@@ -1,0 +1,25 @@
+{
+  "name": "egg-born",
+  "version": "0.0.2",
+  "description": "egg-born",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhennann/egg-born.git"
+  },
+  "keywords": [
+    "egg"
+  ],
+  "author": "zhennann",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zhennann/egg-born/issues"
+  },
+  "homepage": "https://github.com/zhennann/egg-born#readme",
+  "dependencies": {
+    "egg": "^1.7.0"
+  }
+}
