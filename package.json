@@ -4,11 +4,11 @@
   "description": "egg-born",
   "main": "index.js",
   "scripts": {
-    "b-dev": "cd backend && npm run dev",
-    "b-test": "cd backend && npm run test",
-    "b-cov": "cd backend && npm run cov",
-    "b-lint": "cd backend && npm run lint",
-    "b-ci": "cd backend && npm run ci"
+    "b-dev": "cd backend && npm run dev && cd ..",
+    "b-test": "cd backend && npm run test && cd ..",
+    "b-cov": "cd backend && npm run cov && cd ..",
+    "b-lint": "cd backend && npm run lint && cd ..",
+    "b-ci": "cd backend && npm run ci && cd .."
   },
   "repository": {
     "type": "git",
