@@ -13,7 +13,7 @@
 [npm-url]: https://npmjs.org/package/egg-born
 [travis-image]: https://img.shields.io/travis/zhennann/egg-born.svg?style=flat-square
 [travis-url]: https://travis-ci.org/zhennann/egg-born
-[codecov-image]: https://codecov.io/gh/zhennann/egg-born/branch/dev/graph/badge.svg
+[codecov-image]: https://codecov.io/gh/zhennann/egg-born/branch/dev/graph/badge.svg?style=flat-square
 [codecov-url]: https://codecov.io/gh/zhennann/egg-born
 [david-image]: https://david-dm.org/zhennann/egg-born.svg?style=flat-square
 [david-url]: https://david-dm.org/zhennann/egg-born
