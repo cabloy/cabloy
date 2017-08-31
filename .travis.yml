@@ -15,4 +15,4 @@ install:
 script:
   - npm run b-ci
 after_script:
-  - cnpm i codecov -g && cd backend && codecov && cd ..
+  - cnpm i codecov -g && codecov
