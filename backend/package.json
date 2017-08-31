@@ -1,0 +1,20 @@
+{
+  "name": "egg-born-backend",
+  "version": "0.0.1",
+  "description": "egg-born-backend",
+  "scripts": {
+    "dev": "egg-bin dev",
+    "test": "egg-bin test",
+    "cov": "egg-bin cov",
+    "lint": "eslint app config lib test *.js",
+    "ci": "npm run lint && npm run cov"
+  },
+  "author": "zhennann",
+  "devDependencies": {
+    "egg-bin": "^4.1.0",
+    "egg-mock": "^3.10.0"
+  },
+  "dependencies": {
+    "egg": "^1.7.0"
+  }
+}
