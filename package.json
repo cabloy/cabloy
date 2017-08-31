@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "egg-bin dev",
     "test": "egg-bin test",
-    "cov": "egg-bin cov"
+    "cov": "egg-bin cov",
+    "lint": "eslint app config lib test *.js",
+    "ci": "npm run lint & npm run cov"
   },
   "repository": {
     "type": "git",

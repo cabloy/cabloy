@@ -13,6 +13,6 @@ matrix:
 install:
   - npm i cnpm -g && cnpm i
 script:
-  - npm run cov
+  - npm run ci
 after_script:
   - cnpm i codecov -g && codecov
