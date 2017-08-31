@@ -1,6 +1,6 @@
 {
   "name": "egg-born",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "egg-born",
   "main": "index.js",
   "scripts": {
