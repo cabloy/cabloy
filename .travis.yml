@@ -11,8 +11,8 @@ matrix:
     # Allow the nightly installs to fail
     - env: 'NVM_NODEJS_ORG_MIRROR=https://nodejs.org/download/nightly'
 install:
-  - npm i cnpm -g && cnpm i
+  - npm i cnpm -g && cd backend && cnpm i
 script:
-  - npm run ci
+  - npm run b-ci
 after_script:
-  - cnpm i codecov -g && codecov
+  - cnpm i codecov -g && cd backend && codecov
