@@ -16,4 +16,4 @@ install:
 script:
   - npm run cov
 after_script:
-  - cnpm codecov -g && codecov
+  - cnpm i codecov -g && codecov
