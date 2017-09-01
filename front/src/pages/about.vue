@@ -15,9 +15,9 @@
 export default {
   data() {
     return {
-      title: 'hello world!'
-    }
-  }
-}
+      title: 'hello world!',
+    };
+  },
+};
 
 </script>
