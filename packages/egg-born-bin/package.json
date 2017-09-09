@@ -20,6 +20,14 @@
   },
   "homepage": "https://github.com/zhennann/egg-born-bin#readme",
   "devDependencies": {
+    "egg-bin": "^4.1.0",
+    "egg-mock": "^3.10.0",
+    "babel-eslint": "^7.2.3",
+    "eslint": "^4.5.0",
+    "eslint-config-egg": "^5.1.0",
+    "eslint-plugin-vuefix": "^0.2.0"
+  },
+  "dependencies": {
     "egg-bin": "^4.1.0"
   }
 }
