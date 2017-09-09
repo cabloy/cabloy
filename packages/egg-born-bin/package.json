@@ -1,0 +1,25 @@
+{
+  "name": "egg-born-bin",
+  "version": "0.0.1",
+  "description": "egg-born-bin",
+  "main": "index.js",
+  "bin": {
+    "egg-born-bin": "bin/egg-born-bin.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhennann/egg-born-bin.git"
+  },
+  "keywords": [
+    "egg egg-born bin"
+  ],
+  "author": "zhennann",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zhennann/egg-born-bin/issues"
+  },
+  "homepage": "https://github.com/zhennann/egg-born-bin#readme",
+  "devDependencies": {
+    "egg-bin": "^4.1.0",
+  }
+}
