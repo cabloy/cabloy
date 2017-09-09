@@ -20,6 +20,6 @@
   },
   "homepage": "https://github.com/zhennann/egg-born-bin#readme",
   "devDependencies": {
-    "egg-bin": "^4.1.0",
+    "egg-bin": "^4.1.0"
   }
 }
