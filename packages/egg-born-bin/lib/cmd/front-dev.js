@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-09 11:39:56
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-09 16:13:24
+* @Last Modified time: 2017-09-10 18:45:25
 */
 
 const path = require('path');
@@ -16,7 +16,7 @@ class FrontDevCommand extends Command {
   }
 
   * run({ cwd, argv }) {
-    console.log('run front dev at %s with %j', cwd, argv);
+    console.log('run front dev at %s', cwd);
 
     const devServer = path.join(cwd, 'node_modules/egg-born-front/build/dev-server.js');
     const ops = {

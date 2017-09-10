@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-09 12:01:49
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-09 23:27:08
+* @Last Modified time: 2017-09-10 18:45:09
 */
 
 const path = require('path');
@@ -19,8 +19,11 @@ class FrontBuildCommand extends Command {
     console.log('run front build at %s', cwd);
 
     const build = path.join(cwd, 'node_modules/egg-born-front/build/build.js');
+    const ops = {
+      cwd: path.join(cwd, 'node_modules/egg-born-front'),
+    };
 
-    yield this.helper.forkNode(build);
+    yield this.helper.forkNode(build, [], ops);
   }
 
   description() {
