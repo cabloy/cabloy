@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-8 21:31:56
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-12 21:23:43
+* @Last Modified time: 2017-09-12 23:00:22
 */
 
 import Vue from 'vue';
@@ -13,7 +13,9 @@ import main from '../../../src/main.js';
 
 Vue.use(main, ops => {
 
-  if (ops.mode === 'framework7') {
+  Vue.prototype.__provider = ops.provider;
+
+  if (ops.provider === 'framework7') {
     const options = require('./inject/framework7.js').default(Vue);
 
     const optionsNew = {};
@@ -25,7 +27,7 @@ Vue.use(main, ops => {
     }
 
     new Vue(optionsNew);
-  } else if (ops.mode === 'vuerouter') {
+  } else if (ops.provider === 'vuerouter') {
     require('./inject/vuerouter.js').default(Vue, ops.options.router);
     new Vue(ops.options);
   } else {

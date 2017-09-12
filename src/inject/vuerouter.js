@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-12 20:48:23
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-12 22:34:05
+* @Last Modified time: 2017-09-12 23:19:04
 */
 
 import util from './util.js';
@@ -36,7 +36,7 @@ export default function(Vue, router) {
 
         installJS(m, moduleInfo);
 
-        return next(to.path);
+        return next(to.fullPath);
       });
 
     });
