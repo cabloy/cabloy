@@ -4,7 +4,6 @@ const webpack = require('webpack');
 const config = require('../config');
 const merge = require('webpack-merge');
 const baseWebpackConfig = require('./webpack.base.conf');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
@@ -30,8 +29,9 @@ const webpackConfig = merge(baseWebpackConfig, {
     new webpack.DefinePlugin({
       'process.env': env,
     }),
+    // uglifyjs
     new UglifyJSPlugin({
-      sourceMap: true,
+      sourceMap: false,
       uglifyOptions: {
         output: {
           comments: false,
@@ -75,8 +75,7 @@ const webpackConfig = merge(baseWebpackConfig, {
         return (
           module.resource &&
           /\.js$/.test(module.resource) &&
-          module.resource.indexOf('node_modules') > 0
-          // module.resource.indexOf(path.join(__dirname, '../node_modules')) === 0
+          module.resource.indexOf(path.join(__dirname, '../../../node_modules')) === 0
         );
       },
     }),

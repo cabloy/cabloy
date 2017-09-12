@@ -83,7 +83,7 @@ exports.copyModules = function() {
   console.log('\ncopy modules start.');
 
   // copy js css
-  glob(`${nodeModulesPath}/egg-born-module-*/dist/front.{js,css}`, (err, files) => {
+  glob(`${nodeModulesPath}/egg-born-module-*/dist/front.min.{js,css}`, (err, files) => {
     files.forEach(file => {
       const dest = path.join(__dirname, '__module', file.substr(nodeModulesPath.length));
       fse.copySync(file, dest);
