@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-10 21:31:56
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-13 21:31:54
+* @Last Modified time: 2017-09-14 00:04:08
 */
 
 import extend from 'extend2';
@@ -10,14 +10,29 @@ import util from '../base/util.js';
 
 export default function(Vue, options) {
 
+  let f7Router;
+
   // f7 options
   const f7Options = {
-
+    framework7: {
+      preroute(view, options) {
+        const route = f7Router.findMatchingRoute(options.url);
+        if (route && route.route.meta && route.route.meta.requiresAuth && !Vue.prototype.$meta.auth.state.loggedIn) {
+          // emit event: login
+          Vue.prototype.$meta.eventHub.$emit(
+            Vue.prototype.$meta.constants.events.login,
+            { view, options }
+          );
+          return false;
+        }
+        return true;
+      },
+    },
     methods: {
 
       onF7Init(f7) {
 
-        if (this.__onF7Init) this.__onF7Init(f7);
+        f7Router = this.$f7Router;
 
         f7.routerPreOptions = (view, options) => {
           if (options.component === false || !options.url) return options;
@@ -83,7 +98,17 @@ export default function(Vue, options) {
   extend(true, optionsNew, f7Options);
 
   if (options.methods && options.methods.onF7Init) {
-    optionsNew.methods.__onF7Init = options.methods.onF7Init;
+    optionsNew.methods.onF7Init = function(f7) {
+      options.methods.onF7Init.call(this, f7);
+      f7Options.methods.onF7Init.call(this, f7);
+    };
+  }
+
+  if (options.framework7 && options.framework7.preroute) {
+    optionsNew.framework7.preroute = (view, _options) => {
+      if (!options.framework7.preroute(view, _options)) return false;
+      return f7Options.framework7.preroute(view, _options);
+    };
   }
 
   return optionsNew;
