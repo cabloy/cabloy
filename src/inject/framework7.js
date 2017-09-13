@@ -2,14 +2,16 @@
 * @Author: zhennann
 * @Date:   2017-09-10 21:31:56
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-12 21:44:40
+* @Last Modified time: 2017-09-13 21:31:54
 */
 
-import util from './util.js';
+import extend from 'extend2';
+import util from '../base/util.js';
 
-export default function(Vue) {
+export default function(Vue, options) {
 
-  return {
+  // f7 options
+  const f7Options = {
 
     methods: {
 
@@ -43,9 +45,7 @@ export default function(Vue) {
             util.importJS(moduleInfo, (e, m) => {
               if (e) throw e;
 
-              installJS.call(this, m, options, moduleInfo);
-
-              return cb(options);
+              return this.__installJS(m, options, moduleInfo, cb);
             });
           });
 
@@ -53,26 +53,40 @@ export default function(Vue) {
 
       },
 
+      __installJS(m, options, moduleInfo, cb) {
+        // install
+        Vue.use(m.default, ops => {
+          // concat routes
+          const routes = ops.routes.map(route => {
+            route.path = `/${moduleInfo.pid}/${moduleInfo.name}${route.path}`;
+            return route;
+          });
+          this.$f7Router.routes = this.$f7Router.routes.concat(routes);
+
+          // ready
+          this.$f7Router.__ebModules[moduleInfo.fullName] = m;
+          options.component = false;
+
+          return cb(options);
+        });
+
+      },
 
     },
 
   };
 
-  function installJS(m, options, moduleInfo) {
-    // install
-    Vue.use(m.default);
 
-    // concat routes
-    const routes = m.default.routes.map(route => {
-      route.path = `/${moduleInfo.pid}/${moduleInfo.name}${route.path}`;
-      return route;
-    });
-    this.$f7Router.routes = this.$f7Router.routes.concat(routes);
+  // extend options
+  const optionsNew = {};
+  extend(true, optionsNew, options);
+  extend(true, optionsNew, f7Options);
 
-    // ready
-    this.$f7Router.__ebModules[moduleInfo.fullName] = m;
-    options.component = false;
+  if (options.methods && options.methods.onF7Init) {
+    optionsNew.methods.__onF7Init = options.methods.onF7Init;
   }
 
+  return optionsNew;
 
 }
+

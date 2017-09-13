@@ -1,38 +1,64 @@
 /*
 * @Author: zhennann
-* @Date:   2017-09-8 21:31:56
+* @Date:   2017-09-08 21:31:56
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-12 23:00:22
+* @Last Modified time: 2017-09-13 21:31:23
 */
 
 import Vue from 'vue';
-
-import extend from 'extend2';
+import Vuex from 'vuex';
 
 import main from '../../../src/main.js';
 
+// meta
+const meta = Vue.prototype.$meta = {};
+
+// constants
+meta.constants = require('./base/constant.js').default;
+
+// eventHub
+meta.eventHub = new Vue();
+
+// prepare auth
+meta.auth = prepareAuth();
+
+// install main
 Vue.use(main, ops => {
 
-  Vue.prototype.__provider = ops.provider;
+  // provider
+  meta.provider = ops.provider;
 
-  if (ops.provider === 'framework7') {
-    const options = require('./inject/framework7.js').default(Vue);
+  // prepare vue options
+  const options = prepareVueOptions(ops);
 
-    const optionsNew = {};
-    extend(true, optionsNew, ops.options);
-    extend(true, optionsNew, options);
-
-    if (ops.options.methods && ops.options.methods.onF7Init) {
-      optionsNew.methods.__onF7Init = ops.options.methods.onF7Init;
-    }
-
-    new Vue(optionsNew);
-  } else if (ops.provider === 'vuerouter') {
-    require('./inject/vuerouter.js').default(Vue, ops.options.router);
-    new Vue(ops.options);
-  } else {
-    console.warning('should be framework7 or vuerouter!');
-  }
+  // new vue
+  new Vue(options);
 
 });
+
+// prepare vue options
+function prepareVueOptions(ops) {
+
+  if (ops.provider === 'framework7') {
+    // framework7
+    return require('./inject/framework7.js').default(Vue, ops.options);
+  } else if (ops.provider === 'vuerouter') {
+    // vue-router
+    require('./inject/vuerouter.js').default(Vue, ops.options.router);
+    return ops.options;
+  }
+
+  // not support
+  throw new Error('should be framework7 or vuerouter!');
+
+}
+
+// prepare auth
+function prepareAuth() {
+  // install vuex
+  Vue.use(Vuex);
+  // store
+  const auth = require('./base/auth.js').default(Vue);
+  return new Vuex.Store(auth);
+}
 
