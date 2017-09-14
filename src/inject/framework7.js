@@ -2,11 +2,12 @@
 * @Author: zhennann
 * @Date:   2017-09-10 21:31:56
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-14 00:04:08
+* @Last Modified time: 2017-09-14 11:36:37
 */
 
 import extend from 'extend2';
 import util from '../base/util.js';
+import fns from '../base/fns.js';
 
 export default function(Vue, options) {
 
@@ -91,24 +92,17 @@ export default function(Vue, options) {
 
   };
 
-
   // extend options
   const optionsNew = {};
   extend(true, optionsNew, options);
   extend(true, optionsNew, f7Options);
 
   if (options.methods && options.methods.onF7Init) {
-    optionsNew.methods.onF7Init = function(f7) {
-      options.methods.onF7Init.call(this, f7);
-      f7Options.methods.onF7Init.call(this, f7);
-    };
+    optionsNew.methods.onF7Init = fns([ options.methods.onF7Init, f7Options.methods.onF7Init ]);
   }
 
   if (options.framework7 && options.framework7.preroute) {
-    optionsNew.framework7.preroute = (view, _options) => {
-      if (!options.framework7.preroute(view, _options)) return false;
-      return f7Options.framework7.preroute(view, _options);
-    };
+    optionsNew.framework7.preroute = fns([ options.framework7.preroute, f7Options.framework7.preroute ]);
   }
 
   return optionsNew;
