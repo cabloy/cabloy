@@ -18,7 +18,6 @@ spinner.start();
 rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
   if (err) throw err;
 
-  fse.emptyDirSync(path.join(__dirname, '__module'));
   utils.copyModules();
 
   webpack(webpackConfig, function(err, stats) {
@@ -33,7 +32,8 @@ rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
     }) + '\n\n');
 
     const dest = path.join(__dirname, '../../../dist');
-    fse.removeSync(dest);
+    fse.removeSync(path.join(dest, 'index.html'));
+    fse.removeSync(path.join(dest, 'static'));
     fse.copySync(config.build.assetsRoot, dest);
 
     console.log(chalk.cyan('  Build complete.\n'));

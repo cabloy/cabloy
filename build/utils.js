@@ -3,6 +3,7 @@ const config = require('../config');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const glob = require('glob');
 const fse = require('fs-extra');
+const chalk = require('chalk');
 
 exports.assetsPath = function(_path) {
   const assetsSubDirectory = process.env.NODE_ENV === 'production'
@@ -75,15 +76,15 @@ exports.styleLoaders = function(options) {
 
 // copy modules
 exports.copyModules = function() {
-  const nodeModulesPath = path.join(__dirname, '../../node_modules');
+  const nodeModulesPath = path.join(__dirname, '../..');
   if (!fse.existsSync(nodeModulesPath)) {
-    return console.warn('\nnot found egg-born modules.');
+    return console.log('\nnot found egg-born modules.');
   }
 
-  console.log('\ncopy modules start.');
+  fse.emptyDirSync(path.join(__dirname, '__module'));
 
   // copy js css
-  glob(`${nodeModulesPath}/egg-born-module-*/dist/front.min.{js,css}`, (err, files) => {
+  glob(`${nodeModulesPath}/egg-born-module-*/dist/front.*`, (err, files) => {
     files.forEach(file => {
       const dest = path.join(__dirname, '__module', file.substr(nodeModulesPath.length));
       fse.copySync(file, dest);
@@ -98,5 +99,12 @@ exports.copyModules = function() {
     });
   });
 
-  console.log('copy modules end.');
+  // stat
+  glob(`${nodeModulesPath}/egg-born-module-*`, (err, files) => {
+    files.forEach(file => {
+      console.log(chalk.yellow(`\n${file.substr(nodeModulesPath.length + 1)}`));
+    });
+    console.log(chalk.cyan(`\n${files.length} egg-born modules found.`));
+  });
+
 };
