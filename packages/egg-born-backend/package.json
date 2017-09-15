@@ -1,0 +1,38 @@
+{
+  "name": "egg-born-backend",
+  "version": "0.0.1",
+  "description": "egg-born-backend",
+  "scripts": {
+    "test": "egg-bin test",
+    "cov": "egg-bin cov",
+    "lint": "eslint .",
+    "ci": "npm run lint && npm run cov"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhennann/egg-born-backend.git"
+  },
+  "keywords": [
+    "egg egg-born backend"
+  ],
+  "author": "zhennann",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zhennann/egg-born-backend/issues"
+  },
+  "homepage": "https://github.com/zhennann/egg-born-backend#readme",
+  "dependencies": {
+    "egg": "^1.7.0"
+  },
+  "devDependencies": {
+    "autod": "^2.8.0",
+    "autod-egg": "^1.0.0",
+    "babel-eslint": "^7.2.3",
+    "egg-bin": "^4.1.0",
+    "egg-ci": "^1.7.0",
+    "egg-mock": "^3.10.0",
+    "eslint": "^4.5.0",
+    "eslint-config-egg": "^5.1.0",
+    "supertest": "^3.0.0"
+  }
+}
