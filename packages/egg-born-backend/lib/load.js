@@ -2,12 +2,12 @@
 * @Author: zhennann
 * @Date:   2017-09-15 21:40:49
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-18 11:42:10
+* @Last Modified time: 2017-09-19 12:06:37
 */
 
 
 const AppWorkerLoader = require('egg').AppWorkerLoader;
-const loadModule = require('./module.js');
+const loadModules = require('./module');
 
 class CustomAppWorkerLoader extends AppWorkerLoader {
   constructor(opt) {
@@ -20,7 +20,7 @@ class CustomAppWorkerLoader extends AppWorkerLoader {
     super.load();
 
     // load modules
-    loadModule(this);
+    loadModules(this);
 
   }
 
