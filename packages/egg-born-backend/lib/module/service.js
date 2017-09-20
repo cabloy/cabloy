@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-19 10:24:52
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-19 22:35:28
+* @Last Modified time: 2017-09-20 10:45:46
 */
 
 const is = require('is-type-of');
@@ -28,10 +28,12 @@ module.exports = function(loader, modules) {
       const info = moduleUtil.parseInfo(moduleUtil.parseName(context.request.url));
       if (info) {
         const ebServiceClass = ebServiceClasses[info.fullName];
-        context.service.__ebCache = new Map();
-        Object.keys(ebServiceClass).forEach(key => {
-          defineProperty(context, key, ebServiceClass[key]);
-        });
+        if (ebServiceClass) {
+          context.service.__ebCache = new Map();
+          Object.keys(ebServiceClass).forEach(key => {
+            defineProperty(context, key, ebServiceClass[key]);
+          });
+        }
       }
 
       return context;

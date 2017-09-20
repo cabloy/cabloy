@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-19 18:36:54
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-19 22:11:26
+* @Last Modified time: 2017-09-20 10:44:07
 */
 
 const PREFIX_A = '/api/';
@@ -33,7 +33,9 @@ module.exports = {
     if (moduleUrl.indexOf(PREFIX_A) === 0) {
       const posA = PREFIX_A.length;
       const posB = moduleUrl.indexOf('/', posA) + 1;
+      if (posB === -1) return null;
       const posC = moduleUrl.indexOf('/', posB);
+      if (posC === -1) return null;
       return moduleUrl.substring(posA, posC);
     } else if (moduleUrl.indexOf(PREFIX_B) === 0) {
       return moduleUrl.substr(PREFIX_B.length);
