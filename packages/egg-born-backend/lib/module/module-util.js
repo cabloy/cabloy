@@ -2,11 +2,13 @@
 * @Author: zhennann
 * @Date:   2017-09-19 18:36:54
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-20 10:44:07
+* @Last Modified time: 2017-09-20 17:19:45
 */
 
 const PREFIX_A = '/api/';
 const PREFIX_B = 'egg-born-module-';
+const PREFIX_C = './';
+const PREFIX_D = './egg-born-module-';
 
 module.exports = {
   // aa-hello aa/hello
@@ -24,10 +26,13 @@ module.exports = {
       fullName: `egg-born-module-${parts[0]}-${parts[1]}`,
       relativeName: `${parts[0]}-${parts[1]}`,
       url: `${parts[0]}/${parts[1]}`,
+      sync: parts[2] === 'sync',
     };
   },
   // /api/aa/hello/home/index
   // egg-born-module-aa-hello
+  // ./aa-hello/
+  // ./egg-born-module-aa-hello/
   parseName(moduleUrl) {
     if (!moduleUrl) return null;
     if (moduleUrl.indexOf(PREFIX_A) === 0) {
@@ -38,8 +43,18 @@ module.exports = {
       if (posC === -1) return null;
       return moduleUrl.substring(posA, posC);
     } else if (moduleUrl.indexOf(PREFIX_B) === 0) {
-      return moduleUrl.substr(PREFIX_B.length);
+      return this._parseName(moduleUrl, PREFIX_B);
+    } else if (moduleUrl.indexOf(PREFIX_C) === 0) {
+      return this._parseName(moduleUrl, PREFIX_C);
+    } else if (moduleUrl.indexOf(PREFIX_D) === 0) {
+      return this._parseName(moduleUrl, PREFIX_D);
     }
     return null;
+  },
+  _parseName(moduleUrl, prefix) {
+    const posA = prefix.length;
+    let posB = moduleUrl.indexOf('/', posA);
+    if (posB === -1) posB = moduleUrl.length;
+    return moduleUrl.substring(posA, posB);
   },
 };
