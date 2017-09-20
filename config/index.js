@@ -1,7 +1,9 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
 const path = require('path');
+const merge = require('webpack-merge');
+const config = require('../../../build/config.js');
 
-module.exports = {
+module.exports = merge({
   build: {
     env: require('./prod.env'),
     index: path.resolve(__dirname, '../dist/index.html'),
@@ -25,4 +27,4 @@ module.exports = {
     // just be aware of this issue when enabling this option.
     cssSourceMap: false,
   },
-};
+}, config);

@@ -28,7 +28,7 @@ const plugins = [
   // see https://github.com/ampedandwired/html-webpack-plugin
   new HtmlWebpackPlugin({
     filename: config.build.index,
-    template: path.join(__dirname, '../index.html'),
+    template: path.join(__dirname, '../index.ejs'),
     inject: true,
     minify: {
       removeComments: true,
@@ -39,6 +39,7 @@ const plugins = [
     },
     // necessary to consistently work with multiple chunks via CommonsChunkPlugin
     chunksSortMode: 'dependency',
+    title: config.build.title,
   }),
   // split vendor js into its own file
   new webpack.optimize.CommonsChunkPlugin({

@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-08 21:31:56
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-20 17:25:10
+* @Last Modified time: 2017-09-20 22:18:06
 */
 
 import Vue from 'vue';
@@ -42,8 +42,12 @@ Vue.use(main, ops => {
 // prepare vue options
 function prepareVueOptions(ops) {
 
+  ops.options.el = '#app';
+  ops.options.template = '<app/>';
+
   if (ops.meta.provider === 'framework7') {
     // framework7
+    ops.options.framework7.root = '#app';
     return require('./inject/framework7.js').default(Vue, ops.options);
   } else if (ops.meta.provider === 'vuerouter') {
     // vue-router
