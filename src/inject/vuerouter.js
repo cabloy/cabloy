@@ -2,16 +2,28 @@
 * @Author: zhennann
 * @Date:   2017-09-12 20:48:23
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-13 21:31:44
+* @Last Modified time: 2017-09-20 18:10:17
 */
 
 import util from '../base/util.js';
+import moduleUtil from '../base/module-util.js';
 
 export default function(Vue, router) {
+
+  let __moduleIndex = 0;
 
   // check if has inject root
   const routeInject = router.options.routes.find(route => {
     if (route.meta && route.meta.inject) return route;
+  });
+
+  // load sync modules
+  util.requireCSS();
+  util.requireJS((m, moduleInfo) => {
+    __installJS(m, moduleInfo, null);
+  });
+  util.requireJSLocal((m, moduleInfo) => {
+    __installJS(m, moduleInfo, null);
   });
 
   // hook
@@ -35,7 +47,7 @@ export default function(Vue, router) {
     }
 
     // parse module info
-    const moduleInfo = util.parseModuleInfo(to.path);
+    const moduleInfo = moduleUtil.parseInfo(to.path);
     if (!moduleInfo) return next(false);
 
     // check if module loaded
@@ -51,7 +63,7 @@ export default function(Vue, router) {
           return next(false);
         }
 
-        installJS(m, moduleInfo, () => {
+        __installJS(m, moduleInfo, () => {
           return next(to.fullPath);
         });
 
@@ -61,21 +73,25 @@ export default function(Vue, router) {
 
   });
 
-  let __index = 0;
-
-  function installJS(m, moduleInfo, cb) {
+  function __installJS(m, moduleInfo, cb) {
     // install
     Vue.use(m.default, ops => {
 
       // concat routes
+      const routesRoot = [];
       const routes = ops.routes.map(route => {
-        route.path = `/${moduleInfo.pid}/${moduleInfo.name}${route.path}`;
+        if (route.path.charAt(0) === '/') {
+          route.path = `/${moduleInfo.pid}/${moduleInfo.name}${route.path}`;
+          routesRoot.push(route);
+          return null;
+        }
+        route.path = `/${moduleInfo.pid}/${moduleInfo.name}/${route.path}`;
         return route;
-      });
+      }).filter(router => router);
 
       // add routes
       const routesNew = routeInject ? [{
-        path: `__module${++__index}`,
+        path: `__module${++__moduleIndex}`,
         alias: routeInject.path,
         component: routeInject.component,
         children: routes,
@@ -83,10 +99,13 @@ export default function(Vue, router) {
 
       router.addRoutes(routesNew);
 
+      if (routesRoot.length > 0)router.addRoutes(routesRoot);
+
       // ready
+      if (!router.__ebModules) router.__ebModules = {};
       router.__ebModules[moduleInfo.fullName] = m;
 
-      return cb();
+      return cb && cb();
     });
 
   }

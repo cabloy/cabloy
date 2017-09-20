@@ -2,12 +2,13 @@
 * @Author: zhennann
 * @Date:   2017-09-10 21:31:56
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-14 11:36:37
+* @Last Modified time: 2017-09-20 17:39:55
 */
 
 import extend from 'extend2';
 import util from '../base/util.js';
 import fns from '../base/fns.js';
+import moduleUtil from '../base/module-util.js';
 
 export default function(Vue, options) {
 
@@ -39,7 +40,7 @@ export default function(Vue, options) {
           if (options.component === false || !options.url) return options;
 
           // parse module info
-          const moduleInfo = util.parseModuleInfo(options.url);
+          const moduleInfo = moduleUtil.parseInfo(options.url);
           if (!moduleInfo) return options;
 
           // check if module loaded
@@ -67,6 +68,15 @@ export default function(Vue, options) {
 
         };
 
+        // load sync modules
+        util.requireCSS();
+        util.requireJS((m, moduleInfo) => {
+          this.__installJS(m, null, moduleInfo, null);
+        });
+        util.requireJSLocal((m, moduleInfo) => {
+          this.__installJS(m, null, moduleInfo, null);
+        });
+
       },
 
       __installJS(m, options, moduleInfo, cb) {
@@ -74,16 +84,17 @@ export default function(Vue, options) {
         Vue.use(m.default, ops => {
           // concat routes
           const routes = ops.routes.map(route => {
-            route.path = `/${moduleInfo.pid}/${moduleInfo.name}${route.path}`;
+            route.path = `/${moduleInfo.pid}/${moduleInfo.name}/${route.path}`;
             return route;
           });
           this.$f7Router.routes = this.$f7Router.routes.concat(routes);
 
           // ready
+          if (!this.$f7Router.__ebModules) this.$f7Router.__ebModules = {};
           this.$f7Router.__ebModules[moduleInfo.fullName] = m;
-          options.component = false;
+          options && (options.component = false);
 
-          return cb(options);
+          return cb && cb(options);
         });
 
       },

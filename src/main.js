@@ -2,13 +2,13 @@
 * @Author: zhennann
 * @Date:   2017-09-08 21:31:56
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-13 21:31:23
+* @Last Modified time: 2017-09-20 17:25:10
 */
 
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-import main from '../../../src/main.js';
+import main from '../../../src/front/main.js';
 
 // meta
 const meta = Vue.prototype.$meta = {};
@@ -25,11 +25,14 @@ meta.auth = prepareAuth();
 // install main
 Vue.use(main, ops => {
 
-  // provider
-  meta.provider = ops.provider;
+  // meta.provider
+  meta.provider = ops.meta.provider;
 
   // prepare vue options
   const options = prepareVueOptions(ops);
+
+  // meta.options
+  meta.options = ops.options;
 
   // new vue
   new Vue(options);
@@ -39,10 +42,10 @@ Vue.use(main, ops => {
 // prepare vue options
 function prepareVueOptions(ops) {
 
-  if (ops.provider === 'framework7') {
+  if (ops.meta.provider === 'framework7') {
     // framework7
     return require('./inject/framework7.js').default(Vue, ops.options);
-  } else if (ops.provider === 'vuerouter') {
+  } else if (ops.meta.provider === 'vuerouter') {
     // vue-router
     require('./inject/vuerouter.js').default(Vue, ops.options.router);
     return ops.options;
