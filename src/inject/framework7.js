@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-10 21:31:56
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-20 22:14:25
+* @Last Modified time: 2017-09-21 10:44:08
 */
 
 import extend from 'extend2';
@@ -69,11 +69,7 @@ export default function(Vue, options) {
         };
 
         // load sync modules
-        util.requireCSS();
-        util.requireJS((m, moduleInfo) => {
-          this.__installJS(m, null, moduleInfo, null);
-        });
-        util.requireJSLocal((m, moduleInfo) => {
+        util.requireModules((m, moduleInfo) => {
           this.__installJS(m, null, moduleInfo, null);
         });
 

@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-12 21:18:27
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-20 17:30:42
+* @Last Modified time: 2017-09-21 10:52:01
 */
 import moduleUtil from './module-util.js';
 
@@ -33,22 +33,24 @@ export default {
     r.keys().forEach(key => r(key));
   },
 
-  requireJS(cb) {
-    const r = require.context('../../build/__module/', true, /-sync\/dist\/front\.js$/);
+  requireJS(modules, local, cb) {
+    const r = local ?
+      require.context('../../../../src/module/', true, /-sync\/front\/src\/main\.js$/) :
+      require.context('../../build/__module/', true, /-sync\/dist\/front\.js$/);
     r.keys().forEach(key => {
-      const m = r(key);
       const moduleInfo = moduleUtil.parseInfo(moduleUtil.parseName(key));
-      cb(m, moduleInfo);
+      if (!modules[moduleInfo.fullName]) {
+        const m = r(key);
+        modules[moduleInfo.fullName] = m;
+        cb(m, moduleInfo);
+      }
     });
+    return modules;
   },
 
-  requireJSLocal(cb) {
-    const r = require.context('../../../../src/module/', true, /-sync\/front\/src\/main\.js$/);
-    r.keys().forEach(key => {
-      const m = r(key);
-      const moduleInfo = moduleUtil.parseInfo(moduleUtil.parseName(key));
-      cb(m, moduleInfo);
-    });
+  requireModules(cb) {
+    this.requireCSS();
+    this.requireJS(this.requireJS({}, false, cb), true, cb);
   },
 
 };

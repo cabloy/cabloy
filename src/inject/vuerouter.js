@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-12 20:48:23
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-20 18:10:17
+* @Last Modified time: 2017-09-21 10:43:29
 */
 
 import util from '../base/util.js';
@@ -18,11 +18,7 @@ export default function(Vue, router) {
   });
 
   // load sync modules
-  util.requireCSS();
-  util.requireJS((m, moduleInfo) => {
-    __installJS(m, moduleInfo, null);
-  });
-  util.requireJSLocal((m, moduleInfo) => {
+  util.requireModules((m, moduleInfo) => {
     __installJS(m, moduleInfo, null);
   });
 
