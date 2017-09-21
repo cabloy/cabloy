@@ -24,7 +24,8 @@
   "dependencies": {
     "egg": "^1.7.0",
     "is-type-of": "^1.0.0",
-    "glob": "^7.1.2"
+    "glob": "^7.1.2",
+    "extend2": "^1.0.0"
   },
   "devDependencies": {
     "autod": "^2.8.0",
