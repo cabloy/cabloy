@@ -2,11 +2,11 @@
 * @Author: zhennann
 * @Date:   2017-09-19 10:24:52
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-20 10:45:46
+* @Last Modified time: 2017-09-24 21:59:45
 */
 
 const is = require('is-type-of');
-const moduleUtil = require('./module-util.js');
+const util = require('./util.js');
 
 module.exports = function(loader, modules) {
 
@@ -25,7 +25,7 @@ module.exports = function(loader, modules) {
       const context = createContext.call(loader.app, ...args);
 
       // maybe /favicon.ico
-      const info = moduleUtil.parseInfo(moduleUtil.parseName(context.request.url));
+      const info = util.getModuleInfo(context);
       if (info) {
         const ebServiceClass = ebServiceClasses[info.fullName];
         if (ebServiceClass) {

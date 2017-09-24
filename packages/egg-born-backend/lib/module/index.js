@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-18 11:06:06
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-21 14:47:56
+* @Last Modified time: 2017-09-24 21:37:07
 */
 
 const glob = require('glob');
@@ -11,6 +11,7 @@ const loadRoutes = require('./route.js');
 const loadServices = require('./service.js');
 const loadConfig = require('./config.js');
 const loadLocales = require('./locales.js');
+const loadErrors = require('./errors.js');
 const moduleUtil = require('./module-util.js');
 
 module.exports = function(loader) {
@@ -21,6 +22,7 @@ module.exports = function(loader) {
   loadServices(loader, modules);
   loadConfig(loader, modules);
   loadLocales(loader, modules);
+  loadErrors(loader, modules);
 
   function parseModules(modules, policy) {
 

@@ -2,12 +2,12 @@
 * @Author: zhennann
 * @Date:   2017-09-21 14:47:36
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-21 15:49:11
+* @Last Modified time: 2017-09-24 22:00:21
 */
 
 const util = require('util');
 const extend = require('extend2');
-const moduleUtil = require('./module-util.js');
+const util2 = require('./util.js');
 
 module.exports = function(loader, modules) {
 
@@ -26,7 +26,7 @@ module.exports = function(loader, modules) {
       const context = createContext.call(loader.app, ...args);
 
       // maybe /favicon.ico
-      const info = moduleUtil.parseInfo(moduleUtil.parseName(context.request.url));
+      const info = util2.getModuleInfo(context);
       if (info) {
         context.text = getText;
       }

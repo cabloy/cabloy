@@ -2,11 +2,11 @@
 * @Author: zhennann
 * @Date:   2017-09-21 11:38:06
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-21 11:40:46
+* @Last Modified time: 2017-09-24 22:00:03
 */
 
 const extend = require('extend2');
-const moduleUtil = require('./module-util.js');
+const util = require('./util.js');
 
 module.exports = function(loader, modules) {
 
@@ -25,7 +25,7 @@ module.exports = function(loader, modules) {
       const context = createContext.call(loader.app, ...args);
 
       // maybe /favicon.ico
-      const info = moduleUtil.parseInfo(moduleUtil.parseName(context.request.url));
+      const info = util.getModuleInfo(context);
       if (info) {
         context.config = ebConfigs[info.fullName];
       }
