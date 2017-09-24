@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-10 21:31:56
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-21 10:44:08
+* @Last Modified time: 2017-09-22 22:44:23
 */
 
 import extend from 'extend2';
@@ -19,7 +19,7 @@ export default function(Vue, options) {
     framework7: {
       preroute(view, options) {
         const route = f7Router.findMatchingRoute(options.url);
-        if (route && route.route.meta && route.route.meta.requiresAuth && !Vue.prototype.$meta.auth.state.loggedIn) {
+        if (route && route.route.meta && route.route.meta.requiresAuth && !Vue.prototype.$meta.store.state.auth.loggedIn) {
           // emit event: login
           Vue.prototype.$meta.eventHub.$emit(
             Vue.prototype.$meta.constants.events.login,
@@ -84,6 +84,9 @@ export default function(Vue, options) {
             return route;
           });
           this.$f7Router.routes = this.$f7Router.routes.concat(routes);
+
+          // register store
+          util.registerStore(ops.store, moduleInfo, Vue);
 
           // ready
           if (!this.$f7Router.__ebModules) this.$f7Router.__ebModules = {};

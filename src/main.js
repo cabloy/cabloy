@@ -2,11 +2,10 @@
 * @Author: zhennann
 * @Date:   2017-09-08 21:31:56
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-20 22:18:06
+* @Last Modified time: 2017-09-24 17:27:49
 */
 
 import Vue from 'vue';
-import Vuex from 'vuex';
 
 import main from '../../../src/front/main.js';
 
@@ -19,20 +18,23 @@ meta.constants = require('./base/constant.js').default;
 // eventHub
 meta.eventHub = new Vue();
 
-// prepare auth
-meta.auth = prepareAuth();
-
 // install main
 Vue.use(main, ops => {
 
   // meta.provider
   meta.provider = ops.meta.provider;
 
+  // prepare store
+  meta.store = ops.options.store = require('./base/store.js').default(Vue, ops.store);
+
+  // prepare api
+  if (ops.axios) meta.api = require('./base/api.js').default(Vue, ops.axios);
+
   // prepare vue options
   const options = prepareVueOptions(ops);
 
   // meta.options
-  meta.options = ops.options;
+  meta.options = options;
 
   // new vue
   new Vue(options);
@@ -42,9 +44,11 @@ Vue.use(main, ops => {
 // prepare vue options
 function prepareVueOptions(ops) {
 
+  // el
   ops.options.el = '#app';
   ops.options.template = '<app/>';
 
+  // framework7 or vuerouter
   if (ops.meta.provider === 'framework7') {
     // framework7
     ops.options.framework7.root = '#app';
@@ -58,14 +62,5 @@ function prepareVueOptions(ops) {
   // not support
   throw new Error('should be framework7 or vuerouter!');
 
-}
-
-// prepare auth
-function prepareAuth() {
-  // install vuex
-  Vue.use(Vuex);
-  // store
-  const auth = require('./base/auth.js').default(Vue);
-  return new Vuex.Store(auth);
 }
 

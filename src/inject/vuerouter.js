@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-12 20:48:23
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-21 10:43:29
+* @Last Modified time: 2017-09-23 23:44:10
 */
 
 import util from '../base/util.js';
@@ -29,7 +29,7 @@ export default function(Vue, router) {
     if (to.matched.length > 0) {
       // check if need login
       if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (!Vue.prototype.$meta.auth.state.loggedIn) {
+        if (!Vue.prototype.$meta.store.state.auth.loggedIn) {
           // emit event: login
           Vue.prototype.$meta.eventHub.$emit(
             Vue.prototype.$meta.constants.events.login,
@@ -96,6 +96,9 @@ export default function(Vue, router) {
       router.addRoutes(routesNew);
 
       if (routesRoot.length > 0)router.addRoutes(routesRoot);
+
+      // register store
+      util.registerStore(ops.store, moduleInfo, Vue);
 
       // ready
       if (!router.__ebModules) router.__ebModules = {};
