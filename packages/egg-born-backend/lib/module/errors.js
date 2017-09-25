@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-24 21:37:17
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-24 22:53:04
+* @Last Modified time: 2017-09-25 16:47:07
 */
 
 /*
@@ -14,6 +14,7 @@
 
 const extend = require('extend2');
 const util = require('./util.js');
+const assetErrors = require('./asset/errors.js');
 
 module.exports = function(loader, modules) {
 
@@ -82,8 +83,8 @@ module.exports = function(loader, modules) {
       // module errors
       if (module.main.errors) extend(true, ebError, module.main.errors);
 
-      // application error
-      if (loader.config.errors) { extend(true, ebError, loader.config.errors); }
+      // asset errors
+      extend(true, ebError, assetErrors);
 
     });
   }

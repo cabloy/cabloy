@@ -2,12 +2,13 @@
 * @Author: zhennann
 * @Date:   2017-09-21 14:47:36
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-24 22:00:21
+* @Last Modified time: 2017-09-25 16:48:21
 */
 
 const util = require('util');
 const extend = require('extend2');
 const util2 = require('./util.js');
+const assetLocales = require('./asset/locales.js');
 
 module.exports = function(loader, modules) {
 
@@ -36,6 +37,8 @@ module.exports = function(loader, modules) {
   }
 
   function loadLocales() {
+
+    // module locales
     Object.keys(modules).forEach(key => {
 
       const module = modules[key];
@@ -49,6 +52,14 @@ module.exports = function(loader, modules) {
       }
 
     });
+
+    // asset locales
+    Object.keys(assetLocales).forEach(key => {
+      let locale = ebLocales[key];
+      if (!locale) locale = ebLocales[key] = {};
+      extend(false, locale, assetLocales[key]);
+    });
+
   }
 
   /**
