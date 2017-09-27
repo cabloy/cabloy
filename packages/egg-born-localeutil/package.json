@@ -1,0 +1,27 @@
+{
+  "name": "egg-born-localeutil",
+  "version": "0.0.1",
+  "description": "egg-born-localeutil",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhennann/egg-born-localeutil.git"
+  },
+  "keywords": [
+    "egg egg-born locale util"
+  ],
+  "author": "zhennann",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zhennann/egg-born-localeutil/issues"
+  },
+  "homepage": "https://github.com/zhennann/egg-born-localeutil#readme",
+  "devDependencies": {
+    "babel-eslint": "^7.2.3",
+    "eslint": "^4.5.0",
+    "eslint-config-egg": "^5.1.0",
+    "eslint-plugin-vuefix": "^0.2.0"
+  },
+  "dependencies": {}
+}
