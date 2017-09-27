@@ -13,7 +13,7 @@
     "url": "git+https://github.com/zhennann/egg-born-backend.git"
   },
   "keywords": [
-    "egg egg-born backend"
+    "egg framework egg-born backend"
   ],
   "author": "zhennann",
   "license": "ISC",
@@ -25,17 +25,19 @@
     "egg": "^1.7.0",
     "is-type-of": "^1.0.0",
     "glob": "^7.1.2",
-    "extend2": "^1.0.0"
-  },
-  "devDependencies": {
+    "egg-born-mparse": "^0.0.1",
+    "extend2": "^1.0.0",
     "autod": "^2.8.0",
     "autod-egg": "^1.0.0",
     "babel-eslint": "^7.2.3",
     "egg-bin": "^4.1.0",
+    "egg-born-localeutil": "^0.0.1",
+    "egg-born-mparse": "^0.0.1",
     "egg-ci": "^1.7.0",
     "egg-mock": "^3.10.0",
     "eslint": "^4.5.0",
     "eslint-config-egg": "^5.1.0",
     "supertest": "^3.0.0"
-  }
+  },
+  "devDependencies": {}
 }

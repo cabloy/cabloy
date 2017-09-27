@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-19 10:24:52
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-24 21:59:45
+* @Last Modified time: 2017-09-27 23:26:19
 */
 
 const is = require('is-type-of');

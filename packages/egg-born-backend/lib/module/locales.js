@@ -2,13 +2,14 @@
 * @Author: zhennann
 * @Date:   2017-09-21 14:47:36
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-25 16:48:21
+* @Last Modified time: 2017-09-27 16:22:39
 */
 
-const util = require('util');
+const fs = require('fs');
+const path = require('path');
 const extend = require('extend2');
+const localeutil = require('egg-born-localeutil');
 const util2 = require('./util.js');
-const assetLocales = require('./asset/locales.js');
 
 module.exports = function(loader, modules) {
 
@@ -53,12 +54,41 @@ module.exports = function(loader, modules) {
 
     });
 
-    // asset locales
-    Object.keys(assetLocales).forEach(key => {
-      let locale = ebLocales[key];
-      if (!locale) locale = ebLocales[key] = {};
-      extend(false, locale, assetLocales[key]);
-    });
+    // // asset locales
+    // Object.keys(assetLocales).forEach(key => {
+    //   let locale = ebLocales[key];
+    //   if (!locale) locale = ebLocales[key] = {};
+    //   extend(false, locale, assetLocales[key]);
+    // });
+
+    /**
+ * based on egg-i18n
+ * 
+ * https://github.com/eggjs/egg-i18n/blob/master/app.js
+ * 
+ */
+    // project locales
+    const localeDirs = loader.app.config.i18n.dirs;
+    for (let i = 0; i < localeDirs.length; i++) {
+      const dir = localeDirs[i];
+
+      if (!fs.existsSync(dir)) {
+        continue;
+      }
+
+      const names = fs.readdirSync(dir);
+      for (let j = 0; j < names.length; j++) {
+        const name = names[j];
+        const filepath = path.join(dir, name);
+        // support en_US.js => en-US.js
+        const key = formatLocale(name.split('.')[0]);
+        const resource = require(filepath);
+
+        let locale = ebLocales[key];
+        if (!locale) locale = ebLocales[key] = {};
+        extend(false, locale, resource);
+      }
+    }
 
   }
 
@@ -69,7 +99,7 @@ module.exports = function(loader, modules) {
  * 
  */
 
-  function getText(key, value) {
+  function getText(key) {
 
     if (arguments.length === 0) return '';
 
@@ -81,57 +111,19 @@ module.exports = function(loader, modules) {
       text = key;
     }
 
-    if (!text) return '';
-
-    if (arguments.length === 1) {
-      return text;
-    }
-    if (arguments.length === 2) {
-      if (isObject(value)) {
-        return formatWithObject(text, value);
-      }
-
-      if (Array.isArray(value)) {
-        return formatWithArray(text, value);
-      }
-
-      return util.format(text, value);
-    }
-
     const args = new Array(arguments.length);
     args[0] = text;
     for (let i = 1; i < args.length; i++) {
       args[i] = arguments[i];
     }
-    return util.format.apply(util, args);
+
+    return localeutil.getText.apply(localeutil, args);
+
   }
 
 };
 
-function isObject(obj) {
-  return Object.prototype.toString.call(obj) === '[object Object]';
-}
-
-const ARRAY_INDEX_RE = /\{(\d+)\}/g;
-function formatWithArray(text, values) {
-  return text.replace(ARRAY_INDEX_RE, function(orignal, matched) {
-    const index = parseInt(matched);
-    if (index < values.length) {
-      return values[index];
-    }
-    // not match index, return orignal text
-    return orignal;
-  });
-}
-
-const Object_INDEX_RE = /\{(.+?)\}/g;
-function formatWithObject(text, values) {
-  return text.replace(Object_INDEX_RE, function(orignal, matched) {
-    const value = values[matched];
-    if (value) {
-      return value;
-    }
-    // not match index, return orignal text
-    return orignal;
-  });
+function formatLocale(locale) {
+  // support zh_CN, en_US => zh-CN, en-US
+  return locale.replace('_', '-').toLowerCase();
 }

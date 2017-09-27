@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-18 11:06:06
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-24 21:37:07
+* @Last Modified time: 2017-09-25 22:24:29
 */
 
 const glob = require('glob');
@@ -12,7 +12,7 @@ const loadServices = require('./service.js');
 const loadConfig = require('./config.js');
 const loadLocales = require('./locales.js');
 const loadErrors = require('./errors.js');
-const moduleUtil = require('./module-util.js');
+const mparse = require('egg-born-mparse');
 
 module.exports = function(loader) {
 
@@ -34,7 +34,7 @@ module.exports = function(loader) {
       const pos2 = file.indexOf('/', pos1);
       const name = file.substr(pos1, pos2 - pos1);
 
-      const info = moduleUtil.parseInfo(name);
+      const info = mparse.parseInfo(name);
 
       if (!modules[info.fullName]) {
         modules[info.fullName] = { file, name, info, main: loader.loadFile(file) };
