@@ -2,10 +2,9 @@
 * @Author: zhennann
 * @Date:   2017-09-15 22:51:21
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-15 23:05:56
+* @Last Modified time: 2017-09-16 21:08:27
 */
 
-const path = require('path');
 const DevCommand = require('egg-bin').DevCommand;
 
 class BackendDevCommand extends DevCommand {
