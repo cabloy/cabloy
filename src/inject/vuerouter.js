@@ -2,11 +2,11 @@
 * @Author: zhennann
 * @Date:   2017-09-12 20:48:23
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-23 23:44:10
+* @Last Modified time: 2017-09-27 11:50:09
 */
 
 import util from '../base/util.js';
-import moduleUtil from '../base/module-util.js';
+import mparse from 'egg-born-mparse';
 
 export default function(Vue, router) {
 
@@ -14,13 +14,16 @@ export default function(Vue, router) {
 
   // check if has inject root
   const routeInject = router.options.routes.find(route => {
-    if (route.meta && route.meta.inject) return route;
+    return (route.meta && route.meta.inject);
   });
 
   // load sync modules
   util.requireModules((m, moduleInfo) => {
     __installJS(m, moduleInfo, null);
   });
+
+  // remove app loading
+  util.removeAppLoading();
 
   // hook
   router.beforeEach((to, from, next) => {
@@ -43,7 +46,7 @@ export default function(Vue, router) {
     }
 
     // parse module info
-    const moduleInfo = moduleUtil.parseInfo(to.path);
+    const moduleInfo = mparse.parseInfo(to.path);
     if (!moduleInfo) return next(false);
 
     // check if module loaded
@@ -97,8 +100,8 @@ export default function(Vue, router) {
 
       if (routesRoot.length > 0)router.addRoutes(routesRoot);
 
-      // register store
-      util.registerStore(ops.store, moduleInfo, Vue);
+      // register module resources
+      util.registerModuleResources(ops, moduleInfo, Vue);
 
       // ready
       if (!router.__ebModules) router.__ebModules = {};

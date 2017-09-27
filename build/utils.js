@@ -108,3 +108,10 @@ exports.copyModules = function() {
   });
 
 };
+
+// get index.ejs
+exports.getIndexPath = function() {
+  const index = path.join(__dirname, '../../../src/front/index.ejs');
+  if (fse.existsSync(index)) return index;
+  return path.join(__dirname, '../index.ejs');
+};

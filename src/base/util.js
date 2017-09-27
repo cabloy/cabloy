@@ -2,9 +2,11 @@
 * @Author: zhennann
 * @Date:   2017-09-12 21:18:27
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-24 17:59:07
+* @Last Modified time: 2017-09-27 14:52:08
 */
-import moduleUtil from './module-util.js';
+
+import extend from 'extend2';
+import mparse from 'egg-born-mparse';
 
 export default {
 
@@ -38,7 +40,7 @@ export default {
       require.context('../../../../src/module/', true, /-sync\/front\/src\/main\.js$/) :
       require.context('../../build/__module/', true, /-sync\/dist\/front\.js$/);
     r.keys().forEach(key => {
-      const moduleInfo = moduleUtil.parseInfo(moduleUtil.parseName(key));
+      const moduleInfo = mparse.parseInfo(mparse.parseName(key));
       if (!modules[moduleInfo.fullName]) {
         const m = r(key);
         modules[moduleInfo.fullName] = m;
@@ -53,16 +55,32 @@ export default {
     this.requireJS(this.requireJS({}, false, cb), true, cb);
   },
 
+  registerModuleResources(options, moduleInfo, Vue) {
+    options.store && this.registerStore(options.store, moduleInfo, Vue);
+    options.config && this.registerConfig(options.config, moduleInfo, Vue);
+    options.locales && this.registerLocales(options.locales, moduleInfo, Vue);
+  },
+
   registerStore(store, moduleInfo, Vue) {
-    if (store) {
-      if (!Vue.prototype.$meta.store._modulesNamespaceMap[`${moduleInfo.pid}/`]) {
-        Vue.prototype.$meta.store.registerModule(moduleInfo.pid, {
-          namespaced: true,
-        });
-      }
-      store.namespaced = true;
-      Vue.prototype.$meta.store.registerModule([ moduleInfo.pid, moduleInfo.name ], store);
+    if (!Vue.prototype.$meta.store._modulesNamespaceMap[`${moduleInfo.pid}/`]) {
+      Vue.prototype.$meta.store.registerModule(moduleInfo.pid, {
+        namespaced: true,
+      });
     }
+    store.namespaced = true;
+    Vue.prototype.$meta.store.registerModule([ moduleInfo.pid, moduleInfo.name ], store);
+  },
+
+  registerConfig(config, moduleInfo, Vue) {
+    if (Vue.prototype.$meta.config.module[moduleInfo.relativeName]) { extend(true, config, Vue.prototype.$meta.config.module[moduleInfo.relativeName]); }
+    Vue.prototype.$meta.config.module[moduleInfo.relativeName] = config;
+  },
+
+  registerLocales(locales, moduleInfo, Vue) {
+    Object.keys(locales).forEach(key => {
+      if (Vue.prototype.$meta.locales[key]) { extend(true, locales[key], Vue.prototype.$meta.locales[key]); }
+      Vue.prototype.$meta.locales[key] = locales[key];
+    });
   },
 
   overrideProperty({ obj, key, objBase, vueComponent, combilePath }) {
@@ -82,11 +100,18 @@ export default {
   },
 
   getModuleInfo: __getModuleInfo,
+
+  removeAppLoading() {
+    // eslint-disable-next-line
+    const loading = window.document.getElementById('app-loading');
+    loading && loading.remove();
+  },
+
 };
 
 function __getModuleInfo(vueComponent) {
   if (!vueComponent.__ebModuleInfo) {
-    vueComponent.__ebModuleInfo = moduleUtil.parseInfo(vueComponent.$route.path);
+    vueComponent.__ebModuleInfo = vueComponent.$route ? mparse.parseInfo(vueComponent.$route.path) : null;
   }
   return vueComponent.__ebModuleInfo;
 }

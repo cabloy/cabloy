@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-24 17:13:11
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-24 17:55:33
+* @Last Modified time: 2017-09-27 11:26:31
 */
 
 import util from './util.js';
@@ -18,10 +18,10 @@ export default function(Vue, axios) {
         error.message = response.data.message;
         return Promise.reject(error);
       }
-      return response.data;
+      return response.data.data;
     }, function(error) {
-      error.code = error.response.data.code;
-      error.message = error.response.data.message;
+      error.code = error.response.status;
+      error.message = error.response.statusText;
       return Promise.reject(error);
     });
   }

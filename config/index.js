@@ -27,4 +27,4 @@ module.exports = merge({
     // just be aware of this issue when enabling this option.
     cssSourceMap: false,
   },
-}, config);
+}, config.front);

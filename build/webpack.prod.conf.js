@@ -28,7 +28,7 @@ const plugins = [
   // see https://github.com/ampedandwired/html-webpack-plugin
   new HtmlWebpackPlugin({
     filename: config.build.index,
-    template: path.join(__dirname, '../index.ejs'),
+    template: utils.getIndexPath(),
     inject: true,
     minify: {
       removeComments: true,

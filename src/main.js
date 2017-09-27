@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-08 21:31:56
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-24 17:27:49
+* @Last Modified time: 2017-09-27 14:30:26
 */
 
 import Vue from 'vue';
@@ -26,6 +26,12 @@ Vue.use(main, ops => {
 
   // prepare store
   meta.store = ops.options.store = require('./base/store.js').default(Vue, ops.store);
+
+  // prepare config
+  meta.config = require('./base/config.js').default(Vue, ops.config);
+
+  // prepare locales
+  meta.locales = require('./base/locales.js').default(Vue, ops.locales);
 
   // prepare api
   if (ops.axios) meta.api = require('./base/api.js').default(Vue, ops.axios);

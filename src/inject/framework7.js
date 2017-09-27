@@ -2,13 +2,13 @@
 * @Author: zhennann
 * @Date:   2017-09-10 21:31:56
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-22 22:44:23
+* @Last Modified time: 2017-09-27 11:50:32
 */
 
 import extend from 'extend2';
 import util from '../base/util.js';
 import fns from '../base/fns.js';
-import moduleUtil from '../base/module-util.js';
+import mparse from 'egg-born-mparse';
 
 export default function(Vue, options) {
 
@@ -40,7 +40,7 @@ export default function(Vue, options) {
           if (options.component === false || !options.url) return options;
 
           // parse module info
-          const moduleInfo = moduleUtil.parseInfo(options.url);
+          const moduleInfo = mparse.parseInfo(options.url);
           if (!moduleInfo) return options;
 
           // check if module loaded
@@ -73,6 +73,9 @@ export default function(Vue, options) {
           this.__installJS(m, null, moduleInfo, null);
         });
 
+        // remove app loading
+        util.removeAppLoading();
+
       },
 
       __installJS(m, options, moduleInfo, cb) {
@@ -85,8 +88,8 @@ export default function(Vue, options) {
           });
           this.$f7Router.routes = this.$f7Router.routes.concat(routes);
 
-          // register store
-          util.registerStore(ops.store, moduleInfo, Vue);
+          // register module resources
+          util.registerModuleResources(ops, moduleInfo, Vue);
 
           // ready
           if (!this.$f7Router.__ebModules) this.$f7Router.__ebModules = {};
