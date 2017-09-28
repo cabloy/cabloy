@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-19 10:24:40
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-19 14:08:44
+* @Last Modified time: 2017-09-28 23:59:48
 */
 
 const is = require('is-type-of');
@@ -17,9 +17,19 @@ module.exports = function(loader, modules) {
     const routes = module.main.routes;
     if (routes) {
       routes.forEach(route => {
+        // args
+        const args = [];
+        // path
+        args.push(`/api/${module.info.url}/${route.path}`);
+        // transaction
+        if (route.transaction === true) {
+          args.push(loader.app.middlewares.transaction());
+        }
+        // action
         if (!route.action) route.action = route.path.substr(route.path.lastIndexOf('/') + 1);
-        route.path = `/api/${module.info.url}/${route.path}`;
-        loader.app[route.method](route.path, methodToMiddleware(route.controller(loader.app), route.action));
+        args.push(methodToMiddleware(route.controller(loader.app), route.action));
+        // load
+        loader.app[route.method].apply(loader.app, args);
       });
     }
 

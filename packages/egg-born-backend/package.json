@@ -35,6 +35,7 @@
     "egg-born-mparse": "^0.0.1",
     "egg-ci": "^1.7.0",
     "egg-mock": "^3.10.0",
+    "egg-mysql": "^3.0.0",
     "eslint": "^4.5.0",
     "eslint-config-egg": "^5.1.0",
     "supertest": "^3.0.0"
