@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-28 21:00:57
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-28 23:33:13
+* @Last Modified time: 2017-09-29 00:46:04
 */
 
 const is = require('is-type-of');
@@ -18,7 +18,7 @@ module.exports = {
   },
   get dbMeta() {
     if (!this[DATABASEMETA]) {
-      this[DATABASEMETA] = { master: true, transaction: false, connection: null };
+      this[DATABASEMETA] = { master: true, transaction: false, connection: { conn: null } };
     }
     return this[DATABASEMETA];
   },
@@ -47,12 +47,12 @@ function createDatabase(ctx) {
             if (!ctx.dbMeta.transaction) return db[key].apply(db, args);
 
             // use transaction
-            if (!ctx.dbMeta.connection) {
+            if (!ctx.dbMeta.connection.conn) {
               return new Promise(function(resolve, reject) {
                 db.beginTransaction()
                   .then(conn => {
-                    ctx.dbMeta.connection = conn;
-                    const fn = ctx.dbMeta.connection[key].apply(ctx.dbMeta.connection, args);
+                    ctx.dbMeta.connection.conn = conn;
+                    const fn = ctx.dbMeta.connection.conn[key].apply(ctx.dbMeta.connection.conn, args);
                     if (!is.promise(fn)) {
                       resolve(fn);
                     } else {
@@ -63,7 +63,7 @@ function createDatabase(ctx) {
               });
             }
             // connection ready
-            return ctx.dbMeta.connection[key].apply(ctx.dbMeta.connection, args);
+            return ctx.dbMeta.connection.conn[key].apply(ctx.dbMeta.connection.conn, args);
           };
         }
         // property
