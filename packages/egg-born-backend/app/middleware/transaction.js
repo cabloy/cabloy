@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-28 23:35:15
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-29 00:46:42
+* @Last Modified time: 2017-09-30 00:09:37
 */
 
 module.exports = () => {
@@ -15,20 +15,20 @@ module.exports = () => {
       // next
       yield next;
 
-      // commit
-      if (this.dbMeta.master && this.dbMeta.connection.conn) {
-        const tran = this.dbMeta.connection.conn;
-        this.dbMeta.connection.conn = null;
-        yield tran.commit();
-      }
+      // check if success
+      if (this.response.body && this.response.body.code !== 0) { yield handleTransaction(this, false); } else { yield handleTransaction(this, true); }
     } catch (err) {
-      if (this.dbMeta.master && this.dbMeta.connection.conn) {
-        const tran = this.dbMeta.connection.conn;
-        this.dbMeta.connection.conn = null;
-        yield tran.rollback();
-        throw err;
-      }
+      yield handleTransaction(this, false);
+      throw err;
     }
 
   };
 };
+
+function* handleTransaction(ctx, success) {
+  if (ctx.dbMeta.master && ctx.dbMeta.connection.conn) {
+    const tran = ctx.dbMeta.connection.conn;
+    ctx.dbMeta.connection.conn = null;
+    if (success) { yield tran.commit(); } else { yield tran.rollback(); }
+  }
+}

@@ -2,9 +2,17 @@
 * @Author: zhennann
 * @Date:   2017-09-28 21:00:57
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-29 00:46:04
+* @Last Modified time: 2017-09-30 15:00:46
 */
 
+const http = require('http');
+const compose_es7 = require('composition');
+const compose = require('koa-compose');
+const co = require('co');
+const onFinished = require('on-finished');
+const statuses = require('statuses');
+const isJSON = require('koa-is-json');
+const Stream = require('stream');
 const is = require('is-type-of');
 const DATABASE = Symbol.for('Context#__database');
 const DATABASEMETA = Symbol.for('Context#__databasemeta');
@@ -22,13 +30,123 @@ module.exports = {
     }
     return this[DATABASEMETA];
   },
+
+  /**
+   * perform action of this or that module
+   * @param  {string} options.method method
+   * @param  {string} options.url    url
+   * @param  {json} options.data   data(optional)
+   * @return {promise}                response.body.data or throw error
+   */
+  performAction({ method, url, data }) {
+    return new Promise((resolve, reject) => {
+      const handleRequest = appCallback.call(this.app);
+      const request = createRequest({ method, url, data }, this.request);
+      const response = new http.ServerResponse(request);
+      handleRequest(request, response, resolve, reject);
+    });
+  },
 };
+
+function appCallback() {
+  if (this.experimental) {
+    console.error('Experimental ES7 Async Function support is deprecated. Please look into Koa v2 as the middleware signature has changed.');
+  }
+  const fn = this.experimental
+    ? compose_es7(this.middleware)
+    : co.wrap(compose(this.middleware));
+  const self = this;
+
+  if (!this.listeners('error').length) this.on('error', this.onerror);
+
+  return function handleRequest(req, res, resolve, reject) {
+    res.statusCode = 404;
+    const ctx = self.createContext(req, res);
+    onFinished(res, ctx.onerror);
+    fn.call(ctx).then(function handleResponse() {
+      respond.call(ctx);
+      if (ctx.status === 200 && ctx.body) {
+        if (ctx.body.code === 0) {
+          resolve(ctx.body.data);
+        } else {
+          reject(ctx.body);
+        }
+      } else {
+        reject({ code: ctx.status, message: ctx.body });
+      }
+    }).catch(err => {
+      ctx.onerror(err);
+      reject({ code: ctx.status, message: ctx.body });
+    });
+  };
+}
+
+function respond() {
+  // allow bypassing koa
+  if (this.respond === false) return;
+
+  const res = this.res;
+  if (res.headersSent || !this.writable) return;
+
+  let body = this.body;
+  const code = this.status;
+
+  // ignore body
+  if (statuses.empty[code]) {
+    // strip headers
+    this.body = null;
+    return res.end();
+  }
+
+  if (this.method === 'HEAD') {
+    if (isJSON(body)) this.length = Buffer.byteLength(JSON.stringify(body));
+    return res.end();
+  }
+
+  // status body
+  if (body == null) {
+    this.type = 'text';
+    body = this.message || String(code);
+    this.length = Buffer.byteLength(body);
+    return res.end(body);
+  }
+
+  // responses
+  if (Buffer.isBuffer(body)) return res.end(body);
+  if (typeof body === 'string') return res.end(body);
+  if (body instanceof Stream) return body.pipe(res);
+
+  // body: json
+  body = JSON.stringify(body);
+  this.length = Buffer.byteLength(body);
+  res.end(body);
+}
+
+function createRequest({ method, url, data }, _req) {
+  const req = {
+    headers: _req.headers,
+    // query:{},
+    // querystring:'',
+    host: _req.host,
+    hostname: _req.hostname,
+    protocol: _req.protocol,
+    secure: _req.secure,
+    method: method.toUpperCase(),
+    url,
+    // path,
+    socket: {
+      remoteAddress: _req.socket.remoteAddress,
+      remotePort: _req.socket.remotePort,
+    },
+  };
+  return req;
+}
 
 function createDatabase(ctx) {
 
   const __db = {};
 
-  const db = ctx.app.mysql.get('__db');
+  const db = ctx.app.mysql.get('__ebdb');
   const proto = Object.getPrototypeOf(Object.getPrototypeOf(db));
   Object.keys(proto).forEach(key => {
     Object.defineProperty(__db, key, {

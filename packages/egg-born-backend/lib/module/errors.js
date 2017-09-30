@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-24 21:37:17
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-25 16:47:07
+* @Last Modified time: 2017-09-29 16:31:08
 */
 
 /*
@@ -35,7 +35,7 @@ module.exports = function(loader, modules) {
       // maybe /favicon.ico
       const info = util.getModuleInfo(context);
       if (info) {
-        // data,code,args
+        // data,code/message,args
         context.success = function(data, code, ...args) {
 
           const body = parseCode(this, info, 0, code, ...args);
@@ -44,7 +44,7 @@ module.exports = function(loader, modules) {
           this.response.type = 'application/json';
           this.response.body = { code: 0, message: body.message, data };
         };
-        // code,args
+        // code/message,args
         context.fail = function(code, ...args) {
 
           const body = parseCode(this, info, 1, code, ...args);
@@ -58,16 +58,20 @@ module.exports = function(loader, modules) {
       return context;
     };
 
+    //
     function parseCode(context, mouduleInfo, codeDefault, code, ...args) {
       const ebError = ebErrors[mouduleInfo.fullName];
       let message = null;
-      if (code) {
+
+      if (typeof code === 'string') {
+        message = context.text(code, ...args);
+        code = codeDefault;
+      } else if (code) {
         message = context.text(ebError[code], ...args);
       }
 
       if (!message) {
-        code = codeDefault;
-        message = context.text(ebError[code]);
+        message = context.text(ebError[codeDefault]);
       }
 
       return { code, message };
