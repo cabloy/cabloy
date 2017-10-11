@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-24 17:13:11
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-27 11:26:31
+* @Last Modified time: 2017-10-11 14:07:15
 */
 
 import util from './util.js';
@@ -20,8 +20,8 @@ export default function(Vue, axios) {
       }
       return response.data.data;
     }, function(error) {
-      error.code = error.response.status;
-      error.message = error.response.statusText;
+      error.code = error.response.data.code || error.response.status;
+      error.message = error.response.data.message || error.response.statusText;
       return Promise.reject(error);
     });
   }
