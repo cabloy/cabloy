@@ -1,0 +1,29 @@
+{
+  "name": "egg-born-scripts",
+  "version": "0.0.1",
+  "description": "egg-born-scripts",
+  "main": "index.js",
+  "bin": {
+    "egg-born-scripts": "bin/egg-born-scripts.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhennann/egg-born-scripts.git"
+  },
+  "keywords": [
+    "egg egg-born scripts"
+  ],
+  "author": "zhennann",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zhennann/egg-born-scripts/issues"
+  },
+  "homepage": "https://github.com/zhennann/egg-born-scripts#readme",
+  "devDependencies": {},
+  "dependencies": {
+    "babel-eslint": "^7.2.3",
+    "egg-scripts": "^1.2.0",
+    "eslint": "^4.5.0",
+    "eslint-config-egg": "^5.1.0"
+  }
+}
