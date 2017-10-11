@@ -9,7 +9,7 @@
   "scripts": {
     "build:front": "node build/front/build.js",
     "build:backend": "node build/backend/build.js",
-    "lint:backend": "eslint backend"
+    "lint": "eslint front backend"
   },
   "repository": {
     "type": "git",
