@@ -2,7 +2,9 @@ const path = require('path');
 // const fs = require('fs');
 const config = require('./config.js');
 
-// const nodeModules = {};
+const nodeModules = {
+  require3: 'commonjs2 require3',
+};
 // fs.readdirSync('node_modules')
 //   .filter(function(x) {
 //     return [ '.bin' ].indexOf(x) === -1;
@@ -26,7 +28,7 @@ module.exports = {
     library: 'backend',
     libraryTarget: 'commonjs2',
   },
-  // externals: nodeModules,
+  externals: nodeModules,
   resolve: {
     extensions: [ '.js', '.json' ],
     alias: {

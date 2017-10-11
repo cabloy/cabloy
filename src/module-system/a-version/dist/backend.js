@@ -184,13 +184,14 @@ module.exports = {
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(module) {/*
+/*
 * @Author: zhennann
 * @Date:   2017-09-08 14:49:08
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-11 21:08:26
+* @Last Modified time: 2017-10-11 22:11:55
 */
 
+const require3 = __webpack_require__(5);
 const semver = __webpack_require__(6);
 
 module.exports = app => {
@@ -343,11 +344,11 @@ module.exports = app => {
     // get module
     __getModule(moduleName) {
       const fullName = `egg-born-module-${moduleName}`;
-      const _module = this.app.modules[fullName];
-      if (!_module) return null;
+      const module = this.app.modules[fullName];
+      if (!module) return null;
 
-      if (!_module.pkg) _module.pkg = module.require(_module.package);
-      return _module;
+      if (!module.pkg) module.pkg = require3(module.package);
+      return module;
     }
 
     // result
@@ -367,35 +368,12 @@ module.exports = app => {
   return Version;
 };
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)(module)))
 
 /***/ }),
 /* 5 */
 /***/ (function(module, exports) {
 
-module.exports = function(module) {
-	if(!module.webpackPolyfill) {
-		module.deprecate = function() {};
-		module.paths = [];
-		// module.parent = undefined by default
-		if(!module.children) module.children = [];
-		Object.defineProperty(module, "loaded", {
-			enumerable: true,
-			get: function() {
-				return module.l;
-			}
-		});
-		Object.defineProperty(module, "id", {
-			enumerable: true,
-			get: function() {
-				return module.i;
-			}
-		});
-		module.webpackPolyfill = 1;
-	}
-	return module;
-};
-
+module.exports = require("require3");
 
 /***/ }),
 /* 6 */

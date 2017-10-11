@@ -2,9 +2,10 @@
 * @Author: zhennann
 * @Date:   2017-09-08 14:49:08
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-11 21:08:26
+* @Last Modified time: 2017-10-11 22:11:55
 */
 
+const require3 = require('require3');
 const semver = require('semver');
 
 module.exports = app => {
@@ -157,11 +158,11 @@ module.exports = app => {
     // get module
     __getModule(moduleName) {
       const fullName = `egg-born-module-${moduleName}`;
-      const _module = this.app.modules[fullName];
-      if (!_module) return null;
+      const module = this.app.modules[fullName];
+      if (!module) return null;
 
-      if (!_module.pkg) _module.pkg = module.require(_module.package);
-      return _module;
+      if (!module.pkg) module.pkg = require3(module.package);
+      return module;
     }
 
     // result
