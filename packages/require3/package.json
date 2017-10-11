@@ -1,0 +1,26 @@
+{
+  "name": "require3",
+  "version": "0.0.1",
+  "description": "require3",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhennann/require3.git"
+  },
+  "keywords": [
+    "require3"
+  ],
+  "author": "zhennann",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zhennann/require3/issues"
+  },
+  "homepage": "https://github.com/zhennann/require3#readme",
+  "devDependencies": {
+    "babel-eslint": "^7.2.3",
+    "eslint": "^4.5.0",
+    "eslint-config-egg": "^5.1.0",
+    "eslint-plugin-vuefix": "^0.2.0"
+  },
+  "dependencies": {}
+}
