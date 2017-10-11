@@ -1,0 +1,64 @@
+{
+  "name": "egg-born-module-a-version",
+  "version": "0.0.1",
+  "eggBornModule": {
+    "fileVersion": 1,
+    "dependencies": {}
+  },
+  "description": "egg-born-module-a-version",
+  "scripts": {
+    "build:front": "node build/front/build.js",
+    "build:backend": "node build/backend/build.js",
+    "lint:backend": "eslint backend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhennann/egg-born-module-a-version.git"
+  },
+  "keywords": [
+    "egg egg-born module a version"
+  ],
+  "author": "zhennann",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zhennann/egg-born-module-a-version/issues"
+  },
+  "homepage": "https://github.com/zhennann/egg-born-module-a-version#readme",
+  "devDependencies": {
+    "babel-eslint": "^7.2.3",
+    "eslint": "^4.5.0",
+    "eslint-config-egg": "^5.1.0",
+    "eslint-plugin-vuefix": "^0.2.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-stage-2": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "chalk": "^2.1.0",
+    "connect-history-api-fallback": "^1.3.0",
+    "ora": "^1.3.0",
+    "rimraf": "^2.6.1",
+    "uglifyjs-webpack-plugin": "^1.0.0-beta.2",
+    "webpack": "^3.5.5",
+    "webpack-bundle-analyzer": "^2.9.0",
+    "webpack-dev-middleware": "^1.12.0",
+    "webpack-hot-middleware": "^2.18.2",
+    "webpack-merge": "^4.1.0",
+    "extract-text-webpack-plugin": "^3.0.0",
+    "file-loader": "^0.11.2",
+    "copy-webpack-plugin": "^4.0.1",
+    "css-loader": "^0.28.7",
+    "eventsource-polyfill": "^0.9.6",
+    "friendly-errors-webpack-plugin": "^1.6.1",
+    "function-bind": "^1.1.1",
+    "opn": "^5.1.0",
+    "optimize-css-assets-webpack-plugin": "^3.1.1",
+    "semver": "^5.4.1",
+    "url-loader": "^0.5.9",
+    "vue-loader": "^13.0.4",
+    "vue-style-loader": "^3.0.1",
+    "vue-template-compiler": "^2.4.2"
+  },
+  "dependencies": {}
+}
