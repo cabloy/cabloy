@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-08 14:49:08
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-11 17:07:07
+* @Last Modified time: 2017-10-11 21:08:26
 */
 
 const semver = require('semver');
@@ -157,11 +157,11 @@ module.exports = app => {
     // get module
     __getModule(moduleName) {
       const fullName = `egg-born-module-${moduleName}`;
-      const module = this.app.modules[fullName];
-      if (!module) return null;
+      const _module = this.app.modules[fullName];
+      if (!_module) return null;
 
-      if (!module.pkg) module.pkg = require(module.package);
-      return module;
+      if (!_module.pkg) _module.pkg = module.require(_module.package);
+      return _module;
     }
 
     // result
