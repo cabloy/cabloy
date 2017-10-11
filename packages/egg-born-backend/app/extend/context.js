@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-28 21:00:57
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-30 15:00:46
+* @Last Modified time: 2017-10-11 11:08:53
 */
 
 const http = require('http');
@@ -14,6 +14,8 @@ const statuses = require('statuses');
 const isJSON = require('koa-is-json');
 const Stream = require('stream');
 const is = require('is-type-of');
+const util = require('../../lib/module/util.js');
+
 const DATABASE = Symbol.for('Context#__database');
 const DATABASEMETA = Symbol.for('Context#__databasemeta');
 
@@ -30,6 +32,13 @@ module.exports = {
     }
     return this[DATABASEMETA];
   },
+  set dbMeta(meta) {
+    if (meta.master && meta.transaction) {
+      this.dbMeta.master = false;
+      this.dbMeta.transaction = true;
+      this.dbMeta.connection = meta.connection;
+    }
+  },
 
   /**
    * perform action of this or that module
@@ -38,14 +47,42 @@ module.exports = {
    * @param  {json} options.data   data(optional)
    * @return {promise}                response.body.data or throw error
    */
-  performAction({ method, url, data }) {
+  performAction({ method, url, query, params, body }) {
     return new Promise((resolve, reject) => {
       const handleRequest = appCallback.call(this.app);
-      const request = createRequest({ method, url, data }, this.request);
+      const request = createRequest({
+        method,
+        url: adjustUrl(this, url),
+      }, this.request);
       const response = new http.ServerResponse(request);
-      handleRequest(request, response, resolve, reject);
+      handleRequest(this, request, response, resolve, reject, query, params, body);
     });
   },
+
+  getInt(name) {
+    const v = this.params[name] || this.query[name] || this.request.body[name];
+    return parseInt(v);
+  },
+
+  getFloat(name) {
+    const v = this.params[name] || this.query[name] || this.request.body[name];
+    return parseFloat(v);
+  },
+
+  getStr(name) {
+    const v = this.params[name] || this.query[name] || this.request.body[name];
+    return (v && v.toString()) || '';
+  },
+
+  getSafeStr(name) {
+    const v = this.getStr(name);
+    return v.replace(/'/gi, "''");
+  },
+
+  successMore(list, index, size) {
+    this.success({ list, index: index + list.length, finished: list.length < size });
+  },
+
 };
 
 function appCallback() {
@@ -59,10 +96,28 @@ function appCallback() {
 
   if (!this.listeners('error').length) this.on('error', this.onerror);
 
-  return function handleRequest(req, res, resolve, reject) {
+  return function handleRequest(ctxCaller, req, res, resolve, reject, query, params, body) {
     res.statusCode = 404;
     const ctx = self.createContext(req, res);
     onFinished(res, ctx.onerror);
+
+    // query params body
+    if (query) ctx.query = query;
+    if (params) ctx.params = params;
+    if (body) ctx.request.body = body;
+
+    // multipart
+    ctx.multipart = function(options) {
+      return ctxCaller.multipart(options);
+    };
+
+    // cookies
+    delegateCookies(ctx, ctxCaller);
+
+    // transaction
+    ctx.dbMeta = ctxCaller.dbMeta;
+
+    // call
     fn.call(ctx).then(function handleResponse() {
       respond.call(ctx);
       if (ctx.status === 200 && ctx.body) {
@@ -76,7 +131,7 @@ function appCallback() {
       }
     }).catch(err => {
       ctx.onerror(err);
-      reject({ code: ctx.status, message: ctx.body });
+      reject({ code: err.code || ctx.status, message: err.message || ctx.body });
     });
   };
 }
@@ -122,11 +177,39 @@ function respond() {
   res.end(body);
 }
 
-function createRequest({ method, url, data }, _req) {
+function delegateCookies(ctx, ctxCaller) {
+  Object.defineProperty(ctx.cookies, 'keys', {
+    get() {
+      return ctxCaller.cookies.keys;
+    },
+  });
+  Object.defineProperty(ctx.cookies, 'get', {
+    get() {
+      return function(name, opts) {
+        return ctxCaller.cookies.get(name, opts);
+      };
+    },
+  });
+  Object.defineProperty(ctx.cookies, 'set', {
+    get() {
+      return function(name, value, opts) {
+        return ctxCaller.cookies.set(name, value, opts);
+      };
+    },
+  });
+}
+
+function adjustUrl(ctx, url) {
+  if (url.charAt(0) === '/') return `/api${url}`;
+
+  const info = util.getModuleInfo(ctx);
+  if (!info) throw new Error('invalid url');
+  return `/api/${info.url}/${url}`;
+}
+
+function createRequest({ method, url }, _req) {
   const req = {
     headers: _req.headers,
-    // query:{},
-    // querystring:'',
     host: _req.host,
     hostname: _req.hostname,
     protocol: _req.protocol,
@@ -161,7 +244,6 @@ function createDatabase(ctx) {
             }
 
             // check if use transaction
-            // ctx.dbMeta.transaction = true;
             if (!ctx.dbMeta.transaction) return db[key].apply(db, args);
 
             // use transaction

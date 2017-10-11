@@ -2,11 +2,10 @@
 * @Author: zhennann
 * @Date:   2017-09-28 14:07:59
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-28 21:05:11
+* @Last Modified time: 2017-10-10 22:03:12
 */
 
-const fse = require('fs-extra');
-const path = require('path');
+const util = require('../../lib/module/util.js');
 const mparse = require('egg-born-mparse');
 
 const MOCKUTIL = Symbol('Application#mockUtil');
@@ -29,7 +28,7 @@ function createMockUtil(app) {
       return `/api/${moduleInfo.pid}/${moduleInfo.name}/`;
     },
     parseInfoFromPackage(dir) {
-      const file = lookupPackage(dir);
+      const file = util.lookupPackage(dir);
       if (!file) return null;
       const pkg = require(file);
       return mparse.parseInfo(mparse.parseName(pkg.name));
@@ -37,13 +36,3 @@ function createMockUtil(app) {
   };
 }
 
-function lookupPackage(dir) {
-  let _dir = dir;
-  // eslint-disable-next-line
-  while (true) {
-    const file = path.join(_dir, 'package.json');
-    if (file === '/package.json') return null;
-    if (fse.existsSync(file)) return file;
-    _dir = path.join(_dir, '../');
-  }
-}

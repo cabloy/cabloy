@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-24 21:37:17
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-29 16:31:08
+* @Last Modified time: 2017-10-11 14:03:45
 */
 
 /*
@@ -38,7 +38,7 @@ module.exports = function(loader, modules) {
         // data,code/message,args
         context.success = function(data, code, ...args) {
 
-          const body = parseCode(this, info, 0, code, ...args);
+          const body = this.parseSuccess(code, ...args);
 
           this.response.status = 200;
           this.response.type = 'application/json';
@@ -47,12 +47,29 @@ module.exports = function(loader, modules) {
         // code/message,args
         context.fail = function(code, ...args) {
 
-          const body = parseCode(this, info, 1, code, ...args);
+          const body = this.parseFail(code, ...args);
 
           this.response.status = 200;
           this.response.type = 'application/json';
           this.response.body = body;
         };
+        // code/message,args
+        context.throw = function(code, ...args) {
+          const body = this.parseFail(code, ...args);
+          const err = new Error();
+          err.code = body.code;
+          err.message = body.message;
+          throw err;
+        };
+        // code/message,args
+        context.parseFail = function(code, ...args) {
+          return parseCode(this, info, 1, code, ...args);
+        };
+        // code/message,args
+        context.parseSuccess = function(code, ...args) {
+          return parseCode(this, info, 0, code, ...args);
+        };
+
       }
 
       return context;

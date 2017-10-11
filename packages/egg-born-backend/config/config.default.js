@@ -1,5 +1,13 @@
+/*
+* @Author: zhennann
+* @Date:   2017-10-10 18:25:09
+* @Last Modified by:   zhennann
+* @Last Modified time: 2017-10-11 18:29:23
+*/
 
+const _config = require('../../../build/config.js');
 
+// eslint-disable-next-line
 module.exports = appInfo => {
   const config = {};
 
@@ -7,6 +15,20 @@ module.exports = appInfo => {
   config.security = {
     csrf: {
       enable: false,
+    },
+  };
+
+  // mysql
+  config.mysql = {
+    app: true,
+    agent: false,
+  };
+
+  // cluster
+  config.cluster = {
+    listen: {
+      port: _config.backend.port,
+      hostname: _config.backend.hostname,
     },
   };
 
