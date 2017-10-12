@@ -1,6 +1,6 @@
 {
   "name": "egg-born-front",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "egg-born-front",
   "scripts": {
     "dev": "node build/dev-server.js",
@@ -11,7 +11,10 @@
     "url": "git+https://github.com/zhennann/egg-born-front.git"
   },
   "keywords": [
-    "egg framework egg-born front"
+    "egg",
+    "egg-born",
+    "framework",
+    "front"
   ],
   "author": "zhennann",
   "license": "ISC",
