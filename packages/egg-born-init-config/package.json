@@ -1,0 +1,39 @@
+{
+  "name": "egg-born-init-config",
+  "version": "0.0.2",
+  "description": "egg-born-init-config",
+  "config": {
+    "boilerplate": {
+      "front-backend-mysql": {
+        "package": "egg-born-template-front-backend-mysql",
+        "description": "egg born template: front-backend-mysql"
+      },
+      "front": {
+        "package": "egg-born-template-front",
+        "description": "egg born template: front"
+      },
+      "module": {
+        "package": "egg-born-template-module",
+        "description": "egg born template: module"
+      }
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhennann/egg-born-init-config.git"
+  },
+  "keywords": [
+    "egg",
+    "egg-born",
+    "init",
+    "config"
+  ],
+  "author": "zhennann",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zhennann/egg-born-init-config/issues"
+  },
+  "homepage": "https://github.com/zhennann/egg-born-init-config#readme",
+  "devDependencies": {},
+  "dependencies": {}
+}
