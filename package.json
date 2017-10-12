@@ -1,21 +1,19 @@
 {
   "name": "egg-born",
   "version": "0.0.3",
-  "description": "egg-born",
-  "main": "index.js",
-  "scripts": {
-    "b-dev": "cd backend && npm run dev && cd ..",
-    "b-test": "cd backend && npm run test && cd ..",
-    "b-cov": "cd backend && npm run cov && cd ..",
-    "b-lint": "cd backend && npm run lint && cd ..",
-    "b-ci": "cd backend && npm run ci && cd .."
+  "description": "egg born boilerplate tools",
+  "scripts": {},
+  "preferGlobal": true,
+  "bin": {
+    "egg-born": "bin/egg-born.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zhennann/egg-born.git"
   },
   "keywords": [
-    "egg"
+    "egg",
+    "egg born"
   ],
   "author": "zhennann",
   "license": "ISC",
@@ -26,7 +24,11 @@
   "devDependencies": {
     "babel-eslint": "^7.2.3",
     "eslint": "^4.5.0",
-    "eslint-config-egg": "^5.1.0",
-    "eslint-plugin-vuefix": "^0.2.0"
+    "eslint-config-egg": "^5.1.0"
+  },
+  "dependencies": {
+    "co": "^4.6.0",
+    "egg-init": "^1.11.0",
+    "egg-born-init-config": "^0.0.2"
   }
 }

@@ -23,3 +23,7 @@ docs/plugins.png
 
 package-lock.json
 yarn.lock
+
+.sync-config.cson
+sftp-config.json
+
