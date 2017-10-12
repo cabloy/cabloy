@@ -9,7 +9,10 @@
     "url": "git+https://github.com/zhennann/egg-born-localeutil.git"
   },
   "keywords": [
-    "egg egg-born locale util"
+    "egg",
+    "egg-born",
+    "locale",
+    "util"
   ],
   "author": "zhennann",
   "license": "ISC",
