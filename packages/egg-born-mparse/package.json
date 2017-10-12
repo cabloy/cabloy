@@ -9,7 +9,10 @@
     "url": "git+https://github.com/zhennann/egg-born-mparse.git"
   },
   "keywords": [
-    "egg egg-born module parse"
+    "egg",
+    "egg-born",
+    "module",
+    "parse"
   ],
   "author": "zhennann",
   "license": "ISC",
