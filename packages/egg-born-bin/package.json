@@ -1,6 +1,6 @@
 {
   "name": "egg-born-bin",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "egg-born-bin",
   "main": "index.js",
   "bin": {
@@ -11,7 +11,9 @@
     "url": "git+https://github.com/zhennann/egg-born-bin.git"
   },
   "keywords": [
-    "egg egg-born bin"
+    "egg",
+    "egg-born",
+    "bin"
   ],
   "author": "zhennann",
   "license": "ISC",
