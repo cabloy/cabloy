@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-21 14:47:36
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-27 16:22:39
+* @Last Modified time: 2017-10-12 20:45:06
 */
 
 const fs = require('fs');
@@ -53,13 +53,6 @@ module.exports = function(loader, modules) {
       }
 
     });
-
-    // // asset locales
-    // Object.keys(assetLocales).forEach(key => {
-    //   let locale = ebLocales[key];
-    //   if (!locale) locale = ebLocales[key] = {};
-    //   extend(false, locale, assetLocales[key]);
-    // });
 
     /**
  * based on egg-i18n
