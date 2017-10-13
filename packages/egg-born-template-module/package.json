@@ -1,0 +1,26 @@
+{
+  "name": "egg-born-template-module",
+  "version": "0.0.3",
+  "description": "egg-born-template-module",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhennann/egg-born-template-module.git"
+  },
+  "keywords": [
+    "egg",
+    "egg-born",
+    "fullstack",
+    "boilerplate",
+    "template",
+    "module"
+  ],
+  "author": "zhennann",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zhennann/egg-born-template-module/issues"
+  },
+  "homepage": "https://github.com/zhennann/egg-born-template-module#readme",
+  "devDependencies": {},
+  "dependencies": {}
+}
