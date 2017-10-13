@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-08 21:31:56
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-11 16:35:02
+* @Last Modified time: 2017-10-12 21:45:28
 */
 
 let Vue;
@@ -19,7 +19,7 @@ function install(_Vue, cb) {
 
   return cb({
     routes: require('./routes.js').default,
-    locales: require('../config/locales.js').default,
+    locales: require('./config/locales.js').default,
   });
 }
 

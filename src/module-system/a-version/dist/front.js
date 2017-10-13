@@ -399,17 +399,11 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/*
-* @Author: zhennann
-* @Date:   2017-10-11 15:41:12
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-11 15:42:42
-*/
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  'zh-cn': __webpack_require__(16).default,
+  'zh-cn': __webpack_require__(16).default
 });
-
 
 /***/ }),
 /* 16 */
@@ -417,17 +411,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/*
-* @Author: zhennann
-* @Date:   2017-10-11 15:41:34
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-11 17:18:24
-*/
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  'Version Check Result': '版本检查结果',
+  'Version Check Result': '版本检查结果'
 });
-
 
 /***/ })
 /******/ ]);
