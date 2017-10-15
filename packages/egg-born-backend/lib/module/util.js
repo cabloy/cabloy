@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-24 21:49:55
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-10 22:05:37
+* @Last Modified time: 2017-10-15 21:16:27
 */
 
 const mparse = require('egg-born-mparse');
@@ -48,7 +48,7 @@ function __parseModules(modules, policy, loader) {
 
     if (!modules[info.fullName]) {
       modules[info.fullName] = { file, name, info, main: loader.loadFile(file), package: util.lookupPackage(file) };
-      console.log(info.fullName, ':', file);
+      if(loader.app.config.env === 'local') console.log(info.fullName, ':', file);
     }
 
   });
