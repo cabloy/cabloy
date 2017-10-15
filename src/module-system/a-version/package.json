@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-version",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "eggBornModule": {
     "fileVersion": 1,
     "dependencies": {}
@@ -63,6 +63,7 @@
     "vue-template-compiler": "2.4.4"
   },
   "dependencies": {
+    "chalk": "^2.1.0",
     "require3": "^0.0.1",
     "semver": "^5.4.1"
   }
