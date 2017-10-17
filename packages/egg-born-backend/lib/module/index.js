@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-18 11:06:06
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-10 16:10:16
+* @Last Modified time: 2017-10-17 11:14:49
 */
 
 
@@ -15,7 +15,8 @@ const util = require('./util.js');
 
 module.exports = function(loader) {
 
-  const modules = loader.app.modules = util.parseModules(loader);
+  if(!loader.app.meta) loader.app.meta = {};
+  const modules = loader.app.meta.modules = util.parseModules(loader);
 
   loadRoutes(loader, modules);
   loadServices(loader, modules);
