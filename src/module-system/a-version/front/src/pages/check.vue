@@ -56,6 +56,9 @@ export default {
     this.$api.get('version/result').then(data => {
       this.module = data.module;
       this.modules = data.modules;
+    }).catch(err => {
+      // eslint-disable-next-line
+      window.alert(err.message);
     });
   },
 };

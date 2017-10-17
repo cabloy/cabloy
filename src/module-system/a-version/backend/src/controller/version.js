@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-08 14:48:59
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-11 18:07:55
+* @Last Modified time: 2017-10-17 11:20:19
 */
 
 module.exports = app => {
@@ -31,6 +31,7 @@ module.exports = app => {
 
     // result
     async result() {
+      if (app.config.env !== 'local') this.ctx.throw(1003);
       const res = this.service.version.result();
       this.ctx.success(res);
     }
