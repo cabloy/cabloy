@@ -1,0 +1,18 @@
+sudo: false
+language: node_js
+node_js:
+  - '8'
+services:
+  - mysql
+before_install:
+  - mysql -e 'CREATE DATABASE `egg-born` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;'
+install:
+  - npm i -g egg-born
+  - egg-born test --type="front-backend-mysql" --silent
+  - cd test
+  - npm i
+script:
+  - npm run build:front
+  - npm run cov:backend
+after_script:
+  - npm i codecov -g && codecov
