@@ -1,6 +1,6 @@
 {
   "name": "egg-born",
-  "version": "0.0.4",
+  "version": "1.0.1",
   "description": "egg born boilerplate tools",
   "scripts": {},
   "preferGlobal": true,
@@ -29,6 +29,6 @@
   "dependencies": {
     "co": "^4.6.0",
     "egg-init": "^1.11.0",
-    "egg-born-init-config": "^0.0.2"
+    "egg-born-init-config": "^1.0.1"
   }
 }
