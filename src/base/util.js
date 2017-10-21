@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-12 21:18:27
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-27 14:52:08
+* @Last Modified time: 2017-10-21 13:36:42
 */
 
 import extend from 'extend2';
@@ -11,7 +11,7 @@ import mparse from 'egg-born-mparse';
 export default {
 
   importCSS(moduleInfo, cb) {
-      import('../../build/__module/' + moduleInfo.fullName + '/dist/front.css').then(() => {
+      System.import('../../build/__module/' + moduleInfo.fullName + '/dist/front.css').then(() => {
         return cb(null);
       }).catch(e => {
         return cb(e);
@@ -19,10 +19,10 @@ export default {
   },
 
   importJS(moduleInfo, cb) {
-      import('../../build/__module/' + moduleInfo.fullName + '/dist/front.js').then(m => {
+      System.import('../../build/__module/' + moduleInfo.fullName + '/dist/front.js').then(m => {
         return cb(null, m);
       }).catch(() => {
-        import('../../../../src/module/' + moduleInfo.relativeName + '/front/src/main.js').then(m => {
+        System.import('../../../../src/module/' + moduleInfo.relativeName + '/front/src/main.js').then(m => {
           return cb(null, m);
         }).catch(e => {
           return cb(e);
@@ -104,7 +104,7 @@ export default {
   removeAppLoading() {
     // eslint-disable-next-line
     const loading = window.document.getElementById('app-loading');
-    loading && loading.remove();
+    loading && loading.parentNode.removeChild(loading);
   },
 
 };

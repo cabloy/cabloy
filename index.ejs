@@ -9,10 +9,427 @@
   <title>
     <%= htmlWebpackPlugin.options.title %>
   </title>
+  <script>
+    var modernBrowser = (
+      'fetch' in window &&
+      'assign' in Object
+    );
+
+    if ( !modernBrowser ) {
+      var scriptElement = document.createElement('script');
+
+      scriptElement.async = false;
+      scriptElement.src = 'static/js/polyfills.js';
+      document.head.appendChild(scriptElement);
+    }
+  </script>
+  <style>
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  #app-loading {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: rgba(238, 232, 213, 0.8);
+    z-index: 50000;
+  }
+
+  #app-loading div {
+    position: absolute;
+    /* position in the center of the screen */
+    left: 50%;
+    top: 50%;
+    height: 48px;
+    /* text area height */
+    width: 48px;
+    /* text area width */
+    text-align: center;
+    padding: 0px 0px 0px 0px;
+    /* image height is 200px (bottom 20px are overlapped with text) */
+    margin: -24px 0px 0px -24px;
+    /* offset vertical: half of image height and text area height */
+    /* offset horizontal: half of text area width */
+    overflow: hidden;
+  }
+
+  #app-loading .preloader {
+    height: 48px;
+    /* text area height */
+    width: 48px;
+    /* text area width */
+  }
+  /* ===
+      Preloader
+      By Rudi Theunissen (https://github.com/rtheunissen/md-preloader)
+      === */
+
+  .preloader {
+    font-size: 0;
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    -webkit-animation: preloader-outer 3300ms linear infinite;
+    animation: preloader-outer 3300ms linear infinite;
+  }
+
+  .preloader svg {
+    width: 100%;
+    height: 100%;
+    -webkit-animation: preloader-inner 1320ms linear infinite;
+    animation: preloader-inner 1320ms linear infinite;
+  }
+
+  .preloader svg circle {
+    fill: none;
+    stroke: #757575;
+    stroke-linecap: square;
+    -webkit-animation: preloader-arc 1320ms cubic-bezier(0.8, 0, 0.4, 0.8) infinite;
+    animation: preloader-arc 1320ms cubic-bezier(0.8, 0, 0.4, 0.8) infinite;
+  }
+
+  @-webkit-keyframes preloader-outer {
+    0% {
+      -webkit-transform: rotate(0);
+    }
+    100% {
+      -webkit-transform: rotate(360deg);
+    }
+  }
+
+  @keyframes preloader-outer {
+    0% {
+      transform: rotate(0);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  @-webkit-keyframes preloader-inner {
+    0% {
+      -webkit-transform: rotate(-100.8deg);
+    }
+    100% {
+      -webkit-transform: rotate(0);
+    }
+  }
+
+  @keyframes preloader-inner {
+    0% {
+      transform: rotate(-100.8deg);
+    }
+    100% {
+      transform: rotate(0);
+    }
+  }
+
+  @-webkit-keyframes preloader-arc {
+    0% {
+      stroke-dasharray: 1 210.48670779px;
+      stroke-dashoffset: 0;
+    }
+    40% {
+      stroke-dasharray: 151.55042961px, 210.48670779px;
+      stroke-dashoffset: 0;
+    }
+    100% {
+      stroke-dasharray: 1 210.48670779px;
+      stroke-dashoffset: -151.55042961px;
+    }
+  }
+
+  @keyframes preloader-arc {
+    0% {
+      stroke-dasharray: 1 210.48670779px;
+      stroke-dashoffset: 0;
+    }
+    40% {
+      stroke-dasharray: 151.55042961px, 210.48670779px;
+      stroke-dashoffset: 0;
+    }
+    100% {
+      stroke-dasharray: 1 210.48670779px;
+      stroke-dashoffset: -151.55042961px;
+    }
+  }
+
+  .preloader-inner {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    -webkit-animation: preloader-inner-rotate 5.25s cubic-bezier(0.35, 0, 0.25, 1) infinite;
+    animation: preloader-inner-rotate 5.25s cubic-bezier(0.35, 0, 0.25, 1) infinite;
+  }
+
+  .preloader-inner .preloader-inner-gap {
+    position: absolute;
+    width: 2px;
+    left: 50%;
+    margin-left: -1px;
+    top: 0;
+    bottom: 0;
+    box-sizing: border-box;
+    border-top: 4px solid #757575;
+  }
+
+  .preloader-inner .preloader-inner-left,
+  .preloader-inner .preloader-inner-right {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 50%;
+    overflow: hidden;
+  }
+
+  .preloader-inner .preloader-inner-half-circle {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 200%;
+    box-sizing: border-box;
+    border: 4px solid #757575;
+    border-bottom-color: transparent !important;
+    border-radius: 50%;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-duration: 1.3125s;
+    -webkit-animation-timing-function: cubic-bezier(0.35, 0, 0.25, 1);
+    animation-iteration-count: infinite;
+    animation-duration: 1.3125s;
+    animation-timing-function: cubic-bezier(0.35, 0, 0.25, 1);
+  }
+
+  .preloader-white .preloader-inner .preloader-inner-gap,
+  .preloader-white .preloader-inner .preloader-inner-half-circle {
+    border-color: #fff;
+  }
+
+  .preloader-inner .preloader-inner-left {
+    left: 0;
+  }
+
+  .preloader-inner .preloader-inner-left .preloader-inner-half-circle {
+    left: 0;
+    border-right-color: transparent !important;
+    -webkit-animation-name: preloader-left-rotate;
+    animation-name: preloader-left-rotate;
+  }
+
+  .preloader-inner .preloader-inner-right {
+    right: 0;
+  }
+
+  .preloader-inner .preloader-inner-right .preloader-inner-half-circle {
+    right: 0;
+    border-left-color: transparent !important;
+    -webkit-animation-name: preloader-right-rotate;
+    animation-name: preloader-right-rotate;
+  }
+
+  .color-multi .preloader-inner .preloader-inner-left .preloader-inner-half-circle {
+    -webkit-animation-name: preloader-left-rotate-multicolor;
+    animation-name: preloader-left-rotate-multicolor;
+  }
+
+  .color-multi .preloader-inner .preloader-inner-right .preloader-inner-half-circle {
+    -webkit-animation-name: preloader-right-rotate-multicolor;
+    animation-name: preloader-right-rotate-multicolor;
+  }
+
+  @-webkit-keyframes preloader-left-rotate {
+    0%,
+    100% {
+      -webkit-transform: rotate(130deg);
+    }
+    50% {
+      -webkit-transform: rotate(-5deg);
+    }
+  }
+
+  @keyframes preloader-left-rotate {
+    0%,
+    100% {
+      transform: rotate(130deg);
+    }
+    50% {
+      transform: rotate(-5deg);
+    }
+  }
+
+  @-webkit-keyframes preloader-right-rotate {
+    0%,
+    100% {
+      -webkit-transform: rotate(-130deg);
+    }
+    50% {
+      -webkit-transform: rotate(5deg);
+    }
+  }
+
+  @keyframes preloader-right-rotate {
+    0%,
+    100% {
+      transform: rotate(-130deg);
+    }
+    50% {
+      transform: rotate(5deg);
+    }
+  }
+
+  @-webkit-keyframes preloader-inner-rotate {
+    12.5% {
+      -webkit-transform: rotate(135deg);
+    }
+    25% {
+      -webkit-transform: rotate(270deg);
+    }
+    37.5% {
+      -webkit-transform: rotate(405deg);
+    }
+    50% {
+      -webkit-transform: rotate(540deg);
+    }
+    62.5% {
+      -webkit-transform: rotate(675deg);
+    }
+    75% {
+      -webkit-transform: rotate(810deg);
+    }
+    87.5% {
+      -webkit-transform: rotate(945deg);
+    }
+    100% {
+      -webkit-transform: rotate(1080deg);
+    }
+  }
+
+  @keyframes preloader-inner-rotate {
+    12.5% {
+      transform: rotate(135deg);
+    }
+    25% {
+      transform: rotate(270deg);
+    }
+    37.5% {
+      transform: rotate(405deg);
+    }
+    50% {
+      transform: rotate(540deg);
+    }
+    62.5% {
+      transform: rotate(675deg);
+    }
+    75% {
+      transform: rotate(810deg);
+    }
+    87.5% {
+      transform: rotate(945deg);
+    }
+    100% {
+      transform: rotate(1080deg);
+    }
+  }
+
+  @-webkit-keyframes preloader-left-rotate-multicolor {
+    0%,
+    100% {
+      border-left-color: #4285F4;
+      -webkit-transform: rotate(130deg);
+    }
+    75% {
+      border-left-color: #1B9A59;
+      border-top-color: #1B9A59;
+    }
+    50% {
+      border-left-color: #F7C223;
+      border-top-color: #F7C223;
+      -webkit-transform: rotate(-5deg);
+    }
+    25% {
+      border-left-color: #DE3E35;
+      border-top-color: #DE3E35;
+    }
+  }
+
+  @keyframes preloader-left-rotate-multicolor {
+    0%,
+    100% {
+      border-left-color: #4285F4;
+      transform: rotate(130deg);
+    }
+    75% {
+      border-left-color: #1B9A59;
+      border-top-color: #1B9A59;
+    }
+    50% {
+      border-left-color: #F7C223;
+      border-top-color: #F7C223;
+      transform: rotate(-5deg);
+    }
+    25% {
+      border-left-color: #DE3E35;
+      border-top-color: #DE3E35;
+    }
+  }
+
+  @-webkit-keyframes preloader-right-rotate-multicolor {
+    0%,
+    100% {
+      border-right-color: #4285F4;
+      -webkit-transform: rotate(-130deg);
+    }
+    75% {
+      border-right-color: #1B9A59;
+      border-top-color: #1B9A59;
+    }
+    50% {
+      border-right-color: #F7C223;
+      border-top-color: #F7C223;
+      -webkit-transform: rotate(5deg);
+    }
+    25% {
+      border-top-color: #DE3E35;
+      border-right-color: #DE3E35;
+    }
+  }
+
+  @keyframes preloader-right-rotate-multicolor {
+    0%,
+    100% {
+      border-right-color: #4285F4;
+      transform: rotate(-130deg);
+    }
+    75% {
+      border-right-color: #1B9A59;
+      border-top-color: #1B9A59;
+    }
+    50% {
+      border-right-color: #F7C223;
+      border-top-color: #F7C223;
+      transform: rotate(5deg);
+    }
+    25% {
+      border-top-color: #DE3E35;
+      border-right-color: #DE3E35;
+    }
+  }
+
+  </style>
   <!-- built style files will be auto injected -->
 </head>
 
 <body>
+  <div id="app-loading">
+    <div>
+      <span class="preloader"><span class="preloader-inner"><span class="preloader-inner-gap"></span><span class="preloader-inner-left"><span class="preloader-inner-half-circle"></span></span><span class="preloader-inner-right"><span class="preloader-inner-half-circle"></span></span>
+      </span>
+      </span>
+    </div>
+  </div>
   <div id="app"></div>
   <!-- built script files will be auto injected -->
 </body>

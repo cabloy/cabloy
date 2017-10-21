@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-24 17:13:11
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-11 14:07:15
+* @Last Modified time: 2017-10-18 21:50:36
 */
 
 import util from './util.js';
@@ -38,7 +38,7 @@ export default function(Vue, axios) {
         objBase: axios,
         vueComponent: this,
         combilePath: (moduleInfo, arg) => {
-          return (arg.charAt(0) === '/') ? arg : `/api/${moduleInfo.pid}/${moduleInfo.name}/${arg}`;
+          return (arg.charAt(0) === '/') ? `/api${arg}` : `/api/${moduleInfo.pid}/${moduleInfo.name}/${arg}`;
         },
       });
     });
