@@ -1,7 +1,7 @@
 {
   "name": "egg-born",
-  "version": "1.0.1",
-  "description": "egg born boilerplate tools",
+  "version": "1.0.2",
+  "description": "The Ultimate Javascript Full Stack Framework",
   "scripts": {},
   "preferGlobal": true,
   "bin": {
