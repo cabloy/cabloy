@@ -1,5 +1,6 @@
+# EggBorn.js
 
-The Ultimate Javascript Full Stack Framework
+EggBorn.js -- The Ultimate Javascript Full Stack Framework
 
 [![NPM version][npm-image]][npm-url]
 [![NPM quality][quality-image]][quality-url]
