@@ -2,10 +2,10 @@
 * @Author: zhennann
 * @Date:   2017-09-24 21:49:55
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-15 21:16:27
+* @Last Modified time: 2017-10-20 00:39:17
 */
 
-const mparse = require('egg-born-mparse');
+const mparse = require('egg-born-mparse').default;
 const glob = require('glob');
 const fse = require('fs-extra');
 const path = require('path');

@@ -2,11 +2,11 @@
 * @Author: zhennann
 * @Date:   2017-09-28 14:07:59
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-10 22:03:12
+* @Last Modified time: 2017-10-20 00:39:05
 */
 
 const util = require('../../lib/module/util.js');
-const mparse = require('egg-born-mparse');
+const mparse = require('egg-born-mparse').default;
 
 const MOCKUTIL = Symbol('Application#mockUtil');
 

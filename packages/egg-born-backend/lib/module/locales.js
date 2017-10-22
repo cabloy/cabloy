@@ -2,13 +2,13 @@
 * @Author: zhennann
 * @Date:   2017-09-21 14:47:36
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-12 20:45:06
+* @Last Modified time: 2017-10-20 00:40:50
 */
 
 const fs = require('fs');
 const path = require('path');
 const extend = require('extend2');
-const localeutil = require('egg-born-localeutil');
+const localeutil = require('egg-born-localeutil').default;
 const util2 = require('./util.js');
 
 module.exports = function(loader, modules) {
