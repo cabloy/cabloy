@@ -2,7 +2,7 @@
 * @Author: zhennann
 * @Date:   2017-09-08 14:49:08
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-11 22:11:55
+* @Last Modified time: 2017-10-17 13:23:11
 */
 
 const require3 = require('require3');
@@ -66,10 +66,10 @@ module.exports = app => {
 
     // check other modules
     async __checkOtherModules() {
-      const keys = Object.keys(this.app.modules);
+      const keys = Object.keys(this.app.meta.modules);
       for (const key of keys) {
         if (key !== 'egg-born-module-a-version') {
-          const module = this.app.modules[key];
+          const module = this.app.meta.modules[key];
           await this.__checkModule(module.info.relativeName);
         }
       }
@@ -158,7 +158,7 @@ module.exports = app => {
     // get module
     __getModule(moduleName) {
       const fullName = `egg-born-module-${moduleName}`;
-      const module = this.app.modules[fullName];
+      const module = this.app.meta.modules[fullName];
       if (!module) return null;
 
       if (!module.pkg) module.pkg = require3(module.package);
@@ -169,11 +169,11 @@ module.exports = app => {
     result() {
 
       // find error module
-      const moduleName = Object.keys(this.app.modules).find(key => this.app.modules[key].__check);
-      if (moduleName) return { module: this.app.modules[moduleName], modules: null };
+      const moduleName = Object.keys(this.app.meta.modules).find(key => this.app.meta.modules[key].__check);
+      if (moduleName) return { module: this.app.meta.modules[moduleName], modules: null };
 
       // ok
-      return { module: null, modules: this.app.modules };
+      return { module: null, modules: this.app.meta.modules };
 
     }
 

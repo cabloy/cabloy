@@ -2075,7 +2075,7 @@ module.exports = [
 * @Author: zhennann
 * @Date:   2017-09-08 14:48:59
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-11 18:07:55
+* @Last Modified time: 2017-10-17 11:20:19
 */
 
 module.exports = app => {
@@ -2104,6 +2104,7 @@ module.exports = app => {
 
     // result
     async result() {
+      if (app.config.env !== 'local') this.ctx.throw(1003);
       const res = this.service.version.result();
       this.ctx.success(res);
     }
@@ -2139,7 +2140,7 @@ module.exports = {
 * @Author: zhennann
 * @Date:   2017-09-08 14:49:08
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-11 22:11:55
+* @Last Modified time: 2017-10-17 13:23:11
 */
 
 const require3 = __webpack_require__(17);
@@ -2203,10 +2204,10 @@ module.exports = app => {
 
     // check other modules
     async __checkOtherModules() {
-      const keys = Object.keys(this.app.modules);
+      const keys = Object.keys(this.app.meta.modules);
       for (const key of keys) {
         if (key !== 'egg-born-module-a-version') {
-          const module = this.app.modules[key];
+          const module = this.app.meta.modules[key];
           await this.__checkModule(module.info.relativeName);
         }
       }
@@ -2295,7 +2296,7 @@ module.exports = app => {
     // get module
     __getModule(moduleName) {
       const fullName = `egg-born-module-${moduleName}`;
-      const module = this.app.modules[fullName];
+      const module = this.app.meta.modules[fullName];
       if (!module) return null;
 
       if (!module.pkg) module.pkg = require3(module.package);
@@ -2306,11 +2307,11 @@ module.exports = app => {
     result() {
 
       // find error module
-      const moduleName = Object.keys(this.app.modules).find(key => this.app.modules[key].__check);
-      if (moduleName) return { module: this.app.modules[moduleName], modules: null };
+      const moduleName = Object.keys(this.app.meta.modules).find(key => this.app.meta.modules[key].__check);
+      if (moduleName) return { module: this.app.meta.modules[moduleName], modules: null };
 
       // ok
-      return { module: null, modules: this.app.modules };
+      return { module: null, modules: this.app.meta.modules };
 
     }
 
@@ -3670,12 +3671,13 @@ module.exports = {
 * @Author: zhennann
 * @Date:   2017-09-21 14:39:35
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-11 00:05:39
+* @Last Modified time: 2017-10-17 11:19:27
 */
 
 module.exports = {
   'module is old': '模块过旧',
   'module %s not exists': '模块%s不存在',
+  'The module only run in development mode': '此模块只能在开发模式下运行',
 };
 
 
@@ -3687,12 +3689,13 @@ module.exports = {
 * @Author: zhennann
 * @Date:   2017-09-24 21:33:17
 * @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-11 00:16:33
+* @Last Modified time: 2017-10-17 11:19:41
 */
 
 module.exports = {
   1001: 'module is old',
   1002: 'module %s not exists',
+  1003: 'The module only run in development mode',
 };
 
 
