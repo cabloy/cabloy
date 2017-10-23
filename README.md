@@ -2,6 +2,8 @@
 
 EggBorn.js -- The Ultimate Javascript Full Stack Framework
 
+Vue.js + Framework7 / Vue Router + Koa.js + Egg.js + MySQL
+
 [![NPM version][npm-image]][npm-url]
 [![NPM quality][quality-image]][quality-url]
 [![build status][travis-image]][travis-url]
@@ -28,3 +30,51 @@ EggBorn.js -- The Ultimate Javascript Full Stack Framework
 ## Docs
 
 - [Website && Documentations](https://zhennann.github.io)
+
+## Getting Started
+
+### Installation
+
+```bash
+$ npm install -g egg-born
+```
+
+### Create a project
+
+```bash
+$ egg-born project_name
+$ cd project_name
+$ npm install
+```
+
+### Setup MySQL 
+
+Edit file: `src/backend/config/config.default.js`
+
+``` javascript
+  // mysql
+  config.mysql = {
+    clients: {
+      // donot change the name  
+      __ebdb: {
+        host: '127.0.0.1',
+        port: '3306',
+        user: 'travis',
+        password: '',
+        database: 'egg-born',
+      },
+    },
+  };
+```
+
+### Run
+
+Start backend service
+```bash
+$ npm run dev:backend
+```
+
+Start front service
+```bash
+$ npm run dev:front
+```

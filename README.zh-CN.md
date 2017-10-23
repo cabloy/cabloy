@@ -2,6 +2,8 @@
 
 EggBorn.js是一款顶级Javascript全栈开发框架
 
+Vue.js + Framework7 / Vue Router + Koa.js + Egg.js + MySQL
+
 [![NPM version][npm-image]][npm-url]
 [![NPM quality][quality-image]][quality-url]
 [![build status][travis-image]][travis-url]
@@ -28,3 +30,51 @@ EggBorn.js是一款顶级Javascript全栈开发框架
 ## 文档
 
 - [官网 && 文档](https://zhennann.github.io)
+
+## 快速开始
+
+### 安装
+
+```bash
+$ npm install -g egg-born
+```
+
+### 新建项目
+
+```bash
+$ egg-born project_name
+$ cd project_name
+$ npm install
+```
+
+### 配置MySQL
+
+Edit file: `src/backend/config/config.default.js`
+
+``` javascript
+  // mysql
+  config.mysql = {
+    clients: {
+      // donot change the name  
+      __ebdb: {
+        host: '127.0.0.1',
+        port: '3306',
+        user: 'travis',
+        password: '',
+        database: 'egg-born',
+      },
+    },
+  };
+```
+
+### 运行
+
+启动后端服务
+```bash
+$ npm run dev:backend
+```
+
+启动前端服务
+```bash
+$ npm run dev:front
+```
