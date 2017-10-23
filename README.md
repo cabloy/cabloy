@@ -29,7 +29,7 @@ Vue.js + Framework7 / Vue Router + Koa.js + Egg.js + MySQL
 
 ## Docs
 
-- [Website && Documentations](https://zhennann.github.io)
+- [Website && Documentations](http://egg-born.org)
 
 ## Getting Started
 

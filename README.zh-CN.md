@@ -29,7 +29,7 @@ Vue.js + Framework7 / Vue Router + Koa.js + Egg.js + MySQL
 
 ## 文档
 
-- [官网 && 文档](https://zhennann.github.io)
+- [官网 && 文档](http://egg-born.org)
 
 ## 快速开始
 
