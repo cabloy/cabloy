@@ -1,6 +1,6 @@
 {
   "name": "egg-born",
-  "version": "1.0.2",
+  "version": "1.0.6",
   "description": "The Ultimate Javascript Full Stack Framework",
   "scripts": {},
   "preferGlobal": true,
@@ -13,7 +13,8 @@
   },
   "keywords": [
     "egg",
-    "egg born"
+    "egg born",
+    "egg-framework"
   ],
   "author": "zhennann",
   "license": "ISC",
