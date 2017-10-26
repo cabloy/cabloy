@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const co = require('co');
 const Command = require('egg-init');
 

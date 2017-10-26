@@ -1,6 +1,6 @@
 {
   "name": "egg-born",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "The Ultimate Javascript Full Stack Framework",
   "scripts": {
     "test": "cd test && npm run test:backend && cd .."
