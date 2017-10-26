@@ -1,9 +1,11 @@
 {
   "name": "egg-born",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "The Ultimate Javascript Full Stack Framework",
   "scripts": {
-    "test:backend": "cd test && npm run test:backend && cd .."
+    "lint": "cd test && npm run lint && cd ..",
+    "test:backend": "cd test && npm run test:backend && cd ..",
+    "cov:backend": "cd test && npm run cov:backend && cd .."
   },
   "preferGlobal": true,
   "bin": {
