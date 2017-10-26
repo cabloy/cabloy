@@ -1,12 +1,3 @@
-#!/usr/bin/env node
-
-/*
-* @Author: zhennann
-* @Date:   2017-10-12 17:14:08
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-12 18:51:17
-*/
-
 const co = require('co');
 const Command = require('egg-init');
 

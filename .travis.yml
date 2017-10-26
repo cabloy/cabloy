@@ -14,5 +14,8 @@ install:
 script:
   - npm run build:front
   - npm run cov:backend
+  - cd $(npm config get prefix)/lib/node_modules/egg-born/test
+  - npm i
+  - npm run cov:backend
 after_script:
   - npm i codecov -g && codecov

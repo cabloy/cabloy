@@ -1,0 +1,6 @@
+{
+  "name": "backend",
+  "egg": {
+    "framework": "egg-born-backend"
+  }
+}
