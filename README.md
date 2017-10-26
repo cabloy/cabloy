@@ -24,8 +24,8 @@ Vue.js + Framework7 / Vue Router + Koa.js + Egg.js + MySQL
 [snyk-url]: https://snyk.io/test/npm/egg-born
 [download-image]: https://img.shields.io/npm/dm/egg-born.svg?style=flat-square
 [download-url]: https://npmjs.org/package/egg-born
-[gitter-image]: https://img.shields.io/gitter/room/zhennann/egg-born.svg?style=flat-square
-[gitter-url]: https://gitter.im/zhennann/egg-born
+[gitter-image]: https://badges.gitter.im/zhennann/egg-born.svg?style=flat-square
+[gitter-url]: https://gitter.im/zhennann/egg-born?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 
 ## Docs
 
