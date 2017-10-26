@@ -7,6 +7,7 @@ Vue.js + Framework7 / Vue Router + Koa.js + Egg.js + MySQL
 [![NPM version][npm-image]][npm-url]
 [![NPM quality][quality-image]][quality-url]
 [![build status][travis-image]][travis-url]
+[![Test coverage][codecov-image]][codecov-url]
 [![David deps][david-image]][david-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![NPM download][download-image]][download-url]
@@ -18,6 +19,8 @@ Vue.js + Framework7 / Vue Router + Koa.js + Egg.js + MySQL
 [quality-url]: http://packagequality.com/#?package=egg-born
 [travis-image]: https://img.shields.io/travis/zhennann/egg-born.svg?style=flat-square
 [travis-url]: https://travis-ci.org/zhennann/egg-born
+[codecov-image]: https://img.shields.io/codecov/c/github/zhennann/egg-born.svg?style=flat-square
+[codecov-url]: https://codecov.io/gh/zhennann/egg-born
 [david-image]: https://img.shields.io/david/zhennann/egg-born.svg?style=flat-square
 [david-url]: https://david-dm.org/zhennann/egg-born
 [snyk-image]: https://snyk.io/test/npm/egg-born/badge.svg?style=flat-square
@@ -77,4 +80,11 @@ $ npm run dev:backend
 Start front service
 ```bash
 $ npm run dev:front
+```
+
+### Test
+
+```bash
+$ npm run test:backend
+$ npm run cov:backend
 ```
