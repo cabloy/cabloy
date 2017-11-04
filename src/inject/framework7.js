@@ -83,7 +83,7 @@ export default function(Vue, options) {
         Vue.use(m.default, ops => {
           // concat routes
           const routes = ops.routes.map(route => {
-            route.path = `/${moduleInfo.pid}/${moduleInfo.name}/${route.path}`;
+            route.pagePath = route.path = `/${moduleInfo.pid}/${moduleInfo.name}/${route.path}`;
             return route;
           });
           this.$f7Router.routes = this.$f7Router.routes.concat(routes);
