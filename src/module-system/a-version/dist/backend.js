@@ -948,6 +948,7 @@ const services = __webpack_require__(15);
 const config = __webpack_require__(19);
 const locales = __webpack_require__(20);
 const errors = __webpack_require__(22);
+const messageCheckReady = 'eb:module:a-version:check-ready';
 
 // eslint-disable-next-line
 module.exports = app => {
@@ -967,27 +968,45 @@ module.exports = app => {
 };
 
 function versionCheck(app) {
+
   if (app.config.env === 'prod') {
     // just send message
-    return app.messenger.sendToApp('eb:module:a-version:check-ready');
+    return app.messenger.sendToApp(messageCheckReady);
   }
 
-  const listen = app.config.cluster.listen;
-  app.curl(`http://${listen.hostname}:${listen.port}/api/a/version/version/check`, {
-    method: 'POST',
-    ontentType: 'json',
-    dataType: 'json',
-  }).then(result => {
-    if (result.data && result.data.code === 0) {
-      console.log(chalk.cyan('  All modules are checked successfully!'));
-    } else {
-      console.log(chalk.cyan('  Modules are checked failed!'));
-    }
-    console.log(chalk.yellow('  For more details, please goto http://{ip}:{port}/#/a/version/check\n'));
+  if (app.config.env === 'unittest') {
+    return app.httpRequest().post('/api/a/version/version/check').then(result => {
+      if (result.data && result.data.code === 0) {
+        console.log(chalk.cyan('  All modules are checked successfully!'));
+      } else {
+        console.log(chalk.cyan('  Modules are checked failed!'));
+      }
 
-    // send message
-    app.messenger.sendToApp('eb:module:a-version:check-ready');
-  });
+      // send message
+      app.emit(messageCheckReady);
+    });
+
+  }
+
+  if (app.config.env === 'local') {
+    const listen = app.config.cluster.listen;
+    return app.curl(`http://${listen.hostname}:${listen.port}/api/a/version/version/check`, {
+      method: 'POST',
+      ontentType: 'json',
+      dataType: 'json',
+    }).then(result => {
+      if (result.data && result.data.code === 0) {
+        console.log(chalk.cyan('  All modules are checked successfully!'));
+      } else {
+        console.log(chalk.cyan('  Modules are checked failed!'));
+      }
+      console.log(chalk.yellow('  For more details, please goto http://{ip}:{port}/#/a/version/check\n'));
+
+      // send message
+      app.messenger.sendToApp(messageCheckReady);
+    });
+
+  }
 
 }
 
