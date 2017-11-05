@@ -967,7 +967,10 @@ module.exports = app => {
 };
 
 function versionCheck(app) {
-  if (app.config.env !== 'local') return;
+  if (app.config.env === 'prod') {
+    // just send message
+    return app.messenger.sendToApp('eb:module:a-version:check-ready');
+  }
 
   const listen = app.config.cluster.listen;
   app.curl(`http://${listen.hostname}:${listen.port}/api/a/version/version/check`, {
@@ -981,6 +984,9 @@ function versionCheck(app) {
       console.log(chalk.cyan('  Modules are checked failed!'));
     }
     console.log(chalk.yellow('  For more details, please goto http://{ip}:{port}/#/a/version/check\n'));
+
+    // send message
+    app.messenger.sendToApp('eb:module:a-version:check-ready');
   });
 
 }
