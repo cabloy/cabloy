@@ -30,6 +30,6 @@
     "egg-born-backend": "^1.0.5",
     "egg-born-bin": "^1.0.1",
     "egg-born-scripts": "^1.0.0",
-    "egg-born-module-a-version": "^1.0.4"
+    "egg-born-module-a-version": "^1.0.5"
   }
 }
