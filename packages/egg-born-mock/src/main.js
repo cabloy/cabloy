@@ -6,14 +6,13 @@ before(function(done) {
 
 module.exports = function(dirname) {
 
-  const prefix = app.mockUtil.parseUrlFromPackage(dirname);
-
   return {
     assert,
     app,
     mock,
-    mm: mock,
+    mm,
     mockUrl(url) {
+      const prefix = app.mockUtil.parseUrlFromPackage(dirname);
       return url ? `${prefix}${url}` : prefix;
     },
   };
