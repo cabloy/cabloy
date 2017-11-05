@@ -1,13 +1,9 @@
-// eslint-disable-next-line
-const { app, mock, assert } = require('egg-mock/bootstrap');
-const parseMockUrl = function() {
-  return app.mockUtil.parseUrlFromPackage(__dirname);
-};
+const { app, mockUrl, assert } = require('egg-born-mock')(__dirname);
 
 describe('test/service/home.test.js', () => {
 
   it('index', async () => {
-    const ctx = app.mockContext({ mockUrl: parseMockUrl() });
+    const ctx = app.mockContext({ mockUrl: mockUrl() });
     const message = await ctx.service.home.index();
     assert(message);
   });

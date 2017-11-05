@@ -27,9 +27,9 @@
   },
   "dependencies": {
     "egg-born-front": "^1.0.5",
-    "egg-born-backend": "^1.0.3",
+    "egg-born-backend": "^1.0.5",
     "egg-born-bin": "^1.0.1",
     "egg-born-scripts": "^1.0.0",
-    "egg-born-module-a-version": "^1.0.2"
+    "egg-born-module-a-version": "^1.0.4"
   }
 }
