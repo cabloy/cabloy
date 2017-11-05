@@ -39,7 +39,7 @@ function versionCheck(app) {
 
   if (app.config.env === 'unittest') {
     return app.httpRequest().post('/api/a/version/version/check').then(result => {
-      if (result.data && result.data.code === 0) {
+      if (result.body && result.body.code === 0) {
         console.log(chalk.cyan('  All modules are checked successfully!'));
       } else {
         console.log(chalk.cyan('  Modules are checked failed!'));
