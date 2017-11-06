@@ -55,7 +55,7 @@ function versionCheck(app) {
     const listen = app.config.cluster.listen;
     return app.curl(`http://${listen.hostname}:${listen.port}/api/a/version/version/check`, {
       method: 'POST',
-      ontentType: 'json',
+      contentType: 'json',
       dataType: 'json',
     }).then(result => {
       if (result.data && result.data.code === 0) {
