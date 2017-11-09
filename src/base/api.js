@@ -38,7 +38,9 @@ export default function(Vue, axios) {
         objBase: axios,
         vueComponent: this,
         combilePath: (moduleInfo, arg) => {
-          return (arg.charAt(0) === '/') ? `/api${arg}` : `/api/${moduleInfo.pid}/${moduleInfo.name}/${arg}`;
+          if (arg.substr(0, 2) === '//') return arg.substr(1);
+          if (arg.charAt(0) === '/') return `/api${arg}`;
+          return `/api/${moduleInfo.url}/${arg}`;
         },
       });
     });
