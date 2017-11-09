@@ -200,6 +200,7 @@ function delegateCookies(ctx, ctxCaller) {
 }
 
 function adjustUrl(ctx, url) {
+  if (url.substr(0,2) === '//') return url.substr(1);
   if (url.charAt(0) === '/') return `/api${url}`;
 
   const info = util.getModuleInfo(ctx);
