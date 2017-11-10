@@ -60,18 +60,15 @@ module.exports = {
   },
 
   getInt(name) {
-    const v = this.params[name] || this.query[name] || this.request.body[name];
-    return parseInt(v);
+    return parseInt(this.getStr(name));
   },
 
   getFloat(name) {
-    const v = this.params[name] || this.query[name] || this.request.body[name];
-    return parseFloat(v);
+    return parseFloat(this.getStr(name));
   },
 
   getStr(name) {
-    const v = this.params[name] || this.query[name] || this.request.body[name];
-    return (v && v.toString()) || '';
+    return (this.params && this.params[name]) || (this.query && this.query[name]) || (this.request.body && this.request.body[name]) || '';
   },
 
   getSafeStr(name) {
@@ -200,7 +197,7 @@ function delegateCookies(ctx, ctxCaller) {
 }
 
 function adjustUrl(ctx, url) {
-  if (url.substr(0,2) === '//') return url.substr(1);
+  if (url.substr(0, 2) === '//') return url.substr(1);
   if (url.charAt(0) === '/') return `/api${url}`;
 
   const info = util.getModuleInfo(ctx);
