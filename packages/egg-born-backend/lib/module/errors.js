@@ -59,7 +59,7 @@ module.exports = function(loader, modules) {
           const err = new Error();
           err.code = body.code;
           err.message = body.message;
-          body.code < 500 && err.status = body.code;
+          if (body.code < 500) err.status = body.code;
           throw err;
         };
         // code/message,args
