@@ -63,6 +63,7 @@ module.exports = function(loader, modules) {
         };
         // code/message,args
         context.parseFail = function(code, ...args) {
+          if (typeof code === 'object') return code;
           return parseCode(this, info, 1, code, ...args);
         };
         // code/message,args
