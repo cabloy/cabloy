@@ -27,8 +27,12 @@ export default function(Vue, axios) {
   }
 
   // custom interceptor
-  axios.__ebCustomInterceptorRequest && axios.interceptors.request.use(axios.__ebCustomInterceptorRequest);
-  axios.__ebCustomInterceptorResponse && axios.interceptors.response.use(axios.__ebCustomInterceptorResponse);
+  axios.__ebCustomInterceptorRequest && axios.interceptors.request.use(
+    axios.__ebCustomInterceptorRequest.resolve,
+    axios.__ebCustomInterceptorRequest.reject);
+  axios.__ebCustomInterceptorResponse && axios.interceptors.response.use(
+    axios.__ebCustomInterceptorResponse.resolve,
+    axios.__ebCustomInterceptorResponse.reject);
 
   // mixin
   Vue.mixin({ beforeCreate() {
