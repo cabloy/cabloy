@@ -92,7 +92,9 @@ module.exports = function(loader, modules) {
         message = context.text(ebError[codeDefault]);
       }
 
-      return { code, message };
+      const res={ code, message };
+      code<500 && res.status=code;
+      return res;
     }
   }
 
