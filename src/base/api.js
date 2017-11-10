@@ -10,7 +10,7 @@ import util from './util.js';
 export default function(Vue, axios) {
 
   // add a response interceptor
-  if (!axios.__ebDefaultDisable) {
+  if (!axios.__ebDefaultResponseDisable) {
     axios.interceptors.response.use(function(response) {
       if (response.data.code !== 0) {
         const error = new Error();
@@ -25,6 +25,10 @@ export default function(Vue, axios) {
       return Promise.reject(error);
     });
   }
+
+  // custom interceptor
+  axios.__ebCustomInterceptorRequest && axios.interceptors.request.use(axios.__ebCustomInterceptorRequest);
+  axios.__ebCustomInterceptorResponse && axios.interceptors.response.use(axios.__ebCustomInterceptorResponse);
 
   // mixin
   Vue.mixin({ beforeCreate() {
