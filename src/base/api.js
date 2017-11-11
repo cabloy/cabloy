@@ -9,8 +9,30 @@ import util from './util.js';
 
 export default function(Vue, axios) {
 
+  // indicator
+  let indicatorCounter = 0;
+
   // add a response interceptor
   if (!axios.__ebDefaultResponseDisable) {
+
+    // request
+    axios.interceptors.request.use(function(config) {
+      (!config.silent) && (++indicatorCounter > 0) && axios.onShowIndicator && axios.onShowIndicator();
+      return config;
+    }, function(error) {
+      return Promise.reject(error);
+    });
+
+    // response
+    axios.interceptors.response.use(function(response) {
+      (!response.config.silent) && (--indicatorCounter === 0) && axios.onHideIndicator && axios.onHideIndicator();
+      return response;
+    }, function(error) {
+      (!error.config.silent) && (--indicatorCounter === 0) && axios.onHideIndicator && axios.onHideIndicator();
+      return Promise.reject(error);
+    });
+
+    // response
     axios.interceptors.response.use(function(response) {
       if (response.data.code !== 0) {
         const error = new Error();
@@ -20,11 +42,14 @@ export default function(Vue, axios) {
       }
       return response.data.data;
     }, function(error) {
-      error.code = error.response.data.code || error.response.status;
-      error.message = error.response.data.message || error.response.statusText;
+      if (error.response) {
+        error.code = (error.response.data && error.response.data.code) || error.response.status;
+        error.message = (error.response.data && error.response.data.message) || error.response.statusText;
+      }
       return Promise.reject(error);
     });
 
+    // response
     axios.interceptors.response.use(function(response) {
       return response;
     }, function(error) {
