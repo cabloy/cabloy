@@ -26,10 +26,10 @@
     "eslint-plugin-vuefix": "^0.2.0"
   },
   "dependencies": {
-    "egg-born-front": "^1.0.5",
-    "egg-born-backend": "^1.0.5",
+    "egg-born-front": "^1.0.13",
+    "egg-born-backend": "^1.0.14",
     "egg-born-bin": "^1.0.1",
     "egg-born-scripts": "^1.0.0",
-    "egg-born-module-a-version": "^1.0.5"
+    "egg-born-module-a-version": "^1.0.8"
   }
 }
