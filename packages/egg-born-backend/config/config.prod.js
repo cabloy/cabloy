@@ -9,9 +9,6 @@
 module.exports = appInfo => {
   const config = {};
 
-  // coreMiddleware
-  config.coreMiddleware = [ 'disableVersionCheck' ];
-
   // middleware disableVersionCheck
   config.disableVersionCheck = {
     enable: true,
