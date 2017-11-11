@@ -24,6 +24,16 @@ export default function(Vue, axios) {
       error.message = error.response.data.message || error.response.statusText;
       return Promise.reject(error);
     });
+
+    axios.interceptors.response.use(function(response) {
+      return response;
+    }, function(error) {
+      if (error.code === 401) {
+        // emit event: login
+        Vue.prototype.$meta.eventHub.$emit(Vue.prototype.$meta.constants.events.login, null);
+      }
+      return Promise.reject(error);
+    });
   }
 
   // custom interceptor
