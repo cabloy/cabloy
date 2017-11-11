@@ -17,6 +17,9 @@ module.exports = {
     }
     return this[MOCKUTIL];
   },
+  get isProd() {
+    return this.config.env !== 'local' && this.config.env !== 'unittest' && this.config.env !== 'test';
+  },
 };
 
 // eslint-disable-next-line
