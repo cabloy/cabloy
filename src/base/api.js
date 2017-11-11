@@ -38,6 +38,7 @@ export default function(Vue, axios) {
         const error = new Error();
         error.code = response.data.code;
         error.message = response.data.message;
+        error.config = response.config;
         return Promise.reject(error);
       }
       return response.data.data;
