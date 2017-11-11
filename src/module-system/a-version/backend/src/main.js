@@ -32,11 +32,6 @@ module.exports = app => {
 
 function versionCheck(app) {
 
-  if (app.config.env === 'prod') {
-    // just send message
-    return app.messenger.sendToApp(messageCheckReady);
-  }
-
   if (app.config.env === 'unittest') {
     return app.httpRequest().post('/api/a/version/version/check').then(result => {
       if (result.body && result.body.code === 0) {
@@ -49,9 +44,7 @@ function versionCheck(app) {
       app.emit(messageCheckReady);
     });
 
-  }
-
-  if (app.config.env === 'local') {
+  } else if (app.config.env === 'local') {
     const listen = app.config.cluster.listen;
     return app.curl(`http://${listen.hostname}:${listen.port}/api/a/version/version/check`, {
       method: 'POST',
@@ -70,5 +63,9 @@ function versionCheck(app) {
     });
 
   }
+
+  // prod
+  // just send message
+  return app.messenger.sendToApp(messageCheckReady);
 
 }
