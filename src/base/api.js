@@ -47,6 +47,10 @@ export default function(Vue, axios) {
   // mixin
   Vue.mixin({ beforeCreate() {
 
+    // cache route path
+    if (this.$parent && this.$parent.__ebRoutePath) { this.__ebRoutePath = this.$parent.__ebRoutePath; } else if (this.$route) { this.__ebRoutePath = this.$route.path; }
+
+    // api
     this.$api = {};
 
     [ 'delete', 'get', 'head', 'options', 'post', 'put', 'patch' ].forEach(key => {

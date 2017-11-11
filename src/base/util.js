@@ -11,23 +11,23 @@ import mparse from 'egg-born-mparse';
 export default {
 
   importCSS(moduleInfo, cb) {
-      System.import('../../build/__module/' + moduleInfo.fullName + '/dist/front.css').then(() => {
-        return cb(null);
-      }).catch(e => {
-        return cb(e);
-      });
+    System.import('../../build/__module/' + moduleInfo.fullName + '/dist/front.css').then(() => {
+      return cb(null);
+    }).catch(e => {
+      return cb(e);
+    });
   },
 
   importJS(moduleInfo, cb) {
-      System.import('../../build/__module/' + moduleInfo.fullName + '/dist/front.js').then(m => {
+    System.import('../../build/__module/' + moduleInfo.fullName + '/dist/front.js').then(m => {
+      return cb(null, m);
+    }).catch(() => {
+      System.import('../../../../src/module/' + moduleInfo.relativeName + '/front/src/main.js').then(m => {
         return cb(null, m);
-      }).catch(() => {
-        System.import('../../../../src/module/' + moduleInfo.relativeName + '/front/src/main.js').then(m => {
-          return cb(null, m);
-        }).catch(e => {
-          return cb(e);
-        });
+      }).catch(e => {
+        return cb(e);
       });
+    });
   },
 
   requireCSS() {
@@ -111,7 +111,7 @@ export default {
 
 function __getModuleInfo(vueComponent) {
   if (!vueComponent.__ebModuleInfo) {
-    vueComponent.__ebModuleInfo = vueComponent.$route ? mparse.parseInfo(vueComponent.$route.path) : null;
+    vueComponent.__ebModuleInfo = mparse.parseInfo(vueComponent.__ebRoutePath);
   }
   return vueComponent.__ebModuleInfo;
 }
