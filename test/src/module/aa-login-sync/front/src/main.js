@@ -13,8 +13,8 @@ function install(_Vue, cb) {
   if (Vue.prototype.$meta.provider === 'framework7') {
     // subcribe event: login
     Vue.prototype.$meta.eventHub.$on(
-      Vue.prototype.$meta.constants.events.login, ({ view, options }) => {
-        Vue.prototype.$meta.loginParams = { view, options };
+      Vue.prototype.$meta.constants.events.login, params => {
+        Vue.prototype.$meta.loginParams = params;
         Vue.prototype.$f7.loginScreen();
       });
     Vue.prototype.$meta.eventHub.$on(
@@ -25,8 +25,8 @@ function install(_Vue, cb) {
   } if (Vue.prototype.$meta.provider === 'vuerouter') {
     // subcribe event: login
     Vue.prototype.$meta.eventHub.$on(
-      Vue.prototype.$meta.constants.events.login, ({ redirect }) => {
-        Vue.prototype.$meta.options.router.push({ path: '/aa/login/login', query: { redirect } });
+      Vue.prototype.$meta.constants.events.login, params => {
+        Vue.prototype.$meta.options.router.push({ path: '/aa/login/login', query: params || { redirect: '/' } });
       });
     Vue.prototype.$meta.eventHub.$on(
       Vue.prototype.$meta.constants.events.logout, () => {
