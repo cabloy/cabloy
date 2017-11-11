@@ -59,20 +59,20 @@ module.exports = {
     });
   },
 
-  getValue(name) {
+  getVal(name) {
     return (this.params && this.params[name]) || (this.query && this.query[name]) || (this.request.body && this.request.body[name]);
   },
 
   getInt(name) {
-    return parseInt(this.getValue(name));
+    return parseInt(this.getVal(name));
   },
 
   getFloat(name) {
-    return parseFloat(this.getValue(name));
+    return parseFloat(this.getVal(name));
   },
 
   getStr(name) {
-    const v = this.getValue(name);
+    const v = this.getVal(name);
     return (v && v.toString()) || '';
   },
 
