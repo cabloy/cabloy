@@ -5,7 +5,7 @@ node_js:
 services:
   - mysql
 before_install:
-  - mysql -e 'CREATE DATABASE `egg-born` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;'
+  - mysql -e 'CREATE DATABASE `egg-born` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'
 install:
   - npm i -g egg-born
   - egg-born test-full-stack --type="front-backend-mysql" --silent
