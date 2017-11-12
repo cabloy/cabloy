@@ -28,7 +28,7 @@ function createMockUtil(app) {
     parseUrlFromPackage(dir) {
       const moduleInfo = this.parseInfoFromPackage(dir);
       if (!moduleInfo) return null;
-      return `/api/${moduleInfo.pid}/${moduleInfo.name}/`;
+      return `/api/${moduleInfo.pid}/${moduleInfo.name}`;
     },
     parseInfoFromPackage(dir) {
       const file = util.lookupPackage(dir);
