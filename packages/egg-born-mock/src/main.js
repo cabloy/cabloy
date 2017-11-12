@@ -13,7 +13,7 @@ module.exports = function(dirname) {
     mm,
     mockUrl(url) {
       const prefix = app.mockUtil.parseUrlFromPackage(dirname);
-      return url ? `${prefix}${url}` : prefix;
+      return url ? `${prefix}/${url}` : `${prefix}/`;
     },
   };
 
