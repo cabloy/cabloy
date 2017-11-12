@@ -52,7 +52,7 @@ $ npm install
 
 ### 配置MySQL
 
-Edit file: `src/backend/config/config.default.js`
+修改文件: `src/backend/config/config.default.js`
 
 ``` javascript
   // mysql
