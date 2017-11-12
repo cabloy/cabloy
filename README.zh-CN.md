@@ -2,7 +2,7 @@
 
 EggBorn.js是一款顶级Javascript全栈开发框架
 
-Vue.js + Framework7 / Vue Router + Koa.js + Egg.js + MySQL
+> Vue.js + Framework7 / Vue Router + Koa.js + Egg.js + MySQL
 
 [![NPM version][npm-image]][npm-url]
 [![NPM quality][quality-image]][quality-url]
