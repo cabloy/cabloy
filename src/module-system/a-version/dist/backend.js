@@ -969,8 +969,10 @@ module.exports = app => {
 
 function versionCheck(app) {
 
+  const prefix = app.mockUtil.parseUrlFromPackage(__dirname);
+
   if (app.config.env === 'unittest') {
-    return app.httpRequest().post('/api/a/version/version/check').then(result => {
+    return app.httpRequest().post(`${prefix}/version/check`).then(result => {
       if (result.body && result.body.code === 0) {
         console.log(chalk.cyan('  All modules are checked successfully!'));
       } else {
@@ -983,7 +985,7 @@ function versionCheck(app) {
 
   } else if (app.config.env === 'local') {
     const listen = app.config.cluster.listen;
-    return app.curl(`http://${listen.hostname}:${listen.port}/api/a/version/version/check`, {
+    return app.curl(`http://${listen.hostname}:${listen.port}${prefix}/version/check`, {
       method: 'POST',
       contentType: 'json',
       dataType: 'json',

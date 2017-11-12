@@ -38,4 +38,13 @@ module.exports = {
   module: {
     rules: [],
   },
+  node: {
+    console: false,
+    global: false,
+    process: false,
+    __filename: false,
+    __dirname: false,
+    Buffer: false,
+    setImmediate: false,
+  },
 };
