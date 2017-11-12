@@ -34,6 +34,12 @@ EggBorn.js -- The Ultimate Javascript Full Stack Framework
 
 - [Website && Documentations](http://egg-born.org)
 
+## Showcase
+
+- [Watch Articles](https://github.com/zhennann/egg-born-showcase-watch-articles)
+
+> Watch articles's statistics, such as visits, stars, replies, etc.
+
 ## Getting Started
 
 ### Installation

@@ -34,6 +34,12 @@ EggBorn.js是一款顶级Javascript全栈开发框架
 
 - [官网 && 文档](http://egg-born.org)
 
+## 案例
+
+- [Watch Articles](https://github.com/zhennann/egg-born-showcase-watch-articles)
+
+> 自动抓取文章的统计数字，诸如visits、 stars、 replies，等等。
+
 ## 快速开始
 
 ### 安装
