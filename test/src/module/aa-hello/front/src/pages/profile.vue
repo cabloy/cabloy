@@ -13,7 +13,7 @@
 export default {
   methods: {
     logout() {
-      this.$meta.eventHub.$emit(this.$meta.constants.events.logout);
+      this.$meta.eventHub.$emit(this.$meta.constant.event.logout);
     },
   },
 };
