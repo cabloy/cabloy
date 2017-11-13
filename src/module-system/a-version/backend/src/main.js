@@ -1,10 +1,3 @@
-/*
-* @Author: zhennann
-* @Date:   2017-09-18 19:03:33
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-15 21:19:22
-*/
-
 const chalk = require('chalk');
 const routes = require('./routes.js');
 const services = require('./services.js');

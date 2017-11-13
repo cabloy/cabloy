@@ -1,10 +1,3 @@
-/*
-* @Author: zhennann
-* @Date:   2017-09-08 14:48:59
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-17 11:20:19
-*/
-
 module.exports = app => {
   class VersionController extends app.Controller {
 

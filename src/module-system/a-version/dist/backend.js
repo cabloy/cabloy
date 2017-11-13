@@ -935,13 +935,6 @@ convert.rgb.gray = function (rgb) {
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/*
-* @Author: zhennann
-* @Date:   2017-09-18 19:03:33
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-15 21:19:22
-*/
-
 const chalk = __webpack_require__(2);
 const routes = __webpack_require__(13);
 const services = __webpack_require__(15);
@@ -2074,13 +2067,6 @@ module.exports = (chalk, tmp) => {
 /* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/*
-* @Author: zhennann
-* @Date:   2017-09-18 19:03:21
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-11 16:48:29
-*/
-
 const version = __webpack_require__(14);
 
 module.exports = [
@@ -2094,13 +2080,6 @@ module.exports = [
 /***/ }),
 /* 14 */
 /***/ (function(module, exports) {
-
-/*
-* @Author: zhennann
-* @Date:   2017-09-08 14:48:59
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-17 11:20:19
-*/
 
 module.exports = app => {
   class VersionController extends app.Controller {
@@ -2142,13 +2121,6 @@ module.exports = app => {
 /* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/*
-* @Author: zhennann
-* @Date:   2017-09-18 21:40:13
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-10 17:01:43
-*/
-
 const version = __webpack_require__(16);
 
 module.exports = {
@@ -2159,13 +2131,6 @@ module.exports = {
 /***/ }),
 /* 16 */
 /***/ (function(module, exports, __webpack_require__) {
-
-/*
-* @Author: zhennann
-* @Date:   2017-09-08 14:49:08
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-17 13:23:11
-*/
 
 const require3 = __webpack_require__(17);
 const semver = __webpack_require__(18);
@@ -3657,13 +3622,6 @@ function intersects(r1, r2, loose) {
 /* 19 */
 /***/ (function(module, exports) {
 
-/*
-* @Author: zhennann
-* @Date:   2017-09-21 11:30:15
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-11 20:36:47
-*/
-
 // eslint-disable-next-line
 module.exports = appInfo => {
   const config = {};
@@ -3675,13 +3633,6 @@ module.exports = appInfo => {
 /* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/*
-* @Author: zhennann
-* @Date:   2017-09-21 14:40:10
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-21 15:51:14
-*/
-
 module.exports = {
   'zh-cn': __webpack_require__(21),
 };
@@ -3690,13 +3641,6 @@ module.exports = {
 /***/ }),
 /* 21 */
 /***/ (function(module, exports) {
-
-/*
-* @Author: zhennann
-* @Date:   2017-09-21 14:39:35
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-17 11:19:27
-*/
 
 module.exports = {
   'module is old': '模块过旧',
@@ -3708,13 +3652,6 @@ module.exports = {
 /***/ }),
 /* 22 */
 /***/ (function(module, exports) {
-
-/*
-* @Author: zhennann
-* @Date:   2017-09-24 21:33:17
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-17 11:19:41
-*/
 
 module.exports = {
   1001: 'module is old',

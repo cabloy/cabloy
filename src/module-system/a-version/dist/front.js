@@ -217,8 +217,6 @@ var Component = normalizeComponent(
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_module_css__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_module_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__css_module_css__);
-
-
 var Vue = void 0;
 
 
@@ -250,8 +248,6 @@ function install(_Vue, cb) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-
-
 function load(name) {
   return __webpack_require__(5)("./" + name + '.vue').default;
 }
@@ -364,8 +360,6 @@ var Component = normalizeComponent(
 
 
 
-
-
 /* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0_vue___default.a.prototype.$meta.provider === 'framework7' ? {} : {
   'f7-page': __WEBPACK_IMPORTED_MODULE_1__mock_vue__["default"],
   'f7-navbar': __WEBPACK_IMPORTED_MODULE_1__mock_vue__["default"],
@@ -419,8 +413,6 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-
-
 /* harmony default export */ __webpack_exports__["default"] = ({
   'zh-cn': __webpack_require__(16).default
 });
@@ -431,8 +423,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-
-
 /* harmony default export */ __webpack_exports__["default"] = ({
   'Version Check Result': '版本检查结果'
 });

@@ -1,10 +1,3 @@
-/*
-* @Author: zhennann
-* @Date:   2017-10-11 16:25:16
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-11 16:25:43
-*/
-
 import Vue from 'vue';
 import mock from './mock.vue';
 

@@ -1,10 +1,3 @@
-/*
-* @Author: zhennann
-* @Date:   2017-09-08 14:49:08
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-17 13:23:11
-*/
-
 const require3 = require('require3');
 const semver = require('semver');
 
