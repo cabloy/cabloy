@@ -1,6 +1,6 @@
 export default{
   event: {
-    login: Symbol(),
-    logout: Symbol(),
+    login: 'eb:event:login',
+    logout: 'eb:event:logout',
   },
 };
