@@ -4,7 +4,7 @@ const util = require('./util.js');
 module.exports = function(loader, modules) {
 
   // all constants
-  const ebConstants = loader.app.constants = {};
+  const ebConstants = loader.app.meta.constants = {};
 
   // load constants
   loadConstants();
