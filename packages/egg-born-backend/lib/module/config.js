@@ -37,7 +37,7 @@ module.exports = function(loader, modules) {
       if (module.main.config) extend(true, ebConfig, module.main.config(loader.appInfo));
 
       // application config
-      if (loader.config.module && loader.config.module[module.info.relativeName]) { extend(true, ebConfig, loader.config.module[module.info.relativeName]); }
+      if (loader.config.modules && loader.config.modules[module.info.relativeName]) { extend(true, ebConfig, loader.config.modules[module.info.relativeName]); }
 
     });
   }
