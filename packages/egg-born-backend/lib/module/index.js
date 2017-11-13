@@ -3,6 +3,7 @@ const loadServices = require('./service.js');
 const loadConfig = require('./config.js');
 const loadLocales = require('./locales.js');
 const loadErrors = require('./errors.js');
+const loadConstants = require('./constant.js');
 const util = require('./util.js');
 
 module.exports = function(loader) {
@@ -15,5 +16,6 @@ module.exports = function(loader) {
   loadConfig(loader, modules);
   loadLocales(loader, modules);
   loadErrors(loader, modules);
+  loadConstants(loader, modules);
 
 };
