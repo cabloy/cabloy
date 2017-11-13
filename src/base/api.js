@@ -1,10 +1,3 @@
-/*
-* @Author: zhennann
-* @Date:   2017-09-24 17:13:11
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-18 21:50:36
-*/
-
 import util from './util.js';
 
 export default function(Vue, axios) {

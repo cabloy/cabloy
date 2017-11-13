@@ -1,10 +1,3 @@
-/*
-* @Author: zhennann
-* @Date:   2017-09-10 21:31:56
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-11 16:04:56
-*/
-
 import extend from 'extend2';
 import util from '../base/util.js';
 import fns from '../base/fns.js';

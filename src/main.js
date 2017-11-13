@@ -1,10 +1,3 @@
-/*
-* @Author: zhennann
-* @Date:   2017-09-08 21:31:56
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-27 14:30:26
-*/
-
 import Vue from 'vue';
 
 import main from '../../../src/front/main.js';

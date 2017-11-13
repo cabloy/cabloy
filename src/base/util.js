@@ -1,10 +1,3 @@
-/*
-* @Author: zhennann
-* @Date:   2017-09-12 21:18:27
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-21 13:36:42
-*/
-
 import extend from 'extend2';
 import mparse from 'egg-born-mparse';
 

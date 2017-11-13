@@ -1,10 +1,3 @@
-/*
-* @Author: zhennann
-* @Date:   2017-09-12 20:48:23
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-27 11:50:09
-*/
-
 import util from '../base/util.js';
 import mparse from 'egg-born-mparse';
 

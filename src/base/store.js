@@ -1,10 +1,3 @@
-/*
-* @Author: zhennann
-* @Date:   2017-09-23 23:21:35
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-24 17:48:57
-*/
-
 import Vuex from 'vuex';
 import util from './util.js';
 

@@ -1,10 +1,3 @@
-/*
-* @Author: zhennann
-* @Date:   2017-09-27 14:30:39
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-27 15:52:06
-*/
-
 import Cookies from 'js-cookie';
 import localeutil from 'egg-born-localeutil';
 
