@@ -15,7 +15,7 @@ export default function(Vue, options) {
         if (route && route.route.meta && route.route.meta.requiresAuth && !Vue.prototype.$meta.store.state.auth.loggedIn) {
           // emit event: login
           Vue.prototype.$meta.eventHub.$emit(
-            Vue.prototype.$meta.constants.events.login,
+            Vue.prototype.$meta.constant.event.login,
             { view, options }
           );
           return false;

@@ -6,7 +6,7 @@ import main from '../../../src/front/main.js';
 const meta = Vue.prototype.$meta = {};
 
 // constants
-meta.constants = require('./base/constant.js').default;
+meta.constant = require('./base/constant.js').default;
 
 // eventHub
 meta.eventHub = new Vue();

@@ -49,7 +49,7 @@ export default function(Vue, axios) {
     }, function(error) {
       if (error.code === 401) {
         // emit event: login
-        Vue.prototype.$meta.eventHub.$emit(Vue.prototype.$meta.constants.events.login, null);
+        Vue.prototype.$meta.eventHub.$emit(Vue.prototype.$meta.constant.event.login, null);
       }
       return Promise.reject(error);
     });
