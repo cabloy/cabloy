@@ -1,6 +1,6 @@
 {
   "name": "egg-born-front",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "egg-born-front",
   "scripts": {
     "dev": "node build/dev-server.js",
