@@ -966,7 +966,7 @@ function versionCheck(app) {
   const moduleInfo = app.mockUtil.parseInfoFromPackage(__dirname);
   const prefix = app.mockUtil.parseUrlFromPackage(__dirname);
 
-  const eventCheckReady = app.constants[moduleInfo.fullName].event.checkReady;
+  const eventCheckReady = app.meta.constants[moduleInfo.fullName].event.checkReady;
 
   if (app.config.env === 'unittest') {
     return app.httpRequest().post(`${prefix}/version/check`).then(result => {
