@@ -941,7 +941,7 @@ const services = __webpack_require__(15);
 const config = __webpack_require__(19);
 const locales = __webpack_require__(20);
 const errors = __webpack_require__(22);
-const messageCheckReady = 'eb:module:a-version:check-ready';
+const constants = __webpack_require__(23);
 
 // eslint-disable-next-line
 module.exports = app => {
@@ -956,13 +956,17 @@ module.exports = app => {
     config,
     locales,
     errors,
+    constants,
   };
 
 };
 
 function versionCheck(app) {
 
+  const moduleInfo = app.mockUtil.parseInfoFromPackage(__dirname);
   const prefix = app.mockUtil.parseUrlFromPackage(__dirname);
+
+  const eventCheckReady = app.constants[moduleInfo.fullName].event.checkReady;
 
   if (app.config.env === 'unittest') {
     return app.httpRequest().post(`${prefix}/version/check`).then(result => {
@@ -972,8 +976,8 @@ function versionCheck(app) {
         console.log(chalk.cyan('  Modules are checked failed!'));
       }
 
-      // send message
-      app.emit(messageCheckReady);
+      // emit event
+      app.emit(eventCheckReady);
     });
 
   } else if (app.config.env === 'local') {
@@ -990,15 +994,15 @@ function versionCheck(app) {
       }
       console.log(chalk.yellow('  For more details, please goto http://{ip}:{port}/#/a/version/check\n'));
 
-      // send message
-      app.messenger.sendToApp(messageCheckReady);
+      // emit event
+      app.emit(eventCheckReady);
     });
 
   }
 
   // prod
-  // just send message
-  return app.messenger.sendToApp(messageCheckReady);
+  // just emit event
+  app.emit(eventCheckReady);
 
 }
 
@@ -3657,6 +3661,17 @@ module.exports = {
   1001: 'module is old',
   1002: 'module %s not exists',
   1003: 'The module only run in development mode',
+};
+
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports) {
+
+module.exports = {
+  event: {
+    checkReady: Symbol(),
+  },
 };
 
 

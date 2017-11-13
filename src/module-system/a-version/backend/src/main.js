@@ -19,7 +19,7 @@ module.exports = app => {
     config,
     locales,
     errors,
-    constants: constants(app),
+    constants,
   };
 
 };
