@@ -1,10 +1,3 @@
-/*
-* @Author: zhennann
-* @Date:   2017-09-28 23:35:15
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-30 00:09:37
-*/
-
 module.exports = () => {
   return function* transaction(next) {
 

@@ -1,10 +1,3 @@
-/*
-* @Author: zhennann
-* @Date:   2017-09-25 16:39:21
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-11 18:06:08
-*/
-
 module.exports = {
   0: 'Success',
   1: 'Unknown Error',

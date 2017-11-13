@@ -1,10 +1,3 @@
-/*
-* @Author: zhennann
-* @Date:   2017-09-21 11:38:06
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-24 22:00:03
-*/
-
 const extend = require('extend2');
 const util = require('./util.js');
 

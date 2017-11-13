@@ -1,10 +1,3 @@
-/*
-* @Author: zhennann
-* @Date:   2017-09-19 10:24:40
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-28 23:59:48
-*/
-
 const is = require('is-type-of');
 
 module.exports = function(loader, modules) {

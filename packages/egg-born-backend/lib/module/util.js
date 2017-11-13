@@ -1,10 +1,3 @@
-/*
-* @Author: zhennann
-* @Date:   2017-09-24 21:49:55
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-20 00:39:17
-*/
-
 const mparse = require('egg-born-mparse').default;
 const glob = require('glob');
 const fse = require('fs-extra');
@@ -48,7 +41,7 @@ function __parseModules(modules, policy, loader) {
 
     if (!modules[info.fullName]) {
       modules[info.fullName] = { file, name, info, main: loader.loadFile(file), package: util.lookupPackage(file) };
-      if(loader.app.config.env === 'local') console.log(info.fullName, ':', file);
+      if (loader.app.config.env === 'local') console.log(info.fullName, ':', file);
     }
 
   });

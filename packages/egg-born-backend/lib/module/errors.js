@@ -1,17 +1,3 @@
-/*
-* @Author: zhennann
-* @Date:   2017-09-24 21:37:17
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-11 14:03:45
-*/
-
-/*
-* @Author: zhennann
-* @Date:   2017-09-21 11:38:06
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-21 11:40:46
-*/
-
 const extend = require('extend2');
 const util = require('./util.js');
 const assetErrors = require('./asset/errors.js');

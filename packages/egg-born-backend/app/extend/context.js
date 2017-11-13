@@ -1,10 +1,3 @@
-/*
-* @Author: zhennann
-* @Date:   2017-09-28 21:00:57
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-11 11:08:53
-*/
-
 const http = require('http');
 const compose_es7 = require('composition');
 const compose = require('koa-compose');
