@@ -18,8 +18,11 @@ module.exports = {
 // eslint-disable-next-line
 function createMockUtil(app) {
   return {
+    parseModuleInfo(dir) {
+      return this.parseInfoFromPackage(dir);
+    },
     parseUrlFromPackage(dir) {
-      const moduleInfo = this.parseInfoFromPackage(dir);
+      const moduleInfo = this.parseModuleInfo(dir);
       if (!moduleInfo) return null;
       return `/api/${moduleInfo.pid}/${moduleInfo.name}`;
     },
