@@ -4,7 +4,7 @@ export default function(Vue, _config) {
 
   // config
   const config = _config || {};
-  config.module = config.module || {};
+  config.modules = config.modules || {};
 
   // mixin
   Vue.mixin({ beforeCreate() {
@@ -14,7 +14,7 @@ export default function(Vue, _config) {
     Object.defineProperty(this, '$config', {
       get() {
         const moduleInfo = util.getModuleInfo(self);
-        return config.module[moduleInfo.relativeName];
+        return config.modules[moduleInfo.relativeName];
       },
     });
 

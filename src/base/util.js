@@ -65,8 +65,8 @@ export default {
   },
 
   registerConfig(config, moduleInfo, Vue) {
-    if (Vue.prototype.$meta.config.module[moduleInfo.relativeName]) { extend(true, config, Vue.prototype.$meta.config.module[moduleInfo.relativeName]); }
-    Vue.prototype.$meta.config.module[moduleInfo.relativeName] = config;
+    if (Vue.prototype.$meta.config.modules[moduleInfo.relativeName]) { extend(true, config, Vue.prototype.$meta.config.modules[moduleInfo.relativeName]); }
+    Vue.prototype.$meta.config.modules[moduleInfo.relativeName] = config;
   },
 
   registerLocales(locales, moduleInfo, Vue) {
