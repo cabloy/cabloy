@@ -1,7 +1,7 @@
 const { assert, app, mock, mm } = require('egg-mock/bootstrap');
 
 before(function(done) {
-  app.on('eb:module:a-version:check-ready', done);
+  app.on('eb:event:a-version:check-ready', done);
 });
 
 module.exports = function(dirname) {
