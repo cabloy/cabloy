@@ -4,7 +4,7 @@ const util = require('./util.js');
 module.exports = function(loader, modules) {
 
   // all configs
-  const ebConfigs = {};
+  const ebConfigs = loader.app.meta.configs = {};
 
   // load configs
   loadConfigs();

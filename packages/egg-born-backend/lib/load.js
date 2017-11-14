@@ -28,6 +28,10 @@ class CustomAgentWorkerLoader extends AgentWorkerLoader {
   }
   load() {
     super.load();
+
+    // load modules
+    loadModules(this);
+
   }
 
 }

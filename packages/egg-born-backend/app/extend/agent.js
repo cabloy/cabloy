@@ -1,6 +1,6 @@
 const common = require('./common.js');
 
-const MOCKUTIL = Symbol('Application#mockUtil');
+const MOCKUTIL = Symbol('Agent#mockUtil');
 
 module.exports = {
   get mockUtil() {
