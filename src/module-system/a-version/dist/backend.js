@@ -946,10 +946,14 @@ const constants = __webpack_require__(23);
 // eslint-disable-next-line
 module.exports = app => {
 
-  // only run in agent or unittest 
-  if (app.meta.inAgent || app.config.env === 'unittest') {
+  if (app.meta.inApp && app.config.env === 'unittest') {
     app.messenger.once('egg-ready', () => {
-      versionCheck(app);
+      versionCheck(app, true);
+    });
+  }
+  if (app.meta.inAgent && app.config.env !== 'unittest') {
+    app.messenger.once('egg-ready', () => {
+      versionCheck(app, false);
     });
   }
 
@@ -964,15 +968,15 @@ module.exports = app => {
 
 };
 
-function versionCheck(app) {
+function versionCheck(app, inApp) {
 
   const moduleInfo = app.mockUtil.parseInfoFromPackage(__dirname);
   const prefix = app.mockUtil.parseUrlFromPackage(__dirname);
 
   const eventCheckReady = app.meta.constants[moduleInfo.fullName].event.checkReady;
 
-  // in unittest
-  if (app.config.env === 'unittest') {
+  // in app
+  if (inApp) {
     return app.httpRequest().post(`${prefix}/version/check`).then(result => {
       if (result.body && result.body.code === 0) {
         console.log(chalk.cyan('  All modules are checked successfully!'));
