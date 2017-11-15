@@ -970,8 +970,8 @@ module.exports = app => {
 
 function versionCheck(app, inApp) {
 
-  const moduleInfo = app.mockUtil.parseInfoFromPackage(__dirname);
-  const prefix = app.mockUtil.parseUrlFromPackage(__dirname);
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const prefix = app.meta.mockUtil.parseUrlFromPackage(__dirname);
 
   const eventCheckReady = app.meta.constants[moduleInfo.fullName].event.checkReady;
 
