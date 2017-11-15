@@ -1,0 +1,52 @@
+#loading {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    z-index: 70;
+    width: 100%;
+    height: 3px;
+    background: @accentColor;
+    &.active {
+        -webkit-animation: loading-anim 1s ease-in-out infinite;
+        animation: loading-anim 1s ease-in-out infinite;
+    }
+}
+
+@-webkit-keyframes loading-anim {
+    from {}
+    to {
+        .transform(translateX(200%))
+    }
+}
+@keyframes loading-anim {
+    from {}
+    to {
+        .transform(translateX(200%))
+    }
+}
+
+.fade,
+.fade-scale {
+    opacity: 0;
+
+    &.in {
+        opacity: 1;
+        .transform(none);
+    }
+}
+.fade {
+    .transition(.4s);
+    .transform(translateY(50px));
+}
+.fade-scale {
+    .transition(.6s);
+    .transform(translate(10%, 20%) scale(.6));
+}
+
+@media screen and (max-width:480px) {
+    .fade,
+    .fade-scale {
+        opacity: 1;
+        .transform(none);
+    }
+}

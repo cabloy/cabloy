@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+<!-- Tencent Speed -->
+<script>var _speedMark = new Date()</script>
+<!-- End Tencent Speed -->
+<!-- Tencent Analysis -->
+<script async src="//tajs.qq.com/stats?sId=63883199"></script>
+<!-- End Tencent Analysis -->
+
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?86fcad11557504dbd37d5a61b1b6a069"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>EggBorn.js Showcase - Watch Articles | EggBorn.js | 一款顶级Javascript全栈开发框架</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="">
+    <meta name="description" content="EggBorn.js Showcase: Watch Articles这是EggBorn.js的案例，同时也是一个强大的工具，可以自动抓取文章的统计数字，诸如visits、 stars、 replies，等等。   Vue.js + Framework7 + Koa.js + Egg.js + MySQL + GitHub Passport  主要演示特性 模块异步加载 Framework7 Ta">
+<meta name="keywords" content="EggBorn,Egg,Vue,Framework7,Javascript,Full Stack,全栈开发框架">
+<meta property="og:type" content="article">
+<meta property="og:title" content="EggBorn.js Showcase - Watch Articles">
+<meta property="og:url" content="http://egg-born.org/zh-cn/showcase/watcharticles/index.html">
+<meta property="og:site_name" content="EggBorn.js">
+<meta property="og:description" content="EggBorn.js Showcase: Watch Articles这是EggBorn.js的案例，同时也是一个强大的工具，可以自动抓取文章的统计数字，诸如visits、 stars、 replies，等等。   Vue.js + Framework7 + Koa.js + Egg.js + MySQL + GitHub Passport  主要演示特性 模块异步加载 Framework7 Ta">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:image" content="http://egg-born.org/zh-cn/images/wa/qrcode.png">
+<meta property="og:image" content="http://egg-born.org/zh-cn/images/wa/1.jpg">
+<meta property="og:image" content="http://egg-born.org/zh-cn/images/wa/2.jpg">
+<meta property="og:image" content="https://avatars2.githubusercontent.com/u/24246985?s=40&v=4">
+<meta property="og:image" content="https://avatars2.githubusercontent.com/u/24246985?s=40&v=4">
+<meta property="og:image" content="https://avatars2.githubusercontent.com/u/24246985?s=40&v=4">
+<meta property="og:updated_time" content="2017-11-13T10:59:59.079Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="EggBorn.js Showcase - Watch Articles">
+<meta name="twitter:description" content="EggBorn.js Showcase: Watch Articles这是EggBorn.js的案例，同时也是一个强大的工具，可以自动抓取文章的统计数字，诸如visits、 stars、 replies，等等。   Vue.js + Framework7 + Koa.js + Egg.js + MySQL + GitHub Passport  主要演示特性 模块异步加载 Framework7 Ta">
+<meta name="twitter:image" content="http://egg-born.org/zh-cn/images/wa/qrcode.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="EggBorn.js" href="/zh-cn/atom.xml">
+    
+    
+    <link rel="icon" sizes="any" mask href="/zh-cn/images/eggborn.svg">
+    <link rel="stylesheet" href="/zh-cn/css/style.css?v=1.6.16">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/zh-cn/img/brand.jpg)">
+      <div class="brand">
+        <a href="https://github.com/zhennann/egg-born" class="avatar waves-effect waves-circle waves-light">
+          <img src="/zh-cn/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">zhennann</h5>
+          <a href="mailto:zhen.nann@icloud.com" title="zhen.nann@icloud.com" class="mail">zhen.nann@icloud.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/zh-cn/"  >
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/zhennann/egg-born" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://vuejs.org/index.html" target="_blank" >
+                <i class="icon icon-lg icon-link"></i>
+                Vue.js
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://framework7.io" target="_blank" >
+                <i class="icon icon-lg icon-link"></i>
+                Framework7
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://eggjs.org"  >
+                <i class="icon icon-lg icon-link"></i>
+                Egg.js
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://koajs.com"  >
+                <i class="icon icon-lg icon-link"></i>
+                Koa
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">EggBorn.js Showcase - Watch Articles</div>
+        <iframe class="github-star" src="https://ghbtns.com/github-btn.html?user=zhennann&repo=egg-born&type=star&count=true" frameborder="0" scrolling="0"></iframe>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="/en" class="header-icon waves-effect waves-circle waves-light">
+            en
+        </a>
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">EggBorn.js Showcase - Watch Articles</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-11-13T10:05:20.000Z" itemprop="datePublished" class="page-time">
+  2017-11-13
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/zh-cn/categories/showcase/">showcase</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>目录</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#EggBorn-js-Showcase-Watch-Articles"><span class="post-toc-number">1.</span> <span class="post-toc-text">EggBorn.js Showcase: Watch Articles</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#主要演示特性"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">主要演示特性</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#体验案例"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">体验案例</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#官网"><span class="post-toc-number">1.2.1.</span> <span class="post-toc-text">官网</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#截图"><span class="post-toc-number">1.2.2.</span> <span class="post-toc-text">截图</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#如何使用"><span class="post-toc-number">1.2.3.</span> <span class="post-toc-text">如何使用</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#模式库"><span class="post-toc-number">1.2.4.</span> <span class="post-toc-text">模式库</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#快速开始"><span class="post-toc-number">1.3.</span> <span class="post-toc-text">快速开始</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#安装"><span class="post-toc-number">1.3.1.</span> <span class="post-toc-text">安装</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#配置MySQL"><span class="post-toc-number">1.3.2.</span> <span class="post-toc-text">配置MySQL</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#运行"><span class="post-toc-number">1.3.3.</span> <span class="post-toc-text">运行</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#测试"><span class="post-toc-number">1.3.4.</span> <span class="post-toc-text">测试</span></a></li></ol></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-watcharticles"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">EggBorn.js Showcase - Watch Articles</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-11-13 18:05:20" datetime="2017-11-13T10:05:20.000Z"  itemprop="datePublished">2017-11-13</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/zh-cn/categories/showcase/">showcase</a></li></ul>
+
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="EggBorn-js-Showcase-Watch-Articles"><a href="#EggBorn-js-Showcase-Watch-Articles" class="headerlink" title="EggBorn.js Showcase: Watch Articles"></a>EggBorn.js Showcase: Watch Articles</h1><p>这是EggBorn.js的案例，同时也是一个强大的工具，可以自动抓取文章的统计数字，诸如visits、 stars、 replies，等等。 </p>
+<blockquote>
+<p>Vue.js + Framework7 + Koa.js + Egg.js + MySQL + GitHub Passport</p>
+</blockquote>
+<h2 id="主要演示特性"><a href="#主要演示特性" class="headerlink" title="主要演示特性"></a>主要演示特性</h2><ul>
+<li>模块异步加载</li>
+<li>Framework7 Tabs View布局</li>
+<li>全局Indicator显示与隐藏</li>
+<li>“上拉刷新”与“下拉加载”</li>
+<li>LoadMore组件设计</li>
+<li>Form Validate</li>
+<li>Login页面跳转逻辑</li>
+<li>GitHub Passport整合</li>
+</ul>
+<h2 id="体验案例"><a href="#体验案例" class="headerlink" title="体验案例"></a>体验案例</h2><h3 id="官网"><a href="#官网" class="headerlink" title="官网"></a>官网</h3><ul>
+<li>网址：<a href="http://wa.egg-born.org" target="_blank" rel="external">http://wa.egg-born.org</a></li>
+<li>二维码：</li>
+</ul>
+<p><br>    <img width="200" src="/zh-cn/images/wa/qrcode.png"><br></p>
+
+<h3 id="截图"><a href="#截图" class="headerlink" title="截图"></a>截图</h3><p><br>    <img width="200" src="/zh-cn/images/wa/1.jpg"><br></p><br><p><br>    <img width="200" src="/zh-cn/images/wa/2.jpg"><br></p>
+
+<h3 id="如何使用"><a href="#如何使用" class="headerlink" title="如何使用"></a>如何使用</h3><p>将文章添加进系统，系统会使用相应的模式代码自动抓取文章的统计数字。如果没有相应的模式代码，您也可以创建一个。</p>
+<h3 id="模式库"><a href="#模式库" class="headerlink" title="模式库"></a>模式库</h3><p>欢迎fork仓库<a href="https://github.com/zhennann/watch-articles" target="_blank" rel="external">watch-articles</a>，创建您自己的模块代码，提交<a href="https://github.com/zhennann/watch-articles/pulls" target="_blank" rel="external">PR</a>，然后发布到这里！</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">模式代码</th>
+<th style="text-align:left">作者</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">github-repo</td>
+<td style="text-align:left"><img width="20" height="20" src="https://avatars2.githubusercontent.com/u/24246985?s=40&v=4"> <a href="https://github.com/zhennann" target="_blank" rel="external">zhennann</a></td>
+</tr>
+<tr>
+<td style="text-align:left">cnode-topic</td>
+<td style="text-align:left"><img width="20" height="20" src="https://avatars2.githubusercontent.com/u/24246985?s=40&v=4"> <a href="https://github.com/zhennann" target="_blank" rel="external">zhennann</a></td>
+</tr>
+<tr>
+<td style="text-align:left">juejin-im-post</td>
+<td style="text-align:left"><img width="20" height="20" src="https://avatars2.githubusercontent.com/u/24246985?s=40&v=4"> <a href="https://github.com/zhennann" target="_blank" rel="external">zhennann</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="快速开始"><a href="#快速开始" class="headerlink" title="快速开始"></a>快速开始</h2><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ npm install</div></pre></td></tr></table></figure>
+<h3 id="配置MySQL"><a href="#配置MySQL" class="headerlink" title="配置MySQL"></a>配置MySQL</h3><p>修改文件: <code>src/backend/config/config.default.js</code></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// mysql</span></div><div class="line">config.mysql = &#123;</div><div class="line">  clients: &#123;</div><div class="line">    <span class="comment">// donot change the name  </span></div><div class="line">    __ebdb: &#123;</div><div class="line">      host: <span class="string">'127.0.0.1'</span>,</div><div class="line">      port: <span class="string">'3306'</span>,</div><div class="line">      user: <span class="string">'travis'</span>,</div><div class="line">      password: <span class="string">''</span>,</div><div class="line">      database: <span class="string">'watch-articles'</span>,</div><div class="line">    &#125;,</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<h3 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h3><p>启动后端服务<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ npm run dev:backend</div></pre></td></tr></table></figure></p>
+<p>启动前端服务<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ npm run dev:front</div></pre></td></tr></table></figure></p>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ npm run <span class="built_in">test</span>:backend</div><div class="line">$ npm run cov:backend</div></pre></td></tr></table></figure>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-11-13T10:59:59.079Z" itemprop="dateUpdated">2017-11-13 18:59:59</time>
+</span><br>
+
+
+        
+    </div>
+    <footer>
+        <a href="http://egg-born.org/zh-cn">
+            <img src="/zh-cn/img/avatar.jpg" alt="zhennann">
+            zhennann
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://egg-born.org/zh-cn/showcase/watcharticles/&title=《EggBorn.js Showcase - Watch Articles》 — EggBorn.js&pic=http://egg-born.org/zh-cn/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://egg-born.org/zh-cn/showcase/watcharticles/&title=《EggBorn.js Showcase - Watch Articles》 — EggBorn.js&source=一款顶级Javascript全栈开发框架" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://egg-born.org/zh-cn/showcase/watcharticles/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《EggBorn.js Showcase - Watch Articles》 — EggBorn.js&url=http://egg-born.org/zh-cn/showcase/watcharticles/&via=http://egg-born.org/zh-cn" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://egg-born.org/zh-cn/showcase/watcharticles/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/zh-cn/docs/tutorial/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">EggBorn.js开发指南</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitment_thread"></div>
+    <link rel="stylesheet" href="//unpkg.com/gitment/style/default.css">
+    <script src="//unpkg.com/gitment/dist/gitment.browser.js"></script>
+    <script>
+        var gitment = new Gitment({
+            id:'watcharticles',
+            owner: 'zhennann',
+            repo: 'egg-born',
+            oauth: {
+                client_id: '7603292a009078f75d72',
+                client_secret: 'a51a6d8e480b8bb6558a34a0c154f2ed0f712c77',
+            },
+        })
+        gitment.render('comments')
+    </script>
+</section>
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    
+    <div class="top">
+        
+
+        
+        <p>
+            
+                <span><a href="/zh-cn/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+              
+        </p>
+        
+    </div>
+    
+    <div class="bottom">
+        <p><span>zhennann &copy; 2017</span>
+            <span>
+                
+                <a href="http://www.miitbeian.gov.cn/" target="_blank">豫ICP备14023860号-1</a><br>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://egg-born.org/zh-cn/showcase/watcharticles/&title=《EggBorn.js Showcase - Watch Articles》 — EggBorn.js&pic=http://egg-born.org/zh-cn/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://egg-born.org/zh-cn/showcase/watcharticles/&title=《EggBorn.js Showcase - Watch Articles》 — EggBorn.js&source=一款顶级Javascript全栈开发框架" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://egg-born.org/zh-cn/showcase/watcharticles/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《EggBorn.js Showcase - Watch Articles》 — EggBorn.js&url=http://egg-born.org/zh-cn/showcase/watcharticles/&via=http://egg-born.org/zh-cn" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://egg-born.org/zh-cn/showcase/watcharticles/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACMUlEQVR42u3aS5LCMAxFUfa/6TBlgM19skNV5OsRBUmc0wO1Pn698Lo+1uj7z19Hn2u7bFsyZMh4LOOartEG5K4Riax0FxkyZJzAGEWw+avUrp/vyK+UIUOGDJLqpQGUpIAyZMiQsc6oFZ9p4ihDhgwZtSJ23mIjbTgepm+sxWXIkPFABu+6///zLfMNGTJkPIpxhYvcu55Wxm8lQ4aM1gwe4PiQMi1r+fc/ni9DhoymjDta/7zITI90DKkyZMg4hrGrxOVNf3LlPMX8EnBlyJDRjpEWk+RxaeOslj4Wo7gMGTIeyFhP4ziGX0+C+LBrKEOGjGMY/IX4eIBfH5fEMmTIOIbBj4LV0rt0zElSzB+TWBkyZLRgkNKRH1flkZCXykvjBxkyZLRgpK2xWoufj0L5AQ40iZUhQ0ZTxt5jE3c05oL/DzJkyGjBqB10WGnxB+3+dHggQ4aMpoy0mKy1+Eng5imjDBkyTmPwLWuHt3hzLU0Th6WsDBkyDmPwBtn6CJMX0sNALEOGjMMYaWs+TezW90KpoQwZMtoxeL99V5LHm/7oXhkyZBzA4CGSBMEUVjvqIUOGjBMYe0tW3tCvteSC3FaGDBmNGHztGh6kzwnOjMiQIaM1oxZk10cFJHEMgqwMGTIOYPBG20pZm44Q4lpchgwZMsLG2To+zl5lyJAhY9omq7XVdiWOMmTIOIFBQuG8QTa/ayntA38UGTJk9GbU8i6eOKa5HA/xMmTIOIDxBnFwQc9HWCANAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/zh-cn/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="/zh-cn/js/main.min.js?v=1.6.16"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/zh-cn/js/search.min.js?v=1.6.16" async></script>
+
+
+
+
+
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = "I'm waiting for you";
+            clearTimeout(titleTime);
+        } else {
+            document.title = "Welcome back";
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

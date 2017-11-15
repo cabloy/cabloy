@@ -1,0 +1,178 @@
+@color-weibo: #E6162D;
+@color-qq: #3D95D5;
+@color-weixin: #2BAD13;
+@color-facebook: #4862A3;
+@color-twitter: #55ACEE;
+@color-google-plus: #db4437;
+
+.share-icons {
+    li {
+        display: inline-block;
+    }
+
+    .icon-square:before {
+        display: inline-block;
+        text-align: center;
+        color: rgba(0,0,0,0);
+        border-radius: .2em;
+    }
+
+    a {
+        display: inline-block;
+        border-radius: .2em;
+        color: #fff;
+        text-align: center;
+        &.weibo {
+            background: @color-weibo
+        }
+
+        &.qq {
+            background: @color-qq
+        }
+
+        &.weixin {
+            background: @color-weixin
+        }
+
+        &.facebook {
+            background: @color-facebook
+        }
+
+        &.twitter {
+            background: @color-twitter
+        }
+
+        &.google {
+            background: @color-google-plus
+        }
+
+    }
+
+}
+
+.global-share {
+    position: fixed;
+    top: 56px;
+    right: 56px;
+    z-index: 96;
+    width: 260px;
+    padding: 16px  6px;
+    background: #fff;
+    border-radius: 3px;
+    visibility: hidden;
+    .boxShadow(.3s);
+    .transform(scale(0));
+    transform-origin: top right;
+    -webkit-transform-origin: top right;
+
+    &.in {
+        visibility: visible;
+        .transform(none);
+    }
+
+    .share-icons {
+        margin: 0 auto;
+    }
+
+    li {
+        width: 80px;
+        text-align: center;
+    }
+
+    a {
+        position: relative;
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        margin-bottom: 20px;
+        font-size: 1.33333333em;
+        &:after {
+            position: absolute;
+            bottom: -22px;
+            left: 50%;
+            content: attr(data-title);
+            white-space: nowrap;
+            line-height: 20px;
+            font-size: 12px;
+            color: @primaryColor;
+            .transform(translateX(-50%));
+        }
+
+    }
+
+}
+
+@share-fab-size: 42px;
+@share-icon-size: @share-fab-size - 8px;
+
+.page-share-fab {
+    display: block;
+    width: @share-fab-size;
+    height: @share-fab-size;
+    line-height: @share-fab-size;
+    color: @primaryColor;
+    background: lighten( @lightPrimaryColor, 10%);
+    .boxShadow();
+}
+
+.page-share-wrap {
+    position: absolute;
+    right: 35px;
+    top: @share-fab-size / -2;
+    z-index: 2;
+    .page-share {
+        visibility: hidden
+    }
+}
+
+.page-share {
+    position: absolute;
+    bottom: @share-fab-size + 6px;
+    right: 4px;
+    text-align: center;
+    width: @share-icon-size;
+
+    &.in {
+        visibility: visible;
+        .share-icons a {
+            opacity: 1;
+            .transform(scale(1));
+        }
+    }
+
+    .share-icons {
+        a {
+            width: @share-icon-size;
+            height: @share-icon-size;
+            line-height: @share-icon-size;
+            font-size: 1.33333em;
+            border-radius: 50%;
+            .tip-left();
+            .boxShadow(.3s);
+            opacity: 0;
+            .transform(scale(0));
+            -webkit-transform-origin: center bottom;
+            transform-origin: center bottom;
+
+            &:before {
+                content: '分享到'attr(data-title)
+            }
+
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+    }
+}
+
+.wx-share {
+    p {
+        margin: 0 0 15px;
+    }
+
+    img {
+        width: 200px;
+    }
+}
