@@ -6,7 +6,7 @@
     "lint": "cd test && npm run lint && cd ..",
     "test:backend": "cd test && npm run test:backend && cd ..",
     "cov:backend": "cd test && npm run cov:backend && cd ..",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
+    "commits": "./scripts/commits.sh"
   },
   "preferGlobal": true,
   "bin": {
@@ -29,7 +29,6 @@
   "homepage": "https://github.com/zhennann/egg-born#readme",
   "devDependencies": {
     "babel-eslint": "^7.2.3",
-    "cz-conventional-changelog": "^2.1.0",
     "eslint": "^4.5.0",
     "eslint-config-egg": "^5.1.0"
   },
@@ -37,10 +36,5 @@
     "co": "^4.6.0",
     "egg-init": "^1.11.0",
     "egg-born-init-config": "^1.0.1"
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
   }
 }
