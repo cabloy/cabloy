@@ -1,27 +1,27 @@
 module.exports = () => {
-  return function* transaction(next) {
+  return async function transaction(ctx, next) {
 
     // set flag
-    this.dbMeta.transaction = true;
+    ctx.dbMeta.transaction = true;
 
     try {
       // next
-      yield next;
+      await next();
 
       // check if success
-      if (this.response.body && this.response.body.code !== 0) { yield handleTransaction(this, false); } else { yield handleTransaction(this, true); }
+      if (ctx.response.body && ctx.response.body.code !== 0) { await handleTransaction(ctx, false); } else { await handleTransaction(ctx, true); }
     } catch (err) {
-      yield handleTransaction(this, false);
+      await handleTransaction(ctx, false);
       throw err;
     }
 
   };
 };
 
-function* handleTransaction(ctx, success) {
+async function handleTransaction(ctx, success) {
   if (ctx.dbMeta.master && ctx.dbMeta.connection.conn) {
     const tran = ctx.dbMeta.connection.conn;
     ctx.dbMeta.connection.conn = null;
-    if (success) { yield tran.commit(); } else { yield tran.rollback(); }
+    if (success) { await tran.commit(); } else { await tran.rollback(); }
   }
 }

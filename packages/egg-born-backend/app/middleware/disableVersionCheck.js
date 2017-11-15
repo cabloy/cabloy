@@ -1,8 +1,8 @@
 module.exports = () => {
-  return function* disableVersionCheck(next) {
+  return async function disableVersionCheck(ctx, next) {
     // only access from localhost
-    if (this.ip !== '127.0.0.1') this.throw(403);
+    if (ctx.ip !== '127.0.0.1') ctx.throw(403);
     // next
-    yield next;
+    await next();
   };
 };
