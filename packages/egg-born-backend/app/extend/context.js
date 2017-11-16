@@ -1,7 +1,5 @@
 const http = require('http');
-const compose_es7 = require('composition');
 const compose = require('koa-compose');
-const co = require('co');
 const onFinished = require('on-finished');
 const statuses = require('statuses');
 const isJSON = require('koa-is-json');
@@ -81,12 +79,7 @@ module.exports = {
 };
 
 function appCallback() {
-  if (this.experimental) {
-    console.error('Experimental ES7 Async Function support is deprecated. Please look into Koa v2 as the middleware signature has changed.');
-  }
-  const fn = this.experimental
-    ? compose_es7(this.middleware)
-    : co.wrap(compose(this.middleware));
+  const fn = compose(this.middleware);
   const self = this;
 
   if (!this.listeners('error').length) this.on('error', this.onerror);
