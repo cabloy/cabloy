@@ -1,6 +1,6 @@
 {
   "name": "egg-born-mock",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "egg-born-mock",
   "main": "src/main.js",
   "repository": {
@@ -20,16 +20,17 @@
   "homepage": "https://github.com/zhennann/egg-born-mock#readme",
   "devDependencies": {
     "babel-core": "^6.26.0",
-    "babel-eslint": "^7.2.3",
+    "babel-eslint": "^8.0.2",
     "babel-loader": "^7.1.2",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.6.0",
     "babel-preset-stage-2": "^6.24.1",
     "babel-register": "^6.26.0",
-    "eslint": "^4.5.0",
-    "eslint-config-egg": "^5.1.0",
-    "eslint-plugin-vuefix": "^0.2.0",
-    "egg-mock": "^3.10.0"
+    "eslint": "^4.11.0",
+    "eslint-config-egg": "^5.1.1",
+    "eslint-plugin-vuefix": "^0.2.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "egg-mock": "^3.13.1"
+  }
 }
