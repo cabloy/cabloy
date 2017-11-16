@@ -9,4 +9,9 @@ module.exports = {
     package: 'egg-mysql',
   },
 
+  passport: {
+    enable: true,
+    package: 'egg-passport',
+  },
+
 };
