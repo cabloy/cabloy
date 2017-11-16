@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-version",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "eggBornModule": {
     "fileVersion": 1,
     "dependencies": {}
@@ -28,10 +28,10 @@
   },
   "homepage": "https://github.com/zhennann/egg-born-module-a-version#readme",
   "devDependencies": {
-    "babel-eslint": "^7.2.3",
-    "eslint": "^4.5.0",
-    "eslint-config-egg": "^5.1.0",
-    "eslint-plugin-vuefix": "^0.2.0",
+    "babel-eslint": "^8.0.2",
+    "eslint": "^4.11.0",
+    "eslint-config-egg": "^5.1.1",
+    "eslint-plugin-vuefix": "^0.2.1",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-plugin-transform-runtime": "^6.23.0",
