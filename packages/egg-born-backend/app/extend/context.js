@@ -106,7 +106,7 @@ function appCallback() {
     ctx.dbMeta = ctxCaller.dbMeta;
 
     // call
-    fn.call(ctx).then(function handleResponse() {
+    fn(ctx).then(function handleResponse() {
       respond.call(ctx);
       if (ctx.status === 200 && ctx.body) {
         if (ctx.body.code === 0) {
