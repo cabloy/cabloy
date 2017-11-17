@@ -1,3 +1,4 @@
+const qs = require('querystring');
 const eventLoadSchedules = 'eb:event:loadSchedules';
 
 module.exports = function(loader, modules) {
@@ -15,6 +16,22 @@ module.exports = function(loader, modules) {
   loader.app.messenger.once('egg-ready', () => {
     loader.app.messenger.sendToAgent(eventLoadSchedules, ebSchedules);
   });
+
+  // for test purpose
+  loader.app.meta.runSchedule = key => {
+    const schedule = ebSchedules[key];
+    if (!schedule) {
+      throw new Error(`Cannot find schedule ${key}`);
+    }
+
+    // run with anonymous context
+    const ctx = loader.app.createAnonymousContext({
+      method: 'SCHEDULE',
+      url: `/__schedule?path=${key}&${qs.stringify(schedule.schedule)}`,
+    });
+
+    return schedule.task(ctx);
+  };
 
   function loadSchedules() {
     Object.keys(modules).forEach(key => {
