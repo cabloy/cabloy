@@ -5,7 +5,7 @@ const loadConfig = require('./config.js');
 const loadLocales = require('./locales.js');
 const loadErrors = require('./errors.js');
 const loadConstants = require('./constant.js');
-const loadSchedules = require('./schedule.js');
+const loadSchedules = require('./schedule/app.js');
 
 const util = require('./util.js');
 
@@ -17,22 +17,12 @@ module.exports = function(loader) {
   // modules
   const modules = meta.modules = util.parseModules(loader);
 
-  // load in app
-  if (meta.inApp) {
-    loadRoutes(loader, modules);
-    loadServices(loader, modules);
-    loadConfig(loader, modules);
-    loadLocales(loader, modules);
-    loadErrors(loader, modules);
-    loadConstants(loader, modules);
-    loadSchedules(loader, modules);
-  }
-
-  // load in agent
-  if (meta.inAgent) {
-    loadConfig(loader, modules);
-    loadConstants(loader, modules);
-    loadSchedules(loader, modules);
-  }
+  loadRoutes(loader, modules);
+  loadServices(loader, modules);
+  loadConfig(loader, modules);
+  loadLocales(loader, modules);
+  loadErrors(loader, modules);
+  loadConstants(loader, modules);
+  loadSchedules(loader, modules);
 
 };
