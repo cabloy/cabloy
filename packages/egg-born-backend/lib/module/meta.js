@@ -12,6 +12,8 @@ module.exports = function(loader) {
 
   // isProd
   meta.isProd = loader.app.config.env !== 'local' && loader.app.config.env !== 'unittest' && loader.app.config.env !== 'test';
+  // isTest
+  meta.isTest = loader.app.config.env === 'unittest' || loader.app.config.env === 'test';
 
   // mockUtil
   meta.mockUtil = createMockUtil();
