@@ -44,12 +44,23 @@ module.exports = function(loader, modules) {
           const scheduleConfig = loader.app.meta.configs[module.info.fullName].schedules[scheduleKey];
           ebSchedules[fullKey] = {
             schedule: scheduleConfig,
-            task: scheduleTask,
+            task: wrapTask(scheduleTask, fullKey, scheduleConfig, module.info),
             key: fullKey,
           };
         });
       }
     });
+  }
+
+  function wrapTask(task, key, schedule, moduleInfo) {
+    return function() {
+      const ctx = loader.app.createAnonymousContext({
+        method: 'SCHEDULE',
+        url: `/api/${moduleInfo.url}/__schedule?path=${key}&${qs.stringify(schedule)}`,
+      });
+      return task(ctx);
+    };
+
   }
 
 };
