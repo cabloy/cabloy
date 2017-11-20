@@ -40,8 +40,9 @@ function __parseModules(modules, policy, loader) {
     const info = mparse.parseInfo(name);
 
     if (!modules[info.fullName]) {
-      modules[info.fullName] = { file, name, info, main: loader.loadFile(file), package: util.lookupPackage(file) };
-      if (loader.app.config.env === 'local' && loader.app.meta.inAgent) console.log(info.fullName, ':', file);
+      const pkg = util.lookupPackage(file);
+      modules[info.fullName] = { file, name, info, pkg, main: loader.loadFile(file, loader.app, info, pkg) };
+      if (loader.app.config.env === 'local') console.log(info.fullName, ':', file);
     }
 
   });
