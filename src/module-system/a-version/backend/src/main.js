@@ -7,11 +7,10 @@ const constants = require('./config/constants.js');
 const schedules = require('./config/schedules.js');
 
 // eslint-disable-next-line
-module.exports = app => {
+module.exports = (app,moduleInfo) => {
 
   if (app.meta.isTest) {
     app.messenger.once('egg-ready', () => {
-      const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
       app.meta.runSchedule(`${moduleInfo.fullName}:versionCheck`);
     });
   }

@@ -81,8 +81,8 @@ module.exports = app => {
 
       // fileVersionNew
       let fileVersionNew = 0;
-      if (module.pkg.eggBornModule && module.pkg.eggBornModule.fileVersion) {
-        fileVersionNew = module.pkg.eggBornModule.fileVersion;
+      if (module._pkg.eggBornModule && module._pkg.eggBornModule.fileVersion) {
+        fileVersionNew = module._pkg.eggBornModule.fileVersion;
       }
 
       if (!fileVersionNew) return;
@@ -108,9 +108,9 @@ module.exports = app => {
     // check dependencies
     async __checkDependencies(module) {
 
-      if (!module.pkg.eggBornModule || !module.pkg.eggBornModule.dependencies) return;
+      if (!module._pkg.eggBornModule || !module._pkg.eggBornModule.dependencies) return;
 
-      const dependencies = module.pkg.eggBornModule.dependencies;
+      const dependencies = module._pkg.eggBornModule.dependencies;
       const keys = Object.keys(dependencies);
       for (const key of keys) {
         const subModule = this.__getModule(key);
@@ -119,7 +119,7 @@ module.exports = app => {
           this.ctx.throw(1002, key);
         }
         const subModuleVersion = dependencies[key];
-        if (semver.lt(subModule.pkg.version, subModuleVersion)) {
+        if (semver.lt(subModule._pkg.version, subModuleVersion)) {
           subModule.__check = this.ctx.parseFail(1001);
           this.ctx.throw(1001);
         }
@@ -154,7 +154,7 @@ module.exports = app => {
       const module = this.app.meta.modules[fullName];
       if (!module) return null;
 
-      if (!module.pkg) module.pkg = require3(module.package);
+      if (!module._pkg) module._pkg = require3(module.pkg);
       return module;
     }
 
