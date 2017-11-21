@@ -229,7 +229,7 @@ In the file `backend/src/routes.js`, add the api route:
 const home = require('./controller/home.js');
 
 module.exports = [
-  { method: 'get', path: 'home/index', controller: home, action: 'index', transaction: true },
+  { method: 'get', path: 'home/index', controller: home, action: 'index', middlewares:'transaction' },
 ];
 ```
 
@@ -237,7 +237,7 @@ module.exports = [
 > - `path`: Supports parameters
 > - `component`: Controller Component
 > - `action`: Controller Action. If not set, will use the last word of `path` automatically.
-> - `transaction`: Default is false. If set to true, the database transaction will be enabled.
+> - `middlewares`: middlewares, such as `transaction` means enable the database transaction.
 
 Access the api route of the same module in the frontend page component:
 ``` javascript
@@ -323,7 +323,7 @@ The backend database operation is consistent with Egg.js
 
 #### Backend Database Transaction
 
-EggBorn.js offers a more convenient database transaction processing. You just need to configure the transaction parameter in the backend api route. Service uses `ctx.db` to operate database.
+EggBorn.js offers a more convenient database transaction processing. You just need to configure the `transaction` middleware in the backend api route. Service uses `ctx.db` to operate database.
 If the `controller caller` calls the `controller callee` through `ctx.performAction`, the database transaction status is as follow:
 
 | Controller Caller Config | Controller Callee Config | Controller Callee Status |
@@ -431,7 +431,7 @@ In the file `package.json` of the module, configure `fileVersion` as the current
 
 Add backend api route:
 ``` javascript
-{ method: 'post', path: 'version/update', controller: version }
+{ method: 'post', path: 'version/update', controller: version, middlewares: 'safeAccess' }
 ```
 
 Add backend controller:

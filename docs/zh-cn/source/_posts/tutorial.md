@@ -218,7 +218,7 @@ const message = this.$text("Hello world! I'm %s.",'zhennann');
 const home = require('./controller/home.js');
 
 module.exports = [
-  { method: 'get', path: 'home/index', controller: home, action: 'index', transaction: true },
+  { method: 'get', path: 'home/index', controller: home, action: 'index', middlewares:'transaction' },
 ];
 ```
 
@@ -226,7 +226,7 @@ module.exports = [
 > - `path`: 路径，支持参数
 > - `component`: Controller对象
 > - `action`: Controller方法，如果不设置，则自动采用path尾部单词
-> - `transaction`: 默认为false，如果设为true，则启用数据库事务
+> - `middlewares`: 可指定一组中间件，如`transaction`是启用数据库事务
 
 在前端页面组件中访问本模块api路由
 ``` javascript
@@ -308,7 +308,7 @@ const message = await this.ctx.performAction({
 > 更多信息，请参阅: [Egg.js MySQL](https://eggjs.org/zh-cn/tutorials/mysql.html)
 
 #### 后端数据库事务
-EggBorn.js提供了更为便利的数据库事务实现方式，只需在后端api路由记录中配置`transaction`参数，Service使用`ctx.db`操作数据库。
+EggBorn.js提供了更为便利的数据库事务实现方式，只需在后端api路由记录中添加`transaction`中间件，Service使用`ctx.db`操作数据库。
 如果是主Controller通过`ctx.performAction`调用子Controller，数据库事务开启规则如下：
 
 | 主Controller配置 | 子Controller配置 | 子Controller实际启用 |
@@ -408,7 +408,7 @@ EggBorn.js通过`package.json`文件管理模块依赖关系。
 
 在模块后端添加Api路由
 ``` javascript
-{ method: 'post', path: 'version/update', controller: version }
+{ method: 'post', path: 'version/update', controller: version, middlewares: 'safeAccess' }
 ```
 
 添加version Controller
