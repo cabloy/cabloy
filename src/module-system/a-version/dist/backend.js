@@ -944,11 +944,11 @@ const constants = __webpack_require__(12);
 const schedules = __webpack_require__(13);
 
 // eslint-disable-next-line
-module.exports = (app,moduleInfo) => {
+module.exports = (app,{info}) => {
 
   if (app.meta.isTest) {
     app.messenger.once('egg-ready', () => {
-      app.meta.runSchedule(`${moduleInfo.fullName}:versionCheck`);
+      app.meta.runSchedule(`${info.fullName}:versionCheck`);
     });
   }
 
