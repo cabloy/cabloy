@@ -15,13 +15,20 @@ module.exports = function(loader, modules) {
         const args = [];
         // path
         args.push(`/api/${module.info.url}/${route.path}`);
-        // transaction
-        if (route.transaction === true) {
-          args.push(loader.app.middlewares.transaction());
+
+        // middlewares
+        if (route.middlewares) {
+          let middlewares = route.middlewares;
+          if (is.string(middlewares)) middlewares = middlewares.split(',');
+          middlewares.forEach(key => {
+            args.push(loader.app.middlewares[key]());
+          });
         }
+
         // action
         if (!route.action) route.action = route.path.substr(route.path.lastIndexOf('/') + 1);
         args.push(methodToMiddleware(route.controller(loader.app), route.action));
+
         // load
         loader.app[route.method].apply(loader.app, args);
       });

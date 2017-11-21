@@ -1,4 +1,3 @@
+// eslint-disable-next-line
 module.exports = app => {
-  // coreMiddleware
-  app.config.coreMiddleware.push('disableVersionCheck');
 };

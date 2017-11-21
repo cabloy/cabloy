@@ -1,3 +1,4 @@
+const loadMiddlewares = require('./middleware.js');
 const loadRoutes = require('./route.js');
 const loadMeta = require('./meta.js');
 const loadServices = require('./service.js');
@@ -17,12 +18,13 @@ module.exports = function(loader) {
   // modules
   const modules = meta.modules = util.parseModules(loader);
 
-  loadRoutes(loader, modules);
-  loadServices(loader, modules);
   loadConfig(loader, modules);
   loadLocales(loader, modules);
   loadErrors(loader, modules);
   loadConstants(loader, modules);
+  loadMiddlewares(loader, modules);
+  loadRoutes(loader, modules);
+  loadServices(loader, modules);
   loadSchedules(loader, modules);
 
 };

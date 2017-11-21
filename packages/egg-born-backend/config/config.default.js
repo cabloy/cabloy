@@ -4,6 +4,14 @@ const _config = require('../../../build/config.js');
 module.exports = appInfo => {
   const config = {};
 
+  // cluster
+  config.cluster = {
+    listen: {
+      port: _config.backend.port,
+      hostname: _config.backend.hostname,
+    },
+  };
+
   // safe
   config.security = {
     csrf: {
@@ -17,11 +25,11 @@ module.exports = appInfo => {
     agent: false,
   };
 
-  // cluster
-  config.cluster = {
-    listen: {
-      port: _config.backend.port,
-      hostname: _config.backend.hostname,
+  // middleware safeAccess
+  config.safeAccess = {
+    enable: true,
+    whitelist: {
+      '127.0.0.1': true,
     },
   };
 
