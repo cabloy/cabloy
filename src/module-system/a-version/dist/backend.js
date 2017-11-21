@@ -972,10 +972,10 @@ module.exports = (app,{info}) => {
 const version = __webpack_require__(3);
 
 module.exports = [
-  { method: 'post', path: 'version/check', controller: version },
-  { method: 'post', path: 'version/updateModule', controller: version, transaction: true },
-  { method: 'post', path: 'version/update', controller: version },
-  { method: 'get', path: 'version/result', controller: version },
+  { method: 'post', path: 'version/check', controller: version, middlewares: 'safeAccess' },
+  { method: 'post', path: 'version/updateModule', controller: version, middlewares: 'safeAccess,transaction' },
+  { method: 'post', path: 'version/update', controller: version, middlewares: 'safeAccess' },
+  { method: 'get', path: 'version/result', controller: version, middlewares: 'safeAccess' },
 ];
 
 
