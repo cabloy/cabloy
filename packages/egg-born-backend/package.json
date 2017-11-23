@@ -1,6 +1,6 @@
 {
   "name": "egg-born-backend",
-  "version": "1.0.40",
+  "version": "1.0.41",
   "description": "egg-born-backend",
   "scripts": {
     "lint": "eslint ."
@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/zhennann/egg-born-backend#readme",
   "dependencies": {
-    "egg": "^2.0.0-beta.2",
+    "egg": "^2.0.0",
     "is-type-of": "^1.2.0",
     "glob": "^7.1.2",
     "extend2": "^1.0.0",
@@ -34,7 +34,7 @@
     "egg-born-mparse": "^1.0.3",
     "egg-mysql": "^3.0.0",
     "egg-passport": "^2.0.0",
-    "egg-schedule": "^3.1.0",
+    "egg-schedule": "^3.1.1",
     "eslint": "^4.11.0",
     "eslint-config-egg": "^5.1.1",
     "supertest": "^3.0.0"
