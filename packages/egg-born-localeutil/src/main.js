@@ -1,11 +1,3 @@
-/*
-* @Author: zhennann
-* @Date:   2017-09-27 15:24:36
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-20 00:23:04
-*/
-
-
 /**
  * based on nodejs util.js
  * 
