@@ -44,7 +44,7 @@
 <meta property="og:image" content="http://egg-born.org/en/images/structure.png">
 <meta property="og:image" content="http://egg-born.org/en/images/privatemodule.png">
 <meta property="og:image" content="http://egg-born.org/en/images/publicmodule.png">
-<meta property="og:updated_time" content="2017-11-21T09:47:49.559Z">
+<meta property="og:updated_time" content="2017-11-28T12:44:57.109Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="EggBorn.js Development Guide">
 <meta name="twitter:description" content="What is EggBorn.js? EggBorn.js is the Ultimate Javascript Full Stack Framework.  EggBorn.js is the best practice for implementing full stack with Javascript.EggBorn.js does not ‘Reinvent the Wheel’, b">
@@ -245,6 +245,7 @@
 </blockquote>
 <h3 id="Configure-MySQL"><a href="#Configure-MySQL" class="headerlink" title="Configure MySQL"></a>Configure MySQL</h3><p>If choose the template <code>front-backend-mysql</code>, please configure mysql connection parameters. (empty database just does well)</p>
 <p>Edit the file: <code>src/backend/config/config.default.js</code><br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// mysql</span></div><div class="line">config.mysql = &#123;</div><div class="line">  clients: &#123;</div><div class="line">    <span class="comment">// donot change the name  </span></div><div class="line">    __ebdb: &#123;</div><div class="line">      host: <span class="string">'127.0.0.1'</span>,</div><div class="line">      port: <span class="string">'3306'</span>,</div><div class="line">      user: <span class="string">'travis'</span>,</div><div class="line">      password: <span class="string">''</span>,</div><div class="line">      database: <span class="string">'egg-born'</span>,</div><div class="line">    &#125;,</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>Edit the file: <code>src/backend/config/config.unittest.js</code><br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// mysql</span></div><div class="line">config.mysql = &#123;</div><div class="line">  clients: &#123;</div><div class="line">    <span class="comment">// donot change the name  </span></div><div class="line">    __ebdb: &#123;</div><div class="line">      host: <span class="string">'127.0.0.1'</span>,</div><div class="line">      port: <span class="string">'3306'</span>,</div><div class="line">      user: <span class="string">'root'</span>,</div><div class="line">      password: <span class="string">''</span>,</div><div class="line">      database: <span class="string">'sys'</span>,</div><div class="line">    &#125;,</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <h3 id="Run"><a href="#Run" class="headerlink" title="Run"></a>Run</h3><p>Start Backend Service<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ npm run dev:backend</div></pre></td></tr></table></figure></p>
 <p>Start Frontend Service<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ npm run dev:front</div></pre></td></tr></table></figure></p>
 <h2 id="EggBorn-js-Structure-Diagram"><a href="#EggBorn-js-Structure-Diagram" class="headerlink" title="EggBorn.js Structure Diagram"></a>EggBorn.js Structure Diagram</h2><h3 id="System-Structure"><a href="#System-Structure" class="headerlink" title="System Structure"></a>System Structure</h3><figure class="image-bubble">
@@ -447,7 +448,7 @@
     <div class="content">
         
 <span class="post-time">
-    Last updated: <time datetime="2017-11-21T09:47:49.559Z" itemprop="dateUpdated">2017-11-21 17:47:49</time>
+    Last updated: <time datetime="2017-11-28T12:44:57.109Z" itemprop="dateUpdated">2017-11-28 20:44:57</time>
 </span><br>
 
 

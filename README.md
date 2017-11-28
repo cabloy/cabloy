@@ -76,6 +76,24 @@ Edit file: `src/backend/config/config.default.js`
   };
 ```
 
+Edit file: `src/backend/config/config.unittest.js`
+
+``` javascript
+  // mysql
+  config.mysql = {
+    clients: {
+      // donot change the name  
+      __ebdb: {
+        host: '127.0.0.1',
+        port: '3306',
+        user: 'root',
+        password: '',
+        database: 'sys',
+      },
+    },
+  };
+```
+
 ### Run
 
 Start backend service

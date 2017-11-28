@@ -76,6 +76,24 @@ $ npm install
   };
 ```
 
+修改文件: `src/backend/config/config.unittest.js`
+
+``` javascript
+  // mysql
+  config.mysql = {
+    clients: {
+      // donnot change the name
+      __ebdb: {
+        host: '127.0.0.1',
+        port: '3306',
+        user: 'root',
+        password: '',
+        database: 'sys',
+      },
+    },
+  };
+```
+
 ### 运行
 
 启动后端服务
