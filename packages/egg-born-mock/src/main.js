@@ -38,5 +38,8 @@ module.exports = function(dirname) {
       const prefix = app.meta.mockUtil.parseUrlFromPackage(dirname);
       return url ? `${prefix}/${url}` : `${prefix}/`;
     },
+    mockInfo() {
+      return app.meta.mockUtil.parseInfoFromPackage(dirname);
+    }
   };
 };
