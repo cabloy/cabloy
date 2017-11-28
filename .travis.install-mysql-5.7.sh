@@ -5,3 +5,4 @@ sudo apt-get update -q
 sudo apt-get install -q -y --allow-unauthenticated -o Dpkg::Options::=--force-confnew mysql-server
 sudo mysql_upgrade
 mysql --version
+mysql --user=root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY ''"

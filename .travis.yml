@@ -3,12 +3,11 @@ sudo: required
 language: node_js
 node_js:
   - '8'
+  - '9'
 services:
   - mysql
 before_install:
   - bash .travis.install-mysql-5.7.sh
-  - mysql -e 'CREATE DATABASE `egg-born` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci' -uroot
-  - mysql -e 'grant all privileges on `egg-born`.* to travis@localhost' -uroot
 install:
   - npm i -g egg-born
   - egg-born test-full-stack --type="front-backend-mysql" --silent
