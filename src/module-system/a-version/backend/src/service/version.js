@@ -140,7 +140,7 @@ module.exports = app => {
       }
 
       // for test
-      versions.push(0);
+      if (this.app.meta.isTest) versions.push(0);
 
       // loop
       for (const version of versions) {
