@@ -5,6 +5,10 @@ module.exports = app => {
     async update(version) {
       // eslint-disable-next-line
       if (version === 1) {}
+
+      // can provide test data here
+      // eslint-disable-next-line
+      if (version === 0) {}
     }
 
   }
