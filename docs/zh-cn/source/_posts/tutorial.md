@@ -453,6 +453,10 @@ module.exports = app => {
       if (version === 1) {
         // do something
       }
+
+      if (version === 0) {
+        // can provide test data here
+      }
     }
 
   }
