@@ -1,10 +1,3 @@
-/*
-* @Author: zhennann
-* @Date:   2017-09-25 22:00:50
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-10-20 00:16:52
-*/
-
 const PREFIX_A = '/api/';
 const PREFIX_B = 'egg-born-module-';
 const PREFIX_C = './';

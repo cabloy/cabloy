@@ -70,8 +70,6 @@ module.exports =
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-
-
 var PREFIX_A = '/api/';
 var PREFIX_B = 'egg-born-module-';
 var PREFIX_C = './';
