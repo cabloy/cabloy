@@ -1,10 +1,3 @@
-/*
-* @Author: zhennann
-* @Date:   2017-09-09 11:39:56
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-10 18:45:25
-*/
-
 const path = require('path');
 const Command = require('egg-bin').Command;
 

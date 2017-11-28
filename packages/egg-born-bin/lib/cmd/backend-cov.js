@@ -1,10 +1,3 @@
-/*
-* @Author: zhennann
-* @Date:   2017-09-27 23:33:42
-* @Last Modified by:   zhennann
-* @Last Modified time: 2017-09-27 23:39:00
-*/
-
 const path = require('path');
 const CovCommand = require('egg-bin').CovCommand;
 
