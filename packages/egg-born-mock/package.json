@@ -1,6 +1,6 @@
 {
   "name": "egg-born-mock",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "egg-born-mock",
   "main": "src/main.js",
   "repository": {
@@ -31,6 +31,8 @@
     "eslint-plugin-vuefix": "^0.2.1"
   },
   "dependencies": {
-    "egg-mock": "^3.13.1"
+    "chalk": "^2.3.0",
+    "egg-mock": "^3.13.1",
+    "moment": "^2.19.2"
   }
 }
