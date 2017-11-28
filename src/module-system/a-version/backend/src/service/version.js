@@ -41,10 +41,12 @@ module.exports = app => {
       });
 
       // insert record
-      await this.ctx.db.insert('aVersion', {
-        module: module.info.relativeName,
-        version,
-      });
+      if (version > 0) {
+        await this.ctx.db.insert('aVersion', {
+          module: module.info.relativeName,
+          version,
+        });
+      }
 
     }
 
@@ -130,7 +132,18 @@ module.exports = app => {
 
     // update module
     async __updateModule(module, fileVersionOld, fileVersionNew) {
+
+      // versions
+      const versions = [];
       for (let version = fileVersionOld + 1; version <= fileVersionNew; version++) {
+        versions.push(version);
+      }
+
+      // for test
+      versions.push(0);
+
+      // loop
+      for (const version of versions) {
         // perform action
         try {
           await this.ctx.performAction({
@@ -146,6 +159,7 @@ module.exports = app => {
           throw err;
         }
       }
+
     }
 
     // get module
