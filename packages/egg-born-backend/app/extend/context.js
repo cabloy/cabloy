@@ -207,7 +207,7 @@ function createRequest({ method, url }, _req) {
     url,
     // path,
     socket: {
-      remoteAddress: _req.socket.remoteAddress,
+      remoteAddress: '127.0.0.1', // _req.socket.remoteAddress,
       remotePort: _req.socket.remotePort,
     },
   };
