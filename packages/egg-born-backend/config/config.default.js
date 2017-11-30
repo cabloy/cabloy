@@ -25,11 +25,13 @@ module.exports = appInfo => {
     agent: false,
   };
 
-  // middleware safeAccess
-  config.safeAccess = {
-    enable: true,
-    whitelist: {
-      '127.0.0.1': true,
+  // middlewares
+  config.middlewares = {
+    // safeAccess
+    safeAccess: {
+      whitelist: {
+        '127.0.0.1': true,
+      },
     },
   };
 
