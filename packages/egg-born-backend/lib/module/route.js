@@ -21,8 +21,7 @@ module.exports = function(loader, modules) {
           let middlewares = route.middlewares;
           if (is.string(middlewares)) middlewares = middlewares.split(',');
           middlewares.forEach(key => {
-            if (is.promise(key)) args.push(key);
-            else if (is.string(key)) args.push(loader.app.middlewares[key](loader.app.config.mws[key]));
+            if (is.string(key)) { args.push(loader.app.middlewares[key](loader.app.config.mws[key])); } else { args.push(key); }
           });
         }
 
