@@ -22,7 +22,7 @@ module.exports = function(loader, modules) {
           if (is.string(middlewares)) middlewares = middlewares.split(',');
           middlewares.forEach(key => {
             if (is.promise(key)) args.push(key);
-            else if (is.string(key)) args.push(loader.app.middlewares[key](loader.app.config.middlewares[key]));
+            else if (is.string(key)) args.push(loader.app.middlewares[key](loader.app.config.mws[key]));
           });
         }
 

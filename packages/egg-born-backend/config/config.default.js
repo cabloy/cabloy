@@ -26,7 +26,7 @@ module.exports = appInfo => {
   };
 
   // middlewares
-  config.middlewares = {
+  config.mws = {
     // safeAccess
     safeAccess: {
       whitelist: {
