@@ -1,5 +1,3 @@
-import util from './util.js';
-
 export default function(Vue, _config) {
 
   // config
@@ -13,7 +11,7 @@ export default function(Vue, _config) {
 
     Object.defineProperty(this, '$config', {
       get() {
-        const moduleInfo = util.getModuleInfo(self);
+        const moduleInfo = self.moduleInfo;
         return config.modules[moduleInfo.relativeName];
       },
     });

@@ -1,3 +1,4 @@
+import mparse from 'egg-born-mparse';
 import util from './util.js';
 
 export default function(Vue, axios) {
@@ -68,6 +69,8 @@ export default function(Vue, axios) {
 
     // cache route path
     if (this.$parent && this.$parent.__ebRoutePath) { this.__ebRoutePath = this.$parent.__ebRoutePath; } else if (this.$route) { this.__ebRoutePath = this.$route.path; }
+    // module info
+    this.moduleInfo = mparse.parseInfo(this.__ebRoutePath);
 
     // api
     this.$api = {};

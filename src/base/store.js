@@ -21,7 +21,7 @@ export default function(Vue, _store) {
 
     Object.defineProperty(this.$local, 'state', {
       get() {
-        const moduleInfo = util.getModuleInfo(self);
+        const moduleInfo = self.moduleInfo;
         return self.$store.state[moduleInfo.pid][moduleInfo.name];
       },
     });
@@ -29,7 +29,7 @@ export default function(Vue, _store) {
     Object.defineProperty(this.$local, 'getters', {
       get() {
         return function() {
-          const moduleInfo = util.getModuleInfo(self);
+          const moduleInfo = self.moduleInfo;
           return self.$store.getters[`${moduleInfo.pid}/${moduleInfo.name}/${arguments[0]}`];
         };
       },

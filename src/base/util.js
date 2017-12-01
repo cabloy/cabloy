@@ -80,7 +80,7 @@ export default {
     Object.defineProperty(obj, key, {
       get() {
         return function() {
-          const moduleInfo = __getModuleInfo(vueComponent);
+          const moduleInfo = vueComponent.moduleInfo;
           const args = new Array(arguments.length);
           args[0] = combilePath(moduleInfo, arguments[0]);
           for (let i = 1; i < args.length; i++) {
@@ -92,8 +92,6 @@ export default {
     });
   },
 
-  getModuleInfo: __getModuleInfo,
-
   removeAppLoading() {
     // eslint-disable-next-line
     const loading = window.document.getElementById('app-loading');
@@ -102,9 +100,3 @@ export default {
 
 };
 
-function __getModuleInfo(vueComponent) {
-  if (!vueComponent.__ebModuleInfo) {
-    vueComponent.__ebModuleInfo = mparse.parseInfo(vueComponent.__ebRoutePath);
-  }
-  return vueComponent.__ebModuleInfo;
-}

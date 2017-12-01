@@ -1,8 +1,9 @@
 {
   "name": "egg-born-front",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "egg-born-front",
   "scripts": {
+    "lint": "eslint src",
     "dev": "node build/dev-server.js",
     "build": "node build/build.js"
   },
