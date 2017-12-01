@@ -13,7 +13,7 @@ const DATABASEMETA = Symbol.for('Context#__databasemeta');
 
 module.exports = {
   get moduleInfo() {
-    if (!this[MODULEINFO]) {
+    if (this[MODULEINFO] === undefined) {
       this[MODULEINFO] = mparse.parseInfo(mparse.parseName(this.req.mockUrl || this.req.url));
     }
     return this[MODULEINFO];
