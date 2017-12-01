@@ -5,12 +5,19 @@ const statuses = require('statuses');
 const isJSON = require('koa-is-json');
 const Stream = require('stream');
 const is = require('is-type-of');
-const util = require('../../lib/module/util.js');
+const mparse = require('egg-born-mparse').default;
 
+const MODULEINFO = Symbol.for('Context#__moduleinfo');
 const DATABASE = Symbol.for('Context#__database');
 const DATABASEMETA = Symbol.for('Context#__databasemeta');
 
 module.exports = {
+  get moduleInfo() {
+    if (!this[MODULEINFO]) {
+      this[MODULEINFO] = mparse.parseInfo(mparse.parseName(this.req.mockUrl || this.req.url));
+    }
+    return this[MODULEINFO];
+  },
   get db() {
     if (!this[DATABASE]) {
       this[DATABASE] = createDatabase(this);
@@ -191,9 +198,8 @@ function adjustUrl(ctx, url) {
   if (url.substr(0, 2) === '//') return url.substr(1);
   if (url.charAt(0) === '/') return `/api${url}`;
 
-  const info = util.getModuleInfo(ctx);
-  if (!info) throw new Error('invalid url');
-  return `/api/${info.url}/${url}`;
+  if (!ctx.moduleInfo) throw new Error('invalid url');
+  return `/api/${ctx.moduleInfo.url}/${url}`;
 }
 
 function createRequest({ method, url }, _req) {

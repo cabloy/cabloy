@@ -1,5 +1,4 @@
 const extend = require('extend2');
-const util = require('./util.js');
 
 module.exports = function(loader, modules) {
 
@@ -18,7 +17,7 @@ module.exports = function(loader, modules) {
       const context = createContext.call(loader.app, ...args);
 
       // maybe /favicon.ico
-      const info = util.getModuleInfo(context);
+      const info = context.moduleInfo;
       if (info) {
         context.config = ebConfigs[info.fullName];
       }

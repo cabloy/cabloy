@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const extend = require('extend2');
 const localeutil = require('egg-born-localeutil').default;
-const util2 = require('./util.js');
 
 module.exports = function(loader, modules) {
 
@@ -21,7 +20,7 @@ module.exports = function(loader, modules) {
       const context = createContext.call(loader.app, ...args);
 
       // maybe /favicon.ico
-      const info = util2.getModuleInfo(context);
+      const info = context.moduleInfo;
       if (info) {
         context.text = getText;
       }

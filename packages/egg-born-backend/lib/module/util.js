@@ -5,12 +5,6 @@ const path = require('path');
 const policy = require('./policy.js');
 
 const util = {
-  getModuleInfo(context) {
-    if (context.__ebModuleInfo === undefined) {
-      context.__ebModuleInfo = mparse.parseInfo(mparse.parseName(context.req.mockUrl || context.req.url));
-    }
-    return context.__ebModuleInfo;
-  },
   parseModules(loader) {
     return __parseModules(__parseModules({}, policy.nodeModules, loader), policy.projectModules, loader);
   },
