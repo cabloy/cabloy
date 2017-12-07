@@ -17,7 +17,8 @@ module.exports = function(loader, modules) {
       if (module.main.middlewares) {
         Object.keys(module.main.middlewares).forEach(middlewareKey => {
           const middleware = module.main.middlewares[middlewareKey];
-          const middlewareConfig = loader.app.meta.configs[module.info.fullName].middlewares[middlewareKey];
+          const config = loader.app.meta.configs[module.info.fullName];
+          const middlewareConfig = config.middlewares ? config.middlewares[middlewareKey] : null;
           ebMiddlewares[middlewareKey] = {
             config: middlewareConfig,
             middleware: wrapMiddleware(middleware, middlewareConfig),
