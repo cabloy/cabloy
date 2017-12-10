@@ -2,30 +2,29 @@ const moment = require('moment');
 const chalk = require('chalk');
 const { assert, app, mock, mm } = require('egg-mock/bootstrap');
 
-const database = `egg-born-test-${moment().format('YYYYMMDD-HHmmss')}`;
-
-before(function(done) {
+before(async () => {
   const ctx = app.mockContext({ mockUrl: '/api/a/version/' });
+
+  // drop old databases
+  const dbs = await ctx.db.query('show databases like \'egg-born-test-%\'');
+  for (const db of dbs) {
+    const name = db[Object.keys(db)[0]];
+    await ctx.db.query(`drop database \`${name}\``);
+  }
 
   // create database
-  ctx.db.query(`CREATE DATABASE \`${database}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`).then(() => {
-    // use database
-    ctx.db.query(`use \`${database}\``).then(() => {
-      console.log(chalk.cyan(`  database: ${database}`));
-      app.meta.runSchedule('egg-born-module-a-version:versionCheck').then(() => {
-        mock.restore();
-        done();
-      });
-    });
-  });
-});
+  const database = `egg-born-test-${moment().format('YYYYMMDD-HHmmss')}`;
+  await ctx.db.query(`CREATE DATABASE \`${database}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`);
 
-after(function(done) {
-  const ctx = app.mockContext({ mockUrl: '/api/a/version/' });
-  // drop database
-  ctx.db.query(`DROP DATABASE \`${database}\``).then(() => {
-    done();
-  });
+  // use database
+  await ctx.db.query(`use \`${database}\``);
+  console.log(chalk.cyan(`  database: ${database}`));
+
+  // version check
+  await app.meta.runSchedule('egg-born-module-a-version:versionCheck');
+
+  // restore
+  mock.restore();
 });
 
 module.exports = function(dirname) {
@@ -40,6 +39,6 @@ module.exports = function(dirname) {
     },
     mockInfo() {
       return app.meta.mockUtil.parseInfoFromPackage(dirname);
-    }
+    },
   };
 };
