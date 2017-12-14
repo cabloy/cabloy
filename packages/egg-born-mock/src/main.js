@@ -28,8 +28,6 @@ before(async () => {
     method: 'post',
     url: 'version/check',
     body: {
-      subdomain: '',
-      password: '',
       scene: 'init',
     },
   });
