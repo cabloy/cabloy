@@ -1,5 +1,5 @@
 const require3 = require('require3');
-const semver = require('semver');
+const semver = require3('semver');
 
 module.exports = app => {
 

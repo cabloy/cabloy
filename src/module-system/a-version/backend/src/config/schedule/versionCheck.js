@@ -1,4 +1,5 @@
-const chalk = require('chalk');
+const require3 = require('require3');
+const chalk = require3('chalk');
 
 module.exports = async function(ctx) {
   const eventCheckReady = ctx.constant.event.checkReady;

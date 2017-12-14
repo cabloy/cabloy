@@ -5,7 +5,6 @@ module.exports = app => {
     async check() {
       // options: 
       //   scene:init
-      //         subdomain/superAdmin's password
       //   scene:test      
       const options = this.ctx.request.body;
       await this.service.version.check(options);
