@@ -23,6 +23,26 @@ before(async () => {
   // version check
   await app.meta.runSchedule('egg-born-module-a-version:versionCheck');
 
+  // version init
+  await ctx.performAction({
+    method: 'post',
+    url: 'version/check',
+    body: {
+      subdomain: '',
+      password: '',
+      scene: 'init',
+    },
+  });
+
+  // version test
+  await ctx.performAction({
+    method: 'post',
+    url: 'version/check',
+    body: {
+      scene: 'test',
+    },
+  });
+
   // restore
   mock.restore();
 });
