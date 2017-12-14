@@ -5,12 +5,13 @@ module.exports = app => {
 
   class Version extends app.Service {
 
-    async check() {
+    async check(options) {
 
+      if (!options.scene) {
       // confirm table aVersion exists
-      const res = await this.ctx.db.queryOne('show tables like \'aVersion\'');
-      if (!res) {
-        await this.ctx.db.query(`
+        const res = await this.ctx.db.queryOne('show tables like \'aVersion\'');
+        if (!res) {
+          await this.ctx.db.query(`
           CREATE TABLE aVersion (
             id INT NOT NULL AUTO_INCREMENT,
             module VARCHAR(45) NULL,
@@ -19,13 +20,17 @@ module.exports = app => {
             updatedAt TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY (id));
           `);
+        }
       }
 
+      // reset all modules
+      this.__resetAllModules();
+
       // check module of aVersion
-      await this.__checkModule('a-version');
+      await this.__checkModule('a-version', options);
 
       // check other modules
-      await this.__checkOtherModules();
+      await this.__checkOtherModules(options);
     }
 
     // update module
@@ -50,6 +55,39 @@ module.exports = app => {
 
     }
 
+    // init module
+    async initModule(options) {
+
+      // init
+      try {
+        await this.ctx.performAction({
+          method: 'post',
+          url: `/${options.module.info.url}/version/init`,
+          body: options,
+        });
+      } catch (e) {
+        if (e.code !== 404) throw e;
+      }
+
+    }
+
+    // test module
+    async testModule(options) {
+
+      // test
+      try {
+        await this.ctx.performAction({
+          method: 'post',
+          url: `/${options.module.info.url}/version/test`,
+          body: options,
+        });
+      } catch (e) {
+        if (e.code !== 404) throw e;
+      }
+
+    }
+
+
     // update this module
     async update(version) {
 
@@ -59,19 +97,28 @@ module.exports = app => {
 
     }
 
+    // reset all modules
+    __resetAllModules() {
+      const keys = Object.keys(this.app.meta.modules);
+      for (const key of keys) {
+        const module = this.app.meta.modules[key];
+        module.__checking = false;
+      }
+    }
+
     // check other modules
-    async __checkOtherModules() {
+    async __checkOtherModules(options) {
       const keys = Object.keys(this.app.meta.modules);
       for (const key of keys) {
         if (key !== 'egg-born-module-a-version') {
           const module = this.app.meta.modules[key];
-          await this.__checkModule(module.info.relativeName);
+          await this.__checkModule(module.info.relativeName, options);
         }
       }
     }
 
     // check module
-    async __checkModule(moduleName) {
+    async __checkModule(moduleName, options) {
 
       // module
       const module = this.__getModule(moduleName);
@@ -79,7 +126,7 @@ module.exports = app => {
       module.__checking = true;
 
       // dependencies
-      await this.__checkDependencies(module);
+      await this.__checkDependencies(module, options);
 
       // fileVersionNew
       let fileVersionNew = 0;
@@ -89,26 +136,35 @@ module.exports = app => {
 
       if (!fileVersionNew) return;
 
-      // fileVersionOld
-      let fileVersionOld = 0; // default
-      const res = await this.ctx.db.queryOne('select * from aVersion where module=? order by version desc', [ moduleName ]);
-      if (res) {
-        fileVersionOld = res.version;
-      }
+      if (!options.scene) {
+        // update module
+        // fileVersionOld
+        let fileVersionOld = 0; // default
+        const res = await this.ctx.db.queryOne('select * from aVersion where module=? order by version desc', [ moduleName ]);
+        if (res) {
+          fileVersionOld = res.version;
+        }
 
-      // check if need update
-      if (fileVersionOld > fileVersionNew) {
+        // check if need update
+        if (fileVersionOld > fileVersionNew) {
         // module is old
-        module.__check = this.ctx.parseFail(1001);
-        this.ctx.throw(1001);
-      } else if (fileVersionOld < fileVersionNew) {
-        await this.__updateModule(module, fileVersionOld, fileVersionNew);
+          module.__check = this.ctx.parseFail(1001);
+          this.ctx.throw(1001);
+        } else if (fileVersionOld < fileVersionNew) {
+          await this.__updateModule(module, fileVersionOld, fileVersionNew);
+        }
+      } else if (options.scene === 'init') {
+        // init module
+        await this.__initModule(module, fileVersionNew, options);
+      } else if (options.scene === 'test') {
+        // test module
+        await this.__testModule(module, fileVersionNew, options);
       }
 
     }
 
     // check dependencies
-    async __checkDependencies(module) {
+    async __checkDependencies(module, options) {
 
       if (!module._pkg.eggBornModule || !module._pkg.eggBornModule.dependencies) return;
 
@@ -125,7 +181,7 @@ module.exports = app => {
           subModule.__check = this.ctx.parseFail(1001);
           this.ctx.throw(1001);
         }
-        await this.__checkModule(key);
+        await this.__checkModule(key, options);
       }
 
     }
@@ -138,9 +194,6 @@ module.exports = app => {
       for (let version = fileVersionOld + 1; version <= fileVersionNew; version++) {
         versions.push(version);
       }
-
-      // for test
-      if (this.app.meta.isTest) versions.push(0);
 
       // loop
       for (const version of versions) {
@@ -160,6 +213,30 @@ module.exports = app => {
         }
       }
 
+    }
+
+    // init module
+    async __initModule(module, fileVersionNew, options) {
+      options.module = module;
+      options.version = fileVersionNew;
+
+      await this.ctx.performAction({
+        method: 'post',
+        url: 'version/initModule',
+        body: options,
+      });
+    }
+
+    // test module
+    async __testModule(module, fileVersionNew, options) {
+      options.module = module;
+      options.version = fileVersionNew;
+
+      await this.ctx.performAction({
+        method: 'post',
+        url: 'version/testModule',
+        body: options,
+      });
     }
 
     // get module

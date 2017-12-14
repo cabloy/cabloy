@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-version",
-  "version": "1.0.29",
+  "version": "1.0.30",
   "eggBornModule": {
     "fileVersion": 1,
     "dependencies": {}

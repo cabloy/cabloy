@@ -3,7 +3,12 @@ module.exports = app => {
 
     // check all modules
     async check() {
-      await this.service.version.check();
+      // options: 
+      //   scene:init
+      //         subdomain/superAdmin's password
+      //   scene:test      
+      const options = this.ctx.request.body;
+      await this.service.version.check(options);
       this.ctx.success();
     }
 
@@ -12,6 +17,22 @@ module.exports = app => {
       await this.service.version.updateModule(
         this.ctx.request.body.module,
         this.ctx.getInt('version')
+      );
+      this.ctx.success();
+    }
+
+    // init module
+    async initModule() {
+      await this.service.version.initModule(
+        this.ctx.request.body
+      );
+      this.ctx.success();
+    }
+
+    // test module
+    async testModule() {
+      await this.service.version.testModule(
+        this.ctx.request.body
       );
       this.ctx.success();
     }
