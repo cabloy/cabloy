@@ -10,7 +10,7 @@ class BackendCovCommand extends CovCommand {
 
   * run(context) {
 
-    if (!context.env.EGG_BASE_DIR) context.env.EGG_BASE_DIR = path.join(process.cwd(), '/src/backend');
+    if (!context.env.EGG_BASE_DIR) context.env.EGG_BASE_DIR = path.join(process.cwd(), 'src/backend');
 
     if (!context.argv._ || context.argv._.length === 0) context.argv._ = [ 'src/**/test/**/*.test.js' ];
 

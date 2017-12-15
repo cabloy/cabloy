@@ -1,13 +1,13 @@
-const Command = require('egg-bin').Command;
 const path = require('path');
 const chalk = require('chalk');
 const mock = require('egg-mock');
+const Command = require('egg-bin').Command;
 
 class BackendInitCommand extends Command {
 
   constructor(rawArgv) {
     super(rawArgv);
-    this.usage = 'Usage: egg-born-bin backend-init --subdomain=\'\' --password=123456';
+    this.usage = 'Usage: egg-born-bin backend-init';
   }
 
   * run(context) {
