@@ -24,4 +24,6 @@ async function handleTransaction(ctx, success) {
     ctx.dbMeta.connection.conn = null;
     if (success) { await tran.commit(); } else { await tran.rollback(); }
   }
+  // reset flag
+  ctx.dbMeta.transaction = false;
 }
