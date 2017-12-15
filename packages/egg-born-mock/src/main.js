@@ -3,22 +3,28 @@ const chalk = require('chalk');
 const { assert, app, mock, mm } = require('egg-mock/bootstrap');
 
 before(async () => {
-  const ctx = app.mockContext({ mockUrl: '/api/a/version/' });
-
   // drop old databases
-  const dbs = await ctx.db.query('show databases like \'egg-born-test-%\'');
+  const mysql = app.mysql.get('__ebdb');
+  const dbs = await mysql.query('show databases like \'egg-born-test-%\'');
   for (const db of dbs) {
     const name = db[Object.keys(db)[0]];
-    await ctx.db.query(`drop database \`${name}\``);
+    await mysql.query(`drop database \`${name}\``);
   }
 
   // create database
   const database = `egg-born-test-${moment().format('YYYYMMDD-HHmmss')}`;
-  await ctx.db.query(`CREATE DATABASE \`${database}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`);
+  await mysql.query(`CREATE DATABASE \`${database}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`);
 
-  // use database
-  await ctx.db.query(`use \`${database}\``);
+  // create test mysql
+  const mysqlConfig = app.config.mysql.clients.__ebdb;
+  mysqlConfig.database = database;
+  app.mysql.__ebdb_test = app.mysql.createInstance(mysqlConfig);
+
+  // database ready
   console.log(chalk.cyan(`  database: ${database}`));
+
+  // ctx
+  const ctx = app.mockContext({ mockUrl: '/api/a/version/' });
 
   // version check
   await app.meta.runSchedule('egg-born-module-a-version:versionCheck');
@@ -28,6 +34,8 @@ before(async () => {
     method: 'post',
     url: 'version/check',
     body: {
+      subdomain: '',
+      password: '',
       scene: 'init',
     },
   });
