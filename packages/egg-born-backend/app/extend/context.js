@@ -224,7 +224,7 @@ function createDatabase(ctx) {
 
   const __db = {};
 
-  const db = ctx.app.mysql.get('__ebdb');
+  const db = ctx.app.mysql.__ebdb_test || ctx.app.mysql.get('__ebdb');
   const proto = Object.getPrototypeOf(Object.getPrototypeOf(db));
   Object.keys(proto).forEach(key => {
     Object.defineProperty(__db, key, {
