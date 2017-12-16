@@ -1,4 +1,4 @@
-const Model = require('../base/model.js');
+const ModelClass = require('../base/model.js');
 
 module.exports = function(loader, modules) {
 
@@ -21,7 +21,7 @@ module.exports = function(loader, modules) {
       if (info) {
         const ebModelClass = ebModelClasses[info.fullName];
         if (ebModelClass) {
-          context.model = new (Model(loader.app))(context, { table: null });
+          context.model = new (ModelClass(loader.app))(context, { table: null });
           context.model.__ebCache = new Map();
           Object.keys(ebModelClass).forEach(key => {
             defineProperty(context, key, ebModelClass[key]);
