@@ -2,8 +2,8 @@ const path = require('path');
 const egg = require('egg');
 const EGG_PATH = Symbol.for('egg#eggPath');
 const EGG_LOADER = Symbol.for('egg#loader');
-const AppWorkerLoader = require('./load/app.js');
-const AgentWorkerLoader = require('./load/agent.js');
+const AppWorkerLoader = require('../load/app.js');
+const AgentWorkerLoader = require('../load/agent.js');
 
 class Application extends egg.Application {
   get [EGG_PATH]() {
