@@ -1,1 +1,1 @@
-module.exports = require('./lib/framework.js');
+module.exports = require('./lib/base/framework.js');
