@@ -25,9 +25,19 @@ module.exports = function(loader, modules) {
           });
         }
 
-        // action
-        if (!route.action) route.action = route.path.substr(route.path.lastIndexOf('/') + 1);
-        args.push(methodToMiddleware(route.controller(loader.app), route.action));
+        // controller
+        const Controller = route.controller(loader.app);
+
+        // _route
+        const _route = {
+          pid: module.info.pid,
+          module: module.info.name,
+          controller: Controller.name.replace(/Controller$/g, ''),
+          action: route.action || route.path.substr(route.path.lastIndexOf('/') + 1),
+        };
+
+        // middleware controller
+        args.push(methodToMiddleware(Controller, _route));
 
         // load
         loader.app[route.method].apply(loader.app, args);
@@ -38,13 +48,14 @@ module.exports = function(loader, modules) {
 
 };
 
-function methodToMiddleware(Controller, key) {
+function methodToMiddleware(Controller, _route) {
   return function classControllerMiddleware(...args) {
+    this.route = _route;
     const controller = new Controller(this);
     if (!this.app.config.controller || !this.app.config.controller.supportParams) {
       args = [ this ];
     }
-    return callController(controller[key], args, controller);
+    return callController(controller[_route.action], args, controller);
   };
 }
 
