@@ -17,9 +17,8 @@ module.exports = function(loader, modules) {
       const context = createContext.call(loader.app, ...args);
 
       // maybe /favicon.ico
-      const info = context.moduleInfo;
-      if (info) {
-        context.config = ebConfigs[info.fullName];
+      if (context.module) {
+        context.config = ebConfigs[context.module.info.fullName];
       }
 
       return context;

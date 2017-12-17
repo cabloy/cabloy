@@ -7,16 +7,17 @@ const Stream = require('stream');
 const is = require('is-type-of');
 const mparse = require('egg-born-mparse').default;
 
-const MODULEINFO = Symbol.for('Context#__moduleinfo');
+const MODULE = Symbol.for('Context#__module');
 const DATABASE = Symbol.for('Context#__database');
 const DATABASEMETA = Symbol.for('Context#__databasemeta');
 
 module.exports = {
-  get moduleInfo() {
-    if (this[MODULEINFO] === undefined) {
-      this[MODULEINFO] = mparse.parseInfo(mparse.parseName(this.req.mockUrl || this.req.url));
+  get module() {
+    if (this[MODULE] === undefined) {
+      const info = mparse.parseInfo(mparse.parseName(this.req.mockUrl || this.req.url));
+      this[MODULE] = info ? this.app.meta.modules[info.fullName] : null;
     }
-    return this[MODULEINFO];
+    return this[MODULE];
   },
   get db() {
     if (!this[DATABASE]) {
@@ -198,8 +199,8 @@ function adjustUrl(ctx, url) {
   if (url.substr(0, 2) === '//') return url.substr(1);
   if (url.charAt(0) === '/') return `/api${url}`;
 
-  if (!ctx.moduleInfo) throw new Error('invalid url');
-  return `/api/${ctx.moduleInfo.url}/${url}`;
+  if (!ctx.module) throw new Error('invalid url');
+  return `/api/${ctx.module.info.url}/${url}`;
 }
 
 function createRequest({ method, url }, _req) {

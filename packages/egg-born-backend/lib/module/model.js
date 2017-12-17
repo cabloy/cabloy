@@ -17,9 +17,8 @@ module.exports = function(loader, modules) {
       const context = createContext.call(loader.app, ...args);
 
       // maybe /favicon.ico
-      const info = context.moduleInfo;
-      if (info) {
-        const ebModelClass = ebModelClasses[info.fullName];
+      if (context.module) {
+        const ebModelClass = ebModelClasses[context.module.info.fullName];
         if (ebModelClass) {
           context.model = new (ModelClass(loader.app))(context, { table: null });
           context.model.__ebCache = new Map();

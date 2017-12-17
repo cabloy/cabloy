@@ -35,9 +35,11 @@ function __parseModules(modules, policy, loader) {
 
     if (!modules[info.fullName]) {
       const pkg = util.lookupPackage(file);
-      const main = loader.loadFile(file, loader.app, { info, pkg });
-      modules[info.fullName] = { file, name, info, pkg, main };
-      if (loader.app.config.env === 'local') console.log(info.fullName, ':', file);
+      const module = { file, name, info, pkg };
+      module.package = require(pkg);
+      module.main = loader.loadFile(file, loader.app, module);
+      modules[info.fullName] = module;
+      if (loader.app.config.env === 'local') console.log(info.fullName);
     }
 
   });

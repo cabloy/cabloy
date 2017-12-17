@@ -17,10 +17,9 @@ module.exports = function(loader, modules) {
       const context = createContext.call(loader.app, ...args);
 
       // maybe /favicon.ico
-      const info = context.moduleInfo;
-      if (info) {
+      if (context.module) {
         // constant
-        context.constant = ebConstants[info.fullName];
+        context.constant = ebConstants[context.module.info.fullName];
       }
 
       return context;

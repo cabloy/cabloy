@@ -20,8 +20,7 @@ module.exports = function(loader, modules) {
       const context = createContext.call(loader.app, ...args);
 
       // maybe /favicon.ico
-      const info = context.moduleInfo;
-      if (info) {
+      if (context.module) {
         context.text = getText;
       }
 

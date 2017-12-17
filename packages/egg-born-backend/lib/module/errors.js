@@ -18,8 +18,7 @@ module.exports = function(loader, modules) {
       const context = createContext.call(loader.app, ...args);
 
       // maybe /favicon.ico
-      const info = context.moduleInfo;
-      if (info) {
+      if (context.module) {
         // data,code/message,args
         context.success = function(data, code, ...args) {
 
@@ -50,11 +49,11 @@ module.exports = function(loader, modules) {
         // code/message,args
         context.parseFail = function(code, ...args) {
           if (typeof code === 'object') return code;
-          return parseCode(this, info, 1, code, ...args);
+          return parseCode(this, context.module.info, 1, code, ...args);
         };
         // code/message,args
         context.parseSuccess = function(code, ...args) {
-          return parseCode(this, info, 0, code, ...args);
+          return parseCode(this, context.module.info, 0, code, ...args);
         };
 
       }
@@ -63,8 +62,8 @@ module.exports = function(loader, modules) {
     };
 
     //
-    function parseCode(context, mouduleInfo, codeDefault, code, ...args) {
-      const ebError = ebErrors[mouduleInfo.fullName];
+    function parseCode(context, info, codeDefault, code, ...args) {
+      const ebError = ebErrors[info.fullName];
       let message = null;
 
       if (typeof code === 'string') {

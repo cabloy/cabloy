@@ -52,11 +52,11 @@ module.exports = function(loader, modules) {
     });
   }
 
-  function wrapTask(task, key, schedule, moduleInfo) {
+  function wrapTask(task, key, schedule, info) {
     return function() {
       const ctx = loader.app.createAnonymousContext({
         method: 'SCHEDULE',
-        url: `/api/${moduleInfo.url}/__schedule?path=${key}&${qs.stringify(schedule)}`,
+        url: `/api/${info.url}/__schedule?path=${key}&${qs.stringify(schedule)}`,
       });
       return task(ctx);
     };

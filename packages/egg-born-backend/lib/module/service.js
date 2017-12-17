@@ -17,9 +17,8 @@ module.exports = function(loader, modules) {
       const context = createContext.call(loader.app, ...args);
 
       // maybe /favicon.ico
-      const info = context.moduleInfo;
-      if (info) {
-        const ebServiceClass = ebServiceClasses[info.fullName];
+      if (context.module) {
+        const ebServiceClass = ebServiceClasses[context.module.info.fullName];
         if (ebServiceClass) {
           context.service.__ebCache = new Map();
           Object.keys(ebServiceClass).forEach(key => {
