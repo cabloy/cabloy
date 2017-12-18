@@ -147,6 +147,8 @@ module.exports = app => {
         return function() {
           const args = [ this.table ];
           for (const arg of arguments) args.push(arg);
+          args[1] = args[1] || {};
+          args[1].where = args[1].where || {};
           if (!this.disableDeleted) {
             args[1].where.deleted = 0;
           }
