@@ -86,15 +86,9 @@ module.exports = app => {
             if (!this.disableInstance) {
               args[1].iid = this.ctx.instance.id;
             }
-            return this.ctx.db.get.apply(this.ctx.db, args).then(res => {
-              if (!res) return null;
-              const args = [ this.table ];
-              args.push({
-                id: res.id,
-                deleted: 1,
-              });
-              return this.ctx.db.update.apply(this.ctx.db, args);
-            });
+            const sql = this.ctx.db.format('UPDATE ?? SET deleted=1 ', [ args[0] ]) +
+              this.ctx.db._where(args[1]);
+            return this.ctx.db.query(sql);
           }
           return this.ctx.db[method].apply(this.ctx.db, args);
         };
