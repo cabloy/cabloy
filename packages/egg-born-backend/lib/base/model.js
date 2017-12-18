@@ -3,9 +3,12 @@ const is = require('is-type-of');
 module.exports = app => {
   class Model extends app.BaseContextClass {
 
-    constructor(ctx, { table }) {
+    constructor(ctx, { table, options }) {
       super(ctx);
+      options = options || {};
       this.table = table;
+      this.disableDeleted = (options.disableDeleted === undefined) ? app.config.model.disableDeleted : options.disableDeleted;
+      this.disableInstance = (options.disableInstance === undefined) ? app.config.model.disableInstance : options.disableInstance;
     }
 
   }
@@ -37,11 +40,37 @@ module.exports = app => {
   });
 
   [
-    'count',
-    'select',
-    'get',
     'insert',
+  ].forEach(method => {
+    Object.defineProperty(Model.prototype, method, {
+      get() {
+        return function() {
+          const args = [ this.table ];
+          for (const arg of arguments) args.push(arg);
+          if (!this.disableInstance) {
+            args[1].iid = this.ctx.instance.id;
+          }
+          return this.ctx.db[method].apply(this.ctx.db, args);
+        };
+      },
+    });
+  });
+
+  [
     'update',
+  ].forEach(method => {
+    Object.defineProperty(Model.prototype, method, {
+      get() {
+        return function() {
+          const args = [ this.table ];
+          for (const arg of arguments) args.push(arg);
+          return this.ctx.db[method].apply(this.ctx.db, args);
+        };
+      },
+    });
+  });
+
+  [
     'delete',
   ].forEach(method => {
     Object.defineProperty(Model.prototype, method, {
@@ -49,6 +78,87 @@ module.exports = app => {
         return function() {
           const args = [ this.table ];
           for (const arg of arguments) args.push(arg);
+          if (!this.disableDeleted) {
+            if (args[1].id) {
+              args[1].deleted = 1;
+              return this.ctx.db.update.apply(this.ctx.db, args);
+            }
+            if (!this.disableInstance) {
+              args[1].iid = this.ctx.instance.id;
+            }
+            return this.ctx.db.get.apply(this.ctx.db, args).then(res => {
+              if (!res) return null;
+              const args = [ this.table ];
+              args.push({
+                id: res.id,
+                deleted: 1,
+              });
+              return this.ctx.db.update.apply(this.ctx.db, args);
+            });
+          }
+          return this.ctx.db[method].apply(this.ctx.db, args);
+        };
+      },
+    });
+  });
+
+  [
+    'count',
+  ].forEach(method => {
+    Object.defineProperty(Model.prototype, method, {
+      get() {
+        return function() {
+          const args = [ this.table ];
+          for (const arg of arguments) args.push(arg);
+          if (!this.disableDeleted) {
+            args[1].deleted = 0;
+          }
+          if (!this.disableInstance) {
+            args[1].iid = this.ctx.instance.id;
+          }
+          return this.ctx.db[method].apply(this.ctx.db, args);
+        };
+      },
+    });
+  });
+
+  [
+    'get',
+  ].forEach(method => {
+    Object.defineProperty(Model.prototype, method, {
+      get() {
+        return function() {
+          const args = [ this.table ];
+          for (const arg of arguments) args.push(arg);
+          if (args[1].id) {
+            return this.ctx.db[method].apply(this.ctx.db, args);
+          }
+          if (!this.disableDeleted) {
+            args[1].deleted = 0;
+          }
+          if (!this.disableInstance) {
+            args[1].iid = this.ctx.instance.id;
+          }
+          return this.ctx.db[method].apply(this.ctx.db, args);
+        };
+      },
+    });
+  });
+
+  [
+    'select',
+  ].forEach(method => {
+    Object.defineProperty(Model.prototype, method, {
+      get() {
+        return function() {
+          const args = [ this.table ];
+          for (const arg of arguments) args.push(arg);
+          if (!this.disableDeleted) {
+            args[1].where.deleted = 0;
+          }
+          if (!this.disableInstance) {
+            args[1].where.iid = this.ctx.instance.id;
+          }
           return this.ctx.db[method].apply(this.ctx.db, args);
         };
       },
