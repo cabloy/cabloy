@@ -124,9 +124,9 @@ module.exports = app => {
         return function() {
           const args = [ this.table ];
           for (const arg of arguments) args.push(arg);
-          if (args[1].id) {
-            return this.ctx.db[method].apply(this.ctx.db, args);
-          }
+          // if (args[1].id) {
+          //   return this.ctx.db[method].apply(this.ctx.db, args);
+          // }
           if (!this.disableDeleted) {
             args[1].deleted = 0;
           }
