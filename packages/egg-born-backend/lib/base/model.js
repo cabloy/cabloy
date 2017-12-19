@@ -3,9 +3,8 @@ const is = require('is-type-of');
 module.exports = app => {
   class Model extends app.BaseContextClass {
 
-    constructor(ctx, { table, options }) {
+    constructor(ctx, { table, options = {} }) {
       super(ctx);
-      options = options || {};
       this.table = table;
       this.disableDeleted = (options.disableDeleted === undefined) ? app.config.model.disableDeleted : options.disableDeleted;
       this.disableInstance = (options.disableInstance === undefined) ? app.config.model.disableInstance : options.disableInstance;
