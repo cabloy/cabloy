@@ -159,5 +159,55 @@ module.exports = app => {
     });
   });
 
+  [
+    '_where2',
+  ].forEach(method => {
+    Object.defineProperty(Model.prototype, method, {
+      get() {
+        return function() {
+          return _where2(this.ctx.db, arguments[0]);
+        };
+      },
+    });
+  });
+
   return Model;
 };
+
+function _where2(db, where) {
+  if (!where) {
+    return '';
+  }
+
+  const wheres = [];
+  const values = [];
+  for (const key in where) {
+    let ignore = false;
+    const value = where[key];
+    if (Array.isArray(value)) {
+      wheres.push('?? IN (?)');
+    } else if (typeof value === 'object') {
+      if (value.op === 'like') {
+        const val = db.format('?', value.val);
+        wheres.push(`\`${key}\` LIKE '%${val.substr(1, val.length - 2)}%'`);
+      } else if (value.op === 'likeLeft') {
+        const val = db.format('?', value.val);
+        wheres.push(`\`${key}\` LIKE '%${val.substr(1, val.length - 2)}'`);
+      } else if (value.op === 'likeRight') {
+        const val = db.format('?', value.val);
+        wheres.push(`\`${key}\` LIKE '${val.substr(1, val.length - 2)}%'`);
+      }
+      ignore = true;
+    } else {
+      wheres.push('?? = ?');
+    }
+    if (!ignore) {
+      values.push(key);
+      values.push(value);
+    }
+  }
+  if (wheres.length > 0) {
+    return db.format(` WHERE (${wheres.join(' AND ')})`, values);
+  }
+  return '';
+}
