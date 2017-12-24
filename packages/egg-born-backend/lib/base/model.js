@@ -189,13 +189,13 @@ function _where2(db, where) {
     } else if (typeof value === 'object') {
       if (value.op === 'like') {
         const val = db.format('?', value.val);
-        wheres.push(`\`${key}\` LIKE '%${val.substr(1, val.length - 2)}%'`);
+        wheres.push(`${db.format('??', key)} LIKE '%${val.substr(1, val.length - 2)}%'`);
       } else if (value.op === 'likeLeft') {
         const val = db.format('?', value.val);
-        wheres.push(`\`${key}\` LIKE '%${val.substr(1, val.length - 2)}'`);
+        wheres.push(`${db.format('??', key)} LIKE '%${val.substr(1, val.length - 2)}'`);
       } else if (value.op === 'likeRight') {
         const val = db.format('?', value.val);
-        wheres.push(`\`${key}\` LIKE '${val.substr(1, val.length - 2)}%'`);
+        wheres.push(`${db.format('??', key)} LIKE '${val.substr(1, val.length - 2)}%'`);
       }
       ignore = true;
     } else {
