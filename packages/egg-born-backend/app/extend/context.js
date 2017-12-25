@@ -204,19 +204,18 @@ function adjustUrl(ctx, url) {
 }
 
 function createRequest({ method, url }, _req) {
-  const req = {
-    headers: _req.headers,
-    host: _req.host,
-    hostname: _req.hostname,
-    protocol: _req.protocol,
-    secure: _req.secure,
-    method: method.toUpperCase(),
-    url,
-    // path,
-    socket: {
-      remoteAddress: '127.0.0.1', // _req.socket.remoteAddress,
-      remotePort: _req.socket.remotePort,
-    },
+  const req = new http.IncomingMessage();
+  req.headers = _req.headers;
+  req.host = _req.host;
+  req.hostname = _req.hostname;
+  req.protocol = _req.protocol;
+  req.secure = _req.secure;
+  req.method = method.toUpperCase();
+  req.url = url;
+  // path,
+  req.socket = {
+    remoteAddress: '127.0.0.1', // _req.socket.remoteAddress,
+    remotePort: _req.socket.remotePort,
   };
   return req;
 }
