@@ -1,8 +1,16 @@
 const is = require('is-type-of');
 const co = require('co');
+const extend = require('extend2');
+const pathMatching = require('egg-path-matching');
+const loadMiddlewares = require('./middleware.js');
+const MWSTATUS = Symbol('Context#__wmstatus');
 
 module.exports = function(loader, modules) {
 
+  // load middlewares
+  const [ ebMiddlewares, ebMiddlewaresGlobal ] = loadMiddlewares(loader, modules);
+
+  // load routes
   Object.keys(modules).forEach(key => {
 
     const module = modules[key];
@@ -16,12 +24,35 @@ module.exports = function(loader, modules) {
         // path
         args.push(`/api/${module.info.url}/${route.path}`);
 
-        // middlewares
+        // middlewares: start
+        const fnStart = (ctx, next) => {
+          ctx[MWSTATUS] = {};
+          return next();
+        };
+        fnStart._name = 'start';
+        args.push(fnStart);
+
+        // middlewares: globals
+        ebMiddlewaresGlobal.forEach(key => {
+          const item = ebMiddlewares[key];
+          args.push(wrapMiddleware(item, route, loader));
+        });
+
+        // middlewares: route
         if (route.middlewares) {
           let middlewares = route.middlewares;
           if (is.string(middlewares)) middlewares = middlewares.split(',');
           middlewares.forEach(key => {
-            if (is.string(key)) { args.push(loader.app.middlewares[key](loader.app.config.mws[key], loader.app)); } else { args.push(key); }
+            if (is.string(key)) {
+              const item = ebMiddlewares[key];
+              if (item) {
+                args.push(wrapMiddleware(item, route, loader));
+              } else {
+                args.push(wrapMiddlewareApp(key, route, loader));
+              }
+            } else {
+              args.push(key);
+            }
           });
         }
 
@@ -47,6 +78,51 @@ module.exports = function(loader, modules) {
   });
 
 };
+
+function wrapMiddlewareApp(key, route, loader) {
+  const middleware = loader.app.middlewares[key];
+  const optionsRoute = route.meta ? route.meta[key] : null;
+  const options = optionsRoute ? extend(true, loader.app.config.mws[key], optionsRoute) : loader.app.config.mws[key];
+  const mw = middleware(options, loader.app);
+  mw._name = key;
+  return mw;
+}
+
+function wrapMiddleware(item, route, loader) {
+  const optionsRoute = route.meta ? route.meta[item.key] : null;
+  const options = optionsRoute ? extend(true, item.options, optionsRoute) : item.options;
+  const mw = item.middleware(options, loader.app);
+  mw._name = item.key;
+  return wrapMiddleware2(mw, options);
+}
+
+function wrapMiddleware2(mw, options) {
+  const fn = (ctx, next) => {
+    // enable match ignore dependencies
+    if (options.enable === false || !middlewareMatch(ctx, options) || !middlewareDeps(ctx, options)) {
+      ctx[MWSTATUS][mw._name] = false;
+      return next();
+    }
+    // run
+    return mw(ctx, next);
+  };
+  fn._name = mw._name + 'middlewareWrapper';
+  return fn;
+}
+
+function middlewareMatch(ctx, options) {
+  if (!options.match && !options.ignore) {
+    return true;
+  }
+  const match = pathMatching(options);
+  return match(ctx);
+}
+
+function middlewareDeps(ctx, options) {
+  let deps = options.dependencies || [];
+  if (typeof deps === 'string') deps = deps.split(',');
+  return deps.every(key => ctx[MWSTATUS][key] !== false);
+}
 
 function methodToMiddleware(Controller, _route) {
   return function classControllerMiddleware(...args) {
