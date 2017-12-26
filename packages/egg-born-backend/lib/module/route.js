@@ -82,7 +82,7 @@ module.exports = function(loader, modules) {
 function wrapMiddlewareApp(key, route, loader) {
   const middleware = loader.app.middlewares[key];
   const optionsRoute = route.meta ? route.meta[key] : null;
-  const options = optionsRoute ? extend(true, loader.app.config.mws[key], optionsRoute) : loader.app.config.mws[key];
+  const options = optionsRoute ? extend(true, {}, loader.app.config.mws[key], optionsRoute) : loader.app.config.mws[key];
   const mw = middleware(options, loader.app);
   mw._name = key;
   return mw;
@@ -90,7 +90,7 @@ function wrapMiddlewareApp(key, route, loader) {
 
 function wrapMiddleware(item, route, loader) {
   const optionsRoute = route.meta ? route.meta[item.key] : null;
-  const options = optionsRoute ? extend(true, item.options, optionsRoute) : item.options;
+  const options = optionsRoute ? extend(true, {}, item.options, optionsRoute) : item.options;
   const mw = item.middleware(options, loader.app);
   mw._name = item.key;
   return wrapMiddleware2(mw, options);
