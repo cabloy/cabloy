@@ -49,6 +49,9 @@ module.exports = app => {
           if (!this.disableInstance) {
             args[1].iid = this.ctx.instance.id;
           }
+          if (!this.disableDeleted) {
+            args[1].deleted = 0;
+          }
           return this.ctx.db[method].apply(this.ctx.db, args);
         };
       },
@@ -101,11 +104,11 @@ module.exports = app => {
           const args = [ this.table ];
           for (const arg of arguments) args.push(arg);
           args[1] = args[1] || {};
-          if (!this.disableDeleted) {
-            args[1].deleted = 0;
-          }
           if (!this.disableInstance) {
             args[1].iid = this.ctx.instance.id;
+          }
+          if (!this.disableDeleted) {
+            args[1].deleted = 0;
           }
           return this.ctx.db[method].apply(this.ctx.db, args);
         };
@@ -125,11 +128,11 @@ module.exports = app => {
           // if (args[1].id) {
           //   return this.ctx.db[method].apply(this.ctx.db, args);
           // }
-          if (!this.disableDeleted) {
-            args[1].deleted = 0;
-          }
           if (!this.disableInstance) {
             args[1].iid = this.ctx.instance.id;
+          }
+          if (!this.disableDeleted) {
+            args[1].deleted = 0;
           }
           return this.ctx.db[method].apply(this.ctx.db, args);
         };
@@ -147,11 +150,11 @@ module.exports = app => {
           for (const arg of arguments) args.push(arg);
           args[1] = args[1] || {};
           args[1].where = args[1].where || {};
-          if (!this.disableDeleted) {
-            args[1].where.deleted = 0;
-          }
           if (!this.disableInstance) {
             args[1].where.iid = this.ctx.instance.id;
+          }
+          if (!this.disableDeleted) {
+            args[1].where.deleted = 0;
           }
           return this.ctx.db[method].apply(this.ctx.db, args);
         };
