@@ -71,7 +71,7 @@ module.exports = function(loader, modules) {
         args.push(methodToMiddleware(Controller, _route));
 
         // load
-        loader.app[route.method].apply(loader.app, args);
+        loader.app.router[route.method].apply(loader.app.router, args);
       });
     }
 
