@@ -13,18 +13,6 @@ module.exports = function(loader, modules) {
   // load routes
   loadRoutes();
 
-  // patch router
-  patchRouter();
-
-  function patchRouter() {
-    if (!loader.app.router.unRegister) {
-      loader.app.router.unRegister = function(name) {
-        const index = this.stack.findIndex(layer => layer.name && layer.name === name);
-        if (index > -1) this.stack.splice(index, 1);
-      };
-    }
-  }
-
   function loadRoutes() {
     // load routes
     Object.keys(modules).forEach(key => {
