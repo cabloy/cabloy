@@ -18,13 +18,13 @@ module.exports = function(loader, modules) {
 
   function patchRouter() {
     loader.app.meta.router = {
-      register(module, route) {
+      register(info, route) {
         // args
         const args = [];
         // name
         if (route.name) args.push(route.name);
         // path
-        args.push(`/api/${module.info.url}/${route.path}`);
+        args.push(`/api/${info.url}/${route.path}`);
 
         // middlewares: start
         const fnStart = (ctx, next) => {
@@ -64,8 +64,8 @@ module.exports = function(loader, modules) {
 
           // _route
           const _route = {
-            pid: module.info.pid,
-            module: module.info.name,
+            pid: info.pid,
+            module: info.name,
             controller: Controller.name.replace(/Controller$/g, ''),
             action: route.action || route.path.substr(route.path.lastIndexOf('/') + 1),
           };
@@ -94,7 +94,7 @@ module.exports = function(loader, modules) {
       const routes = module.main.routes;
       if (routes) {
         routes.forEach(route => {
-          loader.app.meta.router.register(module, route);
+          loader.app.meta.router.register(module.info, route);
         });
       }
 
