@@ -59,18 +59,20 @@ module.exports = function(loader, modules) {
         }
 
         // controller
-        const Controller = route.controller(loader.app);
+        if (route.controller) {
+          const Controller = route.controller(loader.app);
 
-        // _route
-        const _route = {
-          pid: module.info.pid,
-          module: module.info.name,
-          controller: Controller.name.replace(/Controller$/g, ''),
-          action: route.action || route.path.substr(route.path.lastIndexOf('/') + 1),
-        };
+          // _route
+          const _route = {
+            pid: module.info.pid,
+            module: module.info.name,
+            controller: Controller.name.replace(/Controller$/g, ''),
+            action: route.action || route.path.substr(route.path.lastIndexOf('/') + 1),
+          };
 
           // middleware controller
-        args.push(methodToMiddleware(Controller, _route));
+          args.push(methodToMiddleware(Controller, _route));
+        }
 
         // load
         loader.app.router[route.method].apply(loader.app.router, args);
