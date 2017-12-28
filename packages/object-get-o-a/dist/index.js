@@ -70,16 +70,18 @@ module.exports =
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-
-Object.prototype.geto = function (name) {
-  if (!this[name]) this[name] = {};
-  return this[name];
-};
-
-Object.prototype.geta = function (name) {
-  if (!this[name]) this[name] = [];
-  return this[name];
-};
+if (!Object.prototype.geto) {
+  Object.prototype.geto = function (name) {
+    if (!this[name]) this[name] = {};
+    return this[name];
+  };
+}
+if (!Object.prototype.geta) {
+  Object.prototype.geta = function (name) {
+    if (!this[name]) this[name] = [];
+    return this[name];
+  };
+}
 /* harmony default export */ __webpack_exports__["default"] = (null);
 
 /***/ })
