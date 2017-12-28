@@ -18,12 +18,6 @@ module.exports = function(loader) {
   // mockUtil
   meta.mockUtil = createMockUtil();
 
-  // unRegister route
-  meta.unRegister = function(name) {
-    const index = loader.app.router.stack.findIndex(layer => layer.name && layer.name === name);
-    if (index > -1) loader.app.router.stack.splice(index, 1);
-  };
-
   return meta;
 };
 

@@ -10,8 +10,77 @@ module.exports = function(loader, modules) {
   // load middlewares
   const [ ebMiddlewares, ebMiddlewaresGlobal ] = loadMiddlewares(loader, modules);
 
+  // patch router
+  patchRouter();
+
   // load routes
   loadRoutes();
+
+  function patchRouter() {
+    loader.app.meta.router = {
+      register(module, route) {
+        // args
+        const args = [];
+        // name
+        if (route.name) args.push(route.name);
+        // path
+        args.push(`/api/${module.info.url}/${route.path}`);
+
+        // middlewares: start
+        const fnStart = (ctx, next) => {
+          ctx[MWSTATUS] = {};
+          return next();
+        };
+        fnStart._name = 'start';
+        args.push(fnStart);
+
+        // middlewares: globals
+        ebMiddlewaresGlobal.forEach(key => {
+          const item = ebMiddlewares[key];
+          args.push(wrapMiddleware(item, route, loader));
+        });
+
+        // middlewares: route
+        if (route.middlewares) {
+          let middlewares = route.middlewares;
+          if (is.string(middlewares)) middlewares = middlewares.split(',');
+          middlewares.forEach(key => {
+            if (is.string(key)) {
+              const item = ebMiddlewares[key];
+              if (item) {
+                args.push(wrapMiddleware(item, route, loader));
+              } else {
+                args.push(wrapMiddlewareApp(key, route, loader));
+              }
+            } else {
+              args.push(key);
+            }
+          });
+        }
+
+        // controller
+        const Controller = route.controller(loader.app);
+
+        // _route
+        const _route = {
+          pid: module.info.pid,
+          module: module.info.name,
+          controller: Controller.name.replace(/Controller$/g, ''),
+          action: route.action || route.path.substr(route.path.lastIndexOf('/') + 1),
+        };
+
+          // middleware controller
+        args.push(methodToMiddleware(Controller, _route));
+
+        // load
+        loader.app.router[route.method].apply(loader.app.router, args);
+      },
+      unRegister(name) {
+        const index = loader.app.router.stack.findIndex(layer => layer.name && layer.name === name);
+        if (index > -1) loader.app.router.stack.splice(index, 1);
+      },
+    };
+  }
 
   function loadRoutes() {
     // load routes
@@ -23,59 +92,7 @@ module.exports = function(loader, modules) {
       const routes = module.main.routes;
       if (routes) {
         routes.forEach(route => {
-        // args
-          const args = [];
-          // path
-          args.push(`/api/${module.info.url}/${route.path}`);
-
-          // middlewares: start
-          const fnStart = (ctx, next) => {
-            ctx[MWSTATUS] = {};
-            return next();
-          };
-          fnStart._name = 'start';
-          args.push(fnStart);
-
-          // middlewares: globals
-          ebMiddlewaresGlobal.forEach(key => {
-            const item = ebMiddlewares[key];
-            args.push(wrapMiddleware(item, route, loader));
-          });
-
-          // middlewares: route
-          if (route.middlewares) {
-            let middlewares = route.middlewares;
-            if (is.string(middlewares)) middlewares = middlewares.split(',');
-            middlewares.forEach(key => {
-              if (is.string(key)) {
-                const item = ebMiddlewares[key];
-                if (item) {
-                  args.push(wrapMiddleware(item, route, loader));
-                } else {
-                  args.push(wrapMiddlewareApp(key, route, loader));
-                }
-              } else {
-                args.push(key);
-              }
-            });
-          }
-
-          // controller
-          const Controller = route.controller(loader.app);
-
-          // _route
-          const _route = {
-            pid: module.info.pid,
-            module: module.info.name,
-            controller: Controller.name.replace(/Controller$/g, ''),
-            action: route.action || route.path.substr(route.path.lastIndexOf('/') + 1),
-          };
-
-          // middleware controller
-          args.push(methodToMiddleware(Controller, _route));
-
-          // load
-          loader.app.router[route.method].apply(loader.app.router, args);
+          loader.app.meta.router.register(module, route);
         });
       }
 
