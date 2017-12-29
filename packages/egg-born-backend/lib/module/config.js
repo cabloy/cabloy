@@ -18,7 +18,7 @@ module.exports = function(loader, modules) {
 
       // maybe /favicon.ico
       if (context.module) {
-        context.config = ebConfigs[context.module.info.fullName];
+        context.config = ebConfigs[context.module.info.relativeName];
       }
 
       return context;
@@ -29,7 +29,7 @@ module.exports = function(loader, modules) {
     Object.keys(modules).forEach(key => {
 
       const module = modules[key];
-      const ebConfig = ebConfigs[module.info.fullName] = {};
+      const ebConfig = ebConfigs[module.info.relativeName] = {};
 
       // module config
       if (module.main.config) extend(true, ebConfig, module.main.config(loader.appInfo));

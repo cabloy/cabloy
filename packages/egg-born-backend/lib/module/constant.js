@@ -19,7 +19,7 @@ module.exports = function(loader, modules) {
       // maybe /favicon.ico
       if (context.module) {
         // constant
-        context.constant = ebConstants[context.module.info.fullName];
+        context.constant = ebConstants[context.module.info.relativeName];
       }
 
       return context;
@@ -31,7 +31,7 @@ module.exports = function(loader, modules) {
     Object.keys(modules).forEach(key => {
 
       const module = modules[key];
-      const ebConstant = ebConstants[module.info.fullName] = {};
+      const ebConstant = ebConstants[module.info.relativeName] = {};
 
       // module constants
       if (module.main.constants) extend(true, ebConstant, module.main.constants);

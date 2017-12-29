@@ -4,7 +4,7 @@ const mparse = require('egg-born-mparse').default;
 module.exports = function(loader) {
 
   // meta
-  const meta = loader.app.meta = loader.app.meta || {};
+  const meta = loader.app.geto('meta');
 
   // app or agent
   meta.inApp = loader.app.type === 'application';

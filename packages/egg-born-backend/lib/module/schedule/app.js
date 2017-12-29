@@ -41,7 +41,7 @@ module.exports = function(loader, modules) {
         Object.keys(module.main.schedules).forEach(scheduleKey => {
           const fullKey = `${module.info.fullName}:${scheduleKey}`;
           const scheduleTask = module.main.schedules[scheduleKey];
-          const scheduleConfig = loader.app.meta.configs[module.info.fullName].schedules[scheduleKey];
+          const scheduleConfig = loader.app.meta.configs[module.info.relativeName].schedules[scheduleKey];
           ebSchedules[fullKey] = {
             schedule: scheduleConfig,
             task: wrapTask(scheduleTask, fullKey, scheduleConfig, module.info),
@@ -60,7 +60,6 @@ module.exports = function(loader, modules) {
       });
       return task(ctx);
     };
-
   }
 
 };

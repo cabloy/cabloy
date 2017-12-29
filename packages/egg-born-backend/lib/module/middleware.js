@@ -20,7 +20,7 @@ function loadMiddlewares(ebMiddlewares, loader, modules) {
     if (module.main.middlewares) {
       Object.keys(module.main.middlewares).forEach(middlewareKey => {
         const middleware = module.main.middlewares[middlewareKey];
-        const config = loader.app.meta.configs[module.info.fullName];
+        const config = loader.app.meta.configs[module.info.relativeName];
         const middlewareConfig = config.middlewares ? config.middlewares[middlewareKey] : null;
         const options = extend(true, {}, middlewareConfig, loader.app.config.mws[middlewareKey]);
         ebMiddlewares[middlewareKey] = {
