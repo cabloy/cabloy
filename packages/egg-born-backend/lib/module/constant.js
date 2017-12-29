@@ -29,13 +29,25 @@ module.exports = function(loader, modules) {
 
   function loadConstants() {
     Object.keys(modules).forEach(key => {
-
       const module = modules[key];
       const ebConstant = ebConstants[module.info.relativeName] = {};
 
       // module constants
       if (module.main.constants) extend(true, ebConstant, module.main.constants);
 
+      // patchConstant
+      patchConstant(ebConstant);
+    });
+  }
+
+  function patchConstant(ebConstant) {
+    Object.defineProperty(ebConstant, 'module', {
+      enumerable: false,
+      get() {
+        return function(moduleName) {
+          return ebConstants[moduleName];
+        };
+      },
     });
   }
 

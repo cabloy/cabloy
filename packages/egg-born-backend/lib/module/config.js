@@ -27,7 +27,6 @@ module.exports = function(loader, modules) {
 
   function loadConfigs() {
     Object.keys(modules).forEach(key => {
-
       const module = modules[key];
       const ebConfig = ebConfigs[module.info.relativeName] = {};
 
@@ -37,6 +36,19 @@ module.exports = function(loader, modules) {
       // application config
       if (loader.config.modules && loader.config.modules[module.info.relativeName]) { extend(true, ebConfig, loader.config.modules[module.info.relativeName]); }
 
+      // patchConfig
+      patchConfig(ebConfig);
+    });
+  }
+
+  function patchConfig(ebConfig) {
+    Object.defineProperty(ebConfig, 'module', {
+      enumerable: false,
+      get() {
+        return function(moduleName) {
+          return ebConfigs[moduleName];
+        };
+      },
     });
   }
 
