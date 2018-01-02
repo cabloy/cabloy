@@ -1,5 +1,7 @@
 const extend = require('extend2');
 const assetErrors = require('./asset/errors.js');
+const errorClassFn = require('../base/error.js');
+const ERROR = Symbol('Context#__error');
 
 module.exports = function(loader, modules) {
 
@@ -19,73 +21,32 @@ module.exports = function(loader, modules) {
 
       // maybe /favicon.ico
       if (context.module) {
-        // data,code/message,args
-        context.success = function(data, code, ...args) {
 
-          const body = this.parseSuccess(code, ...args);
+        // error
+        context[ERROR] = new (errorClassFn(ebErrors))(context);
 
-          this.response.status = 200;
-          this.response.type = 'application/json';
-          this.response.body = { code: 0, message: body.message, data };
-        };
-        // code/message,args
-        context.fail = function(code, ...args) {
-
-          const body = this.parseFail(code, ...args);
-
-          this.response.status = 200;
-          this.response.type = 'application/json';
-          this.response.body = body;
-        };
-        // code/message,args
-        context.throw = function(code, ...args) {
-          const body = this.parseFail(code, ...args);
-          const err = new Error();
-          err.code = body.code;
-          err.message = body.message;
-          if (body.code < 500) err.status = body.code;
-          throw err;
-        };
-        // code/message,args
-        context.parseFail = function(code, ...args) {
-          if (typeof code === 'object') return code;
-          return parseCode(this, context.module.info, 1, code, ...args);
-        };
-        // code/message,args
-        context.parseSuccess = function(code, ...args) {
-          return parseCode(this, context.module.info, 0, code, ...args);
-        };
+        // methods
+        [ 'success', 'fail', 'throw' ].forEach(key => {
+          context[key] = function(...args) {
+            return context[ERROR][key](context.module.info.relativeName, ...args);
+          };
+          context[key].module = function(module, ...args) {
+            return context[ERROR][key](module, ...args);
+          };
+        });
 
       }
 
       return context;
     };
 
-    //
-    function parseCode(context, info, codeDefault, code, ...args) {
-      const ebError = ebErrors[info.fullName];
-      let message = null;
-
-      if (typeof code === 'string') {
-        message = context.text(code, ...args);
-        code = codeDefault;
-      } else if (code) {
-        message = context.text(ebError[code], ...args);
-      }
-
-      if (!message) {
-        message = context.text(ebError[codeDefault]);
-      }
-
-      return { code, message };
-    }
   }
 
   function loadErrors() {
     Object.keys(modules).forEach(key => {
 
       const module = modules[key];
-      const ebError = ebErrors[module.info.fullName] = {};
+      const ebError = ebErrors[module.info.relativeName] = {};
 
       // module errors
       if (module.main.errors) extend(true, ebError, module.main.errors);
