@@ -27,7 +27,7 @@ before(async () => {
   const ctx = app.mockContext({ mockUrl: '/api/a/version/' });
 
   // version check
-  await app.meta.runSchedule('egg-born-module-a-version:versionCheck');
+  await app.meta.runSchedule('a-version','versionCheck');
 
   // version init
   await ctx.performAction({
