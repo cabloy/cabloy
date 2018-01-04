@@ -32,7 +32,7 @@ module.exports = {
     return this[DATABASEMETA];
   },
   set dbMeta(meta) {
-    if (meta.master && meta.transaction) {
+    if (meta.transaction) {
       this.dbMeta.master = false;
       this.dbMeta.transaction = true;
       this.dbMeta.connection = meta.connection;
