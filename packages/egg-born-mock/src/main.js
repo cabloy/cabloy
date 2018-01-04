@@ -23,11 +23,14 @@ before(async () => {
   // database ready
   console.log(chalk.cyan(`  database: ${database}`));
 
+  // session
+  app.mockSession({});
+  
   // ctx
   const ctx = app.mockContext({ mockUrl: '/api/a/version/' });
 
   // version check
-  await app.meta.runSchedule('a-version','versionCheck');
+  await app.meta.runSchedule('a-version', 'versionCheck');
 
   // version init
   await ctx.performAction({
