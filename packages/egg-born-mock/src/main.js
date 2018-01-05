@@ -1,5 +1,6 @@
 const moment = require('moment');
 const chalk = require('chalk');
+const path = require('path');
 const { assert, app, mock, mm } = require('egg-mock/bootstrap');
 
 before(async () => {
@@ -25,12 +26,13 @@ before(async () => {
 
   // session
   app.mockSession({});
-  
+
   // ctx
   const ctx = app.mockContext({ mockUrl: '/api/a/version/' });
 
   // version check
-  await app.runSchedule('versionCheck');
+  const pathVersionCheck = path.join(__dirname, '../../egg-born-backend/app/schedule/versionCheck.js');
+  await app.runSchedule(pathVersionCheck);
 
   // version init
   await ctx.performAction({
