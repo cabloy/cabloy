@@ -80,7 +80,6 @@ const config = __webpack_require__(6);
 const locales = __webpack_require__(7);
 const errors = __webpack_require__(9);
 const constants = __webpack_require__(10);
-const schedules = __webpack_require__(11);
 
 // eslint-disable-next-line
 module.exports = app => {
@@ -92,7 +91,6 @@ module.exports = app => {
     locales,
     errors,
     constants,
-    schedules,
   };
 
 };
@@ -105,6 +103,7 @@ module.exports = app => {
 const version = __webpack_require__(3);
 
 module.exports = [
+  { method: 'post', path: 'version/start', controller: version, middlewares: 'safeAccess' },
   { method: 'post', path: 'version/check', controller: version, middlewares: 'safeAccess' },
   { method: 'post', path: 'version/updateModule', controller: version, middlewares: 'safeAccess,transaction' },
   { method: 'post', path: 'version/initModule', controller: version, middlewares: 'safeAccess,transaction' },
@@ -116,19 +115,65 @@ module.exports = [
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(0);
+const chalk = require3('chalk');
 
 module.exports = app => {
   class VersionController extends app.Controller {
 
+    async start() {
+      // update all modules
+      let result;
+      try {
+        result = await this.ctx.performAction({
+          method: 'post',
+          url: 'version/check',
+        });
+        if (Object.keys(result).length > 0) console.log(result);
+        console.log(chalk.cyan('  All modules are checked successfully!'));
+      } catch (err) {
+        console.log(chalk.cyan('  Modules are checked failed!'));
+        throw err;
+      }
+
+      // init all subdomains
+      if (result && Object.keys(result).length > 0) {
+        try {
+          const rows = await this.ctx.db.query('select distinct subdomain from aVersionInit');
+          for (const row of rows) {
+            await this.ctx.performAction({
+              method: 'post',
+              url: 'version/check',
+              body: {
+                subdomain: row.subdomain,
+                scene: 'init',
+              },
+            });
+          }
+
+          console.log(chalk.cyan('  All subdomains are initialized successfully!'));
+        } catch (err) {
+          console.log(chalk.cyan('  Subdomains are initialized failed!'));
+          throw err;
+        }
+      }
+
+      // ok
+      console.log(chalk.yellow('  For more details, please goto http://{ip}:{port}/#/a/version/check\n'));
+      this.ctx.success();
+    }
+
     // check all modules
     async check() {
-      // options: 
+      // options:
       //   scene:init
-      //   scene:test      
+      //   scene:test
       const options = this.ctx.request.body;
+      options.result = {};
       await this.service.version.check(options);
-      this.ctx.success();
+      this.ctx.success(options.result);
     }
 
     // update module
@@ -143,7 +188,9 @@ module.exports = app => {
     // init module
     async initModule() {
       await this.service.version.initModule(
-        this.ctx.request.body
+        this.ctx.request.body,
+        this.ctx.request.body.module,
+        this.ctx.getInt('version')
       );
       this.ctx.success();
     }
@@ -199,13 +246,13 @@ module.exports = app => {
     async check(options) {
 
       if (!options.scene) {
-      // confirm table aVersion exists
+        // confirm table aVersion exists
         const res = await this.ctx.db.queryOne('show tables like \'aVersion\'');
         if (!res) {
           await this.ctx.db.query(`
           CREATE TABLE aVersion (
             id INT NOT NULL AUTO_INCREMENT,
-            module VARCHAR(45) NULL,
+            module VARCHAR(50) NULL,
             version INT NULL,
             createdAt TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
             updatedAt TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -247,17 +294,26 @@ module.exports = app => {
     }
 
     // init module
-    async initModule(options) {
+    async initModule(options, module, version) {
 
       // init
       try {
         await this.ctx.performAction({
           method: 'post',
-          url: `/${options.module.info.url}/version/init`,
+          url: `/${module.info.url}/version/init`,
           body: options,
         });
       } catch (e) {
         if (e.code !== 404) throw e;
+      }
+
+      // insert record
+      if (version > 0) {
+        await this.ctx.db.insert('aVersionInit', {
+          subdomain: options.subdomain,
+          module: module.info.relativeName,
+          version,
+        });
       }
 
     }
@@ -284,6 +340,19 @@ module.exports = app => {
 
       if (version === 1) {
         // do nothing
+      }
+
+      if (version === 2) {
+        await this.ctx.db.query(`
+          CREATE TABLE aVersionInit (
+            id INT NOT NULL AUTO_INCREMENT,
+            subdomain VARCHAR(50) NULL,
+            module VARCHAR(50) NULL,
+            version INT NULL,
+            createdAt TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id));
+          `);
       }
 
     }
@@ -327,26 +396,31 @@ module.exports = app => {
 
       if (!fileVersionNew) return;
 
-      if (!options.scene) {
-        // update module
+      if (!options.scene || options.scene === 'init') {
+        // update module or init module
+
         // fileVersionOld
         let fileVersionOld = 0; // default
-        const res = await this.ctx.db.queryOne('select * from aVersion where module=? order by version desc', [ moduleName ]);
-        if (res) {
-          fileVersionOld = res.version;
+        if (!options.scene) {
+          const res = await this.ctx.db.queryOne('select * from aVersion where module=? order by version desc', [ moduleName ]);
+          if (res) {
+            fileVersionOld = res.version;
+          }
+        } else {
+          const res = await this.ctx.db.queryOne('select * from aVersionInit where subdomain=? and module=? order by version desc', [ options.subdomain, moduleName ]);
+          if (res) {
+            fileVersionOld = res.version;
+          }
         }
 
         // check if need update
         if (fileVersionOld > fileVersionNew) {
-        // module is old
+          // module is old
           module.__check = this.ctx.parseFail(1001);
           this.ctx.throw(1001);
         } else if (fileVersionOld < fileVersionNew) {
-          await this.__updateModule(module, fileVersionOld, fileVersionNew);
+          await this.__updateModule(options, module, fileVersionOld, fileVersionNew);
         }
-      } else if (options.scene === 'init') {
-        // init module
-        await this.__initModule(module, fileVersionNew, options);
       } else if (options.scene === 'test') {
         // test module
         await this.__testModule(module, fileVersionNew, options);
@@ -377,8 +451,8 @@ module.exports = app => {
 
     }
 
-    // update module
-    async __updateModule(module, fileVersionOld, fileVersionNew) {
+    // update module or init module
+    async __updateModule(options, module, fileVersionOld, fileVersionNew) {
 
       // versions
       const versions = [];
@@ -390,32 +464,33 @@ module.exports = app => {
       for (const version of versions) {
         // perform action
         try {
-          await this.ctx.performAction({
-            method: 'post',
-            url: 'version/updateModule',
-            body: {
-              module,
-              version,
-            },
-          });
+          if (!options.scene) {
+            await this.ctx.performAction({
+              method: 'post',
+              url: 'version/updateModule',
+              body: {
+                module,
+                version,
+              },
+            });
+          } else {
+            options.module = module;
+            options.version = version;
+            await this.ctx.performAction({
+              method: 'post',
+              url: 'version/initModule',
+              body: options,
+            });
+          }
         } catch (err) {
           module.__check = err;
           throw err;
         }
       }
 
-    }
+      // log
+      options.result[module.info.relativeName] = { fileVersionOld, fileVersionNew };
 
-    // init module
-    async __initModule(module, fileVersionNew, options) {
-      options.module = module;
-      options.version = fileVersionNew;
-
-      await this.ctx.performAction({
-        method: 'post',
-        url: 'version/initModule',
-        body: options,
-      });
     }
 
     // test module
@@ -461,15 +536,6 @@ module.exports = app => {
 // eslint-disable-next-line
 module.exports = appInfo => {
   const config = {};
-
-  // schedules
-  config.schedules = {
-    versionCheck: {
-      type: 'worker',
-      immediate: true,
-    },
-  };
-
   return config;
 };
 
@@ -510,50 +576,6 @@ module.exports = {
 /***/ (function(module, exports) {
 
 module.exports = {
-  event: {
-    checkReady: Symbol(),
-  },
-};
-
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const versionCheck = __webpack_require__(12);
-
-module.exports = {
-  versionCheck,
-};
-
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const require3 = __webpack_require__(0);
-const chalk = require3('chalk');
-
-module.exports = async function(ctx) {
-  const eventCheckReady = ctx.constant.event.checkReady;
-
-  try {
-    await ctx.performAction({
-      method: 'post',
-      url: 'version/check',
-    });
-    console.log(chalk.cyan('  All modules are checked successfully!'));
-  } catch (err) {
-    console.log(chalk.cyan('  Modules are checked failed!'));
-  }
-
-  // emit event
-  if (ctx.app.meta.isTest) {
-    ctx.app.emit(eventCheckReady);
-  } else {
-    console.log(chalk.yellow('  For more details, please goto http://{ip}:{port}/#/a/version/check\n'));
-    ctx.app.messenger.sendToApp(eventCheckReady);
-  }
 };
 
 

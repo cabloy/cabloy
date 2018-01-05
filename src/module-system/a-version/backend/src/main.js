@@ -4,7 +4,6 @@ const config = require('./config/config.js');
 const locales = require('./config/locales.js');
 const errors = require('./config/errors.js');
 const constants = require('./config/constants.js');
-const schedules = require('./config/schedules.js');
 
 // eslint-disable-next-line
 module.exports = app => {
@@ -16,7 +15,6 @@ module.exports = app => {
     locales,
     errors,
     constants,
-    schedules,
   };
 
 };

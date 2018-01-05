@@ -8,13 +8,13 @@ module.exports = app => {
     async check(options) {
 
       if (!options.scene) {
-      // confirm table aVersion exists
+        // confirm table aVersion exists
         const res = await this.ctx.db.queryOne('show tables like \'aVersion\'');
         if (!res) {
           await this.ctx.db.query(`
           CREATE TABLE aVersion (
             id INT NOT NULL AUTO_INCREMENT,
-            module VARCHAR(45) NULL,
+            module VARCHAR(50) NULL,
             version INT NULL,
             createdAt TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
             updatedAt TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -56,17 +56,26 @@ module.exports = app => {
     }
 
     // init module
-    async initModule(options) {
+    async initModule(options, module, version) {
 
       // init
       try {
         await this.ctx.performAction({
           method: 'post',
-          url: `/${options.module.info.url}/version/init`,
+          url: `/${module.info.url}/version/init`,
           body: options,
         });
       } catch (e) {
         if (e.code !== 404) throw e;
+      }
+
+      // insert record
+      if (version > 0) {
+        await this.ctx.db.insert('aVersionInit', {
+          subdomain: options.subdomain,
+          module: module.info.relativeName,
+          version,
+        });
       }
 
     }
@@ -93,6 +102,19 @@ module.exports = app => {
 
       if (version === 1) {
         // do nothing
+      }
+
+      if (version === 2) {
+        await this.ctx.db.query(`
+          CREATE TABLE aVersionInit (
+            id INT NOT NULL AUTO_INCREMENT,
+            subdomain VARCHAR(50) NULL,
+            module VARCHAR(50) NULL,
+            version INT NULL,
+            createdAt TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id));
+          `);
       }
 
     }
@@ -136,26 +158,31 @@ module.exports = app => {
 
       if (!fileVersionNew) return;
 
-      if (!options.scene) {
-        // update module
+      if (!options.scene || options.scene === 'init') {
+        // update module or init module
+
         // fileVersionOld
         let fileVersionOld = 0; // default
-        const res = await this.ctx.db.queryOne('select * from aVersion where module=? order by version desc', [ moduleName ]);
-        if (res) {
-          fileVersionOld = res.version;
+        if (!options.scene) {
+          const res = await this.ctx.db.queryOne('select * from aVersion where module=? order by version desc', [ moduleName ]);
+          if (res) {
+            fileVersionOld = res.version;
+          }
+        } else {
+          const res = await this.ctx.db.queryOne('select * from aVersionInit where subdomain=? and module=? order by version desc', [ options.subdomain, moduleName ]);
+          if (res) {
+            fileVersionOld = res.version;
+          }
         }
 
         // check if need update
         if (fileVersionOld > fileVersionNew) {
-        // module is old
+          // module is old
           module.__check = this.ctx.parseFail(1001);
           this.ctx.throw(1001);
         } else if (fileVersionOld < fileVersionNew) {
-          await this.__updateModule(module, fileVersionOld, fileVersionNew);
+          await this.__updateModule(options, module, fileVersionOld, fileVersionNew);
         }
-      } else if (options.scene === 'init') {
-        // init module
-        await this.__initModule(module, fileVersionNew, options);
       } else if (options.scene === 'test') {
         // test module
         await this.__testModule(module, fileVersionNew, options);
@@ -186,8 +213,8 @@ module.exports = app => {
 
     }
 
-    // update module
-    async __updateModule(module, fileVersionOld, fileVersionNew) {
+    // update module or init module
+    async __updateModule(options, module, fileVersionOld, fileVersionNew) {
 
       // versions
       const versions = [];
@@ -199,32 +226,33 @@ module.exports = app => {
       for (const version of versions) {
         // perform action
         try {
-          await this.ctx.performAction({
-            method: 'post',
-            url: 'version/updateModule',
-            body: {
-              module,
-              version,
-            },
-          });
+          if (!options.scene) {
+            await this.ctx.performAction({
+              method: 'post',
+              url: 'version/updateModule',
+              body: {
+                module,
+                version,
+              },
+            });
+          } else {
+            options.module = module;
+            options.version = version;
+            await this.ctx.performAction({
+              method: 'post',
+              url: 'version/initModule',
+              body: options,
+            });
+          }
         } catch (err) {
           module.__check = err;
           throw err;
         }
       }
 
-    }
+      // log
+      options.result[module.info.relativeName] = { fileVersionOld, fileVersionNew };
 
-    // init module
-    async __initModule(module, fileVersionNew, options) {
-      options.module = module;
-      options.version = fileVersionNew;
-
-      await this.ctx.performAction({
-        method: 'post',
-        url: 'version/initModule',
-        body: options,
-      });
     }
 
     // test module

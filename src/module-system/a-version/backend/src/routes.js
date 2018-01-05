@@ -1,6 +1,7 @@
 const version = require('./controller/version.js');
 
 module.exports = [
+  { method: 'post', path: 'version/start', controller: version, middlewares: 'safeAccess' },
   { method: 'post', path: 'version/check', controller: version, middlewares: 'safeAccess' },
   { method: 'post', path: 'version/updateModule', controller: version, middlewares: 'safeAccess,transaction' },
   { method: 'post', path: 'version/initModule', controller: version, middlewares: 'safeAccess,transaction' },
