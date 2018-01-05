@@ -5,9 +5,11 @@ const eventLoadSchedules = 'eb:event:loadSchedules';
 module.exports = function(loader) {
 
   // all schedules
-  const ebScheduleInstances = {};
+  let ebScheduleInstances;
 
   loader.app.messenger.once(eventLoadSchedules, ebSchedules => {
+    if (ebScheduleInstances) return;
+    ebScheduleInstances = {};
     Object.keys(ebSchedules).forEach(key => {
       const schedule = ebSchedules[key];
       const config = schedule.schedule;

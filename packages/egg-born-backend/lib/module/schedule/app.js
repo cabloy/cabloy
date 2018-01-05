@@ -1,4 +1,5 @@
 const qs = require('querystring');
+const eventCheckReady = 'eb:event:version:checkReady';
 const eventLoadSchedules = 'eb:event:loadSchedules';
 
 module.exports = function(loader, modules) {
@@ -13,7 +14,7 @@ module.exports = function(loader, modules) {
     loader.app.schedules[key] = ebSchedules[key];
   });
 
-  loader.app.messenger.once('egg-ready', () => {
+  loader.app.messenger.once(eventCheckReady, () => {
     loader.app.messenger.sendToAgent(eventLoadSchedules, ebSchedules);
   });
 
