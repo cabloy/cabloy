@@ -1,5 +1,6 @@
 const path = require('path');
 const chalk = require('chalk');
+const path = require('path');
 const mock = require('egg-mock');
 const Command = require('egg-bin').Command;
 
@@ -30,7 +31,8 @@ class BackendInitCommand extends Command {
     const ctx = app.mockContext({ mockUrl: '/api/a/version/' });
 
     // version check
-    yield app.meta.runSchedule('egg-born-module-a-version:versionCheck');
+    const pathVersionCheck = path.join(__dirname, '../../../egg-born-backend/app/schedule/versionCheck.js');
+    yield app.runSchedule(pathVersionCheck);
 
     // version init
     yield ctx.performAction({
