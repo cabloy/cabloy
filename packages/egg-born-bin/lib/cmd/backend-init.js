@@ -1,6 +1,5 @@
 const path = require('path');
 const chalk = require('chalk');
-const path = require('path');
 const mock = require('egg-mock');
 const Command = require('egg-bin').Command;
 
