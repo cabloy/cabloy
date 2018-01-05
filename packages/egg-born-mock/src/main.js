@@ -30,7 +30,7 @@ before(async () => {
   const ctx = app.mockContext({ mockUrl: '/api/a/version/' });
 
   // version check
-  await app.meta.runSchedule('a-version', 'versionCheck');
+  await app.runSchedule('versionCheck');
 
   // version init
   await ctx.performAction({
