@@ -26,9 +26,24 @@ module.exports = function(loader, modules) {
         // path
         args.push(`/api/${info.url}/${route.path}`);
 
+        // constroller
+        let Controller;
+        let _route;
+        if (route.controller) {
+          Controller = route.controller(loader.app);
+          // _route
+          _route = {
+            pid: info.pid,
+            module: info.name,
+            controller: Controller.name.replace(/Controller$/g, '').replace(/^\S/, function(s) { return s.toLowerCase(); }),
+            action: route.action || route.path.substr(route.path.lastIndexOf('/') + 1),
+          };
+        }
+
         // middlewares: start
         const fnStart = (ctx, next) => {
           ctx[MWSTATUS] = {};
+          ctx.route = _route;
           return next();
         };
         fnStart._name = 'start';
@@ -60,16 +75,6 @@ module.exports = function(loader, modules) {
 
         // controller
         if (route.controller) {
-          const Controller = route.controller(loader.app);
-
-          // _route
-          const _route = {
-            pid: info.pid,
-            module: info.name,
-            controller: Controller.name.replace(/Controller$/g, '').replace(/^\S/, function(s) { return s.toLowerCase(); }),
-            action: route.action || route.path.substr(route.path.lastIndexOf('/') + 1),
-          };
-
           // middleware controller
           args.push(methodToMiddleware(Controller, _route));
         }
@@ -150,7 +155,6 @@ function middlewareDeps(ctx, options) {
 
 function methodToMiddleware(Controller, _route) {
   return function classControllerMiddleware(...args) {
-    this.route = _route;
     const controller = new Controller(this);
     if (!this.app.config.controller || !this.app.config.controller.supportParams) {
       args = [ this ];
