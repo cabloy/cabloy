@@ -65,8 +65,7 @@ module.exports = function(dirname) {
     mock,
     mm,
     mockUrl(url) {
-      const prefix = app.meta.mockUtil.parseUrlFromPackage(dirname);
-      return url ? `${prefix}/${url}` : `${prefix}/`;
+      return app.meta.mockUtil.mockUrl(dirname,url);
     },
     mockInfo() {
       return app.meta.mockUtil.parseInfoFromPackage(dirname);
