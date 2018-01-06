@@ -113,6 +113,9 @@ function appCallback() {
     // transaction
     ctx.dbMeta = ctxCaller.dbMeta;
 
+    // ctxCaller
+    ctx.meta.ctxCaller = ctxCaller;
+
     // call
     fn(ctx).then(function handleResponse() {
       respond.call(ctx);
