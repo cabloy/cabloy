@@ -34,20 +34,32 @@ function loadMiddlewares(ebMiddlewares, loader, modules) {
   });
 
   // global order
+  // eslint-disable-next-line
+  while (true) {
+    if (!swap(ebMiddlewares, globals)) break;
+  }
+
+  return globals;
+}
+
+function swap(ebMiddlewares, globals) {
+  let result = false;
   const globalsClone = globals.slice(0);
   globalsClone.forEach(key => {
     const item = ebMiddlewares[key];
     let deps = item.options.dependencies || [];
     if (typeof deps === 'string') deps = deps.split(',');
-    deps.forEach(dep => swap(globals, dep, key));
+    deps.forEach(dep => {
+      if (swapDep(globals, dep, key)) result = true;
+    });
   });
-
-  return globals;
+  return result;
 }
 
-function swap(arr, a, b) {
+function swapDep(arr, a, b) {
   const indexA = arr.indexOf(a);
   const indexB = arr.indexOf(b);
-  if (indexA === -1 || indexB === -1 || indexA < indexB) return;
+  if (indexA === -1 || indexB === -1 || indexA < indexB) return false;
   arr.splice(indexB, 0, arr.splice(indexA, 1)[0]);
+  return true;
 }
