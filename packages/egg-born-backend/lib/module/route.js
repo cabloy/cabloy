@@ -66,7 +66,7 @@ module.exports = function(loader, modules) {
           const _route = {
             pid: info.pid,
             module: info.name,
-            controller: Controller.name.replace(/Controller$/g, ''),
+            controller: Controller.name.replace(/Controller$/g, '').replace(/^\S/, function(s) { return s.toLowerCase(); }),
             action: route.action || route.path.substr(route.path.lastIndexOf('/') + 1),
           };
 
