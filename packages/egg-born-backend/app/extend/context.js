@@ -114,7 +114,7 @@ function appCallback() {
     ctx.dbMeta = ctxCaller.dbMeta;
 
     // ctxCaller
-    ctx.meta.ctxCaller = ctxCaller;
+    ctx.ctxCaller = ctxCaller;
 
     // call
     fn(ctx).then(function handleResponse() {
