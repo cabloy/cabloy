@@ -394,9 +394,7 @@ module.exports = app => {
         fileVersionNew = module.package.eggBornModule.fileVersion;
       }
 
-      if (!fileVersionNew) return;
-
-      if (!options.scene || options.scene === 'init') {
+      if (fileVersionNew && (!options.scene || options.scene === 'init')) {
         // update module or init module
 
         // fileVersionOld
@@ -421,7 +419,9 @@ module.exports = app => {
         } else if (fileVersionOld < fileVersionNew) {
           await this.__updateModule(options, module, fileVersionOld, fileVersionNew);
         }
-      } else if (options.scene === 'test') {
+      }
+
+      if (options.scene === 'test') {
         // test module
         await this.__testModule(module, fileVersionNew, options);
       }
