@@ -34,5 +34,10 @@ function createMockUtil() {
       const pkg = require(file);
       return mparse.parseInfo(mparse.parseName(pkg.name));
     },
+    mockUrl(dir, url) {
+      if (url && url.indexOf(0) === '/') return `/api${url}`;
+      const prefix = this.parseUrlFromPackage(dir);
+      return url ? `${prefix}/${url}` : `${prefix}/`;
+    },
   };
 }
