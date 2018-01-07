@@ -15,7 +15,7 @@ module.exports = {
   get module() {
     if (this[MODULE] === undefined) {
       const info = mparse.parseInfo(mparse.parseName(this.req.mockUrl || this.req.url));
-      this[MODULE] = info ? this.app.meta.modules[info.fullName] : null;
+      this[MODULE] = info ? this.app.meta.modules[info.relativeName] : null;
     }
     return this[MODULE];
   },

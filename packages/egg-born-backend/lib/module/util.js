@@ -33,12 +33,12 @@ function __parseModules(modules, policy, loader) {
 
     const info = mparse.parseInfo(name);
 
-    if (!modules[info.fullName]) {
+    if (!modules[info.relativeName]) {
       const pkg = util.lookupPackage(file);
       const module = { file, name, info, pkg };
       module.package = require(pkg);
       module.main = loader.loadFile(file, loader.app, module);
-      modules[info.fullName] = module;
+      modules[info.relativeName] = module;
       if (loader.app.config.env === 'local') console.log(info.fullName);
     }
 

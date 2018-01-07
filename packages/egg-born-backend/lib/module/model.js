@@ -18,7 +18,7 @@ module.exports = function(loader, modules) {
 
       // maybe /favicon.ico
       if (context.module) {
-        const ebModelClass = ebModelClasses[context.module.info.fullName];
+        const ebModelClass = ebModelClasses[context.module.info.relativeName];
         if (ebModelClass) {
           context.model = new (ModelClass(loader.app))(context, { table: null });
           context.model.__ebCache = new Map();
@@ -49,7 +49,7 @@ module.exports = function(loader, modules) {
     Object.keys(modules).forEach(key => {
 
       const module = modules[key];
-      const ebModelClass = ebModelClasses[module.info.fullName] = {};
+      const ebModelClass = ebModelClasses[module.info.relativeName] = {};
 
       // models
       const models = module.main.models;

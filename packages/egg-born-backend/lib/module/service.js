@@ -18,7 +18,7 @@ module.exports = function(loader, modules) {
 
       // maybe /favicon.ico
       if (context.module) {
-        const ebServiceClass = ebServiceClasses[context.module.info.fullName];
+        const ebServiceClass = ebServiceClasses[context.module.info.relativeName];
         if (ebServiceClass) {
           context.service.__ebCache = new Map();
           Object.keys(ebServiceClass).forEach(key => {
@@ -48,7 +48,7 @@ module.exports = function(loader, modules) {
     Object.keys(modules).forEach(key => {
 
       const module = modules[key];
-      const ebServiceClass = ebServiceClasses[module.info.fullName] = {};
+      const ebServiceClass = ebServiceClasses[module.info.relativeName] = {};
 
       // services
       const services = module.main.services;
