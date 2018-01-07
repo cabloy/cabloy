@@ -132,9 +132,8 @@ module.exports = app => {
     async __checkOtherModules(options) {
       const keys = Object.keys(this.app.meta.modules);
       for (const key of keys) {
-        if (key !== 'egg-born-module-a-version') {
-          const module = this.app.meta.modules[key];
-          await this.__checkModule(module.info.relativeName, options);
+        if (key !== 'a-version') {
+          await this.__checkModule(key, options);
         }
       }
     }
@@ -269,8 +268,7 @@ module.exports = app => {
 
     // get module
     __getModule(moduleName) {
-      const fullName = `egg-born-module-${moduleName}`;
-      return this.app.meta.modules[fullName];
+      return this.app.meta.modules[moduleName];
     }
 
     // result
