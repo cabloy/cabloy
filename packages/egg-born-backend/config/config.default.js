@@ -27,12 +27,6 @@ module.exports = appInfo => {
 
   // middlewares
   config.mws = {
-    // safeAccess
-    safeAccess: {
-      whitelist: {
-        '127.0.0.1': true,
-      },
-    },
   };
 
   // model

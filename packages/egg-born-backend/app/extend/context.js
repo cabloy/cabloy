@@ -10,6 +10,7 @@ const mparse = require('egg-born-mparse').default;
 const MODULE = Symbol.for('Context#__module');
 const DATABASE = Symbol.for('Context#__database');
 const DATABASEMETA = Symbol.for('Context#__databasemeta');
+const SAFEACCESS = Symbol.for('Context#__safeaccess');
 
 module.exports = {
   get module() {
@@ -37,6 +38,12 @@ module.exports = {
       this.dbMeta.transaction = true;
       this.dbMeta.connection = meta.connection;
     }
+  },
+  get safeAccess() {
+    return this[SAFEACCESS];
+  },
+  set safeAccess(value) {
+    this[SAFEACCESS] = value;
   },
 
   /**
@@ -115,6 +122,9 @@ function appCallback() {
 
     // ctxCaller
     ctx.ctxCaller = ctxCaller;
+
+    // safeAccess
+    ctx.safeAccess = true;
 
     // call
     fn(ctx).then(function handleResponse() {
@@ -217,7 +227,7 @@ function createRequest({ method, url }, _req) {
   req.url = url;
   // path,
   req.socket = {
-    remoteAddress: '127.0.0.1', // _req.socket.remoteAddress,
+    remoteAddress: _req.socket.remoteAddress,
     remotePort: _req.socket.remotePort,
   };
   return req;

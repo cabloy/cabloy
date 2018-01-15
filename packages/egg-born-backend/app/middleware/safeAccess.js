@@ -1,6 +1,6 @@
-module.exports = options => {
+module.exports = () => {
   return async function safeAccess(ctx, next) {
-    if (!options.whitelist[ctx.ip]) ctx.throw(403);
+    if (!ctx.safeAccess) ctx.throw(403);
     // next
     await next();
   };
