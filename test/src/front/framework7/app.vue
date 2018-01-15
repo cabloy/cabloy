@@ -27,7 +27,6 @@
             <f7-list>
               <f7-list-item link="/aa/hello/welcome/You" title="Welcome"></f7-list-item>
               <f7-list-item link="/aa/hello/profile" title="Profile"></f7-list-item>
-              <f7-list-item link="/a/version/check" title="Version Check"></f7-list-item>
             </f7-list>
           </f7-page>
         </f7-pages>
