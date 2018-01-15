@@ -109,7 +109,7 @@ module.exports = [
   { method: 'post', path: 'version/initModule', controller: version, middlewares: 'safeAccess,transaction' },
   { method: 'post', path: 'version/testModule', controller: version, middlewares: 'safeAccess,transaction' },
   { method: 'post', path: 'version/update', controller: version, middlewares: 'safeAccess' },
-  { method: 'get', path: 'version/result', controller: version, middlewares: 'safeAccess' },
+  // { method: 'get', path: 'version/result', controller: version, middlewares: 'safeAccess' },
 ];
 
 
@@ -161,7 +161,7 @@ module.exports = app => {
       }
 
       // ok
-      console.log(chalk.yellow('  For more details, please goto http://{ip}:{port}/#/a/version/check\n'));
+      // console.log(chalk.yellow('  For more details, please goto http://{ip}:{port}/#/a/version/check\n'));
       this.ctx.success();
     }
 
@@ -209,12 +209,12 @@ module.exports = app => {
       this.ctx.success();
     }
 
-    // result
-    async result() {
-      if (app.config.env !== 'local') this.ctx.throw(1003);
-      const res = this.service.version.result();
-      this.ctx.success(res);
-    }
+    // // result
+    // async result() {
+    //   if (app.config.env !== 'local') this.ctx.throw(1003);
+    //   const res = this.service.version.result();
+    //   this.ctx.success(res);
+    // }
 
   }
   return VersionController;
@@ -509,17 +509,14 @@ module.exports = app => {
       return this.app.meta.modules[moduleName];
     }
 
-    // result
-    result() {
-
-      // find error module
-      const moduleName = Object.keys(this.app.meta.modules).find(key => this.app.meta.modules[key].__check);
-      if (moduleName) return { module: this.app.meta.modules[moduleName], modules: null };
-
-      // ok
-      return { module: null, modules: this.app.meta.modules };
-
-    }
+    // // result
+    // result() {
+    //   // find error module
+    //   const moduleName = Object.keys(this.app.meta.modules).find(key => this.app.meta.modules[key].__check);
+    //   if (moduleName) return { module: this.app.meta.modules[moduleName], modules: null };
+    //   // ok
+    //   return { module: null, modules: this.app.meta.modules };
+    // }
 
   }
 

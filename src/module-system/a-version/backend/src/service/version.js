@@ -271,17 +271,14 @@ module.exports = app => {
       return this.app.meta.modules[moduleName];
     }
 
-    // result
-    result() {
-
-      // find error module
-      const moduleName = Object.keys(this.app.meta.modules).find(key => this.app.meta.modules[key].__check);
-      if (moduleName) return { module: this.app.meta.modules[moduleName], modules: null };
-
-      // ok
-      return { module: null, modules: this.app.meta.modules };
-
-    }
+    // // result
+    // result() {
+    //   // find error module
+    //   const moduleName = Object.keys(this.app.meta.modules).find(key => this.app.meta.modules[key].__check);
+    //   if (moduleName) return { module: this.app.meta.modules[moduleName], modules: null };
+    //   // ok
+    //   return { module: null, modules: this.app.meta.modules };
+    // }
 
   }
 

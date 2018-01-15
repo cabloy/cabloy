@@ -42,7 +42,7 @@ module.exports = app => {
       }
 
       // ok
-      console.log(chalk.yellow('  For more details, please goto http://{ip}:{port}/#/a/version/check\n'));
+      // console.log(chalk.yellow('  For more details, please goto http://{ip}:{port}/#/a/version/check\n'));
       this.ctx.success();
     }
 
@@ -90,12 +90,12 @@ module.exports = app => {
       this.ctx.success();
     }
 
-    // result
-    async result() {
-      if (app.config.env !== 'local') this.ctx.throw(1003);
-      const res = this.service.version.result();
-      this.ctx.success(res);
-    }
+    // // result
+    // async result() {
+    //   if (app.config.env !== 'local') this.ctx.throw(1003);
+    //   const res = this.service.version.result();
+    //   this.ctx.success(res);
+    // }
 
   }
   return VersionController;
