@@ -26,7 +26,7 @@ module.exports = function(loader, modules) {
         context[ERROR] = new (errorClassFn(ebErrors))(context);
 
         // methods
-        [ 'success', 'fail', 'throw' ].forEach(key => {
+        [ 'success', 'fail', 'throw', 'parseFail', 'parseSuccess', 'parseCode' ].forEach(key => {
           context[key] = function(...args) {
             return context[ERROR][key](context.module.info.relativeName, ...args);
           };
