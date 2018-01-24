@@ -60,7 +60,11 @@ module.exports = function(loader, modules) {
         method: 'SCHEDULE',
         url: `/api/${info.url}/__schedule?path=${key}&${qs.stringify(schedule)}`,
       });
-      return task(ctx);
+      if (!schedule.path) return task(ctx);
+      return ctx.performAction({
+        method: 'post',
+        url: schedule.path,
+      });
     };
   }
 
