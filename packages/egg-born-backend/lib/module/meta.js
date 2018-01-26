@@ -1,5 +1,6 @@
-const util = require('./util.js');
 const mparse = require('egg-born-mparse').default;
+const util = require('./util.js');
+const ModelClass = require('../base/model.js');
 
 module.exports = function(loader) {
 
@@ -17,6 +18,9 @@ module.exports = function(loader) {
 
   // mockUtil
   meta.mockUtil = createMockUtil();
+
+  // model
+  meta.Model = ModelClass(loader.app);
 
   return meta;
 };
