@@ -37,7 +37,11 @@ module.exports = function(loader, modules) {
       get() {
         let instance = context.model.__ebCache.get(key);
         if (!instance) {
-          instance = new value(context);
+          if (typeof value === 'function') {
+            instance = new value(context);
+          } else {
+            instance = new (ModelClass(loader.app))(context, value);
+          }
           context.model.__ebCache.set(key, instance);
         }
         return instance;
@@ -55,7 +59,12 @@ module.exports = function(loader, modules) {
       const models = module.main.models;
       if (models) {
         for (const key in models) {
-          ebModelClass[key] = models[key](loader.app);
+          const model = models[key];
+          if (typeof model === 'function') {
+            ebModelClass[key] = model(loader.app);
+          } else {
+            ebModelClass[key] = model;
+          }
         }
       }
     });
