@@ -21,7 +21,12 @@ module.exports = function(loader, modules) {
 
       // maybe /favicon.ico
       if (context.module) {
-        context.text = getText;
+        context.text = function(...args) {
+          return getText(context.locale, ...args);
+        };
+        context.text.locale = function(locale, ...args) {
+          return getText(locale, ...args);
+        };
       }
 
       return context;
@@ -47,9 +52,9 @@ module.exports = function(loader, modules) {
 
     /**
  * based on egg-i18n
- * 
+ *
  * https://github.com/eggjs/egg-i18n/blob/master/app.js
- * 
+ *
  */
     // project locales
     const localeDirs = loader.app.config.i18n.dirs;
@@ -78,31 +83,23 @@ module.exports = function(loader, modules) {
 
   /**
  * based on koa-locales
- * 
+ *
  * https://github.com/koajs/locales/blob/master/index.js
- * 
+ *
  */
 
-  function getText(key) {
+  function getText(locale, ...args) {
+    const key = args[0];
+    if (!key) return null;
 
-    if (arguments.length === 0) return '';
-
-    const locale = this.locale;
     const resource = ebLocales[locale] || {};
-
     let text = resource[key];
     if (text === undefined) {
       text = key;
     }
 
-    const args = new Array(arguments.length);
     args[0] = text;
-    for (let i = 1; i < args.length; i++) {
-      args[i] = arguments[i];
-    }
-
     return localeutil.getText.apply(localeutil, args);
-
   }
 
 };
