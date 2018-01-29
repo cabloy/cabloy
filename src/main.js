@@ -1,5 +1,13 @@
 import Vue from 'vue';
 
+import axios from 'axios';
+
+import Framework7 from 'framework7/dist/framework7.esm.bundle.js';
+import Framework7Vue from 'framework7-vue/dist/framework7-vue.esm.bundle.js';
+
+// eslint-disable-next-line
+import MaterialIconsCSS from '../css/iconfont/material-icons.css'
+
 import main from '../../../src/front/main.js';
 
 // meta
