@@ -1,7 +1,21 @@
+import axios from 'axios';
 import mparse from 'egg-born-mparse';
 import util from './util.js';
 
-export default function(Vue, axios) {
+export default function(Vue) {
+
+  // axios
+  axios.__ebCustomInterceptorResponse = {
+    resolve: response => response,
+    reject: error => {
+      (!error.config.silent) && Vue.prototype.$f7.addNotification({ message: error.message });
+      return Promise.reject(error);
+    },
+  };
+
+  // axios indicator
+  axios.onShowIndicator = () => Vue.prototype.$f7.showIndicator();
+  axios.onHideIndicator = () => Vue.prototype.$f7.hideIndicator();
 
   // indicator
   let indicatorCounter = 0;

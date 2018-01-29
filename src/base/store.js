@@ -1,12 +1,12 @@
 import Vuex from 'vuex';
 import util from './util.js';
 
-export default function(Vue, _store) {
+export default function(Vue) {
   // install vuex
   Vue.use(Vuex);
 
   // store
-  const store = new Vuex.Store(_store || {});
+  const store = new Vuex.Store({});
 
   // register module: auth
   const auth = require('./auth.js').default(Vue);

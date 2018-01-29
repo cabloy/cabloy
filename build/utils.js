@@ -73,17 +73,9 @@ exports.styleLoaders = function(options) {
   return output;
 };
 
-function copyPolyFills() {
-  const src = path.join(__dirname, 'polyfills.js');
-  const dest = path.join(config.build.assetsRoot, config.build.assetsSubDirectory, 'js/polyfills.js');
-  fse.copySync(src, dest);
-}
-
 // copy modules
 exports.copyModules = function() {
 
-  copyPolyFills();
-  
   const nodeModulesPath = path.join(__dirname, '../..');
   if (!fse.existsSync(nodeModulesPath)) {
     return console.log('\nnot found egg-born modules.');
