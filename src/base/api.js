@@ -3,7 +3,6 @@ import mparse from 'egg-born-mparse';
 import util from './util.js';
 
 export default function(Vue) {
-
   // axios
   axios.__ebCustomInterceptorResponse = {
     resolve: response => response,
@@ -106,5 +105,4 @@ export default function(Vue) {
   } });
 
   return axios;
-
 }

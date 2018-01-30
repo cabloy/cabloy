@@ -1,7 +1,7 @@
 import mparse from 'egg-born-mparse';
 
 export default function(Vue) {
-  const util = {
+  const module = {
     importCSS(moduleInfo, cb) {
       System.import('../../build/__module/' + moduleInfo.fullName + '/dist/front.css').then(() => {
         return cb(null);
@@ -97,13 +97,13 @@ export default function(Vue) {
     const loading = window.document.getElementById('app-loading');
       loading && loading.parentNode.removeChild(loading);
     },
-    getModule(moduleRelativeName) {
+    get(moduleRelativeName) {
       return Vue.prototype.$meta.modules[moduleRelativeName];
     },
-    setModule(moduleRelativeName, module) {
+    set(moduleRelativeName, module) {
       Vue.prototype.$meta.modules[moduleRelativeName] = module;
     },
-    useModule(moduleName, cb) {
+    use(moduleName, cb) {
       const moduleInfo = mparse.parseInfo(moduleName);
       if (!moduleInfo) throw new Error('invalid module name!');
       const module = this.getModule(moduleInfo.relativeName);
@@ -115,6 +115,6 @@ export default function(Vue) {
     },
   };
 
-  return util;
+  return module;
 }
 
