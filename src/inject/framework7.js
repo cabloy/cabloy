@@ -1,38 +1,46 @@
-import util from '../base/util.js';
 import fns from '../base/fns.js';
 
-export default function(Vue, meta, options) {
-  const f7Options = {
-    el: '#app',
-    render: c => c('app'),
-    store: meta.store,
-    routes: [],
-    framework7: {
-      theme: 'md',
-    },
-    methods: {
-      onF7Ready(f7) {
-        // routes
-        meta.f7Routes = f7.routes;
-
-        // load sync modules
-        util.requireModules((m, moduleInfo) => {
-          this.__installJS(m, null, moduleInfo, null);
-        });
-        // remove app loading
-        util.removeAppLoading();
+export default function(Vue, options, cb) {
+  // layout
+  Vue.prototype.$meta.module.use(options.meta.layout, module => {
+    return cb(prepareParameters(module));
+  });
+  // prepare parameters
+  function prepareParameters(moduleLayout) {
+    // f7 parameters
+    const f7Parameters = {
+      el: '#app',
+      render: c => c('layout'),
+      store: Vue.prototype.$meta.store,
+      routes: [],
+      framework7: {
+        theme: 'md',
       },
-    },
-  };
+      methods: {
+        onF7Ready() {
+        // load waiting modules
+          Vue.prototype.$meta.module.loadWaitings();
+          // load sync modules
+          Vue.prototype.$meta.module.requireAll();
+          // remove app loading
+          Vue.prototype.$meta.util.removeAppLoading();
+        },
+      },
+      components: {
+        layout: moduleLayout.options.components.layout,
+      },
+    };
 
-  const optionsNew = {};
-  Vue.prototype.$utils.extend(optionsNew, options);
-  Vue.prototype.$utils.extend(optionsNew, f7Options);
+    const parametersNew = {};
+    Vue.prototype.$utils.extend(parametersNew, options.parameters);
+    Vue.prototype.$utils.extend(parametersNew, f7Parameters);
 
-  if (options.methods && options.methods.onF7Ready) {
-    optionsNew.methods.onF7Ready = fns([ options.methods.onF7Ready, f7Options.methods.onF7Ready ]);
+    if (options.parameters.methods && options.parameters.methods.onF7Ready) {
+      parametersNew.methods.onF7Ready = fns([ options.parameters.methods.onF7Ready, f7Parameters.methods.onF7Ready ]);
+    }
+
+    return parametersNew;
   }
 
-  return optionsNew;
 }
 

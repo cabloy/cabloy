@@ -2,101 +2,6 @@ import mparse from 'egg-born-mparse';
 
 export default function(Vue) {
   const module = {
-    importCSS(moduleInfo, cb) {
-      System.import('../../build/__module/' + moduleInfo.fullName + '/dist/front.css').then(() => {
-        return cb(null);
-      }).catch(e => {
-        return cb(e);
-      });
-    },
-    importJS(moduleInfo, cb) {
-      System.import('../../build/__module/' + moduleInfo.fullName + '/dist/front.js').then(m => {
-        return cb(null, m);
-      }).catch(() => {
-        System.import('../../../../src/module/' + moduleInfo.relativeName + '/front/src/main.js').then(m => {
-          return cb(null, m);
-        }).catch(e => {
-          return cb(e);
-        });
-      });
-    },
-    requireCSS(moduleRelativeName) {
-      const r = require.context('../../build/__module/', true, /-sync\/dist\/front\.css$/);
-      r.keys().forEach(key => {
-        const moduleInfo = mparse.parseInfo(mparse.parseName(key));
-        if (!this.getModule(moduleInfo.relativeName)) {
-          if (!moduleRelativeName || moduleRelativeName === moduleInfo.relativeName) r(key);
-        }
-      });
-    },
-    requireJS(moduleRelativeName, local, cb) {
-      const r = local ?
-        require.context('../../../../src/module/', true, /-sync\/front\/src\/main\.js$/) :
-        require.context('../../build/__module/', true, /-sync\/dist\/front\.js$/);
-      r.keys().forEach(key => {
-        const moduleInfo = mparse.parseInfo(mparse.parseName(key));
-        if (!this.getModule(moduleInfo.relativeName)) {
-          const m = r(key);
-
-          modules[moduleInfo.fullName] = m;
-          cb(m, moduleInfo);
-        }
-      });
-    },
-    requireModules(cb) {
-      this.requireCSS();
-      this.requireJS(this.requireJS({}, false, cb), true, cb);
-    },
-    requireModule(moduleRelativeName) {
-      this.requireCSS(moduleRelativeName);
-      let module = this.requireJS(moduleRelativeName, false);
-      if (!module) module = this.requireJS(moduleRelativeName, true);
-      return module;
-    },
-    registerModuleResources(options, moduleInfo, Vue) {
-      options.store && this.registerStore(options.store, moduleInfo, Vue);
-      options.config && this.registerConfig(options.config, moduleInfo, Vue);
-      options.locales && this.registerLocales(options.locales, moduleInfo, Vue);
-    },
-    registerStore(store, moduleInfo, Vue) {
-      if (!Vue.prototype.$meta.store._modulesNamespaceMap[`${moduleInfo.pid}/`]) {
-        Vue.prototype.$meta.store.registerModule(moduleInfo.pid, {
-          namespaced: true,
-        });
-      }
-      store.namespaced = true;
-      Vue.prototype.$meta.store.registerModule([ moduleInfo.pid, moduleInfo.name ], store);
-    },
-    registerConfig(config, moduleInfo, Vue) {
-      if (Vue.prototype.$meta.config.modules[moduleInfo.relativeName]) { extend(true, config, Vue.prototype.$meta.config.modules[moduleInfo.relativeName]); }
-      Vue.prototype.$meta.config.modules[moduleInfo.relativeName] = config;
-    },
-    registerLocales(locales, moduleInfo, Vue) {
-      Object.keys(locales).forEach(key => {
-        if (Vue.prototype.$meta.locales[key]) { extend(true, locales[key], Vue.prototype.$meta.locales[key]); }
-        Vue.prototype.$meta.locales[key] = locales[key];
-      });
-    },
-    overrideProperty({ obj, key, objBase, vueComponent, combilePath }) {
-      Object.defineProperty(obj, key, {
-        get() {
-          return function() {
-            const moduleInfo = vueComponent.moduleInfo;
-            const args = new Array(arguments.length);
-            args[0] = combilePath(moduleInfo, arguments[0]);
-            for (let i = 1; i < args.length; i++) {
-              args[i] = arguments[i];
-            }
-            return objBase[key].apply(objBase, args);
-          };
-        },
-      });
-    },
-    removeAppLoading() {
-    // eslint-disable-next-line
-    const loading = window.document.getElementById('app-loading');
-      loading && loading.parentNode.removeChild(loading);
-    },
     get(moduleRelativeName) {
       return Vue.prototype.$meta.modules[moduleRelativeName];
     },
@@ -106,12 +11,133 @@ export default function(Vue) {
     use(moduleName, cb) {
       const moduleInfo = mparse.parseInfo(moduleName);
       if (!moduleInfo) throw new Error('invalid module name!');
-      const module = this.getModule(moduleInfo.relativeName);
+      const module = this.get(moduleInfo.relativeName);
       if (module) return cb(module);
-
       if (moduleInfo.sync) {
-
+        this._require(moduleInfo, module => cb(module));
+      } else {
+        this._import(moduleInfo, module => cb(module));
       }
+    },
+    requireAll() {
+      this._requireCSS();
+      this._requireJS(null, false);
+      this._requireJS(null, true);
+    },
+    loadWaitings() {
+      for (const key in Vue.prototype.$meta.modulesWaiting) {
+        this._registerRoutes(Vue.prototype.$meta.modulesWaiting[key]);
+      }
+    },
+    _import(moduleInfo, cb) {
+      this._importCSS(moduleInfo);
+      this._importJS(moduleInfo, module => cb(module));
+    },
+    _require(moduleInfo, cb) {
+      this._requireCSS(moduleInfo.relativeName);
+      this._requireJS(moduleInfo.relativeName, false, module => {
+        if (module) return cb(module);
+        this._requireJS(moduleInfo.relativeName, true, module => {
+          return cb(module);
+        });
+      });
+    },
+    _importCSS(moduleInfo) {
+      System.import('../../build/__module/' + moduleInfo.fullName + '/dist/front.css');
+    },
+    _importJS(moduleInfo, cb) {
+      System.import('../../build/__module/' + moduleInfo.fullName + '/dist/front.js').then(instance => {
+        this._install(instance, moduleInfo, module => cb(module));
+      }).catch(() => {
+        System.import('../../../../src/module/' + moduleInfo.relativeName + '/front/src/main.js').then(instance => {
+          this._install(instance, moduleInfo, module => cb(module));
+        });
+      });
+    },
+    _requireCSS(moduleRelativeName) {
+      const r = require.context('../../build/__module/', true, /-sync\/dist\/front\.css$/);
+      r.keys().every(key => {
+        const moduleInfo = mparse.parseInfo(mparse.parseName(key));
+        const single = moduleRelativeName === moduleInfo.relativeName;
+        const module = this.get(moduleInfo.relativeName);
+        if (!module && (!moduleRelativeName || single)) r(key);
+        return !single;
+      });
+    },
+    _requireJS(moduleRelativeName, local, cb) {
+      const r = local ?
+        require.context('../../../../src/module/', true, /-sync\/front\/src\/main\.js$/) :
+        require.context('../../build/__module/', true, /-sync\/dist\/front\.js$/);
+      r.keys().every(key => {
+        const moduleInfo = mparse.parseInfo(mparse.parseName(key));
+        const single = moduleRelativeName === moduleInfo.relativeName;
+        const module = this.get(moduleInfo.relativeName);
+        if (module) {
+          cb && cb(module);
+        } else if ((!moduleRelativeName || single)) {
+          const instance = r(key);
+          this._install(instance, moduleInfo, module => {
+            cb && cb(module);
+          });
+        }
+        return !single;
+      });
+    },
+    _registerRoutes(module) {
+      if (!module.options.routes) return null;
+      const routes = module.options.routes.map(route => {
+        route.pagePath = route.path = `/${module.info.pid}/${module.info.name}/${route.path}`;
+        return route;
+      });
+      Vue.prototype.$f7.routes = Vue.prototype.$f7.routes.concat(routes);
+    },
+    _install(instance, moduleInfo, cb) {
+      // install
+      Vue.use(instance.default, options => {
+        // module
+        const module = {
+          name: moduleInfo.relativeName,
+          info: moduleInfo,
+          instance,
+          options,
+        };
+        // set
+        this.set(moduleInfo.relativeName, module);
+        // routes
+        if (!Vue.prototype.$f7) {
+          Vue.prototype.$meta.modulesWaiting[moduleInfo.relativeName] = module;
+        } else {
+          this._registerRoutes(module);
+        }
+        // register resources
+        this._registerResources(module);
+        // ready
+        return cb && cb(module);
+      });
+    },
+    _registerResources(module) {
+      module.options.store && this._registerStore(module);
+      module.options.config && this._registerConfig(module);
+      module.options.locales && this._registerLocales(module);
+    },
+    _registerStore(module) {
+      if (!Vue.prototype.$meta.store._modulesNamespaceMap[`${module.info.pid}/`]) {
+        Vue.prototype.$meta.store.registerModule(module.info.pid, {
+          namespaced: true,
+        });
+      }
+      module.options.store.namespaced = true;
+      Vue.prototype.$meta.store.registerModule([ module.info.pid, module.info.name ], module.options.store);
+    },
+    _registerConfig(module) {
+      Vue.prototype.$meta.config.modules[module.info.relativeName] =
+       Vue.prototype.$utils.extend({}, module.options.config, Vue.prototype.$meta.config.modules[module.info.relativeName]);
+    },
+    _registerLocales(module) {
+      Object.keys(module.options.locales).forEach(key => {
+        Vue.prototype.$meta.locales[key] =
+         Vue.prototype.$utils.extend({}, module.options.locales[key], Vue.prototype.$meta.locales[key]);
+      });
     },
   };
 

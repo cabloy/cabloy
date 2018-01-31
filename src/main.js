@@ -20,7 +20,7 @@ meta.modules = {};
 // modulesWaiting
 meta.modulesWaiting = {};
 // module
-meta.module = require('./base/module.js').default(vue);
+meta.module = require('./base/module.js').default(Vue);
 // util
 meta.util = require('./base/util.js').default(Vue);
 // store
@@ -30,13 +30,15 @@ meta.api = require('./base/api.js').default(Vue);
 
 // install main
 import main from '../../../src/front/main.js';
-Vue.use(main, ops => {
+Vue.use(main, options => {
   // config
-  meta.config = require('./base/config.js').default(Vue, ops.config);
+  meta.config = require('./base/config.js').default(Vue, options.config);
   // locales
-  meta.locales = require('./base/locales.js').default(Vue, ops.locales);
-  // vue options
-  meta.options = require('./inject/framework7.js').default(Vue, meta, ops.options);
-  // new vue
-  new Vue(meta.options);
+  meta.locales = require('./base/locales.js').default(Vue, options.locales);
+  // vue parameters
+  require('./inject/framework7.js').default(Vue, options, parameters => {
+    meta.parameters = parameters;
+    // new vue
+    new Vue(parameters);
+  });
 });
