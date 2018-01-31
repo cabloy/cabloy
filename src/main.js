@@ -36,7 +36,7 @@ Vue.use(main, options => {
   // locales
   meta.locales = require('./base/locales.js').default(Vue, options.locales);
   // vue parameters
-  require('./inject/framework7.js').default(Vue, options, parameters => {
+  require('./inject/framework7.js').default(Vue, Framework7, options, parameters => {
     meta.parameters = parameters;
     // new vue
     new Vue(parameters);

@@ -8,8 +8,10 @@ export default function(Vue) {
     set(moduleRelativeName, module) {
       Vue.prototype.$meta.modules[moduleRelativeName] = module;
     },
+    // use
+    //   moduleRelativeName / moduleRelativeName-sync
     use(moduleName, cb) {
-      const moduleInfo = mparse.parseInfo(moduleName);
+      const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;
       if (!moduleInfo) throw new Error('invalid module name!');
       const module = this.get(moduleInfo.relativeName);
       if (module) return cb(module);
@@ -131,7 +133,7 @@ export default function(Vue) {
     },
     _registerConfig(module) {
       Vue.prototype.$meta.config.modules[module.info.relativeName] =
-       Vue.prototype.$utils.extend({}, module.options.config, Vue.prototype.$meta.config.modules[module.info.relativeName]);
+       Vue.prototype.$utils.extend(module.options.config, Vue.prototype.$meta.config.modules[module.info.relativeName]);
     },
     _registerLocales(module) {
       Object.keys(module.options.locales).forEach(key => {

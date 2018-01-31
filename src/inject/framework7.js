@@ -1,6 +1,8 @@
 import fns from '../base/fns.js';
 
-export default function(Vue, options, cb) {
+export default function(Vue, Framework7, options, cb) {
+  // router
+  require('./router.js').default(Vue, Framework7);
   // layout
   Vue.prototype.$meta.module.use(options.meta.layout, module => {
     return cb(prepareParameters(module));
