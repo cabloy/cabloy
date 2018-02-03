@@ -1,6 +1,6 @@
 import mparse from 'egg-born-mparse';
 
-export default function(Vue, Framework7) {
+export default function(Vue) {
   // router
   function patchRouter(router) {
     // routes
@@ -29,12 +29,12 @@ export default function(Vue, Framework7) {
       return router;
     };
   }
-  Framework7.use({
+  Vue.prototype.$Framework7.use({
     create() {
       patchRouter(this.router);
     },
   });
-  Framework7.View.use({
+  Vue.prototype.$Framework7.View.use({
     create() {
       patchRouter(this.router);
     },

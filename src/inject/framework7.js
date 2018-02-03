@@ -1,12 +1,15 @@
 import fns from '../base/fns.js';
 
-export default function(Vue, Framework7, options, cb) {
+export default function(Vue, options, cb) {
   // router
-  require('./router.js').default(Vue, Framework7);
-  // layout
+  require('./router.js').default(Vue);
+  // load sync modules
+  Vue.prototype.$meta.module.requireAll();
+  // load layout module
   Vue.prototype.$meta.module.use(options.meta.layout, module => {
     return cb(prepareParameters(module));
   });
+
   // prepare parameters
   function prepareParameters(moduleLayout) {
     // f7 parameters
@@ -20,10 +23,8 @@ export default function(Vue, Framework7, options, cb) {
       },
       methods: {
         onF7Ready() {
-        // load waiting modules
+          // load waiting modules
           Vue.prototype.$meta.module.loadWaitings();
-          // load sync modules
-          Vue.prototype.$meta.module.requireAll();
           // remove app loading
           Vue.prototype.$meta.util.removeAppLoading();
         },

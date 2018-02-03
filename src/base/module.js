@@ -88,7 +88,34 @@ export default function(Vue) {
     _registerRoutes(module) {
       if (!module.options.routes) return null;
       const routes = module.options.routes.map(route => {
-        route.pagePath = route.path = `/${module.info.pid}/${module.info.name}/${route.path}`;
+        // path
+        route.path = `/${module.info.pid}/${module.info.name}/${route.path}`;
+        // meta.modal
+        if (route.meta && route.meta.modal) {
+          route[route.meta.modal] = {
+            component: route.component,
+          };
+          route.component = null;
+        }
+        // meta.auth
+        if (route.meta && route.meta.auth) {
+          route.async = function(routeTo, routeFrom, resolve) {
+            if (Vue.prototype.$meta.store.state.auth.loggedIn) {
+              const _component = {};
+              if (route.meta.modal) {
+                _component[route.meta.modal] = route[route.meta.modal];
+                route[route.meta.modal] = null;
+              } else {
+                _component.component = route.component;
+                route.component = null;
+              }
+              resolve(_component);
+            } else {
+              // login
+            }
+          };
+          route.component = null;
+        }
         return route;
       });
       Vue.prototype.$f7.routes = Vue.prototype.$f7.routes.concat(routes);

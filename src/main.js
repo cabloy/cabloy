@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Framework7 from 'framework7/dist/framework7.esm.bundle.js';
 import Framework7Vue from 'framework7-vue/dist/framework7-vue.esm.bundle.js';
 Vue.use(Framework7Vue, Framework7);
+Vue.prototype.$Framework7 = Framework7;
 
 // eslint-disable-next-line
 import Framework7CSS from 'framework7/dist/css/framework7.md.css';
@@ -36,7 +37,7 @@ Vue.use(main, options => {
   // locales
   meta.locales = require('./base/locales.js').default(Vue, options.locales);
   // vue parameters
-  require('./inject/framework7.js').default(Vue, Framework7, options, parameters => {
+  require('./inject/framework7.js').default(Vue, options, parameters => {
     meta.parameters = parameters;
     // new vue
     new Vue(parameters);
