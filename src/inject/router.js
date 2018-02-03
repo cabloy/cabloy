@@ -21,7 +21,7 @@ export default function(Vue) {
       }
       // info
       const moduleInfo = mparse.parseInfo(url);
-      if (!moduleInfo) throw new Error('invalid url');
+      if (!moduleInfo) return router; // throw new Error('invalid url');
       // use module
       Vue.prototype.$meta.module.use(moduleInfo, () => {
         return navigate.call(router, navigateParams, navigateOptions);

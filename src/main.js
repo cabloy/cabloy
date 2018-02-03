@@ -22,16 +22,24 @@ meta.modules = {};
 meta.modulesWaiting = {};
 // module
 meta.module = require('./base/module.js').default(Vue);
-// util
-meta.util = require('./base/util.js').default(Vue);
 // store
 meta.store = require('./base/store.js').default(Vue);
 // api
 meta.api = require('./base/api.js').default(Vue);
+// login
+meta.login = require('./base/login.js').default(Vue);
 
-// install main
-import main from '../../../src/front/main.js';
-Vue.use(main, options => {
+// install module main
+const instanceMain = require('../../../src/front/main.js');
+Vue.use(instanceMain.default, options => {
+  // save module main
+  const module = {
+    name: 'main',
+    instance: instanceMain,
+    options,
+  };
+  meta.module.set('main', module);
+
   // config
   meta.config = require('./base/config.js').default(Vue, options.config);
   // locales

@@ -45,7 +45,7 @@ export default function(Vue) {
       });
     },
     _importCSS(moduleInfo) {
-      System.import('../../build/__module/' + moduleInfo.fullName + '/dist/front.css');
+      System.import('../../build/__module/' + moduleInfo.fullName + '/dist/front.css').catch(() => {});
     },
     _importJS(moduleInfo, cb) {
       System.import('../../build/__module/' + moduleInfo.fullName + '/dist/front.js').then(instance => {
@@ -99,7 +99,7 @@ export default function(Vue) {
         }
         // meta.auth
         if (route.meta && route.meta.auth) {
-          route.async = function(routeTo, routeFrom, resolve) {
+          route.async = function(routeTo, routeFrom, resolve, reject) {
             if (Vue.prototype.$meta.store.state.auth.loggedIn) {
               const _component = {};
               if (route.meta.modal) {
@@ -112,6 +112,8 @@ export default function(Vue) {
               resolve(_component);
             } else {
               // login
+              Vue.prototype.$meta.login.open(routeTo);
+              reject();
             }
           };
           route.component = null;
