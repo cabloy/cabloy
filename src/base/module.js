@@ -109,8 +109,14 @@ export default function(Vue) {
               }
               resolve(_component);
             } else {
+              // check if close main
+              if (this.view.name === 'main' && this.currentRoute && this.currentRoute.path === '/') {
+                Vue.prototype.$meta.vueLayout.closeMain(true);
+              }
               // login
-              Vue.prototype.$meta.vueLayout.openLogin(routeTo);
+              Vue.prototype.$meta.vueLayout.openLogin({
+                view: this.view,
+                url: routeTo });
               reject();
             }
           };
