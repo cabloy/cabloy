@@ -2,10 +2,11 @@ import fns from '../base/fns.js';
 import App from './pages/app.vue';
 import root from './root.js';
 import routes from './routes.js';
+import patch from './patch.js';
 
 export default function(Vue, options, cb) {
-  // patch router
-  require('./router.js').default(Vue);
+  // patch
+  patch(Vue);
   // load sync modules
   Vue.prototype.$meta.module.requireAll();
   // load module layout
@@ -15,12 +16,12 @@ export default function(Vue, options, cb) {
 
   // prepare parameters
   function prepareParameters(moduleLayout) {
-    // layout
+    // layout component
     App.components.layout = moduleLayout.options.components.layout;
     // f7 parameters
     const f7Parameters = {
       el: '#app',
-      render: c => c('app'),
+      render: c => c('app', { ref: 'app' }),
       store: Vue.prototype.$meta.store,
       routes,
       framework7: {

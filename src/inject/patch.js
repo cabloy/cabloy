@@ -37,8 +37,7 @@ export default function(Vue) {
       const view = router.view;
       if (view && view.$el.hasClass('eb-view')) {
         if (router.history.length <= 2) {
-          const root = Vue.prototype.$f7.root[0].__vue__;
-          root.closeView(view.$el[0].__vue__, true);
+          Vue.prototype.$meta.vueRoot.closeView(view.name, true);
         }
       }
       return back.call(router, ...args);
@@ -52,6 +51,28 @@ export default function(Vue) {
   Vue.prototype.$Framework7.View.use({
     create() {
       patchRouter(this.router);
+    },
+  });
+
+  // vue components
+  Object.defineProperty(Vue.prototype.$meta, 'vueRoot', {
+    get() {
+      return Vue.prototype.$f7.root[0].__vue__;
+    },
+  });
+  Object.defineProperty(Vue.prototype.$meta, 'vueApp', {
+    get() {
+      return Vue.prototype.$meta.vueRoot.$refs.app;
+    },
+  });
+  Object.defineProperty(Vue.prototype.$meta, 'vueLayout', {
+    get() {
+      return Vue.prototype.$meta.vueApp.$refs.layout;
+    },
+  });
+  Object.defineProperty(Vue.prototype.$meta, 'vueLogin', {
+    get() {
+      return Vue.prototype.$meta.vueApp.$refs.login;
     },
   });
 }

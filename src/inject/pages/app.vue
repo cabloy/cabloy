@@ -2,9 +2,9 @@
 import Login from './login.vue';
 export default {
   render(c) {
-    const statusBar = c('f7-statusbar');
-    const layout = c('layout');
-    const login = c('login');
+    const statusBar = c('f7-statusbar', { ref: 'statusbar' });
+    const layout = c('layout', { ref: 'layout' });
+    const login = c('login', { ref: 'login' });
     return c(
       'div', {}, [
         statusBar,

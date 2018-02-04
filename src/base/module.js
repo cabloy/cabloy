@@ -3,7 +3,7 @@ import mparse from 'egg-born-mparse';
 export default function(Vue) {
   const module = {
     get(moduleRelativeName) {
-      return Vue.prototype.$meta.modules[moduleRelativeName];
+      return Vue.prototype.$meta.modules[moduleRelativeName || 'main'];
     },
     set(moduleRelativeName, module) {
       Vue.prototype.$meta.modules[moduleRelativeName] = module;
@@ -112,7 +112,7 @@ export default function(Vue) {
               resolve(_component);
             } else {
               // login
-              Vue.prototype.$meta.login.open(routeTo);
+              Vue.prototype.$meta.vueRoot.openView('login', routeTo);
               reject();
             }
           };
