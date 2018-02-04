@@ -1,6 +1,6 @@
 <template>
   <f7-login-screen class="eb-view-container eb-view-container-login">
-    <f7-view name="login" class="eb-view eb-view-login" :init="false"></f7-view>
+    <f7-view name="login" class="eb-view eb-view-login" url="/"></f7-view>
   </f7-login-screen>
 </template>
 <script>

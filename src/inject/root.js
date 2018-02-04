@@ -16,18 +16,14 @@ export default function(Vue) {
       }
       // navigate
       const urlLogin = Vue.prototype.$meta.module.get('main').options.meta.login;
-      view.f7View.router.navigate(urlLogin, { reloadAll: true });
+      view.f7View.router.navigate(urlLogin, { history: true, pushState: true });
       // open
       Vue.prototype.$f7.loginScreen.open(this.$$(view.$el).parent('.eb-view-container'));
     },
-    closeView(view, back) {
+    closeView(view, cancel) {
       view = typeof view === 'string' ? Vue.prototype.$$(`.eb-view-${view}`)[0].__vue__ : view;
       // close
       Vue.prototype.$f7.loginScreen.close(this.$$(view.$el).parent('.eb-view-container'));
-      // load empty
-      this.$nextTick(() => {
-        view.f7View.router.navigate('/empty', { reloadAll: true });
-      });
     },
   };
 }

@@ -36,7 +36,7 @@ export default function(Vue) {
     router.back = (...args) => {
       const view = router.view;
       if (view && view.$el.hasClass('eb-view')) {
-        if (router.history.length === 1) {
+        if (router.history.length <= 2) {
           const root = Vue.prototype.$f7.root[0].__vue__;
           root.closeView(view.$el[0].__vue__, true);
         }

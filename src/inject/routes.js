@@ -2,7 +2,7 @@ import Empty from './pages/empty.vue';
 
 export default[
   {
-    path: '/empty',
+    path: '/',
     component: Empty,
   },
 ];
