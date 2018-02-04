@@ -112,7 +112,7 @@ export default function(Vue) {
               resolve(_component);
             } else {
               // login
-              Vue.prototype.$meta.vueRoot.openView('login', routeTo);
+              Vue.prototype.$meta.vueLayout.openLogin(routeTo);
               reject();
             }
           };

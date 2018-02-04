@@ -1,7 +1,7 @@
 import fns from '../base/fns.js';
 import App from './pages/app.vue';
-import root from './root.js';
 import routes from './routes.js';
+import util from '../base/util.js';
 import patch from './patch.js';
 
 export default function(Vue, options, cb) {
@@ -11,11 +11,11 @@ export default function(Vue, options, cb) {
   Vue.prototype.$meta.module.requireAll();
   // load module layout
   Vue.prototype.$meta.module.use(options.meta.layout, module => {
-    return cb(prepareParameters(module));
+    return cb(prepareParameters(options, module));
   });
 
   // prepare parameters
-  function prepareParameters(moduleLayout) {
+  function prepareParameters(options, moduleLayout) {
     // layout component
     App.components.ebLayout = moduleLayout.options.components.layout;
     // f7 parameters
@@ -30,7 +30,19 @@ export default function(Vue, options, cb) {
       components: {
         App,
       },
-      methods: root(Vue),
+      methods: {
+        onF7Ready() {
+          // load waiting modules
+          Vue.prototype.$meta.module.loadWaitings();
+          // remove app loading
+          util.removeAppLoading();
+          // invoke layout.start
+          Vue.prototype.$meta.vueLayout.start({
+            login: options.meta.login,
+            loginOnStart: options.meta.loginOnStart,
+          });
+        },
+      },
     };
 
     const parametersNew = {};
