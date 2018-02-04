@@ -1,6 +1,7 @@
 import fns from '../base/fns.js';
-import App from './app.vue';
-import util from '../base/util.js';
+import App from './pages/app.vue';
+import root from './root.js';
+import routes from './routes.js';
 
 export default function(Vue, options, cb) {
   // patch router
@@ -21,21 +22,14 @@ export default function(Vue, options, cb) {
       el: '#app',
       render: c => c('app'),
       store: Vue.prototype.$meta.store,
-      routes: [],
+      routes,
       framework7: {
         theme: 'md',
-      },
-      methods: {
-        onF7Ready() {
-          // load waiting modules
-          Vue.prototype.$meta.module.loadWaitings();
-          // remove app loading
-          util.removeAppLoading();
-        },
       },
       components: {
         App,
       },
+      methods: root(Vue),
     };
 
     const parametersNew = {};

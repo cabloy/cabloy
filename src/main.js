@@ -27,7 +27,7 @@ meta.store = require('./base/store.js').default(Vue);
 // api
 meta.api = require('./base/api.js').default(Vue);
 // login
-meta.login = require('./base/login.js').default(Vue);
+meta.login = require('./inject/login.js').default(Vue);
 
 // install module main
 const instanceMain = require('../../../src/front/main.js');

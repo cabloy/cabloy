@@ -19,6 +19,9 @@ export default function(Vue) {
       } else {
         url = navigateParams.url;
       }
+      // match
+      const route = router.findMatchingRoute(url);
+      if (route) return navigate.call(router, navigateParams, navigateOptions);
       // info
       const moduleInfo = mparse.parseInfo(url);
       if (!moduleInfo) return router; // throw new Error('invalid url');
@@ -27,6 +30,18 @@ export default function(Vue) {
         return navigate.call(router, navigateParams, navigateOptions);
       });
       return router;
+    };
+    // back
+    const back = router.back;
+    router.back = (...args) => {
+      const view = router.view;
+      if (view && view.$el.hasClass('eb-view')) {
+        if (router.history.length === 1) {
+          const root = Vue.prototype.$f7.root[0].__vue__;
+          root.closeView(view.$el[0].__vue__, true);
+        }
+      }
+      return back.call(router, ...args);
     };
   }
   Vue.prototype.$Framework7.use({
