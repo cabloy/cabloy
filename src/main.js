@@ -8,6 +8,8 @@ Vue.prototype.$Framework7 = Framework7;
 import Framework7CSS from 'framework7/dist/css/framework7.md.css';
 // eslint-disable-next-line
 import MaterialIconsCSS from './css/iconfont/material-icons.css';
+// eslint-disable-next-line
+import AppCSS from './css/app.css';
 
 // meta
 const meta = Vue.prototype.$meta = {};

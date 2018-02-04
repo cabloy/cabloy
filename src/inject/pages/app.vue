@@ -1,20 +1,24 @@
 <script>
+import Main from './main.vue';
 import Login from './login.vue';
 export default {
   render(c) {
     const statusBar = c('f7-statusbar', { ref: 'statusbar' });
-    const layout = c('layout', { ref: 'layout' });
-    const login = c('login', { ref: 'login' });
+    const layout = c('eb-layout', { ref: 'layout' });
+    const main = c('eb-main', { ref: 'main' });
+    const login = c('eb-login', { ref: 'login' });
     return c(
-      'div', {}, [
+      'div', [
         statusBar,
         layout,
+        main,
         login,
       ]
     );
   },
   components: {
-    Login,
+    ebMain: Main,
+    ebLogin: Login,
   },
 };
 

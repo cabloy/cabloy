@@ -70,6 +70,11 @@ export default function(Vue) {
       return Vue.prototype.$meta.vueApp.$refs.layout;
     },
   });
+  Object.defineProperty(Vue.prototype.$meta, 'vueMain', {
+    get() {
+      return Vue.prototype.$meta.vueApp.$refs.main;
+    },
+  });
   Object.defineProperty(Vue.prototype.$meta, 'vueLogin', {
     get() {
       return Vue.prototype.$meta.vueApp.$refs.login;

@@ -3,9 +3,42 @@ import mparse from 'egg-born-mparse';
 import util from './util.js';
 
 export default function(Vue) {
+  // axios
+  axios.__ebCustomInterceptorResponse = {
+    resolve: response => response,
+    reject: error => {
+      (!error.config.silent) && Vue.prototype.$f7.addNotification({ message: error.message });
+      return Promise.reject(error);
+    },
+  };
+
+  // axios indicator
+  axios.onShowIndicator = () => Vue.prototype.$f7.showIndicator();
+  axios.onHideIndicator = () => Vue.prototype.$f7.hideIndicator();
+
+  // indicator
+  let indicatorCounter = 0;
 
   // add a response interceptor
   if (!axios.__ebDefaultResponseDisable) {
+
+    // request
+    axios.interceptors.request.use(function(config) {
+      (!config.silent) && (++indicatorCounter > 0) && axios.onShowIndicator && axios.onShowIndicator();
+      return config;
+    }, function(error) {
+      return Promise.reject(error);
+    });
+
+    // response
+    axios.interceptors.response.use(function(response) {
+      (!response.config.silent) && (--indicatorCounter === 0) && axios.onHideIndicator && axios.onHideIndicator();
+      return response;
+    }, function(error) {
+      (!error.config.silent) && (--indicatorCounter === 0) && axios.onHideIndicator && axios.onHideIndicator();
+      return Promise.reject(error);
+    });
+
     // response
     axios.interceptors.response.use(function(response) {
       if (response.data.code !== 0) {

@@ -7,12 +7,13 @@ export default function(Vue) {
       user: null,
     },
     mutations: {
-      login(state, { user }) {
-        state.loggedIn = true;
+      login(state, { loggedIn, user }) {
+        state.loggedIn = loggedIn;
         state.user = user;
       },
       logout(state) {
         state.loggedIn = false;
+        state.user = null;
       },
     },
   };

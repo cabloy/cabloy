@@ -17,7 +17,7 @@ export default function(Vue, options, cb) {
   // prepare parameters
   function prepareParameters(moduleLayout) {
     // layout component
-    App.components.layout = moduleLayout.options.components.layout;
+    App.components.ebLayout = moduleLayout.options.components.layout;
     // f7 parameters
     const f7Parameters = {
       el: '#app',
