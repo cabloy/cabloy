@@ -103,11 +103,9 @@ export default function(Vue) {
             if (Vue.prototype.$meta.store.state.auth.loggedIn) {
               const _component = {};
               if (route.meta.modal) {
-                _component[route.meta.modal] = route[route.meta.modal];
-                route[route.meta.modal] = null;
+                _component[route.meta.modal] = route.async[route.meta.modal];
               } else {
-                _component.component = route.component;
-                route.component = null;
+                _component.component = route.async.component;
               }
               resolve(_component);
             } else {
@@ -116,7 +114,13 @@ export default function(Vue) {
               reject();
             }
           };
-          route.component = null;
+          if (route.meta.modal) {
+            route.async[route.meta.modal] = route[route.meta.modal];
+            route[route.meta.modal] = null;
+          } else {
+            route.async.component = route.component;
+            route.component = null;
+          }
         }
         return route;
       });
