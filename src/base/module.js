@@ -110,8 +110,8 @@ export default function(Vue) {
               resolve(_component);
             } else {
               // check if close main
-              if (this.view.name === 'main' && this.currentRoute && this.currentRoute.path === '/') {
-                Vue.prototype.$meta.vueLayout.closeMain(true);
+              if (this.view.$el.hasClass('eb-view') && this.currentRoute && this.currentRoute.path === '/') {
+                Vue.prototype.$meta.vueLayout.closeView(this.view, true);
               }
               // login
               Vue.prototype.$meta.vueLayout.openLogin({
