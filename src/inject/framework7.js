@@ -9,15 +9,11 @@ export default function(Vue, options, cb) {
   patch(Vue);
   // load sync modules
   Vue.prototype.$meta.module.requireAll();
-  // load module layout
-  Vue.prototype.$meta.module.use(options.meta.layout, module => {
-    return cb(prepareParameters(options, module));
-  });
+  // prepare parameters
+  return cb(prepareParameters(options));
 
   // prepare parameters
-  function prepareParameters(options, moduleLayout) {
-    // layout component
-    App.components.ebLayout = moduleLayout.options.components.layout;
+  function prepareParameters(options) {
     // f7 parameters
     const f7Parameters = {
       el: '#app',
@@ -36,11 +32,6 @@ export default function(Vue, options, cb) {
           Vue.prototype.$meta.module.loadWaitings();
           // remove app loading
           util.removeAppLoading();
-          // invoke layout.start
-          Vue.prototype.$meta.vueLayout.start({
-            login: options.meta.login,
-            loginOnStart: options.meta.loginOnStart,
-          });
         },
       },
     };

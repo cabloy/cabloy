@@ -20,19 +20,14 @@ export default function(Vue) {
   });
 
   // vue components
-  Object.defineProperty(Vue.prototype.$meta, 'vueRoot', {
+  Object.defineProperty(Vue.prototype.$meta, 'vueApp', {
     get() {
       return Vue.prototype.$f7.root[0].__vue__;
     },
   });
-  Object.defineProperty(Vue.prototype.$meta, 'vueApp', {
-    get() {
-      return Vue.prototype.$meta.vueRoot.$refs.app;
-    },
-  });
   Object.defineProperty(Vue.prototype.$meta, 'vueLayout', {
     get() {
-      return Vue.prototype.$meta.vueApp.$refs.layout;
+      return Vue.prototype.$meta.vueApp.getLayout();
     },
   });
 }
