@@ -5,6 +5,8 @@ import util from '../base/util.js';
 import patch from './patch.js';
 
 export default function(Vue, options, cb) {
+  // clear router history
+  util.clearRouterHistory();
   // patch
   patch(Vue);
   // load sync modules

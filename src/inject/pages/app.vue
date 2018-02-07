@@ -40,7 +40,7 @@ export default {
       // check if switch
       if (this.layout === layout) {
         const component = this.getLayout();
-        if (component) component.onresize();
+        if (component) component.onResize();
       } else {
         this.layout = layout;
         // layout options

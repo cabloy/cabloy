@@ -19,4 +19,9 @@ export default {
     const loading = window.document.getElementById('app-loading');
     loading && loading.parentNode.removeChild(loading);
   },
+  clearRouterHistory() {
+    Object.keys(window.localStorage).forEach(key => {
+      if (key.indexOf('f7router-') === 0) window.localStorage.removeItem(key);
+    });
+  },
 };

@@ -6,7 +6,13 @@ export default function(Vue) {
       get() {
         return Vue.prototype.$f7.routes;
       },
+      set() {
+        // donothing, just for writable
+      },
     });
+    // layout patch
+    const layout = Vue.prototype.$meta.vueLayout;
+    if (layout) layout.patchRouter(router);
   }
   Vue.prototype.$Framework7.use({
     create() {
@@ -22,12 +28,13 @@ export default function(Vue) {
   // vue components
   Object.defineProperty(Vue.prototype.$meta, 'vueApp', {
     get() {
-      return Vue.prototype.$f7.root[0].__vue__;
+      return Vue.prototype.$f7 ? Vue.prototype.$f7.root[0].__vue__ : null;
     },
   });
   Object.defineProperty(Vue.prototype.$meta, 'vueLayout', {
     get() {
-      return Vue.prototype.$meta.vueApp.getLayout();
+      const app = Vue.prototype.$meta.vueApp;
+      return app ? Vue.prototype.$meta.vueApp.getLayout() : null;
     },
   });
 }
