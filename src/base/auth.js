@@ -1,10 +1,10 @@
 // eslint-disable-next-line
 export default function(Vue) {
-
   return {
     state: {
       loggedIn: false,
       user: null,
+      hashInit: null,
     },
     mutations: {
       login(state, { loggedIn, user }) {
@@ -15,8 +15,10 @@ export default function(Vue) {
         state.loggedIn = false;
         state.user = null;
       },
+      setHashInit(state, hashInit) {
+        state.hashInit = hashInit;
+      },
     },
   };
-
 }
 

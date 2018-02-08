@@ -1,6 +1,5 @@
 import axios from 'axios';
 import mparse from 'egg-born-mparse';
-import util from './util.js';
 
 export default function(Vue) {
   // axios
@@ -89,7 +88,7 @@ export default function(Vue) {
     this.$api = {};
 
     [ 'delete', 'get', 'head', 'options', 'post', 'put', 'patch' ].forEach(key => {
-      util.overrideProperty({
+      Vue.prototype.$meta.util.overrideProperty({
         obj: this.$api,
         key,
         objBase: axios,

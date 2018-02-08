@@ -1,6 +1,5 @@
 import Vue from 'vue';
-// eslint-disable-next-line
-import MaterialIconsCSS from './css/iconfont/material-icons.css';
+import './css/iconfont/material-icons.css';
 
 // meta
 const meta = Vue.prototype.$meta = {};
@@ -19,6 +18,8 @@ meta.module = require('./base/module.js').default(Vue);
 meta.store = require('./base/store.js').default(Vue);
 // api
 meta.api = require('./base/api.js').default(Vue);
+// util
+meta.util = require('./base/util.js').default(Vue);
 
 // install module main
 const instanceMain = require('../../../src/front/main.js');

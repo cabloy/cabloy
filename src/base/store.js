@@ -1,5 +1,4 @@
 import Vuex from 'vuex';
-import util from './util.js';
 
 export default function(Vue) {
   // install vuex
@@ -36,7 +35,7 @@ export default function(Vue) {
     });
 
     [ 'commit', 'dispatch' ].forEach(key => {
-      util.overrideProperty({
+      Vue.prototype.$meta.util.overrideProperty({
         obj: this.$local,
         key,
         objBase: this.$store,

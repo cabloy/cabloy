@@ -1,12 +1,11 @@
 import fns from '../base/fns.js';
 import App from './pages/app.vue';
 import routes from './routes.js';
-import util from '../base/util.js';
 import patch from './patch.js';
 
 export default function(Vue, options, cb) {
   // clear router history
-  util.clearRouterHistory();
+  Vue.prototype.$meta.util.clearRouterHistory();
   // patch
   patch(Vue);
   // load sync modules
@@ -33,11 +32,12 @@ export default function(Vue, options, cb) {
           // load waiting modules
           Vue.prototype.$meta.module.loadWaitings();
           // remove app loading
-          util.removeAppLoading();
+          Vue.prototype.$meta.util.removeAppLoading();
         },
       },
     };
 
+    // extend parameters
     const parametersNew = {};
     Vue.prototype.$utils.extend(parametersNew, options.parameters);
     Vue.prototype.$utils.extend(parametersNew, f7Parameters);

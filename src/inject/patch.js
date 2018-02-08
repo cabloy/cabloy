@@ -1,6 +1,6 @@
 export default function(Vue) {
   // router
-  function patchRouter(router) {
+  function patchRouter(router, root) {
     // routes
     Object.defineProperty(router, 'routes', {
       get() {
@@ -11,17 +11,19 @@ export default function(Vue) {
       },
     });
     // layout patch
-    const layout = Vue.prototype.$meta.vueLayout;
-    if (layout) layout.patchRouter(router);
+    if (!root) {
+      const layout = Vue.prototype.$meta.vueLayout;
+      if (layout) layout.patchRouter(router);
+    }
   }
   Vue.prototype.$Framework7.use({
     create() {
-      patchRouter(this.router);
+      patchRouter(this.router, true);
     },
   });
   Vue.prototype.$Framework7.View.use({
     create() {
-      patchRouter(this.router);
+      patchRouter(this.router, false);
     },
   });
 
@@ -37,4 +39,8 @@ export default function(Vue) {
       return app ? Vue.prototype.$meta.vueApp.getLayout() : null;
     },
   });
+
+  // hash
+  Vue.prototype.$meta.store.commit('auth/setHashInit', location.href);
+  history.replaceState(null, '', location.href.split('#')[0]);
 }
