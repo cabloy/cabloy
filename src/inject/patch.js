@@ -39,8 +39,4 @@ export default function(Vue) {
       return app ? Vue.prototype.$meta.vueApp.getLayout() : null;
     },
   });
-
-  // hash
-  Vue.prototype.$meta.store.commit('auth/setHashInit', location.href);
-  history.replaceState(null, '', location.href.split('#')[0]);
 }
