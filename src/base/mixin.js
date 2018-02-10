@@ -23,6 +23,8 @@ export default function(Vue, options) {
     if (this.__ebRoutePath) {
       const moduleInfo = mparse.parseInfo(this.__ebRoutePath);
       this.$module = meta.module.get(moduleInfo.relativeName);
+    } else if (!this.$module) {
+      this.$module = this.$parent.$module;
     }
 
     // mixin store
