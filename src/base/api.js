@@ -28,8 +28,8 @@ export default function(Vue) {
       return response;
     }, function(error) {
       if (error.code === 401) {
-        // emit event: login
-        Vue.prototype.$meta.eventHub.$emit(Vue.prototype.$meta.constant.event.login, null);
+        // login
+        Vue.prototype.$meta.vueLayout.openLogin();
       }
       return Promise.reject(error);
     });

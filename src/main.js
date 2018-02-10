@@ -4,8 +4,6 @@ import './css/iconfont/material-icons.css';
 // meta
 const meta = Vue.prototype.$meta = {};
 
-// constants
-meta.constant = require('./base/constant.js').default;
 // eventHub
 meta.eventHub = new Vue();
 // modules
