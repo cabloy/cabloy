@@ -12,42 +12,48 @@ export default function(Vue) {
   auth.namespaced = true;
   store.registerModule('auth', auth);
 
-  // mixin
-  Vue.mixin({ beforeCreate() {
+  // beforeCreate
+  Object.defineProperty(store, '__beforeCreate', {
+    enumerable: false,
+    get() {
+      return function(ctx) {
+        return __beforeCreate(ctx);
+      };
+    },
+  });
 
-    const self = this;
-    this.$local = {};
+  function __beforeCreate(ctx) {
+    // local
+    ctx.$local = {};
 
-    Object.defineProperty(this.$local, 'state', {
+    Object.defineProperty(ctx.$local, 'state', {
       get() {
-        const moduleInfo = self.moduleInfo;
-        return self.$store.state[moduleInfo.pid][moduleInfo.name];
+        const moduleInfo = ctx.$module.info;
+        return ctx.$store.state[moduleInfo.pid][moduleInfo.name];
       },
     });
 
-    Object.defineProperty(this.$local, 'getters', {
+    Object.defineProperty(ctx.$local, 'getters', {
       get() {
         return function() {
-          const moduleInfo = self.moduleInfo;
-          return self.$store.getters[`${moduleInfo.pid}/${moduleInfo.name}/${arguments[0]}`];
+          const moduleInfo = ctx.$module.info;
+          return ctx.$store.getters[`${moduleInfo.pid}/${moduleInfo.name}/${arguments[0]}`];
         };
       },
     });
 
     [ 'commit', 'dispatch' ].forEach(key => {
       Vue.prototype.$meta.util.overrideProperty({
-        obj: this.$local,
+        obj: ctx.$local,
         key,
-        objBase: this.$store,
-        vueComponent: this,
+        objBase: ctx.$store,
+        vueComponent: ctx,
         combilePath: (moduleInfo, arg) => {
           return `${moduleInfo.pid}/${moduleInfo.name}/${arg}`;
         },
       });
     });
-
-  } });
+  }
 
   return store;
 }
-

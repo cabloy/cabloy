@@ -4,19 +4,24 @@ export default function(Vue, _config) {
   const config = _config || {};
   config.modules = config.modules || {};
 
-  // mixin
-  Vue.mixin({ beforeCreate() {
+  // beforeCreate
+  Object.defineProperty(config, '__beforeCreate', {
+    enumerable: false,
+    get() {
+      return function(ctx) {
+        return __beforeCreate(ctx);
+      };
+    },
+  });
 
-    const self = this;
-
-    Object.defineProperty(this, '$config', {
+  function __beforeCreate(ctx) {
+    Object.defineProperty(ctx, '$config', {
       get() {
-        const moduleInfo = self.moduleInfo;
+        const moduleInfo = ctx.$module.info;
         return config.modules[moduleInfo.relativeName];
       },
     });
-
-  } });
+  }
 
   return config;
 }

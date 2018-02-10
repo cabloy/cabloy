@@ -14,12 +14,12 @@ meta.modules = {};
 meta.modulesWaiting = {};
 // module
 meta.module = require('./base/module.js').default(Vue);
+// util
+meta.util = require('./base/util.js').default(Vue);
 // store
 meta.store = require('./base/store.js').default(Vue);
 // api
 meta.api = require('./base/api.js').default(Vue);
-// util
-meta.util = require('./base/util.js').default(Vue);
 
 // install module main
 const instanceMain = require('../../../src/front/main.js');
@@ -32,10 +32,9 @@ Vue.use(instanceMain.default, options => {
   };
   meta.module.set('main', module);
 
-  // config
-  meta.config = require('./base/config.js').default(Vue, options.config);
-  // locales
-  meta.locales = require('./base/locales.js').default(Vue, options.locales);
+  // mixin
+  require('./base/mixin.js').default(Vue, options);
+
   // vue parameters
   require('./inject/framework7.js').default(Vue, options, parameters => {
     meta.parameters = parameters;

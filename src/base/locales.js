@@ -6,10 +6,18 @@ export default function(Vue, _locales) {
   // locales
   const locales = _locales || {};
 
-  // mixin
-  Vue.mixin({ beforeCreate() {
+  // beforeCreate
+  Object.defineProperty(locales, '__beforeCreate', {
+    enumerable: false,
+    get() {
+      return function(ctx) {
+        return __beforeCreate(ctx);
+      };
+    },
+  });
 
-    Object.defineProperty(this, '$text', {
+  function __beforeCreate(ctx) {
+    Object.defineProperty(ctx, '$text', {
       get() {
         return function(key) {
           if (arguments.length === 0) return '';
@@ -31,8 +39,7 @@ export default function(Vue, _locales) {
         };
       },
     });
-
-  } });
+  }
 
   return locales;
 }

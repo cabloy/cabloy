@@ -43,23 +43,26 @@ export default function(Vue) {
     axios.__ebCustomInterceptorResponse.resolve,
     axios.__ebCustomInterceptorResponse.reject);
 
-  // mixin
-  Vue.mixin({ beforeCreate() {
+  // beforeCreate
+  Object.defineProperty(axios, '__beforeCreate', {
+    enumerable: false,
+    get() {
+      return function(ctx) {
+        return __beforeCreate(ctx);
+      };
+    },
+  });
 
-    // cache route path
-    if (this.$parent && this.$parent.__ebRoutePath) { this.__ebRoutePath = this.$parent.__ebRoutePath; } else if (this.$route) { this.__ebRoutePath = this.$route.path; }
-    // module info
-    this.moduleInfo = mparse.parseInfo(this.__ebRoutePath);
-
+  function __beforeCreate(ctx) {
     // api
-    this.$api = {};
+    ctx.$api = {};
 
     [ 'delete', 'get', 'head', 'options', 'post', 'put', 'patch' ].forEach(key => {
       Vue.prototype.$meta.util.overrideProperty({
-        obj: this.$api,
+        obj: ctx.$api,
         key,
         objBase: axios,
-        vueComponent: this,
+        vueComponent: ctx,
         combilePath: (moduleInfo, arg) => {
           if (arg.substr(0, 2) === '//') return arg.substr(1);
           if (arg.charAt(0) === '/') return `/api${arg}`;
@@ -67,8 +70,7 @@ export default function(Vue) {
         },
       });
     });
-
-  } });
+  }
 
   return axios;
 }

@@ -7,14 +7,24 @@ export default {
     // statusbar
     children.push(c('f7-statusbar', { ref: 'statusbar' }));
     // layout options
-    const layoutOptions = this.$meta.module.get().options.meta.layout[this.layout];
+    const layoutOptions = this.layout ?
+      this.$meta.module.get().options.meta.layout[this.layout] : null;
+    // layout module
+    const $module = layoutOptions ?
+      this.$meta.module.get(layoutOptions.module) : null;
     // layout mobile
     if (this.layoutMobile) {
-      children.push(c('eb-layout-mobile', { ref: 'layoutMobile', props: { layoutOptions } }));
+      children.push(c('eb-layout-mobile', {
+        ref: 'layoutMobile',
+        props: { layoutOptions, $module },
+      }));
     }
     // layout pc
     if (this.layoutPC) {
-      children.push(c('eb-layout-pc', { ref: 'layoutPC', props: { layoutOptions } }));
+      children.push(c('eb-layout-pc', {
+        ref: 'layoutPC',
+        props: { layoutOptions, $module },
+      }));
     }
     return c('div', children);
   },
@@ -36,7 +46,11 @@ export default {
     resize() {
       const options = this.$meta.module.get().options;
       // layout
-      const layout = window.document.documentElement.clientWidth > options.meta.breakpoint ? 'pc' : 'mobile';
+      let layout = window.document.documentElement.clientWidth > options.meta.breakpoint ?
+        'pc' : 'mobile';
+      if (!options.meta.layout[layout]) {
+        layout = layout === 'pc' ? 'mobile' : 'pc';
+      }
       // check if switch
       if (this.layout === layout) {
         const component = this.getLayout();
