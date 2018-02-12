@@ -1,41 +1,43 @@
-import mparse from 'egg-born-mparse';
+export default function(Vue) {
 
-export default function(Vue, options) {
-  // meta
-  const meta = Vue.prototype.$meta;
+  // beforeCreates
+  const beforeCreates = [];
 
+  // store
+  init('store', require('./store.js'));
+  // api
+  init('api', require('./api.js'));
   // config
-  meta.config = require('./config.js').default(Vue, options.config);
+  init('config', require('./config.js'));
   // locales
-  meta.locales = require('./locales.js').default(Vue, options.locales);
+  init('locales', require('./locales.js'));
 
   // mixin
   Vue.mixin({ beforeCreate() {
 
-    // cache route path
-    if (this.$parent && this.$parent.__ebRoutePath) {
-      this.__ebRoutePath = this.$parent.__ebRoutePath;
-    } else if (this.$route) {
-      this.__ebRoutePath = this.$route.path;
-    }
+    // mixin module
+    mixinModule(this);
 
-    // module
-    if (this.__ebRoutePath) {
-      const moduleInfo = mparse.parseInfo(this.__ebRoutePath);
-      this.$module = meta.module.get(moduleInfo.relativeName);
-    } else if (!this.$module) {
-      this.$module = this.$parent.$module;
+    // mixins
+    for (const _beforeCreate of beforeCreates) {
+      _beforeCreate(this);
     }
-
-    // mixin store
-    meta.store.__beforeCreate(this);
-    // mixin api
-    meta.api.__beforeCreate(this);
-    // mixin config
-    meta.config.__beforeCreate(this);
-    // mixin locales
-    meta.locales.__beforeCreate(this);
 
   } });
+
+  function init(key, instance) {
+    const res = instance.default(Vue);
+    Vue.prototype.$meta[key] = res[key];
+    beforeCreates.push(res.beforeCreate);
+  }
+
+  function mixinModule(ctx) {
+    if (!ctx.$module) {
+      ctx.$module = ctx.$options.__proto__.__ebModule;
+    }
+    if (!ctx.$module && ctx.$parent) {
+      ctx.$module = ctx.$parent.$module;
+    }
+  }
 
 }

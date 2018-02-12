@@ -9,21 +9,18 @@ export default {
     // layout options
     const layoutOptions = this.layout ?
       this.$meta.module.get().options.meta.layout[this.layout] : null;
-    // layout module
-    const $module = layoutOptions ?
-      this.$meta.module.get(layoutOptions.module) : null;
     // layout mobile
     if (this.layoutMobile) {
       children.push(c('eb-layout-mobile', {
         ref: 'layoutMobile',
-        props: { layoutOptions, $module },
+        props: { layoutOptions },
       }));
     }
     // layout pc
     if (this.layoutPC) {
       children.push(c('eb-layout-pc', {
         ref: 'layoutPC',
-        props: { layoutOptions, $module },
+        props: { layoutOptions },
       }));
     }
     return c('div', children);
@@ -61,6 +58,8 @@ export default {
         const layoutOptions = options.meta.layout[this.layout];
         // load module layout
         this.$meta.module.use(layoutOptions.module, module => {
+          // set module
+          module.options.components.layout.__ebModule = module;
           // set layout component
           this.$options.__proto__.components[`eb-layout-${this.layout}`] = module.options.components.layout;
           // show

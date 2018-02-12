@@ -13,16 +13,7 @@ export default function(Vue) {
   store.registerModule('auth', auth);
 
   // beforeCreate
-  Object.defineProperty(store, '__beforeCreate', {
-    enumerable: false,
-    get() {
-      return function(ctx) {
-        return __beforeCreate(ctx);
-      };
-    },
-  });
-
-  function __beforeCreate(ctx) {
+  const beforeCreate = function(ctx) {
     // local
     ctx.$local = {};
 
@@ -53,7 +44,7 @@ export default function(Vue) {
         },
       });
     });
-  }
+  };
 
-  return store;
+  return { store, beforeCreate };
 }

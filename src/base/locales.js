@@ -1,22 +1,13 @@
 import Cookies from 'js-cookie';
 import localeutil from 'egg-born-localeutil';
 
-export default function(Vue, _locales) {
+export default function(Vue) {
 
   // locales
-  const locales = _locales || {};
+  const locales = {};
 
   // beforeCreate
-  Object.defineProperty(locales, '__beforeCreate', {
-    enumerable: false,
-    get() {
-      return function(ctx) {
-        return __beforeCreate(ctx);
-      };
-    },
-  });
-
-  function __beforeCreate(ctx) {
+  const beforeCreate = function(ctx) {
     Object.defineProperty(ctx, '$text', {
       get() {
         return function(key) {
@@ -39,7 +30,7 @@ export default function(Vue, _locales) {
         };
       },
     });
-  }
+  };
 
-  return locales;
+  return { locales, beforeCreate };
 }

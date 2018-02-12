@@ -31,6 +31,30 @@ export default function(Vue) {
         this._registerRoutes(Vue.prototype.$meta.modulesWaiting[key]);
       }
     },
+    install(instance, moduleInfo, cb) {
+      // install
+      Vue.use(instance.default, options => {
+        // module
+        const module = {
+          name: moduleInfo.relativeName,
+          info: moduleInfo,
+          instance,
+          options,
+        };
+        // set
+        this.set(moduleInfo.relativeName, module);
+        // routes
+        if (!Vue.prototype.$f7) {
+          Vue.prototype.$meta.modulesWaiting[moduleInfo.relativeName] = module;
+        } else {
+          this._registerRoutes(module);
+        }
+        // register resources
+        this._registerResources(module);
+        // ready
+        return cb && cb(module);
+      });
+    },
     _import(moduleInfo, cb) {
       this._importCSS(moduleInfo);
       this._importJS(moduleInfo, module => cb(module));
@@ -49,10 +73,10 @@ export default function(Vue) {
     },
     _importJS(moduleInfo, cb) {
       System.import('../../build/__module/' + moduleInfo.fullName + '/dist/front.js').then(instance => {
-        this._install(instance, moduleInfo, module => cb(module));
+        this.install(instance, moduleInfo, module => cb(module));
       }).catch(() => {
         System.import('../../../../src/module/' + moduleInfo.relativeName + '/front/src/main.js').then(instance => {
-          this._install(instance, moduleInfo, module => cb(module));
+          this.install(instance, moduleInfo, module => cb(module));
         });
       });
     },
@@ -78,7 +102,7 @@ export default function(Vue) {
           cb && cb(module);
         } else if ((!moduleRelativeName || single)) {
           const instance = r(key);
-          this._install(instance, moduleInfo, module => {
+          this.install(instance, moduleInfo, module => {
             cb && cb(module);
           });
         }
@@ -88,6 +112,7 @@ export default function(Vue) {
     _registerRoutes(module) {
       if (!module.options.routes) return null;
       const routes = module.options.routes.map(route => {
+        route.component.__ebModule = module;
         // path
         route.path = `/${module.info.pid}/${module.info.name}/${route.path}`;
         // meta.modal
@@ -132,30 +157,6 @@ export default function(Vue) {
       });
       Vue.prototype.$f7.routes = Vue.prototype.$f7.routes.concat(routes);
     },
-    _install(instance, moduleInfo, cb) {
-      // install
-      Vue.use(instance.default, options => {
-        // module
-        const module = {
-          name: moduleInfo.relativeName,
-          info: moduleInfo,
-          instance,
-          options,
-        };
-        // set
-        this.set(moduleInfo.relativeName, module);
-        // routes
-        if (!Vue.prototype.$f7) {
-          Vue.prototype.$meta.modulesWaiting[moduleInfo.relativeName] = module;
-        } else {
-          this._registerRoutes(module);
-        }
-        // register resources
-        this._registerResources(module);
-        // ready
-        return cb && cb(module);
-      });
-    },
     _registerResources(module) {
       module.options.store && this._registerStore(module);
       module.options.config && this._registerConfig(module);
@@ -171,8 +172,13 @@ export default function(Vue) {
       Vue.prototype.$meta.store.registerModule([ module.info.pid, module.info.name ], module.options.store);
     },
     _registerConfig(module) {
-      Vue.prototype.$meta.config.modules[module.info.relativeName] =
-       Vue.prototype.$utils.extend(module.options.config, Vue.prototype.$meta.config.modules[module.info.relativeName]);
+      if (module.name === 'main') {
+        Vue.prototype.$utils.extend(Vue.prototype.$meta.config, module.options.config);
+        if (!Vue.prototype.$meta.config.modules) Vue.prototype.$meta.config.modules = {};
+      } else {
+        Vue.prototype.$meta.config.modules[module.info.relativeName] =
+       Vue.prototype.$utils.extend({}, module.options.config, Vue.prototype.$meta.config.modules[module.info.relativeName]);
+      }
     },
     _registerLocales(module) {
       Object.keys(module.options.locales).forEach(key => {

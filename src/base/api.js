@@ -1,5 +1,4 @@
 import axios from 'axios';
-import mparse from 'egg-born-mparse';
 
 export default function(Vue) {
 
@@ -44,16 +43,7 @@ export default function(Vue) {
     axios.__ebCustomInterceptorResponse.reject);
 
   // beforeCreate
-  Object.defineProperty(axios, '__beforeCreate', {
-    enumerable: false,
-    get() {
-      return function(ctx) {
-        return __beforeCreate(ctx);
-      };
-    },
-  });
-
-  function __beforeCreate(ctx) {
+  const beforeCreate = function(ctx) {
     // api
     ctx.$api = {};
 
@@ -70,7 +60,7 @@ export default function(Vue) {
         },
       });
     });
-  }
+  };
 
-  return axios;
+  return { api: axios, beforeCreate };
 }
