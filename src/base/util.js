@@ -25,6 +25,9 @@ export default function(Vue) {
         if (key.indexOf('f7router-') === 0) window.localStorage.removeItem(key);
       });
     },
+    setComponentModule(component, module) {
+      component.__ebModuleRelativeName = module.info.relativeName;
+    },
     parseHash(url) {
       if (!url || url === '/') return '/';
       let documentUrl = url.split(location.origin)[1];

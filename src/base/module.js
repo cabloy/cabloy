@@ -112,7 +112,7 @@ export default function(Vue) {
     _registerRoutes(module) {
       if (!module.options.routes) return null;
       const routes = module.options.routes.map(route => {
-        route.component.__ebModule = module;
+        Vue.prototype.$meta.util.setComponentModule(route.component, module);
         // path
         route.path = `/${module.info.pid}/${module.info.name}/${route.path}`;
         // meta.modal
@@ -134,10 +134,6 @@ export default function(Vue) {
               }
               resolve(_component);
             } else {
-              // check if close main
-              if (this.view.$el.hasClass('eb-view') && this.currentRoute && this.currentRoute.path === '/') {
-                Vue.prototype.$meta.vueLayout.closeView(this.view, true);
-              }
               // login
               Vue.prototype.$meta.vueLayout.openLogin({
                 view: this.view,
@@ -166,7 +162,7 @@ export default function(Vue) {
     _registerComponents(module) {
       Object.keys(module.options.components).forEach(key => {
         const component = module.options.components[key];
-        component.__ebModule = module;
+        Vue.prototype.$meta.util.setComponentModule(component, module);
         Vue.component(key, component);
       });
     },

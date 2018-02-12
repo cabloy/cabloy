@@ -33,7 +33,8 @@ export default function(Vue) {
 
   function mixinModule(ctx) {
     if (!ctx.$module) {
-      ctx.$module = ctx.$options.__proto__.__ebModule;
+      const relativeName = ctx.$options.__proto__.__ebModuleRelativeName;
+      if (relativeName)ctx.$module = ctx.$meta.module.get(relativeName);
     }
     if (!ctx.$module && ctx.$parent) {
       ctx.$module = ctx.$parent.$module;
