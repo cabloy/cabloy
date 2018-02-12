@@ -28,15 +28,21 @@ export default function(Vue) {
   });
 
   // vue components
+  Object.defineProperty(Vue.prototype.$meta, 'vueRoot', {
+    get() {
+      return Vue.prototype.$f7 ? Vue.prototype.$f7.root[0].__vue__.$root : null;
+    },
+  });
   Object.defineProperty(Vue.prototype.$meta, 'vueApp', {
     get() {
-      return Vue.prototype.$f7 ? Vue.prototype.$f7.root[0].__vue__ : null;
+      const root = Vue.prototype.$meta.vueRoot;
+      return root ? root.$refs.app : null;
     },
   });
   Object.defineProperty(Vue.prototype.$meta, 'vueLayout', {
     get() {
       const app = Vue.prototype.$meta.vueApp;
-      return app ? Vue.prototype.$meta.vueApp.getLayout() : null;
+      return app ? app.getLayout() : null;
     },
   });
 }

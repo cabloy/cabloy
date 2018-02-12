@@ -158,9 +158,17 @@ export default function(Vue) {
       Vue.prototype.$f7.routes = Vue.prototype.$f7.routes.concat(routes);
     },
     _registerResources(module) {
+      module.options.components && this._registerComponents(module);
       module.options.store && this._registerStore(module);
       module.options.config && this._registerConfig(module);
       module.options.locales && this._registerLocales(module);
+    },
+    _registerComponents(module) {
+      Object.keys(module.options.components).forEach(key => {
+        const component = module.options.components[key];
+        component.__ebModule = module;
+        Vue.component(key, component);
+      });
     },
     _registerStore(module) {
       if (!Vue.prototype.$meta.store._modulesNamespaceMap[`${module.info.pid}/`]) {

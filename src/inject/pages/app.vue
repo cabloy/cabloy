@@ -9,17 +9,12 @@ export default {
     // layout options
     const layoutOptions = this.layout ?
       this.$meta.module.get().options.meta.layout[this.layout] : null;
-    // layout mobile
-    if (this.layoutMobile) {
-      children.push(c('eb-layout-mobile', {
-        ref: 'layoutMobile',
-        props: { layoutOptions },
-      }));
-    }
-    // layout pc
-    if (this.layoutPC) {
-      children.push(c('eb-layout-pc', {
-        ref: 'layoutPC',
+    const layoutComponent = layoutOptions ?
+      this.$meta.module.get(layoutOptions.module).options.meta.layout : null;
+    // layout
+    if (layoutComponent) {
+      children.push(c(layoutComponent, {
+        ref: 'layout',
         props: { layoutOptions },
       }));
     }
@@ -28,8 +23,6 @@ export default {
   data() {
     return {
       layout: null,
-      layoutMobile: false,
-      layoutPC: false,
     };
   },
   methods: {
@@ -37,13 +30,12 @@ export default {
       this.resize();
     },
     getLayout() {
-      if (this.layoutMobile) return this.$refs.layoutMobile;
-      if (this.layoutPC) return this.$refs.layoutPC;
+      return this.$refs.layout;
     },
     resize() {
       const options = this.$meta.module.get().options;
       // layout
-      let layout = window.document.documentElement.clientWidth > options.meta.breakpoint ?
+      let layout = window.document.documentElement.clientWidth > options.meta.layoutBreakPoint ?
         'pc' : 'mobile';
       if (!options.meta.layout[layout]) {
         layout = layout === 'pc' ? 'mobile' : 'pc';
@@ -53,18 +45,10 @@ export default {
         const component = this.getLayout();
         if (component) component.onResize();
       } else {
-        this.layout = layout;
-        // layout options
-        const layoutOptions = options.meta.layout[this.layout];
         // load module layout
-        this.$meta.module.use(layoutOptions.module, module => {
-          // set module
-          module.options.components.layout.__ebModule = module;
-          // set layout component
-          this.$options.__proto__.components[`eb-layout-${this.layout}`] = module.options.components.layout;
-          // show
-          this.layoutMobile = this.layout === 'mobile';
-          this.layoutPC = this.layout === 'pc';
+        this.$meta.module.use(options.meta.layout[layout].module, () => {
+          // ready
+          this.layout = layout;
         });
       }
     },
