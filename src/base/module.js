@@ -1,6 +1,22 @@
 import mparse from 'egg-born-mparse';
 
 export default function(Vue) {
+  const loadingQueue = {
+    _queue: {},
+    push(relativeName, cb) {
+      if (!this._queue[relativeName]) this._queue[relativeName] = [];
+      this._queue[relativeName].push(cb);
+      return this._queue[relativeName].length === 1;
+    },
+    pop(relativeName, module) {
+      if (!this._queue[relativeName]) return;
+      for (const cb of this._queue[relativeName]) {
+        cb(module);
+      }
+      delete this._queue[relativeName];
+    },
+  };
+
   const module = {
     get(moduleRelativeName) {
       return Vue.prototype.$meta.modules[moduleRelativeName || 'main'];
@@ -15,10 +31,12 @@ export default function(Vue) {
       if (!moduleInfo) throw new Error('invalid module name!');
       const module = this.get(moduleInfo.relativeName);
       if (module) return cb(module);
-      if (moduleInfo.sync) {
-        this._require(moduleInfo, module => cb(module));
-      } else {
-        this._import(moduleInfo, module => cb(module));
+      if (loadingQueue.push(moduleInfo.relativeName, cb)) {
+        if (moduleInfo.sync) {
+          this._require(moduleInfo, module => loadingQueue.pop(moduleInfo.relativeName, module));
+        } else {
+          this._import(moduleInfo, module => loadingQueue.pop(moduleInfo.relativeName, module));
+        }
       }
     },
     requireAll() {
