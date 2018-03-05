@@ -1,13 +1,13 @@
 import fns from '../base/fns.js';
 import App from './pages/app.vue';
 import routes from './routes.js';
-import patch from './patch.js';
+import patchRouter from './patch/router.js';
 
 export default function(Vue, options, cb) {
   // clear router history
   Vue.prototype.$meta.util.clearRouterHistory();
-  // patch
-  patch(Vue);
+  // patch router
+  patchRouter(Vue);
   // load sync modules
   Vue.prototype.$meta.module.requireAll();
   // prepare parameters
@@ -23,6 +23,28 @@ export default function(Vue, options, cb) {
       routes,
       framework7: {
         theme: 'md',
+        modal: {
+          moveToRoot: false,
+          backdrop: false,
+        },
+        sheet: {
+          closeByOutsideClick: true,
+        },
+        popover: {
+          closeByOutsideClick: true,
+          backdrop: false,
+        },
+        popup: {
+          closeByOutsideClick: true,
+          backdrop: false,
+        },
+        actions: {
+          closeByOutsideClick: true,
+          backdrop: false,
+        },
+        calendar: {
+          routableModals: false,
+        },
       },
       components: {
         App,
