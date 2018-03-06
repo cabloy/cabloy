@@ -1,6 +1,6 @@
 export default function(Vue) {
   // router
-  function patchRouter(router, root) {
+  function patch(router, root) {
     // routes
     Object.defineProperty(router, 'routes', {
       get() {
@@ -18,12 +18,12 @@ export default function(Vue) {
   }
   Vue.prototype.$Framework7.use({
     create() {
-      patchRouter(this.router, true);
+      patch(this.router, true);
     },
   });
   Vue.prototype.$Framework7.View.use({
     create() {
-      patchRouter(this.router, false);
+      patch(this.router, false);
     },
   });
 

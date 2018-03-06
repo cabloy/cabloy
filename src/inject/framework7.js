@@ -2,12 +2,15 @@ import fns from '../base/fns.js';
 import App from './pages/app.vue';
 import routes from './routes.js';
 import patchRouter from './patch/router.js';
+import patchModal from './patch/modal.js';
 
 export default function(Vue, options, cb) {
   // clear router history
   Vue.prototype.$meta.util.clearRouterHistory();
   // patch router
   patchRouter(Vue);
+  // patch modal
+  patchModal(Vue);
   // load sync modules
   Vue.prototype.$meta.module.requireAll();
   // prepare parameters
