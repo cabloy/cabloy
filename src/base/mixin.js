@@ -4,13 +4,15 @@ export default function(Vue) {
   const beforeCreates = [];
 
   // store
-  init('store', require('./store.js'));
+  init('store', require('./mixin/store.js'));
   // api
-  init('api', require('./api.js'));
+  init('api', require('./mixin/api.js'));
   // config
-  init('config', require('./config.js'));
+  init('config', require('./mixin/config.js'));
   // locales
-  init('locales', require('./locales.js'));
+  init('locales', require('./mixin/locales.js'));
+  // component
+  init(null, require('./mixin/component.js'));
 
   // mixin
   Vue.mixin({ beforeCreate() {
@@ -27,7 +29,7 @@ export default function(Vue) {
 
   function init(key, instance) {
     const res = instance.default(Vue);
-    Vue.prototype.$meta[key] = res[key];
+    if (key) Vue.prototype.$meta[key] = res[key];
     beforeCreates.push(res.beforeCreate);
   }
 

@@ -8,7 +8,7 @@ export default function(Vue) {
   const store = new Vuex.Store({});
 
   // register module: auth
-  const auth = require('./auth.js').default(Vue);
+  const auth = require('../auth.js').default(Vue);
   auth.namespaced = true;
   store.registerModule('auth', auth);
 
