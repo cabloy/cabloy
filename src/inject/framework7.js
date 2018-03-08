@@ -46,7 +46,6 @@ export default function(Vue, options, cb) {
           routableModals: false,
         },
         dialog: {
-          closeByOutsideClick: true,
           backdrop: false,
         },
       },
