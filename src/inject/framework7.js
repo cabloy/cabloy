@@ -48,6 +48,9 @@ export default function(Vue, options, cb) {
         dialog: {
           backdrop: false,
         },
+        toast: {
+          closeTimeout: 3000,
+        },
       },
       components: {
         App,
