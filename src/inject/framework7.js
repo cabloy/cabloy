@@ -25,10 +25,10 @@ export default function(Vue, options, cb) {
         theme: 'md',
         modal: {
           moveToRoot: false,
-          backdrop: false,
         },
         sheet: {
           closeByOutsideClick: true,
+          backdrop: false,
         },
         popover: {
           closeByOutsideClick: true,

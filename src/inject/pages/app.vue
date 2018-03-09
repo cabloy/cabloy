@@ -8,7 +8,7 @@ export default {
     children.push(c('f7-statusbar', { ref: 'statusbar' }));
     // layout options
     const layoutOptions = this.layout ?
-      this.$meta.module.get().options.meta.layout[this.layout] : null;
+      this.$meta.module.get().options.meta.layout.items[this.layout] : null;
     const layoutComponent = layoutOptions ?
       this.$meta.module.get(layoutOptions.module).options.meta.layout : null;
     // layout
@@ -35,9 +35,9 @@ export default {
     resize() {
       const options = this.$meta.module.get().options;
       // layout
-      let layout = window.document.documentElement.clientWidth > options.meta.layoutBreakPoint ?
+      let layout = window.document.documentElement.clientWidth > options.meta.layout.breakPoint ?
         'pc' : 'mobile';
-      if (!options.meta.layout[layout]) {
+      if (!options.meta.layout.items[layout]) {
         layout = layout === 'pc' ? 'mobile' : 'pc';
       }
       // check if switch
@@ -46,7 +46,7 @@ export default {
         if (component) component.onResize();
       } else {
         // load module layout
-        this.$meta.module.use(options.meta.layout[layout].module, () => {
+        this.$meta.module.use(options.meta.layout.items[layout].module, () => {
           // ready
           this.layout = layout;
         });
