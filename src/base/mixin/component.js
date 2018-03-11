@@ -4,7 +4,7 @@ export default function() {
   const beforeCreate = function(ctx) {
     Object.defineProperty(ctx, '$view', {
       get() {
-        return ctx.$f7Router.view.$el[0].__vue__.$parent;
+        return ctx.$f7Router.view.$el[0].__vue__;
       },
     });
   };

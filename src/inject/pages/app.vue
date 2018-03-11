@@ -35,7 +35,7 @@ export default {
     resize() {
       const options = this.$meta.module.get().options;
       // layout
-      let layout = window.document.documentElement.clientWidth > options.meta.layout.breakPoint ?
+      let layout = window.document.documentElement.clientWidth > options.meta.layout.breakpoint ?
         'pc' : 'mobile';
       if (!options.meta.layout.items[layout]) {
         layout = layout === 'pc' ? 'mobile' : 'pc';
