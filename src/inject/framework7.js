@@ -26,27 +26,8 @@ export default function(Vue, options, cb) {
         modal: {
           moveToRoot: false,
         },
-        sheet: {
-          closeByOutsideClick: true,
-          backdrop: false,
-        },
-        popover: {
-          closeByOutsideClick: true,
-          backdrop: false,
-        },
-        popup: {
-          closeByOutsideClick: true,
-          backdrop: false,
-        },
-        actions: {
-          closeByOutsideClick: true,
-          backdrop: false,
-        },
         calendar: {
           routableModals: false,
-        },
-        dialog: {
-          backdrop: false,
         },
         toast: {
           closeTimeout: 3000,
