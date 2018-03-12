@@ -40,5 +40,8 @@ export default function(Vue) {
       }
       return documentUrl || '/';
     },
+    isPromise(value) {
+      return value && typeof value === 'object' && typeof value.then === 'function';
+    },
   };
 }
