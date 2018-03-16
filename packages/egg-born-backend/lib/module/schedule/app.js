@@ -1,6 +1,7 @@
 const qs = require('querystring');
 const eventCheckReady = 'eb:event:version:checkReady';
 const eventLoadSchedules = 'eb:event:loadSchedules';
+const eventCheckNeedRunSchedules = 'eb:event:checkNeedRunSchedules';
 
 module.exports = function(loader, modules) {
 
@@ -17,6 +18,8 @@ module.exports = function(loader, modules) {
   loader.app.messenger.once(eventCheckReady, () => {
     loader.app.messenger.sendToAgent(eventLoadSchedules, ebSchedules);
   });
+
+  loader.app.messenger.sendToAgent(eventCheckNeedRunSchedules, { pid: process.pid });
 
   // for test purpose
   loader.app.meta.runSchedule = (module, key) => {
