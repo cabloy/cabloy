@@ -1,6 +1,6 @@
 {
   "name": "egg-born-backend",
-  "version": "1.0.107",
+  "version": "1.0.108",
   "description": "egg-born-backend",
   "scripts": {
     "lint": "eslint ."

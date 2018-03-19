@@ -19,7 +19,9 @@ module.exports = function(loader, modules) {
     loader.app.messenger.sendToAgent(eventLoadSchedules, ebSchedules);
   });
 
-  loader.app.messenger.sendToAgent(eventCheckNeedRunSchedules, { pid: process.pid });
+  loader.app.messenger.once('egg-ready', () => {
+    loader.app.messenger.sendToAgent(eventCheckNeedRunSchedules, { pid: process.pid });
+  });
 
   // for test purpose
   loader.app.meta.runSchedule = (module, key) => {
