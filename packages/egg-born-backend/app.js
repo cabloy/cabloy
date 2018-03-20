@@ -1,3 +1,4 @@
+const eventWorkStartReady = 'eb:event:work-start:ready';
 module.exports = app => {
   app.beforeStart(async () => {
     // dev/debug db
@@ -12,5 +13,6 @@ module.exports = app => {
         app.mysql.__ebdb_test = app.mysql.createInstance(mysqlConfig);
       }
     }
+    app.emit(eventWorkStartReady);
   });
 };

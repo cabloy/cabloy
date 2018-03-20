@@ -11,6 +11,6 @@ module.exports = {
       method: 'post',
       url: '/a/version/version/start',
     });
-    ctx.app.messenger.sendToApp(eventCheckReady);
+    ctx.app.emit(eventCheckReady);
   },
 };
