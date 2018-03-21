@@ -1,3 +1,4 @@
+const scheduleTestFn = require('../../lib/module/schedule/test.js');
 const eventCheckReady = 'eb:event:version:checkReady';
 
 module.exports = {
@@ -32,7 +33,12 @@ module.exports = {
         },
       });
     }
-    // emit checkReady
-    ctx.app.emit(eventCheckReady);
+    // ready
+    if (!ctx.app.meta.isTest) {
+      // emit checkReady
+      ctx.app.emit(eventCheckReady);
+    } else {
+      await scheduleTestFn(ctx.app);
+    }
   },
 };

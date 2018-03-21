@@ -7,7 +7,7 @@ const eventWorkStartReady = 'eb:event:work-start:ready';
 module.exports = function(loader, modules) {
 
   // all schedules
-  const ebSchedules = {};
+  const ebSchedules = loader.app.meta.schedules = {};
 
   // load schedules
   loadSchedules();
@@ -26,7 +26,7 @@ module.exports = function(loader, modules) {
 
   // for test purpose
   loader.app.meta.runSchedule = (module, key) => {
-    const fullKey = `${module}:${key}`;
+    const fullKey = key === undefined ? module : `${module}:${key}`;
     const schedule = ebSchedules[fullKey];
     if (!schedule) {
       throw new Error(`Cannot find schedule ${fullKey}`);
