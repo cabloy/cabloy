@@ -1,6 +1,6 @@
 {
   "name": "egg-born-backend",
-  "version": "1.0.111",
+  "version": "1.0.112",
   "description": "egg-born-backend",
   "scripts": {
     "lint": "eslint ."
@@ -25,6 +25,7 @@
     "autod": "^3.0.1",
     "autod-egg": "^1.0.0",
     "babel-eslint": "^8.0.2",
+    "chalk": "^2.3.0",
     "egg": "^2.0.0",
     "egg-born-localeutil": "^1.0.3",
     "egg-born-mock": "^1.0.2",
@@ -37,6 +38,7 @@
     "extend2": "^1.0.0",
     "glob": "^7.1.2",
     "is-type-of": "^1.2.0",
+    "moment": "^2.19.2",
     "object-get-o-a": "^1.0.2",
     "supertest": "^3.0.0"
   },
