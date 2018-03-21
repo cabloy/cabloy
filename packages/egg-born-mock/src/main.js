@@ -27,32 +27,9 @@ before(async () => {
   // session
   app.mockSession({});
 
-  // ctx
-  const ctx = app.mockContext({ mockUrl: '/api/a/version/' });
-
   // version check
   const pathVersionCheck = path.join(__dirname, '../../egg-born-backend/app/schedule/versionCheck.js');
   await app.runSchedule(pathVersionCheck);
-
-  // version init
-  await ctx.performAction({
-    method: 'post',
-    url: 'version/check',
-    body: {
-      subdomain: '',
-      password: '',
-      scene: 'init',
-    },
-  });
-
-  // version test
-  await ctx.performAction({
-    method: 'post',
-    url: 'version/check',
-    body: {
-      scene: 'test',
-    },
-  });
 
   // restore
   mock.restore();
