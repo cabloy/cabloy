@@ -1,14 +1,10 @@
 // eslint-disable-next-line
 export default function(Vue) {
-  // hash init
-  const hashInit = location.href;
-  history.replaceState(null, '', location.href.split('#')[0]);
-
   return {
     state: {
       loggedIn: false,
       user: null,
-      hashInit,
+      hashInit: null,
     },
     mutations: {
       login(state, { loggedIn, user }) {
@@ -25,4 +21,3 @@ export default function(Vue) {
     },
   };
 }
-

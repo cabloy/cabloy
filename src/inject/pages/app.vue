@@ -27,6 +27,10 @@ export default {
   },
   methods: {
     onF7Ready() {
+      // hash init
+      const hashInit = this.$meta.util.parseHash(location.href);
+      if (hashInit && hashInit !== '/') this.$store.commit('auth/setHashInit', hashInit);
+      // resize
       this.resize();
     },
     getLayout() {
@@ -47,6 +51,8 @@ export default {
       } else {
         // load module layout
         this.$meta.module.use(options.meta.layout.items[layout].module, () => {
+          // clear router history
+          this.$meta.util.clearRouterHistory();
           // ready
           this.layout = layout;
         });
@@ -56,12 +62,8 @@ export default {
       const layout = this.layout;
       this.layout = null;
       this.$nextTick(() => {
-        // clear state
-        this.$Framework7.history.state = null;
         // clear router history
         this.$meta.util.clearRouterHistory();
-        // clear hash url
-        history.replaceState(null, '', location.href.split('#')[0]);
         // restore layout
         this.layout = layout;
       })

@@ -4,8 +4,6 @@ import routes from './routes.js';
 import patchRouter from './patch/router.js';
 
 export default function(Vue, options, cb) {
-  // clear router history
-  Vue.prototype.$meta.util.clearRouterHistory();
   // patch router
   patchRouter(Vue);
   // load sync modules

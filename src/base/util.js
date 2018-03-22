@@ -21,6 +21,8 @@ export default function(Vue) {
       loading && loading.parentNode.removeChild(loading);
     },
     clearRouterHistory() {
+      Vue.prototype.$Framework7.history.state = null;
+      history.replaceState(null, '', location.href.split('#')[0]);
       Object.keys(window.localStorage).forEach(key => {
         if (key.indexOf('f7router-') === 0) window.localStorage.removeItem(key);
       });
