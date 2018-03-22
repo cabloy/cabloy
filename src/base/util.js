@@ -40,6 +40,13 @@ export default function(Vue) {
       }
       return documentUrl || '/';
     },
+    historyUrlEmpty(historyUrl) {
+      if (!historyUrl || historyUrl === '/') return true;
+      const router = Vue.prototype.$f7.router;
+      if (!router.params.pushStateSeparator || historyUrl.indexOf(router.params.pushStateSeparator) < 0) return false;
+      historyUrl = historyUrl.split(router.params.pushStateSeparator)[1];
+      return (!historyUrl || historyUrl === '/');
+    },
     isPromise(value) {
       return value && typeof value === 'object' && typeof value.then === 'function';
     },

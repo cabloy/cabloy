@@ -52,6 +52,20 @@ export default {
         });
       }
     },
+    reload() {
+      const layout = this.layout;
+      this.layout = null;
+      this.$nextTick(() => {
+        // clear state
+        this.$Framework7.history.state = null;
+        // clear router history
+        this.$meta.util.clearRouterHistory();
+        // clear hash url
+        history.replaceState(null, '', location.href.split('#')[0]);
+        // restore layout
+        this.layout = layout;
+      })
+    }
   },
   mounted() {
     window.onresize = () => {
