@@ -1,6 +1,4 @@
 <script>
-let _resizeTimeout = 0;
-
 export default {
   render(c) {
     const children = [];
@@ -23,6 +21,7 @@ export default {
   data() {
     return {
       layout: null,
+      resizeTimeout: 0,
     };
   },
   methods: {
@@ -32,6 +31,8 @@ export default {
       if (hashInit && hashInit !== '/') this.$store.commit('auth/setHashInit', hashInit);
       // resize
       this.resize();
+      // on resize
+      this.$f7.on('resize', this.onResize);
     },
     getLayout() {
       return this.$refs.layout;
@@ -67,16 +68,17 @@ export default {
         // restore layout
         this.layout = layout;
       })
-    }
-  },
-  mounted() {
-    window.onresize = () => {
-      if (_resizeTimeout) return;
-      _resizeTimeout = window.setTimeout(() => {
-        _resizeTimeout = 0;
+    },
+    onResize() {
+      if (this.resizeTimeout) return;
+      this.resizeTimeout = window.setTimeout(() => {
+        this.resizeTimeout = 0;
         this.resize();
       }, 300);
-    };
+    }
+  },
+  beforeDestroy() {
+    this.$f7.off('resize', this.onResize);
   },
 };
 
