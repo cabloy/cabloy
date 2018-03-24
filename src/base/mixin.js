@@ -36,7 +36,17 @@ export default function(Vue) {
   function mixinModule(ctx) {
     if (!ctx.$module) {
       const relativeName = ctx.$options.__proto__.__ebModuleRelativeName;
-      if (relativeName)ctx.$module = ctx.$meta.module.get(relativeName);
+      if (relativeName) {
+        ctx.$module = ctx.$meta.module.get(relativeName);
+        if (!ctx.$module.adjustHref) {
+          ctx.$module.adjustHref = href => {
+            if (!href || typeof href !== 'string') return href;
+            const first = href.charAt(0);
+            if (first === '/' || first === '#') return href;
+            return `/${ctx.$module.info.url}/${href}`;
+          };
+        }
+      }
     }
     if (!ctx.$module && ctx.$parent) {
       ctx.$module = ctx.$parent.$module;
