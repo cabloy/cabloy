@@ -2,6 +2,7 @@ const is = require('is-type-of');
 const co = require('co');
 const extend = require('extend2');
 const pathMatching = require('egg-path-matching');
+const util = require('./util.js');
 const loadMiddlewares = require('./middleware.js');
 const MWSTATUS = Symbol('Context#__wmstatus');
 
@@ -24,7 +25,7 @@ module.exports = function(loader, modules) {
         // name
         if (route.name) args.push(route.name);
         // path
-        args.push(`/api/${info.url}/${route.path}`);
+        args.push(util.adjustUrl(info, route.path));
 
         // constroller
         let Controller;

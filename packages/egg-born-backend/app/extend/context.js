@@ -6,6 +6,7 @@ const isJSON = require('koa-is-json');
 const Stream = require('stream');
 const is = require('is-type-of');
 const mparse = require('egg-born-mparse').default;
+const util = require('../../lib/module/util.js');
 
 const MODULE = Symbol.for('Context#__module');
 const DATABASE = Symbol.for('Context#__database');
@@ -58,7 +59,7 @@ module.exports = {
       const handleRequest = appCallback.call(this.app);
       const request = createRequest({
         method,
-        url: adjustUrl(this, url),
+        url: util.adjustUrl(this.module && this.module.info, url),
       }, this.request);
       const response = new http.ServerResponse(request);
       handleRequest(this, request, response, resolve, reject, query, params, body);
@@ -206,14 +207,6 @@ function delegateCookies(ctx, ctxCaller) {
       };
     },
   });
-}
-
-function adjustUrl(ctx, url) {
-  if (url.substr(0, 2) === '//') return url.substr(1);
-  if (url.charAt(0) === '/') return `/api${url}`;
-
-  if (!ctx.module) throw new Error('invalid url');
-  return `/api/${ctx.module.info.url}/${url}`;
 }
 
 function createRequest({ method, url }, _req) {

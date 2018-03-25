@@ -18,7 +18,12 @@ const util = {
       _dir = path.join(_dir, '../');
     }
   },
-
+  adjustUrl(info, url) {
+    if (url.substr(0, 2) === '//') return url.substr(1);
+    if (url.charAt(0) === '/') return `/api${url}`;
+    if (!info) throw new Error('invalid url');
+    return `/api/${info.url}/${url}`;
+  },
 };
 
 function __parseModules(modules, policy, loader) {
