@@ -42,6 +42,14 @@ export default function(Vue) {
       }
       return documentUrl || '/';
     },
+    combineHash(hash) {
+      let url = location.origin;
+      const router = Vue.prototype.$f7.router;
+      if (router.params.pushStateRoot) url += router.params.pushStateRoot;
+      if (router.params.pushStateSeparator) url += router.params.pushStateSeparator;
+      url += hash;
+      return url;
+    },
     historyUrlEmpty(historyUrl) {
       if (!historyUrl || historyUrl === '/') return true;
       const router = Vue.prototype.$f7.router;
