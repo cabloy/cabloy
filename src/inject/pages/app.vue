@@ -75,7 +75,13 @@ export default {
         this.resizeTimeout = 0;
         this.resize();
       }, 300);
-    }
+    },
+    login(url) {
+      const hashInit = this.$store.state.auth.hashInit;
+      this.$store.commit('auth/setHashInit', null);
+      if (hashInit) url = `${url}?returnTo=${encodeURIComponent(this.$meta.util.combineHash(hashInit))}`;
+      location.assign(url);
+    },
   },
   beforeDestroy() {
     this.$f7.off('resize', this.onResize);
