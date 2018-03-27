@@ -181,7 +181,9 @@ export default function(Vue) {
       Object.keys(module.options.components).forEach(key => {
         const component = module.options.components[key];
         Vue.prototype.$meta.util.setComponentModule(component, module);
-        Vue.component(key, component);
+        if (!component.meta || component.meta.global !== false) {
+          Vue.component(key, component);
+        }
       });
     },
     _registerStore(module) {

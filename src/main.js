@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import './css/iconfont/material-icons.css';
+import './assets/css/iconfont/material-icons.css';
 
 // meta
 const meta = Vue.prototype.$meta = {};

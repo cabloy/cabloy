@@ -4,7 +4,7 @@ export default function(Vue) {
       Object.defineProperty(obj, key, {
         get() {
           return function() {
-            const moduleInfo = vueComponent.$module.info;
+            const moduleInfo = vueComponent.$module && vueComponent.$module.info;
             const args = new Array(arguments.length);
             args[0] = combilePath(moduleInfo, arguments[0]);
             for (let i = 1; i < args.length; i++) {

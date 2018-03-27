@@ -7,11 +7,9 @@ export default {
     // layout options
     const layoutOptions = this.layout ?
       this.$meta.module.get().options.meta.layout.items[this.layout] : null;
-    const layoutComponent = layoutOptions ?
-      this.$meta.module.get(layoutOptions.module).options.meta.layout : null;
     // layout
-    if (layoutComponent) {
-      children.push(c(layoutComponent, {
+    if (this.layout) {
+      children.push(c(this.layout, {
         ref: 'layout',
         props: { layoutOptions },
       }));
@@ -29,10 +27,13 @@ export default {
       // hash init
       const hashInit = this.$meta.util.parseHash(location.href);
       if (hashInit && hashInit !== '/') this.$store.commit('auth/setHashInit', hashInit);
-      // resize
-      this.resize();
       // on resize
       this.$f7.on('resize', this.onResize);
+      // auth echo first
+      this._authEcho(() => {
+        // resize
+        this.resize();
+      });
     },
     getLayout() {
       return this.$refs.layout;
@@ -51,7 +52,8 @@ export default {
         if (component) component.onResize();
       } else {
         // load module layout
-        this.$meta.module.use(options.meta.layout.items[layout].module, () => {
+        this.$meta.module.use(options.meta.layout.items[layout].module, module => {
+          this.$options.components[layout] = module.options.components[options.meta.layout.items[layout].component];
           // clear router history
           this.$meta.util.clearRouterHistory();
           // ready
@@ -81,6 +83,18 @@ export default {
       this.$store.commit('auth/setHashInit', null);
       if (hashInit) url = `${url}?returnTo=${encodeURIComponent(this.$meta.util.combineHash(hashInit))}`;
       location.assign(url);
+    },
+    _authEcho(cb) {
+      // get auth first
+      this.$api.post('/a/base/auth/echo').then(user => {
+        this.$store.commit('auth/login', {
+          loggedIn: user.agent.anonymous === 0,
+          user,
+        });
+        return cb && cb();
+      }).catch(() => {
+        return cb && cb();
+      });
     },
   },
   beforeDestroy() {
