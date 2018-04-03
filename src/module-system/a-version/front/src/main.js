@@ -2,7 +2,7 @@ let Vue;
 
 // import css
 // eslint-disable-next-line
-import CSS from './css/module.css';
+import CSS from './assets/css/module.css';
 
 // install
 function install(_Vue, cb) {
