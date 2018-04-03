@@ -87,13 +87,13 @@ export default function(Vue) {
       });
     },
     _importCSS(moduleInfo) {
-      System.import('../../build/__module/' + moduleInfo.fullName + '/dist/front.css').catch(() => {});
+      import('../../build/__module/' + moduleInfo.fullName + '/dist/front.css').catch(() => {});
     },
     _importJS(moduleInfo, cb) {
-      System.import('../../build/__module/' + moduleInfo.fullName + '/dist/front.js').then(instance => {
+      import('../../build/__module/' + moduleInfo.fullName + '/dist/front.js').then(instance => {
         this.install(instance, moduleInfo, module => cb(module));
       }).catch(() => {
-        System.import('../../../../src/module/' + moduleInfo.relativeName + '/front/src/main.js').then(instance => {
+        import('../../../../src/module/' + moduleInfo.relativeName + '/front/src/main.js').then(instance => {
           this.install(instance, moduleInfo, module => cb(module));
         });
       });
