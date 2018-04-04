@@ -5,6 +5,7 @@ const merge = require('webpack-merge');
 const baseWebpackConfig = require('./webpack.base.conf');
 const { VueLoaderPlugin } = require('vue-loader');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const env = config.build.env;
 
@@ -16,6 +17,7 @@ const plugins = [
   new MiniCssExtractPlugin({
     filename: '[name].css',
   }),
+  new OptimizeCssAssetsPlugin(),
 ];
 
 const webpackConfig = merge(baseWebpackConfig, {
