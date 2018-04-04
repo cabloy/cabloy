@@ -3,6 +3,9 @@ module.exports =
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
+/******/ 	// object to store loaded and loading wasm modules
+/******/ 	var installedWasmModules = {};
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/
@@ -45,6 +48,11 @@ module.exports =
 /******/ 		}
 /******/ 	};
 /******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
 /******/ 	__webpack_require__.n = function(module) {
 /******/ 		var getter = module && module.__esModule ?
@@ -60,8 +68,12 @@ module.exports =
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
 /******/
+/******/ 	// object with all compiled WebAssembly.Modules
+/******/ 	__webpack_require__.w = {};
+/******/
+/******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 10);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -72,152 +84,31 @@ module.exports = require("require3");
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-const routes = __webpack_require__(2);
-const services = __webpack_require__(4);
-const config = __webpack_require__(6);
-const locales = __webpack_require__(7);
-const errors = __webpack_require__(9);
-const constants = __webpack_require__(10);
-
-// eslint-disable-next-line
-module.exports = app => {
-
-  return {
-    routes,
-    services,
-    config,
-    locales,
-    errors,
-    constants,
-  };
-
+module.exports = {
 };
 
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-const version = __webpack_require__(3);
-
-module.exports = [
-  { method: 'post', path: 'version/start', controller: version, middlewares: 'safeAccess' },
-  { method: 'post', path: 'version/check', controller: version, middlewares: 'safeAccess' },
-  { method: 'post', path: 'version/updateModule', controller: version, middlewares: 'safeAccess,transaction' },
-  { method: 'post', path: 'version/initModule', controller: version, middlewares: 'safeAccess,transaction' },
-  { method: 'post', path: 'version/testModule', controller: version, middlewares: 'safeAccess,transaction' },
-  { method: 'post', path: 'version/update', controller: version, middlewares: 'safeAccess' },
-  // { method: 'get', path: 'version/result', controller: version, middlewares: 'safeAccess' },
-];
+module.exports = {
+  1001: 'module is old',
+  1002: 'module %s not exists',
+  1003: 'The module only run in development mode',
+};
 
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-const require3 = __webpack_require__(0);
-const chalk = require3('chalk');
-
-module.exports = app => {
-  class VersionController extends app.Controller {
-
-    async start() {
-      // update all modules
-      let result;
-      try {
-        result = await this.ctx.performAction({
-          method: 'post',
-          url: 'version/check',
-        });
-        if (Object.keys(result).length > 0) console.log(result);
-        console.log(chalk.cyan('  All modules are checked successfully!'));
-      } catch (err) {
-        console.log(chalk.cyan('  Modules are checked failed!'));
-        throw err;
-      }
-
-      // init all subdomains
-      if (result && Object.keys(result).length > 0) {
-        try {
-          const rows = await this.ctx.db.query('select distinct subdomain from aVersionInit');
-          for (const row of rows) {
-            await this.ctx.performAction({
-              method: 'post',
-              url: 'version/check',
-              body: {
-                subdomain: row.subdomain,
-                scene: 'init',
-              },
-            });
-          }
-
-          console.log(chalk.cyan('  All subdomains are initialized successfully!'));
-        } catch (err) {
-          console.log(chalk.cyan('  Subdomains are initialized failed!'));
-          throw err;
-        }
-      }
-
-      // ok
-      // console.log(chalk.yellow('  For more details, please goto http://{ip}:{port}/#/a/version/check\n'));
-      this.ctx.success();
-    }
-
-    // check all modules
-    async check() {
-      // options:
-      //   scene:init
-      //   scene:test
-      const options = this.ctx.request.body;
-      options.result = {};
-      await this.service.version.check(options);
-      this.ctx.success(options.result);
-    }
-
-    // update module
-    async updateModule() {
-      await this.service.version.updateModule(
-        this.ctx.request.body.module,
-        this.ctx.getInt('version')
-      );
-      this.ctx.success();
-    }
-
-    // init module
-    async initModule() {
-      await this.service.version.initModule(
-        this.ctx.request.body,
-        this.ctx.request.body.module,
-        this.ctx.getInt('version')
-      );
-      this.ctx.success();
-    }
-
-    // test module
-    async testModule() {
-      await this.service.version.testModule(
-        this.ctx.request.body
-      );
-      this.ctx.success();
-    }
-
-    // update this module
-    async update() {
-      await this.service.version.update(this.ctx.getInt('version'));
-      this.ctx.success();
-    }
-
-    // // result
-    // async result() {
-    //   if (app.config.env !== 'local') this.ctx.throw(1003);
-    //   const res = this.service.version.result();
-    //   this.ctx.success(res);
-    // }
-
-  }
-  return VersionController;
+module.exports = {
+  'module is old': '模块过旧',
+  'module %s not exists': '模块%s不存在',
+  'The module only run in development mode': '此模块只能在开发模式下运行',
 };
 
 
@@ -225,15 +116,24 @@ module.exports = app => {
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(5);
-
 module.exports = {
-  version,
+  'zh-cn': __webpack_require__(3),
 };
 
 
 /***/ }),
 /* 5 */
+/***/ (function(module, exports) {
+
+// eslint-disable-next-line
+module.exports = appInfo => {
+  const config = {};
+  return config;
+};
+
+
+/***/ }),
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -525,52 +425,164 @@ module.exports = app => {
 
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports) {
-
-// eslint-disable-next-line
-module.exports = appInfo => {
-  const config = {};
-  return config;
-};
-
-
-/***/ }),
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
+const version = __webpack_require__(6);
+
 module.exports = {
-  'zh-cn': __webpack_require__(8),
+  version,
 };
 
 
 /***/ }),
 /* 8 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = {
-  'module is old': '模块过旧',
-  'module %s not exists': '模块%s不存在',
-  'The module only run in development mode': '此模块只能在开发模式下运行',
+const require3 = __webpack_require__(0);
+const chalk = require3('chalk');
+
+module.exports = app => {
+  class VersionController extends app.Controller {
+
+    async start() {
+      // update all modules
+      let result;
+      try {
+        result = await this.ctx.performAction({
+          method: 'post',
+          url: 'version/check',
+        });
+        if (Object.keys(result).length > 0) console.log(result);
+        console.log(chalk.cyan('  All modules are checked successfully!'));
+      } catch (err) {
+        console.log(chalk.cyan('  Modules are checked failed!'));
+        throw err;
+      }
+
+      // init all subdomains
+      if (result && Object.keys(result).length > 0) {
+        try {
+          const rows = await this.ctx.db.query('select distinct subdomain from aVersionInit');
+          for (const row of rows) {
+            await this.ctx.performAction({
+              method: 'post',
+              url: 'version/check',
+              body: {
+                subdomain: row.subdomain,
+                scene: 'init',
+              },
+            });
+          }
+
+          console.log(chalk.cyan('  All subdomains are initialized successfully!'));
+        } catch (err) {
+          console.log(chalk.cyan('  Subdomains are initialized failed!'));
+          throw err;
+        }
+      }
+
+      // ok
+      // console.log(chalk.yellow('  For more details, please goto http://{ip}:{port}/#/a/version/check\n'));
+      this.ctx.success();
+    }
+
+    // check all modules
+    async check() {
+      // options:
+      //   scene:init
+      //   scene:test
+      const options = this.ctx.request.body;
+      options.result = {};
+      await this.service.version.check(options);
+      this.ctx.success(options.result);
+    }
+
+    // update module
+    async updateModule() {
+      await this.service.version.updateModule(
+        this.ctx.request.body.module,
+        this.ctx.getInt('version')
+      );
+      this.ctx.success();
+    }
+
+    // init module
+    async initModule() {
+      await this.service.version.initModule(
+        this.ctx.request.body,
+        this.ctx.request.body.module,
+        this.ctx.getInt('version')
+      );
+      this.ctx.success();
+    }
+
+    // test module
+    async testModule() {
+      await this.service.version.testModule(
+        this.ctx.request.body
+      );
+      this.ctx.success();
+    }
+
+    // update this module
+    async update() {
+      await this.service.version.update(this.ctx.getInt('version'));
+      this.ctx.success();
+    }
+
+    // // result
+    // async result() {
+    //   if (app.config.env !== 'local') this.ctx.throw(1003);
+    //   const res = this.service.version.result();
+    //   this.ctx.success(res);
+    // }
+
+  }
+  return VersionController;
 };
 
 
 /***/ }),
 /* 9 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = {
-  1001: 'module is old',
-  1002: 'module %s not exists',
-  1003: 'The module only run in development mode',
-};
+const version = __webpack_require__(8);
+
+module.exports = [
+  { method: 'post', path: 'version/start', controller: version, middlewares: 'safeAccess' },
+  { method: 'post', path: 'version/check', controller: version, middlewares: 'safeAccess' },
+  { method: 'post', path: 'version/updateModule', controller: version, middlewares: 'safeAccess,transaction' },
+  { method: 'post', path: 'version/initModule', controller: version, middlewares: 'safeAccess,transaction' },
+  { method: 'post', path: 'version/testModule', controller: version, middlewares: 'safeAccess,transaction' },
+  { method: 'post', path: 'version/update', controller: version, middlewares: 'safeAccess' },
+  // { method: 'get', path: 'version/result', controller: version, middlewares: 'safeAccess' },
+];
 
 
 /***/ }),
 /* 10 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = {
+const routes = __webpack_require__(9);
+const services = __webpack_require__(7);
+const config = __webpack_require__(5);
+const locales = __webpack_require__(4);
+const errors = __webpack_require__(2);
+const constants = __webpack_require__(1);
+
+// eslint-disable-next-line
+module.exports = app => {
+
+  return {
+    routes,
+    services,
+    config,
+    locales,
+    errors,
+    constants,
+  };
+
 };
 
 
