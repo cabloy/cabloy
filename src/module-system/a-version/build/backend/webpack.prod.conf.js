@@ -6,7 +6,6 @@ const baseWebpackConfig = require('./webpack.base.conf');
 const env = config.build.env;
 
 const plugins = [
-// http://vuejs.github.io/vue-loader/en/workflow/production.html
   new webpack.DefinePlugin({
     'process.env': env,
   }),
