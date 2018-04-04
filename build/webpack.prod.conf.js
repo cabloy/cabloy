@@ -5,9 +5,9 @@ const config = require('../config');
 const merge = require('webpack-merge');
 const baseWebpackConfig = require('./webpack.base.conf');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const env = config.build.env;
 
@@ -19,6 +19,7 @@ const plugins = [
   new MiniCssExtractPlugin({
     filename: utils.assetsPath('css/[name].[contenthash].css'),
   }),
+  new OptimizeCssAssetsPlugin(),
   // generate dist index.html with correct asset hash for caching.
   // you can customize output by editing /index.html
   // see https://github.com/ampedandwired/html-webpack-plugin

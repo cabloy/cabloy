@@ -46,7 +46,6 @@
     "eventsource-polyfill": "^0.9.6",
     "express": "^4.15.4",
     "extend2": "^1.0.0",
-    "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "file-loader": "^1.1.11",
     "@zhennann/framework7": "^2.0.10",
     "@zhennann/framework7-vue": "^2.0.11",
