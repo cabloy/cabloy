@@ -4,14 +4,10 @@ export default {
     const children = [];
     // statusbar
     children.push(c('f7-statusbar', { ref: 'statusbar' }));
-    // layout options
-    const layoutOptions = this.layout ?
-      this.$meta.module.get().options.meta.layout.items[this.layout] : null;
     // layout
     if (this.layout) {
       children.push(c(this.layout, {
         ref: 'layout',
-        props: { layoutOptions },
       }));
     }
     return c('div', children);
