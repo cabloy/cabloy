@@ -9,6 +9,10 @@ const { VueLoaderPlugin } = require('vue-loader');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
+function resolve(dir) {
+  return path.join(__dirname, '..', dir);
+}
+
 const env = config.build.env;
 
 const plugins = [
@@ -46,10 +50,28 @@ const plugins = [
 const webpackConfig = merge(baseWebpackConfig, {
   mode: 'production',
   module: {
-    rules: utils.styleLoaders({
-      sourceMap: config.build.productionSourceMap,
-      extract: true,
-    }),
+    rules: [
+      {
+        test: /\.esm\.js$/,
+        loader: 'babel-loader',
+      },
+      {
+        test: /\.esm\.bundle\.js$/,
+        loader: 'babel-loader',
+      },
+      {
+        test: /\.module\.js$/,
+        loader: 'babel-loader',
+      },
+      {
+        test: /\.js$/,
+        loader: 'babel-loader',
+        include: [ resolve('src'), resolve('../../src') ],
+      },
+      ...utils.styleLoaders({
+        sourceMap: config.build.productionSourceMap,
+        extract: true,
+      }) ],
   },
   devtool: config.build.productionSourceMap ? 'source-map' : false,
   output: {

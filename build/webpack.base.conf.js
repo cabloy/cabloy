@@ -32,23 +32,6 @@ module.exports = {
         loader: 'vue-loader',
       },
       {
-        test: /\.esm\.js$/,
-        loader: 'babel-loader',
-      },
-      {
-        test: /\.esm\.bundle\.js$/,
-        loader: 'babel-loader',
-      },
-      {
-        test: /\.module\.js$/,
-        loader: 'babel-loader',
-      },
-      {
-        test: /\.js$/,
-        loader: 'babel-loader',
-        include: [ resolve('src'), resolve('../../src') ],
-      },
-      {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         loader: 'url-loader',
         options: {
