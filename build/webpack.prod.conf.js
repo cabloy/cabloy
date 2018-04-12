@@ -40,6 +40,7 @@ const plugins = [
     },
     title: config.build.title,
   }),
+  new webpack.HashedModuleIdsPlugin(),
   // Banner
   new webpack.BannerPlugin({
     banner: 'Powered by egg-born!',
