@@ -1,4 +1,5 @@
 <script>
+import Vue from 'vue';
 export default {
   render(c) {
     const children = [];
@@ -15,7 +16,6 @@ export default {
   data() {
     return {
       layout: null,
-      resizeTimeout: 0,
     };
   },
   methods: {
@@ -67,13 +67,9 @@ export default {
         this.layout = layout;
       })
     },
-    onResize() {
-      if (this.resizeTimeout) return;
-      this.resizeTimeout = window.setTimeout(() => {
-        this.resizeTimeout = 0;
-        this.resize();
-      }, 300);
-    },
+    onResize: Vue.prototype.$meta.util.debounce(function() {
+      this.resize();
+    }, 300),
     login(url) {
       const hashInit = this.$store.state.auth.hashInit;
       this.$store.commit('auth/setHashInit', null);

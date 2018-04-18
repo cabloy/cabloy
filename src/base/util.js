@@ -60,10 +60,20 @@ export default function(Vue) {
     isPromise(value) {
       return value && typeof value === 'object' && typeof value.then === 'function';
     },
-    timeout(ms) {
+    sleep(ms) {
       return new Promise(reslove => {
         window.setTimeout(() => { reslove(); }, ms);
       });
+    },
+    debounce(func, wait) {
+      let i = 0;
+      return function(...args) {
+        const ctx = this;
+        if (i !== 0) window.clearTimeout(i);
+        i = window.setTimeout(() => {
+          func.apply(ctx, args);
+        }, wait);
+      };
     },
   };
 }
