@@ -1,4 +1,5 @@
 export default function(Vue) {
+  const _ids = { };
   return {
     overrideProperty({ obj, key, objBase, vueComponent, combilePath }) {
       Object.defineProperty(obj, key, {
@@ -74,6 +75,11 @@ export default function(Vue) {
           func.apply(ctx, args);
         }, wait);
       };
+    },
+    nextId(scene) {
+      scene = scene || 'default';
+      if (!_ids.scene) _ids.scene = 1; else _ids.scene++;
+      return `${scene}_${_ids.scene}`;
     },
   };
 }
