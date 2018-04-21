@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import moment from 'moment';
 import './assets/css/iconfont/material-icons.css';
 
 // meta
@@ -14,6 +15,8 @@ meta.modulesWaiting = {};
 meta.module = require('./base/module.js').default(Vue);
 // util
 meta.util = require('./base/util.js').default(Vue);
+// moment
+meta.moment = moment;
 // mixin
 require('./base/mixin.js').default(Vue);
 

@@ -81,5 +81,25 @@ export default function(Vue) {
       if (!_ids.scene) _ids.scene = 1; else _ids.scene++;
       return `${scene}_${_ids.scene}`;
     },
+    fromNow(date) {
+      if (typeof (date) !== 'object') date = new Date(date);
+      return Vue.prototype.$meta.moment(date).fromNow();
+    },
+    formatDateTime(date, fmt) {
+      date = date || new Date();
+      fmt = fmt || 'YYYY-MM-DD HH:mm:ss';
+      if (typeof (date) !== 'object') date = new Date(date);
+      return Vue.prototype.$meta.moment(date).format(fmt);
+    },
+    formatDate(date, sep) {
+      if (this.isUndefined(sep)) sep = '-';
+      const fmt = `YYYY${sep}MM${sep}DD`;
+      return this.formatDateTime(date, fmt);
+    },
+    formatTime(date, sep) {
+      if (this.isUndefined(sep)) sep = ':';
+      const fmt = `HH${sep}mm${sep}ss`;
+      return this.formatDateTime(date, fmt);
+    },
   };
 }
