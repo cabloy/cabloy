@@ -86,19 +86,25 @@ export default function(Vue) {
       return Vue.prototype.$meta.moment(date).fromNow();
     },
     formatDateTime(date, fmt) {
-      date = date || new Date();
       fmt = fmt || 'YYYY-MM-DD HH:mm:ss';
+      date = date || new Date();
       if (typeof (date) !== 'object') date = new Date(date);
       return Vue.prototype.$meta.moment(date).format(fmt);
     },
     formatDate(date, sep) {
-      if (this.isUndefined(sep)) sep = '-';
+      if (sep === undefined) sep = '-';
       const fmt = `YYYY${sep}MM${sep}DD`;
       return this.formatDateTime(date, fmt);
     },
     formatTime(date, sep) {
-      if (this.isUndefined(sep)) sep = ':';
+      if (sep === undefined) sep = ':';
       const fmt = `HH${sep}mm${sep}ss`;
+      return this.formatDateTime(date, fmt);
+    },
+    formatDateTimeRelative(date, fmt) {
+      date = date || new Date();
+      if (typeof (date) !== 'object') date = new Date(date);
+      if (Vue.prototype.$meta.moment().diff(date, 'days') == 0) return this.formatTime(date);
       return this.formatDateTime(date, fmt);
     },
   };
