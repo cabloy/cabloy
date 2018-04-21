@@ -2,6 +2,10 @@ import axios from 'axios';
 
 export default function(Vue) {
 
+  // api
+  Vue.prototype.$meta.api = {};
+  wrapApi(Vue, Vue.prototype.$meta.api, axios, null);
+
   // add a response interceptor
   if (!axios.__ebDefaultResponseDisable) {
     // response
@@ -46,21 +50,24 @@ export default function(Vue) {
   const beforeCreate = function(ctx) {
     // api
     ctx.$api = {};
-
-    [ 'delete', 'get', 'head', 'options', 'post', 'put', 'patch' ].forEach(key => {
-      Vue.prototype.$meta.util.overrideProperty({
-        obj: ctx.$api,
-        key,
-        objBase: axios,
-        vueComponent: ctx,
-        combilePath: (moduleInfo, arg) => {
-          if (arg.substr(0, 2) === '//') return arg.substr(1);
-          if (arg.charAt(0) === '/') return `/api${arg}`;
-          return `/api/${moduleInfo.url}/${arg}`;
-        },
-      });
-    });
+    wrapApi(Vue, ctx.$api, axios, ctx);
   };
 
-  return { api: axios, beforeCreate };
+  return { beforeCreate };
+}
+
+function wrapApi(Vue, obj, objBase, vueComponent) {
+  [ 'delete', 'get', 'head', 'options', 'post', 'put', 'patch' ].forEach(key => {
+    Vue.prototype.$meta.util.overrideProperty({
+      obj,
+      key,
+      objBase,
+      vueComponent,
+      combilePath: (moduleInfo, arg) => {
+        if (arg.substr(0, 2) === '//') return arg.substr(1);
+        if (arg.charAt(0) === '/') return `/api${arg}`;
+        return `/api/${moduleInfo.url}/${arg}`;
+      },
+    });
+  });
 }

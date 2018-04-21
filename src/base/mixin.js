@@ -29,7 +29,7 @@ export default function(Vue) {
 
   function init(key, instance) {
     const res = instance.default(Vue);
-    if (key) Vue.prototype.$meta[key] = res[key];
+    if (key && res[key]) Vue.prototype.$meta[key] = res[key];
     beforeCreates.push(res.beforeCreate);
   }
 
