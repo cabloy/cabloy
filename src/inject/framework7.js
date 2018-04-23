@@ -30,6 +30,9 @@ export default function(Vue, options, cb) {
         toast: {
           closeTimeout: 3000,
         },
+        swipeout: {
+          removeElements: false,
+        },
       },
       components: {
         App,
