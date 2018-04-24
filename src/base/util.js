@@ -107,5 +107,11 @@ export default function(Vue) {
       if (Vue.prototype.$meta.moment().diff(date, 'days') == 0) return this.formatTime(date);
       return this.formatDateTime(date, fmt);
     },
+    swipeoutClose(target) {
+      Vue.prototype.$f7.swipeout.close(Vue.prototype.$$(target).closest('.swipeout'));
+    },
+    swipeoutDelete(target) {
+      Vue.prototype.$f7.swipeout.delete(Vue.prototype.$$(target).closest('.swipeout'));
+    },
   };
 }
