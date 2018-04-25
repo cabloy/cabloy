@@ -119,5 +119,13 @@ export default function(Vue) {
     swipeoutDelete(target) {
       Vue.prototype.$f7.swipeout.delete(Vue.prototype.$$(target).closest('.swipeout'));
     },
+    replaceTemplate(content, scope) {
+      return content.toString().replace(/(\\)?{{ *(\w+) *}}/g, (block, skip, key) => {
+        if (skip) {
+          return block.substring(skip.length);
+        }
+        return scope[key] || block;
+      });
+    },
   };
 }
