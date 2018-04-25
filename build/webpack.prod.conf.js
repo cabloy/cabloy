@@ -67,7 +67,7 @@ const webpackConfig = merge(baseWebpackConfig, {
       {
         test: /\.js$/,
         loader: 'babel-loader',
-        include: [ resolve('src'), resolve('../../src') ],
+        include: [ resolve('src'), resolve('../../src'), resolve('build/__module') ],
       },
       ...utils.styleLoaders({
         sourceMap: config.build.productionSourceMap,
