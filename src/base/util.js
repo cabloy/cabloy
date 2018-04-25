@@ -61,6 +61,12 @@ export default function(Vue) {
     isPromise(value) {
       return value && typeof value === 'object' && typeof value.then === 'function';
     },
+    wrapPromise(promise) {
+      if (!this.isPromise(promise)) {
+        return new Promise(resovle => resovle(promise));
+      }
+      return promise;
+    },
     sleep(ms) {
       return new Promise(reslove => {
         window.setTimeout(() => { reslove(); }, ms);
