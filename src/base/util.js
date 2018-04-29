@@ -120,6 +120,7 @@ export default function(Vue) {
       Vue.prototype.$f7.swipeout.delete(Vue.prototype.$$(target).closest('.swipeout'));
     },
     replaceTemplate(content, scope) {
+      if (!content) return null;
       return content.toString().replace(/(\\)?{{ *(\w+) *}}/g, (block, skip, key) => {
         if (skip) {
           return block.substring(skip.length);
