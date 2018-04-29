@@ -64,9 +64,7 @@ function wrapApi(Vue, obj, objBase, vueComponent) {
       objBase,
       vueComponent,
       combilePath: (moduleInfo, arg) => {
-        if (arg.substr(0, 2) === '//') return arg.substr(1);
-        if (arg.charAt(0) === '/') return `/api${arg}`;
-        return `/api/${moduleInfo.url}/${arg}`;
+        return Vue.prototype.$meta.util.combineApiPath(moduleInfo, arg);
       },
     });
   });

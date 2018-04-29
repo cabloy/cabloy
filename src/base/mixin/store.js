@@ -40,7 +40,7 @@ export default function(Vue) {
         objBase: ctx.$store,
         vueComponent: ctx,
         combilePath: (moduleInfo, arg) => {
-          return `${moduleInfo.pid}/${moduleInfo.name}/${arg}`;
+          return Vue.prototype.$meta.util.combineStorePath(moduleInfo, arg);
         },
       });
     });

@@ -1,3 +1,4 @@
+import mparse from 'egg-born-mparse';
 export default function(Vue) {
   const _ids = { };
   return {
@@ -127,6 +128,24 @@ export default function(Vue) {
         }
         return scope[key] || block;
       });
+    },
+    combineApiPath(moduleName, arg) {
+      if (arg.substr(0, 2) === '//') return arg.substr(1);
+      if (arg.charAt(0) === '/') return `/api${arg}`;
+      const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;
+      return `/api/${moduleInfo.url}/${arg}`;
+    },
+    combineStorePath(moduleName, arg) {
+      if (arg.substr(0) === '/') return arg.substr(1);
+      const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;
+      return `${moduleInfo.url}/${arg}`;
+    },
+    combinePagePath(moduleName, arg) {
+      if (!arg || typeof arg !== 'string') return arg;
+      const first = arg.charAt(0);
+      if (first === '/' || first === '#') return arg;
+      const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;
+      return `/${moduleInfo.url}/${arg}`;
     },
   };
 }
