@@ -63,7 +63,7 @@ function wrapApi(Vue, obj, objBase, vueComponent) {
       key,
       objBase,
       vueComponent,
-      combilePath: (moduleInfo, arg) => {
+      combinePath: (moduleInfo, arg) => {
         return Vue.prototype.$meta.util.combineApiPath(moduleInfo, arg);
       },
     });

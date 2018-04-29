@@ -2,13 +2,13 @@ import mparse from 'egg-born-mparse';
 export default function(Vue) {
   const _ids = { };
   return {
-    overrideProperty({ obj, key, objBase, vueComponent, combilePath }) {
+    overrideProperty({ obj, key, objBase, vueComponent, combinePath }) {
       Object.defineProperty(obj, key, {
         get() {
           return function() {
             const moduleInfo = vueComponent && vueComponent.$module && vueComponent.$module.info;
             const args = new Array(arguments.length);
-            args[0] = combilePath(moduleInfo, arguments[0]);
+            args[0] = combinePath(moduleInfo, arguments[0]);
             for (let i = 1; i < args.length; i++) {
               args[i] = arguments[i];
             }
@@ -146,6 +146,34 @@ export default function(Vue) {
       if (first === '/' || first === '#') return arg;
       const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;
       return `/${moduleInfo.url}/${arg}`;
+    },
+    performAction({ ctx, action, item }) {
+      return new Promise((resolve, reject) => {
+        const url = action.actionPath ? this.combinePagePath(action.actionModule, this.replaceTemplate(action.actionPath, item)) : null;
+        if (!action.actionComponent) {
+          if (url) ctx.$meta.vueLayout.navigate(url);
+          return resolve();
+        }
+        ctx.$meta.module.use(action.actionModule, module => {
+          try {
+            const component = module.options.components[action.actionComponent];
+            const componentInstance = new Vue(component);
+            const res = componentInstance.onAction({ ctx, action, item });
+            this.wrapPromise(res)
+              .then(() => {
+                componentInstance.$destroy();
+                if (url) ctx.$meta.vueLayout.navigate(url);
+                resolve();
+              })
+              .catch(err => {
+                componentInstance.$destroy();
+                reject(err);
+              });
+          } catch (err) {
+            reject(err);
+          }
+        });
+      });
     },
   };
 }

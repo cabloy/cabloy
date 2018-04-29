@@ -39,7 +39,7 @@ export default function(Vue) {
         key,
         objBase: ctx.$store,
         vueComponent: ctx,
-        combilePath: (moduleInfo, arg) => {
+        combinePath: (moduleInfo, arg) => {
           return Vue.prototype.$meta.util.combineStorePath(moduleInfo, arg);
         },
       });
