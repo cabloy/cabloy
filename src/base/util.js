@@ -149,19 +149,20 @@ export default function(Vue) {
     },
     performAction({ ctx, action, item }) {
       return new Promise((resolve, reject) => {
-        const url = action.actionPath ? this.combinePagePath(action.actionModule, this.replaceTemplate(action.actionPath, item)) : null;
         if (!action.actionComponent) {
+          const url = action.actionPath ? this.combinePagePath(action.actionModule, this.replaceTemplate(action.actionPath, item)) : null;
           if (url) ctx.$meta.vueLayout.navigate(url);
           return resolve();
         }
         ctx.$meta.module.use(action.actionModule, module => {
+          const component = module.options.components[action.actionComponent];
+          const componentInstance = new Vue(component);
           try {
-            const component = module.options.components[action.actionComponent];
-            const componentInstance = new Vue(component);
             const res = componentInstance.onAction({ ctx, action, item });
             this.wrapPromise(res)
               .then(() => {
                 componentInstance.$destroy();
+                const url = action.actionPath ? this.combinePagePath(action.actionModule, this.replaceTemplate(action.actionPath, item)) : null;
                 if (url) ctx.$meta.vueLayout.navigate(url);
                 resolve();
               })
@@ -170,6 +171,7 @@ export default function(Vue) {
                 reject(err);
               });
           } catch (err) {
+            componentInstance.$destroy();
             reject(err);
           }
         });
