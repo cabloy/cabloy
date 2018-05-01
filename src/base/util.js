@@ -177,5 +177,16 @@ export default function(Vue) {
         });
       });
     },
+    setProperty(obj, name, value) {
+      const names = name.split('.');
+      if (names.length === 1) {
+        obj[name] = value;
+      } else {
+        for (let i = 0; i < names.length - 1; i++) {
+          obj = obj[names[i]];
+        }
+        obj[names[names.length - 1]] = value;
+      }
+    },
   };
 }
