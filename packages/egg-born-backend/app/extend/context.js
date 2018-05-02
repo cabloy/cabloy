@@ -11,7 +11,7 @@ const util = require('../../lib/module/util.js');
 const MODULE = Symbol.for('Context#__module');
 const DATABASE = Symbol.for('Context#__database');
 const DATABASEMETA = Symbol.for('Context#__databasemeta');
-const SAFEACCESS = Symbol.for('Context#__safeaccess');
+const INNERACCESS = Symbol.for('Context#__inneraccess');
 
 module.exports = {
   get module() {
@@ -40,11 +40,11 @@ module.exports = {
       this.dbMeta.connection = meta.connection;
     }
   },
-  get safeAccess() {
-    return this[SAFEACCESS];
+  get innerAccess() {
+    return this[INNERACCESS];
   },
-  set safeAccess(value) {
-    this[SAFEACCESS] = value;
+  set innerAccess(value) {
+    this[INNERACCESS] = value;
   },
 
   /**
@@ -124,8 +124,8 @@ function appCallback() {
     // ctxCaller
     ctx.ctxCaller = ctxCaller;
 
-    // safeAccess
-    ctx.safeAccess = true;
+    // innerAccess
+    ctx.innerAccess = true;
 
     // call
     fn(ctx).then(function handleResponse() {
