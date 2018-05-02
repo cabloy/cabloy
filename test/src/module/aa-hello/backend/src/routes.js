@@ -6,5 +6,5 @@ module.exports = [
   { method: 'get', path: 'home/index', controller: home },
   // same as one
   { method: 'get', path: 'home', controller: home, action: 'index' },
-  { method: 'post', path: 'version/update', controller: version, middlewares: 'safeAccess' },
+  { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
 ];
