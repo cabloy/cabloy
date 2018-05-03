@@ -448,7 +448,7 @@ In the file `package.json` of the module, configure `fileVersion` as the current
 
 Add backend api route:
 ``` javascript
-{ method: 'post', path: 'version/update', controller: version, middlewares: 'safeAccess' }
+{ method: 'post', path: 'version/update', controller: version, middlewares: 'inner' }
 ```
 
 Add backend controller:

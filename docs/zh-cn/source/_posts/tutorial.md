@@ -425,7 +425,7 @@ EggBorn.js通过`package.json`文件管理模块依赖关系。
 
 在模块后端添加Api路由
 ``` javascript
-{ method: 'post', path: 'version/update', controller: version, middlewares: 'safeAccess' }
+{ method: 'post', path: 'version/update', controller: version, middlewares: 'inner' }
 ```
 
 添加version Controller

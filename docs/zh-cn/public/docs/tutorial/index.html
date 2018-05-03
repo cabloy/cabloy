@@ -44,7 +44,7 @@
 <meta property="og:image" content="http://egg-born.org/zh-cn/images/structure.png">
 <meta property="og:image" content="http://egg-born.org/zh-cn/images/privatemodule.png">
 <meta property="og:image" content="http://egg-born.org/zh-cn/images/publicmodule.png">
-<meta property="og:updated_time" content="2017-11-28T14:18:31.170Z">
+<meta property="og:updated_time" content="2018-05-03T01:19:27.600Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="EggBorn.js开发指南">
 <meta name="twitter:description" content="EggBorn.js是什么 EggBorn.js是一款顶级Javascript全栈开发框架。  EggBorn.js是采用Javascript进行全栈开发的最佳实践。EggBorn.js不重复造轮子，而是采用业界最新的开源技术，进行全栈开发的最佳组合。EggBorn.js前端采用Vue.js + Framework7 / Vue Router + Webpack，后端采用Koa.js + Egg.">
@@ -398,7 +398,7 @@
 </blockquote>
 <h3 id="模块数据版本"><a href="#模块数据版本" class="headerlink" title="模块数据版本"></a>模块数据版本</h3><p>模块一般都要操作数据库，当模块版本升级时，数据库结构也有可能变动。EggBorn.js实现了模块数据版本的管理，便于业务模块的积累沉淀。</p>
 <p>在模块的<code>package.json</code>文件中配置<code>fileVersion</code>为当前数据版本<br><figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"name"</span>: <span class="string">"egg-born-module-aa-module1"</span>,</div><div class="line">  <span class="attr">"version"</span>: <span class="string">"0.0.1"</span>,</div><div class="line">  <span class="attr">"eggBornModule"</span>: &#123;</div><div class="line">    <span class="attr">"fileVersion"</span>: <span class="number">1</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>在模块后端添加Api路由<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&#123; <span class="attr">method</span>: <span class="string">'post'</span>, <span class="attr">path</span>: <span class="string">'version/update'</span>, <span class="attr">controller</span>: version, <span class="attr">middlewares</span>: <span class="string">'safeAccess'</span> &#125;</div></pre></td></tr></table></figure></p>
+<p>在模块后端添加Api路由<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&#123; <span class="attr">method</span>: <span class="string">'post'</span>, <span class="attr">path</span>: <span class="string">'version/update'</span>, <span class="attr">controller</span>: version, <span class="attr">middlewares</span>: <span class="string">'inner'</span> &#125;</div></pre></td></tr></table></figure></p>
 <p>添加version Controller<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  <span class="class"><span class="keyword">class</span> <span class="title">VersionController</span> <span class="keyword">extends</span> <span class="title">app</span>.<span class="title">Controller</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">async</span> update() &#123;</div><div class="line">      <span class="keyword">await</span> <span class="keyword">this</span>.service.version.update(<span class="keyword">this</span>.ctx.getInt(<span class="string">'version'</span>));</div><div class="line">      <span class="keyword">this</span>.ctx.success();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> VersionController;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <p>添加version Service<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line"></div><div class="line">  <span class="class"><span class="keyword">class</span> <span class="title">Version</span> <span class="keyword">extends</span> <span class="title">app</span>.<span class="title">Service</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">async</span> update(version) &#123;</div><div class="line">      <span class="keyword">if</span> (version === <span class="number">1</span>) &#123;</div><div class="line">        <span class="comment">// do something</span></div><div class="line">      &#125;</div><div class="line"></div><div class="line">      <span class="keyword">if</span> (version === <span class="number">0</span>) &#123;</div><div class="line">        <span class="comment">// can provide test data here</span></div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="keyword">return</span> Version;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <blockquote>
@@ -441,7 +441,7 @@
     <div class="content">
         
 <span class="post-time">
-    最后更新时间：<time datetime="2017-11-28T14:18:31.170Z" itemprop="dateUpdated">2017-11-28 22:18:31</time>
+    最后更新时间：<time datetime="2018-05-03T01:19:27.600Z" itemprop="dateUpdated">2018-05-03 09:19:27</time>
 </span><br>
 
 
@@ -582,7 +582,7 @@
     </div>
     
     <div class="bottom">
-        <p><span>zhennann &copy; 2017</span>
+        <p><span>zhennann &copy; 2017 - 2018</span>
             <span>
                 
                 <a href="http://www.miitbeian.gov.cn/" target="_blank">豫ICP备14023860号-1</a><br>
