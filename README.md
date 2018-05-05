@@ -32,7 +32,7 @@ EggBorn.js -- The Ultimate Javascript Full Stack Framework
 
 ## Docs
 
-- [Website && Documentations](http://egg-born.org)
+- [Website && Documentations](http://eb.cabloy.org)
 
 ## Showcase
 

@@ -32,7 +32,7 @@ EggBorn.js是一款顶级Javascript全栈开发框架
 
 ## 文档
 
-- [官网 && 文档](http://egg-born.org)
+- [官网 && 文档](http://eb.cabloy.org)
 
 ## 案例
 
