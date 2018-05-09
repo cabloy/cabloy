@@ -40,7 +40,7 @@ module.exports = function(loader) {
       const config = strategy.schedule;
       if (!config.disable && config.type === 'all' && config.immediate) {
         loader.app.coreLogger.info(`[egg-schedule] send message to worker ${data.pid}: ${key}`);
-        loader.app.messenger.sendTo(data.pid, 'egg-schedule', { key });
+        loader.app.messenger.sendTo(data.pid, 'egg-schedule', { key, args: [] });
       }
     });
   });
