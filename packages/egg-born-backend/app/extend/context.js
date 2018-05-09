@@ -89,7 +89,7 @@ module.exports = {
   },
 
   successMore(list, index, size) {
-    this.success({ list, index: index + list.length, finished: list.length < size });
+    this.success({ list, index: index + list.length, finished: size === -1 || list.length < size });
   },
 
 };
