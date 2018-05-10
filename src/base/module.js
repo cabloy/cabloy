@@ -180,9 +180,11 @@ export default function(Vue) {
     _registerComponents(module) {
       Object.keys(module.options.components).forEach(key => {
         const component = module.options.components[key];
-        Vue.prototype.$meta.util.setComponentModule(component, module);
-        if (!component.meta || component.meta.global !== false) {
-          Vue.component(key, component);
+        if (!component.meta || component.meta.component !== false) {
+          Vue.prototype.$meta.util.setComponentModule(component, module);
+          if (!component.meta || component.meta.global !== false) {
+            Vue.component(key, component);
+          }
         }
       });
     },
