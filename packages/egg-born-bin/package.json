@@ -1,6 +1,6 @@
 {
   "name": "egg-born-bin",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "egg-born-bin",
   "main": "index.js",
   "bin": {

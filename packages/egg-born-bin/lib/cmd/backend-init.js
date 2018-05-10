@@ -23,7 +23,7 @@ class BackendInitCommand extends Command {
     options.baseDir = context.argv.baseDir || path.join(context.cwd, 'src/backend');
 
     // env
-    mock.env('prod');
+    mock.env(params.env || 'prod');
     // app
     const app = mock.app(options);
     yield app.ready();
