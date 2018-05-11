@@ -5,12 +5,13 @@ const PREFIX_D = './egg-born-module-';
 
 export default {
   // aa-hello aa/hello
+  //   first check / then -
   parseInfo(moduleName) {
     if (!moduleName) return null;
-    let parts = moduleName.split('-');
+    if (moduleName.charAt(0) === '/') moduleName = moduleName.substr(1);
+    let parts = moduleName.split('/');
     if (parts.length < 2) {
-      if (moduleName.charAt(0) === '/') moduleName = moduleName.substr(1);
-      parts = moduleName.split('/');
+      parts = moduleName.split('-');
       if (parts.length < 2) return null;
     }
     return {

@@ -45,6 +45,11 @@ module.exports =
 /******/ 		}
 /******/ 	};
 /******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
 /******/ 	__webpack_require__.n = function(module) {
 /******/ 		var getter = module && module.__esModule ?
@@ -60,6 +65,7 @@ module.exports =
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
 /******/
+/******/
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
@@ -69,7 +75,7 @@ module.exports =
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+__webpack_require__.r(__webpack_exports__);
 var PREFIX_A = '/api/';
 var PREFIX_B = 'egg-born-module-';
 var PREFIX_C = './';
@@ -78,10 +84,10 @@ var PREFIX_D = './egg-born-module-';
 /* harmony default export */ __webpack_exports__["default"] = ({
   parseInfo: function parseInfo(moduleName) {
     if (!moduleName) return null;
-    var parts = moduleName.split('-');
+    if (moduleName.charAt(0) === '/') moduleName = moduleName.substr(1);
+    var parts = moduleName.split('/');
     if (parts.length < 2) {
-      if (moduleName.charAt(0) === '/') moduleName = moduleName.substr(1);
-      parts = moduleName.split('/');
+      parts = moduleName.split('-');
       if (parts.length < 2) return null;
     }
     return {
