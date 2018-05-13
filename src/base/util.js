@@ -129,6 +129,9 @@ export default function(Vue) {
         return scope[key] || block;
       });
     },
+    parseModuleInfo(moduleName) {
+      return mparse.parseInfo(moduleName);
+    },
     combineApiPath(moduleName, arg) {
       if (arg.substr(0, 2) === '//') return arg.substr(1);
       if (arg.charAt(0) === '/') return `/api${arg}`;
