@@ -109,6 +109,7 @@ function appCallback() {
     if (query) ctx.query = query;
     if (params) ctx.params = params;
     if (body) ctx.request.body = body;
+    ctx.disableBodyParser = true;
 
     // multipart
     ctx.multipart = function(options) {
