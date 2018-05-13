@@ -133,6 +133,11 @@ export default function(Vue) {
       return mparse.parseInfo(moduleName);
     },
     combineApiPath(moduleName, arg) {
+      if (arg.charAt(0) === '/') return arg;
+      const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;
+      return `/${moduleInfo.url}/${arg}`;
+    },
+    combineFetchPath(moduleName, arg) {
       if (arg.substr(0, 2) === '//') return arg.substr(1);
       if (arg.charAt(0) === '/') return `/api${arg}`;
       const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;
