@@ -51,7 +51,7 @@ module.exports = app => {
       // options:
       //   scene:init
       //   scene:test
-      const options = this.ctx.request.body;
+      const options = this.ctx.request.body || {};
       options.result = {};
       await this.service.version.check(options);
       this.ctx.success(options.result);
