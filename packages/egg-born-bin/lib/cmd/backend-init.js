@@ -39,6 +39,9 @@ class BackendInitCommand extends Command {
     yield ctx.performAction({
       method: 'post',
       url: 'version/check',
+      headers: {
+        'x-inner-subdomain': params.subdomain,
+      },
       body: {
         ...params,
         scene: 'init',
