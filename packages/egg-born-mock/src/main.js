@@ -1,14 +1,14 @@
 const path = require('path');
 const { assert, app, mock, mm } = require('egg-mock/bootstrap');
 
-before(async () => {
+before(done => {
   // session
   app.mockSession({});
-  // version check
-  const pathVersionCheck = path.join(__dirname, '../../egg-born-backend/app/schedule/versionCheck.js');
-  await app.runSchedule(pathVersionCheck);
-  // restore
-  mock.restore();
+  // wait test ready
+  app.on('testReady', () => {
+    mock.restore();
+    done();
+  });
 });
 
 module.exports = function(dirname) {
