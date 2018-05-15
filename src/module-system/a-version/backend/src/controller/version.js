@@ -27,6 +27,9 @@ module.exports = app => {
             await this.ctx.performAction({
               method: 'post',
               url: 'version/check',
+              headers: {
+                'x-inner-subdomain': row.subdomain,
+              },
               body: {
                 subdomain: row.subdomain,
                 scene: 'init',
