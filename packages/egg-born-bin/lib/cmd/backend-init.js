@@ -2,6 +2,7 @@ const path = require('path');
 const chalk = require('chalk');
 const mock = require('egg-mock');
 const Command = require('egg-bin').Command;
+const eventAppReady = 'eb:event:appReady';
 
 class BackendInitCommand extends Command {
 
@@ -10,7 +11,7 @@ class BackendInitCommand extends Command {
     this.usage = 'Usage: egg-born-bin backend-init';
   }
 
-  * run(context) {
+  async run(context) {
 
     // override argv
     const params = Object.assign({}, context.argv);
@@ -26,17 +27,16 @@ class BackendInitCommand extends Command {
     mock.env(params.env || 'prod');
     // app
     const app = mock.app(options);
-    yield app.ready();
+    await app.ready();
+
+    // check app ready
+    await this.checkAppReady(app);
 
     // ctx
     const ctx = app.mockContext({ mockUrl: '/api/a/version/' });
 
-    // version check
-    const pathVersionCheck = path.join(__dirname, '../../../egg-born-backend/app/schedule/versionCheck.js');
-    yield app.runSchedule(pathVersionCheck);
-
     // version init
-    yield ctx.performAction({
+    await ctx.performAction({
       method: 'post',
       url: 'version/check',
       headers: {
@@ -51,6 +51,14 @@ class BackendInitCommand extends Command {
     // done
     console.log(chalk.cyan('  backend-init successfully!'));
     process.exit(0);
+  }
+
+  checkAppReady(app) {
+    return new Promise((resolve, reject) => {
+      app.on(eventAppReady, () => {
+        resolve();
+      });
+    });
   }
 
   description() {
