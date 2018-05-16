@@ -5,7 +5,7 @@ const eventAppReady = 'eb:event:appReady';
 before(done => {
   // session
   app.mockSession({});
-  // wait test ready
+  // wait app ready
   app.on(eventAppReady, () => {
     mock.restore();
     done();
