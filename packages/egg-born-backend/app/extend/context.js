@@ -46,6 +46,10 @@ module.exports = {
   set innerAccess(value) {
     this[INNERACCESS] = value;
   },
+  get subdomain() {
+    const _subdomain = this.headers['x-inner-subdomain'];
+    return _subdomain ? _subdomain : this.subdomains.join('.');
+  },
 
   /**
    * perform action of this or that module
@@ -54,15 +58,15 @@ module.exports = {
    * @param  {json} options.data   data(optional)
    * @return {promise}                response.body.data or throw error
    */
-  performAction({ method, url, query, params, body }) {
+  performAction({ method, url, query, params, headers, body }) {
     return new Promise((resolve, reject) => {
       const handleRequest = appCallback.call(this.app);
       const request = createRequest({
         method,
-        url: util.adjustUrl(this.module && this.module.info, url),
+        url: util.combineFetchPath(this.module && this.module.info, url),
       }, this.request);
       const response = new http.ServerResponse(request);
-      handleRequest(this, request, response, resolve, reject, query, params, body);
+      handleRequest(this, request, response, resolve, reject, query, params, headers, body);
     });
   },
 
@@ -100,7 +104,7 @@ function appCallback() {
 
   if (!this.listeners('error').length) this.on('error', this.onerror);
 
-  return function handleRequest(ctxCaller, req, res, resolve, reject, query, params, body) {
+  return function handleRequest(ctxCaller, req, res, resolve, reject, query, params, headers, body) {
     res.statusCode = 404;
     const ctx = self.createContext(req, res);
     onFinished(res, ctx.onerror);
@@ -109,6 +113,9 @@ function appCallback() {
     if (query) ctx.query = query;
     if (params) ctx.params = params;
     ctx.request.body = body || null; // not undefined
+
+    // headers
+    if (headers) Object.assign(ctx.headers, headers);
 
     // multipart
     ctx.multipart = function(options) {

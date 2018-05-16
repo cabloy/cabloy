@@ -1,23 +1,60 @@
+const qs = require('querystring');
 const WorkerStrategy = require('egg-schedule/lib/strategy/worker');
 const AllStrategy = require('egg-schedule/lib/strategy/all');
-const eventLoadSchedules = 'eb:event:loadSchedules';
-const eventCheckNeedRunSchedules = 'eb:event:checkNeedRunSchedules';
+const loadSchedules = require('./schedules.js');
+const eventVersionCheck = 'eb:event:versionCheck';
+const eventVersionCheckReady = 'eb:event:versionCheckReady';
+const eventVersionReady = 'eb:event:versionReady';
+const eventVersionReadyAsk = 'eb:event:versionReadyAsk';
 
-module.exports = function(loader) {
+module.exports = function(loader, modules) {
 
-  // workers
-  const workers = {};
+  // ready
+  let _ready = false;
+  // pids
+  let _pids = null;
 
   // all schedules
-  let ebScheduleInstances;
+  const ebSchedules = loadSchedules(loader, modules);
 
-  loader.app.messenger.once(eventLoadSchedules, ebSchedules => {
-    if (ebScheduleInstances) return;
-    ebScheduleInstances = {};
+  // egg-ready
+  loader.app.messenger.once('egg-ready', () => {
+    // version check ready
+    loader.app.messenger.once(eventVersionCheckReady, () => {
+      // start schedules
+      startSchedules();
+      // version ready
+      loader.app.messenger.sendToApp(eventVersionReady);
+      // ready
+      _ready = true;
+    });
+    // version check
+    if (loader.app.meta.isTest || !_pids) {
+      loader.app.messenger.sendToApp(eventVersionCheck);
+    } else {
+      loader.app.messenger.sendRandom(eventVersionCheck);
+    }
+  });
+
+  // check if version ready for worker
+  loader.app.messenger.on(eventVersionReadyAsk, pid => {
+    if (_ready) {
+      loader.app.messenger.sendTo(pid, eventVersionReady);
+    }
+  });
+
+  // get pids
+  loader.app.messenger.on('egg-pids', data => {
+    _pids = data;
+  });
+
+  // start schedules
+  let ebScheduleInstances;
+  function startSchedules() {
     Object.keys(ebSchedules).forEach(key => {
       const schedule = ebSchedules[key];
       const config = schedule.schedule;
-      if (!config.disable) {
+      if (!config.disable && (config.interval || config.cron || config.immediate)) {
         let Strategy;
         if (config.type === 'worker') Strategy = WorkerStrategy;
         if (config.type === 'all') Strategy = AllStrategy;
@@ -30,26 +67,6 @@ module.exports = function(loader) {
         ebScheduleInstances[key].start();
       }
     });
-  });
-
-  loader.app.messenger.on(eventCheckNeedRunSchedules, data => {
-    if (!ebScheduleInstances || workers[data.pid]) return;
-    // run immediate schedules
-    Object.keys(ebScheduleInstances).forEach(key => {
-      const strategy = ebScheduleInstances[key];
-      const config = strategy.schedule;
-      if (!config.disable && config.type === 'all' && config.immediate) {
-        loader.app.coreLogger.info(`[egg-schedule] send message to worker ${data.pid}: ${key}`);
-        loader.app.messenger.sendTo(data.pid, 'egg-schedule', { key, args: [] });
-      }
-    });
-  });
-
-  loader.app.messenger.on('egg-pids', data => {
-    if (ebScheduleInstances) return;
-    for (const pid of data) {
-      workers[pid] = true;
-    }
-  });
+  }
 
 };

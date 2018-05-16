@@ -25,7 +25,7 @@ module.exports = function(loader, modules) {
         // name
         if (route.name) args.push(route.name);
         // path
-        args.push(util.adjustUrl(info, route.path));
+        args.push(util.combineFetchPath(info, route.path));
 
         // constroller
         let Controller;

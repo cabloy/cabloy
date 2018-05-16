@@ -18,11 +18,18 @@ const util = {
       _dir = path.join(_dir, '../');
     }
   },
-  adjustUrl(info, url) {
-    if (url.substr(0, 2) === '//') return url.substr(1);
-    if (url.charAt(0) === '/') return `/api${url}`;
-    if (!info) throw new Error('invalid url');
-    return `/api/${info.url}/${url}`;
+  combineFetchPath(moduleName, arg) {
+    if (arg.substr(0, 2) === '//') return arg.substr(1);
+    if (arg.charAt(0) === '/') return `/api${arg}`;
+    const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;
+    if (!moduleInfo) throw new Error('invalid url');
+    return `/api/${moduleInfo.url}/${arg}`;
+  },
+  combineApiPath(moduleName, arg) {
+    if (arg.charAt(0) === '/') return arg;
+    const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;
+    if (!moduleInfo) throw new Error('invalid url');
+    return `/${moduleInfo.url}/${arg}`;
   },
 };
 
@@ -44,7 +51,7 @@ function __parseModules(modules, policy, loader) {
       module.package = require(pkg);
       module.main = loader.loadFile(file, loader.app, module);
       modules[info.relativeName] = module;
-      if (loader.app.config.env === 'local') console.log(info.fullName);
+      if (loader.app.meta.inAgent) console.log(info.fullName);
     }
 
   });

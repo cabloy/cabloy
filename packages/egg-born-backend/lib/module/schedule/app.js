@@ -1,27 +1,44 @@
 const qs = require('querystring');
-const eventCheckReady = 'eb:event:version:checkReady';
-const eventLoadSchedules = 'eb:event:loadSchedules';
-const eventCheckNeedRunSchedules = 'eb:event:checkNeedRunSchedules';
-const eventWorkStartReady = 'eb:event:work-start:ready';
+const loadSchedules = require('./schedules.js');
+const versionCheck = require('./versionCheck.js');
+const versionReady = require('./versionReady.js');
+const eventVersionCheck = 'eb:event:versionCheck';
+const eventVersionCheckReady = 'eb:event:versionCheckReady';
+const eventVersionReady = 'eb:event:versionReady';
+const eventVersionReadyAsk = 'eb:event:versionReadyAsk';
+const eventAppReady = 'eb:event:appReady';
 
 module.exports = function(loader, modules) {
 
   // all schedules
-  const ebSchedules = loader.app.meta.schedules = {};
+  const ebSchedules = loader.app.meta.schedules = loadSchedules(loader, modules);
 
-  // load schedules
-  loadSchedules();
-
+  // load to app
   Object.keys(ebSchedules).forEach(key => {
     loader.app.schedules[key] = ebSchedules[key];
   });
 
-  loader.app.once(eventCheckReady, () => {
-    loader.app.messenger.sendToAgent(eventLoadSchedules, ebSchedules);
+  // version check
+  loader.app.messenger.once(eventVersionCheck, async () => {
+    await versionCheck(loader.app);
+    loader.app.messenger.sendToAgent(eventVersionCheckReady);
   });
 
-  loader.app.once(eventWorkStartReady, () => {
-    loader.app.messenger.sendToAgent(eventCheckNeedRunSchedules, { pid: process.pid });
+  // version ready
+  let _versionReady = false;
+  loader.app.messenger.once(eventVersionReady, async () => {
+    if (!_versionReady) {
+      _versionReady = true;
+      // version ready
+      await versionReady(loader.app);
+      // event: appReady
+      loader.app.emit(eventAppReady);
+    }
+  });
+
+  // egg-ready
+  loader.app.messenger.once('egg-ready', () => {
+    loader.app.messenger.sendToAgent(eventVersionReadyAsk, process.pid);
   });
 
   // for test purpose
@@ -40,38 +57,5 @@ module.exports = function(loader, modules) {
 
     return schedule.task(ctx);
   };
-
-  function loadSchedules() {
-    Object.keys(modules).forEach(key => {
-      const module = modules[key];
-      // module schedules
-      if (module.main.schedules) {
-        Object.keys(module.main.schedules).forEach(scheduleKey => {
-          const fullKey = `${module.info.relativeName}:${scheduleKey}`;
-          const scheduleTask = module.main.schedules[scheduleKey];
-          const scheduleConfig = loader.app.meta.configs[module.info.relativeName].schedules[scheduleKey];
-          ebSchedules[fullKey] = {
-            schedule: scheduleConfig,
-            task: wrapTask(scheduleTask, fullKey, scheduleConfig, module.info),
-            key: fullKey,
-          };
-        });
-      }
-    });
-  }
-
-  function wrapTask(task, key, schedule, info) {
-    return function() {
-      const ctx = loader.app.createAnonymousContext({
-        method: 'SCHEDULE',
-        url: `/api/${info.url}/__schedule?path=${key}&${qs.stringify(schedule)}`,
-      });
-      if (!schedule.path) return task(ctx);
-      return ctx.performAction({
-        method: 'post',
-        url: schedule.path,
-      });
-    };
-  }
 
 };

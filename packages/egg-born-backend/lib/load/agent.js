@@ -1,5 +1,6 @@
 const AgentWorkerLoader = require('egg').AgentWorkerLoader;
 const loadSchedules = require('../module/schedule/agent.js');
+const loadModules = require('../module');
 
 module.exports = class CustomAgentWorkerLoader extends AgentWorkerLoader {
   constructor(opt) {
@@ -10,7 +11,7 @@ module.exports = class CustomAgentWorkerLoader extends AgentWorkerLoader {
   }
   load() {
     super.load();
-    // load schedules
-    loadSchedules(this);
+    // load modules
+    loadModules(this);
   }
 };

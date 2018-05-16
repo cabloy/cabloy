@@ -1,8 +1,8 @@
-const eventWorkStartReady = 'eb:event:work-start:ready';
 const moment = require('moment');
 const chalk = require('chalk');
 
 module.exports = app => {
+  // beforeStart
   app.beforeStart(async () => {
     // db prefix
     const dbPrefix = `egg-born-test-${app.name}`;
@@ -39,7 +39,5 @@ module.exports = app => {
       // database ready
       console.log(chalk.cyan(`  database: ${database}`));
     }
-    // ready
-    app.emit(eventWorkStartReady);
   });
 };
