@@ -6,10 +6,10 @@ const loadConfig = require('./config.js');
 const loadLocales = require('./locales.js');
 const loadErrors = require('./errors.js');
 const loadConstants = require('./constant.js');
-const loadSchedulesApp = require('./schedule/app.js');
-const loadQueuesApp = require('./queue/app.js');
-const loadQueuesAgent = require('./queue/agent.js');
-const loadSchedulesAgent = require('./schedule/agent.js');
+const loadQueues = require('./queue/queue.js');
+const loadSchedules = require('./schedule.js');
+const loadClusterApp = require('./cluster/app.js');
+const loadClusterAgent = require('./cluster/agent.js');
 
 const util = require('./util.js');
 
@@ -29,12 +29,14 @@ module.exports = function(loader) {
     loadRoutes(loader, modules);
     loadServices(loader, modules);
     loadModels(loader, modules);
-    loadQueuesApp(loader, modules);
-    loadSchedulesApp(loader, modules);
+    loadQueues(loader, modules);
+    loadSchedules(loader, modules);
+    loadClusterApp(loader, modules);
   } else {
     loadConfig(loader, modules);
-    loadQueuesAgent(loader, modules);
-    loadSchedulesAgent(loader, modules);
+    loadQueues(loader, modules);
+    loadSchedules(loader, modules);
+    loadClusterAgent(loader, modules);
   }
 
 };

@@ -1,5 +1,5 @@
 const qs = require('querystring');
-const loadSchedules = require('./schedules.js');
+const database = require('./database.js');
 const versionCheck = require('./versionCheck.js');
 const versionReady = require('./versionReady.js');
 const eventVersionCheck = 'eb:event:versionCheck';
@@ -10,25 +10,27 @@ const eventAppReady = 'eb:event:appReady';
 
 module.exports = function(loader, modules) {
 
-  // all schedules
-  const ebSchedules = loader.app.meta.schedules = loadSchedules(loader, modules);
-
-  // load to app
-  Object.keys(ebSchedules).forEach(key => {
-    loader.app.schedules[key] = ebSchedules[key];
-  });
+  let _versionReady = false;
 
   // version check
   loader.app.messenger.once(eventVersionCheck, async () => {
+    await database(loader.app);
     await versionCheck(loader.app);
-    loader.app.messenger.sendToAgent(eventVersionCheckReady);
+    const info = {};
+    if (loader.app.meta.isTest) info.app = loader.app; // send to agent: app
+    loader.app.messenger.sendToAgent(eventVersionCheckReady, info);
   });
 
   // version ready
-  let _versionReady = false;
-  loader.app.messenger.once(eventVersionReady, async () => {
+  loader.app.messenger.once(eventVersionReady, async info => {
     if (!_versionReady) {
       _versionReady = true;
+      // inner cookie
+      loader.app.meta.__innerCookie = info.innerCookie;
+      // queue ready
+      await loader.app.meta.queue.ready();
+      // database
+      await database(loader.app);
       // version ready
       await versionReady(loader.app);
       // event: appReady
@@ -40,22 +42,5 @@ module.exports = function(loader, modules) {
   loader.app.messenger.once('egg-ready', () => {
     loader.app.messenger.sendToAgent(eventVersionReadyAsk, process.pid);
   });
-
-  // for test purpose
-  loader.app.meta.runSchedule = (module, key) => {
-    const fullKey = key === undefined ? module : `${module}:${key}`;
-    const schedule = ebSchedules[fullKey];
-    if (!schedule) {
-      throw new Error(`Cannot find schedule ${fullKey}`);
-    }
-
-    // run with anonymous context
-    const ctx = loader.app.createAnonymousContext({
-      method: 'SCHEDULE',
-      url: `/__schedule?path=${fullKey}&${qs.stringify(schedule.schedule)}`,
-    });
-
-    return schedule.task(ctx);
-  };
 
 };
