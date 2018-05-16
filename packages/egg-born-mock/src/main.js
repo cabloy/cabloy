@@ -1,11 +1,12 @@
 const path = require('path');
 const { assert, app, mock, mm } = require('egg-mock/bootstrap');
+const eventAppReady = 'eb:event:appReady';
 
 before(done => {
   // session
   app.mockSession({});
   // wait test ready
-  app.on('testReady', () => {
+  app.on(eventAppReady, () => {
     mock.restore();
     done();
   });
