@@ -1,5 +1,6 @@
 const glob = require('glob');
 const semver = require('semver');
+const chalk = require('chalk');
 const mparse = require('egg-born-mparse').default;
 const policy = require('./policy.js');
 const util = require('./util.js');
@@ -62,10 +63,16 @@ module.exports = function(loader) {
     const dependencies = module.package.eggBornModule.dependencies;
     for (const key in dependencies) {
       const subModule = modules[key];
-      if (!subModule) throw new Error(`module ${key} not exists`);
+      if (!subModule) {
+        console.warn(chalk.cyan(`module ${key} not exists`));
+        process.exit(0);
+      }
 
       const subModuleVersion = dependencies[key];
-      if (semver.lt(subModule.package.version, subModuleVersion)) throw new Error(`module ${key} is old`);
+      if (semver.lt(subModule.package.version, subModuleVersion)) {
+        console.warn(chalk.cyan(`module ${key} is old`));
+        process.exit(0);
+      }
 
       _pushModule(modules, key);
     }
