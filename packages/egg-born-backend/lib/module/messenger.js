@@ -61,7 +61,7 @@ module.exports = function(loader, modules) {
       if (cb) {
         info.echo = uuid.v1();
         loader.app.messenger.once(info.echo, info => {
-          cb(info);
+          return cb(info);
         });
       }
       if (loader.app.meta.inApp) {
