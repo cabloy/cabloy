@@ -1,5 +1,6 @@
-const loadRoutes = require('./route.js');
 const loadMeta = require('./meta.js');
+const loadModules = require('./module.js');
+const loadRoutes = require('./route.js');
 const loadServices = require('./service.js');
 const loadModels = require('./model.js');
 const loadConfig = require('./config.js');
@@ -11,15 +12,13 @@ const loadSchedules = require('./schedule.js');
 const loadClusterApp = require('./cluster/app.js');
 const loadClusterAgent = require('./cluster/agent.js');
 
-const util = require('./util.js');
-
 module.exports = function(loader) {
 
   // meta
   const meta = loadMeta(loader);
 
   // modules
-  const modules = meta.modules = util.parseModules(loader);
+  const modules = loadModules(loader);
 
   if (meta.inApp) {
     loadConfig(loader, modules);
