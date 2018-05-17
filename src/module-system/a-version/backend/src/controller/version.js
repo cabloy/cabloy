@@ -93,13 +93,6 @@ module.exports = app => {
       this.ctx.success();
     }
 
-    // // result
-    // async result() {
-    //   if (app.config.env !== 'local') this.ctx.throw(1003);
-    //   const res = this.service.version.result();
-    //   this.ctx.success(res);
-    // }
-
   }
   return VersionController;
 };

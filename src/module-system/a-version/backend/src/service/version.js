@@ -1,5 +1,4 @@
 const require3 = require('require3');
-const semver = require3('semver');
 
 module.exports = app => {
 
@@ -23,14 +22,11 @@ module.exports = app => {
         }
       }
 
-      // reset all modules
-      this.__resetAllModules();
+      // check all modules
+      for (const module of this.app.meta.modulesArray) {
+        await this.__checkModule(module.info.relativeName, options);
+      }
 
-      // check module of aVersion
-      await this.__checkModule('a-version', options);
-
-      // check other modules
-      await this.__checkOtherModules(options);
     }
 
     // update module
@@ -119,35 +115,11 @@ module.exports = app => {
 
     }
 
-    // reset all modules
-    __resetAllModules() {
-      const keys = Object.keys(this.app.meta.modules);
-      for (const key of keys) {
-        const module = this.app.meta.modules[key];
-        module.__checking = false;
-      }
-    }
-
-    // check other modules
-    async __checkOtherModules(options) {
-      const keys = Object.keys(this.app.meta.modules);
-      for (const key of keys) {
-        if (key !== 'a-version') {
-          await this.__checkModule(key, options);
-        }
-      }
-    }
-
     // check module
     async __checkModule(moduleName, options) {
 
       // module
       const module = this.__getModule(moduleName);
-      if (module.__checking) return;
-      module.__checking = true;
-
-      // dependencies
-      await this.__checkDependencies(module, options);
 
       // fileVersionNew
       let fileVersionNew = 0;
@@ -174,9 +146,7 @@ module.exports = app => {
 
         // check if need update
         if (fileVersionOld > fileVersionNew) {
-          // module is old
-          module.__check = this.ctx.parseFail(1001);
-          this.ctx.throw(1001);
+          this.ctx.throw(1001, moduleName);
         } else if (fileVersionOld < fileVersionNew) {
           await this.__updateModule(options, module, fileVersionOld, fileVersionNew);
         }
@@ -185,29 +155,6 @@ module.exports = app => {
       if (options.scene === 'test') {
         // test module
         await this.__testModule(module, fileVersionNew, options);
-      }
-
-    }
-
-    // check dependencies
-    async __checkDependencies(module, options) {
-
-      if (!module.package.eggBornModule || !module.package.eggBornModule.dependencies) return;
-
-      const dependencies = module.package.eggBornModule.dependencies;
-      const keys = Object.keys(dependencies);
-      for (const key of keys) {
-        const subModule = this.__getModule(key);
-        if (!subModule) {
-          module.__check = this.ctx.parseFail(1002, key);
-          this.ctx.throw(1002, key);
-        }
-        const subModuleVersion = dependencies[key];
-        if (semver.lt(subModule.package.version, subModuleVersion)) {
-          subModule.__check = this.ctx.parseFail(1001);
-          this.ctx.throw(1001);
-        }
-        await this.__checkModule(key, options);
       }
 
     }
@@ -244,7 +191,6 @@ module.exports = app => {
             });
           }
         } catch (err) {
-          module.__check = err;
           throw err;
         }
       }
@@ -270,15 +216,6 @@ module.exports = app => {
     __getModule(moduleName) {
       return this.app.meta.modules[moduleName];
     }
-
-    // // result
-    // result() {
-    //   // find error module
-    //   const moduleName = Object.keys(this.app.meta.modules).find(key => this.app.meta.modules[key].__check);
-    //   if (moduleName) return { module: this.app.meta.modules[moduleName], modules: null };
-    //   // ok
-    //   return { module: null, modules: this.app.meta.modules };
-    // }
 
   }
 

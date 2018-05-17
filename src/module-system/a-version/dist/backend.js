@@ -95,9 +95,7 @@ module.exports = {
 /***/ (function(module, exports) {
 
 module.exports = {
-  1001: 'module is old',
-  1002: 'module %s not exists',
-  1003: 'The module only run in development mode',
+  1001: 'module %s is old',
 };
 
 
@@ -106,9 +104,7 @@ module.exports = {
 /***/ (function(module, exports) {
 
 module.exports = {
-  'module is old': '模块过旧',
-  'module %s not exists': '模块%s不存在',
-  'The module only run in development mode': '此模块只能在开发模式下运行',
+  'module %s is old': '模块过旧',
 };
 
 
@@ -137,7 +133,6 @@ module.exports = appInfo => {
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
-const semver = require3('semver');
 
 module.exports = app => {
 
@@ -161,14 +156,11 @@ module.exports = app => {
         }
       }
 
-      // reset all modules
-      this.__resetAllModules();
+      // check all modules
+      for (const module of this.app.meta.modulesArray) {
+        await this.__checkModule(module.info.relativeName, options);
+      }
 
-      // check module of aVersion
-      await this.__checkModule('a-version', options);
-
-      // check other modules
-      await this.__checkOtherModules(options);
     }
 
     // update module
@@ -257,35 +249,11 @@ module.exports = app => {
 
     }
 
-    // reset all modules
-    __resetAllModules() {
-      const keys = Object.keys(this.app.meta.modules);
-      for (const key of keys) {
-        const module = this.app.meta.modules[key];
-        module.__checking = false;
-      }
-    }
-
-    // check other modules
-    async __checkOtherModules(options) {
-      const keys = Object.keys(this.app.meta.modules);
-      for (const key of keys) {
-        if (key !== 'a-version') {
-          await this.__checkModule(key, options);
-        }
-      }
-    }
-
     // check module
     async __checkModule(moduleName, options) {
 
       // module
       const module = this.__getModule(moduleName);
-      if (module.__checking) return;
-      module.__checking = true;
-
-      // dependencies
-      await this.__checkDependencies(module, options);
 
       // fileVersionNew
       let fileVersionNew = 0;
@@ -312,9 +280,7 @@ module.exports = app => {
 
         // check if need update
         if (fileVersionOld > fileVersionNew) {
-          // module is old
-          module.__check = this.ctx.parseFail(1001);
-          this.ctx.throw(1001);
+          this.ctx.throw(1001, moduleName);
         } else if (fileVersionOld < fileVersionNew) {
           await this.__updateModule(options, module, fileVersionOld, fileVersionNew);
         }
@@ -323,29 +289,6 @@ module.exports = app => {
       if (options.scene === 'test') {
         // test module
         await this.__testModule(module, fileVersionNew, options);
-      }
-
-    }
-
-    // check dependencies
-    async __checkDependencies(module, options) {
-
-      if (!module.package.eggBornModule || !module.package.eggBornModule.dependencies) return;
-
-      const dependencies = module.package.eggBornModule.dependencies;
-      const keys = Object.keys(dependencies);
-      for (const key of keys) {
-        const subModule = this.__getModule(key);
-        if (!subModule) {
-          module.__check = this.ctx.parseFail(1002, key);
-          this.ctx.throw(1002, key);
-        }
-        const subModuleVersion = dependencies[key];
-        if (semver.lt(subModule.package.version, subModuleVersion)) {
-          subModule.__check = this.ctx.parseFail(1001);
-          this.ctx.throw(1001);
-        }
-        await this.__checkModule(key, options);
       }
 
     }
@@ -382,7 +325,6 @@ module.exports = app => {
             });
           }
         } catch (err) {
-          module.__check = err;
           throw err;
         }
       }
@@ -408,15 +350,6 @@ module.exports = app => {
     __getModule(moduleName) {
       return this.app.meta.modules[moduleName];
     }
-
-    // // result
-    // result() {
-    //   // find error module
-    //   const moduleName = Object.keys(this.app.meta.modules).find(key => this.app.meta.modules[key].__check);
-    //   if (moduleName) return { module: this.app.meta.modules[moduleName], modules: null };
-    //   // ok
-    //   return { module: null, modules: this.app.meta.modules };
-    // }
 
   }
 
@@ -534,13 +467,6 @@ module.exports = app => {
       this.ctx.success();
     }
 
-    // // result
-    // async result() {
-    //   if (app.config.env !== 'local') this.ctx.throw(1003);
-    //   const res = this.service.version.result();
-    //   this.ctx.success(res);
-    // }
-
   }
   return VersionController;
 };
@@ -559,7 +485,6 @@ module.exports = [
   { method: 'post', path: 'version/initModule', controller: version, middlewares: 'inner,transaction' },
   { method: 'post', path: 'version/testModule', controller: version, middlewares: 'inner,transaction' },
   { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
-  // { method: 'get', path: 'version/result', controller: version, middlewares: 'inner' },
 ];
 
 

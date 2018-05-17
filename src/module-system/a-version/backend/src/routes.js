@@ -7,5 +7,4 @@ module.exports = [
   { method: 'post', path: 'version/initModule', controller: version, middlewares: 'inner,transaction' },
   { method: 'post', path: 'version/testModule', controller: version, middlewares: 'inner,transaction' },
   { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
-  // { method: 'get', path: 'version/result', controller: version, middlewares: 'inner' },
 ];
