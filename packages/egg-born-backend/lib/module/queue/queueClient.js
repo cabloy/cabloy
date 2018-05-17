@@ -1,112 +1,103 @@
-const Base = require('sdk-base');
 const async = require('async');
+const uuid = require('uuid');
 const util = require('../util.js');
 
 module.exports = function(app) {
-  class QueueClient extends Base {
-    constructor(options) {
-      super({
-        initMethod: 'init',
-      });
-      this._options = options;
+
+  class QueueClient {
+
+    constructor() {
       this._queues = {};
+      this._queueCallbacks = {};
+      this.init();
     }
 
-    async init() {
-      await this.ready(true);
-    }
-
-    subscribe({ subdomain, module, queueName, key }, listener) {
-      this.on(this._combileFullKey({ subdomain, module, queueName, key }), listener);
-    }
-
-    unSubscribe({ subdomain, module, queueName, key }) {
-      this.off(this._combileFullKey({ subdomain, module, queueName, key }));
-    }
-
-    publish({ subdomain, module, queueName, key, data }) {
-      const queueKey = this._combileQueueKey({ subdomain, module, queueName });
-      const fullKey = this._combileFullKey({ subdomain, module, queueName, key });
-      // queue
-      let queue = this._queues[queueKey];
-      if (!queue) {
-        queue = this._queues[queueKey] = async.queue(({ subdomain, module, queueName, key, data }, cb) => {
-          this._performTask({ subdomain, module, queueName, key, data }, cb);
-        }, 1);
+    init() {
+      if (app.meta.inApp) {
+        app.meta.messenger.addProvider({
+          name: 'queueCall',
+          handler: async info => {
+            const ctx = app.createAnonymousContext({
+              method: 'post',
+              url: info.url,
+            });
+            return await ctx.performAction(info);
+          },
+        });
+        app.meta.messenger.addProvider({
+          name: 'queuePushEcho',
+          handler: res => {
+            const key = res.key;
+            this._queueCallbacks[key](res);
+            delete this._queueCallbacks[key];
+          },
+        });
+      } else {
+        app.meta.messenger.addProvider({
+          name: 'queuePush',
+          handler: info => {
+            const queueKey = this._combileQueueKey(info);
+            // queue
+            let queue = this._queues[queueKey];
+            if (!queue) {
+              queue = this._queues[queueKey] = async.queue((info, cb) => {
+                this._performTask(info, cb);
+              }, 1);
+            }
+            // push
+            queue.push(info);
+          },
+        });
       }
-      // push
-      queue.push({ subdomain, module, queueName, key, data });
+    }
+
+    push(info) {
+      app.meta.messenger.callAgent({ name: 'queuePush', data: info });
+    }
+
+    // { subdomain, module, queueName,data }
+    pushAsync(info) {
+      return new Promise((resolve, reject) => {
+        info.key = uuid.v1();
+        info.pid = process.pid;
+        this._queueCallbacks[info.key] = res => {
+          if (res.err) return reject(new Error(res.err.message));
+          resolve(res.data);
+        };
+        app.meta.messenger.callAgent({ name: 'queuePush', data: info });
+      });
     }
 
     _combileQueueKey({ subdomain = '', module = '', queueName = '' }) {
       return `${subdomain}:${module}:${queueName}`;
     }
 
-    _combileFullKey({ subdomain, module, queueName, key = '' }) {
-      const queueKey = this._combileQueueKey({ subdomain, module, queueName });
-      return `${queueKey}:${key}`;
-    }
-
-    _callback(key, fullKey, res, cb) {
-    // emit result
-      if (key) this.emit(fullKey, res);
-      // callback
-      cb();
-    }
-
-    _performTask({ subdomain, module, queueName, key, data }, cb) {
-      const fullKey = this._combileFullKey({ subdomain, module, queueName, key });
+    _performTask({ subdomain, module, queueName, key, pid, data }, cb) {
       // queue config
       const queueConfig = app.meta.queues[`${module}:${queueName}`];
-      // task
-      let task;
-      if (app.meta.isTest) {
-        const url = util.combineApiPath(module, queueConfig.config.path);
-        const ctx = app.meta.__app.createAnonymousContext({
+      // call
+      app.meta.messenger.callRandom({
+        name: 'queueCall',
+        data: {
           method: 'post',
-          url,
-        });
-        task = ctx.performAction({
-          method: 'post',
-          url,
-          headers: {
-            'x-inner-subdomain': subdomain,
-          },
+          url: util.combineApiPath(module, queueConfig.config.path),
+          headers: { 'x-inner-subdomain': subdomain },
           body: data,
-        });
-      } else {
-        const url = util.combineFetchPath(module, queueConfig.config.path);
-        const listen = app.config.cluster.listen;
-        task = app.curl(`http://${listen.hostname}:${listen.port}${url}`, {
-          method: 'POST',
-          contentType: 'json',
-          dataType: 'json',
-          headers: {
-            'x-inner-cookie': app.meta.__innerCookie,
-            'x-inner-subdomain': subdomain,
-          },
-          data,
-        });
-      }
-      // perform
-      task.then(result => {
-        let res;
-        if (app.meta.isTest) {
-          res = { data: result };
-        } else {
-          if (result.data && result.data.code === 0) {
-            res = { data: result.data.data };
-          } else {
-            res = { err: result.data };
-          }
+        },
+      }, res => {
+        if (key) {
+          res.key = key;
+          app.meta.messenger.callTo(pid, {
+            name: 'queuePushEcho',
+            data: res,
+          });
         }
-        this._callback(key, fullKey, res, cb);
-      }).catch(err => {
-        const res = { err: { code: err.code, message: err.message } };
-        this._callback(key, fullKey, res, cb);
+        // callback
+        cb();
       });
     }
   }
+
   return QueueClient;
 };
 

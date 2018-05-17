@@ -2,7 +2,6 @@ const moment = require('moment');
 const chalk = require('chalk');
 
 module.exports = async function(app) {
-  if (app.mysql.__ebdb_test) return;
   // db prefix
   const dbPrefix = `egg-born-test-${app.name}`;
   // dev/debug db

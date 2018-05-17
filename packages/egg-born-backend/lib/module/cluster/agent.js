@@ -1,50 +1,29 @@
-const qs = require('querystring');
-const uuid = require('uuid');
-const eventVersionCheck = 'eb:event:versionCheck';
-const eventVersionCheckReady = 'eb:event:versionCheckReady';
-const eventVersionReady = 'eb:event:versionReady';
-const eventVersionReadyAsk = 'eb:event:versionReadyAsk';
-
 module.exports = function(loader, modules) {
 
   // ready
   let _ready = false;
-  // pids
-  let _pids = null;
+
+  // messenger
+  loader.app.meta.messenger.addProvider({
+    name: 'versionReadyAsk',
+    handler: () => {
+      return _ready;
+    },
+  });
 
   // egg-ready
   loader.app.messenger.once('egg-ready', async () => {
-    // inner cookie
-    loader.app.meta.__innerCookie = uuid.v4();
-    // queue ready
-    await loader.app.meta.queue.ready();
-    // version check ready
-    loader.app.messenger.once(eventVersionCheckReady, info => {
-      // queue app
-      loader.app.meta.__app = info.app;
+    // call
+    loader.app.meta.messenger.callRandom({
+      name: 'versionCheck',
+      data: null,
+    }, info => {
+      if (info.err) throw new Error(info.err.message);
       // version ready
-      loader.app.messenger.sendToApp(eventVersionReady, { innerCookie: loader.app.meta.__innerCookie });
+      loader.app.meta.messenger.callAll({ name: 'versionReady' });
       // ready
       _ready = true;
     });
-    // version check
-    if (loader.app.meta.isTest || !_pids) { // support init:backend
-      loader.app.messenger.sendToApp(eventVersionCheck);
-    } else {
-      loader.app.messenger.sendRandom(eventVersionCheck);
-    }
-  });
-
-  // check if version ready for worker
-  loader.app.messenger.on(eventVersionReadyAsk, pid => {
-    if (_ready) {
-      loader.app.messenger.sendTo(pid, eventVersionReady, { innerCookie: loader.app.meta.__innerCookie });
-    }
-  });
-
-  // get pids
-  loader.app.messenger.on('egg-pids', data => {
-    _pids = data;
   });
 
 };

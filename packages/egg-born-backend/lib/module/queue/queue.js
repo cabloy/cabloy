@@ -3,7 +3,7 @@ const QueueClientFn = require('./queueClient.js');
 module.exports = function(loader, modules) {
 
   // queue
-  loader.app.meta.queue = loader.app.cluster(QueueClientFn(loader.app)).create({});
+  loader.app.meta.queue = new (QueueClientFn(loader.app))();
 
   // all queues
   const ebQueues = loader.app.meta.queues = {};
