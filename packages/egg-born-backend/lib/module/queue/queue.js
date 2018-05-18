@@ -14,12 +14,12 @@ module.exports = function(loader, modules) {
   function loadQueues() {
     Object.keys(modules).forEach(key => {
       const module = modules[key];
+      const config = loader.app.meta.configs[module.info.relativeName];
       // module queues
-      if (module.main.queues) {
-        Object.keys(module.main.queues).forEach(queueKey => {
+      if (config.queues) {
+        Object.keys(config.queues).forEach(queueKey => {
           const fullKey = `${module.info.relativeName}:${queueKey}`;
-          const config = loader.app.meta.configs[module.info.relativeName].queues[queueKey];
-          ebQueues[fullKey] = { config };
+          ebQueues[fullKey] = { config: config.queues[queueKey] };
         });
       }
     });
