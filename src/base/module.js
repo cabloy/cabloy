@@ -1,4 +1,7 @@
 import mparse from 'egg-born-mparse';
+const rLocalJSs = require.context('../../../../src/module/', true, /-sync\/front\/src\/main\.js$/);
+const rGlobalJSs = require.context('../../build/__module/', true, /-sync\/dist\/front\.js$/);
+const rGlobalCSSs = require.context('../../build/__module/', true, /-sync\/dist\/front\.css$/);
 
 export default function(Vue) {
   const loadingQueue = {
@@ -39,11 +42,6 @@ export default function(Vue) {
         }
       }
     },
-    requireAll() {
-      this._requireCSS();
-      this._requireJS(null, false);
-      this._requireJS(null, true);
-    },
     loadWaitings() {
       for (const key in Vue.prototype.$meta.modulesWaiting) {
         this._registerRoutes(Vue.prototype.$meta.modulesWaiting[key]);
@@ -74,57 +72,63 @@ export default function(Vue) {
       });
     },
     _import(moduleInfo, cb) {
-      this._importCSS(moduleInfo);
-      this._importJS(moduleInfo, module => cb(module));
-    },
-    _require(moduleInfo, cb) {
-      this._requireCSS(moduleInfo.relativeName);
-      this._requireJS(moduleInfo.relativeName, false, module => {
-        if (module) return cb(module);
-        this._requireJS(moduleInfo.relativeName, true, module => {
-          return cb(module);
-        });
-      });
-    },
-    _importCSS(moduleInfo) {
-      import('../../build/__module/' + moduleInfo.fullName + '/dist/front.css').catch(() => {});
-    },
-    _importJS(moduleInfo, cb) {
-      import('../../build/__module/' + moduleInfo.fullName + '/dist/front.js').then(instance => {
+      import('../../../../src/module/' + moduleInfo.relativeName + '/front/src/main.js').then(instance => {
         this.install(instance, moduleInfo, module => cb(module));
       }).catch(() => {
-        import('../../../../src/module/' + moduleInfo.relativeName + '/front/src/main.js').then(instance => {
+        import('../../build/__module/' + moduleInfo.fullName + '/dist/front.css').catch(() => {});
+        import('../../build/__module/' + moduleInfo.fullName + '/dist/front.js').then(instance => {
           this.install(instance, moduleInfo, module => cb(module));
         });
       });
     },
-    _requireCSS(moduleRelativeName) {
-      const r = require.context('../../build/__module/', true, /-sync\/dist\/front\.css$/);
-      r.keys().every(key => {
+    requireAll() {
+      // local
+      rLocalJSs.keys().every(key => {
         const moduleInfo = mparse.parseInfo(mparse.parseName(key));
-        const single = moduleRelativeName === moduleInfo.relativeName;
         const module = this.get(moduleInfo.relativeName);
-        if (!module && (!moduleRelativeName || single)) r(key);
-        return !single;
+        if (!module) {
+          this._requireJS(rLocalJSs, key, moduleInfo);
+        }
+      });
+      // global
+      rGlobalJSs.keys().every(key => {
+        const moduleInfo = mparse.parseInfo(mparse.parseName(key));
+        const module = this.get(moduleInfo.relativeName);
+        if (!module) {
+          const keyCss = this._requireFindKey(rGlobalCSSs, moduleInfo.relativeName);
+          this._requireCSS(rGlobalCSSs, keyCss);
+          this._requireJS(rGlobalJSs, key, moduleInfo);
+        }
       });
     },
-    _requireJS(moduleRelativeName, local, cb) {
-      const r = local ?
-        require.context('../../../../src/module/', true, /-sync\/front\/src\/main\.js$/) :
-        require.context('../../build/__module/', true, /-sync\/dist\/front\.js$/);
-      r.keys().every(key => {
-        const moduleInfo = mparse.parseInfo(mparse.parseName(key));
-        const single = moduleRelativeName === moduleInfo.relativeName;
-        const module = this.get(moduleInfo.relativeName);
-        if (module) {
-          cb && cb(module);
-        } else if ((!moduleRelativeName || single)) {
-          const instance = r(key);
-          this.install(instance, moduleInfo, module => {
-            cb && cb(module);
-          });
+    _require(moduleInfo, cb) {
+      let key = this._requireFindKey(rLocalJSs, moduleInfo.relativeName);
+      if (key) {
+        this._requireJS(rLocalJSs, key, moduleInfo, cb);
+      } else {
+        key = this._requireFindKey(rGlobalJSs, moduleInfo.relativeName);
+        if (key) {
+          const keyCss = this._requireFindKey(rGlobalCSSs, moduleInfo.relativeName);
+          this._requireCSS(rGlobalCSSs, keyCss);
+          this._requireJS(rGlobalJSs, key, moduleInfo, cb);
+        } else {
+          throw new Error(`Module ${moduleInfo.relativeName} not exists`);
         }
-        return !single;
+      }
+    },
+    _requireFindKey(r, moduleRelativeName) {
+      return r.keys().find(key => {
+        const moduleInfo = mparse.parseInfo(mparse.parseName(key));
+        return moduleRelativeName === moduleInfo.relativeName;
+      });
+    },
+    _requireCSS(r, key) {
+      return r(key);
+    },
+    _requireJS(r, key, moduleInfo, cb) {
+      const instance = r(key);
+      this.install(instance, moduleInfo, module => {
+        cb && cb(module);
       });
     },
     _registerRoutes(module) {
