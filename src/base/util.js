@@ -126,7 +126,7 @@ export default function(Vue) {
         if (skip) {
           return block.substring(skip.length);
         }
-        return scope[key] || block;
+        return scope[key];
       });
     },
     parseModuleInfo(moduleName) {
