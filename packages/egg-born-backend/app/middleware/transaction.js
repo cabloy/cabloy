@@ -9,7 +9,11 @@ module.exports = () => {
       await next();
 
       // check if success
-      if (ctx.response.body && ctx.response.body.code !== 0) { await handleTransaction(ctx, false); } else { await handleTransaction(ctx, true); }
+      if (ctx.response.body && ctx.response.body.code !== 0) {
+        await handleTransaction(ctx, false);
+      } else {
+        await handleTransaction(ctx, true);
+      }
     } catch (err) {
       await handleTransaction(ctx, false);
       throw err;
@@ -23,7 +27,11 @@ async function handleTransaction(ctx, success) {
     if (ctx.dbMeta.connection.conn) {
       const tran = ctx.dbMeta.connection.conn;
       ctx.dbMeta.connection.conn = null;
-      if (success) { await tran.commit(); } else { await tran.rollback(); }
+      if (success) {
+        await tran.commit();
+      } else {
+        await tran.rollback();
+      }
     }
     // reset flag
     ctx.dbMeta.transaction = false;

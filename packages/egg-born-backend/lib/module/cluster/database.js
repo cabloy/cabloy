@@ -2,6 +2,8 @@ const moment = require('moment');
 const chalk = require('chalk');
 
 module.exports = async function(app) {
+  // isolation level
+  await app.mysql.get('__ebdb').query('SET GLOBAL TRANSACTION ISOLATION LEVEL READ COMMITTED');
   // db prefix
   const dbPrefix = `egg-born-test-${app.name}`;
   // dev/debug db
