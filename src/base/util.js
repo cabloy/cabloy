@@ -168,11 +168,15 @@ export default function(Vue) {
           try {
             const res = componentInstance.onAction({ ctx, action, item });
             this.wrapPromise(res)
-              .then(() => {
+              .then(res2 => {
                 componentInstance.$destroy();
                 const url = action.actionPath ? this.combinePagePath(action.actionModule, this.replaceTemplate(action.actionPath, item)) : null;
-                if (url) ctx.$meta.vueLayout.navigate(url);
-                resolve();
+                if (url) {
+                  ctx.$nextTick(() => {
+                    ctx.$meta.vueLayout.navigate(url);
+                  });
+                }
+                resolve(res2);
               })
               .catch(err => {
                 componentInstance.$destroy();
