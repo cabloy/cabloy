@@ -30,8 +30,14 @@ module.exports = function(loader, modules) {
       return schedule.task(ctx);
     };
   } else {
-    // start schedules
-    startSchedules();
+    // for agent
+    if (!loader.app.meta.isTest) {
+      // egg-ready
+      loader.app.messenger.once('egg-ready', () => {
+        // start schedules
+        startSchedules();
+      });
+    }
   }
 
   function startSchedules() {
