@@ -23,7 +23,7 @@ module.exports = async function(app) {
   for (const key in app.meta.schedules) {
     const schedule = app.meta.schedules[key];
     const config = schedule.schedule;
-    if (!config.disable && config.immediate2) {
+    if (!config.disable && config.immediate2 && config.type === 'all') {
       await app.meta.runSchedule(key);
     }
   }
