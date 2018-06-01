@@ -159,7 +159,9 @@ export default function(Vue) {
       return new Promise((resolve, reject) => {
         if (!action.actionComponent) {
           const url = action.actionPath ? this.combinePagePath(action.actionModule, this.replaceTemplate(action.actionPath, item)) : null;
-          if (url) ctx.$meta.vueLayout.navigate(url);
+          if (url) {
+            ctx.$view.navigate(url, action.navigateOptions);
+          }
           return resolve();
         }
         ctx.$meta.module.use(action.actionModule, module => {
@@ -173,7 +175,7 @@ export default function(Vue) {
                 const url = action.actionPath ? this.combinePagePath(action.actionModule, this.replaceTemplate(action.actionPath, item)) : null;
                 if (url) {
                   ctx.$nextTick(() => {
-                    ctx.$meta.vueLayout.navigate(url);
+                    ctx.$view.navigate(url, action.navigateOptions);
                   });
                 }
                 resolve(res2);
