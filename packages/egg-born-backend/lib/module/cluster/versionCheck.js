@@ -9,12 +9,11 @@ module.exports = async function(app) {
     method: 'post',
     url: '/a/version/version/start',
   });
-  // run immediate schedules: worker
-  for (const key in app.meta.schedules) {
-    const schedule = app.meta.schedules[key];
-    const config = schedule.schedule;
-    if (!config.disable && config.immediate2 && config.type === 'worker') {
-      await app.meta.runSchedule(key);
+  // run startups: worker
+  for (const key in app.meta.startups) {
+    const startup = app.meta.startups[key];
+    if (!startup.startup.disable && startup.startup.type === 'worker') {
+      await app.meta.runStartup(key);
     }
   }
 };

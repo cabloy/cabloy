@@ -1,6 +1,7 @@
 const qs = require('querystring');
 const WorkerStrategy = require('egg-schedule/lib/strategy/worker');
 const AllStrategy = require('egg-schedule/lib/strategy/all');
+const util = require('./util.js');
 
 module.exports = function(loader, modules) {
 
@@ -81,14 +82,10 @@ module.exports = function(loader, modules) {
   }
 
   function wrapTask(key, schedule, info) {
-    return function() {
-      const ctx = loader.app.createAnonymousContext({
-        method: 'SCHEDULE',
-        url: `/api/${info.url}/__schedule?path=${key}&${qs.stringify(schedule)}`,
-      });
+    return function(ctx) {
       return ctx.performAction({
         method: 'post',
-        url: schedule.path,
+        url: util.combineApiPath(info, schedule.path),
       });
     };
   }

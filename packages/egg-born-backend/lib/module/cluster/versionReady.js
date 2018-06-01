@@ -20,11 +20,10 @@ module.exports = async function(app) {
     });
   }
   // run immediate schedules
-  for (const key in app.meta.schedules) {
-    const schedule = app.meta.schedules[key];
-    const config = schedule.schedule;
-    if (!config.disable && config.immediate2 && config.type === 'all') {
-      await app.meta.runSchedule(key);
+  for (const key in app.meta.startups) {
+    const startup = app.meta.startups[key];
+    if (!startup.startup.disable && startup.startup.type === 'all') {
+      await app.meta.runStartup(key);
     }
   }
   // version test

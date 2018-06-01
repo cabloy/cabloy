@@ -10,6 +10,7 @@ const loadConstants = require('./constant.js');
 const loadMessenger = require('./messenger.js');
 const loadQueues = require('./queue/queue.js');
 const loadSchedules = require('./schedule.js');
+const loadStartups = require('./startup.js');
 const loadClusterApp = require('./cluster/app.js');
 const loadClusterAgent = require('./cluster/agent.js');
 
@@ -32,6 +33,7 @@ module.exports = function(loader) {
     loadMessenger(loader, modules);
     loadQueues(loader, modules);
     loadSchedules(loader, modules);
+    loadStartups(loader, modules);
     loadClusterApp(loader, modules);
   } else {
     loadConfig(loader, modules);
