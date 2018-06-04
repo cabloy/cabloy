@@ -1,7 +1,7 @@
 const qs = require('querystring');
-const database = require('./database.js');
-const versionCheck = require('./versionCheck.js');
-const versionReady = require('./versionReady.js');
+const database = require('../version/database.js');
+const versionCheck = require('../version/check.js');
+const versionReady = require('../version/ready.js');
 const eventAppReady = 'eb:event:appReady';
 
 module.exports = function(loader, modules) {

@@ -22,7 +22,7 @@ module.exports = async function(app) {
   // run immediate schedules
   for (const key in app.meta.startups) {
     const startup = app.meta.startups[key];
-    if (!startup.startup.disable && startup.startup.type === 'all') {
+    if (!startup.startup.disable && (startup.startup.type === 'all' || app.meta.isTest)) {
       await app.meta.runStartup(key);
     }
   }
