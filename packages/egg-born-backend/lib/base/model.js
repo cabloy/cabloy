@@ -174,8 +174,30 @@ module.exports = app => {
     });
   });
 
+  [
+    '_format2',
+  ].forEach(method => {
+    Object.defineProperty(Model.prototype, method, {
+      get() {
+        return function() {
+          return _format2(this.ctx.db, arguments[0]);
+        };
+      },
+    });
+  });
+
   return Model;
 };
+
+function _format2(db, value) {
+  if (typeof value !== 'object') return db.format('?', value);
+  const val = db.format('?', value.val);
+  const val2 = val.substr(1, val.length - 2);
+  if (value.op === 'like') return `'%${val2}%'`;
+  if (value.op === 'likeLeft') return `'%${val2}'`;
+  if (value.op === 'likeRight') return `'${val2}%'`;
+  return val;
+}
 
 function _where2(db, where) {
   if (!where) {
@@ -190,16 +212,7 @@ function _where2(db, where) {
     if (Array.isArray(value)) {
       wheres.push('?? IN (?)');
     } else if (typeof value === 'object') {
-      if (value.op === 'like') {
-        const val = db.format('?', value.val);
-        wheres.push(`${db.format('??', key)} LIKE '%${val.substr(1, val.length - 2)}%'`);
-      } else if (value.op === 'likeLeft') {
-        const val = db.format('?', value.val);
-        wheres.push(`${db.format('??', key)} LIKE '%${val.substr(1, val.length - 2)}'`);
-      } else if (value.op === 'likeRight') {
-        const val = db.format('?', value.val);
-        wheres.push(`${db.format('??', key)} LIKE '${val.substr(1, val.length - 2)}%'`);
-      }
+      wheres.push(`${db.format('??', key)} LIKE ${_format2(db, value)}`);
       ignore = true;
     } else {
       wheres.push('?? = ?');
