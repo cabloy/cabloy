@@ -7,6 +7,17 @@ export default function(Vue) {
   // store
   const store = new Vuex.Store({});
 
+  // get state
+  store.getState = function(path) {
+    const keys = path.split('/');
+    let value = store.state;
+    for (const key of keys) {
+      if (!value) break;
+      value = value[key];
+    }
+    return value;
+  };
+
   // register module: auth
   const auth = require('../auth.js').default(Vue);
   auth.namespaced = true;
