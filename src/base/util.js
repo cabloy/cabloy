@@ -1,7 +1,10 @@
 import mparse from 'egg-born-mparse';
+import cookies from 'js-cookie';
+
 export default function(Vue) {
   const _ids = { };
   return {
+    cookies,
     overrideProperty({ obj, key, objBase, vueComponent, combinePath }) {
       Object.defineProperty(obj, key, {
         get() {

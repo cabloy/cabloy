@@ -1,4 +1,4 @@
-import Cookies from 'js-cookie';
+import cookies from 'js-cookie';
 import localeutil from 'egg-born-localeutil';
 
 export default function(Vue) {
@@ -12,7 +12,7 @@ export default function(Vue) {
       get() {
         return function(key) {
           if (arguments.length === 0) return '';
-          const locale = Cookies.get('locale') || 'en-us';
+          const locale = cookies.get('locale') || 'en-us';
           const resource = locales[locale] || {};
 
           let text = resource[key];
