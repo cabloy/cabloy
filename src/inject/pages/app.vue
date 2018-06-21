@@ -57,15 +57,15 @@ export default {
         });
       }
     },
-    reload() {
-      const layout = this.layout;
-      this.layout = null;
-      this.$nextTick(() => {
-        // clear router history
-        this.$meta.util.clearRouterHistory();
-        // restore layout
-        this.layout = layout;
-      })
+    reload(ops) {
+      ops = ops || { echo: false };
+      if (ops.echo) {
+        this._authEcho(() => {
+          this._reloadLayout();
+        });
+      } else {
+        this._reloadLayout();
+      }
     },
     onResize: Vue.prototype.$meta.util.debounce(function() {
       this.resize();
@@ -87,6 +87,16 @@ export default {
       }).catch(() => {
         return cb && cb();
       });
+    },
+    _reloadLayout() {
+      const layout = this.layout;
+      this.layout = null;
+      this.$nextTick(() => {
+        // clear router history
+        this.$meta.util.clearRouterHistory();
+        // restore layout
+        this.layout = layout;
+      })
     },
   },
   beforeDestroy() {
