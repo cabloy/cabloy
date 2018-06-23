@@ -14,7 +14,7 @@
 <script>
 import Vue from 'vue';
 import LiquorTree from 'liquor-tree';
-const ebPageContext = Vue.prototype.$meta.module.get('a-ui').options.components.ebPageContext;
+const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.components.ebPageContext;
 export default {
   mixins: [ebPageContext],
   components: {
