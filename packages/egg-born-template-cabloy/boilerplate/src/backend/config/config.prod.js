@@ -4,6 +4,14 @@ module.exports = appInfo => {
   // keys
   config.keys = appInfo.name + '_{{keys}}';
 
+  // module config
+  config.modules = {
+    'a-base': {
+      checkUserName: false,
+      signupRoleName: 'authenticated',
+    },
+  };
+
   // mysql
   config.mysql = {
     clients: {
@@ -13,7 +21,7 @@ module.exports = appInfo => {
         port: '3306',
         user: 'root', // 'travis',
         password: '',
-        database: 'cabloy-demo',
+        database: '{{name}}',
       },
     },
   };
