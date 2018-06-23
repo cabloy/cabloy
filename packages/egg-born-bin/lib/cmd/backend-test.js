@@ -12,7 +12,7 @@ class BackendTestCommand extends TestCommand {
     this.usage = 'Usage: egg-born-bin backend-test';
   }
 
-  async run(context) {
+  * run(context) {
 
     if (!context.env.EGG_BASE_DIR) context.env.EGG_BASE_DIR = path.join(process.cwd(), 'src/backend');
 
@@ -38,17 +38,17 @@ class BackendTestCommand extends TestCommand {
       mock.env('unittest');
       // app
       const app = mock.app(options);
-      await app.ready();
+      yield app.ready();
 
       // check app ready
-      await this.checkAppReady(app);
+      yield this.checkAppReady(app);
 
       // done
       console.log(chalk.cyan('  backend-test successfully!'));
       process.exit(0);
     } else {
       // run
-      await super.run(context);
+      yield super.run(context);
     }
 
   }
