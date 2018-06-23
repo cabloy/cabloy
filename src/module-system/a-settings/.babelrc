@@ -1,0 +1,21 @@
+{
+  "presets": [
+    [
+      "env",
+      {
+        "modules": false,
+        "useBuiltIns": false
+      }
+    ]
+  ],
+  "plugins": ["syntax-dynamic-import"],
+  "comments": false,
+  "env":
+  {
+    "test":
+    {
+      "presets": ["env"],
+      "plugins": ["istanbul"]
+    }
+  }
+}

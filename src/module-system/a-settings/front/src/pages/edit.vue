@@ -1,0 +1,64 @@
+<template>
+  <f7-page>
+    <eb-navbar :title="title" eb-back-link="Back">
+      <f7-nav-right>
+        <eb-link v-if="ready" iconMaterial="save" :onPerform="onSave"></eb-link>
+      </f7-nav-right>
+    </eb-navbar>
+    <eb-validate ref="validate" auto :data="data" :params="validateParams" :onPerform="onPerformValidate">
+    </eb-validate>
+  </f7-page>
+</template>
+<script>
+import Vue from 'vue';
+const ebModules = Vue.prototype.$meta.module.get('a-ui').options.components.ebModules;
+export default {
+  mixins: [ebModules],
+  data() {
+    return {
+      scene: this.$f7Route.params.scene,
+      module: this.$f7Route.query.module,
+      data: null,
+      validateParams: null,
+    };
+  },
+  computed: {
+    ready() {
+      return this.data && this.validateParams;
+    },
+    title() {
+      const module = this.getModule(this.module);
+      return module ? module.titleLocale : ''
+    }
+  },
+  methods: {
+    onPerformValidate(event, context) {
+      return this.$api.post(`settings/${this.scene}/save`, {
+        module: this.module,
+        data: this.data,
+      }).then(() => {
+        return true; // toast on success
+      });
+    },
+    onSave(event) {
+      return this.$refs.validate.perform(event, 'save');
+    },
+  },
+  created() {
+    this.$api.post(`settings/${this.scene}/load`, {
+      module: this.module,
+    }).then(data => {
+      this.data = data.data;
+      this.validateParams = {
+        module: data.module,
+        validator: data.validator,
+      };
+    });
+  },
+};
+
+</script>
+<style scoped>
+
+
+</style>
