@@ -78,8 +78,8 @@ module.exports =
 __webpack_require__.r(__webpack_exports__);
 var PREFIX_A = '/api/';
 var PREFIX_B = 'egg-born-module-';
-var PREFIX_C = './';
-var PREFIX_D = './egg-born-module-';
+var PREFIX_C = './egg-born-module-';
+var PREFIX_D = './';
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   parseInfo: function parseInfo(moduleName) {
