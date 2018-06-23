@@ -1,7 +1,7 @@
 const PREFIX_A = '/api/';
 const PREFIX_B = 'egg-born-module-';
-const PREFIX_C = './';
-const PREFIX_D = './egg-born-module-';
+const PREFIX_C = './egg-born-module-';
+const PREFIX_D = './';
 
 export default {
   // aa-hello aa/hello
