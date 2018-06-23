@@ -181,8 +181,8 @@ module.exports =
 __webpack_require__.r(__webpack_exports__);
 var PREFIX_A = '/api/';
 var PREFIX_B = 'egg-born-module-';
-var PREFIX_C = './';
-var PREFIX_D = './egg-born-module-';
+var PREFIX_C = './egg-born-module-';
+var PREFIX_D = './';
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   parseInfo: function parseInfo(moduleName) {
@@ -239,7 +239,7 @@ var PREFIX_D = './egg-born-module-';
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
-// EXTERNAL MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/egg-born-mparse/dist/index.js
+// EXTERNAL MODULE: ./node_modules/egg-born-mparse/dist/index.js
 var dist = __webpack_require__(2);
 var dist_default = /*#__PURE__*/__webpack_require__.n(dist);
 
