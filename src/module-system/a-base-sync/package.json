@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-base",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "title": "Base",
   "eggBornModule": {
     "fileVersion": 2,
@@ -55,7 +55,8 @@
     "vue-template-compiler": "^2.5.16"
   },
   "dependencies": {
-    "require3": "^1.0.1",
-    "extend2": "^1.0.0"
+    "egg-born-mparse": "^1.0.9",
+    "extend2": "^1.0.0",
+    "require3": "^1.0.1"
   }
 }
