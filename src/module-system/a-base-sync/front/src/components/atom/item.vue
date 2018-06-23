@@ -27,7 +27,7 @@
 <script>
 import Vue from 'vue';
 import atoms from './list.vue';
-const ebActions = Vue.prototype.$meta.module.get('a-ui').options.components.ebActions;
+const ebActions = Vue.prototype.$meta.module.get('a-components').options.components.ebActions;
 export default {
   mixins: [ebActions],
   meta: {
