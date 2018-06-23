@@ -1,0 +1,26 @@
+{
+  "name": "egg-born-template-cabloy",
+  "version": "1.0.0",
+  "description": "egg-born-template-cabloy",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhennann/egg-born-template-cabloy.git"
+  },
+  "keywords": [
+    "egg",
+    "egg-born",
+    "fullstack",
+    "boilerplate",
+    "template",
+    "cabloy"
+  ],
+  "author": "zhennann",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zhennann/egg-born-template-cabloy/issues"
+  },
+  "homepage": "https://github.com/zhennann/egg-born-template-cabloy#readme",
+  "devDependencies": {},
+  "dependencies": {}
+}

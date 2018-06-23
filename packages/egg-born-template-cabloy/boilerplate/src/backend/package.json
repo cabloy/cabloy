@@ -1,0 +1,6 @@
+{
+  "name": "backend-{{name}}",
+  "egg": {
+    "framework": "egg-born-backend"
+  }
+}

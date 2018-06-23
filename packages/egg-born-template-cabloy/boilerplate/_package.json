@@ -1,0 +1,30 @@
+{
+  "name": "{{name}}",
+  "version": "1.0.0",
+  "description": "{{description}}",
+  "scripts":
+  {
+    "dev:front": "egg-born-bin front-dev",
+    "build:front": "egg-born-bin front-build",
+    "dev:backend": "egg-born-bin backend-dev",
+    "debug:backend": "egg-born-bin backend-debug",
+    "lint": "eslint src",
+    "test:backend": "egg-born-bin backend-test",
+    "cov:backend": "egg-born-bin backend-cov",
+    "start:backend": "egg-born-scripts backend-start --daemon",
+    "stop:backend": "egg-born-scripts backend-stop",
+    "init:backend": "egg-born-bin backend-init --env='prod' --subdomain='' --password='123456'"
+  },
+  "author": "{{author}}",
+  "devDependencies":
+  {
+    "babel-eslint": "^8.0.2",
+    "eslint": "^4.11.0",
+    "eslint-config-egg": "^5.1.1",
+    "eslint-plugin-vuefix": "^0.2.1"
+  },
+  "dependencies":
+  {
+    "cabloy": "^1.0.0"
+  }
+}
