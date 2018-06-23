@@ -23,9 +23,6 @@ module.exports = {
   externals: nodeModules,
   resolve: {
     extensions: [ '.js', '.json' ],
-    alias: {
-      '@': resolve('src'),
-    },
   },
   module: {
     rules: [],

@@ -1,8 +1,6 @@
 let Vue;
 
-// import css
-// eslint-disable-next-line
-import CSS from './css/module.css';
+import './assets/css/module.css';
 
 // install
 function install(_Vue, cb) {
@@ -15,6 +13,7 @@ function install(_Vue, cb) {
     store: require('./store.js').default(Vue),
     config: require('./config/config.js').default,
     locales: require('./config/locales.js').default,
+    components: require('./components.js').default,
   });
 }
 

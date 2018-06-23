@@ -8,7 +8,7 @@ module.exports = app => {
     async init(options) {
     }
 
-    async test(options) {
+    async test() {
     }
 
   }

@@ -3,53 +3,38 @@ const webpack = require('webpack');
 const config = require('./config.js');
 const merge = require('webpack-merge');
 const baseWebpackConfig = require('./webpack.base.conf');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const { VueLoaderPlugin } = require('vue-loader');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const env = config.build.env;
 
 const plugins = [
-  // http://vuejs.github.io/vue-loader/en/workflow/production.html
   new webpack.DefinePlugin({
     'process.env': env,
   }),
-  // extract css into its own file
-  new ExtractTextPlugin({
+  new VueLoaderPlugin(),
+  new MiniCssExtractPlugin({
     filename: '[name].css',
   }),
-  // Compress extracted CSS. We are using this plugin so that possible
-  // duplicated CSS from different components can be deduped.
-  new OptimizeCSSPlugin(),
+  new OptimizeCssAssetsPlugin(),
 ];
 
-if (config.build.uglify) {
-  plugins.push(
-    new UglifyJSPlugin({
-      sourceMap: config.build.productionSourceMap,
-      uglifyOptions: {
-        output: {
-          comments: false,
-          beautify: false,
-        },
-        compress: {
-          warnings: false,
-        },
-        warnings: false,
-      },
-    })
-  );
-}
-
 const webpackConfig = merge(baseWebpackConfig, {
+  mode: 'production',
   module: {
     rules: utils.styleLoaders({
       sourceMap: config.build.productionSourceMap,
       extract: true,
     }),
   },
-  devtool: config.build.productionSourceMap ? '#source-map' : false,
+  devtool: config.build.productionSourceMap ? 'source-map' : false,
   plugins,
+  optimization: {
+    runtimeChunk: false,
+    splitChunks: false,
+    minimize: config.build.uglify,
+  },
 });
 
 module.exports = webpackConfig;
