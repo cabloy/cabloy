@@ -1,0 +1,17 @@
+<script>
+import Vue from 'vue';
+import perform from '../common/perform.js';
+import link from '../common/link.js';
+const f7Link = Vue.options.components.f7Link;
+delete f7Link.props.href;
+export default {
+  name: 'eb-link',
+  extends: f7Link,
+  mixins: [perform, link],
+};
+
+</script>
+<style scoped>
+
+
+</style>

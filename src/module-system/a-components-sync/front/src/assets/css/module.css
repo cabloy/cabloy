@@ -1,0 +1,40 @@
+.button-backdrop {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  visibility: hidden;
+  opacity: 0;
+  -webkit-transition-duration: 400ms;
+  transition-duration: 400ms;
+  z-index: 10500;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.button-backdrop.not-animated {
+  -webkit-transition-duration: 0ms;
+  transition-duration: 0ms;
+}
+
+.button-backdrop.backdrop-in {
+  visibility: visible;
+  opacity: 1;
+}
+
+.button-backdrop .preloader-inner-left {
+  margin-left: auto !important;
+}
+
+.item-panel-invalid {
+  color: #f44336;
+}
+
+.swipeout-actions-left,
+.swipeout-actions-right {
+  z-index: 10;
+}
