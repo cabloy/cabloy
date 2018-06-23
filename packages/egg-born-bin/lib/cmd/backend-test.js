@@ -34,6 +34,8 @@ class BackendTestCommand extends TestCommand {
       const options = {};
       options.baseDir = context.env.EGG_BASE_DIR;
 
+      // env
+      mock.env('unittest');
       // app
       const app = mock.app(options);
       await app.ready();
