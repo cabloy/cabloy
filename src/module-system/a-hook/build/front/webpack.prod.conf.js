@@ -17,7 +17,9 @@ const plugins = [
   new MiniCssExtractPlugin({
     filename: '[name].css',
   }),
-  new OptimizeCssAssetsPlugin(),
+  new OptimizeCssAssetsPlugin({
+    cssProcessorOptions: { safe: true, discardComments: { removeAll: true } },
+  }),
 ];
 
 const webpackConfig = merge(baseWebpackConfig, {
