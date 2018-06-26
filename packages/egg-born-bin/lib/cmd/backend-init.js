@@ -11,7 +11,7 @@ class BackendInitCommand extends Command {
     this.usage = 'Usage: egg-born-bin backend-init';
   }
 
-  async run(context) {
+  * run(context) {
 
     // override argv
     const params = Object.assign({}, context.argv);
@@ -27,16 +27,16 @@ class BackendInitCommand extends Command {
     mock.env(params.env || 'prod');
     // app
     const app = mock.app(options);
-    await app.ready();
+    yield app.ready();
 
     // check app ready
-    await this.checkAppReady(app);
+    yield this.checkAppReady(app);
 
     // ctx
     const ctx = app.mockContext({ mockUrl: '/api/a/version/' });
 
     // version init
-    await ctx.performAction({
+    yield ctx.performAction({
       method: 'post',
       url: 'version/check',
       headers: {
