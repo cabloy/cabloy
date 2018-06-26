@@ -97,8 +97,9 @@ exports.copyModules = function() {
 
   // stat
   glob(`${nodeModulesPath}/egg-born-module-*`, (err, files) => {
+    if (files.length > 0)console.log('\n');
     files.forEach(file => {
-      console.log(chalk.yellow(`\n${file.substr(nodeModulesPath.length + 1)}`));
+      console.log(chalk.yellow(`${file.substr(nodeModulesPath.length + 1)}`));
     });
     console.log(chalk.cyan(`\n${files.length} egg-born modules found.`));
   });
