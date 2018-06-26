@@ -23,7 +23,9 @@ const plugins = [
   new MiniCssExtractPlugin({
     filename: utils.assetsPath('css/[name].[contenthash].css'),
   }),
-  new OptimizeCssAssetsPlugin(),
+  new OptimizeCssAssetsPlugin({
+    cssProcessorOptions: { safe: true, discardComments: { removeAll: true } },
+  }),
   // generate dist index.html with correct asset hash for caching.
   // you can customize output by editing /index.html
   // see https://github.com/ampedandwired/html-webpack-plugin
