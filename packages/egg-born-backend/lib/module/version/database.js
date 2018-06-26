@@ -3,7 +3,9 @@ const chalk = require('chalk');
 
 module.exports = async function(app) {
   // isolation level
-  await app.mysql.get('__ebdb').query('SET GLOBAL TRANSACTION ISOLATION LEVEL READ COMMITTED');
+  if (app.meta.isLocal || app.meta.isTest) {
+    await app.mysql.get('__ebdb').query('SET GLOBAL TRANSACTION ISOLATION LEVEL READ COMMITTED');
+  }
   // db prefix
   const dbPrefix = `egg-born-test-${app.name}`;
   // dev/debug db
