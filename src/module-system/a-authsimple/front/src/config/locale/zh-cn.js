@@ -16,4 +16,5 @@ export default {
   'New password': '新密码',
   'New password again': '重复新密码',
   OK: '确定',
+  'Test Account': '测试账号',
 };

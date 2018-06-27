@@ -30,6 +30,10 @@
         <eb-link eb-href="/a/authsimple/signup" class="text-smaller">{{$text('Sign up')}}</eb-link>
       </f7-card-footer>
     </f7-card>
+    <f7-card v-if="$config.test">
+      <f7-card-header>{{$text('Test Account')}}</f7-card-header>
+      <f7-card-content>demo@cabloy.org : 123456</f7-card-content>
+    </f7-card>
   </div>
 </template>
 <script>

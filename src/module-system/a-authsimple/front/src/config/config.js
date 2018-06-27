@@ -1,2 +1,3 @@
 export default {
+  test: false,
 };

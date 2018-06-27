@@ -4,7 +4,7 @@
     <f7-block>
       <eb-validate ref="validate" auto :data="data" :params="{validator: 'reset'}" :onPerform="onPerformValidate">
       </eb-validate>
-      <eb-button :onPerform="onPerformOk">{{$text('OK')}}</eb-button>
+      <eb-button v-if="!$config.test" :onPerform="onPerformOk">{{$text('OK')}}</eb-button>
     </f7-block>
   </f7-page>
 </template>
