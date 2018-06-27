@@ -118,17 +118,16 @@ module.exports = ctx => {
 
     async add({ disabled = 0, userName, realName, email, mobile, avatar, motto, locale, anonymous = 0 }) {
       // check if incomplete information
-      let ok;
+      let needCheck;
       if (anonymous) {
-        ok = true;
+        needCheck = false;
       } else if (ctx.config.module(moduleInfo.relativeName).checkUserName === true) {
-        ok = userName || email || mobile;
+        needCheck = userName || email || mobile;
       } else {
-        ok = email || mobile;
+        needCheck = email || mobile;
       }
-      if (!ok) ctx.throw.module(moduleInfo.relativeName, 1007);
       // if exists
-      if (!anonymous) {
+      if (needCheck) {
         const res = await this.exists({ userName, email, mobile });
         if (res) ctx.throw.module(moduleInfo.relativeName, 1001);
       }
