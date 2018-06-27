@@ -38,3 +38,18 @@
 .swipeout-actions-right {
   z-index: 10;
 }
+
+.avatar {
+  border-radius: 50%;
+  border: 1px solid transparent;
+}
+
+.avatar32 {
+  height: 32px;
+  width: 32px;
+}
+
+.avatar48 {
+  height: 48px;
+  width: 48px;
+}
