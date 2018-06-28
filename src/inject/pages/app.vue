@@ -20,6 +20,11 @@ export default {
   },
   methods: {
     onF7Ready() {
+      // check query
+      let documentUrl = location.href.split(location.origin)[1];
+      if (documentUrl && documentUrl.indexOf('/?') === 0) {
+        history.replaceState(null, '', location.origin);
+      }
       // hash init
       const hashInit = this.$meta.util.parseHash(location.href);
       if (hashInit && hashInit !== '/') this.$store.commit('auth/setHashInit', hashInit);
