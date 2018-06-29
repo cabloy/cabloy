@@ -82,12 +82,10 @@ function createAuthenticate(moduleRelativeName, providerName, _config) {
     if (!providerItem || providerItem.disabled !== 0) ctx.throw(423);
 
     // returnTo
-    if (ctx.url.indexOf(_config.callbackURL) === -1) {
-      if (ctx.request.query && ctx.request.query.returnTo) {
-        ctx.session.returnTo = ctx.request.query.returnTo;
-      } else {
-        delete ctx.session.returnTo; // force to delete
-      }
+    if (ctx.request.query && ctx.request.query.returnTo) {
+      ctx.session.returnTo = ctx.request.query.returnTo;
+    } else {
+      delete ctx.session.returnTo; // force to delete
     }
 
     // config
