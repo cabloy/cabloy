@@ -48,6 +48,7 @@ export default function(Vue) {
       return documentUrl || '/';
     },
     combineHash(hash) {
+      hash = hash || '';
       let url = location.origin + '/';
       const router = Vue.prototype.$f7.router;
       if (router.params.pushStateRoot) url += router.params.pushStateRoot;

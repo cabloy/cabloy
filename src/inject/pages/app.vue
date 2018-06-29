@@ -76,7 +76,7 @@ export default {
       this.resize();
     }, 300),
     login(url) {
-      const hashInit = this.$store.state.auth.hashInit || '';
+      const hashInit = this.$store.state.auth.hashInit;
       this.$store.commit('auth/setHashInit', null);
       url = `${url}?returnTo=${encodeURIComponent(this.$meta.util.combineHash(hashInit))}`;
       location.assign(url);
