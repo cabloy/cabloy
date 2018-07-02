@@ -6,17 +6,17 @@
       </f7-nav-right>
     </eb-navbar>
     <tree ref="tree" :options="treeOptions">
-      <span slot-scope="{node}" @click.prevent="onNodeClick(node)">
+      <span slot-scope="{node}" @click.stop="onNodeClick(node)">
         <f7-icon v-if="node.states._selected" material="check_box"></f7-icon>{{node.text}}</span>
     </tree>
   </f7-page>
 </template>
 <script>
 import Vue from 'vue';
-import LiquorTree from 'liquor-tree';
+import LiquorTree from '@zhennann/liquor-tree';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.components.ebPageContext;
 export default {
-  mixins: [ebPageContext],
+  mixins: [ ebPageContext ],
   components: {
     [LiquorTree.name]: LiquorTree,
   },
@@ -55,7 +55,7 @@ export default {
               data: item,
               showChildren: item.catalog === 1,
               isBatch: item.catalog === 1,
-            }
+            };
             return node;
           });
           if (this.catalogOnly) {
@@ -98,7 +98,7 @@ export default {
       const selection = this.$refs.tree.find({ state: { _selected: true } }, this.multiple);
       if (!selection) return null;
       return this.multiple ? selection.map(node => node.data) : selection[0].data;
-    }
+    },
   },
 };
 

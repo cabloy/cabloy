@@ -1,10 +1,10 @@
 <template>
   <tree ref="tree" :options="treeOptions">
-    <span slot-scope="{node}" @click.prevent="onNodeClick(node)">{{node.text}}</span>
+    <span slot-scope="{node}" @click.stop="onNodeClick(node)">{{node.text}}</span>
   </tree>
 </template>
 <script>
-import LiquorTree from 'liquor-tree';
+import LiquorTree from '@zhennann/liquor-tree';
 export default {
   meta: {
     global: true,
@@ -12,7 +12,7 @@ export default {
   props: {
     roleIdStart: {
       type: Number,
-    }
+    },
   },
   components: {
     [LiquorTree.name]: LiquorTree,
@@ -29,7 +29,7 @@ export default {
   computed: {
     tree() {
       return this.$refs.tree;
-    }
+    },
   },
   methods: {
     fetchChildren(roleId) {
@@ -43,9 +43,9 @@ export default {
               data: item,
               showChildren: item.catalog === 1,
               isBatch: item.catalog === 1,
-            }
+            };
             return node;
-          })
+          });
           return list;
         })
         .catch(err => {
