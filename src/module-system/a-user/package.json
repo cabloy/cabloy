@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-user",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "title": "User",
   "eggBornModule": {
     "dependencies": {
@@ -53,7 +53,6 @@
   },
   "dependencies": {
     "require3": "^1.0.1",
-    "extend2": "^1.0.0",
-    "liquor-tree": "^0.2.30"
+    "extend2": "^1.0.0"
   }
 }
