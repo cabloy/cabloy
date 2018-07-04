@@ -300,6 +300,17 @@ const Fn = module.exports = ctx => {
           public: _func.public ? 1 : 0,
         };
         func.titleLocale = ctx.text(func.title);
+        // create
+        if (func.action === 'create' && !func.actionComponent && !func.actionPath) {
+          func.actionModule = 'a-base';
+          func.actionComponent = 'action';
+          func.actionPath = '/a/base/atom/edit?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}';
+        }
+        // list
+        if (func.action === 'read' && !func.actionComponent && !func.actionPath) {
+          func.actionPath = '/a/base/atom/list?module={{module}}&atomClassName={{atomClassName}}';
+        }
+        // ok
         functions[key] = func;
       }
       return functions;
