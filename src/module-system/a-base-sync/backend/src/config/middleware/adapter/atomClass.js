@@ -53,6 +53,7 @@ const Fn = module.exports = ctx => {
       if (res) return res;
       // data
       const atomClass = ctx.meta.base.atomClass({ module, atomClassName });
+      if (!atomClass) throw new Error(`atomClass ${module}:${atomClassName} not found!`);
       const data = {
         module,
         atomClassName,
