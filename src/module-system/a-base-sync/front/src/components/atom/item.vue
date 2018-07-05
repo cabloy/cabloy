@@ -29,7 +29,7 @@ import Vue from 'vue';
 import atoms from './list.vue';
 const ebActions = Vue.prototype.$meta.module.get('a-components').options.components.ebActions;
 export default {
-  mixins: [ebActions],
+  mixins: [ ebActions ],
   meta: {
     global: false,
   },
@@ -43,7 +43,7 @@ export default {
     },
     query: {
       type: Object,
-    }
+    },
   },
   data() {
     return {
@@ -89,8 +89,8 @@ export default {
         }).then(data => {
           this.validateParams = {
             module: data.module,
-            validator: data.validator
-          }
+            validator: data.validator,
+          };
         });
         // actions
         this.fetchActions();
@@ -111,25 +111,23 @@ export default {
     onAction(event, action) {
       if (action === 'save' || action === 'submit') {
         return this.$refs.validate.perform(event, action);
-      } else {
-        if (typeof action === 'string') {
-          action = {
-            module: this.item.module,
-            atomClassName: this.item.atomClassName,
-            name: action
-          }
-        }
-        // for write
-        if (action.name === 'write') {
-          action.navigateOptions = { view: 'self' };
-        }
-        // action
-        const _action = this.getAction(action);
-        return this.$meta.util.performAction({ ctx: this, action: _action, item: this.item }).then(res => {
-          console.log(res);
-          if (res) this.$f7Router.back();
-        });
       }
+      if (typeof action === 'string') {
+        action = {
+          module: this.item.module,
+          atomClassName: this.item.atomClassName,
+          name: action,
+        };
+      }
+      // for write
+      if (action.name === 'write') {
+        action.navigateOptions = { view: 'self' };
+      }
+      // action
+      const _action = this.getAction(action);
+      return this.$meta.util.performAction({ ctx: this, action: _action, item: this.item }).then(res => {
+        if (res) this.$f7Router.back();
+      });
     },
     onPerformValidate(event, actionName) {
       const action = this.$utils.extend({}, this.findAction('write'), { name: actionName });
