@@ -28,17 +28,6 @@ function install(_Vue, cb) {
         name: '{{name}}',
       },
     },
-    meta: {
-      layout: {
-        breakpoint: 768,
-        items: {
-          mobile: {
-            module: 'a-layoutmobile',
-            component: 'layout',
-          },
-        },
-      },
-    },
   });
 }
 
