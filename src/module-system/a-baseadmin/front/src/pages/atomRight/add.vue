@@ -26,7 +26,7 @@
 import Vue from 'vue';
 const ebActions = Vue.prototype.$meta.module.get('a-components').options.components.ebActions;
 export default {
-  mixins: [ebActions],
+  mixins: [ ebActions ],
   data() {
     return {
       roleId: parseInt(this.$f7Route.query.roleId),
@@ -42,7 +42,7 @@ export default {
       if (!actions) return null;
       const options = [{ title: null, value: '' }];
       for (const key in actions) {
-        if (['save', 'submit'].indexOf(key) === -1) {
+        if (actions[key].authorize) {
           options.push({ title: key, value: actions[key].code });
         }
       }
@@ -53,12 +53,12 @@ export default {
       return this.scope.map(item => item.roleName).join(',');
     },
     scopeSelfEnable() {
-      return this.actionCode && ['3', '4'].indexOf(this.actionCode) > -1;
+      return this.actionCode && [ '3', '4' ].indexOf(this.actionCode) > -1;
     },
     scopeEnable() {
       if (!this.actionCode) return false;
       if (this.actionCode === '1') return false;
-      if (['3', '4'].indexOf(this.actionCode) > -1 && this.scopeSelf) return false;
+      if ([ '3', '4' ].indexOf(this.actionCode) > -1 && this.scopeSelf) return false;
       return true;
     },
   },
@@ -103,12 +103,12 @@ export default {
     onSave() {
       if (!this.atomClass || !this.actionCode) return;
       return this.$api.post('atomRight/add', {
-          roleId: this.roleId,
-          atomClass: this.atomClass,
-          actionCode: parseInt(this.actionCode),
-          scopeSelf: this.scopeSelf,
-          scope: this.scope ? this.scope.map(item => item.id) : [],
-        })
+        roleId: this.roleId,
+        atomClass: this.atomClass,
+        actionCode: parseInt(this.actionCode),
+        scopeSelf: this.scopeSelf,
+        scope: this.scope ? this.scope.map(item => item.id) : [],
+      })
         .then(() => {
           this.$meta.eventHub.$emit('atomRight:add', { roleId: this.roleId });
           this.$f7Router.back();

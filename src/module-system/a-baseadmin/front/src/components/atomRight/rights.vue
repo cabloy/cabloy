@@ -97,7 +97,7 @@ export default {
     onAtomRightDelete(data) {
       const index = this.items.findIndex(item => item.id === data.id);
       if (index > -1) this.items.splice(index, 1);
-    }
+    },
   },
 };
 
