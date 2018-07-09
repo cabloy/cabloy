@@ -204,7 +204,6 @@ export default function(Vue) {
     _registerConfig(module) {
       if (module.name === 'main') {
         Vue.prototype.$utils.extend(Vue.prototype.$meta.config, module.options.config);
-        if (!Vue.prototype.$meta.config.modules) Vue.prototype.$meta.config.modules = {};
       } else {
         Vue.prototype.$meta.config.modules[module.info.relativeName] =
        Vue.prototype.$utils.extend({}, module.options.config, Vue.prototype.$meta.config.modules[module.info.relativeName]);

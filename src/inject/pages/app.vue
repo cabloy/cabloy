@@ -40,11 +40,10 @@ export default {
       return this.$refs.layout;
     },
     resize() {
-      const options = this.$meta.module.get().options;
       // layout
-      let layout = window.document.documentElement.clientWidth > options.meta.layout.breakpoint ?
-        'pc' : 'mobile';
-      if (!options.meta.layout.items[layout]) {
+      const breakpoint = this.$meta.config.layout.breakpoint;
+      let layout = window.document.documentElement.clientWidth > breakpoint ? 'pc' : 'mobile';
+      if (!this.$meta.config.layout.items[layout]) {
         layout = layout === 'pc' ? 'mobile' : 'pc';
       }
       // check if switch
@@ -53,8 +52,8 @@ export default {
         if (component) component.onResize();
       } else {
         // load module layout
-        this.$meta.module.use(options.meta.layout.items[layout].module, module => {
-          this.$options.components[layout] = module.options.components[options.meta.layout.items[layout].component];
+        this.$meta.module.use(this.$meta.config.layout.items[layout].module, module => {
+          this.$options.components[layout] = module.options.components[this.$meta.config.layout.items[layout].component];
           // clear router history
           this.$meta.util.clearRouterHistory();
           // ready
