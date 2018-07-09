@@ -210,12 +210,15 @@ const Fn = module.exports = ctx => {
             name: key,
             title: _actionsSystemMeta[key].title,
             flag: (_actions && _actions[key] && _actions[key].flag) || '',
+            authorize: _actionsSystemMeta[key].authorize !== false,
           };
           if (_actions && _actions[key] && (_actions[key].actionComponent || _actions[key].actionPath)) {
+            // custom
             action.actionModule = _actions[key].actionModule || module.info.relativeName;
             action.actionComponent = _actions[key].actionComponent;
             action.actionPath = _actions[key].actionPath;
           } else {
+            // default
             action.actionModule = moduleInfo.relativeName;
             action.actionComponent = _actionsSystemMeta[key].actionComponent;
             action.actionPath = _actionsSystemMeta[key].actionPath;
@@ -236,12 +239,15 @@ const Fn = module.exports = ctx => {
               actionModule: _actions[key].actionModule || module.info.relativeName,
               actionComponent: _actions[key].actionComponent,
               actionPath: _actions[key].actionPath,
+              authorize: _actions[key].authorize !== false,
             };
             if (!_actions[key].actionComponent && !_actions[key].actionPath) {
+              // default
               action.actionModule = _actions[key].actionModule || moduleInfo.relativeName;
               action.actionComponent = 'action';
               action.actionPath = '';
             } else {
+              // custom
               action.actionModule = _actions[key].actionModule || module.info.relativeName;
               action.actionComponent = _actions[key].actionComponent;
               action.actionPath = _actions[key].actionPath;
