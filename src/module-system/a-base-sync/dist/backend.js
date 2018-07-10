@@ -1272,6 +1272,7 @@ const tables = {
             atomClassName varchar(255) DEFAULT NULL,
             atomClassIdParent int(11) DEFAULT '0',
             public int(11) DEFAULT '0',
+            flow int(11) DEFAULT '0',
             PRIMARY KEY (id)
           )
         `,
@@ -1284,6 +1285,7 @@ const tables = {
             iid int(11) DEFAULT '0',
             itemId int(11) DEFAULT '0',
             atomEnabled int(11) DEFAULT '0',
+            atomFlow int(11) DEFAULT '0',
             atomFlag int(11) DEFAULT '0',
             atomClassId int(11) DEFAULT '0',
             atomName varchar(255) DEFAULT NULL,
@@ -1449,7 +1451,7 @@ const tables = {
 const views = {
   aViewUserRoleRef: `
 create view aViewUserRoleRef as
-  select a.iid,a.userId,a.roleId,b.roleIdParent,b.level from aUserRole a 
+  select a.iid,a.userId,a.roleId,b.roleIdParent,b.level from aUserRole a
     inner join aRoleRef b on a.roleId=b.roleId
   `,
   aViewUserRoleExpand: `
@@ -1471,7 +1473,7 @@ create view aViewUserRightAtomClassUser as
   aViewUserRightAtom: `
 create view aViewUserRightAtom as
   select a.iid, a.id as atomId,a.userIdCreated as userIdWhom,b.userIdWho,b.action from aAtom a,aViewUserRightAtomClassUser b
-    where a.deleted=0 and a.atomEnabled=1 
+    where a.deleted=0 and a.atomEnabled=1
       and a.atomClassId=b.atomClassId
       and a.userIdCreated=b.userIdWhom
   `,
@@ -1508,13 +1510,13 @@ begin
   else
     set _where=' WHERE';
   end if;
-  
+
   if __orders<>'' then
     set _orders=__orders;
   else
     set _orders='';
   end if;
-  
+
   if __limit<>'' then
     set _limit=__limit;
   else
@@ -1525,7 +1527,7 @@ begin
     set _starJoin=' inner join aAtomStar d on a.id=d.atomId';
     set _starWhere=concat(' and d.iid=',_iid,' and d.userId=',_userIdWho,' and d.star=1');
   else
-    set _starJoin='';  
+    set _starJoin='';
     set _starWhere='';
   end if;
     set _starField=concat(
@@ -1536,7 +1538,7 @@ begin
     set _labelJoin=' inner join aAtomLabelRef e on a.id=e.atomId';
     set _labelWhere=concat(' and e.iid=',_iid,' and e.userId=',_userIdWho,' and e.labelId=',_label);
   else
-    set _labelJoin='';  
+    set _labelJoin='';
     set _labelWhere='';
   end if;
     set _labelField=concat(
@@ -1550,32 +1552,43 @@ begin
     set _itemField='';
     set _itemJoin='';
   end if;
-  
+
   set @sql=concat(
-    'select ',_itemField,'a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomClassId,a.atomName,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,b.module,b.atomClassName,b.atomClassIdParent,g.userName,g.avatar',_starField,_labelField,' from aAtom a',
+    'select ',_itemField,'a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomFlow,a.atomClassId,a.atomName,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,b.module,b.atomClassName,b.atomClassIdParent,g.userName,g.avatar',_starField,_labelField,' from aAtom a',
     ' inner join aAtomClass b on a.atomClassId=b.id',
     ' inner join aUser g on a.userIdCreated=g.id',
     _itemJoin,
     _starJoin,
     _labelJoin,
     _where,
-    ' (', 
+    ' (',
     '  a.deleted=0 and a.iid=', _iid,
     _starWhere,
     _labelWhere,
     '    and (',
     '           (a.userIdCreated=',_userIdWho,') or',
-    '           (a.atomEnabled=1 and (b.public=1 or exists(select c.atomId from aViewUserRightAtom c where c.iid=',_iid,' and a.id=c.atomId and c.action=2 and c.userIdWho=',_userIdWho,')))',        
+    '             (a.atomEnabled=1 and (',
+    '               (',
+    '                 a.atomFlow=1 and (',
+    '                   (exists(select c.atomId from aViewUserRightAtom c where c.iid=',_iid,' and a.id=c.atomId and c.action>2 and c.userIdWho=',_userIdWho,')) or',
+    '                   (a.userIdCreated=',_userIdWho,' and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=',_iid,' and a.atomClassId=c.atomClassId and c.action>2 and c.scope=0 and c.userIdWho=',_userIdWho,'))',
+    '                 )',
+    '               ) or (',
+    '                 a.atomFlow=0 and (',
+    '                   b.public=1 or exists(select c.atomId from aViewUserRightAtom c where c.iid=',_iid,' and a.id=c.atomId and c.action=2 and c.userIdWho=',_userIdWho,')',
+    '                 )',
+    '                )',
+    '             ))',
     '        )',
     ' )',
     _orders,
     _limit
   );
-    
+
   prepare stmt from @sql;
   execute stmt;
   deallocate prepare stmt;
-  
+
 end
 `,
   aGetAtom: `
@@ -1591,7 +1604,7 @@ begin
 
   declare _starField,_labelField text;
   declare _itemField,_itemJoin text;
-  
+
   set _starField=concat(
         ',(select d.star from aAtomStar d where d.iid=',_iid,' and d.atomId=a.id and d.userId=',_userIdWho,') as star'
       );
@@ -1607,83 +1620,96 @@ begin
     set _itemField='';
     set _itemJoin='';
   end if;
-  
+
   set @sql=concat(
-    'select ',_itemField,'a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomClassId,a.atomName,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,b.module,b.atomClassName,b.atomClassIdParent,g.userName,g.avatar',_starField,_labelField,' from aAtom a',
+    'select ',_itemField,'a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomFlow,a.atomClassId,a.atomName,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,b.module,b.atomClassName,b.atomClassIdParent,g.userName,g.avatar',_starField,_labelField,' from aAtom a',
     ' inner join aAtomClass b on a.atomClassId=b.id',
     ' inner join aUser g on a.userIdCreated=g.id',
     _itemJoin,
     ' where a.id=', _atomId,
     '   and a.deleted=0 and a.iid=', _iid
   );
-    
+
   prepare stmt from @sql;
   execute stmt;
   deallocate prepare stmt;
-  
+
 end
 `,
   aCheckRightRead: `
 create procedure aCheckRightRead (in _iid int,in _userIdWho int,in _atomId int)
 begin
-  
+
   select a.* from aAtom a
    left join aAtomClass b on a.atomClassId=b.id
     where (
      a.deleted=0 and a.iid=_iid and a.id=_atomId
      and (
             (a.userIdCreated=_userIdWho) or
-            (a.atomEnabled=1 and (b.public=1 or exists(select c.atomId from aViewUserRightAtom c where c.iid=_iid and a.id=c.atomId and c.action=2 and c.userIdWho=_userIdWho)))    
+            (a.atomEnabled=1 and (
+              (
+                a.atomFlow=1 and (
+                  (exists(select c.atomId from aViewUserRightAtom c where c.iid=_iid and a.id=c.atomId and c.action>2 and c.userIdWho=_userIdWho)) or
+                  (a.userIdCreated=_userIdWho and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=_iid and a.atomClassId=c.atomClassId and c.action>2 and c.scope=0 and c.userIdWho=_userIdWho))
+                )
+              ) or (
+                a.atomFlow=0 and (
+                  b.public=1 or exists(select c.atomId from aViewUserRightAtom c where c.iid=_iid and a.id=c.atomId and c.action=2 and c.userIdWho=_userIdWho)
+                )
+              )
+            ))
           )
     );
-  
+
 end
 `,
   aCheckRightUpdate: `
 create procedure aCheckRightUpdate (in _iid int,in _userIdWho int,in _atomId int,in _action int,in _actionFlag varchar(255))
 begin
-  
+
   select a.* from aAtom a
     where (
      a.deleted=0 and a.iid=_iid and a.id=_atomId
      and (
             (a.atomEnabled=0 and a.userIdCreated=_userIdWho) or
-            (a.atomEnabled=1 and exists(select c.atomId from aViewUserRightAtom c where c.iid=_iid and a.id=c.atomId and c.action=_action and (_actionFlag='' or find_in_set(a.atomFlag,_actionFlag)>0 ) and c.userIdWho=_userIdWho)) or 
-            (a.atomEnabled=1 and a.userIdCreated=_userIdWho and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=_iid and a.atomClassId=c.atomClassId and c.action=_action and (_actionFlag='' or find_in_set(a.atomFlag,_actionFlag)>0 ) and c.scope=0 and c.userIdWho=_userIdWho))
+            (a.atomEnabled=1 and (
+              (exists(select c.atomId from aViewUserRightAtom c where c.iid=_iid and a.id=c.atomId and c.action=_action and (_actionFlag='' or find_in_set(a.atomFlag,_actionFlag)>0 ) and c.userIdWho=_userIdWho)) or
+              (a.userIdCreated=_userIdWho and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=_iid and a.atomClassId=c.atomClassId and c.action=_action and (_actionFlag='' or find_in_set(a.atomFlag,_actionFlag)>0 ) and c.scope=0 and c.userIdWho=_userIdWho))
+            ))
           )
     );
-    
+
 end
 `,
   aCheckRightAction: `
 create procedure aCheckRightAction (in _iid int,in _userIdWho int,in _atomId int,in _action int,in _actionFlag varchar(255))
 begin
-  
+
   select a.* from aAtom a
     where (
      a.deleted=0 and a.iid=_iid and a.id=_atomId and a.atomEnabled=1
      and (
-            (exists(select c.atomId from aViewUserRightAtom c where c.iid=_iid and a.id=c.atomId and c.action=_action and (_actionFlag='' or find_in_set(a.atomFlag,_actionFlag)>0 ) and c.userIdWho=_userIdWho)) or 
+            (exists(select c.atomId from aViewUserRightAtom c where c.iid=_iid and a.id=c.atomId and c.action=_action and (_actionFlag='' or find_in_set(a.atomFlag,_actionFlag)>0 ) and c.userIdWho=_userIdWho)) or
             (a.userIdCreated=_userIdWho and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=_iid and a.atomClassId=c.atomClassId and c.action=_action and (_actionFlag='' or find_in_set(a.atomFlag,_actionFlag)>0 ) and c.scope=0 and c.userIdWho=_userIdWho))
           )
     );
-    
+
 end
 `,
   aCheckRightCreate: `
 create procedure aCheckRightCreate (in _iid int,in _userIdWho int,in _atomClassId int)
 begin
- 
+
   select a.* from aAtomClass a
     inner join aViewUserRightAtomClass b on a.id=b.atomClassId
       where b.iid=_iid and b.atomClassId=_atomClassId and b.action=1 and b.userIdWho=_userIdWho;
-  
+
 end
 `,
   aCheckRightFunction: `
 create procedure aCheckRightFunction (in _iid int,in _userIdWho int,in _functionId int)
 begin
- 
+
   select a.* from aFunction a
     where a.deleted=0 and a.iid=_iid and a.id=_functionId
       and ( a.public=1 or
@@ -1711,13 +1737,13 @@ begin
   else
     set _where=' WHERE';
   end if;
-  
+
   if __orders<>'' then
     set _orders=__orders;
   else
     set _orders='';
   end if;
-  
+
   if __limit<>'' then
     set _limit=__limit;
   else
@@ -1732,7 +1758,7 @@ begin
     set _starField=concat(
         ',(select d.star from aFunctionStar d where d.iid=',_iid,' and d.functionId=a.id and d.userId=',_userIdWho,') as star'
       );
-    set _starJoin='';  
+    set _starJoin='';
     set _starWhere='';
   end if;
 
@@ -1742,7 +1768,7 @@ begin
     set _localeWhere=concat(' and b.iid=',_iid,' and b.locale=',_locale);
   else
     set _localeField='';
-    set _localeJoin='';  
+    set _localeJoin='';
     set _localeWhere='';
   end if;
 
@@ -1752,7 +1778,7 @@ begin
     _localeJoin,
     _starJoin,
     _where,
-    ' (', 
+    ' (',
     '  a.deleted=0 and a.iid=', _iid,
     _localeWhere,
     _starWhere,
@@ -1767,40 +1793,40 @@ begin
   prepare stmt from @sql;
   execute stmt;
   deallocate prepare stmt;
-  
+
 end
 `,
   aCheckFunctionLocales: `
 create procedure aCheckFunctionLocales (in _iid int,in _locale varchar(50))
 begin
- 
+
   select a.* from aFunction a
     where a.iid=_iid and a.menu=1
       and not exists(
-        select b.id from aFunctionLocale b 
+        select b.id from aFunctionLocale b
           where b.iid=_iid and b.locale=_locale and b.functionId=a.id
             and (b.titleLocale is not null and b.titleLocale<>'')
         );
-  
+
 end
 `,
   aBuildRoles: `
 create procedure aBuildRoles (in _iid int)
 begin
-  
+
   call aBuildRolesRemove(_iid);
   call aBuildRolesAdd(_iid,0);
-  
+
 end
 `,
   aBuildRolesRemove: `
 create procedure aBuildRolesRemove (in _iid int)
 begin
-  
+
   delete from aRoleRef where aRoleRef.iid=_iid;
   delete from aRoleIncRef where aRoleIncRef.iid=_iid;
   delete from aRoleExpand where aRoleExpand.iid=_iid;
-  
+
 end
 `,
   aBuildRolesAdd: `
@@ -1812,7 +1838,7 @@ begin
   declare i,_roleCount int;
   declare _cur cursor for select a.id,a.catalog from aRole a where a.iid=_iid and a.roleIdParent=_roleIdParent;
   declare continue handler for not found set _done=true;
-  
+
   SET @@session.max_sp_recursion_depth = 128;
 
   -- roleIds
@@ -1822,7 +1848,7 @@ begin
 
   open _cur;
 
-  set i=0; 
+  set i=0;
   read_loop: loop
     fetch _cur into _id,_catalog;
     if _done then
@@ -1832,11 +1858,11 @@ begin
     set _catalogs=json_set(_catalogs,concat('$[',i,']'),_catalog);
     set i=i+1;
   end loop;
-  
+
   close _cur;
-  
+
   -- build roles
-  
+
   set _roleCount=json_length(_roleIds);
   set i=0;
   while i<_roleCount do
@@ -1879,9 +1905,9 @@ create procedure aBuildRoleIncRef (in _iid int,in _roleId int)
 begin
 
   insert into aRoleIncRef(iid,roleId,roleIdInc,roleIdSrc)
-    select _iid,_roleId,a.roleIdInc,a.roleId from aRoleInc a 
+    select _iid,_roleId,a.roleIdInc,a.roleId from aRoleInc a
       where a.iid=_iid and a.roleId in (select b.roleIdParent from aRoleRef b where b.iid=_iid and b.roleId=_roleId);
-  
+
 end
 `,
   aBuildRoleExpand: `
@@ -1895,7 +1921,7 @@ begin
   insert into aRoleExpand(iid,roleId,roleIdBase)
     select a.iid,a.roleId,a.roleIdInc from aRoleIncRef a
       where a.iid=_iid and a.roleId=_roleId;
- 
+
 end
 `,
 };
@@ -3824,10 +3850,10 @@ const Fn = module.exports = ctx => {
     async create({ atomClass, user }) {
       // sequence
       const sequence = await this.sequence.next('draft');
-      // atom
-      const atom = { atomName: `${ctx.text('Draft')}-${sequence}` };
       // atomClass
       atomClass = await ctx.meta.atomClass.get(atomClass);
+      // atom
+      const atom = { atomName: `${ctx.text('Draft')}-${sequence}`, atomFlow: atomClass.flow };
       const atomId = await this._add({
         atomClass,
         atom,
@@ -3853,6 +3879,7 @@ const Fn = module.exports = ctx => {
         atom: {
           id: atomId,
           itemId,
+          atomFlow: atom.atomFlow, // maybe changed
         },
         user,
       });
@@ -4046,6 +4073,15 @@ const Fn = module.exports = ctx => {
       if (res.affectedRows !== 1) ctx.throw(1003);
     }
 
+    async flow({ key, atom: { atomFlow }, user }) {
+      const res = await this.modelAtom.update({
+        id: key.atomId,
+        atomFlow,
+        userIdUpdated: user.id,
+      });
+      if (res.affectedRows !== 1) ctx.throw(1003);
+    }
+
     async star({ key, atom: { star = 1 }, user }) {
       // force delete
       await this.modelAtomStar.delete({
@@ -4095,8 +4131,8 @@ const Fn = module.exports = ctx => {
       // actions
       const _basic = basic ? 'and a.code<100' : '';
       const sql = `
-        select a.*,b.module,b.atomClassName from aAtomAction a 
-          left join aAtomClass b on a.atomClassId=b.id 
+        select a.*,b.module,b.atomClassName from aAtomAction a
+          left join aAtomClass b on a.atomClassId=b.id
             where a.iid=? and a.deleted=0 and a.atomClassId=? ${_basic}
               order by a.code asc
       `;
@@ -4137,7 +4173,7 @@ const Fn = module.exports = ctx => {
 
     async _add({
       atomClass: { id, atomClassName, atomClassIdParent = 0 },
-      atom: { itemId, atomName, atomFlag = 0 },
+      atom: { itemId, atomName, atomFlag = 0, atomFlow = 0 },
       user,
     }) {
       let atomClassId = id;
@@ -4145,6 +4181,7 @@ const Fn = module.exports = ctx => {
       const res = await this.modelAtom.insert({
         atomEnabled: 0, // must be enabled by enable
         atomFlag,
+        atomFlow,
         itemId,
         atomClassId,
         atomName,
@@ -4379,6 +4416,7 @@ const Fn = module.exports = ctx => {
         atomClassName,
         atomClassIdParent,
         public: atomClass.public,
+        flow: atomClass.flow,
       };
       // insert
       const res2 = await this.model.insert(data);
@@ -4579,6 +4617,7 @@ const Fn = module.exports = ctx => {
           title: _atom.title || key,
           tableName: _atom.tableName || '',
           public: _atom.public ? 1 : 0,
+          flow: _atom.flow ? 1 : 0,
         };
         atomClass.titleLocale = ctx.text(atomClass.title);
         atomClasses[key] = atomClass;

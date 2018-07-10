@@ -149,6 +149,7 @@ const Fn = module.exports = ctx => {
           title: _atom.title || key,
           tableName: _atom.tableName || '',
           public: _atom.public ? 1 : 0,
+          flow: _atom.flow ? 1 : 0,
         };
         atomClass.titleLocale = ctx.text(atomClass.title);
         atomClasses[key] = atomClass;

@@ -59,6 +59,7 @@ const Fn = module.exports = ctx => {
         atomClassName,
         atomClassIdParent,
         public: atomClass.public,
+        flow: atomClass.flow,
       };
       // insert
       const res2 = await this.model.insert(data);

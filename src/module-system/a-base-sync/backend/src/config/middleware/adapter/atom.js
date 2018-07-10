@@ -69,10 +69,10 @@ const Fn = module.exports = ctx => {
     async create({ atomClass, user }) {
       // sequence
       const sequence = await this.sequence.next('draft');
-      // atom
-      const atom = { atomName: `${ctx.text('Draft')}-${sequence}` };
       // atomClass
       atomClass = await ctx.meta.atomClass.get(atomClass);
+      // atom
+      const atom = { atomName: `${ctx.text('Draft')}-${sequence}`, atomFlow: atomClass.flow };
       const atomId = await this._add({
         atomClass,
         atom,
@@ -98,6 +98,7 @@ const Fn = module.exports = ctx => {
         atom: {
           id: atomId,
           itemId,
+          atomFlow: atom.atomFlow, // maybe changed
         },
         user,
       });
@@ -291,6 +292,15 @@ const Fn = module.exports = ctx => {
       if (res.affectedRows !== 1) ctx.throw(1003);
     }
 
+    async flow({ key, atom: { atomFlow }, user }) {
+      const res = await this.modelAtom.update({
+        id: key.atomId,
+        atomFlow,
+        userIdUpdated: user.id,
+      });
+      if (res.affectedRows !== 1) ctx.throw(1003);
+    }
+
     async star({ key, atom: { star = 1 }, user }) {
       // force delete
       await this.modelAtomStar.delete({
@@ -340,8 +350,8 @@ const Fn = module.exports = ctx => {
       // actions
       const _basic = basic ? 'and a.code<100' : '';
       const sql = `
-        select a.*,b.module,b.atomClassName from aAtomAction a 
-          left join aAtomClass b on a.atomClassId=b.id 
+        select a.*,b.module,b.atomClassName from aAtomAction a
+          left join aAtomClass b on a.atomClassId=b.id
             where a.iid=? and a.deleted=0 and a.atomClassId=? ${_basic}
               order by a.code asc
       `;
@@ -382,7 +392,7 @@ const Fn = module.exports = ctx => {
 
     async _add({
       atomClass: { id, atomClassName, atomClassIdParent = 0 },
-      atom: { itemId, atomName, atomFlag = 0 },
+      atom: { itemId, atomName, atomFlag = 0, atomFlow = 0 },
       user,
     }) {
       let atomClassId = id;
@@ -390,6 +400,7 @@ const Fn = module.exports = ctx => {
       const res = await this.modelAtom.insert({
         atomEnabled: 0, // must be enabled by enable
         atomFlag,
+        atomFlow,
         itemId,
         atomClassId,
         atomName,
