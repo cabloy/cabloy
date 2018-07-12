@@ -6,10 +6,6 @@ module.exports = appInfo => {
 
   // module config
   config.modules = {
-    'a-base': {
-      checkUserName: false,
-      signupRoleName: 'authenticated',
-    },
   };
 
   // mysql

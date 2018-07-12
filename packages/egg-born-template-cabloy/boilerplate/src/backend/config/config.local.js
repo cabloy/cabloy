@@ -8,7 +8,6 @@ module.exports = appInfo => {
   config.modules = {
     'a-base': {
       checkUserName: true,
-      signupRoleName: 'authenticated',
     },
   };
 
