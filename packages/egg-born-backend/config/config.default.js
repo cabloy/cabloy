@@ -42,6 +42,20 @@ module.exports = appInfo => {
     disableInstance: false,
   };
 
+  // pageSize
+  config.pageSize = 20;
+
+  // modules
+  config.modules = {
+  };
+
+  // session
+  config.session = {
+    key: 'CABLOY_SESS',
+    httpOnly: true,
+    encrypt: true,
+  };
+
   // onerror
   config.onerror = {
     json(err) {
