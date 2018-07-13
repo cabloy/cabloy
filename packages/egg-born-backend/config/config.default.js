@@ -38,8 +38,8 @@ module.exports = appInfo => {
 
   // model
   config.model = {
-    disableDeleted: true,
-    disableInstance: true,
+    disableDeleted: false,
+    disableInstance: false,
   };
 
   // onerror
