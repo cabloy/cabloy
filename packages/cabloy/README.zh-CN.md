@@ -2,7 +2,7 @@
 
 Cabloy.js是基于EggBorn.js开发的一款顶级Javascript全栈业务开发框架
 
-> Vue.js + Framework7 + Koa.js + Egg.js + MySQL
+> Vue.js + Framework7 + Koa.js + Egg.js + EggBorn.js + MySQL
 
 [![NPM version][npm-image]][npm-url]
 [![David deps][david-image]][david-url]
