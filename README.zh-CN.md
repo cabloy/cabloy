@@ -20,4 +20,6 @@ EggBorn.js是一款顶级Javascript全栈开发框架
 
 ## 重要提示
 
-- 请移步至 [Cabloy.js](https://github.com/zhennann/cabloy)
+- 请移步至 [https://github.com/zhennann/cabloy](https://github.com/zhennann/cabloy)
+
+> Cabloy.js是基于EggBorn.js开发的一款顶级Javascript全栈业务开发框架。

@@ -20,4 +20,6 @@ EggBorn.js -- The Ultimate Javascript Full Stack Framework
 
 ## Important
 
-- Please go to [Cabloy.js](https://github.com/zhennann/cabloy)
+- Please go to [https://github.com/zhennann/cabloy](https://github.com/zhennann/cabloy)
+
+> Cabloy.js: The Ultimate Javascript Full Stack Business Development Platform, based on EggBornJS.
