@@ -25,7 +25,9 @@ Cabloy.js是基于EggBorn.js开发的一款顶级Javascript全栈业务开发框
 ## 演示
 
 - PC：[http://demo.cabloy.org](http://demo.cabloy.org)
-- Mobile：![](./docs/assets/images/cabloy-demo-qrcode.png)
+- Mobile：
+
+![](./docs/assets/images/cabloy-demo-qrcode.png)
 
 ## EggBorn.js是什么
 EggBorn.js是一款顶级Javascript全栈开发框架。前端采用Vue.js + Framework7 + Webpack，后端采用Koa.js + Egg.js，数据库采用mysql。
@@ -42,7 +44,7 @@ Cabloy.js在EggBorn.js的基础上，通过“业务模块”的方式，实现�
 
 ## 先决条件
 
-!> 凡是可以用 JavaScript 来写的应用，最终都会用 JavaScript 来写。 ——Atwood定律
+> 凡是可以用 JavaScript 来写的应用，最终都会用 JavaScript 来写。 ——Atwood定律
 
 相信，Javascript的深度探索者都会被这句名言激发，共同努力，为Javascript生态添砖加瓦，构建更繁荣的应用生态。
 Cabloy.js正是对这一名言的探索之作。Cabloy.js不重复造轮子，而是采用业界最新的开源技术，进行全栈开发的最佳组合。因此，也深度建议您在继续后面的阅读之前，最好能对以下框架有所了解和认知。
