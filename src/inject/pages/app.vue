@@ -11,7 +11,8 @@ export default {
         ref: 'layout',
       }));
     }
-    return c('div', children);
+    const app = c('f7-app', { props: { params: this.$root.$options.framework7 } }, children);
+    return c('div', [ app ]);
   },
   data() {
     return {
@@ -19,9 +20,9 @@ export default {
     };
   },
   methods: {
-    onF7Ready() {
+    ready() {
       // check query
-      let documentUrl = location.href.split(location.origin)[1];
+      const documentUrl = location.href.split(location.origin)[1];
       if (documentUrl && documentUrl.indexOf('/?') === 0) {
         history.replaceState(null, '', location.origin);
       }
@@ -100,11 +101,16 @@ export default {
         this.$meta.util.clearRouterHistory();
         // restore layout
         this.layout = layout;
-      })
+      });
     },
   },
   beforeDestroy() {
     this.$f7.off('resize', this.onResize);
+  },
+  mounted() {
+    this.$f7ready(() => {
+      this.ready();
+    });
   },
 };
 

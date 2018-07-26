@@ -18,7 +18,6 @@ export default function(Vue, options, cb) {
       el: '#app',
       render: c => c('app', { ref: 'app' }),
       store: Vue.prototype.$meta.store,
-      routes,
       framework7: {
         theme: 'md',
         modal: {
@@ -33,17 +32,18 @@ export default function(Vue, options, cb) {
         swipeout: {
           removeElements: false,
         },
+        routes,
       },
       components: {
         App,
       },
-      methods: {
-        onF7Ready() {
+      mounted() {
+        this.$f7ready(() => {
           // load waiting modules
           Vue.prototype.$meta.module.loadWaitings();
           // remove app loading
           Vue.prototype.$meta.util.removeAppLoading();
-        },
+        });
       },
     };
 
@@ -51,10 +51,6 @@ export default function(Vue, options, cb) {
     const parametersNew = {};
     Vue.prototype.$utils.extend(parametersNew, options.parameters);
     Vue.prototype.$utils.extend(parametersNew, f7Parameters);
-
-    if (options.parameters.methods && options.parameters.methods.onF7Ready) {
-      parametersNew.methods.onF7Ready = fns([ options.parameters.methods.onF7Ready, f7Parameters.methods.onF7Ready ]);
-    }
 
     return parametersNew;
   }
