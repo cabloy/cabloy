@@ -10,11 +10,10 @@ export default function(Vue) {
           module: 'a-layoutmobile',
           component: 'layout',
         },
-        // pc: {
-        //   module: 'a-layoutmobile',
-        //   login: '/a/login/login',
-        //   loginOnStart: false,
-        // },
+        pc: {
+          module: 'a-layoutpc',
+          component: 'layout',
+        },
       },
     },
   };
