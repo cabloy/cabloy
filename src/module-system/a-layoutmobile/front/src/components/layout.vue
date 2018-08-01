@@ -114,11 +114,13 @@ export default {
       });
     },
   },
-  methods: {
-    onF7Ready() {
+  mounted() {
+    this.$f7ready(() => {
       // start
       this.start();
-    },
+    });
+  },
+  methods: {
     onResize() {
       if (!this.started) return;
     },
@@ -176,14 +178,17 @@ export default {
     },
     onTabShow(e) {
       const target = e ? this.$$(e.target) : this.$$('.view.eb-layout-tab.tab-active');
-      if (target.hasClass('eb-layout-tab') && target[0].f7View.router.currentRoute.path === '/') {
-        target[0].f7View.router.navigate(target.data('url'));
-        this.tabShowed = true;
+      if (target.hasClass('eb-layout-tab')) {
+        const path = target[0].f7View.router.currentRoute.path;
+        if (!path || path === '/') {
+          target[0].f7View.router.navigate(target.data('url'));
+          this.tabShowed = true;
+        }
       }
     },
     backLink(ctx) {
       let backLink = false;
-      if (!this.$meta.util.historyUrlEmpty(ctx.$f7Router.history[ctx.$f7Router.history.length - 1])) {
+      if (!this.$meta.util.historyUrlEmpty(ctx.$f7router.history[ctx.$f7router.history.length - 1])) {
         backLink = true;
       } else {
         const $el = ctx.$$(ctx.$el);
