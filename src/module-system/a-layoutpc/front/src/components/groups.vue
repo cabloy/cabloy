@@ -10,7 +10,7 @@ export default {
     for (const tab of this.tabs) {
       const views = c('eb-views', {
         staticClass: 'eb-layout-views',
-        props: { views: tab.views },
+        props: { groupId: tab.id, views: tab.views },
       });
       children.push(c('f7-tab', {
         staticClass: 'eb-layout-group',

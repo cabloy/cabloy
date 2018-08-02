@@ -66,4 +66,8 @@ export default function(ctx, router) {
     }
     return back.call(router, ...args);
   };
+
+  return {
+    loadRoute,
+  };
 }

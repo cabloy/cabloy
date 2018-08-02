@@ -4,7 +4,7 @@ export default {
     loginOnStart: true,
     header: {
       buttons: [
-        { name: 'Dashboard', iconMaterial: 'dashboard', url: '/a/base/menu/list' },
+        { name: 'Home', iconMaterial: 'dashboard', url: '/a/base/menu/list' },
         { name: 'Atom', iconMaterial: 'group_work', url: '/a/base/atom/list' },
       ],
       mime:

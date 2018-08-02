@@ -100,6 +100,7 @@ export default {
         spacing: 0,
       },
       tabs: [],
+      router: null,
     };
   },
   computed: {
@@ -151,7 +152,7 @@ export default {
       this.setSize();
     },
     patchRouter(router) {
-      patch(this, router);
+      this.router = patch(this, router);
     },
     setSize() {
       const width = this.size.width = this.$$(this.$el).width();
@@ -166,6 +167,7 @@ export default {
         this.size.small = (width - spacing * 2) / 2;
         this.size.enough = false;
       } else {
+        this.size.small = small;
         this.size.enough = true;
       }
       this.size.middle = this.size.small * 2;
@@ -212,6 +214,7 @@ export default {
             title: '',
             views: [{
               id: this.$meta.util.nextId('layouttabview'),
+              url,
               callback: view => {
                 this.$f7.tab.show(`#${id}`);
                 resolve(view);
