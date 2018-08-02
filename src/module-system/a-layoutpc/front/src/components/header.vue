@@ -1,9 +1,11 @@
 <script>
+import Tabs from './tabs.vue';
 import Buttons from './buttons.vue';
 import Mine from './mine.vue';
 
 export default {
   components: {
+    ebTabs: Tabs,
     ebButtons: Buttons,
     ebMine: Mine,
   },
@@ -12,9 +14,8 @@ export default {
       staticClass: 'title',
       domProps: { innerText: this.$f7.params.name },
     });
-    const tabs = c('div', {
+    const tabs = c('eb-tabs', {
       staticClass: 'tabs',
-      domProps: { innerText: 'tabs' },
     });
     const buttons = c('eb-buttons', {
       staticClass: 'buttons',

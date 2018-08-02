@@ -2,6 +2,7 @@
 import patch from '../patch.js';
 import LayoutView from './layoutView.vue';
 import Header from './header.vue';
+import Groups from './groups.vue';
 
 export default {
   meta: {
@@ -10,10 +11,17 @@ export default {
   components: {
     ebLayoutView: LayoutView,
     ebHeader: Header,
+    ebGroups: Groups,
   },
   render(c) {
     const header = c('eb-header', { style: { height: `${this.size.top}px` } });
-    return c('div', [ header ]);
+    const groups = c('eb-groups', {
+      style: {
+        height: `${this.size.height - this.size.top - this.size.spacing * 2}px`,
+        top: `${this.size.spacing}px`,
+      },
+    });
+    return c('div', { staticClass: 'eb-layout' }, [ header, groups ]);
   },
   _render(c) {
     // view main id
@@ -82,6 +90,8 @@ export default {
       viewLoginVisible: false,
       tabShowed: false,
       size: {
+        width: 0,
+        height: 0,
         small: 0,
         middle: 0,
         enough: false,
@@ -89,6 +99,7 @@ export default {
         main: 0,
         spacing: 0,
       },
+      tabs: [],
     };
   },
   computed: {
@@ -143,8 +154,8 @@ export default {
       patch(this, router);
     },
     setSize() {
-      const width = this.$$(this.$el).width();
-      const height = this.$$(this.$el).height();
+      const width = this.size.width = this.$$(this.$el).width();
+      const height = this.size.height = this.$$(this.$el).height();
 
       // spacing
       const spacing = this.size.spacing = this.$config.layout.size.spacing;
@@ -184,10 +195,32 @@ export default {
     },
     navigate(url, options) {
       options = options || {};
-      let view = options.view || 'main';
-      view = typeof view === 'string' ? this.$f7.views[view] : view;
-      view.router.navigate(url, options);
-      if (view.name === 'main') this.viewMainVisible = true;
+      const ctx = options.ctx;
+      const target = options.target;
+      this.getView(url).then(view => {
+        view.f7View.router.navigate(url, options);
+      });
+    },
+    getView(url) {
+      return new Promise(resolve => {
+        let tab = this.tabs.find(tab => tab.url === url);
+        if (!tab) {
+          const id = this.$meta.util.nextId('layouttab');
+          tab = {
+            id,
+            url,
+            title: '',
+            views: [{
+              id: this.$meta.util.nextId('layouttabview'),
+              callback: view => {
+                this.$f7.tab.show(`#${id}`);
+                resolve(view);
+              },
+            }],
+          };
+          this.tabs.push(tab);
+        }
+      });
     },
     openLogin(routeTo) {
       const hashInit = (!routeTo || typeof routeTo === 'string') ? routeTo : routeTo.url.url;

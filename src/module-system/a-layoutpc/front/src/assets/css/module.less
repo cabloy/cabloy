@@ -1,14 +1,30 @@
-.eb-layout-view-container-main {
-  z-index: 10000;
+.eb-layout {
+  position: relative;
+  height: 100%;
+  width: 100%;
 }
 
 .eb-layout-header {
+  position: relative;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
   background-color: #343D46;
-  box-shadow: 0 0 0 1px rgba(61, 70, 79, .05), 0 1px 3px 0 rgba(61, 70, 79, .15);
+
+  &:after {
+    content: '';
+    position: absolute;
+    right: 0;
+    width: 100%;
+    top: 100%;
+    bottom: auto;
+    height: 10px;
+    pointer-events: none;
+    background: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0.3)), color-stop(40%, rgba(0, 0, 0, 0.1)), color-stop(50%, rgba(0, 0, 0, 0.05)), color-stop(80%, rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0)));
+    background: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 40%, rgba(0, 0, 0, 0.05) 50%, rgba(0, 0, 0, 0) 80%, rgba(0, 0, 0, 0) 100%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 40%, rgba(0, 0, 0, 0.05) 50%, rgba(0, 0, 0, 0) 80%, rgba(0, 0, 0, 0) 100%);
+  }
 
   .title {
     display: flex;
@@ -27,6 +43,15 @@
     align-items: center;
     flex-grow: 1;
     height: 100%;
+    background-color: #343D46;
+
+    a:hover {
+      background-color: hsla(0, 0%, 100%, .12);
+    }
+
+    &:after {
+      display: none;
+    }
   }
 
   .buttons {
@@ -64,5 +89,19 @@
       background-color: hsla(0, 0%, 100%, .12);
       border-radius: 4px;
     }
+  }
+}
+
+.eb-layout-groups {
+  position: relative;
+
+  .eb-layout-group {
+    position: relative;
+    height: 100%;
+  }
+
+  .eb-layout-views {
+    position: relative;
+    height: 100%;
   }
 }
