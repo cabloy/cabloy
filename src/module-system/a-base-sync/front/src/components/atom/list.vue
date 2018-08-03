@@ -65,7 +65,7 @@
 import Vue from 'vue';
 const ebActions = Vue.prototype.$meta.module.get('a-components').options.components.ebActions;
 export default {
-  mixins: [ebActions],
+  mixins: [ ebActions ],
   meta: {
     global: false,
   },
@@ -82,11 +82,11 @@ export default {
     },
     atomClass: {
       type: Object,
-    }
+    },
   },
   data() {
     return {
-      items: this.itemShow ? [this.itemShow] : [],
+      items: this.itemShow ? [ this.itemShow ] : [],
     };
   },
   computed: {
@@ -95,7 +95,7 @@ export default {
     },
     flags() {
       return this.$local.state.flags;
-    }
+    },
   },
   created() {
     this.$local.dispatch('getLabels');
@@ -130,7 +130,7 @@ export default {
         options = {
           where: { 'a.atomEnabled': 1 },
           orders: [
-            ['a.updatedAt', 'desc'],
+            [ 'a.updatedAt', 'desc' ],
           ],
           page: { index },
         };
@@ -138,14 +138,14 @@ export default {
         options = {
           where: { 'a.atomEnabled': 0 },
           orders: [
-            ['a.updatedAt', 'desc'],
+            [ 'a.updatedAt', 'desc' ],
           ],
           page: { index },
         };
       } else if (this.mode === 'stars') {
         options = {
           orders: [
-            ['d.updatedAt', 'desc'],
+            [ 'd.updatedAt', 'desc' ],
           ],
           star: 1,
           page: { index },
@@ -153,7 +153,7 @@ export default {
       } else if (this.mode.indexOf('labels') > -1) {
         options = {
           orders: [
-            ['e.updatedAt', 'desc'],
+            [ 'e.updatedAt', 'desc' ],
           ],
           label: this.mode.split('-')[1],
           page: { index },
@@ -171,7 +171,7 @@ export default {
         options = {
           where,
           orders: [
-            ['a.updatedAt', 'desc'],
+            [ 'a.updatedAt', 'desc' ],
           ],
           page: { index },
         };
@@ -305,12 +305,12 @@ export default {
       return this.$meta.util.performAction({ ctx: this, action: _action, item: context.item })
         .then(() => {
           this.$meta.util.swipeoutClose(event.target);
-        })
+        });
     },
     getActionColor(action, index) {
       if (index === 0) return 'orange';
       else if (index === 1) return 'yellow';
-      else return 'blue';
+      return 'blue';
     },
     getFlagTitle(item) {
       if (!this.flags) return null;
@@ -323,9 +323,9 @@ export default {
         action: {
           module: item.module,
           atomClassName: item.atomClassName,
-          name: 'read'
-        }
-      })
+          name: 'read',
+        },
+      });
     },
   },
 };

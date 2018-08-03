@@ -1,5 +1,5 @@
 <template>
-  <f7-page>
+  <eb-page>
     <eb-navbar :title="this.mode==='edit'?$text('Edit'):$text('View')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link v-if="ready && findAction('write')" :iconMaterial="this.mode==='edit'?'save':'edit'" :context="this.mode==='edit'?'save':'write'" :onPerform="onAction"></eb-link>
@@ -22,7 +22,7 @@
         </f7-list>
       </f7-popover>
     </template>
-  </f7-page>
+  </eb-page>
 </template>
 <script>
 import Vue from 'vue';
@@ -119,14 +119,14 @@ export default {
           name: action,
         };
       }
-      // for write
-      if (action.name === 'write') {
-        action.navigateOptions = { view: 'self' };
-      }
       // action
       const _action = this.getAction(action);
+      // for write
+      if (action.name === 'write') {
+        _action.navigateOptions = { target: '_self' };
+      }
       return this.$meta.util.performAction({ ctx: this, action: _action, item: this.item }).then(res => {
-        if (res) this.$f7Router.back();
+        if (res) this.$f7router.back();
       });
     },
     onPerformValidate(event, actionName) {
@@ -134,7 +134,7 @@ export default {
       const _action = this.getAction(action);
       return this.$meta.util.performAction({ ctx: this, action: _action, item: this.item }).then(() => {
         if (actionName === 'save') return true; // toast on success
-        if (actionName === 'submit') this.$f7Router.back();
+        if (actionName === 'submit') this.$f7router.back();
       });
     },
     onActionChanged(data) {

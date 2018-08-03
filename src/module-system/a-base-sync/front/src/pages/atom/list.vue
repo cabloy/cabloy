@@ -1,5 +1,5 @@
 <template>
-  <f7-page :page-content="false" tabs with-subnavbar>
+  <eb-page :page-content="false" tabs with-subnavbar>
     <eb-navbar :title="$text('Atom')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="search" @click.prevent="onSearch"></eb-link>
@@ -31,7 +31,7 @@
         </eb-tab-page-content>
       </template>
     </f7-tabs>
-  </f7-page>
+  </eb-page>
 </template>
 <script>
 import Vue from 'vue';
@@ -53,12 +53,12 @@ export default {
       return this.$local.state.labels;
     },
     atomClass() {
-      if (!this.$f7Route.query.module || !this.$f7Route.query.atomClassName) return null;
+      if (!this.$f7route.query.module || !this.$f7route.query.atomClassName) return null;
       return {
-        module: this.$f7Route.query.module,
-        atomClassName: this.$f7Route.query.atomClassName
+        module: this.$f7route.query.module,
+        atomClassName: this.$f7route.query.atomClassName,
       };
-    }
+    },
   },
   methods: {
     onSearch() {

@@ -1,15 +1,15 @@
 <template>
-  <f7-page ptr @ptr:refresh="onRefresh" infinite :infinitePreloader="false" @infinite="onInfinite">
+  <eb-page ptr @ptr:refresh="onRefresh" infinite :infinitePreloader="false" @infinite="onInfinite">
     <eb-navbar :title="$text('Search Result')" eb-back-link="Back"></eb-navbar>
     <atoms ref="list" mode="search" :params="params" :atomClass="atomClass"></atoms>
-  </f7-page>
+  </eb-page>
 </template>
 <script>
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.components.ebPageContext;
 import atoms from '../../components/atom/list.vue';
 export default {
-  mixins: [ebPageContext],
+  mixins: [ ebPageContext ],
   components: {
     atoms,
   },

@@ -1,5 +1,5 @@
 <template>
-  <f7-page>
+  <eb-page>
     <eb-navbar :title="$text('Labels')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="add" @click.prevent="onAddLabel"></eb-link>
@@ -9,7 +9,7 @@
       <f7-list-item group-title :title="item?item.atomName:''"></f7-list-item>
       <f7-list-item v-for="key of Object.keys(labelsAll)" :key="key" :title="labelsAll[key].text" checkbox :checked="labelChecked(key)" @change="onLabelCheckChange($event,key)" swipeout>
         <div slot="media" class="media" :style="{backgroundColor:labelsAll[key].color}"></div>
-        <f7-swipeout-actions>
+        <f7-swipeout-actions right>
           <eb-swipeout-button close>{{$text('Close')}}</eb-swipeout-button>
           <eb-swipeout-button color="orange" :context="key" :onPerform="onEditLabel">{{$text('Edit')}}</eb-swipeout-button>
         </f7-swipeout-actions>
@@ -41,13 +41,13 @@
         </f7-block>
       </f7-page-content>
     </f7-sheet>
-  </f7-page>
+  </eb-page>
 </template>
 <script>
 export default {
   data() {
     return {
-      atomId: parseInt(this.$f7Route.query.atomId),
+      atomId: parseInt(this.$f7route.query.atomId),
       item: null,
       labels: [],
       sheetOpened: false,

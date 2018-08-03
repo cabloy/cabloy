@@ -5,12 +5,15 @@
 import Vue from 'vue';
 import item from '../../components/atom/item.vue';
 export default {
+  meta: {
+    size: 'middle',
+  },
   components: {
     item,
   },
   data() {
     return {
-      query: this.$f7Route.query,
+      query: this.$f7route.query,
     };
   },
 };

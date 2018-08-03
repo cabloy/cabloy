@@ -1,17 +1,17 @@
 <template>
-  <f7-page>
+  <eb-page>
     <eb-navbar :title="$text('Select atom class')" eb-back-link="Back"></eb-navbar>
     <f7-list>
       <f7-list-item v-for="(item,index) of atomClasses" :key="index" radio :checked="module===item.module && atomClassName===item.atomClassName" :title="item.title" @click="onItemClick(item)">
       </f7-list-item>
     </f7-list>
-  </f7-page>
+  </eb-page>
 </template>
 <script>
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.components.ebPageContext;
 export default {
-  mixins: [ebPageContext],
+  mixins: [ ebPageContext ],
   data() {
     return {};
   },
@@ -56,8 +56,8 @@ export default {
         title: item.title,
       } : null;
       this.contextCallback(200, data);
-      this.$f7Router.back();
-    }
+      this.$f7router.back();
+    },
   },
 };
 

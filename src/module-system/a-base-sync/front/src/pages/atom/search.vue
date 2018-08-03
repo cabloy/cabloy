@@ -1,5 +1,5 @@
 <template>
-  <f7-page>
+  <eb-page>
     <eb-navbar :title="$text('Search Atom')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="search" @click.prevent="onSearch"></eb-link>
@@ -19,7 +19,7 @@
     </f7-list>
     <eb-validate v-if="item && validateParams" ref="validate" auto :data="item" :params="validateParams">
     </eb-validate>
-  </f7-page>
+  </eb-page>
 </template>
 <script>
 export default {
@@ -56,17 +56,17 @@ export default {
           // validateParams
           this.$api.post('atomClass/validatorSearch', {
             module: atomClass.module,
-            atomClassName: atomClass.atomClassName
+            atomClassName: atomClass.atomClassName,
           }).then(data => {
             this.item = {};
             this.validateParams = {
               module: data.module,
-              validator: data.validator
-            }
+              validator: data.validator,
+            };
           });
         });
       }
-    }
+    },
   },
   created() {
     this.$local.dispatch('getLabels');
@@ -74,7 +74,7 @@ export default {
   methods: {
     onSelectAtomClass() {
       this.$view.navigate('/a/base/atom/selectAtomClass', {
-        view: 'self',
+        target: '_self',
         context: {
           params: {
             atomClass: this.atomClass,
@@ -84,7 +84,7 @@ export default {
             if (code === 200) {
               this.atomClass = data;
             }
-          }
+          },
         },
       });
     },
@@ -105,7 +105,7 @@ export default {
       }
 
       this.$view.navigate('/a/base/atom/searchResult', {
-        view: 'self',
+        target: '_self',
         context: {
           params: {
             atomName: this.atomName,

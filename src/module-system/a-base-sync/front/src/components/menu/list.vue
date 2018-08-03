@@ -4,14 +4,14 @@
       <template v-if="mode==='search'">
         <eb-list-item v-for="item of items" :key="item.id" link="#" :context="item" :onPerform="onItemClick" :title="item.titleLocale" swipeout>
           <f7-icon slot="media" color="orange" :material="item.star?'star':''"></f7-icon>
-          <f7-swipeout-actions>
+          <f7-swipeout-actions right>
             <eb-swipeout-button color="orange" :context="item" :onPerform="onStarSwitch">{{item.star?$text('Unstar'):$text('Star')}}</eb-swipeout-button>
           </f7-swipeout-actions>
         </eb-list-item>
       </template>
       <template v-else-if="mode==='stars'">
         <eb-list-item v-for="item of items" :key="item.id" link="#" :context="item" :onPerform="onItemClick" :title="item.titleLocale" swipeout>
-          <f7-swipeout-actions>
+          <f7-swipeout-actions right>
             <eb-swipeout-button color="orange" :context="item" :onPerform="onStarOff">{{$text('Unstar')}}</eb-swipeout-button>
           </f7-swipeout-actions>
         </eb-list-item>
@@ -21,7 +21,7 @@
           <f7-list-item :title="group.title" group-title></f7-list-item>
           <eb-list-item v-for="item of group.items" :key="item.id" link="#" :context="item" :onPerform="onItemClick" :title="item.titleLocale" swipeout>
             <f7-icon slot="media" color="orange" :material="item.star?'star':''"></f7-icon>
-            <f7-swipeout-actions>
+            <f7-swipeout-actions right>
               <eb-swipeout-button color="orange" :context="item" :onPerform="onStarSwitch">{{item.star?$text('Unstar'):$text('Star')}}</eb-swipeout-button>
             </f7-swipeout-actions>
           </eb-list-item>
@@ -38,7 +38,7 @@ export default {
   meta: {
     global: false,
   },
-  mixins: [ebModules],
+  mixins: [ ebModules ],
   props: {
     mode: {
       type: String,
@@ -122,8 +122,8 @@ export default {
         options = {
           where: { menu: 1 },
           orders: [
-            ['scene', 'asc'],
-            ['sorting', 'asc'],
+            [ 'scene', 'asc' ],
+            [ 'sorting', 'asc' ],
           ],
           page: { index },
         };
@@ -131,9 +131,9 @@ export default {
         options = {
           where: { menu: 1 },
           orders: [
-            ['module', 'asc'],
-            ['scene', 'asc'],
-            ['sorting', 'asc'],
+            [ 'module', 'asc' ],
+            [ 'scene', 'asc' ],
+            [ 'sorting', 'asc' ],
           ],
           page: { index },
         };
@@ -141,7 +141,7 @@ export default {
         options = {
           where: { menu: 1 },
           orders: [
-            ['d.updatedAt', 'desc'],
+            [ 'd.updatedAt', 'desc' ],
           ],
           star: 1,
           page: { index },
@@ -150,7 +150,7 @@ export default {
         options = {
           where: { menu: 1, titleLocale: { val: this.query, op: 'like' } },
           orders: [
-            ['titleLocale', 'asc'],
+            [ 'titleLocale', 'asc' ],
           ],
           page: { index },
         };
