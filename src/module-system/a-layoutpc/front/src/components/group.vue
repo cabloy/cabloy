@@ -29,8 +29,7 @@ export default {
         }));
       }
     }
-    const views = c('div', children);
-    return views;
+    return c('div', children);
   },
   props: {
     groupId: {
@@ -44,8 +43,8 @@ export default {
     size() {
       return this.$parent.$parent.$parent.$parent.size;
     },
-    tabs() {
-      return this.$parent.$parent.$parent.$parent.tabs;
+    groups() {
+      return this.$parent.$parent.$parent.$parent.groups;
     },
   },
   methods: {
@@ -63,25 +62,45 @@ export default {
         } else {
           width = this.size.middle;
         }
-        // left
-        let left;
-        if (this.views.length === 1) {
-          left = (this.size.width - width) / 2;
-        } else {
-          left = this.size.spacing;
-        }
         this.$$(view.$el).css({
           width: `${width}px`,
-          left: `${left}px`,
         });
+        // reLayout
+        this.reLayout();
         // callback
         _view.callback(view);
         delete _view.callback;
       });
     },
+    reLayout() {
+      // space
+      let space = this.size.width;
+      let spacing = 0;
+      for (let i = this.views.length - 1; i >= 0; i--) {
+        const view = this.$refs[this.views[i].id];
+        const space2 = space - this.$$(view.$el).width() - spacing;
+        if (space2 > 0) {
+          space = space2;
+          spacing = this.size.spacing;
+        } else {
+          break;
+        }
+      }
+      // left
+      let left = parseInt(this.size.width - space / 2);
+      spacing = 0;
+      for (let i = this.views.length - 1; i >= 0; i--) {
+        const view = this.$refs[this.views[i].id];
+        left -= this.$$(view.$el).width() + spacing;
+        spacing = this.size.spacing;
+        this.$$(view.$el).css({
+          left: `${left}px`,
+        });
+      }
+    },
     onViewTitle(data) {
-      const tab = this.tabs.find(tab => tab.id === this.groupId);
-      if (!tab.title) tab.title = data.title;
+      const group = this.groups.find(group => group.id === this.groupId);
+      if (!group.title) group.title = data.title;
     },
   },
 };

@@ -1,28 +1,27 @@
 <script>
-import Views from './views.vue';
+import Group from './group.vue';
 
 export default {
   components: {
-    ebViews: Views,
+    ebGroup: Group,
   },
   render(c) {
     const children = [];
-    for (const tab of this.tabs) {
-      const views = c('eb-views', {
+    for (const group of this.groups) {
+      const _group = c('eb-group', {
         staticClass: 'eb-layout-views',
-        props: { groupId: tab.id, views: tab.views },
+        props: { groupId: group.id, views: group.views },
       });
       children.push(c('f7-tab', {
-        staticClass: 'eb-layout-group',
-        attrs: { ref: tab.id, key: tab.id, id: tab.id, tabActive: tab.active },
-      }, [ views ]));
+        staticClass: `eb-layout-group${group.dashboard ? ' eb-layout-group-dashboard' : ''}`,
+        attrs: { ref: group.id, key: group.id, id: group.id, tabActive: group.active, 'data-groupId': group.id },
+      }, [ _group ]));
     }
-    const tabs = c('f7-tabs', { staticClass: 'eb-layout-groups' }, children);
-    return tabs;
+    return c('f7-tabs', { staticClass: 'eb-layout-groups' }, children);
   },
   computed: {
-    tabs() {
-      return this.$parent.tabs;
+    groups() {
+      return this.$parent.groups;
     },
   },
 };

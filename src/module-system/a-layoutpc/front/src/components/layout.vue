@@ -21,7 +21,7 @@ export default {
         top: `${this.size.spacing}px`,
       },
     });
-    return c('div', { staticClass: 'eb-layout' }, [ header, groups ]);
+    return c('div', { staticClass: 'eb-layout-container eb-layout-container-pc' }, [ header, groups ]);
   },
   _render(c) {
     // view main id
@@ -99,7 +99,7 @@ export default {
         main: 0,
         spacing: 0,
       },
-      tabs: [],
+      groups: [],
       router: null,
     };
   },
@@ -162,9 +162,9 @@ export default {
       const spacing = this.size.spacing = this.$config.layout.size.spacing;
 
       // width
-      const small = (width - spacing * 3) / 3;
+      const small = parseInt((width - spacing * 3) / 3);
       if (small < this.$config.layout.size.small) {
-        this.size.small = (width - spacing * 2) / 2;
+        this.size.small = parseInt((width - spacing * 2) / 2);
         this.size.enough = false;
       } else {
         this.size.small = small;
@@ -199,30 +199,49 @@ export default {
       options = options || {};
       const ctx = options.ctx;
       const target = options.target;
-      this.getView(url).then(view => {
-        view.f7View.router.navigate(url, options);
-      });
+      if (target === '_self') {
+        ctx.$view.f7View.router.navigate(url, options);
+      } else {
+        // groupId
+        let groupId;
+        if (!ctx.$view || target === '_group' || this.$$(ctx.$view.$el).parents('.eb-layout-group-dashboard').length > 0) {
+          groupId = null;
+        } else {
+          groupId = this.$$(ctx.$view.$el).parents('.eb-layout-group').data('groupId');
+        }
+        // get view
+        this.getView({ groupId, url, dashboard: target === '_dashboard' }).then(view => {
+          view.f7View.router.navigate(url, options);
+        });
+      }
     },
-    getView(url) {
+    getView({ groupId, url, dashboard }) {
       return new Promise(resolve => {
-        let tab = this.tabs.find(tab => tab.url === url);
-        if (!tab) {
-          const id = this.$meta.util.nextId('layouttab');
-          tab = {
-            id,
+        let group;
+        if (groupId) {
+          group = this.groups.find(group => group.id === groupId);
+        } else {
+          group = this.groups.find(group => group.url === url);
+        }
+        if (!group) {
+          groupId = this.$meta.util.nextId('layoutgroup');
+          group = {
+            id: groupId,
             url,
             title: '',
-            views: [{
-              id: this.$meta.util.nextId('layouttabview'),
-              url,
-              callback: view => {
-                this.$f7.tab.show(`#${id}`);
-                resolve(view);
-              },
-            }],
+            dashboard,
+            views: [],
           };
-          this.tabs.push(tab);
+          this.groups.push(group);
         }
+        group.views.push({
+          id: this.$meta.util.nextId('layoutgroupview'),
+          url,
+          callback: view => {
+            this.$f7.tab.show(`#${groupId}`);
+            resolve(view);
+          },
+        });
       });
     },
     openLogin(routeTo) {

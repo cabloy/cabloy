@@ -1,112 +1,112 @@
-.eb-layout {
+.eb-layout-container-pc {
   position: relative;
   height: 100%;
   width: 100%;
   background-color: #C3D4E7;
-}
 
-.eb-layout-header {
-  position: relative;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  background-color: #343D46;
-
-  &:after {
-    content: '';
-    position: absolute;
-    right: 0;
-    width: 100%;
-    top: 100%;
-    bottom: auto;
-    height: 10px;
-    pointer-events: none;
-    background: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0.3)), color-stop(40%, rgba(0, 0, 0, 0.1)), color-stop(50%, rgba(0, 0, 0, 0.05)), color-stop(80%, rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0)));
-    background: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 40%, rgba(0, 0, 0, 0.05) 50%, rgba(0, 0, 0, 0) 80%, rgba(0, 0, 0, 0) 100%);
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 40%, rgba(0, 0, 0, 0.05) 50%, rgba(0, 0, 0, 0) 80%, rgba(0, 0, 0, 0) 100%);
-  }
-
-  .title {
+  .eb-layout-header {
+    position: relative;
     display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
     align-items: center;
-    height: 100%;
-    min-width: 180px;
-    color: #C3D4E7;
-    font-size: 30px;
-    font-weight: 700;
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-
-  .tabs {
-    display: flex;
-    align-items: center;
-    flex-grow: 1;
-    height: 100%;
     background-color: #343D46;
 
-    a:hover {
-      background-color: hsla(0, 0%, 100%, .12);
-    }
-
     &:after {
-      display: none;
+      content: '';
+      position: absolute;
+      right: 0;
+      width: 100%;
+      top: 100%;
+      bottom: auto;
+      height: 10px;
+      pointer-events: none;
+      background: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0.3)), color-stop(40%, rgba(0, 0, 0, 0.1)), color-stop(50%, rgba(0, 0, 0, 0.05)), color-stop(80%, rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0)));
+      background: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 40%, rgba(0, 0, 0, 0.05) 50%, rgba(0, 0, 0, 0) 80%, rgba(0, 0, 0, 0) 100%);
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 40%, rgba(0, 0, 0, 0.05) 50%, rgba(0, 0, 0, 0) 80%, rgba(0, 0, 0, 0) 100%);
     }
-  }
 
-  .buttons {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    border-right: 1px solid #414D5B;
-    padding-left: 6px;
-    padding-right: 6px;
-
-    a {
+    .title {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      min-width: 180px;
       color: #C3D4E7;
-      padding: 6px;
+      font-size: 30px;
+      font-weight: 700;
+      padding-left: 20px;
+      padding-right: 20px;
     }
 
-    a:hover {
-      background-color: hsla(0, 0%, 100%, .12);
-      border-radius: 4px;
+    .tabs {
+      display: flex;
+      align-items: center;
+      flex-grow: 1;
+      height: 100%;
+      background-color: #343D46;
+
+      a:hover {
+        background-color: hsla(0, 0%, 100%, .12);
+      }
+
+      &:after {
+        display: none;
+      }
+    }
+
+    .buttons {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      border-right: 1px solid #414D5B;
+      padding-left: 6px;
+      padding-right: 6px;
+
+      a {
+        color: #C3D4E7;
+        padding: 6px;
+      }
+
+      a:hover {
+        background-color: hsla(0, 0%, 100%, .12);
+        border-radius: 4px;
+      }
+    }
+
+    .mine {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      color: #C3D4E7;
+      padding-left: 12px;
+      cursor: pointer;
+
+      div {
+        padding-right: 12px;
+      }
+
+      &:hover {
+        background-color: hsla(0, 0%, 100%, .12);
+        border-radius: 4px;
+      }
     }
   }
 
-  .mine {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    color: #C3D4E7;
-    padding-left: 12px;
-    cursor: pointer;
-
-    div {
-      padding-right: 12px;
-    }
-
-    &:hover {
-      background-color: hsla(0, 0%, 100%, .12);
-      border-radius: 4px;
-    }
-  }
-}
-
-.eb-layout-groups {
-  position: relative;
-
-  .eb-layout-group {
+  .eb-layout-groups {
     position: relative;
-    height: 100%;
-  }
 
-  .eb-layout-views {
-    position: relative;
-    height: 100%;
-
-    .eb-layout-view {
+    .eb-layout-group {
       position: relative;
+      height: 100%;
+    }
+
+    .eb-layout-views {
+      position: relative;
+      height: 100%;
+
+      .eb-layout-view {
+        position: absolute;
+      }
     }
   }
 }

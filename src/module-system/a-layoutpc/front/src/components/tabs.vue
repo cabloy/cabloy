@@ -2,18 +2,18 @@
 export default {
   render(c) {
     const children = [];
-    for (const tab of this.tabs) {
+    for (const group of this.groups) {
       children.push(c('f7-link', {
-        attrs: { tabLink: `#${tab.id}`, tabLinkActive: tab.active },
-        domProps: { innerText: tab.title },
+        attrs: { tabLink: `#${group.id}`, tabLinkActive: group.active },
+        domProps: { innerText: group.title },
       }));
     }
     const toolbar = c('f7-toolbar', { attrs: { tabbar: true, scrollable: true } }, children);
     return toolbar;
   },
   computed: {
-    tabs() {
-      return this.$parent.$parent.tabs;
+    groups() {
+      return this.$parent.$parent.groups;
     },
   },
 };

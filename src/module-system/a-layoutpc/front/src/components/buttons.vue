@@ -6,6 +6,7 @@ export default {
       const props = {
         iconMaterial: button.iconMaterial,
         ebHref: button.url,
+        ebTarget: button.target,
       };
       children.push(c('eb-link', { key: button.name, props }));
     }
