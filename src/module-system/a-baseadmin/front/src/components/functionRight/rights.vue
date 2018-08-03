@@ -4,7 +4,7 @@
       <f7-list-group v-for="group of itemGroups" :key="group.id">
         <f7-list-item :title="group.id" group-title></f7-list-item>
         <eb-list-item v-for="item of group.items" :key="item.id" :title="item.title" swipeout>
-          <f7-swipeout-actions>
+          <f7-swipeout-actions right>
             <eb-swipeout-button color="orange" :context="item" :onPerform="onPerformDelete">Delete</eb-swipeout-button>
           </f7-swipeout-actions>
         </eb-list-item>
@@ -97,7 +97,7 @@ export default {
     onFunctionRightDelete(data) {
       const index = this.items.findIndex(item => item.id === data.id);
       if (index > -1) this.items.splice(index, 1);
-    }
+    },
   },
 };
 

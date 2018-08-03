@@ -7,7 +7,7 @@
           <f7-badge v-if="item.mobile">{{item.mobile}}</f7-badge>
           <f7-badge v-if="item.disabled===1">Disabled</f7-badge>
         </div>
-        <f7-swipeout-actions>
+        <f7-swipeout-actions right>
           <eb-swipeout-button v-if="item.disabled===0" color="orange" :context="item" :onPerform="onPerformDisable">Disable</eb-swipeout-button>
           <eb-swipeout-button v-if="item.disabled===1" color="orange" :context="item" :onPerform="onPerformEnable">Enable</eb-swipeout-button>
           <eb-swipeout-button color="yellow" :context="item" :onPerform="onPerformDelete">Delete</eb-swipeout-button>
@@ -69,7 +69,7 @@ export default {
       const params = {
         roleId: this.roleId,
         query: this.query,
-        page: { index }
+        page: { index },
       };
       if (!this.roleId) params.anonymous = 0;
       return this.$api.post('user/list', params)
@@ -86,8 +86,8 @@ export default {
     },
     onPerformDelete(event, item) {
       return this.$api.post('user/delete', {
-          userId: item.id,
-        })
+        userId: item.id,
+      })
         .then(() => {
           this.$meta.eventHub.$emit('user:delete', { userId: item.id });
           this.$meta.util.swipeoutDelete(event.target);
@@ -96,9 +96,9 @@ export default {
     },
     disableUser(event, item, disabled) {
       return this.$api.post('user/disable', {
-          userId: item.id,
-          disabled,
-        })
+        userId: item.id,
+        disabled,
+      })
         .then(() => {
           this.$meta.eventHub.$emit('user:disable', { userId: item.id, disabled });
           this.$meta.util.swipeoutClose(event.target);

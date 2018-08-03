@@ -10,7 +10,7 @@
               <f7-badge v-for="scopeRole of item.scopeRoles" :key="scopeRole.id">{{scopeRole.roleName}}</f7-badge>
             </template>
           </div>
-          <f7-swipeout-actions>
+          <f7-swipeout-actions right>
             <eb-swipeout-button color="orange" :context="item" :onPerform="onPerformDelete">Delete</eb-swipeout-button>
           </f7-swipeout-actions>
         </eb-list-item>

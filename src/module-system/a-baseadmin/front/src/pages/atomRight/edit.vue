@@ -1,5 +1,5 @@
 <template>
-  <f7-page :page-content="false" tabs with-subnavbar>
+  <eb-page :page-content="false" tabs with-subnavbar>
     <eb-navbar :title="getPageTitle()" eb-back-link="Back">
       <f7-subnavbar>
         <f7-toolbar v-if="role" tabbar>
@@ -19,7 +19,7 @@
     <f7-toolbar v-if="tabName==='rights'" bottom-md>
       <eb-link :onPerform="onPerformRightsAdd">Add Atom Right</eb-link>
     </f7-toolbar>
-  </f7-page>
+  </eb-page>
 </template>
 <script>
 import Vue from 'vue';
@@ -32,7 +32,7 @@ export default {
   },
   data() {
     return {
-      roleId: parseInt(this.$f7Route.query.roleId),
+      roleId: parseInt(this.$f7route.query.roleId),
       role: null,
       tabIdRights: Vue.prototype.$meta.util.nextId('tab'),
       tabIdSpreads: Vue.prototype.$meta.util.nextId('tab'),
@@ -43,7 +43,7 @@ export default {
     this.$api.post('role/item', { roleId: this.roleId })
       .then(data => {
         this.role = data;
-      })
+      });
   },
   methods: {
     getPageTitle() {
@@ -53,8 +53,8 @@ export default {
     },
     onPerformRightsAdd() {
       return this.$refs.rights.onPerformAdd();
-    }
-  }
+    },
+  },
 };
 
 </script>

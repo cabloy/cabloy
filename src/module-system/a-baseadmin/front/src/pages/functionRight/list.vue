@@ -1,20 +1,20 @@
 <template>
-  <f7-page>
+  <eb-page>
     <eb-navbar :title="$text('Function Right Management')" eb-back-link="Back"></eb-navbar>
     <eb-role-list ref="roleList" :roleIdStart="roleIdStart" @node:click="onNodeClick"></eb-role-list>
-  </f7-page>
+  </eb-page>
 </template>
 <script>
 export default {
   data() {
     return {
-      roleIdStart: parseInt(this.$f7Route.query.roleIdStart),
+      roleIdStart: parseInt(this.$f7route.query.roleIdStart),
     };
   },
   computed: {
     tree() {
       return this.$refs.roleList.tree;
-    }
+    },
   },
   methods: {
     onNodeClick(node) {

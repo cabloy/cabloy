@@ -1,5 +1,5 @@
 <template>
-  <f7-page>
+  <eb-page>
     <eb-navbar title="Add Atom Right" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="save" :onPerform="onSave"></eb-link>
@@ -20,7 +20,7 @@
         <div slot="after">{{scopeTitle}}</div>
       </f7-list-item>
     </f7-list>
-  </f7-page>
+  </eb-page>
 </template>
 <script>
 import Vue from 'vue';
@@ -29,7 +29,7 @@ export default {
   mixins: [ ebActions ],
   data() {
     return {
-      roleId: parseInt(this.$f7Route.query.roleId),
+      roleId: parseInt(this.$f7route.query.roleId),
       atomClass: null,
       actionCode: '',
       scopeSelf: true,
@@ -70,7 +70,7 @@ export default {
   methods: {
     onSelectAtomClass() {
       this.$view.navigate('/a/base/atom/selectAtomClass', {
-        view: 'self',
+        target: '_self',
         context: {
           params: {
             atomClass: this.atomClass,
@@ -86,7 +86,7 @@ export default {
     },
     onSelectScope() {
       this.$view.navigate('/a/baseadmin/role/select', {
-        view: 'self',
+        target: '_self',
         context: {
           params: {
             roleIdStart: null,
@@ -111,7 +111,7 @@ export default {
       })
         .then(() => {
           this.$meta.eventHub.$emit('atomRight:add', { roleId: this.roleId });
-          this.$f7Router.back();
+          this.$f7router.back();
         });
     },
   },

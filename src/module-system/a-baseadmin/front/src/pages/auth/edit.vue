@@ -1,5 +1,5 @@
 <template>
-  <f7-page>
+  <eb-page>
     <eb-navbar :title="$text('Edit')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="save" :onPerform="onPerformSave"></eb-link>
@@ -9,7 +9,7 @@
       <eb-validate ref="validate" auto :data="config" :params="{validator: 'auth'}" :onPerform="onPerformValidate">
       </eb-validate>
     </f7-block>
-  </f7-page>
+  </eb-page>
 </template>
 <script>
 export default {
@@ -18,16 +18,16 @@ export default {
   },
   data() {
     return {
-      id: parseInt(this.$f7Route.query.id),
+      id: parseInt(this.$f7route.query.id),
       item: null,
       config: null,
-    }
+    };
   },
   created() {
     this.$api.post('auth/item', { id: this.id }).then(data => {
       this.item = data;
       this.config = JSON.parse(data.config);
-    })
+    });
   },
   methods: {
     onPerformValidate() {
@@ -35,7 +35,7 @@ export default {
         id: this.id,
         data: this.config,
       }).then(() => {
-        this.$f7Router.back();
+        this.$f7router.back();
       });
     },
     onPerformSave() {

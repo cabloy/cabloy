@@ -1,5 +1,5 @@
 <template>
-  <f7-page>
+  <eb-page>
     <eb-navbar :title="$text('Role Management')" eb-back-link="Back"></eb-navbar>
     <eb-role-list ref="roleList" :roleIdStart="roleIdStart" @node:click="onNodeClick"></eb-role-list>
     <f7-fab v-if="roleDirty" color="pink">
@@ -9,20 +9,20 @@
         <eb-fab-button color="orange" :onPerform="onPerformBuild">Build</eb-fab-button>
       </f7-fab-buttons>
     </f7-fab>
-  </f7-page>
+  </eb-page>
 </template>
 <script>
 export default {
   data() {
     return {
-      roleIdStart: parseInt(this.$f7Route.query.roleIdStart),
+      roleIdStart: parseInt(this.$f7route.query.roleIdStart),
       roleDirty: false,
     };
   },
   computed: {
     tree() {
       return this.$refs.roleList.tree;
-    }
+    },
   },
   mounted() {
     this.$meta.eventHub.$on('role:save', this.onRoleSave);
@@ -59,7 +59,7 @@ export default {
       this.reloadChildren(node && node[0]);
     },
     onRoleMove(data) {
-      for (const roleIdParent of ['roleIdFrom', 'roleIdTo']) {
+      for (const roleIdParent of [ 'roleIdFrom', 'roleIdTo' ]) {
         const node = this.tree.find(node => node.id === data[roleIdParent]);
         this.reloadChildren(node && node[0]);
       }

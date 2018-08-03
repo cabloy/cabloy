@@ -1,12 +1,12 @@
 <template>
-  <f7-page ptr @ptr:refresh="onRefresh" infinite :infinitePreloader="false" @infinite="onInfinite">
+  <eb-page ptr @ptr:refresh="onRefresh" infinite :infinitePreloader="false" @infinite="onInfinite">
     <eb-navbar :title="$text('User Management')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link iconMaterial="search" eb-target="self" eb-href="user/search"></eb-link>
+        <eb-link iconMaterial="search" eb-target="_self" eb-href="user/search"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <users ref="users"></users>
-  </f7-page>
+  </eb-page>
 </template>
 <script>
 import Vue from 'vue';
@@ -29,7 +29,7 @@ export default {
     onInfinite() {
       this.$refs.users.loadMore();
     },
-  }
+  },
 };
 
 </script>

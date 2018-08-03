@@ -32,7 +32,7 @@ export default {
   props: {
     role: {
       type: Object,
-    }
+    },
   },
   data() {
     return {};
@@ -52,7 +52,7 @@ export default {
     },
     onPerformMove() {
       this.$view.navigate('/a/baseadmin/role/select', {
-        view: 'self',
+        target: '_self',
         context: {
           params: {
             roleIdStart: null,
@@ -72,7 +72,7 @@ export default {
                   });
               }
             }
-          }
+          },
         },
       });
     },
@@ -83,11 +83,11 @@ export default {
             .then(() => {
               this.$meta.eventHub.$emit('role:delete', { roleId: this.role.id, roleIdParent: this.role.roleIdParent });
               this.$meta.eventHub.$emit('role:dirty', { dirty: true });
-              this.$f7Router.back();
+              this.$f7router.back();
             });
         });
-    }
-  }
+    },
+  },
 };
 
 </script>

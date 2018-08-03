@@ -2,7 +2,7 @@
   <div>
     <f7-list>
       <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.roleName" :eb-href="`role/edit?roleId=${item.roleId}`" swipeout>
-        <f7-swipeout-actions>
+        <f7-swipeout-actions right>
           <eb-swipeout-button color="orange" :context="item" :onPerform="onRemove">Remove</eb-swipeout-button>
         </f7-swipeout-actions>
       </eb-list-item>
@@ -54,7 +54,7 @@ export default {
     },
     onPerformAdd() {
       this.$view.navigate('/a/baseadmin/role/select', {
-        view: 'self',
+        target: '_self',
         context: {
           params: {
             roleIdStart: null,
@@ -69,7 +69,7 @@ export default {
                   this.$view.toast.show({ text: this.$text('Operation succeeded') });
                 });
             }
-          }
+          },
         },
       });
     },
@@ -92,7 +92,7 @@ export default {
     onRoleDelete(data) {
       const index = this.items.findIndex(item => item.roleId === data.roleId);
       if (index > -1) this.items.splice(index, 1);
-    }
+    },
   },
 };
 

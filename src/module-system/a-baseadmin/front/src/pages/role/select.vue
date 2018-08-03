@@ -1,5 +1,5 @@
 <template>
-  <f7-page>
+  <eb-page>
     <eb-navbar :title="$text('Select Roles')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="done" @click.prevent="onDone"></eb-link>
@@ -9,7 +9,7 @@
       <span slot-scope="{node}" @click.stop="onNodeClick(node)">
         <f7-icon v-if="node.states._selected" material="check_box"></f7-icon>{{node.text}}</span>
     </tree>
-  </f7-page>
+  </eb-page>
 </template>
 <script>
 import Vue from 'vue';
@@ -72,7 +72,7 @@ export default {
       if (!selected) return;
 
       this.contextCallback(200, selected);
-      this.$f7Router.back();
+      this.$f7router.back();
     },
     onNodeClick(node) {
       if (node.states._selected) {

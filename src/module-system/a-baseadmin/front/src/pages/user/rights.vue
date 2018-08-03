@@ -1,5 +1,5 @@
 <template>
-  <f7-page :page-content="false" tabs with-subnavbar>
+  <eb-page :page-content="false" tabs with-subnavbar>
     <eb-navbar :title="getPageTitle()" eb-back-link="Back">
       <f7-subnavbar>
         <f7-toolbar v-if="user" tabbar>
@@ -20,7 +20,7 @@
         <functions-spreads ref="functions" slot="list" :user="user" :menu="0"></functions-spreads>
       </eb-tab-page-content>
     </f7-tabs>
-  </f7-page>
+  </eb-page>
 </template>
 <script>
 import Vue from 'vue';
@@ -33,7 +33,7 @@ export default {
   },
   data() {
     return {
-      userId: parseInt(this.$f7Route.query.userId),
+      userId: parseInt(this.$f7route.query.userId),
       user: null,
       tabIdAtoms: Vue.prototype.$meta.util.nextId('tab'),
       tabIdMenus: Vue.prototype.$meta.util.nextId('tab'),
@@ -45,7 +45,7 @@ export default {
     this.$api.post('user/item', { userId: this.userId })
       .then(data => {
         this.user = data;
-      })
+      });
   },
   methods: {
     getPageTitle() {
@@ -53,7 +53,7 @@ export default {
       if (this.user) title = `${title}: ${this.user.userName}`;
       return title;
     },
-  }
+  },
 };
 
 </script>

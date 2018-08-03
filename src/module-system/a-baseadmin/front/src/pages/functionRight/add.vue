@@ -1,5 +1,5 @@
 <template>
-  <f7-page>
+  <eb-page>
     <eb-navbar :title="menu===1?'Add Menu Right':'Add Function Right'" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="save" :onPerform="onSave"></eb-link>
@@ -13,15 +13,15 @@
         <div slot="after">{{func && func.title}}</div>
       </f7-list-item>
     </f7-list>
-  </f7-page>
+  </eb-page>
 </template>
 <script>
 import Vue from 'vue';
 export default {
   data() {
     return {
-      roleId: parseInt(this.$f7Route.query.roleId),
-      menu: parseInt(this.$f7Route.query.menu),
+      roleId: parseInt(this.$f7route.query.roleId),
+      menu: parseInt(this.$f7route.query.menu),
       module: '',
       func: null,
     };
@@ -53,7 +53,7 @@ export default {
   methods: {
     onSelectFunction() {
       this.$view.navigate('/a/base/menu/selectFunction', {
-        view: 'self',
+        target: '_self',
         context: {
           params: {
             module: this.module,
@@ -72,13 +72,13 @@ export default {
     onSave() {
       if (!this.module || !this.func) return;
       return this.$api.post(`${this.apiPath}/add`, {
-          roleId: this.roleId,
-          module: this.module,
-          name: this.func.name,
-        })
+        roleId: this.roleId,
+        module: this.module,
+        name: this.func.name,
+      })
         .then(() => {
           this.$meta.eventHub.$emit('functionRight:add', { roleId: this.roleId });
-          this.$f7Router.back();
+          this.$f7router.back();
         });
     },
   },
