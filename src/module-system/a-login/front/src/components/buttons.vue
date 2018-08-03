@@ -16,7 +16,7 @@ export default {
     }
     const children = [];
     if (this.loginSimple) {
-      children.push(c('div', { staticClass: 'line' }, [c('div', { staticClass: 'text', domProps: { innerText: this.$text('or') } })]));
+      children.push(c('div', { staticClass: 'line' }, [ c('div', { staticClass: 'text', domProps: { innerText: this.$text('or') } }) ]));
     }
     children.push(c('div', { staticClass: 'btns' }, btns));
     return c('div', children);
@@ -31,7 +31,7 @@ export default {
       if (!component.meta) return cb(false);
       if (typeof component.meta.disable !== 'function') return cb(component.meta.disable);
       this.$meta.util.wrapPromise(component.meta.disable()).then(res => cb(res));
-    }
+    },
   },
   created() {
     const self = this;
@@ -49,7 +49,7 @@ export default {
               } else {
                 resolve(null);
               }
-            })
+            });
           });
         };
       };

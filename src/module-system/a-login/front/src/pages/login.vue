@@ -1,5 +1,5 @@
 <template>
-  <f7-page login-screen no-toolbar no-navbar no-swipeback>
+  <eb-page login-screen no-toolbar no-navbar no-swipeback>
     <f7-icon v-if="showClose" material="close" class="close" @click.native="close"></f7-icon>
     <f7-login-screen-title>{{$f7.params.name}}</f7-login-screen-title>
     <div v-if="loginSimple">
@@ -8,7 +8,7 @@
     <f7-block>
       <buttons :loginSimple="loginSimple"></buttons>
     </f7-block>
-  </f7-page>
+  </eb-page>
 </template>
 <script>
 import buttons from '../components/buttons.vue';
