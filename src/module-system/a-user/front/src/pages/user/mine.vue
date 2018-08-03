@@ -1,5 +1,5 @@
 <template>
-  <f7-page>
+  <eb-page>
     <eb-navbar :title="$text('Mine')" eb-back-link="Back">
     </eb-navbar>
     <f7-block>
@@ -21,10 +21,9 @@
       <eb-list-item :title="$text('Functions')" eb-href="user/functions"></eb-list-item>
       <eb-list-item :title="$text('Settings')" eb-href="/a/settings/user/list"></eb-list-item>
     </f7-list>
-  </f7-page>
+  </eb-page>
 </template>
 <script>
-import Vue from 'vue';
 export default {
   components: {},
   data() {
@@ -59,7 +58,7 @@ export default {
         this.$meta.vueApp.reload();
       });
     },
-  }
+  },
 };
 
 </script>

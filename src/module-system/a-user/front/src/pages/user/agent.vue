@@ -1,5 +1,5 @@
 <template>
-  <f7-page>
+  <eb-page>
     <eb-navbar :title="$text('Agent')" eb-back-link="Back">
     </eb-navbar>
     <f7-list>
@@ -21,7 +21,7 @@
       </eb-list-item>
       <f7-list-item v-if="!agent" :title="$text('Specify agent')" link="#" @click="onSelectUser"></f7-list-item>
     </f7-list>
-  </f7-page>
+  </eb-page>
 </template>
 <script>
 import Vue from 'vue';
@@ -53,7 +53,7 @@ export default {
             this.$view.dialog.confirm(`${mobile}<br>${userAgent.userName}`).then(() => {
               this.$api.post('user/addAgent', { userIdAgent: userAgent.id }).then(() => {
                 this.agent = userAgent;
-              })
+              });
             });
           }
         });
@@ -79,8 +79,8 @@ export default {
           this.$meta.vueApp.reload({ echo: true });
         });
       });
-    }
-  }
+    },
+  },
 };
 
 </script>

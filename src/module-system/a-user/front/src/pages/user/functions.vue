@@ -1,5 +1,5 @@
 <template>
-  <f7-page>
+  <eb-page>
     <eb-navbar :title="$text('Functions')" eb-back-link="Back"></eb-navbar>
     <f7-list v-if="items">
       <f7-list-group v-for="group of itemGroups" :key="group">
@@ -8,13 +8,13 @@
         </eb-list-item>
       </f7-list-group>
     </f7-list>
-  </f7-page>
+  </eb-page>
 </template>
 <script>
 import Vue from 'vue';
 const ebModules = Vue.prototype.$meta.module.get('a-components').options.components.ebModules;
 export default {
-  mixins: [ebModules],
+  mixins: [ ebModules ],
   data() {
     return {
       items: null,
@@ -28,7 +28,7 @@ export default {
   },
   created() {
     // fetch
-    return this.$api.post(`user/functions`).then(data => {
+    return this.$api.post('user/functions').then(data => {
       this.items = data;
     });
   },

@@ -1,5 +1,5 @@
 <template>
-  <f7-page>
+  <eb-page>
     <eb-navbar :title="$text('Info')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="save" :onPerform="onPerformSave"></eb-link>
@@ -7,7 +7,7 @@
     </eb-navbar>
     <eb-validate ref="validate" auto :data="user" :params="{module:'a-base',validator: 'user'}" :onPerform="onPerformValidate">
     </eb-validate>
-  </f7-page>
+  </eb-page>
 </template>
 <script>
 import Vue from 'vue';
@@ -39,10 +39,10 @@ export default {
         data: this.user,
       }).then(() => {
         this.$store.state.auth.user.agent = this.user;
-        this.$f7Router.back();
+        this.$f7router.back();
       });
     },
-  }
+  },
 };
 
 </script>
