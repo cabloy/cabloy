@@ -1,5 +1,5 @@
 <template>
-  <f7-page>
+  <eb-page>
     <eb-navbar :title="title" eb-back-link="Back">
       <f7-nav-right>
         <eb-link v-if="schemaReady" iconMaterial="done" :onPerform="onSave"></eb-link>
@@ -7,13 +7,13 @@
     </eb-navbar>
     <eb-validate ref="validate" :readOnly="readOnly" auto :data="data" :dataPathRoot="dataPathRoot" :errors="errors" :params="params" @schema:ready="onSchemaReady">
     </eb-validate>
-  </f7-page>
+  </eb-page>
 </template>
 <script>
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.components.ebPageContext;
 export default {
-  mixins: [ebPageContext],
+  mixins: [ ebPageContext ],
   data() {
     return {
       schemaReady: false,
@@ -45,10 +45,10 @@ export default {
     onSave() {
       this.contextCallback(200, {
         data: this.data,
-        errors: this.errors
+        errors: this.errors,
       });
-      this.$f7Router.back();
-    }
+      this.$f7router.back();
+    },
   },
 };
 
