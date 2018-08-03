@@ -1,5 +1,5 @@
 <template>
-  <f7-page>
+  <eb-page>
     <eb-navbar :title="title" eb-back-link="Back">
       <f7-nav-right>
         <eb-link v-if="ready" iconMaterial="save" :onPerform="onSave"></eb-link>
@@ -7,17 +7,17 @@
     </eb-navbar>
     <eb-validate ref="validate" auto :data="data" :params="validateParams" :onPerform="onPerformValidate">
     </eb-validate>
-  </f7-page>
+  </eb-page>
 </template>
 <script>
 import Vue from 'vue';
 const ebModules = Vue.prototype.$meta.module.get('a-components').options.components.ebModules;
 export default {
-  mixins: [ebModules],
+  mixins: [ ebModules ],
   data() {
     return {
-      scene: this.$f7Route.params.scene,
-      module: this.$f7Route.query.module,
+      scene: this.$f7route.params.scene,
+      module: this.$f7route.query.module,
       data: null,
       validateParams: null,
     };
@@ -28,8 +28,8 @@ export default {
     },
     title() {
       const module = this.getModule(this.module);
-      return module ? module.titleLocale : ''
-    }
+      return module ? module.titleLocale : '';
+    },
   },
   methods: {
     onPerformValidate(event, context) {

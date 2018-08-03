@@ -1,21 +1,21 @@
 <template>
-  <f7-page>
+  <eb-page>
     <eb-navbar :title="$text('Settings')" eb-back-link="Back"> </eb-navbar>
     <f7-list v-if="ready">
       <eb-list-item class="item" v-for="item of items" :key="item.module" :title="getModule(item.module).titleLocale" :eb-href="`${scene}/edit?module=${item.module}`">
       </eb-list-item>
     </f7-list>
     <eb-load-more ref="loadMore" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="true"></eb-load-more>
-  </f7-page>
+  </eb-page>
 </template>
 <script>
 import Vue from 'vue';
 const ebModules = Vue.prototype.$meta.module.get('a-components').options.components.ebModules;
 export default {
-  mixins: [ebModules],
+  mixins: [ ebModules ],
   data() {
     return {
-      scene: this.$f7Route.params.scene,
+      scene: this.$f7route.params.scene,
       items: null,
     };
   },
