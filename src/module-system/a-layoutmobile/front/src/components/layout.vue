@@ -64,7 +64,7 @@ export default {
       },
     });
     // ready
-    return c('div', { staticClass: 'eb-layout-container' }, [ views, viewMain, viewLogin ]);
+    return c('div', { staticClass: 'eb-layout-container eb-layout-container-mobile' }, [ views, viewMain, viewLogin ]);
   },
   components: {
     ebLayoutView: LayoutView,
@@ -146,10 +146,16 @@ export default {
     },
     navigate(url, options) {
       options = options || {};
-      let view = options.view || 'main';
-      view = typeof view === 'string' ? this.$f7.views[view] : view;
-      view.router.navigate(url, options);
-      if (view.name === 'main') this.viewMainVisible = true;
+      const ctx = options.ctx;
+      const target = options.target;
+      if (target === '_self') {
+        ctx.$view.f7View.router.navigate(url, options);
+      } else {
+        // todo: 判断所在view，如果是tabs，就用main，否则就在当前view打开
+        const view = this.$f7.views.main;
+        view.router.navigate(url, options);
+        if (view.name === 'main') this.viewMainVisible = true;
+      }
     },
     openLogin(routeTo) {
       const hashInit = (!routeTo || typeof routeTo === 'string') ? routeTo : routeTo.url.url;

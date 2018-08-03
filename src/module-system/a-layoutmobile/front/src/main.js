@@ -1,5 +1,5 @@
 import layout from './components/layout.vue';
-import './assets/css/module.css';
+import './assets/css/module.less';
 
 let Vue;
 
