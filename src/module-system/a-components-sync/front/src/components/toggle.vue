@@ -1,13 +1,13 @@
 <script>
 import Vue from 'vue';
-const f7Toggle = Vue.options.components.f7Toggle;
+const f7Toggle = Vue.options.components['f7-toggle'].extendOptions;
 delete f7Toggle.props.checked;
 export default {
   name: 'eb-toggle',
   extends: f7Toggle,
   props: {
     value: {
-      type: [Boolean, Number],
+      type: [ Boolean, Number ],
       default: false,
     },
   },

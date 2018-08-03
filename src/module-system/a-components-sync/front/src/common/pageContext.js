@@ -4,20 +4,20 @@ export default {
   },
   computed: {
     contextParams() {
-      return this.$f7Route.context && this.$f7Route.context.params;
+      return this.$f7route.context && this.$f7route.context.params;
     },
   },
   methods: {
     contextCallback(code, data) {
-      if (this.$f7Route.context.callback) {
+      if (this.$f7route.context.callback) {
         this._callbackCalled = true;
-        this.$f7Route.context.callback(code, data);
+        this.$f7route.context.callback(code, data);
       }
     },
   },
   beforeDestroy() {
-    if (this.$f7Route.context.callback) {
-      this.$f7Route.context.callback(this._callbackCalled ? null : false);
+    if (this.$f7route.context.callback) {
+      this.$f7route.context.callback(this._callbackCalled ? null : false);
     }
   },
 };

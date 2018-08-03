@@ -12,10 +12,16 @@ export default {
     };
   },
   methods: {
+    click(event) {
+      const href = this.href;
+      const target = this.ebTarget;
+      if (!href) return;
+      return this.$meta.vueLayout.navigate(href, { ctx: this, target });
+    },
     onClick(event) {
       if (this._preloader) return;
       this.$emit('click', event);
-      if (!this.onPerform) return;
+      if (!this.onPerform) return this.click(event);
       const res = this.onPerform(event, this.context);
       if (this.$meta.util.isPromise(res)) {
         this._showPreloader();
@@ -50,7 +56,7 @@ export default {
               </span>
             </span>
           </div>
-        </div>  
+        </div>
       `;
       this._preloader = this.$$(html);
       this.$$(this.$el).append(this._preloader);

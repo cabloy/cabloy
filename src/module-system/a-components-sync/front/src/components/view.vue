@@ -1,7 +1,7 @@
 <script>
 import Vue from 'vue';
 import appMethods from '../common/appMethods.js';
-const f7View = Vue.options.components.f7View;
+const f7View = Vue.options.components['f7-view'].extendOptions;
 export default {
   name: 'eb-view',
   extends: f7View,
@@ -16,9 +16,25 @@ export default {
     },
     navigate(url, options) {
       options = options || {};
-      if (options.view === 'self') options.view = this.$el.f7View;
+      if (!options.ctx) options.ctx = this;
       this.$meta.vueLayout.navigate(url, options);
     },
+  },
+  mounted() {
+    const self = this;
+    const el = self.$refs.el;
+    self.$f7ready(f7Instance => {
+      if (self.props.init) return;
+      self.routerData = {
+        el,
+        component: self,
+        instance: null,
+      };
+      self.$vuef7.routers.views.push(self.routerData);
+      self.routerData.instance = f7Instance.views.create(el, self.$options.propsData || {});
+      self.f7View = self.routerData.instance;
+      this.$emit('view:ready', self);
+    });
   },
 };
 

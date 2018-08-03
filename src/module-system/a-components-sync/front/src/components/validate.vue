@@ -30,8 +30,8 @@ export default {
       default: '/',
     },
     errors: {
-      type: Array
-    }
+      type: Array,
+    },
   },
   data() {
     return {
@@ -49,8 +49,8 @@ export default {
     params() {
       this.$nextTick(() => {
         this.fetchSchema();
-      })
-    }
+      });
+    },
   },
   mounted() {
     this.fetchSchema();
@@ -87,10 +87,7 @@ export default {
       dataPath = this.adjustDataPath(dataPath);
       while (true) {
         const index = this.verrors.findIndex(item => item.dataPath === dataPath);
-        if (index > -1)
-          this.verrors.splice(index, 1);
-        else
-          break;
+        if (index > -1) { this.verrors.splice(index, 1); } else { break; }
       }
     },
     adjustDataPath(dataPath) {
@@ -162,14 +159,14 @@ export default {
       const dataPath = pathParent + key + '/';
       return c('eb-list-panel', {
         attrs: {
-          link: "#",
+          link: '#',
           title: this.$text(property.ebTitle || key),
           dataPath,
         },
         on: {
           click: event => {
             this.$view.navigate('/a/validation/validate', {
-              view: 'self',
+              target: '_self',
               context: {
                 params: {
                   module: this.params.module,
@@ -195,7 +192,7 @@ export default {
     renderGroup(c, data, pathParent, key, property) {
       const children = this.renderProperties(c, data[key], property.properties, `${pathParent}${key}/`);
       const group = c('f7-list-item', {
-        attrs: { groupTitle: true, title: this.$text(property.ebTitle || key) }
+        attrs: { groupTitle: true, title: this.$text(property.ebTitle || key) },
       });
       children.unshift(group);
       return c('f7-list-group', children);
@@ -207,7 +204,7 @@ export default {
           attrs: {
             title,
             after: data[key] ? data[key].toString() : null,
-          }
+          },
         });
       }
       const placeholder = property.ebDescription ? this.$text(property.ebDescription) : title;
@@ -246,7 +243,7 @@ export default {
           attrs: {
             dataPath: pathParent + key,
             value: this.getValue(data, key, property),
-            disabled: this.readOnly
+            disabled: this.readOnly,
           },
           on: {
             input: value => {

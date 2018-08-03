@@ -1,9 +1,9 @@
 <template>
-  <f7-page infinite :infinitePreloader="false" @infinite="onInfinite">
+  <eb-page infinite :infinitePreloader="false" @infinite="onInfinite">
     <f7-searchbar ref="searchbar" @searchbar:search="onSearch" @searchbar:disable="onDisable" :placeholder="title" :backdrop="false" :disable-button="true" :clear-button="true" :custom-search="true">
     </f7-searchbar>
     <slot ref="list" name="list"></slot>
-  </f7-page>
+  </eb-page>
 </template>
 <script>
 import Vue from 'vue';
@@ -28,7 +28,7 @@ export default {
       this.list.onSearch(query);
     }, 300),
     onDisable() {
-      this.$f7Router.back();
+      this.$f7router.back();
     },
     onInfinite() {
       this.list.loadMore();

@@ -1,22 +1,22 @@
 <script>
 import Vue from 'vue';
-const f7SwipeoutActions = Vue.options.components.f7SwipeoutActions;
+const f7SwipeoutActions = Vue.options.components['f7-swipeout-actions'].extendOptions;
 export default {
   name: 'eb-swipeout-actions',
   extends: f7SwipeoutActions,
   props: {
     ready: {
-      default: true
-    }
+      default: true,
+    },
   },
   watch: {
     ready(value) {
       if (value) {
         this.$nextTick(() => {
           this.showActions();
-        })
+        });
       }
-    }
+    },
   },
   methods: {
     showActions() {
@@ -32,8 +32,8 @@ export default {
           this.$$(buttons[i]).transform(`translate3d(${newTranslate}px,0,0)`);
         }
       }
-    }
-  }
+    },
+  },
 };
 
 </script>

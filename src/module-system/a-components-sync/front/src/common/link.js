@@ -38,7 +38,7 @@ export default {
     getHref(href) {
       if (!href) return href;
       const page = this.$page;
-      if (!page || !page.$module) return false;
+      if (!page || !page.$module) return href;
       return this.$meta.util.combinePagePath(page.$module.info, href);
     },
   },

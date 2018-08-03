@@ -39,8 +39,11 @@ export default {
       if (this._validate) this._validate.clearError(this.dataPath);
     },
     checkValidateError() {
+      // should twice
       this.$nextTick(() => {
-        this.onValidateError(this._validate.getError(this.dataPath));
+        this.$nextTick(() => {
+          this.onValidateError(this._validate.getError(this.dataPath));
+        });
       });
     },
   },
