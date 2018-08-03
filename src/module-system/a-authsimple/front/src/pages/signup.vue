@@ -1,12 +1,12 @@
 <template>
-  <f7-page>
+  <eb-page>
     <eb-navbar :title="$text('Sign up')" eb-back-link="Back"></eb-navbar>
     <f7-block>
       <eb-validate ref="validate" auto :data="data" :params="{validator: 'signup'}" :onPerform="onPerformValidate">
       </eb-validate>
       <eb-button :onPerform="signUp">{{$text('Sign up')}}</eb-button>
     </f7-block>
-  </f7-page>
+  </eb-page>
 </template>
 <script>
 export default {
@@ -22,13 +22,13 @@ export default {
         mobile: null,
         password: null,
         passwordAgain: null,
-      }
-    }
+      },
+    };
   },
   methods: {
     onPerformValidate() {
       return this.$api.post('auth/signup', {
-        data: this.data
+        data: this.data,
       }).then(() => {
         return this.$api.post('passport/a-authsimple/authsimple', {
           auth: this.data.email || this.data.mobile,
