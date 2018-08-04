@@ -20,17 +20,6 @@ export default {
     };
   },
   mounted() {
-    // target
-    if (this.ebTarget === 'self') {
-      const view = this.$$(this.$view.$el);
-      let selfClass = view.data('selfClass');
-      if (!selfClass) {
-        selfClass = this.$meta.util.nextId('selfClass');
-        view.data('selfClass', selfClass);
-        view.addClass(selfClass);
-      }
-      this.$el.dataset.view = '.' + selfClass;
-    }
     // href
     this.href = this.getHref(this.ebHref);
   },
