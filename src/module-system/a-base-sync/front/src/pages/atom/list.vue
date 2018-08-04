@@ -1,6 +1,6 @@
 <template>
   <eb-page :page-content="false" tabs with-subnavbar>
-    <eb-navbar :title="$text('Atom')" eb-back-link="Back">
+    <eb-navbar :title="title" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="search" @click.prevent="onSearch"></eb-link>
       </f7-nav-right>
@@ -36,7 +36,9 @@
 <script>
 import Vue from 'vue';
 import atoms from '../../components/atom/list.vue';
+const ebAtomClasses = Vue.prototype.$meta.module.get('a-components').options.components.ebAtomClasses;
 export default {
+  mixins: [ ebAtomClasses ],
   components: {
     atoms,
   },
@@ -59,6 +61,11 @@ export default {
         atomClassName: this.$f7route.query.atomClassName,
       };
     },
+    title() {
+      const atomClass = this.getAtomClass(this.atomClass);
+      if (!atomClass) return this.$text('Atom');
+      return `${this.$text('Atom')}: ${atomClass.titleLocale}`;
+    },
   },
   methods: {
     onSearch() {
@@ -67,7 +74,7 @@ export default {
       if (atomClass) {
         url = `${url}?module=${atomClass.module}&atomClassName=${atomClass.atomClassName}`;
       }
-      this.$view.navigate(url);
+      this.$view.navigate(url, { target: '_self' });
     },
   },
   created() {

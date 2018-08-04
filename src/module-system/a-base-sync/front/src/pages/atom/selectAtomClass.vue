@@ -10,8 +10,9 @@
 <script>
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.components.ebPageContext;
+const ebAtomClasses = Vue.prototype.$meta.module.get('a-components').options.components.ebAtomClasses;
 export default {
-  mixins: [ ebPageContext ],
+  mixins: [ ebPageContext, ebAtomClasses ],
   data() {
     return {};
   },
@@ -26,7 +27,7 @@ export default {
       return this.contextParams.optional;
     },
     atomClasses() {
-      const atomClassesAll = this.$local.state.atomClasses;
+      const atomClassesAll = this.atomClassesAll;
       if (!atomClassesAll) return [];
 
       const atomClasses = [];
@@ -44,9 +45,6 @@ export default {
       }
       return atomClasses;
     },
-  },
-  created() {
-    this.$local.dispatch('getAtomClasses');
   },
   methods: {
     onItemClick(item) {
