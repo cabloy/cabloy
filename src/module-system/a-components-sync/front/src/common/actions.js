@@ -26,6 +26,5 @@ export default {
       this.$store.dispatch('a/base/getActions');
     });
   },
-
 };
 
