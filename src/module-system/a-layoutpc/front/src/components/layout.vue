@@ -16,6 +16,7 @@ export default {
   render(c) {
     const header = c('eb-header', { style: { height: `${this.size.top}px` } });
     const groups = c('eb-groups', {
+      ref: 'groups',
       style: {
         height: `${this.size.height - this.size.top - this.size.spacing * 2}px`,
         top: `${this.size.spacing}px`,
@@ -210,12 +211,15 @@ export default {
           groupId = this.$$(ctx.$view.$el).parents('.eb-layout-group').data('groupId');
         }
         // get view
-        this.getView({ groupId, url, dashboard: target === '_dashboard' }).then(view => {
-          view.f7View.router.navigate(url, options);
+        this.getView({ ctx, groupId, url, dashboard: target === '_dashboard' }).then(res => {
+          if (res) {
+            if (res.options) this.$utils.extend(options, res.options);
+            res.view.f7View.router.navigate(url, options);
+          }
         });
       }
     },
-    getView({ groupId, url, dashboard }) {
+    getView({ ctx, groupId, url, dashboard }) {
       return new Promise(resolve => {
         let group;
         if (groupId) {
@@ -232,16 +236,45 @@ export default {
             dashboard,
             views: [],
           };
-          this.groups.push(group);
+          if (dashboard) {
+            this.groups.unshift(group);
+          } else {
+            this.groups.push(group);
+          }
         }
-        group.views.push({
-          id: this.$meta.util.nextId('layoutgroupview'),
-          url,
-          callback: view => {
-            this.$f7.tab.show(`#${groupId}`);
-            resolve(view);
-          },
-        });
+        if (group.url === url && group.views.length > 0) {
+          this.$f7.tab.show(`#${group.id}`);
+          resolve(null);
+        } else {
+          let viewIndex = -1;
+          if (ctx.$view) {
+            viewIndex = parseInt(this.$$(ctx.$view.$el).data('index'));
+            if (viewIndex >= group.views.length - 1) {
+              viewIndex = -1;
+            }
+          }
+          if (viewIndex === -1) {
+            group.views.push({
+              id: this.$meta.util.nextId('layoutgroupview'),
+              url,
+              callback: view => {
+                this.$f7.tab.show(`#${group.id}`);
+                resolve({ view, options: null });
+              },
+            });
+          } else {
+            // remove last views
+            for (let i = group.views.length - 1; i >= 0; i--) {
+              if (i > viewIndex + 1) {
+                group.views.splice(i, 1);
+              }
+            }
+            this.$refs.groups.reLayout(groupId);
+            // return next view
+            const view = this.$refs.groups.getView(group.id, group.views[viewIndex + 1].id);
+            resolve({ view, options: { reloadAll: true } });
+          }
+        }
       });
     },
     openLogin(routeTo) {
@@ -259,15 +292,15 @@ export default {
       if (view.name === 'login') this.viewLoginVisible = true;
     },
     hideView(view, cancel = false) {
-      view = typeof view === 'string' ? this.$f7.views[view] : view;
-      // close
-      if (view.name === 'main') this.viewMainVisible = false;
-      if (view.name === 'login') this.viewLoginVisible = false;
-      // close directly
-      if (!cancel) {
-        // adjust history
-        view.router.navigate('/', { reloadAll: true });
+      const viewIndex = parseInt(this.$$(view.$el).data('index'));
+      const groupId = this.$$(view.$el).parents('.eb-layout-group').data('groupId');
+      const group = this.groups.find(group => group.id === groupId);
+      for (let i = group.views.length - 1; i >= 0; i--) {
+        if (i >= viewIndex) {
+          group.views.splice(i, 1);
+        }
       }
+      this.$refs.groups.reLayout(groupId);
     },
     onTabShow(e) {
       const target = e ? this.$$(e.target) : this.$$('.view.eb-layout-tab.tab-active');
@@ -286,8 +319,7 @@ export default {
       } else {
         const $el = ctx.$$(ctx.$el);
         const $view = $el.parents('.view');
-        if ($view.hasClass('eb-layout-view-main')) backLink = true;
-        else if ($view.hasClass('eb-layout-view-login') && this.tabShowed) backLink = true;
+        if (parseInt($view.data('index')) > 0) backLink = true;
       }
       return backLink;
     },

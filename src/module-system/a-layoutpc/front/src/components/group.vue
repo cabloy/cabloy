@@ -3,7 +3,8 @@ export default {
   render(c) {
     const children = [];
     if (this.views) {
-      for (const view of this.views) {
+      for (let index = 0; index < this.views.length; index++) {
+        const view = this.views[index];
         const _viewAttrs = {
           id: view.id,
           init: false,
@@ -11,6 +12,7 @@ export default {
           stackPages: true,
           pushStateOnLoad: false,
           preloadPreviousPage: false,
+          'data-index': index,
         };
         children.push(c('eb-view', {
           ref: view.id,
@@ -73,6 +75,11 @@ export default {
       });
     },
     reLayout() {
+      this.$nextTick(() => {
+        this._reLayout();
+      });
+    },
+    _reLayout() {
       // space
       let space = this.size.width;
       let spacing = 0;
@@ -93,14 +100,26 @@ export default {
         const view = this.$refs[this.views[i].id];
         left -= this.$$(view.$el).width() + spacing;
         spacing = this.size.spacing;
-        this.$$(view.$el).css({
-          left: `${left}px`,
-        });
+        const _left = this.$$(view.$el).css('left');
+        if (_left === 'auto' || _left === '0px') {
+          this.$$(view.$el).css({
+            left: `${left}px`,
+          });
+        } else {
+          if (parseInt(_left) !== left) {
+            this.$$(view.$el).animate({
+              left,
+            }, { duration: 600 });
+          }
+        }
       }
     },
     onViewTitle(data) {
       const group = this.groups.find(group => group.id === this.groupId);
       if (!group.title) group.title = data.title;
+    },
+    getView(viewId) {
+      return this.$refs[viewId];
     },
   },
 };

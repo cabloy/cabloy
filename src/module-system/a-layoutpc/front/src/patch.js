@@ -40,14 +40,6 @@ export default function(ctx, router) {
           navigate.call(router, navigateParams, navigateOptions);
           return cb && cb();
         }
-        // check if open view
-        if (url !== '/') {
-          const view = router.view;
-          if (view && view.$el.hasClass('eb-layout-view')) {
-          // try open view
-            ctx.$meta.vueLayout.showView(view);
-          }
-        }
         // navigate
         navigate.call(router, navigateParams, navigateOptions);
         return cb && cb();
@@ -60,7 +52,7 @@ export default function(ctx, router) {
   router.back = (...args) => {
     const view = router.view;
     if (view && view.$el.hasClass('eb-layout-view')) {
-      if (router.history.length <= 2 || ctx.$meta.util.historyUrlEmpty(router.history[router.history.length - 2])) {
+      if (ctx.$meta.util.historyUrlEmpty(router.history[router.history.length - 2])) {
         ctx.$meta.vueLayout.hideView(view, true);
       }
     }
