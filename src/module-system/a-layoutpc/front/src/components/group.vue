@@ -115,8 +115,11 @@ export default {
       }
     },
     onViewTitle(data) {
-      const group = this.groups.find(group => group.id === this.groupId);
-      if (!group.title) group.title = data.title;
+      const viewIndex = parseInt(this.$$(data.page.$view.$el).data('index'));
+      if (viewIndex === 0) {
+        const group = this.groups.find(group => group.id === this.groupId);
+        if (!group.title) group.title = data.title;
+      }
     },
     getView(viewId) {
       return this.$refs[viewId];
