@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="this.mode==='edit'?$text('Edit'):$text('View')" eb-back-link="Back">
+    <eb-navbar :title="title" eb-back-link="Back">
       <f7-nav-right>
         <eb-link v-if="ready && findAction('write')" :iconMaterial="this.mode==='edit'?'save':'edit'" :context="this.mode==='edit'?'save':'write'" :onPerform="onAction"></eb-link>
         <eb-link v-if="ready" iconMaterial="more_horiz" :popover-open="`#${popoverId}`"></eb-link>
@@ -61,6 +61,11 @@ export default {
   computed: {
     ready() {
       return this.item && this.module && this.validateParams && this.actions && this.actionsAll;
+    },
+    title() {
+      const name = this.mode === 'edit' ? this.$text('Edit') : this.$text('View');
+      if (!this.item) return name;
+      return `${name}: ${this.item.atomName}`;
     },
   },
   mounted() {
