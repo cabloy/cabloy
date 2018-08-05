@@ -17,11 +17,15 @@ export default {
         key: group.id,
         staticClass: `eb-layout-group${group.dashboard ? ' eb-layout-group-dashboard' : ''}`,
         attrs: { id: group.id, 'data-groupId': group.id },
+        on: { 'tab:show': this.onTabShow },
       }, [ _group ]));
     }
     return c('f7-tabs', { staticClass: 'eb-layout-groups' }, children);
   },
   computed: {
+    layout() {
+      return this.$parent;
+    },
     groups() {
       return this.$parent.groups;
     },
@@ -32,6 +36,11 @@ export default {
     },
     getView(groupId, viewId) {
       return this.$refs[groupId].getView(viewId);
+    },
+    onTabShow(e) {
+      const groupId = this.$$(e.target).data('groupId');
+      const tabLink = this.layout.$refs.header.$refs.tabs.$refs[groupId].$el;
+      tabLink.scrollIntoView(false);
     },
   },
 };

@@ -261,8 +261,10 @@ export default {
               id: this.$meta.util.nextId('layoutgroupview'),
               url,
               callback: view => {
-                this.$f7.tab.show(`#${group.id}`);
-                resolve({ view, options: null });
+                this.$nextTick(() => {
+                  this.$f7.tab.show(`#${group.id}`);
+                  resolve({ view, options: null });
+                });
               },
             });
           } else {
