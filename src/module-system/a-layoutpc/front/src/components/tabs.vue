@@ -16,6 +16,7 @@ export default {
         },
       });
       children.push(c('f7-link', {
+        ref: group.id,
         key: group.id,
         staticClass: 'no-auto',
         attrs: { tabLink: `#${group.id}` },
@@ -38,6 +39,14 @@ export default {
     },
     groups() {
       return this.layout.groups;
+    },
+  },
+  methods: {
+    isTabActive(groupId) {
+      return this.$$(this.$refs[groupId].$el).hasClass('tab-link-active');
+    },
+    clearHighLight() {
+      this.$$(this.$refs.toolbar.$el).find('.tab-link-highlight').remove();
     },
   },
 };

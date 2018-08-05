@@ -283,15 +283,19 @@ export default {
     removeGroup(groupId) {
       let groupIdNext;
       const index = this.groups.findIndex(group => group.id === groupId);
-      if (index > 0) {
-        groupIdNext = this.groups[index - 1].id;
-      } else if (this.groups.length > 1) {
-        groupIdNext = this.groups[index + 1].id;
+      if (this.$refs.header.isTabActive(groupId)) {
+        if (index > 0) {
+          groupIdNext = this.groups[index - 1].id;
+        } else if (this.groups.length > 1) {
+          groupIdNext = this.groups[index + 1].id;
+        }
       }
       this.groups.splice(index, 1);
       this.$nextTick(() => {
         if (groupIdNext) {
           this.$f7.tab.show(`#${groupIdNext}`);
+        } else if (this.groups.length === 0) {
+          this.$refs.header.clearHighLight();
         }
       });
     },

@@ -26,6 +26,14 @@ export default {
     });
     return c('div', { staticClass: 'eb-layout-header' }, [ title, tabs, buttons, mine ]);
   },
+  methods: {
+    isTabActive(groupId) {
+      return this.$refs.tabs.isTabActive(groupId);
+    },
+    clearHighLight() {
+      this.$refs.tabs.clearHighLight();
+    },
+  },
 };
 
 </script>
