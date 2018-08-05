@@ -16,7 +16,7 @@ export default {
       children.push(c('f7-tab', {
         key: group.id,
         staticClass: `eb-layout-group${group.dashboard ? ' eb-layout-group-dashboard' : ''}`,
-        attrs: { id: group.id, tabActive: group.active, 'data-groupId': group.id },
+        attrs: { id: group.id, 'data-groupId': group.id },
       }, [ _group ]));
     }
     return c('f7-tabs', { staticClass: 'eb-layout-groups' }, children);

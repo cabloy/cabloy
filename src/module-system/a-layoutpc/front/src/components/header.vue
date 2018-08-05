@@ -15,6 +15,7 @@ export default {
       domProps: { innerText: this.$f7.params.name },
     });
     const tabs = c('eb-tabs', {
+      ref: 'tabs',
       staticClass: 'tabs',
     });
     const buttons = c('eb-buttons', {

@@ -14,7 +14,10 @@ export default {
     ebGroups: Groups,
   },
   render(c) {
-    const header = c('eb-header', { style: { height: `${this.size.top}px` } });
+    const header = c('eb-header', {
+      ref: 'header',
+      style: { height: `${this.size.top}px` },
+    });
     const groups = c('eb-groups', {
       ref: 'groups',
       style: {
@@ -274,6 +277,21 @@ export default {
             const view = this.$refs.groups.getView(group.id, group.views[viewIndex + 1].id);
             resolve({ view, options: { reloadAll: true } });
           }
+        }
+      });
+    },
+    removeGroup(groupId) {
+      let groupIdNext;
+      const index = this.groups.findIndex(group => group.id === groupId);
+      if (index > 0) {
+        groupIdNext = this.groups[index - 1].id;
+      } else if (this.groups.length > 1) {
+        groupIdNext = this.groups[index + 1].id;
+      }
+      this.groups.splice(index, 1);
+      this.$nextTick(() => {
+        if (groupIdNext) {
+          this.$f7.tab.show(`#${groupIdNext}`);
         }
       });
     },

@@ -45,8 +45,36 @@
       height: 100%;
       background-color: #343D46;
 
+      a {
+        max-width: 200px;
+        align-items: flex-start;
+
+        .close {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 18px;
+          height: 18px;
+          font-size: 18px;
+          background-color: hsla(0, 0%, 100%, .12);
+          border-radius: 9px;
+          visibility: hidden;
+        }
+      }
+
       a:hover {
         background-color: hsla(0, 0%, 100%, .12);
+
+        .close {
+          visibility: visible;
+        }
+      }
+
+      a.tab-link-active {
+
+        .close {
+          visibility: visible;
+        }
       }
 
       &:after {
