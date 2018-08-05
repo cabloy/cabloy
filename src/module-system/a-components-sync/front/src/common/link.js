@@ -30,5 +30,11 @@ export default {
       if (!page || !page.$module) return href;
       return this.$meta.util.combinePagePath(page.$module.info, href);
     },
+    onLinkClick(event) {
+      const href = this.href;
+      const target = this.ebTarget;
+      if (!href) return;
+      return this.$meta.vueLayout.navigate(href, { ctx: this, target });
+    },
   },
 };

@@ -5,15 +5,8 @@ export default {
   name: 'eb-page',
   extends: f7Page,
   methods: {
-    onPageInit(event) {
-      // event
-      this.dispatchEvent('page:init pageInit', event, event.detail);
-      // title
-      const title = this.$$(event.target).find('.navbar .title').text();
-      this.onTitleChange(title, true);
-    },
-    onPageReinit(event) {
-      this.dispatchEvent('page:reinit pageReinit', event, event.detail);
+    onPageAfterIn(event) {
+      this.dispatchEvent('page:afterin pageAfterIn', event, event.detail);
       // title
       const title = this.$$(event.target).find('.navbar .title').text();
       this.onTitleChange(title, true);
