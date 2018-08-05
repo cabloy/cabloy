@@ -53,24 +53,18 @@
           position: absolute;
           left: 0;
           top: 0;
-          width: 18px;
-          height: 18px;
-          font-size: 18px;
+          width: 16px;
+          height: 16px;
+          font-size: 16px;
           background-color: hsla(0, 0%, 100%, .12);
-          border-radius: 9px;
+          border-radius: 8px;
           visibility: hidden;
+          color: #C3D4E7;
         }
       }
 
       a:hover {
         background-color: hsla(0, 0%, 100%, .12);
-
-        .close {
-          visibility: visible;
-        }
-      }
-
-      a.tab-link-active {
 
         .close {
           visibility: visible;
@@ -134,6 +128,22 @@
 
       .eb-layout-view {
         position: absolute;
+      }
+    }
+  }
+}
+
+.device-ios,
+.device-android,
+.device-windowsPhone {
+  .eb-layout-container-pc {
+    .eb-layout-header {
+      .tabs {
+        a.tab-link-active {
+          .close {
+            visibility: visible;
+          }
+        }
       }
     }
   }

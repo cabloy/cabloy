@@ -30,9 +30,6 @@ export default {
     isTabActive(groupId) {
       return this.$refs.tabs.isTabActive(groupId);
     },
-    clearHighLight() {
-      this.$refs.tabs.clearHighLight();
-    },
   },
 };
 

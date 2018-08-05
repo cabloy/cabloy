@@ -45,9 +45,6 @@ export default {
     isTabActive(groupId) {
       return this.$$(this.$refs[groupId].$el).hasClass('tab-link-active');
     },
-    clearHighLight() {
-      this.$$(this.$refs.toolbar.$el).find('.tab-link-highlight').remove();
-    },
   },
 };
 
