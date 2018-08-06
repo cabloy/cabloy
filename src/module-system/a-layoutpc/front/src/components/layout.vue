@@ -1,6 +1,5 @@
 <script>
 import patch from '../patch.js';
-import LayoutView from './layoutView.vue';
 import Header from './header.vue';
 import Groups from './groups.vue';
 
@@ -9,7 +8,6 @@ export default {
     global: false,
   },
   components: {
-    ebLayoutView: LayoutView,
     ebHeader: Header,
     ebGroups: Groups,
   },
@@ -27,72 +25,9 @@ export default {
     });
     return c('div', { staticClass: 'eb-layout-container eb-layout-container-pc' }, [ header, groups ]);
   },
-  _render(c) {
-    // view main id
-    const viewMainId = 'eb-layout-view-main';
-    // links and tabs
-    const toolbarLinks = [];
-    const tabs = [];
-    this.$config.layout.tabs.forEach(tab => {
-      // tab id
-      const id = `eb-layout-tab-${tab.name}`;
-      // link
-      const _linkAttrs = this.$utils.extend({}, tab);
-      _linkAttrs.text = this.$text(_linkAttrs.text || _linkAttrs.name);
-      _linkAttrs.tabLink = `#${id}`;
-      toolbarLinks.push(c('f7-link', { attrs: _linkAttrs }));
-      // view
-      const _viewAttrs = {
-        id,
-        tab: true,
-        linksView: `.${viewMainId}`,
-        'data-url': tab.url,
-        init: true,
-        tabActive: tab.tabLinkActive,
-        pushState: false,
-        stackPages: true,
-        pushStateOnLoad: false,
-        preloadPreviousPage: false,
-      };
-      tabs.push(c('eb-view', { key: id, staticClass: 'eb-layout-tab', attrs: _viewAttrs, on: { 'tab:show': this.onTabShow } }));
-    });
-    // toolbar
-    const _toolbarAttrs = this.$utils.extend({}, this.$config.layout.toolbar);
-    const toolbar = c('f7-toolbar', { attrs: _toolbarAttrs }, toolbarLinks);
-    // views
-    const views = c('f7-views', { attrs: { tabs: true } }, [ toolbar, ...tabs ]);
-    // view main
-    const viewMain = c('eb-layout-view', {
-      ref: 'main',
-      attrs: {
-        main: true,
-        name: 'main',
-        pushState: true,
-        stackPages: true,
-        pushStateOnLoad: false,
-        preloadPreviousPage: false,
-      },
-    });
-    // view login
-    const viewLogin = c('eb-layout-view', {
-      ref: 'login',
-      attrs: {
-        name: 'login',
-        pushState: true,
-        stackPages: true,
-        pushStateOnLoad: false,
-        preloadPreviousPage: false,
-      },
-    });
-    // ready
-    return c('div', { staticClass: 'eb-layout-container' }, [ views, viewMain, viewLogin ]);
-  },
   data() {
     return {
       started: false,
-      viewMainVisible: false,
-      viewLoginVisible: false,
-      tabShowed: false,
       size: {
         width: 0,
         height: 0,
@@ -106,43 +41,6 @@ export default {
       groups: [],
       router: null,
     };
-  },
-  computed: {
-    viewTabsVisible() {
-      return this.started && !this.viewMainVisible && !this.viewLoginVisible;
-    },
-  },
-  watch: {
-    viewTabsVisible(value) {
-      // avoid warn: Duplicate keys detected
-      this.$nextTick(() => {
-        if (value) {
-          this.onTabShow();
-        }
-      });
-    },
-    viewMainVisible(value) {
-      this.$nextTick(() => {
-        if (value) {
-          this.$f7.loginScreen.open(this.$refs.main.$el);
-        } else {
-          this.$f7.loginScreen.close(this.$refs.main.$el);
-        }
-      });
-    },
-    viewLoginVisible(value) {
-      this.$nextTick(() => {
-        if (value) {
-          // open
-          this.$f7.loginScreen.open(this.$refs.login.$el);
-        } else {
-          // close
-          this.$f7.loginScreen.close(this.$refs.login.$el);
-          // clear hashInit
-          this.$store.commit('auth/setHashInit', null);
-        }
-      });
-    },
   },
   mounted() {
     this.$f7ready(() => {
@@ -192,7 +90,12 @@ export default {
         const hashInit = this.$store.state.auth.hashInit;
         this.$store.commit('auth/setHashInit', null);
         // open view main
-        if (hashInit && hashInit !== '/' && hashInit !== this.$config.layout.login) this.navigate(hashInit);
+        if (hashInit && hashInit !== '/' && hashInit !== this.$config.layout.login) {
+          this.navigate(hashInit);
+        } else {
+          const button = this.$config.layout.header.buttons.find(button => button.name === 'Home');
+          if (button) this.navigate(button.url);
+        }
       }
       // started
       this.$nextTick(() => {
@@ -208,7 +111,7 @@ export default {
       } else {
         // groupId
         let groupId;
-        if (!ctx.$view || target === '_group' || this.$$(ctx.$view.$el).parents('.eb-layout-group-dashboard').length > 0) {
+        if (!ctx || !ctx.$view || target === '_group' || this.$$(ctx.$view.$el).parents('.eb-layout-group-dashboard').length > 0) {
           groupId = null;
         } else {
           groupId = this.$$(ctx.$view.$el).parents('.eb-layout-group').data('groupId');
@@ -250,17 +153,19 @@ export default {
           resolve(null);
         } else {
           let viewIndex = -1;
-          if (ctx.$view) {
+          if (ctx && ctx.$view) {
             viewIndex = parseInt(this.$$(ctx.$view.$el).data('index'));
             if (viewIndex >= group.views.length - 1) {
               viewIndex = -1;
             }
           }
           if (viewIndex === -1) {
+            const viewId = this.$meta.util.nextId('layoutgroupview');
             group.views.push({
-              id: this.$meta.util.nextId('layoutgroupview'),
+              id: viewId,
               url,
-              callback: view => {
+              callback: ({ view, title }) => {
+                if (title) group.title = title;
                 this.$nextTick(() => {
                   this.$f7.tab.show(`#${group.id}`);
                   resolve({ view, options: null });
@@ -302,16 +207,7 @@ export default {
     openLogin(routeTo) {
       const hashInit = (!routeTo || typeof routeTo === 'string') ? routeTo : routeTo.url.url;
       if (hashInit && hashInit !== '/') this.$store.commit('auth/setHashInit', hashInit);
-      this.$f7.views.login.router.navigate(this.$config.layout.login);
-      this.viewLoginVisible = true;
-    },
-    closeLogin(cancel) {
-      this.hideView('login', cancel);
-    },
-    showView(view) {
-      view = typeof view === 'string' ? this.$f7.views[view] : view;
-      if (view.name === 'main') this.viewMainVisible = true;
-      if (view.name === 'login') this.viewLoginVisible = true;
+      this.navigate(this.$config.layout.login);
     },
     hideView(view, cancel = false) {
       const viewIndex = parseInt(this.$$(view.$el).data('index'));
@@ -323,16 +219,6 @@ export default {
         }
       }
       this.$refs.groups.reLayout(groupId);
-    },
-    onTabShow(e) {
-      const target = e ? this.$$(e.target) : this.$$('.view.eb-layout-tab.tab-active');
-      if (target.hasClass('eb-layout-tab')) {
-        const path = target[0].f7View.router.currentRoute.path;
-        if (!path || path === '/') {
-          target[0].f7View.router.navigate(target.data('url'));
-          this.tabShowed = true;
-        }
-      }
     },
     backLink(ctx) {
       let backLink = false;
@@ -350,10 +236,6 @@ export default {
 
 </script>
 <style scoped>
-.eb-layout-container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
+
 
 </style>

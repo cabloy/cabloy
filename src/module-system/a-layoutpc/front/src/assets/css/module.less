@@ -11,6 +11,7 @@
     justify-content: flex-start;
     align-items: center;
     background-color: #343D46;
+    white-space: nowrap;
 
     &:after {
       content: '';
@@ -101,10 +102,19 @@
       height: 100%;
       color: #C3D4E7;
       padding-left: 12px;
-      cursor: pointer;
 
       div {
+        height: 100%;
+        display: flex;
+        align-items: center;
         padding-right: 12px;
+      }
+
+      a {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        color: #C3D4E7;
       }
 
       &:hover {

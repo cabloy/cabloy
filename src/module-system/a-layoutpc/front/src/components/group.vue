@@ -67,10 +67,13 @@ export default {
         this.$$(view.$el).css({
           width: `${width}px`,
         });
+        // title
+        let title = meta && meta.title;
+        if (title) title = this.$text(title);
         // reLayout
         this.reLayout();
         // callback
-        _view.callback(view);
+        _view.callback({ view, title });
         delete _view.callback;
       });
     },

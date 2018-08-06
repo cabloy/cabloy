@@ -7,7 +7,7 @@ export default {
         { name: 'Home', iconMaterial: 'dashboard', url: '/a/base/menu/list', target: '_dashboard' },
         { name: 'Atom', iconMaterial: 'group_work', url: '/a/base/atom/list' },
       ],
-      mime:
+      mine:
         { name: 'Mine', iconMaterial: 'person', url: '/a/user/user/mine' },
     },
     size: {

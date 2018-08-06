@@ -15,13 +15,12 @@ export default {
           },
         },
       });
-      children.push(c('f7-link', {
+      children.push(c('eb-link', {
         ref: group.id,
         key: group.id,
-        staticClass: 'no-auto',
         attrs: { tabLink: `#${group.id}` },
-        on: {
-          click: () => {
+        props: {
+          onPerform: () => {
             this.$f7.tab.show(`#${group.id}`);
           },
         },
