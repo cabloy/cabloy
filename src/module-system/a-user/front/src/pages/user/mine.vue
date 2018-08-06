@@ -2,19 +2,17 @@
   <eb-page>
     <eb-navbar :title="$text('Mine')" eb-back-link="Back">
     </eb-navbar>
-    <f7-block>
-      <div class="me">
-        <div>
-          <img class="avatar avatar48" :src="user.op.avatar">
-        </div>
-        <div class="name">{{userName}}</div>
-        <div class="status" v-if="!loggedIn">{{$text('Not LoggedIn')}}</div>
-        <div class="login">
-          <eb-button v-if="!loggedIn" :onPerform="onPerformLogin" fill big color="orange">{{$text('Sign In')}}</eb-button>
-          <eb-button v-if="loggedIn" :onPerform="onPerformLogout" fill big color="orange">{{$text('Log Out')}}</eb-button>
-        </div>
+    <div class="me">
+      <div>
+        <img class="avatar avatar48" :src="user.op.avatar">
       </div>
-    </f7-block>
+      <div class="name">{{userName}}</div>
+      <div class="status" v-if="!loggedIn">{{$text('Not LoggedIn')}}</div>
+      <div class="login">
+        <eb-link v-if="!loggedIn" :onPerform="onPerformLogin">{{$text('Sign In')}}</eb-link>
+        <eb-link v-if="loggedIn" :onPerform="onPerformLogout">{{$text('Log Out')}}</eb-link>
+      </div>
+    </div>
     <f7-list>
       <eb-list-item :title="$text('Info')" eb-href="user/edit"></eb-list-item>
       <eb-list-item v-if="!$config.agent.disabled" :title="$text('Agent')" eb-href="user/agent"></eb-list-item>
@@ -64,29 +62,32 @@ export default {
 </script>
 <style lang="less" scoped>
 .me {
-  border-radius: 6px;
-  border-radius: 6px;
-  background-color: #b58900;
-  text-align: center;
-  opacity: 0.8;
-  width: 90%;
   position: relative;
-  left: 0;
-  right: 0;
-  margin: auto;
+  display: flex;
+  align-items: center;
+  height: 100px;
+  background-color: #F4F4F4;
+  color: dimgray;
+  padding-left: 24px;
 
-  img {
-    margin-top: 20px;
+  div {
+    display: flex;
+    align-items: center;
+    padding-right: 12px;
   }
 
   .name {
     font-size: 20px;
-    color: dimgray;
   }
 
   .status {
     font-size: 16px;
-    color: dimgray;
+  }
+
+  .login {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
   }
 }
 
