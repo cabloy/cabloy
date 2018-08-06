@@ -94,7 +94,7 @@ export default {
           this.navigate(hashInit);
         } else {
           const button = this.$config.layout.header.buttons.find(button => button.name === 'Home');
-          if (button) this.navigate(button.url);
+          if (button) this.navigate(button.url, { target: '_dashboard' });
         }
       }
       // started
@@ -164,8 +164,13 @@ export default {
             group.views.push({
               id: viewId,
               url,
-              callback: ({ view, title }) => {
+              size: 'small',
+              callback: ({ view, title, size }) => {
+                // title
                 if (title) group.title = title;
+                // size
+                const _view = group.views.find(item => item.id === viewId);
+                _view.size = size;
                 this.$nextTick(() => {
                   this.$f7.tab.show(`#${group.id}`);
                   resolve({ view, options: null });

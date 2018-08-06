@@ -18,8 +18,11 @@ export default {
           ref: view.id,
           id: view.id,
           key: view.id,
-          staticClass: 'eb-layout-view',
+          staticClass: `eb-layout-view eb-layout-view-size-${view.size}`,
           attrs: _viewAttrs,
+          props: {
+            size: view.size,
+          },
           on: {
             'view:ready': view => {
               this.onViewReady(view);
@@ -68,12 +71,16 @@ export default {
           width: `${width}px`,
         });
         // title
-        let title = meta && meta.title;
-        if (title) title = this.$text(title);
+        let title;
+        const viewIndex = parseInt(this.$$(view.$el).data('index'));
+        if (viewIndex === 0) {
+          title = meta && meta.title;
+          if (title) title = this.$text(title);
+        }
         // reLayout
         this.reLayout();
         // callback
-        _view.callback({ view, title });
+        _view.callback({ view, title, size });
         delete _view.callback;
       });
     },
