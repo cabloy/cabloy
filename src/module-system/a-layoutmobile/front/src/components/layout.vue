@@ -209,10 +209,6 @@ export default {
 
 </script>
 <style scoped>
-.eb-layout-container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
+
 
 </style>
