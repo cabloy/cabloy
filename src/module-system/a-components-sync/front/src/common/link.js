@@ -22,6 +22,8 @@ export default {
   mounted() {
     // href
     this.href = this.getHref(this.ebHref);
+    // class
+    this.$$(this.$el).addClass('no-auto');
   },
   methods: {
     getHref(href) {
@@ -31,6 +33,7 @@ export default {
       return this.$meta.util.combinePagePath(page.$module.info, href);
     },
     onLinkClick(event) {
+      if (!this.$$(this.$el).hasClass('no-auto')) return;
       const href = this.href;
       const target = this.ebTarget;
       if (!href) return;

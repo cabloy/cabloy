@@ -5,6 +5,12 @@ const f7View = Vue.options.components['f7-view'].extendOptions;
 export default {
   name: 'eb-view',
   extends: f7View,
+  props: {
+    size: {
+      type: String,
+      default: 'small',
+    },
+  },
   data() {
     return appMethods(this);
   },
