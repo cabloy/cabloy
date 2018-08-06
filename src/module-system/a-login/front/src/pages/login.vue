@@ -13,6 +13,9 @@
 <script>
 import buttons from '../components/buttons.vue';
 export default {
+  meta: {
+    title: 'Sign in',
+  },
   components: {
     buttons,
   },

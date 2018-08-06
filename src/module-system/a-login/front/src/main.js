@@ -12,6 +12,7 @@ function install(_Vue, cb) {
     routes: require('./routes.js').default,
     config: require('./config/config.js').default,
     locales: require('./config/locales.js').default,
+    components: require('./components.js').default,
   });
 }
 

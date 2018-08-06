@@ -1,5 +1,8 @@
 <script>
 export default {
+  meta: {
+    global: false,
+  },
   props: {
     loginSimple: {
       type: Boolean,
