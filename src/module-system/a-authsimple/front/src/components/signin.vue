@@ -27,7 +27,7 @@
       </f7-card-content>
       <f7-card-footer>
         <eb-link class="text-smaller">{{$text('Find password')}}</eb-link>
-        <eb-link eb-href="/a/authsimple/signup" class="text-smaller">{{$text('Sign up')}}</eb-link>
+        <eb-link eb-href="/a/authsimple/signup" eb-target="_self" class="text-smaller">{{$text('Sign up')}}</eb-link>
       </f7-card-footer>
     </f7-card>
     <f7-card v-if="$config.test">
