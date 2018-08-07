@@ -3,7 +3,7 @@
     <eb-navbar :title="title" eb-back-link="Back">
       <f7-nav-right>
         <eb-link v-if="ready && findAction('write')" :iconMaterial="this.mode==='edit'?'save':'edit'" :context="this.mode==='edit'?'save':'write'" :onPerform="onAction"></eb-link>
-        <eb-link v-if="ready" iconMaterial="more_horiz" :popover-open="`#${popoverId}`"></eb-link>
+        <f7-link v-if="ready" iconMaterial="more_horiz" :popover-open="`#${popoverId}`"></f7-link>
       </f7-nav-right>
     </eb-navbar>
     <template v-if="notfound">

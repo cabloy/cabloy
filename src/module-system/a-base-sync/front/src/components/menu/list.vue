@@ -7,6 +7,11 @@
           <f7-swipeout-actions right>
             <eb-swipeout-button color="orange" :context="item" :onPerform="onStarSwitch">{{item.star?$text('Unstar'):$text('Star')}}</eb-swipeout-button>
           </f7-swipeout-actions>
+          <eb-popover>
+            <f7-list inset>
+              <eb-list-item popover-close link="#" :context="item" :onPerform="onStarSwitch">{{item.star?$text('Unstar'):$text('Star')}}</eb-list-item>
+            </f7-list>
+          </eb-popover>
         </eb-list-item>
       </template>
       <template v-else-if="mode==='stars'">
@@ -14,6 +19,11 @@
           <f7-swipeout-actions right>
             <eb-swipeout-button color="orange" :context="item" :onPerform="onStarOff">{{$text('Unstar')}}</eb-swipeout-button>
           </f7-swipeout-actions>
+          <eb-popover>
+            <f7-list inset>
+              <eb-list-item popover-close link="#" :context="item" :onPerform="onStarOff">{{$text('Unstar')}}</eb-list-item>
+            </f7-list>
+          </eb-popover>
         </eb-list-item>
       </template>
       <template v-else>
@@ -24,6 +34,11 @@
             <f7-swipeout-actions right>
               <eb-swipeout-button color="orange" :context="item" :onPerform="onStarSwitch">{{item.star?$text('Unstar'):$text('Star')}}</eb-swipeout-button>
             </f7-swipeout-actions>
+            <eb-popover>
+              <f7-list inset>
+                <eb-list-item popover-close link="#" :context="item" :onPerform="onStarSwitch">{{item.star?$text('Unstar'):$text('Star')}}</eb-list-item>
+              </f7-list>
+            </eb-popover>
           </eb-list-item>
         </f7-list-group>
       </template>
@@ -159,7 +174,7 @@ export default {
       return this.$api.post('function/list', {
         options,
       }).then(data => {
-        this.items = data.list;
+        this.items = this.items.concat(data.list);
         return data;
       });
     },

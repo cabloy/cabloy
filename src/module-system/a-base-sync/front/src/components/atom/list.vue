@@ -1,7 +1,7 @@
 <template>
   <div>
     <f7-list>
-      <eb-list-item class="item" v-for="item of items" :key="item.atomId" :link="itemShow?false:'#'" :context="item" :onPerform="onItemClick" swipeout @swipeout:opened="onSwipeoutOpened($event,item)">
+      <eb-list-item class="item" v-for="item of items" :key="item.atomId" :link="itemShow?false:'#'" :context="item" :onPerform="onItemClick" swipeout @swipeout:opened="onSwipeoutOpened($event,item)" @contextmenu:opened="onSwipeoutOpened($event,item)">
         <div slot="root-start" class="header">
           <div class="userName">
             <span>{{item.userName}}</span>
@@ -51,11 +51,26 @@
           </template>
           <eb-swipeout-button color="yellow" :context="item" :onPerform="onLabel">{{$text('Labels')}}</eb-swipeout-button>
         </f7-swipeout-actions>
-        <eb-swipeout-actions right v-if="!itemShow" :ready="item._actions">
+        <eb-swipeout-actions right v-if="!itemShow" :ready="!!item._actions">
           <template v-if="item._actions">
             <eb-swipeout-button v-for="(action,index) of item._actions" :key="action.id" :color="getActionColor(action,index)" :context="{item,action}" :onPerform="onAction">{{getActionTitle(action)}}</eb-swipeout-button>
           </template>
         </eb-swipeout-actions>
+        <eb-popover :ready="!!item._actions">
+          <f7-list inset>
+            <template v-if="mode==='stars'">
+              <eb-list-item popover-close link="#" :context="item" :onPerform="onStarOff">{{$text('Unstar')}}</eb-list-item>
+            </template>
+            <template v-else>
+              <eb-list-item popover-close link="#" :context="item" :onPerform="onStarSwitch">{{item.star?$text('Unstar'):$text('Star')}}</eb-list-item>
+            </template>
+            <eb-list-item popover-close link="#" :context="item" :onPerform="onLabel">{{$text('Labels')}}</eb-list-item>
+            <f7-list-item divider></f7-list-item>
+            <template v-if="item._actions">
+              <eb-list-item v-for="(action,index) of item._actions" :key="action.id" popover-close link="#" :context="{item,action}" :onPerform="onAction">{{getActionTitle(action)}}</eb-list-item>
+            </template>
+          </f7-list>
+        </eb-popover>
       </eb-list-item>
     </f7-list>
     <eb-load-more ref="loadMore" v-if="!itemShow" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="false"></eb-load-more>
@@ -185,7 +200,7 @@ export default {
         atomClass: this.atomClass,
         options,
       }).then(data => {
-        this.items = data.list;
+        this.items = this.items.concat(data.list);
         return data;
       });
     },
@@ -217,7 +232,7 @@ export default {
       });
     },
     onLabel(event, item) {
-      this.$meta.vueLayout.navigate(`/a/base/atom/labels?atomId=${item.atomId}`);
+      this.$view.navigate(`/a/base/atom/labels?atomId=${item.atomId}`, { target: '_self' });
     },
     onStarChanged(data) {
       const index = this.items.findIndex(item => item.atomId === data.key.atomId);
