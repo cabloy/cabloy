@@ -1,5 +1,4 @@
 <script>
-import patch from '../patch.js';
 import LayoutView from './layoutView.vue';
 
 export default {
@@ -7,8 +6,6 @@ export default {
     global: false,
   },
   render(c) {
-    // view main id
-    const viewMainId = 'eb-layout-view-main';
     // links and tabs
     const toolbarLinks = [];
     const tabs = [];
@@ -24,7 +21,6 @@ export default {
       const _viewAttrs = {
         id,
         tab: true,
-        linksView: `.${viewMainId}`,
         'data-url': tab.url,
         init: true,
         tabActive: tab.tabLinkActive,
@@ -44,7 +40,6 @@ export default {
     const viewMain = c('eb-layout-view', {
       ref: 'main',
       attrs: {
-        main: true,
         name: 'main',
         pushState: true,
         stackPages: true,
@@ -124,9 +119,6 @@ export default {
     onResize() {
       if (!this.started) return;
     },
-    patchRouter(router) {
-      patch(this, router);
-    },
     start() {
       // loginOnStart
       if (this.$config.layout.loginOnStart === true && !this.$store.state.auth.loggedIn) {
@@ -151,10 +143,15 @@ export default {
       if (target === '_self') {
         ctx.$view.f7View.router.navigate(url, options);
       } else {
-        // todo: 判断所在view，如果是tabs，就用main，否则就在当前view打开
-        const view = this.$f7.views.main;
-        view.router.navigate(url, options);
-        if (view.name === 'main') this.viewMainVisible = true;
+        const viewName = ctx.$view.$el.f7View.name || 'main';
+        this.$f7.views[viewName].router.navigate(url, options);
+        if (viewName === 'main') {
+          this.viewMainVisible = true;
+          this.viewLoginVisible = false;
+        } else if (viewName === 'login') {
+          this.viewMainVisible = false;
+          this.viewLoginVisible = true;
+        }
       }
     },
     openLogin(routeTo) {
@@ -162,14 +159,6 @@ export default {
       if (hashInit && hashInit !== '/') this.$store.commit('auth/setHashInit', hashInit);
       this.$f7.views.login.router.navigate(this.$config.layout.login);
       this.viewLoginVisible = true;
-    },
-    closeLogin(cancel) {
-      this.hideView('login', cancel);
-    },
-    showView(view) {
-      view = typeof view === 'string' ? this.$f7.views[view] : view;
-      if (view.name === 'main') this.viewMainVisible = true;
-      if (view.name === 'login') this.viewLoginVisible = true;
     },
     hideView(view, cancel = false) {
       view = typeof view === 'string' ? this.$f7.views[view] : view;
