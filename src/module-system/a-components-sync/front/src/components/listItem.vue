@@ -8,6 +8,24 @@ export default {
   name: 'eb-list-item',
   extends: f7ListItem,
   mixins: [ perform, link ],
+  mounted() {
+    this.$$(this.$el).on('contextmenu', this.onContextMenu);
+  },
+  beforeDestroy() {
+    this.$$(this.$el).off('contextmenu', this.onContextMenu);
+  },
+  methods: {
+    onContextMenu(event) {
+      const popover = this.$$(this.$el).find('.popover');
+      if (popover.length === 0) return;
+
+      this.$f7.popover.open(popover, this.$el);
+      this.$emit('contextmenu:opened', event);
+
+      event.stopPropagation();
+      event.preventDefault();
+    },
+  },
 };
 
 </script>

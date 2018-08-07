@@ -6,6 +6,10 @@ export default {
     ebTarget: {
       type: String,
     },
+    noAuto: {
+      type: Boolean,
+      default: true,
+    },
   },
   watch: {
     ebHref(value) {
@@ -23,7 +27,9 @@ export default {
     // href
     this.href = this.getHref(this.ebHref);
     // class
-    this.$$(this.$el).addClass('no-auto');
+    if (this.noAuto) {
+      this.$$(this.$el).addClass('no-auto');
+    }
   },
   methods: {
     getHref(href) {
@@ -33,11 +39,16 @@ export default {
       return this.$meta.util.combinePagePath(page.$module.info, href);
     },
     onLinkClick(event) {
-      if (!this.$$(this.$el).hasClass('no-auto')) return;
+      if (!this.noAuto) return;
+
       const href = this.href;
       const target = this.ebTarget;
       if (!href) return;
-      return this.$meta.vueLayout.navigate(href, { ctx: this, target });
+
+      this.$meta.vueLayout.navigate(href, { ctx: this, target });
+
+      event.stopPropagation();
+      event.preventDefault();
     },
   },
 };

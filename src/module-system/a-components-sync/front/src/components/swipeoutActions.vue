@@ -6,6 +6,7 @@ export default {
   extends: f7SwipeoutActions,
   props: {
     ready: {
+      type: Boolean,
       default: true,
     },
   },
