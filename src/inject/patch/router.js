@@ -1,3 +1,5 @@
+import patchRouter from './patch.js';
+
 export default function(Vue) {
   // router
   function patch(router, root) {
@@ -13,7 +15,13 @@ export default function(Vue) {
     // layout patch
     if (!root) {
       const layout = Vue.prototype.$meta.vueLayout;
-      if (layout) layout.patchRouter(router);
+      if (layout) {
+        if (layout.patchRouter) {
+          layout._patchRouter = layout.patchRouter(router);
+        } else {
+          layout._patchRouter = patchRouter(layout, router);
+        }
+      }
     }
   }
   Vue.prototype.$Framework7.use({
