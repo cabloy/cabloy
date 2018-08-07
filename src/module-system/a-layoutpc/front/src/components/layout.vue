@@ -224,7 +224,11 @@ export default {
           group.views.splice(i, 1);
         }
       }
-      this.$refs.groups.reLayout(groupId);
+      if (group.views.length === 0) {
+        this.removeGroup(groupId);
+      } else {
+        this.$refs.groups.reLayout(groupId);
+      }
     },
     backLink(ctx) {
       let backLink = false;
