@@ -32,7 +32,7 @@ export default {
     onLoadMore({ index }) {
       // fetch
       return this.$api.post(`settings/${this.scene}/list`).then(data => {
-        this.items = data.list;
+        this.items = this.items.concat(data.list);
         return data;
       });
     },
