@@ -1,12 +1,12 @@
 <template>
   <div>
-    <eb-link :popover-open="`#${popoverId}`">
+    <f7-link :popover-open="`#${popoverId}`">
       <div class="item">
         <img class="avatar avatar24" :src="user.op.avatar">
       </div>
       <div class="item name" v-if="loggedIn">{{userName}}</div>
       <div class="item status" v-if="!loggedIn">{{$text('Not LoggedIn')}}</div>
-    </eb-link>
+    </f7-link>
     <f7-popover :id="popoverId">
       <f7-list inset>
         <eb-list-item popover-close :title="$text('Mine')" :eb-href="$config.layout.header.mine.url">

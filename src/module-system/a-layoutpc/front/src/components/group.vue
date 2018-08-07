@@ -57,7 +57,7 @@ export default {
       // view
       const _view = this.views.find(item => item.id === view.id);
       // route
-      this.$meta.vueLayout.router.loadRoute(_view.url, route => {
+      this.$meta.vueLayout._patchRouter.loadRoute(_view.url, route => {
         // width
         const meta = route.route.component.meta;
         const size = (meta && meta.size) || 'small';

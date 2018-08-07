@@ -1,5 +1,4 @@
 <script>
-import patch from '../patch.js';
 import Header from './header.vue';
 import Groups from './groups.vue';
 
@@ -53,9 +52,6 @@ export default {
       if (!this.started) return;
       this.setSize();
       this.resizeGroups();
-    },
-    patchRouter(router) {
-      this.router = patch(this, router);
     },
     resizeGroups() {
       for (const group of this.groups) {
