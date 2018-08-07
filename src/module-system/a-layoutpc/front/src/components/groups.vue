@@ -34,6 +34,9 @@ export default {
     reLayout(groupId) {
       this.$refs[groupId].reLayout();
     },
+    resizeGroup(groupId) {
+      this.$refs[groupId].resize();
+    },
     getView(groupId, viewId) {
       return this.$refs[groupId].getView(viewId);
     },

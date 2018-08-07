@@ -8,10 +8,10 @@ export default {
         staticClass: 'close',
         attrs: { material: 'close' },
         nativeOn: {
-          click: () => {
+          click: event => {
             this.layout.removeGroup(group.id);
-            window.event.stopPropagation();
-            window.event.preventDefault();
+            event.stopPropagation();
+            event.preventDefault();
           },
         },
       });

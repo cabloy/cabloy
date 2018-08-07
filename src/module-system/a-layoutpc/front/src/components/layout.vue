@@ -52,9 +52,15 @@ export default {
     onResize() {
       if (!this.started) return;
       this.setSize();
+      this.resizeGroups();
     },
     patchRouter(router) {
       this.router = patch(this, router);
+    },
+    resizeGroups() {
+      for (const group of this.groups) {
+        this.$refs.groups.resizeGroup(group.id);
+      }
     },
     setSize() {
       const width = this.size.width = this.$$(this.$el).width();
@@ -125,14 +131,13 @@ export default {
         });
       }
     },
+    getGroup({ id, url }) {
+      if (id) return this.groups.find(group => group.id === id);
+      return this.groups.find(group => group.url === url);
+    },
     getView({ ctx, groupId, url, dashboard }) {
       return new Promise(resolve => {
-        let group;
-        if (groupId) {
-          group = this.groups.find(group => group.id === groupId);
-        } else {
-          group = this.groups.find(group => group.url === url);
-        }
+        let group = this.getGroup({ id: groupId, url });
         if (!group) {
           groupId = this.$meta.util.nextId('layoutgroup');
           group = {
@@ -217,7 +222,7 @@ export default {
     hideView(view, cancel = false) {
       const viewIndex = parseInt(this.$$(view.$el).data('index'));
       const groupId = this.$$(view.$el).parents('.eb-layout-group').data('groupId');
-      const group = this.groups.find(group => group.id === groupId);
+      const group = this.getGroup({ id: groupId });
       for (let i = group.views.length - 1; i >= 0; i--) {
         if (i >= viewIndex) {
           group.views.splice(i, 1);

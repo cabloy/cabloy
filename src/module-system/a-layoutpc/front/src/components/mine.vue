@@ -1,11 +1,11 @@
 <template>
   <div>
     <eb-link :popover-open="`#${popoverId}`">
-      <div>
+      <div class="item">
         <img class="avatar avatar24" :src="user.op.avatar">
       </div>
-      <div class="name" v-if="loggedIn">{{userName}}</div>
-      <div class="status" v-if="!loggedIn">{{$text('Not LoggedIn')}}</div>
+      <div class="item name" v-if="loggedIn">{{userName}}</div>
+      <div class="item status" v-if="!loggedIn">{{$text('Not LoggedIn')}}</div>
     </eb-link>
     <f7-popover :id="popoverId">
       <f7-list inset>

@@ -84,6 +84,27 @@ export default {
         delete _view.callback;
       });
     },
+    resize() {
+      this.$nextTick(() => {
+        this._resize();
+        this._reLayout();
+      });
+    },
+    _resize() {
+      for (const view of this.views) {
+        const _view = this.$refs[view.id];
+        const size = _view.size;
+        let width;
+        if (size === 'small') {
+          width = this.size.small;
+        } else {
+          width = this.size.middle;
+        }
+        this.$$(_view.$el).css({
+          width: `${width}px`,
+        });
+      }
+    },
     reLayout() {
       this.$nextTick(() => {
         this._reLayout();
