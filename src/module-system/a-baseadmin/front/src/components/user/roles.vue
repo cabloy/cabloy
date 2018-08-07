@@ -5,6 +5,11 @@
         <f7-swipeout-actions right>
           <eb-swipeout-button color="orange" :context="item" :onPerform="onRemove">Remove</eb-swipeout-button>
         </f7-swipeout-actions>
+        <eb-popover>
+          <f7-list inset>
+            <eb-list-item popover-close link="#" :context="item" :onPerform="onRemove">Remove</eb-list-item>
+          </f7-list>
+        </eb-popover>
       </eb-list-item>
     </f7-list>
     <eb-load-more ref="loadMore" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="false"></eb-load-more>
@@ -48,7 +53,7 @@ export default {
     onLoadMore({ index }) {
       return this.$api.post('user/roles', { userId: this.user.id, page: { index } })
         .then(data => {
-          this.items = data.list;
+          this.items = this.items.concat(data.list);
           return data;
         });
     },

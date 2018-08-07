@@ -79,24 +79,24 @@ export default {
         // role
         return this.$api.post('atomRight/spreads', { roleId: this.role.id, page: { index } })
           .then(data => {
-            this.items = data.list;
-            return data;
-          });
-      } else {
-        // user
-        return this.$api.post('user/atomRights', { userId: this.user.id, page: { index } })
-          .then(data => {
-            this.items = data.list;
+            this.items = this.items.concat(data.list);
             return data;
           });
       }
+      // user
+      return this.$api.post('user/atomRights', { userId: this.user.id, page: { index } })
+        .then(data => {
+          this.items = this.items.concat(data.list);
+          return data;
+        });
+
     },
     onAtomRightAdd(data) {
       this.reload();
     },
     onAtomRightDelete(data) {
       this.reload();
-    }
+    },
   },
 };
 

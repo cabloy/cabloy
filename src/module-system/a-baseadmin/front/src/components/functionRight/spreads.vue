@@ -78,24 +78,24 @@ export default {
         // role
         return this.$api.post(`${this.apiPath}/spreads`, { roleId: this.role.id, menu: this.menu, page: { index } })
           .then(data => {
-            this.items = data.list;
-            return data;
-          });
-      } else {
-        // user
-        return this.$api.post('user/functionRights', { userId: this.user.id, menu: this.menu, page: { index } })
-          .then(data => {
-            this.items = data.list;
+            this.items = this.items.concat(data.list);
             return data;
           });
       }
+      // user
+      return this.$api.post('user/functionRights', { userId: this.user.id, menu: this.menu, page: { index } })
+        .then(data => {
+          this.items = this.items.concat(data.list);
+          return data;
+        });
+
     },
     onFunctionRightAdd(data) {
       this.reload();
     },
     onFunctionRightDelete(data) {
       this.reload();
-    }
+    },
   },
 };
 

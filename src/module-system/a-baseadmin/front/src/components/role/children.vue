@@ -55,7 +55,7 @@ export default {
     onLoadMore({ index }) {
       return this.$api.post('role/children', { roleId: this.role.id, page: { index } })
         .then(data => {
-          this.items = data.list;
+          this.items = this.items.concat(data.list);
           return data;
         });
     },

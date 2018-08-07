@@ -12,6 +12,13 @@
           <eb-swipeout-button v-if="item.disabled===1" color="orange" :context="item" :onPerform="onPerformEnable">Enable</eb-swipeout-button>
           <eb-swipeout-button color="yellow" :context="item" :onPerform="onPerformDelete">Delete</eb-swipeout-button>
         </f7-swipeout-actions>
+        <eb-popover>
+          <f7-list inset>
+            <eb-list-item v-if="item.disabled===0" popover-close link="#" :context="item" :onPerform="onPerformDisable">Disable</eb-list-item>
+            <eb-list-item v-if="item.disabled===1" popover-close link="#" :context="item" :onPerform="onPerformEnable">Enable</eb-list-item>
+            <eb-list-item popover-close link="#" :context="item" :onPerform="onPerformDelete">Delete</eb-list-item>
+          </f7-list>
+        </eb-popover>
       </eb-list-item>
     </f7-list>
     <eb-load-more ref="loadMore" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="false"></eb-load-more>
@@ -74,7 +81,7 @@ export default {
       if (!this.roleId) params.anonymous = 0;
       return this.$api.post('user/list', params)
         .then(data => {
-          this.items = data.list;
+          this.items = this.items.concat(data.list);
           return data;
         });
     },

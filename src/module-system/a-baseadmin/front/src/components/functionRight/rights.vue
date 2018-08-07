@@ -7,6 +7,11 @@
           <f7-swipeout-actions right>
             <eb-swipeout-button color="orange" :context="item" :onPerform="onPerformDelete">Delete</eb-swipeout-button>
           </f7-swipeout-actions>
+          <eb-popover>
+            <f7-list inset>
+              <eb-list-item popover-close link="#" :context="item" :onPerform="onPerformDelete">Delete</eb-list-item>
+            </f7-list>
+          </eb-popover>
         </eb-list-item>
       </f7-list-group>
     </f7-list>
@@ -73,7 +78,7 @@ export default {
     onLoadMore({ index }) {
       return this.$api.post(`${this.apiPath}/rights`, { roleId: this.role.id, page: { index } })
         .then(data => {
-          this.items = data.list;
+          this.items = this.items.concat(data.list);
           return data;
         });
     },
