@@ -72,7 +72,7 @@ export default {
 <style lang="less" scoped>
 .line {
   height: 1px;
-  margin: 40px 0;
+  margin: 30px 0;
   text-align: center;
   border-top: 1px solid #e2e2e2;
 

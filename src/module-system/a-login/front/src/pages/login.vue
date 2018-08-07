@@ -27,7 +27,7 @@ export default {
   },
   methods: {
     close() {
-      this.$meta.vueLayout.closeLogin();
+      this.$f7router.back();
     },
   },
   mounted() {
