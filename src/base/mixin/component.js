@@ -12,11 +12,10 @@ export default function() {
         const pageEl = ctx.$$(ctx.$el).parents('.page');
         let page = pageEl.length > 0 && pageEl[0].__vue__;
         if (!page) return null;
-        if (page.$options._componentTag !== 'eb-page') {
-          page = page.$children[0];
-          if (page.$options._componentTag !== 'eb-page') throw new Error('not found eb-page');
+        while (page.$parent.$options._componentTag !== 'eb-view') {
+          page = page.$parent;
         }
-        return page.$parent;
+        return page;
       },
     });
   };
