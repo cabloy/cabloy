@@ -15,7 +15,19 @@ export default {
     onClick(event) {
       if (this._preloader) return;
       this.$emit('click', event);
+
+      const linkEl = this.getLinkEl && this.getLinkEl();
+      if (linkEl) {
+        if (linkEl.hasClass('popover-close')) {
+          this.$f7.popover.close(linkEl.parents('.popover'));
+        }
+      }
+
+      event.stopPropagation();
+      event.preventDefault();
+
       if (!this.onPerform) return this.onLinkClick && this.onLinkClick(event);
+
       const res = this.onPerform(event, this.context);
       if (this.$meta.util.isPromise(res)) {
         this._showPreloader();

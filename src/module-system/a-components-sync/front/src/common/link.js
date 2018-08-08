@@ -34,9 +34,10 @@ export default {
   methods: {
     getHref(href) {
       if (!href) return href;
-      const page = this.$page;
-      if (!page || !page.$module) return href;
-      return this.$meta.util.combinePagePath(page.$module.info, href);
+      if (!this.$page) return href;
+      const module = this.$page.$module;
+      if (!module) return href;
+      return this.$meta.util.combinePagePath(module.info, href);
     },
     onLinkClick(event) {
       if (!this.noAuto) return;
@@ -46,9 +47,6 @@ export default {
       if (!href) return;
 
       this.$meta.vueLayout.navigate(href, { ctx: this, target });
-
-      event.stopPropagation();
-      event.preventDefault();
     },
   },
 };

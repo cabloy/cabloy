@@ -3,7 +3,7 @@ import Vue from 'vue';
 import validate from '../common/validate.js';
 export default {
   name: 'eb-select',
-  mixins: [validate],
+  mixins: [ validate ],
   props: {
     readOnly: {
       type: Boolean,
@@ -30,28 +30,28 @@ export default {
       type: Boolean,
       default: false,
     },
-    value: {}
+    value: {},
   },
   data() {
     return {
       voptions: null,
-    }
+    };
   },
   watch: {
     options() {
       this.$nextTick(() => {
         this.prepareOptions();
-      })
+      });
     },
     optionsUrl() {
       this.$nextTick(() => {
         this.prepareOptions();
-      })
+      });
     },
     value() {
       this.$nextTick(() => {
         this.setValue();
-      })
+      });
     },
   },
   mounted() {
@@ -83,7 +83,7 @@ export default {
 
       this.$nextTick(() => {
         this.setValue();
-      })
+      });
     },
     fetchOptions() {
       let moduleName;
@@ -144,18 +144,18 @@ export default {
     },
     optionDisplay(opt) {
       return this.$text(this.optionTitle(opt) || this.optionValue(opt));
-    }
+    },
   },
   render(c) {
     if (this.readOnly) {
       return c('div', {
         staticClass: 'item-after',
         domProps: { innerText: this.getDisplays() },
-      })
+      });
     }
     // options
     const options = [];
-    let optionSelected
+    let optionSelected;
     if (this.voptions) {
       for (const opt of this.voptions) {
         let selected;
@@ -175,7 +175,7 @@ export default {
             selected,
           },
           domProps: { innerText: this.optionDisplay(opt) },
-        }))
+        }));
       }
     }
     // select
@@ -188,7 +188,7 @@ export default {
       },
     }, options);
   },
-}
+};
 
 </script>
 <style scoped>

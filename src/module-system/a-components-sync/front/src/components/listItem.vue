@@ -10,6 +10,11 @@ export default {
   mixins: [ perform, link ],
   mounted() {
     this.$$(this.$el).on('contextmenu', this.onContextMenu);
+    if (this.noAuto) {
+      this.$nextTick(() => {
+        this.getLinkEl().addClass('no-auto');
+      });
+    }
   },
   beforeDestroy() {
     this.$$(this.$el).off('contextmenu', this.onContextMenu);
@@ -24,6 +29,9 @@ export default {
 
       event.stopPropagation();
       event.preventDefault();
+    },
+    getLinkEl() {
+      return this.$$(this.$el).find('.item-link');
     },
   },
 };
