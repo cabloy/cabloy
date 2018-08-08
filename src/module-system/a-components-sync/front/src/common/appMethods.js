@@ -39,6 +39,7 @@ export default function(ctx) {
   };
   // confirm
   dialog.confirm = function(text, title) {
+    if (!text) text = ctx.$text('Are you sure to perform this operation?');
     return new Promise((resolve, reject) => {
       ctx.$f7.dialog.confirm(ctx.getHostEl(), text, title, () => resolve(), () => reject());
     });
