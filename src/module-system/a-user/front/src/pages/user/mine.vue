@@ -48,12 +48,14 @@ export default {
       this.$meta.vueLayout.openLogin();
     },
     onPerformLogout() {
-      return this.$api.post('/a/base/auth/logout').then(user => {
-        this.$store.commit('auth/login', {
-          loggedIn: false,
-          user,
+      this.$view.dialog.confirm().then(() => {
+        return this.$api.post('/a/base/auth/logout').then(user => {
+          this.$store.commit('auth/login', {
+            loggedIn: false,
+            user,
+          });
+          this.$meta.vueApp.reload();
         });
-        this.$meta.vueApp.reload();
       });
     },
   },

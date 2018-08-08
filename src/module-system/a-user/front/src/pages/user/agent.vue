@@ -60,21 +60,21 @@ export default {
       });
     },
     onPerformRemoveAgent(event) {
-      return this.$view.dialog.confirm(this.$text('Are you sure to perform this operation?')).then(() => {
+      return this.$view.dialog.confirm().then(() => {
         return this.$api.post('user/removeAgent', { userIdAgent: this.agent.id }).then(() => {
           this.agent = null;
         });
       });
     },
     onPerformSwitch(event, item) {
-      return this.$view.dialog.confirm(this.$text('Are you sure to perform this operation?')).then(() => {
+      return this.$view.dialog.confirm().then(() => {
         return this.$api.post('user/switchAgent', { userIdAgent: item.id }).then(() => {
           this.$meta.vueApp.reload({ echo: true });
         });
       });
     },
     onPerformSwitchOff(event, item) {
-      return this.$view.dialog.confirm(this.$text('Are you sure to perform this operation?')).then(() => {
+      return this.$view.dialog.confirm().then(() => {
         return this.$api.post('user/switchOffAgent').then(() => {
           this.$meta.vueApp.reload({ echo: true });
         });

@@ -16,6 +16,5 @@ export default {
   'No agents': '没有代理',
   Remove: '移除',
   'Please specify the mobile': '请指定手机号',
-  'Are you sure to perform this operation?': '您确认要执行此操作吗？',
   Functions: '功能',
 };
