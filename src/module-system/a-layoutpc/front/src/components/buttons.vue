@@ -5,7 +5,7 @@ export default {
     const children = [];
     // more
     if (this.groups.length > 2) {
-      children.push(c('eb-link', {
+      children.push(c('f7-link', {
         props: {
           iconMaterial: 'expand_more',
           popoverOpen: `#${this.popoverId}`,

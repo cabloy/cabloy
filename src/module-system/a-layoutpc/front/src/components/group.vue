@@ -58,6 +58,7 @@ export default {
       const _view = this.views.find(item => item.id === view.id);
       // route
       this.$meta.vueLayout._patchRouter.loadRoute(_view.url, route => {
+        if (!route) throw new Error(`not found route: ${_view.url}`);
         // width
         const meta = route.route.component.meta;
         const size = (meta && meta.size) || 'small';
