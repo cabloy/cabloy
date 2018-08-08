@@ -77,7 +77,7 @@ export default {
       });
     },
     onPerformDelete() {
-      return this.$view.dialog.confirm(this.$text('Are you sure to perform this operation?'))
+      return this.$view.dialog.confirm()
         .then(() => {
           return this.$api.post('role/delete', { roleId: this.role.id })
             .then(() => {

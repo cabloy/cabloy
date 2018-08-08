@@ -79,7 +79,7 @@ export default {
       });
     },
     onRemove(event, item) {
-      return this.$view.dialog.confirm(this.$text('Are you sure to perform this operation?'))
+      return this.$view.dialog.confirm()
         .then(() => {
           return this.$api.post('role/removeRoleInc', { id: item.id })
             .then(() => {

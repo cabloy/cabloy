@@ -86,7 +86,7 @@ export default {
       this.$view.navigate(`/a/baseadmin/functionRight/add?roleId=${this.role.id}&menu=${this.menu}`);
     },
     onPerformDelete(event, item) {
-      return this.$view.dialog.confirm(this.$text('Are you sure to perform this operation?'))
+      return this.$view.dialog.confirm()
         .then(() => {
           return this.$api.post(`${this.apiPath}/delete`, { id: item.id })
             .then(() => {
