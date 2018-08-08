@@ -9,7 +9,6 @@
   </eb-page>
 </template>
 <script>
-import Vue from 'vue';
 import users from '../../components/user/list.vue';
 export default {
   components: {
