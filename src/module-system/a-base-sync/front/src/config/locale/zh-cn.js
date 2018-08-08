@@ -25,7 +25,6 @@ export default {
   Blue: '蓝色',
   Green: '绿色',
   Purple: '紫色',
-  'Are you sure to perform this operation?': '您确认要执行此操作吗？',
   'Modification time': '修改时间',
   'Created time': '创建时间',
   'Search Atom': '搜索原子',

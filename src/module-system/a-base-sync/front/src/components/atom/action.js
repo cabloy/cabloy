@@ -15,7 +15,7 @@ export default {
       } else if (action.name === 'delete') {
         // delete
         const key = { atomId: item.atomId, itemId: item.itemId };
-        return ctx.$view.dialog.confirm(ctx.$text('Are you sure to perform this operation?')).then(() => {
+        return ctx.$view.dialog.confirm().then(() => {
           return ctx.$api.post('/a/base/atom/delete', {
             key,
           }).then(() => {
@@ -35,7 +35,7 @@ export default {
       } else if (action.name === 'submit') {
         // submit
         const key = { atomId: item.atomId, itemId: item.itemId };
-        return ctx.$view.dialog.confirm(ctx.$text('Are you sure to perform this operation?')).then(() => {
+        return ctx.$view.dialog.confirm().then(() => {
           return ctx.$api.post('/a/base/atom/submit', {
             key,
             item,
@@ -46,7 +46,7 @@ export default {
       }
       // others
       const key = { atomId: item.atomId, itemId: item.itemId };
-      return ctx.$view.dialog.confirm(ctx.$text('Are you sure to perform this operation?')).then(() => {
+      return ctx.$view.dialog.confirm().then(() => {
         return ctx.$api.post('/a/base/atom/action', {
           action: action.code,
           key,
