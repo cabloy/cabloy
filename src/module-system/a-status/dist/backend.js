@@ -82,57 +82,47 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 15);
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = require("require3");
+const services = __webpack_require__(1);
+const config = __webpack_require__(4);
+const locales = __webpack_require__(5);
+const errors = __webpack_require__(7);
+const middlewares = __webpack_require__(8);
+
+// eslint-disable-next-line
+module.exports = app => {
+
+  const routes = __webpack_require__(11)(app);
+
+  return {
+    routes,
+    services,
+    config,
+    locales,
+    errors,
+    middlewares,
+  };
+
+};
+
 
 /***/ }),
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(0);
-const assert = require3('assert');
+const version = __webpack_require__(2);
+const status = __webpack_require__(3);
 
-module.exports = app => {
-  class TestController extends app.Controller {
-
-    async status() {
-
-      // get
-      let value = await this.ctx.meta.status.get('__enable');
-      assert(value === undefined);
-
-      // set
-      await this.ctx.meta.status.set('__enable', true);
-
-      // get
-      value = await this.ctx.meta.status.get('__enable');
-      assert(value === true);
-
-      // other module's status
-      const moduleStatus = this.ctx.meta.status.module(this.ctx.module.info.relativeName);
-      value = await moduleStatus.get('__enable');
-      assert(value === true);
-
-      // set
-      await this.ctx.meta.status.set('__enable', false);
-
-      // get
-      value = await this.ctx.meta.status.get('__enable');
-      assert(value === false);
-
-      this.ctx.success();
-    }
-
-  }
-  return TestController;
+module.exports = {
+  version,
+  status,
 };
-
 
 
 /***/ }),
@@ -141,16 +131,31 @@ module.exports = app => {
 
 module.exports = app => {
 
-  class StatusController extends app.Controller {
+  class Version extends app.Service {
 
-    async set() {
-      const res = await this.ctx.service.status.set(this.ctx.request.body);
-      this.ctx.success(res);
+    async update(options) {
+      if (options.version === 1) {
+        // create table: aStatus
+        const sql = `
+          CREATE TABLE aStatus (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            deleted int(11) DEFAULT '0',
+            iid int(11) DEFAULT '0',
+            module varchar(255) DEFAULT NULL,
+            name varchar(255) DEFAULT NULL,
+            value json DEFAULT NULL,
+            PRIMARY KEY (id)
+          )
+        `;
+        await this.ctx.model.query(sql);
+      }
     }
 
   }
 
-  return StatusController;
+  return Version;
 };
 
 
@@ -159,44 +164,111 @@ module.exports = app => {
 /***/ (function(module, exports) {
 
 module.exports = app => {
-  class VersionController extends app.Controller {
 
-    async update() {
-      await this.service.version.update(this.ctx.request.body);
-      this.ctx.success();
+  class Status extends app.Service {
+
+    async set({ module, name, value }) {
+      const res = await this.ctx.meta.status.module(module)._set({ name, value, queue: false });
+      return res;
     }
 
   }
-  return VersionController;
+
+  return Status;
 };
 
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-const version = __webpack_require__(3);
-const status = __webpack_require__(2);
-const test = __webpack_require__(1);
+// eslint-disable-next-line
+module.exports = appInfo => {
+  const config = {};
 
-module.exports = app => {
-  let routes = [
-    { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
-    { method: 'post', path: 'status/set', controller: status, middlewares: 'inner',
-      meta: { auth: { enable: false } },
+  // middlewares
+  config.middlewares = {
+    status: {
+      global: true,
+      dependencies: 'instance',
     },
-  ];
-  if (app.meta.isTest || app.meta.isLocal) {
-    routes = routes.concat([
-      { method: 'get', path: 'test/status', controller: test, middlewares: 'test' },
-    ]);
-  }
-  return routes;
+  };
+
+  // queues
+  config.queues = {
+    statusSet: {
+      path: 'status/set',
+    },
+  };
+
+  return config;
 };
 
 
 /***/ }),
 /* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = {
+  'zh-cn': __webpack_require__(6),
+};
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+module.exports = {
+};
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+// error code should start from 1001
+module.exports = {
+};
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const status = __webpack_require__(9);
+
+module.exports = {
+  status,
+};
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const StatusFn = __webpack_require__(10);
+const STATUS = Symbol('CTX#__STATUS');
+
+module.exports = () => {
+  return async function status(ctx, next) {
+    ctx.meta = ctx.meta || {};
+    Object.defineProperty(ctx.meta, 'status', {
+      get() {
+        if (ctx.meta[STATUS] === undefined) {
+          ctx.meta[STATUS] = new (StatusFn(ctx))();
+        }
+        return ctx.meta[STATUS];
+      },
+    });
+
+    // next
+    await next();
+  };
+};
+
+
+/***/ }),
+/* 10 */
 /***/ (function(module, exports) {
 
 const Fn = module.exports = ctx => {
@@ -266,91 +338,26 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const StatusFn = __webpack_require__(5);
-const STATUS = Symbol('CTX#__STATUS');
-
-module.exports = () => {
-  return async function status(ctx, next) {
-    ctx.meta = ctx.meta || {};
-    Object.defineProperty(ctx.meta, 'status', {
-      get() {
-        if (ctx.meta[STATUS] === undefined) {
-          ctx.meta[STATUS] = new (StatusFn(ctx))();
-        }
-        return ctx.meta[STATUS];
-      },
-    });
-
-    // next
-    await next();
-  };
-};
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const status = __webpack_require__(6);
-
-module.exports = {
-  status,
-};
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports) {
-
-// error code should start from 1001
-module.exports = {
-};
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports) {
-
-module.exports = {
-};
-
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = {
-  'zh-cn': __webpack_require__(9),
-};
-
-
-/***/ }),
 /* 11 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-// eslint-disable-next-line
-module.exports = appInfo => {
-  const config = {};
+const version = __webpack_require__(12);
+const status = __webpack_require__(13);
+const test = __webpack_require__(14);
 
-  // middlewares
-  config.middlewares = {
-    status: {
-      global: true,
-      dependencies: 'instance',
+module.exports = app => {
+  let routes = [
+    { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
+    { method: 'post', path: 'status/set', controller: status, middlewares: 'inner',
+      meta: { auth: { enable: false } },
     },
-  };
-
-  // queues
-  config.queues = {
-    statusSet: {
-      path: 'status/set',
-    },
-  };
-
-  return config;
+  ];
+  if (app.meta.isTest || app.meta.isLocal) {
+    routes = routes.concat([
+      { method: 'get', path: 'test/status', controller: test, middlewares: 'test' },
+    ]);
+  }
+  return routes;
 };
 
 
@@ -359,17 +366,15 @@ module.exports = appInfo => {
 /***/ (function(module, exports) {
 
 module.exports = app => {
+  class VersionController extends app.Controller {
 
-  class Status extends app.Service {
-
-    async set({ module, name, value }) {
-      const res = await this.ctx.meta.status.module(module)._set({ name, value, queue: false });
-      return res;
+    async update() {
+      await this.service.version.update(this.ctx.request.body);
+      this.ctx.success();
     }
 
   }
-
-  return Status;
+  return VersionController;
 };
 
 
@@ -379,31 +384,16 @@ module.exports = app => {
 
 module.exports = app => {
 
-  class Version extends app.Service {
+  class StatusController extends app.Controller {
 
-    async update(options) {
-      if (options.version === 1) {
-        // create table: aStatus
-        const sql = `
-          CREATE TABLE aStatus (
-            id int(11) NOT NULL AUTO_INCREMENT,
-            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            deleted int(11) DEFAULT '0',
-            iid int(11) DEFAULT '0',
-            module varchar(255) DEFAULT NULL,
-            name varchar(255) DEFAULT NULL,
-            value json DEFAULT NULL,
-            PRIMARY KEY (id)
-          )
-        `;
-        await this.ctx.model.query(sql);
-      }
+    async set() {
+      const res = await this.ctx.service.status.set(this.ctx.request.body);
+      this.ctx.success(res);
     }
 
   }
 
-  return Version;
+  return StatusController;
 };
 
 
@@ -411,41 +401,51 @@ module.exports = app => {
 /* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(13);
-const status = __webpack_require__(12);
+const require3 = __webpack_require__(15);
+const assert = require3('assert');
 
-module.exports = {
-  version,
-  status,
+module.exports = app => {
+  class TestController extends app.Controller {
+
+    async status() {
+
+      // get
+      let value = await this.ctx.meta.status.get('__enable');
+      assert(value === undefined);
+
+      // set
+      await this.ctx.meta.status.set('__enable', true);
+
+      // get
+      value = await this.ctx.meta.status.get('__enable');
+      assert(value === true);
+
+      // other module's status
+      const moduleStatus = this.ctx.meta.status.module(this.ctx.module.info.relativeName);
+      value = await moduleStatus.get('__enable');
+      assert(value === true);
+
+      // set
+      await this.ctx.meta.status.set('__enable', false);
+
+      // get
+      value = await this.ctx.meta.status.get('__enable');
+      assert(value === false);
+
+      this.ctx.success();
+    }
+
+  }
+  return TestController;
 };
+
 
 
 /***/ }),
 /* 15 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-const services = __webpack_require__(14);
-const config = __webpack_require__(11);
-const locales = __webpack_require__(10);
-const errors = __webpack_require__(8);
-const middlewares = __webpack_require__(7);
-
-// eslint-disable-next-line
-module.exports = app => {
-
-  const routes = __webpack_require__(4)(app);
-
-  return {
-    routes,
-    services,
-    config,
-    locales,
-    errors,
-    middlewares,
-  };
-
-};
-
+module.exports = require("require3");
 
 /***/ })
 /******/ ]);
