@@ -82,44 +82,69 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 8);
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-// error code should start from 1001
-module.exports = {
+const routes = __webpack_require__(1);
+const services = __webpack_require__(3);
+const config = __webpack_require__(5);
+const locales = __webpack_require__(6);
+const errors = __webpack_require__(8);
+
+// eslint-disable-next-line
+module.exports = app => {
+
+  return {
+    routes,
+    services,
+    config,
+    locales,
+    errors,
+  };
+
 };
 
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = {
-};
+const version = __webpack_require__(2);
+
+module.exports = [
+  { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
+];
 
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-module.exports = {
-  'zh-cn': __webpack_require__(1),
+module.exports = app => {
+  class VersionController extends app.Controller {
+
+    async update() {
+      await this.service.version.update(this.ctx.request.body);
+      this.ctx.success();
+    }
+
+  }
+  return VersionController;
 };
 
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-// eslint-disable-next-line
-module.exports = appInfo => {
-  const config = {};
+const version = __webpack_require__(4);
 
-  return config;
+module.exports = {
+  version,
 };
 
 
@@ -143,64 +168,39 @@ module.exports = app => {
 
 /***/ }),
 /* 5 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-const version = __webpack_require__(4);
+// eslint-disable-next-line
+module.exports = appInfo => {
+  const config = {};
 
-module.exports = {
-  version,
+  return config;
 };
 
 
 /***/ }),
 /* 6 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = app => {
-  class VersionController extends app.Controller {
-
-    async update() {
-      await this.service.version.update(this.ctx.request.body);
-      this.ctx.success();
-    }
-
-  }
-  return VersionController;
+module.exports = {
+  'zh-cn': __webpack_require__(7),
 };
 
 
 /***/ }),
 /* 7 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-const version = __webpack_require__(6);
-
-module.exports = [
-  { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
-];
+module.exports = {
+};
 
 
 /***/ }),
 /* 8 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-const routes = __webpack_require__(7);
-const services = __webpack_require__(5);
-const config = __webpack_require__(3);
-const locales = __webpack_require__(2);
-const errors = __webpack_require__(0);
-
-// eslint-disable-next-line
-module.exports = app => {
-
-  return {
-    routes,
-    services,
-    config,
-    locales,
-    errors,
-  };
-
+// error code should start from 1001
+module.exports = {
 };
 
 

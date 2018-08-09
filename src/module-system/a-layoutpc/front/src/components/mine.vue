@@ -1,7 +1,7 @@
 <template>
   <div>
     <f7-link :popover-open="`#${popoverId}`">
-      <div class="item">
+      <div class="item" v-if="loggedIn">
         <img class="avatar avatar24" :src="user.op.avatar">
       </div>
       <div class="item name" v-if="loggedIn">{{userName}}</div>
