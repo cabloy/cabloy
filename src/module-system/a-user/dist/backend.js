@@ -82,43 +82,201 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 12);
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = require("require3");
+const config = __webpack_require__(1);
+const locales = __webpack_require__(2);
+const errors = __webpack_require__(4);
+const middlewares = __webpack_require__(5);
+
+// eslint-disable-next-line
+module.exports = app => {
+
+  // routes
+  const routes = __webpack_require__(6)(app);
+  // services
+  const services = __webpack_require__(8)(app);
+  // models
+  const models = __webpack_require__(10)(app);
+  // meta
+  const meta = __webpack_require__(11)(app);
+
+  return {
+    routes,
+    services,
+    models,
+    config,
+    locales,
+    errors,
+    middlewares,
+    meta,
+  };
+
+};
+
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-const require3 = __webpack_require__(0);
-const extend = require3('extend2');
-
-module.exports = app => {
-  // meta
-  const meta = {
-  };
-  return meta;
+// eslint-disable-next-line
+module.exports = appInfo => {
+  const config = {};
+  return config;
 };
 
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = app => {
-  const models = {
-  };
-  return models;
+module.exports = {
+  'zh-cn': __webpack_require__(3),
 };
 
 
 /***/ }),
 /* 3 */
+/***/ (function(module, exports) {
+
+module.exports = {
+};
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports) {
+
+// error code should start from 1001
+module.exports = {
+};
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports) {
+
+module.exports = {
+};
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const user = __webpack_require__(7);
+
+module.exports = app => {
+  const routes = [
+    // user
+    { method: 'post', path: 'user/save', controller: user, middlewares: 'validate',
+      meta: { validate: { module: 'a-base', validator: 'user' } },
+    },
+    { method: 'post', path: 'user/agent', controller: user },
+    { method: 'post', path: 'user/agentsBy', controller: user },
+    { method: 'post', path: 'user/userByMobile', controller: user },
+    { method: 'post', path: 'user/addAgent', controller: user },
+    { method: 'post', path: 'user/removeAgent', controller: user },
+    { method: 'post', path: 'user/switchAgent', controller: user },
+    { method: 'post', path: 'user/switchOffAgent', controller: user },
+    { method: 'post', path: 'user/functions', controller: user },
+
+  ];
+  return routes;
+};
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+
+
+module.exports = app => {
+  class UserController extends app.Controller {
+
+    async save() {
+      const res = await this.service.user.save({
+        data: this.ctx.request.body.data,
+        user: this.ctx.user.agent,
+      });
+      this.ctx.success(res);
+    }
+
+    async agent() {
+      const res = await this.service.user.agent({ userId: this.ctx.user.agent.id });
+      this.ctx.success(res);
+    }
+
+    async agentsBy() {
+      const res = await this.service.user.agentsBy({ userId: this.ctx.user.agent.id });
+      this.ctx.success(res);
+    }
+
+    async userByMobile() {
+      const res = await this.service.user.userByMobile({ mobile: this.ctx.request.body.mobile });
+      this.ctx.success(res);
+    }
+
+    async addAgent() {
+      const res = await this.service.user.addAgent({
+        userIdAgent: this.ctx.request.body.userIdAgent,
+        userId: this.ctx.user.agent.id,
+      });
+      this.ctx.success(res);
+    }
+
+    async removeAgent() {
+      const res = await this.service.user.removeAgent({
+        userIdAgent: this.ctx.request.body.userIdAgent,
+        userId: this.ctx.user.agent.id,
+      });
+      this.ctx.success(res);
+    }
+
+    async switchAgent() {
+      const res = await this.service.user.switchAgent({
+        userIdAgent: this.ctx.request.body.userIdAgent,
+      });
+      this.ctx.success(res);
+    }
+
+    async switchOffAgent() {
+      const res = await this.service.user.switchOffAgent();
+      this.ctx.success(res);
+    }
+
+    functions() {
+      const res = this.service.user.functions();
+      this.ctx.success(res);
+    }
+
+  }
+  return UserController;
+};
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const user = __webpack_require__(9);
+
+module.exports = app => {
+  const services = {
+    user,
+  };
+  return services;
+};
+
+
+/***/ }),
+/* 9 */
 /***/ (function(module, exports) {
 
 const _functions = {};
@@ -203,194 +361,36 @@ module.exports = app => {
 
 
 /***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const user = __webpack_require__(3);
-
-module.exports = app => {
-  const services = {
-    user,
-  };
-  return services;
-};
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports) {
-
-
-
-module.exports = app => {
-  class UserController extends app.Controller {
-
-    async save() {
-      const res = await this.service.user.save({
-        data: this.ctx.request.body.data,
-        user: this.ctx.user.agent,
-      });
-      this.ctx.success(res);
-    }
-
-    async agent() {
-      const res = await this.service.user.agent({ userId: this.ctx.user.agent.id });
-      this.ctx.success(res);
-    }
-
-    async agentsBy() {
-      const res = await this.service.user.agentsBy({ userId: this.ctx.user.agent.id });
-      this.ctx.success(res);
-    }
-
-    async userByMobile() {
-      const res = await this.service.user.userByMobile({ mobile: this.ctx.request.body.mobile });
-      this.ctx.success(res);
-    }
-
-    async addAgent() {
-      const res = await this.service.user.addAgent({
-        userIdAgent: this.ctx.request.body.userIdAgent,
-        userId: this.ctx.user.agent.id,
-      });
-      this.ctx.success(res);
-    }
-
-    async removeAgent() {
-      const res = await this.service.user.removeAgent({
-        userIdAgent: this.ctx.request.body.userIdAgent,
-        userId: this.ctx.user.agent.id,
-      });
-      this.ctx.success(res);
-    }
-
-    async switchAgent() {
-      const res = await this.service.user.switchAgent({
-        userIdAgent: this.ctx.request.body.userIdAgent,
-      });
-      this.ctx.success(res);
-    }
-
-    async switchOffAgent() {
-      const res = await this.service.user.switchOffAgent();
-      this.ctx.success(res);
-    }
-
-    functions() {
-      const res = this.service.user.functions();
-      this.ctx.success(res);
-    }
-
-  }
-  return UserController;
-};
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const user = __webpack_require__(5);
-
-module.exports = app => {
-  const routes = [
-    // user
-    { method: 'post', path: 'user/save', controller: user, middlewares: 'validate',
-      meta: { validate: { module: 'a-base', validator: 'user' } },
-    },
-    { method: 'post', path: 'user/agent', controller: user },
-    { method: 'post', path: 'user/agentsBy', controller: user },
-    { method: 'post', path: 'user/userByMobile', controller: user },
-    { method: 'post', path: 'user/addAgent', controller: user },
-    { method: 'post', path: 'user/removeAgent', controller: user },
-    { method: 'post', path: 'user/switchAgent', controller: user },
-    { method: 'post', path: 'user/switchOffAgent', controller: user },
-    { method: 'post', path: 'user/functions', controller: user },
-
-  ];
-  return routes;
-};
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports) {
-
-module.exports = {
-};
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports) {
-
-// error code should start from 1001
-module.exports = {
-};
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports) {
-
-module.exports = {
-};
-
-
-/***/ }),
 /* 10 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-module.exports = {
-  'zh-cn': __webpack_require__(9),
+module.exports = app => {
+  const models = {
+  };
+  return models;
 };
 
 
 /***/ }),
 /* 11 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-// eslint-disable-next-line
-module.exports = appInfo => {
-  const config = {};
-  return config;
+const require3 = __webpack_require__(12);
+const extend = require3('extend2');
+
+module.exports = app => {
+  // meta
+  const meta = {
+  };
+  return meta;
 };
 
 
 /***/ }),
 /* 12 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-const config = __webpack_require__(11);
-const locales = __webpack_require__(10);
-const errors = __webpack_require__(8);
-const middlewares = __webpack_require__(7);
-
-// eslint-disable-next-line
-module.exports = app => {
-
-  // routes
-  const routes = __webpack_require__(6)(app);
-  // services
-  const services = __webpack_require__(4)(app);
-  // models
-  const models = __webpack_require__(2)(app);
-  // meta
-  const meta = __webpack_require__(1)(app);
-
-  return {
-    routes,
-    services,
-    models,
-    config,
-    locales,
-    errors,
-    middlewares,
-    meta,
-  };
-
-};
-
+module.exports = require("require3");
 
 /***/ })
 /******/ ]);
