@@ -82,34 +82,32 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 12);
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = () => {
-  return async function instance(ctx, next) {
+const routes = __webpack_require__(1);
+const services = __webpack_require__(5);
+const config = __webpack_require__(7);
+const locales = __webpack_require__(8);
+const errors = __webpack_require__(10);
+const middlewares = __webpack_require__(11);
 
-    const timeout = ctx.config.module('a-instance').cache.timeout;
-    let instance = timeout > 0 ? ctx.cache.mem.get('instance') : null;
-    if (!instance) {
-      instance = await ctx.db.get('aInstance', { name: ctx.subdomain });
-      if (instance && timeout > 0) {
-        ctx.cache.mem.set('instance', instance, timeout);
-      }
-    }
+// eslint-disable-next-line
+module.exports = app => {
 
-    if (!/\/version\/init/.test(ctx.request.url) && (!instance || instance.disabled)) {
-      ctx.throw(423); // locked
-    }
-
-    ctx.instance = instance;
-
-    // next
-    await next();
+  return {
+    routes,
+    services,
+    config,
+    locales,
+    errors,
+    middlewares,
   };
+
 };
 
 
@@ -117,62 +115,72 @@ module.exports = () => {
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const instance = __webpack_require__(0);
+const version = __webpack_require__(2);
+const test = __webpack_require__(3);
 
-module.exports = {
-  instance,
-};
+module.exports = [
+  { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
+  { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
+  { method: 'get', path: 'test/instance', controller: test, middlewares: 'test' },
+];
 
 
 /***/ }),
 /* 2 */
 /***/ (function(module, exports) {
 
-// error code should start from 1001
-module.exports = {
+module.exports = app => {
+  class VersionController extends app.Controller {
+
+    async update() {
+      await this.service.version.update(this.ctx.request.body);
+      this.ctx.success();
+    }
+
+    async init() {
+      await this.service.version.init(this.ctx.request.body);
+      this.ctx.success();
+    }
+
+  }
+  return VersionController;
 };
 
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = {
+const require3 = __webpack_require__(4);
+const assert = require3('assert');
+
+module.exports = app => {
+  class TestController extends app.Controller {
+
+    async instance() {
+      assert(this.ctx.instance.id === 1);
+      this.ctx.success();
+    }
+
+  }
+  return TestController;
 };
 
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-module.exports = {
-  'zh-cn': __webpack_require__(3),
-};
-
+module.exports = require("require3");
 
 /***/ }),
 /* 5 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-// eslint-disable-next-line
-module.exports = appInfo => {
-  const config = {};
+const version = __webpack_require__(6);
 
-  // middlewares
-  config.middlewares = {
-    instance: {
-      global: true,
-      dependencies: 'cachemem',
-      ignore: /(\/version\/(start|check|update|initModule)|\/a\/instance\/version\/init|\/a\/version\/version\/init)/,
-    },
-  };
-
-  // cache
-  config.cache = {
-    timeout: 1 * 24 * 3600 * 1000, // 1 天
-  };
-
-  return config;
+module.exports = {
+  version,
 };
 
 
@@ -216,38 +224,44 @@ module.exports = app => {
 
 /***/ }),
 /* 7 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-const version = __webpack_require__(6);
+// eslint-disable-next-line
+module.exports = appInfo => {
+  const config = {};
 
-module.exports = {
-  version,
+  // middlewares
+  config.middlewares = {
+    instance: {
+      global: true,
+      dependencies: 'cachemem',
+      ignore: /(\/version\/(start|check|update|initModule)|\/a\/instance\/version\/init|\/a\/version\/version\/init)/,
+    },
+  };
+
+  // cache
+  config.cache = {
+    timeout: 1 * 24 * 3600 * 1000, // 1 天
+  };
+
+  return config;
 };
 
 
 /***/ }),
 /* 8 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = require("require3");
+module.exports = {
+  'zh-cn': __webpack_require__(9),
+};
+
 
 /***/ }),
 /* 9 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-const require3 = __webpack_require__(8);
-const assert = require3('assert');
-
-module.exports = app => {
-  class TestController extends app.Controller {
-
-    async instance() {
-      assert(this.ctx.instance.id === 1);
-      this.ctx.success();
-    }
-
-  }
-  return TestController;
+module.exports = {
 };
 
 
@@ -255,21 +269,8 @@ module.exports = app => {
 /* 10 */
 /***/ (function(module, exports) {
 
-module.exports = app => {
-  class VersionController extends app.Controller {
-
-    async update() {
-      await this.service.version.update(this.ctx.request.body);
-      this.ctx.success();
-    }
-
-    async init() {
-      await this.service.version.init(this.ctx.request.body);
-      this.ctx.success();
-    }
-
-  }
-  return VersionController;
+// error code should start from 1001
+module.exports = {
 };
 
 
@@ -277,39 +278,38 @@ module.exports = app => {
 /* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(10);
-const test = __webpack_require__(9);
+const instance = __webpack_require__(12);
 
-module.exports = [
-  { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
-  { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
-  { method: 'get', path: 'test/instance', controller: test, middlewares: 'test' },
-];
+module.exports = {
+  instance,
+};
 
 
 /***/ }),
 /* 12 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-const routes = __webpack_require__(11);
-const services = __webpack_require__(7);
-const config = __webpack_require__(5);
-const locales = __webpack_require__(4);
-const errors = __webpack_require__(2);
-const middlewares = __webpack_require__(1);
+module.exports = () => {
+  return async function instance(ctx, next) {
 
-// eslint-disable-next-line
-module.exports = app => {
+    const timeout = ctx.config.module('a-instance').cache.timeout;
+    let instance = timeout > 0 ? ctx.cache.mem.get('instance') : null;
+    if (!instance) {
+      instance = await ctx.db.get('aInstance', { name: ctx.subdomain });
+      if (instance && timeout > 0) {
+        ctx.cache.mem.set('instance', instance, timeout);
+      }
+    }
 
-  return {
-    routes,
-    services,
-    config,
-    locales,
-    errors,
-    middlewares,
+    if (!/\/version\/init/.test(ctx.request.url) && (!instance || instance.disabled)) {
+      ctx.throw(423); // locked
+    }
+
+    ctx.instance = instance;
+
+    // next
+    await next();
   };
-
 };
 
 
