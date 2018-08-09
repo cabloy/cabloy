@@ -1,1 +1,1 @@
-.eb-layout-container[data-v-3df1aba0]{position:relative;width:100%;height:100%}.eb-layout-view-container-main{z-index:10000}
+.eb-layout-container-mobile{position:relative;height:100%;width:100%}.eb-layout-container-mobile .eb-layout-view-container-main{z-index:10000}.device-windows .eb-layout-container-mobile ::-webkit-scrollbar{width:10px;height:10px;background-color:#f4f7f8}.device-windows .eb-layout-container-mobile ::-webkit-scrollbar-thumb{border-radius:0;background-color:#d3e4e7}
