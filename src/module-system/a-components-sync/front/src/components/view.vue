@@ -21,9 +21,11 @@ export default {
       return views.length > 0 ? views : view;
     },
     navigate(url, options) {
-      options = options || {};
-      if (!options.ctx) options.ctx = this;
-      this.$meta.vueLayout.navigate(url, options);
+      let _options = options || {};
+      if (!_options.ctx) {
+        _options = this.$utils.extend({}, _options, { ctx: this });
+      }
+      this.$meta.vueLayout.navigate(url, _options);
     },
   },
   mounted() {
