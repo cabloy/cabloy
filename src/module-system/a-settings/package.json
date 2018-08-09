@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-settings",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "title": "Settings",
   "eggBornModule": {
     "fileVersion": 1,
