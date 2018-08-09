@@ -26,6 +26,18 @@ Cabloy.js: The Ultimate Javascript Full Stack Business Development Platform, bas
 
 ![](./docs/assets/images/cabloy-demo-qrcode.png)
 
+## 移动优先 PC适配
+
+Cabloy所有页面开发采用`移动优先`策略，同时完美适配`PC布局`。
+
+### Mobile布局
+
+![](./docs/assets/images/layout-mobile.png)
+
+### PC布局
+
+![](./docs/assets/images/layout-pc.png)
+
 ## EggBorn.js是什么
 EggBorn.js是一款顶级Javascript全栈开发框架。前端采用Vue.js + Framework7 + Webpack，后端采用Koa.js + Egg.js，数据库采用mysql。
 EggBorn.js在纵向上，将前端和后端打通，形成一个有机的整体，避免前端和后端各自为政的状况；
