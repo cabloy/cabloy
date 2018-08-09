@@ -11,7 +11,7 @@
         <div slot="media" class="media" :style="{backgroundColor:labelsAll[key].color}"></div>
         <f7-swipeout-actions right>
           <eb-swipeout-button close>{{$text('Close')}}</eb-swipeout-button>
-          <eb-swipeout-button color="orange" :context="key" :onPerform="onEditLabel">{{$text('Edit')}}</eb-swipeout-button>
+          <eb-swipeout-button close color="orange" :context="key" :onPerform="onEditLabel">{{$text('Edit')}}</eb-swipeout-button>
         </f7-swipeout-actions>
         <eb-popover>
           <f7-list inset>
