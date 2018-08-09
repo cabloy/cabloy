@@ -82,15 +82,31 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-// error code should start from 1001
-module.exports = {
+const routes = __webpack_require__(1);
+const services = __webpack_require__(2);
+const config = __webpack_require__(3);
+const locales = __webpack_require__(4);
+const errors = __webpack_require__(6);
+
+// eslint-disable-next-line
+module.exports = (app,module) => {
+
+  //
+  return {
+    routes,
+    services,
+    config,
+    locales,
+    errors,
+  };
+
 };
 
 
@@ -98,16 +114,15 @@ module.exports = {
 /* 1 */
 /***/ (function(module, exports) {
 
-module.exports = {
-};
+module.exports = [
+];
 
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
 module.exports = {
-  'zh-cn': __webpack_require__(1),
 };
 
 
@@ -125,9 +140,10 @@ module.exports = appInfo => {
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
+  'zh-cn': __webpack_require__(5),
 };
 
 
@@ -135,32 +151,16 @@ module.exports = {
 /* 5 */
 /***/ (function(module, exports) {
 
-module.exports = [
-];
+module.exports = {
+};
 
 
 /***/ }),
 /* 6 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-const routes = __webpack_require__(5);
-const services = __webpack_require__(4);
-const config = __webpack_require__(3);
-const locales = __webpack_require__(2);
-const errors = __webpack_require__(0);
-
-// eslint-disable-next-line
-module.exports = (app,module) => {
-
-  //
-  return {
-    routes,
-    services,
-    config,
-    locales,
-    errors,
-  };
-
+// error code should start from 1001
+module.exports = {
 };
 
 
