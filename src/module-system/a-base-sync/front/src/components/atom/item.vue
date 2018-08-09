@@ -125,10 +125,10 @@ export default {
         };
       }
       // action
-      const _action = this.getAction(action);
+      let _action = this.getAction(action);
       // for write
       if (action.name === 'write') {
-        _action.navigateOptions = { target: '_self' };
+        _action = this.$utils.extend({}, _action, { navigateOptions: { target: '_self' } });
       }
       return this.$meta.util.performAction({ ctx: this, action: _action, item: this.item }).then(res => {
         if (res) this.$f7router.back();
