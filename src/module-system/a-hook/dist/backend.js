@@ -82,136 +82,44 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 12);
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
+const services = __webpack_require__(1);
+const config = __webpack_require__(3);
+const locales = __webpack_require__(4);
+const errors = __webpack_require__(6);
+const middlewares = __webpack_require__(7);
+
+// eslint-disable-next-line
 module.exports = app => {
 
-  class HookController extends app.Controller {
+  // meta
+  const meta = __webpack_require__(9)(app);
+  const routes = __webpack_require__(10)(app);
 
-    async installHooks() {
-      // register all hooks
-      await this.ctx.service.hook.registerAllHooks();
-      this.ctx.success();
-    }
+  return {
+    routes,
+    services,
+    config,
+    locales,
+    errors,
+    middlewares,
+    meta,
+  };
 
-  }
-
-  return HookController;
 };
 
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports) {
-
-module.exports = app => {
-  class TestController extends app.Controller {
-
-    async test() {
-      this.ctx.success();
-    }
-
-    async hookTestBefore() {
-      console.log('hook:before', this.ctx.ctxCaller.route);
-      this.ctx.success();
-    }
-    async hookTestAfter() {
-      console.log('hook:after', this.ctx.ctxCaller.route);
-      this.ctx.success();
-    }
-
-  }
-  return TestController;
-};
-
-
-
-/***/ }),
-/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const test = __webpack_require__(1);
-const hook = __webpack_require__(0);
-
-module.exports = app => {
-  let routes = [
-    { method: 'post', path: 'hook/installHooks', controller: hook, middlewares: 'inner',
-      meta: {
-        instance: { enable: false },
-      },
-    },
-  ];
-  if (app.meta.isTest) {
-    routes = routes.concat([
-      { method: 'post', path: 'test/test', controller: test, middlewares: 'test' },
-      { method: 'post', path: 'test/hookTestBefore', controller: test, middlewares: 'test' },
-      { method: 'post', path: 'test/hookTestAfter', controller: test, middlewares: 'test' },
-    ]);
-  }
-  return routes;
-};
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports) {
-
-module.exports = app => {
-  const meta = {};
-  if (app.meta.isTest) {
-    Object.assign(meta, {
-      hook: {
-        before: [
-          { path: '/a/base/auth/echo', route: 'test/hookTestBefore' },
-        ],
-        after: [
-          { path: '/a/base/auth/echo', route: 'test/hookTestAfter' },
-        ],
-      },
-    });
-  }
-  return meta;
-};
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports) {
-
-module.exports = () => {
-  return async function hook(ctx, next) {
-    // before
-    await invokeHooks(ctx, 'before');
-    // next
-    await next();
-    // after
-    await invokeHooks(ctx, 'after');
-  };
-};
-
-async function invokeHooks(ctx, stage) {
-  if (!ctx.route) return;
-  const path = `/${ctx.route.pid}/${ctx.route.module}/${ctx.route.controller}/${ctx.route.action}`;
-  const hooks = ctx.app.meta.geto('hooks').geto(stage).geta(path);
-  for (const hook of hooks) {
-    await ctx.performAction({
-      method: 'post',
-      url: hook.route,
-    });
-  }
-}
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const hook = __webpack_require__(4);
+const hook = __webpack_require__(2);
 
 module.exports = {
   hook,
@@ -219,61 +127,7 @@ module.exports = {
 
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports) {
-
-// error code should start from 1001
-module.exports = {
-};
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports) {
-
-module.exports = {
-};
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = {
-  'zh-cn': __webpack_require__(7),
-};
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports) {
-
-// eslint-disable-next-line
-module.exports = appInfo => {
-  const config = {};
-
-  // middlewares
-  config.middlewares = {
-    hook: {
-      global: true,
-      dependencies: 'instance',
-    },
-  };
-
-  // startups
-  config.startups = {
-    installHooks: {
-      type: 'all',
-      path: 'hook/installHooks',
-    },
-  };
-
-  return config;
-};
-
-
-/***/ }),
-/* 10 */
+/* 2 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -307,10 +161,64 @@ module.exports = app => {
 
 
 /***/ }),
-/* 11 */
+/* 3 */
+/***/ (function(module, exports) {
+
+// eslint-disable-next-line
+module.exports = appInfo => {
+  const config = {};
+
+  // middlewares
+  config.middlewares = {
+    hook: {
+      global: true,
+      dependencies: 'instance',
+    },
+  };
+
+  // startups
+  config.startups = {
+    installHooks: {
+      type: 'all',
+      path: 'hook/installHooks',
+    },
+  };
+
+  return config;
+};
+
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const hook = __webpack_require__(10);
+module.exports = {
+  'zh-cn': __webpack_require__(5),
+};
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports) {
+
+module.exports = {
+};
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+// error code should start from 1001
+module.exports = {
+};
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const hook = __webpack_require__(8);
 
 module.exports = {
   hook,
@@ -318,32 +226,124 @@ module.exports = {
 
 
 /***/ }),
-/* 12 */
+/* 8 */
+/***/ (function(module, exports) {
+
+module.exports = () => {
+  return async function hook(ctx, next) {
+    // before
+    await invokeHooks(ctx, 'before');
+    // next
+    await next();
+    // after
+    await invokeHooks(ctx, 'after');
+  };
+};
+
+async function invokeHooks(ctx, stage) {
+  if (!ctx.route) return;
+  const path = `/${ctx.route.pid}/${ctx.route.module}/${ctx.route.controller}/${ctx.route.action}`;
+  const hooks = ctx.app.meta.geto('hooks').geto(stage).geta(path);
+  for (const hook of hooks) {
+    await ctx.performAction({
+      method: 'post',
+      url: hook.route,
+    });
+  }
+}
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+  const meta = {};
+  if (app.meta.isTest) {
+    Object.assign(meta, {
+      hook: {
+        before: [
+          { path: '/a/base/auth/echo', route: 'test/hookTestBefore' },
+        ],
+        after: [
+          { path: '/a/base/auth/echo', route: 'test/hookTestAfter' },
+        ],
+      },
+    });
+  }
+  return meta;
+};
+
+
+/***/ }),
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const services = __webpack_require__(11);
-const config = __webpack_require__(9);
-const locales = __webpack_require__(8);
-const errors = __webpack_require__(6);
-const middlewares = __webpack_require__(5);
+const test = __webpack_require__(11);
+const hook = __webpack_require__(12);
 
-// eslint-disable-next-line
+module.exports = app => {
+  let routes = [
+    { method: 'post', path: 'hook/installHooks', controller: hook, middlewares: 'inner',
+      meta: {
+        instance: { enable: false },
+      },
+    },
+  ];
+  if (app.meta.isTest) {
+    routes = routes.concat([
+      { method: 'post', path: 'test/test', controller: test, middlewares: 'test' },
+      { method: 'post', path: 'test/hookTestBefore', controller: test, middlewares: 'test' },
+      { method: 'post', path: 'test/hookTestAfter', controller: test, middlewares: 'test' },
+    ]);
+  }
+  return routes;
+};
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+  class TestController extends app.Controller {
+
+    async test() {
+      this.ctx.success();
+    }
+
+    async hookTestBefore() {
+      console.log('hook:before', this.ctx.ctxCaller.route);
+      this.ctx.success();
+    }
+    async hookTestAfter() {
+      console.log('hook:after', this.ctx.ctxCaller.route);
+      this.ctx.success();
+    }
+
+  }
+  return TestController;
+};
+
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports) {
+
 module.exports = app => {
 
-  // meta
-  const meta = __webpack_require__(3)(app);
-  const routes = __webpack_require__(2)(app);
+  class HookController extends app.Controller {
 
-  return {
-    routes,
-    services,
-    config,
-    locales,
-    errors,
-    middlewares,
-    meta,
-  };
+    async installHooks() {
+      // register all hooks
+      await this.ctx.service.hook.registerAllHooks();
+      this.ctx.success();
+    }
 
+  }
+
+  return HookController;
 };
 
 
