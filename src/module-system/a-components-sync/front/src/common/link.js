@@ -6,7 +6,7 @@ export default {
     ebTarget: {
       type: String,
     },
-    noAuto: {
+    externalLink: {
       type: Boolean,
       default: true,
     },
@@ -27,8 +27,8 @@ export default {
     // href
     this.href = this.getHref(this.ebHref);
     // class
-    if (this.noAuto) {
-      this.$$(this.$el).addClass('no-auto');
+    if (this.externalLink) {
+      this.$$(this.$el).addClass('external');
     }
   },
   methods: {
@@ -40,7 +40,7 @@ export default {
       return this.$meta.util.combinePagePath(module.info, href);
     },
     onLinkClick(event) {
-      if (!this.noAuto) return;
+      if (!this.externalLink) return;
 
       const href = this.href;
       const target = this.ebTarget;

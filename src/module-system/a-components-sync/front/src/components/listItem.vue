@@ -10,9 +10,9 @@ export default {
   mixins: [ perform, link ],
   mounted() {
     this.$$(this.$el).on('contextmenu', this.onContextMenu);
-    if (this.noAuto) {
+    if (this.externalLink) {
       this.$nextTick(() => {
-        this.getLinkEl().addClass('no-auto');
+        this.getLinkEl().addClass('external');
       });
     }
   },
@@ -31,7 +31,9 @@ export default {
       event.preventDefault();
     },
     getLinkEl() {
-      return this.$$(this.$el).find('.item-link');
+      const content = this.$$(this.$el).find('.item-content');
+      if (content.length === 0) return null;
+      return this.$$(content[0]).closest('a');
     },
   },
 };

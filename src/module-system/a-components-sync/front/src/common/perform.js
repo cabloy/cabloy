@@ -17,14 +17,16 @@ export default {
       this.$emit('click', event);
 
       const linkEl = this.getLinkEl && this.getLinkEl();
-      if (linkEl) {
+      if (linkEl && linkEl.length > 0) {
+        // popover
         if (linkEl.hasClass('popover-close')) {
           this.$f7.popover.close(linkEl.parents('.popover'));
         }
-      }
 
-      event.stopPropagation();
-      event.preventDefault();
+        // only preventDefault for link
+        event.stopPropagation();
+        event.preventDefault();
+      }
 
       if (!this.onPerform) return this.onLinkClick && this.onLinkClick(event);
 
