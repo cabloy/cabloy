@@ -21,6 +21,10 @@ export default {
   },
   methods: {
     ready() {
+      if (this.$f7.device.ie) {
+        this.$f7.dialog.alert('Supports All Modern Browsers Except IE');
+        return;
+      }
       // check query
       const documentUrl = location.href.split(location.origin)[1];
       if (documentUrl && documentUrl.indexOf('/?') === 0) {

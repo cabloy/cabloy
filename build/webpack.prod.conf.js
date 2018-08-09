@@ -72,6 +72,7 @@ const webpackConfig = merge(baseWebpackConfig, {
         include: [
           resolve('src'),
           resolve('../../src'),
+          resolve('../../modules'),
           resolve('build/__module'),
           resolve('../@zhennann/framework7/packages'),
         ],
