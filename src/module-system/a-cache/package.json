@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-cache",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "eggBornModule": {
     "fileVersion": 1,
     "dependencies": {
