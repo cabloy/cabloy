@@ -82,7 +82,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 22);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -93,97 +93,396 @@ module.exports = require("require3");
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
+const services = __webpack_require__(2);
+const models = __webpack_require__(4);
+const config = __webpack_require__(5);
+const locales = __webpack_require__(6);
+const errors = __webpack_require__(8);
+const middlewares = __webpack_require__(9);
+const constants = __webpack_require__(13);
+const ajv = __webpack_require__(14);
+
+// eslint-disable-next-line
 module.exports = app => {
-  class TestController extends app.Controller {
 
-    async validate1() {
-      this.ctx.success();
-    }
+  // meta
+  const meta = __webpack_require__(17)(app);
+  const routes = __webpack_require__(20)(app);
 
-    async validate2() {
-      this.ctx.success();
-    }
+  // ajv
+  app.meta.ajv = ajv;
 
-  }
-  return TestController;
+  return {
+    routes,
+    services,
+    models,
+    config,
+    locales,
+    errors,
+    middlewares,
+    constants,
+    meta,
+  };
+
 };
-
 
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = app => {
-  class ValidationController extends app.Controller {
+const validation = __webpack_require__(3);
 
-    schema() {
-      const res = this.service.validation.schema(this.ctx.request.body);
-      this.ctx.success(res);
-    }
-
-  }
-  return ValidationController;
+module.exports = {
+  validation,
 };
 
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const validation = __webpack_require__(2);
-const test = __webpack_require__(1);
+/***/ (function(module, exports) {
 
 module.exports = app => {
-  let routes = [
-    { method: 'post', path: 'validation/schema', controller: validation },
-  ];
-  if (app.meta.isTest || app.meta.isLocal) {
-    routes = routes.concat([
-      { method: 'post', path: 'test/validate1', controller: test, middlewares: 'test,validate' },
-      { method: 'post', path: 'test/validate2', controller: test, middlewares: 'test,validate',
-        meta: { validate: { validator: 'test' } } },
-    ]);
+
+  class Validation extends app.Service {
+
+    schema({ module, validator, schema }) {
+      return this.ctx.meta.validation.getSchema({ module, validator, schema });
+    }
+
   }
-  return routes;
+
+  return Validation;
 };
 
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-const require3 = __webpack_require__(0);
-const Ajv = require3('ajv');
-
-module.exports = app => {
-  const keywords = {};
-  keywords.languages = {
-    async: true,
-    type: 'string',
-    errors: true,
-    compile() {
-      return async function(data) {
-        const ctx = this;
-        return new Promise((resolve, reject) => {
-          const res = [ 'zh-cn', 'en-us' ].indexOf(data) > -1;
-          if (!res) {
-            const errors = [{ keyword: 'x-languages', params: [], message: ctx.text('Not expected value') }];
-            return reject(new Ajv.ValidationError(errors));
-          }
-          return resolve(res);
-        });
-      };
-    },
-  };
-  return keywords;
+module.exports = {
 };
 
 
 /***/ }),
 /* 5 */
+/***/ (function(module, exports) {
+
+// eslint-disable-next-line
+module.exports = appInfo => {
+  const config = {};
+
+  // middlewares
+  config.middlewares = {
+    validation: {
+      global: true,
+      dependencies: 'instance',
+    },
+    validate: {
+      global: false,
+    },
+  };
+
+  return config;
+};
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = {
+  'zh-cn': __webpack_require__(7),
+};
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+module.exports = {
+  test: '测试',
+  'Not empty': '不允许为空',
+  'Not expected value': '不是期望的值',
+};
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports) {
+
+// error code should start from 1001
+module.exports = {
+};
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const validation = __webpack_require__(10);
+const validate = __webpack_require__(12);
+
+module.exports = {
+  validation,
+  validate,
+};
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// validation
+const ValidationFn = __webpack_require__(11);
+const VALIDATION = Symbol('CTX#__VALIDATION');
+
+module.exports = (options, app) => {
+  return async function validation(ctx, next) {
+    ctx.meta = ctx.meta || {};
+    Object.defineProperty(ctx.meta, 'validation', {
+      get() {
+        if (ctx.meta[VALIDATION] === undefined) {
+          ctx.meta[VALIDATION] = new (ValidationFn(ctx))();
+        }
+        return ctx.meta[VALIDATION];
+      },
+    });
+    // next
+    await next();
+  };
+};
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports) {
+
+const Fn = module.exports = ctx => {
+  class Validation {
+
+    constructor(moduleName) {
+      this.moduleName = moduleName || ctx.module.info.relativeName;
+    }
+
+    // other module's validation
+    module(moduleName) {
+      return new (Fn(ctx))(moduleName);
+    }
+
+    getSchema({ module, validator, schema }) {
+      module = module || this.moduleName;
+      const meta = ctx.app.meta.modules[module].main.meta;
+      if (!schema) {
+        const schemas = this._adjustSchemas(meta.validation.validators[validator].schemas);
+        schema = schemas[0];
+      }
+      return meta.validation.schemas[schema];
+    }
+
+    async validate({ module, validator, schema, data }) {
+      const _validator = this._checkValidator({ module, validator });
+      const res = await _validator.ajv.v({ ctx, schema, data });
+      return res;
+    }
+
+    _checkValidator({ module, validator }) {
+      module = module || this.moduleName;
+      const meta = ctx.app.meta.modules[module].main.meta;
+      const _validator = meta.validation.validators[validator];
+      if (_validator.ajv) return _validator;
+      // create ajv
+      const _schemas = this._adjustSchemas(_validator.schemas);
+      const schemas = {};
+      for (const _schema of _schemas) {
+        schemas[_schema] = meta.validation.schemas[_schema];
+        schemas[_schema].$async = true;
+      }
+      _validator.ajv = ctx.app.meta.ajv.create({ options: _validator.options, keywords: meta.validation.keywords, schemas, schemaRoot: _schemas[0] });
+      return _validator;
+    }
+
+    _adjustSchemas(schemas) {
+      if (typeof schemas === 'string') return schemas.split(',');
+      return schemas;
+    }
+
+  }
+
+  return Validation;
+};
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports) {
+
+// request.body
+//   validate: module(optional), validator, schema(optional)
+//   data:
+module.exports = (options, app) => {
+  return async function validate(ctx, next) {
+    // ignore
+    const validator = options.validator || (ctx.request.body.validate && ctx.request.body.validate.validator);
+    if (!validator) return await next();
+    // params
+    const module = options.module || (ctx.request.body.validate && ctx.request.body.validate.module) || ctx.module.info.relativeName;
+    const schema = options.schema || (ctx.request.body.validate && ctx.request.body.validate.schema);
+    const data = ctx.request.body[options.data || 'data'];
+    // if error throw 422
+    await ctx.meta.validation.validate({
+      module,
+      validator,
+      schema,
+      data,
+    });
+    // next
+    await next();
+  };
+};
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports) {
+
+module.exports = {
+};
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(0);
+const Ajv = require3('ajv');
+const AjvLocalize = require3('ajv-i18n');
+const AjvKeywords = require3('ajv-keywords');
+const systemKeywords = __webpack_require__(15);
+
+module.exports = {
+  create({ options, keywords, schemas, schemaRoot }) {
+    const _options = Object.assign({
+      $data: true,
+      allErrors: true,
+      verbose: false,
+      jsonPointers: true,
+      format: 'full',
+      unknownFormats: true,
+      useDefaults: true,
+      coerceTypes: true,
+      transpile: false,
+      passContext: true,
+      removeAdditional: 'all',
+    }, options);
+    const ajv = new Ajv(_options);
+    AjvKeywords(ajv);
+    ajv.v = createValidate(schemaRoot);
+    // systemKeywords
+    for (const _keyword in systemKeywords) {
+      ajv.addKeyword(_keyword, systemKeywords[_keyword]);
+    }
+    // keywords
+    if (keywords) {
+      for (const _keyword in keywords) {
+        ajv.addKeyword(_keyword, keywords[_keyword]);
+      }
+    }
+    // schemas
+    if (schemas) {
+      for (const key in schemas) {
+        ajv.addSchema(schemas[key], key);
+      }
+    }
+    return ajv;
+  },
+};
+
+function createValidate(schemaRoot) {
+  return async function({ ctx, schema, data }) {
+    const validate = this.getSchema(schema || schemaRoot);
+    try {
+      const res = await validate.call(ctx, data);
+      return res;
+    } catch (e) {
+      const locale = ctx.locale.split('-')[0];
+      if (locale !== 'en' && AjvLocalize[locale]) AjvLocalize[locale](e.errors);
+      const error = new Error();
+      error.code = 422;
+      error.message = e.errors;
+      throw error;
+    }
+  };
+}
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const notEmpty = __webpack_require__(16);
+
+module.exports = {
+  notEmpty,
+};
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports) {
+
+module.exports = {
+  errors: true,
+  compile(schema) {
+    const fun = function(data) {
+      const res = schema ? !!data : !data;
+      if (!res) {
+        fun.errors = [{ keyword: 'notEmpty', params: [], message: this.text('Not empty') }];
+      }
+      return res;
+    };
+    return fun;
+  },
+};
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = app => {
+  const meta = {};
+  if (app.meta.isTest || app.meta.isLocal) {
+    // schemas
+    const schemas = __webpack_require__(18)(app);
+    // keywords
+    const keywords = __webpack_require__(19)(app);
+    // meta
+    Object.assign(meta, {
+      validation: {
+        validators: {
+          test: {
+            schemas: 'root,extra',
+          },
+        },
+        keywords: {
+          'x-languages': keywords.languages,
+        },
+        schemas: {
+          root: schemas.root,
+          extra: schemas.extra,
+        },
+      },
+    });
+  }
+  return meta;
+};
+
+
+/***/ }),
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -257,393 +556,94 @@ module.exports = app => {
 
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = app => {
-  const meta = {};
-  if (app.meta.isTest || app.meta.isLocal) {
-    // schemas
-    const schemas = __webpack_require__(5)(app);
-    // keywords
-    const keywords = __webpack_require__(4)(app);
-    // meta
-    Object.assign(meta, {
-      validation: {
-        validators: {
-          test: {
-            schemas: 'root,extra',
-          },
-        },
-        keywords: {
-          'x-languages': keywords.languages,
-        },
-        schemas: {
-          root: schemas.root,
-          extra: schemas.extra,
-        },
-      },
-    });
-  }
-  return meta;
-};
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports) {
-
-module.exports = {
-  errors: true,
-  compile(schema) {
-    const fun = function(data) {
-      const res = schema ? !!data : !data;
-      if (!res) {
-        fun.errors = [{ keyword: 'notEmpty', params: [], message: this.text('Not empty') }];
-      }
-      return res;
-    };
-    return fun;
-  },
-};
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const notEmpty = __webpack_require__(7);
-
-module.exports = {
-  notEmpty,
-};
-
-
-/***/ }),
-/* 9 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
 const Ajv = require3('ajv');
-const AjvLocalize = require3('ajv-i18n');
-const AjvKeywords = require3('ajv-keywords');
-const systemKeywords = __webpack_require__(8);
 
-module.exports = {
-  create({ options, keywords, schemas, schemaRoot }) {
-    const _options = Object.assign({
-      $data: true,
-      allErrors: true,
-      verbose: false,
-      jsonPointers: true,
-      format: 'full',
-      unknownFormats: true,
-      useDefaults: true,
-      coerceTypes: true,
-      transpile: false,
-      passContext: true,
-      removeAdditional: 'all',
-    }, options);
-    const ajv = new Ajv(_options);
-    AjvKeywords(ajv);
-    ajv.v = createValidate(schemaRoot);
-    // systemKeywords
-    for (const _keyword in systemKeywords) {
-      ajv.addKeyword(_keyword, systemKeywords[_keyword]);
-    }
-    // keywords
-    if (keywords) {
-      for (const _keyword in keywords) {
-        ajv.addKeyword(_keyword, keywords[_keyword]);
-      }
-    }
-    // schemas
-    if (schemas) {
-      for (const key in schemas) {
-        ajv.addSchema(schemas[key], key);
-      }
-    }
-    return ajv;
-  },
-};
-
-function createValidate(schemaRoot) {
-  return async function({ ctx, schema, data }) {
-    const validate = this.getSchema(schema || schemaRoot);
-    try {
-      const res = await validate.call(ctx, data);
-      return res;
-    } catch (e) {
-      const locale = ctx.locale.split('-')[0];
-      if (locale !== 'en' && AjvLocalize[locale]) AjvLocalize[locale](e.errors);
-      const error = new Error();
-      error.code = 422;
-      error.message = e.errors;
-      throw error;
-    }
-  };
-}
-
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports) {
-
-module.exports = {
-};
-
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports) {
-
-// request.body
-//   validate: module(optional), validator, schema(optional)
-//   data:
-module.exports = (options, app) => {
-  return async function validate(ctx, next) {
-    // ignore
-    const validator = options.validator || (ctx.request.body.validate && ctx.request.body.validate.validator);
-    if (!validator) return await next();
-    // params
-    const module = options.module || (ctx.request.body.validate && ctx.request.body.validate.module) || ctx.module.info.relativeName;
-    const schema = options.schema || (ctx.request.body.validate && ctx.request.body.validate.schema);
-    const data = ctx.request.body[options.data || 'data'];
-    // if error throw 422
-    await ctx.meta.validation.validate({
-      module,
-      validator,
-      schema,
-      data,
-    });
-    // next
-    await next();
-  };
-};
-
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports) {
-
-const Fn = module.exports = ctx => {
-  class Validation {
-
-    constructor(moduleName) {
-      this.moduleName = moduleName || ctx.module.info.relativeName;
-    }
-
-    // other module's validation
-    module(moduleName) {
-      return new (Fn(ctx))(moduleName);
-    }
-
-    getSchema({ module, validator, schema }) {
-      module = module || this.moduleName;
-      const meta = ctx.app.meta.modules[module].main.meta;
-      if (!schema) {
-        const schemas = this._adjustSchemas(meta.validation.validators[validator].schemas);
-        schema = schemas[0];
-      }
-      return meta.validation.schemas[schema];
-    }
-
-    async validate({ module, validator, schema, data }) {
-      const _validator = this._checkValidator({ module, validator });
-      const res = await _validator.ajv.v({ ctx, schema, data });
-      return res;
-    }
-
-    _checkValidator({ module, validator }) {
-      module = module || this.moduleName;
-      const meta = ctx.app.meta.modules[module].main.meta;
-      const _validator = meta.validation.validators[validator];
-      if (_validator.ajv) return _validator;
-      // create ajv
-      const _schemas = this._adjustSchemas(_validator.schemas);
-      const schemas = {};
-      for (const _schema of _schemas) {
-        schemas[_schema] = meta.validation.schemas[_schema];
-        schemas[_schema].$async = true;
-      }
-      _validator.ajv = ctx.app.meta.ajv.create({ options: _validator.options, keywords: meta.validation.keywords, schemas, schemaRoot: _schemas[0] });
-      return _validator;
-    }
-
-    _adjustSchemas(schemas) {
-      if (typeof schemas === 'string') return schemas.split(',');
-      return schemas;
-    }
-
-  }
-
-  return Validation;
-};
-
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// validation
-const ValidationFn = __webpack_require__(12);
-const VALIDATION = Symbol('CTX#__VALIDATION');
-
-module.exports = (options, app) => {
-  return async function validation(ctx, next) {
-    ctx.meta = ctx.meta || {};
-    Object.defineProperty(ctx.meta, 'validation', {
-      get() {
-        if (ctx.meta[VALIDATION] === undefined) {
-          ctx.meta[VALIDATION] = new (ValidationFn(ctx))();
-        }
-        return ctx.meta[VALIDATION];
-      },
-    });
-    // next
-    await next();
-  };
-};
-
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const validation = __webpack_require__(13);
-const validate = __webpack_require__(11);
-
-module.exports = {
-  validation,
-  validate,
-};
-
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports) {
-
-// error code should start from 1001
-module.exports = {
-};
-
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports) {
-
-module.exports = {
-  test: '测试',
-  'Not empty': '不允许为空',
-  'Not expected value': '不是期望的值',
-};
-
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = {
-  'zh-cn': __webpack_require__(16),
-};
-
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports) {
-
-// eslint-disable-next-line
-module.exports = appInfo => {
-  const config = {};
-
-  // middlewares
-  config.middlewares = {
-    validation: {
-      global: true,
-      dependencies: 'instance',
-    },
-    validate: {
-      global: false,
+module.exports = app => {
+  const keywords = {};
+  keywords.languages = {
+    async: true,
+    type: 'string',
+    errors: true,
+    compile() {
+      return async function(data) {
+        const ctx = this;
+        return new Promise((resolve, reject) => {
+          const res = [ 'zh-cn', 'en-us' ].indexOf(data) > -1;
+          if (!res) {
+            const errors = [{ keyword: 'x-languages', params: [], message: ctx.text('Not expected value') }];
+            return reject(new Ajv.ValidationError(errors));
+          }
+          return resolve(res);
+        });
+      };
     },
   };
-
-  return config;
-};
-
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports) {
-
-module.exports = {
+  return keywords;
 };
 
 
 /***/ }),
 /* 20 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+const validation = __webpack_require__(21);
+const test = __webpack_require__(22);
 
 module.exports = app => {
-
-  class Validation extends app.Service {
-
-    schema({ module, validator, schema }) {
-      return this.ctx.meta.validation.getSchema({ module, validator, schema });
-    }
-
+  let routes = [
+    { method: 'post', path: 'validation/schema', controller: validation },
+  ];
+  if (app.meta.isTest || app.meta.isLocal) {
+    routes = routes.concat([
+      { method: 'post', path: 'test/validate1', controller: test, middlewares: 'test,validate' },
+      { method: 'post', path: 'test/validate2', controller: test, middlewares: 'test,validate',
+        meta: { validate: { validator: 'test' } } },
+    ]);
   }
-
-  return Validation;
+  return routes;
 };
 
 
 /***/ }),
 /* 21 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-const validation = __webpack_require__(20);
+module.exports = app => {
+  class ValidationController extends app.Controller {
 
-module.exports = {
-  validation,
+    schema() {
+      const res = this.service.validation.schema(this.ctx.request.body);
+      this.ctx.success(res);
+    }
+
+  }
+  return ValidationController;
 };
 
 
 /***/ }),
 /* 22 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-const services = __webpack_require__(21);
-const models = __webpack_require__(19);
-const config = __webpack_require__(18);
-const locales = __webpack_require__(17);
-const errors = __webpack_require__(15);
-const middlewares = __webpack_require__(14);
-const constants = __webpack_require__(10);
-const ajv = __webpack_require__(9);
-
-// eslint-disable-next-line
 module.exports = app => {
+  class TestController extends app.Controller {
 
-  // meta
-  const meta = __webpack_require__(6)(app);
-  const routes = __webpack_require__(3)(app);
+    async validate1() {
+      this.ctx.success();
+    }
 
-  // ajv
-  app.meta.ajv = ajv;
+    async validate2() {
+      this.ctx.success();
+    }
 
-  return {
-    routes,
-    services,
-    models,
-    config,
-    locales,
-    errors,
-    middlewares,
-    constants,
-    meta,
-  };
-
+  }
+  return TestController;
 };
+
 
 
 /***/ })
