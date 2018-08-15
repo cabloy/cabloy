@@ -1,7 +1,7 @@
 let Vue;
 
 // import formEvent from './directives/formEvent.js';
-import './assets/css/module.css';
+import './assets/css/module.less';
 
 // install
 function install(_Vue, cb) {

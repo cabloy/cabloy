@@ -90,18 +90,6 @@ export default {
 
 </script>
 <style>
-.eb-loadmore {
-  text-align: center;
-  color: #8e8e93;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  position: relative;
-  height: 50px;
-}
 
-.eb-loadmore .eb-preloader {
-  margin-top: 0;
-  top: 0;
-}
 
 </style>

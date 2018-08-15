@@ -199,8 +199,8 @@ module.exports = require("vue");
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _assets_css_module_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(19);
-/* harmony import */ var _assets_css_module_css__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_assets_css_module_css__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _assets_css_module_less__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(19);
+/* harmony import */ var _assets_css_module_less__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_assets_css_module_less__WEBPACK_IMPORTED_MODULE_0__);
 var Vue = void 0;
 
 
@@ -481,12 +481,12 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/components/loadMore.vue?vue&type=template&id=433d4839&
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/components/loadMore.vue?vue&type=template&id=4b365ce2&
 var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return (_vm.doing || _vm.none || _vm.nomore || _vm.retry)?_c('div',{staticClass:"eb-loadmore"},[(_vm.doing)?_c('f7-preloader',{staticClass:"eb-preloader"}):_vm._e(),_vm._v(" "),(_vm.none)?_c('div',[_vm._v(_vm._s(_vm.$text('No data')))]):_vm._e(),_vm._v(" "),(_vm.nomore)?_c('div',[_vm._v(_vm._s(_vm.$text('No more data')))]):_vm._e(),_vm._v(" "),(_vm.retry)?_c('div',[_c('f7-button',{staticClass:"color-orange",attrs:{"round":""},on:{"click":_vm.onRetry}},[_vm._v(_vm._s(_vm.$text('Load error, try again')))])],1):_vm._e()],1):_vm._e()}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./front/src/components/loadMore.vue?vue&type=template&id=433d4839&
+// CONCATENATED MODULE: ./front/src/components/loadMore.vue?vue&type=template&id=4b365ce2&
 
 // CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/components/loadMore.vue?vue&type=script&lang=js&
 
