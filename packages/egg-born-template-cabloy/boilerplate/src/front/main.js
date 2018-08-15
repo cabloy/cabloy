@@ -1,6 +1,6 @@
 import 'egg-born-front/src/bootstrap.js';
 
-import './assets/css/app.css';
+import './assets/css/app.less';
 
 import config from './config/config.js';
 import locales from './config/locales.js';
