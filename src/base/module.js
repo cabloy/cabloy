@@ -1,7 +1,6 @@
 import mparse from 'egg-born-mparse';
 const rLocalJSs = require.context('../../../../src/module/', true, /-sync\/front\/src\/main\.js$/);
 const rGlobalJSs = require.context('../../build/__module/', true, /-sync\/dist\/front\.js$/);
-const rGlobalCSSs = require.context('../../build/__module/', true, /-sync\/dist\/front\.css$/);
 
 export default function(Vue) {
   const loadingQueue = {
@@ -75,7 +74,6 @@ export default function(Vue) {
       import('../../../../src/module/' + moduleInfo.relativeName + '/front/src/main.js').then(instance => {
         this.install(instance, moduleInfo, module => cb(module));
       }).catch(() => {
-        import('../../build/__module/' + moduleInfo.fullName + '/dist/front.css').catch(() => {});
         import('../../build/__module/' + moduleInfo.fullName + '/dist/front.js').then(instance => {
           this.install(instance, moduleInfo, module => cb(module));
         });
@@ -95,8 +93,6 @@ export default function(Vue) {
         const moduleInfo = mparse.parseInfo(mparse.parseName(key));
         const module = this.get(moduleInfo.relativeName);
         if (!module) {
-          const keyCss = this._requireFindKey(rGlobalCSSs, moduleInfo.relativeName);
-          this._requireCSS(rGlobalCSSs, keyCss);
           this._requireJS(rGlobalJSs, key, moduleInfo);
         }
       });
@@ -108,8 +104,6 @@ export default function(Vue) {
       } else {
         key = this._requireFindKey(rGlobalJSs, moduleInfo.relativeName);
         if (key) {
-          const keyCss = this._requireFindKey(rGlobalCSSs, moduleInfo.relativeName);
-          this._requireCSS(rGlobalCSSs, keyCss);
           this._requireJS(rGlobalJSs, key, moduleInfo, cb);
         } else {
           throw new Error(`Module ${moduleInfo.relativeName} not exists`);
@@ -121,9 +115,6 @@ export default function(Vue) {
         const moduleInfo = mparse.parseInfo(mparse.parseName(key));
         return moduleRelativeName === moduleInfo.relativeName;
       });
-    },
-    _requireCSS(r, key) {
-      return r(key);
     },
     _requireJS(r, key, moduleInfo, cb) {
       const instance = r(key);
