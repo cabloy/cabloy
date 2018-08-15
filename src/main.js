@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import moment from 'moment';
-import './assets/css/iconfont/material-icons.css';
 
 // meta
 const meta = Vue.prototype.$meta = {};
