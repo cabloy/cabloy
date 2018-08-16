@@ -1,5 +1,11 @@
 # History
 
+## 2018-08-16, Version 1.1.3
+
+* **features**
+  * a-baseadmin support locale
+
+
 ## 2018-08-15, Version 1.1.2
 
 * **features**
