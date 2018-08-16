@@ -18,6 +18,7 @@ import swipeoutButton from './components/swipeoutButton.vue';
 import tabPageContent from './components/tabPageContent.vue';
 import searchPage from './components/searchPage.vue';
 import popover from './components/popover.vue';
+import contextMenu from './components/contextMenu.vue';
 import modules from './common/modules.js';
 import pageContext from './common/pageContext.js';
 import actions from './common/actions.js';
@@ -44,6 +45,7 @@ export default {
   ebTabPageContent: tabPageContent,
   ebSearchPage: searchPage,
   ebPopover: popover,
+  ebContextMenu: contextMenu,
   ebModules: modules,
   ebPageContext: pageContext,
   ebActions: actions,

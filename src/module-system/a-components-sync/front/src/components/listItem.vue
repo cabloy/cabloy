@@ -31,6 +31,7 @@ export default {
       event.preventDefault();
     },
     getLinkEl() {
+      // bypass the popover's link
       const content = this.$$(this.$el).find('.item-content');
       if (content.length === 0) return null;
       return this.$$(content[0]).closest('a');
