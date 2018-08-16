@@ -9,15 +9,11 @@
       <f7-list-item group-title :title="item?item.atomName:''"></f7-list-item>
       <eb-list-item v-for="key of Object.keys(labelsAll)" :key="key" :title="labelsAll[key].text" checkbox :checked="labelChecked(key)" @change="onLabelCheckChange($event,key)" swipeout>
         <div slot="media" class="media" :style="{backgroundColor:labelsAll[key].color}"></div>
-        <f7-swipeout-actions right>
-          <eb-swipeout-button close>{{$text('Close')}}</eb-swipeout-button>
-          <eb-swipeout-button close color="orange" :context="key" :onPerform="onEditLabel">{{$text('Edit')}}</eb-swipeout-button>
-        </f7-swipeout-actions>
-        <eb-popover>
-          <f7-list inset>
-            <eb-list-item popover-close link="#" :context="key" :onPerform="onEditLabel">{{$text('Edit')}}</eb-list-item>
-          </f7-list>
-        </eb-popover>
+        <eb-context-menu>
+          <div slot="right">
+            <div close color="orange" :context="key" :onPerform="onEditLabel">{{$text('Edit')}}</div>
+          </div>
+        </eb-context-menu>
       </eb-list-item>
     </f7-list>
     <f7-sheet ref="ebSheet" fill :opened="sheetOpened" @sheet:closed="sheetOpened = false">

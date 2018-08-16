@@ -42,35 +42,22 @@
             </template>
           </template>
         </div>
-        <f7-swipeout-actions left>
-          <template v-if="mode==='stars'">
-            <eb-swipeout-button color="orange" :context="item" :onPerform="onStarOff">{{$text('Unstar')}}</eb-swipeout-button>
-          </template>
-          <template v-else>
-            <eb-swipeout-button color="orange" :context="item" :onPerform="onStarSwitch">{{item.star?$text('Unstar'):$text('Star')}}</eb-swipeout-button>
-          </template>
-          <eb-swipeout-button color="yellow" :context="item" :onPerform="onLabel">{{$text('Labels')}}</eb-swipeout-button>
-        </f7-swipeout-actions>
-        <eb-swipeout-actions right v-if="!itemShow" :ready="!!item._actions">
-          <template v-if="item._actions">
-            <eb-swipeout-button v-for="(action,index) of item._actions" :key="action.id" :color="getActionColor(action,index)" :context="{item,action}" :onPerform="onAction">{{getActionTitle(action)}}</eb-swipeout-button>
-          </template>
-        </eb-swipeout-actions>
-        <eb-popover :ready="!!item._actions">
-          <f7-list inset>
+        <eb-context-menu>
+          <div slot="left">
             <template v-if="mode==='stars'">
-              <eb-list-item popover-close link="#" :context="item" :onPerform="onStarOff">{{$text('Unstar')}}</eb-list-item>
+              <div color="orange" :context="item" :onPerform="onStarOff">{{$text('Unstar')}}</div>
             </template>
             <template v-else>
-              <eb-list-item popover-close link="#" :context="item" :onPerform="onStarSwitch">{{item.star?$text('Unstar'):$text('Star')}}</eb-list-item>
+              <div color="orange" :context="item" :onPerform="onStarSwitch">{{item.star?$text('Unstar'):$text('Star')}}</div>
             </template>
-            <eb-list-item popover-close link="#" :context="item" :onPerform="onLabel">{{$text('Labels')}}</eb-list-item>
-            <f7-list-item divider></f7-list-item>
+            <div color="yellow" :context="item" :onPerform="onLabel">{{$text('Labels')}}</div>
+          </div>
+          <div slot="right" v-if="!itemShow" :ready="!!item._actions">
             <template v-if="item._actions">
-              <eb-list-item v-for="(action,index) of item._actions" :key="action.id" popover-close link="#" :context="{item,action}" :onPerform="onAction">{{getActionTitle(action)}}</eb-list-item>
+              <div v-for="(action,index) of item._actions" :key="action.id" :color="getActionColor(action,index)" :context="{item,action}" :onPerform="onAction">{{getActionTitle(action)}}</div>
             </template>
-          </f7-list>
-        </eb-popover>
+          </div>
+        </eb-context-menu>
       </eb-list-item>
     </f7-list>
     <eb-load-more ref="loadMore" v-if="!itemShow" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="false"></eb-load-more>

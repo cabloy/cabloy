@@ -4,26 +4,20 @@
       <template v-if="mode==='search'">
         <eb-list-item v-for="item of items" :key="item.id" link="#" :context="item" :onPerform="onItemClick" :title="item.titleLocale" swipeout>
           <f7-icon slot="media" color="orange" :material="item.star?'star':''"></f7-icon>
-          <f7-swipeout-actions right>
-            <eb-swipeout-button color="orange" :context="item" :onPerform="onStarSwitch">{{item.star?$text('Unstar'):$text('Star')}}</eb-swipeout-button>
-          </f7-swipeout-actions>
-          <eb-popover>
-            <f7-list inset>
-              <eb-list-item popover-close link="#" :context="item" :onPerform="onStarSwitch">{{item.star?$text('Unstar'):$text('Star')}}</eb-list-item>
-            </f7-list>
-          </eb-popover>
+          <eb-context-menu>
+            <div slot="right">
+              <div color="orange" :context="item" :onPerform="onStarSwitch">{{item.star?$text('Unstar'):$text('Star')}}</div>
+            </div>
+          </eb-context-menu>
         </eb-list-item>
       </template>
       <template v-else-if="mode==='stars'">
         <eb-list-item v-for="item of items" :key="item.id" link="#" :context="item" :onPerform="onItemClick" :title="item.titleLocale" swipeout>
-          <f7-swipeout-actions right>
-            <eb-swipeout-button color="orange" :context="item" :onPerform="onStarOff">{{$text('Unstar')}}</eb-swipeout-button>
-          </f7-swipeout-actions>
-          <eb-popover>
-            <f7-list inset>
-              <eb-list-item popover-close link="#" :context="item" :onPerform="onStarOff">{{$text('Unstar')}}</eb-list-item>
-            </f7-list>
-          </eb-popover>
+          <eb-context-menu>
+            <div slot="right">
+              <div color="orange" :context="item" :onPerform="onStarOff">{{$text('Unstar')}}</div>
+            </div>
+          </eb-context-menu>
         </eb-list-item>
       </template>
       <template v-else>
@@ -31,14 +25,11 @@
           <f7-list-item :title="group.title" group-title></f7-list-item>
           <eb-list-item v-for="item of group.items" :key="item.id" link="#" :context="item" :onPerform="onItemClick" :title="item.titleLocale" swipeout>
             <f7-icon slot="media" color="orange" :material="item.star?'star':''"></f7-icon>
-            <f7-swipeout-actions right>
-              <eb-swipeout-button color="orange" :context="item" :onPerform="onStarSwitch">{{item.star?$text('Unstar'):$text('Star')}}</eb-swipeout-button>
-            </f7-swipeout-actions>
-            <eb-popover>
-              <f7-list inset>
-                <eb-list-item popover-close link="#" :context="item" :onPerform="onStarSwitch">{{item.star?$text('Unstar'):$text('Star')}}</eb-list-item>
-              </f7-list>
-            </eb-popover>
+            <eb-context-menu>
+              <div slot="right">
+                <div color="orange" :context="item" :onPerform="onStarSwitch">{{item.star?$text('Unstar'):$text('Star')}}</div>
+              </div>
+            </eb-context-menu>
           </eb-list-item>
         </f7-list-group>
       </template>
