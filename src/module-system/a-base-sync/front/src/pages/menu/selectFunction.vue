@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text(menu===1?'Select menu':'Select function')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar :title="$text(menu===1?'Select Menu':'Select Function')" eb-back-link="Back"></eb-navbar>
     <f7-list>
       <f7-list-item v-for="(item,index) of functions" :key="index" radio :checked="name===item.name" :title="item.title" @click="onItemClick(item)">
       </f7-list-item>
