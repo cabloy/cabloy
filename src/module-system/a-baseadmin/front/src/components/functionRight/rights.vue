@@ -4,14 +4,11 @@
       <f7-list-group v-for="group of itemGroups" :key="group.id">
         <f7-list-item :title="group.id" group-title></f7-list-item>
         <eb-list-item v-for="item of group.items" :key="item.id" :title="item.titleLocale || item.title" swipeout>
-          <f7-swipeout-actions right>
-            <eb-swipeout-button color="orange" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</eb-swipeout-button>
-          </f7-swipeout-actions>
-          <eb-popover>
-            <f7-list inset>
-              <eb-list-item popover-close link="#" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</eb-list-item>
-            </f7-list>
-          </eb-popover>
+          <eb-context-menu>
+            <div slot="right">
+              <div color="orange" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
+            </div>
+          </eb-context-menu>
         </eb-list-item>
       </f7-list-group>
     </f7-list>

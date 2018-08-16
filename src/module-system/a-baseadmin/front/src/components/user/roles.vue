@@ -2,14 +2,11 @@
   <div>
     <f7-list>
       <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.roleName" :eb-href="`role/edit?roleId=${item.roleId}`" swipeout>
-        <f7-swipeout-actions right>
-          <eb-swipeout-button color="orange" :context="item" :onPerform="onRemove">{{$text('Remove')}}</eb-swipeout-button>
-        </f7-swipeout-actions>
-        <eb-popover>
-          <f7-list inset>
-            <eb-list-item popover-close link="#" :context="item" :onPerform="onRemove">{{$text('Remove')}}</eb-list-item>
-          </f7-list>
-        </eb-popover>
+        <eb-context-menu>
+          <div slot="right">
+            <div color="orange" :context="item" :onPerform="onRemove">{{$text('Remove')}}</div>
+          </div>
+        </eb-context-menu>
       </eb-list-item>
     </f7-list>
     <eb-load-more ref="loadMore" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="false"></eb-load-more>

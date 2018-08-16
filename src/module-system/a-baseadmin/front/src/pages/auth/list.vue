@@ -6,16 +6,12 @@
         <div slot="after">
           <f7-badge v-if="item.disabled===1">{{$text('Disabled')}}</f7-badge>
         </div>
-        <f7-swipeout-actions right>
-          <eb-swipeout-button v-if="item.disabled===0" color="orange" :context="item" :onPerform="onPerformDisable">{{$text('Disable')}}</eb-swipeout-button>
-          <eb-swipeout-button v-else color="orange" :context="item" :onPerform="onPerformEnable">{{$text('Enable')}}</eb-swipeout-button>
-        </f7-swipeout-actions>
-        <eb-popover>
-          <f7-list inset>
-            <eb-list-item v-if="item.disabled===0" popover-close link="#" :context="item" :onPerform="onPerformDisable">{{$text('Disable')}}</eb-list-item>
-            <eb-list-item v-else popover-close link="#" :context="item" :onPerform="onPerformEnable">{{$text('Enable')}}</eb-list-item>
-          </f7-list>
-        </eb-popover>
+        <eb-context-menu>
+          <div slot="right">
+            <div v-if="item.disabled===0" color="orange" :context="item" :onPerform="onPerformDisable">{{$text('Disable')}}</div>
+            <div v-else color="orange" :context="item" :onPerform="onPerformEnable">{{$text('Enable')}}</div>
+          </div>
+        </eb-context-menu>
       </eb-list-item>
     </f7-list>
   </eb-page>
@@ -50,7 +46,8 @@ export default {
     },
     onDisable(event, item, disabled) {
       return this.$api.post('auth/disable', { id: item.id, disabled }).then(() => {
-        item.disabled = disabled;
+        const index = this.items.findIndex(_item => _item.id === item.id);
+        this.items[index].disabled = disabled;
         this.$meta.util.swipeoutClose(event.target);
         return true;
       });

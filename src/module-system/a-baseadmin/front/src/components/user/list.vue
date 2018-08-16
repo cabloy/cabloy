@@ -7,18 +7,13 @@
           <f7-badge v-if="item.mobile">{{item.mobile}}</f7-badge>
           <f7-badge v-if="item.disabled===1">{{$text('Disabled')}}</f7-badge>
         </div>
-        <f7-swipeout-actions right>
-          <eb-swipeout-button v-if="item.disabled===0" color="orange" :context="item" :onPerform="onPerformDisable">{{$text('Disable')}}</eb-swipeout-button>
-          <eb-swipeout-button v-if="item.disabled===1" color="orange" :context="item" :onPerform="onPerformEnable">{{$text('Enable')}}</eb-swipeout-button>
-          <eb-swipeout-button color="yellow" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</eb-swipeout-button>
-        </f7-swipeout-actions>
-        <eb-popover>
-          <f7-list inset>
-            <eb-list-item v-if="item.disabled===0" popover-close link="#" :context="item" :onPerform="onPerformDisable">{{$text('Disable')}}</eb-list-item>
-            <eb-list-item v-if="item.disabled===1" popover-close link="#" :context="item" :onPerform="onPerformEnable">{{$text('Enable')}}</eb-list-item>
-            <eb-list-item popover-close link="#" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</eb-list-item>
-          </f7-list>
-        </eb-popover>
+        <eb-context-menu>
+          <div slot="right">
+            <div v-if="item.disabled===0" color="orange" :context="item" :onPerform="onPerformDisable">{{$text('Disable')}}</div>
+            <div v-if="item.disabled===1" color="orange" :context="item" :onPerform="onPerformEnable">{{$text('Enable')}}</div>
+            <div color="yellow" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
+          </div>
+        </eb-context-menu>
       </eb-list-item>
     </f7-list>
     <eb-load-more ref="loadMore" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="false"></eb-load-more>
