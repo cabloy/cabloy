@@ -2,6 +2,7 @@
 import Vue from 'vue';
 const f7Toggle = Vue.options.components['f7-toggle'].extendOptions;
 delete f7Toggle.props.checked;
+delete f7Toggle.props.value;
 export default {
   name: 'eb-toggle',
   extends: f7Toggle,
@@ -11,9 +12,14 @@ export default {
       default: false,
     },
   },
-  computed: {
-    checked() {
-      return this.value;
+  data() {
+    return {
+      checked: this.value,
+    };
+  },
+  watch: {
+    value() {
+      this.checked = this.value;
     },
   },
   methods: {

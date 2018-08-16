@@ -369,10 +369,10 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_toggle_vue_vue_type_style_index_0_id_19d92ea3_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8);
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_toggle_vue_vue_type_style_index_0_id_19d92ea3_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_toggle_vue_vue_type_style_index_0_id_19d92ea3_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_toggle_vue_vue_type_style_index_0_id_c144377a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_toggle_vue_vue_type_style_index_0_id_c144377a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_toggle_vue_vue_type_style_index_0_id_c144377a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
 /* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_toggle_vue_vue_type_style_index_0_id_19d92ea3_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
+ /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_toggle_vue_vue_type_style_index_0_id_c144377a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 /* 41 */,
@@ -1295,6 +1295,7 @@ input_component.options.__file = "input.vue"
 
 var f7Toggle = external_vue_default.a.options.components['f7-toggle'].extendOptions;
 delete f7Toggle.props.checked;
+delete f7Toggle.props.value;
 /* harmony default export */ var togglevue_type_script_lang_js_ = ({
   name: 'eb-toggle',
   extends: f7Toggle,
@@ -1304,9 +1305,15 @@ delete f7Toggle.props.checked;
       default: false
     }
   },
-  computed: {
-    checked: function checked() {
-      return this.value;
+  data: function data() {
+    return {
+      checked: this.value
+    };
+  },
+
+  watch: {
+    value: function value() {
+      this.checked = this.value;
     }
   },
   methods: {
@@ -1317,8 +1324,8 @@ delete f7Toggle.props.checked;
 });
 // CONCATENATED MODULE: ./front/src/components/toggle.vue?vue&type=script&lang=js&
  /* harmony default export */ var components_togglevue_type_script_lang_js_ = (togglevue_type_script_lang_js_); 
-// EXTERNAL MODULE: ./front/src/components/toggle.vue?vue&type=style&index=0&id=19d92ea3&scoped=true&lang=css&
-var togglevue_type_style_index_0_id_19d92ea3_scoped_true_lang_css_ = __webpack_require__(40);
+// EXTERNAL MODULE: ./front/src/components/toggle.vue?vue&type=style&index=0&id=c144377a&scoped=true&lang=css&
+var togglevue_type_style_index_0_id_c144377a_scoped_true_lang_css_ = __webpack_require__(40);
 
 // CONCATENATED MODULE: ./front/src/components/toggle.vue
 var toggle_render, toggle_staticRenderFns
@@ -1335,7 +1342,7 @@ var toggle_component = normalizeComponent(
   toggle_staticRenderFns,
   false,
   null,
-  "19d92ea3",
+  "c144377a",
   null
   
 )
