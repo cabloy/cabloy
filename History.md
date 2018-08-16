@@ -1,5 +1,11 @@
 # History
 
+## 2018-08-16, Version 1.1.5
+
+* **fix**
+  * a-components: eb-context-menu
+
+
 ## 2018-08-16, Version 1.1.4
 
 * **fix**
