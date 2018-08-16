@@ -6,7 +6,7 @@
         <eb-list-item class="item" v-for="item of group.items" :key="`${item.roleExpandId}:${item.roleRightId}`" :title="item.actionName">
           <div slot="root-start" class="header">
             <div></div>
-            <div>from: {{item.roleName}}</div>
+            <div>{{$text('from')}}: {{item.roleName}}</div>
           </div>
           <div slot="after">
             <f7-badge v-if="item.actionCode!==1 && item.scope==='0'">Self</f7-badge>
@@ -21,7 +21,6 @@
   </div>
 </template>
 <script>
-import Vue from 'vue';
 export default {
   meta: {
     global: false,

@@ -5,18 +5,18 @@
         <div slot="after">
           <f7-badge v-if="item.realName && item.realName!==item.userName">{{item.realName}}</f7-badge>
           <f7-badge v-if="item.mobile">{{item.mobile}}</f7-badge>
-          <f7-badge v-if="item.disabled===1">Disabled</f7-badge>
+          <f7-badge v-if="item.disabled===1">{{$text('Disabled')}}</f7-badge>
         </div>
         <f7-swipeout-actions right>
-          <eb-swipeout-button v-if="item.disabled===0" color="orange" :context="item" :onPerform="onPerformDisable">Disable</eb-swipeout-button>
-          <eb-swipeout-button v-if="item.disabled===1" color="orange" :context="item" :onPerform="onPerformEnable">Enable</eb-swipeout-button>
-          <eb-swipeout-button color="yellow" :context="item" :onPerform="onPerformDelete">Delete</eb-swipeout-button>
+          <eb-swipeout-button v-if="item.disabled===0" color="orange" :context="item" :onPerform="onPerformDisable">{{$text('Disable')}}</eb-swipeout-button>
+          <eb-swipeout-button v-if="item.disabled===1" color="orange" :context="item" :onPerform="onPerformEnable">{{$text('Enable')}}</eb-swipeout-button>
+          <eb-swipeout-button color="yellow" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</eb-swipeout-button>
         </f7-swipeout-actions>
         <eb-popover>
           <f7-list inset>
-            <eb-list-item v-if="item.disabled===0" popover-close link="#" :context="item" :onPerform="onPerformDisable">Disable</eb-list-item>
-            <eb-list-item v-if="item.disabled===1" popover-close link="#" :context="item" :onPerform="onPerformEnable">Enable</eb-list-item>
-            <eb-list-item popover-close link="#" :context="item" :onPerform="onPerformDelete">Delete</eb-list-item>
+            <eb-list-item v-if="item.disabled===0" popover-close link="#" :context="item" :onPerform="onPerformDisable">{{$text('Disable')}}</eb-list-item>
+            <eb-list-item v-if="item.disabled===1" popover-close link="#" :context="item" :onPerform="onPerformEnable">{{$text('Enable')}}</eb-list-item>
+            <eb-list-item popover-close link="#" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</eb-list-item>
           </f7-list>
         </eb-popover>
       </eb-list-item>
@@ -91,14 +91,16 @@ export default {
       return this.disableUser(event, item, 0);
     },
     onPerformDelete(event, item) {
-      return this.$api.post('user/delete', {
-        userId: item.id,
-      })
-        .then(() => {
-          this.$meta.eventHub.$emit('user:delete', { userId: item.id });
-          this.$meta.util.swipeoutDelete(event.target);
-          return true;
-        });
+      return this.$view.dialog.confirm().then(() => {
+        return this.$api.post('user/delete', {
+          userId: item.id,
+        })
+          .then(() => {
+            this.$meta.eventHub.$emit('user:delete', { userId: item.id });
+            this.$meta.util.swipeoutDelete(event.target);
+            return true;
+          });
+      });
     },
     disableUser(event, item, disabled) {
       return this.$api.post('user/disable', {

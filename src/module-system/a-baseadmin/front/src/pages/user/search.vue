@@ -1,5 +1,5 @@
 <template>
-  <eb-search-page :title="$text('Search user')">
+  <eb-search-page :title="$text('Search User')">
     <users slot="list"></users>
   </eb-search-page>
 </template>

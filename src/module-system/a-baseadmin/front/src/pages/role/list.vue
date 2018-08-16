@@ -6,7 +6,7 @@
       <f7-icon material="add"></f7-icon>
       <f7-icon material="close"></f7-icon>
       <f7-fab-buttons>
-        <eb-fab-button color="orange" :onPerform="onPerformBuild">Build</eb-fab-button>
+        <eb-fab-button color="orange" :onPerform="onPerformBuild">{{$text('Build')}}</eb-fab-button>
       </f7-fab-buttons>
     </f7-fab>
   </eb-page>

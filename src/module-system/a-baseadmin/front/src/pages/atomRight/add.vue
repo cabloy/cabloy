@@ -1,22 +1,22 @@
 <template>
   <eb-page>
-    <eb-navbar title="Add Atom Right" eb-back-link="Back">
+    <eb-navbar :title="$text('New Atom Right')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="save" :onPerform="onSave"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <f7-list form no-hairlines-md>
-      <f7-list-item title="Atom class" link="#" @click="onSelectAtomClass">
+      <f7-list-item :title="$text('Atom Class')" link="#" @click="onSelectAtomClass">
         <div slot="after">{{atomClass && atomClass.title}}</div>
       </f7-list-item>
-      <f7-list-item smartSelect title="Atom action" :smartSelectParams="{openIn: 'page', closeOnSelect: true}">
+      <f7-list-item smartSelect :title="$text('Atom Action')" :smartSelectParams="{openIn: 'page', closeOnSelect: true}">
         <eb-select name="actionCode" v-model="actionCode" :options="actions"></eb-select>
       </f7-list-item>
-      <f7-list-item v-if="scopeSelfEnable" title="Scope">
+      <f7-list-item v-if="scopeSelfEnable" :title="$text('Scope')">
         <span class="text-color-gray">Self</span>
         <eb-toggle v-model="scopeSelf"></eb-toggle>
       </f7-list-item>
-      <f7-list-item v-if="scopeEnable" title="Scope" link="#" @click="onSelectScope">
+      <f7-list-item v-if="scopeEnable" :title="$text('Scope')" link="#" @click="onSelectScope">
         <div slot="after">{{scopeTitle}}</div>
       </f7-list-item>
     </f7-list>

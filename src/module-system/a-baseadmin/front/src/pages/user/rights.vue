@@ -3,9 +3,9 @@
     <eb-navbar :title="getPageTitle()" eb-back-link="Back">
       <f7-subnavbar>
         <f7-toolbar v-if="user" tabbar>
-          <f7-link :tab-link="`#${tabIdAtoms}`" tab-link-active>Atoms</f7-link>
-          <f7-link :tab-link="`#${tabIdMenus}`">Menus</f7-link>
-          <f7-link :tab-link="`#${tabIdFunctions}`">Functions</f7-link>
+          <f7-link :tab-link="`#${tabIdAtoms}`" tab-link-active>{{$text('Atoms')}}</f7-link>
+          <f7-link :tab-link="`#${tabIdMenus}`">{{$text('Menus')}}</f7-link>
+          <f7-link :tab-link="`#${tabIdFunctions}`">{{$text('Functions')}}</f7-link>
         </f7-toolbar>
       </f7-subnavbar>
     </eb-navbar>

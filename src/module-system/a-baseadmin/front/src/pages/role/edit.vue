@@ -3,10 +3,10 @@
     <eb-navbar :title="getPageTitle()" eb-back-link="Back">
       <f7-subnavbar>
         <f7-toolbar v-if="role" tabbar scrollable>
-          <f7-link :tab-link="`#${tabIdInfo}`" tab-link-active>Info</f7-link>
-          <f7-link v-if="role.catalog===0" :tab-link="`#${tabIdUsers}`">Users</f7-link>
-          <f7-link v-if="role.catalog===1" :tab-link="`#${tabIdChildren}`">Children</f7-link>
-          <f7-link :tab-link="`#${tabIdIncludes}`">Includes</f7-link>
+          <f7-link :tab-link="`#${tabIdInfo}`" tab-link-active>{{$text('Info')}}</f7-link>
+          <f7-link v-if="role.catalog===0" :tab-link="`#${tabIdUsers}`">{{$text('Users')}}</f7-link>
+          <f7-link v-if="role.catalog===1" :tab-link="`#${tabIdChildren}`">{{$text('Children')}}</f7-link>
+          <f7-link :tab-link="`#${tabIdIncludes}`">{{$text('Includes')}}</f7-link>
         </f7-toolbar>
       </f7-subnavbar>
     </eb-navbar>
@@ -25,18 +25,18 @@
       </eb-tab-page-content>
     </f7-tabs>
     <f7-toolbar v-if="tabName==='info'" bottom-md>
-      <eb-link :onPerform="onPerformInfoSave">Save</eb-link>
-      <eb-link v-if="role && !role.system" :onPerform="onPerformInfoMove">Move</eb-link>
-      <eb-link v-if="role && !role.system" :onPerform="onPerformInfoDelete">Delete</eb-link>
+      <eb-link :onPerform="onPerformInfoSave">{{$text('Save')}}</eb-link>
+      <eb-link v-if="role && !role.system" :onPerform="onPerformInfoMove">{{$text('Move')}}</eb-link>
+      <eb-link v-if="role && !role.system" :onPerform="onPerformInfoDelete">{{$text('Delete')}}</eb-link>
     </f7-toolbar>
     <f7-toolbar v-if="tabName==='users'" bottom-md>
     </f7-toolbar>
     <f7-toolbar v-if="tabName==='children'" bottom-md>
-      <eb-link :onPerform="onPerformChildrenAdd">Add Role</eb-link>
-      <eb-link :onPerform="onPerformChildrenAddCatalog">Add Catalog</eb-link>
+      <eb-link :onPerform="onPerformChildrenAdd">{{$text('New Role')}}</eb-link>
+      <eb-link :onPerform="onPerformChildrenAddCatalog">{{$text('New Catalog')}}</eb-link>
     </f7-toolbar>
     <f7-toolbar v-if="tabName==='includes'" bottom-md>
-      <eb-link :onPerform="onPerformIncludesAdd">Add Role Include</eb-link>
+      <eb-link :onPerform="onPerformIncludesAdd">{{$text('Add Role Include')}}</eb-link>
     </f7-toolbar>
   </eb-page>
 </template>

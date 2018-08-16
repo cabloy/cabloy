@@ -4,16 +4,16 @@
     <f7-list v-if="ready">
       <eb-list-item v-for="item of items" :key="item.id" :eb-href="`auth/edit?id=${item.id}`" :title="getModule(item.module).titleLocale" swipeout>
         <div slot="after">
-          <f7-badge v-if="item.disabled===1">disabled</f7-badge>
+          <f7-badge v-if="item.disabled===1">{{$text('Disabled')}}</f7-badge>
         </div>
         <f7-swipeout-actions right>
-          <eb-swipeout-button v-if="item.disabled===0" color="orange" :context="item" :onPerform="onPerformDisable">Disable</eb-swipeout-button>
-          <eb-swipeout-button v-else color="orange" :context="item" :onPerform="onPerformEnable">Enable</eb-swipeout-button>
+          <eb-swipeout-button v-if="item.disabled===0" color="orange" :context="item" :onPerform="onPerformDisable">{{$text('Disable')}}</eb-swipeout-button>
+          <eb-swipeout-button v-else color="orange" :context="item" :onPerform="onPerformEnable">{{$text('Enable')}}</eb-swipeout-button>
         </f7-swipeout-actions>
         <eb-popover>
           <f7-list inset>
-            <eb-list-item v-if="item.disabled===0" popover-close link="#" :context="item" :onPerform="onPerformDisable">Disable</eb-list-item>
-            <eb-list-item v-else popover-close link="#" :context="item" :onPerform="onPerformEnable">Enable</eb-list-item>
+            <eb-list-item v-if="item.disabled===0" popover-close link="#" :context="item" :onPerform="onPerformDisable">{{$text('Disable')}}</eb-list-item>
+            <eb-list-item v-else popover-close link="#" :context="item" :onPerform="onPerformEnable">{{$text('Enable')}}</eb-list-item>
           </f7-list>
         </eb-popover>
       </eb-list-item>

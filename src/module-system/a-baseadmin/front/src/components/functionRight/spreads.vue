@@ -3,9 +3,9 @@
     <f7-list>
       <f7-list-group v-for="group of itemGroups" :key="group.id">
         <f7-list-item :title="group.id" group-title></f7-list-item>
-        <eb-list-item v-for="item of group.items" :key="`${item.roleExpandId}:${item.roleFunctionId}`" :title="item.title">
+        <eb-list-item v-for="item of group.items" :key="`${item.roleExpandId}:${item.roleFunctionId}`" :title="item.titleLocale || item.title">
           <div slot="after">
-            <div>from: {{item.roleName}}</div>
+            <div>{{$text('from')}}: {{item.roleName}}</div>
           </div>
         </eb-list-item>
       </f7-list-group>
@@ -14,7 +14,6 @@
   </div>
 </template>
 <script>
-import Vue from 'vue';
 export default {
   meta: {
     global: false,

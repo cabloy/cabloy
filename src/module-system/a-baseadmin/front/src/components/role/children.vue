@@ -4,9 +4,9 @@
       <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.roleName" :eb-href="`role/edit?roleId=${item.id}`">
         <f7-badge slot="media">{{item.sorting}}</f7-badge>
         <div slot="after">
-          <f7-badge v-if="item.leader">Leader</f7-badge>
-          <f7-badge v-if="item.catalog">Catalog</f7-badge>
-          <f7-badge v-if="item.system">System</f7-badge>
+          <f7-badge v-if="item.leader">{{$text('Leader')}}</f7-badge>
+          <f7-badge v-if="item.catalog">{{$text('Catalog')}}</f7-badge>
+          <f7-badge v-if="item.system">{{$text('System')}}</f7-badge>
         </div>
       </eb-list-item>
     </f7-list>
@@ -14,7 +14,6 @@
   </div>
 </template>
 <script>
-import Vue from 'vue';
 export default {
   meta: {
     global: false,

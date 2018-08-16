@@ -11,11 +11,11 @@
             </template>
           </div>
           <f7-swipeout-actions right>
-            <eb-swipeout-button color="orange" :context="item" :onPerform="onPerformDelete">Delete</eb-swipeout-button>
+            <eb-swipeout-button color="orange" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</eb-swipeout-button>
           </f7-swipeout-actions>
           <eb-popover>
             <f7-list inset>
-              <eb-list-item popover-close link="#" :context="item" :onPerform="onPerformDelete">Delete</eb-list-item>
+              <eb-list-item popover-close link="#" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</eb-list-item>
             </f7-list>
           </eb-popover>
         </eb-list-item>
@@ -25,7 +25,6 @@
   </div>
 </template>
 <script>
-import Vue from 'vue';
 export default {
   meta: {
     global: false,

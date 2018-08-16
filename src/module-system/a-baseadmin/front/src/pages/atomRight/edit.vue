@@ -3,8 +3,8 @@
     <eb-navbar :title="getPageTitle()" eb-back-link="Back">
       <f7-subnavbar>
         <f7-toolbar v-if="role" tabbar>
-          <f7-link :tab-link="`#${tabIdRights}`" tab-link-active>Rights</f7-link>
-          <f7-link :tab-link="`#${tabIdSpreads}`">Spreads</f7-link>
+          <f7-link :tab-link="`#${tabIdRights}`" tab-link-active>{{$text('Rights')}}</f7-link>
+          <f7-link :tab-link="`#${tabIdSpreads}`">{{$text('Spreads')}}</f7-link>
         </f7-toolbar>
       </f7-subnavbar>
     </eb-navbar>
@@ -17,7 +17,7 @@
       </eb-tab-page-content>
     </f7-tabs>
     <f7-toolbar v-if="tabName==='rights'" bottom-md>
-      <eb-link :onPerform="onPerformRightsAdd">Add Atom Right</eb-link>
+      <eb-link :onPerform="onPerformRightsAdd">{{$text('New Atom Right')}}</eb-link>
     </f7-toolbar>
   </eb-page>
 </template>

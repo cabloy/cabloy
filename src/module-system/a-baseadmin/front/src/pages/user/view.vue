@@ -2,12 +2,12 @@
   <eb-page :page-content="false" tabs with-subnavbar>
     <eb-navbar :title="getPageTitle()" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link :eb-href="`user/rights?userId=${userId}`">Rights</eb-link>
+        <eb-link :eb-href="`user/rights?userId=${userId}`">{{$text('Rights')}}</eb-link>
       </f7-nav-right>
       <f7-subnavbar>
         <f7-toolbar v-if="user" tabbar>
-          <f7-link :tab-link="`#${tabIdInfo}`" tab-link-active>Info</f7-link>
-          <f7-link :tab-link="`#${tabIdRoles}`">Roles</f7-link>
+          <f7-link :tab-link="`#${tabIdInfo}`" tab-link-active>{{$text('Info')}}</f7-link>
+          <f7-link :tab-link="`#${tabIdRoles}`">{{$text('Roles')}}</f7-link>
         </f7-toolbar>
       </f7-subnavbar>
     </eb-navbar>
@@ -20,7 +20,7 @@
       </eb-tab-page-content>
     </f7-tabs>
     <f7-toolbar v-if="tabName==='roles'" bottom-md>
-      <eb-link :onPerform="onPerformRolesAdd">Add Role</eb-link>
+      <eb-link :onPerform="onPerformRolesAdd">{{$text('Add Role')}}</eb-link>
     </f7-toolbar>
   </eb-page>
 </template>
