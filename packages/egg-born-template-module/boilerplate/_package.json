@@ -5,7 +5,9 @@
   "eggBornModule":
   {
     "dependencies":
-    {}
+    {
+      "a-instance": "1.0.0"
+    }
   },
   "description": "{{description}}",
   "scripts":
