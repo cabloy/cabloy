@@ -113,10 +113,10 @@ module.exports =
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_layout_vue_vue_type_style_index_0_id_32cf7a5a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_layout_vue_vue_type_style_index_0_id_32cf7a5a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_layout_vue_vue_type_style_index_0_id_32cf7a5a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_layout_vue_vue_type_style_index_0_id_67c364b9_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_layout_vue_vue_type_style_index_0_id_67c364b9_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_layout_vue_vue_type_style_index_0_id_67c364b9_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
 /* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_layout_vue_vue_type_style_index_0_id_32cf7a5a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
+ /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_layout_vue_vue_type_style_index_0_id_67c364b9_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 /* 5 */,
@@ -482,7 +482,7 @@ component.options.__file = "layoutView.vue"
       if (target === '_self') {
         ctx.$view.f7View.router.navigate(url, options);
       } else {
-        var viewName = ctx.$view.$el.f7View.name || 'main';
+        var viewName = ctx && ctx.$view.$el.f7View.name || 'main';
         this.$f7.views[viewName].router.navigate(url, options);
         if (viewName === 'main') {
           this.viewMainVisible = true;
@@ -536,8 +536,8 @@ component.options.__file = "layoutView.vue"
 });
 // CONCATENATED MODULE: ./front/src/components/layout.vue?vue&type=script&lang=js&
  /* harmony default export */ var components_layoutvue_type_script_lang_js_ = (layoutvue_type_script_lang_js_); 
-// EXTERNAL MODULE: ./front/src/components/layout.vue?vue&type=style&index=0&id=32cf7a5a&scoped=true&lang=css&
-var layoutvue_type_style_index_0_id_32cf7a5a_scoped_true_lang_css_ = __webpack_require__(4);
+// EXTERNAL MODULE: ./front/src/components/layout.vue?vue&type=style&index=0&id=67c364b9&scoped=true&lang=css&
+var layoutvue_type_style_index_0_id_67c364b9_scoped_true_lang_css_ = __webpack_require__(4);
 
 // CONCATENATED MODULE: ./front/src/components/layout.vue
 var layout_render, layout_staticRenderFns
@@ -554,7 +554,7 @@ var layout_component = normalizeComponent(
   layout_staticRenderFns,
   false,
   null,
-  "32cf7a5a",
+  "67c364b9",
   null
   
 )

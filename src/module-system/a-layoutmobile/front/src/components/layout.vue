@@ -143,7 +143,7 @@ export default {
       if (target === '_self') {
         ctx.$view.f7View.router.navigate(url, options);
       } else {
-        const viewName = ctx.$view.$el.f7View.name || 'main';
+        const viewName = (ctx && ctx.$view.$el.f7View.name) || 'main';
         this.$f7.views[viewName].router.navigate(url, options);
         if (viewName === 'main') {
           this.viewMainVisible = true;
