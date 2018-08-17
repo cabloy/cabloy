@@ -29,9 +29,10 @@ export default {
   'Created time': '创建时间',
   'Search Atom': '搜索原子',
   'Search Result': '搜索结果',
+  'Select Atom Class': '选择原子类型',
   'Select Menu': '选择菜单',
   'Select Function': '选择功能',
   'Atom name': '原子名称',
-  'Atom class': '原子类别',
+  'Atom class': '原子类型',
   Label: '标签',
 };

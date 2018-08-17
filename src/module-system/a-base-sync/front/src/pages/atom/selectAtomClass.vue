@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Select atom class')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar :title="$text('Select Atom Class')" eb-back-link="Back"></eb-navbar>
     <f7-list>
       <f7-list-item v-for="(item,index) of atomClasses" :key="index" radio :checked="module===item.module && atomClassName===item.atomClassName" :title="item.title" @click="onItemClick(item)">
       </f7-list-item>
