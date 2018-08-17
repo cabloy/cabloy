@@ -1,6 +1,6 @@
 let Vue;
 
-import './assets/css/module.css';
+import './assets/css/module.less';
 
 // install
 function install(_Vue, cb) {
