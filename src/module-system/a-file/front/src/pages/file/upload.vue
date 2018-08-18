@@ -6,14 +6,15 @@
     </div>
     <input ref="file" type="file" :accept="accept" @change="onFileChange" style="display: none;">
     <f7-block>
+      <h2>{{fileName}}</h2>
+    </f7-block>
+    <f7-block>
       <f7-segmented raised tag="p">
         <f7-button @click="onClickSelect">{{selectText}}</f7-button>
         <f7-button v-if="cropped" @click="onClickClearCrop">{{$text('Clear Crop')}}</f7-button>
-        <f7-button v-if="fileName" active @click="onClickUpload">{{$text('Upload')}}</f7-button>
+        <eb-button v-if="fileName" active :onPerform="onPerformUpload">{{$text('Upload')}}</eb-button>
       </f7-segmented>
     </f7-block>
-    <f7-button></f7-button>
-    <f7-button @click="onClick">done</f7-button>
   </eb-page>
 </template>
 <script>
@@ -30,7 +31,7 @@ export default {
   },
   computed: {
     mode() {
-      return this.contextParams && this.contextParams.mode || 1;
+      return this.contextParams && this.contextParams.mode || 2;
     },
     atomId() {
       return this.contextParams && this.contextParams.atomId || 0;
@@ -49,19 +50,21 @@ export default {
     },
   },
   mounted() {
-    this._cropper = new Cropper(this.$refs.image, {
-      viewMode: 3,
-      checkOrientation: false,
-      autoCrop: false,
-      movable: false,
-      rotatable: false,
-      scalable: false,
-      zoomable: false,
-      toggleDragModeOnDblclick: false,
-      crop: () => {
-        this.cropped = true;
-      },
-    });
+    if (this.mode === 1) {
+      this._cropper = new Cropper(this.$refs.image, {
+        viewMode: 3,
+        checkOrientation: false,
+        autoCrop: false,
+        movable: false,
+        rotatable: false,
+        scalable: false,
+        zoomable: false,
+        toggleDragModeOnDblclick: false,
+        crop: () => {
+          this.cropped = true;
+        },
+      });
+    }
   },
   methods: {
     onClickSelect() {
@@ -69,20 +72,23 @@ export default {
     },
     onFileChange(event) {
       this.fileName = event.target.files[0].name;
-      const reader = new FileReader();
-      reader.onload = () => {
-        this._cropper.reset().replace(reader.result);
-      };
-      reader.readAsDataURL(event.target.files[0]);
+      if (this.mode === 1) {
+        const reader = new window.FileReader();
+        reader.onload = () => {
+          this._cropper.reset().replace(reader.result);
+        };
+        reader.readAsDataURL(event.target.files[0]);
+      }
     },
     onClickClearCrop() {
       this._cropper.clear();
       this.cropped = false;
     },
-    onClickUpload() {
+    onPerformUpload() {
       const formData = new FormData();
-      formData.append('file', this.$refs.file.files[0]);
       formData.append('mode', this.mode);
+      formData.append('atomId', this.atomId);
+      formData.append('file', this.$refs.file.files[0]);
       if (this.mode === 1) {
         formData.append('cropped', this.cropped);
         if (this.cropped) {
@@ -93,11 +99,12 @@ export default {
           formData.append('cropbox', JSON.stringify(data));
         }
       }
-
-    },
-    onClick() {
-      this.contextCallback(200, this.mode);
-      this.$f7router.back();
+      return this.$api.post('file/upload', formData)
+        .then(() => {
+          // this.contextCallback(200, this.mode);
+          // this.$f7router.back();
+          return true;
+        });
     },
   },
 };

@@ -11,7 +11,7 @@ export default {
   },
   methods: {
     onClick() {
-      this.$view.navigate('/a/file/upload', {
+      this.$view.navigate('/a/file/file/upload', {
         context: {
           params: {
             mode: 1,

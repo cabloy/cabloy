@@ -3,6 +3,6 @@ function load(name) {
 }
 
 export default [
-  { path: 'upload', component: load('upload') },
-  { path: 'test', component: load('test') },
+  { path: 'file/upload', component: load('file/upload') },
+  { path: 'file/test', component: load('file/test') },
 ];
