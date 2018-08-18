@@ -89,6 +89,12 @@ module.exports =
 /* 0 */
 /***/ (function(module, exports) {
 
+module.exports = require("require3");
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports) {
+
 module.exports = app => {
 
   class Function extends app.meta.Model {
@@ -104,7 +110,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -122,7 +128,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -138,12 +144,6 @@ module.exports = app => {
   return AtomAction;
 };
 
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports) {
-
-module.exports = require("require3");
 
 /***/ }),
 /* 4 */
@@ -1069,7 +1069,7 @@ const Fn = module.exports = ctx => {
 /* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const modelFn = __webpack_require__(1);
+const modelFn = __webpack_require__(2);
 
 const Fn = module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -1180,7 +1180,7 @@ const Fn = module.exports = ctx => {
 /* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const modelFn = __webpack_require__(2);
+const modelFn = __webpack_require__(3);
 
 const Fn = module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -1247,7 +1247,7 @@ const Fn = module.exports = ctx => {
 /* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(3);
+const require3 = __webpack_require__(0);
 const mparse = require3('egg-born-mparse').default;
 const modelAtomFn = __webpack_require__(4);
 const modelAtomStarFn = __webpack_require__(5);
@@ -1756,7 +1756,7 @@ const Fn = module.exports = ctx => {
 /* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const modelFn = __webpack_require__(0);
+const modelFn = __webpack_require__(1);
 const modelFunctionStarFn = __webpack_require__(8);
 const modelFunctionLocaleFn = __webpack_require__(9);
 
@@ -1938,7 +1938,7 @@ const modelRoleIncFn = __webpack_require__(11);
 const modelUserRoleFn = __webpack_require__(12);
 const modelRoleRightFn = __webpack_require__(13);
 const modelRoleRightRefFn = __webpack_require__(14);
-const modelFunctionFn = __webpack_require__(0);
+const modelFunctionFn = __webpack_require__(1);
 const modelRoleFunctionFn = __webpack_require__(15);
 
 const Fn = module.exports = ctx => {
@@ -2744,18 +2744,56 @@ module.exports = ctx => {
 
 /***/ }),
 /* 34 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(0);
+const moment = require3('moment');
 
 module.exports = ctx => {
   class Util {
+
     page(_page, force = true) {
       _page = _page || { index: 0 };
       if (force || _page.size === undefined) _page.size = ctx.app.config.pageSize;
       return _page;
     }
+
     user(_user) {
       return _user || ctx.user.op;
     }
+
+    now() {
+      return moment().format('YYYY-MM-DD HH:mm:ss');
+    }
+
+    today() {
+      return moment().format('YYYY-MM-DD');
+    }
+
+    formatDateTime(date, fmt) {
+      date = date || new Date();
+      fmt = fmt || 'YYYY-MM-DD HH:mm:ss';
+      if (typeof (date) !== 'object') date = new Date(date);
+      return moment(date).format(fmt);
+    }
+
+    formatDate(date, sep) {
+      if (this.isUndefined(sep)) sep = '-';
+      const fmt = `YYYY${sep}MM${sep}DD`;
+      return this.formatDateTime(date, fmt);
+    }
+
+    formatTime(date, sep) {
+      if (this.isUndefined(sep)) sep = ':';
+      const fmt = `HH${sep}mm${sep}ss`;
+      return this.formatDateTime(date, fmt);
+    }
+
+    fromNow(date) {
+      if (typeof (date) !== 'object') date = new Date(date);
+      return moment(date).fromNow();
+    }
+
   }
 
   return Util;
@@ -4741,7 +4779,7 @@ module.exports = app => {
 /* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(3);
+const require3 = __webpack_require__(0);
 const mparse = require3('egg-born-mparse').default;
 
 module.exports = app => {
@@ -4894,8 +4932,8 @@ module.exports = app => {
 /***/ (function(module, exports, __webpack_require__) {
 
 const atom = __webpack_require__(4);
-const atomAction = __webpack_require__(2);
-const atomClass = __webpack_require__(1);
+const atomAction = __webpack_require__(3);
+const atomClass = __webpack_require__(2);
 const auth = __webpack_require__(18);
 const authProvider = __webpack_require__(19);
 const role = __webpack_require__(10);
@@ -4911,7 +4949,7 @@ const label = __webpack_require__(64);
 const atomLabel = __webpack_require__(6);
 const atomLabelRef = __webpack_require__(7);
 const atomStar = __webpack_require__(5);
-const func = __webpack_require__(0);
+const func = __webpack_require__(1);
 const functionStar = __webpack_require__(8);
 const functionLocale = __webpack_require__(9);
 const roleFunction = __webpack_require__(15);

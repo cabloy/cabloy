@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-base",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "title": "Base",
   "eggBornModule": {
     "fileVersion": 2,
@@ -57,6 +57,7 @@
   "dependencies": {
     "egg-born-mparse": "^1.0.9",
     "extend2": "^1.0.0",
-    "require3": "^1.0.1"
+    "require3": "^1.0.1",
+    "moment": "^2.22.2"
   }
 }
