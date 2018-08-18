@@ -56,6 +56,20 @@ module.exports = appInfo => {
     encrypt: true,
   };
 
+  // multipart
+  config.multipart = {
+    fileSize: '20mb',
+    fileExtensions: [
+      '.txt', '.ini',
+      '.apk',
+      '.rar',
+      '.xls', '.xlsx',
+      '.ppt', '.pptx',
+      '.doc', '.docx',
+      '.pdf',
+    ],
+  };
+
   // onerror
   config.onerror = {
     json(err) {
