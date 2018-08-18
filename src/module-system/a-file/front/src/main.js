@@ -1,5 +1,6 @@
 let Vue;
 
+import 'cropperjs/dist/cropper.css';
 import './assets/css/module.less';
 
 // install
