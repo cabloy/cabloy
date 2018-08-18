@@ -10,14 +10,14 @@ export default {
   },
   methods: {
     contextCallback(code, data) {
-      if (this.pageContext.callback) {
+      if (this.pageContext && this.pageContext.callback) {
         this._callbackCalled = true;
         this.pageContext.callback(code, data);
       }
     },
   },
   beforeDestroy() {
-    if (this.pageContext.callback) {
+    if (this.pageContext && this.pageContext.callback) {
       this.pageContext.callback(this._callbackCalled ? null : false);
     }
   },

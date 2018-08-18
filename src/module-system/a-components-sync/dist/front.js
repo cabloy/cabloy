@@ -2717,14 +2717,14 @@ contextMenu_component.options.__file = "contextMenu.vue"
 
   methods: {
     contextCallback: function contextCallback(code, data) {
-      if (this.pageContext.callback) {
+      if (this.pageContext && this.pageContext.callback) {
         this._callbackCalled = true;
         this.pageContext.callback(code, data);
       }
     }
   },
   beforeDestroy: function beforeDestroy() {
-    if (this.pageContext.callback) {
+    if (this.pageContext && this.pageContext.callback) {
       this.pageContext.callback(this._callbackCalled ? null : false);
     }
   }
