@@ -9,6 +9,7 @@ module.exports = app => {
     { method: 'post', path: 'version/test', controller: version, middlewares: 'test' },
     // file
     { method: 'post', path: 'file/upload', controller: file, middlewares: 'file', meta: { auth: { user: true } } },
+    { method: 'get', path: 'file/download/:downloadId', controller: file, action: 'download', middlewares: 'file' },
 
   ];
   return routes;

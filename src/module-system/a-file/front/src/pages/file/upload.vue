@@ -85,7 +85,7 @@ export default {
       this.cropped = false;
     },
     onPerformUpload() {
-      const formData = new FormData();
+      const formData = new window.FormData();
       formData.append('mode', this.mode);
       formData.append('atomId', this.atomId);
       formData.append('file', this.$refs.file.files[0]);
@@ -100,10 +100,9 @@ export default {
         }
       }
       return this.$api.post('file/upload', formData)
-        .then(() => {
-          // this.contextCallback(200, this.mode);
-          // this.$f7router.back();
-          return true;
+        .then(data => {
+          this.contextCallback(200, data);
+          this.$f7router.back();
         });
     },
   },

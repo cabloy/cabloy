@@ -6,6 +6,10 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async download() {
+      await this.service.file.download();
+    }
+
   }
   return FileController;
 };
