@@ -2,7 +2,7 @@
   <div>
     <f7-link :popover-open="`#${popoverId}`">
       <div class="item" v-if="loggedIn">
-        <img class="avatar avatar24" :src="user.op.avatar">
+        <img class="avatar avatar24" :src="$meta.util.combineImageUrl(user.op.avatar,24)">
       </div>
       <div class="item name" v-if="loggedIn">{{userName}}</div>
       <div class="item status" v-if="!loggedIn">{{$text('Not LoggedIn')}}</div>
