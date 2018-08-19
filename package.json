@@ -19,8 +19,8 @@
     "eslint-plugin-vuefix": "^0.2.1"
   },
   "dependencies": {
-    "egg-born-front": "^3.0.12",
-    "egg-born-backend": "^1.1.0",
+    "egg-born-front": "^3.0.13",
+    "egg-born-backend": "^1.1.1",
     "egg-born-bin": "^1.0.16",
     "egg-born-scripts": "^1.0.4",
     "egg-born-module-a-version": "^2.0.12",
@@ -33,12 +33,12 @@
     "egg-born-module-a-hook": "^1.0.2",
     "egg-born-module-a-instance": "^1.0.2",
     "egg-born-module-a-layoutmobile": "^1.0.4",
-    "egg-born-module-a-layoutpc": "^1.0.1",
+    "egg-born-module-a-layoutpc": "^1.0.2",
     "egg-born-module-a-login": "^1.0.2",
     "egg-born-module-a-sequence": "^1.0.2",
     "egg-born-module-a-settings": "^1.0.3",
     "egg-born-module-a-status": "^1.0.2",
-    "egg-born-module-a-user": "^1.0.4",
+    "egg-born-module-a-user": "^1.0.5",
     "egg-born-module-a-validation": "^1.0.3",
     "egg-born-module-test-cook": "^1.0.6"
   }
