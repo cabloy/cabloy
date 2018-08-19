@@ -206,5 +206,14 @@ export default function(Vue) {
         obj[names[names.length - 1]] = value;
       }
     },
+    combineImageUrl(url, width, height) {
+      if (!url) return url;
+      if (!width && !height) return url;
+      const pixelRatio = Vue.prototype.$device.pixelRatio;
+      let query = '';
+      if (width) query = `width=${parseInt(width) * pixelRatio}`;
+      if (height) query = `${query ? query + '&' : ''}height=${parseInt(height) * pixelRatio}`;
+      return `${url}${url.charAt(url.length - 1) === '?' ? '' : '?'}${query}`;
+    },
   };
 }
