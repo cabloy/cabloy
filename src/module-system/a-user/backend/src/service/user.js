@@ -9,6 +9,11 @@ module.exports = app => {
       return await this.ctx.meta.user.save({ user: data });
     }
 
+    async saveAvatar({ data, user }) {
+      data.id = user.id;
+      return await this.ctx.meta.user.save({ user: data });
+    }
+
     async agent({ userId }) {
       return await this.ctx.meta.user.agent({ userId });
     }

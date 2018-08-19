@@ -4,7 +4,7 @@
     </eb-navbar>
     <div class="me">
       <div>
-        <img class="avatar avatar48" :src="user.op.avatar">
+        <img class="avatar avatar48" :src="$meta.util.combineImageUrl(user.op.avatar,48)" style="cursor:pointer;" @click="onClickAvatar">
       </div>
       <div class="name">{{userName}}</div>
       <div class="status" v-if="!loggedIn">{{$text('Not LoggedIn')}}</div>
@@ -57,6 +57,27 @@ export default {
           this.$meta.vueApp.reload();
         });
       });
+    },
+    onClickAvatar() {
+      if (this.user.agent.anonymous || this.user.op.id !== this.user.agent.id);
+      this.$view.navigate('/a/file/file/upload', {
+        context: {
+          params: {
+            mode: 1,
+          },
+          callback: (code, res) => {
+            if (code === 200) {
+              return this.$api.post('user/saveAvatar', {
+                data: { avatar: res.downloadUrl },
+              }).then(() => {
+                this.$store.state.auth.user.agent.avatar = res.downloadUrl;
+                this.$store.state.auth.user.op.avatar = res.downloadUrl;
+              });
+            }
+          },
+        },
+      });
+
     },
   },
 };

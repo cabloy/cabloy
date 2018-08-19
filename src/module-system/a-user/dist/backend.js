@@ -177,6 +177,7 @@ module.exports = app => {
     { method: 'post', path: 'user/save', controller: user, middlewares: 'validate',
       meta: { validate: { module: 'a-base', validator: 'user' } },
     },
+    { method: 'post', path: 'user/saveAvatar', controller: user },
     { method: 'post', path: 'user/agent', controller: user },
     { method: 'post', path: 'user/agentsBy', controller: user },
     { method: 'post', path: 'user/userByMobile', controller: user },
@@ -202,6 +203,14 @@ module.exports = app => {
 
     async save() {
       const res = await this.service.user.save({
+        data: this.ctx.request.body.data,
+        user: this.ctx.user.agent,
+      });
+      this.ctx.success(res);
+    }
+
+    async saveAvatar() {
+      const res = await this.service.user.saveAvatar({
         data: this.ctx.request.body.data,
         user: this.ctx.user.agent,
       });
@@ -286,6 +295,11 @@ module.exports = app => {
   class User extends app.Service {
 
     async save({ data, user }) {
+      data.id = user.id;
+      return await this.ctx.meta.user.save({ user: data });
+    }
+
+    async saveAvatar({ data, user }) {
       data.id = user.id;
       return await this.ctx.meta.user.save({ user: data });
     }

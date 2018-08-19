@@ -11,6 +11,14 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async saveAvatar() {
+      const res = await this.service.user.saveAvatar({
+        data: this.ctx.request.body.data,
+        user: this.ctx.user.agent,
+      });
+      this.ctx.success(res);
+    }
+
     async agent() {
       const res = await this.service.user.agent({ userId: this.ctx.user.agent.id });
       this.ctx.success(res);
