@@ -12,7 +12,7 @@ module.exports = app => {
 
   class File extends app.Service {
 
-    async upload() {
+    async upload({ user }) {
       const stream = await this.ctx.getFileStream();
       try {
         // info
@@ -63,6 +63,7 @@ module.exports = app => {
 
         // save
         const res = await this.ctx.model.file.insert({
+          userId: user.id,
           downloadId,
           atomId,
           mode,
@@ -94,9 +95,8 @@ module.exports = app => {
       }
     }
 
-    async download() {
+    async download({ downloadId, width, height, user }) {
       // downloadId
-      let downloadId = this.ctx.params.downloadId.toString();
       if (!downloadId) this.ctx.throw(404);
       const extPos = downloadId.indexOf('.');
       if (extPos > -1) downloadId = downloadId.substr(0, extPos);
@@ -105,10 +105,14 @@ module.exports = app => {
       const file = await this.ctx.model.file.get({ downloadId });
       if (!file) this.ctx.throw(404);
 
-      // adjust image
+      // pre
       let fileName = file.fileName;
       if (file.mode === 1) {
-        fileName = await this.adjustImage(file);
+        // adjust image
+        fileName = await this.adjustImage(file, width, height);
+      } else if (file.mode === 2) {
+        // check right
+        await this.checkRight(file, user);
       }
 
       // download url
@@ -131,9 +135,9 @@ module.exports = app => {
 
     }
 
-    async adjustImage(file) {
-      const widthRequire = this.ctx.query.width === undefined ? 0 : parseInt(this.ctx.query.width);
-      const heightRequire = this.ctx.query.height === undefined ? 0 : parseInt(this.ctx.query.height);
+    async adjustImage(file, widthRequire, heightRequire) {
+      widthRequire = widthRequire ? parseInt(widthRequire) : 0;
+      heightRequire = heightRequire ? parseInt(heightRequire) : 0;
       if (!widthRequire && !heightRequire) return file.fileName;
 
       const fileName = `${file.fileName}-${widthRequire}*${heightRequire}`;
@@ -152,15 +156,19 @@ module.exports = app => {
       );
       await bb.fromCallback(cb => {
         gm(srcFile)
-          .resize(width, height)
-          .background('gray')
-          .gravity('Center')
-          .extent(width, height)
+          .resize(width, height, '!')
           .quality(100)
           .write(destFile, cb);
       });
 
       return fileName;
+    }
+
+    async checkRight(file, user) {
+      // not check if !atomId
+      if (!file.atomId) return;
+      const res = await this.ctx.meta.atom.checkRightRead({ atom: { id: file.atomId }, user });
+      if (!res) this.ctx.throw(403);
     }
 
   }

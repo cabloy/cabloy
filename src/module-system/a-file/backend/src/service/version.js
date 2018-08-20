@@ -12,6 +12,7 @@ module.exports = app => {
             updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             deleted int(11) DEFAULT '0',
             iid int(11) DEFAULT '0',
+            userId int(11) DEFAULT '0',
             downloadId varchar(50) DEFAULT NULL,
             atomId int(11) DEFAULT '0',
             mode int(11) DEFAULT '0',
