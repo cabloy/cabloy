@@ -4,6 +4,9 @@ const glob = require('glob');
 module.exports = appInfo => {
   const config = {};
 
+  // proxy
+  config.proxy = true;
+
   // development
   config.development = {
     watchDirs: glob.sync(`${path.join(appInfo.baseDir, '../module')}/*/backend`)
