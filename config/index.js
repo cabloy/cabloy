@@ -22,15 +22,15 @@ module.exports = merge({
     proxyTable: {
       '/favicon.ico': {
         target: `http://${config.backend.hostname}:${config.backend.port}`,
-        changeOrigin: true,
+        xfwd: true,
       },
       '/api': {
         target: `http://${config.backend.hostname}:${config.backend.port}`,
-        changeOrigin: true,
+        xfwd: true,
       },
       '/public': {
         target: `http://${config.backend.hostname}:${config.backend.port}`,
-        changeOrigin: true,
+        xfwd: true,
       },
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
