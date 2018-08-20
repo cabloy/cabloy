@@ -15,12 +15,6 @@ const front = {
   dev: {
     title,
     port: 9092,
-    proxyTable: {
-      '/api': {
-        target: `http://${backend.hostname}:${backend.port}`,
-        changeOrigin: true,
-      },
-    },
   },
 };
 
