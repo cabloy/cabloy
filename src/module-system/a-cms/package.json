@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "title": "cms",
   "eggBornModule": {
+    "fileVersion": 1,
     "dependencies": {
       "a-instance": "1.0.0"
     }
