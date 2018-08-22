@@ -8,7 +8,6 @@ module.exports = appInfo => {
       google: '',
       baidu: '',
     },
-    icp: '',
   };
 
   return config;
