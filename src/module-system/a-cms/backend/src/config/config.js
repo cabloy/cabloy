@@ -11,7 +11,7 @@ module.exports = appInfo => {
       keywords: '',
     },
     host: {
-      url: '',
+      url: 'http://example.com',
       rootPath: '',
     },
     format: {
