@@ -451,9 +451,9 @@ module.exports = app => {
   // services
   const services = __webpack_require__(47)(app);
   // models
-  const models = __webpack_require__(61)(app);
+  const models = __webpack_require__(62)(app);
   // meta
-  const meta = __webpack_require__(65)(app);
+  const meta = __webpack_require__(66)(app);
 
   return {
     routes,
@@ -1702,6 +1702,16 @@ const Fn = module.exports = ctx => {
     }
 
     // right
+
+    async checkRoleRightRead({
+      atom: { id },
+      roleId,
+    }) {
+      const res = await ctx.model.query('call aCheckRoleRightRead(?,?,?)',
+        [ ctx.instance.id, roleId, id ]
+      );
+      return res[0][0];
+    }
 
     async checkRightRead({
       atom: { id },
@@ -3499,13 +3509,13 @@ module.exports = app => {
 /***/ (function(module, exports, __webpack_require__) {
 
 const version = __webpack_require__(48);
-const base = __webpack_require__(54);
-const user = __webpack_require__(55);
-const atom = __webpack_require__(56);
-const atomClass = __webpack_require__(57);
-const atomAction = __webpack_require__(58);
-const auth = __webpack_require__(59);
-const func = __webpack_require__(60);
+const base = __webpack_require__(55);
+const user = __webpack_require__(56);
+const atom = __webpack_require__(57);
+const atomClass = __webpack_require__(58);
+const atomAction = __webpack_require__(59);
+const auth = __webpack_require__(60);
+const func = __webpack_require__(61);
 
 module.exports = app => {
   const services = {
@@ -3528,13 +3538,19 @@ module.exports = app => {
 
 const VersionUpdate1Fn = __webpack_require__(49);
 const VersionUpdate2Fn = __webpack_require__(51);
-const VersionInitFn = __webpack_require__(52);
+const VersionUpdate3Fn = __webpack_require__(52);
+const VersionInitFn = __webpack_require__(53);
 
 module.exports = app => {
 
   class Version extends app.Service {
 
     async update(options) {
+
+      if (options.version === 3) {
+        const versionUpdate3 = new (VersionUpdate3Fn(this.ctx))();
+        await versionUpdate3.run();
+      }
 
       if (options.version === 2) {
         const versionUpdate2 = new (VersionUpdate2Fn(this.ctx))();
@@ -4119,13 +4135,21 @@ begin
   declare _starField,_labelField text;
   declare _itemField,_itemJoin text;
 
-  set _starField=concat(
-        ',(select d.star from aAtomStar d where d.iid=',_iid,' and d.atomId=a.id and d.userId=',_userIdWho,') as star'
-      );
+  if _userIdWho=0 then
+    set _starField='';
+  else
+    set _starField=concat(
+          ',(select d.star from aAtomStar d where d.iid=',_iid,' and d.atomId=a.id and d.userId=',_userIdWho,') as star'
+        );
+  end if;
 
-  set _labelField=concat(
-        ',(select e.labels from aAtomLabel e where e.iid=',_iid,' and e.atomId=a.id and e.userId=',_userIdWho,') as labels'
-      );
+  if _userIdWho=0 then
+    set _labelField='';
+  else
+    set _labelField=concat(
+          ',(select e.labels from aAtomLabel e where e.iid=',_iid,' and e.atomId=a.id and e.userId=',_userIdWho,') as labels'
+        );
+  end if;
 
   if _tableName<>'' then
     set _itemField='f.*,';
@@ -4487,9 +4511,73 @@ module.exports = function(ctx) {
 
 /***/ }),
 /* 52 */
+/***/ (function(module, exports) {
+
+module.exports = function(ctx) {
+
+  class VersionUpdate3 {
+
+    async run() {
+      // aViewRoleRightAtomClassUser
+      let sql = `
+        create view aViewRoleRightAtomClassUser as
+          select a.iid,a.roleId as roleIdWho,b.atomClassId,b.action,c.userId as userIdWhom from aRoleExpand a
+            inner join aRoleRightRef b on a.roleIdBase=b.roleId
+            inner join aViewUserRoleRef c on b.roleIdScope=c.roleIdParent
+          `;
+      await ctx.model.query(sql);
+
+      // aViewRoleRightAtom
+      sql = `
+        create view aViewRoleRightAtom as
+          select a.iid, a.id as atomId,a.userIdCreated as userIdWhom,b.roleIdWho,b.action from aAtom a,aViewRoleRightAtomClassUser b
+            where a.deleted=0 and a.atomEnabled=1
+              and a.atomClassId=b.atomClassId
+              and a.userIdCreated=b.userIdWhom
+          `;
+      await ctx.model.query(sql);
+
+      // aCheckRoleRightRead
+      sql = `
+        create procedure aCheckRoleRightRead (in _iid int,in _roleIdWho int,in _atomId int)
+        begin
+
+          select a.* from aAtom a
+           left join aAtomClass b on a.atomClassId=b.id
+            where (
+             a.deleted=0 and a.iid=_iid and a.id=_atomId
+             and (
+                    (a.atomEnabled=1 and (
+                      (
+                        a.atomFlow=1 and (
+                          (exists(select c.atomId from aViewRoleRightAtom c where c.iid=_iid and a.id=c.atomId and c.action>2 and c.roleIdWho=_roleIdWho))
+                        )
+                      ) or (
+                        a.atomFlow=0 and (
+                          b.public=1 or exists(select c.atomId from aViewRoleRightAtom c where c.iid=_iid and a.id=c.atomId and c.action=2 and c.roleIdWho=_roleIdWho)
+                        )
+                      )
+                    ))
+                  )
+            );
+
+        end
+        `;
+      await ctx.model.query(sql);
+
+    }
+
+  }
+
+  return VersionUpdate3;
+};
+
+
+/***/ }),
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const initData = __webpack_require__(53);
+const initData = __webpack_require__(54);
 
 module.exports = function(ctx) {
 
@@ -4537,7 +4625,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports) {
 
 // roles
@@ -4593,7 +4681,7 @@ module.exports = {
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -4635,7 +4723,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -4674,7 +4762,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -4736,7 +4824,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -4758,7 +4846,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -4776,7 +4864,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -4889,7 +4977,7 @@ function createAuthenticate(moduleRelativeName, providerName, _config) {
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -4928,7 +5016,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const atom = __webpack_require__(4);
@@ -4938,14 +5026,14 @@ const auth = __webpack_require__(18);
 const authProvider = __webpack_require__(19);
 const role = __webpack_require__(10);
 const roleInc = __webpack_require__(11);
-const roleIncRef = __webpack_require__(62);
-const roleRef = __webpack_require__(63);
+const roleIncRef = __webpack_require__(63);
+const roleRef = __webpack_require__(64);
 const roleRight = __webpack_require__(13);
 const roleRightRef = __webpack_require__(14);
 const user = __webpack_require__(16);
 const userAgent = __webpack_require__(17);
 const userRole = __webpack_require__(12);
-const label = __webpack_require__(64);
+const label = __webpack_require__(65);
 const atomLabel = __webpack_require__(6);
 const atomLabelRef = __webpack_require__(7);
 const atomStar = __webpack_require__(5);
@@ -4984,7 +5072,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5002,7 +5090,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5028,7 +5116,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5046,12 +5134,12 @@ module.exports = app => {
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
   // schemas
-  const schemas = __webpack_require__(66)(app);
+  const schemas = __webpack_require__(67)(app);
   // meta
   const meta = {
     sequence: {
@@ -5081,7 +5169,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports) {
 
 module.exports = app => {

@@ -454,6 +454,16 @@ const Fn = module.exports = ctx => {
 
     // right
 
+    async checkRoleRightRead({
+      atom: { id },
+      roleId,
+    }) {
+      const res = await ctx.model.query('call aCheckRoleRightRead(?,?,?)',
+        [ ctx.instance.id, roleId, id ]
+      );
+      return res[0][0];
+    }
+
     async checkRightRead({
       atom: { id },
       user,

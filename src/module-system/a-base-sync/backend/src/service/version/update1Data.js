@@ -480,13 +480,21 @@ begin
   declare _starField,_labelField text;
   declare _itemField,_itemJoin text;
 
-  set _starField=concat(
-        ',(select d.star from aAtomStar d where d.iid=',_iid,' and d.atomId=a.id and d.userId=',_userIdWho,') as star'
-      );
+  if _userIdWho=0 then
+    set _starField='';
+  else
+    set _starField=concat(
+          ',(select d.star from aAtomStar d where d.iid=',_iid,' and d.atomId=a.id and d.userId=',_userIdWho,') as star'
+        );
+  end if;
 
-  set _labelField=concat(
-        ',(select e.labels from aAtomLabel e where e.iid=',_iid,' and e.atomId=a.id and e.userId=',_userIdWho,') as labels'
-      );
+  if _userIdWho=0 then
+    set _labelField='';
+  else
+    set _labelField=concat(
+          ',(select e.labels from aAtomLabel e where e.iid=',_iid,' and e.atomId=a.id and e.userId=',_userIdWho,') as labels'
+        );
+  end if;
 
   if _tableName<>'' then
     set _itemField='f.*,';

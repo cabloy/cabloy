@@ -1,9 +1,9 @@
 {
   "name": "egg-born-module-a-base",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "title": "Base",
   "eggBornModule": {
-    "fileVersion": 2,
+    "fileVersion": 3,
     "dependencies": {
       "a-instance": "1.0.0",
       "a-status": "1.0.0",
