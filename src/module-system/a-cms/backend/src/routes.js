@@ -1,5 +1,7 @@
 const version = require('./controller/version.js');
 const article = require('./controller/article.js');
+const render = require('./controller/render.js');
+const site = require('./controller/site.js');
 
 module.exports = app => {
   const routes = [
@@ -15,6 +17,11 @@ module.exports = app => {
     { method: 'post', path: 'article/delete', controller: article, middlewares: 'inner' },
     { method: 'post', path: 'article/action', controller: article, middlewares: 'inner' },
     { method: 'post', path: 'article/enable', controller: article, middlewares: 'inner' },
+    // render
+    { method: 'post', path: 'render/article', controller: render, middlewares: 'inner,file' },
+    // site
+    { method: 'post', path: 'site/getConfigSite', controller: site, meta: { right: { type: 'function', name: 'site' } } },
+    { method: 'post', path: 'site/getConfigLanguage', controller: site, meta: { right: { type: 'function', name: 'site' } } },
   ];
   return routes;
 };

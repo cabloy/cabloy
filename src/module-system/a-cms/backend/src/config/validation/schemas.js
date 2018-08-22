@@ -10,6 +10,12 @@ module.exports = app => {
         ebTitle: 'What to write',
         notEmpty: true,
       },
+      language: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Language',
+        notEmpty: true,
+      },
     },
   };
   // todo search

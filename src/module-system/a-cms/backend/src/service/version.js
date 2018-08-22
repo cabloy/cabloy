@@ -13,10 +13,11 @@ module.exports = app => {
             deleted int(11) DEFAULT '0',
             iid int(11) DEFAULT '0',
             atomId int(11) DEFAULT '0',
-            userId int(11) DEFAULT '0',
+            categoryId int(11) DEFAULT '0',
             language varchar(50) DEFAULT NULL,
             top int(11) DEFAULT '0',
-            summary text DEFAULT NULL,
+            keywords varchar(255) DEFAULT NULL,
+            description text DEFAULT NULL,
             content text DEFAULT NULL,
             extra json DEFAULT NULL,
             completed int(11) DEFAULT '0',
@@ -32,13 +33,17 @@ module.exports = app => {
         // create roles: cms-writer cms-publisher
         const roles = [ 'cms-writer', 'cms-publisher' ];
         const roleAuthenticated = await this.ctx.meta.role.getSystemRole({ roleName: 'authenticated' });
-        const roleSuperuser = await this.ctx.meta.role.getSystemRole({ roleName: 'superuser' });
+        const userRoot = await this.ctx.meta.user.get({ userName: 'root' });
         for (const roleName of roles) {
           const roleId = await this.ctx.meta.role.add({
             roleName,
             roleIdParent: roleAuthenticated.id,
           });
-          await this.ctx.meta.role.addRoleInc({ roleId: roleSuperuser.id, roleIdInc: roleId });
+          // add user to role
+          await this.ctx.meta.role.addUserRole({
+            userId: userRoot.id,
+            roleId,
+          });
         }
         // build roles
         await this.ctx.meta.role.build();
@@ -52,11 +57,12 @@ module.exports = app => {
           { roleName: 'cms-publisher', action: 'read', scopeNames: 'cms-writer' },
           { roleName: 'cms-publisher', action: 'write', scopeNames: 'cms-writer' },
           { roleName: 'cms-publisher', action: 'publish', scopeNames: 'cms-writer' },
+          { roleName: 'root', action: 'read', scopeNames: 'cms-writer' },
         ];
         const module = this.ctx.app.meta.modules[this.ctx.module.info.relativeName];
         const atomClass = await this.ctx.meta.atomClass.get({ atomClassName: 'article' });
         for (const roleRight of roleRights) {
-        // role
+          // role
           const role = await this.ctx.meta.role.get({ roleName: roleRight.roleName });
           // scope
           let scope;

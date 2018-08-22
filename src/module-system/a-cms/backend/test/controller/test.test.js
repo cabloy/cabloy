@@ -22,7 +22,15 @@ describe.only('test/controller/test.test.js', () => {
       key: atomKey,
       item: {
         atomName: 'hello world',
+        language: 'en-us',
       },
+    });
+    assert(result.body.code === 0);
+
+    // publish
+    result = await app.httpRequest().post(mockUrl('/a/base/atom/action')).send({
+      action: 101,
+      key: atomKey,
     });
     assert(result.body.code === 0);
 

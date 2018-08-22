@@ -22,7 +22,7 @@ module.exports = app => {
       // update article
       await this.ctx.model.article.update({
         id: key.itemId,
-        completed: item.completed,
+        language: item.language,
       });
     }
 
@@ -40,6 +40,12 @@ module.exports = app => {
           key,
           atom: { atomFlag: 2 },
           user,
+        });
+        // render
+        await this.ctx.performAction({
+          method: 'post',
+          url: 'render/article',
+          body: { key },
         });
       }
     }

@@ -48,6 +48,13 @@ module.exports = app => {
           sorting: 1,
           menu: 1,
         },
+        site: {
+          title: 'Site Management',
+          scene: 'tools',
+          actionPath: 'site/manage',
+          sorting: 1,
+          menu: 1,
+        },
       },
     },
     validation: {
