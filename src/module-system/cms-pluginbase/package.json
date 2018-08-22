@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "title": "cms:plugin:base",
   "eggBornModule": {
+    "cms": {
+      "name": "base",
+      "plugin": true
+    },
     "dependencies": {
       "a-instance": "1.0.0"
     }
