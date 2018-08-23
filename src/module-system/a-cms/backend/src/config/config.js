@@ -20,11 +20,10 @@ module.exports = appInfo => {
     },
     language: {
       default: 'en-us',
-      items: 'en-us,zh-cn',
+      items: 'en-us',
     },
     themes: {
       'en-us': 'cms-themeblog',
-      'zh-cn': 'cms-themeblog',
     },
   };
 

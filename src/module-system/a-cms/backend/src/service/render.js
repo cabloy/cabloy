@@ -6,6 +6,8 @@ const extend = require3('extend2');
 const uuid = require3('uuid');
 const fse = require3('fs-extra');
 const moment = require3('moment');
+const glob = require3('glob');
+const bb = require3('bluebird');
 
 module.exports = app => {
 
@@ -28,7 +30,20 @@ module.exports = app => {
       console.timeEnd('a');
     }
 
-    async article({ key }) {
+    async renderAllFiles({ language }) {
+      // clearCache
+      ejs.clearCache();
+      // site
+      const site = await this.getSite({ language });
+      // render static
+      await this._renderStatic({ site });
+      // render index
+      await this._renderIndex({ site });
+      // render articles
+      await this._renderArticles({ site });
+    }
+
+    async renderArticle({ key }) {
       // clearCache
       ejs.clearCache();
       // check right
@@ -42,18 +57,18 @@ module.exports = app => {
       // site
       const site = await this.getSite({ language: article.language });
       // render index
-      await this.renderIndex({ site });
+      await this._renderIndex({ site });
       // render article
-      await this.renderArticle({ site, article });
+      await this._renderArticle({ site, article });
       // write sitemap
-      await this.writeSitemap({ site, article });
+      await this._writeSitemap({ site, article });
     }
 
-    async writeSitemap({ site, article }) {
+    async _writeSitemap({ site, article }) {
       const loc = article.url;
       const lastmod = moment(article.updatedAt).format();
       // load
-      const pathDist = await this.getPathDist(site, site.language.default);
+      const pathDist = await this.getPathDist(site, site.language.current);
       const fileName = path.join(pathDist, 'sitemap.xml');
       let xml;
       const exists = await fse.pathExists(fileName);
@@ -79,25 +94,51 @@ module.exports = app => {
       await fse.writeFile(fileName, xml);
     }
 
-    async renderIndex({ site }) {
+    async _renderArticles({ site }) {
+      // anonymous user
+      // articles
+      // render article
+      // write sitemap
+    }
+
+    async _renderStatic({ site }) {
+      // static
+      const pathIntermediate = await this.getPathIntermediate(site.language.current);
+      const staticFiles = await bb.fromCallback(cb => {
+        glob(`${pathIntermediate}/static/\*.ejs`, cb);
+      });
+      for (const item of staticFiles) {
+        // data
+        const data = this.getData({ site });
+        // path
+        const _fileName = `static/${path.basename(item, '.ejs')}.html`;
+        await this._renderFile({
+          fileSrc: `static/${path.basename(item)}`,
+          fileDest: _fileName,
+          data,
+        });
+      }
+    }
+
+    async _renderIndex({ site }) {
       // data
       const data = this.getData({ site });
       // path
       const _fileName = 'index.html';
-      await this.renderFile({
+      await this._renderFile({
         fileSrc: 'main/index.ejs',
         fileDest: _fileName,
         data,
       });
     }
 
-    async renderArticle({ site, article }) {
+    async _renderArticle({ site, article }) {
       // data
       const data = this.getData({ site });
       data.article = article;
       // path
       const _fileName = `articles/${uuid.v4().replace(/-/g, '')}.html`;
-      await this.renderFile({
+      await this._renderFile({
         fileSrc: 'main/article.ejs',
         fileDest: _fileName,
         data,
@@ -111,7 +152,7 @@ module.exports = app => {
       });
     }
 
-    async renderFile({ fileSrc, fileDest, data }) {
+    async _renderFile({ fileSrc, fileDest, data }) {
       // language
       const language = data.site.language.current;
       // src

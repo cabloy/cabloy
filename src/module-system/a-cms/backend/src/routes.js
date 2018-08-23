@@ -21,7 +21,9 @@ module.exports = app => {
     { method: 'post', path: 'render/article', controller: render, middlewares: 'inner,file' },
     // site
     { method: 'post', path: 'site/getConfigSite', controller: site, meta: { right: { type: 'function', name: 'site' } } },
+    { method: 'post', path: 'site/setConfigSite', controller: site, meta: { right: { type: 'function', name: 'site' } } },
     { method: 'post', path: 'site/getConfigLanguage', controller: site, meta: { right: { type: 'function', name: 'site' } } },
+    { method: 'post', path: 'site/setConfigLanguage', controller: site, meta: { right: { type: 'function', name: 'site' } } },
     { method: 'post', path: 'site/buildLanguage', controller: site, middlewares: 'file', meta: { right: { type: 'function', name: 'site' } } },
     { method: 'post', path: 'site/buildLanguages', controller: site, middlewares: 'file', meta: { right: { type: 'function', name: 'site' } } },
   ];

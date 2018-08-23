@@ -12,7 +12,7 @@ module.exports = app => {
             publish: {
               code: 101,
               title: 'Publish',
-              flag: '1',
+              flag: '1,2',
             },
           },
           flags: {

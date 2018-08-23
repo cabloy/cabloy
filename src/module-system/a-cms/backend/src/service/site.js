@@ -12,8 +12,16 @@ module.exports = app => {
       return await this.ctx.meta.status.get('config-site');
     }
 
+    async setConfigSite({ data }) {
+      await this.ctx.meta.status.set('config-site', data);
+    }
+
     async getConfigLanguage({ language }) {
       return await this.ctx.meta.status.get(`config-${language}`);
+    }
+
+    async setConfigLanguage({ language, data }) {
+      await this.ctx.meta.status.set(`config-${language}`, data);
     }
 
     async buildLanguages() {
@@ -47,7 +55,7 @@ module.exports = app => {
 
       // dist
       const pathDist = await this.ctx.service.render.getPathDist(site, language);
-      const distPaths = [ 'index.html', 'articles', 'static', 'asserts', 'plugins' ];
+      const distPaths = [ 'sitemap.xml', 'index.html', 'articles', 'static', 'assets', 'plugins' ];
       for (const item of distPaths) {
         await fse.remove(path.join(pathDist, item));
       }
@@ -125,7 +133,8 @@ module.exports = app => {
       // / sitemapIndex
       await this.createSitemapIndex({ site });
 
-      // render files
+      // render all files
+      await this.ctx.service.render.renderAllFiles({ language });
 
       // time end
       const timeEnd = new Date();
