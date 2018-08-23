@@ -22,6 +22,8 @@ module.exports = app => {
     // site
     { method: 'post', path: 'site/getConfigSite', controller: site, meta: { right: { type: 'function', name: 'site' } } },
     { method: 'post', path: 'site/getConfigLanguage', controller: site, meta: { right: { type: 'function', name: 'site' } } },
+    { method: 'post', path: 'site/buildLanguage', controller: site, middlewares: 'file', meta: { right: { type: 'function', name: 'site' } } },
+    { method: 'post', path: 'site/buildLanguages', controller: site, middlewares: 'file', meta: { right: { type: 'function', name: 'site' } } },
   ];
   return routes;
 };

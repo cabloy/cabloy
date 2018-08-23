@@ -14,6 +14,18 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async buildLanguage() {
+      const res = await this.ctx.service.site.buildLanguage({
+        language: this.ctx.request.body.language,
+      });
+      this.ctx.success(res);
+    }
+
+    async buildLanguages() {
+      const res = await this.ctx.service.site.buildLanguages();
+      this.ctx.success(res);
+    }
+
   }
   return SiteController;
 };

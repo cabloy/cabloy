@@ -55,7 +55,9 @@
   "dependencies": {
     "require3": "^1.0.1",
     "extend2": "^1.0.0",
-    "ejs": "^2.6.1",
-    "p-map": "^1.2.0"
+    "@zhennann/ejs": "^2.6.2",
+    "p-map": "^1.2.0",
+    "moment": "^2.22.2",
+    "glob": "^7.1.2"
   }
 }

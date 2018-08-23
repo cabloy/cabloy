@@ -1,10 +1,11 @@
 const path = require('path');
 const require3 = require('require3');
-const ejs = require3('ejs');
+const ejs = require3('@zhennann/ejs');
 const pMap = require3('p-map');
 const extend = require3('extend2');
 const uuid = require3('uuid');
 const fse = require3('fs-extra');
+const moment = require3('moment');
 
 module.exports = app => {
 
@@ -44,7 +45,38 @@ module.exports = app => {
       await this.renderIndex({ site });
       // render article
       await this.renderArticle({ site, article });
-      // todo: write to sitemap
+      // write sitemap
+      await this.writeSitemap({ site, article });
+    }
+
+    async writeSitemap({ site, article }) {
+      const loc = article.url;
+      const lastmod = moment(article.updatedAt).format();
+      // load
+      const pathDist = await this.getPathDist(site, site.language.default);
+      const fileName = path.join(pathDist, 'sitemap.xml');
+      let xml;
+      const exists = await fse.pathExists(fileName);
+      if (!exists) {
+        xml =
+`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${loc}</loc>
+    <lastmod>${lastmod}</lastmod>
+  </url>
+</urlset>`;
+      } else {
+        xml = await fse.readFile(fileName);
+        xml = xml.toString().replace('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+          `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${loc}</loc>
+    <lastmod>${lastmod}</lastmod>
+  </url>`);
+      }
+      // save
+      await fse.writeFile(fileName, xml);
     }
 
     async renderIndex({ site }) {
@@ -83,26 +115,44 @@ module.exports = app => {
       // language
       const language = data.site.language.current;
       // src
-      const pathIntermediate = await this.getPathIntermediate(language, false);
+      const pathIntermediate = await this.getPathIntermediate(language);
       const fileName = path.join(pathIntermediate, fileSrc);
+      // data
+      data._filename = fileName;
       // render
-      const value = await ejs.renderFile(fileName, data, this.getOptions());
+      const content = await ejs.renderFile(fileName, data, this.getOptions());
       // dest
-      const pathDist = await this.getPathDist(data.site, language, false);
+      const pathDist = await this.getPathDist(data.site, language);
       const fileWrite = path.join(pathDist, fileDest);
-      await fse.ensureDir(path.dirname(fileWrite));
       // write
-      await fse.writeFile(fileWrite, value);
+      await fse.outputFile(fileWrite, content);
     }
 
-    async getPathIntermediate(language, ensure) {
-      return await this.ctx.meta.file.getPath(`cms/${language}/intermediate`, ensure);
+    async getPathCustom(language) {
+      const cms = await this.getPathCms();
+      return path.join(cms, language, 'custom');
     }
-    async getPathDist(site, language, ensure) {
-      return await this.ctx.meta.file.getPath(`cms/dist${language === site.language.default ? '' : '/' + language}`, ensure);
+    async getPathIntermediate(language) {
+      const cms = await this.getPathCms();
+      return path.join(cms, language, 'intermediate');
+    }
+    async getPathDist(site, language) {
+      const rawDist = await this.getPathRawDist();
+      return path.join(rawDist, language === site.language.default ? '' : '/' + language);
+    }
+    async getPathCms() {
+      return await this.ctx.meta.file.getPath('cms');
+    }
+    async getPathRawDist() {
+      return await this.ctx.meta.file.getPath('cms/dist');
+    }
+
+    getUrlRawRoot(site) {
+      return `${site.host.url}${site.host.rootPath ? '/' + site.host.rootPath : ''}`;
     }
     getUrlRoot(site, language) {
-      return `${site.host.url}${site.host.rootPath ? '/' + site.host.rootPath : ''}${language === site.language.default ? '' : '/' + language}`;
+      const rawRoot = this.getUrlRawRoot(site);
+      return `${rawRoot}${language === site.language.default ? '' : '/' + language}`;
     }
     getUrl(site, language, path) {
       const urlRoot = this.getUrlRoot(site, language);
@@ -112,8 +162,10 @@ module.exports = app => {
     getData({ site }) {
       return {
         site,
-        require: fileName => {
-          console.log(fileName);
+        require(fileName) {
+          const ch = fileName.charAt(0);
+          const file = (ch !== '.' && ch !== '..') ? fileName : path.resolve(path.dirname(this._filename), fileName);
+          return require(file);
         },
       };
     }
@@ -129,12 +181,12 @@ module.exports = app => {
 
     // site<plugin<theme<site(db)<language(db)
     async getSite({ language }) {
-      const siteBase = this.combineSiteBase();
+      const siteBase = await this.combineSiteBase();
       return await this.combineSite({ siteBase, language });
     }
 
     // site<plugin<theme<site(db)<language(db)
-    combineSiteBase() {
+    async combineSiteBase() {
       // site
       const site = extend(true, {}, this.ctx.config.site);
       // plugins
@@ -145,6 +197,10 @@ module.exports = app => {
           site.plugins[module.package.eggBornModule.cms.name] = this.ctx.config.module(relativeName).plugin;
         }
       }
+      // site(db) special for language/themes
+      const configSite = await this.ctx.service.site.getConfigSite();
+      if (configSite && configSite.language) site.language = configSite.language;
+      if (configSite && configSite.themes) site.themes = configSite.themes;
       return site;
     }
 
