@@ -1,6 +1,7 @@
 const glob = require('glob');
 const semver = require('semver');
 const chalk = require('chalk');
+const path = require('path');
 const mparse = require('egg-born-mparse').default;
 const policy = require('./policy.js');
 const util = require('./util.js');
@@ -93,7 +94,8 @@ module.exports = function(loader) {
       const info = mparse.parseInfo(name);
       if (!modules[info.relativeName]) {
         const pkg = util.lookupPackage(file);
-        modules[info.relativeName] = { file, name, info, pkg, package: require(pkg) };
+        const root = path.dirname(pkg);
+        modules[info.relativeName] = { root, file, name, info, pkg, package: require(pkg) };
       }
     });
     return modules;
