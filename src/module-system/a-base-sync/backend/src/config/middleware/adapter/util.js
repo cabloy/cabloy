@@ -5,7 +5,9 @@ module.exports = ctx => {
   class Util {
 
     page(_page, force = true) {
-      _page = _page || { index: 0 };
+      if (!_page) {
+        _page = force ? { index: 0 } : { index: 0, size: 0 };
+      }
       if (force || _page.size === undefined) _page.size = ctx.app.config.pageSize;
       return _page;
     }

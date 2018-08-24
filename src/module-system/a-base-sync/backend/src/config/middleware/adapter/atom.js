@@ -143,7 +143,7 @@ const Fn = module.exports = ctx => {
     }
 
     // select
-    async select({ atomClass, options, user }) {
+    async select({ atomClass, options, user, pageForce = true }) {
       // atomClass
       let _atomClass;
       if (atomClass) {
@@ -155,6 +155,7 @@ const Fn = module.exports = ctx => {
         tableName: _atomClass ? _atomClass.tableName : '',
         options,
         user,
+        pageForce,
       });
 
       // select items
@@ -439,8 +440,8 @@ const Fn = module.exports = ctx => {
       return res[0][0];
     }
 
-    async _list({ tableName = '', options: { where, orders, page, star = 0, label = 0 }, user }) {
-      page = ctx.meta.util.page(page);
+    async _list({ tableName = '', options: { where, orders, page, star = 0, label = 0 }, user, pageForce = true }) {
+      page = ctx.meta.util.page(page, pageForce);
 
       const _where = ctx.model._where2(where);
       const _orders = ctx.model._orders(orders);
