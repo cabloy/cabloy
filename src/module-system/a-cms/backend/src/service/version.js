@@ -20,6 +20,7 @@ module.exports = app => {
             description text DEFAULT NULL,
             url varchar(255) DEFAULT NULL,
             extra json DEFAULT NULL,
+            editMode int(11) DEFAULT '0',
             content text DEFAULT NULL,
             PRIMARY KEY (id)
           )

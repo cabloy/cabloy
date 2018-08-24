@@ -25,6 +25,9 @@ module.exports = appInfo => {
     themes: {
       'en-us': 'cms-themeblog',
     },
+    edit: {
+      mode: 1, // markdown
+    },
   };
 
   //

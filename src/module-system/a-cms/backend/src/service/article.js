@@ -3,9 +3,12 @@ module.exports = app => {
   class Article extends app.Service {
 
     async create({ atomClass, key, atom, user }) {
+      const site = await this.ctx.service.render.combineSiteBase();
+      const editMode = site.edit.mode;
       // add article
       const res = await this.ctx.model.article.insert({
         atomId: key.atomId,
+        editMode,
       });
       return { atomId: key.atomId, itemId: res.insertId };
     }
