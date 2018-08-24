@@ -28,6 +28,12 @@ module.exports = app => {
 
     async delete({ atomClass, key, user }) {
       // delete article
+      await this.ctx.performAction({
+        method: 'post',
+        url: 'render/deleteArticle',
+        body: { key },
+      });
+      // delete article
       await this.ctx.model.article.delete({
         id: key.itemId,
       });
@@ -44,7 +50,7 @@ module.exports = app => {
         // render
         await this.ctx.performAction({
           method: 'post',
-          url: 'render/article',
+          url: 'render/renderArticle',
           body: { key },
         });
       }

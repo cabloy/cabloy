@@ -161,13 +161,13 @@ module.exports = app => {
         items +=
 `  <sitemap>
     <loc>${urlRawRoot}${language === site.language.default ? '' : '/' + language}/sitemap.xml</loc>
-  </sitemap>`;
+  </sitemap>
+`;
       }
       const content =
 `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${items}
-</sitemapindex>`;
+${items}</sitemapindex>`;
       // write
       const pathRawDist = await this.ctx.service.render.getPathRawDist(site);
       await fse.outputFile(`${pathRawDist}/sitemapindex.xml`, content);

@@ -13,23 +13,6 @@ module.exports = app => {
 
   class Render extends app.Service {
 
-    async renders({ key }) {
-      console.time('a');
-      // for (let i = 0; i < 10000; i++) {
-      //   await this.render({ key });
-      // }
-      // 批量执行
-      const mapper = () => {
-        return this.render({});
-      };
-      const articles = [];
-      for (let i = 0; i < 10000; i++) {
-        articles[i] = i;
-      }
-      const results = await pMap(articles, mapper, { concurrency: 10 });
-      console.timeEnd('a');
-    }
-
     async renderAllFiles({ language }) {
       // clearCache
       ejs.clearCache();
@@ -37,68 +20,89 @@ module.exports = app => {
       const site = await this.getSite({ language });
       // render static
       await this._renderStatic({ site });
-      // render index
-      await this._renderIndex({ site });
       // render articles
       await this._renderArticles({ site });
+      // render index
+      await this._renderIndex({ site });
     }
 
     async renderArticle({ key }) {
+      // article
+      const article = await this._getArticle({ key });
+      if (!article) return;
       // clearCache
       ejs.clearCache();
-      // check right
-      const roleAnonymous = await this.ctx.meta.role.getSystemRole({ roleName: 'anonymous' });
-      const right = await this.ctx.meta.atom.checkRoleRightRead({ atom: { id: key.atomId }, roleId: roleAnonymous.id });
-      if (!right) return;
-      // article
-      const article = await this.ctx.meta.atom.read({ key, user: { id: 0 } });
-      if (!article) return;
-      if (!article.language) this.ctx.throw(1001);
       // site
       const site = await this.getSite({ language: article.language });
-      // render index
-      await this._renderIndex({ site });
       // render article
       await this._renderArticle({ site, article });
       // write sitemap
       await this._writeSitemap({ site, article });
+      // render index
+      await this._renderIndex({ site });
     }
 
-    async _writeSitemap({ site, article }) {
-      const loc = article.url;
-      const lastmod = moment(article.updatedAt).format();
-      // load
-      const pathDist = await this.getPathDist(site, site.language.current);
-      const fileName = path.join(pathDist, 'sitemap.xml');
-      let xml;
-      const exists = await fse.pathExists(fileName);
-      if (!exists) {
-        xml =
-`<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>${loc}</loc>
-    <lastmod>${lastmod}</lastmod>
-  </url>
-</urlset>`;
-      } else {
-        xml = await fse.readFile(fileName);
-        xml = xml.toString().replace('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-          `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>${loc}</loc>
-    <lastmod>${lastmod}</lastmod>
-  </url>`);
-      }
+    async deleteArticle({ key }) {
+      // article
+      const article = await this._getArticle({ key });
+      if (!article) return;
+      // site
+      const site = await this.getSite({ language: article.language });
+      // remove file
+      const pathDist = await this.getPathDist(site, article.language);
+      await fse.remove(path.join(pathDist, article.url));
+      // remove sitemap
+      let xml = await fse.readFile(path.join(pathDist, 'sitemap.xml'));
+      const regexp = new RegExp(` {2}<url>\\s+<loc>[^<]*${article.url}[^<]*</loc>[\\s\\S]*?</url>[\\r\\n]`);
+      xml = xml.toString().replace(regexp, '');
       // save
-      await fse.writeFile(fileName, xml);
+      await fse.writeFile(path.join(pathDist, 'sitemap.xml'), xml);
+    }
+
+    async _getArticle({ key }) {
+      // check right
+      const roleAnonymous = await this.ctx.meta.role.getSystemRole({ roleName: 'anonymous' });
+      const right = await this.ctx.meta.atom.checkRoleRightRead({ atom: { id: key.atomId }, roleId: roleAnonymous.id });
+      if (!right) return null;
+      // article
+      const article = await this.ctx.meta.atom.read({ key, user: { id: 0 } });
+      if (!article || article.atomFlag !== 2) return null;
+      if (!article.language) this.ctx.throw(1001);
+      return article;
     }
 
     async _renderArticles({ site }) {
       // anonymous user
+      let userId;
+      const user = await this.ctx.meta.user.get({ anonymous: true });
+      if (user) {
+        userId = user.id;
+      } else {
+        userId = await this.ctx.meta.user.anonymous();
+      }
       // articles
-      // render article
+      const articles = await this.ctx.meta.atom.select({
+        atomClass: { module: 'a-cms', atomClassName: 'article' },
+        options: {
+          where: {
+            'a.atomFlag': 2,
+            'f.language': site.language.current,
+          },
+          orders: [[ 'a.updatedAt', 'desc' ]],
+          page: null,
+        },
+        user: { id: userId },
+        pageForce: false,
+      });
+
+      // concurrency
+      const mapper = article => {
+        // render article
+        return this._renderArticle({ site, article });
+      };
+      await pMap(articles, mapper, { concurrency: 10 });
       // write sitemap
+      await this._writeSitemaps({ site, articles });
     }
 
     async _renderStatic({ site }) {
@@ -120,6 +124,64 @@ module.exports = app => {
       }
     }
 
+    async _writeSitemap({ site, article }) {
+      const loc = this.getUrl(site, site.language.current, article.url);
+      const lastmod = moment(article.updatedAt).format();
+      // load
+      const pathDist = await this.getPathDist(site, site.language.current);
+      const fileName = path.join(pathDist, 'sitemap.xml');
+      let xml;
+      const exists = await fse.pathExists(fileName);
+      if (!exists) {
+        xml =
+`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${loc}</loc>
+    <lastmod>${lastmod}</lastmod>
+  </url>
+</urlset>`;
+      } else {
+        xml = await fse.readFile(fileName);
+        xml = xml.toString();
+        // remove
+        const regexp = new RegExp(` {2}<url>\\s+<loc>[^<]*${article.url}[^<]*</loc>[\\s\\S]*?</url>[\\r\\n]`);
+        xml = xml.replace(regexp, '');
+        // append
+        xml = xml.replace('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+          `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${loc}</loc>
+    <lastmod>${lastmod}</lastmod>
+  </url>`);
+      }
+      // save
+      await fse.writeFile(fileName, xml);
+    }
+
+    async _writeSitemaps({ site, articles }) {
+      // xml
+      let xml =
+`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+`;
+      for (const article of articles) {
+        const loc = this.getUrl(site, site.language.current, article.url);
+        const lastmod = moment(article.updatedAt).format();
+        xml +=
+`  <url>
+    <loc>${loc}</loc>
+    <lastmod>${lastmod}</lastmod>
+  </url>
+`;
+      }
+      xml += '</urlset>';
+      // save
+      const pathDist = await this.getPathDist(site, site.language.current);
+      const fileName = path.join(pathDist, 'sitemap.xml');
+      await fse.writeFile(fileName, xml);
+    }
+
     async _renderIndex({ site }) {
       // data
       const data = this.getData({ site });
@@ -137,19 +199,18 @@ module.exports = app => {
       const data = this.getData({ site });
       data.article = article;
       // path
-      const _fileName = `articles/${uuid.v4().replace(/-/g, '')}.html`;
+      const url = article.url || `articles/${uuid.v4().replace(/-/g, '')}.html`;
       await this._renderFile({
         fileSrc: 'main/article.ejs',
-        fileDest: _fileName,
+        fileDest: url,
         data,
       });
-      // url
-      const url = article.url = this.getUrl(data.site, site.language.current, _fileName);
       // save
       await this.ctx.model.article.update({
         id: article.id,
         url,
       });
+      article.url = url;
     }
 
     async _renderFile({ fileSrc, fileDest, data }) {

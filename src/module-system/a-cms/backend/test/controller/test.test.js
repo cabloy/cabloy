@@ -53,11 +53,20 @@ describe.only('test/controller/test.test.js', () => {
 
     const articles = [
       {
+        special: true,
         atomName: 'hello world',
         language: 'en-us',
       },
       {
+        atomName: 'hello world2',
+        language: 'en-us',
+      },
+      {
         atomName: '你好，世界',
+        language: 'zh-cn',
+      },
+      {
+        atomName: '你好，世界2',
         language: 'zh-cn',
       },
     ];
@@ -85,6 +94,22 @@ describe.only('test/controller/test.test.js', () => {
         key: atomKey,
       });
       assert(result.body.code === 0);
+
+      // special test
+      if (article.special) {
+        // publish again
+        let result = await app.httpRequest().post(mockUrl('/a/base/atom/action')).send({
+          action: 101,
+          key: atomKey,
+        });
+        assert(result.body.code === 0);
+
+        // delete
+        result = await app.httpRequest().post(mockUrl('/a/base/atom/delete')).send({
+          key: atomKey,
+        });
+        assert(result.body.code === 0);
+      }
     }
 
   });
@@ -99,12 +124,11 @@ describe.only('test/controller/test.test.js', () => {
     });
 
     const result = await app.httpRequest().post(mockUrl('site/buildLanguage')).send({
-      language: 'en-us',
+      language: 'zh-cn',
     });
     assert(result.body.code === 0);
     console.log('time used: ', result.body.data.time);
 
   });
-
 
 });
