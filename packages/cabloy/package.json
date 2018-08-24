@@ -26,7 +26,7 @@
     "egg-born-module-a-version": "^2.0.12",
     "egg-born-module-a-authgithub": "^1.0.2",
     "egg-born-module-a-authsimple": "^1.0.4",
-    "egg-born-module-a-base": "^1.0.18",
+    "egg-born-module-a-base": "^1.0.19",
     "egg-born-module-a-baseadmin": "^1.0.7",
     "egg-born-module-a-cache": "^1.0.2",
     "egg-born-module-a-components-sync": "^1.0.8",
