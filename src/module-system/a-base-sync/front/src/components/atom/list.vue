@@ -219,7 +219,7 @@ export default {
       });
     },
     onLabel(event, item) {
-      this.$view.navigate(`/a/base/atom/labels?atomId=${item.atomId}`, { target: '_self' });
+      this.$view.navigate(`/a/base/atom/labels?atomId=${item.atomId}`);
     },
     onStarChanged(data) {
       const index = this.items.findIndex(item => item.atomId === data.key.atomId);
