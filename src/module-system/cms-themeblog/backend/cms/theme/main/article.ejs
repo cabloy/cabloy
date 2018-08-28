@@ -1,8 +1,6 @@
 <%
 console.log(article.atomName);
-   const fse=require('fs-extra');
-   const text=await fse.readFile('/Users/wind/Downloads/免责声明.txt');
  %>
 <h1>
-  <p><%=text%></p>
+  <p><%- article.text %></p>
 </h1>
