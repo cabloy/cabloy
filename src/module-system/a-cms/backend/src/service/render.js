@@ -253,38 +253,52 @@ module.exports = app => {
 
     async _renderCSSJS({ data, content, type, items }) {
       if (items.length === 0) return content;
-      // combine
-      let result = '';
-      for (const item of items) {
-        let _content;
-        if (path.extname === '.ejs') {
-          // data
-          data._filename = item;
-          _content = await ejs.renderFile(item, data, this.getOptions());
-        } else {
-          _content = await fse.readFile(item);
-        }
-        result += _content + '\n';
-      }
-      // minify
-      if (type === 'CSS') {
-        const output = new CleanCSS().minify(result);
-        result = output.styles;
+      // site
+      const site = data.site;
+      // cache
+      if (!site._cache) site._cache = {};
+      if (!site._cache[type])site._cache[type] = {};
+      const cacheSha = shajs('sha256').update(items.join(',')).digest('hex');
+      let urlDest;
+      if (site._cache[type][cacheSha]) {
+        urlDest = site._cache[type][cacheSha];
       } else {
-        const output = UglifyJS.minify(result);
-        if (output.error) throw new Error(`${output.error.name}: ${output.error.message}`);
-        result = output.code;
+        // combine
+        let result = '';
+        for (const item of items) {
+          let _content;
+          if (path.extname === '.ejs') {
+          // data
+            data._filename = item;
+            _content = await ejs.renderFile(item, data, this.getOptions());
+          } else {
+            _content = await fse.readFile(item);
+          }
+          result += _content + '\n';
+        }
+        // minify
+        if (type === 'CSS') {
+          const output = new CleanCSS().minify(result);
+          result = output.styles;
+        } else {
+          const output = UglifyJS.minify(result);
+          if (output.error) throw new Error(`${output.error.name}: ${output.error.message}`);
+          result = output.code;
+        }
+        // save
+        const sha = shajs('sha256').update(result).digest('hex');
+        // dest
+        const fileDest = `assets/${type.toLowerCase()}/${sha}.${type.toLowerCase()}`;
+        const pathDist = await this.getPathDist(site, site.language.current);
+        const fileWrite = path.join(pathDist, fileDest);
+        // write
+        await fse.outputFile(fileWrite, result);
+        // url
+        urlDest = this.getUrl(site, site.language.current, fileDest);
+        // cache
+        site._cache[type][cacheSha] = urlDest;
       }
-      // save
-      const sha = shajs('sha256').update(result).digest('hex');
-      // dest
-      const fileDest = `assets/${type.toLowerCase()}/${sha}.${type.toLowerCase()}`;
-      const pathDist = await this.getPathDist(data.site, data.site.language.current);
-      const fileWrite = path.join(pathDist, fileDest);
-      // write
-      await fse.outputFile(fileWrite, result);
       // replace
-      const urlDest = this.getUrl(data.site, data.site.language.current, fileDest);
       const regexp = new RegExp(`__${type}__`);
       return content.replace(regexp, urlDest);
     }
