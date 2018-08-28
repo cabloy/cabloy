@@ -1,0 +1,368 @@
+#banner {
+  z-index: 100;
+  left: 0;
+  right: 50%;
+  height: 50px;
+  margin-right: -382px;
+  position: fixed;
+  top: 100px;
+  background: #fc0;
+  border: 1px solid #cca300;
+  -moz-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
+  -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
+  -moz-border-radius: 0px 2px 2px 0px;
+  -webkit-border-radius: 0px;
+  border-radius: 0px 2px 2px 0px
+}
+
+#banner .banner-inner {
+  max-width: 650px;
+  width: 100%;
+  overflow: hidden;
+  float: right;
+  margin-right: 55px
+}
+
+#banner .button {
+  border: 1px solid #cca300;
+  font-size: 14px;
+  line-height: 14px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  margin-left: 5px;
+  padding: 10px 12px;
+  margin-top: 6px;
+  color: #333;
+  font-weight: bold;
+  display: inline-block;
+  text-align: center;
+  box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 1px rgba(0, 0, 0, 0.05);
+  background: #ffe064;
+  transition: background .1s ease-in
+}
+
+#banner .button:hover {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 1px rgba(0, 0, 0, 0.05);
+  background: #ffe788
+}
+
+#banner .fork {
+  font-size: 14px;
+  line-height: 14px;
+  padding: 10px 12px;
+  margin-top: 6px;
+  margin-left: 0
+}
+
+#banner .downloads {
+  float: right;
+  margin: 0
+}
+
+#banner .downloads span {
+  float: left;
+  display: inline-block;
+  line-height: 46px;
+  color: #9d7f0d;
+  text-shadow: rgba(255, 255, 255, 0.2) 0 1px 0
+}
+
+#banner ul {
+  list-style: none;
+  height: 40px;
+  padding: 0;
+  float: left;
+  margin-left: 10px
+}
+
+#banner ul li {
+  display: inline;
+  list-style: none
+}
+
+#banner #logo {
+  position: absolute;
+  height: 36px;
+  width: 36px;
+  right: 7px;
+  top: 7px;
+  display: block;
+  color: #ffe788
+}
+
+#banner #logo .octicon {
+  font-size: 36px;
+  margin-top: -1px
+}
+
+
+nav,
+section,
+summary {
+  display: block
+}
+
+nav ul,
+nav ol {
+  list-style: none;
+  list-style-image: none
+}
+
+nav {
+  width: 230px;
+  position: fixed;
+  left: 50%;
+  margin-left: -580px;
+  padding-top: 2px;
+  text-align: left
+}
+
+nav ul {
+  list-style: none;
+  list-style-image: none
+}
+
+nav li {
+  padding: 4px 4px 0 0;
+  font-size: 13px;
+  line-height: 36px;
+  box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.05)
+}
+
+nav li.tag-h1 {
+  font-size: 16px
+}
+
+nav li.tag-h1 a {
+  font-weight: bold;
+  color: #333
+}
+
+nav li.tag-h1 a:hover {
+  color: #2980b9
+}
+
+nav li.tag-h2:before {
+  content: '-';
+  margin-right: 5px
+}
+
+nav li.tag-h2.active a {
+  color: #2980b9;
+  font-weight: bold
+}
+
+nav li.tag-h2+.tag-h1 {
+  margin-top: 10px
+}
+
+nav li.tag-h2 a {
+  color: #333
+}
+
+nav li.tag-h2 a:hover {
+  color: #2980b9
+}
+
+.wrapper {
+  width: 650px;
+  margin: 0 auto;
+  position: relative
+}
+
+section {
+  width: 100%;
+  padding: 30px 30px 10px 30px;
+  margin: 20px 0;
+  margin-top: 190px;
+  position: relative;
+  background: #fbfbfb;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  border: 1px solid #cbcbcb;
+  -moz-box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.09), inset 0px 0px 2px 2px rgba(255, 255, 255, 0.5), inset 0 0 5px 5px rgba(255, 255, 255, 0.4);
+  -webkit-box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.09), inset 0px 0px 2px 2px rgba(255, 255, 255, 0.5), inset 0 0 5px 5px rgba(255, 255, 255, 0.4);
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.09), inset 0px 0px 2px 2px rgba(255, 255, 255, 0.5), inset 0 0 5px 5px rgba(255, 255, 255, 0.4)
+}
+
+section ul li:before {
+  content: ">";
+  display: inline-block;
+  position: relative;
+  margin-right: 10px;
+  color: #fc0;
+  font-weight: bold
+}
+
+section img {
+  max-width: 100%;
+  margin: 0px auto;
+  border-radius: 2px
+}
+
+@media print,
+screen and (max-width: 1060px) {
+  div.wrapper {
+    width: auto;
+    margin: 0
+  }
+  nav {
+    display: none
+  }
+  header,
+  section,
+  footer {
+    float: none
+  }
+  header h1,
+  section h1,
+  footer h1 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis
+  }
+  #banner {
+    width: 100%;
+    max-width: none
+  }
+  #banner .banner-inner {
+    float: none;
+    margin: 0 auto;
+    max-width: none
+  }
+  #banner .downloads {
+    margin-right: 20px
+  }
+  #banner .fork {
+    left: 50%;
+    position: relative;
+    margin-left: -325px
+  }
+  #banner #logo {
+    margin-right: 5px;
+    float: right;
+    position: relative
+  }
+  section {
+    border: 1px solid #e5e5e5;
+    border-width: 1px 0;
+    padding: 20px auto;
+    margin: 190px auto 20px;
+    max-width: 600px
+  }
+  footer {
+    text-align: center;
+    margin: 20px auto;
+    position: relative;
+    left: auto;
+    bottom: auto;
+    width: auto
+  }
+}
+
+@media print,
+screen and (max-width: 720px) {
+  body {
+    word-wrap: break-word
+  }
+  header {
+    padding: 20px 20px;
+    margin: 0
+  }
+  header h1 {
+    font-size: 32px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis
+  }
+  header p {
+    display: none
+  }
+  #banner {
+    top: 80px
+  }
+  #banner .fork {
+    float: left;
+    display: inline-block;
+    margin-left: 0px;
+    position: fixed;
+    left: 20px
+  }
+  section {
+    margin-top: 130px;
+    margin-bottom: 0px;
+    width: auto
+  }
+  header ul,
+  header p.view {
+    position: static
+  }
+}
+
+@media print,
+screen and (max-width: 480px) {
+  header {
+    position: relative;
+    padding: 5px 0px;
+    min-height: 0px
+  }
+  header h1 {
+    font-size: 24px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis
+  }
+  section {
+    margin-top: 5px
+  }
+  #banner {
+    display: none
+  }
+  header ul {
+    display: none
+  }
+}
+
+@media print {
+  body {
+    padding: 0.4in;
+    font-size: 12px;
+    color: #444
+  }
+}
+
+@media print,
+screen and (max-height: 680px) {
+  footer {
+    text-align: center;
+    margin: 20px auto;
+    position: relative;
+    left: auto;
+    bottom: auto;
+    width: auto
+  }
+}
+
+@media print,
+screen and (max-height: 480px) {
+  nav {
+    display: none
+  }
+  footer {
+    text-align: center;
+    margin: 20px auto;
+    position: relative;
+    left: auto;
+    bottom: auto;
+    width: auto
+  }
+}
