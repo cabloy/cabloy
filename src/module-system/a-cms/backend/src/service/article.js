@@ -26,6 +26,8 @@ module.exports = app => {
       await this.ctx.model.article.update({
         id: key.itemId,
         language: item.language,
+        editMode: item.editMode,
+        content: item.content,
       });
     }
 

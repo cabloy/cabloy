@@ -8,6 +8,10 @@ const fse = require3('fs-extra');
 const moment = require3('moment');
 const glob = require3('glob');
 const bb = require3('bluebird');
+const CleanCSS = require3('clean-css');
+const shajs = require3('sha.js');
+const UglifyJS = require3('uglify-js');
+const markdown = require('./markdown.js');
 
 module.exports = app => {
 
@@ -34,8 +38,10 @@ module.exports = app => {
       ejs.clearCache();
       // site
       const site = await this.getSite({ language: article.language });
+      // markdown
+      const md = markdown.create();
       // render article
-      await this._renderArticle({ site, article });
+      await this._renderArticle({ site, article, md });
       // write sitemap
       await this._writeSitemap({ site, article });
       // render index
@@ -94,11 +100,13 @@ module.exports = app => {
         user: { id: userId },
         pageForce: false,
       });
+      // markdown
+      const md = markdown.create();
 
       // concurrency
       const mapper = article => {
         // render article
-        return this._renderArticle({ site, article });
+        return this._renderArticle({ site, article, md });
       };
       await pMap(articles, mapper, { concurrency: 10 });
       // write sitemap
@@ -194,7 +202,13 @@ module.exports = app => {
       });
     }
 
-    async _renderArticle({ site, article }) {
+    async _renderArticle({ site, article, md }) {
+      // article's content
+      if (article.editMode === 1) {
+        article.text = article.content ? md.render(article.content) : '';
+      } else {
+        article.text = article.content;
+      }
       // data
       const data = this.getData({ site });
       data.article = article;
@@ -222,12 +236,57 @@ module.exports = app => {
       // data
       data._filename = fileName;
       // render
-      const content = await ejs.renderFile(fileName, data, this.getOptions());
+      let content = await ejs.renderFile(fileName, data, this.getOptions());
+      content = await this._renderCSSJSes({ data, content });
       // dest
       const pathDist = await this.getPathDist(data.site, language);
       const fileWrite = path.join(pathDist, fileDest);
       // write
       await fse.outputFile(fileWrite, content);
+    }
+
+    async _renderCSSJSes({ data, content }) {
+      content = await this._renderCSSJS({ data, content, type: 'CSS', items: data._csses });
+      content = await this._renderCSSJS({ data, content, type: 'JS', items: data._jses });
+      return content;
+    }
+
+    async _renderCSSJS({ data, content, type, items }) {
+      if (items.length === 0) return content;
+      // combine
+      let result = '';
+      for (const item of items) {
+        let _content;
+        if (path.extname === '.ejs') {
+          // data
+          data._filename = item;
+          _content = await ejs.renderFile(item, data, this.getOptions());
+        } else {
+          _content = await fse.readFile(item);
+        }
+        result += _content + '\n';
+      }
+      // minify
+      if (type === 'CSS') {
+        const output = new CleanCSS().minify(result);
+        result = output.styles;
+      } else {
+        const output = UglifyJS.minify(result);
+        if (output.error) throw new Error(`${output.error.name}: ${output.error.message}`);
+        result = output.code;
+      }
+      // save
+      const sha = shajs('sha256').update(result).digest('hex');
+      // dest
+      const fileDest = `assets/${type.toLowerCase()}/${sha}.${type.toLowerCase()}`;
+      const pathDist = await this.getPathDist(data.site, data.site.language.current);
+      const fileWrite = path.join(pathDist, fileDest);
+      // write
+      await fse.outputFile(fileWrite, result);
+      // replace
+      const urlDest = this.getUrl(data.site, data.site.language.current, fileDest);
+      const regexp = new RegExp(`__${type}__`);
+      return content.replace(regexp, urlDest);
     }
 
     async getPathCustom(language) {
@@ -262,12 +321,26 @@ module.exports = app => {
     }
 
     getData({ site }) {
+      const self = this;
+      const _csses = [];
+      const _jses = [];
       return {
         site,
+        _csses,
+        _jses,
         require(fileName) {
           const ch = fileName.charAt(0);
           const file = (ch !== '.' && ch !== '..') ? fileName : path.resolve(path.dirname(this._filename), fileName);
           return require(file);
+        },
+        url(fileName) {
+          return self.getUrl(site, site.language.current, fileName);
+        },
+        css(fileName) {
+          _csses.push(path.resolve(path.dirname(this._filename), fileName));
+        },
+        js(fileName) {
+          _jses.push(path.resolve(path.dirname(this._filename), fileName));
         },
       };
     }

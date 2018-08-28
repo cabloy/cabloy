@@ -13,6 +13,10 @@ describe.only('test/controller/test.test.js', () => {
 
     const result = await app.httpRequest().post(mockUrl('site/setConfigSite')).send({
       data: {
+        host: {
+          url: 'http://localhost:9080',
+          rootPath: '',
+        },
         language: {
           default: 'en-us',
           items: 'en-us,zh-cn',
@@ -56,18 +60,32 @@ describe.only('test/controller/test.test.js', () => {
         special: true,
         atomName: 'hello world',
         language: 'en-us',
+        editMode: 1,
       },
       {
         atomName: 'hello world2',
         language: 'en-us',
+        editMode: 1,
+        content: `
+  # hello world
+  (c)
+  \`\`\` js
+  var foo = function (bar) {
+    return bar++;
+  };
+  console.log(foo(5));
+  \`\`\`
+        `,
       },
       {
         atomName: '你好，世界',
         language: 'zh-cn',
+        editMode: 1,
       },
       {
         atomName: '你好，世界2',
         language: 'zh-cn',
+        editMode: 1,
       },
     ];
     for (const article of articles) {
@@ -84,6 +102,8 @@ describe.only('test/controller/test.test.js', () => {
         item: {
           atomName: article.atomName,
           language: article.language,
+          editMode: article.editMode,
+          content: article.content,
         },
       });
       assert(result.body.code === 0);

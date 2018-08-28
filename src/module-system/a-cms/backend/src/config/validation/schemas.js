@@ -16,6 +16,18 @@ module.exports = app => {
         ebTitle: 'Language',
         notEmpty: true,
       },
+      editMode: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Edit Mode',
+        notEmpty: true,
+      },
+      content: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Language',
+        notEmpty: true,
+      },
     },
   };
   // todo search

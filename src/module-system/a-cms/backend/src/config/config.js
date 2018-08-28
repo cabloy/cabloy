@@ -5,10 +5,11 @@ module.exports = appInfo => {
   // site
   config.site = {
     base: {
-      title: '',
-      subTitle: '',
+      title: 'my blog',
+      subTitle: 'gone with the wind',
       description: '',
       keywords: '',
+      author: '',
     },
     host: {
       url: 'http://example.com',
