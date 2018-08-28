@@ -267,8 +267,8 @@ module.exports = app => {
         let result = '';
         for (const item of items) {
           let _content;
-          if (path.extname === '.ejs') {
-          // data
+          if (path.extname(item) === '.ejs') {
+            // data
             data._filename = item;
             _content = await ejs.renderFile(item, data, this.getOptions());
           } else {
@@ -339,6 +339,7 @@ module.exports = app => {
       const _csses = [];
       const _jses = [];
       return {
+        ctx: self.ctx,
         site,
         _csses,
         _jses,
