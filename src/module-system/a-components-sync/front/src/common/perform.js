@@ -30,25 +30,30 @@ export default {
 
       if (!this.onPerform) return this.onLinkClick && this.onLinkClick(event);
 
-      const res = this.onPerform(event, this.context);
-      if (this.$meta.util.isPromise(res)) {
-        this._showPreloader();
-        res.then(res2 => {
-          this._hidePreloader();
-          if (res2 === true) {
+      try {
+        const res = this.onPerform(event, this.context);
+        if (this.$meta.util.isPromise(res)) {
+          this._showPreloader();
+          res.then(res2 => {
+            this._hidePreloader();
+            if (res2 === true) {
+              this.$view.toast.show({ text: this.$text('Operation succeeded') });
+            }
+          }).catch(err => {
+            this._hidePreloader();
+            if (err && err.code !== 401) {
+              this.$view.toast.show({ text: err.message });
+            }
+          });
+        } else {
+          if (res === true) {
             this.$view.toast.show({ text: this.$text('Operation succeeded') });
           }
-        }).catch(err => {
-          this._hidePreloader();
-          if (err && err.code !== 401) {
-            this.$view.toast.show({ text: err.message });
-          }
-        });
-      } else {
-        if (res === true) {
-          this.$view.toast.show({ text: this.$text('Operation succeeded') });
         }
+      } catch (err) {
+        this.$view.toast.show({ text: err.message });
       }
+
     },
     _showPreloader() {
       const html = `

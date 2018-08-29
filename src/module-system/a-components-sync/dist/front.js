@@ -1016,24 +1016,28 @@ navbar_component.options.__file = "navbar.vue"
 
       if (!this.onPerform) return this.onLinkClick && this.onLinkClick(event);
 
-      var res = this.onPerform(event, this.context);
-      if (this.$meta.util.isPromise(res)) {
-        this._showPreloader();
-        res.then(function (res2) {
-          _this._hidePreloader();
-          if (res2 === true) {
-            _this.$view.toast.show({ text: _this.$text('Operation succeeded') });
+      try {
+        var res = this.onPerform(event, this.context);
+        if (this.$meta.util.isPromise(res)) {
+          this._showPreloader();
+          res.then(function (res2) {
+            _this._hidePreloader();
+            if (res2 === true) {
+              _this.$view.toast.show({ text: _this.$text('Operation succeeded') });
+            }
+          }).catch(function (err) {
+            _this._hidePreloader();
+            if (err && err.code !== 401) {
+              _this.$view.toast.show({ text: err.message });
+            }
+          });
+        } else {
+          if (res === true) {
+            this.$view.toast.show({ text: this.$text('Operation succeeded') });
           }
-        }).catch(function (err) {
-          _this._hidePreloader();
-          if (err && err.code !== 401) {
-            _this.$view.toast.show({ text: err.message });
-          }
-        });
-      } else {
-        if (res === true) {
-          this.$view.toast.show({ text: this.$text('Operation succeeded') });
         }
+      } catch (err) {
+        this.$view.toast.show({ text: err.message });
       }
     },
     _showPreloader: function _showPreloader() {
