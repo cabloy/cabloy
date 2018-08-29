@@ -378,15 +378,7 @@ module.exports = app => {
     // site<plugin<theme<site(db)<language(db)
     async combineSiteBase() {
       // site
-      const site = extend(true, {}, this.ctx.config.site);
-      // plugins
-      site.plugins = {};
-      for (const relativeName in this.app.meta.modules) {
-        const module = this.app.meta.modules[relativeName];
-        if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin) {
-          site.plugins[module.package.eggBornModule.cms.name] = this.ctx.config.module(relativeName).plugin;
-        }
-      }
+      const site = await this.ctx.service.site.getConfigSiteBase();
       // site(db) special for language/themes
       const configSite = await this.ctx.service.site.getConfigSite();
       if (configSite && configSite.language) site.language = configSite.language;

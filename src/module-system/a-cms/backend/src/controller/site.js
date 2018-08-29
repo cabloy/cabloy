@@ -2,6 +2,11 @@ module.exports = app => {
 
   class SiteController extends app.Controller {
 
+    async getConfigSiteBase() {
+      const data = await this.ctx.service.site.getConfigSiteBase();
+      this.ctx.success({ data });
+    }
+
     async getConfigSite() {
       const data = await this.ctx.service.site.getConfigSite();
       this.ctx.success({ data });

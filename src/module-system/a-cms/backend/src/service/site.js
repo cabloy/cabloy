@@ -3,10 +3,25 @@ const require3 = require('require3');
 const fse = require3('fs-extra');
 const glob = require3('glob');
 const bb = require3('bluebird');
+const extend = require3('extend2');
 
 module.exports = app => {
 
   class Site extends app.Service {
+
+    async getConfigSiteBase() {
+      // site
+      const site = extend(true, {}, this.ctx.config.site);
+      // plugins
+      site.plugins = {};
+      for (const relativeName in this.app.meta.modules) {
+        const module = this.app.meta.modules[relativeName];
+        if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin) {
+          site.plugins[module.package.eggBornModule.cms.name] = this.ctx.config.module(relativeName).plugin;
+        }
+      }
+      return site;
+    }
 
     async getConfigSite() {
       return await this.ctx.meta.status.get('config-site');
