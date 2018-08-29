@@ -344,12 +344,12 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/list.vue?vue&type=template&id=fef7c74a&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('Settings'),"eb-back-link":"Back"}}),_vm._v(" "),(_vm.ready)?_c('f7-list',_vm._l((_vm.items),function(item){return _c('eb-list-item',{key:item.module,staticClass:"item",attrs:{"title":_vm.getModule(item.module).titleLocale,"eb-href":(_vm.scene + "/edit?module=" + (item.module))}})})):_vm._e(),_vm._v(" "),_c('eb-load-more',{ref:"loadMore",attrs:{"onLoadClear":_vm.onLoadClear,"onLoadMore":_vm.onLoadMore,"autoInit":true}})],1)}
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/list.vue?vue&type=template&id=36b851cc&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('Settings'),"eb-back-link":"Back"}}),_vm._v(" "),(_vm.ready)?_c('f7-list',_vm._l((_vm.items),function(item){return _c('eb-list-item',{key:item.module,staticClass:"item",attrs:{"title":_vm.getModule(item.module).titleLocale,"link":"#","context":item,"onPerform":_vm.onItemClick}})})):_vm._e(),_vm._v(" "),_c('eb-load-more',{ref:"loadMore",attrs:{"onLoadClear":_vm.onLoadClear,"onLoadMore":_vm.onLoadMore,"autoInit":true}})],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./front/src/pages/list.vue?vue&type=template&id=fef7c74a&
+// CONCATENATED MODULE: ./front/src/pages/list.vue?vue&type=template&id=36b851cc&
 
 // EXTERNAL MODULE: external "vue"
 var external_vue_ = __webpack_require__(1);
@@ -387,6 +387,15 @@ var ebModules = external_vue_default.a.prototype.$meta.module.get('a-components'
       return this.$api.post('settings/' + this.scene + '/list').then(function (data) {
         _this.items = _this.items.concat(data.list);
         return data;
+      });
+    },
+    onItemClick: function onItemClick(event, item) {
+      var action = item.validator ? {
+        actionModule: 'a-settings',
+        actionPath: this.scene + '/edit?module=' + item.module
+      } : item;
+      return this.$meta.util.performAction({ ctx: this, action: action, item: item }).then(function () {
+        return;
       });
     }
   }

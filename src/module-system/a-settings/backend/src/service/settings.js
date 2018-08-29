@@ -58,10 +58,17 @@ module.exports = app => {
       for (const relativeName in this.app.meta.modules) {
         const module = this.app.meta.modules[relativeName];
         if (module.main.meta && module.main.meta.settings && module.main.meta.settings[scene]) {
-          list.push({
+          const settings = module.main.meta.settings[scene];
+          const item = {
             module: relativeName,
-            validator: module.main.meta.settings[scene].validator,
-          });
+            validator: settings.validator,
+          };
+          if (settings.actionComponent || settings.actionPath) {
+            item.actionModule = item.module;
+            item.actionComponent = settings.actionComponent;
+            item.actionPath = settings.actionPath;
+          }
+          list.push(item);
         }
       }
       return list;
