@@ -38,6 +38,8 @@ export default {
             this._hidePreloader();
             if (res2 === true) {
               this.$view.toast.show({ text: this.$text('Operation succeeded') });
+            } else if (typeof res2 === 'string') {
+              this.$view.toast.show({ text: res2 });
             }
           }).catch(err => {
             this._hidePreloader();

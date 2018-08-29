@@ -1024,6 +1024,8 @@ navbar_component.options.__file = "navbar.vue"
             _this._hidePreloader();
             if (res2 === true) {
               _this.$view.toast.show({ text: _this.$text('Operation succeeded') });
+            } else if (typeof res2 === 'string') {
+              _this.$view.toast.show({ text: res2 });
             }
           }).catch(function (err) {
             _this._hidePreloader();
