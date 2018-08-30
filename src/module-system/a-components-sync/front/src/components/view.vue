@@ -10,6 +10,9 @@ export default {
       type: String,
       default: 'small',
     },
+    sizeExtent: {
+      type: Object,
+    },
   },
   data() {
     return appMethods(this);
