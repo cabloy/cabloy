@@ -29,7 +29,16 @@ export default {
         pushStateOnLoad: false,
         preloadPreviousPage: false,
       };
-      tabs.push(c('eb-view', { key: id, staticClass: 'eb-layout-tab', attrs: _viewAttrs, on: { 'tab:show': this.onTabShow } }));
+      tabs.push(c('eb-view', {
+        key: id,
+        staticClass: 'eb-layout-tab eb-layout-view-size-small',
+        attrs: _viewAttrs,
+        props: {
+          size: 'small',
+          sizeExtent: this.sizeExtent,
+        },
+        on: { 'tab:show': this.onTabShow },
+      }));
     });
     // toolbar
     const _toolbarAttrs = this.$utils.extend({}, this.$config.layout.toolbar);
@@ -45,6 +54,8 @@ export default {
         stackPages: true,
         pushStateOnLoad: false,
         preloadPreviousPage: false,
+        size: 'small',
+        sizeExtent: this.sizeExtent,
       },
     });
     // view login
@@ -56,6 +67,8 @@ export default {
         stackPages: true,
         pushStateOnLoad: false,
         preloadPreviousPage: false,
+        size: 'small',
+        sizeExtent: this.sizeExtent,
       },
     });
     // ready
@@ -70,6 +83,7 @@ export default {
       viewMainVisible: false,
       viewLoginVisible: false,
       tabShowed: false,
+      sizeExtent: null,
     };
   },
   computed: {
@@ -109,6 +123,9 @@ export default {
       });
     },
   },
+  created() {
+    this._onSize();
+  },
   mounted() {
     this.$f7ready(() => {
       // start
@@ -117,7 +134,14 @@ export default {
   },
   methods: {
     onResize() {
-      if (!this.started) return;
+      this._onSize();
+    },
+    _onSize() {
+      // sizeExtent
+      this.sizeExtent = {
+        width: this.$$(window).width(),
+        height: this.$$(window).height(),
+      };
     },
     start() {
       // loginOnStart
