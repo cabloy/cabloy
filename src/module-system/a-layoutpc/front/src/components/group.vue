@@ -22,6 +22,7 @@ export default {
           attrs: _viewAttrs,
           props: {
             size: view.size,
+            sizeExtent: view.sizeExtent,
           },
           on: {
             'view:ready': view => {
@@ -62,12 +63,7 @@ export default {
         // width
         const meta = route.route.component.meta;
         const size = (meta && meta.size) || 'small';
-        let width;
-        if (size === 'small') {
-          width = this.size.small;
-        } else {
-          width = this.size.middle;
-        }
+        const width = this.size[size];
         this.$$(view.$el).css({
           width: `${width}px`,
         });
@@ -78,10 +74,16 @@ export default {
           title = meta && meta.title;
           if (title) title = this.$text(title);
         }
+        // size
+        _view.size = size;
+        _view.sizeExtent = {
+          width: this.size[size],
+          height: this.size.main,
+        };
         // reLayout
         this.reLayout();
         // callback
-        _view.callback({ view, title, size });
+        _view.callback({ view, title });
         delete _view.callback;
       });
     },
@@ -94,16 +96,14 @@ export default {
     _resize() {
       for (const view of this.views) {
         const _view = this.$refs[view.id];
-        const size = _view.size;
-        let width;
-        if (size === 'small') {
-          width = this.size.small;
-        } else {
-          width = this.size.middle;
-        }
+        const width = this.size[view.size];
         this.$$(_view.$el).css({
           width: `${width}px`,
         });
+        view.sizeExtent = {
+          width: this.size[view.size],
+          height: this.size.main,
+        };
       }
     },
     reLayout() {

@@ -166,12 +166,13 @@ export default {
               id: viewId,
               url,
               size: 'small',
-              callback: ({ view, title, size }) => {
+              sizeExtent: {
+                width: this.size.small,
+                height: this.size.main,
+              },
+              callback: ({ view, title }) => {
                 // title
                 if (title) group.title = title;
-                // size
-                const _view = group.views.find(item => item.id === viewId);
-                _view.size = size;
                 this.$nextTick(() => {
                   this.$f7.tab.show(`#${group.id}`);
                   resolve({ view, options: null });
