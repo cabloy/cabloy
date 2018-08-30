@@ -19,6 +19,13 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async getConfigLanguagePreview() {
+      const data = await this.ctx.service.site.getConfigLanguagePreview({
+        language: this.ctx.request.body.language,
+      });
+      this.ctx.success({ data });
+    }
+
     async getConfigLanguage() {
       const data = await this.ctx.service.site.getConfigLanguage({
         language: this.ctx.request.body.language,

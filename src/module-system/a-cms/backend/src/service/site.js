@@ -31,12 +31,27 @@ module.exports = app => {
       await this.ctx.meta.status.set('config-site', data);
     }
 
+    async getConfigLanguagePreview({ language }) {
+      const site = await this.ctx.service.render.getSite({ language });
+      this._adjustConfigLanguange(site);
+      return site;
+    }
+
     async getConfigLanguage({ language }) {
       return await this.ctx.meta.status.get(`config-${language}`);
     }
 
     async setConfigLanguage({ language, data }) {
+      this._adjustConfigLanguange(data);
       await this.ctx.meta.status.set(`config-${language}`, data);
+    }
+
+    _adjustConfigLanguange(data) {
+      if (data) {
+        delete data.host;
+        delete data.language;
+        delete data.themes;
+      }
     }
 
     async buildLanguages() {

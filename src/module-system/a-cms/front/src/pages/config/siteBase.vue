@@ -1,12 +1,8 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Site Configuration')" eb-back-link="Back">
-      <f7-nav-right>
-        <eb-link iconMaterial="save" :onPerform="onPerformSave"></eb-link>
-        <eb-link iconMaterial="info" eb-href="config/siteBase"></eb-link>
-      </f7-nav-right>
+    <eb-navbar :title="$text('Default')" eb-back-link="Back">
     </eb-navbar>
-    <textarea ref="textarea" type="textarea" :value="content" @input="onInput" class="cms-json-textarea"></textarea>
+    <textarea ref="textarea" type="textarea" readonly="readonly" :value="content" class="cms-json-textarea"></textarea>
   </eb-page>
 </template>
 <script>
@@ -18,7 +14,7 @@ export default {
     };
   },
   created() {
-    this.$local.dispatch('getConfigSite').then(data => {
+    this.$local.dispatch('getConfigSiteBase').then(data => {
       if (!data) {
         this.content = '{}';
       } else {
@@ -47,16 +43,6 @@ export default {
           width: `${size.width - 20}px`,
         });
       }
-    },
-    onInput(event) {
-      this.content = event.target.value;
-    },
-    onPerformSave() {
-      const data = JSON.parse(this.content);
-      return this.$api.post('site/setConfigSite', { data }).then(() => {
-        this.$local.commit('setConfigSite', data);
-        return true;
-      });
     },
   },
 };
