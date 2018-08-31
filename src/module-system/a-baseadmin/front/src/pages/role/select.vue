@@ -5,21 +5,17 @@
         <eb-link iconMaterial="done" @click.prevent="onDone"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <tree ref="tree" :options="treeOptions">
+    <eb-tree ref="tree" :options="treeOptions">
       <span slot-scope="{node}" @click.stop="onNodeClick(node)">
         <f7-icon v-if="node.states._selected" material="check_box"></f7-icon>{{node.text}}</span>
-    </tree>
+    </eb-tree>
   </eb-page>
 </template>
 <script>
 import Vue from 'vue';
-import LiquorTree from '@zhennann/liquor-tree';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.components.ebPageContext;
 export default {
   mixins: [ ebPageContext ],
-  components: {
-    [LiquorTree.name]: LiquorTree,
-  },
   data() {
     return {
       treeOptions: {

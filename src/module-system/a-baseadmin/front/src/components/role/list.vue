@@ -1,10 +1,9 @@
 <template>
-  <tree ref="tree" :options="treeOptions">
+  <eb-tree ref="tree" :options="treeOptions">
     <span slot-scope="{node}" @click.stop="onNodeClick(node)">{{node.text}}</span>
-  </tree>
+  </eb-tree>
 </template>
 <script>
-import LiquorTree from '@zhennann/liquor-tree';
 export default {
   meta: {
     global: false,
@@ -13,9 +12,6 @@ export default {
     roleIdStart: {
       type: Number,
     },
-  },
-  components: {
-    [LiquorTree.name]: LiquorTree,
   },
   data() {
     return {
