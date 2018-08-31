@@ -63,7 +63,6 @@
     "clean-css": "^4.2.1",
     "uglify-js": "^3.4.8",
     "sha.js": "^2.4.11",
-    "@zhennann/liquor-tree": "^0.2.30",
     "markdown-it": "^8.4.2",
     "markdown-it-abbr": "^1.0.4",
     "markdown-it-container": "^2.0.0",

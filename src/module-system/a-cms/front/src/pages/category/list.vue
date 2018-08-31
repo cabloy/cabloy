@@ -1,7 +1,7 @@
 <template>
   <eb-page>
     <eb-navbar :title="title" eb-back-link="Back"></eb-navbar>
-    <tree ref="tree" :options="treeOptions">
+    <eb-tree ref="tree" :options="treeOptions">
       <div class="category-node" slot-scope="{node}">
         <span @click.stop="onNodeClickEdit(node)">{{node.text}}</span>
         <span>
@@ -9,15 +9,11 @@
         <span v-if="node.id!=='_root'" @click.stop="onNodeClickDelete(node)">{{$text('Delete')}}</span>
         </span>
       </div>
-    </tree>
+    </eb-tree>
   </eb-page>
 </template>
 <script>
-import LiquorTree from '@zhennann/liquor-tree';
 export default {
-  components: {
-    [LiquorTree.name]: LiquorTree,
-  },
   data() {
     return {
       language: this.$f7route.query.language,
