@@ -12,6 +12,7 @@
         <f7-list-item :title="$text('Languages')" group-title></f7-list-item>
         <eb-list-item v-for="item of languages" :key="item" :title="item">
           <div slot="after">
+            <eb-link :eb-href="`category/list?language=${item}`">{{$text('Categories')}}</eb-link>
             <eb-link :eb-href="`config/language?language=${item}`">{{$text('Config')}}</eb-link>
             <eb-link :context="item" :onPerform="onPerformBuildLanguage">{{$text('Build')}}</eb-link>
           </div>
@@ -26,21 +27,12 @@ export default {
     return {};
   },
   computed: {
-    configSiteBase() {
-      return this.$local.state.configSite;
-    },
-    configSite() {
-      return this.$local.state.configSite;
-    },
     languages() {
-      if (!this.configSiteBase || !this.configSite) return [];
-      const site = this.$utils.extend({}, this.configSiteBase, this.configSite);
-      return site.language.items.split(',');
+      return this.$local.getters('languages');
     },
   },
   created() {
-    this.$local.dispatch('getConfigSiteBase');
-    this.$local.dispatch('getConfigSite');
+    this.$local.dispatch('getLanguages');
   },
   methods: {
     onPerformBuild() {

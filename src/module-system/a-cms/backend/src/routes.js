@@ -1,5 +1,6 @@
 const version = require('./controller/version.js');
 const article = require('./controller/article.js');
+const category = require('./controller/category.js');
 const render = require('./controller/render.js');
 const site = require('./controller/site.js');
 
@@ -29,6 +30,11 @@ module.exports = app => {
     { method: 'post', path: 'site/setConfigLanguage', controller: site, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'site/buildLanguage', controller: site, middlewares: 'file', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'site/buildLanguages', controller: site, middlewares: 'file', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
+    // category
+    { method: 'post', path: 'category/children', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
+    { method: 'post', path: 'category/add', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
+    { method: 'post', path: 'category/delete', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
+
   ];
   return routes;
 };

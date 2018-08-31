@@ -1,13 +1,18 @@
 export default {
+  Add: '添加',
   Build: '构建',
+  Category: '目录',
+  Categories: '目录',
   Config: '配置',
   Default: '缺省',
+  Delete: '删除',
   Language: '语言',
   Languages: '语言',
   Preview: '预览',
   seconds: '秒',
   Site: '站点',
   'Language Configuration': '语言配置',
+  'Please specify the category name': '请指定目录名称',
   'Site Configuration': '站点配置',
   'Time Used': '用时',
 };

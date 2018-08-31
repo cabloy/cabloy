@@ -3,10 +3,15 @@ export default function(Vue) {
 
   return {
     state: {
-      confitSiteBase: null,
+      configSiteBase: null,
       configSite: null,
     },
     getters: {
+      languages(state) {
+        if (!state.configSiteBase || !state.configSite) return null;
+        const site = Vue.prototype.$utils.extend({}, state.configSiteBase, state.configSite);
+        return site.language.items.split(',');
+      },
     },
     mutations: {
       setConfigSiteBase(state, configSiteBase) {
@@ -24,9 +29,7 @@ export default function(Vue) {
             const data = res.data || {};
             commit('setConfigSiteBase', data);
             resolve(data);
-          }).catch(err => {
-            reject(err);
-          });
+          }).catch(err => reject(err));
         });
       },
       getConfigSite({ state, commit }) {
@@ -36,9 +39,17 @@ export default function(Vue) {
             const data = res.data || {};
             commit('setConfigSite', data);
             resolve(data);
-          }).catch(err => {
-            reject(err);
-          });
+          }).catch(err => reject(err));
+        });
+      },
+      getLanguages({ getters, dispatch }) {
+        return new Promise((resolve, reject) => {
+          if (getters.languages) return resolve(getters.languages);
+          dispatch('getConfigSiteBase').then(() => {
+            dispatch('getConfigSite').then(() => {
+              resolve(getters.languages);
+            });
+          }).catch(err => reject(err));
         });
       },
     },
