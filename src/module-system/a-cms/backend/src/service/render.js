@@ -357,6 +357,9 @@ module.exports = app => {
         js(fileName) {
           _jses.push(path.resolve(path.dirname(this._filename), fileName));
         },
+        text(str) {
+          return this.ctx.text.locale(site.language.current, str);
+        },
       };
     }
 

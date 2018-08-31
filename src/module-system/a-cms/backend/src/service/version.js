@@ -4,9 +4,9 @@ module.exports = app => {
 
     async update(options) {
       if (options.version === 1) {
-        // create table: aArticle
-        const sql = `
-          CREATE TABLE aArticle (
+        // create table: aCmsArticle
+        let sql = `
+          CREATE TABLE aCmsArticle (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -22,6 +22,25 @@ module.exports = app => {
             extra json DEFAULT NULL,
             editMode int(11) DEFAULT '0',
             content text DEFAULT NULL,
+            PRIMARY KEY (id)
+          )
+        `;
+        await this.ctx.model.query(sql);
+
+        // create table: aCmsCategory
+        sql = `
+          CREATE TABLE aCmsCategory (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            deleted int(11) DEFAULT '0',
+            iid int(11) DEFAULT '0',
+            categoryName varchar(50) DEFAULT NULL,
+            language varchar(50) DEFAULT NULL,
+            catalog int(11) DEFAULT '0',
+            hidden int(11) DEFAULT '0',
+            sorting int(11) DEFAULT '0',
+            categoryIdParent int(11) DEFAULT '0',
             PRIMARY KEY (id)
           )
         `;
