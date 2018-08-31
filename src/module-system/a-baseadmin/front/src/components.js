@@ -11,7 +11,7 @@ import functionRightRights from './components/functionRight/rights.vue';
 import functionRightSpreads from './components/functionRight/spreads.vue';
 
 export default {
-  ebRoleList: roleList,
+  roleList,
   roleInfo,
   roleChildren,
   roleIncludes,

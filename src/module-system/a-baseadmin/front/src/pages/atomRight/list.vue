@@ -1,11 +1,15 @@
 <template>
   <eb-page>
     <eb-navbar :title="$text('Atom Right Management')" eb-back-link="Back"></eb-navbar>
-    <eb-role-list ref="roleList" :roleIdStart="roleIdStart" @node:click="onNodeClick"></eb-role-list>
+    <role-list ref="roleList" :roleIdStart="roleIdStart" @node:click="onNodeClick"></role-list>
   </eb-page>
 </template>
 <script>
+import roleList from '../../components/role/list.vue';
 export default {
+  components: {
+    roleList,
+  },
   data() {
     return {
       roleIdStart: parseInt(this.$f7route.query.roleIdStart),

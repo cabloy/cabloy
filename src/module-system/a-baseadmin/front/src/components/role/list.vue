@@ -7,7 +7,7 @@
 import LiquorTree from '@zhennann/liquor-tree';
 export default {
   meta: {
-    global: true,
+    global: false,
   },
   props: {
     roleIdStart: {
