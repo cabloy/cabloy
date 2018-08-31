@@ -73,7 +73,8 @@ export default function(Vue) {
     _import(moduleInfo, cb) {
       import('../../../../src/module/' + moduleInfo.relativeName + '/front/src/main.js').then(instance => {
         this.install(instance, moduleInfo, module => cb(module));
-      }).catch(() => {
+      }).catch(err => {
+        if (err.message.indexOf('/front/src/main.js') === -1) throw err;
         import('../../build/__module/' + moduleInfo.fullName + '/dist/front.js').then(instance => {
           this.install(instance, moduleInfo, module => cb(module));
         });
@@ -210,4 +211,3 @@ export default function(Vue) {
 
   return module;
 }
-
