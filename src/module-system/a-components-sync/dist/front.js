@@ -82,7 +82,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 19);
+/******/ 	return __webpack_require__(__webpack_require__.s = 63);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -201,43 +201,13 @@ module.exports = require("vue");
 
 /***/ }),
 /* 19 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _assets_css_module_less__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(20);
-/* harmony import */ var _assets_css_module_less__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_assets_css_module_less__WEBPACK_IMPORTED_MODULE_0__);
-var Vue = void 0;
-
-
-
-function install(_Vue, cb) {
-  if (Vue) return console.error('already installed.');
-
-  Vue = _Vue;
-
-  return cb({
-    routes: __webpack_require__(22).default,
-    store: __webpack_require__(23).default(Vue),
-    config: __webpack_require__(24).default,
-    locales: __webpack_require__(25).default,
-    components: __webpack_require__(63).default
-  });
-}
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  install: install
-});
-
-/***/ }),
-/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // extracted by mini-css-extract-plugin
 
 /***/ }),
-/* 21 */,
-/* 22 */
+/* 20 */,
+/* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -245,7 +215,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ([]);
 
 /***/ }),
-/* 23 */
+/* 22 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -262,7 +232,7 @@ __webpack_require__.r(__webpack_exports__);
 });
 
 /***/ }),
-/* 24 */
+/* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -270,17 +240,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({});
 
 /***/ }),
-/* 25 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
-  'zh-cn': __webpack_require__(26).default
+  'zh-cn': __webpack_require__(25).default
 });
 
 /***/ }),
-/* 26 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -294,7 +264,7 @@ __webpack_require__.r(__webpack_exports__);
 });
 
 /***/ }),
-/* 27 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -304,8 +274,8 @@ __webpack_require__.r(__webpack_exports__);
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_loadMore_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
-/* 28 */,
-/* 29 */
+/* 27 */,
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -315,8 +285,8 @@ __webpack_require__.r(__webpack_exports__);
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_view_vue_vue_type_style_index_0_id_c9a33e9a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
-/* 30 */,
-/* 31 */
+/* 29 */,
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -326,8 +296,8 @@ __webpack_require__.r(__webpack_exports__);
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_page_vue_vue_type_style_index_0_id_6f7f7a56_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
-/* 32 */,
-/* 33 */
+/* 31 */,
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -337,8 +307,8 @@ __webpack_require__.r(__webpack_exports__);
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_navbar_vue_vue_type_style_index_0_id_297c83bd_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
-/* 34 */,
-/* 35 */
+/* 33 */,
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -348,8 +318,8 @@ __webpack_require__.r(__webpack_exports__);
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_link_vue_vue_type_style_index_0_id_8ef79826_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
-/* 36 */,
-/* 37 */
+/* 35 */,
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -359,8 +329,8 @@ __webpack_require__.r(__webpack_exports__);
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_button_vue_vue_type_style_index_0_id_4f79d3a6_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
-/* 38 */,
-/* 39 */
+/* 37 */,
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -370,8 +340,8 @@ __webpack_require__.r(__webpack_exports__);
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_input_vue_vue_type_style_index_0_id_c264fdae_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
-/* 40 */,
-/* 41 */
+/* 39 */,
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -381,8 +351,8 @@ __webpack_require__.r(__webpack_exports__);
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_toggle_vue_vue_type_style_index_0_id_c144377a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
-/* 42 */,
-/* 43 */
+/* 41 */,
+/* 42 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -392,8 +362,8 @@ __webpack_require__.r(__webpack_exports__);
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_radio_vue_vue_type_style_index_0_id_8343a332_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
-/* 44 */,
-/* 45 */
+/* 43 */,
+/* 44 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -403,8 +373,8 @@ __webpack_require__.r(__webpack_exports__);
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_select_vue_vue_type_style_index_0_id_4dd4ee56_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
-/* 46 */,
-/* 47 */
+/* 45 */,
+/* 46 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -414,8 +384,8 @@ __webpack_require__.r(__webpack_exports__);
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_listButton_vue_vue_type_style_index_0_id_550219f8_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
-/* 48 */,
-/* 49 */
+/* 47 */,
+/* 48 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -425,8 +395,8 @@ __webpack_require__.r(__webpack_exports__);
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_listItem_vue_vue_type_style_index_0_id_6c7c397a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
-/* 50 */,
-/* 51 */
+/* 49 */,
+/* 50 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -436,8 +406,8 @@ __webpack_require__.r(__webpack_exports__);
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_listPanel_vue_vue_type_style_index_0_id_314278e7_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
-/* 52 */,
-/* 53 */
+/* 51 */,
+/* 52 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -447,8 +417,8 @@ __webpack_require__.r(__webpack_exports__);
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_fabButton_vue_vue_type_style_index_0_id_871f688a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
-/* 54 */,
-/* 55 */
+/* 53 */,
+/* 54 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -458,8 +428,8 @@ __webpack_require__.r(__webpack_exports__);
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_swipeoutActions_vue_vue_type_style_index_0_id_ce4bb16a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
-/* 56 */,
-/* 57 */
+/* 55 */,
+/* 56 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -469,8 +439,8 @@ __webpack_require__.r(__webpack_exports__);
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_swipeoutButton_vue_vue_type_style_index_0_id_49cbb8ae_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
-/* 58 */,
-/* 59 */
+/* 57 */,
+/* 58 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -480,8 +450,8 @@ __webpack_require__.r(__webpack_exports__);
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_popover_vue_vue_type_style_index_0_id_6b7ac1c9_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
-/* 60 */,
-/* 61 */
+/* 59 */,
+/* 60 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -491,8 +461,8 @@ __webpack_require__.r(__webpack_exports__);
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_contextMenu_vue_vue_type_style_index_0_id_0e7710d2_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
-/* 62 */,
-/* 63 */
+/* 61 */,
+/* 62 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -594,7 +564,7 @@ var staticRenderFns = []
 // CONCATENATED MODULE: ./front/src/components/loadMore.vue?vue&type=script&lang=js&
  /* harmony default export */ var components_loadMorevue_type_script_lang_js_ = (loadMorevue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./front/src/components/loadMore.vue?vue&type=style&index=0&lang=css&
-var loadMorevue_type_style_index_0_lang_css_ = __webpack_require__(27);
+var loadMorevue_type_style_index_0_lang_css_ = __webpack_require__(26);
 
 // CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/runtime/componentNormalizer.js
 /* globals __VUE_SSR_CONTEXT__ */
@@ -850,7 +820,7 @@ var f7View = external_vue_default.a.options.components['f7-view'].extendOptions;
 // CONCATENATED MODULE: ./front/src/components/view.vue?vue&type=script&lang=js&
  /* harmony default export */ var components_viewvue_type_script_lang_js_ = (viewvue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./front/src/components/view.vue?vue&type=style&index=0&id=c9a33e9a&scoped=true&lang=css&
-var viewvue_type_style_index_0_id_c9a33e9a_scoped_true_lang_css_ = __webpack_require__(29);
+var viewvue_type_style_index_0_id_c9a33e9a_scoped_true_lang_css_ = __webpack_require__(28);
 
 // CONCATENATED MODULE: ./front/src/components/view.vue
 var view_render, view_staticRenderFns
@@ -914,7 +884,7 @@ var f7Page = external_vue_default.a.options.components['f7-page'].extendOptions;
 // CONCATENATED MODULE: ./front/src/components/page.vue?vue&type=script&lang=js&
  /* harmony default export */ var components_pagevue_type_script_lang_js_ = (pagevue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./front/src/components/page.vue?vue&type=style&index=0&id=6f7f7a56&scoped=true&lang=css&
-var pagevue_type_style_index_0_id_6f7f7a56_scoped_true_lang_css_ = __webpack_require__(31);
+var pagevue_type_style_index_0_id_6f7f7a56_scoped_true_lang_css_ = __webpack_require__(30);
 
 // CONCATENATED MODULE: ./front/src/components/page.vue
 var page_render, page_staticRenderFns
@@ -962,7 +932,7 @@ delete f7Navbar.props.backLink;
 // CONCATENATED MODULE: ./front/src/components/navbar.vue?vue&type=script&lang=js&
  /* harmony default export */ var components_navbarvue_type_script_lang_js_ = (navbarvue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./front/src/components/navbar.vue?vue&type=style&index=0&id=297c83bd&scoped=true&lang=css&
-var navbarvue_type_style_index_0_id_297c83bd_scoped_true_lang_css_ = __webpack_require__(33);
+var navbarvue_type_style_index_0_id_297c83bd_scoped_true_lang_css_ = __webpack_require__(32);
 
 // CONCATENATED MODULE: ./front/src/components/navbar.vue
 var navbar_render, navbar_staticRenderFns
@@ -1134,7 +1104,7 @@ delete f7Link.props.href;
 // CONCATENATED MODULE: ./front/src/components/link.vue?vue&type=script&lang=js&
  /* harmony default export */ var components_linkvue_type_script_lang_js_ = (linkvue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./front/src/components/link.vue?vue&type=style&index=0&id=8ef79826&scoped=true&lang=css&
-var linkvue_type_style_index_0_id_8ef79826_scoped_true_lang_css_ = __webpack_require__(35);
+var linkvue_type_style_index_0_id_8ef79826_scoped_true_lang_css_ = __webpack_require__(34);
 
 // CONCATENATED MODULE: ./front/src/components/link.vue
 var link_render, link_staticRenderFns
@@ -1171,7 +1141,7 @@ var f7Button = external_vue_default.a.options.components['f7-button'].extendOpti
 // CONCATENATED MODULE: ./front/src/components/button.vue?vue&type=script&lang=js&
  /* harmony default export */ var components_buttonvue_type_script_lang_js_ = (buttonvue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./front/src/components/button.vue?vue&type=style&index=0&id=4f79d3a6&scoped=true&lang=css&
-var buttonvue_type_style_index_0_id_4f79d3a6_scoped_true_lang_css_ = __webpack_require__(37);
+var buttonvue_type_style_index_0_id_4f79d3a6_scoped_true_lang_css_ = __webpack_require__(36);
 
 // CONCATENATED MODULE: ./front/src/components/button.vue
 var button_render, button_staticRenderFns
@@ -1292,7 +1262,7 @@ var f7Input = external_vue_default.a.options.components['f7-input'].extendOption
 // CONCATENATED MODULE: ./front/src/components/input.vue?vue&type=script&lang=js&
  /* harmony default export */ var components_inputvue_type_script_lang_js_ = (inputvue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./front/src/components/input.vue?vue&type=style&index=0&id=c264fdae&scoped=true&lang=css&
-var inputvue_type_style_index_0_id_c264fdae_scoped_true_lang_css_ = __webpack_require__(39);
+var inputvue_type_style_index_0_id_c264fdae_scoped_true_lang_css_ = __webpack_require__(38);
 
 // CONCATENATED MODULE: ./front/src/components/input.vue
 var input_render, input_staticRenderFns
@@ -1351,7 +1321,7 @@ delete f7Toggle.props.value;
 // CONCATENATED MODULE: ./front/src/components/toggle.vue?vue&type=script&lang=js&
  /* harmony default export */ var components_togglevue_type_script_lang_js_ = (togglevue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./front/src/components/toggle.vue?vue&type=style&index=0&id=c144377a&scoped=true&lang=css&
-var togglevue_type_style_index_0_id_c144377a_scoped_true_lang_css_ = __webpack_require__(41);
+var togglevue_type_style_index_0_id_c144377a_scoped_true_lang_css_ = __webpack_require__(40);
 
 // CONCATENATED MODULE: ./front/src/components/toggle.vue
 var toggle_render, toggle_staticRenderFns
@@ -1391,7 +1361,7 @@ var f7Radio = external_vue_default.a.options.components['f7-radio'].extendOption
 // CONCATENATED MODULE: ./front/src/components/radio.vue?vue&type=script&lang=js&
  /* harmony default export */ var components_radiovue_type_script_lang_js_ = (radiovue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./front/src/components/radio.vue?vue&type=style&index=0&id=8343a332&scoped=true&lang=css&
-var radiovue_type_style_index_0_id_8343a332_scoped_true_lang_css_ = __webpack_require__(43);
+var radiovue_type_style_index_0_id_8343a332_scoped_true_lang_css_ = __webpack_require__(42);
 
 // CONCATENATED MODULE: ./front/src/components/radio.vue
 var radio_render, radio_staticRenderFns
@@ -1692,7 +1662,7 @@ radio_component.options.__file = "radio.vue"
 // CONCATENATED MODULE: ./front/src/components/select.vue?vue&type=script&lang=js&
  /* harmony default export */ var components_selectvue_type_script_lang_js_ = (selectvue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./front/src/components/select.vue?vue&type=style&index=0&id=4dd4ee56&scoped=true&lang=css&
-var selectvue_type_style_index_0_id_4dd4ee56_scoped_true_lang_css_ = __webpack_require__(45);
+var selectvue_type_style_index_0_id_4dd4ee56_scoped_true_lang_css_ = __webpack_require__(44);
 
 // CONCATENATED MODULE: ./front/src/components/select.vue
 var select_render, select_staticRenderFns
@@ -2043,7 +2013,7 @@ var f7ListButton = external_vue_default.a.options.components['f7-list-button'].e
 // CONCATENATED MODULE: ./front/src/components/listButton.vue?vue&type=script&lang=js&
  /* harmony default export */ var components_listButtonvue_type_script_lang_js_ = (listButtonvue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./front/src/components/listButton.vue?vue&type=style&index=0&id=550219f8&scoped=true&lang=css&
-var listButtonvue_type_style_index_0_id_550219f8_scoped_true_lang_css_ = __webpack_require__(47);
+var listButtonvue_type_style_index_0_id_550219f8_scoped_true_lang_css_ = __webpack_require__(46);
 
 // CONCATENATED MODULE: ./front/src/components/listButton.vue
 var listButton_render, listButton_staticRenderFns
@@ -2113,7 +2083,7 @@ delete f7ListItem.props.href;
 // CONCATENATED MODULE: ./front/src/components/listItem.vue?vue&type=script&lang=js&
  /* harmony default export */ var components_listItemvue_type_script_lang_js_ = (listItemvue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./front/src/components/listItem.vue?vue&type=style&index=0&id=6c7c397a&scoped=true&lang=css&
-var listItemvue_type_style_index_0_id_6c7c397a_scoped_true_lang_css_ = __webpack_require__(49);
+var listItemvue_type_style_index_0_id_6c7c397a_scoped_true_lang_css_ = __webpack_require__(48);
 
 // CONCATENATED MODULE: ./front/src/components/listItem.vue
 var listItem_render, listItem_staticRenderFns
@@ -2160,7 +2130,7 @@ var listPanelvue_type_script_lang_js_f7ListItem = external_vue_default.a.options
 // CONCATENATED MODULE: ./front/src/components/listPanel.vue?vue&type=script&lang=js&
  /* harmony default export */ var components_listPanelvue_type_script_lang_js_ = (listPanelvue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./front/src/components/listPanel.vue?vue&type=style&index=0&id=314278e7&scoped=true&lang=css&
-var listPanelvue_type_style_index_0_id_314278e7_scoped_true_lang_css_ = __webpack_require__(51);
+var listPanelvue_type_style_index_0_id_314278e7_scoped_true_lang_css_ = __webpack_require__(50);
 
 // CONCATENATED MODULE: ./front/src/components/listPanel.vue
 var listPanel_render, listPanel_staticRenderFns
@@ -2197,7 +2167,7 @@ var f7FabButton = external_vue_default.a.options.components['f7-fab-button'].ext
 // CONCATENATED MODULE: ./front/src/components/fabButton.vue?vue&type=script&lang=js&
  /* harmony default export */ var components_fabButtonvue_type_script_lang_js_ = (fabButtonvue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./front/src/components/fabButton.vue?vue&type=style&index=0&id=871f688a&scoped=true&lang=css&
-var fabButtonvue_type_style_index_0_id_871f688a_scoped_true_lang_css_ = __webpack_require__(53);
+var fabButtonvue_type_style_index_0_id_871f688a_scoped_true_lang_css_ = __webpack_require__(52);
 
 // CONCATENATED MODULE: ./front/src/components/fabButton.vue
 var fabButton_render, fabButton_staticRenderFns
@@ -2265,7 +2235,7 @@ var f7SwipeoutActions = external_vue_default.a.options.components['f7-swipeout-a
 // CONCATENATED MODULE: ./front/src/components/swipeoutActions.vue?vue&type=script&lang=js&
  /* harmony default export */ var components_swipeoutActionsvue_type_script_lang_js_ = (swipeoutActionsvue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./front/src/components/swipeoutActions.vue?vue&type=style&index=0&id=ce4bb16a&scoped=true&lang=css&
-var swipeoutActionsvue_type_style_index_0_id_ce4bb16a_scoped_true_lang_css_ = __webpack_require__(55);
+var swipeoutActionsvue_type_style_index_0_id_ce4bb16a_scoped_true_lang_css_ = __webpack_require__(54);
 
 // CONCATENATED MODULE: ./front/src/components/swipeoutActions.vue
 var swipeoutActions_render, swipeoutActions_staticRenderFns
@@ -2302,7 +2272,7 @@ var f7SwipeoutButton = external_vue_default.a.options.components['f7-swipeout-bu
 // CONCATENATED MODULE: ./front/src/components/swipeoutButton.vue?vue&type=script&lang=js&
  /* harmony default export */ var components_swipeoutButtonvue_type_script_lang_js_ = (swipeoutButtonvue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./front/src/components/swipeoutButton.vue?vue&type=style&index=0&id=49cbb8ae&scoped=true&lang=css&
-var swipeoutButtonvue_type_style_index_0_id_49cbb8ae_scoped_true_lang_css_ = __webpack_require__(57);
+var swipeoutButtonvue_type_style_index_0_id_49cbb8ae_scoped_true_lang_css_ = __webpack_require__(56);
 
 // CONCATENATED MODULE: ./front/src/components/swipeoutButton.vue
 var swipeoutButton_render, swipeoutButton_staticRenderFns
@@ -2501,7 +2471,7 @@ var f7Popover = external_vue_default.a.options.components['f7-popover'].extendOp
 // CONCATENATED MODULE: ./front/src/components/popover.vue?vue&type=script&lang=js&
  /* harmony default export */ var components_popovervue_type_script_lang_js_ = (popovervue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./front/src/components/popover.vue?vue&type=style&index=0&id=6b7ac1c9&scoped=true&lang=css&
-var popovervue_type_style_index_0_id_6b7ac1c9_scoped_true_lang_css_ = __webpack_require__(59);
+var popovervue_type_style_index_0_id_6b7ac1c9_scoped_true_lang_css_ = __webpack_require__(58);
 
 // CONCATENATED MODULE: ./front/src/components/popover.vue
 var popover_render, popover_staticRenderFns
@@ -2657,7 +2627,7 @@ popover_component.options.__file = "popover.vue"
 // CONCATENATED MODULE: ./front/src/components/contextMenu.vue?vue&type=script&lang=js&
  /* harmony default export */ var components_contextMenuvue_type_script_lang_js_ = (contextMenuvue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./front/src/components/contextMenu.vue?vue&type=style&index=0&id=0e7710d2&scoped=true&lang=css&
-var contextMenuvue_type_style_index_0_id_0e7710d2_scoped_true_lang_css_ = __webpack_require__(61);
+var contextMenuvue_type_style_index_0_id_0e7710d2_scoped_true_lang_css_ = __webpack_require__(60);
 
 // CONCATENATED MODULE: ./front/src/components/contextMenu.vue
 var contextMenu_render, contextMenu_staticRenderFns
@@ -2847,6 +2817,665 @@ contextMenu_component.options.__file = "contextMenu.vue"
   ebPageContext: pageContext,
   ebActions: actions,
   ebAtomClasses: atomClasses
+});
+
+/***/ }),
+/* 63 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/@zhennann/liquor-tree/dist/liquor-tree.esm.js
+
+var NodeContent = { name: "node-content", props: ["node"], render: function render(e) {
+    var t = this,
+        n = this.node,
+        r = this.node.tree.vm;if (n.isEditing) {
+      var i = n.text;return this.$nextTick(function (e) {
+        t.$refs.editCtrl.focus();
+      }), e("input", { domProps: { value: n.text, type: "text" }, class: "tree-input", on: { input: function input(e) {
+            i = e.target.value;
+          }, blur: function blur() {
+            n.stopEditing(i);
+          }, keyup: function keyup(e) {
+            13 === e.keyCode && n.stopEditing(i);
+          }, click: function click(e) {
+            e.stopPropagation();
+          } }, ref: "editCtrl" });
+    }return r.$scopedSlots.default ? r.$scopedSlots.default({ node: this.node }) : e("span", { domProps: { innerHTML: n.text } });
+  } };!function () {
+  if ("undefined" != typeof document) {
+    var e = document.head || document.getElementsByTagName("head")[0],
+        t = document.createElement("style"),
+        n = ' .tree-node { white-space: nowrap; display: flex; flex-direction: column; position: relative; box-sizing: border-box; } .tree-content { display: flex; align-items: center; padding: 4px; cursor: pointer; width: 100%; box-sizing: border-box; } .tree-node:not(.selected)>.tree-content:hover { background: #f6f8fb; } .tree-node.selected>.tree-content { background-color: #e7eef7; } .tree-node.disabled>.tree-content:hover { background: inherit; } .tree-arrow { flex-shrink: 0; height: 30px; cursor: pointer; margin-left: 30px; width: 0; } .tree-arrow.has-child { margin-left: 0; width: 30px; position: relative; } .tree-arrow.has-child:after { border: 1.5px solid #494646; position: absolute; border-left: 0; border-top: 0; left: 9px; top: 50%; height: 9px; width: 9px; transform: rotate(-45deg) translateY(-50%) translateX(0); transition: transform .25s; transform-origin: center; } .tree-arrow.expanded.has-child:after { transform: rotate(45deg) translateY(-50%) translateX(-5px); } .tree-checkbox { flex-shrink: 0; position: relative; width: 30px; height: 30px; box-sizing: border-box; border: 1px solid #dadada; border-radius: 2px; background: #fff; transition: border-color .25s, background-color .25s; } .tree-checkbox:after, .tree-arrow:after { position: absolute; display: block; content: ""; } .tree-checkbox.checked, .tree-checkbox.indeterminate { background-color: #3a99fc; border-color: #218eff; } .tree-checkbox.checked:after { box-sizing: content-box; border: 1.5px solid #fff; /* probably width would be rounded in most cases */ border-left: 0; border-top: 0; left: 9px; top: 3px; height: 15px; width: 8px; transform: rotate(45deg) scaleY(0); transition: transform .25s; transform-origin: center; } .tree-checkbox.checked:after { transform: rotate(45deg) scaleY(1); } .tree-checkbox.indeterminate:after { background-color: #fff; top: 50%; left: 20%; right: 20%; height: 2px; } .tree-anchor { flex-grow: 2; outline: none; display: flex; text-decoration: none; color: #343434; vertical-align: top; margin-left: 3px; line-height: 24px; padding: 3px 6px; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; } .tree-node.selected .tree-anchor { outline: none; } .tree-node.disabled .tree-anchor { color: #989191; background: #fff; opacity: .6; cursor: default; outline: none; } .tree-input { display: block; width: 100%; height: 24px; line-height: 24px; outline: none; border: 1px solid #3498db; padding: 0 4px; } .l-fade-enter-active, .l-fade-leave-active { transition: opacity .3s, transform .3s; transform: translateX(0); } .l-fade-enter, .l-fade-leave-to { opacity: 0; transform: translateX(-2em); } .tree--small .tree-anchor { line-height: 19px; } .tree--small .tree-checkbox { width: 23px; height: 23px; } .tree--small .tree-arrow { height: 23px; } .tree--small .tree-checkbox.checked:after { left: 7px; top: 3px; height: 11px; width: 5px; } ';t.type = "text/css", t.styleSheet ? t.styleSheet.cssText = n : t.appendChild(document.createTextNode(n)), e.appendChild(t);
+  }
+}();var TreeNode = { render: function render() {
+    var e = this,
+        t = e.$createElement,
+        n = e._self._c || t;return n("li", { staticClass: "tree-node", class: e.nodeClass }, [n("div", { staticClass: "tree-content", style: { "padding-left": e.paddingLeft }, on: { click: function click(t) {
+          return t.stopPropagation(), e.select(t);
+        } } }, [n("i", { staticClass: "tree-arrow", class: { expanded: e.node.states.expanded, "has-child": e.node.children.length || e.node.isBatch }, on: { click: function click(t) {
+          return t.stopPropagation(), e.toggleExpand(t);
+        } } }), e._v(" "), e.options.checkbox ? n("i", { staticClass: "tree-checkbox", class: { checked: e.node.states.checked, indeterminate: e.node.states.indeterminate }, on: { click: function click(t) {
+          return t.stopPropagation(), e.check(t);
+        } } }) : e._e(), e._v(" "), n("a", { ref: "anchor", staticClass: "tree-anchor", attrs: { href: "javascript:void(0)", tabindex: "1" }, on: { focus: e.onNodeFocus, dblclick: function dblclick(t) {
+          e.tree.$emit("node:dblclick", e.node);
+        } } }, [n("node-content", { attrs: { node: e.node } })], 1)]), e._v(" "), n("transition", { attrs: { name: "l-fade" } }, [e.hasChildren() && e.state.expanded ? n("ul", { staticClass: "tree-children" }, e._l(e.node.children, function (t) {
+      return t.visible() ? n("node", { key: t.id, attrs: { node: t, options: e.options } }) : e._e();
+    })) : e._e()])], 1);
+  }, staticRenderFns: [], name: "Node", inject: ["tree"], props: ["node", "options"], components: { NodeContent: NodeContent }, data: function data() {
+    return this.node.vm = this, { state: this.node.states };
+  }, computed: { paddingLeft: function paddingLeft() {
+      return this.node.depth * this.options.paddingLeft + "px";
+    }, nodeClass: function nodeClass() {
+      var e = this.state,
+          t = this.hasChildren(),
+          n = { "has-child": t, expanded: t && e.expanded, selected: e.selected, disabled: e.disabled, matched: e.matched };return this.options.checkbox && (n.checked = e.checked, n.indeterminate = e.indeterminate), n;
+    } }, methods: { onNodeFocus: function onNodeFocus() {
+      this.tree.activeElement = this.node;
+    }, focus: function focus() {
+      this.$refs.anchor.focus(), this.node.select();
+    }, check: function check() {
+      this.node.checked() ? this.node.uncheck() : this.node.check();
+    }, select: function select(e) {
+      void 0 === e && (e = evnt);var t = e.ctrlKey,
+          n = this.options,
+          r = this.tree,
+          i = this.node;if (!n.editing || !i.isEditing) {
+        if (n.editing && i.editable()) return this.startEditing();if (n.checkbox && n.checkOnSelect) return !n.parentSelect && this.hasChildren() ? this.toggleExpand() : this.check(t);!n.parentSelect && this.hasChildren() && this.toggleExpand(), n.multiple ? i.selected() ? t ? i.unselect() : 1 != this.tree.selectedNodes.length && (r.unselectAll(), i.select()) : i.select(t) : i.selected() && t ? i.unselect() : i.select();
+      }
+    }, toggleExpand: function toggleExpand() {
+      this.hasChildren() && this.node.toggleExpand();
+    }, hasChildren: function hasChildren() {
+      return this.node.hasChildren();
+    }, startEditing: function startEditing() {
+      this.tree._editingNode && this.tree._editingNode.stopEditing(), this.node.startEditing();
+    }, stopEditing: function stopEditing() {
+      this.node.stopEditing();
+    } } };function recurseDown(e, t) {
+  var n;return Array.isArray(e) ? e.map(function (e) {
+    return recurseDown(e, t);
+  }) : (!1 !== (n = t(e)) && e.hasChildren() && (n = recurseDown(e.children, t)), n);
+}var $div = document.createElement("div");function finder(e) {
+  return function (t) {
+    return Object.keys(e).every(function (n) {
+      if ("text" === n) {
+        var r = e[n],
+            i = t[n];return $div.innerHTML = i, i = $div.innerText, isRegExp(r) ? r.test(i) : r === i;
+      }var o = e[n];return "state" === n && (n = "states"), Object.keys(o).every(function (e) {
+        return t[n][e] === o[e];
+      });
+    });
+  };
+}function isRegExp(e) {
+  return e instanceof RegExp;
+}function getAllChildren(e) {
+  var t = [];return e.forEach(function e(n) {
+    t.push(n), n.children && n.children.forEach(e);
+  }), t;
+}function find(e, t, n) {
+  if (void 0 === n && (n = !0), !e || !e.length || !t) return null;if (n && (e = getAllChildren(e)), "number" == typeof t) return e[t] || null;("string" == typeof t || t instanceof RegExp) && (t = { text: t }), "function" != typeof t && (t = finder(t));var r = e.filter(t);return r.length ? r : null;
+}function s4() {
+  return Math.floor(65536 * (1 + Math.random())).toString(16).substring(1);
+}function uuidV4() {
+  return s4() + s4() + "-" + s4() + "-" + s4() + "-" + s4() + "-" + s4() + s4() + s4();
+}function nodeIterator(e, t) {
+  for (var n = [], r = arguments.length - 2; r-- > 0;) {
+    n[r] = arguments[r + 2];
+  }e.forEach(function (e) {
+    return e[t].apply(e, n);
+  });
+}var Selection = function (e) {
+  function t(t, n) {
+    var r;void 0 === n && (n = []), e.call(this), this.tree = t, (r = this).push.apply(r, n);
+  }return e && (t.__proto__ = e), t.prototype = Object.create(e && e.prototype), t.prototype.constructor = t, t.prototype.remove = function () {
+    return nodeIterator(this, "remove"), this;
+  }, t.prototype.expand = function () {
+    return nodeIterator(this, "expand"), this;
+  }, t.prototype.collapse = function () {
+    return nodeIterator(this, "collapse"), this;
+  }, t.prototype.select = function (e) {
+    return nodeIterator(this, "select", e), this;
+  }, t.prototype.unselect = function () {
+    return nodeIterator(this, "unselect"), this;
+  }, t.prototype.check = function () {
+    return this.tree.options.checkbox && nodeIterator(this, "check"), this;
+  }, t.prototype.uncheck = function () {
+    return this.tree.options.checkbox && nodeIterator(this, "uncheck"), this;
+  }, t;
+}(Array),
+    Node = function Node(e, t) {
+  if (!t) throw new Error("Node can not be empty");if (this.id = t.id || uuidV4(), this.states = t.state || {}, this.showChildren = !0, this.children = t.children || [], this.parent = t.parent || null, this.isBatch = t.isBatch || !1, this.isEditing = !1, this.data = Object.assign({}, { text: t.text }, t.data || {}), !e) throw new Error("Node must has a Tree context!");this.tree = e;
+},
+    prototypeAccessors = { depth: { configurable: !0 }, text: { configurable: !0 } };Node.prototype.$emit = function (e) {
+  for (var t, n = [], r = arguments.length - 1; r-- > 0;) {
+    n[r] = arguments[r + 1];
+  }(t = this.tree).$emit.apply(t, ["node:" + e, this].concat(n));
+}, prototypeAccessors.depth.get = function () {
+  var e = 0,
+      t = this.parent;if (!t || !1 === this.showChildren) return e;do {
+    e++;
+  } while (t = t.parent);return e;
+}, prototypeAccessors.text.get = function () {
+  return this.data.text;
+}, prototypeAccessors.text.set = function (e) {
+  var t = this.text;this.data.text = e, this.$emit("text:changed", e, t);
+}, Node.prototype.state = function (e, t) {
+  return void 0 === t ? this.states[e] : (this.states[e] = t, this);
+}, Node.prototype.recurseUp = function (e, t) {
+  if (void 0 === t && (t = this), t.parent) return !1 !== e(t.parent) ? this.recurseUp(e, t.parent) : void 0;
+}, Node.prototype.recurseDown = function (e, t) {
+  !0 !== t && e(this), this.hasChildren() && recurseDown(this.children, e);
+}, Node.prototype.refreshIndeterminateState = function () {
+  if (!this.tree.options.autoCheckChildren) return this;if (this.state("indeterminate", !1), this.hasChildren()) {
+    var e = this.children.length,
+        t = 0,
+        n = 0,
+        r = 0;this.children.forEach(function (e) {
+      e.checked() && t++, e.disabled() && r++, e.indeterminate() && n++;
+    }), t === e - r ? this.checked() || (this.state("checked", !0), this.tree.check(this), this.$emit("checked")) : (this.checked() && (this.state("checked", !1), this.tree.uncheck(this), this.$emit("unchecked")), this.state("indeterminate", n > 0 || t > 0 && t < e));
+  }this.parent && this.parent.refreshIndeterminateState();
+}, Node.prototype.indeterminate = function () {
+  return this.state("indeterminate");
+}, Node.prototype.editable = function () {
+  return !this.state("disabled") && this.state("editable");
+}, Node.prototype.selectable = function () {
+  return !this.state("disabled") && this.state("selectable");
+}, Node.prototype.selected = function () {
+  return this.state("selected");
+}, Node.prototype.select = function (e) {
+  return !this.selectable() || this.selected() ? this : (this.tree.select(this, e), this.state("selected", !0), this.$emit("selected"), this);
+}, Node.prototype.unselect = function () {
+  return this.selectable() && this.selected() ? (this.tree.unselect(this), this.state("selected", !1), this.$emit("unselected"), this) : this;
+}, Node.prototype.checked = function () {
+  return this.state("checked");
+}, Node.prototype.check = function () {
+  var e = this;return this.checked() || this.disabled() ? this : this.indeterminate() ? this.uncheck() : (this.tree.options.autoCheckChildren ? (this.recurseDown(function (t) {
+    t.state("indeterminate", !1), t.checked() || (e.tree.check(t), t.state("checked", !0), t.$emit("checked"));
+  }), this.parent && this.parent.refreshIndeterminateState()) : (this.tree.check(this), this.state("checked", !0), this.$emit("checked")), this);
+}, Node.prototype.uncheck = function () {
+  var e = this;return !this.indeterminate() && !this.checked() || this.disabled() ? this : (this.tree.options.autoCheckChildren ? (this.recurseDown(function (t) {
+    t.state("indeterminate", !1), t.checked() && (e.tree.uncheck(t), t.state("checked", !1), t.$emit("unchecked"));
+  }), this.parent && this.parent.refreshIndeterminateState()) : (this.tree.uncheck(this), this.state("checked", !1), this.$emit("unchecked")), this);
+}, Node.prototype.show = function () {
+  return this.visible() ? this : (this.state("visible", !0), this.$emit("shown"), this);
+}, Node.prototype.hide = function () {
+  return this.hidden() ? this : (this.state("visible", !1), this.$emit("hidden"), this);
+}, Node.prototype.visible = function () {
+  return this.state("visible");
+}, Node.prototype.hidden = function () {
+  return !this.state("visible");
+}, Node.prototype.enable = function () {
+  return this.enabled() ? this : (this.recurseDown(function (e) {
+    e.disabled() && (e.state("disabled", !1), e.$emit("enabled"));
+  }), this);
+}, Node.prototype.enabled = function () {
+  return !this.state("disabled");
+}, Node.prototype.disable = function () {
+  return this.disabled() ? this : (this.recurseDown(function (e) {
+    e.enabled() && (e.state("disabled", !0), e.$emit("disabled"));
+  }), this);
+}, Node.prototype.disabled = function () {
+  return this.state("disabled");
+}, Node.prototype.expandTop = function (e) {
+  var t = this;this.recurseUp(function (n) {
+    n.state("expanded", !0), !0 !== e && t.$emit("expanded", n);
+  });
+}, Node.prototype.expand = function () {
+  var e = this;return !this.hasChildren() || this.expanded() || this.disabled() ? this : (this.isBatch ? this.tree.loadChildren(this).then(function (t) {
+    e.state("expanded", !0), e.$emit("expanded");
+  }) : (this.state("expanded", !0), this.$emit("expanded")), this);
+}, Node.prototype.expanded = function () {
+  return this.state("expanded");
+}, Node.prototype.collapse = function () {
+  return !this.hasChildren() || this.collapsed() || this.disabled() ? this : (this.state("expanded", !1), this.$emit("collapsed"), this);
+}, Node.prototype.collapsed = function () {
+  return !this.state("expanded");
+}, Node.prototype.toggleExpand = function () {
+  return this._toggleOpenedState();
+}, Node.prototype.toggleCollapse = function () {
+  return this._toggleOpenedState();
+}, Node.prototype._toggleOpenedState = function () {
+  return this.disabled() || !this.hasChildren() ? this : this.expanded() ? this.collapse() : this.expand();
+}, Node.prototype.startEditing = function () {
+  if (this.disabled()) return !1;this.isEditing || (this.tree._editingNode = this, this.tree.activeElement = this, this.isEditing = !0, this.$emit("editing:start"));
+}, Node.prototype.stopEditing = function (e) {
+  this.isEditing && (this.isEditing = !1, this.tree._editingNode = null, this.tree.activeElement = null, e && !1 !== e && this.text !== e && (this.text = e), this.$emit("editing:stop", this.text === e));
+}, Node.prototype.index = function (e) {
+  return this.tree.index(this, e);
+}, Node.prototype.first = function () {
+  return this.hasChildren() ? this.children[0] : null;
+}, Node.prototype.last = function () {
+  return this.hasChildren() ? this.children[this.children.length - 1] : null;
+}, Node.prototype.next = function () {
+  return this.tree.nextNode(this);
+}, Node.prototype.prev = function () {
+  return this.tree.prevNode(this);
+}, Node.prototype.insertAt = function (e, t) {
+  var n = this;if (void 0 === t && (t = this.children.length), e) return e = this.tree.objectToNode(e), Array.isArray(e) ? (e.reverse().map(function (e) {
+    return n.insertAt(e, t);
+  }), new Selection(this.tree, [].concat(e))) : (e.parent = this, this.children.splice(t, 0, e), e.disabled() && e.hasChildren() && e.recurseDown(function (e) {
+    e.state("disabled", !0);
+  }), this.isBatch || this.$emit("added", e), e);
+}, Node.prototype.addChild = function (e) {
+  return this.insertAt(e);
+}, Node.prototype.append = function (e) {
+  return this.addChild(e);
+}, Node.prototype.prepend = function (e) {
+  return this.insertAt(e, 0);
+}, Node.prototype.before = function (e) {
+  return this.tree.before(this, e);
+}, Node.prototype.after = function (e) {
+  return this.tree.after(this, e);
+}, Node.prototype.empty = function () {
+  for (var e; e = this.children.pop();) {
+    e.remove();
+  }return this;
+}, Node.prototype.remove = function () {
+  return this.tree.removeNode(this);
+}, Node.prototype.removeChild = function (e) {
+  var t = this.find(e);return t ? this.tree.removeNode(t) : null;
+}, Node.prototype.find = function (e, t) {
+  return e instanceof Node ? e : find(this.children, e, t);
+}, Node.prototype.focus = function () {
+  this.vm && this.vm.focus();
+}, Node.prototype.hasChildren = function () {
+  return this.showChildren && this.isBatch || this.children.length > 0;
+}, Node.prototype.isRoot = function () {
+  return null === this.parent;
+}, Node.prototype.toJSON = function () {
+  return { text: this.text, data: this.data, state: this.states, children: this.children };
+}, Object.defineProperties(Node.prototype, prototypeAccessors);var nodeStates = { selected: !1, selectable: !0, checked: !1, expanded: !1, disabled: !1, visible: !0, indeterminate: !1, matched: !1, editable: !0 };function merge(e) {
+  return void 0 === e && (e = {}), Object.assign({}, nodeStates, e);
+}function objectToNode(e, t) {
+  var n = null;if (t instanceof Node) return t;if ("string" == typeof t) n = new Node(e, { text: t, state: merge(), id: uuidV4() });else {
+    if (Array.isArray(t)) return t.map(function (t) {
+      return objectToNode(e, t);
+    });(n = new Node(e, t)).states = merge(n.states), n.id || (n.id = uuidV4()), n.children.length && (n.children = n.children.map(function (t) {
+      return (t = objectToNode(e, t)).parent = n, t;
+    }));
+  }return n;
+}var List = function (e) {
+  function t() {
+    e.apply(this, arguments);
+  }return e && (t.__proto__ = e), t.prototype = Object.create(e && e.prototype), t.prototype.constructor = t, t.prototype.empty = function () {
+    return this.splice(0, this.length), this;
+  }, t.prototype.add = function () {
+    for (var e, t = [], n = arguments.length; n--;) {
+      t[n] = arguments[n];
+    }return (e = this).push.apply(e, t), this;
+  }, t.prototype.remove = function (e) {
+    var t = this.indexOf(e);return -1 === t ? this : (this.splice(t, 1), this);
+  }, t.prototype.removeAll = function (e) {
+    for (; this.includes(e);) {
+      this.remove(e);
+    }return this;
+  }, t.prototype.top = function () {
+    return this[this.length - 1];
+  }, t;
+}(Array),
+    defaultPropertyNames = { id: "id", text: "text", children: "children", state: "state", data: "data", isBatch: "isBatch" };function convertNames(e, t) {
+  return { id: e[t.id], text: e[t.text], children: e[t.children], state: e[t.state], data: e[t.data], isBatch: e[t.isBatch] };
+}var TreeParser = { parse: function parse(e, t, n) {
+    void 0 === n && (n = {}), "string" == typeof e && (e = JSON.parse(e)), Array.isArray(e) || (e = [e]);var r = Object.assign({}, defaultPropertyNames, n);return e.map(function e(t) {
+      var n = convertNames(t, r);return n.children && !Array.isArray(n.children) && (n.children = [n.children]), n.children && (n.children = n.children.map(e)), n;
+    }).map(function (e) {
+      return objectToNode(t, e);
+    });
+  } };function request(e) {
+  return new Promise(function (t, n) {
+    var r = new XMLHttpRequest();r.open("GET", e), r.setRequestHeader("Content-Type", "application/json"), r.addEventListener("load", function (e) {
+      try {
+        var i = JSON.parse(r.response);t(i);
+      } catch (e) {
+        n(e);
+      }
+    }), r.send(null);
+  });
+}function get(e) {
+  return request(e);
+}function createTemplate(e) {
+  return function (t) {
+    for (var n, r = /{([^}]+)}/, i = e; n = r.exec(i);) {
+      i = i.replace(n[0], t[n[1]]);
+    }return i;
+  };
+}function orderAsc(e, t) {
+  return e.text < t.text ? -1 : e.text > t.text ? 1 : 0;
+}function orderDesc(e, t) {
+  return e.text < t.text ? 1 : e.text > t.text ? -1 : 0;
+}function getCompareFunction(e) {
+  switch (e.toLowerCase()) {case "asc":
+      return orderAsc;case "desc":
+      return orderDesc;}
+}function sort(e, t) {
+  "string" == typeof t && (t = getCompareFunction(t)), Array.isArray(e) && "function" == typeof t && e.sort(t);
+}var Tree = function Tree(e) {
+  var t = this;this.vm = e, this.options = e.opts, this.activeElement = null;var n,
+      r = this.options.fetchData;"string" == typeof r && (this.options.fetchData = (n = createTemplate(r), function (e) {
+    return get(n(e)).catch(t.options.onFetchError);
+  }));
+};Tree.prototype.$on = function (e) {
+  for (var t, n = [], r = arguments.length - 1; r-- > 0;) {
+    n[r] = arguments[r + 1];
+  }(t = this.vm).$on.apply(t, [e].concat(n));
+}, Tree.prototype.$once = function (e) {
+  for (var t, n = [], r = arguments.length - 1; r-- > 0;) {
+    n[r] = arguments[r + 1];
+  }(t = this.vm).$once.apply(t, [e].concat(n));
+}, Tree.prototype.$off = function (e) {
+  for (var t, n = [], r = arguments.length - 1; r-- > 0;) {
+    n[r] = arguments[r + 1];
+  }(t = this.vm).$off.apply(t, [e].concat(n));
+}, Tree.prototype.$emit = function (e) {
+  for (var t, n = [], r = arguments.length - 1; r-- > 0;) {
+    n[r] = arguments[r + 1];
+  }(t = this.vm).$emit.apply(t, [e].concat(n));
+}, Tree.prototype._sort = function (e, t, n) {
+  !1 !== n && this.recurseDown(e, function (e) {
+    e.hasChildren() && sort(e.children, t);
+  }), sort(e, t);
+}, Tree.prototype.sortTree = function (e, t) {
+  this._sort(this.model, e, t);
+}, Tree.prototype.sort = function (e, t, n) {
+  var r = this,
+      i = this.find(e, !0);i && t && i.forEach(function (e) {
+    r._sort(e.children, t, n);
+  });
+}, Tree.prototype.clearFilter = function () {
+  this.recurseDown(function (e) {
+    e.state("matched", !1), e.state("visible", !0), e.state("expanded", e.__expanded), e.__expanded = void 0, e.showChildren = !0;
+  }), this.vm.matches.length = 0, this.vm.$emit("tree:filtered", [], "");
+}, Tree.prototype.filter = function (e) {
+  if (!e) return this.clearFilter();var t = [],
+      n = this.options.filter.matcher,
+      r = this.options.filter,
+      i = r.showChildren,
+      o = r.plainList;return this.recurseDown(function (r) {
+    n(e, r) && t.push(r), r.showChildren = !0, void 0 === r.__expanded && (r.__expanded = r.state("expanded")), r.state("visible", !1), r.state("matched", !1), r.state("expanded", !0);
+  }), t.reverse().forEach(function (e) {
+    e.state("matched", !0), e.state("visible", !0), e.showChildren = !o, e.hasChildren() && e.recurseDown(function (e) {
+      e.state("visible", !!i);
+    }, !0), e.recurseUp(function (e) {
+      e.state("visible", !0), e.state("expanded", !0);
+    }), e.hasChildren() && e.state("expanded", !1);
+  }), this.vm.matches = t, this.vm.$emit("tree:filtered", t, e), t;
+}, Tree.prototype.selected = function () {
+  return new (Function.prototype.bind.apply(Selection, [null].concat([this], this.selectedNodes)))();
+}, Tree.prototype.checked = function () {
+  return this.options.checkbox ? new (Function.prototype.bind.apply(Selection, [null].concat([this], this.checkedNodes)))() : null;
+}, Tree.prototype.loadChildren = function (e) {
+  var t = this;if (e) return this.$emit("tree:data:fetch", e), this.fetch(e).then(function (n) {
+    e.append(n), e.isBatch = !1, e.checked() && e.recurseDown(function (e) {
+      e.state("checked", !0);
+    }), t.$emit("tree:data:received", e);
+  });
+}, Tree.prototype.fetch = function (e) {
+  var t = this,
+      n = this.options.fetchData(e);return n.then || (n = get(n).catch(this.options.onFetchError)), n.then(function (e) {
+    return e && t.parse(e, t.options.modelParse);
+  }).catch(this.options.onFetchError), n;
+}, Tree.prototype.fetchInitData = function () {
+  return this.fetch({ id: "root", name: "root" });
+}, Tree.prototype.setModel = function (e) {
+  var t = this;if (this.model = this.parse(e, this.options.modelParse), this.vm.model = this.model, this.selectedNodes = new List(), this.checkedNodes = new List(), recurseDown(this.model, function (e) {
+    e.tree = t, e.selected() && t.selectedNodes.add(e), e.checked() && (t.checkedNodes.add(e), e.parent && e.parent.refreshIndeterminateState()), e.disabled() && e.recurseDown(function (e) {
+      e.state("disabled", !0);
+    });
+  }), !this.options.multiple && this.selectedNodes.length) {
+    var n = this.selectedNodes.top();this.selectedNodes.forEach(function (e) {
+      n !== e && e.state("selected", !1);
+    }), this.selectedNodes.empty().add(n);
+  }this.options.checkOnSelect && this.options.checkbox && this.unselectAll();
+}, Tree.prototype.recurseDown = function (e, t) {
+  return !t && e && (t = e, e = this.model), recurseDown(e, t);
+}, Tree.prototype.select = function (e, t) {
+  var n = this.getNode(e);return !!n && (this.options.multiple && t ? this.selectedNodes.add(n) : (this.unselectAll(), this.selectedNodes.empty().add(n)), !0);
+}, Tree.prototype.selectAll = function () {
+  var e = this;return !!this.options.multiple && (this.selectedNodes.empty(), this.recurseDown(function (t) {
+    e.selectedNodes.add(t.select(!0));
+  }), !0);
+}, Tree.prototype.unselect = function (e) {
+  var t = this.getNode(e);return !!t && (this.selectedNodes.remove(t), !0);
+}, Tree.prototype.unselectAll = function () {
+  for (var e; e = this.selectedNodes.pop();) {
+    e.unselect();
+  }return !0;
+}, Tree.prototype.check = function (e) {
+  this.checkedNodes.add(e);
+}, Tree.prototype.uncheck = function (e) {
+  this.checkedNodes.remove(e);
+}, Tree.prototype.checkAll = function () {
+  this.recurseDown(function (e) {
+    0 === e.depth && (e.indeterminate() && e.state("indeterminate", !1), e.check());
+  });
+}, Tree.prototype.uncheckAll = function () {
+  for (var e; e = this.checkedNodes.pop();) {
+    e.uncheck();
+  }return !0;
+}, Tree.prototype.expand = function (e) {
+  return !e.expanded() && (e.expand(), !0);
+}, Tree.prototype.collapse = function (e) {
+  return !e.collapsed() && (e.collapse(), !0);
+}, Tree.prototype.toggleExpand = function (e) {
+  return !!e.hasChildren() && (e.toggleExpand(), !0);
+}, Tree.prototype.toggleCollapse = function (e) {
+  return !!e.hasChildren() && (e.toggleCollapse(), !0);
+}, Tree.prototype.expandAll = function () {
+  this.recurseDown(function (e) {
+    e.hasChildren() && e.collapsed() && e.expand();
+  });
+}, Tree.prototype.collapseAll = function () {
+  this.recurseDown(function (e) {
+    e.hasChildren() && e.expanded() && e.collapse();
+  });
+}, Tree.prototype.index = function (e, t) {
+  var n = e.parent,
+      r = (n = n ? n.children : this.model).indexOf(e);return t ? { index: r, target: n, node: n[r] } : r;
+}, Tree.prototype.nextNode = function (e) {
+  var t = this.index(e, !0);return t.target[t.index + 1] || null;
+}, Tree.prototype.nextVisibleNode = function (e) {
+  if (e.hasChildren() && e.expanded()) return e.first();var t = this.nextNode(e);return !t && e.parent ? e.parent.next() : t;
+}, Tree.prototype.prevNode = function (e) {
+  var t = this.index(e, !0);return t.target[t.index - 1] || null;
+}, Tree.prototype.prevVisibleNode = function (e) {
+  var t = this.prevNode(e);return t ? t.hasChildren() && t.expanded() ? t.last() : t : e.parent;
+}, Tree.prototype.addToModel = function (e, t) {
+  var n = this;void 0 === t && (t = this.model.length), e = this.objectToNode(e), this.model.splice(t, 0, e), this.recurseDown(e, function (e) {
+    e.tree = n;
+  }), this.$emit("node:added", e);
+}, Tree.prototype.append = function (e, t) {
+  var n = this.find(e);return !!n && n.append(t);
+}, Tree.prototype.prepend = function (e, t) {
+  var n = this.find(e);return !!n && n.prepend(t);
+}, Tree.prototype.before = function (e, t) {
+  e = this.find(e);var n = this.index(e, !0),
+      r = this.objectToNode(t);return !!~n.index && (n.target.splice(n.index, 0, r), this.$emit("node:added", r), t);
+}, Tree.prototype.after = function (e, t) {
+  e = this.find(e);var n = this.index(e, !0),
+      r = this.objectToNode(t);return !!~n.index && (n.target.splice(n.index + 1, 0, r), this.$emit("node:added", r), t);
+}, Tree.prototype.addNode = function (e) {
+  var t = this.model.length;return e = objectToNode(e), this.model.splice(t, 0, e), this.$emit("node:added", e), e;
+}, Tree.prototype.remove = function (e, t) {
+  return this.removeNode(this.find(e, t));
+}, Tree.prototype.removeNode = function (e) {
+  if (e instanceof Selection) return e.remove();if (!e) return !1;if (e.parent) {
+    var t = e.parent.children;~t.indexOf(e) && t.splice(t.indexOf(e), 1);
+  } else ~this.model.indexOf(e) && this.model.splice(this.model.indexOf(e), 1);e.parent && e.parent.indeterminate() && !e.parent.hasChildren() && e.parent.state("indeterminate", !1), e.parent = null, this.$emit("node:removed", e), this.selectedNodes.remove(e), this.checkedNodes.remove(e);var n = this.vm.matches;return n && n.length && n.includes(e) && n.splice(n.indexOf(e), 1), e;
+}, Tree.prototype.isNode = function (e) {
+  return e instanceof Node;
+}, Tree.prototype.find = function (e, t) {
+  if (e instanceof Node) return e;var n = find(this.model, e);return n && n.length ? new Selection(this, !0 === t ? n : [n[0]]) : null;
+}, Tree.prototype.getNode = function (e) {
+  return e instanceof Node ? e : null;
+}, Tree.prototype.objectToNode = function (e) {
+  return objectToNode(this, e);
+}, Tree.prototype.parse = function (e, t) {
+  t || (t = this.options.propertyNames);try {
+    return TreeParser.parse(e, this, t);
+  } catch (e) {
+    return console.error(e), [];
+  }
+};var keyCodes = { ARROW_LEFT: 37, ARROW_TOP: 38, ARROW_RIGHT: 39, ARROW_BOTTOM: 40, SPACE: 32, DELETE: 46, ENTER: 13, ESC: 27 },
+    codesArr = [37, 38, 39, 40, 32];function focusUp(e, t) {
+  var n = e.prevVisibleNode(t);if (n) return n.disabled() ? focusUp(e, n) : void n.focus();
+}function focusdDown(e, t) {
+  var n = e.nextVisibleNode(t);if (n) return n.disabled() ? focusdDown(e, n) : void n.focus();
+}function checkNode(e, t) {
+  e.options.checkbox && (t.checked() ? t.uncheck() : t.check());
+}function leftArrow(e, t) {
+  if (t.expanded()) t.collapse();else {
+    var n = t.parent;n && n.focus();
+  }
+}function rightArrow(e, t) {
+  if (t.collapsed()) t.expand();else {
+    var n = t.first();n && n.focus();
+  }
+}function deleteNode(e, t) {
+  var n = e.options.deletion;n && ("function" == typeof n ? !0 === n(t) && t.remove() : !0 === n && t.remove());
+}function initKeyboardNavigation(e) {
+  e.vm.$el.addEventListener("keydown", function (t) {
+    var n = t.keyCode,
+        r = e.activeElement;if (e.isNode(r)) if (r.isEditing) switch (n) {case keyCodes.ESC:
+        return r.stopEditing(!1);} else switch (codesArr.includes(n) && (t.preventDefault(), t.stopPropagation()), n) {case keyCodes.ARROW_LEFT:
+        return leftArrow(e, r);case keyCodes.ARROW_RIGHT:
+        return rightArrow(e, r);case keyCodes.ARROW_TOP:
+        return focusUp(e, r);case keyCodes.ARROW_BOTTOM:
+        return focusdDown(e, r);case keyCodes.SPACE:case keyCodes.ENTER:
+        return checkNode(e, r);case keyCodes.DELETE:
+        return deleteNode(e, r);}
+  }, !0);
+}function initEvents(e) {
+  var t = e.opts,
+      n = t.multiple,
+      r = t.checkbox,
+      i = function i(t) {
+    var i = e.selected();r ? e.$emit("input", { selected: n ? i : i[0] || null, checked: e.checked() }) : e.$emit("input", n ? i : i[0] || null);
+  };e.tree.$on("node:selected", function (t) {
+    n ? i(e.selected()) : i();
+  }), e.tree.$on("node:unselected", i), r && (e.tree.$on("node:checked", i), e.tree.$on("node:unchecked", i));
+}var TreeMixin = { mounted: function mounted() {
+    var e,
+        t = this,
+        n = new Tree(this);this.tree = n, this._provided.tree = n, !this.data && this.opts.fetchData ? e = n.fetchInitData() : this.data && this.data.then ? (e = this.data, this.loading = !0) : e = Promise.resolve(this.data), e.then(function (e) {
+      e || (e = []), t.opts.store ? t.connectStore(t.opts.store) : t.tree.setModel(e), t.loading && (t.loading = !1), t.$emit("tree:mounted", t);
+    }), !1 !== this.opts.keyboardNavigation && initKeyboardNavigation(n), initEvents(this);
+  }, methods: { connectStore: function connectStore(e) {
+      var t = this,
+          n = e.store,
+          r = e.key,
+          i = e.getter,
+          o = this.tree,
+          s = this.opts.modelParse,
+          d = function d(e) {
+        t.model = o.parse(e, s), t.tree.setModel(t.model);
+      },
+          c = function c(e, t) {
+        return void 0 === e && (e = []), e.forEach(function (e, n) {
+          t[n] && e.text == t[n].text && (e.state = Object.assign({}, e.state, t[n].states), e.children && e.children.length && t[n].children && c(e.children, t[n].children));
+        }), e;
+      },
+          a = function a(e, t) {
+        return i ? e.getters[i] || [] : e.state[r] || [];
+      },
+          h = e.mutations;h && !h.length && (h = null), d(a(n)), n.subscribe(function (e, r) {
+        var i;h && !h.includes(e.type) || (i = a(n), d(c(i, t.model)));
+      });
+    }, recurseDown: function recurseDown(e) {
+      this.tree.recurseDown(e);
+    }, selected: function selected() {
+      return this.tree.selected();
+    }, checked: function checked() {
+      return this.tree.checked();
+    }, append: function append(e, t) {
+      return t ? this.tree.append(e, t) : this.tree.addToModel(e, this.tree.model.length);
+    }, prepend: function prepend(e, t) {
+      return t ? this.tree.prepend(e, t) : this.tree.addToModel(e, 0);
+    }, addChild: function addChild(e, t) {
+      return this.append(e, t);
+    }, remove: function remove(e, t) {
+      return this.tree.remove(e, t);
+    }, before: function before(e, t) {
+      return t ? this.tree.before(e, t) : this.prepend(e);
+    }, after: function after(e, t) {
+      return t ? this.tree.after(e, t) : this.append(e);
+    }, find: function find(e, t) {
+      return this.tree.find(e, t);
+    }, findAll: function findAll(e) {
+      return this.tree.find(e, !0);
+    }, expandAll: function expandAll() {
+      return this.tree.expandAll();
+    }, collapseAll: function collapseAll() {
+      return this.tree.collapseAll();
+    }, sortTree: function sortTree(e, t) {
+      return this.tree.sortTree(e, t);
+    }, sort: function sort() {
+      for (var e, t = [], n = arguments.length; n--;) {
+        t[n] = arguments[n];
+      }return (e = this.tree).sort.apply(e, t);
+    }, toJSON: function toJSON() {
+      return JSON.parse(JSON.stringify(this.model));
+    } } };!function () {
+  if ("undefined" != typeof document) {
+    var e = document.head || document.getElementsByTagName("head")[0],
+        t = document.createElement("style"),
+        n = " .tree { overflow: auto; } .tree-root, .tree-children { list-style: none; padding: 0; } .tree > .tree-root, .tree > .tree-filter-empty { padding: 3px; box-sizing: border-box; } ";t.type = "text/css", t.styleSheet ? t.styleSheet.cssText = n : t.appendChild(document.createTextNode(n)), e.appendChild(t);
+  }
+}();var defaults = { multiple: !0, checkbox: !1, checkOnSelect: !1, autoCheckChildren: !0, parentSelect: !1, keyboardNavigation: !0, paddingLeft: 24, fetchData: null, propertyNames: null, deletion: !1, onFetchError: function onFetchError(e) {
+    throw e;
+  } },
+    filterDefaults = { emptyText: "Nothing found!", matcher: function matcher(e, t) {
+    return new RegExp(e, "i").test(t.text);
+  }, plainList: !1, showChildren: !0 },
+    TreeRoot = { render: function render() {
+    var e = this,
+        t = e.$createElement,
+        n = e._self._c || t;return n("div", { class: { tree: !0, "tree-loading": this.loading }, attrs: { role: "tree" } }, [e.filter && 0 == e.matches.length ? [n("div", { staticClass: "tree-filter-empty" }, [e._v(e._s(e.opts.filter.emptyText))])] : [n("ul", { staticClass: "tree-root" }, [e.opts.filter.plainList && e.matches.length > 0 ? e._l(e.matches, function (t) {
+      return t.visible() ? n("node", { key: t.id, attrs: { node: t, options: e.opts } }) : e._e();
+    }) : e._l(e.model, function (t) {
+      return t.visible() ? n("node", { key: t.id, attrs: { node: t, options: e.opts } }) : e._e();
+    })], 2)]], 2);
+  }, staticRenderFns: [], name: "Tree", components: { node: TreeNode }, mixins: [TreeMixin], provide: function provide(e) {
+    return { tree: null };
+  }, props: { data: {}, options: { type: Object, default: function _default(e) {
+        return {};
+      } }, filter: String }, watch: { filter: function filter(e) {
+      this.tree.filter(e);
+    } }, data: function data() {
+    var e = Object.assign({}, defaults, this.options);return e.filter = Object.assign({}, filterDefaults, e.filter), { model: null, tree: null, loading: !1, opts: e, matches: [] };
+  } },
+    install = function install(e) {
+  e.component(TreeRoot.name, TreeRoot);
+};TreeRoot.install = install, "undefined" != typeof window && window.Vue && window.Vue.use(TreeRoot);/* harmony default export */ var liquor_tree_esm = (TreeRoot);
+// EXTERNAL MODULE: ./front/src/assets/css/module.less
+var css_module = __webpack_require__(19);
+
+// CONCATENATED MODULE: ./front/src/main.js
+var Vue = void 0;
+
+
+
+
+
+function main_install(_Vue, cb) {
+  if (Vue) return console.error('already installed.');
+
+  Vue = _Vue;
+
+  Vue.component('ebTree', liquor_tree_esm);
+
+  return cb({
+    routes: __webpack_require__(21).default,
+    store: __webpack_require__(22).default(Vue),
+    config: __webpack_require__(23).default,
+    locales: __webpack_require__(24).default,
+    components: __webpack_require__(62).default
+  });
+}
+
+/* harmony default export */ var main = __webpack_exports__["default"] = ({
+  install: main_install
 });
 
 /***/ })

@@ -1,6 +1,7 @@
 let Vue;
 
-// import formEvent from './directives/formEvent.js';
+import LiquorTree from '@zhennann/liquor-tree';
+
 import './assets/css/module.less';
 
 // install
@@ -9,8 +10,8 @@ function install(_Vue, cb) {
 
   Vue = _Vue;
 
-  // register directives
-  // Vue.directive('ebFormEvent', formEvent);
+  // register components
+  Vue.component('ebTree', LiquorTree);
 
   //
   return cb({

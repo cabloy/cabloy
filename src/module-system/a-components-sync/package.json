@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-components-sync",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "eggBornModule": {
     "dependencies": {}
   },
@@ -49,6 +49,7 @@
     "vue-template-compiler": "^2.5.16"
   },
   "dependencies": {
-    "require3": "^1.0.1"
+    "require3": "^1.0.1",
+    "@zhennann/liquor-tree": "^0.2.30"
   }
 }
