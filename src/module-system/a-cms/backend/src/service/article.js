@@ -10,11 +10,19 @@ module.exports = app => {
         atomId: key.atomId,
         editMode,
       });
-      return { atomId: key.atomId, itemId: res.insertId };
+      const itemId = res.insertId;
+      // add content
+      await this.ctx.model.content.insert({
+        atomId: key.atomId,
+        itemId,
+      });
+      return { atomId: key.atomId, itemId };
     }
 
     async read({ atomClass, key, item, user }) {
       // read
+      const data = await this.ctx.model.content.get({ atomId: key.atomId });
+      item.content = data.content;
     }
 
     async select({ atomClass, options, items, user }) {
@@ -27,8 +35,10 @@ module.exports = app => {
         id: key.itemId,
         language: item.language,
         editMode: item.editMode,
-        content: item.content,
       });
+      // update content
+      await this.ctx.model.query('update aCmsContent a set a.content=? where a.iid=? and a.atomId=?',
+        [ item.content, this.ctx.instance.id, key.atomId ]);
     }
 
     async delete({ atomClass, key, user }) {
@@ -42,6 +52,9 @@ module.exports = app => {
       await this.ctx.model.article.delete({
         id: key.itemId,
       });
+      // delete content
+      await this.ctx.model.query('delete from aCmsContent where iid=? and atomId=?',
+        [ this.ctx.instance.id, key.atomId ]);
     }
 
     async action({ action, atomClass, key, user }) {

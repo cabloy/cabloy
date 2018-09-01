@@ -15,9 +15,11 @@ module.exports = appInfo => {
       url: 'http://example.com',
       rootPath: '',
     },
-    format: {
-      date: 'YYYY-MM-DD',
-      time: 'HH:mm:ss',
+    env: {
+      format: {
+        date: 'YYYY-MM-DD',
+        time: 'HH:mm:ss',
+      },
     },
     language: {
       default: 'en-us',

@@ -9,6 +9,7 @@ module.exports = app => {
             tableName: 'aCmsArticle',
           },
           actions: {
+            write: { actionPath: 'article/edit?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}' },
             publish: {
               code: 101,
               title: 'Publish',

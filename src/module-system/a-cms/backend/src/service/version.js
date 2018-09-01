@@ -21,6 +21,21 @@ module.exports = app => {
             url varchar(255) DEFAULT NULL,
             extra json DEFAULT NULL,
             editMode int(11) DEFAULT '0',
+            PRIMARY KEY (id)
+          )
+        `;
+        await this.ctx.model.query(sql);
+
+        // create table: aCmsContent
+        sql = `
+          CREATE TABLE aCmsContent (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            deleted int(11) DEFAULT '0',
+            iid int(11) DEFAULT '0',
+            atomId int(11) DEFAULT '0',
+            itemId int(11) DEFAULT '0',
             content text DEFAULT NULL,
             PRIMARY KEY (id)
           )

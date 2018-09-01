@@ -16,11 +16,12 @@ module.exports = app => {
     }
 
     async children({ language, categoryId }) {
+      const where = {
+        categoryIdParent: categoryId,
+      };
+      if (language) where.language = language;
       const list = await this.ctx.model.category.select({
-        where: {
-          language,
-          categoryIdParent: categoryId,
-        },
+        where,
         orders: [[ 'sorting', 'asc' ], [ 'createdAt', 'asc' ]],
       });
       return list;
@@ -36,44 +37,50 @@ module.exports = app => {
         sorting: 0,
         categoryIdParent,
       });
-
-      // update parent's catalog
-      if (categoryIdParent) {
-        await this.ctx.model.category.update({
-          id: categoryIdParent,
-          catalog: 1,
-        });
-      }
+      // adjust catalog
+      await this.adjustCatalog(categoryIdParent);
 
       return res.insertId;
     }
 
     async delete({ categoryId }) {
+      // todo: check articles
+
+      // check children
+      const children = await this.children({ categoryId });
+      if (children.length > 0) this.ctx.throw(1004);
       // category
       const category = await this.ctx.model.category.get({ id: categoryId });
       // parent
-      let categoryParent;
-      if (category.categoryIdParent) {
-        categoryParent = await this.ctx.model.category.get({
-          id: category.categoryIdParent,
-        });
-      }
+      const categoryIdParent = category.categoryIdParent;
       // delete
       await this.ctx.model.category.delete({ id: categoryId });
-      // update parent's catalog
-      if (categoryParent) {
-        const list = await this.ctx.model.category.select({
-          where: {
-            categoryIdParent: categoryParent.id,
-          },
-        });
-        if (list.length === 0) {
-          await this.ctx.model.category.update({
-            id: categoryParent.id,
-            catalog: 0,
-          });
-        }
-      }
+      // adjust catalog
+      await this.adjustCatalog(categoryIdParent);
+    }
+
+    async move({ categoryId, categoryIdParent }) {
+      // category
+      const category = await this.ctx.model.category.get({ id: categoryId });
+      // categoryIdParentOld
+      const categoryIdParentOld = category.categoryIdParent;
+      // move
+      await this.ctx.model.category.update({
+        id: categoryId,
+        categoryIdParent,
+      });
+      // adjust catalog
+      await this.adjustCatalog(categoryIdParentOld);
+      await this.adjustCatalog(categoryIdParent);
+    }
+
+    async adjustCatalog(categoryId) {
+      if (categoryId === 0) return;
+      const children = await this.children({ categoryId });
+      await this.ctx.model.category.update({
+        id: categoryId,
+        catalog: children.length === 0 ? 0 : 1,
+      });
     }
 
   }

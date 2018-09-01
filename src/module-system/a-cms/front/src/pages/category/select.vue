@@ -20,43 +20,66 @@ export default {
     return {
       treeOptions: {
         fetchData: node => {
-          return this.fetchChildren(node.id);
+          return this.fetchChildren(node);
         },
       },
     };
   },
   computed: {
-    roleIdStart() {
-      return this.contextParams.roleIdStart;
+    categoryIdStart() {
+      return this.contextParams.categoryIdStart;
     },
     multiple() {
       return this.contextParams.multiple;
     },
+    language() {
+      return this.contextParams.language;
+    },
     catalogOnly() {
       return this.contextParams.catalogOnly;
     },
-    roleIdDisable() {
-      return this.contextParams.roleIdDisable;
+    leafOnly() {
+      return this.contextParams.leafOnly;
+    },
+    categoryIdDisable() {
+      return this.contextParams.categoryIdDisable;
     },
   },
   methods: {
-    fetchChildren(roleId) {
-      if (roleId === 'root') roleId = this.roleIdStart;
-      return this.$api.post('role/children', { roleId, page: { size: 0 } })
+    fetchChildren(node) {
+      // root
+      if (node.id === 'root' && this.categoryIdStart === undefined) {
+        return new Promise(resolve => {
+          resolve([{
+            id: '_root',
+            text: 'Root',
+            data: {
+              id: 0,
+              catalog: 1,
+            },
+            showChildren: true,
+            isBatch: true,
+          }]);
+        });
+      }
+      // children
+      const categoryId = node.id === 'root' ? this.categoryIdStart : node.data.id;
+      return this.$api.post('category/children', { language: this.language, categoryId })
         .then(data => {
           let list = data.list.map(item => {
             const node = {
               id: item.id,
-              text: item.roleName,
+              text: item.categoryName || '[New Category]',
               data: item,
               showChildren: item.catalog === 1,
               isBatch: item.catalog === 1,
             };
             return node;
           });
-          if (this.catalogOnly) {
-            list = list.filter(item => item.data.catalog === 1 && (!this.roleIdDisable || this.roleIdDisable !== item.id));
-          }
+          list = list.filter(item => {
+            return (!this.catalogOnly || item.data.catalog === 1) &&
+              (!this.categoryIdDisable || this.categoryIdDisable !== item.id);
+          });
           return list;
         })
         .catch(err => {
@@ -71,6 +94,7 @@ export default {
       this.$f7router.back();
     },
     onNodeClick(node) {
+      if (this.leafOnly && node.data.catalog === 1) return;
       if (node.states._selected) {
         this.$set(node.states, '_selected', false);
       } else {

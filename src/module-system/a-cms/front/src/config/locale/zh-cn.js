@@ -10,6 +10,7 @@ export default {
   Hidden: '隐藏',
   Language: '语言',
   Languages: '语言',
+  Move: '移动',
   Preview: '预览',
   seconds: '秒',
   Site: '站点',

@@ -6,7 +6,8 @@
         <span @click.stop="onNodeClickEdit(node)">{{node.text}}</span>
         <span>
           <span @click.stop="onNodeClickAdd(node)">{{$text('Add')}}</span>
-        <span v-if="node.id!=='_root'" @click.stop="onNodeClickDelete(node)">{{$text('Delete')}}</span>
+        <span v-if="node.data.id" @click.stop="onNodeClickMove(node)">{{$text('Move')}}</span>
+        <span v-if="node.data.id" @click.stop="onNodeClickDelete(node)">{{$text('Delete')}}</span>
         </span>
       </div>
     </eb-tree>
@@ -19,7 +20,7 @@ export default {
       language: this.$f7route.query.language,
       treeOptions: {
         fetchData: node => {
-          return this.fetchChildren(node.id);
+          return this.fetchChildren(node);
         },
       },
     };
@@ -37,23 +38,24 @@ export default {
     this.$meta.eventHub.$off('a-cms:category:save', this.onCategorySave);
   },
   methods: {
-    fetchChildren(categoryId) {
-      console.log(categoryId);
+    fetchChildren(node) {
       // root
-      if (categoryId === 'root') {
+      if (node.id === 'root') {
         return new Promise(resolve => {
           resolve([{
             id: '_root',
             text: 'Root',
-            data: null,
+            data: {
+              id: 0,
+              catalog: 1,
+            },
             showChildren: true,
             isBatch: true,
           }]);
         });
       }
-      if (categoryId === '_root') categoryId = 0;
       // children
-      return this.$api.post('category/children', { language: this.language, categoryId })
+      return this.$api.post('category/children', { language: this.language, categoryId: node.data.id })
         .then(data => {
           const list = data.list.map(item => {
             const node = {
@@ -72,11 +74,11 @@ export default {
         });
     },
     onNodeClickEdit(node) {
-      if (node.id === '_root') return;
-      this.$view.navigate(`/a/cms/category/edit?categoryId=${node.id}`);
+      if (!node.data.id) return;
+      this.$view.navigate(`/a/cms/category/edit?categoryId=${node.data.id}`);
     },
     onNodeClickAdd(node) {
-      const categoryId = node.id === '_root' ? 0 : node.id;
+      const categoryId = node.data.id;
       this.$view.dialog.prompt(this.$text('Please specify the category name')).then(categoryName => {
         if (!categoryName) return;
         this.$api.post('category/add', {
@@ -92,39 +94,29 @@ export default {
     },
     onNodeClickDelete(node) {
       return this.$view.dialog.confirm().then(() => {
-        return this.$api.post('category/delete', { categoryId: node.id }).then(() => {
+        return this.$api.post('category/delete', { categoryId: node.data.id }).then(() => {
           this.reloadChildren(node.parent);
-        });
+        }).catch(err => this.$view.dialog.alert(err.message));
       });
     },
-    reloadChildren(node) {
-      if (!node) return;
-      node.isBatch = true;
-      node.collapse().empty().expand();
-    },
-    onCategorySave(data) {
-      const node = this.$refs.tree.find(node => (node.id === data.categoryIdParent) || (data.categoryIdParent === 0 && node.id === '_root'));
-      this.reloadChildren(node && node[0]);
-    },
-    onPerformMove() {
-      this.$view.navigate('/a/baseadmin/role/select', {
-        target: '_self',
+    onNodeClickMove(node) {
+      const categoryId = node.data.id;
+      this.$view.navigate('/a/cms/category/select', {
         context: {
           params: {
-            roleIdStart: null,
-            multiple: false,
-            roleIdDisable: this.role.id,
-            catalogOnly: true,
+            language: this.language,
+            categoryIdDisable: categoryId,
           },
           callback: (code, data) => {
             if (code === 200) {
-              const roleIdParent = data.id;
-              if (this.role.roleIdParent !== roleIdParent) {
-                this.$api.post('role/move', { roleId: this.role.id, roleIdParent })
+              const categoryIdParent = data.id;
+              if (node.data.categoryIdParent !== categoryIdParent) {
+                this.$api.post('category/move', { categoryId, categoryIdParent })
                   .then(data => {
-                    this.$meta.eventHub.$emit('role:move', { roleId: this.role.id, roleIdFrom: this.role.roleIdParent, roleIdTo: roleIdParent });
-                    this.$meta.eventHub.$emit('role:dirty', { dirty: true });
-                    this.$view.toast.show({ text: this.$text('Operation succeeded') });
+                    for (const id of [ node.data.categoryIdParent, categoryIdParent ]) {
+                      const node = this.findNode(id);
+                      this.reloadChildren(node && node[0]);
+                    }
                   });
               }
             }
@@ -132,20 +124,18 @@ export default {
         },
       });
     },
-    // onRoleAdd(data) {
-    //   const node = this.tree.find(node => node.id === data.roleIdParent);
-    //   this.reloadChildren(node && node[0]);
-    // },
-    // onRoleMove(data) {
-    //   for (const roleIdParent of [ 'roleIdFrom', 'roleIdTo' ]) {
-    //     const node = this.tree.find(node => node.id === data[roleIdParent]);
-    //     this.reloadChildren(node && node[0]);
-    //   }
-    // },
-    // onRoleDelete(data) {
-    //   const node = this.tree.find(node => node.id === data.roleId);
-    //   if (node) node.remove();
-    // },
+    reloadChildren(node) {
+      if (!node) return;
+      node.isBatch = true;
+      node.collapse().empty().expand();
+    },
+    findNode(id) {
+      return this.$refs.tree.find(node => node.data.id === id);
+    },
+    onCategorySave(data) {
+      const node = this.findNode(data.categoryIdParent);
+      this.reloadChildren(node && node[0]);
+    },
   },
 };
 

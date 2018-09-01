@@ -37,6 +37,14 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async move() {
+      const res = await this.ctx.service.category.move({
+        categoryId: this.ctx.request.body.categoryId,
+        categoryIdParent: this.ctx.request.body.categoryIdParent,
+      });
+      this.ctx.success(res);
+    }
+
   }
   return CategoryController;
 };
