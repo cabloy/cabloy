@@ -29,15 +29,12 @@ export default {
       const _title = this.$text('Categories');
       return `${_title}: ${this.language}`;
     },
-    tree() {
-      return this.$refs.categoryList.tree;
-    },
   },
   mounted() {
-    this.$meta.eventHub.$on('role:save', this.onRoleSave);
+    this.$meta.eventHub.$on('a-cms:category:save', this.onCategorySave);
   },
   beforeDestroy() {
-    this.$meta.eventHub.$off('role:save', this.onRoleSave);
+    this.$meta.eventHub.$off('a-cms:category:save', this.onCategorySave);
   },
   methods: {
     fetchChildren(categoryId) {
@@ -75,7 +72,7 @@ export default {
         });
     },
     onNodeClickEdit(node) {
-      if (node.id === 0) return;
+      if (node.id === '_root') return;
       this.$view.navigate(`/a/cms/category/edit?categoryId=${node.id}`);
     },
     onNodeClickAdd(node) {
@@ -105,9 +102,35 @@ export default {
       node.isBatch = true;
       node.collapse().empty().expand();
     },
-    onRoleSave(data) {
-      const node = this.tree.find(node => node.id === data.roleIdParent);
+    onCategorySave(data) {
+      const node = this.$refs.tree.find(node => (node.id === data.categoryIdParent) || (data.categoryIdParent === 0 && node.id === '_root'));
       this.reloadChildren(node && node[0]);
+    },
+    onPerformMove() {
+      this.$view.navigate('/a/baseadmin/role/select', {
+        target: '_self',
+        context: {
+          params: {
+            roleIdStart: null,
+            multiple: false,
+            roleIdDisable: this.role.id,
+            catalogOnly: true,
+          },
+          callback: (code, data) => {
+            if (code === 200) {
+              const roleIdParent = data.id;
+              if (this.role.roleIdParent !== roleIdParent) {
+                this.$api.post('role/move', { roleId: this.role.id, roleIdParent })
+                  .then(data => {
+                    this.$meta.eventHub.$emit('role:move', { roleId: this.role.id, roleIdFrom: this.role.roleIdParent, roleIdTo: roleIdParent });
+                    this.$meta.eventHub.$emit('role:dirty', { dirty: true });
+                    this.$view.toast.show({ text: this.$text('Operation succeeded') });
+                  });
+              }
+            }
+          },
+        },
+      });
     },
     // onRoleAdd(data) {
     //   const node = this.tree.find(node => node.id === data.roleIdParent);

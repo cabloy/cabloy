@@ -2,6 +2,19 @@ module.exports = app => {
 
   class Category extends app.Service {
 
+    async item({ categoryId }) {
+      return await this.ctx.model.category.get({ id: categoryId });
+    }
+
+    async save({ categoryId, data }) {
+      await this.ctx.model.category.update({
+        id: categoryId,
+        categoryName: data.categoryName,
+        hidden: data.hidden,
+        sorting: data.sorting,
+      });
+    }
+
     async children({ language, categoryId }) {
       const list = await this.ctx.model.category.select({
         where: {

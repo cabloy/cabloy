@@ -1,9 +1,13 @@
 module.exports = {
   Article: '文章',
+  Catalog: '目录',
+  Language: '语言',
   Publish: '发布',
   Publishing: '发布中',
   Published: '已发布',
+  Sorting: '排序',
   'Article List': '文章清单',
+  'Category name': '目录名称',
   'Create Article': '新建文章',
   'What to write': '写点什么',
   'Language must not be empty': '语言不允许为空',

@@ -10,4 +10,5 @@ export default [
   { path: 'config/languagePreview', component: load('config/languagePreview') },
   { path: 'category/list', component: load('category/list') },
   { path: 'category/edit', component: load('category/edit') },
+  { path: 'category/select', component: load('category/select') },
 ];

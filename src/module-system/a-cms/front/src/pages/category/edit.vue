@@ -1,91 +1,46 @@
 <template>
-  <eb-validate ref="validate" :data="role" :params="{validator: 'role'}" :onPerform="onPerformValidate">
-    <f7-list>
-      <f7-list-item>
-        <f7-label floating>{{$text('Role Name')}}</f7-label>
-        <eb-input type="text" :placeholder="$text('Role Name')" :disabled="role.system===1" :clear-button="role.system===0" v-model="role.roleName" dataPath="roleName"></eb-input>
-      </f7-list-item>
-      <f7-list-item>
-        <f7-label floating>{{$text('Sorting')}}</f7-label>
-        <eb-input type="text" :placeholder="$text('Sorting')" clear-button v-model="role.sorting" dataPath="sorting"></eb-input>
-      </f7-list-item>
-      <f7-list-item>
-        <span class="text-color-gray">{{$text('Leader')}}</span>
-        <eb-toggle v-model="role.leader" dataPath="leader"></eb-toggle>
-      </f7-list-item>
-      <f7-list-item>
-        <span class="text-color-gray">{{$text('Catalog')}}</span>
-        <eb-toggle :value="role.catalog" disabled dataPath="catalog"></eb-toggle>
-      </f7-list-item>
-      <f7-list-item>
-        <span class="text-color-gray">{{$text('System')}}</span>
-        <eb-toggle :value="role.system" disabled dataPath="system"></eb-toggle>
-      </f7-list-item>
-    </f7-list>
-  </eb-validate>
+  <eb-page>
+    <eb-navbar :title="title" eb-back-link="Back">
+      <f7-nav-right>
+        <eb-link iconMaterial="save" :onPerform="onPerformSave"></eb-link>
+      </f7-nav-right>
+    </eb-navbar>
+    <eb-validate ref="validate" auto :data="category" :params="{validator: 'category'}" :onPerform="onPerformValidate">
+    </eb-validate>
+  </eb-page>
 </template>
 <script>
 export default {
-  meta: {
-    global: false,
+  data() {
+    return {
+      categoryId: this.$f7route.query.categoryId,
+      category: null,
+    };
   },
-  props: {
-    role: {
-      type: Object,
+  computed: {
+    title() {
+      let _title = this.$text('Category');
+      if (this.category) _title = `${_title}: ${this.category.categoryName}`;
+      return _title;
     },
   },
-  data() {
-    return {};
+  created() {
+    this.$api.post('category/item', { categoryId: this.categoryId }).then(data => {
+      this.category = data;
+    });
   },
   methods: {
     onPerformValidate() {
-      return this.$api.post('role/save', {
-        roleId: this.role.id,
-        data: this.role,
+      return this.$api.post('category/save', {
+        categoryId: this.categoryId,
+        data: this.category,
       }).then(() => {
-        this.$meta.eventHub.$emit('role:save', { roleId: this.role.id, roleIdParent: this.role.roleIdParent, role: this.role });
-        return true;
+        this.$meta.eventHub.$emit('a-cms:category:save', { categoryId: this.categoryId, categoryIdParent: this.category.categoryIdParent, category: this.category });
+        this.$f7router.back();
       });
     },
     onPerformSave() {
       return this.$refs.validate.perform();
-    },
-    onPerformMove() {
-      this.$view.navigate('/a/baseadmin/role/select', {
-        target: '_self',
-        context: {
-          params: {
-            roleIdStart: null,
-            multiple: false,
-            roleIdDisable: this.role.id,
-            catalogOnly: true,
-          },
-          callback: (code, data) => {
-            if (code === 200) {
-              const roleIdParent = data.id;
-              if (this.role.roleIdParent !== roleIdParent) {
-                this.$api.post('role/move', { roleId: this.role.id, roleIdParent })
-                  .then(data => {
-                    this.$meta.eventHub.$emit('role:move', { roleId: this.role.id, roleIdFrom: this.role.roleIdParent, roleIdTo: roleIdParent });
-                    this.$meta.eventHub.$emit('role:dirty', { dirty: true });
-                    this.$view.toast.show({ text: this.$text('Operation succeeded') });
-                  });
-              }
-            }
-          },
-        },
-      });
-    },
-    onPerformDelete() {
-      return this.$view.dialog.confirm()
-        .then(() => {
-          return this.$api.post('role/delete', { roleId: this.role.id })
-            .then(() => {
-              this.$meta.eventHub.$emit('role:delete', { roleId: this.role.id, roleIdParent: this.role.roleIdParent });
-              this.$meta.eventHub.$emit('role:dirty', { dirty: true });
-              this.$f7router.back();
-            });
-        });
     },
   },
 };

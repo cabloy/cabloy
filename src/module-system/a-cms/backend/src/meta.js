@@ -58,11 +58,15 @@ module.exports = app => {
         articleSearch: {
           schemas: 'articleSearch',
         },
+        category: {
+          schemas: 'category',
+        },
       },
       keywords: {},
       schemas: {
         article: schemas.article,
         articleSearch: schemas.articleSearch,
+        category: schemas.category,
       },
     },
     settings: {
