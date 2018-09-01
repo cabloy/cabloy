@@ -5,7 +5,7 @@ import action from './components/atom/action.js';
 
 export default {
   menus,
-  atoms,
+  ebAtoms: atoms,
   item,
   action,
 };
