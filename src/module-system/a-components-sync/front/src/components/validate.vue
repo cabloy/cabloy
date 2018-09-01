@@ -175,7 +175,7 @@ export default {
                   data: data[key],
                   dataPathRoot: this.adjustDataPath(dataPath),
                   errors: this.verrors ? this.verrors.slice(0) : null,
-                  readOnly: this.readOnly,
+                  readOnly: this.readOnly || property.ebReadOnly,
                 },
                 callback: (code, res) => {
                   if (code) {
@@ -199,8 +199,9 @@ export default {
     },
     renderText(c, data, pathParent, key, property) {
       const title = this.$text(property.ebTitle || key);
-      if (this.readOnly) {
+      if (this.readOnly || property.ebReadOnly) {
         return c('f7-list-item', {
+          staticClass: this.readOnly || property.ebReadOnly ? 'text-color-gray' : '',
           attrs: {
             title,
             after: data[key] ? data[key].toString() : null,
@@ -236,14 +237,14 @@ export default {
       const title = this.$text(property.ebTitle || key);
       return c('f7-list-item', [
         c('span', {
-          staticClass: 'text-color-gray',
+          staticClass: this.readOnly || property.ebReadOnly ? 'text-color-gray' : '',
           domProps: { innerText: title },
         }),
         c('eb-toggle', {
           attrs: {
             dataPath: pathParent + key,
             value: this.getValue(data, key, property),
-            disabled: this.readOnly,
+            disabled: this.readOnly || property.ebReadOnly,
           },
           on: {
             input: value => {
@@ -259,7 +260,7 @@ export default {
         name: key,
         dataPath: pathParent + key,
         value: this.getValue(data, key, property),
-        readOnly: this.readOnly,
+        readOnly: this.readOnly || property.ebReadOnly,
       };
       if (property.ebOptions) attrs.options = property.ebOptions;
       if (property.ebOptionsUrl) attrs.optionsUrl = property.ebOptionsUrl;
@@ -268,8 +269,9 @@ export default {
       if (property.ebOptionValueKey) attrs.optionValueKey = property.ebOptionValueKey;
       if (property.ebMultiple) attrs.multiple = property.ebMultiple;
       return c('f7-list-item', {
+        staticClass: this.readOnly || property.ebReadOnly ? 'text-color-gray' : '',
         attrs: {
-          smartSelect: !this.readOnly,
+          smartSelect: !this.readOnly && !property.ebReadOnly,
           title,
           smartSelectParams: property.ebParams || { openIn: 'page', closeOnSelect: true },
         },
