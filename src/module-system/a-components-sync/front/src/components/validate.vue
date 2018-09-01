@@ -201,7 +201,7 @@ export default {
       const title = this.$text(property.ebTitle || key);
       if (this.readOnly || property.ebReadOnly) {
         return c('f7-list-item', {
-          staticClass: this.readOnly || property.ebReadOnly ? 'text-color-gray' : '',
+          staticClass: property.ebReadOnly ? 'text-color-gray' : '',
           attrs: {
             title,
             after: data[key] ? data[key].toString() : null,
@@ -237,7 +237,7 @@ export default {
       const title = this.$text(property.ebTitle || key);
       return c('f7-list-item', [
         c('span', {
-          staticClass: this.readOnly || property.ebReadOnly ? 'text-color-gray' : '',
+          staticClass: property.ebReadOnly ? 'text-color-gray' : '',
           domProps: { innerText: title },
         }),
         c('eb-toggle', {
@@ -269,7 +269,7 @@ export default {
       if (property.ebOptionValueKey) attrs.optionValueKey = property.ebOptionValueKey;
       if (property.ebMultiple) attrs.multiple = property.ebMultiple;
       return c('f7-list-item', {
-        staticClass: this.readOnly || property.ebReadOnly ? 'text-color-gray' : '',
+        staticClass: property.ebReadOnly ? 'text-color-gray' : '',
         attrs: {
           smartSelect: !this.readOnly && !property.ebReadOnly,
           title,
