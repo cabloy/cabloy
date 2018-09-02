@@ -218,11 +218,13 @@ const Fn = module.exports = ctx => {
             action.actionModule = _actions[key].actionModule || module.info.relativeName;
             action.actionComponent = _actions[key].actionComponent;
             action.actionPath = _actions[key].actionPath;
+            action.meta = _actions[key].meta;
           } else {
             // default
             action.actionModule = moduleInfo.relativeName;
             action.actionComponent = _actionsSystemMeta[key].actionComponent;
             action.actionPath = _actionsSystemMeta[key].actionPath;
+            action.meta = (_actions && _actions[key] && _actions[key].meta) || _actionsSystemMeta[key].meta;
           }
           action.titleLocale = ctx.text(action.title);
           actions[key] = action;
@@ -241,6 +243,7 @@ const Fn = module.exports = ctx => {
               actionComponent: _actions[key].actionComponent,
               actionPath: _actions[key].actionPath,
               authorize: _actions[key].authorize !== false,
+              meta: _actions[key].meta,
             };
             if (!_actions[key].actionComponent && !_actions[key].actionPath) {
               // default

@@ -13,7 +13,10 @@
     </template>
     <template v-else>
       <atoms v-if="ready" mode="list" :itemShow="item"></atoms>
-      <eb-validate v-if="ready" ref="validate" :readOnly="this.mode!=='edit'" auto :data="item" :params="validateParams" :onPerform="onPerformValidate">
+      <eb-validate v-if="ready" ref="validate" :readOnly="this.mode!=='edit'" :auto="!custom" :data="item" :params="validateParams" :onPerform="onPerformValidate">
+        <template v-if="custom">
+          <custom :item="item" :mode="this.mode"></custom>
+        </template>
       </eb-validate>
       <f7-popover :id="popoverId">
         <f7-list v-if="ready" inset>
@@ -56,6 +59,7 @@ export default {
       actions: null,
       popoverId: Vue.prototype.$meta.util.nextId('popover'),
       notfound: false,
+      custom: false,
     };
   },
   computed: {
@@ -87,6 +91,14 @@ export default {
         // module
         this.$meta.module.use(this.item.module, module => {
           this.module = module;
+          const _action = this.getAction({ module: this.item.module, atomClassName: this.item.atomClassName, name: 'write' });
+          const _componentName = _action.meta && _action.meta.item && _action.meta.item.component;
+          if (_componentName) {
+            const _component = module.options.components[_componentName];
+            this.$meta.util.setComponentModule(_component, module);
+            this.$options.components.custom = _component;
+            this.custom = true;
+          }
         });
         // validateParams
         this.$api.post('atom/validator', {
