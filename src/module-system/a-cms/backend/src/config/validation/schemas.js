@@ -7,7 +7,7 @@ module.exports = app => {
       atomName: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'What to write',
+        ebTitle: 'Atom Name',
         notEmpty: true,
       },
       language: {

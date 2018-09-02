@@ -9,7 +9,6 @@ module.exports = {
   'Article List': '文章清单',
   'Category name': '目录名称',
   'Create Article': '新建文章',
-  'What to write': '写点什么',
   'Language must not be empty': '语言不允许为空',
   'Theme not set': '没有设置主题',
   'Theme not found': '没有找到主题',

@@ -15,10 +15,12 @@ export default {
   seconds: '秒',
   Site: '站点',
   Sorting: '排序',
+  'Atom Name': '原子名称',
   'Category name': '目录名称',
   'Language Configuration': '语言配置',
   'Please specify the category name': '请指定目录名称',
   'Select Category': '选择目录',
   'Site Configuration': '站点配置',
   'Time Used': '用时',
+  'What to write': '写点什么',
 };

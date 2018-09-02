@@ -9,7 +9,13 @@ module.exports = app => {
             tableName: 'aCmsArticle',
           },
           actions: {
-            write: { actionPath: 'article/edit?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}' },
+            write: {
+              meta: {
+                item: {
+                  component: 'articleItem',
+                },
+              },
+            },
             publish: {
               code: 101,
               title: 'Publish',
