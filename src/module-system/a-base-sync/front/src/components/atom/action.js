@@ -11,6 +11,12 @@ export default {
         }).then(key => {
           ctx.$utils.extend(item, key);
           ctx.$meta.eventHub.$emit('atom:action', { key, action });
+          // write
+          return ctx.$store.dispatch('a/base/getActions').then(actionsAll => {
+            let actionWrite = actionsAll[item.module][item.atomClassName].write;
+            actionWrite = ctx.$utils.extend({}, actionWrite);
+            return ctx.$meta.util.performAction({ ctx, action: actionWrite, item });
+          });
         });
       } else if (action.name === 'delete') {
         // delete

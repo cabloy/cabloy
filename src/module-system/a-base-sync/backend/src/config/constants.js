@@ -11,7 +11,7 @@ module.exports = {
       custom: 100, // custom action start from custom
     },
     actionMeta: {
-      create: { title: 'Create', actionComponent: 'action', actionPath: 'atom/edit?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}' },
+      create: { title: 'Create', actionComponent: 'action' },
       read: { title: 'View', actionPath: 'atom/view?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}' },
       write: { title: 'Edit', actionPath: 'atom/edit?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}' },
       delete: { title: 'Delete', actionComponent: 'action' },

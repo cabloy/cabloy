@@ -2366,6 +2366,12 @@ var item = __webpack_require__(4);
         }).then(function (key) {
           ctx.$utils.extend(item, key);
           ctx.$meta.eventHub.$emit('atom:action', { key: key, action: action });
+
+          return ctx.$store.dispatch('a/base/getActions').then(function (actionsAll) {
+            var actionWrite = actionsAll[item.module][item.atomClassName].write;
+            actionWrite = ctx.$utils.extend({}, actionWrite);
+            return ctx.$meta.util.performAction({ ctx: ctx, action: actionWrite, item: item });
+          });
         });
       } else if (action.name === 'delete') {
         var _key = { atomId: item.atomId, itemId: item.itemId };
