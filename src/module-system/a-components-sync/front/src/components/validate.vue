@@ -74,7 +74,7 @@ export default {
         });
     },
     getError(dataPath) {
-      if (!this.verrors) return '';
+      if (!this.verrors || !dataPath) return '';
       dataPath = this.adjustDataPath(dataPath);
       const error = this.verrors.find(item => {
         if (dataPath.charAt(dataPath.length - 1) === '/') return item.dataPath.indexOf(dataPath) > -1;
@@ -83,7 +83,7 @@ export default {
       return error ? error.message : '';
     },
     clearError(dataPath) {
-      if (!this.verrors) return;
+      if (!this.verrors || !dataPath) return;
       dataPath = this.adjustDataPath(dataPath);
       while (true) {
         const index = this.verrors.findIndex(item => item.dataPath === dataPath);

@@ -1766,7 +1766,7 @@ select_component.options.__file = "select.vue"
       });
     },
     getError: function getError(dataPath) {
-      if (!this.verrors) return '';
+      if (!this.verrors || !dataPath) return '';
       dataPath = this.adjustDataPath(dataPath);
       var error = this.verrors.find(function (item) {
         if (dataPath.charAt(dataPath.length - 1) === '/') return item.dataPath.indexOf(dataPath) > -1;
@@ -1775,7 +1775,7 @@ select_component.options.__file = "select.vue"
       return error ? error.message : '';
     },
     clearError: function clearError(dataPath) {
-      if (!this.verrors) return;
+      if (!this.verrors || !dataPath) return;
       dataPath = this.adjustDataPath(dataPath);
       while (true) {
         var index = this.verrors.findIndex(function (item) {
