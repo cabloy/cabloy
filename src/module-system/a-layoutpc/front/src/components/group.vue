@@ -132,6 +132,14 @@ export default {
         const view = this.$refs[this.views[i].id];
         left -= this.$$(view.$el).width() + spacing;
         spacing = this.size.spacing;
+        console.log(left);
+        // display
+        if (left >= 0) {
+          this.$$(view.$el).show();
+        } else {
+          this.$$(view.$el).hide();
+        }
+        // left
         const _left = this.$$(view.$el).css('left');
         if (_left === 'auto' || _left === '0px') {
           this.$$(view.$el).css({
