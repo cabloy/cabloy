@@ -1,5 +1,11 @@
 # History
 
+## 2018-09-03, Version 1.2.0
+
+* **refactor**
+  * a-base: changed to sync module
+
+
 ## 2018-08-16, Version 1.1.5
 
 * **fix**
