@@ -65,7 +65,7 @@
 </template>
 <script>
 import Vue from 'vue';
-const ebActions = Vue.prototype.$meta.module.get('a-components').options.components.ebActions;
+import ebActions from '../../common/actions.js';
 export default {
   mixins: [ ebActions ],
   meta: {

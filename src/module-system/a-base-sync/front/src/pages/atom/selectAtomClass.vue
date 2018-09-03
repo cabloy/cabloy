@@ -10,7 +10,7 @@
 <script>
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.components.ebPageContext;
-const ebAtomClasses = Vue.prototype.$meta.module.get('a-components').options.components.ebAtomClasses;
+import ebAtomClasses from '../../common/atomClasses.js';
 export default {
   mixins: [ ebPageContext, ebAtomClasses ],
   data() {

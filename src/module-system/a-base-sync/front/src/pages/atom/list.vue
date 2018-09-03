@@ -36,7 +36,7 @@
 <script>
 import Vue from 'vue';
 import atoms from '../../components/atom/list.vue';
-const ebAtomClasses = Vue.prototype.$meta.module.get('a-components').options.components.ebAtomClasses;
+import ebAtomClasses from '../../common/atomClasses.js';
 export default {
   mixins: [ ebAtomClasses ],
   components: {

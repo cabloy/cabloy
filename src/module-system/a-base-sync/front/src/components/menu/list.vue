@@ -39,7 +39,7 @@
 </template>
 <script>
 import Vue from 'vue';
-const ebModules = Vue.prototype.$meta.module.get('a-components').options.components.ebModules;
+import ebModules from '../../common/modules.js';
 export default {
   meta: {
     global: false,
