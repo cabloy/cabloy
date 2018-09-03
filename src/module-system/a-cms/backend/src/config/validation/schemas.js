@@ -16,8 +16,30 @@ module.exports = app => {
         ebTitle: 'Language',
         notEmpty: true,
       },
-      editMode: {
+      categoryId: {
+        type: 'number',
+        ebType: 'text',
+        ebTitle: 'Category',
+        notEmpty: true,
+      },
+      sticky: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Sticky',
+        default: false,
+      },
+      keywords: {
         type: 'string',
+        ebType: 'text',
+        ebTitle: 'Keywords',
+      },
+      description: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Description',
+      },
+      editMode: {
+        type: 'number',
         ebType: 'text',
         ebTitle: 'Edit Mode',
         notEmpty: true,
@@ -25,8 +47,7 @@ module.exports = app => {
       content: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Language',
-        notEmpty: true,
+        ebTitle: 'Content',
       },
     },
   };

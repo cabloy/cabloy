@@ -15,7 +15,7 @@ module.exports = app => {
             atomId int(11) DEFAULT '0',
             categoryId int(11) DEFAULT '0',
             language varchar(50) DEFAULT NULL,
-            top int(11) DEFAULT '0',
+            sticky int(11) DEFAULT '0',
             keywords varchar(255) DEFAULT NULL,
             description text DEFAULT NULL,
             url varchar(255) DEFAULT NULL,
@@ -60,6 +60,15 @@ module.exports = app => {
           )
         `;
         await this.ctx.model.query(sql);
+
+        // create view: aCmsArticleView
+        sql = `
+          CREATE VIEW aCmsArticleView as
+            select a.*,b.categoryName from aCmsArticle a
+              left join aCmsCategory b on a.categoryId=b.id
+        `;
+        await this.ctx.model.query(sql);
+
       }
     }
 

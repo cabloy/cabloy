@@ -6,7 +6,7 @@ module.exports = app => {
         article: {
           info: {
             title: 'Article',
-            tableName: 'aCmsArticle',
+            tableName: 'aCmsArticleView',
           },
           actions: {
             write: {

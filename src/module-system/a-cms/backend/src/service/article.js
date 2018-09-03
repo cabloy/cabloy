@@ -15,6 +15,7 @@ module.exports = app => {
       await this.ctx.model.content.insert({
         atomId: key.atomId,
         itemId,
+        content: '',
       });
       return { atomId: key.atomId, itemId };
     }
@@ -34,6 +35,10 @@ module.exports = app => {
       await this.ctx.model.article.update({
         id: key.itemId,
         language: item.language,
+        categoryId: item.categoryId,
+        sticky: item.sticky,
+        keywords: item.keywords,
+        description: item.description,
         editMode: item.editMode,
       });
       // update content

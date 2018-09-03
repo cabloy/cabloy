@@ -11,4 +11,5 @@ export default [
   { path: 'category/list', component: load('category/list') },
   { path: 'category/edit', component: load('category/edit') },
   { path: 'category/select', component: load('category/select') },
+  { path: 'article/contentEdit', component: load('article/contentEdit') },
 ];
