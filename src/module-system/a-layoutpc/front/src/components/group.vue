@@ -132,7 +132,6 @@ export default {
         const view = this.$refs[this.views[i].id];
         left -= this.$$(view.$el).width() + spacing;
         spacing = this.size.spacing;
-        console.log(left);
         // display
         if (left >= 0) {
           this.$$(view.$el).show();
