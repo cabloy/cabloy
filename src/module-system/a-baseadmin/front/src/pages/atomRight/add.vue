@@ -24,7 +24,7 @@
 </template>
 <script>
 import Vue from 'vue';
-const ebActions = Vue.prototype.$meta.module.get('a-components').options.components.ebActions;
+const ebActions = Vue.prototype.$meta.module.get('a-base').options.components.ebActions;
 export default {
   mixins: [ ebActions ],
   data() {

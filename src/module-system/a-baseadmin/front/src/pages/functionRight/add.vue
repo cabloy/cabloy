@@ -45,9 +45,7 @@ export default {
     },
   },
   created() {
-    this.$meta.module.use('a-base', module => {
-      this.$store.dispatch('a/base/getFunctions');
-    });
+    this.$store.dispatch('a/base/getFunctions');
   },
   methods: {
     onSelectFunction() {

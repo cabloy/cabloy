@@ -18,7 +18,7 @@
 </template>
 <script>
 import Vue from 'vue';
-const ebModules = Vue.prototype.$meta.module.get('a-components').options.components.ebModules;
+const ebModules = Vue.prototype.$meta.module.get('a-base').options.components.ebModules;
 export default {
   mixins: [ ebModules ],
   data() {
