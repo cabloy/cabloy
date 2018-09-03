@@ -157,7 +157,7 @@ export default {
     },
     renderPanel(c, data, pathParent, key, property) {
       const dataPath = pathParent + key + '/';
-      return c('eb-list-panel', {
+      return c('eb-list-item-panel', {
         attrs: {
           link: '#',
           title: this.$text(property.ebTitle || key),
