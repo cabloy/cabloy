@@ -19,10 +19,7 @@ import tabPageContent from './components/tabPageContent.vue';
 import searchPage from './components/searchPage.vue';
 import popover from './components/popover.vue';
 import contextMenu from './components/contextMenu.vue';
-import modules from './common/modules.js';
 import pageContext from './common/pageContext.js';
-import actions from './common/actions.js';
-import atomClasses from './common/atomClasses.js';
 
 export default {
   ebLoadMore: loadMore,
@@ -46,8 +43,5 @@ export default {
   ebSearchPage: searchPage,
   ebPopover: popover,
   ebContextMenu: contextMenu,
-  ebModules: modules,
   ebPageContext: pageContext,
-  ebActions: actions,
-  ebAtomClasses: atomClasses,
 };

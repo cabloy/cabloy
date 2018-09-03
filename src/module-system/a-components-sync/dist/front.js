@@ -2653,37 +2653,6 @@ var contextMenu_component = normalizeComponent(
 
 contextMenu_component.options.__file = "contextMenu.vue"
 /* harmony default export */ var contextMenu = (contextMenu_component.exports);
-// CONCATENATED MODULE: ./front/src/common/modules.js
-/* harmony default export */ var modules = ({
-  meta: {
-    component: false
-  },
-  data: function data() {
-    return {
-      moduleBase: null
-    };
-  },
-
-  computed: {
-    modulesAll: function modulesAll() {
-      return this.moduleBase ? this.$store.state.a.base.modules : null;
-    }
-  },
-  created: function created() {
-    var _this = this;
-
-    this.$meta.module.use('a-base', function (module) {
-      _this.moduleBase = module;
-      _this.$store.dispatch('a/base/getModules');
-    });
-  },
-
-  methods: {
-    getModule: function getModule(module) {
-      return this.modulesAll ? this.modulesAll[module] : null;
-    }
-  }
-});
 // CONCATENATED MODULE: ./front/src/common/pageContext.js
 /* harmony default export */ var pageContext = ({
   meta: {
@@ -2710,66 +2679,7 @@ contextMenu_component.options.__file = "contextMenu.vue"
     }
   }
 });
-// CONCATENATED MODULE: ./front/src/common/actions.js
-/* harmony default export */ var actions = ({
-  meta: {
-    component: false
-  },
-  computed: {
-    actionsAll: function actionsAll() {
-      return this.$store.state.a.base.actions;
-    }
-  },
-  methods: {
-    getAction: function getAction(action) {
-      if (!this.actionsAll) return null;
-      return this.actionsAll[action.module][action.atomClassName][action.name];
-    },
-    getActionTitle: function getActionTitle(action) {
-      var _action = this.getAction(action);
-      return _action ? _action.titleLocale : null;
-    },
-    getActionsOfAtomClass: function getActionsOfAtomClass(atomClass) {
-      if (!atomClass || !this.actionsAll) return null;
-      return this.actionsAll[atomClass.module][atomClass.atomClassName];
-    }
-  },
-  created: function created() {
-    var _this = this;
-
-    this.$meta.module.use('a-base', function (module) {
-      _this.$store.dispatch('a/base/getActions');
-    });
-  }
-});
-// CONCATENATED MODULE: ./front/src/common/atomClasses.js
-/* harmony default export */ var atomClasses = ({
-  meta: {
-    component: false
-  },
-  computed: {
-    atomClassesAll: function atomClassesAll() {
-      return this.$store.state.a.base.atomClasses;
-    }
-  },
-  methods: {
-    getAtomClass: function getAtomClass(atomClass) {
-      if (!this.atomClassesAll || !atomClass) return null;
-      return this.atomClassesAll[atomClass.module][atomClass.atomClassName];
-    }
-  },
-  created: function created() {
-    var _this = this;
-
-    this.$meta.module.use('a-base', function (module) {
-      _this.$store.dispatch('a/base/getAtomClasses');
-    });
-  }
-});
 // CONCATENATED MODULE: ./front/src/components.js
-
-
-
 
 
 
@@ -2815,10 +2725,7 @@ contextMenu_component.options.__file = "contextMenu.vue"
   ebSearchPage: searchPage,
   ebPopover: popover,
   ebContextMenu: contextMenu,
-  ebModules: modules,
-  ebPageContext: pageContext,
-  ebActions: actions,
-  ebAtomClasses: atomClasses
+  ebPageContext: pageContext
 });
 
 /***/ }),
