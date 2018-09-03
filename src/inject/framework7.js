@@ -1,4 +1,3 @@
-import fns from '../base/fns.js';
 import App from './pages/app.vue';
 import routes from './routes.js';
 import patchRouter from './patch/router.js';

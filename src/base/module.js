@@ -20,8 +20,21 @@ export default function(Vue) {
   };
 
   const module = {
-    get(moduleRelativeName) {
+    _get(moduleRelativeName) {
       return Vue.prototype.$meta.modules[moduleRelativeName || 'main'];
+    },
+    get(moduleRelativeName) {
+      const module = this._get(moduleRelativeName);
+      if (module) return module;
+      // try sync module
+      try {
+        const moduleInfo = mparse.parseInfo(moduleRelativeName);
+        if (!moduleInfo) throw new Error('invalid module name!');
+        this._require(moduleInfo);
+        return this._get(moduleRelativeName);
+      } catch (err) {
+        return null;
+      }
     },
     set(moduleRelativeName, module) {
       Vue.prototype.$meta.modules[moduleRelativeName] = module;
@@ -31,7 +44,7 @@ export default function(Vue) {
     use(moduleName, cb) {
       const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;
       if (!moduleInfo) throw new Error('invalid module name!');
-      const module = this.get(moduleInfo.relativeName);
+      const module = this._get(moduleInfo.relativeName);
       if (module) return cb(module);
       if (loadingQueue.push(moduleInfo.relativeName, cb)) {
         if (moduleInfo.sync) {
@@ -84,7 +97,7 @@ export default function(Vue) {
       // local
       rLocalJSs.keys().every(key => {
         const moduleInfo = mparse.parseInfo(mparse.parseName(key));
-        const module = this.get(moduleInfo.relativeName);
+        const module = this._get(moduleInfo.relativeName);
         if (!module) {
           this._requireJS(rLocalJSs, key, moduleInfo);
         }
@@ -92,7 +105,7 @@ export default function(Vue) {
       // global
       rGlobalJSs.keys().every(key => {
         const moduleInfo = mparse.parseInfo(mparse.parseName(key));
-        const module = this.get(moduleInfo.relativeName);
+        const module = this._get(moduleInfo.relativeName);
         if (!module) {
           this._requireJS(rGlobalJSs, key, moduleInfo);
         }
