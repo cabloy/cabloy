@@ -15,7 +15,7 @@
       <atoms v-if="ready" mode="list" :itemShow="item"></atoms>
       <eb-validate v-if="ready" ref="validate" :readOnly="this.mode!=='edit'" :auto="!custom" :data="item" :params="validateParams" :onPerform="onPerformValidate">
         <template v-if="custom">
-          <custom :item="item" :mode="this.mode"></custom>
+          <custom :item="item" :mode="this.mode" @save="onSave"></custom>
         </template>
       </eb-validate>
       <f7-popover :id="popoverId">
@@ -124,6 +124,9 @@ export default {
     },
     findAction(actionName) {
       return this.actions.find(item => item.name === actionName);
+    },
+    onSave(event) {
+      return this.onAction(event, 'save');
     },
     onAction(event, action) {
       if (action === 'save' || action === 'submit') {
