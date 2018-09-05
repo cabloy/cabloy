@@ -30,8 +30,8 @@ export default {
     title() {
       return `${this.dirty ? '* ' : ''}${this.item.atomName}`;
     },
-    mode() {
-      return this.contextParams.mode;
+    readOnly() {
+      return this.contextParams.readOnly;
     },
     item() {
       return this.contextParams.item;
@@ -44,7 +44,7 @@ export default {
       return this.editable && this.$view.size !== 'small';
     },
     editable() {
-      return this.mode === 'edit';
+      return !this.readOnly;
     },
     defaultOpen() {
       return this.editable ? '' : 'preview';

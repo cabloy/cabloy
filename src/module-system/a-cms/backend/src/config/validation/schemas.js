@@ -3,6 +3,11 @@ module.exports = app => {
   // article
   schemas.article = {
     type: 'object',
+    meta: {
+      custom: {
+        component: 'articleItem',
+      },
+    },
     properties: {
       atomName: {
         type: 'string',
@@ -12,8 +17,9 @@ module.exports = app => {
       },
       language: {
         type: 'string',
-        ebType: 'text',
+        ebType: 'select',
         ebTitle: 'Language',
+        ebMultiple: false,
         notEmpty: true,
       },
       categoryId: {

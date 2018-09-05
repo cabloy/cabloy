@@ -1,7 +1,7 @@
 <template>
   <div>
-    <template v-if="this.mode==='edit'">
-      <item-edit :mode="mode" :item="item" @save="onSave"></item-edit>
+    <template v-if="!this.readOnly">
+      <item-edit :readOnly="readOnly" :item="data" @save="onSave"></item-edit>
     </template>
     <template v-else></template>
   </div>
@@ -17,10 +17,10 @@ export default {
   },
   props: {
     // mode: edit/view
-    mode: {
-      type: String,
+    readOnly: {
+      type: Boolean,
     },
-    item: {
+    data: {
       type: Object,
     },
   },

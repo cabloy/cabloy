@@ -9,13 +9,6 @@ module.exports = app => {
             tableName: 'aCmsArticleView',
           },
           actions: {
-            write: {
-              meta: {
-                item: {
-                  component: 'articleItem',
-                },
-              },
-            },
             publish: {
               code: 101,
               title: 'Publish',

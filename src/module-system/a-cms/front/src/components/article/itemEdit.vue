@@ -2,45 +2,30 @@
   <f7-list>
     <f7-list-group>
       <f7-list-item group-title :title="$text('Title')"></f7-list-item>
-      <f7-list-item>
-        <f7-label floating>{{$text('Title')}}</f7-label>
-        <eb-input type="text" clear-button v-model="item.atomName" dataPath="atomName"></eb-input>
-      </f7-list-item>
+      <eb-validate-item dataKey="atomName"></eb-validate-item>
     </f7-list-group>
     <f7-list-group>
       <f7-list-item group-title :title="$text('Content')"></f7-list-item>
-      <eb-list-item-choose eb-href="#" dataPath="content" :title="$text('Content')" :onPerform="onPerformEditContent">
+      <eb-list-item-choose link="#" dataPath="content" :title="$text('Content')" :onChoose="onChooseEditContent">
       </eb-list-item-choose>
     </f7-list-group>
     <f7-list-group>
       <f7-list-item group-title :title="$text('Basic Info')"></f7-list-item>
-      <f7-list-item smartSelect :title="$text('Language')" :smartSelectParams="{openIn: 'page', closeOnSelect: true}">
-        <eb-select name="language" v-model="item.language" dataPath="language" :options="languages"></eb-select>
-      </f7-list-item>
-      <eb-list-item-choose ref="category" eb-href="#" dataPath="categoryId" :title="$text('Category')" :onPerform="onPerformChooseCategory">
+      <eb-validate-item dataKey="language" :options="languages"></eb-validate-item>
+      <eb-list-item-choose link="#" dataPath="categoryId" :title="$text('Category')" :onChoose="onChooseCategory">
         <div slot="after">{{item.categoryName}}</div>
       </eb-list-item-choose>
-      <f7-list-item>
-        <span>{{$text('Sticky')}}</span>
-        <eb-toggle v-model="item.sticky" dataPath="sticky"></eb-toggle>
-      </f7-list-item>
-      <f7-list-item>
-        <f7-label floating>{{$text('Keywords')}}</f7-label>
-        <eb-input type="text" clear-button v-model="item.keywords" dataPath="keywords"></eb-input>
-      </f7-list-item>
-      <f7-list-item>
-        <f7-label floating>{{$text('Description')}}</f7-label>
-        <eb-input type="text" clear-button v-model="item.description" dataPath="description"></eb-input>
-      </f7-list-item>
+      <eb-validate-item dataKey="sticky"></eb-validate-item>
+      <eb-validate-item dataKey="keywords"></eb-validate-item>
+      <eb-validate-item dataKey="description"></eb-validate-item>
     </f7-list-group>
   </f7-list>
 </template>
 <script>
 export default {
   props: {
-    // mode: edit/view
-    mode: {
-      type: String,
+    readOnly: {
+      type: Boolean,
     },
     item: {
       type: Object,
@@ -52,7 +37,7 @@ export default {
   computed: {
     languages() {
       let _languages = this.$local.getters('languages');
-      if (!_languages) return [];
+      if (!_languages) return null;
       _languages = _languages.map(item => {
         return {
           title: item,
@@ -70,34 +55,39 @@ export default {
     onSave() {
       this.$emit('save');
     },
-    onPerformChooseCategory() {
+    onChooseCategory() {
       if (!this.item.language) {
-        return this.$view.dialog.alert(this.$text('Please specify the language'));
+        this.$view.dialog.alert(this.$text('Please specify the language'));
+        return false;
       }
-      this.$view.navigate('/a/cms/category/select', {
-        context: {
-          params: {
-            language: this.item.language,
-            categoryIdStart: 0,
-            leafOnly: true,
+      return new Promise(resolve => {
+        this.$view.navigate('/a/cms/category/select', {
+          context: {
+            params: {
+              language: this.item.language,
+              categoryIdStart: 0,
+              leafOnly: true,
+            },
+            callback: (code, data) => {
+              if (code === 200) {
+                this.item.categoryId = data.id;
+                this.item.categoryName = data.categoryName;
+                resolve(true);
+              } else if (code === false) {
+                resolve(false);
+              }
+            },
           },
-          callback: (code, data) => {
-            if (code === 200) {
-              this.item.categoryId = data.id;
-              this.item.categoryName = data.categoryName;
-              this.$refs.category.clearValidateError();
-            }
-          },
-        },
+        });
       });
     },
-    onPerformEditContent() {
+    onChooseEditContent() {
       this.$view.navigate('/a/cms/article/contentEdit', {
         context: {
           params: {
             ctx: this,
             item: this.item,
-            mode: this.mode,
+            readOnly: this.readOnly,
           },
           callback: (code, data) => {
             if (code === 200) {
