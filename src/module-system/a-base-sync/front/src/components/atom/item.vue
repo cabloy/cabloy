@@ -13,7 +13,7 @@
     </template>
     <template v-else>
       <atoms v-if="ready" mode="list" :itemShow="item"></atoms>
-      <eb-validate v-if="ready" ref="validate" :readOnly="this.mode!=='edit'" auto :data="item" :params="validateParams" :onPerform="onPerformValidate" @save="onSave">
+      <eb-validate v-if="ready" ref="validate" :readOnly="this.mode!=='edit'" auto :data="item" :params="validateParams" :onPerform="onPerformValidate" :onSave="onSave">
       </eb-validate>
       <f7-popover :id="popoverId">
         <f7-list v-if="ready" inset>
