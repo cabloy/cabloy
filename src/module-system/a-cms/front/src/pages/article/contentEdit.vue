@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar :title="title" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link iconMaterial="save" :onPerform="onPerformSave"></eb-link>
+        <eb-link v-if="!readOnly" iconMaterial="save" :onPerform="onPerformSave"></eb-link>
         <eb-link iconMaterial="visibility" :onPerform="onPerformPreview"></eb-link>
       </f7-nav-right>
     </eb-navbar>
@@ -115,6 +115,7 @@ export default {
       });
     },
     onChange(data) {
+      if (this.readOnly) return;
       this.dirty = true;
       this.contextCallback(200, { content: data });
     },
@@ -122,8 +123,10 @@ export default {
       this.onPerformSave();
     },
     onPerformSave() {
-      this.contextParams.ctx.onSave();
-      this.dirty = false;
+      return this.contextParams.ctx.onSave().then(() => {
+        this.dirty = false;
+        return true;
+      });
     },
     onPerformPreview() {
 

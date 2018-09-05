@@ -12,9 +12,9 @@
     <f7-list-group>
       <f7-list-item group-title :title="$text('Basic Info')"></f7-list-item>
       <eb-validate-item dataKey="language" :options="languages"></eb-validate-item>
-      <eb-list-item-choose link="#" dataPath="categoryId" :title="$text('Category')" :onChoose="onChooseCategory">
+      <f7-list-item :title="$text('Category')">
         <div slot="after">{{item.categoryName}}</div>
-      </eb-list-item-choose>
+      </f7-list-item>
       <eb-validate-item dataKey="sticky"></eb-validate-item>
       <eb-validate-item dataKey="keywords"></eb-validate-item>
       <eb-validate-item dataKey="description"></eb-validate-item>
@@ -29,9 +29,6 @@ export default {
     },
     item: {
       type: Object,
-    },
-    onSave: {
-      type: Function,
     },
   },
   computed: {
@@ -52,31 +49,8 @@ export default {
     this.$local.dispatch('getLanguages');
   },
   methods: {
-    onChooseCategory() {
-      if (!this.item.language) {
-        this.$view.dialog.alert(this.$text('Please specify the language'));
-        return false;
-      }
-      return new Promise(resolve => {
-        this.$view.navigate('/a/cms/category/select', {
-          context: {
-            params: {
-              language: this.item.language,
-              categoryIdStart: 0,
-              leafOnly: true,
-            },
-            callback: (code, data) => {
-              if (code === 200) {
-                this.item.categoryId = data.id;
-                this.item.categoryName = data.categoryName;
-                resolve(true);
-              } else if (code === false) {
-                resolve(false);
-              }
-            },
-          },
-        });
-      });
+    onSave() {
+      this.$emit('save');
     },
     onChooseEditContent() {
       this.$view.navigate('/a/cms/article/contentEdit', {
