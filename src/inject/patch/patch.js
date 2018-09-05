@@ -18,6 +18,9 @@ export default function(ctx, router) {
   // navigate
   const navigate = router.navigate;
   router.navigate = (navigateParams, navigateOptions, cb) => {
+    if (navigateOptions && navigateOptions.initial) {
+      return navigate.call(router, navigateParams, navigateOptions);
+    }
     ctx.$nextTick(() => {
       // url
       let url;
