@@ -12,11 +12,7 @@ export default {
           props: {
             data: this.data,
             readOnly: this.readOnly,
-          },
-          on: {
-            save: () => {
-              this.$emit('save');
-            },
+            onSave: this.onSave,
           },
         });
       }
@@ -48,6 +44,9 @@ export default {
     },
     errors: {
       type: Array,
+    },
+    onSave: {
+      type: Function,
     },
   },
   data() {

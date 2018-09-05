@@ -16,6 +16,17 @@ export default {
       type: Array,
     },
   },
+  data() {
+    return {
+      validate: null,
+    };
+  },
+  created() {
+    this.validate = this.getValidate();
+  },
+  beforeDestroy() {
+    this.validate = null;
+  },
   methods: {
     getValidate() {
       let parent = this.$parent;
@@ -39,14 +50,12 @@ export default {
       }
     },
     adjustDataPath(dataPath) {
-      const validate = this.getValidate();
       if (!dataPath) return dataPath;
-      if (dataPath[0] !== '/') return validate.dataPathRoot + dataPath;
+      if (dataPath[0] !== '/') return this.validate.dataPathRoot + dataPath;
       return dataPath;
     },
     renderItem(c) {
-      const validate = this.getValidate();
-      return this._renderItem(c, validate.data, validate.schema.properties, this.dataKey, this.pathParent, { options: this.options });
+      return this._renderItem(c, this.validate.data, this.validate.schema.properties, this.dataKey, this.pathParent, { options: this.options });
     },
     _renderItem(c, data, properties, key, pathParent, meta) {
       const property = properties[key];
@@ -104,7 +113,7 @@ export default {
                   data: data[key],
                   dataPathRoot: this.adjustDataPath(dataPath),
                   errors: this.verrors ? this.verrors.slice(0) : null,
-                  readOnly: this.readOnly || property.ebReadOnly,
+                  readOnly: this.validate.readOnly || property.ebReadOnly,
                 },
                 callback: (code, res) => {
                   if (code) {
@@ -128,7 +137,7 @@ export default {
     },
     renderText(c, data, pathParent, key, property) {
       const title = this.$text(property.ebTitle || key);
-      if (this.readOnly || property.ebReadOnly) {
+      if (this.validate.readOnly || property.ebReadOnly) {
         return c('f7-list-item', {
           key,
           staticClass: property.ebReadOnly ? 'text-color-gray' : '',
@@ -178,7 +187,7 @@ export default {
           attrs: {
             dataPath: pathParent + key,
             value: this.getValue(data, key, property),
-            disabled: this.readOnly || property.ebReadOnly,
+            disabled: this.validate.readOnly || property.ebReadOnly,
           },
           on: {
             input: value => {
@@ -194,7 +203,7 @@ export default {
         name: key,
         dataPath: pathParent + key,
         value: this.getValue(data, key, property),
-        readOnly: this.readOnly || property.ebReadOnly,
+        readOnly: this.validate.readOnly || property.ebReadOnly,
       };
       if (meta.options) attrs.options = meta.options;
       if (!meta.options && property.ebOptions) attrs.options = property.ebOptions;
@@ -207,7 +216,7 @@ export default {
         key,
         staticClass: property.ebReadOnly ? 'text-color-gray' : '',
         attrs: {
-          smartSelect: !this.readOnly && !property.ebReadOnly,
+          smartSelect: !this.validate.readOnly && !property.ebReadOnly,
           title,
           smartSelectParams: property.ebParams || { openIn: 'page', closeOnSelect: true },
         },

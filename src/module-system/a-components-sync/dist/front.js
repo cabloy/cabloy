@@ -390,10 +390,10 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_validateItem_vue_vue_type_style_index_0_id_14f24b65_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(11);
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_validateItem_vue_vue_type_style_index_0_id_14f24b65_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_validateItem_vue_vue_type_style_index_0_id_14f24b65_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_validateItem_vue_vue_type_style_index_0_id_7f461e47_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(11);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_validateItem_vue_vue_type_style_index_0_id_7f461e47_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_validateItem_vue_vue_type_style_index_0_id_7f461e47_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
 /* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_validateItem_vue_vue_type_style_index_0_id_14f24b65_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
+ /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_validateItem_vue_vue_type_style_index_0_id_7f461e47_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 /* 49 */,
@@ -1723,8 +1723,6 @@ select_component.options.__file = "select.vue"
 /* harmony default export */ var validatevue_type_script_lang_js_ = ({
   name: 'eb-validate',
   render: function render(c) {
-    var _this = this;
-
     if (!this.auto) return c('div', this.$slots.default);
 
     if (this.auto && this.ready) {
@@ -1732,12 +1730,8 @@ select_component.options.__file = "select.vue"
         return c('custom', {
           props: {
             data: this.data,
-            readOnly: this.readOnly
-          },
-          on: {
-            save: function save() {
-              _this.$emit('save');
-            }
+            readOnly: this.readOnly,
+            onSave: this.onSave
           }
         });
       }
@@ -1769,6 +1763,9 @@ select_component.options.__file = "select.vue"
     },
     errors: {
       type: Array
+    },
+    onSave: {
+      type: Function
     }
   },
   data: function data() {
@@ -1787,10 +1784,10 @@ select_component.options.__file = "select.vue"
   },
   watch: {
     params: function params() {
-      var _this2 = this;
+      var _this = this;
 
       this.$nextTick(function () {
-        _this2.fetchSchema();
+        _this.fetchSchema();
       });
     }
   },
@@ -1803,16 +1800,16 @@ select_component.options.__file = "select.vue"
       this.verrors = null;
     },
     perform: function perform(event, context) {
-      var _this3 = this;
+      var _this2 = this;
 
       if (this.auto && !this.ready) return null;
       return this.onPerform(event, context).then(function (data) {
-        _this3.reset();
+        _this2.reset();
         return data;
       }).catch(function (err) {
         if (err) {
           if (err.code !== 422) throw err;
-          _this3.verrors = err.message;
+          _this2.verrors = err.message;
         }
       });
     },
@@ -1845,29 +1842,29 @@ select_component.options.__file = "select.vue"
       return dataPath;
     },
     fetchSchema: function fetchSchema() {
-      var _this4 = this;
+      var _this3 = this;
 
       if (!this.params) return;
       if (!this.params.module) this.params.module = this.$page.$module.name;
       this.$meta.module.use(this.params.module, function (module) {
-        _this4.module = module;
-        _this4.$api.post('/a/validation/validation/schema', {
-          module: _this4.params.module,
-          validator: _this4.params.validator,
-          schema: _this4.params.schema
+        _this3.module = module;
+        _this3.$api.post('/a/validation/validation/schema', {
+          module: _this3.params.module,
+          validator: _this3.params.validator,
+          schema: _this3.params.schema
         }).then(function (data) {
-          _this4.schema = data;
-          if (_this4.errors) _this4.verrors = _this4.errors;
+          _this3.schema = data;
+          if (_this3.errors) _this3.verrors = _this3.errors;
 
-          var _componentName = _this4.schema.meta && _this4.schema.meta.custom && _this4.schema.meta.custom.component;
+          var _componentName = _this3.schema.meta && _this3.schema.meta.custom && _this3.schema.meta.custom.component;
           if (_componentName) {
             var _component = module.options.components[_componentName];
-            _this4.$meta.util.setComponentModule(_component, module);
-            _this4.$options.components.custom = _component;
-            _this4.custom = true;
+            _this3.$meta.util.setComponentModule(_component, module);
+            _this3.$options.components.custom = _component;
+            _this3.custom = true;
           }
 
-          _this4.$emit('schema:ready', _this4.schema);
+          _this3.$emit('schema:ready', _this3.schema);
         });
       });
     },
@@ -1933,6 +1930,18 @@ validate_component.options.__file = "validate.vue"
       type: Array
     }
   },
+  data: function data() {
+    return {
+      validate: null
+    };
+  },
+  created: function created() {
+    this.validate = this.getValidate();
+  },
+  beforeDestroy: function beforeDestroy() {
+    this.validate = null;
+  },
+
   methods: {
     getValidate: function getValidate() {
       var parent = this.$parent;
@@ -1956,14 +1965,12 @@ validate_component.options.__file = "validate.vue"
       }
     },
     adjustDataPath: function adjustDataPath(dataPath) {
-      var validate = this.getValidate();
       if (!dataPath) return dataPath;
-      if (dataPath[0] !== '/') return validate.dataPathRoot + dataPath;
+      if (dataPath[0] !== '/') return this.validate.dataPathRoot + dataPath;
       return dataPath;
     },
     renderItem: function renderItem(c) {
-      var validate = this.getValidate();
-      return this._renderItem(c, validate.data, validate.schema.properties, this.dataKey, this.pathParent, { options: this.options });
+      return this._renderItem(c, this.validate.data, this.validate.schema.properties, this.dataKey, this.pathParent, { options: this.options });
     },
     _renderItem: function _renderItem(c, data, properties, key, pathParent, meta) {
       var property = properties[key];
@@ -2015,7 +2022,7 @@ validate_component.options.__file = "validate.vue"
                   data: data[key],
                   dataPathRoot: _this.adjustDataPath(dataPath),
                   errors: _this.verrors ? _this.verrors.slice(0) : null,
-                  readOnly: _this.readOnly || property.ebReadOnly
+                  readOnly: _this.validate.readOnly || property.ebReadOnly
                 },
                 callback: function callback(code, res) {
                   if (code) {
@@ -2041,7 +2048,7 @@ validate_component.options.__file = "validate.vue"
       var _this2 = this;
 
       var title = this.$text(property.ebTitle || key);
-      if (this.readOnly || property.ebReadOnly) {
+      if (this.validate.readOnly || property.ebReadOnly) {
         return c('f7-list-item', {
           key: key,
           staticClass: property.ebReadOnly ? 'text-color-gray' : '',
@@ -2087,7 +2094,7 @@ validate_component.options.__file = "validate.vue"
         attrs: {
           dataPath: pathParent + key,
           value: this.getValue(data, key, property),
-          disabled: this.readOnly || property.ebReadOnly
+          disabled: this.validate.readOnly || property.ebReadOnly
         },
         on: {
           input: function input(value) {
@@ -2104,7 +2111,7 @@ validate_component.options.__file = "validate.vue"
         name: key,
         dataPath: pathParent + key,
         value: this.getValue(data, key, property),
-        readOnly: this.readOnly || property.ebReadOnly
+        readOnly: this.validate.readOnly || property.ebReadOnly
       };
       if (meta.options) attrs.options = meta.options;
       if (!meta.options && property.ebOptions) attrs.options = property.ebOptions;
@@ -2117,7 +2124,7 @@ validate_component.options.__file = "validate.vue"
         key: key,
         staticClass: property.ebReadOnly ? 'text-color-gray' : '',
         attrs: {
-          smartSelect: !this.readOnly && !property.ebReadOnly,
+          smartSelect: !this.validate.readOnly && !property.ebReadOnly,
           title: title,
           smartSelectParams: property.ebParams || { openIn: 'page', closeOnSelect: true }
         }
@@ -2134,8 +2141,8 @@ validate_component.options.__file = "validate.vue"
 });
 // CONCATENATED MODULE: ./front/src/components/validateItem.vue?vue&type=script&lang=js&
  /* harmony default export */ var components_validateItemvue_type_script_lang_js_ = (validateItemvue_type_script_lang_js_); 
-// EXTERNAL MODULE: ./front/src/components/validateItem.vue?vue&type=style&index=0&id=14f24b65&scoped=true&lang=css&
-var validateItemvue_type_style_index_0_id_14f24b65_scoped_true_lang_css_ = __webpack_require__(48);
+// EXTERNAL MODULE: ./front/src/components/validateItem.vue?vue&type=style&index=0&id=7f461e47&scoped=true&lang=css&
+var validateItemvue_type_style_index_0_id_7f461e47_scoped_true_lang_css_ = __webpack_require__(48);
 
 // CONCATENATED MODULE: ./front/src/components/validateItem.vue
 var validateItem_render, validateItem_staticRenderFns
@@ -2152,7 +2159,7 @@ var validateItem_component = normalizeComponent(
   validateItem_staticRenderFns,
   false,
   null,
-  "14f24b65",
+  "7f461e47",
   null
   
 )
