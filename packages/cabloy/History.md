@@ -1,5 +1,11 @@
 # History
 
+## 2018-09-05, Version 1.2.2
+
+* **features**
+  * enhance schema&validate
+
+
 ## 2018-09-03, Version 1.2.0
 
 * **refactor**
