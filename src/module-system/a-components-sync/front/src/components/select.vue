@@ -1,5 +1,4 @@
 <script>
-import Vue from 'vue';
 import validate from '../common/validate.js';
 export default {
   name: 'eb-select',
@@ -155,7 +154,6 @@ export default {
     }
     // options
     const options = [];
-    let optionSelected;
     if (this.voptions) {
       for (const opt of this.voptions) {
         let selected;

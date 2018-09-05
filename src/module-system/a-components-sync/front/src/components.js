@@ -9,6 +9,7 @@ import toggle from './components/toggle.vue';
 import radio from './components/radio.vue';
 import select from './components/select.vue';
 import validate from './components/validate.vue';
+import validateItem from './components/validateItem.vue';
 import listButton from './components/listButton.vue';
 import listItem from './components/listItem.vue';
 import listPanel from './components/listPanel.vue';
@@ -34,6 +35,7 @@ export default {
   ebRadio: radio,
   ebSelect: select,
   ebValidate: validate,
+  ebValidateItem: validateItem,
   ebListButton: listButton,
   ebListItem: listItem,
   ebListItemPanel: listPanel,

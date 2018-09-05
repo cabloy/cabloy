@@ -5,7 +5,24 @@ export default {
     // slot
     if (!this.auto) return c('div', this.$slots.default);
     // schema
-    if (this.auto && this.ready) return this.renderSchema(c);
+    if (this.auto && this.ready) {
+      // custom
+      if (this.custom) {
+        return c('custom', {
+          props: {
+            data: this.data,
+            readOnly: this.readOnly,
+          },
+          on: {
+            save: () => {
+              this.$emit('save');
+            },
+          },
+        });
+      }
+      // auto
+      return this.renderSchema(c);
+    }
   },
   props: {
     readOnly: {
@@ -38,6 +55,7 @@ export default {
       module: null,
       schema: null,
       verrors: null,
+      custom: false,
     };
   },
   computed: {
@@ -95,19 +113,6 @@ export default {
       if (dataPath[0] !== '/') return this.dataPathRoot + dataPath;
       return dataPath;
     },
-    getValue(data, key, property) {
-      if (data[key] === undefined) return property.default;
-      return data[key];
-    },
-    setValue(data, key, value, property) {
-      if (property.type === 'number') {
-        data[key] = Number(value);
-      } else if (property.type === 'boolean') {
-        data[key] = Boolean(value);
-      } else {
-        data[key] = value;
-      }
-    },
     fetchSchema() {
       if (!this.params) return;
       if (!this.params.module) this.params.module = this.$page.$module.name;
@@ -120,6 +125,15 @@ export default {
         }).then(data => {
           this.schema = data;
           if (this.errors) this.verrors = this.errors;
+          // custom
+          const _componentName = this.schema.meta && this.schema.meta.custom && this.schema.meta.custom.component;
+          if (_componentName) {
+            const _component = module.options.components[_componentName];
+            this.$meta.util.setComponentModule(_component, module);
+            this.$options.components.custom = _component;
+            this.custom = true;
+          }
+          // event
           this.$emit('schema:ready', this.schema);
         });
       });
@@ -131,161 +145,17 @@ export default {
     renderProperties(c, data, properties, pathParent) {
       const children = [];
       for (const key in properties) {
-        const property = properties[key];
-        // panel
-        if (property.ebType === 'panel') {
-          children.push(this.renderPanel(c, data, pathParent, key, property));
-        }
-        // group
-        else if (property.ebType === 'group') {
-          children.push(this.renderGroup(c, data, pathParent, key, property));
-        }
-        // text
-        else if (property.ebType === 'text') {
-          children.push(this.renderText(c, data, pathParent, key, property));
-        }
-        // toggle
-        else if (property.ebType === 'toggle') {
-          children.push(this.renderToggle(c, data, pathParent, key, property));
-        }
-        // select
-        else if (property.ebType === 'select') {
-          children.push(this.renderSelect(c, data, pathParent, key, property));
-        }
+        children.push(c('validate-item', {
+          key,
+          props: {
+            dataKey: key,
+            pathParent,
+          },
+        }));
       }
       return children;
     },
-    renderPanel(c, data, pathParent, key, property) {
-      const dataPath = pathParent + key + '/';
-      return c('eb-list-item-panel', {
-        attrs: {
-          link: '#',
-          title: this.$text(property.ebTitle || key),
-          dataPath,
-        },
-        on: {
-          click: event => {
-            this.$view.navigate('/a/validation/validate', {
-              target: '_self',
-              context: {
-                params: {
-                  module: this.params.module,
-                  validator: this.params.validator,
-                  schema: property.$ref,
-                  data: data[key],
-                  dataPathRoot: this.adjustDataPath(dataPath),
-                  errors: this.verrors ? this.verrors.slice(0) : null,
-                  readOnly: this.readOnly || property.ebReadOnly,
-                },
-                callback: (code, res) => {
-                  if (code) {
-                    data[key] = res.data;
-                    this.verrors = res.errors;
-                  }
-                },
-              },
-            });
-          },
-        },
-      });
-    },
-    renderGroup(c, data, pathParent, key, property) {
-      const children = this.renderProperties(c, data[key], property.properties, `${pathParent}${key}/`);
-      const group = c('f7-list-item', {
-        attrs: { groupTitle: true, title: this.$text(property.ebTitle || key) },
-      });
-      children.unshift(group);
-      return c('f7-list-group', children);
-    },
-    renderText(c, data, pathParent, key, property) {
-      const title = this.$text(property.ebTitle || key);
-      if (this.readOnly || property.ebReadOnly) {
-        return c('f7-list-item', {
-          staticClass: property.ebReadOnly ? 'text-color-gray' : '',
-          attrs: {
-            title,
-            after: data[key] ? data[key].toString() : null,
-          },
-        });
-      }
-      const placeholder = property.ebDescription ? this.$text(property.ebDescription) : title;
-      let type;
-      if (property.ebSecure) type = 'password';
-      else type = 'text';
-      return c('f7-list-item', [
-        c('f7-label', {
-          attrs: { floating: true },
-          domProps: { innerText: title },
-        }),
-        c('eb-input', {
-          attrs: {
-            type,
-            placeholder,
-            clearButton: true,
-            dataPath: pathParent + key,
-            value: this.getValue(data, key, property),
-          },
-          on: {
-            input: value => {
-              this.setValue(data, key, value, property);
-            },
-          },
-        }),
-      ]);
-    },
-    renderToggle(c, data, pathParent, key, property) {
-      const title = this.$text(property.ebTitle || key);
-      return c('f7-list-item', [
-        c('span', {
-          staticClass: property.ebReadOnly ? 'text-color-gray' : '',
-          domProps: { innerText: title },
-        }),
-        c('eb-toggle', {
-          attrs: {
-            dataPath: pathParent + key,
-            value: this.getValue(data, key, property),
-            disabled: this.readOnly || property.ebReadOnly,
-          },
-          on: {
-            input: value => {
-              this.setValue(data, key, value, property);
-            },
-          },
-        }),
-      ]);
-    },
-    renderSelect(c, data, pathParent, key, property) {
-      const title = this.$text(property.ebTitle || key);
-      const attrs = {
-        name: key,
-        dataPath: pathParent + key,
-        value: this.getValue(data, key, property),
-        readOnly: this.readOnly || property.ebReadOnly,
-      };
-      if (property.ebOptions) attrs.options = property.ebOptions;
-      if (property.ebOptionsUrl) attrs.optionsUrl = property.ebOptionsUrl;
-      if (property.ebOptionsUrlParams) attrs.optionsUrlParams = property.ebOptionsUrlParams;
-      if (property.ebOptionTitleKey) attrs.optionTitleKey = property.ebOptionTitleKey;
-      if (property.ebOptionValueKey) attrs.optionValueKey = property.ebOptionValueKey;
-      if (property.ebMultiple) attrs.multiple = property.ebMultiple;
-      return c('f7-list-item', {
-        staticClass: property.ebReadOnly ? 'text-color-gray' : '',
-        attrs: {
-          smartSelect: !this.readOnly && !property.ebReadOnly,
-          title,
-          smartSelectParams: property.ebParams || { openIn: 'page', closeOnSelect: true },
-        },
-      }, [
-        c('eb-select', {
-          attrs,
-          on: {
-            input: value => {
-              this.setValue(data, key, value, property);
-            },
-          },
-        }),
-      ]);
-    },
+
   },
 };
 
