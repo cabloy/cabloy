@@ -85,6 +85,9 @@ export default {
     atomClass: {
       type: Object,
     },
+    where: {
+      type: Object,
+    },
   },
   data() {
     return {
@@ -163,10 +166,10 @@ export default {
       } else if (this.mode === 'search') {
         // where
         const where = {};
-        if (this.params.atomName) {
+        if (this.params && this.params.atomName) {
           where['a.atomName'] = { val: this.params.atomName, op: 'like' };
         }
-        if (this.params.atomClassExtra) {
+        if (this.params && this.params.atomClassExtra) {
           this.$utils.extend(where, this.params.atomClassExtra);
         }
         // options
@@ -178,9 +181,13 @@ export default {
           page: { index },
         };
         // label
-        if (this.params.label) {
+        if (this.params && this.params.label) {
           options.label = this.params.label;
         }
+      }
+      // where
+      if (this.where) {
+        options.where = this.$utils.extend({}, options.where, this.where);
       }
       // fetch
       return this.$api.post('atom/select', {

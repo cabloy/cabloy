@@ -40,11 +40,12 @@
 <script>
 import Vue from 'vue';
 import ebModules from '../../common/modules.js';
+import ebMenus from '../../common/menus.js';
 export default {
   meta: {
     global: false,
   },
-  mixins: [ ebModules ],
+  mixins: [ ebModules, ebMenus ],
   props: {
     mode: {
       type: String,
@@ -57,9 +58,6 @@ export default {
     };
   },
   computed: {
-    menusAll() {
-      return this.$local.state.menus;
-    },
     itemGroups() {
       if (this.mode === 'scenes') return this.itemGroupsScenes;
       if (this.mode === 'modules') return this.itemGroupsModules;
@@ -92,9 +90,6 @@ export default {
       }
       return groups;
     },
-  },
-  created() {
-    this.$local.dispatch('getMenus');
   },
   mounted() {
     this.$meta.eventHub.$on('menu:star', this.onStarChanged);
@@ -201,10 +196,6 @@ export default {
           this.items[index].star = data.star;
         }
       }
-    },
-    getMenu(item) {
-      if (!this.menusAll) return null;
-      return this.menusAll[item.module][item.name];
     },
     onItemClick(event, item) {
       const _menu = this.getMenu(item);

@@ -13,6 +13,7 @@
       <f7-list-item smartSelect :title="$text('Label')" :smartSelectParams="{openIn: 'page', closeOnSelect: true}">
         <eb-select name="label" v-model="label" :options="labels"></eb-select>
       </f7-list-item>
+      <f7-list-item divider></f7-list-item>
       <f7-list-item :title="$text('Atom class')" link="#" @click="onSelectAtomClass">
         <div slot="after">{{atomClass && atomClass.title}}</div>
       </f7-list-item>

@@ -17,17 +17,17 @@
     </eb-navbar>
     <f7-tabs>
       <eb-tab-page-content :id="tabIdList" tab-active>
-        <atoms slot="list" mode="list" :atomClass="atomClass"></atoms>
+        <atoms slot="list" mode="list" :atomClass="atomClass" :where="where"></atoms>
       </eb-tab-page-content>
       <eb-tab-page-content :id="tabIdDrafts">
-        <atoms slot="list" mode="drafts" :atomClass="atomClass"></atoms>
+        <atoms slot="list" mode="drafts" :atomClass="atomClass" :where="where"></atoms>
       </eb-tab-page-content>
       <eb-tab-page-content :id="tabIdStars">
-        <atoms slot="list" mode="stars" :atomClass="atomClass"></atoms>
+        <atoms slot="list" mode="stars" :atomClass="atomClass" :where="where"></atoms>
       </eb-tab-page-content>
       <template v-if="labels">
         <eb-tab-page-content v-for="key of Object.keys(labels)" :key="key" :id="`${tabIdLabels}_${key}`">
-          <atoms slot="list" :mode="`labels-${key}`" :atomClass="atomClass"></atoms>
+          <atoms slot="list" :mode="`labels-${key}`" :atomClass="atomClass" :where="where"></atoms>
         </eb-tab-page-content>
       </template>
     </f7-tabs>
@@ -44,6 +44,9 @@ export default {
   },
   data() {
     return {
+      module: this.$f7route.query.module,
+      atomClassName: this.$f7route.query.atomClassName,
+      where: this.$f7route.query.where ? JSON.parse(this.$f7route.query.where) : null,
       tabIdList: Vue.prototype.$meta.util.nextId('tab'),
       tabIdDrafts: Vue.prototype.$meta.util.nextId('tab'),
       tabIdStars: Vue.prototype.$meta.util.nextId('tab'),
@@ -55,10 +58,10 @@ export default {
       return this.$local.state.labels;
     },
     atomClass() {
-      if (!this.$f7route.query.module || !this.$f7route.query.atomClassName) return null;
+      if (!this.module || !this.atomClassName) return null;
       return {
-        module: this.$f7route.query.module,
-        atomClassName: this.$f7route.query.atomClassName,
+        module: this.module,
+        atomClassName: this.atomClassName,
       };
     },
     title() {
@@ -78,6 +81,7 @@ export default {
     },
   },
   created() {
+    console.log(this.where);
     this.$local.dispatch('getLabels');
   },
 };
