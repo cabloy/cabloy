@@ -22,8 +22,6 @@ module.exports = app => {
 
     async read({ atomClass, key, item, user }) {
       // read
-      const data = await this.ctx.model.content.get({ atomId: key.atomId });
-      item.content = data.content;
     }
 
     async select({ atomClass, options, items, user }) {

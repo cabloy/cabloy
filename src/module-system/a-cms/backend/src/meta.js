@@ -48,6 +48,16 @@ module.exports = app => {
           sorting: 1,
           menu: 1,
         },
+        listArticleByCategory: {
+          title: 'Article List(by category)',
+          scene: 'list',
+          autoRight: 1,
+          atomClassName: 'article',
+          action: 'read',
+          sorting: 1,
+          menu: 1,
+          actionPath: 'article/category',
+        },
       },
     },
     validation: {

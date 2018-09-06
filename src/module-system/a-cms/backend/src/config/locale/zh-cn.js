@@ -7,6 +7,7 @@ module.exports = {
   Published: '已发布',
   Sorting: '排序',
   'Article List': '文章清单',
+  'Article List(by category)': '文章清单(按目录)',
   'Category name': '目录名称',
   'Create Article': '新建文章',
   'Language must not be empty': '语言不允许为空',

@@ -61,8 +61,28 @@ module.exports = app => {
   // article search
   schemas.articleSearch = {
     type: 'object',
+    meta: {
+      custom: {
+        component: 'articleSearch',
+      },
+    },
     properties: {
-
+      language: {
+        type: 'string',
+        ebType: 'select',
+        ebTitle: 'Language',
+        ebMultiple: false,
+      },
+      categoryId: {
+        type: 'number',
+        ebType: 'text',
+        ebTitle: 'Category',
+      },
+      content: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Content',
+      },
     },
   };
 

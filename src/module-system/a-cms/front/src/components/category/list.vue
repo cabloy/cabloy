@@ -9,38 +9,62 @@ export default {
     global: false,
   },
   props: {
+    categoryIdStart: {
+      type: Number,
+    },
     language: {
       type: String,
+    },
+    catalogOnly: {
+      type: Boolean,
+    },
+    categoryIdDisable: {
+      type: Boolean,
     },
   },
   data() {
     return {
       treeOptions: {
         fetchData: node => {
-          return this.fetchChildren(node.id);
+          return this.fetchChildren(node);
         },
       },
     };
   },
-  computed: {
-    tree() {
-      return this.$refs.tree;
-    },
-  },
   methods: {
-    fetchChildren(roleId) {
-      if (roleId === 'root') roleId = this.roleIdStart;
-      return this.$api.post('role/children', { roleId, page: { size: 0 } })
+    fetchChildren(node) {
+      // root
+      if (node.id === 'root' && this.categoryIdStart === undefined) {
+        return new Promise(resolve => {
+          resolve([{
+            id: '_root',
+            text: 'Root',
+            data: {
+              id: 0,
+              catalog: 1,
+            },
+            showChildren: true,
+            isBatch: true,
+          }]);
+        });
+      }
+      // children
+      const categoryId = node.id === 'root' ? this.categoryIdStart : node.data.id;
+      return this.$api.post('category/children', { language: this.language, categoryId })
         .then(data => {
-          const list = data.list.map(item => {
+          let list = data.list.map(item => {
             const node = {
               id: item.id,
-              text: item.roleName || '[New Role]',
+              text: item.categoryName || '[New Category]',
               data: item,
               showChildren: item.catalog === 1,
               isBatch: item.catalog === 1,
             };
             return node;
+          });
+          list = list.filter(item => {
+            return (!this.catalogOnly || item.data.catalog === 1) &&
+              (!this.categoryIdDisable || this.categoryIdDisable !== item.id);
           });
           return list;
         })

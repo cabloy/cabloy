@@ -1,5 +1,6 @@
 export default {
   Add: '添加',
+  Article: '文章',
   Build: '构建',
   Catalog: '目录',
   Category: '目录',

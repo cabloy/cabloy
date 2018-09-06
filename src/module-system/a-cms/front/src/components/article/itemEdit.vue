@@ -2,7 +2,7 @@
   <f7-list>
     <f7-list-group>
       <f7-list-item group-title :title="$text('Title')"></f7-list-item>
-      <eb-validate-item dataKey="atomName"></eb-validate-item>
+      <eb-list-item-validate dataKey="atomName"></eb-list-item-validate>
     </f7-list-group>
     <f7-list-group>
       <f7-list-item group-title :title="$text('Content')"></f7-list-item>
@@ -11,13 +11,13 @@
     </f7-list-group>
     <f7-list-group>
       <f7-list-item group-title :title="$text('Basic Info')"></f7-list-item>
-      <eb-validate-item dataKey="language" :options="languages"></eb-validate-item>
+      <eb-list-item-validate dataKey="language" :options="languages"></eb-list-item-validate>
       <eb-list-item-choose link="#" dataPath="categoryId" :title="$text('Category')" :onChoose="onChooseCategory">
         <div slot="after">{{item.categoryName}}</div>
       </eb-list-item-choose>
-      <eb-validate-item dataKey="sticky"></eb-validate-item>
-      <eb-validate-item dataKey="keywords"></eb-validate-item>
-      <eb-validate-item dataKey="description"></eb-validate-item>
+      <eb-list-item-validate dataKey="sticky"></eb-list-item-validate>
+      <eb-list-item-validate dataKey="keywords"></eb-list-item-validate>
+      <eb-list-item-validate dataKey="description"></eb-list-item-validate>
     </f7-list-group>
   </f7-list>
 </template>
