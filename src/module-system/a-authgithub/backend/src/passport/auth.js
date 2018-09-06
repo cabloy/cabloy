@@ -1,4 +1,5 @@
-const strategy = require('passport-github').Strategy;
+const require3 = require('require3');
+const strategy = require3('passport-github').Strategy;
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const provider = moduleInfo.name;
