@@ -35,7 +35,7 @@ export default {
   ebRadio: radio,
   ebSelect: select,
   ebValidate: validate,
-  ebValidateItem: validateItem,
+  ebListItemValidate: validateItem,
   ebListButton: listButton,
   ebListItem: listItem,
   ebListItemPanel: listPanel,

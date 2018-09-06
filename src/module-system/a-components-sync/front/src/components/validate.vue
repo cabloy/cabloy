@@ -1,6 +1,10 @@
 <script>
+import validateItem from './validateItem.vue';
 export default {
   name: 'eb-validate',
+  components: {
+    validateItem,
+  },
   render(c) {
     // slot
     if (!this.auto) return c('div', this.$slots.default);
@@ -64,6 +68,8 @@ export default {
   },
   watch: {
     params() {
+      this.custom = false;
+      delete this.$options.components.custom;
       this.$nextTick(() => {
         this.fetchSchema();
       });

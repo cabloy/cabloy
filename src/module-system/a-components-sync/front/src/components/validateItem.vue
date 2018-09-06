@@ -1,6 +1,6 @@
 <script>
 export default {
-  name: 'eb-validate-item',
+  name: 'eb-list-item-validate',
   render(c) {
     return this.renderItem(c);
   },
@@ -41,13 +41,18 @@ export default {
       return data[key];
     },
     setValue(data, key, value, property) {
+      let _value;
       if (property.type === 'number') {
-        data[key] = Number(value);
+        _value = Number(value);
       } else if (property.type === 'boolean') {
-        data[key] = Boolean(value);
+        _value = Boolean(value);
       } else {
-        data[key] = value;
+        _value = value;
       }
+      if (data[key] !== _value) {
+        this.$emit('change', _value);
+      }
+      this.$set(data, key, _value); // always set as maybe Object
     },
     adjustDataPath(dataPath) {
       if (!dataPath) return dataPath;

@@ -390,10 +390,10 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_validateItem_vue_vue_type_style_index_0_id_7f461e47_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(11);
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_validateItem_vue_vue_type_style_index_0_id_7f461e47_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_validateItem_vue_vue_type_style_index_0_id_7f461e47_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_validateItem_vue_vue_type_style_index_0_id_03052d2f_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(11);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_validateItem_vue_vue_type_style_index_0_id_03052d2f_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_validateItem_vue_vue_type_style_index_0_id_03052d2f_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
 /* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_validateItem_vue_vue_type_style_index_0_id_7f461e47_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
+ /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_validateItem_vue_vue_type_style_index_0_id_03052d2f_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 /* 49 */,
@@ -1718,202 +1718,10 @@ var select_component = normalizeComponent(
 
 select_component.options.__file = "select.vue"
 /* harmony default export */ var components_select = (select_component.exports);
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/components/validate.vue?vue&type=script&lang=js&
-
-/* harmony default export */ var validatevue_type_script_lang_js_ = ({
-  name: 'eb-validate',
-  render: function render(c) {
-    if (!this.auto) return c('div', this.$slots.default);
-
-    if (this.auto && this.ready) {
-      if (this.custom) {
-        return c('custom', {
-          props: {
-            data: this.data,
-            readOnly: this.readOnly,
-            onSave: this.onSave
-          }
-        });
-      }
-
-      return this.renderSchema(c);
-    }
-  },
-
-  props: {
-    readOnly: {
-      type: Boolean,
-      default: false
-    },
-    auto: {
-      type: Boolean,
-      default: false
-    },
-    data: {
-      type: Object
-    },
-    params: {
-      type: Object },
-    onPerform: {
-      type: Function
-    },
-    dataPathRoot: {
-      type: String,
-      default: '/'
-    },
-    errors: {
-      type: Array
-    },
-    onSave: {
-      type: Function
-    }
-  },
-  data: function data() {
-    return {
-      module: null,
-      schema: null,
-      verrors: null,
-      custom: false
-    };
-  },
-
-  computed: {
-    ready: function ready() {
-      return this.data && this.schema;
-    }
-  },
-  watch: {
-    params: function params() {
-      var _this = this;
-
-      this.$nextTick(function () {
-        _this.fetchSchema();
-      });
-    }
-  },
-  mounted: function mounted() {
-    this.fetchSchema();
-  },
-
-  methods: {
-    reset: function reset() {
-      this.verrors = null;
-    },
-    perform: function perform(event, context) {
-      var _this2 = this;
-
-      if (this.auto && !this.ready) return null;
-      return this.onPerform(event, context).then(function (data) {
-        _this2.reset();
-        return data;
-      }).catch(function (err) {
-        if (err) {
-          if (err.code !== 422) throw err;
-          _this2.verrors = err.message;
-        }
-      });
-    },
-    getError: function getError(dataPath) {
-      if (!this.verrors || !dataPath) return '';
-      dataPath = this.adjustDataPath(dataPath);
-      var error = this.verrors.find(function (item) {
-        if (dataPath.charAt(dataPath.length - 1) === '/') return item.dataPath.indexOf(dataPath) > -1;
-        return item.dataPath === dataPath;
-      });
-      return error ? error.message : '';
-    },
-    clearError: function clearError(dataPath) {
-      if (!this.verrors || !dataPath) return;
-      dataPath = this.adjustDataPath(dataPath);
-      while (true) {
-        var index = this.verrors.findIndex(function (item) {
-          return item.dataPath === dataPath;
-        });
-        if (index > -1) {
-          this.verrors.splice(index, 1);
-        } else {
-          break;
-        }
-      }
-    },
-    adjustDataPath: function adjustDataPath(dataPath) {
-      if (!dataPath) return dataPath;
-      if (dataPath[0] !== '/') return this.dataPathRoot + dataPath;
-      return dataPath;
-    },
-    fetchSchema: function fetchSchema() {
-      var _this3 = this;
-
-      if (!this.params) return;
-      if (!this.params.module) this.params.module = this.$page.$module.name;
-      this.$meta.module.use(this.params.module, function (module) {
-        _this3.module = module;
-        _this3.$api.post('/a/validation/validation/schema', {
-          module: _this3.params.module,
-          validator: _this3.params.validator,
-          schema: _this3.params.schema
-        }).then(function (data) {
-          _this3.schema = data;
-          if (_this3.errors) _this3.verrors = _this3.errors;
-
-          var _componentName = _this3.schema.meta && _this3.schema.meta.custom && _this3.schema.meta.custom.component;
-          if (_componentName) {
-            var _component = module.options.components[_componentName];
-            _this3.$meta.util.setComponentModule(_component, module);
-            _this3.$options.components.custom = _component;
-            _this3.custom = true;
-          }
-
-          _this3.$emit('schema:ready', _this3.schema);
-        });
-      });
-    },
-    renderSchema: function renderSchema(c) {
-      var children = this.renderProperties(c, this.data, this.schema.properties, '');
-      return c('f7-list', { attrs: { form: true, noHairlinesMd: true } }, children);
-    },
-    renderProperties: function renderProperties(c, data, properties, pathParent) {
-      var children = [];
-      for (var key in properties) {
-        children.push(c('validate-item', {
-          key: key,
-          props: {
-            dataKey: key,
-            pathParent: pathParent
-          }
-        }));
-      }
-      return children;
-    }
-  }
-});
-// CONCATENATED MODULE: ./front/src/components/validate.vue?vue&type=script&lang=js&
- /* harmony default export */ var components_validatevue_type_script_lang_js_ = (validatevue_type_script_lang_js_); 
-// CONCATENATED MODULE: ./front/src/components/validate.vue
-var validate_render, validate_staticRenderFns
-
-
-
-
-/* normalize component */
-
-var validate_component = normalizeComponent(
-  components_validatevue_type_script_lang_js_,
-  validate_render,
-  validate_staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-validate_component.options.__file = "validate.vue"
-/* harmony default export */ var components_validate = (validate_component.exports);
 // CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/components/validateItem.vue?vue&type=script&lang=js&
 
 /* harmony default export */ var validateItemvue_type_script_lang_js_ = ({
-  name: 'eb-validate-item',
+  name: 'eb-list-item-validate',
   render: function render(c) {
     return this.renderItem(c);
   },
@@ -1956,13 +1764,18 @@ validate_component.options.__file = "validate.vue"
       return data[key];
     },
     setValue: function setValue(data, key, value, property) {
+      var _value = void 0;
       if (property.type === 'number') {
-        data[key] = Number(value);
+        _value = Number(value);
       } else if (property.type === 'boolean') {
-        data[key] = Boolean(value);
+        _value = Boolean(value);
       } else {
-        data[key] = value;
+        _value = value;
       }
+      if (data[key] !== _value) {
+        this.$emit('change', _value);
+      }
+      this.$set(data, key, _value);
     },
     adjustDataPath: function adjustDataPath(dataPath) {
       if (!dataPath) return dataPath;
@@ -2141,8 +1954,8 @@ validate_component.options.__file = "validate.vue"
 });
 // CONCATENATED MODULE: ./front/src/components/validateItem.vue?vue&type=script&lang=js&
  /* harmony default export */ var components_validateItemvue_type_script_lang_js_ = (validateItemvue_type_script_lang_js_); 
-// EXTERNAL MODULE: ./front/src/components/validateItem.vue?vue&type=style&index=0&id=7f461e47&scoped=true&lang=css&
-var validateItemvue_type_style_index_0_id_7f461e47_scoped_true_lang_css_ = __webpack_require__(48);
+// EXTERNAL MODULE: ./front/src/components/validateItem.vue?vue&type=style&index=0&id=03052d2f&scoped=true&lang=css&
+var validateItemvue_type_style_index_0_id_03052d2f_scoped_true_lang_css_ = __webpack_require__(48);
 
 // CONCATENATED MODULE: ./front/src/components/validateItem.vue
 var validateItem_render, validateItem_staticRenderFns
@@ -2159,13 +1972,211 @@ var validateItem_component = normalizeComponent(
   validateItem_staticRenderFns,
   false,
   null,
-  "7f461e47",
+  "03052d2f",
   null
   
 )
 
 validateItem_component.options.__file = "validateItem.vue"
 /* harmony default export */ var validateItem = (validateItem_component.exports);
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/components/validate.vue?vue&type=script&lang=js&
+
+
+/* harmony default export */ var validatevue_type_script_lang_js_ = ({
+  name: 'eb-validate',
+  components: {
+    validateItem: validateItem
+  },
+  render: function render(c) {
+    if (!this.auto) return c('div', this.$slots.default);
+
+    if (this.auto && this.ready) {
+      if (this.custom) {
+        return c('custom', {
+          props: {
+            data: this.data,
+            readOnly: this.readOnly,
+            onSave: this.onSave
+          }
+        });
+      }
+
+      return this.renderSchema(c);
+    }
+  },
+
+  props: {
+    readOnly: {
+      type: Boolean,
+      default: false
+    },
+    auto: {
+      type: Boolean,
+      default: false
+    },
+    data: {
+      type: Object
+    },
+    params: {
+      type: Object },
+    onPerform: {
+      type: Function
+    },
+    dataPathRoot: {
+      type: String,
+      default: '/'
+    },
+    errors: {
+      type: Array
+    },
+    onSave: {
+      type: Function
+    }
+  },
+  data: function data() {
+    return {
+      module: null,
+      schema: null,
+      verrors: null,
+      custom: false
+    };
+  },
+
+  computed: {
+    ready: function ready() {
+      return this.data && this.schema;
+    }
+  },
+  watch: {
+    params: function params() {
+      var _this = this;
+
+      this.custom = false;
+      delete this.$options.components.custom;
+      this.$nextTick(function () {
+        _this.fetchSchema();
+      });
+    }
+  },
+  mounted: function mounted() {
+    this.fetchSchema();
+  },
+
+  methods: {
+    reset: function reset() {
+      this.verrors = null;
+    },
+    perform: function perform(event, context) {
+      var _this2 = this;
+
+      if (this.auto && !this.ready) return null;
+      return this.onPerform(event, context).then(function (data) {
+        _this2.reset();
+        return data;
+      }).catch(function (err) {
+        if (err) {
+          if (err.code !== 422) throw err;
+          _this2.verrors = err.message;
+        }
+      });
+    },
+    getError: function getError(dataPath) {
+      if (!this.verrors || !dataPath) return '';
+      dataPath = this.adjustDataPath(dataPath);
+      var error = this.verrors.find(function (item) {
+        if (dataPath.charAt(dataPath.length - 1) === '/') return item.dataPath.indexOf(dataPath) > -1;
+        return item.dataPath === dataPath;
+      });
+      return error ? error.message : '';
+    },
+    clearError: function clearError(dataPath) {
+      if (!this.verrors || !dataPath) return;
+      dataPath = this.adjustDataPath(dataPath);
+      while (true) {
+        var index = this.verrors.findIndex(function (item) {
+          return item.dataPath === dataPath;
+        });
+        if (index > -1) {
+          this.verrors.splice(index, 1);
+        } else {
+          break;
+        }
+      }
+    },
+    adjustDataPath: function adjustDataPath(dataPath) {
+      if (!dataPath) return dataPath;
+      if (dataPath[0] !== '/') return this.dataPathRoot + dataPath;
+      return dataPath;
+    },
+    fetchSchema: function fetchSchema() {
+      var _this3 = this;
+
+      if (!this.params) return;
+      if (!this.params.module) this.params.module = this.$page.$module.name;
+      this.$meta.module.use(this.params.module, function (module) {
+        _this3.module = module;
+        _this3.$api.post('/a/validation/validation/schema', {
+          module: _this3.params.module,
+          validator: _this3.params.validator,
+          schema: _this3.params.schema
+        }).then(function (data) {
+          _this3.schema = data;
+          if (_this3.errors) _this3.verrors = _this3.errors;
+
+          var _componentName = _this3.schema.meta && _this3.schema.meta.custom && _this3.schema.meta.custom.component;
+          if (_componentName) {
+            var _component = module.options.components[_componentName];
+            _this3.$meta.util.setComponentModule(_component, module);
+            _this3.$options.components.custom = _component;
+            _this3.custom = true;
+          }
+
+          _this3.$emit('schema:ready', _this3.schema);
+        });
+      });
+    },
+    renderSchema: function renderSchema(c) {
+      var children = this.renderProperties(c, this.data, this.schema.properties, '');
+      return c('f7-list', { attrs: { form: true, noHairlinesMd: true } }, children);
+    },
+    renderProperties: function renderProperties(c, data, properties, pathParent) {
+      var children = [];
+      for (var key in properties) {
+        children.push(c('validate-item', {
+          key: key,
+          props: {
+            dataKey: key,
+            pathParent: pathParent
+          }
+        }));
+      }
+      return children;
+    }
+  }
+});
+// CONCATENATED MODULE: ./front/src/components/validate.vue?vue&type=script&lang=js&
+ /* harmony default export */ var components_validatevue_type_script_lang_js_ = (validatevue_type_script_lang_js_); 
+// CONCATENATED MODULE: ./front/src/components/validate.vue
+var validate_render, validate_staticRenderFns
+
+
+
+
+/* normalize component */
+
+var validate_component = normalizeComponent(
+  components_validatevue_type_script_lang_js_,
+  validate_render,
+  validate_staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+validate_component.options.__file = "validate.vue"
+/* harmony default export */ var components_validate = (validate_component.exports);
 // CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/components/listButton.vue?vue&type=script&lang=js&
 
 
@@ -2532,12 +2543,12 @@ var swipeoutButton_component = normalizeComponent(
 
 swipeoutButton_component.options.__file = "swipeoutButton.vue"
 /* harmony default export */ var swipeoutButton = (swipeoutButton_component.exports);
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/components/tabPageContent.vue?vue&type=template&id=1fb7b0c4&
-var tabPageContentvue_type_template_id_1fb7b0c4_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('f7-page-content',{attrs:{"id":_vm.id,"tab":"","tab-active":_vm.tabActive,"ptr":"","infinite":"","infinitePreloader":false},on:{"ptr:refresh":_vm.onRefresh,"infinite":_vm.onInfinite,"tab:show":_vm.onTabShow}},[_vm._t("list")],2)}
-var tabPageContentvue_type_template_id_1fb7b0c4_staticRenderFns = []
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/components/tabPageContent.vue?vue&type=template&id=e64ffef8&
+var tabPageContentvue_type_template_id_e64ffef8_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('f7-page-content',{attrs:{"id":_vm.id,"tab":_vm.tab,"tab-active":_vm.tabActive,"ptr":"","infinite":"","infinitePreloader":false},on:{"ptr:refresh":_vm.onRefresh,"infinite":_vm.onInfinite,"tab:show":_vm.onTabShow}},[_vm._t("list")],2)}
+var tabPageContentvue_type_template_id_e64ffef8_staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./front/src/components/tabPageContent.vue?vue&type=template&id=1fb7b0c4&
+// CONCATENATED MODULE: ./front/src/components/tabPageContent.vue?vue&type=template&id=e64ffef8&
 
 // CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/components/tabPageContent.vue?vue&type=script&lang=js&
 
@@ -2545,6 +2556,10 @@ var tabPageContentvue_type_template_id_1fb7b0c4_staticRenderFns = []
 /* harmony default export */ var tabPageContentvue_type_script_lang_js_ = ({
   name: 'eb-tab-page-content',
   props: {
+    tab: {
+      type: Boolean,
+      default: true
+    },
     tabActive: {
       type: Boolean,
       default: false
@@ -2598,8 +2613,8 @@ var tabPageContentvue_type_template_id_1fb7b0c4_staticRenderFns = []
 
 var tabPageContent_component = normalizeComponent(
   components_tabPageContentvue_type_script_lang_js_,
-  tabPageContentvue_type_template_id_1fb7b0c4_render,
-  tabPageContentvue_type_template_id_1fb7b0c4_staticRenderFns,
+  tabPageContentvue_type_template_id_e64ffef8_render,
+  tabPageContentvue_type_template_id_e64ffef8_staticRenderFns,
   false,
   null,
   null,
@@ -2951,7 +2966,7 @@ contextMenu_component.options.__file = "contextMenu.vue"
   ebRadio: components_radio,
   ebSelect: components_select,
   ebValidate: components_validate,
-  ebValidateItem: validateItem,
+  ebListItemValidate: validateItem,
   ebListButton: listButton,
   ebListItem: listItem,
   ebListItemPanel: listPanel,
