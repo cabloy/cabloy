@@ -53,6 +53,9 @@ export default {
       this.$emit('save');
     },
     onChooseEditContent() {
+      if (!this.item.categoryId) {
+        return false;
+      }
       this.$view.navigate('/a/cms/article/contentEdit', {
         context: {
           params: {
