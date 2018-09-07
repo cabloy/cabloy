@@ -81,7 +81,6 @@ export default {
     },
   },
   created() {
-    console.log(this.where);
     this.$local.dispatch('getLabels');
   },
 };
