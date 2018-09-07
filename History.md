@@ -1,5 +1,11 @@
 # History
 
+## 2018-09-07, Version 1.2.4
+
+* **features**
+  * a-components: eb-box
+
+
 ## 2018-09-06, Version 1.2.3
 
 * **features**
