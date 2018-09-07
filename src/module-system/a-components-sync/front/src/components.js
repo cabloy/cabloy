@@ -21,6 +21,7 @@ import tabPageContent from './components/tabPageContent.vue';
 import searchPage from './components/searchPage.vue';
 import popover from './components/popover.vue';
 import contextMenu from './components/contextMenu.vue';
+import box from './components/box.vue';
 import pageContext from './common/pageContext.js';
 
 export default {
@@ -47,5 +48,6 @@ export default {
   ebSearchPage: searchPage,
   ebPopover: popover,
   ebContextMenu: contextMenu,
+  ebBox: box,
   ebPageContext: pageContext,
 };
