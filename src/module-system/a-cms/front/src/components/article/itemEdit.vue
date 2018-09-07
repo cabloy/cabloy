@@ -79,6 +79,10 @@ export default {
       });
     },
     onChooseEditContent() {
+      if (!this.item.categoryId) {
+        this.$view.dialog.alert(this.$text('Please specify the category name'));
+        return false;
+      }
       this.$view.navigate('/a/cms/article/contentEdit', {
         context: {
           params: {

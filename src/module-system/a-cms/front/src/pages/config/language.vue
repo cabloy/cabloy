@@ -6,7 +6,9 @@
         <eb-link iconMaterial="visibility" :onPerform="onPerformPreview"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <textarea ref="textarea" type="textarea" :value="content" @input="onInput" class="cms-json-textarea"></textarea>
+    <eb-box @size="onSize">
+      <textarea ref="textarea" type="textarea" :value="content" @input="onInput" class="cms-json-textarea"></textarea>
+    </eb-box>
   </eb-page>
 </template>
 <script>
@@ -15,7 +17,6 @@ export default {
     return {
       language: this.$f7route.query.language,
       content: '{}',
-      _unwatch: null,
     };
   },
   computed: {
@@ -33,27 +34,12 @@ export default {
       }
     });
   },
-  mounted() {
-    this._unwatch = this.$view.$watch('sizeExtent', () => {
-      this.onSize();
-    });
-    this.onSize();
-  },
-  beforeDestroy() {
-    if (this._unwatch) {
-      this._unwatch();
-      this._unwatch = null;
-    }
-  },
   methods: {
-    onSize() {
-      const size = this.$view.sizeExtent;
-      if (size) {
-        this.$$(this.$refs.textarea).css({
-          height: `${size.height - 84}px`,
-          width: `${size.width - 20}px`,
-        });
-      }
+    onSize(size) {
+      this.$$(this.$refs.textarea).css({
+        height: `${size.height - 20}px`,
+        width: `${size.width - 20}px`,
+      });
     },
     onInput(event) {
       this.content = event.target.value;
@@ -81,12 +67,7 @@ export default {
 };
 
 </script>
-<style lang="less" scoped>
-.cms-json-textarea {
-  border: 1px solid #C3D4E7;
-  margin: 10px;
-  padding: 6px;
-  line-height: 1.5;
-}
+<style>
+
 
 </style>

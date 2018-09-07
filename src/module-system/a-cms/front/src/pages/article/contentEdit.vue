@@ -7,7 +7,9 @@
       </f7-nav-right>
     </eb-navbar>
     <template v-if="module">
-      <mavon-editor ref="editor" :value="item.content" @change="onChange" @save="onSave" @imgAdd="onImgAdd" :language="language" :subfield="subfield" :editable="editable" :defaultOpen="defaultOpen" :toolbarsFlag="toolbarsFlag" :navigation="navigation" :toolbars="toolbars" />
+      <eb-box>
+        <eb-mde ref="editor" :value="item.content" @change="onChange" @save="onSave" @imgAdd="onImgAdd" :language="language" :subfield="subfield" :editable="editable" :defaultOpen="defaultOpen" :toolbarsFlag="toolbarsFlag" :navigation="navigation" :toolbars="toolbars" />
+      </eb-box>
     </template>
   </eb-page>
 </template>
@@ -88,32 +90,11 @@ export default {
     },
   },
   mounted() {
-    this.$meta.module.use('a-mavoneditor', module => {
+    this.$meta.module.use('a-mde', module => {
       this.module = module;
-      this.onSize();
     });
-    this._unwatch = this.$view.$watch('sizeExtent', () => {
-      this.onSize();
-    });
-  },
-  beforeDestroy() {
-    if (this._unwatch) {
-      this._unwatch();
-      this._unwatch = null;
-    }
   },
   methods: {
-    onSize() {
-      this.$nextTick(() => {
-        const size = this.$view.sizeExtent;
-        if (size) {
-          this.$$(this.$refs.editor.$el).css({
-            height: `${size.height - 64}px`,
-            width: `${size.width}px`,
-          });
-        }
-      });
-    },
     onChange(data) {
       if (this.readOnly) return;
       this.dirty = true;

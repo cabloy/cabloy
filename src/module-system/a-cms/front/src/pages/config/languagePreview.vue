@@ -2,7 +2,9 @@
   <eb-page>
     <eb-navbar :title="$text('Preview')" eb-back-link="Back">
     </eb-navbar>
-    <textarea ref="textarea" type="textarea" readonly="readonly" :value="content" class="cms-json-textarea"></textarea>
+    <eb-box @size="onSize">
+      <textarea ref="textarea" type="textarea" readonly="readonly" :value="content" class="cms-json-textarea"></textarea>
+    </eb-box>
   </eb-page>
 </template>
 <script>
@@ -14,7 +16,6 @@ export default {
     return {
       language: this.$f7route.query.language,
       content: '{}',
-      _unwatch: null,
     };
   },
   computed: {
@@ -29,22 +30,12 @@ export default {
     this.onLoad();
   },
   mounted() {
-    // size
-    this._unwatch = this.$view.$watch('sizeExtent', () => {
-      this.onSize();
-    });
-    this.onSize();
     // preview
     if (this.source) {
       this.source.$on('preview', this.onPreview);
     }
   },
   beforeDestroy() {
-    // size
-    if (this._unwatch) {
-      this._unwatch();
-      this._unwatch = null;
-    }
     // preview
     if (this.source) {
       this.source.$off('preview', this.onPreview);
@@ -63,25 +54,17 @@ export default {
         }
       });
     },
-    onSize() {
-      const size = this.$view.sizeExtent;
-      if (size) {
-        this.$$(this.$refs.textarea).css({
-          height: `${size.height - 84}px`,
-          width: `${size.width - 20}px`,
-        });
-      }
+    onSize(size) {
+      this.$$(this.$refs.textarea).css({
+        height: `${size.height - 20}px`,
+        width: `${size.width - 20}px`,
+      });
     },
   },
 };
 
 </script>
-<style lang="less" scoped>
-.cms-json-textarea {
-  border: 1px solid #C3D4E7;
-  margin: 10px;
-  padding: 6px;
-  line-height: 1.5;
-}
+<style>
+
 
 </style>
