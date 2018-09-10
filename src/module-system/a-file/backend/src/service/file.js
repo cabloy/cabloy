@@ -85,6 +85,7 @@ module.exports = app => {
         );
         return {
           fileId,
+          realName: fileInfo.name,
           downloadId,
           downloadUrl,
         };
