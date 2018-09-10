@@ -1,7 +1,7 @@
 let Vue;
 
-import mavonEditor from 'mavon-editor';
-import 'mavon-editor/dist/css/index.css';
+import mavonEditor from '@zhennann/mavon-editor';
+import '@zhennann/mavon-editor/dist/css/index.css';
 
 import './assets/css/module.less';
 
