@@ -11,8 +11,11 @@ export default {
         ref: 'layout',
       }));
     }
-    const app = c('f7-app', { props: { params: this.$root.$options.framework7 } }, children);
-    return c('div', [ app ]);
+    const app = c('f7-app', {
+      staticClass: this.$meta.config.layout.color ? `color-theme-${this.$meta.config.layout.color}` : '',
+      props: { params: this.$root.$options.framework7 }
+    }, children);
+    return c('div', [app]);
   },
   data() {
     return {

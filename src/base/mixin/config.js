@@ -4,6 +4,7 @@ export default function(Vue) {
   const config = {
     modules: {},
     layout: {
+      color: '',
       breakpoint: 800,
       items: {
         mobile: {
