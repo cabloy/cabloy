@@ -29,7 +29,8 @@ export default {
       this.$emit('input:clear', event.target.value);
     },
     checkEmptyState() {
-      this.$f7.input.checkEmptyState(this.$$(this.$el).find('input'));
+      const tag = this.type === 'textarea' ? 'textarea' : 'input';
+      this.$f7.input.checkEmptyState(this.$$(this.$el).find(tag));
     },
   },
 };

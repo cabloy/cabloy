@@ -155,6 +155,7 @@ export default {
       const placeholder = property.ebDescription ? this.$text(property.ebDescription) : title;
       let type;
       if (property.ebSecure) type = 'password';
+      if (property.ebTextarea) type = 'textarea';
       else type = 'text';
       return c('f7-list-item', {
         key,
@@ -167,6 +168,7 @@ export default {
           attrs: {
             type,
             placeholder,
+            resizable: property.ebTextarea,
             clearButton: true,
             dataPath: pathParent + key,
             value: this.getValue(data, key, property),
