@@ -1,5 +1,11 @@
 # History
 
+## 2018-09-011, Version 1.2.5
+
+* **features**
+  * support f7 color-theme
+
+
 ## 2018-09-07, Version 1.2.4
 
 * **features**
