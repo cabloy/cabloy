@@ -1536,6 +1536,10 @@ const Fn = module.exports = ctx => {
 
     // atom other functions
 
+    async get({ atomId }) {
+      return await this.modelAtom.get({ id: atomId });
+    }
+
     async flag({ key, atom: { atomFlag }, user }) {
       const res = await this.modelAtom.update({
         id: key.atomId,
