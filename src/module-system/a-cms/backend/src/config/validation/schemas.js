@@ -63,6 +63,7 @@ module.exports = app => {
       extra: {
         type: 'string',
         ebType: 'text',
+        ebTextarea: true,
         ebTitle: 'Extra Attributes',
       },
       content: {
