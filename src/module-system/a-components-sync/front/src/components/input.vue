@@ -13,7 +13,7 @@ export default {
   },
   methods: {
     onValidateError(error) {
-      const input = this.$$(this.$el).find('input');
+      const input = this._findText();
       input[0].setCustomValidity(error);
       this.$f7.input.validate(input);
       this.checkEmptyState();
@@ -29,8 +29,11 @@ export default {
       this.$emit('input:clear', event.target.value);
     },
     checkEmptyState() {
+      this.$f7.input.checkEmptyState(this._findText());
+    },
+    _findText() {
       const tag = this.type === 'textarea' ? 'textarea' : 'input';
-      this.$f7.input.checkEmptyState(this.$$(this.$el).find(tag));
+      return this.$$(this.$el).find(tag);
     },
   },
 };
