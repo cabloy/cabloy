@@ -23,6 +23,7 @@ module.exports = app => {
             slug varchar(255) DEFAULT NULL,
             flag varchar(255) DEFAULT NULL,
             extra json DEFAULT NULL,
+            imageFirst varchar(255) DEFAULT NULL,
             PRIMARY KEY (id)
           )
         `;

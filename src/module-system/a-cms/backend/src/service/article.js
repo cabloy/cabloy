@@ -29,6 +29,9 @@ module.exports = app => {
     }
 
     async write({ atomClass, key, item, validation, user }) {
+      // image first
+      const matches = item.content && item.content.match(/!\[[^\]]*?\]\(([^\)]*?)\)/);
+      const imageFirst = (matches && matches[1]) || '';
       // update article
       await this.ctx.model.article.update({
         id: key.itemId,
@@ -41,6 +44,7 @@ module.exports = app => {
         slug: item.slug,
         flag: item.flag,
         extra: item.extra || '{}',
+        imageFirst,
       });
       // update content
       await this.ctx.model.query('update aCmsContent a set a.content=? where a.iid=? and a.atomId=?',
