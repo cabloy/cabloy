@@ -19,8 +19,10 @@ module.exports = app => {
             keywords varchar(255) DEFAULT NULL,
             description text DEFAULT NULL,
             url varchar(255) DEFAULT NULL,
-            extra json DEFAULT NULL,
             editMode int(11) DEFAULT '0',
+            slug varchar(255) DEFAULT NULL,
+            flag varchar(255) DEFAULT NULL,
+            extra json DEFAULT NULL,
             PRIMARY KEY (id)
           )
         `;

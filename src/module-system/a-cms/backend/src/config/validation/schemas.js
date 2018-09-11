@@ -50,6 +50,21 @@ module.exports = app => {
         ebTitle: 'Edit Mode',
         notEmpty: true,
       },
+      slug: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Slug',
+      },
+      flag: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Flag',
+      },
+      extra: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Extra Attributes',
+      },
       content: {
         type: 'string',
         ebType: 'text',

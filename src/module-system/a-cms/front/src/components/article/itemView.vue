@@ -18,6 +18,8 @@
       <eb-list-item-validate dataKey="sticky"></eb-list-item-validate>
       <eb-list-item-validate dataKey="keywords"></eb-list-item-validate>
       <eb-list-item-validate dataKey="description"></eb-list-item-validate>
+      <eb-list-item-validate dataKey="slug"></eb-list-item-validate>
+      <eb-list-item-validate dataKey="flag"></eb-list-item-validate>
     </f7-list-group>
   </f7-list>
 </template>

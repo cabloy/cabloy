@@ -38,6 +38,9 @@ module.exports = app => {
         keywords: item.keywords,
         description: item.description,
         editMode: item.editMode,
+        slug: item.slug,
+        flag: item.flag,
+        extra: item.extra,
       });
       // update content
       await this.ctx.model.query('update aCmsContent a set a.content=? where a.iid=? and a.atomId=?',

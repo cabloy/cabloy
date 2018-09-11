@@ -135,16 +135,36 @@ module.exports = app => {
       // static
       const pathIntermediate = await this.getPathIntermediate(site.language.current);
       const staticFiles = await bb.fromCallback(cb => {
-        glob(`${pathIntermediate}/static/\*.ejs`, cb);
+        glob(`${pathIntermediate}/static/\*\*/\*.ejs`, cb);
       });
       for (const item of staticFiles) {
         // data
         const data = this.getData({ site });
         // path
-        const _fileName = `static/${path.basename(item, '.ejs')}.html`;
+        const _fileSrc = item.substr(pathIntermediate.length + 1);
         await this._renderFile({
-          fileSrc: `static/${path.basename(item)}`,
-          fileDest: _fileName,
+          fileSrc: _fileSrc,
+          fileDest: _fileSrc.replace('.ejs', '.html'),
+          data,
+        });
+      }
+    }
+
+    async _renderIndex({ site }) {
+      // index
+      const pathIntermediate = await this.getPathIntermediate(site.language.current);
+      const indexFiles = await bb.fromCallback(cb => {
+        glob(`${pathIntermediate}/main/index/\*\*/\*.ejs`, cb);
+      });
+      for (const item of indexFiles) {
+        // data
+        const data = this.getData({ site });
+        // path
+        const _fileSrc = item.substr(pathIntermediate.length + 1);
+        const _fileDest = _fileSrc.substr('main/index/'.length).replace('.ejs', '.html');
+        await this._renderFile({
+          fileSrc: _fileSrc,
+          fileDest: _fileDest,
           data,
         });
       }
@@ -206,18 +226,6 @@ module.exports = app => {
       const pathDist = await this.getPathDist(site, site.language.current);
       const fileName = path.join(pathDist, 'sitemap.xml');
       await fse.writeFile(fileName, xml);
-    }
-
-    async _renderIndex({ site }) {
-      // data
-      const data = this.getData({ site });
-      // path
-      const _fileName = 'index.html';
-      await this._renderFile({
-        fileSrc: 'main/index.ejs',
-        fileDest: _fileName,
-        data,
-      });
     }
 
     async _renderArticle({ site, article, md }) {
