@@ -142,7 +142,7 @@ export default {
     },
     renderText(c, data, pathParent, key, property) {
       const title = this.$text(property.ebTitle || key);
-      if (this.validate.readOnly || property.ebReadOnly) {
+      if ((this.validate.readOnly || property.ebReadOnly) && !property.ebTextarea) {
         return c('f7-list-item', {
           key,
           staticClass: property.ebReadOnly ? 'text-color-gray' : '',
@@ -169,9 +169,10 @@ export default {
             type,
             placeholder,
             resizable: property.ebTextarea,
-            clearButton: true,
+            clearButton: !this.validate.readOnly && !property.ebReadOnly,
             dataPath: pathParent + key,
             value: this.getValue(data, key, property),
+            disabled: this.validate.readOnly || property.ebReadOnly,
           },
           on: {
             input: value => {
