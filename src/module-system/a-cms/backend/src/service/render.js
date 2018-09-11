@@ -11,7 +11,7 @@ const bb = require3('bluebird');
 const CleanCSS = require3('clean-css');
 const shajs = require3('sha.js');
 const UglifyJS = require3('uglify-js');
-const markdown = require('./markdown.js');
+const markdown = require('../common/markdown.js');
 
 module.exports = app => {
 
@@ -30,9 +30,9 @@ module.exports = app => {
       await this._renderIndex({ site });
     }
 
-    async renderArticle({ key }) {
+    async renderArticle({ key, inner }) {
       // article
-      const article = await this._getArticle({ key });
+      const article = await this._getArticle({ key, inner });
       if (!article) return;
       // clearCache
       ejs.clearCache();
@@ -42,15 +42,17 @@ module.exports = app => {
       const md = markdown.create();
       // render article
       await this._renderArticle({ site, article, md });
-      // write sitemap
-      await this._writeSitemap({ site, article });
-      // render index
-      await this._renderIndex({ site });
+      if (!inner) {
+        // write sitemap
+        await this._writeSitemap({ site, article });
+        // render index
+        await this._renderIndex({ site });
+      }
     }
 
     async deleteArticle({ key }) {
       // article
-      const article = await this._getArticle({ key });
+      const article = await this._getArticle({ key, inner: true });
       if (!article) return;
       // site
       const site = await this.getSite({ language: article.language });
@@ -65,14 +67,30 @@ module.exports = app => {
       await fse.writeFile(path.join(pathDist, 'sitemap.xml'), xml);
     }
 
-    async _getArticle({ key }) {
-      // check right
-      const roleAnonymous = await this.ctx.meta.role.getSystemRole({ roleName: 'anonymous' });
-      const right = await this.ctx.meta.atom.checkRoleRightRead({ atom: { id: key.atomId }, roleId: roleAnonymous.id });
-      if (!right) return null;
+    async getArticleUrl({ key }) {
+      // article
+      const article = await this._getArticle({ key, inner: true });
+      if (!article) return;
+      // site
+      const site = await this.getSite({ language: article.language });
+      // url
+      return {
+        relativeUrl: article.url,
+        url: this.getUrl(site, site.language.current, article.url),
+      };
+    }
+
+    async _getArticle({ key, inner }) {
+      if (!inner) {
+        // check right
+        const roleAnonymous = await this.ctx.meta.role.getSystemRole({ roleName: 'anonymous' });
+        const right = await this.ctx.meta.atom.checkRoleRightRead({ atom: { id: key.atomId }, roleId: roleAnonymous.id });
+        if (!right) return null;
+      }
       // article
       const article = await this.ctx.meta.atom.read({ key, user: { id: 0 } });
-      if (!article || article.atomFlag !== 2) return null;
+      if (!article) return null;
+      // check language
       if (!article.language) this.ctx.throw(1001);
       return article;
     }

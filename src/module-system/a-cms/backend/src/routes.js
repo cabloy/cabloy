@@ -21,6 +21,9 @@ module.exports = app => {
     // render
     { method: 'post', path: 'render/renderArticle', controller: render, middlewares: 'inner,file' },
     { method: 'post', path: 'render/deleteArticle', controller: render, middlewares: 'inner,file' },
+    { method: 'post', path: 'render/getArticleUrl', controller: render,
+      meta: { right: { type: 'atom', action: 2 } },
+    },
     // site
     { method: 'post', path: 'site/getConfigSiteBase', controller: site, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'site/getConfigSite', controller: site, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },

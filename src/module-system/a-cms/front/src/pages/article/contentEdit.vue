@@ -111,7 +111,17 @@ export default {
       });
     },
     onPerformPreview() {
-
+      if (this.readOnly) {
+        return this._preview();
+      }
+      return this.onPerformSave().then(() => {
+        return this._preview();
+      });
+    },
+    _preview() {
+      return this.$api.post('render/getArticleUrl', { key: { atomId: this.item.atomId } }).then(data => {
+        window.open(data.url, `cms_article_${this.item.atomId}`);
+      });
     },
     onImageUpload() {
       return new Promise((resolve, reject) => {

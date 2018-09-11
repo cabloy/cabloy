@@ -12,6 +12,11 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async getArticleUrl() {
+      const res = await this.ctx.service.render.getArticleUrl(this.ctx.request.body);
+      this.ctx.success(res);
+    }
+
   }
   return RenderController;
 };

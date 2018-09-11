@@ -42,6 +42,11 @@ module.exports = app => {
       // update content
       await this.ctx.model.query('update aCmsContent a set a.content=? where a.iid=? and a.atomId=?',
         [ item.content, this.ctx.instance.id, key.atomId ]);
+      // get atom for safety
+      const atom = await this.ctx.meta.atom.get(key);
+      const inner = atom.atomFlag !== 2;
+      // render
+      await this._renderArticle({ key, inner });
     }
 
     async delete({ atomClass, key, user }) {
@@ -69,11 +74,7 @@ module.exports = app => {
           user,
         });
         // render
-        await this.ctx.performAction({
-          method: 'post',
-          url: 'render/renderArticle',
-          body: { key },
-        });
+        await this._renderArticle({ key, inner: false });
       }
     }
 
@@ -85,6 +86,14 @@ module.exports = app => {
         key,
         atom: { atomFlag },
         user,
+      });
+    }
+
+    async _renderArticle({ key, inner }) {
+      await this.ctx.performAction({
+        method: 'post',
+        url: 'render/renderArticle',
+        body: { key, inner },
       });
     }
 
