@@ -29,7 +29,7 @@
     "egg-born-module-a-base-sync": "^1.1.7",
     "egg-born-module-a-baseadmin": "^1.0.10",
     "egg-born-module-a-cache": "^1.0.2",
-    "egg-born-module-a-components-sync": "^1.1.1",
+    "egg-born-module-a-components-sync": "^1.1.2",
     "egg-born-module-a-hook": "^1.0.2",
     "egg-born-module-a-instance": "^1.0.2",
     "egg-born-module-a-layoutmobile": "^1.0.5",
