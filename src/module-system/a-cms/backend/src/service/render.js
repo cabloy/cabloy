@@ -238,8 +238,13 @@ module.exports = app => {
       // data
       const data = this.getData({ site });
       data.article = article;
-      // path
-      const url = article.url || `articles/${uuid.v4().replace(/-/g, '')}.html`;
+      // url
+      let url;
+      if (article.slug) {
+        url = `articles/${article.slug}.html`;
+      } else {
+        url = article.url || `articles/${uuid.v4().replace(/-/g, '')}.html`;
+      }
       await this._renderFile({
         fileSrc: 'main/article.ejs',
         fileDest: url,
@@ -263,6 +268,7 @@ module.exports = app => {
       data._filename = fileName;
       // render
       let content = await ejs.renderFile(fileName, data, this.getOptions());
+      content = await this._renderEnvs({ data, content });
       content = await this._renderCSSJSes({ data, content });
       // dest
       const pathDist = await this.getPathDist(data.site, language);
@@ -329,6 +335,40 @@ module.exports = app => {
       return content.replace(regexp, urlDest);
     }
 
+    async _renderEnvs({ data, content }) {
+      // site
+      const site = data.site;
+      // env
+      const _env = {};
+      for (const name of Object.keys(data._envs)) {
+        let value;
+        const keys = name.split('.');
+        for (let index = keys.length - 1; index >= 0; index--) {
+          const key = keys[index];
+          value = value ? { [key]: value } : { [key]: data._envs[name] };
+        }
+        extend(true, _env, value);
+      }
+      // combine
+      const env = extend(true, {
+        base: site.base,
+        language: site.language,
+      }, site.env, _env);
+      if (data.article) {
+        env.article = extend(true, {}, data.article);
+        delete env.article.content;
+        delete env.article.text;
+      }
+      // replace
+      const text = `
+<script type="text/javascript">
+var env=${JSON.stringify(env, null, 2)};
+</script>
+`;
+      const regexp = new RegExp('__ENV__');
+      return content.replace(regexp, text);
+    }
+
     async getPathCustom(language) {
       const cms = await this.getPathCms();
       return path.join(cms, language, 'custom');
@@ -364,11 +404,13 @@ module.exports = app => {
       const self = this;
       const _csses = [];
       const _jses = [];
+      const _envs = {};
       return {
         ctx: self.ctx,
         site,
         _csses,
         _jses,
+        _envs,
         require(fileName) {
           const ch = fileName.charAt(0);
           const file = (ch !== '.' && ch !== '..') ? fileName : path.resolve(path.dirname(this._filename), fileName);
@@ -382,6 +424,9 @@ module.exports = app => {
         },
         js(fileName) {
           _jses.push(path.resolve(path.dirname(this._filename), fileName));
+        },
+        env(name, value) {
+          _envs[name] = value;
         },
         text(str) {
           return this.ctx.text.locale(site.language.current, str);
