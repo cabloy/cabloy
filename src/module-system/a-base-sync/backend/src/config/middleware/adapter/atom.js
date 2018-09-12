@@ -67,12 +67,10 @@ const Fn = module.exports = ctx => {
 
     // create
     async create({ atomClass, user }) {
-      // sequence
-      const sequence = await this.sequence.next('draft');
       // atomClass
       atomClass = await ctx.meta.atomClass.get(atomClass);
       // atom
-      const atom = { atomName: `${ctx.text('Draft')}-${sequence}`, atomFlow: atomClass.flow };
+      const atom = { };
       const atomId = await this._add({
         atomClass,
         atom,
@@ -94,11 +92,19 @@ const Fn = module.exports = ctx => {
       const itemId = res.itemId;
 
       // save itemId
+      let atomName = atom.atomName;
+      if (!atomName) {
+      // sequence
+        const sequence = await this.sequence.next('draft');
+        atomName = `${ctx.text('Draft')}-${sequence}`;
+      }
+      const atomFlow = atom.atomFlow === undefined ? atomClass.flow : atom.atomFlow;
       await this._update({
         atom: {
           id: atomId,
           itemId,
-          atomFlow: atom.atomFlow, // maybe changed
+          atomName,
+          atomFlow,
         },
         user,
       });
@@ -183,16 +189,6 @@ const Fn = module.exports = ctx => {
     // write
     async write({ key, item, validation, user }) {
       const atomClass = await ctx.meta.atomClass.getByAtomId({ atomId: key.atomId });
-      if (item && item.atomName !== undefined) {
-        await this._update({
-          atom: {
-            id: key.atomId,
-            atomName: item.atomName,
-          },
-          user,
-        });
-      }
-
       // write item
       const moduleInfo = mparse.parseInfo(atomClass.module);
       await ctx.performAction({
@@ -206,6 +202,19 @@ const Fn = module.exports = ctx => {
           user,
         },
       });
+
+      // write atom
+      if (item) {
+        const atom = { };
+        if (item.atomName !== undefined) atom.atomName = item.atomName;
+        if (Object.keys(atom).length > 0) {
+          atom.id = key.atomId;
+          await this._update({
+            atom,
+            user,
+          });
+        }
+      }
     }
 
     // delete
@@ -416,11 +425,12 @@ const Fn = module.exports = ctx => {
     }
 
     async _update({
-      atom: { id, atomName, itemId },
+      atom: { id, atomName, atomFlow, itemId },
       user,
     }) {
       const params = { id, userIdUpdated: user.id };
       if (atomName !== undefined) params.atomName = atomName;
+      if (atomFlow !== undefined) params.atomFlow = atomFlow;
       if (itemId !== undefined) params.itemId = itemId;
       const res = await this.modelAtom.update(params);
       if (res.affectedRows !== 1) ctx.throw(1003);
