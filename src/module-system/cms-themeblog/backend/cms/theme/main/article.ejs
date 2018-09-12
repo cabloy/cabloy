@@ -1,6 +1,5 @@
-<%
-console.log(article.atomName);
-%>
-<h1>
+<%- await include('../layout/header.ejs') %>
+  <section>
   <p><%- article.text %></p>
-</h1>
+  </section>
+<%- await include('../layout/footer.ejs') %>
