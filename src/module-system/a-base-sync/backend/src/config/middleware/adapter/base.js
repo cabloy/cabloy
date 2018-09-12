@@ -148,6 +148,7 @@ const Fn = module.exports = ctx => {
           name: key,
           title: _atom.title || key,
           tableName: _atom.tableName || '',
+          tableNameFull: _atom.tableNameFull,
           public: _atom.public ? 1 : 0,
           flow: _atom.flow ? 1 : 0,
         };

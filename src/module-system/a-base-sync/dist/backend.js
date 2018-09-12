@@ -884,6 +884,7 @@ const Fn = module.exports = ctx => {
           name: key,
           title: _atom.title || key,
           tableName: _atom.tableName || '',
+          tableNameFull: _atom.tableNameFull,
           public: _atom.public ? 1 : 0,
           flow: _atom.flow ? 1 : 0,
         };
@@ -1368,10 +1369,11 @@ const Fn = module.exports = ctx => {
     async read({ key, user }) {
       const atomClass = await ctx.meta.atomClass.getByAtomId({ atomId: key.atomId });
       const _atomClass = await ctx.meta.atomClass.atomClass(atomClass);
+      // get
       const item = await this._get({
         atom: {
           id: key.atomId,
-          tableName: _atomClass.tableName,
+          tableName: _atomClass.tableNameFull || _atomClass.tableName,
         },
         user,
       });
@@ -1408,9 +1410,18 @@ const Fn = module.exports = ctx => {
         atomClass = await ctx.meta.atomClass.get(atomClass);
         _atomClass = await ctx.meta.atomClass.atomClass(atomClass);
       }
+      // tableName
+      let tableName = '';
+      if (_atomClass) {
+        if (options.mode === 'search') {
+          tableName = _atomClass.tableNameFull || _atomClass.tableName;
+        } else {
+          tableName = _atomClass.tableName;
+        }
+      }
       // select
       const items = await this._list({
-        tableName: _atomClass ? _atomClass.tableName : '',
+        tableName,
         options,
         user,
         pageForce,

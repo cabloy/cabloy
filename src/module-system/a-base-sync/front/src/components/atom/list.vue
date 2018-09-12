@@ -189,6 +189,8 @@ export default {
       if (this.where) {
         options.where = this.$utils.extend({}, options.where, this.where);
       }
+      // mode
+      options.mode = this.mode;
       // fetch
       return this.$api.post('atom/select', {
         atomClass: this.atomClass,
