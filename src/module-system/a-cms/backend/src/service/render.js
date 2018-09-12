@@ -139,7 +139,7 @@ module.exports = app => {
       });
       for (const item of staticFiles) {
         // data
-        const data = this.getData({ site });
+        const data = await this.getData({ site });
         // path
         const _fileSrc = item.substr(pathIntermediate.length + 1);
         await this._renderFile({
@@ -158,7 +158,7 @@ module.exports = app => {
       });
       for (const item of indexFiles) {
         // data
-        const data = this.getData({ site });
+        const data = await this.getData({ site });
         // path
         const _fileSrc = item.substr(pathIntermediate.length + 1);
         const _fileDest = _fileSrc.substr('main/index/'.length).replace('.ejs', '.html');
@@ -236,7 +236,7 @@ module.exports = app => {
         article.text = article.content;
       }
       // data
-      const data = this.getData({ site });
+      const data = await this.getData({ site });
       data.article = article;
       // url
       let url;
@@ -400,7 +400,12 @@ var env=${JSON.stringify(env, null, 2)};
       return `${urlRoot}/${path}`;
     }
 
-    getData({ site }) {
+    async getData({ site }) {
+      // categories
+      if (!site.categories) {
+        site.categories = await this.ctx.service.category.tree({ language: site.language.current });
+      }
+      // data
       const self = this;
       const _csses = [];
       const _jses = [];

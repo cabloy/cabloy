@@ -15,11 +15,12 @@ module.exports = app => {
       });
     }
 
-    async children({ language, categoryId }) {
+    async children({ language, categoryId, hidden }) {
       const where = {
         categoryIdParent: categoryId,
       };
-      if (language) where.language = language;
+      if (language !== undefined) where.language = language;
+      if (hidden !== undefined) where.hidden = hidden;
       const list = await this.ctx.model.category.select({
         where,
         orders: [[ 'sorting', 'asc' ], [ 'createdAt', 'asc' ]],
@@ -82,6 +83,20 @@ module.exports = app => {
         id: categoryId,
         catalog: children.length === 0 ? 0 : 1,
       });
+    }
+
+    async tree({ language }) {
+      return await this._treeChildren({ language, categoryId: 0 });
+    }
+
+    async _treeChildren({ language, categoryId }) {
+      const list = await this.children({ language, categoryId, hidden: 0 });
+      for (const item of list) {
+        if (item.catalog) {
+          item.children = await this._treeChildren({ language, categoryId: item.id });
+        }
+      }
+      return list;
     }
 
   }
