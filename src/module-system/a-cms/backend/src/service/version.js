@@ -67,6 +67,14 @@ module.exports = app => {
         // create view: aCmsArticleView
         sql = `
           CREATE VIEW aCmsArticleView as
+            select a.*,b.categoryName from aCmsArticle a
+              left join aCmsCategory b on a.categoryId=b.id
+        `;
+        await this.ctx.model.query(sql);
+
+        // create view: aCmsArticleViewFull
+        sql = `
+          CREATE VIEW aCmsArticleViewFull as
             select a.*,b.categoryName,c.content from aCmsArticle a
               left join aCmsCategory b on a.categoryId=b.id
               left join aCmsContent c on a.id=c.itemId

@@ -7,6 +7,7 @@ module.exports = app => {
           info: {
             title: 'Article',
             tableName: 'aCmsArticleView',
+            tableNameFull: 'aCmsArticleViewFull',
           },
           actions: {
             publish: {

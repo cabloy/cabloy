@@ -10,6 +10,7 @@ const glob = require3('glob');
 const bb = require3('bluebird');
 const CleanCSS = require3('clean-css');
 const shajs = require3('sha.js');
+const babel = require3('babel-core');
 const UglifyJS = require3('uglify-js');
 const markdown = require('../common/markdown.js');
 
@@ -114,6 +115,7 @@ module.exports = app => {
           },
           orders: [[ 'a.updatedAt', 'desc' ]],
           page: null,
+          mode: 'search',
         },
         user: { id: userId },
         pageForce: false,
@@ -313,6 +315,7 @@ module.exports = app => {
           const output = new CleanCSS().minify(result);
           result = output.styles;
         } else {
+          result = babel.transform(result, { ast: false, babelrc: false, presets: [ 'env' ] }).code;
           const output = UglifyJS.minify(result);
           if (output.error) throw new Error(`${output.error.name}: ${output.error.message}`);
           result = output.code;
