@@ -107,7 +107,7 @@ module.exports = app => {
             glob(`${pluginPath}/\*`, cb);
           });
           for (const item of pluginFiles) {
-            await fse.copy(item, path.join(pathIntermediate, 'plugins', module.package.eggBornModule.cms.name, path.basename(item)));
+            await fse.copy(item, path.join(pathIntermediate, 'plugins', relativeName, path.basename(item)));
           }
         }
       }

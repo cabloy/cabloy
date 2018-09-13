@@ -31,6 +31,50 @@ describe.only('test/controller/test.test.js', () => {
 
   });
 
+  it('action:categories', async () => {
+    app.mockSession({});
+
+    // login as root
+    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
+      auth: 'root',
+      password: '123456',
+    });
+
+    const categories = [
+      { categoryName: 'test4', language: 'en-us', categoryIdParent: 0, sorting: 1 },
+      { categoryName: 'test1', language: 'en-us', categoryIdParent: 0 },
+      { categoryName: 'test2', language: 'en-us', categoryIdParent: 0 },
+      { categoryName: 'test3', language: 'en-us', categoryIdParent: 'test2' },
+      { categoryName: 'testHidden', language: 'en-us', categoryIdParent: 0, hidden: 1 },
+      { categoryName: 'testFlag', language: 'en-us', categoryIdParent: 0, flag: 'Flag' },
+    ];
+    const categoryIds = {};
+    for (const item of categories) {
+      // add
+      let result = await app.httpRequest().post(mockUrl('category/add')).send({
+        data: {
+          categoryName: item.categoryName,
+          language: item.language,
+          categoryIdParent: item.categoryIdParent ? categoryIds[item.categoryIdParent] : 0,
+        },
+      });
+      assert(result.body.code === 0);
+      categoryIds[item.categoryName] = result.body.data;
+      // write
+      result = await app.httpRequest().post(mockUrl('category/save')).send({
+        categoryId: categoryIds[item.categoryName],
+        data: {
+          categoryName: item.categoryName,
+          flag: item.flag || null,
+          hidden: item.hidden || 0,
+          sorting: item.sorting || 0,
+        },
+      });
+      assert(result.body.code === 0);
+    }
+
+  });
+
   it('action:build languages', async () => {
     app.mockSession({});
 
@@ -65,6 +109,8 @@ describe.only('test/controller/test.test.js', () => {
       {
         atomName: 'hello world2',
         language: 'en-us',
+        categoryName: 'category1',
+        slug: 'about',
         editMode: 1,
         content: `
   # hello world
@@ -89,8 +135,21 @@ describe.only('test/controller/test.test.js', () => {
       },
     ];
     for (const article of articles) {
+      let result;
+      // category
+      if (article.categoryName) {
+        result = await app.httpRequest().post(mockUrl('category/add')).send({
+          data: {
+            categoryName: article.categoryName,
+            language: article.language,
+            categoryIdParent: 0,
+          },
+        });
+        article.categoryId = result.body.data;
+      }
+
       // create
-      let result = await app.httpRequest().post(mockUrl('/a/base/atom/create')).send({
+      result = await app.httpRequest().post(mockUrl('/a/base/atom/create')).send({
         atomClass: { module: mockInfo().relativeName, atomClassName: 'article', atomClassIdParent: 0 },
       });
       assert(result.body.code === 0);
@@ -104,6 +163,8 @@ describe.only('test/controller/test.test.js', () => {
           language: article.language,
           editMode: article.editMode,
           content: article.content,
+          categoryId: article.categoryId,
+          slug: article.slug,
         },
       });
       assert(result.body.code === 0);
@@ -134,7 +195,7 @@ describe.only('test/controller/test.test.js', () => {
 
   });
 
-  it('action:build language', async () => {
+  it('action:build languages', async () => {
     app.mockSession({});
 
     // login as root
@@ -143,9 +204,7 @@ describe.only('test/controller/test.test.js', () => {
       password: '123456',
     });
 
-    const result = await app.httpRequest().post(mockUrl('site/buildLanguage')).send({
-      language: 'zh-cn',
-    });
+    const result = await app.httpRequest().post(mockUrl('site/buildLanguages')).send();
     assert(result.body.code === 0);
     console.log('time used: ', result.body.data.time);
 

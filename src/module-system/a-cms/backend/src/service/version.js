@@ -40,6 +40,7 @@ module.exports = app => {
             atomId int(11) DEFAULT '0',
             itemId int(11) DEFAULT '0',
             content text DEFAULT NULL,
+            html text DEFAULT NULL,
             PRIMARY KEY (id)
           )
         `;
@@ -58,6 +59,7 @@ module.exports = app => {
             catalog int(11) DEFAULT '0',
             hidden int(11) DEFAULT '0',
             sorting int(11) DEFAULT '0',
+            flag varchar(255) DEFAULT NULL,
             categoryIdParent int(11) DEFAULT '0',
             PRIMARY KEY (id)
           )
@@ -75,7 +77,7 @@ module.exports = app => {
         // create view: aCmsArticleViewFull
         sql = `
           CREATE VIEW aCmsArticleViewFull as
-            select a.*,b.categoryName,c.content from aCmsArticle a
+            select a.*,b.categoryName,c.content,c.html from aCmsArticle a
               left join aCmsCategory b on a.categoryId=b.id
               left join aCmsContent c on a.id=c.itemId
         `;

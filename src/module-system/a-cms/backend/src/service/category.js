@@ -12,15 +12,17 @@ module.exports = app => {
         categoryName: data.categoryName,
         hidden: data.hidden,
         sorting: data.sorting,
+        flag: data.flag,
       });
     }
 
-    async children({ language, categoryId, hidden }) {
+    async children({ language, categoryId, hidden, flag }) {
       const where = {
-        categoryIdParent: categoryId,
+        categoryIdParent: categoryId || 0,
       };
       if (language !== undefined) where.language = language;
       if (hidden !== undefined) where.hidden = hidden;
+      if (flag !== undefined) where.flag = flag;
       const list = await this.ctx.model.category.select({
         where,
         orders: [[ 'sorting', 'asc' ], [ 'createdAt', 'asc' ]],
@@ -85,15 +87,16 @@ module.exports = app => {
       });
     }
 
-    async tree({ language }) {
-      return await this._treeChildren({ language, categoryId: 0 });
+    async tree({ language, categoryId, hidden, flag }) {
+      return await this._treeChildren({ language, categoryId, hidden, flag });
     }
 
-    async _treeChildren({ language, categoryId }) {
-      const list = await this.children({ language, categoryId, hidden: 0 });
+    async _treeChildren({ language, categoryId, hidden, flag }) {
+      const list = await this.children({ language, categoryId, hidden, flag });
       for (const item of list) {
         if (item.catalog) {
-          item.children = await this._treeChildren({ language, categoryId: item.id });
+          // only categoryId
+          item.children = await this._treeChildren({ categoryId: item.id });
         }
       }
       return list;

@@ -123,6 +123,11 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Sorting',
       },
+      flag: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Flag',
+      },
       catalog: {
         type: 'boolean',
         ebType: 'toggle',

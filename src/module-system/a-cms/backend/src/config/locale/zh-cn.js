@@ -5,6 +5,8 @@ module.exports = {
   Publish: '发布',
   Publishing: '发布中',
   Published: '已发布',
+  Search: '搜索',
+  Submit: '提交',
   Sorting: '排序',
   'Article List': '文章清单',
   'Article List(by category)': '文章清单(按目录)',
@@ -13,4 +15,6 @@ module.exports = {
   'Language must not be empty': '语言不允许为空',
   'Theme not set': '没有设置主题',
   'Theme not found': '没有找到主题',
+  'en-us': '英语',
+  'zh-cn': '简体中文',
 };

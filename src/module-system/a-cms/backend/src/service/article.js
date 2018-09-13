@@ -1,3 +1,5 @@
+const markdown = require('../common/markdown.js');
+
 module.exports = app => {
 
   class Article extends app.Service {
@@ -46,9 +48,18 @@ module.exports = app => {
         extra: item.extra || '{}',
         imageFirst,
       });
+      // markdown
+      const md = markdown.create();
+      let html;
+      // article's content
+      if (item.editMode === 1) {
+        html = item.content ? md.render(item.content) : '';
+      } else {
+        html = item.content;
+      }
       // update content
-      await this.ctx.model.query('update aCmsContent a set a.content=? where a.iid=? and a.atomId=?',
-        [ item.content, this.ctx.instance.id, key.atomId ]);
+      await this.ctx.model.query('update aCmsContent a set a.content=?, a.html=? where a.iid=? and a.atomId=?',
+        [ item.content, html, this.ctx.instance.id, key.atomId ]);
       // get atom for safety
       const atom = await this.ctx.meta.atom.get(key);
       const inner = atom.atomFlag !== 2;

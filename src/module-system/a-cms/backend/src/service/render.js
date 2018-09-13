@@ -12,7 +12,6 @@ const CleanCSS = require3('clean-css');
 const shajs = require3('sha.js');
 const babel = require3('babel-core');
 const UglifyJS = require3('uglify-js');
-const markdown = require('../common/markdown.js');
 
 module.exports = app => {
 
@@ -39,10 +38,8 @@ module.exports = app => {
       ejs.clearCache();
       // site
       const site = await this.getSite({ language: article.language });
-      // markdown
-      const md = markdown.create();
       // render article
-      await this._renderArticle({ site, article, md });
+      await this._renderArticle({ site, article });
       if (!inner) {
         // write sitemap
         await this._writeSitemap({ site, article });
@@ -120,13 +117,10 @@ module.exports = app => {
         user: { id: userId },
         pageForce: false,
       });
-      // markdown
-      const md = markdown.create();
-
       // concurrency
       const mapper = article => {
         // render article
-        return this._renderArticle({ site, article, md });
+        return this._renderArticle({ site, article });
       };
       await pMap(articles, mapper, { concurrency: 10 });
       // write sitemap
@@ -230,13 +224,7 @@ module.exports = app => {
       await fse.writeFile(fileName, xml);
     }
 
-    async _renderArticle({ site, article, md }) {
-      // article's content
-      if (article.editMode === 1) {
-        article.text = article.content ? md.render(article.content) : '';
-      } else {
-        article.text = article.content;
-      }
+    async _renderArticle({ site, article }) {
       // data
       const data = await this.getData({ site });
       data.article = article;
@@ -406,7 +394,18 @@ var env=${JSON.stringify(env, null, 2)};
     async getData({ site }) {
       // categories
       if (!site.categories) {
-        site.categories = await this.ctx.service.category.tree({ language: site.language.current });
+        site.categories = await this.ctx.service.category.tree({ language: site.language.current, hidden: 0 });
+      }
+      // languages
+      if (!site.languages) {
+        site.languages = [];
+        for (const item of site.language.items.split(',')) {
+          site.languages.push({
+            name: item,
+            title: this.ctx.text.locale(item, item),
+            url: this.getUrl(site, item, ''),
+          });
+        }
       }
       // data
       const self = this;
