@@ -1,5 +1,19 @@
 <%- await include('../layout/header.ejs') %>
-  <section>
-  <p><%- article.text %></p>
-  </section>
+<div class="row">
+  <div class="col-sm-8">
+    <article>
+      <%- article.html %>
+    </article>
+  </div>
+  <div class="col-sm-4">
+    <div class="sidebar">
+      <div class="panel panel-default">
+        <div class="panel-heading">Panel heading without title</div>
+        <div class="panel-body">
+          Panel content
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <%- await include('../layout/footer.ejs') %>

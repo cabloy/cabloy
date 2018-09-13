@@ -3,13 +3,14 @@
 <%- await include('./highlight/atom-one-light.css') %>
 
 body {
+  font-size:14px;
+  color:#666;
   background: url(<%=url('assets/images/body-background.png')%>) #eae6d1
 }
 
 header {
   margin: 0;
   padding: 15px 0;
-  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -20,7 +21,7 @@ header {
   -webkit-box-shadow: 1px 0px 2px rgba(0, 0, 0, 0.75);
   box-shadow: 1px 0px 2px rgba(0, 0, 0, 0.75);
   z-index: 99;
-  height: 112px;
+  height: 115px;
 }
 
 header h1 {
@@ -47,12 +48,8 @@ header p {
 }
 
 footer {
-  width: 180px;
-  position: fixed;
-  left: 50%;
-  margin-left: -530px;
-  bottom: 40px;
-  text-align: left
+  margin: 0 0 20px 0;
+  text-align: center;
 }
 
 footer .small {
@@ -67,15 +64,60 @@ footer .small {
   margin-top:-16px;
 }
 
-.navbar-default>li>a{
+.navbar-default .navbar-brand{
   color: #9d7f0d;
   text-shadow: rgba(255, 255, 255, 0.2) 0 1px 0;
+  text-transform: uppercase;
+}
+
+.navbar-default .navbar-nav>li>a{
+  color: #9d7f0d;
+  text-shadow: rgba(255, 255, 255, 0.2) 0 1px 0;
+  text-transform: uppercase;
 }
 
 .navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus {
+  color: #9d7f0d;
   background-color: #FFE788;
 }
 
 .navbar-default .navbar-nav>li>a:focus, .navbar-default .navbar-nav>li>a:hover {
   background-color: #EEE;
 }
+
+.container-site{
+  padding-top: 40px;
+}
+
+.btn-default,.btn-default:focus{
+  color: #777;
+  background-color: #FFE788;
+  border: 1px solid #dba500;
+  background: linear-gradient(#ffe788,#ffce38);
+  border-radius: 2px;
+  box-shadow: inset 0px 1px 0px rgba(255,255,255,0.4), 0px 1px 1px rgba(0,0,0,0.1);
+  transition: all 0.4s ease-in;
+  outline: 0;
+}
+
+article{
+  width: 100%;
+    padding: 30px 30px 10px 30px;
+    margin: 20px 0;
+    position: relative;
+    background: #fbfbfb;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    -ms-border-radius: 2px;
+    -o-border-radius: 2px;
+    border-radius: 2px;
+    border: 1px solid #cbcbcb;
+    -webkit-box-shadow: 0px 1px 2px rgba(0,0,0,0.09), inset 0px 0px 2px 2px rgba(255,255,255,0.5), inset 0 0 5px 5px rgba(255,255,255,0.4);
+    -moz-box-shadow: 0px 1px 2px rgba(0,0,0,0.09),inset 0px 0px 2px 2px rgba(255,255,255,0.5),inset 0 0 5px 5px rgba(255,255,255,0.4);
+    box-shadow: 0px 1px 2px rgba(0,0,0,0.09), inset 0px 0px 2px 2px rgba(255,255,255,0.5), inset 0 0 5px 5px rgba(255,255,255,0.4);
+}
+
+.sidebar{
+  margin: 20px 0;
+}
+
