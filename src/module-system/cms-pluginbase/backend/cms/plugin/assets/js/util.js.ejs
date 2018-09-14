@@ -1,0 +1,140 @@
+const createPromise = function createPromise(handler) {
+  let resolved = false;
+  let rejected = false;
+  let resolveArgs;
+  let rejectArgs;
+  const promiseHandlers = {
+    then: undefined,
+    catch: undefined,
+  };
+  const promise = {
+    then(thenHandler) {
+      if (resolved) {
+        thenHandler(...resolveArgs);
+      } else {
+        promiseHandlers.then = thenHandler;
+      }
+      return promise;
+    },
+    catch(catchHandler) {
+      if (rejected) {
+        catchHandler(...rejectArgs);
+      } else {
+        promiseHandlers.catch = catchHandler;
+      }
+      return promise;
+    },
+  };
+
+  function resolve(...args) {
+    resolved = true;
+    if (promiseHandlers.then) promiseHandlers.then(...args);
+    else resolveArgs = args;
+  }
+  function reject(...args) {
+    rejected = true;
+    if (promiseHandlers.catch) promiseHandlers.catch(...args);
+    else rejectArgs = args;
+  }
+  handler(resolve, reject);
+
+  return promise;
+};
+
+const util = {
+  parseUrlQuery(url) {
+    const query = {};
+    let urlToParse = url || window.location.href;
+    let i;
+    let params;
+    let param;
+    let length;
+    if (typeof urlToParse === 'string' && urlToParse.length) {
+      urlToParse = urlToParse.indexOf('?') > -1 ? urlToParse.replace(/\S*\?/, '') : '';
+      params = urlToParse.split('&');
+      length = params.length;
+
+      for (let i = 0; i < length; i += 1) {
+        param = params[i].replace(/#\S+/g, '').split('=');
+        query[decodeURIComponent(param[0])] = typeof param[1] === 'undefined' ? undefined : decodeURIComponent(param[1]) || '';
+      }
+    }
+    return query;
+  },
+  promise(handler) {
+    return window.Promise ? new Promise(handler) : createPromise(handler);
+  },
+  ajax({ url, body, cache = true }) {
+    return this.promise((resolve, reject) => {
+      $.ajax({
+        type: 'GET',
+        cache,
+        url: `<%=site.serverUrl%>/api/${url}`,
+        data: body,
+        dataType: 'jsonp',
+        timeout: 7000,
+      }).done(function(data) {
+        if (data.code === 0) {
+          resolve(data.data);
+        } else {
+          reject(data.message);
+        }
+      }).fail(function() {
+        reject(null);
+      });
+    });
+  },
+  loadMore({ container, threshold = 50, index = 0, onFetch, onParse }) {
+    // init
+    const $container = $(container);
+    const $window = $(window);
+    const $body = $('body');
+
+    const $loadMoreContainer = $('<div class="load-more"></div>');
+    $loadMoreContainer.insertAfter($container);
+
+    //
+    let finished = false;
+    let fetching = false;
+    let error = false;
+
+    // onFetch
+    const _onFetch = function() {
+      fetching = true;
+      $loadMoreContainer.empty();
+      $loadMoreContainer.append($('<span class="glyphicon glyphicon-refresh spinning"></span>'));
+      const res = onFetch({ index });
+      res.then(data => {
+        $loadMoreContainer.empty();
+        index = data.index;
+        finished = data.finished;
+        for (let i = 0; i < data.list.length; i++) {
+          $container.append($(onParse(data.list[i])));
+        }
+        error = false;
+        fetching = false;
+      }).catch(() => {
+        const $buttonTry = $('<button type="button" class="btn btn-warning btn-xs"><%=text("Load error, try again")%></button>');
+        $buttonTry.click(() => {
+          _onFetch();
+        });
+        $loadMoreContainer.empty();
+        $loadMoreContainer.append($buttonTry);
+        // need retry manually
+        error = true;
+        fetching = false;
+      });
+    };
+    // onScroll
+    const _onScroll = function() {
+      if (finished || fetching || error) return;
+      if (($body.outerHeight() - $window.height() - $window.scrollTop()) < threshold) {
+        _onFetch();
+      }
+    };
+
+    // bind event
+    $window.on('scroll.infinite resize.infinite', _onScroll);
+    _onScroll();
+  },
+};
