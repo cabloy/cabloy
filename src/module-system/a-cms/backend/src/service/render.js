@@ -249,6 +249,8 @@ module.exports = app => {
     }
 
     async _renderFile({ fileSrc, fileDest, data }) {
+      // env path
+      data.env('path', fileSrc.replace('.ejs', ''));
       // language
       const language = data.site.language.current;
       // src
@@ -390,6 +392,9 @@ var env=${JSON.stringify(env, null, 2)};
       const urlRoot = this.getUrlRoot(site, language);
       return `${urlRoot}/${path}`;
     }
+    getServerUrl(path) {
+      return this.ctx.meta.file.getUrl(path);
+    }
 
     async getData({ site }) {
       // categories
@@ -406,6 +411,11 @@ var env=${JSON.stringify(env, null, 2)};
             url: this.getUrl(site, item, ''),
           });
         }
+      }
+      // server url
+      if (!site.serverUrl) {
+        site.serverUrl = this.getServerUrl('');
+        console.log(site.serverUrl);
       }
       // data
       const self = this;

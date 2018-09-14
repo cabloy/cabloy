@@ -3,6 +3,7 @@ const article = require('./controller/article.js');
 const category = require('./controller/category.js');
 const render = require('./controller/render.js');
 const site = require('./controller/site.js');
+const jsonp = require('./controller/jsonp.js');
 
 module.exports = app => {
   const routes = [
@@ -43,6 +44,8 @@ module.exports = app => {
     { method: 'post', path: 'category/add', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'category/delete', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'category/move', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
+    // jsonp
+    { method: 'get', path: 'jsonp/articleList', controller: jsonp, middlewares: 'jsonp' },
 
   ];
   return routes;
