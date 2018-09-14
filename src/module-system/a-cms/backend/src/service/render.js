@@ -412,6 +412,8 @@ var env=${JSON.stringify(env, null, 2)};
       const _csses = [];
       const _jses = [];
       const _envs = {};
+      let _pathIntermediate = await this.getPathIntermediate(site.language.current);
+      _pathIntermediate = path.join(_pathIntermediate, '/');
       return {
         ctx: self.ctx,
         site,
@@ -419,18 +421,18 @@ var env=${JSON.stringify(env, null, 2)};
         _jses,
         _envs,
         require(fileName) {
-          const ch = fileName.charAt(0);
-          const file = (ch !== '.' && ch !== '..') ? fileName : path.resolve(path.dirname(this._filename), fileName);
-          return require(file);
+          const _path = self.resolvePath('', this._filename, fileName);
+          return require(_path);
         },
         url(fileName) {
-          return self.getUrl(site, site.language.current, fileName);
+          const _path = self.resolvePath('', path.relative(_pathIntermediate, this._filename), fileName);
+          return self.getUrl(site, site.language.current, _path);
         },
         css(fileName) {
-          _csses.push(path.resolve(path.dirname(this._filename), fileName));
+          _csses.push(self.resolvePath(_pathIntermediate, this._filename, fileName));
         },
         js(fileName) {
-          _jses.push(path.resolve(path.dirname(this._filename), fileName));
+          _jses.push(self.resolvePath(_pathIntermediate, this._filename, fileName));
         },
         env(name, value) {
           _envs[name] = value;
@@ -439,6 +441,12 @@ var env=${JSON.stringify(env, null, 2)};
           return this.ctx.text.locale(site.language.current, str);
         },
       };
+    }
+
+    resolvePath(pathRoot, fileCurrent, fileName) {
+      if (!fileName) return pathRoot;
+      if (fileName.charAt(0) === '.') return path.join(path.dirname(fileCurrent), fileName); // not use path.resolve
+      return path.join(pathRoot, fileName);
     }
 
     getOptions() {
