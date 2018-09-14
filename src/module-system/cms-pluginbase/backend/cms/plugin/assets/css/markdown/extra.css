@@ -1,0 +1,20 @@
+.hljs-center {
+  text-align: center;
+}
+
+.hljs-right {
+  text-align: right;
+}
+
+.hljs-left {
+  text-align: left;
+}
+
+.warning {
+  color: #8a6d3b;
+  background-color: #fcf8e3;
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid #faebcc;
+  border-radius: 4px;
+}
