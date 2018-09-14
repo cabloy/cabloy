@@ -27,7 +27,11 @@ module.exports = {
   create() {
     return markdown_it(defaults)
       .use(markdown_it_abbr)
+      .use(markdown_it_container)
       .use(markdown_it_container, 'warning')
+      .use(markdown_it_container, 'hljs-left')
+      .use(markdown_it_container, 'hljs-center')
+      .use(markdown_it_container, 'hljs-right')
       .use(markdown_it_deflist)
       .use(markdown_it_emoji)
       .use(markdown_it_footnote)
