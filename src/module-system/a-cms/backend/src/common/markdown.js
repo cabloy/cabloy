@@ -12,7 +12,7 @@ const markdown_it_mark = require3('markdown-it-mark');
 const markdown_it_sub = require3('markdown-it-sub');
 const markdown_it_sup = require3('markdown-it-sup');
 const markdown_it_task_lists = require3('markdown-it-task-lists');
-
+const markdown_it_toc = require3('markdown-it-toc');
 
 const defaults = {
   html: false, // Enable HTML tags in source
@@ -41,6 +41,7 @@ module.exports = {
       .use(markdown_it_mark)
       .use(markdown_it_sub)
       .use(markdown_it_sup)
-      .use(markdown_it_task_lists);
+      .use(markdown_it_task_lists)
+      .use(markdown_it_toc);
   },
 };
