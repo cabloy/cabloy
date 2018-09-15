@@ -2,7 +2,50 @@
 <div class="row">
   <div class="col-sm-8">
     <section>
-      <ul class="article-list">
+      <ul class="article-list media-list">
+        <%
+          // options
+          const options = {
+            where: {
+              'f.language': site.language.current,
+            },
+            orders: [
+              [ 'a.createdAt', 'desc' ],
+            ],
+            page: { index:0 },
+            mode: 'list',
+          };
+          // select
+          const data=await ctx.performAction({
+            method:'get',
+            url: '/a/cms/jsonp/articleList',
+            body: { options },
+          });
+          // index
+          env('index',{
+            [_path]:data.index,
+          });
+          // list
+          for(const item of data.list){
+             const media = !item.imageFirst ? '' : `
+<div class="media-right">
+      <a target="_blank" href="${url(item.url)}">
+        <img class="media-object img-delay" data-src="${item.imageFirst}" data-width="125" data-height="100">
+      </a>
+</div>
+        `;
+        const html= `
+<li class="media">
+    <div class="media-body">
+      <h4 class="media-heading"><a target="_blank" href="${url(item.url)}">${item.atomName}</a></h4>
+      ${item.description || item.summary}
+    </div>
+    ${media}
+</li>
+        `;
+          echo(html);
+          }
+        %>
       </ul>
     </section>
   </div>
