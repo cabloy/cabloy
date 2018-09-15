@@ -18,6 +18,7 @@ module.exports = app => {
             sticky int(11) DEFAULT '0',
             keywords varchar(255) DEFAULT NULL,
             description text DEFAULT NULL,
+            summary text DEFAULT NULL,
             url varchar(255) DEFAULT NULL,
             editMode int(11) DEFAULT '0',
             slug varchar(255) DEFAULT NULL,

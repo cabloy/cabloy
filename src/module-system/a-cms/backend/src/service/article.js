@@ -1,3 +1,5 @@
+const require3 = require('require3');
+const trimHtml = require3('trim-html');
 const markdown = require('../common/markdown.js');
 
 module.exports = app => {
@@ -32,8 +34,22 @@ module.exports = app => {
 
     async write({ atomClass, key, item, validation, user }) {
       // image first
-      const matches = item.content && item.content.match(/!\[[^\]]*?\]\(([^\)]*?)\)/);
-      const imageFirst = (matches && matches[1]) || '';
+      let imageFirst = '';
+      if (item.editMode === 1) {
+        const matches = item.content && item.content.match(/!\[[^\]]*?\]\(([^\)]*?)\)/);
+        imageFirst = (matches && matches[1]) || '';
+      }
+      // markdown
+      const md = markdown.create();
+      let html;
+      // html
+      if (item.editMode === 1) {
+        html = item.content ? md.render(item.content) : '';
+      } else {
+        html = item.content;
+      }
+      // summary
+      const summary = trimHtml(html, this.ctx.config.article.trim);
       // update article
       await this.ctx.model.article.update({
         id: key.itemId,
@@ -42,21 +58,13 @@ module.exports = app => {
         sticky: item.sticky,
         keywords: item.keywords,
         description: item.description,
+        summary: summary.html,
         editMode: item.editMode,
         slug: item.slug,
         flag: item.flag,
         extra: item.extra || '{}',
         imageFirst,
       });
-      // markdown
-      const md = markdown.create();
-      let html;
-      // article's content
-      if (item.editMode === 1) {
-        html = item.content ? md.render(item.content) : '';
-      } else {
-        html = item.content;
-      }
       // update content
       await this.ctx.model.query('update aCmsContent a set a.content=?, a.html=? where a.iid=? and a.atomId=?',
         [ item.content, html, this.ctx.instance.id, key.atomId ]);

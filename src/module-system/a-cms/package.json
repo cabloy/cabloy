@@ -63,6 +63,7 @@
     "clean-css": "^4.2.1",
     "uglify-js": "^3.4.8",
     "sha.js": "^2.4.11",
+    "trim-html": "^0.1.9",
     "egg-born-module-a-mde": "^1.0.0",
     "markdown-it": "^8.4.2",
     "markdown-it-abbr": "^1.0.4",

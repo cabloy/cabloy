@@ -42,6 +42,7 @@ module.exports = app => {
       description: {
         type: 'string',
         ebType: 'text',
+        ebTextarea: true,
         ebTitle: 'Description',
       },
       editMode: {

@@ -2,6 +2,15 @@
 module.exports = appInfo => {
   const config = {};
 
+  // article
+  config.article = {
+    trim: {
+      limit: 100,
+      wordBreak: false,
+      preserveTags: false,
+    },
+  };
+
   // site
   config.site = {
     base: {

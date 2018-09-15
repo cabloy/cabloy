@@ -249,21 +249,28 @@ module.exports = app => {
     }
 
     async _renderFile({ fileSrc, fileDest, data }) {
-      // env path
-      data.env('path', fileSrc.replace('.ejs', ''));
+      // site
+      const site = data.site;
       // language
-      const language = data.site.language.current;
+      const language = site.language.current;
       // src
       const pathIntermediate = await this.getPathIntermediate(language);
       const fileName = path.join(pathIntermediate, fileSrc);
       // data
       data._filename = fileName;
+      data._path = fileSrc.replace('.ejs', '');
+      // env site
+      data.env('site', {
+        path: data._path,
+        serverUrl: site.serverUrl,
+        rootUrl: this.getUrl(site, language, ''),
+      });
       // render
       let content = await ejs.renderFile(fileName, data, this.getOptions());
       content = await this._renderEnvs({ data, content });
       content = await this._renderCSSJSes({ data, content });
       // dest
-      const pathDist = await this.getPathDist(data.site, language);
+      const pathDist = await this.getPathDist(site, language);
       const fileWrite = path.join(pathDist, fileDest);
       // write
       await fse.outputFile(fileWrite, content);
@@ -390,7 +397,7 @@ var env=${JSON.stringify(env, null, 2)};
     }
     getUrl(site, language, path) {
       const urlRoot = this.getUrlRoot(site, language);
-      return `${urlRoot}/${path}`;
+      return path ? `${urlRoot}/${path}` : urlRoot;
     }
     getServerUrl(path) {
       return this.ctx.meta.file.getUrl(path);
@@ -415,7 +422,6 @@ var env=${JSON.stringify(env, null, 2)};
       // server url
       if (!site.serverUrl) {
         site.serverUrl = this.getServerUrl('');
-        console.log(site.serverUrl);
       }
       // data
       const self = this;
