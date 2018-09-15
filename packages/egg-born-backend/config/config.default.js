@@ -1,5 +1,8 @@
 const _config = require('../../../build/config.js');
 
+const fs = require('fs');
+const path = require('path');
+
 const {
   isProd,
   detectStatus,
@@ -68,6 +71,11 @@ module.exports = appInfo => {
       '.doc', '.docx',
       '.pdf',
     ],
+  };
+
+  // siteFile
+  config.siteFile = {
+    '/favicon.ico': fs.readFileSync(path.join(__dirname, 'favicon.ico')),
   };
 
   // onerror
