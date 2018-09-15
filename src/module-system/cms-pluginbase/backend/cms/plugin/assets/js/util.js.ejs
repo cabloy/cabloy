@@ -69,7 +69,7 @@ const util = {
       $.ajax({
         type: 'GET',
         cache,
-        url: `<%=site.serverUrl%>/api/${url}`,
+        url: `<%=site.serverUrl%>/api${url}`,
         data: body,
         dataType: 'jsonp',
         timeout: 7000,
@@ -83,6 +83,16 @@ const util = {
         reject(null);
       });
     });
+  },
+  combineImageUrl(url, width, height) {
+    if (!url) return url;
+    if (url.indexOf('/api/a/file/file/download') === -1) return url;
+    if (!width && !height) return url;
+    const pixelRatio = window.devicePixelRatio || 1;
+    let query = '';
+    if (width) query = `width=${parseInt(width) * pixelRatio}`;
+    if (height) query = `${query ? query + '&' : ''}height=${parseInt(height) * pixelRatio}`;
+    return `${url}${url.charAt(url.length - 1) === '?' ? '' : '?'}${query}`;
   },
   loadMore({ container, threshold = 50, index = 0, onFetch, onParse }) {
     // init
@@ -138,3 +148,15 @@ const util = {
     _onScroll();
   },
 };
+
+$(document).ready(function() {
+  // img delay
+  $.each($('.img-delay'), (index, item) => {
+    const $item = $(item);
+    const src=$item.data('src');
+    const width=$item.data('width');
+    const height=$item.data('height');
+    $item.attr('src', util.combineImageUrl(src, width, height));
+    $(item).removeClass('img-delay');
+  });
+});
