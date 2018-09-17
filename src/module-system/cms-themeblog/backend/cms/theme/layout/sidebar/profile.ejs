@@ -1,0 +1,12 @@
+<div class="panel panel-default">
+  <div class="panel-heading"><%=text('personalProfile')%></div>
+  <div class="panel-body">
+    <div class="profile">
+      <a class='avatar' href="<%=url(site.profile.avatarUrl)%>">
+        <img class="img-delay" data-src="<%=url(site.profile.avatar)%>" data-width="125" data-height="100" title="<%=site.profile.userName%>"/>
+      </a>
+      <span class='name'><a href="<%=url(site.profile.avatarUrl)%>"><%=site.profile.userName%></a></span>
+      <div class="motto"><%=site.profile.motto%></div>
+    </div>
+  </div>
+</div>
