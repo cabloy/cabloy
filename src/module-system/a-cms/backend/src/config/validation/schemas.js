@@ -77,6 +77,18 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Content',
       },
+      allowHeart: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Allow Heart',
+        default: false,
+      },
+      allowComment: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Allow Comment',
+        default: false,
+      },
     },
   };
 
