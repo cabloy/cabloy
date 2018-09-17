@@ -217,6 +217,8 @@ const Fn = module.exports = ctx => {
       if (item) {
         const atom = { };
         if (item.atomName !== undefined) atom.atomName = item.atomName;
+        if (item.allowHeart !== undefined) atom.allowHeart = item.allowHeart;
+        if (item.allowComment !== undefined) atom.allowComment = item.allowComment;
         if (Object.keys(atom).length > 0) {
           atom.id = key.atomId;
           await this._update({
@@ -435,11 +437,13 @@ const Fn = module.exports = ctx => {
     }
 
     async _update({
-      atom: { id, atomName, atomFlow, itemId },
+      atom: { id, atomName, allowHeart, allowComment, atomFlow, itemId },
       user,
     }) {
       const params = { id, userIdUpdated: user.id };
       if (atomName !== undefined) params.atomName = atomName;
+      if (allowHeart !== undefined) params.allowHeart = allowHeart;
+      if (allowComment !== undefined) params.allowComment = allowComment;
       if (atomFlow !== undefined) params.atomFlow = atomFlow;
       if (itemId !== undefined) params.itemId = itemId;
       const res = await this.modelAtom.update(params);

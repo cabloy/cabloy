@@ -1,5 +1,5 @@
 <template>
-  <eb-search-page :title="$text('Search menu')">
+  <eb-search-page :title="$text('Search Menu')">
     <menus slot="list" mode="search"></menus>
   </eb-search-page>
 </template>
