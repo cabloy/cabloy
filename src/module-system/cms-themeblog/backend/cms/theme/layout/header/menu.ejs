@@ -3,7 +3,7 @@ function _menuItems(categories) {
   let res = '';
   for (const item of categories) {
     if (!item.catalog) {
-      res += `<li><a class="category-${item.id}" href="${url('static/category.html')}?categoryId=${item.id}">${item.categoryName}</a></li>`;
+      res += `<li><a class="category-${item.id}" data-category-name="${item.categoryName}" href="${url('static/category.html')}?categoryId=${item.id}">${item.categoryName}</a></li>`;
     } else {
       const _items = _menuItems(item.children);
       res += `

@@ -18,8 +18,8 @@
           // select
           const data=await ctx.performAction({
             method:'get',
-            url: '/a/cms/jsonp/articleList',
-            body: { options },
+            url: '/a/cms/article/list',
+            query: { options:JSON.stringify(options) },
           });
           // index
           env('index',{

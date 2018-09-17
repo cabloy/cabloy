@@ -1,9 +1,6 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-<meta name="description" content="<%=site.base.description || site.base.subTitle%>">
-<meta name="author" content="<%=site.base.author%>">
-<link href="<%=url('assets/images/favicon.ico')%>" rel="icon">
-<title>
-  <%=`${site.base.title} - ${site.base.subTitle}`%>
-</title>
+<link rel="shortcut icon" href="<%=url('assets/images/favicon.ico')%>" type="image/x-icon">
+<%- await include('../../plugins/cms-pluginbase/header-meta.ejs') %>
+<%- await include('../../plugins/cms-pluginbase/header-css.ejs') %>

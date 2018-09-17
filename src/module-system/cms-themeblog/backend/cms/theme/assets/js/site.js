@@ -23,6 +23,9 @@ $(document).ready(function() {
     $('form.search input').val(query.search);
   }
 
+  // title
+  util.title();
+
 });
 
 function loadMore({ categoryId, search }) {
@@ -52,8 +55,8 @@ function loadMore({ categoryId, search }) {
       }
       // select
       return util.ajax({
-        url: '/a/cms/jsonp/articleList',
-        body: { options: encodeURIComponent(JSON.stringify(options)) },
+        url: '/a/cms/article/list',
+        body: { options: JSON.stringify(options) },
       });
     },
     onParse(item) {
