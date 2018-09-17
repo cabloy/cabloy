@@ -23,12 +23,6 @@ module.exports = appInfo => {
       url: 'http://example.com',
       rootPath: '',
     },
-    env: {
-      format: {
-        date: 'YYYY-MM-DD',
-        time: 'HH:mm:ss',
-      },
-    },
     language: {
       default: 'en-us',
       items: 'en-us',
@@ -38,6 +32,18 @@ module.exports = appInfo => {
     },
     edit: {
       mode: 1, // markdown
+    },
+    env: {
+      format: {
+        date: 'YYYY-MM-DD',
+        time: 'HH:mm:ss',
+      },
+    },
+    profile: {
+      userName: 'zhennann',
+      motto: 'Less is more, while more is less.',
+      avatar: 'assets/images/avatar.jpg',
+      avatarUrl: '',
     },
   };
 
