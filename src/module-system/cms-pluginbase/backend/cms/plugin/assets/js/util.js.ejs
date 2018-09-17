@@ -147,15 +147,28 @@ const util = {
     $window.on('scroll.infinite resize.infinite', _onScroll);
     _onScroll();
   },
+  categoryName(categoryId){
+    return $(`.category-${categoryId}`).data('category-name');
+  },
+  title() {
+    if (env.site.path === 'static/category') {
+      const query = this.parseUrlQuery();
+      if (query.search) {
+        document.title = `<%=text('Search')%>:${query.search}-${env.base.title}`;
+      } else {
+        document.title = `${this.categoryName(query.categoryId)}-${env.base.title}`;
+      }
+    }
+  },
 };
 
 $(document).ready(function() {
   // img delay
   $.each($('.img-delay'), (index, item) => {
     const $item = $(item);
-    const src=$item.data('src');
-    const width=$item.data('width');
-    const height=$item.data('height');
+    const src = $item.data('src');
+    const width = $item.data('width');
+    const height = $item.data('height');
     $item.attr('src', util.combineImageUrl(src, width, height));
     $(item).removeClass('img-delay');
   });
