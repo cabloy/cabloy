@@ -22,6 +22,7 @@ module.exports = app => {
             url varchar(255) DEFAULT NULL,
             editMode int(11) DEFAULT '0',
             slug varchar(255) DEFAULT NULL,
+            sorting int(11) DEFAULT '0',
             flag varchar(255) DEFAULT NULL,
             extra json DEFAULT NULL,
             imageFirst varchar(255) DEFAULT NULL,

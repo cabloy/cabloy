@@ -61,6 +61,7 @@ module.exports = app => {
         summary: summary.html,
         editMode: item.editMode,
         slug: item.slug,
+        sorting: item.sorting,
         flag: item.flag,
         extra: item.extra || '{}',
         imageFirst,
@@ -97,6 +98,12 @@ module.exports = app => {
         await this.ctx.meta.atom.flag({
           key,
           atom: { atomFlag: 2 },
+          user,
+        });
+        // change flow
+        await this.ctx.meta.atom.flow({
+          key,
+          atom: { atomFlow: 0 },
           user,
         });
         // render

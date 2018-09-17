@@ -18,7 +18,6 @@ module.exports = appInfo => {
       subTitle: 'gone with the wind',
       description: '',
       keywords: '',
-      author: '',
     },
     host: {
       url: 'http://example.com',

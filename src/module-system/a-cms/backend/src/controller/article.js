@@ -1,3 +1,6 @@
+const require3 = require('require3');
+const extend = require3('extend2');
+
 module.exports = app => {
 
   class ArticleController extends app.Controller {
@@ -34,6 +37,29 @@ module.exports = app => {
 
     async enable() {
       const res = await this.ctx.service.article.enable(this.ctx.request.body);
+      this.ctx.success(res);
+    }
+
+    // list
+    async list() {
+      // options
+      const options = JSON.parse(this.ctx.request.query.options);
+      options.where = extend(true, options.where, {
+        'a.atomEnabled': 1,
+        'a.atomFlag': 2,
+      });
+      // select
+      const res = await this.ctx.performAction({
+        method: 'post',
+        url: '/a/base/atom/select',
+        body: {
+          atomClass: {
+            module: 'a-cms',
+            atomClassName: 'article',
+          },
+          options,
+        },
+      });
       this.ctx.success(res);
     }
 

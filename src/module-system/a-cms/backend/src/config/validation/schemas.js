@@ -56,6 +56,11 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Slug',
       },
+      sorting: {
+        type: 'number',
+        ebType: 'text',
+        ebTitle: 'Sorting',
+      },
       flag: {
         type: 'string',
         ebType: 'text',
