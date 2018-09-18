@@ -25,7 +25,7 @@ module.exports = {
       default: 0,
       create: 1,
       list: 2,
-      statistics: 20,
+      report: 20,
       tools: 50,
       custom: 100,
     },

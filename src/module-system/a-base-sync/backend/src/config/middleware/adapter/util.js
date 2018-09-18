@@ -8,7 +8,7 @@ module.exports = ctx => {
       if (!_page) {
         _page = force ? { index: 0 } : { index: 0, size: 0 };
       }
-      if (force || _page.size === undefined) _page.size = ctx.app.config.pageSize;
+      if (_page.size === undefined || (force && (_page.size === 0 || _page.size === -1 || _page.size > ctx.app.config.pageSize))) _page.size = ctx.app.config.pageSize;
       return _page;
     }
 
