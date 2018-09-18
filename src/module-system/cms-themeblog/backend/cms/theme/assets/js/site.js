@@ -4,13 +4,10 @@ $(document).ready(function() {
   const query = util.parseUrlQuery();
 
   // title
-  util.title();
+  title(query);
 
   // menu active
-  if (query.categoryId) {
-    const link = $(`.category-${query.categoryId}`);
-    link.parents('li').addClass('active');
-  }
+  menuActive(query);
 
   // search text
   if (query.search) {
@@ -20,10 +17,41 @@ $(document).ready(function() {
   // load more
   loadMore(query);
 
+  // breadcrumb
+  breadcrumb();
+
   // relatives
   relatives();
 
 });
+
+function menuActive(query) {
+  const categoryId = query.categoryId || (env.article && env.article.categoryId);
+  if (categoryId) {
+    const link = $(`.category-${categoryId}`);
+    link.parents('li').addClass('active');
+  }
+}
+
+function title(query) {
+  if (env.site.path === 'static/category') {
+    if (query.search) {
+      document.title = `<%=text('Search')%>:${query.search}-${env.base.title}`;
+    } else {
+      document.title = `${categoryName(query.categoryId)}-${env.base.title}`;
+    }
+  }
+}
+
+function breadcrumb() {
+  if (env.site.path === 'main/article') {
+    const $category = $(`.category-${env.article.categoryId}`);
+    $('.breadcrumb .category')
+      .attr('href', $category.attr('href'))
+      .text($category.data('category-name'));
+    $('.breadcrumb .active').text(env.article.atomName);
+  }
+}
 
 function relatives() {
   if (env.site.path === 'main/article') {
@@ -74,6 +102,10 @@ function _relative({ type, article }) {
   $relativeLink.attr('href', `${env.site.rootUrl}/${article.url}`);
   $relativeLink.text(article.atomName);
   $relative.removeClass('hidden');
+}
+
+function categoryName(categoryId) {
+  return $(`.category-${categoryId}`).data('category-name');
 }
 
 function loadMore(query) {

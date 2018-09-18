@@ -2,6 +2,7 @@
 <div class="row">
   <div class="col-sm-8">
     <article>
+      <%- await include('../layout/breadcrumb.ejs') %>
       <%- article.html %>
       <%- await include('../layout/relatives.ejs') %>
     </article>
