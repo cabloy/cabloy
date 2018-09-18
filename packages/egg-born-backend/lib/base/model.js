@@ -212,7 +212,8 @@ function _where2(db, where) {
     if (Array.isArray(value)) {
       wheres.push('?? IN (?)');
     } else if (typeof value === 'object') {
-      wheres.push(`${db.format('??', key)} LIKE ${_format2(db, value)}`);
+      const op = value.op.indexOf('like') > -1 ? 'LIKE' : value.op;
+      wheres.push(`${db.format('??', key)} ${op} ${_format2(db, value)}`);
       ignore = true;
     } else {
       wheres.push('?? = ?');
