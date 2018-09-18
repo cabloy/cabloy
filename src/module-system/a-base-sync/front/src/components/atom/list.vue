@@ -2,10 +2,14 @@
   <div>
     <f7-list>
       <eb-list-item class="item" v-for="item of items" :key="item.atomId" :link="itemShow?false:'#'" :context="item" :onPerform="onItemClick" swipeout @swipeout:opened="onSwipeoutOpened($event,item)" @contextmenu:opened="onSwipeoutOpened($event,item)">
+        <div slot="media">
+          <img class="avatar avatar32" :src="$meta.util.combineImageUrl(item.avatar,32)">
+        </div>
         <div slot="root-start" class="header">
           <div class="userName">
             <span>{{item.userName}}</span>
-            <f7-icon class="star" color="orange" :material="item.star?'star':''"></f7-icon>
+            <f7-icon v-if="item.star" class="star" color="orange" material="star"></f7-icon>
+            <f7-icon v-if="item.attachmentCount>0" class="star" color="orange" material="attachment"></f7-icon>
           </div>
           <template v-if="itemShow">
             <div>
@@ -209,8 +213,8 @@ export default {
       return this.$api.post('atom/star', {
         key,
         atom: { star },
-      }).then(() => {
-        this.$meta.eventHub.$emit('atom:star', { key, star });
+      }).then(data => {
+        this.$meta.eventHub.$emit('atom:star', { key, star: data.star, starCount: data.starCount });
         this.$meta.util.swipeoutClose(event.target);
       });
     },
@@ -222,8 +226,8 @@ export default {
       return this.$api.post('atom/star', {
         key,
         atom: { star: 0 },
-      }).then(() => {
-        this.$meta.eventHub.$emit('atom:star', { key, star: 0 });
+      }).then(data => {
+        this.$meta.eventHub.$emit('atom:star', { key, star: data.star, starCount: data.starCount });
         this.$meta.util.swipeoutDelete(event.target);
       });
     },

@@ -3,16 +3,15 @@ module.exports = function(ctx) {
   class VersionUpdate4 {
 
     async run() {
+
       // aAtom
       let sql = `
         ALTER TABLE aAtom
-          ADD COLUMN allowHeart int(11) DEFAULT '0',
-          ADD COLUMN allowComment int(11) DEFAULT '0',
-          ADD COLUMN hearts json DEFAULT NULL,
-          ADD COLUMN heartUids text DEFAULT NULL,
-          ADD COLUMN heartCount int(11) DEFAULT '0',
+          ADD COLUMN allowComment int(11) DEFAULT '1',
+          ADD COLUMN starCount int(11) DEFAULT '0',
           ADD COLUMN commentCount int(11) DEFAULT '0',
-          ADD COLUMN attachmentCount int(11) DEFAULT '0'
+          ADD COLUMN attachmentCount int(11) DEFAULT '0',
+          ADD COLUMN readCount int(11) DEFAULT '0'
                   `;
       await ctx.model.query(sql);
 
@@ -84,7 +83,7 @@ begin
   end if;
 
   set @sql=concat(
-    'select ',_itemField,'a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomFlow,a.atomClassId,a.atomName,a.allowHeart,a.allowComment,a.hearts,a.heartUids,a.heartCount,a.commentCount,a.attachmentCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,b.module,b.atomClassName,b.atomClassIdParent,g.userName,g.avatar',_starField,_labelField,' from aAtom a',
+    'select ',_itemField,'a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomFlow,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,b.module,b.atomClassName,b.atomClassIdParent,g.userName,g.avatar',_starField,_labelField,' from aAtom a',
     ' inner join aAtomClass b on a.atomClassId=b.id',
     ' inner join aUser g on a.userIdCreated=g.id',
     _itemJoin,
@@ -164,7 +163,7 @@ begin
   end if;
 
   set @sql=concat(
-    'select ',_itemField,'a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomFlow,a.atomClassId,a.atomName,a.allowHeart,a.allowComment,a.hearts,a.heartUids,a.heartCount,a.commentCount,a.attachmentCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,b.module,b.atomClassName,b.atomClassIdParent,g.userName,g.avatar',_starField,_labelField,' from aAtom a',
+    'select ',_itemField,'a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomFlow,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,b.module,b.atomClassName,b.atomClassIdParent,g.userName,g.avatar',_starField,_labelField,' from aAtom a',
     ' inner join aAtomClass b on a.atomClassId=b.id',
     ' inner join aUser g on a.userIdCreated=g.id',
     _itemJoin,

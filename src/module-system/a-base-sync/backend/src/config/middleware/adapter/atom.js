@@ -217,7 +217,6 @@ const Fn = module.exports = ctx => {
       if (item) {
         const atom = { };
         if (item.atomName !== undefined) atom.atomName = item.atomName;
-        if (item.allowHeart !== undefined) atom.allowHeart = item.allowHeart;
         if (item.allowComment !== undefined) atom.allowComment = item.allowComment;
         if (Object.keys(atom).length > 0) {
           atom.id = key.atomId;
@@ -328,19 +327,41 @@ const Fn = module.exports = ctx => {
     }
 
     async star({ key, atom: { star = 1 }, user }) {
-      // force delete
-      await this.modelAtomStar.delete({
+      let diff = 0;
+      // check if exists
+      const _star = await this.modelAtomStar.get({
         userId: user.id,
         atomId: key.atomId,
       });
-      // new
-      if (star) {
+      if (_star && !star) {
+        diff = -1;
+        // delete
+        await this.modelAtomStar.delete({
+          userId: user.id,
+          atomId: key.atomId,
+        });
+      } else if (!_star && star) {
+        diff = 1;
+        // new
         await this.modelAtomStar.insert({
           userId: user.id,
           atomId: key.atomId,
           star: 1,
         });
       }
+      // get
+      const atom = await this.get({ atomId: key.atomId });
+      let starCount = atom.starCount;
+      if (diff !== 0) {
+        starCount += diff;
+        await this.modelAtom.update({
+          id: key.atomId,
+          starCount,
+          // userIdUpdated: user.id,
+        });
+      }
+      // ok
+      return { star, starCount };
     }
 
     async labels({ key, atom: { labels = null }, user }) {
@@ -437,12 +458,11 @@ const Fn = module.exports = ctx => {
     }
 
     async _update({
-      atom: { id, atomName, allowHeart, allowComment, atomFlow, itemId },
+      atom: { id, atomName, allowComment, atomFlow, itemId },
       user,
     }) {
       const params = { id, userIdUpdated: user.id };
       if (atomName !== undefined) params.atomName = atomName;
-      if (allowHeart !== undefined) params.allowHeart = allowHeart;
       if (allowComment !== undefined) params.allowComment = allowComment;
       if (atomFlow !== undefined) params.atomFlow = atomFlow;
       if (itemId !== undefined) params.itemId = itemId;

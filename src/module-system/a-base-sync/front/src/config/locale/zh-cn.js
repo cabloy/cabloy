@@ -35,6 +35,5 @@ export default {
   'Select Function': '选择功能',
   'Atom name': '原子名称',
   'Atom class': '原子类型',
-  'Allow Heart': '允许点赞',
   'Allow Comment': '允许评论',
 };
