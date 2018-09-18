@@ -15,7 +15,6 @@
       <eb-list-item-choose link="#" dataPath="categoryId" :title="$text('Category')" :onChoose="onChooseCategory">
         <div slot="after">{{item.categoryName}}</div>
       </eb-list-item-choose>
-      <eb-list-item-validate dataKey="sticky"></eb-list-item-validate>
       <eb-list-item-validate dataKey="keywords"></eb-list-item-validate>
       <eb-list-item-validate dataKey="description"></eb-list-item-validate>
       <eb-list-item-validate dataKey="slug"></eb-list-item-validate>
@@ -24,6 +23,7 @@
     </f7-list-group>
     <f7-list-group>
       <f7-list-item group-title :title="$text('Extra')"></f7-list-item>
+      <eb-list-item-validate dataKey="sticky"></eb-list-item-validate>
       <eb-list-item-validate dataKey="sorting"></eb-list-item-validate>
       <eb-list-item-validate dataKey="flag"></eb-list-item-validate>
       <eb-list-item-validate dataKey="extra"></eb-list-item-validate>

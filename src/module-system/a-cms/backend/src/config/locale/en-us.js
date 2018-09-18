@@ -1,5 +1,7 @@
 module.exports = {
   'en-us': 'English',
   'zh-cn': 'Chinese',
-  personalProfile: 'Profile',
+  PersonalProfile: 'Profile',
+  ArticlePrevious: 'Previous',
+  ArticleNext: 'Next',
 };
