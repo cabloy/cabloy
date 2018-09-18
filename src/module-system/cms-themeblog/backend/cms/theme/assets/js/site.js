@@ -3,19 +3,13 @@ $(document).ready(function() {
   // query
   const query = util.parseUrlQuery();
 
+  // title
+  util.title();
+
   // menu active
   if (query.categoryId) {
     const link = $(`.category-${query.categoryId}`);
     link.parents('li').addClass('active');
-  }
-
-  // load more
-  if (env.site.path === 'main/index/index') {
-    loadMore({});
-  } else if (env.site.path === 'static/category') {
-    loadMore({
-      categoryId: query.categoryId,
-      search: query.search });
   }
 
   // search text
@@ -23,12 +17,76 @@ $(document).ready(function() {
     $('form.search input').val(query.search);
   }
 
-  // title
-  util.title();
+  // load more
+  loadMore(query);
+
+  // relatives
+  relatives();
 
 });
 
-function loadMore({ categoryId, search }) {
+function relatives() {
+  if (env.site.path === 'main/article') {
+    _relatives('prev');
+    _relatives('next');
+  }
+}
+
+function _relatives(type) {
+  // article
+  const article = env.article;
+  // options
+  const options = {
+    where: {
+      'f.language': article.language,
+      'f.categoryId': article.categoryId,
+    },
+    page: { index: 0, size: 1 },
+    mode: 'list',
+  };
+  if (article.sorting > 0) {
+    // asc for sorting
+    options.where['f.sorting'] = { op: type === 'prev' ? '<' : '>', val: article.sorting };
+    options.orders = [
+      [ 'f.sorting', type === 'prev' ? 'desc' : 'asc' ],
+    ];
+  } else {
+    // desc for createdAt
+    options.where['f.createdAt'] = { op: type === 'prev' ? '>' : '<', val: this.ctx.meta.util.formatDateTime(article.createdAt) };
+    options.orders = [
+      [ 'f.createdAt', type === 'prev' ? 'asc' : 'desc' ],
+    ];
+  }
+  // select
+  util.ajax({
+    url: '/a/cms/article/list',
+    body: { options: JSON.stringify(options) },
+  }).then(data => {
+    _relative({ type, article: data.list[0] });
+  });
+}
+
+function _relative({ type, article }) {
+  if (!article) return;
+  const $relative = $(`.relatives .${type}`);
+  const $relativeLink = $(`.relatives .${type} a`);
+
+  $relativeLink.attr('href', `${env.site.rootUrl}/${article.url}`);
+  $relativeLink.text(article.atomName);
+  $relative.removeClass('hidden');
+}
+
+function loadMore(query) {
+  if (env.site.path === 'main/index/index') {
+    _loadMore({});
+  } else if (env.site.path === 'static/category') {
+    _loadMore({
+      categoryId: query.categoryId,
+      search: query.search });
+  }
+}
+
+function _loadMore({ categoryId, search }) {
   util.loadMore({
     container: '.article-list',
     index: (env.index && env.index[env.site.path]) || 0,
@@ -39,6 +97,7 @@ function loadMore({ categoryId, search }) {
           'f.language': env.language.current,
         },
         orders: [
+          [ 'f.sticky', 'desc' ],
           [ 'a.createdAt', 'desc' ],
         ],
         page: { index },
@@ -47,6 +106,11 @@ function loadMore({ categoryId, search }) {
       // categoryId
       if (categoryId) {
         options.where['f.categoryId'] = categoryId;
+        options.orders = [
+          [ 'f.sticky', 'desc' ],
+          [ 'f.sorting', 'asc' ],
+          [ 'a.createdAt', 'desc' ],
+        ];
       }
       // search
       if (search) {
@@ -60,6 +124,7 @@ function loadMore({ categoryId, search }) {
       });
     },
     onParse(item) {
+      const sticky = !item.sticky ? '' : '<span class="glyphicon glyphicon-pushpin"></span>';
       const media = !item.imageFirst ? '' : `
 <div class="media-right">
       <a target="_blank" href="${env.site.rootUrl}/${item.url}">
@@ -70,7 +135,7 @@ function loadMore({ categoryId, search }) {
       return `
 <li class="media">
     <div class="media-body">
-      <h4 class="media-heading"><a target="_blank" href="${env.site.rootUrl}/${item.url}">${item.atomName}</a></h4>
+      <h4 class="media-heading">${sticky} <a target="_blank" href="${env.site.rootUrl}/${item.url}">${item.atomName}</a></h4>
       ${item.description || item.summary}
     </div>
     ${media}

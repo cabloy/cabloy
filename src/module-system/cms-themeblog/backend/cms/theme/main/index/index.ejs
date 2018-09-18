@@ -10,6 +10,7 @@
               'f.language': site.language.current,
             },
             orders: [
+              [ 'f.sticky', 'desc' ],
               [ 'a.createdAt', 'desc' ],
             ],
             page: { index:0 },
@@ -27,6 +28,7 @@
           });
           // list
           for(const item of data.list){
+             const sticky = !item.sticky ? '' : '<span class="glyphicon glyphicon-pushpin"></span>';
              const media = !item.imageFirst ? '' : `
 <div class="media-right">
       <a target="_blank" href="${url(item.url)}">
@@ -37,7 +39,7 @@
         const html= `
 <li class="media">
     <div class="media-body">
-      <h4 class="media-heading"><a target="_blank" href="${url(item.url)}">${item.atomName}</a></h4>
+      <h4 class="media-heading">${sticky} <a target="_blank" href="${url(item.url)}">${item.atomName}</a></h4>
       ${item.description || item.summary}
     </div>
     ${media}
