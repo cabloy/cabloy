@@ -25,7 +25,6 @@ export default {
     return {
       dirty: false,
       module: null,
-      _unwatch: null,
     };
   },
   computed: {
@@ -89,7 +88,7 @@ export default {
       };
     },
   },
-  mounted() {
+  created() {
     this.$meta.module.use('a-mavoneditor', module => {
       this.module = module;
     });
@@ -142,7 +141,6 @@ export default {
           },
         });
       });
-
     },
   },
 };

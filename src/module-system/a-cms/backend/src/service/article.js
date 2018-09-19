@@ -1,6 +1,6 @@
 const require3 = require('require3');
 const trimHtml = require3('trim-html');
-const markdown = require('../common/markdown.js');
+const markdown = require3('@zhennann/markdown');
 
 module.exports = app => {
 
