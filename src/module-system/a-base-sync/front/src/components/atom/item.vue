@@ -23,7 +23,7 @@
       </f7-popover>
     </template>
     <f7-toolbar v-if="ready" bottom-md>
-      <eb-link iconMaterial="comment">{{item.commentCount}}</eb-link>
+      <eb-link iconMaterial="comment" :eb-href="`comment/list?atomId=${item.atomId}`">{{item.commentCount}}</eb-link>
       <eb-link iconMaterial="attach_file">{{item.attachmentCount}}</eb-link>
     </f7-toolbar>
   </eb-page>

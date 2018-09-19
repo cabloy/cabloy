@@ -6,6 +6,7 @@ const atomClass = require('./controller/atomClass.js');
 const atomAction = require('./controller/atomAction.js');
 const func = require('./controller/function.js');
 const auth = require('./controller/auth.js');
+const comment = require('./controller/comment.js');
 
 module.exports = app => {
   const routes = [
@@ -59,6 +60,19 @@ module.exports = app => {
     { method: 'post', path: 'atom/actions', controller: atom },
     { method: 'post', path: 'atom/schema', controller: atom },
     { method: 'post', path: 'atom/validator', controller: atom },
+    // comment
+    { method: 'post', path: 'comment/save', controller: comment, middlewares: 'transaction',
+      meta: { right: { type: 'atom', action: 2 } },
+    },
+    { method: 'post', path: 'comment/list', controller: comment,
+      meta: { right: { type: 'atom', action: 2 } },
+    },
+    { method: 'post', path: 'comment/delete', controller: comment,
+      meta: { right: { type: 'atom', action: 2 } },
+    },
+    { method: 'post', path: 'comment/item', controller: comment,
+      meta: { right: { type: 'atom', action: 2 } },
+    },
     // user
     { method: 'post', path: 'user/getLabels', controller: user },
     { method: 'post', path: 'user/setLabels', controller: user },

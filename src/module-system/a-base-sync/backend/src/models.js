@@ -20,6 +20,9 @@ const func = require('./model/function.js');
 const functionStar = require('./model/functionStar.js');
 const functionLocale = require('./model/functionLocale.js');
 const roleFunction = require('./model/roleFunction.js');
+const comment = require('./model/comment.js');
+const commentView = require('./model/commentView.js');
+const commentHeart = require('./model/commentHeart.js');
 
 module.exports = app => {
   const models = {
@@ -45,6 +48,9 @@ module.exports = app => {
     functionStar,
     functionLocale,
     roleFunction,
+    comment,
+    commentView,
+    commentHeart,
   };
   return models;
 };

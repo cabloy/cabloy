@@ -13,4 +13,6 @@ export default [
   { path: 'atom/edit', component: load('atom/edit') },
   { path: 'atom/view', component: load('atom/view') },
   { path: 'atom/selectAtomClass', component: load('atom/selectAtomClass') },
+  { path: 'comment/list', component: load('comment/list') },
+  { path: 'comment/item', component: load('comment/item') },
 ];

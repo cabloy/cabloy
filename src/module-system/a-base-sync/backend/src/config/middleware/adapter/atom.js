@@ -364,6 +364,11 @@ const Fn = module.exports = ctx => {
       return { star, starCount };
     }
 
+    async comment({ key, atom: { comment = 1 }, user }) {
+      await this.modelAtom.query('update aAtom set commentCount = commentCount + ? where iid=? and id=?',
+        [ comment, ctx.instance.id, key.atomId ]);
+    }
+
     async labels({ key, atom: { labels = null }, user }) {
       // force delete
       await this.modelAtomLabel.delete({
@@ -466,6 +471,7 @@ const Fn = module.exports = ctx => {
       if (allowComment !== undefined) params.allowComment = allowComment;
       if (atomFlow !== undefined) params.atomFlow = atomFlow;
       if (itemId !== undefined) params.itemId = itemId;
+      params.updatedAt = new Date();
       const res = await this.modelAtom.update(params);
       if (res.affectedRows !== 1) ctx.throw(1003);
     }
