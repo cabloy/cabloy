@@ -23,6 +23,13 @@
   text-align: center;
 }
 
+article img {
+  max-width: 100%;
+  border-radius: 2px;
+  display: block;
+  margin: 0 auto;
+}
+
 .glyphicon.spinning {
   animation: spin 1s infinite linear;
   -webkit-animation: spin2 1s infinite linear;
