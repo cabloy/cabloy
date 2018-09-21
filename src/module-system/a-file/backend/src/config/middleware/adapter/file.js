@@ -41,8 +41,8 @@ const Fn = module.exports = ctx => {
       return `${prefix}${path}`;
     }
 
-    // get download url
-    getDownloadUrl(path) {
+    // get forward url
+    getForwardUrl(path) {
       const prefix = (ctx.app.meta.isTest || ctx.app.meta.isLocal) ? ctx.app.config.static.prefix : '/public/';
       return `${prefix}${ctx.instance.id}/${path}`;
     }

@@ -12,6 +12,38 @@ module.exports = app => {
 
   class File extends app.Service {
 
+    async list({ key, options, user }) {
+      const _options = {};
+      // where
+      _options.where = options.where || {};
+      _options.where.atomId = key.atomId;
+      // orders
+      _options.orders = options.orders;
+      // page
+      if (options.page.size !== 0) {
+        _options.limit = options.page.size;
+        _options.offset = options.page.index;
+      }
+      // select
+      const list = await this.ctx.model.fileView.select(_options);
+      for (const item of list) {
+        item.downloadUrl = this.getDownloadUrl(item);
+      }
+      return list;
+    }
+
+    async delete({ key, data: { fileId }, user }) {
+      // file
+      const item = await this.ctx.model.file.get({ id: fileId });
+      if (key.atomId !== item.atomId || item.userId !== user.id) this.ctx.throw(403);
+      // delete
+      await this.ctx.model.file.delete({ id: fileId });
+      // attachmentCount
+      if (item.atomId && item.attachment) {
+        await this.ctx.meta.atom.attachment({ key, atom: { attachment: -1 }, user });
+      }
+    }
+
     async upload({ user }) {
       const stream = await this.ctx.getFileStream();
       try {
@@ -22,6 +54,8 @@ module.exports = app => {
         const fields = stream.fields;
         const mode = parseInt(fields.mode || 2);
         const atomId = parseInt(fields.atomId || 0);
+        const attachment = parseInt(fields.attachment || 0);
+        const flag = fields.flag || '';
         let imgWidth = 0;
         let imgHeight = 0;
 
@@ -41,7 +75,7 @@ module.exports = app => {
               const cropbox = JSON.parse(fields.cropbox);
               img = img.crop(parseInt(cropbox.width), parseInt(cropbox.height), parseInt(cropbox.x), parseInt(cropbox.y));
             }
-            img.quality(100).write(destFile, cb);
+            img.quality(93).write(destFile, cb);
           });
           // size
           const imgSize = await bb.fromCallback(cb => {
@@ -50,6 +84,8 @@ module.exports = app => {
           imgWidth = imgSize.width;
           imgHeight = imgSize.height;
         } else if (mode === 2) {
+          // check right only for file
+          await this.checkRightWrite(atomId, user);
           // file
           const writeStream = fs.createWriteStream(destFile);
           await bb.fromCallback(cb => {
@@ -76,13 +112,18 @@ module.exports = app => {
           fileExt: fileInfo.ext,
           encoding,
           mime,
+          attachment,
+          flag,
         });
         const fileId = res.insertId;
 
+        // attachmentCount
+        if (atomId && attachment) {
+          await this.ctx.meta.atom.attachment({ key: { atomId }, atom: { attachment: 1 }, user });
+        }
+
         // ok
-        const downloadUrl = this.ctx.meta.file.getUrl(
-          `/api/a/file/file/download/${downloadId}${mode === 1 ? fileInfo.ext : ''}`
-        );
+        const downloadUrl = this.getDownloadUrl({ downloadId, mode, fileExt: fileInfo.ext });
         return {
           fileId,
           realName: fileInfo.name,
@@ -94,6 +135,12 @@ module.exports = app => {
         await sendToWormhole(stream);
         throw e;
       }
+    }
+
+    getDownloadUrl({ downloadId, mode, fileExt }) {
+      return this.ctx.meta.file.getUrl(
+        `/api/a/file/file/download/${downloadId}${mode === 1 ? fileExt : ''}`
+      );
     }
 
     async download({ downloadId, width, height, user }) {
@@ -113,24 +160,24 @@ module.exports = app => {
         fileName = await this.adjustImage(file, width, height);
       } else if (file.mode === 2) {
         // check right
-        await this.checkRight(file, user);
+        await this.checkRightRead(file.atomId, user);
       }
 
-      // download url
-      const downloadUrl = this.ctx.meta.file.getDownloadUrl(
+      // forward url
+      const forwardUrl = this.ctx.meta.file.getForwardUrl(
         `${file.filePath}/${fileName}${file.fileExt}`
       );
 
       // send
       if (app.meta.isTest || app.meta.isLocal) {
         // redirect
-        this.ctx.redirect(downloadUrl);
+        this.ctx.redirect(forwardUrl);
       } else {
         // redirect nginx
         this.ctx.set('content-type', file.mime);
         this.ctx.set('content-transfer-encoding', file.encoding);
         this.ctx.set('content-disposition', `attachment; filename*=UTF-8''${encodeURIComponent(file.realName)}${file.fileExt}`);
-        this.ctx.set('X-Accel-Redirect', downloadUrl);
+        this.ctx.set('X-Accel-Redirect', forwardUrl);
         this.ctx.success();
       }
 
@@ -165,10 +212,20 @@ module.exports = app => {
       return fileName;
     }
 
-    async checkRight(file, user) {
+    async checkRightWrite(atomId, user) {
       // not check if !atomId
-      if (!file.atomId) return;
-      const res = await this.ctx.meta.atom.checkRightRead({ atom: { id: file.atomId }, user });
+      if (!atomId) return;
+      const res = await this.ctx.meta.atom.checkRightUpdate({
+        atom: { id: atomId, action: this.ctx.constant.module('a-base').atom.action.write },
+        user,
+      });
+      if (!res) this.ctx.throw(403);
+    }
+
+    async checkRightRead(atomId, user) {
+      // not check if !atomId
+      if (!atomId) return;
+      const res = await this.ctx.meta.atom.checkRightRead({ atom: { id: atomId }, user });
       if (!res) this.ctx.throw(403);
     }
 

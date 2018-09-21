@@ -36,6 +36,12 @@ export default {
     atomId() {
       return this.contextParams && this.contextParams.atomId || 0;
     },
+    attachment() {
+      return this.contextParams && this.contextParams.attachment || 0;
+    },
+    flag() {
+      return this.contextParams && this.contextParams.flag || '';
+    },
     title() {
       if (this.mode === 1) return this.$text('Upload Image');
       else if (this.mode === 2) return this.$text('Upload File');
@@ -88,7 +94,8 @@ export default {
       const formData = new window.FormData();
       formData.append('mode', this.mode);
       formData.append('atomId', this.atomId);
-      formData.append('file', this.$refs.file.files[0]);
+      formData.append('attachment', this.attachment);
+      formData.append('flag', this.flag);
       if (this.mode === 1) {
         formData.append('cropped', this.cropped);
         if (this.cropped) {
@@ -99,6 +106,7 @@ export default {
           formData.append('cropbox', JSON.stringify(data));
         }
       }
+      formData.append('file', this.$refs.file.files[0]);
       return this.$api.post('file/upload', formData)
         .then(data => {
           this.contextCallback(200, data);

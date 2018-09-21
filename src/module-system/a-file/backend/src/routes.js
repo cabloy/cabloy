@@ -10,7 +10,12 @@ module.exports = app => {
     // file
     { method: 'post', path: 'file/upload', controller: file, middlewares: 'file', meta: { auth: { user: true } } },
     { method: 'get', path: 'file/download/:downloadId', controller: file, action: 'download', middlewares: 'file' },
-
+    { method: 'post', path: 'file/list', controller: file, middlewares: 'file',
+      meta: { right: { type: 'atom', action: 2 } },
+    },
+    { method: 'post', path: 'file/delete', controller: file, middlewares: 'transaction',
+      meta: { right: { type: 'atom', action: 3 } },
+    },
   ];
   return routes;
 };
