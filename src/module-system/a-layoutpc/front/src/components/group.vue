@@ -128,16 +128,32 @@ export default {
       // left
       let left = parseInt(this.size.width - space / 2);
       spacing = 0;
+      let spacingLeft = null;
       for (let i = this.views.length - 1; i >= 0; i--) {
         const view = this.$refs[this.views[i].id];
-        left -= this.$$(view.$el).width() + spacing;
+        const width = this.$$(view.$el).width();
+        left -= width + spacing;
         spacing = this.size.spacing;
+
+        // solution: 1
+        if (left < 0 && spacingLeft === null) {
+          const _viewPrev = this.views[i + 1];
+          spacingLeft = (left + width + spacing < spacing * 2) && _viewPrev.size !== 'small';
+        }
+        // fix
+        if (left < 0 && left + width > 0) {
+          left -= left + width;
+        }
         // display
-        if (left >= 0) {
+        if (spacingLeft !== true) {
           this.$$(view.$el).show();
         } else {
           this.$$(view.$el).hide();
         }
+
+        // solution: 2
+        // left = left >= 0 ? left : left - 20;
+
         // left
         const _left = this.$$(view.$el).css('left');
         if (_left === 'auto' || _left === '0px') {
