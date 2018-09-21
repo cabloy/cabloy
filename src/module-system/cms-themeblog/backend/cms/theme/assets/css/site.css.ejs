@@ -59,6 +59,7 @@ footer .small {
   background: #fc0;
   border: 1px solid #cca300;
   margin-top:-16px;
+  z-index:1;
 }
 
 .navbar-default .navbar-brand{
@@ -97,6 +98,10 @@ footer .small {
   outline: 0;
 }
 
+.btn-warning,.btn-warning:focus{
+  outline: 0;
+}
+
 section,article{
   width: 100%;
     padding: 30px 30px 10px 30px;
@@ -112,6 +117,21 @@ section,article{
     -webkit-box-shadow: 0px 1px 2px rgba(0,0,0,0.09), inset 0px 0px 2px 2px rgba(255,255,255,0.5), inset 0 0 5px 5px rgba(255,255,255,0.4);
     -moz-box-shadow: 0px 1px 2px rgba(0,0,0,0.09),inset 0px 0px 2px 2px rgba(255,255,255,0.5),inset 0 0 5px 5px rgba(255,255,255,0.4);
     box-shadow: 0px 1px 2px rgba(0,0,0,0.09), inset 0px 0px 2px 2px rgba(255,255,255,0.5), inset 0 0 5px 5px rgba(255,255,255,0.4);
+}
+
+section .stat{
+  color: #ababab;
+  margin: 6px 0 -2px 2px;
+  font-size: 12px;
+}
+section .stat a{
+  color: #ababab;
+}
+section .stat .glyphicon{
+  margin-right:2px;
+}
+section .stat .num{
+  margin-right:6px;
 }
 
 article .relatives span{

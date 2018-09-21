@@ -23,6 +23,8 @@ $(document).ready(function() {
   // relatives
   relatives();
 
+  // echo
+  util.echo();
 });
 
 function menuActive(query) {
@@ -35,7 +37,7 @@ function menuActive(query) {
 
 function title(query) {
   if (env.site.path === 'static/category') {
-    if (query.search) {
+    if (query.search !== undefined) {
       document.title = `<%=text('Search')%>:${query.search}-${env.base.title}`;
     } else {
       document.title = `${categoryName(query.categoryId)}-${env.base.title}`;
@@ -80,7 +82,7 @@ function _relatives(type) {
     ];
   } else {
     // desc for createdAt
-    options.where['f.createdAt'] = { op: type === 'prev' ? '>' : '<', val: this.ctx.meta.util.formatDateTime(article.createdAt) };
+    options.where['f.createdAt'] = { op: type === 'prev' ? '>' : '<', val: util.formatDateTime(article.createdAt) };
     options.orders = [
       [ 'f.createdAt', type === 'prev' ? 'asc' : 'desc' ],
     ];
@@ -99,9 +101,10 @@ function _relative({ type, article }) {
   const $relative = $(`.relatives .${type}`);
   const $relativeLink = $(`.relatives .${type} a`);
 
-  $relativeLink.attr('href', `${env.site.rootUrl}/${article.url}`);
+  $relativeLink.attr('href', `${util.url(article.url)}`);
   $relativeLink.text(article.atomName);
   $relative.removeClass('hidden');
+  $('.relatives').removeClass('hidden');
 }
 
 function categoryName(categoryId) {
@@ -159,16 +162,24 @@ function _loadMore({ categoryId, search }) {
       const sticky = !item.sticky ? '' : '<span class="glyphicon glyphicon-pushpin"></span>';
       const media = !item.imageFirst ? '' : `
 <div class="media-right">
-      <a target="_blank" href="${env.site.rootUrl}/${item.url}">
+      <a target="_blank" href="${util.url(item.url)}">
         <img class="media-object" src="${util.combineImageUrl(item.imageFirst, 125, 100)}">
       </a>
+</div>
+        `;
+      const stat = `
+<div class="stat no-parse" data-article-id="${item.atomId}">
+<span class="glyphicon glyphicon-eye-open"></span><span class="num readCount">${item.readCount}</span>
+<span class="glyphicon glyphicon-heart"></span><span class="num starCount">${item.starCount}</span>
+<a target="_blank" href="${util.url(item.url)}#comments"><span class="glyphicon glyphicon-comment"></span><span class="num commentCount">${item.commentCount}</span></a>
 </div>
         `;
       return `
 <li class="media">
     <div class="media-body">
-      <h4 class="media-heading">${sticky} <a target="_blank" href="${env.site.rootUrl}/${item.url}">${item.atomName}</a></h4>
+      <h4 class="media-heading">${sticky} <a target="_blank" href="${util.url(item.url)}">${item.atomName}</a></h4>
       ${item.description || item.summary}
+      ${stat}
     </div>
     ${media}
 </li>

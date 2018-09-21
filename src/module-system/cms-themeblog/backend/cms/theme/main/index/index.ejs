@@ -36,11 +36,19 @@
       </a>
 </div>
         `;
+        const stat=`
+<div class="stat" data-article-id="${item.atomId}">
+<span class="glyphicon glyphicon-eye-open"></span><span class="num readCount"></span>
+<span class="glyphicon glyphicon-heart"></span><span class="num starCount"></span>
+<a target="_blank" href="${url(item.url)}#comments"><span class="glyphicon glyphicon-comment"></span><span class="num commentCount"></span></a>
+</div>
+        `;
         const html= `
 <li class="media">
     <div class="media-body">
       <h4 class="media-heading">${sticky} <a target="_blank" href="${url(item.url)}">${item.atomName}</a></h4>
       ${item.description || item.summary}
+      ${stat}
     </div>
     ${media}
 </li>
