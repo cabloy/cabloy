@@ -44,6 +44,7 @@ module.exports = app => {
     async list() {
       // options
       const options = JSON.parse(this.ctx.request.query.options);
+      // filter drafts
       options.where = extend(true, options.where, {
         'a.atomEnabled': 1,
         'a.atomFlag': 2,
