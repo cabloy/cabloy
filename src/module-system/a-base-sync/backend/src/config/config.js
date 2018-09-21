@@ -58,7 +58,7 @@ module.exports = appInfo => {
   };
   // registered or rememberMe
   config.registered = {
-    maxAge: 1 * 24 * 3600 * 1000, // 1 天
+    maxAge: 30 * 24 * 3600 * 1000, // 30 天
   };
   // checkUserName
   config.checkUserName = false;

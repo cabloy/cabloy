@@ -24,7 +24,7 @@
     </template>
     <f7-toolbar v-if="ready" bottom-md>
       <eb-link iconMaterial="comment" :eb-href="`comment/list?atomId=${item.atomId}`">{{item.commentCount}}</eb-link>
-      <eb-link iconMaterial="attach_file">{{item.attachmentCount}}</eb-link>
+      <eb-link iconMaterial="attach_file" :eb-href="`attachment/list?atomId=${item.atomId}`">{{item.attachmentCount}}</eb-link>
     </f7-toolbar>
   </eb-page>
 </template>
@@ -74,14 +74,23 @@ export default {
   },
   mounted() {
     this.$meta.eventHub.$on('atom:action', this.onActionChanged);
+    this.$meta.eventHub.$on('comment:action', this.onCommentChanged);
+    this.$meta.eventHub.$on('attachment:action', this.onAttachmentChanged);
   },
   beforeDestroy() {
     this.$meta.eventHub.$off('atom:action', this.onActionChanged);
+    this.$meta.eventHub.$off('comment:action', this.onCommentChanged);
+    this.$meta.eventHub.$off('attachment:action', this.onAttachmentChanged);
   },
   created() {
     this.load();
   },
   methods: {
+    reload() {
+      this.item = null;
+      this.actions = null;
+      this.load();
+    },
     load() {
       // item & module
       this.$api.post('atom/read', {
@@ -168,9 +177,17 @@ export default {
         return;
       }
       // others
-      this.item = null;
-      this.actions = null;
-      this.load();
+      this.reload();
+    },
+    onCommentChanged(data) {
+      if (!this.item || data.atomId !== this.atomId) return;
+      if (data.action === 'create') this.item.commentCount += 1;
+      if (data.action === 'delete') this.item.commentCount -= 1;
+    },
+    onAttachmentChanged(data) {
+      if (!this.item || data.atomId !== this.atomId) return;
+      if (data.action === 'create') this.item.attachmentCount += 1;
+      if (data.action === 'delete') this.item.attachmentCount -= 1;
     },
   },
 };

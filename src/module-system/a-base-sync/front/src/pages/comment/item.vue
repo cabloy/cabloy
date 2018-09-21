@@ -7,7 +7,7 @@
     </eb-navbar>
     <template v-if="ready">
       <eb-box>
-        <mavon-editor ref="editor" :value="content" @change="onChange" @save="onSave" :onImageUpload="onImageUpload" :language="language" :subfield="subfield" :editable="editable" :defaultOpen="defaultOpen" :toolbarsFlag="toolbarsFlag" :navigation="navigation" :toolbars="toolbars" />
+        <mavon-editor ref="editor" :value="content" :onPreRender="onPreRender" @change="onChange" @save="onSave" :onImageUpload="onImageUpload" :language="language" :subfield="subfield" :editable="editable" :defaultOpen="defaultOpen" :toolbarsFlag="toolbarsFlag" :navigation="navigation" :toolbars="toolbars" />
       </eb-box>
     </template>
   </eb-page>
@@ -91,25 +91,29 @@ export default {
     this.$meta.module.use('a-mavoneditor', module => {
       this.module = module;
     });
-    if (this.commentId) {
-      return this.$api.post('comment/item', {
+    this.loadComment(this.commentId);
+    this.loadReply(this.replyId);
+  },
+  methods: {
+    loadComment(commentId) {
+      if (!commentId) return;
+      this.$api.post('comment/item', {
         key: { atomId: this.atomId },
-        data: { commentId: this.commentId },
+        data: { commentId },
       }).then(data => {
         this.comment = data;
         this.content = this.comment.content;
       });
-    }
-    if (this.replyId) {
-      return this.$api.post('comment/item', {
+    },
+    loadReply(replyId) {
+      if (!replyId) return;
+      this.$api.post('comment/item', {
         key: { atomId: this.atomId },
-        data: { commentId: this.replyId },
+        data: { commentId: replyId },
       }).then(data => {
         this.reply = data;
       });
-    }
-  },
-  methods: {
+    },
     onChange(data) {
       this.content = data;
     },
@@ -126,7 +130,7 @@ export default {
           content: this.content,
         },
       }).then(data => {
-        console.log(data);
+        this.$meta.eventHub.$emit('comment:action', data);
         this.$f7router.back();
       });
     },
@@ -136,7 +140,8 @@ export default {
           context: {
             params: {
               mode: 1,
-              atomId: this.item.atomId,
+              atomId: this.atomId,
+              flag: 'comment',
             },
             callback: (code, data) => {
               if (code === 200) {
@@ -149,6 +154,37 @@ export default {
           },
         });
       });
+    },
+    onPreRender(value) {
+      if (this.comment) {
+        return this.fullContent({
+          content: value,
+          replyContent: this.comment.replyContent,
+          replyUserName: this.comment.replyUserName,
+        });
+      }
+      if (this.reply) {
+        // replyContent
+        const replyContent = this.fullContent({
+          content: this.reply.content,
+          replyContent: this.reply.replyContent,
+          replyUserName: this.reply.replyUserName,
+        });
+        return this.fullContent({
+          content: value,
+          replyContent,
+          replyUserName: this.reply.userName,
+        });
+      }
+      return value;
+    },
+    fullContent({ content, replyContent, replyUserName }) {
+      if (!replyContent) return content;
+      return `${content}
+
+> \`${replyUserName}\`:
+> ${replyContent}
+`;
     },
   },
 };

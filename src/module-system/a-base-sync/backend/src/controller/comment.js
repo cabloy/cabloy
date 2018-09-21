@@ -13,6 +13,15 @@ module.exports = app => {
       this.ctx.successMore(items, options.page.index, options.page.size);
     }
 
+    async item() {
+      const res = await this.ctx.service.comment.item({
+        key: this.ctx.request.body.key,
+        data: this.ctx.request.body.data,
+        user: this.ctx.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     async save() {
       const res = await this.ctx.service.comment.save({
         key: this.ctx.request.body.key,
@@ -31,8 +40,8 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async item() {
-      const res = await this.ctx.service.comment.item({
+    async heart() {
+      const res = await this.ctx.service.comment.heart({
         key: this.ctx.request.body.key,
         data: this.ctx.request.body.data,
         user: this.ctx.user.op,

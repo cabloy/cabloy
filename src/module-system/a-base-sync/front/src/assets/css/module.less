@@ -21,9 +21,49 @@
       min-width: 0;
       height: auto;
       color: #8e8e93;
+
+      .icon {
+        display: inline;
+        font-size: 18px;
+      }
     }
-    .icon {
-      font-size: 18px;
+  }
+}
+
+.item {
+  .header {
+    position: relative;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 2px 8px -8px 18px;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.65);
+
+    .userName {
+      display: flex;
+      align-items: center;
+    }
+
+    .star {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .title {
+    .date {
+      font-size: 10px;
+      color: rgba(0, 0, 0, 0.65);
+    }
+  }
+
+  .after {
+    .date {
+      font-size: 10px;
+      color: rgba(0, 0, 0, 0.50);
     }
   }
 }

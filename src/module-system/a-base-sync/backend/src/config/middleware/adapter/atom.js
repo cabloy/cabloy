@@ -337,8 +337,7 @@ const Fn = module.exports = ctx => {
         diff = -1;
         // delete
         await this.modelAtomStar.delete({
-          userId: user.id,
-          atomId: key.atomId,
+          id: _star.id,
         });
       } else if (!_star && star) {
         diff = 1;
@@ -367,6 +366,11 @@ const Fn = module.exports = ctx => {
     async comment({ key, atom: { comment = 1 }, user }) {
       await this.modelAtom.query('update aAtom set commentCount = commentCount + ? where iid=? and id=?',
         [ comment, ctx.instance.id, key.atomId ]);
+    }
+
+    async attachment({ key, atom: { attachment = 1 }, user }) {
+      await this.modelAtom.query('update aAtom set attachmentCount = attachmentCount + ? where iid=? and id=?',
+        [ attachment, ctx.instance.id, key.atomId ]);
     }
 
     async labels({ key, atom: { labels = null }, user }) {

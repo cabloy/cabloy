@@ -38,4 +38,5 @@ export default {
   'Atom name': '原子名称',
   'Atom class': '原子类型',
   'Allow Comment': '允许评论',
+  'Attachment List': '附件列表',
 };
