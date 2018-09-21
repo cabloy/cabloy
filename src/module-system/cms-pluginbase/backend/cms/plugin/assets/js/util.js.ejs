@@ -1,4 +1,4 @@
-const createPromise = function createPromise(handler) {
+const _createPromise = function(handler) {
   let resolved = false;
   let rejected = false;
   let resolveArgs;
@@ -41,7 +41,42 @@ const createPromise = function createPromise(handler) {
   return promise;
 };
 
+const _formatDateTime = function(date, fmt) { // author: meizz
+  const o = {
+    'M+': date.getMonth() + 1, // 月份
+    'd+': date.getDate(), // 日
+    'h+': date.getHours(), // 小时
+    'm+': date.getMinutes(), // 分
+    's+': date.getSeconds(), // 秒
+    'q+': Math.floor((date.getMonth() + 3) / 3), // 季度
+    S: date.getMilliseconds(), // 毫秒
+  };
+  if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
+  for (const k in o) { if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length))); }
+  return fmt;
+};
+
 const util = {
+  now() {
+    return this.formatDateTime(null);
+  },
+  today() {
+    return this.formatDateTime(null, 'yyyy-MM-dd');
+  },
+  formatDateTime(date, fmt) {
+    date = date || new Date();
+    if (typeof (date) !== 'object') date = new Date(date);
+    fmt = fmt || 'yyyy-MM-dd hh:mm:ss';
+    return _formatDateTime(date, fmt);
+  },
+  formatDate(date, sep) {
+    sep = sep || '-';
+    return this.formatDateTime(date, `yyyy${sep}MM${sep}dd`);
+  },
+  formatTime(date, sep) {
+    sep = sep || ':';
+    return this.formatDateTime(date, `hh${sep}mm${sep}ss`);
+  },
   parseUrlQuery(url) {
     const query = {};
     let urlToParse = url || window.location.href;
@@ -62,7 +97,10 @@ const util = {
     return query;
   },
   promise(handler) {
-    return window.Promise ? new Promise(handler) : createPromise(handler);
+    return window.Promise ? new Promise(handler) : _createPromise(handler);
+  },
+  url(path) {
+    return `${env.site.rootUrl}/${path}`;
   },
   ajax({ url, body, cache = true }) {
     return this.promise((resolve, reject) => {
@@ -146,6 +184,76 @@ const util = {
     // bind event
     $window.on('scroll.infinite resize.infinite', _onScroll);
     _onScroll();
+  },
+  echo() {
+    return this.ajax({
+      url: '/a/base/auth/echo',
+    }).then(data => {
+      this.user = data;
+      this.stats();
+    });
+  },
+  stats() {
+    const stats = $('.stat');
+    const atomIds = [];
+    $.each(stats, (index, item) => {
+      const $item = $(item);
+      if (!$item.hasClass('no-parse')) {
+        atomIds.push($item.data('article-id'));
+      }
+    });
+    if (atomIds.length === 0) return;
+    this.ajax({
+      url: '/a/base/atom/stats',
+      body: {
+        data: JSON.stringify(atomIds),
+      },
+    }).then(atoms => {
+      this.setStats(atoms);
+    });
+  },
+  setStats(atoms) {
+    for (const atom of atoms) {
+      const atomId = atom.atomId;
+      // stat
+      const $stat = $(`.stat[data-article-id=${atomId}]`);
+      // num
+      $('.num.readCount', $stat).text(atom.readCount);
+      $('.num.commentCount', $stat).text(atom.commentCount);
+      this.starCount(atomId, atom.star, atom.starCount);
+      // click
+      $('.button-starCount', $stat).click(() => {
+        this.starClick(atomId);
+      });
+    }
+  },
+  starClick(atomId) {
+    // stat
+    const $stat = $(`.stat[data-article-id=${atomId}]`);
+    const star = $('.button-starCount .star-on', $stat).hasClass('hidden') ? 1 : 0;
+    const data = {
+      key: { atomId },
+      atom: { star },
+    };
+    this.ajax({
+      url: '/a/base/atom/star',
+      body: {
+        data: JSON.stringify(data),
+      },
+    }).then(data => {
+      this.starCount(atomId, data.star, data.starCount);
+    });
+  },
+  starCount(atomId, star, starCount) {
+    const $stat = $(`.stat[data-article-id=${atomId}]`);
+    $('.num.starCount', $stat).text(starCount);
+    if (star) {
+      $('.button-starCount .star-on').removeClass('hidden');
+      $('.button-starCount .star-off').addClass('hidden');
+    } else {
+      $('.button-starCount .star-on').addClass('hidden');
+      $('.button-starCount .star-off').removeClass('hidden');
+    }
   },
 };
 
