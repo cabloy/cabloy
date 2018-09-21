@@ -196,6 +196,14 @@ function _format2(db, value) {
   if (value.op === 'like') return `'%${val2}%'`;
   if (value.op === 'likeLeft') return `'%${val2}'`;
   if (value.op === 'likeRight') return `'${val2}%'`;
+  if (value.op === 'in') {
+    const arr = typeof value.val === 'string' ? value.val.split(',') : value.val;
+    const arrVal = [];
+    for (const item of arr) {
+      arrVal.push(db.format('?', item));
+    }
+    return `(${arrVal.join(',')})`;
+  }
   return val;
 }
 
