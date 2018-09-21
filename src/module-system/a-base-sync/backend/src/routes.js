@@ -54,6 +54,8 @@ module.exports = app => {
     { method: 'post', path: 'atom/star', controller: atom,
       meta: { right: { type: 'atom', action: 2 } },
     },
+    { method: 'get', path: 'atom/star', controller: atom, action: 'starp', middlewares: 'jsonp' },
+    { method: 'get', path: 'atom/stats', controller: atom, action: 'statsp', middlewares: 'jsonp' },
     { method: 'post', path: 'atom/labels', controller: atom,
       meta: { right: { type: 'atom', action: 2 } },
     },
@@ -107,6 +109,7 @@ module.exports = app => {
     { method: 'post', path: 'atomClass/validatorSearch', controller: atomClass },
     // auth
     { method: 'post', path: 'auth/echo', controller: auth, meta: { auth: { enable: false } } },
+    { method: 'get', path: 'auth/echo', controller: auth, middlewares: 'jsonp', meta: { auth: { enable: false } } },
     { method: 'post', path: 'auth/check', controller: auth, meta: { auth: { user: true } } },
     { method: 'post', path: 'auth/logout', controller: auth, meta: { auth: { enable: false } } },
     { method: 'post', path: 'auth/installAuthProviders', controller: auth, middlewares: 'inner',

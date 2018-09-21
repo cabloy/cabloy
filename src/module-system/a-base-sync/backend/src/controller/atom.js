@@ -88,6 +88,33 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async starp() {
+      // data
+      const data = JSON.parse(this.ctx.request.query.data);
+      // select
+      const res = await this.ctx.performAction({
+        method: 'post',
+        url: 'atom/star',
+        body: data,
+      });
+      this.ctx.success(res);
+    }
+
+    async statsp() {
+      // atomIds
+      const atomIds = JSON.parse(this.ctx.request.query.data);
+      const options = {
+        where: {
+          'a.id': { op: 'in', val: atomIds },
+        },
+      };
+      // select
+      const res = await this.ctx.meta.atom.select({
+        options, user: this.ctx.user.op, pageForce: false,
+      });
+      this.ctx.success(res);
+    }
+
     async labels() {
       const res = await this.ctx.service.atom.labels({
         key: this.ctx.request.body.key,
