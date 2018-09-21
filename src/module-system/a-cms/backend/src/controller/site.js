@@ -53,6 +53,11 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async getLanguages() {
+      const res = await this.ctx.service.site.getLanguages();
+      this.ctx.success(res);
+    }
+
   }
   return SiteController;
 };

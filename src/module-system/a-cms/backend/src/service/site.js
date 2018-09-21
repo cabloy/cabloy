@@ -46,6 +46,18 @@ module.exports = app => {
       await this.ctx.meta.status.set(`config-${language}`, data);
     }
 
+    async getLanguages() {
+      const siteBase = await this.ctx.service.render.combineSiteBase();
+      const languages = [];
+      for (const item of siteBase.language.items.split(',')) {
+        languages.push({
+          title: this.ctx.text(item),
+          value: item,
+        });
+      }
+      return languages;
+    }
+
     _adjustConfigLanguange(data) {
       if (data) {
         delete data.host;

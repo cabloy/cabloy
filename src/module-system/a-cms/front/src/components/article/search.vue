@@ -19,16 +19,7 @@ export default {
   },
   computed: {
     languages() {
-      let _languages = this.$local.getters('languages');
-      if (!_languages) return null;
-      _languages = _languages.map(item => {
-        return {
-          title: item,
-          value: item,
-        };
-      });
-      _languages.unshift({ title: '', value: '' });
-      return _languages;
+      return this.$local.getters('languages2');
     },
   },
   created() {

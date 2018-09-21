@@ -10,13 +10,15 @@
       </eb-list-item>
       <f7-list-group>
         <f7-list-item :title="$text('Languages')" group-title></f7-list-item>
-        <eb-list-item v-for="item of languages" :key="item" :title="item">
-          <div slot="after">
-            <eb-link :eb-href="`category/list?language=${item}`">{{$text('Categories')}}</eb-link>
-            <eb-link :eb-href="`config/language?language=${item}`">{{$text('Config')}}</eb-link>
-            <eb-link :context="item" :onPerform="onPerformBuildLanguage">{{$text('Build')}}</eb-link>
-          </div>
-        </eb-list-item>
+        <template v-if="languages">
+          <eb-list-item v-for="item of languages" :key="item.value" :title="item.title">
+            <div slot="after">
+              <eb-link :eb-href="`category/list?language=${item.value}`">{{$text('Categories')}}</eb-link>
+              <eb-link :eb-href="`config/language?language=${item.value}`">{{$text('Config')}}</eb-link>
+              <eb-link :context="item.value" :onPerform="onPerformBuildLanguage">{{$text('Build')}}</eb-link>
+            </div>
+          </eb-list-item>
+        </template>
       </f7-list-group>
     </f7-list>
   </eb-page>
@@ -28,7 +30,7 @@ export default {
   },
   computed: {
     languages() {
-      return this.$local.getters('languages');
+      return this.$local.state.languages;
     },
   },
   created() {

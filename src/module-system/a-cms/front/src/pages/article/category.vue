@@ -8,15 +8,15 @@
       <f7-subnavbar>
         <f7-toolbar tabbar :scrollable="languages && languages.length>2">
           <template v-if="languages">
-            <f7-link v-for="(item,index) of languages" :key="item" :tab-link="`#${tabIdLanguages}_${item}`" :tab-link-active="index===0">{{item}}</f7-link>
+            <f7-link v-for="(item,index) of languages" :key="item.value" :tab-link="`#${tabIdLanguages}_${item.value}`" :tab-link-active="index===0">{{item.title}}</f7-link>
           </template>
         </f7-toolbar>
       </f7-subnavbar>
     </eb-navbar>
     <f7-tabs>
       <template v-if="languages">
-        <f7-page-content v-for="(item,index) of languages" :key="item" :id="`${tabIdLanguages}_${item}`" tab :tab-active="index===0">
-          <category-list :categoryIdStart="0" :language="item" @node:click="onNodeClick"></category-list>
+        <f7-page-content v-for="(item,index) of languages" :key="item.value" :id="`${tabIdLanguages}_${item.value}`" tab :tab-active="index===0">
+          <category-list :categoryIdStart="0" :language="item.value" @node:click="onNodeClick"></category-list>
         </f7-page-content>
       </template>
     </f7-tabs>
@@ -41,7 +41,7 @@ export default {
       return `${this.$text('Atom')}: ${this.$text('Article')}`;
     },
     languages() {
-      return this.$local.getters('languages');
+      return this.$local.state.languages;
     },
   },
   created() {
