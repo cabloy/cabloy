@@ -255,6 +255,9 @@ const util = {
       $('.button-starCount .star-off').removeClass('hidden');
     }
   },
+  read(){
+
+  },
 };
 
 $(document).ready(function() {
@@ -267,4 +270,8 @@ $(document).ready(function() {
     $item.attr('src', util.combineImageUrl(src, width, height));
     $(item).removeClass('img-delay');
   });
+  // echo
+  util.echo();
+  // read
+  util.read();
 });
