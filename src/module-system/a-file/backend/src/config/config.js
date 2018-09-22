@@ -2,6 +2,9 @@
 module.exports = appInfo => {
   const config = {};
 
+  // public dir
+  config.publicDir = '';
+
   // middlewares
   config.middlewares = {
     file: {

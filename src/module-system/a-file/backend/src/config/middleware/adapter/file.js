@@ -3,7 +3,7 @@ const require3 = require('require3');
 const fse = require3('fs-extra');
 
 const Fn = module.exports = ctx => {
-
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class File {
 
     constructor(moduleName) {
@@ -20,7 +20,7 @@ const Fn = module.exports = ctx => {
       if (ctx.app.meta.isTest || ctx.app.meta.isLocal) {
         return ctx.app.config.static.dir;
       }
-      const dir = path.join(require('os').homedir(), 'cabloy', ctx.app.name, 'public');
+      const dir = ctx.config.module(moduleInfo.relativeName).publicDir || path.join(require('os').homedir(), 'cabloy', ctx.app.name, 'public');
       await fse.ensureDir(dir);
       return dir;
     }
