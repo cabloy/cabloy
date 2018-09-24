@@ -12,6 +12,7 @@ const CleanCSS = require3('clean-css');
 const shajs = require3('sha.js');
 const babel = require3('babel-core');
 const UglifyJS = require3('uglify-js');
+const time = require('../common/time.js');
 
 module.exports = app => {
 
@@ -455,6 +456,12 @@ var env=${JSON.stringify(env, null, 2)};
         },
         text(str) {
           return this.ctx.text.locale(site.language.current, str);
+        },
+        util: {
+          time,
+          formatDateTime(date) {
+            return this.time.formatDateTime(date, `${site.env.format.date} ${site.env.format.time}`);
+          },
         },
       };
     }

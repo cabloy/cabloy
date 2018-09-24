@@ -64,6 +64,34 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    // attachments
+    async attachments() {
+      // key
+      const key = JSON.parse(this.ctx.request.query.key);
+      // options
+      const options = this.ctx.request.query.options ? JSON.parse(this.ctx.request.query.options) : {};
+      // filter drafts
+      options.where = extend(true, options.where, {
+        mode: 2,
+        attachment: 1,
+      });
+      if (!options.orders) {
+        options.orders = [
+          [ 'createdAt', 'asc' ],
+        ];
+      }
+      // select
+      const res = await this.ctx.performAction({
+        method: 'post',
+        url: '/a/file/file/list',
+        body: {
+          key,
+          options,
+        },
+      });
+      this.ctx.success(res);
+    }
+
   }
   return ArticleController;
 };

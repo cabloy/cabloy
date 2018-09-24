@@ -19,6 +19,7 @@ module.exports = app => {
     { method: 'post', path: 'article/action', controller: article, middlewares: 'inner' },
     { method: 'post', path: 'article/enable', controller: article, middlewares: 'inner' },
     { method: 'get', path: 'article/list', controller: article, middlewares: 'jsonp' },
+    { method: 'get', path: 'article/attachments', controller: article, middlewares: 'jsonp' },
 
     // render
     { method: 'post', path: 'render/renderArticle', controller: render, middlewares: 'inner,file' },
