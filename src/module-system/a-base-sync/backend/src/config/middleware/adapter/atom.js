@@ -363,6 +363,11 @@ const Fn = module.exports = ctx => {
       return { star, starCount };
     }
 
+    async readCount({ key, atom: { readCount = 1 }, user }) {
+      await this.modelAtom.query('update aAtom set readCount = readCount + ? where iid=? and id=?',
+        [ readCount, ctx.instance.id, key.atomId ]);
+    }
+
     async comment({ key, atom: { comment = 1 }, user }) {
       await this.modelAtom.query('update aAtom set commentCount = commentCount + ? where iid=? and id=?',
         [ comment, ctx.instance.id, key.atomId ]);

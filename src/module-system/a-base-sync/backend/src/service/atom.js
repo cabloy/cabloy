@@ -34,6 +34,10 @@ module.exports = app => {
       return await this.ctx.meta.atom.star({ key, atom, user });
     }
 
+    async readCount({ key, atom, user }) {
+      return await this.ctx.meta.atom.readCount({ key, atom, user });
+    }
+
     async labels({ key, atom, user }) {
       return await this.ctx.meta.atom.labels({ key, atom, user });
     }

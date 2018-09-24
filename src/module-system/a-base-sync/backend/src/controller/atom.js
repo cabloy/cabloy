@@ -88,7 +88,7 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async starp() {
+    async starP() {
       // data
       const data = JSON.parse(this.ctx.request.query.data);
       // select
@@ -100,7 +100,28 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async statsp() {
+    async readCount() {
+      const res = await this.ctx.service.atom.readCount({
+        key: this.ctx.request.body.key,
+        atom: this.ctx.request.body.atom,
+        user: this.ctx.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async readCountP() {
+      // data
+      const data = JSON.parse(this.ctx.request.query.data);
+      // select
+      const res = await this.ctx.performAction({
+        method: 'post',
+        url: 'atom/readCount',
+        body: data,
+      });
+      this.ctx.success(res);
+    }
+
+    async statsP() {
       // atomIds
       const atomIds = JSON.parse(this.ctx.request.query.data);
       const options = {
