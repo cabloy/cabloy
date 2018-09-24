@@ -1,0 +1,19 @@
+<% if(article.attachmentCount>0){ %>
+<hr>
+<ul class="attachments">
+  <%
+    // key
+    const key = { atomId: article.atomId };
+    // fetch
+    const data=await ctx.performAction({
+      method:'get',
+      url: '/a/cms/article/attachments',
+      query: { key:JSON.stringify(key) },
+    });
+    // loop
+    for(const item of data.list){
+  %>
+  <li><span class="glyphicon glyphicon-paperclip"></span> <a target="_blank" href="<%=item.downloadUrl%>"><%=item.realName%></a></li>
+  <% } %>
+</ul>
+<% } %>

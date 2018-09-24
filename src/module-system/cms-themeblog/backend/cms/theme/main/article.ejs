@@ -2,10 +2,12 @@
 <div class="row">
   <div class="col-sm-8">
     <article>
-      <%- await include('../layout/breadcrumb.ejs') %>
+      <%- await include('../layout/article/breadcrumb.ejs') %>
+      <%- await include('../layout/article/title.ejs')%>
       <%- article.html %>
-      <%- await include('../layout/stat.ejs') %>
-      <%- await include('../layout/relatives.ejs') %>
+      <%- await include('../layout/article/attachments.ejs') %>
+      <%- await include('../layout/article/stat.ejs') %>
+      <%- await include('../layout/article/relatives.ejs') %>
     </article>
   </div>
   <div class="col-sm-4">

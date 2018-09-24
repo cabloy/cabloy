@@ -80,7 +80,7 @@ function _relatives(type) {
     ];
   } else {
     // desc for createdAt
-    options.where['f.createdAt'] = { op: type === 'prev' ? '>' : '<', val: util.formatDateTime(article.createdAt) };
+    options.where['f.createdAt'] = { op: type === 'prev' ? '>' : '<', val: util.time.formatDateTime(article.createdAt) };
     options.orders = [
       [ 'f.createdAt', type === 'prev' ? 'asc' : 'desc' ],
     ];
@@ -157,7 +157,8 @@ function _loadMore({ categoryId, search }) {
       });
     },
     onParse(item) {
-      const sticky = !item.sticky ? '' : '<span class="glyphicon glyphicon-pushpin"></span>';
+      const sticky = !item.sticky ? '' : '<span class="glyphicon glyphicon-pushpin"></span> ';
+      const attachment = item.attachmentCount===0 ? '' : '<span class="glyphicon glyphicon-paperclip"></span> ';
       const media = !item.imageFirst ? '' : `
 <div class="media-right">
       <a target="_blank" href="${util.url(item.url)}">
@@ -166,7 +167,8 @@ function _loadMore({ categoryId, search }) {
 </div>
         `;
       const stat = `
-<div class="stat no-parse" data-article-id="${item.atomId}">
+<div class="title stat no-parse" data-article-id="${item.atomId}">
+<span class="num date">${util.formatDateTime(item.createdAt)}</span>
 <span class="glyphicon glyphicon-eye-open"></span><span class="num readCount">${item.readCount}</span>
 <span class="glyphicon glyphicon-heart"></span><span class="num starCount">${item.starCount}</span>
 <a target="_blank" href="${util.url(item.url)}#comments"><span class="glyphicon glyphicon-comment"></span><span class="num commentCount">${item.commentCount}</span></a>
@@ -175,7 +177,7 @@ function _loadMore({ categoryId, search }) {
       return `
 <li class="media">
     <div class="media-body">
-      <h4 class="media-heading">${sticky} <a target="_blank" href="${util.url(item.url)}">${item.atomName}</a></h4>
+      <h4 class="media-heading">${sticky}${attachment}<a target="_blank" href="${util.url(item.url)}">${item.atomName}</a></h4>
       ${item.description || item.summary}
       ${stat}
     </div>
