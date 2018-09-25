@@ -38,6 +38,9 @@ module.exports = appInfo => {
         date: 'YYYY-MM-DD',
         time: 'HH:mm:ss',
       },
+      comments: {
+        order: 'asc',
+      },
     },
     profile: {
       userName: 'zhennann',

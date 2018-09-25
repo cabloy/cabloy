@@ -66,10 +66,10 @@ module.exports = app => {
 
     // attachments
     async attachments() {
-      // key
-      const key = JSON.parse(this.ctx.request.query.key);
+      // data
+      const data = JSON.parse(this.ctx.request.query.data);
       // options
-      const options = this.ctx.request.query.options ? JSON.parse(this.ctx.request.query.options) : {};
+      const options = data.options || {};
       // filter drafts
       options.where = extend(true, options.where, {
         mode: 2,
@@ -77,7 +77,7 @@ module.exports = app => {
       });
       if (!options.orders) {
         options.orders = [
-          [ 'createdAt', 'asc' ],
+          [ 'realName', 'asc' ],
         ];
       }
       // select
@@ -85,7 +85,7 @@ module.exports = app => {
         method: 'post',
         url: '/a/file/file/list',
         body: {
-          key,
+          key: data.key,
           options,
         },
       });

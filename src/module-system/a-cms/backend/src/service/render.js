@@ -357,8 +357,9 @@ module.exports = app => {
       }, site.env, _env);
       if (data.article) {
         env.article = extend(true, {}, data.article);
+        delete env.article.summary;
         delete env.article.content;
-        delete env.article.text;
+        delete env.article.html;
       }
       // replace
       const text = `
