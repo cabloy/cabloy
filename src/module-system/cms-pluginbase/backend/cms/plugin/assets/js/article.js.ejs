@@ -1,0 +1,292 @@
+util.article = {
+  echo() {
+    return util.ajax({
+      url: '/a/base/auth/echo',
+    }).then(data => {
+      this.user = data;
+      $(document).trigger('echo-ready', data);
+    });
+  },
+  stats() {
+    const stats = $('.stat');
+    const atomIds = {};
+    $.each(stats, (index, item) => {
+      const $item = $(item);
+      if (!$item.hasClass('no-parse')) {
+        atomIds[$item.data('article-id')] = true;
+      }
+    });
+    if (Object.keys(atomIds).length === 0) return;
+    util.ajax({
+      url: '/a/base/atom/stats',
+      body: {
+        data: JSON.stringify(Object.keys(atomIds)),
+      },
+    }).then(atoms => {
+      this._setStats(atoms);
+      // read
+      this.read();
+    });
+  },
+  read() {
+    if (!env.article) return;
+    const data = {
+      key: { atomId: env.article.atomId },
+      atom: { readCount: 1 },
+    };
+    util.ajax({
+      url: '/a/base/atom/readCount',
+      body: {
+        data: JSON.stringify(data),
+      },
+    }).then(data => {
+      this._readCountInc(env.article.atomId, 1);
+    });
+  },
+  breadcrumb() {
+    if (!env.article || $('.breadcrumb-nav').length === 0) return;
+    const $category = $(`.category-${env.article.categoryId}`);
+    $('.breadcrumb-nav .category')
+      .attr('href', $category.attr('href'))
+      .text($category.data('category-name'));
+    $('.breadcrumb-nav .active').text(env.article.atomName);
+  },
+  categoryName(categoryId) {
+    return $(`.category-${categoryId}`).data('category-name');
+  },
+  relatives() {
+    if (!env.article || $('.relatives').length === 0) return;
+    this._relatives('prev');
+    this._relatives('next');
+  },
+  comments({ onParse }) {
+    if (!env.article || $('.comments').length === 0) return;
+    // postComment click
+    $('.comments .button-postComment').click(()=>{
+      window.open(util.article.commentUrl({ atomId: env.article.atomId, id: 0, replyId: 0 }));
+    });
+    // order click
+    $('.comments .order a').click(event => {
+      event.preventDefault();
+      const link = $(event.target).closest('a');
+      const order = link.hasClass('asc') ? 'desc' : 'asc';
+      this._switchOrder({ order, onParse });
+    });
+    // action click
+    $('.comments .list').click(event => {
+      const link = $(event.target).closest('a.action');
+      if (link.length > 0) {
+        const comment = link.closest('.comment');
+        const commentId = parseInt(comment.data('comment-id'));
+        if (link.hasClass('delete')) {
+          event.preventDefault();
+          this._commentActionDelete({ comment, atomId: env.article.atomId, id: commentId });
+        } else if (link.hasClass('heart')) {
+          event.preventDefault();
+          const heart = $(event.target).hasClass('heart-on') ? 0 : 1;
+          this._commentActionHeart({ link, atomId: env.article.atomId, id: commentId, heart });
+        }
+      }
+    });
+    // init order
+    this._switchOrder({ order: env.comments.order, onParse });
+  },
+  commentUrl({ atomId, id, replyId }) {
+    return `${env.site.serverUrl}/#!/a/base/comment/item?atomId=${atomId}&commentId=${id}&replyId=${replyId || 0}`;
+  },
+  _commentActionDelete({ comment, atomId, id }) {
+    bootbox.confirm({
+      message: '<%=text("Are you sure?")%>',
+      buttons: {
+        confirm: {
+          label: '<%=text("Yes")%>',
+        },
+        cancel: {
+          label: '<%=text("No")%>',
+        },
+      },
+      callback: res => {
+        if (!res) return;
+        const data = {
+          key: { atomId },
+          data: { commentId: id },
+        };
+        util.ajax({
+          url: '/a/base/comment/delete',
+          body: { data: JSON.stringify(data) },
+        }).then(() => {
+          comment.remove();
+          this._commentCountInc(atomId, -1);
+        });
+      },
+    });
+  },
+  _commentActionHeart({ link, atomId, id, heart }) {
+    const data = {
+      key: { atomId },
+      data: { commentId: id, heart },
+    };
+    util.ajax({
+      url: '/a/base/comment/heart',
+      body: { data: JSON.stringify(data) },
+    }).then(() => {
+      this._commentHeartSwitch(link, atomId, id, heart);
+    });
+  },
+  _switchOrder({ order, onParse }) {
+    // res
+    let res;
+    // load more
+    if (this._commentsController) {
+      res = this._commentsController.reload({ index: 0, context: { order } });
+    } else {
+      res = true;
+      this._commentsController = util.loadMore({
+        container: '.comments .list',
+        index: 0,
+        context: { order },
+        onFetch({ index, context }) {
+          // options
+          const options = {
+            orders: [
+              [ 'sorting', context.order ],
+            ],
+            page: { index },
+          };
+          // data
+          const data = {
+            key: { atomId: env.article.atomId },
+            options,
+          };
+          // select
+          return util.ajax({
+            url: '/a/base/comment/list',
+            body: { data: JSON.stringify(data) },
+          });
+        },
+        onParse(item) {
+          return onParse(item);
+        },
+      });
+    }
+    // order
+    if (res) {
+      if (order === 'asc') {
+        $('.comments .order .asc').removeClass('hidden');
+        $('.comments .order .desc').addClass('hidden');
+      } else {
+        $('.comments .order .asc').addClass('hidden');
+        $('.comments .order .desc').removeClass('hidden');
+      }
+    }
+  },
+  _relatives(type) {
+  // article
+    const article = env.article;
+    // options
+    const options = {
+      where: {
+        'f.language': article.language,
+        'f.categoryId': article.categoryId,
+      },
+      page: { index: 0, size: 1 },
+      mode: 'list',
+    };
+    if (article.sorting > 0) {
+    // asc for sorting
+      options.where['f.sorting'] = { op: type === 'prev' ? '<' : '>', val: article.sorting };
+      options.orders = [
+        [ 'f.sorting', type === 'prev' ? 'desc' : 'asc' ],
+      ];
+    } else {
+    // desc for createdAt
+      options.where['f.createdAt'] = { op: type === 'prev' ? '>' : '<', val: util.time.formatDateTime(article.createdAt) };
+      options.orders = [
+        [ 'f.createdAt', type === 'prev' ? 'asc' : 'desc' ],
+      ];
+    }
+    // select
+    util.ajax({
+      url: '/a/cms/article/list',
+      body: { options: JSON.stringify(options) },
+    }).then(data => {
+      this._relative({ type, article: data.list[0] });
+    });
+  },
+  _relative({ type, article }) {
+    if (!article) return;
+    const $relative = $(`.relatives .${type}`);
+    const $relativeLink = $(`.relatives .${type} a`);
+
+    $relativeLink.attr('href', `${util.url(article.url)}`);
+    $relativeLink.text(article.atomName);
+    $relative.removeClass('hidden');
+    $('.relatives').removeClass('hidden');
+  },
+  _setStats(atoms) {
+    for (const atom of atoms) {
+      const atomId = atom.atomId;
+      // stat
+      const $stat = $(`.stat[data-article-id=${atomId}]`);
+      // num
+      $('.num.readCount', $stat).text(atom.readCount);
+      $('.num.commentCount', $stat).text(atom.commentCount);
+      this._starCount(atomId, atom.star, atom.starCount);
+      // click
+      $('.button-starCount', $stat).click(() => {
+        this._starClick(atomId);
+      });
+    }
+  },
+  _starClick(atomId) {
+    // stat
+    const $stat = $(`.stat[data-article-id=${atomId}]`);
+    const star = $('.button-starCount .star-on', $stat).hasClass('hidden') ? 1 : 0;
+    const data = {
+      key: { atomId },
+      atom: { star },
+    };
+    util.ajax({
+      url: '/a/base/atom/star',
+      body: {
+        data: JSON.stringify(data),
+      },
+    }).then(data => {
+      this._starCount(atomId, data.star, data.starCount);
+    });
+  },
+  _starCount(atomId, star, starCount) {
+    const $stat = $(`.stat[data-article-id=${atomId}]`);
+    $('.num.starCount', $stat).text(starCount);
+    if (star) {
+      $('.button-starCount .star-on').removeClass('hidden');
+      $('.button-starCount .star-off').addClass('hidden');
+    } else {
+      $('.button-starCount .star-on').addClass('hidden');
+      $('.button-starCount .star-off').removeClass('hidden');
+    }
+  },
+  _readCountInc(atomId, num) {
+    const $stat = $(`.stat[data-article-id=${atomId}]`);
+    const $readCount = $('.num.readCount', $stat);
+    $readCount.text(parseInt($($readCount[0]).text()) + num);
+  },
+  _commentCountInc(atomId, num) {
+    const $stat = $(`.stat[data-article-id=${atomId}]`);
+    const $commentCount = $('.num.commentCount', $stat);
+    $commentCount.text(parseInt($($commentCount[0]).text()) + num);
+  },
+  _commentHeartSwitch(link, atomId, id, heart) {
+    // num
+    const $heartCount = $('.num', link);
+    $heartCount.text(parseInt($($heartCount[0]).text()) + (heart ? 1 : -1));
+    // icon
+    if (heart) {
+      $('.heart-on', link).removeClass('hidden');
+      $('.heart-off', link).addClass('hidden');
+    } else {
+      $('.heart-on', link).addClass('hidden');
+      $('.heart-off', link).removeClass('hidden');
+    }
+  },
+};

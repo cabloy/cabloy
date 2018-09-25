@@ -41,41 +41,48 @@ const _createPromise = function(handler) {
   return promise;
 };
 
-const _formatDateTime = function(date, fmt) { // author: meizz
+const _formatDateTime = function(date, fmt) { // original author: meizz
   const o = {
-    'M+': date.getMonth() + 1, // 月份
-    'd+': date.getDate(), // 日
-    'h+': date.getHours(), // 小时
-    'm+': date.getMinutes(), // 分
-    's+': date.getSeconds(), // 秒
-    'q+': Math.floor((date.getMonth() + 3) / 3), // 季度
-    S: date.getMilliseconds(), // 毫秒
+    'M+': date.getMonth() + 1, // month
+    'D+': date.getDate(), // day
+    'H+': date.getHours(), // hour
+    'm+': date.getMinutes(), // minute
+    's+': date.getSeconds(), // second
+    'Q+': Math.floor((date.getMonth() + 3) / 3), // quarter
+    S: date.getMilliseconds(), // millisecond
   };
-  if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
+  if (/(Y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
   for (const k in o) { if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length))); }
   return fmt;
 };
 
-const util = {
+const _time = {
   now() {
     return this.formatDateTime(null);
   },
   today() {
-    return this.formatDateTime(null, 'yyyy-MM-dd');
+    return this.formatDate(null);
   },
   formatDateTime(date, fmt) {
     date = date || new Date();
     if (typeof (date) !== 'object') date = new Date(date);
-    fmt = fmt || 'yyyy-MM-dd hh:mm:ss';
+    fmt = fmt || 'YYYY-MM-DD HH:mm:ss';
     return _formatDateTime(date, fmt);
   },
   formatDate(date, sep) {
     sep = sep || '-';
-    return this.formatDateTime(date, `yyyy${sep}MM${sep}dd`);
+    return this.formatDateTime(date, `YYYY${sep}MM${sep}DD`);
   },
   formatTime(date, sep) {
     sep = sep || ':';
-    return this.formatDateTime(date, `hh${sep}mm${sep}ss`);
+    return this.formatDateTime(date, `HH${sep}mm${sep}ss`);
+  },
+};
+
+const util = {
+  time: _time,
+  formatDateTime(date) {
+    return this.time.formatDateTime(date, `${env.format.date} ${env.format.time}`);
   },
   parseUrlQuery(url) {
     const query = {};
@@ -132,7 +139,7 @@ const util = {
     if (height) query = `${query ? query + '&' : ''}height=${parseInt(height) * pixelRatio}`;
     return `${url}${url.charAt(url.length - 1) === '?' ? '' : '?'}${query}`;
   },
-  loadMore({ container, threshold = 50, index = 0, onFetch, onParse }) {
+  loadMore({ container, threshold = 100, index = 0, context, onFetch, onParse }) {
     // init
     const $container = $(container);
     const $window = $(window);
@@ -151,9 +158,18 @@ const util = {
       fetching = true;
       $loadMoreContainer.empty();
       $loadMoreContainer.append($('<span class="glyphicon glyphicon-refresh spinning"></span>'));
-      const res = onFetch({ index });
+      const res = onFetch({ index, context });
       res.then(data => {
+        //
         $loadMoreContainer.empty();
+        if (!data.finished) {
+          const $buttonMore = $('<button type="button" class="btn btn-warning btn-xs"><%=text("Load More")%></button>');
+          $buttonMore.click(() => {
+            _onFetch();
+          });
+          $loadMoreContainer.append($buttonMore);
+        }
+        //
         index = data.index;
         finished = data.finished;
         for (let i = 0; i < data.list.length; i++) {
@@ -161,7 +177,8 @@ const util = {
         }
         error = false;
         fetching = false;
-      }).catch(() => {
+      }).catch(err => {
+        console.log(err);
         const $buttonTry = $('<button type="button" class="btn btn-warning btn-xs"><%=text("Load error, try again")%></button>');
         $buttonTry.click(() => {
           _onFetch();
@@ -183,79 +200,44 @@ const util = {
 
     // bind event
     $window.on('scroll.infinite resize.infinite', _onScroll);
-    _onScroll();
-  },
-  echo() {
-    return this.ajax({
-      url: '/a/base/auth/echo',
-    }).then(data => {
-      this.user = data;
-      this.stats();
-    });
-  },
-  stats() {
-    const stats = $('.stat');
-    const atomIds = [];
-    $.each(stats, (index, item) => {
-      const $item = $(item);
-      if (!$item.hasClass('no-parse')) {
-        atomIds.push($item.data('article-id'));
-      }
-    });
-    if (atomIds.length === 0) return;
-    this.ajax({
-      url: '/a/base/atom/stats',
-      body: {
-        data: JSON.stringify(atomIds),
-      },
-    }).then(atoms => {
-      this.setStats(atoms);
-    });
-  },
-  setStats(atoms) {
-    for (const atom of atoms) {
-      const atomId = atom.atomId;
-      // stat
-      const $stat = $(`.stat[data-article-id=${atomId}]`);
-      // num
-      $('.num.readCount', $stat).text(atom.readCount);
-      $('.num.commentCount', $stat).text(atom.commentCount);
-      this.starCount(atomId, atom.star, atom.starCount);
-      // click
-      $('.button-starCount', $stat).click(() => {
-        this.starClick(atomId);
-      });
-    }
-  },
-  starClick(atomId) {
-    // stat
-    const $stat = $(`.stat[data-article-id=${atomId}]`);
-    const star = $('.button-starCount .star-on', $stat).hasClass('hidden') ? 1 : 0;
-    const data = {
-      key: { atomId },
-      atom: { star },
-    };
-    this.ajax({
-      url: '/a/base/atom/star',
-      body: {
-        data: JSON.stringify(data),
-      },
-    }).then(data => {
-      this.starCount(atomId, data.star, data.starCount);
-    });
-  },
-  starCount(atomId, star, starCount) {
-    const $stat = $(`.stat[data-article-id=${atomId}]`);
-    $('.num.starCount', $stat).text(starCount);
-    if (star) {
-      $('.button-starCount .star-on').removeClass('hidden');
-      $('.button-starCount .star-off').addClass('hidden');
+    if (index === 0) {
+      _onFetch();
     } else {
-      $('.button-starCount .star-on').addClass('hidden');
-      $('.button-starCount .star-off').removeClass('hidden');
+      _onScroll();
     }
-  },
-  read(){
 
+    // controller
+    const _controller = {
+      reload(ops) {
+        // check if fetching
+        if (fetching) return false;
+        // reset
+        index = ops.index;
+        context = ops.context;
+        finished = false;
+        error = false;
+        // empty
+        $container.empty();
+        // load
+        _onScroll();
+        // ok
+        return true;
+      },
+    };
+
+    return _controller;
   },
 };
+
+$(document).ready(function() {
+  // img delay
+  $.each($('.img-delay'), (index, item) => {
+    const $item = $(item);
+    const src = $item.data('src');
+    const width = $item.data('width');
+    const height = $item.data('height');
+    $item.attr('src', util.combineImageUrl(src, width, height));
+    $(item).removeClass('img-delay');
+  });
+});
+

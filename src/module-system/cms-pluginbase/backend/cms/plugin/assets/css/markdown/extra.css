@@ -30,6 +30,30 @@ article img {
   margin: 0 auto;
 }
 
+.img-delay {
+  display: none;
+}
+
+.avatar {
+  border-radius: 4px;
+  border: 1px solid transparent;
+}
+
+.avatar24 {
+  height: 24px;
+  width: 24px;
+}
+
+.avatar32 {
+  height: 32px;
+  width: 32px;
+}
+
+.avatar48 {
+  height: 48px;
+  width: 48px;
+}
+
 .glyphicon.spinning {
   animation: spin 1s infinite linear;
   -webkit-animation: spin2 1s infinite linear;
