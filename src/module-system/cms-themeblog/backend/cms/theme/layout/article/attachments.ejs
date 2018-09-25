@@ -2,16 +2,18 @@
 <hr>
 <ul class="attachments">
   <%
-    // key
-    const key = { atomId: article.atomId };
+    // data
+    const data={
+      key: { atomId: article.atomId },
+    };
     // fetch
-    const data=await ctx.performAction({
+    const res=await ctx.performAction({
       method:'get',
       url: '/a/cms/article/attachments',
-      query: { key:JSON.stringify(key) },
+      query: { data:JSON.stringify(data) },
     });
     // loop
-    for(const item of data.list){
+    for(const item of res.list){
   %>
   <li><span class="glyphicon glyphicon-paperclip"></span> <a target="_blank" href="<%=item.downloadUrl%>"><%=item.realName%></a></li>
   <% } %>

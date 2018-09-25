@@ -1,29 +1,32 @@
 $(document).ready(function() {
-
   // query
   const query = util.parseUrlQuery();
-
   // title
   title(query);
-
   // menu active
   menuActive(query);
-
   // search text
   if (query.search) {
     $('form.search input').val(query.search);
   }
-
   // load more
   loadMore(query);
-
-  // breadcrumb
-  breadcrumb();
-
-  // relatives
-  relatives();
-
 });
+
+$(document).on('echo-ready', function() {
+  // comments
+  util.article.comments({ onParse: onParseComment });
+});
+
+function title(query) {
+  if (env.site.path === 'static/category') {
+    if (query.search !== undefined) {
+      document.title = `<%=text('Search')%>:${query.search}-${env.base.title}`;
+    } else {
+      document.title = `${util.article.categoryName(query.categoryId)}-${env.base.title}`;
+    }
+  }
+}
 
 function menuActive(query) {
   const categoryId = query.categoryId || (env.article && env.article.categoryId);
@@ -31,82 +34,6 @@ function menuActive(query) {
     const link = $(`.category-${categoryId}`);
     link.parents('li').addClass('active');
   }
-}
-
-function title(query) {
-  if (env.site.path === 'static/category') {
-    if (query.search !== undefined) {
-      document.title = `<%=text('Search')%>:${query.search}-${env.base.title}`;
-    } else {
-      document.title = `${categoryName(query.categoryId)}-${env.base.title}`;
-    }
-  }
-}
-
-function breadcrumb() {
-  if (env.site.path === 'main/article') {
-    const $category = $(`.category-${env.article.categoryId}`);
-    $('.breadcrumb .category')
-      .attr('href', $category.attr('href'))
-      .text($category.data('category-name'));
-    $('.breadcrumb .active').text(env.article.atomName);
-  }
-}
-
-function relatives() {
-  if (env.site.path === 'main/article') {
-    _relatives('prev');
-    _relatives('next');
-  }
-}
-
-function _relatives(type) {
-  // article
-  const article = env.article;
-  // options
-  const options = {
-    where: {
-      'f.language': article.language,
-      'f.categoryId': article.categoryId,
-    },
-    page: { index: 0, size: 1 },
-    mode: 'list',
-  };
-  if (article.sorting > 0) {
-    // asc for sorting
-    options.where['f.sorting'] = { op: type === 'prev' ? '<' : '>', val: article.sorting };
-    options.orders = [
-      [ 'f.sorting', type === 'prev' ? 'desc' : 'asc' ],
-    ];
-  } else {
-    // desc for createdAt
-    options.where['f.createdAt'] = { op: type === 'prev' ? '>' : '<', val: util.time.formatDateTime(article.createdAt) };
-    options.orders = [
-      [ 'f.createdAt', type === 'prev' ? 'asc' : 'desc' ],
-    ];
-  }
-  // select
-  util.ajax({
-    url: '/a/cms/article/list',
-    body: { options: JSON.stringify(options) },
-  }).then(data => {
-    _relative({ type, article: data.list[0] });
-  });
-}
-
-function _relative({ type, article }) {
-  if (!article) return;
-  const $relative = $(`.relatives .${type}`);
-  const $relativeLink = $(`.relatives .${type} a`);
-
-  $relativeLink.attr('href', `${util.url(article.url)}`);
-  $relativeLink.text(article.atomName);
-  $relative.removeClass('hidden');
-  $('.relatives').removeClass('hidden');
-}
-
-function categoryName(categoryId) {
-  return $(`.category-${categoryId}`).data('category-name');
 }
 
 function loadMore(query) {
@@ -158,7 +85,7 @@ function _loadMore({ categoryId, search }) {
     },
     onParse(item) {
       const sticky = !item.sticky ? '' : '<span class="glyphicon glyphicon-pushpin"></span> ';
-      const attachment = item.attachmentCount===0 ? '' : '<span class="glyphicon glyphicon-paperclip"></span> ';
+      const attachment = item.attachmentCount === 0 ? '' : '<span class="glyphicon glyphicon-paperclip"></span> ';
       const media = !item.imageFirst ? '' : `
 <div class="media-right">
       <a target="_blank" href="${util.url(item.url)}">
@@ -186,4 +113,34 @@ function _loadMore({ categoryId, search }) {
         `;
     },
   });
+}
+
+function onParseComment(item) {
+  const reply = !env.article.allowComment ? '' : `
+    <a href="${util.article.commentUrl({ atomId: item.atomId, id: 0, replyId: item.id })}" class="action" target="_blank"><span class="glyphicon glyphicon-share-alt"></span></a>
+    `;
+  return `
+<div class="comment panel panel-default" data-comment-id="${item.id}">
+  <div class="header panel-heading">
+    <div class="user">
+      <img class="avatar avatar32" src="${util.combineImageUrl(item.avatar, 32, 32)}" />
+      <h3 class="name panel-title">${item.userName}</h3>
+      <div class="date">#${item.sorting} · ${util.time.formatDateTime(item.createdAt)}</div>
+    </div>
+    <div class="actions">
+      <a href="${util.article.commentUrl({ atomId: item.atomId, id: item.id, replyId: 0 })}" class="action" target="_blank"><span class="glyphicon glyphicon-pencil"></span></a>
+      <a href="#" class="action delete"><span class="glyphicon glyphicon-trash"></span></a>
+      <a href="#" class="action heart">
+        <span class="glyphicon glyphicon-heart heart-on ${item.heart ? '' : 'hidden'}"></span>
+        <span class="glyphicon glyphicon-heart-empty heart-off ${item.heart ? 'hidden' : ''}"></span>
+        <span class="num">${item.heartCount}</span>
+      </a>
+      ${reply}
+    </div>
+  </div>
+  <div class="content panel-body">
+    ${item.html}
+  </div>
+</div>
+  `;
 }

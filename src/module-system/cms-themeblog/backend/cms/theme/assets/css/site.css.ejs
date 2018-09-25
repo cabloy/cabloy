@@ -151,6 +151,64 @@ article .attachments li{
   list-style:none;
 }
 
+.comments .header .stat{
+  float:left;
+}
+
+.comments .header .order{
+  float:right;
+  line-height:60px;
+}
+
+.comments .header:after{
+  display:block;
+  content:'';
+  clear:both;
+}
+
+.comments .comment{
+  list-style:none;
+}
+
+.comments .comment .header .user{
+  float:left;
+}
+
+.comments .comment .header .actions{
+  float:right;
+}
+
+.comments .comment .header .user .avatar{
+  float:left;
+}
+
+.comments .comment .header .user .name{
+   margin-left: 40px;
+   margin-top: -2px;
+}
+
+.comments .comment .header .user .date{
+  margin-left: 39px;
+  margin-top:-8px;
+  font-style: italic;
+  font-size: 13px;
+  color: #8e8e93;
+}
+
+.comments .comment .header .actions{
+  margin-top:6px;
+}
+
+.comments .comment .header .actions .action{
+  margin-left:6px;
+}
+
+.comments .comment .header .actions a.action:hover,
+.comments .comment .header .actions a.action:focus
+{
+  text-decoration: none;
+}
+
 .sidebar{
   margin: 20px 0;
 }
@@ -167,19 +225,13 @@ article .attachments li{
   border: 1px solid #f0f0f0;
 }
 
-.profile .avatar{
+.profile a.avatar{
    vertical-align: middle;
 }
 
-.profile .avatar:hover{
+.profile a.avatar:hover,
+.profile a.avatar:focus{
   text-decoration: none;
-}
-
-.profile .avatar img{
-  width: 48px;
-  height: 48px;
-  border-radius: 4px;
-  border: 1px solid #f0f0f0;
 }
 
 .profile .name{
@@ -190,10 +242,6 @@ article .attachments li{
 .profile .motto{
   margin-top:8px;
   font-style: italic;
-}
-
-.img-delay{
-  display:none;
 }
 
 hr{
