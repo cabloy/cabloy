@@ -4,10 +4,6 @@ module.exports = appInfo => {
 
   // plugin
   config.plugin = {
-    track: {
-      google: '',
-      baidu: '',
-    },
   };
 
   return config;
