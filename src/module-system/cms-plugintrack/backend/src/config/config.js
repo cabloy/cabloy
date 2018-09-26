@@ -7,7 +7,7 @@ module.exports = appInfo => {
     track: {
       google: '',
       baidu: '',
-      bing: '',
+      qq: '',
     },
   };
 
