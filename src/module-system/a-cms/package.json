@@ -57,6 +57,8 @@
     "extend2": "^1.0.0",
     "@zhennann/ejs": "^2.6.2",
     "@zhennann/markdown": "^1.0.0",
+    "egg-born-module-cms-pluginbase": "^1.0.0",
+    "egg-born-module-cms-plugintrack": "^1.0.0",
     "p-map": "^1.2.0",
     "moment": "^2.22.2",
     "glob": "^7.1.2",

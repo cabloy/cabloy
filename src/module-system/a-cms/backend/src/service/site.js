@@ -17,7 +17,7 @@ module.exports = app => {
       for (const relativeName in this.app.meta.modules) {
         const module = this.app.meta.modules[relativeName];
         if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin) {
-          site.plugins[module.package.eggBornModule.cms.name] = this.ctx.config.module(relativeName).plugin;
+          site.plugins[relativeName] = this.ctx.config.module(relativeName).plugin;
         }
       }
       return site;
