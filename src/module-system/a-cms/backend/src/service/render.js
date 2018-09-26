@@ -306,17 +306,22 @@ module.exports = app => {
           } else {
             _content = await fse.readFile(item);
           }
+          // minify
+          if (type === 'CSS') {
+            if (item.indexOf('.min.css') === -1) {
+              const output = new CleanCSS().minify(_content);
+              _content = output.styles;
+            }
+          } else {
+            if (item.indexOf('.min.js') === -1) {
+              _content = babel.transform(_content, { ast: false, babelrc: false, presets: [ 'env' ] }).code;
+              const output = UglifyJS.minify(_content);
+              if (output.error) throw new Error(`${output.error.name}: ${output.error.message}`);
+              _content = output.code;
+            }
+          }
+          // append
           result += _content + '\n';
-        }
-        // minify
-        if (type === 'CSS') {
-          const output = new CleanCSS().minify(result);
-          result = output.styles;
-        } else {
-          result = babel.transform(result, { ast: false, babelrc: false, presets: [ 'env' ] }).code;
-          const output = UglifyJS.minify(result);
-          if (output.error) throw new Error(`${output.error.name}: ${output.error.message}`);
-          result = output.code;
         }
         // save
         const sha = shajs('sha256').update(result).digest('hex');
