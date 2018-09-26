@@ -57,7 +57,6 @@
   },
   "dependencies": {
     "require3": "^1.0.1",
-    "extend2": "^1.0.0",
-    "egg-born-module-cms-pluginbase": "^1.0.0"
+    "extend2": "^1.0.0"
   }
 }
