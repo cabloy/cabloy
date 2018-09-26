@@ -116,9 +116,13 @@ function _loadMore({ categoryId, search }) {
 }
 
 function onParseComment(item) {
+  const actionsEdit=item.userId!==util.article.user.op.id?'':`
+      <a href="${util.article.commentUrl({ atomId: item.atomId, id: item.id, replyId: 0 })}" class="action" target="_blank"><span class="glyphicon glyphicon-pencil"></span></a>
+      <a href="#" class="action delete"><span class="glyphicon glyphicon-trash"></span></a>
+  `;
   const reply = !env.article.allowComment ? '' : `
     <a href="${util.article.commentUrl({ atomId: item.atomId, id: 0, replyId: item.id })}" class="action" target="_blank"><span class="glyphicon glyphicon-share-alt"></span></a>
-    `;
+  `;
   return `
 <div class="comment panel panel-default" data-comment-id="${item.id}">
   <div class="header panel-heading">
@@ -128,8 +132,7 @@ function onParseComment(item) {
       <div class="date">#${item.sorting} · ${util.time.formatDateTime(item.createdAt)}</div>
     </div>
     <div class="actions">
-      <a href="${util.article.commentUrl({ atomId: item.atomId, id: item.id, replyId: 0 })}" class="action" target="_blank"><span class="glyphicon glyphicon-pencil"></span></a>
-      <a href="#" class="action delete"><span class="glyphicon glyphicon-trash"></span></a>
+      ${actionsEdit}
       <a href="#" class="action heart">
         <span class="glyphicon glyphicon-heart heart-on ${item.heart ? '' : 'hidden'}"></span>
         <span class="glyphicon glyphicon-heart-empty heart-off ${item.heart ? 'hidden' : ''}"></span>
