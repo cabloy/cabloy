@@ -71,9 +71,8 @@ module.exports = app => {
         [ item.content, html, this.ctx.instance.id, key.atomId ]);
       // get atom for safety
       const atom = await this.ctx.meta.atom.get(key);
-      const inner = atom.atomFlag !== 2;
       // render
-      await this._renderArticle({ key, inner });
+      await this._renderArticle({ key, inner: atom.atomFlag !== 2 });
     }
 
     async delete({ atomClass, key, user }) {
@@ -120,6 +119,10 @@ module.exports = app => {
         atom: { atomFlag },
         user,
       });
+      if (this.ctx.config.article.publishOnSubmit) {
+        // publish
+        await this.action({ action: 101, key, user });
+      }
     }
 
     async _renderArticle({ key, inner }) {

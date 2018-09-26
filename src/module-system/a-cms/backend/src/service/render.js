@@ -396,6 +396,11 @@ var env=${JSON.stringify(env, null, 2)};
     }
 
     getUrlRawRoot(site) {
+      if (this.ctx.app.meta.isTest || this.ctx.app.meta.isLocal) {
+        const publicDir = this.ctx.app.config.static.prefix;
+        const prefix = this.ctx.host ? `${this.ctx.protocol}://${this.ctx.host}` : '';
+        return `${prefix}${publicDir}${this.ctx.instance.id}/cms/dist`;
+      }
       return `${site.host.url}${site.host.rootPath ? '/' + site.host.rootPath : ''}`;
     }
     getUrlRoot(site, language) {

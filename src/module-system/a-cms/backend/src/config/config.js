@@ -9,6 +9,7 @@ module.exports = appInfo => {
       wordBreak: false,
       preserveTags: false,
     },
+    publishOnSubmit: true,
   };
 
   // site
