@@ -16,6 +16,8 @@ $(document).ready(function() {
 $(document).on('echo-ready', function() {
   // comments
   util.article.comments({ onParse: onParseComment });
+  // recent comments
+  recentComments();
 });
 
 function title(query) {
@@ -116,7 +118,7 @@ function _loadMore({ categoryId, search }) {
 }
 
 function onParseComment(item) {
-  const actionsEdit=item.userId!==util.article.user.op.id?'':`
+  const actionsEdit = item.userId !== util.article.user.op.id ? '' : `
       <a href="${util.article.commentUrl({ atomId: item.atomId, id: item.id, replyId: 0 })}" class="action" target="_blank"><span class="glyphicon glyphicon-pencil"></span></a>
       <a href="#" class="action delete"><span class="glyphicon glyphicon-trash"></span></a>
   `;
@@ -146,4 +148,36 @@ function onParseComment(item) {
   </div>
 </div>
   `;
+}
+
+function onParseCommentRecent(item) {
+  return `
+<li class="media">
+    <div class="media-body">
+      <h4 class="media-heading"><a href="${util.url(item.url)}#comments">Re: ${item.atomName}</a></h4>
+      <div class="body">${item.h_summary}</div>
+      <div class="user">-- ${item.h_userName}</div>
+    </div>
+</li>
+  `;
+}
+
+function recentComments() {
+  // options
+  const options = {
+    orders: [
+      [ 'h_updatedAt', 'desc' ],
+    ],
+    page: { index: 0, size: env.comment.recentNum },
+  };
+  // select
+  util.ajax({
+    url: '/a/cms/comment/all',
+    body: { options: JSON.stringify(options) },
+  }).then(data => {
+    const $list=$('.panel-recentComments .list');
+    for (let i = 0; i < data.list.length; i++) {
+      $list.append($(onParseCommentRecent(data.list[i])));
+    }
+  });
 }
