@@ -10,6 +10,7 @@ export default {
   Default: '缺省',
   Delete: '删除',
   Description: '描述',
+  Extra: '额外',
   Flag: '标记',
   Hidden: '隐藏',
   Keywords: '关键字',

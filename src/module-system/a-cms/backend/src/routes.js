@@ -45,7 +45,7 @@ module.exports = app => {
       validate: { validator: 'category' },
       right: { type: 'function', module: 'a-settings', name: 'settings' },
     } },
-    { method: 'post', path: 'category/children', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
+    { method: 'post', path: 'category/children', controller: category }, // not set function right
     { method: 'post', path: 'category/add', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'category/delete', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'category/move', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
