@@ -89,7 +89,7 @@ util.article = {
       }
     });
     // init order
-    this._switchOrder({ order: env.comments.order, onParse });
+    this._switchOrder({ order: env.comment.order, onParse });
   },
   commentUrl({ atomId, id, replyId }) {
     return `${env.site.serverUrl}/#!/a/base/comment/item?atomId=${atomId}&commentId=${id}&replyId=${replyId || 0}`;

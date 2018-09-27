@@ -130,7 +130,7 @@ const util = {
     });
   },
   combineImageUrl(url, width, height) {
-    if (!url) return url;
+    if (!url) return this.url('plugins/cms-pluginbase/assets/images/avatar_user.png');
     if (url.indexOf('/api/a/file/file/download') === -1) return url;
     if (!width && !height) return url;
     const pixelRatio = window.devicePixelRatio || 1;
