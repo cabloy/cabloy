@@ -503,15 +503,15 @@ const Fn = module.exports = ctx => {
       return res[0][0];
     }
 
-    async _list({ tableName = '', options: { where, orders, page, star = 0, label = 0 }, user, pageForce = true }) {
+    async _list({ tableName = '', options: { where, orders, page, star = 0, label = 0, comment = 0, file = 0 }, user, pageForce = true }) {
       page = ctx.meta.util.page(page, pageForce);
 
       const _where = ctx.model._where2(where);
       const _orders = ctx.model._orders(orders);
       const _limit = ctx.model._limit(page.size, page.index);
 
-      const res = await ctx.model.query('call aSelectAtoms(?,?,?,?,?,?,?,?)',
-        [ tableName, _where, _orders, _limit, ctx.instance.id, user.id, star, label ]
+      const res = await ctx.model.query('call aSelectAtoms(?,?,?,?,?,?,?,?,?,?)',
+        [ tableName, _where, _orders, _limit, ctx.instance.id, user.id, star, label, comment, file ]
       );
       return res[0];
     }

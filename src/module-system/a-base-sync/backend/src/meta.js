@@ -3,6 +3,17 @@ module.exports = app => {
   const schemas = require('./config/validation/schemas.js')(app);
   // meta
   const meta = {
+    base: {
+      functions: {
+        listComment: {
+          title: 'Comment List',
+          scene: 'list',
+          sorting: 1,
+          menu: 1,
+          actionPath: 'comment/all',
+        },
+      },
+    },
     sequence: {
       providers: {
         draft: {

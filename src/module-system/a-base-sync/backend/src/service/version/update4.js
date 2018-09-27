@@ -26,6 +26,7 @@ module.exports = function(ctx) {
         `;
       await ctx.model.query(sql);
 
+      // aViewComment
       sql = `
           create view aViewComment as
             select a.*,b.userName,b.avatar,c.userName as replyUserName from aComment a
@@ -66,7 +67,7 @@ module.exports = function(ctx) {
       // aSelectAtoms
       await ctx.model.query('drop procedure aSelectAtoms');
       sql = `
-create procedure aSelectAtoms (in _tableName varchar(50),in __where text,in __orders text,in __limit text,in _iid int,in _userIdWho int,in _star int,in _label int)
+create procedure aSelectAtoms (in _tableName varchar(50),in __where text,in __orders text,in __limit text,in _iid int,in _userIdWho int,in _star int,in _label int,in _comment int, in _file int)
 begin
   -- tables
   -- a: aAtom
@@ -76,10 +77,14 @@ begin
   -- e: aAtomLabelRef
   -- f: {item}
   -- g: aUser
+  -- h: aComment
+  -- i: aFile
 
   declare _where,_orders,_limit text;
   declare _starField,_starJoin,_starWhere text;
   declare _labelField,_labelJoin,_labelWhere text;
+  declare _commentField,_commentJoin,_commentWhere text;
+  declare _fileField,_fileJoin,_fileWhere text;
   declare _itemField,_itemJoin text;
 
   if __where<>'' then
@@ -122,6 +127,26 @@ begin
         ',(select e2.labels from aAtomLabel e2 where e2.iid=',_iid,' and e2.atomId=a.id and e2.userId=',_userIdWho,') as labels'
       );
 
+  if _comment<>0 then
+    set _commentField=',h.createdAt h_createdAt,h.updatedAt h_updatedAt,h.userId h_userId,h.sorting h_sorting,h.heartCount h_heartCount,h.replyId h_replyId,h.replyUserId h_replyUserId,h.replyContent h_replyContent,h.content h_content,h.html h_html,h.userName h_userName,h.avatar h_avatar,h.replyUserName h_replyUserName';
+    set _commentJoin=' inner join aViewComment h on h.atomId=a.id';
+    set _commentWhere=concat(' and h.iid=',_iid,' and h.delete=0');
+  else
+    set _commentField='';
+    set _commentJoin='';
+    set _commentWhere='';
+  end if;
+
+  if _file<>0 then
+    set _fileField=',i.createdAt i_createdAt,i.updatedAt i_updatedAt,i.userId i_userId,i.downloadId i_downloadId,i.mode i_mode,i.fileSize i_fileSize,i.width i_width,i.height i_height,i.filePath i_filePath,i.fileName i_fileName,i.realName i_realName,i.fileExt i_fileExt,i.encoding i_encoding,i.mime i_mime,i.attachment i_attachment,i.flag i_flag,i.userName i_userName,i.avatar i_avatar';
+    set _fileJoin=' inner join aViewFile i on i.atomId=a.id';
+    set _fileWhere=concat(' and i.iid=',_iid,' and i.delete=0');
+  else
+    set _fileField='';
+    set _fileJoin='';
+    set _fileWhere='';
+  end if;
+
   if _tableName<>'' then
     set _itemField='f.*,';
     set _itemJoin=concat(' inner join ',_tableName,' f on f.atomId=a.id');
@@ -131,17 +156,21 @@ begin
   end if;
 
   set @sql=concat(
-    'select ',_itemField,'a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomFlow,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,b.module,b.atomClassName,b.atomClassIdParent,g.userName,g.avatar',_starField,_labelField,' from aAtom a',
+    'select ',_itemField,'a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomFlow,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,b.module,b.atomClassName,b.atomClassIdParent,g.userName,g.avatar',_starField,_labelField,_commentField,_fileField,' from aAtom a',
     ' inner join aAtomClass b on a.atomClassId=b.id',
     ' inner join aUser g on a.userIdCreated=g.id',
     _itemJoin,
     _starJoin,
     _labelJoin,
+    _commentJoin,
+    _fileJoin,
     _where,
     ' (',
     '  a.deleted=0 and a.iid=', _iid,
     _starWhere,
     _labelWhere,
+    _commentWhere,
+    _fileWhere,
     '    and (',
     '           (a.userIdCreated=',_userIdWho,') or',
     '             (a.atomEnabled=1 and (',

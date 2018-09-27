@@ -1,4 +1,4 @@
-const initData = require('./initData.js');
+const initData = require('./initData2.js');
 
 module.exports = function(ctx) {
 

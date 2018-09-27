@@ -15,5 +15,6 @@ export default [
   { path: 'atom/selectAtomClass', component: load('atom/selectAtomClass') },
   { path: 'comment/list', component: load('comment/list') },
   { path: 'comment/item', component: load('comment/item') },
+  { path: 'comment/all', component: load('comment/all') },
   { path: 'attachment/list', component: load('attachment/list') },
 ];

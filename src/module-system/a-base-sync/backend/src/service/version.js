@@ -2,7 +2,8 @@ const VersionUpdate1Fn = require('./version/update1.js');
 const VersionUpdate2Fn = require('./version/update2.js');
 const VersionUpdate3Fn = require('./version/update3.js');
 const VersionUpdate4Fn = require('./version/update4.js');
-const VersionInitFn = require('./version/init.js');
+const VersionInit2Fn = require('./version/init2.js');
+const VersionInit4Fn = require('./version/init4.js');
 
 module.exports = app => {
 
@@ -33,8 +34,12 @@ module.exports = app => {
 
     async init(options) {
       if (options.version === 2) {
-        const versionInit = new (VersionInitFn(this.ctx))();
-        await versionInit.run(options);
+        const versionInit2 = new (VersionInit2Fn(this.ctx))();
+        await versionInit2.run(options);
+      }
+      if (options.version === 4) {
+        const versionInit4 = new (VersionInit4Fn(this.ctx))();
+        await versionInit4.run(options);
       }
     }
 

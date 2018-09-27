@@ -1,4 +1,5 @@
 module.exports = {
+  'Comment List': '评论列表',
   'Element exists': '元素已存在',
   'Element does not exist': '元素不存在',
   'Operation failed': '操作失败',
