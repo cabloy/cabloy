@@ -2,6 +2,32 @@ module.exports = app => {
 
   class CommentController extends app.Controller {
 
+    async all() {
+      const options = this.ctx.request.body.options;
+      options.comment = 1;
+      const res = await this.ctx.performAction({
+        method: 'post',
+        url: 'atom/select',
+        body: {
+          atomClass: this.ctx.request.body.atomClass,
+          options,
+        },
+      });
+      this.ctx.success(res);
+    }
+
+    async allP() {
+      // data
+      const data = JSON.parse(this.ctx.request.query.data);
+      // select
+      const res = await this.ctx.performAction({
+        method: 'post',
+        url: 'comment/all',
+        body: data,
+      });
+      this.ctx.success(res);
+    }
+
     async list() {
       const options = this.ctx.request.body.options;
       options.page = this.ctx.meta.util.page(options.page);

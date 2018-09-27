@@ -9,7 +9,7 @@ module.exports = function(ctx) {
           CREATE TABLE aComment (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
             deleted int(11) DEFAULT '0',
             iid int(11) DEFAULT '0',
             atomId int(11) DEFAULT '0',
@@ -20,6 +20,7 @@ module.exports = function(ctx) {
             replyUserId int(11) DEFAULT '0',
             replyContent text DEFAULT NULL,
             content text DEFAULT NULL,
+            summary text DEFAULT NULL,
             html text DEFAULT NULL,
             PRIMARY KEY (id)
           )
@@ -128,9 +129,12 @@ begin
       );
 
   if _comment<>0 then
-    set _commentField=',h.createdAt h_createdAt,h.updatedAt h_updatedAt,h.userId h_userId,h.sorting h_sorting,h.heartCount h_heartCount,h.replyId h_replyId,h.replyUserId h_replyUserId,h.replyContent h_replyContent,h.content h_content,h.html h_html,h.userName h_userName,h.avatar h_avatar,h.replyUserName h_replyUserName';
+    set _commentField=concat(
+        ',h.id h_id,h.createdAt h_createdAt,h.updatedAt h_updatedAt,h.userId h_userId,h.sorting h_sorting,h.heartCount h_heartCount,h.replyId h_replyId,h.replyUserId h_replyUserId,h.replyContent h_replyContent,h.content h_content,h.summary h_summary,h.html h_html,h.userName h_userName,h.avatar h_avatar,h.replyUserName h_replyUserName,',
+        '(select h2.heart from aCommentHeart h2 where h2.iid=',_iid,' and h2.commentId=h.id and h2.userId=',_userIdWho,') as h_heart'
+      );
     set _commentJoin=' inner join aViewComment h on h.atomId=a.id';
-    set _commentWhere=concat(' and h.iid=',_iid,' and h.delete=0');
+    set _commentWhere=concat(' and h.iid=',_iid,' and h.deleted=0');
   else
     set _commentField='';
     set _commentJoin='';
@@ -138,9 +142,9 @@ begin
   end if;
 
   if _file<>0 then
-    set _fileField=',i.createdAt i_createdAt,i.updatedAt i_updatedAt,i.userId i_userId,i.downloadId i_downloadId,i.mode i_mode,i.fileSize i_fileSize,i.width i_width,i.height i_height,i.filePath i_filePath,i.fileName i_fileName,i.realName i_realName,i.fileExt i_fileExt,i.encoding i_encoding,i.mime i_mime,i.attachment i_attachment,i.flag i_flag,i.userName i_userName,i.avatar i_avatar';
+    set _fileField=',i.id i_id,i.createdAt i_createdAt,i.updatedAt i_updatedAt,i.userId i_userId,i.downloadId i_downloadId,i.mode i_mode,i.fileSize i_fileSize,i.width i_width,i.height i_height,i.filePath i_filePath,i.fileName i_fileName,i.realName i_realName,i.fileExt i_fileExt,i.encoding i_encoding,i.mime i_mime,i.attachment i_attachment,i.flag i_flag,i.userName i_userName,i.avatar i_avatar';
     set _fileJoin=' inner join aViewFile i on i.atomId=a.id';
-    set _fileWhere=concat(' and i.iid=',_iid,' and i.delete=0');
+    set _fileWhere=concat(' and i.iid=',_iid,' and i.deleted=0');
   else
     set _fileField='';
     set _fileJoin='';

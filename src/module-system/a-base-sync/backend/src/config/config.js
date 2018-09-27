@@ -65,5 +65,14 @@ module.exports = appInfo => {
   // signupRoleName
   config.signupRoleName = 'registered';
 
+  // comment
+  config.comment = {
+    trim: {
+      limit: 100,
+      wordBreak: false,
+      preserveTags: false,
+    },
+  };
+
   return config;
 };

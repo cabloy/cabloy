@@ -62,7 +62,7 @@ export default {
       // options
       const options = {
         orders: [
-          [ 'sorting', this.order ],
+          [ 'updatedAt', this.order ],
         ],
         page: { index },
       };

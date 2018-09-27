@@ -1,4 +1,5 @@
 const require3 = require('require3');
+const trimHtml = require3('trim-html');
 const markdown = require3('@zhennann/markdown');
 
 module.exports = app => {
@@ -56,11 +57,15 @@ module.exports = app => {
         replyContent: item.replyContent,
         replyUserName: item.replyUserName,
       });
+      // summary
+      const summary = this._trimHtml(html);
       // update
       await this.ctx.model.comment.update({
         id: commentId,
         content,
+        summary: summary.html,
         html,
+        updatedAt: new Date(),
       });
       // ok
       return {
@@ -90,6 +95,8 @@ module.exports = app => {
         replyContent,
         replyUserName: reply && reply.userName,
       });
+      // summary
+      const summary = this._trimHtml(html);
       // create
       const res = await this.ctx.model.comment.insert({
         atomId: key.atomId,
@@ -100,6 +107,7 @@ module.exports = app => {
         replyUserId: reply ? reply.userId : 0,
         replyContent,
         content,
+        summary: summary.html,
         html,
       });
       // commentCount
@@ -186,6 +194,10 @@ module.exports = app => {
       const _content = this._fullContent({ content, replyContent, replyUserName });
       const md = markdown.create();
       return md.render(_content);
+    }
+
+    _trimHtml(html) {
+      return trimHtml(html, this.ctx.config.comment.trim);
     }
 
   }

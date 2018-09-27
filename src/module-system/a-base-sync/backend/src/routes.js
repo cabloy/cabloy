@@ -67,6 +67,8 @@ module.exports = app => {
     { method: 'post', path: 'atom/schema', controller: atom },
     { method: 'post', path: 'atom/validator', controller: atom },
     // comment
+    { method: 'post', path: 'comment/all', controller: comment },
+    { method: 'get', path: 'comment/all', controller: comment, action: 'allP', middlewares: 'jsonp' },
     { method: 'post', path: 'comment/list', controller: comment,
       meta: { right: { type: 'atom', action: 2 } },
     },
