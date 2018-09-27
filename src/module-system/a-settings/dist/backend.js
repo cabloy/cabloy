@@ -678,7 +678,7 @@ module.exports = app => {
           title: 'Settings',
           scene: 'tools',
           actionPath: 'instance/list',
-          sorting: 1,
+          sorting: 10,
           menu: 1,
         },
       },
