@@ -13,9 +13,9 @@ export default {
     }
     const app = c('f7-app', {
       staticClass: this.$meta.config.layout.color ? `color-theme-${this.$meta.config.layout.color}` : '',
-      props: { params: this.$root.$options.framework7 }
+      props: { params: this.$root.$options.framework7 },
     }, children);
-    return c('div', [app]);
+    return c('div', [ app ]);
   },
   data() {
     return {

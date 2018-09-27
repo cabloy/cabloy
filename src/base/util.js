@@ -130,7 +130,7 @@ export default function(Vue) {
         if (skip) {
           return block.substring(skip.length);
         }
-        return scope[key];
+        return scope[key] !== undefined ? scope[key] : '';
       });
     },
     parseModuleInfo(moduleName) {
