@@ -10,7 +10,14 @@ export default {
   methods: {
     getMenu(menu) {
       if (!this.menusAll) return null;
-      return this.menusAll[menu.module][menu.name];
+      const menus = this.menusAll[menu.module];
+      // by name
+      if (menu.name) return menus[ menu.name ];
+      // by action
+      for (const key in menus) {
+        if (menus[key].action === menu.action) return menus[key];
+      }
+      return null;
     },
     getMenuTitle(menu) {
       const _menu = this.getMenu(menu);

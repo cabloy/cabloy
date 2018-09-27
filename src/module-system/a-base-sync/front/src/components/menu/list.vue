@@ -38,7 +38,6 @@
   </div>
 </template>
 <script>
-import Vue from 'vue';
 import ebModules from '../../common/modules.js';
 import ebMenus from '../../common/menus.js';
 export default {

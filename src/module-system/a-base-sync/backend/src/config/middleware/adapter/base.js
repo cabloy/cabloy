@@ -315,7 +315,7 @@ const Fn = module.exports = ctx => {
         if (func.action === 'create' && !func.actionComponent && !func.actionPath) {
           func.actionModule = 'a-base';
           func.actionComponent = 'action';
-          func.actionPath = '/a/base/atom/edit?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}';
+          // func.actionPath = '/a/base/atom/edit?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}';
         }
         // list
         if (func.action === 'read' && !func.actionComponent && !func.actionPath) {

@@ -3,7 +3,7 @@
     <eb-navbar :title="title" eb-back-link="Back">
       <f7-nav-right>
         <eb-link v-if="ready && findAction('write')" :iconMaterial="this.mode==='edit'?'save':'edit'" :context="this.mode==='edit'?'save':'write'" :onPerform="onAction"></eb-link>
-        <f7-link v-if="ready" iconMaterial="more_horiz" :popover-open="`#${popoverId}`"></f7-link>
+        <f7-link v-if="showPopover" iconMaterial="more_horiz" :popover-open="`#${popoverId}`"></f7-link>
       </f7-nav-right>
     </eb-navbar>
     <template v-if="notfound">
@@ -16,7 +16,7 @@
       <eb-validate v-if="ready" ref="validate" :readOnly="this.mode!=='edit'" auto :data="item" :params="validateParams" :onPerform="onPerformValidate" :onSave="onSave">
       </eb-validate>
       <f7-popover :id="popoverId">
-        <f7-list v-if="ready" inset>
+        <f7-list v-if="showPopover" inset>
           <eb-list-button v-if="findAction('write') && item.atomEnabled===0" popover-close context="submit" :onPerform="onAction">{{$text('Submit')}}</eb-list-button>
           <eb-list-button v-for="action of actions" :key="action.id" v-if="action.name!=='write'" popover-close :context="action" :onPerform="onAction">{{getActionTitle(action)}}</eb-list-button>
         </f7-list>
@@ -71,6 +71,17 @@ export default {
       if (!this.item) return name;
       return `${name}: ${this.item.atomName}`;
     },
+    showPopover() {
+      if (!this.ready) return false;
+      // submit
+      const submit = this.findAction('write') && this.item.atomEnabled === 0;
+      if (submit) return true;
+      // others
+      for (const action of this.actions) {
+        if (action.name !== 'write') return true;
+      }
+      return false;
+    },
   },
   mounted() {
     this.$meta.eventHub.$on('atom:action', this.onActionChanged);
@@ -103,7 +114,7 @@ export default {
         });
         // validateParams
         this.$api.post('atom/validator', {
-          atomClass: { id: this.atomClassId },
+          atomClass: { id: this.item.atomClassId },
         }).then(data => {
           this.validateParams = {
             module: data.module,

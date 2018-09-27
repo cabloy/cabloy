@@ -36,7 +36,7 @@ const Fn = module.exports = ctx => {
     // list
     //   locale maybe '' for selectAllFunctions beside menus
     async list({ options: { where, orders, page, star = 0, locale = '' }, user }) {
-      page = ctx.meta.util.page(page);
+      // page = ctx.meta.util.page(page); // has set in controller
 
       const _where = ctx.model._where2(where);
       const _orders = ctx.model._orders(orders);

@@ -10,6 +10,10 @@ module.exports = app => {
       return this.ctx.meta.atomClass.validatorSearch({ module, atomClassName });
     }
 
+    async checkRightCreate({ atomClass, user }) {
+      return await this.ctx.meta.atom.checkRightCreate({ atomClass, user });
+    }
+
   }
 
   return AtomClass;

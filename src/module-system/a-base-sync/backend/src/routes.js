@@ -116,6 +116,7 @@ module.exports = app => {
       meta: { auth: { enable: false } },
     },
     { method: 'post', path: 'atomClass/validatorSearch', controller: atomClass },
+    { method: 'post', path: 'atomClass/checkRightCreate', controller: atomClass },
     // auth
     { method: 'post', path: 'auth/echo', controller: auth, meta: { auth: { enable: false } } },
     { method: 'get', path: 'auth/echo', controller: auth, middlewares: 'jsonp', meta: { auth: { enable: false } } },

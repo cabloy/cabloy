@@ -6,7 +6,7 @@ module.exports = app => {
     //   where, orders, page, star,language
     async list() {
       const options = this.ctx.request.body.options || {};
-      options.page = this.ctx.meta.util.page(options.page);
+      options.page = this.ctx.meta.util.page(options.page, false); // false
       // locale maybe '' for selectAllFunctions
       if (options.locale === undefined) options.locale = this.ctx.locale;
       const items = await this.ctx.service.function.list({

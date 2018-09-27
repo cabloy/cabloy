@@ -7,7 +7,11 @@ export default {
       if (action.menu === 1 && action.action === 'create') {
         // create
         return ctx.$api.post('/a/base/atom/create', {
-          atomClass: { id: item.atomClassId },
+          atomClass: {
+            id: item.atomClassId,
+            module: item.module,
+            atomClassName: item.atomClassName,
+          },
         }).then(key => {
           ctx.$utils.extend(item, key);
           ctx.$meta.eventHub.$emit('atom:action', { key, action });

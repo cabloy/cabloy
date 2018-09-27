@@ -19,6 +19,14 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async checkRightCreate() {
+      const res = await this.ctx.service.atomClass.checkRightCreate({
+        atomClass: this.ctx.request.body.atomClass,
+        user: this.ctx.user.op,
+      });
+      this.ctx.success(res);
+    }
+
   }
 
   return AtomClassController;
