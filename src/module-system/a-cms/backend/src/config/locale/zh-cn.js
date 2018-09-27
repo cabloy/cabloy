@@ -18,6 +18,7 @@ module.exports = {
   'Language must not be empty': '语言不允许为空',
   'Load More': '加载更多',
   'Post Comment': '发表评论',
+  'Recent Comments': '最近评论',
   'Theme not set': '没有设置主题',
   'Theme not found': '没有找到主题',
   'en-us': '英语',

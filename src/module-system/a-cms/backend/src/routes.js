@@ -3,6 +3,7 @@ const article = require('./controller/article.js');
 const category = require('./controller/category.js');
 const render = require('./controller/render.js');
 const site = require('./controller/site.js');
+const comment = require('./controller/comment.js');
 
 module.exports = app => {
   const routes = [
@@ -20,7 +21,8 @@ module.exports = app => {
     { method: 'post', path: 'article/enable', controller: article, middlewares: 'inner' },
     { method: 'get', path: 'article/list', controller: article, middlewares: 'jsonp' },
     { method: 'get', path: 'article/attachments', controller: article, middlewares: 'jsonp' },
-
+    // comment
+    { method: 'get', path: 'comment/all', controller: comment, action: 'allP', middlewares: 'jsonp' },
     // render
     { method: 'post', path: 'render/renderArticle', controller: render, middlewares: 'inner,file' },
     { method: 'post', path: 'render/deleteArticle', controller: render, middlewares: 'inner,file' },

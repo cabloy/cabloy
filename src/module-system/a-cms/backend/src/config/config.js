@@ -39,8 +39,9 @@ module.exports = appInfo => {
         date: 'YYYY-MM-DD',
         time: 'HH:mm:ss',
       },
-      comments: {
+      comment: {
         order: 'asc',
+        recentNum: 5,
       },
     },
     profile: {
