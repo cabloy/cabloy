@@ -92,10 +92,10 @@ module.exports =
 const routes = __webpack_require__(1);
 const services = __webpack_require__(3);
 const models = __webpack_require__(5);
-const config = __webpack_require__(7);
-const locales = __webpack_require__(8);
-const errors = __webpack_require__(10);
-const metaFn = __webpack_require__(11);
+const config = __webpack_require__(6);
+const locales = __webpack_require__(7);
+const errors = __webpack_require__(9);
+const metaFn = __webpack_require__(10);
 
 module.exports = app => {
   return {
@@ -167,19 +167,7 @@ module.exports = app => {
     }
 
     async init(options) {
-      if (options.version === 1) {
-        // provider
-        const info = this.ctx.module.info;
-        await this.ctx.model.authProvider.insert({
-          module: info.relativeName,
-          providerName: info.name,
-          config: JSON.stringify({
-            addUser: true, addRole: true,
-            clientID: options['github.clientID'] || 'required',
-            clientSecret: options['github.clientSecret'] || 'required',
-          }),
-        });
-      }
+      if (options.version === 1) {}
     }
 
   }
@@ -190,35 +178,14 @@ module.exports = app => {
 
 /***/ }),
 /* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const authProvider = __webpack_require__(6);
+/***/ (function(module, exports) {
 
 module.exports = {
-  authProvider,
 };
 
 
 /***/ }),
 /* 6 */
-/***/ (function(module, exports) {
-
-module.exports = app => {
-
-  class AuthProvider extends app.meta.Model {
-
-    constructor(ctx) {
-      super(ctx, { table: 'aAuthProvider', options: { disableDeleted: true } });
-    }
-
-  }
-
-  return AuthProvider;
-};
-
-
-/***/ }),
-/* 7 */
 /***/ (function(module, exports) {
 
 // eslint-disable-next-line
@@ -230,16 +197,16 @@ module.exports = appInfo => {
 
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
-  'zh-cn': __webpack_require__(9),
+  'zh-cn': __webpack_require__(8),
 };
 
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -248,7 +215,7 @@ module.exports = {
 
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports) {
 
 // error code should start from 1001
@@ -257,10 +224,10 @@ module.exports = {
 
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const authFn = __webpack_require__(12);
+const authFn = __webpack_require__(11);
 module.exports = app => {
   return {
     auth: authFn(app),
@@ -269,38 +236,45 @@ module.exports = app => {
 
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(13);
+const require3 = __webpack_require__(12);
 const strategy = require3('passport-github').Strategy;
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const provider = moduleInfo.name;
   return {
     providers: {
-      [provider]: app => {
-        return {
-          strategy,
-          callback: (req, accessToken, refreshToken, params, profile, done) => {
-            const user = {
-              module: moduleInfo.relativeName,
-              provider,
-              profileId: profile.id,
-              profile: {
-                id: profile.id,
-                userName: profile.username,
-                realName: profile.displayName,
-                avatar: profile.photos && profile.photos[0] && profile.photos[0].value,
-                accessToken,
-                refreshToken,
-                params,
-                profile,
-              },
-            };
-            app.passport.doVerify(req, user, done);
-          },
-        };
+      [provider]: {
+        config: {
+          addUser: true, addRole: true,
+          clientID: '[required]',
+          clientSecret: '[required]',
+        },
+        handler: app => {
+          return {
+            strategy,
+            callback: (req, accessToken, refreshToken, params, profile, done) => {
+              const user = {
+                module: moduleInfo.relativeName,
+                provider,
+                profileId: profile.id,
+                profile: {
+                  id: profile.id,
+                  userName: profile.username,
+                  realName: profile.displayName,
+                  avatar: profile.photos && profile.photos[0] && profile.photos[0].value,
+                  accessToken,
+                  refreshToken,
+                  params,
+                  profile,
+                },
+              };
+              app.passport.doVerify(req, user, done);
+            },
+          };
+        },
       },
     },
   };
@@ -308,7 +282,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, exports) {
 
 module.exports = require("require3");
