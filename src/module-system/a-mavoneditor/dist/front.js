@@ -3496,6 +3496,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony default export */ __webpack_exports__["default"] = ({
     mixins: [__WEBPACK_IMPORTED_MODULE_11__lib_mixins_markdown_js__["a" /* default */]],
     props: {
+        onPreRender: {
+            type: Function
+        },
         scrollStyle: {
             type: Boolean,
             default: true
@@ -3694,6 +3697,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
 
     methods: {
+        preRender: function preRender(value) {
+            return !this.onPreRender ? value : this.onPreRender(value);
+        },
         onClickContainer: function onClickContainer() {
             if (this.$refs.toolbar_left) {
                 this.$refs.toolbar_left.$mouseleave_header_dropdown();
@@ -3808,9 +3814,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         $imgUpdateByUrl: function $imgUpdateByUrl(pos, url) {
             var $vm = this;
-            this.markdownIt.image_add(pos, url);
-            this.$nextTick(function () {
-                $vm.d_render = this.markdownIt.render(this.d_value);
+            $vm.markdownIt.image_add(pos, url);
+            $vm.$nextTick(function () {
+                $vm.d_render = $vm.markdownIt.render($vm.preRender($vm.d_value));
             });
         },
         $imgAddByUrl: function $imgAddByUrl(pos, url) {
@@ -3956,7 +3962,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         iRender: function iRender() {
             var $vm = this;
-            $vm.$render($vm.d_value, function (res) {
+            $vm.$render($vm.preRender($vm.d_value), function (res) {
                 $vm.d_render = res;
 
                 if ($vm.change) $vm.change($vm.d_value, $vm.d_render);
