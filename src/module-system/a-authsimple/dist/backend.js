@@ -98,10 +98,10 @@ module.exports = require("util");
 const routes = __webpack_require__(2);
 const services = __webpack_require__(5);
 const models = __webpack_require__(11);
-const config = __webpack_require__(15);
-const locales = __webpack_require__(16);
-const errors = __webpack_require__(18);
-const metaFn = __webpack_require__(19);
+const config = __webpack_require__(14);
+const locales = __webpack_require__(15);
+const errors = __webpack_require__(17);
+const metaFn = __webpack_require__(18);
 
 module.exports = app => {
   return {
@@ -234,13 +234,6 @@ module.exports = app => {
 
     async init(options) {
       if (options.version === 1) {
-        // provider
-        const info = this.ctx.module.info;
-        await this.ctx.model.authProvider.insert({
-          module: info.relativeName,
-          providerName: info.name,
-          config: JSON.stringify({ successReturnToOrRedirect: false, successRedirect: false, addUser: false, addRole: false }),
-        });
         // root
         const user = await this.ctx.meta.user.get({ userName: 'root' });
         await this.ctx.service.auth.add({
@@ -285,7 +278,7 @@ module.exports = app => {
       });
       // auth
       const info = this.ctx.module.info;
-      const providerItem = await this.ctx.model.authProvider.get({
+      const providerItem = await this.ctx.meta.user.getAuthProvider({
         module: info.relativeName,
         providerName: info.name,
       });
@@ -436,12 +429,10 @@ module.exports = require("crypto");
 /***/ (function(module, exports, __webpack_require__) {
 
 const auth = __webpack_require__(12);
-const authProvider = __webpack_require__(13);
-const authSimple = __webpack_require__(14);
+const authSimple = __webpack_require__(13);
 
 module.exports = {
   auth,
-  authProvider,
   authSimple,
 };
 
@@ -470,24 +461,6 @@ module.exports = app => {
 
 module.exports = app => {
 
-  class AuthProvider extends app.meta.Model {
-
-    constructor(ctx) {
-      super(ctx, { table: 'aAuthProvider', options: { disableDeleted: true } });
-    }
-
-  }
-
-  return AuthProvider;
-};
-
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports) {
-
-module.exports = app => {
-
   class AuthSimple extends app.meta.Model {
 
     constructor(ctx) {
@@ -501,7 +474,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports) {
 
 // eslint-disable-next-line
@@ -514,16 +487,16 @@ module.exports = appInfo => {
 
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
-  'zh-cn': __webpack_require__(17),
+  'zh-cn': __webpack_require__(16),
 };
 
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -531,11 +504,13 @@ module.exports = {
   'User is disabled': '用户被禁用',
   'Auth-Simple': '认证-简单',
   'Reset password': '重置密码',
+  'Element exists': '元素已存在',
+  'Cannot contain __': '不能包含__',
 };
 
 
 /***/ }),
-/* 18 */
+/* 17 */
 /***/ (function(module, exports) {
 
 // error code should start from 1001
@@ -546,12 +521,16 @@ module.exports = {
 
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
-  const auth = __webpack_require__(20)(app);
-  const schemas = __webpack_require__(24)(app);
+  // auth
+  const auth = __webpack_require__(19)(app);
+  // keywords
+  const keywords = __webpack_require__(23)(app);
+  // schemas
+  const schemas = __webpack_require__(25)(app);
   return {
     auth,
     validation: {
@@ -565,6 +544,9 @@ module.exports = app => {
         reset: {
           schemas: 'reset',
         },
+      },
+      keywords: {
+        'x-exists': keywords.exists,
       },
       schemas: {
         signup: schemas.signup,
@@ -585,10 +567,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 20 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const strategy = __webpack_require__(21);
+const strategy = __webpack_require__(20);
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const provider = moduleInfo.name;
@@ -617,15 +599,21 @@ module.exports = app => {
   }
   return {
     providers: {
-      [provider]: app => {
-        return {
-          strategy,
-          callback: (req, body, done) => {
-            verify(req.ctx, body).then(user => {
-              app.passport.doVerify(req, user, done);
-            }).catch(err => { done(err); });
-          },
-        };
+      [provider]: {
+        config: {
+          successReturnToOrRedirect: false, successRedirect: false,
+          addUser: false, addRole: false,
+        },
+        handler: app => {
+          return {
+            strategy,
+            callback: (req, body, done) => {
+              verify(req.ctx, body).then(user => {
+                app.passport.doVerify(req, user, done);
+              }).catch(err => { done(err); });
+            },
+          };
+        },
       },
     },
   };
@@ -633,10 +621,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 21 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const passport = __webpack_require__(22);
+const passport = __webpack_require__(21);
 const util = __webpack_require__(0);
 
 function Strategy(options, verify) {
@@ -681,13 +669,13 @@ module.exports = Strategy;
 
 
 /***/ }),
-/* 22 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
  * Module dependencies.
  */
-var Strategy = __webpack_require__(23);
+var Strategy = __webpack_require__(22);
 
 
 /**
@@ -702,7 +690,7 @@ exports.Strategy = Strategy;
 
 
 /***/ }),
-/* 23 */
+/* 22 */
 /***/ (function(module, exports) {
 
 /**
@@ -736,7 +724,46 @@ module.exports = Strategy;
 
 
 /***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(24);
+const Ajv = require3('ajv');
+
+module.exports = app => {
+  const keywords = {};
+  keywords.exists = {
+    async: true,
+    type: 'string',
+    errors: true,
+    compile() {
+      return async function(data, path, rootData, name) {
+        const ctx = this;
+        const res = await ctx.meta.user.exists({ [name]: data });
+        if (res) {
+          const errors = [{ keyword: 'x-exists', params: [], message: ctx.text('Element exists') }];
+          throw new Ajv.ValidationError(errors);
+        }
+        if (data.indexOf('__') > -1) {
+          const errors = [{ keyword: 'x-exists', params: [], message: ctx.text('Cannot contain __') }];
+          throw new Ajv.ValidationError(errors);
+        }
+        return true;
+      };
+    },
+  };
+  return keywords;
+};
+
+
+/***/ }),
 /* 24 */
+/***/ (function(module, exports) {
+
+module.exports = require("require3");
+
+/***/ }),
+/* 25 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -749,6 +776,7 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Username',
         notEmpty: true,
+        'x-exists': true,
       },
       realName: {
         type: 'string',
@@ -762,12 +790,14 @@ module.exports = app => {
         ebTitle: 'Email',
         notEmpty: true,
         format: 'email',
+        'x-exists': true,
       },
       mobile: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Mobile',
         notEmpty: true,
+        'x-exists': true,
       },
       password: {
         type: 'string',

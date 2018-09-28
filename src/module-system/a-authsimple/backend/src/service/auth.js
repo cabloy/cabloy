@@ -19,7 +19,7 @@ module.exports = app => {
       });
       // auth
       const info = this.ctx.module.info;
-      const providerItem = await this.ctx.model.authProvider.get({
+      const providerItem = await this.ctx.meta.user.getAuthProvider({
         module: info.relativeName,
         providerName: info.name,
       });

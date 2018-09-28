@@ -27,15 +27,21 @@ module.exports = app => {
   }
   return {
     providers: {
-      [provider]: app => {
-        return {
-          strategy,
-          callback: (req, body, done) => {
-            verify(req.ctx, body).then(user => {
-              app.passport.doVerify(req, user, done);
-            }).catch(err => { done(err); });
-          },
-        };
+      [provider]: {
+        config: {
+          successReturnToOrRedirect: false, successRedirect: false,
+          addUser: false, addRole: false,
+        },
+        handler: app => {
+          return {
+            strategy,
+            callback: (req, body, done) => {
+              verify(req.ctx, body).then(user => {
+                app.passport.doVerify(req, user, done);
+              }).catch(err => { done(err); });
+            },
+          };
+        },
       },
     },
   };

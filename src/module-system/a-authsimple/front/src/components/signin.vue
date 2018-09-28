@@ -6,8 +6,8 @@
           <f7-list form no-hairlines-md>
             <f7-list-item>
               <f7-icon material="person_outline" slot="media"></f7-icon>
-              <f7-label floating>{{$text('Your mobile/email')}}</f7-label>
-              <eb-input type="text" :placeholder="$text('Your mobile/email')" clear-button v-model="auth" dataPath="auth"></eb-input>
+              <f7-label floating>{{$text('Your username/mobile/email')}}</f7-label>
+              <eb-input type="text" :placeholder="$text('Your username/mobile/email')" clear-button v-model="auth" dataPath="auth"></eb-input>
             </f7-list-item>
             <f7-list-item>
               <f7-icon material="lock_outline" slot="media"></f7-icon>
@@ -26,7 +26,8 @@
         </f7-list>
       </f7-card-content>
       <f7-card-footer>
-        <eb-link class="text-smaller">{{$text('Find password')}}</eb-link>
+        <div></div>
+        <!-- <eb-link class="text-smaller">{{$text('Find password')}}</eb-link> -->
         <eb-link eb-href="/a/authsimple/signup" eb-target="_self" class="text-smaller">{{$text('Sign up')}}</eb-link>
       </f7-card-footer>
     </f7-card>

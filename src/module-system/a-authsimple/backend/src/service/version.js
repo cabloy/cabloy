@@ -22,13 +22,6 @@ module.exports = app => {
 
     async init(options) {
       if (options.version === 1) {
-        // provider
-        const info = this.ctx.module.info;
-        await this.ctx.model.authProvider.insert({
-          module: info.relativeName,
-          providerName: info.name,
-          config: JSON.stringify({ successReturnToOrRedirect: false, successRedirect: false, addUser: false, addRole: false }),
-        });
         // root
         const user = await this.ctx.meta.user.get({ userName: 'root' });
         await this.ctx.service.auth.add({

@@ -2,7 +2,7 @@ export default {
   'Find password': '找回密码',
   'Sign up': '注册',
   'Sign in': '登录',
-  'Your mobile/email': '您的手机号/邮箱',
+  'Your username/mobile/email': '您的用户名/手机号/邮箱',
   'Your password': '您的密码',
   'Remember me': '记住我',
   Username: '用户名',

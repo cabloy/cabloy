@@ -8,6 +8,7 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Username',
         notEmpty: true,
+        'x-exists': true,
       },
       realName: {
         type: 'string',
@@ -21,12 +22,14 @@ module.exports = app => {
         ebTitle: 'Email',
         notEmpty: true,
         format: 'email',
+        'x-exists': true,
       },
       mobile: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Mobile',
         notEmpty: true,
+        'x-exists': true,
       },
       password: {
         type: 'string',
