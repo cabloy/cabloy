@@ -1,12 +1,1 @@
-<hr>
-<div class="stat" data-article-id="<%=article.atomId%>">
-<button class="btn btn-default btn-lg">
-  <span class="glyphicon glyphicon-eye-open"></span>
-  <span class="num readCount"></span>
-</button>
-<button class="btn btn-warning btn-lg button-starCount" type="button">
-  <span class="glyphicon glyphicon-heart hidden star-on"></span>
-  <span class="glyphicon glyphicon-heart-empty star-off"></span>
-  <span class="num starCount"></span>
-</button>
-</div>
+<%- await include('../../plugins/cms-pluginbase/article/stat.ejs') %>
