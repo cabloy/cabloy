@@ -14,6 +14,7 @@ module.exports = ctx => {
       this._modelAgent = null;
       this._modelAuth = null;
       this._modelAuthProvider = null;
+      this._sequence = null;
     }
 
     get model() {
@@ -34,6 +35,11 @@ module.exports = ctx => {
     get modelAuthProvider() {
       if (!this._modelAuthProvider) this._modelAuthProvider = new (modelAuthProviderFn(ctx.app))(ctx);
       return this._modelAuthProvider;
+    }
+
+    get sequence() {
+      if (!this._sequence) this._sequence = ctx.meta.sequence.module(moduleInfo.relativeName);
+      return this._sequence;
     }
 
     async anonymous() {
@@ -106,12 +112,12 @@ module.exports = ctx => {
       mobile = mobile || '';
       if (ctx.config.module(moduleInfo.relativeName).checkUserName === true) {
         return await this.model.queryOne(
-          `select * from aUser 
+          `select * from aUser
              where iid=? and deleted=0 and ((?<>'' and userName=?) or (?<>'' and email=?) or (?<>'' and mobile=?))`,
           [ ctx.instance.id, userName, userName, email, email, mobile, mobile ]);
       }
       return await this.model.queryOne(
-        `select * from aUser 
+        `select * from aUser
              where iid=? and deleted=0 and ((?<>'' and email=?) or (?<>'' and mobile=?))`,
         [ ctx.instance.id, email, email, mobile, mobile ]);
     }
@@ -156,8 +162,8 @@ module.exports = ctx => {
 
     async agent({ userId }) {
       const sql = `
-        select a.* from aUser a 
-          left join aUserAgent b on a.id=b.userIdAgent 
+        select a.* from aUser a
+          left join aUserAgent b on a.id=b.userIdAgent
             where a.iid=? and a.deleted=0 and b.userId=?
       `;
       return await ctx.model.queryOne(sql, [ ctx.instance.id, userId ]);
@@ -165,7 +171,7 @@ module.exports = ctx => {
 
     async agentsBy({ userId }) {
       const sql = `
-        select a.* from aUser a 
+        select a.* from aUser a
           left join aUserAgent b on a.id=b.userId
             where a.iid=? and a.deleted=0 and b.userIdAgent=?
       `;
@@ -212,10 +218,10 @@ module.exports = ctx => {
       const _limit = ctx.model._limit(page.size, page.index);
       const sql = `
         select a.* from aUser a
-          ${roleJoin}   
+          ${roleJoin}
             where a.iid=? and a.deleted=0
                   ${anonymousWhere}
-                  ${roleWhere} 
+                  ${roleWhere}
                   ${queryWhere}
             ${_limit}
       `;
@@ -252,7 +258,7 @@ module.exports = ctx => {
       const verifyUser = {};
 
       // provider
-      const providerItem = await this.modelAuthProvider.get({
+      const providerItem = await this.getAuthProvider({
         module: profileUser.module,
         providerName: profileUser.provider,
       });
@@ -350,7 +356,7 @@ module.exports = ctx => {
     async _addUserInfo(profile, columns, addRole) {
       const user = {};
       for (const column of columns) {
-        user[column] = profile[column];
+        await this._setUserInfoColumn(user, column, profile[column]);
       }
       return await this.signup(user, { addRole });
     }
@@ -361,10 +367,72 @@ module.exports = ctx => {
       });
       const user = users[0];
       for (const column of columns) {
-        if (!user[column] && profile[column]) user[column] = profile[column];
+        await this._setUserInfoColumn(user, column, profile[column]);
       }
       user.id = userId;
       await this.model.update(user);
+    }
+
+    async _setUserInfoColumn(user, column, value) {
+      if (user[column] || !value) return;
+      // userName
+      if (column === 'userName') {
+        const res = await this.exists({ [column]: value });
+        if (res) {
+          // sequence
+          const sequence = await this.sequence.next('userName');
+          value = `${value}__${sequence}`;
+        }
+      } else if (column === 'email' || column === 'mobile') {
+        const res = await this.exists({ [column]: value });
+        if (res) {
+          value = '';
+        }
+      }
+      if (value) {
+        user[column] = value;
+      }
+    }
+
+    async getAuthProvider({ subdomain, iid, id, module, providerName }) {
+      // ctx.instance maybe not exists
+      const data = id ? {
+        iid: iid || ctx.instance.id,
+        id,
+      } : {
+        iid: iid || ctx.instance.id,
+        module,
+        providerName,
+      };
+      const res = await ctx.db.get('aAuthProvider', data);
+      if (res) return res;
+      if (!module || !providerName) throw new Error('Invalid arguments');
+      // queue
+      return await ctx.app.meta.queue.pushAsync({
+        subdomain: subdomain || ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'registerAuthProvider',
+        data: { module, providerName },
+      });
+    }
+
+    async registerAuthProvider({ module, providerName }) {
+      // get
+      const res = await this.modelAuthProvider.get({ module, providerName });
+      if (res) return res;
+      // data
+      const _module = ctx.app.meta.modules[module];
+      const _provider = _module.main.meta.auth.providers[providerName];
+      if (!_provider) throw new Error(`authProvider ${module}:${providerName} not found!`);
+      const data = {
+        module,
+        providerName,
+        config: JSON.stringify(_provider.config),
+      };
+      // insert
+      const res2 = await this.modelAuthProvider.insert(data);
+      data.id = res2.insertId;
+      return data;
     }
 
   }

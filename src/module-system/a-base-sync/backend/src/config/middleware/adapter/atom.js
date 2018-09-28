@@ -94,7 +94,7 @@ const Fn = module.exports = ctx => {
       // save itemId
       let atomName = atom.atomName;
       if (!atomName) {
-      // sequence
+        // sequence
         const sequence = await this.sequence.next('draft');
         atomName = `${ctx.text('Draft')}-${sequence}`;
       }

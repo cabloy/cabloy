@@ -125,6 +125,9 @@ module.exports = app => {
     { method: 'post', path: 'auth/installAuthProviders', controller: auth, middlewares: 'inner',
       meta: { instance: { enable: false } },
     },
+    { method: 'post', path: 'auth/register', controller: auth, middlewares: 'inner',
+      meta: { auth: { enable: false } },
+    },
   ];
   return routes;
 };

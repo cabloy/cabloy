@@ -1,5 +1,6 @@
 const require3 = require('require3');
 const mparse = require3('egg-born-mparse').default;
+const UserFn = require('../config/middleware/adapter/user.js');
 
 module.exports = app => {
 
@@ -21,7 +22,7 @@ module.exports = app => {
       // all instances
       const instances = await this.ctx.model.query('select * from aInstance a where a.disabled=0');
       for (const instance of instances) {
-        await this.registerProviderInstance(instance.id, moduleRelativeName, providerName);
+        await this.registerProviderInstance(instance.name, instance.id, moduleRelativeName, providerName);
       }
       // config
       const moduleInfo = mparse.parseInfo(moduleRelativeName);
@@ -44,9 +45,11 @@ module.exports = app => {
       }
     }
 
-    async registerProviderInstance(iid, moduleRelativeName, providerName) {
+    async registerProviderInstance(subdomain, iid, moduleRelativeName, providerName) {
       // provider of db
-      const providerItem = await this.ctx.db.get('aAuthProvider', {
+      const user = new (UserFn(this.ctx))();
+      const providerItem = await user.getAuthProvider({
+        subdomain,
         iid,
         module: moduleRelativeName,
         providerName,
@@ -59,12 +62,16 @@ module.exports = app => {
         // module
         const module = this.app.meta.modules[moduleRelativeName];
         // provider
-        const provider = module.main.meta.auth.providers[providerName](this.app);
+        const provider = module.main.meta.auth.providers[providerName].handler(this.app);
         // install strategy
         const strategyName = `${iid}:${moduleRelativeName}:${providerName}`;
         this.app.passport.unuse(strategyName);
         this.app.passport.use(strategyName, new provider.strategy(config, provider.callback));
       }
+    }
+
+    async register({ module, providerName }) {
+      return await this.ctx.meta.user.registerAuthProvider({ module, providerName });
     }
 
   }
@@ -75,7 +82,7 @@ module.exports = app => {
 function createAuthenticate(moduleRelativeName, providerName, _config) {
   return async function(ctx, next) {
     // provider of db
-    const providerItem = await ctx.model.authProvider.get({
+    const providerItem = await ctx.meta.user.getAuthProvider({
       module: moduleRelativeName,
       providerName,
     });

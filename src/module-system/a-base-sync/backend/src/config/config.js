@@ -45,6 +45,9 @@ module.exports = appInfo => {
     registerAtomClass: {
       path: 'atomClass/register',
     },
+    registerAuthProvider: {
+      path: 'auth/register',
+    },
   };
 
   // locales
@@ -61,7 +64,7 @@ module.exports = appInfo => {
     maxAge: 30 * 24 * 3600 * 1000, // 30 天
   };
   // checkUserName
-  config.checkUserName = false;
+  config.checkUserName = true;
   // signupRoleName
   config.signupRoleName = 'registered';
 

@@ -29,8 +29,8 @@ module.exports = function(ctx) {
     async _initUsers(roleIds, options) {
       // root user
       const userRoot = initData.users.root;
-      userRoot.email = options.email;
-      userRoot.mobile = options.mobile;
+      userRoot.item.email = options.email;
+      userRoot.item.mobile = options.mobile;
       const userId = await ctx.meta.user.add(userRoot.item);
       // user->role
       await ctx.meta.role.addUserRole({

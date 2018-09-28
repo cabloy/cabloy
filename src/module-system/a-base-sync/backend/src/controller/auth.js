@@ -41,6 +41,14 @@ module.exports = app => {
       this.ctx.success();
     }
 
+    async register() {
+      const res = await this.ctx.service.auth.register({
+        module: this.ctx.request.body.module,
+        providerName: this.ctx.request.body.providerName,
+      });
+      this.ctx.success(res);
+    }
+
   }
 
   return AuthController;

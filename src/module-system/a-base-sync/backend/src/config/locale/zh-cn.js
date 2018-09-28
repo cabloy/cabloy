@@ -8,6 +8,7 @@ module.exports = {
   'Agent user does not exist': '代理用户不存在',
   'Incomplete information': '信息不完整',
   'Should delete children first': '应该先删除子角色',
+  'Cannot contain __': '不能包含__',
   Draft: '草稿',
   Base: '基本',
   English: '英文',

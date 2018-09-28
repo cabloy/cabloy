@@ -82,7 +82,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 20);
+/******/ 	return __webpack_require__(__webpack_require__.s = 21);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -363,6 +363,453 @@ module.exports = app => {
 
 /***/ }),
 /* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const modelFn = __webpack_require__(17);
+const modelAgentFn = __webpack_require__(18);
+const modelAuthFn = __webpack_require__(19);
+const modelAuthProviderFn = __webpack_require__(20);
+
+module.exports = ctx => {
+
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+
+  class User {
+
+    constructor() {
+      this._model = null;
+      this._modelAgent = null;
+      this._modelAuth = null;
+      this._modelAuthProvider = null;
+      this._sequence = null;
+    }
+
+    get model() {
+      if (!this._model) this._model = new (modelFn(ctx.app))(ctx);
+      return this._model;
+    }
+
+    get modelAgent() {
+      if (!this._modelAgent) this._modelAgent = new (modelAgentFn(ctx.app))(ctx);
+      return this._modelAgent;
+    }
+
+    get modelAuth() {
+      if (!this._modelAuth) this._modelAuth = new (modelAuthFn(ctx.app))(ctx);
+      return this._modelAuth;
+    }
+
+    get modelAuthProvider() {
+      if (!this._modelAuthProvider) this._modelAuthProvider = new (modelAuthProviderFn(ctx.app))(ctx);
+      return this._modelAuthProvider;
+    }
+
+    get sequence() {
+      if (!this._sequence) this._sequence = ctx.meta.sequence.module(moduleInfo.relativeName);
+      return this._sequence;
+    }
+
+    async anonymous() {
+      // new
+      const userId = await this.add({ disabled: 0, anonymous: 1 });
+      // addRole
+      const role = await ctx.meta.role.getSystemRole({ roleName: 'anonymous' });
+      await ctx.meta.role.addUserRole({ userId, roleId: role.id });
+      return userId;
+    }
+
+    async loginAsAnonymous() {
+      const maxAge = ctx.config.module(moduleInfo.relativeName).anonymous.maxAge;
+      let userId = ctx.cookies.get('anonymous', { encrypt: true });
+      let userOp;
+      if (userId) {
+        userOp = await this.get({ id: userId });
+      }
+      if (!userOp) {
+        userId = await this.anonymous();
+        ctx.cookies.set('anonymous', userId.toString(), { encrypt: true, maxAge });
+        userOp = await this.get({ id: userId });
+      }
+      const user = {
+        op: userOp,
+        agent: userOp,
+      };
+      await ctx.login(user);
+      // maxAge
+      ctx.session.maxAge = maxAge;
+      return user;
+    }
+
+    async check() {
+      // check if deleted,disabled,agent
+      const userOp = await this.get({ id: ctx.user.op.id });
+      // deleted
+      if (!userOp) ctx.throw.module(moduleInfo.relativeName, 1004);
+      // disabled
+      if (userOp.disabled) ctx.throw.module(moduleInfo.relativeName, 1005);
+      // hold user
+      ctx.user.op = userOp;
+      // agent
+      if (ctx.user.agent.id !== ctx.user.op.id) {
+        const agent = await this.agent({ userId: ctx.user.op.id });
+        if (!agent) ctx.throw.module(moduleInfo.relativeName, 1006);
+        if (agent.id !== ctx.user.agent.id) ctx.throw.module(moduleInfo.relativeName, 1006);
+        if (agent.disabled) ctx.throw.module(moduleInfo.relativeName, 1005);
+        // hold agent
+        ctx.user.agent = agent;
+      } else {
+        // hold agent
+        ctx.user.agent = userOp;
+      }
+    }
+
+    async signup(user, ops) {
+      ops = ops || {};
+      const userId = await this.add(user);
+      if (ops.addRole !== false) {
+        const role = await ctx.meta.role.getSystemRole({ roleName: ctx.config.module(moduleInfo.relativeName).signupRoleName });
+        await ctx.meta.role.addUserRole({ userId, roleId: role.id });
+      }
+      return userId;
+    }
+
+    async exists({ userName, email, mobile }) {
+      userName = userName || '';
+      email = email || '';
+      mobile = mobile || '';
+      if (ctx.config.module(moduleInfo.relativeName).checkUserName === true) {
+        return await this.model.queryOne(
+          `select * from aUser
+             where iid=? and deleted=0 and ((?<>'' and userName=?) or (?<>'' and email=?) or (?<>'' and mobile=?))`,
+          [ ctx.instance.id, userName, userName, email, email, mobile, mobile ]);
+      }
+      return await this.model.queryOne(
+        `select * from aUser
+             where iid=? and deleted=0 and ((?<>'' and email=?) or (?<>'' and mobile=?))`,
+        [ ctx.instance.id, email, email, mobile, mobile ]);
+    }
+
+    async add({ disabled = 0, userName, realName, email, mobile, avatar, motto, locale, anonymous = 0 }) {
+      // check if incomplete information
+      let needCheck;
+      if (anonymous) {
+        needCheck = false;
+      } else if (ctx.config.module(moduleInfo.relativeName).checkUserName === true) {
+        needCheck = userName || email || mobile;
+      } else {
+        needCheck = email || mobile;
+      }
+      // if exists
+      if (needCheck) {
+        const res = await this.exists({ userName, email, mobile });
+        if (res) ctx.throw.module(moduleInfo.relativeName, 1001);
+      }
+      // insert
+      const res = await this.model.insert({
+        disabled,
+        userName,
+        realName,
+        email,
+        mobile,
+        avatar,
+        motto,
+        locale,
+        anonymous,
+      });
+      return res.insertId;
+    }
+
+    async get(where) {
+      return await this.model.get(where);
+    }
+
+    async save({ user }) {
+      await this.model.update(user);
+    }
+
+    async agent({ userId }) {
+      const sql = `
+        select a.* from aUser a
+          left join aUserAgent b on a.id=b.userIdAgent
+            where a.iid=? and a.deleted=0 and b.userId=?
+      `;
+      return await ctx.model.queryOne(sql, [ ctx.instance.id, userId ]);
+    }
+
+    async agentsBy({ userId }) {
+      const sql = `
+        select a.* from aUser a
+          left join aUserAgent b on a.id=b.userId
+            where a.iid=? and a.deleted=0 and b.userIdAgent=?
+      `;
+      return await ctx.model.query(sql, [ ctx.instance.id, userId ]);
+    }
+
+    async addAgent({ userIdAgent, userId }) {
+      await this.modelAgent.insert({
+        userIdAgent,
+        userId,
+      });
+    }
+
+    async removeAgent({ userIdAgent, userId }) {
+      await this.modelAgent.delete({
+        userIdAgent,
+        userId,
+      });
+    }
+
+    async switchAgent({ userIdAgent }) {
+      const op = ctx.user.op;
+      ctx.user.op = { id: userIdAgent };
+      try {
+        await this.check();
+        await ctx.login(ctx.user);
+        return ctx.user;
+      } catch (err) {
+        ctx.user.op = op;
+        throw err;
+      }
+    }
+
+    async switchOffAgent() {
+      return await this.switchAgent({ userIdAgent: ctx.user.agent.id });
+    }
+
+    async list({ roleId, query, anonymous, page }) {
+      const roleJoin = roleId ? 'left join aUserRole b on a.id=b.userId' : '';
+      const roleWhere = roleId ? `and b.roleId=${ctx.model._format2(roleId)}` : '';
+      const queryLike = query ? ctx.model._format2({ op: 'like', val: query }) : '';
+      const queryWhere = query ? `and ( a.userName like ${queryLike} or a.realName like ${queryLike} or a.mobile like ${queryLike} )` : '';
+      const anonymousWhere = anonymous !== undefined ? `and a.anonymous=${ctx.model._format2(anonymous)}` : '';
+      const _limit = ctx.model._limit(page.size, page.index);
+      const sql = `
+        select a.* from aUser a
+          ${roleJoin}
+            where a.iid=? and a.deleted=0
+                  ${anonymousWhere}
+                  ${roleWhere}
+                  ${queryWhere}
+            ${_limit}
+      `;
+      return await ctx.model.query(sql, [ ctx.instance.id ]);
+    }
+
+    async disable({ userId, disabled }) {
+      await this.model.update({ id: userId, disabled });
+    }
+
+    async delete({ userId }) {
+      await ctx.meta.role.deleteAllUserRoles({ userId });
+      await this.model.delete({ id: userId });
+    }
+
+    // roles
+    async roles({ userId, page }) {
+      page = ctx.meta.util.page(page, false);
+      const _limit = ctx.model._limit(page.size, page.index);
+      return await ctx.model.query(`
+        select a.*,b.roleName from aUserRole a
+          left join aRole b on a.roleId=b.id
+            where a.iid=? and a.userId=?
+            ${_limit}
+        `, [ ctx.instance.id, userId ]);
+    }
+
+    async verify(profileUser) {
+      // state
+      //   login/associate
+      const state = ctx.request.query.state || 'login';
+
+      // verifyUser
+      const verifyUser = {};
+
+      // provider
+      const providerItem = await this.getAuthProvider({
+        module: profileUser.module,
+        providerName: profileUser.provider,
+      });
+      const config = JSON.parse(providerItem.config);
+
+      // check if auth exists
+      const authItem = await this.modelAuth.get({
+        providerId: providerItem.id,
+        profileId: profileUser.profileId,
+      });
+      let authId;
+      let authUserId;
+      if (authItem) {
+        // update
+        authItem.profile = JSON.stringify(profileUser.profile);
+        await this.modelAuth.update(authItem);
+        authId = authItem.id;
+        authUserId = authItem.userId;
+      } else {
+        // add
+        const res = await this.modelAuth.insert({
+          providerId: providerItem.id,
+          profileId: profileUser.profileId,
+          profile: JSON.stringify(profileUser.profile),
+        });
+        authId = res.insertId;
+      }
+      verifyUser.provider = {
+        id: authId,
+        module: profileUser.module,
+        providerName: profileUser.provider,
+        // profile: profileUser.profile,  // maybe has private info
+      };
+
+      // columns
+      const columns = [ 'userName', 'realName', 'email', 'mobile', 'avatar', 'motto', 'locale' ];
+
+      //
+      let userId;
+      if (state === 'associate') {
+        // check if ctx.user exists
+        if (!ctx.user || ctx.user.agent.anonymous) return false;
+        userId = ctx.user.agent.id;
+        // associated
+        // update user
+        await this._updateUserInfo(userId, profileUser.profile, columns);
+        // force update auth's userId, maybe different
+        if (authUserId !== userId) {
+          await this.modelAuth.update({
+            id: authId,
+            userId,
+          });
+        }
+        // ready
+        verifyUser.op = ctx.user.op;
+        verifyUser.agent = ctx.user.agent;
+      } else if (state === 'login') {
+        // check if user exists
+        let user;
+        if (authUserId) {
+          user = await this.model.get({ id: authUserId });
+        }
+        if (user) {
+          // check if disabled
+          if (user.disabled) return false;
+          // update user
+          await this._updateUserInfo(user.id, profileUser.profile, columns);
+          userId = user.id;
+        } else {
+          // check if addUser
+          if (config.addUser === false) return false;
+          // add user
+          userId = await this._addUserInfo(profileUser.profile, columns, config.addRole !== false);
+          user = await this.model.get({ id: userId });
+          // update auth's userId
+          await this.modelAuth.update({
+            id: authId,
+            userId,
+          });
+        }
+        // ready
+        verifyUser.op = user;
+        verifyUser.agent = user;
+      }
+
+      // restore maxAge
+      if (profileUser.maxAge === 0) {
+        ctx.session.maxAge = 0;
+      } else {
+        ctx.session.maxAge = profileUser.maxAge || ctx.config.module(moduleInfo.relativeName).registered.maxAge;
+      }
+      return verifyUser;
+    }
+
+    async _addUserInfo(profile, columns, addRole) {
+      const user = {};
+      for (const column of columns) {
+        await this._setUserInfoColumn(user, column, profile[column]);
+      }
+      return await this.signup(user, { addRole });
+    }
+    async _updateUserInfo(userId, profile, columns) {
+      const users = await this.model.select({
+        where: { id: userId },
+        columns,
+      });
+      const user = users[0];
+      for (const column of columns) {
+        await this._setUserInfoColumn(user, column, profile[column]);
+      }
+      user.id = userId;
+      await this.model.update(user);
+    }
+
+    async _setUserInfoColumn(user, column, value) {
+      if (user[column] || !value) return;
+      // userName
+      if (column === 'userName') {
+        const res = await this.exists({ [column]: value });
+        if (res) {
+          // sequence
+          const sequence = await this.sequence.next('userName');
+          value = `${value}__${sequence}`;
+        }
+      } else if (column === 'email' || column === 'mobile') {
+        const res = await this.exists({ [column]: value });
+        if (res) {
+          value = '';
+        }
+      }
+      if (value) {
+        user[column] = value;
+      }
+    }
+
+    async getAuthProvider({ subdomain, iid, id, module, providerName }) {
+      // ctx.instance maybe not exists
+      const data = id ? {
+        iid: iid || ctx.instance.id,
+        id,
+      } : {
+        iid: iid || ctx.instance.id,
+        module,
+        providerName,
+      };
+      const res = await ctx.db.get('aAuthProvider', data);
+      if (res) return res;
+      if (!module || !providerName) throw new Error('Invalid arguments');
+      // queue
+      return await ctx.app.meta.queue.pushAsync({
+        subdomain: subdomain || ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'registerAuthProvider',
+        data: { module, providerName },
+      });
+    }
+
+    async registerAuthProvider({ module, providerName }) {
+      // get
+      const res = await this.modelAuthProvider.get({ module, providerName });
+      if (res) return res;
+      // data
+      const _module = ctx.app.meta.modules[module];
+      const _provider = _module.main.meta.auth.providers[providerName];
+      if (!_provider) throw new Error(`authProvider ${module}:${providerName} not found!`);
+      const data = {
+        module,
+        providerName,
+        config: JSON.stringify(_provider.config),
+      };
+      // insert
+      const res2 = await this.modelAuthProvider.insert(data);
+      data.id = res2.insertId;
+      return data;
+    }
+
+  }
+
+  return User;
+};
+
+
+/***/ }),
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -380,7 +827,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -398,7 +845,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -416,7 +863,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -434,13 +881,13 @@ module.exports = app => {
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const config = __webpack_require__(21);
-const locales = __webpack_require__(22);
-const errors = __webpack_require__(24);
-const middlewares = __webpack_require__(25);
+const config = __webpack_require__(22);
+const locales = __webpack_require__(23);
+const errors = __webpack_require__(25);
+const middlewares = __webpack_require__(26);
 const constants = __webpack_require__(37);
 
 // eslint-disable-next-line
@@ -449,11 +896,11 @@ module.exports = app => {
   // routes
   const routes = __webpack_require__(38)(app);
   // services
-  const services = __webpack_require__(47)(app);
+  const services = __webpack_require__(48)(app);
   // models
-  const models = __webpack_require__(62)(app);
+  const models = __webpack_require__(66)(app);
   // meta
-  const meta = __webpack_require__(66)(app);
+  const meta = __webpack_require__(73)(app);
 
   return {
     routes,
@@ -471,7 +918,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports) {
 
 // eslint-disable-next-line
@@ -521,6 +968,9 @@ module.exports = appInfo => {
     registerAtomClass: {
       path: 'atomClass/register',
     },
+    registerAuthProvider: {
+      path: 'auth/register',
+    },
   };
 
   // locales
@@ -534,31 +984,41 @@ module.exports = appInfo => {
   };
   // registered or rememberMe
   config.registered = {
-    maxAge: 1 * 24 * 3600 * 1000, // 1 天
+    maxAge: 30 * 24 * 3600 * 1000, // 30 天
   };
   // checkUserName
-  config.checkUserName = false;
+  config.checkUserName = true;
   // signupRoleName
   config.signupRoleName = 'registered';
+
+  // comment
+  config.comment = {
+    trim: {
+      limit: 100,
+      wordBreak: false,
+      preserveTags: false,
+    },
+  };
 
   return config;
 };
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
-  'zh-cn': __webpack_require__(23),
+  'zh-cn': __webpack_require__(24),
 };
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports) {
 
 module.exports = {
+  'Comment List': '评论列表',
   'Element exists': '元素已存在',
   'Element does not exist': '元素不存在',
   'Operation failed': '操作失败',
@@ -567,6 +1027,7 @@ module.exports = {
   'Agent user does not exist': '代理用户不存在',
   'Incomplete information': '信息不完整',
   'Should delete children first': '应该先删除子角色',
+  'Cannot contain __': '不能包含__',
   Draft: '草稿',
   Base: '基本',
   English: '英文',
@@ -581,7 +1042,7 @@ module.exports = {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports) {
 
 // error code should start from 1001
@@ -598,10 +1059,10 @@ module.exports = {
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const base = __webpack_require__(26);
+const base = __webpack_require__(27);
 const auth = __webpack_require__(35);
 const right = __webpack_require__(36);
 
@@ -613,35 +1074,35 @@ module.exports = {
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // base
-const BaseFn = __webpack_require__(27);
+const BaseFn = __webpack_require__(28);
 const BASE = Symbol('CTX#__BASE');
 
 // atomClass
-const AtomClassFn = __webpack_require__(28);
+const AtomClassFn = __webpack_require__(29);
 const ATOMCLASS = Symbol('CTX#__ATOMCLASS');
 
 // atomClass
-const AtomActionFn = __webpack_require__(29);
+const AtomActionFn = __webpack_require__(30);
 const ATOMACTION = Symbol('CTX#__ATOMACTION');
 
 // atom
-const AtomFn = __webpack_require__(30);
+const AtomFn = __webpack_require__(31);
 const ATOM = Symbol('CTX#__ATOM');
 
 // function
-const FunctionFn = __webpack_require__(31);
+const FunctionFn = __webpack_require__(32);
 const FUNCTION = Symbol('CTX#__FUNCTION');
 
 // role
-const RoleFn = __webpack_require__(32);
+const RoleFn = __webpack_require__(33);
 const ROLE = Symbol('CTX#__ROLE');
 
 // user
-const UserFn = __webpack_require__(33);
+const UserFn = __webpack_require__(16);
 const USER = Symbol('CTX#__USER');
 
 // util
@@ -731,7 +1192,7 @@ module.exports = () => {
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports) {
 
 const _modulesLocales = {};
@@ -1051,7 +1512,7 @@ const Fn = module.exports = ctx => {
         if (func.action === 'create' && !func.actionComponent && !func.actionPath) {
           func.actionModule = 'a-base';
           func.actionComponent = 'action';
-          func.actionPath = '/a/base/atom/edit?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}';
+          // func.actionPath = '/a/base/atom/edit?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}';
         }
         // list
         if (func.action === 'read' && !func.actionComponent && !func.actionPath) {
@@ -1070,7 +1531,7 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const modelFn = __webpack_require__(2);
@@ -1181,7 +1642,7 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const modelFn = __webpack_require__(3);
@@ -1248,7 +1709,7 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -1347,7 +1808,7 @@ const Fn = module.exports = ctx => {
       // save itemId
       let atomName = atom.atomName;
       if (!atomName) {
-      // sequence
+        // sequence
         const sequence = await this.sequence.next('draft');
         atomName = `${ctx.text('Draft')}-${sequence}`;
       }
@@ -1470,6 +1931,7 @@ const Fn = module.exports = ctx => {
       if (item) {
         const atom = { };
         if (item.atomName !== undefined) atom.atomName = item.atomName;
+        if (item.allowComment !== undefined) atom.allowComment = item.allowComment;
         if (Object.keys(atom).length > 0) {
           atom.id = key.atomId;
           await this._update({
@@ -1579,19 +2041,55 @@ const Fn = module.exports = ctx => {
     }
 
     async star({ key, atom: { star = 1 }, user }) {
-      // force delete
-      await this.modelAtomStar.delete({
+      let diff = 0;
+      // check if exists
+      const _star = await this.modelAtomStar.get({
         userId: user.id,
         atomId: key.atomId,
       });
-      // new
-      if (star) {
+      if (_star && !star) {
+        diff = -1;
+        // delete
+        await this.modelAtomStar.delete({
+          id: _star.id,
+        });
+      } else if (!_star && star) {
+        diff = 1;
+        // new
         await this.modelAtomStar.insert({
           userId: user.id,
           atomId: key.atomId,
           star: 1,
         });
       }
+      // get
+      const atom = await this.get({ atomId: key.atomId });
+      let starCount = atom.starCount;
+      if (diff !== 0) {
+        starCount += diff;
+        await this.modelAtom.update({
+          id: key.atomId,
+          starCount,
+          // userIdUpdated: user.id,
+        });
+      }
+      // ok
+      return { star, starCount };
+    }
+
+    async readCount({ key, atom: { readCount = 1 }, user }) {
+      await this.modelAtom.query('update aAtom set readCount = readCount + ? where iid=? and id=?',
+        [ readCount, ctx.instance.id, key.atomId ]);
+    }
+
+    async comment({ key, atom: { comment = 1 }, user }) {
+      await this.modelAtom.query('update aAtom set commentCount = commentCount + ? where iid=? and id=?',
+        [ comment, ctx.instance.id, key.atomId ]);
+    }
+
+    async attachment({ key, atom: { attachment = 1 }, user }) {
+      await this.modelAtom.query('update aAtom set attachmentCount = attachmentCount + ? where iid=? and id=?',
+        [ attachment, ctx.instance.id, key.atomId ]);
     }
 
     async labels({ key, atom: { labels = null }, user }) {
@@ -1688,13 +2186,15 @@ const Fn = module.exports = ctx => {
     }
 
     async _update({
-      atom: { id, atomName, atomFlow, itemId },
+      atom: { id, atomName, allowComment, atomFlow, itemId },
       user,
     }) {
       const params = { id, userIdUpdated: user.id };
       if (atomName !== undefined) params.atomName = atomName;
+      if (allowComment !== undefined) params.allowComment = allowComment;
       if (atomFlow !== undefined) params.atomFlow = atomFlow;
       if (itemId !== undefined) params.itemId = itemId;
+      params.updatedAt = new Date();
       const res = await this.modelAtom.update(params);
       if (res.affectedRows !== 1) ctx.throw(1003);
     }
@@ -1717,15 +2217,15 @@ const Fn = module.exports = ctx => {
       return res[0][0];
     }
 
-    async _list({ tableName = '', options: { where, orders, page, star = 0, label = 0 }, user, pageForce = true }) {
+    async _list({ tableName = '', options: { where, orders, page, star = 0, label = 0, comment = 0, file = 0 }, user, pageForce = true }) {
       page = ctx.meta.util.page(page, pageForce);
 
       const _where = ctx.model._where2(where);
       const _orders = ctx.model._orders(orders);
       const _limit = ctx.model._limit(page.size, page.index);
 
-      const res = await ctx.model.query('call aSelectAtoms(?,?,?,?,?,?,?,?)',
-        [ tableName, _where, _orders, _limit, ctx.instance.id, user.id, star, label ]
+      const res = await ctx.model.query('call aSelectAtoms(?,?,?,?,?,?,?,?,?,?)',
+        [ tableName, _where, _orders, _limit, ctx.instance.id, user.id, star, label, comment, file ]
       );
       return res[0];
     }
@@ -1792,7 +2292,7 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const modelFn = __webpack_require__(1);
@@ -1833,7 +2333,7 @@ const Fn = module.exports = ctx => {
     // list
     //   locale maybe '' for selectAllFunctions beside menus
     async list({ options: { where, orders, page, star = 0, locale = '' }, user }) {
-      page = ctx.meta.util.page(page);
+      // page = ctx.meta.util.page(page); // has set in controller
 
       const _where = ctx.model._where2(where);
       const _orders = ctx.model._orders(orders);
@@ -1969,7 +2469,7 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const modelFn = __webpack_require__(10);
@@ -2403,385 +2903,6 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 33 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const modelFn = __webpack_require__(16);
-const modelAgentFn = __webpack_require__(17);
-const modelAuthFn = __webpack_require__(18);
-const modelAuthProviderFn = __webpack_require__(19);
-
-module.exports = ctx => {
-
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-
-  class User {
-
-    constructor() {
-      this._model = null;
-      this._modelAgent = null;
-      this._modelAuth = null;
-      this._modelAuthProvider = null;
-    }
-
-    get model() {
-      if (!this._model) this._model = new (modelFn(ctx.app))(ctx);
-      return this._model;
-    }
-
-    get modelAgent() {
-      if (!this._modelAgent) this._modelAgent = new (modelAgentFn(ctx.app))(ctx);
-      return this._modelAgent;
-    }
-
-    get modelAuth() {
-      if (!this._modelAuth) this._modelAuth = new (modelAuthFn(ctx.app))(ctx);
-      return this._modelAuth;
-    }
-
-    get modelAuthProvider() {
-      if (!this._modelAuthProvider) this._modelAuthProvider = new (modelAuthProviderFn(ctx.app))(ctx);
-      return this._modelAuthProvider;
-    }
-
-    async anonymous() {
-      // new
-      const userId = await this.add({ disabled: 0, anonymous: 1 });
-      // addRole
-      const role = await ctx.meta.role.getSystemRole({ roleName: 'anonymous' });
-      await ctx.meta.role.addUserRole({ userId, roleId: role.id });
-      return userId;
-    }
-
-    async loginAsAnonymous() {
-      const maxAge = ctx.config.module(moduleInfo.relativeName).anonymous.maxAge;
-      let userId = ctx.cookies.get('anonymous', { encrypt: true });
-      let userOp;
-      if (userId) {
-        userOp = await this.get({ id: userId });
-      }
-      if (!userOp) {
-        userId = await this.anonymous();
-        ctx.cookies.set('anonymous', userId.toString(), { encrypt: true, maxAge });
-        userOp = await this.get({ id: userId });
-      }
-      const user = {
-        op: userOp,
-        agent: userOp,
-      };
-      await ctx.login(user);
-      // maxAge
-      ctx.session.maxAge = maxAge;
-      return user;
-    }
-
-    async check() {
-      // check if deleted,disabled,agent
-      const userOp = await this.get({ id: ctx.user.op.id });
-      // deleted
-      if (!userOp) ctx.throw.module(moduleInfo.relativeName, 1004);
-      // disabled
-      if (userOp.disabled) ctx.throw.module(moduleInfo.relativeName, 1005);
-      // hold user
-      ctx.user.op = userOp;
-      // agent
-      if (ctx.user.agent.id !== ctx.user.op.id) {
-        const agent = await this.agent({ userId: ctx.user.op.id });
-        if (!agent) ctx.throw.module(moduleInfo.relativeName, 1006);
-        if (agent.id !== ctx.user.agent.id) ctx.throw.module(moduleInfo.relativeName, 1006);
-        if (agent.disabled) ctx.throw.module(moduleInfo.relativeName, 1005);
-        // hold agent
-        ctx.user.agent = agent;
-      } else {
-        // hold agent
-        ctx.user.agent = userOp;
-      }
-    }
-
-    async signup(user, ops) {
-      ops = ops || {};
-      const userId = await this.add(user);
-      if (ops.addRole !== false) {
-        const role = await ctx.meta.role.getSystemRole({ roleName: ctx.config.module(moduleInfo.relativeName).signupRoleName });
-        await ctx.meta.role.addUserRole({ userId, roleId: role.id });
-      }
-      return userId;
-    }
-
-    async exists({ userName, email, mobile }) {
-      userName = userName || '';
-      email = email || '';
-      mobile = mobile || '';
-      if (ctx.config.module(moduleInfo.relativeName).checkUserName === true) {
-        return await this.model.queryOne(
-          `select * from aUser 
-             where iid=? and deleted=0 and ((?<>'' and userName=?) or (?<>'' and email=?) or (?<>'' and mobile=?))`,
-          [ ctx.instance.id, userName, userName, email, email, mobile, mobile ]);
-      }
-      return await this.model.queryOne(
-        `select * from aUser 
-             where iid=? and deleted=0 and ((?<>'' and email=?) or (?<>'' and mobile=?))`,
-        [ ctx.instance.id, email, email, mobile, mobile ]);
-    }
-
-    async add({ disabled = 0, userName, realName, email, mobile, avatar, motto, locale, anonymous = 0 }) {
-      // check if incomplete information
-      let needCheck;
-      if (anonymous) {
-        needCheck = false;
-      } else if (ctx.config.module(moduleInfo.relativeName).checkUserName === true) {
-        needCheck = userName || email || mobile;
-      } else {
-        needCheck = email || mobile;
-      }
-      // if exists
-      if (needCheck) {
-        const res = await this.exists({ userName, email, mobile });
-        if (res) ctx.throw.module(moduleInfo.relativeName, 1001);
-      }
-      // insert
-      const res = await this.model.insert({
-        disabled,
-        userName,
-        realName,
-        email,
-        mobile,
-        avatar,
-        motto,
-        locale,
-        anonymous,
-      });
-      return res.insertId;
-    }
-
-    async get(where) {
-      return await this.model.get(where);
-    }
-
-    async save({ user }) {
-      await this.model.update(user);
-    }
-
-    async agent({ userId }) {
-      const sql = `
-        select a.* from aUser a 
-          left join aUserAgent b on a.id=b.userIdAgent 
-            where a.iid=? and a.deleted=0 and b.userId=?
-      `;
-      return await ctx.model.queryOne(sql, [ ctx.instance.id, userId ]);
-    }
-
-    async agentsBy({ userId }) {
-      const sql = `
-        select a.* from aUser a 
-          left join aUserAgent b on a.id=b.userId
-            where a.iid=? and a.deleted=0 and b.userIdAgent=?
-      `;
-      return await ctx.model.query(sql, [ ctx.instance.id, userId ]);
-    }
-
-    async addAgent({ userIdAgent, userId }) {
-      await this.modelAgent.insert({
-        userIdAgent,
-        userId,
-      });
-    }
-
-    async removeAgent({ userIdAgent, userId }) {
-      await this.modelAgent.delete({
-        userIdAgent,
-        userId,
-      });
-    }
-
-    async switchAgent({ userIdAgent }) {
-      const op = ctx.user.op;
-      ctx.user.op = { id: userIdAgent };
-      try {
-        await this.check();
-        await ctx.login(ctx.user);
-        return ctx.user;
-      } catch (err) {
-        ctx.user.op = op;
-        throw err;
-      }
-    }
-
-    async switchOffAgent() {
-      return await this.switchAgent({ userIdAgent: ctx.user.agent.id });
-    }
-
-    async list({ roleId, query, anonymous, page }) {
-      const roleJoin = roleId ? 'left join aUserRole b on a.id=b.userId' : '';
-      const roleWhere = roleId ? `and b.roleId=${ctx.model._format2(roleId)}` : '';
-      const queryLike = query ? ctx.model._format2({ op: 'like', val: query }) : '';
-      const queryWhere = query ? `and ( a.userName like ${queryLike} or a.realName like ${queryLike} or a.mobile like ${queryLike} )` : '';
-      const anonymousWhere = anonymous !== undefined ? `and a.anonymous=${ctx.model._format2(anonymous)}` : '';
-      const _limit = ctx.model._limit(page.size, page.index);
-      const sql = `
-        select a.* from aUser a
-          ${roleJoin}   
-            where a.iid=? and a.deleted=0
-                  ${anonymousWhere}
-                  ${roleWhere} 
-                  ${queryWhere}
-            ${_limit}
-      `;
-      return await ctx.model.query(sql, [ ctx.instance.id ]);
-    }
-
-    async disable({ userId, disabled }) {
-      await this.model.update({ id: userId, disabled });
-    }
-
-    async delete({ userId }) {
-      await ctx.meta.role.deleteAllUserRoles({ userId });
-      await this.model.delete({ id: userId });
-    }
-
-    // roles
-    async roles({ userId, page }) {
-      page = ctx.meta.util.page(page, false);
-      const _limit = ctx.model._limit(page.size, page.index);
-      return await ctx.model.query(`
-        select a.*,b.roleName from aUserRole a
-          left join aRole b on a.roleId=b.id
-            where a.iid=? and a.userId=?
-            ${_limit}
-        `, [ ctx.instance.id, userId ]);
-    }
-
-    async verify(profileUser) {
-      // state
-      //   login/associate
-      const state = ctx.request.query.state || 'login';
-
-      // verifyUser
-      const verifyUser = {};
-
-      // provider
-      const providerItem = await this.modelAuthProvider.get({
-        module: profileUser.module,
-        providerName: profileUser.provider,
-      });
-      const config = JSON.parse(providerItem.config);
-
-      // check if auth exists
-      const authItem = await this.modelAuth.get({
-        providerId: providerItem.id,
-        profileId: profileUser.profileId,
-      });
-      let authId;
-      let authUserId;
-      if (authItem) {
-        // update
-        authItem.profile = JSON.stringify(profileUser.profile);
-        await this.modelAuth.update(authItem);
-        authId = authItem.id;
-        authUserId = authItem.userId;
-      } else {
-        // add
-        const res = await this.modelAuth.insert({
-          providerId: providerItem.id,
-          profileId: profileUser.profileId,
-          profile: JSON.stringify(profileUser.profile),
-        });
-        authId = res.insertId;
-      }
-      verifyUser.provider = {
-        id: authId,
-        module: profileUser.module,
-        providerName: profileUser.provider,
-        // profile: profileUser.profile,  // maybe has private info
-      };
-
-      // columns
-      const columns = [ 'userName', 'realName', 'email', 'mobile', 'avatar', 'motto', 'locale' ];
-
-      //
-      let userId;
-      if (state === 'associate') {
-        // check if ctx.user exists
-        if (!ctx.user || ctx.user.agent.anonymous) return false;
-        userId = ctx.user.agent.id;
-        // associated
-        // update user
-        await this._updateUserInfo(userId, profileUser.profile, columns);
-        // force update auth's userId, maybe different
-        if (authUserId !== userId) {
-          await this.modelAuth.update({
-            id: authId,
-            userId,
-          });
-        }
-        // ready
-        verifyUser.op = ctx.user.op;
-        verifyUser.agent = ctx.user.agent;
-      } else if (state === 'login') {
-        // check if user exists
-        let user;
-        if (authUserId) {
-          user = await this.model.get({ id: authUserId });
-        }
-        if (user) {
-          // check if disabled
-          if (user.disabled) return false;
-          // update user
-          await this._updateUserInfo(user.id, profileUser.profile, columns);
-          userId = user.id;
-        } else {
-          // check if addUser
-          if (config.addUser === false) return false;
-          // add user
-          userId = await this._addUserInfo(profileUser.profile, columns, config.addRole !== false);
-          user = await this.model.get({ id: userId });
-          // update auth's userId
-          await this.modelAuth.update({
-            id: authId,
-            userId,
-          });
-        }
-        // ready
-        verifyUser.op = user;
-        verifyUser.agent = user;
-      }
-
-      // restore maxAge
-      if (profileUser.maxAge === 0) {
-        ctx.session.maxAge = 0;
-      } else {
-        ctx.session.maxAge = profileUser.maxAge || ctx.config.module(moduleInfo.relativeName).registered.maxAge;
-      }
-      return verifyUser;
-    }
-
-    async _addUserInfo(profile, columns, addRole) {
-      const user = {};
-      for (const column of columns) {
-        user[column] = profile[column];
-      }
-      return await this.signup(user, { addRole });
-    }
-    async _updateUserInfo(userId, profile, columns) {
-      const users = await this.model.select({
-        where: { id: userId },
-        columns,
-      });
-      const user = users[0];
-      for (const column of columns) {
-        if (!user[column] && profile[column]) user[column] = profile[column];
-      }
-      user.id = userId;
-      await this.model.update(user);
-    }
-
-  }
-
-  return User;
-};
-
-
-/***/ }),
 /* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2795,7 +2916,7 @@ module.exports = ctx => {
       if (!_page) {
         _page = force ? { index: 0 } : { index: 0, size: 0 };
       }
-      if (force || _page.size === undefined) _page.size = ctx.app.config.pageSize;
+      if (_page.size === undefined || (force && (_page.size === 0 || _page.size === -1 || _page.size > ctx.app.config.pageSize))) _page.size = ctx.app.config.pageSize;
       return _page;
     }
 
@@ -3010,8 +3131,8 @@ module.exports = {
     },
     actionMeta: {
       create: { title: 'Create', actionComponent: 'action' },
-      read: { title: 'View', actionPath: 'atom/view?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}' },
-      write: { title: 'Edit', actionPath: 'atom/edit?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}' },
+      read: { title: 'View', actionPath: 'atom/view?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&module={{module}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}' },
+      write: { title: 'Edit', actionPath: 'atom/edit?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&module={{module}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}' },
       delete: { title: 'Delete', actionComponent: 'action' },
       save: { title: 'Save', actionComponent: 'action', authorize: false },
       submit: { title: 'Submit', actionComponent: 'action', authorize: false },
@@ -3023,7 +3144,7 @@ module.exports = {
       default: 0,
       create: 1,
       list: 2,
-      statistics: 20,
+      report: 20,
       tools: 50,
       custom: 100,
     },
@@ -3043,6 +3164,7 @@ const atomClass = __webpack_require__(43);
 const atomAction = __webpack_require__(44);
 const func = __webpack_require__(45);
 const auth = __webpack_require__(46);
+const comment = __webpack_require__(47);
 
 module.exports = app => {
   const routes = [
@@ -3090,12 +3212,45 @@ module.exports = app => {
     { method: 'post', path: 'atom/star', controller: atom,
       meta: { right: { type: 'atom', action: 2 } },
     },
+    { method: 'get', path: 'atom/star', controller: atom, action: 'starP', middlewares: 'jsonp' },
+    { method: 'post', path: 'atom/readCount', controller: atom,
+      meta: { right: { type: 'atom', action: 2 } },
+    },
+    { method: 'get', path: 'atom/readCount', controller: atom, action: 'readCountP', middlewares: 'jsonp' },
+    { method: 'get', path: 'atom/stats', controller: atom, action: 'statsP', middlewares: 'jsonp' },
     { method: 'post', path: 'atom/labels', controller: atom,
       meta: { right: { type: 'atom', action: 2 } },
     },
     { method: 'post', path: 'atom/actions', controller: atom },
     { method: 'post', path: 'atom/schema', controller: atom },
     { method: 'post', path: 'atom/validator', controller: atom },
+    // comment
+    { method: 'post', path: 'comment/all', controller: comment },
+    { method: 'get', path: 'comment/all', controller: comment, action: 'allP', middlewares: 'jsonp' },
+    { method: 'post', path: 'comment/list', controller: comment,
+      meta: { right: { type: 'atom', action: 2 } },
+    },
+    { method: 'get', path: 'comment/list', controller: comment, action: 'listP', middlewares: 'jsonp' },
+    { method: 'post', path: 'comment/item', controller: comment,
+      meta: { right: { type: 'atom', action: 2 } },
+    },
+    { method: 'post', path: 'comment/save', controller: comment, middlewares: 'transaction',
+      meta: {
+        auth: { user: true },
+        right: { type: 'atom', action: 2 },
+      },
+    },
+    { method: 'post', path: 'comment/delete', controller: comment, middlewares: 'transaction',
+      meta: {
+        auth: { user: true },
+        right: { type: 'atom', action: 2 },
+      },
+    },
+    { method: 'get', path: 'comment/delete', controller: comment, action: 'deleteP', middlewares: 'jsonp' },
+    { method: 'post', path: 'comment/heart', controller: comment, middlewares: 'transaction',
+      meta: { right: { type: 'atom', action: 2 } },
+    },
+    { method: 'get', path: 'comment/heart', controller: comment, action: 'heartP', middlewares: 'jsonp' },
     // user
     { method: 'post', path: 'user/getLabels', controller: user },
     { method: 'post', path: 'user/setLabels', controller: user },
@@ -3119,12 +3274,17 @@ module.exports = app => {
       meta: { auth: { enable: false } },
     },
     { method: 'post', path: 'atomClass/validatorSearch', controller: atomClass },
+    { method: 'post', path: 'atomClass/checkRightCreate', controller: atomClass },
     // auth
     { method: 'post', path: 'auth/echo', controller: auth, meta: { auth: { enable: false } } },
+    { method: 'get', path: 'auth/echo', controller: auth, middlewares: 'jsonp', meta: { auth: { enable: false } } },
     { method: 'post', path: 'auth/check', controller: auth, meta: { auth: { user: true } } },
     { method: 'post', path: 'auth/logout', controller: auth, meta: { auth: { enable: false } } },
     { method: 'post', path: 'auth/installAuthProviders', controller: auth, middlewares: 'inner',
       meta: { instance: { enable: false } },
+    },
+    { method: 'post', path: 'auth/register', controller: auth, middlewares: 'inner',
+      meta: { auth: { enable: false } },
     },
   ];
   return routes;
@@ -3325,6 +3485,54 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async starP() {
+      // data
+      const data = JSON.parse(this.ctx.request.query.data);
+      // select
+      const res = await this.ctx.performAction({
+        method: 'post',
+        url: 'atom/star',
+        body: data,
+      });
+      this.ctx.success(res);
+    }
+
+    async readCount() {
+      const res = await this.ctx.service.atom.readCount({
+        key: this.ctx.request.body.key,
+        atom: this.ctx.request.body.atom,
+        user: this.ctx.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async readCountP() {
+      // data
+      const data = JSON.parse(this.ctx.request.query.data);
+      // select
+      const res = await this.ctx.performAction({
+        method: 'post',
+        url: 'atom/readCount',
+        body: data,
+      });
+      this.ctx.success(res);
+    }
+
+    async statsP() {
+      // atomIds
+      const atomIds = JSON.parse(this.ctx.request.query.data);
+      const options = {
+        where: {
+          'a.id': { op: 'in', val: atomIds },
+        },
+      };
+      // select
+      const res = await this.ctx.meta.atom.select({
+        options, user: this.ctx.user.op, pageForce: false,
+      });
+      this.ctx.success(res);
+    }
+
     async labels() {
       const res = await this.ctx.service.atom.labels({
         key: this.ctx.request.body.key,
@@ -3389,6 +3597,14 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async checkRightCreate() {
+      const res = await this.ctx.service.atomClass.checkRightCreate({
+        atomClass: this.ctx.request.body.atomClass,
+        user: this.ctx.user.op,
+      });
+      this.ctx.success(res);
+    }
+
   }
 
   return AtomClassController;
@@ -3429,7 +3645,7 @@ module.exports = app => {
     //   where, orders, page, star,language
     async list() {
       const options = this.ctx.request.body.options || {};
-      options.page = this.ctx.meta.util.page(options.page);
+      options.page = this.ctx.meta.util.page(options.page, false); // false
       // locale maybe '' for selectAllFunctions
       if (options.locale === undefined) options.locale = this.ctx.locale;
       const items = await this.ctx.service.function.list({
@@ -3529,6 +3745,14 @@ module.exports = app => {
       this.ctx.success();
     }
 
+    async register() {
+      const res = await this.ctx.service.auth.register({
+        module: this.ctx.request.body.module,
+        providerName: this.ctx.request.body.providerName,
+      });
+      this.ctx.success(res);
+    }
+
   }
 
   return AuthController;
@@ -3537,16 +3761,139 @@ module.exports = app => {
 
 /***/ }),
 /* 47 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+
+  class CommentController extends app.Controller {
+
+    async all() {
+      const options = this.ctx.request.body.options;
+      options.comment = 1;
+      const res = await this.ctx.performAction({
+        method: 'post',
+        url: 'atom/select',
+        body: {
+          atomClass: this.ctx.request.body.atomClass,
+          options,
+        },
+      });
+      this.ctx.success(res);
+    }
+
+    async allP() {
+      // data
+      const data = JSON.parse(this.ctx.request.query.data);
+      // select
+      const res = await this.ctx.performAction({
+        method: 'post',
+        url: 'comment/all',
+        body: data,
+      });
+      this.ctx.success(res);
+    }
+
+    async list() {
+      const options = this.ctx.request.body.options;
+      options.page = this.ctx.meta.util.page(options.page);
+      const items = await this.ctx.service.comment.list({
+        key: this.ctx.request.body.key,
+        options,
+        user: this.ctx.user.op,
+      });
+      this.ctx.successMore(items, options.page.index, options.page.size);
+    }
+
+    async listP() {
+      // data
+      const data = JSON.parse(this.ctx.request.query.data);
+      // select
+      const res = await this.ctx.performAction({
+        method: 'post',
+        url: 'comment/list',
+        body: data,
+      });
+      this.ctx.success(res);
+    }
+
+    async item() {
+      const res = await this.ctx.service.comment.item({
+        key: this.ctx.request.body.key,
+        data: this.ctx.request.body.data,
+        user: this.ctx.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async save() {
+      const res = await this.ctx.service.comment.save({
+        key: this.ctx.request.body.key,
+        data: this.ctx.request.body.data,
+        user: this.ctx.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async delete() {
+      const res = await this.ctx.service.comment.delete({
+        key: this.ctx.request.body.key,
+        data: this.ctx.request.body.data,
+        user: this.ctx.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async deleteP() {
+      // data
+      const data = JSON.parse(this.ctx.request.query.data);
+      // delete
+      const res = await this.ctx.performAction({
+        method: 'post',
+        url: 'comment/delete',
+        body: data,
+      });
+      this.ctx.success(res);
+    }
+
+    async heart() {
+      const res = await this.ctx.service.comment.heart({
+        key: this.ctx.request.body.key,
+        data: this.ctx.request.body.data,
+        user: this.ctx.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async heartP() {
+      // data
+      const data = JSON.parse(this.ctx.request.query.data);
+      // heart
+      const res = await this.ctx.performAction({
+        method: 'post',
+        url: 'comment/heart',
+        body: data,
+      });
+      this.ctx.success(res);
+    }
+
+  }
+  return CommentController;
+};
+
+
+/***/ }),
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(48);
-const base = __webpack_require__(55);
-const user = __webpack_require__(56);
-const atom = __webpack_require__(57);
-const atomClass = __webpack_require__(58);
-const atomAction = __webpack_require__(59);
-const auth = __webpack_require__(60);
-const func = __webpack_require__(61);
+const version = __webpack_require__(49);
+const base = __webpack_require__(58);
+const user = __webpack_require__(59);
+const atom = __webpack_require__(60);
+const atomClass = __webpack_require__(61);
+const atomAction = __webpack_require__(62);
+const auth = __webpack_require__(63);
+const func = __webpack_require__(64);
+const comment = __webpack_require__(65);
 
 module.exports = app => {
   const services = {
@@ -3558,25 +3905,33 @@ module.exports = app => {
     atomAction,
     auth,
     function: func,
+    comment,
   };
   return services;
 };
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const VersionUpdate1Fn = __webpack_require__(49);
-const VersionUpdate2Fn = __webpack_require__(51);
-const VersionUpdate3Fn = __webpack_require__(52);
-const VersionInitFn = __webpack_require__(53);
+const VersionUpdate1Fn = __webpack_require__(50);
+const VersionUpdate2Fn = __webpack_require__(52);
+const VersionUpdate3Fn = __webpack_require__(53);
+const VersionUpdate4Fn = __webpack_require__(54);
+const VersionInit2Fn = __webpack_require__(55);
+const VersionInit4Fn = __webpack_require__(57);
 
 module.exports = app => {
 
   class Version extends app.Service {
 
     async update(options) {
+
+      if (options.version === 4) {
+        const versionUpdate4 = new (VersionUpdate4Fn(this.ctx))();
+        await versionUpdate4.run();
+      }
 
       if (options.version === 3) {
         const versionUpdate3 = new (VersionUpdate3Fn(this.ctx))();
@@ -3596,8 +3951,12 @@ module.exports = app => {
 
     async init(options) {
       if (options.version === 2) {
-        const versionInit = new (VersionInitFn(this.ctx))();
-        await versionInit.run(options);
+        const versionInit2 = new (VersionInit2Fn(this.ctx))();
+        await versionInit2.run(options);
+      }
+      if (options.version === 4) {
+        const versionInit4 = new (VersionInit4Fn(this.ctx))();
+        await versionInit4.run(options);
       }
     }
 
@@ -3608,10 +3967,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const update1Data = __webpack_require__(50);
+const update1Data = __webpack_require__(51);
 
 module.exports = function(ctx) {
 
@@ -3681,7 +4040,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports) {
 
 const tables = {
@@ -4504,7 +4863,7 @@ module.exports = {
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -4541,7 +4900,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -4605,10 +4964,284 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 53 */
+/* 54 */
+/***/ (function(module, exports) {
+
+module.exports = function(ctx) {
+
+  class VersionUpdate4 {
+
+    async run() {
+
+      // aComment
+      let sql = `
+          CREATE TABLE aComment (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            deleted int(11) DEFAULT '0',
+            iid int(11) DEFAULT '0',
+            atomId int(11) DEFAULT '0',
+            userId int(11) DEFAULT '0',
+            sorting int(11) DEFAULT '0',
+            heartCount int(11) DEFAULT '0',
+            replyId int(11) DEFAULT '0',
+            replyUserId int(11) DEFAULT '0',
+            replyContent text DEFAULT NULL,
+            content text DEFAULT NULL,
+            summary text DEFAULT NULL,
+            html text DEFAULT NULL,
+            PRIMARY KEY (id)
+          )
+        `;
+      await ctx.model.query(sql);
+
+      // aViewComment
+      sql = `
+          create view aViewComment as
+            select a.*,b.userName,b.avatar,c.userName as replyUserName from aComment a
+              left join aUser b on a.userId=b.id
+              left join aUser c on a.replyUserId=c.id
+        `;
+      await ctx.model.query(sql);
+
+      // aCommentHeart
+      sql = `
+          CREATE TABLE aCommentHeart (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            deleted int(11) DEFAULT '0',
+            iid int(11) DEFAULT '0',
+            userId int(11) DEFAULT '0',
+            atomId int(11) DEFAULT '0',
+            commentId int(11) DEFAULT '0',
+            heart int(11) DEFAULT '1',
+            PRIMARY KEY (id)
+          )
+        `;
+      await ctx.model.query(sql);
+
+      // aAtom
+      sql = `
+        ALTER TABLE aAtom
+          MODIFY COLUMN updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          ADD COLUMN allowComment int(11) DEFAULT '1',
+          ADD COLUMN starCount int(11) DEFAULT '0',
+          ADD COLUMN commentCount int(11) DEFAULT '0',
+          ADD COLUMN attachmentCount int(11) DEFAULT '0',
+          ADD COLUMN readCount int(11) DEFAULT '0'
+                  `;
+      await ctx.model.query(sql);
+
+      // aSelectAtoms
+      await ctx.model.query('drop procedure aSelectAtoms');
+      sql = `
+create procedure aSelectAtoms (in _tableName varchar(50),in __where text,in __orders text,in __limit text,in _iid int,in _userIdWho int,in _star int,in _label int,in _comment int, in _file int)
+begin
+  -- tables
+  -- a: aAtom
+  -- b: aAtomClass
+  -- c: aViewUserRightAtom
+  -- d: aAtomStar
+  -- e: aAtomLabelRef
+  -- f: {item}
+  -- g: aUser
+  -- h: aComment
+  -- i: aFile
+
+  declare _where,_orders,_limit text;
+  declare _starField,_starJoin,_starWhere text;
+  declare _labelField,_labelJoin,_labelWhere text;
+  declare _commentField,_commentJoin,_commentWhere text;
+  declare _fileField,_fileJoin,_fileWhere text;
+  declare _itemField,_itemJoin text;
+
+  if __where<>'' then
+    set _where=concat(__where,' AND');
+  else
+    set _where=' WHERE';
+  end if;
+
+  if __orders<>'' then
+    set _orders=__orders;
+  else
+    set _orders='';
+  end if;
+
+  if __limit<>'' then
+    set _limit=__limit;
+  else
+    set _limit='';
+  end if;
+
+  if _star<>0 then
+    set _starJoin=' inner join aAtomStar d on a.id=d.atomId';
+    set _starWhere=concat(' and d.iid=',_iid,' and d.userId=',_userIdWho,' and d.star=1');
+  else
+    set _starJoin='';
+    set _starWhere='';
+  end if;
+    set _starField=concat(
+        ',(select d2.star from aAtomStar d2 where d2.iid=',_iid,' and d2.atomId=a.id and d2.userId=',_userIdWho,') as star'
+      );
+
+  if _label<>0 then
+    set _labelJoin=' inner join aAtomLabelRef e on a.id=e.atomId';
+    set _labelWhere=concat(' and e.iid=',_iid,' and e.userId=',_userIdWho,' and e.labelId=',_label);
+  else
+    set _labelJoin='';
+    set _labelWhere='';
+  end if;
+    set _labelField=concat(
+        ',(select e2.labels from aAtomLabel e2 where e2.iid=',_iid,' and e2.atomId=a.id and e2.userId=',_userIdWho,') as labels'
+      );
+
+  if _comment<>0 then
+    set _commentField=concat(
+        ',h.id h_id,h.createdAt h_createdAt,h.updatedAt h_updatedAt,h.userId h_userId,h.sorting h_sorting,h.heartCount h_heartCount,h.replyId h_replyId,h.replyUserId h_replyUserId,h.replyContent h_replyContent,h.content h_content,h.summary h_summary,h.html h_html,h.userName h_userName,h.avatar h_avatar,h.replyUserName h_replyUserName,',
+        '(select h2.heart from aCommentHeart h2 where h2.iid=',_iid,' and h2.commentId=h.id and h2.userId=',_userIdWho,') as h_heart'
+      );
+    set _commentJoin=' inner join aViewComment h on h.atomId=a.id';
+    set _commentWhere=concat(' and h.iid=',_iid,' and h.deleted=0');
+  else
+    set _commentField='';
+    set _commentJoin='';
+    set _commentWhere='';
+  end if;
+
+  if _file<>0 then
+    set _fileField=',i.id i_id,i.createdAt i_createdAt,i.updatedAt i_updatedAt,i.userId i_userId,i.downloadId i_downloadId,i.mode i_mode,i.fileSize i_fileSize,i.width i_width,i.height i_height,i.filePath i_filePath,i.fileName i_fileName,i.realName i_realName,i.fileExt i_fileExt,i.encoding i_encoding,i.mime i_mime,i.attachment i_attachment,i.flag i_flag,i.userName i_userName,i.avatar i_avatar';
+    set _fileJoin=' inner join aViewFile i on i.atomId=a.id';
+    set _fileWhere=concat(' and i.iid=',_iid,' and i.deleted=0');
+  else
+    set _fileField='';
+    set _fileJoin='';
+    set _fileWhere='';
+  end if;
+
+  if _tableName<>'' then
+    set _itemField='f.*,';
+    set _itemJoin=concat(' inner join ',_tableName,' f on f.atomId=a.id');
+  else
+    set _itemField='';
+    set _itemJoin='';
+  end if;
+
+  set @sql=concat(
+    'select ',_itemField,'a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomFlow,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,b.module,b.atomClassName,b.atomClassIdParent,g.userName,g.avatar',_starField,_labelField,_commentField,_fileField,' from aAtom a',
+    ' inner join aAtomClass b on a.atomClassId=b.id',
+    ' inner join aUser g on a.userIdCreated=g.id',
+    _itemJoin,
+    _starJoin,
+    _labelJoin,
+    _commentJoin,
+    _fileJoin,
+    _where,
+    ' (',
+    '  a.deleted=0 and a.iid=', _iid,
+    _starWhere,
+    _labelWhere,
+    _commentWhere,
+    _fileWhere,
+    '    and (',
+    '           (a.userIdCreated=',_userIdWho,') or',
+    '             (a.atomEnabled=1 and (',
+    '               (',
+    '                 a.atomFlow=1 and (',
+    '                   (exists(select c.atomId from aViewUserRightAtom c where c.iid=',_iid,' and a.id=c.atomId and c.action>2 and c.userIdWho=',_userIdWho,')) or',
+    '                   (a.userIdCreated=',_userIdWho,' and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=',_iid,' and a.atomClassId=c.atomClassId and c.action>2 and c.scope=0 and c.userIdWho=',_userIdWho,'))',
+    '                 )',
+    '               ) or (',
+    '                 a.atomFlow=0 and (',
+    '                   b.public=1 or exists(select c.atomId from aViewUserRightAtom c where c.iid=',_iid,' and a.id=c.atomId and c.action=2 and c.userIdWho=',_userIdWho,')',
+    '                 )',
+    '                )',
+    '             ))',
+    '        )',
+    ' )',
+    _orders,
+    _limit
+  );
+
+  prepare stmt from @sql;
+  execute stmt;
+  deallocate prepare stmt;
+
+end
+`;
+      await ctx.model.query(sql);
+
+      // aGetAtom
+      await ctx.model.query('drop procedure aGetAtom');
+      sql = `
+create procedure aGetAtom (in _tableName varchar(50),in _atomId int,in _iid int,in _userIdWho int)
+begin
+  -- tables
+  -- a: aAtom
+  -- b: aAtomClass
+  -- d: aAtomStar
+  -- e: aAtomLabelRef
+  -- f: {item}
+  -- g: aUser
+
+  declare _starField,_labelField text;
+  declare _itemField,_itemJoin text;
+
+  if _userIdWho=0 then
+    set _starField='';
+  else
+    set _starField=concat(
+          ',(select d.star from aAtomStar d where d.iid=',_iid,' and d.atomId=a.id and d.userId=',_userIdWho,') as star'
+        );
+  end if;
+
+  if _userIdWho=0 then
+    set _labelField='';
+  else
+    set _labelField=concat(
+          ',(select e.labels from aAtomLabel e where e.iid=',_iid,' and e.atomId=a.id and e.userId=',_userIdWho,') as labels'
+        );
+  end if;
+
+  if _tableName<>'' then
+    set _itemField='f.*,';
+    set _itemJoin=concat(' inner join ',_tableName,' f on f.atomId=a.id');
+  else
+    set _itemField='';
+    set _itemJoin='';
+  end if;
+
+  set @sql=concat(
+    'select ',_itemField,'a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomFlow,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,b.module,b.atomClassName,b.atomClassIdParent,g.userName,g.avatar',_starField,_labelField,' from aAtom a',
+    ' inner join aAtomClass b on a.atomClassId=b.id',
+    ' inner join aUser g on a.userIdCreated=g.id',
+    _itemJoin,
+    ' where a.id=', _atomId,
+    '   and a.deleted=0 and a.iid=', _iid
+  );
+
+  prepare stmt from @sql;
+  execute stmt;
+  deallocate prepare stmt;
+
+end
+`;
+      await ctx.model.query(sql);
+
+    }
+
+  }
+
+  return VersionUpdate4;
+};
+
+
+/***/ }),
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const initData = __webpack_require__(54);
+const initData = __webpack_require__(56);
 
 module.exports = function(ctx) {
 
@@ -4639,8 +5272,8 @@ module.exports = function(ctx) {
     async _initUsers(roleIds, options) {
       // root user
       const userRoot = initData.users.root;
-      userRoot.email = options.email;
-      userRoot.mobile = options.mobile;
+      userRoot.item.email = options.email;
+      userRoot.item.mobile = options.mobile;
       const userId = await ctx.meta.user.add(userRoot.item);
       // user->role
       await ctx.meta.role.addUserRole({
@@ -4656,7 +5289,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 54 */
+/* 56 */
 /***/ (function(module, exports) {
 
 // roles
@@ -4695,7 +5328,7 @@ const users = {
     item: {
       userName: 'root',
       realName: 'root',
-      email: 'demo@cabloy.org',
+      email: null,
       mobile: null,
       avatar: null,
       motto: null,
@@ -4712,7 +5345,36 @@ module.exports = {
 
 
 /***/ }),
-/* 55 */
+/* 57 */
+/***/ (function(module, exports) {
+
+module.exports = function(ctx) {
+
+  class VersionInit {
+
+    async run(options) {
+      // roleFunctions
+      const role = await ctx.meta.role.getSystemRole({ roleName: 'root' });
+      const functions = [ 'listComment' ];
+      for (const functionName of functions) {
+        const func = await ctx.meta.function.get({
+          name: functionName,
+        });
+        await ctx.meta.role.addRoleFunction({
+          roleId: role.id,
+          functionId: func.id,
+        });
+      }
+    }
+
+  }
+
+  return VersionInit;
+};
+
+
+/***/ }),
+/* 58 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -4754,7 +5416,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 56 */
+/* 59 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -4793,7 +5455,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 57 */
+/* 60 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -4832,6 +5494,10 @@ module.exports = app => {
       return await this.ctx.meta.atom.star({ key, atom, user });
     }
 
+    async readCount({ key, atom, user }) {
+      return await this.ctx.meta.atom.readCount({ key, atom, user });
+    }
+
     async labels({ key, atom, user }) {
       return await this.ctx.meta.atom.labels({ key, atom, user });
     }
@@ -4855,7 +5521,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 58 */
+/* 61 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -4870,6 +5536,10 @@ module.exports = app => {
       return this.ctx.meta.atomClass.validatorSearch({ module, atomClassName });
     }
 
+    async checkRightCreate({ atomClass, user }) {
+      return await this.ctx.meta.atom.checkRightCreate({ atomClass, user });
+    }
+
   }
 
   return AtomClass;
@@ -4877,7 +5547,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 59 */
+/* 62 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -4895,11 +5565,12 @@ module.exports = app => {
 
 
 /***/ }),
-/* 60 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
 const mparse = require3('egg-born-mparse').default;
+const UserFn = __webpack_require__(16);
 
 module.exports = app => {
 
@@ -4921,7 +5592,7 @@ module.exports = app => {
       // all instances
       const instances = await this.ctx.model.query('select * from aInstance a where a.disabled=0');
       for (const instance of instances) {
-        await this.registerProviderInstance(instance.id, moduleRelativeName, providerName);
+        await this.registerProviderInstance(instance.name, instance.id, moduleRelativeName, providerName);
       }
       // config
       const moduleInfo = mparse.parseInfo(moduleRelativeName);
@@ -4944,9 +5615,11 @@ module.exports = app => {
       }
     }
 
-    async registerProviderInstance(iid, moduleRelativeName, providerName) {
+    async registerProviderInstance(subdomain, iid, moduleRelativeName, providerName) {
       // provider of db
-      const providerItem = await this.ctx.db.get('aAuthProvider', {
+      const user = new (UserFn(this.ctx))();
+      const providerItem = await user.getAuthProvider({
+        subdomain,
         iid,
         module: moduleRelativeName,
         providerName,
@@ -4959,12 +5632,16 @@ module.exports = app => {
         // module
         const module = this.app.meta.modules[moduleRelativeName];
         // provider
-        const provider = module.main.meta.auth.providers[providerName](this.app);
+        const provider = module.main.meta.auth.providers[providerName].handler(this.app);
         // install strategy
         const strategyName = `${iid}:${moduleRelativeName}:${providerName}`;
         this.app.passport.unuse(strategyName);
         this.app.passport.use(strategyName, new provider.strategy(config, provider.callback));
       }
+    }
+
+    async register({ module, providerName }) {
+      return await this.ctx.meta.user.registerAuthProvider({ module, providerName });
     }
 
   }
@@ -4975,7 +5652,7 @@ module.exports = app => {
 function createAuthenticate(moduleRelativeName, providerName, _config) {
   return async function(ctx, next) {
     // provider of db
-    const providerItem = await ctx.model.authProvider.get({
+    const providerItem = await ctx.meta.user.getAuthProvider({
       module: moduleRelativeName,
       providerName,
     });
@@ -5008,7 +5685,7 @@ function createAuthenticate(moduleRelativeName, providerName, _config) {
 
 
 /***/ }),
-/* 61 */
+/* 64 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5047,24 +5724,236 @@ module.exports = app => {
 
 
 /***/ }),
-/* 62 */
+/* 65 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(0);
+const trimHtml = require3('trim-html');
+const markdown = require3('@zhennann/markdown');
+
+module.exports = app => {
+
+  class Comment extends app.Service {
+
+    async list({ key, options, user }) {
+      const _options = {};
+      // where
+      _options.where = options.where || {};
+      _options.where.iid = this.ctx.instance.id;
+      _options.where.deleted = 0;
+      _options.where.atomId = key.atomId;
+      // orders
+      _options.orders = options.orders;
+      // page
+      if (options.page.size !== 0) {
+        _options.limit = options.page.size;
+        _options.offset = options.page.index;
+      }
+      // sql
+      const _where = this.ctx.model._where2(_options.where);
+      const _orders = this.ctx.model._orders(_options.orders);
+      const _limit = this.ctx.model._limit(_options.limit, _options.offset);
+      const sql = `select a.*,(select d2.heart from aCommentHeart d2 where d2.iid=? and d2.commentId=a.id and d2.userId=?) as heart from aViewComment a
+         ${_where} ${_orders} ${_limit}`;
+      // select
+      return await this.ctx.model.query(sql, [ this.ctx.instance.id, user.id ]);
+    }
+
+    async item({ key, data: { commentId }, user }) {
+      const sql = `select a.*,(select d2.heart from aCommentHeart d2 where d2.iid=? and d2.commentId=a.id and d2.userId=?) as heart from aViewComment a
+         where a.iid=? and a.deleted=0 and a.id=?`;
+      // select
+      const list = await this.ctx.model.query(sql,
+        [ this.ctx.instance.id, user.id, this.ctx.instance.id, commentId ]
+      );
+      return list[0];
+    }
+
+    async save({ key, data, user }) {
+      if (!data.commentId) {
+        return await this.save_add({ key, data, user });
+      }
+      return await this.save_edit({ key, data, user });
+    }
+
+    async save_edit({ key, data: { commentId, content }, user }) {
+      // comment
+      const item = await this.ctx.model.commentView.get({ id: commentId });
+      if (key.atomId !== item.atomId || item.userId !== user.id) this.ctx.throw(403);
+      // html
+      const html = this._renderContent({
+        content,
+        replyContent: item.replyContent,
+        replyUserName: item.replyUserName,
+      });
+      // summary
+      const summary = this._trimHtml(html);
+      // update
+      await this.ctx.model.comment.update({
+        id: commentId,
+        content,
+        summary: summary.html,
+        html,
+        updatedAt: new Date(),
+      });
+      // ok
+      return {
+        action: 'update',
+        atomId: key.atomId,
+        commentId,
+      };
+    }
+
+    async save_add({ key, data: { replyId, content }, user }) {
+      // sorting
+      const list = await this.ctx.model.query(
+        'select max(sorting) as sorting from aComment where iid=? and deleted=0 and atomId=?',
+        [ this.ctx.instance.id, key.atomId ]);
+      const sorting = (list[0].sorting || 0) + 1;
+      // reply
+      let reply;
+      if (replyId) {
+        reply = await this.ctx.model.commentView.get({ id: replyId });
+      }
+      // replyContent
+      const replyContent = !reply ? '' :
+        this._fullContent({ content: reply.content, replyContent: reply.replyContent, replyUserName: reply.replyUserName });
+      // html
+      const html = this._renderContent({
+        content,
+        replyContent,
+        replyUserName: reply && reply.userName,
+      });
+      // summary
+      const summary = this._trimHtml(html);
+      // create
+      const res = await this.ctx.model.comment.insert({
+        atomId: key.atomId,
+        userId: user.id,
+        sorting,
+        heartCount: 0,
+        replyId,
+        replyUserId: reply ? reply.userId : 0,
+        replyContent,
+        content,
+        summary: summary.html,
+        html,
+      });
+      // commentCount
+      await this.ctx.meta.atom.comment({ key, atom: { comment: 1 }, user });
+      // ok
+      return {
+        action: 'create',
+        atomId: key.atomId,
+        commentId: res.insertId,
+      };
+    }
+
+    async delete({ key, data: { commentId }, user }) {
+      // comment
+      const item = await this.ctx.model.comment.get({ id: commentId });
+      if (key.atomId !== item.atomId || item.userId !== user.id) this.ctx.throw(403);
+      // delete hearts
+      await this.ctx.model.commentHeart.delete({ commentId });
+      // delete comment
+      await this.ctx.model.comment.delete({ id: commentId });
+      // commentCount
+      await this.ctx.meta.atom.comment({ key, atom: { comment: -1 }, user });
+      // ok
+      return {
+        action: 'delete',
+        atomId: key.atomId,
+        commentId,
+      };
+    }
+
+    async heart({ key, data: { commentId, heart }, user }) {
+      let diff = 0;
+      // check if exists
+      const _heart = await this.ctx.model.commentHeart.get({
+        userId: user.id,
+        atomId: key.atomId,
+        commentId,
+      });
+      if (_heart && !heart) {
+        diff = -1;
+        // delete
+        await this.ctx.model.commentHeart.delete({
+          id: _heart.id,
+        });
+      } else if (!_heart && heart) {
+        diff = 1;
+        // new
+        await this.ctx.model.commentHeart.insert({
+          userId: user.id,
+          atomId: key.atomId,
+          commentId,
+          heart: 1,
+        });
+      }
+      // get
+      const item = await this.ctx.model.comment.get({ id: commentId });
+      let heartCount = item.heartCount;
+      if (diff !== 0) {
+        heartCount += diff;
+        await this.ctx.model.comment.update({
+          id: commentId,
+          heartCount,
+        });
+      }
+      // ok
+      return {
+        action: 'heart',
+        atomId: key.atomId,
+        commentId,
+        heart, heartCount,
+      };
+    }
+
+    _fullContent({ content, replyContent, replyUserName }) {
+      if (!replyContent) return content;
+      return `${content}
+
+> \`${replyUserName}\`:
+> ${replyContent}
+`;
+    }
+
+    _renderContent({ content, replyContent, replyUserName }) {
+      const _content = this._fullContent({ content, replyContent, replyUserName });
+      const md = markdown.create();
+      return md.render(_content);
+    }
+
+    _trimHtml(html) {
+      return trimHtml(html, this.ctx.config.comment.trim);
+    }
+
+  }
+
+  return Comment;
+};
+
+
+/***/ }),
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const atom = __webpack_require__(4);
 const atomAction = __webpack_require__(3);
 const atomClass = __webpack_require__(2);
-const auth = __webpack_require__(18);
-const authProvider = __webpack_require__(19);
+const auth = __webpack_require__(19);
+const authProvider = __webpack_require__(20);
 const role = __webpack_require__(10);
 const roleInc = __webpack_require__(11);
-const roleIncRef = __webpack_require__(63);
-const roleRef = __webpack_require__(64);
+const roleIncRef = __webpack_require__(67);
+const roleRef = __webpack_require__(68);
 const roleRight = __webpack_require__(13);
 const roleRightRef = __webpack_require__(14);
-const user = __webpack_require__(16);
-const userAgent = __webpack_require__(17);
+const user = __webpack_require__(17);
+const userAgent = __webpack_require__(18);
 const userRole = __webpack_require__(12);
-const label = __webpack_require__(65);
+const label = __webpack_require__(69);
 const atomLabel = __webpack_require__(6);
 const atomLabelRef = __webpack_require__(7);
 const atomStar = __webpack_require__(5);
@@ -5072,6 +5961,9 @@ const func = __webpack_require__(1);
 const functionStar = __webpack_require__(8);
 const functionLocale = __webpack_require__(9);
 const roleFunction = __webpack_require__(15);
+const comment = __webpack_require__(70);
+const commentView = __webpack_require__(71);
+const commentHeart = __webpack_require__(72);
 
 module.exports = app => {
   const models = {
@@ -5097,13 +5989,16 @@ module.exports = app => {
     functionStar,
     functionLocale,
     roleFunction,
+    comment,
+    commentView,
+    commentHeart,
   };
   return models;
 };
 
 
 /***/ }),
-/* 63 */
+/* 67 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5121,7 +6016,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 64 */
+/* 68 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5147,7 +6042,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 65 */
+/* 69 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5165,17 +6060,90 @@ module.exports = app => {
 
 
 /***/ }),
-/* 66 */
+/* 70 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+
+  class Comment extends app.meta.Model {
+
+    constructor(ctx) {
+      super(ctx, { table: 'aComment', options: { disableDeleted: false } });
+    }
+
+  }
+
+  return Comment;
+};
+
+
+/***/ }),
+/* 71 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+
+  class CommentView extends app.meta.Model {
+
+    constructor(ctx) {
+      super(ctx, { table: 'aViewComment', options: { disableDeleted: false } });
+    }
+
+  }
+
+  return CommentView;
+};
+
+
+/***/ }),
+/* 72 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+
+  class CommentHeart extends app.meta.Model {
+
+    constructor(ctx) {
+      super(ctx, { table: 'aCommentHeart', options: { disableDeleted: true } });
+    }
+
+  }
+
+  return CommentHeart;
+};
+
+
+/***/ }),
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
+  // keywords
+  const keywords = __webpack_require__(74)(app);
   // schemas
-  const schemas = __webpack_require__(67)(app);
+  const schemas = __webpack_require__(75)(app);
   // meta
   const meta = {
+    base: {
+      functions: {
+        listComment: {
+          title: 'Comment List',
+          scene: 'list',
+          sorting: 1,
+          menu: 1,
+          actionPath: 'comment/all',
+        },
+      },
+    },
     sequence: {
       providers: {
         draft: {
+          start: 0,
+          expression({ ctx, value }) {
+            return ++value;
+          },
+        },
+        userName: {
           start: 0,
           expression({ ctx, value }) {
             return ++value;
@@ -5189,7 +6157,9 @@ module.exports = app => {
           schemas: 'user',
         },
       },
-      keywords: {},
+      keywords: {
+        'x-exists': keywords.exists,
+      },
       schemas: {
         user: schemas.user,
       },
@@ -5200,7 +6170,40 @@ module.exports = app => {
 
 
 /***/ }),
-/* 67 */
+/* 74 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(0);
+const Ajv = require3('ajv');
+
+module.exports = app => {
+  const keywords = {};
+  keywords.exists = {
+    async: true,
+    type: 'string',
+    errors: true,
+    compile() {
+      return async function(data, path, rootData, name) {
+        const ctx = this;
+        const res = await ctx.meta.user.exists({ [name]: data });
+        if (res && res.id !== ctx.user.agent.id) {
+          const errors = [{ keyword: 'x-exists', params: [], message: ctx.text('Element exists') }];
+          throw new Ajv.ValidationError(errors);
+        }
+        if (!res && data.indexOf('__') > -1) {
+          const errors = [{ keyword: 'x-exists', params: [], message: ctx.text('Cannot contain __') }];
+          throw new Ajv.ValidationError(errors);
+        }
+        return true;
+      };
+    },
+  };
+  return keywords;
+};
+
+
+/***/ }),
+/* 75 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5214,6 +6217,7 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Username',
         notEmpty: true,
+        'x-exists': true,
       },
       realName: {
         type: 'string',
@@ -5227,12 +6231,14 @@ module.exports = app => {
         ebTitle: 'Email',
         notEmpty: true,
         format: 'email',
+        'x-exists': true,
       },
       mobile: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Mobile',
         notEmpty: true,
+        'x-exists': true,
       },
       motto: {
         type: 'string',

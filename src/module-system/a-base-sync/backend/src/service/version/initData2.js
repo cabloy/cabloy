@@ -34,7 +34,7 @@ const users = {
     item: {
       userName: 'root',
       realName: 'root',
-      email: 'demo@cabloy.org',
+      email: null,
       mobile: null,
       avatar: null,
       motto: null,

@@ -1,4 +1,6 @@
 module.exports = app => {
+  // keywords
+  const keywords = require('./config/validation/keywords.js')(app);
   // schemas
   const schemas = require('./config/validation/schemas.js')(app);
   // meta
@@ -22,6 +24,12 @@ module.exports = app => {
             return ++value;
           },
         },
+        userName: {
+          start: 0,
+          expression({ ctx, value }) {
+            return ++value;
+          },
+        },
       },
     },
     validation: {
@@ -30,7 +38,9 @@ module.exports = app => {
           schemas: 'user',
         },
       },
-      keywords: {},
+      keywords: {
+        'x-exists': keywords.exists,
+      },
       schemas: {
         user: schemas.user,
       },
