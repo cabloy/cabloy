@@ -1,3 +1,49 @@
+function _onParseComment(item) {
+  const actionsEdit = item.userId !== util.article.user.op.id ? '' : `
+      <a href="${util.article.commentUrl({ atomId: item.atomId, id: item.id, replyId: 0 })}" class="action" target="_blank"><span class="glyphicon glyphicon-pencil"></span></a>
+      <a href="#" class="action delete"><span class="glyphicon glyphicon-trash"></span></a>
+  `;
+  const reply = !env.article.allowComment ? '' : `
+    <a href="${util.article.commentUrl({ atomId: item.atomId, id: 0, replyId: item.id })}" class="action" target="_blank"><span class="glyphicon glyphicon-share-alt"></span></a>
+  `;
+  return `
+<div class="comment panel panel-default" data-comment-id="${item.id}">
+  <div class="header panel-heading">
+    <div class="user">
+      <img class="avatar avatar32" src="${util.combineImageUrl(item.avatar, 32, 32)}" />
+      <h3 class="name panel-title">${item.userName}</h3>
+      <div class="date">#${item.sorting} · ${util.time.formatDateTime(item.createdAt)}</div>
+    </div>
+    <div class="actions">
+      ${actionsEdit}
+      <a href="#" class="action heart">
+        <span class="glyphicon glyphicon-heart heart-on ${item.heart ? '' : 'hidden'}"></span>
+        <span class="glyphicon glyphicon-heart-empty heart-off ${item.heart ? 'hidden' : ''}"></span>
+        <span class="num">${item.heartCount}</span>
+      </a>
+      ${reply}
+    </div>
+  </div>
+  <div class="content panel-body">
+    ${item.html}
+  </div>
+</div>
+  `;
+}
+
+function _onParseCommentRecent(item) {
+  return `
+<li class="media">
+    <div class="media-body">
+      <h4 class="media-heading"><a href="${util.url(item.url)}#comments">Re: ${item.atomName}</a></h4>
+      <div class="body">${item.h_summary}</div>
+      <div class="user">-- ${item.h_userName}</div>
+    </div>
+</li>
+  `;
+}
+
+// article
 util.article = {
   echo() {
     return util.ajax({
@@ -43,37 +89,47 @@ util.article = {
       this._readCountInc(env.article.atomId, 1);
     });
   },
-  breadcrumb() {
-    if (!env.article || $('.breadcrumb-nav').length === 0) return;
+  breadcrumb({ container }) {
+    const $container = $(container);
+    if (!env.article || $container.length === 0) return;
     const $category = $(`.category-${env.article.categoryId}`);
-    $('.breadcrumb-nav .category')
+    $('.category', $container)
       .attr('href', $category.attr('href'))
       .text($category.data('category-name'));
-    $('.breadcrumb-nav .active').text(env.article.atomName);
+    $('.active', $container).text(env.article.atomName);
   },
   categoryName(categoryId) {
     return $(`.category-${categoryId}`).data('category-name');
   },
-  relatives() {
-    if (!env.article || $('.relatives').length === 0) return;
-    this._relatives('prev');
-    this._relatives('next');
+  relatives({ container }) {
+    const $container = $(container);
+    if (!env.article || $container.length === 0) return;
+    this._relatives($container, 'prev');
+    this._relatives($container, 'next');
   },
-  comments({ onParse }) {
-    if (!env.article || $('.comments').length === 0) return;
+  commentsRecent(options) {
+    const $container = $(options.container);
+    if ($container.length === 0) return;
+    if (!options.onParse) options.onParse = _onParseCommentRecent;
+    this._loadCommentsRecent({ $container, onParse: options.onParse });
+  },
+  comments(options) {
+    const $container = $(options.container);
+    if (!env.article || $container.length === 0) return;
+    if (!options.onParse) options.onParse = _onParseComment;
     // postComment click
-    $('.comments .button-postComment').click(()=>{
+    $('.button-postComment', $container).click(() => {
       window.open(util.article.commentUrl({ atomId: env.article.atomId, id: 0, replyId: 0 }));
     });
     // order click
-    $('.comments .order a').click(event => {
+    $('.order a', $container).click(event => {
       event.preventDefault();
       const link = $(event.target).closest('a');
       const order = link.hasClass('asc') ? 'desc' : 'asc';
-      this._switchOrder({ order, onParse });
+      this._switchOrder({ $container, order, onParse: options.onParse });
     });
     // action click
-    $('.comments .list').click(event => {
+    $('.list', $container).click(event => {
       const link = $(event.target).closest('a.action');
       if (link.length > 0) {
         const comment = link.closest('.comment');
@@ -89,10 +145,29 @@ util.article = {
       }
     });
     // init order
-    this._switchOrder({ order: env.comment.order, onParse });
+    this._switchOrder({ $container, order: env.comment.order, onParse: options.onParse });
   },
   commentUrl({ atomId, id, replyId }) {
     return `${env.site.serverUrl}/#!/a/base/comment/item?atomId=${atomId}&commentId=${id}&replyId=${replyId || 0}`;
+  },
+  _loadCommentsRecent({ $container, onParse }) {
+    // options
+    const options = {
+      orders: [
+        [ 'h_updatedAt', 'desc' ],
+      ],
+      page: { index: 0, size: env.comment.recentNum },
+    };
+    // select
+    util.ajax({
+      url: '/a/cms/comment/all',
+      body: { options: JSON.stringify(options) },
+    }).then(data => {
+      const $list = $('.list', $container);
+      for (let i = 0; i < data.list.length; i++) {
+        $list.append($(onParse(data.list[i])));
+      }
+    });
   },
   _commentActionDelete({ comment, atomId, id }) {
     bootbox.confirm({
@@ -133,7 +208,7 @@ util.article = {
       this._commentHeartSwitch(link, atomId, id, heart);
     });
   },
-  _switchOrder({ order, onParse }) {
+  _switchOrder({ $container, order, onParse }) {
     // res
     let res;
     // load more
@@ -142,7 +217,7 @@ util.article = {
     } else {
       res = true;
       this._commentsController = util.loadMore({
-        container: '.comments .list',
+        container: $('.list', $container),
         index: 0,
         context: { order },
         onFetch({ index, context }) {
@@ -172,15 +247,15 @@ util.article = {
     // order
     if (res) {
       if (order === 'asc') {
-        $('.comments .order .asc').removeClass('hidden');
-        $('.comments .order .desc').addClass('hidden');
+        $('.order .asc', $container).removeClass('hidden');
+        $('.order .desc', $container).addClass('hidden');
       } else {
-        $('.comments .order .asc').addClass('hidden');
-        $('.comments .order .desc').removeClass('hidden');
+        $('.order .asc', $container).addClass('hidden');
+        $('.order .desc', $container).removeClass('hidden');
       }
     }
   },
-  _relatives(type) {
+  _relatives($container, type) {
   // article
     const article = env.article;
     // options
@@ -210,18 +285,18 @@ util.article = {
       url: '/a/cms/article/list',
       body: { options: JSON.stringify(options) },
     }).then(data => {
-      this._relative({ type, article: data.list[0] });
+      this._relative({ $container, type, article: data.list[0] });
     });
   },
-  _relative({ type, article }) {
+  _relative({ $container, type, article }) {
     if (!article) return;
-    const $relative = $(`.relatives .${type}`);
-    const $relativeLink = $(`.relatives .${type} a`);
+    const $relative = $(`.${type}`, $container);
+    const $relativeLink = $(`.${type} a`, $container);
 
     $relativeLink.attr('href', `${util.url(article.url)}`);
     $relativeLink.text(article.atomName);
     $relative.removeClass('hidden');
-    $('.relatives').removeClass('hidden');
+    $container.removeClass('hidden');
   },
   _setStats(atoms) {
     for (const atom of atoms) {

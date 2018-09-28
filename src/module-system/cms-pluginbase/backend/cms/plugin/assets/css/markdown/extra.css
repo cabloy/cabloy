@@ -54,6 +54,11 @@ article img {
   width: 48px;
 }
 
+hr {
+  height: 1px;
+  border: 0 none;
+}
+
 .glyphicon.spinning {
   animation: spin 1s infinite linear;
   -webkit-animation: spin2 1s infinite linear;

@@ -2,12 +2,16 @@ $(document).ready(function() {
   // echo
   util.article.echo();
   // breadcrumb
-  util.article.breadcrumb();
+  util.article.breadcrumb({container:'.breadcrumb-nav'});
   // relatives
-  util.article.relatives();
+  util.article.relatives({container:'.relatives'});
 });
 
 $(document).on('echo-ready', function() {
   // stats
   util.article.stats();
+  // comments
+  util.article.comments({container:'.comments'});
+  // recent comments
+  util.article.commentsRecent({container:'.comments-recent'});
 });

@@ -1,0 +1,118 @@
+article .attachments li {
+  list-style: none;
+}
+
+article .relatives span {
+  display: inline-block;
+  width: 80px;
+}
+
+.title.stat {
+  color: #ababab;
+  margin: 6px 0 -2px 2px;
+  font-size: 12px;
+}
+
+.title.stat a {
+  color: #ababab;
+}
+
+.title.stat .glyphicon {
+  margin-right: 2px;
+}
+
+.title.stat .num {
+  margin-right: 6px;
+}
+
+article h1.title {
+  text-align: center;
+}
+
+article .title.stat {
+  text-align: right;
+}
+
+article .stat .read-count {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: 400;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  color: #777;
+  background-color: #FFE788;
+  border: 1px solid #dba500;
+  background: linear-gradient(#ffe788, #ffce38);
+  border-radius: 2px;
+  box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.4), 0px 1px 1px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s ease-in;
+  outline: 0;
+  padding: 10px 16px;
+  font-size: 18px;
+  line-height: 1.3333333;
+  border-radius: 6px;
+}
+
+.comments-recent .user {
+  text-align: right;
+}
+
+.comments .header .stat {
+  float: left;
+}
+
+.comments .header .order {
+  float: right;
+  line-height: 60px;
+}
+
+.comments .header:after {
+  display: block;
+  content: '';
+  clear: both;
+}
+
+.comments .comment {
+  list-style: none;
+}
+
+.comments .comment .header .user {
+  float: left;
+}
+
+.comments .comment .header .actions {
+  float: right;
+}
+
+.comments .comment .header .user .avatar {
+  float: left;
+}
+
+.comments .comment .header .user .name {
+  margin-left: 40px;
+  margin-top: -2px;
+}
+
+.comments .comment .header .user .date {
+  margin-left: 39px;
+  margin-top: -8px;
+  font-style: italic;
+  font-size: 13px;
+  color: #8e8e93;
+}
+
+.comments .comment .header .actions {
+  margin-top: 6px;
+}
+
+.comments .comment .header .actions a.action {
+  margin-left: 6px;
+  color: #8e8e93;
+}
+
+.comments .comment .header .actions a.action:hover,
+.comments .comment .header .actions a.action:focus {
+  color: #23527c;
+  text-decoration: none;
+}
