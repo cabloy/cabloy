@@ -1564,7 +1564,8 @@ var env=${JSON.stringify(env, null, 2)};
           return __webpack_require__(22)(_path);
         },
         url(fileName) {
-          const _path = self.resolvePath('', path.relative(_pathIntermediate, this._filename), fileName);
+          let _path = self.resolvePath('', path.relative(_pathIntermediate, this._filename), fileName);
+          _path = _path.replace(/\\/gi, '/');
           return self.getUrl(site, site.language.current, _path);
         },
         css(fileName) {
