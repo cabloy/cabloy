@@ -33,6 +33,7 @@ co(function* () {
     `);
   };
 
+  // 'mem-fs-editor' may cause a problem on windows
   command.processFiles = function* (targetDir, templateDir) {
     const src = path.join(templateDir, 'boilerplate');
     const locals = yield this.askForVariable(targetDir, templateDir);
