@@ -29,12 +29,6 @@ co(function* () {
     `);
   };
 
-  const replaceTemplate = command.replaceTemplate;
-  command.replaceTemplate = function(content, scope) {
-    if (content.toString('hex', 0, 4) === 'ffd8ffe0') return content;
-    return replaceTemplate.call(command, content, scope);
-  };
-
   yield command.run(process.cwd(), process.argv.slice(2));
 
 }).catch(err => {
