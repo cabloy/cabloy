@@ -2,6 +2,10 @@
 
 const co = require('co');
 const Command = require('egg-init');
+const path = require('path');
+const glob = require('glob');
+const fse = require('fs-extra');
+const isTextOrBinary = require('istextorbinary');
 
 co(function* () {
 
@@ -27,6 +31,23 @@ co(function* () {
       - npm run start:backend
       - npm run stop:backend
     `);
+  };
+
+  command.processFiles = function* (targetDir, templateDir) {
+    const src = path.join(templateDir, 'boilerplate');
+    const locals = yield this.askForVariable(targetDir, templateDir);
+    const files = glob.sync('**/*', { cwd: src, dot: true, nodir: true });
+    files.forEach(file => {
+      const from = path.join(src, file);
+      const to = path.join(targetDir, this.replaceTemplate(this.fileMapping[file] || file, locals));
+      this.log('write to %s', to);
+      let content = fse.readFileSync(from);
+      if (isTextOrBinary.isTextSync(from, content)) {
+        content = this.replaceTemplate(content, locals);
+      }
+      fse.outputFileSync(to, content);
+    });
+    return files;
   };
 
   yield command.run(process.cwd(), process.argv.slice(2));
