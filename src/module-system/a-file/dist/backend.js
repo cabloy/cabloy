@@ -654,7 +654,8 @@ module.exports = app => {
       heightRequire = heightRequire ? parseInt(heightRequire) : 0;
       if (!widthRequire && !heightRequire) return file.fileName;
 
-      const fileName = `${file.fileName}-${widthRequire}*${heightRequire}`;
+      // cannot use * in path on windows
+      const fileName = `${file.fileName}-${widthRequire}_${heightRequire}`;
       const destFile = await this.ctx.meta.file.getPath(
         `${file.filePath}/${fileName}${file.fileExt}`, false
       );
