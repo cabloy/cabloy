@@ -2,12 +2,7 @@
   <eb-page :page-content="false" tabs with-subnavbar>
     <eb-navbar :title="title" eb-back-link="Back">
       <f7-nav-right>
-        <template v-if="atomClass">
-          <eb-link v-if="showAdd" iconMaterial="add" :onPerform="onPerformAdd"></eb-link>
-        </template>
-        <template v-else>
-          <f7-link v-if="showPopover" iconMaterial="add" :popover-open="`#${popoverId}`"></f7-link>
-        </template>
+        <f7-link v-if="showPopover" iconMaterial="add" :popover-open="`#${popoverId}`"></f7-link>
         <eb-link iconMaterial="search" @click.prevent="onSearch"></eb-link>
       </f7-nav-right>
       <f7-subnavbar>
@@ -65,7 +60,6 @@ export default {
       tabIdStars: Vue.prototype.$meta.util.nextId('tab'),
       tabIdLabels: Vue.prototype.$meta.util.nextId('tab'),
       popoverId: Vue.prototype.$meta.util.nextId('popover'),
-      showAdd: false,
       actions: null,
     };
   },
@@ -92,26 +86,22 @@ export default {
   created() {
     // labels
     this.$local.dispatch('getLabels');
-    // checkRightCreate or functionList
+    // functionList
+    const options = {
+      where: { menu: 1, scene: 1 },
+      orders: [
+        [ 'sorting', 'asc' ],
+      ],
+    };
     if (this.atomClass) {
-      this.$api.post('atomClass/checkRightCreate', {
-        atomClass: this.atomClass,
-      }).then(data => {
-        this.showAdd = !!data;
-      });
-    } else {
-      const options = {
-        where: { menu: 1, scene: 1 },
-        orders: [
-          [ 'sorting', 'asc' ],
-        ],
-      };
-      this.$api.post('function/list', {
-        options,
-      }).then(data => {
-        this.actions = data.list;
-      });
+      options.where['e.module'] = this.atomClass.module;
+      options.where['e.atomClassName'] = this.atomClass.atomClassName;
     }
+    this.$api.post('function/list', {
+      options,
+    }).then(data => {
+      this.actions = data.list;
+    });
   },
   methods: {
     onSearch() {
@@ -126,13 +116,6 @@ export default {
       const _menu = this.getMenu(item);
       if (!_menu) return;
       return this.$meta.util.performAction({ ctx: this, action: _menu, item });
-    },
-    onPerformAdd(event) {
-      return this.onAction(event, {
-        module: this.module,
-        atomClassName: this.atomClassName,
-        action: 'create',
-      });
     },
   },
 };
