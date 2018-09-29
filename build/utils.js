@@ -92,6 +92,8 @@ exports.copyModules = function() {
     files.forEach(file => {
       const dest = path.join(config.build.assetsRoot, config.build.assetsSubDirectory);
       fse.copySync(file, dest);
+      const dest2 = path.join(__dirname, '__module', file.substr(nodeModulesPath.length));
+      fse.copySync(file, dest2);
     });
   });
 
