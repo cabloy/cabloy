@@ -6,9 +6,6 @@ module.exports = appInfo => {
 
   // modules
   config.modules = {
-    'a-base': {
-      checkUserName: true,
-    },
   };
 
   // mysql
