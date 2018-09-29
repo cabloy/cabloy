@@ -25,6 +25,6 @@
   },
   "dependencies":
   {
-    "cabloy": "^1.3.0"
+    "cabloy": "^1.3.1"
   }
 }
