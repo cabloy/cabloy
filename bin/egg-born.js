@@ -33,6 +33,16 @@ co(function* () {
     `);
   };
 
+  const askForVariable = command.askForVariable;
+  command.askForVariable = function* (targetDir, templateDir) {
+    const locals = yield askForVariable.call(command, targetDir, templateDir);
+    // targetDir
+    locals.targetDir = this.targetDir.replace(/\\/, '/');
+    // publicDir
+    locals.publicDir = path.join(require('os').homedir(), 'cabloy', locals.name).replace(/\\/, '/');
+    return locals;
+  };
+
   // 'mem-fs-editor' may cause a problem on windows
   command.processFiles = function* (targetDir, templateDir) {
     const src = path.join(templateDir, 'boilerplate');
