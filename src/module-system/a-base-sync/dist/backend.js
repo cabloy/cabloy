@@ -5241,6 +5241,8 @@ end
 /* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
+const require3 = __webpack_require__(0);
+const extend = require3('extend2');
 const initData = __webpack_require__(56);
 
 module.exports = function(ctx) {
@@ -5261,7 +5263,7 @@ module.exports = function(ctx) {
       roleIds.system = 0;
       // system roles
       for (const roleName of ctx.constant.systemRoles) {
-        const role = initData.roles[roleName];
+        const role = extend(true, {}, initData.roles[roleName]);
         role.roleIdParent = roleIds[role.roleIdParent];
         roleIds[roleName] = await ctx.meta.role.add(role);
       }
@@ -5271,7 +5273,7 @@ module.exports = function(ctx) {
     // users
     async _initUsers(roleIds, options) {
       // root user
-      const userRoot = initData.users.root;
+      const userRoot = extend(true, {}, initData.users.root);
       userRoot.item.email = options.email;
       userRoot.item.mobile = options.mobile;
       const userId = await ctx.meta.user.add(userRoot.item);
