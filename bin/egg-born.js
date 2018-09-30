@@ -37,9 +37,9 @@ co(function* () {
   command.askForVariable = function* (targetDir, templateDir) {
     const locals = yield askForVariable.call(command, targetDir, templateDir);
     // targetDir
-    locals.targetDir = this.targetDir.replace(/\\/, '/');
+    locals.targetDir = this.targetDir.replace(/\\/gi, '/');
     // publicDir
-    locals.publicDir = path.join(require('os').homedir(), 'cabloy', locals.name).replace(/\\/, '/');
+    locals.publicDir = path.join(require('os').homedir(), 'cabloy', locals.name).replace(/\\/gi, '/');
     return locals;
   };
 
