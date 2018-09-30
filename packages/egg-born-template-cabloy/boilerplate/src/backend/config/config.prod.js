@@ -4,6 +4,11 @@ module.exports = appInfo => {
   // keys
   config.keys = appInfo.name + '_{{keys}}';
 
+  // instances
+  config.instances = [
+    { subdomain: '', password: '' },
+  ];
+
   // modules
   config.modules = {
   };

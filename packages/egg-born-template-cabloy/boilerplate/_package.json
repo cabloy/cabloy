@@ -13,7 +13,6 @@
     "cov:backend": "egg-born-bin backend-cov",
     "start:backend": "egg-born-scripts backend-start --daemon",
     "stop:backend": "egg-born-scripts backend-stop",
-    "init:backend": "egg-born-bin backend-init --env='prod' --subdomain='' --password='123456'"
   },
   "author": "{{author}}",
   "devDependencies":
@@ -25,6 +24,6 @@
   },
   "dependencies":
   {
-    "cabloy": "^1.3.4"
+    "cabloy": "^1.3.5"
   }
 }
