@@ -82,20 +82,14 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
-
-module.exports = require("require3");
-
-/***/ }),
-/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const routes = __webpack_require__(2);
+const routes = __webpack_require__(1);
 const services = __webpack_require__(4);
 const config = __webpack_require__(6);
 const locales = __webpack_require__(7);
@@ -118,10 +112,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 2 */
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(3);
+const version = __webpack_require__(2);
 
 module.exports = [
   { method: 'post', path: 'version/start', controller: version, middlewares: 'inner' },
@@ -134,10 +128,10 @@ module.exports = [
 
 
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(0);
+const require3 = __webpack_require__(3);
 const chalk = require3('chalk');
 
 module.exports = app => {
@@ -159,28 +153,26 @@ module.exports = app => {
       }
 
       // init all instances
-      if (result && Object.keys(result).length > 0) {
-        try {
-          const instances = app.config.instances || [{ subdomain: '', password: '' }];
-          for (const instance of instances) {
-            await this.ctx.performAction({
-              method: 'post',
-              url: 'version/check',
-              headers: {
-                'x-inner-subdomain': instance.subdomain,
-              },
-              body: {
-                ...instance,
-                scene: 'init',
-              },
-            });
-          }
-
-          console.log(chalk.cyan('  All instances are initialized successfully!'));
-        } catch (err) {
-          console.log(chalk.cyan('  Instances are initialized failed!'));
-          throw err;
+      try {
+        const instances = app.config.instances || [{ subdomain: '', password: '' }];
+        for (const instance of instances) {
+          await this.ctx.performAction({
+            method: 'post',
+            url: 'version/check',
+            headers: {
+              'x-inner-subdomain': instance.subdomain,
+            },
+            body: {
+              ...instance,
+              scene: 'init',
+            },
+          });
         }
+
+        console.log(chalk.cyan('  All instances are initialized successfully!'));
+      } catch (err) {
+        console.log(chalk.cyan('  Instances are initialized failed!'));
+        throw err;
       }
 
       // ok
@@ -238,6 +230,12 @@ module.exports = app => {
 
 
 /***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
+module.exports = require("require3");
+
+/***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -250,9 +248,7 @@ module.exports = {
 
 /***/ }),
 /* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const require3 = __webpack_require__(0);
+/***/ (function(module, exports) {
 
 module.exports = app => {
 

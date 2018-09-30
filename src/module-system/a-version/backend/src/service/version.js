@@ -1,5 +1,3 @@
-const require3 = require('require3');
-
 module.exports = app => {
 
   class Version extends app.Service {

@@ -20,28 +20,26 @@ module.exports = app => {
       }
 
       // init all instances
-      if (result && Object.keys(result).length > 0) {
-        try {
-          const instances = app.config.instances || [{ subdomain: '', password: '' }];
-          for (const instance of instances) {
-            await this.ctx.performAction({
-              method: 'post',
-              url: 'version/check',
-              headers: {
-                'x-inner-subdomain': instance.subdomain,
-              },
-              body: {
-                ...instance,
-                scene: 'init',
-              },
-            });
-          }
-
-          console.log(chalk.cyan('  All instances are initialized successfully!'));
-        } catch (err) {
-          console.log(chalk.cyan('  Instances are initialized failed!'));
-          throw err;
+      try {
+        const instances = app.config.instances || [{ subdomain: '', password: '' }];
+        for (const instance of instances) {
+          await this.ctx.performAction({
+            method: 'post',
+            url: 'version/check',
+            headers: {
+              'x-inner-subdomain': instance.subdomain,
+            },
+            body: {
+              ...instance,
+              scene: 'init',
+            },
+          });
         }
+
+        console.log(chalk.cyan('  All instances are initialized successfully!'));
+      } catch (err) {
+        console.log(chalk.cyan('  Instances are initialized failed!'));
+        throw err;
       }
 
       // ok
