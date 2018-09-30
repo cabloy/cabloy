@@ -1563,10 +1563,10 @@ var env=${JSON.stringify(env, null, 2)};
           const _path = self.resolvePath('', this._filename, fileName);
           return __webpack_require__(22)(_path);
         },
-        url(fileName) {
+        url(fileName, language) {
           let _path = self.resolvePath('', path.relative(_pathIntermediate, this._filename), fileName);
           _path = _path.replace(/\\/gi, '/');
-          return self.getUrl(site, site.language.current, _path);
+          return self.getUrl(site, language || site.language.current, _path);
         },
         css(fileName) {
           _csses.push(self.resolvePath(_pathIntermediate, this._filename, fileName));
