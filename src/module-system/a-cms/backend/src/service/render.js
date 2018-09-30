@@ -264,7 +264,7 @@ module.exports = app => {
       data.env('site', {
         path: data._path,
         serverUrl: site.serverUrl,
-        rootUrl: this.getUrl(site, language, ''),
+        rawRootUrl: this.getUrlRawRoot(site),
       });
       // render
       let content = await ejs.renderFile(fileName, data, this.getOptions());
