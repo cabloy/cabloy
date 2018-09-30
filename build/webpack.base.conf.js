@@ -6,6 +6,11 @@ function resolve(dir) {
   return path.join(__dirname, '..', dir);
 }
 
+function hasHash(file) {
+  const name = path.basename(file);
+  return name.split('.').length - 1 > 1;
+}
+
 module.exports = {
   entry: {
     app: resolve('src/main.js'),
@@ -36,7 +41,9 @@ module.exports = {
         loader: 'url-loader',
         options: {
           limit: 10000,
-          name: utils.assetsPath('img/[name].[hash].[ext]'),
+          name(file) {
+            return hasHash(file) ? utils.assetsPath('img/[name].[ext]') : utils.assetsPath('img/[name].[hash].[ext]');
+          },
         },
       },
       {
@@ -44,7 +51,9 @@ module.exports = {
         loader: 'url-loader',
         options: {
           limit: 10000,
-          name: utils.assetsPath('fonts/[name].[hash].[ext]'),
+          name(file) {
+            return hasHash(file) ? utils.assetsPath('fonts/[name].[ext]') : utils.assetsPath('fonts/[name].[hash].[ext]');
+          },
         },
       },
     ],
