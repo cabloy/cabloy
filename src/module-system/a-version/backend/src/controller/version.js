@@ -19,27 +19,27 @@ module.exports = app => {
         throw err;
       }
 
-      // init all subdomains
+      // init all instances
       if (result && Object.keys(result).length > 0) {
         try {
-          const rows = await this.ctx.db.query('select distinct subdomain from aVersionInit');
-          for (const row of rows) {
+          const instances = app.config.instances || [{ subdomain: '', password: '' }];
+          for (const instance of instances) {
             await this.ctx.performAction({
               method: 'post',
               url: 'version/check',
               headers: {
-                'x-inner-subdomain': row.subdomain,
+                'x-inner-subdomain': instance.subdomain,
               },
               body: {
-                subdomain: row.subdomain,
+                ...instance,
                 scene: 'init',
               },
             });
           }
 
-          console.log(chalk.cyan('  All subdomains are initialized successfully!'));
+          console.log(chalk.cyan('  All instances are initialized successfully!'));
         } catch (err) {
-          console.log(chalk.cyan('  Subdomains are initialized failed!'));
+          console.log(chalk.cyan('  Instances are initialized failed!'));
           throw err;
         }
       }

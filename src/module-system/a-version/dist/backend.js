@@ -3,9 +3,6 @@ module.exports =
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
-/******/ 	// object to store loaded and loading wasm modules
-/******/ 	var installedWasmModules = {};
-/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/
@@ -40,17 +37,32 @@ module.exports =
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
 /******/ 		}
 /******/ 	};
 /******/
 /******/ 	// define __esModule on exports
 /******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
 /******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
 /******/ 	};
 /******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
@@ -68,12 +80,9 @@ module.exports =
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
 /******/
-/******/ 	// object with all compiled WebAssembly.Modules
-/******/ 	__webpack_require__.w = {};
-/******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 10);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -84,27 +93,147 @@ module.exports = require("require3");
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = {
+const routes = __webpack_require__(2);
+const services = __webpack_require__(4);
+const config = __webpack_require__(6);
+const locales = __webpack_require__(7);
+const errors = __webpack_require__(9);
+const constants = __webpack_require__(10);
+
+// eslint-disable-next-line
+module.exports = app => {
+
+  return {
+    routes,
+    services,
+    config,
+    locales,
+    errors,
+    constants,
+  };
+
 };
 
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = {
-  1001: 'module %s is old',
-};
+const version = __webpack_require__(3);
+
+module.exports = [
+  { method: 'post', path: 'version/start', controller: version, middlewares: 'inner' },
+  { method: 'post', path: 'version/check', controller: version, middlewares: 'inner' },
+  { method: 'post', path: 'version/updateModule', controller: version, middlewares: 'inner,transaction' },
+  { method: 'post', path: 'version/initModule', controller: version, middlewares: 'inner,transaction' },
+  { method: 'post', path: 'version/testModule', controller: version, middlewares: 'inner,transaction' },
+  { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
+];
 
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = {
-  'module %s is old': '模块过旧',
+const require3 = __webpack_require__(0);
+const chalk = require3('chalk');
+
+module.exports = app => {
+  class VersionController extends app.Controller {
+
+    async start() {
+      // update all modules
+      let result;
+      try {
+        result = await this.ctx.performAction({
+          method: 'post',
+          url: 'version/check',
+        });
+        if (Object.keys(result).length > 0) console.log(result);
+        console.log(chalk.cyan('  All modules are checked successfully!'));
+      } catch (err) {
+        console.log(chalk.cyan('  Modules are checked failed!'));
+        throw err;
+      }
+
+      // init all instances
+      if (result && Object.keys(result).length > 0) {
+        try {
+          const instances = app.config.instances || [{ subdomain: '', password: '' }];
+          for (const instance of instances) {
+            await this.ctx.performAction({
+              method: 'post',
+              url: 'version/check',
+              headers: {
+                'x-inner-subdomain': instance.subdomain,
+              },
+              body: {
+                ...instance,
+                scene: 'init',
+              },
+            });
+          }
+
+          console.log(chalk.cyan('  All instances are initialized successfully!'));
+        } catch (err) {
+          console.log(chalk.cyan('  Instances are initialized failed!'));
+          throw err;
+        }
+      }
+
+      // ok
+      // console.log(chalk.yellow('  For more details, please goto http://{ip}:{port}/#/a/version/check\n'));
+      this.ctx.success();
+    }
+
+    // check all modules
+    async check() {
+      // options:
+      //   scene:init
+      //   scene:test
+      const options = this.ctx.request.body || {};
+      options.result = {};
+      await this.service.version.check(options);
+      this.ctx.success(options.result);
+    }
+
+    // update module
+    async updateModule() {
+      await this.service.version.updateModule(
+        this.ctx.request.body.module,
+        this.ctx.getInt('version')
+      );
+      this.ctx.success();
+    }
+
+    // init module
+    async initModule() {
+      await this.service.version.initModule(
+        this.ctx.request.body,
+        this.ctx.request.body.module,
+        this.ctx.getInt('version')
+      );
+      this.ctx.success();
+    }
+
+    // test module
+    async testModule() {
+      await this.service.version.testModule(
+        this.ctx.request.body
+      );
+      this.ctx.success();
+    }
+
+    // update this module
+    async update() {
+      await this.service.version.update(this.ctx.getInt('version'));
+      this.ctx.success();
+    }
+
+  }
+  return VersionController;
 };
 
 
@@ -112,24 +241,15 @@ module.exports = {
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
+const version = __webpack_require__(5);
+
 module.exports = {
-  'zh-cn': __webpack_require__(3),
+  version,
 };
 
 
 /***/ }),
 /* 5 */
-/***/ (function(module, exports) {
-
-// eslint-disable-next-line
-module.exports = appInfo => {
-  const config = {};
-  return config;
-};
-
-
-/***/ }),
-/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -358,159 +478,48 @@ module.exports = app => {
 
 
 /***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+// eslint-disable-next-line
+module.exports = appInfo => {
+  const config = {};
+  return config;
+};
+
+
+/***/ }),
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(6);
-
 module.exports = {
-  version,
+  'zh-cn': __webpack_require__(8),
 };
 
 
 /***/ }),
 /* 8 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-const require3 = __webpack_require__(0);
-const chalk = require3('chalk');
-
-module.exports = app => {
-  class VersionController extends app.Controller {
-
-    async start() {
-      // update all modules
-      let result;
-      try {
-        result = await this.ctx.performAction({
-          method: 'post',
-          url: 'version/check',
-        });
-        if (Object.keys(result).length > 0) console.log(result);
-        console.log(chalk.cyan('  All modules are checked successfully!'));
-      } catch (err) {
-        console.log(chalk.cyan('  Modules are checked failed!'));
-        throw err;
-      }
-
-      // init all subdomains
-      if (result && Object.keys(result).length > 0) {
-        try {
-          const rows = await this.ctx.db.query('select distinct subdomain from aVersionInit');
-          for (const row of rows) {
-            await this.ctx.performAction({
-              method: 'post',
-              url: 'version/check',
-              headers: {
-                'x-inner-subdomain': row.subdomain,
-              },
-              body: {
-                subdomain: row.subdomain,
-                scene: 'init',
-              },
-            });
-          }
-
-          console.log(chalk.cyan('  All subdomains are initialized successfully!'));
-        } catch (err) {
-          console.log(chalk.cyan('  Subdomains are initialized failed!'));
-          throw err;
-        }
-      }
-
-      // ok
-      // console.log(chalk.yellow('  For more details, please goto http://{ip}:{port}/#/a/version/check\n'));
-      this.ctx.success();
-    }
-
-    // check all modules
-    async check() {
-      // options:
-      //   scene:init
-      //   scene:test
-      const options = this.ctx.request.body || {};
-      options.result = {};
-      await this.service.version.check(options);
-      this.ctx.success(options.result);
-    }
-
-    // update module
-    async updateModule() {
-      await this.service.version.updateModule(
-        this.ctx.request.body.module,
-        this.ctx.getInt('version')
-      );
-      this.ctx.success();
-    }
-
-    // init module
-    async initModule() {
-      await this.service.version.initModule(
-        this.ctx.request.body,
-        this.ctx.request.body.module,
-        this.ctx.getInt('version')
-      );
-      this.ctx.success();
-    }
-
-    // test module
-    async testModule() {
-      await this.service.version.testModule(
-        this.ctx.request.body
-      );
-      this.ctx.success();
-    }
-
-    // update this module
-    async update() {
-      await this.service.version.update(this.ctx.getInt('version'));
-      this.ctx.success();
-    }
-
-  }
-  return VersionController;
+module.exports = {
+  'module %s is old': '模块过旧',
 };
 
 
 /***/ }),
 /* 9 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-const version = __webpack_require__(8);
-
-module.exports = [
-  { method: 'post', path: 'version/start', controller: version, middlewares: 'inner' },
-  { method: 'post', path: 'version/check', controller: version, middlewares: 'inner' },
-  { method: 'post', path: 'version/updateModule', controller: version, middlewares: 'inner,transaction' },
-  { method: 'post', path: 'version/initModule', controller: version, middlewares: 'inner,transaction' },
-  { method: 'post', path: 'version/testModule', controller: version, middlewares: 'inner,transaction' },
-  { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
-];
+module.exports = {
+  1001: 'module %s is old',
+};
 
 
 /***/ }),
 /* 10 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-const routes = __webpack_require__(9);
-const services = __webpack_require__(7);
-const config = __webpack_require__(5);
-const locales = __webpack_require__(4);
-const errors = __webpack_require__(2);
-const constants = __webpack_require__(1);
-
-// eslint-disable-next-line
-module.exports = app => {
-
-  return {
-    routes,
-    services,
-    config,
-    locales,
-    errors,
-    constants,
-  };
-
+module.exports = {
 };
 
 
