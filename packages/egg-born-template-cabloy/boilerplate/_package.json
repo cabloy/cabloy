@@ -12,7 +12,7 @@
     "test:backend": "egg-born-bin backend-test",
     "cov:backend": "egg-born-bin backend-cov",
     "start:backend": "egg-born-scripts backend-start --daemon",
-    "stop:backend": "egg-born-scripts backend-stop",
+    "stop:backend": "egg-born-scripts backend-stop"
   },
   "author": "{{author}}",
   "devDependencies":
