@@ -321,6 +321,7 @@ module.exports = app => {
     { method: 'post', path: 'site/buildLanguage', controller: site, middlewares: 'file', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'site/buildLanguages', controller: site, middlewares: 'file', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'site/getLanguages', controller: site },
+    { method: 'post', path: 'site/getUrl', controller: site },
     // category
     { method: 'post', path: 'category/item', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'category/save', controller: category, middlewares: 'validate', meta: {
@@ -615,6 +616,14 @@ module.exports = app => {
 
     async getLanguages() {
       const res = await this.ctx.service.site.getLanguages();
+      this.ctx.success(res);
+    }
+
+    async getUrl() {
+      const res = await this.ctx.service.site.getUrl({
+        language: this.ctx.request.body.language,
+        path: this.ctx.request.body.path,
+      });
       this.ctx.success(res);
     }
 
@@ -1764,6 +1773,11 @@ module.exports = app => {
         });
       }
       return languages;
+    }
+
+    async getUrl({ language, path }) {
+      const site = await this.ctx.service.render.getSite({ language });
+      return this.ctx.service.render.getUrl(site, language, path);
     }
 
     _adjustConfigLanguange(data) {

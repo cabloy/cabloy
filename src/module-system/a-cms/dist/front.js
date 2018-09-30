@@ -2015,12 +2015,12 @@ component.options.__file = "languagePreview.vue"
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/config/list.vue?vue&type=template&id=61f55c7e&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('cms'),"eb-back-link":"Back"}}),_vm._v(" "),_c('f7-list',[_c('eb-list-item',{attrs:{"title":_vm.$text('Site')}},[_c('div',{attrs:{"slot":"after"},slot:"after"},[_c('eb-link',{attrs:{"eb-href":"config/site"}},[_vm._v(_vm._s(_vm.$text('Config')))]),_vm._v(" "),_c('eb-link',{attrs:{"onPerform":_vm.onPerformBuild}},[_vm._v(_vm._s(_vm.$text('Build')))])],1)]),_vm._v(" "),_c('f7-list-group',[_c('f7-list-item',{attrs:{"title":_vm.$text('Languages'),"group-title":""}}),_vm._v(" "),(_vm.languages)?_vm._l((_vm.languages),function(item){return _c('eb-list-item',{key:item.value,attrs:{"title":item.title}},[_c('div',{attrs:{"slot":"after"},slot:"after"},[_c('eb-link',{attrs:{"eb-href":("category/list?language=" + (item.value))}},[_vm._v(_vm._s(_vm.$text('Categories')))]),_vm._v(" "),_c('eb-link',{attrs:{"eb-href":("config/language?language=" + (item.value))}},[_vm._v(_vm._s(_vm.$text('Config')))]),_vm._v(" "),_c('eb-link',{attrs:{"context":item.value,"onPerform":_vm.onPerformBuildLanguage}},[_vm._v(_vm._s(_vm.$text('Build')))])],1)])}):_vm._e()],2)],1)],1)}
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/config/list.vue?vue&type=template&id=77f8013f&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('cms'),"eb-back-link":"Back"}}),_vm._v(" "),_c('f7-list',[_c('eb-list-item',{attrs:{"title":_vm.$text('Site')}},[_c('div',{attrs:{"slot":"after"},slot:"after"},[_c('eb-link',{attrs:{"eb-href":"config/site"}},[_vm._v(_vm._s(_vm.$text('Config')))]),_vm._v(" "),_c('eb-link',{attrs:{"onPerform":_vm.onPerformBuild}},[_vm._v(_vm._s(_vm.$text('Build')))])],1)]),_vm._v(" "),_c('f7-list-group',[_c('f7-list-item',{attrs:{"title":_vm.$text('Languages'),"group-title":""}}),_vm._v(" "),(_vm.languages)?_vm._l((_vm.languages),function(item){return _c('eb-list-item',{key:item.value,attrs:{"title":item.title}},[_c('div',{attrs:{"slot":"after"},slot:"after"},[_c('eb-link',{attrs:{"eb-href":("category/list?language=" + (item.value))}},[_vm._v(_vm._s(_vm.$text('Categories')))]),_vm._v(" "),_c('eb-link',{attrs:{"eb-href":("config/language?language=" + (item.value))}},[_vm._v(_vm._s(_vm.$text('Config')))]),_vm._v(" "),_c('eb-link',{attrs:{"context":item.value,"onPerform":_vm.onPerformBuildLanguage}},[_vm._v(_vm._s(_vm.$text('Build')))]),_vm._v(" "),_c('eb-link',{attrs:{"context":item.value,"onPerform":_vm.onPerformPreview}},[_vm._v(_vm._s(_vm.$text('Preview')))])],1)])}):_vm._e()],2)],1)],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./front/src/pages/config/list.vue?vue&type=template&id=61f55c7e&
+// CONCATENATED MODULE: ./front/src/pages/config/list.vue?vue&type=template&id=77f8013f&
 
 // CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/config/list.vue?vue&type=script&lang=js&
 
@@ -2058,6 +2058,14 @@ var staticRenderFns = []
         }).then(function (data) {
           return _this2.$text('Time Used') + ': ' + data.time + _this2.$text('seconds');
         });
+      });
+    },
+    onPerformPreview: function onPerformPreview(event, context) {
+      return this.$api.post('site/getUrl', {
+        language: context,
+        path: 'index.html'
+      }).then(function (data) {
+        window.open(data, 'cms_site_' + context);
       });
     }
   }

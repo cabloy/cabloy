@@ -16,6 +16,7 @@
               <eb-link :eb-href="`category/list?language=${item.value}`">{{$text('Categories')}}</eb-link>
               <eb-link :eb-href="`config/language?language=${item.value}`">{{$text('Config')}}</eb-link>
               <eb-link :context="item.value" :onPerform="onPerformBuildLanguage">{{$text('Build')}}</eb-link>
+              <eb-link :context="item.value" :onPerform="onPerformPreview">{{$text('Preview')}}</eb-link>
             </div>
           </eb-list-item>
         </template>
@@ -51,6 +52,14 @@ export default {
         }).then(data => {
           return `${this.$text('Time Used')}: ${data.time}${this.$text('seconds')}`;
         });
+      });
+    },
+    onPerformPreview(event, context) {
+      return this.$api.post('site/getUrl', {
+        language: context,
+        path: 'index.html',
+      }).then(data => {
+        window.open(data, `cms_site_${context}`);
       });
     },
   },

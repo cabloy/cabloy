@@ -58,6 +58,11 @@ module.exports = app => {
       return languages;
     }
 
+    async getUrl({ language, path }) {
+      const site = await this.ctx.service.render.getSite({ language });
+      return this.ctx.service.render.getUrl(site, language, path);
+    }
+
     _adjustConfigLanguange(data) {
       if (data) {
         delete data.host;

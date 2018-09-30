@@ -58,6 +58,14 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async getUrl() {
+      const res = await this.ctx.service.site.getUrl({
+        language: this.ctx.request.body.language,
+        path: this.ctx.request.body.path,
+      });
+      this.ctx.success(res);
+    }
+
   }
   return SiteController;
 };
