@@ -40,7 +40,11 @@ export default {
     onPerformSave() {
       const data = JSON.parse(this.content);
       return this.$api.post('site/setConfigSite', { data }).then(() => {
+        // change
         this.$local.commit('setConfigSite', data);
+        // refetch languages
+        this.$local.commit('setLanguages', null);
+        this.$local.dispatch('getLanguages');
         return true;
       });
     },
