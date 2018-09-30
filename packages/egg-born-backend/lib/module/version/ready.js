@@ -4,21 +4,6 @@ module.exports = async function(app) {
     method: 'post',
     url: '/api/a/version',
   });
-  // version init
-  if (app.meta.isTest) {
-    await ctx.performAction({
-      method: 'post',
-      url: '/a/version/version/check',
-      headers: {
-        'x-inner-subdomain': '',
-      },
-      body: {
-        subdomain: '',
-        password: '',
-        scene: 'init',
-      },
-    });
-  }
   // run immediate schedules
   for (const key in app.meta.startups) {
     const startup = app.meta.startups[key];
