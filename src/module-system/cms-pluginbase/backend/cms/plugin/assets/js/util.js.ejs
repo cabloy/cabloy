@@ -106,8 +106,13 @@ const util = {
   promise(handler) {
     return window.Promise ? new Promise(handler) : _createPromise(handler);
   },
-  url(path) {
-    return `${env.site.rootUrl}/${path}`;
+  rootUrl(language) {
+    language = language || env.language.current;
+    return `${env.site.rawRootUrl}${language === env.language.default ? '' : '/' + language}`;
+  },
+  url(path, language) {
+    const urlRoot = this.rootUrl(language);
+    return path ? `${urlRoot}/${path}` : urlRoot;
   },
   ajax({ url, body, cache = true }) {
     return this.promise((resolve, reject) => {
