@@ -1,7 +1,7 @@
 <template>
   <eb-page login-screen no-toolbar no-navbar no-swipeback>
     <f7-icon v-if="showClose" material="close" class="close" @click.native="close"></f7-icon>
-    <f7-login-screen-title>{{$f7.params.name}}</f7-login-screen-title>
+    <f7-login-screen-title>{{this.title}}</f7-login-screen-title>
     <div v-if="loginSimple">
       <loginSimple></loginSimple>
     </div>
@@ -28,6 +28,11 @@ export default {
   methods: {
     close() {
       this.$f7router.back();
+    },
+  },
+  computed: {
+    title() {
+      return this.$store.getters['auth/title'];
     },
   },
   mounted() {
