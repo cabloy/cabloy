@@ -31,7 +31,8 @@
       display: flex;
       align-items: center;
       height: 100%;
-      min-width: 180px;
+      /* if set, the width not expand automatically */
+      /* min-width: 180px; */
       color: #C3D4E7;
       font-size: 30px;
       font-weight: 700;
@@ -161,12 +162,13 @@
 
 .device-windows {
   .eb-layout-container-pc {
-     ::-webkit-scrollbar {
+    ::-webkit-scrollbar {
       width: 10px;
       height: 10px;
       background-color: #F4F7F8;
     }
-     ::-webkit-scrollbar-thumb {
+
+    ::-webkit-scrollbar-thumb {
       border-radius: 0;
       background-color: #D3E4E7;
     }
