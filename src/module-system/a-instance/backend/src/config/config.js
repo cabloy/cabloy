@@ -13,7 +13,7 @@ module.exports = appInfo => {
 
   // cache
   config.cache = {
-    timeout: 1 * 24 * 3600 * 1000, // 1 天
+    timeout: 1 * 1 * 3600 * 1000, // 1 hour
   };
 
   return config;
