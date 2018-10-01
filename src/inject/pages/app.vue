@@ -15,7 +15,7 @@ export default {
       staticClass: this.$meta.config.layout.color ? `color-theme-${this.$meta.config.layout.color}` : '',
       props: { params: this.$root.$options.framework7 },
     }, children);
-    return c('div', [ app ]);
+    return c('div', [app]);
   },
   data() {
     return {
@@ -90,11 +90,12 @@ export default {
     },
     _authEcho(cb) {
       // get auth first
-      this.$api.post('/a/base/auth/echo').then(user => {
+      this.$api.post('/a/base/auth/echo').then(data => {
         this.$store.commit('auth/login', {
-          loggedIn: user.agent.anonymous === 0,
-          user,
+          loggedIn: data.user.agent.anonymous === 0,
+          user: data.user,
         });
+        this.$store.commit('auth/setInstance', data.instance);
         return cb && cb();
       }).catch(() => {
         return cb && cb();
@@ -123,6 +124,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>
