@@ -3718,7 +3718,10 @@ module.exports = app => {
           await this.ctx.meta.user.check();
         }
         // logined
-        this.ctx.success(this.ctx.user);
+        this.ctx.success({
+          user: this.ctx.user,
+          instance: this.ctx.instance,
+        });
       } catch (e) {
         // deleted,disabled
         await this.logout();
@@ -3726,13 +3729,19 @@ module.exports = app => {
     }
 
     async check() {
-      this.ctx.success(this.ctx.user);
+      this.ctx.success({
+        user: this.ctx.user,
+        instance: this.ctx.instance,
+      });
     }
 
     async logout() {
       await this.ctx.logout();
       await this.ctx.meta.user.loginAsAnonymous();
-      this.ctx.success(this.ctx.user);
+      this.ctx.success({
+        user: this.ctx.user,
+        instance: this.ctx.instance,
+      });
     }
 
     async installAuthProviders() {
