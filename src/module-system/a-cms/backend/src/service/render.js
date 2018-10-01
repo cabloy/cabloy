@@ -365,6 +365,7 @@ module.exports = app => {
         delete env.article.summary;
         delete env.article.content;
         delete env.article.html;
+        delete env.article.contentSearch;
       }
       // replace
       const text = `

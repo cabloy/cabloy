@@ -779,9 +779,10 @@ module.exports = app => {
         // create view: aCmsArticleViewFull
         sql = `
           CREATE VIEW aCmsArticleViewFull as
-            select a.*,b.categoryName,c.content,c.html from aCmsArticle a
+            select a.*,b.categoryName,c.content,c.html,concat(d.atomName,',',c.content) contentSearch from aCmsArticle a
               left join aCmsCategory b on a.categoryId=b.id
               left join aCmsContent c on a.id=c.itemId
+              left join aAtom d on a.atomId=d.id
         `;
         await this.ctx.model.query(sql);
 
@@ -1485,6 +1486,7 @@ module.exports = app => {
         delete env.article.summary;
         delete env.article.content;
         delete env.article.html;
+        delete env.article.contentSearch;
       }
       // replace
       const text = `
