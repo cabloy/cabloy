@@ -4,8 +4,8 @@
       <div class="item" v-if="loggedIn">
         <img class="avatar avatar24" :src="$meta.util.combineImageUrl(user.op.avatar,24)">
       </div>
-      <div class="item name" v-if="loggedIn">{{userName}}</div>
-      <div class="item status" v-if="!loggedIn">{{$text('Not LoggedIn')}}</div>
+        <div class="item name" v-if="loggedIn">{{userName}}</div>
+        <div class="item status" v-if="!loggedIn">{{$text('Not LoggedIn')}}</div>
     </f7-link>
     <f7-popover :id="popoverId">
       <f7-list inset>
@@ -47,12 +47,8 @@ export default {
     },
     onLogout() {
       this.$f7.dialog.confirm(this.$text('Are you sure to perform this operation?'), () => {
-        this.$api.post('/a/base/auth/logout').then(user => {
-          this.$store.commit('auth/login', {
-            loggedIn: false,
-            user,
-          });
-          this.$meta.vueApp.reload();
+        this.$api.post('/a/base/auth/logout').then(() => {
+          this.$meta.vueApp.reload({ echo: true });
         });
       });
     },
@@ -61,6 +57,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>

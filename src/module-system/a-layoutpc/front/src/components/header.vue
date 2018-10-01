@@ -12,7 +12,7 @@ export default {
   render(c) {
     const title = c('div', {
       staticClass: 'title',
-      domProps: { innerText: this.$f7.params.name },
+      domProps: { innerText: this.title },
     });
     const tabs = c('eb-tabs', {
       ref: 'tabs',
@@ -26,6 +26,11 @@ export default {
     });
     return c('div', { staticClass: 'eb-layout-header' }, [ title, tabs, buttons, mine ]);
   },
+  computed: {
+    title() {
+      return this.$store.getters['auth/title'];
+    },
+  },
   methods: {
     isTabActive(groupId) {
       return this.$refs.tabs.isTabActive(groupId);
@@ -35,6 +40,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>
