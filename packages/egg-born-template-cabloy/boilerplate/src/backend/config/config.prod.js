@@ -6,7 +6,7 @@ module.exports = appInfo => {
 
   // instances
   config.instances = [
-    { subdomain: '', password: '' },
+    { subdomain: '', password: '', title: '' },
   ];
 
   // modules
