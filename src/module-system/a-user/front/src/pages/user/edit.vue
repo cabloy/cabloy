@@ -19,18 +19,6 @@ export default {
     };
   },
   methods: {
-    onPerformLogin() {
-      this.$meta.vueLayout.openLogin();
-    },
-    onPerformLogout() {
-      return this.$api.post('/a/base/auth/logout').then(user => {
-        this.$store.commit('auth/login', {
-          loggedIn: false,
-          user,
-        });
-        this.$meta.vueApp.reload();
-      });
-    },
     onPerformSave(event) {
       return this.$refs.validate.perform(event);
     },
@@ -47,6 +35,4 @@ export default {
 
 </script>
 <style lang="less" scoped>
-
-
 </style>
