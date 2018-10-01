@@ -55,12 +55,8 @@ export default {
         auth: this.auth,
         password: this.password,
         rememberMe: this.rememberMe,
-      }).then(user => {
-        this.$store.commit('auth/login', {
-          loggedIn: true,
-          user,
-        });
-        this.$meta.vueApp.reload();
+      }).then(() => {
+        this.$meta.vueApp.reload({ echo: true });
       });
     },
     signIn() {

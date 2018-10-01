@@ -34,12 +34,8 @@ export default {
           auth: this.data.email || this.data.mobile,
           password: this.data.password,
           rememberMe: false,
-        }).then(user => {
-          this.$store.commit('auth/login', {
-            loggedIn: true,
-            user,
-          });
-          this.$meta.vueApp.reload();
+        }).then(() => {
+          this.$meta.vueApp.reload({ echo: true });
         });
       });
     },
