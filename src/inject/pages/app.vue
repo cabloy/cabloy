@@ -91,11 +91,16 @@ export default {
     _authEcho(cb) {
       // get auth first
       this.$api.post('/a/base/auth/echo').then(data => {
+        // login
         this.$store.commit('auth/login', {
           loggedIn: data.user.agent.anonymous === 0,
           user: data.user,
         });
+        // instance
         this.$store.commit('auth/setInstance', data.instance);
+        // title
+        window.document.title = this.$store.getters['auth/title'];
+        // ok
         return cb && cb();
       }).catch(() => {
         return cb && cb();
