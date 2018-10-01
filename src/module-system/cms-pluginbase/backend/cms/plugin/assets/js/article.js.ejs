@@ -49,7 +49,7 @@ util.article = {
     return util.ajax({
       url: '/a/base/auth/echo',
     }).then(data => {
-      this.user = data;
+      this.user = data.user;
       $(document).trigger('echo-ready', data);
     });
   },
