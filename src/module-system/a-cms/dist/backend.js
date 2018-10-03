@@ -1821,14 +1821,9 @@ module.exports = app => {
 
       // dist
       const pathDist = await this.ctx.service.render.getPathDist(site, language);
-      const distFiles = await bb.fromCallback(cb => {
-        glob(`${pathDist}/\*`, cb);
-      });
-      const languages = site.language.items.split(',');
-      for (const item of distFiles) {
-        if (languages.indexOf(path.basename(item)) === -1) {
-          await fse.remove(item);
-        }
+      const distPaths = [ 'articles', 'asserts', 'plugins', 'static', 'index.html', 'robots.txt', 'sitemap.xml', 'sitemapindex.xml' ];
+      for (const item of distPaths) {
+        await fse.remove(path.join(pathDist, item));
       }
 
       // / copy files to intermediate
