@@ -19,9 +19,9 @@ $(document).on('echo-ready', function() {
 function title(query) {
   if (env.site.path === 'static/category') {
     if (query.search !== undefined) {
-      document.title = `<%=text('Search')%>:${query.search}-${env.base.title}`;
+      document.title = `<%=text('Search')%>: ${query.search} | ${env.base.title}`;
     } else {
-      document.title = `${util.article.categoryName(query.categoryId)}-${env.base.title}`;
+      document.title = `${util.article.categoryName(query.categoryId)} | ${env.base.title}`;
     }
   }
 }
