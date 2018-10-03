@@ -9,6 +9,8 @@ module.exports = {
   Search: '搜索',
   Submit: '提交',
   Sorting: '排序',
+  Tag: '标签',
+  Tags: '标签',
   'Are you sure?': '您确认吗？',
   'Article List': '文章清单',
   'Article List(by category)': '文章清单(按目录)',

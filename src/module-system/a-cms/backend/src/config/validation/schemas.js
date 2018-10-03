@@ -39,6 +39,11 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Keywords',
       },
+      tags: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Tags',
+      },
       description: {
         type: 'string',
         ebType: 'text',

@@ -33,6 +33,9 @@ module.exports = app => {
     }
 
     async write({ atomClass, key, item, validation, user }) {
+      // get atom for safety
+      const atomOld = await this.ctx.meta.atom.read({ key, user });
+
       // image first
       let imageFirst = '';
       if (item.editMode === 1) {
@@ -69,30 +72,52 @@ module.exports = app => {
       // update content
       await this.ctx.model.query('update aCmsContent a set a.content=?, a.html=? where a.iid=? and a.atomId=?',
         [ item.content, html, this.ctx.instance.id, key.atomId ]);
-      // get atom for safety
-      const atom = await this.ctx.meta.atom.get(key);
+
+
+      // tags
+      const tagsNew = await this.ctx.service.tag.updateArticleTags({ key, item });
+      if (atomOld.atomFlag === 2) {
+        await this.ctx.service.tag.setTagArticleCount({ tagsNew, tagsOld: atomOld.tags });
+      }
+
       // render
-      await this._renderArticle({ key, inner: atom.atomFlag !== 2 });
+      await this._renderArticle({ key, inner: atomOld.atomFlag !== 2 });
     }
 
     async delete({ atomClass, key, user }) {
-      // delete article
-      await this.ctx.performAction({
-        method: 'post',
-        url: 'render/deleteArticle',
-        body: { key },
-      });
+      // get atom for safety
+      const atomOld = await this.ctx.meta.atom.read({ key, user });
+
       // delete article
       await this.ctx.model.article.delete({
         id: key.itemId,
       });
       // delete content
-      await this.ctx.model.query('delete from aCmsContent where iid=? and atomId=?',
-        [ this.ctx.instance.id, key.atomId ]);
+      await this.ctx.model.content.delete({
+        itemId: key.itemId,
+      });
+
+      // delete tags
+      await this.ctx.service.tag.deleteArticleTags({ key });
+
+      // set tag count , force check if delete tags
+      // if (atomOld.atomFlag === 2) {
+      await this.ctx.service.tag.setTagArticleCount({ tagsNew: null, tagsOld: atomOld.tags });
+      // }
+
+      // delete article
+      await this.ctx.performAction({
+        method: 'post',
+        url: 'render/deleteArticle',
+        body: { key, article: atomOld, inner: atomOld.atomFlag !== 2 },
+      });
     }
 
     async action({ action, atomClass, key, user }) {
       if (action === 101) {
+        // get atom for safety
+        const atomOld = await this.ctx.meta.atom.read({ key, user });
+
         // change flag
         await this.ctx.meta.atom.flag({
           key,
@@ -105,6 +130,12 @@ module.exports = app => {
           atom: { atomFlow: 0 },
           user,
         });
+
+        // tags
+        if (atomOld.atomFlag !== 2) {
+          await this.ctx.service.tag.setTagArticleCount({ tagsOld: atomOld.tags });
+        }
+
         // render
         await this._renderArticle({ key, inner: false });
       }
@@ -132,6 +163,7 @@ module.exports = app => {
         body: { key, inner },
       });
     }
+
 
   }
 

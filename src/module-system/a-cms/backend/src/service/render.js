@@ -49,21 +49,24 @@ module.exports = app => {
       }
     }
 
-    async deleteArticle({ key }) {
-      // article
-      const article = await this._getArticle({ key, inner: true });
-      if (!article) return;
+    async deleteArticle({ key, article, inner }) {
+      // clearCache
+      ejs.clearCache();
       // site
       const site = await this.getSite({ language: article.language });
       // remove file
       const pathDist = await this.getPathDist(site, article.language);
       await fse.remove(path.join(pathDist, article.url));
-      // remove sitemap
-      let xml = await fse.readFile(path.join(pathDist, 'sitemap.xml'));
-      const regexp = new RegExp(` {2}<url>\\s+<loc>[^<]*${article.url}[^<]*</loc>[\\s\\S]*?</url>[\\r\\n]`);
-      xml = xml.toString().replace(regexp, '');
-      // save
-      await fse.writeFile(path.join(pathDist, 'sitemap.xml'), xml);
+      if (!inner) {
+        // remove sitemap
+        let xml = await fse.readFile(path.join(pathDist, 'sitemap.xml'));
+        const regexp = new RegExp(` {2}<url>\\s+<loc>[^<]*${article.url}[^<]*</loc>[\\s\\S]*?</url>[\\r\\n]`);
+        xml = xml.toString().replace(regexp, '');
+        // save
+        await fse.writeFile(path.join(pathDist, 'sitemap.xml'), xml);
+        // render index
+        await this._renderIndex({ site });
+      }
     }
 
     async getArticleUrl({ key }) {

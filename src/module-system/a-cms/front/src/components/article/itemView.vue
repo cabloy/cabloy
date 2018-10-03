@@ -15,6 +15,9 @@
       <f7-list-item :title="$text('Category')">
         <div slot="after">{{item.categoryName}}</div>
       </f7-list-item>
+      <f7-list-item :title="$text('Tags')">
+        <div slot="after">{{adjustTags(item.tags)}}</div>
+      </f7-list-item>
       <eb-list-item-validate dataKey="keywords"></eb-list-item-validate>
       <eb-list-item-validate dataKey="description"></eb-list-item-validate>
       <eb-list-item-validate dataKey="slug"></eb-list-item-validate>
@@ -48,8 +51,10 @@ export default {
     this.$local.dispatch('getLanguages');
   },
   methods: {
-    onSave() {
-      this.$emit('save');
+    adjustTags(tags) {
+      if (!tags) return '';
+      const _tags = JSON.parse(tags);
+      return _tags.map(item => item.name).join(',');
     },
     onChooseEditContent() {
       if (!this.item.categoryId) {
@@ -75,6 +80,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>

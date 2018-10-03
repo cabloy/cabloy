@@ -15,6 +15,9 @@
       <eb-list-item-choose link="#" dataPath="categoryId" :title="$text('Category')" :onChoose="onChooseCategory">
         <div slot="after">{{item.categoryName}}</div>
       </eb-list-item-choose>
+      <eb-list-item-choose link="#" dataPath="tags" :title="$text('Tags')" :onChoose="onChooseTags">
+        <div slot="after">{{adjustTags(item.tags)}}</div>
+      </eb-list-item-choose>
       <eb-list-item-validate dataKey="keywords"></eb-list-item-validate>
       <eb-list-item-validate dataKey="description"></eb-list-item-validate>
       <eb-list-item-validate dataKey="slug"></eb-list-item-validate>
@@ -51,6 +54,35 @@ export default {
     this.$local.dispatch('getLanguages');
   },
   methods: {
+    adjustTags(tags) {
+      if (!tags) return '';
+      const _tags = JSON.parse(tags);
+      return _tags.map(item => item.name).join(',');
+    },
+    onChooseTags() {
+      if (!this.item.language) {
+        this.$view.dialog.alert(this.$text('Please specify the language'));
+        return false;
+      }
+      return new Promise(resolve => {
+        this.$view.navigate('/a/cms/tag/select', {
+          context: {
+            params: {
+              language: this.item.language,
+              tags: this.item.tags,
+            },
+            callback: (code, data) => {
+              if (code === 200) {
+                this.item.tags = data;
+                resolve(true);
+              } else if (code === false) {
+                resolve(false);
+              }
+            },
+          },
+        });
+      });
+    },
     onChooseCategory() {
       if (!this.item.language) {
         this.$view.dialog.alert(this.$text('Please specify the language'));
@@ -102,6 +134,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>
