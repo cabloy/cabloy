@@ -160,11 +160,7 @@ const Fn = module.exports = ctx => {
       // tableName
       let tableName = '';
       if (_atomClass) {
-        if (options.mode === 'search') {
-          tableName = _atomClass.tableNameFull || _atomClass.tableName;
-        } else {
-          tableName = _atomClass.tableName;
-        }
+        tableName = this._getTableName({ atomClass: _atomClass, mode: options.mode });
       }
       // select
       const items = await this._list({
@@ -569,6 +565,19 @@ const Fn = module.exports = ctx => {
         [ ctx.instance.id, user.id, id ]
       );
       return res[0][0];
+    }
+
+    _upperCaseFirstChar(str) {
+      if (!str) return '';
+      return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    _getTableName({ atomClass, mode }) {
+      mode = this._upperCaseFirstChar(mode);
+      if (mode === 'Search') {
+        return atomClass.tableNameSearch || atomClass.tableNameFull || atomClass.tableName;
+      }
+      return atomClass[`tableName${mode}`] || atomClass.tableName;
     }
 
   }

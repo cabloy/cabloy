@@ -1341,15 +1341,22 @@ const Fn = module.exports = ctx => {
       const atomClasses = {};
       for (const key in _atoms) {
         const _atom = _atoms[key].info;
+        // info
         const atomClass = {
           name: key,
           title: _atom.title || key,
-          tableName: _atom.tableName || '',
-          tableNameFull: _atom.tableNameFull,
           public: _atom.public ? 1 : 0,
           flow: _atom.flow ? 1 : 0,
         };
+        // tableName
+        for (const key in _atom) {
+          if (key.indexOf('tableName') === 0) {
+            atomClass[key] = _atom[key];
+          }
+        }
+        // titleLocale
         atomClass.titleLocale = ctx.text(atomClass.title);
+        // ok
         atomClasses[key] = atomClass;
       }
       return atomClasses;
@@ -1874,11 +1881,7 @@ const Fn = module.exports = ctx => {
       // tableName
       let tableName = '';
       if (_atomClass) {
-        if (options.mode === 'search') {
-          tableName = _atomClass.tableNameFull || _atomClass.tableName;
-        } else {
-          tableName = _atomClass.tableName;
-        }
+        tableName = this._getTableName({ atomClass: _atomClass, mode: options.mode });
       }
       // select
       const items = await this._list({
@@ -2283,6 +2286,19 @@ const Fn = module.exports = ctx => {
         [ ctx.instance.id, user.id, id ]
       );
       return res[0][0];
+    }
+
+    _upperCaseFirstChar(str) {
+      if (!str) return '';
+      return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    _getTableName({ atomClass, mode }) {
+      mode = this._upperCaseFirstChar(mode);
+      if (mode === 'Search') {
+        return atomClass.tableNameSearch || atomClass.tableNameFull || atomClass.tableName;
+      }
+      return atomClass[`tableName${mode}`] || atomClass.tableName;
     }
 
   }

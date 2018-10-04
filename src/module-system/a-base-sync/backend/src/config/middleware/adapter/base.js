@@ -144,15 +144,22 @@ const Fn = module.exports = ctx => {
       const atomClasses = {};
       for (const key in _atoms) {
         const _atom = _atoms[key].info;
+        // info
         const atomClass = {
           name: key,
           title: _atom.title || key,
-          tableName: _atom.tableName || '',
-          tableNameFull: _atom.tableNameFull,
           public: _atom.public ? 1 : 0,
           flow: _atom.flow ? 1 : 0,
         };
+        // tableName
+        for (const key in _atom) {
+          if (key.indexOf('tableName') === 0) {
+            atomClass[key] = _atom[key];
+          }
+        }
+        // titleLocale
         atomClass.titleLocale = ctx.text(atomClass.title);
+        // ok
         atomClasses[key] = atomClass;
       }
       return atomClasses;
