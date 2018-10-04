@@ -90,7 +90,7 @@ export default {
         }).then(() => {
           this.reloadChildren(node);
         });
-      });
+      }).catch(() => {});
     },
     onNodeClickDelete(node) {
       return this.$view.dialog.confirm().then(() => {

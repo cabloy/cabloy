@@ -149,11 +149,31 @@ module.exports = app => {
         // alter view: aCmsArticleViewFull
         sql = `
           ALTER VIEW aCmsArticleViewFull as
+            select a.*,b.categoryName,e.tags,c.content,c.html from aCmsArticle a
+              left join aCmsCategory b on a.categoryId=b.id
+              left join aCmsContent c on a.id=c.itemId
+              left join aCmsArticleTag e on a.id=e.itemId
+        `;
+        await this.ctx.model.query(sql);
+
+        // alter view: aCmsArticleViewSearch
+        sql = `
+          CREATE VIEW aCmsArticleViewSearch as
             select a.*,b.categoryName,e.tags,c.content,c.html,concat(d.atomName,',',c.content) contentSearch from aCmsArticle a
               left join aCmsCategory b on a.categoryId=b.id
               left join aCmsContent c on a.id=c.itemId
               left join aAtom d on a.atomId=d.id
               left join aCmsArticleTag e on a.id=e.itemId
+        `;
+        await this.ctx.model.query(sql);
+
+        // create view: aCmsArticleViewTag
+        sql = `
+          CREATE VIEW aCmsArticleViewTag as
+            select a.*,b.categoryName,e.tags,f.tagId from aCmsArticle a
+              left join aCmsCategory b on a.categoryId=b.id
+              left join aCmsArticleTag e on a.id=e.itemId
+              left join aCmsArticleTagRef f on a.id=f.itemId
         `;
         await this.ctx.model.query(sql);
 

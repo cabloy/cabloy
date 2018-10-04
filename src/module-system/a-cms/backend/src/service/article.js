@@ -76,9 +76,11 @@ module.exports = app => {
 
       // tags
       const tagsNew = await this.ctx.service.tag.updateArticleTags({ key, item });
-      if (atomOld.atomFlag === 2) {
-        await this.ctx.service.tag.setTagArticleCount({ tagsNew, tagsOld: atomOld.tags });
-      }
+
+      // set tag count , force check if delete tags
+      // if (atomOld.atomFlag === 2) {
+      await this.ctx.service.tag.setTagArticleCount({ tagsNew, tagsOld: atomOld.tags });
+      // }
 
       // render
       await this._renderArticle({ key, inner: atomOld.atomFlag !== 2 });

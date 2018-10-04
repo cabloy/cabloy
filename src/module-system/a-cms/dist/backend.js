@@ -111,11 +111,11 @@ module.exports = app => {
   // routes
   const routes = __webpack_require__(9)(app);
   // services
-  const services = __webpack_require__(16)(app);
+  const services = __webpack_require__(17)(app);
   // models
-  const models = __webpack_require__(24)(app);
+  const models = __webpack_require__(26)(app);
   // meta
-  const meta = __webpack_require__(28)(app);
+  const meta = __webpack_require__(33)(app);
 
   return {
     routes,
@@ -224,6 +224,8 @@ module.exports = {
 module.exports = {
   Article: '文章',
   Catalog: '目录',
+  Category: '目录',
+  Categories: '目录',
   Comments: '评论',
   Language: '语言',
   Publish: '发布',
@@ -232,6 +234,8 @@ module.exports = {
   Search: '搜索',
   Submit: '提交',
   Sorting: '排序',
+  Tag: '标签',
+  Tags: '标签',
   'Are you sure?': '您确认吗？',
   'Article List': '文章清单',
   'Article List(by category)': '文章清单(按目录)',
@@ -285,7 +289,8 @@ const article = __webpack_require__(11);
 const category = __webpack_require__(12);
 const render = __webpack_require__(13);
 const site = __webpack_require__(14);
-const comment = __webpack_require__(15);
+const tag = __webpack_require__(15);
+const comment = __webpack_require__(16);
 
 module.exports = app => {
   const routes = [
@@ -332,6 +337,8 @@ module.exports = app => {
     { method: 'post', path: 'category/add', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'category/delete', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'category/move', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
+    // tag
+    { method: 'post', path: 'tag/list', controller: tag },
 
   ];
   return routes;
@@ -635,6 +642,28 @@ module.exports = app => {
 
 /***/ }),
 /* 15 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+
+  class TagController extends app.Controller {
+
+    async list() {
+      const list = await this.ctx.service.tag.list({
+        language: this.ctx.request.body.language,
+        orders: this.ctx.request.body.orders,
+      });
+      this.ctx.success({ list });
+    }
+
+  }
+  return TagController;
+};
+
+
+
+/***/ }),
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -673,14 +702,15 @@ module.exports = app => {
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(17);
-const article = __webpack_require__(18);
-const category = __webpack_require__(19);
-const render = __webpack_require__(20);
-const site = __webpack_require__(23);
+const version = __webpack_require__(18);
+const article = __webpack_require__(19);
+const category = __webpack_require__(20);
+const render = __webpack_require__(21);
+const site = __webpack_require__(24);
+const tag = __webpack_require__(25);
 
 module.exports = app => {
   const services = {
@@ -689,13 +719,14 @@ module.exports = app => {
     category,
     render,
     site,
+    tag,
   };
   return services;
 };
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -787,6 +818,98 @@ module.exports = app => {
         await this.ctx.model.query(sql);
 
       }
+
+      if (options.version === 2) {
+        // create table: aCmsTag
+        let sql = `
+          CREATE TABLE aCmsTag (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            deleted int(11) DEFAULT '0',
+            iid int(11) DEFAULT '0',
+            language varchar(50) DEFAULT NULL,
+            tagName varchar(50) DEFAULT NULL,
+            articleCount int(11) DEFAULT '0',
+            PRIMARY KEY (id)
+          )
+        `;
+        await this.ctx.model.query(sql);
+
+        // create table: aCmsArticleTag
+        sql = `
+          CREATE TABLE aCmsArticleTag (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            deleted int(11) DEFAULT '0',
+            iid int(11) DEFAULT '0',
+            atomId int(11) DEFAULT '0',
+            itemId int(11) DEFAULT '0',
+            tags JSON DEFAULT NULL,
+            PRIMARY KEY (id)
+          )
+        `;
+        await this.ctx.model.query(sql);
+
+        // create table: aCmsArticleTagRef
+        sql = `
+          CREATE TABLE aCmsArticleTagRef (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            deleted int(11) DEFAULT '0',
+            iid int(11) DEFAULT '0',
+            atomId int(11) DEFAULT '0',
+            itemId int(11) DEFAULT '0',
+            tagId int(11) DEFAULT '0',
+            PRIMARY KEY (id)
+          )
+        `;
+        await this.ctx.model.query(sql);
+
+        // alter view: aCmsArticleView
+        sql = `
+          ALTER VIEW aCmsArticleView as
+            select a.*,b.categoryName,e.tags from aCmsArticle a
+              left join aCmsCategory b on a.categoryId=b.id
+              left join aCmsArticleTag e on a.id=e.itemId
+        `;
+        await this.ctx.model.query(sql);
+
+        // alter view: aCmsArticleViewFull
+        sql = `
+          ALTER VIEW aCmsArticleViewFull as
+            select a.*,b.categoryName,e.tags,c.content,c.html from aCmsArticle a
+              left join aCmsCategory b on a.categoryId=b.id
+              left join aCmsContent c on a.id=c.itemId
+              left join aCmsArticleTag e on a.id=e.itemId
+        `;
+        await this.ctx.model.query(sql);
+
+        // alter view: aCmsArticleViewSearch
+        sql = `
+          CREATE VIEW aCmsArticleViewSearch as
+            select a.*,b.categoryName,e.tags,c.content,c.html,concat(d.atomName,',',c.content) contentSearch from aCmsArticle a
+              left join aCmsCategory b on a.categoryId=b.id
+              left join aCmsContent c on a.id=c.itemId
+              left join aAtom d on a.atomId=d.id
+              left join aCmsArticleTag e on a.id=e.itemId
+        `;
+        await this.ctx.model.query(sql);
+
+        // create view: aCmsArticleViewTag
+        sql = `
+          CREATE VIEW aCmsArticleViewTag as
+            select a.*,b.categoryName,e.tags,f.tagId from aCmsArticle a
+              left join aCmsCategory b on a.categoryId=b.id
+              left join aCmsArticleTag e on a.id=e.itemId
+              left join aCmsArticleTagRef f on a.id=f.itemId
+        `;
+        await this.ctx.model.query(sql);
+
+      }
+
     }
 
     async init(options) {
@@ -857,7 +980,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -895,6 +1018,9 @@ module.exports = app => {
     }
 
     async write({ atomClass, key, item, validation, user }) {
+      // get atom for safety
+      const atomOld = await this.ctx.meta.atom.read({ key, user });
+
       // image first
       let imageFirst = '';
       if (item.editMode === 1) {
@@ -931,30 +1057,54 @@ module.exports = app => {
       // update content
       await this.ctx.model.query('update aCmsContent a set a.content=?, a.html=? where a.iid=? and a.atomId=?',
         [ item.content, html, this.ctx.instance.id, key.atomId ]);
-      // get atom for safety
-      const atom = await this.ctx.meta.atom.get(key);
+
+
+      // tags
+      const tagsNew = await this.ctx.service.tag.updateArticleTags({ key, item });
+
+      // set tag count , force check if delete tags
+      // if (atomOld.atomFlag === 2) {
+      await this.ctx.service.tag.setTagArticleCount({ tagsNew, tagsOld: atomOld.tags });
+      // }
+
       // render
-      await this._renderArticle({ key, inner: atom.atomFlag !== 2 });
+      await this._renderArticle({ key, inner: atomOld.atomFlag !== 2 });
     }
 
     async delete({ atomClass, key, user }) {
-      // delete article
-      await this.ctx.performAction({
-        method: 'post',
-        url: 'render/deleteArticle',
-        body: { key },
-      });
+      // get atom for safety
+      const atomOld = await this.ctx.meta.atom.read({ key, user });
+
       // delete article
       await this.ctx.model.article.delete({
         id: key.itemId,
       });
       // delete content
-      await this.ctx.model.query('delete from aCmsContent where iid=? and atomId=?',
-        [ this.ctx.instance.id, key.atomId ]);
+      await this.ctx.model.content.delete({
+        itemId: key.itemId,
+      });
+
+      // delete tags
+      await this.ctx.service.tag.deleteArticleTags({ key });
+
+      // set tag count , force check if delete tags
+      // if (atomOld.atomFlag === 2) {
+      await this.ctx.service.tag.setTagArticleCount({ tagsNew: null, tagsOld: atomOld.tags });
+      // }
+
+      // delete article
+      await this.ctx.performAction({
+        method: 'post',
+        url: 'render/deleteArticle',
+        body: { key, article: atomOld, inner: atomOld.atomFlag !== 2 },
+      });
     }
 
     async action({ action, atomClass, key, user }) {
       if (action === 101) {
+        // get atom for safety
+        const atomOld = await this.ctx.meta.atom.read({ key, user });
+
         // change flag
         await this.ctx.meta.atom.flag({
           key,
@@ -967,6 +1117,12 @@ module.exports = app => {
           atom: { atomFlow: 0 },
           user,
         });
+
+        // tags
+        if (atomOld.atomFlag !== 2) {
+          await this.ctx.service.tag.setTagArticleCount({ tagsOld: atomOld.tags });
+        }
+
         // render
         await this._renderArticle({ key, inner: false });
       }
@@ -995,6 +1151,7 @@ module.exports = app => {
       });
     }
 
+
   }
 
   return Article;
@@ -1002,7 +1159,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1116,7 +1273,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const path = __webpack_require__(1);
@@ -1133,7 +1290,7 @@ const CleanCSS = require3('clean-css');
 const shajs = require3('sha.js');
 const babel = require3('babel-core');
 const UglifyJS = require3('uglify-js');
-const time = __webpack_require__(21);
+const time = __webpack_require__(22);
 
 module.exports = app => {
 
@@ -1170,21 +1327,24 @@ module.exports = app => {
       }
     }
 
-    async deleteArticle({ key }) {
-      // article
-      const article = await this._getArticle({ key, inner: true });
-      if (!article) return;
+    async deleteArticle({ key, article, inner }) {
+      // clearCache
+      ejs.clearCache();
       // site
       const site = await this.getSite({ language: article.language });
       // remove file
       const pathDist = await this.getPathDist(site, article.language);
       await fse.remove(path.join(pathDist, article.url));
-      // remove sitemap
-      let xml = await fse.readFile(path.join(pathDist, 'sitemap.xml'));
-      const regexp = new RegExp(` {2}<url>\\s+<loc>[^<]*${article.url}[^<]*</loc>[\\s\\S]*?</url>[\\r\\n]`);
-      xml = xml.toString().replace(regexp, '');
-      // save
-      await fse.writeFile(path.join(pathDist, 'sitemap.xml'), xml);
+      if (!inner) {
+        // remove sitemap
+        let xml = await fse.readFile(path.join(pathDist, 'sitemap.xml'));
+        const regexp = new RegExp(` {2}<url>\\s+<loc>[^<]*${article.url}[^<]*</loc>[\\s\\S]*?</url>[\\r\\n]`);
+        xml = xml.toString().replace(regexp, '');
+        // save
+        await fse.writeFile(path.join(pathDist, 'sitemap.xml'), xml);
+        // render index
+        await this._renderIndex({ site });
+      }
     }
 
     async getArticleUrl({ key }) {
@@ -1572,7 +1732,7 @@ var env=${JSON.stringify(env, null, 2)};
         _envs,
         require(fileName) {
           const _path = self.resolvePath('', this._filename, fileName);
-          return __webpack_require__(22)(_path);
+          return __webpack_require__(23)(_path);
         },
         url(fileName, language) {
           let _path = self.resolvePath('', path.relative(_pathIntermediate, this._filename), fileName);
@@ -1657,7 +1817,7 @@ var env=${JSON.stringify(env, null, 2)};
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports) {
 
 const _formatDateTime = function(date, fmt) { // original author: meizz
@@ -1700,7 +1860,7 @@ module.exports = {
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports) {
 
 function webpackEmptyContext(req) {
@@ -1711,10 +1871,10 @@ function webpackEmptyContext(req) {
 webpackEmptyContext.keys = function() { return []; };
 webpackEmptyContext.resolve = webpackEmptyContext;
 module.exports = webpackEmptyContext;
-webpackEmptyContext.id = 22;
+webpackEmptyContext.id = 23;
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const path = __webpack_require__(1);
@@ -1946,25 +2106,160 @@ ${items}</sitemapindex>`;
 
 
 /***/ }),
-/* 24 */
+/* 25 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+
+  class Tag extends app.Service {
+
+    async list({ language, orders }) {
+      const list = await this.ctx.model.tag.select({
+        where: { language },
+        orders,
+      });
+
+      return list;
+    }
+
+    async create({ language, tagName }) {
+      // check if exists
+      const tag = await this.ctx.model.tag.get({
+        language, tagName,
+      });
+      if (tag) return tag.id;
+      // insert
+      const res = await this.ctx.model.tag.insert({
+        language, tagName, articleCount: 0,
+      });
+      return res.insertId;
+    }
+
+    async updateArticleTags({ key, item }) {
+      // tags
+      let tags = null;
+      if (item.tags) {
+        tags = JSON.parse(item.tags);
+        for (const tag of tags) {
+          if (tag.id === 0) {
+            tag.id = await this.create({ language: item.language, tagName: tag.name });
+          }
+        }
+      }
+      // force delete
+      await this.deleteArticleTags({ key });
+      // new
+      if (tags && tags.length > 0) {
+        await this.ctx.model.articleTag.insert({
+          atomId: key.atomId,
+          itemId: key.itemId,
+          tags: JSON.stringify(tags),
+        });
+        for (const tag of tags) {
+          await this.ctx.model.articleTagRef.insert({
+            atomId: key.atomId,
+            itemId: key.itemId,
+            tagId: tag.id,
+          });
+        }
+      }
+      // ok
+      return tags;
+    }
+
+    async deleteArticleTags({ key }) {
+      await this.ctx.model.articleTag.delete({
+        itemId: key.itemId,
+      });
+      await this.ctx.model.articleTagRef.delete({
+        itemId: key.itemId,
+      });
+    }
+
+    async setTagArticleCount({ tagsNew, tagsOld }) {
+      // tags
+      const tags = {};
+      if (tagsNew) {
+        const _tags = typeof tagsNew === 'string' ? JSON.parse(tagsNew) : tagsNew;
+        for (const tag of _tags) {
+          tags[tag.id] = tag;
+        }
+      }
+      if (tagsOld) {
+        const _tags = typeof tagsOld === 'string' ? JSON.parse(tagsOld) : tagsOld;
+        for (const tag of _tags) {
+          tags[tag.id] = tag;
+        }
+      }
+      // loop
+      for (const id in tags) {
+        const articleCount = await this.calcArticleCount({ id });
+        if (articleCount > 0) {
+          // update
+          await this.ctx.model.tag.update({ id, articleCount });
+        } else {
+          const articleCount2 = await this.calcArticleCount2({ id });
+          if (articleCount2 > 0) {
+            // update
+            await this.ctx.model.tag.update({ id, articleCount });
+          } else {
+            // delete
+            await this.ctx.model.tag.delete({ id });
+          }
+        }
+      }
+    }
+
+    async calcArticleCount({ id }) {
+      const res = await this.ctx.model.query(`
+        select count(*) articleCount from aCmsArticleTagRef a
+          inner join aAtom b on a.atomId=b.id
+          where a.iid=? and a.tagId=? and b.iid=? and b.deleted=0 and b.atomFlag=2
+        `,
+      [ this.ctx.instance.id, id, this.ctx.instance.id ]);
+      return res[0].articleCount;
+    }
+
+    async calcArticleCount2({ id }) {
+      const res = await this.ctx.model.query(`
+        select count(*) articleCount from aCmsArticleTagRef a where a.iid=? and a.tagId=?
+        `,
+      [ this.ctx.instance.id, id ]);
+      return res[0].articleCount;
+    }
+
+  }
+
+  return Tag;
+};
+
+
+/***/ }),
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const article = __webpack_require__(25);
-const category = __webpack_require__(26);
-const content = __webpack_require__(27);
+const article = __webpack_require__(27);
+const category = __webpack_require__(28);
+const content = __webpack_require__(29);
+const tag = __webpack_require__(30);
+const articleTag = __webpack_require__(31);
+const articleTagRef = __webpack_require__(32);
 
 module.exports = app => {
   const models = {
     article,
     category,
     content,
+    tag,
+    articleTag,
+    articleTagRef,
   };
   return models;
 };
 
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1978,7 +2273,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 26 */
+/* 28 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1992,7 +2287,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 27 */
+/* 29 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2006,11 +2301,53 @@ module.exports = app => {
 
 
 /***/ }),
-/* 28 */
+/* 30 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+  class Tag extends app.meta.Model {
+    constructor(ctx) {
+      super(ctx, { table: 'aCmsTag', options: { disableDeleted: true } });
+    }
+  }
+  return Tag;
+};
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+  class ArticleTag extends app.meta.Model {
+    constructor(ctx) {
+      super(ctx, { table: 'aCmsArticleTag', options: { disableDeleted: true } });
+    }
+  }
+  return ArticleTag;
+};
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+  class ArticleTagRef extends app.meta.Model {
+    constructor(ctx) {
+      super(ctx, { table: 'aCmsArticleTagRef', options: { disableDeleted: true } });
+    }
+  }
+  return ArticleTagRef;
+};
+
+
+/***/ }),
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
-  const schemas = __webpack_require__(29)(app);
+  const schemas = __webpack_require__(34)(app);
   const meta = {
     base: {
       atoms: {
@@ -2019,6 +2356,8 @@ module.exports = app => {
             title: 'Article',
             tableName: 'aCmsArticleView',
             tableNameFull: 'aCmsArticleViewFull',
+            tableNameSearch: 'aCmsArticleViewSearch',
+            tableNameTag: 'aCmsArticleViewTag',
             flow: 1,
           },
           actions: {
@@ -2103,7 +2442,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 29 */
+/* 34 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2146,6 +2485,11 @@ module.exports = app => {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Keywords',
+      },
+      tags: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Tags',
       },
       description: {
         type: 'string',

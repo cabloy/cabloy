@@ -1,6 +1,8 @@
 module.exports = {
   Article: '文章',
   Catalog: '目录',
+  Category: '目录',
+  Categories: '目录',
   Comments: '评论',
   Language: '语言',
   Publish: '发布',

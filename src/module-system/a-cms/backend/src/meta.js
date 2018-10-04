@@ -8,6 +8,8 @@ module.exports = app => {
             title: 'Article',
             tableName: 'aCmsArticleView',
             tableNameFull: 'aCmsArticleViewFull',
+            tableNameSearch: 'aCmsArticleViewSearch',
+            tableNameTag: 'aCmsArticleViewTag',
             flow: 1,
           },
           actions: {
