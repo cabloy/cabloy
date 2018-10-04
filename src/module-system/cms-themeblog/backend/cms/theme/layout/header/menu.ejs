@@ -3,7 +3,7 @@ function _menuItems(categories) {
   let res = '';
   for (const item of categories) {
     if (!item.catalog) {
-      res += `<li><a class="category-${item.id}" data-category-name="${item.categoryName}" href="${url('static/category.html')}?categoryId=${item.id}">${item.categoryName}</a></li>`;
+      res += `<li><a class="category-${item.id}" data-category-name="${item.categoryName}" href="${url('static/articles.html')}?categoryId=${item.id}&categoryName=${item.categoryName}">${item.categoryName}</a></li>`;
     } else {
       const _items = _menuItems(item.children);
       res += `
@@ -36,7 +36,7 @@ const menuItems = _menuItems(site.categories);
       <ul class="nav navbar-nav">
         <%- menuItems %>
       </ul>
-      <form class="navbar-form navbar-right search" action="<%=url('static/category.html')%>">
+      <form class="navbar-form navbar-right search" action="<%=url('static/articles.html')%>">
         <div class="form-group">
           <input name="search" type="text" class="form-control" placeholder="<%=text('Search')%>">
         </div>
