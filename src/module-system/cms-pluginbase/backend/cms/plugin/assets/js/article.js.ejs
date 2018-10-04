@@ -89,23 +89,14 @@ util.article = {
       this._readCountInc(env.article.atomId, 1);
     });
   },
-  breadcrumb({ container }) {
-    const $container = $(container);
-    if (!env.article || $container.length === 0) return;
-    const $category = $(`.category-${env.article.categoryId}`);
-    $('.category', $container)
-      .attr('href', $category.attr('href'))
-      .text($category.data('category-name'));
-    $('.active', $container).text(env.article.atomName);
-  },
   categoryName(categoryId) {
     return $(`.category-${categoryId}`).data('category-name');
   },
-  relatives({ container }) {
+  brothers({ container }) {
     const $container = $(container);
     if (!env.article || $container.length === 0) return;
-    this._relatives($container, 'prev');
-    this._relatives($container, 'next');
+    this._brothers($container, 'prev');
+    this._brothers($container, 'next');
   },
   commentsRecent(options) {
     const $container = $(options.container);
@@ -255,8 +246,8 @@ util.article = {
       }
     }
   },
-  _relatives($container, type) {
-  // article
+  _brothers($container, type) {
+    // article
     const article = env.article;
     // options
     const options = {
@@ -268,13 +259,13 @@ util.article = {
       mode: 'list',
     };
     if (article.sorting > 0) {
-    // asc for sorting
+      // asc for sorting
       options.where['f.sorting'] = { op: type === 'prev' ? '<' : '>', val: article.sorting };
       options.orders = [
         [ 'f.sorting', type === 'prev' ? 'desc' : 'asc' ],
       ];
     } else {
-    // desc for createdAt
+      // desc for createdAt
       options.where['f.createdAt'] = { op: type === 'prev' ? '>' : '<', val: util.time.formatDateTime(article.createdAt) };
       options.orders = [
         [ 'f.createdAt', type === 'prev' ? 'asc' : 'desc' ],
@@ -285,17 +276,17 @@ util.article = {
       url: '/a/cms/article/list',
       body: { options: JSON.stringify(options) },
     }).then(data => {
-      this._relative({ $container, type, article: data.list[0] });
+      this._brother({ $container, type, article: data.list[0] });
     });
   },
-  _relative({ $container, type, article }) {
+  _brother({ $container, type, article }) {
     if (!article) return;
-    const $relative = $(`.${type}`, $container);
-    const $relativeLink = $(`.${type} a`, $container);
+    const $brother = $(`.${type}`, $container);
+    const $brotherLink = $(`.${type} a`, $container);
 
-    $relativeLink.attr('href', `${util.url(article.url)}`);
-    $relativeLink.text(article.atomName);
-    $relative.removeClass('hidden');
+    $brotherLink.attr('href', `${util.url(article.url)}`);
+    $brotherLink.text(article.atomName);
+    $brother.removeClass('hidden');
     $container.removeClass('hidden');
   },
   _setStats(atoms) {
