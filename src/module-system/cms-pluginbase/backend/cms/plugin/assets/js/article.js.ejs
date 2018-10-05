@@ -35,7 +35,7 @@ function _onParseCommentRecent(item) {
   return `
 <li class="media">
     <div class="media-body">
-      <h4 class="media-heading"><a href="${util.url(item.url, item.language)}#comments">Re: ${item.atomName}</a></h4>
+      <h5 class="media-heading"><a href="${util.url(item.url, item.language)}#comments">Re: ${item.atomName}</a></h5>
       <div class="body">${item.h_summary}</div>
       <div class="user">-- ${item.h_userName}</div>
     </div>
