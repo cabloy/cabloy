@@ -2,10 +2,10 @@
   <div class="panel-heading"><%=text('PersonalProfile')%></div>
   <div class="panel-body">
     <div class="profile">
-      <a class='avatar' href="<%=url(site.profile.avatarUrl)%>">
+      <a class='avatar' href="<%=url(site.profile.url)%>">
         <img class="img-delay avatar avatar48" data-src="<%=url(site.profile.avatar)%>" data-width="125" data-height="100" title="<%=site.profile.userName%>"/>
       </a>
-      <span class='name'><a href="<%=url(site.profile.avatarUrl)%>"><%=site.profile.userName%></a></span>
+      <span class='name'><a href="<%=url(site.profile.url)%>"><%=site.profile.userName%></a></span>
       <% if(site.profile.motto){ %>
         <div class="motto"><%=site.profile.motto%></div>
       <% } %>
