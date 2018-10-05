@@ -1,7 +1,7 @@
 <%
   let title;
   if(typeof article!=='undefined'){
-    title=`${article.atomName}-${site.base.title}`;
+    title=`${article.atomName} | ${site.base.title}`;
   }else if(_path==='main/index/index'){
     title=site.base.title;
   }else{
