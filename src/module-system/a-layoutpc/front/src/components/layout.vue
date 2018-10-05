@@ -76,7 +76,11 @@ export default {
         this.size.enough = true;
       }
       this.size.middle = this.size.small * 2;
-      this.size.large = this.size.small * 3 + spacing;
+      if (this.size.enough) {
+        this.size.large = this.size.small * 3 + spacing;
+      } else {
+        this.size.large = this.size.middle;
+      }
 
       // height
       this.size.top = this.$config.layout.size.top;
@@ -97,14 +101,17 @@ export default {
         if (hashInit && hashInit !== '/' && hashInit !== this.$config.layout.login) {
           this.navigate(hashInit);
         } else {
-          const button = this.$config.layout.header.buttons.find(button => button.name === 'Home');
-          if (button) this.navigate(button.url, { target: '_dashboard' });
+          this.openHome();
         }
       }
       // started
       this.$nextTick(() => {
         this.started = true;
       });
+    },
+    openHome() {
+      const button = this.$config.layout.header.buttons.find(button => button.name === 'Home');
+      if (button) this.navigate(button.url, { target: '_dashboard' });
     },
     navigate(url, options) {
       options = options || {};
@@ -197,8 +204,11 @@ export default {
       });
     },
     removeGroup(groupId) {
-      let groupIdNext;
+      // current
       const index = this.groups.findIndex(group => group.id === groupId);
+      const groupCurrent = this.groups[index];
+      // next
+      let groupIdNext;
       if (this.$refs.header.isTabActive(groupId)) {
         if (this.groups.length - 1 > index) {
           groupIdNext = this.groups[index + 1].id;
@@ -206,10 +216,16 @@ export default {
           groupIdNext = this.groups[index - 1].id;
         }
       }
+      // remove
       this.groups.splice(index, 1);
       this.$nextTick(() => {
+        // next
         if (groupIdNext) {
           this.$f7.tab.show(`#${groupIdNext}`);
+        }
+        // check if openHome
+        if (this.groups.length === 0 && !groupCurrent.dashboard) {
+          this.openHome();
         }
       });
     },
@@ -249,6 +265,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>
