@@ -48,7 +48,8 @@ module.exports = appInfo => {
       userName: 'zhennann',
       motto: 'Less is more, while more is less.',
       avatar: 'assets/images/avatar.jpg',
-      avatarUrl: 'index.html',
+      url: 'index.html',
+      extra: '',
     },
   };
 
