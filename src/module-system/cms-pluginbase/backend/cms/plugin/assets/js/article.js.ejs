@@ -77,9 +77,6 @@ util.article = {
       this._readCountInc(env.article.atomId, 1);
     });
   },
-  categoryName(categoryId) {
-    return $(`.category-${categoryId}`).data('category-name');
-  },
   brothers({ container }) {
     const $container = $(container);
     if (!env.article || $container.length === 0) return;
