@@ -2,11 +2,16 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <link rel="shortcut icon" href="<%=url('assets/images/favicon.ico')%>" type="image/x-icon">
-<%- await include('../../plugins/cms-pluginbase/header-meta.ejs') %>
-<%- await include('../../plugins/cms-pluginbase/header-css.ejs') %>
+<%- await include('../../plugins/cms-pluginbase/header/meta.ejs') %>
+<%- await include('../../plugins/cms-pluginbase/header/css.ejs') %>
+<%- await include('../../plugins/cms-pluginbase/header/js.ejs') %>
+<%
+  // pluginbase init
+  js('../../plugins/cms-pluginbase/assets/js/init.js.ejs');
+%>
 <%
   // css
-  css('assets/css/site.css.ejs');
+  css('../../assets/css/site.css.ejs');
   // js
-  js('assets/js/site.js.ejs');
+  js('../../assets/js/site.js.ejs');
 %>
