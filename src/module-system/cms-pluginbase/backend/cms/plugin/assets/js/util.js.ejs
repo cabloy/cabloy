@@ -203,13 +203,18 @@ const util = {
       }
     };
 
+    // fetchOrScroll
+    const _fetchOrScroll = function() {
+      if (index === 0) {
+        _onFetch();
+      } else {
+        _onScroll();
+      }
+    };
+
     // bind event
     $window.on('scroll.infinite resize.infinite', _onScroll);
-    if (index === 0) {
-      _onFetch();
-    } else {
-      _onScroll();
-    }
+    _fetchOrScroll();
 
     // controller
     const _controller = {
@@ -224,7 +229,7 @@ const util = {
         // empty
         $container.empty();
         // load
-        _onScroll();
+        _fetchOrScroll();
         // ok
         return true;
       },

@@ -4,7 +4,7 @@ $(document).ready(function() {
   // brothers
   util.article.brothers({container:'.brothers'});
   // tags
-  util.article.tags({container:'.tags-cloud'});
+  util.sidebar.tags({container:'.panel-tags'});
 });
 
 $(document).on('echo-ready', function() {
@@ -13,5 +13,5 @@ $(document).on('echo-ready', function() {
   // comments
   util.article.comments({container:'.comments'});
   // recent comments
-  util.article.commentsRecent({container:'.comments-recent'});
+  util.sidebar.commentsRecent({container:'.panel-comments-recent'});
 });

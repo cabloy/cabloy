@@ -54,10 +54,6 @@ article .stat .read-count {
   border-radius: 6px;
 }
 
-.comments-recent .user {
-  text-align: right;
-}
-
 .comments .header .stat {
   float: left;
 }
