@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-themeblog",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "title": "cms:theme:blog",
   "eggBornModule": {
     "cms": {
@@ -58,7 +58,7 @@
   "dependencies": {
     "require3": "^1.0.1",
     "extend2": "^1.0.0",
-    "egg-born-module-cms-pluginbase": "^1.0.8",
+    "egg-born-module-cms-pluginbase": "^1.0.9",
     "egg-born-module-cms-plugintrack": "^1.0.1"
   }
 }

@@ -1,4 +1,5 @@
 <%
+
 function _menuItems(categories) {
   let res = '';
   for (const item of categories) {
@@ -18,7 +19,20 @@ function _menuItems(categories) {
   return res;
 }
 
-const menuItems = _menuItems(site.categories);
+// categories
+if (!site._categories) {
+  // categories
+  const res = await ctx.performAction({
+    method:'post',
+    url: '/a/cms/category/tree',
+    body: { language:site.language.current,hidden:0 },
+  });
+  site._categories=res.list;
+}
+// menu
+if(!site._menuItems){
+  site._menuItems = _menuItems(site._categories);
+}
 
 %>
 <nav class="navbar navbar-default">
@@ -34,7 +48,7 @@ const menuItems = _menuItems(site.categories);
     </div>
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <%- menuItems %>
+        <%- site._menuItems %>
       </ul>
       <form class="navbar-form navbar-right search" action="<%=url('static/articles.html')%>">
         <div class="form-group">
