@@ -43,12 +43,13 @@ export default {
   created() {
     this.tagsText = this.adjustTags();
     // all tags
-    this.$api.post('tag/list', {
-      language: this.language,
+    const options = {
+      where: { language: this.language },
       orders: [
         [ 'tagName', 'asc' ],
       ],
-    }).then(res => {
+    };
+    this.$api.post('tag/list', { options }).then(res => {
       this.tagsAll = res.list;
     });
   },

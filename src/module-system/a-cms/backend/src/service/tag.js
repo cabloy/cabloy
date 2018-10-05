@@ -2,13 +2,8 @@ module.exports = app => {
 
   class Tag extends app.Service {
 
-    async list({ language, orders }) {
-      const list = await this.ctx.model.tag.select({
-        where: { language },
-        orders,
-      });
-
-      return list;
+    async list({ options }) {
+      return await this.ctx.model.tag.select(options);
     }
 
     async create({ language, tagName }) {

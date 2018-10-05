@@ -53,6 +53,7 @@ module.exports = app => {
     { method: 'post', path: 'category/move', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     // tag
     { method: 'post', path: 'tag/list', controller: tag },
+    { method: 'get', path: 'tag/list', controller: tag, action: 'listP', middlewares: 'jsonp' },
 
   ];
   return routes;

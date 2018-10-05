@@ -339,6 +339,7 @@ module.exports = app => {
     { method: 'post', path: 'category/move', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     // tag
     { method: 'post', path: 'tag/list', controller: tag },
+    { method: 'get', path: 'tag/list', controller: tag, action: 'listP', middlewares: 'jsonp' },
 
   ];
   return routes;
@@ -650,10 +651,21 @@ module.exports = app => {
 
     async list() {
       const list = await this.ctx.service.tag.list({
-        language: this.ctx.request.body.language,
-        orders: this.ctx.request.body.orders,
+        options: this.ctx.request.body.options,
       });
       this.ctx.success({ list });
+    }
+
+    async listP() {
+      // options
+      const options = JSON.parse(this.ctx.request.query.options);
+      // list
+      const res = await this.ctx.performAction({
+        method: 'post',
+        url: '/a/cms/tag/list',
+        body: { options },
+      });
+      this.ctx.success(res);
     }
 
   }
@@ -2113,13 +2125,8 @@ module.exports = app => {
 
   class Tag extends app.Service {
 
-    async list({ language, orders }) {
-      const list = await this.ctx.model.tag.select({
-        where: { language },
-        orders,
-      });
-
-      return list;
+    async list({ options }) {
+      return await this.ctx.model.tag.select(options);
     }
 
     async create({ language, tagName }) {
