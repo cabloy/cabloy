@@ -6,7 +6,12 @@
         <img class="img-delay avatar avatar48" data-src="<%=url(site.profile.avatar)%>" data-width="125" data-height="100" title="<%=site.profile.userName%>"/>
       </a>
       <span class='name'><a href="<%=url(site.profile.avatarUrl)%>"><%=site.profile.userName%></a></span>
-      <div class="motto"><%=site.profile.motto%></div>
+      <% if(site.profile.motto){ %>
+        <div class="motto"><%=site.profile.motto%></div>
+      <% } %>
+      <% if(site.profile.extra){ %>
+        <div class="extra"><%-site.profile.extra%></div>
+      <% } %>
     </div>
   </div>
 </div>
