@@ -156,6 +156,14 @@ module.exports = app => {
         await fse.copy(item, path.join(pathIntermediate, path.basename(item)));
       }
 
+      // custom dist
+      const customDistFiles = await bb.fromCallback(cb => {
+        glob(`${customPath}/dist/\*`, cb);
+      });
+      for (const item of customDistFiles) {
+        await fse.copy(item, path.join(pathDist, path.basename(item)));
+      }
+
       // / copy files to dist (ignore .ejs)
       // /  assets plugins/[plugin]/assets
       for (const dir of [ 'assets', 'plugins' ]) {

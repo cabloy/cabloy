@@ -17,10 +17,22 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async tree() {
+      const list = await this.ctx.service.category.tree({
+        language: this.ctx.request.body.language,
+        categoryId: this.ctx.request.body.categoryId,
+        hidden: this.ctx.request.body.hidden,
+        flag: this.ctx.request.body.flag,
+      });
+      this.ctx.success({ list });
+    }
+
     async children() {
       const list = await this.ctx.service.category.children({
         language: this.ctx.request.body.language,
         categoryId: this.ctx.request.body.categoryId,
+        hidden: this.ctx.request.body.hidden,
+        flag: this.ctx.request.body.flag,
       });
       this.ctx.success({ list });
     }

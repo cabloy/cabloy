@@ -334,6 +334,7 @@ module.exports = app => {
       validate: { validator: 'category' },
       right: { type: 'function', module: 'a-settings', name: 'settings' },
     } },
+    { method: 'post', path: 'category/tree', controller: category }, // not set function right
     { method: 'post', path: 'category/children', controller: category }, // not set function right
     { method: 'post', path: 'category/add', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'category/delete', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
@@ -501,10 +502,22 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async tree() {
+      const list = await this.ctx.service.category.tree({
+        language: this.ctx.request.body.language,
+        categoryId: this.ctx.request.body.categoryId,
+        hidden: this.ctx.request.body.hidden,
+        flag: this.ctx.request.body.flag,
+      });
+      this.ctx.success({ list });
+    }
+
     async children() {
       const list = await this.ctx.service.category.children({
         language: this.ctx.request.body.language,
         categoryId: this.ctx.request.body.categoryId,
+        hidden: this.ctx.request.body.hidden,
+        flag: this.ctx.request.body.flag,
       });
       this.ctx.success({ list });
     }
@@ -1713,10 +1726,6 @@ var env=${JSON.stringify(env, null, 2)};
     }
 
     async getData({ site }) {
-      // categories
-      if (!site.categories) {
-        site.categories = await this.ctx.service.category.tree({ language: site.language.current, hidden: 0 });
-      }
       // languages
       if (!site.languages) {
         site.languages = [];
@@ -2048,6 +2057,14 @@ module.exports = app => {
       });
       for (const item of customFiles) {
         await fse.copy(item, path.join(pathIntermediate, path.basename(item)));
+      }
+
+      // custom dist
+      const customDistFiles = await bb.fromCallback(cb => {
+        glob(`${customPath}/dist/\*`, cb);
+      });
+      for (const item of customDistFiles) {
+        await fse.copy(item, path.join(pathDist, path.basename(item)));
       }
 
       // / copy files to dist (ignore .ejs)

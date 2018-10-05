@@ -420,10 +420,6 @@ var env=${JSON.stringify(env, null, 2)};
     }
 
     async getData({ site }) {
-      // categories
-      if (!site.categories) {
-        site.categories = await this.ctx.service.category.tree({ language: site.language.current, hidden: 0 });
-      }
       // languages
       if (!site.languages) {
         site.languages = [];
