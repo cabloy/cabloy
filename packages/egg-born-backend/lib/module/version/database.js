@@ -3,8 +3,16 @@ const chalk = require('chalk');
 
 module.exports = async function(app) {
   // isolation level
+  const transaction_isolation_cmd = 'SET GLOBAL transaction_isolation=\'READ-COMMITTED\'';
   if (app.meta.isLocal || app.meta.isTest) {
-    await app.mysql.get('__ebdb').query('SET GLOBAL TRANSACTION ISOLATION LEVEL READ COMMITTED');
+    await app.mysql.get('__ebdb').query(transaction_isolation_cmd);
+  } else {
+    const res = await app.mysql.get('__ebdb').query('SELECT @@GLOBAL.transaction_isolation transaction_isolation');
+    const transaction_isolation = res[0] && res[0].transaction_isolation;
+    if (transaction_isolation !== 'READ-COMMITTED') {
+      console.log(chalk.red(transaction_isolation_cmd));
+      throw new Error(transaction_isolation_cmd);
+    }
   }
   // db prefix
   const dbPrefix = `egg-born-test-${app.name}`;
