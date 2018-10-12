@@ -6,22 +6,24 @@
         <eb-link :iconMaterial="order==='desc'?'arrow_downward':'arrow_upward'" :onPerform="onPerformSort"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <f7-card class="comment" v-for="item of items" :key="item.id">
-      <f7-card-header>
-        <div class="title">
-          <img class="avatar avatar32" :src="$meta.util.combineImageUrl(item.avatar,32)">
-          <div class="name">{{item.userName}}</div>
-          <div class="date">#{{item.sorting}} · {{$meta.util.formatDateTimeRelative(item.createdAt)}}</div>
-        </div>
-        <div class="actions">
-          <eb-link v-if="item.userId===user.id" class="action" iconMaterial="edit" :eb-href="`comment/item?atomId=${atomId}&commentId=${item.id}&replyId=0`"></eb-link>
-          <eb-link v-if="item.userId===user.id" class="action" iconMaterial="delete_forever" :context="item" :onPerform="onPerformDelete"></eb-link>
-          <eb-link class="action" :iconMaterial="item.heart?'favorite':'favorite_border'" :context="item" :onPerform="onPerformHeart">{{item.heartCount}}</eb-link>
-          <eb-link v-if="!user.anonymous" class="action" iconMaterial="reply" :eb-href="`comment/item?atomId=${atomId}&commentId=0&replyId=${item.id}`"></eb-link>
-        </div>
-      </f7-card-header>
-      <f7-card-content padding class="markdown-body" v-html="item.html"></f7-card-content>
-    </f7-card>
+    <template v-if="moduleStyle">
+      <f7-card class="comment" v-for="item of items" :key="item.id">
+        <f7-card-header>
+          <div class="title">
+            <img class="avatar avatar32" :src="$meta.util.combineImageUrl(item.avatar,32)">
+            <div class="name">{{item.userName}}</div>
+            <div class="date">#{{item.sorting}} · {{$meta.util.formatDateTimeRelative(item.createdAt)}}</div>
+          </div>
+          <div class="actions">
+            <eb-link v-if="item.userId===user.id" class="action" iconMaterial="edit" :eb-href="`comment/item?atomId=${atomId}&commentId=${item.id}&replyId=0`"></eb-link>
+            <eb-link v-if="item.userId===user.id" class="action" iconMaterial="delete_forever" :context="item" :onPerform="onPerformDelete"></eb-link>
+            <eb-link class="action" :iconMaterial="item.heart?'favorite':'favorite_border'" :context="item" :onPerform="onPerformHeart">{{item.heartCount}}</eb-link>
+            <eb-link v-if="!user.anonymous" class="action" iconMaterial="reply" :eb-href="`comment/item?atomId=${atomId}&commentId=0&replyId=${item.id}`"></eb-link>
+          </div>
+        </f7-card-header>
+        <f7-card-content padding class="markdown-body" v-html="item.html"></f7-card-content>
+      </f7-card>
+    </template>
     <eb-load-more ref="loadMore" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="true"></eb-load-more>
   </eb-page>
 </template>
@@ -33,12 +35,18 @@ export default {
       atomId: parseInt(this.$f7route.query.atomId),
       order: 'desc',
       items: [],
+      moduleStyle: null,
     };
   },
   computed: {
     user() {
       return this.$store.state.auth.user.op;
     },
+  },
+  created() {
+    this.$meta.module.use(this.$meta.config.markdown.style.module, module => {
+      this.moduleStyle = module;
+    });
   },
   mounted() {
     this.$meta.eventHub.$on('comment:action', this.onCommentChanged);

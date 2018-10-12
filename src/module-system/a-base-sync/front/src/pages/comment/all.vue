@@ -5,29 +5,31 @@
         <eb-link :iconMaterial="order==='desc'?'arrow_downward':'arrow_upward'" :onPerform="onPerformSort"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <f7-card class="comment" v-for="item of items" :key="item.h_id">
-      <f7-card-header>
-        <div class="header-container">
-          <div class="header-atom">
-            <eb-link :context="item" :onPerform="onPerformViewAtom">{{item.atomName}}</eb-link>
-          </div>
-          <div class="header-comment">
-            <div class="title">
-              <img class="avatar avatar32" :src="$meta.util.combineImageUrl(item.h_avatar,32)">
-              <div class="name">{{item.h_userName}}</div>
-              <div class="date">#{{item.h_sorting}} · {{$meta.util.formatDateTimeRelative(item.h_createdAt)}}</div>
+    <template v-if="moduleStyle">
+      <f7-card class="comment" v-for="item of items" :key="item.h_id">
+        <f7-card-header>
+          <div class="header-container">
+            <div class="header-atom">
+              <eb-link :context="item" :onPerform="onPerformViewAtom">{{item.atomName}}</eb-link>
             </div>
-            <div class="actions">
-              <eb-link v-if="item.h_userId===user.id" class="action" iconMaterial="edit" :eb-href="`comment/item?atomId=${item.atomId}&commentId=${item.h_id}&replyId=0`"></eb-link>
-              <eb-link v-if="item.h_userId===user.id" class="action" iconMaterial="delete_forever" :context="item" :onPerform="onPerformDelete"></eb-link>
-              <eb-link class="action" :iconMaterial="item.h_heart?'favorite':'favorite_border'" :context="item" :onPerform="onPerformHeart">{{item.h_heartCount}}</eb-link>
-              <eb-link v-if="!user.anonymous" class="action" iconMaterial="reply" :eb-href="`comment/item?atomId=${item.atomId}&commentId=0&replyId=${item.h_id}`"></eb-link>
+            <div class="header-comment">
+              <div class="title">
+                <img class="avatar avatar32" :src="$meta.util.combineImageUrl(item.h_avatar,32)">
+                <div class="name">{{item.h_userName}}</div>
+                <div class="date">#{{item.h_sorting}} · {{$meta.util.formatDateTimeRelative(item.h_createdAt)}}</div>
+              </div>
+              <div class="actions">
+                <eb-link v-if="item.h_userId===user.id" class="action" iconMaterial="edit" :eb-href="`comment/item?atomId=${item.atomId}&commentId=${item.h_id}&replyId=0`"></eb-link>
+                <eb-link v-if="item.h_userId===user.id" class="action" iconMaterial="delete_forever" :context="item" :onPerform="onPerformDelete"></eb-link>
+                <eb-link class="action" :iconMaterial="item.h_heart?'favorite':'favorite_border'" :context="item" :onPerform="onPerformHeart">{{item.h_heartCount}}</eb-link>
+                <eb-link v-if="!user.anonymous" class="action" iconMaterial="reply" :eb-href="`comment/item?atomId=${item.atomId}&commentId=0&replyId=${item.h_id}`"></eb-link>
+              </div>
             </div>
           </div>
-        </div>
-      </f7-card-header>
-      <f7-card-content padding class="markdown-body" v-html="item.h_html"></f7-card-content>
-    </f7-card>
+        </f7-card-header>
+        <f7-card-content padding class="markdown-body" v-html="item.h_html"></f7-card-content>
+      </f7-card>
+    </template>
     <eb-load-more ref="loadMore" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="true"></eb-load-more>
   </eb-page>
 </template>
@@ -39,12 +41,18 @@ export default {
     return {
       order: 'desc',
       items: [],
+      moduleStyle: null,
     };
   },
   computed: {
     user() {
       return this.$store.state.auth.user.op;
     },
+  },
+  created() {
+    this.$meta.module.use(this.$meta.config.markdown.style.module, module => {
+      this.moduleStyle = module;
+    });
   },
   mounted() {
     this.$meta.eventHub.$on('comment:action', this.onCommentChanged);
