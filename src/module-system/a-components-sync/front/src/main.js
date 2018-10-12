@@ -2,7 +2,6 @@ let Vue;
 
 import LiquorTree from '@zhennann/liquor-tree';
 
-import './assets/css/markdown/github.less';
 import './assets/css/module.less';
 
 // install
