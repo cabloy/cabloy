@@ -6,7 +6,11 @@ module.exports = appInfo => {
 
   // instances
   config.instances = [
-    { subdomain: '', password: '', title: '' },
+    { subdomain: '', password: '', title: '',
+      meta: {
+        jsonp: { whiteList: null },
+      },
+    },
   ];
 
   // modules
