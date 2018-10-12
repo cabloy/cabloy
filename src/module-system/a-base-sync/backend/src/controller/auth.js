@@ -16,7 +16,7 @@ module.exports = app => {
         // logined
         this.ctx.success({
           user: this.ctx.user,
-          instance: this.ctx.instance,
+          instance: this.getInstance(),
         });
       } catch (e) {
         // deleted,disabled
@@ -27,7 +27,7 @@ module.exports = app => {
     async check() {
       this.ctx.success({
         user: this.ctx.user,
-        instance: this.ctx.instance,
+        instance: this.getInstance(),
       });
     }
 
@@ -36,7 +36,7 @@ module.exports = app => {
       await this.ctx.meta.user.loginAsAnonymous();
       this.ctx.success({
         user: this.ctx.user,
-        instance: this.ctx.instance,
+        instance: this.getInstance(),
       });
     }
 
@@ -56,6 +56,13 @@ module.exports = app => {
         providerName: this.ctx.request.body.providerName,
       });
       this.ctx.success(res);
+    }
+
+    getInstance() {
+      return {
+        name: this.ctx.instance.name,
+        title: this.ctx.instance.title,
+      };
     }
 
   }
