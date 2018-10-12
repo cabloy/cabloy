@@ -26,6 +26,14 @@ module.exports = app => {
         `;
         await this.ctx.model.query(sql);
       }
+      if (options.version === 3) {
+        // aInstance
+        const sql = `
+          ALTER TABLE aInstance
+          ADD COLUMN meta json DEFAULT NULL
+        `;
+        await this.ctx.model.query(sql);
+      }
     }
 
     async init(options) {
@@ -36,6 +44,12 @@ module.exports = app => {
         if (options.title) {
           const instance = await this.ctx.db.get('aInstance', { name: options.subdomain });
           await this.ctx.db.update('aInstance', { id: instance.id, title: options.title });
+        }
+      }
+      if (options.version === 3) {
+        if (options.meta) {
+          const instance = await this.ctx.db.get('aInstance', { name: options.subdomain });
+          await this.ctx.db.update('aInstance', { id: instance.id, meta: JSON.stringify(options.meta) });
         }
       }
     }

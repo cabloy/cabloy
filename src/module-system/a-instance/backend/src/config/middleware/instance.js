@@ -5,8 +5,11 @@ module.exports = () => {
     let instance = timeout > 0 ? ctx.cache.mem.get('instance') : null;
     if (!instance) {
       instance = await ctx.db.get('aInstance', { name: ctx.subdomain });
-      if (instance && timeout > 0) {
-        ctx.cache.mem.set('instance', instance, timeout);
+      if (instance) {
+        instance.meta = JSON.parse(instance.meta);
+        if (timeout > 0) {
+          ctx.cache.mem.set('instance', instance, timeout);
+        }
       }
     }
 

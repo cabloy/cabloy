@@ -90,14 +90,19 @@ module.exports =
 /***/ (function(module, exports, __webpack_require__) {
 
 const routes = __webpack_require__(1);
-const services = __webpack_require__(5);
-const config = __webpack_require__(7);
-const locales = __webpack_require__(8);
-const errors = __webpack_require__(10);
-const middlewares = __webpack_require__(11);
+const services = __webpack_require__(6);
+const config = __webpack_require__(9);
+const locales = __webpack_require__(10);
+const errors = __webpack_require__(12);
+const middlewares = __webpack_require__(13);
 
 // eslint-disable-next-line
 module.exports = app => {
+
+  // models
+  const models = __webpack_require__(15)(app);
+  // meta
+  const meta = __webpack_require__(16)(app);
 
   return {
     routes,
@@ -106,6 +111,8 @@ module.exports = app => {
     locales,
     errors,
     middlewares,
+    models,
+    meta,
   };
 
 };
@@ -116,12 +123,22 @@ module.exports = app => {
 /***/ (function(module, exports, __webpack_require__) {
 
 const version = __webpack_require__(2);
-const test = __webpack_require__(3);
+const instance = __webpack_require__(3);
+const test = __webpack_require__(4);
 
 module.exports = [
+  // version
   { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
   { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
   { method: 'get', path: 'test/instance', controller: test, middlewares: 'test' },
+  // instance
+  { method: 'post', path: 'instance/item', controller: instance, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
+  { method: 'post', path: 'instance/save', controller: instance, middlewares: 'validate',
+    meta: {
+      validate: { validator: 'instance' },
+      right: { type: 'function', module: 'a-settings', name: 'settings' },
+    },
+  },
 ];
 
 
@@ -149,9 +166,33 @@ module.exports = app => {
 
 /***/ }),
 /* 3 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+  class InstanceController extends app.Controller {
+
+    async item() {
+      const res = await this.service.instance.item();
+      this.ctx.success(res);
+    }
+
+    async save() {
+      await this.service.instance.save({
+        data: this.ctx.request.body.data,
+      });
+      this.ctx.success();
+    }
+
+  }
+  return InstanceController;
+};
+
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(4);
+const require3 = __webpack_require__(5);
 const assert = require3('assert');
 
 module.exports = app => {
@@ -168,24 +209,26 @@ module.exports = app => {
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports) {
 
 module.exports = require("require3");
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(6);
+const version = __webpack_require__(7);
+const instance = __webpack_require__(8);
 
 module.exports = {
   version,
+  instance,
 };
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -216,6 +259,14 @@ module.exports = app => {
         `;
         await this.ctx.model.query(sql);
       }
+      if (options.version === 3) {
+        // aInstance
+        const sql = `
+          ALTER TABLE aInstance
+          ADD COLUMN meta json DEFAULT NULL
+        `;
+        await this.ctx.model.query(sql);
+      }
     }
 
     async init(options) {
@@ -228,6 +279,12 @@ module.exports = app => {
           await this.ctx.db.update('aInstance', { id: instance.id, title: options.title });
         }
       }
+      if (options.version === 3) {
+        if (options.meta) {
+          const instance = await this.ctx.db.get('aInstance', { name: options.subdomain });
+          await this.ctx.db.update('aInstance', { id: instance.id, meta: JSON.stringify(options.meta) });
+        }
+      }
     }
 
   }
@@ -237,7 +294,33 @@ module.exports = app => {
 
 
 /***/ }),
-/* 7 */
+/* 8 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+
+  class Instance extends app.Service {
+
+    async item() {
+      return await this.ctx.db.get('aInstance', { id: this.ctx.instance.id });
+    }
+
+    async save({ data }) {
+      await this.ctx.db.update('aInstance', {
+        id: this.ctx.instance.id,
+        title: data.title,
+        meta: data.meta,
+      });
+    }
+
+  }
+
+  return Instance;
+};
+
+
+/***/ }),
+/* 9 */
 /***/ (function(module, exports) {
 
 // eslint-disable-next-line
@@ -255,7 +338,7 @@ module.exports = appInfo => {
 
   // cache
   config.cache = {
-    timeout: 1 * 1 * 3600 * 1000, // 1 hour
+    timeout: 3 * 1000, // 3s
   };
 
   return config;
@@ -263,24 +346,25 @@ module.exports = appInfo => {
 
 
 /***/ }),
-/* 8 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
-  'zh-cn': __webpack_require__(9),
+  'zh-cn': __webpack_require__(11),
 };
 
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, exports) {
 
 module.exports = {
+  Instance: '实例',
 };
 
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, exports) {
 
 // error code should start from 1001
@@ -289,10 +373,10 @@ module.exports = {
 
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const instance = __webpack_require__(12);
+const instance = __webpack_require__(14);
 
 module.exports = {
   instance,
@@ -300,7 +384,7 @@ module.exports = {
 
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, exports) {
 
 module.exports = () => {
@@ -310,8 +394,11 @@ module.exports = () => {
     let instance = timeout > 0 ? ctx.cache.mem.get('instance') : null;
     if (!instance) {
       instance = await ctx.db.get('aInstance', { name: ctx.subdomain });
-      if (instance && timeout > 0) {
-        ctx.cache.mem.set('instance', instance, timeout);
+      if (instance) {
+        instance.meta = JSON.parse(instance.meta);
+        if (timeout > 0) {
+          ctx.cache.mem.set('instance', instance, timeout);
+        }
       }
     }
 
@@ -324,6 +411,81 @@ module.exports = () => {
     // next
     await next();
   };
+};
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+  const models = {
+  };
+  return models;
+};
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = app => {
+  const schemas = __webpack_require__(17)(app);
+  const meta = {
+    validation: {
+      validators: {
+        instance: {
+          schemas: 'instance',
+        },
+      },
+      keywords: {},
+      schemas: {
+        instance: schemas.instance,
+      },
+    },
+    settings: {
+      instance: {
+        actionPath: 'instance/config',
+      },
+    },
+  };
+  return meta;
+};
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+  const schemas = {};
+  // instance
+  schemas.instance = {
+    type: 'object',
+    properties: {
+      name: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Subdomain',
+        ebReadOnly: true,
+      },
+      title: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Title',
+        notEmpty: true,
+      },
+      meta: {
+        type: 'string',
+        ebType: 'text',
+        ebTextarea: true,
+        ebTitle: 'Meta',
+        notEmpty: true,
+      },
+    },
+  };
+
+  return schemas;
 };
 
 

@@ -8,6 +8,11 @@ const middlewares = require('./config/middlewares.js');
 // eslint-disable-next-line
 module.exports = app => {
 
+  // models
+  const models = require('./models.js')(app);
+  // meta
+  const meta = require('./meta.js')(app);
+
   return {
     routes,
     services,
@@ -15,6 +20,8 @@ module.exports = app => {
     locales,
     errors,
     middlewares,
+    models,
+    meta,
   };
 
 };
