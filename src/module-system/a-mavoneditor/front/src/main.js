@@ -14,13 +14,18 @@ function install(_Vue, cb) {
   // use
   Vue.use(mavonEditor);
 
-  return cb({
-    routes: require('./routes.js').default,
-    store: require('./store.js').default(Vue),
-    config: require('./config/config.js').default,
-    locales: require('./config/locales.js').default,
-    components: require('./components.js').default,
+  // style
+  Vue.prototype.$meta.module.use(Vue.prototype.$meta.config.markdown.style.module, () => {
+    // ready
+    return cb({
+      routes: require('./routes.js').default,
+      store: require('./store.js').default(Vue),
+      config: require('./config/config.js').default,
+      locales: require('./config/locales.js').default,
+      components: require('./components.js').default,
+    });
   });
+
 }
 
 // export

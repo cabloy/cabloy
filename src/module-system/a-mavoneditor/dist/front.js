@@ -20235,7 +20235,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _zhennann_mavon_editor__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_zhennann_mavon_editor__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _zhennann_mavon_editor_dist_css_index_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
 /* harmony import */ var _zhennann_mavon_editor_dist_css_index_css__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_zhennann_mavon_editor_dist_css_index_css__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _assets_css_module_less__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4);
+/* harmony import */ var _assets_css_module_less__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3);
 /* harmony import */ var _assets_css_module_less__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_assets_css_module_less__WEBPACK_IMPORTED_MODULE_2__);
 var Vue = void 0;
 
@@ -20251,12 +20251,14 @@ function install(_Vue, cb) {
 
   Vue.use(_zhennann_mavon_editor__WEBPACK_IMPORTED_MODULE_0___default.a);
 
-  return cb({
-    routes: __webpack_require__(6).default,
-    store: __webpack_require__(8).default(Vue),
-    config: __webpack_require__(9).default,
-    locales: __webpack_require__(10).default,
-    components: __webpack_require__(12).default
+  Vue.prototype.$meta.module.use(Vue.prototype.$meta.config.markdown.style.module, function () {
+    return cb({
+      routes: __webpack_require__(4).default,
+      store: __webpack_require__(6).default(Vue),
+      config: __webpack_require__(7).default,
+      locales: __webpack_require__(8).default,
+      components: __webpack_require__(10).default
+    });
   });
 }
 
@@ -20271,27 +20273,25 @@ function install(_Vue, cb) {
 // extracted by mini-css-extract-plugin
 
 /***/ }),
-/* 3 */,
-/* 4 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // extracted by mini-css-extract-plugin
 
 /***/ }),
-/* 5 */,
-/* 6 */
+/* 4 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 function load(name) {
-  return __webpack_require__(7)("./" + name + ".vue").default;
+  return __webpack_require__(5)("./" + name + ".vue").default;
 }
 
 /* harmony default export */ __webpack_exports__["default"] = ([]);
 
 /***/ }),
-/* 7 */
+/* 5 */
 /***/ (function(module, exports) {
 
 function webpackEmptyContext(req) {
@@ -20302,10 +20302,10 @@ function webpackEmptyContext(req) {
 webpackEmptyContext.keys = function() { return []; };
 webpackEmptyContext.resolve = webpackEmptyContext;
 module.exports = webpackEmptyContext;
-webpackEmptyContext.id = 7;
+webpackEmptyContext.id = 5;
 
 /***/ }),
-/* 8 */
+/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20322,6 +20322,24 @@ __webpack_require__.r(__webpack_exports__);
 });
 
 /***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({});
+
+/***/ }),
+/* 8 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  'zh-cn': __webpack_require__(9).default
+});
+
+/***/ }),
 /* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -20331,24 +20349,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 /* 10 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ({
-  'zh-cn': __webpack_require__(11).default
-});
-
-/***/ }),
-/* 11 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ({});
-
-/***/ }),
-/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
