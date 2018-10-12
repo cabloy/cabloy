@@ -1,5 +1,6 @@
 let Vue;
 
+import './assets/css/markdown/github.less';
 import './assets/css/module.less';
 
 // install
