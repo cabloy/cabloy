@@ -17,6 +17,11 @@ export default function(Vue) {
         },
       },
     },
+    markdown: {
+      style: {
+        module: 'a-markdownstyle',
+      },
+    },
   };
 
   // beforeCreate
