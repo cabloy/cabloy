@@ -1,6 +1,8 @@
 import mparse from 'egg-born-mparse';
 const rLocalJSs = require.context('../../../../src/module/', true, /-sync\/front\/src\/main\.js$/);
 const rGlobalJSs = require.context('../../build/__module/', true, /-sync\/dist\/front\.js$/);
+const rGlobalCSSs = require.context('../../build/__module/', true, /-sync\/dist\/front\.css$/);
+const rCustomCSSs = require.context('../../../../src/front/assets/css/module/', true, /-sync\/custom\.less$/);
 
 export default function(Vue) {
   const loadingQueue = {
@@ -84,13 +86,27 @@ export default function(Vue) {
       });
     },
     _import(moduleInfo, cb) {
-      import('../../../../src/module/' + moduleInfo.relativeName + '/front/src/main.js').then(instance => {
-        this.install(instance, moduleInfo, module => cb(module));
-      }).catch(err => {
-        if (err.message.indexOf('/front/src/main.js') === -1) throw err;
-        import('../../build/__module/' + moduleInfo.fullName + '/dist/front.js').then(instance => {
+      this._import2(moduleInfo, instance => {
+        // custom css
+        import('../../../../src/front/assets/css/module/' + moduleInfo.relativeName + '/custom.less').then(() => {
+          // instance
+          this.install(instance, moduleInfo, module => cb(module));
+        }).catch(() => {
+          // instance
           this.install(instance, moduleInfo, module => cb(module));
         });
+      });
+    },
+    _import2(moduleInfo, cb) {
+      import('../../../../src/module/' + moduleInfo.relativeName + '/front/src/main.js').then(instance => {
+        cb(instance);
+      }).catch(err => {
+        if (err.message.indexOf('/front/src/main.js') === -1) throw err;
+        import('../../build/__module/' + moduleInfo.fullName + '/dist/front.css').then(() => {
+          import('../../build/__module/' + moduleInfo.fullName + '/dist/front.js').then(instance => {
+            cb(instance);
+          });
+        }).catch(() => {});
       });
     },
     requireAll() {
@@ -107,7 +123,7 @@ export default function(Vue) {
         const moduleInfo = mparse.parseInfo(mparse.parseName(key));
         const module = this._get(moduleInfo.relativeName);
         if (!module) {
-          this._requireJS(rGlobalJSs, key, moduleInfo);
+          this._requireGlobalCSSJS(key, moduleInfo);
         }
       });
     },
@@ -118,7 +134,7 @@ export default function(Vue) {
       } else {
         key = this._requireFindKey(rGlobalJSs, moduleInfo.relativeName);
         if (key) {
-          this._requireJS(rGlobalJSs, key, moduleInfo, cb);
+          this._requireGlobalCSSJS(key, moduleInfo, cb);
         } else {
           throw new Error(`Module ${moduleInfo.relativeName} not exists`);
         }
@@ -130,8 +146,25 @@ export default function(Vue) {
         return moduleRelativeName === moduleInfo.relativeName;
       });
     },
+    _requireGlobalCSSJS(key, moduleInfo, cb) {
+      const keyCss = this._requireFindKey(rGlobalCSSs, moduleInfo.relativeName);
+      if (keyCss) {
+        this._requireCSS(rGlobalCSSs, keyCss);
+      }
+      this._requireJS(rGlobalJSs, key, moduleInfo, cb);
+    },
+    _requireCSS(r, key) {
+      return r(key);
+    },
     _requireJS(r, key, moduleInfo, cb) {
+      // instance
       const instance = r(key);
+      // custom css, must after instance loaded
+      const keyCss = this._requireFindKey(rCustomCSSs, moduleInfo.relativeName);
+      if (keyCss) {
+        this._requireCSS(rCustomCSSs, keyCss);
+      }
+      // install
       this.install(instance, moduleInfo, module => {
         cb && cb(module);
       });
