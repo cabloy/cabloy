@@ -103,12 +103,17 @@ export default {
 .tags {
   justify-content: space-around;
 
-  .chip-media {
-    min-width: 32px;
-    width: auto;
-    border: 1px solid orange;
-    color: orange;
+  .chip {
+    cursor: pointer;
+
+    .chip-media {
+      min-width: 32px;
+      width: auto;
+      border: 1px solid orange;
+      color: orange;
+    }
   }
+
 }
 
 </style>
