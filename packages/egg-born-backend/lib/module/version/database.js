@@ -22,9 +22,15 @@ module.exports = async function(app) {
     if (mysqlConfig.database === 'sys') {
       const mysql = app.mysql.get('__ebdb');
       const dbs = await mysql.query(`show databases like \'${dbPrefix}-%\'`);
-      if (dbs.length === 0) throw new Error('run \'npm run test:backend\' first!');
-      const db = dbs[0];
-      mysqlConfig.database = db[Object.keys(db)[0]];
+      if (dbs.length === 0) {
+        const database = `${dbPrefix}-${moment().format('YYYYMMDD-HHmmss')}`;
+        await mysql.query(`CREATE DATABASE \`${database}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`);
+        mysqlConfig.database = database;
+      } else {
+        const db = dbs[0];
+        mysqlConfig.database = db[Object.keys(db)[0]];
+      }
+      // create test mysql
       app.mysql.__ebdb_test = app.mysql.createInstance(mysqlConfig);
       // database ready
       console.log(chalk.cyan(`  database: ${mysqlConfig.database}`));
