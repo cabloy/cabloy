@@ -473,7 +473,6 @@ module.exports = app => {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Title',
-        notEmpty: true,
       },
       meta: {
         type: 'string',
