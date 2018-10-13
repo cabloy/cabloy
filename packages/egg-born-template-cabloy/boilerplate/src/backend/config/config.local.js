@@ -17,7 +17,7 @@ module.exports = appInfo => {
         port: '3306',
         user: 'root',
         password: '',
-        database: 'sys',
+        database: 'sys', // recommended
       },
     },
   };
