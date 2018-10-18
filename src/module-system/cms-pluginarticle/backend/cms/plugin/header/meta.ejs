@@ -1,0 +1,36 @@
+<%
+  let title;
+  if(typeof article!=='undefined'){
+    title=`${article.atomName} | ${site.base.title}`;
+  }else if(_path==='main/index/index'){
+    title=site.base.title;
+  }else{
+    // modified by client
+  }
+%>
+<% if(typeof article!=='undefined'){ %>
+  <title><%=title%></title>
+  <link rel="canonical" href="<%=url(article.url)%>" />
+  <meta name="description" content="<%=article.description || article.summary%>" />
+  <% if(article.keywords){ %>
+  <meta name="keywords" content="<%=article.keywords%>" />
+  <% } %>
+  <meta property="og:title" content="<%=title%>" />
+  <meta property='og:description' content="<%=article.description || article.summary%>" />
+  <meta property="og:url" content="<%=url(article.url)%>" />
+  <% if(article.imageFirst){ %>
+  <meta property="og:image" content="<%=article.imageFirst%>" />
+  <% } %>
+<% }else{ %>
+  <% if(title){ %>
+  <title><%=title%></title>
+  <% } %>
+  <meta name="description" content="<%=site.base.description || site.base.subTitle%>" />
+  <% if(site.base.keywords){ %>
+  <meta name="keywords" content="<%=site.base.keywords%>" />
+  <% } %>
+  <% if(title){ %>
+  <meta property="og:title" content="<%=title%>" />
+  <% } %>
+  <meta property="og:description" content="<%=site.base.description || site.base.subTitle%>" />
+<% } %>

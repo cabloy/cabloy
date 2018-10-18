@@ -1,0 +1,310 @@
+function _onParseComment(item) {
+  const actionsEdit = item.userId !== util.user.op.id ? '' : `
+      <a href="${util.article.commentUrl({ atomId: item.atomId, id: item.id, replyId: 0 })}" class="action" target="_blank"><span class="glyphicon glyphicon-pencil"></span></a>
+      <a href="#" class="action delete"><span class="glyphicon glyphicon-trash"></span></a>
+  `;
+  const reply = !env.article.allowComment ? '' : `
+    <a href="${util.article.commentUrl({ atomId: item.atomId, id: 0, replyId: item.id })}" class="action" target="_blank"><span class="glyphicon glyphicon-share-alt"></span></a>
+  `;
+  return `
+<div class="comment panel panel-default" data-comment-id="${item.id}">
+  <div class="header panel-heading">
+    <div class="user">
+      <img class="avatar avatar32" src="${util.combineImageUrl(item.avatar, 32, 32)}" />
+      <h3 class="name panel-title">${item.userName}</h3>
+      <div class="date">#${item.sorting} · ${util.time.formatDateTime(item.createdAt)}</div>
+    </div>
+    <div class="actions">
+      ${actionsEdit}
+      <a href="#" class="action heart">
+        <span class="glyphicon glyphicon-heart heart-on ${item.heart ? '' : 'hidden'}"></span>
+        <span class="glyphicon glyphicon-heart-empty heart-off ${item.heart ? 'hidden' : ''}"></span>
+        <span class="num">${item.heartCount}</span>
+      </a>
+      ${reply}
+    </div>
+  </div>
+  <div class="content panel-body">
+    ${item.html}
+  </div>
+</div>
+  `;
+}
+
+// article
+util.article = {
+  stats() {
+    const stats = $('.stat');
+    const atomIds = {};
+    $.each(stats, (index, item) => {
+      const $item = $(item);
+      if (!$item.hasClass('no-parse')) {
+        atomIds[$item.data('article-id')] = true;
+      }
+    });
+    if (Object.keys(atomIds).length === 0) return;
+    util.ajax({
+      url: '/a/base/atom/stats',
+      body: {
+        data: JSON.stringify(Object.keys(atomIds)),
+      },
+    }).then(atoms => {
+      this._setStats(atoms);
+      // read
+      this.read();
+    });
+  },
+  read() {
+    if (!env.article) return;
+    const data = {
+      key: { atomId: env.article.atomId },
+      atom: { readCount: 1 },
+    };
+    util.ajax({
+      url: '/a/base/atom/readCount',
+      body: {
+        data: JSON.stringify(data),
+      },
+    }).then(data => {
+      this._readCountInc(env.article.atomId, 1);
+    });
+  },
+  brothers({ container }) {
+    const $container = $(container);
+    if (!env.article || $container.length === 0) return;
+    this._brothers($container, 'prev');
+    this._brothers($container, 'next');
+  },
+  comments(options) {
+    const $container = $(options.container);
+    if (!env.article || $container.length === 0) return;
+    if (!options.onParse) options.onParse = _onParseComment;
+    // postComment click
+    $('.button-postComment', $container).click(() => {
+      window.open(util.article.commentUrl({ atomId: env.article.atomId, id: 0, replyId: 0 }));
+    });
+    // order click
+    $('.order a', $container).click(event => {
+      event.preventDefault();
+      const link = $(event.target).closest('a');
+      const order = link.hasClass('asc') ? 'desc' : 'asc';
+      this._switchOrder({ $container, order, onParse: options.onParse });
+    });
+    // action click
+    $('.list', $container).click(event => {
+      const link = $(event.target).closest('a.action');
+      if (link.length > 0) {
+        const comment = link.closest('.comment');
+        const commentId = parseInt(comment.data('comment-id'));
+        if (link.hasClass('delete')) {
+          event.preventDefault();
+          this._commentActionDelete({ comment, atomId: env.article.atomId, id: commentId });
+        } else if (link.hasClass('heart')) {
+          event.preventDefault();
+          const heart = $(event.target).hasClass('heart-on') ? 0 : 1;
+          this._commentActionHeart({ link, atomId: env.article.atomId, id: commentId, heart });
+        }
+      }
+    });
+    // init order
+    this._switchOrder({ $container, order: env.comment.order, onParse: options.onParse });
+  },
+  commentUrl({ atomId, id, replyId }) {
+    return `${env.site.serverUrl}/#!/a/base/comment/item?atomId=${atomId}&commentId=${id}&replyId=${replyId || 0}`;
+  },
+  _commentActionDelete({ comment, atomId, id }) {
+    bootbox.confirm({
+      message: '<%=text("Are you sure?")%>',
+      buttons: {
+        confirm: {
+          label: '<%=text("Yes")%>',
+        },
+        cancel: {
+          label: '<%=text("No")%>',
+        },
+      },
+      callback: res => {
+        if (!res) return;
+        const data = {
+          key: { atomId },
+          data: { commentId: id },
+        };
+        util.ajax({
+          url: '/a/base/comment/delete',
+          body: { data: JSON.stringify(data) },
+        }).then(() => {
+          comment.remove();
+          this._commentCountInc(atomId, -1);
+        });
+      },
+    });
+  },
+  _commentActionHeart({ link, atomId, id, heart }) {
+    const data = {
+      key: { atomId },
+      data: { commentId: id, heart },
+    };
+    util.ajax({
+      url: '/a/base/comment/heart',
+      body: { data: JSON.stringify(data) },
+    }).then(() => {
+      this._commentHeartSwitch(link, atomId, id, heart);
+    });
+  },
+  _switchOrder({ $container, order, onParse }) {
+    // res
+    let res;
+    // load more
+    if (this._commentsController) {
+      res = this._commentsController.reload({ index: 0, context: { order } });
+    } else {
+      res = true;
+      this._commentsController = util.loadMore({
+        container: $('.list', $container),
+        index: 0,
+        context: { order },
+        onFetch({ index, context }) {
+          // options
+          const options = {
+            orders: [
+              [ 'sorting', context.order ],
+            ],
+            page: { index },
+          };
+          // data
+          const data = {
+            key: { atomId: env.article.atomId },
+            options,
+          };
+          // select
+          return util.ajax({
+            url: '/a/base/comment/list',
+            body: { data: JSON.stringify(data) },
+          });
+        },
+        onParse(item) {
+          return onParse(item);
+        },
+      });
+    }
+    // order
+    if (res) {
+      if (order === 'asc') {
+        $('.order .asc', $container).removeClass('hidden');
+        $('.order .desc', $container).addClass('hidden');
+      } else {
+        $('.order .asc', $container).addClass('hidden');
+        $('.order .desc', $container).removeClass('hidden');
+      }
+    }
+  },
+  _brothers($container, type) {
+    // article
+    const article = env.article;
+    // options
+    const options = {
+      where: {
+        'f.language': article.language,
+        'f.categoryId': article.categoryId,
+      },
+      page: { index: 0, size: 1 },
+      mode: 'list',
+    };
+    if (article.sorting > 0) {
+      // asc for sorting
+      options.where['f.sorting'] = { op: type === 'prev' ? '<' : '>', val: article.sorting };
+      options.orders = [
+        [ 'f.sorting', type === 'prev' ? 'desc' : 'asc' ],
+      ];
+    } else {
+      // desc for createdAt
+      options.where['f.createdAt'] = { op: type === 'prev' ? '>' : '<', val: util.time.formatDateTime(article.createdAt) };
+      options.orders = [
+        [ 'f.createdAt', type === 'prev' ? 'asc' : 'desc' ],
+      ];
+    }
+    // select
+    util.ajax({
+      url: '/a/cms/article/list',
+      body: { options: JSON.stringify(options) },
+    }).then(data => {
+      this._brother({ $container, type, article: data.list[0] });
+    });
+  },
+  _brother({ $container, type, article }) {
+    if (!article) return;
+    const $brother = $(`.${type}`, $container);
+    const $brotherLink = $(`.${type} a`, $container);
+
+    $brotherLink.attr('href', `${util.url(article.url)}`);
+    $brotherLink.text(article.atomName);
+    $brother.removeClass('hidden');
+    $container.removeClass('hidden');
+  },
+  _setStats(atoms) {
+    for (const atom of atoms) {
+      const atomId = atom.atomId;
+      // stat
+      const $stat = $(`.stat[data-article-id=${atomId}]`);
+      // num
+      $('.num.readCount', $stat).text(atom.readCount);
+      $('.num.commentCount', $stat).text(atom.commentCount);
+      this._starCount(atomId, atom.star, atom.starCount);
+      // click
+      $('.button-starCount', $stat).click(() => {
+        this._starClick(atomId);
+      });
+    }
+  },
+  _starClick(atomId) {
+    // stat
+    const $stat = $(`.stat[data-article-id=${atomId}]`);
+    const star = $('.button-starCount .star-on', $stat).hasClass('hidden') ? 1 : 0;
+    const data = {
+      key: { atomId },
+      atom: { star },
+    };
+    util.ajax({
+      url: '/a/base/atom/star',
+      body: {
+        data: JSON.stringify(data),
+      },
+    }).then(data => {
+      this._starCount(atomId, data.star, data.starCount);
+    });
+  },
+  _starCount(atomId, star, starCount) {
+    const $stat = $(`.stat[data-article-id=${atomId}]`);
+    $('.num.starCount', $stat).text(starCount);
+    if (star) {
+      $('.button-starCount .star-on').removeClass('hidden');
+      $('.button-starCount .star-off').addClass('hidden');
+    } else {
+      $('.button-starCount .star-on').addClass('hidden');
+      $('.button-starCount .star-off').removeClass('hidden');
+    }
+  },
+  _readCountInc(atomId, num) {
+    const $stat = $(`.stat[data-article-id=${atomId}]`);
+    const $readCount = $('.num.readCount', $stat);
+    $readCount.text(parseInt($($readCount[0]).text()) + num);
+  },
+  _commentCountInc(atomId, num) {
+    const $stat = $(`.stat[data-article-id=${atomId}]`);
+    const $commentCount = $('.num.commentCount', $stat);
+    $commentCount.text(parseInt($($commentCount[0]).text()) + num);
+  },
+  _commentHeartSwitch(link, atomId, id, heart) {
+    // num
+    const $heartCount = $('.num', link);
+    $heartCount.text(parseInt($($heartCount[0]).text()) + (heart ? 1 : -1));
+    // icon
+    if (heart) {
+      $('.heart-on', link).removeClass('hidden');
+      $('.heart-off', link).addClass('hidden');
+    } else {
+      $('.heart-on', link).addClass('hidden');
+      $('.heart-off', link).removeClass('hidden');
+    }
+  },
+};

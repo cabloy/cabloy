@@ -1,0 +1,11 @@
+$(document).ready(function() {
+  // brothers
+  util.article.brothers({container:'.brothers'});
+});
+
+$(document).on('echo-ready', function() {
+  // stats
+  util.article.stats();
+  // comments
+  util.article.comments({container:'.comments'});
+});
