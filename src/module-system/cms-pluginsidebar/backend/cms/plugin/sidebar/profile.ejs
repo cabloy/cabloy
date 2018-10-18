@@ -1,0 +1,15 @@
+<div class="panel panel-default panel-profile">
+  <div class="panel-heading"><%=text('PersonalProfile')%></div>
+  <div class="panel-body">
+    <a class='avatar' href="<%=url(site.profile.url)%>">
+      <img class="img-delay avatar avatar48" data-src="<%=url(site.profile.avatar)%>" data-width="48" data-height="48" title="<%=site.profile.userName%>"/>
+    </a>
+    <span class='name'><a href="<%=url(site.profile.url)%>"><%=site.profile.userName%></a></span>
+    <% if(site.profile.motto){ %>
+      <div class="motto"><%=site.profile.motto%></div>
+    <% } %>
+    <% if(site.profile.extra){ %>
+      <div class="extra"><%-site.profile.extra%></div>
+    <% } %>
+  </div>
+</div>
