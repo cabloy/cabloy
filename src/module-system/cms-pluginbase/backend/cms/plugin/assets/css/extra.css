@@ -10,6 +10,18 @@
   text-align: left;
 }
 
+hr {
+  height: 1px;
+  border: 0 none;
+}
+
+article img {
+  max-width: 100%;
+  border-radius: 2px;
+  display: block;
+  margin: 0 auto;
+}
+
 .warning {
   color: #8a6d3b;
   background-color: #fcf8e3;
@@ -21,13 +33,6 @@
 
 .load-more {
   text-align: center;
-}
-
-article img {
-  max-width: 100%;
-  border-radius: 2px;
-  display: block;
-  margin: 0 auto;
 }
 
 .img-delay {
@@ -54,11 +59,6 @@ article img {
   width: 48px;
 }
 
-hr {
-  height: 1px;
-  border: 0 none;
-}
-
 .glyphicon.spinning {
   animation: spin 1s infinite linear;
   -webkit-animation: spin2 1s infinite linear;
@@ -68,6 +68,7 @@ hr {
   from {
     transform: scale(1) rotate(0deg);
   }
+
   to {
     transform: scale(1) rotate(360deg);
   }
@@ -77,6 +78,7 @@ hr {
   from {
     -webkit-transform: rotate(0deg);
   }
+
   to {
     -webkit-transform: rotate(360deg);
   }

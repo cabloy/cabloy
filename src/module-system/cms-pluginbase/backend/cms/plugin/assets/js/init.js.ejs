@@ -1,17 +1,4 @@
 $(document).ready(function() {
   // echo
-  util.article.echo();
-  // brothers
-  util.article.brothers({container:'.brothers'});
-  // tags
-  util.sidebar.tags({container:'.panel-tags'});
-});
-
-$(document).on('echo-ready', function() {
-  // stats
-  util.article.stats();
-  // comments
-  util.article.comments({container:'.comments'});
-  // recent comments
-  util.sidebar.commentsRecent({container:'.panel-comments-recent'});
+  util.echo();
 });
