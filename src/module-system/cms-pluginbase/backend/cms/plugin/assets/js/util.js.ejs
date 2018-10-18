@@ -246,16 +246,3 @@ const util = {
     });
   },
 };
-
-$(document).ready(function() {
-  // img delay
-  $.each($('.img-delay'), (index, item) => {
-    const $item = $(item);
-    const src = $item.data('src');
-    const width = $item.data('width');
-    const height = $item.data('height');
-    $item.attr('src', util.combineImageUrl(src, width, height));
-    $(item).removeClass('img-delay');
-  });
-});
-
