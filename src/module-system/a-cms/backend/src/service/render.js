@@ -427,7 +427,7 @@ var env=${JSON.stringify(env, null, 2)};
           site.languages.push({
             name: item,
             title: this.ctx.text.locale(item, item),
-            url: this.getUrl(site, item, ''),
+            url: this.getUrl(site, item, 'index.html'),
           });
         }
       }
@@ -450,7 +450,7 @@ var env=${JSON.stringify(env, null, 2)};
         _envs,
         require(fileName) {
           const _path = self.resolvePath('', this._filename, fileName);
-          return require(_path);
+          return require3(_path);
         },
         url(fileName, language) {
           let _path = self.resolvePath('', path.relative(_pathIntermediate, this._filename), fileName);
@@ -516,7 +516,7 @@ var env=${JSON.stringify(env, null, 2)};
       const themeModuleName = siteBase.themes[language];
       if (!themeModuleName) this.ctx.throw(1002);
       // theme
-      const theme = this.ctx.config.module(themeModuleName).theme;
+      const theme = this.combineThemes(themeModuleName);
       // site(db)
       const configSite = await this.ctx.service.site.getConfigSite();
       // language(db)
@@ -525,6 +525,23 @@ var env=${JSON.stringify(env, null, 2)};
       return extend(true, {},
         siteBase, theme, configSite, configLanguage,
         { language: { current: language } }
+      );
+    }
+
+    // theme extend
+    combineThemes(themeModuleName) {
+      return this._combineThemes(themeModuleName);
+    }
+
+    _combineThemes(themeModuleName) {
+      // module
+      const module = this.app.meta.modules[themeModuleName];
+      if (!module) this.ctx.throw(1003);
+      const moduleExtend = module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.extend;
+      if (!moduleExtend) return this.ctx.config.module(themeModuleName).theme;
+      return extend(true, {},
+        this._combineThemes(moduleExtend),
+        this.ctx.config.module(themeModuleName).theme
       );
     }
 

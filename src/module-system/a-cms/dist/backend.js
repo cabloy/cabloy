@@ -113,9 +113,9 @@ module.exports = app => {
   // services
   const services = __webpack_require__(17)(app);
   // models
-  const models = __webpack_require__(26)(app);
+  const models = __webpack_require__(25)(app);
   // meta
-  const meta = __webpack_require__(33)(app);
+  const meta = __webpack_require__(32)(app);
 
   return {
     routes,
@@ -735,8 +735,8 @@ const version = __webpack_require__(18);
 const article = __webpack_require__(19);
 const category = __webpack_require__(20);
 const render = __webpack_require__(21);
-const site = __webpack_require__(24);
-const tag = __webpack_require__(25);
+const site = __webpack_require__(23);
+const tag = __webpack_require__(24);
 
 module.exports = app => {
   const services = {
@@ -1733,7 +1733,7 @@ var env=${JSON.stringify(env, null, 2)};
           site.languages.push({
             name: item,
             title: this.ctx.text.locale(item, item),
-            url: this.getUrl(site, item, ''),
+            url: this.getUrl(site, item, 'index.html'),
           });
         }
       }
@@ -1756,7 +1756,7 @@ var env=${JSON.stringify(env, null, 2)};
         _envs,
         require(fileName) {
           const _path = self.resolvePath('', this._filename, fileName);
-          return __webpack_require__(23)(_path);
+          return require3(_path);
         },
         url(fileName, language) {
           let _path = self.resolvePath('', path.relative(_pathIntermediate, this._filename), fileName);
@@ -1822,7 +1822,7 @@ var env=${JSON.stringify(env, null, 2)};
       const themeModuleName = siteBase.themes[language];
       if (!themeModuleName) this.ctx.throw(1002);
       // theme
-      const theme = this.ctx.config.module(themeModuleName).theme;
+      const theme = this.combineThemes(themeModuleName);
       // site(db)
       const configSite = await this.ctx.service.site.getConfigSite();
       // language(db)
@@ -1831,6 +1831,23 @@ var env=${JSON.stringify(env, null, 2)};
       return extend(true, {},
         siteBase, theme, configSite, configLanguage,
         { language: { current: language } }
+      );
+    }
+
+    // theme extend
+    combineThemes(themeModuleName) {
+      return this._combineThemes(themeModuleName);
+    }
+
+    _combineThemes(themeModuleName) {
+      // module
+      const module = this.app.meta.modules[themeModuleName];
+      if (!module) this.ctx.throw(1003);
+      const moduleExtend = module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.extend;
+      if (!moduleExtend) return this.ctx.config.module(themeModuleName).theme;
+      return extend(true, {},
+        this._combineThemes(moduleExtend),
+        this.ctx.config.module(themeModuleName).theme
       );
     }
 
@@ -1885,20 +1902,6 @@ module.exports = {
 
 /***/ }),
 /* 23 */
-/***/ (function(module, exports) {
-
-function webpackEmptyContext(req) {
-	var e = new Error("Cannot find module '" + req + "'");
-	e.code = 'MODULE_NOT_FOUND';
-	throw e;
-}
-webpackEmptyContext.keys = function() { return []; };
-webpackEmptyContext.resolve = webpackEmptyContext;
-module.exports = webpackEmptyContext;
-webpackEmptyContext.id = 23;
-
-/***/ }),
-/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const path = __webpack_require__(1);
@@ -2040,15 +2043,7 @@ module.exports = app => {
 
       // theme
       if (!site.themes[language]) this.ctx.throw(1002);
-      const themeModule = this.app.meta.modules[site.themes[language]];
-      if (!themeModule) this.ctx.throw(1003);
-      const themePath = path.join(themeModule.root, 'backend/cms/theme');
-      const themeFiles = await bb.fromCallback(cb => {
-        glob(`${themePath}/\*`, cb);
-      });
-      for (const item of themeFiles) {
-        await fse.copy(item, path.join(pathIntermediate, path.basename(item)));
-      }
+      await this.copyThemes(pathIntermediate, site.themes[language]);
 
       // custom
       const customPath = await this.ctx.service.render.getPathCustom(language);
@@ -2113,6 +2108,30 @@ module.exports = app => {
       };
     }
 
+    // theme extend
+    async copyThemes(pathIntermediate, themeModuleName) {
+      await this._copyThemes(pathIntermediate, themeModuleName);
+    }
+
+    async _copyThemes(pathIntermediate, themeModuleName) {
+      // module
+      const module = this.app.meta.modules[themeModuleName];
+      if (!module) this.ctx.throw(1003);
+      // extend
+      const moduleExtend = module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.extend;
+      if (moduleExtend) {
+        await this._copyThemes(pathIntermediate, moduleExtend);
+      }
+      // current
+      const themePath = path.join(module.root, 'backend/cms/theme');
+      const themeFiles = await bb.fromCallback(cb => {
+        glob(`${themePath}/\*`, cb);
+      });
+      for (const item of themeFiles) {
+        await fse.copy(item, path.join(pathIntermediate, path.basename(item)));
+      }
+    }
+
     async createRobots({ site }) {
       // content
       const urlRawRoot = this.ctx.service.render.getUrlRawRoot(site);
@@ -2149,7 +2168,7 @@ ${items}</sitemapindex>`;
 
 
 /***/ }),
-/* 25 */
+/* 24 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2273,15 +2292,15 @@ module.exports = app => {
 
 
 /***/ }),
-/* 26 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const article = __webpack_require__(27);
-const category = __webpack_require__(28);
-const content = __webpack_require__(29);
-const tag = __webpack_require__(30);
-const articleTag = __webpack_require__(31);
-const articleTagRef = __webpack_require__(32);
+const article = __webpack_require__(26);
+const category = __webpack_require__(27);
+const content = __webpack_require__(28);
+const tag = __webpack_require__(29);
+const articleTag = __webpack_require__(30);
+const articleTagRef = __webpack_require__(31);
 
 module.exports = app => {
   const models = {
@@ -2297,7 +2316,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 27 */
+/* 26 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2311,7 +2330,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 28 */
+/* 27 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2325,7 +2344,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 29 */
+/* 28 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2339,7 +2358,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 30 */
+/* 29 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2353,7 +2372,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 31 */
+/* 30 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2367,7 +2386,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 32 */
+/* 31 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2381,11 +2400,11 @@ module.exports = app => {
 
 
 /***/ }),
-/* 33 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
-  const schemas = __webpack_require__(34)(app);
+  const schemas = __webpack_require__(33)(app);
   const meta = {
     base: {
       atoms: {
@@ -2480,7 +2499,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 34 */
+/* 33 */
 /***/ (function(module, exports) {
 
 module.exports = app => {

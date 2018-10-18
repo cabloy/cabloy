@@ -137,15 +137,7 @@ module.exports = app => {
 
       // theme
       if (!site.themes[language]) this.ctx.throw(1002);
-      const themeModule = this.app.meta.modules[site.themes[language]];
-      if (!themeModule) this.ctx.throw(1003);
-      const themePath = path.join(themeModule.root, 'backend/cms/theme');
-      const themeFiles = await bb.fromCallback(cb => {
-        glob(`${themePath}/\*`, cb);
-      });
-      for (const item of themeFiles) {
-        await fse.copy(item, path.join(pathIntermediate, path.basename(item)));
-      }
+      await this.copyThemes(pathIntermediate, site.themes[language]);
 
       // custom
       const customPath = await this.ctx.service.render.getPathCustom(language);
@@ -208,6 +200,30 @@ module.exports = app => {
       return {
         time,
       };
+    }
+
+    // theme extend
+    async copyThemes(pathIntermediate, themeModuleName) {
+      await this._copyThemes(pathIntermediate, themeModuleName);
+    }
+
+    async _copyThemes(pathIntermediate, themeModuleName) {
+      // module
+      const module = this.app.meta.modules[themeModuleName];
+      if (!module) this.ctx.throw(1003);
+      // extend
+      const moduleExtend = module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.extend;
+      if (moduleExtend) {
+        await this._copyThemes(pathIntermediate, moduleExtend);
+      }
+      // current
+      const themePath = path.join(module.root, 'backend/cms/theme');
+      const themeFiles = await bb.fromCallback(cb => {
+        glob(`${themePath}/\*`, cb);
+      });
+      for (const item of themeFiles) {
+        await fse.copy(item, path.join(pathIntermediate, path.basename(item)));
+      }
     }
 
     async createRobots({ site }) {
