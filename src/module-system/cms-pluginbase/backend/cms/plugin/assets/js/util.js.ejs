@@ -198,7 +198,10 @@ const util = {
     // onScroll
     const _onScroll = function() {
       if (finished || fetching || error) return;
-      if (($body.outerHeight() - $window.height() - $window.scrollTop()) < threshold) {
+      if (
+        (($body.outerHeight() - $window.height() - $window.scrollTop()) < threshold) ||
+        (($container.offset().top + $container.outerHeight() - $window.height() - $window.scrollTop()) < threshold)
+      ) {
         _onFetch();
       }
     };
