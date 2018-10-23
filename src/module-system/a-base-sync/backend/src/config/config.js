@@ -17,6 +17,9 @@ module.exports = appInfo => {
       global: true,
       dependencies: 'auth,validation',
     },
+    jsonp: {
+      global: false,
+    },
   };
 
   // startups
