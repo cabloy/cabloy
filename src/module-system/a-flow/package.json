@@ -2,23 +2,20 @@
   "name": "egg-born-module-a-flow",
   "version": "1.0.0",
   "title": "a-flow",
-  "eggBornModule":
-  {
-    "dependencies":
-    {
-      "a-instance": "1.0.0"
+  "eggBornModule": {
+    "dependencies": {
+      "a-instance": "1.0.0",
+      "a-base": "1.0.0"
     }
   },
   "description": "",
-  "scripts":
-  {
+  "scripts": {
     "build:front": "node build/front/build.js",
     "build:backend": "node build/backend/build.js",
     "lint": "eslint front backend"
   },
   "author": "zhennann",
-  "devDependencies":
-  {
+  "devDependencies": {
     "babel-eslint": "^8.0.2",
     "eslint": "^4.19.0",
     "eslint-config-egg": "^5.1.1",
@@ -55,8 +52,7 @@
     "vue-style-loader": "^4.1.0",
     "vue-template-compiler": "^2.5.16"
   },
-  "dependencies":
-  {
+  "dependencies": {
     "require3": "^1.0.1",
     "extend2": "^1.0.0"
   }
