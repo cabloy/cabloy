@@ -53,6 +53,9 @@ module.exports = appInfo => {
     },
   };
 
+  // pageSize
+  config.pageSize = 20;
+
   // locales
   config.locales = {
     'en-us': 'English',

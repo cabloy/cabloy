@@ -2,13 +2,15 @@ const require3 = require('require3');
 const moment = require3('moment');
 
 module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Util {
 
     page(_page, force = true) {
+      const pageSize = ctx.config.module(moduleInfo.relativeName).pageSize;
       if (!_page) {
         _page = force ? { index: 0 } : { index: 0, size: 0 };
       }
-      if (_page.size === undefined || (force && (_page.size === 0 || _page.size === -1 || _page.size > ctx.app.config.pageSize))) _page.size = ctx.app.config.pageSize;
+      if (_page.size === undefined || (force && (_page.size === 0 || _page.size === -1 || _page.size > pageSize))) _page.size = pageSize;
       return _page;
     }
 
