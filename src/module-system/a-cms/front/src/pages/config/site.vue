@@ -7,7 +7,7 @@
       </f7-nav-right>
     </eb-navbar>
     <eb-box @size="onSize">
-      <textarea ref="textarea" type="textarea" :value="content" @input="onInput" class="cms-json-textarea"></textarea>
+      <textarea ref="textarea" type="textarea" :value="content" @input="onInput" class="json-textarea"></textarea>
     </eb-box>
   </eb-page>
 </template>
@@ -53,6 +53,4 @@ export default {
 
 </script>
 <style>
-
-
 </style>
