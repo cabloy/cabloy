@@ -1,0 +1,26 @@
+{
+  "name": "egg-born-template-module-business",
+  "version": "1.0.0",
+  "description": "egg-born-template-module-business",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhennann/egg-born-template-module-business.git"
+  },
+  "keywords": [
+    "egg",
+    "egg-born",
+    "fullstack",
+    "boilerplate",
+    "template",
+    "module"
+  ],
+  "author": "zhennann",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zhennann/egg-born-template-module-business/issues"
+  },
+  "homepage": "https://github.com/zhennann/egg-born-template-module-business#readme",
+  "devDependencies": {},
+  "dependencies": {}
+}
