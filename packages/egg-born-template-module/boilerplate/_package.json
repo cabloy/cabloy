@@ -4,9 +4,11 @@
   "title": "{{name}}",
   "eggBornModule":
   {
+    "fileVersion": 0,
     "dependencies":
     {
-      "a-instance": "1.0.0"
+      "a-instance": "1.0.0",
+      "a-base": "1.0.0"
     }
   },
   "description": "{{description}}",
@@ -57,7 +59,7 @@
   },
   "dependencies":
   {
-    "require3": "^1.0.1",
+    "require3": "^1.0.3",
     "extend2": "^1.0.0"
   }
 }
