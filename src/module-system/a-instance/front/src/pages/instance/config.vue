@@ -18,7 +18,7 @@ export default {
   },
   created() {
     this.$api.post('instance/item').then(data => {
-      data.meta = JSON.stringify(JSON.parse(data.meta || '{}'), null, 2);
+      data.config = JSON.stringify(JSON.parse(data.config || '{}'), null, 2);
       this.instance = data;
     });
   },

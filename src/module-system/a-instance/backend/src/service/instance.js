@@ -10,7 +10,7 @@ module.exports = app => {
       await this.ctx.db.update('aInstance', {
         id: this.ctx.instance.id,
         title: data.title,
-        meta: data.meta,
+        config: data.config,
       });
     }
 

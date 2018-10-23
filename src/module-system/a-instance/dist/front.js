@@ -203,6 +203,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
+  Config: '配置',
   Instance: '实例',
   Subdomain: '子域名',
   Title: '标题'
@@ -215,12 +216,12 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/instance/config.vue?vue&type=template&id=1ccc53d2&
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/instance/config.vue?vue&type=template&id=0b398b18&
 var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('Instance'),"eb-back-link":"Back"}},[_c('f7-nav-right',[_c('eb-link',{attrs:{"iconMaterial":"save","onPerform":_vm.onPerformSave}})],1)],1),_vm._v(" "),_c('eb-validate',{ref:"validate",attrs:{"auto":"","data":_vm.instance,"params":{validator: 'instance'},"onPerform":_vm.onPerformValidate}})],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./front/src/pages/instance/config.vue?vue&type=template&id=1ccc53d2&
+// CONCATENATED MODULE: ./front/src/pages/instance/config.vue?vue&type=template&id=0b398b18&
 
 // CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/instance/config.vue?vue&type=script&lang=js&
 
@@ -235,7 +236,7 @@ var staticRenderFns = []
     var _this = this;
 
     this.$api.post('instance/item').then(function (data) {
-      data.meta = JSON.stringify(JSON.parse(data.meta || '{}'), null, 2);
+      data.config = JSON.stringify(JSON.parse(data.config || '{}'), null, 2);
       _this.instance = data;
     });
   },

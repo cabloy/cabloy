@@ -1,3 +1,6 @@
+const require3 = require('require3');
+const extend = require3('extend2');
+
 module.exports = () => {
   return async function instance(ctx, next) {
 
@@ -6,7 +9,12 @@ module.exports = () => {
     if (!instance) {
       instance = await ctx.db.get('aInstance', { name: ctx.subdomain });
       if (instance) {
-        instance.meta = JSON.parse(instance.meta);
+        // config
+        instance.config = JSON.parse(instance.config);
+        // extend
+        if (!ctx.app.meta._configsOriginal) ctx.app.meta._configsOriginal = extend(true, {}, ctx.app.meta.configs);
+        ctx.app.meta.configs = extend(true, {}, ctx.app.meta._configsOriginal, instance.config);
+        // cache
         if (timeout > 0) {
           ctx.cache.mem.set('instance', instance, timeout);
         }

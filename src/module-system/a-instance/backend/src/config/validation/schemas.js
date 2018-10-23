@@ -15,11 +15,11 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Title',
       },
-      meta: {
+      config: {
         type: 'string',
         ebType: 'text',
         ebTextarea: true,
-        ebTitle: 'Meta',
+        ebTitle: 'Config',
         notEmpty: true,
       },
     },

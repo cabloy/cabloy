@@ -82,14 +82,20 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports) {
+
+module.exports = require("require3");
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const routes = __webpack_require__(1);
+const routes = __webpack_require__(2);
 const services = __webpack_require__(6);
 const config = __webpack_require__(9);
 const locales = __webpack_require__(10);
@@ -119,12 +125,12 @@ module.exports = app => {
 
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(2);
-const instance = __webpack_require__(3);
-const test = __webpack_require__(4);
+const version = __webpack_require__(3);
+const instance = __webpack_require__(4);
+const test = __webpack_require__(5);
 
 module.exports = [
   // version
@@ -143,7 +149,7 @@ module.exports = [
 
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -165,7 +171,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -189,10 +195,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(5);
+const require3 = __webpack_require__(0);
 const assert = require3('assert');
 
 module.exports = app => {
@@ -207,12 +213,6 @@ module.exports = app => {
   return TestController;
 };
 
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports) {
-
-module.exports = require("require3");
 
 /***/ }),
 /* 6 */
@@ -267,6 +267,14 @@ module.exports = app => {
         `;
         await this.ctx.model.query(sql);
       }
+      if (options.version === 4) {
+        // aInstance
+        const sql = `
+          ALTER TABLE aInstance
+          CHANGE COLUMN meta config json DEFAULT NULL
+        `;
+        await this.ctx.model.query(sql);
+      }
     }
 
     async init(options) {
@@ -279,10 +287,16 @@ module.exports = app => {
           await this.ctx.db.update('aInstance', { id: instance.id, title: options.title });
         }
       }
-      if (options.version === 3) {
-        if (options.meta) {
+      // if (options.version === 3) {
+      //   if (options.meta) {
+      //     const instance = await this.ctx.db.get('aInstance', { name: options.subdomain });
+      //     await this.ctx.db.update('aInstance', { id: instance.id, meta: JSON.stringify(options.meta) });
+      //   }
+      // }
+      if (options.version === 4) {
+        if (options.config) {
           const instance = await this.ctx.db.get('aInstance', { name: options.subdomain });
-          await this.ctx.db.update('aInstance', { id: instance.id, meta: JSON.stringify(options.meta) });
+          await this.ctx.db.update('aInstance', { id: instance.id, config: JSON.stringify(options.config) });
         }
       }
     }
@@ -309,7 +323,7 @@ module.exports = app => {
       await this.ctx.db.update('aInstance', {
         id: this.ctx.instance.id,
         title: data.title,
-        meta: data.meta,
+        config: data.config,
       });
     }
 
@@ -385,7 +399,10 @@ module.exports = {
 
 /***/ }),
 /* 14 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(0);
+const extend = require3('extend2');
 
 module.exports = () => {
   return async function instance(ctx, next) {
@@ -395,7 +412,12 @@ module.exports = () => {
     if (!instance) {
       instance = await ctx.db.get('aInstance', { name: ctx.subdomain });
       if (instance) {
-        instance.meta = JSON.parse(instance.meta);
+        // config
+        instance.config = JSON.parse(instance.config);
+        // extend
+        if (!ctx.app.meta._configsOriginal) ctx.app.meta._configsOriginal = extend(true, {}, ctx.app.meta.configs);
+        ctx.app.meta.configs = extend(true, {}, ctx.app.meta._configsOriginal, instance.config);
+        // cache
         if (timeout > 0) {
           ctx.cache.mem.set('instance', instance, timeout);
         }
@@ -474,11 +496,11 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Title',
       },
-      meta: {
+      config: {
         type: 'string',
         ebType: 'text',
         ebTextarea: true,
-        ebTitle: 'Meta',
+        ebTitle: 'Config',
         notEmpty: true,
       },
     },
