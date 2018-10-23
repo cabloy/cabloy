@@ -5,8 +5,8 @@ describe('[your tests start from here]', () => {
     app.mockSession({});
 
     // atomClass info
-    const atomClassModule = 'test-cook'; // mockInfo().relativeName
-    const atomClassName = 'cook';
+    const atomClassModule = mockInfo().relativeName;
+    const atomClassName = '{{atomClassName}}';
 
     // login as root
     await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
@@ -26,7 +26,7 @@ describe('[your tests start from here]', () => {
       key: atomKey,
       item: {
         atomName: 'test',
-        cookCount: 3,
+        description: 'this is a test',
       },
     });
     assert(result.body.code === 0);
