@@ -8,4 +8,8 @@ module.exports = {
   author: {
     desc: 'module author',
   },
+  atomClassName:{
+    desc: 'atomClassName',
+    default: 'todo',
+  }
 };
