@@ -1,11 +1,12 @@
 {
   "name": "egg-born-module-a-file",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "title": "File",
   "eggBornModule": {
     "fileVersion": 1,
     "dependencies": {
-      "a-instance": "1.0.0"
+      "a-instance": "1.0.0",
+      "a-base": "1.0.0"
     }
   },
   "description": "",

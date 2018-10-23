@@ -206,7 +206,7 @@ module.exports = require("vue");
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var cropperjs_dist_cropper_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4);
 /* harmony import */ var cropperjs_dist_cropper_css__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(cropperjs_dist_cropper_css__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _assets_css_module_less__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6);
+/* harmony import */ var _assets_css_module_less__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
 /* harmony import */ var _assets_css_module_less__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_assets_css_module_less__WEBPACK_IMPORTED_MODULE_1__);
 var Vue = void 0;
 
@@ -219,11 +219,11 @@ function install(_Vue, cb) {
   Vue = _Vue;
 
   return cb({
-    routes: __webpack_require__(8).default,
-    store: __webpack_require__(12).default(Vue),
-    config: __webpack_require__(13).default,
-    locales: __webpack_require__(14).default,
-    components: __webpack_require__(16).default
+    routes: __webpack_require__(6).default,
+    store: __webpack_require__(9).default(Vue),
+    config: __webpack_require__(10).default,
+    locales: __webpack_require__(11).default,
+    components: __webpack_require__(13).default
   });
 }
 
@@ -238,32 +238,30 @@ function install(_Vue, cb) {
 // extracted by mini-css-extract-plugin
 
 /***/ }),
-/* 5 */,
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // extracted by mini-css-extract-plugin
 
 /***/ }),
-/* 7 */,
-/* 8 */
+/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 function load(name) {
-  return __webpack_require__(9)("./" + name + '.vue').default;
+  return __webpack_require__(7)("./" + name + '.vue').default;
 }
 
 /* harmony default export */ __webpack_exports__["default"] = ([{ path: 'file/upload', component: load('file/upload') }, { path: 'file/test', component: load('file/test') }]);
 
 /***/ }),
-/* 9 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./file/test.vue": 18,
-	"./file/upload.vue": 17
+	"./file/test.vue": 15,
+	"./file/upload.vue": 14
 };
 
 
@@ -285,10 +283,10 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 9;
+webpackContext.id = 7;
 
 /***/ }),
-/* 10 */
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -298,8 +296,7 @@ webpackContext.id = 9;
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_upload_vue_vue_type_style_index_0_id_203ad71a_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
-/* 11 */,
-/* 12 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -316,7 +313,7 @@ __webpack_require__.r(__webpack_exports__);
 });
 
 /***/ }),
-/* 13 */
+/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -324,17 +321,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({});
 
 /***/ }),
-/* 14 */
+/* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
-  'zh-cn': __webpack_require__(15).default
+  'zh-cn': __webpack_require__(12).default
 });
 
 /***/ }),
-/* 15 */
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -349,7 +346,7 @@ __webpack_require__.r(__webpack_exports__);
 });
 
 /***/ }),
-/* 16 */
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -357,7 +354,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({});
 
 /***/ }),
-/* 17 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3682,7 +3679,7 @@ var ebPageContext = external_vue_default.a.prototype.$meta.module.get('a-compone
 // CONCATENATED MODULE: ./front/src/pages/file/upload.vue?vue&type=script&lang=js&
  /* harmony default export */ var file_uploadvue_type_script_lang_js_ = (uploadvue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./front/src/pages/file/upload.vue?vue&type=style&index=0&id=203ad71a&lang=less&scoped=true&
-var uploadvue_type_style_index_0_id_203ad71a_lang_less_scoped_true_ = __webpack_require__(10);
+var uploadvue_type_style_index_0_id_203ad71a_lang_less_scoped_true_ = __webpack_require__(8);
 
 // EXTERNAL MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/runtime/componentNormalizer.js
 var componentNormalizer = __webpack_require__(1);
@@ -3711,7 +3708,7 @@ component.options.__file = "upload.vue"
 /* harmony default export */ var upload = __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
-/* 18 */
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
