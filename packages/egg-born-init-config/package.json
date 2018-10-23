@@ -1,6 +1,6 @@
 {
   "name": "egg-born-init-config",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "egg-born-init-config",
   "config": {
     "boilerplate": {
@@ -11,6 +11,10 @@
       "module": {
         "package": "egg-born-template-module",
         "description": "module"
+      },
+      "module-business": {
+        "package": "egg-born-template-module-business",
+        "description": "module-business"
       }
     }
   },
