@@ -45,9 +45,6 @@ module.exports = appInfo => {
     disableInstance: false,
   };
 
-  // pageSize
-  config.pageSize = 20;
-
   // modules
   config.modules = {
   };
