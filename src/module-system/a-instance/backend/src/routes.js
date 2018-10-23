@@ -15,4 +15,5 @@ module.exports = [
       right: { type: 'function', module: 'a-settings', name: 'settings' },
     },
   },
+  { method: 'post', path: 'instance/getConfigsPreview', controller: instance, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
 ];

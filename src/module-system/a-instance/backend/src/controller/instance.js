@@ -13,6 +13,11 @@ module.exports = app => {
       this.ctx.success();
     }
 
+    async getConfigsPreview() {
+      const res = await this.service.instance.getConfigsPreview();
+      this.ctx.success(res);
+    }
+
   }
   return InstanceController;
 };

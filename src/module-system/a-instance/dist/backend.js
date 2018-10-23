@@ -145,6 +145,7 @@ module.exports = [
       right: { type: 'function', module: 'a-settings', name: 'settings' },
     },
   },
+  { method: 'post', path: 'instance/getConfigsPreview', controller: instance, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
 ];
 
 
@@ -187,6 +188,11 @@ module.exports = app => {
         data: this.ctx.request.body.data,
       });
       this.ctx.success();
+    }
+
+    async getConfigsPreview() {
+      const res = await this.service.instance.getConfigsPreview();
+      this.ctx.success(res);
     }
 
   }
@@ -309,7 +315,10 @@ module.exports = app => {
 
 /***/ }),
 /* 8 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(0);
+const extend = require3('extend2');
 
 module.exports = app => {
 
@@ -325,6 +334,14 @@ module.exports = app => {
         title: data.title,
         config: data.config,
       });
+    }
+
+    async getConfigsPreview() {
+      const instance = await this.item();
+      instance.config = JSON.parse(instance.config);
+      if (!this.ctx.app.meta._configsOriginal) this.ctx.app.meta._configsOriginal = extend(true, {}, this.ctx.app.meta.configs);
+      this.ctx.app.meta.configs = extend(true, {}, this.ctx.app.meta._configsOriginal, instance.config);
+      return { data: this.ctx.app.meta.configs };
     }
 
   }

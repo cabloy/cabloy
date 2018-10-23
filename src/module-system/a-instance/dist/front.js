@@ -82,187 +82,21 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _assets_css_module_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _assets_css_module_css__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_assets_css_module_css__WEBPACK_IMPORTED_MODULE_0__);
-var Vue = void 0;
-
-
-
-function install(_Vue, cb) {
-  if (Vue) return console.error('already installed.');
-
-  Vue = _Vue;
-
-  return cb({
-    routes: __webpack_require__(2).default,
-    store: __webpack_require__(4).default(Vue),
-    config: __webpack_require__(5).default,
-    locales: __webpack_require__(6).default
-  });
-}
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  install: install
-});
-
-/***/ }),
-/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // extracted by mini-css-extract-plugin
 
 /***/ }),
-/* 2 */
+/* 1 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-__webpack_require__.r(__webpack_exports__);
-function load(name) {
-  return __webpack_require__(3)("./" + name + '.vue').default;
-}
-
-/* harmony default export */ __webpack_exports__["default"] = ([{ path: 'instance/config', component: load('instance/config') }]);
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var map = {
-	"./instance/config.vue": 8
-};
-
-
-function webpackContext(req) {
-	var id = webpackContextResolve(req);
-	return __webpack_require__(id);
-}
-function webpackContextResolve(req) {
-	var id = map[req];
-	if(!(id + 1)) { // check for number or string
-		var e = new Error("Cannot find module '" + req + "'");
-		e.code = 'MODULE_NOT_FOUND';
-		throw e;
-	}
-	return id;
-}
-webpackContext.keys = function webpackContextKeys() {
-	return Object.keys(map);
-};
-webpackContext.resolve = webpackContextResolve;
-module.exports = webpackContext;
-webpackContext.id = 3;
-
-/***/ }),
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-
-/* harmony default export */ __webpack_exports__["default"] = (function (Vue) {
-
-  return {
-    state: {},
-    getters: {},
-    mutations: {},
-    actions: {}
-  };
-});
-
-/***/ }),
-/* 5 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ({});
-
-/***/ }),
-/* 6 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ({
-  'zh-cn': __webpack_require__(7).default
-});
-
-/***/ }),
-/* 7 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ({
-  Config: '配置',
-  Instance: '实例',
-  Subdomain: '子域名',
-  Title: '标题'
-});
-
-/***/ }),
-/* 8 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/instance/config.vue?vue&type=template&id=0b398b18&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('Instance'),"eb-back-link":"Back"}},[_c('f7-nav-right',[_c('eb-link',{attrs:{"iconMaterial":"save","onPerform":_vm.onPerformSave}})],1)],1),_vm._v(" "),_c('eb-validate',{ref:"validate",attrs:{"auto":"","data":_vm.instance,"params":{validator: 'instance'},"onPerform":_vm.onPerformValidate}})],1)}
-var staticRenderFns = []
-
-
-// CONCATENATED MODULE: ./front/src/pages/instance/config.vue?vue&type=template&id=0b398b18&
-
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/instance/config.vue?vue&type=script&lang=js&
-
-
-/* harmony default export */ var configvue_type_script_lang_js_ = ({
-  data: function data() {
-    return {
-      instance: null
-    };
-  },
-  created: function created() {
-    var _this = this;
-
-    this.$api.post('instance/item').then(function (data) {
-      data.config = JSON.stringify(JSON.parse(data.config || '{}'), null, 2);
-      _this.instance = data;
-    });
-  },
-
-  methods: {
-    onPerformValidate: function onPerformValidate() {
-      var _this2 = this;
-
-      return this.$api.post('instance/save', {
-        data: this.instance
-      }).then(function () {
-        _this2.$store.commit('auth/setInstance', { name: _this2.instance.name, title: _this2.instance.title });
-
-        window.document.title = _this2.$store.getters['auth/title'];
-
-        _this2.$f7router.back();
-      });
-    },
-    onPerformSave: function onPerformSave() {
-      return this.$refs.validate.perform();
-    }
-  }
-});
-// CONCATENATED MODULE: ./front/src/pages/instance/config.vue?vue&type=script&lang=js&
- /* harmony default export */ var instance_configvue_type_script_lang_js_ = (configvue_type_script_lang_js_); 
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/runtime/componentNormalizer.js
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return normalizeComponent; });
 /* globals __VUE_SSR_CONTEXT__ */
 
 // IMPORTANT: Do NOT use ES2015 features in this file (except for modules).
@@ -357,6 +191,323 @@ function normalizeComponent (
   }
 }
 
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+module.exports = require("vue");
+
+/***/ }),
+/* 3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _assets_css_module_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4);
+/* harmony import */ var _assets_css_module_css__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_assets_css_module_css__WEBPACK_IMPORTED_MODULE_0__);
+var Vue = void 0;
+
+
+
+function install(_Vue, cb) {
+  if (Vue) return console.error('already installed.');
+
+  Vue = _Vue;
+
+  return cb({
+    routes: __webpack_require__(5).default,
+    store: __webpack_require__(8).default(Vue),
+    config: __webpack_require__(9).default,
+    locales: __webpack_require__(10).default
+  });
+}
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  install: install
+});
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+function load(name) {
+  return __webpack_require__(6)("./" + name + '.vue').default;
+}
+
+/* harmony default export */ __webpack_exports__["default"] = ([{ path: 'instance/config', component: load('instance/config') }, { path: 'instance/configPreview', component: load('instance/configPreview') }]);
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var map = {
+	"./instance/config.vue": 13,
+	"./instance/configPreview.vue": 12
+};
+
+
+function webpackContext(req) {
+	var id = webpackContextResolve(req);
+	return __webpack_require__(id);
+}
+function webpackContextResolve(req) {
+	var id = map[req];
+	if(!(id + 1)) { // check for number or string
+		var e = new Error("Cannot find module '" + req + "'");
+		e.code = 'MODULE_NOT_FOUND';
+		throw e;
+	}
+	return id;
+}
+webpackContext.keys = function webpackContextKeys() {
+	return Object.keys(map);
+};
+webpackContext.resolve = webpackContextResolve;
+module.exports = webpackContext;
+webpackContext.id = 6;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_configPreview_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_configPreview_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_configPreview_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* unused harmony reexport * */
+ /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_configPreview_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+/* 8 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+/* harmony default export */ __webpack_exports__["default"] = (function (Vue) {
+
+  return {
+    state: {},
+    getters: {},
+    mutations: {},
+    actions: {}
+  };
+});
+
+/***/ }),
+/* 9 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({});
+
+/***/ }),
+/* 10 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  'zh-cn': __webpack_require__(11).default
+});
+
+/***/ }),
+/* 11 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  Config: '配置',
+  Instance: '实例',
+  Preview: '预览',
+  Subdomain: '子域名',
+  Title: '标题'
+});
+
+/***/ }),
+/* 12 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/instance/configPreview.vue?vue&type=template&id=3795604a&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('Preview'),"eb-back-link":"Back"}}),_vm._v(" "),_c('eb-box',{on:{"size":_vm.onSize}},[_c('textarea',{ref:"textarea",staticClass:"json-textarea",attrs:{"type":"textarea","readonly":"readonly"},domProps:{"value":_vm.content}})])],1)}
+var staticRenderFns = []
+
+
+// CONCATENATED MODULE: ./front/src/pages/instance/configPreview.vue?vue&type=template&id=3795604a&
+
+// EXTERNAL MODULE: external "vue"
+var external_vue_ = __webpack_require__(2);
+var external_vue_default = /*#__PURE__*/__webpack_require__.n(external_vue_);
+
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/instance/configPreview.vue?vue&type=script&lang=js&
+
+
+
+var ebPageContext = external_vue_default.a.prototype.$meta.module.get('a-components').options.components.ebPageContext;
+/* harmony default export */ var configPreviewvue_type_script_lang_js_ = ({
+  mixins: [ebPageContext],
+  data: function data() {
+    return {
+      content: '{}'
+    };
+  },
+
+  computed: {
+    params: function params() {
+      return this.contextParams;
+    },
+    source: function source() {
+      return this.contextParams && this.contextParams.source;
+    }
+  },
+  created: function created() {
+    this.onLoad();
+  },
+  mounted: function mounted() {
+    if (this.source) {
+      this.source.$on('preview', this.onPreview);
+    }
+  },
+  beforeDestroy: function beforeDestroy() {
+    if (this.source) {
+      this.source.$off('preview', this.onPreview);
+    }
+  },
+
+  methods: {
+    onPreview: function onPreview() {
+      this.onLoad();
+    },
+    onLoad: function onLoad() {
+      var _this = this;
+
+      this.$api.post('instance/getConfigsPreview').then(function (res) {
+        if (!res.data) {
+          _this.content = '{}';
+        } else {
+          _this.content = JSON.stringify(res.data, null, 2);
+        }
+      });
+    },
+    onSize: function onSize(size) {
+      this.$$(this.$refs.textarea).css({
+        height: size.height - 20 + 'px',
+        width: size.width - 20 + 'px'
+      });
+    }
+  }
+});
+// CONCATENATED MODULE: ./front/src/pages/instance/configPreview.vue?vue&type=script&lang=js&
+ /* harmony default export */ var instance_configPreviewvue_type_script_lang_js_ = (configPreviewvue_type_script_lang_js_); 
+// EXTERNAL MODULE: ./front/src/pages/instance/configPreview.vue?vue&type=style&index=0&lang=css&
+var configPreviewvue_type_style_index_0_lang_css_ = __webpack_require__(7);
+
+// EXTERNAL MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/runtime/componentNormalizer.js
+var componentNormalizer = __webpack_require__(1);
+
+// CONCATENATED MODULE: ./front/src/pages/instance/configPreview.vue
+
+
+
+
+
+
+/* normalize component */
+
+var component = Object(componentNormalizer["a" /* default */])(
+  instance_configPreviewvue_type_script_lang_js_,
+  render,
+  staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+component.options.__file = "configPreview.vue"
+/* harmony default export */ var configPreview = __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+/* 13 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/instance/config.vue?vue&type=template&id=8768770e&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('Instance'),"eb-back-link":"Back"}},[_c('f7-nav-right',[_c('eb-link',{attrs:{"iconMaterial":"save","onPerform":_vm.onPerformSave}}),_vm._v(" "),_c('eb-link',{attrs:{"iconMaterial":"visibility","onPerform":_vm.onPerformPreview}})],1)],1),_vm._v(" "),_c('eb-validate',{ref:"validate",attrs:{"auto":"","data":_vm.instance,"params":{validator: 'instance'},"onPerform":_vm.onPerformValidate}})],1)}
+var staticRenderFns = []
+
+
+// CONCATENATED MODULE: ./front/src/pages/instance/config.vue?vue&type=template&id=8768770e&
+
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/instance/config.vue?vue&type=script&lang=js&
+
+
+/* harmony default export */ var configvue_type_script_lang_js_ = ({
+  data: function data() {
+    return {
+      instance: null
+    };
+  },
+  created: function created() {
+    var _this = this;
+
+    this.$api.post('instance/item').then(function (data) {
+      data.config = JSON.stringify(JSON.parse(data.config || '{}'), null, 2);
+      _this.instance = data;
+    });
+  },
+
+  methods: {
+    onPerformValidate: function onPerformValidate() {
+      var _this2 = this;
+
+      return this.$api.post('instance/save', {
+        data: this.instance
+      }).then(function () {
+        _this2.$emit('preview');
+
+        _this2.$store.commit('auth/setInstance', { name: _this2.instance.name, title: _this2.instance.title });
+
+        window.document.title = _this2.$store.getters['auth/title'];
+
+        return true;
+      });
+    },
+    onPerformSave: function onPerformSave() {
+      return this.$refs.validate.perform();
+    },
+    onPerformPreview: function onPerformPreview() {
+      this.$view.navigate('/a/instance/instance/configPreview', {
+        context: {
+          params: {
+            source: this
+          }
+        }
+      });
+    }
+  }
+});
+// CONCATENATED MODULE: ./front/src/pages/instance/config.vue?vue&type=script&lang=js&
+ /* harmony default export */ var instance_configvue_type_script_lang_js_ = (configvue_type_script_lang_js_); 
+// EXTERNAL MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/runtime/componentNormalizer.js
+var componentNormalizer = __webpack_require__(1);
+
 // CONCATENATED MODULE: ./front/src/pages/instance/config.vue
 
 
@@ -365,7 +516,7 @@ function normalizeComponent (
 
 /* normalize component */
 
-var component = normalizeComponent(
+var component = Object(componentNormalizer["a" /* default */])(
   instance_configvue_type_script_lang_js_,
   render,
   staticRenderFns,
