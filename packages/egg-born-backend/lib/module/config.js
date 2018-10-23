@@ -3,7 +3,7 @@ const extend = require('extend2');
 module.exports = function(loader, modules) {
 
   // all configs
-  const ebConfigs = loader.app.meta.configs = {};
+  loader.app.meta.configs = {};
 
   // load configs
   loadConfigs();
@@ -18,7 +18,16 @@ module.exports = function(loader, modules) {
 
       // maybe /favicon.ico
       if (context.module) {
-        context.config = ebConfigs[context.module.info.relativeName];
+        Object.defineProperty(context, 'config', {
+          enumerable: false,
+          get() {
+            const _config = loader.app.meta.configs[context.module.info.relativeName];
+            _config.module = function(moduleName) {
+              return loader.app.meta.configs[moduleName];
+            };
+            return _config;
+          },
+        });
       }
 
       return context;
@@ -28,27 +37,13 @@ module.exports = function(loader, modules) {
   function loadConfigs() {
     Object.keys(modules).forEach(key => {
       const module = modules[key];
-      const ebConfig = ebConfigs[module.info.relativeName] = {};
+      const ebConfig = loader.app.meta.configs[module.info.relativeName] = {};
 
       // module config
       if (module.main.config) extend(true, ebConfig, module.main.config(loader.appInfo));
 
       // application config
       if (loader.config.modules && loader.config.modules[module.info.relativeName]) { extend(true, ebConfig, loader.config.modules[module.info.relativeName]); }
-
-      // patchConfig
-      patchConfig(ebConfig);
-    });
-  }
-
-  function patchConfig(ebConfig) {
-    Object.defineProperty(ebConfig, 'module', {
-      enumerable: false,
-      get() {
-        return function(moduleName) {
-          return ebConfigs[moduleName];
-        };
-      },
     });
   }
 
