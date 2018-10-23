@@ -8,8 +8,16 @@ module.exports = {
   author: {
     desc: 'module author',
   },
+  providerId: {
+    desc: 'providerId',
+    default(vars) {
+      return vars.name.split('-')[0];
+    },
+  },
   atomClassName:{
     desc: 'atomClassName',
-    default: 'todo',
+    default(vars) {
+      return vars.name.split('-')[1];
+    },
   }
 };
