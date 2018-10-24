@@ -1,5 +1,7 @@
 const extend = require('extend2');
 
+const CTXCONFIG = Symbol.for('Context#__config');
+
 module.exports = function(loader, modules) {
 
   // all configs
@@ -21,11 +23,14 @@ module.exports = function(loader, modules) {
         Object.defineProperty(context, 'config', {
           enumerable: false,
           get() {
-            const _config = loader.app.meta.configs[context.module.info.relativeName];
-            _config.module = function(moduleName) {
-              return loader.app.meta.configs[moduleName];
-            };
-            return _config;
+            if (!context[CTXCONFIG]) {
+              const _config = loader.app.meta.configs[context.module.info.relativeName];
+              _config.module = function(moduleName) {
+                return loader.app.meta.configs[moduleName];
+              };
+              context[CTXCONFIG] = _config;
+            }
+            return context[CTXCONFIG];
           },
         });
       }
