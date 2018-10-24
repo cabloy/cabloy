@@ -20,10 +20,10 @@ module.exports = app => {
     { method: 'post', path: 'article/delete', controller: article, middlewares: 'inner' },
     { method: 'post', path: 'article/action', controller: article, middlewares: 'inner' },
     { method: 'post', path: 'article/enable', controller: article, middlewares: 'inner' },
-    { method: 'get', path: 'article/list', controller: article, middlewares: 'jsonp' },
-    { method: 'get', path: 'article/attachments', controller: article, middlewares: 'jsonp' },
+    { method: 'post', path: 'article/list', controller: article },
+    { method: 'post', path: 'article/attachments', controller: article },
     // comment
-    { method: 'get', path: 'comment/all', controller: comment, action: 'allP', middlewares: 'jsonp' },
+    { method: 'post', path: 'comment/all', controller: comment },
     // render
     { method: 'post', path: 'render/renderArticle', controller: render, middlewares: 'inner,file' },
     { method: 'post', path: 'render/deleteArticle', controller: render, middlewares: 'inner,file' },
@@ -54,7 +54,6 @@ module.exports = app => {
     { method: 'post', path: 'category/move', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     // tag
     { method: 'post', path: 'tag/list', controller: tag },
-    { method: 'get', path: 'tag/list', controller: tag, action: 'listP', middlewares: 'jsonp' },
 
   ];
   return routes;

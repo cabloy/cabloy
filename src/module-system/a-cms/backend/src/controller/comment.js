@@ -5,9 +5,9 @@ module.exports = app => {
 
   class CommentController extends app.Controller {
 
-    async allP() {
+    async all() {
       // options
-      const options = JSON.parse(this.ctx.request.query.options);
+      const options = this.ctx.request.body.options;
       // filter drafts
       options.where = extend(true, options.where, {
         'a.atomEnabled': 1,

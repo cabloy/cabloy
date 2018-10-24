@@ -43,7 +43,7 @@ module.exports = app => {
     // list
     async list() {
       // options
-      const options = JSON.parse(this.ctx.request.query.options);
+      const options = this.ctx.request.body.options;
       // filter drafts
       options.where = extend(true, options.where, {
         'a.atomEnabled': 1,
@@ -66,10 +66,10 @@ module.exports = app => {
 
     // attachments
     async attachments() {
-      // data
-      const data = JSON.parse(this.ctx.request.query.data);
+      // key
+      const key = this.ctx.request.body.key;
       // options
-      const options = data.options || {};
+      const options = this.ctx.request.body.options || {};
       // filter drafts
       options.where = extend(true, options.where, {
         mode: 2,
@@ -85,7 +85,7 @@ module.exports = app => {
         method: 'post',
         url: '/a/file/file/list',
         body: {
-          key: data.key,
+          key,
           options,
         },
       });
