@@ -57,6 +57,10 @@ module.exports = ctx => {
       let userOp;
       if (userId) {
         userOp = await this.get({ id: userId });
+        // anonymous maybe 1 for local env
+        if (userOp && !userOp.anonymous) {
+          userOp = null;
+        }
       }
       if (!userOp) {
         userId = await this.anonymous();

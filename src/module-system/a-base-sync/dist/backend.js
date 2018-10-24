@@ -424,6 +424,10 @@ module.exports = ctx => {
       let userOp;
       if (userId) {
         userOp = await this.get({ id: userId });
+        // anonymous maybe 1 for local env
+        if (userOp && !userOp.anonymous) {
+          userOp = null;
+        }
       }
       if (!userOp) {
         userId = await this.anonymous();
@@ -3239,6 +3243,7 @@ module.exports = app => {
     { method: 'post', path: 'base/flags', controller: base },
     { method: 'post', path: 'base/menus', controller: base },
     { method: 'post', path: 'base/functions', controller: base },
+    { method: 'get', path: 'base/performAction', controller: base, middlewares: 'jsonp', meta: { auth: { enable: false } } },
     // atom
     { method: 'post', path: 'atom/create', controller: atom, middlewares: 'transaction',
       meta: { right: { type: 'atom', action: 1 } },
@@ -3272,12 +3277,10 @@ module.exports = app => {
     { method: 'post', path: 'atom/star', controller: atom,
       meta: { right: { type: 'atom', action: 2 } },
     },
-    { method: 'get', path: 'atom/star', controller: atom, action: 'starP', middlewares: 'jsonp' },
     { method: 'post', path: 'atom/readCount', controller: atom,
       meta: { right: { type: 'atom', action: 2 } },
     },
-    { method: 'get', path: 'atom/readCount', controller: atom, action: 'readCountP', middlewares: 'jsonp' },
-    { method: 'get', path: 'atom/stats', controller: atom, action: 'statsP', middlewares: 'jsonp' },
+    { method: 'post', path: 'atom/stats', controller: atom },
     { method: 'post', path: 'atom/labels', controller: atom,
       meta: { right: { type: 'atom', action: 2 } },
     },
@@ -3286,11 +3289,9 @@ module.exports = app => {
     { method: 'post', path: 'atom/validator', controller: atom },
     // comment
     { method: 'post', path: 'comment/all', controller: comment },
-    { method: 'get', path: 'comment/all', controller: comment, action: 'allP', middlewares: 'jsonp' },
     { method: 'post', path: 'comment/list', controller: comment,
       meta: { right: { type: 'atom', action: 2 } },
     },
-    { method: 'get', path: 'comment/list', controller: comment, action: 'listP', middlewares: 'jsonp' },
     { method: 'post', path: 'comment/item', controller: comment,
       meta: { right: { type: 'atom', action: 2 } },
     },
@@ -3306,11 +3307,9 @@ module.exports = app => {
         right: { type: 'atom', action: 2 },
       },
     },
-    { method: 'get', path: 'comment/delete', controller: comment, action: 'deleteP', middlewares: 'jsonp' },
     { method: 'post', path: 'comment/heart', controller: comment, middlewares: 'transaction',
       meta: { right: { type: 'atom', action: 2 } },
     },
-    { method: 'get', path: 'comment/heart', controller: comment, action: 'heartP', middlewares: 'jsonp' },
     // user
     { method: 'post', path: 'user/getLabels', controller: user },
     { method: 'post', path: 'user/setLabels', controller: user },
@@ -3337,7 +3336,6 @@ module.exports = app => {
     { method: 'post', path: 'atomClass/checkRightCreate', controller: atomClass },
     // auth
     { method: 'post', path: 'auth/echo', controller: auth, meta: { auth: { enable: false } } },
-    { method: 'get', path: 'auth/echo', controller: auth, middlewares: 'jsonp', meta: { auth: { enable: false } } },
     { method: 'post', path: 'auth/check', controller: auth, meta: { auth: { user: true } } },
     { method: 'post', path: 'auth/logout', controller: auth, meta: { auth: { enable: false } } },
     { method: 'post', path: 'auth/installAuthProviders', controller: auth, middlewares: 'inner',
@@ -3413,6 +3411,14 @@ module.exports = app => {
 
     functions() {
       const res = this.ctx.service.base.functions();
+      this.ctx.success(res);
+    }
+
+    async performAction() {
+      // params
+      const params = JSON.parse(this.ctx.request.query.params);
+      // performAction
+      const res = await this.ctx.performAction(params);
       this.ctx.success(res);
     }
 
@@ -3545,18 +3551,6 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async starP() {
-      // data
-      const data = JSON.parse(this.ctx.request.query.data);
-      // select
-      const res = await this.ctx.performAction({
-        method: 'post',
-        url: 'atom/star',
-        body: data,
-      });
-      this.ctx.success(res);
-    }
-
     async readCount() {
       const res = await this.ctx.service.atom.readCount({
         key: this.ctx.request.body.key,
@@ -3566,21 +3560,9 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async readCountP() {
-      // data
-      const data = JSON.parse(this.ctx.request.query.data);
-      // select
-      const res = await this.ctx.performAction({
-        method: 'post',
-        url: 'atom/readCount',
-        body: data,
-      });
-      this.ctx.success(res);
-    }
-
-    async statsP() {
+    async stats() {
       // atomIds
-      const atomIds = JSON.parse(this.ctx.request.query.data);
+      const atomIds = this.ctx.request.body.atomIds;
       const options = {
         where: {
           'a.id': { op: 'in', val: atomIds },
@@ -3857,18 +3839,6 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async allP() {
-      // data
-      const data = JSON.parse(this.ctx.request.query.data);
-      // select
-      const res = await this.ctx.performAction({
-        method: 'post',
-        url: 'comment/all',
-        body: data,
-      });
-      this.ctx.success(res);
-    }
-
     async list() {
       const options = this.ctx.request.body.options;
       options.page = this.ctx.meta.util.page(options.page);
@@ -3878,18 +3848,6 @@ module.exports = app => {
         user: this.ctx.user.op,
       });
       this.ctx.successMore(items, options.page.index, options.page.size);
-    }
-
-    async listP() {
-      // data
-      const data = JSON.parse(this.ctx.request.query.data);
-      // select
-      const res = await this.ctx.performAction({
-        method: 'post',
-        url: 'comment/list',
-        body: data,
-      });
-      this.ctx.success(res);
     }
 
     async item() {
@@ -3919,35 +3877,11 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async deleteP() {
-      // data
-      const data = JSON.parse(this.ctx.request.query.data);
-      // delete
-      const res = await this.ctx.performAction({
-        method: 'post',
-        url: 'comment/delete',
-        body: data,
-      });
-      this.ctx.success(res);
-    }
-
     async heart() {
       const res = await this.ctx.service.comment.heart({
         key: this.ctx.request.body.key,
         data: this.ctx.request.body.data,
         user: this.ctx.user.op,
-      });
-      this.ctx.success(res);
-    }
-
-    async heartP() {
-      // data
-      const data = JSON.parse(this.ctx.request.query.data);
-      // heart
-      const res = await this.ctx.performAction({
-        method: 'post',
-        url: 'comment/heart',
-        body: data,
       });
       this.ctx.success(res);
     }

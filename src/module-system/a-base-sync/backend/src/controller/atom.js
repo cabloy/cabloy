@@ -88,18 +88,6 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async starP() {
-      // data
-      const data = JSON.parse(this.ctx.request.query.data);
-      // select
-      const res = await this.ctx.performAction({
-        method: 'post',
-        url: 'atom/star',
-        body: data,
-      });
-      this.ctx.success(res);
-    }
-
     async readCount() {
       const res = await this.ctx.service.atom.readCount({
         key: this.ctx.request.body.key,
@@ -109,21 +97,9 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async readCountP() {
-      // data
-      const data = JSON.parse(this.ctx.request.query.data);
-      // select
-      const res = await this.ctx.performAction({
-        method: 'post',
-        url: 'atom/readCount',
-        body: data,
-      });
-      this.ctx.success(res);
-    }
-
-    async statsP() {
+    async stats() {
       // atomIds
-      const atomIds = JSON.parse(this.ctx.request.query.data);
+      const atomIds = this.ctx.request.body.atomIds;
       const options = {
         where: {
           'a.id': { op: 'in', val: atomIds },

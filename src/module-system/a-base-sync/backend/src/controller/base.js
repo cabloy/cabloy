@@ -37,6 +37,14 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async performAction() {
+      // params
+      const params = JSON.parse(this.ctx.request.query.params);
+      // performAction
+      const res = await this.ctx.performAction(params);
+      this.ctx.success(res);
+    }
+
   }
 
   return BaseController;
