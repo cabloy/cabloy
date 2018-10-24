@@ -19,9 +19,9 @@
           };
           // select
           const data=await ctx.performAction({
-            method:'get',
+            method:'post',
             url: '/a/cms/article/list',
-            query: { options:JSON.stringify(options) },
+            body: { options },
           });
           // index
           env('index',{

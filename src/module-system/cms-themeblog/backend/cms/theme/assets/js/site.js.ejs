@@ -11,11 +11,13 @@ $(document).ready(function() {
   if (query.search) {
     $('form.search input').val(query.search);
   }
-  // load more
-  loadMore(query);
 });
 
 $(document).on('echo-ready', function() {
+  // query
+  const query = util.parseUrlQuery();
+  // load more
+  loadMore(query);
 });
 
 function title(query) {
@@ -112,9 +114,10 @@ function _loadMore({ categoryId, tagId, search }) {
         options.mode = 'search';
       }
       // select
-      return util.ajax({
+      return util.performAction({
+        method: 'post',
         url: '/a/cms/article/list',
-        body: { options: JSON.stringify(options) },
+        body: { options },
       });
     },
     onParse(item) {
