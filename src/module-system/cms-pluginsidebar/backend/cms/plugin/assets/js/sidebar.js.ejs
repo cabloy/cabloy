@@ -44,9 +44,10 @@ util.sidebar = {
       ],
     };
     // select
-    util.ajax({
+    util.performAction({
+      method: 'post',
       url: '/a/cms/tag/list',
-      body: { options: JSON.stringify(options) },
+      body: { options },
     }).then(data => {
       const $list = $('.list', $container);
       for (let i = 0; i < data.list.length; i++) {
@@ -63,9 +64,10 @@ util.sidebar = {
       page: { index: 0, size: env.comment.recentNum },
     };
     // select
-    util.ajax({
+    util.performAction({
+      method: 'post',
       url: '/a/cms/comment/all',
-      body: { options: JSON.stringify(options) },
+      body: { options },
     }).then(data => {
       const $list = $('.list', $container);
       for (let i = 0; i < data.list.length; i++) {
