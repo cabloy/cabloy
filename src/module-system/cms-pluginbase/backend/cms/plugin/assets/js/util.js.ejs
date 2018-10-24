@@ -122,7 +122,7 @@ const util = {
         url: `<%=site.serverUrl%>/api${url}`,
         data: body,
         dataType: 'jsonp',
-        timeout: 7000,
+        timeout: 8000,
       }).done(function(data) {
         if (data.code === 0) {
           resolve(data.data);
@@ -132,6 +132,14 @@ const util = {
       }).fail(function() {
         reject(null);
       });
+    });
+  },
+  performAction(params) {
+    return this.ajax({
+      url: '/a/base/base/performAction',
+      body: {
+        params: JSON.stringify(params),
+      },
     });
   },
   combineImageUrl(url, width, height) {
@@ -241,7 +249,8 @@ const util = {
     return _controller;
   },
   echo() {
-    return util.ajax({
+    return this.performAction({
+      method: 'post',
       url: '/a/base/auth/echo',
     }).then(data => {
       this.user = data.user;
