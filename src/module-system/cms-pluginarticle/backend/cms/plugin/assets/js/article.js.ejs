@@ -43,10 +43,11 @@ util.article = {
       }
     });
     if (Object.keys(atomIds).length === 0) return;
-    util.ajax({
+    util.performAction({
+      method: 'post',
       url: '/a/base/atom/stats',
       body: {
-        data: JSON.stringify(Object.keys(atomIds)),
+        atomIds: Object.keys(atomIds),
       },
     }).then(atoms => {
       this._setStats(atoms);
@@ -56,14 +57,12 @@ util.article = {
   },
   read() {
     if (!env.article) return;
-    const data = {
-      key: { atomId: env.article.atomId },
-      atom: { readCount: 1 },
-    };
-    util.ajax({
+    util.performAction({
+      method: 'post',
       url: '/a/base/atom/readCount',
       body: {
-        data: JSON.stringify(data),
+        key: { atomId: env.article.atomId },
+        atom: { readCount: 1 },
       },
     }).then(data => {
       this._readCountInc(env.article.atomId, 1);
@@ -101,7 +100,7 @@ util.article = {
           this._commentActionDelete({ comment, atomId: env.article.atomId, id: commentId });
         } else if (link.hasClass('heart')) {
           event.preventDefault();
-          const heart = $(event.target).hasClass('heart-on') ? 0 : 1;
+          const heart = $('.heart-on', link).hasClass('hidden') ? 1 : 0;
           this._commentActionHeart({ link, atomId: env.article.atomId, id: commentId, heart });
         }
       }
@@ -125,13 +124,13 @@ util.article = {
       },
       callback: res => {
         if (!res) return;
-        const data = {
-          key: { atomId },
-          data: { commentId: id },
-        };
-        util.ajax({
+        util.performAction({
+          method: 'post',
           url: '/a/base/comment/delete',
-          body: { data: JSON.stringify(data) },
+          body: {
+            key: { atomId },
+            data: { commentId: id },
+          },
         }).then(() => {
           comment.remove();
           this._commentCountInc(atomId, -1);
@@ -140,13 +139,13 @@ util.article = {
     });
   },
   _commentActionHeart({ link, atomId, id, heart }) {
-    const data = {
-      key: { atomId },
-      data: { commentId: id, heart },
-    };
-    util.ajax({
+    util.performAction({
+      method: 'post',
       url: '/a/base/comment/heart',
-      body: { data: JSON.stringify(data) },
+      body: {
+        key: { atomId },
+        data: { commentId: id, heart },
+      },
     }).then(() => {
       this._commentHeartSwitch(link, atomId, id, heart);
     });
@@ -171,15 +170,14 @@ util.article = {
             ],
             page: { index },
           };
-          // data
-          const data = {
-            key: { atomId: env.article.atomId },
-            options,
-          };
           // select
-          return util.ajax({
+          return util.performAction({
+            method: 'post',
             url: '/a/base/comment/list',
-            body: { data: JSON.stringify(data) },
+            body: {
+              key: { atomId: env.article.atomId },
+              options,
+            },
           });
         },
         onParse(item) {
@@ -224,9 +222,10 @@ util.article = {
       ];
     }
     // select
-    util.ajax({
+    util.performAction({
+      method: 'post',
       url: '/a/cms/article/list',
-      body: { options: JSON.stringify(options) },
+      body: { options },
     }).then(data => {
       this._brother({ $container, type, article: data.list[0] });
     });
@@ -260,14 +259,12 @@ util.article = {
     // stat
     const $stat = $(`.stat[data-article-id=${atomId}]`);
     const star = $('.button-starCount .star-on', $stat).hasClass('hidden') ? 1 : 0;
-    const data = {
-      key: { atomId },
-      atom: { star },
-    };
-    util.ajax({
+    util.performAction({
+      method: 'post',
       url: '/a/base/atom/star',
       body: {
-        data: JSON.stringify(data),
+        key: { atomId },
+        atom: { star },
       },
     }).then(data => {
       this._starCount(atomId, data.star, data.starCount);

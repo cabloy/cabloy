@@ -2,15 +2,13 @@
 <hr>
 <ul class="attachments">
   <%
-    // data
-    const data={
-      key: { atomId: article.atomId },
-    };
     // fetch
-    const res=await ctx.performAction({
-      method:'get',
+    const res = await ctx.performAction({
+      method: 'post',
       url: '/a/cms/article/attachments',
-      query: { data:JSON.stringify(data) },
+      body: {
+        key: { atomId: article.atomId },
+      },
     });
     // loop
     for(const item of res.list){
