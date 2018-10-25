@@ -54,12 +54,15 @@ function breadcrumb(query) {
       $('.parent', $container).text('<%=text("Tag")%>');
       $('.current', $container).text(query.tagName);
     }
+  } else if (env.site.path === 'static/comments') {
+    $('.parent', $container).text('<%=text("Comment")%>');
+    $('.current', $container).text('<%=text("All")%>');
   } else if (env.site.path === 'main/article') {
     $('.parent', $container).html(`<a href="${util.url('static/articles.html')}?categoryId=${env.article.categoryId}&categoryName=${env.article.categoryName}">${env.article.categoryName}</a>`);
     $('.current', $container).text(env.article.atomName);
   }
   // show
-  if(env.site.path!=='main/index/index'){
+  if (env.site.path !== 'main/index/index') {
     $('.parent', $container).removeClass('hidden');
     $('.current', $container).removeClass('hidden');
   }
@@ -74,6 +77,7 @@ function loadMore(query) {
 }
 
 function _loadMore({ categoryId, tagId, search }) {
+  if($('.article-list').length===0) return;
   util.loadMore({
     container: '.article-list',
     index: (env.index && env.index[env.site.path]) || 0,
