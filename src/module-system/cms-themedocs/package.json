@@ -63,6 +63,6 @@
     "egg-born-module-cms-pluginsidebar": "^1.0.2",
     "egg-born-module-cms-pluginmarkdowngithub": "^1.0.0",
     "egg-born-module-cms-plugintrack": "^1.0.1",
-    "egg-born-module-cms-pluginbacktotop": "^1.0.0"
+    "egg-born-module-cms-pluginbacktotop": "^1.0.1"
   }
 }
