@@ -112,3 +112,7 @@ article .stat .read-count {
   color: #23527c;
   text-decoration: none;
 }
+
+.comments .comment .article-title {
+  text-align: right;
+}
