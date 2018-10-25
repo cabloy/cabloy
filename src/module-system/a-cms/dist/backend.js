@@ -223,10 +223,12 @@ module.exports = {
 /***/ (function(module, exports) {
 
 module.exports = {
+  All: '所有',
   Article: '文章',
   Catalog: '目录',
   Category: '目录',
   Categories: '目录',
+  Comment: '评论',
   Comments: '评论',
   Language: '语言',
   Publish: '发布',
