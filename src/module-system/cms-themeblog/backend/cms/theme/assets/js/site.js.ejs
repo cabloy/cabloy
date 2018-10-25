@@ -29,6 +29,8 @@ function title(query) {
     } else if (query.tagId !== undefined) {
       document.title = `${query.tagName} | <%=text('Tag')%> | ${env.base.title}`;
     }
+  } else if (env.site.path === 'static/comments') {
+    document.title = `<%=text('Comments')%> | ${env.base.title}`;
   }
 }
 
@@ -77,7 +79,7 @@ function loadMore(query) {
 }
 
 function _loadMore({ categoryId, tagId, search }) {
-  if($('.article-list').length===0) return;
+  if ($('.article-list').length === 0) return;
   util.loadMore({
     container: '.article-list',
     index: (env.index && env.index[env.site.path]) || 0,
