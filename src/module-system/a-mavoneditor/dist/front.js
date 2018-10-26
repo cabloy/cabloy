@@ -3252,22 +3252,26 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         onImageUpload: {
             type: Function
+        },
+        onAudioUpload: {
+            type: Function
         }
     },
     data: function data() {
         return {
             img_file: [[0, null]],
             img_timer: null,
+            audio_timer: null,
             header_timer: null,
             s_img_dropdown_open: false,
+            s_audio_dropdown_open: false,
             s_header_dropdown_open: false,
             s_img_link_open: false,
             trigger: null,
             num: 0,
             link_text: '',
             link_addr: '',
-            link_type: 'link'
-        };
+            link_type: 'link' };
     },
 
     methods: {
@@ -3285,16 +3289,27 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 }).catch(function (err) {});
             };
         },
-        $toggle_imgLinkAdd: function $toggle_imgLinkAdd(type) {
+        $audioLinkUpload: function $audioLinkUpload() {
             var _this2 = this;
+
+            this.s_audio_dropdown_open = false;
+            if (this.onAudioUpload) {
+                this.onAudioUpload().then(function (data) {
+                    _this2.$emit('toolbar_left_addlink', 'audiolink', data.text, data.addr);
+                }).catch(function (err) {});
+            };
+        },
+        $toggle_imgLinkAdd: function $toggle_imgLinkAdd(type) {
+            var _this3 = this;
 
             this.link_type = type;
             this.link_text = this.link_addr = '';
             this.s_img_link_open = true;
             this.$nextTick(function () {
-                _this2.$refs.linkTextInput.focus();
+                _this3.$refs.linkTextInput.focus();
             });
             this.s_img_dropdown_open = false;
+            this.s_audio_dropdown_open = false;
         },
         $imgFileListClick: function $imgFileListClick(pos) {
             this.$emit('imgTouch', this.img_file[pos]);
@@ -3390,6 +3405,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 vm.s_img_dropdown_open = false;
             }, 200);
         },
+        $mouseenter_audio_dropdown: function $mouseenter_audio_dropdown() {
+            if (this.editable) {
+                clearTimeout(this.audio_timer);
+                this.s_audio_dropdown_open = true;
+            }
+        },
+        $mouseleave_audio_dropdown: function $mouseleave_audio_dropdown() {
+            var vm = this;
+            this.audio_timer = setTimeout(function () {
+                vm.s_audio_dropdown_open = false;
+            }, 200);
+        },
         $mouseenter_header_dropdown: function $mouseenter_header_dropdown() {
             if (this.editable) {
                 clearTimeout(this.header_timer);
@@ -3413,6 +3440,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         handleClose: function handleClose(e) {
             this.s_img_dropdown_open = false;
+            this.s_audio_dropdown_open = false;
         }
     }
 });
@@ -3585,6 +3613,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             default: null
         },
         onImageUpload: {
+            type: Function
+        },
+        onAudioUpload: {
             type: Function
         }
     },
@@ -4112,6 +4143,7 @@ var CONFIG = {
         'ul': true,
         'link': true,
         'imagelink': true,
+        'audiolink': true,
         'code': true,
         'table': true,
         'undo': true,
@@ -4720,7 +4752,27 @@ var hljs_opts = {
         }
     }
 };
-markdown.use(mihe, hljs_opts).use(emoji).use(sup).use(sub).use(container).use(container, 'warning').use(container, 'hljs-left').use(container, 'hljs-center').use(container, 'hljs-right').use(deflist).use(abbr).use(footnote).use(insert).use(mark).use(miip).use(katex).use(taskLists).use(toc);
+var audio_opts = {
+    validate: function validate(params) {
+        return params.trim().match(/^audio$/);
+    },
+    render: function render(tokens, idx) {
+        console.log('2', tokens, idx);
+        if (tokens[idx].nesting === 1) {
+            var tokenContent = tokens[idx + 2];
+            if (tokenContent && tokenContent.type === 'inline') {
+                tokenContent.content = '';
+                tokenContent.children = [];
+            }
+
+            return '<div>\n\n<img src="https://cdn.cabloy.org/audio/cover.jpg" style="width:100px;height:100px;">\n      ';
+        } else {
+            return '</div>\n';
+        }
+    }
+};
+
+markdown.use(mihe, hljs_opts).use(emoji).use(sup).use(sub).use(container).use(container, 'warning').use(container, 'hljs-left').use(container, 'hljs-center').use(container, 'hljs-right').use(container, 'audio', audio_opts).use(deflist).use(abbr).use(footnote).use(insert).use(mark).use(miip).use(katex).use(taskLists).use(toc);
 
 /* harmony default export */ __webpack_exports__["a"] = ({
     data: function data() {
@@ -4820,11 +4872,20 @@ function $toolbar_left_remove_line_click($vm) {
 }
 
 var toolbar_left_addlink = function toolbar_left_addlink(type, text, link, $vm) {
-    var insert_text = {
-        prefix: type === 'link' ? '[' + text + '](' : '![' + text + '](',
-        subfix: ')',
-        str: link
-    };
+    var insert_text = void 0;
+    if (type === 'audiolink') {
+        insert_text = {
+            prefix: '::: audio\n\n',
+            subfix: '\n\n:::\n',
+            str: '\n{\n  "autoplay": true,\n  "listshow": false,\n  "mode": "singleloop",\n  "music": {\n    "type": "file",\n    "source":\n    [\n      {\n        "name": "' + text + '",\n        "src": "' + link + '",\n        "author": "",\n        "cover": ""\n      }\n    ]\n  }\n}\n'
+        };
+    } else {
+        insert_text = {
+            prefix: type === 'link' ? '[' + text + '](' : '![' + text + '](',
+            subfix: ')',
+            str: link
+        };
+    }
     $vm.insertText($vm.getTextareaDom(), insert_text);
 };
 var toolbar_left_click = function toolbar_left_click(_type, $vm) {
@@ -4913,6 +4974,11 @@ var toolbar_left_click = function toolbar_left_click(_type, $vm) {
             prefix: '![](',
             subfix: ')',
             str: $vm.d_words.tl_image
+        },
+        'audiolink': {
+            prefix: '::: audio\n\n',
+            subfix: '\n\n:::\n',
+            str: $vm.d_words.tl_audio
         },
         'code': {
             prefix: '```',
@@ -19381,7 +19447,57 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         _vm.$imgLinkUpload($event)
       }
     }
-  }, [_c('span', [_vm._v(_vm._s(_vm.d_words.tl_upload))])])])])], 1) : _vm._e(), _vm._v(" "), (_vm.toolbars.code) ? _c('button', {
+  }, [_c('span', [_vm._v(_vm._s(_vm.d_words.tl_upload))])])])])], 1) : _vm._e(), _vm._v(" "), (_vm.toolbars.audiolink) ? _c('div', {
+    staticClass: "op-icon fa fa-mavon-file-audio dropdown dropdown-wrapper",
+    class: {
+      'selected': _vm.s_audio_dropdown_open
+    },
+    attrs: {
+      "disabled": !_vm.editable,
+      "type": "button",
+      "aria-hidden": "true"
+    },
+    on: {
+      "click": function($event) {
+        $event.stopPropagation();
+        _vm.$mouseenter_audio_dropdown($event)
+      },
+      "mouseleave": _vm.$mouseleave_audio_dropdown,
+      "mouseenter": _vm.$mouseenter_audio_dropdown
+    }
+  }, [_c('transition', {
+    attrs: {
+      "name": "fade"
+    }
+  }, [_c('div', {
+    directives: [{
+      name: "show",
+      rawName: "v-show",
+      value: (_vm.s_audio_dropdown_open),
+      expression: "s_audio_dropdown_open"
+    }],
+    staticClass: "op-audio popup-dropdown",
+    on: {
+      "mouseleave": _vm.$mouseleave_audio_dropdown,
+      "mouseenter": _vm.$mouseenter_audio_dropdown
+    }
+  }, [_c('div', {
+    staticClass: "dropdown-item",
+    on: {
+      "click": function($event) {
+        $event.stopPropagation();
+        _vm.$toggle_imgLinkAdd('audiolink')
+      }
+    }
+  }, [_c('span', [_vm._v(_vm._s(_vm.d_words.tl_audio))])]), _vm._v(" "), _c('div', {
+    staticClass: "dropdown-item",
+    on: {
+      "click": function($event) {
+        $event.stopPropagation();
+        _vm.$audioLinkUpload($event)
+      }
+    }
+  }, [_c('span', [_vm._v(_vm._s(_vm.d_words.tl_uploadaudio))])])])])], 1) : _vm._e(), _vm._v(" "), (_vm.toolbars.code) ? _c('button', {
     staticClass: "op-icon fa fa-mavon-code",
     attrs: {
       "disabled": !_vm.editable,
@@ -19479,7 +19595,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }), _vm._v(" "), _c('h3', {
     staticClass: "title"
-  }, [_vm._v(_vm._s(_vm.link_type == 'link' ? _vm.d_words.tl_popup_link_title : _vm.d_words.tl_popup_img_link_title))]), _vm._v(" "), _c('div', {
+  }, [_vm._v(_vm._s(_vm.link_type == 'link' ? _vm.d_words.tl_popup_link_title : (_vm.link_type == 'imagelink' ? _vm.d_words.tl_popup_img_link_title : _vm.d_words.tl_popup_audio_link_title)))]), _vm._v(" "), _c('div', {
     staticClass: "link-text input-wrapper"
   }, [_c('input', {
     directives: [{
@@ -19491,7 +19607,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     ref: "linkTextInput",
     attrs: {
       "type": "text",
-      "placeholder": _vm.link_type == 'link' ? _vm.d_words.tl_popup_link_text : _vm.d_words.tl_popup_img_link_text
+      "placeholder": _vm.link_type == 'link' ? _vm.d_words.tl_popup_link_text : (_vm.link_type == 'imagelink' ? _vm.d_words.tl_popup_img_link_text : _vm.d_words.tl_popup_audio_link_text)
     },
     domProps: {
       "value": (_vm.link_text)
@@ -19513,7 +19629,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }],
     attrs: {
       "type": "text",
-      "placeholder": _vm.link_type == 'link' ? _vm.d_words.tl_popup_link_addr : _vm.d_words.tl_popup_img_link_addr
+      "placeholder": _vm.link_type == 'link' ? _vm.d_words.tl_popup_link_addr : (_vm.link_type == 'imagelink' ? _vm.d_words.tl_popup_img_link_addr : _vm.d_words.tl_popup_audio_link_addr)
     },
     domProps: {
       "value": (_vm.link_addr)
@@ -19576,7 +19692,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "d_words": _vm.d_words,
       "toolbars": _vm.toolbars,
       "image_filter": _vm.imageFilter,
-      "onImageUpload": _vm.onImageUpload
+      "onImageUpload": _vm.onImageUpload,
+      "onAudioUpload": _vm.onAudioUpload
     },
     on: {
       "toolbar_left_click": _vm.toolbar_left_click,
@@ -19952,6 +20069,8 @@ module.exports = {
 	"tl_ul": "Ul",
 	"tl_link": "Link",
 	"tl_image": "Image Link",
+	"tl_audio": "Audio Link",
+	"tl_uploadaudio": "Upload Audios",
 	"tl_code": "Code",
 	"tl_table": "Table",
 	"tl_undo": "Undo",
@@ -19981,6 +20100,9 @@ module.exports = {
 	"tl_popup_img_link_title": "Add Image",
 	"tl_popup_img_link_text": "Image Text",
 	"tl_popup_img_link_addr": "Image Link",
+	"tl_popup_audio_link_title": "Add Audio",
+	"tl_popup_audio_link_text": "Audio Text",
+	"tl_popup_audio_link_addr": "Audio Link",
 	"tl_popup_link_sure": "Sure",
 	"tl_popup_link_cancel": "Cancel"
 };
@@ -20188,6 +20310,8 @@ module.exports = {
 	"tl_ul": "无序列表",
 	"tl_link": "链接",
 	"tl_image": "添加图片链接",
+	"tl_audio": "添加音频链接",
+	"tl_uploadaudio": "上传音频",
 	"tl_code": "代码块",
 	"tl_table": "表格",
 	"tl_undo": "上一步",
@@ -20217,6 +20341,9 @@ module.exports = {
 	"tl_popup_img_link_title": "添加图片",
 	"tl_popup_img_link_text": "图片描述",
 	"tl_popup_img_link_addr": "图片链接",
+	"tl_popup_audio_link_title": "添加音频",
+	"tl_popup_audio_link_text": "音频描述",
+	"tl_popup_audio_link_addr": "音频链接",
 	"tl_popup_link_sure": "确定",
 	"tl_popup_link_cancel": "取消"
 };
