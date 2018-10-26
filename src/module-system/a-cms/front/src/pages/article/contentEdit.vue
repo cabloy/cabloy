@@ -71,6 +71,7 @@ export default {
         ul: true, // 无序列表
         link: true, // 链接
         imagelink: true, // 图片链接
+        audiolink: true,
         code: true, // code
         table: true, // 表格
         /* 1.3.5 */
@@ -147,6 +148,4 @@ export default {
 
 </script>
 <style lang="less" scoped>
-
-
 </style>

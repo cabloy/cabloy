@@ -470,10 +470,10 @@ webpackContext.id = 17;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_contentEdit_vue_vue_type_style_index_0_id_21e485cc_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_contentEdit_vue_vue_type_style_index_0_id_21e485cc_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_contentEdit_vue_vue_type_style_index_0_id_21e485cc_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_contentEdit_vue_vue_type_style_index_0_id_4d5fa10e_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_contentEdit_vue_vue_type_style_index_0_id_4d5fa10e_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_contentEdit_vue_vue_type_style_index_0_id_4d5fa10e_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0__);
 /* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_contentEdit_vue_vue_type_style_index_0_id_21e485cc_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
+ /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_contentEdit_vue_vue_type_style_index_0_id_4d5fa10e_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 /* 19 */
@@ -1825,12 +1825,12 @@ component.options.__file = "select.vue"
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/article/contentEdit.vue?vue&type=template&id=21e485cc&scoped=true&
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/article/contentEdit.vue?vue&type=template&id=4d5fa10e&scoped=true&
 var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.title,"eb-back-link":"Back"}},[_c('f7-nav-right',[(!_vm.readOnly)?_c('eb-link',{attrs:{"iconMaterial":"save","onPerform":_vm.onPerformSave}}):_vm._e(),_vm._v(" "),_c('eb-link',{attrs:{"iconMaterial":"visibility","onPerform":_vm.onPerformPreview}})],1)],1),_vm._v(" "),(_vm.module)?[_c('eb-box',[_c('mavon-editor',{ref:"editor",attrs:{"value":_vm.item.content,"onImageUpload":_vm.onImageUpload,"language":_vm.language,"subfield":_vm.subfield,"editable":_vm.editable,"defaultOpen":_vm.defaultOpen,"toolbarsFlag":_vm.toolbarsFlag,"navigation":_vm.navigation,"toolbars":_vm.toolbars},on:{"change":_vm.onChange,"save":_vm.onSave}})],1)]:_vm._e()],2)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./front/src/pages/article/contentEdit.vue?vue&type=template&id=21e485cc&scoped=true&
+// CONCATENATED MODULE: ./front/src/pages/article/contentEdit.vue?vue&type=template&id=4d5fa10e&scoped=true&
 
 // EXTERNAL MODULE: external "vue"
 var external_vue_ = __webpack_require__(1);
@@ -1897,6 +1897,7 @@ var ebPageContext = external_vue_default.a.prototype.$meta.module.get('a-compone
         ul: true,
         link: true,
         imagelink: true,
+        audiolink: true,
         code: true,
         table: true,
         undo: true,
@@ -1978,8 +1979,8 @@ var ebPageContext = external_vue_default.a.prototype.$meta.module.get('a-compone
 });
 // CONCATENATED MODULE: ./front/src/pages/article/contentEdit.vue?vue&type=script&lang=js&
  /* harmony default export */ var article_contentEditvue_type_script_lang_js_ = (contentEditvue_type_script_lang_js_); 
-// EXTERNAL MODULE: ./front/src/pages/article/contentEdit.vue?vue&type=style&index=0&id=21e485cc&lang=less&scoped=true&
-var contentEditvue_type_style_index_0_id_21e485cc_lang_less_scoped_true_ = __webpack_require__(18);
+// EXTERNAL MODULE: ./front/src/pages/article/contentEdit.vue?vue&type=style&index=0&id=4d5fa10e&lang=less&scoped=true&
+var contentEditvue_type_style_index_0_id_4d5fa10e_lang_less_scoped_true_ = __webpack_require__(18);
 
 // EXTERNAL MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/runtime/componentNormalizer.js
 var componentNormalizer = __webpack_require__(0);
@@ -1999,7 +2000,7 @@ var component = Object(componentNormalizer["a" /* default */])(
   staticRenderFns,
   false,
   null,
-  "21e485cc",
+  "4d5fa10e",
   null
   
 )
