@@ -22,6 +22,69 @@ const defaults = {
   typographer: true, // Enable smartypants and other sweet transforms
 };
 
+const audio_opts = {
+  validate(params) {
+    return params.trim().match(/^audio$/);
+  },
+  render(tokens, idx) {
+    if (tokens[idx].nesting === 1) {
+      const tokenContent = tokens[idx + 2];
+      if (tokenContent && tokenContent.type === 'inline') {
+        // content
+        const content = tokenContent.content;
+        tokenContent.content = '';
+        tokenContent.children = [];
+        // element
+        const id = `skPlayer-${(new Date()).getTime()}`;
+        // opening tag
+        return `<div id="${id}" class="skPlayer">
+                <script type="text/javascript">
+                function loadScript(src, callback) {
+                    if (!(typeof callback === 'function')) {
+                        callback = function() {};
+                    }
+                    var check = document.querySelectorAll("script[src='" + src + "']");
+                    if (check.length > 0) {
+                        check[0].addEventListener('load', function() {
+                            callback();
+                        });
+                        callback();
+                        return;
+                    }
+                    var script = document.createElement('script');
+                    var head = document.getElementsByTagName('head')[0];
+                    script.type = 'text/javascript';
+                    script.charset = 'UTF-8';
+                    script.src = src;
+                    if (script.addEventListener) {
+                        script.addEventListener('load', function() {
+                            callback();
+                        }, false);
+                    } else if (script.attachEvent) {
+                        script.attachEvent('onreadystatechange', function() {
+                            var target = window.event.srcElement;
+                            if (target.readyState === 'loaded') {
+                                callback();
+                            }
+                        });
+                    }
+                    head.appendChild(script);
+                }
+                loadScript('https://cdn.cabloy.org/audio/skPlayer.min.js', function() {
+                    var options = ${content};
+                    options.element = document.getElementById('${id}');
+                    var player = new skPlayer(options);
+                })
+                </script>
+        `;
+      }
+      return '<div>\n';
+    }
+    // closing tag
+    return '</div>\n';
+  },
+};
+
 module.exports = {
   create(ops) {
     return markdown_it((ops && ops.defaults) || defaults)
@@ -31,6 +94,7 @@ module.exports = {
       .use(markdown_it_container, 'hljs-left')
       .use(markdown_it_container, 'hljs-center')
       .use(markdown_it_container, 'hljs-right')
+      .use(markdown_it_container, 'audio', audio_opts)
       .use(markdown_it_deflist)
       .use(markdown_it_emoji)
       .use(markdown_it_footnote)
