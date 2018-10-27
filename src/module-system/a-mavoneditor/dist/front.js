@@ -4875,9 +4875,9 @@ var toolbar_left_addlink = function toolbar_left_addlink(type, text, link, $vm) 
     var insert_text = void 0;
     if (type === 'audiolink') {
         insert_text = {
-            prefix: '::: audio\n\n',
-            subfix: '\n\n:::\n',
-            str: '\n{\n  "autoplay": true,\n  "listshow": false,\n  "mode": "singleloop",\n  "music": {\n    "type": "file",\n    "source":\n    [\n      {\n        "name": "' + text + '",\n        "src": "' + link + '",\n        "author": "",\n        "cover": ""\n      }\n    ]\n  }\n}\n'
+            prefix: '::: audio',
+            subfix: ':::\n',
+            str: '\n{\n  autoplay: true,\n  audio:\n  {\n    name: \'' + text + '\',\n    url: \'' + link + '\',\n    artist: \'\',\n    cover: \'\'\n  }\n}\n'
         };
     } else {
         insert_text = {
