@@ -35,11 +35,11 @@ const audio_opts = {
         tokenContent.content = '';
         tokenContent.children = [];
         // element
-        const id = `aplayer-${(new Date()).getTime()}`;
+        const id = `aplayer-${(new Date()).getTime()}${idx}`;
         // opening tag
         return `<p><div id="${id}">
                 <script type="text/javascript">
-                function loadScript(src, callback) {
+                function __aplayerLoadScript(src, callback) {
                   if (!(typeof callback === 'function')) {
                       callback = function() {};
                   }
@@ -70,7 +70,7 @@ const audio_opts = {
                   }
                   head.appendChild(script);
                 }
-                function loadLink(src, callback) {
+                function __aplayerLoadLink(src, callback) {
                   if (!(typeof callback === 'function')) {
                       callback = function() {};
                   }
@@ -97,18 +97,18 @@ const audio_opts = {
                   }
                   head.appendChild(link);
                 }
-                function loadAplayer(callback){
+                function __aplayerLoadResource(callback){
                   if(window.APlayer) return callback();
-                  loadLink('https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.css',function(){
-                    loadScript('https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js', function() {
+                  __aplayerLoadLink('https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.css',function(){
+                    __aplayerLoadScript('https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js', function() {
                       return callback();
                     })
                   })
                 }
-                loadAplayer(function(){
-                  var options = ${content};
+                function __aplayerLoad(id,options){
+                  // options
                   if(!options.audio) return;
-                  options.container = document.getElementById('${id}');
+                  options.container = document.getElementById(id);
                   if(options.audio.concat){
                     for(var i=0;i<options.audio.length;i++){
                       if(!options.audio[i].cover) options.audio[i].cover='https://cdn.cabloy.org/audio/cover.jpg';
@@ -116,8 +116,20 @@ const audio_opts = {
                   }else{
                     if(!options.audio.cover) options.audio.cover='https://cdn.cabloy.org/audio/cover.jpg';
                   }
-                  new window.APlayer(options);
-                });
+                  // queue
+                  if(!window.__aplayerLoadQueue){
+                    window.__aplayerLoadQueue=[options];
+                    __aplayerLoadResource(function(){
+                      for(var i=0;i<window.__aplayerLoadQueue.length;i++){
+                        new window.APlayer(window.__aplayerLoadQueue[i]);
+                      }
+                      window.__aplayerLoadQueue=null;
+                    });
+                  }else{
+                    window.__aplayerLoadQueue.push(options);
+                  }
+                }
+                __aplayerLoad('${id}',${content});
                 </script>
         `;
       }
