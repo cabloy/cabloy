@@ -35,53 +35,96 @@ const audio_opts = {
         tokenContent.content = '';
         tokenContent.children = [];
         // element
-        const id = `skPlayer-${(new Date()).getTime()}`;
+        const id = `aplayer-${(new Date()).getTime()}`;
         // opening tag
-        return `<div id="${id}" class="skPlayer">
+        return `<p><div id="${id}">
                 <script type="text/javascript">
                 function loadScript(src, callback) {
-                    if (!(typeof callback === 'function')) {
-                        callback = function() {};
-                    }
-                    var check = document.querySelectorAll("script[src='" + src + "']");
-                    if (check.length > 0) {
-                        check[0].addEventListener('load', function() {
-                            callback();
-                        });
-                        callback();
-                        return;
-                    }
-                    var script = document.createElement('script');
-                    var head = document.getElementsByTagName('head')[0];
-                    script.type = 'text/javascript';
-                    script.charset = 'UTF-8';
-                    script.src = src;
-                    if (script.addEventListener) {
-                        script.addEventListener('load', function() {
-                            callback();
-                        }, false);
-                    } else if (script.attachEvent) {
-                        script.attachEvent('onreadystatechange', function() {
-                            var target = window.event.srcElement;
-                            if (target.readyState === 'loaded') {
-                                callback();
-                            }
-                        });
-                    }
-                    head.appendChild(script);
+                  if (!(typeof callback === 'function')) {
+                      callback = function() {};
+                  }
+                  var check = document.querySelectorAll("script[src='" + src + "']");
+                  if (check.length > 0) {
+                      check[0].addEventListener('load', function() {
+                          callback();
+                      });
+                      callback();
+                      return;
+                  }
+                  var script = document.createElement('script');
+                  var head = document.getElementsByTagName('head')[0];
+                  script.type = 'text/javascript';
+                  script.charset = 'UTF-8';
+                  script.src = src;
+                  if (script.addEventListener) {
+                      script.addEventListener('load', function() {
+                          callback();
+                      }, false);
+                  } else if (script.attachEvent) {
+                      script.attachEvent('onreadystatechange', function() {
+                          var target = window.event.srcElement;
+                          if (target.readyState === 'loaded') {
+                              callback();
+                          }
+                      });
+                  }
+                  head.appendChild(script);
                 }
-                loadScript('https://cdn.cabloy.org/audio/skPlayer.min.js', function() {
-                    var options = ${content};
-                    options.element = document.getElementById('${id}');
-                    var player = new skPlayer(options);
-                })
+                function loadLink(src, callback) {
+                  if (!(typeof callback === 'function')) {
+                      callback = function() {};
+                  }
+                  var check = document.querySelectorAll("link[href='" + src + "']");
+                  if (check.length > 0) {
+                      callback();
+                      return;
+                  }
+                  var link = document.createElement('link');
+                  var head = document.getElementsByTagName('head')[0];
+                  link.rel = 'stylesheet';
+                  link.href = src;
+                  if (link.addEventListener) {
+                      link.addEventListener('load', function () {
+                          callback();
+                      }, false);
+                  } else if (link.attachEvent) {
+                      link.attachEvent('onreadystatechange', function () {
+                          var target = window.event.srcElement;
+                          if (target.readyState === 'loaded') {
+                              callback();
+                          }
+                      });
+                  }
+                  head.appendChild(link);
+                }
+                function loadAplayer(callback){
+                  if(APlayer) return callback();
+                  loadLink('https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.css',function(){
+                    loadScript('https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js', function() {
+                      return callback();
+                    })
+                  })
+                }
+                loadAplayer(function(){
+                  var options = ${content};
+                  if(!options.audio) return;
+                  options.container = document.getElementById('${id}');
+                  if(options.audio.concat){
+                    for(var i=0;i<options.audio.length;i++){
+                      if(!options.audio[i].cover) options.audio[i].cover='https://cdn.cabloy.org/audio/cover.jpg';
+                    }
+                  }else{
+                    if(!options.audio.cover) options.audio.cover='https://cdn.cabloy.org/audio/cover.jpg';
+                  }
+                  new APlayer(options);
+                });
                 </script>
         `;
       }
-      return '<div>\n';
+      return '<p><div>\n';
     }
     // closing tag
-    return '</div>\n';
+    return '</div></p>\n';
   },
 };
 
