@@ -927,6 +927,61 @@ module.exports = app => {
 
       }
 
+      if (options.version === 3) {
+        // alter table: aCmsArticle
+        let sql = `
+        ALTER TABLE aCmsArticle
+          ADD COLUMN audioFirst varchar(255) DEFAULT NULL,
+          ADD COLUMN audioCoverFirst varchar(255) DEFAULT NULL
+                  `;
+        await this.ctx.model.query(sql);
+
+        // alter view: aCmsArticleView
+        await this.ctx.model.query('drop view aCmsArticleView');
+        sql = `
+          CREATE VIEW aCmsArticleView as
+            select a.*,b.categoryName,e.tags from aCmsArticle a
+              left join aCmsCategory b on a.categoryId=b.id
+              left join aCmsArticleTag e on a.id=e.itemId
+        `;
+        await this.ctx.model.query(sql);
+
+        // alter view: aCmsArticleViewFull
+        await this.ctx.model.query('drop view aCmsArticleViewFull');
+        sql = `
+          CREATE VIEW aCmsArticleViewFull as
+            select a.*,b.categoryName,e.tags,c.content,c.html from aCmsArticle a
+              left join aCmsCategory b on a.categoryId=b.id
+              left join aCmsContent c on a.id=c.itemId
+              left join aCmsArticleTag e on a.id=e.itemId
+        `;
+        await this.ctx.model.query(sql);
+
+        // alter view: aCmsArticleViewSearch
+        await this.ctx.model.query('drop view aCmsArticleViewSearch');
+        sql = `
+          CREATE VIEW aCmsArticleViewSearch as
+            select a.*,b.categoryName,e.tags,c.content,c.html,concat(d.atomName,',',c.content) contentSearch from aCmsArticle a
+              left join aCmsCategory b on a.categoryId=b.id
+              left join aCmsContent c on a.id=c.itemId
+              left join aAtom d on a.atomId=d.id
+              left join aCmsArticleTag e on a.id=e.itemId
+        `;
+        await this.ctx.model.query(sql);
+
+        // alter view: aCmsArticleViewTag
+        await this.ctx.model.query('drop view aCmsArticleViewTag');
+        sql = `
+          CREATE VIEW aCmsArticleViewTag as
+            select a.*,b.categoryName,e.tags,f.tagId from aCmsArticle a
+              left join aCmsCategory b on a.categoryId=b.id
+              left join aCmsArticleTag e on a.id=e.itemId
+              left join aCmsArticleTagRef f on a.id=f.itemId
+        `;
+        await this.ctx.model.query(sql);
+
+      }
+
     }
 
     async init(options) {
@@ -1001,7 +1056,7 @@ module.exports = app => {
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
-const trimHtml = require3('trim-html');
+const trimHtml = require3('@zhennann/trim-html');
 const markdown = require3('@zhennann/markdown');
 
 module.exports = app => {
@@ -1044,6 +1099,25 @@ module.exports = app => {
         const matches = item.content && item.content.match(/!\[[^\]]*?\]\(([^\)]*?)\)/);
         imageFirst = (matches && matches[1]) || '';
       }
+      // audio first
+      let audioFirst = '';
+      let audioCoverFirst = '';
+      if (item.editMode === 1) {
+        const matches = item.content && item.content.match(/:::\s*audio([\s\S]*?):::/);
+        let options = matches && matches[1];
+        if (options) {
+          options = JSON.parse(options);
+          if (options && options.audio) {
+            if (Array.isArray(options.audio)) {
+              audioFirst = options.audio[0].url;
+              audioCoverFirst = options.audio[0].cover;
+            } else {
+              audioFirst = options.audio.url;
+              audioCoverFirst = options.audio.cover;
+            }
+          }
+        }
+      }
       // markdown
       const md = markdown.create();
       let html;
@@ -1070,6 +1144,8 @@ module.exports = app => {
         flag: item.flag,
         extra: item.extra || '{}',
         imageFirst,
+        audioFirst,
+        audioCoverFirst,
       });
       // update content
       await this.ctx.model.query('update aCmsContent a set a.content=?, a.html=? where a.iid=? and a.atomId=?',

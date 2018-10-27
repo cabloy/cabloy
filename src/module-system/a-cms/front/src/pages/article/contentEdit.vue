@@ -8,7 +8,7 @@
     </eb-navbar>
     <template v-if="module">
       <eb-box>
-        <mavon-editor ref="editor" :value="item.content" @change="onChange" @save="onSave" :onImageUpload="onImageUpload" :language="language" :subfield="subfield" :editable="editable" :defaultOpen="defaultOpen" :toolbarsFlag="toolbarsFlag" :navigation="navigation" :toolbars="toolbars" />
+        <mavon-editor ref="editor" :value="item.content" @change="onChange" @save="onSave" :onImageUpload="onImageUpload" :onAudioUpload="onAudioUpload" :language="language" :subfield="subfield" :editable="editable" :defaultOpen="defaultOpen" :toolbarsFlag="toolbarsFlag" :navigation="navigation" :toolbars="toolbars" />
       </eb-box>
     </template>
   </eb-page>
@@ -124,12 +124,18 @@ export default {
       });
     },
     onImageUpload() {
+      return this.onUpload(1, this.item.atomId);
+    },
+    onAudioUpload() {
+      return this.onUpload(3, this.item.atomId);
+    },
+    onUpload(mode, atomId) {
       return new Promise((resolve, reject) => {
         this.$view.navigate('/a/file/file/upload', {
           context: {
             params: {
-              mode: 1,
-              atomId: this.item.atomId,
+              mode,
+              atomId,
             },
             callback: (code, data) => {
               if (code === 200) {

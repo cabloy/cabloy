@@ -1,5 +1,5 @@
 const require3 = require('require3');
-const trimHtml = require3('trim-html');
+const trimHtml = require3('@zhennann/trim-html');
 const markdown = require3('@zhennann/markdown');
 
 module.exports = app => {
@@ -42,6 +42,25 @@ module.exports = app => {
         const matches = item.content && item.content.match(/!\[[^\]]*?\]\(([^\)]*?)\)/);
         imageFirst = (matches && matches[1]) || '';
       }
+      // audio first
+      let audioFirst = '';
+      let audioCoverFirst = '';
+      if (item.editMode === 1) {
+        const matches = item.content && item.content.match(/:::\s*audio([\s\S]*?):::/);
+        let options = matches && matches[1];
+        if (options) {
+          options = JSON.parse(options);
+          if (options && options.audio) {
+            if (Array.isArray(options.audio)) {
+              audioFirst = options.audio[0].url;
+              audioCoverFirst = options.audio[0].cover;
+            } else {
+              audioFirst = options.audio.url;
+              audioCoverFirst = options.audio.cover;
+            }
+          }
+        }
+      }
       // markdown
       const md = markdown.create();
       let html;
@@ -68,6 +87,8 @@ module.exports = app => {
         flag: item.flag,
         extra: item.extra || '{}',
         imageFirst,
+        audioFirst,
+        audioCoverFirst,
       });
       // update content
       await this.ctx.model.query('update aCmsContent a set a.content=?, a.html=? where a.iid=? and a.atomId=?',
