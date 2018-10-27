@@ -98,7 +98,7 @@ const audio_opts = {
                   head.appendChild(link);
                 }
                 function loadAplayer(callback){
-                  if(APlayer) return callback();
+                  if(window.APlayer) return callback();
                   loadLink('https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.css',function(){
                     loadScript('https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js', function() {
                       return callback();
@@ -116,7 +116,7 @@ const audio_opts = {
                   }else{
                     if(!options.audio.cover) options.audio.cover='https://cdn.cabloy.org/audio/cover.jpg';
                   }
-                  new APlayer(options);
+                  new window.APlayer(options);
                 });
                 </script>
         `;
