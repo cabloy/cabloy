@@ -290,10 +290,10 @@ webpackContext.id = 7;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_upload_vue_vue_type_style_index_0_id_203ad71a_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_upload_vue_vue_type_style_index_0_id_203ad71a_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_upload_vue_vue_type_style_index_0_id_203ad71a_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_upload_vue_vue_type_style_index_0_id_9eb90c22_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_upload_vue_vue_type_style_index_0_id_9eb90c22_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_upload_vue_vue_type_style_index_0_id_9eb90c22_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0__);
 /* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_upload_vue_vue_type_style_index_0_id_203ad71a_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
+ /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_upload_vue_vue_type_style_index_0_id_9eb90c22_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 /* 9 */
@@ -340,8 +340,10 @@ __webpack_require__.r(__webpack_exports__);
   'Clear Crop': '清除剪裁',
   'Select Image': '选择图片',
   'Select File': '选择文件',
+  'Select Audio': '选择音频',
   'Upload Image': '上传图片',
   'Upload File': '上传文件',
+  'Upload Audio': '上传音频',
   Upload: '上传'
 });
 
@@ -360,12 +362,12 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/file/upload.vue?vue&type=template&id=203ad71a&scoped=true&
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/file/upload.vue?vue&type=template&id=9eb90c22&scoped=true&
 var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.title,"eb-back-link":"Back"}}),_vm._v(" "),_c('div',[_c('img',{ref:"image",staticClass:"image"})]),_vm._v(" "),_c('input',{ref:"file",staticStyle:{"display":"none"},attrs:{"type":"file","accept":_vm.accept},on:{"change":_vm.onFileChange}}),_vm._v(" "),_c('f7-block',[_c('h2',[_vm._v(_vm._s(_vm.fileName))])]),_vm._v(" "),_c('f7-block',[_c('f7-segmented',{attrs:{"raised":"","tag":"p"}},[_c('f7-button',{on:{"click":_vm.onClickSelect}},[_vm._v(_vm._s(_vm.selectText))]),_vm._v(" "),(_vm.cropped)?_c('f7-button',{on:{"click":_vm.onClickClearCrop}},[_vm._v(_vm._s(_vm.$text('Clear Crop')))]):_vm._e(),_vm._v(" "),(_vm.fileName)?_c('eb-button',{attrs:{"active":"","onPerform":_vm.onPerformUpload}},[_vm._v(_vm._s(_vm.$text('Upload')))]):_vm._e()],1)],1)],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./front/src/pages/file/upload.vue?vue&type=template&id=203ad71a&scoped=true&
+// CONCATENATED MODULE: ./front/src/pages/file/upload.vue?vue&type=template&id=9eb90c22&scoped=true&
 
 // EXTERNAL MODULE: external "vue"
 var external_vue_ = __webpack_require__(2);
@@ -3601,13 +3603,13 @@ var ebPageContext = external_vue_default.a.prototype.$meta.module.get('a-compone
       return this.contextParams && this.contextParams.flag || '';
     },
     title: function title() {
-      if (this.mode === 1) return this.$text('Upload Image');else if (this.mode === 2) return this.$text('Upload File');
+      if (this.mode === 1) return this.$text('Upload Image');else if (this.mode === 2) return this.$text('Upload File');else if (this.mode === 3) return this.$text('Upload Audio');
     },
     selectText: function selectText() {
-      if (this.mode === 1) return this.$text('Select Image');else if (this.mode === 2) return this.$text('Select File');
+      if (this.mode === 1) return this.$text('Select Image');else if (this.mode === 2) return this.$text('Select File');else if (this.mode === 3) return this.$text('Select Audio');
     },
     accept: function accept() {
-      if (this.mode === 1) return 'image/*';else if (this.mode === 2) return '';
+      if (this.mode === 1) return 'image/*';else if (this.mode === 2) return '';else if (this.mode === 3) return 'audio/*';
     }
   },
   mounted: function mounted() {
@@ -3678,8 +3680,8 @@ var ebPageContext = external_vue_default.a.prototype.$meta.module.get('a-compone
 });
 // CONCATENATED MODULE: ./front/src/pages/file/upload.vue?vue&type=script&lang=js&
  /* harmony default export */ var file_uploadvue_type_script_lang_js_ = (uploadvue_type_script_lang_js_); 
-// EXTERNAL MODULE: ./front/src/pages/file/upload.vue?vue&type=style&index=0&id=203ad71a&lang=less&scoped=true&
-var uploadvue_type_style_index_0_id_203ad71a_lang_less_scoped_true_ = __webpack_require__(8);
+// EXTERNAL MODULE: ./front/src/pages/file/upload.vue?vue&type=style&index=0&id=9eb90c22&lang=less&scoped=true&
+var uploadvue_type_style_index_0_id_9eb90c22_lang_less_scoped_true_ = __webpack_require__(8);
 
 // EXTERNAL MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/runtime/componentNormalizer.js
 var componentNormalizer = __webpack_require__(1);
@@ -3699,7 +3701,7 @@ var component = Object(componentNormalizer["a" /* default */])(
   staticRenderFns,
   false,
   null,
-  "203ad71a",
+  "9eb90c22",
   null
   
 )

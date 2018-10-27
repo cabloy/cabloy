@@ -61,7 +61,7 @@ module.exports = app => {
 
         // dest
         const downloadId = uuid.v4().replace(/-/g, '');
-        const _filePath = `file/${mode === 1 ? 'image' : 'file'}/${this.ctx.meta.util.today()}`;
+        const _filePath = `file/${mode === 1 ? 'image' : (mode === 2 ? 'file' : 'audio')}/${this.ctx.meta.util.today()}`;
         const _fileName = uuid.v4().replace(/-/g, '');
         const destDir = await this.ctx.meta.file.getPath(_filePath, true);
         const destFile = path.join(destDir, `${_fileName}${fileInfo.ext}`);
@@ -83,9 +83,11 @@ module.exports = app => {
           });
           imgWidth = imgSize.width;
           imgHeight = imgSize.height;
-        } else if (mode === 2) {
+        } else if (mode === 2 || mode === 3) {
           // check right only for file
-          await this.checkRightWrite(atomId, user);
+          if (mode === 2) {
+            await this.checkRightWrite(atomId, user);
+          }
           // file
           const writeStream = fs.createWriteStream(destFile);
           await bb.fromCallback(cb => {
@@ -139,7 +141,7 @@ module.exports = app => {
 
     getDownloadUrl({ downloadId, mode, fileExt }) {
       return this.ctx.meta.file.getUrl(
-        `/api/a/file/file/download/${downloadId}${mode === 1 ? fileExt : ''}`
+        `/api/a/file/file/download/${downloadId}${(mode === 1 || mode === 3) ? fileExt : ''}`
       );
     }
 
@@ -161,6 +163,8 @@ module.exports = app => {
       } else if (file.mode === 2) {
         // check right
         await this.checkRightRead(file.atomId, user);
+      } else if (file.mode === 3) {
+        // do nothing
       }
 
       // forward url

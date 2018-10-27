@@ -4,17 +4,17 @@
     <div>
       <img ref="image" class="image">
     </div>
-    <input ref="file" type="file" :accept="accept" @change="onFileChange" style="display: none;">
-    <f7-block>
-      <h2>{{fileName}}</h2>
-    </f7-block>
-    <f7-block>
-      <f7-segmented raised tag="p">
-        <f7-button @click="onClickSelect">{{selectText}}</f7-button>
-        <f7-button v-if="cropped" @click="onClickClearCrop">{{$text('Clear Crop')}}</f7-button>
-        <eb-button v-if="fileName" active :onPerform="onPerformUpload">{{$text('Upload')}}</eb-button>
-      </f7-segmented>
-    </f7-block>
+      <input ref="file" type="file" :accept="accept" @change="onFileChange" style="display: none;">
+      <f7-block>
+        <h2>{{fileName}}</h2>
+      </f7-block>
+      <f7-block>
+        <f7-segmented raised tag="p">
+          <f7-button @click="onClickSelect">{{selectText}}</f7-button>
+          <f7-button v-if="cropped" @click="onClickClearCrop">{{$text('Clear Crop')}}</f7-button>
+          <eb-button v-if="fileName" active :onPerform="onPerformUpload">{{$text('Upload')}}</eb-button>
+        </f7-segmented>
+      </f7-block>
   </eb-page>
 </template>
 <script>
@@ -45,14 +45,17 @@ export default {
     title() {
       if (this.mode === 1) return this.$text('Upload Image');
       else if (this.mode === 2) return this.$text('Upload File');
+      else if (this.mode === 3) return this.$text('Upload Audio');
     },
     selectText() {
       if (this.mode === 1) return this.$text('Select Image');
       else if (this.mode === 2) return this.$text('Select File');
+      else if (this.mode === 3) return this.$text('Select Audio');
     },
     accept() {
       if (this.mode === 1) return 'image/*';
       else if (this.mode === 2) return '';
+      else if (this.mode === 3) return 'audio/*';
     },
   },
   mounted() {
