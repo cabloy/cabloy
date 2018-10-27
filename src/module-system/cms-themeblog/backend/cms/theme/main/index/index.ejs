@@ -30,6 +30,7 @@
           // list
           for(const item of data.list){
              const sticky = !item.sticky ? '' : '<span class="glyphicon glyphicon-pushpin"></span> ';
+             const audio = !item.audioFirst ? '' : '<span class="glyphicon glyphicon-music"></span> ';
              const attachment = item.attachmentCount===0 ? '' : '<span class="glyphicon glyphicon-paperclip"></span> ';
              const media = !item.imageFirst ? '' : `
 <div class="media-right">
@@ -63,7 +64,7 @@ ${tagsText}
         const html= `
 <li class="media">
     <div class="media-body">
-      <h4 class="media-heading">${sticky}${attachment}<a target="_blank" href="${url(item.url)}">${item.atomName}</a></h4>
+      <h4 class="media-heading">${sticky}${audio}${attachment}<a target="_blank" href="${url(item.url)}">${item.atomName}</a></h4>
       ${item.description || item.summary}
       ${stat}
     </div>
