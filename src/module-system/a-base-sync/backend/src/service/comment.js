@@ -1,5 +1,5 @@
 const require3 = require('require3');
-const trimHtml = require3('trim-html');
+const trimHtml = require3('@zhennann/trim-html');
 const markdown = require3('@zhennann/markdown');
 
 module.exports = app => {

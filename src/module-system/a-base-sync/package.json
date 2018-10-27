@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-base-sync",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "title": "Base",
   "eggBornModule": {
     "fileVersion": 4,
@@ -60,6 +60,6 @@
     "require3": "^1.0.1",
     "moment": "^2.22.2",
     "@zhennann/markdown": "^1.0.0",
-    "trim-html": "^0.1.9"
+    "@zhennann/trim-html": "^0.1.10"
   }
 }

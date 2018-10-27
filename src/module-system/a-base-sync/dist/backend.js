@@ -5740,7 +5740,7 @@ module.exports = app => {
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
-const trimHtml = require3('trim-html');
+const trimHtml = require3('@zhennann/trim-html');
 const markdown = require3('@zhennann/markdown');
 
 module.exports = app => {
