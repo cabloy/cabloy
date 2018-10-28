@@ -130,10 +130,11 @@ function _loadMore({ categoryId, tagId, search }) {
       const sticky = !item.sticky ? '' : '<span class="glyphicon glyphicon-pushpin"></span> ';
       const audio = !item.audioFirst ? '' : '<span class="glyphicon glyphicon-music"></span> ';
       const attachment = item.attachmentCount === 0 ? '' : '<span class="glyphicon glyphicon-paperclip"></span> ';
-      const media = !item.imageFirst ? '' : `
+      const mediaUrl = item.imageFirst || item.audioCoverFirst;
+      const media = !mediaUrl ? '' : `
 <div class="media-right">
       <a target="_blank" href="${util.url(item.url)}">
-        <img class="media-object" src="${util.combineImageUrl(item.imageFirst, 125, 100)}">
+        <img class="media-object" src="${util.combineImageUrl(mediaUrl, 125, 100)}">
       </a>
 </div>
         `;

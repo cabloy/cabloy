@@ -32,10 +32,11 @@
              const sticky = !item.sticky ? '' : '<span class="glyphicon glyphicon-pushpin"></span> ';
              const audio = !item.audioFirst ? '' : '<span class="glyphicon glyphicon-music"></span> ';
              const attachment = item.attachmentCount===0 ? '' : '<span class="glyphicon glyphicon-paperclip"></span> ';
-             const media = !item.imageFirst ? '' : `
+             const mediaUrl = item.imageFirst || item.audioCoverFirst;
+             const media = !mediaUrl ? '' : `
 <div class="media-right">
       <a target="_blank" href="${url(item.url)}">
-        <img class="media-object img-delay" data-src="${item.imageFirst}" data-width="125" data-height="100">
+        <img class="media-object img-delay" data-src="${mediaUrl}" data-width="125" data-height="100">
       </a>
 </div>
         `;
