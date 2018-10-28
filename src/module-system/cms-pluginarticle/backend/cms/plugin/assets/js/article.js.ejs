@@ -12,7 +12,7 @@ function _onParseComment(item) {
     <div class="user">
       <img class="avatar avatar32" src="${util.combineImageUrl(item.avatar, 32, 32)}" />
       <h3 class="name panel-title">${item.userName}</h3>
-      <div class="date">#${item.sorting} · ${util.time.formatDateTime(item.createdAt)}</div>
+      <div class="date">#${item.sorting} · ${util.time.formatDateTime(item.updatedAt)}</div>
     </div>
     <div class="actions">
       ${actionsEdit}
@@ -45,8 +45,8 @@ function _onParseCommentAll(item) {
     <h5 class="article-title"><a target="_blank" href="${util.url(item.url, item.language)}#comments">Re: ${item.atomName}</a></h5>
     <div class="user">
       <img class="avatar avatar32" src="${util.combineImageUrl(item.avatar, 32, 32)}" />
-      <h3 class="name panel-title">${item.userName}</h3>
-      <div class="date">#${item.h_sorting} · ${util.time.formatDateTime(item.h_createdAt)}</div>
+      <h3 class="name panel-title">${item.h_userName}</h3>
+      <div class="date">#${item.h_sorting} · ${util.time.formatDateTime(item.h_updatedAt)}</div>
     </div>
     <div class="actions">
       ${actionsEdit}
@@ -222,10 +222,6 @@ util.article = {
           // all comments
           // options
           const options = {
-            where: {
-              'a.atomEnabled': 1,
-              'a.atomFlag': 2,
-            },
             orders: [
               [ 'h_updatedAt', 'desc' ],
             ],
@@ -233,14 +229,8 @@ util.article = {
           };
           return util.performAction({
             method: 'post',
-            url: '/a/base/comment/all',
-            body: {
-              atomClass: {
-                module: 'a-cms',
-                atomClassName: 'article',
-              },
-              options,
-            },
+            url: '/a/cms/comment/all',
+            body: { options },
           });
         },
         onParse(item) {
