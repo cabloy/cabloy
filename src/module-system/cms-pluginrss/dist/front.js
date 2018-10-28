@@ -103,11 +103,11 @@ function install(_Vue, cb) {
   Vue = _Vue;
 
   return cb({
-    routes: __webpack_require__(3).default,
-    store: __webpack_require__(5).default(Vue),
-    config: __webpack_require__(6).default,
-    locales: __webpack_require__(7).default,
-    components: __webpack_require__(9).default
+    routes: __webpack_require__(2).default,
+    store: __webpack_require__(4).default(Vue),
+    config: __webpack_require__(5).default,
+    locales: __webpack_require__(6).default,
+    components: __webpack_require__(8).default
   });
 }
 
@@ -122,20 +122,19 @@ function install(_Vue, cb) {
 // extracted by mini-css-extract-plugin
 
 /***/ }),
-/* 2 */,
-/* 3 */
+/* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 function load(name) {
-  return __webpack_require__(4)("./" + name + ".vue").default;
+  return __webpack_require__(3)("./" + name + ".vue").default;
 }
 
 /* harmony default export */ __webpack_exports__["default"] = ([]);
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports) {
 
 function webpackEmptyContext(req) {
@@ -146,10 +145,10 @@ function webpackEmptyContext(req) {
 webpackEmptyContext.keys = function() { return []; };
 webpackEmptyContext.resolve = webpackEmptyContext;
 module.exports = webpackEmptyContext;
-webpackEmptyContext.id = 4;
+webpackEmptyContext.id = 3;
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -166,12 +165,22 @@ __webpack_require__.r(__webpack_exports__);
 });
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({});
+
+/***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  'zh-cn': __webpack_require__(7).default
+});
 
 /***/ }),
 /* 7 */
@@ -179,20 +188,10 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ({
-  'zh-cn': __webpack_require__(8).default
-});
-
-/***/ }),
-/* 8 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({});
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
