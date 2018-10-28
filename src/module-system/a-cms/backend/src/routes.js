@@ -5,6 +5,7 @@ const render = require('./controller/render.js');
 const site = require('./controller/site.js');
 const tag = require('./controller/tag.js');
 const comment = require('./controller/comment.js');
+const rss = require('./controller/rss.js');
 
 module.exports = app => {
   const routes = [
@@ -27,7 +28,7 @@ module.exports = app => {
     // render
     { method: 'post', path: 'render/renderArticle', controller: render, middlewares: 'inner,file' },
     { method: 'post', path: 'render/deleteArticle', controller: render, middlewares: 'inner,file' },
-    { method: 'post', path: 'render/getArticleUrl', controller: render,
+    { method: 'post', path: 'render/getArticleUrl', controller: render, middlewares: 'file',
       meta: { right: { type: 'atom', action: 2 } },
     },
     // site
@@ -40,7 +41,7 @@ module.exports = app => {
     { method: 'post', path: 'site/buildLanguage', controller: site, middlewares: 'file', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'site/buildLanguages', controller: site, middlewares: 'file', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'site/getLanguages', controller: site },
-    { method: 'post', path: 'site/getUrl', controller: site },
+    { method: 'post', path: 'site/getUrl', controller: site, middlewares: 'file' },
     // category
     { method: 'post', path: 'category/item', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'category/save', controller: category, middlewares: 'validate', meta: {
@@ -54,7 +55,10 @@ module.exports = app => {
     { method: 'post', path: 'category/move', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     // tag
     { method: 'post', path: 'tag/list', controller: tag },
-
+    // rss
+    { method: 'get', path: 'rss/feed/:language', controller: rss, action: 'feed', middlewares: 'file' },
+    { method: 'get', path: 'rss/feed/comments/:language', controller: rss, action: 'feedComments', middlewares: 'file' },
+    { method: 'get', path: 'rss/feed/article/comments/:atomId', controller: rss, action: 'articleComments', middlewares: 'file' },
   ];
   return routes;
 };

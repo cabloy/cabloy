@@ -420,21 +420,6 @@ var env=${JSON.stringify(env, null, 2)};
     }
 
     async getData({ site }) {
-      // languages
-      if (!site.languages) {
-        site.languages = [];
-        for (const item of site.language.items.split(',')) {
-          site.languages.push({
-            name: item,
-            title: this.ctx.text.locale(item, item),
-            url: this.getUrl(site, item, 'index.html'),
-          });
-        }
-      }
-      // server url
-      if (!site.serverUrl) {
-        site.serverUrl = this.getServerUrl('');
-      }
       // data
       const self = this;
       const _csses = [];
@@ -495,8 +480,22 @@ var env=${JSON.stringify(env, null, 2)};
 
     // site<plugin<theme<site(db)<language(db)
     async getSite({ language }) {
+      // base
       const siteBase = await this.combineSiteBase();
-      return await this.combineSite({ siteBase, language });
+      // site
+      const site = await this.combineSite({ siteBase, language });
+      // serverUrl
+      site.serverUrl = this.getServerUrl('');
+      // languages
+      site.languages = [];
+      for (const item of site.language.items.split(',')) {
+        site.languages.push({
+          name: item,
+          title: this.ctx.text.locale(item, item),
+          url: this.getUrl(site, item, 'index.html'),
+        });
+      }
+      return site;
     }
 
     // site<plugin<theme<site(db)<language(db)
