@@ -12,7 +12,7 @@ function _onParseComment(item) {
     <div class="user">
       <img class="avatar avatar32" src="${util.combineImageUrl(item.avatar, 32, 32)}" />
       <h3 class="name panel-title">${item.userName}</h3>
-      <div class="date">#${item.sorting} · ${util.time.formatDateTime(item.updatedAt)}</div>
+      <div class="date">#${item.sorting} · ${util.time.formatDateTime(item.createdAt)}</div>
     </div>
     <div class="actions">
       ${actionsEdit}
@@ -46,7 +46,7 @@ function _onParseCommentAll(item) {
     <div class="user">
       <img class="avatar avatar32" src="${util.combineImageUrl(item.avatar, 32, 32)}" />
       <h3 class="name panel-title">${item.h_userName}</h3>
-      <div class="date">#${item.h_sorting} · ${util.time.formatDateTime(item.h_updatedAt)}</div>
+      <div class="date">#${item.h_sorting} · ${util.time.formatDateTime(item.h_createdAt)}</div>
     </div>
     <div class="actions">
       ${actionsEdit}
