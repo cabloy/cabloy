@@ -1,5 +1,5 @@
 module.exports = app => {
-
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class SiteController extends app.Controller {
 
     async getConfigSiteBase() {
@@ -42,14 +42,24 @@ module.exports = app => {
     }
 
     async buildLanguage() {
-      const res = await this.ctx.service.site.buildLanguage({
-        language: this.ctx.request.body.language,
+      // queue
+      const res = await this.ctx.app.meta.queue.pushAsync({
+        subdomain: this.ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'queueBuildLanguage',
+        data: { language: this.ctx.request.body.language },
       });
       this.ctx.success(res);
     }
 
     async buildLanguages() {
-      const res = await this.ctx.service.site.buildLanguages();
+      // queue
+      const res = await this.ctx.app.meta.queue.pushAsync({
+        subdomain: this.ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'queueBuildLanguages',
+        data: null,
+      });
       this.ctx.success(res);
     }
 

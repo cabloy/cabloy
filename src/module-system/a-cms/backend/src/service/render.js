@@ -3,7 +3,6 @@ const require3 = require('require3');
 const ejs = require3('@zhennann/ejs');
 const pMap = require3('p-map');
 const extend = require3('extend2');
-const uuid = require3('uuid');
 const fse = require3('fs-extra');
 const moment = require3('moment');
 const glob = require3('glob');
@@ -232,24 +231,11 @@ module.exports = app => {
       // data
       const data = await this.getData({ site });
       data.article = article;
-      // url
-      let url;
-      if (article.slug) {
-        url = `articles/${article.slug}.html`;
-      } else {
-        url = article.url || `articles/${uuid.v4().replace(/-/g, '')}.html`;
-      }
       await this._renderFile({
         fileSrc: 'main/article.ejs',
-        fileDest: url,
+        fileDest: article.url,
         data,
       });
-      // save
-      await this.ctx.model.article.update({
-        id: article.id,
-        url,
-      });
-      article.url = url;
     }
 
     async _renderFile({ fileSrc, fileDest, data }) {

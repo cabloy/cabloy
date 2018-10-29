@@ -1,9 +1,10 @@
 const require3 = require('require3');
 const trimHtml = require3('@zhennann/trim-html');
 const markdown = require3('@zhennann/markdown');
+const uuid = require3('uuid');
 
 module.exports = app => {
-
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Article extends app.Service {
 
     async create({ atomClass, key, atom, user }) {
@@ -36,6 +37,13 @@ module.exports = app => {
       // get atom for safety
       const atomOld = await this.ctx.meta.atom.read({ key, user });
 
+      // url
+      let url;
+      if (item.slug) {
+        url = `articles/${item.slug}.html`;
+      } else {
+        url = atomOld.url || `articles/${uuid.v4().replace(/-/g, '')}.html`;
+      }
       // image first
       let imageFirst = '';
       if (item.editMode === 1) {
@@ -81,6 +89,7 @@ module.exports = app => {
         keywords: item.keywords,
         description: item.description,
         summary: summary.html,
+        url,
         editMode: item.editMode,
         slug: item.slug,
         sorting: item.sorting,
@@ -93,7 +102,6 @@ module.exports = app => {
       // update content
       await this.ctx.model.query('update aCmsContent a set a.content=?, a.html=? where a.iid=? and a.atomId=?',
         [ item.content, html, this.ctx.instance.id, key.atomId ]);
-
 
       // tags
       const tagsNew = await this.ctx.service.tag.updateArticleTags({ key, item });
@@ -129,11 +137,7 @@ module.exports = app => {
       // }
 
       // delete article
-      await this.ctx.performAction({
-        method: 'post',
-        url: 'render/deleteArticle',
-        body: { key, article: atomOld, inner: atomOld.atomFlag !== 2 },
-      });
+      await this._deleteArticle({ key, article: atomOld, inner: atomOld.atomFlag !== 2 });
     }
 
     async action({ action, atomClass, key, user }) {
@@ -179,14 +183,29 @@ module.exports = app => {
       }
     }
 
-    async _renderArticle({ key, inner }) {
-      await this.ctx.performAction({
-        method: 'post',
-        url: 'render/renderArticle',
-        body: { key, inner },
+    async _deleteArticle({ key, article, inner }) {
+      await this.ctx.dbMeta.push(async () => {
+        // queue not async
+        await this.ctx.app.meta.queue.push({
+          subdomain: this.ctx.subdomain,
+          module: moduleInfo.relativeName,
+          queueName: 'queueDeleteArticle',
+          data: { key, article, inner },
+        });
       });
     }
 
+    async _renderArticle({ key, inner }) {
+      await this.ctx.dbMeta.push(async () => {
+        // queue not async
+        await this.ctx.app.meta.queue.push({
+          subdomain: this.ctx.subdomain,
+          module: moduleInfo.relativeName,
+          queueName: 'queueRenderArticle',
+          data: { key, inner },
+        });
+      });
+    }
 
   }
 

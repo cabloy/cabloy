@@ -2,6 +2,22 @@
 module.exports = appInfo => {
   const config = {};
 
+  // queues
+  config.queues = {
+    queueBuildLanguage: {
+      path: 'queue/buildLanguage',
+    },
+    queueBuildLanguages: {
+      path: 'queue/buildLanguages',
+    },
+    queueRenderArticle: {
+      path: 'queue/renderArticle',
+    },
+    queueDeleteArticle: {
+      path: 'queue/deleteArticle',
+    },
+  };
+
   // article
   config.article = {
     trim: {

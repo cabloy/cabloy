@@ -111,11 +111,11 @@ module.exports = app => {
   // routes
   const routes = __webpack_require__(9)(app);
   // services
-  const services = __webpack_require__(18)(app);
+  const services = __webpack_require__(19)(app);
   // models
-  const models = __webpack_require__(26)(app);
+  const models = __webpack_require__(27)(app);
   // meta
-  const meta = __webpack_require__(33)(app);
+  const meta = __webpack_require__(34)(app);
 
   return {
     routes,
@@ -138,6 +138,22 @@ module.exports = app => {
 // eslint-disable-next-line
 module.exports = appInfo => {
   const config = {};
+
+  // queues
+  config.queues = {
+    queueBuildLanguage: {
+      path: 'queue/buildLanguage',
+    },
+    queueBuildLanguages: {
+      path: 'queue/buildLanguages',
+    },
+    queueRenderArticle: {
+      path: 'queue/renderArticle',
+    },
+    queueDeleteArticle: {
+      path: 'queue/deleteArticle',
+    },
+  };
 
   // article
   config.article = {
@@ -295,6 +311,7 @@ const site = __webpack_require__(14);
 const tag = __webpack_require__(15);
 const comment = __webpack_require__(16);
 const rss = __webpack_require__(17);
+const queue = __webpack_require__(18);
 
 module.exports = app => {
   const routes = [
@@ -315,8 +332,6 @@ module.exports = app => {
     // comment
     { method: 'post', path: 'comment/all', controller: comment },
     // render
-    { method: 'post', path: 'render/renderArticle', controller: render, middlewares: 'inner,file' },
-    { method: 'post', path: 'render/deleteArticle', controller: render, middlewares: 'inner,file' },
     { method: 'post', path: 'render/getArticleUrl', controller: render, middlewares: 'file',
       meta: { right: { type: 'atom', action: 2 } },
     },
@@ -348,6 +363,19 @@ module.exports = app => {
     { method: 'get', path: 'rss/feed/:language', controller: rss, action: 'feed', middlewares: 'file' },
     { method: 'get', path: 'rss/feed/comments/:language', controller: rss, action: 'feedComments', middlewares: 'file' },
     { method: 'get', path: 'rss/feed/article/comments/:atomId', controller: rss, action: 'articleComments', middlewares: 'file' },
+    // queue
+    { method: 'post', path: 'queue/buildLanguage', controller: queue, middlewares: 'inner,file',
+      meta: { auth: { enable: false } },
+    },
+    { method: 'post', path: 'queue/buildLanguages', controller: queue, middlewares: 'inner,file',
+      meta: { auth: { enable: false } },
+    },
+    { method: 'post', path: 'queue/renderArticle', controller: queue, middlewares: 'inner,file',
+      meta: { auth: { enable: false } },
+    },
+    { method: 'post', path: 'queue/deleteArticle', controller: queue, middlewares: 'inner,file',
+      meta: { auth: { enable: false } },
+    },
   ];
   return routes;
 };
@@ -561,16 +589,6 @@ module.exports = app => {
 
   class RenderController extends app.Controller {
 
-    async renderArticle() {
-      const res = await this.ctx.service.render.renderArticle(this.ctx.request.body);
-      this.ctx.success(res);
-    }
-
-    async deleteArticle() {
-      const res = await this.ctx.service.render.deleteArticle(this.ctx.request.body);
-      this.ctx.success(res);
-    }
-
     async getArticleUrl() {
       const res = await this.ctx.service.render.getArticleUrl(this.ctx.request.body);
       this.ctx.success(res);
@@ -587,7 +605,7 @@ module.exports = app => {
 /***/ (function(module, exports) {
 
 module.exports = app => {
-
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class SiteController extends app.Controller {
 
     async getConfigSiteBase() {
@@ -630,14 +648,24 @@ module.exports = app => {
     }
 
     async buildLanguage() {
-      const res = await this.ctx.service.site.buildLanguage({
-        language: this.ctx.request.body.language,
+      // queue
+      const res = await this.ctx.app.meta.queue.pushAsync({
+        subdomain: this.ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'queueBuildLanguage',
+        data: { language: this.ctx.request.body.language },
       });
       this.ctx.success(res);
     }
 
     async buildLanguages() {
-      const res = await this.ctx.service.site.buildLanguages();
+      // queue
+      const res = await this.ctx.app.meta.queue.pushAsync({
+        subdomain: this.ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'queueBuildLanguages',
+        data: null,
+      });
       this.ctx.success(res);
     }
 
@@ -935,14 +963,50 @@ module.exports = app => {
 
 /***/ }),
 /* 18 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+
+  class QueueController extends app.Controller {
+
+    async buildLanguage() {
+      const res = await this.ctx.service.site.buildLanguage({
+        language: this.ctx.request.body.language,
+      });
+      this.ctx.success(res);
+    }
+
+    async buildLanguages() {
+      const res = await this.ctx.service.site.buildLanguages();
+      this.ctx.success(res);
+    }
+
+    async renderArticle() {
+      const res = await this.ctx.service.render.renderArticle(this.ctx.request.body);
+      this.ctx.success(res);
+    }
+
+    async deleteArticle() {
+      const res = await this.ctx.service.render.deleteArticle(this.ctx.request.body);
+      this.ctx.success(res);
+    }
+
+  }
+
+  return QueueController;
+};
+
+
+/***/ }),
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(19);
-const article = __webpack_require__(20);
-const category = __webpack_require__(21);
-const render = __webpack_require__(22);
-const site = __webpack_require__(24);
-const tag = __webpack_require__(25);
+const version = __webpack_require__(20);
+const article = __webpack_require__(21);
+const category = __webpack_require__(22);
+const render = __webpack_require__(23);
+const site = __webpack_require__(25);
+const tag = __webpack_require__(26);
 
 module.exports = app => {
   const services = {
@@ -958,7 +1022,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1269,15 +1333,16 @@ module.exports = app => {
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
 const trimHtml = require3('@zhennann/trim-html');
 const markdown = require3('@zhennann/markdown');
+const uuid = require3('uuid');
 
 module.exports = app => {
-
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Article extends app.Service {
 
     async create({ atomClass, key, atom, user }) {
@@ -1310,6 +1375,13 @@ module.exports = app => {
       // get atom for safety
       const atomOld = await this.ctx.meta.atom.read({ key, user });
 
+      // url
+      let url;
+      if (item.slug) {
+        url = `articles/${item.slug}.html`;
+      } else {
+        url = atomOld.url || `articles/${uuid.v4().replace(/-/g, '')}.html`;
+      }
       // image first
       let imageFirst = '';
       if (item.editMode === 1) {
@@ -1355,6 +1427,7 @@ module.exports = app => {
         keywords: item.keywords,
         description: item.description,
         summary: summary.html,
+        url,
         editMode: item.editMode,
         slug: item.slug,
         sorting: item.sorting,
@@ -1367,7 +1440,6 @@ module.exports = app => {
       // update content
       await this.ctx.model.query('update aCmsContent a set a.content=?, a.html=? where a.iid=? and a.atomId=?',
         [ item.content, html, this.ctx.instance.id, key.atomId ]);
-
 
       // tags
       const tagsNew = await this.ctx.service.tag.updateArticleTags({ key, item });
@@ -1403,11 +1475,7 @@ module.exports = app => {
       // }
 
       // delete article
-      await this.ctx.performAction({
-        method: 'post',
-        url: 'render/deleteArticle',
-        body: { key, article: atomOld, inner: atomOld.atomFlag !== 2 },
-      });
+      await this._deleteArticle({ key, article: atomOld, inner: atomOld.atomFlag !== 2 });
     }
 
     async action({ action, atomClass, key, user }) {
@@ -1453,14 +1521,29 @@ module.exports = app => {
       }
     }
 
-    async _renderArticle({ key, inner }) {
-      await this.ctx.performAction({
-        method: 'post',
-        url: 'render/renderArticle',
-        body: { key, inner },
+    async _deleteArticle({ key, article, inner }) {
+      await this.ctx.dbMeta.push(async () => {
+        // queue not async
+        await this.ctx.app.meta.queue.push({
+          subdomain: this.ctx.subdomain,
+          module: moduleInfo.relativeName,
+          queueName: 'queueDeleteArticle',
+          data: { key, article, inner },
+        });
       });
     }
 
+    async _renderArticle({ key, inner }) {
+      await this.ctx.dbMeta.push(async () => {
+        // queue not async
+        await this.ctx.app.meta.queue.push({
+          subdomain: this.ctx.subdomain,
+          module: moduleInfo.relativeName,
+          queueName: 'queueRenderArticle',
+          data: { key, inner },
+        });
+      });
+    }
 
   }
 
@@ -1469,7 +1552,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1583,7 +1666,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const path = __webpack_require__(1);
@@ -1591,7 +1674,6 @@ const require3 = __webpack_require__(0);
 const ejs = require3('@zhennann/ejs');
 const pMap = require3('p-map');
 const extend = require3('extend2');
-const uuid = require3('uuid');
 const fse = require3('fs-extra');
 const moment = require3('moment');
 const glob = require3('glob');
@@ -1600,7 +1682,7 @@ const CleanCSS = require3('clean-css');
 const shajs = require3('sha.js');
 const babel = require3('babel-core');
 const UglifyJS = require3('uglify-js');
-const time = __webpack_require__(23);
+const time = __webpack_require__(24);
 
 module.exports = app => {
 
@@ -1820,24 +1902,11 @@ module.exports = app => {
       // data
       const data = await this.getData({ site });
       data.article = article;
-      // url
-      let url;
-      if (article.slug) {
-        url = `articles/${article.slug}.html`;
-      } else {
-        url = article.url || `articles/${uuid.v4().replace(/-/g, '')}.html`;
-      }
       await this._renderFile({
         fileSrc: 'main/article.ejs',
-        fileDest: url,
+        fileDest: article.url,
         data,
       });
-      // save
-      await this.ctx.model.article.update({
-        id: article.id,
-        url,
-      });
-      article.url = url;
     }
 
     async _renderFile({ fileSrc, fileDest, data }) {
@@ -2139,7 +2208,7 @@ var env=${JSON.stringify(env, null, 2)};
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports) {
 
 const _formatDateTime = function(date, fmt) { // original author: meizz
@@ -2182,7 +2251,7 @@ module.exports = {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const path = __webpack_require__(1);
@@ -2449,7 +2518,7 @@ ${items}</sitemapindex>`;
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2573,15 +2642,15 @@ module.exports = app => {
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const article = __webpack_require__(27);
-const category = __webpack_require__(28);
-const content = __webpack_require__(29);
-const tag = __webpack_require__(30);
-const articleTag = __webpack_require__(31);
-const articleTagRef = __webpack_require__(32);
+const article = __webpack_require__(28);
+const category = __webpack_require__(29);
+const content = __webpack_require__(30);
+const tag = __webpack_require__(31);
+const articleTag = __webpack_require__(32);
+const articleTagRef = __webpack_require__(33);
 
 module.exports = app => {
   const models = {
@@ -2597,7 +2666,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2611,7 +2680,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2625,7 +2694,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2639,7 +2708,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2653,7 +2722,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2667,7 +2736,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2681,11 +2750,11 @@ module.exports = app => {
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
-  const schemas = __webpack_require__(34)(app);
+  const schemas = __webpack_require__(35)(app);
   const meta = {
     base: {
       atoms: {
@@ -2780,7 +2849,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports) {
 
 module.exports = app => {

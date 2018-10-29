@@ -6,6 +6,7 @@ const site = require('./controller/site.js');
 const tag = require('./controller/tag.js');
 const comment = require('./controller/comment.js');
 const rss = require('./controller/rss.js');
+const queue = require('./controller/queue.js');
 
 module.exports = app => {
   const routes = [
@@ -26,8 +27,6 @@ module.exports = app => {
     // comment
     { method: 'post', path: 'comment/all', controller: comment },
     // render
-    { method: 'post', path: 'render/renderArticle', controller: render, middlewares: 'inner,file' },
-    { method: 'post', path: 'render/deleteArticle', controller: render, middlewares: 'inner,file' },
     { method: 'post', path: 'render/getArticleUrl', controller: render, middlewares: 'file',
       meta: { right: { type: 'atom', action: 2 } },
     },
@@ -59,6 +58,19 @@ module.exports = app => {
     { method: 'get', path: 'rss/feed/:language', controller: rss, action: 'feed', middlewares: 'file' },
     { method: 'get', path: 'rss/feed/comments/:language', controller: rss, action: 'feedComments', middlewares: 'file' },
     { method: 'get', path: 'rss/feed/article/comments/:atomId', controller: rss, action: 'articleComments', middlewares: 'file' },
+    // queue
+    { method: 'post', path: 'queue/buildLanguage', controller: queue, middlewares: 'inner,file',
+      meta: { auth: { enable: false } },
+    },
+    { method: 'post', path: 'queue/buildLanguages', controller: queue, middlewares: 'inner,file',
+      meta: { auth: { enable: false } },
+    },
+    { method: 'post', path: 'queue/renderArticle', controller: queue, middlewares: 'inner,file',
+      meta: { auth: { enable: false } },
+    },
+    { method: 'post', path: 'queue/deleteArticle', controller: queue, middlewares: 'inner,file',
+      meta: { auth: { enable: false } },
+    },
   ];
   return routes;
 };
