@@ -246,6 +246,9 @@ module.exports = app => {
       // src
       const pathIntermediate = await this.getPathIntermediate(language);
       const fileName = path.join(pathIntermediate, fileSrc);
+      // dest
+      const pathDist = await this.getPathDist(site, language);
+      const fileWrite = path.join(pathDist, fileDest);
       // data
       data._filename = fileName;
       data._path = fileSrc.replace('.ejs', '');
@@ -259,9 +262,37 @@ module.exports = app => {
       let content = await ejs.renderFile(fileName, data, this.getOptions());
       content = await this._renderEnvs({ data, content });
       content = await this._renderCSSJSes({ data, content });
-      // dest
-      const pathDist = await this.getPathDist(site, language);
-      const fileWrite = path.join(pathDist, fileDest);
+      // hot load
+      if (this.app.meta.isTest || this.app.meta.isLocal) {
+        content += `
+<script language="javascript">
+$(document).ready(function() {
+  var __checkFileTimeout = ${this.ctx.config.checkFileTimeout};
+  var __fileTime;
+  function __checkFile() {
+    util.performAction({
+      method: 'post',
+      url: '/a/cms/site/checkFile',
+      body: { file: '${fileWrite}' }
+    }).then(function(stats) {
+      if (!stats) {
+        return window.setTimeout(__checkFile, __checkFileTimeout);
+      }
+      if (!__fileTime) {
+        __fileTime = stats.mtime;
+        return window.setTimeout(__checkFile, __checkFileTimeout);
+      }
+      if (__fileTime === stats.mtime) {
+        return window.setTimeout(__checkFile, __checkFileTimeout);
+      }
+      location.reload(true);
+    });
+  }
+  __checkFile();
+});
+</script>
+          `;
+      }
       // write
       await fse.outputFile(fileWrite, content);
     }

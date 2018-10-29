@@ -1,3 +1,6 @@
+const require3 = require('require3');
+const fse = require3('fs-extra');
+
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class SiteController extends app.Controller {
@@ -74,6 +77,20 @@ module.exports = app => {
         path: this.ctx.request.body.path,
       });
       this.ctx.success(res);
+    }
+
+    async checkFile() {
+      // file
+      const file = this.ctx.request.body.file;
+      // mtime
+      const exists = await fse.pathExists(file);
+      if (!exists) {
+        // deleted
+        this.ctx.success(null);
+      } else {
+        const stats = await fse.stat(file);
+        this.ctx.success({ mtime: stats.mtime });
+      }
     }
 
   }

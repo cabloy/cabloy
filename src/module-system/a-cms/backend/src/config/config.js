@@ -28,6 +28,9 @@ module.exports = appInfo => {
     publishOnSubmit: true,
   };
 
+  // checkFileTimeout
+  config.checkFileTimeout = 500;
+
   // site
   config.site = {
     base: {

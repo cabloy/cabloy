@@ -165,6 +165,9 @@ module.exports = appInfo => {
     publishOnSubmit: true,
   };
 
+  // checkFileTimeout
+  config.checkFileTimeout = 500;
+
   // site
   config.site = {
     base: {
@@ -314,7 +317,7 @@ const rss = __webpack_require__(17);
 const queue = __webpack_require__(18);
 
 module.exports = app => {
-  const routes = [
+  let routes = [
     // version
     { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
@@ -377,6 +380,12 @@ module.exports = app => {
       meta: { auth: { enable: false } },
     },
   ];
+  if (app.meta.isTest || app.meta.isLocal) {
+    routes = routes.concat([
+      // site
+      { method: 'post', path: 'site/checkFile', controller: site },
+    ]);
+  }
   return routes;
 };
 
@@ -602,7 +611,10 @@ module.exports = app => {
 
 /***/ }),
 /* 14 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(0);
+const fse = require3('fs-extra');
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -680,6 +692,20 @@ module.exports = app => {
         path: this.ctx.request.body.path,
       });
       this.ctx.success(res);
+    }
+
+    async checkFile() {
+      // file
+      const file = this.ctx.request.body.file;
+      // mtime
+      const exists = await fse.pathExists(file);
+      if (!exists) {
+        // deleted
+        this.ctx.success(null);
+      } else {
+        const stats = await fse.stat(file);
+        this.ctx.success({ mtime: stats.mtime });
+      }
     }
 
   }
@@ -1917,6 +1943,9 @@ module.exports = app => {
       // src
       const pathIntermediate = await this.getPathIntermediate(language);
       const fileName = path.join(pathIntermediate, fileSrc);
+      // dest
+      const pathDist = await this.getPathDist(site, language);
+      const fileWrite = path.join(pathDist, fileDest);
       // data
       data._filename = fileName;
       data._path = fileSrc.replace('.ejs', '');
@@ -1930,9 +1959,37 @@ module.exports = app => {
       let content = await ejs.renderFile(fileName, data, this.getOptions());
       content = await this._renderEnvs({ data, content });
       content = await this._renderCSSJSes({ data, content });
-      // dest
-      const pathDist = await this.getPathDist(site, language);
-      const fileWrite = path.join(pathDist, fileDest);
+      // hot load
+      if (this.app.meta.isTest || this.app.meta.isLocal) {
+        content += `
+<script language="javascript">
+$(document).ready(function() {
+  var __checkFileTimeout = ${this.ctx.config.checkFileTimeout};
+  var __fileTime;
+  function __checkFile() {
+    util.performAction({
+      method: 'post',
+      url: '/a/cms/site/checkFile',
+      body: { file: '${fileWrite}' }
+    }).then(function(stats) {
+      if (!stats) {
+        return window.setTimeout(__checkFile, __checkFileTimeout);
+      }
+      if (!__fileTime) {
+        __fileTime = stats.mtime;
+        return window.setTimeout(__checkFile, __checkFileTimeout);
+      }
+      if (__fileTime === stats.mtime) {
+        return window.setTimeout(__checkFile, __checkFileTimeout);
+      }
+      location.reload(true);
+    });
+  }
+  __checkFile();
+});
+</script>
+          `;
+      }
       // write
       await fse.outputFile(fileWrite, content);
     }

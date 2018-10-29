@@ -9,7 +9,7 @@ const rss = require('./controller/rss.js');
 const queue = require('./controller/queue.js');
 
 module.exports = app => {
-  const routes = [
+  let routes = [
     // version
     { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
@@ -72,5 +72,11 @@ module.exports = app => {
       meta: { auth: { enable: false } },
     },
   ];
+  if (app.meta.isTest || app.meta.isLocal) {
+    routes = routes.concat([
+      // site
+      { method: 'post', path: 'site/checkFile', controller: site },
+    ]);
+  }
   return routes;
 };
