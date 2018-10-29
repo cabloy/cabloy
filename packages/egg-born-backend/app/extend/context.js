@@ -29,15 +29,27 @@ module.exports = {
   },
   get dbMeta() {
     if (!this[DATABASEMETA]) {
-      this[DATABASEMETA] = { master: true, transaction: false, connection: { conn: null } };
+      this[DATABASEMETA] = {
+        master: true, transaction: false, connection: { conn: null }, callbackes: [],
+        push: async cb => {
+          if (this[DATABASEMETA].transaction) {
+            this[DATABASEMETA].callbackes.push(cb);
+          } else {
+            await cb();
+          }
+        },
+      };
     }
     return this[DATABASEMETA];
   },
-  set dbMeta(meta) {
-    if (meta.transaction) {
-      this.dbMeta.master = false;
+  set dbMeta(metaCaller) {
+    if (metaCaller.transaction) {
+      this.dbMeta.master = false; // false only on metaCaller.transaction=true
       this.dbMeta.transaction = true;
-      this.dbMeta.connection = meta.connection;
+      this.dbMeta.connection = metaCaller.connection;
+      this.dbMeta.push = cb => {
+        metaCaller.push(cb);
+      };
     }
   },
   get innerAccess() {

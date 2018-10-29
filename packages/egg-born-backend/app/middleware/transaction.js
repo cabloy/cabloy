@@ -29,6 +29,10 @@ async function handleTransaction(ctx, success) {
       ctx.dbMeta.connection.conn = null;
       if (success) {
         await tran.commit();
+        // callbackes
+        for (const cb of ctx.dbMeta.callbackes) {
+          await cb();
+        }
       } else {
         await tran.rollback();
       }
