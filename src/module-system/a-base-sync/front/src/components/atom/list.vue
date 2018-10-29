@@ -5,63 +5,63 @@
         <div slot="media">
           <img class="avatar avatar32" :src="$meta.util.combineImageUrl(item.avatar,32)">
         </div>
-        <div slot="root-start" class="header">
-          <div class="userName">
-            <span>{{item.userName}}</span>
-            <f7-icon v-if="item.star" class="star" color="orange" material="star"></f7-icon>
-            <f7-icon v-if="item.attachmentCount>0" class="star" color="orange" material="attachment"></f7-icon>
+          <div slot="root-start" class="header">
+            <div class="userName">
+              <span>{{item.userName}}</span>
+              <f7-icon v-if="item.star" class="star" color="orange" material="star"></f7-icon>
+              <f7-icon v-if="item.attachmentCount>0" class="star" color="orange" material="attachment"></f7-icon>
+            </div>
+            <template v-if="itemShow">
+              <div>
+                <f7-badge v-if="item.atomFlag>0">{{getFlagTitle(item)}}</f7-badge>
+                <template v-if="item.labels && labels">
+                  <f7-badge v-for="label of JSON.parse(item.labels)" :key="label" :style="{backgroundColor:getLabel(label).color}">{{getLabel(label).text}}</f7-badge>
+                </template>
+              </div>
+            </template>
+            <template v-else>
+              <div class="date">{{$meta.util.formatDateTimeRelative(item.atomUpdatedAt)}}</div>
+            </template>
           </div>
-          <template v-if="itemShow">
-            <div>
+          <div slot="title" class="title">
+            <template v-if="itemShow">
+              <div class="date">
+                <div>{{$text('Modification time')}}</div>
+                <div>{{$text('Created time')}}</div>
+              </div>
+            </template>
+            <template v-else>
+              <div>{{item.atomName}}</div>
+            </template>
+          </div>
+          <div slot="after" class="after">
+            <template v-if="itemShow">
+              <div class="date">{{$meta.util.formatDateTime(item.atomUpdatedAt)}}</div>
+              <div class="date">{{$meta.util.formatDateTime(item.atomCreatedAt)}}</div>
+            </template>
+            <template v-else>
               <f7-badge v-if="item.atomFlag>0">{{getFlagTitle(item)}}</f7-badge>
               <template v-if="item.labels && labels">
                 <f7-badge v-for="label of JSON.parse(item.labels)" :key="label" :style="{backgroundColor:getLabel(label).color}">{{getLabel(label).text}}</f7-badge>
               </template>
-            </div>
-          </template>
-          <template v-else>
-            <div class="date">{{$meta.util.formatDateTimeRelative(item.atomUpdatedAt)}}</div>
-          </template>
-        </div>
-        <div slot="title" class="title">
-          <template v-if="itemShow">
-            <div class="date">
-              <div>{{$text('Modification time')}}</div>
-              <div>{{$text('Created time')}}</div>
-            </div>
-          </template>
-          <template v-else>
-            <div>{{item.atomName}}</div>
-          </template>
-        </div>
-        <div slot="after" class="after">
-          <template v-if="itemShow">
-            <div class="date">{{$meta.util.formatDateTime(item.atomUpdatedAt)}}</div>
-            <div class="date">{{$meta.util.formatDateTime(item.atomCreatedAt)}}</div>
-          </template>
-          <template v-else>
-            <f7-badge v-if="item.atomFlag>0">{{getFlagTitle(item)}}</f7-badge>
-            <template v-if="item.labels && labels">
-              <f7-badge v-for="label of JSON.parse(item.labels)" :key="label" :style="{backgroundColor:getLabel(label).color}">{{getLabel(label).text}}</f7-badge>
-            </template>
-          </template>
-        </div>
-        <eb-context-menu>
-          <div slot="left">
-            <template v-if="mode==='stars'">
-              <div color="orange" :context="item" :onPerform="onStarOff">{{$text('Unstar')}}</div>
-            </template>
-            <template v-else>
-              <div color="orange" :context="item" :onPerform="onStarSwitch">{{item.star?$text('Unstar'):$text('Star')}}</div>
-            </template>
-            <div color="yellow" :context="item" :onPerform="onLabel">{{$text('Labels')}}</div>
-          </div>
-          <div slot="right" v-if="!itemShow" :ready="!!item._actions">
-            <template v-if="item._actions">
-              <div v-for="(action,index) of item._actions" :key="action.id" :color="getActionColor(action,index)" :context="{item,action}" :onPerform="onAction">{{getActionTitle(action)}}</div>
             </template>
           </div>
-        </eb-context-menu>
+          <eb-context-menu>
+            <div slot="left">
+              <template v-if="mode==='stars'">
+                <div color="orange" :context="item" :onPerform="onStarOff">{{$text('Unstar')}}</div>
+              </template>
+              <template v-else>
+                <div color="orange" :context="item" :onPerform="onStarSwitch">{{item.star?$text('Unstar'):$text('Star')}}</div>
+              </template>
+              <div color="yellow" :context="item" :onPerform="onLabel">{{$text('Labels')}}</div>
+            </div>
+            <div slot="right" v-if="!itemShow" :ready="!!item._actions">
+              <template v-if="item._actions">
+                <div v-for="(action,index) of item._actions" :key="action.id" :color="getActionColor(action,index)" :context="{item,action}" :onPerform="onAction">{{getActionTitle(action)}}</div>
+              </template>
+            </div>
+          </eb-context-menu>
       </eb-list-item>
     </f7-list>
     <eb-load-more ref="loadMore" v-if="!itemShow" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="false"></eb-load-more>
@@ -329,7 +329,8 @@ export default {
     },
     getFlagTitle(item) {
       if (!this.flags) return null;
-      return this.flags[item.module][item.atomClassName][item.atomFlag].titleLocale;
+      const flag = this.flags[item.module][item.atomClassName][item.atomFlag];
+      return flag ? flag.titleLocale : this.$text('Flag Not Found');
     },
     onItemClick(event, item) {
       if (this.itemShow) return;

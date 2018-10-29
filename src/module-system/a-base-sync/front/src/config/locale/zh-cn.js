@@ -39,4 +39,5 @@ export default {
   'Atom class': '原子类型',
   'Allow Comment': '允许评论',
   'Attachment List': '附件列表',
+  'Flag Not Found': 'Flag未发现',
 };
