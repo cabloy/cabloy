@@ -195,6 +195,10 @@ const Fn = module.exports = ctx => {
     // write
     async write({ key, item, validation, user }) {
       const atomClass = await ctx.meta.atomClass.getByAtomId({ atomId: key.atomId });
+
+      // write atom
+      await this._writeAtom({ key, item, validation, user });
+
       // write item
       const moduleInfo = mparse.parseInfo(atomClass.module);
       await ctx.performAction({
@@ -209,6 +213,11 @@ const Fn = module.exports = ctx => {
         },
       });
 
+      // write atom again
+      await this._writeAtom({ key, item, validation, user });
+    }
+
+    async _writeAtom({ key, item, validation, user }) {
       // write atom
       if (item) {
         const atom = { };
