@@ -189,7 +189,7 @@ module.exports = app => {
         await this.ctx.app.meta.queue.push({
           subdomain: this.ctx.subdomain,
           module: moduleInfo.relativeName,
-          queueName: 'queueDeleteArticle',
+          queueName: 'deleteArticle',
           data: { key, article, inner },
         });
       });
@@ -201,7 +201,7 @@ module.exports = app => {
         await this.ctx.app.meta.queue.push({
           subdomain: this.ctx.subdomain,
           module: moduleInfo.relativeName,
-          queueName: 'queueRenderArticle',
+          queueName: 'renderArticle',
           data: { key, inner },
         });
       });

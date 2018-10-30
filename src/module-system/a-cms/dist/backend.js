@@ -141,16 +141,16 @@ module.exports = appInfo => {
 
   // queues
   config.queues = {
-    queueBuildLanguage: {
+    buildLanguage: {
       path: 'queue/buildLanguage',
     },
-    queueBuildLanguages: {
+    buildLanguages: {
       path: 'queue/buildLanguages',
     },
-    queueRenderArticle: {
+    renderArticle: {
       path: 'queue/renderArticle',
     },
-    queueDeleteArticle: {
+    deleteArticle: {
       path: 'queue/deleteArticle',
     },
   };
@@ -664,7 +664,7 @@ module.exports = app => {
       const res = await this.ctx.app.meta.queue.pushAsync({
         subdomain: this.ctx.subdomain,
         module: moduleInfo.relativeName,
-        queueName: 'queueBuildLanguage',
+        queueName: 'buildLanguage',
         data: { language: this.ctx.request.body.language },
       });
       this.ctx.success(res);
@@ -675,7 +675,7 @@ module.exports = app => {
       const res = await this.ctx.app.meta.queue.pushAsync({
         subdomain: this.ctx.subdomain,
         module: moduleInfo.relativeName,
-        queueName: 'queueBuildLanguages',
+        queueName: 'buildLanguages',
         data: null,
       });
       this.ctx.success(res);
@@ -1553,7 +1553,7 @@ module.exports = app => {
         await this.ctx.app.meta.queue.push({
           subdomain: this.ctx.subdomain,
           module: moduleInfo.relativeName,
-          queueName: 'queueDeleteArticle',
+          queueName: 'deleteArticle',
           data: { key, article, inner },
         });
       });
@@ -1565,7 +1565,7 @@ module.exports = app => {
         await this.ctx.app.meta.queue.push({
           subdomain: this.ctx.subdomain,
           module: moduleInfo.relativeName,
-          queueName: 'queueRenderArticle',
+          queueName: 'renderArticle',
           data: { key, inner },
         });
       });

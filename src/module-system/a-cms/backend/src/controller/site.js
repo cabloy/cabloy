@@ -49,7 +49,7 @@ module.exports = app => {
       const res = await this.ctx.app.meta.queue.pushAsync({
         subdomain: this.ctx.subdomain,
         module: moduleInfo.relativeName,
-        queueName: 'queueBuildLanguage',
+        queueName: 'buildLanguage',
         data: { language: this.ctx.request.body.language },
       });
       this.ctx.success(res);
@@ -60,7 +60,7 @@ module.exports = app => {
       const res = await this.ctx.app.meta.queue.pushAsync({
         subdomain: this.ctx.subdomain,
         module: moduleInfo.relativeName,
-        queueName: 'queueBuildLanguages',
+        queueName: 'buildLanguages',
         data: null,
       });
       this.ctx.success(res);
