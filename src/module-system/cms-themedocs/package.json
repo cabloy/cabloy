@@ -59,11 +59,12 @@
     "require3": "^1.0.1",
     "extend2": "^1.0.0",
     "egg-born-module-cms-pluginbase": "^1.1.3",
-    "egg-born-module-cms-pluginarticle": "^1.0.3",
+    "egg-born-module-cms-pluginarticle": "^1.0.5",
     "egg-born-module-cms-pluginsidebar": "^1.0.2",
     "egg-born-module-cms-pluginmarkdowngithub": "^1.0.0",
     "egg-born-module-cms-plugintrack": "^1.0.1",
     "egg-born-module-cms-pluginbacktotop": "^1.0.1",
-    "egg-born-module-cms-pluginsocialshare": "^1.0.0"
+    "egg-born-module-cms-pluginsocialshare": "^1.0.1",
+    "egg-born-module-cms-pluginrss": "^1.0.1"
   }
 }

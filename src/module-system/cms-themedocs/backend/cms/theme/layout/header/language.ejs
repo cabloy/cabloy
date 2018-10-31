@@ -1,0 +1,10 @@
+<% if(site.languages.length>1){ %>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span></a>
+  <ul class="dropdown-menu">
+    <% for(const item of site.languages){ %>
+    <li><a href="<%=item.url%>"><%=text(item.title)%></a></li>
+    <% } %>
+  </ul>
+</li>
+<% } %>

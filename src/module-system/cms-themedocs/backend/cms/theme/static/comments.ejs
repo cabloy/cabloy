@@ -1,0 +1,13 @@
+<%- await include('../layout/header.ejs') %>
+<div class="row">
+  <div class="col-sm-8">
+    <section>
+      <%- await include('../layout/breadcrumb.ejs') %>
+      <%- await include('../plugins/cms-pluginarticle/article/commentsAll.ejs') %>
+    </section>
+  </div>
+  <div class="col-sm-4">
+    <%- await include('../layout/sidebar.ejs') %>
+  </div>
+</div>
+<%- await include('../layout/footer.ejs') %>
