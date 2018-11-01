@@ -24,7 +24,7 @@ module.exports = appInfo => {
       logoMask: 'assets/images/logo-mask.png',
       buttons: [
         { title: 'Github', color: 'primary', url: 'https://github.com/zhennann/cabloy' },
-        { title: 'Documentation', color: 'primary', url: 'articles/documentation.html' },
+        { title: 'Documentation', color: 'primary', url: 'articles/introduce.html' },
         { title: 'Demo Online', url: 'https://admin.cabloy.org' },
       ],
       features: [
@@ -33,6 +33,7 @@ module.exports = appInfo => {
         { title: 'Frontend and Backend Separation', description: 'Separating Frontend and Backend, so as for decoupling.' },
         { title: 'Core Business Modules', description: 'Providing many core business modules for rapid business development, such as Users, Roles, Rights, Menus, etc.' },
       ],
+      columns: 4,
     },
   };
 

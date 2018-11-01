@@ -11,6 +11,8 @@ $(document).ready(function() {
   if (query.search) {
     $('form.search input').val(query.search);
   }
+  // category tree
+  categoryTree($('.category-sidebar .tree'));
 });
 
 $(document).on('echo-ready', function() {
@@ -20,6 +22,43 @@ $(document).on('echo-ready', function() {
   loadMore(query);
 });
 
+function categoryTree($treeContainer) {
+  if (!env.article || $treeContainer.length===0) return;
+
+  // articleCategoryTop
+  util.performAction({
+    method: 'post',
+    url: '/a/cms/category/relativeTop',
+    body: { categoryId: env.article.categoryId },
+  }).then(category => {
+    // tree
+    util.performAction({
+      method: 'post',
+      url: '/a/cms/category/tree',
+      body: { categoryId: category.id },
+    }).then(tree => {
+      // prepare tree data
+      const data = _prepareTreeData(tree.list);
+      $('.tree').tree({
+        data
+      });
+    });
+  });
+}
+
+function _prepareTreeData(list) {
+  if (!list) return null;
+  if (list.length === 0) return [];
+  const _list = [];
+  for (const item of list) {
+    const _item = {
+      name: item.categoryName,
+    };
+    _item.children = this._prepareTreeData(item.children);
+    _list.push(_item);
+  }
+  return _list;
+}
 
 function title(query) {
   if (env.site.path === 'static/articles') {

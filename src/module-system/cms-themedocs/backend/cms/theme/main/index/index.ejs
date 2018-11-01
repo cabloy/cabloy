@@ -1,5 +1,5 @@
 <%- await include('../../layout/header.ejs') %>
-<section>
+<div class="section">
   <div class="project">
     <h1 class="title">
       <img class="logo" src="<%=url('assets/images/logo.png')%>">
@@ -14,7 +14,7 @@
     </p>
     <div class="row features">
       <%for(const feature of site._project.features){%>
-      <div class="col-sm-3 feature">
+      <div class="col-sm-<%=12/site._project.columns%> feature">
         <div class="panel panel-default">
           <div class="panel-heading"><%=feature.title%></div>
           <div class="panel-body">
@@ -25,5 +25,5 @@
       <%}%>
     </div>
   </div>
-</section>
+</div>
 <%- await include('../../layout/footer.ejs') %>
