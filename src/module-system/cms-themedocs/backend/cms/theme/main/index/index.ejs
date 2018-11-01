@@ -1,4 +1,11 @@
 <%- await include('../../layout/header.ejs') %>
 <section>
+  <%if(site._index.html){%>
+    <%-site._index.html%>
+  <%}else{%>
+  <div class="project">
+
+  </div>
+  <%}%>
 </section>
 <%- await include('../../layout/footer.ejs') %>
