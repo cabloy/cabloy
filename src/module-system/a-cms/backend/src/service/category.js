@@ -13,6 +13,7 @@ module.exports = app => {
         hidden: data.hidden,
         sorting: data.sorting,
         flag: data.flag,
+        url: data.url,
       });
     }
 

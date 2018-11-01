@@ -25,6 +25,7 @@ export default {
   Tag: '标签',
   Tags: '标签',
   Title: '标题',
+  Url: '链接',
   'Atom Name': '原子名称',
   'Basic Info': '基本信息',
   'Category name': '目录名称',

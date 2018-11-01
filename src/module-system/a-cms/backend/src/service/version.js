@@ -236,6 +236,15 @@ module.exports = app => {
 
       }
 
+      if (options.version === 4) {
+        // alter table: aCmsCategory
+        const sql = `
+        ALTER TABLE aCmsCategory
+          ADD COLUMN url varchar(255) DEFAULT NULL
+                  `;
+        await this.ctx.model.query(sql);
+      }
+
     }
 
     async init(options) {

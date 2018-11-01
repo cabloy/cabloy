@@ -159,6 +159,11 @@ module.exports = app => {
         ebReadOnly: true,
         notEmpty: true,
       },
+      url: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Url',
+      },
     },
   };
 
