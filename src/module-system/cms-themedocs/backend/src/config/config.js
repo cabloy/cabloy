@@ -6,7 +6,7 @@ module.exports = appInfo => {
   config.theme = {
     base: {
       title: 'Cabloy',
-      subTitle: 'The Ultimate Javascript Full Stack Business Development Platform, based on EggJS & Framework7.',
+      subTitle: 'The Ultimate Javascript Full Stack Business Development Platform, based on EggJS & VueJS.',
     },
     _theme: {
       name: 'cms-themedocs',
@@ -19,24 +19,20 @@ module.exports = appInfo => {
     _project: {
       name: 'CabloyJS',
       version: '1.1.1',
-      description: 'The Ultimate Javascript Full Stack Business Development Platform, based on EggJS & Framework7.',
-      features: [
-        'feature1', 'feature2',
-      ],
+      description: 'The Ultimate Javascript Full Stack Business Development Platform, based on EggJS & VueJS.',
+      logo: 'assets/images/logo.png',
+      logoMask: 'assets/images/logo-mask.png',
       buttons: [
-        { title: 'Github', url: 'https://github.com/zhennann/cabloy' },
-        { title: 'Get Started', url: 'https://cabloy.org/articles/get-started.html' },
+        { title: 'Github', color: 'primary', url: 'https://github.com/zhennann/cabloy' },
+        { title: 'Documentation', color: 'primary', url: 'articles/documentation.html' },
         { title: 'Demo Online', url: 'https://admin.cabloy.org' },
       ],
-    },
-    _index: {
-      html: '',
-      style:
-`
-section .project{
-  color: blue;
-}
-`,
+      features: [
+        { title: 'PC = MOBILE + PAD', description: '\'Mobile First\' strategy, and perfectly adapting PC layout.' },
+        { title: 'Business Modularization', description: 'The business components and logics are arranged as modules.' },
+        { title: 'Frontend and Backend Separation', description: 'Separating Frontend and Backend, so as for decoupling.' },
+        { title: 'Core Business Modules', description: 'Providing many core business modules for rapid business development, such as Users, Roles, Rights, Menus, etc.' },
+      ],
     },
   };
 

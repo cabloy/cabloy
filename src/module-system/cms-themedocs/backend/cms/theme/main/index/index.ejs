@@ -1,11 +1,29 @@
 <%- await include('../../layout/header.ejs') %>
 <section>
-  <%if(site._index.html){%>
-    <%-site._index.html%>
-  <%}else{%>
   <div class="project">
-
+    <h1 class="title">
+      <img class="logo" src="<%=url('assets/images/logo.png')%>">
+      <span class="name"><%=site._project.name%></span>
+      <small class="version"><%=site._project.version%></small>
+    </h1>
+    <h2 class="description"><%=site._project.description%></h2>
+    <p class="buttons">
+      <%for(const button of site._project.buttons){%>
+      <a href="<%=url(button.url)%>" class="btn btn-<%=button.color || 'success'%> btn-lg"><%=button.title%></a>
+      <%}%>
+    </p>
+    <div class="row features">
+      <%for(const feature of site._project.features){%>
+      <div class="col-sm-3 feature">
+        <div class="panel panel-default">
+          <div class="panel-heading"><%=feature.title%></div>
+          <div class="panel-body">
+            <%=feature.description%>
+          </div>
+        </div>
+      </div>
+      <%}%>
+    </div>
   </div>
-  <%}%>
 </section>
 <%- await include('../../layout/footer.ejs') %>
