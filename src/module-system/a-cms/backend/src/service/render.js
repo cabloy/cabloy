@@ -286,6 +286,8 @@ $(document).ready(function() {
         return window.setTimeout(__checkFile, __checkFileTimeout);
       }
       location.reload(true);
+    }).catch(function(){
+      return window.setTimeout(__checkFile, __checkFileTimeout);
     });
   }
   __checkFile();
@@ -455,6 +457,7 @@ var env=${JSON.stringify(env, null, 2)};
           return require3(_path);
         },
         url(fileName, language) {
+          if (fileName.indexOf('http://') === 0 || fileName.indexOf('https://') === 0) return fileName;
           let _path = self.resolvePath('', path.relative(_pathIntermediate, this._filename), fileName);
           _path = _path.replace(/\\/gi, '/');
           return self.getUrl(site, language || site.language.current, _path);

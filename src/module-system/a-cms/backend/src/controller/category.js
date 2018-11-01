@@ -57,6 +57,13 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async relativeTop() {
+      const res = await this.ctx.service.category.relativeTop({
+        categoryId: this.ctx.request.body.categoryId,
+      });
+      this.ctx.success(res);
+    }
+
   }
   return CategoryController;
 };

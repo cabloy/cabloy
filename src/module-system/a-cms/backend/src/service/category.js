@@ -103,6 +103,17 @@ module.exports = app => {
       return list;
     }
 
+    async relativeTop({ categoryId }) {
+      return await this._relativeTop({ categoryId });
+    }
+
+    async _relativeTop({ categoryId }) {
+      const category = await this.item({ categoryId });
+      if (!category) return null;
+      if (category.url) return category;
+      return await this._relativeTop({ categoryId: category.categoryIdParent });
+    }
+
   }
 
   return Category;

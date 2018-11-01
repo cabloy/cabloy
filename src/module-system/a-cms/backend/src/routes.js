@@ -52,6 +52,7 @@ module.exports = app => {
     { method: 'post', path: 'category/add', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'category/delete', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'category/move', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
+    { method: 'post', path: 'category/relativeTop', controller: category }, // not set function right
     // tag
     { method: 'post', path: 'tag/list', controller: tag },
     // rss
