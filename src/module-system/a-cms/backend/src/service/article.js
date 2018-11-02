@@ -184,7 +184,7 @@ module.exports = app => {
     }
 
     async _deleteArticle({ key, article, inner }) {
-      await this.ctx.dbMeta.push(async () => {
+      await this.ctx.dbMeta.next(async () => {
         // queue not async
         await this.ctx.app.meta.queue.push({
           subdomain: this.ctx.subdomain,
@@ -196,7 +196,7 @@ module.exports = app => {
     }
 
     async _renderArticle({ key, inner }) {
-      await this.ctx.dbMeta.push(async () => {
+      await this.ctx.dbMeta.next(async () => {
         // queue not async
         await this.ctx.app.meta.queue.push({
           subdomain: this.ctx.subdomain,
