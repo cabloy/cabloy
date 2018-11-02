@@ -12,7 +12,7 @@ $(document).ready(function() {
     $('form.search input').val(query.search);
   }
   // category tree
-  categoryTree($('.category-sidebar .tree'));
+  categoryTree($('.category-sidebar'));
 });
 
 $(document).on('echo-ready', function() {
@@ -23,38 +23,136 @@ $(document).on('echo-ready', function() {
 });
 
 function categoryTree($treeContainer) {
-  if (!env.article || $treeContainer.length===0) return;
+  if (!env.article) return;
 
-  // articleCategoryTop
-  util.performAction({
-    method: 'post',
-    url: '/a/cms/category/relativeTop',
-    body: { categoryId: env.article.categoryId },
-  }).then(category => {
-    // tree
-    util.performAction({
-      method: 'post',
-      url: '/a/cms/category/tree',
-      body: { categoryId: category.id },
-    }).then(tree => {
-      // prepare tree data
-      const data = _prepareTreeData(tree.list);
-      $('.tree').tree({
-        data
-      });
-    });
+  const $title = $('.title', $treeContainer);
+  const $tree = $('.tree', $treeContainer);
+  if ($tree.length === 0) return;
+
+  $tree.on('changed.jstree', function(e, data) {
+    window.location.href = data.node.a_attr.href;
+  }).on('load_node.jstree', function(e, data) {
+    if (data.status) {
+      const node = data.node;
+      if (node.id === '#') {
+        // open article's parent category
+        $tree.jstree(true).open_node(env.article.categoryId);
+      } else if (node.id === env.article.categoryId.toString()) {
+        // fill article's h2es
+        _fillArticleH2es($tree);
+        // open article
+        $tree.jstree(true).select_node(`${env.article.categoryId}:${env.article.atomId}`, true);
+        $tree.jstree(true).open_node(`${env.article.categoryId}:${env.article.atomId}`);
+      }
+    }
   });
+  $tree.jstree({
+    plugins: [ 'types' ],
+    types: {
+      file: {
+        icon: 'jstree-icon jstree-file',
+      },
+    },
+    core: {
+      check_callback: true,
+      data(node, cb) {
+        const self = this;
+        if (node.id === '#') {
+          // articleCategoryTop
+          util.performAction({
+            method: 'post',
+            url: '/a/cms/category/relativeTop',
+            body: { categoryId: env.article.categoryId },
+          }).then(category => {
+            if (!category) return cb.call(self, []);
+            // title
+            $title.text(category.categoryName);
+            // tree
+            util.performAction({
+              method: 'post',
+              url: '/a/cms/category/tree',
+              body: { categoryId: category.id },
+            }).then(tree => {
+              // prepare tree data
+              const data = _prepareTreeData(tree.list);
+              cb.call(self, data);
+            });
+          });
+        } else {
+          // articles
+          _fetchArticles({
+            index: 0,
+            categoryId: node.id,
+            orders: [
+              [ 'f.sticky', 'desc' ],
+              [ 'f.sorting', 'asc' ],
+              [ 'a.createdAt', 'asc' ],
+            ],
+          }).then(res => {
+            const data = _prepareArtilesData(node.id, res.list);
+            cb.call(self, data);
+          });
+        }
+      },
+    },
+  });
+}
+
+function _fillArticleH2es($tree) {
+  const h2es = $('article h2');
+  for (let i = 0; i < h2es.length; i++) {
+    const h2 = $(h2es[i]);
+    const h2link = $('a', h2);
+    const h2linkId = h2link.attr('id');
+    const _item = {
+      id: `${env.article.categoryId}:${env.article.atomId}:${h2linkId}`,
+      text: h2.text(),
+      type: 'h2',
+      icon: false,
+      a_attr: {
+        href: `#${h2linkId}`,
+      },
+    };
+    $tree.jstree(true).create_node(`${env.article.categoryId}:${env.article.atomId}`, _item);
+  }
+}
+
+function _prepareArtilesData(categoryId, list) {
+  const _list = [];
+  for (let i = 0; i < list.length; i++) {
+    const item = list[i];
+    const _item = {
+      id: `${categoryId}:${item.atomId}`,
+      text: item.atomName,
+      type: 'file',
+      icon: false,
+      a_attr: {
+        href: util.url(item.url),
+      },
+    };
+    _list.push(_item);
+  }
+  return _list;
 }
 
 function _prepareTreeData(list) {
   if (!list) return null;
   if (list.length === 0) return [];
   const _list = [];
-  for (const item of list) {
+  for (let i = 0; i < list.length; i++) {
+    const item = list[i];
     const _item = {
-      name: item.categoryName,
+      id: item.id,
+      text: item.categoryName,
+      type: 'folder',
+      icon: false,
+      original: item,
     };
-    _item.children = this._prepareTreeData(item.children);
+    if (item.catalog === 0) {
+      _item.children = true;
+    } else {
+      _item.children = this._prepareTreeData(item.children);
+    }
     _list.push(_item);
   }
   return _list;
@@ -124,47 +222,7 @@ function _loadMore({ categoryId, tagId, search }) {
     container: '.article-list',
     index: (env.index && env.index[env.site.path]) || 0,
     onFetch({ index }) {
-      // options
-      const options = {
-        where: {
-          'f.language': env.language.current,
-        },
-        orders: [
-          [ 'f.sticky', 'desc' ],
-          [ 'a.createdAt', 'desc' ],
-        ],
-        page: { index },
-        mode: 'list',
-      };
-      // categoryId
-      if (categoryId) {
-        options.where['f.categoryId'] = categoryId;
-        options.orders = [
-          [ 'f.sticky', 'desc' ],
-          [ 'f.sorting', 'asc' ],
-          [ 'a.createdAt', 'desc' ],
-        ];
-      }
-      // tagId
-      if (tagId) {
-        options.where['f.tagId'] = tagId;
-        options.orders = [
-          [ 'f.sticky', 'desc' ],
-          [ 'a.createdAt', 'desc' ],
-        ];
-        options.mode = 'tag';
-      }
-      // search
-      if (search) {
-        options.where['f.contentSearch'] = { val: search, op: 'like' };
-        options.mode = 'search';
-      }
-      // select
-      return util.performAction({
-        method: 'post',
-        url: '/a/cms/article/list',
-        body: { options },
-      });
+      return _fetchArticles({ index, categoryId, tagId, search });
     },
     onParse(item) {
       const sticky = !item.sticky ? '' : '<span class="glyphicon glyphicon-pushpin"></span> ';
@@ -185,7 +243,8 @@ function _loadMore({ categoryId, tagId, search }) {
       const tags = item.tags ? JSON.parse(item.tags) : null;
       if (tags && tags.length > 0) {
         tagsText += '<span class="num glyphicon glyphicon-tags"></span> ';
-        for (const tag of tags) {
+        for (let i = 0; i < tags.length; i++) {
+          const tag = tags[i];
           tagsText += `<a target="_blank" href="${util.url('static/articles.html')}?tagId=${tag.id}&tagName=${tag.name}"><span class="num tag">${tag.name}</span></a>`;
         }
         tagsText += '';
@@ -214,3 +273,46 @@ ${tagsText}
   });
 }
 
+function _fetchArticles({ index, categoryId, tagId, search, orders }) {
+  // options
+  const options = {
+    where: {
+      'f.language': env.language.current,
+    },
+    orders: [
+      [ 'f.sticky', 'desc' ],
+      [ 'a.createdAt', 'desc' ],
+    ],
+    page: { index },
+    mode: 'list',
+  };
+  // categoryId
+  if (categoryId) {
+    options.where['f.categoryId'] = categoryId;
+    options.orders = orders || [
+      [ 'f.sticky', 'desc' ],
+      [ 'f.sorting', 'asc' ],
+      [ 'a.createdAt', 'desc' ],
+    ];
+  }
+  // tagId
+  if (tagId) {
+    options.where['f.tagId'] = tagId;
+    options.orders = [
+      [ 'f.sticky', 'desc' ],
+      [ 'a.createdAt', 'desc' ],
+    ];
+    options.mode = 'tag';
+  }
+  // search
+  if (search) {
+    options.where['f.contentSearch'] = { val: search, op: 'like' };
+    options.mode = 'search';
+  }
+  // select
+  return util.performAction({
+    method: 'post',
+    url: '/a/cms/article/list',
+    body: { options },
+  });
+}
