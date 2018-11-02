@@ -258,6 +258,7 @@ module.exports = {
   Sorting: '排序',
   Tag: '标签',
   Tags: '标签',
+  Url: '链接',
   'Are you sure?': '您确认吗？',
   'Article List': '文章清单',
   'Article List(by category)': '文章清单(按目录)',
@@ -360,6 +361,7 @@ module.exports = app => {
     { method: 'post', path: 'category/add', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'category/delete', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'category/move', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
+    { method: 'post', path: 'category/relativeTop', controller: category }, // not set function right
     // tag
     { method: 'post', path: 'tag/list', controller: tag },
     // rss
@@ -580,6 +582,13 @@ module.exports = app => {
       const res = await this.ctx.service.category.move({
         categoryId: this.ctx.request.body.categoryId,
         categoryIdParent: this.ctx.request.body.categoryIdParent,
+      });
+      this.ctx.success(res);
+    }
+
+    async relativeTop() {
+      const res = await this.ctx.service.category.relativeTop({
+        categoryId: this.ctx.request.body.categoryId,
       });
       this.ctx.success(res);
     }
@@ -1289,6 +1298,15 @@ module.exports = app => {
 
       }
 
+      if (options.version === 4) {
+        // alter table: aCmsCategory
+        const sql = `
+        ALTER TABLE aCmsCategory
+          ADD COLUMN url varchar(255) DEFAULT NULL
+                  `;
+        await this.ctx.model.query(sql);
+      }
+
     }
 
     async init(options) {
@@ -1548,7 +1566,7 @@ module.exports = app => {
     }
 
     async _deleteArticle({ key, article, inner }) {
-      await this.ctx.dbMeta.push(async () => {
+      await this.ctx.dbMeta.next(async () => {
         // queue not async
         await this.ctx.app.meta.queue.push({
           subdomain: this.ctx.subdomain,
@@ -1560,7 +1578,7 @@ module.exports = app => {
     }
 
     async _renderArticle({ key, inner }) {
-      await this.ctx.dbMeta.push(async () => {
+      await this.ctx.dbMeta.next(async () => {
         // queue not async
         await this.ctx.app.meta.queue.push({
           subdomain: this.ctx.subdomain,
@@ -1596,6 +1614,7 @@ module.exports = app => {
         hidden: data.hidden,
         sorting: data.sorting,
         flag: data.flag,
+        url: data.url,
       });
     }
 
@@ -1683,6 +1702,17 @@ module.exports = app => {
         }
       }
       return list;
+    }
+
+    async relativeTop({ categoryId }) {
+      return await this._relativeTop({ categoryId });
+    }
+
+    async _relativeTop({ categoryId }) {
+      const category = await this.item({ categoryId });
+      if (!category) return null;
+      if (category.url) return category;
+      return await this._relativeTop({ categoryId: category.categoryIdParent });
     }
 
   }
@@ -1983,6 +2013,8 @@ $(document).ready(function() {
         return window.setTimeout(__checkFile, __checkFileTimeout);
       }
       location.reload(true);
+    }).catch(function(){
+      return window.setTimeout(__checkFile, __checkFileTimeout);
     });
   }
   __checkFile();
@@ -2152,6 +2184,7 @@ var env=${JSON.stringify(env, null, 2)};
           return require3(_path);
         },
         url(fileName, language) {
+          if (fileName.indexOf('http://') === 0 || fileName.indexOf('https://') === 0) return fileName;
           let _path = self.resolvePath('', path.relative(_pathIntermediate, this._filename), fileName);
           _path = _path.replace(/\\/gi, '/');
           return self.getUrl(site, language || site.language.current, _path);
@@ -3069,6 +3102,11 @@ module.exports = app => {
         ebTitle: 'Language',
         ebReadOnly: true,
         notEmpty: true,
+      },
+      url: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Url',
       },
     },
   };
