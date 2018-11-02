@@ -11,8 +11,6 @@ $(document).ready(function() {
   if (query.search) {
     $('form.search input').val(query.search);
   }
-  // category tree
-  categoryTree($('.category-sidebar'));
 });
 
 $(document).on('echo-ready', function() {
@@ -20,7 +18,26 @@ $(document).on('echo-ready', function() {
   const query = util.parseUrlQuery();
   // load more
   loadMore(query);
+  // category tree
+  categoryTree($('.category-sidebar'));
+  // category tree toggle
+  categoryTreeToggle($('.category-sidebar-toggle'), $('.doc-container'));
 });
+
+function categoryTreeToggle($toggle, $container) {
+  const $window = $(window);
+  $toggle.on('click', () => {
+    event.preventDefault();
+    $container.toggleClass('sidebar-collapse');
+  });
+  $window.resize(() => {
+    if ($window.width() <= 768) {
+      $container.addClass('sidebar-collapse');
+    } else {
+      $container.removeClass('sidebar-collapse');
+    }
+  });
+}
 
 function categoryTree($treeContainer) {
   if (!env.article) return;
@@ -30,6 +47,11 @@ function categoryTree($treeContainer) {
   if ($tree.length === 0) return;
 
   $tree.on('changed.jstree', function(e, data) {
+    const node = data.node;
+    if (node.type === 'folder') return event.preventDefault();
+    if (node.type === 'file' && node.id === `${env.article.categoryId}:${env.article.atomId}`) {
+      return window.location.href = '#';
+    }
     window.location.href = data.node.a_attr.href;
   }).on('load_node.jstree', function(e, data) {
     if (data.status) {
@@ -49,9 +71,11 @@ function categoryTree($treeContainer) {
   $tree.jstree({
     plugins: [ 'types' ],
     types: {
+      folder: {},
       file: {
         icon: 'jstree-icon jstree-file',
       },
+      h2: {},
     },
     core: {
       check_callback: true,
@@ -65,6 +89,8 @@ function categoryTree($treeContainer) {
             body: { categoryId: env.article.categoryId },
           }).then(category => {
             if (!category) return cb.call(self, []);
+            // menu active
+            menuActive({ categoryId: category.id });
             // title
             $title.text(category.categoryName);
             // tree
@@ -99,7 +125,7 @@ function categoryTree($treeContainer) {
 }
 
 function _fillArticleH2es($tree) {
-  const h2es = $('article h2');
+  const h2es = $('.article-doc h2');
   for (let i = 0; i < h2es.length; i++) {
     const h2 = $(h2es[i]);
     const h2link = $('a', h2);

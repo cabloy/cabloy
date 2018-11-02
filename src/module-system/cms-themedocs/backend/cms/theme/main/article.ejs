@@ -1,9 +1,10 @@
 <%- await include('../layout/header.ejs') %>
+<div class="doc-container">
 <div class="category-sidebar">
   <h3 class="title"></h3>
   <div class="tree"></div>
 </div>
-<article>
+<article class="article-doc">
   <%- await include('../layout/article/title.ejs')%>
   <%- article.html %>
   <%- await include('../layout/article/attachments.ejs') %>
@@ -12,4 +13,5 @@
   <%- await include('../layout/article/brothers.ejs') %>
   <%- await include('../layout/article/comments.ejs') %>
 </article>
+</div>
 <%- await include('../layout/footer.ejs') %>

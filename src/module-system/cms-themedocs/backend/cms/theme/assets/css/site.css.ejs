@@ -64,11 +64,11 @@ footer .small a:hover{
   padding-top: 70px;
 }
 
-section .project{
+.section-index .project{
   text-align:center;
 }
 
-section .project .features{
+.section-index .project .features{
   margin-top: 40px;
 }
 
@@ -132,6 +132,7 @@ section {
   z-index: 1;
   border-right: 1px solid #EFEFEF;
   background: #FAFBFF;
+  overflow-y: auto;
   transition: left .4s ease-in;
 }
 
@@ -140,4 +141,31 @@ section {
   text-align:center;
 }
 
+.doc-container .article-doc{
+  margin-left: 280px;
+  transition: margin-left .4s ease-in;
+}
+
+.doc-container.sidebar-collapse .category-sidebar{
+  left: -280px;
+}
+
+.doc-container.sidebar-collapse .article-doc{
+  margin-left: 0;
+}
+
+.category-sidebar-toggle {
+  float: left;
+  height: 50px;
+  padding: 15px 15px;
+  font-size: 18px;
+  line-height: 20px;
+  color: white;
+  opacity: 0.7;
+}
+
+.category-sidebar-toggle:hover,.category-sidebar-toggle:focus {
+  color: white;
+  opacity: 1;
+}
 

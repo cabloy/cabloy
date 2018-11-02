@@ -46,6 +46,9 @@ if(!site._menuItems){
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
+      <%if(typeof article!=='undefined'){%>
+      <a class="category-sidebar-toggle" href="#"><span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span></a>
+      <%}%>
       <a class="navbar-brand" href="<%=url('index.html')%>">
         <img class="logo" src="<%=url(site._project.logoMask)%>">
         <span><%=site.base.title%></span>
