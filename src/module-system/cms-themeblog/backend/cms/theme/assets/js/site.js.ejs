@@ -145,7 +145,8 @@ function _loadMore({ categoryId, tagId, search }) {
       const tags = item.tags ? JSON.parse(item.tags) : null;
       if (tags && tags.length > 0) {
         tagsText += '<span class="num glyphicon glyphicon-tags"></span> ';
-        for (const tag of tags) {
+        for (let i = 0; i < tags.length; i++) {
+          const tag = tags[i];
           tagsText += `<a target="_blank" href="${util.url('static/articles.html')}?tagId=${tag.id}&tagName=${tag.name}"><span class="num tag">${tag.name}</span></a>`;
         }
         tagsText += '';
