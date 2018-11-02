@@ -31,7 +31,7 @@ module.exports = {
     if (!this[DATABASEMETA]) {
       this[DATABASEMETA] = {
         master: true, transaction: false, connection: { conn: null }, callbackes: [],
-        push: async cb => {
+        next: async cb => {
           if (this[DATABASEMETA].transaction) {
             this[DATABASEMETA].callbackes.push(cb);
           } else {
@@ -47,8 +47,8 @@ module.exports = {
       this.dbMeta.master = false; // false only on metaCaller.transaction=true
       this.dbMeta.transaction = true;
       this.dbMeta.connection = metaCaller.connection;
-      this.dbMeta.push = cb => {
-        metaCaller.push(cb);
+      this.dbMeta.next = cb => {
+        metaCaller.next(cb);
       };
     }
   },
