@@ -1228,6 +1228,16 @@ const Fn = module.exports = ctx => {
       return new (Fn(ctx))(moduleName);
     }
 
+    get host() {
+      const config = ctx.config.module(moduleInfo.relativeName);
+      return config.host || ctx.host;
+    }
+
+    get protocol() {
+      const config = ctx.config.module(moduleInfo.relativeName);
+      return config.protocol || ctx.protocol;
+    }
+
     modules() {
       if (!_modulesLocales[ctx.locale]) {
         _modulesLocales[ctx.locale] = this._prepareModules();
