@@ -11,11 +11,24 @@ module.exports = () => {
       if (instance) {
         // config
         instance.config = JSON.parse(instance.config);
+        // ctx.host ctx.protocol
+        if (ctx.host && ctx.protocol) {
+          if (!instance.config['a-base']) instance.config['a-base'] = {};
+          const aBase = instance.config['a-base'];
+          if (aBase.host !== ctx.host || aBase.protocol !== ctx.protocol) {
+            aBase.host = ctx.host;
+            aBase.protocol = ctx.protocol;
+            await ctx.db.update('aInstance', {
+              id: instance.id,
+              config: JSON.stringify(instance.config) });
+          }
+        }
         // extend
         if (!ctx.app.meta._configsOriginal) ctx.app.meta._configsOriginal = extend(true, {}, ctx.app.meta.configs);
         ctx.app.meta.configs = extend(true, {}, ctx.app.meta._configsOriginal, instance.config);
         // cache
-        if (timeout > 0) {
+        //   if !host && !protocol then try to get them on next call
+        if (ctx.host && ctx.protocol && timeout > 0) {
           ctx.cache.mem.set('instance', instance, timeout);
         }
       }
