@@ -2964,6 +2964,7 @@ module.exports = app => {
         ebType: 'select',
         ebTitle: 'Language',
         ebMultiple: false,
+        ebOptionsBlankAuto: true,
         notEmpty: true,
       },
       categoryId: {
@@ -3049,6 +3050,7 @@ module.exports = app => {
         ebType: 'select',
         ebTitle: 'Language',
         ebMultiple: false,
+        ebOptionsBlankAuto: true,
       },
       categoryId: {
         type: 'number',

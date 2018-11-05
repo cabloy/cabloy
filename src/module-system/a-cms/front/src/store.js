@@ -8,10 +8,6 @@ export default function(Vue) {
       languages: null,
     },
     getters: {
-      languages2(state) {
-        if (!state.languages) return null;
-        return [{ title: '', value: '' }].concat(state.languages);
-      },
     },
     mutations: {
       setConfigSiteBase(state, configSiteBase) {

@@ -19,7 +19,7 @@ export default {
   },
   computed: {
     languages() {
-      return this.$local.getters('languages2');
+      return this.$local.state.languages;
     },
   },
   created() {
@@ -61,6 +61,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>
