@@ -215,8 +215,11 @@ export default {
       };
       if (meta.options) attrs.options = meta.options;
       if (!meta.options && property.ebOptions) attrs.options = property.ebOptions;
-      if (property.ebOptionsUrl) attrs.optionsUrl = property.ebOptionsUrl;
-      if (property.ebOptionsUrlParams) attrs.optionsUrlParams = property.ebOptionsUrlParams;
+      if (property.ebOptionsUrl) {
+        attrs.optionsUrl = property.ebOptionsUrl;
+        attrs.optionsUrlParams = property.ebOptionsUrlParams;
+      }
+      attrs.optionsBlankAuto = property.ebOptionsBlankAuto;
       if (property.ebOptionTitleKey) attrs.optionTitleKey = property.ebOptionTitleKey;
       if (property.ebOptionValueKey) attrs.optionValueKey = property.ebOptionValueKey;
       if (property.ebMultiple) attrs.multiple = property.ebMultiple;
@@ -244,6 +247,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>

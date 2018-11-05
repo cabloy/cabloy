@@ -17,6 +17,10 @@ export default {
     optionsUrlParams: {
       type: Object,
     },
+    optionsBlankAuto: {
+      type: Boolean,
+      default: false,
+    },
     optionTitleKey: {
       type: String,
       default: 'title',
@@ -77,7 +81,21 @@ export default {
       }
     },
     changeOptions(options) {
-      this.voptions = options;
+      // concat
+      const _options = options ? options.concat() : [];
+
+      // optionsBlankAuto
+      if (this.optionsBlankAuto) {
+        const opt = _options[0];
+        if (!opt || opt.value) {
+          _options.unshift({ title: '', value: '' });
+        }
+      }
+
+      // hold
+      this.voptions = _options;
+
+      // readOnly
       if (this.readOnly) return;
 
       this.$nextTick(() => {
@@ -190,6 +208,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>
