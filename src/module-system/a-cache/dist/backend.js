@@ -435,7 +435,7 @@ const Fn = module.exports = ctx => {
     }
 
     clear() {
-      ctx.app[CACHEMEMORY][ctx.hostname][this.moduleName] = {};
+      ctx.app[CACHEMEMORY][ctx.subdomain][this.moduleName] = {};
     }
 
   }
