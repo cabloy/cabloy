@@ -37,7 +37,7 @@ const Fn = module.exports = ctx => {
 
     // get url
     getUrl(path) {
-      const prefix = ctx.host ? `${ctx.protocol}://${ctx.host}` : '';
+      const prefix = ctx.meta.base.host ? `${ctx.meta.base.protocol}://${ctx.meta.base.host}` : '';
       return `${prefix}${path}`;
     }
 
