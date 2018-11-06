@@ -48,11 +48,12 @@ function categoryTree($treeContainer) {
 
   $tree.on('changed.jstree', function(e, data) {
     const node = data.node;
+    if (!node) return event.preventDefault();
     if (node.type === 'folder') return event.preventDefault();
     if (node.type === 'file' && node.id === `${env.article.categoryId}:${env.article.atomId}`) {
       return window.location.href = '#';
     }
-    window.location.href = data.node.a_attr.href;
+    window.location.href = node.a_attr.href;
   }).on('load_node.jstree', function(e, data) {
     if (data.status) {
       const node = data.node;
