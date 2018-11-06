@@ -1238,6 +1238,11 @@ const Fn = module.exports = ctx => {
       return config.protocol || ctx.protocol;
     }
 
+    getAbsoluteUrl(path) {
+      const prefix = this.host ? `${this.protocol}://${this.host}` : '';
+      return `${prefix}${path}`;
+    }
+
     modules() {
       if (!_modulesLocales[ctx.locale]) {
         _modulesLocales[ctx.locale] = this._prepareModules();
@@ -5702,8 +5707,8 @@ function createAuthenticate(moduleRelativeName, providerName, _config) {
     const config = JSON.parse(providerItem.config);
     config.passReqToCallback = true;
     config.failWithError = false;
-    config.loginURL = _config.loginURL;
-    config.callbackURL = _config.callbackURL;
+    config.loginURL = ctx.meta.base.getAbsoluteUrl(_config.loginURL);
+    config.callbackURL = ctx.meta.base.getAbsoluteUrl(_config.callbackURL);
     config.state = ctx.request.query.state;
 
     // invoke authenticate

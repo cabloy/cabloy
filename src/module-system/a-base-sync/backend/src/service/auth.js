@@ -101,8 +101,8 @@ function createAuthenticate(moduleRelativeName, providerName, _config) {
     const config = JSON.parse(providerItem.config);
     config.passReqToCallback = true;
     config.failWithError = false;
-    config.loginURL = _config.loginURL;
-    config.callbackURL = _config.callbackURL;
+    config.loginURL = ctx.meta.base.getAbsoluteUrl(_config.loginURL);
+    config.callbackURL = ctx.meta.base.getAbsoluteUrl(_config.callbackURL);
     config.state = ctx.request.query.state;
 
     // invoke authenticate

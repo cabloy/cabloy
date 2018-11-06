@@ -29,6 +29,11 @@ const Fn = module.exports = ctx => {
       return config.protocol || ctx.protocol;
     }
 
+    getAbsoluteUrl(path) {
+      const prefix = this.host ? `${this.protocol}://${this.host}` : '';
+      return `${prefix}${path}`;
+    }
+
     modules() {
       if (!_modulesLocales[ctx.locale]) {
         _modulesLocales[ctx.locale] = this._prepareModules();
