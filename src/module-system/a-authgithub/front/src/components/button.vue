@@ -8,8 +8,8 @@ export default {
     disable: () => {
       return new Promise((resolve, reject) => {
         resolve(false);
-      })
-    }
+      });
+    },
   },
   data() {
     return {};
