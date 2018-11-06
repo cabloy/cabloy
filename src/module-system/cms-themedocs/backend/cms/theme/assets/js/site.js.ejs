@@ -26,8 +26,8 @@ $(document).on('echo-ready', function() {
 
 function categoryTreeToggle($toggle, $container) {
   const $window = $(window);
-  $toggle.on('click', () => {
-    event.preventDefault();
+  $toggle.on('click', e => {
+    e.preventDefault();
     $container.toggleClass('sidebar-collapse');
   });
   $window.resize(() => {
@@ -48,8 +48,8 @@ function categoryTree($treeContainer) {
 
   $tree.on('changed.jstree', function(e, data) {
     const node = data.node;
-    if (!node) return event.preventDefault();
-    if (node.type === 'folder') return event.preventDefault();
+    if (!node) return e.preventDefault();
+    if (node.type === 'folder') return e.preventDefault();
     if (node.type === 'file' && node.id === `${env.article.categoryId}:${env.article.atomId}`) {
       return window.location.href = '#';
     }
