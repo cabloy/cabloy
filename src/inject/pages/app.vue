@@ -15,7 +15,7 @@ export default {
       staticClass: this.$meta.config.layout.color ? `color-theme-${this.$meta.config.layout.color}` : '',
       props: { params: this.$root.$options.framework7 },
     }, children);
-    return c('div', [app]);
+    return c('div', [ app ]);
   },
   data() {
     return {
