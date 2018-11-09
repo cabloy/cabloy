@@ -240,7 +240,7 @@ function install(_Vue, cb) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 function load(name) {
-  return __webpack_require__(6)("./" + name + '.vue').default;
+  return __webpack_require__(6)("./" + name + ".vue").default;
 }
 
 /* harmony default export */ __webpack_exports__["default"] = ([{ path: 'instance/config', component: load('instance/config') }, { path: 'instance/configPreview', component: load('instance/configPreview') }]);

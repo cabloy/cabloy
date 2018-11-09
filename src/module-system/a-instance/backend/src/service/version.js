@@ -61,10 +61,9 @@ module.exports = app => {
       //   }
       // }
       if (options.version === 4) {
-        if (options.config) {
-          const instance = await this.ctx.db.get('aInstance', { name: options.subdomain });
-          await this.ctx.db.update('aInstance', { id: instance.id, config: JSON.stringify(options.config) });
-        }
+        const config = options.config || {};
+        const instance = await this.ctx.db.get('aInstance', { name: options.subdomain });
+        await this.ctx.db.update('aInstance', { id: instance.id, config: JSON.stringify(config) });
       }
     }
 

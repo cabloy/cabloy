@@ -300,10 +300,9 @@ module.exports = app => {
       //   }
       // }
       if (options.version === 4) {
-        if (options.config) {
-          const instance = await this.ctx.db.get('aInstance', { name: options.subdomain });
-          await this.ctx.db.update('aInstance', { id: instance.id, config: JSON.stringify(options.config) });
-        }
+        const config = options.config || {};
+        const instance = await this.ctx.db.get('aInstance', { name: options.subdomain });
+        await this.ctx.db.update('aInstance', { id: instance.id, config: JSON.stringify(config) });
       }
     }
 
@@ -430,7 +429,7 @@ module.exports = () => {
       instance = await ctx.db.get('aInstance', { name: ctx.subdomain });
       if (instance) {
         // config
-        instance.config = JSON.parse(instance.config);
+        instance.config = JSON.parse(instance.config) || {};
         // ctx.host ctx.protocol
         if (ctx.host && ctx.protocol) {
           if (!instance.config['a-base']) instance.config['a-base'] = {};

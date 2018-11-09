@@ -10,7 +10,7 @@ module.exports = () => {
       instance = await ctx.db.get('aInstance', { name: ctx.subdomain });
       if (instance) {
         // config
-        instance.config = JSON.parse(instance.config);
+        instance.config = JSON.parse(instance.config) || {};
         // ctx.host ctx.protocol
         if (ctx.host && ctx.protocol) {
           if (!instance.config['a-base']) instance.config['a-base'] = {};
