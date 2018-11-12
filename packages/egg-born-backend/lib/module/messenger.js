@@ -19,6 +19,7 @@ module.exports = function(loader, modules) {
         try {
           data = await provider.handler(info.data);
         } catch (error) {
+          console.log(error);
           err = { code: error.code, message: error.message };
         }
         if (info.echo) {
