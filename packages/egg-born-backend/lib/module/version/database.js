@@ -5,13 +5,16 @@ const transactionIsolationNames = [ 'transaction_isolation', 'tx_isolation' ];
 
 async function transactionIsolationSet(app) {
   for (const name of transactionIsolationNames) {
+    const transaction_isolation_cmd = `SET GLOBAL ${name}='READ-COMMITTED'`;
     try {
-      const transaction_isolation_cmd = `SET GLOBAL ${name}='READ-COMMITTED'`;
       await app.mysql.get('__ebdb').query(transaction_isolation_cmd);
       break;
     } catch (error) {
       if (error.code !== 'ER_UNKNOWN_SYSTEM_VARIABLE') {
-        throw error;
+        // throw error;
+        // just console then pass
+        console.log(chalk.red(transaction_isolation_cmd));
+        break;
       }
     }
   }
@@ -19,8 +22,8 @@ async function transactionIsolationSet(app) {
 
 async function transactionIsolationGet(app) {
   for (const name of transactionIsolationNames) {
+    const transaction_isolation_cmd = `SELECT @@GLOBAL.${name} transaction_isolation`;
     try {
-      const transaction_isolation_cmd = `SELECT @@GLOBAL.${name} transaction_isolation`;
       const res = await app.mysql.get('__ebdb').query(transaction_isolation_cmd);
       const value = res[0] && res[0].transaction_isolation;
       return { name, value };
