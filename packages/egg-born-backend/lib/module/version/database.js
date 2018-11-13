@@ -1,15 +1,47 @@
 const moment = require('moment');
 const chalk = require('chalk');
 
+const transactionIsolationNames = [ 'transaction_isolation', 'tx_isolation' ];
+
+async function transactionIsolationSet(app) {
+  for (const name of transactionIsolationNames) {
+    try {
+      const transaction_isolation_cmd = `SET GLOBAL ${name}='READ-COMMITTED'`;
+      await app.mysql.get('__ebdb').query(transaction_isolation_cmd);
+      break;
+    } catch (error) {
+      if (error.code !== 'ER_UNKNOWN_SYSTEM_VARIABLE') {
+        throw error;
+      }
+    }
+  }
+}
+
+async function transactionIsolationGet(app) {
+  for (const name of transactionIsolationNames) {
+    try {
+      const transaction_isolation_cmd = `SELECT @@GLOBAL.${name} transaction_isolation`;
+      const res = await app.mysql.get('__ebdb').query(transaction_isolation_cmd);
+      const value = res[0] && res[0].transaction_isolation;
+      return { name, value };
+      break;
+    } catch (error) {
+      if (error.code !== 'ER_UNKNOWN_SYSTEM_VARIABLE') {
+        throw error;
+      }
+    }
+  }
+}
+
 module.exports = async function(app) {
   // isolation level
-  const transaction_isolation_cmd = 'SET GLOBAL transaction_isolation=\'READ-COMMITTED\'';
   if (app.meta.isLocal || app.meta.isTest) {
-    await app.mysql.get('__ebdb').query(transaction_isolation_cmd);
+    await transactionIsolationSet(app);
   } else {
-    const res = await app.mysql.get('__ebdb').query('SELECT @@GLOBAL.transaction_isolation transaction_isolation');
-    const transaction_isolation = res[0] && res[0].transaction_isolation;
-    if (transaction_isolation !== 'READ-COMMITTED') {
+    const res = await transactionIsolationGet(app);
+    if (!res) throw new Error('transactionIsolationGet error');
+    if (res.value !== 'READ-COMMITTED') {
+      const transaction_isolation_cmd = `SET GLOBAL ${res.name}='READ-COMMITTED'`;
       console.log(chalk.red(transaction_isolation_cmd));
       throw new Error(transaction_isolation_cmd);
     }

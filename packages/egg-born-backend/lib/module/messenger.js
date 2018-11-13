@@ -1,4 +1,5 @@
 const uuid = require('uuid');
+const chalk = require('chalk');
 const eventMessengerCall = 'eb:event:messengerCall';
 
 module.exports = function(loader, modules) {
@@ -19,7 +20,7 @@ module.exports = function(loader, modules) {
         try {
           data = await provider.handler(info.data);
         } catch (error) {
-          console.log(error);
+          console.log(chalk.red(error));
           err = { code: error.code, message: error.message };
         }
         if (info.echo) {
