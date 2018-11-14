@@ -74,6 +74,9 @@ module.exports = appInfo => {
   // signupRoleName
   config.signupRoleName = 'registered';
 
+  // public dir
+  config.publicDir = '';
+
   // comment
   config.comment = {
     trim: {
