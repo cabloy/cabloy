@@ -27,20 +27,20 @@ module.exports = app => {
     // comment
     { method: 'post', path: 'comment/all', controller: comment },
     // render
-    { method: 'post', path: 'render/getArticleUrl', controller: render, middlewares: 'file',
+    { method: 'post', path: 'render/getArticleUrl', controller: render,
       meta: { right: { type: 'atom', action: 2 } },
     },
     // site
     { method: 'post', path: 'site/getConfigSiteBase', controller: site, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'site/getConfigSite', controller: site, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'site/setConfigSite', controller: site, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'site/getConfigLanguagePreview', controller: site, middlewares: 'file', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
+    { method: 'post', path: 'site/getConfigLanguagePreview', controller: site, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'site/getConfigLanguage', controller: site, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'site/setConfigLanguage', controller: site, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'site/buildLanguage', controller: site, middlewares: 'file', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'site/buildLanguages', controller: site, middlewares: 'file', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
+    { method: 'post', path: 'site/buildLanguage', controller: site, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
+    { method: 'post', path: 'site/buildLanguages', controller: site, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'site/getLanguages', controller: site },
-    { method: 'post', path: 'site/getUrl', controller: site, middlewares: 'file' },
+    { method: 'post', path: 'site/getUrl', controller: site },
     // category
     { method: 'post', path: 'category/item', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'category/save', controller: category, middlewares: 'validate', meta: {
@@ -56,20 +56,20 @@ module.exports = app => {
     // tag
     { method: 'post', path: 'tag/list', controller: tag },
     // rss
-    { method: 'get', path: 'rss/feed/:language', controller: rss, action: 'feed', middlewares: 'file' },
-    { method: 'get', path: 'rss/feed/comments/:language', controller: rss, action: 'feedComments', middlewares: 'file' },
-    { method: 'get', path: 'rss/feed/article/comments/:atomId', controller: rss, action: 'articleComments', middlewares: 'file' },
+    { method: 'get', path: 'rss/feed/:language', controller: rss, action: 'feed' },
+    { method: 'get', path: 'rss/feed/comments/:language', controller: rss, action: 'feedComments' },
+    { method: 'get', path: 'rss/feed/article/comments/:atomId', controller: rss, action: 'articleComments' },
     // queue
-    { method: 'post', path: 'queue/buildLanguage', controller: queue, middlewares: 'inner,file',
+    { method: 'post', path: 'queue/buildLanguage', controller: queue, middlewares: 'inner',
       meta: { auth: { enable: false } },
     },
-    { method: 'post', path: 'queue/buildLanguages', controller: queue, middlewares: 'inner,file',
+    { method: 'post', path: 'queue/buildLanguages', controller: queue, middlewares: 'inner',
       meta: { auth: { enable: false } },
     },
-    { method: 'post', path: 'queue/renderArticle', controller: queue, middlewares: 'inner,file',
+    { method: 'post', path: 'queue/renderArticle', controller: queue, middlewares: 'inner',
       meta: { auth: { enable: false } },
     },
-    { method: 'post', path: 'queue/deleteArticle', controller: queue, middlewares: 'inner,file',
+    { method: 'post', path: 'queue/deleteArticle', controller: queue, middlewares: 'inner',
       meta: { auth: { enable: false } },
     },
   ];

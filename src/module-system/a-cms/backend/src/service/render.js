@@ -412,10 +412,10 @@ var env=${JSON.stringify(env, null, 2)};
       return path.join(rawDist, language === site.language.default ? '' : '/' + language);
     }
     async getPathCms() {
-      return await this.ctx.meta.file.getPath('cms');
+      return await this.ctx.meta.base.getPath('cms');
     }
     async getPathRawDist() {
-      return await this.ctx.meta.file.getPath('cms/dist');
+      return await this.ctx.meta.base.getPath('cms/dist');
     }
 
     getUrlRawRoot(site) {
@@ -435,7 +435,7 @@ var env=${JSON.stringify(env, null, 2)};
       return path ? `${urlRoot}/${path}` : urlRoot;
     }
     getServerUrl(path) {
-      return this.ctx.meta.file.getUrl(path);
+      return this.ctx.meta.base.getAbsoluteUrl(path);
     }
 
     async getData({ site }) {

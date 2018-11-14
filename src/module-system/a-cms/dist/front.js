@@ -420,7 +420,7 @@ function install(_Vue, cb) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 function load(name) {
-  return __webpack_require__(17)("./" + name + '.vue').default;
+  return __webpack_require__(17)("./" + name + ".vue").default;
 }
 
 /* harmony default export */ __webpack_exports__["default"] = ([{ path: 'config/list', component: load('config/list') }, { path: 'config/site', component: load('config/site') }, { path: 'config/siteBase', component: load('config/siteBase') }, { path: 'config/language', component: load('config/language') }, { path: 'config/languagePreview', component: load('config/languagePreview') }, { path: 'category/list', component: load('category/list') }, { path: 'category/edit', component: load('category/edit') }, { path: 'category/select', component: load('category/select') }, { path: 'article/contentEdit', component: load('article/contentEdit') }, { path: 'article/category', component: load('article/category') }, { path: 'article/list', component: load('article/list') }, { path: 'tag/select', component: load('tag/select') }]);
