@@ -82,40 +82,28 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
-
-module.exports = require("path");
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports) {
-
-module.exports = require("require3");
-
-/***/ }),
-/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const config = __webpack_require__(3);
-const locales = __webpack_require__(4);
-const errors = __webpack_require__(6);
-const middlewares = __webpack_require__(7);
+const config = __webpack_require__(1);
+const locales = __webpack_require__(2);
+const errors = __webpack_require__(4);
+const middlewares = __webpack_require__(5);
 
 module.exports = app => {
 
   // routes
-  const routes = __webpack_require__(11)(app);
+  const routes = __webpack_require__(6)(app);
   // services
-  const services = __webpack_require__(14)(app);
+  const services = __webpack_require__(9)(app);
   // models
-  const models = __webpack_require__(18)(app);
+  const models = __webpack_require__(15)(app);
   // meta
-  const meta = __webpack_require__(21)(app);
+  const meta = __webpack_require__(18)(app);
 
   return {
     routes,
@@ -132,39 +120,27 @@ module.exports = app => {
 
 
 /***/ }),
-/* 3 */
+/* 1 */
 /***/ (function(module, exports) {
 
 // eslint-disable-next-line
 module.exports = appInfo => {
   const config = {};
-
-  // public dir
-  config.publicDir = '';
-
-  // middlewares
-  config.middlewares = {
-    file: {
-      global: false,
-      dependencies: 'base',
-    },
-  };
-
   return config;
 };
 
 
 /***/ }),
-/* 4 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
-  'zh-cn': __webpack_require__(5),
+  'zh-cn': __webpack_require__(3),
 };
 
 
 /***/ }),
-/* 5 */
+/* 3 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -173,7 +149,7 @@ module.exports = {
 
 
 /***/ }),
-/* 6 */
+/* 4 */
 /***/ (function(module, exports) {
 
 // error code should start from 1001
@@ -182,112 +158,19 @@ module.exports = {
 
 
 /***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const file = __webpack_require__(8);
-
-module.exports = {
-  file,
-};
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const FileFn = __webpack_require__(9);
-const FILE = Symbol('CTX#__FILE');
-
-module.exports = () => {
-  return async function file(ctx, next) {
-    ctx.meta = ctx.meta || {};
-    Object.defineProperty(ctx.meta, 'file', {
-      get() {
-        if (ctx.meta[FILE] === undefined) {
-          ctx.meta[FILE] = new (FileFn(ctx))();
-        }
-        return ctx.meta[FILE];
-      },
-    });
-
-    // next
-    await next();
-  };
-};
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const path = __webpack_require__(0);
-const require3 = __webpack_require__(1);
-const fse = require3('fs-extra');
-
-const Fn = module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class File {
-
-    constructor(moduleName) {
-      this.moduleName = moduleName || ctx.module.info.relativeName;
-    }
-
-    // other module's file
-    module(moduleName) {
-      return new (Fn(ctx))(moduleName);
-    }
-
-    // get root path
-    async getRootPath() {
-      if (ctx.app.meta.isTest || ctx.app.meta.isLocal) {
-        return ctx.app.config.static.dir;
-      }
-      const dir = ctx.config.module(moduleInfo.relativeName).publicDir || path.join(__webpack_require__(10).homedir(), 'cabloy', ctx.app.name, 'public');
-      await fse.ensureDir(dir);
-      return dir;
-    }
-
-    // get path
-    async getPath(subdir, ensure) {
-      const rootPath = await this.getRootPath();
-      const dir = path.join(rootPath, ctx.instance.id.toString(), subdir || '');
-      if (ensure) {
-        await fse.ensureDir(dir);
-      }
-      return dir;
-    }
-
-    // get url
-    getUrl(path) {
-      const prefix = ctx.meta.base.host ? `${ctx.meta.base.protocol}://${ctx.meta.base.host}` : '';
-      return `${prefix}${path}`;
-    }
-
-    // get forward url
-    getForwardUrl(path) {
-      const prefix = (ctx.app.meta.isTest || ctx.app.meta.isLocal) ? ctx.app.config.static.prefix : '/public/';
-      return `${prefix}${ctx.instance.id}/${path}`;
-    }
-
-  }
-
-  return File;
-};
-
-
-/***/ }),
-/* 10 */
+/* 5 */
 /***/ (function(module, exports) {
 
-module.exports = require("os");
+module.exports = {
+};
+
 
 /***/ }),
-/* 11 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(12);
-const file = __webpack_require__(13);
+const version = __webpack_require__(7);
+const file = __webpack_require__(8);
 
 module.exports = app => {
   const routes = [
@@ -296,9 +179,9 @@ module.exports = app => {
     { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/test', controller: version, middlewares: 'test' },
     // file
-    { method: 'post', path: 'file/upload', controller: file, middlewares: 'file', meta: { auth: { user: true } } },
-    { method: 'get', path: 'file/download/:downloadId', controller: file, action: 'download', middlewares: 'file' },
-    { method: 'post', path: 'file/list', controller: file, middlewares: 'file',
+    { method: 'post', path: 'file/upload', controller: file, meta: { auth: { user: true } } },
+    { method: 'get', path: 'file/download/:downloadId', controller: file, action: 'download' },
+    { method: 'post', path: 'file/list', controller: file,
       meta: { right: { type: 'atom', action: 2 } },
     },
     { method: 'post', path: 'file/delete', controller: file, middlewares: 'transaction',
@@ -310,7 +193,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 12 */
+/* 7 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -337,7 +220,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 13 */
+/* 8 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -385,11 +268,11 @@ module.exports = app => {
 
 
 /***/ }),
-/* 14 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(15);
-const file = __webpack_require__(16);
+const version = __webpack_require__(10);
+const file = __webpack_require__(11);
 
 module.exports = app => {
   const services = {
@@ -401,7 +284,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 15 */
+/* 10 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -461,12 +344,12 @@ module.exports = app => {
 
 
 /***/ }),
-/* 16 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const path = __webpack_require__(0);
-const fs = __webpack_require__(17);
-const require3 = __webpack_require__(1);
+const path = __webpack_require__(12);
+const fs = __webpack_require__(13);
+const require3 = __webpack_require__(14);
 const sendToWormhole = require3('stream-wormhole');
 const uuid = require3('uuid');
 const gm = require3('gm');
@@ -529,7 +412,7 @@ module.exports = app => {
         const downloadId = uuid.v4().replace(/-/g, '');
         const _filePath = `file/${mode === 1 ? 'image' : (mode === 2 ? 'file' : 'audio')}/${this.ctx.meta.util.today()}`;
         const _fileName = uuid.v4().replace(/-/g, '');
-        const destDir = await this.ctx.meta.file.getPath(_filePath, true);
+        const destDir = await this.ctx.meta.base.getPath(_filePath, true);
         const destFile = path.join(destDir, `${_fileName}${fileInfo.ext}`);
 
         // write
@@ -606,7 +489,7 @@ module.exports = app => {
     }
 
     getDownloadUrl({ downloadId, mode, fileExt }) {
-      return this.ctx.meta.file.getUrl(
+      return this.ctx.meta.base.getAbsoluteUrl(
         `/api/a/file/file/download/${downloadId}${(mode === 1 || mode === 3) ? fileExt : ''}`
       );
     }
@@ -634,7 +517,7 @@ module.exports = app => {
       }
 
       // forward url
-      const forwardUrl = this.ctx.meta.file.getForwardUrl(
+      const forwardUrl = this.ctx.meta.base.getForwardUrl(
         `${file.filePath}/${fileName}${file.fileExt}`
       );
 
@@ -660,7 +543,7 @@ module.exports = app => {
 
       // cannot use * in path on windows
       const fileName = `${file.fileName}-${widthRequire}_${heightRequire}`;
-      const destFile = await this.ctx.meta.file.getPath(
+      const destFile = await this.ctx.meta.base.getPath(
         `${file.filePath}/${fileName}${file.fileExt}`, false
       );
 
@@ -670,7 +553,7 @@ module.exports = app => {
       const width = widthRequire || parseInt(file.width * heightRequire / file.height);
       const height = heightRequire || parseInt(file.height * widthRequire / file.width);
 
-      const srcFile = await this.ctx.meta.file.getPath(
+      const srcFile = await this.ctx.meta.base.getPath(
         `${file.filePath}/${file.fileName}${file.fileExt}`, false
       );
       await bb.fromCallback(cb => {
@@ -707,17 +590,29 @@ module.exports = app => {
 
 
 /***/ }),
-/* 17 */
+/* 12 */
+/***/ (function(module, exports) {
+
+module.exports = require("path");
+
+/***/ }),
+/* 13 */
 /***/ (function(module, exports) {
 
 module.exports = require("fs");
 
 /***/ }),
-/* 18 */
+/* 14 */
+/***/ (function(module, exports) {
+
+module.exports = require("require3");
+
+/***/ }),
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const file = __webpack_require__(19);
-const fileView = __webpack_require__(20);
+const file = __webpack_require__(16);
+const fileView = __webpack_require__(17);
 
 module.exports = app => {
   const models = {
@@ -729,7 +624,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 19 */
+/* 16 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -743,7 +638,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 20 */
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -757,11 +652,11 @@ module.exports = app => {
 
 
 /***/ }),
-/* 21 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
-  const schemas = __webpack_require__(22)(app);
+  const schemas = __webpack_require__(19)(app);
   const meta = {
     base: {
       atoms: {
@@ -782,7 +677,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 22 */
+/* 19 */
 /***/ (function(module, exports) {
 
 module.exports = app => {

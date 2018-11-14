@@ -250,7 +250,7 @@ function install(_Vue, cb) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 function load(name) {
-  return __webpack_require__(7)("./" + name + '.vue').default;
+  return __webpack_require__(7)("./" + name + ".vue").default;
 }
 
 /* harmony default export */ __webpack_exports__["default"] = ([{ path: 'file/upload', component: load('file/upload') }, { path: 'file/test', component: load('file/test') }]);

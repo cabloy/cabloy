@@ -63,7 +63,7 @@ module.exports = app => {
         const downloadId = uuid.v4().replace(/-/g, '');
         const _filePath = `file/${mode === 1 ? 'image' : (mode === 2 ? 'file' : 'audio')}/${this.ctx.meta.util.today()}`;
         const _fileName = uuid.v4().replace(/-/g, '');
-        const destDir = await this.ctx.meta.file.getPath(_filePath, true);
+        const destDir = await this.ctx.meta.base.getPath(_filePath, true);
         const destFile = path.join(destDir, `${_fileName}${fileInfo.ext}`);
 
         // write
@@ -140,7 +140,7 @@ module.exports = app => {
     }
 
     getDownloadUrl({ downloadId, mode, fileExt }) {
-      return this.ctx.meta.file.getUrl(
+      return this.ctx.meta.base.getAbsoluteUrl(
         `/api/a/file/file/download/${downloadId}${(mode === 1 || mode === 3) ? fileExt : ''}`
       );
     }
@@ -168,7 +168,7 @@ module.exports = app => {
       }
 
       // forward url
-      const forwardUrl = this.ctx.meta.file.getForwardUrl(
+      const forwardUrl = this.ctx.meta.base.getForwardUrl(
         `${file.filePath}/${fileName}${file.fileExt}`
       );
 
@@ -194,7 +194,7 @@ module.exports = app => {
 
       // cannot use * in path on windows
       const fileName = `${file.fileName}-${widthRequire}_${heightRequire}`;
-      const destFile = await this.ctx.meta.file.getPath(
+      const destFile = await this.ctx.meta.base.getPath(
         `${file.filePath}/${fileName}${file.fileExt}`, false
       );
 
@@ -204,7 +204,7 @@ module.exports = app => {
       const width = widthRequire || parseInt(file.width * heightRequire / file.height);
       const height = heightRequire || parseInt(file.height * widthRequire / file.width);
 
-      const srcFile = await this.ctx.meta.file.getPath(
+      const srcFile = await this.ctx.meta.base.getPath(
         `${file.filePath}/${file.fileName}${file.fileExt}`, false
       );
       await bb.fromCallback(cb => {
