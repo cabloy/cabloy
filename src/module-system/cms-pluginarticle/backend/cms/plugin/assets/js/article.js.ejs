@@ -102,11 +102,12 @@ util.article = {
       this._readCountInc(env.article.atomId, 1);
     });
   },
-  brothers({ container }) {
+  brothers({ container, order }) {
     const $container = $(container);
     if (!env.article || $container.length === 0) return;
-    this._brothers($container, 'prev');
-    this._brothers($container, 'next');
+    order = order || env.comment.order || 'desc';
+    this._brothers($container, 'prev', order);
+    this._brothers($container, 'next', order);
   },
   comments(options) {
     const $container = $(options.container);
@@ -249,7 +250,7 @@ util.article = {
       }
     }
   },
-  _brothers($container, type) {
+  _brothers($container, type, order) {
     // article
     const article = env.article;
     // options
@@ -268,10 +269,10 @@ util.article = {
         [ 'f.sorting', type === 'prev' ? 'desc' : 'asc' ],
       ];
     } else {
-      // desc for createdAt
-      options.where['f.createdAt'] = { op: type === 'prev' ? '>' : '<', val: util.time.formatDateTime(article.createdAt) };
+      // asc/desc for createdAt
+      options.where['f.createdAt'] = { op: type === 'prev' ? (order==='desc'?'>':'<') : (order==='desc'?'<':'>'), val: util.time.formatDateTime(article.createdAt) };
       options.orders = [
-        [ 'f.createdAt', type === 'prev' ? 'asc' : 'desc' ],
+        [ 'f.createdAt', type === 'prev' ? (order==='desc'?'asc':'desc') : (order==='desc'?'desc':'asc') ],
       ];
     }
     // select
