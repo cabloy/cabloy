@@ -199,6 +199,9 @@ module.exports = appInfo => {
         order: 'asc',
         recentNum: 5,
       },
+      brother: {
+        order: 'desc',
+      },
     },
     profile: {
       userName: 'zhennann',
