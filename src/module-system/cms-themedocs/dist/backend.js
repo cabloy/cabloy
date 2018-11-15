@@ -133,6 +133,11 @@ module.exports = appInfo => {
       title: 'Cabloy',
       subTitle: 'The Ultimate Javascript Full Stack Business Development Platform, based on EggJS & VueJS.',
     },
+    env: {
+      brother: {
+        order: 'asc',
+      },
+    },
     _theme: {
       name: 'cms-themedocs',
       url: 'https://github.com/zhennann/egg-born-module-cms-themedocs',
