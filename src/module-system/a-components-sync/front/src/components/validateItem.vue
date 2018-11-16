@@ -154,9 +154,13 @@ export default {
       }
       const placeholder = property.ebDescription ? this.$text(property.ebDescription) : title;
       let type;
-      if (property.ebSecure) type = 'password';
-      if (property.ebTextarea) type = 'textarea';
-      else type = 'text';
+      if (property.ebSecure) {
+        type = 'password';
+      } else if (property.ebTextarea) {
+        type = 'textarea';
+      } else {
+        type = 'text';
+      }
       return c('f7-list-item', {
         key,
       }, [
