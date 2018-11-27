@@ -87,13 +87,14 @@ export default function(Vue) {
     },
     _import(moduleInfo, cb) {
       this._import2(moduleInfo, instance => {
-        // custom css
-        import('../../../../src/front/assets/css/module/' + moduleInfo.relativeName + '/custom.less').then(() => {
-          // instance
-          this.install(instance, moduleInfo, module => cb(module));
-        }).catch(() => {
-          // instance
-          this.install(instance, moduleInfo, module => cb(module));
+        // instance
+        this.install(instance, moduleInfo, module => {
+          // custom css
+          import('../../../../src/front/assets/css/module/' + moduleInfo.relativeName + '/custom.less').then(() => {
+            cb(module);
+          }).catch(() => {
+            cb(module);
+          });
         });
       });
     },
@@ -159,13 +160,14 @@ export default function(Vue) {
     _requireJS(r, key, moduleInfo, cb) {
       // instance
       const instance = r(key);
-      // custom css, must after instance loaded
-      const keyCss = this._requireFindKey(rCustomCSSs, moduleInfo.relativeName);
-      if (keyCss) {
-        this._requireCSS(rCustomCSSs, keyCss);
-      }
       // install
       this.install(instance, moduleInfo, module => {
+        // custom css, must after instance installed
+        const keyCss = this._requireFindKey(rCustomCSSs, moduleInfo.relativeName);
+        if (keyCss) {
+          this._requireCSS(rCustomCSSs, keyCss);
+        }
+        // ok
         cb && cb(module);
       });
     },
