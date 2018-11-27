@@ -11,6 +11,8 @@ const backend = {
 const front = {
   build: {
     title,
+    productionSourceMap: true,
+    uglify: true,
   },
   dev: {
     title,
