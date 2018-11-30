@@ -1001,7 +1001,7 @@ module.exports = app => {
       data = await this.ctx.meta.settings.getInstance({ name: '/info/title' });
       assert(data === 'title1');
 
-      // laod settings
+      // load settings
       data = await this.ctx.meta.settings.loadSettingsInstance();
       assert(data.info.title === 'title1');
       // save settings
