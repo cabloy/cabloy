@@ -3,7 +3,9 @@
 CabloyJS是基于EggJS和VueJS开发的一款顶级Javascript全栈业务开发框架
 
 > 前端：VueJS + Framework7
+
 > 后端：KoaJS + EggJS
+
 > 数据库：MySQL
 
 [![NPM version][npm-image]][npm-url]
