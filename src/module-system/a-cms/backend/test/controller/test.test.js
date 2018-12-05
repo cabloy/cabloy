@@ -1,6 +1,6 @@
 const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
-describe('test/controller/test.test.js', () => {
+describe.only('test/controller/test.test.js', () => {
 
   it('action:set config', async () => {
     app.mockSession({});
@@ -113,7 +113,7 @@ describe('test/controller/test.test.js', () => {
         slug: 'about',
         editMode: 1,
         content: `
-  # hello world
+  ## hello world
   (c)
   \`\`\` js
   var foo = function (bar) {
@@ -121,6 +121,24 @@ describe('test/controller/test.test.js', () => {
   };
   console.log(foo(5));
   \`\`\`
+
+  ::: warning
+  <script>window.alert('test');</script>
+  :::
+
+  ::: audio
+{
+  "autoplay": true,
+  "audio":
+  {
+    "name": "Yadikar",
+    "url": "https://zhennann.cabloy.org/api/a/file/file/download/9d373acea45549fa9fcd90152c73928f.aac",
+    "artist": "Retim",
+    "cover": "https://zhennann.cabloy.org/api/a/file/file/download/73878ed9a1ce4100ad32580b0fd98db2.jpg"
+  }
+}
+:::
+
         `,
       },
       {
