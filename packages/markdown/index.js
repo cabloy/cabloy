@@ -31,9 +31,12 @@ const audio_opts = {
       const tokenContent = tokens[idx + 2];
       if (tokenContent && tokenContent.type === 'inline') {
         // content
-        const content = tokenContent.content;
+        let content = tokenContent.content;
+        // clear
         tokenContent.content = '';
         tokenContent.children = [];
+        // for safe
+        content = JSON.stringify(JSON.parse(content), null, 2);
         // element
         const id = `aplayer-${(new Date()).getTime()}${idx}`;
         // opening tag
