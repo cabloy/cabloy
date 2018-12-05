@@ -2,7 +2,7 @@ module.exports = app => {
 
   class {{atomClassNameCapitalize}} extends app.Service {
 
-    async create({ atomClass, key, atom, user }) {
+    async create({ atomClass, key, item, user }) {
       // add {{atomClassName}}
       const res = await this.ctx.model.{{atomClassName}}.insert({
         atomId: key.atomId,
