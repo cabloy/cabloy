@@ -2,8 +2,8 @@ module.exports = app => {
 
   class Atom extends app.Service {
 
-    async create({ atomClass, user }) {
-      return await this.ctx.meta.atom.create({ atomClass, user });
+    async create({ atomClass, item, user }) {
+      return await this.ctx.meta.atom.create({ atomClass, item, user });
     }
 
     async read({ key, user }) {

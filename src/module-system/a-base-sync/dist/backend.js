@@ -1859,14 +1859,14 @@ const Fn = module.exports = ctx => {
     // atom and item
 
     // create
-    async create({ atomClass, user }) {
+    async create({ atomClass, item, user }) {
       // atomClass
       atomClass = await ctx.meta.atomClass.get(atomClass);
-      // atom
-      const atom = { };
+      // item
+      item = item || { };
       const atomId = await this._add({
         atomClass,
-        atom,
+        atom: item,
         user,
       });
 
@@ -1878,20 +1878,20 @@ const Fn = module.exports = ctx => {
         body: {
           atomClass,
           key: { atomId },
-          atom,
+          item,
           user,
         },
       });
       const itemId = res.itemId;
 
       // save itemId
-      let atomName = atom.atomName;
+      let atomName = item.atomName;
       if (!atomName) {
         // sequence
         const sequence = await this.sequence.next('draft');
         atomName = `${ctx.text('Draft')}-${sequence}`;
       }
-      const atomFlow = atom.atomFlow === undefined ? atomClass.flow : atom.atomFlow;
+      const atomFlow = item.atomFlow === undefined ? atomClass.flow : item.atomFlow;
       await this._update({
         atom: {
           id: atomId,
@@ -3537,6 +3537,7 @@ module.exports = app => {
     async create() {
       const res = await this.ctx.service.atom.create({
         atomClass: this.ctx.request.body.atomClass,
+        item: this.ctx.request.body.item,
         user: this.ctx.user.op,
       });
       this.ctx.success(res);
@@ -5543,8 +5544,8 @@ module.exports = app => {
 
   class Atom extends app.Service {
 
-    async create({ atomClass, user }) {
-      return await this.ctx.meta.atom.create({ atomClass, user });
+    async create({ atomClass, item, user }) {
+      return await this.ctx.meta.atom.create({ atomClass, item, user });
     }
 
     async read({ key, user }) {

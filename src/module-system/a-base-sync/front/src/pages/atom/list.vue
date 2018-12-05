@@ -115,6 +115,14 @@ export default {
     onAction(event, item) {
       const _menu = this.getMenu(item);
       if (!_menu) return;
+      if (_menu.action === 'create') {
+        item = {
+          atomClassId: item.atomClassId,
+          module: item.module,
+          atomClassName: item.atomClassName,
+          atomClassIdParent: item.atomClassIdParent,
+        };
+      }
       return this.$meta.util.performAction({ ctx: this, action: _menu, item });
     },
   },
