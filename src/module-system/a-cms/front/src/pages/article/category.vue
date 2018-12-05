@@ -60,7 +60,7 @@ export default {
     },
     onNodeClick(node) {
       if (node.data.catalog) return;
-      this.$view.navigate(`/a/cms/article/list?categoryId=${node.data.id}&categoryName=${encodeURIComponent(node.data.categoryName)}`, { target: '_self' });
+      this.$view.navigate(`/a/cms/article/list?language=${node.data.language}&categoryId=${node.data.id}&categoryName=${encodeURIComponent(node.data.categoryName)}`, { target: '_self' });
     },
   },
 };

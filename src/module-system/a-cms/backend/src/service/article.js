@@ -7,14 +7,17 @@ module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Article extends app.Service {
 
-    async create({ atomClass, key, atom, user }) {
+    async create({ atomClass, key, item, user }) {
       const site = await this.ctx.service.render.combineSiteBase();
       const editMode = site.edit.mode;
       // add article
-      const res = await this.ctx.model.article.insert({
+      const params = {
         atomId: key.atomId,
         editMode,
-      });
+      };
+      if (item.language) params.language = item.language;
+      if (item.categoryId) params.categoryId = item.categoryId;
+      const res = await this.ctx.model.article.insert(params);
       const itemId = res.insertId;
       // add content
       await this.ctx.model.content.insert({
