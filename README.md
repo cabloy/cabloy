@@ -48,28 +48,29 @@ EggBornJS is the Ultimate Javascript Full Stack Framework
 
 The frontend of EggBornJS uses `VueJS + Framework7 + Webpack`, while the backend uses `KoaJS + EggJS`, and the database uses `MySQL`
 
-EggBornJS在纵向上，将前端和后端打通，形成一个有机的整体，避免前端和后端各自为政的状况
+Vertically, EggBornJS make the frontend and the backend work together to form an organic wholeness, so as to avoid working independently between them
 
-EggBornJS在横向上，提炼出“业务模块化”的代码组织模式，通过不同的模块组合实现业务开发，也为大型Web应用不断增长的业务需求提供有力的基础架构
+Horizontally, EggBornJS has refined a code organization mode called "business modularity", which could offer a powerful basic framework for the continually growing business demands of large-scale web applications through different module combinations
 
-## CabloyJS与EggBornJS的关系
+## Relationship between CabloyJS and EggBornJS
 
-简单的说：
+In brief:
 
-1. `EggBornJS`是一个全栈的`代码加载器`，定义了一套全栈的代码开发规范
-2. `CabloyJS`在`EggBornJS`的基础上提供了一套`核心业务模块`，便于快速进行业务开发
+1. `EggBornJS` is a full-stack `code loader`，and has defined a set of code specifications for full-stack development
 
-`EggBornJS`只是一个基础的全栈开发框架，如果要进行业务开发，还需要考虑许多与业务相关的支撑特性，如：`用户管理、角色管理、权限管理、菜单管理、参数设置管理、表单验证、登录机制`，等等。特别是在前后端分离的场景下，对权限管理的要求就提升到一个更高的水平
+2. On the basis of `EggBornJS`, `CabloyJS` provided a set of `core business modules`, in order to facilitate rapid business development
 
-`CabloyJS`在`EggBornJS`的基础上，提供了一套`核心业务模块`，从而实现了一系列支持特性，并将这些特性进行有机的组合，形成完整而灵活的上层生态架构，从而支持具体的业务开发进程
+EggBornJS is only a basic full-stack development framework. Considering business development, many business-related supporting features need to be provided, such as `User Management`, `Role Management`, `Permission Management`, `Menu Management`, `Settings Management`, `Form Validation`, `Login Mechanism`, and so on. Especially in the case of frontend and backend separation, the requirement of authority management is raised to a higher level
 
-> 有了EggBornJS，从此可复用的不仅仅是组件，还有业务模块
+On the basis of `EggBornJS`, `CabloyJS` provided a set of `core business modules`, so as to realize a series of supporting features, which are organically combined to form a complete and flexible upper ecological architecture, thus supporting the specific business development process
 
-> 有了CabloyJS，您就可以快速开发各类业务应用
+> With EggBornJS, not only the components can be reused, but also the business modules do from now
 
-## EggBornJS与EggJS的关系
+> With CabloyJS, you can quickly develop all kinds of business applications
 
-`EggBornJS`包含`egg-born-front`和`egg-born-backend`两部分，分别对应`前端`和`后端`的加载机制
+## Relationship between EggBornJS and EggJS
+
+`EggBornJS` consists of `egg-born-front`和`egg-born-backend`, which correspond to the loading mechanism of `frontend` and `backend` respectively
 
 从本质上来看，`egg-born-backend`和`EggJS`都是加载器。但是，为了实现`业务模块化`的机制，`egg-born-backend`在`EggJS`的基础上做了许多特性增强，核心特性如下：
 
