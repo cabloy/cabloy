@@ -1,6 +1,6 @@
 # CabloyJS
 
-CabloyJS: The Ultimate Javascript Full Stack Business Development Platform, based on EggBornJS.
+CabloyJS: The Ultimate Javascript Full Stack Business Development Platform, based on EggJS & VueJS
 
 > Frontend：VueJS + Framework7
 
@@ -72,27 +72,30 @@ On the basis of `EggBornJS`, `CabloyJS` provided a set of `core business modules
 
 `EggBornJS` consists of `egg-born-front`和`egg-born-backend`, which correspond to the loading mechanism of `frontend` and `backend` respectively
 
-从本质上来看，`egg-born-backend`和`EggJS`都是加载器。但是，为了实现`业务模块化`的机制，`egg-born-backend`在`EggJS`的基础上做了许多特性增强，核心特性如下：
+Essentially, `egg-born-backend` and `EggJS' are both `code loaders`. However, in order to realize the mechanism of `business modularization`, `egg-born-backend` has made many enhancements on the basis of `EggJS'. The core features are as follows:
 
-1. 在一个`业务模块`中，可以单独设置`后端路由、控制器、服务、中间件、国际化、config配置`等资源
-2. 在`EggJS`中，这些资源都是通过`约定代码位置`的方式组织并加载的。而在`egg-born-backend`的`业务模块`中，这些资源都是通过`require`的方式显式组织并加载的。因此，`业务模块`可以进行单独编译
-3. `业务模块`可单独编译，从而可以单独发布、单独部署，单独升级，从而促进CabloyJS整个生态圈的繁荣，进一步加速实际业务的开发
-4. 另一方面，`业务模块`可单独编译，也可以满足`保护商业代码`的需求
+1. In a `business module`, resources such as `backend routes, controller, service, middleware, i18n, configuration` can be set separately
 
-## CabloyJS架构图
+2. In `EggJS`, these resources are organized and loaded by `predefined file location`. In the `business module` of `egg-born-backend`, these resources are explicitly organized and loaded by `require`. Thus, `business module` can be compiled separately
+
+3. `Business modules` can be compiled separately, so that they can be released separately, deployed separately and upgraded separately, thus promoting the prosperity of the whole ecosystem of CabloyJS and further accelerating the development of actual business
+
+4. On the other hand, `business modules` can be compiled separately may meet the requirement of `protecting business code`
+
+## CabloyJS Architecture Diagram
 
 ![](./docs/assets/images/cabloy.png)
 
-## 信念
+## Faith
 
-> 凡是可以用JavaScript来写的应用，最终都会用JavaScript来写 | Atwood定律
+> Any application that can be written in Javascript, will eventually be written in Javascript | Jeff Atwood (2007)
 
-相信，Javascript的深度探索者都会被这句名言激发，共同努力，为Javascript生态添砖加瓦，构建更繁荣的应用生态
+It is believed that the deep explorers of Javascript will be inspired by Atwood's law and work together to build a more prosperous application ecosystem for Javascript
 
-CabloyJS正是对这一名言的探索之作。CabloyJS不重复造轮子，而是采用业界最新的开源技术，进行全栈开发的最佳组合
+CabloyJS is just an exploration of Atwood's law. Instead of repeating wheels, CabloyJS uses the latest open source technology in the industry to optimize full-stack development
 
-欢迎您也加入CabloyJS的社区生态，一起促进Javascript的繁荣与应用
+Welcome to join the community ecology of CabloyJS to promote the prosperity and application of Javascript
 
-## Cabloy名字的由来
+## The Origin of Cabloy's Name
 
-Cabloy来自蓝精灵的魔法咒语，拼对了Cabloy这个单词就会有神奇的效果。同样，CabloyJS是有关化学的魔法，基于原子的组合与生化反应，您将实现您想要的任何东西
+Cabloy comes from the magic spell of the Smurfs. If you spell the word Cabloy correctly, it will have a magical effect. Likewise, CabloyJS is a magic about chemistry. Based on the combination of atoms and biochemical reactions, you will achieve whatever you want
