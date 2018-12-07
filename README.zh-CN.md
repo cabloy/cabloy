@@ -1,8 +1,8 @@
-# EggBorn.js
+# EggBornJS
 
-EggBorn.js是一款顶级Javascript全栈开发框架
+EggBornJS是一款顶级Javascript全栈开发框架
 
-> Vue.js + Framework7 + Koa.js + Egg.js + MySQL
+> VueJS + Framework7 + KoaJS + EggJS + MySQL
 
 [![NPM version][npm-image]][npm-url]
 [![David deps][david-image]][david-url]
@@ -19,4 +19,4 @@ EggBorn.js是一款顶级Javascript全栈开发框架
 
 - 请移步至 [https://github.com/zhennann/cabloy](https://github.com/zhennann/cabloy)
 
-> Cabloy.js是基于EggBorn.js开发的一款顶级Javascript全栈业务开发框架。
+> CabloyJS是基于EggBornJS开发的一款顶级Javascript全栈业务开发框架

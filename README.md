@@ -1,8 +1,8 @@
-# EggBorn.js
+# EggBornJS
 
-EggBorn.js -- The Ultimate Javascript Full Stack Framework
+EggBornJS: The Ultimate Javascript Full Stack Framework
 
-> Vue.js + Framework7 + Koa.js + Egg.js + MySQL
+> VueJS + Framework7 + KoaJS + EggJS + MySQL
 
 [![NPM version][npm-image]][npm-url]
 [![David deps][david-image]][david-url]
@@ -19,4 +19,4 @@ EggBorn.js -- The Ultimate Javascript Full Stack Framework
 
 - Please go to [https://github.com/zhennann/cabloy](https://github.com/zhennann/cabloy)
 
-> Cabloy.js: The Ultimate Javascript Full Stack Business Development Platform, based on EggBornJS.
+> CabloyJS: The Ultimate Javascript Full Stack Business Development Platform, based on EggBornJS
