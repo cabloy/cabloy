@@ -32,7 +32,7 @@ CabloyJS: The Ultimate Javascript Full Stack Business Development Platform, base
 
 ## adaptive layout: pc = mobile + pad
 
-All pages are developed using the `Mobile First' strategy, while perfectly adapting to the `PC layout'
+All pages are developed using the `Mobile First` strategy, while perfectly adapting to the `PC layout`
 
 ### Mobile Layout
 
@@ -72,7 +72,7 @@ On the basis of `EggBornJS`, `CabloyJS` provided a set of `core business modules
 
 `EggBornJS` consists of `egg-born-front`和`egg-born-backend`, which correspond to the loading mechanism of `frontend` and `backend` respectively
 
-Essentially, `egg-born-backend` and `EggJS' are both `code loaders`. However, in order to realize the mechanism of `business modularization`, `egg-born-backend` has made many enhancements on the basis of `EggJS'. The core features are as follows:
+Essentially, `egg-born-backend` and `EggJS` are both `code loaders`. However, in order to realize the mechanism of `business modularization`, `egg-born-backend` has made many enhancements on the basis of `EggJS`. The core features are as follows:
 
 1. In a `business module`, resources such as `backend routes, controller, service, middleware, i18n, configuration` can be set separately
 
