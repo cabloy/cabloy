@@ -76,7 +76,7 @@ export default {
     global: false,
   },
   props: {
-    // mode: list/drafts/stars/labels
+    // mode: list/drafts/stars/labels/search
     mode: {
       type: String,
     },
@@ -269,7 +269,7 @@ export default {
       const action = data.action;
       // create
       if (action.menu === 1 && action.action === 'create') {
-        if (this.mode === 'drafts') {
+        if (this.mode === 'drafts' || this.mode === 'search') {
           this.reload();
         }
         return;
