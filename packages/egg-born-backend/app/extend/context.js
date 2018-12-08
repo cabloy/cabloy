@@ -60,7 +60,11 @@ module.exports = {
   },
   get subdomain() {
     const _subdomain = this.headers['x-inner-subdomain'];
-    return _subdomain ? _subdomain : this.subdomains.join('.');
+    if (_subdomain) {
+      if (this.innerAccess) return _subdomain;
+      this.throw(403);
+    }
+    return this.subdomains.join('.');
   },
 
   /**
