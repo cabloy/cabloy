@@ -1,3 +1,5 @@
+English | [简体中文](./README.zh-CN.md)
+
 # CabloyJS
 
 CabloyJS: The Ultimate Javascript Full Stack Business Development Platform, based on EggJS & VueJS
