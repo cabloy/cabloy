@@ -1,3 +1,5 @@
+[English](./README.md) | 简体中文
+
 # CabloyJS
 
 CabloyJS是基于EggJS和VueJS开发的一款顶级Javascript全栈业务开发框架
