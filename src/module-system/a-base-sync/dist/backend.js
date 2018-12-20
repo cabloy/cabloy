@@ -1864,6 +1864,11 @@ const Fn = module.exports = ctx => {
       atomClass = await ctx.meta.atomClass.get(atomClass);
       // item
       item = item || { };
+      if (!item.atomName) {
+        // draftId
+        const draftId = await this.sequence.next('draft');
+        item.atomName = `${ctx.text('Draft')}-${draftId}`;
+      }
       const atomId = await this._add({
         atomClass,
         atom: item,
@@ -1885,18 +1890,12 @@ const Fn = module.exports = ctx => {
       const itemId = res.itemId;
 
       // save itemId
-      let atomName = item.atomName;
-      if (!atomName) {
-        // sequence
-        const sequence = await this.sequence.next('draft');
-        atomName = `${ctx.text('Draft')}-${sequence}`;
-      }
       const atomFlow = item.atomFlow === undefined ? atomClass.flow : item.atomFlow;
       await this._update({
         atom: {
           id: atomId,
           itemId,
-          atomName,
+          atomName: item.atomName,
           atomFlow,
         },
         user,
