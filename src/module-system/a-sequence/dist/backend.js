@@ -408,7 +408,7 @@ const test = __webpack_require__(15);
 module.exports = app => {
   let routes = [
     { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
-    { method: 'post', path: 'sequence/next', controller: sequence, middlewares: 'inner' },
+    { method: 'post', path: 'sequence/next', controller: sequence, middlewares: 'inner', meta: { auth: { enable: false } } },
   ];
   if (app.meta.isTest || app.meta.isLocal) {
     routes = routes.concat([
