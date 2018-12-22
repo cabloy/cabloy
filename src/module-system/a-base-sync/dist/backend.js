@@ -1537,7 +1537,8 @@ const Fn = module.exports = ctx => {
         menus[relativeName] = {};
         for (const key in functionsModule) {
           const func = functionsModule[key];
-          if (func.menu === 1) {
+          // 2018.12.22 menu maybe 0 for special scene
+          if (func.menu === 1 || (func.actionComponent || func.actionPath)) {
             menus[relativeName][key] = func;
           }
         }

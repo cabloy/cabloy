@@ -17,7 +17,7 @@ export default {
           // event
           ctx.$meta.eventHub.$emit('atom:action', { key, action });
           // menu
-          if (action.menu === 1) {
+          if (action.menu === 1 || (action.actionComponent || action.actionPath)) {
             item = ctx.$utils.extend({}, item, key);
             // write
             return ctx.$store.dispatch('a/base/getActions').then(actionsAll => {

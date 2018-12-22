@@ -3368,7 +3368,7 @@ var item = __webpack_require__(7);
         }).then(function (key) {
           ctx.$meta.eventHub.$emit('atom:action', { key: key, action: action });
 
-          if (action.menu === 1) {
+          if (action.menu === 1 || action.actionComponent || action.actionPath) {
             item = ctx.$utils.extend({}, item, key);
 
             return ctx.$store.dispatch('a/base/getActions').then(function (actionsAll) {
