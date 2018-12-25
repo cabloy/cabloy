@@ -77,7 +77,7 @@ module.exports = app => {
 
 async function invokeAuthVerify({ ctx, verifyUser, profileUser }) {
   for (const relativeName in ctx.app.meta.modules) {
-    const module = this.app.meta.modules[relativeName];
+    const module = ctx.app.meta.modules[relativeName];
     if (module.main.meta && module.main.meta.authVerify) {
       await module.main.meta.authVerify({ ctx, verifyUser, profileUser });
     }
