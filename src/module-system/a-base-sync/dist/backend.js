@@ -3861,7 +3861,12 @@ module.exports = app => {
       await this.ctx.service.auth.registerAllProviders();
       // verify
       this.app.passport.verify(async function(ctx, profileUser) {
-        return await ctx.meta.user.verify(profileUser);
+        // user verify
+        const verifyUser = await ctx.meta.user.verify(profileUser);
+        // auth verify
+        await invokeAuthVerify({ ctx, verifyUser, profileUser });
+        // ready
+        return verifyUser;
       });
       this.ctx.success();
     }
@@ -3885,6 +3890,15 @@ module.exports = app => {
 
   return AuthController;
 };
+
+async function invokeAuthVerify({ ctx, verifyUser, profileUser }) {
+  for (const relativeName in ctx.app.meta.modules) {
+    const module = this.app.meta.modules[relativeName];
+    if (module.main.meta && module.main.meta.authVerify) {
+      await module.main.meta.authVerify({ ctx, verifyUser, profileUser });
+    }
+  }
+}
 
 
 /***/ }),
