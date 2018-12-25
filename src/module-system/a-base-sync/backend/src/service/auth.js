@@ -55,18 +55,20 @@ module.exports = app => {
         providerName,
       });
       if (providerItem && providerItem.disabled === 0) {
+        // module
+        const module = this.app.meta.modules[moduleRelativeName];
+        // provider
+        const provider = module.main.meta.auth.providers[providerName];
         // config
         const config = JSON.parse(providerItem.config);
         config.passReqToCallback = true;
         config.failWithError = false;
-        // module
-        const module = this.app.meta.modules[moduleRelativeName];
-        // provider
-        const provider = module.main.meta.auth.providers[providerName].handler(this.app);
+        // handler
+        const handler = provider.handler(this.app);
         // install strategy
         const strategyName = `${iid}:${moduleRelativeName}:${providerName}`;
         this.app.passport.unuse(strategyName);
-        this.app.passport.use(strategyName, new provider.strategy(config, provider.callback));
+        this.app.passport.use(strategyName, new handler.strategy(config, handler.callback));
       }
     }
 
@@ -104,6 +106,22 @@ function createAuthenticate(moduleRelativeName, providerName, _config) {
     config.loginURL = ctx.meta.base.getAbsoluteUrl(_config.loginURL);
     config.callbackURL = ctx.meta.base.getAbsoluteUrl(_config.callbackURL);
     config.state = ctx.request.query.state;
+
+    // module
+    const module = this.app.meta.modules[moduleRelativeName];
+    // provider
+    const provider = module.main.meta.auth.providers[providerName];
+
+    // config functions
+    if (provider.configFunctions) {
+      for (const key in provider.configFunctions) {
+        config[key] = function(...args) {
+          return provider.configFunctions[key](ctx, ...args);
+        };
+      }
+    }
+
+    config.getToken('openid', () => {});
 
     // invoke authenticate
     const strategyName = `${ctx.instance.id}:${moduleRelativeName}:${providerName}`;
