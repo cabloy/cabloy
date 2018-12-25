@@ -5787,8 +5787,6 @@ function createAuthenticate(moduleRelativeName, providerName, _config) {
       }
     }
 
-    config.getToken('openid', () => {});
-
     // invoke authenticate
     const strategyName = `${ctx.instance.id}:${moduleRelativeName}:${providerName}`;
     const authenticate = ctx.app.passport.authenticate(strategyName, config);
