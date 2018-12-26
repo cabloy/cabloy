@@ -60,6 +60,7 @@ export default {
       return dataPath;
     },
     renderItem(c) {
+      if (!this.validate.data || !this.validate.schema) return c('div');
       return this._renderItem(c, this.validate.data, this.validate.schema.properties, this.dataKey, this.pathParent, { options: this.options });
     },
     _renderItem(c, data, properties, key, pathParent, meta) {
