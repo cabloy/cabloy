@@ -70,6 +70,7 @@ module.exports = ctx => {
       const user = {
         op: userOp,
         agent: userOp,
+        provider: null,
       };
       await ctx.login(user);
       // maxAge
@@ -78,6 +79,8 @@ module.exports = ctx => {
     }
 
     async check() {
+      // check if has ctx.user
+      if (!ctx.isAuthenticated() || !ctx.user.op || !ctx.user.agent) ctx.throw(401);
       // check if deleted,disabled,agent
       const userOp = await this.get({ id: ctx.user.op.id });
       // deleted
