@@ -3892,10 +3892,10 @@ module.exports = app => {
 };
 
 async function invokeAuthVerify({ ctx, verifyUser, profileUser }) {
-  for (const relativeName in ctx.app.meta.modules) {
-    const module = ctx.app.meta.modules[relativeName];
-    if (module.main.meta && module.main.meta.authVerify) {
-      await module.main.meta.authVerify({ ctx, verifyUser, profileUser });
+  for (const module of ctx.app.meta.modulesArray) {
+    const events = module.main.meta && module.main.meta.auth && module.main.meta.auth.events;
+    if (events && events.onUserVerify) {
+      await events.onUserVerify({ ctx, verifyUser, profileUser });
     }
   }
 }
