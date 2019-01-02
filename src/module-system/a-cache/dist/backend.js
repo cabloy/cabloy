@@ -337,7 +337,7 @@ const Fn = module.exports = ctx => {
     }
 
     async has(name) {
-      const sql = 'select * from aCache where iid=? and module=? and name=? and (timeout=0 or timestampdiff(MICROSECOND,updatedAt,now())<timeout)';
+      const sql = 'select * from aCache where iid=? and module=? and name=? and (timeout=0 or timestampdiff(SECOND,updatedAt,now())*1000 < timeout)';
       const res = await ctx.db.queryOne(sql, [ ctx.instance.id, this.moduleName, name ]);
       return res;
     }
