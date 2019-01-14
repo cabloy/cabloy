@@ -412,6 +412,15 @@ function createValidate(schemaRoot) {
       const error = new Error();
       error.code = 422;
       error.message = e.errors;
+
+      if (e.stack) error.stack = e.stack;
+      if (e.name) error.name = e.name;
+      if (e.errno) error.errno = e.errno;
+      if (e.sqlMessage) error.sqlMessage = e.sqlMessage;
+      if (e.sqlState) error.sqlState = e.sqlState;
+      if (e.index) error.index = e.index;
+      if (e.sql) error.sql = e.sql;
+
       throw error;
     }
   };
