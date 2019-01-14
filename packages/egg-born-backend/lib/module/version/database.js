@@ -59,7 +59,7 @@ module.exports = async function(app) {
       const dbs = await mysql.query(`show databases like \'${dbPrefix}-%\'`);
       if (dbs.length === 0) {
         const database = `${dbPrefix}-${moment().format('YYYYMMDD-HHmmss')}`;
-        await mysql.query(`CREATE DATABASE \`${database}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`);
+        await mysql.query(`CREATE DATABASE \`${database}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci`);
         mysqlConfig.database = database;
       } else {
         const db = dbs[0];
@@ -82,7 +82,7 @@ module.exports = async function(app) {
     }
     // create database
     const database = `${dbPrefix}-${moment().format('YYYYMMDD-HHmmss')}`;
-    await mysql.query(`CREATE DATABASE \`${database}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`);
+    await mysql.query(`CREATE DATABASE \`${database}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci`);
     // create test mysql
     const mysqlConfig = app.config.mysql.clients.__ebdb;
     mysqlConfig.database = database;
