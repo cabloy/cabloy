@@ -117,11 +117,11 @@ module.exports = ctx => {
       userName = userName || '';
       email = email || '';
       mobile = mobile || '';
-      if (ctx.config.module(moduleInfo.relativeName).checkUserName === true) {
+      if (ctx.config.module(moduleInfo.relativeName).checkUserName === true && userName) {
         return await this.model.queryOne(
           `select * from aUser
-             where iid=? and deleted=0 and ((?<>'' and userName=?) or (?<>'' and email=?) or (?<>'' and mobile=?))`,
-          [ ctx.instance.id, userName, userName, email, email, mobile, mobile ]);
+             where iid=? and deleted=0 and ((userName=?) or (?<>'' and email=?) or (?<>'' and mobile=?))`,
+          [ ctx.instance.id, userName, email, email, mobile, mobile ]);
       }
       return await this.model.queryOne(
         `select * from aUser
