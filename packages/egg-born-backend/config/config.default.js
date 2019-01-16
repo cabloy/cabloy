@@ -76,6 +76,13 @@ module.exports = appInfo => {
     '/favicon.ico': fs.readFileSync(path.join(__dirname, 'favicon.ico')),
   };
 
+  // alinode
+  config.alinode = {
+    enable: false,
+    appid: '',
+    secret: '',
+  };
+
   // onerror
   config.onerror = {
     json(err) {

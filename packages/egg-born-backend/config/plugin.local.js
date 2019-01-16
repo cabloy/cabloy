@@ -14,6 +14,11 @@ module.exports = {
     package: 'egg-passport',
   },
 
+  alinode: {
+    enable: true,
+    package: 'egg-alinode',
+  },
+
   proxyagent: {
     enable: true,
     package: 'egg-development-proxyagent',
