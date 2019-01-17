@@ -47,7 +47,7 @@ module.exports = app => {
     },
     event: {
       declarations: {
-        authVerify: 'Auth Verify',
+        userVerify: 'User Verify',
       },
     },
   };

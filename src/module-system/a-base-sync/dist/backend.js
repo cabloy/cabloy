@@ -3866,9 +3866,9 @@ module.exports = app => {
       this.app.passport.verify(async function(ctx, profileUser) {
         // user verify
         const verifyUser = await ctx.meta.user.verify(profileUser);
-        // auth verify
+        // user verify event
         await ctx.meta.event.invoke({
-          module: 'a-base', name: 'authVerify', data: { verifyUser, profileUser },
+          module: 'a-base', name: 'userVerify', data: { verifyUser, profileUser },
         });
         // ready
         return verifyUser;
@@ -6274,7 +6274,7 @@ module.exports = app => {
     },
     event: {
       declarations: {
-        authVerify: 'Auth Verify',
+        userVerify: 'User Verify',
       },
     },
   };
