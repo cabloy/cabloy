@@ -45,6 +45,11 @@ module.exports = app => {
         user: schemas.user,
       },
     },
+    event: {
+      declarations: {
+        authVerify: 'Auth Verify',
+      },
+    },
   };
   return meta;
 };

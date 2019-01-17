@@ -3867,7 +3867,9 @@ module.exports = app => {
         // user verify
         const verifyUser = await ctx.meta.user.verify(profileUser);
         // auth verify
-        await invokeAuthVerify({ ctx, verifyUser, profileUser });
+        await ctx.meta.event.invoke({
+          module: 'a-base', name: 'authVerify', data: { verifyUser, profileUser },
+        });
         // ready
         return verifyUser;
       });
@@ -3893,15 +3895,6 @@ module.exports = app => {
 
   return AuthController;
 };
-
-async function invokeAuthVerify({ ctx, verifyUser, profileUser }) {
-  for (const module of ctx.app.meta.modulesArray) {
-    const events = module.main.meta && module.main.meta.auth && module.main.meta.auth.events;
-    if (events && events.onUserVerify) {
-      await events.onUserVerify({ ctx, verifyUser, profileUser });
-    }
-  }
-}
 
 
 /***/ }),
@@ -6277,6 +6270,11 @@ module.exports = app => {
       },
       schemas: {
         user: schemas.user,
+      },
+    },
+    event: {
+      declarations: {
+        authVerify: 'Auth Verify',
       },
     },
   };
