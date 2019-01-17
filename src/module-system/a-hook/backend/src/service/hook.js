@@ -4,8 +4,7 @@ module.exports = app => {
 
     // register all hooks
     async registerAllHooks() {
-      for (const relativeName in this.app.meta.modules) {
-        const module = this.app.meta.modules[relativeName];
+      for (const module of this.app.meta.modulesArray) {
         if (module.main.meta && module.main.meta.hook) {
           this._registerHooks(module, 'before');
           this._registerHooks(module, 'after');
