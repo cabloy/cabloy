@@ -12,7 +12,7 @@ module.exports = app => {
   if (app.meta.isTest) {
     routes = routes.concat([
       { method: 'post', path: 'test/test', controller: test, middlewares: 'test' },
-      { method: 'post', path: 'test/eventTest', controller: test, middlewares: 'test' },
+      { method: 'post', path: 'test/eventTest', controller: test, middlewares: 'test', meta: { auth: { enable: false } } },
     ]);
   }
   return routes;

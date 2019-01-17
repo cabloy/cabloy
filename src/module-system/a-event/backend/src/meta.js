@@ -3,7 +3,12 @@ module.exports = app => {
   if (app.meta.isTest) {
     Object.assign(meta, {
       event: {
-        'a-event:test': 'test/eventTest',
+        declarations: {
+          test: 'This is a test',
+        },
+        implementations: {
+          'a-event:test': 'test/eventTest',
+        },
       },
     });
   }
