@@ -1,5 +1,5 @@
-const hook = require('./middleware/hook.js');
+const event = require('./middleware/event.js');
 
 module.exports = {
-  hook,
+  event,
 };

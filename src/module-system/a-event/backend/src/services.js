@@ -1,5 +1,5 @@
-const hook = require('./service/hook.js');
+const event = require('./service/event.js');
 
 module.exports = {
-  hook,
+  event,
 };

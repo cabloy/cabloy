@@ -4,7 +4,7 @@ module.exports = appInfo => {
 
   // middlewares
   config.middlewares = {
-    hook: {
+    event: {
       global: true,
       dependencies: 'instance',
     },
@@ -12,9 +12,9 @@ module.exports = appInfo => {
 
   // startups
   config.startups = {
-    installHooks: {
+    installEvents: {
       type: 'all',
-      path: 'hook/installHooks',
+      path: 'event/installEvents',
     },
   };
 

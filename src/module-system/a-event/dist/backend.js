@@ -99,8 +99,8 @@ const middlewares = __webpack_require__(7);
 module.exports = app => {
 
   // meta
-  const meta = __webpack_require__(9)(app);
-  const routes = __webpack_require__(10)(app);
+  const meta = __webpack_require__(10)(app);
+  const routes = __webpack_require__(11)(app);
 
   return {
     routes,
@@ -119,10 +119,10 @@ module.exports = app => {
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const hook = __webpack_require__(2);
+const event = __webpack_require__(2);
 
 module.exports = {
-  hook,
+  event,
 };
 
 
@@ -132,30 +132,28 @@ module.exports = {
 
 module.exports = app => {
 
-  class Hook extends app.Service {
+  class Event extends app.Service {
 
-    // register all hooks
-    async registerAllHooks() {
+    // register all events
+    async registerAllEvents() {
+      // 注意模块之间有依赖关系，所以使用modulesArray
       for (const module of this.app.meta.modulesArray) {
-        if (module.main.meta && module.main.meta.hook) {
-          this._registerHooks(module, 'before');
-          this._registerHooks(module, 'after');
+        if (module.main.meta && module.main.meta.event) {
+          this._registerEvents(module, module.main.meta.event);
         }
       }
     }
 
-    async _registerHooks(module, stage) {
-      const hooksStage = module.main.meta.hook[stage];
-      if (!hooksStage) return;
-      const hooks = this.app.meta.geto('hooks').geto(stage);
-      for (const hook of hooksStage) {
-        hooks.geta(hook.path).push({ route: `/${module.info.url}/${hook.route}` });
+    async _registerEvents(module, metaEvent) {
+      const events = this.app.meta.geto('events');
+      for (const key in metaEvent) {
+        events.geta(key).push(`/${module.info.url}/${metaEvent[key]}`);
       }
     }
 
   }
 
-  return Hook;
+  return Event;
 };
 
 
@@ -169,7 +167,7 @@ module.exports = appInfo => {
 
   // middlewares
   config.middlewares = {
-    hook: {
+    event: {
       global: true,
       dependencies: 'instance',
     },
@@ -177,9 +175,9 @@ module.exports = appInfo => {
 
   // startups
   config.startups = {
-    installHooks: {
+    installEvents: {
       type: 'all',
-      path: 'hook/installHooks',
+      path: 'event/installEvents',
     },
   };
 
@@ -217,56 +215,86 @@ module.exports = {
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const hook = __webpack_require__(8);
+const event = __webpack_require__(8);
 
 module.exports = {
-  hook,
+  event,
 };
 
 
 /***/ }),
 /* 8 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+const EventFn = __webpack_require__(9);
+const EVENT = Symbol('CTX#EVENT');
 
 module.exports = () => {
-  return async function hook(ctx, next) {
-    // before
-    await invokeHooks(ctx, 'before');
+  return async function event(ctx, next) {
+    ctx.meta = ctx.meta || {};
+    Object.defineProperty(ctx.meta, 'event', {
+      get() {
+        if (ctx.meta[EVENT] === undefined) {
+          ctx.meta[EVENT] = new (EventFn(ctx))();
+        }
+        return ctx.meta[EVENT];
+      },
+    });
+
     // next
     await next();
-    // after
-    await invokeHooks(ctx, 'after');
   };
 };
-
-async function invokeHooks(ctx, stage) {
-  if (!ctx.route) return;
-  const path = `/${ctx.route.pid}/${ctx.route.module}/${ctx.route.controller}/${ctx.route.action}`;
-  const hooks = ctx.app.meta.geto('hooks').geto(stage).geta(path);
-  for (const hook of hooks) {
-    await ctx.performAction({
-      method: 'post',
-      url: hook.route,
-    });
-  }
-}
 
 
 /***/ }),
 /* 9 */
 /***/ (function(module, exports) {
 
+const Fn = module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Event {
+
+    constructor(moduleName) {
+      this.moduleName = moduleName || ctx.module.info.relativeName;
+    }
+
+    // other module's event
+    module(moduleName) {
+      return new (Fn(ctx))(moduleName);
+    }
+
+    async invoke({ module, name, data }) {
+      module = module || this.moduleName;
+      const key = `${module}:${name}`;
+      const events = ctx.app.meta.geto('events');
+      const eventArray = events[key];
+      if (!eventArray) return;
+      for (const event of eventArray) {
+        await ctx.performAction({
+          method: 'post',
+          url: event,
+          body: { data },
+        });
+      }
+    }
+
+  }
+
+  return Event;
+};
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports) {
+
 module.exports = app => {
   const meta = {};
   if (app.meta.isTest) {
     Object.assign(meta, {
-      hook: {
-        before: [
-          { path: '/a/base/auth/echo', route: 'test/hookTestBefore' },
-        ],
-        after: [
-          { path: '/a/base/auth/echo', route: 'test/hookTestAfter' },
-        ],
+      event: {
+        'a-event:test': 'test/eventTest',
       },
     });
   }
@@ -275,15 +303,15 @@ module.exports = app => {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const test = __webpack_require__(11);
-const hook = __webpack_require__(12);
+const test = __webpack_require__(12);
+const event = __webpack_require__(13);
 
 module.exports = app => {
   let routes = [
-    { method: 'post', path: 'hook/installHooks', controller: hook, middlewares: 'inner',
+    { method: 'post', path: 'event/installEvents', controller: event, middlewares: 'inner',
       meta: {
         instance: { enable: false },
       },
@@ -292,8 +320,7 @@ module.exports = app => {
   if (app.meta.isTest) {
     routes = routes.concat([
       { method: 'post', path: 'test/test', controller: test, middlewares: 'test' },
-      { method: 'post', path: 'test/hookTestBefore', controller: test, middlewares: 'test' },
-      { method: 'post', path: 'test/hookTestAfter', controller: test, middlewares: 'test' },
+      { method: 'post', path: 'test/eventTest', controller: test, middlewares: 'test' },
     ]);
   }
   return routes;
@@ -301,22 +328,26 @@ module.exports = app => {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
   class TestController extends app.Controller {
 
     async test() {
+      const data = {
+        name: 'test',
+      };
+      await this.ctx.meta.event.invoke({
+        module: 'a-event', name: 'test', data,
+      });
+      console.log('a-event:test:name:', data.name);
       this.ctx.success();
     }
 
-    async hookTestBefore() {
-      console.log('hook:before', this.ctx.ctxCaller.route);
-      this.ctx.success();
-    }
-    async hookTestAfter() {
-      console.log('hook:after', this.ctx.ctxCaller.route);
+    async eventTest() {
+      const data = this.ctx.request.body.data;
+      data.name = 'test:echo';
       this.ctx.success();
     }
 
@@ -327,22 +358,22 @@ module.exports = app => {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
 
-  class HookController extends app.Controller {
+  class EventController extends app.Controller {
 
-    async installHooks() {
-      // register all hooks
-      await this.ctx.service.hook.registerAllHooks();
+    async installEvents() {
+      // register all events
+      await this.ctx.service.event.registerAllEvents();
       this.ctx.success();
     }
 
   }
 
-  return HookController;
+  return EventController;
 };
 
 
