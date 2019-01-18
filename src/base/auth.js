@@ -4,6 +4,7 @@ export default function(Vue) {
       loggedIn: false,
       user: null,
       instance: null,
+      loginInfo: null,
       hashInit: null,
     },
     getters: {
@@ -23,9 +24,17 @@ export default function(Vue) {
       logout(state) {
         state.loggedIn = false;
         state.user = null;
+        state.loginInfo = null;
       },
       setInstance(state, instance) {
         state.instance = instance;
+      },
+      setLoginInfo(state, info) {
+        state.loginInfo = info;
+        // config
+        if (info.config) {
+          Vue.prototype.$utils.extend(Vue.prototype.$meta.config, info.config);
+        }
       },
       setHashInit(state, hashInit) {
         state.hashInit = hashInit;

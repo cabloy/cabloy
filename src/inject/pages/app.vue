@@ -98,6 +98,8 @@ export default {
         });
         // instance
         this.$store.commit('auth/setInstance', data.instance);
+        // loginInfo
+        this.$store.commit('auth/setLoginInfo', data);
         // title
         window.document.title = this.$store.getters['auth/title'];
         // ok
