@@ -47,6 +47,7 @@ module.exports = app => {
     },
     event: {
       declarations: {
+        loginInfo: 'Login Info',
         userVerify: 'User Verify',
       },
     },

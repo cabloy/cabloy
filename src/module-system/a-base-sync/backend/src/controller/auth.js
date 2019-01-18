@@ -14,10 +14,8 @@ module.exports = app => {
           await this.ctx.meta.user.check();
         }
         // logined
-        this.ctx.success({
-          user: this.ctx.user,
-          instance: this.getInstance(),
-        });
+        const info = await this.getLoginInfo();
+        this.ctx.success(info);
       } catch (e) {
         // deleted,disabled
         await this.logout();
@@ -25,19 +23,15 @@ module.exports = app => {
     }
 
     async check() {
-      this.ctx.success({
-        user: this.ctx.user,
-        instance: this.getInstance(),
-      });
+      const info = await this.getLoginInfo();
+      this.ctx.success(info);
     }
 
     async logout() {
       await this.ctx.logout();
       await this.ctx.meta.user.loginAsAnonymous();
-      this.ctx.success({
-        user: this.ctx.user,
-        instance: this.getInstance(),
-      });
+      const info = await this.getLoginInfo();
+      this.ctx.success(info);
     }
 
     async installAuthProviders() {
@@ -63,6 +57,18 @@ module.exports = app => {
         providerName: this.ctx.request.body.providerName,
       });
       this.ctx.success(res);
+    }
+
+    async getLoginInfo() {
+      const info = {
+        user: this.ctx.user,
+        instance: this.getInstance(),
+      };
+      // login info event
+      await this.ctx.meta.event.invoke({
+        name: 'loginInfo', data: { info },
+      });
+      return info;
     }
 
     getInstance() {
