@@ -128,26 +128,32 @@ module.exports = app => {
       if (fileVersionNew && (!options.scene || options.scene === 'init')) {
         // update module or init module
 
-        // fileVersionOld
-        let fileVersionOld = 0; // default
-        if (!options.scene) {
-          const res = await this.ctx.db.queryOne('select * from aVersion where module=? order by version desc', [ moduleName ]);
-          if (res) {
-            fileVersionOld = res.version;
-          }
+        // -1: always
+        if (fileVersionNew === -1) {
+          await this.__updateModule(options, module, -1, -1);
         } else {
-          const res = await this.ctx.db.queryOne('select * from aVersionInit where subdomain=? and module=? order by version desc', [ options.subdomain, moduleName ]);
-          if (res) {
-            fileVersionOld = res.version;
+          // fileVersionOld
+          let fileVersionOld = 0; // default
+          if (!options.scene) {
+            const res = await this.ctx.db.queryOne('select * from aVersion where module=? order by version desc', [ moduleName ]);
+            if (res) {
+              fileVersionOld = res.version;
+            }
+          } else {
+            const res = await this.ctx.db.queryOne('select * from aVersionInit where subdomain=? and module=? order by version desc', [ options.subdomain, moduleName ]);
+            if (res) {
+              fileVersionOld = res.version;
+            }
+          }
+
+          // check if need update
+          if (fileVersionOld > fileVersionNew) {
+            this.ctx.throw(1001, moduleName);
+          } else if (fileVersionOld < fileVersionNew) {
+            await this.__updateModule(options, module, fileVersionOld, fileVersionNew);
           }
         }
 
-        // check if need update
-        if (fileVersionOld > fileVersionNew) {
-          this.ctx.throw(1001, moduleName);
-        } else if (fileVersionOld < fileVersionNew) {
-          await this.__updateModule(options, module, fileVersionOld, fileVersionNew);
-        }
       }
 
       if (options.scene === 'test') {
@@ -157,39 +163,48 @@ module.exports = app => {
 
     }
 
+    async __updateModule2(options, module, version) {
+      // perform action
+      try {
+        if (!options.scene) {
+          await this.ctx.performAction({
+            method: 'post',
+            url: 'version/updateModule',
+            body: {
+              module,
+              version,
+            },
+          });
+        } else {
+          options.module = module;
+          options.version = version;
+          await this.ctx.performAction({
+            method: 'post',
+            url: 'version/initModule',
+            body: options,
+          });
+        }
+      } catch (err) {
+        throw err;
+      }
+    }
+
     // update module or init module
     async __updateModule(options, module, fileVersionOld, fileVersionNew) {
 
-      // versions
-      const versions = [];
-      for (let version = fileVersionOld + 1; version <= fileVersionNew; version++) {
-        versions.push(version);
-      }
+      if (fileVersionNew === -1) {
+        // always
+        await this.__updateModule2(options, module, -1);
+      } else {
+        // versions
+        const versions = [];
+        for (let version = fileVersionOld + 1; version <= fileVersionNew; version++) {
+          versions.push(version);
+        }
 
-      // loop
-      for (const version of versions) {
-        // perform action
-        try {
-          if (!options.scene) {
-            await this.ctx.performAction({
-              method: 'post',
-              url: 'version/updateModule',
-              body: {
-                module,
-                version,
-              },
-            });
-          } else {
-            options.module = module;
-            options.version = version;
-            await this.ctx.performAction({
-              method: 'post',
-              url: 'version/initModule',
-              body: options,
-            });
-          }
-        } catch (err) {
-          throw err;
+        // loop
+        for (const version of versions) {
+          await this.__updateModule2(options, module, version);
         }
       }
 
