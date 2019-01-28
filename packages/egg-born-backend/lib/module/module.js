@@ -12,6 +12,8 @@ module.exports = function(loader) {
   const ebModules = loader.app.meta.modules = {};
   const ebModulesArray = loader.app.meta.modulesArray = [];
 
+  const _ebModulesLast = [];
+
   // parse/order modules
   orderModules(parseModules(loader));
   // load modules
@@ -42,6 +44,10 @@ module.exports = function(loader) {
         _pushModule(modules, key);
       }
     }
+    // combine last
+    for (const module of _ebModulesLast) {
+      ebModulesArray.push(module);
+    }
   }
 
   function _pushModule(modules, moduleRelativeName) {
@@ -55,7 +61,11 @@ module.exports = function(loader) {
 
     // push this
     ebModules[moduleRelativeName] = module;
-    ebModulesArray.push(module);
+    if (module.package && module.package.eggBornModule && module.package.eggBornModule.last === true) {
+      _ebModulesLast.push(module);
+    } else {
+      ebModulesArray.push(module);
+    }
   }
 
   function _orderDependencies(modules, module) {
