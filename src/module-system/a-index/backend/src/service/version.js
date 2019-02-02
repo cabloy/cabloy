@@ -42,7 +42,9 @@ module.exports = app => {
           const fieldNameFirst = fieldNameArray[0];
           const indexType = _arr[1] || '';
           if (!map[fieldNameFirst]) {
-            const sql = `create ${indexType} index idx_${tableName}_${fieldNameArray.join('_')} ON ${tableName} (${fieldNameArray.join(',')})`;
+            // too long
+            // const sql = `create ${indexType} index idx_${tableName}_${fieldNameArray.join('_')} ON ${tableName} (${fieldNameArray.join(',')})`;
+            const sql = `create ${indexType} index idx_${tableName}_${fieldNameFirst} ON ${tableName} (${fieldNameArray.join(',')})`;
             await this.ctx.model.query(sql);
           }
         }
