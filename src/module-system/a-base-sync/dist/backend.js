@@ -895,19 +895,19 @@ const config = __webpack_require__(22);
 const locales = __webpack_require__(23);
 const errors = __webpack_require__(25);
 const middlewares = __webpack_require__(26);
-const constants = __webpack_require__(40);
+const constants = __webpack_require__(41);
 
 // eslint-disable-next-line
 module.exports = app => {
 
   // routes
-  const routes = __webpack_require__(41)(app);
+  const routes = __webpack_require__(42)(app);
   // services
-  const services = __webpack_require__(51)(app);
+  const services = __webpack_require__(52)(app);
   // models
-  const models = __webpack_require__(69)(app);
+  const models = __webpack_require__(70)(app);
   // meta
-  const meta = __webpack_require__(76)(app);
+  const meta = __webpack_require__(77)(app);
 
   return {
     routes,
@@ -949,6 +949,10 @@ module.exports = appInfo => {
     },
     jsonp: {
       global: false,
+    },
+    httpLog: {
+      global: false,
+      dependencies: 'instance',
     },
   };
 
@@ -1016,6 +1020,9 @@ module.exports = appInfo => {
     },
   };
 
+  // httpLog
+  config.httpLog = true;
+
   return config;
 };
 
@@ -1082,12 +1089,14 @@ const base = __webpack_require__(27);
 const auth = __webpack_require__(37);
 const right = __webpack_require__(38);
 const jsonp = __webpack_require__(39);
+const httpLog = __webpack_require__(40);
 
 module.exports = {
   base,
   auth,
   right,
   jsonp,
+  httpLog,
 };
 
 
@@ -3253,6 +3262,56 @@ module.exports = (options, app) => {
 /* 40 */
 /***/ (function(module, exports) {
 
+module.exports = (options, app) => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  return async function httpLog(ctx, next) {
+    await next();
+
+    // check if log
+    const _config = ctx.config.module(moduleInfo.relativeName);
+    if (!_config.httpLog) return;
+
+    //
+    const req = ctx.request;
+    const res = ctx.response;
+
+    // check if json
+    if (res.type.indexOf('application/json') === -1) return;
+
+    // log
+    let log = '';
+    // query
+    if (req.query && Object.keys(req.query).length > 0) {
+      log = `${log}
+query:
+${JSON.stringify(req.query)}`;
+    }
+    // params
+    if (req.params && Object.keys(req.params).length > 0) {
+      log = `${log}
+params:
+${JSON.stringify(req.params)}`;
+    }
+    // body
+    if (req.body && Object.keys(req.body).length > 0) {
+      log = `${log}
+body:
+${JSON.stringify(req.body)}`;
+    }
+    // res
+    log = `${log}
+response:
+${JSON.stringify(res.body)}`;
+    // log
+    ctx.logger.info(log);
+  };
+};
+
+
+/***/ }),
+/* 41 */
+/***/ (function(module, exports) {
+
 module.exports = {
   systemRoles: [ 'root', 'anonymous', 'authenticated', 'registered', 'activated', 'superuser', 'organization', 'internal', 'external' ],
   atom: {
@@ -3289,18 +3348,18 @@ module.exports = {
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(42);
-const base = __webpack_require__(43);
-const user = __webpack_require__(44);
-const atom = __webpack_require__(45);
-const atomClass = __webpack_require__(46);
-const atomAction = __webpack_require__(47);
-const func = __webpack_require__(48);
-const auth = __webpack_require__(49);
-const comment = __webpack_require__(50);
+const version = __webpack_require__(43);
+const base = __webpack_require__(44);
+const user = __webpack_require__(45);
+const atom = __webpack_require__(46);
+const atomClass = __webpack_require__(47);
+const atomAction = __webpack_require__(48);
+const func = __webpack_require__(49);
+const auth = __webpack_require__(50);
+const comment = __webpack_require__(51);
 
 module.exports = app => {
   const routes = [
@@ -3422,7 +3481,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3444,7 +3503,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3501,7 +3560,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3530,7 +3589,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3688,7 +3747,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3727,7 +3786,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3749,7 +3808,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3814,7 +3873,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3904,7 +3963,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3978,18 +4037,18 @@ module.exports = app => {
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(52);
-const base = __webpack_require__(61);
-const user = __webpack_require__(62);
-const atom = __webpack_require__(63);
-const atomClass = __webpack_require__(64);
-const atomAction = __webpack_require__(65);
-const auth = __webpack_require__(66);
-const func = __webpack_require__(67);
-const comment = __webpack_require__(68);
+const version = __webpack_require__(53);
+const base = __webpack_require__(62);
+const user = __webpack_require__(63);
+const atom = __webpack_require__(64);
+const atomClass = __webpack_require__(65);
+const atomAction = __webpack_require__(66);
+const auth = __webpack_require__(67);
+const func = __webpack_require__(68);
+const comment = __webpack_require__(69);
 
 module.exports = app => {
   const services = {
@@ -4008,15 +4067,15 @@ module.exports = app => {
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const VersionUpdate1Fn = __webpack_require__(53);
-const VersionUpdate2Fn = __webpack_require__(55);
-const VersionUpdate3Fn = __webpack_require__(56);
-const VersionUpdate4Fn = __webpack_require__(57);
-const VersionInit2Fn = __webpack_require__(58);
-const VersionInit4Fn = __webpack_require__(60);
+const VersionUpdate1Fn = __webpack_require__(54);
+const VersionUpdate2Fn = __webpack_require__(56);
+const VersionUpdate3Fn = __webpack_require__(57);
+const VersionUpdate4Fn = __webpack_require__(58);
+const VersionInit2Fn = __webpack_require__(59);
+const VersionInit4Fn = __webpack_require__(61);
 
 module.exports = app => {
 
@@ -4063,10 +4122,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const update1Data = __webpack_require__(54);
+const update1Data = __webpack_require__(55);
 
 module.exports = function(ctx) {
 
@@ -4136,7 +4195,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports) {
 
 const tables = {
@@ -4959,7 +5018,7 @@ module.exports = {
 
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -4996,7 +5055,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -5060,7 +5119,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -5334,12 +5393,12 @@ end
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
 const extend = require3('extend2');
-const initData = __webpack_require__(59);
+const initData = __webpack_require__(60);
 
 module.exports = function(ctx) {
 
@@ -5387,7 +5446,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports) {
 
 // roles
@@ -5443,7 +5502,7 @@ module.exports = {
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -5472,7 +5531,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5514,7 +5573,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5553,7 +5612,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5619,7 +5678,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5645,7 +5704,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5663,7 +5722,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -5799,7 +5858,7 @@ function createAuthenticate(moduleRelativeName, providerName, _config) {
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5838,7 +5897,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -6050,7 +6109,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const atom = __webpack_require__(4);
@@ -6060,14 +6119,14 @@ const auth = __webpack_require__(19);
 const authProvider = __webpack_require__(20);
 const role = __webpack_require__(10);
 const roleInc = __webpack_require__(11);
-const roleIncRef = __webpack_require__(70);
-const roleRef = __webpack_require__(71);
+const roleIncRef = __webpack_require__(71);
+const roleRef = __webpack_require__(72);
 const roleRight = __webpack_require__(13);
 const roleRightRef = __webpack_require__(14);
 const user = __webpack_require__(17);
 const userAgent = __webpack_require__(18);
 const userRole = __webpack_require__(12);
-const label = __webpack_require__(72);
+const label = __webpack_require__(73);
 const atomLabel = __webpack_require__(6);
 const atomLabelRef = __webpack_require__(7);
 const atomStar = __webpack_require__(5);
@@ -6075,9 +6134,9 @@ const func = __webpack_require__(1);
 const functionStar = __webpack_require__(8);
 const functionLocale = __webpack_require__(9);
 const roleFunction = __webpack_require__(15);
-const comment = __webpack_require__(73);
-const commentView = __webpack_require__(74);
-const commentHeart = __webpack_require__(75);
+const comment = __webpack_require__(74);
+const commentView = __webpack_require__(75);
+const commentHeart = __webpack_require__(76);
 
 module.exports = app => {
   const models = {
@@ -6112,7 +6171,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6130,7 +6189,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6156,7 +6215,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6174,7 +6233,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6192,7 +6251,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6210,7 +6269,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6228,14 +6287,14 @@ module.exports = app => {
 
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
   // keywords
-  const keywords = __webpack_require__(77)(app);
+  const keywords = __webpack_require__(78)(app);
   // schemas
-  const schemas = __webpack_require__(78)(app);
+  const schemas = __webpack_require__(79)(app);
   // meta
   const meta = {
     base: {
@@ -6290,7 +6349,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -6323,7 +6382,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports) {
 
 module.exports = app => {

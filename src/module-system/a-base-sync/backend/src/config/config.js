@@ -20,6 +20,10 @@ module.exports = appInfo => {
     jsonp: {
       global: false,
     },
+    httpLog: {
+      global: false,
+      dependencies: 'instance',
+    },
   };
 
   // startups
@@ -85,6 +89,9 @@ module.exports = appInfo => {
       preserveTags: false,
     },
   };
+
+  // httpLog
+  config.httpLog = true;
 
   return config;
 };
