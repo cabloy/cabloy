@@ -43,7 +43,7 @@ export default {
             }
           }).catch(err => {
             this._hidePreloader();
-            if (err && err.code !== 401) {
+            if (err && err.code !== 401 && err.message) {
               this.$view.toast.show({ text: err.message });
             }
           });
