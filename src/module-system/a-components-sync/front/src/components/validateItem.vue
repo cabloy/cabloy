@@ -59,6 +59,24 @@ export default {
       if (dataPath[0] !== '/') return this.validate.dataPathRoot + dataPath;
       return dataPath;
     },
+    getTitle(key, property) {
+      const title = this.$text(property.ebTitle || key);
+      // ignore panel/group/toggle
+      const ebType = property.ebType;
+      if (ebType === 'panel' || ebType === 'group' || ebType === 'toggle') return title;
+      // only edit
+      if (this.validate.readOnly || property.ebReadOnly) return title;
+      // check optional
+      if (this.$config.validate.hint.optional && !property.notEmpty) {
+        return `${title}(?)`;
+      }
+      // check must
+      if (this.$config.validate.hint.must && property.notEmpty) {
+        return `${title}(*)`;
+      }
+      // default
+      return title;
+    },
     renderItem(c) {
       if (!this.validate.data || !this.validate.schema) return c('div');
       return this._renderItem(c, this.validate.data, this.validate.schema.properties, this.dataKey, this.pathParent, { options: this.options });
@@ -104,7 +122,7 @@ export default {
         key,
         attrs: {
           link: '#',
-          title: this.$text(property.ebTitle || key),
+          title: this.getTitle(key, property),
           dataPath,
         },
         on: {
@@ -136,13 +154,16 @@ export default {
     renderGroup(c, data, pathParent, key, property) {
       const children = this.renderProperties(c, data[key], property.properties, `${pathParent}${key}/`);
       const group = c('f7-list-item', {
-        attrs: { groupTitle: true, title: this.$text(property.ebTitle || key) },
+        attrs: {
+          groupTitle: true,
+          title: this.getTitle(key, property),
+        },
       });
       children.unshift(group);
       return c('f7-list-group', { key }, children);
     },
     renderText(c, data, pathParent, key, property) {
-      const title = this.$text(property.ebTitle || key);
+      const title = this.getTitle(key, property);
       if ((this.validate.readOnly || property.ebReadOnly) && !property.ebTextarea) {
         return c('f7-list-item', {
           key,
@@ -188,7 +209,7 @@ export default {
       ]);
     },
     renderToggle(c, data, pathParent, key, property) {
-      const title = this.$text(property.ebTitle || key);
+      const title = this.getTitle(key, property);
       return c('f7-list-item', {
         key,
       }, [
@@ -211,7 +232,7 @@ export default {
       ]);
     },
     renderSelect(c, data, pathParent, key, property, meta) {
-      const title = this.$text(property.ebTitle || key);
+      const title = this.getTitle(key, property);
       const attrs = {
         name: key,
         dataPath: pathParent + key,

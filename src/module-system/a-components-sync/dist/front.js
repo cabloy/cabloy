@@ -126,7 +126,14 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ({});
+/* harmony default export */ __webpack_exports__["default"] = ({
+  validate: {
+    hint: {
+      optional: true,
+      must: false
+    }
+  }
+});
 
 /***/ }),
 /* 5 */
@@ -1433,6 +1440,22 @@ var select_component = normalizeComponent(
       if (dataPath[0] !== '/') return this.validate.dataPathRoot + dataPath;
       return dataPath;
     },
+    getTitle: function getTitle(key, property) {
+      var title = this.$text(property.ebTitle || key);
+      var ebType = property.ebType;
+      if (ebType === 'panel' || ebType === 'group' || ebType === 'toggle') return title;
+      if (this.validate.readOnly || property.ebReadOnly) return title;
+
+      if (this.$config.validate.hint.optional && !property.notEmpty) {
+        return "".concat(title, "(?)");
+      }
+
+      if (this.$config.validate.hint.must && property.notEmpty) {
+        return "".concat(title, "(*)");
+      }
+
+      return title;
+    },
     renderItem: function renderItem(c) {
       if (!this.validate.data || !this.validate.schema) return c('div');
       return this._renderItem(c, this.validate.data, this.validate.schema.properties, this.dataKey, this.pathParent, {
@@ -1477,7 +1500,7 @@ var select_component = normalizeComponent(
         key: key,
         attrs: {
           link: '#',
-          title: this.$text(property.ebTitle || key),
+          title: this.getTitle(key, property),
           dataPath: dataPath
         },
         on: {
@@ -1512,7 +1535,7 @@ var select_component = normalizeComponent(
       var group = c('f7-list-item', {
         attrs: {
           groupTitle: true,
-          title: this.$text(property.ebTitle || key)
+          title: this.getTitle(key, property)
         }
       });
       children.unshift(group);
@@ -1523,7 +1546,7 @@ var select_component = normalizeComponent(
     renderText: function renderText(c, data, pathParent, key, property) {
       var _this2 = this;
 
-      var title = this.$text(property.ebTitle || key);
+      var title = this.getTitle(key, property);
 
       if ((this.validate.readOnly || property.ebReadOnly) && !property.ebTextarea) {
         return c('f7-list-item', {
@@ -1576,7 +1599,7 @@ var select_component = normalizeComponent(
     renderToggle: function renderToggle(c, data, pathParent, key, property) {
       var _this3 = this;
 
-      var title = this.$text(property.ebTitle || key);
+      var title = this.getTitle(key, property);
       return c('f7-list-item', {
         key: key
       }, [c('span', {
@@ -1600,7 +1623,7 @@ var select_component = normalizeComponent(
     renderSelect: function renderSelect(c, data, pathParent, key, property, meta) {
       var _this4 = this;
 
-      var title = this.$text(property.ebTitle || key);
+      var title = this.getTitle(key, property);
       var attrs = {
         name: key,
         dataPath: pathParent + key,
@@ -1657,7 +1680,7 @@ var validateItem_component = normalizeComponent(
   validateItem_staticRenderFns,
   false,
   null,
-  "a517742e",
+  "379965ec",
   null
   
 )
