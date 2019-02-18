@@ -129,8 +129,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   validate: {
     hint: {
-      optional: true,
-      must: false
+      optional: '?',
+      must: ''
     }
   }
 });
@@ -1445,13 +1445,15 @@ var select_component = normalizeComponent(
       var ebType = property.ebType;
       if (ebType === 'panel' || ebType === 'group' || ebType === 'toggle') return title;
       if (this.validate.readOnly || property.ebReadOnly) return title;
+      var hintOptional = this.$config.validate.hint.optional;
+      var hintMust = this.$config.validate.hint.must;
 
-      if (this.$config.validate.hint.optional && !property.notEmpty) {
-        return "".concat(title, "(?)");
+      if (hintOptional && !property.notEmpty) {
+        return "".concat(title, "(").concat(this.$text(hintOptional), ")");
       }
 
-      if (this.$config.validate.hint.must && property.notEmpty) {
-        return "".concat(title, "(*)");
+      if (hintMust && property.notEmpty) {
+        return "".concat(title, "(").concat(this.$text(hintMust), ")");
       }
 
       return title;
@@ -1680,7 +1682,7 @@ var validateItem_component = normalizeComponent(
   validateItem_staticRenderFns,
   false,
   null,
-  "379965ec",
+  "56e699fa",
   null
   
 )

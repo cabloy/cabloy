@@ -66,13 +66,16 @@ export default {
       if (ebType === 'panel' || ebType === 'group' || ebType === 'toggle') return title;
       // only edit
       if (this.validate.readOnly || property.ebReadOnly) return title;
+      // config
+      const hintOptional = this.$config.validate.hint.optional;
+      const hintMust = this.$config.validate.hint.must;
       // check optional
-      if (this.$config.validate.hint.optional && !property.notEmpty) {
-        return `${title}(?)`;
+      if (hintOptional && !property.notEmpty) {
+        return `${title}(${this.$text(hintOptional)})`;
       }
       // check must
-      if (this.$config.validate.hint.must && property.notEmpty) {
-        return `${title}(*)`;
+      if (hintMust && property.notEmpty) {
+        return `${title}(${this.$text(hintMust)})`;
       }
       // default
       return title;
