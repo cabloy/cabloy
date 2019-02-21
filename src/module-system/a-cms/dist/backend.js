@@ -1742,7 +1742,7 @@ const glob = require3('glob');
 const bb = require3('bluebird');
 const CleanCSS = require3('clean-css');
 const shajs = require3('sha.js');
-const babel = require3('babel-core');
+const babel = require3('@babel/core');
 const UglifyJS = require3('uglify-js');
 const time = __webpack_require__(24);
 
@@ -2069,7 +2069,7 @@ $(document).ready(function() {
             }
           } else {
             if (item.indexOf('.min.js') === -1) {
-              _content = babel.transform(_content, { ast: false, babelrc: false, presets: [ 'env' ] }).code;
+              _content = babel.transform(_content, { ast: false, babelrc: false, presets: [ '@babel/preset-env' ] }).code;
               const output = UglifyJS.minify(_content);
               if (output.error) throw new Error(`${output.error.name}: ${output.error.message}`);
               _content = output.code;
