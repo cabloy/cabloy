@@ -52,7 +52,7 @@ describe('test/controller/test.test.js', () => {
         extra: {
           extra: {
             info: {
-              language: 'en',
+              language: 'en', // 'en-us',
             },
           },
         },

@@ -510,6 +510,7 @@ module.exports = app => {
             ebType: 'text',
             ebTitle: 'User Name',
             ebDescription: 'Your name',
+            notEmpty: true,
           },
           password: {
             type: 'string',
