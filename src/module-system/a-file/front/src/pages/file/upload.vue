@@ -1,20 +1,18 @@
 <template>
   <eb-page>
     <eb-navbar :title="title" eb-back-link="Back"></eb-navbar>
-    <div>
+    <eb-box ref="box" @size="onSize">
       <img ref="image" class="image">
-    </div>
-      <input ref="file" type="file" :accept="accept" @change="onFileChange" style="display: none;">
+    </eb-box>
+      <input ref="file" type="file" :accept="accept" @change="onFileChange" style="display: none;" />
       <f7-block>
-        <h2>{{fileName}}</h2>
+        <h3>{{fileName}}</h3>
       </f7-block>
-      <f7-block>
-        <f7-segmented raised tag="p">
-          <f7-button @click="onClickSelect">{{selectText}}</f7-button>
-          <f7-button v-if="cropped" @click="onClickClearCrop">{{$text('Clear Crop')}}</f7-button>
-          <eb-button v-if="fileName" active :onPerform="onPerformUpload">{{$text('Upload')}}</eb-button>
-        </f7-segmented>
-      </f7-block>
+      <f7-toolbar bottom-md>
+        <f7-button @click="onClickSelect">{{selectText}}</f7-button>
+        <f7-button v-if="cropped" @click="onClickClearCrop">{{$text('Clear Crop')}}</f7-button>
+        <eb-button v-if="fileName" active :onPerform="onPerformUpload">{{$text('Upload')}}</eb-button>
+      </f7-toolbar>
   </eb-page>
 </template>
 <script>
@@ -58,24 +56,31 @@ export default {
       else if (this.mode === 3) return 'audio/*';
     },
   },
-  mounted() {
-    if (this.mode === 1) {
-      this._cropper = new Cropper(this.$refs.image, {
-        viewMode: 3,
-        checkOrientation: false,
-        autoCrop: false,
-        movable: false,
-        rotatable: false,
-        scalable: false,
-        zoomable: false,
-        toggleDragModeOnDblclick: false,
-        crop: () => {
-          this.cropped = true;
-        },
-      });
-    }
-  },
+  mounted() {},
   methods: {
+    createCropper() {
+      if (this.mode === 1) {
+        this._cropper = new Cropper(this.$refs.image, {
+          viewMode: 3,
+          checkOrientation: false,
+          autoCrop: false,
+          movable: false,
+          rotatable: false,
+          scalable: false,
+          zoomable: false,
+          toggleDragModeOnDblclick: false,
+          crop: () => {
+            this.cropped = true;
+          },
+        });
+      }
+    },
+    onSize(size) {
+      this.$$(this.$refs.box.$el).css({
+        height: `${size.height - 40}px`,
+      });
+      this.createCropper();
+    },
     onClickSelect() {
       this.$refs.file.click();
     },
