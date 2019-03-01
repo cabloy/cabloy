@@ -4764,7 +4764,7 @@ var audio_opts = {
                 tokenContent.children = [];
             }
 
-            return '<div>\n\n<img src="https://cdn.cabloy.org/audio/cover.jpg" style="width:100px;height:100px;">\n      ';
+            return '<div>\n\n<img src="https://cdn.cabloy.com/audio/cover.jpg" style="width:100px;height:100px;">\n      ';
         } else {
             return '</div>\n';
         }
@@ -20363,20 +20363,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _zhennann_mavon_editor_dist_css_index_css__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_zhennann_mavon_editor_dist_css_index_css__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _assets_css_module_less__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3);
 /* harmony import */ var _assets_css_module_less__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_assets_css_module_less__WEBPACK_IMPORTED_MODULE_2__);
-var Vue = void 0;
-
-
+var Vue;
 
 
 
 
 function install(_Vue, cb) {
   if (Vue) return console.error('already installed.');
-
   Vue = _Vue;
-
   Vue.use(_zhennann_mavon_editor__WEBPACK_IMPORTED_MODULE_0___default.a);
-
   Vue.prototype.$meta.module.use(Vue.prototype.$meta.config.markdown.style.module, function () {
     return cb({
       routes: __webpack_require__(4).default,
@@ -20411,7 +20406,7 @@ function install(_Vue, cb) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 function load(name) {
-  return __webpack_require__(5)("./" + name + ".vue").default;
+  return __webpack_require__(5)("./".concat(name, ".vue")).default;
 }
 
 /* harmony default export */ __webpack_exports__["default"] = ([]);
@@ -20436,9 +20431,7 @@ webpackEmptyContext.id = 5;
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-
 /* harmony default export */ __webpack_exports__["default"] = (function (Vue) {
-
   return {
     state: {},
     getters: {},
