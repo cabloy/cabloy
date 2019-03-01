@@ -155,7 +155,7 @@ module.exports = appInfo => {
       buttons: [
         { title: 'Github', color: 'primary', url: 'https://github.com/zhennann/cabloy' },
         { title: 'Documentation', color: 'primary', url: 'articles/introduce.html' },
-        { title: 'Demo Online', url: 'https://admin.cabloy.org' },
+        { title: 'Demo Online', url: 'https://admin.cabloy.com' },
       ],
       features: [
         { title: 'PC = MOBILE + PAD', description: '\'Mobile First\' strategy, and perfectly adapting PC layout.' },
