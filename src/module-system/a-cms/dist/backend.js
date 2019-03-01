@@ -825,7 +825,7 @@ module.exports = app => {
     <link>${this.ctx.service.render.getUrl(site, language, 'index.html')}</link>
     <description><![CDATA[${site.base.description || site.base.subTitle}]]></description>
     <language>${language}</language>
-    <generator>https://cms.cabloy.org</generator>
+    <generator>https://cms.cabloy.com</generator>
 `;
       for (const article of list) {
         feed +=
@@ -890,7 +890,7 @@ module.exports = app => {
     <link>${this.ctx.service.render.getUrl(site, language, 'index.html')}</link>
     <description><![CDATA[${site.base.description || site.base.subTitle}]]></description>
     <language>${language}</language>
-    <generator>https://cms.cabloy.org</generator>
+    <generator>https://cms.cabloy.com</generator>
 `;
       for (const item of list) {
         feed +=
@@ -958,7 +958,7 @@ module.exports = app => {
     <link>${this.ctx.service.render.getUrl(site, language, article.url)}</link>
     <description><![CDATA[${article.description || article.summary}]]></description>
     <language>${language}</language>
-    <generator>https://cms.cabloy.org</generator>
+    <generator>https://cms.cabloy.com</generator>
 `;
       for (const item of list) {
         feed +=
