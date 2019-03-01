@@ -23,11 +23,11 @@ CabloyJS是基于EggJS和VueJS开发的一款顶级Javascript全栈业务开发�
 
 ## 文档
 
-- [官网 && 文档](https://cabloy.org)
+- [官网 && 文档](https://cabloy.com)
 
 ## 演示
 
-- PC：[https://admin.cabloy.org](https://admin.cabloy.org)
+- PC：[https://admin.cabloy.com](https://admin.cabloy.com)
 - Mobile：
 
 ![](./docs/assets/images/cabloy-demo-qrcode.png)

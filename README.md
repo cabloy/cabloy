@@ -23,11 +23,11 @@ CabloyJS: The Ultimate Javascript Full Stack Business Development Platform, base
 
 ## Docs
 
-- [Website && Documentations](https://cabloy.org)
+- [Website && Documentations](https://cabloy.com)
 
 ## Demonstration
 
-- PC：[https://admin.cabloy.org](https://admin.cabloy.org)
+- PC：[https://admin.cabloy.com](https://admin.cabloy.com)
 - Mobile：
 
 ![](./docs/assets/images/cabloy-demo-qrcode.png)
