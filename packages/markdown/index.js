@@ -114,10 +114,10 @@ const audio_opts = {
                   options.container = document.getElementById(id);
                   if(options.audio.concat){
                     for(var i=0;i<options.audio.length;i++){
-                      if(!options.audio[i].cover) options.audio[i].cover='https://cdn.cabloy.org/audio/cover.jpg';
+                      if(!options.audio[i].cover) options.audio[i].cover='https://cdn.cabloy.com/audio/cover.jpg';
                     }
                   }else{
-                    if(!options.audio.cover) options.audio.cover='https://cdn.cabloy.org/audio/cover.jpg';
+                    if(!options.audio.cover) options.audio.cover='https://cdn.cabloy.com/audio/cover.jpg';
                   }
                   // queue
                   if(!window.__aplayerLoadQueue){
