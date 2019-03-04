@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-cms",
-  "version": "1.2.23",
+  "version": "1.2.24",
   "title": "cms",
   "eggBornModule": {
     "fileVersion": 4,
@@ -57,7 +57,7 @@
     "require3": "^1.0.1",
     "extend2": "^1.0.0",
     "@zhennann/ejs": "^2.6.2",
-    "@zhennann/markdown": "^1.0.5",
+    "@zhennann/markdown": "^1.0.6",
     "@zhennann/trim-html": "^0.1.10",
     "p-map": "^1.2.0",
     "moment": "^2.22.2",
