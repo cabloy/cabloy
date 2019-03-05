@@ -1,9 +1,13 @@
 {
-  "name": "egg-born-module-cms-scenecommunity",
+  "name": "egg-born-module-cms-sitecommunity",
   "version": "1.0.0",
-  "title": "cms-scenecommunity",
+  "title": "cms:site:community",
   "eggBornModule": {
     "fileVersion": 1,
+    "cms": {
+      "name": "community",
+      "site": true
+    },
     "dependencies": {
       "a-instance": "1.0.0",
       "a-base": "1.0.0"
