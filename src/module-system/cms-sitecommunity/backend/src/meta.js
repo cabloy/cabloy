@@ -5,12 +5,14 @@ module.exports = app => {
       atoms: {
         post: {
           info: {
-            title: 'Post',
-            tableName: 'cmsPost',
+            title: 'Post2',
+            tableName: 'aCmsArticleView',
+            tableNameFull: 'aCmsArticleViewFull',
+            tableNameSearch: 'aCmsArticleViewSearch',
+            tableNameTag: 'aCmsArticleViewTag',
+            flow: 0,
           },
           actions: {
-          },
-          flags: {
           },
           validator: 'post',
           search: {

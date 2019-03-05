@@ -5,31 +5,67 @@ module.exports = app => {
     type: 'object',
     meta: {
       custom: {
-        // component: 'postItem',
+        component: 'postItem',
       },
     },
     properties: {
       atomName: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Name',
+        ebTitle: 'Atom Name',
         notEmpty: true,
       },
-      description: {
+      language: {
+        type: 'string',
+        ebType: 'select',
+        ebTitle: 'Language',
+        ebMultiple: false,
+        ebOptionsBlankAuto: true,
+        notEmpty: true,
+      },
+      categoryId: {
+        type: 'number',
+        ebType: 'text',
+        ebTitle: 'Category',
+        notEmpty: true,
+      },
+      tags: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Description',
+        ebTitle: 'Tags',
+      },
+      content: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Content',
       },
     },
   };
   // post search
   schemas.postSearch = {
     type: 'object',
+    meta: {
+      custom: {
+        component: 'postSearch',
+      },
+    },
     properties: {
-      description: {
+      language: {
+        type: 'string',
+        ebType: 'select',
+        ebTitle: 'Language',
+        ebMultiple: false,
+        ebOptionsBlankAuto: true,
+      },
+      categoryId: {
+        type: 'number',
+        ebType: 'text',
+        ebTitle: 'Category',
+      },
+      content: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Description',
+        ebTitle: 'Content',
       },
     },
   };
