@@ -79,7 +79,7 @@ module.exports = app => {
       if (item.editMode === 1) {
         html = item.content ? md.render(item.content) : '';
       } else {
-        html = item.content;
+        html = item.content || '';
       }
       // summary
       const summary = trimHtml(html, this.ctx.config.article.trim);
