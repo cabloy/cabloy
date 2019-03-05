@@ -2,9 +2,12 @@ const require3 = require('require3');
 const mparse = require3('egg-born-mparse').default;
 
 module.exports = app => {
+  // article module
   const articleModuleInfo = mparse.parseInfo('a-cms');
   const articleAtomClassName = 'article';
-  const cmsSite = 'community';
+  // this module
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const siteModuleName = moduleInfo.relativeName;
   class Post extends app.Service {
 
     async create({ atomClass, key, item, user }) {
@@ -13,7 +16,7 @@ module.exports = app => {
         method: 'post',
         url: `/${articleModuleInfo.url}/${articleAtomClassName}/create`,
         body: {
-          cmsSite,
+          siteModuleName,
           atomClass,
           key,
           item,
@@ -30,7 +33,7 @@ module.exports = app => {
         method: 'post',
         url: `/${articleModuleInfo.url}/${articleAtomClassName}/read`,
         body: {
-          cmsSite,
+          siteModuleName,
           atomClass,
           key,
           item,
@@ -45,7 +48,7 @@ module.exports = app => {
         method: 'post',
         url: `/${articleModuleInfo.url}/${articleAtomClassName}/select`,
         body: {
-          cmsSite,
+          siteModuleName,
           atomClass,
           options,
           items,
@@ -62,7 +65,7 @@ module.exports = app => {
         method: 'post',
         url: `/${articleModuleInfo.url}/${articleAtomClassName}/write`,
         body: {
-          cmsSite,
+          siteModuleName,
           atomClass,
           key,
           item,
@@ -78,7 +81,7 @@ module.exports = app => {
         method: 'post',
         url: `/${articleModuleInfo.url}/${articleAtomClassName}/delete`,
         body: {
-          cmsSite,
+          siteModuleName,
           atomClass,
           key,
           user,
@@ -92,7 +95,7 @@ module.exports = app => {
         method: 'post',
         url: `/${articleModuleInfo.url}/${articleAtomClassName}/action`,
         body: {
-          cmsSite,
+          siteModuleName,
           action,
           atomClass,
           key,
@@ -107,7 +110,7 @@ module.exports = app => {
         method: 'post',
         url: `/${articleModuleInfo.url}/${articleAtomClassName}/enable`,
         body: {
-          cmsSite,
+          siteModuleName,
           atomClass,
           key,
           atom,
