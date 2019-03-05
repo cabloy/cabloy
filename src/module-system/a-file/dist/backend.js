@@ -527,11 +527,13 @@ module.exports = app => {
         this.ctx.redirect(forwardUrl);
       } else {
         // redirect nginx
-        this.ctx.set('content-type', file.mime);
+        // this.ctx.set('content-type', file.mime);
         this.ctx.set('content-transfer-encoding', file.encoding);
         this.ctx.set('content-disposition', `attachment; filename*=UTF-8''${encodeURIComponent(file.realName)}${file.fileExt}`);
         this.ctx.set('X-Accel-Redirect', forwardUrl);
-        this.ctx.success();
+        // this.ctx.success();
+        this.ctx.response.status = 200;
+        this.ctx.response.type = file.mime;
       }
 
     }
