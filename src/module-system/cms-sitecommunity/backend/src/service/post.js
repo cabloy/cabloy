@@ -2,12 +2,12 @@ const require3 = require('require3');
 const mparse = require3('egg-born-mparse').default;
 
 module.exports = app => {
+  // this module
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   // article module
   const articleModuleInfo = mparse.parseInfo('a-cms');
   const articleAtomClassName = 'article';
-  // this module
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  const siteModuleName = moduleInfo.relativeName;
+
   class Post extends app.Service {
 
     async create({ atomClass, key, item, user }) {
@@ -16,7 +16,6 @@ module.exports = app => {
         method: 'post',
         url: `/${articleModuleInfo.url}/${articleAtomClassName}/create`,
         body: {
-          siteModuleName,
           atomClass,
           key,
           item,
@@ -33,7 +32,6 @@ module.exports = app => {
         method: 'post',
         url: `/${articleModuleInfo.url}/${articleAtomClassName}/read`,
         body: {
-          siteModuleName,
           atomClass,
           key,
           item,
@@ -48,7 +46,6 @@ module.exports = app => {
         method: 'post',
         url: `/${articleModuleInfo.url}/${articleAtomClassName}/select`,
         body: {
-          siteModuleName,
           atomClass,
           options,
           items,
@@ -65,7 +62,6 @@ module.exports = app => {
         method: 'post',
         url: `/${articleModuleInfo.url}/${articleAtomClassName}/write`,
         body: {
-          siteModuleName,
           atomClass,
           key,
           item,
@@ -81,7 +77,6 @@ module.exports = app => {
         method: 'post',
         url: `/${articleModuleInfo.url}/${articleAtomClassName}/delete`,
         body: {
-          siteModuleName,
           atomClass,
           key,
           user,
@@ -95,7 +90,6 @@ module.exports = app => {
         method: 'post',
         url: `/${articleModuleInfo.url}/${articleAtomClassName}/action`,
         body: {
-          siteModuleName,
           action,
           atomClass,
           key,
@@ -110,7 +104,6 @@ module.exports = app => {
         method: 'post',
         url: `/${articleModuleInfo.url}/${articleAtomClassName}/enable`,
         body: {
-          siteModuleName,
           atomClass,
           key,
           atom,
