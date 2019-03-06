@@ -8,7 +8,7 @@ module.exports = app => {
   class Article extends app.Service {
 
     async create({ atomClass, key, item, user }) {
-      const site = await this.ctx.service.render.combineSiteBase();
+      const site = await this.ctx.service.render.combineSiteBase({ atomClass });
       const editMode = site.edit.mode;
       // add article
       const params = {
@@ -115,7 +115,7 @@ module.exports = app => {
       // }
 
       // render
-      await this._renderArticle({ key, inner: atomOld.atomFlag !== 2 });
+      await this._renderArticle({ atomClass, key, inner: atomOld.atomFlag !== 2 });
     }
 
     async delete({ atomClass, key, user }) {
@@ -140,7 +140,7 @@ module.exports = app => {
       // }
 
       // delete article
-      await this._deleteArticle({ key, article: atomOld, inner: atomOld.atomFlag !== 2 });
+      await this._deleteArticle({ atomClass, key, article: atomOld, inner: atomOld.atomFlag !== 2 });
     }
 
     async action({ action, atomClass, key, user }) {
@@ -167,7 +167,7 @@ module.exports = app => {
         }
 
         // render
-        await this._renderArticle({ key, inner: false });
+        await this._renderArticle({ atomClass, key, inner: false });
       }
     }
 
@@ -186,26 +186,26 @@ module.exports = app => {
       }
     }
 
-    async _deleteArticle({ key, article, inner }) {
+    async _deleteArticle({ atomClass, key, article, inner }) {
       await this.ctx.dbMeta.next(async () => {
         // queue not async
         await this.ctx.app.meta.queue.push({
           subdomain: this.ctx.subdomain,
           module: moduleInfo.relativeName,
           queueName: 'deleteArticle',
-          data: { key, article, inner },
+          data: { atomClass, key, article, inner },
         });
       });
     }
 
-    async _renderArticle({ key, inner }) {
+    async _renderArticle({ atomClass, key, inner }) {
       await this.ctx.dbMeta.next(async () => {
         // queue not async
         await this.ctx.app.meta.queue.push({
           subdomain: this.ctx.subdomain,
           module: moduleInfo.relativeName,
           queueName: 'renderArticle',
-          data: { key, inner },
+          data: { atomClass, key, inner },
         });
       });
     }

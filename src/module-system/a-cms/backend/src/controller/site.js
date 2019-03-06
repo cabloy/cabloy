@@ -6,12 +6,14 @@ module.exports = app => {
   class SiteController extends app.Controller {
 
     async getConfigSiteBase() {
-      const data = await this.ctx.service.site.getConfigSiteBase();
+      const atomClass = this.ctx.request.body.atomClass;
+      const data = await this.ctx.service.site.getConfigSiteBase({ atomClass });
       this.ctx.success({ data });
     }
 
     async getConfigSite() {
-      const data = await this.ctx.service.site.getConfigSite();
+      const atomClass = this.ctx.request.body.atomClass;
+      const data = await this.ctx.service.site.getConfigSite({ atomClass });
       this.ctx.success({ data });
     }
 
@@ -30,7 +32,9 @@ module.exports = app => {
     }
 
     async getConfigLanguage() {
+      const atomClass = this.ctx.request.body.atomClass;
       const data = await this.ctx.service.site.getConfigLanguage({
+        atomClass,
         language: this.ctx.request.body.language,
       });
       this.ctx.success({ data });
@@ -45,29 +49,36 @@ module.exports = app => {
     }
 
     async buildLanguage() {
+      const atomClass = this.ctx.request.body.atomClass;
+      const language = this.ctx.request.body.language;
       // queue
       const res = await this.ctx.app.meta.queue.pushAsync({
         subdomain: this.ctx.subdomain,
         module: moduleInfo.relativeName,
         queueName: 'buildLanguage',
-        data: { language: this.ctx.request.body.language },
+        data: {
+          atomClass,
+          language,
+        },
       });
       this.ctx.success(res);
     }
 
     async buildLanguages() {
+      const atomClass = this.ctx.request.body.atomClass;
       // queue
       const res = await this.ctx.app.meta.queue.pushAsync({
         subdomain: this.ctx.subdomain,
         module: moduleInfo.relativeName,
         queueName: 'buildLanguages',
-        data: null,
+        data: { atomClass },
       });
       this.ctx.success(res);
     }
 
     async getLanguages() {
-      const res = await this.ctx.service.site.getLanguages();
+      const atomClass = this.ctx.request.body.atomClass;
+      const res = await this.ctx.service.site.getLanguages({ atomClass });
       this.ctx.success(res);
     }
 

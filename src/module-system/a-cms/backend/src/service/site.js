@@ -4,27 +4,20 @@ const fse = require3('fs-extra');
 const glob = require3('glob');
 const bb = require3('bluebird');
 const extend = require3('extend2');
+const Build = require('../common/build.js');
 
 module.exports = app => {
 
   class Site extends app.Service {
 
-    async getConfigSiteBase() {
-      // site
-      const site = extend(true, {}, this.ctx.config.site);
-      // plugins
-      site.plugins = {};
-      for (const relativeName in this.app.meta.modules) {
-        const module = this.app.meta.modules[relativeName];
-        if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin) {
-          site.plugins[relativeName] = this.ctx.config.module(relativeName).plugin;
-        }
-      }
-      return site;
+    async getConfigSiteBase({ atomClass }) {
+      const build = Build.create(this.ctx, atomClass);
+      return await build.getConfigSiteBase();
     }
 
-    async getConfigSite() {
-      return await this.ctx.meta.status.get('config-site');
+    async getConfigSite({ atomClass }) {
+      const build = Build.create(this.ctx, atomClass);
+      return await build.getConfigSite();
     }
 
     async setConfigSite({ data }) {
@@ -37,8 +30,9 @@ module.exports = app => {
       return site;
     }
 
-    async getConfigLanguage({ language }) {
-      return await this.ctx.meta.status.get(`config-${language}`);
+    async getConfigLanguage({ atomClass, language }) {
+      const build = Build.create(this.ctx, atomClass);
+      return await build.getConfigLanguage({ language });
     }
 
     async setConfigLanguage({ language, data }) {
@@ -46,16 +40,9 @@ module.exports = app => {
       await this.ctx.meta.status.set(`config-${language}`, data);
     }
 
-    async getLanguages() {
-      const siteBase = await this.ctx.service.render.combineSiteBase();
-      const languages = [];
-      for (const item of siteBase.language.items.split(',')) {
-        languages.push({
-          title: this.ctx.text(item),
-          value: item,
-        });
-      }
-      return languages;
+    async getLanguages({ atomClass }) {
+      const build = Build.create(this.ctx, atomClass);
+      return await build.getLanguages();
     }
 
     async getUrl({ language, path }) {
@@ -71,188 +58,15 @@ module.exports = app => {
       }
     }
 
-    async buildLanguages() {
-      // time start
-      const timeStart = new Date();
-      // site
-      const site = await this.ctx.service.render.combineSiteBase();
-      for (const language of site.language.items.split(',')) {
-        await this.buildLanguage({ language });
-      }
-      // time end
-      const timeEnd = new Date();
-      const time = (timeEnd.valueOf() - timeStart.valueOf()) / 1000; // second
-      return {
-        time,
-      };
+    // todo:
+    async buildLanguages({ atomClass }) {
+      const build = Build.create(this.ctx, atomClass);
+      return await build.buildLanguages();
     }
 
-    async buildLanguage({ language }) {
-      // time start
-      const timeStart = new Date();
-
-      // site
-      const site = await this.ctx.service.render.getSite({ language });
-
-      // / clear
-
-      // intermediate
-      const pathIntermediate = await this.ctx.service.render.getPathIntermediate(language);
-      await fse.remove(pathIntermediate);
-
-      // dist
-      const pathDist = await this.ctx.service.render.getPathDist(site, language);
-      //   solution: 1
-      // const distPaths = [ 'articles', 'asserts', 'plugins', 'static', 'index.html', 'robots.txt', 'sitemap.xml', 'sitemapindex.xml' ];
-      // for (const item of distPaths) {
-      //   await fse.remove(path.join(pathDist, item));
-      // }
-      //   solution: 2
-      const distFiles = await bb.fromCallback(cb => {
-        glob(`${pathDist}/\*`, cb);
-      });
-      const languages = site.language.items.split(',');
-      for (const item of distFiles) {
-        if (languages.indexOf(path.basename(item)) === -1) {
-          await fse.remove(item);
-        }
-      }
-
-      // / copy files to intermediate
-      // /  plugins<theme<custom
-
-      // plugins
-      for (const relativeName in this.app.meta.modules) {
-        const module = this.app.meta.modules[relativeName];
-        if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin) {
-          const pluginPath = path.join(module.root, 'backend/cms/plugin');
-          const pluginFiles = await bb.fromCallback(cb => {
-            glob(`${pluginPath}/\*`, cb);
-          });
-          for (const item of pluginFiles) {
-            await fse.copy(item, path.join(pathIntermediate, 'plugins', relativeName, path.basename(item)));
-          }
-        }
-      }
-
-      // theme
-      if (!site.themes[language]) this.ctx.throw(1002);
-      await this.copyThemes(pathIntermediate, site.themes[language]);
-
-      // custom
-      const customPath = await this.ctx.service.render.getPathCustom(language);
-      const customFiles = await bb.fromCallback(cb => {
-        glob(`${customPath}/\*`, cb);
-      });
-      for (const item of customFiles) {
-        await fse.copy(item, path.join(pathIntermediate, path.basename(item)));
-      }
-
-      // custom dist
-      const customDistFiles = await bb.fromCallback(cb => {
-        glob(`${customPath}/dist/\*`, cb);
-      });
-      for (const item of customDistFiles) {
-        await fse.copy(item, path.join(pathDist, path.basename(item)));
-      }
-
-      // / copy files to dist (ignore .ejs)
-      // /  assets plugins/[plugin]/assets
-      for (const dir of [ 'assets', 'plugins' ]) {
-        if (dir === 'assets') {
-          const _filename = path.join(pathIntermediate, 'assets');
-          const exists = await fse.pathExists(_filename);
-          if (exists) {
-            await fse.copy(_filename, path.join(pathDist, 'assets'));
-          }
-        } else {
-          const pluginsFiles = await bb.fromCallback(cb => {
-            glob(`${pathIntermediate}/plugins/\*`, cb);
-          });
-          for (const item of pluginsFiles) {
-            const _filename = `${item}/assets`;
-            const exists = await fse.pathExists(_filename);
-            if (exists) {
-              await fse.copy(_filename, path.join(pathDist, 'plugins', path.basename(item), 'assets'));
-            }
-          }
-        }
-        const ejsFiles = await bb.fromCallback(cb => {
-          glob(`${pathDist}/${dir}/\*\*/\*.ejs`, cb);
-        });
-        for (const item of ejsFiles) {
-          await fse.remove(item);
-        }
-      }
-
-      // / robots.txt
-      await this.createRobots({ site });
-
-      // / sitemapIndex
-      await this.createSitemapIndex({ site });
-
-      // render all files
-      await this.ctx.service.render.renderAllFiles({ language });
-
-      // time end
-      const timeEnd = new Date();
-      const time = (timeEnd.valueOf() - timeStart.valueOf()) / 1000; // second
-      return {
-        time,
-      };
-    }
-
-    // theme extend
-    async copyThemes(pathIntermediate, themeModuleName) {
-      await this._copyThemes(pathIntermediate, themeModuleName);
-    }
-
-    async _copyThemes(pathIntermediate, themeModuleName) {
-      // module
-      const module = this.app.meta.modules[themeModuleName];
-      if (!module) this.ctx.throw(1003);
-      // extend
-      const moduleExtend = module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.extend;
-      if (moduleExtend) {
-        await this._copyThemes(pathIntermediate, moduleExtend);
-      }
-      // current
-      const themePath = path.join(module.root, 'backend/cms/theme');
-      const themeFiles = await bb.fromCallback(cb => {
-        glob(`${themePath}/\*`, cb);
-      });
-      for (const item of themeFiles) {
-        await fse.copy(item, path.join(pathIntermediate, path.basename(item)));
-      }
-    }
-
-    async createRobots({ site }) {
-      // content
-      const urlRawRoot = this.ctx.service.render.getUrlRawRoot(site);
-      const content = `Sitemap: ${urlRawRoot}/sitemapindex.xml`;
-      // write
-      const pathRawDist = await this.ctx.service.render.getPathRawDist(site);
-      await fse.outputFile(`${pathRawDist}/robots.txt`, content);
-    }
-
-    async createSitemapIndex({ site }) {
-      // content
-      const urlRawRoot = this.ctx.service.render.getUrlRawRoot(site);
-      let items = '';
-      for (const language of site.language.items.split(',')) {
-        items +=
-`  <sitemap>
-    <loc>${urlRawRoot}${language === site.language.default ? '' : '/' + language}/sitemap.xml</loc>
-  </sitemap>
-`;
-      }
-      const content =
-`<?xml version="1.0" encoding="UTF-8"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${items}</sitemapindex>`;
-      // write
-      const pathRawDist = await this.ctx.service.render.getPathRawDist(site);
-      await fse.outputFile(`${pathRawDist}/sitemapindex.xml`, content);
+    async buildLanguage({ atomClass, language }) {
+      const build = Build.create(this.ctx, atomClass);
+      return await build.buildLanguage({ language });
     }
 
   }
