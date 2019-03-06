@@ -61,9 +61,34 @@ class Build {
     return await this.ctx.meta.status.get(name);
   }
 
+  async setConfigSite({ data }) {
+    const name = this.default ? 'config-site' : `config-site:${this.atomClass.module}`;
+    await this.ctx.meta.status.set(name, data);
+  }
+
   async getConfigLanguage({ language }) {
     const name = this.default ? `config-${language}` : `config-${language}:${this.atomClass.module}`;
     return await this.ctx.meta.status.get(name);
+  }
+
+  async setConfigLanguage({ language, data }) {
+    const name = this.default ? `config-${language}` : `config-${language}:${this.atomClass.module}`;
+    this._adjustConfigLanguange(data);
+    await this.ctx.meta.status.set(name, data);
+  }
+
+  async getConfigLanguagePreview({ language }) {
+    const site = await this.getSite({ language });
+    this._adjustConfigLanguange(site);
+    return site;
+  }
+
+  _adjustConfigLanguange(data) {
+    if (data) {
+      data.host = undefined;
+      data.language = undefined;
+      data.themes = undefined;
+    }
   }
 
   async getLanguages() {

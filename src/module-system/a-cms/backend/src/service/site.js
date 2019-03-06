@@ -1,9 +1,3 @@
-const path = require('path');
-const require3 = require('require3');
-const fse = require3('fs-extra');
-const glob = require3('glob');
-const bb = require3('bluebird');
-const extend = require3('extend2');
 const Build = require('../common/build.js');
 
 module.exports = app => {
@@ -20,14 +14,14 @@ module.exports = app => {
       return await build.getConfigSite();
     }
 
-    async setConfigSite({ data }) {
-      await this.ctx.meta.status.set('config-site', data);
+    async setConfigSite({ atomClass, data }) {
+      const build = Build.create(this.ctx, atomClass);
+      await build.setConfigSite({ data });
     }
 
-    async getConfigLanguagePreview({ language }) {
-      const site = await this.ctx.service.render.getSite({ language });
-      this._adjustConfigLanguange(site);
-      return site;
+    async getConfigLanguagePreview({ atomClass, language }) {
+      const build = Build.create(this.ctx, atomClass);
+      return await build.getConfigLanguagePreview({ language });
     }
 
     async getConfigLanguage({ atomClass, language }) {
@@ -35,9 +29,9 @@ module.exports = app => {
       return await build.getConfigLanguage({ language });
     }
 
-    async setConfigLanguage({ language, data }) {
-      this._adjustConfigLanguange(data);
-      await this.ctx.meta.status.set(`config-${language}`, data);
+    async setConfigLanguage({ atomClass, language, data }) {
+      const build = Build.create(this.ctx, atomClass);
+      await build.setConfigLanguage({ language, data });
     }
 
     async getLanguages({ atomClass }) {
@@ -45,20 +39,12 @@ module.exports = app => {
       return await build.getLanguages();
     }
 
-    async getUrl({ language, path }) {
-      const site = await this.ctx.service.render.getSite({ language });
-      return this.ctx.service.render.getUrl(site, language, path);
+    async getUrl({ atomClass, language, path }) {
+      const build = Build.create(this.ctx, atomClass);
+      const site = await build.getSite({ language });
+      return build.getUrl(site, language, path);
     }
 
-    _adjustConfigLanguange(data) {
-      if (data) {
-        delete data.host;
-        delete data.language;
-        delete data.themes;
-      }
-    }
-
-    // todo:
     async buildLanguages({ atomClass }) {
       const build = Build.create(this.ctx, atomClass);
       return await build.buildLanguages();

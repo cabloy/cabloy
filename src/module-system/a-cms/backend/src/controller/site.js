@@ -18,14 +18,18 @@ module.exports = app => {
     }
 
     async setConfigSite() {
+      const atomClass = this.ctx.request.body.atomClass;
       const res = await this.ctx.service.site.setConfigSite({
+        atomClass,
         data: this.ctx.request.body.data,
       });
       this.ctx.success(res);
     }
 
     async getConfigLanguagePreview() {
+      const atomClass = this.ctx.request.body.atomClass;
       const data = await this.ctx.service.site.getConfigLanguagePreview({
+        atomClass,
         language: this.ctx.request.body.language,
       });
       this.ctx.success({ data });
@@ -41,7 +45,9 @@ module.exports = app => {
     }
 
     async setConfigLanguage() {
+      const atomClass = this.ctx.request.body.atomClass;
       const res = await this.ctx.service.site.setConfigLanguage({
+        atomClass,
         language: this.ctx.request.body.language,
         data: this.ctx.request.body.data,
       });
@@ -83,7 +89,9 @@ module.exports = app => {
     }
 
     async getUrl() {
+      const atomClass = this.ctx.request.body.atomClass;
       const res = await this.ctx.service.site.getUrl({
+        atomClass,
         language: this.ctx.request.body.language,
         path: this.ctx.request.body.path,
       });
