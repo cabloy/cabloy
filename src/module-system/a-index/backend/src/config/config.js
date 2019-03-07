@@ -46,7 +46,7 @@ module.exports = appInfo => {
       aCmsArticle: 'createdAt,updatedAt,atomId,categoryId,sticky,sorting',
       aCmsArticleTag: 'createdAt,updatedAt,atomId,itemId',
       aCmsArticleTagRef: 'createdAt,updatedAt,atomId,itemId,tagId',
-      aCmsCategory: 'createdAt,updatedAt,categoryName,sorting,categoryIdParent',
+      aCmsCategory: 'createdAt,updatedAt,categoryName,sorting,categoryIdParent,atomClassId',
       aCmsContent: 'createdAt,updatedAt,atomId,itemId,content:fulltext',
       aCmsTag: 'createdAt,updatedAt,language+tagName',
     },
