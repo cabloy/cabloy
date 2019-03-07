@@ -249,20 +249,17 @@ module.exports = app => {
 
     async init(options) {
       if (options.version === 1) {
-        // create roles: cms-writer cms-publisher
+        // create roles: cms-writer cms-publisher to template
         const roles = [ 'cms-writer', 'cms-publisher' ];
-        const roleAuthenticated = await this.ctx.meta.role.getSystemRole({ roleName: 'authenticated' });
-        const userRoot = await this.ctx.meta.user.get({ userName: 'root' });
+        const roleTemplate = await this.ctx.meta.role.getSystemRole({ roleName: 'template' });
+        const roleSuperuser = await this.ctx.meta.role.getSystemRole({ roleName: 'superuser' });
         for (const roleName of roles) {
           const roleId = await this.ctx.meta.role.add({
             roleName,
-            roleIdParent: roleAuthenticated.id,
+            roleIdParent: roleTemplate.id,
           });
-          // add user to role
-          await this.ctx.meta.role.addUserRole({
-            userId: userRoot.id,
-            roleId,
-          });
+          // role:superuser include cms-writer cms-publisher
+          await this.ctx.meta.role.addRoleInc({ roleId: roleSuperuser.id, roleIdInc: roleId });
         }
         // build roles
         await this.ctx.meta.role.build();
@@ -272,11 +269,11 @@ module.exports = app => {
           { roleName: 'cms-writer', action: 'create' },
           { roleName: 'cms-writer', action: 'write', scopeNames: 0 },
           { roleName: 'cms-writer', action: 'delete', scopeNames: 0 },
-          { roleName: 'cms-writer', action: 'read', scopeNames: 'cms-writer' },
-          { roleName: 'cms-publisher', action: 'read', scopeNames: 'cms-writer' },
-          { roleName: 'cms-publisher', action: 'write', scopeNames: 'cms-writer' },
-          { roleName: 'cms-publisher', action: 'publish', scopeNames: 'cms-writer' },
-          { roleName: 'root', action: 'read', scopeNames: 'cms-writer' },
+          { roleName: 'cms-writer', action: 'read', scopeNames: 'authenticated' },
+          { roleName: 'cms-publisher', action: 'read', scopeNames: 'authenticated' },
+          { roleName: 'cms-publisher', action: 'write', scopeNames: 'authenticated' },
+          { roleName: 'cms-publisher', action: 'publish', scopeNames: 'authenticated' },
+          { roleName: 'root', action: 'read', scopeNames: 'authenticated' },
         ];
         const module = this.ctx.app.meta.modules[this.ctx.module.info.relativeName];
         const atomClass = await this.ctx.meta.atomClass.get({ atomClassName: 'article' });
