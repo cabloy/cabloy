@@ -4,6 +4,7 @@ const VersionUpdate3Fn = require('./version/update3.js');
 const VersionUpdate4Fn = require('./version/update4.js');
 const VersionInit2Fn = require('./version/init2.js');
 const VersionInit4Fn = require('./version/init4.js');
+const VersionInit5Fn = require('./version/init5.js');
 
 module.exports = app => {
 
@@ -40,6 +41,10 @@ module.exports = app => {
       if (options.version === 4) {
         const versionInit4 = new (VersionInit4Fn(this.ctx))();
         await versionInit4.run(options);
+      }
+      if (options.version === 5) {
+        const versionInit5 = new (VersionInit5Fn(this.ctx))();
+        await versionInit5.run(options);
       }
     }
 
