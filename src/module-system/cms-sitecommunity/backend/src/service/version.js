@@ -9,31 +9,31 @@ module.exports = app => {
 
     async init(options) {
       if (options.version === 1) {
-        // create roles: cms-community-user
-        const roles = [ 'cms-community-user' ];
-        const roleAuthenticated = await this.ctx.meta.role.getSystemRole({ roleName: 'authenticated' });
-        const userRoot = await this.ctx.meta.user.get({ userName: 'root' });
+        // create roles: cms-community to template
+        const roles = [ 'cms-community' ];
+        const roleTemplate = await this.ctx.meta.role.getSystemRole({ roleName: 'template' });
+        const roleSuperuser = await this.ctx.meta.role.getSystemRole({ roleName: 'superuser' });
+        const roleActivated = await this.ctx.meta.role.getSystemRole({ roleName: 'activated' });
         for (const roleName of roles) {
           const roleId = await this.ctx.meta.role.add({
             roleName,
-            roleIdParent: roleAuthenticated.id,
+            roleIdParent: roleTemplate.id,
           });
-          // add user to role
-          await this.ctx.meta.role.addUserRole({
-            userId: userRoot.id,
-            roleId,
-          });
+          // role:superuser include cms-writer cms-publisher
+          await this.ctx.meta.role.addRoleInc({ roleId: roleSuperuser.id, roleIdInc: roleId });
+          // role:activated include cms-community
+          await this.ctx.meta.role.addRoleInc({ roleId: roleActivated.id, roleIdInc: roleId });
         }
         // build roles
         await this.ctx.meta.role.build();
 
         // add role rights
         const roleRights = [
-          { roleName: 'cms-community-user', action: 'create' },
-          { roleName: 'cms-community-user', action: 'write', scopeNames: 0 },
-          { roleName: 'cms-community-user', action: 'delete', scopeNames: 0 },
-          { roleName: 'cms-community-user', action: 'read', scopeNames: 'cms-community-user' },
-          { roleName: 'root', action: 'read', scopeNames: 'cms-community-user' },
+          { roleName: 'cms-community', action: 'create' },
+          { roleName: 'cms-community', action: 'write', scopeNames: 0 },
+          { roleName: 'cms-community', action: 'delete', scopeNames: 0 },
+          { roleName: 'cms-community', action: 'read', scopeNames: 'authenticated' },
+          { roleName: 'root', action: 'read', scopeNames: 'authenticated' },
         ];
         const module = this.ctx.app.meta.modules[this.ctx.module.info.relativeName];
         const atomClass = await this.ctx.meta.atomClass.get({ atomClassName: 'post' });
