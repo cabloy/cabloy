@@ -76,7 +76,8 @@ module.exports = appInfo => {
   // checkUserName
   config.checkUserName = true;
   // signupRoleName
-  config.signupRoleName = 'registered';
+  //  default is 'activated', if need activating by mobile/email, then add to 'registered' first
+  config.signupRoleName = 'activated';
 
   // public dir
   config.publicDir = '';
