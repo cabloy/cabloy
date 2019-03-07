@@ -11,26 +11,15 @@ const CleanCSS = require3('clean-css');
 const shajs = require3('sha.js');
 const babel = require3('@babel/core');
 const UglifyJS = require3('uglify-js');
-const time = require('../common/time.js');
+const time = require('./time.js');
+const utils = require('./utils.js');
 
 class Build {
 
   constructor(ctx, atomClass) {
     this.ctx = ctx;
     this.app = ctx.app;
-    if (atomClass) {
-      this.atomClass = {
-        module: atomClass.module,
-        atomClassName: atomClass.atomClassName,
-        atomClassIdParent: atomClass.atomClassIdParent || 0,
-      };
-    } else {
-      this.atomClass = {
-        module: 'a-cms',
-        atomClassName: 'article',
-        atomClassIdParent: 0,
-      };
-    }
+    this.atomClass = utils.atomClass(atomClass);
     this.default = this.atomClass.module === 'a-cms';
   }
 

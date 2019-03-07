@@ -1,3 +1,5 @@
+const utils = require('../common/utils.js');
+
 module.exports = app => {
 
   class Category extends app.Service {
@@ -17,10 +19,17 @@ module.exports = app => {
       });
     }
 
-    async children({ language, categoryId, hidden, flag }) {
+    async children({ atomClass, language, categoryId, hidden, flag }) {
+      //
       const where = {
         categoryIdParent: categoryId || 0,
       };
+      // atomClassId
+      if (where.categoryIdParent === 0) {
+        const _atomClass = await utils.atomClass2(this.ctx, atomClass);
+        where.atomClassId = _atomClass.id;
+      }
+      //
       if (language !== undefined) where.language = language;
       if (hidden !== undefined) where.hidden = hidden;
       if (flag !== undefined) where.flag = flag;
@@ -88,16 +97,16 @@ module.exports = app => {
       });
     }
 
-    async tree({ language, categoryId, hidden, flag }) {
-      return await this._treeChildren({ language, categoryId, hidden, flag });
+    async tree({ atomClass, language, categoryId, hidden, flag }) {
+      return await this._treeChildren({ atomClass, language, categoryId, hidden, flag });
     }
 
-    async _treeChildren({ language, categoryId, hidden, flag }) {
-      const list = await this.children({ language, categoryId, hidden, flag });
+    async _treeChildren({ atomClass, language, categoryId, hidden, flag }) {
+      const list = await this.children({ atomClass, language, categoryId, hidden, flag });
       for (const item of list) {
         if (item.catalog) {
           // only categoryId
-          item.children = await this._treeChildren({ categoryId: item.id });
+          item.children = await this._treeChildren({ atomClass, categoryId: item.id });
         }
       }
       return list;

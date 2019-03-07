@@ -1,3 +1,5 @@
+const utils = require('../common/utils.js');
+
 module.exports = app => {
 
   class Version extends app.Service {
@@ -245,6 +247,15 @@ module.exports = app => {
         await this.ctx.model.query(sql);
       }
 
+      if (options.version === 5) {
+        // alter table: aCmsCategory
+        const sql = `
+        ALTER TABLE aCmsCategory
+          ADD COLUMN atomClassId int(11) DEFAULT '0'
+                  `;
+        await this.ctx.model.query(sql);
+      }
+
     }
 
     async init(options) {
@@ -298,6 +309,15 @@ module.exports = app => {
           });
         }
 
+      }
+
+      if (options.version === 5) {
+        // update aCmsCategory's atomClassId
+        const atomClass = await utils.atomClass2(this.ctx, null);
+        await this.ctx.model.query(
+          `update aCmsCategory set atomClassId=?
+             where iid=?`,
+          [ atomClass.id, this.ctx.instance.id ]);
       }
     }
 

@@ -18,7 +18,9 @@ module.exports = app => {
     }
 
     async tree() {
+      const atomClass = this.ctx.request.body.atomClass;
       const list = await this.ctx.service.category.tree({
+        atomClass,
         language: this.ctx.request.body.language,
         categoryId: this.ctx.request.body.categoryId,
         hidden: this.ctx.request.body.hidden,

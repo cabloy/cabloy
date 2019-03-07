@@ -1,5 +1,6 @@
 const require3 = require('require3');
 const extend = require3('extend2');
+const utils = require('../common/utils.js');
 
 module.exports = app => {
 
@@ -42,25 +43,26 @@ module.exports = app => {
 
     // list
     async list() {
+      // atomClass
+      const atomClass = utils.atomClass(this.ctx.request.body.atomClass);
       // options
       const options = this.ctx.request.body.options;
+      // select
       // filter drafts
       options.where = extend(true, options.where, {
-        'a.atomEnabled': 1,
-        'a.atomFlag': 2,
+        'a.atomEnabled': 1, // normal mode
+        'a.atomFlag': 2, // published
       });
       // select
       const res = await this.ctx.performAction({
         method: 'post',
         url: '/a/base/atom/select',
         body: {
-          atomClass: {
-            module: 'a-cms',
-            atomClassName: 'article',
-          },
+          atomClass,
           options,
         },
       });
+      // ok
       this.ctx.success(res);
     }
 
