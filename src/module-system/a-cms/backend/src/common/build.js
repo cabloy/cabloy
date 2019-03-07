@@ -152,7 +152,6 @@ class Build {
   // site<plugin<theme<site(db)<language(db)
   async getSite({ language }) {
     // base
-    // todo:
     const siteBase = await this.combineSiteBase();
     // site
     const site = await this.combineSite({ siteBase, language });
