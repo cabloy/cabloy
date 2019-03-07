@@ -10,7 +10,8 @@
     },
     "dependencies": {
       "a-instance": "1.0.0",
-      "a-base": "1.0.0"
+      "a-base": "1.0.0",
+      "a-cms": '1.0.0'
     }
   },
   "description": "",
