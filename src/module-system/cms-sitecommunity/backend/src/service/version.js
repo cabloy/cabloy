@@ -19,7 +19,7 @@ module.exports = app => {
             roleName,
             roleIdParent: roleTemplate.id,
           });
-          // role:superuser include cms-writer cms-publisher
+          // role:superuser include cms-community
           await this.ctx.meta.role.addRoleInc({ roleId: roleSuperuser.id, roleIdInc: roleId });
           // role:activated include cms-community
           await this.ctx.meta.role.addRoleInc({ roleId: roleActivated.id, roleIdInc: roleId });
