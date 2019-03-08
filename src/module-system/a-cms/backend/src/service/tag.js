@@ -1,8 +1,13 @@
+const utils = require('../common/utils.js');
+
 module.exports = app => {
 
   class Tag extends app.Service {
 
-    async list({ options }) {
+    async list({ atomClass, options }) {
+      const _atomClass = await utils.atomClass2(this.ctx, atomClass);
+      if (!options.where) options.where = {};
+      options.where.atomClassId = _atomClass.id;
       return await this.ctx.model.tag.select(options);
     }
 
