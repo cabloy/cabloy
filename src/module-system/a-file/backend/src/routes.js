@@ -16,6 +16,7 @@ module.exports = app => {
     { method: 'post', path: 'file/delete', controller: file, middlewares: 'transaction',
       meta: { right: { type: 'atom', action: 3 } },
     },
+    { method: 'get', path: 'file/fileInfo/:downloadId', controller: file, action: 'fileInfo', middlewares: 'inner' },
   ];
   return routes;
 };

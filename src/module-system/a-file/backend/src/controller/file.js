@@ -37,6 +37,13 @@ module.exports = app => {
       });
     }
 
+    // inner invoke
+    async fileInfo() {
+      await this.service.file.fileInfo({
+        downloadId: this.ctx.params.downloadId,
+      });
+    }
+
   }
   return FileController;
 };

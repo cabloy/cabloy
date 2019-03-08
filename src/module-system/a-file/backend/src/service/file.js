@@ -189,6 +189,27 @@ module.exports = app => {
 
     }
 
+    // inner invoke
+    async fileInfo({ downloadId }) {
+      // downloadId
+      if (!downloadId) this.ctx.throw(404);
+      const extPos = downloadId.indexOf('.');
+      if (extPos > -1) downloadId = downloadId.substr(0, extPos);
+
+      // get file
+      const file = await this.ctx.model.file.get({ downloadId });
+      if (!file) this.ctx.throw(404);
+
+      // absolutePath
+      const destDir = await this.ctx.meta.base.getPath(file.filePath, true);
+      const absolutePath = path.join(destDir, `${file.fileName}${file.fileExt}`);
+      // ok
+      return {
+        file,
+        absolutePath,
+      };
+    }
+
     async adjustImage(file, widthRequire, heightRequire) {
       widthRequire = widthRequire ? parseInt(widthRequire) : 0;
       heightRequire = heightRequire ? parseInt(heightRequire) : 0;

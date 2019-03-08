@@ -187,6 +187,7 @@ module.exports = app => {
     { method: 'post', path: 'file/delete', controller: file, middlewares: 'transaction',
       meta: { right: { type: 'atom', action: 3 } },
     },
+    { method: 'get', path: 'file/fileInfo/:downloadId', controller: file, action: 'fileInfo', middlewares: 'inner' },
   ];
   return routes;
 };
@@ -259,6 +260,13 @@ module.exports = app => {
         width: this.ctx.query.width,
         height: this.ctx.query.height,
         user: this.ctx.user.op,
+      });
+    }
+
+    // inner invoke
+    async fileInfo() {
+      await this.service.file.fileInfo({
+        downloadId: this.ctx.params.downloadId,
       });
     }
 
@@ -536,6 +544,27 @@ module.exports = app => {
         this.ctx.response.type = file.mime;
       }
 
+    }
+
+    // inner invoke
+    async fileInfo({ downloadId }) {
+      // downloadId
+      if (!downloadId) this.ctx.throw(404);
+      const extPos = downloadId.indexOf('.');
+      if (extPos > -1) downloadId = downloadId.substr(0, extPos);
+
+      // get file
+      const file = await this.ctx.model.file.get({ downloadId });
+      if (!file) this.ctx.throw(404);
+
+      // absolutePath
+      const destDir = await this.ctx.meta.base.getPath(file.filePath, true);
+      const absolutePath = path.join(destDir, `${file.fileName}${file.fileExt}`);
+      // ok
+      return {
+        file,
+        absolutePath,
+      };
     }
 
     async adjustImage(file, widthRequire, heightRequire) {
