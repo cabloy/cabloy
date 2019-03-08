@@ -40,18 +40,20 @@ module.exports = app => {
       return list;
     }
 
-    async add({ categoryName, language, categoryIdParent }) {
+    async add({ atomClass, data }) {
+      const _atomClass = await utils.atomClass2(this.ctx, atomClass);
       // add
       const res = await this.ctx.model.category.insert({
-        categoryName,
-        language,
+        categoryName: data.categoryName,
+        language: data.language,
         catalog: 0,
         hidden: 0,
         sorting: 0,
-        categoryIdParent,
+        categoryIdParent: data.categoryIdParent,
+        atomClassId: _atomClass.id,
       });
       // adjust catalog
-      await this.adjustCatalog(categoryIdParent);
+      await this.adjustCatalog(data.categoryIdParent);
 
       return res.insertId;
     }
@@ -88,6 +90,7 @@ module.exports = app => {
       await this.adjustCatalog(categoryIdParent);
     }
 
+    // for donothing on categoryId === 0, so need not input param:atomClass
     async adjustCatalog(categoryId) {
       if (categoryId === 0) return;
       const children = await this.children({ categoryId });
