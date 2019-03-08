@@ -265,9 +265,10 @@ module.exports = app => {
 
     // inner invoke
     async fileInfo() {
-      await this.service.file.fileInfo({
+      const res = await this.service.file.fileInfo({
         downloadId: this.ctx.params.downloadId,
       });
+      this.ctx.success(res);
     }
 
   }
