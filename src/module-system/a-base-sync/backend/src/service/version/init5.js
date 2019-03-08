@@ -19,7 +19,7 @@ module.exports = function(ctx) {
         if (!role) {
           needBuild = true;
           const roleParent = await ctx.meta.role.getSystemRole({ roleName: item.roleIdParent });
-          await ctx.meta.role.add({
+          const roleId = await ctx.meta.role.add({
             roleName: item.roleName,
             leader: item.leader,
             catalog: item.catalog,
@@ -27,6 +27,11 @@ module.exports = function(ctx) {
             sorting: item.sorting,
             roleIdParent: roleParent.id,
           });
+          if (item.roleName === 'system') {
+            // superuser include system
+            const roleSuperuser = await ctx.meta.role.getSystemRole({ roleName: 'superuser' });
+            await ctx.meta.role.addRoleInc({ roleId: roleSuperuser.id, roleIdInc: roleId });
+          }
         }
       }
       // build

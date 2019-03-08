@@ -35,6 +35,10 @@ const roles = {
   },
 };
 
+const includes = [
+  { from: 'superuser', to: 'system' },
+];
+
 const users = {
   root: {
     item: {
@@ -52,5 +56,6 @@ const users = {
 
 module.exports = {
   roles,
+  includes,
   users,
 };

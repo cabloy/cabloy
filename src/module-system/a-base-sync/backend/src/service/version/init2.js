@@ -9,6 +9,9 @@ module.exports = function(ctx) {
     async run(options) {
       // roles
       const roleIds = await this._initRoles();
+      // role includes
+      await this._roleIncludes(roleIds);
+      // build
       await ctx.meta.role.build();
       // users
       await this._initUsers(roleIds, options);
@@ -25,6 +28,13 @@ module.exports = function(ctx) {
         roleIds[roleName] = await ctx.meta.role.add(role);
       }
       return roleIds;
+    }
+
+    // role includes
+    async _roleIncludes(roleIds) {
+      for (const item of initData.includes) {
+        await ctx.meta.role.addRoleInc({ roleId: roleIds[item.from], roleIdInc: roleIds[item.to] });
+      }
     }
 
     // users
