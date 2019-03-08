@@ -210,6 +210,21 @@ module.exports = app => {
       });
     }
 
+    async _getArticle({ key, inner }) {
+      if (!inner) {
+      // check right
+        const roleAnonymous = await this.ctx.meta.role.getSystemRole({ roleName: 'anonymous' });
+        const right = await this.ctx.meta.atom.checkRoleRightRead({ atom: { id: key.atomId }, roleId: roleAnonymous.id });
+        if (!right) return null;
+      }
+      // article
+      const article = await this.ctx.meta.atom.read({ key, user: { id: 0 } });
+      if (!article) return null;
+      // check language
+      if (!article.language) this.ctx.throw(1001);
+      return article;
+    }
+
   }
 
   return Article;

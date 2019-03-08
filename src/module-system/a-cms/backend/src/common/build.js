@@ -224,7 +224,7 @@ class Build {
 
   async renderArticle({ key, inner }) {
     // article
-    const article = await this._getArticle({ key, inner });
+    const article = await this.ctx.service.article._getArticle({ key, inner });
     if (!article) return;
     // clearCache
     ejs.clearCache();
@@ -383,20 +383,6 @@ class Build {
     await fse.writeFile(fileName, xml);
   }
 
-  async _getArticle({ key, inner }) {
-    if (!inner) {
-      // check right
-      const roleAnonymous = await this.ctx.meta.role.getSystemRole({ roleName: 'anonymous' });
-      const right = await this.ctx.meta.atom.checkRoleRightRead({ atom: { id: key.atomId }, roleId: roleAnonymous.id });
-      if (!right) return null;
-    }
-    // article
-    const article = await this.ctx.meta.atom.read({ key, user: { id: 0 } });
-    if (!article) return null;
-    // check language
-    if (!article.language) this.ctx.throw(1001);
-    return article;
-  }
 
   async _renderStatic({ site }) {
     // static
@@ -833,7 +819,7 @@ ${items}</sitemapindex>`;
 
   async getArticleUrl({ key }) {
     // article
-    const article = await this._getArticle({ key, inner: true });
+    const article = await this.ctx.service.article._getArticle({ key, inner: true });
     if (!article) return;
     // site
     const site = await this.getSite({ language: article.language });

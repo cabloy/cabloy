@@ -18,12 +18,21 @@ module.exports = app => {
     }
 
     async renderArticle() {
-      const res = await this.ctx.service.render.renderArticle(this.ctx.request.body);
+      const res = await this.ctx.service.render.renderArticle({
+        atomClass: this.ctx.request.body.atomClass,
+        key: this.ctx.request.body.key,
+        inner: this.ctx.request.body.inner,
+      });
       this.ctx.success(res);
     }
 
     async deleteArticle() {
-      const res = await this.ctx.service.render.deleteArticle(this.ctx.request.body);
+      const res = await this.ctx.service.render.deleteArticle({
+        atomClass: this.ctx.request.body.atomClass,
+        key: this.ctx.request.body.key,
+        article: this.ctx.request.body.article,
+        inner: this.ctx.request.body.inner,
+      });
       this.ctx.success(res);
     }
 

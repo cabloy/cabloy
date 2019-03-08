@@ -1,10 +1,19 @@
+const Build = require('../common/build.js');
+
 module.exports = app => {
 
   class RSSController extends app.Controller {
 
     async feed() {
-      // language
+      // params
+      //   module
+      const module = this.ctx.params.module;
+      //   atomClassName
+      const atomClassName = this.ctx.params.atomClassName;
+      //   language
       const language = this.ctx.params.language;
+      // atomClass
+      const atomClass = { module, atomClassName };
       // options
       const options = {
         where: {
@@ -20,17 +29,19 @@ module.exports = app => {
       const res = await this.ctx.performAction({
         method: 'post',
         url: '/a/cms/article/list',
-        body: { options },
+        body: { atomClass, options },
       });
       const list = res.list;
+      // build
+      const build = Build.create(this.ctx, atomClass);
       // site
-      const site = await this.ctx.service.render.getSite({ language });
+      const site = await build.getSite({ language });
       // feed
       let feed =
 `<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
   <channel>
     <title><![CDATA[${site.base.title}]]></title>
-    <link>${this.ctx.service.render.getUrl(site, language, 'index.html')}</link>
+    <link>${build.getUrl(site, language, 'index.html')}</link>
     <description><![CDATA[${site.base.description || site.base.subTitle}]]></description>
     <language>${language}</language>
     <generator>https://cms.cabloy.com</generator>
@@ -45,7 +56,7 @@ module.exports = app => {
         ]]>
       </title>
       <link>
-        ${this.ctx.service.render.getUrl(site, language, article.url)}
+        ${build.getUrl(site, language, article.url)}
       </link>
       <description>
         <![CDATA[
@@ -70,8 +81,15 @@ module.exports = app => {
     }
 
     async feedComments() {
-      // language
+      // params
+      //   module
+      const module = this.ctx.params.module;
+      //   atomClassName
+      const atomClassName = this.ctx.params.atomClassName;
+      //   language
       const language = this.ctx.params.language;
+      // atomClass
+      const atomClass = { module, atomClassName };
       // options
       const options = {
         orders: [
@@ -83,19 +101,19 @@ module.exports = app => {
       const res = await this.ctx.performAction({
         method: 'post',
         url: '/a/cms/comment/all',
-        body: {
-          options,
-        },
+        body: { atomClass, options },
       });
       const list = res.list;
+      // build
+      const build = Build.create(this.ctx, atomClass);
       // site
-      const site = await this.ctx.service.render.getSite({ language });
+      const site = await build.getSite({ language });
       // feed
       let feed =
 `<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
   <channel>
     <title><![CDATA[Comments for ${site.base.title}]]></title>
-    <link>${this.ctx.service.render.getUrl(site, language, 'index.html')}</link>
+    <link>${build.getUrl(site, language, 'index.html')}</link>
     <description><![CDATA[${site.base.description || site.base.subTitle}]]></description>
     <language>${language}</language>
     <generator>https://cms.cabloy.com</generator>
@@ -110,7 +128,7 @@ module.exports = app => {
         ]]>
       </title>
       <link>
-        ${this.ctx.service.render.getUrl(site, language, item.url)}#comments
+        ${build.getUrl(site, language, item.url)}#comments
       </link>
       <description>
         <![CDATA[
@@ -137,7 +155,7 @@ module.exports = app => {
       // atomId
       const atomId = this.ctx.params.atomId;
       // article
-      const article = await this.ctx.service.render._getArticle({ key: { atomId }, inner: false });
+      const article = await this.ctx.service.article._getArticle({ key: { atomId }, inner: false });
       // language
       const language = article.language;
       // options
@@ -156,14 +174,18 @@ module.exports = app => {
         },
       });
       const list = res.list;
+      // atomClass
+      const atomClass = await this.ctx.meta.atomClass.get({ id: article.atomClassId });
+      // build
+      const build = Build.create(this.ctx, atomClass);
       // site
-      const site = await this.ctx.service.render.getSite({ language });
+      const site = await build.getSite({ language });
       // feed
       let feed =
 `<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
   <channel>
     <title><![CDATA[Comments on: ${article.atomName}]]></title>
-    <link>${this.ctx.service.render.getUrl(site, language, article.url)}</link>
+    <link>${build.getUrl(site, language, article.url)}</link>
     <description><![CDATA[${article.description || article.summary}]]></description>
     <language>${language}</language>
     <generator>https://cms.cabloy.com</generator>
@@ -178,7 +200,7 @@ module.exports = app => {
         ]]>
       </title>
       <link>
-        ${this.ctx.service.render.getUrl(site, language, article.url)}#comments
+        ${build.getUrl(site, language, article.url)}#comments
       </link>
       <description>
         <![CDATA[
