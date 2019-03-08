@@ -48,7 +48,7 @@ module.exports = appInfo => {
       aCmsArticleTagRef: 'createdAt,updatedAt,atomId,itemId,tagId',
       aCmsCategory: 'createdAt,updatedAt,categoryName,sorting,categoryIdParent,atomClassId',
       aCmsContent: 'createdAt,updatedAt,atomId,itemId,content:fulltext',
-      aCmsTag: 'createdAt,updatedAt,language+tagName',
+      aCmsTag: 'createdAt,updatedAt,language+tagName,atomClassId',
     },
     'a-file': {
       aFile: 'createdAt,updatedAt,userId,downloadId,atomId',
