@@ -12,6 +12,9 @@ const roles = {
   template: {
     roleName: 'template', leader: 0, catalog: 1, system: 1, sorting: 1, roleIdParent: 'authenticated',
   },
+  system: {
+    roleName: 'system', leader: 0, catalog: 0, system: 1, sorting: 1, roleIdParent: 'template',
+  },
   registered: {
     roleName: 'registered', leader: 0, catalog: 0, system: 1, sorting: 2, roleIdParent: 'authenticated',
   },

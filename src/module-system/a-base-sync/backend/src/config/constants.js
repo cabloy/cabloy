@@ -1,5 +1,5 @@
 module.exports = {
-  systemRoles: [ 'root', 'anonymous', 'authenticated', 'template', 'registered', 'activated', 'superuser', 'organization', 'internal', 'external' ],
+  systemRoles: [ 'root', 'anonymous', 'authenticated', 'template', 'system', 'registered', 'activated', 'superuser', 'organization', 'internal', 'external' ],
   atom: {
     action: {
       create: 1,

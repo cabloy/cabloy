@@ -4,20 +4,36 @@ module.exports = function(ctx) {
 
     async run(options) {
       // add role:template to authenticated
-      const roleTemplate = await ctx.meta.role.getSystemRole({ roleName: 'template' });
-      if (!roleTemplate) {
-        const roleAuthenticated = await ctx.meta.role.getSystemRole({ roleName: 'authenticated' });
-        await ctx.meta.role.add({
-          roleName: 'template',
-          leader: 0,
-          catalog: 1,
-          system: 1,
-          sorting: 0,
-          roleIdParent: roleAuthenticated.id,
-        });
-        // build
+      // add role:system to template
+      const items = [
+        {
+          roleName: 'template', leader: 0, catalog: 1, system: 1, sorting: 0, roleIdParent: 'authenticated',
+        },
+        {
+          roleName: 'system', leader: 0, catalog: 0, system: 1, sorting: 1, roleIdParent: 'template',
+        },
+      ];
+      let needBuild = false;
+      for (const item of items) {
+        const role = await ctx.meta.role.getSystemRole({ roleName: item.roleName });
+        if (!role) {
+          needBuild = true;
+          const roleParent = await ctx.meta.role.getSystemRole({ roleName: item.roleIdParent });
+          await ctx.meta.role.add({
+            roleName: item.roleName,
+            leader: item.leader,
+            catalog: item.catalog,
+            system: item.system,
+            sorting: item.sorting,
+            roleIdParent: roleParent.id,
+          });
+        }
+      }
+      // build
+      if (needBuild) {
         await ctx.meta.role.build();
       }
+
     }
 
   }
