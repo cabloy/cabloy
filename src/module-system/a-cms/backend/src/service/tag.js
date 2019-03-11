@@ -11,27 +11,28 @@ module.exports = app => {
       return await this.ctx.model.tag.select(options);
     }
 
-    async create({ language, tagName }) {
+    async create({ atomClassId, language, tagName }) {
       // check if exists
       const tag = await this.ctx.model.tag.get({
-        language, tagName,
+        atomClassId, language, tagName,
       });
       if (tag) return tag.id;
       // insert
       const res = await this.ctx.model.tag.insert({
-        language, tagName, articleCount: 0,
+        atomClassId, language, tagName, articleCount: 0,
       });
       return res.insertId;
     }
 
-    async updateArticleTags({ key, item }) {
+    async updateArticleTags({ atomClass, key, item }) {
+      const _atomClass = await utils.atomClass2(this.ctx, atomClass);
       // tags
       let tags = null;
       if (item.tags) {
         tags = JSON.parse(item.tags);
         for (const tag of tags) {
           if (tag.id === 0) {
-            tag.id = await this.create({ language: item.language, tagName: tag.name });
+            tag.id = await this.create({ atomClassId: _atomClass.id, language: item.language, tagName: tag.name });
           }
         }
       }
@@ -87,6 +88,7 @@ module.exports = app => {
           // update
           await this.ctx.model.tag.update({ id, articleCount });
         } else {
+          // check if referenced by items of deleted or other flag status
           const articleCount2 = await this.calcArticleCount2({ id });
           if (articleCount2 > 0) {
             // update
