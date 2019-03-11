@@ -107,7 +107,9 @@ class Build {
   async combineSite({ siteBase, language }) {
     // themeModuleName
     const themeModuleName = siteBase.themes[language];
-    if (!themeModuleName) this.ctx.throw(1002);
+    if (!themeModuleName) {
+      this.ctx.throw(1002);
+    }
     // theme
     const theme = this.combineThemes(themeModuleName);
     // site(db)

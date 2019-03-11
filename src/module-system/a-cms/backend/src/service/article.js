@@ -180,9 +180,12 @@ module.exports = app => {
         atom: { atomFlag },
         user,
       });
-      if (this.ctx.config.article.publishOnSubmit) {
+      // site
+      const site = await this.ctx.service.render.combineSiteBase({ atomClass });
+      // if (this.ctx.config.article.publishOnSubmit) {
+      if (site.base.publishOnSubmit !== false) {
         // publish
-        await this.action({ action: 101, key, user });
+        await this.action({ action: 101, atomClass, key, user });
       }
     }
 

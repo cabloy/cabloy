@@ -25,7 +25,7 @@ module.exports = appInfo => {
       wordBreak: false,
       preserveTags: false,
     },
-    publishOnSubmit: true,
+    // publishOnSubmit: true,
   };
 
   // checkFileTimeout
@@ -38,6 +38,7 @@ module.exports = appInfo => {
       subTitle: 'gone with the wind',
       description: '',
       keywords: '',
+      publishOnSubmit: true,
     },
     host: {
       url: 'http://example.com',
