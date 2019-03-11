@@ -1,21 +1,21 @@
 {
-  "presets": [
-    [
-      "env",
-      {
-        "modules": false,
-        "useBuiltIns": false
-      }
-    ]
-  ],
-  "plugins": ["syntax-dynamic-import"],
-  "comments": false,
-  "env":
-  {
-    "test":
+    "presets": [
+        [
+            "@babel/preset-env",
+            {
+                "modules": false,
+                "useBuiltIns": false
+            }
+        ]
+    ],
+    "plugins": ["@babel/plugin-syntax-dynamic-import"],
+    "comments": false,
+    "env":
     {
-      "presets": ["env"],
-      "plugins": ["istanbul"]
+        "test":
+        {
+            "presets": ["env"],
+            "plugins": ["istanbul"]
+        }
     }
-  }
 }

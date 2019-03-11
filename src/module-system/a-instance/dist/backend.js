@@ -431,7 +431,7 @@ module.exports = () => {
         // config
         instance.config = JSON.parse(instance.config) || {};
         // ctx.host ctx.protocol
-        if (ctx.host && ctx.protocol) {
+        if (ctxHostValid(ctx)) {
           if (!instance.config['a-base']) instance.config['a-base'] = {};
           const aBase = instance.config['a-base'];
           if (aBase.host !== ctx.host || aBase.protocol !== ctx.protocol) {
@@ -447,7 +447,7 @@ module.exports = () => {
         ctx.app.meta.configs = extend(true, {}, ctx.app.meta._configsOriginal, instance.config);
         // cache
         //   if !host && !protocol then try to get them on next call
-        if (ctx.host && ctx.protocol && timeout > 0) {
+        if (ctxHostValid(ctx) && timeout > 0) {
           ctx.cache.mem.set('instance', instance, timeout);
         }
       }
@@ -463,6 +463,10 @@ module.exports = () => {
     await next();
   };
 };
+
+function ctxHostValid(ctx) {
+  return ctx.host && ctx.protocol && ctx.host !== '127.0.0.1' && ctx.host !== 'localhost';
+}
 
 
 /***/ }),
