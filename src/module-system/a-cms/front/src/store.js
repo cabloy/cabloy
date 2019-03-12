@@ -5,7 +5,7 @@ export default function(Vue) {
     state: {
       configSiteBase: null,
       configSite: null,
-      languages: null,
+      languages: {},
     },
     getters: {
     },
@@ -16,8 +16,11 @@ export default function(Vue) {
       setConfigSite(state, configSite) {
         state.configSite = configSite;
       },
-      setLanguages(state, languages) {
-        state.languages = languages;
+      setLanguages(state, { atomClass, languages }) {
+        state.languages = {
+          ...state.languages,
+          [atomClass.module]: languages,
+        };
       },
     },
     actions: {
@@ -41,13 +44,14 @@ export default function(Vue) {
           }).catch(err => reject(err));
         });
       },
-      getLanguages({ state, commit }) {
+      getLanguages({ state, commit }, { atomClass }) {
         return new Promise((resolve, reject) => {
-          if (state.languages) return resolve(state.languages);
-          Vue.prototype.$meta.api.post('/a/cms/site/getLanguages').then(res => {
-            const data = res || [];
-            commit('setLanguages', data);
-            resolve(data);
+          const _languages = state.languages[atomClass.module];
+          if (_languages) return resolve(_languages);
+          Vue.prototype.$meta.api.post('/a/cms/site/getLanguages', { atomClass }).then(res => {
+            const languages = res || [];
+            commit('setLanguages', { atomClass, languages });
+            resolve(languages);
           }).catch(err => reject(err));
         });
       },

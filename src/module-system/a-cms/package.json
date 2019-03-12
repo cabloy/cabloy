@@ -1,7 +1,7 @@
 {
   "name": "egg-born-module-a-cms",
   "version": "1.2.25",
-  "title": "cms",
+  "title": "CMS",
   "eggBornModule": {
     "fileVersion": 5,
     "dependencies": {
