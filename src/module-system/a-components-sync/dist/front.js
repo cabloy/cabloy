@@ -132,6 +132,11 @@ __webpack_require__.r(__webpack_exports__);
       optional: '?',
       must: ''
     }
+  },
+  error: {
+    message: {
+      maxLength: 40
+    }
   }
 });
 
@@ -636,6 +641,13 @@ var navbar_component = normalizeComponent(
 
 /* harmony default export */ var navbar = (navbar_component.exports);
 // CONCATENATED MODULE: ./front/src/common/perform.js
+function trimMessage(ctx, message) {
+  if (!message || typeof message !== 'string') return message;
+  var maxLength = ctx.$config.error.message.maxLength;
+  if (message.length >= maxLength) return "".concat(message.substr(0, maxLength), "...");
+  return message;
+}
+
 /* harmony default export */ var perform = ({
   props: {
     onPerform: {
@@ -690,7 +702,7 @@ var navbar_component = normalizeComponent(
 
             if (err && err.code !== 401 && err.message) {
               _this.$view.toast.show({
-                text: err.message
+                text: trimMessage(_this, err.message)
               });
             }
           });

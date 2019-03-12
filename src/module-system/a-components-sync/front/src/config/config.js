@@ -5,4 +5,9 @@ export default {
       must: '',
     },
   },
+  error: {
+    message: {
+      maxLength: 40,
+    },
+  },
 };

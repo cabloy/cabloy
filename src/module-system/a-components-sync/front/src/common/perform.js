@@ -1,3 +1,10 @@
+function trimMessage(ctx, message) {
+  if (!message || typeof message !== 'string') return message;
+  const maxLength = ctx.$config.error.message.maxLength;
+  if (message.length >= maxLength) return `${message.substr(0, maxLength)}...`;
+  return message;
+}
+
 export default {
   props: {
     onPerform: {
@@ -44,7 +51,7 @@ export default {
           }).catch(err => {
             this._hidePreloader();
             if (err && err.code !== 401 && err.message) {
-              this.$view.toast.show({ text: err.message });
+              this.$view.toast.show({ text: trimMessage(this, err.message) });
             }
           });
         } else {
