@@ -1,4 +1,9 @@
 module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const atomClass = {
+    module: moduleInfo.relativeName,
+    atomClassName: 'post',
+  };
   const schemas = require('./config/validation/schemas.js')(app);
   const meta = {
     base: {
@@ -52,6 +57,16 @@ module.exports = app => {
           sorting: 1,
           menu: 1,
         },
+        listPostByCategory: {
+          title: 'Post List(by category)',
+          scene: 'list',
+          autoRight: 1,
+          atomClassName: 'post',
+          action: 'read',
+          sorting: 1,
+          menu: 1,
+          actionPath: 'post/category',
+        },
       },
     },
     validation: {
@@ -67,6 +82,11 @@ module.exports = app => {
       schemas: {
         post: schemas.post,
         postSearch: schemas.postSearch,
+      },
+    },
+    settings: {
+      instance: {
+        actionPath: `/a/cms/config/list?module=${atomClass.module}&atomClassName=${atomClass.atomClassName}`,
       },
     },
   };

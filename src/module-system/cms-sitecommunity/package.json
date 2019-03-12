@@ -1,7 +1,7 @@
 {
   "name": "egg-born-module-cms-sitecommunity",
   "version": "1.0.0",
-  "title": "cms:site:community",
+  "title": "CMS:Community",
   "eggBornModule": {
     "fileVersion": 1,
     "cms": {
