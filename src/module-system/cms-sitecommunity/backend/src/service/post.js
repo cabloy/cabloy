@@ -55,8 +55,6 @@ module.exports = app => {
     }
 
     async write({ atomClass, key, item, validation, user }) {
-      // init fields
-      item.editMode = 1;
       // route to article
       await this.ctx.performAction({
         method: 'post',
@@ -85,6 +83,12 @@ module.exports = app => {
     }
 
     async action({ action, atomClass, key, user }) {
+      // switch sticky
+      if (action === 102) {
+        const sql = `update aCmsArticle set sticky=if(sticky=1,0,1)
+                       where iid=? and id=?`;
+        await this.ctx.model.query(sql, [ this.ctx.instance.id, key.itemId ]);
+      }
       // route to article
       return await this.ctx.performAction({
         method: 'post',
