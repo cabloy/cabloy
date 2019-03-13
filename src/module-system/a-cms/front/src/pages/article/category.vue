@@ -1,6 +1,6 @@
 <template>
   <eb-page :page-content="false" tabs with-subnavbar>
-    <eb-navbar :title="title" eb-back-link="Back">
+    <eb-navbar :title="pageTitle" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="view_headline" :onPerform="onPerformList"></eb-link>
         <eb-link iconMaterial="search" :onPerform="onPerformSearch"></eb-link>
@@ -16,7 +16,7 @@
     <f7-tabs>
       <template v-if="languages">
         <f7-page-content v-for="(item,index) of languages" :key="item.value" :id="`${tabIdLanguages}_${item.value}`" tab :tab-active="index===0">
-          <category-list :categoryIdStart="0" :language="item.value" @node:click="onNodeClick"></category-list>
+          <category-list :atomClass="atomClass" :categoryIdStart="0" :language="item.value" @node:click="onNodeClick"></category-list>
         </f7-page-content>
       </template>
     </f7-tabs>
@@ -24,43 +24,65 @@
 </template>
 <script>
 import Vue from 'vue';
-import categoryList from '../../components/category/list.vue';
+const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.components.ebAtomClasses;
 const ebMenus = Vue.prototype.$meta.module.get('a-base').options.components.ebMenus;
+import categoryList from '../../components/category/list.vue';
+import utils from '../../common/utils.js';
 export default {
-  mixins: [ ebMenus ],
+  mixins: [ ebAtomClasses, ebMenus ],
   components: {
     categoryList,
   },
   data() {
+    const atomClass = utils.parseAtomClass(this.$f7route.query);
     return {
+      atomClass,
       tabIdLanguages: Vue.prototype.$meta.util.nextId('tab'),
     };
   },
   computed: {
-    title() {
-      return `${this.$text('Atom')}: ${this.$text('Article')}`;
-    },
     languages() {
-      return this.$local.state.languages;
+      return this.$local.state.languages[this.atomClass.module];
+    },
+    pageTitle() {
+      const atomClass = this.getAtomClass(this.atomClass);
+      if (atomClass) return `${this.$text('Atom')}: ${atomClass.titleLocale}`;
+      return this.$text('Atom');
     },
   },
   created() {
-    this.$local.dispatch('getLanguages');
+    this.$local.dispatch('getLanguages', {
+      atomClass: this.atomClass,
+    });
   },
   methods: {
+    combineAtomClass(url) {
+      return utils.combineAtomClass(this.atomClass, url);
+    },
     onPerformList() {
-      const item = { module: 'a-cms', atomClassName: 'article', name: 'listArticle' };
+      // atomClass
+      const atomClass = this.getAtomClass(this.atomClass);
+      if (!atomClass) return;
+      const atomClassNameCapitalize = atomClass.name.replace(/^\S/, function(s) { return s.toUpperCase(); });
+      // menu
+      const item = {
+        module: this.atomClass.module,
+        atomClassName: this.atomClass.atomClassName,
+        name: `list${atomClassNameCapitalize}`,
+      };
       let _menu = this.getMenu(item);
       if (!_menu) return;
       _menu = this.$utils.extend(_menu, { navigateOptions: { target: '_self' } });
       return this.$meta.util.performAction({ ctx: this, action: _menu, item });
     },
     onPerformSearch() {
-      this.$view.navigate('/a/base/atom/search?module=a-cms&atomClassName=article', { target: '_self' });
+      const url = this.combineAtomClass('/a/base/atom/search');
+      this.$view.navigate(url, { target: '_self' });
     },
     onNodeClick(node) {
       if (node.data.catalog) return;
-      this.$view.navigate(`/a/cms/article/list?language=${node.data.language}&categoryId=${node.data.id}&categoryName=${encodeURIComponent(node.data.categoryName)}`, { target: '_self' });
+      const url = this.combineAtomClass(`/a/cms/article/list?language=${node.data.language}&categoryId=${node.data.id}&categoryName=${encodeURIComponent(node.data.categoryName)}`);
+      this.$view.navigate(url, { target: '_self' });
     },
   },
 };

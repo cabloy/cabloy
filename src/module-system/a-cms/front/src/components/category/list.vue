@@ -9,6 +9,9 @@ export default {
     global: false,
   },
   props: {
+    atomClass: {
+      type: Object,
+    },
     categoryIdStart: {
       type: Number,
     },
@@ -50,7 +53,11 @@ export default {
       }
       // children
       const categoryId = node.id === 'root' ? this.categoryIdStart : node.data.id;
-      return this.$api.post('category/children', { language: this.language, categoryId })
+      return this.$api.post('category/children', {
+        atomClass: this.atomClass,
+        language: this.language,
+        categoryId,
+      })
         .then(data => {
           let list = data.list.map(item => {
             const node = {

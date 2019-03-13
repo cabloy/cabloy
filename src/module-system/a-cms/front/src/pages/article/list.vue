@@ -7,7 +7,7 @@
       </f7-nav-right>
     </eb-navbar>
     <eb-tab-page-content :tab="false" tab-active>
-      <eb-atoms slot="list" mode="search" :atomClass="{module:'a-cms',atomClassName:'article'}" :where="{categoryId}"></eb-atoms>
+      <eb-atoms slot="list" mode="search" :atomClass="atomClass" :where="{categoryId}"></eb-atoms>
     </eb-tab-page-content>
     <f7-popover :id="popoverId">
       <f7-list v-if="showPopover" inset>
@@ -20,13 +20,16 @@
 import Vue from 'vue';
 const ebMenus = Vue.prototype.$meta.module.get('a-base').options.components.ebMenus;
 const ebAtoms = Vue.prototype.$meta.module.get('a-base').options.components.ebAtoms;
+import utils from '../../common/utils.js';
 export default {
   mixins: [ ebMenus ],
   components: {
     ebAtoms,
   },
   data() {
+    const atomClass = utils.parseAtomClass(this.$f7route.query);
     return {
+      atomClass,
       language: this.$f7route.query.language,
       categoryId: this.$f7route.query.categoryId,
       categoryName: this.$f7route.query.categoryName,
@@ -40,12 +43,6 @@ export default {
     },
     showPopover() {
       return this.actions && this.actions.length > 0;
-    },
-    atomClass() {
-      return {
-        module: 'a-cms',
-        atomClassName: 'article',
-      };
     },
   },
   created() {
@@ -67,6 +64,9 @@ export default {
     });
   },
   methods: {
+    combineAtomClass(url) {
+      return utils.combineAtomClass(this.atomClass, url);
+    },
     onAction(event, item) {
       // menu
       const _menu = this.getMenu(item);
@@ -85,7 +85,8 @@ export default {
       return this.$meta.util.performAction({ ctx: this, action: _menu, item });
     },
     onPerformSearch() {
-      this.$view.navigate('/a/base/atom/search?module=a-cms&atomClassName=article', { target: '_self' });
+      const url = this.combineAtomClass('/a/base/atom/search');
+      this.$view.navigate(url, { target: '_self' });
     },
   },
 };
