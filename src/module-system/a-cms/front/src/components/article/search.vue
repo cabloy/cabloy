@@ -8,6 +8,7 @@
   </f7-list>
 </template>
 <script>
+import utils from '../../common/utils.js';
 export default {
   meta: {
     global: false,
@@ -17,15 +18,26 @@ export default {
       type: Object,
     },
   },
+  data() {
+    const atomClass = { module: 'a-cms', atomClassName: 'article' };
+    return {
+      atomClass,
+    };
+  },
   computed: {
     languages() {
-      return this.$local.state.languages;
+      return this.$local.state.languages[this.atomClass.module];
     },
   },
   created() {
-    this.$local.dispatch('getLanguages');
+    this.$local.dispatch('getLanguages', {
+      atomClass: this.atomClass,
+    });
   },
   methods: {
+    combineAtomClass(url) {
+      return utils.combineAtomClass(this.atomClass, url);
+    },
     onChangeLanguage() {
       this.$set(this.data, 'categoryId', null);
       this.$set(this.data, 'categoryName', null);
@@ -36,7 +48,8 @@ export default {
         return false;
       }
       return new Promise(resolve => {
-        this.$view.navigate('/a/cms/category/select', {
+        const url = this.combineAtomClass('/a/cms/category/select');
+        this.$view.navigate(url, {
           context: {
             params: {
               language: this.data.language,

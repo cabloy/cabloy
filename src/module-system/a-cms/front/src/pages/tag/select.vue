@@ -24,10 +24,13 @@
 <script>
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.components.ebPageContext;
+import utils from '../../common/utils.js';
 export default {
   mixins: [ ebPageContext ],
   data() {
+    const atomClass = utils.parseAtomClass(this.$f7route.query);
     return {
+      atomClass,
       tagsText: '',
       tagsAll: null,
     };
@@ -49,7 +52,10 @@ export default {
         [ 'tagName', 'asc' ],
       ],
     };
-    this.$api.post('tag/list', { options }).then(res => {
+    this.$api.post('tag/list', {
+      atomClass: this.atomClass,
+      options,
+    }).then(res => {
       this.tagsAll = res.list;
     });
   },

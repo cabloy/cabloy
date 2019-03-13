@@ -33,6 +33,7 @@
   </f7-list>
 </template>
 <script>
+import utils from '../../common/utils.js';
 export default {
   props: {
     readOnly: {
@@ -43,14 +44,25 @@ export default {
     },
   },
   computed: {
+    atomClass() {
+      return {
+        module: this.item.module,
+        atomClassName: this.item.atomClassName,
+      };
+    },
     languages() {
-      return this.$local.state.languages;
+      return this.$local.state.languages[this.atomClass.module];
     },
   },
   created() {
-    this.$local.dispatch('getLanguages');
+    this.$local.dispatch('getLanguages', {
+      atomClass: this.atomClass,
+    });
   },
   methods: {
+    combineAtomClass(url) {
+      return utils.combineAtomClass(this.atomClass, url);
+    },
     adjustTags(tags) {
       if (!tags) return '';
       const _tags = JSON.parse(tags);
@@ -60,7 +72,8 @@ export default {
       if (!this.item.categoryId) {
         return false;
       }
-      this.$view.navigate('/a/cms/article/contentEdit', {
+      const url = this.combineAtomClass('/a/cms/article/contentEdit');
+      this.$view.navigate(url, {
         context: {
           params: {
             ctx: this,

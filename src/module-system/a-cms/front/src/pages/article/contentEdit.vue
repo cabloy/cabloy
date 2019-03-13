@@ -16,13 +16,16 @@
 <script>
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.components.ebPageContext;
+import utils from '../../common/utils.js';
 export default {
   meta: {
     size: 'large',
   },
   mixins: [ ebPageContext ],
   data() {
+    const atomClass = utils.parseAtomClass(this.$f7route.query);
     return {
+      atomClass,
       dirty: false,
       module: null,
     };
@@ -95,6 +98,9 @@ export default {
     });
   },
   methods: {
+    combineAtomClass(url) {
+      return utils.combineAtomClass(this.atomClass, url);
+    },
     onChange(data) {
       if (this.readOnly) return;
       if (this.item.content === data) return;
@@ -119,8 +125,11 @@ export default {
       });
     },
     _preview() {
-      return this.$api.post('render/getArticleUrl', { key: { atomId: this.item.atomId } }).then(data => {
-        window.open(data.url, `cms_article_${this.item.atomId}`);
+      return this.$api.post('render/getArticleUrl', {
+        atomClass: this.atomClass,
+        key: { atomId: this.item.atomId },
+      }).then(data => {
+        window.open(data.url, `cms_article_${this.atomClass.module}_${this.item.atomId}`);
       });
     },
     onImageUpload() {
