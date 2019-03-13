@@ -7,7 +7,7 @@
       </f7-nav-right>
     </eb-navbar>
     <eb-tab-page-content :tab="false" tab-active>
-      <eb-atoms slot="list" mode="search" :atomClass="atomClass" :where="{categoryId}"></eb-atoms>
+      <eb-atoms slot="list" mode="all" :atomClass="atomClass" :where="{categoryId}"></eb-atoms>
     </eb-tab-page-content>
     <f7-popover :id="popoverId">
       <f7-list v-if="showPopover" inset>
