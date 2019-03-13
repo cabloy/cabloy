@@ -160,6 +160,9 @@ const Fn = module.exports = ctx => {
       let tableName = '';
       if (_atomClass) {
         tableName = this._getTableName({ atomClass: _atomClass, mode: options.mode });
+        // 'where' should append atomClassId, such as article/post using the same table
+        if (!options.where) options.where = {};
+        options.where.atomClassId = atomClass.id;
       }
       // select
       const items = await this._list({
@@ -585,6 +588,7 @@ const Fn = module.exports = ctx => {
       if (mode === 'Search') {
         return atomClass.tableNameSearch || atomClass.tableNameFull || atomClass.tableName;
       }
+      // special: all = list + atomEnabled=1
       return atomClass[`tableName${mode}`] || atomClass.tableName;
     }
 
