@@ -40,6 +40,12 @@ module.exports = app => {
       // get atom for safety
       const atomOld = await this.ctx.meta.atom.read({ key, user });
 
+      // if undefined then old
+      const fields = [ 'slug', 'editMode', 'content', 'language', 'categoryId', 'sticky', 'keywords', 'description', 'sorting', 'flag', 'extra' ];
+      for (const field of fields) {
+        if (item[field] === undefined) item[field] = atomOld[field];
+      }
+
       // url
       let url;
       if (item.slug) {
@@ -167,6 +173,10 @@ module.exports = app => {
         }
 
         // render
+        await this._renderArticle({ atomClass, key, inner: false });
+      } else {
+        // other custom action
+        //   always render again
         await this._renderArticle({ atomClass, key, inner: false });
       }
     }
