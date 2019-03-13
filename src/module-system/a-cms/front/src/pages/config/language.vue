@@ -12,9 +12,12 @@
   </eb-page>
 </template>
 <script>
+import utils from '../../common/utils.js';
 export default {
   data() {
+    const atomClass = utils.parseAtomClass(this.$f7route.query);
     return {
+      atomClass,
       language: this.$f7route.query.language,
       content: '{}',
     };
@@ -26,7 +29,10 @@ export default {
     },
   },
   created() {
-    this.$api.post('site/getConfigLanguage', { language: this.language }).then(res => {
+    this.$api.post('site/getConfigLanguage', {
+      atomClass: this.atomClass,
+      language: this.language,
+    }).then(res => {
       if (!res.data) {
         this.content = '{}';
       } else {
@@ -35,6 +41,9 @@ export default {
     });
   },
   methods: {
+    combineAtomClass(url) {
+      return utils.combineAtomClass(this.atomClass, url);
+    },
     onSize(size) {
       this.$$(this.$refs.textarea).css({
         height: `${size.height - 20}px`,
@@ -47,6 +56,7 @@ export default {
     onPerformSave() {
       const data = JSON.parse(this.content);
       return this.$api.post('site/setConfigLanguage', {
+        atomClass: this.atomClass,
         language: this.language,
         data,
       }).then(() => {
@@ -55,7 +65,8 @@ export default {
       });
     },
     onPerformPreview() {
-      this.$view.navigate(`/a/cms/config/languagePreview?language=${this.language}`, {
+      const url = this.combineAtomClass(`/a/cms/config/languagePreview?language=${this.language}`);
+      this.$view.navigate(url, {
         context: {
           params: {
             source: this,

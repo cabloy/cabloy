@@ -10,10 +10,13 @@
 <script>
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.components.ebPageContext;
+import utils from '../../common/utils.js';
 export default {
   mixins: [ ebPageContext ],
   data() {
+    const atomClass = utils.parseAtomClass(this.$f7route.query);
     return {
+      atomClass,
       language: this.$f7route.query.language,
       content: '{}',
     };
@@ -42,11 +45,17 @@ export default {
     }
   },
   methods: {
+    combineAtomClass(url) {
+      return utils.combineAtomClass(this.atomClass, url);
+    },
     onPreview() {
       this.onLoad();
     },
     onLoad() {
-      this.$api.post('site/getConfigLanguagePreview', { language: this.language }).then(res => {
+      this.$api.post('site/getConfigLanguagePreview', {
+        atomClass: this.atomClass,
+        language: this.language,
+      }).then(res => {
         if (!res.data) {
           this.content = '{}';
         } else {

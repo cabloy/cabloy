@@ -3,18 +3,24 @@ export default function(Vue) {
 
   return {
     state: {
-      configSiteBase: null,
-      configSite: null,
+      configSiteBase: {},
+      configSite: {},
       languages: {},
     },
     getters: {
     },
     mutations: {
-      setConfigSiteBase(state, configSiteBase) {
-        state.configSiteBase = configSiteBase;
+      setConfigSiteBase(state, { atomClass, configSiteBase }) {
+        state.configSiteBase = {
+          ...state.configSiteBase,
+          [atomClass.module]: configSiteBase,
+        };
       },
-      setConfigSite(state, configSite) {
-        state.configSite = configSite;
+      setConfigSite(state, { atomClass, configSite }) {
+        state.configSite = {
+          ...state.configSite,
+          [atomClass.module]: configSite,
+        };
       },
       setLanguages(state, { atomClass, languages }) {
         state.languages = {
@@ -24,23 +30,25 @@ export default function(Vue) {
       },
     },
     actions: {
-      getConfigSiteBase({ state, commit }) {
+      getConfigSiteBase({ state, commit }, { atomClass }) {
         return new Promise((resolve, reject) => {
-          if (state.configSiteBase) return resolve(state.configSiteBase);
-          Vue.prototype.$meta.api.post('/a/cms/site/getConfigSiteBase').then(res => {
-            const data = res.data || {};
-            commit('setConfigSiteBase', data);
-            resolve(data);
+          const _configSiteBase = state.configSiteBase[atomClass.module];
+          if (_configSiteBase) return resolve(_configSiteBase);
+          Vue.prototype.$meta.api.post('/a/cms/site/getConfigSiteBase', { atomClass }).then(res => {
+            const configSiteBase = res.data || {};
+            commit('setConfigSiteBase', { atomClass, configSiteBase });
+            resolve(configSiteBase);
           }).catch(err => reject(err));
         });
       },
-      getConfigSite({ state, commit }) {
+      getConfigSite({ state, commit }, { atomClass }) {
         return new Promise((resolve, reject) => {
-          if (state.configSite) return resolve(state.configSite);
-          Vue.prototype.$meta.api.post('/a/cms/site/getConfigSite').then(res => {
-            const data = res.data || {};
-            commit('setConfigSite', data);
-            resolve(data);
+          const _configSite = state.configSite[atomClass.module];
+          if (_configSite) return resolve(_configSite);
+          Vue.prototype.$meta.api.post('/a/cms/site/getConfigSite', { atomClass }).then(res => {
+            const configSite = res.data || {};
+            commit('setConfigSite', { atomClass, configSite });
+            resolve(configSite);
           }).catch(err => reject(err));
         });
       },

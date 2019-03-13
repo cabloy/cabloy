@@ -8,14 +8,19 @@
   </eb-page>
 </template>
 <script>
+import utils from '../../common/utils.js';
 export default {
   data() {
+    const atomClass = utils.parseAtomClass(this.$f7route.query);
     return {
+      atomClass,
       content: '{}',
     };
   },
   created() {
-    this.$local.dispatch('getConfigSiteBase').then(data => {
+    this.$local.dispatch('getConfigSiteBase', {
+      atomClass: this.atomClass,
+    }).then(data => {
       if (!data) {
         this.content = '{}';
       } else {
