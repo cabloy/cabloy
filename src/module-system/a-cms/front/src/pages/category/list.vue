@@ -6,17 +6,20 @@
         <span @click.stop="onNodeClickEdit(node)">{{node.text}}</span>
         <span>
           <span @click.stop="onNodeClickAdd(node)">{{$text('Add')}}</span>
-        <span v-if="node.data.id" @click.stop="onNodeClickMove(node)">{{$text('Move')}}</span>
-        <span v-if="node.data.id" @click.stop="onNodeClickDelete(node)">{{$text('Delete')}}</span>
+          <span v-if="node.data.id" @click.stop="onNodeClickMove(node)">{{$text('Move')}}</span>
+          <span v-if="node.data.id" @click.stop="onNodeClickDelete(node)">{{$text('Delete')}}</span>
         </span>
       </div>
     </eb-tree>
   </eb-page>
 </template>
 <script>
+import utils from '../../common/utils.js';
 export default {
   data() {
+    const atomClass = utils.parseAtomClass(this.$f7route.query);
     return {
+      atomClass,
       language: this.$f7route.query.language,
       treeOptions: {
         fetchData: node => {
@@ -38,6 +41,9 @@ export default {
     this.$meta.eventHub.$off('a-cms:category:save', this.onCategorySave);
   },
   methods: {
+    combineAtomClass(url) {
+      return utils.combineAtomClass(this.atomClass, url);
+    },
     fetchChildren(node) {
       // root
       if (node.id === 'root') {
@@ -55,7 +61,11 @@ export default {
         });
       }
       // children
-      return this.$api.post('category/children', { language: this.language, categoryId: node.data.id })
+      return this.$api.post('category/children', {
+        atomClass: this.atomClass,
+        language: this.language,
+        categoryId: node.data.id,
+      })
         .then(data => {
           const list = data.list.map(item => {
             const node = {
@@ -75,13 +85,15 @@ export default {
     },
     onNodeClickEdit(node) {
       if (!node.data.id) return;
-      this.$view.navigate(`/a/cms/category/edit?categoryId=${node.data.id}`);
+      const url = this.combineAtomClass(`/a/cms/category/edit?categoryId=${node.data.id}`);
+      this.$view.navigate(url);
     },
     onNodeClickAdd(node) {
       const categoryId = node.data.id;
       this.$view.dialog.prompt(this.$text('Please specify the category name')).then(categoryName => {
         if (!categoryName) return;
         this.$api.post('category/add', {
+          atomClass: this.atomClass,
           data: {
             categoryName,
             language: this.language,
@@ -101,7 +113,8 @@ export default {
     },
     onNodeClickMove(node) {
       const categoryId = node.data.id;
-      this.$view.navigate('/a/cms/category/select', {
+      const url = this.combineAtomClass('/a/cms/category/select');
+      this.$view.navigate(url, {
         context: {
           params: {
             language: this.language,
@@ -133,6 +146,7 @@ export default {
       return this.$refs.tree.find(node => node.data.id === id);
     },
     onCategorySave(data) {
+      if (data.atomClass.module !== this.atomClass.module) return;
       const node = this.findNode(data.categoryIdParent);
       this.reloadChildren(node && node[0]);
     },

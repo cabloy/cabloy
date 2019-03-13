@@ -10,9 +10,12 @@
   </eb-page>
 </template>
 <script>
+import utils from '../../common/utils.js';
 export default {
   data() {
+    const atomClass = utils.parseAtomClass(this.$f7route.query);
     return {
+      atomClass,
       categoryId: this.$f7route.query.categoryId,
       category: null,
     };
@@ -35,7 +38,12 @@ export default {
         categoryId: this.categoryId,
         data: this.category,
       }).then(() => {
-        this.$meta.eventHub.$emit('a-cms:category:save', { categoryId: this.categoryId, categoryIdParent: this.category.categoryIdParent, category: this.category });
+        this.$meta.eventHub.$emit('a-cms:category:save', {
+          atomClass: this.atomClass,
+          categoryId: this.categoryId,
+          categoryIdParent: this.category.categoryIdParent,
+          category: this.category,
+        });
         this.$f7router.back();
       });
     },

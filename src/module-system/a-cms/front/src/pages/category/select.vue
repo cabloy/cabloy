@@ -7,17 +7,21 @@
     </eb-navbar>
     <eb-tree ref="tree" :options="treeOptions">
       <span slot-scope="{node}" @click.stop="onNodeClick(node)">
-        <f7-icon v-if="node.states._selected" material="check_box"></f7-icon>{{node.text}}</span>
+        <f7-icon v-if="node.states._selected" material="check_box"></f7-icon>{{node.text}}
+      </span>
     </eb-tree>
   </eb-page>
 </template>
 <script>
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.components.ebPageContext;
+import utils from '../../common/utils.js';
 export default {
   mixins: [ ebPageContext ],
   data() {
+    const atomClass = utils.parseAtomClass(this.$f7route.query);
     return {
+      atomClass,
       treeOptions: {
         fetchData: node => {
           return this.fetchChildren(node);
@@ -64,7 +68,11 @@ export default {
       }
       // children
       const categoryId = node.id === 'root' ? this.categoryIdStart : node.data.id;
-      return this.$api.post('category/children', { language: this.language, categoryId })
+      return this.$api.post('category/children', {
+        atomClass: this.atomClass,
+        language: this.language,
+        categoryId,
+      })
         .then(data => {
           let list = data.list.map(item => {
             const node = {
