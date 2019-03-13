@@ -4,6 +4,7 @@ module.exports = app => {
     module: moduleInfo.relativeName,
     atomClassName: 'post',
   };
+  const atomClassQuery = `module=${atomClass.module}&atomClassName=${atomClass.atomClassName}`;
   const schemas = require('./config/validation/schemas.js')(app);
   const meta = {
     base: {
@@ -45,7 +46,7 @@ module.exports = app => {
           autoRight: 1,
           atomClassName: 'post',
           action: 'create',
-          sorting: 1,
+          sorting: 2,
           menu: 1,
         },
         listPost: {
@@ -54,7 +55,7 @@ module.exports = app => {
           autoRight: 1,
           atomClassName: 'post',
           action: 'read',
-          sorting: 1,
+          sorting: 2,
           menu: 1,
         },
         listPostByCategory: {
@@ -63,9 +64,9 @@ module.exports = app => {
           autoRight: 1,
           atomClassName: 'post',
           action: 'read',
-          sorting: 1,
+          sorting: 2,
           menu: 1,
-          actionPath: 'post/category',
+          actionPath: `/a/cms/article/category?${atomClassQuery}`,
         },
       },
     },
@@ -86,7 +87,7 @@ module.exports = app => {
     },
     settings: {
       instance: {
-        actionPath: `/a/cms/config/list?module=${atomClass.module}&atomClassName=${atomClass.atomClassName}`,
+        actionPath: `/a/cms/config/list?${atomClassQuery}`,
       },
     },
   };

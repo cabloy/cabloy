@@ -38,6 +38,9 @@ module.exports = appInfo => {
         order: 'desc',
       },
     },
+    profile: {
+
+    },
   };
 
   return config;
