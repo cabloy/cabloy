@@ -8,6 +8,9 @@ describe('test/controller/test.test.js', () => {
     atomClassName: 'post',
   };
 
+  // categoryIds
+  const categoryIds = {};
+
   it('action:set config', async () => {
     app.mockSession({});
 
@@ -29,8 +32,8 @@ describe('test/controller/test.test.js', () => {
           items: 'en-us,zh-cn',
         },
         themes: {
-          'en-us': 'cms-themeblog',
-          'zh-cn': 'cms-themeblog',
+          'en-us': 'cms-themecommunity',
+          'zh-cn': 'cms-themecommunity',
         },
       },
     });
@@ -48,14 +51,10 @@ describe('test/controller/test.test.js', () => {
     });
 
     const categories = [
-      { categoryName: 'test4', language: 'en-us', categoryIdParent: 0, sorting: 1 },
-      { categoryName: 'test1', language: 'en-us', categoryIdParent: 0 },
-      { categoryName: 'test2', language: 'en-us', categoryIdParent: 0 },
-      { categoryName: 'test3', language: 'en-us', categoryIdParent: 'test2' },
-      { categoryName: 'testHidden', language: 'en-us', categoryIdParent: 0, hidden: 1 },
-      { categoryName: 'testFlag', language: 'en-us', categoryIdParent: 0, flag: 'Flag' },
+      { categoryName: 'Share', language: 'en-us', categoryIdParent: 0, sorting: 1 },
+      { categoryName: 'Answer', language: 'en-us', categoryIdParent: 0, sorting: 2 },
+      { categoryName: 'Announcement', language: 'en-us', categoryIdParent: 0, sorting: 3 },
     ];
-    const categoryIds = {};
     for (const item of categories) {
       // add
       let result = await app.httpRequest().post(mockUrl('/a/cms/category/add')).send({
@@ -112,52 +111,31 @@ describe('test/controller/test.test.js', () => {
     const articles = [
       {
         special: true,
-        atomName: 'hello world',
+        atomName: 'only for test',
         language: 'en-us',
         editMode: 1,
       },
       {
-        atomName: 'hello world2',
+        atomName: 'CabloyJS Changelog',
         language: 'en-us',
-        categoryName: 'category1',
-        slug: 'about',
+        categoryName: 'Announcement',
+        slug: 'changelog',
         editMode: 1,
         content: `
-  ## hello world
-  (c)
-  \`\`\` js
-  var foo = function (bar) {
-    return bar++;
-  };
-  console.log(foo(5));
-  \`\`\`
-
-  ::: warning
-  <script>window.alert('test');</script>
-  :::
-
-  ::: audio
-{
-  "autoplay": true,
-  "audio":
-  {
-    "name": "Yadikar",
-    "url": "https://zhennann.cabloy.com/api/a/file/file/download/9d373acea45549fa9fcd90152c73928f.aac",
-    "artist": "Retim",
-    "cover": "https://zhennann.cabloy.com/api/a/file/file/download/73878ed9a1ce4100ad32580b0fd98db2.jpg"
-  }
-}
-:::
-
+  ## CabloyJS Changelog
         `,
       },
       {
-        atomName: '你好，世界',
-        language: 'zh-cn',
+        atomName: 'Welcome to CabloyJS Community',
+        language: 'en-us',
+        categoryName: 'Announcement',
         editMode: 1,
+        content: `
+  ## You are welcome
+        `,
       },
       {
-        atomName: '你好，世界2',
+        atomName: 'CabloyJS修改记录',
         language: 'zh-cn',
         editMode: 1,
       },
@@ -166,15 +144,7 @@ describe('test/controller/test.test.js', () => {
       let result;
       // category
       if (article.categoryName) {
-        result = await app.httpRequest().post(mockUrl('/a/cms/category/add')).send({
-          atomClass,
-          data: {
-            categoryName: article.categoryName,
-            language: article.language,
-            categoryIdParent: 0,
-          },
-        });
-        article.categoryId = result.body.data;
+        article.categoryId = categoryIds[article.categoryName];
       }
 
       // create

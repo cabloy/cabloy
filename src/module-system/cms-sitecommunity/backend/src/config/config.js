@@ -6,7 +6,7 @@ module.exports = appInfo => {
   config.site = {
     base: {
       title: 'Community',
-      subTitle: 'Talk about CabloyJS',
+      subTitle: 'Everything about CabloyJS',
       description: '',
       keywords: '',
       publishOnSubmit: true,
@@ -20,7 +20,7 @@ module.exports = appInfo => {
       items: 'en-us',
     },
     themes: {
-      'en-us': 'cms-themeblog', // 'cms-themecommunity'
+      'en-us': 'cms-themecommunity',
     },
     edit: {
       mode: 1, // markdown
