@@ -231,7 +231,10 @@ util.article = {
           return util.performAction({
             method: 'post',
             url: '/a/cms/comment/all',
-            body: { options },
+            body: {
+              atomClass: env.site.atomClass,
+              options,
+            },
           });
         },
         onParse(item) {
@@ -279,7 +282,10 @@ util.article = {
     util.performAction({
       method: 'post',
       url: '/a/cms/article/list',
-      body: { options },
+      body: {
+        atomClass: env.site.atomClass,
+        options,
+      },
     }).then(data => {
       this._brother({ $container, type, article: data.list[0] });
     });
