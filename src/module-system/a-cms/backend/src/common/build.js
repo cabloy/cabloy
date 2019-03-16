@@ -148,6 +148,8 @@ class Build {
     const site = await this.combineSite({ siteBase, language });
     // serverUrl
     site.serverUrl = this.getServerUrl('');
+    // atomClass
+    site.atomClass = this.atomClass;
     // languages
     site.languages = [];
     for (const item of site.language.items.split(',')) {
@@ -424,6 +426,7 @@ class Build {
       path: data._path,
       serverUrl: site.serverUrl,
       rawRootUrl: this.getUrlRawRoot(site),
+      atomClass: this.atomClass,
     });
     // render
     let content = await ejs.renderFile(fileName, data, this.getOptions());
