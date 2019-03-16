@@ -154,14 +154,20 @@ function _loadMore({ categoryId, tagId, search }) {
         }
         tagsText += '';
       }
+      // author-avatar
+      const authorAvatar=item.avatar?util.url(item.avatar):util.url('plugins/cms-pluginbase/assets/images/avatar_user.png');
+      // stat
       const stat = `
 <div class="title stat no-parse" data-article-id="${item.atomId}">
-${category}
-<span class="num date">${util.formatDateTime(item.createdAt)}</span>
-<span class="glyphicon glyphicon-eye-open"></span><span class="num readCount">${item.readCount}</span>
-<span class="glyphicon glyphicon-heart"></span><span class="num starCount">${item.starCount}</span>
-<a target="_blank" href="${util.url(item.url)}#comments"><span class="glyphicon glyphicon-comment"></span><span class="num commentCount">${item.commentCount}</span></a>
-${tagsText}
+    <img class="num avatar avatar24" src="${authorAvatar}">
+    <span class="num">${item.userName}</span>
+    <span class="num date">${util.formatDateTime(item.createdAt)}</span>
+    <span class="num"></span>
+    ${category}
+    <span class="glyphicon glyphicon-eye-open"></span><span class="num readCount">${item.readCount}</span>
+    <span class="glyphicon glyphicon-heart"></span><span class="num starCount">${item.starCount}</span>
+    <a target="_blank" href="${util.url(item.url)}#comments"><span class="glyphicon glyphicon-comment"></span><span class="num commentCount">${item.commentCount}</span></a>
+    ${tagsText}
 </div>
         `;
       return `
