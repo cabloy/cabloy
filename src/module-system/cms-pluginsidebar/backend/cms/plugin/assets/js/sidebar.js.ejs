@@ -47,7 +47,10 @@ util.sidebar = {
     util.performAction({
       method: 'post',
       url: '/a/cms/tag/list',
-      body: { options },
+      body: {
+        atomClass: env.site.atomClass,
+        options,
+      },
     }).then(data => {
       const $list = $('.list', $container);
       for (let i = 0; i < data.list.length; i++) {
@@ -67,7 +70,10 @@ util.sidebar = {
     util.performAction({
       method: 'post',
       url: '/a/cms/comment/all',
-      body: { options },
+      body: {
+        atomClass: env.site.atomClass,
+        options,
+      },
     }).then(data => {
       const $list = $('.list', $container);
       for (let i = 0; i < data.list.length; i++) {
