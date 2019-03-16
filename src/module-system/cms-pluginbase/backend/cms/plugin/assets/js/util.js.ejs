@@ -111,6 +111,7 @@ const util = {
     return `${env.site.rawRootUrl}${language === env.language.default ? '' : '/' + language}`;
   },
   url(path, language) {
+    if (path && (path.indexOf('http://') === 0 || path.indexOf('https://') === 0)) return path;
     const urlRoot = this.rootUrl(language);
     return path ? `${urlRoot}/${path}` : urlRoot;
   },
