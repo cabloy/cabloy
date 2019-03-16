@@ -25,7 +25,11 @@ if (!site._categories) {
   const res = await ctx.performAction({
     method:'post',
     url: '/a/cms/category/tree',
-    body: { language:site.language.current,hidden:0 },
+    body: {
+      atomClass: site.atomClass,
+      language: site.language.current,
+      hidden: 0,
+    },
   });
   site._categories=res.list;
 }

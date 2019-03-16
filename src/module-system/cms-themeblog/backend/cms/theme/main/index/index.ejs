@@ -21,7 +21,10 @@
           const data=await ctx.performAction({
             method:'post',
             url: '/a/cms/article/list',
-            body: { options },
+            body: {
+              atomClass: site.atomClass,
+              options,
+            },
           });
           // index
           env('index',{
