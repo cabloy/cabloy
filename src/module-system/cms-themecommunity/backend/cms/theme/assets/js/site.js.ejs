@@ -159,7 +159,7 @@ function _loadMore({ categoryId, tagId, search }) {
       // stat
       const stat = `
 <div class="title stat no-parse" data-article-id="${item.atomId}">
-    <img class="num avatar avatar24" src="${authorAvatar}">
+    <img class="num avatar avatar24" src="${util.combineImageUrl(authorAvatar, 24, 24)}">
     <span class="num">${item.userName}</span>
     <span class="num date">${util.formatDateTime(item.createdAt)}</span>
     <span class="num"></span>
