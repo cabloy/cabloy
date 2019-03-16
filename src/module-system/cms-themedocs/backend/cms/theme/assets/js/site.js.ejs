@@ -98,7 +98,10 @@ function categoryTree($treeContainer) {
             util.performAction({
               method: 'post',
               url: '/a/cms/category/tree',
-              body: { categoryId: category.id },
+              body: {
+                atomClass: env.site.atomClass,
+                categoryId: category.id,
+              },
             }).then(tree => {
               // prepare tree data
               const data = _prepareTreeData(tree.list);
@@ -340,6 +343,9 @@ function _fetchArticles({ index, categoryId, tagId, search, orders }) {
   return util.performAction({
     method: 'post',
     url: '/a/cms/article/list',
-    body: { options },
+    body: {
+      atomClass: env.site.atomClass,
+      options,
+    },
   });
 }
