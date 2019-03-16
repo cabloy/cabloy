@@ -1,0 +1,69 @@
+<%
+
+function _menuItems(categories,submenu) {
+  let res = '';
+  for (const item of categories) {
+    if (!item.catalog) {
+      res += `<li><a class="category-${item.id}" data-category-name="${item.categoryName}" href="${url('static/articles.html')}?categoryId=${item.id}&categoryName=${item.categoryName}">${item.categoryName}</a></li>`;
+    } else {
+      const _items = _menuItems(item.children,true);
+      res += `
+        <li class="${submenu?'dropdown-submenu':'dropdown'}">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">${item.categoryName}${submenu?'':' <span class="caret"></span>'}</a>
+          <ul class="dropdown-menu">
+            ${_items}
+          </ul>
+        </li>`;
+    }
+  }
+  return res;
+}
+
+// categories
+if (!site._categories) {
+  // categories
+  const res = await ctx.performAction({
+    method:'post',
+    url: '/a/cms/category/tree',
+    body: {
+      atomClass: site.atomClass,
+      language: site.language.current,
+      hidden: 0,
+    },
+  });
+  site._categories=res.list;
+}
+// menu
+if(!site._menuItems){
+  site._menuItems = _menuItems(site._categories,false);
+}
+
+%>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="<%=url('index.html')%>"><%=text('Home')%></a>
+    </div>
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <%- site._menuItems %>
+      </ul>
+      <form class="navbar-form navbar-right search" action="<%=url('static/articles.html')%>">
+        <div class="form-group">
+          <input name="search" type="text" class="form-control" placeholder="<%=text('Search')%>">
+        </div>
+        <button type="submit" class="btn btn-default"><%=text('Submit')%></button>
+      </form>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="<%=url('static/comments.html')%>"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span></a></li>
+        <%- await include('./language.ejs') %>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>

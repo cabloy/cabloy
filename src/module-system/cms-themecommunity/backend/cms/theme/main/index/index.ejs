@@ -1,0 +1,88 @@
+<%- await include('../../layout/header.ejs') %>
+<div class="row">
+  <div class="col-sm-8">
+    <section>
+      <%- await include('../../layout/breadcrumb.ejs') %>
+      <ul class="article-list media-list">
+        <%
+          // options
+          const options = {
+            where: {
+              'f.language': site.language.current,
+            },
+            orders: [
+              [ 'f.sticky', 'desc' ],
+              [ 'a.createdAt', 'desc' ],
+            ],
+            page: { index:0 },
+            mode: 'list',
+          };
+          // select
+          const data=await ctx.performAction({
+            method:'post',
+            url: '/a/cms/article/list',
+            body: {
+              atomClass: site.atomClass,
+              options,
+            },
+          });
+          // index
+          env('index',{
+            [_path]:data.index,
+          });
+          // list
+          for(const item of data.list){
+             const sticky = !item.sticky ? '' : '<span class="glyphicon glyphicon-pushpin"></span> ';
+             const audio = !item.audioFirst ? '' : '<span class="glyphicon glyphicon-music"></span> ';
+             const attachment = item.attachmentCount===0 ? '' : '<span class="glyphicon glyphicon-paperclip"></span> ';
+             const mediaUrl = item.imageFirst || item.audioCoverFirst;
+             const media = !mediaUrl ? '' : `
+<div class="media-right">
+      <a target="_blank" href="${url(item.url)}">
+        <img class="media-object img-delay" data-src="${mediaUrl}" data-width="125" data-height="100">
+      </a>
+</div>
+        `;
+        // tags
+        let tagsText='';
+        const tags=item.tags?JSON.parse(item.tags):null;
+        if(tags && tags.length>0){
+          tagsText+='<span class="num glyphicon glyphicon-tags"></span> ';
+          for(const tag of tags){
+            tagsText+=`<a target="_blank" href="${url('static/articles.html')}?tagId=${tag.id}&tagName=${tag.name}"><span class="num tag">${tag.name}</span></a>`;
+          }
+          tagsText+='';
+        }
+        // stat
+        const stat=`
+<div class="title stat" data-article-id="${item.atomId}">
+<a target="_blank" href="${url('static/articles.html')}?categoryId=${item.categoryId}&categoryName=${item.categoryName}"><span class="num category">${item.categoryName}</span></a>
+<span class="num date">${util.formatDateTime(item.createdAt)}</span>
+<span class="glyphicon glyphicon-eye-open"></span><span class="num readCount"></span>
+<span class="glyphicon glyphicon-heart"></span><span class="num starCount"></span>
+<a target="_blank" href="${url(item.url)}#comments"><span class="glyphicon glyphicon-comment"></span><span class="num commentCount"></span></a>
+${tagsText}
+</div>
+        `;
+
+        const html= `
+<li class="media">
+    <div class="media-body">
+      <h4 class="media-heading">${sticky}${audio}${attachment}<a target="_blank" href="${url(item.url)}">${item.atomName}</a></h4>
+      ${item.description || item.summary}
+      ${stat}
+    </div>
+    ${media}
+</li>
+        `;
+          echo(html);
+          }
+        %>
+      </ul>
+    </section>
+  </div>
+  <div class="col-sm-4">
+    <%- await include('../../layout/sidebar.ejs') %>
+  </div>
+</div>
+<%- await include('../../layout/footer.ejs') %>

@@ -1,0 +1,180 @@
+$(document).ready(function() {
+  // query
+  const query = util.parseUrlQuery();
+  // title
+  title(query);
+  // menu active
+  menuActive(query);
+  // breadcrumb
+  breadcrumb(query);
+  // search text
+  if (query.search) {
+    $('form.search input').val(query.search);
+  }
+});
+
+$(document).on('echo-ready', function() {
+  // query
+  const query = util.parseUrlQuery();
+  // load more
+  loadMore(query);
+});
+
+function title(query) {
+  if (env.site.path === 'static/articles') {
+    if (query.search !== undefined) {
+      document.title = `${query.search} | <%=text('Search')%> | ${env.base.title}`;
+    } else if (query.categoryId !== undefined) {
+      document.title = `${query.categoryName} | <%=text('Category')%> | ${env.base.title}`;
+    } else if (query.tagId !== undefined) {
+      document.title = `${query.tagName} | <%=text('Tag')%> | ${env.base.title}`;
+    }
+  } else if (env.site.path === 'static/comments') {
+    document.title = `<%=text('Comments')%> | ${env.base.title}`;
+  }
+}
+
+function menuActive(query) {
+  const categoryId = query.categoryId || (env.article && env.article.categoryId);
+  if (categoryId) {
+    const link = $(`.category-${categoryId}`);
+    link.parents('li').addClass('active');
+  }
+}
+
+function breadcrumb(query) {
+  const $container = $('.breadcrumb-nav');
+  // nav
+  if (env.site.path === 'static/articles') {
+    if (query.search !== undefined) {
+      $('.parent', $container).text('<%=text("Search")%>');
+      $('.current', $container).text(query.search);
+    } else if (query.categoryId !== undefined) {
+      $('.parent', $container).text('<%=text("Category")%>');
+      $('.current', $container).text(query.categoryName);
+    } else if (query.tagId !== undefined) {
+      $('.parent', $container).text('<%=text("Tag")%>');
+      $('.current', $container).text(query.tagName);
+    }
+  } else if (env.site.path === 'static/comments') {
+    $('.parent', $container).text('<%=text("Comment")%>');
+    $('.current', $container).text('<%=text("All")%>');
+  } else if (env.site.path === 'main/article') {
+    $('.parent', $container).html(`<a href="${util.url('static/articles.html')}?categoryId=${env.article.categoryId}&categoryName=${env.article.categoryName}">${env.article.categoryName}</a>`);
+    $('.current', $container).text(env.article.atomName);
+  }
+  // show
+  if (env.site.path !== 'main/index/index') {
+    $('.parent', $container).removeClass('hidden');
+    $('.current', $container).removeClass('hidden');
+  }
+}
+
+function loadMore(query) {
+  _loadMore({
+    categoryId: query.categoryId,
+    tagId: query.tagId,
+    search: query.search,
+  });
+}
+
+function _loadMore({ categoryId, tagId, search }) {
+  if ($('.article-list').length === 0) return;
+  util.loadMore({
+    container: '.article-list',
+    index: (env.index && env.index[env.site.path]) || 0,
+    onFetch({ index }) {
+      // options
+      const options = {
+        where: {
+          'f.language': env.language.current,
+        },
+        orders: [
+          [ 'f.sticky', 'desc' ],
+          [ 'a.createdAt', 'desc' ],
+        ],
+        page: { index },
+        mode: 'list',
+      };
+      // categoryId
+      if (categoryId) {
+        options.where['f.categoryId'] = categoryId;
+        options.orders = [
+          [ 'f.sticky', 'desc' ],
+          [ 'f.sorting', 'asc' ],
+          [ 'a.createdAt', 'desc' ],
+        ];
+      }
+      // tagId
+      if (tagId) {
+        options.where['f.tagId'] = tagId;
+        options.orders = [
+          [ 'f.sticky', 'desc' ],
+          [ 'a.createdAt', 'desc' ],
+        ];
+        options.mode = 'tag';
+      }
+      // search
+      if (search) {
+        options.where['f.contentSearch'] = { val: search, op: 'like' };
+        options.mode = 'search';
+      }
+      // select
+      return util.performAction({
+        method: 'post',
+        url: '/a/cms/article/list',
+        body: {
+          atomClass: env.site.atomClass,
+          options,
+        },
+      });
+    },
+    onParse(item) {
+      const sticky = !item.sticky ? '' : '<span class="glyphicon glyphicon-pushpin"></span> ';
+      const audio = !item.audioFirst ? '' : '<span class="glyphicon glyphicon-music"></span> ';
+      const attachment = item.attachmentCount === 0 ? '' : '<span class="glyphicon glyphicon-paperclip"></span> ';
+      const mediaUrl = item.imageFirst || item.audioCoverFirst;
+      const media = !mediaUrl ? '' : `
+<div class="media-right">
+      <a target="_blank" href="${util.url(item.url)}">
+        <img class="media-object" src="${util.combineImageUrl(mediaUrl, 125, 100)}">
+      </a>
+</div>
+        `;
+      const category = (categoryId === undefined) ?
+        `<a target="_blank" href="${util.url('static/articles.html')}?categoryId=${item.categoryId}&categoryName=${item.categoryName}"><span class="num category">${item.categoryName}</span></a>` : '';
+      // tags
+      let tagsText = '';
+      const tags = item.tags ? JSON.parse(item.tags) : null;
+      if (tags && tags.length > 0) {
+        tagsText += '<span class="num glyphicon glyphicon-tags"></span> ';
+        for (let i = 0; i < tags.length; i++) {
+          const tag = tags[i];
+          tagsText += `<a target="_blank" href="${util.url('static/articles.html')}?tagId=${tag.id}&tagName=${tag.name}"><span class="num tag">${tag.name}</span></a>`;
+        }
+        tagsText += '';
+      }
+      const stat = `
+<div class="title stat no-parse" data-article-id="${item.atomId}">
+${category}
+<span class="num date">${util.formatDateTime(item.createdAt)}</span>
+<span class="glyphicon glyphicon-eye-open"></span><span class="num readCount">${item.readCount}</span>
+<span class="glyphicon glyphicon-heart"></span><span class="num starCount">${item.starCount}</span>
+<a target="_blank" href="${util.url(item.url)}#comments"><span class="glyphicon glyphicon-comment"></span><span class="num commentCount">${item.commentCount}</span></a>
+${tagsText}
+</div>
+        `;
+      return `
+<li class="media">
+    <div class="media-body">
+      <h4 class="media-heading">${sticky}${audio}${attachment}<a target="_blank" href="${util.url(item.url)}">${item.atomName}</a></h4>
+      ${item.description || item.summary}
+      ${stat}
+    </div>
+    ${media}
+</li>
+        `;
+    },
+  });
+}
+
