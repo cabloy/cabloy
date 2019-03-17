@@ -15,7 +15,7 @@
       </f7-list-item>
       <f7-list-item divider></f7-list-item>
       <f7-list-item :title="$text('Atom class')" link="#" @click="onSelectAtomClass">
-        <div slot="after">{{atomClass && atomClass.title}}</div>
+        <div slot="after">{{atomClassTitle}}</div>
       </f7-list-item>
     </f7-list>
     <eb-validate v-if="item && validateParams" ref="validate" auto :data="item" :params="validateParams">
@@ -23,7 +23,9 @@
   </eb-page>
 </template>
 <script>
+import ebAtomClasses from '../../common/atomClasses.js';
 export default {
+  mixins: [ ebAtomClasses ],
   data() {
     return {
       atomName: '',
@@ -43,6 +45,13 @@ export default {
         labels.push({ title: labelsAll[key].text, value: key });
       }
       return labels;
+    },
+    atomClassTitle() {
+      if (!this.atomClass) return '';
+      if (this.atomClass.title) return this.atomClass.title;
+      const _atomClass = this.getAtomClass(this.atomClass);
+      if (!_atomClass) return '';
+      return _atomClass.titleLocale;
     },
   },
   watch: {
@@ -70,7 +79,13 @@ export default {
     },
   },
   created() {
+    // labels
     this.$local.dispatch('getLabels');
+    // init atomClass
+    const query = this.$f7route.query;
+    const module = query && query.module;
+    const atomClassName = query && query.atomClassName;
+    this.atomClass = (module && atomClassName) ? { module, atomClassName } : null;
   },
   methods: {
     onSelectAtomClass() {
@@ -122,6 +137,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>
