@@ -24,11 +24,14 @@ export default {
       const popover = this.$$(this.$el).find('.popover');
       if (popover.length === 0) return;
 
-      this.$f7.popover.open(popover, this.$el);
-      this.$emit('contextmenu:opened', event);
-
       event.stopPropagation();
       event.preventDefault();
+
+      // finished the event immediately
+      this.$nextTick(() => {
+        this.$f7.popover.open(popover, this.$el);
+        this.$emit('contextmenu:opened', event);
+      });
     },
     getLinkEl() {
       // bypass the popover's link
@@ -41,6 +44,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>

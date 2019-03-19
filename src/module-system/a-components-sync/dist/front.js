@@ -1965,12 +1965,17 @@ delete f7ListItem.props.href;
   },
   methods: {
     onContextMenu: function onContextMenu(event) {
+      var _this2 = this;
+
       var popover = this.$$(this.$el).find('.popover');
       if (popover.length === 0) return;
-      this.$f7.popover.open(popover, this.$el);
-      this.$emit('contextmenu:opened', event);
       event.stopPropagation();
       event.preventDefault();
+      this.$nextTick(function () {
+        _this2.$f7.popover.open(popover, _this2.$el);
+
+        _this2.$emit('contextmenu:opened', event);
+      });
     },
     getLinkEl: function getLinkEl() {
       var content = this.$$(this.$el).find('.item-content');
@@ -1995,7 +2000,7 @@ var listItem_component = normalizeComponent(
   listItem_staticRenderFns,
   false,
   null,
-  "6c7c397a",
+  "7ff77c22",
   null
   
 )
