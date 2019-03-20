@@ -42,17 +42,26 @@ export default {
     },
     setValue(data, key, value, property) {
       let _value;
-      if (property.type === 'number') {
-        _value = Number(value);
-      } else if (property.type === 'boolean') {
-        _value = Boolean(value);
+
+      if (property.ebType === 'select' && (value === '' || value === undefined || value === null)) {
+        _value = undefined; // for distinguish from 0
       } else {
-        _value = value;
+        if (property.type === 'number') {
+          _value = Number(value);
+        } else if (property.type === 'boolean') {
+          _value = Boolean(value);
+        } else {
+          _value = value;
+        }
       }
-      if (data[key] !== _value) {
+
+      const _valueOld = data[key];
+
+      this.$set(data, key, _value); // always set as maybe Object
+
+      if (_valueOld !== _value) {
         this.$emit('change', _value);
       }
-      this.$set(data, key, _value); // always set as maybe Object
     },
     adjustDataPath(dataPath) {
       if (!dataPath) return dataPath;

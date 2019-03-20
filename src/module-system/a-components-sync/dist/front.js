@@ -1165,7 +1165,7 @@ var radio_component = normalizeComponent(
       if (this.optionsBlankAuto) {
         var opt = _options[0];
 
-        if (!opt || opt.value) {
+        if (!opt || !this.equal(opt.value, '')) {
           _options.unshift({
             title: '',
             value: ''
@@ -1226,7 +1226,7 @@ var radio_component = normalizeComponent(
 
       if (!this.multiple) {
         return this.voptions.find(function (opt) {
-          return _this6.optionValue(opt) == _this6.value;
+          return _this6.equal(_this6.optionValue(opt), _this6.value);
         });
       }
 
@@ -1241,7 +1241,7 @@ var radio_component = normalizeComponent(
           var opt = _step.value;
 
           if (value.findIndex(function (item) {
-            return item == _this6.optionValue(opt);
+            return _this6.equal(item, _this6.optionValue(opt));
           }) > -1) {
             options.push(opt);
           }
@@ -1285,6 +1285,15 @@ var radio_component = normalizeComponent(
     },
     optionDisplay: function optionDisplay(opt) {
       return this.$text(this.optionTitle(opt) || this.optionValue(opt));
+    },
+    adjustToString: function adjustToString(value) {
+      if (value === undefined || value === null) return '';
+      return String(value);
+    },
+    equal: function equal(valueFrom, valueTo) {
+      var valueFrom2 = this.adjustToString(valueFrom);
+      var valueTo2 = this.adjustToString(valueTo);
+      return valueFrom2 === valueTo2;
     }
   },
   render: function render(c) {
@@ -1312,14 +1321,14 @@ var radio_component = normalizeComponent(
           var selected = void 0;
 
           if (!_this8.multiple) {
-            selected = _this8.value == _this8.optionValue(opt);
+            selected = _this8.equal(_this8.value, _this8.optionValue(opt));
           } else {
             if (!_this8.value) {
               selected = false;
             } else {
               var value = _this8.value.findIndex ? _this8.value : _this8.value.toString().split(',');
               selected = value.findIndex(function (item) {
-                return item == _this8.optionValue(opt);
+                return _this8.equal(item, _this8.optionValue(opt));
               }) > -1;
             }
           }
@@ -1380,7 +1389,7 @@ var select_component = normalizeComponent(
   select_staticRenderFns,
   false,
   null,
-  "7f590e59",
+  "71bbb5c0",
   null
   
 )
@@ -1433,19 +1442,24 @@ var select_component = normalizeComponent(
     setValue: function setValue(data, key, value, property) {
       var _value;
 
-      if (property.type === 'number') {
-        _value = Number(value);
-      } else if (property.type === 'boolean') {
-        _value = Boolean(value);
+      if (property.ebType === 'select' && (value === '' || value === undefined || value === null)) {
+        _value = undefined;
       } else {
-        _value = value;
+        if (property.type === 'number') {
+          _value = Number(value);
+        } else if (property.type === 'boolean') {
+          _value = Boolean(value);
+        } else {
+          _value = value;
+        }
       }
 
-      if (data[key] !== _value) {
+      var _valueOld = data[key];
+      this.$set(data, key, _value);
+
+      if (_valueOld !== _value) {
         this.$emit('change', _value);
       }
-
-      this.$set(data, key, _value);
     },
     adjustDataPath: function adjustDataPath(dataPath) {
       if (!dataPath) return dataPath;
@@ -1694,7 +1708,7 @@ var validateItem_component = normalizeComponent(
   validateItem_staticRenderFns,
   false,
   null,
-  "56e699fa",
+  "5b650ee6",
   null
   
 )

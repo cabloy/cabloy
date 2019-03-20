@@ -87,7 +87,7 @@ export default {
       // optionsBlankAuto
       if (this.optionsBlankAuto) {
         const opt = _options[0];
-        if (!opt || opt.value) {
+        if (!opt || !this.equal(opt.value, '')) {
           _options.unshift({ title: '', value: '' });
         }
       }
@@ -135,13 +135,13 @@ export default {
       if (!this.voptions) return null;
       if (!this.value) return null;
       if (!this.multiple) {
-        return this.voptions.find(opt => this.optionValue(opt) == this.value);
+        return this.voptions.find(opt => this.equal(this.optionValue(opt), this.value));
       }
       // multiple
       const options = [];
       const value = this.value.findIndex ? this.value : this.value.toString().split(',');
       for (const opt of this.voptions) {
-        if (value.findIndex(item => item == this.optionValue(opt)) > -1) {
+        if (value.findIndex(item => this.equal(item, this.optionValue(opt))) > -1) {
           options.push(opt);
         }
       }
@@ -162,6 +162,16 @@ export default {
     optionDisplay(opt) {
       return this.$text(this.optionTitle(opt) || this.optionValue(opt));
     },
+    adjustToString(value) {
+      // undefined / null / '' , except 0/false
+      if (value === undefined || value === null) return '';
+      return String(value);
+    },
+    equal(valueFrom, valueTo) {
+      const valueFrom2 = this.adjustToString(valueFrom);
+      const valueTo2 = this.adjustToString(valueTo);
+      return valueFrom2 === valueTo2;
+    },
   },
   render(c) {
     if (this.readOnly) {
@@ -176,13 +186,13 @@ export default {
       for (const opt of this.voptions) {
         let selected;
         if (!this.multiple) {
-          selected = this.value == this.optionValue(opt); // not use ===
+          selected = this.equal(this.value, this.optionValue(opt));
         } else {
           if (!this.value) {
             selected = false;
           } else {
             const value = this.value.findIndex ? this.value : this.value.toString().split(',');
-            selected = value.findIndex(item => item == this.optionValue(opt)) > -1;
+            selected = value.findIndex(item => this.equal(item, this.optionValue(opt))) > -1;
           }
         }
         options.push(c('option', {
