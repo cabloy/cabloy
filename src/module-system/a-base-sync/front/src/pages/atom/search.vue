@@ -110,7 +110,8 @@ export default {
         atomClassExtra = {};
         for (const key in this.item) {
           const value = this.item[key];
-          if (value) {
+          // undefined/null/'', except 0/false
+          if (value !== undefined && value !== null && value !== '') {
             if (typeof value === 'string') {
               atomClassExtra[`f.${key}`] = { val: value, op: 'like' };
             } else {
