@@ -46,7 +46,7 @@ module.exports = app => {
         return function() {
           const args = [ this.table ];
           for (const arg of arguments) args.push(arg);
-          if (!this.disableInstance) {
+          if (!this.disableInstance && !args[1].iid) {
             args[1].iid = this.ctx.instance.id;
           }
           if (!this.disableDeleted) {
@@ -81,7 +81,7 @@ module.exports = app => {
           const args = [ this.table ];
           for (const arg of arguments) args.push(arg);
           args[1] = args[1] || {};
-          if (!this.disableInstance) {
+          if (!this.disableInstance && !args[1].iid) {
             args[1].iid = this.ctx.instance.id;
           }
           if (!this.disableDeleted) {
@@ -104,7 +104,7 @@ module.exports = app => {
           const args = [ this.table ];
           for (const arg of arguments) args.push(arg);
           args[1] = args[1] || {};
-          if (!this.disableInstance) {
+          if (!this.disableInstance && !args[1].iid) {
             args[1].iid = this.ctx.instance.id;
           }
           if (!this.disableDeleted) {
@@ -128,7 +128,7 @@ module.exports = app => {
           // if (args[1].id) {
           //   return this.ctx.db[method].apply(this.ctx.db, args);
           // }
-          if (!this.disableInstance) {
+          if (!this.disableInstance && !args[1].iid) {
             args[1].iid = this.ctx.instance.id;
           }
           if (!this.disableDeleted) {
@@ -150,7 +150,7 @@ module.exports = app => {
           for (const arg of arguments) args.push(arg);
           args[1] = args[1] || {};
           args[1].where = args[1].where || {};
-          if (!this.disableInstance) {
+          if (!this.disableInstance && !args[1].where.iid) {
             args[1].where.iid = this.ctx.instance.id;
           }
           if (!this.disableDeleted) {
