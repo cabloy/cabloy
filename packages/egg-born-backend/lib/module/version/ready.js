@@ -4,7 +4,7 @@ module.exports = async function(app) {
     method: 'post',
     url: '/api/a/version',
   });
-  // run immediate schedules
+  // run startups: all
   for (const key in app.meta.startups) {
     const startup = app.meta.startups[key];
     if (!startup.startup.disable && (startup.startup.type === 'all' || app.meta.isTest)) {

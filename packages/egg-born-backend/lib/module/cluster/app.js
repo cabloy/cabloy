@@ -2,7 +2,7 @@ const qs = require('querystring');
 const database = require('../version/database.js');
 const versionCheck = require('../version/check.js');
 const versionReady = require('../version/ready.js');
-const eventAppReady = 'eb:event:appReady';
+const constant = require('../../base/constants.js');
 
 module.exports = function(loader, modules) {
 
@@ -48,7 +48,7 @@ module.exports = function(loader, modules) {
       // version ready
       await versionReady(loader.app);
       // event: appReady
-      loader.app.emit(eventAppReady);
+      loader.app.emit(constant.event.appReady);
     }
   }
 

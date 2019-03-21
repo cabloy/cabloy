@@ -1,3 +1,5 @@
+const constant = require('../../base/constants.js');
+
 module.exports = function(loader, modules) {
 
   // ready
@@ -19,6 +21,8 @@ module.exports = function(loader, modules) {
       data: null,
     }, info => {
       if (info.err) throw new Error(info.err.message);
+      // for agent: event: appReady
+      loader.app.emit(constant.event.appReady);
       // version ready
       loader.app.meta.messenger.callAll({ name: 'versionReady' });
       // ready

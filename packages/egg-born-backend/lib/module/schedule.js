@@ -2,6 +2,7 @@ const qs = require('querystring');
 const WorkerStrategy = require('egg-schedule/lib/strategy/worker');
 const AllStrategy = require('egg-schedule/lib/strategy/all');
 const util = require('./util.js');
+const constant = require('../base/constants.js');
 
 module.exports = function(loader, modules) {
 
@@ -33,8 +34,8 @@ module.exports = function(loader, modules) {
   } else {
     // for agent
     if (!loader.app.meta.isTest) {
-      // egg-ready
-      loader.app.messenger.once('egg-ready', () => {
+      // event:appReady
+      loader.app.on(constant.event.appReady, () => {
         // start schedules
         startSchedules();
       });
