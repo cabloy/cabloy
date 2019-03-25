@@ -23,9 +23,9 @@ module.exports = () => {
               config: JSON.stringify(instance.config) });
           }
         }
-        // extend
-        if (!ctx.app.meta._configsOriginal) ctx.app.meta._configsOriginal = extend(true, {}, ctx.app.meta.configs);
-        ctx.app.meta.configs = extend(true, {}, ctx.app.meta._configsOriginal, instance.config);
+        // cache configs
+        const instanceConfigs = extend(true, {}, ctx.app.meta.configs, instance.config);
+        ctx.cache.mem.set('instanceConfigs', instanceConfigs);
         // cache
         //   if !host && !protocol then try to get them on next call
         if (ctxHostValid(ctx) && timeout > 0) {
