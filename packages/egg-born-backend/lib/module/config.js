@@ -24,9 +24,16 @@ module.exports = function(loader, modules) {
           enumerable: false,
           get() {
             if (!context[CTXCONFIG]) {
-              const _config = loader.app.meta.configs[context.module.info.relativeName];
+              let _configs;
+              if (context.cache && context.cache.mem) {
+                _configs = context.cache.mem.get('instanceConfigs');
+              }
+              if (!_configs) {
+                _configs = loader.app.meta.configs;
+              }
+              const _config = _configs[context.module.info.relativeName];
               _config.module = function(moduleName) {
-                return loader.app.meta.configs[moduleName];
+                return _configs[moduleName];
               };
               context[CTXCONFIG] = _config;
             }
