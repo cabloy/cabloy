@@ -55,7 +55,7 @@ module.exports = function(app) {
       app.meta.messenger.callAgent({ name: 'queuePush', data: info });
     }
 
-    // { subdomain, module, queueName,data }
+    // { subdomain, module, queueName,queueNameSub,data }
     pushAsync(info) {
       return new Promise((resolve, reject) => {
         info.key = uuid.v1();
@@ -68,19 +68,28 @@ module.exports = function(app) {
       });
     }
 
-    _combileQueueKey({ subdomain = '', module = '', queueName = '' }) {
-      return `${subdomain}:${module}:${queueName}`;
+    _combileQueueKey({ subdomain = '', module = '', queueName = '', queueNameSub = '' }) {
+      let queueKey = `${subdomain}:${module}:${queueName}`;
+      if (queueNameSub) {
+        queueKey += `#${queueNameSub}`;
+      }
+      return queueKey;
     }
 
-    _performTask({ subdomain, module, queueName, key, pid, data }, cb) {
+    _performTask({ subdomain, module, queueName, queueNameSub, key, pid, data }, cb) {
       // queue config
       const queueConfig = app.meta.queues[`${module}:${queueName}`];
+      // url
+      let url = util.combineApiPath(module, queueConfig.config.path);
+      if (queueNameSub) {
+        url += `?queueNameSub=${encodeURIComponent(queueNameSub)}`;
+      }
       // call
       app.meta.messenger.callRandom({
         name: 'queueCall',
         data: {
           method: 'post',
-          url: util.combineApiPath(module, queueConfig.config.path),
+          url,
           headers: { 'x-inner-subdomain': subdomain },
           body: data,
         },
