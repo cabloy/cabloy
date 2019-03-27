@@ -54,7 +54,7 @@ module.exports = app => {
       });
     }
 
-    async write({ atomClass, key, item, validation, user }) {
+    async write({ atomClass, key, item, user }) {
       // route to article
       await this.ctx.performAction({
         method: 'post',
@@ -63,7 +63,6 @@ module.exports = app => {
           atomClass,
           key,
           item,
-          validation,
           user,
         },
       });
