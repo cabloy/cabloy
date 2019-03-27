@@ -19,7 +19,7 @@ module.exports = app => {
       // select
     }
 
-    async write({ atomClass, key, item, validation, user }) {
+    async write({ atomClass, key, item, user }) {
       // update {{atomClassName}}
       await this.ctx.model.{{atomClassName}}.update({
         id: key.itemId,
