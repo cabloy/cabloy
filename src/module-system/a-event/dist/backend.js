@@ -264,19 +264,32 @@ const Fn = module.exports = ctx => {
       return new (Fn(ctx))(moduleName);
     }
 
+    // support: returnValue / event.break
     async invoke({ module, name, data }) {
+      //
       module = module || this.moduleName;
       const key = `${module}:${name}`;
       const events = ctx.app.meta.geto('events');
       const eventArray = events[key];
       if (!eventArray) return;
-      for (const event of eventArray) {
-        await ctx.performAction({
+      //
+      let returnValue;
+      for (const eventUrl of eventArray) {
+        const event = {
+          break: false,
+        };
+        const res = await ctx.performAction({
           method: 'post',
-          url: event,
-          body: { data },
+          url: eventUrl,
+          body: { event, data },
         });
+        // check returnValue
+        if (res !== undefined) returnValue = res;
+        // check break
+        if (event.break) break;
       }
+      // ok
+      return returnValue;
     }
 
   }
@@ -343,17 +356,20 @@ module.exports = app => {
       const data = {
         name: 'test',
       };
-      await this.ctx.meta.event.invoke({
+      const res = await this.ctx.meta.event.invoke({
         module: 'a-event', name: 'test', data,
       });
       console.log('a-event:test:name:', data.name);
-      this.ctx.success();
+      console.log('a-event:test:name:returnValue', res);
+      this.ctx.success(res);
     }
 
     async eventTest() {
+      const event = this.ctx.request.body.event;
       const data = this.ctx.request.body.data;
       data.name = 'test:echo';
-      this.ctx.success();
+      event.break = true;
+      this.ctx.success('returnValue');
     }
 
   }

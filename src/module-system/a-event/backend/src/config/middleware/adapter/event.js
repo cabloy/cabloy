@@ -11,19 +11,32 @@ const Fn = module.exports = ctx => {
       return new (Fn(ctx))(moduleName);
     }
 
+    // support: returnValue / event.break
     async invoke({ module, name, data }) {
+      //
       module = module || this.moduleName;
       const key = `${module}:${name}`;
       const events = ctx.app.meta.geto('events');
       const eventArray = events[key];
       if (!eventArray) return;
-      for (const event of eventArray) {
-        await ctx.performAction({
+      //
+      let returnValue;
+      for (const eventUrl of eventArray) {
+        const event = {
+          break: false,
+        };
+        const res = await ctx.performAction({
           method: 'post',
-          url: event,
-          body: { data },
+          url: eventUrl,
+          body: { event, data },
         });
+        // check returnValue
+        if (res !== undefined) returnValue = res;
+        // check break
+        if (event.break) break;
       }
+      // ok
+      return returnValue;
     }
 
   }
