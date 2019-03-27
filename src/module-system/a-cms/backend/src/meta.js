@@ -88,6 +88,11 @@ module.exports = app => {
         actionPath: 'config/list',
       },
     },
+    event: {
+      implementations: {
+        // 'a-base:atomClassValidator': 'event/atomClassValidator',
+      },
+    },
   };
   return meta;
 };

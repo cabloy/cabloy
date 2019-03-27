@@ -36,7 +36,7 @@ module.exports = app => {
       // select
     }
 
-    async write({ atomClass, key, item, validation, user }) {
+    async write({ atomClass, key, item, user }) {
       // get atom for safety
       const atomOld = await this.ctx.meta.atom.read({ key, user });
 

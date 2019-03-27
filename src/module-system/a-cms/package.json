@@ -58,7 +58,7 @@
     "extend2": "^1.0.0",
     "@zhennann/ejs": "^2.6.2",
     "@zhennann/markdown": "^1.0.6",
-    "@zhennann/trim-html": "^0.1.11",
+    "@zhennann/trim-html": "^0.1.12",
     "p-map": "^1.2.0",
     "moment": "^2.22.2",
     "glob": "^7.1.2",

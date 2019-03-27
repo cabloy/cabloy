@@ -1,5 +1,6 @@
 const require3 = require('require3');
 const fse = require3('fs-extra');
+const utils = require('../common/utils.js');
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -55,7 +56,8 @@ module.exports = app => {
     }
 
     async buildLanguage() {
-      const atomClass = this.ctx.request.body.atomClass;
+      // atomClass
+      const atomClass = utils.atomClass(this.ctx.request.body.atomClass);
       const language = this.ctx.request.body.language;
       // queue
       const res = await this.ctx.app.meta.queue.pushAsync({
@@ -73,7 +75,8 @@ module.exports = app => {
     }
 
     async buildLanguages() {
-      const atomClass = this.ctx.request.body.atomClass;
+      // atomClass
+      const atomClass = utils.atomClass(this.ctx.request.body.atomClass);
       // queue
       const res = await this.ctx.app.meta.queue.pushAsync({
         subdomain: this.ctx.subdomain,
