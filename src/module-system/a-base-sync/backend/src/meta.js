@@ -49,6 +49,7 @@ module.exports = app => {
       declarations: {
         loginInfo: 'Login Info',
         userVerify: 'User Verify',
+        atomClassValidator: 'Atom Validator',
       },
     },
   };

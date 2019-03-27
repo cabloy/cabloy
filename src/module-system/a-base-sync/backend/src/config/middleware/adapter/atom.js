@@ -195,11 +195,11 @@ const Fn = module.exports = ctx => {
     }
 
     // write
-    async write({ key, item, validation, user }) {
+    async write({ key, item, user }) {
       const atomClass = await ctx.meta.atomClass.getByAtomId({ atomId: key.atomId });
 
       // write atom
-      await this._writeAtom({ key, item, validation, user });
+      await this._writeAtom({ key, item, user });
 
       // write item
       const moduleInfo = mparse.parseInfo(atomClass.module);
@@ -210,16 +210,15 @@ const Fn = module.exports = ctx => {
           atomClass,
           key,
           item,
-          validation,
           user,
         },
       });
 
       // write atom again
-      await this._writeAtom({ key, item, validation, user });
+      await this._writeAtom({ key, item, user });
     }
 
-    async _writeAtom({ key, item, validation, user }) {
+    async _writeAtom({ key, item, user }) {
       // write atom
       if (item) {
         const atom = { };
@@ -439,8 +438,8 @@ const Fn = module.exports = ctx => {
       return actionsRes;
     }
 
-    async schema({ atomClass, schema }) {
-      const validator = await this.validator({ atomClass });
+    async schema({ atomClass, schema, user }) {
+      const validator = await this.validator({ atomClass, user });
       if (!validator) return null;
       const _schema = ctx.meta.validation.getSchema({ module: validator.module, validator: validator.validator, schema });
       return {
@@ -450,10 +449,10 @@ const Fn = module.exports = ctx => {
       };
     }
 
-    async validator({ atomClass: { id } }) {
+    async validator({ atomClass: { id }, user }) {
       let atomClass = await this.atomClass.get({ id });
       atomClass = await this.atomClass.top(atomClass);
-      return this.atomClass.validator(atomClass);
+      return await this.atomClass.validator({ atomClass, user });
     }
 
     // atom

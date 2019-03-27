@@ -30,7 +30,7 @@ module.exports = app => {
       meta: { right: { type: 'atom', action: 2 } },
     },
     { method: 'post', path: 'atom/select', controller: atom },
-    { method: 'post', path: 'atom/write', controller: atom, middlewares: 'validate,transaction',
+    { method: 'post', path: 'atom/write', controller: atom, middlewares: 'validate,transaction,httpLog',
       meta: {
         right: { type: 'atom', action: 3 },
         validate: { data: 'item' },

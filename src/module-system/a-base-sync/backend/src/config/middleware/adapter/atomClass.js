@@ -81,20 +81,30 @@ const Fn = module.exports = ctx => {
       return await this.top(atomClass);
     }
 
-    validator({ module, atomClassName }) {
-      const _module = ctx.app.meta.modules[module];
-      const validator = _module.main.meta.base.atoms[atomClassName].validator;
+    async validator({ atomClass, user }) {
+      // event
+      const res = await ctx.meta.event.invoke({
+        module: moduleInfo.relativeName,
+        name: 'atomClassValidator',
+        data: {
+          atomClass, user,
+        },
+      });
+      if (res) return res;
+      // default
+      const _module = ctx.app.meta.modules[atomClass.module];
+      const validator = _module.main.meta.base.atoms[atomClass.atomClassName].validator;
       return validator ? {
-        module,
+        module: atomClass.module,
         validator,
       } : null;
     }
 
-    validatorSearch({ module, atomClassName }) {
-      const _module = ctx.app.meta.modules[module];
-      const validator = _module.main.meta.base.atoms[atomClassName].search.validator;
+    async validatorSearch({ atomClass }) {
+      const _module = ctx.app.meta.modules[atomClass.module];
+      const validator = _module.main.meta.base.atoms[atomClass.atomClassName].search.validator;
       return validator ? {
-        module,
+        module: atomClass.module,
         validator,
       } : null;
     }

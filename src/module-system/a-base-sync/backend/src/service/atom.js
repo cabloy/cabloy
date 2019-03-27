@@ -14,8 +14,8 @@ module.exports = app => {
       return await this.ctx.meta.atom.select({ atomClass, options, user });
     }
 
-    async write({ key, item, validation, user }) {
-      return await this.ctx.meta.atom.write({ key, item, validation, user });
+    async write({ key, item, user }) {
+      return await this.ctx.meta.atom.write({ key, item, user });
     }
 
     async delete({ key, user }) {
@@ -46,12 +46,12 @@ module.exports = app => {
       return await this.ctx.meta.atom.actions({ key, basic, user });
     }
 
-    async schema({ atomClass, schema }) {
-      return await this.ctx.meta.atom.schema({ atomClass, schema });
+    async schema({ atomClass, schema, user }) {
+      return await this.ctx.meta.atom.schema({ atomClass, schema, user });
     }
 
-    async validator({ atomClass }) {
-      return await this.ctx.meta.atom.validator({ atomClass });
+    async validator({ atomClass, user }) {
+      return await this.ctx.meta.atom.validator({ atomClass, user });
     }
 
   }

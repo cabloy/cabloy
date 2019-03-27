@@ -36,7 +36,6 @@ module.exports = app => {
       await this.ctx.service.atom.write({
         key: this.ctx.request.body.key,
         item: this.ctx.request.body.item,
-        validation: this.ctx.request.body.validation,
         user: this.ctx.user.op,
       });
       this.ctx.success();
@@ -135,6 +134,7 @@ module.exports = app => {
       const res = await this.ctx.service.atom.schema({
         atomClass: this.ctx.request.body.atomClass,
         schema: this.ctx.request.body.schema,
+        user: this.ctx.user.op,
       });
       this.ctx.success(res);
     }
@@ -142,6 +142,7 @@ module.exports = app => {
     async validator() {
       const res = await this.ctx.service.atom.validator({
         atomClass: this.ctx.request.body.atomClass,
+        user: this.ctx.user.op,
       });
       this.ctx.success(res);
     }

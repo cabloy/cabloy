@@ -11,10 +11,9 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    validatorSearch() {
-      const res = this.ctx.service.atomClass.validatorSearch({
-        module: this.ctx.request.body.module,
-        atomClassName: this.ctx.request.body.atomClassName,
+    async validatorSearch() {
+      const res = await this.ctx.service.atomClass.validatorSearch({
+        atomClass: this.ctx.request.body.atomClass,
       });
       this.ctx.success(res);
     }

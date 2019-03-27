@@ -6,7 +6,7 @@ module.exports = appInfo => {
   config.middlewares = {
     base: {
       global: true,
-      dependencies: 'instance',
+      dependencies: 'instance,event',
     },
     auth: {
       global: true,

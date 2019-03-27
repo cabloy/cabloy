@@ -65,8 +65,10 @@ export default {
         this.$meta.module.use(atomClass.module, () => {
           // validateParams
           this.$api.post('atomClass/validatorSearch', {
-            module: atomClass.module,
-            atomClassName: atomClass.atomClassName,
+            atomClass: {
+              module: atomClass.module,
+              atomClassName: atomClass.atomClassName,
+            },
           }).then(data => {
             this.item = {};
             this.validateParams = {

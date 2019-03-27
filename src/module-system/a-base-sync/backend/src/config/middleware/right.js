@@ -47,7 +47,7 @@ async function checkAtom(moduleInfo, options, ctx) {
       user: ctx.user.op,
     });
     if (!res) ctx.throw(403);
-    ctx.request.body._atomClass = res;
+    ctx.meta._atomClass = res;
   }
 
   // read
@@ -58,7 +58,7 @@ async function checkAtom(moduleInfo, options, ctx) {
     });
     if (!res) ctx.throw(403);
     ctx.request.body.key.itemId = res.itemId;
-    ctx.request.body._atom = res;
+    ctx.meta._atom = res;
   }
 
   // write/delete
@@ -69,7 +69,7 @@ async function checkAtom(moduleInfo, options, ctx) {
     });
     if (!res) ctx.throw(403);
     ctx.request.body.key.itemId = res.itemId;
-    ctx.request.body._atom = res;
+    ctx.meta._atom = res;
     // ctx.request.body.atom = res;  // atom maybe from client
   }
 
@@ -82,30 +82,15 @@ async function checkAtom(moduleInfo, options, ctx) {
     });
     if (!res) ctx.throw(403);
     ctx.request.body.key.itemId = res.itemId;
-    ctx.request.body._atom = res;
-    // ctx.request.body.atom = res;  // atom maybe from client
+    ctx.meta._atom = res;
   }
 
   // prepare validate: write
   if (options.action === constant.atom.action.write) {
-    const validator = await ctx.meta.atom.validator({ atomClass: { id: ctx.request.body._atom.atomClassId } });
-    if (validator) {
-      const validate = ctx.request.body.geto('validate');
-      validate.module = validator.module;
-      validate.validator = validator.validator;
-    }
-  }
-  // prepare validate: action
-  if (actionCustom > constant.atom.action.custom) {
-    // ignore if no schema
-    if (ctx.request.body.validation && ctx.request.body.validation.schema) {
-      const validator = await ctx.meta.atom.validator({ atomClass: { id: ctx.request.body._atom.atomClassId } });
-      if (validator) {
-        const validate = ctx.request.body.geto('validate');
-        validate.module = validator.module;
-        validate.validator = validator.validator;
-      }
-    }
+    ctx.meta._validator = await ctx.meta.atom.validator({
+      atomClass: { id: ctx.meta._atom.atomClassId },
+      user: ctx.user.op,
+    });
   }
 
 }
@@ -118,5 +103,5 @@ async function checkFunction(moduleInfo, options, ctx) {
     user: ctx.user.op,
   });
   if (!res) ctx.throw(403);
-  ctx.request.body._function = res;
+  ctx.meta._function = res;
 }

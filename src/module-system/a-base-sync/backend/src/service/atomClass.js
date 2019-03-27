@@ -6,8 +6,8 @@ module.exports = app => {
       return await this.ctx.meta.atomClass.register({ module, atomClassName, atomClassIdParent });
     }
 
-    validatorSearch({ module, atomClassName }) {
-      return this.ctx.meta.atomClass.validatorSearch({ module, atomClassName });
+    async validatorSearch({ atomClass }) {
+      return await this.ctx.meta.atomClass.validatorSearch({ atomClass });
     }
 
     async checkRightCreate({ atomClass, user }) {
