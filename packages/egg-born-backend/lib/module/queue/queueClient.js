@@ -69,9 +69,9 @@ module.exports = function(app) {
     }
 
     _combileQueueKey({ subdomain = '', module = '', queueName = '', queueNameSub = '' }) {
-      let queueKey = `${subdomain}:${module}:${queueName}`;
+      let queueKey = `${subdomain}||${module}||${queueName}`;
       if (queueNameSub) {
-        queueKey += `#${queueNameSub}`;
+        queueKey += `##${queueNameSub}`;
       }
       return queueKey;
     }
