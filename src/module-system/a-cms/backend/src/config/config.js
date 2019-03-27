@@ -4,17 +4,8 @@ module.exports = appInfo => {
 
   // queues
   config.queues = {
-    buildLanguage: {
-      path: 'queue/buildLanguage',
-    },
-    buildLanguages: {
-      path: 'queue/buildLanguages',
-    },
-    renderArticle: {
-      path: 'queue/renderArticle',
-    },
-    deleteArticle: {
-      path: 'queue/deleteArticle',
+    render: {
+      path: 'queue/render',
     },
   };
 

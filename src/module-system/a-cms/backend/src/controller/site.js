@@ -61,8 +61,10 @@ module.exports = app => {
       const res = await this.ctx.app.meta.queue.pushAsync({
         subdomain: this.ctx.subdomain,
         module: moduleInfo.relativeName,
-        queueName: 'buildLanguage',
+        queueName: 'render',
+        queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
         data: {
+          queueAction: 'buildLanguage',
           atomClass,
           language,
         },
@@ -76,8 +78,12 @@ module.exports = app => {
       const res = await this.ctx.app.meta.queue.pushAsync({
         subdomain: this.ctx.subdomain,
         module: moduleInfo.relativeName,
-        queueName: 'buildLanguages',
-        data: { atomClass },
+        queueName: 'render',
+        queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
+        data: {
+          queueAction: 'buildLanguages',
+          atomClass,
+        },
       });
       this.ctx.success(res);
     }

@@ -205,8 +205,12 @@ module.exports = app => {
         await this.ctx.app.meta.queue.push({
           subdomain: this.ctx.subdomain,
           module: moduleInfo.relativeName,
-          queueName: 'deleteArticle',
-          data: { atomClass, key, article, inner },
+          queueName: 'render',
+          queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
+          data: {
+            queueAction: 'deleteArticle',
+            atomClass, key, article, inner,
+          },
         });
       });
     }
@@ -217,8 +221,12 @@ module.exports = app => {
         await this.ctx.app.meta.queue.push({
           subdomain: this.ctx.subdomain,
           module: moduleInfo.relativeName,
-          queueName: 'renderArticle',
-          data: { atomClass, key, inner },
+          queueName: 'render',
+          queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
+          data: {
+            queueAction: 'renderArticle',
+            atomClass, key, inner,
+          },
         });
       });
     }

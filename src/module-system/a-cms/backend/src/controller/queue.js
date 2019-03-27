@@ -2,6 +2,11 @@ module.exports = app => {
 
   class QueueController extends app.Controller {
 
+    async render() {
+      const queueAction = this.ctx.request.body.queueAction;
+      await this[queueAction]();
+    }
+
     async buildLanguage() {
       const res = await this.ctx.service.site.buildLanguage({
         atomClass: this.ctx.request.body.atomClass,
