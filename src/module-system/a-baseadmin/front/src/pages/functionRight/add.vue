@@ -16,7 +16,11 @@
   </eb-page>
 </template>
 <script>
+import Vue from 'vue';
+const ebModules = Vue.prototype.$meta.module.get('a-base').options.components.ebModules;
+const ebFunctions = Vue.prototype.$meta.module.get('a-base').options.components.ebFunctions;
 export default {
+  mixins: [ ebModules, ebFunctions ],
   data() {
     return {
       roleId: parseInt(this.$f7route.query.roleId),
@@ -27,11 +31,18 @@ export default {
   },
   computed: {
     modules() {
-      const functionsAll = this.$store.getState('a/base/functions');
+      const modulesAll = this.modulesAll;
+      if (!modulesAll) return [];
+      const functionsAll = this.functionsAll;
       if (!functionsAll) return [];
+
       const options = [{ title: null, value: '' }];
-      for (const key in functionsAll) {
-        options.push({ title: key, value: key });
+      for (const moduleName in functionsAll) {
+        const functions = functionsAll[moduleName];
+        if (Object.keys(functions).length > 0) {
+          const module = this.getModule(moduleName);
+          options.push({ title: module.titleLocale, value: moduleName });
+        }
       }
       return options;
     },
@@ -43,9 +54,6 @@ export default {
     module(value) {
       this.func = null;
     },
-  },
-  created() {
-    this.$store.dispatch('a/base/getFunctions');
   },
   methods: {
     onSelectFunction() {
@@ -83,6 +91,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>

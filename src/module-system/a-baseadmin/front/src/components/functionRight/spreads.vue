@@ -2,7 +2,7 @@
   <div>
     <f7-list>
       <f7-list-group v-for="group of itemGroups" :key="group.id">
-        <f7-list-item :title="group.id" group-title></f7-list-item>
+        <f7-list-item :title="group.moduleTitle" group-title></f7-list-item>
         <eb-list-item v-for="item of group.items" :key="`${item.roleExpandId}:${item.roleFunctionId}`" :title="item.titleLocale || item.title">
           <div slot="after">
             <div>{{$text('from')}}: {{item.roleName}}</div>
@@ -14,10 +14,13 @@
   </div>
 </template>
 <script>
+import Vue from 'vue';
+const ebModules = Vue.prototype.$meta.module.get('a-base').options.components.ebModules;
 export default {
   meta: {
     global: false,
   },
+  mixins: [ ebModules ],
   props: {
     role: {
       type: Object,
@@ -36,13 +39,18 @@ export default {
   },
   computed: {
     itemGroups() {
+      const modulesAll = this.modulesAll;
+      if (!modulesAll) return [];
+
       if (!this.items) return [];
+
       const groups = [];
       let group = null;
       for (const item of this.items) {
         const groupName = item.module;
         if (!group || group.id !== groupName) {
-          group = { id: groupName, title: groupName, items: [] };
+          const module = this.getModule(item.module);
+          group = { id: groupName, moduleTitle: module.titleLocale, items: [] };
           groups.push(group);
         }
         group.items.push(item);
@@ -100,6 +108,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>
