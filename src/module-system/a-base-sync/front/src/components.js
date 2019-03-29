@@ -6,6 +6,7 @@ import actions from './common/actions.js';
 import atomClasses from './common/atomClasses.js';
 import modules from './common/modules.js';
 import ebMenus from './common/menus.js';
+import ebFunctions from './common/functions.js';
 
 export default {
   menus,
@@ -16,4 +17,5 @@ export default {
   ebAtomClasses: atomClasses,
   ebModules: modules,
   ebMenus,
+  ebFunctions,
 };

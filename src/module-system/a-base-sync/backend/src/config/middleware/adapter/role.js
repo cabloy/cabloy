@@ -411,10 +411,11 @@ const Fn = module.exports = ctx => {
       page = ctx.meta.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       const list = await ctx.model.query(`
-        select a.*,b.module,b.name,b.title,b.scene,e.roleName from aViewUserRightFunction a
+        select a.*,b.module,b.name,b.title,b.scene,b.sorting${menu ? ',f.titleLocale' : ''},e.roleName from aViewUserRightFunction a
           left join aFunction b on a.functionId=b.id
+          ${menu ? 'left join aFunctionLocale f on a.functionId=f.functionId' : ''}
           left join aRole e on a.roleIdBase=e.id
-            where a.iid=? and a.userIdWho=? and b.menu=?
+            where a.iid=? and a.userIdWho=? and b.menu=? ${menu ? 'and f.locale=\'' + ctx.locale + '\'' : ''}
             order by b.module,b.scene,b.sorting
             ${_limit}
         `, [ ctx.instance.id, userId, menu ]);
