@@ -422,6 +422,57 @@ const Fn = module.exports = ctx => {
       return list;
     }
 
+    async getUserRolesDirect({ userId }) {
+      const list = await ctx.model.query(`
+        select a.* from aRole a
+          left join aUserRole b on a.id=b.roleId
+            where a.iid=? and b.userId=?
+        `, [ ctx.instance.id, userId ]);
+      return list;
+    }
+
+    async getUserRolesParent({ userId }) {
+      const list = await ctx.model.query(`
+        select a.* from aRole a
+          left join aViewUserRoleRef b on a.id=b.roleIdParent
+            where a.iid=? and b.userId=?
+        `, [ ctx.instance.id, userId ]);
+      return list;
+    }
+
+    async getUserRolesExpand({ userId }) {
+      const list = await ctx.model.query(`
+        select a.* from aRole a
+          left join aViewUserRoleExpand b on a.id=b.roleIdBase
+            where a.iid=? and b.userId=?
+        `, [ ctx.instance.id, userId ]);
+      return list;
+    }
+
+    async userInRoleDirect({ userId, roleId }) {
+      const list = await ctx.model.query(`
+        select count(*) as count from aUserRole a
+          where a.iid=? and a.userId=? and a.roleId=?
+        `, [ ctx.instance.id, userId, roleId ]);
+      return list[0].count > 0;
+    }
+
+    async userInRoleParent({ userId, roleId }) {
+      const list = await ctx.model.query(`
+        select count(*) as count from aViewUserRoleRef a
+          where a.iid=? and a.userId=? and a.roleIdParent=?
+        `, [ ctx.instance.id, userId, roleId ]);
+      return list[0].count > 0;
+    }
+
+    async userInRoleExpand({ userId, roleId }) {
+      const list = await ctx.model.query(`
+        select count(*) as count from aViewUserRoleExpand a
+          where a.iid=? and a.userId=? and a.roleIdBase=?
+        `, [ ctx.instance.id, userId, roleId ]);
+      return list[0].count > 0;
+    }
+
   }
 
   return Role;
