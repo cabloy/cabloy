@@ -38,7 +38,6 @@ module.exports = app => {
           { roleName: 'cms-community-publisher', action: 'read', scopeNames: 'authenticated' },
           { roleName: 'cms-community-publisher', action: 'write', scopeNames: 'authenticated' },
           { roleName: 'cms-community-publisher', action: 'publish', scopeNames: 'authenticated' },
-          { roleName: 'cms-community-publisher', action: 'sticky', scopeNames: 'authenticated' },
           { roleName: 'root', action: 'read', scopeNames: 'authenticated' },
         ];
         const module = this.ctx.app.meta.modules[this.ctx.module.info.relativeName];

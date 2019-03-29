@@ -4,5 +4,4 @@ module.exports = {
   'Create Post': '新建帖子',
   'Post List': '帖子列表',
   'Post List(by category)': '帖子列表(按目录)',
-  'Switch Sticky': '切换置顶',
 };

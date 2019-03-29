@@ -24,11 +24,6 @@ module.exports = app => {
               title: 'Publish',
               flag: '1,2',
             },
-            sticky: {
-              code: 102,
-              title: 'Switch Sticky',
-              flag: '1,2',
-            },
           },
           flags: {
             1: {
