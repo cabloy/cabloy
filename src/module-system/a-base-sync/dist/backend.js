@@ -905,9 +905,9 @@ module.exports = app => {
   // services
   const services = __webpack_require__(52)(app);
   // models
-  const models = __webpack_require__(70)(app);
+  const models = __webpack_require__(71)(app);
   // meta
-  const meta = __webpack_require__(77)(app);
+  const meta = __webpack_require__(78)(app);
 
   return {
     routes,
@@ -936,7 +936,7 @@ module.exports = appInfo => {
   config.middlewares = {
     base: {
       global: true,
-      dependencies: 'instance',
+      dependencies: 'instance,event',
     },
     auth: {
       global: true,
@@ -1006,7 +1006,8 @@ module.exports = appInfo => {
   // checkUserName
   config.checkUserName = true;
   // signupRoleName
-  config.signupRoleName = 'registered';
+  //  default is 'activated', if need activating by mobile/email, then add to 'registered' first
+  config.signupRoleName = 'activated';
 
   // public dir
   config.publicDir = '';
@@ -1709,20 +1710,30 @@ const Fn = module.exports = ctx => {
       return await this.top(atomClass);
     }
 
-    validator({ module, atomClassName }) {
-      const _module = ctx.app.meta.modules[module];
-      const validator = _module.main.meta.base.atoms[atomClassName].validator;
+    async validator({ atomClass, user }) {
+      // event
+      const res = await ctx.meta.event.invoke({
+        module: moduleInfo.relativeName,
+        name: 'atomClassValidator',
+        data: {
+          atomClass, user,
+        },
+      });
+      if (res) return res;
+      // default
+      const _module = ctx.app.meta.modules[atomClass.module];
+      const validator = _module.main.meta.base.atoms[atomClass.atomClassName].validator;
       return validator ? {
-        module,
+        module: atomClass.module,
         validator,
       } : null;
     }
 
-    validatorSearch({ module, atomClassName }) {
-      const _module = ctx.app.meta.modules[module];
-      const validator = _module.main.meta.base.atoms[atomClassName].search.validator;
+    async validatorSearch({ atomClass }) {
+      const _module = ctx.app.meta.modules[atomClass.module];
+      const validator = _module.main.meta.base.atoms[atomClass.atomClassName].search.validator;
       return validator ? {
-        module,
+        module: atomClass.module,
         validator,
       } : null;
     }
@@ -1966,6 +1977,9 @@ const Fn = module.exports = ctx => {
       let tableName = '';
       if (_atomClass) {
         tableName = this._getTableName({ atomClass: _atomClass, mode: options.mode });
+        // 'where' should append atomClassId, such as article/post using the same table
+        if (!options.where) options.where = {};
+        options.where.atomClassId = atomClass.id;
       }
       // select
       const items = await this._list({
@@ -1998,11 +2012,11 @@ const Fn = module.exports = ctx => {
     }
 
     // write
-    async write({ key, item, validation, user }) {
+    async write({ key, item, user }) {
       const atomClass = await ctx.meta.atomClass.getByAtomId({ atomId: key.atomId });
 
       // write atom
-      await this._writeAtom({ key, item, validation, user });
+      await this._writeAtom({ key, item, user });
 
       // write item
       const moduleInfo = mparse.parseInfo(atomClass.module);
@@ -2013,16 +2027,15 @@ const Fn = module.exports = ctx => {
           atomClass,
           key,
           item,
-          validation,
           user,
         },
       });
 
       // write atom again
-      await this._writeAtom({ key, item, validation, user });
+      await this._writeAtom({ key, item, user });
     }
 
-    async _writeAtom({ key, item, validation, user }) {
+    async _writeAtom({ key, item, user }) {
       // write atom
       if (item) {
         const atom = { };
@@ -2242,8 +2255,8 @@ const Fn = module.exports = ctx => {
       return actionsRes;
     }
 
-    async schema({ atomClass, schema }) {
-      const validator = await this.validator({ atomClass });
+    async schema({ atomClass, schema, user }) {
+      const validator = await this.validator({ atomClass, user });
       if (!validator) return null;
       const _schema = ctx.meta.validation.getSchema({ module: validator.module, validator: validator.validator, schema });
       return {
@@ -2253,10 +2266,10 @@ const Fn = module.exports = ctx => {
       };
     }
 
-    async validator({ atomClass: { id } }) {
+    async validator({ atomClass: { id }, user }) {
       let atomClass = await this.atomClass.get({ id });
       atomClass = await this.atomClass.top(atomClass);
-      return this.atomClass.validator(atomClass);
+      return await this.atomClass.validator({ atomClass, user });
     }
 
     // atom
@@ -2391,6 +2404,7 @@ const Fn = module.exports = ctx => {
       if (mode === 'Search') {
         return atomClass.tableNameSearch || atomClass.tableNameFull || atomClass.tableName;
       }
+      // special: all = list + atomEnabled=1
       return atomClass[`tableName${mode}`] || atomClass.tableName;
     }
 
@@ -2994,15 +3008,67 @@ const Fn = module.exports = ctx => {
       page = ctx.meta.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       const list = await ctx.model.query(`
-        select a.*,b.module,b.name,b.title,b.scene,e.roleName from aViewUserRightFunction a
+        select a.*,b.module,b.name,b.title,b.scene,b.sorting${menu ? ',f.titleLocale' : ''},e.roleName from aViewUserRightFunction a
           left join aFunction b on a.functionId=b.id
+          ${menu ? 'left join aFunctionLocale f on a.functionId=f.functionId' : ''}
           left join aRole e on a.roleIdBase=e.id
-            where a.iid=? and a.userIdWho=? and b.menu=?
+            where a.iid=? and a.userIdWho=? and b.menu=? ${menu ? 'and f.locale=\'' + ctx.locale + '\'' : ''}
             order by b.module,b.scene,b.sorting
             ${_limit}
         `, [ ctx.instance.id, userId, menu ]);
 
       return list;
+    }
+
+    async getUserRolesDirect({ userId }) {
+      const list = await ctx.model.query(`
+        select a.* from aRole a
+          left join aUserRole b on a.id=b.roleId
+            where a.iid=? and b.userId=?
+        `, [ ctx.instance.id, userId ]);
+      return list;
+    }
+
+    async getUserRolesParent({ userId }) {
+      const list = await ctx.model.query(`
+        select a.* from aRole a
+          left join aViewUserRoleRef b on a.id=b.roleIdParent
+            where a.iid=? and b.userId=?
+        `, [ ctx.instance.id, userId ]);
+      return list;
+    }
+
+    async getUserRolesExpand({ userId }) {
+      const list = await ctx.model.query(`
+        select a.* from aRole a
+          left join aViewUserRoleExpand b on a.id=b.roleIdBase
+            where a.iid=? and b.userId=?
+        `, [ ctx.instance.id, userId ]);
+      return list;
+    }
+
+    async userInRoleDirect({ userId, roleId }) {
+      const list = await ctx.model.query(`
+        select count(*) as count from aUserRole a
+          where a.iid=? and a.userId=? and a.roleId=?
+        `, [ ctx.instance.id, userId, roleId ]);
+      return list[0].count > 0;
+    }
+
+    async userInRoleParent({ userId, roleId }) {
+      const list = await ctx.model.query(`
+        select count(*) as count from aViewUserRoleRef a
+          where a.iid=? and a.userId=? and a.roleIdParent=?
+        `, [ ctx.instance.id, userId, roleId ]);
+      return list[0].count > 0;
+    }
+
+    async userInRoleExpand({ userId, roleId }) {
+      const list = await ctx.model.query(`
+        select count(*) as count from aViewUserRoleExpand a
+          where a.iid=? and a.userId=? and a.roleIdBase=?
+        `, [ ctx.instance.id, userId, roleId ]);
+      return list[0].count > 0;
     }
 
   }
@@ -3149,7 +3215,7 @@ async function checkAtom(moduleInfo, options, ctx) {
       user: ctx.user.op,
     });
     if (!res) ctx.throw(403);
-    ctx.request.body._atomClass = res;
+    ctx.meta._atomClass = res;
   }
 
   // read
@@ -3160,7 +3226,7 @@ async function checkAtom(moduleInfo, options, ctx) {
     });
     if (!res) ctx.throw(403);
     ctx.request.body.key.itemId = res.itemId;
-    ctx.request.body._atom = res;
+    ctx.meta._atom = res;
   }
 
   // write/delete
@@ -3171,7 +3237,7 @@ async function checkAtom(moduleInfo, options, ctx) {
     });
     if (!res) ctx.throw(403);
     ctx.request.body.key.itemId = res.itemId;
-    ctx.request.body._atom = res;
+    ctx.meta._atom = res;
     // ctx.request.body.atom = res;  // atom maybe from client
   }
 
@@ -3184,30 +3250,15 @@ async function checkAtom(moduleInfo, options, ctx) {
     });
     if (!res) ctx.throw(403);
     ctx.request.body.key.itemId = res.itemId;
-    ctx.request.body._atom = res;
-    // ctx.request.body.atom = res;  // atom maybe from client
+    ctx.meta._atom = res;
   }
 
   // prepare validate: write
   if (options.action === constant.atom.action.write) {
-    const validator = await ctx.meta.atom.validator({ atomClass: { id: ctx.request.body._atom.atomClassId } });
-    if (validator) {
-      const validate = ctx.request.body.geto('validate');
-      validate.module = validator.module;
-      validate.validator = validator.validator;
-    }
-  }
-  // prepare validate: action
-  if (actionCustom > constant.atom.action.custom) {
-    // ignore if no schema
-    if (ctx.request.body.validation && ctx.request.body.validation.schema) {
-      const validator = await ctx.meta.atom.validator({ atomClass: { id: ctx.request.body._atom.atomClassId } });
-      if (validator) {
-        const validate = ctx.request.body.geto('validate');
-        validate.module = validator.module;
-        validate.validator = validator.validator;
-      }
-    }
+    ctx.meta._validator = await ctx.meta.atom.validator({
+      atomClass: { id: ctx.meta._atom.atomClassId },
+      user: ctx.user.op,
+    });
   }
 
 }
@@ -3220,7 +3271,7 @@ async function checkFunction(moduleInfo, options, ctx) {
     user: ctx.user.op,
   });
   if (!res) ctx.throw(403);
-  ctx.request.body._function = res;
+  ctx.meta._function = res;
 }
 
 
@@ -3313,7 +3364,7 @@ module.exports = (options, app) => {
 /***/ (function(module, exports) {
 
 module.exports = {
-  systemRoles: [ 'root', 'anonymous', 'authenticated', 'registered', 'activated', 'superuser', 'organization', 'internal', 'external' ],
+  systemRoles: [ 'root', 'anonymous', 'authenticated', 'template', 'system', 'registered', 'activated', 'superuser', 'organization', 'internal', 'external' ],
   atom: {
     action: {
       create: 1,
@@ -3383,7 +3434,7 @@ module.exports = app => {
       meta: { right: { type: 'atom', action: 2 } },
     },
     { method: 'post', path: 'atom/select', controller: atom },
-    { method: 'post', path: 'atom/write', controller: atom, middlewares: 'validate,transaction',
+    { method: 'post', path: 'atom/write', controller: atom, middlewares: 'validate,transaction,httpLog',
       meta: {
         right: { type: 'atom', action: 3 },
         validate: { data: 'item' },
@@ -3630,7 +3681,6 @@ module.exports = app => {
       await this.ctx.service.atom.write({
         key: this.ctx.request.body.key,
         item: this.ctx.request.body.item,
-        validation: this.ctx.request.body.validation,
         user: this.ctx.user.op,
       });
       this.ctx.success();
@@ -3729,6 +3779,7 @@ module.exports = app => {
       const res = await this.ctx.service.atom.schema({
         atomClass: this.ctx.request.body.atomClass,
         schema: this.ctx.request.body.schema,
+        user: this.ctx.user.op,
       });
       this.ctx.success(res);
     }
@@ -3736,6 +3787,7 @@ module.exports = app => {
     async validator() {
       const res = await this.ctx.service.atom.validator({
         atomClass: this.ctx.request.body.atomClass,
+        user: this.ctx.user.op,
       });
       this.ctx.success(res);
     }
@@ -3763,10 +3815,9 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    validatorSearch() {
-      const res = this.ctx.service.atomClass.validatorSearch({
-        module: this.ctx.request.body.module,
-        atomClassName: this.ctx.request.body.atomClassName,
+    async validatorSearch() {
+      const res = await this.ctx.service.atomClass.validatorSearch({
+        atomClass: this.ctx.request.body.atomClass,
       });
       this.ctx.success(res);
     }
@@ -4041,14 +4092,14 @@ module.exports = app => {
 /***/ (function(module, exports, __webpack_require__) {
 
 const version = __webpack_require__(53);
-const base = __webpack_require__(62);
-const user = __webpack_require__(63);
-const atom = __webpack_require__(64);
-const atomClass = __webpack_require__(65);
-const atomAction = __webpack_require__(66);
-const auth = __webpack_require__(67);
-const func = __webpack_require__(68);
-const comment = __webpack_require__(69);
+const base = __webpack_require__(63);
+const user = __webpack_require__(64);
+const atom = __webpack_require__(65);
+const atomClass = __webpack_require__(66);
+const atomAction = __webpack_require__(67);
+const auth = __webpack_require__(68);
+const func = __webpack_require__(69);
+const comment = __webpack_require__(70);
 
 module.exports = app => {
   const services = {
@@ -4076,6 +4127,7 @@ const VersionUpdate3Fn = __webpack_require__(57);
 const VersionUpdate4Fn = __webpack_require__(58);
 const VersionInit2Fn = __webpack_require__(59);
 const VersionInit4Fn = __webpack_require__(61);
+const VersionInit5Fn = __webpack_require__(62);
 
 module.exports = app => {
 
@@ -4112,6 +4164,10 @@ module.exports = app => {
       if (options.version === 4) {
         const versionInit4 = new (VersionInit4Fn(this.ctx))();
         await versionInit4.run(options);
+      }
+      if (options.version === 5) {
+        const versionInit5 = new (VersionInit5Fn(this.ctx))();
+        await versionInit5.run(options);
       }
     }
 
@@ -5407,6 +5463,9 @@ module.exports = function(ctx) {
     async run(options) {
       // roles
       const roleIds = await this._initRoles();
+      // role includes
+      await this._roleIncludes(roleIds);
+      // build
       await ctx.meta.role.build();
       // users
       await this._initUsers(roleIds, options);
@@ -5423,6 +5482,13 @@ module.exports = function(ctx) {
         roleIds[roleName] = await ctx.meta.role.add(role);
       }
       return roleIds;
+    }
+
+    // role includes
+    async _roleIncludes(roleIds) {
+      for (const item of initData.includes) {
+        await ctx.meta.role.addRoleInc({ roleId: roleIds[item.from], roleIdInc: roleIds[item.to] });
+      }
     }
 
     // users
@@ -5460,17 +5526,23 @@ const roles = {
   authenticated: {
     roleName: 'authenticated', leader: 0, catalog: 1, system: 1, sorting: 2, roleIdParent: 'root',
   },
+  template: {
+    roleName: 'template', leader: 0, catalog: 1, system: 1, sorting: 1, roleIdParent: 'authenticated',
+  },
+  system: {
+    roleName: 'system', leader: 0, catalog: 0, system: 1, sorting: 1, roleIdParent: 'template',
+  },
   registered: {
-    roleName: 'registered', leader: 0, catalog: 0, system: 1, sorting: 1, roleIdParent: 'authenticated',
+    roleName: 'registered', leader: 0, catalog: 0, system: 1, sorting: 2, roleIdParent: 'authenticated',
   },
   activated: {
-    roleName: 'activated', leader: 0, catalog: 0, system: 1, sorting: 2, roleIdParent: 'authenticated',
+    roleName: 'activated', leader: 0, catalog: 0, system: 1, sorting: 3, roleIdParent: 'authenticated',
   },
   superuser: {
-    roleName: 'superuser', leader: 0, catalog: 0, system: 1, sorting: 3, roleIdParent: 'authenticated',
+    roleName: 'superuser', leader: 0, catalog: 0, system: 1, sorting: 4, roleIdParent: 'authenticated',
   },
   organization: {
-    roleName: 'organization', leader: 0, catalog: 1, system: 1, sorting: 4, roleIdParent: 'authenticated',
+    roleName: 'organization', leader: 0, catalog: 1, system: 1, sorting: 5, roleIdParent: 'authenticated',
   },
   internal: {
     roleName: 'internal', leader: 0, catalog: 1, system: 1, sorting: 1, roleIdParent: 'organization',
@@ -5479,6 +5551,10 @@ const roles = {
     roleName: 'external', leader: 0, catalog: 1, system: 1, sorting: 2, roleIdParent: 'organization',
   },
 };
+
+const includes = [
+  { from: 'superuser', to: 'system' },
+];
 
 const users = {
   root: {
@@ -5497,6 +5573,7 @@ const users = {
 
 module.exports = {
   roles,
+  includes,
   users,
 };
 
@@ -5532,6 +5609,59 @@ module.exports = function(ctx) {
 
 /***/ }),
 /* 62 */
+/***/ (function(module, exports) {
+
+module.exports = function(ctx) {
+
+  class VersionInit {
+
+    async run(options) {
+      // add role:template to authenticated
+      // add role:system to template
+      const items = [
+        {
+          roleName: 'template', leader: 0, catalog: 1, system: 1, sorting: 0, roleIdParent: 'authenticated',
+        },
+        {
+          roleName: 'system', leader: 0, catalog: 0, system: 1, sorting: 1, roleIdParent: 'template',
+        },
+      ];
+      let needBuild = false;
+      for (const item of items) {
+        const role = await ctx.meta.role.getSystemRole({ roleName: item.roleName });
+        if (!role) {
+          needBuild = true;
+          const roleParent = await ctx.meta.role.getSystemRole({ roleName: item.roleIdParent });
+          const roleId = await ctx.meta.role.add({
+            roleName: item.roleName,
+            leader: item.leader,
+            catalog: item.catalog,
+            system: item.system,
+            sorting: item.sorting,
+            roleIdParent: roleParent.id,
+          });
+          if (item.roleName === 'system') {
+            // superuser include system
+            const roleSuperuser = await ctx.meta.role.getSystemRole({ roleName: 'superuser' });
+            await ctx.meta.role.addRoleInc({ roleId: roleSuperuser.id, roleIdInc: roleId });
+          }
+        }
+      }
+      // build
+      if (needBuild) {
+        await ctx.meta.role.build();
+      }
+
+    }
+
+  }
+
+  return VersionInit;
+};
+
+
+/***/ }),
+/* 63 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5573,7 +5703,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5612,7 +5742,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5631,8 +5761,8 @@ module.exports = app => {
       return await this.ctx.meta.atom.select({ atomClass, options, user });
     }
 
-    async write({ key, item, validation, user }) {
-      return await this.ctx.meta.atom.write({ key, item, validation, user });
+    async write({ key, item, user }) {
+      return await this.ctx.meta.atom.write({ key, item, user });
     }
 
     async delete({ key, user }) {
@@ -5663,12 +5793,12 @@ module.exports = app => {
       return await this.ctx.meta.atom.actions({ key, basic, user });
     }
 
-    async schema({ atomClass, schema }) {
-      return await this.ctx.meta.atom.schema({ atomClass, schema });
+    async schema({ atomClass, schema, user }) {
+      return await this.ctx.meta.atom.schema({ atomClass, schema, user });
     }
 
-    async validator({ atomClass }) {
-      return await this.ctx.meta.atom.validator({ atomClass });
+    async validator({ atomClass, user }) {
+      return await this.ctx.meta.atom.validator({ atomClass, user });
     }
 
   }
@@ -5678,7 +5808,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5689,8 +5819,8 @@ module.exports = app => {
       return await this.ctx.meta.atomClass.register({ module, atomClassName, atomClassIdParent });
     }
 
-    validatorSearch({ module, atomClassName }) {
-      return this.ctx.meta.atomClass.validatorSearch({ module, atomClassName });
+    async validatorSearch({ atomClass }) {
+      return await this.ctx.meta.atomClass.validatorSearch({ atomClass });
     }
 
     async checkRightCreate({ atomClass, user }) {
@@ -5704,7 +5834,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5722,7 +5852,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -5858,7 +5988,7 @@ function createAuthenticate(moduleRelativeName, providerName, _config) {
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5897,7 +6027,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -6109,7 +6239,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const atom = __webpack_require__(4);
@@ -6119,14 +6249,14 @@ const auth = __webpack_require__(19);
 const authProvider = __webpack_require__(20);
 const role = __webpack_require__(10);
 const roleInc = __webpack_require__(11);
-const roleIncRef = __webpack_require__(71);
-const roleRef = __webpack_require__(72);
+const roleIncRef = __webpack_require__(72);
+const roleRef = __webpack_require__(73);
 const roleRight = __webpack_require__(13);
 const roleRightRef = __webpack_require__(14);
 const user = __webpack_require__(17);
 const userAgent = __webpack_require__(18);
 const userRole = __webpack_require__(12);
-const label = __webpack_require__(73);
+const label = __webpack_require__(74);
 const atomLabel = __webpack_require__(6);
 const atomLabelRef = __webpack_require__(7);
 const atomStar = __webpack_require__(5);
@@ -6134,9 +6264,9 @@ const func = __webpack_require__(1);
 const functionStar = __webpack_require__(8);
 const functionLocale = __webpack_require__(9);
 const roleFunction = __webpack_require__(15);
-const comment = __webpack_require__(74);
-const commentView = __webpack_require__(75);
-const commentHeart = __webpack_require__(76);
+const comment = __webpack_require__(75);
+const commentView = __webpack_require__(76);
+const commentHeart = __webpack_require__(77);
 
 module.exports = app => {
   const models = {
@@ -6171,7 +6301,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6189,7 +6319,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6215,7 +6345,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6233,7 +6363,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6251,7 +6381,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6269,7 +6399,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6287,14 +6417,14 @@ module.exports = app => {
 
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
   // keywords
-  const keywords = __webpack_require__(78)(app);
+  const keywords = __webpack_require__(79)(app);
   // schemas
-  const schemas = __webpack_require__(79)(app);
+  const schemas = __webpack_require__(80)(app);
   // meta
   const meta = {
     base: {
@@ -6341,6 +6471,7 @@ module.exports = app => {
       declarations: {
         loginInfo: 'Login Info',
         userVerify: 'User Verify',
+        atomClassValidator: 'Atom Validator',
       },
     },
   };
@@ -6349,7 +6480,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -6382,7 +6513,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
