@@ -99,11 +99,11 @@ module.exports = app => {
   // routes
   const routes = __webpack_require__(6)(app);
   // services
-  const services = __webpack_require__(9)(app);
+  const services = __webpack_require__(10)(app);
   // models
-  const models = __webpack_require__(12)(app);
+  const models = __webpack_require__(15)(app);
   // meta
-  const meta = __webpack_require__(14)(app);
+  const meta = __webpack_require__(17)(app);
 
   return {
     routes,
@@ -126,6 +126,48 @@ module.exports = app => {
 // eslint-disable-next-line
 module.exports = appInfo => {
   const config = {};
+
+  // site
+  config.site = {
+    base: {
+      title: 'Community',
+      subTitle: 'Everything about CabloyJS',
+      description: '',
+      keywords: '',
+      publishOnSubmit: true,
+    },
+    host: {
+      url: 'http://community.example.com',
+      rootPath: '',
+    },
+    language: {
+      default: 'en-us',
+      items: 'en-us',
+    },
+    themes: {
+      'en-us': 'cms-themecommunity',
+    },
+    edit: {
+      mode: 1, // markdown
+    },
+    env: {
+      format: {
+        date: 'YYYY-MM-DD',
+        time: 'HH:mm:ss',
+      },
+      comment: {
+        order: 'asc',
+        recentNum: 5,
+      },
+      brother: {
+        order: 'desc',
+      },
+    },
+    profile: {
+
+    },
+  };
+
   return config;
 };
 
@@ -144,8 +186,11 @@ module.exports = {
 /***/ (function(module, exports) {
 
 module.exports = {
-  'Create Post': '新建Post',
-  'Post List': 'Post列表',
+  'CMS:Community': 'CMS:社区',
+  Post2: '帖子',
+  'Create Post': '新建帖子',
+  'Post List': '帖子列表',
+  'Post List(by category)': '帖子列表(按目录)',
 };
 
 
@@ -172,6 +217,7 @@ module.exports = {
 
 const version = __webpack_require__(7);
 const post = __webpack_require__(8);
+const event = __webpack_require__(9);
 
 module.exports = app => {
   const routes = [
@@ -187,6 +233,8 @@ module.exports = app => {
     { method: 'post', path: 'post/delete', controller: post, middlewares: 'inner', meta: { auth: { enable: false } } },
     { method: 'post', path: 'post/action', controller: post, middlewares: 'inner', meta: { auth: { enable: false } } },
     { method: 'post', path: 'post/enable', controller: post, middlewares: 'inner', meta: { auth: { enable: false } } },
+    // event
+    { method: 'post', path: 'event/atomClassValidator', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
   ];
   return routes;
 };
@@ -270,22 +318,46 @@ module.exports = app => {
 
 /***/ }),
 /* 9 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+
+  class EventController extends app.Controller {
+
+    async atomClassValidator() {
+      const res = await this.ctx.service.event.atomClassValidator({
+        event: this.ctx.request.body.event,
+        data: this.ctx.request.body.data,
+      });
+      this.ctx.success(res);
+    }
+
+  }
+
+  return EventController;
+};
+
+
+/***/ }),
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(10);
-const post = __webpack_require__(11);
+const version = __webpack_require__(11);
+const post = __webpack_require__(12);
+const event = __webpack_require__(14);
 
 module.exports = app => {
   const services = {
     version,
     post,
+    event,
   };
   return services;
 };
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -294,37 +366,44 @@ module.exports = app => {
 
     async update(options) {
       if (options.version === 1) {
-        // create table: cmsPost
-        const sql = `
-          CREATE TABLE cmsPost (
-            id int(11) NOT NULL AUTO_INCREMENT,
-            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            deleted int(11) DEFAULT '0',
-            iid int(11) DEFAULT '0',
-            atomId int(11) DEFAULT '0',
-            description varchar(255) DEFAULT NULL,
-            PRIMARY KEY (id)
-          )
-        `;
-        await this.ctx.model.query(sql);
       }
     }
 
     async init(options) {
       if (options.version === 1) {
-        // atomClassName
-        const atomClassName = 'post';
+        // create roles: cms-community-writer to template
+        const roles = [ 'cms-community-writer', 'cms-community-publisher' ];
+        const roleTemplate = await this.ctx.meta.role.getSystemRole({ roleName: 'template' });
+        const roleSuperuser = await this.ctx.meta.role.getSystemRole({ roleName: 'superuser' });
+        const roleActivated = await this.ctx.meta.role.getSystemRole({ roleName: 'activated' });
+        for (const roleName of roles) {
+          const roleId = await this.ctx.meta.role.add({
+            roleName,
+            roleIdParent: roleTemplate.id,
+          });
+          // role:superuser include cms-community
+          await this.ctx.meta.role.addRoleInc({ roleId: roleSuperuser.id, roleIdInc: roleId });
+          // role:activated include cms-community-writer
+          if (roleName === 'cms-community-writer') {
+            await this.ctx.meta.role.addRoleInc({ roleId: roleActivated.id, roleIdInc: roleId });
+          }
+        }
+        // build roles
+        await this.ctx.meta.role.build();
+
         // add role rights
         const roleRights = [
-          { roleName: 'authenticated', action: 'create' },
-          { roleName: 'authenticated', action: 'write', scopeNames: 0 },
-          { roleName: 'authenticated', action: 'delete', scopeNames: 0 },
-          { roleName: 'authenticated', action: 'read', scopeNames: 0 },
-          { roleName: 'superuser', action: 'read', scopeNames: 'authenticated' },
+          { roleName: 'cms-community-writer', action: 'create' },
+          { roleName: 'cms-community-writer', action: 'write', scopeNames: 0 },
+          { roleName: 'cms-community-writer', action: 'delete', scopeNames: 0 },
+          { roleName: 'cms-community-writer', action: 'read', scopeNames: 'authenticated' },
+          { roleName: 'cms-community-publisher', action: 'read', scopeNames: 'authenticated' },
+          { roleName: 'cms-community-publisher', action: 'write', scopeNames: 'authenticated' },
+          { roleName: 'cms-community-publisher', action: 'publish', scopeNames: 'authenticated' },
+          { roleName: 'root', action: 'read', scopeNames: 'authenticated' },
         ];
         const module = this.ctx.app.meta.modules[this.ctx.module.info.relativeName];
-        const atomClass = await this.ctx.meta.atomClass.get({ atomClassName });
+        const atomClass = await this.ctx.meta.atomClass.get({ atomClassName: 'post' });
         for (const roleRight of roleRights) {
           // role
           const role = await this.ctx.meta.role.get({ roleName: roleRight.roleName });
@@ -345,6 +424,7 @@ module.exports = app => {
             scope,
           });
         }
+
       }
     }
 
@@ -358,49 +438,118 @@ module.exports = app => {
 
 
 /***/ }),
-/* 11 */
-/***/ (function(module, exports) {
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(13);
+const mparse = require3('egg-born-mparse').default;
 
 module.exports = app => {
+  // this module
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // article module
+  const articleModuleInfo = mparse.parseInfo('a-cms');
+  const articleAtomClassName = 'article';
 
   class Post extends app.Service {
 
     async create({ atomClass, key, item, user }) {
-      // add post
-      const res = await this.ctx.model.post.insert({
-        atomId: key.atomId,
+      // route to article
+      const itemKey = await this.ctx.performAction({
+        method: 'post',
+        url: `/${articleModuleInfo.url}/${articleAtomClassName}/create`,
+        body: {
+          atomClass,
+          key,
+          item,
+          user,
+        },
       });
       // return key
-      return { atomId: key.atomId, itemId: res.insertId };
+      return itemKey;
     }
 
     async read({ atomClass, key, item, user }) {
-      // read
+      // route to article
+      await this.ctx.performAction({
+        method: 'post',
+        url: `/${articleModuleInfo.url}/${articleAtomClassName}/read`,
+        body: {
+          atomClass,
+          key,
+          item,
+          user,
+        },
+      });
     }
 
     async select({ atomClass, options, items, user }) {
-      // select
+      // route to article
+      await this.ctx.performAction({
+        method: 'post',
+        url: `/${articleModuleInfo.url}/${articleAtomClassName}/select`,
+        body: {
+          atomClass,
+          options,
+          items,
+          user,
+        },
+      });
     }
 
-    async write({ atomClass, key, item, validation, user }) {
-      // update post
-      await this.ctx.model.post.update({
-        id: key.itemId,
-        description: item.description,
+    async write({ atomClass, key, item, user }) {
+      // route to article
+      await this.ctx.performAction({
+        method: 'post',
+        url: `/${articleModuleInfo.url}/${articleAtomClassName}/write`,
+        body: {
+          atomClass,
+          key,
+          item,
+          user,
+        },
       });
     }
 
     async delete({ atomClass, key, user }) {
-      // delete post
-      await this.ctx.model.post.delete({
-        id: key.itemId,
+      // route to article
+      await this.ctx.performAction({
+        method: 'post',
+        url: `/${articleModuleInfo.url}/${articleAtomClassName}/delete`,
+        body: {
+          atomClass,
+          key,
+          user,
+        },
       });
     }
 
     async action({ action, atomClass, key, user }) {
+      // route to article
+      return await this.ctx.performAction({
+        method: 'post',
+        url: `/${articleModuleInfo.url}/${articleAtomClassName}/action`,
+        body: {
+          action,
+          atomClass,
+          key,
+          user,
+        },
+      });
     }
 
     async enable({ atomClass, key, atom, user }) {
+      // route to article
+      await this.ctx.performAction({
+        method: 'post',
+        url: `/${articleModuleInfo.url}/${articleAtomClassName}/enable`,
+        body: {
+          atomClass,
+          key,
+          atom,
+          user,
+        },
+      });
     }
 
   }
@@ -410,10 +559,47 @@ module.exports = app => {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
+/***/ (function(module, exports) {
+
+module.exports = require("require3");
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Event extends app.Service {
+
+    async atomClassValidator({ event, data: { atomClass, user } }) {
+      if (atomClass.module === moduleInfo.relativeName && atomClass.atomClassName === 'post') {
+        // check if in role:cms-community-publisher
+        const rolePublisher = await this.ctx.meta.role.get({ roleName: 'cms-community-publisher' });
+        const check = await this.ctx.meta.role.userInRoleExpand({ userId: user.id, roleId: rolePublisher.id });
+        if (!check) return null;
+        // break event
+        event.break = true;
+        // more fields
+        const validator = {
+          module: 'a-cms',
+          validator: 'article',
+        };
+        return validator;
+      }
+    }
+
+  }
+
+  return Event;
+};
+
+
+/***/ }),
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const post = __webpack_require__(13);
+const post = __webpack_require__(16);
 
 module.exports = app => {
   const models = {
@@ -424,13 +610,13 @@ module.exports = app => {
 
 
 /***/ }),
-/* 13 */
+/* 16 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
   class Post extends app.meta.Model {
     constructor(ctx) {
-      super(ctx, { table: 'cmsPost', options: { disableDeleted: false } });
+      super(ctx, { table: 'aCmsArticle', options: { disableDeleted: false } });
     }
   }
   return Post;
@@ -438,22 +624,43 @@ module.exports = app => {
 
 
 /***/ }),
-/* 14 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
-  const schemas = __webpack_require__(15)(app);
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const atomClass = {
+    module: moduleInfo.relativeName,
+    atomClassName: 'post',
+  };
+  const atomClassQuery = `module=${atomClass.module}&atomClassName=${atomClass.atomClassName}`;
+  const schemas = __webpack_require__(18)(app);
   const meta = {
     base: {
       atoms: {
         post: {
           info: {
-            title: 'Post',
-            tableName: 'cmsPost',
+            title: 'Post2',
+            tableName: 'aCmsArticleView',
+            tableNameFull: 'aCmsArticleViewFull',
+            tableNameSearch: 'aCmsArticleViewSearch',
+            tableNameTag: 'aCmsArticleViewTag',
+            flow: 1,
           },
           actions: {
+            publish: {
+              code: 101,
+              title: 'Publish',
+              flag: '1,2',
+            },
           },
           flags: {
+            1: {
+              title: 'Publishing',
+            },
+            2: {
+              title: 'Published',
+            },
           },
           validator: 'post',
           search: {
@@ -468,7 +675,7 @@ module.exports = app => {
           autoRight: 1,
           atomClassName: 'post',
           action: 'create',
-          sorting: 1,
+          sorting: 2,
           menu: 1,
         },
         listPost: {
@@ -477,8 +684,18 @@ module.exports = app => {
           autoRight: 1,
           atomClassName: 'post',
           action: 'read',
-          sorting: 1,
+          sorting: 2,
           menu: 1,
+        },
+        listPostByCategory: {
+          title: 'Post List(by category)',
+          scene: 'list',
+          autoRight: 1,
+          atomClassName: 'post',
+          action: 'read',
+          sorting: 2,
+          menu: 1,
+          actionPath: `/a/cms/article/category?${atomClassQuery}`,
         },
       },
     },
@@ -497,13 +714,23 @@ module.exports = app => {
         postSearch: schemas.postSearch,
       },
     },
+    settings: {
+      instance: {
+        actionPath: `/a/cms/config/list?${atomClassQuery}`,
+      },
+    },
+    event: {
+      implementations: {
+        'a-base:atomClassValidator': 'event/atomClassValidator',
+      },
+    },
   };
   return meta;
 };
 
 
 /***/ }),
-/* 15 */
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -513,31 +740,67 @@ module.exports = app => {
     type: 'object',
     meta: {
       custom: {
-        // component: 'postItem',
+        component: 'postItem',
       },
     },
     properties: {
       atomName: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Name',
+        ebTitle: 'Atom Name',
         notEmpty: true,
       },
-      description: {
+      language: {
+        type: 'string',
+        ebType: 'select',
+        ebTitle: 'Language',
+        ebMultiple: false,
+        ebOptionsBlankAuto: true,
+        notEmpty: true,
+      },
+      categoryId: {
+        type: 'number',
+        ebType: 'text',
+        ebTitle: 'Category',
+        notEmpty: true,
+      },
+      tags: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Description',
+        ebTitle: 'Tags',
+      },
+      content: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Content',
       },
     },
   };
   // post search
   schemas.postSearch = {
     type: 'object',
+    meta: {
+      custom: {
+        component: 'postSearch',
+      },
+    },
     properties: {
-      description: {
+      language: {
+        type: 'string',
+        ebType: 'select',
+        ebTitle: 'Language',
+        ebMultiple: false,
+        ebOptionsBlankAuto: true,
+      },
+      categoryId: {
+        type: 'number',
+        ebType: 'text',
+        ebTitle: 'Category',
+      },
+      content: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Description',
+        ebTitle: 'Content',
       },
     },
   };
