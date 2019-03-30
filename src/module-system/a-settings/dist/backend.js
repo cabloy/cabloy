@@ -240,7 +240,7 @@ module.exports = app => {
           name: 'settings',
         });
         // role function right
-        const role = await this.ctx.meta.role.getSystemRole({ roleName: 'superuser' });
+        const role = await this.ctx.meta.role.getSystemRole({ roleName: 'system' });
         await this.ctx.meta.role.addRoleFunction({
           roleId: role.id,
           functionId: func.id,
