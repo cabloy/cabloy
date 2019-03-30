@@ -667,7 +667,7 @@ module.exports = app => {
     async init(options) {
       if (options.version === 1) {
         // roleFunctions
-        const role = await this.ctx.meta.role.getSystemRole({ roleName: 'superuser' });
+        const role = await this.ctx.meta.role.getSystemRole({ roleName: 'system' });
         const functions = [ 'user', 'role', 'atomRight', 'menuRight', 'functionRight', 'auth' ];
         for (const functionName of functions) {
           const func = await this.ctx.meta.function.get({
