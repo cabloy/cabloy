@@ -82,40 +82,919 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
 /***/ (function(module, exports) {
 
-module.exports = require("require3");
+module.exports = {
+  atomClass(atomClass) {
+    let _atomClass;
+    if (atomClass) {
+      _atomClass = {
+        module: atomClass.module,
+        atomClassName: atomClass.atomClassName,
+        atomClassIdParent: atomClass.atomClassIdParent || 0,
+      };
+      if (atomClass.id) _atomClass.id = atomClass.id;
+    } else {
+      _atomClass = {
+        module: 'a-cms',
+        atomClassName: 'article',
+        atomClassIdParent: 0,
+      };
+    }
+    return _atomClass;
+  },
+  async atomClass2(ctx, atomClass) {
+    const _atomClass = this.atomClass(atomClass);
+    if (!_atomClass.id) {
+      const res = await ctx.meta.atomClass.get(_atomClass);
+      _atomClass.id = res.id;
+    }
+    return _atomClass;
+  },
+};
+
 
 /***/ }),
 /* 1 */
 /***/ (function(module, exports) {
 
-module.exports = require("path");
+module.exports = require("require3");
 
 /***/ }),
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const config = __webpack_require__(3);
-const locales = __webpack_require__(4);
-const errors = __webpack_require__(7);
-const middlewares = __webpack_require__(8);
+const path = __webpack_require__(19);
+const require3 = __webpack_require__(1);
+const ejs = require3('@zhennann/ejs');
+const pMap = require3('p-map');
+const extend = require3('extend2');
+const fse = require3('fs-extra');
+const moment = require3('moment');
+const glob = require3('glob');
+const bb = require3('bluebird');
+const CleanCSS = require3('clean-css');
+const shajs = require3('sha.js');
+const babel = require3('@babel/core');
+const UglifyJS = require3('uglify-js');
+const time = __webpack_require__(20);
+const utils = __webpack_require__(0);
+
+class Build {
+
+  constructor(ctx, atomClass) {
+    this.ctx = ctx;
+    this.app = ctx.app;
+    this.atomClass = utils.atomClass(atomClass);
+    this.default = this.atomClass.module === 'a-cms';
+  }
+
+  async getConfigSiteBase() {
+    // config
+    //    try other then default
+    let configSite = this.ctx.config.module(this.atomClass.module).site;
+    if (!configSite) {
+      configSite = this.ctx.config.site;
+    }
+
+    // site
+    const site = extend(true, {}, configSite);
+
+    // plugins
+    site.plugins = {};
+    for (const relativeName in this.app.meta.modules) {
+      const module = this.app.meta.modules[relativeName];
+      if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin) {
+        site.plugins[relativeName] = this.ctx.config.module(relativeName).plugin;
+      }
+    }
+    return site;
+  }
+
+  async getConfigSite() {
+    const name = this.default ? 'config-site' : `config-site:${this.atomClass.module}`;
+    return await this.ctx.meta.status.get(name);
+  }
+
+  async setConfigSite({ data }) {
+    const name = this.default ? 'config-site' : `config-site:${this.atomClass.module}`;
+    await this.ctx.meta.status.set(name, data);
+  }
+
+  async getConfigLanguage({ language }) {
+    const name = this.default ? `config-${language}` : `config-${language}:${this.atomClass.module}`;
+    return await this.ctx.meta.status.get(name);
+  }
+
+  async setConfigLanguage({ language, data }) {
+    const name = this.default ? `config-${language}` : `config-${language}:${this.atomClass.module}`;
+    this._adjustConfigLanguange(data);
+    await this.ctx.meta.status.set(name, data);
+  }
+
+  async getConfigLanguagePreview({ language }) {
+    const site = await this.getSite({ language });
+    this._adjustConfigLanguange(site);
+    return site;
+  }
+
+  _adjustConfigLanguange(data) {
+    if (data) {
+      data.host = undefined;
+      data.language = undefined;
+      data.themes = undefined;
+    }
+  }
+
+  async getLanguages() {
+    const siteBase = await this.combineSiteBase();
+    const languages = [];
+    for (const item of siteBase.language.items.split(',')) {
+      languages.push({
+        title: this.ctx.text(item),
+        value: item,
+      });
+    }
+    return languages;
+  }
+
+  // site<plugin<theme<site(db)<language(db)
+  async combineSiteBase() {
+    // site
+    const site = await this.getConfigSiteBase();
+    // site(db) special for language/themes
+    const configSite = await this.getConfigSite();
+    if (configSite && configSite.language) site.language = configSite.language;
+    if (configSite && configSite.themes) site.themes = configSite.themes;
+    return site;
+  }
+
+  // site<plugin<theme<site(db)<language(db)
+  async combineSite({ siteBase, language }) {
+    // themeModuleName
+    const themeModuleName = siteBase.themes[language];
+    if (!themeModuleName) {
+      this.ctx.throw(1002);
+    }
+    // theme
+    const theme = this.combineThemes(themeModuleName);
+    // site(db)
+    const configSite = await this.getConfigSite();
+    // language(db)
+    const configLanguage = await this.getConfigLanguage({ language });
+    // combine
+    return extend(true, {},
+      siteBase, theme, configSite, configLanguage,
+      { language: { current: language } }
+    );
+  }
+
+  // theme extend
+  combineThemes(themeModuleName) {
+    return this._combineThemes(themeModuleName);
+  }
+
+  _combineThemes(themeModuleName) {
+    // module
+    const module = this.app.meta.modules[themeModuleName];
+    if (!module) this.ctx.throw(1003);
+    const moduleExtend = module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.extend;
+    if (!moduleExtend) return this.ctx.config.module(themeModuleName).theme;
+    return extend(true, {},
+      this._combineThemes(moduleExtend),
+      this.ctx.config.module(themeModuleName).theme
+    );
+  }
+
+  // site<plugin<theme<site(db)<language(db)
+  async getSite({ language }) {
+    // base
+    const siteBase = await this.combineSiteBase();
+    // site
+    const site = await this.combineSite({ siteBase, language });
+    // serverUrl
+    site.serverUrl = this.getServerUrl('');
+    // atomClass
+    site.atomClass = this.atomClass;
+    // languages
+    site.languages = [];
+    for (const item of site.language.items.split(',')) {
+      site.languages.push({
+        name: item,
+        title: this.ctx.text.locale(item, item),
+        url: this.getUrl(site, item, 'index.html'),
+      });
+    }
+    return site;
+  }
+
+  // ////////////////////////////// url or path
+
+  getCMSPathName() {
+    return this.default ? 'cms' : `cms:${this.atomClass.module}`;
+  }
+
+  getUrlRawRoot(site) {
+    if (this.ctx.app.meta.isTest || this.ctx.app.meta.isLocal) {
+      // cms or cms:moduleName
+      const cmsPathName = this.getCMSPathName();
+      const publicDir = this.ctx.app.config.static.prefix;
+      const prefix = this.ctx.meta.base.host ? `${this.ctx.meta.base.protocol}://${this.ctx.meta.base.host}` : '';
+      return `${prefix}${publicDir}${this.ctx.instance.id}/${cmsPathName}/dist`;
+    }
+    return `${site.host.url}${site.host.rootPath ? '/' + site.host.rootPath : ''}`;
+  }
+  getUrlRoot(site, language) {
+    const rawRoot = this.getUrlRawRoot(site);
+    return `${rawRoot}${language === site.language.default ? '' : '/' + language}`;
+  }
+  getUrl(site, language, path) {
+    const urlRoot = this.getUrlRoot(site, language);
+    return path ? `${urlRoot}/${path}` : urlRoot;
+  }
+  getServerUrl(path) {
+    return this.ctx.meta.base.getAbsoluteUrl(path);
+  }
+
+  async getPathCustom(language) {
+    const cms = await this.getPathCms();
+    return path.join(cms, language, 'custom');
+  }
+  async getPathIntermediate(language) {
+    const cms = await this.getPathCms();
+    return path.join(cms, language, 'intermediate');
+  }
+  async getPathDist(site, language) {
+    const rawDist = await this.getPathRawDist();
+    return path.join(rawDist, language === site.language.default ? '' : '/' + language);
+  }
+  async getPathCms() {
+    // cms
+    return await this.ctx.meta.base.getPath(this.getCMSPathName());
+  }
+  async getPathRawDist() {
+    // cms/dist
+    return await this.ctx.meta.base.getPath(`${this.getCMSPathName()}/dist`);
+  }
+
+  // ///////////////////////////////// render
+
+  async renderAllFiles({ language }) {
+    // clearCache
+    ejs.clearCache();
+    // site
+    const site = await this.getSite({ language });
+    // render static
+    await this._renderStatic({ site });
+    // render articles
+    await this._renderArticles({ site });
+    // render index
+    await this._renderIndex({ site });
+  }
+
+  async renderArticle({ key, inner }) {
+    // article
+    const article = await this.ctx.service.article._getArticle({ key, inner });
+    if (!article) return;
+    // clearCache
+    ejs.clearCache();
+    // site
+    const site = await this.getSite({ language: article.language });
+    // render article
+    await this._renderArticle({ site, article });
+    if (!inner) {
+      // write sitemap
+      await this._writeSitemap({ site, article });
+      // render index
+      await this._renderIndex({ site });
+    }
+  }
+
+  async deleteArticle({ key, article, inner }) {
+    // clearCache
+    ejs.clearCache();
+    // site
+    const site = await this.getSite({ language: article.language });
+    // remove file
+    const pathDist = await this.getPathDist(site, article.language);
+    await fse.remove(path.join(pathDist, article.url));
+    if (!inner) {
+      // remove sitemap
+      let xml = await fse.readFile(path.join(pathDist, 'sitemap.xml'));
+      const regexp = new RegExp(` {2}<url>\\s+<loc>[^<]*${article.url}[^<]*</loc>[\\s\\S]*?</url>[\\r\\n]`);
+      xml = xml.toString().replace(regexp, '');
+      // save
+      await fse.writeFile(path.join(pathDist, 'sitemap.xml'), xml);
+      // render index
+      await this._renderIndex({ site });
+    }
+  }
+
+  async _renderArticles({ site }) {
+    // anonymous user
+    let userId;
+    const user = await this.ctx.meta.user.get({ anonymous: true });
+    if (user) {
+      userId = user.id;
+    } else {
+      userId = await this.ctx.meta.user.anonymous();
+    }
+    // articles
+    const articles = await this.ctx.meta.atom.select({
+      atomClass: this.atomClass,
+      options: {
+        where: {
+          'a.atomFlag': 2,
+          'f.language': site.language.current,
+        },
+        orders: [[ 'a.updatedAt', 'desc' ]],
+        page: null,
+        mode: 'search',
+      },
+      user: { id: userId },
+      pageForce: false,
+    });
+    // concurrency
+    const mapper = article => {
+      // render article
+      return this._renderArticle({ site, article });
+    };
+    await pMap(articles, mapper, { concurrency: 10 });
+    // write sitemap
+    await this._writeSitemaps({ site, articles });
+  }
+
+  async _renderArticle({ site, article }) {
+    // data
+    const data = await this.getData({ site });
+    data.article = article;
+    await this._renderFile({
+      fileSrc: 'main/article.ejs',
+      fileDest: article.url,
+      data,
+    });
+  }
+
+  async _renderIndex({ site }) {
+    // index
+    const pathIntermediate = await this.getPathIntermediate(site.language.current);
+    const indexFiles = await bb.fromCallback(cb => {
+      glob(`${pathIntermediate}/main/index/\*\*/\*.ejs`, cb);
+    });
+    for (const item of indexFiles) {
+      // data
+      const data = await this.getData({ site });
+      // path
+      const _fileSrc = item.substr(pathIntermediate.length + 1);
+      const _fileDest = _fileSrc.substr('main/index/'.length).replace('.ejs', '.html');
+      await this._renderFile({
+        fileSrc: _fileSrc,
+        fileDest: _fileDest,
+        data,
+      });
+    }
+  }
+
+  async _writeSitemaps({ site, articles }) {
+    // xml
+    let xml =
+`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+`;
+    for (const article of articles) {
+      const loc = this.getUrl(site, site.language.current, article.url);
+      const lastmod = moment(article.updatedAt).format();
+      xml +=
+`  <url>
+    <loc>${loc}</loc>
+    <lastmod>${lastmod}</lastmod>
+  </url>
+`;
+    }
+    xml += '</urlset>';
+    // save
+    const pathDist = await this.getPathDist(site, site.language.current);
+    const fileName = path.join(pathDist, 'sitemap.xml');
+    await fse.writeFile(fileName, xml);
+  }
+
+  async _writeSitemap({ site, article }) {
+    const loc = this.getUrl(site, site.language.current, article.url);
+    const lastmod = moment(article.updatedAt).format();
+    // load
+    const pathDist = await this.getPathDist(site, site.language.current);
+    const fileName = path.join(pathDist, 'sitemap.xml');
+    let xml;
+    const exists = await fse.pathExists(fileName);
+    if (!exists) {
+      xml =
+`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${loc}</loc>
+    <lastmod>${lastmod}</lastmod>
+  </url>
+</urlset>`;
+    } else {
+      xml = await fse.readFile(fileName);
+      xml = xml.toString();
+      // remove
+      const regexp = new RegExp(` {2}<url>\\s+<loc>[^<]*${article.url}[^<]*</loc>[\\s\\S]*?</url>[\\r\\n]`);
+      xml = xml.replace(regexp, '');
+      // append
+      xml = xml.replace('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+        `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${loc}</loc>
+    <lastmod>${lastmod}</lastmod>
+  </url>`);
+    }
+    // save
+    await fse.writeFile(fileName, xml);
+  }
+
+
+  async _renderStatic({ site }) {
+    // static
+    const pathIntermediate = await this.getPathIntermediate(site.language.current);
+    const staticFiles = await bb.fromCallback(cb => {
+      glob(`${pathIntermediate}/static/\*\*/\*.ejs`, cb);
+    });
+    for (const item of staticFiles) {
+      // data
+      const data = await this.getData({ site });
+      // path
+      const _fileSrc = item.substr(pathIntermediate.length + 1);
+      await this._renderFile({
+        fileSrc: _fileSrc,
+        fileDest: _fileSrc.replace('.ejs', '.html'),
+        data,
+      });
+    }
+  }
+
+  async _renderFile({ fileSrc, fileDest, data }) {
+    // site
+    const site = data.site;
+    // language
+    const language = site.language.current;
+    // src
+    const pathIntermediate = await this.getPathIntermediate(language);
+    const fileName = path.join(pathIntermediate, fileSrc);
+    // dest
+    const pathDist = await this.getPathDist(site, language);
+    const fileWrite = path.join(pathDist, fileDest);
+    // data
+    data._filename = fileName;
+    data._path = fileSrc.replace('.ejs', '');
+    // env site
+    data.env('site', {
+      path: data._path,
+      serverUrl: site.serverUrl,
+      rawRootUrl: this.getUrlRawRoot(site),
+      atomClass: this.atomClass,
+    });
+    // render
+    let content = await ejs.renderFile(fileName, data, this.getOptions());
+    content = await this._renderEnvs({ data, content });
+    content = await this._renderCSSJSes({ data, content });
+    // hot load
+    if (this.app.meta.isTest || this.app.meta.isLocal) {
+      content += `
+<script language="javascript">
+$(document).ready(function() {
+  var __checkFileTimeout = ${this.ctx.config.checkFileTimeout};
+  var __fileTime;
+  function __checkFile() {
+    util.performAction({
+      method: 'post',
+      url: '/a/cms/site/checkFile',
+      body: { file: '${fileWrite}' }
+    }).then(function(stats) {
+      if (!stats) {
+        return window.setTimeout(__checkFile, __checkFileTimeout);
+      }
+      if (!__fileTime) {
+        __fileTime = stats.mtime;
+        return window.setTimeout(__checkFile, __checkFileTimeout);
+      }
+      if (__fileTime === stats.mtime) {
+        return window.setTimeout(__checkFile, __checkFileTimeout);
+      }
+      location.reload(true);
+    }).catch(function(){
+      return window.setTimeout(__checkFile, __checkFileTimeout);
+    });
+  }
+  __checkFile();
+});
+</script>
+          `;
+    }
+    // write
+    await fse.outputFile(fileWrite, content);
+  }
+
+  async _renderCSSJSes({ data, content }) {
+    content = await this._renderCSSJS({ data, content, type: 'CSS', items: data._csses });
+    content = await this._renderCSSJS({ data, content, type: 'JS', items: data._jses });
+    return content;
+  }
+
+  async _renderCSSJS({ data, content, type, items }) {
+    if (items.length === 0) return content;
+    // site
+    const site = data.site;
+    // cache
+    if (!site._cache) site._cache = {};
+    if (!site._cache[type])site._cache[type] = {};
+    const cacheSha = shajs('sha256').update(items.join(',')).digest('hex');
+    let urlDest;
+    if (site._cache[type][cacheSha]) {
+      urlDest = site._cache[type][cacheSha];
+    } else {
+      // combine
+      let result = '';
+      for (const item of items) {
+        let _content;
+        if (path.extname(item) === '.ejs') {
+          // data
+          data._filename = item;
+          _content = await ejs.renderFile(item, data, this.getOptions());
+        } else {
+          _content = await fse.readFile(item);
+        }
+        // minify
+        if (type === 'CSS') {
+          if (item.indexOf('.min.css') === -1) {
+            const output = new CleanCSS().minify(_content);
+            _content = output.styles;
+          }
+        } else {
+          if (item.indexOf('.min.js') === -1) {
+            _content = babel.transform(_content, { ast: false, babelrc: false, presets: [ '@babel/preset-env' ] }).code;
+            const output = UglifyJS.minify(_content);
+            if (output.error) throw new Error(`${output.error.name}: ${output.error.message}`);
+            _content = output.code;
+          }
+        }
+        // append
+        result += _content + '\n';
+      }
+      // save
+      const sha = shajs('sha256').update(result).digest('hex');
+      // dest
+      const fileDest = `assets/${type.toLowerCase()}/${sha}.${type.toLowerCase()}`;
+      const pathDist = await this.getPathDist(site, site.language.current);
+      const fileWrite = path.join(pathDist, fileDest);
+      // write
+      await fse.outputFile(fileWrite, result);
+      // url
+      urlDest = this.getUrl(site, site.language.current, fileDest);
+      // cache
+      site._cache[type][cacheSha] = urlDest;
+    }
+    // replace
+    const regexp = new RegExp(`__${type}__`);
+    return content.replace(regexp, urlDest);
+  }
+
+  async _renderEnvs({ data, content }) {
+    // site
+    const site = data.site;
+    // env
+    const _env = {};
+    for (const name of Object.keys(data._envs)) {
+      let value;
+      const keys = name.split('.');
+      for (let index = keys.length - 1; index >= 0; index--) {
+        const key = keys[index];
+        value = value ? { [key]: value } : { [key]: data._envs[name] };
+      }
+      extend(true, _env, value);
+    }
+    // combine
+    const env = extend(true, {
+      base: site.base,
+      language: site.language,
+    }, site.env, _env);
+    if (data.article) {
+      env.article = extend(true, {}, data.article);
+      // delete
+      env.article.summary = undefined;
+      env.article.content = undefined;
+      env.article.html = undefined;
+      env.article.contentSearch = undefined;
+    }
+    // replace
+    const text = `
+<script type="text/javascript">
+var env=${JSON.stringify(env, null, 2)};
+</script>
+`;
+    const regexp = new RegExp('__ENV__');
+    return content.replace(regexp, text);
+  }
+
+  resolvePath(pathRoot, fileCurrent, fileName) {
+    if (!fileName) return pathRoot;
+    if (fileName.charAt(0) === '.') return path.join(path.dirname(fileCurrent), fileName); // not use path.resolve
+    return path.join(pathRoot, fileName);
+  }
+
+  getOptions() {
+    return {
+      async: true,
+      cache: true,
+      compileDebug: this.ctx.app.meta.isTest || this.ctx.app.meta.isLocal,
+      outputFunctionName: 'echo',
+    };
+  }
+
+  async getData({ site }) {
+    // data
+    const self = this;
+    const _csses = [];
+    const _jses = [];
+    const _envs = {};
+    let _pathIntermediate = await this.getPathIntermediate(site.language.current);
+    _pathIntermediate = path.join(_pathIntermediate, '/');
+    return {
+      ctx: self.ctx,
+      site,
+      _csses,
+      _jses,
+      _envs,
+      require(fileName) {
+        const _path = self.resolvePath('', this._filename, fileName);
+        return require3(_path);
+      },
+      url(fileName, language) {
+        if (fileName && (fileName.indexOf('http://') === 0 || fileName.indexOf('https://') === 0)) return fileName;
+        let _path = self.resolvePath('', path.relative(_pathIntermediate, this._filename), fileName);
+        _path = _path.replace(/\\/gi, '/');
+        return self.getUrl(site, language || site.language.current, _path);
+      },
+      css(fileName) {
+        _csses.push(self.resolvePath(_pathIntermediate, this._filename, fileName));
+      },
+      js(fileName) {
+        _jses.push(self.resolvePath(_pathIntermediate, this._filename, fileName));
+      },
+      env(name, value) {
+        _envs[name] = value;
+      },
+      text(str) {
+        return this.ctx.text.locale(site.language.current, str);
+      },
+      util: {
+        time,
+        formatDateTime(date) {
+          return this.time.formatDateTime(date, `${site.env.format.date} ${site.env.format.time}`);
+        },
+      },
+    };
+  }
+
+
+  // //////////////////////////////// build
+
+  // build languages
+  async buildLanguages() {
+    // time start
+    const timeStart = new Date();
+    // site
+    const site = await this.combineSiteBase();
+    for (const language of site.language.items.split(',')) {
+      await this.buildLanguage({ language });
+    }
+    // time end
+    const timeEnd = new Date();
+    const time = (timeEnd.valueOf() - timeStart.valueOf()) / 1000; // second
+    return {
+      time,
+    };
+  }
+
+  // build language
+  async buildLanguage({ language }) {
+    // time start
+    const timeStart = new Date();
+
+    // site
+    const site = await this.getSite({ language });
+
+    // / clear
+
+    // intermediate
+    const pathIntermediate = await this.getPathIntermediate(language);
+    await fse.remove(pathIntermediate);
+
+    // dist
+    const pathDist = await this.getPathDist(site, language);
+    //   solution: 1
+    // const distPaths = [ 'articles', 'asserts', 'plugins', 'static', 'index.html', 'robots.txt', 'sitemap.xml', 'sitemapindex.xml' ];
+    // for (const item of distPaths) {
+    //   await fse.remove(path.join(pathDist, item));
+    // }
+    //   solution: 2
+    const distFiles = await bb.fromCallback(cb => {
+      glob(`${pathDist}/\*`, cb);
+    });
+    const languages = site.language.items.split(',');
+    for (const item of distFiles) {
+      if (languages.indexOf(path.basename(item)) === -1) {
+        await fse.remove(item);
+      }
+    }
+
+    // / copy files to intermediate
+    // /  plugins<theme<custom
+
+    // plugins
+    for (const relativeName in this.app.meta.modules) {
+      const module = this.app.meta.modules[relativeName];
+      if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin) {
+        const pluginPath = path.join(module.root, 'backend/cms/plugin');
+        const pluginFiles = await bb.fromCallback(cb => {
+          glob(`${pluginPath}/\*`, cb);
+        });
+        for (const item of pluginFiles) {
+          await fse.copy(item, path.join(pathIntermediate, 'plugins', relativeName, path.basename(item)));
+        }
+      }
+    }
+
+    // theme
+    if (!site.themes[language]) this.ctx.throw(1002);
+    await this.copyThemes(pathIntermediate, site.themes[language]);
+
+    // custom
+    const customPath = await this.getPathCustom(language);
+    const customFiles = await bb.fromCallback(cb => {
+      glob(`${customPath}/\*`, cb);
+    });
+    for (const item of customFiles) {
+      await fse.copy(item, path.join(pathIntermediate, path.basename(item)));
+    }
+
+    // custom dist
+    const customDistFiles = await bb.fromCallback(cb => {
+      glob(`${customPath}/dist/\*`, cb);
+    });
+    for (const item of customDistFiles) {
+      await fse.copy(item, path.join(pathDist, path.basename(item)));
+    }
+
+    // / copy files to dist (ignore .ejs)
+    // /  assets plugins/[plugin]/assets
+    for (const dir of [ 'assets', 'plugins' ]) {
+      if (dir === 'assets') {
+        // assets
+        const _filename = path.join(pathIntermediate, 'assets');
+        const exists = await fse.pathExists(_filename);
+        if (exists) {
+          await fse.copy(_filename, path.join(pathDist, 'assets'));
+        }
+      } else {
+        // plugins
+        const pluginsFiles = await bb.fromCallback(cb => {
+          glob(`${pathIntermediate}/plugins/\*`, cb);
+        });
+        for (const item of pluginsFiles) {
+          const _filename = `${item}/assets`;
+          const exists = await fse.pathExists(_filename);
+          if (exists) {
+            await fse.copy(_filename, path.join(pathDist, 'plugins', path.basename(item), 'assets'));
+          }
+        }
+      }
+      // delete ejs files
+      const ejsFiles = await bb.fromCallback(cb => {
+        glob(`${pathDist}/${dir}/\*\*/\*.ejs`, cb);
+      });
+      for (const item of ejsFiles) {
+        await fse.remove(item);
+      }
+    }
+
+    // / robots.txt
+    await this.createRobots({ site });
+
+    // / sitemapIndex
+    await this.createSitemapIndex({ site });
+
+    // render all files
+    await this.renderAllFiles({ language });
+
+    // time end
+    const timeEnd = new Date();
+    const time = (timeEnd.valueOf() - timeStart.valueOf()) / 1000; // second
+    return {
+      time,
+    };
+  }
+
+  async createSitemapIndex({ site }) {
+    // content
+    const urlRawRoot = this.getUrlRawRoot(site);
+    let items = '';
+    for (const language of site.language.items.split(',')) {
+      items +=
+`  <sitemap>
+    <loc>${urlRawRoot}${language === site.language.default ? '' : '/' + language}/sitemap.xml</loc>
+  </sitemap>
+`;
+    }
+    const content =
+`<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${items}</sitemapindex>`;
+      // write
+    const pathRawDist = await this.getPathRawDist(site);
+    await fse.outputFile(`${pathRawDist}/sitemapindex.xml`, content);
+  }
+
+  async createRobots({ site }) {
+    // content
+    const urlRawRoot = this.getUrlRawRoot(site);
+    const content = `Sitemap: ${urlRawRoot}/sitemapindex.xml`;
+    // write
+    const pathRawDist = await this.getPathRawDist(site);
+    await fse.outputFile(`${pathRawDist}/robots.txt`, content);
+  }
+
+  // theme extend
+  async copyThemes(pathIntermediate, themeModuleName) {
+    await this._copyThemes(pathIntermediate, themeModuleName);
+  }
+
+  async _copyThemes(pathIntermediate, themeModuleName) {
+    // module
+    const module = this.app.meta.modules[themeModuleName];
+    if (!module) this.ctx.throw(1003);
+    // extend
+    const moduleExtend = module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.extend;
+    if (moduleExtend) {
+      await this._copyThemes(pathIntermediate, moduleExtend);
+    }
+    // current
+    const themePath = path.join(module.root, 'backend/cms/theme');
+    const themeFiles = await bb.fromCallback(cb => {
+      glob(`${themePath}/\*`, cb);
+    });
+    for (const item of themeFiles) {
+      await fse.copy(item, path.join(pathIntermediate, path.basename(item)));
+    }
+  }
+
+  async getArticleUrl({ key }) {
+    // article
+    const article = await this.ctx.service.article._getArticle({ key, inner: true });
+    if (!article) return;
+    // site
+    const site = await this.getSite({ language: article.language });
+    // url
+    return {
+      relativeUrl: article.url,
+      url: this.getUrl(site, site.language.current, article.url),
+    };
+  }
+
+}
+
+module.exports = {
+  create(ctx, atomClass) {
+    return new Build(ctx, atomClass);
+  },
+};
+
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const config = __webpack_require__(4);
+const locales = __webpack_require__(5);
+const errors = __webpack_require__(8);
+const middlewares = __webpack_require__(9);
 
 module.exports = app => {
 
   // routes
-  const routes = __webpack_require__(9)(app);
+  const routes = __webpack_require__(10)(app);
   // services
-  const services = __webpack_require__(19)(app);
+  const services = __webpack_require__(23)(app);
   // models
-  const models = __webpack_require__(27)(app);
+  const models = __webpack_require__(31)(app);
   // meta
-  const meta = __webpack_require__(34)(app);
+  const meta = __webpack_require__(38)(app);
 
   return {
     routes,
@@ -132,7 +1011,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports) {
 
 // eslint-disable-next-line
@@ -141,17 +1020,8 @@ module.exports = appInfo => {
 
   // queues
   config.queues = {
-    buildLanguage: {
-      path: 'queue/buildLanguage',
-    },
-    buildLanguages: {
-      path: 'queue/buildLanguages',
-    },
-    renderArticle: {
-      path: 'queue/renderArticle',
-    },
-    deleteArticle: {
-      path: 'queue/deleteArticle',
+    render: {
+      path: 'queue/render',
     },
   };
 
@@ -162,7 +1032,7 @@ module.exports = appInfo => {
       wordBreak: false,
       preserveTags: false,
     },
-    publishOnSubmit: true,
+    // publishOnSubmit: true,
   };
 
   // checkFileTimeout
@@ -175,6 +1045,7 @@ module.exports = appInfo => {
       subTitle: 'gone with the wind',
       description: '',
       keywords: '',
+      publishOnSubmit: true,
     },
     host: {
       url: 'http://example.com',
@@ -218,17 +1089,17 @@ module.exports = appInfo => {
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
-  'en-us': __webpack_require__(5),
-  'zh-cn': __webpack_require__(6),
+  'en-us': __webpack_require__(6),
+  'zh-cn': __webpack_require__(7),
 };
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -241,7 +1112,7 @@ module.exports = {
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -285,7 +1156,7 @@ module.exports = {
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports) {
 
 // error code should start from 1001
@@ -299,7 +1170,7 @@ module.exports = {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -307,18 +1178,19 @@ module.exports = {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(10);
-const article = __webpack_require__(11);
-const category = __webpack_require__(12);
-const render = __webpack_require__(13);
-const site = __webpack_require__(14);
-const tag = __webpack_require__(15);
-const comment = __webpack_require__(16);
-const rss = __webpack_require__(17);
-const queue = __webpack_require__(18);
+const version = __webpack_require__(11);
+const article = __webpack_require__(12);
+const category = __webpack_require__(13);
+const render = __webpack_require__(14);
+const site = __webpack_require__(15);
+const tag = __webpack_require__(16);
+const comment = __webpack_require__(17);
+const rss = __webpack_require__(18);
+const queue = __webpack_require__(21);
+const event = __webpack_require__(22);
 
 module.exports = app => {
   let routes = [
@@ -368,22 +1240,15 @@ module.exports = app => {
     // tag
     { method: 'post', path: 'tag/list', controller: tag },
     // rss
-    { method: 'get', path: 'rss/feed/:language', controller: rss, action: 'feed' },
-    { method: 'get', path: 'rss/feed/comments/:language', controller: rss, action: 'feedComments' },
+    { method: 'get', path: 'rss/feed/:module/:atomClassName/:language', controller: rss, action: 'feed' },
+    { method: 'get', path: 'rss/feed/comments/:module/:atomClassName/:language', controller: rss, action: 'feedComments' },
     { method: 'get', path: 'rss/feed/article/comments/:atomId', controller: rss, action: 'articleComments' },
     // queue
-    { method: 'post', path: 'queue/buildLanguage', controller: queue, middlewares: 'inner',
+    { method: 'post', path: 'queue/render', controller: queue, middlewares: 'inner',
       meta: { auth: { enable: false } },
     },
-    { method: 'post', path: 'queue/buildLanguages', controller: queue, middlewares: 'inner',
-      meta: { auth: { enable: false } },
-    },
-    { method: 'post', path: 'queue/renderArticle', controller: queue, middlewares: 'inner',
-      meta: { auth: { enable: false } },
-    },
-    { method: 'post', path: 'queue/deleteArticle', controller: queue, middlewares: 'inner',
-      meta: { auth: { enable: false } },
-    },
+    // event
+    { method: 'post', path: 'event/atomClassValidator', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
   ];
   if (app.meta.isTest || app.meta.isLocal) {
     routes = routes.concat([
@@ -396,7 +1261,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -423,11 +1288,12 @@ module.exports = app => {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(0);
+const require3 = __webpack_require__(1);
 const extend = require3('extend2');
+const utils = __webpack_require__(0);
 
 module.exports = app => {
 
@@ -470,25 +1336,26 @@ module.exports = app => {
 
     // list
     async list() {
+      // atomClass
+      const atomClass = utils.atomClass(this.ctx.request.body.atomClass);
       // options
       const options = this.ctx.request.body.options;
+      // select
       // filter drafts
       options.where = extend(true, options.where, {
-        'a.atomEnabled': 1,
-        'a.atomFlag': 2,
+        'a.atomEnabled': 1, // normal mode
+        'a.atomFlag': 2, // published
       });
       // select
       const res = await this.ctx.performAction({
         method: 'post',
         url: '/a/base/atom/select',
         body: {
-          atomClass: {
-            module: 'a-cms',
-            atomClassName: 'article',
-          },
+          atomClass,
           options,
         },
       });
+      // ok
       this.ctx.success(res);
     }
 
@@ -527,7 +1394,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -535,6 +1402,7 @@ module.exports = app => {
   class CategoryController extends app.Controller {
 
     async item() {
+      // need not param:atomClass
       const data = await this.ctx.service.category.item({
         categoryId: this.ctx.request.body.categoryId,
       });
@@ -542,6 +1410,7 @@ module.exports = app => {
     }
 
     async save() {
+      // need not param:atomClass
       const res = await this.ctx.service.category.save({
         categoryId: this.ctx.request.body.categoryId,
         data: this.ctx.request.body.data,
@@ -550,7 +1419,9 @@ module.exports = app => {
     }
 
     async tree() {
+      const atomClass = this.ctx.request.body.atomClass;
       const list = await this.ctx.service.category.tree({
+        atomClass,
         language: this.ctx.request.body.language,
         categoryId: this.ctx.request.body.categoryId,
         hidden: this.ctx.request.body.hidden,
@@ -560,7 +1431,9 @@ module.exports = app => {
     }
 
     async children() {
+      const atomClass = this.ctx.request.body.atomClass;
       const list = await this.ctx.service.category.children({
+        atomClass,
         language: this.ctx.request.body.language,
         categoryId: this.ctx.request.body.categoryId,
         hidden: this.ctx.request.body.hidden,
@@ -570,11 +1443,16 @@ module.exports = app => {
     }
 
     async add() {
-      const res = await this.ctx.service.category.add(this.ctx.request.body.data);
+      const atomClass = this.ctx.request.body.atomClass;
+      const res = await this.ctx.service.category.add({
+        atomClass,
+        data: this.ctx.request.body.data,
+      });
       this.ctx.success(res);
     }
 
     async delete() {
+      // need not param:atomClass
       const res = await this.ctx.service.category.delete({
         categoryId: this.ctx.request.body.categoryId,
       });
@@ -582,6 +1460,7 @@ module.exports = app => {
     }
 
     async move() {
+      // need not param:atomClass
       const res = await this.ctx.service.category.move({
         categoryId: this.ctx.request.body.categoryId,
         categoryIdParent: this.ctx.request.body.categoryIdParent,
@@ -590,6 +1469,7 @@ module.exports = app => {
     }
 
     async relativeTop() {
+      // need not param:atomClass
       const res = await this.ctx.service.category.relativeTop({
         categoryId: this.ctx.request.body.categoryId,
       });
@@ -603,7 +1483,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -611,7 +1491,10 @@ module.exports = app => {
   class RenderController extends app.Controller {
 
     async getArticleUrl() {
-      const res = await this.ctx.service.render.getArticleUrl(this.ctx.request.body);
+      const res = await this.ctx.service.render.getArticleUrl({
+        atomClass: this.ctx.request.body.atomClass,
+        key: this.ctx.request.body.key,
+      });
       this.ctx.success(res);
     }
 
@@ -622,49 +1505,60 @@ module.exports = app => {
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(0);
+const require3 = __webpack_require__(1);
 const fse = require3('fs-extra');
+const utils = __webpack_require__(0);
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class SiteController extends app.Controller {
 
     async getConfigSiteBase() {
-      const data = await this.ctx.service.site.getConfigSiteBase();
+      const atomClass = this.ctx.request.body.atomClass;
+      const data = await this.ctx.service.site.getConfigSiteBase({ atomClass });
       this.ctx.success({ data });
     }
 
     async getConfigSite() {
-      const data = await this.ctx.service.site.getConfigSite();
+      const atomClass = this.ctx.request.body.atomClass;
+      const data = await this.ctx.service.site.getConfigSite({ atomClass });
       this.ctx.success({ data });
     }
 
     async setConfigSite() {
+      const atomClass = this.ctx.request.body.atomClass;
       const res = await this.ctx.service.site.setConfigSite({
+        atomClass,
         data: this.ctx.request.body.data,
       });
       this.ctx.success(res);
     }
 
     async getConfigLanguagePreview() {
+      const atomClass = this.ctx.request.body.atomClass;
       const data = await this.ctx.service.site.getConfigLanguagePreview({
+        atomClass,
         language: this.ctx.request.body.language,
       });
       this.ctx.success({ data });
     }
 
     async getConfigLanguage() {
+      const atomClass = this.ctx.request.body.atomClass;
       const data = await this.ctx.service.site.getConfigLanguage({
+        atomClass,
         language: this.ctx.request.body.language,
       });
       this.ctx.success({ data });
     }
 
     async setConfigLanguage() {
+      const atomClass = this.ctx.request.body.atomClass;
       const res = await this.ctx.service.site.setConfigLanguage({
+        atomClass,
         language: this.ctx.request.body.language,
         data: this.ctx.request.body.data,
       });
@@ -672,34 +1566,51 @@ module.exports = app => {
     }
 
     async buildLanguage() {
+      // atomClass
+      const atomClass = utils.atomClass(this.ctx.request.body.atomClass);
+      const language = this.ctx.request.body.language;
       // queue
       const res = await this.ctx.app.meta.queue.pushAsync({
         subdomain: this.ctx.subdomain,
         module: moduleInfo.relativeName,
-        queueName: 'buildLanguage',
-        data: { language: this.ctx.request.body.language },
+        queueName: 'render',
+        queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
+        data: {
+          queueAction: 'buildLanguage',
+          atomClass,
+          language,
+        },
       });
       this.ctx.success(res);
     }
 
     async buildLanguages() {
+      // atomClass
+      const atomClass = utils.atomClass(this.ctx.request.body.atomClass);
       // queue
       const res = await this.ctx.app.meta.queue.pushAsync({
         subdomain: this.ctx.subdomain,
         module: moduleInfo.relativeName,
-        queueName: 'buildLanguages',
-        data: null,
+        queueName: 'render',
+        queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
+        data: {
+          queueAction: 'buildLanguages',
+          atomClass,
+        },
       });
       this.ctx.success(res);
     }
 
     async getLanguages() {
-      const res = await this.ctx.service.site.getLanguages();
+      const atomClass = this.ctx.request.body.atomClass;
+      const res = await this.ctx.service.site.getLanguages({ atomClass });
       this.ctx.success(res);
     }
 
     async getUrl() {
+      const atomClass = this.ctx.request.body.atomClass;
       const res = await this.ctx.service.site.getUrl({
+        atomClass,
         language: this.ctx.request.body.language,
         path: this.ctx.request.body.path,
       });
@@ -727,7 +1638,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -735,7 +1646,9 @@ module.exports = app => {
   class TagController extends app.Controller {
 
     async list() {
+      const atomClass = this.ctx.request.body.atomClass;
       const list = await this.ctx.service.tag.list({
+        atomClass,
         options: this.ctx.request.body.options,
       });
       this.ctx.success({ list });
@@ -748,17 +1661,20 @@ module.exports = app => {
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(0);
+const require3 = __webpack_require__(1);
 const extend = require3('extend2');
+const utils = __webpack_require__(0);
 
 module.exports = app => {
 
   class CommentController extends app.Controller {
 
     async all() {
+      // atomClass
+      const atomClass = utils.atomClass(this.ctx.request.body.atomClass);
       // options
       const options = this.ctx.request.body.options;
       // filter drafts
@@ -771,10 +1687,7 @@ module.exports = app => {
         method: 'post',
         url: '/a/base/comment/all',
         body: {
-          atomClass: {
-            module: 'a-cms',
-            atomClassName: 'article',
-          },
+          atomClass,
           options,
         },
       });
@@ -787,16 +1700,25 @@ module.exports = app => {
 
 
 /***/ }),
-/* 17 */
-/***/ (function(module, exports) {
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Build = __webpack_require__(2);
 
 module.exports = app => {
 
   class RSSController extends app.Controller {
 
     async feed() {
-      // language
+      // params
+      //   module
+      const module = this.ctx.params.module;
+      //   atomClassName
+      const atomClassName = this.ctx.params.atomClassName;
+      //   language
       const language = this.ctx.params.language;
+      // atomClass
+      const atomClass = { module, atomClassName };
       // options
       const options = {
         where: {
@@ -812,17 +1734,19 @@ module.exports = app => {
       const res = await this.ctx.performAction({
         method: 'post',
         url: '/a/cms/article/list',
-        body: { options },
+        body: { atomClass, options },
       });
       const list = res.list;
+      // build
+      const build = Build.create(this.ctx, atomClass);
       // site
-      const site = await this.ctx.service.render.getSite({ language });
+      const site = await build.getSite({ language });
       // feed
       let feed =
 `<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
   <channel>
     <title><![CDATA[${site.base.title}]]></title>
-    <link>${this.ctx.service.render.getUrl(site, language, 'index.html')}</link>
+    <link>${build.getUrl(site, language, 'index.html')}</link>
     <description><![CDATA[${site.base.description || site.base.subTitle}]]></description>
     <language>${language}</language>
     <generator>https://cms.cabloy.com</generator>
@@ -837,7 +1761,7 @@ module.exports = app => {
         ]]>
       </title>
       <link>
-        ${this.ctx.service.render.getUrl(site, language, article.url)}
+        ${build.getUrl(site, language, article.url)}
       </link>
       <description>
         <![CDATA[
@@ -862,8 +1786,15 @@ module.exports = app => {
     }
 
     async feedComments() {
-      // language
+      // params
+      //   module
+      const module = this.ctx.params.module;
+      //   atomClassName
+      const atomClassName = this.ctx.params.atomClassName;
+      //   language
       const language = this.ctx.params.language;
+      // atomClass
+      const atomClass = { module, atomClassName };
       // options
       const options = {
         orders: [
@@ -875,19 +1806,19 @@ module.exports = app => {
       const res = await this.ctx.performAction({
         method: 'post',
         url: '/a/cms/comment/all',
-        body: {
-          options,
-        },
+        body: { atomClass, options },
       });
       const list = res.list;
+      // build
+      const build = Build.create(this.ctx, atomClass);
       // site
-      const site = await this.ctx.service.render.getSite({ language });
+      const site = await build.getSite({ language });
       // feed
       let feed =
 `<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
   <channel>
     <title><![CDATA[Comments for ${site.base.title}]]></title>
-    <link>${this.ctx.service.render.getUrl(site, language, 'index.html')}</link>
+    <link>${build.getUrl(site, language, 'index.html')}</link>
     <description><![CDATA[${site.base.description || site.base.subTitle}]]></description>
     <language>${language}</language>
     <generator>https://cms.cabloy.com</generator>
@@ -902,7 +1833,7 @@ module.exports = app => {
         ]]>
       </title>
       <link>
-        ${this.ctx.service.render.getUrl(site, language, item.url)}#comments
+        ${build.getUrl(site, language, item.url)}#comments
       </link>
       <description>
         <![CDATA[
@@ -929,7 +1860,7 @@ module.exports = app => {
       // atomId
       const atomId = this.ctx.params.atomId;
       // article
-      const article = await this.ctx.service.render._getArticle({ key: { atomId }, inner: false });
+      const article = await this.ctx.service.article._getArticle({ key: { atomId }, inner: false });
       // language
       const language = article.language;
       // options
@@ -948,14 +1879,18 @@ module.exports = app => {
         },
       });
       const list = res.list;
+      // atomClass
+      const atomClass = await this.ctx.meta.atomClass.get({ id: article.atomClassId });
+      // build
+      const build = Build.create(this.ctx, atomClass);
       // site
-      const site = await this.ctx.service.render.getSite({ language });
+      const site = await build.getSite({ language });
       // feed
       let feed =
 `<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
   <channel>
     <title><![CDATA[Comments on: ${article.atomName}]]></title>
-    <link>${this.ctx.service.render.getUrl(site, language, article.url)}</link>
+    <link>${build.getUrl(site, language, article.url)}</link>
     <description><![CDATA[${article.description || article.summary}]]></description>
     <language>${language}</language>
     <generator>https://cms.cabloy.com</generator>
@@ -970,7 +1905,7 @@ module.exports = app => {
         ]]>
       </title>
       <link>
-        ${this.ctx.service.render.getUrl(site, language, article.url)}#comments
+        ${build.getUrl(site, language, article.url)}#comments
       </link>
       <description>
         <![CDATA[
@@ -1000,32 +1935,98 @@ module.exports = app => {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
+/***/ (function(module, exports) {
+
+module.exports = require("path");
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports) {
+
+const _formatDateTime = function(date, fmt) { // original author: meizz
+  const o = {
+    'M+': date.getMonth() + 1, // month
+    'D+': date.getDate(), // day
+    'H+': date.getHours(), // hour
+    'm+': date.getMinutes(), // minute
+    's+': date.getSeconds(), // second
+    'Q+': Math.floor((date.getMonth() + 3) / 3), // quarter
+    S: date.getMilliseconds(), // millisecond
+  };
+  if (/(Y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
+  for (const k in o) { if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length))); }
+  return fmt;
+};
+
+module.exports = {
+  now() {
+    return this.formatDateTime(null);
+  },
+  today() {
+    return this.formatDate(null);
+  },
+  formatDateTime(date, fmt) {
+    date = date || new Date();
+    if (typeof (date) !== 'object') date = new Date(date);
+    fmt = fmt || 'YYYY-MM-DD HH:mm:ss';
+    return _formatDateTime(date, fmt);
+  },
+  formatDate(date, sep) {
+    sep = sep || '-';
+    return this.formatDateTime(date, `YYYY${sep}MM${sep}DD`);
+  },
+  formatTime(date, sep) {
+    sep = sep || ':';
+    return this.formatDateTime(date, `HH${sep}mm${sep}ss`);
+  },
+};
+
+
+/***/ }),
+/* 21 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
 
   class QueueController extends app.Controller {
 
+    async render() {
+      const queueAction = this.ctx.request.body.queueAction;
+      await this[queueAction]();
+    }
+
     async buildLanguage() {
       const res = await this.ctx.service.site.buildLanguage({
+        atomClass: this.ctx.request.body.atomClass,
         language: this.ctx.request.body.language,
       });
       this.ctx.success(res);
     }
 
     async buildLanguages() {
-      const res = await this.ctx.service.site.buildLanguages();
+      const res = await this.ctx.service.site.buildLanguages({
+        atomClass: this.ctx.request.body.atomClass,
+      });
       this.ctx.success(res);
     }
 
     async renderArticle() {
-      const res = await this.ctx.service.render.renderArticle(this.ctx.request.body);
+      const res = await this.ctx.service.render.renderArticle({
+        atomClass: this.ctx.request.body.atomClass,
+        key: this.ctx.request.body.key,
+        inner: this.ctx.request.body.inner,
+      });
       this.ctx.success(res);
     }
 
     async deleteArticle() {
-      const res = await this.ctx.service.render.deleteArticle(this.ctx.request.body);
+      const res = await this.ctx.service.render.deleteArticle({
+        atomClass: this.ctx.request.body.atomClass,
+        key: this.ctx.request.body.key,
+        article: this.ctx.request.body.article,
+        inner: this.ctx.request.body.inner,
+      });
       this.ctx.success(res);
     }
 
@@ -1036,15 +2037,38 @@ module.exports = app => {
 
 
 /***/ }),
-/* 19 */
+/* 22 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+
+  class EventController extends app.Controller {
+
+    async atomClassValidator() {
+      const res = await this.ctx.service.event.atomClassValidator({
+        event: this.ctx.request.body.event,
+        data: this.ctx.request.body.data,
+      });
+      this.ctx.success(res);
+    }
+
+  }
+
+  return EventController;
+};
+
+
+/***/ }),
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(20);
-const article = __webpack_require__(21);
-const category = __webpack_require__(22);
-const render = __webpack_require__(23);
-const site = __webpack_require__(25);
-const tag = __webpack_require__(26);
+const version = __webpack_require__(24);
+const article = __webpack_require__(25);
+const category = __webpack_require__(26);
+const render = __webpack_require__(27);
+const site = __webpack_require__(28);
+const tag = __webpack_require__(29);
+const event = __webpack_require__(30);
 
 module.exports = app => {
   const services = {
@@ -1054,14 +2078,17 @@ module.exports = app => {
     render,
     site,
     tag,
+    event,
   };
   return services;
 };
 
 
 /***/ }),
-/* 20 */
-/***/ (function(module, exports) {
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const utils = __webpack_require__(0);
 
 module.exports = app => {
 
@@ -1310,24 +2337,36 @@ module.exports = app => {
         await this.ctx.model.query(sql);
       }
 
+      if (options.version === 5) {
+        // alter table: aCmsCategory
+        let sql = `
+        ALTER TABLE aCmsCategory
+          ADD COLUMN atomClassId int(11) DEFAULT '0'
+                  `;
+        await this.ctx.model.query(sql);
+        // alter table: aCmsTag
+        sql = `
+        ALTER TABLE aCmsTag
+          ADD COLUMN atomClassId int(11) DEFAULT '0'
+                  `;
+        await this.ctx.model.query(sql);
+      }
+
     }
 
     async init(options) {
       if (options.version === 1) {
-        // create roles: cms-writer cms-publisher
+        // create roles: cms-writer cms-publisher to template
         const roles = [ 'cms-writer', 'cms-publisher' ];
-        const roleAuthenticated = await this.ctx.meta.role.getSystemRole({ roleName: 'authenticated' });
-        const userRoot = await this.ctx.meta.user.get({ userName: 'root' });
+        const roleTemplate = await this.ctx.meta.role.getSystemRole({ roleName: 'template' });
+        const roleSuperuser = await this.ctx.meta.role.getSystemRole({ roleName: 'superuser' });
         for (const roleName of roles) {
           const roleId = await this.ctx.meta.role.add({
             roleName,
-            roleIdParent: roleAuthenticated.id,
+            roleIdParent: roleTemplate.id,
           });
-          // add user to role
-          await this.ctx.meta.role.addUserRole({
-            userId: userRoot.id,
-            roleId,
-          });
+          // role:superuser include cms-writer cms-publisher
+          await this.ctx.meta.role.addRoleInc({ roleId: roleSuperuser.id, roleIdInc: roleId });
         }
         // build roles
         await this.ctx.meta.role.build();
@@ -1337,11 +2376,11 @@ module.exports = app => {
           { roleName: 'cms-writer', action: 'create' },
           { roleName: 'cms-writer', action: 'write', scopeNames: 0 },
           { roleName: 'cms-writer', action: 'delete', scopeNames: 0 },
-          { roleName: 'cms-writer', action: 'read', scopeNames: 'cms-writer' },
-          { roleName: 'cms-publisher', action: 'read', scopeNames: 'cms-writer' },
-          { roleName: 'cms-publisher', action: 'write', scopeNames: 'cms-writer' },
-          { roleName: 'cms-publisher', action: 'publish', scopeNames: 'cms-writer' },
-          { roleName: 'root', action: 'read', scopeNames: 'cms-writer' },
+          { roleName: 'cms-writer', action: 'read', scopeNames: 'authenticated' },
+          { roleName: 'cms-publisher', action: 'read', scopeNames: 'authenticated' },
+          { roleName: 'cms-publisher', action: 'write', scopeNames: 'authenticated' },
+          { roleName: 'cms-publisher', action: 'publish', scopeNames: 'authenticated' },
+          { roleName: 'root', action: 'read', scopeNames: 'authenticated' },
         ];
         const module = this.ctx.app.meta.modules[this.ctx.module.info.relativeName];
         const atomClass = await this.ctx.meta.atomClass.get({ atomClassName: 'article' });
@@ -1367,6 +2406,22 @@ module.exports = app => {
         }
 
       }
+
+      if (options.version === 5) {
+        // atomClass
+        const atomClass = await utils.atomClass2(this.ctx, null);
+        // update aCmsCategory's atomClassId
+        await this.ctx.model.query(
+          `update aCmsCategory set atomClassId=?
+             where iid=?`,
+          [ atomClass.id, this.ctx.instance.id ]);
+        // update aCmsTag's atomClassId
+        await this.ctx.model.query(
+          `update aCmsTag set atomClassId=?
+             where iid=?`,
+          [ atomClass.id, this.ctx.instance.id ]);
+      }
+
     }
 
     async test() {
@@ -1380,10 +2435,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 21 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(0);
+const require3 = __webpack_require__(1);
 const trimHtml = require3('@zhennann/trim-html');
 const markdown = require3('@zhennann/markdown');
 const uuid = require3('uuid');
@@ -1393,7 +2448,7 @@ module.exports = app => {
   class Article extends app.Service {
 
     async create({ atomClass, key, item, user }) {
-      const site = await this.ctx.service.render.combineSiteBase();
+      const site = await this.ctx.service.render.combineSiteBase({ atomClass });
       const editMode = site.edit.mode;
       // add article
       const params = {
@@ -1421,9 +2476,15 @@ module.exports = app => {
       // select
     }
 
-    async write({ atomClass, key, item, validation, user }) {
+    async write({ atomClass, key, item, user }) {
       // get atom for safety
       const atomOld = await this.ctx.meta.atom.read({ key, user });
+
+      // if undefined then old
+      const fields = [ 'slug', 'editMode', 'content', 'language', 'categoryId', 'sticky', 'keywords', 'description', 'sorting', 'flag', 'extra' ];
+      for (const field of fields) {
+        if (item[field] === undefined) item[field] = atomOld[field];
+      }
 
       // url
       let url;
@@ -1492,7 +2553,7 @@ module.exports = app => {
         [ item.content, html, this.ctx.instance.id, key.atomId ]);
 
       // tags
-      const tagsNew = await this.ctx.service.tag.updateArticleTags({ key, item });
+      const tagsNew = await this.ctx.service.tag.updateArticleTags({ atomClass, key, item });
 
       // set tag count , force check if delete tags
       // if (atomOld.atomFlag === 2) {
@@ -1500,7 +2561,7 @@ module.exports = app => {
       // }
 
       // render
-      await this._renderArticle({ key, inner: atomOld.atomFlag !== 2 });
+      await this._renderArticle({ atomClass, key, inner: atomOld.atomFlag !== 2 });
     }
 
     async delete({ atomClass, key, user }) {
@@ -1525,7 +2586,7 @@ module.exports = app => {
       // }
 
       // delete article
-      await this._deleteArticle({ key, article: atomOld, inner: atomOld.atomFlag !== 2 });
+      await this._deleteArticle({ atomClass, key, article: atomOld, inner: atomOld.atomFlag !== 2 });
     }
 
     async action({ action, atomClass, key, user }) {
@@ -1552,7 +2613,11 @@ module.exports = app => {
         }
 
         // render
-        await this._renderArticle({ key, inner: false });
+        await this._renderArticle({ atomClass, key, inner: false });
+      } else {
+        // other custom action
+        //   always render again
+        await this._renderArticle({ atomClass, key, inner: false });
       }
     }
 
@@ -1565,34 +2630,60 @@ module.exports = app => {
         atom: { atomFlag },
         user,
       });
-      if (this.ctx.config.article.publishOnSubmit) {
+      // site
+      const site = await this.ctx.service.render.combineSiteBase({ atomClass });
+      // if (this.ctx.config.article.publishOnSubmit) {
+      if (site.base.publishOnSubmit !== false) {
         // publish
-        await this.action({ action: 101, key, user });
+        await this.action({ action: 101, atomClass, key, user });
       }
     }
 
-    async _deleteArticle({ key, article, inner }) {
+    async _deleteArticle({ atomClass, key, article, inner }) {
       await this.ctx.dbMeta.next(async () => {
         // queue not async
         await this.ctx.app.meta.queue.push({
           subdomain: this.ctx.subdomain,
           module: moduleInfo.relativeName,
-          queueName: 'deleteArticle',
-          data: { key, article, inner },
+          queueName: 'render',
+          queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
+          data: {
+            queueAction: 'deleteArticle',
+            atomClass, key, article, inner,
+          },
         });
       });
     }
 
-    async _renderArticle({ key, inner }) {
+    async _renderArticle({ atomClass, key, inner }) {
       await this.ctx.dbMeta.next(async () => {
         // queue not async
         await this.ctx.app.meta.queue.push({
           subdomain: this.ctx.subdomain,
           module: moduleInfo.relativeName,
-          queueName: 'renderArticle',
-          data: { key, inner },
+          queueName: 'render',
+          queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
+          data: {
+            queueAction: 'renderArticle',
+            atomClass, key, inner,
+          },
         });
       });
+    }
+
+    async _getArticle({ key, inner }) {
+      if (!inner) {
+      // check right
+        const roleAnonymous = await this.ctx.meta.role.getSystemRole({ roleName: 'anonymous' });
+        const right = await this.ctx.meta.atom.checkRoleRightRead({ atom: { id: key.atomId }, roleId: roleAnonymous.id });
+        if (!right) return null;
+      }
+      // article
+      const article = await this.ctx.meta.atom.read({ key, user: { id: 0 } });
+      if (!article) return null;
+      // check language
+      if (!article.language) this.ctx.throw(1001);
+      return article;
     }
 
   }
@@ -1602,8 +2693,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 22 */
-/***/ (function(module, exports) {
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const utils = __webpack_require__(0);
 
 module.exports = app => {
 
@@ -1624,10 +2717,17 @@ module.exports = app => {
       });
     }
 
-    async children({ language, categoryId, hidden, flag }) {
+    async children({ atomClass, language, categoryId, hidden, flag }) {
+      //
       const where = {
         categoryIdParent: categoryId || 0,
       };
+      // atomClassId
+      if (where.categoryIdParent === 0) {
+        const _atomClass = await utils.atomClass2(this.ctx, atomClass);
+        where.atomClassId = _atomClass.id;
+      }
+      //
       if (language !== undefined) where.language = language;
       if (hidden !== undefined) where.hidden = hidden;
       if (flag !== undefined) where.flag = flag;
@@ -1638,18 +2738,20 @@ module.exports = app => {
       return list;
     }
 
-    async add({ categoryName, language, categoryIdParent }) {
+    async add({ atomClass, data }) {
+      const _atomClass = await utils.atomClass2(this.ctx, atomClass);
       // add
       const res = await this.ctx.model.category.insert({
-        categoryName,
-        language,
+        categoryName: data.categoryName,
+        language: data.language,
         catalog: 0,
         hidden: 0,
         sorting: 0,
-        categoryIdParent,
+        categoryIdParent: data.categoryIdParent,
+        atomClassId: _atomClass.id,
       });
       // adjust catalog
-      await this.adjustCatalog(categoryIdParent);
+      await this.adjustCatalog(data.categoryIdParent);
 
       return res.insertId;
     }
@@ -1686,6 +2788,7 @@ module.exports = app => {
       await this.adjustCatalog(categoryIdParent);
     }
 
+    // for donothing on categoryId === 0, so need not input param:atomClass
     async adjustCatalog(categoryId) {
       if (categoryId === 0) return;
       const children = await this.children({ categoryId });
@@ -1695,16 +2798,16 @@ module.exports = app => {
       });
     }
 
-    async tree({ language, categoryId, hidden, flag }) {
-      return await this._treeChildren({ language, categoryId, hidden, flag });
+    async tree({ atomClass, language, categoryId, hidden, flag }) {
+      return await this._treeChildren({ atomClass, language, categoryId, hidden, flag });
     }
 
-    async _treeChildren({ language, categoryId, hidden, flag }) {
-      const list = await this.children({ language, categoryId, hidden, flag });
+    async _treeChildren({ atomClass, language, categoryId, hidden, flag }) {
+      const list = await this.children({ atomClass, language, categoryId, hidden, flag });
       for (const item of list) {
         if (item.catalog) {
           // only categoryId
-          item.children = await this._treeChildren({ categoryId: item.id });
+          item.children = await this._treeChildren({ atomClass, categoryId: item.id });
         }
       }
       return list;
@@ -1728,573 +2831,34 @@ module.exports = app => {
 
 
 /***/ }),
-/* 23 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const path = __webpack_require__(1);
-const require3 = __webpack_require__(0);
-const ejs = require3('@zhennann/ejs');
-const pMap = require3('p-map');
-const extend = require3('extend2');
-const fse = require3('fs-extra');
-const moment = require3('moment');
-const glob = require3('glob');
-const bb = require3('bluebird');
-const CleanCSS = require3('clean-css');
-const shajs = require3('sha.js');
-const babel = require3('@babel/core');
-const UglifyJS = require3('uglify-js');
-const time = __webpack_require__(24);
+const Build = __webpack_require__(2);
 
 module.exports = app => {
 
   class Render extends app.Service {
 
-    async renderAllFiles({ language }) {
-      // clearCache
-      ejs.clearCache();
-      // site
-      const site = await this.getSite({ language });
-      // render static
-      await this._renderStatic({ site });
-      // render articles
-      await this._renderArticles({ site });
-      // render index
-      await this._renderIndex({ site });
+    async renderArticle({ atomClass, key, inner }) {
+      const build = Build.create(this.ctx, atomClass);
+      await build.renderArticle({ key, inner });
     }
 
-    async renderArticle({ key, inner }) {
-      // article
-      const article = await this._getArticle({ key, inner });
-      if (!article) return;
-      // clearCache
-      ejs.clearCache();
-      // site
-      const site = await this.getSite({ language: article.language });
-      // render article
-      await this._renderArticle({ site, article });
-      if (!inner) {
-        // write sitemap
-        await this._writeSitemap({ site, article });
-        // render index
-        await this._renderIndex({ site });
-      }
+    async deleteArticle({ atomClass, key, article, inner }) {
+      const build = Build.create(this.ctx, atomClass);
+      await build.deleteArticle({ key, article, inner });
     }
 
-    async deleteArticle({ key, article, inner }) {
-      // clearCache
-      ejs.clearCache();
-      // site
-      const site = await this.getSite({ language: article.language });
-      // remove file
-      const pathDist = await this.getPathDist(site, article.language);
-      await fse.remove(path.join(pathDist, article.url));
-      if (!inner) {
-        // remove sitemap
-        let xml = await fse.readFile(path.join(pathDist, 'sitemap.xml'));
-        const regexp = new RegExp(` {2}<url>\\s+<loc>[^<]*${article.url}[^<]*</loc>[\\s\\S]*?</url>[\\r\\n]`);
-        xml = xml.toString().replace(regexp, '');
-        // save
-        await fse.writeFile(path.join(pathDist, 'sitemap.xml'), xml);
-        // render index
-        await this._renderIndex({ site });
-      }
-    }
-
-    async getArticleUrl({ key }) {
-      // article
-      const article = await this._getArticle({ key, inner: true });
-      if (!article) return;
-      // site
-      const site = await this.getSite({ language: article.language });
-      // url
-      return {
-        relativeUrl: article.url,
-        url: this.getUrl(site, site.language.current, article.url),
-      };
-    }
-
-    async _getArticle({ key, inner }) {
-      if (!inner) {
-        // check right
-        const roleAnonymous = await this.ctx.meta.role.getSystemRole({ roleName: 'anonymous' });
-        const right = await this.ctx.meta.atom.checkRoleRightRead({ atom: { id: key.atomId }, roleId: roleAnonymous.id });
-        if (!right) return null;
-      }
-      // article
-      const article = await this.ctx.meta.atom.read({ key, user: { id: 0 } });
-      if (!article) return null;
-      // check language
-      if (!article.language) this.ctx.throw(1001);
-      return article;
-    }
-
-    async _renderArticles({ site }) {
-      // anonymous user
-      let userId;
-      const user = await this.ctx.meta.user.get({ anonymous: true });
-      if (user) {
-        userId = user.id;
-      } else {
-        userId = await this.ctx.meta.user.anonymous();
-      }
-      // articles
-      const articles = await this.ctx.meta.atom.select({
-        atomClass: { module: 'a-cms', atomClassName: 'article' },
-        options: {
-          where: {
-            'a.atomFlag': 2,
-            'f.language': site.language.current,
-          },
-          orders: [[ 'a.updatedAt', 'desc' ]],
-          page: null,
-          mode: 'search',
-        },
-        user: { id: userId },
-        pageForce: false,
-      });
-      // concurrency
-      const mapper = article => {
-        // render article
-        return this._renderArticle({ site, article });
-      };
-      await pMap(articles, mapper, { concurrency: 10 });
-      // write sitemap
-      await this._writeSitemaps({ site, articles });
-    }
-
-    async _renderStatic({ site }) {
-      // static
-      const pathIntermediate = await this.getPathIntermediate(site.language.current);
-      const staticFiles = await bb.fromCallback(cb => {
-        glob(`${pathIntermediate}/static/\*\*/\*.ejs`, cb);
-      });
-      for (const item of staticFiles) {
-        // data
-        const data = await this.getData({ site });
-        // path
-        const _fileSrc = item.substr(pathIntermediate.length + 1);
-        await this._renderFile({
-          fileSrc: _fileSrc,
-          fileDest: _fileSrc.replace('.ejs', '.html'),
-          data,
-        });
-      }
-    }
-
-    async _renderIndex({ site }) {
-      // index
-      const pathIntermediate = await this.getPathIntermediate(site.language.current);
-      const indexFiles = await bb.fromCallback(cb => {
-        glob(`${pathIntermediate}/main/index/\*\*/\*.ejs`, cb);
-      });
-      for (const item of indexFiles) {
-        // data
-        const data = await this.getData({ site });
-        // path
-        const _fileSrc = item.substr(pathIntermediate.length + 1);
-        const _fileDest = _fileSrc.substr('main/index/'.length).replace('.ejs', '.html');
-        await this._renderFile({
-          fileSrc: _fileSrc,
-          fileDest: _fileDest,
-          data,
-        });
-      }
-    }
-
-    async _writeSitemap({ site, article }) {
-      const loc = this.getUrl(site, site.language.current, article.url);
-      const lastmod = moment(article.updatedAt).format();
-      // load
-      const pathDist = await this.getPathDist(site, site.language.current);
-      const fileName = path.join(pathDist, 'sitemap.xml');
-      let xml;
-      const exists = await fse.pathExists(fileName);
-      if (!exists) {
-        xml =
-`<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>${loc}</loc>
-    <lastmod>${lastmod}</lastmod>
-  </url>
-</urlset>`;
-      } else {
-        xml = await fse.readFile(fileName);
-        xml = xml.toString();
-        // remove
-        const regexp = new RegExp(` {2}<url>\\s+<loc>[^<]*${article.url}[^<]*</loc>[\\s\\S]*?</url>[\\r\\n]`);
-        xml = xml.replace(regexp, '');
-        // append
-        xml = xml.replace('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-          `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>${loc}</loc>
-    <lastmod>${lastmod}</lastmod>
-  </url>`);
-      }
-      // save
-      await fse.writeFile(fileName, xml);
-    }
-
-    async _writeSitemaps({ site, articles }) {
-      // xml
-      let xml =
-`<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-`;
-      for (const article of articles) {
-        const loc = this.getUrl(site, site.language.current, article.url);
-        const lastmod = moment(article.updatedAt).format();
-        xml +=
-`  <url>
-    <loc>${loc}</loc>
-    <lastmod>${lastmod}</lastmod>
-  </url>
-`;
-      }
-      xml += '</urlset>';
-      // save
-      const pathDist = await this.getPathDist(site, site.language.current);
-      const fileName = path.join(pathDist, 'sitemap.xml');
-      await fse.writeFile(fileName, xml);
-    }
-
-    async _renderArticle({ site, article }) {
-      // data
-      const data = await this.getData({ site });
-      data.article = article;
-      await this._renderFile({
-        fileSrc: 'main/article.ejs',
-        fileDest: article.url,
-        data,
-      });
-    }
-
-    async _renderFile({ fileSrc, fileDest, data }) {
-      // site
-      const site = data.site;
-      // language
-      const language = site.language.current;
-      // src
-      const pathIntermediate = await this.getPathIntermediate(language);
-      const fileName = path.join(pathIntermediate, fileSrc);
-      // dest
-      const pathDist = await this.getPathDist(site, language);
-      const fileWrite = path.join(pathDist, fileDest);
-      // data
-      data._filename = fileName;
-      data._path = fileSrc.replace('.ejs', '');
-      // env site
-      data.env('site', {
-        path: data._path,
-        serverUrl: site.serverUrl,
-        rawRootUrl: this.getUrlRawRoot(site),
-      });
-      // render
-      let content = await ejs.renderFile(fileName, data, this.getOptions());
-      content = await this._renderEnvs({ data, content });
-      content = await this._renderCSSJSes({ data, content });
-      // hot load
-      if (this.app.meta.isTest || this.app.meta.isLocal) {
-        content += `
-<script language="javascript">
-$(document).ready(function() {
-  var __checkFileTimeout = ${this.ctx.config.checkFileTimeout};
-  var __fileTime;
-  function __checkFile() {
-    util.performAction({
-      method: 'post',
-      url: '/a/cms/site/checkFile',
-      body: { file: '${fileWrite}' }
-    }).then(function(stats) {
-      if (!stats) {
-        return window.setTimeout(__checkFile, __checkFileTimeout);
-      }
-      if (!__fileTime) {
-        __fileTime = stats.mtime;
-        return window.setTimeout(__checkFile, __checkFileTimeout);
-      }
-      if (__fileTime === stats.mtime) {
-        return window.setTimeout(__checkFile, __checkFileTimeout);
-      }
-      location.reload(true);
-    }).catch(function(){
-      return window.setTimeout(__checkFile, __checkFileTimeout);
-    });
-  }
-  __checkFile();
-});
-</script>
-          `;
-      }
-      // write
-      await fse.outputFile(fileWrite, content);
-    }
-
-    async _renderCSSJSes({ data, content }) {
-      content = await this._renderCSSJS({ data, content, type: 'CSS', items: data._csses });
-      content = await this._renderCSSJS({ data, content, type: 'JS', items: data._jses });
-      return content;
-    }
-
-    async _renderCSSJS({ data, content, type, items }) {
-      if (items.length === 0) return content;
-      // site
-      const site = data.site;
-      // cache
-      if (!site._cache) site._cache = {};
-      if (!site._cache[type])site._cache[type] = {};
-      const cacheSha = shajs('sha256').update(items.join(',')).digest('hex');
-      let urlDest;
-      if (site._cache[type][cacheSha]) {
-        urlDest = site._cache[type][cacheSha];
-      } else {
-        // combine
-        let result = '';
-        for (const item of items) {
-          let _content;
-          if (path.extname(item) === '.ejs') {
-            // data
-            data._filename = item;
-            _content = await ejs.renderFile(item, data, this.getOptions());
-          } else {
-            _content = await fse.readFile(item);
-          }
-          // minify
-          if (type === 'CSS') {
-            if (item.indexOf('.min.css') === -1) {
-              const output = new CleanCSS().minify(_content);
-              _content = output.styles;
-            }
-          } else {
-            if (item.indexOf('.min.js') === -1) {
-              _content = babel.transform(_content, { ast: false, babelrc: false, presets: [ '@babel/preset-env' ] }).code;
-              const output = UglifyJS.minify(_content);
-              if (output.error) throw new Error(`${output.error.name}: ${output.error.message}`);
-              _content = output.code;
-            }
-          }
-          // append
-          result += _content + '\n';
-        }
-        // save
-        const sha = shajs('sha256').update(result).digest('hex');
-        // dest
-        const fileDest = `assets/${type.toLowerCase()}/${sha}.${type.toLowerCase()}`;
-        const pathDist = await this.getPathDist(site, site.language.current);
-        const fileWrite = path.join(pathDist, fileDest);
-        // write
-        await fse.outputFile(fileWrite, result);
-        // url
-        urlDest = this.getUrl(site, site.language.current, fileDest);
-        // cache
-        site._cache[type][cacheSha] = urlDest;
-      }
-      // replace
-      const regexp = new RegExp(`__${type}__`);
-      return content.replace(regexp, urlDest);
-    }
-
-    async _renderEnvs({ data, content }) {
-      // site
-      const site = data.site;
-      // env
-      const _env = {};
-      for (const name of Object.keys(data._envs)) {
-        let value;
-        const keys = name.split('.');
-        for (let index = keys.length - 1; index >= 0; index--) {
-          const key = keys[index];
-          value = value ? { [key]: value } : { [key]: data._envs[name] };
-        }
-        extend(true, _env, value);
-      }
-      // combine
-      const env = extend(true, {
-        base: site.base,
-        language: site.language,
-      }, site.env, _env);
-      if (data.article) {
-        env.article = extend(true, {}, data.article);
-        delete env.article.summary;
-        delete env.article.content;
-        delete env.article.html;
-        delete env.article.contentSearch;
-      }
-      // replace
-      const text = `
-<script type="text/javascript">
-var env=${JSON.stringify(env, null, 2)};
-</script>
-`;
-      const regexp = new RegExp('__ENV__');
-      return content.replace(regexp, text);
-    }
-
-    async getPathCustom(language) {
-      const cms = await this.getPathCms();
-      return path.join(cms, language, 'custom');
-    }
-    async getPathIntermediate(language) {
-      const cms = await this.getPathCms();
-      return path.join(cms, language, 'intermediate');
-    }
-    async getPathDist(site, language) {
-      const rawDist = await this.getPathRawDist();
-      return path.join(rawDist, language === site.language.default ? '' : '/' + language);
-    }
-    async getPathCms() {
-      return await this.ctx.meta.base.getPath('cms');
-    }
-    async getPathRawDist() {
-      return await this.ctx.meta.base.getPath('cms/dist');
-    }
-
-    getUrlRawRoot(site) {
-      if (this.ctx.app.meta.isTest || this.ctx.app.meta.isLocal) {
-        const publicDir = this.ctx.app.config.static.prefix;
-        const prefix = this.ctx.meta.base.host ? `${this.ctx.meta.base.protocol}://${this.ctx.meta.base.host}` : '';
-        return `${prefix}${publicDir}${this.ctx.instance.id}/cms/dist`;
-      }
-      return `${site.host.url}${site.host.rootPath ? '/' + site.host.rootPath : ''}`;
-    }
-    getUrlRoot(site, language) {
-      const rawRoot = this.getUrlRawRoot(site);
-      return `${rawRoot}${language === site.language.default ? '' : '/' + language}`;
-    }
-    getUrl(site, language, path) {
-      const urlRoot = this.getUrlRoot(site, language);
-      return path ? `${urlRoot}/${path}` : urlRoot;
-    }
-    getServerUrl(path) {
-      return this.ctx.meta.base.getAbsoluteUrl(path);
-    }
-
-    async getData({ site }) {
-      // data
-      const self = this;
-      const _csses = [];
-      const _jses = [];
-      const _envs = {};
-      let _pathIntermediate = await this.getPathIntermediate(site.language.current);
-      _pathIntermediate = path.join(_pathIntermediate, '/');
-      return {
-        ctx: self.ctx,
-        site,
-        _csses,
-        _jses,
-        _envs,
-        require(fileName) {
-          const _path = self.resolvePath('', this._filename, fileName);
-          return require3(_path);
-        },
-        url(fileName, language) {
-          if (fileName.indexOf('http://') === 0 || fileName.indexOf('https://') === 0) return fileName;
-          let _path = self.resolvePath('', path.relative(_pathIntermediate, this._filename), fileName);
-          _path = _path.replace(/\\/gi, '/');
-          return self.getUrl(site, language || site.language.current, _path);
-        },
-        css(fileName) {
-          _csses.push(self.resolvePath(_pathIntermediate, this._filename, fileName));
-        },
-        js(fileName) {
-          _jses.push(self.resolvePath(_pathIntermediate, this._filename, fileName));
-        },
-        env(name, value) {
-          _envs[name] = value;
-        },
-        text(str) {
-          return this.ctx.text.locale(site.language.current, str);
-        },
-        util: {
-          time,
-          formatDateTime(date) {
-            return this.time.formatDateTime(date, `${site.env.format.date} ${site.env.format.time}`);
-          },
-        },
-      };
-    }
-
-    resolvePath(pathRoot, fileCurrent, fileName) {
-      if (!fileName) return pathRoot;
-      if (fileName.charAt(0) === '.') return path.join(path.dirname(fileCurrent), fileName); // not use path.resolve
-      return path.join(pathRoot, fileName);
-    }
-
-    getOptions() {
-      return {
-        async: true,
-        cache: true,
-        compileDebug: this.ctx.app.meta.isTest || this.ctx.app.meta.isLocal,
-        outputFunctionName: 'echo',
-      };
+    async getArticleUrl({ atomClass, key }) {
+      const build = Build.create(this.ctx, atomClass);
+      return await build.getArticleUrl({ key });
     }
 
     // site<plugin<theme<site(db)<language(db)
-    async getSite({ language }) {
-      // base
-      const siteBase = await this.combineSiteBase();
-      // site
-      const site = await this.combineSite({ siteBase, language });
-      // serverUrl
-      site.serverUrl = this.getServerUrl('');
-      // languages
-      site.languages = [];
-      for (const item of site.language.items.split(',')) {
-        site.languages.push({
-          name: item,
-          title: this.ctx.text.locale(item, item),
-          url: this.getUrl(site, item, 'index.html'),
-        });
-      }
-      return site;
-    }
-
-    // site<plugin<theme<site(db)<language(db)
-    async combineSiteBase() {
-      // site
-      const site = await this.ctx.service.site.getConfigSiteBase();
-      // site(db) special for language/themes
-      const configSite = await this.ctx.service.site.getConfigSite();
-      if (configSite && configSite.language) site.language = configSite.language;
-      if (configSite && configSite.themes) site.themes = configSite.themes;
-      return site;
-    }
-
-    // site<plugin<theme<site(db)<language(db)
-    async combineSite({ siteBase, language }) {
-      // themeModuleName
-      const themeModuleName = siteBase.themes[language];
-      if (!themeModuleName) this.ctx.throw(1002);
-      // theme
-      const theme = this.combineThemes(themeModuleName);
-      // site(db)
-      const configSite = await this.ctx.service.site.getConfigSite();
-      // language(db)
-      const configLanguage = await this.ctx.service.site.getConfigLanguage({ language });
-      // combine
-      return extend(true, {},
-        siteBase, theme, configSite, configLanguage,
-        { language: { current: language } }
-      );
-    }
-
-    // theme extend
-    combineThemes(themeModuleName) {
-      return this._combineThemes(themeModuleName);
-    }
-
-    _combineThemes(themeModuleName) {
-      // module
-      const module = this.app.meta.modules[themeModuleName];
-      if (!module) this.ctx.throw(1003);
-      const moduleExtend = module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.extend;
-      if (!moduleExtend) return this.ctx.config.module(themeModuleName).theme;
-      return extend(true, {},
-        this._combineThemes(moduleExtend),
-        this.ctx.config.module(themeModuleName).theme
-      );
+    async combineSiteBase({ atomClass }) {
+      const build = Build.create(this.ctx, atomClass);
+      return await build.combineSiteBase();
     }
 
   }
@@ -2304,307 +2868,64 @@ var env=${JSON.stringify(env, null, 2)};
 
 
 /***/ }),
-/* 24 */
-/***/ (function(module, exports) {
-
-const _formatDateTime = function(date, fmt) { // original author: meizz
-  const o = {
-    'M+': date.getMonth() + 1, // month
-    'D+': date.getDate(), // day
-    'H+': date.getHours(), // hour
-    'm+': date.getMinutes(), // minute
-    's+': date.getSeconds(), // second
-    'Q+': Math.floor((date.getMonth() + 3) / 3), // quarter
-    S: date.getMilliseconds(), // millisecond
-  };
-  if (/(Y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
-  for (const k in o) { if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length))); }
-  return fmt;
-};
-
-module.exports = {
-  now() {
-    return this.formatDateTime(null);
-  },
-  today() {
-    return this.formatDate(null);
-  },
-  formatDateTime(date, fmt) {
-    date = date || new Date();
-    if (typeof (date) !== 'object') date = new Date(date);
-    fmt = fmt || 'YYYY-MM-DD HH:mm:ss';
-    return _formatDateTime(date, fmt);
-  },
-  formatDate(date, sep) {
-    sep = sep || '-';
-    return this.formatDateTime(date, `YYYY${sep}MM${sep}DD`);
-  },
-  formatTime(date, sep) {
-    sep = sep || ':';
-    return this.formatDateTime(date, `HH${sep}mm${sep}ss`);
-  },
-};
-
-
-/***/ }),
-/* 25 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const path = __webpack_require__(1);
-const require3 = __webpack_require__(0);
-const fse = require3('fs-extra');
-const glob = require3('glob');
-const bb = require3('bluebird');
-const extend = require3('extend2');
+const Build = __webpack_require__(2);
 
 module.exports = app => {
 
   class Site extends app.Service {
 
-    async getConfigSiteBase() {
-      // site
-      const site = extend(true, {}, this.ctx.config.site);
-      // plugins
-      site.plugins = {};
-      for (const relativeName in this.app.meta.modules) {
-        const module = this.app.meta.modules[relativeName];
-        if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin) {
-          site.plugins[relativeName] = this.ctx.config.module(relativeName).plugin;
-        }
-      }
-      return site;
+    async getConfigSiteBase({ atomClass }) {
+      const build = Build.create(this.ctx, atomClass);
+      return await build.getConfigSiteBase();
     }
 
-    async getConfigSite() {
-      return await this.ctx.meta.status.get('config-site');
+    async getConfigSite({ atomClass }) {
+      const build = Build.create(this.ctx, atomClass);
+      return await build.getConfigSite();
     }
 
-    async setConfigSite({ data }) {
-      await this.ctx.meta.status.set('config-site', data);
+    async setConfigSite({ atomClass, data }) {
+      const build = Build.create(this.ctx, atomClass);
+      await build.setConfigSite({ data });
     }
 
-    async getConfigLanguagePreview({ language }) {
-      const site = await this.ctx.service.render.getSite({ language });
-      this._adjustConfigLanguange(site);
-      return site;
+    async getConfigLanguagePreview({ atomClass, language }) {
+      const build = Build.create(this.ctx, atomClass);
+      return await build.getConfigLanguagePreview({ language });
     }
 
-    async getConfigLanguage({ language }) {
-      return await this.ctx.meta.status.get(`config-${language}`);
+    async getConfigLanguage({ atomClass, language }) {
+      const build = Build.create(this.ctx, atomClass);
+      return await build.getConfigLanguage({ language });
     }
 
-    async setConfigLanguage({ language, data }) {
-      this._adjustConfigLanguange(data);
-      await this.ctx.meta.status.set(`config-${language}`, data);
+    async setConfigLanguage({ atomClass, language, data }) {
+      const build = Build.create(this.ctx, atomClass);
+      await build.setConfigLanguage({ language, data });
     }
 
-    async getLanguages() {
-      const siteBase = await this.ctx.service.render.combineSiteBase();
-      const languages = [];
-      for (const item of siteBase.language.items.split(',')) {
-        languages.push({
-          title: this.ctx.text(item),
-          value: item,
-        });
-      }
-      return languages;
+    async getLanguages({ atomClass }) {
+      const build = Build.create(this.ctx, atomClass);
+      return await build.getLanguages();
     }
 
-    async getUrl({ language, path }) {
-      const site = await this.ctx.service.render.getSite({ language });
-      return this.ctx.service.render.getUrl(site, language, path);
+    async getUrl({ atomClass, language, path }) {
+      const build = Build.create(this.ctx, atomClass);
+      const site = await build.getSite({ language });
+      return build.getUrl(site, language, path);
     }
 
-    _adjustConfigLanguange(data) {
-      if (data) {
-        delete data.host;
-        delete data.language;
-        delete data.themes;
-      }
+    async buildLanguages({ atomClass }) {
+      const build = Build.create(this.ctx, atomClass);
+      return await build.buildLanguages();
     }
 
-    async buildLanguages() {
-      // time start
-      const timeStart = new Date();
-      // site
-      const site = await this.ctx.service.render.combineSiteBase();
-      for (const language of site.language.items.split(',')) {
-        await this.buildLanguage({ language });
-      }
-      // time end
-      const timeEnd = new Date();
-      const time = (timeEnd.valueOf() - timeStart.valueOf()) / 1000; // second
-      return {
-        time,
-      };
-    }
-
-    async buildLanguage({ language }) {
-      // time start
-      const timeStart = new Date();
-
-      // site
-      const site = await this.ctx.service.render.getSite({ language });
-
-      // / clear
-
-      // intermediate
-      const pathIntermediate = await this.ctx.service.render.getPathIntermediate(language);
-      await fse.remove(pathIntermediate);
-
-      // dist
-      const pathDist = await this.ctx.service.render.getPathDist(site, language);
-      //   solution: 1
-      // const distPaths = [ 'articles', 'asserts', 'plugins', 'static', 'index.html', 'robots.txt', 'sitemap.xml', 'sitemapindex.xml' ];
-      // for (const item of distPaths) {
-      //   await fse.remove(path.join(pathDist, item));
-      // }
-      //   solution: 2
-      const distFiles = await bb.fromCallback(cb => {
-        glob(`${pathDist}/\*`, cb);
-      });
-      const languages = site.language.items.split(',');
-      for (const item of distFiles) {
-        if (languages.indexOf(path.basename(item)) === -1) {
-          await fse.remove(item);
-        }
-      }
-
-      // / copy files to intermediate
-      // /  plugins<theme<custom
-
-      // plugins
-      for (const relativeName in this.app.meta.modules) {
-        const module = this.app.meta.modules[relativeName];
-        if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin) {
-          const pluginPath = path.join(module.root, 'backend/cms/plugin');
-          const pluginFiles = await bb.fromCallback(cb => {
-            glob(`${pluginPath}/\*`, cb);
-          });
-          for (const item of pluginFiles) {
-            await fse.copy(item, path.join(pathIntermediate, 'plugins', relativeName, path.basename(item)));
-          }
-        }
-      }
-
-      // theme
-      if (!site.themes[language]) this.ctx.throw(1002);
-      await this.copyThemes(pathIntermediate, site.themes[language]);
-
-      // custom
-      const customPath = await this.ctx.service.render.getPathCustom(language);
-      const customFiles = await bb.fromCallback(cb => {
-        glob(`${customPath}/\*`, cb);
-      });
-      for (const item of customFiles) {
-        await fse.copy(item, path.join(pathIntermediate, path.basename(item)));
-      }
-
-      // custom dist
-      const customDistFiles = await bb.fromCallback(cb => {
-        glob(`${customPath}/dist/\*`, cb);
-      });
-      for (const item of customDistFiles) {
-        await fse.copy(item, path.join(pathDist, path.basename(item)));
-      }
-
-      // / copy files to dist (ignore .ejs)
-      // /  assets plugins/[plugin]/assets
-      for (const dir of [ 'assets', 'plugins' ]) {
-        if (dir === 'assets') {
-          const _filename = path.join(pathIntermediate, 'assets');
-          const exists = await fse.pathExists(_filename);
-          if (exists) {
-            await fse.copy(_filename, path.join(pathDist, 'assets'));
-          }
-        } else {
-          const pluginsFiles = await bb.fromCallback(cb => {
-            glob(`${pathIntermediate}/plugins/\*`, cb);
-          });
-          for (const item of pluginsFiles) {
-            const _filename = `${item}/assets`;
-            const exists = await fse.pathExists(_filename);
-            if (exists) {
-              await fse.copy(_filename, path.join(pathDist, 'plugins', path.basename(item), 'assets'));
-            }
-          }
-        }
-        const ejsFiles = await bb.fromCallback(cb => {
-          glob(`${pathDist}/${dir}/\*\*/\*.ejs`, cb);
-        });
-        for (const item of ejsFiles) {
-          await fse.remove(item);
-        }
-      }
-
-      // / robots.txt
-      await this.createRobots({ site });
-
-      // / sitemapIndex
-      await this.createSitemapIndex({ site });
-
-      // render all files
-      await this.ctx.service.render.renderAllFiles({ language });
-
-      // time end
-      const timeEnd = new Date();
-      const time = (timeEnd.valueOf() - timeStart.valueOf()) / 1000; // second
-      return {
-        time,
-      };
-    }
-
-    // theme extend
-    async copyThemes(pathIntermediate, themeModuleName) {
-      await this._copyThemes(pathIntermediate, themeModuleName);
-    }
-
-    async _copyThemes(pathIntermediate, themeModuleName) {
-      // module
-      const module = this.app.meta.modules[themeModuleName];
-      if (!module) this.ctx.throw(1003);
-      // extend
-      const moduleExtend = module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.extend;
-      if (moduleExtend) {
-        await this._copyThemes(pathIntermediate, moduleExtend);
-      }
-      // current
-      const themePath = path.join(module.root, 'backend/cms/theme');
-      const themeFiles = await bb.fromCallback(cb => {
-        glob(`${themePath}/\*`, cb);
-      });
-      for (const item of themeFiles) {
-        await fse.copy(item, path.join(pathIntermediate, path.basename(item)));
-      }
-    }
-
-    async createRobots({ site }) {
-      // content
-      const urlRawRoot = this.ctx.service.render.getUrlRawRoot(site);
-      const content = `Sitemap: ${urlRawRoot}/sitemapindex.xml`;
-      // write
-      const pathRawDist = await this.ctx.service.render.getPathRawDist(site);
-      await fse.outputFile(`${pathRawDist}/robots.txt`, content);
-    }
-
-    async createSitemapIndex({ site }) {
-      // content
-      const urlRawRoot = this.ctx.service.render.getUrlRawRoot(site);
-      let items = '';
-      for (const language of site.language.items.split(',')) {
-        items +=
-`  <sitemap>
-    <loc>${urlRawRoot}${language === site.language.default ? '' : '/' + language}/sitemap.xml</loc>
-  </sitemap>
-`;
-      }
-      const content =
-`<?xml version="1.0" encoding="UTF-8"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${items}</sitemapindex>`;
-      // write
-      const pathRawDist = await this.ctx.service.render.getPathRawDist(site);
-      await fse.outputFile(`${pathRawDist}/sitemapindex.xml`, content);
+    async buildLanguage({ atomClass, language }) {
+      const build = Build.create(this.ctx, atomClass);
+      return await build.buildLanguage({ language });
     }
 
   }
@@ -2614,38 +2935,44 @@ ${items}</sitemapindex>`;
 
 
 /***/ }),
-/* 26 */
-/***/ (function(module, exports) {
+/* 29 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const utils = __webpack_require__(0);
 
 module.exports = app => {
 
   class Tag extends app.Service {
 
-    async list({ options }) {
+    async list({ atomClass, options }) {
+      const _atomClass = await utils.atomClass2(this.ctx, atomClass);
+      if (!options.where) options.where = {};
+      options.where.atomClassId = _atomClass.id;
       return await this.ctx.model.tag.select(options);
     }
 
-    async create({ language, tagName }) {
+    async create({ atomClassId, language, tagName }) {
       // check if exists
       const tag = await this.ctx.model.tag.get({
-        language, tagName,
+        atomClassId, language, tagName,
       });
       if (tag) return tag.id;
       // insert
       const res = await this.ctx.model.tag.insert({
-        language, tagName, articleCount: 0,
+        atomClassId, language, tagName, articleCount: 0,
       });
       return res.insertId;
     }
 
-    async updateArticleTags({ key, item }) {
+    async updateArticleTags({ atomClass, key, item }) {
+      const _atomClass = await utils.atomClass2(this.ctx, atomClass);
       // tags
       let tags = null;
       if (item.tags) {
         tags = JSON.parse(item.tags);
         for (const tag of tags) {
           if (tag.id === 0) {
-            tag.id = await this.create({ language: item.language, tagName: tag.name });
+            tag.id = await this.create({ atomClassId: _atomClass.id, language: item.language, tagName: tag.name });
           }
         }
       }
@@ -2701,6 +3028,7 @@ module.exports = app => {
           // update
           await this.ctx.model.tag.update({ id, articleCount });
         } else {
+          // check if referenced by items of deleted or other flag status
           const articleCount2 = await this.calcArticleCount2({ id });
           if (articleCount2 > 0) {
             // update
@@ -2738,15 +3066,33 @@ module.exports = app => {
 
 
 /***/ }),
-/* 27 */
+/* 30 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+
+  class Event extends app.Service {
+
+    async atomClassValidator({ event, data: { atomClass, user } }) {
+      // donothing
+    }
+
+  }
+
+  return Event;
+};
+
+
+/***/ }),
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const article = __webpack_require__(28);
-const category = __webpack_require__(29);
-const content = __webpack_require__(30);
-const tag = __webpack_require__(31);
-const articleTag = __webpack_require__(32);
-const articleTagRef = __webpack_require__(33);
+const article = __webpack_require__(32);
+const category = __webpack_require__(33);
+const content = __webpack_require__(34);
+const tag = __webpack_require__(35);
+const articleTag = __webpack_require__(36);
+const articleTagRef = __webpack_require__(37);
 
 module.exports = app => {
   const models = {
@@ -2762,7 +3108,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 28 */
+/* 32 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2776,7 +3122,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 29 */
+/* 33 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2790,7 +3136,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 30 */
+/* 34 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2804,7 +3150,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 31 */
+/* 35 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2818,7 +3164,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 32 */
+/* 36 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2832,7 +3178,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 33 */
+/* 37 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2846,11 +3192,11 @@ module.exports = app => {
 
 
 /***/ }),
-/* 34 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
-  const schemas = __webpack_require__(35)(app);
+  const schemas = __webpack_require__(39)(app);
   const meta = {
     base: {
       atoms: {
@@ -2939,13 +3285,18 @@ module.exports = app => {
         actionPath: 'config/list',
       },
     },
+    event: {
+      implementations: {
+        // 'a-base:atomClassValidator': 'event/atomClassValidator',
+      },
+    },
   };
   return meta;
 };
 
 
 /***/ }),
-/* 35 */
+/* 39 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
