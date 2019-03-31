@@ -14,11 +14,9 @@ module.exports = async function(app) {
   // version test
   if (app.meta.isTest) {
     await ctx.performAction({
+      subdomain: '',
       method: 'post',
       url: '/a/version/version/check',
-      headers: {
-        'x-inner-subdomain': '',
-      },
       body: {
         scene: 'test',
       },

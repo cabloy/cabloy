@@ -88,9 +88,9 @@ module.exports = function(app) {
       app.meta.messenger.callRandom({
         name: 'queueCall',
         data: {
+          subdomain,
           method: 'post',
           url,
-          headers: { 'x-inner-subdomain': subdomain },
           body: data,
         },
       }, res => {

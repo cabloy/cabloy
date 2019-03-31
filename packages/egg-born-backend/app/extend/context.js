@@ -59,11 +59,8 @@ module.exports = {
     this[INNERACCESS] = value;
   },
   get subdomain() {
-    const _subdomain = this.headers['x-inner-subdomain'];
-    if (_subdomain) {
-      if (this.innerAccess) return _subdomain;
-      this.throw(403);
-    }
+    const _subdomain = this.meta && this.meta.subdomain;
+    if (_subdomain) return _subdomain;
     return this.subdomains.join('.');
   },
 
@@ -74,7 +71,7 @@ module.exports = {
    * @param  {json} options.data   data(optional)
    * @return {promise}                response.body.data or throw error
    */
-  performAction({ method, url, query, params, headers, body }) {
+  performAction({ subdomain, method, url, query, params, headers, body }) {
     return new Promise((resolve, reject) => {
       const handleRequest = appCallback.call(this.app);
       const request = createRequest({
@@ -82,7 +79,7 @@ module.exports = {
         url: util.combineFetchPath(this.module && this.module.info, url),
       }, this);
       const response = new http.ServerResponse(request);
-      handleRequest(this, request, response, resolve, reject, query, params, headers, body);
+      handleRequest(this, subdomain, request, response, resolve, reject, query, params, headers, body);
     });
   },
 
@@ -120,10 +117,14 @@ function appCallback() {
 
   if (!this.listeners('error').length) this.on('error', this.onerror);
 
-  return function handleRequest(ctxCaller, req, res, resolve, reject, query, params, headers, body) {
+  return function handleRequest(ctxCaller, subdomain, req, res, resolve, reject, query, params, headers, body) {
     res.statusCode = 404;
     const ctx = self.createContext(req, res);
     onFinished(res, ctx.onerror);
+
+    // subdomain
+    if (!ctx.meta) ctx.meta = {};
+    ctx.meta.subdomain = subdomain || (ctxCaller.meta && ctxCaller.meta.subdomain);
 
     // query params body
     if (query) ctx.query = query;
@@ -233,11 +234,8 @@ function delegateCookies(ctx, ctxCaller) {
 }
 
 function createRequest({ method, url }, ctxCaller) {
-  // adjust for security
+  // _req
   const _req = ctxCaller.request;
-  if (!ctxCaller.innerAccess && _req.headers && _req.headers['x-inner-subdomain']) {
-    _req.headers['x-inner-subdomain'] = undefined;
-  }
   // req
   const req = new http.IncomingMessage();
   req.headers = _req.headers;
