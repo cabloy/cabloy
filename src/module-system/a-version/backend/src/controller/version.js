@@ -24,11 +24,9 @@ module.exports = app => {
         const instances = app.config.instances || [{ subdomain: '', password: '' }];
         for (const instance of instances) {
           await this.ctx.performAction({
+            subdomain: instance.subdomain,
             method: 'post',
             url: 'version/check',
-            headers: {
-              'x-inner-subdomain': instance.subdomain,
-            },
             body: {
               ...instance,
               scene: 'init',
