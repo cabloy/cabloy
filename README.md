@@ -88,7 +88,7 @@ Essentially, `egg-born-backend` and `EggJS` are both `code loaders`. However, in
 
 ![](./docs/assets/images/cabloy.png)
 
-## Faith
+## The Faith
 
 > Any application that can be written in Javascript, will eventually be written in Javascript | Jeff Atwood (2007)
 
