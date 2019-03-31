@@ -45,9 +45,26 @@ module.exports = function(loader, modules) {
 
   function wrapTask(key, startup, info) {
     return function(ctx) {
-      return ctx.performAction({
-        method: 'post',
-        url: util.combineApiPath(info, startup.path),
+      const url = util.combineApiPath(info, startup.path);
+      if (!startup.instance) {
+        return ctx.performAction({
+          method: 'post',
+          url,
+        });
+      }
+      // all instances
+      return ctx.db.query('select * from aInstance a where a.disabled=0').then(instances => {
+        const list = [];
+        for (const instance of instances) {
+          list.push(
+            ctx.performAction({
+              subdomain: instance.name,
+              method: 'post',
+              url,
+            })
+          );
+        }
+        return Promise.all(list);
       });
     };
   }
