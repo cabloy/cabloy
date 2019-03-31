@@ -12,6 +12,7 @@ const MODULE = Symbol.for('Context#__module');
 const DATABASE = Symbol.for('Context#__database');
 const DATABASEMETA = Symbol.for('Context#__databasemeta');
 const INNERACCESS = Symbol.for('Context#__inneraccess');
+const SUBDOMAIN = Symbol.for('Context#__subdomain');
 
 module.exports = {
   get module() {
@@ -59,9 +60,10 @@ module.exports = {
     this[INNERACCESS] = value;
   },
   get subdomain() {
-    const _subdomain = this.meta && this.meta.subdomain;
-    if (_subdomain) return _subdomain;
-    return this.subdomains.join('.');
+    return this[SUBDOMAIN] || this.subdomains.join('.');
+  },
+  set subdomain(value) {
+    this[SUBDOMAIN] = value;
   },
 
   /**
@@ -123,8 +125,7 @@ function appCallback() {
     onFinished(res, ctx.onerror);
 
     // subdomain
-    if (!ctx.meta) ctx.meta = {};
-    ctx.meta.subdomain = subdomain || (ctxCaller.meta && ctxCaller.meta.subdomain);
+    ctx.subdomain = subdomain || ctxCaller.subdomain;
 
     // query params body
     if (query) ctx.query = query;
