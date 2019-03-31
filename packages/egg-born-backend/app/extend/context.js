@@ -80,7 +80,7 @@ module.exports = {
       const request = createRequest({
         method,
         url: util.combineFetchPath(this.module && this.module.info, url),
-      }, this.request);
+      }, this);
       const response = new http.ServerResponse(request);
       handleRequest(this, request, response, resolve, reject, query, params, headers, body);
     });
@@ -232,7 +232,13 @@ function delegateCookies(ctx, ctxCaller) {
   });
 }
 
-function createRequest({ method, url }, _req) {
+function createRequest({ method, url }, ctxCaller) {
+  // adjust for security
+  const _req = ctxCaller.request;
+  if (!ctxCaller.innerAccess && _req.headers && _req.headers['x-inner-subdomain']) {
+    _req.headers['x-inner-subdomain'] = undefined;
+  }
+  // req
   const req = new http.IncomingMessage();
   req.headers = _req.headers;
   req.host = _req.host;
