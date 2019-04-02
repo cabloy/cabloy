@@ -215,5 +215,25 @@ export default function(Vue) {
       if (height) query = `${query ? query + '&' : ''}height=${parseInt(height) * pixelRatio}`;
       return `${url}${url.charAt(url.length - 1) === '?' ? '' : '?'}${query}`;
     },
+    combineQueries(url, queries) {
+      //
+      if (!queries) return url;
+      //
+      let str = '';
+      for (const key of Object.keys(queries)) {
+        str += `${key}=${encodeURIComponent(queries[key])}&`;
+      }
+      if (str) {
+        str = str.substr(0, str.length - 1);
+      }
+      if (!str) return url;
+      //
+      if (!url) return str;
+      //
+      const pos = url.indexOf('?');
+      if (pos === -1) return `${url}?${str}`;
+      if (pos === url.length - 1) return `${url}${str}`;
+      return `${url}&${str}`;
+    },
   };
 }
