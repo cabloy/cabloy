@@ -1,6 +1,6 @@
 <template>
   <eb-page :page-content="false" tabs with-subnavbar>
-    <eb-navbar :title="title" eb-back-link="Back">
+    <eb-navbar :title="pageTitle" eb-back-link="Back">
       <f7-nav-right>
         <f7-link v-if="showPopover" iconMaterial="add" :popover-open="`#${popoverId}`"></f7-link>
         <eb-link iconMaterial="search" @click.prevent="onSearch"></eb-link>
@@ -51,10 +51,14 @@ export default {
     atoms,
   },
   data() {
+    const query = this.$f7route.query;
+    const module = query && query.module;
+    const atomClassName = query && query.atomClassName;
+    const atomClass = (module && atomClassName) ? { module, atomClassName } : null;
+    const where = (query && query.where) ? JSON.parse(query.where) : null;
     return {
-      module: this.$f7route.query.module,
-      atomClassName: this.$f7route.query.atomClassName,
-      where: this.$f7route.query.where ? JSON.parse(this.$f7route.query.where) : null,
+      atomClass,
+      where,
       tabIdList: Vue.prototype.$meta.util.nextId('tab'),
       tabIdDrafts: Vue.prototype.$meta.util.nextId('tab'),
       tabIdStars: Vue.prototype.$meta.util.nextId('tab'),
@@ -67,14 +71,7 @@ export default {
     labels() {
       return this.$local.state.labels;
     },
-    atomClass() {
-      if (!this.module || !this.atomClassName) return null;
-      return {
-        module: this.module,
-        atomClassName: this.atomClassName,
-      };
-    },
-    title() {
+    pageTitle() {
       const atomClass = this.getAtomClass(this.atomClass);
       if (!atomClass) return this.$text('Atom');
       return `${this.$text('Atom')}: ${atomClass.titleLocale}`;
@@ -105,11 +102,16 @@ export default {
   },
   methods: {
     onSearch() {
+      const queries = {};
       const atomClass = this.atomClass;
-      let url = '/a/base/atom/search';
       if (atomClass) {
-        url = `${url}?module=${atomClass.module}&atomClassName=${atomClass.atomClassName}`;
+        queries.module = atomClass.module;
+        queries.atomClassName = atomClass.atomClassName;
       }
+      if (this.where) {
+        queries.where = JSON.stringify(this.where);
+      }
+      const url = this.$meta.util.combineQueries('/a/base/atom/search', queries);
       this.$view.navigate(url, { target: '_self' });
     },
     onAction(event, item) {

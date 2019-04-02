@@ -1,7 +1,7 @@
 <template>
   <eb-page ptr @ptr:refresh="onRefresh" infinite :infinitePreloader="false" @infinite="onInfinite">
     <eb-navbar :title="$text('Search Result')" eb-back-link="Back"></eb-navbar>
-    <atoms ref="list" mode="search" :params="params" :atomClass="atomClass"></atoms>
+    <atoms ref="list" mode="search" :params="params" :atomClass="atomClass" :where="where"></atoms>
   </eb-page>
 </template>
 <script>
@@ -22,6 +22,9 @@ export default {
     },
     atomClass() {
       return this.contextParams.atomClass;
+    },
+    where() {
+      return this.contextParams.where;
     },
   },
   methods: {

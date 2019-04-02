@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Search Atom')" eb-back-link="Back">
+    <eb-navbar :title="pageTitle" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="search" @click.prevent="onSearch"></eb-link>
       </f7-nav-right>
@@ -14,7 +14,7 @@
         <eb-select name="label" v-model="label" :options="labels"></eb-select>
       </f7-list-item>
       <f7-list-item divider></f7-list-item>
-      <f7-list-item :title="$text('Atom class')" link="#" @click="onSelectAtomClass">
+      <f7-list-item v-if="!atomClassInit" :title="$text('Atom class')" link="#" @click="onSelectAtomClass">
         <div slot="after">{{atomClassTitle}}</div>
       </f7-list-item>
     </f7-list>
@@ -27,15 +27,26 @@ import ebAtomClasses from '../../common/atomClasses.js';
 export default {
   mixins: [ ebAtomClasses ],
   data() {
+    const query = this.$f7route.query;
+    const module = query && query.module;
+    const atomClassName = query && query.atomClassName;
+    const atomClass = (module && atomClassName) ? { module, atomClassName } : null;
+    const where = (query && query.where) ? JSON.parse(query.where) : null;
     return {
       atomName: '',
       label: 0,
-      atomClass: null,
+      atomClass,
+      where,
       item: null,
       validateParams: null,
+      atomClassInit: atomClass,
     };
   },
   computed: {
+    pageTitle() {
+      const atomClassTitle = this.atomClassTitle || this.$text('Atom');
+      return `${this.$text('Search')} ${atomClassTitle}`;
+    },
     labels() {
       const labelsAll = this.$local.state.labels;
       if (!labelsAll) return null;
@@ -56,11 +67,22 @@ export default {
   },
   watch: {
     atomClass(value) {
-      if (!value) {
+      this.atomClassChanged();
+    },
+  },
+  created() {
+    // labels
+    this.$local.dispatch('getLabels');
+    // init atomClass
+    this.atomClassChanged();
+  },
+  methods: {
+    atomClassChanged() {
+      const atomClass = this.atomClass;
+      if (!atomClass) {
         this.item = null;
         this.validateParams = null;
       } else {
-        const atomClass = this.atomClass;
         // module
         this.$meta.module.use(atomClass.module, () => {
           // validateParams
@@ -79,17 +101,6 @@ export default {
         });
       }
     },
-  },
-  created() {
-    // labels
-    this.$local.dispatch('getLabels');
-    // init atomClass
-    const query = this.$f7route.query;
-    const module = query && query.module;
-    const atomClassName = query && query.atomClassName;
-    this.atomClass = (module && atomClassName) ? { module, atomClassName } : null;
-  },
-  methods: {
     onSelectAtomClass() {
       this.$view.navigate('/a/base/atom/selectAtomClass', {
         target: '_self',
@@ -130,6 +141,7 @@ export default {
             atomName: this.atomName,
             label: this.label,
             atomClass: this.atomClass,
+            where: this.where,
             atomClassExtra,
           },
         },
