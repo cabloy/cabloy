@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-validation",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "eggBornModule": {
     "dependencies": {
       "a-instance": "1.0.0"
@@ -52,8 +52,8 @@
   },
   "dependencies": {
     "require3": "^1.0.1",
-    "ajv": "6.8.1",
-    "ajv-i18n": "^3.0.0",
-    "ajv-keywords": "^3.0.0"
+    "ajv": "^6.10.0",
+    "ajv-i18n": "^3.4.0",
+    "ajv-keywords": "^3.4.0"
   }
 }
