@@ -82,7 +82,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 13);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -93,41 +93,6 @@ module.exports =
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
-
-/***/ }),
-/* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_layoutView_vue_vue_type_style_index_0_id_3d6f77e7_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_layoutView_vue_vue_type_style_index_0_id_3d6f77e7_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_layoutView_vue_vue_type_style_index_0_id_3d6f77e7_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
-/* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_layoutView_vue_vue_type_style_index_0_id_3d6f77e7_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
-
-/***/ }),
-/* 3 */,
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_layout_vue_vue_type_style_index_0_id_44123f17_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_layout_vue_vue_type_style_index_0_id_44123f17_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_layout_vue_vue_type_style_index_0_id_44123f17_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
-/* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_layout_vue_vue_type_style_index_0_id_44123f17_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
-
-/***/ }),
-/* 5 */,
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
-
-/***/ }),
-/* 7 */,
-/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -135,14 +100,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ([]);
 
 /***/ }),
-/* 9 */
+/* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-
 /* harmony default export */ __webpack_exports__["default"] = (function (Vue) {
-
   return {
     state: {},
     getters: {},
@@ -152,7 +115,7 @@ __webpack_require__.r(__webpack_exports__);
 });
 
 /***/ }),
-/* 10 */
+/* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -162,24 +125,41 @@ __webpack_require__.r(__webpack_exports__);
     login: '/a/login/login',
     loginOnStart: true,
     toolbar: {
-      tabbar: true, labels: true, bottomMd: true
+      tabbar: true,
+      labels: true,
+      bottomMd: true
     },
-    tabs: [{ name: 'Home', tabLinkActive: true, iconMaterial: 'home', url: '/a/base/menu/list' }, { name: 'Atom', tabLinkActive: false, iconMaterial: 'group_work', url: '/a/base/atom/list' }, { name: 'Mine', tabLinkActive: false, iconMaterial: 'person', url: '/a/user/user/mine' }]
+    tabs: [{
+      name: 'Home',
+      tabLinkActive: true,
+      iconMaterial: 'home',
+      url: '/a/base/menu/list'
+    }, {
+      name: 'Atom',
+      tabLinkActive: false,
+      iconMaterial: 'group_work',
+      url: '/a/base/atom/list'
+    }, {
+      name: 'Mine',
+      tabLinkActive: false,
+      iconMaterial: 'person',
+      url: '/a/user/user/mine'
+    }]
   }
 });
 
 /***/ }),
-/* 11 */
+/* 4 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
-  'zh-cn': __webpack_require__(12).default
+  'zh-cn': __webpack_require__(5)["default"]
 });
 
 /***/ }),
-/* 12 */
+/* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -191,19 +171,20 @@ __webpack_require__.r(__webpack_exports__);
 });
 
 /***/ }),
-/* 13 */
+/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
 // CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/components/layoutView.vue?vue&type=script&lang=js&
-
 /* harmony default export */ var layoutViewvue_type_script_lang_js_ = ({
   render: function render(c) {
     var attrs = this.$utils.extend({}, this.$attrs);
-    return c('f7-login-screen', { staticClass: 'eb-layout-view-container eb-layout-view-container-' + attrs.name }, [c('eb-view', {
-      staticClass: 'eb-layout-view eb-layout-view-' + attrs.name + ' eb-layout-view-size-small',
+    return c('f7-login-screen', {
+      staticClass: "eb-layout-view-container eb-layout-view-container-".concat(attrs.name)
+    }, [c('eb-view', {
+      staticClass: "eb-layout-view eb-layout-view-".concat(attrs.name, " eb-layout-view-size-small"),
       attrs: attrs
     })]);
   },
@@ -213,9 +194,6 @@ __webpack_require__.r(__webpack_exports__);
 });
 // CONCATENATED MODULE: ./front/src/components/layoutView.vue?vue&type=script&lang=js&
  /* harmony default export */ var components_layoutViewvue_type_script_lang_js_ = (layoutViewvue_type_script_lang_js_); 
-// EXTERNAL MODULE: ./front/src/components/layoutView.vue?vue&type=style&index=0&id=3d6f77e7&scoped=true&lang=css&
-var layoutViewvue_type_style_index_0_id_3d6f77e7_scoped_true_lang_css_ = __webpack_require__(2);
-
 // CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/runtime/componentNormalizer.js
 /* globals __VUE_SSR_CONTEXT__ */
 
@@ -317,7 +295,6 @@ var render, staticRenderFns
 
 
 
-
 /* normalize component */
 
 var component = normalizeComponent(
@@ -331,11 +308,8 @@ var component = normalizeComponent(
   
 )
 
-component.options.__file = "layoutView.vue"
 /* harmony default export */ var layoutView = (component.exports);
 // CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/components/layout.vue?vue&type=script&lang=js&
-
-
 
 /* harmony default export */ var layoutvue_type_script_lang_js_ = ({
   meta: {
@@ -344,16 +318,19 @@ component.options.__file = "layoutView.vue"
   render: function render(c) {
     var _this = this;
 
+    var pushStateMain = !this.$device.ios;
     var toolbarLinks = [];
     var tabs = [];
     this.$config.layout.tabs.forEach(function (tab) {
-      var id = 'eb-layout-tab-' + tab.name;
+      var id = "eb-layout-tab-".concat(tab.name);
 
       var _linkAttrs = _this.$utils.extend({}, tab);
-      _linkAttrs.text = _this.$text(_linkAttrs.text || _linkAttrs.name);
-      _linkAttrs.tabLink = '#' + id;
-      toolbarLinks.push(c('f7-link', { attrs: _linkAttrs }));
 
+      _linkAttrs.text = _this.$text(_linkAttrs.text || _linkAttrs.name);
+      _linkAttrs.tabLink = "#".concat(id);
+      toolbarLinks.push(c('f7-link', {
+        attrs: _linkAttrs
+      }));
       var _viewAttrs = {
         id: id,
         tab: true,
@@ -373,20 +350,27 @@ component.options.__file = "layoutView.vue"
           size: 'small',
           sizeExtent: _this.sizeExtent
         },
-        on: { 'tab:show': _this.onTabShow }
+        on: {
+          'tab:show': _this.onTabShow
+        }
       }));
     });
 
     var _toolbarAttrs = this.$utils.extend({}, this.$config.layout.toolbar);
-    var toolbar = c('f7-toolbar', { attrs: _toolbarAttrs }, toolbarLinks);
 
-    var views = c('f7-views', { attrs: { tabs: true } }, [toolbar].concat(tabs));
-
+    var toolbar = c('f7-toolbar', {
+      attrs: _toolbarAttrs
+    }, toolbarLinks);
+    var views = c('f7-views', {
+      attrs: {
+        tabs: true
+      }
+    }, [toolbar].concat(tabs));
     var viewMain = c('eb-layout-view', {
       ref: 'main',
       attrs: {
         name: 'main',
-        pushState: true,
+        pushState: pushStateMain,
         stackPages: true,
         pushStateOnLoad: false,
         preloadPreviousPage: false,
@@ -394,12 +378,11 @@ component.options.__file = "layoutView.vue"
         sizeExtent: this.sizeExtent
       }
     });
-
     var viewLogin = c('eb-layout-view', {
       ref: 'login',
       attrs: {
         name: 'login',
-        pushState: true,
+        pushState: pushStateMain,
         stackPages: true,
         pushStateOnLoad: false,
         preloadPreviousPage: false,
@@ -407,10 +390,10 @@ component.options.__file = "layoutView.vue"
         sizeExtent: this.sizeExtent
       }
     });
-
-    return c('div', { staticClass: 'eb-layout-container eb-layout-container-mobile' }, [views, viewMain, viewLogin]);
+    return c('div', {
+      staticClass: 'eb-layout-container eb-layout-container-mobile'
+    }, [views, viewMain, viewLogin]);
   },
-
   components: {
     ebLayoutView: layoutView
   },
@@ -423,7 +406,6 @@ component.options.__file = "layoutView.vue"
       sizeExtent: null
     };
   },
-
   computed: {
     viewTabsVisible: function viewTabsVisible() {
       return this.started && !this.viewMainVisible && !this.viewLoginVisible;
@@ -474,7 +456,6 @@ component.options.__file = "layoutView.vue"
       _this5.start();
     });
   },
-
   methods: {
     onResize: function onResize() {
       this._onSize();
@@ -493,7 +474,6 @@ component.options.__file = "layoutView.vue"
       } else {
         var hashInit = this.$store.state.auth.hashInit;
         this.$store.commit('auth/setHashInit', null);
-
         if (hashInit && hashInit !== '/' && hashInit !== this.$config.layout.login) this.navigate(hashInit);
       }
 
@@ -505,11 +485,13 @@ component.options.__file = "layoutView.vue"
       options = options || {};
       var ctx = options.ctx;
       var target = options.target;
+
       if (target === '_self') {
         ctx.$view.f7View.router.navigate(url, options);
       } else {
         var viewName = ctx && ctx.$view.$el.f7View.name || 'main';
         this.$f7.views[viewName].router.navigate(url, options);
+
         if (viewName === 'main') {
           this.viewMainVisible = true;
           this.viewLoginVisible = false;
@@ -527,20 +509,22 @@ component.options.__file = "layoutView.vue"
     },
     hideView: function hideView(view) {
       var cancel = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
       view = typeof view === 'string' ? this.$f7.views[view] : view;
-
       if (view.name === 'main') this.viewMainVisible = false;
       if (view.name === 'login') this.viewLoginVisible = false;
 
       if (!cancel) {
-        view.router.navigate('/', { reloadAll: true });
+        view.router.navigate('/', {
+          reloadAll: true
+        });
       }
     },
     onTabShow: function onTabShow(e) {
       var target = e ? this.$$(e.target) : this.$$('.view.eb-layout-tab.tab-active');
+
       if (target.hasClass('eb-layout-tab')) {
         var path = target[0].f7View.router.currentRoute.path;
+
         if (!path || path === '/') {
           target[0].f7View.router.navigate(target.data('url'));
           this.tabShowed = true;
@@ -549,6 +533,7 @@ component.options.__file = "layoutView.vue"
     },
     backLink: function backLink(ctx) {
       var backLink = false;
+
       if (!this.$meta.util.historyUrlEmpty(ctx.$f7router.history[ctx.$f7router.history.length - 1])) {
         backLink = true;
       } else {
@@ -556,18 +541,15 @@ component.options.__file = "layoutView.vue"
         var $view = $el.parents('.view');
         if ($view.hasClass('eb-layout-view-main')) backLink = true;else if ($view.hasClass('eb-layout-view-login') && this.tabShowed) backLink = true;
       }
+
       return backLink;
     }
   }
 });
 // CONCATENATED MODULE: ./front/src/components/layout.vue?vue&type=script&lang=js&
  /* harmony default export */ var components_layoutvue_type_script_lang_js_ = (layoutvue_type_script_lang_js_); 
-// EXTERNAL MODULE: ./front/src/components/layout.vue?vue&type=style&index=0&id=44123f17&scoped=true&lang=css&
-var layoutvue_type_style_index_0_id_44123f17_scoped_true_lang_css_ = __webpack_require__(4);
-
 // CONCATENATED MODULE: ./front/src/components/layout.vue
 var layout_render, layout_staticRenderFns
-
 
 
 
@@ -580,32 +562,28 @@ var layout_component = normalizeComponent(
   layout_staticRenderFns,
   false,
   null,
-  "44123f17",
+  "0f8e9ac2",
   null
   
 )
 
-layout_component.options.__file = "layout.vue"
 /* harmony default export */ var layout = (layout_component.exports);
 // EXTERNAL MODULE: ./front/src/assets/css/module.less
-var css_module = __webpack_require__(6);
+var css_module = __webpack_require__(0);
 
 // CONCATENATED MODULE: ./front/src/main.js
 
 
-
-var Vue = void 0;
+var Vue;
 
 function install(_Vue, cb) {
   if (Vue) return console.error('already installed.');
-
   Vue = _Vue;
-
   return cb({
-    routes: __webpack_require__(8).default,
-    store: __webpack_require__(9).default(Vue),
-    config: __webpack_require__(10).default,
-    locales: __webpack_require__(11).default,
+    routes: __webpack_require__(1)["default"],
+    store: __webpack_require__(2)["default"](Vue),
+    config: __webpack_require__(3)["default"],
+    locales: __webpack_require__(4)["default"],
     components: {
       layout: layout
     }

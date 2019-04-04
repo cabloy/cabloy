@@ -6,6 +6,9 @@ export default {
     global: false,
   },
   render(c) {
+    // pushStateMain: disabled for ios
+    const pushStateMain = !this.$device.ios;
+
     // links and tabs
     const toolbarLinks = [];
     const tabs = [];
@@ -50,7 +53,7 @@ export default {
       ref: 'main',
       attrs: {
         name: 'main',
-        pushState: true,
+        pushState: pushStateMain,
         stackPages: true,
         pushStateOnLoad: false,
         preloadPreviousPage: false,
@@ -63,7 +66,7 @@ export default {
       ref: 'login',
       attrs: {
         name: 'login',
-        pushState: true,
+        pushState: pushStateMain,
         stackPages: true,
         pushStateOnLoad: false,
         preloadPreviousPage: false,
@@ -222,6 +225,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>
