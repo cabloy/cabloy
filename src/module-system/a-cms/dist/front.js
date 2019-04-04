@@ -323,7 +323,7 @@ var staticRenderFns = []
           return (!_this2.catalogOnly || item.data.catalog === 1) && (!_this2.categoryIdDisable || _this2.categoryIdDisable !== item.id);
         });
         return list;
-      }).catch(function (err) {
+      })["catch"](function (err) {
         _this2.$view.toast.show({
           text: err.message
         });
@@ -375,11 +375,11 @@ function install(_Vue, cb) {
   if (Vue) return console.error('already installed.');
   Vue = _Vue;
   return cb({
-    routes: __webpack_require__(8).default,
-    store: __webpack_require__(12).default(Vue),
-    config: __webpack_require__(13).default,
-    locales: __webpack_require__(14).default,
-    components: __webpack_require__(16).default
+    routes: __webpack_require__(8)["default"],
+    store: __webpack_require__(12)["default"](Vue),
+    config: __webpack_require__(13)["default"],
+    locales: __webpack_require__(14)["default"],
+    components: __webpack_require__(16)["default"]
   });
 }
 
@@ -400,7 +400,7 @@ function install(_Vue, cb) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 function load(name) {
-  return __webpack_require__(9)("./".concat(name, ".vue")).default;
+  return __webpack_require__(9)("./".concat(name, ".vue"))["default"];
 }
 
 /* harmony default export */ __webpack_exports__["default"] = ([{
@@ -553,7 +553,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
               configSiteBase: configSiteBase
             });
             resolve(configSiteBase);
-          }).catch(function (err) {
+          })["catch"](function (err) {
             return reject(err);
           });
         });
@@ -574,7 +574,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
               configSite: configSite
             });
             resolve(configSite);
-          }).catch(function (err) {
+          })["catch"](function (err) {
             return reject(err);
           });
         });
@@ -595,7 +595,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
               languages: languages
             });
             resolve(languages);
-          }).catch(function (err) {
+          })["catch"](function (err) {
             return reject(err);
           });
         });
@@ -619,7 +619,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
-  'zh-cn': __webpack_require__(15).default
+  'zh-cn': __webpack_require__(15)["default"]
 });
 
 /***/ }),
@@ -1618,7 +1618,7 @@ var utils = __webpack_require__(0);
           return node;
         });
         return list;
-      }).catch(function (err) {
+      })["catch"](function (err) {
         _this2.$view.toast.show({
           text: err.message
         });
@@ -1646,7 +1646,7 @@ var utils = __webpack_require__(0);
         }).then(function () {
           _this3.reloadChildren(node);
         });
-      }).catch(function () {});
+      })["catch"](function () {});
     },
     onNodeClickDelete: function onNodeClickDelete(node) {
       var _this4 = this;
@@ -1656,7 +1656,7 @@ var utils = __webpack_require__(0);
           categoryId: node.data.id
         }).then(function () {
           _this4.reloadChildren(node.parent);
-        }).catch(function (err) {
+        })["catch"](function (err) {
           return _this4.$view.dialog.alert(err.message);
         });
       });
@@ -1681,9 +1681,7 @@ var utils = __webpack_require__(0);
                   categoryId: categoryId,
                   categoryIdParent: categoryIdParent
                 }).then(function () {
-                  var _arr = [node.data.categoryIdParent, categoryIdParent];
-
-                  for (var _i = 0; _i < _arr.length; _i++) {
+                  for (var _i = 0, _arr = [node.data.categoryIdParent, categoryIdParent]; _i < _arr.length; _i++) {
                     var id = _arr[_i];
 
                     var _node = _this5.findNode(id);
@@ -2311,8 +2309,8 @@ var ebPageContext = external_vue_default.a.prototype.$meta.module.get('a-compone
           _iteratorError = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion && _iterator.return != null) {
-              _iterator.return();
+            if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+              _iterator["return"]();
             }
           } finally {
             if (_didIteratorError) {
@@ -2678,7 +2676,7 @@ var ebPageContext = external_vue_default.a.prototype.$meta.module.get('a-compone
           return (!_this2.catalogOnly || item.data.catalog === 1) && (!_this2.categoryIdDisable || _this2.categoryIdDisable !== item.id);
         });
         return list;
-      }).catch(function (err) {
+      })["catch"](function (err) {
         _this2.$view.toast.show({
           text: err.message
         });
@@ -2726,8 +2724,8 @@ var ebPageContext = external_vue_default.a.prototype.$meta.module.get('a-compone
           _iteratorError = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion && _iterator.return != null) {
-              _iterator.return();
+            if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+              _iterator["return"]();
             }
           } finally {
             if (_didIteratorError) {

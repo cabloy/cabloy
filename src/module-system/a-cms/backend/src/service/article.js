@@ -28,12 +28,24 @@ module.exports = app => {
       return { atomId: key.atomId, itemId };
     }
 
+    _getMeta(item) {
+      const meta = {
+        summary: item.summary,
+        flags: item.sticky ? this.ctx.text('Sticky') : null,
+      };
+      item._meta = meta;
+    }
+
     async read({ atomClass, key, item, user }) {
       // read
+      this._getMeta(item);
     }
 
     async select({ atomClass, options, items, user }) {
       // select
+      for (const item of items) {
+        this._getMeta(item);
+      }
     }
 
     async write({ atomClass, key, item, user }) {

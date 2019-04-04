@@ -35,4 +35,5 @@ module.exports = {
   ArticleNext: '后一篇',
   Yes: '是',
   No: '否',
+  Sticky: '置顶',
 };
