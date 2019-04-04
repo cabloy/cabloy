@@ -2,50 +2,69 @@
   <div>
     <f7-list>
       <eb-list-item class="item" v-for="item of items" :key="item.atomId" :link="itemShow?false:'#'" :context="item" :onPerform="onItemClick" swipeout @swipeout:opened="onSwipeoutOpened($event,item)" @contextmenu:opened="onSwipeoutOpened($event,item)">
-        <div slot="media">
-          <img class="avatar avatar32" :src="$meta.util.combineImageUrl(item.avatar,32)">
-        </div>
-        <div slot="root-start" class="header">
-          <div class="userName">
-            <span>{{item.userName}}</span>
-            <f7-icon v-if="item.star" class="star" color="orange" material="star"></f7-icon>
-            <f7-icon v-if="item.attachmentCount>0" class="star" color="orange" material="attachment"></f7-icon>
+        <template v-if="itemShow">
+          <div slot="media">
+            <img class="avatar avatar32" :src="getItemMetaMedia(item)">
           </div>
-          <template v-if="itemShow">
+          <div slot="root-start" class="header">
+            <div class="mediaLabel">
+              <span>{{getItemMetaMediaLabel(item)}}</span>
+            </div>
             <div>
+              <span v-if="item.star">⭐</span>
+              <span v-if="item.attachmentCount>0">🧷</span>
+              <span v-if="item.attachmentCount>1">{{`${item.attachmentCount}&nbsp;`}}</span>
+              <span v-if="item.commentCount>0">💬</span>
+              <span v-if="item.commentCount>1">{{`${item.commentCount}&nbsp;`}}</span>
+              <f7-badge v-for="flag of getItemMetaFlags(item)" :key="flag">{{flag}}</f7-badge>
               <f7-badge v-if="item.atomFlag>0">{{getFlagTitle(item)}}</f7-badge>
               <template v-if="item.labels && labels">
                 <f7-badge v-for="label of JSON.parse(item.labels)" :key="label" :style="{backgroundColor:getLabel(label).color}">{{getLabel(label).text}}</f7-badge>
               </template>
             </div>
-          </template>
-          <template v-else>
-            <div class="date">{{$meta.util.formatDateTimeRelative(item.atomUpdatedAt)}}</div>
-          </template>
-        </div>
-        <div slot="title" class="title">
-          <template v-if="itemShow">
+          </div>
+          <div slot="title" class="title">
             <div class="date">
               <div>{{$text('Modification time')}}</div>
               <div>{{$text('Created time')}}</div>
             </div>
-          </template>
-          <template v-else>
-            <div>{{item.atomName}}</div>
-          </template>
-        </div>
-        <div slot="after" class="after">
-          <template v-if="itemShow">
+          </div>
+          <div slot="after" class="after">
             <div class="date">{{$meta.util.formatDateTime(item.atomUpdatedAt)}}</div>
             <div class="date">{{$meta.util.formatDateTime(item.atomCreatedAt)}}</div>
-          </template>
-          <template v-else>
+          </div>
+        </template>
+        <template v-if="!itemShow">
+          <div slot="media">
+            <img class="avatar avatar32" :src="getItemMetaMedia(item)">
+          </div>
+          <div slot="root-start" class="header">
+            <div class="mediaLabel">
+              <span>{{getItemMetaMediaLabel(item)}}</span>
+            </div>
+            <div class="date">
+              <span v-if="item.star">⭐</span>
+              <span v-if="item.attachmentCount>0">🧷</span>
+              <span v-if="item.attachmentCount>1">{{`${item.attachmentCount}&nbsp;`}}</span>
+              <span v-if="item.commentCount>0">💬</span>
+              <span v-if="item.commentCount>1">{{`${item.commentCount}&nbsp;`}}</span>
+              <span>{{$meta.util.formatDateTimeRelative(item.atomUpdatedAt)}}</span>
+            </div>
+          </div>
+          <div slot="title" class="title">
+            <div>{{item.atomName}}</div>
+          </div>
+          <div slot="root-end" class="summary">
+            {{ getItemMetaSummary(item) }}
+          </div>
+          <div slot="after" class="after">
+            <f7-badge v-for="flag of getItemMetaFlags(item)" :key="flag">{{flag}}</f7-badge>
             <f7-badge v-if="item.atomFlag>0">{{getFlagTitle(item)}}</f7-badge>
             <template v-if="item.labels && labels">
               <f7-badge v-for="label of JSON.parse(item.labels)" :key="label" :style="{backgroundColor:getLabel(label).color}">{{getLabel(label).text}}</f7-badge>
             </template>
-          </template>
-        </div>
+          </div>
+        </template>
         <eb-context-menu>
           <div slot="left">
             <template v-if="mode==='stars'">
@@ -70,8 +89,9 @@
 <script>
 import Vue from 'vue';
 import ebActions from '../../common/actions.js';
+import ebAtomClasses from '../../common/atomClasses.js';
 export default {
-  mixins: [ ebActions ],
+  mixins: [ ebActions, ebAtomClasses ],
   meta: {
     global: false,
   },
@@ -334,6 +354,30 @@ export default {
       if (index === 0) return 'orange';
       else if (index === 1) return 'yellow';
       return 'blue';
+    },
+    getItemMetaFlags(item) {
+      const flags = (item._meta && item._meta.flags);
+      return flags ? flags.split(',') : [];
+    },
+    getItemMetaMedia(item) {
+      const media = (item._meta && item._meta.media) || item.avatar;
+      return this.$meta.util.combineImageUrl(media, 32);
+    },
+    getItemMetaMediaLabel(item) {
+      const mediaLabel = (item._meta && item._meta.mediaLabel) || item.userName;
+      return mediaLabel;
+    },
+    getItemMetaSummary(item) {
+      const summary = (item._meta && item._meta.summary) || '';
+      if (this.atomClass) {
+        return summary;
+      }
+      const atomClass = this.getAtomClass({
+        module: item.module,
+        atomClassName: item.atomClassName,
+      });
+      if (!atomClass) return summary;
+      return `${atomClass.titleLocale} ${summary}`;
     },
     getFlagTitle(item) {
       if (!this.flags) return null;
