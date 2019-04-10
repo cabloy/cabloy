@@ -83,28 +83,23 @@ module.exports = function(loader, modules) {
   }
 
   function wrapTask(key, schedule, info) {
-    return function(ctx) {
+    return async function(ctx) {
       const url = util.combineApiPath(info, schedule.path);
       if (!schedule.instance) {
-        return ctx.performAction({
+        return await ctx.performAction({
           method: 'post',
           url,
         });
       }
       // all instances
-      return ctx.db.query('select * from aInstance a where a.disabled=0').then(instances => {
-        const list = [];
-        for (const instance of instances) {
-          list.push(
-            ctx.performAction({
-              subdomain: instance.name,
-              method: 'post',
-              url,
-            })
-          );
-        }
-        return Promise.all(list);
-      });
+      const instances = await ctx.db.query('select * from aInstance a where a.disabled=0');
+      for (const instance of instances) {
+        await ctx.performAction({
+          subdomain: instance.name,
+          method: 'post',
+          url,
+        });
+      }
     };
   }
 
