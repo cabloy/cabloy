@@ -7,23 +7,36 @@
             <f7-list-item>
               <f7-icon material="person_outline" slot="media"></f7-icon>
               <f7-label floating>{{$text('Your username/mobile/email')}}</f7-label>
-              <eb-input type="text" :placeholder="$text('Your username/mobile/email')" clear-button v-model="auth" dataPath="auth"></eb-input>
+              <eb-input type="text" :placeholder="$text('Your username/mobile/email')" clear-button v-model="data.auth" dataPath="auth"></eb-input>
             </f7-list-item>
             <f7-list-item>
               <f7-icon material="lock_outline" slot="media"></f7-icon>
               <f7-label floating>{{$text('Your password')}}</f7-label>
-              <eb-input type="password" :placeholder="$text('Your password')" clear-button v-model="password" dataPath="password"></eb-input>
+              <eb-input type="password" :placeholder="$text('Your password')" clear-button v-model="data.password" dataPath="password"></eb-input>
+            </f7-list-item>
+            <f7-list-item>
+              <f7-icon slot="media"></f7-icon>
+              <template v-if="moduleCaptcha">
+                <captchaContainer></captchaContainer>
+              </template>
+            </f7-list-item>
+            <f7-list-item>
+              <f7-icon slot="media"></f7-icon>
+              <f7-label floating>{{$text('Captcha Code')}}</f7-label>
+              <eb-input type="text" :placeholder="$text('Captcha Code')" clear-button v-model="captcha.code" dataPath="captcha/code"></eb-input>
             </f7-list-item>
             <f7-list-item>
               <f7-icon slot="media"></f7-icon>
               <span class="text-color-gray">{{$text('Remember me')}}</span>
-              <eb-toggle v-model="rememberMe" dataPath="rememberMe"></eb-toggle>
+              <eb-toggle v-model="data.rememberMe" dataPath="rememberMe"></eb-toggle>
+            </f7-list-item>
+            <f7-list-item divider>
+              <span class="signin">
+                <eb-button :onPerform="signIn">{{$text('Sign in')}}</eb-button>
+              </span>
             </f7-list-item>
           </f7-list>
         </eb-validate>
-        <f7-list>
-          <eb-list-button :onPerform="signIn">{{$text('Sign in')}}</eb-list-button>
-        </f7-list>
       </f7-card-content>
       <f7-card-footer>
         <div></div>
@@ -40,17 +53,28 @@ export default {
   },
   data() {
     return {
-      auth: null,
-      password: null,
-      rememberMe: false,
+      data: {
+        auth: null,
+        password: null,
+        rememberMe: false,
+      },
+      captcha: {
+        code: null,
+      },
+      moduleCaptcha: null,
     };
+  },
+  created() {
+    this.$meta.module.use('a-captcha', module => {
+      this.$options.components.captchaContainer = module.options.components.captchaContainer;
+      this.moduleCaptcha = module;
+    });
   },
   methods: {
     onPerformValidate() {
-      return this.$api.post('passport/a-authsimple/authsimple', {
-        auth: this.auth,
-        password: this.password,
-        rememberMe: this.rememberMe,
+      return this.$api.post('auth/signin', {
+        data: this.data,
+        captcha: this.captcha,
       }).then(() => {
         this.$meta.vueApp.reload({ echo: true });
       });
@@ -62,9 +86,20 @@ export default {
 };
 
 </script>
-<style scoped>
+<style lang="less" scoped>
 .text-smaller {
   font-size: smaller !important;
+}
+
+.signin {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  a {
+    font-size: larger !important;
+  }
 }
 
 </style>

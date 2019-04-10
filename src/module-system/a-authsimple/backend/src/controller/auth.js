@@ -19,6 +19,12 @@ module.exports = app => {
       this.ctx.success();
     }
 
+    async signin() {
+      const { auth, password, rememberMe } = this.ctx.request.body.data;
+      const res = await this.service.auth.signin({ auth, password, rememberMe });
+      this.ctx.success(res);
+    }
+
   }
   return AuthController;
 };

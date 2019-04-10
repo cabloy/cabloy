@@ -12,4 +12,5 @@ module.exports = [
   { method: 'post', path: 'auth/reset', controller: auth, middlewares: 'validate',
     meta: { validate: { validator: 'reset' } },
   },
+  { method: 'post', path: 'auth/signin', controller: auth, middlewares: 'captchaVerify' },
 ];

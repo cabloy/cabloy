@@ -17,4 +17,5 @@ export default {
   'New password again': '重复新密码',
   OK: '确定',
   'Test Account': '测试账号',
+  'Captcha Code': '验证码',
 };

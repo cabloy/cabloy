@@ -9,6 +9,22 @@ module.exports = app => {
       return userId;
     }
 
+    async signin({ auth, password, rememberMe }) {
+      try {
+        const res = await this.ctx.performAction({
+          method: 'post',
+          url: 'passport/a-authsimple/authsimple',
+          body: { auth, password, rememberMe },
+        });
+        return res;
+      } catch (err) {
+        const error = new Error();
+        error.code = err.code;
+        error.message = err.message;
+        throw error;
+      }
+    }
+
     async add({ userId, password }) {
       password = password || this.ctx.config.defaultPassword;
       const hash = await this._calcPassword({ password });
