@@ -6,6 +6,7 @@ module.exports = appInfo => {
   config.middlewares = {
     mail: {
       global: false,
+      dependencies: 'instance',
     },
   };
 
