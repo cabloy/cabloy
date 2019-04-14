@@ -1,5 +1,6 @@
 const require3 = require('require3');
 const nodemailer = require3('nodemailer');
+const chalk = require3('chalk');
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -57,7 +58,7 @@ module.exports = app => {
         // log
         if (mail.scene === 'test') {
           const url = nodemailer.getTestMessageUrl(res);
-          this.ctx.logger.info(`test mail url: ${url}`);
+          console.log(chalk.keyword('orange')(`test mail url: ${url}`));
         }
         return true;
       } catch (err) {
