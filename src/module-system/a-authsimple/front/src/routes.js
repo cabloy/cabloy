@@ -4,5 +4,6 @@ function load(name) {
 
 export default [
   { path: 'signup', component: load('signup') },
-  { path: 'reset', component: load('reset') },
+  { path: 'passwordChange', component: load('passwordChange') },
+  { path: 'emailConfirm', component: load('emailConfirm') },
 ];

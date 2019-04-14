@@ -22,8 +22,8 @@
             </f7-list-item>
             <f7-list-item>
               <f7-icon slot="media"></f7-icon>
-              <f7-label floating>{{$text('Captcha Code')}}</f7-label>
-              <eb-input type="text" :placeholder="$text('Captcha Code')" clear-button v-model="captcha.code" dataPath="captcha/code"></eb-input>
+              <f7-label floating>{{$text('Captcha code')}}</f7-label>
+              <eb-input type="text" :placeholder="$text('Captcha code')" clear-button v-model="captcha.code" dataPath="captcha/code"></eb-input>
             </f7-list-item>
             <f7-list-item>
               <f7-icon slot="media"></f7-icon>
@@ -31,7 +31,7 @@
               <eb-toggle v-model="data.rememberMe" dataPath="rememberMe"></eb-toggle>
             </f7-list-item>
             <f7-list-item divider>
-              <span class="signin">
+              <span class="eb-list-divider-normal">
                 <eb-button :onPerform="signIn">{{$text('Sign in')}}</eb-button>
               </span>
             </f7-list-item>
@@ -89,17 +89,6 @@ export default {
 <style lang="less" scoped>
 .text-smaller {
   font-size: smaller !important;
-}
-
-.signin {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  a {
-    font-size: larger !important;
-  }
 }
 
 </style>

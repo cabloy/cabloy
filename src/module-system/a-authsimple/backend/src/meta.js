@@ -15,8 +15,11 @@ module.exports = app => {
         signin: {
           schemas: 'signin',
         },
-        reset: {
-          schemas: 'reset',
+        passwordChange: {
+          schemas: 'passwordChange',
+        },
+        emailConfirm: {
+          schemas: 'emailConfirm',
         },
       },
       keywords: {
@@ -25,15 +28,8 @@ module.exports = app => {
       schemas: {
         signup: schemas.signup,
         signin: schemas.signin,
-        reset: schemas.reset,
-      },
-    },
-    user: {
-      functions: {
-        resetPassword: {
-          title: 'Reset password',
-          actionPath: 'reset',
-        },
+        passwordChange: schemas.passwordChange,
+        emailConfirm: schemas.emailConfirm,
       },
     },
   };

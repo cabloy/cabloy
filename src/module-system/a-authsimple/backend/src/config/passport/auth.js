@@ -29,8 +29,9 @@ module.exports = app => {
     providers: {
       [provider]: {
         config: {
-          successReturnToOrRedirect: false, successRedirect: false,
-          addUser: false, addRole: false,
+          successReturnToOrRedirect: false,
+          successRedirect: false,
+          innerAccess: true,
         },
         handler: app => {
           return {

@@ -1,14 +1,12 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Sign up')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar :title="$text('Change password')" eb-back-link="Back"></eb-navbar>
     <f7-block>
-      <eb-validate ref="validate" :auto="false" :data="data" :params="{validator: 'signup'}" :onPerform="onPerformValidate">
+      <eb-validate ref="validate" :auto="false" :data="data" :params="{validator: 'passwordChange'}" :onPerform="onPerformValidate">
         <f7-list form no-hairlines-md>
-          <eb-list-item-validate dataKey="userName"></eb-list-item-validate>
-          <eb-list-item-validate dataKey="realName"></eb-list-item-validate>
-          <eb-list-item-validate dataKey="email"></eb-list-item-validate>
-          <eb-list-item-validate dataKey="password"></eb-list-item-validate>
-          <eb-list-item-validate dataKey="passwordAgain"></eb-list-item-validate>
+          <eb-list-item-validate dataKey="passwordOld"></eb-list-item-validate>
+          <eb-list-item-validate dataKey="passwordNew"></eb-list-item-validate>
+          <eb-list-item-validate dataKey="passwordNewAgain"></eb-list-item-validate>
           <f7-list-item>
             <template v-if="moduleCaptcha">
               <captchaContainer></captchaContainer>
@@ -20,7 +18,7 @@
           </f7-list-item>
           <f7-list-item divider>
             <span class="eb-list-divider-normal">
-              <eb-button :onPerform="signUp">{{$text('Sign up')}}</eb-button>
+              <eb-button :onPerform="onPerformOk">{{$text('OK')}}</eb-button>
             </span>
           </f7-list-item>
         </f7-list>
@@ -36,12 +34,9 @@ export default {
   data() {
     return {
       data: {
-        userName: null,
-        realName: null,
-        email: null,
-        // mobile: null,
-        password: null,
-        passwordAgain: null,
+        passwordOld: null,
+        passwordNew: null,
+        passwordNewAgain: null,
       },
       captcha: {
         code: null,
@@ -57,14 +52,14 @@ export default {
   },
   methods: {
     onPerformValidate() {
-      return this.$api.post('auth/signup', {
+      return this.$api.post('auth/passwordChange', {
         data: this.data,
         captcha: this.captcha,
       }).then(() => {
-        this.$meta.vueApp.reload({ echo: true });
+        this.$f7router.back();
       });
     },
-    signUp() {
+    onPerformOk() {
       return this.$refs.validate.perform();
     },
   },

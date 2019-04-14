@@ -24,13 +24,13 @@ module.exports = app => {
         format: 'email',
         'x-exists': true,
       },
-      mobile: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Mobile',
-        notEmpty: true,
-        'x-exists': true,
-      },
+      // mobile: {
+      //   type: 'string',
+      //   ebType: 'text',
+      //   ebTitle: 'Mobile',
+      //   notEmpty: true,
+      //   'x-exists': true,
+      // },
       password: {
         type: 'string',
         ebType: 'text',
@@ -73,7 +73,7 @@ module.exports = app => {
       },
     },
   };
-  schemas.reset = {
+  schemas.passwordChange = {
     type: 'object',
     properties: {
       passwordOld: {
@@ -99,6 +99,24 @@ module.exports = app => {
         ebSecure: true,
         notEmpty: true,
         const: { $data: '1/passwordNew' },
+      },
+    },
+  };
+  schemas.emailConfirm = {
+    type: 'object',
+    properties: {
+      userName: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Username',
+        ebReadOnly: true,
+      },
+      email: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Email',
+        notEmpty: true,
+        format: 'email',
       },
     },
   };
