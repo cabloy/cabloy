@@ -8,7 +8,7 @@ export default {
     },
     externalLink: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
   watch: {

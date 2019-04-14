@@ -12,7 +12,10 @@ export default {
     this.$$(this.$el).on('contextmenu', this.onContextMenu);
     if (this.externalLink) {
       this.$nextTick(() => {
-        this.getLinkEl().addClass('external');
+        const linkEl = this.getLinkEl();
+        if (linkEl) {
+          linkEl.addClass('external');
+        }
       });
     }
   },
