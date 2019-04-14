@@ -26,14 +26,6 @@ module.exports = app => {
   schemas.auth = {
     type: 'object',
     properties: {
-      addRole: {
-        type: 'boolean',
-        ebType: 'toggle',
-      },
-      addUser: {
-        type: 'boolean',
-        ebType: 'toggle',
-      },
       successRedirect: {
         type: 'boolean',
         ebType: 'toggle',
