@@ -109,48 +109,53 @@ module.exports = ctx => {
       }
     }
 
-    async setEmailConfirmed({ userId, email, emailConfirmed }) {
-      const user = { id: userId, emailConfirmed };
-      if (email) user.email = email;
-      await this.setActivated({ user });
-    }
-
-    async setMobileVerified({ userId, mobile, mobileVerified }) {
-      const user = { id: userId, mobileVerified };
-      if (mobile) user.mobile = mobile;
-      await this.setActivated({ user });
-    }
-
     async setActivated({ user }) {
+      // save
+      if (user.activated !== undefined) delete user.activated;
       await this.save({ user });
-      await this.adjustUserRoles({ userId: user.id });
+      // tryActivate
+      const tryActivate = user.emailConfirmed || user.mobileVerified;
+      if (tryActivate) {
+        await this.userRoleStageActivate({ userId: user.id });
+      }
     }
 
-    async signup(user) {
+    async signup({ user }) {
       // add
       const userId = await this.add(user);
       // role
-      await this.adjustUserRoles({ userId });
+      await this.userRoleStageAdd({ userId });
       // ok
       return userId;
     }
 
-    async adjustUserRoles({ userId }) {
-      // user
-      const user = await this.get({ id: userId });
-      // userRoles
-      const userRoles = await ctx.meta.role.getUserRolesDirect({ userId });
-      // userRolesMap
-      const map = {};
-      for (const role of userRoles) {
-        map[role.roleName] = role;
+    async userRoleStageAdd({ userId }) {
+      // roleNames
+      let roleNames = this.config.account.needActivation ? 'registered' : this.config.account.activatedRoles;
+      roleNames = roleNames.split(',');
+      for (const roleName of roleNames) {
+        const role = await ctx.meta.role.get({ roleName });
+        await ctx.meta.role.addUserRole({ userId, roleId: role.id });
       }
-      // role registered
-      const roleRegistered = await ctx.meta.role.getSystemRole({ roleName: 'registered' });
-      // check
-      if (!this.config.account.needActivation || (user.emailConfirmed || user.mobileVerified)) {
+    }
+
+    async userRoleStageActivate({ userId }) {
+      // get
+      const user = await this.get({ id: userId });
+      // only once
+      if (user.activated) return;
+      // adjust role
+      if (this.config.account.needActivation) {
+        // userRoles
+        const userRoles = await ctx.meta.role.getUserRolesDirect({ userId });
+        // userRolesMap
+        const map = {};
+        for (const role of userRoles) {
+          map[role.roleName] = role;
+        }
         // remove from registered
         if (map.registered) {
+          const roleRegistered = await ctx.meta.role.getSystemRole({ roleName: 'registered' });
           await ctx.meta.role.deleteUserRole({ userId, roleId: roleRegistered.id });
         }
         // add to activated
@@ -161,12 +166,11 @@ module.exports = ctx => {
             await ctx.meta.role.addUserRole({ userId, roleId: role.id });
           }
         }
-      } else {
-        // add to registered
-        if (!map.registered) {
-          await ctx.meta.role.addUserRole({ userId, roleId: roleRegistered.id });
-        }
       }
+      // set activated
+      await this.save({
+        user: { id: userId, activated: 1 },
+      });
     }
 
     async exists({ userName, email, mobile }) {
@@ -187,7 +191,6 @@ module.exports = ctx => {
 
     async add({
       disabled = 0, userName, realName, email, mobile, avatar, motto, locale, anonymous = 0,
-      emailConfirmed = 0, mobileVerified = 0,
     }) {
       // check if incomplete information
       let needCheck;
@@ -214,8 +217,6 @@ module.exports = ctx => {
         motto,
         locale,
         anonymous,
-        emailConfirmed,
-        mobileVerified,
       });
       return res.insertId;
     }
@@ -427,16 +428,22 @@ module.exports = ctx => {
         // others
         await this._setUserInfoColumn(user, column, profile[column]);
       }
+      // signup
+      const userId = await this.signup({ user });
+      // try setActivated
+      const data = { id: userId };
       // emailConfirmed
       if (profile.emailConfirmed && profile.email) {
-        user.emailConfirmed = 1;
+        data.emailConfirmed = 1;
       }
       // mobileVerified
       if (profile.mobileVerified && profile.mobile) {
-        user.mobileVerified = 1;
+        data.mobileVerified = 1;
       }
-      // signup
-      return await this.signup(user);
+      // setActivated
+      await this.setActivated({ user: data });
+      // ok
+      return userId;
     }
     async _updateUserInfo(userId, profile, columns) {
       const users = await this.model.select({
