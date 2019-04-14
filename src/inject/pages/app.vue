@@ -15,7 +15,7 @@ export default {
       staticClass: this.$meta.config.layout.color ? `color-theme-${this.$meta.config.layout.color}` : '',
       props: { params: this.$root.$options.framework7 },
     }, children);
-    return c('div', [ app ]);
+    return c('div', [app]);
   },
   data() {
     return {
@@ -102,6 +102,8 @@ export default {
         this.$store.commit('auth/setLoginInfo', data);
         // title
         window.document.title = this.$store.getters['auth/title'];
+        // check if need activation
+        this._checkActivation();
         // ok
         return cb && cb();
       }).catch(() => {
@@ -118,6 +120,31 @@ export default {
         this.layout = layout;
       });
     },
+    _checkActivation() {
+      //
+      const hashInit = this.$store.state.auth.hashInit;
+      if (hashInit) return;
+      //
+      const userAgent = this.$store.state.auth.user.agent;
+      const configBase = this.$meta.config.modules['a-base'];
+      const account = configBase.account;
+      //
+      if (userAgent.anonymous) return;
+      if (userAgent.emailConfirmed || userAgent.mobileVerified || !account.needActivation) return;
+      //
+      const way = this._chooseActivationWay(account);
+      if (!way) return;
+      //
+      this.$store.commit('auth/setHashInit', way.url);
+    },
+    _chooseActivationWay(account) {
+      const ways = account.activationWays.split(',');
+      for (const way of ways) {
+        if (way === 'email' && account.url.emailConfirm) return { way, url: account.url.emailConfirm };
+        if (way === 'mobile' && account.url.mobileVerify) return { way, url: account.url.mobileVerify };
+      }
+      return null;
+    }
   },
   beforeDestroy() {
     this.$f7.off('resize', this.onResize);

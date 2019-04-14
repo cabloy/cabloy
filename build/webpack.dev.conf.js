@@ -39,4 +39,7 @@ module.exports = merge(baseWebpackConfig, {
     }),
     new FriendlyErrorsPlugin(),
   ],
+  // watchOptions: {
+  //   ignored: /node_modules/,
+  // },
 });
