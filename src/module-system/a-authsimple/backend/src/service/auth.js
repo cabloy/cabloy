@@ -8,18 +8,19 @@ module.exports = app => {
 
     async signup({ userName, realName, email, mobile, password }) {
       // signup
-      const userId = await this.ctx.meta.user.signup({
+      const user = {
         userName,
         realName,
         email,
         // mobile, // not use mobile
-      });
+      };
+      const userId = await this.ctx.meta.user.signup({ user });
       // add auth record
       await this.add({ userId, password });
       // login now
-      const user = await this.signin({ auth: email, password, rememberMe: false });
+      const user2 = await this.signin({ auth: email, password, rememberMe: false });
       // ok
-      return user;
+      return user2;
     }
 
     async signin({ auth, password, rememberMe }) {
@@ -145,7 +146,9 @@ module.exports = app => {
       // userId
       const userId = value.userId;
       // activated
-      await this.ctx.meta.user.setEmailConfirmed({ userId, emailConfirmed: 1 });
+      await this.ctx.meta.user.setActivated({
+        user: { id: userId, emailConfirmed: 1 },
+      });
       // clear token
       await this.ctx.cache.db.remove(cacheKey);
       // not: login antomatically

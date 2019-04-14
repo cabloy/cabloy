@@ -117,6 +117,7 @@ module.exports = app => {
         ebTitle: 'Email',
         notEmpty: true,
         format: 'email',
+        'x-exists': true,
       },
     },
   };

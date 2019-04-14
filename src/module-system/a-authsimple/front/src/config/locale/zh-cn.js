@@ -19,4 +19,5 @@ export default {
   'Captcha code': '验证码',
   'Email confirmation': '邮件确认',
   'Send confirmation email': '发送确认邮件',
+  'The confirmation link has been sent to your email address': '确认链接已经发送至您的邮箱地址',
 };
