@@ -33,7 +33,7 @@ export default {
   },
   methods: {
     getHref(href) {
-      if (!href) return href;
+      if (!href || href[0] === '#') return href;
       if (!this.$page) return href;
       const module = this.$page.$module;
       if (!module) return href;
@@ -46,7 +46,11 @@ export default {
       const target = this.ebTarget;
       if (!href) return;
 
-      this.$meta.vueLayout.navigate(href, { ctx: this, target });
+      if (href === '#back') {
+        this.$f7router.back();
+      } else {
+        this.$meta.vueLayout.navigate(href, { ctx: this, target });
+      }
     },
   },
 };
