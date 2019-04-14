@@ -6,19 +6,18 @@
       <div>
         <img class="avatar avatar48" :src="$meta.util.combineImageUrl(user.op.avatar,48)" style="cursor:pointer;" @click="onClickAvatar">
       </div>
-        <div class="name">{{userName}}</div>
-        <div class="status" v-if="!loggedIn">{{$text('Not LoggedIn')}}</div>
-        <div class="login">
-          <eb-link v-if="!loggedIn" :onPerform="onPerformLogin">{{$text('Sign In')}}</eb-link>
-          <eb-link v-if="loggedIn" :onPerform="onPerformLogout">{{$text('Log Out')}}</eb-link>
-        </div>
+      <div class="name">{{userName}}</div>
+      <div class="status" v-if="!loggedIn">{{$text('Not LoggedIn')}}</div>
+      <div class="login">
+        <eb-link v-if="!loggedIn" :onPerform="onPerformLogin">{{$text('Sign In')}}</eb-link>
+        <eb-link v-if="loggedIn" :onPerform="onPerformLogout">{{$text('Log Out')}}</eb-link>
       </div>
-      <f7-list>
-        <eb-list-item :title="$text('Info')" eb-href="user/edit"></eb-list-item>
-        <eb-list-item v-if="!$config.agent.disabled" :title="$text('Agent')" eb-href="user/agent"></eb-list-item>
-        <eb-list-item :title="$text('Functions')" eb-href="user/functions"></eb-list-item>
-        <eb-list-item :title="$text('Settings')" eb-href="/a/settings/user/list"></eb-list-item>
-      </f7-list>
+    </div>
+    <f7-list>
+      <eb-list-item v-if="!user.agent.anonymous" :title="$text('Account')" eb-href="user/account"></eb-list-item>
+      <eb-list-item :title="$text('Functions')" eb-href="user/functions"></eb-list-item>
+      <eb-list-item :title="$text('Settings')" eb-href="/a/settings/user/list"></eb-list-item>
+    </f7-list>
   </eb-page>
 </template>
 <script>

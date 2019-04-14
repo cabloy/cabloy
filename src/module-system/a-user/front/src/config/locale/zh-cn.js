@@ -17,4 +17,6 @@ export default {
   Remove: '移除',
   'Please specify the mobile': '请指定手机号',
   Functions: '功能',
+  Account: '账户',
+  'Change password': '修改密码',
 };

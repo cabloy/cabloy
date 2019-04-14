@@ -5,7 +5,13 @@ module.exports = app => {
   class User extends app.Service {
 
     async save({ data, user }) {
+      // id
       data.id = user.id;
+      // readOnly
+      delete data.userName;
+      delete data.email;
+      delete data.mobile;
+      // save
       return await this.ctx.meta.user.save({ user: data });
     }
 
