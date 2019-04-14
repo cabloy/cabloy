@@ -69,15 +69,25 @@ module.exports = appInfo => {
   config.anonymous = {
     maxAge: 365 * 24 * 3600 * 1000, // 365 天
   };
-  // registered or rememberMe
-  config.registered = {
+  // authenticated or rememberMe
+  config.authenticated = {
     maxAge: 30 * 24 * 3600 * 1000, // 30 天
   };
   // checkUserName
   config.checkUserName = true;
-  // signupRoleName
-  //  default is 'activated', if need activating by mobile/email, then add to 'registered' first
-  config.signupRoleName = 'activated';
+  // account
+  config.account = {
+    needActivation: true,
+    activationWays: 'mobile,email',
+    url: {
+      emailConfirm: '/a/authsimple/emailConfirm',
+      mobileVerify: '',
+      passwordChange: '/a/authsimple/passwordChange',
+      passwordFind: '/a/authsimple/passwordFind',
+    },
+    //  default is 'activated', if need activating by mobile/email, then add to 'registered' first
+    activatedRoles: 'activated',
+  };
 
   // public dir
   config.publicDir = '';

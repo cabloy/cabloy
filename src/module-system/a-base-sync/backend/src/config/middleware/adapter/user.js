@@ -15,6 +15,7 @@ module.exports = ctx => {
       this._modelAuth = null;
       this._modelAuthProvider = null;
       this._sequence = null;
+      this._config = null;
     }
 
     get model() {
@@ -42,6 +43,11 @@ module.exports = ctx => {
       return this._sequence;
     }
 
+    get config() {
+      if (!this._config) this._config = ctx.config.module(moduleInfo.relativeName);
+      return this._config;
+    }
+
     async anonymous() {
       // new
       const userId = await this.add({ disabled: 0, anonymous: 1 });
@@ -52,7 +58,7 @@ module.exports = ctx => {
     }
 
     async loginAsAnonymous() {
-      const maxAge = ctx.config.module(moduleInfo.relativeName).anonymous.maxAge;
+      const maxAge = this.config.anonymous.maxAge;
       let userId = ctx.cookies.get('anonymous', { encrypt: true });
       let userOp;
       if (userId) {
@@ -103,21 +109,71 @@ module.exports = ctx => {
       }
     }
 
-    async signup(user, ops) {
-      ops = ops || {};
+    async setEmailConfirmed({ userId, email, emailConfirmed }) {
+      const user = { id: userId, emailConfirmed };
+      if (email) user.email = email;
+      await this.setActivated({ user });
+    }
+
+    async setMobileVerified({ userId, mobile, mobileVerified }) {
+      const user = { id: userId, mobileVerified };
+      if (mobile) user.mobile = mobile;
+      await this.setActivated({ user });
+    }
+
+    async setActivated({ user }) {
+      await this.save({ user });
+      await this.adjustUserRoles({ userId: user.id });
+    }
+
+    async signup(user) {
+      // add
       const userId = await this.add(user);
-      if (ops.addRole !== false) {
-        const role = await ctx.meta.role.getSystemRole({ roleName: ctx.config.module(moduleInfo.relativeName).signupRoleName });
-        await ctx.meta.role.addUserRole({ userId, roleId: role.id });
-      }
+      // role
+      await this.adjustUserRoles({ userId });
+      // ok
       return userId;
+    }
+
+    async adjustUserRoles({ userId }) {
+      // user
+      const user = await this.get({ id: userId });
+      // userRoles
+      const userRoles = await ctx.meta.role.getUserRolesDirect({ userId });
+      // userRolesMap
+      const map = {};
+      for (const role of userRoles) {
+        map[role.roleName] = role;
+      }
+      // role registered
+      const roleRegistered = await ctx.meta.role.getSystemRole({ roleName: 'registered' });
+      // check
+      if (!this.config.account.needActivation || (user.emailConfirmed || user.mobileVerified)) {
+        // remove from registered
+        if (map.registered) {
+          await ctx.meta.role.deleteUserRole({ userId, roleId: roleRegistered.id });
+        }
+        // add to activated
+        const roleNames = this.config.account.activatedRoles.split(',');
+        for (const roleName of roleNames) {
+          if (!map[roleName]) {
+            const role = await ctx.meta.role.get({ roleName });
+            await ctx.meta.role.addUserRole({ userId, roleId: role.id });
+          }
+        }
+      } else {
+        // add to registered
+        if (!map.registered) {
+          await ctx.meta.role.addUserRole({ userId, roleId: roleRegistered.id });
+        }
+      }
     }
 
     async exists({ userName, email, mobile }) {
       userName = userName || '';
       email = email || '';
       mobile = mobile || '';
-      if (ctx.config.module(moduleInfo.relativeName).checkUserName === true && userName) {
+      if (this.config.checkUserName === true && userName) {
         return await this.model.queryOne(
           `select * from aUser
              where iid=? and deleted=0 and ((userName=?) or (?<>'' and email=?) or (?<>'' and mobile=?))`,
@@ -129,12 +185,15 @@ module.exports = ctx => {
         [ ctx.instance.id, email, email, mobile, mobile ]);
     }
 
-    async add({ disabled = 0, userName, realName, email, mobile, avatar, motto, locale, anonymous = 0 }) {
+    async add({
+      disabled = 0, userName, realName, email, mobile, avatar, motto, locale, anonymous = 0,
+      emailConfirmed = 0, mobileVerified = 0,
+    }) {
       // check if incomplete information
       let needCheck;
       if (anonymous) {
         needCheck = false;
-      } else if (ctx.config.module(moduleInfo.relativeName).checkUserName === true) {
+      } else if (this.config.checkUserName === true) {
         needCheck = userName || email || mobile;
       } else {
         needCheck = email || mobile;
@@ -155,6 +214,8 @@ module.exports = ctx => {
         motto,
         locale,
         anonymous,
+        emailConfirmed,
+        mobileVerified,
       });
       return res.insertId;
     }
@@ -269,7 +330,7 @@ module.exports = ctx => {
         module: profileUser.module,
         providerName: profileUser.provider,
       });
-      const config = JSON.parse(providerItem.config);
+      // const config = JSON.parse(providerItem.config);
 
       // check if auth exists
       const authItem = await this.modelAuth.get({
@@ -301,7 +362,9 @@ module.exports = ctx => {
       };
 
       // columns
-      const columns = [ 'userName', 'realName', 'email', 'mobile', 'avatar', 'motto', 'locale' ];
+      const columns = [
+        'userName', 'realName', 'email', 'mobile', 'avatar', 'motto', 'locale',
+      ];
 
       //
       let userId;
@@ -335,10 +398,8 @@ module.exports = ctx => {
           await this._updateUserInfo(user.id, profileUser.profile, columns);
           userId = user.id;
         } else {
-          // check if addUser
-          if (config.addUser === false) return false;
           // add user
-          userId = await this._addUserInfo(profileUser.profile, columns, config.addRole !== false);
+          userId = await this._addUserInfo(profileUser.profile, columns);
           user = await this.model.get({ id: userId });
           // update auth's userId
           await this.modelAuth.update({
@@ -355,17 +416,27 @@ module.exports = ctx => {
       if (profileUser.maxAge === 0) {
         ctx.session.maxAge = 0;
       } else {
-        ctx.session.maxAge = profileUser.maxAge || ctx.config.module(moduleInfo.relativeName).registered.maxAge;
+        ctx.session.maxAge = profileUser.maxAge || this.config.authenticated.maxAge;
       }
       return verifyUser;
     }
 
-    async _addUserInfo(profile, columns, addRole) {
+    async _addUserInfo(profile, columns) {
       const user = {};
       for (const column of columns) {
+        // others
         await this._setUserInfoColumn(user, column, profile[column]);
       }
-      return await this.signup(user, { addRole });
+      // emailConfirmed
+      if (profile.emailConfirmed && profile.email) {
+        user.emailConfirmed = 1;
+      }
+      // mobileVerified
+      if (profile.mobileVerified && profile.mobile) {
+        user.mobileVerified = 1;
+      }
+      // signup
+      return await this.signup(user);
     }
     async _updateUserInfo(userId, profile, columns) {
       const users = await this.model.select({
@@ -381,6 +452,7 @@ module.exports = ctx => {
     }
 
     async _setUserInfoColumn(user, column, value) {
+      // only set when empty
       if (user[column] || !value) return;
       // userName
       if (column === 'userName') {
@@ -393,7 +465,7 @@ module.exports = ctx => {
       } else if (column === 'email' || column === 'mobile') {
         const res = await this.exists({ [column]: value });
         if (res) {
-          value = '';
+          value = null;
         }
       }
       if (value) {

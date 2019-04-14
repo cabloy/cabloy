@@ -64,6 +64,11 @@ const Fn = module.exports = ctx => {
       return dir;
     }
 
+    // alert
+    getAlertUrl({ data }) {
+      return this.getAbsoluteUrl(`/#!/a/base/base/alert?data=${encodeURIComponent(JSON.stringify(data))}`);
+    }
+
     modules() {
       if (!_modulesLocales[ctx.locale]) {
         _modulesLocales[ctx.locale] = this._prepareModules();

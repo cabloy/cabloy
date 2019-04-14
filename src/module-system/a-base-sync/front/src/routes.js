@@ -17,4 +17,5 @@ export default [
   { path: 'comment/item', component: load('comment/item') },
   { path: 'comment/all', component: load('comment/all') },
   { path: 'attachment/list', component: load('attachment/list') },
+  { path: 'base/alert', component: load('base/alert') },
 ];

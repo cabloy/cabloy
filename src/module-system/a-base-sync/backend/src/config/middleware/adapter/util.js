@@ -50,6 +50,16 @@ module.exports = ctx => {
       return moment(date).fromNow();
     }
 
+    replaceTemplate(content, scope) {
+      if (!content) return null;
+      return content.toString().replace(/(\\)?{{ *(\w+) *}}/g, (block, skip, key) => {
+        if (skip) {
+          return block.substring(skip.length);
+        }
+        return scope[key] !== undefined ? scope[key] : '';
+      });
+    }
+
   }
 
   return Util;

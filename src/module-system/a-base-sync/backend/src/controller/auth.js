@@ -1,3 +1,6 @@
+const require3 = require('require3');
+const extend = require3('extend2');
+
 module.exports = app => {
 
   class AuthController extends app.Controller {
@@ -63,6 +66,7 @@ module.exports = app => {
       const info = {
         user: this.ctx.user,
         instance: this.getInstance(),
+        config: this.getConfig(),
       };
       // login info event
       await this.ctx.meta.event.invoke({
@@ -76,6 +80,21 @@ module.exports = app => {
         name: this.ctx.instance.name,
         title: this.ctx.instance.title,
       };
+    }
+
+    getConfig() {
+      // account
+      const account = extend(true, {}, this.ctx.config.account);
+      account.activatedRoles = undefined;
+      // config
+      const config = {
+        modules: {
+          'a-base': {
+            account,
+          },
+        },
+      };
+      return config;
     }
 
   }

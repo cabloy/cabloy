@@ -2,6 +2,7 @@ const VersionUpdate1Fn = require('./version/update1.js');
 const VersionUpdate2Fn = require('./version/update2.js');
 const VersionUpdate3Fn = require('./version/update3.js');
 const VersionUpdate4Fn = require('./version/update4.js');
+const VersionUpdate6Fn = require('./version/update6.js');
 const VersionInit2Fn = require('./version/init2.js');
 const VersionInit4Fn = require('./version/init4.js');
 const VersionInit5Fn = require('./version/init5.js');
@@ -11,6 +12,11 @@ module.exports = app => {
   class Version extends app.Service {
 
     async update(options) {
+
+      if (options.version === 6) {
+        const versionUpdate6 = new (VersionUpdate6Fn(this.ctx))();
+        await versionUpdate6.run();
+      }
 
       if (options.version === 4) {
         const versionUpdate4 = new (VersionUpdate4Fn(this.ctx))();

@@ -160,13 +160,19 @@ const Fn = module.exports = ctx => {
     // add user role
     async addUserRole({ userId, roleId }) {
       const res = await this.modelUserRole.insert({
-        userId,
-        roleId,
+        userId, roleId,
       });
       return res.insertId;
     }
 
-    async deleteUserRole({ id }) {
+    async deleteUserRole({ id, userId, roleId }) {
+      if (!id) {
+        const item = await this.modelUserRole.get({
+          userId, roleId,
+        });
+        if (!item) return;
+        id = item.id;
+      }
       await this.modelUserRole.delete({ id });
     }
 

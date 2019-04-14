@@ -30,14 +30,22 @@ module.exports = app => {
         loginURL: `/api/${moduleInfo.url}/passport/${moduleRelativeName}/${providerName}`,
         callbackURL: `/api/${moduleInfo.url}/passport/${moduleRelativeName}/${providerName}/callback`,
       };
+      // innerAccess
+      const _module = this.ctx.app.meta.modules[moduleRelativeName];
+      const _provider = _module.main.meta.auth.providers[providerName];
+      const innerAccess = _provider.config.innerAccess;
       // authenticate
       const authenticate = createAuthenticate(moduleRelativeName, providerName, config);
+      // middlewares
+      const middlewares = [];
+      if (!this.ctx.app.meta.isTest && innerAccess) middlewares.push('inner');
+      middlewares.push(authenticate);
       // mount routes
       const routes = [
-        { name: `get:${config.loginURL}`, method: 'get', path: '/' + config.loginURL, middlewares: [ authenticate ], meta: { auth: { enable: false } } },
-        { name: `post:${config.loginURL}`, method: 'post', path: '/' + config.loginURL, middlewares: [ authenticate ], meta: { auth: { enable: false } } },
-        { name: `get:${config.callbackURL}`, method: 'get', path: '/' + config.callbackURL, middlewares: [ authenticate ], meta: { auth: { enable: false } } },
-        { name: `post:${config.callbackURL}`, method: 'post', path: '/' + config.callbackURL, middlewares: [ authenticate ], meta: { auth: { enable: false } } },
+        { name: `get:${config.loginURL}`, method: 'get', path: '/' + config.loginURL, middlewares, meta: { auth: { enable: false } } },
+        { name: `post:${config.loginURL}`, method: 'post', path: '/' + config.loginURL, middlewares, meta: { auth: { enable: false } } },
+        { name: `get:${config.callbackURL}`, method: 'get', path: '/' + config.callbackURL, middlewares, meta: { auth: { enable: false } } },
+        { name: `post:${config.callbackURL}`, method: 'post', path: '/' + config.callbackURL, middlewares, meta: { auth: { enable: false } } },
       ];
       for (const route of routes) {
         this.app.meta.router.unRegister(route.name);

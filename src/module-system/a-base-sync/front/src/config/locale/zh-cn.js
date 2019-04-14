@@ -32,6 +32,7 @@ export default {
   Motto: '箴言',
   Locale: '本地化',
   Search: '搜索',
+  Link: '链接',
   'Atom Name': '原子名称',
   'Modification time': '修改时间',
   'Comment List': '评论列表',
@@ -47,4 +48,5 @@ export default {
   'Allow Comment': '允许评论',
   'Attachment List': '附件列表',
   'Flag Not Found': 'Flag未发现',
+  'Friendly Tips': '友情提示',
 };
