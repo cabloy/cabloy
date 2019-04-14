@@ -21,6 +21,22 @@ module.exports = app => {
         `;
         await this.ctx.db.query(sql);
       }
+
+      if (options.version === 2) {
+        let sql;
+        // delete
+        sql = `
+          delete from aCache
+        `;
+        await this.ctx.db.query(sql);
+        // alter table: aCache
+        sql = `
+          ALTER TABLE aCache
+            DROP COLUMN timeout,
+            ADD COLUMN expired timestamp DEFAULT NULL
+        `;
+        await this.ctx.db.query(sql);
+      }
     }
 
   }
