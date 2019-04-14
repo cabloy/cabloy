@@ -7,7 +7,8 @@ module.exports = app => {
     providers: {
       [provider]: {
         config: {
-          addUser: true, addRole: true,
+          // addUser: true,
+          // addRole: true,
           clientID: '[required]',
           clientSecret: '[required]',
         },
