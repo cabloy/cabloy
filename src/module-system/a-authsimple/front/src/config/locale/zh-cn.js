@@ -1,7 +1,6 @@
 export default {
   Continue: '继续',
   'Forgot password': '忘记密码',
-  'Find password': '找回密码',
   'Reset password': '重置密码',
   'Sign up': '注册',
   'Sign in': '登录',

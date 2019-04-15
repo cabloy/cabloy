@@ -116,7 +116,7 @@ module.exports = app => {
       return user2;
     }
 
-    async passwordFind({ email }) {
+    async passwordForgot({ email }) {
       // user by email
       const user = await this.ctx.meta.user.exists({ email });
       // link

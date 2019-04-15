@@ -121,7 +121,7 @@ module.exports = app => {
       },
     },
   };
-  schemas.passwordFind = {
+  schemas.passwordForgot = {
     type: 'object',
     properties: {
       email: {
@@ -130,7 +130,7 @@ module.exports = app => {
         ebTitle: 'Email',
         notEmpty: true,
         format: 'email',
-        'x-passwordFindEmail': true,
+        'x-passwordForgotEmail': true,
       },
     },
   };

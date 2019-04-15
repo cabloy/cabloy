@@ -4,7 +4,7 @@
     <f7-block>
       <template v-if="sent">{{$text('passwordResetEmailSentAlert')}}</template>
       <template v-else>
-        <eb-validate ref="validate" :auto="false" :data="data" :params="{validator: 'passwordFind'}" :onPerform="onPerformValidate">
+        <eb-validate ref="validate" :auto="false" :data="data" :params="{validator: 'passwordForgot'}" :onPerform="onPerformValidate">
           <f7-list form no-hairlines-md>
             <eb-list-item-validate dataKey="email"></eb-list-item-validate>
             <f7-list-item divider>
@@ -37,7 +37,7 @@ export default {
   },
   methods: {
     onPerformValidate() {
-      return this.$api.post('auth/passwordFind', {
+      return this.$api.post('auth/passwordForgot', {
         data: this.data,
       }).then(() => {
         this.sent = true;

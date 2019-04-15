@@ -18,8 +18,8 @@ module.exports = app => {
         passwordChange: {
           schemas: 'passwordChange',
         },
-        passwordFind: {
-          schemas: 'passwordFind',
+        passwordForgot: {
+          schemas: 'passwordForgot',
         },
         passwordReset: {
           schemas: 'passwordReset',
@@ -30,13 +30,13 @@ module.exports = app => {
       },
       keywords: {
         'x-exists': keywords.exists,
-        'x-passwordFindEmail': keywords.passwordFindEmail,
+        'x-passwordForgotEmail': keywords.passwordForgotEmail,
       },
       schemas: {
         signup: schemas.signup,
         signin: schemas.signin,
         passwordChange: schemas.passwordChange,
-        passwordFind: schemas.passwordFind,
+        passwordForgot: schemas.passwordForgot,
         passwordReset: schemas.passwordReset,
         emailConfirm: schemas.emailConfirm,
       },

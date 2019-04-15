@@ -25,9 +25,9 @@ module.exports = app => {
       this.ctx.success();
     }
 
-    async passwordFind() {
+    async passwordForgot() {
       const { email } = this.ctx.request.body.data;
-      await this.service.auth.passwordFind({ email });
+      await this.service.auth.passwordForgot({ email });
       this.ctx.success();
     }
 

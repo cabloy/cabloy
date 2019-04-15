@@ -23,7 +23,7 @@ module.exports = app => {
       };
     },
   };
-  keywords.passwordFindEmail = {
+  keywords.passwordForgotEmail = {
     async: true,
     type: 'string',
     errors: true,
@@ -32,7 +32,7 @@ module.exports = app => {
         const ctx = this;
         const res = await ctx.meta.user.exists({ [name]: data });
         if (!res) {
-          const errors = [{ keyword: 'x-passwordFindEmail', params: [], message: ctx.text('Email address does not exist') }];
+          const errors = [{ keyword: 'x-passwordForgotEmail', params: [], message: ctx.text('Email address does not exist') }];
           throw new Ajv.ValidationError(errors);
         }
         return true;

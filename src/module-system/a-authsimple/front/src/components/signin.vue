@@ -39,7 +39,7 @@
         </eb-validate>
       </f7-card-content>
       <f7-card-footer>
-        <eb-link eb-href="/a/authsimple/passwordFind" eb-target="_self" class="text-smaller">{{$text('Forgot password')}}</eb-link>
+        <eb-link eb-href="/a/authsimple/passwordForgot" eb-target="_self" class="text-smaller">{{$text('Forgot password')}}</eb-link>
         <div></div>
         <eb-link eb-href="/a/authsimple/signup" eb-target="_self" class="text-smaller">{{$text('Sign up')}}</eb-link>
       </f7-card-footer>
