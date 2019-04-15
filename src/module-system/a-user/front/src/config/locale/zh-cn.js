@@ -19,4 +19,7 @@ export default {
   Functions: '功能',
   Account: '账户',
   'Change password': '修改密码',
+  Change: '修改',
+  Confirm: '确认',
+  Verify: '验证',
 };

@@ -12,16 +12,20 @@
         <f7-list-item divider></f7-list-item>
         <eb-list-item :title="$text('Email')">
           <div slot="after">
-            <span>email</span>
-            <template v-if="configAccount.url.emailConfirm && user.emailConfirmed">
-              <eb-link>修改</eb-link>
-            </template>
-            <template v-if="configAccount.url.emailConfirm && !user.emailConfirmed">
-              <eb-link>确认</eb-link>
-            </template>
+            <span>{{user.email}}</span>
+            <eb-link v-if="configAccount.url.emailConfirm" :eb-href="configAccount.url.emailConfirm">
+              {{emailConfirmButtonText}}
+            </eb-link>
           </div>
         </eb-list-item>
-        <eb-list-item-validate dataKey="mobile"></eb-list-item-validate>
+        <eb-list-item :title="$text('Mobile')">
+          <div slot="after">
+            <span>{{user.mobile}}</span>
+            <eb-link v-if="configAccount.url.mobileVerify" :eb-href="configAccount.url.mobileVerify">
+              {{mobileVerifyButtonText}}
+            </eb-link>
+          </div>
+        </eb-list-item>
         <f7-list-item divider></f7-list-item>
         <eb-list-item-validate dataKey="motto"></eb-list-item-validate>
         <eb-list-item-validate dataKey="locale"></eb-list-item-validate>
@@ -38,6 +42,14 @@ export default {
       user: Vue.prototype.$utils.extend({}, this.$store.state.auth.user.agent),
       configAccount: null,
     };
+  },
+  computed: {
+    emailConfirmButtonText() {
+      return (!this.user.email || this.user.emailConfirmed) ? this.$text('Change') : this.$text('Confirm');
+    },
+    mobileVerifyButtonText() {
+      return (!this.user.mobile || this.user.mobileVerified) ? this.$text('Change') : this.$text('Verify');
+    },
   },
   created() {
     const configBase = this.$meta.config.modules['a-base'];
