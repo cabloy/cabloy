@@ -15,7 +15,7 @@ export default {
       staticClass: this.$meta.config.layout.color ? `color-theme-${this.$meta.config.layout.color}` : '',
       props: { params: this.$root.$options.framework7 },
     }, children);
-    return c('div', [app]);
+    return c('div', [ app ]);
   },
   data() {
     return {
@@ -130,7 +130,7 @@ export default {
       const account = configBase.account;
       //
       if (userAgent.anonymous) return;
-      if (userAgent.emailConfirmed || userAgent.mobileVerified || !account.needActivation) return;
+      if (userAgent.activated || !account.needActivation) return;
       //
       const way = this._chooseActivationWay(account);
       if (!way) return;
@@ -144,7 +144,7 @@ export default {
         if (way === 'mobile' && account.url.mobileVerify) return { way, url: account.url.mobileVerify };
       }
       return null;
-    }
+    },
   },
   beforeDestroy() {
     this.$f7.off('resize', this.onResize);
