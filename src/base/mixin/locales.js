@@ -11,11 +11,19 @@ export default function(Vue) {
     Object.defineProperty(ctx, '$text', {
       get() {
         return function(key) {
-          if (arguments.length === 0) return '';
+          if (arguments.length === 0 || !key) return null;
+          // locale
           const locale = cookies.get('locale') || 'en-us';
-          const resource = locales[locale] || {};
 
+          // try locale
+          let resource = locales[locale] || {};
           let text = resource[key];
+          if (text === undefined && locale !== 'en-us') {
+            // try en-us
+            resource = locales['en-us'] || {};
+            text = resource[key];
+          }
+          // equal key
           if (text === undefined) {
             text = key;
           }
