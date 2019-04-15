@@ -52,7 +52,7 @@ export default {
       // layout
       const breakpoint = this.$meta.config.layout.breakpoint;
       let layout = window.document.documentElement.clientWidth > breakpoint ? 'pc' : 'mobile';
-      if (!this.$meta.config.layout.items[layout]) {
+      if (!this._getLayoutItem(layout)) {
         layout = layout === 'pc' ? 'mobile' : 'pc';
       }
       // check if switch
@@ -61,8 +61,8 @@ export default {
         if (component) component.onResize();
       } else {
         // load module layout
-        this.$meta.module.use(this.$meta.config.layout.items[layout].module, module => {
-          this.$options.components[layout] = module.options.components[this.$meta.config.layout.items[layout].component];
+        this.$meta.module.use(this._getLayoutItem(layout).module, module => {
+          this.$options.components[layout] = module.options.components[this._getLayoutItem(layout).component];
           // clear router history
           this.$meta.util.clearRouterHistory();
           // ready
@@ -152,6 +152,40 @@ export default {
       for (const way of ways) {
         if (way === 'email' && account.url.emailConfirm) return { way, url: account.url.emailConfirm };
         if (way === 'mobile' && account.url.mobileVerify) return { way, url: account.url.mobileVerify };
+      }
+      return null;
+    },
+    _getLayoutItem(layout) {
+      return this.$meta.config.layout.items[layout];
+    },
+    _getLayoutModuleConfig(layout) {
+      const moduleName = this._getLayoutItem(layout).module;
+      return this.$meta.config.modules[moduleName];
+    },
+    _checkIfPasswordReset() {
+      const hashInit = this.$store.state.auth.hashInit;
+      if (!hashInit) return false;
+      const configBase = this.$meta.config.modules['a-base'];
+      const account = configBase.account;
+      const url = account.url.passwordReset;
+      if (!url) return false;
+      return hashInit.indexOf(url) > -1;
+    },
+    checkIfNeedOpenLogin() {
+      const configLayout = this._getLayoutModuleConfig(this.layout);
+      return (configLayout.layout.loginOnStart === true &&
+        !this.$store.state.auth.loggedIn &&
+        !this._checkIfPasswordReset()
+      );
+    },
+    popupHashInit() {
+      //
+      const hashInit = this.$store.state.auth.hashInit;
+      this.$store.commit('auth/setHashInit', null);
+      //
+      const configLayout = this._getLayoutModuleConfig(this.layout);
+      if (hashInit && hashInit !== '/' && hashInit !== configLayout.layout.login) {
+        return hashInit;
       }
       return null;
     },
