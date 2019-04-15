@@ -148,19 +148,15 @@ export default {
     },
     start() {
       // loginOnStart
-
-      if (this.$config.layout.loginOnStart === true &&
-        !this.$store.state.auth.loggedIn &&
-        !this._checkIfPasswordReset()
-      ) {
+      const vueApp = this.$meta.vueApp;
+      if (vueApp.checkIfNeedOpenLogin()) {
         // open view login
         this.openLogin();
       } else {
-        // hash init
-        const hashInit = this.$store.state.auth.hashInit;
-        this.$store.commit('auth/setHashInit', null);
-        // open view main
-        if (hashInit && hashInit !== '/' && hashInit !== this.$config.layout.login) this.navigate(hashInit);
+        const hashInit = vueApp.popupHashInit();
+        if (hashInit) {
+          this.navigate(hashInit);
+        }
       }
       // started
       this.$nextTick(() => {
@@ -223,15 +219,6 @@ export default {
         else if ($view.hasClass('eb-layout-view-login') && this.tabShowed) backLink = true;
       }
       return backLink;
-    },
-    _checkIfPasswordReset() {
-      const hashInit = this.$store.state.auth.hashInit;
-      if (!hashInit) return false;
-      const configBase = this.$meta.config.modules['a-base'];
-      const account = configBase.account;
-      const url = account.url.passwordReset;
-      if (!url) return false;
-      return hashInit.indexOf(url) > -1;
     },
   },
 };
