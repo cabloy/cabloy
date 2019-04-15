@@ -1,11 +1,28 @@
-// subject
+// confirmationEmail
+//   subject
 const confirmationEmailSubject = '{{siteName}} 账号确认';
-// body
+//   body
 const confirmationEmailBody =
 `
 您好，{{userName}}，
 
 欢迎加入我们。请点击以下链接验证您的邮件：
+
+{{link}}
+
+此致，
+{{siteName}} 团队
+`;
+
+// passwordResetEmail
+//   subject
+const passwordResetEmailSubject = '{{siteName}}重置密码';
+//   body
+const passwordResetEmailBody =
+`
+您好，{{userName}}，
+
+请点击以下链接重置密码：
 
 {{link}}
 
@@ -22,8 +39,12 @@ module.exports = {
   'Element exists': '元素已存在',
   'Cannot contain __': '不能包含__',
   'Resend confirmation email': '重新发送确认邮件',
+  'Email address does not exist': '邮件地址不存在',
   confirmationEmailExpired: '确认邮件链接已经过期',
   confirmationEmailSucceeded: '您的邮件地址已经确认',
   confirmationEmailSubject,
   confirmationEmailBody,
+  passwordResetEmailExpired: '重置密码链接已经过期',
+  passwordResetEmailSubject,
+  passwordResetEmailBody,
 };

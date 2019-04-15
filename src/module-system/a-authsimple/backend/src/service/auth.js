@@ -78,6 +78,11 @@ module.exports = app => {
       const res = await this.verify({ userId, password: passwordOld });
       if (!res) this.ctx.throw(403);
       // save new
+      await this._passwordSaveNew({ passwordNew, userId });
+    }
+
+    async _passwordSaveNew({ passwordNew, userId }) {
+      // save new
       const auth = await this.ctx.model.authSimple.get({
         userId,
       });
@@ -88,17 +93,72 @@ module.exports = app => {
       });
     }
 
-    async emailConfirm({ email, user }) {
-      // save email
-      if (email !== user.email) {
-        await this.ctx.meta.user.save({
-          user: { id: user.id, email },
-        });
+    async passwordReset({ passwordNew, token }) {
+      // token value
+      const cacheKey = `passwordReset:${token}`;
+      const value = await this.ctx.cache.db.get(cacheKey);
+      if (!value) {
+        // expired, send confirmation mail again
+        //  1003: passwordResetEmailExpired
+        this.ctx.throw(1003);
       }
+      // userId
+      const userId = value.userId;
+
+      // save new
+      await this._passwordSaveNew({ passwordNew, userId });
+      // clear token
+      await this.ctx.cache.db.remove(cacheKey);
+      // login antomatically
+      const user = await this.ctx.meta.user.get({ id: userId });
+      const user2 = await this.signin({ auth: user.email, password: passwordNew, rememberMe: false });
+      // ok
+      return user2;
+    }
+
+    async passwordFind({ email }) {
+      // user by email
+      const user = await this.ctx.meta.user.exists({ email });
       // link
       const token = uuid.v4().replace(/-/g, '');
-      const prefix = `${this.ctx.meta.base.protocol}://${this.ctx.meta.base.host}`;
-      const link = `${prefix}/api/a/authsimple/auth/emailConfirmation?token=${token}`;
+      const link = this.ctx.meta.base.getAbsoluteUrl(`/#!/a/authsimple/passwordReset?token=${token}`);
+      // email scene
+      const scene = (app.meta.isTest || app.meta.isLocal) ? 'test' : 'system';
+      // email subject
+      let subject = this.ctx.text('passwordResetEmailSubject');
+      subject = this.ctx.meta.util.replaceTemplate(subject, { siteName: this.ctx.instance.title });
+      // email body
+      let body = this.ctx.text('passwordResetEmailBody');
+      body = this.ctx.meta.util.replaceTemplate(body, {
+        userName: user.userName,
+        link,
+        siteName: this.ctx.instance.title,
+      });
+      // send
+      await this.ctx.meta.mail.send({
+        scene,
+        message: {
+          to: email,
+          subject,
+          text: body,
+        },
+      });
+      // save
+      await this.ctx.cache.db.set(
+        `passwordReset:${token}`,
+        { userId: user.id },
+        this.ctx.config.passwordReset.timeout
+      );
+    }
+
+    async emailConfirm({ email, user }) {
+      // save email
+      await this.ctx.meta.user.setActivated({
+        user: { id: user.id, email, emailConfirmed: 0 },
+      });
+      // link
+      const token = uuid.v4().replace(/-/g, '');
+      const link = this.ctx.meta.base.getAbsoluteUrl(`/api/a/authsimple/auth/emailConfirmation?token=${token}`);
       // email scene
       const scene = (app.meta.isTest || app.meta.isLocal) ? 'test' : 'system';
       // email subject

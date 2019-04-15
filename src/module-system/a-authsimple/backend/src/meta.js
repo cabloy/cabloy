@@ -18,17 +18,26 @@ module.exports = app => {
         passwordChange: {
           schemas: 'passwordChange',
         },
+        passwordFind: {
+          schemas: 'passwordFind',
+        },
+        passwordReset: {
+          schemas: 'passwordReset',
+        },
         emailConfirm: {
           schemas: 'emailConfirm',
         },
       },
       keywords: {
         'x-exists': keywords.exists,
+        'x-passwordFindEmail': keywords.passwordFindEmail,
       },
       schemas: {
         signup: schemas.signup,
         signin: schemas.signin,
         passwordChange: schemas.passwordChange,
+        passwordFind: schemas.passwordFind,
+        passwordReset: schemas.passwordReset,
         emailConfirm: schemas.emailConfirm,
       },
     },

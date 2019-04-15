@@ -1,5 +1,8 @@
 export default {
+  Continue: '继续',
+  'Forgot password': '忘记密码',
   'Find password': '找回密码',
+  'Reset password': '重置密码',
   'Sign up': '注册',
   'Sign in': '登录',
   'Your username/mobile/email': '您的用户名/手机号/邮箱',
@@ -19,5 +22,6 @@ export default {
   'Captcha code': '验证码',
   'Email confirmation': '邮件确认',
   'Send confirmation email': '发送确认邮件',
-  'The confirmation link has been sent to your email address': '确认链接已经发送至您的邮箱地址',
+  emailConfirmSentAlert: '确认链接已经发送至您的邮箱地址，但可能需要几分钟出现在您的收件箱中。若要重发邮件，请至少等10分钟。',
+  passwordResetEmailSentAlert: '密码重置邮件已经发送至您的邮箱地址，但可能需要几分钟出现在您的收件箱中。若要重发邮件，请至少等10分钟。',
 };

@@ -23,5 +23,21 @@ module.exports = app => {
       };
     },
   };
+  keywords.passwordFindEmail = {
+    async: true,
+    type: 'string',
+    errors: true,
+    compile() {
+      return async function(data, path, rootData, name) {
+        const ctx = this;
+        const res = await ctx.meta.user.exists({ [name]: data });
+        if (!res) {
+          const errors = [{ keyword: 'x-passwordFindEmail', params: [], message: ctx.text('Email address does not exist') }];
+          throw new Ajv.ValidationError(errors);
+        }
+        return true;
+      };
+    },
+  };
   return keywords;
 };

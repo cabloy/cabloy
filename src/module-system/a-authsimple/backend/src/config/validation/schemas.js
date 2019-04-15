@@ -121,5 +121,39 @@ module.exports = app => {
       },
     },
   };
+  schemas.passwordFind = {
+    type: 'object',
+    properties: {
+      email: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Email',
+        notEmpty: true,
+        format: 'email',
+        'x-passwordFindEmail': true,
+      },
+    },
+  };
+  schemas.passwordReset = {
+    type: 'object',
+    properties: {
+      passwordNew: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'New password',
+        ebSecure: true,
+        notEmpty: true,
+        minLength: 6,
+      },
+      passwordNewAgain: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'New password again',
+        ebSecure: true,
+        notEmpty: true,
+        const: { $data: '1/passwordNew' },
+      },
+    },
+  };
   return schemas;
 };

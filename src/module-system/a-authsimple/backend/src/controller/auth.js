@@ -25,6 +25,19 @@ module.exports = app => {
       this.ctx.success();
     }
 
+    async passwordFind() {
+      const { email } = this.ctx.request.body.data;
+      await this.service.auth.passwordFind({ email });
+      this.ctx.success();
+    }
+
+    async passwordReset() {
+      const { passwordNew } = this.ctx.request.body.data;
+      const token = this.ctx.request.body.token;
+      await this.service.auth.passwordReset({ passwordNew, token });
+      this.ctx.success();
+    }
+
     async emailConfirm() {
       const { email } = this.ctx.request.body.data;
       await this.service.auth.emailConfirm({ email, user: this.ctx.user.agent });
