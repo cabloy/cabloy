@@ -90,7 +90,10 @@ export default {
       // size
       this.setSize();
       // loginOnStart
-      if (this.$config.layout.loginOnStart === true && !this.$store.state.auth.loggedIn) {
+      if (this.$config.layout.loginOnStart === true &&
+        !this.$store.state.auth.loggedIn &&
+        !this._checkIfPasswordReset()
+      ) {
         // open view login
         this.openLogin();
       } else {
@@ -259,6 +262,15 @@ export default {
         if (parseInt($view.data('index')) > 0) backLink = true;
       }
       return backLink;
+    },
+    _checkIfPasswordReset() {
+      const hashInit = this.$store.state.auth.hashInit;
+      if (!hashInit) return false;
+      const configBase = this.$meta.config.modules['a-base'];
+      const account = configBase.account;
+      const url = account.url.passwordReset;
+      if (!url) return false;
+      return hashInit.indexOf(url) > -1;
     },
   },
 };
