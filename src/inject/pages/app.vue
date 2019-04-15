@@ -1,5 +1,6 @@
 <script>
 import Vue from 'vue';
+const dialogLocales = [ 'buttonCancel', 'buttonOk', 'passwordPlaceholder', 'preloaderTitle', 'progressTitle', 'usernamePlaceholder' ];
 export default {
   render(c) {
     const children = [];
@@ -104,6 +105,8 @@ export default {
         window.document.title = this.$store.getters['auth/title'];
         // check if need activation
         this._checkActivation();
+        // set locale resource
+        this._setLocaleResource();
         // ok
         return cb && cb();
       }).catch(() => {
@@ -119,6 +122,13 @@ export default {
         // restore layout
         this.layout = layout;
       });
+    },
+    _setLocaleResource() {
+      // dialog
+      const dialog = this.$f7.params.dialog;
+      for (const key of dialogLocales) {
+        dialog[key] = this.$text(dialog[key]);
+      }
     },
     _checkActivation() {
       //
