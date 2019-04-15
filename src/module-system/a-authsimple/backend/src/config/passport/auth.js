@@ -12,15 +12,15 @@ module.exports = app => {
     // disabled
     if (user.disabled) return ctx.throw(1002);
     // verify
-    const verify = await ctx.service.auth.verify({ userId: user.id, password });
-    if (!verify) return ctx.throw(1001);
+    const authSimple = await ctx.service.auth.verify({ userId: user.id, password });
+    if (!authSimple) return ctx.throw(1001);
     return {
       module: moduleInfo.relativeName,
       provider,
-      profileId: user.id,
+      profileId: authSimple.id,
       maxAge: rememberMe ? null : 0,
       profile: {
-        userId: user.id,
+        authSimpleId: authSimple.id,
         rememberMe,
       },
     };

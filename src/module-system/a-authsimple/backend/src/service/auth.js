@@ -4,23 +4,56 @@ const require3 = require('require3');
 const uuid = require3('uuid');
 
 module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Auth extends app.Service {
 
-    async signup({ userName, realName, email, mobile, password }) {
-      // signup
-      const user = {
-        userName,
-        realName,
-        email,
-        // mobile, // not use mobile
+    // mobile: not use
+    async signup({ userName, realName, email, mobile, password, state = 'login' }) {
+
+      // add authsimple
+      const authSimpleId = await this._addAuthSimple({ password });
+
+      // profileUser
+      const profileUser = {
+        module: moduleInfo.relativeName,
+        provider: 'authsimple',
+        profileId: authSimpleId,
+        maxAge: 0,
+        profile: {
+          authSimpleId,
+          rememberMe: false,
+        },
       };
-      const userId = await this.ctx.meta.user.signup({ user });
-      // add auth record
-      await this.add({ userId, password });
+
+      // verify
+      const verifyUser = await this.ctx.meta.user.verify({ state, profileUser });
+      if (!verifyUser) this.ctx.throw(403);
+
+      // userId
+      const userId = verifyUser.agent.id;
+      // remove old records
+      await this.ctx.model.authSimple.delete({ userId });
+      // update userId
+      await this.ctx.model.authSimple.update({ id: authSimpleId, userId });
+
+      // override user's info: userName/realName/email
+      await this.ctx.meta.user.save({
+        user: { id: userId, userName, realName },
+      });
+      // save email
+      if (email !== verifyUser.agent.email) {
+        await this.ctx.meta.user.setActivated({
+          user: { id: userId, email, emailConfirmed: 0 },
+        });
+      }
+
       // login now
-      const user2 = await this.signin({ auth: email, password, rememberMe: false });
+      if (state === 'login') {
+        await this.ctx.login(verifyUser);
+      }
+
       // ok
-      return user2;
+      return verifyUser;
     }
 
     async signin({ auth, password, rememberMe }) {
@@ -39,38 +72,53 @@ module.exports = app => {
       }
     }
 
-    async add({ userId, password }) {
+    async _addAuthSimple({ password }) {
+      // hash
       password = password || this.ctx.config.defaultPassword;
       const hash = await this._calcPassword({ password });
       // auth simple
-      await this.ctx.model.authSimple.insert({
-        userId,
+      const res = await this.ctx.model.authSimple.insert({
+        userId: 0,
         hash,
       });
+      return res.insertId;
+    }
+
+    async add({ userId, password }) {
+      // add authsimple
+      const authSimpleId = await this._addAuthSimple({ password });
+      // update userId
+      await this.ctx.model.authSimple.update({ id: authSimpleId, userId });
+
       // auth
-      const info = this.ctx.module.info;
       const providerItem = await this.ctx.meta.user.getAuthProvider({
-        module: info.relativeName,
-        providerName: info.name,
+        module: moduleInfo.relativeName,
+        providerName: 'authsimple',
       });
       await this.ctx.model.auth.insert({
         userId,
         providerId: providerItem.id,
-        profileId: userId,
+        profileId: authSimpleId,
         profile: JSON.stringify({
-          userId,
+          authSimpleId,
           rememberMe: false,
         }),
       });
     }
 
     async verify({ userId, password }) {
+      // check
       if (!password) return false;
-      const auth = await this.ctx.model.authSimple.get({
+      // authSimple
+      const authSimple = await this.ctx.model.authSimple.get({
         userId,
       });
-      if (!auth) return false;
-      return await this._verifyPassword({ password, hash: auth.hash });
+      if (!authSimple) return false;
+      // verify
+      const res = await this._verifyPassword({ password, hash: authSimple.hash });
+      if (!res) return false;
+      // ok
+      return authSimple;
     }
 
     async passwordChange({ passwordOld, passwordNew, userId }) {
