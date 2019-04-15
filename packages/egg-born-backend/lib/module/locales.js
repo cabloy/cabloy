@@ -92,10 +92,9 @@ module.exports = function(loader, modules) {
     const key = args[0];
     if (!key) return null;
 
-    let text;
     // try locale
     let resource = ebLocales[locale] || {};
-    text = resource[key];
+    let text = resource[key];
     if (text === undefined && locale !== 'en-us') {
       // try en-us
       resource = ebLocales['en-us'] || {};
