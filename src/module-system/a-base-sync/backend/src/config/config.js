@@ -83,7 +83,7 @@ module.exports = appInfo => {
       emailConfirm: '/a/authsimple/emailConfirm',
       mobileVerify: '',
       passwordChange: '/a/authsimple/passwordChange',
-      passwordFind: '/a/authsimple/passwordFind',
+      passwordForgot: '/a/authsimple/passwordForgot',
       passwordReset: '/a/authsimple/passwordReset',
     },
     //  default is 'activated', if need activating by mobile/email, then add to 'registered' first
