@@ -112,21 +112,14 @@ module.exports = ctx => {
     async setActivated({ user }) {
       // save
       if (user.activated !== undefined) delete user.activated;
-      await this.save({ user });
+      if (Object.keys(user).length > 1) {
+        await this.save({ user });
+      }
       // tryActivate
       const tryActivate = user.emailConfirmed || user.mobileVerified;
       if (tryActivate) {
         await this.userRoleStageActivate({ userId: user.id });
       }
-    }
-
-    async signup({ user }) {
-      // add
-      const userId = await this.add(user);
-      // role
-      await this.userRoleStageAdd({ userId });
-      // ok
-      return userId;
     }
 
     async userRoleStageAdd({ userId }) {
@@ -318,11 +311,8 @@ module.exports = ctx => {
         `, [ ctx.instance.id, userId ]);
     }
 
-    async verify(profileUser) {
-      // state
-      //   login/associate
-      const state = ctx.request.query.state || 'login';
-
+    // state: login/associate
+    async verify({ state = 'login', profileUser }) {
       // verifyUser
       const verifyUser = {};
 
@@ -428,8 +418,10 @@ module.exports = ctx => {
         // others
         await this._setUserInfoColumn(user, column, profile[column]);
       }
-      // signup
-      const userId = await this.signup({ user });
+      // add user
+      const userId = await this.add(user);
+      // add role
+      await this.userRoleStageAdd({ userId });
       // try setActivated
       const data = { id: userId };
       // emailConfirmed

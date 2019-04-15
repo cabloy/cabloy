@@ -44,6 +44,10 @@ module.exports = function(ctx) {
       userRoot.item.email = options.email;
       userRoot.item.mobile = options.mobile;
       const userId = await ctx.meta.user.add(userRoot.item);
+      // activated
+      await ctx.meta.user.save({
+        user: { id: userId, activated: 1 },
+      });
       // user->role
       await ctx.meta.role.addUserRole({
         userId,

@@ -42,8 +42,10 @@ module.exports = app => {
       await this.ctx.service.auth.registerAllProviders();
       // verify
       this.app.passport.verify(async function(ctx, profileUser) {
+        // state: login/associate
+        const state = ctx.request.query.state || 'login';
         // user verify
-        const verifyUser = await ctx.meta.user.verify(profileUser);
+        const verifyUser = await ctx.meta.user.verify({ state, profileUser });
         // user verify event
         await ctx.meta.event.invoke({
           module: 'a-base', name: 'userVerify', data: { verifyUser, profileUser },
