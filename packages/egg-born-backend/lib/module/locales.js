@@ -92,12 +92,20 @@ module.exports = function(loader, modules) {
     const key = args[0];
     if (!key) return null;
 
-    const resource = ebLocales[locale] || {};
-    let text = resource[key];
+    let text;
+    // try locale
+    let resource = ebLocales[locale] || {};
+    text = resource[key];
+    if (text === undefined && locale !== 'en-us') {
+      // try en-us
+      resource = ebLocales['en-us'] || {};
+      text = resource[key];
+    }
+    // equal key
     if (text === undefined) {
       text = key;
     }
-
+    // format
     args[0] = text;
     return localeutil.getText.apply(localeutil, args);
   }
