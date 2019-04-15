@@ -84,6 +84,7 @@ module.exports = appInfo => {
       mobileVerify: '',
       passwordChange: '/a/authsimple/passwordChange',
       passwordFind: '/a/authsimple/passwordFind',
+      passwordReset: '/a/authsimple/passwordReset',
     },
     //  default is 'activated', if need activating by mobile/email, then add to 'registered' first
     activatedRoles: 'activated',
