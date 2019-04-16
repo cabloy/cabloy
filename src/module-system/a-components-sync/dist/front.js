@@ -147,7 +147,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
-  'zh-cn': __webpack_require__(6).default
+  'zh-cn': __webpack_require__(6)["default"]
 });
 
 /***/ }),
@@ -161,7 +161,12 @@ __webpack_require__.r(__webpack_exports__);
   'No more data': '没有更多数据',
   'Load error, try again': '加载失败，请重试',
   'Operation succeeded': '操作成功',
-  'Are you sure to perform this operation?': '您确认要执行此操作吗？'
+  'Are you sure to perform this operation?': '您确认要执行此操作吗？',
+  Cancel: '取消',
+  OK: '确定',
+  Username: '用户名',
+  Password: '密码',
+  'Loading... ': '加载中... '
 });
 
 /***/ }),
@@ -184,7 +189,7 @@ var staticRenderFns = []
   props: {
     autoInit: {
       type: Boolean,
-      default: false
+      "default": false
     },
     onLoadClear: {
       type: Function
@@ -252,7 +257,7 @@ var staticRenderFns = []
         _this3.doing = false;
         _this3.index = data.index;
         _this3.finished = data.finished;
-      }).catch(function () {
+      })["catch"](function () {
         _this3.error = true;
         _this3.doing = false;
       });
@@ -402,7 +407,6 @@ var external_vue_default = /*#__PURE__*/__webpack_require__.n(external_vue_);
     }
   };
   var dialog = {};
-  var _arr = ['preloader', 'progress'];
 
   var _loop = function _loop() {
     var method = _arr[_i];
@@ -418,7 +422,7 @@ var external_vue_default = /*#__PURE__*/__webpack_require__.n(external_vue_);
     };
   };
 
-  for (var _i = 0; _i < _arr.length; _i++) {
+  for (var _i = 0, _arr = ['preloader', 'progress']; _i < _arr.length; _i++) {
     _loop();
   }
 
@@ -463,11 +467,11 @@ var external_vue_default = /*#__PURE__*/__webpack_require__.n(external_vue_);
 var f7View = external_vue_default.a.options.components['f7-view'].extendOptions;
 /* harmony default export */ var viewvue_type_script_lang_js_ = ({
   name: 'eb-view',
-  extends: f7View,
+  "extends": f7View,
   props: {
     size: {
       type: String,
-      default: 'small'
+      "default": 'small'
     },
     sizeExtent: {
       type: Object
@@ -541,7 +545,7 @@ var view_component = normalizeComponent(
 var f7Page = external_vue_default.a.options.components['f7-page'].extendOptions;
 /* harmony default export */ var pagevue_type_script_lang_js_ = ({
   name: 'eb-page',
-  extends: f7Page,
+  "extends": f7Page,
   methods: {
     onPageAfterIn: function onPageAfterIn(event) {
       this.dispatchEvent('page:afterin pageAfterIn', event, event.detail);
@@ -604,7 +608,7 @@ var f7Navbar = external_vue_default.a.options.components['f7-navbar'].extendOpti
 delete f7Navbar.props.backLink;
 /* harmony default export */ var navbarvue_type_script_lang_js_ = ({
   name: 'eb-navbar',
-  extends: f7Navbar,
+  "extends": f7Navbar,
   props: {
     ebBackLink: [Boolean, String]
   },
@@ -697,7 +701,7 @@ function trimMessage(ctx, message) {
                 text: res2
               });
             }
-          }).catch(function (err) {
+          })["catch"](function (err) {
             _this._hidePreloader();
 
             if (err && err.code !== 401 && err.message) {
@@ -746,7 +750,7 @@ function trimMessage(ctx, message) {
     },
     externalLink: {
       type: Boolean,
-      default: true
+      "default": true
     }
   },
   watch: {
@@ -772,7 +776,7 @@ function trimMessage(ctx, message) {
   },
   methods: {
     getHref: function getHref(href) {
-      if (!href) return href;
+      if (!href || href[0] === '#') return href;
       if (!this.$page) return href;
       var module = this.$page.$module;
       if (!module) return href;
@@ -783,10 +787,15 @@ function trimMessage(ctx, message) {
       var href = this.href;
       var target = this.ebTarget;
       if (!href) return;
-      this.$meta.vueLayout.navigate(href, {
-        ctx: this,
-        target: target
-      });
+
+      if (href === '#back') {
+        this.$f7router.back();
+      } else {
+        this.$meta.vueLayout.navigate(href, {
+          ctx: this,
+          target: target
+        });
+      }
     }
   }
 });
@@ -798,7 +807,7 @@ var f7Link = external_vue_default.a.options.components['f7-link'].extendOptions;
 delete f7Link.props.href;
 /* harmony default export */ var linkvue_type_script_lang_js_ = ({
   name: 'eb-link',
-  extends: f7Link,
+  "extends": f7Link,
   mixins: [perform, common_link],
   methods: {
     getLinkEl: function getLinkEl() {
@@ -834,7 +843,7 @@ var link_component = normalizeComponent(
 var f7Button = external_vue_default.a.options.components['f7-button'].extendOptions;
 /* harmony default export */ var buttonvue_type_script_lang_js_ = ({
   name: 'eb-button',
-  extends: f7Button,
+  "extends": f7Button,
   mixins: [perform]
 });
 // CONCATENATED MODULE: ./front/src/components/button.vue?vue&type=script&lang=js&
@@ -924,7 +933,7 @@ var button_component = normalizeComponent(
 var f7Input = external_vue_default.a.options.components['f7-input'].extendOptions;
 /* harmony default export */ var inputvue_type_script_lang_js_ = ({
   name: 'eb-input',
-  extends: f7Input,
+  "extends": f7Input,
   mixins: [validate],
   mounted: function mounted() {
     var _this = this;
@@ -989,11 +998,11 @@ delete f7Toggle.props.checked;
 delete f7Toggle.props.value;
 /* harmony default export */ var togglevue_type_script_lang_js_ = ({
   name: 'eb-toggle',
-  extends: f7Toggle,
+  "extends": f7Toggle,
   props: {
     value: {
       type: [Boolean, Number],
-      default: false
+      "default": false
     }
   },
   data: function data() {
@@ -1039,7 +1048,7 @@ var toggle_component = normalizeComponent(
 var f7Radio = external_vue_default.a.options.components['f7-radio'].extendOptions;
 /* harmony default export */ var radiovue_type_script_lang_js_ = ({
   name: 'eb-radio',
-  extends: f7Radio,
+  "extends": f7Radio,
   methods: {
     onChange: function onChange(event) {
       this.$emit('input', event.target.value);
@@ -1076,7 +1085,7 @@ var radio_component = normalizeComponent(
   props: {
     readOnly: {
       type: Boolean,
-      default: false
+      "default": false
     },
     options: {
       type: Array
@@ -1089,19 +1098,19 @@ var radio_component = normalizeComponent(
     },
     optionsBlankAuto: {
       type: Boolean,
-      default: false
+      "default": false
     },
     optionTitleKey: {
       type: String,
-      default: 'title'
+      "default": 'title'
     },
     optionValueKey: {
       type: String,
-      default: 'value'
+      "default": 'value'
     },
     multiple: {
       type: Boolean,
-      default: false
+      "default": false
     },
     value: {}
   },
@@ -1255,8 +1264,8 @@ var radio_component = normalizeComponent(
         _iteratorError = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion && _iterator.return != null) {
-            _iterator.return();
+          if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+            _iterator["return"]();
           }
         } finally {
           if (_didIteratorError) {
@@ -1352,8 +1361,8 @@ var radio_component = normalizeComponent(
         _iteratorError2 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
-            _iterator2.return();
+          if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
+            _iterator2["return"]();
           }
         } finally {
           if (_didIteratorError2) {
@@ -1407,7 +1416,7 @@ var select_component = normalizeComponent(
     },
     pathParent: {
       type: String,
-      default: ''
+      "default": ''
     },
     options: {
       type: Array
@@ -1436,7 +1445,7 @@ var select_component = normalizeComponent(
       return parent;
     },
     getValue: function getValue(data, key, property) {
-      if (data[key] === undefined) return property.default;
+      if (data[key] === undefined) return property["default"];
       return data[key];
     },
     setValue: function setValue(data, key, value, property) {
@@ -1722,7 +1731,7 @@ var validateItem_component = normalizeComponent(
     validateItem: validateItem
   },
   render: function render(c) {
-    if (!this.auto) return c('div', this.$slots.default);
+    if (!this.auto) return c('div', this.$slots["default"]);
 
     if (this.auto && this.ready) {
       if (this.custom) {
@@ -1741,11 +1750,11 @@ var validateItem_component = normalizeComponent(
   props: {
     readOnly: {
       type: Boolean,
-      default: false
+      "default": false
     },
     auto: {
       type: Boolean,
-      default: false
+      "default": false
     },
     data: {
       type: Object
@@ -1758,7 +1767,7 @@ var validateItem_component = normalizeComponent(
     },
     dataPathRoot: {
       type: String,
-      default: '/'
+      "default": '/'
     },
     errors: {
       type: Array
@@ -1806,7 +1815,7 @@ var validateItem_component = normalizeComponent(
         _this2.reset();
 
         return data;
-      }).catch(function (err) {
+      })["catch"](function (err) {
         if (err) {
           if (err.code !== 422) throw err;
           _this2.verrors = err.message;
@@ -1928,7 +1937,7 @@ var validate_component = normalizeComponent(
 var f7ListButton = external_vue_default.a.options.components['f7-list-button'].extendOptions;
 /* harmony default export */ var listButtonvue_type_script_lang_js_ = ({
   name: 'eb-list-button',
-  extends: f7ListButton,
+  "extends": f7ListButton,
   mixins: [perform]
 });
 // CONCATENATED MODULE: ./front/src/components/listButton.vue?vue&type=script&lang=js&
@@ -1961,7 +1970,7 @@ var f7ListItem = external_vue_default.a.options.components['f7-list-item'].exten
 delete f7ListItem.props.href;
 /* harmony default export */ var listItemvue_type_script_lang_js_ = ({
   name: 'eb-list-item',
-  extends: f7ListItem,
+  "extends": f7ListItem,
   mixins: [perform, common_link],
   mounted: function mounted() {
     var _this = this;
@@ -1970,7 +1979,11 @@ delete f7ListItem.props.href;
 
     if (this.externalLink) {
       this.$nextTick(function () {
-        _this.getLinkEl().addClass('external');
+        var linkEl = _this.getLinkEl();
+
+        if (linkEl) {
+          linkEl.addClass('external');
+        }
       });
     }
   },
@@ -2014,7 +2027,7 @@ var listItem_component = normalizeComponent(
   listItem_staticRenderFns,
   false,
   null,
-  "7ff77c22",
+  "2f9747ef",
   null
   
 )
@@ -2026,7 +2039,7 @@ var listItem_component = normalizeComponent(
 var listPanelvue_type_script_lang_js_f7ListItem = external_vue_default.a.options.components['f7-list-item'].extendOptions;
 /* harmony default export */ var listPanelvue_type_script_lang_js_ = ({
   name: 'eb-list-item-panel',
-  extends: listPanelvue_type_script_lang_js_f7ListItem,
+  "extends": listPanelvue_type_script_lang_js_f7ListItem,
   mixins: [validate],
   methods: {
     onValidateError: function onValidateError(error) {
@@ -2068,7 +2081,7 @@ var listPanel_component = normalizeComponent(
 var listChoosevue_type_script_lang_js_f7ListItem = external_vue_default.a.options.components['f7-list-item'].extendOptions;
 /* harmony default export */ var listChoosevue_type_script_lang_js_ = ({
   name: 'eb-list-item-choose',
-  extends: listChoosevue_type_script_lang_js_f7ListItem,
+  "extends": listChoosevue_type_script_lang_js_f7ListItem,
   mixins: [validate],
   props: {
     onChoose: {
@@ -2133,7 +2146,7 @@ var listChoose_component = normalizeComponent(
 var f7FabButton = external_vue_default.a.options.components['f7-fab-button'].extendOptions;
 /* harmony default export */ var fabButtonvue_type_script_lang_js_ = ({
   name: 'eb-fab-button',
-  extends: f7FabButton,
+  "extends": f7FabButton,
   mixins: [perform]
 });
 // CONCATENATED MODULE: ./front/src/components/fabButton.vue?vue&type=script&lang=js&
@@ -2163,11 +2176,11 @@ var fabButton_component = normalizeComponent(
 var f7SwipeoutActions = external_vue_default.a.options.components['f7-swipeout-actions'].extendOptions;
 /* harmony default export */ var swipeoutActionsvue_type_script_lang_js_ = ({
   name: 'eb-swipeout-actions',
-  extends: f7SwipeoutActions,
+  "extends": f7SwipeoutActions,
   props: {
     ready: {
       type: Boolean,
-      default: true
+      "default": true
     }
   },
   watch: {
@@ -2226,7 +2239,7 @@ var swipeoutActions_component = normalizeComponent(
 var f7SwipeoutButton = external_vue_default.a.options.components['f7-swipeout-button'].extendOptions;
 /* harmony default export */ var swipeoutButtonvue_type_script_lang_js_ = ({
   name: 'eb-swipeout-button',
-  extends: f7SwipeoutButton,
+  "extends": f7SwipeoutButton,
   mixins: [perform]
 });
 // CONCATENATED MODULE: ./front/src/components/swipeoutButton.vue?vue&type=script&lang=js&
@@ -2264,11 +2277,11 @@ var tabPageContentvue_type_template_id_e64ffef8_staticRenderFns = []
   props: {
     tab: {
       type: Boolean,
-      default: true
+      "default": true
     },
     tabActive: {
       type: Boolean,
-      default: false
+      "default": false
     },
     id: {
       type: String
@@ -2343,7 +2356,7 @@ var searchPagevue_type_template_id_5866be65_staticRenderFns = []
   props: {
     title: {
       type: String,
-      default: 'Search'
+      "default": 'Search'
     }
   },
   computed: {
@@ -2393,11 +2406,11 @@ var searchPage_component = normalizeComponent(
 var f7Popover = external_vue_default.a.options.components['f7-popover'].extendOptions;
 /* harmony default export */ var popovervue_type_script_lang_js_ = ({
   name: 'eb-popover',
-  extends: f7Popover,
+  "extends": f7Popover,
   props: {
     ready: {
       type: Boolean,
-      default: true
+      "default": true
     }
   },
   watch: {
@@ -2467,8 +2480,8 @@ var popover_component = normalizeComponent(
           _iteratorError = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion && _iterator.return != null) {
-              _iterator.return();
+            if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+              _iterator["return"]();
             }
           } finally {
             if (_didIteratorError) {
@@ -2502,8 +2515,8 @@ var popover_component = normalizeComponent(
           _iteratorError2 = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
-              _iterator2.return();
+            if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
+              _iterator2["return"]();
             }
           } finally {
             if (_didIteratorError2) {
@@ -2567,8 +2580,8 @@ var popover_component = normalizeComponent(
         _iteratorError3 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
-            _iterator3.return();
+          if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
+            _iterator3["return"]();
           }
         } finally {
           if (_didIteratorError3) {
@@ -2613,7 +2626,7 @@ var contextMenu_component = normalizeComponent(
   render: function render(c) {
     return c('div', {
       ref: 'box'
-    }, this.$slots.default);
+    }, this.$slots["default"]);
   },
   data: function data() {
     return {
@@ -3881,11 +3894,11 @@ function main_install(_Vue, cb) {
   Vue = _Vue;
   Vue.component('ebTree', liquor_tree_esm);
   return cb({
-    routes: __webpack_require__(2).default,
-    store: __webpack_require__(3).default(Vue),
-    config: __webpack_require__(4).default,
-    locales: __webpack_require__(5).default,
-    components: __webpack_require__(7).default
+    routes: __webpack_require__(2)["default"],
+    store: __webpack_require__(3)["default"](Vue),
+    config: __webpack_require__(4)["default"],
+    locales: __webpack_require__(5)["default"],
+    components: __webpack_require__(7)["default"]
   });
 }
 
