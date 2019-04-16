@@ -83,11 +83,6 @@ export default {
     onResize: Vue.prototype.$meta.util.debounce(function() {
       this.resize();
     }, 300),
-    toLogin(url) {
-      const hashInit = this.popupHashInit();
-      url = `${url}?returnTo=${encodeURIComponent(this.$meta.util.combineHash(hashInit))}`;
-      location.assign(url);
-    },
     _authEcho(cb) {
       // get auth first
       this.$api.post('/a/base/auth/echo').then(data => {
@@ -187,6 +182,13 @@ export default {
         return hashInit;
       }
       return null;
+    },
+    toLogin({ url, hash }) {
+      hash = hash || this.popupHashInit();
+      url = this.$meta.util.combineQueries(url, {
+        returnTo: this.$meta.util.combineHash(hash),
+      });
+      location.assign(url);
     },
   },
   beforeDestroy() {
