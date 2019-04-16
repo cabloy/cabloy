@@ -469,12 +469,16 @@ var component = normalizeComponent(
     start: function start() {
       var _this6 = this;
 
-      if (this.$config.layout.loginOnStart === true && !this.$store.state.auth.loggedIn) {
+      var vueApp = this.$meta.vueApp;
+
+      if (vueApp.checkIfNeedOpenLogin()) {
         this.openLogin();
       } else {
-        var hashInit = this.$store.state.auth.hashInit;
-        this.$store.commit('auth/setHashInit', null);
-        if (hashInit && hashInit !== '/' && hashInit !== this.$config.layout.login) this.navigate(hashInit);
+        var hashInit = vueApp.popupHashInit();
+
+        if (hashInit) {
+          this.navigate(hashInit);
+        }
       }
 
       this.$nextTick(function () {
@@ -562,7 +566,7 @@ var layout_component = normalizeComponent(
   layout_staticRenderFns,
   false,
   null,
-  "0f8e9ac2",
+  "d3f6ea06",
   null
   
 )
