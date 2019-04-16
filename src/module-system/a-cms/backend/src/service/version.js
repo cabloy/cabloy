@@ -43,8 +43,8 @@ module.exports = app => {
             iid int(11) DEFAULT '0',
             atomId int(11) DEFAULT '0',
             itemId int(11) DEFAULT '0',
-            content text DEFAULT NULL,
-            html text DEFAULT NULL,
+            content LONGTEXT DEFAULT NULL,
+            html LONGTEXT DEFAULT NULL,
             PRIMARY KEY (id)
           )
         `;
