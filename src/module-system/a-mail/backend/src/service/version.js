@@ -16,7 +16,7 @@ module.exports = app => {
             status int(11) DEFAULT '0',
             mailTo text DEFAULT NULL,
             mailSubject text DEFAULT NULL,
-            message JSON DEFAULT NULL,
+            message LONGTEXT DEFAULT NULL,
             PRIMARY KEY (id)
           )
         `;

@@ -53,7 +53,7 @@ module.exports = app => {
         // transporter
         const transporter = nodemailer.createTransport(scene.transport, scene.defaults);
         // send
-        const message = JSON.parse(mail.message);
+        const message = mail.message ? JSON.parse(mail.message) : null;
         const res = await transporter.sendMail(message);
         // log
         if (mail.scene === 'test') {
