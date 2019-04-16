@@ -8,4 +8,5 @@ export default [
   { path: 'user/agent', component: load('user/agent') },
   { path: 'user/functions', component: load('user/functions') },
   { path: 'user/account', component: load('user/account') },
+  { path: 'user/authentications', component: load('user/authentications') },
 ];

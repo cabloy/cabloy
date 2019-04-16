@@ -62,6 +62,21 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async authentications() {
+      const res = await this.service.user.authentications({
+        user: this.ctx.user.agent,
+      });
+      this.ctx.success(res);
+    }
+
+    async authenticationDisable() {
+      const res = await this.service.user.authenticationDisable({
+        authId: this.ctx.request.body.authId,
+        user: this.ctx.user.agent,
+      });
+      this.ctx.success(res);
+    }
+
     functions() {
       const res = this.service.user.functions();
       this.ctx.success(res);

@@ -15,6 +15,9 @@ module.exports = app => {
     { method: 'post', path: 'user/switchAgent', controller: user },
     { method: 'post', path: 'user/switchOffAgent', controller: user },
     { method: 'post', path: 'user/functions', controller: user },
+    { method: 'post', path: 'user/authentications', controller: user },
+    { method: 'post', path: 'user/authenticationDisable', controller: user },
+
 
   ];
   return routes;

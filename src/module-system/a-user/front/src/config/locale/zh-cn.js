@@ -22,4 +22,8 @@ export default {
   Change: '修改',
   Confirm: '确认',
   Verify: '验证',
+  Authentications: '认证',
+  Enabled: '已启用',
+  Enable: '启用',
+  Disable: '禁用',
 };
