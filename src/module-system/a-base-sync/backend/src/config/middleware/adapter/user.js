@@ -112,9 +112,7 @@ module.exports = ctx => {
     async setActivated({ user }) {
       // save
       if (user.activated !== undefined) delete user.activated;
-      if (Object.keys(user).length > 1) {
-        await this.save({ user });
-      }
+      await this.save({ user });
       // tryActivate
       const tryActivate = user.emailConfirmed || user.mobileVerified;
       if (tryActivate) {
@@ -219,7 +217,9 @@ module.exports = ctx => {
     }
 
     async save({ user }) {
-      await this.model.update(user);
+      if (Object.keys(user).length > 1) {
+        await this.model.update(user);
+      }
     }
 
     async agent({ userId }) {
@@ -447,7 +447,7 @@ module.exports = ctx => {
         await this._setUserInfoColumn(user, column, profile[column]);
       }
       user.id = userId;
-      await this.model.update(user);
+      await this.save({ user });
     }
 
     async _setUserInfoColumn(user, column, value) {
