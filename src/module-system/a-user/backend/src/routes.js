@@ -18,7 +18,6 @@ module.exports = app => {
     { method: 'post', path: 'user/authentications', controller: user },
     { method: 'post', path: 'user/authenticationDisable', controller: user },
 
-
   ];
   return routes;
 };

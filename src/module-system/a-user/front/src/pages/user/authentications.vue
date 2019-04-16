@@ -2,11 +2,11 @@
   <eb-page>
     <eb-navbar :title="$text('Authentications')" eb-back-link="Back"></eb-navbar>
     <f7-list v-if="ready">
-      <eb-list-item v-for="item of items" :key="item.id" :title="getModule(item.module).titleLocale">
+      <eb-list-item v-for="item of items" :key="item.providerId" :title="getModule(item.module).titleLocale">
         <div slot="after">
           <f7-badge v-if="item.authId">{{$text('Enabled')}}</f7-badge>
-          <eb-link v-if="item.authId" :context="item" :onPerform="onPerformEnable">{{$text('Enable')}}</eb-link>
-          <eb-link v-if="item.authId" :context="item" :onPerform="onPerformDisable">{{$text('Disable')}}</eb-link>
+          <eb-link v-if="!item.authId" :context="item" :onPerform="onPerformEnable">{{$text('Enable')}}</eb-link>
+          <eb-link v-if="item.authId && countEnabled>1" :context="item" :onPerform="onPerformDisable">{{$text('Disable')}}</eb-link>
         </div>
       </eb-list-item>
     </f7-list>
@@ -26,6 +26,9 @@ export default {
     ready() {
       return this.modulesAll && this.items;
     },
+    countEnabled() {
+      return this.items.filter(item => item.authId).length;
+    },
   },
   created() {
     // fetch
@@ -37,7 +40,10 @@ export default {
     onPerformDisable(event, item) {
       return this.$view.dialog.confirm().then(() => {
         return this.$api.post('user/authenticationDisable', { authId: item.authId }).then(() => {
+          // update
+          const index = this.items.findIndex(_item => _item.providerId === item.providerId);
           item.authId = null;
+          Vue.set(this.items, index, item);
           return true;
         });
       });
