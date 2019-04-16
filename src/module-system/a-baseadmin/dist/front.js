@@ -255,7 +255,7 @@ var staticRenderFns = []
           return node;
         });
         return list;
-      }).catch(function (err) {
+      })["catch"](function (err) {
         _this2.$view.toast.show({
           text: err.message
         });
@@ -537,8 +537,8 @@ var ebAtomClasses = external_vue_default.a.prototype.$meta.module.get('a-base').
         _iteratorError = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion && _iterator.return != null) {
-            _iterator.return();
+          if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+            _iterator["return"]();
           }
         } finally {
           if (_didIteratorError) {
@@ -708,8 +708,8 @@ var ebModules = external_vue_default.a.prototype.$meta.module.get('a-base').opti
         _iteratorError = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion && _iterator.return != null) {
-            _iterator.return();
+          if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+            _iterator["return"]();
           }
         } finally {
           if (_didIteratorError) {
@@ -883,8 +883,8 @@ var ebModules = external_vue_default.a.prototype.$meta.module.get('a-base').opti
         _iteratorError = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion && _iterator.return != null) {
-            _iterator.return();
+          if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+            _iterator["return"]();
           }
         } finally {
           if (_didIteratorError) {
@@ -1063,8 +1063,8 @@ var ebAtomClasses = external_vue_default.a.prototype.$meta.module.get('a-base').
         _iteratorError = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion && _iterator.return != null) {
-            _iterator.return();
+          if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+            _iterator["return"]();
           }
         } finally {
           if (_didIteratorError) {
@@ -1817,11 +1817,11 @@ function install(_Vue, cb) {
   if (Vue) return console.error('already installed.');
   Vue = _Vue;
   return cb({
-    routes: __webpack_require__(16).default,
-    store: __webpack_require__(19).default(Vue),
-    config: __webpack_require__(20).default,
-    locales: __webpack_require__(21).default,
-    components: __webpack_require__(23).default
+    routes: __webpack_require__(16)["default"],
+    store: __webpack_require__(19)["default"](Vue),
+    config: __webpack_require__(20)["default"],
+    locales: __webpack_require__(21)["default"],
+    components: __webpack_require__(23)["default"]
   });
 }
 
@@ -1842,7 +1842,7 @@ function install(_Vue, cb) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 function load(name) {
-  return __webpack_require__(17)("./".concat(name, ".vue")).default;
+  return __webpack_require__(17)("./".concat(name, ".vue"))["default"];
 }
 
 /* harmony default export */ __webpack_exports__["default"] = ([{
@@ -1979,7 +1979,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
-  'zh-cn': __webpack_require__(22).default
+  'zh-cn': __webpack_require__(22)["default"]
 });
 
 /***/ }),
@@ -3270,8 +3270,6 @@ var list = __webpack_require__(2);
     onRoleMove: function onRoleMove(data) {
       var _this = this;
 
-      var _arr = ['roleIdFrom', 'roleIdTo'];
-
       var _loop = function _loop() {
         var roleIdParent = _arr[_i];
 
@@ -3282,7 +3280,7 @@ var list = __webpack_require__(2);
         _this.reloadChildren(node && node[0]);
       };
 
-      for (var _i = 0; _i < _arr.length; _i++) {
+      for (var _i = 0, _arr = ['roleIdFrom', 'roleIdTo']; _i < _arr.length; _i++) {
         _loop();
       }
     },
@@ -3467,7 +3465,7 @@ var ebPageContext = external_vue_default.a.prototype.$meta.module.get('a-compone
         }
 
         return list;
-      }).catch(function (err) {
+      })["catch"](function (err) {
         _this2.$view.toast.show({
           text: err.message
         });
@@ -3513,8 +3511,8 @@ var ebPageContext = external_vue_default.a.prototype.$meta.module.get('a-compone
           _iteratorError = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion && _iterator.return != null) {
-              _iterator.return();
+            if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+              _iterator["return"]();
             }
           } finally {
             if (_didIteratorError) {

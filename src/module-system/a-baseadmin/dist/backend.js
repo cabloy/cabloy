@@ -232,9 +232,7 @@ module.exports = app => {
     { method: 'post', path: 'auth/list', controller: auth, meta: { right: { type: 'function', name: 'auth' } } },
     { method: 'post', path: 'auth/disable', controller: auth, meta: { right: { type: 'function', name: 'auth' } } },
     { method: 'post', path: 'auth/item', controller: auth, meta: { right: { type: 'function', name: 'auth' } } },
-    { method: 'post', path: 'auth/save', controller: auth,
-      meta: { right: { type: 'function', name: 'auth' } },
-    },
+    { method: 'post', path: 'auth/save', controller: auth, meta: { right: { type: 'function', name: 'auth' } } },
   ];
   return routes;
 };
@@ -1064,14 +1062,6 @@ module.exports = app => {
   schemas.auth = {
     type: 'object',
     properties: {
-      addRole: {
-        type: 'boolean',
-        ebType: 'toggle',
-      },
-      addUser: {
-        type: 'boolean',
-        ebType: 'toggle',
-      },
       successRedirect: {
         type: 'boolean',
         ebType: 'toggle',
