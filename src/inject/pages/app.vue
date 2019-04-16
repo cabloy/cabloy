@@ -83,9 +83,8 @@ export default {
     onResize: Vue.prototype.$meta.util.debounce(function() {
       this.resize();
     }, 300),
-    login(url) {
-      const hashInit = this.$store.state.auth.hashInit;
-      this.$store.commit('auth/setHashInit', null);
+    toLogin(url) {
+      const hashInit = this.popupHashInit();
       url = `${url}?returnTo=${encodeURIComponent(this.$meta.util.combineHash(hashInit))}`;
       location.assign(url);
     },
