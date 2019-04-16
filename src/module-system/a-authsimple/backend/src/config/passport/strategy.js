@@ -20,7 +20,21 @@ function Strategy(options, verify) {
 util.inherits(Strategy, passport.Strategy);
 
 Strategy.prototype.authenticate = function(req) {
+  // self
   const self = this;
+
+  // check
+  if (req.method === 'GET') {
+    if (req.query.state === 'associate') {
+      // goto signup
+      const url = req.ctx.meta.base.getAbsoluteUrl('/a/authsimple/signup?state=associate');
+      return req.ctx.redirect(url);
+    }
+    // not allow
+    return self.error(req.ctx.parseFail(403));
+  }
+
+  // verified
   function verified(err, user, info) {
     if (err) { return self.error(err); }
     if (!user) { return self.fail(info); }

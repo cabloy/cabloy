@@ -31,7 +31,6 @@ module.exports = app => {
         config: {
           successReturnToOrRedirect: false,
           successRedirect: false,
-          innerAccess: true,
         },
         handler: app => {
           return {
