@@ -27,8 +27,12 @@ Strategy.prototype.authenticate = function(req) {
   if (req.method === 'GET') {
     if (req.query.state === 'associate') {
       // goto signup
-      const url = req.ctx.meta.base.getAbsoluteUrl('/a/authsimple/signup?state=associate');
-      return req.ctx.redirect(url);
+      let url = '/#!/a/authsimple/signup?state=associate';
+      if (req.query.returnTo) {
+        url = `${url}&returnTo=${encodeURIComponent(req.query.returnTo)}`;
+      }
+      url = req.ctx.meta.base.getAbsoluteUrl(url);
+      return self.redirect(url);
     }
     // not allow
     return self.error(req.ctx.parseFail(403));

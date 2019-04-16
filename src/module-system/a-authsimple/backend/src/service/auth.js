@@ -8,7 +8,7 @@ module.exports = app => {
   class Auth extends app.Service {
 
     // mobile: not use
-    async signup({ userName, realName, email, mobile, password, state = 'login' }) {
+    async signup({ state = 'login', userName, realName, email, mobile, password }) {
 
       // add authsimple
       const authSimpleId = await this._addAuthSimple({ password });
@@ -48,9 +48,8 @@ module.exports = app => {
       }
 
       // login now
-      if (state === 'login') {
-        await this.ctx.login(verifyUser);
-      }
+      //   always no matter login/associate
+      await this.ctx.login(verifyUser);
 
       // ok
       return verifyUser;

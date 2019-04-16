@@ -35,6 +35,8 @@ export default {
   },
   data() {
     return {
+      state: this.$f7route.query.state,
+      returnTo: this.$f7route.query.returnTo,
       data: {
         userName: null,
         realName: null,
@@ -58,10 +60,15 @@ export default {
   methods: {
     onPerformValidate() {
       return this.$api.post('auth/signup', {
+        state: this.state,
         data: this.data,
         captcha: this.captcha,
       }).then(() => {
-        this.$meta.vueApp.reload({ echo: true });
+        let hash;
+        if (this.returnTo) {
+          hash = this.$meta.util.parseHash(this.returnTo);
+        }
+        this.$meta.vueApp.reload({ echo: true, hash });
       });
     },
     signUp() {
