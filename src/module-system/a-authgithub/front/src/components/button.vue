@@ -18,13 +18,11 @@ export default {
     signIn() {
       const info = this.$module.info;
       const url = `/api/${info.url}/passport/${info.relativeName}/authgithub`;
-      this.$meta.vueApp.login(url);
+      this.$meta.vueApp.toLogin(url);
     },
   },
 };
 
 </script>
 <style scoped>
-
-
 </style>
