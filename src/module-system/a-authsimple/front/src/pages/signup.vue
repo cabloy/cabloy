@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar :title="$text('Sign up')" eb-back-link="Back"></eb-navbar>
     <f7-block>
-      <eb-validate ref="validate" :auto="false" :data="data" :params="{validator: 'signup'}" :onPerform="onPerformValidate">
+      <eb-validate ref="validate" :auto="false" :data="data" :params="{validator: 'signup'}" :onPerform="onPerformValidate" @schema:ready="onSchemaReady">
         <f7-list form no-hairlines-md>
           <eb-list-item-validate dataKey="userName"></eb-list-item-validate>
           <eb-list-item-validate dataKey="realName"></eb-list-item-validate>
@@ -35,7 +35,7 @@ export default {
   },
   data() {
     return {
-      state: this.$f7route.query.state,
+      state: this.$f7route.query.state || 'login',
       returnTo: this.$f7route.query.returnTo,
       data: {
         userName: null,
@@ -49,15 +49,33 @@ export default {
         code: null,
       },
       moduleCaptcha: null,
+      userNameReadOnly: false,
     };
   },
   created() {
+    // init for associate
+    if (this.state === 'associate') {
+      const userAgent = this.$store.state.auth.user.agent;
+      this.data.userName = userAgent.userName;
+      this.data.realName = userAgent.realName;
+      this.data.email = userAgent.email;
+      // readOnly
+      if (this.data.userName && this.data.userName.indexOf('__') === -1) {
+        this.userNameReadOnly = true;
+      }
+    }
+    // captcha
     this.$meta.module.use('a-captcha', module => {
       this.$options.components.captchaContainer = module.options.components.captchaContainer;
       this.moduleCaptcha = module;
     });
   },
   methods: {
+    onSchemaReady(schema) {
+      if (this.userNameReadOnly) {
+        schema.properties.userName.ebReadOnly = true;
+      }
+    },
     onPerformValidate() {
       return this.$api.post('auth/signup', {
         state: this.state,

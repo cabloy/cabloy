@@ -8,7 +8,7 @@ module.exports = app => {
   class Auth extends app.Service {
 
     // mobile: not use
-    async signup({ state = 'login', userName, realName, email, mobile, password }) {
+    async signup({ user, state = 'login', userName, realName, email, mobile, password }) {
 
       // add authsimple
       const authSimpleId = await this._addAuthSimple({ password });
@@ -37,8 +37,12 @@ module.exports = app => {
       await this.ctx.model.authSimple.update({ id: authSimpleId, userId });
 
       // override user's info: userName/realName/email
+      const userNew = { id: userId, realName };
+      if (state === 'login' || !user.userName || user.userName.indexOf('__') > -1) {
+        userNew.userName = userName;
+      }
       await this.ctx.meta.user.save({
-        user: { id: userId, userName, realName },
+        user: userNew,
       });
       // save email
       if (email !== verifyUser.agent.email) {
