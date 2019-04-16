@@ -181,6 +181,9 @@ module.exports = appInfo => {
     'a-instance': {
       aInstance: 'createdAt,updatedAt,name',
     },
+    'a-mail': {
+      aMail: 'createdAt,updatedAt,status',
+    },
     'a-sequence': {
       aSequence: 'createdAt,updatedAt,module+name',
     },
