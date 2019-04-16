@@ -186,6 +186,8 @@ module.exports = app => {
     { method: 'post', path: 'user/switchAgent', controller: user },
     { method: 'post', path: 'user/switchOffAgent', controller: user },
     { method: 'post', path: 'user/functions', controller: user },
+    { method: 'post', path: 'user/authentications', controller: user },
+    { method: 'post', path: 'user/authenticationDisable', controller: user },
 
   ];
   return routes;
@@ -260,6 +262,21 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async authentications() {
+      const res = await this.service.user.authentications({
+        user: this.ctx.user.agent,
+      });
+      this.ctx.success(res);
+    }
+
+    async authenticationDisable() {
+      const res = await this.service.user.authenticationDisable({
+        authId: this.ctx.request.body.authId,
+        user: this.ctx.user.agent,
+      });
+      this.ctx.success(res);
+    }
+
     functions() {
       const res = this.service.user.functions();
       this.ctx.success(res);
@@ -295,7 +312,13 @@ module.exports = app => {
   class User extends app.Service {
 
     async save({ data, user }) {
+      // id
       data.id = user.id;
+      // readOnly
+      delete data.userName;
+      delete data.email;
+      delete data.mobile;
+      // save
       return await this.ctx.meta.user.save({ user: data });
     }
 
@@ -330,6 +353,22 @@ module.exports = app => {
 
     async switchOffAgent() {
       return await this.ctx.meta.user.switchOffAgent();
+    }
+
+    async authentications({ user }) {
+      const sql = `
+        select a.id as providerId,a.module,a.providerName,b.id as authId from aAuthProvider a
+          left join aAuth b on a.id=b.providerId and b.userId=?
+            where a.iid=? and a.disabled=0
+      `;
+      const list = await this.ctx.model.query(sql, [ user.id, this.ctx.instance.id ]);
+      return list;
+    }
+
+    async authenticationDisable({ authId, user }) {
+      // must use userId in where
+      await this.ctx.model.query('delete from aAuth where id=? and userId=?',
+        [ authId, user.id ]);
     }
 
     functions() {
