@@ -368,6 +368,12 @@ module.exports = ctx => {
         await this._updateUserInfo(userId, profileUser.profile, columns);
         // force update auth's userId, maybe different
         if (authUserId !== userId) {
+          // delete old records
+          await this.modelAuth.delete({
+            providerId: providerItem.id,
+            userId,
+          });
+          // update
           await this.modelAuth.update({
             id: authId,
             userId,
