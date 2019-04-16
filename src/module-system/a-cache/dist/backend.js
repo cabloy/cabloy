@@ -152,6 +152,22 @@ module.exports = app => {
         `;
         await this.ctx.db.query(sql);
       }
+
+      if (options.version === 2) {
+        let sql;
+        // delete
+        sql = `
+          delete from aCache
+        `;
+        await this.ctx.db.query(sql);
+        // alter table: aCache
+        sql = `
+          ALTER TABLE aCache
+            DROP COLUMN timeout,
+            ADD COLUMN expired timestamp DEFAULT NULL
+        `;
+        await this.ctx.db.query(sql);
+      }
     }
 
   }
@@ -300,17 +316,20 @@ const Fn = module.exports = ctx => {
     }
 
     async _set({ name, value, timeout, queue }) {
+      // second
+      const second = timeout ? parseInt(timeout / 1000) : timeout;
+      // expired
+      const expired = second ? `TIMESTAMPADD(SECOND,${second},CURRENT_TIMESTAMP)` : 'null';
       const res = await ctx.db.get('aCache', {
         iid: ctx.instance.id,
         module: this.moduleName,
         name,
       });
       if (res) {
-        await ctx.db.update('aCache', {
-          id: res.id,
-          value: JSON.stringify(value),
-          timeout: timeout || 0,
-        });
+        await ctx.db.query(`
+          update aCache set value=?, expired=${expired}
+            where id=?
+          `, [ JSON.stringify(value), res.id ]);
       } else {
         if (queue) {
           await ctx.app.meta.queue.pushAsync({
@@ -325,19 +344,15 @@ const Fn = module.exports = ctx => {
             },
           });
         } else {
-          await ctx.db.insert('aCache', {
-            iid: ctx.instance.id,
-            module: this.moduleName,
-            name,
-            value: JSON.stringify(value),
-            timeout: timeout || 0,
-          });
+          await ctx.db.query(`
+            insert into aCache(iid,module,name,value,expired) values(?,?,?,?,${expired})
+            `, [ ctx.instance.id, this.moduleName, name, JSON.stringify(value) ]);
         }
       }
     }
 
     async has(name) {
-      const sql = 'select * from aCache where iid=? and module=? and name=? and (timeout=0 or timestampdiff(SECOND,updatedAt,now())*1000 < timeout)';
+      const sql = 'select * from aCache where iid=? and module=? and name=? and (expired is null or expired>CURRENT_TIMESTAMP)';
       const res = await ctx.db.queryOne(sql, [ ctx.instance.id, this.moduleName, name ]);
       return res;
     }
