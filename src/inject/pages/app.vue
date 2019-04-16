@@ -71,7 +71,11 @@ export default {
       }
     },
     reload(ops) {
-      ops = ops || { echo: false };
+      // ops
+      ops = ops || { echo: false, hash: null };
+      // hash
+      if (ops.hash && ops.hash !== '/') this.$store.commit('auth/setHashInit', ops.hash);
+      // echo
       if (ops.echo) {
         this._authEcho(() => {
           this._reloadLayout();
