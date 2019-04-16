@@ -382,6 +382,7 @@ module.exports = ctx => {
       this._modelAuth = null;
       this._modelAuthProvider = null;
       this._sequence = null;
+      this._config = null;
     }
 
     get model() {
@@ -409,6 +410,11 @@ module.exports = ctx => {
       return this._sequence;
     }
 
+    get config() {
+      if (!this._config) this._config = ctx.config.module(moduleInfo.relativeName);
+      return this._config;
+    }
+
     async anonymous() {
       // new
       const userId = await this.add({ disabled: 0, anonymous: 1 });
@@ -419,7 +425,7 @@ module.exports = ctx => {
     }
 
     async loginAsAnonymous() {
-      const maxAge = ctx.config.module(moduleInfo.relativeName).anonymous.maxAge;
+      const maxAge = this.config.anonymous.maxAge;
       let userId = ctx.cookies.get('anonymous', { encrypt: true });
       let userOp;
       if (userId) {
@@ -470,21 +476,66 @@ module.exports = ctx => {
       }
     }
 
-    async signup(user, ops) {
-      ops = ops || {};
-      const userId = await this.add(user);
-      if (ops.addRole !== false) {
-        const role = await ctx.meta.role.getSystemRole({ roleName: ctx.config.module(moduleInfo.relativeName).signupRoleName });
+    async setActivated({ user }) {
+      // save
+      if (user.activated !== undefined) delete user.activated;
+      await this.save({ user });
+      // tryActivate
+      const tryActivate = user.emailConfirmed || user.mobileVerified;
+      if (tryActivate) {
+        await this.userRoleStageActivate({ userId: user.id });
+      }
+    }
+
+    async userRoleStageAdd({ userId }) {
+      // roleNames
+      let roleNames = this.config.account.needActivation ? 'registered' : this.config.account.activatedRoles;
+      roleNames = roleNames.split(',');
+      for (const roleName of roleNames) {
+        const role = await ctx.meta.role.get({ roleName });
         await ctx.meta.role.addUserRole({ userId, roleId: role.id });
       }
-      return userId;
+    }
+
+    async userRoleStageActivate({ userId }) {
+      // get
+      const user = await this.get({ id: userId });
+      // only once
+      if (user.activated) return;
+      // adjust role
+      if (this.config.account.needActivation) {
+        // userRoles
+        const userRoles = await ctx.meta.role.getUserRolesDirect({ userId });
+        // userRolesMap
+        const map = {};
+        for (const role of userRoles) {
+          map[role.roleName] = role;
+        }
+        // remove from registered
+        if (map.registered) {
+          const roleRegistered = await ctx.meta.role.getSystemRole({ roleName: 'registered' });
+          await ctx.meta.role.deleteUserRole({ userId, roleId: roleRegistered.id });
+        }
+        // add to activated
+        const roleNames = this.config.account.activatedRoles.split(',');
+        for (const roleName of roleNames) {
+          if (!map[roleName]) {
+            const role = await ctx.meta.role.get({ roleName });
+            await ctx.meta.role.addUserRole({ userId, roleId: role.id });
+          }
+        }
+      }
+      // set activated
+      await this.save({
+        user: { id: userId, activated: 1 },
+      });
     }
 
     async exists({ userName, email, mobile }) {
       userName = userName || '';
       email = email || '';
       mobile = mobile || '';
-      if (ctx.config.module(moduleInfo.relativeName).checkUserName === true && userName) {
+      if (this.config.checkUserName === true && userName) {
         return await this.model.queryOne(
           `select * from aUser
              where iid=? and deleted=0 and ((userName=?) or (?<>'' and email=?) or (?<>'' and mobile=?))`,
@@ -496,12 +547,14 @@ module.exports = ctx => {
         [ ctx.instance.id, email, email, mobile, mobile ]);
     }
 
-    async add({ disabled = 0, userName, realName, email, mobile, avatar, motto, locale, anonymous = 0 }) {
+    async add({
+      disabled = 0, userName, realName, email, mobile, avatar, motto, locale, anonymous = 0,
+    }) {
       // check if incomplete information
       let needCheck;
       if (anonymous) {
         needCheck = false;
-      } else if (ctx.config.module(moduleInfo.relativeName).checkUserName === true) {
+      } else if (this.config.checkUserName === true) {
         needCheck = userName || email || mobile;
       } else {
         needCheck = email || mobile;
@@ -531,7 +584,9 @@ module.exports = ctx => {
     }
 
     async save({ user }) {
-      await this.model.update(user);
+      if (Object.keys(user).length > 1) {
+        await this.model.update(user);
+      }
     }
 
     async agent({ userId }) {
@@ -623,11 +678,8 @@ module.exports = ctx => {
         `, [ ctx.instance.id, userId ]);
     }
 
-    async verify(profileUser) {
-      // state
-      //   login/associate
-      const state = ctx.request.query.state || 'login';
-
+    // state: login/associate
+    async verify({ state = 'login', profileUser }) {
       // verifyUser
       const verifyUser = {};
 
@@ -636,7 +688,7 @@ module.exports = ctx => {
         module: profileUser.module,
         providerName: profileUser.provider,
       });
-      const config = JSON.parse(providerItem.config);
+      // const config = JSON.parse(providerItem.config);
 
       // check if auth exists
       const authItem = await this.modelAuth.get({
@@ -668,7 +720,9 @@ module.exports = ctx => {
       };
 
       // columns
-      const columns = [ 'userName', 'realName', 'email', 'mobile', 'avatar', 'motto', 'locale' ];
+      const columns = [
+        'userName', 'realName', 'email', 'mobile', 'avatar', 'motto', 'locale',
+      ];
 
       //
       let userId;
@@ -681,6 +735,12 @@ module.exports = ctx => {
         await this._updateUserInfo(userId, profileUser.profile, columns);
         // force update auth's userId, maybe different
         if (authUserId !== userId) {
+          // delete old records
+          await this.modelAuth.delete({
+            providerId: providerItem.id,
+            userId,
+          });
+          // update
           await this.modelAuth.update({
             id: authId,
             userId,
@@ -702,10 +762,8 @@ module.exports = ctx => {
           await this._updateUserInfo(user.id, profileUser.profile, columns);
           userId = user.id;
         } else {
-          // check if addUser
-          if (config.addUser === false) return false;
           // add user
-          userId = await this._addUserInfo(profileUser.profile, columns, config.addRole !== false);
+          userId = await this._addUserInfo(profileUser.profile, columns);
           user = await this.model.get({ id: userId });
           // update auth's userId
           await this.modelAuth.update({
@@ -722,17 +780,35 @@ module.exports = ctx => {
       if (profileUser.maxAge === 0) {
         ctx.session.maxAge = 0;
       } else {
-        ctx.session.maxAge = profileUser.maxAge || ctx.config.module(moduleInfo.relativeName).registered.maxAge;
+        ctx.session.maxAge = profileUser.maxAge || this.config.authenticated.maxAge;
       }
       return verifyUser;
     }
 
-    async _addUserInfo(profile, columns, addRole) {
+    async _addUserInfo(profile, columns) {
       const user = {};
       for (const column of columns) {
+        // others
         await this._setUserInfoColumn(user, column, profile[column]);
       }
-      return await this.signup(user, { addRole });
+      // add user
+      const userId = await this.add(user);
+      // add role
+      await this.userRoleStageAdd({ userId });
+      // try setActivated
+      const data = { id: userId };
+      // emailConfirmed
+      if (profile.emailConfirmed && profile.email) {
+        data.emailConfirmed = 1;
+      }
+      // mobileVerified
+      if (profile.mobileVerified && profile.mobile) {
+        data.mobileVerified = 1;
+      }
+      // setActivated
+      await this.setActivated({ user: data });
+      // ok
+      return userId;
     }
     async _updateUserInfo(userId, profile, columns) {
       const users = await this.model.select({
@@ -744,10 +820,11 @@ module.exports = ctx => {
         await this._setUserInfoColumn(user, column, profile[column]);
       }
       user.id = userId;
-      await this.model.update(user);
+      await this.save({ user });
     }
 
     async _setUserInfoColumn(user, column, value) {
+      // only set when empty
       if (user[column] || !value) return;
       // userName
       if (column === 'userName') {
@@ -760,7 +837,7 @@ module.exports = ctx => {
       } else if (column === 'email' || column === 'mobile') {
         const res = await this.exists({ [column]: value });
         if (res) {
-          value = '';
+          value = null;
         }
       }
       if (value) {
@@ -905,9 +982,9 @@ module.exports = app => {
   // services
   const services = __webpack_require__(52)(app);
   // models
-  const models = __webpack_require__(71)(app);
+  const models = __webpack_require__(72)(app);
   // meta
-  const meta = __webpack_require__(78)(app);
+  const meta = __webpack_require__(79)(app);
 
   return {
     routes,
@@ -999,15 +1076,26 @@ module.exports = appInfo => {
   config.anonymous = {
     maxAge: 365 * 24 * 3600 * 1000, // 365 天
   };
-  // registered or rememberMe
-  config.registered = {
+  // authenticated or rememberMe
+  config.authenticated = {
     maxAge: 30 * 24 * 3600 * 1000, // 30 天
   };
   // checkUserName
   config.checkUserName = true;
-  // signupRoleName
-  //  default is 'activated', if need activating by mobile/email, then add to 'registered' first
-  config.signupRoleName = 'activated';
+  // account
+  config.account = {
+    needActivation: true,
+    activationWays: 'mobile,email',
+    url: {
+      emailConfirm: '/a/authsimple/emailConfirm',
+      mobileVerify: '',
+      passwordChange: '/a/authsimple/passwordChange',
+      passwordForgot: '/a/authsimple/passwordForgot',
+      passwordReset: '/a/authsimple/passwordReset',
+    },
+    //  default is 'activated', if need activating by mobile/email, then add to 'registered' first
+    activatedRoles: 'activated',
+  };
 
   // public dir
   config.publicDir = '';
@@ -1287,6 +1375,11 @@ const Fn = module.exports = ctx => {
         await fse.ensureDir(dir);
       }
       return dir;
+    }
+
+    // alert
+    getAlertUrl({ data }) {
+      return this.getAbsoluteUrl(`/#!/a/base/base/alert?data=${encodeURIComponent(JSON.stringify(data))}`);
     }
 
     modules() {
@@ -2757,13 +2850,19 @@ const Fn = module.exports = ctx => {
     // add user role
     async addUserRole({ userId, roleId }) {
       const res = await this.modelUserRole.insert({
-        userId,
-        roleId,
+        userId, roleId,
       });
       return res.insertId;
     }
 
-    async deleteUserRole({ id }) {
+    async deleteUserRole({ id, userId, roleId }) {
+      if (!id) {
+        const item = await this.modelUserRole.get({
+          userId, roleId,
+        });
+        if (!item) return;
+        id = item.id;
+      }
       await this.modelUserRole.delete({ id });
     }
 
@@ -3131,6 +3230,16 @@ module.exports = ctx => {
     fromNow(date) {
       if (typeof (date) !== 'object') date = new Date(date);
       return moment(date).fromNow();
+    }
+
+    replaceTemplate(content, scope) {
+      if (!content) return null;
+      return content.toString().replace(/(\\)?{{ *(\w+) *}}/g, (block, skip, key) => {
+        if (skip) {
+          return block.substring(skip.length);
+        }
+        return scope[key] !== undefined ? scope[key] : '';
+      });
     }
 
   }
@@ -3925,7 +4034,10 @@ module.exports = app => {
 
 /***/ }),
 /* 50 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(0);
+const extend = require3('extend2');
 
 module.exports = app => {
 
@@ -3968,8 +4080,10 @@ module.exports = app => {
       await this.ctx.service.auth.registerAllProviders();
       // verify
       this.app.passport.verify(async function(ctx, profileUser) {
+        // state: login/associate
+        const state = ctx.request.query.state || 'login';
         // user verify
-        const verifyUser = await ctx.meta.user.verify(profileUser);
+        const verifyUser = await ctx.meta.user.verify({ state, profileUser });
         // user verify event
         await ctx.meta.event.invoke({
           module: 'a-base', name: 'userVerify', data: { verifyUser, profileUser },
@@ -3992,6 +4106,7 @@ module.exports = app => {
       const info = {
         user: this.ctx.user,
         instance: this.getInstance(),
+        config: this.getConfig(),
       };
       // login info event
       await this.ctx.meta.event.invoke({
@@ -4005,6 +4120,21 @@ module.exports = app => {
         name: this.ctx.instance.name,
         title: this.ctx.instance.title,
       };
+    }
+
+    getConfig() {
+      // account
+      const account = extend(true, {}, this.ctx.config.account);
+      account.activatedRoles = undefined;
+      // config
+      const config = {
+        modules: {
+          'a-base': {
+            account,
+          },
+        },
+      };
+      return config;
     }
 
   }
@@ -4092,14 +4222,14 @@ module.exports = app => {
 /***/ (function(module, exports, __webpack_require__) {
 
 const version = __webpack_require__(53);
-const base = __webpack_require__(63);
-const user = __webpack_require__(64);
-const atom = __webpack_require__(65);
-const atomClass = __webpack_require__(66);
-const atomAction = __webpack_require__(67);
-const auth = __webpack_require__(68);
-const func = __webpack_require__(69);
-const comment = __webpack_require__(70);
+const base = __webpack_require__(64);
+const user = __webpack_require__(65);
+const atom = __webpack_require__(66);
+const atomClass = __webpack_require__(67);
+const atomAction = __webpack_require__(68);
+const auth = __webpack_require__(69);
+const func = __webpack_require__(70);
+const comment = __webpack_require__(71);
 
 module.exports = app => {
   const services = {
@@ -4125,15 +4255,21 @@ const VersionUpdate1Fn = __webpack_require__(54);
 const VersionUpdate2Fn = __webpack_require__(56);
 const VersionUpdate3Fn = __webpack_require__(57);
 const VersionUpdate4Fn = __webpack_require__(58);
-const VersionInit2Fn = __webpack_require__(59);
-const VersionInit4Fn = __webpack_require__(61);
-const VersionInit5Fn = __webpack_require__(62);
+const VersionUpdate6Fn = __webpack_require__(59);
+const VersionInit2Fn = __webpack_require__(60);
+const VersionInit4Fn = __webpack_require__(62);
+const VersionInit5Fn = __webpack_require__(63);
 
 module.exports = app => {
 
   class Version extends app.Service {
 
     async update(options) {
+
+      if (options.version === 6) {
+        const versionUpdate6 = new (VersionUpdate6Fn(this.ctx))();
+        await versionUpdate6.run();
+      }
 
       if (options.version === 4) {
         const versionUpdate4 = new (VersionUpdate4Fn(this.ctx))();
@@ -5450,11 +5586,38 @@ end
 
 /***/ }),
 /* 59 */
+/***/ (function(module, exports) {
+
+module.exports = function(ctx) {
+
+  class VersionUpdate6 {
+
+    async run() {
+
+      // aUser
+      const sql = `
+        ALTER TABLE aUser
+          ADD COLUMN activated int(11) DEFAULT '0',
+          ADD COLUMN emailConfirmed int(11) DEFAULT '0',
+          ADD COLUMN mobileVerified int(11) DEFAULT '0'
+                  `;
+      await ctx.model.query(sql);
+
+    }
+
+  }
+
+  return VersionUpdate6;
+};
+
+
+/***/ }),
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
 const extend = require3('extend2');
-const initData = __webpack_require__(60);
+const initData = __webpack_require__(61);
 
 module.exports = function(ctx) {
 
@@ -5498,6 +5661,10 @@ module.exports = function(ctx) {
       userRoot.item.email = options.email;
       userRoot.item.mobile = options.mobile;
       const userId = await ctx.meta.user.add(userRoot.item);
+      // activated
+      await ctx.meta.user.save({
+        user: { id: userId, activated: 1 },
+      });
       // user->role
       await ctx.meta.role.addUserRole({
         userId,
@@ -5512,7 +5679,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports) {
 
 // roles
@@ -5579,7 +5746,7 @@ module.exports = {
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -5608,7 +5775,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -5661,7 +5828,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5703,7 +5870,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5742,7 +5909,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5808,7 +5975,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5834,7 +6001,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5852,7 +6019,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -5889,12 +6056,18 @@ module.exports = app => {
       };
       // authenticate
       const authenticate = createAuthenticate(moduleRelativeName, providerName, config);
+      // middlewares
+      const middlewaresPost = [];
+      const middlewaresGet = [];
+      if (!this.ctx.app.meta.isTest) middlewaresPost.push('inner');
+      middlewaresPost.push(authenticate);
+      middlewaresGet.push(authenticate);
       // mount routes
       const routes = [
-        { name: `get:${config.loginURL}`, method: 'get', path: '/' + config.loginURL, middlewares: [ authenticate ], meta: { auth: { enable: false } } },
-        { name: `post:${config.loginURL}`, method: 'post', path: '/' + config.loginURL, middlewares: [ authenticate ], meta: { auth: { enable: false } } },
-        { name: `get:${config.callbackURL}`, method: 'get', path: '/' + config.callbackURL, middlewares: [ authenticate ], meta: { auth: { enable: false } } },
-        { name: `post:${config.callbackURL}`, method: 'post', path: '/' + config.callbackURL, middlewares: [ authenticate ], meta: { auth: { enable: false } } },
+        { name: `get:${config.loginURL}`, method: 'get', path: '/' + config.loginURL, middlewares: middlewaresGet, meta: { auth: { enable: false } } },
+        { name: `post:${config.loginURL}`, method: 'post', path: '/' + config.loginURL, middlewares: middlewaresPost, meta: { auth: { enable: false } } },
+        { name: `get:${config.callbackURL}`, method: 'get', path: '/' + config.callbackURL, middlewares: middlewaresGet, meta: { auth: { enable: false } } },
+        // { name: `post:${config.callbackURL}`, method: 'post', path: '/' + config.callbackURL, middlewares, meta: { auth: { enable: false } } },
       ];
       for (const route of routes) {
         this.app.meta.router.unRegister(route.name);
@@ -5988,7 +6161,7 @@ function createAuthenticate(moduleRelativeName, providerName, _config) {
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6027,7 +6200,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -6239,7 +6412,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const atom = __webpack_require__(4);
@@ -6249,14 +6422,14 @@ const auth = __webpack_require__(19);
 const authProvider = __webpack_require__(20);
 const role = __webpack_require__(10);
 const roleInc = __webpack_require__(11);
-const roleIncRef = __webpack_require__(72);
-const roleRef = __webpack_require__(73);
+const roleIncRef = __webpack_require__(73);
+const roleRef = __webpack_require__(74);
 const roleRight = __webpack_require__(13);
 const roleRightRef = __webpack_require__(14);
 const user = __webpack_require__(17);
 const userAgent = __webpack_require__(18);
 const userRole = __webpack_require__(12);
-const label = __webpack_require__(74);
+const label = __webpack_require__(75);
 const atomLabel = __webpack_require__(6);
 const atomLabelRef = __webpack_require__(7);
 const atomStar = __webpack_require__(5);
@@ -6264,9 +6437,9 @@ const func = __webpack_require__(1);
 const functionStar = __webpack_require__(8);
 const functionLocale = __webpack_require__(9);
 const roleFunction = __webpack_require__(15);
-const comment = __webpack_require__(75);
-const commentView = __webpack_require__(76);
-const commentHeart = __webpack_require__(77);
+const comment = __webpack_require__(76);
+const commentView = __webpack_require__(77);
+const commentHeart = __webpack_require__(78);
 
 module.exports = app => {
   const models = {
@@ -6301,7 +6474,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6319,7 +6492,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6345,7 +6518,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6363,7 +6536,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6381,7 +6554,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6399,7 +6572,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6417,14 +6590,14 @@ module.exports = app => {
 
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
   // keywords
-  const keywords = __webpack_require__(79)(app);
+  const keywords = __webpack_require__(80)(app);
   // schemas
-  const schemas = __webpack_require__(80)(app);
+  const schemas = __webpack_require__(81)(app);
   // meta
   const meta = {
     base: {
@@ -6480,7 +6653,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -6513,7 +6686,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6528,6 +6701,7 @@ module.exports = app => {
         ebTitle: 'Username',
         notEmpty: true,
         'x-exists': true,
+        ebReadOnly: true,
       },
       realName: {
         type: 'string',
@@ -6539,16 +6713,18 @@ module.exports = app => {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Email',
-        notEmpty: true,
-        format: 'email',
+        // notEmpty: true,
+        // format: 'email',
         'x-exists': true,
+        ebReadOnly: true,
       },
       mobile: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Mobile',
-        notEmpty: true,
+        // notEmpty: true,
         'x-exists': true,
+        ebReadOnly: true,
       },
       motto: {
         type: 'string',
