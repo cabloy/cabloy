@@ -26,7 +26,6 @@ const Fn = module.exports = ctx => {
       // get
       const key = utils.getCacheKey({ user });
       const value = await cache.get(key);
-      console.log(value);
       if (!value) ctx.throw(403);
       // verify provider
       if (provider.module !== value.provider.module || provider.name !== value.provider.name) ctx.throw(403);
