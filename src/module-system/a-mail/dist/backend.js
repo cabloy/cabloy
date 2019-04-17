@@ -105,19 +105,19 @@ module.exports = app => {
 
 const config = __webpack_require__(2);
 const locales = __webpack_require__(3);
-const errors = __webpack_require__(5);
-const middlewares = __webpack_require__(6);
+const errors = __webpack_require__(6);
+const middlewares = __webpack_require__(7);
 
 module.exports = app => {
 
   // routes
-  const routes = __webpack_require__(9)(app);
+  const routes = __webpack_require__(10)(app);
   // services
-  const services = __webpack_require__(12)(app);
+  const services = __webpack_require__(13)(app);
   // models
-  const models = __webpack_require__(16)(app);
+  const models = __webpack_require__(17)(app);
   // meta
-  const meta = __webpack_require__(17)(app);
+  const meta = __webpack_require__(18)(app);
 
   return {
     routes,
@@ -196,7 +196,8 @@ module.exports = appInfo => {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
-  'zh-cn': __webpack_require__(4),
+  'en-us': __webpack_require__(4),
+  'zh-cn': __webpack_require__(5),
 };
 
 
@@ -205,11 +206,21 @@ module.exports = {
 /***/ (function(module, exports) {
 
 module.exports = {
+  mailhostNotConfigAlert: 'Please set module config: [a-mail].scenes.system',
 };
 
 
 /***/ }),
 /* 5 */
+/***/ (function(module, exports) {
+
+module.exports = {
+  mailhostNotConfigAlert: '请设置模块配置: [a-mail].scenes.system',
+};
+
+
+/***/ }),
+/* 6 */
 /***/ (function(module, exports) {
 
 // error code should start from 1001
@@ -218,10 +229,10 @@ module.exports = {
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const mail = __webpack_require__(7);
+const mail = __webpack_require__(8);
 
 module.exports = {
   mail,
@@ -229,11 +240,11 @@ module.exports = {
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // mail
-const MailFn = __webpack_require__(8);
+const MailFn = __webpack_require__(9);
 const MAIL = Symbol('CTX#__MAIL');
 
 
@@ -256,7 +267,7 @@ module.exports = () => {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const modelMailFn = __webpack_require__(0);
@@ -306,11 +317,11 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(10);
-const mail = __webpack_require__(11);
+const version = __webpack_require__(11);
+const mail = __webpack_require__(12);
 
 module.exports = app => {
   const routes = [
@@ -331,7 +342,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -358,7 +369,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -382,11 +393,11 @@ module.exports = app => {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(13);
-const mail = __webpack_require__(14);
+const version = __webpack_require__(14);
+const mail = __webpack_require__(15);
 
 module.exports = app => {
   const services = {
@@ -398,7 +409,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -442,10 +453,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(15);
+const require3 = __webpack_require__(16);
 const nodemailer = require3('nodemailer');
 const chalk = require3('chalk');
 
@@ -497,6 +508,11 @@ module.exports = app => {
         } else {
           scene = this.ctx.config.scenes[mail.scene];
         }
+        // check if empty
+        if (!scene.transport.host) {
+          console.log(chalk.keyword('orange')(this.ctx.text('mailhostNotConfigAlert')));
+          return false;
+        }
         // transporter
         const transporter = nodemailer.createTransport(scene.transport, scene.defaults);
         // send
@@ -543,13 +559,13 @@ module.exports = app => {
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports) {
 
 module.exports = require("require3");
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const mail = __webpack_require__(0);
@@ -563,11 +579,11 @@ module.exports = app => {
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
-  const schemas = __webpack_require__(18)(app);
+  const schemas = __webpack_require__(19)(app);
   const meta = {
     base: {
       atoms: {
@@ -588,7 +604,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports) {
 
 module.exports = app => {

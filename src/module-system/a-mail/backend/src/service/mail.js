@@ -50,6 +50,11 @@ module.exports = app => {
         } else {
           scene = this.ctx.config.scenes[mail.scene];
         }
+        // check if empty
+        if (!scene.transport.host) {
+          console.log(chalk.keyword('orange')(this.ctx.text('mailhostNotConfigAlert')));
+          return false;
+        }
         // transporter
         const transporter = nodemailer.createTransport(scene.transport, scene.defaults);
         // send
