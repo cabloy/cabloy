@@ -42,10 +42,16 @@ module.exports = function(loader, modules) {
         }
 
         // middlewares: start
-        const fnStart = (ctx, next) => {
+        const fnStart = async (ctx, next) => {
+          // info
           ctx[MWSTATUS] = {};
           ctx.route = _route;
-          return next();
+          // next
+          await next();
+          // invoke callbackes
+          for (const cb of ctx.dbMeta.callbackes) {
+            await cb();
+          }
         };
         fnStart._name = 'start';
         args.push(fnStart);

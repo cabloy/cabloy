@@ -23,21 +23,18 @@ module.exports = () => {
 };
 
 async function handleTransaction(ctx, success) {
-  if (ctx.dbMeta.master) {
-    if (ctx.dbMeta.connection.conn) {
-      const tran = ctx.dbMeta.connection.conn;
-      ctx.dbMeta.connection.conn = null;
-      if (success) {
-        await tran.commit();
-        // callbackes
-        for (const cb of ctx.dbMeta.callbackes) {
-          await cb();
-        }
-      } else {
-        await tran.rollback();
-      }
+  if (!ctx.dbMeta.master) return;
+  if (ctx.dbMeta.connection.conn) {
+    const tran = ctx.dbMeta.connection.conn;
+    ctx.dbMeta.connection.conn = null;
+    if (success) {
+      // commit
+      await tran.commit();
+    } else {
+      // rollback
+      await tran.rollback();
     }
-    // reset flag
-    ctx.dbMeta.transaction = false;
   }
+  // reset flag, only for master
+  ctx.dbMeta.transaction = false;
 }

@@ -33,25 +33,23 @@ module.exports = {
       this[DATABASEMETA] = {
         master: true, transaction: false, connection: { conn: null }, callbackes: [],
         next: async cb => {
-          if (this[DATABASEMETA].transaction) {
-            this[DATABASEMETA].callbackes.push(cb);
-          } else {
-            await cb();
-          }
+          this[DATABASEMETA].callbackes.push(cb);
         },
       };
     }
     return this[DATABASEMETA];
   },
   set dbMeta(metaCaller) {
+    // transaction
     if (metaCaller.transaction) {
       this.dbMeta.master = false; // false only on metaCaller.transaction=true
       this.dbMeta.transaction = true;
       this.dbMeta.connection = metaCaller.connection;
-      this.dbMeta.next = cb => {
-        metaCaller.next(cb);
-      };
     }
+    // always route to caller
+    this.dbMeta.next = cb => {
+      metaCaller.next(cb);
+    };
   },
   get innerAccess() {
     return this[INNERACCESS];
