@@ -43,7 +43,7 @@ export default {
     setValue(data, key, value, property) {
       let _value;
 
-      if (property.ebType === 'select' && (value === '' || value === undefined || value === null)) {
+      if (property.ebType === 'select' && this.checkIfEmptyForSelect(value)) {
         _value = undefined; // for distinguish from 0
       } else {
         if (property.type === 'number') {
@@ -62,6 +62,9 @@ export default {
       if (_valueOld !== _value) {
         this.$emit('change', _value);
       }
+    },
+    checkIfEmptyForSelect(value) {
+      return value === '' || value === undefined || value === null;
     },
     adjustDataPath(dataPath) {
       if (!dataPath) return dataPath;
@@ -245,10 +248,11 @@ export default {
     },
     renderSelect(c, data, pathParent, key, property, meta) {
       const title = this.getTitle(key, property);
+      const valueCurrent = this.getValue(data, key, property);
       const attrs = {
         name: key,
         dataPath: pathParent + key,
-        value: this.getValue(data, key, property),
+        value: valueCurrent,
         readOnly: this.validate.readOnly || property.ebReadOnly,
       };
       if (meta.options) attrs.options = meta.options;
@@ -261,6 +265,17 @@ export default {
       if (property.ebOptionTitleKey) attrs.optionTitleKey = property.ebOptionTitleKey;
       if (property.ebOptionValueKey) attrs.optionValueKey = property.ebOptionValueKey;
       if (property.ebMultiple) attrs.multiple = property.ebMultiple;
+      // specially, not showing blank option when notEmpty and has value
+      if (property.notEmpty && !this.checkIfEmptyForSelect(valueCurrent)) {
+        attrs.optionsBlankAuto = false;
+        if (attrs.options && attrs.options.length > 0) {
+          const opt = attrs.options[0];
+          if (!opt || this.checkIfEmptyForSelect(opt.value)) {
+            attrs.options.shift();
+          }
+        }
+      }
+      // render
       return c('eb-list-item', {
         key,
         staticClass: property.ebReadOnly ? 'text-color-gray' : '',

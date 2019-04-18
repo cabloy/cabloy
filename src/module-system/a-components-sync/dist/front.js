@@ -1451,7 +1451,7 @@ var select_component = normalizeComponent(
     setValue: function setValue(data, key, value, property) {
       var _value;
 
-      if (property.ebType === 'select' && (value === '' || value === undefined || value === null)) {
+      if (property.ebType === 'select' && this.checkIfEmptyForSelect(value)) {
         _value = undefined;
       } else {
         if (property.type === 'number') {
@@ -1469,6 +1469,9 @@ var select_component = normalizeComponent(
       if (_valueOld !== _value) {
         this.$emit('change', _value);
       }
+    },
+    checkIfEmptyForSelect: function checkIfEmptyForSelect(value) {
+      return value === '' || value === undefined || value === null;
     },
     adjustDataPath: function adjustDataPath(dataPath) {
       if (!dataPath) return dataPath;
@@ -1661,10 +1664,11 @@ var select_component = normalizeComponent(
       var _this4 = this;
 
       var title = this.getTitle(key, property);
+      var valueCurrent = this.getValue(data, key, property);
       var attrs = {
         name: key,
         dataPath: pathParent + key,
-        value: this.getValue(data, key, property),
+        value: valueCurrent,
         readOnly: this.validate.readOnly || property.ebReadOnly
       };
       if (meta.options) attrs.options = meta.options;
@@ -1679,6 +1683,19 @@ var select_component = normalizeComponent(
       if (property.ebOptionTitleKey) attrs.optionTitleKey = property.ebOptionTitleKey;
       if (property.ebOptionValueKey) attrs.optionValueKey = property.ebOptionValueKey;
       if (property.ebMultiple) attrs.multiple = property.ebMultiple;
+
+      if (property.notEmpty && !this.checkIfEmptyForSelect(valueCurrent)) {
+        attrs.optionsBlankAuto = false;
+
+        if (attrs.options && attrs.options.length > 0) {
+          var opt = attrs.options[0];
+
+          if (!opt || this.checkIfEmptyForSelect(opt.value)) {
+            attrs.options.shift();
+          }
+        }
+      }
+
       return c('eb-list-item', {
         key: key,
         staticClass: property.ebReadOnly ? 'text-color-gray' : '',
@@ -1717,7 +1734,7 @@ var validateItem_component = normalizeComponent(
   validateItem_staticRenderFns,
   false,
   null,
-  "5b650ee6",
+  "150068cf",
   null
   
 )
