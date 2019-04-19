@@ -212,7 +212,7 @@ module.exports = app => {
     }
 
     async _deleteArticle({ atomClass, key, article, inner }) {
-      await this.ctx.dbMeta.next(async () => {
+      this.ctx.tail(async () => {
         // queue not async
         await this.ctx.app.meta.queue.push({
           subdomain: this.ctx.subdomain,
@@ -228,7 +228,7 @@ module.exports = app => {
     }
 
     async _renderArticle({ atomClass, key, inner }) {
-      await this.ctx.dbMeta.next(async () => {
+      this.ctx.tail(async () => {
         // queue not async
         await this.ctx.app.meta.queue.push({
           subdomain: this.ctx.subdomain,
