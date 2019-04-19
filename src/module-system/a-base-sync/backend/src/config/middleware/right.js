@@ -70,7 +70,6 @@ async function checkAtom(moduleInfo, options, ctx) {
     if (!res) ctx.throw(403);
     ctx.request.body.key.itemId = res.itemId;
     ctx.meta._atom = res;
-    // ctx.request.body.atom = res;  // atom maybe from client
   }
 
   // other action
@@ -83,14 +82,6 @@ async function checkAtom(moduleInfo, options, ctx) {
     if (!res) ctx.throw(403);
     ctx.request.body.key.itemId = res.itemId;
     ctx.meta._atom = res;
-  }
-
-  // prepare validate: write
-  if (options.action === constant.atom.action.write) {
-    ctx.meta._validator = await ctx.meta.atom.validator({
-      atomClass: { id: ctx.meta._atom.atomClassId },
-      user: ctx.user.op,
-    });
   }
 
 }

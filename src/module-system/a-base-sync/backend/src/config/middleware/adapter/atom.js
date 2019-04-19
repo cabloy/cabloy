@@ -83,10 +83,10 @@ const Fn = module.exports = ctx => {
       });
 
       // add item
-      const moduleInfo = mparse.parseInfo(atomClass.module);
+      const _moduleInfo = mparse.parseInfo(atomClass.module);
       const res = await ctx.performAction({
         method: 'post',
-        url: `/${moduleInfo.url}/${atomClass.atomClassName}/create`,
+        url: `/${_moduleInfo.url}/${atomClass.atomClassName}/create`,
         body: {
           atomClass,
           key: { atomId },
@@ -129,11 +129,11 @@ const Fn = module.exports = ctx => {
       key.itemId = item.id;
 
       // read item
-      const moduleInfo = mparse.parseInfo(atomClass.module);
+      const _moduleInfo = mparse.parseInfo(atomClass.module);
       try {
         await ctx.performAction({
           method: 'post',
-          url: `/${moduleInfo.url}/${atomClass.atomClassName}/read`,
+          url: `/${_moduleInfo.url}/${atomClass.atomClassName}/read`,
           body: {
             atomClass,
             key,
@@ -174,11 +174,11 @@ const Fn = module.exports = ctx => {
 
       // select items
       if (atomClass) {
-        const moduleInfo = mparse.parseInfo(atomClass.module);
+        const _moduleInfo = mparse.parseInfo(atomClass.module);
         try {
           await ctx.performAction({
             method: 'post',
-            url: `/${moduleInfo.url}/${atomClass.atomClassName}/select`,
+            url: `/${_moduleInfo.url}/${atomClass.atomClassName}/select`,
             body: {
               atomClass,
               options,
@@ -198,23 +198,24 @@ const Fn = module.exports = ctx => {
     async write({ key, item, user }) {
       const atomClass = await ctx.meta.atomClass.getByAtomId({ atomId: key.atomId });
 
-      // write atom
-      await this._writeAtom({ key, item, user });
-
       // write item
-      const moduleInfo = mparse.parseInfo(atomClass.module);
-      await ctx.performAction({
-        method: 'post',
-        url: `/${moduleInfo.url}/${atomClass.atomClassName}/write`,
-        body: {
-          atomClass,
-          key,
-          item,
-          user,
-        },
-      });
+      try {
+        const _moduleInfo = mparse.parseInfo(atomClass.module);
+        await ctx.performAction({
+          method: 'post',
+          url: `/${_moduleInfo.url}/${atomClass.atomClassName}/write`,
+          body: {
+            atomClass,
+            key,
+            item,
+            user,
+          },
+        });
+      } catch (err) {
+        throw err;
+      }
 
-      // write atom again
+      // write atom only after item writed
       await this._writeAtom({ key, item, user });
     }
 
@@ -238,11 +239,11 @@ const Fn = module.exports = ctx => {
     async delete({ key, user }) {
       const atomClass = await ctx.meta.atomClass.getByAtomId({ atomId: key.atomId });
       // delete item
-      const moduleInfo = mparse.parseInfo(atomClass.module);
+      const _moduleInfo = mparse.parseInfo(atomClass.module);
       try {
         await ctx.performAction({
           method: 'post',
-          url: `/${moduleInfo.url}/${atomClass.atomClassName}/delete`,
+          url: `/${_moduleInfo.url}/${atomClass.atomClassName}/delete`,
           body: {
             atomClass,
             key,
@@ -265,10 +266,10 @@ const Fn = module.exports = ctx => {
     // action
     async action({ action, key, user }) {
       const atomClass = await ctx.meta.atomClass.getByAtomId({ atomId: key.atomId });
-      const moduleInfo = mparse.parseInfo(atomClass.module);
+      const _moduleInfo = mparse.parseInfo(atomClass.module);
       return await ctx.performAction({
         method: 'post',
-        url: `/${moduleInfo.url}/${atomClass.atomClassName}/action`,
+        url: `/${_moduleInfo.url}/${atomClass.atomClassName}/action`,
         body: {
           action,
           atomClass,
@@ -287,15 +288,15 @@ const Fn = module.exports = ctx => {
         atomEnabled,
         userIdUpdated: user.id,
       });
-      if (res.affectedRows !== 1) ctx.throw(1003);
+      if (res.affectedRows !== 1) ctx.throw.module(moduleInfo.relativeName, 1003);
       _atom.atomEnabled = atomEnabled;
       // enable item
       const atomClass = await ctx.meta.atomClass.getByAtomId({ atomId: key.atomId });
-      const moduleInfo = mparse.parseInfo(atomClass.module);
+      const _moduleInfo = mparse.parseInfo(atomClass.module);
       try {
         await ctx.performAction({
           method: 'post',
-          url: `/${moduleInfo.url}/${atomClass.atomClassName}/enable`,
+          url: `/${_moduleInfo.url}/${atomClass.atomClassName}/enable`,
           body: {
             atomClass,
             key,
@@ -320,7 +321,7 @@ const Fn = module.exports = ctx => {
         atomFlag,
         userIdUpdated: user.id,
       });
-      if (res.affectedRows !== 1) ctx.throw(1003);
+      if (res.affectedRows !== 1) ctx.throw.module(moduleInfo.relativeName, 1003);
     }
 
     async flow({ key, atom: { atomFlow }, user }) {
@@ -329,7 +330,7 @@ const Fn = module.exports = ctx => {
         atomFlow,
         userIdUpdated: user.id,
       });
-      if (res.affectedRows !== 1) ctx.throw(1003);
+      if (res.affectedRows !== 1) ctx.throw.module(moduleInfo.relativeName, 1003);
     }
 
     async star({ key, atom: { star = 1 }, user }) {
@@ -488,7 +489,7 @@ const Fn = module.exports = ctx => {
       if (itemId !== undefined) params.itemId = itemId;
       params.updatedAt = new Date();
       const res = await this.modelAtom.update(params);
-      if (res.affectedRows !== 1) ctx.throw(1003);
+      if (res.affectedRows !== 1) ctx.throw.module(moduleInfo.relativeName, 1003);
     }
 
     async _delete({
