@@ -302,7 +302,7 @@ const Fn = module.exports = ctx => {
         message: JSON.stringify(message),
       });
       // queue not async
-      await ctx.dbMeta.next(async () => {
+      ctx.tail(async () => {
         await ctx.app.meta.queue.push({
           subdomain: ctx.subdomain,
           module: moduleInfo.relativeName,
