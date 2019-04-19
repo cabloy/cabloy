@@ -9,6 +9,10 @@ module.exports = app => {
       this.ctx.success();
     }
 
+    async validate3() {
+      this.ctx.success();
+    }
+
   }
   return TestController;
 };

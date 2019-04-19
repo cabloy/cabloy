@@ -7,9 +7,15 @@ module.exports = app => {
   ];
   if (app.meta.isTest || app.meta.isLocal) {
     routes = routes.concat([
-      { method: 'post', path: 'test/validate1', controller: test, middlewares: 'test,validate' },
+      { method: 'post', path: 'test/validate1', controller: test, middlewares: 'test,validate',
+        meta: { validate: { validator: 'test' } },
+      },
       { method: 'post', path: 'test/validate2', controller: test, middlewares: 'test,validate',
-        meta: { validate: { validator: 'test' } } },
+        meta: { validate: { validator: 'test' } },
+      },
+      { method: 'post', path: 'test/validate3', controller: test, middlewares: 'test,validate',
+        meta: { validate: { validator: 'test', schema: 'extra' } },
+      },
     ]);
   }
   return routes;

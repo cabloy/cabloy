@@ -4,10 +4,7 @@ describe('test/controller/test.test.js', () => {
 
   it('action:validate1', async () => {
     // schema: root
-    let result = await app.httpRequest().post(mockUrl('test/validate1')).send({
-      validation: {
-        validator: 'test',
-      },
+    const result = await app.httpRequest().post(mockUrl('test/validate1')).send({
       data: {
         info: {
           username: 'zhennann',
@@ -19,21 +16,6 @@ describe('test/controller/test.test.js', () => {
             info: {
               language: 'en-us',
             },
-          },
-        },
-      },
-    });
-    assert(result.body.code === 0);
-    // schema: extra
-    result = await app.httpRequest().post(mockUrl('test/validate1')).send({
-      validation: {
-        validator: 'test',
-        schema: 'extra',
-      },
-      data: {
-        extra: {
-          info: {
-            language: 'en-us',
           },
         },
       },
@@ -59,6 +41,20 @@ describe('test/controller/test.test.js', () => {
       },
     });
     assert(result.body.code !== 0);
+  });
+
+  it('action:validate3', async () => {
+    // schema: extra
+    const result = await app.httpRequest().post(mockUrl('test/validate3')).send({
+      data: {
+        extra: {
+          info: {
+            language: 'en-us',
+          },
+        },
+      },
+    });
+    assert(result.body.code === 0);
   });
 
 });

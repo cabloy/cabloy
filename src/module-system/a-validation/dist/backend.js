@@ -206,6 +206,7 @@ module.exports = {
   test: '测试',
   'Not empty': '不允许为空',
   'Not expected value': '不是期望的值',
+  'validator not specified': '没有指定validator',
 };
 
 
@@ -215,6 +216,7 @@ module.exports = {
 
 // error code should start from 1001
 module.exports = {
+  1001: 'validator not specified',
 };
 
 
@@ -322,13 +324,14 @@ const Fn = module.exports = ctx => {
 // request.body
 //   validate: module(optional), validator, schema(optional)
 //   data:
-module.exports = (options, app) => {
-  return async function validate(ctx, next) {
-    // ignore
-    const validator = options.validator || (ctx.meta._validator && ctx.meta._validator.validator);
-    if (!validator) return await next();
+module.exports = (options2, app) => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  return async function validate(ctx, next, options) {
+    // must exists
+    const validator = options.validator;
+    if (!validator) ctx.throw.module(moduleInfo.relativeName, 1001);
     // params
-    const module = options.module || (ctx.meta._validator && ctx.meta._validator.module) || ctx.module.info.relativeName;
+    const module = options.module || ctx.module.info.relativeName;
     const schema = options.schema || (ctx.meta._validator && ctx.meta._validator.schema);
     const data = ctx.request.body[options.data || 'data'];
     // if error throw 422
@@ -409,19 +412,11 @@ function createValidate(schemaRoot) {
     } catch (e) {
       const locale = ctx.locale.split('-')[0];
       if (locale !== 'en' && AjvLocalize[locale]) AjvLocalize[locale](e.errors);
-      const error = new Error();
-      error.code = 422;
-      error.message = e.errors;
-
-      if (e.stack) error.stack = e.stack;
-      if (e.name) error.name = e.name;
-      if (e.errno) error.errno = e.errno;
-      if (e.sqlMessage) error.sqlMessage = e.sqlMessage;
-      if (e.sqlState) error.sqlState = e.sqlState;
-      if (e.index) error.index = e.index;
-      if (e.sql) error.sql = e.sql;
-
-      throw error;
+      // error
+      throw ctx.createError({
+        ...e,
+        code: 422, message: e.errors,
+      });
     }
   };
 }
@@ -609,9 +604,15 @@ module.exports = app => {
   ];
   if (app.meta.isTest || app.meta.isLocal) {
     routes = routes.concat([
-      { method: 'post', path: 'test/validate1', controller: test, middlewares: 'test,validate' },
+      { method: 'post', path: 'test/validate1', controller: test, middlewares: 'test,validate',
+        meta: { validate: { validator: 'test' } },
+      },
       { method: 'post', path: 'test/validate2', controller: test, middlewares: 'test,validate',
-        meta: { validate: { validator: 'test' } } },
+        meta: { validate: { validator: 'test' } },
+      },
+      { method: 'post', path: 'test/validate3', controller: test, middlewares: 'test,validate',
+        meta: { validate: { validator: 'test', schema: 'extra' } },
+      },
     ]);
   }
   return routes;
@@ -647,6 +648,10 @@ module.exports = app => {
     }
 
     async validate2() {
+      this.ctx.success();
+    }
+
+    async validate3() {
       this.ctx.success();
     }
 
