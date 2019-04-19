@@ -5,6 +5,7 @@ const pathMatching = require('egg-path-matching');
 const util = require('./util.js');
 const loadMiddlewares = require('./middleware.js');
 const MWSTATUS = Symbol('Context#__wmstatus');
+const TAILCALLBACKS = Symbol.for('Context#__tailcallbacks');
 
 module.exports = function(loader, modules) {
 
@@ -43,14 +44,20 @@ module.exports = function(loader, modules) {
 
         // middlewares: start
         const fnStart = async (ctx, next) => {
-          // info
+          // status
           ctx[MWSTATUS] = {};
+          // route
           ctx.route = _route;
+          // dynamic options
+          if (!ctx.meta) ctx.meta = {};
+          ctx.meta.middlewares = {};
           // next
           await next();
           // invoke callbackes
-          for (const cb of ctx.dbMeta.callbackes) {
-            await cb();
+          if (ctx[TAILCALLBACKS]) {
+            for (const cb of ctx[TAILCALLBACKS]) {
+              await cb();
+            }
           }
         };
         fnStart._name = 'start';
@@ -134,13 +141,16 @@ function wrapMiddleware(item, route, loader) {
 
 function wrapMiddleware2(mw, options) {
   const fn = (ctx, next) => {
+    // dynamic options
+    const optionsDynamic = ctx.meta.middlewares[mw._name];
+    const options2 = optionsDynamic ? extend(true, {}, options, optionsDynamic) : options;
     // enable match ignore dependencies
-    if (options.enable === false || !middlewareMatch(ctx, options) || !middlewareDeps(ctx, options)) {
+    if (options2.enable === false || !middlewareMatch(ctx, options2) || !middlewareDeps(ctx, options2)) {
       ctx[MWSTATUS][mw._name] = false;
       return next();
     }
     // run
-    return mw(ctx, next);
+    return mw(ctx, next, options2);
   };
   fn._name = mw._name + 'middlewareWrapper';
   return fn;

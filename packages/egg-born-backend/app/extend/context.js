@@ -13,6 +13,8 @@ const DATABASE = Symbol.for('Context#__database');
 const DATABASEMETA = Symbol.for('Context#__databasemeta');
 const INNERACCESS = Symbol.for('Context#__inneraccess');
 const SUBDOMAIN = Symbol.for('Context#__subdomain');
+const CTXCALLER = Symbol.for('Context#__ctxcaller');
+const TAILCALLBACKS = Symbol.for('Context#__tailcallbacks');
 
 module.exports = {
   get module() {
@@ -31,10 +33,7 @@ module.exports = {
   get dbMeta() {
     if (!this[DATABASEMETA]) {
       this[DATABASEMETA] = {
-        master: true, transaction: false, connection: { conn: null }, callbackes: [],
-        next: async cb => {
-          this[DATABASEMETA].callbackes.push(cb);
-        },
+        master: true, transaction: false, connection: { conn: null },
       };
     }
     return this[DATABASEMETA];
@@ -46,10 +45,6 @@ module.exports = {
       this.dbMeta.transaction = true;
       this.dbMeta.connection = metaCaller.connection;
     }
-    // always route to caller
-    this.dbMeta.next = cb => {
-      metaCaller.next(cb);
-    };
   },
   get innerAccess() {
     return this[INNERACCESS];
@@ -62,6 +57,27 @@ module.exports = {
   },
   set subdomain(value) {
     this[SUBDOMAIN] = value;
+  },
+  get ctxCaller() {
+    return this[CTXCALLER];
+  },
+  set ctxCaller(value) {
+    // ctxCaller
+    this[CTXCALLER] = value;
+    // innerAccess
+    this.innerAccess = true;
+    // transaction
+    this.dbMeta = value.dbMeta;
+  },
+  tail(cb) {
+    if (this.ctxCaller) {
+      this.ctxCaller.tail(cb);
+    } else {
+      if (!this[TAILCALLBACKS]) {
+        this[TAILCALLBACKS] = [];
+      }
+      this[TAILCALLBACKS].push(cb);
+    }
   },
 
   /**
@@ -141,14 +157,8 @@ function appCallback() {
     // cookies
     delegateCookies(ctx, ctxCaller);
 
-    // transaction
-    ctx.dbMeta = ctxCaller.dbMeta;
-
     // ctxCaller
     ctx.ctxCaller = ctxCaller;
-
-    // innerAccess
-    ctx.innerAccess = true;
 
     // call
     fn(ctx).then(function handleResponse() {
@@ -157,14 +167,23 @@ function appCallback() {
         if (ctx.body.code === 0) {
           resolve(ctx.body.data);
         } else {
-          reject(ctx.body);
+          const error = ctx.createError(ctx.body);
+          reject(error);
         }
       } else {
-        reject({ code: ctx.status, message: ctx.body });
+        const error = ctx.createError({
+          code: ctx.status, message: ctx.body,
+        });
+        reject(error);
       }
     }).catch(err => {
-      ctx.onerror(err);
-      reject({ code: err.code || ctx.status, message: err.message || ctx.body });
+      const error = ctx.createError({
+        ...err,
+        code: err.code || ctx.status,
+        message: err.message || ctx.body,
+      });
+      ctx.onerror(error);
+      reject(error);
     });
   };
 }

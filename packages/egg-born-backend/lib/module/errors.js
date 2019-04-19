@@ -35,6 +35,23 @@ module.exports = function(loader, modules) {
           };
         });
 
+        // createError
+        context.createError = function(data) {
+          const error = new Error();
+          error.code = data.code;
+          error.message = data.message;
+          if (!loader.app.meta.isProd) {
+            if (data.stack) error.stack = data.stack;
+            if (data.name) error.name = data.name;
+            if (data.errno) error.errno = data.errno;
+            if (data.sqlMessage) error.sqlMessage = data.sqlMessage;
+            if (data.sqlState) error.sqlState = data.sqlState;
+            if (data.index) error.index = data.index;
+            if (data.sql) error.sql = data.sql;
+          }
+          return error;
+        };
+
       }
 
       return context;
