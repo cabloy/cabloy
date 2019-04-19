@@ -11,7 +11,12 @@ module.exports = app => {
     { method: 'post', path: '{{atomClassName}}/create', controller: {{atomClassName}}, middlewares: 'inner', meta: { auth: { enable: false } } },
     { method: 'post', path: '{{atomClassName}}/read', controller: {{atomClassName}}, middlewares: 'inner', meta: { auth: { enable: false } } },
     { method: 'post', path: '{{atomClassName}}/select', controller: {{atomClassName}}, middlewares: 'inner', meta: { auth: { enable: false } } },
-    { method: 'post', path: '{{atomClassName}}/write', controller: {{atomClassName}}, middlewares: 'inner', meta: { auth: { enable: false } } },
+    { method: 'post', path: '{{atomClassName}}/write', controller: {{atomClassName}}, middlewares: 'inner,validate',
+      meta: {
+        auth: { enable: false },
+        validate: { validator: '{{atomClassName}}', data: 'item' },
+      },
+    },
     { method: 'post', path: '{{atomClassName}}/delete', controller: {{atomClassName}}, middlewares: 'inner', meta: { auth: { enable: false } } },
     { method: 'post', path: '{{atomClassName}}/action', controller: {{atomClassName}}, middlewares: 'inner', meta: { auth: { enable: false } } },
     { method: 'post', path: '{{atomClassName}}/enable', controller: {{atomClassName}}, middlewares: 'inner', meta: { auth: { enable: false } } },
