@@ -214,10 +214,10 @@ function install(_Vue, cb) {
   Vue = _Vue;
   return cb({
     routes: __webpack_require__(5)["default"],
-    store: __webpack_require__(8)["default"](Vue),
-    config: __webpack_require__(9)["default"],
-    locales: __webpack_require__(10)["default"],
-    components: __webpack_require__(12)["default"]
+    store: __webpack_require__(9)["default"](Vue),
+    config: __webpack_require__(10)["default"],
+    locales: __webpack_require__(11)["default"],
+    components: __webpack_require__(13)["default"]
   });
 }
 
@@ -259,6 +259,9 @@ function load(name) {
 }, {
   path: 'user/authentications',
   component: load('user/authentications')
+}, {
+  path: 'my/atoms',
+  component: load('my/atoms')
 }]);
 
 /***/ }),
@@ -266,12 +269,13 @@ function load(name) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./user/account.vue": 18,
+	"./my/atoms.vue": 7,
+	"./user/account.vue": 17,
 	"./user/agent.vue": 15,
-	"./user/authentications.vue": 13,
+	"./user/authentications.vue": 16,
 	"./user/edit.vue": 14,
-	"./user/functions.vue": 16,
-	"./user/mine.vue": 17
+	"./user/functions.vue": 19,
+	"./user/mine.vue": 18
 };
 
 
@@ -300,13 +304,39 @@ webpackContext.id = 6;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
+var render, staticRenderFns
+var script = {}
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"])(
+  script,
+  render,
+  staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+/* 8 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_mine_vue_vue_type_style_index_0_id_cf16e3fe_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
 /* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_mine_vue_vue_type_style_index_0_id_cf16e3fe_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_mine_vue_vue_type_style_index_0_id_cf16e3fe_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0__);
 /* unused harmony reexport * */
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_mine_vue_vue_type_style_index_0_id_cf16e3fe_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -321,7 +351,7 @@ __webpack_require__.r(__webpack_exports__);
 });
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -333,17 +363,17 @@ __webpack_require__.r(__webpack_exports__);
 });
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
-  'zh-cn': __webpack_require__(11)["default"]
+  'zh-cn': __webpack_require__(12)["default"]
 });
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -379,118 +409,12 @@ __webpack_require__.r(__webpack_exports__);
 });
 
 /***/ }),
-/* 12 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ({});
-
-/***/ }),
 /* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/user/authentications.vue?vue&type=template&id=076d2434&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('Authentications'),"eb-back-link":"Back"}}),_vm._v(" "),(_vm.ready)?_c('f7-list',_vm._l((_vm.items),function(item){return _c('eb-list-item',{key:item.providerId,attrs:{"title":_vm.getModule(item.module).titleLocale}},[_c('div',{attrs:{"slot":"after"},slot:"after"},[(item.authId)?_c('f7-badge',[_vm._v(_vm._s(_vm.$text('Enabled')))]):_vm._e(),_vm._v(" "),(!item.authId)?_c('eb-link',{attrs:{"context":item,"onPerform":_vm.onPerformEnable}},[_vm._v(_vm._s(_vm.$text('Enable')))]):_vm._e(),_vm._v(" "),(item.authId && _vm.countEnabled>1)?_c('eb-link',{attrs:{"context":item,"onPerform":_vm.onPerformDisable}},[_vm._v(_vm._s(_vm.$text('Disable')))]):_vm._e()],1)])}),1):_vm._e()],1)}
-var staticRenderFns = []
-
-
-// CONCATENATED MODULE: ./front/src/pages/user/authentications.vue?vue&type=template&id=076d2434&
-
-// EXTERNAL MODULE: external "vue"
-var external_vue_ = __webpack_require__(1);
-var external_vue_default = /*#__PURE__*/__webpack_require__.n(external_vue_);
-
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/user/authentications.vue?vue&type=script&lang=js&
-
-var ebModules = external_vue_default.a.prototype.$meta.module.get('a-base').options.components.ebModules;
-/* harmony default export */ var authenticationsvue_type_script_lang_js_ = ({
-  mixins: [ebModules],
-  data: function data() {
-    return {
-      items: null
-    };
-  },
-  computed: {
-    ready: function ready() {
-      return this.modulesAll && this.items;
-    },
-    countEnabled: function countEnabled() {
-      return this.items.filter(function (item) {
-        return item.authId;
-      }).length;
-    }
-  },
-  created: function created() {
-    var _this = this;
-
-    return this.$api.post('user/authentications').then(function (data) {
-      _this.items = data;
-    });
-  },
-  methods: {
-    onPerformDisable: function onPerformDisable(event, item) {
-      var _this2 = this;
-
-      return this.$view.dialog.confirm().then(function () {
-        return _this2.$api.post('user/authenticationDisable', {
-          authId: item.authId
-        }).then(function () {
-          var index = _this2.items.findIndex(function (_item) {
-            return _item.providerId === item.providerId;
-          });
-
-          item.authId = null;
-          external_vue_default.a.set(_this2.items, index, item);
-          return true;
-        });
-      });
-    },
-    onPerformEnable: function onPerformEnable(event, item) {
-      var _this3 = this;
-
-      return this.$view.dialog.confirm().then(function () {
-        var module = _this3.getModule(item.module);
-
-        var info = module.info;
-        var url = "/api/".concat(info.url, "/passport/").concat(info.relativeName, "/").concat(item.providerName, "?state=associate");
-
-        _this3.$meta.vueApp.toLogin({
-          url: url,
-          hash: '/a/user/user/authentications'
-        });
-      });
-    }
-  }
-});
-// CONCATENATED MODULE: ./front/src/pages/user/authentications.vue?vue&type=script&lang=js&
- /* harmony default export */ var user_authenticationsvue_type_script_lang_js_ = (authenticationsvue_type_script_lang_js_); 
-// EXTERNAL MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/runtime/componentNormalizer.js
-var componentNormalizer = __webpack_require__(0);
-
-// CONCATENATED MODULE: ./front/src/pages/user/authentications.vue
-
-
-
-
-
-/* normalize component */
-
-var component = Object(componentNormalizer["a" /* default */])(
-  user_authenticationsvue_type_script_lang_js_,
-  render,
-  staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* harmony default export */ var authentications = __webpack_exports__["default"] = (component.exports);
+/* harmony default export */ __webpack_exports__["default"] = ({});
 
 /***/ }),
 /* 14 */
@@ -707,21 +631,21 @@ var component = Object(componentNormalizer["a" /* default */])(
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/user/functions.vue?vue&type=template&id=0b17ac46&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('Functions'),"eb-back-link":"Back"}}),_vm._v(" "),(_vm.items)?_c('f7-list',_vm._l((_vm.itemGroups),function(group){return _c('f7-list-group',{key:group},[_c('f7-list-item',{attrs:{"title":_vm.getModule(group).titleLocale,"group-title":""}}),_vm._v(" "),_vm._l((_vm.getGroupFunctions(group)),function(item){return _c('eb-list-item',{key:item.name,attrs:{"link":"#","context":item,"onPerform":_vm.onItemClick,"title":item.titleLocale}})})],2)}),1):_vm._e()],1)}
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/user/authentications.vue?vue&type=template&id=076d2434&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('Authentications'),"eb-back-link":"Back"}}),_vm._v(" "),(_vm.ready)?_c('f7-list',_vm._l((_vm.items),function(item){return _c('eb-list-item',{key:item.providerId,attrs:{"title":_vm.getModule(item.module).titleLocale}},[_c('div',{attrs:{"slot":"after"},slot:"after"},[(item.authId)?_c('f7-badge',[_vm._v(_vm._s(_vm.$text('Enabled')))]):_vm._e(),_vm._v(" "),(!item.authId)?_c('eb-link',{attrs:{"context":item,"onPerform":_vm.onPerformEnable}},[_vm._v(_vm._s(_vm.$text('Enable')))]):_vm._e(),_vm._v(" "),(item.authId && _vm.countEnabled>1)?_c('eb-link',{attrs:{"context":item,"onPerform":_vm.onPerformDisable}},[_vm._v(_vm._s(_vm.$text('Disable')))]):_vm._e()],1)])}),1):_vm._e()],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./front/src/pages/user/functions.vue?vue&type=template&id=0b17ac46&
+// CONCATENATED MODULE: ./front/src/pages/user/authentications.vue?vue&type=template&id=076d2434&
 
 // EXTERNAL MODULE: external "vue"
 var external_vue_ = __webpack_require__(1);
 var external_vue_default = /*#__PURE__*/__webpack_require__.n(external_vue_);
 
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/user/functions.vue?vue&type=script&lang=js&
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/user/authentications.vue?vue&type=script&lang=js&
 
 var ebModules = external_vue_default.a.prototype.$meta.module.get('a-base').options.components.ebModules;
-/* harmony default export */ var functionsvue_type_script_lang_js_ = ({
+/* harmony default export */ var authenticationsvue_type_script_lang_js_ = ({
   mixins: [ebModules],
   data: function data() {
     return {
@@ -729,37 +653,63 @@ var ebModules = external_vue_default.a.prototype.$meta.module.get('a-base').opti
     };
   },
   computed: {
-    itemGroups: function itemGroups() {
-      if (!this.modulesAll) return [];
-      return Object.keys(this.items);
+    ready: function ready() {
+      return this.modulesAll && this.items;
+    },
+    countEnabled: function countEnabled() {
+      return this.items.filter(function (item) {
+        return item.authId;
+      }).length;
     }
   },
   created: function created() {
     var _this = this;
 
-    return this.$api.post('user/functions').then(function (data) {
+    return this.$api.post('user/authentications').then(function (data) {
       _this.items = data;
     });
   },
   methods: {
-    getGroupFunctions: function getGroupFunctions(group) {
-      return Object.values(this.items[group]);
+    onPerformDisable: function onPerformDisable(event, item) {
+      var _this2 = this;
+
+      return this.$view.dialog.confirm().then(function () {
+        return _this2.$api.post('user/authenticationDisable', {
+          authId: item.authId
+        }).then(function () {
+          var index = _this2.items.findIndex(function (_item) {
+            return _item.providerId === item.providerId;
+          });
+
+          item.authId = null;
+          external_vue_default.a.set(_this2.items, index, item);
+          return true;
+        });
+      });
     },
-    onItemClick: function onItemClick(event, item) {
-      return this.$meta.util.performAction({
-        ctx: this,
-        action: item,
-        item: item
+    onPerformEnable: function onPerformEnable(event, item) {
+      var _this3 = this;
+
+      return this.$view.dialog.confirm().then(function () {
+        var module = _this3.getModule(item.module);
+
+        var info = module.info;
+        var url = "/api/".concat(info.url, "/passport/").concat(info.relativeName, "/").concat(item.providerName, "?state=associate");
+
+        _this3.$meta.vueApp.toLogin({
+          url: url,
+          hash: '/a/user/user/authentications'
+        });
       });
     }
   }
 });
-// CONCATENATED MODULE: ./front/src/pages/user/functions.vue?vue&type=script&lang=js&
- /* harmony default export */ var user_functionsvue_type_script_lang_js_ = (functionsvue_type_script_lang_js_); 
+// CONCATENATED MODULE: ./front/src/pages/user/authentications.vue?vue&type=script&lang=js&
+ /* harmony default export */ var user_authenticationsvue_type_script_lang_js_ = (authenticationsvue_type_script_lang_js_); 
 // EXTERNAL MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/runtime/componentNormalizer.js
 var componentNormalizer = __webpack_require__(0);
 
-// CONCATENATED MODULE: ./front/src/pages/user/functions.vue
+// CONCATENATED MODULE: ./front/src/pages/user/authentications.vue
 
 
 
@@ -768,7 +718,7 @@ var componentNormalizer = __webpack_require__(0);
 /* normalize component */
 
 var component = Object(componentNormalizer["a" /* default */])(
-  user_functionsvue_type_script_lang_js_,
+  user_authenticationsvue_type_script_lang_js_,
   render,
   staticRenderFns,
   false,
@@ -778,10 +728,63 @@ var component = Object(componentNormalizer["a" /* default */])(
   
 )
 
-/* harmony default export */ var functions = __webpack_exports__["default"] = (component.exports);
+/* harmony default export */ var authentications = __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 /* 17 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/user/account.vue?vue&type=template&id=864c1586&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('Account'),"eb-back-link":"Back"}}),_vm._v(" "),_c('f7-list',[_c('eb-list-item',{attrs:{"title":_vm.$text('Info'),"eb-href":"user/edit"}}),_vm._v(" "),(_vm.configAccount.url.passwordChange)?_c('eb-list-item',{attrs:{"title":_vm.$text('Change password'),"eb-href":_vm.configAccount.url.passwordChange}}):_vm._e(),_vm._v(" "),_c('f7-list-item',{attrs:{"divider":""}}),_vm._v(" "),_c('eb-list-item',{attrs:{"title":_vm.$text('Authentications'),"eb-href":"user/authentications"}}),_vm._v(" "),(!_vm.$config.agent.disabled)?[_c('f7-list-item',{attrs:{"divider":""}}),_vm._v(" "),_c('eb-list-item',{attrs:{"title":_vm.$text('Agent'),"eb-href":"user/agent"}})]:_vm._e()],2)],1)}
+var staticRenderFns = []
+
+
+// CONCATENATED MODULE: ./front/src/pages/user/account.vue?vue&type=template&id=864c1586&
+
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/user/account.vue?vue&type=script&lang=js&
+/* harmony default export */ var accountvue_type_script_lang_js_ = ({
+  data: function data() {
+    return {
+      configAccount: null
+    };
+  },
+  created: function created() {
+    var configBase = this.$meta.config.modules['a-base'];
+    this.configAccount = configBase.account;
+  },
+  methods: {}
+});
+// CONCATENATED MODULE: ./front/src/pages/user/account.vue?vue&type=script&lang=js&
+ /* harmony default export */ var user_accountvue_type_script_lang_js_ = (accountvue_type_script_lang_js_); 
+// EXTERNAL MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/runtime/componentNormalizer.js
+var componentNormalizer = __webpack_require__(0);
+
+// CONCATENATED MODULE: ./front/src/pages/user/account.vue
+
+
+
+
+
+/* normalize component */
+
+var component = Object(componentNormalizer["a" /* default */])(
+  user_accountvue_type_script_lang_js_,
+  render,
+  staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* harmony default export */ var account = __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -862,7 +865,7 @@ var staticRenderFns = []
 // CONCATENATED MODULE: ./front/src/pages/user/mine.vue?vue&type=script&lang=js&
  /* harmony default export */ var user_minevue_type_script_lang_js_ = (minevue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./front/src/pages/user/mine.vue?vue&type=style&index=0&id=cf16e3fe&lang=less&scoped=true&
-var minevue_type_style_index_0_id_cf16e3fe_lang_less_scoped_true_ = __webpack_require__(7);
+var minevue_type_style_index_0_id_cf16e3fe_lang_less_scoped_true_ = __webpack_require__(8);
 
 // EXTERNAL MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/runtime/componentNormalizer.js
 var componentNormalizer = __webpack_require__(0);
@@ -890,38 +893,65 @@ var component = Object(componentNormalizer["a" /* default */])(
 /* harmony default export */ var mine = __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/user/account.vue?vue&type=template&id=864c1586&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('Account'),"eb-back-link":"Back"}}),_vm._v(" "),_c('f7-list',[_c('eb-list-item',{attrs:{"title":_vm.$text('Info'),"eb-href":"user/edit"}}),_vm._v(" "),(_vm.configAccount.url.passwordChange)?_c('eb-list-item',{attrs:{"title":_vm.$text('Change password'),"eb-href":_vm.configAccount.url.passwordChange}}):_vm._e(),_vm._v(" "),_c('f7-list-item',{attrs:{"divider":""}}),_vm._v(" "),_c('eb-list-item',{attrs:{"title":_vm.$text('Authentications'),"eb-href":"user/authentications"}}),_vm._v(" "),(!_vm.$config.agent.disabled)?[_c('f7-list-item',{attrs:{"divider":""}}),_vm._v(" "),_c('eb-list-item',{attrs:{"title":_vm.$text('Agent'),"eb-href":"user/agent"}})]:_vm._e()],2)],1)}
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/user/functions.vue?vue&type=template&id=0b17ac46&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('Functions'),"eb-back-link":"Back"}}),_vm._v(" "),(_vm.items)?_c('f7-list',_vm._l((_vm.itemGroups),function(group){return _c('f7-list-group',{key:group},[_c('f7-list-item',{attrs:{"title":_vm.getModule(group).titleLocale,"group-title":""}}),_vm._v(" "),_vm._l((_vm.getGroupFunctions(group)),function(item){return _c('eb-list-item',{key:item.name,attrs:{"link":"#","context":item,"onPerform":_vm.onItemClick,"title":item.titleLocale}})})],2)}),1):_vm._e()],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./front/src/pages/user/account.vue?vue&type=template&id=864c1586&
+// CONCATENATED MODULE: ./front/src/pages/user/functions.vue?vue&type=template&id=0b17ac46&
 
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/user/account.vue?vue&type=script&lang=js&
-/* harmony default export */ var accountvue_type_script_lang_js_ = ({
+// EXTERNAL MODULE: external "vue"
+var external_vue_ = __webpack_require__(1);
+var external_vue_default = /*#__PURE__*/__webpack_require__.n(external_vue_);
+
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/user/functions.vue?vue&type=script&lang=js&
+
+var ebModules = external_vue_default.a.prototype.$meta.module.get('a-base').options.components.ebModules;
+/* harmony default export */ var functionsvue_type_script_lang_js_ = ({
+  mixins: [ebModules],
   data: function data() {
     return {
-      configAccount: null
+      items: null
     };
   },
-  created: function created() {
-    var configBase = this.$meta.config.modules['a-base'];
-    this.configAccount = configBase.account;
+  computed: {
+    itemGroups: function itemGroups() {
+      if (!this.modulesAll) return [];
+      return Object.keys(this.items);
+    }
   },
-  methods: {}
+  created: function created() {
+    var _this = this;
+
+    return this.$api.post('user/functions').then(function (data) {
+      _this.items = data;
+    });
+  },
+  methods: {
+    getGroupFunctions: function getGroupFunctions(group) {
+      return Object.values(this.items[group]);
+    },
+    onItemClick: function onItemClick(event, item) {
+      return this.$meta.util.performAction({
+        ctx: this,
+        action: item,
+        item: item
+      });
+    }
+  }
 });
-// CONCATENATED MODULE: ./front/src/pages/user/account.vue?vue&type=script&lang=js&
- /* harmony default export */ var user_accountvue_type_script_lang_js_ = (accountvue_type_script_lang_js_); 
+// CONCATENATED MODULE: ./front/src/pages/user/functions.vue?vue&type=script&lang=js&
+ /* harmony default export */ var user_functionsvue_type_script_lang_js_ = (functionsvue_type_script_lang_js_); 
 // EXTERNAL MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/runtime/componentNormalizer.js
 var componentNormalizer = __webpack_require__(0);
 
-// CONCATENATED MODULE: ./front/src/pages/user/account.vue
+// CONCATENATED MODULE: ./front/src/pages/user/functions.vue
 
 
 
@@ -930,7 +960,7 @@ var componentNormalizer = __webpack_require__(0);
 /* normalize component */
 
 var component = Object(componentNormalizer["a" /* default */])(
-  user_accountvue_type_script_lang_js_,
+  user_functionsvue_type_script_lang_js_,
   render,
   staticRenderFns,
   false,
@@ -940,7 +970,7 @@ var component = Object(componentNormalizer["a" /* default */])(
   
 )
 
-/* harmony default export */ var account = __webpack_exports__["default"] = (component.exports);
+/* harmony default export */ var functions = __webpack_exports__["default"] = (component.exports);
 
 /***/ })
 /******/ ]);

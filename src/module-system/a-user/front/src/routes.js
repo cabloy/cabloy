@@ -9,4 +9,5 @@ export default [
   { path: 'user/functions', component: load('user/functions') },
   { path: 'user/account', component: load('user/account') },
   { path: 'user/authentications', component: load('user/authentications') },
+  { path: 'my/atoms', component: load('my/atoms') },
 ];
