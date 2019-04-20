@@ -18,7 +18,7 @@
     </eb-navbar>
     <f7-tabs>
       <eb-tab-page-content :id="tabIdList" tab-active>
-        <atoms slot="list" mode="list" :atomClass="atomClass" :where="where"></atoms>
+        <atoms slot="list" mode="list" :atomClass="atomClass" :where="whereForList"></atoms>
       </eb-tab-page-content>
       <eb-tab-page-content :id="tabIdDrafts">
         <atoms slot="list" mode="drafts" :atomClass="atomClass" :where="where"></atoms>
@@ -56,9 +56,11 @@ export default {
     const atomClassName = query && query.atomClassName;
     const atomClass = (module && atomClassName) ? { module, atomClassName } : null;
     const where = (query && query.where) ? JSON.parse(query.where) : null;
+    const scene = query && query.scene;
     return {
       atomClass,
       where,
+      scene,
       tabIdList: Vue.prototype.$meta.util.nextId('tab'),
       tabIdDrafts: Vue.prototype.$meta.util.nextId('tab'),
       tabIdStars: Vue.prototype.$meta.util.nextId('tab'),
@@ -69,7 +71,7 @@ export default {
   },
   computed: {
     labels() {
-      return this.$local.state.labels;
+      return this.$local.getters('userLabels');
     },
     pageTitle() {
       const atomClass = this.getAtomClass(this.atomClass);
@@ -78,6 +80,15 @@ export default {
     },
     showPopover() {
       return this.actions && this.actions.length > 0;
+    },
+    whereForList() {
+      // others
+      if (this.scene !== 'mine') return this.where;
+      // mine
+      const where = this.where || {};
+      const user = this.$store.state.auth.user.op;
+      where['a.userIdCreated'] = user.id;
+      return where;
     },
   },
   created() {

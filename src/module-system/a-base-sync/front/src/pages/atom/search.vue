@@ -48,7 +48,7 @@ export default {
       return `${this.$text('Search')} ${atomClassTitle}`;
     },
     labels() {
-      const labelsAll = this.$local.state.labels;
+      const labelsAll = this.$local.getters('userLabels');
       if (!labelsAll) return null;
 
       const labels = [{ title: '', value: 0 }];

@@ -38,7 +38,18 @@ import ebActions from '../../common/actions.js';
 export default {
   mixins: [ ebActions ],
   data() {
+    const query = this.$f7route.query;
+    let where = (query && query.where) ? JSON.parse(query.where) : null;
+    // scene
+    const scene = query && query.scene;
+    if (scene === 'mine') {
+      if (!where) where = {};
+      const user = this.$store.state.auth.user.op;
+      where['h.userId'] = user.id;
+    }
+    // ok
     return {
+      where,
       order: 'desc',
       items: [],
       moduleStyle: null,
@@ -80,6 +91,10 @@ export default {
         ],
         page: { index },
       };
+      // where
+      if (this.where) {
+        options.where = this.where;
+      }
       // fetch
       return this.$api.post('comment/all', {
         options,

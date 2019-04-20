@@ -67,7 +67,7 @@ export default {
   },
   computed: {
     labelsAll() {
-      return this.$local.state.labels;
+      return this.$local.getters('userLabels');
     },
   },
   methods: {

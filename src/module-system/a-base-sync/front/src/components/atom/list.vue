@@ -120,7 +120,7 @@ export default {
   },
   computed: {
     labels() {
-      return this.$local.state.labels;
+      return this.$local.getters('userLabels');
     },
     flags() {
       return this.$local.state.flags;

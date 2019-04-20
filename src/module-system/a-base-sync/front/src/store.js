@@ -12,10 +12,18 @@ export default function(Vue) {
       functions: null,
     },
     getters: {
+      userLabels(state) {
+        if (!state.labels) return null;
+        const user = Vue.prototype.$meta.store.getState('auth/user');
+        return state.labels[user.op.id];
+      },
     },
     mutations: {
       setLabels(state, labels) {
-        state.labels = labels;
+        const user = Vue.prototype.$meta.store.getState('auth/user');
+        state.labels = {
+          [user.op.id]: labels,
+        };
       },
       setModules(state, modules) {
         state.modules = modules;
@@ -37,9 +45,10 @@ export default function(Vue) {
       },
     },
     actions: {
-      getLabels({ state, commit }) {
+      getLabels({ state, commit, getters }) {
         return new Promise((resolve, reject) => {
-          if (state.labels) return resolve(state.labels);
+          const userLabels = getters.userLabels;
+          if (userLabels) return resolve(userLabels);
           Vue.prototype.$meta.api.post('/a/base/user/getLabels').then(data => {
             data = data || {};
             commit('setLabels', data);
