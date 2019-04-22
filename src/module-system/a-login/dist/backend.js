@@ -90,10 +90,10 @@ module.exports =
 /***/ (function(module, exports, __webpack_require__) {
 
 const routes = __webpack_require__(1);
-const services = __webpack_require__(2);
-const config = __webpack_require__(3);
-const locales = __webpack_require__(4);
-const errors = __webpack_require__(6);
+const services = __webpack_require__(3);
+const config = __webpack_require__(5);
+const locales = __webpack_require__(6);
+const errors = __webpack_require__(8);
 
 // eslint-disable-next-line
 module.exports = (app,module) => {
@@ -112,9 +112,13 @@ module.exports = (app,module) => {
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+const auth = __webpack_require__(2);
 
 module.exports = [
+  // auth
+  { method: 'post', path: 'auth/list', controller: auth },
 ];
 
 
@@ -122,28 +126,68 @@ module.exports = [
 /* 2 */
 /***/ (function(module, exports) {
 
-module.exports = {
+module.exports = app => {
+  class AuthController extends app.Controller {
+
+    async list() {
+      const res = await this.service.auth.list();
+      this.ctx.success(res);
+    }
+
+  }
+  return AuthController;
 };
 
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-// eslint-disable-next-line
-module.exports = appInfo => {
-  const config = {};
+const auth = __webpack_require__(4);
 
-  return config;
+module.exports = {
+  auth,
 };
 
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-module.exports = {
-  'zh-cn': __webpack_require__(5),
+module.exports = app => {
+
+  class Auth extends app.Service {
+
+    async list() {
+      // list
+      const list = await this.ctx.model.query(`
+        select a.module,a.providerName from aAuthProvider a
+          where a.iid=? and a.disabled=0
+        `, [ this.ctx.instance.id ]);
+      // list map
+      const listMap = {};
+      // meta
+      const authProviders = this.ctx.meta.base.authProviders();
+      for (const item of list) {
+        const key = `${item.module}:${item.providerName}`;
+        const authProvider = authProviders[key];
+        item.meta = authProvider.meta;
+        listMap[key] = item;
+      }
+      // order
+      const res = [];
+      for (const item of this.ctx.config.providers) {
+        const key = `${item.module}:${item.provider}`;
+        const provider = listMap[key];
+        if (provider) res.push(provider);
+      }
+      // ok
+      return res;
+    }
+
+  }
+
+  return Auth;
 };
 
 
@@ -151,12 +195,45 @@ module.exports = {
 /* 5 */
 /***/ (function(module, exports) {
 
-module.exports = {
+// eslint-disable-next-line
+module.exports = appInfo => {
+  const config = {};
+
+  // providers
+  config.providers = [
+    {
+      module: 'a-authsimple',
+      provider: 'authsimple',
+    },
+    {
+      module: 'a-authgithub',
+      provider: 'authgithub',
+    },
+  ];
+
+  return config;
 };
 
 
 /***/ }),
 /* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = {
+  'zh-cn': __webpack_require__(7),
+};
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+module.exports = {
+};
+
+
+/***/ }),
+/* 8 */
 /***/ (function(module, exports) {
 
 // error code should start from 1001

@@ -5,7 +5,7 @@ export default {
   },
   data() {
     return {
-      items: null,
+      providers: null,
       showClose: false,
     };
   },
@@ -20,16 +20,12 @@ export default {
   created() {
     // list
     return this.$api.post('auth/list').then(list => {
-      //
-    });
-    const provider = this.$config.provider;
-    // simple
-    if (provider.simple) {
-      this.$meta.module.use(provider.simple.module, module => {
-        this.$options.components.loginSimple = module.options.components[provider.simple.component];
-        this.loginSimple = true;
+      // load providers
+      if (list.length === 0) return;
+      this.loadProviders(list).then(providers => {
+        this.providers = providers.filter(item => !!item);
       });
-    }
+    });
   },
   render(c) {
     const children = [];
@@ -50,20 +46,27 @@ export default {
       domProps: { innerText: this.title },
     }));
     // loginTop
-    const loginTop = this.combineLoginTop();
+    const loginTop = this.combineLoginTop(c);
     // loginBottom
-    const loginBottom = this.combineLoginBottom();
+    const loginBottom = this.combineLoginBottom(c);
     // loginLine
     let loginLine;
     if (loginTop && loginBottom) {
       loginLine = c('div', { staticClass: 'line' }, [ c('div', { staticClass: 'text', domProps: { innerText: this.$text('or') } }) ]);
     }
-    // add
+    // add top
     if (loginTop) children.push(loginTop);
-    if (loginLine) children.push(loginLine);
-    if (loginBottom) children.push(loginBottom);
+    // add line and bottom
+    let lineAndBottom;
+    if (loginLine || loginBottom) {
+      const children = [];
+      if (loginLine) children.push(loginLine);
+      if (loginBottom) children.push(loginBottom);
+      lineAndBottom = c('f7-block', children);
+    }
+    if (lineAndBottom) children.push(lineAndBottom);
     // page
-    const page = c('eb-page', {
+    return c('eb-page', {
       attrs: {
         'login-screen': true,
         'no-toolbar': true,
@@ -71,30 +74,87 @@ export default {
         'no-swipeback': true,
       },
     }, children);
-    return page;
-    // if (!this.btns || this.btns.length === 0) return c('div');
-    // const btns = [];
-    // for (const btn of this.btns) {
-    //   btns.push(c(btn, {
-    //     staticClass: 'btn',
-    //   }));
-    // }
-    // const children = [];
-    // if (this.loginSimple) {
-    //   children.push(c('div', { staticClass: 'line' }, [ c('div', { staticClass: 'text', domProps: { innerText: this.$text('or') } }) ]));
-    // }
-    // children.push(c('div', { staticClass: 'btns' }, btns));
-    // return c('div', children);
   },
   methods: {
     onClose() {
       this.$f7router.back();
     },
-    combineLoginTop() {
-
+    combineLoginTop(c) {
+      if (!this.providers) return null;
+      const providers = this.providers.filter(item => item.provider.meta.mode === 'direct');
+      if (providers.length === 0) return null;
+      // check length
+      if (providers.length === 1) {
+        const provider = providers[0];
+        return c(provider.component);
+      }
+      // >1
+      const buttons = [];
+      const tabs = [];
+      for (const index in providers) {
+        const provider = providers[index];
+        buttons.push(c('f7-link', {
+          attrs: {
+            'tab-link': `#tab-${index}`,
+            'tab-link-active': parseInt(index) === 0,
+            text: provider.provider.meta.titleLocale,
+          },
+        }));
+        tabs.push(c('f7-tab', {
+          attrs: {
+            id: `tab-${index}`,
+            'tab-active': parseInt(index) === 0,
+          },
+        }, [ c(provider.component) ]));
+      }
+      const tabbar = c('f7-toolbar', {
+        attrs: {
+          tabbar: true,
+        },
+      }, buttons);
+      const tabblock = c('f7-tabs', tabs);
+      return c('div', [ tabbar, tabblock ]);
     },
-    combineLoginBottom() {
-
+    combineLoginBottom(c) {
+      if (!this.providers) return null;
+      const providers = this.providers.filter(item => item.provider.meta.mode === 'redirect');
+      if (providers.length === 0) return null;
+      // buttons
+      const children = [];
+      for (const item of providers) {
+        children.push(c(item.component, { staticClass: 'btn' }));
+      }
+      return c('div', { staticClass: 'btns' }, children);
+    },
+    loadProviders(list) {
+      const promises = [];
+      for (const item of list) {
+        if (item) promises.push(this._loadProvider(item));
+      }
+      return Promise.all(promises);
+    },
+    _loadProvider(item) {
+      return new Promise((resolve, reject) => {
+        // load module
+        this.$meta.module.use(item.module, module => {
+          // checkIfDisable
+          const component = module.options.components[item.meta.component];
+          this._checkIfDisable(component).then(disable => {
+            if (!disable) {
+              resolve({ provider: item, component });
+            } else {
+              resolve(null);
+            }
+          });
+        });
+      });
+    },
+    _checkIfDisable(component) {
+      return new Promise((resolve, reject) => {
+        if (!component.meta) return resolve(false);
+        if (typeof component.meta.disable !== 'function') return resolve(component.meta.disable);
+        this.$meta.util.wrapPromise(component.meta.disable()).then(res => resolve(res));
+      });
     },
   },
 };
@@ -128,6 +188,7 @@ export default {
   flex-direction: row;
   justify-content: center;
   flex-wrap: wrap;
+  margin-bottom: 30px;
 
   .btn {
     width: 36px;
