@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-authsimple",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "title": "Auth-Simple",
   "eggBornModule": {
     "fileVersion": 1,

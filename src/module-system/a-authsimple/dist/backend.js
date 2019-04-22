@@ -865,6 +865,7 @@ const passwordResetEmailBody =
 
 module.exports = {
   Close: '关闭',
+  'User/Password': '用户/密码',
   'Authentication failed': '认证失败',
   'User is disabled': '用户被禁用',
   'Auth-Simple': '认证-简单',
@@ -980,6 +981,11 @@ module.exports = app => {
   return {
     providers: {
       [provider]: {
+        meta: {
+          title: 'User/Password',
+          mode: 'direct',
+          component: 'signin',
+        },
         config: {
           successReturnToOrRedirect: false,
           successRedirect: false,
