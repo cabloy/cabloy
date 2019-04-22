@@ -2,9 +2,10 @@
   <eb-page>
     <eb-navbar :title="$text('Auth Management')" eb-back-link="Back"></eb-navbar>
     <f7-list v-if="ready">
-      <eb-list-item v-for="item of items" :key="item.id" :eb-href="`auth/edit?id=${item.id}`" :title="getModule(item.module).titleLocale" swipeout>
+      <eb-list-item v-for="item of items" :key="item.id" :eb-href="`auth/edit?id=${item.id}`" :title="item.meta.titleLocale" swipeout>
         <div slot="after">
           <f7-badge v-if="item.disabled===1">{{$text('Disabled')}}</f7-badge>
+          <f7-badge v-else>{{$text('Enabled')}}</f7-badge>
         </div>
         <eb-context-menu>
           <div slot="right">

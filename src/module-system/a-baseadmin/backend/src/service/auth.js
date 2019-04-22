@@ -3,7 +3,17 @@ module.exports = app => {
   class Auth extends app.Service {
 
     async list() {
-      return await this.ctx.model.authProvider.select();
+      // list
+      const list = await this.ctx.model.authProvider.select();
+      // meta
+      const authProviders = this.ctx.meta.base.authProviders();
+      for (const item of list) {
+        const key = `${item.module}:${item.providerName}`;
+        const authProvider = authProviders[key];
+        item.meta = authProvider.meta;
+      }
+      // ok
+      return list;
     }
 
     async disable({ id, disabled }) {

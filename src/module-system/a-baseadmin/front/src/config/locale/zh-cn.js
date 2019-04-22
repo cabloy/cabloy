@@ -29,6 +29,7 @@ export default {
   Disabled: '已禁用',
   Edit: '编辑',
   Enable: '启用',
+  Enabled: '已启用',
   from: '来自',
   Function: '功能',
   Functions: '功能',
