@@ -6,6 +6,11 @@ module.exports = app => {
   return {
     providers: {
       [provider]: {
+        meta: {
+          title: 'Github',
+          mode: 'redirect',
+          component: 'button',
+        },
         config: {
           // addUser: true,
           // addRole: true,
