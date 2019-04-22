@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar :title="$text('Authentications')" eb-back-link="Back"></eb-navbar>
     <f7-list v-if="ready">
-      <eb-list-item v-for="item of items" :key="item.providerId" :title="getModule(item.module).titleLocale">
+      <eb-list-item v-for="item of items" :key="item.providerId" :title="item.meta.titleLocale">
         <div slot="after">
           <f7-badge v-if="item.authId">{{$text('Enabled')}}</f7-badge>
           <eb-link v-if="!item.authId" :context="item" :onPerform="onPerformEnable">{{$text('Enable')}}</eb-link>

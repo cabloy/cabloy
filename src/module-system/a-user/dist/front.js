@@ -631,12 +631,12 @@ var component = Object(componentNormalizer["a" /* default */])(
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/user/authentications.vue?vue&type=template&id=076d2434&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('Authentications'),"eb-back-link":"Back"}}),_vm._v(" "),(_vm.ready)?_c('f7-list',_vm._l((_vm.items),function(item){return _c('eb-list-item',{key:item.providerId,attrs:{"title":_vm.getModule(item.module).titleLocale}},[_c('div',{attrs:{"slot":"after"},slot:"after"},[(item.authId)?_c('f7-badge',[_vm._v(_vm._s(_vm.$text('Enabled')))]):_vm._e(),_vm._v(" "),(!item.authId)?_c('eb-link',{attrs:{"context":item,"onPerform":_vm.onPerformEnable}},[_vm._v(_vm._s(_vm.$text('Enable')))]):_vm._e(),_vm._v(" "),(item.authId && _vm.countEnabled>1)?_c('eb-link',{attrs:{"context":item,"onPerform":_vm.onPerformDisable}},[_vm._v(_vm._s(_vm.$text('Disable')))]):_vm._e()],1)])}),1):_vm._e()],1)}
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/user/authentications.vue?vue&type=template&id=2864a0c2&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('Authentications'),"eb-back-link":"Back"}}),_vm._v(" "),(_vm.ready)?_c('f7-list',_vm._l((_vm.items),function(item){return _c('eb-list-item',{key:item.providerId,attrs:{"title":item.meta.titleLocale}},[_c('div',{attrs:{"slot":"after"},slot:"after"},[(item.authId)?_c('f7-badge',[_vm._v(_vm._s(_vm.$text('Enabled')))]):_vm._e(),_vm._v(" "),(!item.authId)?_c('eb-link',{attrs:{"context":item,"onPerform":_vm.onPerformEnable}},[_vm._v(_vm._s(_vm.$text('Enable')))]):_vm._e(),_vm._v(" "),(item.authId && _vm.countEnabled>1)?_c('eb-link',{attrs:{"context":item,"onPerform":_vm.onPerformDisable}},[_vm._v(_vm._s(_vm.$text('Disable')))]):_vm._e()],1)])}),1):_vm._e()],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./front/src/pages/user/authentications.vue?vue&type=template&id=076d2434&
+// CONCATENATED MODULE: ./front/src/pages/user/authentications.vue?vue&type=template&id=2864a0c2&
 
 // EXTERNAL MODULE: external "vue"
 var external_vue_ = __webpack_require__(1);

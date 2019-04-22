@@ -359,12 +359,21 @@ module.exports = app => {
     }
 
     async authentications({ user }) {
+      // list
       const sql = `
         select a.id as providerId,a.module,a.providerName,b.id as authId from aAuthProvider a
           left join aAuth b on a.id=b.providerId and b.userId=?
             where a.iid=? and a.disabled=0
       `;
       const list = await this.ctx.model.query(sql, [ user.id, this.ctx.instance.id ]);
+      // meta
+      const authProviders = this.ctx.meta.base.authProviders();
+      for (const item of list) {
+        const key = `${item.module}:${item.providerName}`;
+        const authProvider = authProviders[key];
+        item.meta = authProvider.meta;
+      }
+      // ok
       return list;
     }
 
