@@ -70,32 +70,4 @@ export default {
 
 </script>
 <style lang="less" scoped>
-.line {
-  height: 1px;
-  margin: 30px 0;
-  text-align: center;
-  border-top: 1px solid #e2e2e2;
-
-  .text {
-    position: relative;
-    top: -10px;
-    background: #fff;
-    display: inline-block;
-    padding: 0 8px;
-  }
-}
-
-.btns {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  flex-wrap: wrap;
-
-  .btn {
-    width: 36px;
-    height: 36px;
-    cursor: pointer;
-  }
-}
-
 </style>
