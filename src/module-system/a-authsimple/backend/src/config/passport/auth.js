@@ -28,6 +28,11 @@ module.exports = app => {
   return {
     providers: {
       [provider]: {
+        meta: {
+          title: 'User/Password',
+          mode: 'direct',
+          component: 'signin',
+        },
         config: {
           successReturnToOrRedirect: false,
           successRedirect: false,
