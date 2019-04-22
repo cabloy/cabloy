@@ -8,5 +8,6 @@ export default {
   OK: '确定',
   Username: '用户名',
   Password: '密码',
+  Break: '中止',
   'Loading... ': '加载中... ',
 };

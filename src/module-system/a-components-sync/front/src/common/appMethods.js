@@ -1,3 +1,5 @@
+import progressbar from './progressbar.js';
+
 export default function(ctx) {
   // calendar
   const calendar = {
@@ -22,7 +24,7 @@ export default function(ctx) {
   // preloader / progress
   for (const method of [ 'preloader', 'progress' ]) {
     dialog[method] = function(...args) {
-      ctx.$f7.dialog[method](ctx.getHostEl(), ...args);
+      return ctx.$f7.dialog[method](ctx.getHostEl(), ...args);
     };
   }
   // alert
@@ -43,6 +45,10 @@ export default function(ctx) {
     return new Promise((resolve, reject) => {
       ctx.$f7.dialog.confirm(ctx.getHostEl(), text, title, () => resolve(), () => reject());
     });
+  };
+  // progressbar
+  dialog.progressbar = function({ progressId, title, canBreak = true, color, progress = 0 }) {
+    return progressbar({ ctx, progressId, title, canBreak, color, progress });
   };
 
   // ok
