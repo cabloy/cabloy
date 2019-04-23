@@ -36,4 +36,10 @@ module.exports = {
   Yes: '是',
   No: '否',
   Sticky: '置顶',
+  Initialize: '初始化',
+  'Render Files': '渲染文件',
+  'Time Used': '用时',
+  seconds: '秒',
+  second2: '秒',
+  Build: '构建',
 };

@@ -59,8 +59,11 @@ module.exports = app => {
       // atomClass
       const atomClass = utils.atomClass(this.ctx.request.body.atomClass);
       const language = this.ctx.request.body.language;
+      // progress
+      const progressId = await this.ctx.meta.progress.create();
       // queue
-      const res = await this.ctx.app.meta.queue.pushAsync({
+      this.ctx.app.meta.queue.push({
+        locale: this.ctx.locale,
         subdomain: this.ctx.subdomain,
         module: moduleInfo.relativeName,
         queueName: 'render',
@@ -69,16 +72,20 @@ module.exports = app => {
           queueAction: 'buildLanguage',
           atomClass,
           language,
+          progressId,
         },
       });
-      this.ctx.success(res);
+      this.ctx.success({ progressId });
     }
 
     async buildLanguages() {
       // atomClass
       const atomClass = utils.atomClass(this.ctx.request.body.atomClass);
+      // progress
+      const progressId = await this.ctx.meta.progress.create();
       // queue
-      const res = await this.ctx.app.meta.queue.pushAsync({
+      this.ctx.app.meta.queue.push({
+        locale: this.ctx.locale,
         subdomain: this.ctx.subdomain,
         module: moduleInfo.relativeName,
         queueName: 'render',
@@ -86,9 +93,10 @@ module.exports = app => {
         data: {
           queueAction: 'buildLanguages',
           atomClass,
+          progressId,
         },
       });
-      this.ctx.success(res);
+      this.ctx.success({ progressId });
     }
 
     async getLanguages() {

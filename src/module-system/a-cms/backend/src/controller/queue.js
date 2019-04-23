@@ -11,6 +11,7 @@ module.exports = app => {
       const res = await this.ctx.service.site.buildLanguage({
         atomClass: this.ctx.request.body.atomClass,
         language: this.ctx.request.body.language,
+        progressId: this.ctx.request.body.progressId,
       });
       this.ctx.success(res);
     }
@@ -18,6 +19,7 @@ module.exports = app => {
     async buildLanguages() {
       const res = await this.ctx.service.site.buildLanguages({
         atomClass: this.ctx.request.body.atomClass,
+        progressId: this.ctx.request.body.progressId,
       });
       this.ctx.success(res);
     }

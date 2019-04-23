@@ -45,14 +45,14 @@ module.exports = app => {
       return build.getUrl(site, language, path);
     }
 
-    async buildLanguages({ atomClass }) {
+    async buildLanguages({ atomClass, progressId }) {
       const build = Build.create(this.ctx, atomClass);
-      return await build.buildLanguages();
+      return await build.buildLanguages({ progressId });
     }
 
-    async buildLanguage({ atomClass, language }) {
+    async buildLanguage({ atomClass, language, progressId }) {
       const build = Build.create(this.ctx, atomClass);
-      return await build.buildLanguage({ language });
+      return await build.buildLanguage({ language, progressId });
     }
 
   }

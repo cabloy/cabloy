@@ -213,7 +213,7 @@ class Build {
 
   // ///////////////////////////////// render
 
-  async renderAllFiles({ language }) {
+  async renderAllFiles({ language, progressId, progressNo }) {
     // clearCache
     ejs.clearCache();
     // site
@@ -221,7 +221,7 @@ class Build {
     // render static
     await this._renderStatic({ site });
     // render articles
-    await this._renderArticles({ site });
+    await this._renderArticles({ site, progressId, progressNo });
     // render index
     await this._renderIndex({ site });
   }
@@ -264,7 +264,7 @@ class Build {
     }
   }
 
-  async _renderArticles({ site }) {
+  async _renderArticles({ site, progressId, progressNo }) {
     // anonymous user
     let userId;
     const user = await this.ctx.meta.user.get({ anonymous: true });
@@ -288,10 +288,23 @@ class Build {
       user: { id: userId },
       pageForce: false,
     });
+
+    // progress
+    const progress1_Total = articles.length;
+    let progress1_progress = 0;
+
     // concurrency
-    const mapper = article => {
+    const mapper = async article => {
+      // progress: initialize
+      await this.ctx.meta.progress.update({
+        progressId,
+        progressNo,
+        total: progress1_Total,
+        progress: progress1_progress++,
+        text: article.atomName,
+      });
       // render article
-      return this._renderArticle({ site, article });
+      await this._renderArticle({ site, article });
     };
     await pMap(articles, mapper, { concurrency: 10 });
     // write sitemap
@@ -634,139 +647,213 @@ var env=${JSON.stringify(env, null, 2)};
   // //////////////////////////////// build
 
   // build languages
-  async buildLanguages() {
-    // time start
-    const timeStart = new Date();
-    // site
-    const site = await this.combineSiteBase();
-    for (const language of site.language.items.split(',')) {
-      await this.buildLanguage({ language });
+  async buildLanguages({ progressId, progressNo = 0 }) {
+    try {
+      // time start
+      const timeStart = new Date();
+      // site
+      const site = await this.combineSiteBase();
+      const languages = site.language.items.split(',');
+
+      // progress
+      const progress0_Total = languages.length;
+      let progress0_progress = 0;
+
+      for (const language of languages) {
+        // progress: language
+        await this.ctx.meta.progress.update({
+          progressId,
+          progressNo,
+          total: progress0_Total,
+          progress: progress0_progress++,
+          text: `${this.ctx.text('Build')} ${this.ctx.text(language)}`,
+        });
+
+        // build
+        await this.buildLanguage({ language, progressId, progressNo: progressNo + 1 });
+      }
+
+      // time end
+      const timeEnd = new Date();
+      const time = (timeEnd.valueOf() - timeStart.valueOf()) / 1000; // second
+
+      // progress: done
+      if (progressNo === 0) {
+        await this.ctx.meta.progress.done({
+          progressId,
+          message: `${this.ctx.text('Time Used')}: ${parseInt(time)}${this.ctx.text('second2')}`,
+        });
+      }
+
+      // ok
+      return {
+        time,
+      };
+    } catch (err) {
+      // error
+      if (progressNo === 0) {
+        await this.ctx.meta.progress.error({ progressId, message: err.message });
+      }
+      throw err;
     }
-    // time end
-    const timeEnd = new Date();
-    const time = (timeEnd.valueOf() - timeStart.valueOf()) / 1000; // second
-    return {
-      time,
-    };
   }
 
   // build language
-  async buildLanguage({ language }) {
-    // time start
-    const timeStart = new Date();
+  async buildLanguage({ language, progressId, progressNo = 0 }) {
+    try {
+      // time start
+      const timeStart = new Date();
 
-    // site
-    const site = await this.getSite({ language });
+      // progress
+      const progress0_Total = 2;
+      let progress0_progress = 0;
+      // progress: initialize
+      await this.ctx.meta.progress.update({
+        progressId,
+        progressNo,
+        total: progress0_Total,
+        progress: progress0_progress++,
+        text: this.ctx.text('Initialize'),
+      });
 
-    // / clear
+      // site
+      const site = await this.getSite({ language });
 
-    // intermediate
-    const pathIntermediate = await this.getPathIntermediate(language);
-    await fse.remove(pathIntermediate);
+      // / clear
 
-    // dist
-    const pathDist = await this.getPathDist(site, language);
-    //   solution: 1
-    // const distPaths = [ 'articles', 'asserts', 'plugins', 'static', 'index.html', 'robots.txt', 'sitemap.xml', 'sitemapindex.xml' ];
-    // for (const item of distPaths) {
-    //   await fse.remove(path.join(pathDist, item));
-    // }
-    //   solution: 2
-    const distFiles = await bb.fromCallback(cb => {
-      glob(`${pathDist}/\*`, cb);
-    });
-    const languages = site.language.items.split(',');
-    for (const item of distFiles) {
-      if (languages.indexOf(path.basename(item)) === -1) {
-        await fse.remove(item);
-      }
-    }
+      // intermediate
+      const pathIntermediate = await this.getPathIntermediate(language);
+      await fse.remove(pathIntermediate);
 
-    // / copy files to intermediate
-    // /  plugins<theme<custom
-
-    // plugins
-    for (const relativeName in this.app.meta.modules) {
-      const module = this.app.meta.modules[relativeName];
-      if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin) {
-        const pluginPath = path.join(module.root, 'backend/cms/plugin');
-        const pluginFiles = await bb.fromCallback(cb => {
-          glob(`${pluginPath}/\*`, cb);
-        });
-        for (const item of pluginFiles) {
-          await fse.copy(item, path.join(pathIntermediate, 'plugins', relativeName, path.basename(item)));
+      // dist
+      const pathDist = await this.getPathDist(site, language);
+      //   solution: 1
+      // const distPaths = [ 'articles', 'asserts', 'plugins', 'static', 'index.html', 'robots.txt', 'sitemap.xml', 'sitemapindex.xml' ];
+      // for (const item of distPaths) {
+      //   await fse.remove(path.join(pathDist, item));
+      // }
+      //   solution: 2
+      const distFiles = await bb.fromCallback(cb => {
+        glob(`${pathDist}/\*`, cb);
+      });
+      const languages = site.language.items.split(',');
+      for (const item of distFiles) {
+        if (languages.indexOf(path.basename(item)) === -1) {
+          await fse.remove(item);
         }
       }
-    }
 
-    // theme
-    if (!site.themes[language]) this.ctx.throw(1002);
-    await this.copyThemes(pathIntermediate, site.themes[language]);
+      // / copy files to intermediate
+      // /  plugins<theme<custom
 
-    // custom
-    const customPath = await this.getPathCustom(language);
-    const customFiles = await bb.fromCallback(cb => {
-      glob(`${customPath}/\*`, cb);
-    });
-    for (const item of customFiles) {
-      await fse.copy(item, path.join(pathIntermediate, path.basename(item)));
-    }
-
-    // custom dist
-    const customDistFiles = await bb.fromCallback(cb => {
-      glob(`${customPath}/dist/\*`, cb);
-    });
-    for (const item of customDistFiles) {
-      await fse.copy(item, path.join(pathDist, path.basename(item)));
-    }
-
-    // / copy files to dist (ignore .ejs)
-    // /  assets plugins/[plugin]/assets
-    for (const dir of [ 'assets', 'plugins' ]) {
-      if (dir === 'assets') {
-        // assets
-        const _filename = path.join(pathIntermediate, 'assets');
-        const exists = await fse.pathExists(_filename);
-        if (exists) {
-          await fse.copy(_filename, path.join(pathDist, 'assets'));
-        }
-      } else {
-        // plugins
-        const pluginsFiles = await bb.fromCallback(cb => {
-          glob(`${pathIntermediate}/plugins/\*`, cb);
-        });
-        for (const item of pluginsFiles) {
-          const _filename = `${item}/assets`;
-          const exists = await fse.pathExists(_filename);
-          if (exists) {
-            await fse.copy(_filename, path.join(pathDist, 'plugins', path.basename(item), 'assets'));
+      // plugins
+      for (const relativeName in this.app.meta.modules) {
+        const module = this.app.meta.modules[relativeName];
+        if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin) {
+          const pluginPath = path.join(module.root, 'backend/cms/plugin');
+          const pluginFiles = await bb.fromCallback(cb => {
+            glob(`${pluginPath}/\*`, cb);
+          });
+          for (const item of pluginFiles) {
+            await fse.copy(item, path.join(pathIntermediate, 'plugins', relativeName, path.basename(item)));
           }
         }
       }
-      // delete ejs files
-      const ejsFiles = await bb.fromCallback(cb => {
-        glob(`${pathDist}/${dir}/\*\*/\*.ejs`, cb);
+
+      // theme
+      if (!site.themes[language]) this.ctx.throw(1002);
+      await this.copyThemes(pathIntermediate, site.themes[language]);
+
+      // custom
+      const customPath = await this.getPathCustom(language);
+      const customFiles = await bb.fromCallback(cb => {
+        glob(`${customPath}/\*`, cb);
       });
-      for (const item of ejsFiles) {
-        await fse.remove(item);
+      for (const item of customFiles) {
+        await fse.copy(item, path.join(pathIntermediate, path.basename(item)));
       }
+
+      // custom dist
+      const customDistFiles = await bb.fromCallback(cb => {
+        glob(`${customPath}/dist/\*`, cb);
+      });
+      for (const item of customDistFiles) {
+        await fse.copy(item, path.join(pathDist, path.basename(item)));
+      }
+
+      // / copy files to dist (ignore .ejs)
+      // /  assets plugins/[plugin]/assets
+      for (const dir of [ 'assets', 'plugins' ]) {
+        if (dir === 'assets') {
+        // assets
+          const _filename = path.join(pathIntermediate, 'assets');
+          const exists = await fse.pathExists(_filename);
+          if (exists) {
+            await fse.copy(_filename, path.join(pathDist, 'assets'));
+          }
+        } else {
+        // plugins
+          const pluginsFiles = await bb.fromCallback(cb => {
+            glob(`${pathIntermediate}/plugins/\*`, cb);
+          });
+          for (const item of pluginsFiles) {
+            const _filename = `${item}/assets`;
+            const exists = await fse.pathExists(_filename);
+            if (exists) {
+              await fse.copy(_filename, path.join(pathDist, 'plugins', path.basename(item), 'assets'));
+            }
+          }
+        }
+        // delete ejs files
+        const ejsFiles = await bb.fromCallback(cb => {
+          glob(`${pathDist}/${dir}/\*\*/\*.ejs`, cb);
+        });
+        for (const item of ejsFiles) {
+          await fse.remove(item);
+        }
+      }
+
+      // / robots.txt
+      await this.createRobots({ site });
+
+      // / sitemapIndex
+      await this.createSitemapIndex({ site });
+
+      // progress: render files
+      await this.ctx.meta.progress.update({
+        progressId,
+        progressNo,
+        total: progress0_Total,
+        progress: progress0_progress++,
+        text: this.ctx.text('Render Files'),
+      });
+
+      // render all files
+      await this.renderAllFiles({ language, progressId, progressNo: progressNo + 1 });
+
+      // time end
+      const timeEnd = new Date();
+      const time = (timeEnd.valueOf() - timeStart.valueOf()) / 1000; // second
+
+      // progress: done
+      if (progressNo === 0) {
+        await this.ctx.meta.progress.done({
+          progressId,
+          message: `${this.ctx.text('Time Used')}: ${parseInt(time)}${this.ctx.text('second2')}`,
+        });
+      }
+
+      // ok
+      return {
+        time,
+      };
+    } catch (err) {
+      // error
+      if (progressNo === 0) {
+        await this.ctx.meta.progress.error({ progressId, message: err.message });
+      }
+      throw err;
     }
-
-    // / robots.txt
-    await this.createRobots({ site });
-
-    // / sitemapIndex
-    await this.createSitemapIndex({ site });
-
-    // render all files
-    await this.renderAllFiles({ language });
-
-    // time end
-    const timeEnd = new Date();
-    const time = (timeEnd.valueOf() - timeStart.valueOf()) / 1000; // second
-    return {
-      time,
-    };
   }
 
   async createSitemapIndex({ site }) {

@@ -667,7 +667,9 @@ __webpack_require__.r(__webpack_exports__);
   'Select Tags': '选择标签',
   'Site Configuration': '站点配置',
   'Time Used': '用时',
-  'What to write': '写点什么'
+  'What to write': '写点什么',
+  'Build Language': '构建语言',
+  'Build All Languages': '构建所有语言'
 });
 
 /***/ }),
@@ -2362,12 +2364,12 @@ var component = Object(componentNormalizer["a" /* default */])(
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/config/list.vue?vue&type=template&id=f0d31bf6&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.pageTitle,"eb-back-link":"Back"}}),_vm._v(" "),_c('f7-list',[_c('eb-list-item',{attrs:{"title":_vm.$text('Site')}},[_c('div',{attrs:{"slot":"after"},slot:"after"},[_c('eb-link',{attrs:{"eb-href":_vm.combineAtomClass('config/site')}},[_vm._v(_vm._s(_vm.$text('Config')))]),_vm._v(" "),_c('eb-link',{attrs:{"onPerform":_vm.onPerformBuild}},[_vm._v(_vm._s(_vm.$text('Build')))])],1)]),_vm._v(" "),_c('f7-list-group',[_c('f7-list-item',{attrs:{"title":_vm.$text('Languages'),"group-title":""}}),_vm._v(" "),(_vm.languages)?_vm._l((_vm.languages),function(item){return _c('eb-list-item',{key:item.value,attrs:{"title":item.title}},[_c('div',{attrs:{"slot":"after"},slot:"after"},[_c('eb-link',{attrs:{"eb-href":_vm.combineAtomClass(("category/list?language=" + (item.value)))}},[_vm._v(_vm._s(_vm.$text('Categories')))]),_vm._v(" "),_c('eb-link',{attrs:{"eb-href":_vm.combineAtomClass(("config/language?language=" + (item.value)))}},[_vm._v(_vm._s(_vm.$text('Config')))]),_vm._v(" "),_c('eb-link',{attrs:{"context":item.value,"onPerform":_vm.onPerformBuildLanguage}},[_vm._v(_vm._s(_vm.$text('Build')))]),_vm._v(" "),_c('eb-link',{attrs:{"context":item.value,"onPerform":_vm.onPerformPreview}},[_vm._v(_vm._s(_vm.$text('Preview')))])],1)])}):_vm._e()],2)],1)],1)}
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/config/list.vue?vue&type=template&id=9e6a7bf6&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.pageTitle,"eb-back-link":"Back"}}),_vm._v(" "),_c('f7-list',[_c('eb-list-item',{attrs:{"title":_vm.$text('Site')}},[_c('div',{attrs:{"slot":"after"},slot:"after"},[_c('eb-link',{attrs:{"eb-href":_vm.combineAtomClass('config/site')}},[_vm._v(_vm._s(_vm.$text('Config')))]),_vm._v(" "),_c('eb-link',{attrs:{"onPerform":_vm.onPerformBuild}},[_vm._v(_vm._s(_vm.$text('Build')))])],1)]),_vm._v(" "),_c('f7-list-group',[_c('f7-list-item',{attrs:{"title":_vm.$text('Languages'),"group-title":""}}),_vm._v(" "),(_vm.languages)?_vm._l((_vm.languages),function(item){return _c('eb-list-item',{key:item.value,attrs:{"title":item.title}},[_c('div',{attrs:{"slot":"after"},slot:"after"},[_c('eb-link',{attrs:{"eb-href":_vm.combineAtomClass(("category/list?language=" + (item.value)))}},[_vm._v(_vm._s(_vm.$text('Categories')))]),_vm._v(" "),_c('eb-link',{attrs:{"eb-href":_vm.combineAtomClass(("config/language?language=" + (item.value)))}},[_vm._v(_vm._s(_vm.$text('Config')))]),_vm._v(" "),_c('eb-link',{attrs:{"context":item,"onPerform":_vm.onPerformBuildLanguage}},[_vm._v(_vm._s(_vm.$text('Build')))]),_vm._v(" "),_c('eb-link',{attrs:{"context":item,"onPerform":_vm.onPerformPreview}},[_vm._v(_vm._s(_vm.$text('Preview')))])],1)])}):_vm._e()],2)],1)],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./front/src/pages/config/list.vue?vue&type=template&id=f0d31bf6&
+// CONCATENATED MODULE: ./front/src/pages/config/list.vue?vue&type=template&id=9e6a7bf6&
 
 // EXTERNAL MODULE: external "vue"
 var external_vue_ = __webpack_require__(2);
@@ -2414,7 +2416,12 @@ var ebModules = external_vue_default.a.prototype.$meta.module.get('a-base').opti
         return _this.$api.post('site/buildLanguages', {
           atomClass: _this.atomClass
         }).then(function (data) {
-          return "".concat(_this.$text('Time Used'), ": ").concat(data.time).concat(_this.$text('seconds'));
+          var progressId = data.progressId;
+
+          _this.$view.dialog.progressbar({
+            progressId: progressId,
+            title: _this.$text('Build All Languages')
+          });
         });
       });
     },
@@ -2424,9 +2431,14 @@ var ebModules = external_vue_default.a.prototype.$meta.module.get('a-base').opti
       return this.$view.dialog.confirm().then(function () {
         return _this2.$api.post('site/buildLanguage', {
           atomClass: _this2.atomClass,
-          language: context
+          language: context.value
         }).then(function (data) {
-          return "".concat(_this2.$text('Time Used'), ": ").concat(data.time).concat(_this2.$text('seconds'));
+          var progressId = data.progressId;
+
+          _this2.$view.dialog.progressbar({
+            progressId: progressId,
+            title: "".concat(_this2.$text('Build'), " ").concat(context.title)
+          });
         });
       });
     },
@@ -2435,10 +2447,10 @@ var ebModules = external_vue_default.a.prototype.$meta.module.get('a-base').opti
 
       return this.$api.post('site/getUrl', {
         atomClass: this.atomClass,
-        language: context,
+        language: context.value,
         path: 'index.html'
       }).then(function (data) {
-        window.open(data, "cms_site_".concat(_this3.atomClass.module, "_").concat(context));
+        window.open(data, "cms_site_".concat(_this3.atomClass.module, "_").concat(context.value));
       });
     }
   }

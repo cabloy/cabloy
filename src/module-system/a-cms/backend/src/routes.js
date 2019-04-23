@@ -44,8 +44,8 @@ module.exports = app => {
     { method: 'post', path: 'site/getConfigLanguagePreview', controller: site, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'site/getConfigLanguage', controller: site, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'site/setConfigLanguage', controller: site, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'site/buildLanguage', controller: site, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'site/buildLanguages', controller: site, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
+    { method: 'post', path: 'site/buildLanguage', controller: site, middlewares: 'progress', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
+    { method: 'post', path: 'site/buildLanguages', controller: site, middlewares: 'progress', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'site/getLanguages', controller: site },
     { method: 'post', path: 'site/getUrl', controller: site },
     // category
@@ -67,7 +67,7 @@ module.exports = app => {
     { method: 'get', path: 'rss/feed/comments/:module/:atomClassName/:language', controller: rss, action: 'feedComments' },
     { method: 'get', path: 'rss/feed/article/comments/:atomId', controller: rss, action: 'articleComments' },
     // queue
-    { method: 'post', path: 'queue/render', controller: queue, middlewares: 'inner',
+    { method: 'post', path: 'queue/render', controller: queue, middlewares: 'inner,progress',
       meta: { auth: { enable: false } },
     },
     // event

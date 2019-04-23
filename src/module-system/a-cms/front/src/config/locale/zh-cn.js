@@ -38,4 +38,6 @@ export default {
   'Site Configuration': '站点配置',
   'Time Used': '用时',
   'What to write': '写点什么',
+  'Build Language': '构建语言',
+  'Build All Languages': '构建所有语言',
 };

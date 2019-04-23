@@ -15,8 +15,8 @@
             <div slot="after">
               <eb-link :eb-href="combineAtomClass(`category/list?language=${item.value}`)">{{$text('Categories')}}</eb-link>
               <eb-link :eb-href="combineAtomClass(`config/language?language=${item.value}`)">{{$text('Config')}}</eb-link>
-              <eb-link :context="item.value" :onPerform="onPerformBuildLanguage">{{$text('Build')}}</eb-link>
-              <eb-link :context="item.value" :onPerform="onPerformPreview">{{$text('Preview')}}</eb-link>
+              <eb-link :context="item" :onPerform="onPerformBuildLanguage">{{$text('Build')}}</eb-link>
+              <eb-link :context="item" :onPerform="onPerformPreview">{{$text('Preview')}}</eb-link>
             </div>
           </eb-list-item>
         </template>
@@ -60,7 +60,8 @@ export default {
         return this.$api.post('site/buildLanguages', {
           atomClass: this.atomClass,
         }).then(data => {
-          return `${this.$text('Time Used')}: ${data.time}${this.$text('seconds')}`;
+          const progressId = data.progressId;
+          this.$view.dialog.progressbar({ progressId, title: this.$text('Build All Languages') });
         });
       });
     },
@@ -68,19 +69,20 @@ export default {
       return this.$view.dialog.confirm().then(() => {
         return this.$api.post('site/buildLanguage', {
           atomClass: this.atomClass,
-          language: context,
+          language: context.value,
         }).then(data => {
-          return `${this.$text('Time Used')}: ${data.time}${this.$text('seconds')}`;
+          const progressId = data.progressId;
+          this.$view.dialog.progressbar({ progressId, title: `${this.$text('Build')} ${context.title}` });
         });
       });
     },
     onPerformPreview(event, context) {
       return this.$api.post('site/getUrl', {
         atomClass: this.atomClass,
-        language: context,
+        language: context.value,
         path: 'index.html',
       }).then(data => {
-        window.open(data, `cms_site_${this.atomClass.module}_${context}`);
+        window.open(data, `cms_site_${this.atomClass.module}_${context.value}`);
       });
     },
   },
