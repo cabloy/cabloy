@@ -80,6 +80,15 @@ module.exports = {
     }
   },
 
+  performActionInBackground(options) {
+    // inherit subdomain, cookies such as locale
+    const ctx = this;
+    ctx.runInBackground(() => {
+      // performAction
+      return ctx.performAction(options);
+    });
+  },
+
   /**
    * perform action of this or that module
    * @param  {string} options.method method
