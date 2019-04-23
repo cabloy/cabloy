@@ -75,20 +75,20 @@ describe('test/controller/test.test.js', () => {
 
   });
 
-  it('action:build languages', async () => {
-    app.mockSession({});
+  // it('action:build languages', async () => {
+  //   app.mockSession({});
 
-    // login as root
-    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      auth: 'root',
-      password: '123456',
-    });
+  //   // login as root
+  //   await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
+  //     auth: 'root',
+  //     password: '123456',
+  //   });
 
-    const result = await app.httpRequest().post(mockUrl('site/buildLanguages')).send();
-    assert(result.body.code === 0);
-    console.log('time used: ', result.body.data.time);
+  //   const result = await app.httpRequest().post(mockUrl('site/buildLanguages')).send();
+  //   assert(result.body.code === 0);
+  //   console.log('time used: ', result.body.data.time);
 
-  });
+  // });
 
   it('action:render article', async () => {
     app.mockSession({});
@@ -213,19 +213,19 @@ describe('test/controller/test.test.js', () => {
 
   });
 
-  it('action:build languages', async () => {
-    app.mockSession({});
+  // it('action:build languages', async () => {
+  //   app.mockSession({});
 
-    // login as root
-    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      auth: 'root',
-      password: '123456',
-    });
+  //   // login as root
+  //   await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
+  //     auth: 'root',
+  //     password: '123456',
+  //   });
 
-    const result = await app.httpRequest().post(mockUrl('site/buildLanguages')).send();
-    assert(result.body.code === 0);
-    console.log('time used: ', result.body.data.time);
+  //   const result = await app.httpRequest().post(mockUrl('site/buildLanguages')).send();
+  //   assert(result.body.code === 0);
+  //   console.log('time used: ', result.body.data.time);
 
-  });
+  // });
 
 });
