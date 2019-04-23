@@ -76,14 +76,16 @@ module.exports = function(app) {
       return queueKey;
     }
 
-    _performTask({ subdomain, module, queueName, queueNameSub, key, pid, data }, cb) {
+    _performTask({ locale, subdomain, module, queueName, queueNameSub, key, pid, data }, cb) {
       // queue config
       const queueConfig = app.meta.queues[`${module}:${queueName}`];
       // url
       let url = util.combineApiPath(module, queueConfig.config.path);
-      if (queueNameSub) {
-        url += `?queueNameSub=${encodeURIComponent(queueNameSub)}`;
-      }
+      // queries
+      const queries = {};
+      if (locale) queries.locale = locale;
+      if (queueNameSub) queries.queueNameSub = queueNameSub;
+      url = util.combineQueries(url, queries);
       // call
       app.meta.messenger.callRandom({
         name: 'queueCall',
