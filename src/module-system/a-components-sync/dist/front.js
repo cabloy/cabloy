@@ -166,6 +166,7 @@ __webpack_require__.r(__webpack_exports__);
   OK: '确定',
   Username: '用户名',
   Password: '密码',
+  Abort: '中止',
   'Loading... ': '加载中... '
 });
 
@@ -388,7 +389,136 @@ var component = normalizeComponent(
 var external_vue_ = __webpack_require__(0);
 var external_vue_default = /*#__PURE__*/__webpack_require__.n(external_vue_);
 
+// CONCATENATED MODULE: ./front/src/common/progressbar.js
+/* harmony default export */ var progressbar = (function (_ref) {
+  var ctx = _ref.ctx,
+      progressId = _ref.progressId,
+      title = _ref.title,
+      _ref$canAbort = _ref.canAbort,
+      canAbort = _ref$canAbort === void 0 ? true : _ref$canAbort,
+      _ref$interval = _ref.interval,
+      interval = _ref$interval === void 0 ? 1000 : _ref$interval;
+  var dialog;
+  var counter = 0;
+  var app = ctx.$f7;
+  var hostEl = ctx.getHostEl();
+  var buttons = [];
+
+  if (canAbort) {
+    buttons.push({
+      text: ctx.$text('Abort'),
+      keyCodes: [27]
+    });
+  }
+
+  function callbackBreak() {
+    ctx.dialog.confirm().then(function () {
+      ctx.$api.post('/a/progress/progress/abort', {
+        progressId: progressId
+      }).then(function () {});
+    })["catch"](function () {
+      dialog.open();
+    });
+  }
+
+  function setProgress(_ref2) {
+    var _ref2$progressNo = _ref2.progressNo,
+        progressNo = _ref2$progressNo === void 0 ? 0 : _ref2$progressNo,
+        _ref2$total = _ref2.total,
+        total = _ref2$total === void 0 ? -1 : _ref2$total,
+        _ref2$progress = _ref2.progress,
+        progress = _ref2$progress === void 0 ? 0 : _ref2$progress,
+        _ref2$text = _ref2.text,
+        text = _ref2$text === void 0 ? '' : _ref2$text;
+    var progressbars = dialog.$el.find('.progressbar-item');
+    var progressbar = ctx.$$(progressbars[progressNo]);
+
+    var _progress = total > 0 ? parseInt(progress * 100 / total) : progress;
+
+    app.progressbar.set(progressbar.find('.progressbar'), _progress);
+
+    var _text = total > 0 ? "(".concat(progress + 1, "/").concat(total, ") ").concat(text) : text;
+
+    var $textEl = progressbar.find('.progressbar-text');
+    $textEl.text(_text);
+  }
+
+  function prepareProgressbars(length) {
+    var progressbars = dialog.$el.find('.progressbar-item');
+
+    if (progressbars.length > length) {
+      for (var i = progressbars.length - 1; i > length - 1; i--) {
+        progressbars[i].remove();
+      }
+    } else if (progressbars.length < length) {
+      var container = dialog.$el.find('.progressbar-container');
+
+      for (var _i = 0; _i < length - progressbars.length; _i++) {
+        var progressbar = ctx.$$("\n                <div class=\"progressbar-item\">\n                  <div class=\"progressbar\">\n                    <span></span>\n                  </div>\n                  <div class=\"progressbar-text\"></div>\n                <div>\n        ");
+        container.append(progressbar);
+      }
+    }
+  }
+
+  function checking() {
+    window.setTimeout(_checking, interval);
+  }
+
+  function _checking() {
+    ctx.$api.post('/a/progress/progress/check', {
+      progressId: progressId,
+      counter: counter
+    }).then(function (item) {
+      if (!item) {
+        return checking();
+      }
+
+      counter = item.counter;
+
+      if (item.done === 0) {
+        var data = JSON.parse(item.data);
+        prepareProgressbars(data.length);
+
+        for (var progressNo in data) {
+          var _item = data[progressNo];
+          setProgress({
+            progressNo: progressNo,
+            total: _item.total,
+            progress: _item.progress,
+            text: _item.text
+          });
+        }
+
+        checking();
+      } else {
+        dialog.close();
+        dialog.destroy();
+
+        var _data = item.data ? JSON.parse(item.data) : {};
+
+        ctx.toast.show({
+          text: _data.message || ctx.$text('Operation succeeded')
+        });
+      }
+    });
+  }
+
+  dialog = app.dialog.create({
+    hostEl: hostEl,
+    title: typeof title === 'undefined' ? app.params.dialog.progressTitle : title,
+    cssClass: 'dialog-progress',
+    content: "\n              <div class=\"progressbar-container\">\n              </div>\n            ",
+    buttons: buttons,
+    onClick: function onClick(dialog, index) {
+      if (index === 0) callbackBreak();
+    },
+    destroyOnClose: false
+  });
+  checking();
+  return dialog.open();
+});
 // CONCATENATED MODULE: ./front/src/common/appMethods.js
+
 /* harmony default export */ var appMethods = (function (ctx) {
   var calendar = {
     create: function create(params) {
@@ -418,7 +548,7 @@ var external_vue_default = /*#__PURE__*/__webpack_require__.n(external_vue_);
         args[_key] = arguments[_key];
       }
 
-      (_ctx$$f7$dialog = ctx.$f7.dialog)[method].apply(_ctx$$f7$dialog, [ctx.getHostEl()].concat(args));
+      return (_ctx$$f7$dialog = ctx.$f7.dialog)[method].apply(_ctx$$f7$dialog, [ctx.getHostEl()].concat(args));
     };
   };
 
@@ -452,6 +582,24 @@ var external_vue_default = /*#__PURE__*/__webpack_require__.n(external_vue_);
       }, function () {
         return reject();
       });
+    });
+  };
+
+  dialog.progressbar = function (_ref) {
+    var progressId = _ref.progressId,
+        title = _ref.title,
+        _ref$canBreak = _ref.canBreak,
+        canBreak = _ref$canBreak === void 0 ? true : _ref$canBreak,
+        color = _ref.color,
+        _ref$progress = _ref.progress,
+        progress = _ref$progress === void 0 ? 0 : _ref$progress;
+    return progressbar({
+      ctx: ctx,
+      progressId: progressId,
+      title: title,
+      canBreak: canBreak,
+      color: color,
+      progress: progress
     });
   };
 

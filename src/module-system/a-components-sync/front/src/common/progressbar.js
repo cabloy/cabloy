@@ -1,56 +1,119 @@
-export default function({ ctx, progressId, title, canBreak = true, color, progress = 0 }) {
+export default function({ ctx, progressId, title, canAbort = true, interval = 1000 }) {
+  let dialog;
+  let counter = 0;
   const app = ctx.$f7;
   const hostEl = ctx.getHostEl();
-  const infinite = typeof progress === 'undefined';
-  const dialog = app.dialog.create({
+  const buttons = [];
+  if (canAbort) {
+    buttons.push({
+      text: ctx.$text('Abort'),
+      keyCodes: [ 27 ],
+    });
+  }
+  //
+  function callbackBreak() {
+    ctx.dialog.confirm().then(() => {
+      ctx.$api.post('/a/progress/progress/abort', {
+        progressId,
+      }).then(() => {});
+    }).catch(() => {
+      dialog.open();
+    });
+  }
+  //
+  function setProgress({ progressNo = 0, total = -1, progress = 0, text = '' }) {
+    // prepare progressbar
+    const progressbars = dialog.$el.find('.progressbar-item');
+    const progressbar = ctx.$$(progressbars[progressNo]);
+    // setProgress
+    const _progress = total > 0 ? parseInt(progress * 100 / total) : progress;
+    app.progressbar.set(progressbar.find('.progressbar'), _progress);
+    // set text
+    const _text = total > 0 ? `(${progress + 1}/${total}) ${text}` : text;
+    const $textEl = progressbar.find('.progressbar-text');
+    $textEl.text(_text);
+  }
+  //
+  function prepareProgressbars(length) {
+    const progressbars = dialog.$el.find('.progressbar-item');
+    if (progressbars.length > length) {
+      // remove
+      for (let i = progressbars.length - 1; i > length - 1; i--) {
+        progressbars[i].remove();
+      }
+    } else if (progressbars.length < length) {
+      const container = dialog.$el.find('.progressbar-container');
+      for (let i = 0; i < length - progressbars.length; i++) {
+        const progressbar = ctx.$$(`
+                <div class="progressbar-item">
+                  <div class="progressbar">
+                    <span></span>
+                  </div>
+                  <div class="progressbar-text"></div>
+                <div>
+        `);
+        container.append(progressbar);
+      }
+    }
+  }
+  //
+  function checking() {
+    window.setTimeout(_checking, interval);
+  }
+  //
+  function _checking() {
+    ctx.$api.post('/a/progress/progress/check', {
+      progressId, counter,
+    }).then(item => {
+      if (!item) {
+        return checking();
+      }
+      counter = item.counter;
+      if (item.done === 0) {
+        const data = JSON.parse(item.data);
+        // adjust progressbar
+        prepareProgressbars(data.length);
+        // setProgress
+        for (const progressNo in data) {
+          const _item = data[progressNo];
+          setProgress({
+            progressNo,
+            total: _item.total,
+            progress: _item.progress,
+            text: _item.text,
+          });
+        }
+        // check again
+        checking();
+      } else {
+        // done:1 error:-1
+        // close
+        dialog.close();
+        dialog.destroy();
+        // alert
+        const data = item.data ? JSON.parse(item.data) : {};
+        ctx.toast.show({ text: data.message || ctx.$text('Operation succeeded') });
+      }
+    });
+  }
+  // dialog
+  dialog = app.dialog.create({
     hostEl,
     title: typeof title === 'undefined' ? app.params.dialog.progressTitle : title,
     cssClass: 'dialog-progress',
     content: `
-              <div class="progressbar${infinite ? '-infinite' : ''}${color ? ` color-${color}` : ''}">
-                ${!infinite ? '<span></span>' : ''}
+              <div class="progressbar-container">
               </div>
-              <div class="progressbar-text"></div>
             `,
-    buttons: [
-      {
-        text: ctx.$text('Break'),
-        keyCodes: [ 27 ],
-      },
-    ],
+    buttons,
     onClick(dialog, index) {
-      if (index === 0) callbackBreak({ ctx, progressId, dialog });
+      if (index === 0) callbackBreak();
     },
     destroyOnClose: false,
   });
-  // setProgress
-  dialog.setProgress = function(ops) {
-    let progress;
-    let text;
-    if (typeof ops === 'object') {
-      ({ progress, text } = ops);
-    } else {
-      progress = ops;
-    }
-    // setProgress
-    app.progressbar.set(dialog.$el.find('.progressbar'), progress);
-    // set text
-    const $textEl = dialog.$el.find('.progressbar-text');
-    $textEl.text(text || '');
-    // ok
-    return dialog;
-  };
-  // init
-  if (!infinite) dialog.setProgress(progress);
+  // start check
+  checking();
+  // open
   return dialog.open();
-}
-
-function callbackBreak({ ctx, progressId, dialog }) {
-  ctx.dialog.confirm().then(() => {
-    dialog.close();
-    dialog.destroy();
-  }).catch(() => {
-    dialog.open();
-  });
 }
 
