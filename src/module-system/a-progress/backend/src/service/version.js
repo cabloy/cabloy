@@ -12,11 +12,11 @@ module.exports = app => {
             updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             deleted int(11) DEFAULT '0',
             iid int(11) DEFAULT '0',
+            progressId varchar(50) DEFAULT NULL,
+            counter int(11) DEFAULT '0',
             done int(11) DEFAULT '0',
-            progressNo int(11) DEFAULT '0',
-            total int(11) DEFAULT '0',
-            progress int(11) DEFAULT '0',
-            text text DEFAULT NULL,
+            abort int(11) DEFAULT '0',
+            data text DEFAULT NULL,
             PRIMARY KEY (id)
           )
                   `;
