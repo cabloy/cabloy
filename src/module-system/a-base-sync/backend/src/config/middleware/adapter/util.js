@@ -60,6 +60,10 @@ module.exports = ctx => {
       });
     }
 
+    sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
   }
 
   return Util;
