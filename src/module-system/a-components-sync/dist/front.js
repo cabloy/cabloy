@@ -421,11 +421,25 @@ var external_vue_default = /*#__PURE__*/__webpack_require__.n(external_vue_);
     });
   }
 
+  function setProgresses(list) {
+    prepareProgressbars(list.length);
+
+    for (var progressNo in list) {
+      var _item = list[progressNo];
+      setProgress({
+        progressNo: progressNo,
+        total: _item.total,
+        progress: _item.progress,
+        text: _item.text
+      });
+    }
+  }
+
   function setProgress(_ref2) {
     var _ref2$progressNo = _ref2.progressNo,
         progressNo = _ref2$progressNo === void 0 ? 0 : _ref2$progressNo,
         _ref2$total = _ref2.total,
-        total = _ref2$total === void 0 ? -1 : _ref2$total,
+        total = _ref2$total === void 0 ? 0 : _ref2$total,
         _ref2$progress = _ref2.progress,
         progress = _ref2$progress === void 0 ? 0 : _ref2$progress,
         _ref2$text = _ref2.text,
@@ -476,29 +490,29 @@ var external_vue_default = /*#__PURE__*/__webpack_require__.n(external_vue_);
       counter = item.counter;
 
       if (item.done === 0) {
-        var data = JSON.parse(item.data);
-        prepareProgressbars(data.length);
-
-        for (var progressNo in data) {
-          var _item = data[progressNo];
-          setProgress({
-            progressNo: progressNo,
-            total: _item.total,
-            progress: _item.progress,
-            text: _item.text
-          });
-        }
-
+        setProgresses(JSON.parse(item.data));
         checking();
-      } else {
+      } else if (item.done === -1) {
         dialog.close();
         dialog.destroy();
-
+        var data = item.data ? JSON.parse(item.data) : {};
+        ctx.toast.show({
+          text: data.message
+        });
+      } else if (item.done === 1) {
         var _data = item.data ? JSON.parse(item.data) : {};
 
-        ctx.toast.show({
+        var progress = {
+          total: 0,
+          progress: 100,
           text: _data.message || ctx.$text('Operation succeeded')
-        });
+        };
+        setProgresses([progress]);
+        dialog.$el.find('.dialog-buttons').hide();
+        window.setTimeout(function () {
+          dialog.close();
+          dialog.destroy();
+        }, 2000);
       }
     });
   }

@@ -20,8 +20,22 @@ export default function({ ctx, progressId, title, canAbort = true, interval = 10
       dialog.open();
     });
   }
+  function setProgresses(list) {
+    // adjust progressbar
+    prepareProgressbars(list.length);
+    // setProgress
+    for (const progressNo in list) {
+      const _item = list[progressNo];
+      setProgress({
+        progressNo,
+        total: _item.total,
+        progress: _item.progress,
+        text: _item.text,
+      });
+    }
+  }
   //
-  function setProgress({ progressNo = 0, total = -1, progress = 0, text = '' }) {
+  function setProgress({ progressNo = 0, total = 0, progress = 0, text = '' }) {
     // prepare progressbar
     const progressbars = dialog.$el.find('.progressbar-item');
     const progressbar = ctx.$$(progressbars[progressNo]);
@@ -70,29 +84,29 @@ export default function({ ctx, progressId, title, canAbort = true, interval = 10
       }
       counter = item.counter;
       if (item.done === 0) {
-        const data = JSON.parse(item.data);
-        // adjust progressbar
-        prepareProgressbars(data.length);
-        // setProgress
-        for (const progressNo in data) {
-          const _item = data[progressNo];
-          setProgress({
-            progressNo,
-            total: _item.total,
-            progress: _item.progress,
-            text: _item.text,
-          });
-        }
+        setProgresses(JSON.parse(item.data));
         // check again
         checking();
-      } else {
+      } else if (item.done === -1) {
         // done:1 error:-1
         // close
         dialog.close();
         dialog.destroy();
         // alert
         const data = item.data ? JSON.parse(item.data) : {};
-        ctx.toast.show({ text: data.message || ctx.$text('Operation succeeded') });
+        ctx.toast.show({ text: data.message });
+      } else if (item.done === 1) {
+        // alert
+        const data = item.data ? JSON.parse(item.data) : {};
+        const progress = { total: 0, progress: 100, text: data.message || ctx.$text('Operation succeeded') };
+        setProgresses([ progress ]);
+        // hide buttons
+        dialog.$el.find('.dialog-buttons').hide();
+        // close
+        window.setTimeout(() => {
+          dialog.close();
+          dialog.destroy();
+        }, 2000);
       }
     });
   }
