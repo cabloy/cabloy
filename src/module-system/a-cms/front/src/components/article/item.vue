@@ -1,7 +1,7 @@
 <template>
   <div>
     <template v-if="!this.readOnly">
-      <item-edit :readOnly="readOnly" :item="data" :onSave="onSave"></item-edit>
+      <item-edit :readOnly="readOnly" :item="data" :onSave="onSave" @submit="onSubmit"></item-edit>
     </template>
     <template v-else>
       <item-view :readOnly="readOnly" :item="data"></item-view>
@@ -31,10 +31,13 @@ export default {
       type: Function,
     },
   },
+  methods: {
+    onSubmit(event) {
+      this.$emit('submit', event);
+    },
+  },
 };
 
 </script>
 <style scoped>
-
-
 </style>

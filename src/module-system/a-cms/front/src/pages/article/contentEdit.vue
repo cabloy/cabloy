@@ -108,7 +108,9 @@ export default {
       this.contextCallback(200, { content: data });
     },
     onSave() {
-      this.onPerformSave();
+      this.onPerformSave().then(() => {
+        this.$view.toast.show();
+      });
     },
     onPerformSave() {
       return this.contextParams.ctx.onSave().then(() => {

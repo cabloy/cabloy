@@ -2,15 +2,15 @@
   <eb-page>
     <eb-navbar :title="$text('Select Tags')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link iconMaterial="done" @click.prevent="onDone"></eb-link>
+        <eb-button ref="buttonSubmit" iconMaterial="done" :onPerform="onPerformDone"></eb-button>
       </f7-nav-right>
     </eb-navbar>
-    <f7-list form no-hairlines-md>
+    <eb-list form no-hairlines-md @submit.prevent="onFormSubmit">
       <f7-list-item>
         <f7-label floating>{{$text('Tags')}}</f7-label>
         <eb-input type="text" v-model="tagsText" :placeholder="$text('Tags')" clear-button></eb-input>
       </f7-list-item>
-    </f7-list>
+    </eb-list>
     <f7-block>
       <div class="row tags">
         <div :class="{'chip':true, 'col-33':true, 'chip-outline':tagIndex(item)===-1}" v-for="item of tagsAll" :key="item.id" @click="onTagSwitch(item)">
@@ -60,6 +60,9 @@ export default {
     });
   },
   methods: {
+    onFormSubmit() {
+      this.$refs.buttonSubmit.onClick();
+    },
     adjustTags() {
       if (!this.tags) return '';
       const tags = JSON.parse(this.tags);
@@ -80,7 +83,7 @@ export default {
       }
       this.tagsText = tags.join(',');
     },
-    onDone() {
+    onPerformDone() {
       let selected = null;
       if (this.tagsText) {
         selected = [];

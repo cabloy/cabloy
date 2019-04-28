@@ -1,5 +1,5 @@
 <template>
-  <f7-list>
+  <eb-list form no-hairlines-md @submit="onSubmit">
     <f7-list-group>
       <f7-list-item group-title :title="$text('Title')"></f7-list-item>
       <eb-list-item-validate dataKey="atomName"></eb-list-item-validate>
@@ -30,7 +30,7 @@
       <eb-list-item-validate dataKey="flag"></eb-list-item-validate>
       <eb-list-item-validate dataKey="extra"></eb-list-item-validate>
     </f7-list-group>
-  </f7-list>
+  </eb-list>
 </template>
 <script>
 import utils from '../../common/utils.js';
@@ -63,6 +63,9 @@ export default {
     });
   },
   methods: {
+    onSubmit(event) {
+      this.$emit('submit', event);
+    },
     combineAtomClass(url) {
       return utils.combineAtomClass(this.atomClass, url);
     },
