@@ -413,7 +413,7 @@ var external_vue_default = /*#__PURE__*/__webpack_require__.n(external_vue_);
 
   function callbackBreak() {
     ctx.dialog.confirm().then(function () {
-      ctx.$api.post('/a/progress/progress/abort', {
+      return ctx.$api.post('/a/progress/progress/abort', {
         progressId: progressId
       }).then(function () {});
     })["catch"](function () {
@@ -512,8 +512,10 @@ var external_vue_default = /*#__PURE__*/__webpack_require__.n(external_vue_);
         window.setTimeout(function () {
           dialog.close();
           dialog.destroy();
-        }, 2000);
+        }, app.params.toast.closeTimeout);
       }
+    })["catch"](function () {
+      checking();
     });
   }
 

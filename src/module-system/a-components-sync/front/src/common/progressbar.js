@@ -13,7 +13,7 @@ export default function({ ctx, progressId, title, canAbort = true, interval = 10
   //
   function callbackBreak() {
     ctx.dialog.confirm().then(() => {
-      ctx.$api.post('/a/progress/progress/abort', {
+      return ctx.$api.post('/a/progress/progress/abort', {
         progressId,
       }).then(() => {});
     }).catch(() => {
@@ -106,8 +106,11 @@ export default function({ ctx, progressId, title, canAbort = true, interval = 10
         window.setTimeout(() => {
           dialog.close();
           dialog.destroy();
-        }, 2000);
+        }, app.params.toast.closeTimeout);
       }
+    }).catch(() => {
+      // check again
+      checking();
     });
   }
   // dialog
