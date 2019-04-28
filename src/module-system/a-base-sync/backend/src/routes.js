@@ -42,7 +42,7 @@ module.exports = app => {
     { method: 'post', path: 'atom/action', controller: atom, middlewares: 'transaction',
       meta: { right: { type: 'atom' } },
     },
-    { method: 'post', path: 'atom/enable', controller: atom },
+    { method: 'post', path: 'atom/enable', controller: atom, middlewares: 'transaction' },
     { method: 'post', path: 'atom/star', controller: atom,
       meta: { right: { type: 'atom', action: 2 } },
     },
