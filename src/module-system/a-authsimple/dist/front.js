@@ -197,10 +197,10 @@ function normalizeComponent (
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_signin_vue_vue_type_style_index_0_id_1a0a85e4_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_signin_vue_vue_type_style_index_0_id_1a0a85e4_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_signin_vue_vue_type_style_index_0_id_1a0a85e4_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_signin_vue_vue_type_style_index_0_id_224d3294_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_signin_vue_vue_type_style_index_0_id_224d3294_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_signin_vue_vue_type_style_index_0_id_224d3294_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0__);
 /* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_signin_vue_vue_type_style_index_0_id_1a0a85e4_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
+ /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_9_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_less_loader_dist_cjs_js_ref_9_2_node_modules_vue_loader_lib_index_js_vue_loader_options_signin_vue_vue_type_style_index_0_id_224d3294_lang_less_scoped_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 /* 3 */
@@ -353,12 +353,12 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/components/signin.vue?vue&type=template&id=1a0a85e4&scoped=true&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('f7-card',[_c('f7-card-content',[_c('eb-validate',{ref:"validate",attrs:{"onPerform":_vm.onPerformValidate}},[_c('f7-list',{attrs:{"form":"","no-hairlines-md":""}},[_c('f7-list-item',[_c('f7-icon',{attrs:{"slot":"media","material":"person_outline"},slot:"media"}),_vm._v(" "),_c('f7-label',{attrs:{"floating":""}},[_vm._v(_vm._s(_vm.$text('Your username/mobile/email')))]),_vm._v(" "),_c('eb-input',{attrs:{"type":"text","placeholder":_vm.$text('Your username/mobile/email'),"clear-button":"","dataPath":"auth"},model:{value:(_vm.data.auth),callback:function ($$v) {_vm.$set(_vm.data, "auth", $$v)},expression:"data.auth"}})],1),_vm._v(" "),_c('f7-list-item',[_c('f7-icon',{attrs:{"slot":"media","material":"lock_outline"},slot:"media"}),_vm._v(" "),_c('f7-label',{attrs:{"floating":""}},[_vm._v(_vm._s(_vm.$text('Your password')))]),_vm._v(" "),_c('eb-input',{attrs:{"type":"password","placeholder":_vm.$text('Your password'),"clear-button":"","dataPath":"password"},model:{value:(_vm.data.password),callback:function ($$v) {_vm.$set(_vm.data, "password", $$v)},expression:"data.password"}})],1),_vm._v(" "),_c('f7-list-item',[_c('f7-icon',{attrs:{"slot":"media"},slot:"media"}),_vm._v(" "),(_vm.moduleCaptcha)?[_c('captchaContainer')]:_vm._e()],2),_vm._v(" "),_c('f7-list-item',[_c('f7-icon',{attrs:{"slot":"media"},slot:"media"}),_vm._v(" "),_c('f7-label',{attrs:{"floating":""}},[_vm._v(_vm._s(_vm.$text('Captcha code')))]),_vm._v(" "),_c('eb-input',{attrs:{"type":"text","placeholder":_vm.$text('Captcha code'),"clear-button":"","dataPath":"captcha/code"},model:{value:(_vm.captcha.code),callback:function ($$v) {_vm.$set(_vm.captcha, "code", $$v)},expression:"captcha.code"}})],1),_vm._v(" "),_c('f7-list-item',[_c('f7-icon',{attrs:{"slot":"media"},slot:"media"}),_vm._v(" "),_c('span',{staticClass:"text-color-gray"},[_vm._v(_vm._s(_vm.$text('Remember me')))]),_vm._v(" "),_c('eb-toggle',{attrs:{"dataPath":"rememberMe"},model:{value:(_vm.data.rememberMe),callback:function ($$v) {_vm.$set(_vm.data, "rememberMe", $$v)},expression:"data.rememberMe"}})],1),_vm._v(" "),_c('f7-list-item',{attrs:{"divider":""}},[_c('span',{staticClass:"eb-list-divider-normal"},[_c('eb-button',{attrs:{"onPerform":_vm.signIn}},[_vm._v(_vm._s(_vm.$text('Sign in')))])],1)])],1)],1)],1),_vm._v(" "),_c('f7-card-footer',[_c('eb-link',{staticClass:"text-smaller",attrs:{"eb-href":"/a/authsimple/passwordForgot","eb-target":"_self"}},[_vm._v(_vm._s(_vm.$text('Forgot password')))]),_vm._v(" "),_c('div'),_vm._v(" "),_c('eb-link',{staticClass:"text-smaller",attrs:{"eb-href":"/a/authsimple/signup","eb-target":"_self"}},[_vm._v(_vm._s(_vm.$text('Sign up')))])],1)],1)],1)}
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/components/signin.vue?vue&type=template&id=224d3294&scoped=true&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('f7-card',[_c('f7-card-content',[_c('eb-validate',{ref:"validate",attrs:{"onPerform":_vm.onPerformValidate}},[_c('eb-list',{attrs:{"form":"","no-hairlines-md":""},on:{"submit":function($event){$event.preventDefault();return _vm.onSubmit($event)}}},[_c('f7-list-item',[_c('f7-icon',{attrs:{"slot":"media","material":"person_outline"},slot:"media"}),_vm._v(" "),_c('f7-label',{attrs:{"floating":""}},[_vm._v(_vm._s(_vm.$text('Your username/mobile/email')))]),_vm._v(" "),_c('eb-input',{attrs:{"type":"text","placeholder":_vm.$text('Your username/mobile/email'),"clear-button":"","dataPath":"auth"},model:{value:(_vm.data.auth),callback:function ($$v) {_vm.$set(_vm.data, "auth", $$v)},expression:"data.auth"}})],1),_vm._v(" "),_c('f7-list-item',[_c('f7-icon',{attrs:{"slot":"media","material":"lock_outline"},slot:"media"}),_vm._v(" "),_c('f7-label',{attrs:{"floating":""}},[_vm._v(_vm._s(_vm.$text('Your password')))]),_vm._v(" "),_c('eb-input',{attrs:{"type":"password","placeholder":_vm.$text('Your password'),"clear-button":"","dataPath":"password"},model:{value:(_vm.data.password),callback:function ($$v) {_vm.$set(_vm.data, "password", $$v)},expression:"data.password"}})],1),_vm._v(" "),_c('f7-list-item',[_c('f7-icon',{attrs:{"slot":"media"},slot:"media"}),_vm._v(" "),(_vm.moduleCaptcha)?[_c('captchaContainer')]:_vm._e()],2),_vm._v(" "),_c('f7-list-item',[_c('f7-icon',{attrs:{"slot":"media"},slot:"media"}),_vm._v(" "),_c('f7-label',{attrs:{"floating":""}},[_vm._v(_vm._s(_vm.$text('Captcha code')))]),_vm._v(" "),_c('eb-input',{attrs:{"type":"text","placeholder":_vm.$text('Captcha code'),"clear-button":"","dataPath":"captcha/code"},model:{value:(_vm.captcha.code),callback:function ($$v) {_vm.$set(_vm.captcha, "code", $$v)},expression:"captcha.code"}})],1),_vm._v(" "),_c('f7-list-item',[_c('f7-icon',{attrs:{"slot":"media"},slot:"media"}),_vm._v(" "),_c('span',{staticClass:"text-color-gray"},[_vm._v(_vm._s(_vm.$text('Remember me')))]),_vm._v(" "),_c('eb-toggle',{attrs:{"dataPath":"rememberMe"},model:{value:(_vm.data.rememberMe),callback:function ($$v) {_vm.$set(_vm.data, "rememberMe", $$v)},expression:"data.rememberMe"}})],1),_vm._v(" "),_c('f7-list-item',{attrs:{"divider":""}},[_c('span',{staticClass:"eb-list-divider-normal"},[_c('eb-button',{ref:"buttonSubmit",attrs:{"onPerform":_vm.signIn}},[_vm._v(_vm._s(_vm.$text('Sign in')))])],1)]),_vm._v(" "),_c('f7-list-item')],1)],1)],1),_vm._v(" "),_c('f7-card-footer',[_c('eb-link',{staticClass:"text-smaller",attrs:{"eb-href":"/a/authsimple/passwordForgot","eb-target":"_self"}},[_vm._v(_vm._s(_vm.$text('Forgot password')))]),_vm._v(" "),_c('div'),_vm._v(" "),_c('eb-link',{staticClass:"text-smaller",attrs:{"eb-href":"/a/authsimple/signup","eb-target":"_self"}},[_vm._v(_vm._s(_vm.$text('Sign up')))])],1)],1)],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./front/src/components/signin.vue?vue&type=template&id=1a0a85e4&scoped=true&
+// CONCATENATED MODULE: ./front/src/components/signin.vue?vue&type=template&id=224d3294&scoped=true&
 
 // CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/components/signin.vue?vue&type=script&lang=js&
 /* harmony default export */ var signinvue_type_script_lang_js_ = ({
@@ -401,13 +401,16 @@ var staticRenderFns = []
     },
     signIn: function signIn() {
       return this.$refs.validate.perform();
+    },
+    onSubmit: function onSubmit() {
+      this.$refs.buttonSubmit.onClick();
     }
   }
 });
 // CONCATENATED MODULE: ./front/src/components/signin.vue?vue&type=script&lang=js&
  /* harmony default export */ var components_signinvue_type_script_lang_js_ = (signinvue_type_script_lang_js_); 
-// EXTERNAL MODULE: ./front/src/components/signin.vue?vue&type=style&index=0&id=1a0a85e4&lang=less&scoped=true&
-var signinvue_type_style_index_0_id_1a0a85e4_lang_less_scoped_true_ = __webpack_require__(2);
+// EXTERNAL MODULE: ./front/src/components/signin.vue?vue&type=style&index=0&id=224d3294&lang=less&scoped=true&
+var signinvue_type_style_index_0_id_224d3294_lang_less_scoped_true_ = __webpack_require__(2);
 
 // EXTERNAL MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/runtime/componentNormalizer.js
 var componentNormalizer = __webpack_require__(0);
@@ -427,7 +430,7 @@ var component = Object(componentNormalizer["a" /* default */])(
   staticRenderFns,
   false,
   null,
-  "1a0a85e4",
+  "224d3294",
   null
   
 )
@@ -466,12 +469,12 @@ function install(_Vue, cb) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/passwordChange.vue?vue&type=template&id=d779d144&scoped=true&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('Change password'),"eb-back-link":"Back"}}),_vm._v(" "),_c('f7-block',[_c('eb-validate',{ref:"validate",attrs:{"auto":false,"data":_vm.data,"params":{validator: 'passwordChange'},"onPerform":_vm.onPerformValidate}},[_c('f7-list',{attrs:{"form":"","no-hairlines-md":""}},[_c('eb-list-item-validate',{attrs:{"dataKey":"passwordOld"}}),_vm._v(" "),_c('eb-list-item-validate',{attrs:{"dataKey":"passwordNew"}}),_vm._v(" "),_c('eb-list-item-validate',{attrs:{"dataKey":"passwordNewAgain"}}),_vm._v(" "),_c('f7-list-item',[(_vm.moduleCaptcha)?[_c('captchaContainer')]:_vm._e()],2),_vm._v(" "),_c('f7-list-item',[_c('f7-label',{attrs:{"floating":""}},[_vm._v(_vm._s(_vm.$text('Captcha code')))]),_vm._v(" "),_c('eb-input',{attrs:{"type":"text","placeholder":_vm.$text('Captcha code'),"clear-button":"","dataPath":"captcha/code"},model:{value:(_vm.captcha.code),callback:function ($$v) {_vm.$set(_vm.captcha, "code", $$v)},expression:"captcha.code"}})],1),_vm._v(" "),_c('f7-list-item',{attrs:{"divider":""}},[_c('span',{staticClass:"eb-list-divider-normal"},[_c('eb-button',{attrs:{"onPerform":_vm.onPerformOk}},[_vm._v(_vm._s(_vm.$text('OK')))])],1)])],1)],1)],1)],1)}
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/passwordChange.vue?vue&type=template&id=bf97a8ea&scoped=true&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('Change password'),"eb-back-link":"Back"}}),_vm._v(" "),_c('f7-block',[_c('eb-validate',{ref:"validate",attrs:{"auto":false,"data":_vm.data,"params":{validator: 'passwordChange'},"onPerform":_vm.onPerformValidate}},[_c('eb-list',{attrs:{"form":"","no-hairlines-md":""},on:{"submit":function($event){$event.preventDefault();return _vm.onSubmit($event)}}},[_c('eb-list-item-validate',{attrs:{"dataKey":"passwordOld"}}),_vm._v(" "),_c('eb-list-item-validate',{attrs:{"dataKey":"passwordNew"}}),_vm._v(" "),_c('eb-list-item-validate',{attrs:{"dataKey":"passwordNewAgain"}}),_vm._v(" "),_c('f7-list-item',[(_vm.moduleCaptcha)?[_c('captchaContainer')]:_vm._e()],2),_vm._v(" "),_c('f7-list-item',[_c('f7-label',{attrs:{"floating":""}},[_vm._v(_vm._s(_vm.$text('Captcha code')))]),_vm._v(" "),_c('eb-input',{attrs:{"type":"text","placeholder":_vm.$text('Captcha code'),"clear-button":"","dataPath":"captcha/code"},model:{value:(_vm.captcha.code),callback:function ($$v) {_vm.$set(_vm.captcha, "code", $$v)},expression:"captcha.code"}})],1),_vm._v(" "),_c('f7-list-item',{attrs:{"divider":""}},[_c('span',{staticClass:"eb-list-divider-normal"},[_c('eb-button',{ref:"buttonSubmit",attrs:{"onPerform":_vm.onPerformOk}},[_vm._v(_vm._s(_vm.$text('OK')))])],1)])],1)],1)],1)],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./front/src/pages/passwordChange.vue?vue&type=template&id=d779d144&scoped=true&
+// CONCATENATED MODULE: ./front/src/pages/passwordChange.vue?vue&type=template&id=bf97a8ea&scoped=true&
 
 // CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/passwordChange.vue?vue&type=script&lang=js&
 /* harmony default export */ var passwordChangevue_type_script_lang_js_ = ({
@@ -512,6 +515,9 @@ var staticRenderFns = []
     },
     onPerformOk: function onPerformOk() {
       return this.$refs.validate.perform();
+    },
+    onSubmit: function onSubmit() {
+      this.$refs.buttonSubmit.onClick();
     }
   }
 });
@@ -534,7 +540,7 @@ var component = Object(componentNormalizer["a" /* default */])(
   staticRenderFns,
   false,
   null,
-  "d779d144",
+  "bf97a8ea",
   null
   
 )
@@ -548,12 +554,12 @@ var component = Object(componentNormalizer["a" /* default */])(
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/passwordForgot.vue?vue&type=template&id=9afbc8dc&scoped=true&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('Forgot password'),"eb-back-link":"Back"}}),_vm._v(" "),_c('f7-block',[(_vm.sent)?[_vm._v(_vm._s(_vm.$text('passwordResetEmailSentAlert')))]:[_c('eb-validate',{ref:"validate",attrs:{"auto":false,"data":_vm.data,"params":{validator: 'passwordForgot'},"onPerform":_vm.onPerformValidate}},[_c('f7-list',{attrs:{"form":"","no-hairlines-md":""}},[_c('eb-list-item-validate',{attrs:{"dataKey":"email"}}),_vm._v(" "),_c('f7-list-item',{attrs:{"divider":""}},[_c('span',{staticClass:"eb-list-divider-normal"},[_c('eb-button',{attrs:{"onPerform":_vm.onPerformOk}},[_vm._v(_vm._s(_vm.$text('Reset password')))])],1)])],1)],1)]],2)],1)}
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/passwordForgot.vue?vue&type=template&id=79ccc4f5&scoped=true&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('Forgot password'),"eb-back-link":"Back"}}),_vm._v(" "),_c('f7-block',[(_vm.sent)?[_vm._v(_vm._s(_vm.$text('passwordResetEmailSentAlert')))]:[_c('eb-validate',{ref:"validate",attrs:{"auto":false,"data":_vm.data,"params":{validator: 'passwordForgot'},"onPerform":_vm.onPerformValidate}},[_c('eb-list',{attrs:{"form":"","no-hairlines-md":""},on:{"submit":function($event){$event.preventDefault();return _vm.onSubmit($event)}}},[_c('eb-list-item-validate',{attrs:{"dataKey":"email"}}),_vm._v(" "),_c('f7-list-item',{attrs:{"divider":""}},[_c('span',{staticClass:"eb-list-divider-normal"},[_c('eb-button',{ref:"buttonSubmit",attrs:{"onPerform":_vm.onPerformOk}},[_vm._v(_vm._s(_vm.$text('Reset password')))])],1)])],1)],1)]],2)],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./front/src/pages/passwordForgot.vue?vue&type=template&id=9afbc8dc&scoped=true&
+// CONCATENATED MODULE: ./front/src/pages/passwordForgot.vue?vue&type=template&id=79ccc4f5&scoped=true&
 
 // CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/passwordForgot.vue?vue&type=script&lang=js&
 /* harmony default export */ var passwordForgotvue_type_script_lang_js_ = ({
@@ -585,6 +591,9 @@ var staticRenderFns = []
     },
     onPerformOk: function onPerformOk() {
       return this.$refs.validate.perform();
+    },
+    onSubmit: function onSubmit() {
+      this.$refs.buttonSubmit.onClick();
     }
   }
 });
@@ -607,7 +616,7 @@ var component = Object(componentNormalizer["a" /* default */])(
   staticRenderFns,
   false,
   null,
-  "9afbc8dc",
+  "79ccc4f5",
   null
   
 )
@@ -621,12 +630,12 @@ var component = Object(componentNormalizer["a" /* default */])(
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/emailConfirm.vue?vue&type=template&id=47906ba7&scoped=true&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('Email confirmation'),"eb-back-link":"Back"}}),_vm._v(" "),_c('f7-block',[(_vm.sent)?[_vm._v(_vm._s(_vm.$text('emailConfirmSentAlert')))]:[_c('eb-validate',{ref:"validate",attrs:{"auto":false,"data":_vm.data,"params":{validator: 'emailConfirm'},"onPerform":_vm.onPerformValidate}},[_c('f7-list',{attrs:{"form":"","no-hairlines-md":""}},[_c('eb-list-item-validate',{attrs:{"dataKey":"userName"}}),_vm._v(" "),_c('eb-list-item-validate',{attrs:{"dataKey":"email"}}),_vm._v(" "),_c('f7-list-item',{attrs:{"divider":""}},[_c('span',{staticClass:"eb-list-divider-normal"},[_c('eb-button',{attrs:{"onPerform":_vm.onPerformOk}},[_vm._v(_vm._s(_vm.$text('Send confirmation email')))])],1)])],1)],1)]],2)],1)}
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/emailConfirm.vue?vue&type=template&id=04f79bbe&scoped=true&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('Email confirmation'),"eb-back-link":"Back"}}),_vm._v(" "),_c('f7-block',[(_vm.sent)?[_vm._v(_vm._s(_vm.$text('emailConfirmSentAlert')))]:[_c('eb-validate',{ref:"validate",attrs:{"auto":false,"data":_vm.data,"params":{validator: 'emailConfirm'},"onPerform":_vm.onPerformValidate}},[_c('eb-list',{attrs:{"form":"","no-hairlines-md":""},on:{"submit":function($event){$event.preventDefault();return _vm.onSubmit($event)}}},[_c('eb-list-item-validate',{attrs:{"dataKey":"userName"}}),_vm._v(" "),_c('eb-list-item-validate',{attrs:{"dataKey":"email"}}),_vm._v(" "),_c('f7-list-item',{attrs:{"divider":""}},[_c('span',{staticClass:"eb-list-divider-normal"},[_c('eb-button',{ref:"buttonSubmit",attrs:{"onPerform":_vm.onPerformOk}},[_vm._v(_vm._s(_vm.$text('Send confirmation email')))])],1)])],1)],1)]],2)],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./front/src/pages/emailConfirm.vue?vue&type=template&id=47906ba7&scoped=true&
+// CONCATENATED MODULE: ./front/src/pages/emailConfirm.vue?vue&type=template&id=04f79bbe&scoped=true&
 
 // CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/emailConfirm.vue?vue&type=script&lang=js&
 /* harmony default export */ var emailConfirmvue_type_script_lang_js_ = ({
@@ -659,6 +668,9 @@ var staticRenderFns = []
     },
     onPerformOk: function onPerformOk() {
       return this.$refs.validate.perform();
+    },
+    onSubmit: function onSubmit() {
+      this.$refs.buttonSubmit.onClick();
     }
   }
 });
@@ -681,7 +693,7 @@ var component = Object(componentNormalizer["a" /* default */])(
   staticRenderFns,
   false,
   null,
-  "47906ba7",
+  "04f79bbe",
   null
   
 )
@@ -695,12 +707,12 @@ var component = Object(componentNormalizer["a" /* default */])(
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/passwordReset.vue?vue&type=template&id=44c4315d&scoped=true&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('Reset password'),"eb-back-link":"Back"}}),_vm._v(" "),_c('f7-block',[_c('eb-validate',{ref:"validate",attrs:{"auto":false,"data":_vm.data,"params":{validator: 'passwordReset'},"onPerform":_vm.onPerformValidate}},[_c('f7-list',{attrs:{"form":"","no-hairlines-md":""}},[_c('eb-list-item-validate',{attrs:{"dataKey":"passwordNew"}}),_vm._v(" "),_c('eb-list-item-validate',{attrs:{"dataKey":"passwordNewAgain"}}),_vm._v(" "),_c('f7-list-item',{attrs:{"divider":""}},[_c('span',{staticClass:"eb-list-divider-normal"},[_c('eb-button',{attrs:{"onPerform":_vm.onPerformOk}},[_vm._v(_vm._s(_vm.$text('OK')))])],1)])],1)],1)],1)],1)}
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/passwordReset.vue?vue&type=template&id=487e2fe4&scoped=true&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('Reset password'),"eb-back-link":"Back"}}),_vm._v(" "),_c('f7-block',[_c('eb-validate',{ref:"validate",attrs:{"auto":false,"data":_vm.data,"params":{validator: 'passwordReset'},"onPerform":_vm.onPerformValidate}},[_c('eb-list',{attrs:{"form":"","no-hairlines-md":""},on:{"submit":function($event){$event.preventDefault();return _vm.onSubmit($event)}}},[_c('eb-list-item-validate',{attrs:{"dataKey":"passwordNew"}}),_vm._v(" "),_c('eb-list-item-validate',{attrs:{"dataKey":"passwordNewAgain"}}),_vm._v(" "),_c('f7-list-item',{attrs:{"divider":""}},[_c('span',{staticClass:"eb-list-divider-normal"},[_c('eb-button',{ref:"buttonSubmit",attrs:{"onPerform":_vm.onPerformOk}},[_vm._v(_vm._s(_vm.$text('OK')))])],1)])],1)],1)],1)],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./front/src/pages/passwordReset.vue?vue&type=template&id=44c4315d&scoped=true&
+// CONCATENATED MODULE: ./front/src/pages/passwordReset.vue?vue&type=template&id=487e2fe4&scoped=true&
 
 // CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/passwordReset.vue?vue&type=script&lang=js&
 /* harmony default export */ var passwordResetvue_type_script_lang_js_ = ({
@@ -731,6 +743,9 @@ var staticRenderFns = []
     },
     onPerformOk: function onPerformOk() {
       return this.$refs.validate.perform();
+    },
+    onSubmit: function onSubmit() {
+      this.$refs.buttonSubmit.onClick();
     }
   }
 });
@@ -753,7 +768,7 @@ var component = Object(componentNormalizer["a" /* default */])(
   staticRenderFns,
   false,
   null,
-  "44c4315d",
+  "487e2fe4",
   null
   
 )
@@ -767,12 +782,12 @@ var component = Object(componentNormalizer["a" /* default */])(
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/signup.vue?vue&type=template&id=3f6eefdc&scoped=true&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('Sign up'),"eb-back-link":"Back"}}),_vm._v(" "),_c('f7-block',[_c('eb-validate',{ref:"validate",attrs:{"auto":false,"data":_vm.data,"params":{validator: 'signup'},"onPerform":_vm.onPerformValidate},on:{"schema:ready":_vm.onSchemaReady}},[_c('f7-list',{attrs:{"form":"","no-hairlines-md":""}},[_c('eb-list-item-validate',{attrs:{"dataKey":"userName"}}),_vm._v(" "),_c('eb-list-item-validate',{attrs:{"dataKey":"realName"}}),_vm._v(" "),_c('eb-list-item-validate',{attrs:{"dataKey":"email"}}),_vm._v(" "),_c('eb-list-item-validate',{attrs:{"dataKey":"password"}}),_vm._v(" "),_c('eb-list-item-validate',{attrs:{"dataKey":"passwordAgain"}}),_vm._v(" "),_c('f7-list-item',[(_vm.moduleCaptcha)?[_c('captchaContainer')]:_vm._e()],2),_vm._v(" "),_c('f7-list-item',[_c('f7-label',{attrs:{"floating":""}},[_vm._v(_vm._s(_vm.$text('Captcha code')))]),_vm._v(" "),_c('eb-input',{attrs:{"type":"text","placeholder":_vm.$text('Captcha code'),"clear-button":"","dataPath":"captcha/code"},model:{value:(_vm.captcha.code),callback:function ($$v) {_vm.$set(_vm.captcha, "code", $$v)},expression:"captcha.code"}})],1),_vm._v(" "),_c('f7-list-item',{attrs:{"divider":""}},[_c('span',{staticClass:"eb-list-divider-normal"},[_c('eb-button',{attrs:{"onPerform":_vm.signUp}},[_vm._v(_vm._s(_vm.$text('Sign up')))])],1)])],1)],1)],1)],1)}
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/signup.vue?vue&type=template&id=45e75d1d&scoped=true&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('Sign up'),"eb-back-link":"Back"}}),_vm._v(" "),_c('f7-block',[_c('eb-validate',{ref:"validate",attrs:{"auto":false,"data":_vm.data,"params":{validator: 'signup'},"onPerform":_vm.onPerformValidate},on:{"schema:ready":_vm.onSchemaReady}},[_c('eb-list',{attrs:{"form":"","no-hairlines-md":""},on:{"submit":function($event){$event.preventDefault();return _vm.onSubmit($event)}}},[_c('eb-list-item-validate',{attrs:{"dataKey":"userName"}}),_vm._v(" "),_c('eb-list-item-validate',{attrs:{"dataKey":"realName"}}),_vm._v(" "),_c('eb-list-item-validate',{attrs:{"dataKey":"email"}}),_vm._v(" "),_c('eb-list-item-validate',{attrs:{"dataKey":"password"}}),_vm._v(" "),_c('eb-list-item-validate',{attrs:{"dataKey":"passwordAgain"}}),_vm._v(" "),_c('f7-list-item',[(_vm.moduleCaptcha)?[_c('captchaContainer')]:_vm._e()],2),_vm._v(" "),_c('f7-list-item',[_c('f7-label',{attrs:{"floating":""}},[_vm._v(_vm._s(_vm.$text('Captcha code')))]),_vm._v(" "),_c('eb-input',{attrs:{"type":"text","placeholder":_vm.$text('Captcha code'),"clear-button":"","dataPath":"captcha/code"},model:{value:(_vm.captcha.code),callback:function ($$v) {_vm.$set(_vm.captcha, "code", $$v)},expression:"captcha.code"}})],1),_vm._v(" "),_c('f7-list-item',{attrs:{"divider":""}},[_c('span',{staticClass:"eb-list-divider-normal"},[_c('eb-button',{ref:"buttonSubmit",attrs:{"onPerform":_vm.signUp}},[_vm._v(_vm._s(_vm.$text('Sign up')))])],1)])],1)],1)],1)],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./front/src/pages/signup.vue?vue&type=template&id=3f6eefdc&scoped=true&
+// CONCATENATED MODULE: ./front/src/pages/signup.vue?vue&type=template&id=45e75d1d&scoped=true&
 
 // CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/signup.vue?vue&type=script&lang=js&
 /* harmony default export */ var signupvue_type_script_lang_js_ = ({
@@ -844,6 +859,9 @@ var staticRenderFns = []
     },
     signUp: function signUp() {
       return this.$refs.validate.perform();
+    },
+    onSubmit: function onSubmit() {
+      this.$refs.buttonSubmit.onClick();
     }
   }
 });
@@ -866,7 +884,7 @@ var component = Object(componentNormalizer["a" /* default */])(
   staticRenderFns,
   false,
   null,
-  "3f6eefdc",
+  "45e75d1d",
   null
   
 )

@@ -3,7 +3,7 @@
     <eb-navbar :title="$text('Change password')" eb-back-link="Back"></eb-navbar>
     <f7-block>
       <eb-validate ref="validate" :auto="false" :data="data" :params="{validator: 'passwordChange'}" :onPerform="onPerformValidate">
-        <f7-list form no-hairlines-md>
+        <eb-list form no-hairlines-md @submit.prevent="onSubmit">
           <eb-list-item-validate dataKey="passwordOld"></eb-list-item-validate>
           <eb-list-item-validate dataKey="passwordNew"></eb-list-item-validate>
           <eb-list-item-validate dataKey="passwordNewAgain"></eb-list-item-validate>
@@ -18,10 +18,10 @@
           </f7-list-item>
           <f7-list-item divider>
             <span class="eb-list-divider-normal">
-              <eb-button :onPerform="onPerformOk">{{$text('OK')}}</eb-button>
+              <eb-button ref="buttonSubmit" :onPerform="onPerformOk">{{$text('OK')}}</eb-button>
             </span>
           </f7-list-item>
-        </f7-list>
+        </eb-list>
       </eb-validate>
     </f7-block>
   </eb-page>
@@ -61,6 +61,9 @@ export default {
     },
     onPerformOk() {
       return this.$refs.validate.perform();
+    },
+    onSubmit() {
+      this.$refs.buttonSubmit.onClick();
     },
   },
 };

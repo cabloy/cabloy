@@ -3,7 +3,7 @@
     <f7-card>
       <f7-card-content>
         <eb-validate ref="validate" :onPerform="onPerformValidate">
-          <f7-list form no-hairlines-md>
+          <eb-list form no-hairlines-md @submit.prevent="onSubmit">
             <f7-list-item>
               <f7-icon material="person_outline" slot="media"></f7-icon>
               <f7-label floating>{{$text('Your username/mobile/email')}}</f7-label>
@@ -32,10 +32,12 @@
             </f7-list-item>
             <f7-list-item divider>
               <span class="eb-list-divider-normal">
-                <eb-button :onPerform="signIn">{{$text('Sign in')}}</eb-button>
+                <eb-button ref="buttonSubmit" :onPerform="signIn">{{$text('Sign in')}}</eb-button>
               </span>
             </f7-list-item>
-          </f7-list>
+            <f7-list-item>
+            </f7-list-item>
+          </eb-list>
         </eb-validate>
       </f7-card-content>
       <f7-card-footer>
@@ -81,6 +83,9 @@ export default {
     },
     signIn() {
       return this.$refs.validate.perform();
+    },
+    onSubmit() {
+      this.$refs.buttonSubmit.onClick();
     },
   },
 };

@@ -3,7 +3,7 @@
     <eb-navbar :title="$text('Sign up')" eb-back-link="Back"></eb-navbar>
     <f7-block>
       <eb-validate ref="validate" :auto="false" :data="data" :params="{validator: 'signup'}" :onPerform="onPerformValidate" @schema:ready="onSchemaReady">
-        <f7-list form no-hairlines-md>
+        <eb-list form no-hairlines-md @submit.prevent="onSubmit">
           <eb-list-item-validate dataKey="userName"></eb-list-item-validate>
           <eb-list-item-validate dataKey="realName"></eb-list-item-validate>
           <eb-list-item-validate dataKey="email"></eb-list-item-validate>
@@ -20,10 +20,10 @@
           </f7-list-item>
           <f7-list-item divider>
             <span class="eb-list-divider-normal">
-              <eb-button :onPerform="signUp">{{$text('Sign up')}}</eb-button>
+              <eb-button ref="buttonSubmit" :onPerform="signUp">{{$text('Sign up')}}</eb-button>
             </span>
           </f7-list-item>
-        </f7-list>
+        </eb-list>
       </eb-validate>
     </f7-block>
   </eb-page>
@@ -91,6 +91,9 @@ export default {
     },
     signUp() {
       return this.$refs.validate.perform();
+    },
+    onSubmit() {
+      this.$refs.buttonSubmit.onClick();
     },
   },
 };

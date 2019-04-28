@@ -5,15 +5,15 @@
       <template v-if="sent">{{$text('emailConfirmSentAlert')}}</template>
       <template v-else>
         <eb-validate ref="validate" :auto="false" :data="data" :params="{validator: 'emailConfirm'}" :onPerform="onPerformValidate">
-          <f7-list form no-hairlines-md>
+          <eb-list form no-hairlines-md @submit.prevent="onSubmit">
             <eb-list-item-validate dataKey="userName"></eb-list-item-validate>
             <eb-list-item-validate dataKey="email"></eb-list-item-validate>
             <f7-list-item divider>
               <span class="eb-list-divider-normal">
-                <eb-button :onPerform="onPerformOk">{{$text('Send confirmation email')}}</eb-button>
+                <eb-button ref="buttonSubmit" :onPerform="onPerformOk">{{$text('Send confirmation email')}}</eb-button>
               </span>
             </f7-list-item>
-          </f7-list>
+          </eb-list>
         </eb-validate>
       </template>
     </f7-block>
@@ -48,6 +48,9 @@ export default {
     },
     onPerformOk() {
       return this.$refs.validate.perform();
+    },
+    onSubmit() {
+      this.$refs.buttonSubmit.onClick();
     },
   },
 };
