@@ -1,8 +1,8 @@
 <template>
-  <f7-list>
+  <eb-list form no-hairlines-md @submit="onSubmit">
     <eb-list-item-validate dataKey="atomName"></eb-list-item-validate>
     <eb-list-item-validate dataKey="description"></eb-list-item-validate>
-  </f7-list>
+  </eb-list>
 </template>
 <script>
 export default {
@@ -17,7 +17,11 @@ export default {
       type: Function,
     },
   },
-  methods: {},
+  methods: {
+    onSubmit(event) {
+      this.$emit('submit', event);
+    },
+  },
 };
 
 </script>
