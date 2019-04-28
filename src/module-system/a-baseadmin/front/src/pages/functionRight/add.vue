@@ -2,17 +2,17 @@
   <eb-page>
     <eb-navbar :title="$text(menu===1?'New Menu Right':'New Function Right')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link iconMaterial="save" :onPerform="onSave"></eb-link>
+        <eb-button ref="buttonSubmit" iconMaterial="save" :onPerform="onSave"></eb-button>
       </f7-nav-right>
     </eb-navbar>
-    <f7-list form no-hairlines-md>
+    <eb-list form no-hairlines-md @submit.prevent="onFormSubmit">
       <f7-list-item smartSelect :title="$text('Module')" :smartSelectParams="{openIn: 'page', closeOnSelect: true}">
         <eb-select name="module" v-model="module" :options="modules"></eb-select>
       </f7-list-item>
       <f7-list-item v-if="!!module" :title="$text(menu===1?'Menu':'Function')" link="#" @click="onSelectFunction">
         <div slot="after">{{func && func.title}}</div>
       </f7-list-item>
-    </f7-list>
+    </eb-list>
   </eb-page>
 </template>
 <script>
@@ -56,6 +56,9 @@ export default {
     },
   },
   methods: {
+    onFormSubmit() {
+      this.$refs.buttonSubmit.onClick();
+    },
     onSelectFunction() {
       this.$view.navigate('/a/base/menu/selectFunction', {
         target: '_self',

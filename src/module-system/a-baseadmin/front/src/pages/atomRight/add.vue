@@ -2,10 +2,10 @@
   <eb-page>
     <eb-navbar :title="$text('New Atom Right')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link iconMaterial="save" :onPerform="onSave"></eb-link>
+        <eb-button ref="buttonSubmit" iconMaterial="save" :onPerform="onSave"></eb-button>
       </f7-nav-right>
     </eb-navbar>
-    <f7-list form no-hairlines-md>
+    <eb-list form no-hairlines-md @submit.prevent="onFormSubmit">
       <f7-list-item :title="$text('Atom Class')" link="#" @click="onSelectAtomClass">
         <div slot="after">{{atomClass && atomClass.title}}</div>
       </f7-list-item>
@@ -19,7 +19,7 @@
       <f7-list-item v-if="scopeEnable" :title="$text('Scope')" link="#" @click="onSelectScope">
         <div slot="after">{{scopeTitle}}</div>
       </f7-list-item>
-    </f7-list>
+    </eb-list>
   </eb-page>
 </template>
 <script>
@@ -68,6 +68,9 @@ export default {
     },
   },
   methods: {
+    onFormSubmit() {
+      this.$refs.buttonSubmit.onClick();
+    },
     onSelectAtomClass() {
       this.$view.navigate('/a/base/atom/selectAtomClass', {
         target: '_self',
@@ -119,6 +122,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>
