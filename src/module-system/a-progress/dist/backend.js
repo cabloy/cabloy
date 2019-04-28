@@ -149,6 +149,11 @@ module.exports = appInfo => {
     },
   };
 
+  // check
+  config.check = {
+    timeoutDelay: 5000,
+  };
+
   return config;
 };
 
@@ -440,17 +445,30 @@ module.exports = app => {
   class Progress extends app.Service {
 
     async check({ progressId, counter }) {
-      // item
-      const item = await this.ctx.model.queryOne(`
+      // loop
+      const timeStart = new Date();
+      while (true) {
+        // item
+        const item = await this.ctx.model.queryOne(`
         select * from aProgress a
           where a.iid=? and a.progressId=? and a.counter>?
         `, [ this.ctx.instance.id, progressId, counter ]);
-      // delete
-      if (item && item.done !== 0) {
-        await this.ctx.model.progress.delete({ id: item.id });
+        // delete
+        if (item && item.done !== 0) {
+          await this.ctx.model.progress.delete({ id: item.id });
+        }
+        // return if found
+        if (item) return item;
+        // check the delayTimeout if the same
+        const timeEnd = new Date();
+        const time = (timeEnd.valueOf() - timeStart.valueOf());
+        if (time >= this.ctx.config.check.timeoutDelay) {
+          // timeout
+          return null;
+        }
+        // sleep 1s then continue
+        await this.ctx.meta.util.sleep(1000);
       }
-      // ok
-      return item;
     }
 
     async abort({ progressId }) {

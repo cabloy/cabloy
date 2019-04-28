@@ -10,5 +10,10 @@ module.exports = appInfo => {
     },
   };
 
+  // check
+  config.check = {
+    timeoutDelay: 5000,
+  };
+
   return config;
 };
