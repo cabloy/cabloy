@@ -74,6 +74,7 @@ export default {
       }
       const url = this.combineAtomClass('/a/cms/article/contentEdit');
       this.$view.navigate(url, {
+        target: '_self',
         context: {
           params: {
             ctx: this,

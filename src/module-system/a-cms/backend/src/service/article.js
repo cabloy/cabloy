@@ -215,6 +215,7 @@ module.exports = app => {
       this.ctx.tail(async () => {
         // queue not async
         await this.ctx.app.meta.queue.push({
+          locale: this.ctx.locale,
           subdomain: this.ctx.subdomain,
           module: moduleInfo.relativeName,
           queueName: 'render',
@@ -231,6 +232,7 @@ module.exports = app => {
       this.ctx.tail(async () => {
         // queue not async
         await this.ctx.app.meta.queue.push({
+          locale: this.ctx.locale,
           subdomain: this.ctx.subdomain,
           module: moduleInfo.relativeName,
           queueName: 'render',

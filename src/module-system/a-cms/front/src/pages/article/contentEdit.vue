@@ -19,7 +19,7 @@ const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.com
 import utils from '../../common/utils.js';
 export default {
   meta: {
-    size: 'large',
+    size: 'middle',
   },
   mixins: [ ebPageContext ],
   data() {

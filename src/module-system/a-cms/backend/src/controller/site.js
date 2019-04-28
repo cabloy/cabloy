@@ -1,5 +1,3 @@
-const require3 = require('require3');
-const fse = require3('fs-extra');
 const utils = require('../common/utils.js');
 
 module.exports = app => {
@@ -116,17 +114,11 @@ module.exports = app => {
     }
 
     async checkFile() {
-      // file
-      const file = this.ctx.request.body.file;
-      // mtime
-      const exists = await fse.pathExists(file);
-      if (!exists) {
-        // deleted
-        this.ctx.success(null);
-      } else {
-        const stats = await fse.stat(file);
-        this.ctx.success({ mtime: stats.mtime });
-      }
+      const res = await this.ctx.service.site.checkFile({
+        file: this.ctx.request.body.file,
+        mtime: this.ctx.request.body.mtime,
+      });
+      this.ctx.success(res);
     }
 
   }

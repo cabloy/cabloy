@@ -450,22 +450,22 @@ class Build {
       content += `
 <script language="javascript">
 $(document).ready(function() {
-  var __checkFileTimeout = ${this.ctx.config.checkFileTimeout};
-  var __fileTime;
+  var __checkFileTimeout = ${this.ctx.config.checkFile.timeout};
+  var __fileTime=0;
   function __checkFile() {
     util.performAction({
       method: 'post',
       url: '/a/cms/site/checkFile',
-      body: { file: '${fileWrite}' }
-    }).then(function(stats) {
-      if (!stats) {
+      body: { file: '${fileWrite}', mtime: __fileTime }
+    }).then(function(stat) {
+      if (!stat) {
         return window.setTimeout(__checkFile, __checkFileTimeout);
       }
       if (!__fileTime) {
-        __fileTime = stats.mtime;
+        __fileTime = stat.mtime;
         return window.setTimeout(__checkFile, __checkFileTimeout);
       }
-      if (__fileTime === stats.mtime) {
+      if (__fileTime === stat.mtime) {
         return window.setTimeout(__checkFile, __checkFileTimeout);
       }
       location.reload(true);

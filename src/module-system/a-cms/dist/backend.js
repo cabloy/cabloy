@@ -581,22 +581,22 @@ class Build {
       content += `
 <script language="javascript">
 $(document).ready(function() {
-  var __checkFileTimeout = ${this.ctx.config.checkFileTimeout};
-  var __fileTime;
+  var __checkFileTimeout = ${this.ctx.config.checkFile.timeout};
+  var __fileTime=0;
   function __checkFile() {
     util.performAction({
       method: 'post',
       url: '/a/cms/site/checkFile',
-      body: { file: '${fileWrite}' }
-    }).then(function(stats) {
-      if (!stats) {
+      body: { file: '${fileWrite}', mtime: __fileTime }
+    }).then(function(stat) {
+      if (!stat) {
         return window.setTimeout(__checkFile, __checkFileTimeout);
       }
       if (!__fileTime) {
-        __fileTime = stats.mtime;
+        __fileTime = stat.mtime;
         return window.setTimeout(__checkFile, __checkFileTimeout);
       }
-      if (__fileTime === stats.mtime) {
+      if (__fileTime === stat.mtime) {
         return window.setTimeout(__checkFile, __checkFileTimeout);
       }
       location.reload(true);
@@ -1122,8 +1122,11 @@ module.exports = appInfo => {
     // publishOnSubmit: true,
   };
 
-  // checkFileTimeout
-  config.checkFileTimeout = 500;
+  // checkFile
+  config.checkFile = {
+    timeout: 1000,
+    timeoutDelay: 5000,
+  };
 
   // site
   config.site = {
@@ -1613,8 +1616,6 @@ module.exports = app => {
 /* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(1);
-const fse = require3('fs-extra');
 const utils = __webpack_require__(0);
 
 module.exports = app => {
@@ -1731,17 +1732,11 @@ module.exports = app => {
     }
 
     async checkFile() {
-      // file
-      const file = this.ctx.request.body.file;
-      // mtime
-      const exists = await fse.pathExists(file);
-      if (!exists) {
-        // deleted
-        this.ctx.success(null);
-      } else {
-        const stats = await fse.stat(file);
-        this.ctx.success({ mtime: stats.mtime });
-      }
+      const res = await this.ctx.service.site.checkFile({
+        file: this.ctx.request.body.file,
+        mtime: this.ctx.request.body.mtime,
+      });
+      this.ctx.success(res);
     }
 
   }
@@ -2770,6 +2765,7 @@ module.exports = app => {
       this.ctx.tail(async () => {
         // queue not async
         await this.ctx.app.meta.queue.push({
+          locale: this.ctx.locale,
           subdomain: this.ctx.subdomain,
           module: moduleInfo.relativeName,
           queueName: 'render',
@@ -2786,6 +2782,7 @@ module.exports = app => {
       this.ctx.tail(async () => {
         // queue not async
         await this.ctx.app.meta.queue.push({
+          locale: this.ctx.locale,
           subdomain: this.ctx.subdomain,
           module: moduleInfo.relativeName,
           queueName: 'render',
@@ -2998,6 +2995,8 @@ module.exports = app => {
 /* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
+const require3 = __webpack_require__(1);
+const fse = require3('fs-extra');
 const Build = __webpack_require__(2);
 
 module.exports = app => {
@@ -3053,6 +3052,35 @@ module.exports = app => {
     async buildLanguage({ atomClass, language, progressId }) {
       const build = Build.create(this.ctx, atomClass);
       return await build.buildLanguage({ language, progressId });
+    }
+
+    async checkFile({ file, mtime }) {
+      // loop
+      const timeStart = new Date();
+      while (true) {
+        // exists
+        const exists = await fse.pathExists(file);
+        if (!exists) {
+          // deleted
+          return null;
+        }
+        // stat
+        const stat = await fse.stat(file);
+        const mtimeCurrent = stat.mtime.valueOf();
+        if (mtime !== mtimeCurrent) {
+          // different
+          return { mtime: mtimeCurrent };
+        }
+        // check the delayTimeout if the same
+        const timeEnd = new Date();
+        const time = (timeEnd.valueOf() - timeStart.valueOf());
+        if (time >= this.ctx.config.checkFile.timeoutDelay) {
+          // timeout
+          return { mtime: mtimeCurrent };
+        }
+        // sleep 1s then continue
+        await this.ctx.meta.util.sleep(1000);
+      }
     }
 
   }

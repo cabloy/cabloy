@@ -1,3 +1,5 @@
+const require3 = require('require3');
+const fse = require3('fs-extra');
 const Build = require('../common/build.js');
 
 module.exports = app => {
@@ -53,6 +55,35 @@ module.exports = app => {
     async buildLanguage({ atomClass, language, progressId }) {
       const build = Build.create(this.ctx, atomClass);
       return await build.buildLanguage({ language, progressId });
+    }
+
+    async checkFile({ file, mtime }) {
+      // loop
+      const timeStart = new Date();
+      while (true) {
+        // exists
+        const exists = await fse.pathExists(file);
+        if (!exists) {
+          // deleted
+          return null;
+        }
+        // stat
+        const stat = await fse.stat(file);
+        const mtimeCurrent = stat.mtime.valueOf();
+        if (mtime !== mtimeCurrent) {
+          // different
+          return { mtime: mtimeCurrent };
+        }
+        // check the delayTimeout if the same
+        const timeEnd = new Date();
+        const time = (timeEnd.valueOf() - timeStart.valueOf());
+        if (time >= this.ctx.config.checkFile.timeoutDelay) {
+          // timeout
+          return { mtime: mtimeCurrent };
+        }
+        // sleep 1s then continue
+        await this.ctx.meta.util.sleep(1000);
+      }
     }
 
   }

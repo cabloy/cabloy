@@ -79,6 +79,7 @@ export default {
       return new Promise(resolve => {
         const url = this.combineAtomClass('/a/cms/tag/select');
         this.$view.navigate(url, {
+          target: '_self',
           context: {
             params: {
               language: this.item.language,
@@ -104,6 +105,7 @@ export default {
       return new Promise(resolve => {
         const url = this.combineAtomClass('/a/cms/category/select');
         this.$view.navigate(url, {
+          target: '_self',
           context: {
             params: {
               language: this.item.language,
@@ -130,6 +132,7 @@ export default {
       }
       const url = this.combineAtomClass('/a/cms/article/contentEdit');
       this.$view.navigate(url, {
+        target: '_self',
         context: {
           params: {
             ctx: this,
