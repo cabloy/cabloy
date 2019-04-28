@@ -2,11 +2,11 @@
   <eb-page>
     <eb-navbar :title="$text('Info')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link iconMaterial="save" :onPerform="onPerformSave"></eb-link>
+        <eb-button ref="buttonSubmit" iconMaterial="save" :onPerform="onPerformSave"></eb-button>
       </f7-nav-right>
     </eb-navbar>
     <eb-validate ref="validate" :auto="false" :data="user" :params="{module:'a-base',validator: 'user'}" :onPerform="onPerformValidate">
-      <f7-list form no-hairlines-md>
+      <eb-list form no-hairlines-md @submit.prevent="onFormSubmit">
         <eb-list-item-validate dataKey="userName"></eb-list-item-validate>
         <eb-list-item-validate dataKey="realName"></eb-list-item-validate>
         <f7-list-item divider></f7-list-item>
@@ -29,7 +29,7 @@
         <f7-list-item divider></f7-list-item>
         <eb-list-item-validate dataKey="motto"></eb-list-item-validate>
         <eb-list-item-validate dataKey="locale"></eb-list-item-validate>
-      </f7-list>
+      </eb-list>
     </eb-validate>
   </eb-page>
 </template>
@@ -56,6 +56,9 @@ export default {
     this.configAccount = configBase.account;
   },
   methods: {
+    onFormSubmit() {
+      this.$refs.buttonSubmit.onClick();
+    },
     onPerformSave(event) {
       return this.$refs.validate.perform(event);
     },

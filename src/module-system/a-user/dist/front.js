@@ -423,12 +423,12 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/user/edit.vue?vue&type=template&id=5d555ddd&scoped=true&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('Info'),"eb-back-link":"Back"}},[_c('f7-nav-right',[_c('eb-link',{attrs:{"iconMaterial":"save","onPerform":_vm.onPerformSave}})],1)],1),_vm._v(" "),_c('eb-validate',{ref:"validate",attrs:{"auto":false,"data":_vm.user,"params":{module:'a-base',validator: 'user'},"onPerform":_vm.onPerformValidate}},[_c('f7-list',{attrs:{"form":"","no-hairlines-md":""}},[_c('eb-list-item-validate',{attrs:{"dataKey":"userName"}}),_vm._v(" "),_c('eb-list-item-validate',{attrs:{"dataKey":"realName"}}),_vm._v(" "),_c('f7-list-item',{attrs:{"divider":""}}),_vm._v(" "),_c('eb-list-item',{attrs:{"title":_vm.$text('Email')}},[_c('div',{attrs:{"slot":"after"},slot:"after"},[_c('span',[_vm._v(_vm._s(_vm.user.email))]),_vm._v(" "),(_vm.configAccount.url.emailConfirm)?_c('eb-link',{attrs:{"eb-href":_vm.configAccount.url.emailConfirm}},[_vm._v("\n            "+_vm._s(_vm.emailConfirmButtonText)+"\n          ")]):_vm._e()],1)]),_vm._v(" "),_c('eb-list-item',{attrs:{"title":_vm.$text('Mobile')}},[_c('div',{attrs:{"slot":"after"},slot:"after"},[_c('span',[_vm._v(_vm._s(_vm.user.mobile))]),_vm._v(" "),(_vm.configAccount.url.mobileVerify)?_c('eb-link',{attrs:{"eb-href":_vm.configAccount.url.mobileVerify}},[_vm._v("\n            "+_vm._s(_vm.mobileVerifyButtonText)+"\n          ")]):_vm._e()],1)]),_vm._v(" "),_c('f7-list-item',{attrs:{"divider":""}}),_vm._v(" "),_c('eb-list-item-validate',{attrs:{"dataKey":"motto"}}),_vm._v(" "),_c('eb-list-item-validate',{attrs:{"dataKey":"locale"}})],1)],1)],1)}
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/user/edit.vue?vue&type=template&id=4ecbf98c&scoped=true&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('Info'),"eb-back-link":"Back"}},[_c('f7-nav-right',[_c('eb-button',{ref:"buttonSubmit",attrs:{"iconMaterial":"save","onPerform":_vm.onPerformSave}})],1)],1),_vm._v(" "),_c('eb-validate',{ref:"validate",attrs:{"auto":false,"data":_vm.user,"params":{module:'a-base',validator: 'user'},"onPerform":_vm.onPerformValidate}},[_c('eb-list',{attrs:{"form":"","no-hairlines-md":""},on:{"submit":function($event){$event.preventDefault();return _vm.onFormSubmit($event)}}},[_c('eb-list-item-validate',{attrs:{"dataKey":"userName"}}),_vm._v(" "),_c('eb-list-item-validate',{attrs:{"dataKey":"realName"}}),_vm._v(" "),_c('f7-list-item',{attrs:{"divider":""}}),_vm._v(" "),_c('eb-list-item',{attrs:{"title":_vm.$text('Email')}},[_c('div',{attrs:{"slot":"after"},slot:"after"},[_c('span',[_vm._v(_vm._s(_vm.user.email))]),_vm._v(" "),(_vm.configAccount.url.emailConfirm)?_c('eb-link',{attrs:{"eb-href":_vm.configAccount.url.emailConfirm}},[_vm._v("\n            "+_vm._s(_vm.emailConfirmButtonText)+"\n          ")]):_vm._e()],1)]),_vm._v(" "),_c('eb-list-item',{attrs:{"title":_vm.$text('Mobile')}},[_c('div',{attrs:{"slot":"after"},slot:"after"},[_c('span',[_vm._v(_vm._s(_vm.user.mobile))]),_vm._v(" "),(_vm.configAccount.url.mobileVerify)?_c('eb-link',{attrs:{"eb-href":_vm.configAccount.url.mobileVerify}},[_vm._v("\n            "+_vm._s(_vm.mobileVerifyButtonText)+"\n          ")]):_vm._e()],1)]),_vm._v(" "),_c('f7-list-item',{attrs:{"divider":""}}),_vm._v(" "),_c('eb-list-item-validate',{attrs:{"dataKey":"motto"}}),_vm._v(" "),_c('eb-list-item-validate',{attrs:{"dataKey":"locale"}})],1)],1)],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./front/src/pages/user/edit.vue?vue&type=template&id=5d555ddd&scoped=true&
+// CONCATENATED MODULE: ./front/src/pages/user/edit.vue?vue&type=template&id=4ecbf98c&scoped=true&
 
 // EXTERNAL MODULE: external "vue"
 var external_vue_ = __webpack_require__(1);
@@ -457,6 +457,9 @@ var external_vue_default = /*#__PURE__*/__webpack_require__.n(external_vue_);
     this.configAccount = configBase.account;
   },
   methods: {
+    onFormSubmit: function onFormSubmit() {
+      this.$refs.buttonSubmit.onClick();
+    },
     onPerformSave: function onPerformSave(event) {
       return this.$refs.validate.perform(event);
     },
@@ -492,7 +495,7 @@ var component = Object(componentNormalizer["a" /* default */])(
   staticRenderFns,
   false,
   null,
-  "5d555ddd",
+  "4ecbf98c",
   null
   
 )
