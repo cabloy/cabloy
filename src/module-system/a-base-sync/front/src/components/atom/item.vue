@@ -13,7 +13,7 @@
     </template>
     <template v-else>
       <atoms v-if="ready" mode="list" :itemShow="item"></atoms>
-      <eb-validate v-if="ready" ref="validate" :readOnly="this.mode!=='edit'" auto :data="item" :params="validateParams" :onPerform="onPerformValidate" :onSave="onSave">
+      <eb-validate v-if="ready" ref="validate" :readOnly="this.mode!=='edit'" auto :data="item" :params="validateParams" :onPerform="onPerformValidate" :onSave="onSave" @submit.prevent="onSubmit">
       </eb-validate>
       <f7-popover :id="popoverId">
         <f7-list v-if="showPopover" inset>
@@ -138,7 +138,9 @@ export default {
       return this.actions.find(item => item.name === actionName);
     },
     onSave(event) {
-      return this.onAction(event, 'save');
+      return this.onAction(event, 'save').then(() => {
+        this.$view.toast.show();
+      });
     },
     onAction(event, action) {
       if (action === 'save' || action === 'submit') {
@@ -200,11 +202,12 @@ export default {
       if (data.action === 'create') this.item.attachmentCount += 1;
       if (data.action === 'delete') this.item.attachmentCount -= 1;
     },
+    onSubmit(event) {
+      return this.onSave(event);
+    },
   },
 };
 
 </script>
 <style scoped>
-
-
 </style>

@@ -2,10 +2,10 @@
   <eb-page>
     <eb-navbar :title="pageTitle" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link iconMaterial="search" @click.prevent="onSearch"></eb-link>
+        <eb-button ref="buttonSubmit" iconMaterial="search" :onPerform="onPerformSearch"></eb-button>
       </f7-nav-right>
     </eb-navbar>
-    <f7-list form no-hairlines-md>
+    <eb-list form no-hairlines-md @submit.prevent="onFormSubmit">
       <f7-list-item>
         <f7-label floating>{{$text('Atom name')}}</f7-label>
         <eb-input type="text" :placeholder="$text('Atom name')" clear-button v-model="atomName"></eb-input>
@@ -17,7 +17,7 @@
       <f7-list-item v-if="!atomClassInit" :title="$text('Atom class')" link="#" @click="onSelectAtomClass">
         <div slot="after">{{atomClassTitle}}</div>
       </f7-list-item>
-    </f7-list>
+    </eb-list>
     <eb-validate v-if="item && validateParams" ref="validate" auto :data="item" :params="validateParams">
     </eb-validate>
   </eb-page>
@@ -77,6 +77,9 @@ export default {
     this.atomClassChanged();
   },
   methods: {
+    onFormSubmit() {
+      this.$refs.buttonSubmit.onClick();
+    },
     atomClassChanged() {
       const atomClass = this.atomClass;
       if (!atomClass) {
@@ -117,7 +120,7 @@ export default {
         },
       });
     },
-    onSearch() {
+    onPerformSearch() {
       let atomClassExtra;
       if (this.item) {
         atomClassExtra = {};

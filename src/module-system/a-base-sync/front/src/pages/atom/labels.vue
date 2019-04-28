@@ -22,19 +22,19 @@
           <f7-link sheet-close>{{$text('Close')}}</f7-link>
         </div>
         <div class="right">
-          <eb-link :onPerform="onSubmit">{{$text('Submit')}}</eb-link>
+          <eb-button ref="buttonSubmit" :onPerform="onSubmit">{{$text('Submit')}}</eb-button>
         </div>
       </f7-toolbar>
       <f7-page-content>
         <div class="label">
           <f7-badge :style="{backgroundColor:labelColor}">{{labelText}}</f7-badge>
         </div>
-        <f7-list form no-hairlines-md>
+        <eb-list form no-hairlines-md @submit.prevent="onFormSubmit">
           <f7-list-item>
             <f7-label floating>{{$text('Text')}}</f7-label>
             <eb-input type="text" v-model="labelText" :placeholder="$text('Text')" clear-button></eb-input>
           </f7-list-item>
-        </f7-list>
+        </eb-list>
         <f7-block>
           <div class="row colors">
             <f7-button v-for="color of colors" :key="color.value" class="col-33" :style="{backgroundColor:color.value}" small fill @click="onColorSelect(color)">{{$text(color.name)}}</f7-button>
@@ -82,6 +82,9 @@ export default {
       this.labelText = this.labelsAll[key].text;
       this.labelColor = this.labelsAll[key].color;
       this.sheetOpened = true;
+    },
+    onFormSubmit() {
+      this.$refs.buttonSubmit.onClick();
     },
     onSubmit() {
       if (!this.labelText || !this.labelColor) return;
