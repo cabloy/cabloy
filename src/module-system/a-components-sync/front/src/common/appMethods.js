@@ -13,10 +13,13 @@ export default function(ctx) {
   // toast
   const toast = {
     show(params) {
-      ctx.$utils.extend(params, {
+      const _params = ctx.$utils.extend({}, params, {
         hostEl: ctx.getHostEl(),
       });
-      ctx.$f7.toast.show(params);
+      if (!_params.text) {
+        _params.text = ctx.$text('Operation succeeded');
+      }
+      ctx.$f7.toast.show(_params);
     },
   };
   // dialog

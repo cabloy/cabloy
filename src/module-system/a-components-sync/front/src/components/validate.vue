@@ -18,6 +18,7 @@ export default {
             readOnly: this.readOnly,
             onSave: this.onSave,
           },
+          on: { submit: this.onSubmit },
         });
       }
       // auto
@@ -145,7 +146,11 @@ export default {
     },
     renderSchema(c) {
       const children = this.renderProperties(c, this.data, this.schema.properties, '');
-      return c('f7-list', { attrs: { form: true, noHairlinesMd: true } }, children);
+      return c('eb-list', {
+        attrs: { form: true, noHairlinesMd: true },
+        on: { submit: this.onSubmit },
+      },
+      children);
     },
     renderProperties(c, data, properties, pathParent) {
       const children = [];
@@ -160,7 +165,9 @@ export default {
       }
       return children;
     },
-
+    onSubmit(event) {
+      this.$emit('submit', event);
+    },
   },
 };
 

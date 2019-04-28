@@ -1,0 +1,42 @@
+<script>
+import Vue from 'vue';
+const f7List = Vue.options.components['f7-list'].extendOptions;
+export default {
+  name: 'eb-list',
+  extends: f7List,
+  mounted() {
+    const form = this.getForm();
+    if (form) {
+      // append input[type=submit] after the ul element if not found
+      let input = form.find('input[type=submit]');
+      if (input.length === 0) {
+        input = this.$$('<input type="submit" value="" style="width:0;height:0;border:0;padding:0;" />');
+        form.append(input);
+      }
+      // on
+      form.on('submit', this.onSubmit);
+    }
+  },
+  beforeDestroy() {
+    const form = this.getForm();
+    if (form) {
+      form.off('submit', this.onSubmit);
+    }
+  },
+  methods: {
+    onSubmit(event) {
+      this.$emit('submit', event);
+    },
+    getForm() {
+      if (!this.form) return null;
+      const self = this.$$(this.$el);
+      if (self.is('form')) return self;
+      const form = self.find('form');
+      return form.length === 1 ? form : null;
+    },
+  },
+};
+
+</script>
+<style scoped>
+</style>

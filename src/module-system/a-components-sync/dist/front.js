@@ -546,10 +546,15 @@ var external_vue_default = /*#__PURE__*/__webpack_require__.n(external_vue_);
   };
   var toast = {
     show: function show(params) {
-      ctx.$utils.extend(params, {
+      var _params = ctx.$utils.extend({}, params, {
         hostEl: ctx.getHostEl()
       });
-      ctx.$f7.toast.show(params);
+
+      if (!_params.text) {
+        _params.text = ctx.$text('Operation succeeded');
+      }
+
+      ctx.$f7.toast.show(_params);
     }
   };
   var dialog = {};
@@ -1921,6 +1926,9 @@ var validateItem_component = normalizeComponent(
             data: this.data,
             readOnly: this.readOnly,
             onSave: this.onSave
+          },
+          on: {
+            submit: this.onSubmit
           }
         });
       }
@@ -2066,10 +2074,13 @@ var validateItem_component = normalizeComponent(
     },
     renderSchema: function renderSchema(c) {
       var children = this.renderProperties(c, this.data, this.schema.properties, '');
-      return c('f7-list', {
+      return c('eb-list', {
         attrs: {
           form: true,
           noHairlinesMd: true
+        },
+        on: {
+          submit: this.onSubmit
         }
       }, children);
     },
@@ -2087,6 +2098,9 @@ var validateItem_component = normalizeComponent(
       }
 
       return children;
+    },
+    onSubmit: function onSubmit(event) {
+      this.$emit('submit', event);
     }
   }
 });
@@ -2112,6 +2126,68 @@ var validate_component = normalizeComponent(
 )
 
 /* harmony default export */ var components_validate = (validate_component.exports);
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/components/list.vue?vue&type=script&lang=js&
+
+var f7List = external_vue_default.a.options.components['f7-list'].extendOptions;
+/* harmony default export */ var listvue_type_script_lang_js_ = ({
+  name: 'eb-list',
+  "extends": f7List,
+  mounted: function mounted() {
+    var form = this.getForm();
+
+    if (form) {
+      var input = form.find('input[type=submit]');
+
+      if (input.length === 0) {
+        input = this.$$('<input type="submit" value="" style="width:0;height:0;border:0;padding:0;" />');
+        form.append(input);
+      }
+
+      form.on('submit', this.onSubmit);
+    }
+  },
+  beforeDestroy: function beforeDestroy() {
+    var form = this.getForm();
+
+    if (form) {
+      form.off('submit', this.onSubmit);
+    }
+  },
+  methods: {
+    onSubmit: function onSubmit(event) {
+      this.$emit('submit', event);
+    },
+    getForm: function getForm() {
+      if (!this.form) return null;
+      var self = this.$$(this.$el);
+      if (self.is('form')) return self;
+      var form = self.find('form');
+      return form.length === 1 ? form : null;
+    }
+  }
+});
+// CONCATENATED MODULE: ./front/src/components/list.vue?vue&type=script&lang=js&
+ /* harmony default export */ var components_listvue_type_script_lang_js_ = (listvue_type_script_lang_js_); 
+// CONCATENATED MODULE: ./front/src/components/list.vue
+var list_render, list_staticRenderFns
+
+
+
+
+/* normalize component */
+
+var list_component = normalizeComponent(
+  components_listvue_type_script_lang_js_,
+  list_render,
+  list_staticRenderFns,
+  false,
+  null,
+  "b95d0bb8",
+  null
+  
+)
+
+/* harmony default export */ var list = (list_component.exports);
 // CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/components/listButton.vue?vue&type=script&lang=js&
 
 
@@ -2921,6 +2997,7 @@ var box_component = normalizeComponent(
 
 
 
+
 /* harmony default export */ var components = __webpack_exports__["default"] = ({
   ebLoadMore: loadMore,
   ebView: view,
@@ -2933,6 +3010,7 @@ var box_component = normalizeComponent(
   ebRadio: components_radio,
   ebSelect: components_select,
   ebValidate: components_validate,
+  ebList: list,
   ebListItemValidate: validateItem,
   ebListButton: listButton,
   ebListItem: listItem,
