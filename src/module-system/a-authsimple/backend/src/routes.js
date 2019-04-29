@@ -5,7 +5,7 @@ module.exports = [
   { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
   { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
   { method: 'post', path: 'version/test', controller: version, middlewares: 'test' },
-  { method: 'post', path: 'auth/add', controller: auth, middlewares: 'inner' },
+  { method: 'post', path: 'auth/add', controller: auth, middlewares: 'inner', meta: { auth: { enable: false } } },
   { method: 'post', path: 'auth/signin', controller: auth, middlewares: 'captchaVerify' },
   { method: 'post', path: 'auth/signup', controller: auth, middlewares: 'captchaVerify,validate',
     meta: { validate: { validator: 'signup' } },
