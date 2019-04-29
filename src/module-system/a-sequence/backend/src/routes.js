@@ -9,7 +9,7 @@ module.exports = app => {
   ];
   if (app.meta.isTest || app.meta.isLocal) {
     routes = routes.concat([
-      { method: 'get', path: 'test/sequence', controller: test, middlewares: 'test' },
+      { method: 'get', path: 'test/sequence', controller: test, middlewares: 'test', meta: { auth: { enable: false } } },
     ]);
   }
   return routes;
