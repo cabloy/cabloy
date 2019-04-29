@@ -291,9 +291,9 @@ module.exports = app => {
   ];
   if (app.meta.isTest) {
     routes = routes.concat([
-      { method: 'post', path: 'test/test', controller: test, middlewares: 'test' },
-      { method: 'post', path: 'test/hookTestBefore', controller: test, middlewares: 'test' },
-      { method: 'post', path: 'test/hookTestAfter', controller: test, middlewares: 'test' },
+      { method: 'post', path: 'test/test', controller: test, middlewares: 'test', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/hookTestBefore', controller: test, middlewares: 'test', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/hookTestAfter', controller: test, middlewares: 'test', meta: { auth: { enable: false } } },
     ]);
   }
   return routes;
