@@ -279,7 +279,7 @@ module.exports = app => {
           await this.ctx.meta.role.addRoleInc({ roleId: roleSuperuser.id, roleIdInc: roleId });
         }
         // build roles
-        await this.ctx.meta.role.build();
+        await this.ctx.meta.role.setDirty(true);
 
         // add role rights
         const roleRights = [

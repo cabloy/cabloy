@@ -397,13 +397,7 @@ class Build {
 
   async _renderArticles({ site, progressId, progressNo }) {
     // anonymous user
-    let userId;
-    const user = await this.ctx.meta.user.get({ anonymous: true });
-    if (user) {
-      userId = user.id;
-    } else {
-      userId = await this.ctx.meta.user.anonymous();
-    }
+    const user = await this.ctx.meta.user.anonymous();
     // articles
     const articles = await this.ctx.meta.atom.select({
       atomClass: this.atomClass,
@@ -416,7 +410,7 @@ class Build {
         page: null,
         mode: 'search',
       },
-      user: { id: userId },
+      user: { id: user.id },
       pageForce: false,
     });
 
@@ -2479,7 +2473,7 @@ module.exports = app => {
           await this.ctx.meta.role.addRoleInc({ roleId: roleSuperuser.id, roleIdInc: roleId });
         }
         // build roles
-        await this.ctx.meta.role.build();
+        await this.ctx.meta.role.setDirty(true);
 
         // add role rights
         const roleRights = [
