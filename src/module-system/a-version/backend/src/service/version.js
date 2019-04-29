@@ -25,6 +25,24 @@ module.exports = app => {
         await this.__checkModule(module.info.relativeName, options);
       }
 
+      // check if role dirty for init/test
+      if (options.scene === 'init' || options.scene === 'test') {
+        await this.ctx.performAction({
+          subdomain: options.subdomain || '',
+          method: 'post',
+          url: 'version/after',
+          body: options,
+        });
+      }
+
+    }
+
+    async after(options) {
+      // console.log(this.ctx.meta);
+      const dirty = await this.ctx.meta.role.getDirty();
+      if (dirty) {
+        await this.ctx.meta.role.build();
+      }
     }
 
     // update module

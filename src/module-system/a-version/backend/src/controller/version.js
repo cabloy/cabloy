@@ -89,6 +89,12 @@ module.exports = app => {
       this.ctx.success();
     }
 
+    // after
+    async after() {
+      await this.service.version.after(this.ctx.request.body);
+      this.ctx.success();
+    }
+
   }
   return VersionController;
 };

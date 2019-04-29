@@ -118,12 +118,13 @@ module.exports = app => {
 const version = __webpack_require__(2);
 
 module.exports = [
-  { method: 'post', path: 'version/start', controller: version, middlewares: 'inner' },
-  { method: 'post', path: 'version/check', controller: version, middlewares: 'inner' },
-  { method: 'post', path: 'version/updateModule', controller: version, middlewares: 'inner,transaction' },
-  { method: 'post', path: 'version/initModule', controller: version, middlewares: 'inner,transaction' },
-  { method: 'post', path: 'version/testModule', controller: version, middlewares: 'inner,transaction' },
-  { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
+  { method: 'post', path: 'version/start', controller: version, middlewares: 'inner', meta: { instance: { enable: false }, auth: { enable: false } } },
+  { method: 'post', path: 'version/check', controller: version, middlewares: 'inner', meta: { instance: { enable: false }, auth: { enable: false } } },
+  { method: 'post', path: 'version/updateModule', controller: version, middlewares: 'inner,transaction', meta: { instance: { enable: false }, auth: { enable: false } } },
+  { method: 'post', path: 'version/initModule', controller: version, middlewares: 'inner,transaction', meta: { instance: { enable: false }, auth: { enable: false } } },
+  { method: 'post', path: 'version/testModule', controller: version, middlewares: 'inner,transaction', meta: { instance: { enable: false }, auth: { enable: false } } },
+  { method: 'post', path: 'version/update', controller: version, middlewares: 'inner', meta: { instance: { enable: false }, auth: { enable: false } } },
+  { method: 'post', path: 'version/after', controller: version, middlewares: 'inner', meta: { auth: { enable: false } } },
 ];
 
 
@@ -222,6 +223,12 @@ module.exports = app => {
       this.ctx.success();
     }
 
+    // after
+    async after() {
+      await this.service.version.after(this.ctx.request.body);
+      this.ctx.success();
+    }
+
   }
   return VersionController;
 };
@@ -275,6 +282,24 @@ module.exports = app => {
         await this.__checkModule(module.info.relativeName, options);
       }
 
+      // check if role dirty for init/test
+      if (options.scene === 'init' || options.scene === 'test') {
+        await this.ctx.performAction({
+          subdomain: options.subdomain || '',
+          method: 'post',
+          url: 'version/after',
+          body: options,
+        });
+      }
+
+    }
+
+    async after(options) {
+      // console.log(this.ctx.meta);
+      const dirty = await this.ctx.meta.role.getDirty();
+      if (dirty) {
+        await this.ctx.meta.role.build();
+      }
     }
 
     // update module
