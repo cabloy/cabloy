@@ -3,6 +3,8 @@ const modelAgentFn = require('../../../model/userAgent.js');
 const modelAuthFn = require('../../../model/auth.js');
 const modelAuthProviderFn = require('../../../model/authProvider.js');
 
+let _userAnonymous = null;
+
 module.exports = ctx => {
 
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -49,30 +51,23 @@ module.exports = ctx => {
     }
 
     async anonymous() {
-      // new
+      // cache
+      if (_userAnonymous) return _userAnonymous;
+      // try get
+      _userAnonymous = await this.get({ anonymous: 1 });
+      if (_userAnonymous) return _userAnonymous;
+      // add user
       const userId = await this.add({ disabled: 0, anonymous: 1 });
       // addRole
       const role = await ctx.meta.role.getSystemRole({ roleName: 'anonymous' });
       await ctx.meta.role.addUserRole({ userId, roleId: role.id });
-      return userId;
+      // ready
+      _userAnonymous = await this.get({ id: userId });
+      return _userAnonymous;
     }
 
     async loginAsAnonymous() {
-      const maxAge = this.config.anonymous.maxAge;
-      let userId = ctx.cookies.get('anonymous', { encrypt: true });
-      let userOp;
-      if (userId) {
-        userOp = await this.get({ id: userId });
-        // anonymous maybe 1 for local env
-        if (userOp && !userOp.anonymous) {
-          userOp = null;
-        }
-      }
-      if (!userOp) {
-        userId = await this.anonymous();
-        ctx.cookies.set('anonymous', userId.toString(), { encrypt: true, maxAge });
-        userOp = await this.get({ id: userId });
-      }
+      const userOp = await this.anonymous();
       const user = {
         op: userOp,
         agent: userOp,
@@ -80,7 +75,7 @@ module.exports = ctx => {
       };
       await ctx.login(user);
       // maxAge
-      ctx.session.maxAge = maxAge;
+      ctx.session.maxAge = this.config.anonymous.maxAge;
       return user;
     }
 
