@@ -38,18 +38,6 @@ module.exports = function(ctx) {
         await ctx.model.query(update1Data.functions[functionName]);
       }
 
-      // procedures
-      const procedureNames = [
-        'aBuildRoles',
-        'aBuildRolesRemove',
-        'aBuildRolesAdd',
-        'aBuildRoleRef',
-        'aBuildRoleIncRef',
-        'aBuildRoleExpand',
-      ];
-      for (const procedureName of procedureNames) {
-        await ctx.model.query(update1Data.procedures[procedureName]);
-      }
     }
 
   }
