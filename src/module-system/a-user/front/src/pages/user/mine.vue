@@ -16,7 +16,7 @@
     <f7-list>
       <eb-list-item v-if="!user.agent.anonymous" :title="$text('Account')" eb-href="user/account"></eb-list-item>
       <eb-list-item :title="$text('Functions')" eb-href="user/functions"></eb-list-item>
-      <eb-list-item :title="$text('Settings')" eb-href="/a/settings/user/list"></eb-list-item>
+      <eb-list-item v-if="!user.agent.anonymous" :title="$text('Settings')" eb-href="/a/settings/user/list"></eb-list-item>
     </f7-list>
   </eb-page>
 </template>
