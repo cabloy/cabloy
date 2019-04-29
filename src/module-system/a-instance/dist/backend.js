@@ -135,8 +135,8 @@ const test = __webpack_require__(5);
 module.exports = [
   // version
   { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
-  { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
-  { method: 'get', path: 'test/instance', controller: test, middlewares: 'test' },
+  { method: 'post', path: 'version/init', controller: version, middlewares: 'inner', meta: { instance: { enable: false } } },
+  { method: 'get', path: 'test/instance', controller: test, middlewares: 'test', meta: { auth: { enable: false } } },
   // instance
   { method: 'post', path: 'instance/item', controller: instance, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
   { method: 'post', path: 'instance/save', controller: instance, middlewares: 'validate',
@@ -362,7 +362,7 @@ module.exports = appInfo => {
     instance: {
       global: true,
       dependencies: 'cachemem',
-      ignore: /(\/version\/(start|check|update|initModule)|\/a\/instance\/version\/init|\/a\/version\/version\/init)/,
+      ignore: /(\/version\/(update))/,
     },
   };
 
