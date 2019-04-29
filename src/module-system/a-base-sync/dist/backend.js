@@ -82,7 +82,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 21);
+/******/ 	return __webpack_require__(__webpack_require__.s = 22);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -221,6 +221,499 @@ module.exports = app => {
 /* 8 */
 /***/ (function(module, exports) {
 
+module.exports = ctx => {
+  class Procedure {
+
+    selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file }) {
+      // -- tables
+      // -- a: aAtom
+      // -- b: aAtomClass
+      // -- c: aViewUserRightAtom
+      // -- d: aAtomStar
+      // -- e: aAtomLabelRef
+      // -- f: {item}
+      // -- g: aUser
+      // -- h: aComment
+      // -- i: aFile
+
+      // for safe
+      tableName = tableName ? ctx.model.format('??', tableName) : null;
+      where = where ? ctx.model._where2(where) : null;
+      orders = orders ? ctx.model._orders(orders) : null;
+      const limit = page ? ctx.model._limit(page.size, page.index) : null;
+
+      iid = parseInt(iid);
+      userIdWho = parseInt(userIdWho);
+      star = parseInt(star);
+      label = parseInt(label);
+      comment = parseInt(comment);
+      file = parseInt(file);
+
+      // vars
+      let
+        _starJoin,
+        _starWhere;
+
+      let
+        _labelJoin,
+        _labelWhere;
+      let _commentField,
+        _commentJoin,
+        _commentWhere;
+      let _fileField,
+        _fileJoin,
+        _fileWhere;
+      let _itemField,
+        _itemJoin;
+
+      //
+      const _where = where ? `${where} AND` : ' WHERE';
+      const _orders = orders || '';
+      const _limit = limit || '';
+
+      // star
+      if (star) {
+        _starJoin = ' inner join aAtomStar d on a.id=d.atomId';
+        _starWhere = ` and d.iid=${iid} and d.userId=${userIdWho} and d.star=1`;
+      } else {
+        _starJoin = '';
+        _starWhere = '';
+      }
+      const _starField = `,(select d2.star from aAtomStar d2 where d2.iid=${iid} and d2.atomId=a.id and d2.userId=${userIdWho}) as star`;
+
+      // label
+      if (label) {
+        _labelJoin = ' inner join aAtomLabelRef e on a.id=e.atomId';
+        _labelWhere = ` and e.iid=${iid} and e.userId=${userIdWho} and e.labelId=${label}`;
+      } else {
+        _labelJoin = '';
+        _labelWhere = '';
+      }
+      const _labelField = `,(select e2.labels from aAtomLabel e2 where e2.iid=${iid} and e2.atomId=a.id and e2.userId=${userIdWho}) as labels`;
+
+      // comment
+      if (comment) {
+        _commentField =
+             `,h.id h_id,h.createdAt h_createdAt,h.updatedAt h_updatedAt,h.userId h_userId,h.sorting h_sorting,h.heartCount h_heartCount,h.replyId h_replyId,h.replyUserId h_replyUserId,h.replyContent h_replyContent,h.content h_content,h.summary h_summary,h.html h_html,h.userName h_userName,h.avatar h_avatar,h.replyUserName h_replyUserName,
+               (select h2.heart from aCommentHeart h2 where h2.iid=${iid} and h2.commentId=h.id and h2.userId=${userIdWho}) as h_heart`;
+
+        _commentJoin = ' inner join aViewComment h on h.atomId=a.id';
+        _commentWhere = ` and h.iid=${iid} and h.deleted=0`;
+      } else {
+        _commentField = '';
+        _commentJoin = '';
+        _commentWhere = '';
+      }
+
+      // file
+      if (file) {
+        _fileField = ',i.id i_id,i.createdAt i_createdAt,i.updatedAt i_updatedAt,i.userId i_userId,i.downloadId i_downloadId,i.mode i_mode,i.fileSize i_fileSize,i.width i_width,i.height i_height,i.filePath i_filePath,i.fileName i_fileName,i.realName i_realName,i.fileExt i_fileExt,i.encoding i_encoding,i.mime i_mime,i.attachment i_attachment,i.flag i_flag,i.userName i_userName,i.avatar i_avatar';
+        _fileJoin = ' inner join aViewFile i on i.atomId=a.id';
+        _fileWhere = ` and i.iid=${iid} and i.deleted=0`;
+      } else {
+        _fileField = '';
+        _fileJoin = '';
+        _fileWhere = '';
+      }
+
+      // tableName
+      if (tableName) {
+        _itemField = 'f.*,';
+        _itemJoin = ` inner join ${tableName} f on f.atomId=a.id`;
+      } else {
+        _itemField = '';
+        _itemJoin = '';
+      }
+
+      // sql
+      const _sql =
+        `select ${_itemField}
+                a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomFlow,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
+                b.module,b.atomClassName,b.atomClassIdParent,
+                g.userName,g.avatar
+                ${_starField} ${_labelField} ${_commentField} ${_fileField}
+          from aAtom a
+
+            inner join aAtomClass b on a.atomClassId=b.id
+            inner join aUser g on a.userIdCreated=g.id
+            ${_itemJoin}
+            ${_starJoin}
+            ${_labelJoin}
+            ${_commentJoin}
+            ${_fileJoin}
+
+          ${_where}
+           (
+             a.deleted=0 and a.iid=${iid}
+             ${_starWhere}
+             ${_labelWhere}
+             ${_commentWhere}
+             ${_fileWhere}
+             and (
+                     (a.userIdCreated=${userIdWho}) or
+                     (
+                           a.atomEnabled=1 and
+                           (
+                               (
+                                 a.atomFlow=1 and
+                                   (
+                                     (
+                                       exists(
+                                               select c.atomId from aViewUserRightAtom c where c.iid=${iid} and a.id=c.atomId and c.action>2 and c.userIdWho=${userIdWho}
+                                             )
+                                     ) or
+                                     (
+                                       a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action>2 and c.scope=0 and c.userIdWho=${userIdWho}
+                                     )
+                                   )
+                                 )
+                               )
+                               or
+                               (
+                                 a.atomFlow=0 and
+                                   (
+                                     b.public=1 or
+                                     exists(
+                                             select c.atomId from aViewUserRightAtom c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.userIdWho=${userIdWho}
+                                           )
+                                   )
+                               )
+                           )
+                     )
+                 )
+           )
+
+          ${_orders}
+          ${_limit}
+        `;
+
+      // ok
+      return _sql;
+    }
+
+    getAtom({ iid, userIdWho, tableName, atomId }) {
+      // -- tables
+      // -- a: aAtom
+      // -- b: aAtomClass
+      // -- d: aAtomStar
+      // -- e: aAtomLabelRef
+      // -- f: {item}
+      // -- g: aUser
+
+      // for safe
+      tableName = tableName ? ctx.model.format('??', tableName) : null;
+
+      iid = parseInt(iid);
+      userIdWho = parseInt(userIdWho);
+      atomId = parseInt(atomId);
+
+      // vars
+      let _starField,
+        _labelField;
+      let _itemField,
+        _itemJoin;
+
+      // star
+      if (userIdWho) {
+        _starField =
+          `,(select d.star from aAtomStar d where d.iid=${iid} and d.atomId=a.id and d.userId=${userIdWho}) as star`;
+      } else {
+        _starField = '';
+      }
+
+      // label
+      if (userIdWho) {
+        _labelField =
+          `,(select e.labels from aAtomLabel e where e.iid=${iid} and e.atomId=a.id and e.userId=${userIdWho}) as labels`;
+      } else {
+        _labelField = '';
+      }
+
+      // tableName
+      if (tableName) {
+        _itemField = 'f.*,';
+        _itemJoin = ` inner join ${tableName} f on f.atomId=a.id`;
+      } else {
+        _itemField = '';
+        _itemJoin = '';
+      }
+
+      // sql
+      const _sql =
+        `select ${_itemField}
+                a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomFlow,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
+                b.module,b.atomClassName,b.atomClassIdParent,
+                g.userName,g.avatar
+                ${_starField}
+                ${_labelField}
+          from aAtom a
+
+            inner join aAtomClass b on a.atomClassId=b.id
+            inner join aUser g on a.userIdCreated=g.id
+            ${_itemJoin}
+
+          where a.id=${atomId}
+            and a.deleted=0 and a.iid=${iid}
+        `;
+
+      // ok
+      return _sql;
+    }
+
+    checkRightRead({ iid, userIdWho, atomId }) {
+      // for safe
+      iid = parseInt(iid);
+      userIdWho = parseInt(userIdWho);
+      atomId = parseInt(atomId);
+      // sql
+      const _sql =
+        `select a.* from aAtom a
+           left join aAtomClass b on a.atomClassId=b.id
+             where
+             (
+                 a.deleted=0 and a.iid=${iid} and a.id=${atomId}
+                 and
+                 (
+                      (a.userIdCreated=${userIdWho})
+                      or
+                      (
+                          a.atomEnabled=1 and
+                          (
+                              (
+                                  a.atomFlow=1 and
+                                  (
+                                      (
+                                        exists(
+                                                select c.atomId from aViewUserRightAtom c where c.iid=${iid} and a.id=c.atomId and c.action>2 and c.userIdWho=${userIdWho}
+                                              )
+                                      )
+                                      or
+                                      (
+                                        a.userIdCreated=${userIdWho} and
+                                        exists(
+                                                select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action>2 and c.scope=0 and c.userIdWho=${userIdWho}
+                                              )
+                                      )
+                                  )
+                              )
+                              or
+                              (
+                                  a.atomFlow=0 and
+                                  (
+                                      b.public=1 or
+                                      exists(
+                                              select c.atomId from aViewUserRightAtom c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.userIdWho=${userIdWho}
+                                            )
+                                  )
+                              )
+                          )
+                      )
+                 )
+             )
+        `;
+      return _sql;
+    }
+
+    checkRightUpdate({ iid, userIdWho, atomId, action, actionFlag }) {
+      // for safe
+      iid = parseInt(iid);
+      userIdWho = parseInt(userIdWho);
+      atomId = parseInt(atomId);
+      action = parseInt(action);
+
+      actionFlag = ctx.model.format('?', actionFlag);
+
+      // sql
+      const _sql =
+        `select a.* from aAtom a
+           where
+           (
+             a.deleted=0 and a.iid=${iid} and a.id=${atomId}
+             and (
+                  (a.atomEnabled=0 and a.userIdCreated=${userIdWho}) or
+                  (a.atomEnabled=1 and (
+                    (exists(select c.atomId from aViewUserRightAtom c where c.iid=${iid} and a.id=c.atomId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.userIdWho=${userIdWho})) or
+                    (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.scope=0 and c.userIdWho=${userIdWho}))
+                  ))
+                )
+           )
+        `;
+      return _sql;
+    }
+
+    checkRightAction({ iid, userIdWho, atomId, action, actionFlag }) {
+      // for safe
+      iid = parseInt(iid);
+      userIdWho = parseInt(userIdWho);
+      atomId = parseInt(atomId);
+      action = parseInt(action);
+
+      actionFlag = ctx.model.format('?', actionFlag);
+
+      // sql
+      const _sql =
+        `select a.* from aAtom a
+            where
+            (
+               a.deleted=0 and a.iid=${iid} and a.id=${atomId} and a.atomEnabled=1
+               and (
+                      (exists(select c.atomId from aViewUserRightAtom c where c.iid=${iid} and a.id=c.atomId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.userIdWho=${userIdWho})) or
+                      (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.scope=0 and c.userIdWho=${userIdWho}))
+                   )
+            )
+        `;
+      return _sql;
+    }
+
+    checkRightCreate({ iid, userIdWho, atomClassId }) {
+      // for safe
+      iid = parseInt(iid);
+      userIdWho = parseInt(userIdWho);
+      atomClassId = parseInt(atomClassId);
+
+      // sql
+      const _sql =
+        `select a.* from aAtomClass a
+            inner join aViewUserRightAtomClass b on a.id=b.atomClassId
+              where b.iid=${iid} and b.atomClassId=${atomClassId} and b.action=1 and b.userIdWho=${userIdWho}
+        `;
+      return _sql;
+    }
+
+    selectFunctions({ iid, locale, userIdWho, where, orders, page, star }) {
+      // -- tables
+      // -- a: aFunction
+      // -- b: aFunctionLocale
+      // -- c: aViewUserRightFunction
+      // -- d: aFunctionStar
+      // -- e: aAtomClass
+
+      // for safe
+      where = where ? ctx.model._where2(where) : null;
+      orders = orders ? ctx.model._orders(orders) : null;
+      const limit = page ? ctx.model._limit(page.size, page.index) : null;
+
+      iid = parseInt(iid);
+      userIdWho = parseInt(userIdWho);
+      star = parseInt(star);
+
+      locale = locale ? ctx.model.format('?', locale) : null;
+
+      // vars
+      let _starField,
+        _starJoin,
+        _starWhere;
+      let _localeField,
+        _localeJoin,
+        _localeWhere;
+
+      //
+      const _where = where ? `${where} AND` : ' WHERE';
+      const _orders = orders || '';
+      const _limit = limit || '';
+
+      // star
+      if (star) {
+        _starField = '';
+        _starJoin = ' inner join aFunctionStar d on a.id=d.functionId';
+        _starWhere = ` and d.iid=${iid} and d.userId=${userIdWho} and d.star=1`;
+      } else {
+        _starField =
+        `,(select d.star from aFunctionStar d where d.iid=${iid} and d.functionId=a.id and d.userId=${userIdWho}) as star`;
+        _starJoin = '';
+        _starWhere = '';
+      }
+
+      // locale
+      if (locale) {
+        _localeField = ',b.titleLocale';
+        _localeJoin = ' inner join aFunctionLocale b on a.id=b.functionId';
+        _localeWhere = ` and b.iid=${iid} and b.locale=${locale}`;
+      } else {
+        _localeField = '';
+        _localeJoin = '';
+        _localeWhere = '';
+      }
+
+      // sql
+      const _sql =
+        `select a.*,
+                e.atomClassName,e.atomClassIdParent
+                ${_localeField}
+                ${_starField}
+           from aFunction a
+
+             left join aAtomClass e on a.atomClassId=e.id
+             ${_localeJoin}
+             ${_starJoin}
+
+             ${_where}
+
+              (
+                a.deleted=0 and a.iid=${iid}
+                ${_localeWhere}
+                ${_starWhere}
+                and (
+                       a.public=1
+                       or
+                       exists(
+                               select c.functionId from aViewUserRightFunction c where c.iid=${iid} and a.id=c.functionId and c.userIdWho=${userIdWho}
+                             )
+                    )
+              )
+
+            ${_orders}
+            ${_limit}
+       `;
+
+      // ok
+      return _sql;
+    }
+
+    checkRightFunction({ iid, userIdWho, functionId }) {
+      // for safe
+      iid = parseInt(iid);
+      userIdWho = parseInt(userIdWho);
+      functionId = parseInt(functionId);
+      // sql
+      const _sql =
+        `select a.* from aFunction a
+            where a.deleted=0 and a.iid=${iid} and a.id=${functionId}
+              and ( a.public=1 or
+                    exists(select c.functionId from aViewUserRightFunction c where c.iid=${iid} and c.functionId=${functionId} and c.userIdWho=${userIdWho})
+                  )
+        `;
+      return _sql;
+    }
+
+    checkFunctionLocales({ iid, locale }) {
+      // for safe
+      iid = parseInt(iid);
+      locale = ctx.model.format('?', locale);
+      // sql
+      const _sql =
+        `select a.* from aFunction a
+            where a.iid=${iid} and a.menu=1
+              and not exists(
+                select b.id from aFunctionLocale b
+                  where b.iid=${iid} and b.locale=${locale} and b.functionId=a.id
+                    and (b.titleLocale is not null and b.titleLocale<>'')
+                )
+        `;
+      return _sql;
+    }
+
+  }
+
+  return Procedure;
+
+};
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
 module.exports = app => {
 
   class FunctionStar extends app.meta.Model {
@@ -236,7 +729,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -254,7 +747,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -272,7 +765,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -290,7 +783,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -308,7 +801,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -326,7 +819,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -344,7 +837,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -362,13 +855,15 @@ module.exports = app => {
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const modelFn = __webpack_require__(17);
-const modelAgentFn = __webpack_require__(18);
-const modelAuthFn = __webpack_require__(19);
-const modelAuthProviderFn = __webpack_require__(20);
+const modelFn = __webpack_require__(18);
+const modelAgentFn = __webpack_require__(19);
+const modelAuthFn = __webpack_require__(20);
+const modelAuthProviderFn = __webpack_require__(21);
+
+let _userAnonymous = null;
 
 module.exports = ctx => {
 
@@ -416,30 +911,23 @@ module.exports = ctx => {
     }
 
     async anonymous() {
-      // new
+      // cache
+      if (_userAnonymous) return _userAnonymous;
+      // try get
+      _userAnonymous = await this.get({ anonymous: 1 });
+      if (_userAnonymous) return _userAnonymous;
+      // add user
       const userId = await this.add({ disabled: 0, anonymous: 1 });
       // addRole
       const role = await ctx.meta.role.getSystemRole({ roleName: 'anonymous' });
       await ctx.meta.role.addUserRole({ userId, roleId: role.id });
-      return userId;
+      // ready
+      _userAnonymous = await this.get({ id: userId });
+      return _userAnonymous;
     }
 
     async loginAsAnonymous() {
-      const maxAge = this.config.anonymous.maxAge;
-      let userId = ctx.cookies.get('anonymous', { encrypt: true });
-      let userOp;
-      if (userId) {
-        userOp = await this.get({ id: userId });
-        // anonymous maybe 1 for local env
-        if (userOp && !userOp.anonymous) {
-          userOp = null;
-        }
-      }
-      if (!userOp) {
-        userId = await this.anonymous();
-        ctx.cookies.set('anonymous', userId.toString(), { encrypt: true, maxAge });
-        userOp = await this.get({ id: userId });
-      }
+      const userOp = await this.anonymous();
       const user = {
         op: userOp,
         agent: userOp,
@@ -447,7 +935,7 @@ module.exports = ctx => {
       };
       await ctx.login(user);
       // maxAge
-      ctx.session.maxAge = maxAge;
+      ctx.session.maxAge = this.config.anonymous.maxAge;
       return user;
     }
 
@@ -893,7 +1381,7 @@ module.exports = ctx => {
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -911,7 +1399,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -929,7 +1417,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -947,7 +1435,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -965,26 +1453,26 @@ module.exports = app => {
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const config = __webpack_require__(22);
-const locales = __webpack_require__(23);
-const errors = __webpack_require__(25);
-const middlewares = __webpack_require__(26);
-const constants = __webpack_require__(41);
+const config = __webpack_require__(23);
+const locales = __webpack_require__(24);
+const errors = __webpack_require__(26);
+const middlewares = __webpack_require__(27);
+const constants = __webpack_require__(42);
 
 // eslint-disable-next-line
 module.exports = app => {
 
   // routes
-  const routes = __webpack_require__(42)(app);
+  const routes = __webpack_require__(43)(app);
   // services
-  const services = __webpack_require__(52)(app);
+  const services = __webpack_require__(53)(app);
   // models
-  const models = __webpack_require__(72)(app);
+  const models = __webpack_require__(73)(app);
   // meta
-  const meta = __webpack_require__(79)(app);
+  const meta = __webpack_require__(80)(app);
 
   return {
     routes,
@@ -1002,7 +1490,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports) {
 
 // eslint-disable-next-line
@@ -1018,7 +1506,7 @@ module.exports = appInfo => {
     auth: {
       global: true,
       dependencies: 'base,sequence',
-      ignore: /\/version\/(start|check|update|init)/,
+      ignore: /\/version\/(update|init|test)/,
     },
     right: {
       global: true,
@@ -1117,16 +1605,16 @@ module.exports = appInfo => {
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
-  'zh-cn': __webpack_require__(24),
+  'zh-cn': __webpack_require__(25),
 };
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -1154,7 +1642,7 @@ module.exports = {
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports) {
 
 // error code should start from 1001
@@ -1171,14 +1659,14 @@ module.exports = {
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const base = __webpack_require__(27);
-const auth = __webpack_require__(37);
-const right = __webpack_require__(38);
-const jsonp = __webpack_require__(39);
-const httpLog = __webpack_require__(40);
+const base = __webpack_require__(28);
+const auth = __webpack_require__(38);
+const right = __webpack_require__(39);
+const jsonp = __webpack_require__(40);
+const httpLog = __webpack_require__(41);
 
 module.exports = {
   base,
@@ -1190,39 +1678,39 @@ module.exports = {
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // base
-const BaseFn = __webpack_require__(28);
+const BaseFn = __webpack_require__(29);
 const BASE = Symbol('CTX#__BASE');
 
 // atomClass
-const AtomClassFn = __webpack_require__(31);
+const AtomClassFn = __webpack_require__(32);
 const ATOMCLASS = Symbol('CTX#__ATOMCLASS');
 
 // atomClass
-const AtomActionFn = __webpack_require__(32);
+const AtomActionFn = __webpack_require__(33);
 const ATOMACTION = Symbol('CTX#__ATOMACTION');
 
 // atom
-const AtomFn = __webpack_require__(33);
+const AtomFn = __webpack_require__(34);
 const ATOM = Symbol('CTX#__ATOM');
 
 // function
-const FunctionFn = __webpack_require__(34);
+const FunctionFn = __webpack_require__(35);
 const FUNCTION = Symbol('CTX#__FUNCTION');
 
 // role
-const RoleFn = __webpack_require__(35);
+const RoleFn = __webpack_require__(36);
 const ROLE = Symbol('CTX#__ROLE');
 
 // user
-const UserFn = __webpack_require__(16);
+const UserFn = __webpack_require__(17);
 const USER = Symbol('CTX#__USER');
 
 // util
-const UtilFn = __webpack_require__(36);
+const UtilFn = __webpack_require__(37);
 const UTIL = Symbol('CTX#__UTIL');
 
 module.exports = () => {
@@ -1308,10 +1796,10 @@ module.exports = () => {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const path = __webpack_require__(29);
+const path = __webpack_require__(30);
 const require3 = __webpack_require__(0);
 const fse = require3('fs-extra');
 
@@ -1363,7 +1851,7 @@ const Fn = module.exports = ctx => {
       if (ctx.app.meta.isTest || ctx.app.meta.isLocal) {
         return ctx.app.config.static.dir;
       }
-      const dir = ctx.config.module(moduleInfo.relativeName).publicDir || path.join(__webpack_require__(30).homedir(), 'cabloy', ctx.app.name, 'public');
+      const dir = ctx.config.module(moduleInfo.relativeName).publicDir || path.join(__webpack_require__(31).homedir(), 'cabloy', ctx.app.name, 'public');
       await fse.ensureDir(dir);
       return dir;
     }
@@ -1735,19 +2223,19 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports) {
 
 module.exports = require("path");
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports) {
 
 module.exports = require("os");
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const modelFn = __webpack_require__(2);
@@ -1870,7 +2358,7 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const modelFn = __webpack_require__(3);
@@ -1937,7 +2425,7 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -1946,6 +2434,7 @@ const modelAtomFn = __webpack_require__(4);
 const modelAtomStarFn = __webpack_require__(5);
 const modelAtomLabelFn = __webpack_require__(6);
 const modelAtomLabelRefFn = __webpack_require__(7);
+const sqlProcedureFn = __webpack_require__(8);
 
 const Fn = module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -1959,6 +2448,7 @@ const Fn = module.exports = ctx => {
       this._modelAtomLabel = null;
       this._modelAtomLabelRef = null;
       this._sequence = null;
+      this._sqlProcedure = null;
     }
 
     // other module's atom
@@ -1994,6 +2484,11 @@ const Fn = module.exports = ctx => {
     get sequence() {
       if (!this._sequence) this._sequence = ctx.meta.sequence.module(moduleInfo.relativeName);
       return this._sequence;
+    }
+
+    get sqlProcedure() {
+      if (!this._sqlProcedure) this._sqlProcedure = new (sqlProcedureFn(ctx))();
+      return this._sqlProcedure;
     }
 
     async getAtomClassId({ module, atomClassName, atomClassIdParent = 0 }) {
@@ -2443,26 +2938,27 @@ const Fn = module.exports = ctx => {
     }
 
     async _get({
-      atom: { id, tableName = '' },
+      atom: { id, tableName },
       user,
     }) {
-      const res = await ctx.model.query('call aGetAtom(?,?,?,?)',
-        [ tableName, id, ctx.instance.id, user.id ]
-      );
-      return res[0][0];
+      const sql = this.sqlProcedure.getAtom({
+        iid: ctx.instance.id,
+        userIdWho: user.id,
+        tableName, atomId: id,
+      });
+      return await ctx.model.queryOne(sql);
     }
 
-    async _list({ tableName = '', options: { where, orders, page, star = 0, label = 0, comment = 0, file = 0 }, user, pageForce = true }) {
+    async _list({ tableName, options: { where, orders, page, star = 0, label = 0, comment = 0, file = 0 }, user, pageForce = true }) {
       page = ctx.meta.util.page(page, pageForce);
 
-      const _where = ctx.model._where2(where);
-      const _orders = ctx.model._orders(orders);
-      const _limit = ctx.model._limit(page.size, page.index);
-
-      const res = await ctx.model.query('call aSelectAtoms(?,?,?,?,?,?,?,?,?,?)',
-        [ tableName, _where, _orders, _limit, ctx.instance.id, user.id, star, label, comment, file ]
-      );
-      return res[0];
+      const sql = this.sqlProcedure.selectAtoms({
+        iid: ctx.instance.id,
+        userIdWho: user.id,
+        tableName, where, orders, page,
+        star, label, comment, file,
+      });
+      return await ctx.model.query(sql);
     }
 
     // right
@@ -2481,10 +2977,12 @@ const Fn = module.exports = ctx => {
       atom: { id },
       user,
     }) {
-      const res = await ctx.model.query('call aCheckRightRead(?,?,?)',
-        [ ctx.instance.id, user.id, id ]
-      );
-      return res[0][0];
+      const sql = this.sqlProcedure.checkRightRead({
+        iid: ctx.instance.id,
+        userIdWho: user.id,
+        atomId: id,
+      });
+      return await ctx.model.queryOne(sql);
     }
 
     async checkRightUpdate({
@@ -2492,10 +2990,13 @@ const Fn = module.exports = ctx => {
       user,
     }) {
       const actionFlag = await ctx.meta.atomAction.getFlagByAtomId({ atomId: id, code: action });
-      const res = await ctx.model.query('call aCheckRightUpdate(?,?,?,?,?)',
-        [ ctx.instance.id, user.id, id, action, actionFlag ]
-      );
-      return res[0][0];
+      const sql = this.sqlProcedure.checkRightUpdate({
+        iid: ctx.instance.id,
+        userIdWho: user.id,
+        atomId: id,
+        action, actionFlag,
+      });
+      return await ctx.model.queryOne(sql);
     }
 
     async checkRightAction({
@@ -2503,10 +3004,13 @@ const Fn = module.exports = ctx => {
       user,
     }) {
       const actionFlag = await ctx.meta.atomAction.getFlagByAtomId({ atomId: id, code: action });
-      const res = await ctx.model.query('call aCheckRightAction(?,?,?,?,?)',
-        [ ctx.instance.id, user.id, id, action, actionFlag ]
-      );
-      return res[0][0];
+      const sql = this.sqlProcedure.checkRightAction({
+        iid: ctx.instance.id,
+        userIdWho: user.id,
+        atomId: id,
+        action, actionFlag,
+      });
+      return await ctx.model.queryOne(sql);
     }
 
     async checkRightCreate({
@@ -2514,10 +3018,12 @@ const Fn = module.exports = ctx => {
       user,
     }) {
       if (!id) id = await this.getAtomClassId({ module, atomClassName, atomClassIdParent });
-      const res = await ctx.model.query('call aCheckRightCreate(?,?,?)',
-        [ ctx.instance.id, user.id, id ]
-      );
-      return res[0][0];
+      const sql = this.sqlProcedure.checkRightCreate({
+        iid: ctx.instance.id,
+        userIdWho: user.id,
+        atomClassId: id,
+      });
+      return await ctx.model.queryOne(sql);
     }
 
     _upperCaseFirstChar(str) {
@@ -2541,12 +3047,13 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const modelFn = __webpack_require__(1);
-const modelFunctionStarFn = __webpack_require__(8);
-const modelFunctionLocaleFn = __webpack_require__(9);
+const modelFunctionStarFn = __webpack_require__(9);
+const modelFunctionLocaleFn = __webpack_require__(10);
+const sqlProcedureFn = __webpack_require__(8);
 
 const Fn = module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -2557,6 +3064,7 @@ const Fn = module.exports = ctx => {
       this._model = null;
       this._modelFunctionStar = null;
       this._modelFunctionLocale = null;
+      this._sqlProcedure = null;
     }
 
     // other module's menu
@@ -2579,23 +3087,28 @@ const Fn = module.exports = ctx => {
       return this._modelFunctionLocale;
     }
 
+    get sqlProcedure() {
+      if (!this._sqlProcedure) this._sqlProcedure = new (sqlProcedureFn(ctx))();
+      return this._sqlProcedure;
+    }
+
     // list
     //   locale maybe '' for selectAllFunctions beside menus
     async list({ options: { where, orders, page, star = 0, locale = '' }, user }) {
       // page = ctx.meta.util.page(page); // has set in controller
 
-      const _where = ctx.model._where2(where);
-      const _orders = ctx.model._orders(orders);
-      const _limit = ctx.model._limit(page.size, page.index);
-
       // check locale
       if (locale) await this.checkLocale({ locale });
 
+      // sql
+      const sql = this.sqlProcedure.selectFunctions({
+        iid: ctx.instance.id,
+        locale,
+        userIdWho: user.id,
+        where, orders, page, star,
+      });
       // select
-      const res = await ctx.model.query('call aSelectFunctions(?,?,?,?,?,?,?)',
-        [ _where, _orders, _limit, ctx.instance.id, user.id, star, this.model.format('?', locale) ]
-      );
-      return res[0];
+      return await ctx.model.query(sql);
     }
 
     async star({ id, star = 1, user }) {
@@ -2672,17 +3185,26 @@ const Fn = module.exports = ctx => {
       user,
     }) {
       const func = await this.get({ module, name });
-      const res = await ctx.model.query('call aCheckRightFunction(?,?,?)',
-        [ ctx.instance.id, user.id, func.id ]
-      );
-      return res[0][0];
+      const sql = this.sqlProcedure.checkRightFunction({
+        iid: ctx.instance.id,
+        userIdWho: user.id,
+        functionId: func.id,
+      });
+      return await ctx.model.queryOne(sql);
+    }
+
+    async _checkFunctionLocales({ locale }) {
+      locale = locale || ctx.locale;
+      const sql = this.sqlProcedure.checkFunctionLocales({
+        iid: ctx.instance.id,
+        locale,
+      });
+      return await ctx.model.query(sql);
     }
 
     async checkLocale({ locale }) {
-      locale = locale || ctx.locale;
-      const res = await this.model.query('call aCheckFunctionLocales(?,?)',
-        [ ctx.instance.id, locale ]);
-      if (res[0].length === 0) return;
+      const res = await this._checkFunctionLocales({ locale });
+      if (res.length === 0) return;
       // queue
       await ctx.app.meta.queue.pushAsync({
         subdomain: ctx.subdomain,
@@ -2693,11 +3215,10 @@ const Fn = module.exports = ctx => {
     }
 
     async _checkLocale({ locale }) {
-      const res = await this.model.query('call aCheckFunctionLocales(?,?)',
-        [ ctx.instance.id, locale ]);
-      if (res[0].length === 0) return;
+      const res = await this._checkFunctionLocales({ locale });
+      if (res.length === 0) return;
       // insert locales
-      for (const menu of res[0]) {
+      for (const menu of res) {
         const titleLocale = ctx.text.locale(locale, menu.title);
         await this.modelFunctionLocale.insert({
           functionId: menu.id,
@@ -2718,16 +3239,16 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const modelFn = __webpack_require__(10);
-const modelRoleIncFn = __webpack_require__(11);
-const modelUserRoleFn = __webpack_require__(12);
-const modelRoleRightFn = __webpack_require__(13);
-const modelRoleRightRefFn = __webpack_require__(14);
+const modelFn = __webpack_require__(11);
+const modelRoleIncFn = __webpack_require__(12);
+const modelUserRoleFn = __webpack_require__(13);
+const modelRoleRightFn = __webpack_require__(14);
+const modelRoleRightRefFn = __webpack_require__(15);
 const modelFunctionFn = __webpack_require__(1);
-const modelRoleFunctionFn = __webpack_require__(15);
+const modelRoleFunctionFn = __webpack_require__(16);
 
 const Fn = module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -2977,21 +3498,6 @@ const Fn = module.exports = ctx => {
       await this.modelRoleFunction.delete({ id });
     }
 
-    // set dirty
-    async setDirty(dirty) {
-      await ctx.meta.status.module(moduleInfo.relativeName).set('roleDirty', dirty);
-    }
-
-    async getDirty() {
-      return await ctx.meta.status.module(moduleInfo.relativeName).get('roleDirty');
-    }
-
-    // build roles
-    async build() {
-      await this.model.query('call aBuildRoles(?)', [ ctx.instance.id ]);
-      await this.setDirty(false);
-    }
-
     // children
     async children({ roleId, page }) {
       page = ctx.meta.util.page(page, false);
@@ -3203,6 +3709,95 @@ const Fn = module.exports = ctx => {
       return list[0].count > 0;
     }
 
+    // set dirty
+    async setDirty(dirty) {
+      await ctx.meta.status.module(moduleInfo.relativeName).set('roleDirty', dirty);
+    }
+
+    async getDirty() {
+      return await ctx.meta.status.module(moduleInfo.relativeName).get('roleDirty');
+    }
+
+    // build roles
+    async build() {
+      // iid
+      const iid = ctx.instance.id;
+      // remove
+      await this._buildRolesRemove({ iid });
+      // add
+      await this._buildRolesAdd({ iid, roleIdParent: 0 });
+      // setDirty
+      await this.setDirty(false);
+    }
+
+    async _buildRolesRemove({ iid }) {
+      await ctx.model.query(`delete from aRoleRef where aRoleRef.iid=${iid}`);
+      await ctx.model.query(`delete from aRoleIncRef where aRoleIncRef.iid=${iid}`);
+      await ctx.model.query(`delete from aRoleExpand where aRoleExpand.iid=${iid}`);
+    }
+
+    async _buildRolesAdd({ iid, roleIdParent }) {
+      const list = await ctx.model.query(
+        `select a.id,a.catalog from aRole a where a.iid=${iid} and a.roleIdParent=${roleIdParent}`
+      );
+      for (const item of list) {
+        // info
+        const roleId = item.id;
+        const catalog = item.catalog;
+        // build
+        await this._buildRoleRef({ iid, roleId });
+        await this._buildRoleIncRef({ iid, roleId });
+        await this._buildRoleExpand({ iid, roleId });
+        // catalog
+        if (catalog === 1) {
+          await this._buildRolesAdd({ iid, roleIdParent: roleId });
+        }
+      }
+    }
+
+    async _buildRoleRef({ iid, roleId }) {
+      let level = 0;
+      let roleIdParent = roleId;
+      // loop
+      while (level !== -1) {
+        await ctx.model.query(
+          `insert into aRoleRef(iid,roleId,roleIdParent,level)
+             values(${iid},${roleId},${roleIdParent},${level})
+          `
+        );
+        const item = await ctx.model.queryOne(
+          `select a.roleIdParent from aRole a where a.iid=${iid} and a.id=${roleIdParent}`
+        );
+        if (!item || !item.roleIdParent) {
+          level = -1;
+        } else {
+          roleIdParent = item.roleIdParent;
+          level++;
+        }
+      }
+    }
+
+    async _buildRoleIncRef({ iid, roleId }) {
+      await ctx.model.query(
+        `insert into aRoleIncRef(iid,roleId,roleIdInc,roleIdSrc)
+            select ${iid},${roleId},a.roleIdInc,a.roleId from aRoleInc a
+              where a.iid=${iid} and a.roleId in (select b.roleIdParent from aRoleRef b where b.iid=${iid} and b.roleId=${roleId})
+        `);
+    }
+
+    async _buildRoleExpand({ iid, roleId }) {
+      await ctx.model.query(
+        `insert into aRoleExpand(iid,roleId,roleIdBase)
+            select a.iid,a.roleId,a.roleIdParent from aRoleRef a
+              where a.iid=${iid} and a.roleId=${roleId}
+        `);
+      await ctx.model.query(
+        `insert into aRoleExpand(iid,roleId,roleIdBase)
+            select a.iid,a.roleId,a.roleIdInc from aRoleIncRef a
+              where a.iid=${iid} and a.roleId=${roleId}
+        `);
+    }
+
   }
 
   return Role;
@@ -3210,7 +3805,7 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -3286,7 +3881,7 @@ module.exports = ctx => {
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports) {
 
 module.exports = options => {
@@ -3309,7 +3904,7 @@ module.exports = options => {
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports) {
 
 // request.body
@@ -3413,7 +4008,7 @@ async function checkFunction(moduleInfo, options, ctx) {
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports) {
 
 module.exports = (options, app) => {
@@ -3447,7 +4042,7 @@ module.exports = (options, app) => {
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports) {
 
 module.exports = (options, app) => {
@@ -3497,7 +4092,7 @@ module.exports = (options, app) => {
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -3536,18 +4131,18 @@ module.exports = {
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(43);
-const base = __webpack_require__(44);
-const user = __webpack_require__(45);
-const atom = __webpack_require__(46);
-const atomClass = __webpack_require__(47);
-const atomAction = __webpack_require__(48);
-const func = __webpack_require__(49);
-const auth = __webpack_require__(50);
-const comment = __webpack_require__(51);
+const version = __webpack_require__(44);
+const base = __webpack_require__(45);
+const user = __webpack_require__(46);
+const atom = __webpack_require__(47);
+const atomClass = __webpack_require__(48);
+const atomAction = __webpack_require__(49);
+const func = __webpack_require__(50);
+const auth = __webpack_require__(51);
+const comment = __webpack_require__(52);
 
 module.exports = app => {
   const routes = [
@@ -3585,14 +4180,20 @@ module.exports = app => {
     },
     { method: 'post', path: 'atom/enable', controller: atom, middlewares: 'transaction' },
     { method: 'post', path: 'atom/star', controller: atom,
-      meta: { right: { type: 'atom', action: 2 } },
+      meta: {
+        auth: { user: true },
+        right: { type: 'atom', action: 2 },
+      },
     },
     { method: 'post', path: 'atom/readCount', controller: atom,
       meta: { right: { type: 'atom', action: 2 } },
     },
     { method: 'post', path: 'atom/stats', controller: atom },
     { method: 'post', path: 'atom/labels', controller: atom,
-      meta: { right: { type: 'atom', action: 2 } },
+      meta: {
+        auth: { user: true },
+        right: { type: 'atom', action: 2 },
+      },
     },
     { method: 'post', path: 'atom/actions', controller: atom },
     { method: 'post', path: 'atom/schema', controller: atom },
@@ -3618,7 +4219,10 @@ module.exports = app => {
       },
     },
     { method: 'post', path: 'comment/heart', controller: comment, middlewares: 'transaction',
-      meta: { right: { type: 'atom', action: 2 } },
+      meta: {
+        auth: { user: true },
+        right: { type: 'atom', action: 2 },
+      },
     },
     // user
     { method: 'post', path: 'user/getLabels', controller: user },
@@ -3627,7 +4231,7 @@ module.exports = app => {
     { method: 'post', path: 'function/list', controller: func },
     { method: 'post', path: 'function/star', controller: func },
     { method: 'post', path: 'function/check', controller: func },
-    { method: 'post', path: 'function/checkLocale', controller: func, middlewares: 'inner' },
+    { method: 'post', path: 'function/checkLocale', controller: func, middlewares: 'inner', meta: { auth: { enable: false } } },
     { method: 'post', path: 'function/register', controller: func, middlewares: 'inner',
       meta: { auth: { enable: false } },
     },
@@ -3660,7 +4264,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3682,7 +4286,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3739,7 +4343,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3768,7 +4372,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3927,7 +4531,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3965,7 +4569,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3987,7 +4591,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -4052,7 +4656,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -4163,7 +4767,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -4237,18 +4841,18 @@ module.exports = app => {
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(53);
-const base = __webpack_require__(64);
-const user = __webpack_require__(65);
-const atom = __webpack_require__(66);
-const atomClass = __webpack_require__(67);
-const atomAction = __webpack_require__(68);
-const auth = __webpack_require__(69);
-const func = __webpack_require__(70);
-const comment = __webpack_require__(71);
+const version = __webpack_require__(54);
+const base = __webpack_require__(65);
+const user = __webpack_require__(66);
+const atom = __webpack_require__(67);
+const atomClass = __webpack_require__(68);
+const atomAction = __webpack_require__(69);
+const auth = __webpack_require__(70);
+const func = __webpack_require__(71);
+const comment = __webpack_require__(72);
 
 module.exports = app => {
   const services = {
@@ -4267,17 +4871,17 @@ module.exports = app => {
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const VersionUpdate1Fn = __webpack_require__(54);
-const VersionUpdate2Fn = __webpack_require__(56);
-const VersionUpdate3Fn = __webpack_require__(57);
-const VersionUpdate4Fn = __webpack_require__(58);
-const VersionUpdate6Fn = __webpack_require__(59);
-const VersionInit2Fn = __webpack_require__(60);
-const VersionInit4Fn = __webpack_require__(62);
-const VersionInit5Fn = __webpack_require__(63);
+const VersionUpdate1Fn = __webpack_require__(55);
+const VersionUpdate2Fn = __webpack_require__(57);
+const VersionUpdate3Fn = __webpack_require__(58);
+const VersionUpdate4Fn = __webpack_require__(59);
+const VersionUpdate6Fn = __webpack_require__(60);
+const VersionInit2Fn = __webpack_require__(61);
+const VersionInit4Fn = __webpack_require__(63);
+const VersionInit5Fn = __webpack_require__(64);
 
 module.exports = app => {
 
@@ -4333,10 +4937,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const update1Data = __webpack_require__(55);
+const update1Data = __webpack_require__(56);
 
 module.exports = function(ctx) {
 
@@ -4376,27 +4980,6 @@ module.exports = function(ctx) {
         await ctx.model.query(update1Data.functions[functionName]);
       }
 
-      // procedures
-      const procedureNames = [
-        'aSelectAtoms',
-        'aGetAtom',
-        'aCheckRightRead',
-        'aCheckRightUpdate',
-        'aCheckRightAction',
-        'aCheckRightCreate',
-        'aCheckRightFunction',
-        'aSelectFunctions',
-        'aCheckFunctionLocales',
-        'aBuildRoles',
-        'aBuildRolesRemove',
-        'aBuildRolesAdd',
-        'aBuildRoleRef',
-        'aBuildRoleIncRef',
-        'aBuildRoleExpand',
-      ];
-      for (const procedureName of procedureNames) {
-        await ctx.model.query(update1Data.procedures[procedureName]);
-      }
     }
 
   }
@@ -4406,7 +4989,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports) {
 
 const tables = {
@@ -4773,463 +5356,15 @@ create view aViewUserRightFunction as
 const functions = {
 };
 
-const procedures = {
-  aSelectAtoms: `
-create procedure aSelectAtoms (in _tableName varchar(50),in __where text,in __orders text,in __limit text,in _iid int,in _userIdWho int,in _star int,in _label int)
-begin
-  -- tables
-  -- a: aAtom
-  -- b: aAtomClass
-  -- c: aViewUserRightAtom
-  -- d: aAtomStar
-  -- e: aAtomLabelRef
-  -- f: {item}
-  -- g: aUser
-
-  declare _where,_orders,_limit text;
-  declare _starField,_starJoin,_starWhere text;
-  declare _labelField,_labelJoin,_labelWhere text;
-  declare _itemField,_itemJoin text;
-
-  if __where<>'' then
-    set _where=concat(__where,' AND');
-  else
-    set _where=' WHERE';
-  end if;
-
-  if __orders<>'' then
-    set _orders=__orders;
-  else
-    set _orders='';
-  end if;
-
-  if __limit<>'' then
-    set _limit=__limit;
-  else
-    set _limit='';
-  end if;
-
-  if _star<>0 then
-    set _starJoin=' inner join aAtomStar d on a.id=d.atomId';
-    set _starWhere=concat(' and d.iid=',_iid,' and d.userId=',_userIdWho,' and d.star=1');
-  else
-    set _starJoin='';
-    set _starWhere='';
-  end if;
-    set _starField=concat(
-        ',(select d2.star from aAtomStar d2 where d2.iid=',_iid,' and d2.atomId=a.id and d2.userId=',_userIdWho,') as star'
-      );
-
-  if _label<>0 then
-    set _labelJoin=' inner join aAtomLabelRef e on a.id=e.atomId';
-    set _labelWhere=concat(' and e.iid=',_iid,' and e.userId=',_userIdWho,' and e.labelId=',_label);
-  else
-    set _labelJoin='';
-    set _labelWhere='';
-  end if;
-    set _labelField=concat(
-        ',(select e2.labels from aAtomLabel e2 where e2.iid=',_iid,' and e2.atomId=a.id and e2.userId=',_userIdWho,') as labels'
-      );
-
-  if _tableName<>'' then
-    set _itemField='f.*,';
-    set _itemJoin=concat(' inner join ',_tableName,' f on f.atomId=a.id');
-  else
-    set _itemField='';
-    set _itemJoin='';
-  end if;
-
-  set @sql=concat(
-    'select ',_itemField,'a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomFlow,a.atomClassId,a.atomName,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,b.module,b.atomClassName,b.atomClassIdParent,g.userName,g.avatar',_starField,_labelField,' from aAtom a',
-    ' inner join aAtomClass b on a.atomClassId=b.id',
-    ' inner join aUser g on a.userIdCreated=g.id',
-    _itemJoin,
-    _starJoin,
-    _labelJoin,
-    _where,
-    ' (',
-    '  a.deleted=0 and a.iid=', _iid,
-    _starWhere,
-    _labelWhere,
-    '    and (',
-    '           (a.userIdCreated=',_userIdWho,') or',
-    '             (a.atomEnabled=1 and (',
-    '               (',
-    '                 a.atomFlow=1 and (',
-    '                   (exists(select c.atomId from aViewUserRightAtom c where c.iid=',_iid,' and a.id=c.atomId and c.action>2 and c.userIdWho=',_userIdWho,')) or',
-    '                   (a.userIdCreated=',_userIdWho,' and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=',_iid,' and a.atomClassId=c.atomClassId and c.action>2 and c.scope=0 and c.userIdWho=',_userIdWho,'))',
-    '                 )',
-    '               ) or (',
-    '                 a.atomFlow=0 and (',
-    '                   b.public=1 or exists(select c.atomId from aViewUserRightAtom c where c.iid=',_iid,' and a.id=c.atomId and c.action=2 and c.userIdWho=',_userIdWho,')',
-    '                 )',
-    '                )',
-    '             ))',
-    '        )',
-    ' )',
-    _orders,
-    _limit
-  );
-
-  prepare stmt from @sql;
-  execute stmt;
-  deallocate prepare stmt;
-
-end
-`,
-  aGetAtom: `
-create procedure aGetAtom (in _tableName varchar(50),in _atomId int,in _iid int,in _userIdWho int)
-begin
-  -- tables
-  -- a: aAtom
-  -- b: aAtomClass
-  -- d: aAtomStar
-  -- e: aAtomLabelRef
-  -- f: {item}
-  -- g: aUser
-
-  declare _starField,_labelField text;
-  declare _itemField,_itemJoin text;
-
-  if _userIdWho=0 then
-    set _starField='';
-  else
-    set _starField=concat(
-          ',(select d.star from aAtomStar d where d.iid=',_iid,' and d.atomId=a.id and d.userId=',_userIdWho,') as star'
-        );
-  end if;
-
-  if _userIdWho=0 then
-    set _labelField='';
-  else
-    set _labelField=concat(
-          ',(select e.labels from aAtomLabel e where e.iid=',_iid,' and e.atomId=a.id and e.userId=',_userIdWho,') as labels'
-        );
-  end if;
-
-  if _tableName<>'' then
-    set _itemField='f.*,';
-    set _itemJoin=concat(' inner join ',_tableName,' f on f.atomId=a.id');
-  else
-    set _itemField='';
-    set _itemJoin='';
-  end if;
-
-  set @sql=concat(
-    'select ',_itemField,'a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomFlow,a.atomClassId,a.atomName,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,b.module,b.atomClassName,b.atomClassIdParent,g.userName,g.avatar',_starField,_labelField,' from aAtom a',
-    ' inner join aAtomClass b on a.atomClassId=b.id',
-    ' inner join aUser g on a.userIdCreated=g.id',
-    _itemJoin,
-    ' where a.id=', _atomId,
-    '   and a.deleted=0 and a.iid=', _iid
-  );
-
-  prepare stmt from @sql;
-  execute stmt;
-  deallocate prepare stmt;
-
-end
-`,
-  aCheckRightRead: `
-create procedure aCheckRightRead (in _iid int,in _userIdWho int,in _atomId int)
-begin
-
-  select a.* from aAtom a
-   left join aAtomClass b on a.atomClassId=b.id
-    where (
-     a.deleted=0 and a.iid=_iid and a.id=_atomId
-     and (
-            (a.userIdCreated=_userIdWho) or
-            (a.atomEnabled=1 and (
-              (
-                a.atomFlow=1 and (
-                  (exists(select c.atomId from aViewUserRightAtom c where c.iid=_iid and a.id=c.atomId and c.action>2 and c.userIdWho=_userIdWho)) or
-                  (a.userIdCreated=_userIdWho and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=_iid and a.atomClassId=c.atomClassId and c.action>2 and c.scope=0 and c.userIdWho=_userIdWho))
-                )
-              ) or (
-                a.atomFlow=0 and (
-                  b.public=1 or exists(select c.atomId from aViewUserRightAtom c where c.iid=_iid and a.id=c.atomId and c.action=2 and c.userIdWho=_userIdWho)
-                )
-              )
-            ))
-          )
-    );
-
-end
-`,
-  aCheckRightUpdate: `
-create procedure aCheckRightUpdate (in _iid int,in _userIdWho int,in _atomId int,in _action int,in _actionFlag varchar(255))
-begin
-
-  select a.* from aAtom a
-    where (
-     a.deleted=0 and a.iid=_iid and a.id=_atomId
-     and (
-            (a.atomEnabled=0 and a.userIdCreated=_userIdWho) or
-            (a.atomEnabled=1 and (
-              (exists(select c.atomId from aViewUserRightAtom c where c.iid=_iid and a.id=c.atomId and c.action=_action and (_actionFlag='' or find_in_set(a.atomFlag,_actionFlag)>0 ) and c.userIdWho=_userIdWho)) or
-              (a.userIdCreated=_userIdWho and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=_iid and a.atomClassId=c.atomClassId and c.action=_action and (_actionFlag='' or find_in_set(a.atomFlag,_actionFlag)>0 ) and c.scope=0 and c.userIdWho=_userIdWho))
-            ))
-          )
-    );
-
-end
-`,
-  aCheckRightAction: `
-create procedure aCheckRightAction (in _iid int,in _userIdWho int,in _atomId int,in _action int,in _actionFlag varchar(255))
-begin
-
-  select a.* from aAtom a
-    where (
-     a.deleted=0 and a.iid=_iid and a.id=_atomId and a.atomEnabled=1
-     and (
-            (exists(select c.atomId from aViewUserRightAtom c where c.iid=_iid and a.id=c.atomId and c.action=_action and (_actionFlag='' or find_in_set(a.atomFlag,_actionFlag)>0 ) and c.userIdWho=_userIdWho)) or
-            (a.userIdCreated=_userIdWho and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=_iid and a.atomClassId=c.atomClassId and c.action=_action and (_actionFlag='' or find_in_set(a.atomFlag,_actionFlag)>0 ) and c.scope=0 and c.userIdWho=_userIdWho))
-          )
-    );
-
-end
-`,
-  aCheckRightCreate: `
-create procedure aCheckRightCreate (in _iid int,in _userIdWho int,in _atomClassId int)
-begin
-
-  select a.* from aAtomClass a
-    inner join aViewUserRightAtomClass b on a.id=b.atomClassId
-      where b.iid=_iid and b.atomClassId=_atomClassId and b.action=1 and b.userIdWho=_userIdWho;
-
-end
-`,
-  aCheckRightFunction: `
-create procedure aCheckRightFunction (in _iid int,in _userIdWho int,in _functionId int)
-begin
-
-  select a.* from aFunction a
-    where a.deleted=0 and a.iid=_iid and a.id=_functionId
-      and ( a.public=1 or
-            exists(select c.functionId from aViewUserRightFunction c where c.iid=_iid and c.functionId=_functionId and c.userIdWho=_userIdWho)
-          );
-
-end
-`,
-  aSelectFunctions: `
-create procedure aSelectFunctions (in __where text,in __orders text,in __limit text,in _iid int,in _userIdWho int,in _star int,in _locale varchar(50))
-begin
-  -- tables
-  -- a: aFunction
-  -- b: aFunctionLocale
-  -- c: aViewUserRightFunction
-  -- d: aFunctionStar
-  -- e: aAtomClass
-
-  declare _where,_orders,_limit text;
-  declare _starField,_starJoin,_starWhere text;
-  declare _localeField,_localeJoin,_localeWhere text;
-
-  if __where<>'' then
-    set _where=concat(__where,' AND');
-  else
-    set _where=' WHERE';
-  end if;
-
-  if __orders<>'' then
-    set _orders=__orders;
-  else
-    set _orders='';
-  end if;
-
-  if __limit<>'' then
-    set _limit=__limit;
-  else
-    set _limit='';
-  end if;
-
-  if _star<>0 then
-    set _starField='';
-    set _starJoin=' inner join aFunctionStar d on a.id=d.functionId';
-    set _starWhere=concat(' and d.iid=',_iid,' and d.userId=',_userIdWho,' and d.star=1');
-  else
-    set _starField=concat(
-        ',(select d.star from aFunctionStar d where d.iid=',_iid,' and d.functionId=a.id and d.userId=',_userIdWho,') as star'
-      );
-    set _starJoin='';
-    set _starWhere='';
-  end if;
-
-  if _locale<>'\'\'\'\'' then
-    set _localeField=',b.titleLocale';
-    set _localeJoin=' inner join aFunctionLocale b on a.id=b.functionId';
-    set _localeWhere=concat(' and b.iid=',_iid,' and b.locale=',_locale);
-  else
-    set _localeField='';
-    set _localeJoin='';
-    set _localeWhere='';
-  end if;
-
-  set @sql=concat(
-    'select a.*,e.atomClassName,e.atomClassIdParent',_localeField,_starField,' from aFunction a',
-    ' left join aAtomClass e on a.atomClassId=e.id',
-    _localeJoin,
-    _starJoin,
-    _where,
-    ' (',
-    '  a.deleted=0 and a.iid=', _iid,
-    _localeWhere,
-    _starWhere,
-    '    and ( a.public=1',
-    '          or exists(select c.functionId from aViewUserRightFunction c where c.iid=',_iid,' and a.id=c.functionId and c.userIdWho=',_userIdWho,')',
-    '        )',
-    ' )',
-    _orders,
-    _limit
-  );
-
-  prepare stmt from @sql;
-  execute stmt;
-  deallocate prepare stmt;
-
-end
-`,
-  aCheckFunctionLocales: `
-create procedure aCheckFunctionLocales (in _iid int,in _locale varchar(50))
-begin
-
-  select a.* from aFunction a
-    where a.iid=_iid and a.menu=1
-      and not exists(
-        select b.id from aFunctionLocale b
-          where b.iid=_iid and b.locale=_locale and b.functionId=a.id
-            and (b.titleLocale is not null and b.titleLocale<>'')
-        );
-
-end
-`,
-  aBuildRoles: `
-create procedure aBuildRoles (in _iid int)
-begin
-
-  call aBuildRolesRemove(_iid);
-  call aBuildRolesAdd(_iid,0);
-
-end
-`,
-  aBuildRolesRemove: `
-create procedure aBuildRolesRemove (in _iid int)
-begin
-
-  delete from aRoleRef where aRoleRef.iid=_iid;
-  delete from aRoleIncRef where aRoleIncRef.iid=_iid;
-  delete from aRoleExpand where aRoleExpand.iid=_iid;
-
-end
-`,
-  aBuildRolesAdd: `
-create procedure aBuildRolesAdd (in _iid int,in _roleIdParent int)
-begin
-  declare _done int default false;
-  declare _id,_catalog int;
-  declare _roleIds,_catalogs json;
-  declare i,_roleCount int;
-  declare _cur cursor for select a.id,a.catalog from aRole a where a.iid=_iid and a.roleIdParent=_roleIdParent;
-  declare continue handler for not found set _done=true;
-
-  SET @@session.max_sp_recursion_depth = 128;
-
-  -- roleIds
-
-  set _roleIds=json_array();
-  set _catalogs=json_array();
-
-  open _cur;
-
-  set i=0;
-  read_loop: loop
-    fetch _cur into _id,_catalog;
-    if _done then
-        leave read_loop;
-    end if;
-    set _roleIds=json_set(_roleIds,concat('$[',i,']'),_id);
-    set _catalogs=json_set(_catalogs,concat('$[',i,']'),_catalog);
-    set i=i+1;
-  end loop;
-
-  close _cur;
-
-  -- build roles
-
-  set _roleCount=json_length(_roleIds);
-  set i=0;
-  while i<_roleCount do
-    set _id=json_extract(_roleIds,concat('$[',i,']'));
-    set _catalog=json_extract(_catalogs,concat('$[',i,']'));
-    call aBuildRoleRef(_iid,_id);
-    call aBuildRoleIncRef(_iid,_id);
-    call aBuildRoleExpand(_iid,_id);
-    if _catalog=1 then
-      call aBuildRolesAdd(_iid,_id);
-    end if;
-    set i=i+1;
-  end while;
-
-end
-`,
-  aBuildRoleRef: `
-create procedure aBuildRoleRef (in _iid int,in _roleId int)
-begin
-  declare _level,_roleIdParent int;
-
-  set _level=0;
-  set _roleIdParent=_roleId;
-
-  while _level<>-1 do
-    insert into aRoleRef(iid,roleId,roleIdParent,level)
-      values(_iid,_roleId,_roleIdParent,_level);
-    set _roleIdParent=(select a.roleIdParent from aRole a where a.iid=_iid and a.id=_roleIdParent);
-    if _roleIdParent<>'' then
-      set _level=_level+1;
-    else
-      set _level=-1;
-    end if;
-  end while;
-
-end
-`,
-  aBuildRoleIncRef: `
-create procedure aBuildRoleIncRef (in _iid int,in _roleId int)
-begin
-
-  insert into aRoleIncRef(iid,roleId,roleIdInc,roleIdSrc)
-    select _iid,_roleId,a.roleIdInc,a.roleId from aRoleInc a
-      where a.iid=_iid and a.roleId in (select b.roleIdParent from aRoleRef b where b.iid=_iid and b.roleId=_roleId);
-
-end
-`,
-  aBuildRoleExpand: `
-create procedure aBuildRoleExpand (in _iid int,in _roleId int)
-begin
-
-  insert into aRoleExpand(iid,roleId,roleIdBase)
-    select a.iid,a.roleId,a.roleIdParent from aRoleRef a
-      where a.iid=_iid and a.roleId=_roleId;
-
-  insert into aRoleExpand(iid,roleId,roleIdBase)
-    select a.iid,a.roleId,a.roleIdInc from aRoleIncRef a
-      where a.iid=_iid and a.roleId=_roleId;
-
-end
-`,
-};
-
 module.exports = {
   tables,
   views,
   functions,
-  procedures,
 };
 
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -5266,7 +5401,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -5330,7 +5465,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -5400,201 +5535,6 @@ module.exports = function(ctx) {
                   `;
       await ctx.model.query(sql);
 
-      // aSelectAtoms
-      await ctx.model.query('drop procedure aSelectAtoms');
-      sql = `
-create procedure aSelectAtoms (in _tableName varchar(50),in __where text,in __orders text,in __limit text,in _iid int,in _userIdWho int,in _star int,in _label int,in _comment int, in _file int)
-begin
-  -- tables
-  -- a: aAtom
-  -- b: aAtomClass
-  -- c: aViewUserRightAtom
-  -- d: aAtomStar
-  -- e: aAtomLabelRef
-  -- f: {item}
-  -- g: aUser
-  -- h: aComment
-  -- i: aFile
-
-  declare _where,_orders,_limit text;
-  declare _starField,_starJoin,_starWhere text;
-  declare _labelField,_labelJoin,_labelWhere text;
-  declare _commentField,_commentJoin,_commentWhere text;
-  declare _fileField,_fileJoin,_fileWhere text;
-  declare _itemField,_itemJoin text;
-
-  if __where<>'' then
-    set _where=concat(__where,' AND');
-  else
-    set _where=' WHERE';
-  end if;
-
-  if __orders<>'' then
-    set _orders=__orders;
-  else
-    set _orders='';
-  end if;
-
-  if __limit<>'' then
-    set _limit=__limit;
-  else
-    set _limit='';
-  end if;
-
-  if _star<>0 then
-    set _starJoin=' inner join aAtomStar d on a.id=d.atomId';
-    set _starWhere=concat(' and d.iid=',_iid,' and d.userId=',_userIdWho,' and d.star=1');
-  else
-    set _starJoin='';
-    set _starWhere='';
-  end if;
-    set _starField=concat(
-        ',(select d2.star from aAtomStar d2 where d2.iid=',_iid,' and d2.atomId=a.id and d2.userId=',_userIdWho,') as star'
-      );
-
-  if _label<>0 then
-    set _labelJoin=' inner join aAtomLabelRef e on a.id=e.atomId';
-    set _labelWhere=concat(' and e.iid=',_iid,' and e.userId=',_userIdWho,' and e.labelId=',_label);
-  else
-    set _labelJoin='';
-    set _labelWhere='';
-  end if;
-    set _labelField=concat(
-        ',(select e2.labels from aAtomLabel e2 where e2.iid=',_iid,' and e2.atomId=a.id and e2.userId=',_userIdWho,') as labels'
-      );
-
-  if _comment<>0 then
-    set _commentField=concat(
-        ',h.id h_id,h.createdAt h_createdAt,h.updatedAt h_updatedAt,h.userId h_userId,h.sorting h_sorting,h.heartCount h_heartCount,h.replyId h_replyId,h.replyUserId h_replyUserId,h.replyContent h_replyContent,h.content h_content,h.summary h_summary,h.html h_html,h.userName h_userName,h.avatar h_avatar,h.replyUserName h_replyUserName,',
-        '(select h2.heart from aCommentHeart h2 where h2.iid=',_iid,' and h2.commentId=h.id and h2.userId=',_userIdWho,') as h_heart'
-      );
-    set _commentJoin=' inner join aViewComment h on h.atomId=a.id';
-    set _commentWhere=concat(' and h.iid=',_iid,' and h.deleted=0');
-  else
-    set _commentField='';
-    set _commentJoin='';
-    set _commentWhere='';
-  end if;
-
-  if _file<>0 then
-    set _fileField=',i.id i_id,i.createdAt i_createdAt,i.updatedAt i_updatedAt,i.userId i_userId,i.downloadId i_downloadId,i.mode i_mode,i.fileSize i_fileSize,i.width i_width,i.height i_height,i.filePath i_filePath,i.fileName i_fileName,i.realName i_realName,i.fileExt i_fileExt,i.encoding i_encoding,i.mime i_mime,i.attachment i_attachment,i.flag i_flag,i.userName i_userName,i.avatar i_avatar';
-    set _fileJoin=' inner join aViewFile i on i.atomId=a.id';
-    set _fileWhere=concat(' and i.iid=',_iid,' and i.deleted=0');
-  else
-    set _fileField='';
-    set _fileJoin='';
-    set _fileWhere='';
-  end if;
-
-  if _tableName<>'' then
-    set _itemField='f.*,';
-    set _itemJoin=concat(' inner join ',_tableName,' f on f.atomId=a.id');
-  else
-    set _itemField='';
-    set _itemJoin='';
-  end if;
-
-  set @sql=concat(
-    'select ',_itemField,'a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomFlow,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,b.module,b.atomClassName,b.atomClassIdParent,g.userName,g.avatar',_starField,_labelField,_commentField,_fileField,' from aAtom a',
-    ' inner join aAtomClass b on a.atomClassId=b.id',
-    ' inner join aUser g on a.userIdCreated=g.id',
-    _itemJoin,
-    _starJoin,
-    _labelJoin,
-    _commentJoin,
-    _fileJoin,
-    _where,
-    ' (',
-    '  a.deleted=0 and a.iid=', _iid,
-    _starWhere,
-    _labelWhere,
-    _commentWhere,
-    _fileWhere,
-    '    and (',
-    '           (a.userIdCreated=',_userIdWho,') or',
-    '             (a.atomEnabled=1 and (',
-    '               (',
-    '                 a.atomFlow=1 and (',
-    '                   (exists(select c.atomId from aViewUserRightAtom c where c.iid=',_iid,' and a.id=c.atomId and c.action>2 and c.userIdWho=',_userIdWho,')) or',
-    '                   (a.userIdCreated=',_userIdWho,' and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=',_iid,' and a.atomClassId=c.atomClassId and c.action>2 and c.scope=0 and c.userIdWho=',_userIdWho,'))',
-    '                 )',
-    '               ) or (',
-    '                 a.atomFlow=0 and (',
-    '                   b.public=1 or exists(select c.atomId from aViewUserRightAtom c where c.iid=',_iid,' and a.id=c.atomId and c.action=2 and c.userIdWho=',_userIdWho,')',
-    '                 )',
-    '                )',
-    '             ))',
-    '        )',
-    ' )',
-    _orders,
-    _limit
-  );
-
-  prepare stmt from @sql;
-  execute stmt;
-  deallocate prepare stmt;
-
-end
-`;
-      await ctx.model.query(sql);
-
-      // aGetAtom
-      await ctx.model.query('drop procedure aGetAtom');
-      sql = `
-create procedure aGetAtom (in _tableName varchar(50),in _atomId int,in _iid int,in _userIdWho int)
-begin
-  -- tables
-  -- a: aAtom
-  -- b: aAtomClass
-  -- d: aAtomStar
-  -- e: aAtomLabelRef
-  -- f: {item}
-  -- g: aUser
-
-  declare _starField,_labelField text;
-  declare _itemField,_itemJoin text;
-
-  if _userIdWho=0 then
-    set _starField='';
-  else
-    set _starField=concat(
-          ',(select d.star from aAtomStar d where d.iid=',_iid,' and d.atomId=a.id and d.userId=',_userIdWho,') as star'
-        );
-  end if;
-
-  if _userIdWho=0 then
-    set _labelField='';
-  else
-    set _labelField=concat(
-          ',(select e.labels from aAtomLabel e where e.iid=',_iid,' and e.atomId=a.id and e.userId=',_userIdWho,') as labels'
-        );
-  end if;
-
-  if _tableName<>'' then
-    set _itemField='f.*,';
-    set _itemJoin=concat(' inner join ',_tableName,' f on f.atomId=a.id');
-  else
-    set _itemField='';
-    set _itemJoin='';
-  end if;
-
-  set @sql=concat(
-    'select ',_itemField,'a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomFlow,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,b.module,b.atomClassName,b.atomClassIdParent,g.userName,g.avatar',_starField,_labelField,' from aAtom a',
-    ' inner join aAtomClass b on a.atomClassId=b.id',
-    ' inner join aUser g on a.userIdCreated=g.id',
-    _itemJoin,
-    ' where a.id=', _atomId,
-    '   and a.deleted=0 and a.iid=', _iid
-  );
-
-  prepare stmt from @sql;
-  execute stmt;
-  deallocate prepare stmt;
-
-end
-`;
-      await ctx.model.query(sql);
-
     }
 
   }
@@ -5604,7 +5544,7 @@ end
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -5631,12 +5571,12 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
 const extend = require3('extend2');
-const initData = __webpack_require__(61);
+const initData = __webpack_require__(62);
 
 module.exports = function(ctx) {
 
@@ -5648,7 +5588,7 @@ module.exports = function(ctx) {
       // role includes
       await this._roleIncludes(roleIds);
       // build
-      await ctx.meta.role.build();
+      await ctx.meta.role.setDirty(true);
       // users
       await this._initUsers(roleIds, options);
     }
@@ -5698,7 +5638,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports) {
 
 // roles
@@ -5765,7 +5705,7 @@ module.exports = {
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -5794,7 +5734,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -5835,7 +5775,7 @@ module.exports = function(ctx) {
       }
       // build
       if (needBuild) {
-        await ctx.meta.role.build();
+        await ctx.meta.role.setDirty(true);
       }
 
     }
@@ -5847,7 +5787,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5889,7 +5829,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5928,7 +5868,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5994,7 +5934,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6020,7 +5960,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6038,12 +5978,12 @@ module.exports = app => {
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
 const mparse = require3('egg-born-mparse').default;
-const UserFn = __webpack_require__(16);
+const UserFn = __webpack_require__(17);
 
 module.exports = app => {
 
@@ -6180,7 +6120,7 @@ function createAuthenticate(moduleRelativeName, providerName, _config) {
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6219,7 +6159,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -6431,34 +6371,34 @@ module.exports = app => {
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const atom = __webpack_require__(4);
 const atomAction = __webpack_require__(3);
 const atomClass = __webpack_require__(2);
-const auth = __webpack_require__(19);
-const authProvider = __webpack_require__(20);
-const role = __webpack_require__(10);
-const roleInc = __webpack_require__(11);
-const roleIncRef = __webpack_require__(73);
-const roleRef = __webpack_require__(74);
-const roleRight = __webpack_require__(13);
-const roleRightRef = __webpack_require__(14);
-const user = __webpack_require__(17);
-const userAgent = __webpack_require__(18);
-const userRole = __webpack_require__(12);
-const label = __webpack_require__(75);
+const auth = __webpack_require__(20);
+const authProvider = __webpack_require__(21);
+const role = __webpack_require__(11);
+const roleInc = __webpack_require__(12);
+const roleIncRef = __webpack_require__(74);
+const roleRef = __webpack_require__(75);
+const roleRight = __webpack_require__(14);
+const roleRightRef = __webpack_require__(15);
+const user = __webpack_require__(18);
+const userAgent = __webpack_require__(19);
+const userRole = __webpack_require__(13);
+const label = __webpack_require__(76);
 const atomLabel = __webpack_require__(6);
 const atomLabelRef = __webpack_require__(7);
 const atomStar = __webpack_require__(5);
 const func = __webpack_require__(1);
-const functionStar = __webpack_require__(8);
-const functionLocale = __webpack_require__(9);
-const roleFunction = __webpack_require__(15);
-const comment = __webpack_require__(76);
-const commentView = __webpack_require__(77);
-const commentHeart = __webpack_require__(78);
+const functionStar = __webpack_require__(9);
+const functionLocale = __webpack_require__(10);
+const roleFunction = __webpack_require__(16);
+const comment = __webpack_require__(77);
+const commentView = __webpack_require__(78);
+const commentHeart = __webpack_require__(79);
 
 module.exports = app => {
   const models = {
@@ -6493,7 +6433,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6511,7 +6451,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6537,7 +6477,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6555,7 +6495,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6573,7 +6513,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6591,7 +6531,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6609,14 +6549,14 @@ module.exports = app => {
 
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
   // keywords
-  const keywords = __webpack_require__(80)(app);
+  const keywords = __webpack_require__(81)(app);
   // schemas
-  const schemas = __webpack_require__(81)(app);
+  const schemas = __webpack_require__(82)(app);
   // meta
   const meta = {
     base: {
@@ -6672,7 +6612,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -6705,7 +6645,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports) {
 
 module.exports = app => {

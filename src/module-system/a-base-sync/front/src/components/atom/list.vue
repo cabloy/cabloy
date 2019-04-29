@@ -125,6 +125,9 @@ export default {
     flags() {
       return this.$local.state.flags;
     },
+    user() {
+      return this.$store.state.auth.user.op;
+    },
   },
   created() {
     this.$local.dispatch('getLabels');
@@ -233,33 +236,45 @@ export default {
       });
     },
     onStarSwitch(event, item) {
+      const star = item.star ? 0 : 1;
+      return this._onStarSwitch(event, item, star, 'swipeoutClose');
+    },
+    onStarOff(event, item) {
+      return this._onStarSwitch(event, item, 0, 'swipeoutDelete');
+    },
+    _onStarSwitch(event, item, star, swipeoutAction) {
+      // anonymous
+      if (this.user.anonymous) {
+        this.$view.dialog.confirm(this.$text('Please sign in')).then(() => {
+          // login
+          this.$meta.vueLayout.openLogin();
+        });
+        return;
+      }
+      // key
       const key = {
         atomId: item.atomId,
         itemId: item.itemId,
       };
-      const star = item.star ? 0 : 1;
+      //
       return this.$api.post('atom/star', {
         key,
         atom: { star },
       }).then(data => {
         this.$meta.eventHub.$emit('atom:star', { key, star: data.star, starCount: data.starCount });
-        this.$meta.util.swipeoutClose(event.target);
-      });
-    },
-    onStarOff(event, item) {
-      const key = {
-        atomId: item.atomId,
-        itemId: item.itemId,
-      };
-      return this.$api.post('atom/star', {
-        key,
-        atom: { star: 0 },
-      }).then(data => {
-        this.$meta.eventHub.$emit('atom:star', { key, star: data.star, starCount: data.starCount });
-        this.$meta.util.swipeoutDelete(event.target);
+        this.$meta.util[swipeoutAction](event.target);
       });
     },
     onLabel(event, item) {
+      // anonymous
+      if (this.user.anonymous) {
+        this.$view.dialog.confirm(this.$text('Please sign in')).then(() => {
+          // login
+          this.$meta.vueLayout.openLogin();
+        });
+        return;
+      }
+      // navigate
       this.$view.navigate(`/a/base/atom/labels?atomId=${item.atomId}`);
     },
     onStarChanged(data) {

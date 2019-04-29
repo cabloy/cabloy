@@ -119,6 +119,15 @@ export default {
       });
     },
     onPerformHeart(event, item) {
+      // anonymous
+      if (this.user.anonymous) {
+        this.$view.dialog.confirm(this.$text('Please sign in')).then(() => {
+          // login
+          this.$meta.vueLayout.openLogin();
+        });
+        return;
+      }
+      //
       return this.$api.post('comment/heart', {
         key: { atomId: item.atomId },
         data: { commentId: item.h_id, heart: item.h_heart ? 0 : 1 },
