@@ -40,14 +40,9 @@ module.exports = function(ctx) {
 
       // procedures
       const procedureNames = [
-        'aSelectAtoms',
-        'aGetAtom',
-        'aCheckRightRead',
-        'aCheckRightUpdate',
         'aCheckRightAction',
         'aCheckRightCreate',
         'aCheckRightFunction',
-        'aSelectFunctions',
         'aCheckFunctionLocales',
         'aBuildRoles',
         'aBuildRolesRemove',

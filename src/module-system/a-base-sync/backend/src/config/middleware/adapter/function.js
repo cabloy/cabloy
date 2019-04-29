@@ -1,6 +1,7 @@
 const modelFn = require('../../../model/function.js');
 const modelFunctionStarFn = require('../../../model/functionStar.js');
 const modelFunctionLocaleFn = require('../../../model/functionLocale.js');
+const sqlProcedureFn = require('../../sql/procedure.js');
 
 const Fn = module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -11,6 +12,7 @@ const Fn = module.exports = ctx => {
       this._model = null;
       this._modelFunctionStar = null;
       this._modelFunctionLocale = null;
+      this._sqlProcedure = null;
     }
 
     // other module's menu
@@ -33,23 +35,28 @@ const Fn = module.exports = ctx => {
       return this._modelFunctionLocale;
     }
 
+    get sqlProcedure() {
+      if (!this._sqlProcedure) this._sqlProcedure = new (sqlProcedureFn(ctx))();
+      return this._sqlProcedure;
+    }
+
     // list
     //   locale maybe '' for selectAllFunctions beside menus
     async list({ options: { where, orders, page, star = 0, locale = '' }, user }) {
       // page = ctx.meta.util.page(page); // has set in controller
 
-      const _where = ctx.model._where2(where);
-      const _orders = ctx.model._orders(orders);
-      const _limit = ctx.model._limit(page.size, page.index);
-
       // check locale
       if (locale) await this.checkLocale({ locale });
 
+      // sql
+      const sql = this.sqlProcedure.selectFunctions({
+        iid: ctx.instance.id,
+        locale,
+        userIdWho: user.id,
+        where, orders, page, star,
+      });
       // select
-      const res = await ctx.model.query('call aSelectFunctions(?,?,?,?,?,?,?)',
-        [ _where, _orders, _limit, ctx.instance.id, user.id, star, this.model.format('?', locale) ]
-      );
-      return res[0];
+      return await ctx.model.query(sql);
     }
 
     async star({ id, star = 1, user }) {

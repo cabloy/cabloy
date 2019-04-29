@@ -4,6 +4,7 @@ const modelAtomFn = require('../../../model/atom.js');
 const modelAtomStarFn = require('../../../model/atomStar.js');
 const modelAtomLabelFn = require('../../../model/atomLabel.js');
 const modelAtomLabelRefFn = require('../../../model/atomLabelRef.js');
+const sqlProcedureFn = require('../../sql/procedure.js');
 
 const Fn = module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -17,6 +18,7 @@ const Fn = module.exports = ctx => {
       this._modelAtomLabel = null;
       this._modelAtomLabelRef = null;
       this._sequence = null;
+      this._sqlProcedure = null;
     }
 
     // other module's atom
@@ -52,6 +54,11 @@ const Fn = module.exports = ctx => {
     get sequence() {
       if (!this._sequence) this._sequence = ctx.meta.sequence.module(moduleInfo.relativeName);
       return this._sequence;
+    }
+
+    get sqlProcedure() {
+      if (!this._sqlProcedure) this._sqlProcedure = new (sqlProcedureFn(ctx))();
+      return this._sqlProcedure;
     }
 
     async getAtomClassId({ module, atomClassName, atomClassIdParent = 0 }) {
@@ -501,26 +508,27 @@ const Fn = module.exports = ctx => {
     }
 
     async _get({
-      atom: { id, tableName = '' },
+      atom: { id, tableName },
       user,
     }) {
-      const res = await ctx.model.query('call aGetAtom(?,?,?,?)',
-        [ tableName, id, ctx.instance.id, user.id ]
-      );
-      return res[0][0];
+      const sql = this.sqlProcedure.getAtom({
+        iid: ctx.instance.id,
+        userIdWho: user.id,
+        tableName, atomId: id,
+      });
+      return await ctx.model.queryOne(sql);
     }
 
-    async _list({ tableName = '', options: { where, orders, page, star = 0, label = 0, comment = 0, file = 0 }, user, pageForce = true }) {
+    async _list({ tableName, options: { where, orders, page, star = 0, label = 0, comment = 0, file = 0 }, user, pageForce = true }) {
       page = ctx.meta.util.page(page, pageForce);
 
-      const _where = ctx.model._where2(where);
-      const _orders = ctx.model._orders(orders);
-      const _limit = ctx.model._limit(page.size, page.index);
-
-      const res = await ctx.model.query('call aSelectAtoms(?,?,?,?,?,?,?,?,?,?)',
-        [ tableName, _where, _orders, _limit, ctx.instance.id, user.id, star, label, comment, file ]
-      );
-      return res[0];
+      const sql = this.sqlProcedure.selectAtoms({
+        iid: ctx.instance.id,
+        userIdWho: user.id,
+        tableName, where, orders, page,
+        star, label, comment, file,
+      });
+      return await ctx.model.query(sql);
     }
 
     // right
@@ -539,10 +547,12 @@ const Fn = module.exports = ctx => {
       atom: { id },
       user,
     }) {
-      const res = await ctx.model.query('call aCheckRightRead(?,?,?)',
-        [ ctx.instance.id, user.id, id ]
-      );
-      return res[0][0];
+      const sql = this.sqlProcedure.checkRightRead({
+        iid: ctx.instance.id,
+        userIdWho: user.id,
+        atomId: id,
+      });
+      return await ctx.model.queryOne(sql);
     }
 
     async checkRightUpdate({
@@ -550,10 +560,13 @@ const Fn = module.exports = ctx => {
       user,
     }) {
       const actionFlag = await ctx.meta.atomAction.getFlagByAtomId({ atomId: id, code: action });
-      const res = await ctx.model.query('call aCheckRightUpdate(?,?,?,?,?)',
-        [ ctx.instance.id, user.id, id, action, actionFlag ]
-      );
-      return res[0][0];
+      const sql = this.sqlProcedure.checkRightUpdate({
+        iid: ctx.instance.id,
+        userIdWho: user.id,
+        atomId: id,
+        action, actionFlag,
+      });
+      return await ctx.model.queryOne(sql);
     }
 
     async checkRightAction({
