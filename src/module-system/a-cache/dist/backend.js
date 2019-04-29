@@ -476,8 +476,8 @@ module.exports = app => {
   ];
   if (app.meta.isTest || app.meta.isLocal) {
     routes = routes.concat([
-      { method: 'get', path: 'test/cachedb', controller: test, middlewares: 'test' },
-      { method: 'get', path: 'test/cachemem', controller: test, middlewares: 'test' },
+      { method: 'get', path: 'test/cachedb', controller: test, middlewares: 'test', meta: { auth: { enable: false } } },
+      { method: 'get', path: 'test/cachemem', controller: test, middlewares: 'test', meta: { auth: { enable: false } } },
     ]);
   }
   return routes;
