@@ -406,7 +406,7 @@ module.exports = app => {
           }
         }
         // build roles
-        await this.ctx.meta.role.build();
+        await this.ctx.meta.role.setDirty(true);
 
         // add role rights
         const roleRights = [
