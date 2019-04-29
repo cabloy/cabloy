@@ -100,10 +100,10 @@ function install(_Vue, cb) {
   if (Vue) return console.error('already installed.');
   Vue = _Vue;
   return cb({
-    routes: __webpack_require__(2).default,
-    store: __webpack_require__(3).default(Vue),
-    config: __webpack_require__(4).default,
-    locales: __webpack_require__(5).default
+    routes: __webpack_require__(2)["default"],
+    store: __webpack_require__(3)["default"](Vue),
+    config: __webpack_require__(4)["default"],
+    locales: __webpack_require__(5)["default"]
   });
 }
 
@@ -155,7 +155,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
-  'zh-cn': __webpack_require__(6).default
+  'zh-cn': __webpack_require__(6)["default"]
 });
 
 /***/ }),
