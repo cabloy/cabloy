@@ -12,7 +12,7 @@ module.exports = function(ctx) {
       // role includes
       await this._roleIncludes(roleIds);
       // build
-      await ctx.meta.role.build();
+      await ctx.meta.role.setDirty(true);
       // users
       await this._initUsers(roleIds, options);
     }

@@ -86,7 +86,7 @@ module.exports = app => {
     { method: 'post', path: 'function/list', controller: func },
     { method: 'post', path: 'function/star', controller: func },
     { method: 'post', path: 'function/check', controller: func },
-    { method: 'post', path: 'function/checkLocale', controller: func, middlewares: 'inner' },
+    { method: 'post', path: 'function/checkLocale', controller: func, middlewares: 'inner', meta: { auth: { enable: false } } },
     { method: 'post', path: 'function/register', controller: func, middlewares: 'inner',
       meta: { auth: { enable: false } },
     },

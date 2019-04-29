@@ -36,7 +36,7 @@ module.exports = function(ctx) {
       }
       // build
       if (needBuild) {
-        await ctx.meta.role.build();
+        await ctx.meta.role.setDirty(true);
       }
 
     }

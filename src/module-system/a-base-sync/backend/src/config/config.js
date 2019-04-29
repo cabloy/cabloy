@@ -11,7 +11,7 @@ module.exports = appInfo => {
     auth: {
       global: true,
       dependencies: 'base,sequence',
-      ignore: /\/version\/(start|check|update|init)/,
+      ignore: /\/version\/(update|init|test)/,
     },
     right: {
       global: true,
