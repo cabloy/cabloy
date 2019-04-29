@@ -133,17 +133,26 @@ const Fn = module.exports = ctx => {
       user,
     }) {
       const func = await this.get({ module, name });
-      const res = await ctx.model.query('call aCheckRightFunction(?,?,?)',
-        [ ctx.instance.id, user.id, func.id ]
-      );
-      return res[0][0];
+      const sql = this.sqlProcedure.checkRightFunction({
+        iid: ctx.instance.id,
+        userIdWho: user.id,
+        functionId: func.id,
+      });
+      return await ctx.model.queryOne(sql);
+    }
+
+    async _checkFunctionLocales({ locale }) {
+      locale = locale || ctx.locale;
+      const sql = this.sqlProcedure.checkFunctionLocales({
+        iid: ctx.instance.id,
+        locale,
+      });
+      return await ctx.model.query(sql);
     }
 
     async checkLocale({ locale }) {
-      locale = locale || ctx.locale;
-      const res = await this.model.query('call aCheckFunctionLocales(?,?)',
-        [ ctx.instance.id, locale ]);
-      if (res[0].length === 0) return;
+      const res = await this._checkFunctionLocales({ locale });
+      if (res.length === 0) return;
       // queue
       await ctx.app.meta.queue.pushAsync({
         subdomain: ctx.subdomain,
@@ -154,11 +163,10 @@ const Fn = module.exports = ctx => {
     }
 
     async _checkLocale({ locale }) {
-      const res = await this.model.query('call aCheckFunctionLocales(?,?)',
-        [ ctx.instance.id, locale ]);
-      if (res[0].length === 0) return;
+      const res = await this._checkFunctionLocales({ locale });
+      if (res.length === 0) return;
       // insert locales
-      for (const menu of res[0]) {
+      for (const menu of res) {
         const titleLocale = ctx.text.locale(locale, menu.title);
         await this.modelFunctionLocale.insert({
           functionId: menu.id,

@@ -364,57 +364,6 @@ const functions = {
 
 const procedures = {
 
-  aCheckRightAction: `
-create procedure aCheckRightAction (in _iid int,in _userIdWho int,in _atomId int,in _action int,in _actionFlag varchar(255))
-begin
-
-  select a.* from aAtom a
-    where (
-     a.deleted=0 and a.iid=_iid and a.id=_atomId and a.atomEnabled=1
-     and (
-            (exists(select c.atomId from aViewUserRightAtom c where c.iid=_iid and a.id=c.atomId and c.action=_action and (_actionFlag='' or find_in_set(a.atomFlag,_actionFlag)>0 ) and c.userIdWho=_userIdWho)) or
-            (a.userIdCreated=_userIdWho and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=_iid and a.atomClassId=c.atomClassId and c.action=_action and (_actionFlag='' or find_in_set(a.atomFlag,_actionFlag)>0 ) and c.scope=0 and c.userIdWho=_userIdWho))
-          )
-    );
-
-end
-`,
-  aCheckRightCreate: `
-create procedure aCheckRightCreate (in _iid int,in _userIdWho int,in _atomClassId int)
-begin
-
-  select a.* from aAtomClass a
-    inner join aViewUserRightAtomClass b on a.id=b.atomClassId
-      where b.iid=_iid and b.atomClassId=_atomClassId and b.action=1 and b.userIdWho=_userIdWho;
-
-end
-`,
-  aCheckRightFunction: `
-create procedure aCheckRightFunction (in _iid int,in _userIdWho int,in _functionId int)
-begin
-
-  select a.* from aFunction a
-    where a.deleted=0 and a.iid=_iid and a.id=_functionId
-      and ( a.public=1 or
-            exists(select c.functionId from aViewUserRightFunction c where c.iid=_iid and c.functionId=_functionId and c.userIdWho=_userIdWho)
-          );
-
-end
-`,
-  aCheckFunctionLocales: `
-create procedure aCheckFunctionLocales (in _iid int,in _locale varchar(50))
-begin
-
-  select a.* from aFunction a
-    where a.iid=_iid and a.menu=1
-      and not exists(
-        select b.id from aFunctionLocale b
-          where b.iid=_iid and b.locale=_locale and b.functionId=a.id
-            and (b.titleLocale is not null and b.titleLocale<>'')
-        );
-
-end
-`,
   aBuildRoles: `
 create procedure aBuildRoles (in _iid int)
 begin

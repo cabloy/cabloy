@@ -237,6 +237,126 @@ module.exports = ctx => {
       return _sql;
     }
 
+    checkRightRead({ iid, userIdWho, atomId }) {
+      // for safe
+      iid = parseInt(iid);
+      userIdWho = parseInt(userIdWho);
+      atomId = parseInt(atomId);
+      // sql
+      const _sql =
+        `select a.* from aAtom a
+           left join aAtomClass b on a.atomClassId=b.id
+             where
+             (
+                 a.deleted=0 and a.iid=${iid} and a.id=${atomId}
+                 and
+                 (
+                      (a.userIdCreated=${userIdWho})
+                      or
+                      (
+                          a.atomEnabled=1 and
+                          (
+                              (
+                                  a.atomFlow=1 and
+                                  (
+                                      (
+                                        exists(
+                                                select c.atomId from aViewUserRightAtom c where c.iid=${iid} and a.id=c.atomId and c.action>2 and c.userIdWho=${userIdWho}
+                                              )
+                                      )
+                                      or
+                                      (
+                                        a.userIdCreated=${userIdWho} and
+                                        exists(
+                                                select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action>2 and c.scope=0 and c.userIdWho=${userIdWho}
+                                              )
+                                      )
+                                  )
+                              )
+                              or
+                              (
+                                  a.atomFlow=0 and
+                                  (
+                                      b.public=1 or
+                                      exists(
+                                              select c.atomId from aViewUserRightAtom c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.userIdWho=${userIdWho}
+                                            )
+                                  )
+                              )
+                          )
+                      )
+                 )
+             )
+        `;
+      return _sql;
+    }
+
+    checkRightUpdate({ iid, userIdWho, atomId, action, actionFlag }) {
+      // for safe
+      iid = parseInt(iid);
+      userIdWho = parseInt(userIdWho);
+      atomId = parseInt(atomId);
+      action = parseInt(action);
+
+      actionFlag = ctx.model.format('?', actionFlag);
+
+      // sql
+      const _sql =
+        `select a.* from aAtom a
+           where
+           (
+             a.deleted=0 and a.iid=${iid} and a.id=${atomId}
+             and (
+                  (a.atomEnabled=0 and a.userIdCreated=${userIdWho}) or
+                  (a.atomEnabled=1 and (
+                    (exists(select c.atomId from aViewUserRightAtom c where c.iid=${iid} and a.id=c.atomId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.userIdWho=${userIdWho})) or
+                    (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.scope=0 and c.userIdWho=${userIdWho}))
+                  ))
+                )
+           )
+        `;
+      return _sql;
+    }
+
+    checkRightAction({ iid, userIdWho, atomId, action, actionFlag }) {
+      // for safe
+      iid = parseInt(iid);
+      userIdWho = parseInt(userIdWho);
+      atomId = parseInt(atomId);
+      action = parseInt(action);
+
+      actionFlag = ctx.model.format('?', actionFlag);
+
+      // sql
+      const _sql =
+        `select a.* from aAtom a
+            where
+            (
+               a.deleted=0 and a.iid=${iid} and a.id=${atomId} and a.atomEnabled=1
+               and (
+                      (exists(select c.atomId from aViewUserRightAtom c where c.iid=${iid} and a.id=c.atomId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.userIdWho=${userIdWho})) or
+                      (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.scope=0 and c.userIdWho=${userIdWho}))
+                   )
+            )
+        `;
+      return _sql;
+    }
+
+    checkRightCreate({ iid, userIdWho, atomClassId }) {
+      // for safe
+      iid = parseInt(iid);
+      userIdWho = parseInt(userIdWho);
+      atomClassId = parseInt(atomClassId);
+
+      // sql
+      const _sql =
+        `select a.* from aAtomClass a
+            inner join aViewUserRightAtomClass b on a.id=b.atomClassId
+              where b.iid=${iid} and b.atomClassId=${atomClassId} and b.action=1 and b.userIdWho=${userIdWho}
+        `;
+      return _sql;
+    }
+
     selectFunctions({ iid, locale, userIdWho, where, orders, page, star }) {
       // -- tables
       // -- a: aFunction
@@ -327,84 +447,36 @@ module.exports = ctx => {
       return _sql;
     }
 
-    checkRightRead({ iid, userIdWho, atomId }) {
+    checkRightFunction({ iid, userIdWho, functionId }) {
       // for safe
       iid = parseInt(iid);
       userIdWho = parseInt(userIdWho);
-      atomId = parseInt(atomId);
+      functionId = parseInt(functionId);
       // sql
       const _sql =
-        `select a.* from aAtom a
-           left join aAtomClass b on a.atomClassId=b.id
-             where
-             (
-                 a.deleted=0 and a.iid=${iid} and a.id=${atomId}
-                 and
-                 (
-                      (a.userIdCreated=${userIdWho})
-                      or
-                      (
-                          a.atomEnabled=1 and
-                          (
-                              (
-                                  a.atomFlow=1 and
-                                  (
-                                      (
-                                        exists(
-                                                select c.atomId from aViewUserRightAtom c where c.iid=${iid} and a.id=c.atomId and c.action>2 and c.userIdWho=${userIdWho}
-                                              )
-                                      )
-                                      or
-                                      (
-                                        a.userIdCreated=${userIdWho} and
-                                        exists(
-                                                select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action>2 and c.scope=0 and c.userIdWho=${userIdWho}
-                                              )
-                                      )
-                                  )
-                              )
-                              or
-                              (
-                                  a.atomFlow=0 and
-                                  (
-                                      b.public=1 or
-                                      exists(
-                                              select c.atomId from aViewUserRightAtom c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.userIdWho=${userIdWho}
-                                            )
-                                  )
-                              )
-                          )
-                      )
-                 )
-             )
+        `select a.* from aFunction a
+            where a.deleted=0 and a.iid=${iid} and a.id=${functionId}
+              and ( a.public=1 or
+                    exists(select c.functionId from aViewUserRightFunction c where c.iid=${iid} and c.functionId=${functionId} and c.userIdWho=${userIdWho})
+                  )
         `;
       return _sql;
     }
 
-    checkRightUpdate({ iid, userIdWho, atomId, action, actionFlag }) {
+    checkFunctionLocales({ iid, locale }) {
       // for safe
       iid = parseInt(iid);
-      userIdWho = parseInt(userIdWho);
-      atomId = parseInt(atomId);
-      action = parseInt(action);
-
-      actionFlag = ctx.model.format('?', actionFlag);
-
+      locale = ctx.model.format('?', locale);
       // sql
       const _sql =
-        `select a.* from aAtom a
-           where
-           (
-             a.deleted=0 and a.iid=${iid} and a.id=${atomId}
-             and (
-                  (a.atomEnabled=0 and a.userIdCreated=${userIdWho}) or
-                  (a.atomEnabled=1 and (
-                    (exists(select c.atomId from aViewUserRightAtom c where c.iid=${iid} and a.id=c.atomId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.userIdWho=${userIdWho})) or
-                    (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.scope=0 and c.userIdWho=${userIdWho}))
-                  ))
+        `select a.* from aFunction a
+            where a.iid=${iid} and a.menu=1
+              and not exists(
+                select b.id from aFunctionLocale b
+                  where b.iid=${iid} and b.locale=${locale} and b.functionId=a.id
+                    and (b.titleLocale is not null and b.titleLocale<>'')
                 )
-           )
-          `;
+        `;
       return _sql;
     }
 

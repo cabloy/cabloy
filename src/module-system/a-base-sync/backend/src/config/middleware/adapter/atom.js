@@ -574,10 +574,13 @@ const Fn = module.exports = ctx => {
       user,
     }) {
       const actionFlag = await ctx.meta.atomAction.getFlagByAtomId({ atomId: id, code: action });
-      const res = await ctx.model.query('call aCheckRightAction(?,?,?,?,?)',
-        [ ctx.instance.id, user.id, id, action, actionFlag ]
-      );
-      return res[0][0];
+      const sql = this.sqlProcedure.checkRightAction({
+        iid: ctx.instance.id,
+        userIdWho: user.id,
+        atomId: id,
+        action, actionFlag,
+      });
+      return await ctx.model.queryOne(sql);
     }
 
     async checkRightCreate({
@@ -585,10 +588,12 @@ const Fn = module.exports = ctx => {
       user,
     }) {
       if (!id) id = await this.getAtomClassId({ module, atomClassName, atomClassIdParent });
-      const res = await ctx.model.query('call aCheckRightCreate(?,?,?)',
-        [ ctx.instance.id, user.id, id ]
-      );
-      return res[0][0];
+      const sql = this.sqlProcedure.checkRightCreate({
+        iid: ctx.instance.id,
+        userIdWho: user.id,
+        atomClassId: id,
+      });
+      return await ctx.model.queryOne(sql);
     }
 
     _upperCaseFirstChar(str) {
