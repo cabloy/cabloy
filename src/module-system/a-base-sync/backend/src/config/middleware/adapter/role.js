@@ -475,15 +475,36 @@ const Fn = module.exports = ctx => {
     }
 
     // build roles
-    async build() {
-      // iid
-      const iid = ctx.instance.id;
-      // remove
-      await this._buildRolesRemove({ iid });
-      // add
-      await this._buildRolesAdd({ iid, roleIdParent: 0 });
-      // setDirty
-      await this.setDirty(false);
+    async build(options) {
+      options = options || {};
+      const progressId = options.progressId;
+      // total
+      let total;
+      if (progressId) {
+        total = await this.model.count();
+      }
+      // progress
+      const progress = { progressId, total, progress: 0 };
+      try {
+        // iid
+        const iid = ctx.instance.id;
+        // remove
+        await this._buildRolesRemove({ iid });
+        // add
+        await this._buildRolesAdd({ iid, roleIdParent: 0 }, progress);
+        // setDirty
+        await this.setDirty(false);
+        // done
+        if (progressId) {
+          await ctx.meta.progress.done({ progressId });
+        }
+      } catch (err) {
+        // error
+        if (progressId) {
+          await ctx.meta.progress.error({ progressId, message: err.message });
+        }
+        throw err;
+      }
     }
 
     async _buildRolesRemove({ iid }) {
@@ -492,9 +513,9 @@ const Fn = module.exports = ctx => {
       await ctx.model.query(`delete from aRoleExpand where aRoleExpand.iid=${iid}`);
     }
 
-    async _buildRolesAdd({ iid, roleIdParent }) {
+    async _buildRolesAdd({ iid, roleIdParent }, progress) {
       const list = await ctx.model.query(
-        `select a.id,a.catalog from aRole a where a.iid=${iid} and a.roleIdParent=${roleIdParent}`
+        `select a.id,a.roleName,a.catalog from aRole a where a.iid=${iid} and a.roleIdParent=${roleIdParent}`
       );
       for (const item of list) {
         // info
@@ -506,7 +527,15 @@ const Fn = module.exports = ctx => {
         await this._buildRoleExpand({ iid, roleId });
         // catalog
         if (catalog === 1) {
-          await this._buildRolesAdd({ iid, roleIdParent: roleId });
+          await this._buildRolesAdd({ iid, roleIdParent: roleId }, progress);
+        }
+        // progress
+        if (progress.progressId) {
+          await ctx.meta.progress.update({
+            progressId: progress.progressId, progressNo: 0,
+            total: progress.total, progress: progress.progress++,
+            text: item.roleName,
+          });
         }
       }
     }
