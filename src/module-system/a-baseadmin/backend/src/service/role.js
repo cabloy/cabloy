@@ -38,12 +38,24 @@ module.exports = app => {
       return await this.ctx.meta.role.removeRoleInc({ id });
     }
 
-    async build() {
-      return await this.ctx.meta.role.build();
-    }
-
     async dirty() {
       return await this.ctx.meta.role.getDirty();
+    }
+
+    async build() {
+      const progressId = await this.ctx.meta.progress.create();
+      this.ctx.performActionInBackground({
+        method: 'post',
+        url: 'role/buildInBackground',
+        body: {
+          progressId,
+        },
+      });
+      return { progressId };
+    }
+
+    async buildInBackground({ progressId }) {
+      return await this.ctx.meta.role.build({ progressId });
     }
 
   }

@@ -72,15 +72,23 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async dirty() {
+      const res = await this.service.role.dirty();
+      this.ctx.success(res);
+    }
+
     async build() {
       const res = await this.service.role.build();
       this.ctx.success(res);
     }
 
-    async dirty() {
-      const res = await this.service.role.dirty();
+    async buildInBackground() {
+      const res = await this.service.role.buildInBackground({
+        progressId: this.ctx.request.body.progressId,
+      });
       this.ctx.success(res);
     }
+
 
   }
   return RoleController;

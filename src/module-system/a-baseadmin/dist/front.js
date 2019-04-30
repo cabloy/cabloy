@@ -3209,12 +3209,12 @@ var component = Object(componentNormalizer["a" /* default */])(
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/role/list.vue?vue&type=template&id=74431cd3&
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/pages/role/list.vue?vue&type=template&id=63d8ffd7&
 var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('eb-page',[_c('eb-navbar',{attrs:{"title":_vm.$text('Role Management'),"eb-back-link":"Back"}}),_vm._v(" "),_c('role-list',{ref:"roleList",attrs:{"roleIdStart":_vm.roleIdStart},on:{"node:click":_vm.onNodeClick}}),_vm._v(" "),(_vm.roleDirty)?_c('f7-fab',{attrs:{"color":"pink"}},[_c('f7-icon',{attrs:{"material":"add"}}),_vm._v(" "),_c('f7-icon',{attrs:{"material":"close"}}),_vm._v(" "),_c('f7-fab-buttons',[_c('eb-fab-button',{attrs:{"color":"orange","onPerform":_vm.onPerformBuild}},[_vm._v(_vm._s(_vm.$text('Build')))])],1)],1):_vm._e()],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./front/src/pages/role/list.vue?vue&type=template&id=74431cd3&
+// CONCATENATED MODULE: ./front/src/pages/role/list.vue?vue&type=template&id=63d8ffd7&
 
 // EXTERNAL MODULE: ./front/src/components/role/list.vue + 4 modules
 var list = __webpack_require__(2);
@@ -3303,9 +3303,15 @@ var list = __webpack_require__(2);
     onPerformBuild: function onPerformBuild() {
       var _this2 = this;
 
-      return this.$api.post('role/build').then(function () {
-        _this2.roleDirty = false;
-        return true;
+      return this.$api.post('role/build').then(function (data) {
+        var progressId = data.progressId;
+
+        _this2.$view.dialog.progressbar({
+          progressId: progressId,
+          title: _this2.$text('Build')
+        }).then(function () {
+          _this2.roleDirty = false;
+        })["catch"](function () {});
       });
     },
     checkRoleDirty: function checkRoleDirty() {

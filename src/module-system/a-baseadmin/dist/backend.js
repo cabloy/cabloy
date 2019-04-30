@@ -201,8 +201,9 @@ module.exports = app => {
     { method: 'post', path: 'role/includes', controller: role, meta: { right: { type: 'function', name: 'role' } } },
     { method: 'post', path: 'role/addRoleInc', controller: role, meta: { right: { type: 'function', name: 'role' } } },
     { method: 'post', path: 'role/removeRoleInc', controller: role, meta: { right: { type: 'function', name: 'role' } } },
-    { method: 'post', path: 'role/build', controller: role, middlewares: 'transaction', meta: { right: { type: 'function', name: 'role' } } },
     { method: 'post', path: 'role/dirty', controller: role, meta: { right: { type: 'function', name: 'role' } } },
+    { method: 'post', path: 'role/build', controller: role, middlewares: 'progress', meta: { right: { type: 'function', name: 'role' } } },
+    { method: 'post', path: 'role/buildInBackground', controller: role, middlewares: 'inner,progress', meta: { auth: { enable: false } } },
     // user
     { method: 'post', path: 'user/list', controller: user, meta: { right: { type: 'function', name: 'user' } } },
     { method: 'post', path: 'user/item', controller: user, meta: { right: { type: 'function', name: 'user' } } },
@@ -338,15 +339,23 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async dirty() {
+      const res = await this.service.role.dirty();
+      this.ctx.success(res);
+    }
+
     async build() {
       const res = await this.service.role.build();
       this.ctx.success(res);
     }
 
-    async dirty() {
-      const res = await this.service.role.dirty();
+    async buildInBackground() {
+      const res = await this.service.role.buildInBackground({
+        progressId: this.ctx.request.body.progressId,
+      });
       this.ctx.success(res);
     }
+
 
   }
   return RoleController;
@@ -729,12 +738,24 @@ module.exports = app => {
       return await this.ctx.meta.role.removeRoleInc({ id });
     }
 
-    async build() {
-      return await this.ctx.meta.role.build();
-    }
-
     async dirty() {
       return await this.ctx.meta.role.getDirty();
+    }
+
+    async build() {
+      const progressId = await this.ctx.meta.progress.create();
+      this.ctx.performActionInBackground({
+        method: 'post',
+        url: 'role/buildInBackground',
+        body: {
+          progressId,
+        },
+      });
+      return { progressId };
+    }
+
+    async buildInBackground({ progressId }) {
+      return await this.ctx.meta.role.build({ progressId });
     }
 
   }
