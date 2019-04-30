@@ -398,140 +398,144 @@ var external_vue_default = /*#__PURE__*/__webpack_require__.n(external_vue_);
       canAbort = _ref$canAbort === void 0 ? true : _ref$canAbort,
       _ref$interval = _ref.interval,
       interval = _ref$interval === void 0 ? 1000 : _ref$interval;
-  var dialog;
-  var counter = 0;
-  var app = ctx.$f7;
-  var hostEl = ctx.getHostEl();
-  var buttons = [];
+  return new Promise(function (resolve, reject) {
+    var dialog;
+    var counter = 0;
+    var app = ctx.$f7;
+    var hostEl = ctx.getHostEl();
+    var buttons = [];
 
-  if (canAbort) {
-    buttons.push({
-      text: ctx.$text('Abort'),
-      keyCodes: [27]
-    });
-  }
-
-  function callbackBreak() {
-    ctx.dialog.confirm().then(function () {
-      return ctx.$api.post('/a/progress/progress/abort', {
-        progressId: progressId
-      }).then(function () {});
-    })["catch"](function () {
-      dialog.open();
-    });
-  }
-
-  function setProgresses(list) {
-    prepareProgressbars(list.length);
-
-    for (var progressNo in list) {
-      var _item = list[progressNo];
-      setProgress({
-        progressNo: progressNo,
-        total: _item.total,
-        progress: _item.progress,
-        text: _item.text
+    if (canAbort) {
+      buttons.push({
+        text: ctx.$text('Abort'),
+        keyCodes: [27]
       });
     }
-  }
 
-  function setProgress(_ref2) {
-    var _ref2$progressNo = _ref2.progressNo,
-        progressNo = _ref2$progressNo === void 0 ? 0 : _ref2$progressNo,
-        _ref2$total = _ref2.total,
-        total = _ref2$total === void 0 ? 0 : _ref2$total,
-        _ref2$progress = _ref2.progress,
-        progress = _ref2$progress === void 0 ? 0 : _ref2$progress,
-        _ref2$text = _ref2.text,
-        text = _ref2$text === void 0 ? '' : _ref2$text;
-    var progressbars = dialog.$el.find('.progressbar-item');
-    var progressbar = ctx.$$(progressbars[progressNo]);
+    function callbackBreak() {
+      ctx.dialog.confirm().then(function () {
+        return ctx.$api.post('/a/progress/progress/abort', {
+          progressId: progressId
+        }).then(function () {});
+      })["catch"](function () {
+        dialog.open();
+      });
+    }
 
-    var _progress = total > 0 ? parseInt(progress * 100 / total) : progress;
+    function setProgresses(list) {
+      prepareProgressbars(list.length);
 
-    app.progressbar.set(progressbar.find('.progressbar'), _progress);
-
-    var _text = total > 0 ? "(".concat(progress + 1, "/").concat(total, ") ").concat(text) : text;
-
-    var $textEl = progressbar.find('.progressbar-text');
-    $textEl.text(_text);
-  }
-
-  function prepareProgressbars(length) {
-    var progressbars = dialog.$el.find('.progressbar-item');
-
-    if (progressbars.length > length) {
-      for (var i = progressbars.length - 1; i > length - 1; i--) {
-        progressbars[i].remove();
-      }
-    } else if (progressbars.length < length) {
-      var container = dialog.$el.find('.progressbar-container');
-
-      for (var _i = 0; _i < length - progressbars.length; _i++) {
-        var progressbar = ctx.$$("\n                <div class=\"progressbar-item\">\n                  <div class=\"progressbar\">\n                    <span></span>\n                  </div>\n                  <div class=\"progressbar-text\"></div>\n                <div>\n        ");
-        container.append(progressbar);
+      for (var progressNo in list) {
+        var _item = list[progressNo];
+        setProgress({
+          progressNo: progressNo,
+          total: _item.total,
+          progress: _item.progress,
+          text: _item.text
+        });
       }
     }
-  }
 
-  function checking() {
-    window.setTimeout(_checking, interval);
-  }
+    function setProgress(_ref2) {
+      var _ref2$progressNo = _ref2.progressNo,
+          progressNo = _ref2$progressNo === void 0 ? 0 : _ref2$progressNo,
+          _ref2$total = _ref2.total,
+          total = _ref2$total === void 0 ? 0 : _ref2$total,
+          _ref2$progress = _ref2.progress,
+          progress = _ref2$progress === void 0 ? 0 : _ref2$progress,
+          _ref2$text = _ref2.text,
+          text = _ref2$text === void 0 ? '' : _ref2$text;
+      var progressbars = dialog.$el.find('.progressbar-item');
+      var progressbar = ctx.$$(progressbars[progressNo]);
 
-  function _checking() {
-    ctx.$api.post('/a/progress/progress/check', {
-      progressId: progressId,
-      counter: counter
-    }).then(function (item) {
-      if (!item) {
-        return checking();
+      var _progress = total > 0 ? parseInt(progress * 100 / total) : progress;
+
+      app.progressbar.set(progressbar.find('.progressbar'), _progress);
+
+      var _text = total > 0 ? "(".concat(progress + 1, "/").concat(total, ") ").concat(text) : text;
+
+      var $textEl = progressbar.find('.progressbar-text');
+      $textEl.text(_text);
+    }
+
+    function prepareProgressbars(length) {
+      var progressbars = dialog.$el.find('.progressbar-item');
+
+      if (progressbars.length > length) {
+        for (var i = progressbars.length - 1; i > length - 1; i--) {
+          progressbars[i].remove();
+        }
+      } else if (progressbars.length < length) {
+        var container = dialog.$el.find('.progressbar-container');
+
+        for (var _i = 0; _i < length - progressbars.length; _i++) {
+          var progressbar = ctx.$$("\n                <div class=\"progressbar-item\">\n                  <div class=\"progressbar\">\n                    <span></span>\n                  </div>\n                  <div class=\"progressbar-text\"></div>\n                <div>\n        ");
+          container.append(progressbar);
+        }
       }
+    }
 
-      counter = item.counter;
+    function checking() {
+      window.setTimeout(_checking, interval);
+    }
 
-      if (item.done === 0) {
-        setProgresses(JSON.parse(item.data));
-        checking();
-      } else if (item.done === -1) {
-        dialog.close();
-        dialog.destroy();
-        var data = item.data ? JSON.parse(item.data) : {};
-        ctx.toast.show({
-          text: data.message
-        });
-      } else if (item.done === 1) {
-        var _data = item.data ? JSON.parse(item.data) : {};
+    function _checking() {
+      ctx.$api.post('/a/progress/progress/check', {
+        progressId: progressId,
+        counter: counter
+      }).then(function (item) {
+        if (!item) {
+          return checking();
+        }
 
-        var progress = {
-          total: 0,
-          progress: 100,
-          text: _data.message || ctx.$text('Operation succeeded')
-        };
-        setProgresses([progress]);
-        dialog.$el.find('.dialog-buttons').hide();
-        window.setTimeout(function () {
+        counter = item.counter;
+
+        if (item.done === 0) {
+          setProgresses(JSON.parse(item.data));
+          checking();
+        } else if (item.done === -1) {
           dialog.close();
           dialog.destroy();
-        }, app.params.toast.closeTimeout);
-      }
-    })["catch"](function () {
-      checking();
-    });
-  }
+          var data = item.data ? JSON.parse(item.data) : {};
+          ctx.toast.show({
+            text: data.message
+          });
+          reject(data);
+        } else if (item.done === 1) {
+          var _data = item.data ? JSON.parse(item.data) : {};
 
-  dialog = app.dialog.create({
-    hostEl: hostEl,
-    title: typeof title === 'undefined' ? app.params.dialog.progressTitle : title,
-    cssClass: 'dialog-progress',
-    content: "\n              <div class=\"progressbar-container\">\n              </div>\n            ",
-    buttons: buttons,
-    onClick: function onClick(dialog, index) {
-      if (index === 0) callbackBreak();
-    },
-    destroyOnClose: false
+          var progress = {
+            total: 0,
+            progress: 100,
+            text: _data.message || ctx.$text('Operation succeeded')
+          };
+          setProgresses([progress]);
+          dialog.$el.find('.dialog-buttons').hide();
+          window.setTimeout(function () {
+            dialog.close();
+            dialog.destroy();
+          }, app.params.toast.closeTimeout);
+          resolve(_data);
+        }
+      })["catch"](function () {
+        checking();
+      });
+    }
+
+    dialog = app.dialog.create({
+      hostEl: hostEl,
+      title: typeof title === 'undefined' ? app.params.dialog.progressTitle : title,
+      cssClass: 'dialog-progress',
+      content: "\n              <div class=\"progressbar-container\">\n              </div>\n            ",
+      buttons: buttons,
+      onClick: function onClick(dialog, index) {
+        if (index === 0) callbackBreak();
+      },
+      destroyOnClose: false
+    });
+    checking();
+    return dialog.open();
   });
-  checking();
-  return dialog.open();
 });
 // CONCATENATED MODULE: ./front/src/common/appMethods.js
 
