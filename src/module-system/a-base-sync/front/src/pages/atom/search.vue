@@ -23,15 +23,19 @@
   </eb-page>
 </template>
 <script>
+import Vue from 'vue';
+const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.components.ebPageContext;
 import ebAtomClasses from '../../common/atomClasses.js';
 export default {
-  mixins: [ ebAtomClasses ],
+  mixins: [ ebPageContext, ebAtomClasses ],
   data() {
     const query = this.$f7route.query;
     const module = query && query.module;
     const atomClassName = query && query.atomClassName;
     const atomClass = (module && atomClassName) ? { module, atomClassName } : null;
     const where = (query && query.where) ? JSON.parse(query.where) : null;
+    const mode = query && query.mode;
+    const selectMode = query && query.selectMode;
     return {
       atomName: '',
       label: 0,
@@ -40,6 +44,8 @@ export default {
       item: null,
       validateParams: null,
       atomClassInit: atomClass,
+      mode,
+      selectMode,
     };
   },
   computed: {
@@ -121,6 +127,7 @@ export default {
       });
     },
     onPerformSearch() {
+      // atomClassExtra
       let atomClassExtra;
       if (this.item) {
         atomClassExtra = {};
@@ -136,15 +143,25 @@ export default {
           }
         }
       }
-
-      this.$view.navigate('/a/base/atom/searchResult', {
+      // url
+      const queries = {};
+      const atomClass = this.atomClass;
+      if (atomClass) {
+        queries.module = atomClass.module;
+        queries.atomClassName = atomClass.atomClassName;
+      }
+      if (this.where) {
+        queries.where = JSON.stringify(this.where);
+      }
+      queries.mode = this.mode;
+      queries.selectMode = this.selectMode;
+      const url = this.$meta.util.combineQueries('/a/base/atom/searchResult', queries);
+      this.$view.navigate(url, {
         target: '_self',
         context: {
           params: {
             atomName: this.atomName,
             label: this.label,
-            atomClass: this.atomClass,
-            where: this.where,
             atomClassExtra,
           },
         },

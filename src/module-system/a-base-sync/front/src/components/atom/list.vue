@@ -75,11 +75,18 @@
             </template>
             <div color="yellow" :context="item" :onPerform="onLabel">{{$text('Labels')}}</div>
           </div>
-          <div slot="right" v-if="!itemShow" :ready="!!item._actions">
-            <template v-if="item._actions">
-              <div v-for="(action,index) of item._actions" :key="action.id" :color="getActionColor(action,index)" :context="{item,action}" :onPerform="onAction">{{getActionTitle(action)}}</div>
-            </template>
-          </div>
+          <template v-if="mode==='select'">
+            <div slot="right">
+              <div color="yellow" :context="item" :onPerform="onItemSelectRemove">{{$text('Remove')}}</div>
+            </div>
+          </template>
+          <template v-if="mode!=='select'">
+            <div slot="right" v-if="!itemShow" :ready="!!item._actions">
+              <template v-if="item._actions">
+                <div v-for="(action,index) of item._actions" :key="action.id" :color="getActionColor(action,index)" :context="{item,action}" :onPerform="onAction">{{getActionTitle(action)}}</div>
+              </template>
+            </div>
+          </template>
         </eb-context-menu>
       </eb-list-item>
     </f7-list>
@@ -126,6 +133,7 @@ export default {
     return {
       items: this.itemShow ? [ this.itemShow ] : [],
       atomOrderSelected: null,
+      selectedAtomIds: null,
     };
   },
   computed: {
@@ -186,6 +194,12 @@ export default {
         atomOrder = {
           name: 'updatedAt',
           by: 'desc',
+          tableAlias: 'a',
+        };
+      } else if (this.mode === 'select') {
+        atomOrder = {
+          name: 'atomName',
+          by: 'asc',
           tableAlias: 'a',
         };
       }
@@ -265,6 +279,18 @@ export default {
         if (this.params && this.params.label) {
           options.label = this.params.label;
         }
+      } else if (this.mode === 'select') {
+        // where
+        const where = {};
+        if (!this.selectedAtomIds) {
+          this.selectedAtomIds = this.params.selectedAtomIds || [];
+        }
+        where['a.id'] = this.selectedAtomIds.length > 0 ? this.selectedAtomIds : null;
+        // options
+        options = {
+          where,
+          page: { index },
+        };
       }
       // where
       if (this.where) {
@@ -488,6 +514,22 @@ export default {
       }
       // reload
       this.reload(true);
+    },
+    onItemSelectRemove(event, item) {
+      // remove from selectedAtomIds
+      if (this.selectedAtomIds) {
+        const index = this.selectedAtomIds.findIndex(_item => _item === item.atomId);
+        if (index !== -1) {
+          this.selectedAtomIds.splice(index, 1);
+        }
+      }
+      // remove from list
+      const index = this.items.findIndex(_item => _item.atomId === item.atomId);
+      if (index !== -1) {
+        this.items.splice(index, 1);
+      }
+      // close
+      this.$meta.util.swipeoutClose(event.target);
     },
     getAtomOrderKey(atomOrder) {
       return `${atomOrder.tableAlias}.${atomOrder.name}`;

@@ -18,17 +18,23 @@ export default {
     atoms,
   },
   data() {
-    return {};
+    const query = this.$f7route.query;
+    const module = query && query.module;
+    const atomClassName = query && query.atomClassName;
+    const atomClass = (module && atomClassName) ? { module, atomClassName } : null;
+    const where = (query && query.where) ? JSON.parse(query.where) : null;
+    const mode = query && query.mode;
+    const selectMode = query && query.selectMode;
+    return {
+      atomClass,
+      where,
+      mode,
+      selectMode,
+    };
   },
   computed: {
     params() {
       return this.contextParams;
-    },
-    atomClass() {
-      return this.contextParams.atomClass;
-    },
-    where() {
-      return this.contextParams.where;
     },
   },
   methods: {

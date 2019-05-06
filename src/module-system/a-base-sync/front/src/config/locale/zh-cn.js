@@ -33,6 +33,8 @@ export default {
   Locale: '本地化',
   Search: '搜索',
   Link: '链接',
+  Select: '选择',
+  Remove: '移除',
   'Atom Flag': '原子标记',
   'Atom Name': '原子名称',
   'Modification Time': '修改时间',
