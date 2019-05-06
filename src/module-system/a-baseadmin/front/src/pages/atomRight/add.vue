@@ -24,9 +24,9 @@
 </template>
 <script>
 import Vue from 'vue';
-const ebActions = Vue.prototype.$meta.module.get('a-base').options.components.ebActions;
+const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.components.ebAtomActions;
 export default {
-  mixins: [ ebActions ],
+  mixins: [ ebAtomActions ],
   data() {
     return {
       roleId: parseInt(this.$f7route.query.roleId),
