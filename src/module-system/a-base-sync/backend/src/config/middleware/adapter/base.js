@@ -1,12 +1,14 @@
 const path = require('path');
 const require3 = require('require3');
 const fse = require3('fs-extra');
+const constants = require('../../constants.js');
 
 const _modulesLocales = {};
 const _locales = {};
 const _atomClasses = {};
 const _actions = {};
 const _flags = {};
+const _orders = {};
 const _functions = {};
 const _menus = {};
 const _authProvidersLocales = {};
@@ -123,6 +125,13 @@ const Fn = module.exports = ctx => {
         _flags[ctx.locale] = this._prepareFlags();
       }
       return _flags[ctx.locale];
+    }
+
+    orders() {
+      if (!_orders[ctx.locale]) {
+        _orders[ctx.locale] = this._prepareOrders();
+      }
+      return _orders[ctx.locale];
     }
 
     menus() {
@@ -270,6 +279,49 @@ const Fn = module.exports = ctx => {
         flags[key] = flag;
       }
       return flags;
+    }
+
+    _prepareOrders() {
+      const orders = {};
+      // modules
+      for (const relativeName in ctx.app.meta.modules) {
+        const module = ctx.app.meta.modules[relativeName];
+        if (module.main.meta && module.main.meta.base && module.main.meta.base.atoms) {
+          orders[relativeName] = {};
+          for (const atomClassName in module.main.meta.base.atoms) {
+            orders[relativeName][atomClassName] = this._prepareOrdersAtomClass(module, module.main.meta.base.atoms[atomClassName]);
+          }
+        }
+      }
+      // base
+      orders.base = this._prepareOrdersBase();
+      // ok
+      return orders;
+    }
+
+    _prepareOrdersAtomClass(module, atomClass) {
+      if (!atomClass.orders) return null;
+      return atomClass.orders.map(item => {
+        return {
+          name: item.name,
+          title: item.title,
+          by: item.by,
+          tableAlias: item.tableAlias || 'f',
+          titleLocale: ctx.text(item.title),
+        };
+      });
+    }
+
+    _prepareOrdersBase() {
+      return constants.atom.orders.map(item => {
+        return {
+          name: item.name,
+          title: item.title,
+          by: item.by,
+          tableAlias: item.tableAlias,
+          titleLocale: ctx.text(item.title),
+        };
+      });
     }
 
     _prepareActions() {

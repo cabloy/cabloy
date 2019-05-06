@@ -1,6 +1,10 @@
 <template>
   <eb-page ptr @ptr:refresh="onRefresh" infinite :infinitePreloader="false" @infinite="onInfinite">
-    <eb-navbar :title="$text('Search Result')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar :title="$text('Search Result')" eb-back-link="Back">
+      <f7-nav-right>
+        <eb-link iconMaterial="sort" :onPerform="onPerformAtomOrders"></eb-link>
+      </f7-nav-right>
+    </eb-navbar>
     <atoms ref="list" mode="search" :params="params" :atomClass="atomClass" :where="where"></atoms>
   </eb-page>
 </template>
@@ -34,6 +38,9 @@ export default {
     },
     onInfinite() {
       this.$refs.list.loadMore();
+    },
+    onPerformAtomOrders(event) {
+      this.$refs.list.openPopoverForAtomOrders(event.currentTarget);
     },
   },
   mounted() {

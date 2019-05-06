@@ -7,14 +7,14 @@
     </eb-navbar>
     <eb-list form no-hairlines-md @submit.prevent="onFormSubmit">
       <f7-list-item>
-        <f7-label floating>{{$text('Atom name')}}</f7-label>
-        <eb-input type="text" :placeholder="$text('Atom name')" clear-button v-model="atomName"></eb-input>
+        <f7-label floating>{{$text('Atom Name')}}</f7-label>
+        <eb-input type="text" :placeholder="$text('Atom Name')" clear-button v-model="atomName"></eb-input>
       </f7-list-item>
       <f7-list-item smartSelect :title="$text('Label')" :smartSelectParams="{openIn: 'page', closeOnSelect: true}">
         <eb-select name="label" v-model="label" :options="labels"></eb-select>
       </f7-list-item>
       <f7-list-item divider></f7-list-item>
-      <f7-list-item v-if="!atomClassInit" :title="$text('Atom class')" link="#" @click="onSelectAtomClass">
+      <f7-list-item v-if="!atomClassInit" :title="$text('Atom Class')" link="#" @click="onSelectAtomClass">
         <div slot="after">{{atomClassTitle}}</div>
       </f7-list-item>
     </eb-list>

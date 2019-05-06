@@ -31,9 +31,9 @@
 <script>
 import Vue from 'vue';
 import atoms from './list.vue';
-import ebActions from '../../common/actions.js';
+import ebAtomActions from '../../common/atomActions.js';
 export default {
-  mixins: [ ebActions ],
+  mixins: [ ebAtomActions ],
   meta: {
     global: false,
   },

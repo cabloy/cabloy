@@ -3,7 +3,8 @@
     <eb-navbar :title="pageTitle" eb-back-link="Back">
       <f7-nav-right>
         <f7-link v-if="showPopover" iconMaterial="add" :popover-open="`#${popoverId}`"></f7-link>
-        <eb-link iconMaterial="search" @click.prevent="onSearch"></eb-link>
+        <eb-link iconMaterial="search" :onPerform="onPerformSearch"></eb-link>
+        <eb-link iconMaterial="sort" :onPerform="onPerformAtomOrders"></eb-link>
       </f7-nav-right>
       <f7-subnavbar>
         <f7-toolbar tabbar :scrollable="labels && Object.keys(labels).length>1">
@@ -16,19 +17,19 @@
         </f7-toolbar>
       </f7-subnavbar>
     </eb-navbar>
-    <f7-tabs>
-      <eb-tab-page-content :id="tabIdList" tab-active>
-        <atoms slot="list" mode="list" :atomClass="atomClass" :where="whereForList"></atoms>
+    <f7-tabs ref="tabs">
+      <eb-tab-page-content :id="tabIdList" tab-active data-ref="list">
+        <atoms ref="list" slot="list" mode="list" :atomClass="atomClass" :where="whereForList"></atoms>
       </eb-tab-page-content>
-      <eb-tab-page-content :id="tabIdDrafts">
-        <atoms slot="list" mode="drafts" :atomClass="atomClass" :where="where"></atoms>
+      <eb-tab-page-content :id="tabIdDrafts" data-ref="drafts">
+        <atoms ref="drafts" slot="list" mode="drafts" :atomClass="atomClass" :where="where"></atoms>
       </eb-tab-page-content>
-      <eb-tab-page-content :id="tabIdStars">
-        <atoms slot="list" mode="stars" :atomClass="atomClass" :where="where"></atoms>
+      <eb-tab-page-content :id="tabIdStars" data-ref="stars">
+        <atoms ref="stars" slot="list" mode="stars" :atomClass="atomClass" :where="where"></atoms>
       </eb-tab-page-content>
       <template v-if="labels">
-        <eb-tab-page-content v-for="key of Object.keys(labels)" :key="key" :id="`${tabIdLabels}_${key}`">
-          <atoms slot="list" :mode="`labels-${key}`" :atomClass="atomClass" :where="where"></atoms>
+        <eb-tab-page-content v-for="key of Object.keys(labels)" :key="key" :id="`${tabIdLabels}_${key}`" :data-ref="`labels-${key}`">
+          <atoms :ref="`labels-${key}`" slot="list" :mode="`labels-${key}`" :atomClass="atomClass" :where="where"></atoms>
         </eb-tab-page-content>
       </template>
     </f7-tabs>
@@ -43,10 +44,10 @@
 import Vue from 'vue';
 import atoms from '../../components/atom/list.vue';
 import ebAtomClasses from '../../common/atomClasses.js';
-import ebActions from '../../common/actions.js';
+import ebAtomActions from '../../common/atomActions.js';
 import ebMenus from '../../common/menus.js';
 export default {
-  mixins: [ ebAtomClasses, ebActions, ebMenus ],
+  mixins: [ ebAtomClasses, ebAtomActions, ebMenus ],
   components: {
     atoms,
   },
@@ -112,7 +113,7 @@ export default {
     });
   },
   methods: {
-    onSearch() {
+    onPerformSearch() {
       const queries = {};
       const atomClass = this.atomClass;
       if (atomClass) {
@@ -137,6 +138,12 @@ export default {
         };
       }
       return this.$meta.util.performAction({ ctx: this, action: _menu, item });
+    },
+    onPerformAtomOrders(event) {
+      const tab = this.$$(this.$refs.tabs.$el).find('.tab-active');
+      let tabRef = this.$refs[tab.data('ref')];
+      if (Array.isArray(tabRef)) tabRef = tabRef[0];
+      tabRef.openPopoverForAtomOrders(event.currentTarget);
     },
   },
 };

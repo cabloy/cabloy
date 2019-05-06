@@ -22,6 +22,10 @@ module.exports = app => {
       return this.ctx.meta.base.flags();
     }
 
+    orders() {
+      return this.ctx.meta.base.orders();
+    }
+
     menus() {
       return this.ctx.meta.base.menus();
     }

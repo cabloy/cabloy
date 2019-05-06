@@ -8,6 +8,7 @@ export default function(Vue) {
       atomClasses: null,
       actions: null,
       flags: null,
+      orders: null,
       menus: null,
       functions: null,
     },
@@ -37,6 +38,9 @@ export default function(Vue) {
       setFlags(state, flags) {
         state.flags = flags;
       },
+      setOrders(state, orders) {
+        state.orders = orders;
+      },
       setMenus(state, menus) {
         state.menus = menus;
       },
@@ -45,7 +49,7 @@ export default function(Vue) {
       },
     },
     actions: {
-      getLabels({ state, commit, getters }) {
+      getLabels({ commit, getters }) {
         return new Promise((resolve, reject) => {
           const userLabels = getters.userLabels;
           if (userLabels) return resolve(userLabels);
@@ -100,6 +104,18 @@ export default function(Vue) {
           Vue.prototype.$meta.api.post('/a/base/base/flags').then(data => {
             data = data || {};
             commit('setFlags', data);
+            resolve(data);
+          }).catch(err => {
+            reject(err);
+          });
+        });
+      },
+      getOrders({ state, commit }) {
+        return new Promise((resolve, reject) => {
+          if (state.orders) return resolve(state.orders);
+          Vue.prototype.$meta.api.post('/a/base/base/orders').then(data => {
+            data = data || {};
+            commit('setOrders', data);
             resolve(data);
           }).catch(err => {
             reject(err);

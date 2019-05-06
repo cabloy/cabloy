@@ -25,8 +25,8 @@
           </div>
           <div slot="title" class="title">
             <div class="date">
-              <div>{{$text('Modification time')}}</div>
-              <div>{{$text('Created time')}}</div>
+              <div>{{$text('Modification Time')}}</div>
+              <div>{{$text('Created Time')}}</div>
             </div>
           </div>
           <div slot="after" class="after">
@@ -84,14 +84,23 @@
       </eb-list-item>
     </f7-list>
     <eb-load-more ref="loadMore" v-if="!itemShow" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="false"></eb-load-more>
+    <eb-popover ref="popoverAtomOrders" :ready="popoverOrdersReady">
+      <f7-list v-if="popoverOrdersReady" inset>
+        <eb-list-item v-for="atomOrder of atomOrders" :key="getAtomOrderKey(atomOrder)" popover-close link="#" :context="atomOrder" :onPerform="onPerformChangeAtomOrder">
+          <f7-icon slot="media" :material="getAtomOrderStatus(atomOrder)"></f7-icon>
+          <div slot="title">{{atomOrder.titleLocale}}</div>
+        </eb-list-item>
+      </f7-list>
+    </eb-popover>
   </div>
 </template>
 <script>
 import Vue from 'vue';
-import ebActions from '../../common/actions.js';
 import ebAtomClasses from '../../common/atomClasses.js';
+import ebAtomActions from '../../common/atomActions.js';
+import ebAtomOrders from '../../common/atomOrders.js';
 export default {
-  mixins: [ ebActions, ebAtomClasses ],
+  mixins: [ ebAtomClasses, ebAtomActions, ebAtomOrders ],
   meta: {
     global: false,
   },
@@ -116,6 +125,7 @@ export default {
   data() {
     return {
       items: this.itemShow ? [ this.itemShow ] : [],
+      atomOrderSelected: null,
     };
   },
   computed: {
@@ -127,6 +137,60 @@ export default {
     },
     user() {
       return this.$store.state.auth.user.op;
+    },
+    popoverOrdersReady() {
+      return !!this.ordersAll;
+    },
+    atomOrders() {
+      if (!this.ordersAll) return null;
+      // base
+      const ordersBase = this.getOrdersOfBase();
+      // atomClass
+      const ordersAtomClass = this.atomClass ? this.getOrdersOfAtomClass(this.atomClass) : null;
+      // atomOrders
+      return ordersAtomClass ? ordersBase.concat(ordersAtomClass) : ordersBase;
+    },
+    atomOrderDefault() {
+      let atomOrder;
+      if (this.mode === 'list') {
+        atomOrder = {
+          name: 'updatedAt',
+          by: 'desc',
+          tableAlias: 'a',
+        };
+      } else if (this.mode === 'drafts') {
+        atomOrder = {
+          name: 'updatedAt',
+          by: 'desc',
+          tableAlias: 'a',
+        };
+      } else if (this.mode === 'stars') {
+        atomOrder = {
+          name: 'updatedAt',
+          by: 'desc',
+          tableAlias: 'd',
+        };
+      } else if (this.mode.indexOf('labels') > -1) {
+        atomOrder = {
+          name: 'updatedAt',
+          by: 'desc',
+          tableAlias: 'e',
+        };
+      } else if (this.mode === 'all') {
+        atomOrder = {
+          name: 'updatedAt',
+          by: 'desc',
+          tableAlias: 'a',
+        };
+      } else if (this.mode === 'search') {
+        atomOrder = {
+          name: 'updatedAt',
+          by: 'desc',
+          tableAlias: 'a',
+        };
+      }
+      // ok
+      return atomOrder;
     },
   },
   created() {
@@ -161,41 +225,26 @@ export default {
       if (this.mode === 'list') {
         options = {
           where: { 'a.atomEnabled': 1 },
-          orders: [
-            [ 'a.updatedAt', 'desc' ],
-          ],
           page: { index },
         };
       } else if (this.mode === 'drafts') {
         options = {
           where: { 'a.atomEnabled': 0 },
-          orders: [
-            [ 'a.updatedAt', 'desc' ],
-          ],
           page: { index },
         };
       } else if (this.mode === 'stars') {
         options = {
-          orders: [
-            [ 'd.updatedAt', 'desc' ],
-          ],
           star: 1,
           page: { index },
         };
       } else if (this.mode.indexOf('labels') > -1) {
         options = {
-          orders: [
-            [ 'e.updatedAt', 'desc' ],
-          ],
           label: this.mode.split('-')[1],
           page: { index },
         };
       } else if (this.mode === 'all') {
         // special: all = list + atomEnabled=1
         options = {
-          orders: [
-            [ 'a.updatedAt', 'desc' ],
-          ],
           page: { index },
         };
       } else if (this.mode === 'search') {
@@ -210,9 +259,6 @@ export default {
         // options
         options = {
           where,
-          orders: [
-            [ 'a.updatedAt', 'desc' ],
-          ],
           page: { index },
         };
         // label
@@ -224,6 +270,11 @@ export default {
       if (this.where) {
         options.where = this.$utils.extend({}, options.where, this.where);
       }
+      // order
+      const atomOrderCurrent = this.atomOrderSelected || this.atomOrderDefault;
+      options.orders = [
+        [ this.getAtomOrderKey(atomOrderCurrent), atomOrderCurrent.by ],
+      ];
       // mode
       options.mode = this.mode;
       // fetch
@@ -372,7 +423,9 @@ export default {
     },
     getItemMetaFlags(item) {
       const flags = (item._meta && item._meta.flags);
-      return flags ? flags.split(',') : [];
+      if (!flags) return [];
+      if (Array.isArray(flags)) return flags;
+      return flags.split(',');
     },
     getItemMetaMedia(item) {
       const media = (item._meta && item._meta.media) || item.avatar;
@@ -409,6 +462,35 @@ export default {
           name: 'read',
         },
       });
+    },
+    openPopoverForAtomOrders(element) {
+      const popover = this.$refs.popoverAtomOrders.$el;
+      this.$f7.popover.open(popover, element);
+    },
+    getAtomOrderStatus(atomOrder) {
+      const atomOrderCurrent = this.atomOrderSelected || this.atomOrderDefault;
+      if (this.getAtomOrderKey(atomOrderCurrent) === this.getAtomOrderKey(atomOrder)) {
+        return atomOrderCurrent.by === 'desc' ? 'arrow_drop_down' : 'arrow_drop_up';
+      }
+      return '';
+    },
+    onPerformChangeAtomOrder(event, atomOrder) {
+      // switch
+      const atomOrderCurrent = this.atomOrderSelected || this.atomOrderDefault;
+      if (this.getAtomOrderKey(atomOrderCurrent) === this.getAtomOrderKey(atomOrder)) {
+        this.atomOrderSelected = {
+          name: atomOrderCurrent.name,
+          tableAlias: atomOrderCurrent.tableAlias,
+          by: atomOrderCurrent.by === 'desc' ? 'asc' : 'desc',
+        };
+      } else {
+        this.atomOrderSelected = atomOrder;
+      }
+      // reload
+      this.reload(true);
+    },
+    getAtomOrderKey(atomOrder) {
+      return `${atomOrder.tableAlias}.${atomOrder.name}`;
     },
   },
 };

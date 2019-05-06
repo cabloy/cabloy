@@ -34,9 +34,9 @@
   </eb-page>
 </template>
 <script>
-import ebActions from '../../common/actions.js';
+import ebAtomActions from '../../common/atomActions.js';
 export default {
-  mixins: [ ebActions ],
+  mixins: [ ebAtomActions ],
   data() {
     const query = this.$f7route.query;
     let where = (query && query.where) ? JSON.parse(query.where) : null;

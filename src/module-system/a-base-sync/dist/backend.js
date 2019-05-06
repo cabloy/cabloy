@@ -82,7 +82,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 22);
+/******/ 	return __webpack_require__(__webpack_require__.s = 23);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -113,6 +113,51 @@ module.exports = app => {
 /* 2 */
 /***/ (function(module, exports) {
 
+module.exports = {
+  systemRoles: [ 'root', 'anonymous', 'authenticated', 'template', 'system', 'registered', 'activated', 'superuser', 'organization', 'internal', 'external' ],
+  atom: {
+    action: {
+      create: 1,
+      read: 2,
+      write: 3,
+      delete: 4,
+      save: 51,
+      submit: 52,
+      custom: 100, // custom action start from custom
+    },
+    actionMeta: {
+      create: { title: 'Create', actionComponent: 'action' },
+      read: { title: 'View', actionPath: 'atom/view?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&module={{module}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}' },
+      write: { title: 'Edit', actionPath: 'atom/edit?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&module={{module}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}' },
+      delete: { title: 'Delete', actionComponent: 'action' },
+      save: { title: 'Save', actionComponent: 'action', authorize: false },
+      submit: { title: 'Submit', actionComponent: 'action', authorize: false },
+      custom: { title: 'Custom' },
+    },
+    orders: [
+      { name: 'createdAt', title: 'Created Time', by: 'desc', tableAlias: 'a' },
+      { name: 'updatedAt', title: 'Modification Time', by: 'desc', tableAlias: 'a' },
+      { name: 'atomFlag', title: 'Atom Flag', by: 'asc', tableAlias: 'a' },
+      { name: 'atomName', title: 'Atom Name', by: 'asc', tableAlias: 'a' },
+    ],
+  },
+  function: {
+    scene: {
+      default: 0,
+      create: 1,
+      list: 2,
+      report: 20,
+      tools: 50,
+      custom: 100,
+    },
+  },
+};
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
 module.exports = app => {
 
   class AtomClass extends app.meta.Model {
@@ -128,7 +173,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -146,7 +191,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -164,7 +209,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -182,7 +227,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -200,7 +245,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -218,7 +263,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports) {
 
 module.exports = ctx => {
@@ -711,7 +756,7 @@ module.exports = ctx => {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -729,7 +774,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -747,7 +792,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -765,7 +810,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -783,7 +828,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -801,7 +846,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -819,7 +864,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -837,7 +882,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -855,13 +900,13 @@ module.exports = app => {
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const modelFn = __webpack_require__(18);
-const modelAgentFn = __webpack_require__(19);
-const modelAuthFn = __webpack_require__(20);
-const modelAuthProviderFn = __webpack_require__(21);
+const modelFn = __webpack_require__(19);
+const modelAgentFn = __webpack_require__(20);
+const modelAuthFn = __webpack_require__(21);
+const modelAuthProviderFn = __webpack_require__(22);
 
 let _userAnonymous = null;
 
@@ -1381,7 +1426,7 @@ module.exports = ctx => {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1399,7 +1444,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1417,7 +1462,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1435,7 +1480,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1453,14 +1498,14 @@ module.exports = app => {
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const config = __webpack_require__(23);
-const locales = __webpack_require__(24);
-const errors = __webpack_require__(26);
-const middlewares = __webpack_require__(27);
-const constants = __webpack_require__(42);
+const config = __webpack_require__(24);
+const locales = __webpack_require__(25);
+const errors = __webpack_require__(27);
+const middlewares = __webpack_require__(28);
+const constants = __webpack_require__(2);
 
 // eslint-disable-next-line
 module.exports = app => {
@@ -1490,7 +1535,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports) {
 
 // eslint-disable-next-line
@@ -1605,16 +1650,16 @@ module.exports = appInfo => {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
-  'zh-cn': __webpack_require__(25),
+  'zh-cn': __webpack_require__(26),
 };
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -1628,6 +1673,10 @@ module.exports = {
   'Incomplete information': '信息不完整',
   'Should delete children first': '应该先删除子角色',
   'Cannot contain __': '不能包含__',
+  'Atom Flag': '原子标记',
+  'Atom Name': '原子名称',
+  'Modification Time': '修改时间',
+  'Created Time': '创建时间',
   Draft: '草稿',
   Base: '基本',
   English: '英文',
@@ -1642,7 +1691,7 @@ module.exports = {
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports) {
 
 // error code should start from 1001
@@ -1659,14 +1708,14 @@ module.exports = {
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const base = __webpack_require__(28);
-const auth = __webpack_require__(38);
-const right = __webpack_require__(39);
-const jsonp = __webpack_require__(40);
-const httpLog = __webpack_require__(41);
+const base = __webpack_require__(29);
+const auth = __webpack_require__(39);
+const right = __webpack_require__(40);
+const jsonp = __webpack_require__(41);
+const httpLog = __webpack_require__(42);
 
 module.exports = {
   base,
@@ -1678,39 +1727,39 @@ module.exports = {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // base
-const BaseFn = __webpack_require__(29);
+const BaseFn = __webpack_require__(30);
 const BASE = Symbol('CTX#__BASE');
 
 // atomClass
-const AtomClassFn = __webpack_require__(32);
+const AtomClassFn = __webpack_require__(33);
 const ATOMCLASS = Symbol('CTX#__ATOMCLASS');
 
 // atomClass
-const AtomActionFn = __webpack_require__(33);
+const AtomActionFn = __webpack_require__(34);
 const ATOMACTION = Symbol('CTX#__ATOMACTION');
 
 // atom
-const AtomFn = __webpack_require__(34);
+const AtomFn = __webpack_require__(35);
 const ATOM = Symbol('CTX#__ATOM');
 
 // function
-const FunctionFn = __webpack_require__(35);
+const FunctionFn = __webpack_require__(36);
 const FUNCTION = Symbol('CTX#__FUNCTION');
 
 // role
-const RoleFn = __webpack_require__(36);
+const RoleFn = __webpack_require__(37);
 const ROLE = Symbol('CTX#__ROLE');
 
 // user
-const UserFn = __webpack_require__(17);
+const UserFn = __webpack_require__(18);
 const USER = Symbol('CTX#__USER');
 
 // util
-const UtilFn = __webpack_require__(37);
+const UtilFn = __webpack_require__(38);
 const UTIL = Symbol('CTX#__UTIL');
 
 module.exports = () => {
@@ -1796,18 +1845,20 @@ module.exports = () => {
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const path = __webpack_require__(30);
+const path = __webpack_require__(31);
 const require3 = __webpack_require__(0);
 const fse = require3('fs-extra');
+const constants = __webpack_require__(2);
 
 const _modulesLocales = {};
 const _locales = {};
 const _atomClasses = {};
 const _actions = {};
 const _flags = {};
+const _orders = {};
 const _functions = {};
 const _menus = {};
 const _authProvidersLocales = {};
@@ -1851,7 +1902,7 @@ const Fn = module.exports = ctx => {
       if (ctx.app.meta.isTest || ctx.app.meta.isLocal) {
         return ctx.app.config.static.dir;
       }
-      const dir = ctx.config.module(moduleInfo.relativeName).publicDir || path.join(__webpack_require__(31).homedir(), 'cabloy', ctx.app.name, 'public');
+      const dir = ctx.config.module(moduleInfo.relativeName).publicDir || path.join(__webpack_require__(32).homedir(), 'cabloy', ctx.app.name, 'public');
       await fse.ensureDir(dir);
       return dir;
     }
@@ -1924,6 +1975,13 @@ const Fn = module.exports = ctx => {
         _flags[ctx.locale] = this._prepareFlags();
       }
       return _flags[ctx.locale];
+    }
+
+    orders() {
+      if (!_orders[ctx.locale]) {
+        _orders[ctx.locale] = this._prepareOrders();
+      }
+      return _orders[ctx.locale];
     }
 
     menus() {
@@ -2071,6 +2129,49 @@ const Fn = module.exports = ctx => {
         flags[key] = flag;
       }
       return flags;
+    }
+
+    _prepareOrders() {
+      const orders = {};
+      // modules
+      for (const relativeName in ctx.app.meta.modules) {
+        const module = ctx.app.meta.modules[relativeName];
+        if (module.main.meta && module.main.meta.base && module.main.meta.base.atoms) {
+          orders[relativeName] = {};
+          for (const atomClassName in module.main.meta.base.atoms) {
+            orders[relativeName][atomClassName] = this._prepareOrdersAtomClass(module, module.main.meta.base.atoms[atomClassName]);
+          }
+        }
+      }
+      // base
+      orders.base = this._prepareOrdersBase();
+      // ok
+      return orders;
+    }
+
+    _prepareOrdersAtomClass(module, atomClass) {
+      if (!atomClass.orders) return null;
+      return atomClass.orders.map(item => {
+        return {
+          name: item.name,
+          title: item.title,
+          by: item.by,
+          tableAlias: item.tableAlias || 'f',
+          titleLocale: ctx.text(item.title),
+        };
+      });
+    }
+
+    _prepareOrdersBase() {
+      return constants.atom.orders.map(item => {
+        return {
+          name: item.name,
+          title: item.title,
+          by: item.by,
+          tableAlias: item.tableAlias,
+          titleLocale: ctx.text(item.title),
+        };
+      });
     }
 
     _prepareActions() {
@@ -2223,22 +2324,22 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports) {
 
 module.exports = require("path");
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports) {
 
 module.exports = require("os");
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const modelFn = __webpack_require__(2);
+const modelFn = __webpack_require__(3);
 
 const Fn = module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -2358,10 +2459,10 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const modelFn = __webpack_require__(3);
+const modelFn = __webpack_require__(4);
 
 const Fn = module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -2425,16 +2526,16 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
 const mparse = require3('egg-born-mparse').default;
-const modelAtomFn = __webpack_require__(4);
-const modelAtomStarFn = __webpack_require__(5);
-const modelAtomLabelFn = __webpack_require__(6);
-const modelAtomLabelRefFn = __webpack_require__(7);
-const sqlProcedureFn = __webpack_require__(8);
+const modelAtomFn = __webpack_require__(5);
+const modelAtomStarFn = __webpack_require__(6);
+const modelAtomLabelFn = __webpack_require__(7);
+const modelAtomLabelRefFn = __webpack_require__(8);
+const sqlProcedureFn = __webpack_require__(9);
 
 const Fn = module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -3047,13 +3148,13 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const modelFn = __webpack_require__(1);
-const modelFunctionStarFn = __webpack_require__(9);
-const modelFunctionLocaleFn = __webpack_require__(10);
-const sqlProcedureFn = __webpack_require__(8);
+const modelFunctionStarFn = __webpack_require__(10);
+const modelFunctionLocaleFn = __webpack_require__(11);
+const sqlProcedureFn = __webpack_require__(9);
 
 const Fn = module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -3239,16 +3340,16 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const modelFn = __webpack_require__(11);
-const modelRoleIncFn = __webpack_require__(12);
-const modelUserRoleFn = __webpack_require__(13);
-const modelRoleRightFn = __webpack_require__(14);
-const modelRoleRightRefFn = __webpack_require__(15);
+const modelFn = __webpack_require__(12);
+const modelRoleIncFn = __webpack_require__(13);
+const modelUserRoleFn = __webpack_require__(14);
+const modelRoleRightFn = __webpack_require__(15);
+const modelRoleRightRefFn = __webpack_require__(16);
 const modelFunctionFn = __webpack_require__(1);
-const modelRoleFunctionFn = __webpack_require__(16);
+const modelRoleFunctionFn = __webpack_require__(17);
 
 const Fn = module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -3834,7 +3935,7 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -3910,7 +4011,7 @@ module.exports = ctx => {
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports) {
 
 module.exports = options => {
@@ -3933,7 +4034,7 @@ module.exports = options => {
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports) {
 
 // request.body
@@ -4037,7 +4138,7 @@ async function checkFunction(moduleInfo, options, ctx) {
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports) {
 
 module.exports = (options, app) => {
@@ -4071,7 +4172,7 @@ module.exports = (options, app) => {
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports) {
 
 module.exports = (options, app) => {
@@ -4121,45 +4222,6 @@ module.exports = (options, app) => {
 
 
 /***/ }),
-/* 42 */
-/***/ (function(module, exports) {
-
-module.exports = {
-  systemRoles: [ 'root', 'anonymous', 'authenticated', 'template', 'system', 'registered', 'activated', 'superuser', 'organization', 'internal', 'external' ],
-  atom: {
-    action: {
-      create: 1,
-      read: 2,
-      write: 3,
-      delete: 4,
-      save: 51,
-      submit: 52,
-      custom: 100, // custom action start from custom
-    },
-    actionMeta: {
-      create: { title: 'Create', actionComponent: 'action' },
-      read: { title: 'View', actionPath: 'atom/view?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&module={{module}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}' },
-      write: { title: 'Edit', actionPath: 'atom/edit?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&module={{module}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}' },
-      delete: { title: 'Delete', actionComponent: 'action' },
-      save: { title: 'Save', actionComponent: 'action', authorize: false },
-      submit: { title: 'Submit', actionComponent: 'action', authorize: false },
-      custom: { title: 'Custom' },
-    },
-  },
-  function: {
-    scene: {
-      default: 0,
-      create: 1,
-      list: 2,
-      report: 20,
-      tools: 50,
-      custom: 100,
-    },
-  },
-};
-
-
-/***/ }),
 /* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4184,6 +4246,7 @@ module.exports = app => {
     { method: 'post', path: 'base/atomClasses', controller: base },
     { method: 'post', path: 'base/actions', controller: base },
     { method: 'post', path: 'base/flags', controller: base },
+    { method: 'post', path: 'base/orders', controller: base },
     { method: 'post', path: 'base/menus', controller: base },
     { method: 'post', path: 'base/functions', controller: base },
     { method: 'get', path: 'base/performAction', controller: base, middlewares: 'jsonp', meta: { auth: { enable: false } } },
@@ -4344,6 +4407,11 @@ module.exports = app => {
 
     flags() {
       const res = this.ctx.service.base.flags();
+      this.ctx.success(res);
+    }
+
+    orders() {
+      const res = this.ctx.service.base.orders();
       this.ctx.success(res);
     }
 
@@ -5843,6 +5911,10 @@ module.exports = app => {
       return this.ctx.meta.base.flags();
     }
 
+    orders() {
+      return this.ctx.meta.base.orders();
+    }
+
     menus() {
       return this.ctx.meta.base.menus();
     }
@@ -6012,7 +6084,7 @@ module.exports = app => {
 
 const require3 = __webpack_require__(0);
 const mparse = require3('egg-born-mparse').default;
-const UserFn = __webpack_require__(17);
+const UserFn = __webpack_require__(18);
 
 module.exports = app => {
 
@@ -6403,28 +6475,28 @@ module.exports = app => {
 /* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const atom = __webpack_require__(4);
-const atomAction = __webpack_require__(3);
-const atomClass = __webpack_require__(2);
-const auth = __webpack_require__(20);
-const authProvider = __webpack_require__(21);
-const role = __webpack_require__(11);
-const roleInc = __webpack_require__(12);
+const atom = __webpack_require__(5);
+const atomAction = __webpack_require__(4);
+const atomClass = __webpack_require__(3);
+const auth = __webpack_require__(21);
+const authProvider = __webpack_require__(22);
+const role = __webpack_require__(12);
+const roleInc = __webpack_require__(13);
 const roleIncRef = __webpack_require__(74);
 const roleRef = __webpack_require__(75);
-const roleRight = __webpack_require__(14);
-const roleRightRef = __webpack_require__(15);
-const user = __webpack_require__(18);
-const userAgent = __webpack_require__(19);
-const userRole = __webpack_require__(13);
+const roleRight = __webpack_require__(15);
+const roleRightRef = __webpack_require__(16);
+const user = __webpack_require__(19);
+const userAgent = __webpack_require__(20);
+const userRole = __webpack_require__(14);
 const label = __webpack_require__(76);
-const atomLabel = __webpack_require__(6);
-const atomLabelRef = __webpack_require__(7);
-const atomStar = __webpack_require__(5);
+const atomLabel = __webpack_require__(7);
+const atomLabelRef = __webpack_require__(8);
+const atomStar = __webpack_require__(6);
 const func = __webpack_require__(1);
-const functionStar = __webpack_require__(9);
-const functionLocale = __webpack_require__(10);
-const roleFunction = __webpack_require__(16);
+const functionStar = __webpack_require__(10);
+const functionLocale = __webpack_require__(11);
+const roleFunction = __webpack_require__(17);
 const comment = __webpack_require__(77);
 const commentView = __webpack_require__(78);
 const commentHeart = __webpack_require__(79);
