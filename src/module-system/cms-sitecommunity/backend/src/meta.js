@@ -37,6 +37,9 @@ module.exports = app => {
           search: {
             validator: 'postSearch',
           },
+          orders: [
+            { name: 'sticky', title: 'Sticky', by: 'desc' },
+          ],
         },
       },
       functions: {
