@@ -4,10 +4,11 @@
       <f7-nav-right>
         <f7-link v-if="showPopover" iconMaterial="add" :popover-open="`#${popoverId}`"></f7-link>
         <eb-link iconMaterial="search" :onPerform="onPerformSearch"></eb-link>
+        <eb-link iconMaterial="sort" :onPerform="onPerformAtomOrders"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <eb-tab-page-content :tab="false" tab-active>
-      <eb-atoms slot="list" mode="all" :atomClass="atomClass" :where="{categoryId}"></eb-atoms>
+      <eb-atoms ref="all" slot="list" mode="all" :atomClass="atomClass" :where="{categoryId}"></eb-atoms>
     </eb-tab-page-content>
     <f7-popover :id="popoverId">
       <f7-list v-if="showPopover" inset>
@@ -87,6 +88,9 @@ export default {
     onPerformSearch() {
       const url = this.combineAtomClass('/a/base/atom/search');
       this.$view.navigate(url, { target: '_self' });
+    },
+    onPerformAtomOrders(event) {
+      this.$refs.all.openPopoverForAtomOrders(event.currentTarget);
     },
   },
 };

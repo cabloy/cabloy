@@ -29,10 +29,16 @@ module.exports = app => {
     }
 
     _getMeta(item) {
+      // flags
+      const flags = [];
+      if (item.sticky) flags.push(this.ctx.text('Sticky'));
+      if (item.sorting) flags.push(item.sorting);
+      // meta
       const meta = {
         summary: item.summary,
-        flags: item.sticky ? this.ctx.text('Sticky') : null,
+        flags,
       };
+      // ok
       item._meta = meta;
     }
 
