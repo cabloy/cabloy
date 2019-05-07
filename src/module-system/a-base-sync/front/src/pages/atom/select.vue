@@ -42,20 +42,23 @@ export default {
   mounted() {
     // pageContext
     const contextParams = this.contextParams;
-    // params
-    let selectedAtomIds;
-    if (contextParams.selectMode === 'single') {
-      selectedAtomIds = contextParams.selectedAtomId ? [ contextParams.selectedAtomId ] : null;
-    } else {
-      selectedAtomIds = contextParams.selectedAtomIds;
-    }
-    this.params = { selectedAtomIds };
     // selectMode
     this.selectMode = contextParams.selectMode;
     // atomClass
     this.atomClass = contextParams.atomClass;
     // where
     this.where = contextParams.where;
+    // params
+    let selectedAtomIds;
+    if (contextParams.selectMode === 'single') {
+      selectedAtomIds = contextParams.selectedAtomId ? [ contextParams.selectedAtomId ] : null;
+    } else {
+      selectedAtomIds = contextParams.selectedAtomIds ? contextParams.selectedAtomIds.concat() : null;
+    }
+    this.params = {
+      selectMode: this.selectMode,
+      selectedAtomIds,
+    };
     // reload
     this.$nextTick(() => {
       this.$refs.list.reload(true);
@@ -88,14 +91,27 @@ export default {
           params: {},
           callback: (code, data) => {
             if (code === 200) {
-              console.log(data);
+              this._updateSelectedAtoms(data);
             }
           },
         },
       });
     },
+    _updateSelectedAtoms(selectedAtoms) {
+      this.$refs.list.updateSelectedAtoms(selectedAtoms);
+    },
     onPerformDone() {
-
+      // selectedAtoms
+      const selectedAtoms = this.$refs.list.getSelectedAtoms();
+      let res;
+      if (this.selectMode === 'single') {
+        res = (selectedAtoms && selectedAtoms.length > 0) ? selectedAtoms[0] : null;
+      } else {
+        res = (selectedAtoms && selectedAtoms.length > 0) ? selectedAtoms : null;
+      }
+      // ok
+      this.contextCallback(200, res);
+      this.$f7router.back();
     },
   },
 };

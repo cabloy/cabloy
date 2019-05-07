@@ -1,7 +1,7 @@
 <template>
   <div>
     <f7-list>
-      <eb-list-item class="item" v-for="item of items" :key="item.atomId" :name="radioName" :radio="mode==='selectSearch' && params.selectMode==='single'" :checkbox="mode==='selectSearch' && params.selectMode==='single'" :link="(itemShow || mode==='selectSearch')?false:'#'" :context="item" :onPerform="onItemClick" swipeout @swipeout:opened="onSwipeoutOpened($event,item)" @contextmenu:opened="onSwipeoutOpened($event,item)" @change="onItemChange($event,item)">
+      <eb-list-item class="item" v-for="item of items" :key="item.atomId" :name="radioName" :radio="mode==='selectSearch' && params.selectMode==='single'" :checkbox="mode==='selectSearch' && params.selectMode==='multiple'" :link="(itemShow || mode==='selectSearch')?false:'#'" :context="item" :onPerform="onItemClick" swipeout @swipeout:opened="onSwipeoutOpened($event,item)" @contextmenu:opened="onSwipeoutOpened($event,item)" @change="onItemChange($event,item)">
         <template v-if="itemShow">
           <div slot="media">
             <img class="avatar avatar32" :src="getItemMetaMedia(item)">
@@ -529,20 +529,22 @@ export default {
       this.reload(true);
     },
     onItemSelectRemove(event, item) {
-      // remove from selectedAtomIds
-      if (this.selectedAtomIds) {
-        const index = this.selectedAtomIds.findIndex(_item => _item === item.atomId);
-        if (index !== -1) {
-          this.selectedAtomIds.splice(index, 1);
+      this.$view.dialog.confirm().then(() => {
+        // remove from selectedAtomIds
+        if (this.selectedAtomIds) {
+          const index = this.selectedAtomIds.findIndex(_item => _item === item.atomId);
+          if (index !== -1) {
+            this.selectedAtomIds.splice(index, 1);
+          }
         }
-      }
-      // remove from list
-      const index = this.items.findIndex(_item => _item.atomId === item.atomId);
-      if (index !== -1) {
-        this.items.splice(index, 1);
-      }
+        // remove from list
+        const index = this.items.findIndex(_item => _item.atomId === item.atomId);
+        if (index !== -1) {
+          this.items.splice(index, 1);
+        }
+      });
       // close
-      this.$meta.util.swipeoutClose(event.target);
+      // this.$meta.util.swipeoutClose(event.target);
     },
     onItemChange(event, item) {
       if (this.params.selectMode === 'single') {
@@ -560,7 +562,32 @@ export default {
       }
     },
     getSelectedAtoms() {
-      return this.selectedAtoms;
+      if (this.mode === 'selectSearch') {
+        return this.selectedAtoms;
+      }
+      if (this.mode === 'select') {
+        return this.items;
+      }
+    },
+    updateSelectedAtoms(selectedAtoms) {
+      if (!selectedAtoms || selectedAtoms.length === 0) return;
+      let needReload = false;
+      if (this.params.selectMode === 'single') {
+        this.selectedAtomIds = [ selectedAtoms[0].atomId ];
+        needReload = true;
+      } else {
+        if (!this.selectedAtomIds) this.selectedAtomIds = [];
+        for (const item of selectedAtoms) {
+          const index = this.selectedAtomIds.indexOf(item.atomId);
+          if (index === -1) {
+            this.selectedAtomIds.push(item.atomId);
+            needReload = true;
+          }
+        }
+      }
+      if (needReload) {
+        this.reload(true);
+      }
     },
     getAtomOrderKey(atomOrder) {
       return `${atomOrder.tableAlias}.${atomOrder.name}`;
