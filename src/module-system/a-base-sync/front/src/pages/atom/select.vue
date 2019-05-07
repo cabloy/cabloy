@@ -88,7 +88,7 @@ export default {
           params: {},
           callback: (code, data) => {
             if (code === 200) {
-              this.atomIds = data.atomIds;
+              console.log(data);
             }
           },
         },

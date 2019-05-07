@@ -1,7 +1,7 @@
 <template>
   <div>
     <f7-list>
-      <eb-list-item class="item" v-for="item of items" :key="item.atomId" :link="itemShow?false:'#'" :context="item" :onPerform="onItemClick" swipeout @swipeout:opened="onSwipeoutOpened($event,item)" @contextmenu:opened="onSwipeoutOpened($event,item)">
+      <eb-list-item class="item" v-for="item of items" :key="item.atomId" :name="radioName" :radio="mode==='selectSearch' && params.selectMode==='single'" :checkbox="mode==='selectSearch' && params.selectMode==='single'" :link="(itemShow || mode==='selectSearch')?false:'#'" :context="item" :onPerform="onItemClick" swipeout @swipeout:opened="onSwipeoutOpened($event,item)" @contextmenu:opened="onSwipeoutOpened($event,item)" @change="onItemChange($event,item)">
         <template v-if="itemShow">
           <div slot="media">
             <img class="avatar avatar32" :src="getItemMetaMedia(item)">
@@ -35,7 +35,7 @@
           </div>
         </template>
         <template v-if="!itemShow">
-          <div slot="media">
+          <div slot="media" v-if="mode!=='selectSearch'">
             <img class="avatar avatar32" :src="getItemMetaMedia(item)">
           </div>
           <div slot="root-start" class="header">
@@ -112,7 +112,7 @@ export default {
     global: false,
   },
   props: {
-    // mode: list/drafts/stars/labels/search/all
+    // mode: list/drafts/stars/labels/search/all / select/selectSearch
     mode: {
       type: String,
     },
@@ -131,9 +131,11 @@ export default {
   },
   data() {
     return {
+      radioName: Vue.prototype.$meta.util.nextId('radio'),
       items: this.itemShow ? [ this.itemShow ] : [],
       atomOrderSelected: null,
       selectedAtomIds: null,
+      selectedAtoms: null,
     };
   },
   computed: {
@@ -148,6 +150,11 @@ export default {
     },
     popoverOrdersReady() {
       return !!this.ordersAll;
+    },
+    mode2() {
+      if (this.mode === 'select') return 'all';
+      if (this.mode === 'selectSearch') return 'search';
+      return this.mode;
     },
     atomOrders() {
       if (!this.ordersAll) return null;
@@ -197,6 +204,12 @@ export default {
           tableAlias: 'a',
         };
       } else if (this.mode === 'select') {
+        atomOrder = {
+          name: 'atomName',
+          by: 'asc',
+          tableAlias: 'a',
+        };
+      } else if (this.mode === 'selectSearch') {
         atomOrder = {
           name: 'atomName',
           by: 'asc',
@@ -257,11 +270,11 @@ export default {
           page: { index },
         };
       } else if (this.mode === 'all') {
-        // special: all = list + atomEnabled=1
+        // special: all = list + atomEnabled=0
         options = {
           page: { index },
         };
-      } else if (this.mode === 'search') {
+      } else if (this.mode === 'search' || this.mode === 'selectSearch') {
         // where
         const where = {};
         if (this.params && this.params.atomName) {
@@ -302,7 +315,7 @@ export default {
         [ this.getAtomOrderKey(atomOrderCurrent), atomOrderCurrent.by ],
       ];
       // mode
-      options.mode = this.mode;
+      options.mode = this.mode2;
       // fetch
       return this.$api.post('atom/select', {
         atomClass: this.atomClass,
@@ -479,7 +492,7 @@ export default {
       return flag ? flag.titleLocale : this.$text('Flag Not Found');
     },
     onItemClick(event, item) {
-      if (this.itemShow) return;
+      if (this.itemShow || this.mode === 'selectSearch') return;
       return this.onAction(event, {
         item,
         action: {
@@ -530,6 +543,24 @@ export default {
       }
       // close
       this.$meta.util.swipeoutClose(event.target);
+    },
+    onItemChange(event, item) {
+      if (this.params.selectMode === 'single') {
+        if (event.target.checked) {
+          this.selectedAtoms = [ item ];
+        }
+      } else {
+        if (!this.selectedAtoms) this.selectedAtoms = [];
+        const index = this.selectedAtoms.findIndex(_item => _item.atomId === item.atomId);
+        if (event.target.checked && index === -1) {
+          this.selectedAtoms.push(item);
+        } else if (!event.target.checked && index > -1) {
+          this.selectedAtoms.splice(index, 1);
+        }
+      }
+    },
+    getSelectedAtoms() {
+      return this.selectedAtoms;
     },
     getAtomOrderKey(atomOrder) {
       return `${atomOrder.tableAlias}.${atomOrder.name}`;

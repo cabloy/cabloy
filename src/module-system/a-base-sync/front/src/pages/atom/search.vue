@@ -1,5 +1,5 @@
 <template>
-  <eb-page>
+  <eb-page @page:afterin="onPageAfterIn">
     <eb-navbar :title="pageTitle" eb-back-link="Back">
       <f7-nav-right>
         <eb-button ref="buttonSubmit" iconMaterial="search" :onPerform="onPerformSearch"></eb-button>
@@ -46,6 +46,7 @@ export default {
       atomClassInit: atomClass,
       mode,
       selectMode,
+      closeOnPageAfterIn: false,
     };
   },
   computed: {
@@ -126,6 +127,13 @@ export default {
         },
       });
     },
+    onPageAfterIn() {
+      if (this.closeOnPageAfterIn) {
+        this.$nextTick(() => {
+          this.$f7router.back();
+        });
+      }
+    },
     onPerformSearch() {
       // atomClassExtra
       let atomClassExtra;
@@ -154,7 +162,6 @@ export default {
         queries.where = JSON.stringify(this.where);
       }
       queries.mode = this.mode;
-      queries.selectMode = this.selectMode;
       const url = this.$meta.util.combineQueries('/a/base/atom/searchResult', queries);
       this.$view.navigate(url, {
         target: '_self',
@@ -163,6 +170,15 @@ export default {
             atomName: this.atomName,
             label: this.label,
             atomClassExtra,
+            selectMode: this.selectMode,
+          },
+          callback: (code, data) => {
+            if (code === 200) {
+              if (this.mode === 'selectSearch') {
+                this.contextCallback(200, data);
+                this.closeOnPageAfterIn = true;
+              }
+            }
           },
         },
       });

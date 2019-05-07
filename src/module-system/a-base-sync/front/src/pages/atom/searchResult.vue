@@ -3,9 +3,10 @@
     <eb-navbar :title="$text('Search Result')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="sort" :onPerform="onPerformAtomOrders"></eb-link>
+        <eb-link v-if="mode==='selectSearch'" iconMaterial="done" :onPerform="onPerformDone"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <atoms ref="list" mode="search" :params="params" :atomClass="atomClass" :where="where"></atoms>
+    <atoms ref="list" :mode="modeAtoms" :params="params" :atomClass="atomClass" :where="where"></atoms>
   </eb-page>
 </template>
 <script>
@@ -24,18 +25,22 @@ export default {
     const atomClass = (module && atomClassName) ? { module, atomClassName } : null;
     const where = (query && query.where) ? JSON.parse(query.where) : null;
     const mode = query && query.mode;
-    const selectMode = query && query.selectMode;
     return {
       atomClass,
       where,
       mode,
-      selectMode,
     };
   },
   computed: {
     params() {
       return this.contextParams;
     },
+    modeAtoms() {
+      return this.mode || 'search';
+    },
+  },
+  mounted() {
+    this.$refs.list.reload(true);
   },
   methods: {
     onRefresh(event, done) { // eslint-disable-line
@@ -48,9 +53,11 @@ export default {
     onPerformAtomOrders(event) {
       this.$refs.list.openPopoverForAtomOrders(event.currentTarget);
     },
-  },
-  mounted() {
-    this.$refs.list.reload(true);
+    onPerformDone(event) {
+      const selectedAtoms = this.$refs.list.getSelectedAtoms();
+      this.contextCallback(200, selectedAtoms);
+      this.$f7router.back();
+    },
   },
 };
 

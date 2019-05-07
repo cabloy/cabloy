@@ -606,7 +606,7 @@ const Fn = module.exports = ctx => {
       if (mode === 'Search') {
         return atomClass.tableNameSearch || atomClass.tableNameFull || atomClass.tableName;
       }
-      // special: all = list + atomEnabled=1
+      // special: all = list + atomEnabled=0
       return atomClass[`tableName${mode}`] || atomClass.tableName;
     }
 
