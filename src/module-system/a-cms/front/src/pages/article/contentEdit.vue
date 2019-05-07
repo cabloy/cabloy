@@ -3,7 +3,7 @@
     <eb-navbar :title="title" eb-back-link="Back">
       <f7-nav-right>
         <eb-link v-if="!readOnly" iconMaterial="save" :onPerform="onPerformSave"></eb-link>
-        <eb-link iconMaterial="visibility" :onPerform="onPerformPreview"></eb-link>
+        <eb-link v-if="!!$device.desktop" iconMaterial="visibility" :onPerform="onPerformPreview"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <template v-if="module">

@@ -16,7 +16,7 @@
               <eb-link :eb-href="combineAtomClass(`category/list?language=${item.value}`)">{{$text('Categories')}}</eb-link>
               <eb-link :eb-href="combineAtomClass(`config/language?language=${item.value}`)">{{$text('Config')}}</eb-link>
               <eb-link :context="item" :onPerform="onPerformBuildLanguage">{{$text('Build')}}</eb-link>
-              <eb-link :context="item" :onPerform="onPerformPreview">{{$text('Preview')}}</eb-link>
+              <eb-link v-if="!!$device.desktop" :context="item" :onPerform="onPerformPreview">{{$text('Preview')}}</eb-link>
             </div>
           </eb-list-item>
         </template>
