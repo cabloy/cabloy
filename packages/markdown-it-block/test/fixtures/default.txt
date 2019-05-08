@@ -1,0 +1,34 @@
+
+Simple Tag
+.
+$$$ iframe
+{
+  "src":"https://cabloy.com"
+}
+$$$
+.
+<div><iframe src="https://cabloy.com"></iframe></div>
+.
+
+
+Ending marker could be longer
+.
+$$$$$ name $$$$$
+  hello world
+$$$$$$$$$$$$$$$$
+.
+<div><iframe src="https://cabloy.com"></iframe></div>
+.
+
+
+They should terminate paragraphs
+.
+blah blah
+$$$ iframe
+{
+  "src":"https://cabloy.com"
+}
+$$$
+.
+<div><iframe src="https://cabloy.com"></iframe></div>
+.
