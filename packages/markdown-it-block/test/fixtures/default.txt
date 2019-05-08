@@ -1,5 +1,5 @@
 
-Simple Tag
+Simple tag
 .
 $$$ iframe
 {
@@ -10,11 +10,28 @@ $$$
 <div><iframe src="https://cabloy.com"></iframe></div>
 .
 
+Undefined tag
+
+.
+$$$ undefined
+{
+  "src":"https://cabloy.com"
+}
+$$$
+.
+<div>
+{
+  &quot;src&quot;: &quot;https://cabloy.com&quot;
+}
+</div>
+.
 
 Ending marker could be longer
 .
-$$$$$ name $$$$$
-  hello world
+$$$$$ iframe
+{
+  "src":"https://cabloy.com"
+}
 $$$$$$$$$$$$$$$$
 .
 <div><iframe src="https://cabloy.com"></iframe></div>
@@ -30,5 +47,6 @@ $$$ iframe
 }
 $$$
 .
+<p>blah blah</p>
 <div><iframe src="https://cabloy.com"></iframe></div>
 .

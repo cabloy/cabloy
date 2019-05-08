@@ -8,7 +8,7 @@
   },
   "license": "ISC",
   "scripts": {
-    "test": "make test"
+    "test": "mocha -R spec"
   },
   "keywords": [
     "markdown-it-plugin",
