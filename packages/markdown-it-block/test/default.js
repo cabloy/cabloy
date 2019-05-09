@@ -7,9 +7,9 @@ var generate = require('markdown-it-testgen');
 /*eslint-env mocha*/
 
 var options = {
-  tags:{
+  blocks:{
     iframe:{
-      render:function ({ md, token, content, tag }){
+      render:function ({ md, token, content, block }){
         var src = md.utils.escapeHtml(content.src);
         return `<div><iframe src="${src}"></iframe></div>\n`;
       }
@@ -17,7 +17,7 @@ var options = {
   }
 };
 
-describe('default container', function () {
+describe('default block', function () {
   var md = require('markdown-it')()
               .use(require('../'), options);
 

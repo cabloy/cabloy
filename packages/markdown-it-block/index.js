@@ -3,24 +3,24 @@
 'use strict';
 
 
-module.exports = function cabloycmstag_plugin(md, options) {
+module.exports = function block_plugin(md, options) {
 
-  function render(tokens, idx /*_options, env, self*/) {
-    // tag
+  function blockRender(tokens, idx /*_options, env, self*/) {
+    // block
     var token = tokens[idx];
-    var tagName = token.info.trim().split(' ', 2)[0];
-    var tag = options.tags[tagName];
+    var blockName = token.info.trim().split(' ', 2)[0];
+    var block = options.blocks[blockName];
     // content: for safe
     var content = token.content ? JSON.parse(token.content) : {};
-    if (!tag || !tag.render){
+    if (!block || !block.render){
       // default
       var res = JSON.stringify(content, null, 2);
       return `<div>\n${md.utils.escapeHtml(res)}\n</div>\n`;
     }
-    return tag.render({ md, token, content, tag });
+    return block.render({ md, token, content, block });
   }
 
-  function cabloycmstag(state, startLine, endLine, silent) {
+  function blockRuler(state, startLine, endLine, silent) {
     var marker, len, params, nextLine, mem, token, markup,
         haveEndMarker = false,
         pos = state.bMarks[startLine] + state.tShift[startLine],
@@ -77,7 +77,7 @@ module.exports = function cabloycmstag_plugin(md, options) {
     // If a fence has heading spaces, they should be removed from its inner block
     len = state.sCount[startLine];
     state.line = nextLine + (haveEndMarker ? 1 : 0);
-    token         = state.push('cabloycmstag', 'div', 0);
+    token         = state.push('cabloy_cms_block', 'div', 0);
     token.info    = params;
     token.content = state.getLines(startLine + 1, nextLine, len, true);
     token.markup  = markup;
@@ -85,8 +85,8 @@ module.exports = function cabloycmstag_plugin(md, options) {
     return true;
   }
 
-  md.block.ruler.before('fence', 'cabloycmstag', cabloycmstag, {
+  md.block.ruler.before('fence', 'cabloy_cms_block', blockRuler, {
     alt: [ 'paragraph', 'reference', 'blockquote', 'list' ]
   });
-  md.renderer.rules.cabloycmstag = render;
+  md.renderer.rules.cabloy_cms_block = blockRender;
 };

@@ -1,10 +1,11 @@
 {
-  "name": "@zhennann/markdown-it-cabloycmstag",
+  "name": "@zhennann/markdown-it-block",
   "version": "1.0.1",
   "description": "Plugin to create block-level custom tags for markdown-it markdown parser on Cabloy-CMS",
+  "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zhennann/markdown-it-cabloycmstag.git"
+    "url": "git+https://github.com/zhennann/markdown-it-block.git"
   },
   "license": "ISC",
   "scripts": {
