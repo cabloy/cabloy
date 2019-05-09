@@ -4,12 +4,13 @@
 
 
 module.exports = function block_plugin(md, options) {
+  options = options || {};
 
   function blockRender(tokens, idx /*_options, env, self*/) {
     // block
     var token = tokens[idx];
     var blockName = token.info.trim().split(' ', 2)[0];
-    var block = options.blocks[blockName];
+    var block = options.blocks && options.blocks[blockName];
     // content: for safe
     var content = token.content ? JSON.parse(token.content) : {};
     if (!block || !block.render){
