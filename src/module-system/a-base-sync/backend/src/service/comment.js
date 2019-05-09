@@ -1,6 +1,7 @@
 const require3 = require('require3');
 const trimHtml = require3('@zhennann/trim-html');
 const markdown = require3('@zhennann/markdown');
+const markdonw_it_block = require3('@zhennann/markdown-it-block');
 
 module.exports = app => {
 
@@ -193,6 +194,7 @@ module.exports = app => {
     _renderContent({ content, replyContent, replyUserName }) {
       const _content = this._fullContent({ content, replyContent, replyUserName });
       const md = markdown.create();
+      md.use(markdonw_it_block);
       return md.render(_content);
     }
 

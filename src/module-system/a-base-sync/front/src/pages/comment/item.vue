@@ -15,7 +15,7 @@
 <script>
 export default {
   meta: {
-    size: 'large',
+    size: 'middle',
   },
   data() {
     return {
