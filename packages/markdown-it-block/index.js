@@ -23,9 +23,7 @@ module.exports = function block_plugin(md, options) {
       return `<div class="alert-danger">
 <p><strong>Block: ${md.utils.escapeHtml(blockName)}</strong></p>
 <p>${md.utils.escapeHtml(errorMessage)}</p>
-<pre><code>
-${md.utils.escapeHtml(token.content)}
-</code></pre>
+<pre><code>${md.utils.escapeHtml(token.content)}</code></pre>
 </div>
 `;
     }
@@ -35,9 +33,7 @@ ${md.utils.escapeHtml(token.content)}
       var res = JSON.stringify(content, null, 2);
       return `<div class="alert-info">
 <p><strong>Block: ${md.utils.escapeHtml(blockName)}</strong></p>
-<pre><code>
-${md.utils.escapeHtml(res)}
-</code></pre>
+<pre><code>${md.utils.escapeHtml(res)}</code></pre>
 </div>
 `;
     }
