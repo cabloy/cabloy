@@ -1,6 +1,9 @@
 const require3 = require('require3');
 const fse = require3('fs-extra');
+const extend = require3('extend2');
 const Build = require('../common/build.js');
+
+const _blocksLocales = {};
 
 module.exports = app => {
 
@@ -84,6 +87,36 @@ module.exports = app => {
         // sleep 1s then continue
         await this.ctx.meta.util.sleep(1000);
       }
+    }
+
+    getBlocks({ locale }) {
+      if (!_blocksLocales[locale]) {
+        _blocksLocales[locale] = this._prepareBlocks({ locale });
+      }
+      return _blocksLocales[locale];
+    }
+
+    _prepareBlocks({ locale }) {
+      const blocks = {};
+      // modulesArray for block override
+      for (const module of this.app.meta.modulesArray) {
+        if (module.main.meta && module.main.meta.cms &&
+          module.main.meta.cms.plugin && module.main.meta.cms.plugin.blocks) {
+          const blocksModule = this._prepareBlocksModule({ locale, module, blocks: module.main.meta.cms.plugin.blocks });
+          extend(true, blocks, blocksModule);
+        }
+      }
+      return blocks;
+    }
+
+    _prepareBlocksModule({ locale, module, blocks }) {
+      const blocksModule = extend(true, {}, blocks);
+      for (const key in blocksModule) {
+        const block = blocksModule[key];
+        block.meta.module = module.relativeName;
+        block.meta.titleLocale = this.ctx.text.locale(locale, block.meta.title);
+      }
+      return blocksModule;
     }
 
   }

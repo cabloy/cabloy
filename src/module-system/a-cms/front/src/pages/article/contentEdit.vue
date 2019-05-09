@@ -8,7 +8,7 @@
     </eb-navbar>
     <template v-if="module">
       <eb-box>
-        <mavon-editor ref="editor" :value="item.content" @change="onChange" @save="onSave" :onImageUpload="onImageUpload" :onAudioUpload="onAudioUpload" :language="language" :subfield="subfield" :editable="editable" :defaultOpen="defaultOpen" :toolbarsFlag="toolbarsFlag" :navigation="navigation" :toolbars="toolbars" />
+        <mavon-editor ref="editor" :value="item.content" @change="onChange" @save="onSave" :onImageUpload="onImageUpload" :onAudioUpload="onAudioUpload" :onBlockAdd="onBlockAdd" :language="language" :subfield="subfield" :editable="editable" :defaultOpen="defaultOpen" :toolbarsFlag="toolbarsFlag" :navigation="navigation" :toolbars="toolbars" />
       </eb-box>
     </template>
   </eb-page>
@@ -74,9 +74,10 @@ export default {
         ul: true, // 无序列表
         link: true, // 链接
         imagelink: true, // 图片链接
-        audiolink: true,
+        audiolink: false,
         code: true, // code
         table: true, // 表格
+        block: true, // 区块
         /* 1.3.5 */
         undo: true, // 上一步
         redo: true, // 下一步
@@ -158,6 +159,11 @@ export default {
             },
           },
         });
+      });
+    },
+    onBlockAdd() {
+      return new Promise((resolve, reject) => {
+        this.$view.navigate('/a/cms/block/list');
       });
     },
   },

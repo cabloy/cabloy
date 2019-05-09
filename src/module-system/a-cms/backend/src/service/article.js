@@ -1,6 +1,7 @@
 const require3 = require('require3');
 const trimHtml = require3('@zhennann/trim-html');
 const markdown = require3('@zhennann/markdown');
+const markdonw_it_block = require3('@zhennann/markdown-it-block');
 const uuid = require3('uuid');
 
 module.exports = app => {
@@ -98,8 +99,11 @@ module.exports = app => {
       }
       // markdown
       const md = markdown.create();
-      let html;
+      // markdown-it-block
+      const blocks = this.ctx.service.site.getBlocks({ locale: item.language });
+      md.use(markdonw_it_block, { blocks });
       // html
+      let html;
       if (item.editMode === 1) {
         html = item.content ? md.render(item.content) : '';
       } else {
