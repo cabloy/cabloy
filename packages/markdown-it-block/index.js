@@ -2,22 +2,46 @@
 //
 'use strict';
 
-
 module.exports = function block_plugin(md, options) {
   options = options || {};
 
-  function blockRender(tokens, idx /*_options, env, self*/) {
+  function blockRender(tokens, idx /* _options, env, self */) {
     // block
     var token = tokens[idx];
     var blockName = token.info.trim().split(' ', 2)[0];
     var block = options.blocks && options.blocks[blockName];
-    // content: for safe
-    var content = token.content ? JSON.parse(token.content) : {};
-    if (!block || !block.render){
-      // default
-      var res = JSON.stringify(content, null, 2);
-      return `<div>\n${md.utils.escapeHtml(res)}\n</div>\n`;
+    // content
+    var content;
+    var errorMessage;
+    try {
+      content = token.content ? JSON.parse(token.content) : {};
+    } catch (err) {
+      errorMessage = err.message;
     }
+    // error
+    if (errorMessage) {
+      return `<div class="alert-danger">
+<p><strong>Block: ${md.utils.escapeHtml(blockName)}</strong></p>
+<p>${md.utils.escapeHtml(errorMessage)}</p>
+<pre><code>
+${md.utils.escapeHtml(token.content)}
+</code></pre>
+</div>
+`;
+    }
+    // render
+    if (!block || !block.render) {
+      // placeholder
+      var res = JSON.stringify(content, null, 2);
+      return `<div class="alert-info">
+<p><strong>Block: ${md.utils.escapeHtml(blockName)}</strong></p>
+<pre><code>
+${md.utils.escapeHtml(res)}
+</code></pre>
+</div>
+`;
+    }
+    // block
     return block.render({ md, token, content, block });
   }
 
