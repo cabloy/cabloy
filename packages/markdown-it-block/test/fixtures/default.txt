@@ -19,10 +19,11 @@ $$$ undefined
 }
 $$$
 .
-<div>
-{
+<div class="alert-info">
+<p><strong>Block: undefined</strong></p>
+<pre><code>{
   &quot;src&quot;: &quot;https://cabloy.com&quot;
-}
+}</code></pre>
 </div>
 .
 

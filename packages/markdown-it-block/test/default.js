@@ -7,6 +7,11 @@ var generate = require('markdown-it-testgen');
 /*eslint-env mocha*/
 
 var options = {
+  utils:{
+    text(){
+      return 'Block';
+    }
+  },
   blocks:{
     iframe:{
       render:function ({ md, token, content, block }){
