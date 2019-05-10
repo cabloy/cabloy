@@ -16,4 +16,5 @@ export default [
   { path: 'article/list', component: load('article/list') },
   { path: 'tag/select', component: load('tag/select') },
   { path: 'block/list', component: load('block/list') },
+  { path: 'block/item', component: load('block/item') },
 ];

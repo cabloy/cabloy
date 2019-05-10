@@ -1,88 +1,53 @@
 <template>
-  <eb-page>
-    <eb-navbar :title="pageTitle" eb-back-link="Back"> </eb-navbar>
+  <eb-page @page:afterin="onPageAfterIn">
+    <eb-navbar :title="$text('Block')" eb-back-link="Back"> </eb-navbar>
     <f7-list>
-      <eb-list-item :title="$text('Site')">
-        <div slot="after">
-          <eb-link :eb-href="combineAtomClass('config/site')">{{$text('Config')}}</eb-link>
-          <eb-link :onPerform="onPerformBuild">{{$text('Build')}}</eb-link>
-        </div>
+      <eb-list-item v-for="item of blocks" :key="item.meta.name" :title="item.meta.titleLocale" link="#" :context="item" :onPerform="onPerformItem">
       </eb-list-item>
-      <f7-list-group>
-        <f7-list-item :title="$text('Languages')" group-title></f7-list-item>
-        <template v-if="languages">
-          <eb-list-item v-for="item of languages" :key="item.value" :title="item.title">
-            <div slot="after">
-              <eb-link :eb-href="combineAtomClass(`category/list?language=${item.value}`)">{{$text('Categories')}}</eb-link>
-              <eb-link :eb-href="combineAtomClass(`config/language?language=${item.value}`)">{{$text('Config')}}</eb-link>
-              <eb-link :context="item" :onPerform="onPerformBuildLanguage">{{$text('Build')}}</eb-link>
-              <eb-link v-if="!!$device.desktop" :context="item" :onPerform="onPerformPreview">{{$text('Preview')}}</eb-link>
-            </div>
-          </eb-list-item>
-        </template>
-      </f7-list-group>
     </f7-list>
   </eb-page>
 </template>
 <script>
 import Vue from 'vue';
-const ebModules = Vue.prototype.$meta.module.get('a-base').options.components.ebModules;
-import utils from '../../common/utils.js';
+const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.components.ebPageContext;
 export default {
-  mixins: [ ebModules ],
+  mixins: [ ebPageContext ],
   data() {
-    const atomClass = utils.parseAtomClass(this.$f7route.query);
     return {
-      atomClass,
+      blocks: null,
+      closeOnPageAfterIn: false,
     };
   },
-  computed: {
-    languages() {
-      return this.$local.state.languages[this.atomClass.module];
-    },
-    pageTitle() {
-      const module = this.getModule(this.atomClass.module);
-      if (module) return module.titleLocale;
-      return '';
-    },
-  },
   created() {
-    this.$local.dispatch('getLanguages', {
-      atomClass: this.atomClass,
+    this.$api.post('site/getBlockArray').then(data => {
+      this.blocks = data;
     });
   },
   methods: {
-    combineAtomClass(url) {
-      return utils.combineAtomClass(this.atomClass, url);
-    },
-    onPerformBuild() {
-      return this.$view.dialog.confirm().then(() => {
-        return this.$api.post('site/buildLanguages', {
-          atomClass: this.atomClass,
-        }).then(data => {
-          const progressId = data.progressId;
-          this.$view.dialog.progressbar({ progressId, title: this.$text('Build All Languages') });
+    onPageAfterIn() {
+      if (this.closeOnPageAfterIn) {
+        this.$nextTick(() => {
+          this.$f7router.back();
         });
-      });
+      }
     },
-    onPerformBuildLanguage(event, context) {
-      return this.$view.dialog.confirm().then(() => {
-        return this.$api.post('site/buildLanguage', {
-          atomClass: this.atomClass,
-          language: context.value,
-        }).then(data => {
-          const progressId = data.progressId;
-          this.$view.dialog.progressbar({ progressId, title: `${this.$text('Build')} ${context.title}` });
-        });
-      });
-    },
-    onPerformPreview(event, context) {
-      return this.$api.post('site/getUrl', {
-        atomClass: this.atomClass,
-        language: context.value,
-        path: 'index.html',
-      }).then(data => {
-        window.open(data, `cms_site_${this.atomClass.module}_${context.value}`);
+    onPerformItem(event, block) {
+      this.$view.navigate('/a/cms/block/item', {
+        context: {
+          params: {
+            block,
+          },
+          callback: (code, data) => {
+            if (code === 200) {
+              // data: {name,content}
+              this.contextCallback(200, data);
+              this.closeOnPageAfterIn = true;
+            }
+            if (code === false) {
+              // donothing
+            }
+          },
+        },
       });
     },
   },

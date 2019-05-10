@@ -4,6 +4,7 @@ const extend = require3('extend2');
 const Build = require('../common/build.js');
 
 const _blocksLocales = {};
+const _blockArrayLocales = {};
 
 module.exports = app => {
 
@@ -91,9 +92,34 @@ module.exports = app => {
 
     getBlocks({ locale }) {
       if (!_blocksLocales[locale]) {
-        _blocksLocales[locale] = this._prepareBlocks({ locale });
+        const blocks = this._prepareBlocks({ locale });
+        // object
+        _blocksLocales[locale] = blocks;
+        // array order by titleLocale
+        const blockArray = [];
+        for (const key in blocks) {
+          blockArray.push(blocks[key]);
+        }
+        _blockArrayLocales[locale] = blockArray.sort((a, b) => a.meta.titleLocale.localeCompare(b.meta.titleLocale, locale));
       }
       return _blocksLocales[locale];
+    }
+
+    getBlockArray({ locale }) {
+      this.getBlocks({ locale });
+      return _blockArrayLocales[locale];
+    }
+
+    async blockSave({ blockName, item }) {
+      const blocks = this.getBlocks({ locale: this.ctx.locale });
+      const block = blocks[blockName];
+      await this.ctx.meta.validation.validate({
+        module: block.meta.module,
+        validator: block.meta.validator,
+        schema: null,
+        data: item,
+      });
+      return item;
     }
 
     _prepareBlocks({ locale }) {
@@ -103,7 +129,7 @@ module.exports = app => {
         if (module.main.meta && module.main.meta.cms &&
           module.main.meta.cms.plugin && module.main.meta.cms.plugin.blocks) {
           const blocksModule = this._prepareBlocksModule({ locale, module, blocks: module.main.meta.cms.plugin.blocks });
-          extend(true, blocks, blocksModule);
+          Object.assign(blocks, blocksModule);
         }
       }
       return blocks;
@@ -113,7 +139,7 @@ module.exports = app => {
       const blocksModule = extend(true, {}, blocks);
       for (const key in blocksModule) {
         const block = blocksModule[key];
-        block.meta.module = module.relativeName;
+        block.meta.module = module.info.relativeName;
         block.meta.titleLocale = this.ctx.text.locale(locale, block.meta.title);
       }
       return blocksModule;

@@ -163,7 +163,19 @@ export default {
     },
     onBlockAdd() {
       return new Promise((resolve, reject) => {
-        this.$view.navigate('/a/cms/block/list');
+        this.$view.navigate('/a/cms/block/list', {
+          context: {
+            callback: (code, data) => {
+              if (code === 200) {
+                // data: {name,content}
+                resolve(data);
+              }
+              if (code === false) {
+                reject();
+              }
+            },
+          },
+        });
       });
     },
   },

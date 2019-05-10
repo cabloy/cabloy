@@ -42,4 +42,5 @@ module.exports = {
   seconds: '秒',
   second2: '秒',
   Build: '构建',
+  Block: '区块',
 };

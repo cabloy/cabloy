@@ -1,6 +1,7 @@
 export default {
   Add: '添加',
   Article: '文章',
+  Block: '区块',
   Build: '构建',
   Catalog: '目录',
   Category: '目录',

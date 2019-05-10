@@ -101,7 +101,16 @@ module.exports = app => {
       const md = markdown.create();
       // markdown-it-block
       const blocks = this.ctx.service.site.getBlocks({ locale: item.language });
-      md.use(markdonw_it_block, { blocks });
+      // block options
+      const blockOptions = {
+        utils: {
+          text: (...args) => {
+            return this.ctx.text.locale(item.language, ...args);
+          },
+        },
+        blocks,
+      };
+      md.use(markdonw_it_block, blockOptions);
       // html
       let html;
       if (item.editMode === 1) {
