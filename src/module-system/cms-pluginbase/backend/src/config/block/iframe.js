@@ -4,7 +4,7 @@ module.exports = {
     title: 'Embed Page',
     validator: 'blockIFrame',
   },
-  render({ md, token, content, block }) {
+  render({ md, options, block, token, content }) {
     const url = md.utils.escapeHtml(content.url);
     const width = md.utils.escapeHtml(content.width || '100%');
     const height = md.utils.escapeHtml(content.height || '300px');
