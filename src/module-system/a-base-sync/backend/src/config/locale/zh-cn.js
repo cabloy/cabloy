@@ -23,4 +23,5 @@ module.exports = {
   Delete: '删除',
   Save: '保存',
   Submit: '提交',
+  Atom: '原子',
 };

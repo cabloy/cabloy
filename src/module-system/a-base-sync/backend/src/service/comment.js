@@ -194,7 +194,16 @@ module.exports = app => {
     _renderContent({ content, replyContent, replyUserName }) {
       const _content = this._fullContent({ content, replyContent, replyUserName });
       const md = markdown.create();
-      md.use(markdonw_it_block);
+      // block options
+      const blockOptions = {
+        utils: {
+          text: (...args) => {
+            return this.ctx.text(...args);
+          },
+        },
+      };
+      md.use(markdonw_it_block, blockOptions);
+      // render
       return md.render(_content);
     }
 
