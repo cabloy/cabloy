@@ -8,7 +8,8 @@
       "plugin": true
     },
     "dependencies": {
-      "a-instance": "1.0.0"
+      "a-instance": "1.0.0",
+      "cms-pluginbase": "1.0.0"
     }
   },
   "description": "",
