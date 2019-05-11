@@ -435,8 +435,15 @@ class Build {
       rawRootUrl: this.getUrlRawRoot(site),
       atomClass: this.atomClass,
     });
+    // load src
+    let contentSrc = await fse.readFile(fileName);
+    // load includes of plugins
+    const pluginIncludes = await this._loadPluginIncludes({ site, language });
+    contentSrc = `${pluginIncludes}\n${contentSrc}`;
     // render
-    let content = await ejs.renderFile(fileName, data, this.getOptions());
+    const options = this.getOptions();
+    options.filename = fileName;
+    let content = await ejs.render(contentSrc, data, options);
     content = await this._renderEnvs({ data, content });
     content = await this._renderCSSJSes({ data, content });
     // hot load
@@ -474,6 +481,27 @@ $(document).ready(function() {
     }
     // write
     await fse.outputFile(fileWrite, content);
+  }
+
+  async _loadPluginIncludes({ site, language }) {
+    // if exists
+    if (site._pluginIncludes) return site._pluginIncludes;
+    // modulesArray
+    let pluginIncludes = '';
+    for (const module of this.app.meta.modulesArray) {
+      if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin) {
+        // path intermediate
+        const pathIntermediate = await this.getPathIntermediate(language);
+        const incudeFileName = path.join(pathIntermediate, `plugins/${module.info.relativeName}/include.ejs`);
+        const exists = await fse.pathExists(incudeFileName);
+        if (exists) {
+          pluginIncludes = `${pluginIncludes}<%- await include('${incudeFileName}') %>\n`;
+        }
+      }
+    }
+    // ok
+    site._pluginIncludes = pluginIncludes;
+    return site._pluginIncludes;
   }
 
   async _renderCSSJSes({ data, content }) {
@@ -589,6 +617,7 @@ var env=${JSON.stringify(env, null, 2)};
       cache: true,
       compileDebug: this.ctx.app.meta.isTest || this.ctx.app.meta.isLocal,
       outputFunctionName: 'echo',
+      rmWhitespace: true,
     };
   }
 
@@ -779,14 +808,14 @@ var env=${JSON.stringify(env, null, 2)};
       // /  assets plugins/[plugin]/assets
       for (const dir of [ 'assets', 'plugins' ]) {
         if (dir === 'assets') {
-        // assets
+          // assets
           const _filename = path.join(pathIntermediate, 'assets');
           const exists = await fse.pathExists(_filename);
           if (exists) {
             await fse.copy(_filename, path.join(pathDist, 'assets'));
           }
         } else {
-        // plugins
+          // plugins
           const pluginsFiles = await bb.fromCallback(cb => {
             glob(`${pathIntermediate}/plugins/\*`, cb);
           });
