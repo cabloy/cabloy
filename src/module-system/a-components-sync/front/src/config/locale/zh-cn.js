@@ -9,5 +9,6 @@ export default {
   Username: '用户名',
   Password: '密码',
   Abort: '中止',
+  Upload: '上传',
   'Loading... ': '加载中... ',
 };

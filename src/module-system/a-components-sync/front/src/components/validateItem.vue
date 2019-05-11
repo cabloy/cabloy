@@ -118,6 +118,11 @@ export default {
       else if (property.ebType === 'select') {
         return this.renderSelect(c, data, pathParent, key, property, meta);
       }
+      // file
+      else if (property.ebType === 'file') {
+        return this.renderFile(c, data, pathParent, key, property);
+      }
+      // not support
       return c('div', {
         domProps: {
           innerText: 'not support',
@@ -127,7 +132,12 @@ export default {
     renderProperties(c, data, properties, pathParent) {
       const children = [];
       for (const key in properties) {
-        children.push(this._renderItem(c, data, properties, key, pathParent, {}));
+        const item = this._renderItem(c, data, properties, key, pathParent, {});
+        if (Array.isArray(item)) {
+          children = children.concat(item);
+        } else {
+          children.push(item);
+        }
       }
       return children;
     },
@@ -167,15 +177,19 @@ export default {
       });
     },
     renderGroup(c, data, pathParent, key, property) {
+      // children
       const children = this.renderProperties(c, data[key], property.properties, `${pathParent}${key}/`);
+      // group
       const group = c('f7-list-item', {
+        key,
         attrs: {
           groupTitle: true,
           title: this.getTitle(key, property),
         },
       });
+      // combine
       children.unshift(group);
-      return c('f7-list-group', { key }, children);
+      return c('div', children);
     },
     renderText(c, data, pathParent, key, property) {
       const title = this.getTitle(key, property);
@@ -218,6 +232,75 @@ export default {
           on: {
             input: value => {
               this.setValue(data, key, value, property);
+            },
+          },
+        }),
+      ]);
+    },
+    renderFile(c, data, pathParent, key, property) {
+      const title = this.getTitle(key, property);
+      if ((this.validate.readOnly || property.ebReadOnly) && !property.ebTextarea) {
+        return c('f7-list-item', {
+          key,
+          staticClass: property.ebReadOnly ? 'text-color-gray' : '',
+          attrs: {
+            title,
+            after: data[key] ? data[key].toString() : null,
+          },
+        });
+      }
+      const placeholder = property.ebDescription ? this.$text(property.ebDescription) : title;
+      let type;
+      if (property.ebSecure) {
+        type = 'password';
+      } else if (property.ebTextarea) {
+        type = 'textarea';
+      } else {
+        type = 'text';
+      }
+      const mode = property.ebParams.mode;
+      return c('f7-list-item', {
+        key,
+      }, [
+        c('f7-label', {
+          attrs: { floating: true },
+          domProps: { innerText: title },
+        }),
+        c('eb-input', {
+          attrs: {
+            type,
+            placeholder,
+            resizable: property.ebTextarea,
+            clearButton: !this.validate.readOnly && !property.ebReadOnly,
+            dataPath: pathParent + key,
+            value: this.getValue(data, key, property),
+            disabled: this.validate.readOnly || property.ebReadOnly,
+          },
+          on: {
+            input: value => {
+              this.setValue(data, key, value, property);
+            },
+          },
+        }),
+        c('eb-button', {
+          slot: 'root-end',
+          staticClass: 'eb-input-file-upload',
+          domProps: { innerText: this.$text('Upload') },
+          props: {
+            onPerform: () => {
+              this.$view.navigate('/a/file/file/upload', {
+                target: '_self',
+                context: {
+                  params: {
+                    mode,
+                  },
+                  callback: (code, value) => {
+                    if (code === 200) {
+                      this.setValue(data, key, value.downloadUrl, property);
+                    }
+                  },
+                },
+              });
             },
           },
         }),
