@@ -39,7 +39,7 @@ module.exports = function block_plugin(md, options) {
 `;
     }
     // block
-    return block.render({ md, options, block, token, content });
+    return block.render({ md, options, block, token, index:idx, content });
   }
 
   function blockRuler(state, startLine, endLine, silent) {
