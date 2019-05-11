@@ -10,21 +10,64 @@ module.exports = app => {
         ebTitle: 'URL',
         format: 'uri',
         notEmpty: true,
-        default: '',
       },
       width: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Width',
-        notEmpty: true,
-        default: '100%',
       },
       height: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Height',
-        notEmpty: true,
-        default: '300px',
+      },
+    },
+  };
+  // block audio
+  schemas.blockAudio = {
+    type: 'object',
+    properties: {
+      audio: {
+        type: 'object',
+        ebType: 'group',
+        ebTitle: 'Audio',
+        properties: {
+          name: {
+            type: 'string',
+            ebType: 'text',
+            ebTitle: 'Name',
+            notEmpty: true,
+          },
+          url: {
+            type: 'string',
+            ebType: 'file',
+            ebTitle: 'URL',
+            ebParams: { mode: 3 },
+            format: 'uri',
+            notEmpty: true,
+          },
+          artist: {
+            type: 'string',
+            ebType: 'text',
+            ebTitle: 'Artist',
+          },
+          cover: {
+            type: 'string',
+            ebType: 'file',
+            ebTitle: 'AudioCover',
+            ebParams: { mode: 1 },
+          },
+        },
+      },
+      autoplay: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Auto Play',
+      },
+      loop: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Loop',
       },
     },
   };

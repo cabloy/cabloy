@@ -1,4 +1,4 @@
-const blockIFrame = require('./config/block/iframe.js');
+const blocks = require('./config/blocks.js');
 
 module.exports = app => {
   const schemas = require('./config/validation/schemas.js')(app);
@@ -14,17 +14,19 @@ module.exports = app => {
         blockIFrame: {
           schemas: 'blockIFrame',
         },
+        blockAudio: {
+          schemas: 'blockAudio',
+        },
       },
       keywords: {},
       schemas: {
         blockIFrame: schemas.blockIFrame,
+        blockAudio: schemas.blockAudio,
       },
     },
     cms: {
       plugin: {
-        blocks: {
-          iframe: blockIFrame,
-        },
+        blocks,
       },
     },
   };

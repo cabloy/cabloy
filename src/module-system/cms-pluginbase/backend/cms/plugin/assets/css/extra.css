@@ -1,3 +1,15 @@
+.block-iframe {
+  margin: .8em auto;
+}
+
+.block-audio {
+  margin: .8em auto;
+}
+
+.block-audio .aplayer {
+  margin: 0;
+}
+
 .hljs-center {
   text-align: center;
 }
