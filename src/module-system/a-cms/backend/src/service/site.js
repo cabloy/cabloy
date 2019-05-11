@@ -111,15 +111,19 @@ module.exports = app => {
     }
 
     async blockSave({ blockName, item }) {
+      // block
       const blocks = this.getBlocks({ locale: this.ctx.locale });
       const block = blocks[blockName];
+      // validate
       await this.ctx.meta.validation.validate({
         module: block.meta.module,
         validator: block.meta.validator,
         schema: null,
         data: item,
       });
-      return item;
+      // output
+      if (!block.data.output) return item;
+      return await block.data.output({ ctx: this.ctx, block, data: item });
     }
 
     _prepareBlocks({ locale }) {

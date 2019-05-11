@@ -19,7 +19,7 @@ export default {
     };
   },
   created() {
-    this.$api.post('site/getBlockArray').then(data => {
+    this.$local.dispatch('getBlockArray').then(data => {
       this.blocks = data;
     });
   },
@@ -33,6 +33,7 @@ export default {
     },
     onPerformItem(event, block) {
       this.$view.navigate('/a/cms/block/item', {
+        target: '_self',
         context: {
           params: {
             block,

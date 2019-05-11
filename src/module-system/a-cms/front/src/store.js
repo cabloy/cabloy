@@ -6,6 +6,7 @@ export default function(Vue) {
       configSiteBase: {},
       configSite: {},
       languages: {},
+      blockArray: null,
     },
     getters: {
     },
@@ -27,6 +28,9 @@ export default function(Vue) {
           ...state.languages,
           [atomClass.module]: languages,
         };
+      },
+      setBlockArray(state, blockArray) {
+        state.blockArray = blockArray;
       },
     },
     actions: {
@@ -61,6 +65,18 @@ export default function(Vue) {
             commit('setLanguages', { atomClass, languages });
             resolve(languages);
           }).catch(err => reject(err));
+        });
+      },
+      getBlockArray({ state, commit }) {
+        return new Promise((resolve, reject) => {
+          if (state.blockArray) return resolve(state.blockArray);
+          Vue.prototype.$meta.api.post('/a/cms/site/getBlockArray').then(data => {
+            data = data || [];
+            commit('setBlockArray', data);
+            resolve(data);
+          }).catch(err => {
+            reject(err);
+          });
         });
       },
     },

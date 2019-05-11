@@ -16,22 +16,27 @@ export default {
   mixins: [ ebPageContext ],
   data() {
     return {
-      item: {},
+      item: null,
     };
   },
   computed: {
     block() {
-      return this.contextParams.block;
+      return this.contextParams && this.contextParams.block;
     },
     title() {
+      if (!this.block) return this.$text('Block');
       return `${this.$text('Block')}: ${this.block.meta.titleLocale}`;
     },
     validateParams() {
+      if (!this.block) return null;
       return {
         module: this.block.meta.module,
         validator: this.block.meta.validator,
       };
     },
+  },
+  mounted() {
+    this.item = this.block.data.default;
   },
   methods: {
     onPerformValidate() {
@@ -45,7 +50,9 @@ export default {
       });
     },
     onPerformDone() {
-      return this.$refs.validate.perform();
+      return this.$view.dialog.confirm().then(() => {
+        return this.$refs.validate.perform();
+      });
     },
     onSubmit() {
       return this.onPerformDone();

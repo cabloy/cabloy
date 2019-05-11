@@ -59,7 +59,7 @@
     "@zhennann/ejs": "^2.6.2",
     "@zhennann/markdown": "^1.0.7",
     "@zhennann/trim-html": "^0.1.12",
-    "@zhennann/markdown-it-block": "^1.0.5",
+    "@zhennann/markdown-it-block": "^1.0.7",
     "p-map": "^1.2.0",
     "moment": "^2.22.2",
     "glob": "^7.1.2",
