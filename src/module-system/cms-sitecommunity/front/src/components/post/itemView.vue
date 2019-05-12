@@ -11,7 +11,7 @@
     </f7-list-group>
     <f7-list-group>
       <f7-list-item group-title :title="$text('Basic Info')"></f7-list-item>
-      <eb-list-item-validate dataKey="language" :options="languages"></eb-list-item-validate>
+      <eb-list-item-validate dataKey="language" :meta="{options:languages}"></eb-list-item-validate>
       <f7-list-item :title="$text('Category')">
         <div slot="after">{{item.categoryName}}</div>
       </f7-list-item>

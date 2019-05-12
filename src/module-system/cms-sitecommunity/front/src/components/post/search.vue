@@ -1,6 +1,6 @@
 <template>
   <f7-list v-if="moduleCMS">
-    <eb-list-item-validate dataKey="language" :options="languages" @change="onChangeLanguage"></eb-list-item-validate>
+    <eb-list-item-validate dataKey="language" :meta="{options:languages}" @change="onChangeLanguage"></eb-list-item-validate>
     <eb-list-item-choose link="#" dataPath="categoryId" :title="$text('Category')" :onChoose="onChooseCategory">
       <div slot="after">{{data.categoryName}}</div>
     </eb-list-item-choose>
