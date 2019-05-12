@@ -153,7 +153,8 @@ const util = {
     if (height) query = `${query ? query + '&' : ''}height=${parseInt(height) * pixelRatio}`;
     return `${url}${url.charAt(url.length - 1) === '?' ? '' : '?'}${query}`;
   },
-  loadMore({ container, threshold = 100, index = 0, context, onFetch, onParse }) {
+  loadMore({ container, loadOnScroll, threshold = 100, index = 0, context, onFetch, onParse }) {
+    if (loadOnScroll === undefined) loadOnScroll = env.loadMore.loadOnScroll;
     // init
     const $container = $(container);
     const $window = $(window);
@@ -167,21 +168,39 @@ const util = {
     let fetching = false;
     let error = false;
 
+    let _onFetch = null;
+
+    // showButtonLoadMore
+    const _showButtonLoadMore = function() {
+      const $buttonMore = $('<button type="button" class="btn btn-warning btn-xs"><%=text("Load More")%></button>');
+      $buttonMore.click(() => {
+        _onFetch();
+      });
+      $loadMoreContainer.empty();
+      $loadMoreContainer.append($buttonMore);
+    };
+
+    // showTextLoadCompleted
+    const _showTextLoadCompleted = function() {
+      // const $text = $('<span class="load-completed"><%=text("Load Completed")%></span>');
+      $loadMoreContainer.empty();
+      // $loadMoreContainer.append($text);
+    };
+
     // onFetch
-    const _onFetch = function() {
+    _onFetch = function() {
       fetching = true;
       $loadMoreContainer.empty();
       $loadMoreContainer.append($('<span class="glyphicon glyphicon-refresh spinning"></span>'));
       const res = onFetch({ index, context });
       res.then(data => {
         //
-        $loadMoreContainer.empty();
         if (!data.finished) {
-          const $buttonMore = $('<button type="button" class="btn btn-warning btn-xs"><%=text("Load More")%></button>');
-          $buttonMore.click(() => {
-            _onFetch();
-          });
-          $loadMoreContainer.append($buttonMore);
+          // load more
+          _showButtonLoadMore();
+        } else {
+          // finished
+          _showTextLoadCompleted();
         }
         //
         index = data.index;
@@ -206,13 +225,15 @@ const util = {
     };
     // onScroll
     const _onScroll = function() {
-      if (finished || fetching || error) return;
+      if (finished || fetching || error) return false;
       if (
         (($body.outerHeight() - $window.height() - $window.scrollTop()) < threshold) ||
         (($container.offset().top + $container.outerHeight() - $window.height() - $window.scrollTop()) < threshold)
       ) {
         _onFetch();
+        return true;
       }
+      return false;
     };
 
     // fetchOrScroll
@@ -220,12 +241,19 @@ const util = {
       if (index === 0) {
         _onFetch();
       } else {
-        _onScroll();
+        if (!_onScroll()) {
+          // show button
+          _showButtonLoadMore();
+        }
       }
     };
 
     // bind event
-    $window.on('scroll.infinite resize.infinite', _onScroll);
+    if (loadOnScroll) {
+      $window.on('scroll.infinite resize.infinite', _onScroll);
+    }
+
+    // init
     _fetchOrScroll();
 
     // controller
@@ -251,59 +279,60 @@ const util = {
   },
   loadScript(src, callback) {
     if (!(typeof callback === 'function')) {
-        callback = function() {};
+      callback = function() {};
     }
-    var check = document.querySelectorAll("script[src='" + src + "']");
+    const check = document.querySelectorAll("script[src='" + src + "']");
     if (check.length > 0) {
-        check[0].addEventListener('load', function() {
-            callback();
-        });
+      check[0].addEventListener('load', function() {
         callback();
-        return;
+      });
+      callback();
+      return;
     }
-    var script = document.createElement('script');
-    var head = document.getElementsByTagName('head')[0];
+    const script = document.createElement('script');
+    const head = document.getElementsByTagName('head')[0];
     script.type = 'text/javascript';
     script.charset = 'UTF-8';
+    script.async = true;
     script.src = src;
     if (script.addEventListener) {
-        script.addEventListener('load', function() {
-            callback();
-        }, false);
+      script.addEventListener('load', function() {
+        callback();
+      }, false);
     } else if (script.attachEvent) {
-        script.attachEvent('onreadystatechange', function() {
-            var target = window.event.srcElement;
-            if (target.readyState === 'loaded') {
-                callback();
-            }
-        });
+      script.attachEvent('onreadystatechange', function() {
+        const target = window.event.srcElement;
+        if (target.readyState === 'loaded') {
+          callback();
+        }
+      });
     }
     head.appendChild(script);
   },
   loadLink(src, callback) {
     if (!(typeof callback === 'function')) {
-        callback = function() {};
+      callback = function() {};
     }
-    var check = document.querySelectorAll("link[href='" + src + "']");
+    const check = document.querySelectorAll("link[href='" + src + "']");
     if (check.length > 0) {
-        callback();
-        return;
+      callback();
+      return;
     }
-    var link = document.createElement('link');
-    var head = document.getElementsByTagName('head')[0];
+    const link = document.createElement('link');
+    const head = document.getElementsByTagName('head')[0];
     link.rel = 'stylesheet';
     link.href = src;
     if (link.addEventListener) {
-        link.addEventListener('load', function () {
-            callback();
-        }, false);
+      link.addEventListener('load', function() {
+        callback();
+      }, false);
     } else if (link.attachEvent) {
-        link.attachEvent('onreadystatechange', function () {
-            var target = window.event.srcElement;
-            if (target.readyState === 'loaded') {
-                callback();
-            }
-        });
+      link.attachEvent('onreadystatechange', function() {
+        const target = window.event.srcElement;
+        if (target.readyState === 'loaded') {
+          callback();
+        }
+      });
     }
     head.appendChild(link);
   },

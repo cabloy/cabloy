@@ -1,15 +1,3 @@
-.block-iframe {
-  margin: .8em auto;
-}
-
-.block-audio {
-  margin: .8em auto;
-}
-
-.block-audio .aplayer {
-  margin: 0;
-}
-
 .hljs-center {
   text-align: center;
 }
@@ -72,6 +60,10 @@ article img {
 
 .load-more {
   text-align: center;
+}
+
+.load-more .load-completed {
+  color: #666;
 }
 
 .img-delay {

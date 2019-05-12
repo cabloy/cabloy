@@ -149,7 +149,9 @@ module.exports = {
 /***/ (function(module, exports) {
 
 module.exports = {
+  'Load More': '加载更多',
   'Load error, try again': '加载失败，请重试',
+  'Load Completed': '加载完毕',
 };
 
 
@@ -292,7 +294,7 @@ module.exports = app => {
 /***/ (function(module, exports) {
 
 module.exports = app => {
-  const schemas = {};
+  const schemas = { };
   return schemas;
 };
 
