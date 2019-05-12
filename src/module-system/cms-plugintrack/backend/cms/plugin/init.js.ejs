@@ -1,0 +1,28 @@
+$(document).ready(function() {
+  _sitetrack();
+});
+
+function _sitetrack() {
+  <%
+  const track=site.plugins['cms-plugintrack'].track;
+  %>
+  <% if(track.google){ %>
+    util.loadScript('https://www.googletagmanager.com/gtag/js?id=<%=track.google%>');
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '<%=track.google%>');
+  <% } %>
+  <% if(track.baidu){ %>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?<%=track.baidu%>";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  <% } %>
+  <% if(track.qq){ %>
+    util.loadScript('https://tajs.qq.com/stats?sId=<%=track.qq%>');
+  <% } %>
+};
