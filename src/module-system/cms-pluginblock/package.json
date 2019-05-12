@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-pluginblock",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "title": "cms:plugin:block",
   "eggBornModule": {
     "cms": {

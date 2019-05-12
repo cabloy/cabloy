@@ -150,6 +150,8 @@ module.exports = {
 
 module.exports = {
   'Load error, try again': '加载失败，请重试',
+  'Embed Page': '内嵌页面',
+  Audio: '音频',
 };
 
 
@@ -266,8 +268,10 @@ module.exports = app => {
 /* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
+const blocks = __webpack_require__(12);
+
 module.exports = app => {
-  const schemas = __webpack_require__(12)(app);
+  const schemas = __webpack_require__(15)(app);
   const meta = {
     base: {
       atoms: {
@@ -277,9 +281,22 @@ module.exports = app => {
     },
     validation: {
       validators: {
+        blockIFrame: {
+          schemas: 'blockIFrame',
+        },
+        blockAudio: {
+          schemas: 'blockAudio',
+        },
       },
       keywords: {},
       schemas: {
+        blockIFrame: schemas.blockIFrame,
+        blockAudio: schemas.blockAudio,
+      },
+    },
+    cms: {
+      plugin: {
+        blocks,
       },
     },
   };
@@ -289,10 +306,170 @@ module.exports = app => {
 
 /***/ }),
 /* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const iframe = __webpack_require__(13);
+const audio = __webpack_require__(14);
+
+module.exports = {
+  iframe,
+  audio,
+};
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports) {
+
+module.exports = {
+  meta: {
+    name: 'iframe',
+    title: 'Embed Page',
+    validator: 'blockIFrame',
+  },
+  data: {
+    default: {
+      url: '',
+      width: '',
+      height: '',
+    },
+  },
+  render({ md, options, block, token, index, content }) {
+    const url = md.utils.escapeHtml(content.url);
+    const width = md.utils.escapeHtml(content.width || '100%');
+    const height = md.utils.escapeHtml(content.height || '300px');
+    return `<div class="block block-iframe" style="width:${width};height:${height};"><iframe width="100%" height="100%" scrolling="auto" frameborder="0" src="${url}"></iframe></div>\n`;
+  },
+};
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports) {
+
+module.exports = {
+  meta: {
+    name: 'audio',
+    title: 'Audio',
+    validator: 'blockAudio',
+  },
+  data: {
+    default: {
+      audio: {
+        name: '',
+        url: '',
+        artist: '',
+        cover: '',
+      },
+      autoplay: false,
+      loop: true,
+    },
+    // async output({ ctx, block, data }) {
+    //   return data;
+    // },
+  },
+  render({ md, options, block, token, index, content }) {
+    content = content || {};
+    content.audio = content.audio || {};
+    const content2 = {
+      audio: {
+        name: md.utils.escapeHtml(content.audio.name),
+        url: md.utils.escapeHtml(content.audio.url),
+        artist: md.utils.escapeHtml(content.audio.artist),
+        cover: md.utils.escapeHtml(content.audio.cover),
+      },
+      autoplay: !!content.autoplay,
+      loop: content.loop ? 'all' : 'none',
+    };
+    // element
+    return `<div class="block block-audio block-audio-aplayer">
+    <script type="text/template" class="template">
+    ${JSON.stringify(content2, null, 2)}
+    </script>
+    <div class="aplayer"></div></div>
+    `;
+  },
+};
+
+
+/***/ }),
+/* 15 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
-  const schemas = {};
+  const schemas = { };
+  // block iframe
+  schemas.blockIFrame = {
+    type: 'object',
+    properties: {
+      url: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'URL',
+        format: 'uri',
+        notEmpty: true,
+      },
+      width: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Width',
+      },
+      height: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Height',
+      },
+    },
+  };
+  // block audio
+  schemas.blockAudio = {
+    type: 'object',
+    properties: {
+      audio: {
+        type: 'object',
+        ebType: 'group',
+        ebTitle: 'Audio',
+        properties: {
+          name: {
+            type: 'string',
+            ebType: 'text',
+            ebTitle: 'Name',
+            notEmpty: true,
+          },
+          url: {
+            type: 'string',
+            ebType: 'file',
+            ebTitle: 'URL',
+            ebParams: { mode: 3 },
+            format: 'uri',
+            notEmpty: true,
+          },
+          artist: {
+            type: 'string',
+            ebType: 'text',
+            ebTitle: 'Artist',
+          },
+          cover: {
+            type: 'string',
+            ebType: 'file',
+            ebTitle: 'AudioCover',
+            ebParams: { mode: 1 },
+          },
+        },
+      },
+      autoplay: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Auto Play',
+      },
+      loop: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Loop',
+      },
+    },
+  };
+
   return schemas;
 };
 
