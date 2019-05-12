@@ -167,6 +167,7 @@ __webpack_require__.r(__webpack_exports__);
   Username: '用户名',
   Password: '密码',
   Abort: '中止',
+  Upload: '上传',
   'Loading... ': '加载中... '
 });
 
@@ -1591,8 +1592,8 @@ var select_component = normalizeComponent(
       type: String,
       "default": ''
     },
-    options: {
-      type: Array
+    meta: {
+      type: Object
     }
   },
   data: function data() {
@@ -1616,6 +1617,12 @@ var select_component = normalizeComponent(
       }
 
       return parent;
+    },
+    getMetaValue: function getMetaValue(key) {
+      var value = this.meta ? this.meta[key] : undefined;
+      if (value !== undefined) return value;
+      var validateMeta = this.validate.meta;
+      return validateMeta ? validateMeta[key] : undefined;
     },
     getValue: function getValue(data, key, property) {
       if (data[key] === undefined) return property["default"];
@@ -1671,11 +1678,9 @@ var select_component = normalizeComponent(
     },
     renderItem: function renderItem(c) {
       if (!this.validate.data || !this.validate.schema) return c('div');
-      return this._renderItem(c, this.validate.data, this.validate.schema.properties, this.dataKey, this.pathParent, {
-        options: this.options
-      });
+      return this._renderItem(c, this.validate.data, this.validate.schema.properties, this.dataKey, this.pathParent);
     },
-    _renderItem: function _renderItem(c, data, properties, key, pathParent, meta) {
+    _renderItem: function _renderItem(c, data, properties, key, pathParent) {
       var property = properties[key];
 
       if (property.ebType === 'panel') {
@@ -1687,8 +1692,10 @@ var select_component = normalizeComponent(
           } else if (property.ebType === 'toggle') {
               return this.renderToggle(c, data, pathParent, key, property);
             } else if (property.ebType === 'select') {
-                return this.renderSelect(c, data, pathParent, key, property, meta);
-              }
+                return this.renderSelect(c, data, pathParent, key, property);
+              } else if (property.ebType === 'file') {
+                  return this.renderFile(c, data, pathParent, key, property);
+                }
 
       return c('div', {
         domProps: {
@@ -1700,7 +1707,13 @@ var select_component = normalizeComponent(
       var children = [];
 
       for (var key in properties) {
-        children.push(this._renderItem(c, data, properties, key, pathParent, {}));
+        var item = this._renderItem(c, data, properties, key, pathParent);
+
+        if (Array.isArray(item)) {
+          children = children.concat(item);
+        } else {
+          children.push(item);
+        }
       }
 
       return children;
@@ -1717,7 +1730,7 @@ var select_component = normalizeComponent(
           dataPath: dataPath
         },
         on: {
-          click: function click(event) {
+          click: function click() {
             _this.$view.navigate('/a/validation/validate', {
               target: '_self',
               context: {
@@ -1746,15 +1759,14 @@ var select_component = normalizeComponent(
     renderGroup: function renderGroup(c, data, pathParent, key, property) {
       var children = this.renderProperties(c, data[key], property.properties, "".concat(pathParent).concat(key, "/"));
       var group = c('f7-list-item', {
+        key: key,
         attrs: {
           groupTitle: true,
           title: this.getTitle(key, property)
         }
       });
       children.unshift(group);
-      return c('f7-list-group', {
-        key: key
-      }, children);
+      return c('div', children);
     },
     renderText: function renderText(c, data, pathParent, key, property) {
       var _this2 = this;
@@ -1809,8 +1821,88 @@ var select_component = normalizeComponent(
         }
       })]);
     },
-    renderToggle: function renderToggle(c, data, pathParent, key, property) {
+    renderFile: function renderFile(c, data, pathParent, key, property) {
       var _this3 = this;
+
+      var title = this.getTitle(key, property);
+
+      if ((this.validate.readOnly || property.ebReadOnly) && !property.ebTextarea) {
+        return c('f7-list-item', {
+          key: key,
+          staticClass: property.ebReadOnly ? 'text-color-gray' : '',
+          attrs: {
+            title: title,
+            after: data[key] ? data[key].toString() : null
+          }
+        });
+      }
+
+      var placeholder = property.ebDescription ? this.$text(property.ebDescription) : title;
+      var type;
+
+      if (property.ebSecure) {
+        type = 'password';
+      } else if (property.ebTextarea) {
+        type = 'textarea';
+      } else {
+        type = 'text';
+      }
+
+      var mode = property.ebParams.mode;
+      var atomId = this.getMetaValue('atomId');
+      atomId = atomId || property.ebParams.atomId || 0;
+      return c('f7-list-item', {
+        key: key
+      }, [c('f7-label', {
+        attrs: {
+          floating: true
+        },
+        domProps: {
+          innerText: title
+        }
+      }), c('eb-input', {
+        attrs: {
+          type: type,
+          placeholder: placeholder,
+          resizable: property.ebTextarea,
+          clearButton: !this.validate.readOnly && !property.ebReadOnly,
+          dataPath: pathParent + key,
+          value: this.getValue(data, key, property),
+          disabled: this.validate.readOnly || property.ebReadOnly
+        },
+        on: {
+          input: function input(value) {
+            _this3.setValue(data, key, value, property);
+          }
+        }
+      }), c('eb-button', {
+        slot: 'root-end',
+        staticClass: 'eb-input-file-upload',
+        domProps: {
+          innerText: this.$text('Upload')
+        },
+        props: {
+          onPerform: function onPerform() {
+            _this3.$view.navigate('/a/file/file/upload', {
+              target: '_self',
+              context: {
+                params: {
+                  mode: mode,
+                  atomId: atomId
+                },
+                callback: function callback(code, value) {
+                  if (code === 200) {
+                    _this3.setValue(data, key, value.downloadUrl, property);
+                  }
+                }
+              }
+            });
+          }
+        }
+      })]);
+    },
+    renderToggle: function renderToggle(c, data, pathParent, key, property) {
+      var _this4 = this;
 
       var title = this.getTitle(key, property);
       return c('f7-list-item', {
@@ -1828,13 +1920,13 @@ var select_component = normalizeComponent(
         },
         on: {
           input: function input(value) {
-            _this3.setValue(data, key, value, property);
+            _this4.setValue(data, key, value, property);
           }
         }
       })]);
     },
-    renderSelect: function renderSelect(c, data, pathParent, key, property, meta) {
-      var _this4 = this;
+    renderSelect: function renderSelect(c, data, pathParent, key, property) {
+      var _this5 = this;
 
       var title = this.getTitle(key, property);
       var valueCurrent = this.getValue(data, key, property);
@@ -1844,8 +1936,9 @@ var select_component = normalizeComponent(
         value: valueCurrent,
         readOnly: this.validate.readOnly || property.ebReadOnly
       };
-      if (meta.options) attrs.options = meta.options;
-      if (!meta.options && property.ebOptions) attrs.options = property.ebOptions;
+      var metaOptions = this.getMetaValue('options');
+      if (metaOptions) attrs.options = metaOptions;
+      if (!metaOptions && property.ebOptions) attrs.options = property.ebOptions;
 
       if (property.ebOptionsUrl) {
         attrs.optionsUrl = property.ebOptionsUrl;
@@ -1884,7 +1977,7 @@ var select_component = normalizeComponent(
         attrs: attrs,
         on: {
           input: function input(value) {
-            _this4.setValue(data, key, value, property);
+            _this5.setValue(data, key, value, property);
           }
         }
       })]);
@@ -1907,7 +2000,7 @@ var validateItem_component = normalizeComponent(
   validateItem_staticRenderFns,
   false,
   null,
-  "150068cf",
+  "0b0ca31a",
   null
   
 )
@@ -1953,6 +2046,9 @@ var validateItem_component = normalizeComponent(
       type: Object
     },
     params: {
+      type: Object
+    },
+    meta: {
       type: Object
     },
     onPerform: {

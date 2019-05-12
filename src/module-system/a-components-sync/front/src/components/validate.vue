@@ -40,6 +40,9 @@ export default {
     params: {
       type: Object, // module,validator,schema
     },
+    meta: {
+      type: Object,
+    },
     onPerform: {
       type: Function,
     },

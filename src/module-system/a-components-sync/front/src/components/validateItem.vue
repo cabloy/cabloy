@@ -12,8 +12,8 @@ export default {
       type: String,
       default: '',
     },
-    options: {
-      type: Array,
+    meta: {
+      type: Object,
     },
   },
   data() {
@@ -35,6 +35,14 @@ export default {
         parent = parent.$parent;
       }
       return parent;
+    },
+    getMetaValue(key) {
+      // 1. item
+      const value = this.meta ? this.meta[key] : undefined;
+      if (value !== undefined) return value;
+      // 2. validate
+      const validateMeta = this.validate.meta;
+      return validateMeta ? validateMeta[key] : undefined;
     },
     getValue(data, key, property) {
       if (data[key] === undefined) return property.default;
@@ -94,9 +102,9 @@ export default {
     },
     renderItem(c) {
       if (!this.validate.data || !this.validate.schema) return c('div');
-      return this._renderItem(c, this.validate.data, this.validate.schema.properties, this.dataKey, this.pathParent, { options: this.options });
+      return this._renderItem(c, this.validate.data, this.validate.schema.properties, this.dataKey, this.pathParent);
     },
-    _renderItem(c, data, properties, key, pathParent, meta) {
+    _renderItem(c, data, properties, key, pathParent) {
       const property = properties[key];
       // panel
       if (property.ebType === 'panel') {
@@ -116,7 +124,7 @@ export default {
       }
       // select
       else if (property.ebType === 'select') {
-        return this.renderSelect(c, data, pathParent, key, property, meta);
+        return this.renderSelect(c, data, pathParent, key, property);
       }
       // file
       else if (property.ebType === 'file') {
@@ -130,9 +138,9 @@ export default {
       });
     },
     renderProperties(c, data, properties, pathParent) {
-      const children = [];
+      let children = [];
       for (const key in properties) {
-        const item = this._renderItem(c, data, properties, key, pathParent, {});
+        const item = this._renderItem(c, data, properties, key, pathParent);
         if (Array.isArray(item)) {
           children = children.concat(item);
         } else {
@@ -151,7 +159,7 @@ export default {
           dataPath,
         },
         on: {
-          click: event => {
+          click: () => {
             this.$view.navigate('/a/validation/validate', {
               target: '_self',
               context: {
@@ -258,7 +266,12 @@ export default {
       } else {
         type = 'text';
       }
+      // mode
       const mode = property.ebParams.mode;
+      // atomId
+      let atomId = this.getMetaValue('atomId');
+      atomId = atomId || property.ebParams.atomId || 0;
+      // render
       return c('f7-list-item', {
         key,
       }, [
@@ -293,6 +306,7 @@ export default {
                 context: {
                   params: {
                     mode,
+                    atomId,
                   },
                   callback: (code, value) => {
                     if (code === 200) {
@@ -329,7 +343,7 @@ export default {
         }),
       ]);
     },
-    renderSelect(c, data, pathParent, key, property, meta) {
+    renderSelect(c, data, pathParent, key, property) {
       const title = this.getTitle(key, property);
       const valueCurrent = this.getValue(data, key, property);
       const attrs = {
@@ -338,8 +352,9 @@ export default {
         value: valueCurrent,
         readOnly: this.validate.readOnly || property.ebReadOnly,
       };
-      if (meta.options) attrs.options = meta.options;
-      if (!meta.options && property.ebOptions) attrs.options = property.ebOptions;
+      const metaOptions = this.getMetaValue('options');
+      if (metaOptions) attrs.options = metaOptions;
+      if (!metaOptions && property.ebOptions) attrs.options = property.ebOptions;
       if (property.ebOptionsUrl) {
         attrs.optionsUrl = property.ebOptionsUrl;
         attrs.optionsUrlParams = property.ebOptionsUrlParams;
