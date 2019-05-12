@@ -590,7 +590,7 @@ export default {
       }
     },
     getAtomOrderKey(atomOrder) {
-      return `${atomOrder.tableAlias}.${atomOrder.name}`;
+      return atomOrder ? `${atomOrder.tableAlias}.${atomOrder.name}` : null;
     },
   },
 };

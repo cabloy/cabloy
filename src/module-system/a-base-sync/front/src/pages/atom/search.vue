@@ -34,7 +34,7 @@ export default {
     const atomClassName = query && query.atomClassName;
     const atomClass = (module && atomClassName) ? { module, atomClassName } : null;
     const where = (query && query.where) ? JSON.parse(query.where) : null;
-    const mode = query && query.mode;
+    const mode = (query && query.mode) || 'search';
     const selectMode = query && query.selectMode;
     return {
       atomName: '',

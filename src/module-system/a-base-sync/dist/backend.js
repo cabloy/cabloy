@@ -1687,6 +1687,7 @@ module.exports = {
   Delete: '删除',
   Save: '保存',
   Submit: '提交',
+  Atom: '原子',
 };
 
 
@@ -6266,6 +6267,7 @@ module.exports = app => {
 const require3 = __webpack_require__(0);
 const trimHtml = require3('@zhennann/trim-html');
 const markdown = require3('@zhennann/markdown');
+const markdonw_it_block = require3('@zhennann/markdown-it-block');
 
 module.exports = app => {
 
@@ -6458,6 +6460,16 @@ module.exports = app => {
     _renderContent({ content, replyContent, replyUserName }) {
       const _content = this._fullContent({ content, replyContent, replyUserName });
       const md = markdown.create();
+      // block options
+      const blockOptions = {
+        utils: {
+          text: (...args) => {
+            return this.ctx.text(...args);
+          },
+        },
+      };
+      md.use(markdonw_it_block, blockOptions);
+      // render
       return md.render(_content);
     }
 
