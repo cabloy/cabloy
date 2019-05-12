@@ -566,8 +566,15 @@ class Build {
       rawRootUrl: this.getUrlRawRoot(site),
       atomClass: this.atomClass,
     });
+    // load src
+    let contentSrc = await fse.readFile(fileName);
+    // load includes of plugins
+    const pluginIncludes = await this._loadPluginIncludes({ site, language });
+    contentSrc = `${pluginIncludes}\n${contentSrc}`;
     // render
-    let content = await ejs.renderFile(fileName, data, this.getOptions());
+    const options = this.getOptions();
+    options.filename = fileName;
+    let content = await ejs.render(contentSrc, data, options);
     content = await this._renderEnvs({ data, content });
     content = await this._renderCSSJSes({ data, content });
     // hot load
@@ -605,6 +612,27 @@ $(document).ready(function() {
     }
     // write
     await fse.outputFile(fileWrite, content);
+  }
+
+  async _loadPluginIncludes({ site, language }) {
+    // if exists
+    if (site._pluginIncludes) return site._pluginIncludes;
+    // modulesArray
+    let pluginIncludes = '';
+    for (const module of this.app.meta.modulesArray) {
+      if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin) {
+        // path intermediate
+        const pathIntermediate = await this.getPathIntermediate(language);
+        const incudeFileName = path.join(pathIntermediate, `plugins/${module.info.relativeName}/include.ejs`);
+        const exists = await fse.pathExists(incudeFileName);
+        if (exists) {
+          pluginIncludes = `${pluginIncludes}<%- await include('${incudeFileName}') %>\n`;
+        }
+      }
+    }
+    // ok
+    site._pluginIncludes = pluginIncludes;
+    return site._pluginIncludes;
   }
 
   async _renderCSSJSes({ data, content }) {
@@ -720,6 +748,7 @@ var env=${JSON.stringify(env, null, 2)};
       cache: true,
       compileDebug: this.ctx.app.meta.isTest || this.ctx.app.meta.isLocal,
       outputFunctionName: 'echo',
+      rmWhitespace: true,
     };
   }
 
@@ -910,14 +939,14 @@ var env=${JSON.stringify(env, null, 2)};
       // /  assets plugins/[plugin]/assets
       for (const dir of [ 'assets', 'plugins' ]) {
         if (dir === 'assets') {
-        // assets
+          // assets
           const _filename = path.join(pathIntermediate, 'assets');
           const exists = await fse.pathExists(_filename);
           if (exists) {
             await fse.copy(_filename, path.join(pathDist, 'assets'));
           }
         } else {
-        // plugins
+          // plugins
           const pluginsFiles = await bb.fromCallback(cb => {
             glob(`${pathIntermediate}/plugins/\*`, cb);
           });
@@ -1157,6 +1186,9 @@ module.exports = appInfo => {
       brother: {
         order: 'desc',
       },
+      loadMore: {
+        loadOnScroll: false,
+      },
     },
     profile: {
       userName: 'zhennann',
@@ -1244,6 +1276,7 @@ module.exports = {
   seconds: '秒',
   second2: '秒',
   Build: '构建',
+  Block: '区块',
 };
 
 
@@ -1323,6 +1356,9 @@ module.exports = app => {
     { method: 'post', path: 'site/buildLanguages', controller: site, middlewares: 'progress', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'site/getLanguages', controller: site },
     { method: 'post', path: 'site/getUrl', controller: site },
+    { method: 'post', path: 'site/getBlocks', controller: site },
+    { method: 'post', path: 'site/getBlockArray', controller: site },
+    { method: 'post', path: 'site/blockSave', controller: site },
     // category
     { method: 'post', path: 'category/item', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'category/save', controller: category, middlewares: 'validate', meta: {
@@ -1729,6 +1765,28 @@ module.exports = app => {
       const res = await this.ctx.service.site.checkFile({
         file: this.ctx.request.body.file,
         mtime: this.ctx.request.body.mtime,
+      });
+      this.ctx.success(res);
+    }
+
+    async getBlocks() {
+      const res = await this.ctx.service.site.getBlocks({
+        locale: this.ctx.locale,
+      });
+      this.ctx.success(res);
+    }
+
+    async getBlockArray() {
+      const res = await this.ctx.service.site.getBlockArray({
+        locale: this.ctx.locale,
+      });
+      this.ctx.success(res);
+    }
+
+    async blockSave() {
+      const res = await this.ctx.service.site.blockSave({
+        blockName: this.ctx.request.body.blockName,
+        item: this.ctx.request.body.item,
       });
       this.ctx.success(res);
     }
@@ -2545,6 +2603,7 @@ module.exports = app => {
 const require3 = __webpack_require__(1);
 const trimHtml = require3('@zhennann/trim-html');
 const markdown = require3('@zhennann/markdown');
+const markdonw_it_block = require3('@zhennann/markdown-it-block');
 const uuid = require3('uuid');
 
 module.exports = app => {
@@ -2642,8 +2701,20 @@ module.exports = app => {
       }
       // markdown
       const md = markdown.create();
-      let html;
+      // markdown-it-block
+      const blocks = this.ctx.service.site.getBlocks({ locale: item.language });
+      // block options
+      const blockOptions = {
+        utils: {
+          text: (...args) => {
+            return this.ctx.text.locale(item.language, ...args);
+          },
+        },
+        blocks,
+      };
+      md.use(markdonw_it_block, blockOptions);
       // html
+      let html;
       if (item.editMode === 1) {
         html = item.content ? md.render(item.content) : '';
       } else {
@@ -2997,7 +3068,11 @@ module.exports = app => {
 
 const require3 = __webpack_require__(1);
 const fse = require3('fs-extra');
+const extend = require3('extend2');
 const Build = __webpack_require__(2);
+
+const _blocksLocales = {};
+const _blockArrayLocales = {};
 
 module.exports = app => {
 
@@ -3081,6 +3156,65 @@ module.exports = app => {
         // sleep 1s then continue
         await this.ctx.meta.util.sleep(1000);
       }
+    }
+
+    getBlocks({ locale }) {
+      if (!_blocksLocales[locale]) {
+        const blocks = this._prepareBlocks({ locale });
+        // object
+        _blocksLocales[locale] = blocks;
+        // array order by titleLocale
+        const blockArray = [];
+        for (const key in blocks) {
+          blockArray.push(blocks[key]);
+        }
+        _blockArrayLocales[locale] = blockArray.sort((a, b) => a.meta.titleLocale.localeCompare(b.meta.titleLocale, locale));
+      }
+      return _blocksLocales[locale];
+    }
+
+    getBlockArray({ locale }) {
+      this.getBlocks({ locale });
+      return _blockArrayLocales[locale];
+    }
+
+    async blockSave({ blockName, item }) {
+      // block
+      const blocks = this.getBlocks({ locale: this.ctx.locale });
+      const block = blocks[blockName];
+      // validate
+      await this.ctx.meta.validation.validate({
+        module: block.meta.module,
+        validator: block.meta.validator,
+        schema: null,
+        data: item,
+      });
+      // output
+      if (!block.data.output) return item;
+      return await block.data.output({ ctx: this.ctx, block, data: item });
+    }
+
+    _prepareBlocks({ locale }) {
+      const blocks = {};
+      // modulesArray for block override
+      for (const module of this.app.meta.modulesArray) {
+        if (module.main.meta && module.main.meta.cms &&
+          module.main.meta.cms.plugin && module.main.meta.cms.plugin.blocks) {
+          const blocksModule = this._prepareBlocksModule({ locale, module, blocks: module.main.meta.cms.plugin.blocks });
+          Object.assign(blocks, blocksModule);
+        }
+      }
+      return blocks;
+    }
+
+    _prepareBlocksModule({ locale, module, blocks }) {
+      const blocksModule = extend(true, {}, blocks);
+      for (const key in blocksModule) {
+        const block = blocksModule[key];
+        block.meta.module = module.info.relativeName;
+        block.meta.titleLocale = this.ctx.text.locale(locale, block.meta.title);
+      }
+      return blocksModule;
     }
 
   }

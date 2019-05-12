@@ -32,11 +32,13 @@ export default {
       }
     },
     onPerformItem(event, block) {
+      const atomId = this.contextParams.atomId;
       this.$view.navigate('/a/cms/block/item', {
         target: '_self',
         context: {
           params: {
             block,
+            atomId,
           },
           callback: (code, data) => {
             if (code === 200) {

@@ -162,9 +162,13 @@ export default {
       });
     },
     onBlockAdd() {
+      const atomId = this.item.atomId;
       return new Promise((resolve, reject) => {
         this.$view.navigate('/a/cms/block/list', {
           context: {
+            params: {
+              atomId,
+            },
             callback: (code, data) => {
               if (code === 200) {
                 // data: {name,content}

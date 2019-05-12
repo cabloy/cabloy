@@ -5,7 +5,7 @@
         <eb-link iconMaterial="done" :onPerform="onPerformDone"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-validate ref="validate" :readOnly="false" auto :data="item" :params="validateParams" :onPerform="onPerformValidate" @submit.prevent="onSubmit">
+    <eb-validate ref="validate" :readOnly="false" auto :data="item" :params="validateParams" :meta="meta" :onPerform="onPerformValidate" @submit.prevent="onSubmit">
     </eb-validate>
   </eb-page>
 </template>
@@ -16,13 +16,12 @@ export default {
   mixins: [ ebPageContext ],
   data() {
     return {
+      block: null,
       item: null,
+      meta: null,
     };
   },
   computed: {
-    block() {
-      return this.contextParams && this.contextParams.block;
-    },
     title() {
       if (!this.block) return this.$text('Block');
       return `${this.$text('Block')}: ${this.block.meta.titleLocale}`;
@@ -36,7 +35,11 @@ export default {
     },
   },
   mounted() {
+    this.block = this.contextParams.block;
     this.item = this.block.data.default;
+    this.meta = {
+      atomId: this.contextParams.atomId,
+    };
   },
   methods: {
     onPerformValidate() {
