@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-markdownstyle",
-  "version": "1.0.4",
+  "version": "2.0.0",
   "title": "a-markdownstyle",
   "eggBornModule": {
     "dependencies": {
