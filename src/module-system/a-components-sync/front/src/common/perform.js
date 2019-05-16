@@ -31,8 +31,10 @@ export default {
         }
 
         // only preventDefault for link
-        event.stopPropagation();
-        event.preventDefault();
+        if (event) {
+          event.stopPropagation();
+          event.preventDefault();
+        }
       }
 
       if (!this.onPerform) return this.onLinkClick && this.onLinkClick(event);

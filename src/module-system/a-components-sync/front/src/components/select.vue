@@ -63,7 +63,7 @@ export default {
   methods: {
     setValue() {
       const f7Select = this.$$(this.$el).parents('.smart-select')[0].f7SmartSelect;
-      f7Select.setValue();
+      f7Select.setValue(this.value);
     },
     onValidateError(error) {
       const panel = this.$$(this.$el).parents('.item-content');

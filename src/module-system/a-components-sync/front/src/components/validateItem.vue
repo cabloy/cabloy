@@ -220,30 +220,25 @@ export default {
       } else {
         type = 'text';
       }
-      return c('f7-list-item', {
+      return c('eb-list-input', {
         key,
-      }, [
-        c('f7-label', {
-          attrs: { floating: true },
-          domProps: { innerText: title },
-        }),
-        c('eb-input', {
-          attrs: {
-            type,
-            placeholder,
-            resizable: property.ebTextarea,
-            clearButton: !this.validate.readOnly && !property.ebReadOnly,
-            dataPath: pathParent + key,
-            value: this.getValue(data, key, property),
-            disabled: this.validate.readOnly || property.ebReadOnly,
+        attrs: {
+          label: title,
+          floatingLabel: true,
+          type,
+          placeholder,
+          resizable: property.ebTextarea,
+          clearButton: !this.validate.readOnly && !property.ebReadOnly,
+          dataPath: pathParent + key,
+          value: this.getValue(data, key, property),
+          disabled: this.validate.readOnly || property.ebReadOnly,
+        },
+        on: {
+          input: value => {
+            this.setValue(data, key, value, property);
           },
-          on: {
-            input: value => {
-              this.setValue(data, key, value, property);
-            },
-          },
-        }),
-      ]);
+        },
+      });
     },
     renderFile(c, data, pathParent, key, property) {
       const title = this.getTitle(key, property);
@@ -272,29 +267,25 @@ export default {
       let atomId = this.getMetaValue('atomId');
       atomId = atomId || property.ebParams.atomId || 0;
       // render
-      return c('f7-list-item', {
+      return c('eb-list-input', {
         key,
+        attrs: {
+          label: title,
+          floatingLabel: true,
+          type,
+          placeholder,
+          resizable: property.ebTextarea,
+          clearButton: !this.validate.readOnly && !property.ebReadOnly,
+          dataPath: pathParent + key,
+          value: this.getValue(data, key, property),
+          disabled: this.validate.readOnly || property.ebReadOnly,
+        },
+        on: {
+          input: value => {
+            this.setValue(data, key, value, property);
+          },
+        },
       }, [
-        c('f7-label', {
-          attrs: { floating: true },
-          domProps: { innerText: title },
-        }),
-        c('eb-input', {
-          attrs: {
-            type,
-            placeholder,
-            resizable: property.ebTextarea,
-            clearButton: !this.validate.readOnly && !property.ebReadOnly,
-            dataPath: pathParent + key,
-            value: this.getValue(data, key, property),
-            disabled: this.validate.readOnly || property.ebReadOnly,
-          },
-          on: {
-            input: value => {
-              this.setValue(data, key, value, property);
-            },
-          },
-        }),
         c('eb-button', {
           slot: 'root-end',
           staticClass: 'eb-input-file-upload',
@@ -326,10 +317,12 @@ export default {
         key,
       }, [
         c('span', {
+          slot: 'title',
           staticClass: property.ebReadOnly ? 'text-color-gray' : '',
           domProps: { innerText: title },
         }),
         c('eb-toggle', {
+          slot: 'after',
           attrs: {
             dataPath: pathParent + key,
             value: this.getValue(data, key, property),

@@ -1,10 +1,10 @@
 <script>
 import Vue from 'vue';
 import validate from '../common/validate.js';
-const f7Input = Vue.options.components['f7-input'].extendOptions;
+const f7ListInput = Vue.options.components['f7-list-input'].extendOptions;
 export default {
-  name: 'eb-input',
-  extends: f7Input,
+  name: 'eb-list-input',
+  extends: f7ListInput,
   mixins: [ validate ],
   mounted() {
     this.$nextTick(() => {
