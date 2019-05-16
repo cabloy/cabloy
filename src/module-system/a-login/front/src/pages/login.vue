@@ -109,6 +109,7 @@ export default {
       }
       const tabbar = c('f7-toolbar', {
         attrs: {
+          top: true,
           tabbar: true,
         },
       }, buttons);
