@@ -8,15 +8,15 @@
       <template v-if="agentsBy && agentsBy.length>0">
         <eb-list-item v-for="item of agentsBy" :key="item.id" radio disabled :checked="user.op.id===item.id" :title="item.userName">
           <div slot="after">
-            <eb-button v-if="user.op.id===item.id" :context="item" :onPerform="onPerformSwitchOff">{{$text('Switch off')}}</eb-button>
-            <eb-button v-else :context="item" :onPerform="onPerformSwitch">{{$text('Switch')}}</eb-button>
+            <eb-link v-if="user.op.id===item.id" :context="item" :onPerform="onPerformSwitchOff">{{$text('Switch off')}}</eb-link>
+            <eb-link v-else :context="item" :onPerform="onPerformSwitch">{{$text('Switch')}}</eb-link>
           </div>
         </eb-list-item>
       </template>
       <eb-list-item :title="$text('Agent by')" group-title></eb-list-item>
       <eb-list-item v-if="agent" :title="agent.userName">
         <div slot="after">
-          <eb-button :onPerform="onPerformRemoveAgent">{{$text('Remove')}}</eb-button>
+          <eb-link :onPerform="onPerformRemoveAgent">{{$text('Remove')}}</eb-link>
         </div>
       </eb-list-item>
       <f7-list-item v-if="!agent" :title="$text('Specify agent')" link="#" @click="onSelectUser"></f7-list-item>
@@ -85,6 +85,4 @@ export default {
 
 </script>
 <style lang="less" scoped>
-
-
 </style>

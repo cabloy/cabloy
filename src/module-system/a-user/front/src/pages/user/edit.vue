@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar :title="$text('Info')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-button ref="buttonSubmit" iconMaterial="save" :onPerform="onPerformSave"></eb-button>
+        <eb-link ref="buttonSubmit" iconMaterial="save" :onPerform="onPerformSave"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <eb-validate ref="validate" :auto="false" :data="user" :params="{module:'a-base',validator: 'user'}" :onPerform="onPerformValidate">

@@ -4,7 +4,7 @@
     </eb-navbar>
     <div class="me">
       <div>
-        <img class="avatar avatar48" :src="$meta.util.combineImageUrl(user.op.avatar,48)" style="cursor:pointer;" @click="onClickAvatar">
+        <img class="avatar avatar48" :src="userAvatar" style="cursor:pointer;" @click="onClickAvatar">
       </div>
       <div class="name">{{userName}}</div>
       <div class="status" v-if="!loggedIn">{{$text('Not LoggedIn')}}</div>
@@ -14,9 +14,9 @@
       </div>
     </div>
     <f7-list>
-      <eb-list-item v-if="!user.agent.anonymous" :title="$text('Account')" eb-href="user/account"></eb-list-item>
-      <eb-list-item :title="$text('Functions')" eb-href="user/functions"></eb-list-item>
-      <eb-list-item v-if="!user.agent.anonymous" :title="$text('Settings')" eb-href="/a/settings/user/list"></eb-list-item>
+      <eb-list-item v-if="!user.agent.anonymous" :title="$text('Account')" link="#" eb-href="user/account"></eb-list-item>
+      <eb-list-item :title="$text('Functions')" link="#" eb-href="user/functions"></eb-list-item>
+      <eb-list-item v-if="!user.agent.anonymous" :title="$text('Settings')" link="#" eb-href="/a/settings/user/list"></eb-list-item>
     </f7-list>
   </eb-page>
 </template>
@@ -39,6 +39,14 @@ export default {
         userName = `${userName}(${this.$text('Agent')})`;
       }
       return userName;
+    },
+    userAvatar() {
+      let avatar = this.user.op.avatar;
+      if (!avatar) {
+        const configBase = this.$meta.config.modules['a-base'];
+        avatar = configBase.user.avatar.default;
+      }
+      return this.$meta.util.combineImageUrl(avatar, 48);
     },
   },
   created() {},
