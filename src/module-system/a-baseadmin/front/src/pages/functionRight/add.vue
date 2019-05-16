@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar :title="$text(menu===1?'New Menu Right':'New Function Right')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-button ref="buttonSubmit" iconMaterial="save" :onPerform="onSave"></eb-button>
+        <eb-link ref="buttonSubmit" iconMaterial="save" :onPerform="onSave"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <eb-list form no-hairlines-md @submit.prevent="onFormSubmit">

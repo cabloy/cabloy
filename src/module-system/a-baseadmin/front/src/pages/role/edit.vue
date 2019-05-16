@@ -2,7 +2,7 @@
   <eb-page :page-content="false" tabs with-subnavbar>
     <eb-navbar :title="getPageTitle()" eb-back-link="Back">
       <f7-subnavbar>
-        <f7-toolbar v-if="role" tabbar scrollable>
+        <f7-toolbar v-if="role" top tabbar scrollable>
           <f7-link :tab-link="`#${tabIdInfo}`" tab-link-active>{{$text('Info')}}</f7-link>
           <f7-link v-if="role.catalog===0" :tab-link="`#${tabIdUsers}`">{{$text('Users')}}</f7-link>
           <f7-link v-if="role.catalog===1" :tab-link="`#${tabIdChildren}`">{{$text('Children')}}</f7-link>

@@ -5,7 +5,7 @@
         <eb-link :eb-href="`user/rights?userId=${userId}`">{{$text('Rights')}}</eb-link>
       </f7-nav-right>
       <f7-subnavbar>
-        <f7-toolbar v-if="user" tabbar>
+        <f7-toolbar v-if="user" top tabbar>
           <f7-link :tab-link="`#${tabIdInfo}`" tab-link-active>{{$text('Info')}}</f7-link>
           <f7-link :tab-link="`#${tabIdRoles}`">{{$text('Roles')}}</f7-link>
         </f7-toolbar>

@@ -1,7 +1,7 @@
 <template>
   <div>
     <f7-list>
-      <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.userName" :eb-href="`user/view?userId=${item.id}`" swipeout>
+      <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.userName" link="#" :eb-href="`user/view?userId=${item.id}`" swipeout>
         <div slot="after">
           <f7-badge v-if="item.realName && item.realName!==item.userName">{{item.realName}}</f7-badge>
           <f7-badge v-if="item.mobile">{{item.mobile}}</f7-badge>
@@ -130,6 +130,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>

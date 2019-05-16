@@ -1,7 +1,7 @@
 <template>
   <div>
     <f7-list>
-      <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.roleName" :eb-href="`role/edit?roleId=${item.id}`">
+      <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.roleName" link="#" :eb-href="`role/edit?roleId=${item.id}`">
         <f7-badge slot="media">{{item.sorting}}</f7-badge>
         <div slot="after">
           <f7-badge v-if="item.leader">{{$text('Leader')}}</f7-badge>
@@ -93,6 +93,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>

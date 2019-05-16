@@ -1,14 +1,10 @@
 <template>
   <eb-validate ref="validate" :data="role" :params="{validator: 'role'}" :onPerform="onPerformValidate">
     <f7-list>
-      <f7-list-item>
-        <f7-label floating>{{$text('Role Name')}}</f7-label>
-        <eb-input type="text" :placeholder="$text('Role Name')" :disabled="role.system===1" :clear-button="role.system===0" v-model="role.roleName" dataPath="roleName"></eb-input>
-      </f7-list-item>
-      <f7-list-item>
-        <f7-label floating>{{$text('Sorting')}}</f7-label>
-        <eb-input type="text" :placeholder="$text('Sorting')" clear-button v-model="role.sorting" dataPath="sorting"></eb-input>
-      </f7-list-item>
+      <eb-list-input :label="$text('Role Name')" floating-label type="text" :disabled="role.system===1" :clear-button="role.system===0" :placeholder="$text('Role Name')" v-model="role.roleName" dataPath="roleName">
+      </eb-list-input>
+      <eb-list-input :label="$text('Sorting')" floating-label type="text" clear-button :placeholder="$text('Sorting')" v-model="role.sorting" dataPath="sorting">
+      </eb-list-input>
       <f7-list-item>
         <span class="text-color-gray">{{$text('Leader')}}</span>
         <eb-toggle v-model="role.leader" dataPath="leader"></eb-toggle>

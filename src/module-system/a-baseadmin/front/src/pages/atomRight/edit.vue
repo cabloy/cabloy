@@ -2,7 +2,7 @@
   <eb-page :page-content="false" tabs with-subnavbar>
     <eb-navbar :title="getPageTitle()" eb-back-link="Back">
       <f7-subnavbar>
-        <f7-toolbar v-if="role" tabbar>
+        <f7-toolbar v-if="role" top tabbar>
           <f7-link :tab-link="`#${tabIdRights}`" tab-link-active>{{$text('Rights')}}</f7-link>
           <f7-link :tab-link="`#${tabIdSpreads}`">{{$text('Spreads')}}</f7-link>
         </f7-toolbar>
