@@ -3,7 +3,7 @@ export default {
     login: '/a/login/login',
     loginOnStart: true,
     toolbar: {
-      tabbar: true, labels: true, bottomMd: true,
+      tabbar: true, labels: true, bottom: true,
     },
     tabs: [
       { name: 'Home', tabLinkActive: true, iconMaterial: 'home', url: '/a/base/menu/list' },
