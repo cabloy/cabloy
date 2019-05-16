@@ -21,10 +21,10 @@ function _renderAudio($block) {
   // audio
   if (options.audio.concat) {
     for (let i = 0; i < options.audio.length; i++) {
-      if (!options.audio[i].cover) options.audio[i].cover = 'https://cdn.cabloy.com/audio/cover.jpg';
+      if (!options.audio[i].cover) options.audio[i].cover = 'https://cdn.cabloy.com/assets/audio/cover.jpg';
     }
   } else {
-    if (!options.audio.cover) options.audio.cover = 'https://cdn.cabloy.com/audio/cover.jpg';
+    if (!options.audio.cover) options.audio.cover = 'https://cdn.cabloy.com/assets/audio/cover.jpg';
   }
   // create
   new window.APlayer(options);
