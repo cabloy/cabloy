@@ -47,7 +47,8 @@
       height: 100%;
       background-color: #343D46 !important;
 
-      a {
+      .tab-link {
+        color: #C3D4E7;
         max-width: 200px;
         align-items: flex-start;
 
@@ -57,6 +58,7 @@
           top: 0;
           width: 16px;
           height: 16px;
+          line-height: 16px;
           font-size: 16px;
           background-color: hsla(0, 0%, 100%, .12);
           border-radius: 8px;
@@ -65,7 +67,14 @@
         }
       }
 
-      a:hover {
+      .tab-link.tab-link-active {
+        color: var(--f7-tabbar-link-active-color, var(--f7-theme-color));
+
+        .close {}
+      }
+
+      .tab-link:hover {
+        color: var(--f7-tabbar-link-active-color, var(--f7-theme-color));
         background-color: hsla(0, 0%, 100%, .12);
 
         .close {
@@ -150,7 +159,7 @@
   .eb-layout-container-pc {
     .eb-layout-header {
       .tabs {
-        a.tab-link-active {
+        .tab-link.tab-link-active {
           .close {
             visibility: visible;
           }

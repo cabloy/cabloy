@@ -28,7 +28,7 @@ export default {
     }
     const toolbar = c('f7-toolbar', {
       ref: 'toolbar',
-      attrs: { tabbar: true, scrollable: true },
+      attrs: { top: true, tabbar: true, scrollable: true },
     }, children);
     return toolbar;
   },
@@ -49,6 +49,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>
