@@ -254,6 +254,7 @@ __webpack_require__.r(__webpack_exports__);
     var toolbar = c('f7-toolbar', {
       ref: 'toolbar',
       attrs: {
+        top: true,
         tabbar: true,
         scrollable: true
       }
@@ -385,7 +386,7 @@ var component = normalizeComponent(
   staticRenderFns,
   false,
   null,
-  "06ea70d6",
+  "b8afb67c",
   null
   
 )
@@ -522,12 +523,12 @@ var buttons_component = normalizeComponent(
 )
 
 /* harmony default export */ var buttons = (buttons_component.exports);
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/components/mine.vue?vue&type=template&id=28e25bee&scoped=true&
-var minevue_type_template_id_28e25bee_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('f7-link',{attrs:{"popover-open":("#" + _vm.popoverId)}},[(_vm.loggedIn)?_c('div',{staticClass:"item"},[_c('img',{staticClass:"avatar avatar24",attrs:{"src":_vm.$meta.util.combineImageUrl(_vm.user.op.avatar,24)}})]):_vm._e(),_vm._v(" "),(_vm.loggedIn)?_c('div',{staticClass:"item name"},[_vm._v(_vm._s(_vm.userName))]):_vm._e(),_vm._v(" "),(!_vm.loggedIn)?_c('div',{staticClass:"item status"},[_vm._v(_vm._s(_vm.$text('Not LoggedIn')))]):_vm._e()]),_vm._v(" "),_c('f7-popover',{attrs:{"id":_vm.popoverId}},[_c('f7-list',{attrs:{"inset":""}},[_c('eb-list-item',{attrs:{"popover-close":"","title":_vm.$text('Mine'),"eb-href":_vm.$config.layout.header.mine.url}},[_c('f7-icon',{attrs:{"slot":"media","material":_vm.$config.layout.header.mine.iconMaterial},slot:"media"})],1),_vm._v(" "),(!_vm.loggedIn)?_c('eb-list-item',{attrs:{"popover-close":"","link":"#","onPerform":_vm.onSignin}},[_vm._v(_vm._s(_vm.$text('Sign in')))]):_vm._e(),_vm._v(" "),(_vm.loggedIn)?_c('eb-list-item',{attrs:{"popover-close":"","link":"#","onPerform":_vm.onLogout}},[_vm._v(_vm._s(_vm.$text('Log Out')))]):_vm._e()],1)],1)],1)}
-var minevue_type_template_id_28e25bee_scoped_true_staticRenderFns = []
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/components/mine.vue?vue&type=template&id=351493c4&scoped=true&
+var minevue_type_template_id_351493c4_scoped_true_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('f7-link',{attrs:{"popover-open":("#" + _vm.popoverId)}},[(_vm.loggedIn)?_c('div',{staticClass:"item"},[_c('img',{staticClass:"avatar avatar24",attrs:{"src":_vm.userAvatar}})]):_vm._e(),_vm._v(" "),(_vm.loggedIn)?_c('div',{staticClass:"item name"},[_vm._v(_vm._s(_vm.userName))]):_vm._e(),_vm._v(" "),(!_vm.loggedIn)?_c('div',{staticClass:"item status"},[_vm._v(_vm._s(_vm.$text('Not LoggedIn')))]):_vm._e()]),_vm._v(" "),_c('f7-popover',{attrs:{"id":_vm.popoverId}},[_c('f7-list',{attrs:{"inset":""}},[_c('eb-list-item',{attrs:{"popover-close":"","title":_vm.$text('Mine'),"link":"#","eb-href":_vm.$config.layout.header.mine.url}},[_c('f7-icon',{attrs:{"slot":"media","material":_vm.$config.layout.header.mine.iconMaterial},slot:"media"})],1),_vm._v(" "),(!_vm.loggedIn)?_c('eb-list-item',{attrs:{"popover-close":"","link":"#","onPerform":_vm.onSignin}},[_vm._v(_vm._s(_vm.$text('Sign in')))]):_vm._e(),_vm._v(" "),(_vm.loggedIn)?_c('eb-list-item',{attrs:{"popover-close":"","link":"#","onPerform":_vm.onLogout}},[_vm._v(_vm._s(_vm.$text('Log Out')))]):_vm._e()],1)],1)],1)}
+var minevue_type_template_id_351493c4_scoped_true_staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./front/src/components/mine.vue?vue&type=template&id=28e25bee&scoped=true&
+// CONCATENATED MODULE: ./front/src/components/mine.vue?vue&type=template&id=351493c4&scoped=true&
 
 // CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/components/mine.vue?vue&type=script&lang=js&
 
@@ -552,6 +553,16 @@ var minevue_type_template_id_28e25bee_scoped_true_staticRenderFns = []
       }
 
       return userName;
+    },
+    userAvatar: function userAvatar() {
+      var avatar = this.user.op.avatar;
+
+      if (!avatar) {
+        var configBase = this.$meta.config.modules['a-base'];
+        avatar = configBase.user.avatar["default"];
+      }
+
+      return this.$meta.util.combineImageUrl(avatar, 48);
     }
   },
   methods: {
@@ -583,11 +594,11 @@ var minevue_type_template_id_28e25bee_scoped_true_staticRenderFns = []
 
 var mine_component = normalizeComponent(
   components_minevue_type_script_lang_js_,
-  minevue_type_template_id_28e25bee_scoped_true_render,
-  minevue_type_template_id_28e25bee_scoped_true_staticRenderFns,
+  minevue_type_template_id_351493c4_scoped_true_render,
+  minevue_type_template_id_351493c4_scoped_true_staticRenderFns,
   false,
   null,
-  "28e25bee",
+  "351493c4",
   null
   
 )
