@@ -2,14 +2,12 @@
   <eb-page>
     <eb-navbar :title="$text('Select Tags')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-button ref="buttonSubmit" iconMaterial="done" :onPerform="onPerformDone"></eb-button>
+        <eb-link ref="buttonSubmit" iconMaterial="done" :onPerform="onPerformDone"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <eb-list form no-hairlines-md @submit.prevent="onFormSubmit">
-      <f7-list-item>
-        <f7-label floating>{{$text('Tags')}}</f7-label>
-        <eb-input type="text" v-model="tagsText" :placeholder="$text('Tags')" clear-button></eb-input>
-      </f7-list-item>
+      <eb-list-input :label="$text('Tags')" floating-label type="text" clear-button :placeholder="$text('Tags')" v-model="tagsText">
+      </eb-list-input>
     </eb-list>
     <f7-block>
       <div class="row tags">

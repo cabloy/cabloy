@@ -6,7 +6,7 @@
         <eb-link iconMaterial="search" :onPerform="onPerformSearch"></eb-link>
       </f7-nav-right>
       <f7-subnavbar>
-        <f7-toolbar tabbar :scrollable="languages && languages.length>2">
+        <f7-toolbar top tabbar :scrollable="languages && languages.length>2">
           <template v-if="languages">
             <f7-link v-for="(item,index) of languages" :key="item.value" :tab-link="`#${tabIdLanguages}_${item.value}`" :tab-link-active="index===0">{{item.title}}</f7-link>
           </template>
