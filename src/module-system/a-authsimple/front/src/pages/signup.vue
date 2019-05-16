@@ -14,14 +14,10 @@
               <captchaContainer></captchaContainer>
             </template>
           </f7-list-item>
-          <f7-list-item>
-            <f7-label floating>{{$text('Captcha code')}}</f7-label>
-            <eb-input type="text" :placeholder="$text('Captcha code')" clear-button v-model="captcha.code" dataPath="captcha/code"></eb-input>
-          </f7-list-item>
+          <eb-list-input :label="$text('Captcha code')" floating-label type="text" clear-button :placeholder="$text('Captcha code')" v-model="captcha.code" dataPath="captcha/code">
+          </eb-list-input>
           <f7-list-item divider>
-            <span class="eb-list-divider-normal">
-              <eb-button ref="buttonSubmit" :onPerform="signUp">{{$text('Sign up')}}</eb-button>
-            </span>
+            <eb-button ref="buttonSubmit" :onPerform="signUp">{{$text('Sign up')}}</eb-button>
           </f7-list-item>
         </eb-list>
       </eb-validate>

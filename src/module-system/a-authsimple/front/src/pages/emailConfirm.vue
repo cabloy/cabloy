@@ -9,9 +9,7 @@
             <eb-list-item-validate dataKey="userName"></eb-list-item-validate>
             <eb-list-item-validate dataKey="email"></eb-list-item-validate>
             <f7-list-item divider>
-              <span class="eb-list-divider-normal">
-                <eb-button ref="buttonSubmit" :onPerform="onPerformOk">{{$text('Send confirmation email')}}</eb-button>
-              </span>
+              <eb-button ref="buttonSubmit" :onPerform="onPerformOk">{{$text('Send confirmation email')}}</eb-button>
             </f7-list-item>
           </eb-list>
         </eb-validate>

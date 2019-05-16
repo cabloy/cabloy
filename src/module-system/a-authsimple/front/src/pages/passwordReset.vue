@@ -7,9 +7,7 @@
           <eb-list-item-validate dataKey="passwordNew"></eb-list-item-validate>
           <eb-list-item-validate dataKey="passwordNewAgain"></eb-list-item-validate>
           <f7-list-item divider>
-            <span class="eb-list-divider-normal">
-              <eb-button ref="buttonSubmit" :onPerform="onPerformOk">{{$text('OK')}}</eb-button>
-            </span>
+            <eb-button ref="buttonSubmit" :onPerform="onPerformOk">{{$text('OK')}}</eb-button>
           </f7-list-item>
         </eb-list>
       </eb-validate>

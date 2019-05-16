@@ -4,39 +4,27 @@
       <f7-card-content>
         <eb-validate ref="validate" :onPerform="onPerformValidate">
           <eb-list form no-hairlines-md @submit.prevent="onSubmit">
-            <f7-list-item>
+            <eb-list-input :label="$text('Your username/mobile/email')" floating-label type="text" clear-button :placeholder="$text('Your username/mobile/email')" v-model="data.auth" dataPath="auth">
               <f7-icon material="person_outline" slot="media"></f7-icon>
-              <f7-label floating>{{$text('Your username/mobile/email')}}</f7-label>
-              <eb-input type="text" :placeholder="$text('Your username/mobile/email')" clear-button v-model="data.auth" dataPath="auth"></eb-input>
-            </f7-list-item>
-            <f7-list-item>
+            </eb-list-input>
+            <eb-list-input :label="$text('Your password')" floating-label type="password" clear-button :placeholder="$text('Your password')" v-model="data.password" dataPath="password">
               <f7-icon material="lock_outline" slot="media"></f7-icon>
-              <f7-label floating>{{$text('Your password')}}</f7-label>
-              <eb-input type="password" :placeholder="$text('Your password')" clear-button v-model="data.password" dataPath="password"></eb-input>
-            </f7-list-item>
+            </eb-list-input>
             <f7-list-item>
               <f7-icon slot="media"></f7-icon>
               <template v-if="moduleCaptcha">
                 <captchaContainer></captchaContainer>
               </template>
             </f7-list-item>
-            <f7-list-item>
+            <eb-list-input :label="$text('Captcha code')" floating-label type="text" clear-button :placeholder="$text('Captcha code')" v-model="captcha.code" dataPath="captcha/code">
               <f7-icon slot="media"></f7-icon>
-              <f7-label floating>{{$text('Captcha code')}}</f7-label>
-              <eb-input type="text" :placeholder="$text('Captcha code')" clear-button v-model="captcha.code" dataPath="captcha/code"></eb-input>
-            </f7-list-item>
+            </eb-list-input>
             <f7-list-item>
               <f7-icon slot="media"></f7-icon>
               <span class="text-color-gray">{{$text('Remember me')}}</span>
               <eb-toggle v-model="data.rememberMe" dataPath="rememberMe"></eb-toggle>
             </f7-list-item>
-            <f7-list-item divider>
-              <span class="eb-list-divider-normal">
-                <eb-button ref="buttonSubmit" :onPerform="signIn">{{$text('Sign in')}}</eb-button>
-              </span>
-            </f7-list-item>
-            <f7-list-item>
-            </f7-list-item>
+            <eb-list-button ref="buttonSubmit" :onPerform="signIn">{{$text('Sign in')}}</eb-list-button>
           </eb-list>
         </eb-validate>
       </f7-card-content>

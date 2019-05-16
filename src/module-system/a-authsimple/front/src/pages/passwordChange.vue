@@ -1,6 +1,10 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Change password')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar :title="$text('Change password')" eb-back-link="Back">
+      <f7-nav-right>
+        <eb-link iconMaterial="done" ref="buttonSubmit" :onPerform="onPerformOk"></eb-link>
+      </f7-nav-right>
+    </eb-navbar>
     <f7-block>
       <eb-validate ref="validate" :auto="false" :data="data" :params="{validator: 'passwordChange'}" :onPerform="onPerformValidate">
         <eb-list form no-hairlines-md @submit.prevent="onSubmit">
@@ -12,15 +16,8 @@
               <captchaContainer></captchaContainer>
             </template>
           </f7-list-item>
-          <f7-list-item>
-            <f7-label floating>{{$text('Captcha code')}}</f7-label>
-            <eb-input type="text" :placeholder="$text('Captcha code')" clear-button v-model="captcha.code" dataPath="captcha/code"></eb-input>
-          </f7-list-item>
-          <f7-list-item divider>
-            <span class="eb-list-divider-normal">
-              <eb-button ref="buttonSubmit" :onPerform="onPerformOk">{{$text('OK')}}</eb-button>
-            </span>
-          </f7-list-item>
+          <eb-list-input :label="$text('Captcha code')" floating-label type="text" clear-button :placeholder="$text('Captcha code')" v-model="captcha.code" dataPath="captcha/code">
+          </eb-list-input>
         </eb-list>
       </eb-validate>
     </f7-block>

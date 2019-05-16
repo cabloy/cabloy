@@ -8,9 +8,7 @@
           <eb-list form no-hairlines-md @submit.prevent="onSubmit">
             <eb-list-item-validate dataKey="email"></eb-list-item-validate>
             <f7-list-item divider>
-              <span class="eb-list-divider-normal">
-                <eb-button ref="buttonSubmit" :onPerform="onPerformOk">{{$text('Reset password')}}</eb-button>
-              </span>
+              <eb-button ref="buttonSubmit" :onPerform="onPerformOk">{{$text('Reset password')}}</eb-button>
             </f7-list-item>
           </eb-list>
         </eb-validate>
