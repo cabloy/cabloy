@@ -467,7 +467,7 @@ export default {
       return flags.split(',');
     },
     getItemMetaMedia(item) {
-      const media = (item._meta && item._meta.media) || item.avatar;
+      const media = (item._meta && item._meta.media) || item.avatar || this.$config.user.avatar.default;
       return this.$meta.util.combineImageUrl(media, 32);
     },
     getItemMetaMediaLabel(item) {

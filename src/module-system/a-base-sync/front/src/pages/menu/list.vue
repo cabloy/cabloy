@@ -5,7 +5,7 @@
         <eb-link iconMaterial="search" eb-target="_self" eb-href="menu/search"></eb-link>
       </f7-nav-right>
       <f7-subnavbar>
-        <f7-toolbar tabbar>
+        <f7-toolbar top tabbar>
           <f7-link :tab-link="`#${tabIdScenes}`" tab-link-active>{{$text('Scenes')}}</f7-link>
           <f7-link :tab-link="`#${tabIdModules}`">{{$text('Modules')}}</f7-link>
           <f7-link :tab-link="`#${tabIdStars}`">{{$text('Stars')}}</f7-link>

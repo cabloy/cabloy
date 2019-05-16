@@ -22,7 +22,7 @@
           <f7-link sheet-close>{{$text('Close')}}</f7-link>
         </div>
         <div class="right">
-          <eb-button ref="buttonSubmit" :onPerform="onSubmit">{{$text('Submit')}}</eb-button>
+          <eb-link ref="buttonSubmit" :onPerform="onSubmit">{{$text('Submit')}}</eb-link>
         </div>
       </f7-toolbar>
       <f7-page-content>
@@ -30,16 +30,14 @@
           <f7-badge :style="{backgroundColor:labelColor}">{{labelText}}</f7-badge>
         </div>
         <eb-list form no-hairlines-md @submit.prevent="onFormSubmit">
+          <eb-list-input :label="$text('Text')" floating-label type="text" clear-button :placeholder="$text('Text')" v-model="labelText">
+          </eb-list-input>
           <f7-list-item>
-            <f7-label floating>{{$text('Text')}}</f7-label>
-            <eb-input type="text" v-model="labelText" :placeholder="$text('Text')" clear-button></eb-input>
+            <div class="row colors">
+              <f7-button v-for="color of colors" :key="color.value" class="col-33" :style="{backgroundColor:color.value}" small fill @click="onColorSelect(color)">{{$text(color.name)}}</f7-button>
+            </div>
           </f7-list-item>
         </eb-list>
-        <f7-block>
-          <div class="row colors">
-            <f7-button v-for="color of colors" :key="color.value" class="col-33" :style="{backgroundColor:color.value}" small fill @click="onColorSelect(color)">{{$text(color.name)}}</f7-button>
-          </div>
-        </f7-block>
       </f7-page-content>
     </f7-sheet>
   </eb-page>
@@ -160,6 +158,7 @@ export default {
 
 .colors {
   height: 60px;
+  width: 100%;
 }
 
 </style>

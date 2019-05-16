@@ -2,14 +2,12 @@
   <eb-page @page:afterin="onPageAfterIn">
     <eb-navbar :title="pageTitle" eb-back-link="Back">
       <f7-nav-right>
-        <eb-button ref="buttonSubmit" iconMaterial="search" :onPerform="onPerformSearch"></eb-button>
+        <eb-link ref="buttonSubmit" iconMaterial="search" :onPerform="onPerformSearch"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <eb-list form no-hairlines-md @submit.prevent="onFormSubmit">
-      <f7-list-item>
-        <f7-label floating>{{$text('Atom Name')}}</f7-label>
-        <eb-input type="text" :placeholder="$text('Atom Name')" clear-button v-model="atomName"></eb-input>
-      </f7-list-item>
+      <eb-list-input :label="$text('Atom Name')" floating-label type="text" clear-button :placeholder="$text('Atom Name')" v-model="atomName">
+      </eb-list-input>
       <f7-list-item smartSelect :title="$text('Label')" :smartSelectParams="{openIn: 'page', closeOnSelect: true}">
         <eb-select name="label" v-model="label" :options="labels"></eb-select>
       </f7-list-item>

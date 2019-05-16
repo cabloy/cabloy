@@ -7,7 +7,7 @@
         <eb-link iconMaterial="sort" :onPerform="onPerformAtomOrders"></eb-link>
       </f7-nav-right>
       <f7-subnavbar>
-        <f7-toolbar tabbar :scrollable="labels && Object.keys(labels).length>1">
+        <f7-toolbar top tabbar :scrollable="labels && Object.keys(labels).length>1">
           <f7-link :tab-link="`#${tabIdList}`" tab-link-active>{{$text('List')}}</f7-link>
           <f7-link :tab-link="`#${tabIdDrafts}`">{{$text('Drafts')}}</f7-link>
           <f7-link :tab-link="`#${tabIdStars}`">{{$text('Stars')}}</f7-link>

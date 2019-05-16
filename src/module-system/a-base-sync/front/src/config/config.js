@@ -8,4 +8,9 @@ export default {
       50: 'Tools',
     },
   },
+  user: {
+    avatar: {
+      default: 'https://cdn.cabloy.com/assets/img/user.png',
+    },
+  },
 };
