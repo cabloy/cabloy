@@ -127,7 +127,7 @@ __webpack_require__.r(__webpack_exports__);
     toolbar: {
       tabbar: true,
       labels: true,
-      bottomMd: true
+      bottom: true
     },
     tabs: [{
       name: 'Home',
