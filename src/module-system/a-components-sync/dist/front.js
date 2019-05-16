@@ -851,8 +851,10 @@ function trimMessage(ctx, message) {
           this.$f7.popover.close(linkEl.parents('.popover'));
         }
 
-        event.stopPropagation();
-        event.preventDefault();
+        if (event) {
+          event.stopPropagation();
+          event.preventDefault();
+        }
       }
 
       if (!this.onPerform) return this.onLinkClick && this.onLinkClick(event);
@@ -1159,7 +1161,7 @@ var input_component = normalizeComponent(
   input_staticRenderFns,
   false,
   null,
-  "2f39bf3b",
+  "6e7e8e8a",
   null
   
 )
@@ -1322,7 +1324,7 @@ var radio_component = normalizeComponent(
   methods: {
     setValue: function setValue() {
       var f7Select = this.$$(this.$el).parents('.smart-select')[0].f7SmartSelect;
-      f7Select.setValue();
+      f7Select.setValue(this.value);
     },
     onValidateError: function onValidateError(error) {
       var panel = this.$$(this.$el).parents('.item-content');
@@ -1572,7 +1574,7 @@ var select_component = normalizeComponent(
   select_staticRenderFns,
   false,
   null,
-  "71bbb5c0",
+  "74a9683f",
   null
   
 )
@@ -1795,17 +1797,11 @@ var select_component = normalizeComponent(
         type = 'text';
       }
 
-      return c('f7-list-item', {
-        key: key
-      }, [c('f7-label', {
+      return c('eb-list-input', {
+        key: key,
         attrs: {
-          floating: true
-        },
-        domProps: {
-          innerText: title
-        }
-      }), c('eb-input', {
-        attrs: {
+          label: title,
+          floatingLabel: true,
           type: type,
           placeholder: placeholder,
           resizable: property.ebTextarea,
@@ -1819,7 +1815,7 @@ var select_component = normalizeComponent(
             _this2.setValue(data, key, value, property);
           }
         }
-      })]);
+      });
     },
     renderFile: function renderFile(c, data, pathParent, key, property) {
       var _this3 = this;
@@ -1851,17 +1847,11 @@ var select_component = normalizeComponent(
       var mode = property.ebParams.mode;
       var atomId = this.getMetaValue('atomId');
       atomId = atomId || property.ebParams.atomId || 0;
-      return c('f7-list-item', {
-        key: key
-      }, [c('f7-label', {
+      return c('eb-list-input', {
+        key: key,
         attrs: {
-          floating: true
-        },
-        domProps: {
-          innerText: title
-        }
-      }), c('eb-input', {
-        attrs: {
+          label: title,
+          floatingLabel: true,
           type: type,
           placeholder: placeholder,
           resizable: property.ebTextarea,
@@ -1875,7 +1865,7 @@ var select_component = normalizeComponent(
             _this3.setValue(data, key, value, property);
           }
         }
-      }), c('eb-button', {
+      }, [c('eb-button', {
         slot: 'root-end',
         staticClass: 'eb-input-file-upload',
         domProps: {
@@ -1908,11 +1898,13 @@ var select_component = normalizeComponent(
       return c('f7-list-item', {
         key: key
       }, [c('span', {
+        slot: 'title',
         staticClass: property.ebReadOnly ? 'text-color-gray' : '',
         domProps: {
           innerText: title
         }
       }), c('eb-toggle', {
+        slot: 'after',
         attrs: {
           dataPath: pathParent + key,
           value: this.getValue(data, key, property),
@@ -2000,7 +1992,7 @@ var validateItem_component = normalizeComponent(
   validateItem_staticRenderFns,
   false,
   null,
-  "0b0ca31a",
+  "4b87e3b4",
   null
   
 )
@@ -2497,6 +2489,70 @@ var listChoose_component = normalizeComponent(
 )
 
 /* harmony default export */ var listChoose = (listChoose_component.exports);
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/components/listInput.vue?vue&type=script&lang=js&
+
+
+var f7ListInput = external_vue_default.a.options.components['f7-list-input'].extendOptions;
+/* harmony default export */ var listInputvue_type_script_lang_js_ = ({
+  name: 'eb-list-input',
+  "extends": f7ListInput,
+  mixins: [validate],
+  mounted: function mounted() {
+    var _this = this;
+
+    this.$nextTick(function () {
+      _this.checkEmptyState();
+    });
+  },
+  methods: {
+    onValidateError: function onValidateError(error) {
+      var input = this._findText();
+
+      input[0].setCustomValidity(error);
+      this.$f7.input.validate(input);
+      this.checkEmptyState();
+    },
+    onInput: function onInput(event) {
+      this.$emit('input', event.target.value);
+      this.clearValidateError();
+    },
+    onChange: function onChange(event) {
+      this.$emit('change', event.target.value);
+    },
+    onInputClear: function onInputClear(event) {
+      this.$emit('input:clear', event.target.value);
+    },
+    checkEmptyState: function checkEmptyState() {
+      this.$f7.input.checkEmptyState(this._findText());
+    },
+    _findText: function _findText() {
+      var tag = this.type === 'textarea' ? 'textarea' : 'input';
+      return this.$$(this.$el).find(tag);
+    }
+  }
+});
+// CONCATENATED MODULE: ./front/src/components/listInput.vue?vue&type=script&lang=js&
+ /* harmony default export */ var components_listInputvue_type_script_lang_js_ = (listInputvue_type_script_lang_js_); 
+// CONCATENATED MODULE: ./front/src/components/listInput.vue
+var listInput_render, listInput_staticRenderFns
+
+
+
+
+/* normalize component */
+
+var listInput_component = normalizeComponent(
+  components_listInputvue_type_script_lang_js_,
+  listInput_render,
+  listInput_staticRenderFns,
+  false,
+  null,
+  "13c80493",
+  null
+  
+)
+
+/* harmony default export */ var listInput = (listInput_component.exports);
 // CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/components/fabButton.vue?vue&type=script&lang=js&
 
 
@@ -2621,12 +2677,12 @@ var swipeoutButton_component = normalizeComponent(
 )
 
 /* harmony default export */ var swipeoutButton = (swipeoutButton_component.exports);
-// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/components/tabPageContent.vue?vue&type=template&id=e64ffef8&
-var tabPageContentvue_type_template_id_e64ffef8_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('f7-page-content',{attrs:{"id":_vm.id,"tab":_vm.tab,"tab-active":_vm.tabActive,"ptr":"","infinite":"","infinitePreloader":false},on:{"ptr:refresh":_vm.onRefresh,"infinite":_vm.onInfinite,"tab:show":_vm.onTabShow}},[_vm._t("list")],2)}
-var tabPageContentvue_type_template_id_e64ffef8_staticRenderFns = []
+// CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/components/tabPageContent.vue?vue&type=template&id=1862eac8&
+var tabPageContentvue_type_template_id_1862eac8_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('f7-page-content',{attrs:{"id":_vm.id,"tab":_vm.tab,"tab-active":_vm.tabActive,"ptr":"","ptrMousewheel":"","infinite":"","infinitePreloader":false},on:{"ptr:refresh":_vm.onRefresh,"infinite":_vm.onInfinite,"tab:show":_vm.onTabShow}},[_vm._t("list")],2)}
+var tabPageContentvue_type_template_id_1862eac8_staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./front/src/components/tabPageContent.vue?vue&type=template&id=e64ffef8&
+// CONCATENATED MODULE: ./front/src/components/tabPageContent.vue?vue&type=template&id=1862eac8&
 
 // CONCATENATED MODULE: /Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/babel-loader/lib!/Users/wind/Documents/data/cabloy/egg-born-demo/node_modules/vue-loader/lib??vue-loader-options!./front/src/components/tabPageContent.vue?vue&type=script&lang=js&
 /* harmony default export */ var tabPageContentvue_type_script_lang_js_ = ({
@@ -2689,8 +2745,8 @@ var tabPageContentvue_type_template_id_e64ffef8_staticRenderFns = []
 
 var tabPageContent_component = normalizeComponent(
   components_tabPageContentvue_type_script_lang_js_,
-  tabPageContentvue_type_template_id_e64ffef8_render,
-  tabPageContentvue_type_template_id_e64ffef8_staticRenderFns,
+  tabPageContentvue_type_template_id_1862eac8_render,
+  tabPageContentvue_type_template_id_1862eac8_staticRenderFns,
   false,
   null,
   null,
@@ -3098,6 +3154,7 @@ var box_component = normalizeComponent(
 
 
 
+
 /* harmony default export */ var components = __webpack_exports__["default"] = ({
   ebLoadMore: loadMore,
   ebView: view,
@@ -3116,6 +3173,7 @@ var box_component = normalizeComponent(
   ebListItem: listItem,
   ebListItemPanel: listPanel,
   ebListItemChoose: listChoose,
+  ebListInput: listInput,
   ebFabButton: fabButton,
   ebSwipeoutActions: swipeoutActions,
   ebSwipeoutButton: swipeoutButton,
