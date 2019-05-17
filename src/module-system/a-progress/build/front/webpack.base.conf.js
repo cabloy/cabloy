@@ -6,6 +6,9 @@ function resolve(dir) {
   return path.join(__dirname, '../../front', dir);
 }
 
+const moduleInfo = utils.parseInfoFromPackage(__dirname);
+const libraryName = moduleInfo.relativeName;
+
 module.exports = {
   entry: {
     front: resolve('src/main.js'),
@@ -14,11 +17,11 @@ module.exports = {
     path: config.build.assetsRoot,
     filename: '[name].js',
     publicPath: config.build.assetsPublicPath,
-    library: 'front',
-    libraryTarget: 'commonjs2',
+    library: libraryName,
+    libraryTarget: 'window',
   },
   externals: {
-    vue: 'vue',
+    vue: 'Vue',
   },
   resolve: {
     extensions: [ '.js', '.vue', '.json' ],

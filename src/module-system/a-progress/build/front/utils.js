@@ -1,6 +1,8 @@
 const path = require('path');
 const config = require('./config.js');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const mparse = require('egg-born-mparse').default;
+const fse = require('fs-extra');
 
 exports.assetsPath = function(_path) {
   return path.join(config.build.assetsSubDirectory, _path);
@@ -62,3 +64,21 @@ exports.styleLoaders = function(options) {
   }
   return output;
 };
+
+exports.parseInfoFromPackage = function(dir) {
+  const file = lookupPackage(dir);
+  if (!file) return null;
+  const pkg = require(file);
+  return mparse.parseInfo(mparse.parseName(pkg.name));
+};
+
+function lookupPackage(dir) {
+  let _dir = dir;
+  // eslint-disable-next-line
+    while (true) {
+    const file = path.join(_dir, 'package.json');
+    if (file === '/package.json') return null;
+    if (fse.existsSync(file)) return file;
+    _dir = path.join(_dir, '../');
+  }
+}
