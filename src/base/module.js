@@ -152,7 +152,8 @@ export default function(Vue) {
     },
     _requireJS(r, key, moduleInfo, cb) {
       // instance
-      const instance = r(key);
+      let instance = r(key);
+      instance = window[moduleInfo.relativeName];
       // install
       this.install(instance, moduleInfo, module => {
         // custom css, must after instance installed
