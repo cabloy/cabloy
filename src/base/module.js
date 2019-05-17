@@ -153,7 +153,7 @@ export default function(Vue) {
     _requireJS(r, key, moduleInfo, cb) {
       // instance
       let instance = r(key);
-      if (!instance) {
+      if (!instance.default) {
         instance = window[moduleInfo.relativeName];
       }
       // install
