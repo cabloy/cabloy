@@ -1,7 +1,6 @@
 import mparse from 'egg-born-mparse';
 const rLocalJSs = require.context('../../../../src/module/', true, /-sync\/front\/src\/main\.js$/);
 const rGlobalJSs = require.context('../../build/__module/', true, /-sync\/dist\/front\.js$/);
-const rGlobalCSSs = require.context('../../build/__module/', true, /-sync\/dist\/front\.css$/);
 const rCustomCSSs = require.context('../../../../src/front/assets/css/module/', true, /-sync\/custom\.less$/);
 
 export default function(Vue) {
@@ -90,7 +89,7 @@ export default function(Vue) {
         // instance
         this.install(instance, moduleInfo, module => {
           // custom css
-          import('../../../../src/front/assets/css/module/' + moduleInfo.relativeName + '/custom.less').then(() => {
+          import(`../../../../src/front/assets/css/module/${moduleInfo.relativeName}/custom.less`).then(() => {
             cb(module);
           }).catch(() => {
             cb(module);
@@ -99,15 +98,13 @@ export default function(Vue) {
       });
     },
     _import2(moduleInfo, cb) {
-      import('../../../../src/module/' + moduleInfo.relativeName + '/front/src/main.js').then(instance => {
+      import(`../../../../src/module/${moduleInfo.relativeName}/front/src/main.js`).then(instance => {
         cb(instance);
       }).catch(err => {
         if (err.message.indexOf('/front/src/main.js') === -1) throw err;
-        import('../../build/__module/' + moduleInfo.fullName + '/dist/front.css').then(() => {
-          import('../../build/__module/' + moduleInfo.fullName + '/dist/front.js').then(instance => {
-            cb(instance);
-          });
-        }).catch(() => {});
+        import(`../../build/__module/${moduleInfo.relativeName}/dist/front.js`).then(() => {
+          cb(window[moduleInfo.relativeName]);
+        });
       });
     },
     requireAll() {
@@ -148,10 +145,6 @@ export default function(Vue) {
       });
     },
     _requireGlobalCSSJS(key, moduleInfo, cb) {
-      const keyCss = this._requireFindKey(rGlobalCSSs, moduleInfo.relativeName);
-      if (keyCss) {
-        this._requireCSS(rGlobalCSSs, keyCss);
-      }
       this._requireJS(rGlobalJSs, key, moduleInfo, cb);
     },
     _requireCSS(r, key) {

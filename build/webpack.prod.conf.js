@@ -8,6 +8,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 function resolve(dir) {
   return path.join(__dirname, '..', dir);
@@ -73,7 +74,7 @@ const webpackConfig = merge(baseWebpackConfig, {
           resolve('src'),
           resolve('../../src'),
           resolve('../../modules'),
-          resolve('build/__module'),
+          // resolve('build/__module'),
           resolve('../@zhennann/framework7/packages'),
         ],
       },
@@ -115,6 +116,20 @@ const webpackConfig = merge(baseWebpackConfig, {
       },
     },
     minimize: config.build.uglify,
+    minimizer: [
+      new TerserPlugin({
+        parallel: true,
+        chunkFilter: chunk => {
+          if (!chunk._modules) return true;
+          for (const module of chunk._modules.values()) {
+            if (module.resource && module.resource.indexOf('/build/__module') > -1) {
+              return false;
+            }
+          }
+          return true;
+        },
+      }),
+    ],
   },
 });
 

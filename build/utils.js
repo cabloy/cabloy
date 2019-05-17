@@ -82,7 +82,7 @@ exports.copyModules = function() {
   // copy js css
   glob(`${nodeModulesPath}/egg-born-module-*/dist/front.*`, (err, files) => {
     files.forEach(file => {
-      const dest = path.join(__dirname, '__module', file.substr(nodeModulesPath.length));
+      const dest = path.join(__dirname, '__module', file.substr(nodeModulesPath.length + '/egg-born-module-'.length));
       fse.copySync(file, dest);
     });
   });
@@ -92,7 +92,7 @@ exports.copyModules = function() {
     files.forEach(file => {
       const dest = path.join(config.build.assetsRoot, config.build.assetsSubDirectory);
       fse.copySync(file, dest);
-      const dest2 = path.join(__dirname, '__module', file.substr(nodeModulesPath.length));
+      const dest2 = path.join(__dirname, '__module', file.substr(nodeModulesPath.length + '/egg-born-module-'.length));
       fse.copySync(file, dest2);
     });
   });

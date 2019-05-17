@@ -1,6 +1,9 @@
 import Vue from 'vue';
 import moment from 'moment';
 
+// Vue
+window.Vue = Vue;
+
 // meta
 const meta = Vue.prototype.$meta = {};
 
