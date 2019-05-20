@@ -37,6 +37,9 @@ module.exports = appInfo => {
       brother: {
         order: 'desc',
       },
+      loadMore: {
+        loadOnScroll: false,
+      },
     },
     profile: {
 
