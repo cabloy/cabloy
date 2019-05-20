@@ -273,9 +273,9 @@ util.article = {
       ];
     } else {
       // asc/desc for createdAt
-      options.where['f.createdAt'] = { op: type === 'prev' ? (order==='desc'?'>':'<') : (order==='desc'?'<':'>'), val: article.createdAt };
+      options.where['f.createdAt'] = { op: type === 'prev' ? (order === 'desc' ? '>' : '<') : (order === 'desc' ? '<' : '>'), val: article.createdAt };
       options.orders = [
-        [ 'f.createdAt', type === 'prev' ? (order==='desc'?'asc':'desc') : (order==='desc'?'desc':'asc') ],
+        [ 'f.createdAt', type === 'prev' ? (order === 'desc' ? 'asc' : 'desc') : (order === 'desc' ? 'desc' : 'asc') ],
       ];
     }
     // select
@@ -316,19 +316,27 @@ util.article = {
     }
   },
   _starClick(atomId) {
-    // stat
-    const $stat = $(`.stat[data-article-id=${atomId}]`);
-    const star = $('.button-starCount .star-on', $stat).hasClass('hidden') ? 1 : 0;
-    util.performAction({
-      method: 'post',
-      url: '/a/base/atom/star',
-      body: {
-        key: { atomId },
-        atom: { star },
-      },
-    }).then(data => {
-      this._starCount(atomId, data.star, data.starCount);
-    });
+    // check if anonymous
+    if (util.user.op.anonymous) {
+      // url
+      const url=`${env.site.serverUrl}/#!/a/cms/article/autoStar?atomId=${atomId}`;
+      location.assign(url);
+    } else {
+      // stat
+      const $stat = $(`.stat[data-article-id=${atomId}]`);
+      const star = $('.button-starCount .star-on', $stat).hasClass('hidden') ? 1 : 0;
+      util.performAction({
+        method: 'post',
+        url: '/a/base/atom/star',
+        body: {
+          key: { atomId },
+          atom: { star },
+        },
+      }).then(data => {
+        this._starCount(atomId, data.star, data.starCount);
+      });
+    }
+
   },
   _starCount(atomId, star, starCount) {
     const $stat = $(`.stat[data-article-id=${atomId}]`);
