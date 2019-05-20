@@ -40,7 +40,7 @@ module.exports = {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         loader: 'url-loader',
         options: {
-          limit: 10000,
+          limit: 1000,
           name(file) {
             return hasHash(file) ? utils.assetsPath('img/[name].[ext]') : utils.assetsPath('img/[name].[hash].[ext]');
           },
@@ -50,7 +50,7 @@ module.exports = {
         test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
         loader: 'url-loader',
         options: {
-          limit: 10000,
+          limit: 1000,
           name(file) {
             return hasHash(file) ? utils.assetsPath('fonts/[name].[ext]') : utils.assetsPath('fonts/[name].[hash].[ext]');
           },

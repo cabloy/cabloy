@@ -208,6 +208,7 @@ export default function(Vue) {
     },
     combineImageUrl(url, width, height) {
       if (!url) return url;
+      if (url.indexOf('data:image/') === 0) return url;
       if (!width && !height) return url;
       const pixelRatio = Vue.prototype.$device.pixelRatio;
       let query = '';
