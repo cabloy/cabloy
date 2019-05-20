@@ -1,3 +1,4 @@
+import avatarUser from '../assets/img/user.png';
 export default {
   menu: {
     scene: {
@@ -10,7 +11,7 @@ export default {
   },
   user: {
     avatar: {
-      default: 'https://cdn.cabloy.com/assets/img/user.png',
+      default: avatarUser,
     },
   },
 };
