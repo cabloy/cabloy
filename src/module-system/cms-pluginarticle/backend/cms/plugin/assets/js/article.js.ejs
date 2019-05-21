@@ -1,10 +1,10 @@
 function _onParseComment(item) {
   const actionsEdit = item.userId !== util.user.op.id ? '' : `
-      <a href="${util.article.commentUrl({ atomId: item.atomId, id: item.id, replyId: 0 })}" class="action" target="_blank"><span class="glyphicon glyphicon-pencil"></span></a>
+      <a href="${util.article.commentUrl({ atomId: item.atomId, id: item.id, replyId: 0 })}" class="action" target="_self"><span class="glyphicon glyphicon-pencil"></span></a>
       <a href="#" class="action delete"><span class="glyphicon glyphicon-trash"></span></a>
   `;
   const reply = !env.article.allowComment ? '' : `
-    <a href="${util.article.commentUrl({ atomId: item.atomId, id: 0, replyId: item.id })}" class="action" target="_blank"><span class="glyphicon glyphicon-share-alt"></span></a>
+    <a href="${util.article.commentUrl({ atomId: item.atomId, id: 0, replyId: item.id })}" class="action" target="_self"><span class="glyphicon glyphicon-share-alt"></span></a>
   `;
   return `
 <div class="comment panel panel-default" data-atom-id="${item.atomId}" data-comment-id="${item.id}">
@@ -33,11 +33,11 @@ function _onParseComment(item) {
 
 function _onParseCommentAll(item) {
   const actionsEdit = item.h_userId !== util.user.op.id ? '' : `
-      <a href="${util.article.commentUrl({ atomId: item.atomId, id: item.h_id, replyId: 0 })}" class="action" target="_blank"><span class="glyphicon glyphicon-pencil"></span></a>
+      <a href="${util.article.commentUrl({ atomId: item.atomId, id: item.h_id, replyId: 0 })}" class="action" target="_self"><span class="glyphicon glyphicon-pencil"></span></a>
       <a href="#" class="action delete"><span class="glyphicon glyphicon-trash"></span></a>
   `;
   const reply = !item.allowComment ? '' : `
-    <a href="${util.article.commentUrl({ atomId: item.atomId, id: 0, replyId: item.h_id })}" class="action" target="_blank"><span class="glyphicon glyphicon-share-alt"></span></a>
+    <a href="${util.article.commentUrl({ atomId: item.atomId, id: 0, replyId: item.h_id })}" class="action" target="_self"><span class="glyphicon glyphicon-share-alt"></span></a>
   `;
   return `
 <div class="comment panel panel-default" data-atom-id="${item.atomId}" data-comment-id="${item.h_id}">
@@ -117,7 +117,8 @@ util.article = {
     if (env.article) {
       // postComment click
       $('.button-postComment', $container).click(() => {
-        window.open(util.article.commentUrl({ atomId: env.article.atomId, id: 0, replyId: 0 }));
+        const url = util.article.commentUrl({ atomId: env.article.atomId, id: 0, replyId: 0 });
+        location.assign(url);
       });
       // order click
       $('.order a', $container).click(event => {
@@ -148,7 +149,7 @@ util.article = {
     this._switchOrder({ $container, order: orderInit, onParse: options.onParse });
   },
   commentUrl({ atomId, id, replyId }) {
-    return `${env.site.serverUrl}/#!/a/base/comment/item?atomId=${atomId}&commentId=${id}&replyId=${replyId || 0}`;
+    return `${env.site.serverUrl}/#!/a/base/comment/item?atomId=${atomId}&commentId=${id}&replyId=${replyId || 0}&returnTo=${encodeURIComponent(location.href)}`;
   },
   _commentActionDelete({ comment, atomId, id }) {
     bootbox.confirm({
@@ -178,16 +179,23 @@ util.article = {
     });
   },
   _commentActionHeart({ link, atomId, id, heart }) {
-    util.performAction({
-      method: 'post',
-      url: '/a/base/comment/heart',
-      body: {
-        key: { atomId },
-        data: { commentId: id, heart },
-      },
-    }).then(() => {
-      this._commentHeartSwitch(link, atomId, id, heart);
-    });
+    // check if anonymous
+    if (util.user.op.anonymous) {
+      // url
+      const url = `${env.site.serverUrl}/#!/a/base/comment/autoHeart?atomId=${atomId}&commentId=${id}&returnTo=${encodeURIComponent(location.href)}`;
+      location.assign(url);
+    } else {
+      util.performAction({
+        method: 'post',
+        url: '/a/base/comment/heart',
+        body: {
+          key: { atomId },
+          data: { commentId: id, heart },
+        },
+      }).then(() => {
+        this._commentHeartSwitch(link, atomId, id, heart);
+      });
+    }
   },
   _switchOrder({ $container, order, onParse }) {
     // res
@@ -319,10 +327,10 @@ util.article = {
     // check if anonymous
     if (util.user.op.anonymous) {
       // url
-      const url=`${env.site.serverUrl}/#!/a/cms/article/autoStar?atomId=${atomId}`;
+      const url = `${env.site.serverUrl}/#!/a/base/atom/autoStar?atomId=${atomId}&returnTo=${encodeURIComponent(location.href)}`;
       location.assign(url);
     } else {
-      // stat
+      // star
       const $stat = $(`.stat[data-article-id=${atomId}]`);
       const star = $('.button-starCount .star-on', $stat).hasClass('hidden') ? 1 : 0;
       util.performAction({
@@ -336,7 +344,6 @@ util.article = {
         this._starCount(atomId, data.star, data.starCount);
       });
     }
-
   },
   _starCount(atomId, star, starCount) {
     const $stat = $(`.stat[data-article-id=${atomId}]`);
