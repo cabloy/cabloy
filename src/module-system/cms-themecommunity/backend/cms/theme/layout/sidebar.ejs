@@ -1,5 +1,14 @@
 <div class="sidebar">
-  <%- await include('./sidebar/profile.ejs') %>
+
+  <% if(typeof article==='undefined'){ %>
+    <%- await include('./sidebar/articlePost.ejs') %>
+  <% } %>
+
+  <% if(typeof article!=='undefined'){ %>
+    <%- await include('./sidebar/profile.ejs') %>
+  <% } %>
+
   <%- await include('./sidebar/tags.ejs') %>
   <%- await include('./sidebar/commentsRecent.ejs') %>
+
 </div>

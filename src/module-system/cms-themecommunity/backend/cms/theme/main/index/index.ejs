@@ -53,20 +53,15 @@
           }
           tagsText+='';
         }
-        // author-avatar
-        const authorAvatar=item.avatar?url(item.avatar):url('plugins/cms-pluginbase/assets/images/avatar_user.png');
         // stat
         const stat=`
 <div class="title stat" data-article-id="${item.atomId}">
-    <img class="num avatar avatar24 img-delay" data-src="${authorAvatar}" data-width="24" data-height="24">
-    <span class="num">${item.userName}</span>
-    <span class="num date">${util.formatDateTime(item.createdAt)}</span>
-    <span class="num"></span>
-    <a target="_blank" href="${url('static/articles.html')}?categoryId=${item.categoryId}&categoryName=${item.categoryName}"><span class="num category">${item.categoryName}</span></a>
-    <span class="glyphicon glyphicon-eye-open"></span><span class="num readCount"></span>
-    <span class="glyphicon glyphicon-heart"></span><span class="num starCount"></span>
-    <a target="_blank" href="${url(item.url)}#comments"><span class="glyphicon glyphicon-comment"></span><span class="num commentCount"></span></a>
-    ${tagsText}
+<a target="_blank" href="${url('static/articles.html')}?categoryId=${item.categoryId}&categoryName=${item.categoryName}"><span class="num category">${item.categoryName}</span></a>
+<span class="num date">${util.formatDateTime(item.createdAt)}</span>
+<span class="glyphicon glyphicon-eye-open"></span><span class="num readCount"></span>
+<span class="glyphicon glyphicon-heart"></span><span class="num starCount"></span>
+<a target="_blank" href="${url(item.url)}#comments"><span class="glyphicon glyphicon-comment"></span><span class="num commentCount"></span></a>
+${tagsText}
 </div>
         `;
 

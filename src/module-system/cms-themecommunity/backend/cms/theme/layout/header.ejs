@@ -4,6 +4,11 @@
   <%- await include('./header/head.ejs') %>
 </head>
 <body>
-  <%- await include('./header/menu.ejs') %>
+  <header>
+    <div class="container">
+      <%- await include('./header/title.ejs') %>
+      <%- await include('./header/menu.ejs') %>
+    </div>
+  </header>
   <div class="container container-site">
 
