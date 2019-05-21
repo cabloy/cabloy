@@ -131,7 +131,12 @@ export default {
         },
       }).then(data => {
         this.$meta.eventHub.$emit('comment:action', data);
-        this.$f7router.back();
+        const returnTo = this.$f7route.query.returnTo;
+        if (returnTo) {
+          location.assign(returnTo);
+        } else {
+          this.$f7router.back();
+        }
       });
     },
     onImageUpload() {
