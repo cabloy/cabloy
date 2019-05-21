@@ -100,11 +100,11 @@ module.exports = app => {
   // routes
   const routes = __webpack_require__(6)(app);
   // services
-  const services = __webpack_require__(8)(app);
+  const services = __webpack_require__(9)(app);
   // models
-  const models = __webpack_require__(10)(app);
+  const models = __webpack_require__(12)(app);
   // meta
-  const meta = __webpack_require__(11)(app);
+  const meta = __webpack_require__(13)(app);
 
   return {
     routes,
@@ -173,6 +173,7 @@ module.exports = {
 /***/ (function(module, exports, __webpack_require__) {
 
 const user = __webpack_require__(7);
+const public2 = __webpack_require__(8);
 
 module.exports = app => {
   const routes = [
@@ -191,6 +192,7 @@ module.exports = app => {
     { method: 'post', path: 'user/functions', controller: user },
     { method: 'post', path: 'user/authentications', controller: user },
     { method: 'post', path: 'user/authenticationDisable', controller: user },
+    { method: 'post', path: 'public/profile', controller: public2 },
 
   ];
   return routes;
@@ -200,8 +202,6 @@ module.exports = app => {
 /***/ }),
 /* 7 */
 /***/ (function(module, exports) {
-
-
 
 module.exports = app => {
   class UserController extends app.Controller {
@@ -292,20 +292,41 @@ module.exports = app => {
 
 /***/ }),
 /* 8 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+  class PublicController extends app.Controller {
+
+    async profile() {
+      const res = await this.service.public.profile({
+        userId: this.ctx.request.body.userId,
+      });
+      this.ctx.success(res);
+    }
+
+  }
+  return PublicController;
+};
+
+
+/***/ }),
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const user = __webpack_require__(9);
+const user = __webpack_require__(10);
+const public2 = __webpack_require__(11);
 
 module.exports = app => {
   const services = {
     user,
+    public: public2,
   };
   return services;
 };
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports) {
 
 const _functions = {};
@@ -426,7 +447,30 @@ module.exports = app => {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+
+  class Public2 extends app.Service {
+
+    async profile({ userId }) {
+      const item = await this.ctx.meta.user.get({ id: userId });
+      const user = {
+        userName: item.userName,
+        avatar: item.avatar,
+        motto: item.motto,
+      };
+      return { user };
+    }
+
+  }
+  return Public2;
+};
+
+
+/***/ }),
+/* 12 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -437,10 +481,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(12);
+const require3 = __webpack_require__(14);
 const extend = require3('extend2');
 
 module.exports = app => {
@@ -464,7 +508,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, exports) {
 
 module.exports = require("require3");
