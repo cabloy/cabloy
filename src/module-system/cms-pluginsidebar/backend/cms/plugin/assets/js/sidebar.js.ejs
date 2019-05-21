@@ -21,6 +21,19 @@ function _onParseTag(item) {
   `;
 }
 
+function _onParseProfileAuthor(data) {
+  const author = data.user;
+  return `
+  <div>
+    <a class='avatar'>
+      <img class="avatar avatar48" src="${util.combineImageUrl(author.avatar, 48, 48)}" title="${author.userName}"/>
+    </a>
+    <span class='name'><a>${author.userName}</a></span>
+    <div class="motto">${author.motto}</div>
+  </div>
+  `;
+}
+
 // sidebar
 util.sidebar = {
   tags(options) {
@@ -34,6 +47,12 @@ util.sidebar = {
     if ($container.length === 0) return;
     if (!options.onParse) options.onParse = _onParseCommentRecent;
     this._loadCommentsRecent({ $container, onParse: options.onParse });
+  },
+  profileAuthor(options) {
+    const $container = $(options.container);
+    if ($container.length === 0) return;
+    if (!options.onParse) options.onParse = _onParseProfileAuthor;
+    this._loadProfileAuthor({ $container, onParse: options.onParse });
   },
   _loadTags({ $container, onParse }) {
     // options
@@ -79,6 +98,19 @@ util.sidebar = {
       for (let i = 0; i < data.list.length; i++) {
         $list.append($(onParse(data.list[i])));
       }
+    });
+  },
+  _loadProfileAuthor({ $container, onParse }) {
+    // profile
+    util.performAction({
+      method: 'post',
+      url: '/a/user/public/profile',
+      body: {
+        userId: env.article.userIdCreated,
+      },
+    }).then(data => {
+      const $panelBody = $('.panel-body', $container);
+      $panelBody.append($(onParse(data)));
     });
   },
 };
