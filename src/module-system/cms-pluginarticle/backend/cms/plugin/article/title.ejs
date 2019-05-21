@@ -2,7 +2,9 @@
 <%
   const sticky = !article.sticky ? '' : '<span class="glyphicon glyphicon-pushpin"></span> ';
   const attachment = article.attachmentCount===0 ? '' : '<span class="glyphicon glyphicon-paperclip"></span> ';
-  echo(`${sticky}${attachment}${article.atomName}`);
+  const atomName=`<span>${article.atomName}</span>`;
+  const edit=`<span class="article-edit"></span>`;
+  echo(`${sticky}${attachment}${atomName}${edit}`);
 %>
 </h1>
 <div class="title stat" data-article-id="<%=article.atomId%>">

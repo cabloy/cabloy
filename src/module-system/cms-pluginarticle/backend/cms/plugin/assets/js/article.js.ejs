@@ -151,6 +151,15 @@ util.article = {
   commentUrl({ atomId, id, replyId }) {
     return `${env.site.serverUrl}/#!/a/base/comment/item?atomId=${atomId}&commentId=${id}&replyId=${replyId || 0}&returnTo=${encodeURIComponent(location.href)}`;
   },
+  articleEdit(options) {
+    const $container = $(options.container);
+    if ($container.length === 0) return;
+    if (env.article.userIdCreated === util.user.op.id) {
+      const editUrl = `${env.site.serverUrl}/#!/a/base/atom/edit?atomId=${env.article.atomId}&itemId=${env.article.itemId}&module=${env.site.atomClass.module}&atomClassName=${env.site.atomClass.atomClassName}&atomClassIdParent=${env.site.atomClass.atomClassIdParent}`;
+      const edit = `<a href="${editUrl}" target="_blank"><span class="glyphicon glyphicon-pencil"></span></a>`;
+      $container.append($(edit));
+    }
+  },
   _commentActionDelete({ comment, atomId, id }) {
     bootbox.confirm({
       message: '<%=text("Are you sure?")%>',
