@@ -29,7 +29,7 @@ function _onParseProfileAuthor(data) {
       <img class="avatar avatar48" src="${util.combineImageUrl(author.avatar, 48, 48)}" title="${author.userName}"/>
     </a>
     <span class='name'><a>${author.userName}</a></span>
-    <div class="motto">${author.motto}</div>
+    <div class="motto">${author.motto || ''}</div>
   </div>
   `;
 }
@@ -53,6 +53,20 @@ util.sidebar = {
     if ($container.length === 0) return;
     if (!options.onParse) options.onParse = _onParseProfileAuthor;
     this._loadProfileAuthor({ $container, onParse: options.onParse });
+  },
+  articlePost(options) {
+    const $container = $(options.container);
+    if ($container.length === 0) return;
+    $('.button-article-post', $container).click(() => {
+      const item = {
+        module: env.site.atomClass.module,
+        atomClassName: env.site.atomClass.atomClassName,
+        atomClassIdParent: env.site.atomClass.atomClassIdParent,
+        language: env.language.current,
+      };
+      const url = `${env.site.serverUrl}/#!/a/cms/article/post?item=${encodeURIComponent(JSON.stringify(item))}`;
+      location.assign(url);
+    });
   },
   _loadTags({ $container, onParse }) {
     // options
