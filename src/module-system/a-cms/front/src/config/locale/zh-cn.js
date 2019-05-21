@@ -18,6 +18,7 @@ export default {
   Language: '语言',
   Languages: '语言',
   Move: '移动',
+  Post: '发表',
   Preview: '预览',
   seconds: '秒',
   Star: '星标',

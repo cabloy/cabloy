@@ -14,6 +14,7 @@ export default [
   { path: 'article/contentEdit', component: load('article/contentEdit') },
   { path: 'article/category', component: load('article/category') },
   { path: 'article/list', component: load('article/list') },
+  { path: 'article/post', component: load('article/post') },
   { path: 'tag/select', component: load('tag/select') },
   { path: 'block/list', component: load('block/list') },
   { path: 'block/item', component: load('block/item') },
