@@ -21,7 +21,6 @@ export default {
   Preview: '预览',
   seconds: '秒',
   Star: '星标',
-  Starred: '已加星标',
   Site: '站点',
   Sticky: '置顶',
   Sorting: '排序',
