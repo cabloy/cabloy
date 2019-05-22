@@ -90,8 +90,8 @@ module.exports =
 /***/ (function(module, exports) {
 
 module.exports = {
-  getCacheKey({ user }) {
-    return `captcha:${user.id}`;
+  getCacheKey({ ctx }) {
+    return `captcha:${ctx.meta.user.anonymousId()}`;
   },
 };
 
@@ -260,10 +260,8 @@ const Fn = module.exports = ctx => {
       const cache = ctx.cache.db.module(moduleInfo.relativeName);
       // timeout
       const timeout = config.cache.timeout;
-      // user
-      const user = ctx.user.agent;
       // get
-      const key = utils.getCacheKey({ user });
+      const key = utils.getCacheKey({ ctx });
       const value = await cache.get(key);
       if (!value) ctx.throw(403);
       // verify provider
@@ -293,10 +291,8 @@ module.exports = (options, app) => {
     const cache = ctx.cache.db.module(moduleInfo.relativeName);
     // timeout
     const timeout = config.cache.timeout;
-    // user
-    const user = ctx.user.agent;
     // get
-    const key = utils.getCacheKey({ user });
+    const key = utils.getCacheKey({ ctx });
     const value = await cache.get(key);
     if (!value || !value.code) {
       // error
@@ -393,9 +389,7 @@ module.exports = app => {
   class CaptchaController extends app.Controller {
 
     async getProvider() {
-      const res = await this.service.captcha.getProvider({
-        user: this.ctx.user.agent,
-      });
+      const res = await this.service.captcha.getProvider();
       this.ctx.success(res);
     }
 
@@ -453,13 +447,13 @@ module.exports = app => {
 
   class Captcha extends app.Service {
 
-    async getProvider({ user }) {
+    async getProvider() {
       // timeout
       const timeout = this.ctx.config.cache.timeout;
       // provider
       const provider = this.ctx.config.provider;
       // cache
-      const key = utils.getCacheKey({ user });
+      const key = utils.getCacheKey({ ctx: this.ctx });
       await this.ctx.cache.db.set(key, { provider }, timeout);
       // ok
       return { provider };

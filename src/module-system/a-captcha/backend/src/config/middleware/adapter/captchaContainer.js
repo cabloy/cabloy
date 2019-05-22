@@ -21,10 +21,8 @@ const Fn = module.exports = ctx => {
       const cache = ctx.cache.db.module(moduleInfo.relativeName);
       // timeout
       const timeout = config.cache.timeout;
-      // user
-      const user = ctx.user.agent;
       // get
-      const key = utils.getCacheKey({ user });
+      const key = utils.getCacheKey({ ctx });
       const value = await cache.get(key);
       if (!value) ctx.throw(403);
       // verify provider

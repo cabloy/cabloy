@@ -1,5 +1,5 @@
 module.exports = {
-  getCacheKey({ user }) {
-    return `captcha:${user.id}`;
+  getCacheKey({ ctx }) {
+    return `captcha:${ctx.meta.user.anonymousId()}`;
   },
 };
