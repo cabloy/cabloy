@@ -903,6 +903,9 @@ module.exports = app => {
 /* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
+const require3 = __webpack_require__(0);
+const uuid = require3('uuid');
+
 const modelFn = __webpack_require__(19);
 const modelAgentFn = __webpack_require__(20);
 const modelAuthFn = __webpack_require__(21);
@@ -980,8 +983,20 @@ module.exports = ctx => {
       };
       await ctx.login(user);
       // maxAge
-      ctx.session.maxAge = this.config.anonymous.maxAge;
+      const maxAge = this.config.anonymous.maxAge;
+      ctx.session.maxAge = maxAge;
+      // ok
       return user;
+    }
+
+    anonymousId() {
+      let _anonymousId = ctx.cookies.get('anonymous', { encrypt: true });
+      if (!_anonymousId) {
+        _anonymousId = uuid.v4().replace(/-/g, '');
+        const maxAge = this.config.anonymous.maxAge;
+        ctx.cookies.set('anonymous', _anonymousId, { encrypt: true, maxAge });
+      }
+      return _anonymousId;
     }
 
     async check() {
@@ -4015,8 +4030,12 @@ module.exports = ctx => {
 /* 39 */
 /***/ (function(module, exports) {
 
-module.exports = options => {
+module.exports = (options, app) => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   return async function auth(ctx, next) {
+    // always has anonymous id
+    ctx.meta.user.anonymousId();
+    // check
     if (!ctx.isAuthenticated() || !ctx.user.op || !ctx.user.agent) {
       // anonymous
       await ctx.meta.user.loginAsAnonymous();

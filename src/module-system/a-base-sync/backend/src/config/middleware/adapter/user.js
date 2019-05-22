@@ -1,3 +1,6 @@
+const require3 = require('require3');
+const uuid = require3('uuid');
+
 const modelFn = require('../../../model/user.js');
 const modelAgentFn = require('../../../model/userAgent.js');
 const modelAuthFn = require('../../../model/auth.js');
@@ -75,8 +78,20 @@ module.exports = ctx => {
       };
       await ctx.login(user);
       // maxAge
-      ctx.session.maxAge = this.config.anonymous.maxAge;
+      const maxAge = this.config.anonymous.maxAge;
+      ctx.session.maxAge = maxAge;
+      // ok
       return user;
+    }
+
+    anonymousId() {
+      let _anonymousId = ctx.cookies.get('anonymous', { encrypt: true });
+      if (!_anonymousId) {
+        _anonymousId = uuid.v4().replace(/-/g, '');
+        const maxAge = this.config.anonymous.maxAge;
+        ctx.cookies.set('anonymous', _anonymousId, { encrypt: true, maxAge });
+      }
+      return _anonymousId;
     }
 
     async check() {

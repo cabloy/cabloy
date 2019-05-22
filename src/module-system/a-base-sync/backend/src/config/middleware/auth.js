@@ -1,5 +1,9 @@
-module.exports = options => {
+module.exports = (options, app) => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   return async function auth(ctx, next) {
+    // always has anonymous id
+    ctx.meta.user.anonymousId();
+    // check
     if (!ctx.isAuthenticated() || !ctx.user.op || !ctx.user.agent) {
       // anonymous
       await ctx.meta.user.loginAsAnonymous();
