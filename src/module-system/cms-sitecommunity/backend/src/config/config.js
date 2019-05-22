@@ -6,7 +6,7 @@ module.exports = appInfo => {
   config.site = {
     base: {
       title: 'Community',
-      subTitle: 'Everything about CabloyJS',
+      subTitle: 'Everything About CabloyJS',
       description: '',
       keywords: '',
       publishOnSubmit: true,
