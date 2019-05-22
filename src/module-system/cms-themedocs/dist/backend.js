@@ -185,6 +185,7 @@ module.exports = {
 /***/ (function(module, exports) {
 
 module.exports = {
+  Documentation: '文档',
 };
 
 
