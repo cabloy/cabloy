@@ -153,6 +153,7 @@ module.exports = {
 /***/ (function(module, exports) {
 
 module.exports = {
+  Community: '社区',
 };
 
 
