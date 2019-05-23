@@ -82,7 +82,7 @@ module.exports = app => {
       let audioFirst = '';
       let audioCoverFirst = '';
       if (item.editMode === 1) {
-        const matches = item.content && item.content.match(/:::\s*audio([\s\S]*?):::/);
+        const matches = item.content && item.content.match(/\$\$\$\s*audio([\s\S]*?)\$\$\$/);
         let options = matches && matches[1];
         if (options) {
           options = JSON.parse(options);
