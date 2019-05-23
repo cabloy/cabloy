@@ -29,11 +29,11 @@ module.exports = app => {
       return { atomId: key.atomId, itemId };
     }
 
-    _getMeta(item) {
+    _getMeta(item, showSorting) {
       // flags
       const flags = [];
       if (item.sticky) flags.push(this.ctx.text('Sticky'));
-      if (item.sorting) flags.push(item.sorting);
+      if (item.sorting && showSorting) flags.push(item.sorting);
       // meta
       const meta = {
         summary: item.summary,
@@ -45,13 +45,14 @@ module.exports = app => {
 
     async read({ atomClass, key, item, user }) {
       // read
-      this._getMeta(item);
+      this._getMeta(item, false);
     }
 
     async select({ atomClass, options, items, user }) {
+      const showSorting = options && options.where && options.where.categoryId;
       // select
       for (const item of items) {
-        this._getMeta(item);
+        this._getMeta(item, showSorting);
       }
     }
 
