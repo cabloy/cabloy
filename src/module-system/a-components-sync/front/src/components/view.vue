@@ -30,6 +30,14 @@ export default {
       }
       this.$meta.vueLayout.navigate(url, _options);
     },
+    getSizeExtend() {
+      const view = this.$$(this.$el);
+      const size = {
+        width: view.width(),
+        height: view.height(),
+      };
+      return size;
+    },
   },
   mounted() {
     const self = this;
@@ -51,6 +59,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>
