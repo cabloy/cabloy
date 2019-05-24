@@ -30,7 +30,7 @@ export default {
       }
       this.$meta.vueLayout.navigate(url, _options);
     },
-    getSizeExtend() {
+    getSizeExtent() {
       const view = this.$$(this.$el);
       const size = {
         width: view.width(),

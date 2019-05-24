@@ -23,7 +23,7 @@ export default {
   },
   methods: {
     onSize() {
-      const size = this.$view.getSizeExtend();
+      const size = this.$view.getSizeExtent();
       if (size) {
         const height = size.height - (this.$device.desktop ? 64 : 56);
         this.$$(this.$refs.box).css({
