@@ -1,6 +1,6 @@
 {
   "name": "egg-born-bin",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "egg-born-bin",
   "main": "index.js",
   "bin": {
@@ -21,15 +21,17 @@
     "url": "https://github.com/zhennann/egg-born-bin/issues"
   },
   "homepage": "https://github.com/zhennann/egg-born-bin#readme",
-  "devDependencies": {},
+  "devDependencies": {
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.16.0",
+    "eslint-config-egg": "^7.4.1",
+    "eslint-plugin-vuefix": "^0.2.1"
+  },
   "dependencies": {
-    "babel-eslint": "^8.0.2",
     "chai": "^4.1.2",
     "chalk": "^2.3.0",
     "egg-bin": "^4.3.5",
     "egg-mock": "^3.13.1",
-    "eslint": "^4.11.0",
-    "eslint-config-egg": "^5.1.1",
     "nock": "^9.1.0",
     "should": "^13.1.3"
   }
