@@ -4,7 +4,7 @@ module.exports = (options, app) => {
     // always has anonymous id
     ctx.meta.user.anonymousId();
     // check
-    if (!ctx.isAuthenticated() || !ctx.user.op || !ctx.user.agent) {
+    if (!ctx.isAuthenticated() || !ctx.user.op || !ctx.user.agent || ctx.user.op.iid !== ctx.instance.id) {
       // anonymous
       await ctx.meta.user.loginAsAnonymous();
     } else {

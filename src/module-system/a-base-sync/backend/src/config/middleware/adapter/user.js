@@ -96,7 +96,7 @@ module.exports = ctx => {
 
     async check() {
       // check if has ctx.user
-      if (!ctx.isAuthenticated() || !ctx.user.op || !ctx.user.agent) ctx.throw(401);
+      if (!ctx.isAuthenticated() || !ctx.user.op || !ctx.user.agent || ctx.user.op.iid !== ctx.instance.id) ctx.throw(401);
       // check if deleted,disabled,agent
       const userOp = await this.get({ id: ctx.user.op.id });
       // deleted
