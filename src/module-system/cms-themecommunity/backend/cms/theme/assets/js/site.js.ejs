@@ -154,10 +154,15 @@ function _loadMore({ categoryId, tagId, search }) {
         }
         tagsText += '';
       }
+      // avatar
+      const userAvatar = item.avatar || util.url('assets/images/avatar.jpg');
+      // stat
       const stat = `
 <div class="title stat no-parse" data-article-id="${item.atomId}">
+<img class="avatar avatar16" src="${util.combineImageUrl(userAvatar, 16, 16)}">
+<span>${item.userName}</span>
+<span class="num date">${util.formatDateTime(item.updatedAt)}</span>
 ${category}
-<span class="num date">${util.formatDateTime(item.createdAt)}</span>
 <span class="glyphicon glyphicon-eye-open"></span><span class="num readCount">${item.readCount}</span>
 <span class="glyphicon glyphicon-heart"></span><span class="num starCount">${item.starCount}</span>
 <a target="_blank" href="${util.url(item.url)}#comments"><span class="glyphicon glyphicon-comment"></span><span class="num commentCount">${item.commentCount}</span></a>

@@ -53,11 +53,15 @@
           }
           tagsText+='';
         }
+        // avatar
+        const userAvatar = item.avatar || url('assets/images/avatar.jpg');
         // stat
         const stat=`
 <div class="title stat" data-article-id="${item.atomId}">
+<img class="avatar avatar16 img-delay" data-src="${userAvatar}" data-width="16" data-height="16">
+<span>${item.userName}</span>
+<span class="num date">${util.formatDateTime(item.updatedAt)}</span>
 <a target="_blank" href="${url('static/articles.html')}?categoryId=${item.categoryId}&categoryName=${item.categoryName}"><span class="num category">${item.categoryName}</span></a>
-<span class="num date">${util.formatDateTime(item.createdAt)}</span>
 <span class="glyphicon glyphicon-eye-open"></span><span class="num readCount"></span>
 <span class="glyphicon glyphicon-heart"></span><span class="num starCount"></span>
 <a target="_blank" href="${url(item.url)}#comments"><span class="glyphicon glyphicon-comment"></span><span class="num commentCount"></span></a>
