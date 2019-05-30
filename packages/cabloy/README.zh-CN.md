@@ -21,6 +21,10 @@ CabloyJS是基于EggJS和VueJS开发的一款顶级Javascript全栈业务开发�
 [download-image]: https://img.shields.io/npm/dm/cabloy.svg?style=flat-square
 [download-url]: https://npmjs.org/package/cabloy
 
+## 文章
+
+- [一文读懂NodeJS全栈开发利器：CabloyJS](https://community.cabloy.com/zh-cn/articles/known-cabloyjs.html)
+
 ## 文档
 
 - [官网 && 文档](https://cabloy.com)
