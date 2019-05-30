@@ -75,6 +75,11 @@ article img {
   border: 1px solid transparent;
 }
 
+.avatar16 {
+  height: 16px;
+  width: 16px;
+}
+
 .avatar24 {
   height: 24px;
   width: 24px;
