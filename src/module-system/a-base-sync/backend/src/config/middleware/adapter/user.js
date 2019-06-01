@@ -6,7 +6,7 @@ const modelAgentFn = require('../../../model/userAgent.js');
 const modelAuthFn = require('../../../model/auth.js');
 const modelAuthProviderFn = require('../../../model/authProvider.js');
 
-let _userAnonymous = null;
+const _usersAnonymous = {};
 
 module.exports = ctx => {
 
@@ -55,10 +55,14 @@ module.exports = ctx => {
 
     async anonymous() {
       // cache
+      let _userAnonymous = _usersAnonymous[ctx.instance.id];
       if (_userAnonymous) return _userAnonymous;
       // try get
       _userAnonymous = await this.get({ anonymous: 1 });
-      if (_userAnonymous) return _userAnonymous;
+      if (_userAnonymous) {
+        _usersAnonymous[ctx.instance.id] = _userAnonymous;
+        return _userAnonymous;
+      }
       // add user
       const userId = await this.add({ disabled: 0, anonymous: 1 });
       // addRole
@@ -66,6 +70,7 @@ module.exports = ctx => {
       await ctx.meta.role.addUserRole({ userId, roleId: role.id });
       // ready
       _userAnonymous = await this.get({ id: userId });
+      _usersAnonymous[ctx.instance.id] = _userAnonymous;
       return _userAnonymous;
     }
 
