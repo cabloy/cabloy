@@ -23,21 +23,28 @@ module.exports = function(loader, modules) {
         Object.defineProperty(context, 'config', {
           enumerable: false,
           get() {
-            if (!context[CTXCONFIG]) {
-              let _configs;
-              if (context.cache && context.cache.mem) {
-                _configs = context.cache.mem.get('instanceConfigs');
-              }
-              if (!_configs) {
-                _configs = loader.app.meta.configs;
-              }
-              const _config = _configs[context.module.info.relativeName];
-              _config.module = function(moduleName) {
-                return _configs[moduleName];
-              };
+            // check cache
+            if (context[CTXCONFIG]) return context[CTXCONFIG];
+            // get
+            let _configs;
+            let useCache;
+            if (context.cache && context.cache.mem) {
+              _configs = context.cache.mem.get('instanceConfigs');
+            }
+            if (!_configs) {
+              _configs = loader.app.meta.configs;
+              useCache = false;
+            } else {
+              useCache = true;
+            }
+            const _config = _configs[context.module.info.relativeName];
+            _config.module = function(moduleName) {
+              return _configs[moduleName];
+            };
+            if (useCache) {
               context[CTXCONFIG] = _config;
             }
-            return context[CTXCONFIG];
+            return _config;
           },
         });
       }
