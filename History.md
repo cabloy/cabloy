@@ -1,6 +1,16 @@
 # History
 
-## 2018-09-011, Version 1.2.5
+## 2019-05-29, Version 2.1.0
+
+* **features**
+  * support module prebuild, so as to reduce project build time 🎉
+  
+## 2019-05-16, Version 2.0.0
+
+* **features**
+  * updated to Framework7 V4 🎉
+
+## 2018-09-11, Version 1.2.5
 
 * **features**
   * support f7 color-theme

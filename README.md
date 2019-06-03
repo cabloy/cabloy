@@ -23,7 +23,7 @@ CabloyJS: The Ultimate Javascript Full Stack Business Development Platform, base
 
 ## Articles
 
-- [一文读懂NodeJS全栈开发利器：CabloyJS](https://community.cabloy.com/zh-cn/articles/known-cabloyjs.html)
+- [一文读懂NodeJS全栈开发利器：CabloyJS（万字长文）](https://community.cabloy.com/zh-cn/articles/known-cabloyjs.html)
 
 ## Docs
 
