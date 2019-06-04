@@ -60,7 +60,7 @@ function breadcrumb(query) {
     $('.parent', $container).text('<%=text("Comment")%>');
     $('.current', $container).text('<%=text("All")%>');
   } else if (env.site.path === 'main/article') {
-    $('.parent', $container).html(`<a href="${util.url('static/articles.html')}?categoryId=${env.article.categoryId}&categoryName=${env.article.categoryName}">${env.article.categoryName}</a>`);
+    $('.parent', $container).html(`<a href="${util.url('static/articles.html')}?categoryId=${env.article.categoryId}&categoryName=${encodeURIComponent(env.article.categoryName)}">${util.escapeHtml(env.article.categoryName)}</a>`);
     $('.current', $container).text(env.article.atomName);
   }
   // show
@@ -142,7 +142,7 @@ function _loadMore({ categoryId, tagId, search }) {
 </div>
         `;
       const category = (categoryId === undefined) ?
-        `<a target="_blank" href="${util.url('static/articles.html')}?categoryId=${item.categoryId}&categoryName=${item.categoryName}"><span class="num category">${item.categoryName}</span></a>` : '';
+        `<a target="_blank" href="${util.url('static/articles.html')}?categoryId=${item.categoryId}&categoryName=${encodeURIComponent(item.categoryName)}"><span class="num category">${util.escapeHtml(item.categoryName)}</span></a>` : '';
       // tags
       let tagsText = '';
       const tags = item.tags ? JSON.parse(item.tags) : null;
@@ -150,7 +150,7 @@ function _loadMore({ categoryId, tagId, search }) {
         tagsText += '<span class="num glyphicon glyphicon-tags"></span> ';
         for (let i = 0; i < tags.length; i++) {
           const tag = tags[i];
-          tagsText += `<a target="_blank" href="${util.url('static/articles.html')}?tagId=${tag.id}&tagName=${tag.name}"><span class="num tag">${tag.name}</span></a>`;
+          tagsText += `<a target="_blank" href="${util.url('static/articles.html')}?tagId=${tag.id}&tagName=${encodeURIComponent(tag.name)}"><span class="num tag">${util.escapeHtml(tag.name)}</span></a>`;
         }
         tagsText += '';
       }
@@ -160,7 +160,7 @@ function _loadMore({ categoryId, tagId, search }) {
       const stat = `
 <div class="title stat no-parse" data-article-id="${item.atomId}">
 <img class="avatar avatar16" src="${util.combineImageUrl(userAvatar, 16, 16)}">
-<span>${item.userName}</span>
+<span>${util.escapeHtml(item.userName)}</span>
 <span class="num date">${util.formatDateTime(item.updatedAt)}</span>
 ${category}
 <span class="glyphicon glyphicon-eye-open"></span><span class="num readCount">${item.readCount}</span>
@@ -172,8 +172,8 @@ ${tagsText}
       return `
 <li class="media">
     <div class="media-body">
-      <h4 class="media-heading">${sticky}${audio}${attachment}<a target="_blank" href="${util.url(item.url)}">${item.atomName}</a></h4>
-      ${item.description || item.summary}
+      <h4 class="media-heading">${sticky}${audio}${attachment}<a target="_blank" href="${util.url(item.url)}">${util.escapeHtml(item.atomName)}</a></h4>
+      ${util.escapeHtml(item.description) || item.summary}
       ${stat}
     </div>
     ${media}
