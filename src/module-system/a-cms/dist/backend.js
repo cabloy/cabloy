@@ -89,6 +89,50 @@ module.exports =
 /* 0 */
 /***/ (function(module, exports) {
 
+
+/**
+  escapeHtml: based on markdown-it
+**/
+
+const HTML_ESCAPE_TEST_RE = /[&<>"']/;
+const HTML_ESCAPE_REPLACE_RE = /[&<>"']/g;
+const HTML_REPLACEMENTS = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  '\'': '&#039;',
+};
+
+function replaceUnsafeChar(ch) {
+  return HTML_REPLACEMENTS[ch];
+}
+
+function escapeHtml(str) {
+  if (HTML_ESCAPE_TEST_RE.test(str)) {
+    return str.replace(HTML_ESCAPE_REPLACE_RE, replaceUnsafeChar);
+  }
+  return str;
+}
+
+const URL_ESCAPE_TEST_RE = /["']/;
+const URL_ESCAPE_REPLACE_RE = /["']/g;
+const URL_REPLACEMENTS = {
+  '"': '%22',
+  '\'': '%27',
+};
+
+function replaceUnsafeCharURL(ch) {
+  return URL_REPLACEMENTS[ch];
+}
+
+function escapeURL(str) {
+  if (URL_ESCAPE_TEST_RE.test(str)) {
+    return str.replace(URL_ESCAPE_REPLACE_RE, replaceUnsafeCharURL);
+  }
+  return str;
+}
+
 module.exports = {
   atomClass(atomClass) {
     let _atomClass;
@@ -115,6 +159,12 @@ module.exports = {
       _atomClass.id = res.id;
     }
     return _atomClass;
+  },
+  escapeHtml(str) {
+    return escapeHtml(str);
+  },
+  escapeURL(str) {
+    return escapeURL(str);
   },
 };
 
@@ -771,10 +821,11 @@ var env=${JSON.stringify(env, null, 2)};
         return require3(_path);
       },
       url(fileName, language) {
-        if (fileName && (fileName.indexOf('http://') === 0 || fileName.indexOf('https://') === 0)) return fileName;
+        if (fileName && (fileName.indexOf('http://') === 0 || fileName.indexOf('https://') === 0)) return utils.escapeURL(fileName);
         let _path = self.resolvePath('', path.relative(_pathIntermediate, this._filename), fileName);
         _path = _path.replace(/\\/gi, '/');
-        return self.getUrl(site, language || site.language.current, _path);
+        const _url = self.getUrl(site, language || site.language.current, _path);
+        return utils.escapeURL(_url);
       },
       css(fileName) {
         _csses.push(self.resolvePath(_pathIntermediate, this._filename, fileName));
@@ -792,6 +843,12 @@ var env=${JSON.stringify(env, null, 2)};
         time,
         formatDateTime(date) {
           return this.time.formatDateTime(date, `${site.env.format.date} ${site.env.format.time}`);
+        },
+        escapeHtml(str) {
+          return utils.escapeHtml(str);
+        },
+        escapeURL(str) {
+          return utils.escapeURL(str);
         },
       },
     };

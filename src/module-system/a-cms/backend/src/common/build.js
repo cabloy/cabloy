@@ -640,10 +640,11 @@ var env=${JSON.stringify(env, null, 2)};
         return require3(_path);
       },
       url(fileName, language) {
-        if (fileName && (fileName.indexOf('http://') === 0 || fileName.indexOf('https://') === 0)) return fileName;
+        if (fileName && (fileName.indexOf('http://') === 0 || fileName.indexOf('https://') === 0)) return utils.escapeURL(fileName);
         let _path = self.resolvePath('', path.relative(_pathIntermediate, this._filename), fileName);
         _path = _path.replace(/\\/gi, '/');
-        return self.getUrl(site, language || site.language.current, _path);
+        const _url = self.getUrl(site, language || site.language.current, _path);
+        return utils.escapeURL(_url);
       },
       css(fileName) {
         _csses.push(self.resolvePath(_pathIntermediate, this._filename, fileName));
@@ -661,6 +662,12 @@ var env=${JSON.stringify(env, null, 2)};
         time,
         formatDateTime(date) {
           return this.time.formatDateTime(date, `${site.env.format.date} ${site.env.format.time}`);
+        },
+        escapeHtml(str) {
+          return utils.escapeHtml(str);
+        },
+        escapeURL(str) {
+          return utils.escapeURL(str);
         },
       },
     };
