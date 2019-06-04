@@ -1,3 +1,47 @@
+/**
+  escapeHtml: based on markdown-it
+**/
+
+const HTML_ESCAPE_TEST_RE = /[&<>"']/;
+const HTML_ESCAPE_REPLACE_RE = /[&<>"']/g;
+const HTML_REPLACEMENTS = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  '\'': '&#039;',
+};
+
+function _replaceUnsafeChar(ch) {
+  return HTML_REPLACEMENTS[ch];
+}
+
+function _escapeHtml(str) {
+  if (HTML_ESCAPE_TEST_RE.test(str)) {
+    return str.replace(HTML_ESCAPE_REPLACE_RE, _replaceUnsafeChar);
+  }
+  return str;
+}
+
+const URL_ESCAPE_TEST_RE = /["']/;
+const URL_ESCAPE_REPLACE_RE = /["']/g;
+const URL_REPLACEMENTS = {
+  '"': '%22',
+  '\'': '%27',
+};
+
+function _replaceUnsafeCharURL(ch) {
+  return URL_REPLACEMENTS[ch];
+}
+
+function _escapeURL(str) {
+  if (URL_ESCAPE_TEST_RE.test(str)) {
+    return str.replace(URL_ESCAPE_REPLACE_RE, _replaceUnsafeCharURL);
+  }
+  return str;
+}
+
+// promise
 const _createPromise = function(handler) {
   let resolved = false;
   let rejected = false;
@@ -111,9 +155,10 @@ const util = {
     return `${env.site.rawRootUrl}${language === env.language.default ? '' : '/' + language}`;
   },
   url(path, language) {
-    if (path && (path.indexOf('http://') === 0 || path.indexOf('https://') === 0)) return path;
+    if (path && (path.indexOf('http://') === 0 || path.indexOf('https://') === 0)) return this.escapeURL(path);
     const urlRoot = this.rootUrl(language);
-    return path ? `${urlRoot}/${path}` : urlRoot;
+    const _url = path ? `${urlRoot}/${path}` : urlRoot;
+    return this.escapeURL(_url);
   },
   ajax({ url, body, cache = true }) {
     return this.promise((resolve, reject) => {
@@ -145,13 +190,14 @@ const util = {
   },
   combineImageUrl(url, width, height) {
     if (!url) return this.url('plugins/cms-pluginbase/assets/images/avatar_user.png');
-    if (url.indexOf('/api/a/file/file/download') === -1) return url;
-    if (!width && !height) return url;
+    if (url.indexOf('/api/a/file/file/download') === -1) return this.escapeURL(url);
+    if (!width && !height) return this.escapeURL(url);
     const pixelRatio = window.devicePixelRatio || 1;
     let query = '';
     if (width) query = `width=${parseInt(width) * pixelRatio}`;
     if (height) query = `${query ? query + '&' : ''}height=${parseInt(height) * pixelRatio}`;
-    return `${url}${url.charAt(url.length - 1) === '?' ? '' : '?'}${query}`;
+    const _url = `${url}${url.charAt(url.length - 1) === '?' ? '' : '?'}${query}`;
+    return this.escapeURL(_url);
   },
   loadMore({ container, loadOnScroll, threshold = 100, index = 0, context, onFetch, onParse }) {
     if (loadOnScroll === undefined) loadOnScroll = env.loadMore.loadOnScroll;
@@ -344,5 +390,11 @@ const util = {
       this.user = data.user;
       $(document).trigger('echo-ready', data);
     });
+  },
+  escapeHtml(str) {
+    return _escapeHtml(str);
+  },
+  escapeURL(str){
+    return _escapeURL(str);
   },
 };
