@@ -2,7 +2,7 @@
 <%
   const sticky = !article.sticky ? '' : '<span class="glyphicon glyphicon-pushpin"></span> ';
   const attachment = article.attachmentCount===0 ? '' : '<span class="glyphicon glyphicon-paperclip"></span> ';
-  const atomName=`<span>${article.atomName}</span>`;
+  const atomName=`<span>${util.escapeHtml(article.atomName)}</span>`;
   const edit=`<span class="article-edit"></span>`;
   echo(`${sticky}${attachment}${atomName}${edit}`);
 %>
@@ -19,7 +19,7 @@
   if(tags && tags.length>0){
     tagsText+='<span class="num glyphicon glyphicon-tags"></span> ';
     for(const tag of tags){
-      tagsText+=`<a target="_blank" href="${url('static/articles.html')}?tagId=${tag.id}&tagName=${tag.name}"><span class="num tag">${tag.name}</span></a>`;
+      tagsText+=`<a target="_blank" href="${url('static/articles.html')}?tagId=${tag.id}&tagName=${encodeURIComponent(tag.name)}"><span class="num tag">${util.escapeHtml(tag.name)}</span></a>`;
     }
     tagsText+='';
   }

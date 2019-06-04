@@ -11,7 +11,7 @@ function _onParseComment(item) {
   <div class="header panel-heading">
     <div class="user">
       <img class="avatar avatar32" src="${util.combineImageUrl(item.avatar, 32, 32)}" />
-      <h3 class="name panel-title">${item.userName}</h3>
+      <h3 class="name panel-title">${util.escapeHtml(item.userName)}</h3>
       <div class="date">#${item.sorting} · ${util.time.formatDateTime(item.createdAt)}</div>
     </div>
     <div class="actions">
@@ -42,10 +42,10 @@ function _onParseCommentAll(item) {
   return `
 <div class="comment panel panel-default" data-atom-id="${item.atomId}" data-comment-id="${item.h_id}">
   <div class="header panel-heading">
-    <h5 class="article-title"><a target="_blank" href="${util.url(item.url, item.language)}#comments">Re: ${item.atomName}</a></h5>
+    <h5 class="article-title"><a target="_blank" href="${util.url(item.url, item.language)}#comments">Re: ${util.escapeHtml(item.atomName)}</a></h5>
     <div class="user">
       <img class="avatar avatar32" src="${util.combineImageUrl(item.avatar, 32, 32)}" />
-      <h3 class="name panel-title">${item.h_userName}</h3>
+      <h3 class="name panel-title">${util.escapeHtml(item.h_userName)}</h3>
       <div class="date">#${item.h_sorting} · ${util.time.formatDateTime(item.h_createdAt)}</div>
     </div>
     <div class="actions">
