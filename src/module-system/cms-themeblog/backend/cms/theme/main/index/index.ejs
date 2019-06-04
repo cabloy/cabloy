@@ -39,7 +39,7 @@
              const media = !mediaUrl ? '' : `
 <div class="media-right">
       <a target="_blank" href="${url(item.url)}">
-        <img class="media-object img-delay" data-src="${mediaUrl}" data-width="125" data-height="100">
+        <img class="media-object img-delay" data-src="${util.escapeURL(mediaUrl)}" data-width="125" data-height="100">
       </a>
 </div>
         `;
@@ -49,14 +49,14 @@
         if(tags && tags.length>0){
           tagsText+='<span class="num glyphicon glyphicon-tags"></span> ';
           for(const tag of tags){
-            tagsText+=`<a target="_blank" href="${url('static/articles.html')}?tagId=${tag.id}&tagName=${tag.name}"><span class="num tag">${tag.name}</span></a>`;
+            tagsText+=`<a target="_blank" href="${url('static/articles.html')}?tagId=${tag.id}&tagName=${encodeURIComponent(tag.name)}"><span class="num tag">${util.escapeHtml(tag.name)}</span></a>`;
           }
           tagsText+='';
         }
         // stat
         const stat=`
 <div class="title stat" data-article-id="${item.atomId}">
-<a target="_blank" href="${url('static/articles.html')}?categoryId=${item.categoryId}&categoryName=${item.categoryName}"><span class="num category">${item.categoryName}</span></a>
+<a target="_blank" href="${url('static/articles.html')}?categoryId=${item.categoryId}&categoryName=${encodeURIComponent(item.categoryName)}"><span class="num category">${util.escapeHtml(item.categoryName)}</span></a>
 <span class="num date">${util.formatDateTime(item.createdAt)}</span>
 <span class="glyphicon glyphicon-eye-open"></span><span class="num readCount"></span>
 <span class="glyphicon glyphicon-heart"></span><span class="num starCount"></span>
@@ -68,8 +68,8 @@ ${tagsText}
         const html= `
 <li class="media">
     <div class="media-body">
-      <h4 class="media-heading">${sticky}${audio}${attachment}<a target="_blank" href="${url(item.url)}">${item.atomName}</a></h4>
-      ${item.description || item.summary}
+      <h4 class="media-heading">${sticky}${audio}${attachment}<a target="_blank" href="${url(item.url)}">${util.escapeHtml(item.atomName)}</a></h4>
+      ${util.escapeHtml(item.description) || item.summary}
       ${stat}
     </div>
     ${media}
