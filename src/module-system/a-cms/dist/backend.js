@@ -115,9 +115,11 @@ function escapeHtml(str) {
   return str;
 }
 
-const URL_ESCAPE_TEST_RE = /["']/;
-const URL_ESCAPE_REPLACE_RE = /["']/g;
+const URL_ESCAPE_TEST_RE = /[<>"']/;
+const URL_ESCAPE_REPLACE_RE = /[<>"']/g;
 const URL_REPLACEMENTS = {
+  '<': '%3C',
+  '>': '%3E',
   '"': '%22',
   '\'': '%27',
 };
