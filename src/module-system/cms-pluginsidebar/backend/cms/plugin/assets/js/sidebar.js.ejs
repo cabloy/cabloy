@@ -2,9 +2,9 @@ function _onParseCommentRecent(item) {
   return `
 <li class="media">
     <div class="media-body">
-      <h5 class="media-heading"><a href="${util.url(item.url, item.language)}#comments">Re: ${item.atomName}</a></h5>
+      <h5 class="media-heading"><a href="${util.url(item.url, item.language)}#comments">Re: ${util.escapeHtml(item.atomName)}</a></h5>
       <div class="body">${item.h_summary}</div>
-      <div class="user">-- ${item.h_userName}</div>
+      <div class="user">-- ${util.escapeHtml(item.h_userName)}</div>
     </div>
 </li>
   `;
@@ -14,7 +14,7 @@ function _onParseTag(item) {
   return `
 <li class="media">
   <div class="media-body">
-    <div class="media-heading"><a href="${util.url('static/articles.html')}?tagId=${item.id}&tagName=${item.tagName}">${item.tagName}</a></div>
+    <div class="media-heading"><a href="${util.url('static/articles.html')}?tagId=${item.id}&tagName=${encodeURIComponent(item.tagName)}">${util.escapeHtml(item.tagName)}</a></div>
   </div>
   <div class="media-right"><span class="badge">${item.articleCount}</span></div>
 </li>
@@ -26,10 +26,10 @@ function _onParseProfileAuthor(data) {
   return `
   <div>
     <a class='avatar'>
-      <img class="avatar avatar48" src="${util.combineImageUrl(author.avatar, 48, 48)}" title="${author.userName}"/>
+      <img class="avatar avatar48" src="${util.combineImageUrl(author.avatar, 48, 48)}" title="${util.escapeHtml(author.userName)}"/>
     </a>
-    <span class='name'><a>${author.userName}</a></span>
-    <div class="motto">${author.motto || ''}</div>
+    <span class='name'><a>${util.escapeHtml(author.userName)}</a></span>
+    <div class="motto">${util.escapeHtml(author.motto) || ''}</div>
   </div>
   `;
 }
