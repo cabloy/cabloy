@@ -36,6 +36,65 @@ CabloyJS是一款顶级NodeJS全栈业务开发框架, 基于KoaJS + EggJS + Vue
 
 ![](./docs/assets/images/cabloy-demo-qrcode.png)
 
+## 核心模块
+
+### 内置模块
+
+|名称|说明|
+|--|--|
+|[egg-born-front](https://github.com/zhennann/egg-born-backend)|前端核心|
+|[egg-born-backend](https://github.com/zhennann/egg-born-backend)||
+|[egg-born-bin](https://github.com/zhennann/egg-born-bin)||
+|[egg-born-scripts](https://github.com/zhennann/egg-born-scripts)||
+|[egg-born-module-a-version](https://github.com/zhennann/egg-born-module-a-version)||
+|[egg-born-module-a-authgithub](https://github.com/zhennann/egg-born-module-a-authgithub)||
+|[egg-born-module-a-authsimple](https://github.com/zhennann/egg-born-module-a-authsimple)||
+|[egg-born-module-a-base-sync](https://github.com/zhennann/egg-born-module-a-base-sync)||
+|[egg-born-module-a-baseadmin](https://github.com/zhennann/egg-born-module-a-baseadmin)||
+|[egg-born-module-a-cache](https://github.com/zhennann/egg-born-module-a-cache)||
+|[egg-born-module-a-captcha](https://github.com/zhennann/egg-born-module-a-captcha)||
+|[egg-born-module-a-captchasimple](https://github.com/zhennann/egg-born-module-a-captchasimple)||
+|[egg-born-module-a-components-sync](https://github.com/zhennann/egg-born-module-a-components-sync)||
+|[egg-born-module-a-event](https://github.com/zhennann/egg-born-module-a-event)||
+|[egg-born-module-a-file](https://github.com/zhennann/egg-born-module-a-file)||
+|[egg-born-module-a-hook](https://github.com/zhennann/egg-born-module-a-hook)||
+|[egg-born-module-a-index](https://github.com/zhennann/egg-born-module-a-index)||
+|[egg-born-module-a-instance](https://github.com/zhennann/egg-born-module-a-instance)||
+|[egg-born-module-a-layoutmobile](https://github.com/zhennann/egg-born-module-a-layoutmobile)||
+|[egg-born-module-a-layoutpc](https://github.com/zhennann/egg-born-module-a-layoutpc)||
+|[egg-born-module-a-login](https://github.com/zhennann/egg-born-module-a-login)||
+|[egg-born-module-a-mail](https://github.com/zhennann/egg-born-module-a-mail)||
+|[egg-born-module-a-markdownstyle](https://github.com/zhennann/egg-born-module-a-markdownstyle)||
+|[egg-born-module-a-mavoneditor](https://github.com/zhennann/egg-born-module-a-mavoneditor)||
+|[egg-born-module-a-progress](https://github.com/zhennann/egg-born-module-a-progress)||
+|[egg-born-module-a-sequence](https://github.com/zhennann/egg-born-module-a-sequence)||
+|[egg-born-module-a-settings](https://github.com/zhennann/egg-born-module-a-settings)||
+|[egg-born-module-a-status](https://github.com/zhennann/egg-born-module-a-status)||
+|[egg-born-module-a-user](https://github.com/zhennann/egg-born-module-a-user)||
+|[egg-born-module-a-validation](https://github.com/zhennann/egg-born-module-a-validation)||
+|[egg-born-module-test-cook](https://github.com/zhennann/egg-born-module-test-cook)||
+
+### 可选模块
+
+|名称|说明|
+|--|--|
+|[egg-born-module-a-cms](https://github.com/zhennann/egg-born-module-a-cms)||
+|[egg-born-module-cms-sitecommunity](https://github.com/zhennann/egg-born-module-cms-sitecommunity)||
+|[egg-born-module-cms-themeaws](https://github.com/zhennann/egg-born-module-cms-themeaws)||
+|[egg-born-module-cms-themeblog](https://github.com/zhennann/egg-born-module-cms-themeblog)||
+|[egg-born-module-cms-themecommunity](https://github.com/zhennann/egg-born-module-cms-themecommunity)||
+|[egg-born-module-cms-themedocs](https://github.com/zhennann/egg-born-module-cms-themedocs)||
+|[egg-born-module-cms-pluginbase](https://github.com/zhennann/egg-born-module-cms-pluginbase)||
+|[egg-born-module-cms-pluginarticle](https://github.com/zhennann/egg-born-module-cms-pluginarticle)||
+|[egg-born-module-cms-pluginbacktotop](https://github.com/zhennann/egg-born-module-cms-pluginbacktotop)||
+|[egg-born-module-cms-pluginblock](https://github.com/zhennann/egg-born-module-cms-pluginblock)||
+|[egg-born-module-cms-pluginfixcontainersite](https://github.com/zhennann/egg-born-module-cms-pluginfixcontainersite)||
+|[egg-born-module-cms-pluginmarkdowngithub](https://github.com/zhennann/egg-born-module-cms-pluginmarkdowngithub)||
+|[egg-born-module-cms-pluginrss](https://github.com/zhennann/egg-born-module-cms-pluginrss)||
+|[egg-born-module-cms-pluginsidebar](https://github.com/zhennann/egg-born-module-cms-pluginsidebar)||
+|[egg-born-module-cms-pluginsocialshare](https://github.com/zhennann/egg-born-module-cms-pluginsocialshare)||
+|[egg-born-module-cms-plugintrack](https://github.com/zhennann/egg-born-module-cms-plugintrack)||
+
 ## 亮点与痛点
 
 ### 1. 亮点：pc = mobile + pad
