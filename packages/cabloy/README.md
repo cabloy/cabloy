@@ -78,22 +78,22 @@ CabloyJS是一款顶级NodeJS全栈业务开发框架, 基于KoaJS + EggJS + Vue
 
 |名称|说明|
 |--|--|
-|[egg-born-module-a-cms](https://github.com/zhennann/egg-born-module-a-cms)||
-|[egg-born-module-cms-sitecommunity](https://github.com/zhennann/egg-born-module-cms-sitecommunity)||
-|[egg-born-module-cms-themeaws](https://github.com/zhennann/egg-born-module-cms-themeaws)||
-|[egg-born-module-cms-themeblog](https://github.com/zhennann/egg-born-module-cms-themeblog)||
-|[egg-born-module-cms-themecommunity](https://github.com/zhennann/egg-born-module-cms-themecommunity)||
-|[egg-born-module-cms-themedocs](https://github.com/zhennann/egg-born-module-cms-themedocs)||
-|[egg-born-module-cms-pluginbase](https://github.com/zhennann/egg-born-module-cms-pluginbase)||
-|[egg-born-module-cms-pluginarticle](https://github.com/zhennann/egg-born-module-cms-pluginarticle)||
-|[egg-born-module-cms-pluginbacktotop](https://github.com/zhennann/egg-born-module-cms-pluginbacktotop)||
-|[egg-born-module-cms-pluginblock](https://github.com/zhennann/egg-born-module-cms-pluginblock)||
-|[egg-born-module-cms-pluginfixcontainersite](https://github.com/zhennann/egg-born-module-cms-pluginfixcontainersite)||
-|[egg-born-module-cms-pluginmarkdowngithub](https://github.com/zhennann/egg-born-module-cms-pluginmarkdowngithub)||
-|[egg-born-module-cms-pluginrss](https://github.com/zhennann/egg-born-module-cms-pluginrss)||
-|[egg-born-module-cms-pluginsidebar](https://github.com/zhennann/egg-born-module-cms-pluginsidebar)||
-|[egg-born-module-cms-pluginsocialshare](https://github.com/zhennann/egg-born-module-cms-pluginsocialshare)||
-|[egg-born-module-cms-plugintrack](https://github.com/zhennann/egg-born-module-cms-plugintrack)||
+|[egg-born-module-a-cms](https://github.com/zhennann/egg-born-module-a-cms)|CMS模块，可快速创建博客、技术文档、社区（论坛）、公司官网等静态站点|
+|[egg-born-module-cms-sitecommunity](https://github.com/zhennann/egg-born-module-cms-sitecommunity)|论坛模块|
+|[egg-born-module-cms-themeaws](https://github.com/zhennann/egg-born-module-cms-themeaws)|主题：AWS风格的博客|
+|[egg-born-module-cms-themeblog](https://github.com/zhennann/egg-born-module-cms-themeblog)|主题：博客|
+|[egg-born-module-cms-themecommunity](https://github.com/zhennann/egg-born-module-cms-themecommunity)|主题：社区|
+|[egg-born-module-cms-themedocs](https://github.com/zhennann/egg-born-module-cms-themedocs)|主题：技术文档|
+|[egg-born-module-cms-pluginbase](https://github.com/zhennann/egg-born-module-cms-pluginbase)|插件：基础功能|
+|[egg-born-module-cms-pluginarticle](https://github.com/zhennann/egg-born-module-cms-pluginarticle)|插件：文章基础功能|
+|[egg-born-module-cms-pluginbacktotop](https://github.com/zhennann/egg-born-module-cms-pluginbacktotop)|插件：回到页首|
+|[egg-born-module-cms-pluginblock](https://github.com/zhennann/egg-born-module-cms-pluginblock)|插件：Markdown自定义区块框架|
+|[egg-born-module-cms-pluginfixcontainersite](https://github.com/zhennann/egg-born-module-cms-pluginfixcontainersite)|插件：调整首页容器的高度|
+|[egg-born-module-cms-pluginmarkdowngithub](https://github.com/zhennann/egg-born-module-cms-pluginmarkdowngithub)|插件：一款基于Github的Markdown样式|
+|[egg-born-module-cms-pluginrss](https://github.com/zhennann/egg-born-module-cms-pluginrss)|插件：RSS|
+|[egg-born-module-cms-pluginsidebar](https://github.com/zhennann/egg-born-module-cms-pluginsidebar)|插件：侧边栏组件|
+|[egg-born-module-cms-pluginsocialshare](https://github.com/zhennann/egg-born-module-cms-pluginsocialshare)|插件：社会化分享（一组按钮）|
+|[egg-born-module-cms-plugintrack](https://github.com/zhennann/egg-born-module-cms-plugintrack)|插件：Google统计、百度统计、腾讯统计|
 
 ## 亮点与痛点
 
