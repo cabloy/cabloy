@@ -44,8 +44,8 @@ CabloyJS: The Ultimate NodeJS Full Stack Business Development Platform, based on
 |--|--|
 |[egg-born-front](https://github.com/zhennann/egg-born-front)|The Core of Frontend|
 |[egg-born-backend](https://github.com/zhennann/egg-born-backend)|The Core of Backend|
-|[egg-born-bin](https://github.com/zhennann/egg-born-bin)|command-line tools|
-|[egg-born-scripts](https://github.com/zhennann/egg-born-scripts)|command-line tools for start/stop backend service|
+|[egg-born-bin](https://github.com/zhennann/egg-born-bin)|Command-line tools|
+|[egg-born-scripts](https://github.com/zhennann/egg-born-scripts)|Command-line tools for start/stop backend service|
 |[egg-born-module-a-version](https://github.com/zhennann/egg-born-module-a-version)|Module Data Version|
 |[egg-born-module-a-authgithub](https://github.com/zhennann/egg-born-module-a-authgithub)|Github Login|
 |[egg-born-module-a-authsimple](https://github.com/zhennann/egg-born-module-a-authsimple)|Username/Password Login|
