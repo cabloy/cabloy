@@ -2,7 +2,7 @@ English | [简体中文](./README.md)
 
 # CabloyJS
 
-CabloyJS: The Ultimate NodeJS Full Stack Business Development Platform, based on KoaJS & EggJS & VueJS & Framework7
+CabloyJS: The Ultimate NodeJS Full Stack Business Development Platform, based on KoaJS + EggJS + VueJS + Framework7
 
 > Frontend：VueJS + Framework7
 
@@ -36,57 +36,227 @@ CabloyJS: The Ultimate NodeJS Full Stack Business Development Platform, based on
 
 ![](./docs/assets/images/cabloy-demo-qrcode.png)
 
-## adaptive layout: pc = mobile + pad
+## Bright Point and Pain Point
 
-All pages are developed using the `Mobile First` strategy, while perfectly adapting to the `PC layout`
+### 1. Bright Point：pc = mobile + pad
 
-### Mobile Layout
+The most prominent bright point on CabloyJS: 
+Through the mode of `pc = mobile + pad`, the `manipulation experience` and `development mode` of the mobile scene are brought into the PC scene. It not only significantly reduces the amount of code development and improves the efficiency of development, but also maintains the consistency of user manipulation experience
+
+![pc-mobile-layout](./docs/assets/images/pc-mobile-layout.gif)
+
+#### Mobile Layout
 
 ![](./docs/assets/images/layout-mobile.png)
 
-### PC Layout
+#### PC Layout
 
 ![](./docs/assets/images/layout-pc.png)
 
-## What is EggBornJS?
+### 2. Pain Point：Full Scene Business Development
 
-EggBornJS is the Ultimate Javascript Full Stack Framework
+The most prominent pain point on CabloyJS: Through modular architecture design, full-scene business can be rapidly developed
 
-The frontend of EggBornJS uses `VueJS + Framework7 + Webpack`, while the backend uses `KoaJS + EggJS`, and the database uses `MySQL`
+|Scene|Frontend|Backend|
+|--|--|--|
+| PC：Web | CabloyJS Frontend |CabloyJS Backend|
+| PC：Exe | CabloyJS Frontend + Electron |CabloyJS Backend|
+| Mobile：IOS | CabloyJS Frontend + Cordova |CabloyJS Backend|
+| Mobile：Android | CabloyJS Frontend + Cordova |CabloyJS Backend|
+| Wechat| CabloyJS Frontend + Wechat API |CabloyJS Backend|
+| Wechat Enterprise| CabloyJS Frontend + Wechat API |CabloyJS Backend|
+| DingTalk | CabloyJS Frontend + DingTalk API |CabloyJS Backend|
+| Slack | CabloyJS Frontend + Slack API |CabloyJS Backend|
 
-Vertically, EggBornJS make the frontend and the backend work together to form an organic wholeness, so as to avoid working independently between them
+* Backend：Because of the complete frontend and backend separation design, only a set of CabloyJS backend code can be developed
+* Frontend：All scenarios that can be based on H5 need only develop a set of CabloyJS frontend code
 
-Horizontally, EggBornJS has refined a code organization mode called "business modularity", which could offer a powerful basic framework for the continually growing business demands of large-scale web applications through different module combinations
+## Characteristics and Ideas
 
-## Relationship between CabloyJS and EggBornJS
+### 1. Characteristics
 
-In brief:
+* CabloyJS is the best practice for full-stack development with NodeJS
+* CabloyJS does not 'Reinvent the Wheel', but uses the latest open source technology, so as to achieve the best combination of the full-stack development technology
+* The frontend of CabloyJS uses VueJS + Framework7, while the backend uses KoaJS + EggJS, and the database uses MySQL
+* CabloyJS keeps track of the latest achievements in open source technology, and continues to optimize to keep the entire framework in the best status
 
-1. `EggBornJS` is a full-stack `code loader`，and has defined a set of code specifications for full-stack development
+### 2. Ideas
 
-2. On the basis of `EggBornJS`, `CabloyJS` provided a set of `core business modules`, in order to facilitate rapid business development
+> Developed quickly and customized flexibly
+
+To achieve this ideas, CabloyJS built-in developed a large number of core modules, so that you can build a complete web project in the shortest possible time. For example, when you build a new web project, you already have a complete user login and authentication system, also has `user management`, `role management`, `authority management`, and other functions
+
+In addition, these built-in modules provide flexible customization features. You can also develop new modules to replace the built-in modules to achieve customization of the system
+
+## What are the key issues to solve in CabloyJS?
+
+1. Scene Fragmentation
+2. Business Modularization
+
+### 1. Scene Fragmentation
+
+#### 1) Firstly, let's start with the `Mobile Scenario`
+
+As we know, with the increasing popularity of smart phones, the demand scenarios and development scenarios faced by our developers are becoming increasingly fragmented, such as browsers, IOS, Android, as well as a large number of third-party platforms: Wechat, Wechat Enterprise, DingTalk, Facebook, Slack and so on.
+
+With the performance of smart devices getting better and faster, H5 development will be the trend of the times for so many development scenarios. Only a set of code can be developed to run in all the above smart devices, which can not only significantly reduce the amount of development, but also significantly improve the efficiency of development. It is a great benefit to the development team and end users
+
+#### 2) Then let's talk about the `PC scenario`
+
+As mentioned above, using H5 technology, only a set of code can be developed to run in all smart devices. But there's another development scenario that hasn't been unified: `PC Scenario`
+
+Due to the different screen display sizes, `PC Scene` and `Mobile Scene` have different operating styles. Some frontend UI frameworks, using the adaptive strategy, develop pages for PC scenarios. Although they can be viewed and used in Mobil scenarios, the experience is often unsatisfactory
+
+> This is why some frontend frameworks always appear in pairs: such as Element-UI and Mint-UI, Ant Design and Ant Design Mobile
+
+This also means that we still need to develop two sets of code when we are faced with both `PC Scene` and `Mobile Scene`. These duplicate workloads are often unacceptable in the face of many development requirements
+
+#### 3) PC = MOBILE + PAD
+
+The frontend of CabloyJS uses Framework7, which has been upgraded to the latest version of Framework7 V4. CabloyJS is a ingenious extension based on Framework7, which divides the pages of PC into several areas, and achieves the effect of multiple mobile and PAD on one PC side at the same time. In other words, when you buy a Mac, you work with multiple virtual mobile devices at the same time as you buy multiple IPhones and IPads, which significantly improves productivity and provides a very interesting experience.
+
+#### 4) Actual Effect
+
+> Picture Is Truth
+
+![pc-mobile-layout](./docs/assets/images/pc-mobile-layout.gif)
+
+### 2. Business Modularization
+
+With the developing of the NodeJS technology, the experience of the frontend and backend development becomes smoother, and the development efficiency enhance significantly. However, some friends still doubt whether it can be competent for the development of large-scale web applications. Large-scale web applications are characterized by the need to develop a large number of page components as business grows. Faced with this situation, generally there are two solutions:
+
+1. Build as a single page application: The disadvantage is that the deployment package is very large
+2. All page components are loaded asynchronously: The disadvantage is that the pages are too scattered, so the frontend should interact with the backend frequently
+
+CabloyJS implements the third solution:
+
+3. The page components are classified by business requirements, which is business modularization, and implements the business module’s asynchronous loading mechanism. Thus it makes up the shortcomings of the first two solutions and satisfies the needs of the large-scale web application
+
+In CabloyJS, all business development is based on business modules. For example, if we want to develop CMS, we will build a new business module, such as the implemented module `egg-born-module-a-cms`. The CMS module contains more than ten Vue page components, which will be built into a single JS bundle when officially released. At runtime, you can access any Vue page component in the CMS module by loading this JS bundle asynchronously
+
+Therefore, in a large web system, even if there are dozens or even hundreds of business modules, code organization and development according to CabloyJS modularization strategy will neither appear a single huge deployment bundle nor a large number of fragmented JS bundles.
+
+The modular system of CabloyJS has the following remarkable characteristics:
+
+#### 1) Zero Configuration, Zero Code
+
+That is to say, the modular asynchronous packaging strategy mentioned above is the core feature of the system that has been carefully tuned. We only need to develop the Vue page components as usual. At the time of building, the system will automatically package at the module level, and load asynchronously at run time
+
+#### 2) Module Self-Consistent, Plug and Play
+
+Each business module is a self-consistent whole, including the frontend code and backend code related to the business of this module, and adopts the frontend and backend separation mode
+
+`Module self-consistency` is conducive not only to its own `high cohesion`, but also to the `full decoupling` of the whole system. Business modules only need to consider their own logical implementation, which is easy to achieve `full precipitation and sharing` of business and achieve `plug and play` effect
+
+For example, if we want to develop file upload function, we still need to develop a lot of docking code when we find the appropriate upload component on the Internet and use it in our own project. That is to say, the upload components found on the Internet do not achieve sufficient precipitation, are not self-consistent, and can not achieve convenient sharing, to achieve the effect of `plug and play`
+
+
+While, CabloyJS's built-in file upload module `egg-born-module-a-file` has realized the full precipitation of functions. Why? Because the business module itself contains frontend code and backend code, it has a large space to implement and can fully refine the upload logic
+
+Therefore, it is extremely convenient to call the file upload function in CabloyJS. Taking CMS module as an example, uploading picture and getting picture URL only need 20 lines of code
+
+`egg-born-module-a-cms/src/module/a-cms/front/src/pages/article/contentEdit.vue`
+
+``` javascript
+...
+    onUpload(mode, atomId) {
+      return new Promise((resolve, reject) => {
+        this.$view.navigate('/a/file/file/upload', {
+          context: {
+            params: {
+              mode,
+              atomId,
+            },
+            callback: (code, data) => {
+              if (code === 200) {
+                resolve({ text: data.realName, addr: data.downloadUrl });
+              }
+              if (code === false) {
+                reject();
+              }
+            },
+          },
+        });
+      });
+
+```
+
+#### 3) Modular Isolation
+
+In large-scale web projects, it is unavoidable to consider the conflict of names among various resources, variables and entities. To solve this problem, different development teams mostly standardize the naming of various entities. With the expansion of the project, this naming specification will still become very complex. If we are faced with an open system using modules developed by different teams, the risk of naming conflicts becomes more serious
+
+CabloyJS uses a clever design to solve the hidden danger of naming conflicts once and for all. In CabloyJS, business modules adopt the following naming specifications:
+
+```
+egg-born-module-{providerId}-{moduleName}
+```
+
+* `providerId`: Provider Id, Github's Username is strongly recommended to ensure that modules contributed to the community do not conflict
+* `moduleName`: Module Name
+
+Because of the design mechanism of `module self-consistency`, we only need to solve the problem of uniqueness of module naming, so we can no longer be entangled by naming conflicts in module development
+
+For example, the CMS module provides a frontend page route `config/list`. Obviously, such a short path has a high probability of appearing in other business modules. But in CabloyJS, such naming does not produce conflicts. When making page jumps within CMS modules, you can use `config/list` directly, which is called `relative path` reference. However, if other business modules want to jump to this page, they use `/a/cms/config/list`, which is called `absolute path` reference
+
+For example, in the previous example, we call the upload file page by using the `absolute path`: `/a/file/file/upload`
+
+`Module isolation` is the core feature of business module. This is because there are a large number of entities at the frontend and backend of the module that need this isolation. CabloyJS completes this isolation mechanism from the system level, which makes it easy and convenient for us to develop the actual module business
+
+> Modular Frontend Isolation
+
+`Modular Frontend Isolation` is accomplished by the core module `egg-born-front`, which achieves the isolation of the following entities:
+
+1. Frontend Page Route: [See also](https://cabloy.com/zh-cn/articles/7503a4d34b83409ba6477135fa840736.html)
+2. Frontend Configuration: [See also](https://cabloy.com/zh-cn/articles/3952948bf69e4fc2ae6930d1fc58ba0f.html)
+3. Frontend State Management: [See also](https://cabloy.com/zh-cn/articles/096584b6a8174fea9039d745a812bea7.html)
+4. Frontend I18n：[See also](https://cabloy.com/zh-cn/articles/1c7c9cf3861744c2a63ae134076c652f.html)
+
+> Modular Backend Isolation
+ 
+`Modular Backend Isolation` is accomplished by the core module `egg-born-backend`, which achieves the isolation of the following entities:
+
+1. Backend API Route: [See also](https://cabloy.com/zh-cn/articles/515720864cc14d6b94c3194283272bb6.html)
+2. Backend Service: [See also](https://cabloy.com/zh-cn/articles/fbe1d2789f1343fdb210e3acaac2097f.html)
+3. Backend Model: [See also](https://cabloy.com/zh-cn/articles/d33153578d564a79a7ed1176944d0541.html)
+4. Backend Configuration: [See also](https://cabloy.com/zh-cn/articles/13e14810cb124ac2908220caf4f29ac4.html)
+5. Backend Error Handling: [See also](https://cabloy.com/zh-cn/articles/b81df4d4ed4d4428b286d41a8d7bbca3.html)
+6. Backend I18n: [See also](https://cabloy.com/zh-cn/articles/f6d5a48f10dc40d3b8aed7862c23570b.html)
+
+#### 4) Fast frontend build
+
+CabloyJS uses WebPack to build the frontend of the project. Because the CabloyJS project is composed of a series of business modules, the module code can be pre-compiled in advance, which can significantly improve the speed of building the frontend of the whole project
+
+In practice, if a project contains 40 business modules, it will take 70 seconds to build according to the normal build mode. With the precompiled mechanism, it only takes 20 seconds to complete. This has significant engineering significance for developing large-scale web projects
+
+#### 5) Protecting business code
+
+Business modules in CabloyJS can be built not only in frontend code, but also in backend code with WebPack. Backend code can also be built to specify whether it is ugly or not, a mechanism that meets the need to `protect business code`
+
+> The foundation of CabloyJS backend is EggJS. How can we compile and build it?
+
+The CabloyJS backend is extended on the basis of EggJS. Each business module has an entry file `main.js`, through which all JS codes of the backend can be serialized, so compilation and building can be easily realized
+
+## Development Process of CabloyJS
+
+The development of CabloyJS started in 2016. It has gone through two stages:
+
+### Stage One：EggBornJS
+
+EggBornJS implements a full-stack development framework with business modules as its core
+
+For example, the module `egg-born-front` is the core module of the frontend of the framework, the module `egg-born-backend` is the core module of the backend of the framework, and the module `egg-born` is the command-line tool of the framework for creating the project skeleton
+
+This is why all business modules are prefixed with `egg-born-module-`
+
+### Stage Two：CabloyJS
 
 EggBornJS is only a basic full-stack development framework. Considering business development, many business-related supporting features need to be provided, such as `User Management`, `Role Management`, `Permission Management`, `Menu Management`, `Settings Management`, `Form Validation`, `Login Mechanism`, and so on. Especially in the case of frontend and backend separation, the requirement of authority management is raised to a higher level
 
-On the basis of `EggBornJS`, `CabloyJS` provided a set of `core business modules`, so as to realize a series of supporting features, which are organically combined to form a complete and flexible upper ecological architecture, thus supporting the specific business development process
+On the basis of EggBornJS, CabloyJS provided a set of core business modules, so as to realize a series of supporting features, which are organically combined to form a complete and flexible upper ecological architecture, thus supporting the specific business development process
 
 > With EggBornJS, not only the components can be reused, but also the business modules do from now
 
 > With CabloyJS, you can quickly develop all kinds of business applications
-
-## Relationship between EggBornJS and EggJS
-
-`EggBornJS` consists of `egg-born-front`和`egg-born-backend`, which correspond to the loading mechanism of `frontend` and `backend` respectively
-
-Essentially, `egg-born-backend` and `EggJS` are both `code loaders`. However, in order to realize the mechanism of `business modularization`, `egg-born-backend` has made many enhancements on the basis of `EggJS`. The core features are as follows:
-
-1. In a `business module`, resources such as `backend routes, controller, service, middleware, i18n, configuration` can be set separately
-
-2. In `EggJS`, these resources are organized and loaded by `predefined file location`. In the `business module` of `egg-born-backend`, these resources are explicitly organized and loaded by `require`. Thus, `business module` can be compiled separately
-
-3. `Business modules` can be compiled separately, so that they can be released separately, deployed separately and upgraded separately, thus promoting the prosperity of the whole ecosystem of CabloyJS and further accelerating the development of actual business
-
-4. On the other hand, `business modules` can be compiled separately may meet the requirement of `protecting business code`
 
 ## CabloyJS Architecture Diagram
 
@@ -102,6 +272,12 @@ CabloyJS is just an exploration of Atwood's law. Instead of repeating wheels, Ca
 
 Welcome to join the community ecology of CabloyJS to promote the prosperity and application of Javascript
 
-## The Origin of Cabloy's Name
+## The Origin of Framework Name
 
-Cabloy comes from the magic spell of the Smurfs. If you spell the word Cabloy correctly, it will have a magical effect. Likewise, CabloyJS is a magic about chemistry. Based on the combination of atoms and biochemical reactions, you will achieve whatever you want
+### 1. EggBorn
+
+The origin of this name is relatively simple, because there is Egg (backend framework), so there is EggBorn. There is an animated film called "Tianshu Qitan". Its originator is called "DanSheng". I like to watch it very much (inadvertently exposed the age😅)
+
+### 2. Cabloy
+
+Cabloy comes from the magic spell of the Smurfs. If you spell the word Cabloy correctly, it will have a magical effect. Likewise, CabloyJS is a magic about chemistry. Based on the combination and biochemical reactions of business modules, you will achieve whatever you want
