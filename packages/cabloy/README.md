@@ -2,7 +2,7 @@
 
 # CabloyJS
 
-CabloyJS是一款顶级NodeJS全栈业务开发框架, 基于KOAJS + EggJS + VueJS + Framework7
+CabloyJS是一款顶级NodeJS全栈业务开发框架, 基于KoaJS + EggJS + VueJS + Framework7
 
 > 前端：VueJS + Framework7
 
@@ -134,9 +134,9 @@ CabloyJS实现了第三种解决方案：
 
 3. 页面组件按业务需求归类，进行模块化，并且实现了模块的异步加载机制，从而弥合了前两种解决方案的缺点，完美满足大型Web应用业务持续增长的需求
 
-在CabloyJS中，一切业务开发皆以业务模块为单位。比如，我们要开发一个CMS建站工具，就新建一个业务模块，如已经实现的模块`egg-born-module-a-cms`。该CMS模块包含十多个Vue页面组件，在正式发布时，就会构建成一个JS包。在运行时，只需异步加载这一个JS包，就可以访问CMS模块中任何一个Vue页面组件了。
+在CabloyJS中，一切业务开发皆以业务模块为单位。比如，我们要开发一个CMS建站工具，就新建一个业务模块，如已经实现的模块`egg-born-module-a-cms`。该CMS模块包含十多个Vue页面组件，在正式发布时，就会构建成一个JS包。在运行时，只需异步加载这一个JS包，就可以访问CMS模块中任何一个Vue页面组件了
 
-因此，在一个大型的Web系统中，哪怕有数十甚至上百个业务模块，按CabloyJS的模块化策略进行代码组织和开发，既不会出现单一巨大的部署包，也不会出现大量碎片化的JS构建文件。
+因此，在一个大型的Web系统中，哪怕有数十甚至上百个业务模块，按CabloyJS的模块化策略进行代码组织和开发，既不会出现单一巨大的部署包，也不会出现大量碎片化的JS构建文件
 
 CabloyJS的模块化系统还有如下显著的特点：
 
@@ -218,14 +218,7 @@ egg-born-module-{providerId}-{moduleName}
 
 1. 后端API接口路由：[参见](https://cabloy.com/zh-cn/articles/515720864cc14d6b94c3194283272bb6.html)
 2. 后端Service：[参见](https://cabloy.com/zh-cn/articles/fbe1d2789f1343fdb210e3acaac2097f.html)
-> 后端Service隔离，不仅是解决命名冲突的需要，更是性能提升方面重要的考量。
-
-> 比如有50个业务模块，每个模块有20个Service，这样全局就有1000个Service。 在EggJS中，这1000个Service需要一次性预加载以便供Controller代码调用。CabloyJS就在EggJS的基础上做了隔离处理，如果是模块A的Controller，只需要预加载模块A的20个Service，供模块A的Controller调用。这样，就实现了一举两得：不仅命名隔离，而且性能提升，从而满足大型Web系统开发的需求
 3. 后端Model：[参见](https://cabloy.com/zh-cn/articles/d33153578d564a79a7ed1176944d0541.html)
-> 后端Model是CabloyJS实现的访问数据实体的便捷工具，在Model的定义和使用上，都比Sequelize简洁、高效
-
-> 与后端Service一样，后端Model也实现了命名隔离，同时也只能被模块自身的Controller和Service调用
-
 4. 后端参数配置：[参见](https://cabloy.com/zh-cn/articles/13e14810cb124ac2908220caf4f29ac4.html)
 5. 后端Error处理：[参见](https://cabloy.com/zh-cn/articles/b81df4d4ed4d4428b286d41a8d7bbca3.html)
 6. 后端国际化：[参见](https://cabloy.com/zh-cn/articles/f6d5a48f10dc40d3b8aed7862c23570b.html)
@@ -262,8 +255,6 @@ EggBornJS只是一个基础的全栈开发框架，如果要进行业务开发�
 
 CabloyJS在EggBornJS的基础上，提供了一套核心业务模块，从而实现了一系列业务支撑特性，并将这些特性进行有机的组合，形成完整而灵活的上层生态架构，从而支持具体的业务开发进程
 
-换句话说，从实质上看，CabloyJS是一组核心业务模块的组合，从形式上看，CabloyJS是一组模块依赖项。
-
 > 有了EggBornJS，从此可复用的不仅仅是组件，还有业务模块
 
 > 有了CabloyJS，您就可以快速开发各类业务应用
@@ -282,6 +273,12 @@ CabloyJS正是对这一名言的探索之作。CabloyJS不重复造轮子，而�
 
 欢迎您也加入CabloyJS的社区生态，一起促进Javascript的繁荣与应用
 
-## Cabloy名字的由来
+## 名称的由来
 
-Cabloy来自蓝精灵的魔法咒语，拼对了Cabloy这个单词就会有神奇的效果。同样，CabloyJS是有关化学的魔法，基于原子的组合与生化反应，您将实现您想要的任何东西
+### 1. EggBorn
+
+这个名称的由来比较简单，因为有了Egg(后端框架)，所以就有了EggBorn。有一部动画片叫《天书奇谭》，里面的萌主就叫“蛋生”，我很喜欢看（不小心暴露了年龄😅）
+
+### 2. Cabloy
+
+Cabloy来自蓝精灵的魔法咒语，拼对了Cabloy这个单词就会有神奇的效果。同样，CabloyJS是有关化学的魔法，基于模块的组合与生化反应，您将实现您想要的任何东西
