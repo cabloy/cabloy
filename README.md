@@ -36,7 +36,7 @@ CabloyJS是一款顶级NodeJS全栈业务开发框架, 基于KoaJS + EggJS + Vue
 
 ![](./docs/assets/images/cabloy-demo-qrcode.png)
 
-## 核心模块
+## 核心模块一览表
 
 ### 内置模块
 
@@ -78,7 +78,7 @@ CabloyJS是一款顶级NodeJS全栈业务开发框架, 基于KoaJS + EggJS + Vue
 
 |名称|说明|
 |--|--|
-|[egg-born-module-a-cms](https://github.com/zhennann/egg-born-module-a-cms)|CMS模块，可快速创建博客、技术文档、社区（论坛）、公司官网等静态站点|
+|[egg-born-module-a-cms](https://github.com/zhennann/egg-born-module-a-cms)|CMS模块，可快速创建博客、技术文档、社区（论坛）、公司官网等静态站点，并提供必要的动态功能，如评论等等|
 |[egg-born-module-cms-sitecommunity](https://github.com/zhennann/egg-born-module-cms-sitecommunity)|论坛模块|
 |[egg-born-module-cms-themeaws](https://github.com/zhennann/egg-born-module-cms-themeaws)|主题：AWS风格的博客|
 |[egg-born-module-cms-themeblog](https://github.com/zhennann/egg-born-module-cms-themeblog)|主题：博客|
