@@ -281,3 +281,8 @@ The origin of this name is relatively simple, because there is Egg (backend fram
 ### 2. Cabloy
 
 Cabloy comes from the magic spell of the Smurfs. If you spell the word Cabloy correctly, it will have a magical effect. Likewise, CabloyJS is a magic about chemistry. Based on the combination and biochemical reactions of business modules, you will achieve whatever you want
+
+## License
+
+[LGPL](./LICENSE)
+
