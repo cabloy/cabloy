@@ -282,3 +282,8 @@ CabloyJS正是对这一名言的探索之作。CabloyJS不重复造轮子，而�
 ### 2. Cabloy
 
 Cabloy来自蓝精灵的魔法咒语，拼对了Cabloy这个单词就会有神奇的效果。同样，CabloyJS是有关化学的魔法，基于模块的组合与生化反应，您将实现您想要的任何东西
+
+## License
+
+[LGPL](./LICENSE)
+
