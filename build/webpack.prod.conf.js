@@ -46,7 +46,7 @@ const plugins = [
   new webpack.HashedModuleIdsPlugin(),
   // Banner
   new webpack.BannerPlugin({
-    banner: 'Powered by egg-born!',
+    banner: 'Powered by CabloyJS!',
     entryOnly: true,
   }),
 ];
