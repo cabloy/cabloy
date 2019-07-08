@@ -1,9 +1,12 @@
 #!/usr/bin/env node
 
+const os = require('os');
 const co = require('co');
 const Command = require('egg-init');
 const path = require('path');
 const fse = require('fs-extra');
+const rimraf = require('mz-modules/rimraf');
+const compressing = require('compressing');
 
 co(function* () {
 
@@ -48,7 +51,7 @@ co(function* () {
     const pkg = require(path.join(templateDir, 'package.json'));
     if (pkg.name === 'egg-born-template-cabloy') {
       // download
-      testCookDir = yield this.downloadBoilerplate('egg-born-module-test-cook');
+      testCookDir = yield this.downloadModule('egg-born-module-test-cook');
     }
     // process files
     yield processFiles.call(command, targetDir, templateDir);
@@ -60,6 +63,22 @@ co(function* () {
       // delete .gitkeep
       fse.removeSync(path.join(destDir, '.gitkeep'));
     }
+  };
+
+  command.downloadModule = function* (pkgName) {
+    const result = yield this.getPackageInfo(pkgName, false);
+    const tgzUrl = result.dist.tarball;
+
+    this.log(`downloading ${tgzUrl}`);
+
+    const saveDir = path.join(os.tmpdir(), 'egg-born-module');
+    yield rimraf(saveDir);
+
+    const response = yield this.curl(tgzUrl, { streaming: true, followRedirect: true });
+    yield compressing.tgz.uncompress(response.res, saveDir);
+
+    this.log(`extract to ${saveDir}`);
+    return path.join(saveDir, '/package');
   };
 
   // run
