@@ -1,0 +1,24 @@
+{
+  "name": "egg-born-module-test-party",
+  "version": "2.0.0",
+  "title": "Party",
+  "eggBornModule": {
+    "fileVersion": 1,
+    "dependencies": {
+      "a-instance": "2.0.0",
+      "a-base": "2.0.0"
+    }
+  },
+  "description": "",
+  "scripts": {
+    "build:front": "node build/front/build.js",
+    "build:backend": "node build/backend/build.js",
+    "lint": "eslint front backend"
+  },
+  "author": "zhennann",
+  "devDependencies": {},
+  "dependencies": {
+    "require3": "^1.0.3",
+    "extend2": "^1.0.0"
+  }
+}
