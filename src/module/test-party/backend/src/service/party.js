@@ -1,5 +1,11 @@
 module.exports = app => {
 
+  const gPartyTypeEmojis = {
+    Birthday: '🎂',
+    Dance: '💃',
+    Garden: '🏡',
+  };
+
   class Party extends app.Service {
 
     async create({ atomClass, key, item, user }) {
@@ -10,12 +16,36 @@ module.exports = app => {
       return { atomId: key.atomId, itemId: res.insertId };
     }
 
+    _getMeta(item) {
+      // flags
+      const flags = [];
+      if (item.personCount) {
+        flags.push(item.personCount);
+      }
+      // summary
+      let summary;
+      if (item.partyTypeName) {
+        summary = `${gPartyTypeEmojis[item.partyTypeName]}${this.ctx.text(item.partyTypeName)}`;
+      }
+      // meta
+      const meta = {
+        flags,
+        summary,
+      };
+      // ok
+      item._meta = meta;
+    }
+
     async read({ atomClass, key, item, user }) {
       // read
+      this._getMeta(item);
     }
 
     async select({ atomClass, options, items, user }) {
       // select
+      for (const item of items) {
+        this._getMeta(item);
+      }
     }
 
     async write({ atomClass, key, item, user }) {
