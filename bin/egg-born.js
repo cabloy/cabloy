@@ -46,20 +46,20 @@ co(function* () {
 
   const processFiles = command.processFiles;
   command.processFiles = function* (targetDir, templateDir) {
-    // download test-cook
-    let testCookDir;
+    // download test-party
+    let testPartyDir;
     const pkg = require(path.join(templateDir, 'package.json'));
     if (pkg.name === 'egg-born-template-cabloy') {
       // download
-      testCookDir = yield this.downloadModule('egg-born-module-test-cook');
+      testPartyDir = yield this.downloadModule('egg-born-module-test-party');
     }
     // process files
     yield processFiles.call(command, targetDir, templateDir);
-    // move test-cook
-    if (testCookDir) {
+    // move test-party
+    if (testPartyDir) {
       const destDir = path.join(targetDir, 'src/module');
       // move
-      fse.moveSync(testCookDir, path.join(destDir, 'test-cook'));
+      fse.moveSync(testPartyDir, path.join(destDir, 'test-party'));
       // delete .gitkeep
       fse.removeSync(path.join(destDir, '.gitkeep'));
     }
