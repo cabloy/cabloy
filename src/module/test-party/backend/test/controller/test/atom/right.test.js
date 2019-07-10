@@ -1,16 +1,6 @@
 const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
-describe('test/controller/test.test.js', () => {
-
-  it('action:starlabel', async () => {
-    const result = await app.httpRequest().get(mockUrl('test/starlabel'));
-    assert(result.body.code === 0);
-  });
-
-  it('action:atom', async () => {
-    const result = await app.httpRequest().get(mockUrl('test/atom'));
-    assert(result.body.code === 0);
-  });
+describe('test/controller/test/atom/right.test.js', () => {
 
   it('action:checkRightCreate', async () => {
     app.mockSession({});
@@ -21,14 +11,20 @@ describe('test/controller/test.test.js', () => {
       [ 'Smith', false ],
     ];
     for (const [ userName, right ] of checkRightCreates) {
+      // login
       await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
         auth: userName,
         password: '123456',
       });
-      const result = await app.httpRequest().post(mockUrl('test/checkRightCreate')).send({
+      // checkRightCreate
+      const result = await app.httpRequest().post(mockUrl('test/atom/checkRightCreate')).send({
         atomClass: { module: mockInfo().relativeName, atomClassName: 'party', atomClassIdParent: 0 },
       });
-      if (right) { assert(result.body.data.id > 0); } else { assert(result.status === 403); }
+      if (right) {
+        assert.equal(result.body.data.id > 0, true);
+      } else {
+        assert.equal(result.status, 403);
+      }
     }
   });
 
@@ -53,14 +49,20 @@ describe('test/controller/test.test.js', () => {
       [ 'Tomson', false ],
     ];
     for (const [ userName, right ] of checkRightReads) {
+      // login
       await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
         auth: userName,
         password: '123456',
       });
-      const result = await app.httpRequest().post(mockUrl('test/checkRightRead')).send({
+      // checkRightRead
+      const result = await app.httpRequest().post(mockUrl('test/atom/checkRightRead')).send({
         key: partyKey,
       });
-      if (right) { assert(result.body.data.id === partyKey.atomId); } else { assert(result.status === 403); }
+      if (right) {
+        assert.equal(result.body.data.id, partyKey.atomId);
+      } else {
+        assert.equal(result.status, 403);
+      }
     }
 
     // check right write
@@ -69,14 +71,20 @@ describe('test/controller/test.test.js', () => {
       [ 'Tomson', false ],
     ];
     for (const [ userName, right ] of checkRightWrites) {
+      // login
       await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
         auth: userName,
         password: '123456',
       });
-      const result = await app.httpRequest().post(mockUrl('test/checkRightWrite')).send({
+      // checkRightWrite
+      const result = await app.httpRequest().post(mockUrl('test/atom/checkRightWrite')).send({
         key: partyKey,
       });
-      if (right) { assert(result.body.data.id === partyKey.atomId); } else { assert(result.status === 403); }
+      if (right) {
+        assert.equal(result.body.data.id, partyKey.atomId);
+      } else {
+        assert.equal(result.status, 403);
+      }
     }
 
     // enable
@@ -87,7 +95,7 @@ describe('test/controller/test.test.js', () => {
     res = await app.httpRequest().post(mockUrl('/a/base/atom/enable')).send({
       key: partyKey,
     });
-    assert(res.body.code === 0);
+    assert.equal(res.body.code, 0);
 
     // check right actions
     const checkRightActions = [
@@ -95,14 +103,20 @@ describe('test/controller/test.test.js', () => {
       [ 'Jane', true ],
     ];
     for (const [ userName, right ] of checkRightActions) {
+      // login
       await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
         auth: userName,
         password: '123456',
       });
-      const result = await app.httpRequest().post(mockUrl('test/checkRightAction')).send({
+      // checkRightAction
+      const result = await app.httpRequest().post(mockUrl('test/atom/checkRightAction')).send({
         key: partyKey,
       });
-      if (right) { assert(result.body.data.id === partyKey.atomId); } else { assert(result.status === 403); }
+      if (right) {
+        assert.equal(result.body.data.id, partyKey.atomId);
+      } else {
+        assert.equal(result.status, 403);
+      }
     }
 
     // customActionReview
@@ -111,15 +125,21 @@ describe('test/controller/test.test.js', () => {
       [ 'Jane', true ],
     ];
     for (const [ userName, right ] of customActionReviews) {
+      // login
       await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
         auth: userName,
         password: '123456',
       });
+      // action:review
       const result = await app.httpRequest().post(mockUrl('/a/base/atom/action')).send({
         key: partyKey,
         action: 101,
       });
-      if (right) { assert(result.body.code === 0); } else { assert(result.status === 403); }
+      if (right) {
+        assert.equal(result.body.code, 0);
+      } else {
+        assert.equal(result.status, 403);
+      }
     }
 
     // delete
@@ -130,69 +150,7 @@ describe('test/controller/test.test.js', () => {
     res = await app.httpRequest().post(mockUrl('/a/base/atom/delete')).send({
       key: partyKey,
     });
-    assert(res.body.code === 0);
-  });
-
-  it('action:checkRightFunctionUser', async () => {
-    app.mockSession({});
-
-    const checkRightFunctions = [
-      [ 'Root', true ],
-      [ 'Tomson', false ],
-    ];
-    for (const [ userName, right ] of checkRightFunctions) {
-      await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-        auth: userName,
-        password: '123456',
-      });
-      const result = await app.httpRequest().post(mockUrl('test/checkRightFunctionUser'));
-      if (right) { assert(result.body.data.id > 0); } else { assert(result.status === 403); }
-    }
-  });
-
-  it('action:echo', async () => {
-    app.mockSession({});
-
-    // anonymous
-    let result = await app.httpRequest().get(mockUrl('test/echo/1'));
-    assert(result.body.code === 0);
-
-    // login
-    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      auth: 'root',
-      password: '123456',
-    });
-
-    // test again
-    result = await app.httpRequest().get(mockUrl('test/echo/1'));
-    assert(result.body.code === 0);
-  });
-
-  it('action:function', async () => {
-    const result = await app.httpRequest().get(mockUrl('test/function'));
-    assert(result.body.code === 0);
-  });
-
-  it('action:functionPublic', async () => {
-    const result = await app.httpRequest().get(mockUrl('test/functionPublic'));
-    assert(result.body.code === 0);
-  });
-
-  it('action:atomPublic', async () => {
-    const result = await app.httpRequest().get(mockUrl('test/atomPublic'));
-    assert(result.body.code === 0);
-  });
-
-  it('action:httpLog', async () => {
-    const result = await app.httpRequest().post(mockUrl('test/httpLog?name=zhennann')).send({
-      sex: 1,
-    });
-    assert(result.body.code === 0);
-  });
-
-  it('action:userRole', async () => {
-    const result = await app.httpRequest().get(mockUrl('test/userRole'));
-    assert(result.body.code === 0);
+    assert.equal(res.body.code, 0);
   });
 
 });

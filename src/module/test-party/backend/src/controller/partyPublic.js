@@ -18,6 +18,7 @@ module.exports = app => {
     }
 
   }
+
   return PartyPublicController;
 };
 

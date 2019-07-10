@@ -1,11 +1,7 @@
-const require3 = require('require3');
-const assert = require3('assert');
-
 module.exports = app => {
 
-  class Test2Controller extends app.Controller {
+  class SendMailController extends app.Controller {
 
-    // sendMail
     async sendMail() {
       // send
       await this.ctx.meta.mail.send({
@@ -16,12 +12,12 @@ module.exports = app => {
           text: 'message body!',
         },
       });
-      // ok
+      // done
       this.ctx.success();
     }
 
   }
 
-  return Test2Controller;
+  return SendMailController;
 
 };

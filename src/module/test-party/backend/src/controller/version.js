@@ -1,4 +1,5 @@
 module.exports = app => {
+
   class VersionController extends app.Controller {
 
     async update() {
@@ -17,5 +18,6 @@ module.exports = app => {
     }
 
   }
+
   return VersionController;
 };

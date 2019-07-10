@@ -15,6 +15,7 @@ module.exports = app => {
             info: {
               title: 'Party',
               tableName: 'testPartyView',
+              flow: 0,
             },
             actions: {
               review: {
@@ -89,7 +90,7 @@ module.exports = app => {
           },
         },
         functions: {
-          testPublic: {
+          testFunctionPublic: {
             scene: 'tools',
             menu: 1,
             public: 1,
@@ -98,7 +99,7 @@ module.exports = app => {
       },
       event: {
         implementations: {
-          'a-base:userVerify': 'test/eventUserVerify',
+          'a-base:userVerify': 'test/event/userVerify',
         },
       },
     });

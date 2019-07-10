@@ -43,6 +43,7 @@ module.exports = app => {
     }
 
   }
+
   return PartyController;
 };
 

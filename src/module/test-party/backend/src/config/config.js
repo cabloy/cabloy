@@ -7,12 +7,12 @@ module.exports = appInfo => {
     config.startups = {
       startupAll: {
         type: 'worker',
-        path: 'test/startupAll',
+        path: 'test/feat/startup/all',
       },
       startupInstance: {
         type: 'worker',
         instance: true,
-        path: 'test/startupInstance',
+        path: 'test/feat/startup/instance',
       },
     };
   }
