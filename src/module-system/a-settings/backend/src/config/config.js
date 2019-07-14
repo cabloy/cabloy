@@ -10,32 +10,5 @@ module.exports = appInfo => {
     },
   };
 
-  // schedules
-  config.schedules = {
-  };
-
-  // settings
-  config.settings = {
-    instance: {
-      info: {
-        title: 'title1',
-      },
-    },
-    user: {
-      info: {
-        username: 'zhennann',
-      },
-      extra: {
-        extra: {
-          info: {
-            mobile: '1',
-            sex: 1,
-            language: 'en-us',
-          },
-        },
-      },
-    },
-  };
-
   return config;
 };

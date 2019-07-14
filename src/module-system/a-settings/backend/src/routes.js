@@ -1,9 +1,8 @@
 const version = require('./controller/version.js');
 const settings = require('./controller/settings.js');
-const test = require('./controller/test.js');
 
 module.exports = app => {
-  let routes = [
+  const routes = [
     // version
     { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
@@ -22,10 +21,5 @@ module.exports = app => {
     { method: 'post', path: 'settings/user/load', controller: settings, action: 'userLoad' },
     { method: 'post', path: 'settings/user/save', controller: settings, action: 'userSave' },
   ];
-  if (app.meta.isTest) {
-    routes = routes.concat([
-      { method: 'get', path: 'test/settings', controller: test, middlewares: 'test' },
-    ]);
-  }
   return routes;
 };

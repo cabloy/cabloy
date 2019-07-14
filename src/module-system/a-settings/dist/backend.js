@@ -82,17 +82,11 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
-
-module.exports = require("require3");
-
-/***/ }),
-/* 1 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -110,7 +104,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 2 */
+/* 1 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -128,7 +122,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -140,23 +134,23 @@ module.exports = {
 
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const services = __webpack_require__(5);
-const models = __webpack_require__(8);
-const config = __webpack_require__(9);
-const locales = __webpack_require__(10);
-const errors = __webpack_require__(12);
-const middlewares = __webpack_require__(13);
-const constants = __webpack_require__(3);
+const services = __webpack_require__(4);
+const models = __webpack_require__(7);
+const config = __webpack_require__(8);
+const locales = __webpack_require__(9);
+const errors = __webpack_require__(11);
+const middlewares = __webpack_require__(12);
+const constants = __webpack_require__(2);
 
 // eslint-disable-next-line
 module.exports = app => {
 
   // meta
   const meta = __webpack_require__(16)(app);
-  const routes = __webpack_require__(19)(app);
+  const routes = __webpack_require__(17)(app);
 
   return {
     routes,
@@ -174,11 +168,11 @@ module.exports = app => {
 
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(6);
-const settings = __webpack_require__(7);
+const version = __webpack_require__(5);
+const settings = __webpack_require__(6);
 
 module.exports = {
   version,
@@ -187,7 +181,7 @@ module.exports = {
 
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -255,7 +249,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -341,11 +335,11 @@ module.exports = app => {
 
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const settings = __webpack_require__(1);
-const settingsRef = __webpack_require__(2);
+const settings = __webpack_require__(0);
+const settingsRef = __webpack_require__(1);
 
 module.exports = {
   settings,
@@ -354,7 +348,7 @@ module.exports = {
 
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports) {
 
 // eslint-disable-next-line
@@ -369,58 +363,30 @@ module.exports = appInfo => {
     },
   };
 
-  // schedules
-  config.schedules = {
-  };
-
-  // settings
-  config.settings = {
-    instance: {
-      info: {
-        title: 'title1',
-      },
-    },
-    user: {
-      info: {
-        username: 'zhennann',
-      },
-      extra: {
-        extra: {
-          info: {
-            mobile: '1',
-            sex: 1,
-            language: 'en-us',
-          },
-        },
-      },
-    },
-  };
-
   return config;
 };
 
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
-  'zh-cn': __webpack_require__(11),
+  'zh-cn': __webpack_require__(10),
+};
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports) {
+
+module.exports = {
+  Settings: '设置',
 };
 
 
 /***/ }),
 /* 11 */
-/***/ (function(module, exports) {
-
-module.exports = {
-  Settings: '设置',
-  test: '测试',
-};
-
-
-/***/ }),
-/* 12 */
 /***/ (function(module, exports) {
 
 // error code should start from 1001
@@ -429,10 +395,10 @@ module.exports = {
 
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const settings = __webpack_require__(14);
+const settings = __webpack_require__(13);
 
 module.exports = {
   settings,
@@ -440,10 +406,10 @@ module.exports = {
 
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const SettingsFn = __webpack_require__(15);
+const SettingsFn = __webpack_require__(14);
 const SETTINGS = Symbol('CTX#__SETTINGS');
 
 module.exports = () => {
@@ -465,14 +431,14 @@ module.exports = () => {
 
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(0);
+const require3 = __webpack_require__(15);
 const extend = require3('extend2');
-const modelSettingsFn = __webpack_require__(1);
-const modelSettingsRefFn = __webpack_require__(2);
-const constants = __webpack_require__(3);
+const modelSettingsFn = __webpack_require__(0);
+const modelSettingsRefFn = __webpack_require__(1);
+const constants = __webpack_require__(2);
 
 const Fn = module.exports = ctx => {
 
@@ -664,11 +630,14 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 15 */
+/***/ (function(module, exports) {
 
-const require3 = __webpack_require__(0);
-const extend = require3('extend2');
+module.exports = require("require3");
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports) {
 
 module.exports = app => {
   const meta = {
@@ -684,191 +653,19 @@ module.exports = app => {
       },
     },
   };
-  // only support in test
-  if (app.meta.isTest) {
-    // schemas
-    const schemas = __webpack_require__(17)(app);
-    // keywords
-    const keywords = __webpack_require__(18)(app);
-    // meta
-    extend(true, meta, {
-      settings: {
-        user: {
-          validator: 'userTest',
-        },
-        instance: {
-          validator: 'instanceTest',
-        },
-      },
-      validation: {
-        validators: {
-          userTest: {
-            schemas: 'user,userExtra',
-          },
-          instanceTest: {
-            schemas: 'instance',
-          },
-        },
-        keywords: {
-          'x-languages': keywords.languages,
-        },
-        schemas: {
-          user: schemas.user,
-          userExtra: schemas.userExtra,
-          instance: schemas.instance,
-        },
-      },
-    });
-  }
   return meta;
 };
 
 
 /***/ }),
 /* 17 */
-/***/ (function(module, exports) {
-
-module.exports = app => {
-  const schemas = {};
-  schemas.user = {
-    type: 'object',
-    properties: {
-      info: {
-        type: 'object',
-        ebType: 'group',
-        ebTitle: 'Info Group',
-        properties: {
-          username: {
-            type: 'string',
-            ebType: 'text',
-            ebDescription: '',
-            notEmpty: true,
-          },
-        },
-      },
-      extra: {
-        type: 'object',
-        ebType: 'group',
-        ebTitle: 'Extra Group',
-        properties: {
-          extra: {
-            ebType: 'panel',
-            ebTitle: 'Extra',
-            $ref: 'userExtra',
-          },
-        },
-      },
-    },
-  };
-  schemas.userExtra = {
-    type: 'object',
-    ebTitle: 'Extra',
-    properties: {
-      info: {
-        type: 'object',
-        ebType: 'group',
-        ebTitle: 'Info Group',
-        properties: {
-          mobile: {
-            type: 'string',
-            ebType: 'text',
-            notEmpty: true,
-          },
-          sex: {
-            type: 'number',
-            ebType: 'select',
-            ebMultiple: false,
-            ebOptions: [
-              { title: 'Male', value: 1 },
-              { title: 'Female', value: 2 },
-            ],
-            ebParams: {
-              openIn: 'page',
-              closeOnSelect: true,
-            },
-          },
-          language: {
-            type: 'string',
-            ebType: 'select',
-            ebOptionsUrl: '/a/base/base/locales',
-            ebOptionsUrlParams: null,
-            'x-languages': true,
-          },
-        },
-        required: [ 'language' ],
-      },
-    },
-  };
-  schemas.instance = {
-    type: 'object',
-    properties: {
-      info: {
-        type: 'object',
-        ebType: 'group',
-        ebTitle: 'Info Group',
-        properties: {
-          title: {
-            type: 'string',
-            ebType: 'text',
-            ebTitle: 'title',
-            ebDescription: 'website\'s title',
-            notEmpty: true,
-          },
-        },
-      },
-    },
-  };
-  return schemas;
-};
-
-
-/***/ }),
-/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(0);
-const Ajv = require3('ajv');
+const version = __webpack_require__(18);
+const settings = __webpack_require__(19);
 
 module.exports = app => {
-  const keywords = {};
-  keywords.languages = {
-    async: true,
-    type: 'string',
-    errors: true,
-    compile(sch, parentSchema) {
-      const func = async function(data) {
-        const ctx = this;
-        const context = arguments.callee.context;
-        const locales = await ctx.performAction({
-          method: 'post',
-          url: context.parentSchema.ebOptionsUrl,
-          body: context.parentSchema.ebOptionsUrlParams,
-        });
-        const index = locales.findIndex(item => item.value === data);
-        if (index > -1) return true;
-        const errors = [{ keyword: 'x-languages', params: [], message: ctx.text('Not expected value') }];
-        throw new Ajv.ValidationError(errors);
-      };
-      func.context = {
-        sch, parentSchema,
-      };
-      return func;
-    },
-  };
-  return keywords;
-};
-
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const version = __webpack_require__(20);
-const settings = __webpack_require__(21);
-const test = __webpack_require__(22);
-
-module.exports = app => {
-  let routes = [
+  const routes = [
     // version
     { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
@@ -887,17 +684,12 @@ module.exports = app => {
     { method: 'post', path: 'settings/user/load', controller: settings, action: 'userLoad' },
     { method: 'post', path: 'settings/user/save', controller: settings, action: 'userSave' },
   ];
-  if (app.meta.isTest) {
-    routes = routes.concat([
-      { method: 'get', path: 'test/settings', controller: test, middlewares: 'test' },
-    ]);
-  }
   return routes;
 };
 
 
 /***/ }),
-/* 20 */
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -919,7 +711,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 21 */
+/* 19 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -962,63 +754,6 @@ module.exports = app => {
   }
   return SettingsController;
 };
-
-
-/***/ }),
-/* 22 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const require3 = __webpack_require__(0);
-const assert = require3('assert');
-
-module.exports = app => {
-  class TestController extends app.Controller {
-
-    async settings() {
-
-      // user
-
-      // get settings from config
-      let data = await this.ctx.meta.settings.getUser({ name: '/info/username' });
-      assert(data === 'zhennann');
-      data = await this.ctx.meta.settings.getUser({ name: '/extra/extra/info/language' });
-      assert(data === 'en-us');
-
-      // load settings
-      data = await this.ctx.meta.settings.loadSettingsUser();
-      assert(data.info.username === 'zhennann');
-      // save settings
-      data.extra.extra.info.language = 'zh-cn';
-      await this.ctx.meta.settings.saveSettingsUser({ data });
-
-      // get settings from db
-      data = await this.ctx.meta.settings.getUser({ name: '/extra/extra/info/language' });
-      assert(data === 'zh-cn');
-
-      // instance
-
-      // get settings from config
-      data = await this.ctx.meta.settings.getInstance({ name: '/info/title' });
-      assert(data === 'title1');
-
-      // load settings
-      data = await this.ctx.meta.settings.loadSettingsInstance();
-      assert(data.info.title === 'title1');
-      // save settings
-      data.info.title = 'title2';
-      await this.ctx.meta.settings.saveSettingsInstance({ data });
-
-      // get settings from db
-      data = await this.ctx.meta.settings.getInstance({ name: '/info/title' });
-      assert(data === 'title2');
-
-      this.ctx.success();
-    }
-
-  }
-  return TestController;
-};
-
 
 
 /***/ })
