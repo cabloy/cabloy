@@ -98,7 +98,11 @@ module.exports = app => {
         },
       },
       event: {
+        declarations: {
+          hello: 'This is a test for event',
+        },
         implementations: {
+          'test-party:hello': 'test/event/helloEcho',
           'a-base:userVerify': 'test/event/userVerify',
         },
       },
