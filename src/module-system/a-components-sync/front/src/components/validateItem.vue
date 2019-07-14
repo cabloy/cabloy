@@ -160,22 +160,26 @@ export default {
         },
         on: {
           click: () => {
+            const params = this.validate.params;
+            const verrors = this.validate.verrors;
             this.$view.navigate('/a/validation/validate', {
               target: '_self',
               context: {
                 params: {
-                  module: this.params.module,
-                  validator: this.params.validator,
-                  schema: property.$ref,
+                  params: {
+                    module: params.module,
+                    validator: params.validator,
+                    schema: property.$ref,
+                  },
                   data: data[key],
                   dataPathRoot: this.adjustDataPath(dataPath),
-                  errors: this.verrors ? this.verrors.slice(0) : null,
+                  errors: verrors ? verrors.slice(0) : null,
                   readOnly: this.validate.readOnly || property.ebReadOnly,
                 },
                 callback: (code, res) => {
                   if (code) {
                     this.setValue(data, key, res.data, property);
-                    this.verrors = res.errors;
+                    this.validate.verrors = res.errors;
                   }
                 },
               },
