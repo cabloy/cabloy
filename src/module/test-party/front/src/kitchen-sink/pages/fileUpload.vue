@@ -5,14 +5,14 @@
       <f7-card-header>{{$text('Image')}}</f7-card-header>
       <f7-card-content>
         <img v-if="imageUrl" class="image" :src="imageUrl">
-        <f7-button @click="onClickImage">{{$text('Select And Upload')}}</f7-button>
+        <eb-button :onPerform="onPerformImage">{{$text('Select And Upload')}}</eb-button>
       </f7-card-content>
     </f7-card>
     <f7-card>
       <f7-card-header>{{$text('Audio')}}</f7-card-header>
       <f7-card-content>
         <audio v-if="audioUrl" :src="audioUrl" controls autoplay></audio>
-        <f7-button @click="onClickAudio">{{$text('Select And Upload')}}</f7-button>
+        <eb-button :onPerform="onPerformAudio">{{$text('Select And Upload')}}</eb-button>
       </f7-card-content>
     </f7-card>
     <f7-card>
@@ -34,23 +34,29 @@ export default {
     };
   },
   methods: {
-    onClickImage() {
-      this.$view.navigate('/a/file/file/upload', {
-        context: {
-          params: {
-            mode: 1,
-            // atomId: 0,
+    onPerformImage() {
+      return new Promise((resolve, reject) => {
+        this.$view.navigate('/a/file/file/upload', {
+          context: {
+            params: {
+              mode: 1,
+              // atomId: 0,
+            },
+            callback: (code, data) => {
+              if (code === 200) {
+                this.imageUrl = data.downloadUrl;
+                resolve();
+              }
+              if (code === false) {
+                reject();
+              }
+            },
           },
-          callback: (code, data) => {
-            if (code === 200) {
-              this.imageUrl = data.downloadUrl;
-            }
-          },
-        },
+        });
       });
     },
-    onClickAudio() {
-      this.$view.navigate('/a/file/file/upload', {
+    onPerformAudio() {
+      return this.$view.navigate('/a/file/file/upload', {
         context: {
           params: {
             mode: 3,

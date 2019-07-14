@@ -21,6 +21,8 @@ const testFeatHttpLog = require('./controller/test/feat/httpLog.js');
 const testFeatStartup = require('./controller/test/feat/startup.js');
 const testFeatSendMail = require('./controller/test/feat/sendMail.js');
 const testFeatHook = require('./controller/test/feat/hook.js');
+const testFeatInstance = require('./controller/test/feat/instance.js');
+const testFeatProgress = require('./controller/test/feat/progress.js');
 
 module.exports = app => {
   let routes = [
@@ -119,6 +121,13 @@ module.exports = app => {
       { method: 'post', path: 'test/feat/hook/echo', controller: testFeatHook, middlewares: 'test', meta: { auth: { enable: false } } },
       { method: 'post', path: 'test/feat/hook/echoBefore', controller: testFeatHook, middlewares: 'test', meta: { auth: { enable: false } } },
       { method: 'post', path: 'test/feat/hook/echoAfter', controller: testFeatHook, middlewares: 'test', meta: { auth: { enable: false } } },
+
+      // test/feat/hook
+      { method: 'post', path: 'test/feat/instance', controller: testFeatInstance, middlewares: 'test', meta: { auth: { enable: false } } },
+
+      // test/feat/progress
+      { method: 'post', path: 'test/feat/progress', controller: testFeatProgress, middlewares: 'progress', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/feat/progressInBackground', controller: testFeatProgress, middlewares: 'inner,progress', meta: { auth: { enable: false } } },
 
     ]);
   }

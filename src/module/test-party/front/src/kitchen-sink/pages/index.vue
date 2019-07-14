@@ -9,6 +9,7 @@
 <script>
 const items = [
   { title: 'File Upload', path: 'kichen-sink/fileUpload' },
+  { title: 'Progress Bar', path: 'kichen-sink/progress' },
 ];
 export default {
   data() {
@@ -23,7 +24,6 @@ export default {
         ...item,
       };
     }).sort((a, b) => {
-      console.log(a.titleLocale);
       const locale = this.$meta.util.cookies.get('locale') || 'en-us';
       return a.titleLocale.localeCompare(b.titleLocale, locale);
     });

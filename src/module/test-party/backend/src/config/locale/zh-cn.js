@@ -1,6 +1,4 @@
 module.exports = {
-  'Create Party': '新建宴会',
-  'Party List': '宴会列表',
   Party: '宴会',
   Review: '评审',
   Reviewing: '评审中',
@@ -8,4 +6,10 @@ module.exports = {
   Birthday: '生日',
   Dance: '跳舞',
   Garden: '花园',
+  'Create Party': '新建宴会',
+  'Party List': '宴会列表',
+  'Level One': '层级1',
+  'Level Two': '层级2',
+  'Level Three': '层级3',
+  'Well Done': '干得好',
 };
