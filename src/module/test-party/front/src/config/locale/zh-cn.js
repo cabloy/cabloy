@@ -9,5 +9,5 @@ export default {
   'File Upload': '文件上传',
   'Select And Upload': '选择并上传',
   'Progress Bar': '进度条',
-  'Start working': '开始工作',
+  'Start Working': '开始工作',
 };

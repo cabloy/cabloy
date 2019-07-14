@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar :title="$text('Progress Bar')" eb-back-link="Back"></eb-navbar>
     <f7-block>
-      <eb-link :onPerform="onPerformStart">{{$text('Start working')}}</eb-link>
+      <eb-link :onPerform="onPerformStart">{{$text('Start Working')}}</eb-link>
     </f7-block>
   </eb-page>
 </template>
