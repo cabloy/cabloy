@@ -17,5 +17,31 @@ module.exports = appInfo => {
     };
   }
 
+  if (appInfo.env === 'unittest' || appInfo.env === 'local') {
+    // settings
+    config.settings = {
+      instance: {
+        groupInfo: {
+          slogan: '',
+        },
+      },
+      user: {
+        groupInfo: {
+          username: 'zhennann',
+        },
+        groupExtra: {
+          panelExtra: {
+            groupInfo: {
+              mobile: '123',
+              sex: 1,
+              language: 'en-us',
+            },
+          },
+        },
+      },
+    };
+  }
+
+
   return config;
 };

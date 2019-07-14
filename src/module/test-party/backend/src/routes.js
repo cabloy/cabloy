@@ -24,6 +24,7 @@ const testFeatHook = require('./controller/test/feat/hook.js');
 const testFeatInstance = require('./controller/test/feat/instance.js');
 const testFeatProgress = require('./controller/test/feat/progress.js');
 const testFeatSequence = require('./controller/test/feat/sequence.js');
+const testFeatSettings = require('./controller/test/feat/settings.js');
 
 module.exports = app => {
   let routes = [
@@ -132,6 +133,9 @@ module.exports = app => {
 
       // test/feat/sequence
       { method: 'post', path: 'test/feat/sequence', controller: testFeatSequence, middlewares: 'test', meta: { auth: { enable: false } } },
+
+      // test/feat/settings
+      { method: 'post', path: 'test/feat/settings', controller: testFeatSettings, middlewares: 'test' },
 
     ]);
   }

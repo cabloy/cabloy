@@ -10,6 +10,7 @@
 const items = [
   { title: 'File Upload', path: 'kichen-sink/fileUpload' },
   { title: 'Progress Bar', path: 'kichen-sink/progress' },
+  { title: 'Settings', path: 'kichen-sink/settings' },
 ];
 export default {
   data() {

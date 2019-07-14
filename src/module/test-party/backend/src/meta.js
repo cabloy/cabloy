@@ -7,6 +7,8 @@ module.exports = app => {
   if (app.meta.isTest || app.meta.isLocal) {
     // schemas
     const schemas = require('./config/validation/schemas.js')(app);
+    // keywords
+    const keywords = require('./config/validation/keywords.js')(app);
     // meta
     extend(true, meta, {
       base: {
@@ -74,11 +76,30 @@ module.exports = app => {
           partySearch: {
             schemas: 'partySearch',
           },
+          userTest: {
+            schemas: 'settingsUser,settingsUserExtra',
+          },
+          instanceTest: {
+            schemas: 'settingsInstance',
+          },
         },
-        keywords: {},
+        keywords: {
+          'x-languages': keywords.languages,
+        },
         schemas: {
           party: schemas.party,
           partySearch: schemas.partySearch,
+          settingsUser: schemas.settingsUser,
+          settingsUserExtra: schemas.settingsUserExtra,
+          settingsInstance: schemas.settingsInstance,
+        },
+      },
+      settings: {
+        user: {
+          validator: 'userTest',
+        },
+        instance: {
+          validator: 'instanceTest',
         },
       },
     });

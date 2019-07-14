@@ -11,4 +11,5 @@ export default [
   { path: 'kichen-sink/index', component: loadKichenSink('index') },
   { path: 'kichen-sink/fileUpload', component: loadKichenSink('fileUpload') },
   { path: 'kichen-sink/progress', component: loadKichenSink('progress') },
+  { path: 'kichen-sink/settings', component: loadKichenSink('settings') },
 ];
