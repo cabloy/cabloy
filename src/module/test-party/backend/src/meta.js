@@ -121,6 +121,16 @@ module.exports = app => {
           { path: '/test/party/test/feat/hook/echo', route: 'test/feat/hook/echoAfter' },
         ],
       },
+      sequence: {
+        providers: {
+          test: {
+            start: 0,
+            expression({ ctx, value }) {
+              return ++value;
+            },
+          },
+        },
+      },
     });
   }
   return meta;

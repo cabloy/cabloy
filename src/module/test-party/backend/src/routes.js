@@ -23,6 +23,7 @@ const testFeatSendMail = require('./controller/test/feat/sendMail.js');
 const testFeatHook = require('./controller/test/feat/hook.js');
 const testFeatInstance = require('./controller/test/feat/instance.js');
 const testFeatProgress = require('./controller/test/feat/progress.js');
+const testFeatSequence = require('./controller/test/feat/sequence.js');
 
 module.exports = app => {
   let routes = [
@@ -128,6 +129,9 @@ module.exports = app => {
       // test/feat/progress
       { method: 'post', path: 'test/feat/progress', controller: testFeatProgress, middlewares: 'progress', meta: { auth: { enable: false } } },
       { method: 'post', path: 'test/feat/progressInBackground', controller: testFeatProgress, middlewares: 'inner,progress', meta: { auth: { enable: false } } },
+
+      // test/feat/sequence
+      { method: 'post', path: 'test/feat/sequence', controller: testFeatSequence, middlewares: 'test', meta: { auth: { enable: false } } },
 
     ]);
   }
