@@ -4,15 +4,13 @@
     <eb-box ref="box" @size="onSize">
       <img ref="image" class="image">
     </eb-box>
-      <input ref="file" type="file" :accept="accept" @change="onFileChange" style="display: none;" />
-      <f7-block>
-        <h3>{{fileName}}</h3>
-      </f7-block>
-      <f7-toolbar bottom-md>
-        <f7-button @click="onClickSelect">{{selectText}}</f7-button>
-        <f7-button v-if="cropped" @click="onClickClearCrop">{{$text('Clear Crop')}}</f7-button>
-        <eb-button v-if="fileName" active :onPerform="onPerformUpload">{{$text('Upload')}}</eb-button>
-      </f7-toolbar>
+    <input ref="file" type="file" :accept="accept" @change="onFileChange" style="display: none;" />
+    <div v-if="fileName" class="fileName">{{fileName}}</div>
+    <f7-toolbar bottom-md>
+      <f7-button @click="onClickSelect">{{selectText}}</f7-button>
+      <f7-button v-if="cropped" @click="onClickClearCrop">{{$text('Clear Crop')}}</f7-button>
+      <eb-button v-if="fileName" active :onPerform="onPerformUpload">{{$text('Upload')}}</eb-button>
+    </f7-toolbar>
   </eb-page>
 </template>
 <script>
@@ -61,7 +59,7 @@ export default {
     createCropper() {
       if (this.mode === 1) {
         this._cropper = new Cropper(this.$refs.image, {
-          viewMode: 3,
+          viewMode: 2,
           checkOrientation: false,
           autoCrop: false,
           movable: false,
@@ -128,6 +126,15 @@ export default {
 <style lang="less" scoped>
 .image {
   max-width: 100%;
+}
+
+.fileName {
+  text-align: center;
+  color: #fff;
+  padding: 20px 20px;
+  background: #555;
+  opacity: 0.4;
+  user-select: none;
 }
 
 </style>
