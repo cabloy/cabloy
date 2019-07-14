@@ -378,21 +378,6 @@ const Fn = module.exports = ctx => {
 
 module.exports = app => {
   const meta = {};
-  if (app.meta.isTest || app.meta.isLocal) {
-    // meta
-    Object.assign(meta, {
-      sequence: {
-        providers: {
-          test: {
-            start: 0,
-            expression({ ctx, value }) {
-              return ++value;
-            },
-          },
-        },
-      },
-    });
-  }
   return meta;
 };
 
@@ -403,18 +388,12 @@ module.exports = app => {
 
 const version = __webpack_require__(13);
 const sequence = __webpack_require__(14);
-const test = __webpack_require__(15);
 
 module.exports = app => {
-  let routes = [
+  const routes = [
     { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'sequence/next', controller: sequence, middlewares: 'inner', meta: { auth: { enable: false } } },
   ];
-  if (app.meta.isTest || app.meta.isLocal) {
-    routes = routes.concat([
-      { method: 'get', path: 'test/sequence', controller: test, middlewares: 'test', meta: { auth: { enable: false } } },
-    ]);
-  }
   return routes;
 };
 
@@ -453,146 +432,6 @@ module.exports = app => {
 
   return SequenceController;
 };
-
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const require3 = __webpack_require__(16);
-const assert = require3('assert');
-
-module.exports = app => {
-  const pMap = __webpack_require__(17);
-  class TestController extends app.Controller {
-
-    async sequence() {
-
-      // current
-      let current = await this.ctx.meta.sequence.current('test');
-      assert(current === 0);
-
-      // next
-      let next = await this.ctx.meta.sequence.next('test');
-      assert(next === 1);
-
-      // current
-      current = await this.ctx.meta.sequence.current('test');
-      assert(current === 1);
-
-      // reset
-      await this.ctx.meta.sequence.reset('test');
-
-      // other module's sequence
-      const moduleSequence = this.ctx.meta.sequence.module(this.ctx.module.info.relativeName);
-
-      // next
-      next = await moduleSequence.next('test');
-      assert(next === 1);
-
-      // current
-      current = await moduleSequence.current('test');
-      assert(current === 1);
-
-      // reset
-      await moduleSequence.reset('test');
-
-      // concurrency
-      const results = await pMap([ 1, 2, 3, 4, 5 ], async () => {
-        return await moduleSequence.next('test');
-      });
-      assert(results.join(',') === '1,2,3,4,5');
-
-      // reset
-      await moduleSequence.reset('test');
-
-      this.ctx.success();
-    }
-
-  }
-  return TestController;
-};
-
-
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports) {
-
-module.exports = require("require3");
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-module.exports = (iterable, mapper, opts) => new Promise((resolve, reject) => {
-	opts = Object.assign({
-		concurrency: Infinity
-	}, opts);
-
-	if (typeof mapper !== 'function') {
-		throw new TypeError('Mapper function is required');
-	}
-
-	const concurrency = opts.concurrency;
-
-	if (!(typeof concurrency === 'number' && concurrency >= 1)) {
-		throw new TypeError(`Expected \`concurrency\` to be a number from 1 and up, got \`${concurrency}\` (${typeof concurrency})`);
-	}
-
-	const ret = [];
-	const iterator = iterable[Symbol.iterator]();
-	let isRejected = false;
-	let iterableDone = false;
-	let resolvingCount = 0;
-	let currentIdx = 0;
-
-	const next = () => {
-		if (isRejected) {
-			return;
-		}
-
-		const nextItem = iterator.next();
-		const i = currentIdx;
-		currentIdx++;
-
-		if (nextItem.done) {
-			iterableDone = true;
-
-			if (resolvingCount === 0) {
-				resolve(ret);
-			}
-
-			return;
-		}
-
-		resolvingCount++;
-
-		Promise.resolve(nextItem.value)
-			.then(el => mapper(el, i))
-			.then(
-				val => {
-					ret[i] = val;
-					resolvingCount--;
-					next();
-				},
-				err => {
-					isRejected = true;
-					reject(err);
-				}
-			);
-	};
-
-	for (let i = 0; i < concurrency; i++) {
-		next();
-
-		if (iterableDone) {
-			break;
-		}
-	}
-});
 
 
 /***/ })
