@@ -67,7 +67,7 @@ module.exports = appInfo => {
       '.ppt', '.pptx',
       '.doc', '.docx',
       '.pdf',
-      '.aac', '.ogg',
+      '.aac', '.ogg', '.m4a', '.mp3', '.wav',
     ],
   };
 
