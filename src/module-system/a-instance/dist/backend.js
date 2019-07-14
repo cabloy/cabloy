@@ -96,19 +96,19 @@ module.exports = require("require3");
 /***/ (function(module, exports, __webpack_require__) {
 
 const routes = __webpack_require__(2);
-const services = __webpack_require__(6);
-const config = __webpack_require__(9);
-const locales = __webpack_require__(10);
-const errors = __webpack_require__(12);
-const middlewares = __webpack_require__(13);
+const services = __webpack_require__(5);
+const config = __webpack_require__(8);
+const locales = __webpack_require__(9);
+const errors = __webpack_require__(11);
+const middlewares = __webpack_require__(12);
 
 // eslint-disable-next-line
 module.exports = app => {
 
   // models
-  const models = __webpack_require__(15)(app);
+  const models = __webpack_require__(14)(app);
   // meta
-  const meta = __webpack_require__(16)(app);
+  const meta = __webpack_require__(15)(app);
 
   return {
     routes,
@@ -130,13 +130,11 @@ module.exports = app => {
 
 const version = __webpack_require__(3);
 const instance = __webpack_require__(4);
-const test = __webpack_require__(5);
 
 module.exports = [
   // version
   { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
   { method: 'post', path: 'version/init', controller: version, middlewares: 'inner', meta: { instance: { enable: false } } },
-  { method: 'get', path: 'test/instance', controller: test, middlewares: 'test', meta: { auth: { enable: false } } },
   // instance
   { method: 'post', path: 'instance/item', controller: instance, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
   { method: 'post', path: 'instance/save', controller: instance, middlewares: 'validate',
@@ -204,28 +202,8 @@ module.exports = app => {
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(0);
-const assert = require3('assert');
-
-module.exports = app => {
-  class TestController extends app.Controller {
-
-    async instance() {
-      assert(this.ctx.instance.id === 1);
-      this.ctx.success();
-    }
-
-  }
-  return TestController;
-};
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const version = __webpack_require__(7);
-const instance = __webpack_require__(8);
+const version = __webpack_require__(6);
+const instance = __webpack_require__(7);
 
 module.exports = {
   version,
@@ -234,7 +212,7 @@ module.exports = {
 
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -313,7 +291,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -350,7 +328,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports) {
 
 // eslint-disable-next-line
@@ -376,16 +354,16 @@ module.exports = appInfo => {
 
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
-  'zh-cn': __webpack_require__(11),
+  'zh-cn': __webpack_require__(10),
 };
 
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -394,7 +372,7 @@ module.exports = {
 
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, exports) {
 
 // error code should start from 1001
@@ -403,10 +381,10 @@ module.exports = {
 
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const instance = __webpack_require__(14);
+const instance = __webpack_require__(13);
 
 module.exports = {
   instance,
@@ -414,7 +392,7 @@ module.exports = {
 
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -470,7 +448,7 @@ function ctxHostValid(ctx) {
 
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -481,11 +459,11 @@ module.exports = app => {
 
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
-  const schemas = __webpack_require__(17)(app);
+  const schemas = __webpack_require__(16)(app);
   const meta = {
     validation: {
       validators: {
@@ -509,7 +487,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
