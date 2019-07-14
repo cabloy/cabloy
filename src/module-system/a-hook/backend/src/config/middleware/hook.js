@@ -10,8 +10,8 @@ module.exports = () => {
 };
 
 async function invokeHooks(ctx, stage) {
-  if (!ctx.route) return;
-  const path = `/${ctx.route.pid}/${ctx.route.module}/${ctx.route.controller}/${ctx.route.action}`;
+  if (!ctx.req._parsedUrl) return;
+  const path = ctx.req._parsedUrl.pathname.substr(4); // remove /api
   const hooks = ctx.app.meta.geto('hooks').geto(stage).geta(path);
   for (const hook of hooks) {
     await ctx.performAction({

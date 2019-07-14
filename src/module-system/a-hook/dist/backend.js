@@ -240,8 +240,8 @@ module.exports = () => {
 };
 
 async function invokeHooks(ctx, stage) {
-  if (!ctx.route) return;
-  const path = `/${ctx.route.pid}/${ctx.route.module}/${ctx.route.controller}/${ctx.route.action}`;
+  if (!ctx.req._parsedUrl) return;
+  const path = ctx.req._parsedUrl.pathname.substr(4); // remove /api
   const hooks = ctx.app.meta.geto('hooks').geto(stage).geta(path);
   for (const hook of hooks) {
     await ctx.performAction({
@@ -258,18 +258,6 @@ async function invokeHooks(ctx, stage) {
 
 module.exports = app => {
   const meta = {};
-  if (app.meta.isTest) {
-    Object.assign(meta, {
-      hook: {
-        before: [
-          { path: '/a/base/auth/echo', route: 'test/hookTestBefore' },
-        ],
-        after: [
-          { path: '/a/base/auth/echo', route: 'test/hookTestAfter' },
-        ],
-      },
-    });
-  }
   return meta;
 };
 
@@ -278,56 +266,22 @@ module.exports = app => {
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const test = __webpack_require__(11);
-const hook = __webpack_require__(12);
+const hook = __webpack_require__(11);
 
 module.exports = app => {
-  let routes = [
+  const routes = [
     { method: 'post', path: 'hook/installHooks', controller: hook, middlewares: 'inner',
       meta: {
         instance: { enable: false },
       },
     },
   ];
-  if (app.meta.isTest) {
-    routes = routes.concat([
-      { method: 'post', path: 'test/test', controller: test, middlewares: 'test', meta: { auth: { enable: false } } },
-      { method: 'post', path: 'test/hookTestBefore', controller: test, middlewares: 'test', meta: { auth: { enable: false } } },
-      { method: 'post', path: 'test/hookTestAfter', controller: test, middlewares: 'test', meta: { auth: { enable: false } } },
-    ]);
-  }
   return routes;
 };
 
 
 /***/ }),
 /* 11 */
-/***/ (function(module, exports) {
-
-module.exports = app => {
-  class TestController extends app.Controller {
-
-    async test() {
-      this.ctx.success();
-    }
-
-    async hookTestBefore() {
-      console.log('hook:before', this.ctx.ctxCaller.route);
-      this.ctx.success();
-    }
-    async hookTestAfter() {
-      console.log('hook:after', this.ctx.ctxCaller.route);
-      this.ctx.success();
-    }
-
-  }
-  return TestController;
-};
-
-
-
-/***/ }),
-/* 12 */
 /***/ (function(module, exports) {
 
 module.exports = app => {

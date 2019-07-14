@@ -1,20 +1,12 @@
-const test = require('./controller/test.js');
 const hook = require('./controller/hook.js');
 
 module.exports = app => {
-  let routes = [
+  const routes = [
     { method: 'post', path: 'hook/installHooks', controller: hook, middlewares: 'inner',
       meta: {
         instance: { enable: false },
       },
     },
   ];
-  if (app.meta.isTest) {
-    routes = routes.concat([
-      { method: 'post', path: 'test/test', controller: test, middlewares: 'test', meta: { auth: { enable: false } } },
-      { method: 'post', path: 'test/hookTestBefore', controller: test, middlewares: 'test', meta: { auth: { enable: false } } },
-      { method: 'post', path: 'test/hookTestAfter', controller: test, middlewares: 'test', meta: { auth: { enable: false } } },
-    ]);
-  }
   return routes;
 };
