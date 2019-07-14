@@ -304,18 +304,6 @@ const Fn = module.exports = ctx => {
 
 module.exports = app => {
   const meta = {};
-  if (app.meta.isTest) {
-    Object.assign(meta, {
-      event: {
-        declarations: {
-          test: 'This is a test',
-        },
-        implementations: {
-          'a-event:test': 'test/eventTest',
-        },
-      },
-    });
-  }
   return meta;
 };
 
@@ -324,62 +312,22 @@ module.exports = app => {
 /* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const test = __webpack_require__(12);
-const event = __webpack_require__(13);
+const event = __webpack_require__(12);
 
 module.exports = app => {
-  let routes = [
+  const routes = [
     { method: 'post', path: 'event/installEvents', controller: event, middlewares: 'inner',
       meta: {
         instance: { enable: false },
       },
     },
   ];
-  if (app.meta.isTest) {
-    routes = routes.concat([
-      { method: 'post', path: 'test/test', controller: test, middlewares: 'test', meta: { auth: { enable: false } } },
-      { method: 'post', path: 'test/eventTest', controller: test, middlewares: 'test', meta: { auth: { enable: false } } },
-    ]);
-  }
   return routes;
 };
 
 
 /***/ }),
 /* 12 */
-/***/ (function(module, exports) {
-
-module.exports = app => {
-  class TestController extends app.Controller {
-
-    async test() {
-      const data = {
-        name: 'test',
-      };
-      const res = await this.ctx.meta.event.invoke({
-        module: 'a-event', name: 'test', data,
-      });
-      console.log('a-event:test:name:', data.name);
-      console.log('a-event:test:name:returnValue', res);
-      this.ctx.success(res);
-    }
-
-    async eventTest() {
-      const event = this.ctx.request.body.event;
-      const data = this.ctx.request.body.data;
-      data.name = 'test:echo';
-      event.break = true;
-      this.ctx.success('returnValue');
-    }
-
-  }
-  return TestController;
-};
-
-
-
-/***/ }),
-/* 13 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
