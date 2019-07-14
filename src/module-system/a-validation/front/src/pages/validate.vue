@@ -22,7 +22,7 @@ export default {
   },
   computed: {
     params() {
-      return this.contextParams;
+      return this.contextParams.params;
     },
     data() {
       return this.contextParams.data;
@@ -40,7 +40,7 @@ export default {
   methods: {
     onSchemaReady(schema) {
       this.schemaReady = true;
-      this.title = schema.ebTitle;
+      this.title = this.$text(schema.ebTitle);
     },
     onSave() {
       this.contextCallback(200, {
@@ -54,6 +54,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>
