@@ -57,6 +57,13 @@ module.exports = app => {
             sorting: 1,
             menu: 1,
           },
+          kichenSink: {
+            title: 'Kichen-sink',
+            scene: 'tools',
+            actionPath: 'kichen-sink/index',
+            sorting: 1,
+            menu: 1,
+          },
         },
       },
       validation: {

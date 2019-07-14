@@ -71,6 +71,23 @@ module.exports = app => {
           await this.ctx.model.partyType.insert({ name });
         }
       }
+
+      //
+      if (options.version === 2) {
+        // roleFunctions
+        const roleRoot = await this.ctx.meta.role.getSystemRole({ roleName: 'root' });
+        const functions = [ 'kichenSink' ];
+        for (const functionName of functions) {
+          const func = await this.ctx.meta.function.get({
+            name: functionName,
+          });
+          await this.ctx.meta.role.addRoleFunction({
+            roleId: roleRoot.id,
+            functionId: func.id,
+          });
+        }
+      }
+
     }
 
     async test() {
