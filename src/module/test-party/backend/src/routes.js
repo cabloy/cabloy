@@ -14,12 +14,13 @@ const testCtxTail = require('./controller/test/ctx/tail.js');
 const testCtxSession = require('./controller/test/ctx/session.js');
 const testCacheMem = require('./controller/test/cache/mem.js');
 const testCacheDb = require('./controller/test/cache/db.js');
-const testFeatHttpLog = require('./controller/test/feat/httpLog.js');
 const testRoleUserRole = require('./controller/test/role/userRole.js');
-const testFeatStartup = require('./controller/test/feat/startup.js');
-const testFeatSendMail = require('./controller/test/feat/sendMail.js');
 const testEventHello = require('./controller/test/event/hello.js');
 const testEventUserVerify = require('./controller/test/event/userVerify.js');
+const testFeatHttpLog = require('./controller/test/feat/httpLog.js');
+const testFeatStartup = require('./controller/test/feat/startup.js');
+const testFeatSendMail = require('./controller/test/feat/sendMail.js');
+const testFeatHook = require('./controller/test/feat/hook.js');
 
 module.exports = app => {
   let routes = [
@@ -94,7 +95,13 @@ module.exports = app => {
       { method: 'post', path: 'test/ctx/session/echo1', controller: testCtxSession, middlewares: 'test' },
       { method: 'post', path: 'test/ctx/session/echo2', controller: testCtxSession, middlewares: 'test' },
 
-      // test/feat/httpLog
+      // test/event/hello
+      { method: 'post', path: 'test/event/hello', controller: testEventHello, middlewares: 'test', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/event/helloEcho', controller: testEventHello, middlewares: 'test,inner', meta: { auth: { enable: false } } },
+      // test/event/userVerify
+      { method: 'post', path: 'test/event/userVerify', controller: testEventUserVerify, middlewares: 'test', meta: { auth: { enable: false } } },
+
+      // test/cache
       { method: 'post', path: 'test/cache/mem', controller: testCacheMem, middlewares: 'test', meta: { auth: { enable: false } } },
       { method: 'post', path: 'test/cache/db', controller: testCacheDb, middlewares: 'test', meta: { auth: { enable: false } } },
 
@@ -108,11 +115,11 @@ module.exports = app => {
       // test/feat/sendMail
       { method: 'post', path: 'test/feat/sendMail', controller: testFeatSendMail, middlewares: 'test,mail', meta: { auth: { enable: false } } },
 
-      // test/event/hello
-      { method: 'post', path: 'test/event/hello', controller: testEventHello, middlewares: 'test', meta: { auth: { enable: false } } },
-      { method: 'post', path: 'test/event/helloEcho', controller: testEventHello, middlewares: 'test,inner', meta: { auth: { enable: false } } },
-      // test/event/userVerify
-      { method: 'post', path: 'test/event/userVerify', controller: testEventUserVerify, middlewares: 'test', meta: { auth: { enable: false } } },
+      // test/feat/hook
+      { method: 'post', path: 'test/feat/hook/echo', controller: testFeatHook, middlewares: 'test', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/feat/hook/echoBefore', controller: testFeatHook, middlewares: 'test', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/feat/hook/echoAfter', controller: testFeatHook, middlewares: 'test', meta: { auth: { enable: false } } },
+
     ]);
   }
   return routes;

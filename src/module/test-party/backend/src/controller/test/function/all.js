@@ -1,6 +1,8 @@
 const require3 = require('require3');
 const assert = require3('assert');
 
+const functionCount = 3;
+
 module.exports = app => {
 
   class AllController extends app.Controller {
@@ -20,7 +22,7 @@ module.exports = app => {
         },
         user: userTom,
       });
-      assert.equal(list.length, 2);
+      assert.equal(list.length, functionCount);
       assert(!list[0].titleLocale);
 
       // Tom menu list zh-cn
@@ -33,8 +35,8 @@ module.exports = app => {
         },
         user: userTom,
       });
-      assert.equal(list.length, 2);
-      assert.notEqual(list[0].title, list[0].titleLocale);
+      assert.equal(list.length, functionCount);
+      assert.equal(!!list[0].titleLocale, true);
 
       // hold first
       const function1 = list[0];

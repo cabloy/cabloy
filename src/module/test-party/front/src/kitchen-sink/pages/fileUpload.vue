@@ -1,25 +1,79 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('test')" eb-back-link="Back"></eb-navbar>
-    <f7-button @click="onClick">test</f7-button>
+    <eb-navbar :title="$text('File Upload')" eb-back-link="Back"></eb-navbar>
+    <f7-card>
+      <f7-card-header>{{$text('Image')}}</f7-card-header>
+      <f7-card-content>
+        <img v-if="imageUrl" class="image" :src="imageUrl">
+        <f7-button @click="onClickImage">{{$text('Select And Upload')}}</f7-button>
+      </f7-card-content>
+    </f7-card>
+    <f7-card>
+      <f7-card-header>{{$text('Audio')}}</f7-card-header>
+      <f7-card-content>
+        <audio v-if="audioUrl" :src="audioUrl" controls autoplay></audio>
+        <f7-button @click="onClickAudio">{{$text('Select And Upload')}}</f7-button>
+      </f7-card-content>
+    </f7-card>
+    <f7-card>
+      <f7-card-header>{{$text('File')}}</f7-card-header>
+      <f7-card-content>
+        <pre v-if="file">{{JSON.stringify(this.file,null,2)}}</pre>
+        <f7-button @click="onClickFile">{{$text('Select And Upload')}}</f7-button>
+      </f7-card-content>
+    </f7-card>
   </eb-page>
 </template>
 <script>
 export default {
   data() {
-    return {};
+    return {
+      imageUrl: null,
+      audioUrl: null,
+      file: null,
+    };
   },
   methods: {
-    onClick() {
+    onClickImage() {
       this.$view.navigate('/a/file/file/upload', {
         context: {
           params: {
             mode: 1,
-            atomId: 1,
+            // atomId: 0,
           },
           callback: (code, data) => {
             if (code === 200) {
-              console.log(data);
+              this.imageUrl = data.downloadUrl;
+            }
+          },
+        },
+      });
+    },
+    onClickAudio() {
+      this.$view.navigate('/a/file/file/upload', {
+        context: {
+          params: {
+            mode: 3,
+            // atomId: 0,
+          },
+          callback: (code, data) => {
+            if (code === 200) {
+              this.audioUrl = data.downloadUrl;
+            }
+          },
+        },
+      });
+    },
+    onClickFile() {
+      this.$view.navigate('/a/file/file/upload', {
+        context: {
+          params: {
+            mode: 2,
+            // atomId: 0,
+          },
+          callback: (code, data) => {
+            if (code === 200) {
+              this.file = data;
             }
           },
         },
@@ -29,3 +83,10 @@ export default {
 };
 
 </script>
+<style lang="less" scoped="">
+.image {
+  width: 100%;
+  max-height: 300px;
+}
+
+</style>
