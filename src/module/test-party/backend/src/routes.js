@@ -12,6 +12,7 @@ const testCtxPerformAction = require('./controller/test/ctx/performAction.js');
 const testCtxTransaction = require('./controller/test/ctx/transaction.js');
 const testCtxTail = require('./controller/test/ctx/tail.js');
 const testCtxSession = require('./controller/test/ctx/session.js');
+const testCtxRequest = require('./controller/test/ctx/request.js');
 const testCacheMem = require('./controller/test/cache/mem.js');
 const testCacheDb = require('./controller/test/cache/db.js');
 const testRoleUserRole = require('./controller/test/role/userRole.js');
@@ -100,6 +101,8 @@ module.exports = app => {
       { method: 'post', path: 'test/ctx/session', controller: testCtxSession, middlewares: 'test' },
       { method: 'post', path: 'test/ctx/session/echo1', controller: testCtxSession, middlewares: 'test' },
       { method: 'post', path: 'test/ctx/session/echo2', controller: testCtxSession, middlewares: 'test' },
+      // test/ctx/request
+      { method: 'post', path: 'test/ctx/request/:id', controller: testCtxRequest, action: 'request', middlewares: 'test', meta: { auth: { enable: false } } },
 
       // test/event/hello
       { method: 'post', path: 'test/event/hello', controller: testEventHello, middlewares: 'test', meta: { auth: { enable: false } } },
