@@ -596,25 +596,11 @@ module.exports = app => {
 /***/ (function(module, exports, __webpack_require__) {
 
 const validation = __webpack_require__(21);
-const test = __webpack_require__(22);
 
 module.exports = app => {
-  let routes = [
+  const routes = [
     { method: 'post', path: 'validation/schema', controller: validation },
   ];
-  if (app.meta.isTest || app.meta.isLocal) {
-    routes = routes.concat([
-      { method: 'post', path: 'test/validate1', controller: test, middlewares: 'test,validate',
-        meta: { auth: { enable: false }, validate: { validator: 'test' } },
-      },
-      { method: 'post', path: 'test/validate2', controller: test, middlewares: 'test,validate',
-        meta: { auth: { enable: false }, validate: { validator: 'test' } },
-      },
-      { method: 'post', path: 'test/validate3', controller: test, middlewares: 'test,validate',
-        meta: { auth: { enable: false }, validate: { validator: 'test', schema: 'extra' } },
-      },
-    ]);
-  }
   return routes;
 };
 
@@ -634,31 +620,6 @@ module.exports = app => {
   }
   return ValidationController;
 };
-
-
-/***/ }),
-/* 22 */
-/***/ (function(module, exports) {
-
-module.exports = app => {
-  class TestController extends app.Controller {
-
-    async validate1() {
-      this.ctx.success();
-    }
-
-    async validate2() {
-      this.ctx.success();
-    }
-
-    async validate3() {
-      this.ctx.success();
-    }
-
-  }
-  return TestController;
-};
-
 
 
 /***/ })
