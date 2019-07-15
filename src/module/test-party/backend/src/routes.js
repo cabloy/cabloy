@@ -26,6 +26,7 @@ const testFeatProgress = require('./controller/test/feat/progress.js');
 const testFeatSequence = require('./controller/test/feat/sequence.js');
 const testFeatSettings = require('./controller/test/feat/settings.js');
 const testFeatStatus = require('./controller/test/feat/status.js');
+const testFeatValidation = require('./controller/test/feat/validation.js');
 
 module.exports = app => {
   let routes = [
@@ -140,6 +141,17 @@ module.exports = app => {
 
       // test/feat/status
       { method: 'post', path: 'test/feat/status', controller: testFeatStatus, middlewares: 'test', meta: { auth: { enable: false } } },
+
+      // test/feat/validation
+      { method: 'post', path: 'test/feat/validation/success', controller: testFeatValidation, middlewares: 'test,validate',
+        meta: { auth: { enable: false }, validate: { validator: 'userTest' } },
+      },
+      { method: 'post', path: 'test/feat/validation/fail', controller: testFeatValidation, middlewares: 'test,validate',
+        meta: { auth: { enable: false }, validate: { validator: 'userTest' } },
+      },
+      { method: 'post', path: 'test/feat/validation/schema', controller: testFeatValidation, middlewares: 'test,validate',
+        meta: { auth: { enable: false }, validate: { validator: 'userTest', schema: 'settingsUserExtra' } },
+      },
 
     ]);
   }

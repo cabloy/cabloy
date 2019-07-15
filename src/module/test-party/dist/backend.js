@@ -105,11 +105,11 @@ module.exports = app => {
   // routes
   const routes = __webpack_require__(7)(app);
   // services
-  const services = __webpack_require__(30)(app);
+  const services = __webpack_require__(37)(app);
   // models
-  const models = __webpack_require__(36)(app);
+  const models = __webpack_require__(43)(app);
   // meta
-  const meta = __webpack_require__(40)(app);
+  const meta = __webpack_require__(47)(app);
 
   return {
     routes,
@@ -148,6 +148,32 @@ module.exports = appInfo => {
     };
   }
 
+  if (appInfo.env === 'unittest' || appInfo.env === 'local') {
+    // settings
+    config.settings = {
+      instance: {
+        groupInfo: {
+          slogan: '',
+        },
+      },
+      user: {
+        groupInfo: {
+          username: 'zhennann',
+        },
+        groupExtra: {
+          panelExtra: {
+            groupInfo: {
+              mobile: '123',
+              sex: 1,
+              language: 'en-us',
+            },
+          },
+        },
+      },
+    };
+  }
+
+
   return config;
 };
 
@@ -166,8 +192,6 @@ module.exports = {
 /***/ (function(module, exports) {
 
 module.exports = {
-  'Create Party': '新建宴会',
-  'Party List': '宴会列表',
   Party: '宴会',
   Review: '评审',
   Reviewing: '评审中',
@@ -175,6 +199,12 @@ module.exports = {
   Birthday: '生日',
   Dance: '跳舞',
   Garden: '花园',
+  'Create Party': '新建宴会',
+  'Party List': '宴会列表',
+  'Level One': '层级1',
+  'Level Two': '层级2',
+  'Level Three': '层级3',
+  'Well Done': '干得好',
 };
 
 
@@ -215,12 +245,19 @@ const testCtxTail = __webpack_require__(20);
 const testCtxSession = __webpack_require__(21);
 const testCacheMem = __webpack_require__(22);
 const testCacheDb = __webpack_require__(23);
-const testFeatHttpLog = __webpack_require__(24);
-const testRoleUserRole = __webpack_require__(25);
-const testFeatStartup = __webpack_require__(26);
-const testFeatSendMail = __webpack_require__(27);
-const testEventHello = __webpack_require__(28);
-const testEventUserVerify = __webpack_require__(29);
+const testRoleUserRole = __webpack_require__(24);
+const testEventHello = __webpack_require__(25);
+const testEventUserVerify = __webpack_require__(26);
+const testFeatHttpLog = __webpack_require__(27);
+const testFeatStartup = __webpack_require__(28);
+const testFeatSendMail = __webpack_require__(29);
+const testFeatHook = __webpack_require__(30);
+const testFeatInstance = __webpack_require__(31);
+const testFeatProgress = __webpack_require__(32);
+const testFeatSequence = __webpack_require__(33);
+const testFeatSettings = __webpack_require__(34);
+const testFeatStatus = __webpack_require__(35);
+const testFeatValidation = __webpack_require__(36);
 
 module.exports = app => {
   let routes = [
@@ -295,7 +332,13 @@ module.exports = app => {
       { method: 'post', path: 'test/ctx/session/echo1', controller: testCtxSession, middlewares: 'test' },
       { method: 'post', path: 'test/ctx/session/echo2', controller: testCtxSession, middlewares: 'test' },
 
-      // test/feat/httpLog
+      // test/event/hello
+      { method: 'post', path: 'test/event/hello', controller: testEventHello, middlewares: 'test', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/event/helloEcho', controller: testEventHello, middlewares: 'test,inner', meta: { auth: { enable: false } } },
+      // test/event/userVerify
+      { method: 'post', path: 'test/event/userVerify', controller: testEventUserVerify, middlewares: 'test', meta: { auth: { enable: false } } },
+
+      // test/cache
       { method: 'post', path: 'test/cache/mem', controller: testCacheMem, middlewares: 'test', meta: { auth: { enable: false } } },
       { method: 'post', path: 'test/cache/db', controller: testCacheDb, middlewares: 'test', meta: { auth: { enable: false } } },
 
@@ -309,11 +352,38 @@ module.exports = app => {
       // test/feat/sendMail
       { method: 'post', path: 'test/feat/sendMail', controller: testFeatSendMail, middlewares: 'test,mail', meta: { auth: { enable: false } } },
 
-      // test/event/hello
-      { method: 'post', path: 'test/event/hello', controller: testEventHello, middlewares: 'test', meta: { auth: { enable: false } } },
-      { method: 'post', path: 'test/event/helloEcho', controller: testEventHello, middlewares: 'test,inner', meta: { auth: { enable: false } } },
-      // test/event/userVerify
-      { method: 'post', path: 'test/event/userVerify', controller: testEventUserVerify, middlewares: 'test', meta: { auth: { enable: false } } },
+      // test/feat/hook
+      { method: 'post', path: 'test/feat/hook/echo', controller: testFeatHook, middlewares: 'test', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/feat/hook/echoBefore', controller: testFeatHook, middlewares: 'test', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/feat/hook/echoAfter', controller: testFeatHook, middlewares: 'test', meta: { auth: { enable: false } } },
+
+      // test/feat/hook
+      { method: 'post', path: 'test/feat/instance', controller: testFeatInstance, middlewares: 'test', meta: { auth: { enable: false } } },
+
+      // test/feat/progress
+      { method: 'post', path: 'test/feat/progress', controller: testFeatProgress, middlewares: 'progress', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/feat/progressInBackground', controller: testFeatProgress, middlewares: 'inner,progress', meta: { auth: { enable: false } } },
+
+      // test/feat/sequence
+      { method: 'post', path: 'test/feat/sequence', controller: testFeatSequence, middlewares: 'test', meta: { auth: { enable: false } } },
+
+      // test/feat/settings
+      { method: 'post', path: 'test/feat/settings', controller: testFeatSettings, middlewares: 'test' },
+
+      // test/feat/status
+      { method: 'post', path: 'test/feat/status', controller: testFeatStatus, middlewares: 'test', meta: { auth: { enable: false } } },
+
+      // test/feat/validation
+      { method: 'post', path: 'test/feat/validation/success', controller: testFeatValidation, middlewares: 'test,validate',
+        meta: { auth: { enable: false }, validate: { validator: 'userTest' } },
+      },
+      { method: 'post', path: 'test/feat/validation/fail', controller: testFeatValidation, middlewares: 'test,validate',
+        meta: { auth: { enable: false }, validate: { validator: 'userTest' } },
+      },
+      { method: 'post', path: 'test/feat/validation/schema', controller: testFeatValidation, middlewares: 'test,validate',
+        meta: { auth: { enable: false }, validate: { validator: 'userTest', schema: 'settingsUserExtra' } },
+      },
+
     ]);
   }
   return routes;
@@ -952,6 +1022,8 @@ module.exports = app => {
 const require3 = __webpack_require__(0);
 const assert = require3('assert');
 
+const functionCount = 3;
+
 module.exports = app => {
 
   class AllController extends app.Controller {
@@ -971,7 +1043,7 @@ module.exports = app => {
         },
         user: userTom,
       });
-      assert.equal(list.length, 2);
+      assert.equal(list.length, functionCount);
       assert(!list[0].titleLocale);
 
       // Tom menu list zh-cn
@@ -984,8 +1056,8 @@ module.exports = app => {
         },
         user: userTom,
       });
-      assert.equal(list.length, 2);
-      assert.notEqual(list[0].title, list[0].titleLocale);
+      assert.equal(list.length, functionCount);
+      assert.equal(!!list[0].titleLocale, true);
 
       // hold first
       const function1 = list[0];
@@ -1286,43 +1358,47 @@ module.exports = app => {
 
     async mem() {
 
+      // name
+      const name = '__test:name';
+
       // set
-      this.ctx.cache.mem.set('name', 'zhennann');
+      this.ctx.cache.mem.set(name, 'zhennann');
 
       // has
-      let res = this.ctx.cache.mem.has('name');
-      assert(res);
+      let res = this.ctx.cache.mem.has(name);
+      assert.equal(!!res, true);
 
       // get
-      let value = this.ctx.cache.mem.get('name');
-      assert(value === 'zhennann');
+      let value = this.ctx.cache.mem.get(name);
+      assert.equal(value, 'zhennann');
 
       // remove
-      this.ctx.cache.mem.remove('name');
-      res = this.ctx.cache.mem.has('name');
-      assert(!res);
+      this.ctx.cache.mem.remove(name);
+      res = this.ctx.cache.mem.has(name);
+      assert.equal(res, null);
 
       // set with timeout
-      this.ctx.cache.mem.set('name', 'zhennann', 1000);
+      this.ctx.cache.mem.set(name, 'zhennann', 1000);
 
       // get
-      value = this.ctx.cache.mem.get('name');
-      assert(value === 'zhennann');
+      value = this.ctx.cache.mem.get(name);
+      assert.equal(value, 'zhennann');
 
       // other module's cache
       const moduleCache = this.ctx.cache.mem.module(this.ctx.module.info.relativeName);
-      value = moduleCache.get('name');
-      assert(value === 'zhennann');
+      value = moduleCache.get(name);
+      assert.equal(value, 'zhennann');
 
       // get after timeout
       await sleep(1000);
-      value = this.ctx.cache.mem.get('name');
-      assert(!value);
+      value = this.ctx.cache.mem.get(name);
+      assert.equal(value, null);
 
       // clear
       //   not clear, hold other caches
       // this.ctx.cache.mem.clear();
 
+      // done
       this.ctx.success();
     }
 
@@ -1348,43 +1424,47 @@ module.exports = app => {
 
     async db() {
 
+      // name
+      const name = '__test:name';
+
       // set
-      await this.ctx.cache.db.set('name', 'zhennann');
+      await this.ctx.cache.db.set(name, 'zhennann');
 
       // has
-      let res = await this.ctx.cache.db.has('name');
-      assert(res);
+      let res = await this.ctx.cache.db.has(name);
+      assert.equal(!!res, true);
 
       // get
-      let value = await this.ctx.cache.db.get('name');
-      assert(value === 'zhennann');
+      let value = await this.ctx.cache.db.get(name);
+      assert.equal(value, 'zhennann');
 
       // remove
-      await this.ctx.cache.db.remove('name');
-      res = await this.ctx.cache.db.has('name');
-      assert(!res);
+      await this.ctx.cache.db.remove(name);
+      res = await this.ctx.cache.db.has(name);
+      assert.equal(res, null);
 
       // set with timeout
-      await this.ctx.cache.db.set('name', 'zhennann', 1000);
+      await this.ctx.cache.db.set(name, 'zhennann', 1000);
 
       // get
-      value = await this.ctx.cache.db.get('name');
-      assert(value === 'zhennann');
+      value = await this.ctx.cache.db.get(name);
+      assert.equal(value, 'zhennann');
 
       // other module's cache
       const moduleCache = this.ctx.cache.db.module(this.ctx.module.info.relativeName);
-      value = await moduleCache.get('name');
-      assert(value === 'zhennann');
+      value = await moduleCache.get(name);
+      assert.equal(value, 'zhennann');
 
       // get after timeout
       await sleep(1000);
-      value = await this.ctx.cache.db.get('name');
-      assert(!value);
+      value = await this.ctx.cache.db.get(name);
+      assert.equal(value, undefined);
 
       // clear
       //   not clear, hold other caches
       // await this.ctx.cache.db.clear();
 
+      // done
       this.ctx.success();
     }
 
@@ -1399,26 +1479,6 @@ function sleep(ms) {
 
 /***/ }),
 /* 24 */
-/***/ (function(module, exports) {
-
-module.exports = app => {
-
-  class HttpLogController extends app.Controller {
-
-    async httpLog() {
-      // please see: {projectDir}/src/backend/logs/{projectName}/{projectName}-web.log
-      this.ctx.success('this is a test for httpLog');
-    }
-
-  }
-
-  return HttpLogController;
-};
-
-
-
-/***/ }),
-/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -1472,65 +1532,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 26 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const require3 = __webpack_require__(0);
-const assert = require3('assert');
-
-module.exports = app => {
-
-  class StartupController extends app.Controller {
-
-    async all() {
-      console.log('test/feat/startup: all');
-      assert.equal(this.ctx.instance, undefined);
-      this.ctx.success();
-    }
-
-    async instance() {
-      console.log(`test/feat/startup: instance:${this.ctx.instance.id}`);
-      assert(this.ctx.instance.id > 0);
-      this.ctx.success();
-    }
-
-  }
-
-  return StartupController;
-};
-
-
-/***/ }),
-/* 27 */
-/***/ (function(module, exports) {
-
-module.exports = app => {
-
-  class SendMailController extends app.Controller {
-
-    async sendMail() {
-      // send
-      await this.ctx.meta.mail.send({
-        scene: 'test',
-        message: {
-          to: 'test@cabloy.com',
-          subject: 'this is a test',
-          text: 'message body!',
-        },
-      });
-      // done
-      this.ctx.success();
-    }
-
-  }
-
-  return SendMailController;
-
-};
-
-
-/***/ }),
-/* 28 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -1569,7 +1571,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 29 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -1594,12 +1596,446 @@ module.exports = app => {
 
 
 /***/ }),
+/* 27 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+
+  class HttpLogController extends app.Controller {
+
+    async httpLog() {
+      // please see: {projectDir}/src/backend/logs/{projectName}/{projectName}-web.log
+      this.ctx.success('this is a test for httpLog');
+    }
+
+  }
+
+  return HttpLogController;
+};
+
+
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(0);
+const assert = require3('assert');
+
+module.exports = app => {
+
+  class StartupController extends app.Controller {
+
+    async all() {
+      console.log('test/feat/startup: all');
+      assert.equal(this.ctx.instance, undefined);
+      this.ctx.success();
+    }
+
+    async instance() {
+      console.log(`test/feat/startup: instance:${this.ctx.instance.id}`);
+      assert(this.ctx.instance.id > 0);
+      this.ctx.success();
+    }
+
+  }
+
+  return StartupController;
+};
+
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+
+  class SendMailController extends app.Controller {
+
+    async sendMail() {
+      // send
+      await this.ctx.meta.mail.send({
+        scene: 'test',
+        message: {
+          to: 'test@cabloy.com',
+          subject: 'this is a test',
+          text: 'message body!',
+        },
+      });
+      // done
+      this.ctx.success();
+    }
+
+  }
+
+  return SendMailController;
+
+};
+
+
+/***/ }),
 /* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(31);
-const party = __webpack_require__(34);
-const partyPublic = __webpack_require__(35);
+const require3 = __webpack_require__(0);
+const assert = require3('assert');
+
+module.exports = app => {
+
+  class HookController extends app.Controller {
+
+    async echo() {
+      const data = this.ctx.request.body.data;
+      assert.equal(data.text, 'before');
+      data.text = 'before:echo';
+      this.ctx.success();
+    }
+
+    async echoBefore() {
+      const ctxCaller = this.ctx.ctxCaller;
+      ctxCaller.request.body.data = { text: 'before' };
+      this.ctx.success();
+    }
+    async echoAfter() {
+      const ctxCaller = this.ctx.ctxCaller;
+      const data = ctxCaller.request.body.data;
+      assert.equal(data.text, 'before:echo');
+      this.ctx.success();
+    }
+
+  }
+
+  return HookController;
+};
+
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(0);
+const assert = require3('assert');
+
+module.exports = app => {
+
+  class InstanceController extends app.Controller {
+
+    async instance() {
+      assert.equal(!!this.ctx.instance.id, true);
+      assert.equal(!!this.ctx.instance.config, true);
+      this.ctx.success();
+    }
+
+  }
+  return InstanceController;
+};
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+
+  class ProgressController extends app.Controller {
+
+    async progress() {
+      // create progress
+      const progressId = await this.ctx.meta.progress.create();
+      // background
+      this.ctx.performActionInBackground({
+        method: 'post',
+        url: 'test/feat/progressInBackground',
+        body: {
+          progressId,
+        },
+      });
+      // return progressId
+      this.ctx.success({ progressId });
+    }
+
+    async progressInBackground() {
+      const progressId = this.ctx.request.body.progressId;
+      try {
+        // level one
+        await this._levelOne({ progressId, progressNo: 0 });
+        // progress done
+        await this.ctx.meta.progress.done({ progressId, message: this.ctx.text('Well Done') });
+        // ok
+        this.ctx.success(true);
+      } catch (err) {
+        // progress error
+        await this.ctx.meta.progress.error({ progressId, message: err.message });
+        // throw err
+        throw err;
+      }
+    }
+
+    async _levelOne({ progressId, progressNo }) {
+      const total = 2;
+      let current = 0;
+      for (let i = 0; i < total; i++) {
+        const text = `${this.ctx.text('Level One')}: ${i + 1}`;
+        await this.ctx.meta.progress.update({
+          progressId,
+          progressNo,
+          total,
+          progress: current++,
+          text,
+        });
+        // sleep
+        await this.ctx.meta.util.sleep(1500);
+        // level two
+        await this._levelTwo({ progressId, progressNo: progressNo + 1 });
+      }
+    }
+
+    async _levelTwo({ progressId, progressNo }) {
+      const total = 2;
+      let current = 0;
+      for (let i = 0; i < total; i++) {
+        const text = `${this.ctx.text('Level Two')}: ${i + 1}`;
+        await this.ctx.meta.progress.update({
+          progressId,
+          progressNo,
+          total,
+          progress: current++,
+          text,
+        });
+        // sleep
+        await this.ctx.meta.util.sleep(1500);
+        // level two
+        await this._levelThree({ progressId, progressNo: progressNo + 1 });
+      }
+    }
+
+    async _levelThree({ progressId, progressNo }) {
+      const total = 3;
+      let current = 0;
+      for (let i = 0; i < total; i++) {
+        const text = `${this.ctx.text('Level Three')}: ${i + 1}`;
+        await this.ctx.meta.progress.update({
+          progressId,
+          progressNo,
+          total,
+          progress: current++,
+          text,
+        });
+        // sleep
+        await this.ctx.meta.util.sleep(1500);
+      }
+    }
+
+  }
+  return ProgressController;
+};
+
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(0);
+const assert = require3('assert');
+const pMap = require3('p-map');
+
+module.exports = app => {
+
+  class SequenceController extends app.Controller {
+
+    async sequence() {
+
+      // current
+      let current = await this.ctx.meta.sequence.current('test');
+      assert.equal(current, 0);
+
+      // next
+      let next = await this.ctx.meta.sequence.next('test');
+      assert.equal(next, 1);
+
+      // current
+      current = await this.ctx.meta.sequence.current('test');
+      assert.equal(current, 1);
+
+      // reset
+      await this.ctx.meta.sequence.reset('test');
+
+      // other module's sequence
+      const moduleSequence = this.ctx.meta.sequence.module(this.ctx.module.info.relativeName);
+
+      // next
+      next = await moduleSequence.next('test');
+      assert.equal(next, 1);
+
+      // current
+      current = await moduleSequence.current('test');
+      assert.equal(current, 1);
+
+      // reset
+      await moduleSequence.reset('test');
+
+      // concurrency
+      const results = await pMap([ 1, 2, 3, 4, 5 ], async () => {
+        return await moduleSequence.next('test');
+      });
+      assert.equal(results.join(','), '1,2,3,4,5');
+
+      // reset
+      await moduleSequence.reset('test');
+
+      // done
+      this.ctx.success();
+    }
+
+  }
+  return SequenceController;
+};
+
+
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(0);
+const assert = require3('assert');
+
+module.exports = app => {
+
+  class SettingsController extends app.Controller {
+
+    async settings() {
+
+      // user
+
+      // get settings from config
+      let data = await this.ctx.meta.settings.getUser({ name: '/groupInfo/username' });
+      assert.equal(data, 'zhennann');
+      data = await this.ctx.meta.settings.getUser({ name: '/groupExtra/panelExtra/groupInfo/language' });
+      assert.equal(data, 'en-us');
+
+      // load settings
+      data = await this.ctx.meta.settings.loadSettingsUser();
+      assert.equal(data.groupInfo.username, 'zhennann');
+      // save settings
+      data.groupExtra.panelExtra.groupInfo.language = 'zh-cn';
+      await this.ctx.meta.settings.saveSettingsUser({ data });
+
+      // get settings from db
+      data = await this.ctx.meta.settings.getUser({ name: '/groupExtra/panelExtra/groupInfo/language' });
+      assert.equal(data, 'zh-cn');
+
+      // instance
+
+      // get settings from config
+      data = await this.ctx.meta.settings.getInstance({ name: '/groupInfo/slogan' });
+      assert.equal(data, '');
+
+      // load settings
+      data = await this.ctx.meta.settings.loadSettingsInstance();
+      assert.equal(data.groupInfo.slogan, '');
+      // save settings
+      data.groupInfo.slogan = 'Less is more, while more is less';
+      await this.ctx.meta.settings.saveSettingsInstance({ data });
+
+      // get settings from db
+      data = await this.ctx.meta.settings.getInstance({ name: '/groupInfo/slogan' });
+      assert.equal(data, 'Less is more, while more is less');
+
+      // ok
+      this.ctx.success();
+    }
+
+  }
+  return SettingsController;
+};
+
+
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(0);
+const assert = require3('assert');
+
+module.exports = app => {
+
+  class StatusController extends app.Controller {
+
+    async status() {
+
+      // name
+      const name = '__test_enable';
+
+      // get
+      let value = await this.ctx.meta.status.get(name);
+      assert.equal(value, undefined);
+
+      // set
+      await this.ctx.meta.status.set(name, true);
+
+      // get
+      value = await this.ctx.meta.status.get(name);
+      assert.equal(value, true);
+
+      // other module's status
+      const moduleStatus = this.ctx.meta.status.module(this.ctx.module.info.relativeName);
+      value = await moduleStatus.get(name);
+      assert.equal(value, true);
+
+      // set
+      await this.ctx.meta.status.set(name, false);
+
+      // get
+      value = await this.ctx.meta.status.get(name);
+      assert.equal(value, false);
+
+      // done
+      this.ctx.success();
+    }
+
+  }
+  return StatusController;
+};
+
+
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+
+  class ValidationController extends app.Controller {
+
+    async success() {
+      this.ctx.success();
+    }
+
+    async fail() {
+      this.ctx.success();
+    }
+
+    async schema() {
+      this.ctx.success();
+    }
+
+  }
+
+  return ValidationController;
+};
+
+
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const version = __webpack_require__(38);
+const party = __webpack_require__(41);
+const partyPublic = __webpack_require__(42);
 
 module.exports = app => {
   const services = {
@@ -1616,10 +2052,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 31 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const VersionTestFn = __webpack_require__(32);
+const VersionTestFn = __webpack_require__(39);
 
 module.exports = app => {
 
@@ -1692,6 +2128,23 @@ module.exports = app => {
           await this.ctx.model.partyType.insert({ name });
         }
       }
+
+      //
+      if (options.version === 2) {
+        // roleFunctions
+        const roleRoot = await this.ctx.meta.role.getSystemRole({ roleName: 'root' });
+        const functions = [ 'kichenSink' ];
+        for (const functionName of functions) {
+          const func = await this.ctx.meta.function.get({
+            name: functionName,
+          });
+          await this.ctx.meta.role.addRoleFunction({
+            roleId: roleRoot.id,
+            functionId: func.id,
+          });
+        }
+      }
+
     }
 
     async test() {
@@ -1706,10 +2159,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 32 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const testData = __webpack_require__(33);
+const testData = __webpack_require__(40);
 
 module.exports = function(ctx) {
 
@@ -1840,7 +2293,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 33 */
+/* 40 */
 /***/ (function(module, exports) {
 
 // roleName, leader, catalog, roleNameParent
@@ -1893,7 +2346,7 @@ module.exports = {
 
 
 /***/ }),
-/* 34 */
+/* 41 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2001,7 +2454,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 35 */
+/* 42 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2031,12 +2484,12 @@ module.exports = app => {
 
 
 /***/ }),
-/* 36 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const party = __webpack_require__(37);
-const partyType = __webpack_require__(38);
-const partyPublic = __webpack_require__(39);
+const party = __webpack_require__(44);
+const partyType = __webpack_require__(45);
+const partyPublic = __webpack_require__(46);
 
 module.exports = app => {
   const models = {
@@ -2053,7 +2506,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 37 */
+/* 44 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2071,7 +2524,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 38 */
+/* 45 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2089,7 +2542,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 39 */
+/* 46 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2107,7 +2560,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 40 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -2118,7 +2571,9 @@ module.exports = app => {
   };
   if (app.meta.isTest || app.meta.isLocal) {
     // schemas
-    const schemas = __webpack_require__(41)(app);
+    const schemas = __webpack_require__(48)(app);
+    // keywords
+    const keywords = __webpack_require__(49)(app);
     // meta
     extend(true, meta, {
       base: {
@@ -2169,6 +2624,13 @@ module.exports = app => {
             sorting: 1,
             menu: 1,
           },
+          kichenSink: {
+            title: 'Kichen-sink',
+            scene: 'tools',
+            actionPath: 'kichen-sink/index',
+            sorting: 1,
+            menu: 1,
+          },
         },
       },
       validation: {
@@ -2179,11 +2641,30 @@ module.exports = app => {
           partySearch: {
             schemas: 'partySearch',
           },
+          userTest: {
+            schemas: 'settingsUser,settingsUserExtra',
+          },
+          instanceTest: {
+            schemas: 'settingsInstance',
+          },
         },
-        keywords: {},
+        keywords: {
+          'x-languages': keywords.languages,
+        },
         schemas: {
           party: schemas.party,
           partySearch: schemas.partySearch,
+          settingsUser: schemas.settingsUser,
+          settingsUserExtra: schemas.settingsUserExtra,
+          settingsInstance: schemas.settingsInstance,
+        },
+      },
+      settings: {
+        user: {
+          validator: 'userTest',
+        },
+        instance: {
+          validator: 'instanceTest',
         },
       },
     });
@@ -2218,6 +2699,24 @@ module.exports = app => {
           'a-base:userVerify': 'test/event/userVerify',
         },
       },
+      hook: {
+        before: [
+          { path: '/test/party/test/feat/hook/echo', route: 'test/feat/hook/echoBefore' },
+        ],
+        after: [
+          { path: '/test/party/test/feat/hook/echo', route: 'test/feat/hook/echoAfter' },
+        ],
+      },
+      sequence: {
+        providers: {
+          test: {
+            start: 0,
+            expression({ ctx, value }) {
+              return ++value;
+            },
+          },
+        },
+      },
     });
   }
   return meta;
@@ -2225,7 +2724,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 41 */
+/* 48 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2274,7 +2773,137 @@ module.exports = app => {
     },
   };
 
+  // settings
+  schemas.settingsUser = {
+    type: 'object',
+    properties: {
+      groupInfo: {
+        type: 'object',
+        ebType: 'group',
+        ebTitle: 'Info Group',
+        properties: {
+          username: {
+            type: 'string',
+            ebType: 'text',
+            ebTitle: 'My Name',
+            notEmpty: true,
+          },
+        },
+      },
+      groupExtra: {
+        type: 'object',
+        ebType: 'group',
+        ebTitle: 'Extra Group',
+        properties: {
+          panelExtra: {
+            ebType: 'panel',
+            ebTitle: 'Extra',
+            $ref: 'settingsUserExtra',
+          },
+        },
+      },
+    },
+  };
+  schemas.settingsUserExtra = {
+    type: 'object',
+    ebTitle: 'Extra',
+    properties: {
+      groupInfo: {
+        type: 'object',
+        ebType: 'group',
+        ebTitle: 'Info Group',
+        properties: {
+          mobile: {
+            type: 'string',
+            ebType: 'text',
+            ebTitle: 'Mobile',
+            notEmpty: true,
+          },
+          sex: {
+            type: 'number',
+            ebType: 'select',
+            ebTitle: 'Sex',
+            ebMultiple: false,
+            ebOptions: [
+              { title: 'Male', value: 1 },
+              { title: 'Female', value: 2 },
+            ],
+            ebParams: {
+              openIn: 'page',
+              closeOnSelect: true,
+            },
+            notEmpty: true,
+          },
+          language: {
+            type: 'string',
+            ebType: 'select',
+            ebTitle: 'Language',
+            ebOptionsUrl: '/a/base/base/locales',
+            ebOptionsUrlParams: null,
+            'x-languages': true,
+            notEmpty: true,
+          },
+        },
+      },
+    },
+  };
+  schemas.settingsInstance = {
+    type: 'object',
+    properties: {
+      groupInfo: {
+        type: 'object',
+        ebType: 'group',
+        ebTitle: 'Info Group',
+        properties: {
+          slogan: {
+            type: 'string',
+            ebType: 'text',
+            ebTitle: 'Slogan',
+            notEmpty: true,
+          },
+        },
+      },
+    },
+  };
+
   return schemas;
+};
+
+
+/***/ }),
+/* 49 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(0);
+const Ajv = require3('ajv');
+
+module.exports = app => {
+  const keywords = {};
+  keywords.languages = {
+    async: true,
+    type: 'string',
+    errors: true,
+    compile(sch, parentSchema) {
+      const func = async function(data) {
+        const ctx = this;
+        const context = arguments.callee.context;
+        const locales = await ctx.performAction({
+          method: 'post',
+          url: context.parentSchema.ebOptionsUrl,
+          body: context.parentSchema.ebOptionsUrlParams,
+        });
+        const index = locales.findIndex(item => item.value === data);
+        if (index > -1) return true;
+        const errors = [{ keyword: 'x-languages', params: [], message: ctx.text('Not expected value') }];
+        throw new Ajv.ValidationError(errors);
+      };
+      func.context = {
+        sch, parentSchema,
+      };
+      return func;
+    },
+  };
+  return keywords;
 };
 
 
