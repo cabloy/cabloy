@@ -343,20 +343,14 @@ const Fn = module.exports = ctx => {
 
 const version = __webpack_require__(12);
 const status = __webpack_require__(13);
-const test = __webpack_require__(14);
 
 module.exports = app => {
-  let routes = [
+  const routes = [
     { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'status/set', controller: status, middlewares: 'inner',
       meta: { auth: { enable: false } },
     },
   ];
-  if (app.meta.isTest || app.meta.isLocal) {
-    routes = routes.concat([
-      { method: 'get', path: 'test/status', controller: test, middlewares: 'test', meta: { auth: { enable: false } } },
-    ]);
-  }
   return routes;
 };
 
@@ -396,56 +390,6 @@ module.exports = app => {
   return StatusController;
 };
 
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const require3 = __webpack_require__(15);
-const assert = require3('assert');
-
-module.exports = app => {
-  class TestController extends app.Controller {
-
-    async status() {
-
-      // get
-      let value = await this.ctx.meta.status.get('__enable');
-      assert(value === undefined);
-
-      // set
-      await this.ctx.meta.status.set('__enable', true);
-
-      // get
-      value = await this.ctx.meta.status.get('__enable');
-      assert(value === true);
-
-      // other module's status
-      const moduleStatus = this.ctx.meta.status.module(this.ctx.module.info.relativeName);
-      value = await moduleStatus.get('__enable');
-      assert(value === true);
-
-      // set
-      await this.ctx.meta.status.set('__enable', false);
-
-      // get
-      value = await this.ctx.meta.status.get('__enable');
-      assert(value === false);
-
-      this.ctx.success();
-    }
-
-  }
-  return TestController;
-};
-
-
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports) {
-
-module.exports = require("require3");
 
 /***/ })
 /******/ ]);
