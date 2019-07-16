@@ -13,6 +13,9 @@ const testCtxTransaction = require('./controller/test/ctx/transaction.js');
 const testCtxTail = require('./controller/test/ctx/tail.js');
 const testCtxSession = require('./controller/test/ctx/session.js');
 const testCtxRequest = require('./controller/test/ctx/request.js');
+const testCtxResponse = require('./controller/test/ctx/response.js');
+const testCtxConfig = require('./controller/test/ctx/config.js');
+const testCtxLocale = require('./controller/test/ctx/locale.js');
 const testCacheMem = require('./controller/test/cache/mem.js');
 const testCacheDb = require('./controller/test/cache/db.js');
 const testRoleUserRole = require('./controller/test/role/userRole.js');
@@ -103,6 +106,16 @@ module.exports = app => {
       { method: 'post', path: 'test/ctx/session/echo2', controller: testCtxSession, middlewares: 'test' },
       // test/ctx/request
       { method: 'post', path: 'test/ctx/request/:id', controller: testCtxRequest, action: 'request', middlewares: 'test', meta: { auth: { enable: false } } },
+      // test/ctx/response
+      { method: 'post', path: 'test/ctx/response/success', controller: testCtxResponse, middlewares: 'test', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/ctx/response/successMore', controller: testCtxResponse, middlewares: 'test', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/ctx/response/fail', controller: testCtxResponse, middlewares: 'test', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/ctx/response/throwError', controller: testCtxResponse, middlewares: 'test', meta: { auth: { enable: false } } },
+      // test/ctx/config
+      { method: 'post', path: 'test/ctx/config/test', controller: testCtxConfig, middlewares: 'test', meta: { auth: { enable: false } } },
+      // test/ctx/locale
+      { method: 'post', path: 'test/ctx/locale/enus', controller: testCtxLocale, middlewares: 'test', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/ctx/locale/zhcn', controller: testCtxLocale, middlewares: 'test', meta: { auth: { enable: false } } },
 
       // test/event/hello
       { method: 'post', path: 'test/event/hello', controller: testEventHello, middlewares: 'test', meta: { auth: { enable: false } } },

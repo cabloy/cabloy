@@ -105,11 +105,11 @@ module.exports = app => {
   // routes
   const routes = __webpack_require__(7)(app);
   // services
-  const services = __webpack_require__(38)(app);
+  const services = __webpack_require__(41)(app);
   // models
-  const models = __webpack_require__(44)(app);
+  const models = __webpack_require__(47)(app);
   // meta
-  const meta = __webpack_require__(48)(app);
+  const meta = __webpack_require__(51)(app);
 
   return {
     routes,
@@ -149,6 +149,10 @@ module.exports = appInfo => {
   }
 
   if (appInfo.env === 'unittest' || appInfo.env === 'local') {
+
+    // config
+    config.message = 'Hello World';
+
     // settings
     config.settings = {
       instance: {
@@ -205,6 +209,8 @@ module.exports = {
   'Level Two': '层级2',
   'Level Three': '层级3',
   'Well Done': '干得好',
+  'Error Test': '错误测试',
+  'Hello World': '世界您好',
 };
 
 
@@ -214,6 +220,7 @@ module.exports = {
 
 // error code should start from 1001
 module.exports = {
+  1001: 'Error Test',
 };
 
 
@@ -244,21 +251,24 @@ const testCtxTransaction = __webpack_require__(19);
 const testCtxTail = __webpack_require__(20);
 const testCtxSession = __webpack_require__(21);
 const testCtxRequest = __webpack_require__(22);
-const testCacheMem = __webpack_require__(23);
-const testCacheDb = __webpack_require__(24);
-const testRoleUserRole = __webpack_require__(25);
-const testEventHello = __webpack_require__(26);
-const testEventUserVerify = __webpack_require__(27);
-const testFeatHttpLog = __webpack_require__(28);
-const testFeatStartup = __webpack_require__(29);
-const testFeatSendMail = __webpack_require__(30);
-const testFeatHook = __webpack_require__(31);
-const testFeatInstance = __webpack_require__(32);
-const testFeatProgress = __webpack_require__(33);
-const testFeatSequence = __webpack_require__(34);
-const testFeatSettings = __webpack_require__(35);
-const testFeatStatus = __webpack_require__(36);
-const testFeatValidation = __webpack_require__(37);
+const testCtxResponse = __webpack_require__(23);
+const testCtxConfig = __webpack_require__(24);
+const testCtxLocale = __webpack_require__(25);
+const testCacheMem = __webpack_require__(26);
+const testCacheDb = __webpack_require__(27);
+const testRoleUserRole = __webpack_require__(28);
+const testEventHello = __webpack_require__(29);
+const testEventUserVerify = __webpack_require__(30);
+const testFeatHttpLog = __webpack_require__(31);
+const testFeatStartup = __webpack_require__(32);
+const testFeatSendMail = __webpack_require__(33);
+const testFeatHook = __webpack_require__(34);
+const testFeatInstance = __webpack_require__(35);
+const testFeatProgress = __webpack_require__(36);
+const testFeatSequence = __webpack_require__(37);
+const testFeatSettings = __webpack_require__(38);
+const testFeatStatus = __webpack_require__(39);
+const testFeatValidation = __webpack_require__(40);
 
 module.exports = app => {
   let routes = [
@@ -334,6 +344,16 @@ module.exports = app => {
       { method: 'post', path: 'test/ctx/session/echo2', controller: testCtxSession, middlewares: 'test' },
       // test/ctx/request
       { method: 'post', path: 'test/ctx/request/:id', controller: testCtxRequest, action: 'request', middlewares: 'test', meta: { auth: { enable: false } } },
+      // test/ctx/response
+      { method: 'post', path: 'test/ctx/response/success', controller: testCtxResponse, middlewares: 'test', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/ctx/response/successMore', controller: testCtxResponse, middlewares: 'test', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/ctx/response/fail', controller: testCtxResponse, middlewares: 'test', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/ctx/response/throwError', controller: testCtxResponse, middlewares: 'test', meta: { auth: { enable: false } } },
+      // test/ctx/config
+      { method: 'post', path: 'test/ctx/config/test', controller: testCtxConfig, middlewares: 'test', meta: { auth: { enable: false } } },
+      // test/ctx/locale
+      { method: 'post', path: 'test/ctx/locale/enus', controller: testCtxLocale, middlewares: 'test', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/ctx/locale/zhcn', controller: testCtxLocale, middlewares: 'test', meta: { auth: { enable: false } } },
 
       // test/event/hello
       { method: 'post', path: 'test/event/hello', controller: testEventHello, middlewares: 'test', meta: { auth: { enable: false } } },
@@ -1384,6 +1404,114 @@ module.exports = app => {
 
 /***/ }),
 /* 23 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+
+  class ResponseController extends app.Controller {
+
+    async success() {
+      const res = {
+        userName: 'zhennann',
+      };
+      this.ctx.success(res);
+    }
+
+    async successMore() {
+      const page = this.ctx.request.body.page;
+      const items = [
+        { userName: 'zhennann' },
+        { userName: 'root' },
+      ];
+      this.ctx.successMore(items, page.index, page.size);
+    }
+
+    async fail() {
+      // Error Test
+      this.ctx.fail(1001);
+    }
+
+    async throwError() {
+      this.ctx.throw(1001);
+    }
+
+  }
+
+  return ResponseController;
+};
+
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(0);
+const assert = require3('assert');
+
+module.exports = app => {
+
+  class ConfigController extends app.Controller {
+
+    async test() {
+      // current module
+      let message = this.ctx.config.message;
+      assert.equal(message, 'Hello World');
+
+      // other module
+      message = this.ctx.config.module('test-party').message;
+      assert.equal(message, 'Hello World');
+
+      // done
+      this.ctx.success();
+    }
+
+  }
+
+  return ConfigController;
+};
+
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(0);
+const assert = require3('assert');
+
+module.exports = app => {
+
+  class LocaleController extends app.Controller {
+
+    async enus() {
+      const message = this.ctx.config.message;
+      const data = {
+        enus: this.ctx.text(message),
+        zhcn: this.ctx.text.locale('zh-cn', message),
+      };
+
+      // done
+      this.ctx.success(data);
+    }
+
+    async zhcn() {
+      const message = this.ctx.config.message;
+      const data = {
+        zhcn: this.ctx.text(message),
+        enus: this.ctx.text.locale('en-us', message),
+      };
+
+      // done
+      this.ctx.success(data);
+    }
+
+  }
+
+  return LocaleController;
+};
+
+
+/***/ }),
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -1449,7 +1577,7 @@ function sleep(ms) {
 
 
 /***/ }),
-/* 24 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -1515,7 +1643,7 @@ function sleep(ms) {
 
 
 /***/ }),
-/* 25 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -1569,7 +1697,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 26 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -1608,7 +1736,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 27 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -1633,7 +1761,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 28 */
+/* 31 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1653,7 +1781,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 29 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -1682,7 +1810,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 30 */
+/* 33 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1711,7 +1839,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 31 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -1748,7 +1876,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 32 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -1770,7 +1898,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 33 */
+/* 36 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1870,7 +1998,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 34 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -1932,7 +2060,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 35 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -1991,7 +2119,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 36 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -2040,7 +2168,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 37 */
+/* 40 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2067,12 +2195,12 @@ module.exports = app => {
 
 
 /***/ }),
-/* 38 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(39);
-const party = __webpack_require__(42);
-const partyPublic = __webpack_require__(43);
+const version = __webpack_require__(42);
+const party = __webpack_require__(45);
+const partyPublic = __webpack_require__(46);
 
 module.exports = app => {
   const services = {
@@ -2089,10 +2217,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 39 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const VersionTestFn = __webpack_require__(40);
+const VersionTestFn = __webpack_require__(43);
 
 module.exports = app => {
 
@@ -2196,10 +2324,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 40 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const testData = __webpack_require__(41);
+const testData = __webpack_require__(44);
 
 module.exports = function(ctx) {
 
@@ -2330,7 +2458,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 41 */
+/* 44 */
 /***/ (function(module, exports) {
 
 // roleName, leader, catalog, roleNameParent
@@ -2383,7 +2511,7 @@ module.exports = {
 
 
 /***/ }),
-/* 42 */
+/* 45 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2491,7 +2619,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 43 */
+/* 46 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2521,12 +2649,12 @@ module.exports = app => {
 
 
 /***/ }),
-/* 44 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const party = __webpack_require__(45);
-const partyType = __webpack_require__(46);
-const partyPublic = __webpack_require__(47);
+const party = __webpack_require__(48);
+const partyType = __webpack_require__(49);
+const partyPublic = __webpack_require__(50);
 
 module.exports = app => {
   const models = {
@@ -2543,7 +2671,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 45 */
+/* 48 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2561,7 +2689,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 46 */
+/* 49 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2579,7 +2707,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 47 */
+/* 50 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2597,7 +2725,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 48 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -2608,9 +2736,9 @@ module.exports = app => {
   };
   if (app.meta.isTest || app.meta.isLocal) {
     // schemas
-    const schemas = __webpack_require__(49)(app);
+    const schemas = __webpack_require__(52)(app);
     // keywords
-    const keywords = __webpack_require__(50)(app);
+    const keywords = __webpack_require__(53)(app);
     // meta
     extend(true, meta, {
       base: {
@@ -2761,7 +2889,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 49 */
+/* 52 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2908,7 +3036,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 50 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);

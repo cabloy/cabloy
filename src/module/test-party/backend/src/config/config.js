@@ -18,6 +18,10 @@ module.exports = appInfo => {
   }
 
   if (appInfo.env === 'unittest' || appInfo.env === 'local') {
+
+    // config
+    config.message = 'Hello World';
+
     // settings
     config.settings = {
       instance: {
