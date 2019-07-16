@@ -59,10 +59,10 @@ module.exports = app => {
             sorting: 1,
             menu: 1,
           },
-          kichenSink: {
-            title: 'Kichen-sink',
+          kitchenSink: {
+            title: 'Kitchen-sink',
             scene: 'tools',
-            actionPath: 'kichen-sink/index',
+            actionPath: 'kitchen-sink/index',
             sorting: 1,
             menu: 1,
           },

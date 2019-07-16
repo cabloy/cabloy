@@ -2296,9 +2296,28 @@ module.exports = app => {
 
       //
       if (options.version === 2) {
+        // // roleFunctions
+        // const roleRoot = await this.ctx.meta.role.getSystemRole({ roleName: 'root' });
+        // const functions = [ 'kichenSink' ];
+        // for (const functionName of functions) {
+        //   const func = await this.ctx.meta.function.get({
+        //     name: functionName,
+        //   });
+        //   await this.ctx.meta.role.addRoleFunction({
+        //     roleId: roleRoot.id,
+        //     functionId: func.id,
+        //   });
+        // }
+      }
+
+      //
+      if (options.version === 3) {
+        // delete old function
+        await this.ctx.meta.function.delete({ name: 'kichenSink' });
+
         // roleFunctions
         const roleRoot = await this.ctx.meta.role.getSystemRole({ roleName: 'root' });
-        const functions = [ 'kichenSink' ];
+        const functions = [ 'kitchenSink' ];
         for (const functionName of functions) {
           const func = await this.ctx.meta.function.get({
             name: functionName,
@@ -2789,10 +2808,10 @@ module.exports = app => {
             sorting: 1,
             menu: 1,
           },
-          kichenSink: {
-            title: 'Kichen-sink',
+          kitchenSink: {
+            title: 'Kitchen-sink',
             scene: 'tools',
-            actionPath: 'kichen-sink/index',
+            actionPath: 'kitchen-sink/index',
             sorting: 1,
             menu: 1,
           },

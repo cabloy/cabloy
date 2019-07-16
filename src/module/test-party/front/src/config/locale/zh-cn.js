@@ -8,6 +8,7 @@ export default {
   Sex: '性别',
   Language: '语言',
   Settings: '设置',
+  Plus: '加',
   'Instance Settings': '实例设置',
   'User Settings': '用户设置',
   'My Name': '我的姓名',
@@ -18,4 +19,10 @@ export default {
   'Select And Upload': '选择并上传',
   'Progress Bar': '进度条',
   'Start Working': '开始工作',
+  'View Size & Open Target': '视图尺寸&打开目标',
+  'View Size': '视图尺寸',
+  'Open Target': '打开目标',
+  'Please preview this page in PC mode': '请在PC模式下预览此页面',
+  'Page Open & Return Value': '页面打开&返回值',
+  'Open Page': '打开页面',
 };

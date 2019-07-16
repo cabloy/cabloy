@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Kichen-sink')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar :title="$text('Kitchen-sink')" eb-back-link="Back"></eb-navbar>
     <eb-list no-hairlines-md>
       <eb-list-item v-for="item of items" :key="item.title" :title="item.titleLocale" link="#" :eb-href="item.path"></eb-list-item>
     </eb-list>
@@ -8,9 +8,11 @@
 </template>
 <script>
 const items = [
-  { title: 'File Upload', path: 'kichen-sink/fileUpload' },
-  { title: 'Progress Bar', path: 'kichen-sink/progress' },
-  { title: 'Settings', path: 'kichen-sink/settings' },
+  { title: 'File Upload', path: 'kitchen-sink/fileUpload' },
+  { title: 'Progress Bar', path: 'kitchen-sink/progress' },
+  { title: 'Settings', path: 'kitchen-sink/settings' },
+  { title: 'View Size & Open Target', path: 'kitchen-sink/view/sizeTarget' },
+  { title: 'Page Open & Return Value', path: 'kitchen-sink/page/openReturn' },
 ];
 export default {
   data() {
