@@ -44,7 +44,7 @@ function _onParseCommentAll(item) {
   <div class="header panel-heading">
     <h5 class="article-title"><a target="_blank" href="${util.url(item.url, item.language)}#comments">Re: ${util.escapeHtml(item.atomName)}</a></h5>
     <div class="user">
-      <img class="avatar avatar32" src="${util.combineImageUrl(item.avatar, 32, 32)}" />
+      <img class="avatar avatar32" src="${util.combineImageUrl(item.h_avatar, 32, 32)}" />
       <h3 class="name panel-title">${util.escapeHtml(item.h_userName)}</h3>
       <div class="date">#${item.h_sorting} · ${util.time.formatDateTime(item.h_createdAt)}</div>
     </div>
