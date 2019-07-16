@@ -188,7 +188,11 @@ export default {
       return `${content}
 
 > \`${replyUserName}\`:
-> ${replyContent}
+
+::: comment-quot
+${replyContent}
+:::
+
 `;
     },
   },

@@ -6477,7 +6477,11 @@ module.exports = app => {
       return `${content}
 
 > \`${replyUserName}\`:
-> ${replyContent}
+
+::: comment-quot
+${replyContent}
+:::
+
 `;
     }
 
