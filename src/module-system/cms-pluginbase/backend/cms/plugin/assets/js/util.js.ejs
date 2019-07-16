@@ -283,10 +283,15 @@ const util = {
       }
       return false;
     };
+    // getInitIndex
+    const _getInitIndex = function() {
+      if (!env.index || !env.site.path) return 0;
+      return env.index[env.site.path];
+    };
 
     // fetchOrScroll
     const _fetchOrScroll = function() {
-      if (index === 0) {
+      if (index === _getInitIndex()) {
         _onFetch();
       } else {
         if (!_onScroll()) {
@@ -396,7 +401,7 @@ const util = {
   escapeHtml(str) {
     return _escapeHtml(str);
   },
-  escapeURL(str){
+  escapeURL(str) {
     return _escapeURL(str);
   },
 };
