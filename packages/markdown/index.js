@@ -27,6 +27,7 @@ module.exports = {
     return markdown_it((ops && ops.defaults) || defaults)
       .use(markdown_it_abbr)
       .use(markdown_it_container)
+      .use(markdown_it_container, 'comment-quot')
       .use(markdown_it_container, 'alert-success')
       .use(markdown_it_container, 'alert-info')
       .use(markdown_it_container, 'alert-warning')
