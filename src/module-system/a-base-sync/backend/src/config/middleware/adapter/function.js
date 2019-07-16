@@ -85,6 +85,15 @@ const Fn = module.exports = ctx => {
 
     //
 
+    async delete({ id, module, name }) {
+      if (id) {
+        await this.model.delete({ id });
+      } else {
+        module = module || this.moduleName;
+        await this.model.delete({ module, name });
+      }
+    }
+
     async get({ id, module, name }) {
       if (id) return await this.model.get({ id });
       module = module || this.moduleName;
