@@ -24,6 +24,16 @@ export default function(ctx) {
   };
   // dialog
   const dialog = {};
+  // create
+  dialog.create = function(params) {
+    ctx.$utils.extend(params, {
+      hostEl: ctx.getHostEl(),
+    });
+    return ctx.$f7.dialog.create(params);
+  };
+  dialog.close = function() {
+    ctx.$f7.dialog.close();
+  };
   // preloader / progress
   for (const method of [ 'preloader', 'progress' ]) {
     dialog[method] = function(...args) {
