@@ -38,6 +38,12 @@ CabloyJS: The Ultimate NodeJS Full Stack Business Development Platform, based on
 
 ## Core Modules
 
+### Test Module
+
+[egg-born-module-test-party](https://github.com/zhennann/egg-born-module-test-party)
+
+> The new project automatically includes a demonstration module `test-party`, which contains a large number of `test cases` and `Kitchen-sink`, and continues to add new content. It is not only convenient to learn all aspects of CabloyJS knowledge quickly, but also convenient to start the actual business development quickly
+ 
 ### Build-in Modules
 
 |Name|Description|
@@ -72,7 +78,6 @@ CabloyJS: The Ultimate NodeJS Full Stack Business Development Platform, based on
 |[egg-born-module-a-status](https://github.com/zhennann/egg-born-module-a-status)|Status Management|
 |[egg-born-module-a-user](https://github.com/zhennann/egg-born-module-a-user)|User-related Functions|
 |[egg-born-module-a-validation](https://github.com/zhennann/egg-born-module-a-validation)|Data Validation|
-|[egg-born-module-test-cook](https://github.com/zhennann/egg-born-module-test-cook)|Test module, effective only in development and test environments|
 
 ### Optional Modules
 
