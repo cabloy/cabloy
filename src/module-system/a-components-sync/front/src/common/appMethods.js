@@ -31,6 +31,7 @@ export default function(ctx) {
     });
     return ctx.$f7.dialog.create(params);
   };
+  // close
   dialog.close = function() {
     ctx.$f7.dialog.close();
   };
