@@ -8,6 +8,7 @@
 </template>
 <script>
 const items = [
+  { title: 'About', path: 'kitchen-sink/about' },
   { title: 'File Upload', path: 'kitchen-sink/fileUpload' },
   { title: 'Progress Bar', path: 'kitchen-sink/progress' },
   { title: 'Settings', path: 'kitchen-sink/settings' },
@@ -16,6 +17,7 @@ const items = [
   { title: 'Box Container', path: 'kitchen-sink/box' },
   { title: 'Markdown Editor(mavon-editor)', path: 'kitchen-sink/markdownEditor' },
   { title: 'Dialog', path: 'kitchen-sink/dialog' },
+  { title: 'Accordion', path: 'kitchen-sink/framework7/accordion' },
 ];
 export default {
   data() {
@@ -24,15 +26,24 @@ export default {
     };
   },
   created() {
-    this.items = items.map(item => {
+    // locale
+    let _items = items.map(item => {
       return {
         titleLocale: this.$text(item.title),
         ...item,
       };
-    }).sort((a, b) => {
+    });
+    // about
+    const about = _items.shift();
+    // sort
+    _items = _items.sort((a, b) => {
       const locale = this.$meta.util.cookies.get('locale') || 'en-us';
       return a.titleLocale.localeCompare(b.titleLocale, locale);
     });
+    // about
+    _items.unshift(about);
+    // ok
+    this.items = _items;
   },
   methods: {
 

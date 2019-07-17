@@ -1,4 +1,5 @@
 export default {
+  About: '关于',
   Audio: '音频',
   File: '文件',
   Image: '图像',
@@ -10,6 +11,11 @@ export default {
   Settings: '设置',
   Plus: '加',
   Dialog: '对话框',
+  Accordion: '折叠面板',
+  AboutTip1: 'CabloyJS - 是一款顶级NodeJS全栈业务开发框架',
+  AboutTip2: '前端采用VueJS + Framework7 + Webpack，后端采用KoaJS + EggJS，数据库采用MySQL',
+  AboutTip3: '在纵向上，将前端和后端打通，形成一个有机的整体，避免前端和后端各自为政的状况',
+  AboutTip4: '在横向上，提炼出“业务模块化”的代码组织模式，通过不同的模块组合实现业务开发，也为大型Web应用不断增长的业务需求提供有力的基础架构',
   'Instance Settings': '实例设置',
   'User Settings': '用户设置',
   'My Name': '我的姓名',
@@ -28,5 +34,6 @@ export default {
   'Open Page': '打开页面',
   'Box Container': '盒子容器',
   'Markdown Editor(mavon-editor)': 'Markdown编辑器(mavon-editor)',
+  'Welcome to CabloyJS': '欢迎使用CabloyJS',
 };
 

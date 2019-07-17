@@ -8,6 +8,7 @@ function loadKitchenSink(name) {
 
 export default [
   { path: 'test/select', component: load('test/select') },
+  { path: 'kitchen-sink/about', component: loadKitchenSink('about') },
   { path: 'kitchen-sink/index', component: loadKitchenSink('index') },
   { path: 'kitchen-sink/fileUpload', component: loadKitchenSink('fileUpload') },
   { path: 'kitchen-sink/progress', component: loadKitchenSink('progress') },
@@ -21,4 +22,5 @@ export default [
   { path: 'kitchen-sink/box', component: loadKitchenSink('box') },
   { path: 'kitchen-sink/markdownEditor', component: loadKitchenSink('markdownEditor') },
   { path: 'kitchen-sink/dialog', component: loadKitchenSink('dialog') },
+  { path: 'kitchen-sink/framework7/accordion', component: loadKitchenSink('framework7/accordion') },
 ];
