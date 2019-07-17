@@ -1,6 +1,6 @@
 {
   "name": "cabloy",
-  "version": "2.2.3",
+  "version": "2.2.4",
   "description": "The Ultimate Javascript Full Stack Framework",
   "repository": {
     "type": "git",
@@ -19,7 +19,7 @@
     "eslint-plugin-vuefix": "^0.2.1"
   },
   "dependencies": {
-    "egg-born-front": "^4.1.4",
+    "egg-born-front": "^4.1.5",
     "egg-born-backend": "^2.1.2",
     "egg-born-bin": "^1.2.0",
     "egg-born-scripts": "^1.1.0",
