@@ -38,6 +38,12 @@ CabloyJS是一款顶级NodeJS全栈业务开发框架, 基于KoaJS + EggJS + Vue
 
 ## 核心模块一览表
 
+### 测试模块
+
+[egg-born-module-test-party](https://github.com/zhennann/egg-born-module-test-party)
+
+> 当新建项目时，自动下载到项目所在目录中。包含大量`测试用例`和`Kitchen-sink`，并且持续添加更多内容。既便于快速学习CabloyJS方方面面的知识点，又便于快速启动实际的业务开发
+
 ### 内置模块
 
 |名称|说明|
@@ -72,7 +78,6 @@ CabloyJS是一款顶级NodeJS全栈业务开发框架, 基于KoaJS + EggJS + Vue
 |[egg-born-module-a-status](https://github.com/zhennann/egg-born-module-a-status)|状态管理|
 |[egg-born-module-a-user](https://github.com/zhennann/egg-born-module-a-user)|与个人用户相关的功能|
 |[egg-born-module-a-validation](https://github.com/zhennann/egg-born-module-a-validation)|数据验证|
-|[egg-born-module-test-cook](https://github.com/zhennann/egg-born-module-test-cook)|测试模块，仅在开发、测试环境有效|
 
 ### 可选模块
 
