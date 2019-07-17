@@ -18,4 +18,6 @@ export default [
   { path: 'kitchen-sink/view/sizeLarge', component: loadKitchenSink('view/sizeLarge') },
   { path: 'kitchen-sink/page/openReturn', component: loadKitchenSink('page/openReturn') },
   { path: 'kitchen-sink/page/pageReturn', component: loadKitchenSink('page/pageReturn') },
+  { path: 'kitchen-sink/box', component: loadKitchenSink('box') },
+  { path: 'kitchen-sink/markdownEditor', component: loadKitchenSink('markdownEditor') },
 ];

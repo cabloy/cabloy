@@ -13,6 +13,8 @@ const items = [
   { title: 'Settings', path: 'kitchen-sink/settings' },
   { title: 'View Size & Open Target', path: 'kitchen-sink/view/sizeTarget' },
   { title: 'Page Open & Return Value', path: 'kitchen-sink/page/openReturn' },
+  { title: 'Box Container', path: 'kitchen-sink/box' },
+  { title: 'Markdown Editor(mavon-editor)', path: 'kitchen-sink/markdownEditor' },
 ];
 export default {
   data() {

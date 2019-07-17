@@ -25,4 +25,7 @@ export default {
   'Please preview this page in PC mode': '请在PC模式下预览此页面',
   'Page Open & Return Value': '页面打开&返回值',
   'Open Page': '打开页面',
+  'Box Container': '盒子容器',
+  'Markdown Editor(mavon-editor)': 'Markdown编辑器(mavon-editor)',
 };
+
