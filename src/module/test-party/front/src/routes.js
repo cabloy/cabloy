@@ -20,4 +20,5 @@ export default [
   { path: 'kitchen-sink/page/pageReturn', component: loadKitchenSink('page/pageReturn') },
   { path: 'kitchen-sink/box', component: loadKitchenSink('box') },
   { path: 'kitchen-sink/markdownEditor', component: loadKitchenSink('markdownEditor') },
+  { path: 'kitchen-sink/dialog', component: loadKitchenSink('dialog') },
 ];

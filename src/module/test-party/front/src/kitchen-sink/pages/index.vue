@@ -15,6 +15,7 @@ const items = [
   { title: 'Page Open & Return Value', path: 'kitchen-sink/page/openReturn' },
   { title: 'Box Container', path: 'kitchen-sink/box' },
   { title: 'Markdown Editor(mavon-editor)', path: 'kitchen-sink/markdownEditor' },
+  { title: 'Dialog', path: 'kitchen-sink/dialog' },
 ];
 export default {
   data() {

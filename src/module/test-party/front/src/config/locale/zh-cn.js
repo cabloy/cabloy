@@ -9,6 +9,7 @@ export default {
   Language: '语言',
   Settings: '设置',
   Plus: '加',
+  Dialog: '对话框',
   'Instance Settings': '实例设置',
   'User Settings': '用户设置',
   'My Name': '我的姓名',
