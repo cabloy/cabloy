@@ -11,6 +11,7 @@ const items = [
   { title: 'About', path: 'kitchen-sink/framework7/about' },
   { title: 'Accordion', path: 'kitchen-sink/framework7/accordion' },
   { title: 'Action Sheet', path: 'kitchen-sink/framework7/action-sheet' },
+  { title: 'Autocomplete', path: 'kitchen-sink/framework7/autocomplete' },
 ];
 export default {
   data() {

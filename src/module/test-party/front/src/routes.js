@@ -30,4 +30,5 @@ export default [
   { path: 'kitchen-sink/framework7/about', component: loadKitchenSinkFramework7('about') },
   { path: 'kitchen-sink/framework7/accordion', component: loadKitchenSinkFramework7('accordion') },
   { path: 'kitchen-sink/framework7/action-sheet', component: loadKitchenSinkFramework7('action-sheet') },
+  { path: 'kitchen-sink/framework7/autocomplete', component: loadKitchenSinkFramework7('autocomplete') },
 ];
