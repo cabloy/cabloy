@@ -3,10 +3,10 @@
     <eb-navbar :title="$text('About')" eb-back-link="Back"> </eb-navbar>
     <f7-block-title>{{$text('Welcome to CabloyJS')}}</f7-block-title>
     <f7-block strong>
-      <p>{{$text('AboutTip1')}}</p>
-      <p>{{$text('AboutTip2')}}</p>
-      <p>{{$text('AboutTip3')}}</p>
-      <p>{{$text('AboutTip4')}}</p>
+      <div class="alert-info">{{$text('CabloyAboutTip1')}}</div>
+      <p>{{$text('CabloyAboutTip2')}}</p>
+      <p>{{$text('CabloyAboutTip3')}}</p>
+      <p>{{$text('CabloyAboutTip4')}}</p>
     </f7-block>
   </eb-page>
 </template>

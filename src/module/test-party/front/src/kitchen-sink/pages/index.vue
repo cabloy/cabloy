@@ -9,6 +9,7 @@
 <script>
 const items = [
   { title: 'About', path: 'kitchen-sink/about' },
+  { title: 'Framework7', path: 'kitchen-sink/framework7/index' },
   { title: 'File Upload', path: 'kitchen-sink/fileUpload' },
   { title: 'Progress Bar', path: 'kitchen-sink/progress' },
   { title: 'Settings', path: 'kitchen-sink/settings' },
@@ -17,7 +18,6 @@ const items = [
   { title: 'Box Container', path: 'kitchen-sink/box' },
   { title: 'Markdown Editor(mavon-editor)', path: 'kitchen-sink/markdownEditor' },
   { title: 'Dialog', path: 'kitchen-sink/dialog' },
-  { title: 'Accordion', path: 'kitchen-sink/framework7/accordion' },
 ];
 export default {
   data() {
@@ -34,14 +34,14 @@ export default {
       };
     });
     // about
-    const about = _items.shift();
+    const about = _items.splice(0, 2);
     // sort
     _items = _items.sort((a, b) => {
       const locale = this.$meta.util.cookies.get('locale') || 'en-us';
       return a.titleLocale.localeCompare(b.titleLocale, locale);
     });
     // about
-    _items.unshift(about);
+    _items = about.concat(_items);
     // ok
     this.items = _items;
   },
