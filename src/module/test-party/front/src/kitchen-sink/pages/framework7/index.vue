@@ -12,6 +12,9 @@ const items = [
   { title: 'Accordion', path: 'kitchen-sink/framework7/accordion' },
   { title: 'Action Sheet', path: 'kitchen-sink/framework7/action-sheet' },
   { title: 'Autocomplete', path: 'kitchen-sink/framework7/autocomplete' },
+  { title: 'Badge', path: 'kitchen-sink/framework7/badge' },
+  { title: 'Buttons', path: 'kitchen-sink/framework7/buttons' },
+  { title: 'Calendar / Date Picker', path: 'kitchen-sink/framework7/calendar' },
 ];
 export default {
   data() {

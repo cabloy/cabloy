@@ -1,0 +1,93 @@
+<template>
+  <eb-page @page:beforeremove="onPageBeforeRemove" @page:init="onPageInit">
+    <eb-navbar :title="$text('Calendar / Date Picker')" eb-back-link="Back"></eb-navbar>
+    <f7-block>
+      <p>Calendar is a touch optimized component that provides an easy way to handle dates.</p>
+      <p>Calendar could be used as inline component or as overlay. Overlay Calendar will be automatically converted to Popover on tablets (iPad).</p>
+    </f7-block>
+    <f7-block-title>Default setup</f7-block-title>
+    <f7-list no-hairlines-md>
+      <f7-list-input type="datepicker" placeholder="Your birth date" readonly />
+    </f7-list>
+    <f7-block-title>Custom date format</f7-block-title>
+    <f7-list no-hairlines-md>
+      <f7-list-input type="datepicker" placeholder="Select date" readonly :calendar-params="{dateFormat: 'DD, MM dd, yyyy'}" />
+    </f7-list>
+    <f7-block-title>Multiple Values</f7-block-title>
+    <f7-list no-hairlines-md>
+      <f7-list-input type="datepicker" placeholder="Select multiple dates" readonly :calendar-params="{ dateFormat: 'M dd yyyy', multiple: true }" />
+    </f7-list>
+    <f7-block-title>Range Picker</f7-block-title>
+    <f7-list no-hairlines-md>
+      <f7-list-input type="datepicker" placeholder="Select date range" readonly :calendar-params="{ dateFormat: 'M dd yyyy', rangePicker: true }" />
+    </f7-list>
+    <f7-block-title>Open in Modal</f7-block-title>
+    <f7-list no-hairlines-md>
+      <f7-list-input type="datepicker" placeholder="Select date" readonly :calendar-params="{openIn: 'customModal', header: true, footer: true, dateFormat: 'MM dd yyyy'}" />
+    </f7-list>
+    <f7-block-title>Calendar Page</f7-block-title>
+    <f7-list>
+      <eb-list-item title="Open Calendar Page" link="#" eb-href="kitchen-sink/framework7/calendar-page" />
+    </f7-list>
+    <f7-block-title>Inline with custom toolbar</f7-block-title>
+    <f7-block class="no-padding">
+      <div id="demo-calendar-inline-container"></div>
+    </f7-block>
+    <f7-block-title>Jalali Calendar</f7-block-title>
+    <f7-list no-hairlines-md>
+      <f7-list-input type="datepicker" placeholder="Your birth date in Jalali" readonly :calendar-params="{calendarType: 'jalali'}" />
+    </f7-list>
+  </eb-page>
+</template>
+<script>
+export default {
+  methods: {
+    onPageInit(e) {
+      const self = this;
+      const app = self.$f7;
+      const $ = self.$$;
+
+      // Inline with custom toolbar
+      const monthNames = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
+      self.calendarInline = app.calendar.create({
+        containerEl: '#demo-calendar-inline-container',
+        value: [ new Date() ],
+        renderToolbar() {
+          return `
+              <div class="toolbar calendar-custom-toolbar no-shadow">
+                <div class="toolbar-inner">
+                  <div class="left">
+                    <a href="#" class="link icon-only"><i class="icon icon-back"></i></a>
+                  </div>
+                  <div class="center"></div>
+                  <div class="right">
+                    <a href="#" class="link icon-only"><i class="icon icon-forward"></i></a>
+                  </div>
+                </div>
+              </div>
+            `.trim();
+        },
+        on: {
+          init(c) {
+            $('.calendar-custom-toolbar .center').text(`${monthNames[c.currentMonth]}, ${c.currentYear}`);
+            $('.calendar-custom-toolbar .left .link').on('click', () => {
+              self.calendarInline.prevMonth();
+            });
+            $('.calendar-custom-toolbar .right .link').on('click', () => {
+              self.calendarInline.nextMonth();
+            });
+          },
+          monthYearChangeStart(c) {
+            $('.calendar-custom-toolbar .center').text(`${monthNames[c.currentMonth]}, ${c.currentYear}`);
+          },
+        },
+      });
+    },
+    onPageBeforeRemove() {
+      const self = this;
+      self.calendarInline.destroy();
+    },
+  },
+};
+
+</script>

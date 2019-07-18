@@ -31,4 +31,8 @@ export default [
   { path: 'kitchen-sink/framework7/accordion', component: loadKitchenSinkFramework7('accordion') },
   { path: 'kitchen-sink/framework7/action-sheet', component: loadKitchenSinkFramework7('action-sheet') },
   { path: 'kitchen-sink/framework7/autocomplete', component: loadKitchenSinkFramework7('autocomplete') },
+  { path: 'kitchen-sink/framework7/badge', component: loadKitchenSinkFramework7('badge') },
+  { path: 'kitchen-sink/framework7/buttons', component: loadKitchenSinkFramework7('buttons') },
+  { path: 'kitchen-sink/framework7/calendar', component: loadKitchenSinkFramework7('calendar') },
+  { path: 'kitchen-sink/framework7/calendar-page', component: loadKitchenSinkFramework7('calendar-page') },
 ];
