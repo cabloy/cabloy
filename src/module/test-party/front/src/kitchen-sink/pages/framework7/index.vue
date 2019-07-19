@@ -17,6 +17,8 @@ const items = [
   { title: 'Calendar / Date Picker', path: 'kitchen-sink/framework7/calendar' },
   { title: 'Cards', path: 'kitchen-sink/framework7/cards' },
   { title: 'Cards Expandable', path: 'kitchen-sink/framework7/cards-expandable' },
+  { title: 'Checkbox', path: 'kitchen-sink/framework7/checkbox' },
+  { title: 'Chips / Tags', path: 'kitchen-sink/framework7/chips' },
 ];
 export default {
   data() {

@@ -17,6 +17,7 @@ export default {
   Buttons: '按钮',
   Cards: '卡片',
   'Cards Expandable': '卡片（可展开）',
+  Checkbox: '选择框',
   CabloyAboutTip1: 'CabloyJS - 是一款顶级NodeJS全栈业务开发框架',
   CabloyAboutTip2: '前端采用VueJS + Framework7 + Webpack，后端采用KoaJS + EggJS，数据库采用MySQL',
   CabloyAboutTip3: '在纵向上，将前端和后端打通，形成一个有机的整体，避免前端和后端各自为政的状况',
@@ -47,5 +48,6 @@ export default {
   'Welcome to Framework7': '欢迎使用Framework7',
   'Action Sheet': '动作面板',
   'Calendar / Date Picker': '日历 / 时间选择器',
+  'Chips / Tags': '标签',
 };
 

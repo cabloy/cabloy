@@ -37,4 +37,6 @@ export default [
   { path: 'kitchen-sink/framework7/calendar-page', component: loadKitchenSinkFramework7('calendar-page') },
   { path: 'kitchen-sink/framework7/cards', component: loadKitchenSinkFramework7('cards') },
   { path: 'kitchen-sink/framework7/cards-expandable', component: loadKitchenSinkFramework7('cards-expandable') },
+  { path: 'kitchen-sink/framework7/checkbox', component: loadKitchenSinkFramework7('checkbox') },
+  { path: 'kitchen-sink/framework7/chips', component: loadKitchenSinkFramework7('chips') },
 ];
