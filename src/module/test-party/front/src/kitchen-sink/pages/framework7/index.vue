@@ -15,6 +15,8 @@ const items = [
   { title: 'Badge', path: 'kitchen-sink/framework7/badge' },
   { title: 'Buttons', path: 'kitchen-sink/framework7/buttons' },
   { title: 'Calendar / Date Picker', path: 'kitchen-sink/framework7/calendar' },
+  { title: 'Cards', path: 'kitchen-sink/framework7/cards' },
+  { title: 'Cards Expandable', path: 'kitchen-sink/framework7/cards-expandable' },
 ];
 export default {
   data() {
