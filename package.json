@@ -1,6 +1,6 @@
 {
   "name": "egg-born-front",
-  "version": "4.1.8",
+  "version": "4.1.9",
   "description": "egg-born-front",
   "scripts": {
     "lint": "eslint src",
@@ -46,7 +46,8 @@
     "express": "^4.15.4",
     "extend2": "^1.0.0",
     "file-loader": "^3.0.1",
-    "@zhennann/framework7": "^4.4.5",
+    "@zhennann/framework7": "^4.4.6",
+    "framework7-icons": "^2.3.1",
     "friendly-errors-webpack-plugin": "^1.6.1",
     "fs-extra": "^8.0.1",
     "function-bind": "^1.1.1",
