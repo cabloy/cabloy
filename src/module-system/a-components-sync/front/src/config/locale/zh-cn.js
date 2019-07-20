@@ -11,4 +11,5 @@ export default {
   Abort: '中止',
   Upload: '上传',
   'Loading... ': '加载中... ',
+  Done: '完成',
 };
