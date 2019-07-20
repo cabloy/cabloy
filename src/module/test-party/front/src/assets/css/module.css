@@ -4,3 +4,28 @@
   height: 24px;
   border-radius: 4px;
 }
+
+.ios .demo-list-icon,
+.ios .icon-f7,
+.ios .icon-vi {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  box-sizing: border-box
+}
+
+.md .demo-list-icon,
+.md .icon-f7,
+.md .icon-vi {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px
+}
+
+.aurora .demo-list-icon,
+.aurora .icon-f7,
+.aurora .icon-vi {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px
+}

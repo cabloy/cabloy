@@ -19,6 +19,7 @@ const items = [
   { title: 'Cards Expandable', path: 'kitchen-sink/framework7/cards-expandable' },
   { title: 'Checkbox', path: 'kitchen-sink/framework7/checkbox' },
   { title: 'Chips / Tags', path: 'kitchen-sink/framework7/chips' },
+  { title: 'Color Picker', path: 'kitchen-sink/framework7/color-picker' },
 ];
 export default {
   data() {

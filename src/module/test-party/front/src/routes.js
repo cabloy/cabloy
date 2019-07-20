@@ -39,4 +39,5 @@ export default [
   { path: 'kitchen-sink/framework7/cards-expandable', component: loadKitchenSinkFramework7('cards-expandable') },
   { path: 'kitchen-sink/framework7/checkbox', component: loadKitchenSinkFramework7('checkbox') },
   { path: 'kitchen-sink/framework7/chips', component: loadKitchenSinkFramework7('chips') },
+  { path: 'kitchen-sink/framework7/color-picker', component: loadKitchenSinkFramework7('color-picker') },
 ];
