@@ -1,6 +1,9 @@
 <script>
 import Vue from 'vue';
-const dialogLocales = [ 'buttonCancel', 'buttonOk', 'passwordPlaceholder', 'preloaderTitle', 'progressTitle', 'usernamePlaceholder' ];
+const F7Locales = {
+  dialog: [ 'buttonCancel', 'buttonOk', 'passwordPlaceholder', 'preloaderTitle', 'progressTitle', 'usernamePlaceholder' ],
+  picker: [ 'toolbarCloseText' ],
+};
 export default {
   render(c) {
     const children = [];
@@ -122,10 +125,12 @@ export default {
       });
     },
     _setLocaleResource() {
-      // dialog
-      const dialog = this.$f7.params.dialog;
-      for (const key of dialogLocales) {
-        dialog[key] = this.$text(dialog[key]);
+      for (const f7Component in F7Locales) {
+        const component = this.$f7.params[f7Component];
+        const locales = F7Locales[f7Component];
+        for (const key of locales) {
+          component[key] = this.$text(component[key]);
+        }
       }
     },
     _checkActivation() {

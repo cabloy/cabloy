@@ -37,6 +37,9 @@ export default function(Vue, options, cb) {
         colorPicker: {
           routableModals: false,
         },
+        picker: {
+          routableModals: false,
+        },
         routes,
       },
       components: {
