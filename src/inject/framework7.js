@@ -34,6 +34,9 @@ export default function(Vue, options, cb) {
         swipeout: {
           removeElements: false,
         },
+        colorPicker: {
+          routableModals: false,
+        },
         routes,
       },
       components: {
