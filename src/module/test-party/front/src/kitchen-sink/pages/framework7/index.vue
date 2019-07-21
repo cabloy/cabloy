@@ -39,6 +39,18 @@ const items = [
   { title: 'Messsages', path: 'kitchen-sink/framework7/messages' },
   { title: 'Navbar', path: 'kitchen-sink/framework7/navbar' },
   { title: 'Photo Browser', path: 'kitchen-sink/framework7/photo-browser' },
+  { title: 'Picker', path: 'kitchen-sink/framework7/picker' },
+  { title: 'Popover', path: 'kitchen-sink/framework7/popover' },
+  { title: 'Preloader', path: 'kitchen-sink/framework7/preloader' },
+  { title: 'Progress Bar', path: 'kitchen-sink/framework7/progressbar' },
+  { title: 'Pull To Refresh', path: 'kitchen-sink/framework7/pull-to-refresh' },
+  { title: 'RadioBox', path: 'kitchen-sink/framework7/radio' },
+  { title: 'Range Slider', path: 'kitchen-sink/framework7/range' },
+  { title: 'Searchbar Expandable', path: 'kitchen-sink/framework7/searchbar-expandable' },
+  { title: 'Searchbar', path: 'kitchen-sink/framework7/searchbar' },
+  { title: 'Sheet Modal', path: 'kitchen-sink/framework7/sheet-modal' },
+  { title: 'Skeleton Layouts', path: 'kitchen-sink/framework7/skeleton' },
+  { title: 'Smart Select', path: 'kitchen-sink/framework7/smart-select' },
 ];
 export default {
   data() {
