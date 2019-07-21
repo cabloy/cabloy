@@ -29,6 +29,9 @@ export default {
   Preloader: '预加载动画',
   RadioBox: '单选框',
   Searchbar: '搜索框',
+  Stepper: '步进器',
+  Subnavbar: '导航条（子）',
+  Swipeout: '左右滑动',
   CabloyAboutTip1: 'CabloyJS - 是一款顶级NodeJS全栈业务开发框架',
   CabloyAboutTip2: '前端采用VueJS + Framework7 + Webpack，后端采用KoaJS + EggJS，数据库采用MySQL',
   CabloyAboutTip3: '在纵向上，将前端和后端打通，形成一个有机的整体，避免前端和后端各自为政的状况',
@@ -82,5 +85,7 @@ export default {
   'Sheet Modal': '动作面板（模式框）',
   'Skeleton Layouts': '骨架屏布局',
   'Smart Select': '智能选择器',
+  'Sortable List': '列表排序',
+  'Swiper Slider': '左右滑动轮播',
 };
 

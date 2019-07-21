@@ -16,7 +16,10 @@ const items = [
   { title: 'Buttons', path: 'kitchen-sink/framework7/buttons' },
   { title: 'Calendar / Date Picker', path: 'kitchen-sink/framework7/calendar' },
   { title: 'Cards', path: 'kitchen-sink/framework7/cards' },
-  { title: 'Cards Expandable', path: 'kitchen-sink/framework7/cards-expandable' },
+  {
+    title: 'Cards Expandable',
+    path: 'kitchen-sink/framework7/cards-expandable',
+  },
   { title: 'Checkbox', path: 'kitchen-sink/framework7/checkbox' },
   { title: 'Chips / Tags', path: 'kitchen-sink/framework7/chips' },
   { title: 'Color Picker', path: 'kitchen-sink/framework7/color-picker' },
@@ -46,11 +49,19 @@ const items = [
   { title: 'Pull To Refresh', path: 'kitchen-sink/framework7/pull-to-refresh' },
   { title: 'RadioBox', path: 'kitchen-sink/framework7/radio' },
   { title: 'Range Slider', path: 'kitchen-sink/framework7/range' },
-  { title: 'Searchbar Expandable', path: 'kitchen-sink/framework7/searchbar-expandable' },
+  {
+    title: 'Searchbar Expandable',
+    path: 'kitchen-sink/framework7/searchbar-expandable',
+  },
   { title: 'Searchbar', path: 'kitchen-sink/framework7/searchbar' },
   { title: 'Sheet Modal', path: 'kitchen-sink/framework7/sheet-modal' },
   { title: 'Skeleton Layouts', path: 'kitchen-sink/framework7/skeleton' },
   { title: 'Smart Select', path: 'kitchen-sink/framework7/smart-select' },
+  { title: 'Sortable List', path: 'kitchen-sink/framework7/sortable' },
+  { title: 'Stepper', path: 'kitchen-sink/framework7/stepper' },
+  { title: 'Subnavbar', path: 'kitchen-sink/framework7/subnavbar' },
+  { title: 'Swipeout', path: 'kitchen-sink/framework7/swipeout' },
+  { title: 'Swiper Slider', path: 'kitchen-sink/framework7/swiper' },
 ];
 export default {
   data() {
@@ -78,9 +89,7 @@ export default {
     // ok
     this.items = _items;
   },
-  methods: {
-
-  },
+  methods: {},
 };
 
 </script>

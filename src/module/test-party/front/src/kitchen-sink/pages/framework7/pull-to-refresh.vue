@@ -40,7 +40,7 @@ export default {
       const self = this;
 
       setTimeout(() => {
-        const picURL = `https://cdn.framework7.io/placeholder/abstract-88x88-${Math.round(Math.random() * 10)}.jpg`;
+        const picURL = `https://cdn.framework7.io/placeholder/abstract-88x88-${(Math.floor(Math.random() * 10) + 1)}.jpg`;
         const song = self.songs[Math.floor(Math.random() * self.songs.length)];
         const author = self.authors[Math.floor(Math.random() * self.authors.length)];
 
