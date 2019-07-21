@@ -40,6 +40,9 @@ export default function(Vue, options, cb) {
         picker: {
           routableModals: false,
         },
+        smartSelect: {
+          routableModals: false,
+        },
         routes,
       },
       components: {
