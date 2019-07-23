@@ -32,6 +32,12 @@ export default {
   Stepper: '步进器',
   Subnavbar: '导航条（子）',
   Swipeout: '左右滑动',
+  Tabs: '选项卡',
+  ToggleSwitch: '切换开关',
+  Timeline: '时间线',
+  ToastDialog: '提示信息弹出框',
+  Tooltip: '提示信息',
+  Treeview: '树型列表',
   CabloyAboutTip1: 'CabloyJS - 是一款顶级NodeJS全栈业务开发框架',
   CabloyAboutTip2: '前端采用VueJS + Framework7 + Webpack，后端采用KoaJS + EggJS，数据库采用MySQL',
   CabloyAboutTip3: '在纵向上，将前端和后端打通，形成一个有机的整体，避免前端和后端各自为政的状况',
@@ -87,5 +93,7 @@ export default {
   'Smart Select': '智能选择器',
   'Sortable List': '列表排序',
   'Swiper Slider': '左右滑动轮播',
+  'Toolbar & Tabbar': '工具栏&标签栏',
+  'Virtual List': '虚拟列表',
 };
 

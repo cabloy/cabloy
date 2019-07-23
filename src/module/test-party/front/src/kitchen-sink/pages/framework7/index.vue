@@ -62,6 +62,14 @@ const items = [
   { title: 'Subnavbar', path: 'kitchen-sink/framework7/subnavbar' },
   { title: 'Swipeout', path: 'kitchen-sink/framework7/swipeout' },
   { title: 'Swiper Slider', path: 'kitchen-sink/framework7/swiper' },
+  { title: 'Tabs', path: 'kitchen-sink/framework7/tabs' },
+  { title: 'Timeline', path: 'kitchen-sink/framework7/timeline' },
+  { title: 'ToastDialog', path: 'kitchen-sink/framework7/toast' },
+  { title: 'ToggleSwitch', path: 'kitchen-sink/framework7/toggle' },
+  { title: 'Toolbar & Tabbar', path: 'kitchen-sink/framework7/toolbar-tabbar' },
+  { title: 'Tooltip', path: 'kitchen-sink/framework7/tooltip' },
+  { title: 'Treeview', path: 'kitchen-sink/framework7/treeview' },
+  { title: 'Virtual List', path: 'kitchen-sink/framework7/virtual-list' },
 ];
 export default {
   data() {
