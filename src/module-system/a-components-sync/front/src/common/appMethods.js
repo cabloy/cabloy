@@ -7,19 +7,27 @@ export default function(ctx) {
       ctx.$utils.extend(params, {
         hostEl: ctx.getHostEl(),
       });
-      ctx.$f7.calendar.create(params);
+      return ctx.$f7.calendar.create(params);
     },
   };
   // toast
   const toast = {
-    show(params) {
+    _prepareParams(params) {
       const _params = ctx.$utils.extend({}, params, {
         hostEl: ctx.getHostEl(),
       });
       if (!_params.text) {
         _params.text = ctx.$text('Operation succeeded');
       }
-      ctx.$f7.toast.show(_params);
+      return _params;
+    },
+    create(params) {
+      const _params = this._prepareParams(params);
+      return ctx.$f7.toast.create(_params);
+    },
+    show(params) {
+      const _params = this._prepareParams(params);
+      return ctx.$f7.toast.show(_params);
     },
   };
   // dialog
