@@ -82,6 +82,9 @@ module.exports = app => {
           instanceTest: {
             schemas: 'settingsInstance',
           },
+          formTest: {
+            schemas: 'formTest',
+          },
         },
         keywords: {
           'x-languages': keywords.languages,
@@ -92,6 +95,7 @@ module.exports = app => {
           settingsUser: schemas.settingsUser,
           settingsUserExtra: schemas.settingsUserExtra,
           settingsInstance: schemas.settingsInstance,
+          formTest: schemas.formTest,
         },
       },
       settings: {

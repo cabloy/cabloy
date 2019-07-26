@@ -38,6 +38,12 @@ export default {
   ToastDialog: '提示信息弹出框',
   Tooltip: '提示信息',
   Treeview: '树型列表',
+  Male: '男',
+  Female: '女',
+  English: '英语',
+  Chinese: '中文',
+  Upload: '上传',
+  Avatar: '头像',
   CabloyAboutTip1: 'CabloyJS - 是一款顶级NodeJS全栈业务开发框架',
   CabloyAboutTip2: '前端采用VueJS + Framework7 + Webpack，后端采用KoaJS + EggJS，数据库采用MySQL',
   CabloyAboutTip3: '在纵向上，将前端和后端打通，形成一个有机的整体，避免前端和后端各自为政的状况',
@@ -95,5 +101,10 @@ export default {
   'Swiper Slider': '左右滑动轮播',
   'Toolbar & Tabbar': '工具栏&标签栏',
   'Virtual List': '虚拟列表',
+  'Form / Schema / Validation': '表单 / Schema / 验证 ',
+  'Form (Simple)': '表单 (简单)',
+  'Form / Schema (Auto) / Validation': '表单 / Schema (自动) / 验证',
+  'Form / Schema (Custom) / Validation': '表单 / Schema (自定义) / 验证',
+  'Password again': '重复密码',
 };
 

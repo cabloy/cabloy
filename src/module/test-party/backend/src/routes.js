@@ -32,6 +32,7 @@ const testFeatSettings = require('./controller/test/feat/settings.js');
 const testFeatStatus = require('./controller/test/feat/status.js');
 const testFeatValidation = require('./controller/test/feat/validation.js');
 const testKitchensinkAutocomplete = require('./controller/kitchen-sink/autocomplete.js');
+const testKitchensinkFormSchemaValidation = require('./controller/kitchen-sink/form-schema-validation.js');
 
 module.exports = app => {
   let routes = [
@@ -172,7 +173,14 @@ module.exports = app => {
 
       // kitchen-sink/autocomplete
       { method: 'get', path: 'kitchen-sink/autocomplete/languages/:query', controller: testKitchensinkAutocomplete, action: 'languages', meta: { auth: { enable: false } } },
-
+      // kitchen-sink/form-schema-validation
+      { method: 'get', path: 'kitchen-sink/form-schema-validation/load', controller: testKitchensinkFormSchemaValidation },
+      { method: 'post', path: 'kitchen-sink/form-schema-validation/saveSimple', controller: testKitchensinkFormSchemaValidation },
+      { method: 'post', path: 'kitchen-sink/form-schema-validation/saveValidation', controller: testKitchensinkFormSchemaValidation, middlewares: 'validate',
+        meta: {
+          validate: { validator: 'formTest' },
+        },
+      },
 
     ]);
   }

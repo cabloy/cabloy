@@ -11,7 +11,7 @@ function loadKitchenSinkFramework7(name) {
 }
 
 export default [
-  { path: 'test/select', component: load('test/select') },
+  // cabloy
   { path: 'kitchen-sink/index', component: loadKitchenSink('index') },
   { path: 'kitchen-sink/about', component: loadKitchenSink('about') },
   { path: 'kitchen-sink/fileUpload', component: loadKitchenSink('fileUpload') },
@@ -26,6 +26,11 @@ export default [
   { path: 'kitchen-sink/box', component: loadKitchenSink('box') },
   { path: 'kitchen-sink/markdownEditor', component: loadKitchenSink('markdownEditor') },
   { path: 'kitchen-sink/dialog', component: loadKitchenSink('dialog') },
+  { path: 'kitchen-sink/form-schema-validation/index', component: loadKitchenSink('form-schema-validation/index') },
+  { path: 'kitchen-sink/form-schema-validation/form', component: loadKitchenSink('form-schema-validation/form') },
+  { path: 'kitchen-sink/form-schema-validation/formSchemaAuto', component: loadKitchenSink('form-schema-validation/formSchemaAuto') },
+  { path: 'kitchen-sink/form-schema-validation/formSchemaCustom', component: loadKitchenSink('form-schema-validation/formSchemaCustom') },
+  // framework7
   { path: 'kitchen-sink/framework7/index', component: loadKitchenSinkFramework7('index') },
   { path: 'kitchen-sink/framework7/about', component: loadKitchenSinkFramework7('about') },
   { path: 'kitchen-sink/framework7/accordion', component: loadKitchenSinkFramework7('accordion') },

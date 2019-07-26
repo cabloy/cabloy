@@ -18,6 +18,7 @@ const items = [
   { title: 'Box Container', path: 'kitchen-sink/box' },
   { title: 'Markdown Editor(mavon-editor)', path: 'kitchen-sink/markdownEditor' },
   { title: 'Dialog', path: 'kitchen-sink/dialog' },
+  { title: 'Form / Schema / Validation', path: 'kitchen-sink/form-schema-validation/index' },
 ];
 export default {
   data() {
@@ -44,9 +45,6 @@ export default {
     _items = about.concat(_items);
     // ok
     this.items = _items;
-  },
-  methods: {
-
   },
 };
 

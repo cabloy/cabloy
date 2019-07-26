@@ -105,11 +105,11 @@ module.exports = app => {
   // routes
   const routes = __webpack_require__(7)(app);
   // services
-  const services = __webpack_require__(43)(app);
+  const services = __webpack_require__(44)(app);
   // models
-  const models = __webpack_require__(49)(app);
+  const models = __webpack_require__(50)(app);
   // meta
-  const meta = __webpack_require__(53)(app);
+  const meta = __webpack_require__(54)(app);
 
   return {
     routes,
@@ -270,6 +270,7 @@ const testFeatSettings = __webpack_require__(38);
 const testFeatStatus = __webpack_require__(39);
 const testFeatValidation = __webpack_require__(40);
 const testKitchensinkAutocomplete = __webpack_require__(41);
+const testKitchensinkFormSchemaValidation = __webpack_require__(43);
 
 module.exports = app => {
   let routes = [
@@ -410,7 +411,14 @@ module.exports = app => {
 
       // kitchen-sink/autocomplete
       { method: 'get', path: 'kitchen-sink/autocomplete/languages/:query', controller: testKitchensinkAutocomplete, action: 'languages', meta: { auth: { enable: false } } },
-
+      // kitchen-sink/form-schema-validation
+      { method: 'get', path: 'kitchen-sink/form-schema-validation/load', controller: testKitchensinkFormSchemaValidation },
+      { method: 'post', path: 'kitchen-sink/form-schema-validation/saveSimple', controller: testKitchensinkFormSchemaValidation },
+      { method: 'post', path: 'kitchen-sink/form-schema-validation/saveValidation', controller: testKitchensinkFormSchemaValidation, middlewares: 'validate',
+        meta: {
+          validate: { validator: 'formTest' },
+        },
+      },
 
     ]);
   }
@@ -2237,11 +2245,65 @@ module.exports = [{"id":0,"name":"A# .NET"},{"id":1,"name":"A# (Axiom)"},{"id":2
 
 /***/ }),
 /* 43 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+
+  class FormSchemaValidationController extends app.Controller {
+
+    async load() {
+      // try load from db cache
+      const cacheName = this._getCacheName();
+      let item = await this.ctx.cache.db.get(cacheName);
+      if (!item) {
+        item = {
+          userName: '',
+          password: '',
+          passwordAgain: '',
+          sex: 0,
+          language: '',
+          avatar: '',
+          rememberMe: false,
+        };
+      }
+      // ok
+      this.ctx.success(item);
+    }
+
+    async saveSimple() {
+      // item
+      const item = this.ctx.request.body.data;
+      // save to db cache
+      const cacheName = this._getCacheName();
+      await this.ctx.cache.db.set(cacheName, item);
+      // ok
+      this.ctx.success();
+    }
+
+    async saveValidation() {
+      await this.saveSimple();
+    }
+
+    _getCacheName() {
+      // get the operation user
+      const user = this.ctx.user.op;
+      return `__formTest:${user.id}`;
+    }
+
+  }
+
+  return FormSchemaValidationController;
+};
+
+
+
+/***/ }),
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(44);
-const party = __webpack_require__(47);
-const partyPublic = __webpack_require__(48);
+const version = __webpack_require__(45);
+const party = __webpack_require__(48);
+const partyPublic = __webpack_require__(49);
 
 module.exports = app => {
   const services = {
@@ -2258,10 +2320,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const VersionTestFn = __webpack_require__(45);
+const VersionTestFn = __webpack_require__(46);
 
 module.exports = app => {
 
@@ -2384,10 +2446,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const testData = __webpack_require__(46);
+const testData = __webpack_require__(47);
 
 module.exports = function(ctx) {
 
@@ -2518,7 +2580,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports) {
 
 // roleName, leader, catalog, roleNameParent
@@ -2571,7 +2633,7 @@ module.exports = {
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2679,7 +2741,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2709,12 +2771,12 @@ module.exports = app => {
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const party = __webpack_require__(50);
-const partyType = __webpack_require__(51);
-const partyPublic = __webpack_require__(52);
+const party = __webpack_require__(51);
+const partyType = __webpack_require__(52);
+const partyPublic = __webpack_require__(53);
 
 module.exports = app => {
   const models = {
@@ -2731,7 +2793,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2749,7 +2811,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2767,7 +2829,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2785,7 +2847,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -2796,9 +2858,9 @@ module.exports = app => {
   };
   if (app.meta.isTest || app.meta.isLocal) {
     // schemas
-    const schemas = __webpack_require__(54)(app);
+    const schemas = __webpack_require__(55)(app);
     // keywords
-    const keywords = __webpack_require__(55)(app);
+    const keywords = __webpack_require__(56)(app);
     // meta
     extend(true, meta, {
       base: {
@@ -2872,6 +2934,9 @@ module.exports = app => {
           instanceTest: {
             schemas: 'settingsInstance',
           },
+          formTest: {
+            schemas: 'formTest',
+          },
         },
         keywords: {
           'x-languages': keywords.languages,
@@ -2882,6 +2947,7 @@ module.exports = app => {
           settingsUser: schemas.settingsUser,
           settingsUserExtra: schemas.settingsUserExtra,
           settingsInstance: schemas.settingsInstance,
+          formTest: schemas.formTest,
         },
       },
       settings: {
@@ -2949,7 +3015,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3090,13 +3156,79 @@ module.exports = app => {
       },
     },
   };
+  schemas.formTest = {
+    type: 'object',
+    properties: {
+      userName: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Username',
+        notEmpty: true,
+        'x-exists': true,
+      },
+      password: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Password',
+        ebSecure: true,
+        notEmpty: true,
+        minLength: 6,
+      },
+      passwordAgain: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Password again',
+        ebSecure: true,
+        notEmpty: true,
+        const: { $data: '1/password' },
+      },
+      sex: {
+        type: 'number',
+        ebType: 'select',
+        ebTitle: 'Sex',
+        ebMultiple: false,
+        ebOptions: [
+          { title: 'Male', value: 1 },
+          { title: 'Female', value: 2 },
+        ],
+        ebOptionsBlankAuto: true,
+        ebParams: {
+          openIn: 'page',
+          closeOnSelect: true,
+        },
+        notEmpty: true,
+      },
+      language: {
+        type: 'string',
+        ebType: 'select',
+        ebTitle: 'Language',
+        ebOptionsUrl: '/a/base/base/locales',
+        ebOptionsUrlParams: null,
+        ebOptionsBlankAuto: true,
+        'x-languages': true,
+        notEmpty: true,
+      },
+      avatar: {
+        type: 'string',
+        ebType: 'file',
+        ebTitle: 'Avatar',
+        ebParams: { mode: 1 },
+        notEmpty: true,
+      },
+      rememberMe: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Remember me',
+      },
+    },
+  };
 
   return schemas;
 };
 
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);

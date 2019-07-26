@@ -136,6 +136,72 @@ module.exports = app => {
       },
     },
   };
+  schemas.formTest = {
+    type: 'object',
+    properties: {
+      userName: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Username',
+        notEmpty: true,
+        'x-exists': true,
+      },
+      password: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Password',
+        ebSecure: true,
+        notEmpty: true,
+        minLength: 6,
+      },
+      passwordAgain: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Password again',
+        ebSecure: true,
+        notEmpty: true,
+        const: { $data: '1/password' },
+      },
+      sex: {
+        type: 'number',
+        ebType: 'select',
+        ebTitle: 'Sex',
+        ebMultiple: false,
+        ebOptions: [
+          { title: 'Male', value: 1 },
+          { title: 'Female', value: 2 },
+        ],
+        ebOptionsBlankAuto: true,
+        ebParams: {
+          openIn: 'page',
+          closeOnSelect: true,
+        },
+        notEmpty: true,
+      },
+      language: {
+        type: 'string',
+        ebType: 'select',
+        ebTitle: 'Language',
+        ebOptionsUrl: '/a/base/base/locales',
+        ebOptionsUrlParams: null,
+        ebOptionsBlankAuto: true,
+        'x-languages': true,
+        notEmpty: true,
+      },
+      avatar: {
+        type: 'string',
+        ebType: 'file',
+        ebTitle: 'Avatar',
+        ebParams: { mode: 1 },
+        notEmpty: true,
+      },
+      rememberMe: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Remember me',
+      },
+    },
+  };
 
   return schemas;
 };
