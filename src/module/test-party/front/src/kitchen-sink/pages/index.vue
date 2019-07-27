@@ -19,6 +19,7 @@ const items = [
   { title: 'Markdown Editor(mavon-editor)', path: 'kitchen-sink/markdownEditor' },
   { title: 'Dialog', path: 'kitchen-sink/dialog' },
   { title: 'Form / Schema / Validation', path: 'kitchen-sink/form-schema-validation/index' },
+  { title: 'Pull To Refresh / Infinite Scroll / Load More', path: 'kitchen-sink/ptrIsLoadMore' },
 ];
 export default {
   data() {

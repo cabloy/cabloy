@@ -6,6 +6,7 @@ module.exports = {
   Birthday: '生日',
   Dance: '跳舞',
   Garden: '花园',
+  Item: '条目',
   'Create Party': '新建宴会',
   'Party List': '宴会列表',
   'Level One': '层级1',

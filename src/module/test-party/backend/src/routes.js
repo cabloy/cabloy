@@ -33,6 +33,7 @@ const testFeatStatus = require('./controller/test/feat/status.js');
 const testFeatValidation = require('./controller/test/feat/validation.js');
 const testKitchensinkAutocomplete = require('./controller/kitchen-sink/autocomplete.js');
 const testKitchensinkFormSchemaValidation = require('./controller/kitchen-sink/form-schema-validation.js');
+const testKitchensinkPtrIsLoadMore = require('./controller/kitchen-sink/ptr-is-loadmore.js');
 
 module.exports = app => {
   let routes = [
@@ -181,6 +182,8 @@ module.exports = app => {
           validate: { validator: 'formTest' },
         },
       },
+      // kitchen-sink/ptr-is-loadmore
+      { method: 'post', path: 'kitchen-sink/ptr-is-loadmore/list', controller: testKitchensinkPtrIsLoadMore },
 
     ]);
   }

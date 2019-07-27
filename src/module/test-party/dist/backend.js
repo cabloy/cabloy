@@ -105,11 +105,11 @@ module.exports = app => {
   // routes
   const routes = __webpack_require__(7)(app);
   // services
-  const services = __webpack_require__(44)(app);
+  const services = __webpack_require__(45)(app);
   // models
-  const models = __webpack_require__(50)(app);
+  const models = __webpack_require__(51)(app);
   // meta
-  const meta = __webpack_require__(54)(app);
+  const meta = __webpack_require__(55)(app);
 
   return {
     routes,
@@ -203,6 +203,7 @@ module.exports = {
   Birthday: '生日',
   Dance: '跳舞',
   Garden: '花园',
+  Item: '条目',
   'Create Party': '新建宴会',
   'Party List': '宴会列表',
   'Level One': '层级1',
@@ -271,6 +272,7 @@ const testFeatStatus = __webpack_require__(39);
 const testFeatValidation = __webpack_require__(40);
 const testKitchensinkAutocomplete = __webpack_require__(41);
 const testKitchensinkFormSchemaValidation = __webpack_require__(43);
+const testKitchensinkPtrIsLoadMore = __webpack_require__(44);
 
 module.exports = app => {
   let routes = [
@@ -419,6 +421,8 @@ module.exports = app => {
           validate: { validator: 'formTest' },
         },
       },
+      // kitchen-sink/ptr-is-loadmore
+      { method: 'post', path: 'kitchen-sink/ptr-is-loadmore/list', controller: testKitchensinkPtrIsLoadMore },
 
     ]);
   }
@@ -2299,11 +2303,48 @@ module.exports = app => {
 
 /***/ }),
 /* 44 */
+/***/ (function(module, exports) {
+
+
+const gTestListMax = 89;
+
+module.exports = app => {
+
+  class PtrIsLoadMoreController extends app.Controller {
+
+    async list() {
+      // page
+      let page = this.ctx.request.body.page;
+      // adjust page
+      page = this.ctx.meta.util.page(page, false);
+      // items
+      const items = [];
+      for (let i = 0; i < page.size; i++) {
+        const itemId = page.index + i + 1;
+        if (itemId > gTestListMax) break;
+        items.push({
+          id: itemId,
+          title: `${this.ctx.text('Item')} - ${itemId}`,
+        });
+      }
+      // ok
+      this.ctx.successMore(items, page.index, page.size);
+    }
+
+  }
+
+  return PtrIsLoadMoreController;
+};
+
+
+
+/***/ }),
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(45);
-const party = __webpack_require__(48);
-const partyPublic = __webpack_require__(49);
+const version = __webpack_require__(46);
+const party = __webpack_require__(49);
+const partyPublic = __webpack_require__(50);
 
 module.exports = app => {
   const services = {
@@ -2320,10 +2361,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const VersionTestFn = __webpack_require__(46);
+const VersionTestFn = __webpack_require__(47);
 
 module.exports = app => {
 
@@ -2446,10 +2487,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const testData = __webpack_require__(47);
+const testData = __webpack_require__(48);
 
 module.exports = function(ctx) {
 
@@ -2580,7 +2621,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports) {
 
 // roleName, leader, catalog, roleNameParent
@@ -2633,7 +2674,7 @@ module.exports = {
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2741,7 +2782,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2771,12 +2812,12 @@ module.exports = app => {
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const party = __webpack_require__(51);
-const partyType = __webpack_require__(52);
-const partyPublic = __webpack_require__(53);
+const party = __webpack_require__(52);
+const partyType = __webpack_require__(53);
+const partyPublic = __webpack_require__(54);
 
 module.exports = app => {
   const models = {
@@ -2793,7 +2834,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2811,7 +2852,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2829,7 +2870,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2847,7 +2888,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -2858,9 +2899,9 @@ module.exports = app => {
   };
   if (app.meta.isTest || app.meta.isLocal) {
     // schemas
-    const schemas = __webpack_require__(55)(app);
+    const schemas = __webpack_require__(56)(app);
     // keywords
-    const keywords = __webpack_require__(56)(app);
+    const keywords = __webpack_require__(57)(app);
     // meta
     extend(true, meta, {
       base: {
@@ -3015,7 +3056,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3228,7 +3269,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
