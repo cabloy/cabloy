@@ -107,5 +107,6 @@ export default {
   'Form / Schema (Custom) / Validation': '表单 / Schema (自定义) / 验证',
   'Password again': '重复密码',
   'Pull To Refresh / Infinite Scroll / Load More': '上拉刷新 / 无限滚动 / 加载更多',
+  'Button Event': '按钮事件',
 };
 

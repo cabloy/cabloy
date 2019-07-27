@@ -20,6 +20,7 @@ const items = [
   { title: 'Dialog', path: 'kitchen-sink/dialog' },
   { title: 'Form / Schema / Validation', path: 'kitchen-sink/form-schema-validation/index' },
   { title: 'Pull To Refresh / Infinite Scroll / Load More', path: 'kitchen-sink/ptrIsLoadMore' },
+  { title: 'Button Event', path: 'kitchen-sink/buttonEvent' },
 ];
 export default {
   data() {
