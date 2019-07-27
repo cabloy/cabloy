@@ -22,30 +22,47 @@ export default {
   data() {
     return {
       inited: false,
+      tabMounted: false,
     };
   },
   computed: {
     list() {
-      return this.$slots.list[0].componentInstance;
+      const list = this.$slots.list;
+      return list ? list[0].componentInstance : null;
     },
   },
   methods: {
     onRefresh(event, done) { // eslint-disable-line
       done();
-      this.list.reload();
+      this.list && this.list.reload();
     },
     onInfinite() {
-      this.list.loadMore();
+      this.list && this.list.loadMore();
     },
     onTabShow(event) {
       this.$emit('tab:show', event);
-      if (!this.inited) {
+      if (!this.inited && this.list) {
         this.inited = true;
         this.list.reload(true);
       }
     },
+    getPage() {
+      return this.$page.$children[0];
+    },
+  },
+  beforeDestroy() {
+    if (this.tabMounted) {
+      this.$f7router.emit('tabBeforeRemove', this.$el);
+    }
   },
   mounted() {
+    const page = this.getPage();
+    if (page.$el.f7PageInitialized) {
+      // should trigger tabMounted
+      this.$f7router.emit('tabMounted', this.$el);
+      this.tabMounted = true;
+    }
+    //
     if (this.tabActive) {
       this.onTabShow();
     }
