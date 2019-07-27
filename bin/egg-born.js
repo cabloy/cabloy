@@ -2,7 +2,7 @@
 
 const os = require('os');
 const co = require('co');
-const Command = require('egg-init');
+const Command = require('@zhennann/egg-init');
 const path = require('path');
 const fse = require('fs-extra');
 const rimraf = require('mz-modules/rimraf');
