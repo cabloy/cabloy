@@ -1,4 +1,5 @@
 const path = require('path');
+const fse = require('fs-extra');
 const utils = require('./utils');
 const config = require('../config');
 
@@ -9,6 +10,12 @@ function resolve(dir) {
 function hasHash(file) {
   const name = path.basename(file);
   return name.split('.').length - 1 > 1;
+}
+
+// vue module path
+let vueModulePath = resolve('../@zhennann/vue/dist/vue.esm.js');
+if (!fse.existsSync(vueModulePath)) {
+  vueModulePath = resolve('node_modules/@zhennann/vue/dist/vue.esm.js');
 }
 
 module.exports = {
@@ -26,7 +33,7 @@ module.exports = {
   resolve: {
     extensions: [ '.js', '.vue', '.json' ],
     alias: {
-      vue$: 'vue/dist/vue.esm.js',
+      vue: vueModulePath,
       '@': resolve('src'),
     },
   },
