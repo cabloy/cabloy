@@ -9,6 +9,12 @@ module.exports = app => {
       return { atomId: key.atomId, itemId: res.insertId };
     }
 
+    async read({ atomClass, key, item, user }) {
+    }
+
+    async select({ atomClass, options, items, user }) {
+    }
+
     async write({ atomClass, key, item, user }) {
     }
 
@@ -16,6 +22,12 @@ module.exports = app => {
       await this.ctx.model.partyPublic.delete({
         id: key.itemId,
       });
+    }
+
+    async action({ action, atomClass, key, user }) {
+    }
+
+    async enable({ atomClass, key, atom, user }) {
     }
 
   }

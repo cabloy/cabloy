@@ -300,8 +300,12 @@ module.exports = app => {
 
       // atom: partyPublic (only for test)
       { method: 'post', path: 'partyPublic/create', controller: partyPublic, middlewares: 'inner', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'partyPublic/read', controller: party, middlewares: 'inner', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'partyPublic/select', controller: party, middlewares: 'inner', meta: { auth: { enable: false } } },
       { method: 'post', path: 'partyPublic/write', controller: partyPublic, middlewares: 'inner', meta: { auth: { enable: false } } },
       { method: 'post', path: 'partyPublic/delete', controller: partyPublic, middlewares: 'inner', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'partyPublic/action', controller: party, middlewares: 'inner', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'partyPublic/enable', controller: party, middlewares: 'inner', meta: { auth: { enable: false } } },
 
       // test/atom/starLabel
       { method: 'post', path: 'test/atom/starLabel', controller: testAtomStarLabel, middlewares: 'test' },
@@ -527,6 +531,16 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async read() {
+      const res = await this.ctx.service.party.read(this.ctx.request.body);
+      this.ctx.success(res);
+    }
+
+    async select() {
+      const res = await this.ctx.service.party.select(this.ctx.request.body);
+      this.ctx.success(res);
+    }
+
     async write() {
       await this.ctx.service.partyPublic.write(this.ctx.request.body);
       this.ctx.success();
@@ -535,6 +549,16 @@ module.exports = app => {
     async delete() {
       await this.ctx.service.partyPublic.delete(this.ctx.request.body);
       this.ctx.success();
+    }
+
+    async action() {
+      const res = await this.ctx.service.party.action(this.ctx.request.body);
+      this.ctx.success(res);
+    }
+
+    async enable() {
+      const res = await this.ctx.service.party.enable(this.ctx.request.body);
+      this.ctx.success(res);
     }
 
   }
@@ -1572,7 +1596,7 @@ module.exports = app => {
       assert.equal(value, 'zhennann');
 
       // get after timeout
-      await sleep(1000);
+      await sleep(1200);
       value = this.ctx.cache.mem.get(name);
       assert.equal(value, null);
 
@@ -1638,7 +1662,7 @@ module.exports = app => {
       assert.equal(value, 'zhennann');
 
       // get after timeout
-      await sleep(1000);
+      await sleep(1200);
       value = await this.ctx.cache.db.get(name);
       assert.equal(value, undefined);
 
@@ -2795,6 +2819,12 @@ module.exports = app => {
       return { atomId: key.atomId, itemId: res.insertId };
     }
 
+    async read({ atomClass, key, item, user }) {
+    }
+
+    async select({ atomClass, options, items, user }) {
+    }
+
     async write({ atomClass, key, item, user }) {
     }
 
@@ -2802,6 +2832,12 @@ module.exports = app => {
       await this.ctx.model.partyPublic.delete({
         id: key.itemId,
       });
+    }
+
+    async action({ action, atomClass, key, user }) {
+    }
+
+    async enable({ atomClass, key, atom, user }) {
     }
 
   }

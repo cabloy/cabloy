@@ -4,7 +4,7 @@ describe('test/controller/test/cache/db.test.js', () => {
 
   it('action:cache:db', async () => {
     const result = await app.httpRequest().post(mockUrl('test/cache/db'));
-    assert(result.body.code === 0);
+    assert.equal(result.body.code, 0);
   });
 
 });

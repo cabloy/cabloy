@@ -61,8 +61,12 @@ module.exports = app => {
 
       // atom: partyPublic (only for test)
       { method: 'post', path: 'partyPublic/create', controller: partyPublic, middlewares: 'inner', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'partyPublic/read', controller: party, middlewares: 'inner', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'partyPublic/select', controller: party, middlewares: 'inner', meta: { auth: { enable: false } } },
       { method: 'post', path: 'partyPublic/write', controller: partyPublic, middlewares: 'inner', meta: { auth: { enable: false } } },
       { method: 'post', path: 'partyPublic/delete', controller: partyPublic, middlewares: 'inner', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'partyPublic/action', controller: party, middlewares: 'inner', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'partyPublic/enable', controller: party, middlewares: 'inner', meta: { auth: { enable: false } } },
 
       // test/atom/starLabel
       { method: 'post', path: 'test/atom/starLabel', controller: testAtomStarLabel, middlewares: 'test' },
