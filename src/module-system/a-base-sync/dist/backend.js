@@ -2689,20 +2689,16 @@ const Fn = module.exports = ctx => {
 
       // read item
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      try {
-        await ctx.performAction({
-          method: 'post',
-          url: `/${_moduleInfo.url}/${atomClass.atomClassName}/read`,
-          body: {
-            atomClass,
-            key,
-            item,
-            user,
-          },
-        });
-      } catch (e) {
-        if (e.code !== 404) throw e;
-      }
+      await ctx.performAction({
+        method: 'post',
+        url: `/${_moduleInfo.url}/${atomClass.atomClassName}/read`,
+        body: {
+          atomClass,
+          key,
+          item,
+          user,
+        },
+      });
 
       return item;
     }
@@ -2734,20 +2730,16 @@ const Fn = module.exports = ctx => {
       // select items
       if (atomClass) {
         const _moduleInfo = mparse.parseInfo(atomClass.module);
-        try {
-          await ctx.performAction({
-            method: 'post',
-            url: `/${_moduleInfo.url}/${atomClass.atomClassName}/select`,
-            body: {
-              atomClass,
-              options,
-              items,
-              user,
-            },
-          });
-        } catch (e) {
-          if (e.code !== 404) throw e;
-        }
+        await ctx.performAction({
+          method: 'post',
+          url: `/${_moduleInfo.url}/${atomClass.atomClassName}/select`,
+          body: {
+            atomClass,
+            options,
+            items,
+            user,
+          },
+        });
       }
 
       return items;
@@ -2758,21 +2750,17 @@ const Fn = module.exports = ctx => {
       const atomClass = await ctx.meta.atomClass.getByAtomId({ atomId: key.atomId });
 
       // write item
-      try {
-        const _moduleInfo = mparse.parseInfo(atomClass.module);
-        await ctx.performAction({
-          method: 'post',
-          url: `/${_moduleInfo.url}/${atomClass.atomClassName}/write`,
-          body: {
-            atomClass,
-            key,
-            item,
-            user,
-          },
-        });
-      } catch (err) {
-        throw err;
-      }
+      const _moduleInfo = mparse.parseInfo(atomClass.module);
+      await ctx.performAction({
+        method: 'post',
+        url: `/${_moduleInfo.url}/${atomClass.atomClassName}/write`,
+        body: {
+          atomClass,
+          key,
+          item,
+          user,
+        },
+      });
 
       // write atom only after item writed
       await this._writeAtom({ key, item, user });
@@ -2799,19 +2787,15 @@ const Fn = module.exports = ctx => {
       const atomClass = await ctx.meta.atomClass.getByAtomId({ atomId: key.atomId });
       // delete item
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      try {
-        await ctx.performAction({
-          method: 'post',
-          url: `/${_moduleInfo.url}/${atomClass.atomClassName}/delete`,
-          body: {
-            atomClass,
-            key,
-            user,
-          },
-        });
-      } catch (e) {
-        if (e.code !== 404) throw e;
-      }
+      await ctx.performAction({
+        method: 'post',
+        url: `/${_moduleInfo.url}/${atomClass.atomClassName}/delete`,
+        body: {
+          atomClass,
+          key,
+          user,
+        },
+      });
 
       // delete atom and item
       await this._delete({
@@ -2852,20 +2836,16 @@ const Fn = module.exports = ctx => {
       // enable item
       const atomClass = await ctx.meta.atomClass.getByAtomId({ atomId: key.atomId });
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      try {
-        await ctx.performAction({
-          method: 'post',
-          url: `/${_moduleInfo.url}/${atomClass.atomClassName}/enable`,
-          body: {
-            atomClass,
-            key,
-            atom: _atom,
-            user,
-          },
-        });
-      } catch (e) {
-        if (e.code !== 404) throw e;
-      }
+      await ctx.performAction({
+        method: 'post',
+        url: `/${_moduleInfo.url}/${atomClass.atomClassName}/enable`,
+        body: {
+          atomClass,
+          key,
+          atom: _atom,
+          user,
+        },
+      });
     }
 
     // atom other functions
