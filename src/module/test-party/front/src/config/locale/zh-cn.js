@@ -108,5 +108,9 @@ export default {
   'Password again': '重复密码',
   'Pull To Refresh / Infinite Scroll / Load More': '上拉刷新 / 无限滚动 / 加载更多',
   'Button Event': '按钮事件',
+  'Create Party': '新建宴会',
+  'Party List': '宴会列表',
+  'Select Single Atom': '选择单条原子',
+  'Select Multiple Atoms': '选择多条原子',
 };
 

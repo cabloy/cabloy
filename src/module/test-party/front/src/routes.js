@@ -32,6 +32,7 @@ export default [
   { path: 'kitchen-sink/form-schema-validation/formSchemaCustom', component: loadKitchenSink('form-schema-validation/formSchemaCustom') },
   { path: 'kitchen-sink/ptrIsLoadMore', component: loadKitchenSink('ptrIsLoadMore') },
   { path: 'kitchen-sink/buttonEvent', component: loadKitchenSink('buttonEvent') },
+  { path: 'kitchen-sink/atom', component: loadKitchenSink('atom') },
   // framework7
   { path: 'kitchen-sink/framework7/index', component: loadKitchenSinkFramework7('index') },
   { path: 'kitchen-sink/framework7/about', component: loadKitchenSinkFramework7('about') },

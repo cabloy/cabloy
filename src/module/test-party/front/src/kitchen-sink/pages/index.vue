@@ -21,6 +21,7 @@ const items = [
   { title: 'Form / Schema / Validation', path: 'kitchen-sink/form-schema-validation/index' },
   { title: 'Pull To Refresh / Infinite Scroll / Load More', path: 'kitchen-sink/ptrIsLoadMore' },
   { title: 'Button Event', path: 'kitchen-sink/buttonEvent' },
+  { title: 'Atom', path: 'kitchen-sink/atom' },
 ];
 export default {
   data() {
