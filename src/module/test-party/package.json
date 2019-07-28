@@ -1,9 +1,9 @@
 {
   "name": "egg-born-module-test-party",
-  "version": "2.1.21",
+  "version": "2.1.22",
   "title": "Party",
   "eggBornModule": {
-    "fileVersion": 3,
+    "fileVersion": 4,
     "dependencies": {
       "a-instance": "2.0.0",
       "a-base": "2.0.0"

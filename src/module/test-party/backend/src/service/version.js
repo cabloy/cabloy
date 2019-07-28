@@ -107,6 +107,19 @@ module.exports = app => {
         }
       }
 
+      //
+      if (options.version === 4) {
+        // add role rights
+        const roleRights = [
+          { roleName: 'system', action: 'create' },
+          { roleName: 'system', action: 'write', scopeNames: 0 },
+          { roleName: 'system', action: 'delete', scopeNames: 0 },
+          { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
+          { roleName: 'system', action: 'review', scopeNames: 'authenticated' },
+        ];
+        await this.ctx.meta.role.addRoleRightBatch({ atomClassName: 'party', roleRights });
+      }
+
     }
 
     async test() {

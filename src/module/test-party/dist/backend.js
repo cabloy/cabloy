@@ -2473,6 +2473,19 @@ module.exports = app => {
         }
       }
 
+      //
+      if (options.version === 4) {
+        // add role rights
+        const roleRights = [
+          { roleName: 'system', action: 'create' },
+          { roleName: 'system', action: 'write', scopeNames: 0 },
+          { roleName: 'system', action: 'delete', scopeNames: 0 },
+          { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
+          { roleName: 'system', action: 'review', scopeNames: 'authenticated' },
+        ];
+        await this.ctx.meta.role.addRoleRightBatch({ atomClassName: 'party', roleRights });
+      }
+
     }
 
     async test() {
@@ -2586,18 +2599,8 @@ module.exports = function(ctx) {
     }
 
     // role rights
-    async _testRoleRights(roleIds) {
-      const module = ctx.app.meta.modules[ctx.module.info.relativeName];
-      for (const [ roleName, atomClassName, actionName, scopeNames ] of testData.roleRights) {
-        const atomClass = await ctx.meta.atomClass.get({ atomClassName });
-        await ctx.meta.role.addRoleRight({
-          roleId: roleIds[roleName],
-          atomClassId: atomClass.id,
-          action: ctx.constant.module('a-base').atom.action[actionName] || module.main.meta.base.atoms[atomClassName]
-            .actions[actionName].code,
-          scope: scopeNames ? scopeNames.split(',').map(scopeName => roleIds[scopeName]) : 0,
-        });
-      }
+    async _testRoleRights() {
+      await ctx.meta.role.addRoleRightBatch({ atomClassName: 'party', roleRights: testData.roleRights });
     }
 
     // auths
@@ -2653,16 +2656,12 @@ const users = [
 
 // roleRights
 const roleRights = [
-  [ 'system', 'party', 'create' ],
-  [ 'system', 'party', 'read', 'family' ],
-  [ 'system', 'party', 'review', 'family' ],
-  [ 'system', 'party', 'review', 'authenticated' ],
-  [ 'family', 'party', 'create' ],
-  [ 'family', 'party', 'read', 'family' ],
-  [ 'mother', 'party', 'review', 'family' ],
-  [ 'authenticated', 'party', 'write', 0 ],
-  [ 'authenticated', 'party', 'delete', 0 ],
-  [ 'consultant', 'party', 'read', 'family' ],
+  { roleName: 'family', action: 'create' },
+  { roleName: 'family', action: 'read', scopeNames: 'family' },
+  { roleName: 'mother', action: 'review', scopeNames: 'family' },
+  { roleName: 'authenticated', action: 'write', scopeNames: 0 },
+  { roleName: 'authenticated', action: 'delete', scopeNames: 0 },
+  { roleName: 'consultant', action: 'read', scopeNames: 'family' },
 ];
 
 module.exports = {

@@ -94,18 +94,8 @@ module.exports = function(ctx) {
     }
 
     // role rights
-    async _testRoleRights(roleIds) {
-      const module = ctx.app.meta.modules[ctx.module.info.relativeName];
-      for (const [ roleName, atomClassName, actionName, scopeNames ] of testData.roleRights) {
-        const atomClass = await ctx.meta.atomClass.get({ atomClassName });
-        await ctx.meta.role.addRoleRight({
-          roleId: roleIds[roleName],
-          atomClassId: atomClass.id,
-          action: ctx.constant.module('a-base').atom.action[actionName] || module.main.meta.base.atoms[atomClassName]
-            .actions[actionName].code,
-          scope: scopeNames ? scopeNames.split(',').map(scopeName => roleIds[scopeName]) : 0,
-        });
-      }
+    async _testRoleRights() {
+      await ctx.meta.role.addRoleRightBatch({ atomClassName: 'party', roleRights: testData.roleRights });
     }
 
     // auths

@@ -27,16 +27,12 @@ const users = [
 
 // roleRights
 const roleRights = [
-  [ 'system', 'party', 'create' ],
-  [ 'system', 'party', 'read', 'family' ],
-  [ 'system', 'party', 'review', 'family' ],
-  [ 'system', 'party', 'review', 'authenticated' ],
-  [ 'family', 'party', 'create' ],
-  [ 'family', 'party', 'read', 'family' ],
-  [ 'mother', 'party', 'review', 'family' ],
-  [ 'authenticated', 'party', 'write', 0 ],
-  [ 'authenticated', 'party', 'delete', 0 ],
-  [ 'consultant', 'party', 'read', 'family' ],
+  { roleName: 'family', action: 'create' },
+  { roleName: 'family', action: 'read', scopeNames: 'family' },
+  { roleName: 'mother', action: 'review', scopeNames: 'family' },
+  { roleName: 'authenticated', action: 'write', scopeNames: 0 },
+  { roleName: 'authenticated', action: 'delete', scopeNames: 0 },
+  { roleName: 'consultant', action: 'read', scopeNames: 'family' },
 ];
 
 module.exports = {
