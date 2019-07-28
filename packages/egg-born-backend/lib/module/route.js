@@ -100,6 +100,10 @@ module.exports = function(loader, modules) {
         const index = loader.app.router.stack.findIndex(layer => layer.name && layer.name === name);
         if (index > -1) loader.app.router.stack.splice(index, 1);
       },
+      findByPath(moduleName, arg) {
+        const path = util.combineFetchPath(moduleName, arg);
+        return loader.app.router.stack.find(layer => layer.path === path);
+      },
     };
   }
 
