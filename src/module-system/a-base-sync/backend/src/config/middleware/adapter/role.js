@@ -507,6 +507,48 @@ const Fn = module.exports = ctx => {
       }
     }
 
+    // const roleRights = [
+    //   { roleName: 'cms-writer', action: 'create' },
+    //   { roleName: 'cms-writer', action: 'write', scopeNames: 0 },
+    //   { roleName: 'cms-writer', action: 'delete', scopeNames: 0 },
+    //   { roleName: 'cms-writer', action: 'read', scopeNames: 'authenticated' },
+    //   { roleName: 'cms-publisher', action: 'read', scopeNames: 'authenticated' },
+    //   { roleName: 'cms-publisher', action: 'write', scopeNames: 'authenticated' },
+    //   { roleName: 'cms-publisher', action: 'publish', scopeNames: 'authenticated' },
+    //   { roleName: 'root', action: 'read', scopeNames: 'authenticated' },
+    // ];
+    async addRoleRightBatch({ module, atomClassName, atomClassIdParent = 0, roleRights }) {
+      if (!roleRights || !roleRights.length) return;
+      module = module || this.moduleName;
+      const _module = ctx.app.meta.modules[module];
+      const atomClass = await ctx.meta.atomClass.get({ module, atomClassName, atomClassIdParent });
+      for (const roleRight of roleRights) {
+        // role
+        const role = await this.get({ roleName: roleRight.roleName });
+        // scope
+        let scope;
+        if (!roleRight.scopeNames) {
+          scope = 0;
+        } else {
+          scope = [];
+          const scopeNames = Array.isArray(roleRight.scopeNames) ? roleRight.scopeNames : roleRight.scopeNames.split(',');
+          for (const scopeName of scopeNames) {
+            const roleScope = await this.get({ roleName: scopeName });
+            scope.push(roleScope.id);
+          }
+        }
+        // add role right
+        await this.addRoleRight({
+          roleId: role.id,
+          atomClassId: atomClass.id,
+          action: ctx.constant.module('a-base').atom.action[roleRight.action] || _module.main.meta.base.atoms[atomClassName]
+            .actions[roleRight.action].code,
+          scope,
+        });
+      }
+
+    }
+
     async _buildRolesRemove({ iid }) {
       await ctx.model.query(`delete from aRoleRef where aRoleRef.iid=${iid}`);
       await ctx.model.query(`delete from aRoleIncRef where aRoleIncRef.iid=${iid}`);
