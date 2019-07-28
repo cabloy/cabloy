@@ -71,14 +71,13 @@ module.exports = app => {
     async initModule(options, module, version) {
 
       // init
-      try {
+      const url = `/${module.info.url}/version/init`;
+      if (app.meta.router.findByPath(null, url)) {
         await this.ctx.performAction({
           method: 'post',
-          url: `/${module.info.url}/version/init`,
+          url,
           body: options,
         });
-      } catch (e) {
-        if (e.code !== 404) throw e;
       }
 
       // insert record
@@ -96,18 +95,16 @@ module.exports = app => {
     async testModule(options) {
 
       // test
-      try {
+      const url = `/${options.module.info.url}/version/test`;
+      if (app.meta.router.findByPath(null, url)) {
         await this.ctx.performAction({
           method: 'post',
-          url: `/${options.module.info.url}/version/test`,
+          url,
           body: options,
         });
-      } catch (e) {
-        if (e.code !== 404) throw e;
       }
 
     }
-
 
     // update this module
     async update(version) {
