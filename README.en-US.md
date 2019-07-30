@@ -36,6 +36,17 @@ CabloyJS: The Ultimate NodeJS Full Stack Business Development Platform, based on
 
 ![](./docs/assets/images/cabloy-demo-qrcode.png)
 
+## 解决方案
+
+CabloyJS has a large number of built-in modules to support the rapid development of various businesses. At the same time, CabloyJS provides a series of `out-of-the-box` solutions on this basis
+
+### Cabloy-CMS
+
+Cabloy-CMS is a `combination of static and dynamic` CMS based on the CabloyJS full-stack business development framework, which can quickly build web applications such as corporate websites, blogs, communities, and malls
+
+- Demonstration: [Blog - 暮风洗月](https://zhennann.com)
+- Docs: [https://cabloy.com/articles/cms-introduce.html](https://cabloy.com/articles/cms-introduce.html)
+
 ## Core Modules
 
 ### Test Module

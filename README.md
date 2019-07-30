@@ -36,6 +36,24 @@ CabloyJS是一款顶级NodeJS全栈业务开发框架, 基于KoaJS + EggJS + Vue
 
 ![](./docs/assets/images/cabloy-demo-qrcode.png)
 
+## 解决方案
+
+CabloyJS内置了大量核心模块，从而便于支持各类业务的快速开发。同时，CabloyJS在此基础上还提供了一系列`开箱即用`的解决方案
+
+### Cabloy-CMS
+
+Cabloy-CMS是基于CabloyJS全栈业务开发框架开发的`动静结合`的CMS，可以快速构建`企业网站`、`博客`、`社区`、`商城`等Web应用
+
+- 演示：[博客 - 暮风洗月](https://zhennann.com)
+- 官方文档：[https://cabloy.com/zh-cn/articles/cms-introduce.html](https://cabloy.com/zh-cn/articles/cms-introduce.html)
+
+### Cabloy-社区
+
+Cabloy-Community是基于Cabloy-CMS开发的社区（论坛）Web应用
+
+- 演示：[CabloyJS官方社区](https://community.cabloy.com)
+- 官方文档：[https://cabloy.com/zh-cn/articles/community-introduce.html](https://cabloy.com/zh-cn/articles/community-introduce.html)
+
 ## 核心模块一览表
 
 ### 测试模块
