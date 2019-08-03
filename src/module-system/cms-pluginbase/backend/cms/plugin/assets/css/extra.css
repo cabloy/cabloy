@@ -15,7 +15,8 @@ hr {
   border: 0 none;
 }
 
-article img {
+article img,
+.comment .content img {
   max-width: 100%;
   border-radius: 2px;
   display: block;
