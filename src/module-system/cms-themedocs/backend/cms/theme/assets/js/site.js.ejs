@@ -26,17 +26,44 @@ $(document).on('echo-ready', function() {
 
 function categoryTreeToggle($toggle, $container) {
   const $window = $(window);
+  const keyName = '_doc_tree_collapse';
+  function _toggle() {
+    let collapse = window.localStorage.getItem(keyName) || 'false';
+    if (collapse === 'false') {
+      collapse = 'true';
+      $container.addClass('sidebar-collapse');
+    } else {
+      collapse = 'false';
+      $container.removeClass('sidebar-collapse');
+    }
+    window.localStorage.setItem(keyName, collapse);
+  }
+  function _initOrSet(collapse) {
+    if (collapse === undefined) {
+      collapse = window.localStorage.getItem(keyName) || 'false';
+    } else {
+      window.localStorage.setItem(keyName, collapse);
+    }
+    if (collapse === 'false') {
+      $container.removeClass('sidebar-collapse');
+    } else {
+      $container.addClass('sidebar-collapse');
+    }
+  }
+
   $toggle.on('click', e => {
     e.preventDefault();
-    $container.toggleClass('sidebar-collapse');
+    _toggle();
   });
   $window.resize(() => {
     if ($window.width() <= 768) {
-      $container.addClass('sidebar-collapse');
+      _initOrSet('true');
     } else {
-      $container.removeClass('sidebar-collapse');
+      _initOrSet('false');
     }
   });
+
+  _initOrSet();
 }
 
 function categoryTree($treeContainer) {
