@@ -9,7 +9,7 @@
     "dev:backend": "egg-born-bin backend-dev",
     "debug:backend": "egg-born-bin backend-debug",
     "lint": "eslint src",
-    "test:backend": "egg-born-bin backend-test",
+    "test:backend": "egg-born-bin backend-test --timeout=3600000",
     "cov:backend": "egg-born-bin backend-cov",
     "start:backend": "egg-born-scripts backend-start --daemon",
     "stop:backend": "egg-born-scripts backend-stop"
