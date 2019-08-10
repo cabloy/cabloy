@@ -1,5 +1,16 @@
-<div class="panel panel-default panel-comments-recent">
-  <div class="panel-heading"><%=text('Recent Comments')%></div>
+<%
+  // options
+  const _options=typeof options!=='undefined'?options:null;
+  // title
+  const title=(_options && _options.title) || text('Recent Comments');
+  // data
+  let atomClassData='';
+  if(_options && _options.atomClass){
+    atomClassData=` data-module="${_options.atomClass.module}" data-atomclassname="${_options.atomClass.atomClassName}" data-atomclassidparent="${_options.atomClass.atomClassIdParent}"`;
+  }
+%>
+<div class="panel panel-default panel-comments-recent"<%-atomClassData%>>
+  <div class="panel-heading"><%=title%></div>
   <div class="panel-body">
     <ul class="media-list list"></ul>
   </div>

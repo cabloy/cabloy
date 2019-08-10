@@ -43,10 +43,13 @@ util.sidebar = {
     this._loadTags({ $container, onParse: options.onParse });
   },
   commentsRecent(options) {
-    const $container = $(options.container);
-    if ($container.length === 0) return;
-    if (!options.onParse) options.onParse = _onParseCommentRecent;
-    this._loadCommentsRecent({ $container, onParse: options.onParse });
+    const $containers = $(options.container);
+    if ($containers.length === 0) return;
+    for (let i = 0; i < $containers.length; i++) {
+      const $container = $($containers[i]);
+      if (!options.onParse) options.onParse = _onParseCommentRecent;
+      this._loadCommentsRecent({ $container, onParse: options.onParse });
+    }
   },
   profileAuthor(options) {
     const $container = $(options.container);
@@ -92,6 +95,16 @@ util.sidebar = {
     });
   },
   _loadCommentsRecent({ $container, onParse }) {
+    let atomClass;
+    if ($container.data('module')) {
+      atomClass = {
+        module: $container.data('module'),
+        atomClassName: $container.data('atomclassname'),
+        atomClassIdParent: parseInt($container.data('atomclassidparent') || 0),
+      };
+    } else {
+      atomClass = env.site.atomClass;
+    }
     // options
     const options = {
       orders: [
@@ -104,7 +117,7 @@ util.sidebar = {
       method: 'post',
       url: '/a/cms/comment/all',
       body: {
-        atomClass: env.site.atomClass,
+        atomClass,
         options,
       },
     }).then(data => {
