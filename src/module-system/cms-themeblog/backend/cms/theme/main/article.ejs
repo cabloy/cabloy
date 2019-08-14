@@ -4,7 +4,9 @@
     <article>
       <%- await include('../layout/breadcrumb.ejs') %>
       <%- await include('../layout/article/title.ejs')%>
-      <%- article.html %>
+      <div class="article-body">
+        <%- article.html %>
+      </div>
       <%- await include('../layout/article/attachments.ejs') %>
       <%- await include('../layout/article/socialshare.ejs') %>
       <%- await include('../layout/article/stat.ejs') %>
