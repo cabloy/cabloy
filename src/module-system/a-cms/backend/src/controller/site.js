@@ -4,6 +4,16 @@ module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class SiteController extends app.Controller {
 
+    async getSite() {
+      const atomClass = this.ctx.request.body.atomClass;
+      const site = await this.ctx.service.site.getSite({
+        atomClass,
+        language: this.ctx.request.body.language,
+        options: this.ctx.request.body.options,
+      });
+      this.ctx.success(site);
+    }
+
     async getConfigSiteBase() {
       const atomClass = this.ctx.request.body.atomClass;
       const data = await this.ctx.service.site.getConfigSiteBase({ atomClass });

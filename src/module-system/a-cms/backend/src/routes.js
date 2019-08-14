@@ -38,6 +38,7 @@ module.exports = app => {
       meta: { right: { type: 'atom', action: 2 } },
     },
     // site
+    { method: 'post', path: 'site/getSite', controller: site, middlewares: 'inner', meta: { auth: { enable: false } } },
     { method: 'post', path: 'site/getConfigSiteBase', controller: site, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'site/getConfigSite', controller: site, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'site/setConfigSite', controller: site, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },

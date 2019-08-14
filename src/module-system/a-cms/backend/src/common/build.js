@@ -141,7 +141,9 @@ class Build {
   }
 
   // site<plugin<theme<site(db)<language(db)
-  async getSite({ language }) {
+  async getSite({ language, options }) {
+    // options
+    options = options || {};
     // base
     const siteBase = await this.combineSiteBase();
     // site
@@ -159,6 +161,25 @@ class Build {
         url: this.getUrl(site, item, 'index.html'),
       });
     }
+    // front
+    site.front = {};
+    // front.env
+    site.front.env = extend(true, {
+      base: site.base,
+      language: site.language,
+    }, site.env, {
+      site: {
+        serverUrl: site.serverUrl,
+        rawRootUrl: this.getUrlRawRoot(site),
+        atomClass: this.atomClass,
+      },
+    });
+    // front.envs
+    if (!options.notEnvs) {
+      site.front.envs = await this.getFrontEnvs({ language });
+    }
+
+    // ok
     return site;
   }
 
@@ -429,12 +450,7 @@ class Build {
     data._filename = fileName;
     data._path = fileSrc.replace('.ejs', '');
     // env site
-    data.env('site', {
-      path: data._path,
-      serverUrl: site.serverUrl,
-      rawRootUrl: this.getUrlRawRoot(site),
-      atomClass: this.atomClass,
-    });
+    data.env('site.path', data._path);
     // load src
     let contentSrc = await fse.readFile(fileName);
     // load includes of plugins
@@ -583,10 +599,10 @@ $(document).ready(function() {
       extend(true, _env, value);
     }
     // combine
-    const env = extend(true, {
-      base: site.base,
-      language: site.language,
-    }, site.env, _env);
+    const env = extend(true, site.front.env, _env);
+    // front.envs
+    env.envs = site.front.envs;
+    // article
     if (data.article) {
       env.article = extend(true, {}, data.article);
       // delete
@@ -950,6 +966,45 @@ ${items}</sitemapindex>`;
       relativeUrl: article.url,
       url: this.getUrl(site, site.language.current, article.url),
     };
+  }
+
+  getAtomClassFullName(atomClass) {
+    return `${atomClass.module}:${atomClass.atomClassName}:${atomClass.atomClassIdParent}`;
+  }
+
+  async getFrontEnvs({ language }) {
+    const envs = {};
+    for (const module of this.ctx.app.meta.modulesArray) {
+      if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.site) {
+        // may be more atoms
+        for (const key in module.main.meta.base.atoms) {
+          // atomClass
+          const atomClass = {
+            module: module.info.relativeName,
+            atomClassName: key,
+            atomClassIdParent: 0,
+          };
+          const atomClassFullName = this.getAtomClassFullName(atomClass);
+          if (this.getAtomClassFullName(this.atomClass) !== atomClassFullName) {
+            // getSite
+            const site = await this.ctx.performAction({
+              method: 'post',
+              url: '/a/cms/site/getSite',
+              body: {
+                atomClass,
+                language,
+                options: {
+                  notEnvs: true,
+                },
+              },
+            });
+            // set
+            envs[atomClassFullName] = site.front.env;
+          }
+        }
+      }
+    }
+    return envs;
   }
 
 }

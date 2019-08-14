@@ -10,6 +10,11 @@ module.exports = app => {
 
   class Site extends app.Service {
 
+    async getSite({ atomClass, language, options }) {
+      const build = Build.create(this.ctx, atomClass);
+      return await build.getSite({ language, options });
+    }
+
     async getConfigSiteBase({ atomClass }) {
       const build = Build.create(this.ctx, atomClass);
       return await build.getConfigSiteBase();

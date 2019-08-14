@@ -4,6 +4,10 @@
   "title": "CMS",
   "eggBornModule": {
     "fileVersion": 5,
+    "cms": {
+      "name": "cms",
+      "site": true
+    },
     "dependencies": {
       "a-instance": "2.0.0",
       "a-base": "2.0.0"
