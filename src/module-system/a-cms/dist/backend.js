@@ -324,7 +324,9 @@ class Build {
   }
 
   // site<plugin<theme<site(db)<language(db)
-  async getSite({ language }) {
+  async getSite({ language, options }) {
+    // options
+    options = options || {};
     // base
     const siteBase = await this.combineSiteBase();
     // site
@@ -342,6 +344,28 @@ class Build {
         url: this.getUrl(site, item, 'index.html'),
       });
     }
+    // front
+    site.front = {};
+    // front.env
+    site.front.env = extend(true, {
+      base: site.base,
+      language: site.language,
+    }, site.env, {
+      site: {
+        serverUrl: site.serverUrl,
+        rawRootUrl: this.getUrlRawRoot(site),
+        atomClass: this.atomClass,
+      },
+    });
+    // front.envs
+    if (options.envs !== false) {
+      const envs = await this.getFrontEnvs({ language });
+      if (Object.keys(envs).length > 0) {
+        site.front.envs = envs;
+      }
+    }
+
+    // ok
     return site;
   }
 
@@ -612,12 +636,7 @@ class Build {
     data._filename = fileName;
     data._path = fileSrc.replace('.ejs', '');
     // env site
-    data.env('site', {
-      path: data._path,
-      serverUrl: site.serverUrl,
-      rawRootUrl: this.getUrlRawRoot(site),
-      atomClass: this.atomClass,
-    });
+    data.env('site.path', data._path);
     // load src
     let contentSrc = await fse.readFile(fileName);
     // load includes of plugins
@@ -766,10 +785,12 @@ $(document).ready(function() {
       extend(true, _env, value);
     }
     // combine
-    const env = extend(true, {
-      base: site.base,
-      language: site.language,
-    }, site.env, _env);
+    const env = extend(true, site.front.env, _env);
+    // front.envs
+    if (site.front.envs) {
+      env.envs = site.front.envs;
+    }
+    // article
     if (data.article) {
       env.article = extend(true, {}, data.article);
       // delete
@@ -1135,6 +1156,52 @@ ${items}</sitemapindex>`;
     };
   }
 
+  getAtomClassFullName(atomClass) {
+    return `${atomClass.module}:${atomClass.atomClassName}:${atomClass.atomClassIdParent}`;
+  }
+
+  async getFrontEnvs({ language }) {
+    const envs = {};
+    for (const module of this.ctx.app.meta.modulesArray) {
+      if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.site) {
+        // may be more atoms
+        for (const key in module.main.meta.base.atoms) {
+          // atomClass
+          const atomClass = {
+            module: module.info.relativeName,
+            atomClassName: key,
+            atomClassIdParent: 0,
+          };
+          const atomClassFullName = this.getAtomClassFullName(atomClass);
+          if (this.getAtomClassFullName(this.atomClass) !== atomClassFullName) {
+            // getSite
+            let site;
+            try {
+              site = await this.ctx.performAction({
+                method: 'post',
+                url: '/a/cms/site/getSite',
+                body: {
+                  atomClass,
+                  language,
+                  options: {
+                    envs: false,
+                  },
+                },
+              });
+            } catch (e) {
+              // nothing
+            }
+            // set
+            if (site) {
+              envs[atomClassFullName] = site.front.env;
+            }
+          }
+        }
+      }
+    }
+    return envs;
+  }
+
 }
 
 module.exports = {
@@ -1405,6 +1472,7 @@ module.exports = app => {
       meta: { right: { type: 'atom', action: 2 } },
     },
     // site
+    { method: 'post', path: 'site/getSite', controller: site, middlewares: 'inner', meta: { auth: { enable: false } } },
     { method: 'post', path: 'site/getConfigSiteBase', controller: site, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'site/getConfigSite', controller: site, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'site/setConfigSite', controller: site, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
@@ -1710,6 +1778,16 @@ const utils = __webpack_require__(0);
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class SiteController extends app.Controller {
+
+    async getSite() {
+      const atomClass = this.ctx.request.body.atomClass;
+      const site = await this.ctx.service.site.getSite({
+        atomClass,
+        language: this.ctx.request.body.language,
+        options: this.ctx.request.body.options,
+      });
+      this.ctx.success(site);
+    }
 
     async getConfigSiteBase() {
       const atomClass = this.ctx.request.body.atomClass;
@@ -3119,6 +3197,11 @@ const _blockArrayLocales = {};
 module.exports = app => {
 
   class Site extends app.Service {
+
+    async getSite({ atomClass, language, options }) {
+      const build = Build.create(this.ctx, atomClass);
+      return await build.getSite({ language, options });
+    }
 
     async getConfigSiteBase({ atomClass }) {
       const build = Build.create(this.ctx, atomClass);

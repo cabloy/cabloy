@@ -175,8 +175,11 @@ class Build {
       },
     });
     // front.envs
-    if (!options.notEnvs) {
-      site.front.envs = await this.getFrontEnvs({ language });
+    if (options.envs !== false) {
+      const envs = await this.getFrontEnvs({ language });
+      if (Object.keys(envs).length > 0) {
+        site.front.envs = envs;
+      }
     }
 
     // ok
@@ -601,7 +604,9 @@ $(document).ready(function() {
     // combine
     const env = extend(true, site.front.env, _env);
     // front.envs
-    env.envs = site.front.envs;
+    if (site.front.envs) {
+      env.envs = site.front.envs;
+    }
     // article
     if (data.article) {
       env.article = extend(true, {}, data.article);
@@ -987,19 +992,26 @@ ${items}</sitemapindex>`;
           const atomClassFullName = this.getAtomClassFullName(atomClass);
           if (this.getAtomClassFullName(this.atomClass) !== atomClassFullName) {
             // getSite
-            const site = await this.ctx.performAction({
-              method: 'post',
-              url: '/a/cms/site/getSite',
-              body: {
-                atomClass,
-                language,
-                options: {
-                  notEnvs: true,
+            let site;
+            try {
+              site = await this.ctx.performAction({
+                method: 'post',
+                url: '/a/cms/site/getSite',
+                body: {
+                  atomClass,
+                  language,
+                  options: {
+                    envs: false,
+                  },
                 },
-              },
-            });
+              });
+            } catch (e) {
+              // nothing
+            }
             // set
-            envs[atomClassFullName] = site.front.env;
+            if (site) {
+              envs[atomClassFullName] = site.front.env;
+            }
           }
         }
       }
