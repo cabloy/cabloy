@@ -34,6 +34,32 @@ function _onParseProfileAuthor(data) {
   `;
 }
 
+function _onParseArticleRecent(item, atomClass) {
+  const audio = !item.audioFirst ? '' : '<span class="glyphicon glyphicon-music"></span> ';
+  const attachment = item.attachmentCount === 0 ? '' : '<span class="glyphicon glyphicon-paperclip"></span> ';
+  // avatar
+  const userAvatar = item.avatar || util.url('plugins/cms-pluginsidebar/assets/images/user.png');
+  const stat = `
+<div class="title stat no-parse" data-article-id="${item.atomId}">
+<img class="avatar avatar16" src="${util.combineImageUrl(userAvatar, 16, 16)}">
+<span>${util.escapeHtml(item.userName)}</span>
+<span class="num date">${util.time.formatDateTime(item.updatedAt, 'MM-DD HH:mm')}</span>
+<span class="glyphicon glyphicon-eye-open"></span><span class="num readCount">${item.readCount}</span>
+<span class="glyphicon glyphicon-heart"></span><span class="num starCount">${item.starCount}</span>
+<a target="_blank" href="${util.url(item.url)}#comments"><span class="glyphicon glyphicon-comment"></span><span class="num commentCount">${item.commentCount}</span></a>
+</div>
+        `;
+  return `
+<li class="media">
+    <div class="media-body">
+      <h4 class="media-heading">${audio}${attachment}<a target="_blank" href="${util.url(item.url, item.language, atomClass)}">${util.escapeHtml(item.atomName)}</a></h4>
+      ${util.escapeHtml(item.description) || item.summary}
+      ${stat}
+    </div>
+</li>
+        `;
+}
+
 // sidebar
 util.sidebar = {
   tags(options) {
@@ -69,6 +95,52 @@ util.sidebar = {
       };
       const url = `${env.site.serverUrl}/#!/a/cms/article/post?item=${encodeURIComponent(JSON.stringify(item))}`;
       location.assign(url);
+    });
+  },
+  articlesRecent(options) {
+    const $containers = $(options.container);
+    if ($containers.length === 0) return;
+    for (let i = 0; i < $containers.length; i++) {
+      const $container = $($containers[i]);
+      if (!options.onParse) options.onParse = _onParseArticleRecent;
+      this._loadArticlesRecent({ $container, onParse: options.onParse });
+    }
+  },
+  _loadArticlesRecent({ $container, onParse }) {
+    let atomClass;
+    if ($container.data('module')) {
+      atomClass = {
+        module: $container.data('module'),
+        atomClassName: $container.data('atomclassname'),
+        atomClassIdParent: parseInt($container.data('atomclassidparent') || 0),
+      };
+    } else {
+      atomClass = env.site.atomClass;
+    }
+    // options
+    const options = {
+      where: {
+        'f.language': env.language.current,
+      },
+      orders: [
+        [ 'a.createdAt', 'desc' ],
+      ],
+      page: { index: 0, size: env.article.recentNum },
+      mode: 'list',
+    };
+    // select
+    util.performAction({
+      method: 'post',
+      url: '/a/cms/article/list',
+      body: {
+        atomClass,
+        options,
+      },
+    }).then(data => {
+      const $list = $('.list', $container);
+      for (let i = 0; i < data.list.length; i++) {
+        $list.append($(onParse(data.list[i], atomClass)));
+      }
     });
   },
   _loadTags({ $container, onParse }) {
@@ -123,7 +195,7 @@ util.sidebar = {
     }).then(data => {
       const $list = $('.list', $container);
       for (let i = 0; i < data.list.length; i++) {
-        $list.append($(onParse(data.list[i],atomClass)));
+        $list.append($(onParse(data.list[i], atomClass)));
       }
     });
   },
