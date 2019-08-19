@@ -1305,7 +1305,7 @@ module.exports = appInfo => {
         date: 'YYYY-MM-DD',
         time: 'HH:mm:ss',
       },
-      article: {
+      article2: {
         recentNum: 5,
       },
       comment: {
