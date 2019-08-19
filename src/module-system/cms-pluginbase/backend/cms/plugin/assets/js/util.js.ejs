@@ -154,25 +154,25 @@ const util = {
   },
   getAtomClassFullName(atomClass) {
     return `${atomClass.module}:${atomClass.atomClassName}:${atomClass.atomClassIdParent}`;
-  }
-  atomClassEqual(atomClass1,atomClass2){
-    if(!atomClass1 || !atomClass2) return false;
-    return this.getAtomClassFullName(atomClass1)===this.getAtomClassFullName(atomClass2);
   },
-  rootUrl(language,atomClass) {
+  atomClassEqual(atomClass1, atomClass2) {
+    if (!atomClass1 || !atomClass2) return false;
+    return this.getAtomClassFullName(atomClass1) === this.getAtomClassFullName(atomClass2);
+  },
+  rootUrl(language, atomClass) {
     let _env;
-    if(!atomClass || this.atomClassEqual(atomClass,env.site.atomClass)){
-      _env=env;
-    }else{
-      _env=env.envs && env.envs[this.getAtomClassFullName(atomClass)];
-      if(!_env) return null;
+    if (!atomClass || this.atomClassEqual(atomClass, env.site.atomClass)) {
+      _env = env;
+    } else {
+      _env = env.envs && env.envs[this.getAtomClassFullName(atomClass)];
+      if (!_env) return null;
     }
     language = language || _env.language.current;
     return `${_env.site.rawRootUrl}${language === _env.language.default ? '' : '/' + language}`;
   },
-  url(path, language,atomClass) {
+  url(path, language, atomClass) {
     if (path && (path.indexOf('http://') === 0 || path.indexOf('https://') === 0)) return this.escapeURL(path);
-    const urlRoot = this.rootUrl(language,atomClass);
+    const urlRoot = this.rootUrl(language, atomClass);
     const _url = path ? `${urlRoot}/${path}` : urlRoot;
     return this.escapeURL(_url);
   },
