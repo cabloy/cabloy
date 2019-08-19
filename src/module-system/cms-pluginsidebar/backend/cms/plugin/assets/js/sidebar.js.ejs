@@ -1,8 +1,8 @@
-function _onParseCommentRecent(item) {
+function _onParseCommentRecent(item, atomClass) {
   return `
 <li class="media">
     <div class="media-body">
-      <h5 class="media-heading"><a href="${util.url(item.url, item.language)}#comments">Re: ${util.escapeHtml(item.atomName)}</a></h5>
+      <h5 class="media-heading"><a href="${util.url(item.url, item.language, atomClass)}#comments">Re: ${util.escapeHtml(item.atomName)}</a></h5>
       <div class="body">${item.h_summary}</div>
       <div class="user">-- ${util.escapeHtml(item.h_userName)}</div>
     </div>
@@ -123,7 +123,7 @@ util.sidebar = {
     }).then(data => {
       const $list = $('.list', $container);
       for (let i = 0; i < data.list.length; i++) {
-        $list.append($(onParse(data.list[i])));
+        $list.append($(onParse(data.list[i],atomClass)));
       }
     });
   },
