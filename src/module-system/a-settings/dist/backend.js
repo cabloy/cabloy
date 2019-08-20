@@ -229,16 +229,11 @@ module.exports = app => {
 
     async init(options) {
       if (options.version === 1) {
-        // function
-        const func = await this.ctx.meta.function.get({
-          name: 'settings',
-        });
-        // role function right
-        const role = await this.ctx.meta.role.getSystemRole({ roleName: 'system' });
-        await this.ctx.meta.role.addRoleFunction({
-          roleId: role.id,
-          functionId: func.id,
-        });
+        // roleFunctions
+        const roleFunctions = [
+          { roleName: 'system', name: 'settings' },
+        ];
+        await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
       }
     }
 
