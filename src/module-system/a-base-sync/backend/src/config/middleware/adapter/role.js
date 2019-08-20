@@ -546,7 +546,25 @@ const Fn = module.exports = ctx => {
           scope,
         });
       }
+    }
 
+    // const roleFunctions = [
+    //   { roleName: 'root', name: 'listComment' },
+    // ];
+    async addRoleFunctionBatch({ module, roleFunctions }) {
+      if (!roleFunctions || !roleFunctions.length) return;
+      module = module || this.moduleName;
+      for (const roleFunction of roleFunctions) {
+        // role
+        const role = await this.get({ roleName: roleFunction.roleName });
+        // func
+        const func = await ctx.meta.function.get({ module, name: roleFunction.name });
+        // add role function
+        await this.addRoleFunction({
+          roleId: role.id,
+          functionId: func.id,
+        });
+      }
     }
 
     async _buildRolesRemove({ iid }) {

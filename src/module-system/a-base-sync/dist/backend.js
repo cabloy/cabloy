@@ -3901,7 +3901,25 @@ const Fn = module.exports = ctx => {
           scope,
         });
       }
+    }
 
+    // const roleFunctions = [
+    //   { roleName: 'root', name: 'listComment' },
+    // ];
+    async addRoleFunctionBatch({ module, roleFunctions }) {
+      if (!roleFunctions || !roleFunctions.length) return;
+      module = module || this.moduleName;
+      for (const roleFunction of roleFunctions) {
+        // role
+        const role = await this.get({ roleName: roleFunction.roleName });
+        // func
+        const func = await ctx.meta.function.get({ module, name: roleFunction.name });
+        // add role function
+        await this.addRoleFunction({
+          roleId: role.id,
+          functionId: func.id,
+        });
+      }
     }
 
     async _buildRolesRemove({ iid }) {
@@ -5867,17 +5885,10 @@ module.exports = function(ctx) {
 
     async run(options) {
       // roleFunctions
-      const role = await ctx.meta.role.getSystemRole({ roleName: 'root' });
-      const functions = [ 'listComment' ];
-      for (const functionName of functions) {
-        const func = await ctx.meta.function.get({
-          name: functionName,
-        });
-        await ctx.meta.role.addRoleFunction({
-          roleId: role.id,
-          functionId: func.id,
-        });
-      }
+      const roleFunctions = [
+        { roleName: 'root', name: 'listComment' },
+      ];
+      await ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
     }
 
   }
