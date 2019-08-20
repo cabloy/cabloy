@@ -32,7 +32,7 @@ CabloyJS是一款顶级NodeJS全栈业务开发框架, 基于KoaJS + EggJS + Vue
 
 ## 核心资源一览表
 
-- [Awesome](./awesome.md)
+- [CabloyJS Awesome](./awesome.md)
 
 ## 目标
 
