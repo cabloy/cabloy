@@ -94,17 +94,10 @@ module.exports = app => {
         await this.ctx.meta.function.delete({ name: 'kichenSink' });
 
         // roleFunctions
-        const roleRoot = await this.ctx.meta.role.getSystemRole({ roleName: 'root' });
-        const functions = [ 'kitchenSink' ];
-        for (const functionName of functions) {
-          const func = await this.ctx.meta.function.get({
-            name: functionName,
-          });
-          await this.ctx.meta.role.addRoleFunction({
-            roleId: roleRoot.id,
-            functionId: func.id,
-          });
-        }
+        const roleFunctions = [
+          { roleName: 'root', name: 'kitchenSink' },
+        ];
+        await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
       }
 
       //
