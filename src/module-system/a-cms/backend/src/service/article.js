@@ -18,6 +18,9 @@ module.exports = app => {
       };
       if (item.language) params.language = item.language;
       if (item.categoryId) params.categoryId = item.categoryId;
+      // uuid
+      params.uuid = item.uuid || uuid.v4().replace(/-/g, '');
+      // insert
       const res = await this.ctx.model.article.insert(params);
       const itemId = res.insertId;
       // add content
@@ -59,7 +62,6 @@ module.exports = app => {
     async write({ atomClass, key, item, user }) {
       // get atom for safety
       const atomOld = await this.ctx.meta.atom.read({ key, user });
-
       // if undefined then old
       const fields = [ 'slug', 'editMode', 'content', 'language', 'categoryId', 'sticky', 'keywords', 'description', 'sorting', 'flag', 'extra' ];
       for (const field of fields) {
@@ -71,7 +73,7 @@ module.exports = app => {
       if (item.slug) {
         url = `articles/${item.slug}.html`;
       } else {
-        url = atomOld.url || `articles/${uuid.v4().replace(/-/g, '')}.html`;
+        url = `articles/${atomOld.uuid}.html`;
       }
       // image first
       let imageFirst = '';

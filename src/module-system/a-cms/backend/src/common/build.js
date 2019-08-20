@@ -333,9 +333,11 @@ class Build {
     // data
     const data = await this.getData({ site });
     data.article = article;
+    // render
     await this._renderFile({
       fileSrc: 'main/article.ejs',
       fileDest: article.url,
+      fileDestAlt: `articles/${article.uuid}.html`,
       data,
     });
   }
@@ -438,7 +440,7 @@ class Build {
     }
   }
 
-  async _renderFile({ fileSrc, fileDest, data }) {
+  async _renderFile({ fileSrc, fileDest, fileDestAlt, data }) {
     // site
     const site = data.site;
     // language
@@ -500,6 +502,11 @@ $(document).ready(function() {
     }
     // write
     await fse.outputFile(fileWrite, content);
+    // alternative url
+    if (fileDestAlt && fileDestAlt !== fileDest) {
+      const fileWriteAlt = path.join(pathDist, fileDestAlt);
+      await fse.outputFile(fileWriteAlt, content);
+    }
   }
 
   async _loadPluginIncludes({ site, language }) {

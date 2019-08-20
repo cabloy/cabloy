@@ -1,9 +1,9 @@
 {
   "name": "egg-born-module-a-cms",
-  "version": "2.0.16",
+  "version": "2.0.17",
   "title": "CMS",
   "eggBornModule": {
-    "fileVersion": 5,
+    "fileVersion": 6,
     "cms": {
       "name": "cms",
       "site": true
