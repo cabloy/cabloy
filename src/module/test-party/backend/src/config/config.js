@@ -15,6 +15,21 @@ module.exports = appInfo => {
         path: 'test/feat/startup/instance',
       },
     };
+    // middlewares
+    config.middlewares = {
+      testInterception: {
+        global: false,
+        dependencies: 'instance',
+      },
+      testRestructuring: {
+        global: false,
+        dependencies: 'instance',
+      },
+      testInjection: {
+        global: false,
+        dependencies: 'instance',
+      },
+    };
   }
 
   if (appInfo.env === 'unittest' || appInfo.env === 'local') {

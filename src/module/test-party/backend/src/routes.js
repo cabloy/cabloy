@@ -31,6 +31,7 @@ const testFeatSequence = require('./controller/test/feat/sequence.js');
 const testFeatSettings = require('./controller/test/feat/settings.js');
 const testFeatStatus = require('./controller/test/feat/status.js');
 const testFeatValidation = require('./controller/test/feat/validation.js');
+const testFeatMiddleware = require('./controller/test/feat/middleware.js');
 const testKitchensinkAutocomplete = require('./controller/kitchen-sink/autocomplete.js');
 const testKitchensinkFormSchemaValidation = require('./controller/kitchen-sink/form-schema-validation.js');
 const testKitchensinkPtrIsLoadMore = require('./controller/kitchen-sink/ptr-is-loadmore.js');
@@ -175,6 +176,11 @@ module.exports = app => {
       { method: 'post', path: 'test/feat/validation/schema', controller: testFeatValidation, middlewares: 'test,validate',
         meta: { auth: { enable: false }, validate: { validator: 'userTest', schema: 'settingsUserExtra' } },
       },
+
+      // test/feat/middleware
+      { method: 'post', path: 'test/feat/middleware/interception', controller: testFeatMiddleware, middlewares: 'test,testInterception' },
+      { method: 'post', path: 'test/feat/middleware/restructuring', controller: testFeatMiddleware, middlewares: 'test,testInterception,testRestructuring' },
+      { method: 'post', path: 'test/feat/middleware/injection', controller: testFeatMiddleware, middlewares: 'test,testInterception,testRestructuring,testInjection' },
 
       // kitchen-sink/autocomplete
       { method: 'get', path: 'kitchen-sink/autocomplete/languages/:query', controller: testKitchensinkAutocomplete, action: 'languages', meta: { auth: { enable: false } } },
