@@ -10,4 +10,5 @@ export default {
   F7AboutTip2: 'The main approach of the Framework7 is to give you an opportunity to create iOS and Android (Material) apps with HTML, CSS and JavaScript easily and clear. Framework7 is full of freedom. It doesn\'t limit your imagination or offer ways of any solutions somehow. Framework7 gives you freedom!',
   F7AboutTip3: 'Framework7 is not compatible with all platforms. It is focused only on iOS and Android (Material) to bring the best experience and simplicity',
   F7AboutTip4: 'CabloyJS pioneered the layout strategy of \'PC = Mobile + Pad\', bringing the user experience and development experience of Framework7 into the PC scene',
+  TipBasicProcess: 'Basic process of frontend and backend development',
 };

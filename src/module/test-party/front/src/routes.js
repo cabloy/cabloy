@@ -14,6 +14,7 @@ export default [
   // cabloy
   { path: 'kitchen-sink/index', component: loadKitchenSink('index') },
   { path: 'kitchen-sink/about', component: loadKitchenSink('about') },
+  { path: 'kitchen-sink/hello', component: loadKitchenSink('hello') },
   { path: 'kitchen-sink/fileUpload', component: loadKitchenSink('fileUpload') },
   { path: 'kitchen-sink/progress', component: loadKitchenSink('progress') },
   { path: 'kitchen-sink/settings', component: loadKitchenSink('settings') },

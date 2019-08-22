@@ -105,11 +105,11 @@ module.exports = app => {
   // routes
   const routes = __webpack_require__(10)(app);
   // services
-  const services = __webpack_require__(49)(app);
+  const services = __webpack_require__(50)(app);
   // models
-  const models = __webpack_require__(55)(app);
+  const models = __webpack_require__(56)(app);
   // meta
-  const meta = __webpack_require__(59)(app);
+  const meta = __webpack_require__(60)(app);
 
   return {
     routes,
@@ -226,7 +226,7 @@ module.exports = {
   'Level Three': '层级3',
   'Well Done': '干得好',
   'Error Test': '错误测试',
-  'Hello World': '世界您好',
+  'Hello World': '世界，您好',
 };
 
 
@@ -345,8 +345,9 @@ const testFeatStatus = __webpack_require__(42);
 const testFeatValidation = __webpack_require__(43);
 const testFeatMiddleware = __webpack_require__(44);
 const testKitchensinkAutocomplete = __webpack_require__(45);
-const testKitchensinkFormSchemaValidation = __webpack_require__(47);
-const testKitchensinkPtrIsLoadMore = __webpack_require__(48);
+const testKitchensinkHello = __webpack_require__(47);
+const testKitchensinkFormSchemaValidation = __webpack_require__(48);
+const testKitchensinkPtrIsLoadMore = __webpack_require__(49);
 
 module.exports = app => {
   let routes = [
@@ -493,6 +494,9 @@ module.exports = app => {
       { method: 'post', path: 'test/feat/middleware/interception', controller: testFeatMiddleware, middlewares: 'test,testInterception' },
       { method: 'post', path: 'test/feat/middleware/restructuring', controller: testFeatMiddleware, middlewares: 'test,testInterception,testRestructuring' },
       { method: 'post', path: 'test/feat/middleware/injection', controller: testFeatMiddleware, middlewares: 'test,testInterception,testRestructuring,testInjection' },
+
+      // kitchen-sink/hello
+      { method: 'post', path: 'kitchen-sink/hello/echo', controller: testKitchensinkHello },
 
       // kitchen-sink/autocomplete
       { method: 'get', path: 'kitchen-sink/autocomplete/languages/:query', controller: testKitchensinkAutocomplete, action: 'languages', meta: { auth: { enable: false } } },
@@ -2389,6 +2393,36 @@ module.exports = [{"id":0,"name":"A# .NET"},{"id":1,"name":"A# (Axiom)"},{"id":2
 
 module.exports = app => {
 
+  class HelloController extends app.Controller {
+
+    async echo() {
+      const message = 'Hello World';
+      this.ctx.success(message);
+    }
+
+    async echo2() {
+      const message = this.ctx.config.message;
+      this.ctx.success(message);
+    }
+
+    async echo3() {
+      const message = this.ctx.text('Hello World');
+      this.ctx.success(message);
+    }
+
+  }
+
+  return HelloController;
+};
+
+
+
+/***/ }),
+/* 48 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+
   class FormSchemaValidationController extends app.Controller {
 
     async load() {
@@ -2438,7 +2472,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports) {
 
 
@@ -2475,12 +2509,12 @@ module.exports = app => {
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(50);
-const party = __webpack_require__(53);
-const partyPublic = __webpack_require__(54);
+const version = __webpack_require__(51);
+const party = __webpack_require__(54);
+const partyPublic = __webpack_require__(55);
 
 module.exports = app => {
   const services = {
@@ -2497,10 +2531,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const VersionTestFn = __webpack_require__(51);
+const VersionTestFn = __webpack_require__(52);
 
 module.exports = app => {
 
@@ -2629,10 +2663,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const testData = __webpack_require__(52);
+const testData = __webpack_require__(53);
 
 module.exports = function(ctx) {
 
@@ -2753,7 +2787,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports) {
 
 // roleName, leader, catalog, roleNameParent
@@ -2802,7 +2836,7 @@ module.exports = {
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2910,7 +2944,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2952,12 +2986,12 @@ module.exports = app => {
 
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const party = __webpack_require__(56);
-const partyType = __webpack_require__(57);
-const partyPublic = __webpack_require__(58);
+const party = __webpack_require__(57);
+const partyType = __webpack_require__(58);
+const partyPublic = __webpack_require__(59);
 
 module.exports = app => {
   const models = {
@@ -2974,7 +3008,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2992,7 +3026,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3010,7 +3044,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3028,7 +3062,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -3039,9 +3073,9 @@ module.exports = app => {
   };
   if (app.meta.isTest || app.meta.isLocal) {
     // schemas
-    const schemas = __webpack_require__(60)(app);
+    const schemas = __webpack_require__(61)(app);
     // keywords
-    const keywords = __webpack_require__(61)(app);
+    const keywords = __webpack_require__(62)(app);
     // meta
     extend(true, meta, {
       base: {
@@ -3196,7 +3230,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3409,7 +3443,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);

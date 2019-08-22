@@ -44,6 +44,7 @@ export default {
   Chinese: '中文',
   Upload: '上传',
   Avatar: '头像',
+  Click: '点击',
   CabloyAboutTip1: 'CabloyJS - 是一款顶级NodeJS全栈业务开发框架',
   CabloyAboutTip2: '前端采用VueJS + Framework7 + Webpack，后端采用KoaJS + EggJS，数据库采用MySQL',
   CabloyAboutTip3: '在纵向上，将前端和后端打通，形成一个有机的整体，避免前端和后端各自为政的状况',
@@ -52,6 +53,7 @@ export default {
   F7AboutTip2: 'Framework7完全自由，不限制您的想象力，并以任何方式提供解决方案',
   F7AboutTip3: 'Framework7不兼容所有平台，而是聚焦于iOS和Android，带来最佳用户体验和简洁性',
   F7AboutTip4: 'CabloyJS首创PC=Mobile+Pad的布局策略，将Framework7的用户体验和开发体验也带入到了PC场景',
+  TipBasicProcess: '前后端开发的基本流程',
   'Instance Settings': '实例设置',
   'User Settings': '用户设置',
   'My Name': '我的姓名',
@@ -112,5 +114,6 @@ export default {
   'Party List': '宴会列表',
   'Select Single Atom': '选择单条原子',
   'Select Multiple Atoms': '选择多条原子',
+  'Hello World': '世界，您好',
 };
 

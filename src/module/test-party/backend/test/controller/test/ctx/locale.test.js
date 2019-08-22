@@ -6,7 +6,7 @@ describe('test/controller/test/ctx/locale.test.js', () => {
     const result = await app.httpRequest().post(mockUrl('test/ctx/locale/enus'));
     const data = result.body.data;
     assert.equal(data.enus, 'Hello World');
-    assert.equal(data.zhcn, '世界您好');
+    assert.equal(data.zhcn, '世界，您好');
   });
 
   it('action:locale:zhcn:cookie', async () => {
@@ -14,14 +14,14 @@ describe('test/controller/test/ctx/locale.test.js', () => {
       .set('Cookie', [ 'locale=zh-cn' ]);
     const data = result.body.data;
     assert.equal(data.enus, 'Hello World');
-    assert.equal(data.zhcn, '世界您好');
+    assert.equal(data.zhcn, '世界，您好');
   });
 
   it('action:locale:zhcn:query', async () => {
     const result = await app.httpRequest().post(mockUrl('test/ctx/locale/zhcn?locale=zh-cn'));
     const data = result.body.data;
     assert.equal(data.enus, 'Hello World');
-    assert.equal(data.zhcn, '世界您好');
+    assert.equal(data.zhcn, '世界，您好');
   });
 
 });

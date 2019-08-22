@@ -14,5 +14,5 @@ module.exports = {
   'Level Three': '层级3',
   'Well Done': '干得好',
   'Error Test': '错误测试',
-  'Hello World': '世界您好',
+  'Hello World': '世界，您好',
 };
