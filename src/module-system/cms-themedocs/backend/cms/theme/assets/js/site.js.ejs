@@ -111,25 +111,14 @@ function categoryTree($treeContainer) {
         const self = this;
         if (node.id === '#') {
           // articleCategoryTop
-          util.performAction({
-            method: 'post',
-            url: '/a/cms/category/relativeTop',
-            body: { categoryId: env.article.categoryId },
-          }).then(category => {
+          _loadRelativeTop(category => {
             if (!category) return cb.call(self, []);
             // menu active
             menuActive({ categoryId: category.id });
             // title
             $title.text(category.categoryName);
             // tree
-            util.performAction({
-              method: 'post',
-              url: '/a/cms/category/tree',
-              body: {
-                atomClass: env.site.atomClass,
-                categoryId: category.id,
-              },
-            }).then(tree => {
+            _loadTree(category.id, tree => {
               // prepare tree data
               const data = _prepareTreeData(tree.list);
               cb.call(self, data);
@@ -152,6 +141,33 @@ function categoryTree($treeContainer) {
         }
       },
     },
+  });
+}
+
+function _loadRelativeTop(cb) {
+  const relativeTop = env._docTree && env._docTree.relativeTop;
+  if (relativeTop) return cb(relativeTop);
+  util.performAction({
+    method: 'post',
+    url: '/a/cms/category/relativeTop',
+    body: { categoryId: env.article.categoryId },
+  }).then(category => {
+    return cb(category);
+  });
+}
+
+function _loadTree(categoryId, cb) {
+  const tree = env._docTree && env._docTree.tree;
+  if (tree) return cb(tree);
+  util.performAction({
+    method: 'post',
+    url: '/a/cms/category/tree',
+    body: {
+      atomClass: env.site.atomClass,
+      categoryId,
+    },
+  }).then(tree => {
+    return cb(tree);
   });
 }
 

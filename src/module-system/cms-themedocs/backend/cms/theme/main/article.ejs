@@ -1,4 +1,41 @@
 <%- await include('../layout/header.ejs') %>
+<%
+  // cache
+  if(!site._docTree){
+    site._docTree={
+      relativeTop:{},
+      tree:{},
+    };
+  }
+  // relativeTop
+  let relativeTop=site._docTree.relativeTop[article.categoryId];
+  if(relativeTop===undefined){
+    relativeTop=await ctx.performAction({
+      method: 'post',
+      url: '/a/cms/category/relativeTop',
+      body: { categoryId: article.categoryId },
+    });
+    site._docTree.relativeTop[article.categoryId]=relativeTop;
+    // tree
+    let tree=null;
+    if(relativeTop){
+      tree=await ctx.performAction({
+        method: 'post',
+        url: '/a/cms/category/tree',
+        body: {
+          atomClass: site.atomClass,
+          categoryId: relativeTop.id,
+        },
+      });
+    }
+    site._docTree.tree[relativeTop.id]=tree;
+  }
+  // env
+  if(relativeTop){
+    env('_docTree.relativeTop',relativeTop);
+    env('_docTree.tree',site._docTree.tree[relativeTop.id]);
+  }
+%>
 <div class="doc-container">
 <div class="category-sidebar">
   <h3 class="title"></h3>
