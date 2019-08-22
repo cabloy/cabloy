@@ -525,6 +525,13 @@ module.exports = app => {
         }
         return true;
       } catch (err) {
+        // status
+        if (err.responseCode === 559) {
+          await this.ctx.model.mail.update({
+            id: mail.id,
+            status: -1,
+          });
+        }
         // log
         this.ctx.logger.error(err);
         return false;
