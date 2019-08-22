@@ -491,11 +491,6 @@ module.exports = app => {
         // send
         const res = await this._send({ mail });
         if (!res) break;
-        // status
-        await this.ctx.model.mail.update({
-          id: mail.id,
-          status: 1,
-        });
       }
     }
 
@@ -523,17 +518,27 @@ module.exports = app => {
           const url = nodemailer.getTestMessageUrl(res);
           console.log(chalk.keyword('orange')(`test mail url: ${url}`));
         }
+        // status
+        await this.ctx.model.mail.update({
+          id: mail.id,
+          status: 1,
+        });
+        // continue
         return true;
       } catch (err) {
-        // status
+        // log
+        this.ctx.logger.error(err);
+        // error
         if (err.responseCode === 559) {
+          // status
           await this.ctx.model.mail.update({
             id: mail.id,
             status: -1,
           });
+          // continue
+          return true;
         }
-        // log
-        this.ctx.logger.error(err);
+        // break
         return false;
       }
     }
