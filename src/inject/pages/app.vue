@@ -1,8 +1,8 @@
 <script>
 import Vue from 'vue';
 const F7Locales = {
-  dialog: [ 'buttonCancel', 'buttonOk', 'passwordPlaceholder', 'preloaderTitle', 'progressTitle', 'usernamePlaceholder' ],
-  picker: [ 'toolbarCloseText' ],
+  dialog: ['buttonCancel', 'buttonOk', 'passwordPlaceholder', 'preloaderTitle', 'progressTitle', 'usernamePlaceholder'],
+  picker: ['toolbarCloseText'],
 };
 export default {
   render(c) {
@@ -19,7 +19,7 @@ export default {
       staticClass: this.$meta.config.layout.color ? `color-theme-${this.$meta.config.layout.color}` : '',
       props: { params: this.$root.$options.framework7 },
     }, children);
-    return c('div', [ app ]);
+    return c('div', [app]);
   },
   data() {
     return {
