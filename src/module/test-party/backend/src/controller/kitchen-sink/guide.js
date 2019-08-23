@@ -1,6 +1,6 @@
 module.exports = app => {
 
-  class HelloController extends app.Controller {
+  class GuideController extends app.Controller {
 
     async echo() {
       const message = 'Hello World';
@@ -17,8 +17,14 @@ module.exports = app => {
       this.ctx.success(message);
     }
 
+    async echo4() {
+      const { message, markCount } = this.ctx.request.body;
+      const res = `${message}${new Array(markCount + 1).join('!')}`;
+      this.ctx.success(res);
+    }
+
   }
 
-  return HelloController;
+  return GuideController;
 };
 

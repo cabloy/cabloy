@@ -10,7 +10,7 @@
 const items = [
   { title: 'About', path: 'kitchen-sink/about' },
   { title: 'Framework7', path: 'kitchen-sink/framework7/index' },
-  { title: 'Hello World', path: 'kitchen-sink/hello' },
+  { title: 'Guide', path: 'kitchen-sink/guide' },
   { title: 'File Upload', path: 'kitchen-sink/fileUpload' },
   { title: 'Progress Bar', path: 'kitchen-sink/progress' },
   { title: 'Settings', path: 'kitchen-sink/settings' },

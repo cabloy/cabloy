@@ -345,7 +345,7 @@ const testFeatStatus = __webpack_require__(42);
 const testFeatValidation = __webpack_require__(43);
 const testFeatMiddleware = __webpack_require__(44);
 const testKitchensinkAutocomplete = __webpack_require__(45);
-const testKitchensinkHello = __webpack_require__(47);
+const testKitchensinkGuide = __webpack_require__(47);
 const testKitchensinkFormSchemaValidation = __webpack_require__(48);
 const testKitchensinkPtrIsLoadMore = __webpack_require__(49);
 
@@ -495,8 +495,10 @@ module.exports = app => {
       { method: 'post', path: 'test/feat/middleware/restructuring', controller: testFeatMiddleware, middlewares: 'test,testInterception,testRestructuring' },
       { method: 'post', path: 'test/feat/middleware/injection', controller: testFeatMiddleware, middlewares: 'test,testInterception,testRestructuring,testInjection' },
 
-      // kitchen-sink/hello
-      { method: 'post', path: 'kitchen-sink/hello/echo', controller: testKitchensinkHello },
+      // kitchen-sink/guide
+      { method: 'post', path: 'kitchen-sink/guide/echo', controller: testKitchensinkGuide },
+      { method: 'post', path: 'kitchen-sink/guide/echo3', controller: testKitchensinkGuide },
+      { method: 'post', path: 'kitchen-sink/guide/echo4', controller: testKitchensinkGuide },
 
       // kitchen-sink/autocomplete
       { method: 'get', path: 'kitchen-sink/autocomplete/languages/:query', controller: testKitchensinkAutocomplete, action: 'languages', meta: { auth: { enable: false } } },
@@ -2393,7 +2395,7 @@ module.exports = [{"id":0,"name":"A# .NET"},{"id":1,"name":"A# (Axiom)"},{"id":2
 
 module.exports = app => {
 
-  class HelloController extends app.Controller {
+  class GuideController extends app.Controller {
 
     async echo() {
       const message = 'Hello World';
@@ -2410,9 +2412,15 @@ module.exports = app => {
       this.ctx.success(message);
     }
 
+    async echo4() {
+      const { message, markCount } = this.ctx.request.body;
+      const res = `${message}${new Array(markCount + 1).join('!')}`;
+      this.ctx.success(res);
+    }
+
   }
 
-  return HelloController;
+  return GuideController;
 };
 
 

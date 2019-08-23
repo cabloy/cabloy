@@ -11,4 +11,6 @@ export default {
   F7AboutTip3: 'Framework7 is not compatible with all platforms. It is focused only on iOS and Android (Material) to bring the best experience and simplicity',
   F7AboutTip4: 'CabloyJS pioneered the layout strategy of \'PC = Mobile + Pad\', bringing the user experience and development experience of Framework7 into the PC scene',
   TipBasicProcess: 'Basic process of frontend and backend development',
+  TipBackendConfigI18N: 'Backend configuration & i18n',
+  TipFrontendConfigI18N: 'Frontend configuration & i18n',
 };
