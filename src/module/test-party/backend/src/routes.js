@@ -32,6 +32,7 @@ const testFeatSettings = require('./controller/test/feat/settings.js');
 const testFeatStatus = require('./controller/test/feat/status.js');
 const testFeatValidation = require('./controller/test/feat/validation.js');
 const testFeatMiddleware = require('./controller/test/feat/middleware.js');
+const testFeatQueue = require('./controller/test/feat/queue.js');
 const testKitchensinkAutocomplete = require('./controller/kitchen-sink/autocomplete.js');
 const testKitchensinkGuide = require('./controller/kitchen-sink/guide.js');
 const testKitchensinkFormSchemaValidation = require('./controller/kitchen-sink/form-schema-validation.js');
@@ -182,6 +183,11 @@ module.exports = app => {
       { method: 'post', path: 'test/feat/middleware/interception', controller: testFeatMiddleware, middlewares: 'test,testInterception' },
       { method: 'post', path: 'test/feat/middleware/restructuring', controller: testFeatMiddleware, middlewares: 'test,testInterception,testRestructuring' },
       { method: 'post', path: 'test/feat/middleware/injection', controller: testFeatMiddleware, middlewares: 'test,testInterception,testRestructuring,testInjection' },
+
+      // test/feat/queue
+      { method: 'post', path: 'test/feat/queue', controller: testFeatQueue, middlewares: 'inner' },
+      { method: 'post', path: 'test/feat/pushAsync', controller: testFeatQueue, middlewares: 'test' },
+      { method: 'post', path: 'test/feat/push', controller: testFeatQueue, middlewares: 'test' },
 
       // kitchen-sink/guide
       { method: 'post', path: 'kitchen-sink/guide/echo', controller: testKitchensinkGuide },

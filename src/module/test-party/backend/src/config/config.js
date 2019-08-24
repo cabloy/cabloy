@@ -30,6 +30,12 @@ module.exports = appInfo => {
         dependencies: 'instance',
       },
     };
+    // queues
+    config.queues = {
+      queueTest: {
+        path: 'test/feat/queue',
+      },
+    };
   }
 
   if (appInfo.env === 'unittest' || appInfo.env === 'local') {
