@@ -122,5 +122,7 @@ export default {
   'Select Multiple Atoms': '选择多条原子',
   'Hello World': '世界，您好',
   'How to do ...': '如何做...',
+  'Global Component': '全局组件',
+  'State Management': '状态管理',
 };
 
