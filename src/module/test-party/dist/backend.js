@@ -499,6 +499,17 @@ module.exports = app => {
       { method: 'post', path: 'kitchen-sink/guide/echo', controller: testKitchensinkGuide },
       { method: 'post', path: 'kitchen-sink/guide/echo3', controller: testKitchensinkGuide },
       { method: 'post', path: 'kitchen-sink/guide/echo4', controller: testKitchensinkGuide },
+      { method: 'post', path: 'kitchen-sink/guide/echo6', controller: testKitchensinkGuide },
+      { method: 'post', path: 'kitchen-sink/guide/echo7', controller: testKitchensinkGuide },
+      { method: 'post', path: 'kitchen-sink/guide/echo8', controller: testKitchensinkGuide, middlewares: 'transaction' },
+      { method: 'post', path: 'kitchen-sink/guide/echo9', controller: testKitchensinkGuide,
+        meta: {
+          right: {
+            type: 'function',
+            name: 'kitchenSink',
+          },
+        },
+      },
 
       // kitchen-sink/autocomplete
       { method: 'get', path: 'kitchen-sink/autocomplete/languages/:query', controller: testKitchensinkAutocomplete, action: 'languages', meta: { auth: { enable: false } } },
@@ -2416,6 +2427,67 @@ module.exports = app => {
       const { message, markCount } = this.ctx.request.body;
       const res = `${message}${new Array(markCount + 1).join('!')}`;
       this.ctx.success(res);
+    }
+
+    async echo6() {
+      // testParty: insert/udpate/delete/get
+
+      // insert
+      const res = await this.ctx.db.insert('testParty', {
+        iid: this.ctx.instance.id,
+        deleted: 0,
+        personCount: 3,
+      });
+      const id = res.insertId;
+      // update
+      await this.ctx.db.update('testParty', {
+        id,
+        personCount: 5,
+      });
+      // get
+      const item = await this.ctx.db.get('testParty', {
+        id,
+      });
+      // delete
+      await this.ctx.db.delete('testParty', {
+        id,
+      });
+      // ok
+      this.ctx.success(item);
+    }
+
+    async echo7() {
+      // testParty: insert/udpate/delete/get
+
+      // insert
+      const res = await this.ctx.model.party.insert({ personCount: 3 });
+      const id = res.insertId;
+      // update
+      await this.ctx.model.party.update({ id, personCount: 6 });
+      // get
+      const item = await this.ctx.model.party.get({ id });
+      // delete
+      await this.ctx.model.party.delete({ id });
+      // ok
+      this.ctx.success(item);
+    }
+
+    async echo8() {
+      // transaction
+
+      // insert
+      const res = await this.ctx.model.party.insert({ personCount: 3 });
+      const id = res.insertId;
+      // will throw error
+      await this.ctx.model.party.update({ id, personCountA: 6 });
+      // never here
+      this.ctx.success();
+    }
+
+    async echo9() {
+      // Menu Authorization
+      // ok
+      this.ctx.success('ok');
     }
 
   }

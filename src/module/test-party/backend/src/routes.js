@@ -187,6 +187,17 @@ module.exports = app => {
       { method: 'post', path: 'kitchen-sink/guide/echo', controller: testKitchensinkGuide },
       { method: 'post', path: 'kitchen-sink/guide/echo3', controller: testKitchensinkGuide },
       { method: 'post', path: 'kitchen-sink/guide/echo4', controller: testKitchensinkGuide },
+      { method: 'post', path: 'kitchen-sink/guide/echo6', controller: testKitchensinkGuide },
+      { method: 'post', path: 'kitchen-sink/guide/echo7', controller: testKitchensinkGuide },
+      { method: 'post', path: 'kitchen-sink/guide/echo8', controller: testKitchensinkGuide, middlewares: 'transaction' },
+      { method: 'post', path: 'kitchen-sink/guide/echo9', controller: testKitchensinkGuide,
+        meta: {
+          right: {
+            type: 'function',
+            name: 'kitchenSink',
+          },
+        },
+      },
 
       // kitchen-sink/autocomplete
       { method: 'get', path: 'kitchen-sink/autocomplete/languages/:query', controller: testKitchensinkAutocomplete, action: 'languages', meta: { auth: { enable: false } } },

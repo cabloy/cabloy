@@ -13,4 +13,7 @@ export default {
   TipBasicProcess: 'Basic process of frontend and backend development',
   TipBackendConfigI18N: 'Backend configuration & i18n',
   TipFrontendConfigI18N: 'Frontend configuration & i18n',
+  TipBackendDatabase: 'Backend Database',
+  TipBackendDatabaseTransaction: 'Backend Database Transaction',
+  TipMenuAuthorization: 'Menu Authorization',
 };
