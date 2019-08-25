@@ -30,6 +30,9 @@ export default {
               if (code === false) {
                 reject();
               }
+              if (code === null) {
+                // do nothing
+              }
             },
           },
         });
