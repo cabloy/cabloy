@@ -367,13 +367,17 @@ const Fn = module.exports = ctx => {
 
     // function rights
     async functionRights({ menu, roleId, page }) {
+      // check locale
+      const locale = ctx.locale;
+      if (locale) await ctx.meta.function.checkLocale({ locale });
+      // list
       page = ctx.meta.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       const list = await ctx.model.query(`
         select a.*,b.module,b.name,b.title,b.scene,b.sorting${menu ? ',f.titleLocale' : ''} from aRoleFunction a
           left join aFunction b on a.functionId=b.id
           ${menu ? 'left join aFunctionLocale f on a.functionId=f.functionId' : ''}
-            where a.iid=? and a.roleId=? and b.menu=? ${menu ? 'and f.locale=\'' + ctx.locale + '\'' : ''}
+            where a.iid=? and a.roleId=? and b.menu=? ${menu ? 'and f.locale=\'' + locale + '\'' : ''}
             order by b.module,b.scene,b.sorting
             ${_limit}
         `, [ ctx.instance.id, roleId, menu ]);
@@ -382,6 +386,10 @@ const Fn = module.exports = ctx => {
 
     // function spreads
     async functionSpreads({ menu, roleId, page }) {
+      // check locale
+      const locale = ctx.locale;
+      if (locale) await ctx.meta.function.checkLocale({ locale });
+      // list
       page = ctx.meta.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       const list = await ctx.model.query(`
@@ -390,7 +398,7 @@ const Fn = module.exports = ctx => {
           left join aRoleExpand d on a.roleId=d.roleIdBase
           left join aRole e on d.roleIdBase=e.id
           ${menu ? 'left join aFunctionLocale f on a.functionId=f.functionId' : ''}
-            where d.iid=? and d.roleId=? and b.menu=? ${menu ? 'and f.locale=\'' + ctx.locale + '\'' : ''}
+            where d.iid=? and d.roleId=? and b.menu=? ${menu ? 'and f.locale=\'' + locale + '\'' : ''}
             order by b.module,b.scene,b.sorting
             ${_limit}
         `, [ ctx.instance.id, roleId, menu ]);
@@ -399,6 +407,10 @@ const Fn = module.exports = ctx => {
 
     // function rights of user
     async functionRightsOfUser({ menu, userId, page }) {
+      // check locale
+      const locale = ctx.locale;
+      if (locale) await ctx.meta.function.checkLocale({ locale });
+      // list
       page = ctx.meta.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       const list = await ctx.model.query(`
@@ -406,7 +418,7 @@ const Fn = module.exports = ctx => {
           left join aFunction b on a.functionId=b.id
           ${menu ? 'left join aFunctionLocale f on a.functionId=f.functionId' : ''}
           left join aRole e on a.roleIdBase=e.id
-            where a.iid=? and a.userIdWho=? and b.menu=? ${menu ? 'and f.locale=\'' + ctx.locale + '\'' : ''}
+            where a.iid=? and a.userIdWho=? and b.menu=? ${menu ? 'and f.locale=\'' + locale + '\'' : ''}
             order by b.module,b.scene,b.sorting
             ${_limit}
         `, [ ctx.instance.id, userId, menu ]);
