@@ -271,7 +271,7 @@ module.exports = ctx => {
 
     async switchAgent({ userIdAgent }) {
       const op = ctx.user.op;
-      ctx.user.op = { id: userIdAgent };
+      ctx.user.op = await this.get({ id: userIdAgent });
       try {
         await this.check();
         await ctx.login(ctx.user);
