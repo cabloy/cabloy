@@ -8,7 +8,7 @@
       <template v-if="agentsBy && agentsBy.length>0">
         <eb-list-item v-for="item of agentsBy" :key="item.id" radio disabled :checked="user.op.id===item.id" :title="item.userName">
           <div slot="after">
-            <eb-link v-if="user.op.id===item.id" :context="item" :onPerform="onPerformSwitchOff">{{$text('Switch off')}}</eb-link>
+            <eb-link v-if="user.op.id===item.id" :context="item" :onPerform="onPerformSwitchOff">{{$text('Switch Off')}}</eb-link>
             <eb-link v-else :context="item" :onPerform="onPerformSwitch">{{$text('Switch')}}</eb-link>
           </div>
         </eb-list-item>
@@ -46,9 +46,9 @@ export default {
     onSelectUser() {
       this.$view.dialog.prompt(this.$text('Please specify the mobile')).then(mobile => {
         if (!mobile) return;
-        this.$api.post('user/userByMobile', { mobile: 1 }).then(userAgent => {
+        this.$api.post('user/userByMobile', { mobile }).then(userAgent => {
           if (!userAgent) {
-            this.$view.dialog.alert(this.$text('Not found'));
+            this.$view.dialog.alert(this.$text('Not Found'));
           } else {
             this.$view.dialog.confirm(`${mobile}<br>${userAgent.userName}`).then(() => {
               this.$api.post('user/addAgent', { userIdAgent: userAgent.id }).then(() => {

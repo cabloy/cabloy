@@ -26,4 +26,7 @@ export default {
   Enabled: '已启用',
   Enable: '启用',
   Disable: '禁用',
+  Switch: '切换',
+  'Switch Off': '关闭',
+  'Not Found': '未发现',
 };
