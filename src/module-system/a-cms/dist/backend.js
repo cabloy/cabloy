@@ -1120,7 +1120,12 @@ ${items}</sitemapindex>`;
   async createRobots({ site }) {
     // content
     const urlRawRoot = this.getUrlRawRoot(site);
-    const content = `Sitemap: ${urlRawRoot}/sitemapindex.xml`;
+    const content =
+`User-agent: *
+Allow: /
+
+Sitemap: ${urlRawRoot}/sitemapindex.xml
+`;
     // write
     const pathRawDist = await this.getPathRawDist(site);
     await fse.outputFile(`${pathRawDist}/robots.txt`, content);
