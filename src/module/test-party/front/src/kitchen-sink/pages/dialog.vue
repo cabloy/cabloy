@@ -54,7 +54,7 @@ export default {
         return this.$view.dialog.confirm(`Are you sure that your name is ${name}?`).then(() => {
           this.$view.dialog.alert(`Ok, your name is ${name}`);
         });
-      });
+      }).catch(() => {});
     },
     openAlerts() {
       this.$view.dialog.alert('Alert 1');
