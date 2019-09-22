@@ -89,10 +89,9 @@ export default function({ ctx, progressId, title, canAbort = true, interval = 10
           // check again
           checking();
         } else if (item.done === -1) {
-        // done:1 error:-1
-        // close
+          // done:1 error:-1
+          // close
           dialog.close();
-          dialog.destroy();
           // alert
           const data = item.data ? JSON.parse(item.data) : {};
           ctx.toast.show({ text: data.message });
@@ -108,7 +107,6 @@ export default function({ ctx, progressId, title, canAbort = true, interval = 10
           // close
           window.setTimeout(() => {
             dialog.close();
-            dialog.destroy();
           }, app.params.toast.closeTimeout);
           // resolve
           resolve(data);
