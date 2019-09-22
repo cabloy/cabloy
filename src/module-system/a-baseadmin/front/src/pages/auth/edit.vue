@@ -7,6 +7,10 @@
     </eb-navbar>
     <eb-box @size="onSize">
       <textarea ref="textarea" type="textarea" :value="content" @input="onInput" class="json-textarea"></textarea>
+      <template v-if="meta">
+        <f7-block-title>{{$text('Info')}}</f7-block-title>
+        <div class="json-textarea">{{meta}}</div>
+      </template>
     </eb-box>
   </eb-page>
 </template>
@@ -20,22 +24,30 @@ export default {
       id: parseInt(this.$f7route.query.id),
       item: null,
       content: '{}',
+      meta: '',
     };
   },
   created() {
     this.$api.post('auth/item', { id: this.id }).then(data => {
       this.item = data;
+      // config
       if (!data.config) {
         this.content = '{}';
       } else {
         this.content = JSON.stringify(JSON.parse(data.config), null, 2);
+      }
+      // meta
+      if (!data._meta) {
+        this.meta = '';
+      } else {
+        this.meta = JSON.stringify(data._meta, null, 2);
       }
     });
   },
   methods: {
     onSize(size) {
       this.$$(this.$refs.textarea).css({
-        height: `${size.height - 20}px`,
+        height: '200px', // `${size.height - 20}px`,
         width: `${size.width - 20}px`,
       });
     },
@@ -54,5 +66,5 @@ export default {
 };
 
 </script>
-<style scoped>
+<style lang="less" scoped>
 </style>

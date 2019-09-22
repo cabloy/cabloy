@@ -82,29 +82,35 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports) {
+
+module.exports = require("require3");
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const config = __webpack_require__(1);
-const locales = __webpack_require__(2);
-const errors = __webpack_require__(4);
-const middlewares = __webpack_require__(5);
+const config = __webpack_require__(2);
+const locales = __webpack_require__(3);
+const errors = __webpack_require__(5);
+const middlewares = __webpack_require__(6);
 
 // eslint-disable-next-line
 module.exports = app => {
 
   // routes
-  const routes = __webpack_require__(6)(app);
+  const routes = __webpack_require__(7)(app);
   // services
-  const services = __webpack_require__(14)(app);
+  const services = __webpack_require__(15)(app);
   // models
-  const models = __webpack_require__(21)(app);
+  const models = __webpack_require__(22)(app);
   // meta
-  const meta = __webpack_require__(23)(app);
+  const meta = __webpack_require__(24)(app);
 
   return {
     routes,
@@ -121,7 +127,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, exports) {
 
 // eslint-disable-next-line
@@ -132,16 +138,16 @@ module.exports = appInfo => {
 
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
-  'zh-cn': __webpack_require__(3),
+  'zh-cn': __webpack_require__(4),
 };
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -156,7 +162,7 @@ module.exports = {
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports) {
 
 // error code should start from 1001
@@ -165,7 +171,7 @@ module.exports = {
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -173,16 +179,16 @@ module.exports = {
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(7);
-const role = __webpack_require__(8);
-const user = __webpack_require__(9);
-const atomRight = __webpack_require__(10);
-const menuRight = __webpack_require__(11);
-const functionRight = __webpack_require__(12);
-const auth = __webpack_require__(13);
+const version = __webpack_require__(8);
+const role = __webpack_require__(9);
+const user = __webpack_require__(10);
+const atomRight = __webpack_require__(11);
+const menuRight = __webpack_require__(12);
+const functionRight = __webpack_require__(13);
+const auth = __webpack_require__(14);
 
 module.exports = app => {
   const routes = [
@@ -240,7 +246,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -262,7 +268,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -363,7 +369,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -451,7 +457,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -499,7 +505,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -547,7 +553,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -595,7 +601,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -635,15 +641,15 @@ module.exports = app => {
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(15);
-const role = __webpack_require__(16);
-const user = __webpack_require__(17);
-const atomRight = __webpack_require__(18);
-const functionRight = __webpack_require__(19);
-const auth = __webpack_require__(20);
+const version = __webpack_require__(16);
+const role = __webpack_require__(17);
+const user = __webpack_require__(18);
+const atomRight = __webpack_require__(19);
+const functionRight = __webpack_require__(20);
+const auth = __webpack_require__(21);
 
 module.exports = app => {
   const services = {
@@ -659,7 +665,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -693,7 +699,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -763,7 +769,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -814,7 +820,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -851,7 +857,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -903,8 +909,11 @@ module.exports = app => {
 
 
 /***/ }),
-/* 20 */
-/***/ (function(module, exports) {
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(0);
+const mparse = require3('egg-born-mparse').default;
 
 module.exports = app => {
 
@@ -929,7 +938,20 @@ module.exports = app => {
     }
 
     async item({ id }) {
-      return await this.ctx.model.authProvider.get({ id });
+      // item
+      const item = await this.ctx.model.authProvider.get({ id });
+      // meta
+      const authProviders = this.ctx.meta.base.authProviders();
+      const authProvider = authProviders[`${item.module}:${item.providerName}`];
+      if (authProvider.meta.mode === 'redirect') {
+        const moduleInfo = mparse.parseInfo(item.module);
+        const callbackURL = this.ctx.meta.base.getAbsoluteUrl(`/api/${moduleInfo.url}/passport/${item.module}/${item.providerName}/callback`);
+        item._meta = {
+          callbackURL,
+        };
+      }
+      // ok
+      return item;
     }
 
     async save({ id, config }) {
@@ -943,10 +965,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const authProvider = __webpack_require__(22);
+const authProvider = __webpack_require__(23);
 
 module.exports = app => {
   const models = {
@@ -957,7 +979,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -975,10 +997,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(24);
+const require3 = __webpack_require__(0);
 const extend = require3('extend2');
 
 module.exports = app => {
@@ -1052,12 +1074,6 @@ module.exports = app => {
   return meta;
 };
 
-
-/***/ }),
-/* 24 */
-/***/ (function(module, exports) {
-
-module.exports = require("require3");
 
 /***/ }),
 /* 25 */

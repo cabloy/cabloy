@@ -1,3 +1,6 @@
+const require3 = require('require3');
+const mparse = require3('egg-born-mparse').default;
+
 module.exports = app => {
 
   class Auth extends app.Service {
@@ -21,7 +24,20 @@ module.exports = app => {
     }
 
     async item({ id }) {
-      return await this.ctx.model.authProvider.get({ id });
+      // item
+      const item = await this.ctx.model.authProvider.get({ id });
+      // meta
+      const authProviders = this.ctx.meta.base.authProviders();
+      const authProvider = authProviders[`${item.module}:${item.providerName}`];
+      if (authProvider.meta.mode === 'redirect') {
+        const moduleInfo = mparse.parseInfo(item.module);
+        const callbackURL = this.ctx.meta.base.getAbsoluteUrl(`/api/${moduleInfo.url}/passport/${item.module}/${item.providerName}/callback`);
+        item._meta = {
+          callbackURL,
+        };
+      }
+      // ok
+      return item;
     }
 
     async save({ id, config }) {
