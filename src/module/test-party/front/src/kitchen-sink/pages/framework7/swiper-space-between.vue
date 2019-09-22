@@ -1,11 +1,7 @@
 <template>
   <eb-page>
     <eb-navbar title="Space Between Slides" eb-back-link="Back"></eb-navbar>
-    <div
-      data-pagination="{'el': '.swiper-pagination', 'hideOnClick': true}"
-      data-space-between="50"
-      class="swiper-container swiper-init demo-swiper"
-    >
+    <div data-pagination="{'el': '.swiper-pagination', 'hideOnClick': true}" data-space-between="50" class="swiper-container swiper-init demo-swiper">
       <div class="swiper-pagination"></div>
       <div class="swiper-wrapper">
         <div class="swiper-slide">Slide 1</div>
@@ -24,4 +20,5 @@
 </template>
 <script>
 export default {};
+
 </script>

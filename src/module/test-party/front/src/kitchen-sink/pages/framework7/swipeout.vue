@@ -185,7 +185,7 @@ export default {
           [{
             text: 'Cancel',
             bold: true,
-          }, ],
+          },],
         ],
       });
     },

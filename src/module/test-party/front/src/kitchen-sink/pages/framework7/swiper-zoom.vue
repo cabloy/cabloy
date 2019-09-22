@@ -1,12 +1,7 @@
 <template>
   <eb-page>
     <eb-navbar title="Zoom" eb-back-link="Back"></eb-navbar>
-    <div
-      data-pagination="{'el': '.swiper-pagination'}"
-      data-zoom="{'enabled': true}"
-      data-navigation="{'nextEl': '.swiper-button-next', 'prevEl': '.swiper-button-prev'}"
-      class="swiper-container swiper-init demo-swiper"
-    >
+    <div data-pagination="{'el': '.swiper-pagination'}" data-zoom="{'enabled': true}" data-navigation="{'nextEl': '.swiper-button-next', 'prevEl': '.swiper-button-prev'}" class="swiper-container swiper-init demo-swiper">
       <div class="swiper-wrapper">
         <div class="swiper-slide">
           <div class="swiper-zoom-container">
@@ -47,4 +42,5 @@
 </template>
 <script>
 export default {};
+
 </script>

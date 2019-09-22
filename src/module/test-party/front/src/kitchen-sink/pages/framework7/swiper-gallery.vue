@@ -3,30 +3,12 @@
     <eb-navbar title="Thumbs Gallery" eb-back-link="Back"></eb-navbar>
     <div class="swiper-container demo-swiper-gallery-top">
       <div class="swiper-wrapper">
-        <div
-          style="background-image:url(https://cdn.framework7.io/placeholder/nature-800x800-1.jpg)"
-          class="swiper-slide"
-        ></div>
-        <div
-          style="background-image:url(https://cdn.framework7.io/placeholder/nature-800x800-2.jpg)"
-          class="swiper-slide"
-        ></div>
-        <div
-          style="background-image:url(https://cdn.framework7.io/placeholder/nature-800x800-3.jpg)"
-          class="swiper-slide"
-        ></div>
-        <div
-          style="background-image:url(https://cdn.framework7.io/placeholder/nature-800x800-4.jpg)"
-          class="swiper-slide"
-        ></div>
-        <div
-          style="background-image:url(https://cdn.framework7.io/placeholder/nature-800x800-5.jpg)"
-          class="swiper-slide"
-        ></div>
-        <div
-          style="background-image:url(https://cdn.framework7.io/placeholder/nature-800x800-6.jpg)"
-          class="swiper-slide"
-        ></div>
+        <div style="background-image:url(https://cdn.framework7.io/placeholder/nature-800x800-1.jpg)" class="swiper-slide"></div>
+        <div style="background-image:url(https://cdn.framework7.io/placeholder/nature-800x800-2.jpg)" class="swiper-slide"></div>
+        <div style="background-image:url(https://cdn.framework7.io/placeholder/nature-800x800-3.jpg)" class="swiper-slide"></div>
+        <div style="background-image:url(https://cdn.framework7.io/placeholder/nature-800x800-4.jpg)" class="swiper-slide"></div>
+        <div style="background-image:url(https://cdn.framework7.io/placeholder/nature-800x800-5.jpg)" class="swiper-slide"></div>
+        <div style="background-image:url(https://cdn.framework7.io/placeholder/nature-800x800-6.jpg)" class="swiper-slide"></div>
       </div>
       <div class="swiper-button-next color-white"></div>
       <div class="swiper-button-prev color-white"></div>
@@ -34,40 +16,22 @@
     <div class="swiper-container demo-swiper-gallery-thumbs">
       <div class="swiper-wrapper">
         <div class="swiper-slide">
-          <div
-            style="background-image:url(https://cdn.framework7.io/placeholder/nature-800x800-1.jpg)"
-            class="swiper-slide-pic"
-          ></div>
+          <div style="background-image:url(https://cdn.framework7.io/placeholder/nature-800x800-1.jpg)" class="swiper-slide-pic"></div>
         </div>
         <div class="swiper-slide">
-          <div
-            style="background-image:url(https://cdn.framework7.io/placeholder/nature-800x800-2.jpg)"
-            class="swiper-slide-pic"
-          ></div>
+          <div style="background-image:url(https://cdn.framework7.io/placeholder/nature-800x800-2.jpg)" class="swiper-slide-pic"></div>
         </div>
         <div class="swiper-slide">
-          <div
-            style="background-image:url(https://cdn.framework7.io/placeholder/nature-800x800-3.jpg)"
-            class="swiper-slide-pic"
-          ></div>
+          <div style="background-image:url(https://cdn.framework7.io/placeholder/nature-800x800-3.jpg)" class="swiper-slide-pic"></div>
         </div>
         <div class="swiper-slide">
-          <div
-            style="background-image:url(https://cdn.framework7.io/placeholder/nature-800x800-4.jpg)"
-            class="swiper-slide-pic"
-          ></div>
+          <div style="background-image:url(https://cdn.framework7.io/placeholder/nature-800x800-4.jpg)" class="swiper-slide-pic"></div>
         </div>
         <div class="swiper-slide">
-          <div
-            style="background-image:url(https://cdn.framework7.io/placeholder/nature-800x800-5.jpg)"
-            class="swiper-slide-pic"
-          ></div>
+          <div style="background-image:url(https://cdn.framework7.io/placeholder/nature-800x800-5.jpg)" class="swiper-slide-pic"></div>
         </div>
         <div class="swiper-slide">
-          <div
-            style="background-image:url(https://cdn.framework7.io/placeholder/nature-800x800-6.jpg)"
-            class="swiper-slide-pic"
-          ></div>
+          <div style="background-image:url(https://cdn.framework7.io/placeholder/nature-800x800-6.jpg)" class="swiper-slide-pic"></div>
         </div>
       </div>
     </div>
@@ -84,8 +48,7 @@ export default {
     onPageInit() {
       const self = this;
       const swiperThumbs = self.$f7.swiper.create(
-        '.demo-swiper-gallery-thumbs',
-        {
+        '.demo-swiper-gallery-thumbs', {
           slidesPerView: 4,
           spaceBetween: 10,
           freeMode: true,
@@ -97,7 +60,7 @@ export default {
         spaceBetween: 10,
         navigation: {
           nextEl: '.swiper-button-next',
-          prevEl: ".swiper-button-prev",
+          prevEl: '.swiper-button-prev',
         },
         thumbs: {
           swiper: swiperThumbs,
@@ -109,4 +72,5 @@ export default {
     },
   },
 };
+
 </script>

@@ -1,10 +1,7 @@
 <template>
   <eb-page>
     <eb-navbar title="Scrollbar" eb-back-link="Back"></eb-navbar>
-    <div
-      data-scrollbar="{'el': '.swiper-scrollbar'}"
-      class="swiper-container swiper-init demo-swiper"
-    >
+    <div data-scrollbar="{'el': '.swiper-scrollbar'}" class="swiper-container swiper-init demo-swiper">
       <div class="swiper-pagination"></div>
       <div class="swiper-scrollbar"></div>
       <div class="swiper-wrapper">
@@ -24,4 +21,5 @@
 </template>
 <script>
 export default {};
+
 </script>

@@ -1,11 +1,7 @@
 <template>
   <eb-page>
     <eb-navbar title="Infinite Loop Mode" eb-back-link="Back"></eb-navbar>
-    <div
-      data-pagination="{'el': '.swiper-pagination'}"
-      data-loop="true"
-      class="swiper-container swiper-init demo-swiper"
-    >
+    <div data-pagination="{'el': '.swiper-pagination'}" data-loop="true" class="swiper-container swiper-init demo-swiper">
       <div class="swiper-pagination"></div>
       <div class="swiper-wrapper">
         <div class="swiper-slide">Slide 1</div>
@@ -24,4 +20,5 @@
 </template>
 <script>
 export default {};
+
 </script>
