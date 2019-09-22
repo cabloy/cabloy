@@ -1,17 +1,21 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Button Event')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar :title="$text('Button Event')" eb-back-link="Back">
+      <f7-nav-right>
+        <eb-link iconMaterial="save" :onPerform="onPerformTrue"></eb-link>
+      </f7-nav-right>
+    </eb-navbar>
     <f7-block-title>eb-button</f7-block-title>
     <f7-block>
       <f7-row>
         <f7-col>
-          <eb-button fill round @click="onClick">@click</eb-button>
+          <eb-button fill @click="onClick">@click</eb-button>
         </f7-col>
         <f7-col>
-          <eb-button fill round :onPerform="onPerform">:onPerform</eb-button>
+          <eb-button fill :onPerform="onPerform">:onPerform</eb-button>
         </f7-col>
         <f7-col>
-          <eb-button fill round :onPerform="onPerformTrue">:onPerform</eb-button>
+          <eb-button fill :onPerform="onPerformTrue">:onPerform</eb-button>
         </f7-col>
       </f7-row>
     </f7-block>
@@ -22,7 +26,7 @@
           <eb-link @click="onClick">@click</eb-link>
         </f7-col>
         <f7-col>
-          <eb-link :onPerform="onPerform">:onPerform</eb-link>
+          <eb-link :onPerform="onPerformTrue">:onPerform</eb-link>
         </f7-col>
       </f7-row>
     </f7-block>

@@ -3,7 +3,7 @@
     <eb-navbar :title="$text('Page Open & Return Value')" eb-back-link="Back"></eb-navbar>
     <f7-block>
       <div class="alert-info">{{value}}</div>
-      <eb-link :onPerform="onPerformOpen">{{$text('Open Page')}}</eb-link>
+      <eb-button :onPerform="onPerformOpen">{{$text('Open Page')}}</eb-button>
     </f7-block>
   </eb-page>
 </template>
