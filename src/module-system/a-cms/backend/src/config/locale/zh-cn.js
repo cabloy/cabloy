@@ -43,4 +43,5 @@ module.exports = {
   second2: '秒',
   Build: '构建',
   Block: '区块',
+  'Slug Exists': 'Slug已存在',
 };

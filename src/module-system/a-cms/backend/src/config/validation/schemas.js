@@ -9,6 +9,9 @@ module.exports = app => {
       },
     },
     properties: {
+      atomId: {
+        type: 'number',
+      },
       atomName: {
         type: 'string',
         ebType: 'text',
@@ -61,6 +64,7 @@ module.exports = app => {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Slug',
+        'x-slug': true,
       },
       sorting: {
         type: 'number',

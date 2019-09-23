@@ -1,4 +1,5 @@
 module.exports = app => {
+  const keywords = require('./config/validation/keywords.js')(app);
   const schemas = require('./config/validation/schemas.js')(app);
   const meta = {
     base: {
@@ -80,7 +81,9 @@ module.exports = app => {
           schemas: 'category',
         },
       },
-      keywords: {},
+      keywords: {
+        'x-slug': keywords.slug,
+      },
       schemas: {
         article: schemas.article,
         articleSearch: schemas.articleSearch,

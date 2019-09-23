@@ -89,6 +89,12 @@ module.exports =
 /* 0 */
 /***/ (function(module, exports) {
 
+module.exports = require("require3");
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports) {
+
 
 /**
   escapeHtml: based on markdown-it
@@ -172,17 +178,11 @@ module.exports = {
 
 
 /***/ }),
-/* 1 */
-/***/ (function(module, exports) {
-
-module.exports = require("require3");
-
-/***/ }),
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const path = __webpack_require__(19);
-const require3 = __webpack_require__(1);
+const require3 = __webpack_require__(0);
 const ejs = require3('@zhennann/ejs');
 const pMap = require3('p-map');
 const extend = require3('extend2');
@@ -195,7 +195,7 @@ const shajs = require3('sha.js');
 const babel = require3('@babel/core');
 const UglifyJS = require3('uglify-js');
 const time = __webpack_require__(20);
-const utils = __webpack_require__(0);
+const utils = __webpack_require__(1);
 
 class Build {
 
@@ -1418,6 +1418,7 @@ module.exports = {
   second2: '秒',
   Build: '构建',
   Block: '区块',
+  'Slug Exists': 'Slug已存在',
 };
 
 
@@ -1561,9 +1562,9 @@ module.exports = app => {
 /* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(1);
+const require3 = __webpack_require__(0);
 const extend = require3('extend2');
-const utils = __webpack_require__(0);
+const utils = __webpack_require__(1);
 
 module.exports = app => {
 
@@ -1778,7 +1779,7 @@ module.exports = app => {
 /* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const utils = __webpack_require__(0);
+const utils = __webpack_require__(1);
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -1966,9 +1967,9 @@ module.exports = app => {
 /* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(1);
+const require3 = __webpack_require__(0);
 const extend = require3('extend2');
-const utils = __webpack_require__(0);
+const utils = __webpack_require__(1);
 
 module.exports = app => {
 
@@ -2392,9 +2393,9 @@ module.exports = app => {
 /* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(1);
+const require3 = __webpack_require__(0);
 const uuid = require3('uuid');
-const utils = __webpack_require__(0);
+const utils = __webpack_require__(1);
 
 module.exports = app => {
 
@@ -2799,7 +2800,7 @@ module.exports = app => {
 /* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(1);
+const require3 = __webpack_require__(0);
 const trimHtml = require3('@zhennann/trim-html');
 const markdown = require3('@zhennann/markdown');
 const markdonw_it_block = require3('@zhennann/markdown-it-block');
@@ -3093,7 +3094,7 @@ module.exports = app => {
 /* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const utils = __webpack_require__(0);
+const utils = __webpack_require__(1);
 
 module.exports = app => {
 
@@ -3271,7 +3272,7 @@ module.exports = app => {
 /* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(1);
+const require3 = __webpack_require__(0);
 const fse = require3('fs-extra');
 const extend = require3('extend2');
 const Build = __webpack_require__(2);
@@ -3437,7 +3438,7 @@ module.exports = app => {
 /* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const utils = __webpack_require__(0);
+const utils = __webpack_require__(1);
 
 module.exports = app => {
 
@@ -3695,7 +3696,8 @@ module.exports = app => {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
-  const schemas = __webpack_require__(39)(app);
+  const keywords = __webpack_require__(39)(app);
+  const schemas = __webpack_require__(40)(app);
   const meta = {
     base: {
       atoms: {
@@ -3776,7 +3778,9 @@ module.exports = app => {
           schemas: 'category',
         },
       },
-      keywords: {},
+      keywords: {
+        'x-slug': keywords.slug,
+      },
       schemas: {
         article: schemas.article,
         articleSearch: schemas.articleSearch,
@@ -3800,6 +3804,45 @@ module.exports = app => {
 
 /***/ }),
 /* 39 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(0);
+const Ajv = require3('ajv');
+
+module.exports = app => {
+  const keywords = {};
+  keywords.slug = {
+    async: true,
+    type: 'string',
+    errors: true,
+    compile() {
+      return async function(data, path, rootData, name) {
+        // ignore if empty
+        if (!data) return true;
+        // unique slug for language and atomClass
+        const ctx = this;
+        //   atomClass from atomId
+        const atomClass = await ctx.meta.atomClass.getByAtomId({ atomId: rootData.atomId });
+        //   read by atomClass, language, slug
+        const items = await ctx.model.query(`
+          select a.id from aAtom a
+            left join aCmsArticle b on a.id=b.atomId
+              where a.iid=? and a.deleted=0 and a.atomClassId=? and b.language=? and b.slug=?
+          `, [ ctx.instance.id, atomClass.id, rootData.language, data ]);
+        if (items[0] && items[0].id !== rootData.atomId) {
+          const errors = [{ keyword: 'x-slug', params: [], message: ctx.text('Slug Exists') }];
+          throw new Ajv.ValidationError(errors);
+        }
+        return true;
+      };
+    },
+  };
+  return keywords;
+};
+
+
+/***/ }),
+/* 40 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3813,6 +3856,9 @@ module.exports = app => {
       },
     },
     properties: {
+      atomId: {
+        type: 'number',
+      },
       atomName: {
         type: 'string',
         ebType: 'text',
@@ -3865,6 +3911,7 @@ module.exports = app => {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Slug',
+        'x-slug': true,
       },
       sorting: {
         type: 'number',
