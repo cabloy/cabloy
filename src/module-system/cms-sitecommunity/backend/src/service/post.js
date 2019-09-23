@@ -58,7 +58,7 @@ module.exports = app => {
       // route to article
       await this.ctx.performAction({
         method: 'post',
-        url: `/${articleModuleInfo.url}/${articleAtomClassName}/writeNoValidate`,
+        url: `/${articleModuleInfo.url}/${articleAtomClassName}/write`,
         body: {
           atomClass,
           key,

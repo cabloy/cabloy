@@ -222,21 +222,6 @@ const version = __webpack_require__(7);
 const post = __webpack_require__(8);
 const event = __webpack_require__(9);
 
-const middlewareWrite = async function(ctx, next) {
-  // validator
-  const validator = await ctx.meta.atom.validator({
-    atomClass: ctx.request.body.atomClass,
-    user: ctx.user.op,
-  });
-  // validate options
-  ctx.meta.middlewares.validate = {
-    module: validator.module,
-    validator: validator.validator,
-    data: 'item',
-  };
-  await next();
-};
-
 module.exports = app => {
   const routes = [
     // version
@@ -247,8 +232,7 @@ module.exports = app => {
     { method: 'post', path: 'post/create', controller: post, middlewares: 'inner', meta: { auth: { enable: false } } },
     { method: 'post', path: 'post/read', controller: post, middlewares: 'inner', meta: { auth: { enable: false } } },
     { method: 'post', path: 'post/select', controller: post, middlewares: 'inner', meta: { auth: { enable: false } } },
-    { method: 'post', path: 'post/write', controller: post, middlewares: [ 'inner', middlewareWrite, 'validate' ],
-      meta: { auth: { enable: false } },
+    { method: 'post', path: 'post/write', controller: post, middlewares: 'inner', meta: { auth: { enable: false } },
     },
     { method: 'post', path: 'post/delete', controller: post, middlewares: 'inner', meta: { auth: { enable: false } } },
     { method: 'post', path: 'post/action', controller: post, middlewares: 'inner', meta: { auth: { enable: false } } },
@@ -500,7 +484,7 @@ module.exports = app => {
       // route to article
       await this.ctx.performAction({
         method: 'post',
-        url: `/${articleModuleInfo.url}/${articleAtomClassName}/writeNoValidate`,
+        url: `/${articleModuleInfo.url}/${articleAtomClassName}/write`,
         body: {
           atomClass,
           key,
