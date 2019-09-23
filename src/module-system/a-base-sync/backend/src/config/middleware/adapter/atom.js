@@ -197,6 +197,18 @@ const Fn = module.exports = ctx => {
     async write({ key, item, user }) {
       const atomClass = await ctx.meta.atomClass.getByAtomId({ atomId: key.atomId });
 
+      // validator
+      const validator = await ctx.meta.atom.validator({ atomClass, user });
+      if (validator) {
+        // if error throw 422
+        await ctx.meta.validation.validate({
+          module: validator.module,
+          validator: validator.validator,
+          schema: validator.schema,
+          data: item,
+        });
+      }
+
       // write item
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       await ctx.performAction({
