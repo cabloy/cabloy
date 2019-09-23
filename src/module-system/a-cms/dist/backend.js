@@ -1468,13 +1468,7 @@ module.exports = app => {
     { method: 'post', path: 'article/create', controller: article, middlewares: 'inner', meta: { auth: { enable: false } } },
     { method: 'post', path: 'article/read', controller: article, middlewares: 'inner', meta: { auth: { enable: false } } },
     { method: 'post', path: 'article/select', controller: article, middlewares: 'inner', meta: { auth: { enable: false } } },
-    { method: 'post', path: 'article/write', controller: article, middlewares: 'inner,validate',
-      meta: {
-        auth: { enable: false },
-        validate: { validator: 'article', data: 'item' },
-      },
-    },
-    { method: 'post', path: 'article/writeNoValidate', controller: article, middlewares: 'inner', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'article/write', controller: article, middlewares: 'inner', meta: { auth: { enable: false } } },
     { method: 'post', path: 'article/delete', controller: article, middlewares: 'inner', meta: { auth: { enable: false } } },
     { method: 'post', path: 'article/action', controller: article, middlewares: 'inner', meta: { auth: { enable: false } } },
     { method: 'post', path: 'article/enable', controller: article, middlewares: 'inner', meta: { auth: { enable: false } } },
@@ -1593,10 +1587,6 @@ module.exports = app => {
     async write() {
       await this.ctx.service.article.write(this.ctx.request.body);
       this.ctx.success();
-    }
-
-    async writeNoValidate() {
-      await this.write();
     }
 
     async delete() {

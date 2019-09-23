@@ -26,10 +26,6 @@ module.exports = app => {
       this.ctx.success();
     }
 
-    async writeNoValidate() {
-      await this.write();
-    }
-
     async delete() {
       await this.ctx.service.article.delete(this.ctx.request.body);
       this.ctx.success();
