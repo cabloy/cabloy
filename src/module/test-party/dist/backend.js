@@ -369,12 +369,7 @@ module.exports = app => {
       { method: 'post', path: 'party/create', controller: party, middlewares: 'inner', meta: { auth: { enable: false } } },
       { method: 'post', path: 'party/read', controller: party, middlewares: 'inner', meta: { auth: { enable: false } } },
       { method: 'post', path: 'party/select', controller: party, middlewares: 'inner', meta: { auth: { enable: false } } },
-      { method: 'post', path: 'party/write', controller: party, middlewares: 'inner,validate',
-        meta: {
-          auth: { enable: false },
-          validate: { validator: 'party', data: 'item' },
-        },
-      },
+      { method: 'post', path: 'party/write', controller: party, middlewares: 'inner', meta: { auth: { enable: false } } },
       { method: 'post', path: 'party/delete', controller: party, middlewares: 'inner', meta: { auth: { enable: false } } },
       { method: 'post', path: 'party/action', controller: party, middlewares: 'inner', meta: { auth: { enable: false } } },
       { method: 'post', path: 'party/enable', controller: party, middlewares: 'inner', meta: { auth: { enable: false } } },
