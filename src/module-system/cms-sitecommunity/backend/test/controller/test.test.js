@@ -158,6 +158,7 @@ describe('test/controller/test.test.js', () => {
       result = await app.httpRequest().post(mockUrl('/a/base/atom/submit')).send({
         key: atomKey,
         item: {
+          atomId: atomKey.atomId,
           atomName: article.atomName,
           language: article.language,
           editMode: article.editMode,
