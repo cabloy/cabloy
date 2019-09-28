@@ -51,6 +51,7 @@ function createValidate(schemaRoot) {
     } catch (e) {
       const locale = ctx.locale.split('-')[0];
       if (locale !== 'en' && AjvLocalize[locale]) AjvLocalize[locale](e.errors);
+      ctx.logger.error(e);
       // error
       throw ctx.createError({
         ...e,
