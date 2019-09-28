@@ -8,6 +8,12 @@
   },
   "author": "zhennann",
   "license": "ISC",
+  "keywords": [
+    "egg",
+    "egg-framework",
+    "framework7",
+    "cabloy"
+  ],
   "bugs": {
     "url": "https://github.com/zhennann/cabloy/issues"
   },
