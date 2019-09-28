@@ -445,6 +445,7 @@ module.exports = app => {
       { method: 'post', path: 'test/event/helloEcho', controller: testEventHello, middlewares: 'test,inner', meta: { auth: { enable: false } } },
       // test/event/userVerify
       { method: 'post', path: 'test/event/userVerify', controller: testEventUserVerify, middlewares: 'test', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/event/loginInfo', controller: testEventUserVerify, middlewares: 'test', meta: { auth: { enable: false } } },
 
       // test/cache
       { method: 'post', path: 'test/cache/mem', controller: testCacheMem, middlewares: 'test', meta: { auth: { enable: false } } },
@@ -1765,7 +1766,7 @@ module.exports = app => {
       assert.equal(value, 'zhennann');
 
       // get after timeout
-      await sleep(1200);
+      await sleep(1500);
       value = await this.ctx.cache.db.get(name);
       assert.equal(value, undefined);
 
@@ -1884,6 +1885,7 @@ module.exports = app => {
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
+const extend = require3('extend2');
 const assert = require3('assert');
 
 module.exports = app => {
@@ -1894,6 +1896,32 @@ module.exports = app => {
       const data = this.ctx.request.body.data;
       // console.log('onUserVerify profileId: ', data.profileUser.profileId);
       assert(data.profileUser.profileId > 0);
+      this.ctx.success();
+    }
+
+    async loginInfo() {
+      // change the config of mobile layout by checking the user's login status
+      const data = this.ctx.request.body.data;
+      const info = data.info;
+      const provider = info.user && info.user.provider;
+      if (provider && provider.module === 'a-authgithub' && provider.providerName === 'authgithub') {
+        info.config = extend(true, info.config, {
+          modules: {
+            'a-layoutmobile': {
+              layout: {
+                login: '/a/login/login',
+                loginOnStart: true,
+                toolbar: {
+                  tabbar: true, labels: true, bottomMd: true,
+                },
+                tabs: [
+                  { name: 'Mine', tabLinkActive: true, iconMaterial: 'person', url: '/a/user/user/mine' },
+                ],
+              },
+            },
+          },
+        });
+      }
       this.ctx.success();
     }
 
@@ -3335,6 +3363,7 @@ module.exports = app => {
         implementations: {
           'test-party:hello': 'test/event/helloEcho',
           'a-base:userVerify': 'test/event/userVerify',
+          'a-base:loginInfo': 'test/event/loginInfo',
         },
       },
       hook: {

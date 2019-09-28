@@ -127,6 +127,7 @@ module.exports = app => {
       { method: 'post', path: 'test/event/helloEcho', controller: testEventHello, middlewares: 'test,inner', meta: { auth: { enable: false } } },
       // test/event/userVerify
       { method: 'post', path: 'test/event/userVerify', controller: testEventUserVerify, middlewares: 'test', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/event/loginInfo', controller: testEventUserVerify, middlewares: 'test', meta: { auth: { enable: false } } },
 
       // test/cache
       { method: 'post', path: 'test/cache/mem', controller: testCacheMem, middlewares: 'test', meta: { auth: { enable: false } } },
