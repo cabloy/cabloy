@@ -54,6 +54,6 @@
     "egg-born-module-a-settings": "^2.0.4",
     "egg-born-module-a-status": "^2.0.3",
     "egg-born-module-a-user": "^2.0.4",
-    "egg-born-module-a-validation": "^2.0.6"
+    "egg-born-module-a-validation": "^2.0.7"
   }
 }
