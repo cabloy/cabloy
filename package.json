@@ -36,7 +36,7 @@
     "egg-born-module-a-baseadmin": "^2.0.5",
     "egg-born-module-a-cache": "^2.0.4",
     "egg-born-module-a-captcha": "^2.0.4",
-    "egg-born-module-a-captchasimple": "^2.0.3",
+    "egg-born-module-a-captchasimple": "^2.0.4",
     "egg-born-module-a-components-sync": "^2.0.15",
     "egg-born-module-a-event": "^2.0.3",
     "egg-born-module-a-file": "^2.0.3",
