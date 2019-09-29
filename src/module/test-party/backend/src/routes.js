@@ -194,10 +194,7 @@ module.exports = app => {
       { method: 'post', path: 'kitchen-sink/guide/echo8', controller: testKitchensinkGuide, middlewares: 'transaction' },
       { method: 'post', path: 'kitchen-sink/guide/echo9', controller: testKitchensinkGuide,
         meta: {
-          right: {
-            type: 'function',
-            name: 'kitchenSink',
-          },
+          right: { type: 'function', name: 'kitchenSink' },
         },
       },
 
@@ -207,9 +204,10 @@ module.exports = app => {
       { method: 'get', path: 'kitchen-sink/form-schema-validation/load', controller: testKitchensinkFormSchemaValidation },
       { method: 'post', path: 'kitchen-sink/form-schema-validation/saveSimple', controller: testKitchensinkFormSchemaValidation },
       { method: 'post', path: 'kitchen-sink/form-schema-validation/saveValidation', controller: testKitchensinkFormSchemaValidation, middlewares: 'validate',
-        meta: {
-          validate: { validator: 'formTest' },
-        },
+        meta: { validate: { validator: 'formTest' } },
+      },
+      { method: 'post', path: 'kitchen-sink/form-captcha/signup', controller: testKitchensinkFormSchemaValidation, middlewares: 'validate,captchaVerify',
+        meta: { validate: { validator: 'formCaptchaTest' } },
       },
       // kitchen-sink/ptr-is-loadmore
       { method: 'post', path: 'kitchen-sink/ptr-is-loadmore/list', controller: testKitchensinkPtrIsLoadMore },

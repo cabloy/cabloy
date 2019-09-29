@@ -31,6 +31,7 @@ export default [
   { path: 'kitchen-sink/form-schema-validation/form', component: loadKitchenSink('form-schema-validation/form') },
   { path: 'kitchen-sink/form-schema-validation/formSchemaAuto', component: loadKitchenSink('form-schema-validation/formSchemaAuto') },
   { path: 'kitchen-sink/form-schema-validation/formSchemaCustom', component: loadKitchenSink('form-schema-validation/formSchemaCustom') },
+  { path: 'kitchen-sink/form-captcha', component: loadKitchenSink('form-schema-validation/captcha') },
   { path: 'kitchen-sink/ptrIsLoadMore', component: loadKitchenSink('ptrIsLoadMore') },
   { path: 'kitchen-sink/buttonEvent', component: loadKitchenSink('buttonEvent') },
   { path: 'kitchen-sink/atom', component: loadKitchenSink('atom') },

@@ -46,6 +46,7 @@ export default {
   Avatar: '头像',
   Guide: '指南',
   Click: '点击',
+  Captcha: '验证码',
   CabloyAboutTip1: 'CabloyJS - 是一款顶级NodeJS全栈业务开发框架',
   CabloyAboutTip2: '前端采用VueJS + Framework7 + Webpack，后端采用KoaJS + EggJS，数据库采用MySQL',
   CabloyAboutTip3: '在纵向上，将前端和后端打通，形成一个有机的整体，避免前端和后端各自为政的状况',
@@ -113,6 +114,7 @@ export default {
   'Form (Simple)': '表单 (简单)',
   'Form / Schema (Auto) / Validation': '表单 / Schema (自动) / 验证',
   'Form / Schema (Custom) / Validation': '表单 / Schema (自定义) / 验证',
+  'Form / Captcha': '表单 / 验证码',
   'Password again': '重复密码',
   'Pull To Refresh / Infinite Scroll / Load More': '上拉刷新 / 无限滚动 / 加载更多',
   'Button Event': '按钮事件',
@@ -124,5 +126,6 @@ export default {
   'How to do ...': '如何做...',
   'Global Component': '全局组件',
   'State Management': '状态管理',
+  'Sign Up': '注册',
 };
 

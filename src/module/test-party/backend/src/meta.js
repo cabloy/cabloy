@@ -85,6 +85,9 @@ module.exports = app => {
           formTest: {
             schemas: 'formTest',
           },
+          formCaptchaTest: {
+            schemas: 'formCaptchaTest',
+          },
         },
         keywords: {
           'x-languages': keywords.languages,
@@ -96,6 +99,7 @@ module.exports = app => {
           settingsUserExtra: schemas.settingsUserExtra,
           settingsInstance: schemas.settingsInstance,
           formTest: schemas.formTest,
+          formCaptchaTest: schemas.formCaptchaTest,
         },
       },
       settings: {

@@ -512,10 +512,7 @@ module.exports = app => {
       { method: 'post', path: 'kitchen-sink/guide/echo8', controller: testKitchensinkGuide, middlewares: 'transaction' },
       { method: 'post', path: 'kitchen-sink/guide/echo9', controller: testKitchensinkGuide,
         meta: {
-          right: {
-            type: 'function',
-            name: 'kitchenSink',
-          },
+          right: { type: 'function', name: 'kitchenSink' },
         },
       },
 
@@ -525,9 +522,10 @@ module.exports = app => {
       { method: 'get', path: 'kitchen-sink/form-schema-validation/load', controller: testKitchensinkFormSchemaValidation },
       { method: 'post', path: 'kitchen-sink/form-schema-validation/saveSimple', controller: testKitchensinkFormSchemaValidation },
       { method: 'post', path: 'kitchen-sink/form-schema-validation/saveValidation', controller: testKitchensinkFormSchemaValidation, middlewares: 'validate',
-        meta: {
-          validate: { validator: 'formTest' },
-        },
+        meta: { validate: { validator: 'formTest' } },
+      },
+      { method: 'post', path: 'kitchen-sink/form-captcha/signup', controller: testKitchensinkFormSchemaValidation, middlewares: 'validate,captchaVerify',
+        meta: { validate: { validator: 'formCaptchaTest' } },
       },
       // kitchen-sink/ptr-is-loadmore
       { method: 'post', path: 'kitchen-sink/ptr-is-loadmore/list', controller: testKitchensinkPtrIsLoadMore },
@@ -2618,6 +2616,11 @@ module.exports = app => {
       await this.saveSimple();
     }
 
+    // form-captcha signup
+    signup() {
+      this.ctx.success();
+    }
+
     _getCacheName() {
       // get the operation user
       const user = this.ctx.user.op;
@@ -3312,6 +3315,9 @@ module.exports = app => {
           formTest: {
             schemas: 'formTest',
           },
+          formCaptchaTest: {
+            schemas: 'formCaptchaTest',
+          },
         },
         keywords: {
           'x-languages': keywords.languages,
@@ -3323,6 +3329,7 @@ module.exports = app => {
           settingsUserExtra: schemas.settingsUserExtra,
           settingsInstance: schemas.settingsInstance,
           formTest: schemas.formTest,
+          formCaptchaTest: schemas.formCaptchaTest,
         },
       },
       settings: {
@@ -3540,7 +3547,6 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Username',
         notEmpty: true,
-        'x-exists': true,
       },
       password: {
         type: 'string',
@@ -3595,6 +3601,25 @@ module.exports = app => {
         type: 'boolean',
         ebType: 'toggle',
         ebTitle: 'Remember me',
+      },
+    },
+  };
+  schemas.formCaptchaTest = {
+    type: 'object',
+    properties: {
+      userName: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Username',
+        notEmpty: true,
+      },
+      password: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Password',
+        ebSecure: true,
+        notEmpty: true,
+        minLength: 6,
       },
     },
   };

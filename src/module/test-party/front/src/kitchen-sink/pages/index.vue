@@ -20,6 +20,7 @@ const items = [
   { title: 'Markdown Editor(mavon-editor)', path: 'kitchen-sink/markdownEditor' },
   { title: 'Dialog', path: 'kitchen-sink/dialog' },
   { title: 'Form / Schema / Validation', path: 'kitchen-sink/form-schema-validation/index' },
+  { title: 'Form / Captcha', path: 'kitchen-sink/form-captcha' },
   { title: 'Pull To Refresh / Infinite Scroll / Load More', path: 'kitchen-sink/ptrIsLoadMore' },
   { title: 'Button Event', path: 'kitchen-sink/buttonEvent' },
   { title: 'Atom', path: 'kitchen-sink/atom' },

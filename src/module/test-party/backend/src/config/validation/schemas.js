@@ -144,7 +144,6 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Username',
         notEmpty: true,
-        'x-exists': true,
       },
       password: {
         type: 'string',
@@ -199,6 +198,25 @@ module.exports = app => {
         type: 'boolean',
         ebType: 'toggle',
         ebTitle: 'Remember me',
+      },
+    },
+  };
+  schemas.formCaptchaTest = {
+    type: 'object',
+    properties: {
+      userName: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Username',
+        notEmpty: true,
+      },
+      password: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Password',
+        ebSecure: true,
+        notEmpty: true,
+        minLength: 6,
       },
     },
   };

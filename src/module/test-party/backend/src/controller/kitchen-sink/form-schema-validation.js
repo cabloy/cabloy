@@ -35,6 +35,11 @@ module.exports = app => {
       await this.saveSimple();
     }
 
+    // form-captcha signup
+    signup() {
+      this.ctx.success();
+    }
+
     _getCacheName() {
       // get the operation user
       const user = this.ctx.user.op;
