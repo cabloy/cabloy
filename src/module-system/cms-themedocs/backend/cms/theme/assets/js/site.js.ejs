@@ -134,6 +134,7 @@ function categoryTree($treeContainer) {
               [ 'f.sorting', 'asc' ],
               [ 'a.createdAt', 'asc' ],
             ],
+            pageForce: false,
           }).then(res => {
             const data = _prepareArtilesData(node.id, res.list);
             cb.call(self, data);
@@ -346,7 +347,11 @@ ${tagsText}
   });
 }
 
-function _fetchArticles({ index, categoryId, tagId, search, orders }) {
+function _fetchArticles({ index, categoryId, tagId, search, orders, pageForce = true }) {
+  const page = { index };
+  if (!pageForce) {
+    page.size = 0;
+  }
   // options
   const options = {
     where: {
@@ -356,7 +361,7 @@ function _fetchArticles({ index, categoryId, tagId, search, orders }) {
       [ 'f.sticky', 'desc' ],
       [ 'a.createdAt', 'desc' ],
     ],
-    page: { index },
+    page,
     mode: 'list',
   };
   // categoryId
