@@ -47,6 +47,8 @@ module.exports = app => {
       const atomClass = utils.atomClass(this.ctx.request.body.atomClass);
       // options
       const options = this.ctx.request.body.options;
+      // user
+      const user = this.ctx.user.op;
       // select
       // filter drafts
       options.where = extend(true, options.where, {
@@ -54,16 +56,10 @@ module.exports = app => {
         'a.atomFlag': 2, // published
       });
       // select
-      const res = await this.ctx.performAction({
-        method: 'post',
-        url: '/a/base/atom/select',
-        body: {
-          atomClass,
-          options,
-        },
-      });
+      options.page = this.ctx.meta.util.page(options.page, false);
+      const items = await this.ctx.meta.atom.select({ atomClass, options, user, pageForce: false });
       // ok
-      this.ctx.success(res);
+      this.ctx.successMore(items, options.page.index, options.page.size);
     }
 
     // attachments
