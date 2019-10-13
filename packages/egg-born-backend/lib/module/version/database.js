@@ -1,54 +1,29 @@
 const moment = require('moment');
 const chalk = require('chalk');
+const RDSClient = require('ali-rds');
+const RDSConnection = require('ali-rds/lib/connection');
 
-const transactionIsolationNames = [ 'transaction_isolation', 'tx_isolation' ];
-
-async function transactionIsolationSet(app) {
-  for (const name of transactionIsolationNames) {
-    const transaction_isolation_cmd = `SET GLOBAL ${name}='READ-COMMITTED'`;
-    try {
-      await app.mysql.get('__ebdb').query(transaction_isolation_cmd);
-      break;
-    } catch (error) {
-      if (error.code !== 'ER_UNKNOWN_SYSTEM_VARIABLE') {
-        // throw error;
-        // just console then pass
-        console.log(chalk.red(transaction_isolation_cmd));
-        break;
-      }
+// RDSClient
+RDSClient.prototype.getConnection = function() {
+  return this.pool.getConnection().then(onConnection, onError);
+  async function onConnection(conn) {
+    const rdsConn = new RDSConnection(conn);
+    if (!conn.__eb_inited) {
+      await sessionVariablesSet(rdsConn);
+      conn.__eb_inited = true;
     }
+    return rdsConn;
   }
-}
-
-async function transactionIsolationGet(app) {
-  for (const name of transactionIsolationNames) {
-    const transaction_isolation_cmd = `SELECT @@GLOBAL.${name} transaction_isolation`;
-    try {
-      const res = await app.mysql.get('__ebdb').query(transaction_isolation_cmd);
-      const value = res[0] && res[0].transaction_isolation;
-      return { name, value };
-      break;
-    } catch (error) {
-      if (error.code !== 'ER_UNKNOWN_SYSTEM_VARIABLE') {
-        throw error;
-      }
+  function onError(err) {
+    if (err.name === 'Error') {
+      err.name = 'RDSClientGetConnectionError';
     }
+    throw err;
   }
-}
+};
 
+// database
 module.exports = async function(app) {
-  // isolation level
-  if (app.meta.isLocal || app.meta.isTest) {
-    await transactionIsolationSet(app);
-  } else {
-    const res = await transactionIsolationGet(app);
-    if (!res) throw new Error('transactionIsolationGet error');
-    if (res.value !== 'READ-COMMITTED') {
-      const transaction_isolation_cmd = `SET GLOBAL ${res.name}='READ-COMMITTED'`;
-      console.log(chalk.red(transaction_isolation_cmd));
-      throw new Error(transaction_isolation_cmd);
-    }
-  }
   // db prefix
   const dbPrefix = `egg-born-test-${app.name}`;
   // dev/debug db
@@ -91,3 +66,17 @@ module.exports = async function(app) {
     console.log(chalk.cyan(`  database: ${database}`));
   }
 };
+
+async function sessionVariablesSet(rdsConn) {
+  sessionVariableSet(rdsConn, 'SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED');
+  sessionVariableSet(rdsConn, 'SET SESSION explicit_defaults_for_timestamp=ON');
+}
+
+async function sessionVariableSet(rdsConn, sql) {
+  try {
+    await rdsConn.query(sql);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
