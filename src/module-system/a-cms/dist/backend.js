@@ -751,9 +751,12 @@ $(document).ready(function() {
         } else {
           if (item.indexOf('.min.js') === -1) {
             _content = babel.transform(_content, { ast: false, babelrc: false, presets: [ '@babel/preset-env' ] }).code;
-            const output = UglifyJS.minify(_content);
-            if (output.error) throw new Error(`${output.error.name}: ${output.error.message}`);
-            _content = output.code;
+            // not minify for test/dev
+            if (!this.ctx.app.meta.isTest && !this.ctx.app.meta.isLocal) {
+              const output = UglifyJS.minify(_content);
+              if (output.error) throw new Error(`${output.error.name}: ${output.error.message}`);
+              _content = output.code;
+            }
           }
         }
         // append
@@ -813,7 +816,11 @@ var env=${JSON.stringify(env, null, 2)};
 </script>
 `;
     const regexp = new RegExp('__ENV__');
-    return content.replace(regexp, text);
+    const res = content.replace(regexp, text);
+    // remove article
+    env.article = undefined;
+    // ok
+    return res;
   }
 
   resolvePath(pathRoot, fileCurrent, fileName) {
