@@ -20,7 +20,7 @@
               </div>
               <div class="actions">
                 <eb-link v-if="item.h_userId===user.id" class="action" iconMaterial="edit" :eb-href="`comment/item?atomId=${item.atomId}&commentId=${item.h_id}&replyId=0`"></eb-link>
-                <eb-link v-if="item.h_userId===user.id" class="action" iconMaterial="delete_forever" :context="item" :onPerform="onPerformDelete"></eb-link>
+                <eb-link v-if="item.h_userId===user.id || rightDeleteComment" class="action" iconMaterial="delete_forever" :context="item" :onPerform="onPerformDelete"></eb-link>
                 <eb-link class="action" :iconMaterial="item.h_heart?'favorite':'favorite_border'" :context="item" :onPerform="onPerformHeart">{{item.h_heartCount}}</eb-link>
                 <eb-link v-if="!user.anonymous" class="action" iconMaterial="reply" :eb-href="`comment/item?atomId=${item.atomId}&commentId=0&replyId=${item.h_id}`"></eb-link>
               </div>
@@ -53,6 +53,7 @@ export default {
       order: 'desc',
       items: [],
       moduleStyle: null,
+      rightDeleteComment: false,
     };
   },
   computed: {
@@ -61,8 +62,19 @@ export default {
     },
   },
   created() {
-    this.$meta.module.use(this.$meta.config.markdown.style.module, module => {
-      this.moduleStyle = module;
+    // check function right
+    const functions = [{
+      module: 'a-base',
+      name: 'deleteComment',
+    }];
+    this.$api.post('function/check', {
+      functions,
+    }).then(data => {
+      this.rightDeleteComment = data[0].passed;
+      // markdown style
+      this.$meta.module.use(this.$meta.config.markdown.style.module, module => {
+        this.moduleStyle = module;
+      });
     });
   },
   mounted() {

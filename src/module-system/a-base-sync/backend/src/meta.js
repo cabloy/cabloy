@@ -14,6 +14,10 @@ module.exports = app => {
           menu: 1,
           actionPath: 'comment/all',
         },
+        deleteComment: {
+          title: 'Delete Comment',
+          menu: 0,
+        },
       },
     },
     sequence: {

@@ -124,7 +124,15 @@ module.exports = app => {
     async delete({ key, data: { commentId }, user }) {
       // comment
       const item = await this.ctx.model.comment.get({ id: commentId });
-      if (key.atomId !== item.atomId || item.userId !== user.id) this.ctx.throw(403);
+      // check right
+      let canDeleted = (key.atomId === item.atomId && item.userId === user.id);
+      if (!canDeleted) {
+        canDeleted = await this.ctx.meta.function.checkRightFunction({
+          function: { module: 'a-base', name: 'deleteComment' },
+          user,
+        });
+      }
+      if (!canDeleted) this.ctx.throw(403);
       // delete hearts
       await this.ctx.model.commentHeart.delete({ commentId });
       // delete comment

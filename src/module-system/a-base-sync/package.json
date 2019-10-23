@@ -1,9 +1,9 @@
 {
   "name": "egg-born-module-a-base-sync",
-  "version": "2.1.9",
+  "version": "2.1.11",
   "title": "Base",
   "eggBornModule": {
-    "fileVersion": 6,
+    "fileVersion": 7,
     "dependencies": {
       "a-instance": "2.0.0",
       "a-status": "2.0.0",

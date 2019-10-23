@@ -1535,9 +1535,9 @@ module.exports = app => {
   // services
   const services = __webpack_require__(53)(app);
   // models
-  const models = __webpack_require__(73)(app);
+  const models = __webpack_require__(74)(app);
   // meta
-  const meta = __webpack_require__(80)(app);
+  const meta = __webpack_require__(81)(app);
 
   return {
     routes,
@@ -5040,14 +5040,14 @@ module.exports = app => {
 /***/ (function(module, exports, __webpack_require__) {
 
 const version = __webpack_require__(54);
-const base = __webpack_require__(65);
-const user = __webpack_require__(66);
-const atom = __webpack_require__(67);
-const atomClass = __webpack_require__(68);
-const atomAction = __webpack_require__(69);
-const auth = __webpack_require__(70);
-const func = __webpack_require__(71);
-const comment = __webpack_require__(72);
+const base = __webpack_require__(66);
+const user = __webpack_require__(67);
+const atom = __webpack_require__(68);
+const atomClass = __webpack_require__(69);
+const atomAction = __webpack_require__(70);
+const auth = __webpack_require__(71);
+const func = __webpack_require__(72);
+const comment = __webpack_require__(73);
 
 module.exports = app => {
   const services = {
@@ -5077,6 +5077,7 @@ const VersionUpdate6Fn = __webpack_require__(60);
 const VersionInit2Fn = __webpack_require__(61);
 const VersionInit4Fn = __webpack_require__(63);
 const VersionInit5Fn = __webpack_require__(64);
+const VersionInit7Fn = __webpack_require__(65);
 
 module.exports = app => {
 
@@ -5122,6 +5123,10 @@ module.exports = app => {
       if (options.version === 5) {
         const versionInit5 = new (VersionInit5Fn(this.ctx))();
         await versionInit5.run(options);
+      }
+      if (options.version === 7) {
+        const versionInit7 = new (VersionInit7Fn(this.ctx))();
+        await versionInit7.run(options);
       }
     }
 
@@ -5978,6 +5983,28 @@ module.exports = function(ctx) {
 /* 65 */
 /***/ (function(module, exports) {
 
+module.exports = function(ctx) {
+
+  class VersionInit {
+
+    async run(options) {
+      // roleFunctions
+      const roleFunctions = [
+        { roleName: 'system', name: 'deleteComment' },
+      ];
+      await ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
+    }
+
+  }
+
+  return VersionInit;
+};
+
+
+/***/ }),
+/* 66 */
+/***/ (function(module, exports) {
+
 module.exports = app => {
 
   class Base extends app.Service {
@@ -6021,7 +6048,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6060,7 +6087,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6126,7 +6153,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6152,7 +6179,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6170,7 +6197,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -6312,7 +6339,7 @@ function createAuthenticate(moduleRelativeName, providerName, _config) {
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6351,7 +6378,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -6480,7 +6507,15 @@ module.exports = app => {
     async delete({ key, data: { commentId }, user }) {
       // comment
       const item = await this.ctx.model.comment.get({ id: commentId });
-      if (key.atomId !== item.atomId || item.userId !== user.id) this.ctx.throw(403);
+      // check right
+      let canDeleted = (key.atomId === item.atomId && item.userId === user.id);
+      if (!canDeleted) {
+        canDeleted = await this.ctx.meta.function.checkRightFunction({
+          function: { module: 'a-base', name: 'deleteComment' },
+          user,
+        });
+      }
+      if (!canDeleted) this.ctx.throw(403);
       // delete hearts
       await this.ctx.model.commentHeart.delete({ commentId });
       // delete comment
@@ -6578,7 +6613,7 @@ ${replyContent}
 
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const atom = __webpack_require__(5);
@@ -6588,14 +6623,14 @@ const auth = __webpack_require__(21);
 const authProvider = __webpack_require__(22);
 const role = __webpack_require__(12);
 const roleInc = __webpack_require__(13);
-const roleIncRef = __webpack_require__(74);
-const roleRef = __webpack_require__(75);
+const roleIncRef = __webpack_require__(75);
+const roleRef = __webpack_require__(76);
 const roleRight = __webpack_require__(15);
 const roleRightRef = __webpack_require__(16);
 const user = __webpack_require__(19);
 const userAgent = __webpack_require__(20);
 const userRole = __webpack_require__(14);
-const label = __webpack_require__(76);
+const label = __webpack_require__(77);
 const atomLabel = __webpack_require__(7);
 const atomLabelRef = __webpack_require__(8);
 const atomStar = __webpack_require__(6);
@@ -6603,9 +6638,9 @@ const func = __webpack_require__(1);
 const functionStar = __webpack_require__(10);
 const functionLocale = __webpack_require__(11);
 const roleFunction = __webpack_require__(17);
-const comment = __webpack_require__(77);
-const commentView = __webpack_require__(78);
-const commentHeart = __webpack_require__(79);
+const comment = __webpack_require__(78);
+const commentView = __webpack_require__(79);
+const commentHeart = __webpack_require__(80);
 
 module.exports = app => {
   const models = {
@@ -6640,7 +6675,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6658,7 +6693,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6684,7 +6719,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6702,7 +6737,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6720,7 +6755,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6738,7 +6773,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6756,14 +6791,14 @@ module.exports = app => {
 
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
   // keywords
-  const keywords = __webpack_require__(81)(app);
+  const keywords = __webpack_require__(82)(app);
   // schemas
-  const schemas = __webpack_require__(82)(app);
+  const schemas = __webpack_require__(83)(app);
   // meta
   const meta = {
     base: {
@@ -6774,6 +6809,10 @@ module.exports = app => {
           sorting: 1,
           menu: 1,
           actionPath: 'comment/all',
+        },
+        deleteComment: {
+          title: 'Delete Comment',
+          menu: 0,
         },
       },
     },
@@ -6819,7 +6858,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -6852,7 +6891,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
