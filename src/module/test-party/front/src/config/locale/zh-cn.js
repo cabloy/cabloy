@@ -127,5 +127,6 @@ export default {
   'Global Component': '全局组件',
   'State Management': '状态管理',
   'Sign Up': '注册',
+  'Switch Tab': '切换Tab',
 };
 
