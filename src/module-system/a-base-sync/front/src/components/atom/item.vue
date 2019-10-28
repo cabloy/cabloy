@@ -138,8 +138,12 @@ export default {
       return this.actions.find(item => item.name === actionName);
     },
     onSave(event) {
-      return this.onAction(event, 'save').then(() => {
-        this.$view.toast.show();
+      return this.onAction(event, 'save').then(res => {
+        if (res === true) {
+          this.$view.toast.show();
+        } else if (typeof res === 'string') {
+          this.$view.toast.show({ text: res });
+        }
       });
     },
     onAction(event, action) {
