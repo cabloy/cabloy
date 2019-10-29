@@ -516,7 +516,7 @@ const Fn = module.exports = ctx => {
 
       const sql = this.sqlProcedure.selectAtoms({
         iid: ctx.instance.id,
-        userIdWho: user.id,
+        userIdWho: user ? user.id : 0,
         tableName, where, orders, page,
         star, label, comment, file,
       });
