@@ -17,6 +17,7 @@ module.exports = app => {
         [ 'Jane', 0 ],
         [ 'Jimmy', 0 ],
         [ 'Smith', 0 ],
+        [ '', 0 ],
       ], (actual, expected, userName) => {
         assert.equal(actual, expected, userName);
       });
@@ -37,6 +38,7 @@ module.exports = app => {
         [ 'Jane', 0 ],
         [ 'Jimmy', 0 ],
         [ 'Smith', 0 ],
+        [ '', 1 ],
       ], (actual, expected, userName) => {
         assert.equal(actual, expected, userName);
       });
@@ -55,6 +57,7 @@ module.exports = app => {
         [ 'Jane', 1 ],
         [ 'Jimmy', 1 ],
         [ 'Smith', 1 ],
+        [ '', 1 ],
       ], (actual, expected, userName) => {
         assert.equal(actual, expected, userName);
       });
@@ -171,6 +174,7 @@ module.exports = app => {
         [ 'Jane', 0 ],
         [ 'Jimmy', 0 ],
         [ 'Smith', 0 ],
+        [ '', 0 ],
       ], (actual, expected, userName) => {
         assert.equal(actual, expected, userName);
       });
@@ -190,7 +194,7 @@ module.exports = app => {
             orders: null,
             page: null,
           },
-          user: { id: userIds[userName] },
+          user: userName ? { id: userIds[userName] } : null,
         });
         // callback
         cb(list.length, atomCountExpected, userName);
