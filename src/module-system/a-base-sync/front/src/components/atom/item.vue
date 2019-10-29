@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar :title="title" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link v-if="ready && findAction('write')" :iconMaterial="this.mode==='edit'?'save':'edit'" :context="this.mode==='edit'?'save':'write'" :onPerform="onAction"></eb-link>
+        <eb-link ref="buttonSave" v-if="ready && findAction('write')" :iconMaterial="this.mode==='edit'?'save':'edit'" :context="this.mode==='edit'?'save':'write'" :onPerform="onAction"></eb-link>
         <f7-link v-if="showPopover" iconMaterial="more_horiz" :popover-open="`#${popoverId}`"></f7-link>
       </f7-nav-right>
     </eb-navbar>
@@ -138,13 +138,7 @@ export default {
       return this.actions.find(item => item.name === actionName);
     },
     onSave(event) {
-      return this.onAction(event, 'save').then(res => {
-        if (res === true) {
-          this.$view.toast.show();
-        } else if (typeof res === 'string') {
-          this.$view.toast.show({ text: res });
-        }
-      });
+      return this.onAction(event, 'save');
     },
     onAction(event, action) {
       if (action === 'save' || action === 'submit') {
@@ -206,8 +200,8 @@ export default {
       if (data.action === 'create') this.item.attachmentCount += 1;
       if (data.action === 'delete') this.item.attachmentCount -= 1;
     },
-    onSubmit(event) {
-      return this.onSave(event);
+    onSubmit() {
+      this.$refs.buttonSave.onClick();
     },
   },
 };
