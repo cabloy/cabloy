@@ -91,19 +91,19 @@ module.exports =
 
 const config = __webpack_require__(1);
 const locales = __webpack_require__(2);
-const errors = __webpack_require__(4);
-const middlewares = __webpack_require__(5);
+const errors = __webpack_require__(5);
+const middlewares = __webpack_require__(6);
 
 module.exports = app => {
 
   // routes
-  const routes = __webpack_require__(6)(app);
+  const routes = __webpack_require__(7)(app);
   // services
-  const services = __webpack_require__(10)(app);
+  const services = __webpack_require__(11)(app);
   // models
-  const models = __webpack_require__(15)(app);
+  const models = __webpack_require__(16)(app);
   // meta
-  const meta = __webpack_require__(17)(app);
+  const meta = __webpack_require__(18)(app);
 
   return {
     routes,
@@ -180,12 +180,22 @@ module.exports = appInfo => {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
-  'zh-cn': __webpack_require__(3),
+  'en-us': __webpack_require__(3),
+  'zh-cn': __webpack_require__(4),
 };
 
 
 /***/ }),
 /* 3 */
+/***/ (function(module, exports) {
+
+module.exports = {
+  Post2: 'Post',
+};
+
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -198,7 +208,7 @@ module.exports = {
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports) {
 
 // error code should start from 1001
@@ -207,7 +217,7 @@ module.exports = {
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -215,12 +225,12 @@ module.exports = {
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(7);
-const post = __webpack_require__(8);
-const event = __webpack_require__(9);
+const version = __webpack_require__(8);
+const post = __webpack_require__(9);
+const event = __webpack_require__(10);
 
 module.exports = app => {
   const routes = [
@@ -245,7 +255,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -272,7 +282,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -321,7 +331,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -343,12 +353,12 @@ module.exports = app => {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(11);
-const post = __webpack_require__(12);
-const event = __webpack_require__(14);
+const version = __webpack_require__(12);
+const post = __webpack_require__(13);
+const event = __webpack_require__(15);
 
 module.exports = app => {
   const services = {
@@ -361,7 +371,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -421,10 +431,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(13);
+const require3 = __webpack_require__(14);
 const mparse = require3('egg-born-mparse').default;
 
 module.exports = app => {
@@ -542,13 +552,13 @@ module.exports = app => {
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports) {
 
 module.exports = require("require3");
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -579,10 +589,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const post = __webpack_require__(16);
+const post = __webpack_require__(17);
 
 module.exports = app => {
   const models = {
@@ -593,7 +603,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -607,7 +617,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
@@ -617,7 +627,7 @@ module.exports = app => {
     atomClassName: 'post',
   };
   const atomClassQuery = `module=${atomClass.module}&atomClassName=${atomClass.atomClassName}`;
-  const schemas = __webpack_require__(18)(app);
+  const schemas = __webpack_require__(19)(app);
   const meta = {
     base: {
       atoms: {
@@ -716,7 +726,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
