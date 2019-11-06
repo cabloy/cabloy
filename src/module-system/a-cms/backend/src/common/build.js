@@ -518,9 +518,10 @@ $(document).ready(function() {
       if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin) {
         // path intermediate
         const pathIntermediate = await this.getPathIntermediate(language);
-        const incudeFileName = path.join(pathIntermediate, `plugins/${module.info.relativeName}/include.ejs`);
+        let incudeFileName = path.join(pathIntermediate, `plugins/${module.info.relativeName}/include.ejs`);
         const exists = await fse.pathExists(incudeFileName);
         if (exists) {
+          incudeFileName = incudeFileName.replace(/\\/g, '\\\\');
           pluginIncludes = `${pluginIncludes}<%- await include('${incudeFileName}') %>\n`;
         }
       }
