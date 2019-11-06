@@ -315,7 +315,17 @@ module.exports = app => {
     async update(options) {
       // check indexes
       if (this.ctx.config.indexesCheck) {
-        const indexes = extend(true, {}, this.ctx.config.indexes, this.ctx.config.indexesExtend);
+        // combine module's indexes
+        const moduleIndexes = {};
+        for (const relativeName in this.app.meta.modules) {
+          const module = this.app.meta.modules[relativeName];
+          if (module.main.meta && module.main.meta.index && module.main.meta.index.indexes) {
+            moduleIndexes[relativeName] = module.main.meta.index.indexes;
+          }
+        }
+        // combine indexes all
+        const indexes = extend(true, {}, this.ctx.config.indexes, moduleIndexes, this.ctx.config.indexesExtend);
+        // create indexes
         for (const moduleRelativeName in indexes) {
           if (this.app.meta.modules[moduleRelativeName]) {
             const moduleIndexes = indexes[moduleRelativeName];
