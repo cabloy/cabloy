@@ -110,6 +110,11 @@ module.exports = app => {
           validator: 'instanceTest',
         },
       },
+      index: {
+        indexes: {
+          testParty: 'createdAt,updatedAt,atomId,partyTypeId',
+        },
+      },
     });
   }
   if (app.meta.isTest) {
