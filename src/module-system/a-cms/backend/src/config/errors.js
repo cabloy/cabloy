@@ -5,4 +5,5 @@ module.exports = {
   1003: 'Theme not found',
   1004: 'Cannot delete if has children',
   1005: 'Cannot delete if has articles',
+  1006: 'Build Site First',
 };

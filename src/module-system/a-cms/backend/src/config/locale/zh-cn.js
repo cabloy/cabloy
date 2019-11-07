@@ -44,4 +44,5 @@ module.exports = {
   Build: '构建',
   Block: '区块',
   'Slug Exists': 'Slug已存在',
+  'Build Site First': '请先构建站点',
 };

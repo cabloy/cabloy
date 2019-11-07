@@ -1169,6 +1169,11 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
     if (!article) return;
     // site
     const site = await this.getSite({ language: article.language });
+    // check if build site first
+    const pathIntermediate = await this.getPathIntermediate(article.language);
+    const fileName = path.join(pathIntermediate, 'main/article.ejs');
+    const exists = await fse.pathExists(fileName);
+    if (!exists) this.ctx.throw(1006);
     // url
     return {
       relativeUrl: article.url,
@@ -1427,6 +1432,7 @@ module.exports = {
   Build: '构建',
   Block: '区块',
   'Slug Exists': 'Slug已存在',
+  'Build Site First': '请先构建站点',
 };
 
 
@@ -1441,6 +1447,7 @@ module.exports = {
   1003: 'Theme not found',
   1004: 'Cannot delete if has children',
   1005: 'Cannot delete if has articles',
+  1006: 'Build Site First',
 };
 
 

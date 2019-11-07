@@ -986,6 +986,11 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
     if (!article) return;
     // site
     const site = await this.getSite({ language: article.language });
+    // check if build site first
+    const pathIntermediate = await this.getPathIntermediate(article.language);
+    const fileName = path.join(pathIntermediate, 'main/article.ejs');
+    const exists = await fse.pathExists(fileName);
+    if (!exists) this.ctx.throw(1006);
     // url
     return {
       relativeUrl: article.url,
