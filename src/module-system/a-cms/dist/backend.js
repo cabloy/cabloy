@@ -372,12 +372,12 @@ class Build {
   // ////////////////////////////// url or path
 
   getCMSPathName() {
-    return this.default ? 'cms' : `cms:${this.atomClass.module}`;
+    return this.default ? 'cms' : `cms.${this.atomClass.module}`;
   }
 
   getUrlRawRoot(site) {
     if (this.ctx.app.meta.isTest || this.ctx.app.meta.isLocal) {
-      // cms or cms:moduleName
+      // cms or cms.moduleName
       const cmsPathName = this.getCMSPathName();
       const publicDir = this.ctx.app.config.static.prefix;
       const prefix = this.ctx.meta.base.host ? `${this.ctx.meta.base.protocol}://${this.ctx.meta.base.host}` : '';
