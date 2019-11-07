@@ -469,6 +469,7 @@ class Build {
     content = await this._renderCSSJSes({ data, content });
     // hot load
     if (this.app.meta.isTest || this.app.meta.isLocal) {
+      const fileWrite2 = fileWrite.replace(/\\/g, '\\\\');
       content += `
 <script language="javascript">
 $(document).ready(function() {
@@ -478,7 +479,7 @@ $(document).ready(function() {
     util.performAction({
       method: 'post',
       url: '/a/cms/site/checkFile',
-      body: { file: '${fileWrite}', mtime: __fileTime }
+      body: { file: '${fileWrite2}', mtime: __fileTime }
     }).then(function(stat) {
       if (!stat) {
         return window.setTimeout(__checkFile, __checkFileTimeout);
