@@ -38,7 +38,7 @@ module.exports = function(loader, modules) {
         // createError
         context.createError = function(data) {
           const error = new Error();
-          error.code = data.code;
+          error.code = data.code || 500;
           error.message = data.message;
           if (!loader.app.meta.isProd) {
             if (data.stack) error.stack = data.stack;
