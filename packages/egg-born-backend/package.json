@@ -32,7 +32,6 @@
     "egg-born-mock": "^1.0.29",
     "egg-born-mparse": "^1.0.7",
     "egg-development-proxyagent": "^1.0.0",
-    "egg-alinode": "^2.0.1",
     "egg-mysql": "^3.0.0",
     "egg-passport": "^2.0.0",
     "egg-schedule": "^3.6.2",

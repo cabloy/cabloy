@@ -14,9 +14,4 @@ module.exports = {
     package: 'egg-passport',
   },
 
-  alinode: {
-    enable: true,
-    package: 'egg-alinode',
-  },
-
 };
