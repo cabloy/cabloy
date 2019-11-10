@@ -188,8 +188,9 @@ function appCallback() {
     }).catch(err => {
       const error = ctx.createError({
         ...err,
-        code: err.code || ctx.status,
+        code: err.code || 500, //  ctx.status(404),
         message: err.message || ctx.body,
+        stack: err.stack,
       });
       ctx.onerror(error);
       reject(error);
