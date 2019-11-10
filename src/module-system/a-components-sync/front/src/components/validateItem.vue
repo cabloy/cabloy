@@ -106,6 +106,8 @@ export default {
     },
     _renderItem(c, data, properties, key, pathParent) {
       const property = properties[key];
+      // ignore if not specified
+      if (!property.ebType) return null;
       // panel
       if (property.ebType === 'panel') {
         return this.renderPanel(c, data, pathParent, key, property);
@@ -141,10 +143,12 @@ export default {
       let children = [];
       for (const key in properties) {
         const item = this._renderItem(c, data, properties, key, pathParent);
-        if (Array.isArray(item)) {
-          children = children.concat(item);
-        } else {
-          children.push(item);
+        if (item) {
+          if (Array.isArray(item)) {
+            children = children.concat(item);
+          } else {
+            children.push(item);
+          }
         }
       }
       return children;
