@@ -45,11 +45,7 @@ export default {
           this._showPreloader();
           res.then(res2 => {
             this._hidePreloader();
-            if (res2 === true) {
-              this.$view.toast.show({ text: this.$text('Operation succeeded') });
-            } else if (typeof res2 === 'string') {
-              this.$view.toast.show({ text: res2 });
-            }
+            this._handleResult(res2);
           }).catch(err => {
             this._hidePreloader();
             if (err && err.code !== 401 && err.message) {
@@ -57,14 +53,19 @@ export default {
             }
           });
         } else {
-          if (res === true) {
-            this.$view.toast.show({ text: this.$text('Operation succeeded') });
-          }
+          this._handleResult(res);
         }
       } catch (err) {
         this.$view.toast.show({ text: err.message });
       }
 
+    },
+    _handleResult(res) {
+      if (res === true) {
+        this.$view.toast.show({ text: this.$text('Operation succeeded') });
+      } else if (typeof res === 'string') {
+        this.$view.toast.show({ text: res });
+      }
     },
     _showPreloader() {
       const html = `

@@ -8,23 +8,24 @@ export default {
     const form = this.getForm();
     if (form) {
       // append input[type=submit] after the ul element if not found
-      let input = form.find('input[type=submit]');
+      let input = this.getInputSubmit();
       if (input.length === 0) {
         input = this.$$('<input type="submit" value="" style="width:0;height:0;border:0;padding:0;" />');
         form.append(input);
       }
       // on
-      form.on('submit', this.onSubmit);
+      input.on('click', this.onSubmit);
     }
   },
   beforeDestroy() {
-    const form = this.getForm();
-    if (form) {
-      form.off('submit', this.onSubmit);
+    const input = this.getInputSubmit();
+    if (input) {
+      input.off('click', this.onSubmit);
     }
   },
   methods: {
     onSubmit(event) {
+      event.preventDefault();
       this.$emit('submit', event);
     },
     getForm() {
@@ -33,6 +34,11 @@ export default {
       if (self.is('form')) return self;
       const form = self.find('form');
       return form.length === 1 ? form : null;
+    },
+    getInputSubmit() {
+      const form = this.getForm();
+      if (!form) return null;
+      return form.find('input[type=submit]');
     },
   },
 };
