@@ -138,6 +138,7 @@ export default {
           const _componentName = this.schema.meta && this.schema.meta.custom && this.schema.meta.custom.component;
           if (_componentName) {
             const _component = module.options.components[_componentName];
+            if (!_component) throw new Error(`custom component:${_componentName} of validator:${this.params.validator} & schema:${this.params.schema} not found!`);
             this.$meta.util.setComponentModule(_component, module);
             this.$options.components.custom = _component;
             this.custom = true;
