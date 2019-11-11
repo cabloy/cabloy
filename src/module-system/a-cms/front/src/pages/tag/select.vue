@@ -5,7 +5,7 @@
         <eb-link ref="buttonSubmit" iconMaterial="done" :onPerform="onPerformDone"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-list form no-hairlines-md @submit.prevent="onFormSubmit">
+    <eb-list form no-hairlines-md @submit="onFormSubmit">
       <eb-list-input :label="$text('Tags')" floating-label type="text" clear-button :placeholder="$text('Tags')" v-model="tagsText">
       </eb-list-input>
     </eb-list>
