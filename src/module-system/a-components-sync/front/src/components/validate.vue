@@ -12,14 +12,18 @@ export default {
     if (this.auto && this.ready) {
       // custom
       if (this.custom) {
-        return c('custom', {
-          props: {
-            data: this.data,
-            readOnly: this.readOnly,
-            onSave: this.onSave,
-          },
-          on: { submit: this.onSubmit },
-        });
+        return this.customNotFound ?
+          c('div', {
+            domProps: { innerText: `custom component ${this.schema.meta.custom.component} not found` },
+          }) :
+          c('custom', {
+            props: {
+              data: this.data,
+              readOnly: this.readOnly,
+              onSave: this.onSave,
+            },
+            on: { submit: this.onSubmit },
+          });
       }
       // auto
       return this.renderSchema(c);
@@ -63,6 +67,7 @@ export default {
       schema: null,
       verrors: null,
       custom: false,
+      customNotFound: false,
     };
   },
   computed: {
@@ -73,6 +78,7 @@ export default {
   watch: {
     params() {
       this.custom = false;
+      this.customNotFound = false;
       delete this.$options.components.custom;
       this.$nextTick(() => {
         this.fetchSchema();
@@ -138,9 +144,12 @@ export default {
           const _componentName = this.schema.meta && this.schema.meta.custom && this.schema.meta.custom.component;
           if (_componentName) {
             const _component = module.options.components[_componentName];
-            if (!_component) throw new Error(`custom component:${_componentName} of validator:${this.params.validator} & schema:${this.params.schema} not found!`);
-            this.$meta.util.setComponentModule(_component, module);
-            this.$options.components.custom = _component;
+            if (!_component) {
+              this.customNotFound = true;
+            } else {
+              this.$meta.util.setComponentModule(_component, module);
+              this.$options.components.custom = _component;
+            }
             this.custom = true;
           }
           // event
