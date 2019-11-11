@@ -1,5 +1,5 @@
 <template>
-  <f7-list v-if="moduleCMS">
+  <eb-list form no-hairlines-md @submit="onSubmit" v-if="moduleCMS">
     <f7-list-group>
       <f7-list-item group-title :title="$text('Title')"></f7-list-item>
       <eb-list-item-validate dataKey="atomName"></eb-list-item-validate>
@@ -19,7 +19,7 @@
         <div slot="after">{{adjustTags(item.tags)}}</div>
       </eb-list-item-choose>
     </f7-list-group>
-  </f7-list>
+  </eb-list>
 </template>
 <script>
 import utils from '../../common/utils.js';
@@ -63,6 +63,9 @@ export default {
     });
   },
   methods: {
+    onSubmit(event) {
+      this.$emit('submit', event);
+    },
     combineAtomClass(url) {
       return utils.combineAtomClass(this.atomClass, url);
     },
