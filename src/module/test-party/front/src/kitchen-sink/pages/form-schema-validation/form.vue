@@ -16,7 +16,7 @@
       <f7-list-item smartSelect :title="$text('Language')" :smartSelectParams="{openIn: 'page', closeOnSelect: true}">
         <eb-select name="language" v-model="item.language" optionsBlankAuto :multiple="false" :options="languages"></eb-select>
       </f7-list-item>
-      <eb-list-input :label="$text('Avatar')" floatingLabel type="text" clearButton :placeholder="$text('Avatar')" v-model="item.avatar">
+      <eb-list-input :label="$text('Avatar')" floatingLabel type="text" clearButton :placeholder="$text('Avatar')" v-model="item.avatar" @focus="onAvatarFocus" @blur="onAvatarBlur">
         <eb-button slot="root-end" class="eb-input-file-upload" :onPerform="onPerformUpload">{{$text('Upload')}}</eb-button>
       </eb-list-input>
       <f7-list-item v-if="item.avatar">
@@ -85,6 +85,23 @@ export default {
     },
     getAvatarUrl(avatar, size) {
       return this.$meta.util.combineImageUrl(avatar, size);
+    },
+    onAvatarFocus(event) {
+      const upload = this.$$(event.target).closest('li').find('.eb-input-file-upload');
+      const timeoutId = upload.data('timeoutId');
+      if (timeoutId) {
+        window.clearTimeout(timeoutId);
+        upload.data('timeoutId', 0);
+      }
+      upload.show();
+    },
+    onAvatarBlur(event) {
+      const upload = this.$$(event.target).closest('li').find('.eb-input-file-upload');
+      const timeoutId = window.setTimeout(() => {
+        upload.data('timeoutId', 0);
+        upload.hide();
+      }, 300);
+      upload.data('timeoutId', timeoutId);
     },
   },
 };
