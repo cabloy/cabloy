@@ -292,6 +292,23 @@ export default {
           input: value => {
             this.setValue(data, key, value, property);
           },
+          focus: event => {
+            const upload = this.$$(event.target).closest('li').find('.eb-input-file-upload');
+            const timeoutId = upload.data('timeoutId');
+            if (timeoutId) {
+              window.clearTimeout(timeoutId);
+              upload.data('timeoutId', 0);
+            }
+            upload.show();
+          },
+          blur: () => {
+            const upload = this.$$(event.target).closest('li').find('.eb-input-file-upload');
+            const timeoutId = window.setTimeout(() => {
+              upload.data('timeoutId', 0);
+              upload.hide();
+            }, 300);
+            upload.data('timeoutId', timeoutId);
+          },
         },
       }, [
         c('eb-button', {
