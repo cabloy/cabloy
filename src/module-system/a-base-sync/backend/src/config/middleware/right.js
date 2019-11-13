@@ -87,6 +87,7 @@ async function checkAtom(moduleInfo, options, ctx) {
 }
 
 async function checkFunction(moduleInfo, options, ctx) {
+  if (options.allowInner && ctx.innerAccess) return;
   const res = await ctx.meta.function.checkRightFunction({
     function: {
       module: options.module || ctx.module.info.relativeName,
