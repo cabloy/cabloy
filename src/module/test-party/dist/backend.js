@@ -924,15 +924,11 @@ module.exports = app => {
       }
 
       // action: review again
-      try {
-        await this.ctx.meta.atom.action({
-          action: 101,
-          key: partyKey,
-          user: { id: userIds.Jane },
-        });
-      } catch (e) {
-        assert.equal(e.code, 405);
-      }
+      await this.ctx.meta.atom.action({
+        action: 101,
+        key: partyKey,
+        user: { id: userIds.Jane },
+      });
 
       // Tom delete party
       await this.ctx.meta.atom.delete({
