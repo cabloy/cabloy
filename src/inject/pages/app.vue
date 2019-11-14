@@ -170,7 +170,7 @@ export default {
       if (!hashInit) return false;
       const configBase = this.$meta.config.modules['a-base'];
       const account = configBase.account;
-      const url = account.url.passwordReset;
+      const url = account && account.url.passwordReset;
       if (!url) return false;
       return hashInit.indexOf(url) > -1;
     },
