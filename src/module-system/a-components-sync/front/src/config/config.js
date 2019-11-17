@@ -7,7 +7,11 @@ export default {
   },
   error: {
     message: {
-      maxLength: 40,
+      maxLength: {
+        default: 80,
+        'en-us': 80,
+        'zh-cn': 40,
+      },
     },
   },
 };
