@@ -505,7 +505,7 @@ const Fn = module.exports = ctx => {
     }) {
       const sql = this.sqlProcedure.getAtom({
         iid: ctx.instance.id,
-        userIdWho: user.id,
+        userIdWho: user ? user.id : 0,
         tableName, atomId: id,
       });
       return await ctx.model.queryOne(sql);
