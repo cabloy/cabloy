@@ -1,4 +1,5 @@
-const QRCode = require('qrcode-svg');
+const require3 = require('require3');
+const qr = require3('qr-image');
 
 module.exports = app => {
 
@@ -54,19 +55,16 @@ module.exports = app => {
 
     async qrcode() {
       const query = this.ctx.request.query;
-      const qrcode = new QRCode({
-        content: query.content || 'CabloyJS',
-        padding: parseInt(query.padding || '4'),
-        width: parseInt(query.width || '256'),
-        height: parseInt(query.height || '256'),
-        color: query.color || '#000000',
-        background: query.background || '#ffffff',
-        ecl: query.ecl || 'M',
+      const img = qr.image(query.text || '', {
+        type: query.type || 'png',
+        size: query.size || 10,
+        margin: query.margin || 4,
+        ec_level: query.ec_level || 'M',
       });
       // ok
       this.ctx.status = 200;
-      this.ctx.type = 'image/svg';
-      this.ctx.body = qrcode.svg();
+      this.ctx.type = 'image/png';
+      this.ctx.body = img;
     }
 
   }
