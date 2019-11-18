@@ -133,7 +133,7 @@ export default {
     },
     getSelectedOptions() {
       if (!this.voptions) return null;
-      if (!this.value) return null;
+      if (this.checkIfEmptyForSelect(this.value)) return null;
       if (!this.multiple) {
         return this.voptions.find(opt => this.equal(this.optionValue(opt), this.value));
       }
@@ -162,9 +162,12 @@ export default {
     optionDisplay(opt) {
       return this.$text(this.optionTitle(opt) || this.optionValue(opt));
     },
+    checkIfEmptyForSelect(value) {
+      return value === '' || value === undefined || value === null;
+    },
     adjustToString(value) {
       // undefined / null / '' , except 0/false
-      if (value === undefined || value === null) return '';
+      if (this.checkIfEmptyForSelect(value)) return '';
       return String(value);
     },
     equal(valueFrom, valueTo) {
