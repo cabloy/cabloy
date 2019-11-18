@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-base-sync",
-  "version": "2.1.17",
+  "version": "2.1.18",
   "title": "Base",
   "eggBornModule": {
     "fileVersion": 7,
@@ -23,6 +23,7 @@
     "extend2": "^1.0.0",
     "require3": "^1.0.1",
     "moment": "^2.22.2",
+    "qrcode-svg": "^1.1.0",
     "@zhennann/markdown": "^1.0.8",
     "@zhennann/trim-html": "^0.1.10",
     "@zhennann/markdown-it-block": "^1.0.7"

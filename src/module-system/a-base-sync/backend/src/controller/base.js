@@ -1,3 +1,5 @@
+const QRCode = require('qrcode-svg');
+
 module.exports = app => {
 
   class BaseController extends app.Controller {
@@ -48,6 +50,23 @@ module.exports = app => {
       // performAction
       const res = await this.ctx.performAction(params);
       this.ctx.success(res);
+    }
+
+    async qrcode() {
+      const query = this.ctx.request.query;
+      const qrcode = new QRCode({
+        content: query.content || 'CabloyJS',
+        padding: parseInt(query.padding || '4'),
+        width: parseInt(query.width || '256'),
+        height: parseInt(query.height || '256'),
+        color: query.color || '#000000',
+        background: query.background || '#ffffff',
+        ecl: query.ecl || 'M',
+      });
+      // ok
+      this.ctx.status = 200;
+      this.ctx.type = 'image/svg';
+      this.ctx.body = qrcode.svg();
     }
 
   }

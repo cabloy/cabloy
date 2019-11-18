@@ -23,6 +23,7 @@ module.exports = app => {
     { method: 'post', path: 'base/menus', controller: base },
     { method: 'post', path: 'base/functions', controller: base },
     { method: 'get', path: 'base/performAction', controller: base, middlewares: 'jsonp', meta: { auth: { enable: false } } },
+    { method: 'get', path: 'base/qrcode', controller: base, meta: { auth: { enable: false } } },
     // atom
     { method: 'post', path: 'atom/create', controller: atom, middlewares: 'transaction',
       meta: { right: { type: 'atom', action: 1 } },
