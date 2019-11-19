@@ -270,10 +270,15 @@ export default {
         type = 'text';
       }
       // mode
-      const mode = property.ebParams.mode;
+      const mode = this.getMetaValue('mode') || property.ebParams.mode;
       // atomId
-      let atomId = this.getMetaValue('atomId');
-      atomId = atomId || property.ebParams.atomId || 0;
+      const atomId = this.getMetaValue('atomId') || property.ebParams.atomId || 0;
+      // attachment
+      const attachment = this.getMetaValue('attachment') || property.ebParams.attachment;
+      // flag
+      const flag = this.getMetaValue('flag') || property.ebParams.flag;
+      // accept
+      const accept = this.getMetaValue('accept') || property.ebParams.accept;
       // render
       return c('eb-list-input', {
         key,
@@ -323,6 +328,9 @@ export default {
                   params: {
                     mode,
                     atomId,
+                    attachment,
+                    flag,
+                    accept,
                   },
                   callback: (code, value) => {
                     if (code === 200) {
