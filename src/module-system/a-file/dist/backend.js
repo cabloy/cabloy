@@ -181,12 +181,8 @@ module.exports = app => {
     // file
     { method: 'post', path: 'file/upload', controller: file, meta: { auth: { user: true } } },
     { method: 'get', path: 'file/download/:downloadId', controller: file, action: 'download' },
-    { method: 'post', path: 'file/list', controller: file,
-      meta: { right: { type: 'atom', action: 2 } },
-    },
-    { method: 'post', path: 'file/delete', controller: file, middlewares: 'transaction',
-      meta: { right: { type: 'atom', action: 3 } },
-    },
+    { method: 'post', path: 'file/list', controller: file },
+    { method: 'post', path: 'file/delete', controller: file, middlewares: 'transaction' },
     { method: 'get', path: 'file/fileInfo/:downloadId', controller: file, action: 'fileInfo', middlewares: 'inner' },
   ];
   return routes;
@@ -228,22 +224,47 @@ module.exports = app => {
   class FileController extends app.Controller {
 
     async list() {
+      const user = this.ctx.user.op;
       const options = this.ctx.request.body.options;
       options.page = this.ctx.meta.util.page(options.page, false);
-      const items = await this.ctx.service.file.list({
-        key: this.ctx.request.body.key,
-        options,
-        user: this.ctx.user.op,
-      });
+      // where
+      options.where = options.where || {};
+      // check right: atom.read or user's files
+      const key = this.ctx.request.body.key;
+      const atomId = key && key.atomId;
+      if (atomId) {
+        const res = await this.ctx.meta.atom.checkRightRead({
+          atom: { id: atomId },
+          user,
+        });
+        if (!res) this.ctx.throw(403);
+        options.where.atomId = atomId; // add where
+      } else {
+        options.where.userId = user.id; // add where
+      }
+      //
+      const items = await this.ctx.service.file.list({ options });
       this.ctx.successMore(items, options.page.index, options.page.size);
     }
 
     async delete() {
-      const res = await this.ctx.service.file.delete({
-        key: this.ctx.request.body.key,
-        data: this.ctx.request.body.data,
-        user: this.ctx.user.op,
-      });
+      //
+      const user = this.ctx.user.op;
+      const data = this.ctx.request.body.data;
+      // file
+      const item = await this.ctx.model.file.get({ id: data.fileId });
+      // check right: atom.write or user's file
+      if (item.atomId) {
+        const res = await this.ctx.meta.atom.checkRightUpdate({
+          atom: { id: item.atomId, action: 3 },
+          user,
+        });
+        if (!res) this.ctx.throw(403);
+      } else {
+        if (item.userId !== user.id) this.ctx.throw(403);
+      }
+      //
+      const res = await this.ctx.service.file.delete({ data });
       this.ctx.success(res);
     }
 
@@ -370,11 +391,11 @@ module.exports = app => {
 
   class File extends app.Service {
 
-    async list({ key, options, user }) {
+    // where adjusted by controller
+    async list({ options }) {
       const _options = {};
       // where
       _options.where = options.where || {};
-      _options.where.atomId = key.atomId;
       // orders
       _options.orders = options.orders;
       // page
@@ -390,15 +411,14 @@ module.exports = app => {
       return list;
     }
 
-    async delete({ key, data: { fileId }, user }) {
+    async delete({ data: { fileId } }) {
       // file
       const item = await this.ctx.model.file.get({ id: fileId });
-      if (key.atomId !== item.atomId || item.userId !== user.id) this.ctx.throw(403);
       // delete
       await this.ctx.model.file.delete({ id: fileId });
       // attachmentCount
       if (item.atomId && item.attachment) {
-        await this.ctx.meta.atom.attachment({ key, atom: { attachment: -1 }, user });
+        await this.ctx.meta.atom.attachment({ key: { atomId: item.atomId }, atom: { attachment: -1 } });
       }
     }
 

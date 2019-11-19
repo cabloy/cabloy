@@ -12,11 +12,11 @@ module.exports = app => {
 
   class File extends app.Service {
 
-    async list({ key, options, user }) {
+    // where adjusted by controller
+    async list({ options }) {
       const _options = {};
       // where
       _options.where = options.where || {};
-      _options.where.atomId = key.atomId;
       // orders
       _options.orders = options.orders;
       // page
@@ -32,15 +32,14 @@ module.exports = app => {
       return list;
     }
 
-    async delete({ key, data: { fileId }, user }) {
+    async delete({ data: { fileId } }) {
       // file
       const item = await this.ctx.model.file.get({ id: fileId });
-      if (key.atomId !== item.atomId || item.userId !== user.id) this.ctx.throw(403);
       // delete
       await this.ctx.model.file.delete({ id: fileId });
       // attachmentCount
       if (item.atomId && item.attachment) {
-        await this.ctx.meta.atom.attachment({ key, atom: { attachment: -1 }, user });
+        await this.ctx.meta.atom.attachment({ key: { atomId: item.atomId }, atom: { attachment: -1 } });
       }
     }
 
