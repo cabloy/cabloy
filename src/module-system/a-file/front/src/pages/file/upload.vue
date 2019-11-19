@@ -49,9 +49,10 @@ export default {
       else if (this.mode === 3) return this.$text('Select Audio');
     },
     accept() {
-      if (this.mode === 1) return 'image/*';
-      else if (this.mode === 2) return '';
-      else if (this.mode === 3) return 'audio/*';
+      const custom = this.contextParams && this.contextParams.accept;
+      if (this.mode === 1) return custom || 'image/*';
+      else if (this.mode === 2) return custom || '';
+      else if (this.mode === 3) return custom || 'audio/*';
     },
   },
   mounted() {},
