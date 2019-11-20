@@ -61,9 +61,9 @@ module.exports = app => {
     // tag
     { method: 'post', path: 'tag/list', controller: tag },
     // rss
-    { method: 'get', path: 'rss/feed/:module/:atomClassName/:language', controller: rss, action: 'feed' },
-    { method: 'get', path: 'rss/feed/comments/:module/:atomClassName/:language', controller: rss, action: 'feedComments' },
     { method: 'get', path: 'rss/feed/article/comments/:atomId', controller: rss, action: 'articleComments' },
+    { method: 'get', path: 'rss/feed/comments/:module/:atomClassName/:language', controller: rss, action: 'feedComments' },
+    { method: 'get', path: 'rss/feed/:module/:atomClassName/:language', controller: rss, action: 'feed' },
     // queue
     { method: 'post', path: 'queue/render', controller: queue, middlewares: 'inner,progress',
       meta: { auth: { enable: false } },
