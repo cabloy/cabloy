@@ -61,7 +61,7 @@ module.exports = function(app) {
         info.key = uuid.v1();
         info.pid = process.pid;
         this._queueCallbacks[info.key] = res => {
-          if (res.err) return reject(new Error(res.err.message));
+          if (res.err) return reject(util.createError(res.err));
           resolve(res.data);
         };
         app.meta.messenger.callAgent({ name: 'queuePush', data: info });

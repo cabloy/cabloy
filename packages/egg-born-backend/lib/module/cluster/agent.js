@@ -1,4 +1,5 @@
 const constant = require('../../base/constants.js');
+const util = require('../util.js');
 
 module.exports = function(loader, modules) {
 
@@ -20,7 +21,7 @@ module.exports = function(loader, modules) {
       name: 'versionCheck',
       data: null,
     }, info => {
-      if (info.err) throw new Error(info.err.message);
+      if (info.err) throw util.createError(info.err);
       // for agent: event: appReady
       loader.app.emit(constant.event.appReady);
       // version ready
