@@ -2073,7 +2073,7 @@ const Fn = module.exports = ctx => {
 
     atomClass({ module, atomClassName }) {
       const _atomClasses = this.atomClasses();
-      return _atomClasses[module][atomClassName];
+      return _atomClasses[module] && _atomClasses[module][atomClassName];
     }
 
     actions() {
