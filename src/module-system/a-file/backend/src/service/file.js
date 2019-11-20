@@ -261,7 +261,7 @@ module.exports = app => {
         name: 'fileDownloadCheck',
         data: { file, user },
       });
-      if (!res) this.ctx.throw(403);
+      if (res === false) this.ctx.throw(403);
     }
 
   }
