@@ -46,8 +46,8 @@ const util = {
     if (pos === url.length - 1) return `${url}${str}`;
     return `${url}&${str}`;
   },
-  createError(data) {
-    const error = new Error();
+  createError(data, returnObject) {
+    const error = returnObject ? {} : new Error();
     error.code = data.code || 500;
     error.message = data.message;
     if (data.stack) error.stack = data.stack;
