@@ -388,7 +388,7 @@ const pump = require3('pump');
 const fse = require3('fs-extra');
 
 module.exports = app => {
-
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class File extends app.Service {
 
     // where adjusted by controller
@@ -540,7 +540,7 @@ module.exports = app => {
         fileName = await this.adjustImage(file, width, height);
       } else if (file.mode === 2) {
         // check right
-        await this.checkRightRead(file.atomId, user);
+        await this.fileDownloadCheck({ file, user });
       } else if (file.mode === 3) {
         // do nothing
       }
@@ -628,10 +628,18 @@ module.exports = app => {
       if (!res) this.ctx.throw(403);
     }
 
-    async checkRightRead(atomId, user) {
+    async fileDownloadCheck({ file, user }) {
       // not check if !atomId
-      if (!atomId) return;
-      const res = await this.ctx.meta.atom.checkRightRead({ atom: { id: atomId }, user });
+      if (file.atomId) {
+        const res = await this.ctx.meta.atom.checkRightRead({ atom: { id: file.atomId }, user });
+        if (!res) this.ctx.throw(403);
+      }
+      // invoke event
+      const res = await this.ctx.meta.event.invoke({
+        module: moduleInfo.relativeName,
+        name: 'fileDownloadCheck',
+        data: { file, user },
+      });
       if (!res) this.ctx.throw(403);
     }
 
