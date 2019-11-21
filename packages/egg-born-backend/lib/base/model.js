@@ -1,4 +1,5 @@
 const is = require('is-type-of');
+const moment = require('moment');
 
 module.exports = app => {
   class Model extends app.BaseContextClass {
@@ -191,7 +192,12 @@ module.exports = app => {
 
 function _format2(db, value) {
   if (typeof value !== 'object') return db.format('?', value);
-  const val = db.format('?', value.val);
+  let val;
+  if (value.type === 'Date') {
+    val = db.format('?', moment(value.val).format('YYYY-MM-DD HH:mm:ss.SSS'));
+  } else {
+    val = db.format('?', value.val);
+  }
   const val2 = val.substr(1, val.length - 2);
   if (value.op === 'like') return `'%${val2}%'`;
   if (value.op === 'likeLeft') return `'%${val2}'`;
