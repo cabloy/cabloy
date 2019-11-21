@@ -290,7 +290,7 @@ util.article = {
       ];
     } else {
       // asc/desc for createdAt
-      options.where['f.createdAt'] = { op: type === 'prev' ? (order === 'desc' ? '>' : '<') : (order === 'desc' ? '<' : '>'), val: article.createdAt };
+      options.where['f.createdAt'] = { op: type === 'prev' ? (order === 'desc' ? '>' : '<') : (order === 'desc' ? '<' : '>'), val: article.createdAt, type: 'Date' };
       options.orders = [
         [ 'f.createdAt', type === 'prev' ? (order === 'desc' ? 'asc' : 'desc') : (order === 'desc' ? 'desc' : 'asc') ],
       ];
