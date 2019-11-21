@@ -291,7 +291,7 @@ class Build {
     // themeModuleName
     const themeModuleName = siteBase.themes[language];
     if (!themeModuleName) {
-      this.ctx.throw(1002);
+      this.ctx.throw(1002, this.atomClass.module, this.atomClass.atomClassName, language);
     }
     // theme
     const theme = this.combineThemes(themeModuleName);
@@ -314,7 +314,7 @@ class Build {
   _combineThemes(themeModuleName) {
     // module
     const module = this.app.meta.modules[themeModuleName];
-    if (!module) this.ctx.throw(1003);
+    if (!module) this.ctx.throw(1003, themeModuleName);
     const moduleExtend = module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.extend;
     if (!moduleExtend) return this.ctx.config.module(themeModuleName).theme;
     return extend(true, {},
@@ -1011,7 +1011,7 @@ var env=${JSON.stringify(env, null, 2)};
       }
 
       // theme
-      if (!site.themes[language]) this.ctx.throw(1002);
+      if (!site.themes[language]) this.ctx.throw(1002, this.atomClass.module, this.atomClass.atomClassName, language);
       await this.copyThemes(pathIntermediate, site.themes[language]);
 
       // custom
@@ -1148,7 +1148,7 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
   async _copyThemes(pathIntermediate, themeModuleName) {
     // module
     const module = this.app.meta.modules[themeModuleName];
-    if (!module) this.ctx.throw(1003);
+    if (!module) this.ctx.throw(1003, themeModuleName);
     // extend
     const moduleExtend = module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.extend;
     if (moduleExtend) {
@@ -1415,8 +1415,8 @@ module.exports = {
   'Load More': '加载更多',
   'Post Comment': '发表评论',
   'Recent Comments': '最近评论',
-  'Theme not set': '没有设置主题',
-  'Theme not found': '没有找到主题',
+  'Theme %s:%s:%s not set': '没有设置主题%s:%s:%s',
+  'Theme %s not found': '没有找到主题%s',
   'en-us': '英语',
   'zh-cn': '简体中文',
   PersonalProfile: '个人信息',
@@ -1444,8 +1444,8 @@ module.exports = {
 // error code should start from 1001
 module.exports = {
   1001: 'Language must not be empty',
-  1002: 'Theme not set',
-  1003: 'Theme not found',
+  1002: 'Theme %s:%s:%s not set',
+  1003: 'Theme %s not found',
   1004: 'Cannot delete if has children',
   1005: 'Cannot delete if has articles',
   1006: 'Build Site First',

@@ -108,7 +108,7 @@ class Build {
     // themeModuleName
     const themeModuleName = siteBase.themes[language];
     if (!themeModuleName) {
-      this.ctx.throw(1002);
+      this.ctx.throw(1002, this.atomClass.module, this.atomClass.atomClassName, language);
     }
     // theme
     const theme = this.combineThemes(themeModuleName);
@@ -131,7 +131,7 @@ class Build {
   _combineThemes(themeModuleName) {
     // module
     const module = this.app.meta.modules[themeModuleName];
-    if (!module) this.ctx.throw(1003);
+    if (!module) this.ctx.throw(1003, themeModuleName);
     const moduleExtend = module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.extend;
     if (!moduleExtend) return this.ctx.config.module(themeModuleName).theme;
     return extend(true, {},
@@ -828,7 +828,7 @@ var env=${JSON.stringify(env, null, 2)};
       }
 
       // theme
-      if (!site.themes[language]) this.ctx.throw(1002);
+      if (!site.themes[language]) this.ctx.throw(1002, this.atomClass.module, this.atomClass.atomClassName, language);
       await this.copyThemes(pathIntermediate, site.themes[language]);
 
       // custom
@@ -965,7 +965,7 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
   async _copyThemes(pathIntermediate, themeModuleName) {
     // module
     const module = this.app.meta.modules[themeModuleName];
-    if (!module) this.ctx.throw(1003);
+    if (!module) this.ctx.throw(1003, themeModuleName);
     // extend
     const moduleExtend = module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.extend;
     if (moduleExtend) {
