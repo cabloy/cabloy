@@ -31,6 +31,7 @@ module.exports = {
   'en-us': '英语',
   'zh-cn': '简体中文',
   PersonalProfile: '个人信息',
+  AuthorProfile: '作者信息',
   ArticlePrevious: '前一篇',
   ArticleNext: '后一篇',
   Yes: '是',
