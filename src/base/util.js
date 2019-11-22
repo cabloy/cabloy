@@ -37,7 +37,8 @@ export default function(Vue) {
     },
     parseHash(url) {
       if (!url || url === '/') return '/';
-      let documentUrl = url.split(location.origin)[1];
+      let documentUrl = url.substr(location.origin.length);
+      if (documentUrl.indexOf('https://') === 0 || documentUrl.indexOf('http://') === 0) return documentUrl;
       const router = Vue.prototype.$f7.router;
       if (router.params.pushStateRoot && documentUrl.indexOf(router.params.pushStateRoot) >= 0) {
         documentUrl = documentUrl.split(router.params.pushStateRoot)[1] || '/';
