@@ -33,7 +33,7 @@ export default {
         return;
       }
       // check query
-      const documentUrl = location.href.split(location.origin)[1];
+      const documentUrl = location.href.substr(location.origin.length);
       if (documentUrl && documentUrl.indexOf('/?') === 0) {
         history.replaceState(null, '', location.origin);
       }
