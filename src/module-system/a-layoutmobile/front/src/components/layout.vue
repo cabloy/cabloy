@@ -164,6 +164,11 @@ export default {
       });
     },
     navigate(url, options) {
+      if (!url) return;
+      // check if http
+      if (url.indexOf('https://') === 0 || url.indexOf('http://') === 0) {
+        return location.assign(url);
+      }
       options = options || {};
       const ctx = options.ctx;
       const target = options.target;
