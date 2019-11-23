@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-themecommunity",
-  "version": "2.0.10",
+  "version": "2.0.11",
   "title": "cms:theme:community",
   "eggBornModule": {
     "cms": {
@@ -32,6 +32,7 @@
     "egg-born-module-cms-pluginbacktotop": "^2.0.0",
     "egg-born-module-cms-pluginsocialshare": "^2.0.0",
     "egg-born-module-cms-pluginrss": "^2.0.0",
-    "egg-born-module-cms-pluginfixcontainersite": "^2.0.0"
+    "egg-born-module-cms-pluginfixcontainersite": "^2.0.0",
+    "egg-born-module-cms-pluginuser": "^2.0.0"
   }
 }
