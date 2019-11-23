@@ -35,7 +35,7 @@ function _renderNavbarUser({ container }) {
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><img class="avatar avatar16 avatar-user" src="${util.user.op.avatar || util.url('plugins/cms-pluginbase/assets/images/avatar_user.png')}">${util.user.op.userName}</a>
         <ul class="dropdown-menu">
           <%- userLinks %>
-          <%- userLinks?'<li role="separator" class="divider"></li>':''%>
+          <%- userLinks?'<li role="separator" class="divider"></li>':'' %>
           <li><a href="#" onclick="return onClickUserLogout();"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> <%=text('Log Out')%></a></li>
         </ul>
       </li>
