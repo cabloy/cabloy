@@ -1,31 +1,55 @@
+<%
+  let userLinks='';
+  const links=site.plugins['cms-pluginuser'].links;
+  for(const link of links){
+    let _url;
+    if(link.url.indexOf('https://')===0 || link.url.indexOf('http://')===0){
+      _url=link.url;
+    }else if(link.url.indexOf('/')===0){
+      _url=`${site.serverUrl}/#!${link.url}`;
+    }else{
+      _url=`${url(link.url)}`;
+    }
+    userLinks+=`<li><a href="${_url}">${text(link.title)}</a></li>`;
+  }
+%>
+
 $(document).ready(function() {
-  _backtotop();
 });
 
-function _backtotop() {
-  // init
-  const $window = $(window);
-  const $body = $('body');
-  const $htmlBody=$('html, body');
-  // button
-  const $button = $('<a class="backtotop"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a>');
-  $button.click(()=>{
-    $htmlBody.animate({scrollTop:0},<%=site.plugins['cms-pluginbacktotop'].animateSpeed%>);
+$(document).on('echo-ready', function() {
+  _renderNavbarUser({ container: '.navbar-user' });
+});
+
+function _renderNavbarUser({ container }) {
+  const $container = $(container);
+  if ($container.length === 0) return;
+  if (util.user.op.anonymous) {
+    const html = `
+      <li><a href="${env.site.serverUrl}/#!${location.href}"><%=text('Sign In')%></a></li>
+    `;
+    $container.append(html);
+  } else {
+    const html = `
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><img class="avatar avatar16 avatar-user" src="${util.user.op.avatar || util.url('plugins/cms-pluginbase/assets/images/avatar_user.png')}">${util.user.op.userName}</a>
+        <ul class="dropdown-menu">
+          <%- userLinks %>
+          <%- userLinks?'<li role="separator" class="divider"></li>':''%>
+          <li><a href="#" onclick="return onClickUserLogout();"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> <%=text('Log Out')%></a></li>
+        </ul>
+      </li>
+    `;
+    $container.append(html);
+  }
+}
+
+function onClickUserLogout() {
+  util.performAction({
+    method: 'post',
+    url: '/a/base/auth/logout',
+  }).then(() => {
+    location.reload();
   });
-  $body.append($button);
-
-  // onScroll
-  const _onScroll = function() {
-    const visible=$window.scrollTop()>$(window).height()/2;
-    if(visible){
-      $button.fadeIn();
-    }else{
-      $button.fadeOut();
-    }
-  };
-
-  // bind event
-  $window.on('scroll.infinite resize.infinite', _onScroll);
-  _onScroll();
-};
-
+  return false;
+}

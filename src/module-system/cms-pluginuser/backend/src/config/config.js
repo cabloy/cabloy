@@ -4,7 +4,11 @@ module.exports = appInfo => {
 
   // plugin
   config.plugin = {
-    animateSpeed: 500,
+    links: [
+      { title: 'PersonalProfile', url: '/a/user/user/mine' },
+      // { title: 'front', url: 'static/comments.html' },
+      // { title: 'external', url: 'https://cabloy.com' },
+    ],
   };
 
   return config;

@@ -129,7 +129,11 @@ module.exports = appInfo => {
 
   // plugin
   config.plugin = {
-    animateSpeed: 500,
+    links: [
+      { title: 'PersonalProfile', url: '/a/user/user/mine' },
+      // { title: 'front', url: 'static/comments.html' },
+      // { title: 'external', url: 'https://cabloy.com' },
+    ],
   };
 
   return config;
@@ -150,6 +154,9 @@ module.exports = {
 /***/ (function(module, exports) {
 
 module.exports = {
+  'Not LoggedIn': '未登录',
+  'Sign In': '登录',
+  'Log Out': '退出登录',
 };
 
 
