@@ -987,8 +987,6 @@ module.exports = app => {
           component: 'signin',
         },
         config: {
-          successReturnToOrRedirect: false,
-          successRedirect: false,
         },
         handler: app => {
           return {
