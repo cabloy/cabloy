@@ -3,6 +3,8 @@ const nodemailer = require3('nodemailer');
 const chalk = require3('chalk');
 const boxen = require3('boxen');
 
+const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' };
+
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Mail extends app.Service {
@@ -49,7 +51,7 @@ module.exports = app => {
         // check if empty
         if (!scene.transport.host) {
           const message = chalk.keyword('orange')(this.ctx.text('mailhostNotConfigAlert'));
-          console.log('\n' + boxen(message, { padding: 1, margin: 1, align: 'center' }));
+          console.log('\n' + boxen(message, boxenOptions));
           return false;
         }
         // transporter
@@ -60,8 +62,10 @@ module.exports = app => {
         // log
         if (mail.scene === 'test') {
           const url = nodemailer.getTestMessageUrl(res);
-          const message = chalk.keyword('cyan')('Please open the test mail url') + chalk.keyword('orange')('\n' + url);
-          console.log('\n' + boxen(message, { padding: 1, margin: 1, align: 'center' }));
+          const message = chalk.keyword('cyan')('Test Mail To: ')
+                        + chalk.keyword('yellow')(mail.mailTo)
+                        + chalk.keyword('orange')('\n' + url);
+          console.log('\n' + boxen(message, boxenOptions));
         }
         // status
         await this.ctx.model.mail.update({
