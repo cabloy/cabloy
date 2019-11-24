@@ -840,11 +840,11 @@ var env=${JSON.stringify(env, null, 2)};
         await fse.copy(item, path.join(pathIntermediate, path.basename(item)));
       }
 
-      // custom dist
-      const customDistFiles = await bb.fromCallback(cb => {
-        glob(`${customPath}/dist/\*`, cb);
+      // intermediate dist
+      const intermediateDistFiles = await bb.fromCallback(cb => {
+        glob(`${pathIntermediate}/dist/\*`, cb);
       });
-      for (const item of customDistFiles) {
+      for (const item of intermediateDistFiles) {
         await fse.copy(item, path.join(pathDist, path.basename(item)));
       }
 
