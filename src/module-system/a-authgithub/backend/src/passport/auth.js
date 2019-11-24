@@ -12,8 +12,6 @@ module.exports = app => {
           component: 'button',
         },
         config: {
-          // addUser: true,
-          // addRole: true,
           clientID: '[required]',
           clientSecret: '[required]',
         },
