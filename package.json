@@ -1,6 +1,6 @@
 {
   "name": "cabloy",
-  "version": "2.2.44",
+  "version": "2.2.45",
   "description": "The Ultimate Javascript Full Stack Framework",
   "repository": {
     "type": "git",
@@ -46,7 +46,7 @@
     "egg-born-module-a-layoutmobile": "^2.0.3",
     "egg-born-module-a-layoutpc": "^2.0.3",
     "egg-born-module-a-login": "^2.0.2",
-    "egg-born-module-a-mail": "^2.0.4",
+    "egg-born-module-a-mail": "^2.0.6",
     "egg-born-module-a-markdownstyle": "^2.0.4",
     "egg-born-module-a-mavoneditor": "^2.0.3",
     "egg-born-module-a-progress": "^2.0.2",
