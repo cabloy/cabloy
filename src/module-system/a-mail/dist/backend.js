@@ -459,6 +459,7 @@ module.exports = app => {
 const require3 = __webpack_require__(16);
 const nodemailer = require3('nodemailer');
 const chalk = require3('chalk');
+const boxen = require3('boxen');
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -505,7 +506,8 @@ module.exports = app => {
         }
         // check if empty
         if (!scene.transport.host) {
-          console.log(chalk.keyword('orange')(this.ctx.text('mailhostNotConfigAlert')));
+          const message = chalk.keyword('orange')(this.ctx.text('mailhostNotConfigAlert'));
+          console.log('\n' + boxen(message, { padding: 1, margin: 1, align: 'center' }));
           return false;
         }
         // transporter
@@ -516,7 +518,8 @@ module.exports = app => {
         // log
         if (mail.scene === 'test') {
           const url = nodemailer.getTestMessageUrl(res);
-          console.log(chalk.keyword('orange')(`test mail url: ${url}`));
+          const message = chalk.keyword('cyan')('Please open the test mail url') + chalk.keyword('orange')('\n' + url);
+          console.log('\n' + boxen(message, { padding: 1, margin: 1, align: 'center' }));
         }
         // status
         await this.ctx.model.mail.update({
