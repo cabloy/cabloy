@@ -1,6 +1,6 @@
 {
   "name": "cabloy",
-  "version": "2.2.43",
+  "version": "2.2.44",
   "description": "The Ultimate Javascript Full Stack Framework",
   "repository": {
     "type": "git",
@@ -25,7 +25,7 @@
     "eslint-plugin-vuefix": "^0.2.1"
   },
   "dependencies": {
-    "egg-born-front": "^4.2.1",
+    "egg-born-front": "^4.2.3",
     "egg-born-backend": "^2.2.6",
     "egg-born-bin": "^1.2.0",
     "egg-born-scripts": "^1.1.0",
@@ -33,7 +33,7 @@
     "egg-born-module-a-authgithub": "^2.0.3",
     "egg-born-module-a-authsimple": "^2.0.5",
     "egg-born-module-a-base-sync": "^2.1.20",
-    "egg-born-module-a-baseadmin": "^2.0.5",
+    "egg-born-module-a-baseadmin": "^2.0.6",
     "egg-born-module-a-cache": "^2.0.4",
     "egg-born-module-a-captcha": "^2.0.4",
     "egg-born-module-a-captchasimple": "^2.0.4",
@@ -43,8 +43,8 @@
     "egg-born-module-a-hook": "^2.0.3",
     "egg-born-module-a-index": "^2.0.4",
     "egg-born-module-a-instance": "^2.0.3",
-    "egg-born-module-a-layoutmobile": "^2.0.2",
-    "egg-born-module-a-layoutpc": "^2.0.2",
+    "egg-born-module-a-layoutmobile": "^2.0.3",
+    "egg-born-module-a-layoutpc": "^2.0.3",
     "egg-born-module-a-login": "^2.0.2",
     "egg-born-module-a-mail": "^2.0.4",
     "egg-born-module-a-markdownstyle": "^2.0.4",
