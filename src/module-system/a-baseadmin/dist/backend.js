@@ -1109,16 +1109,6 @@ module.exports = app => {
   schemas.auth = {
     type: 'object',
     properties: {
-      successRedirect: {
-        type: 'boolean',
-        ebType: 'toggle',
-        default: true,
-      },
-      successReturnToOrRedirect: {
-        type: 'boolean',
-        ebType: 'toggle',
-        default: true,
-      },
       clientID: {
         type: 'string',
         ebType: 'text',
