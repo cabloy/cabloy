@@ -69,6 +69,7 @@ module.exports = app => {
         const config = JSON.parse(providerItem.config);
         config.passReqToCallback = true;
         config.failWithError = false;
+        config.successRedirect = config.successReturnToOrRedirect = provider.meta.mode === 'redirect';
         // handler
         const handler = provider.handler(this.app);
         // install strategy
@@ -105,6 +106,11 @@ function createAuthenticate(moduleRelativeName, providerName, _config) {
       }
     }
 
+    // module
+    const module = this.app.meta.modules[moduleRelativeName];
+    // provider
+    const provider = module.main.meta.auth.providers[providerName];
+
     // config
     const config = JSON.parse(providerItem.config);
     config.passReqToCallback = true;
@@ -112,11 +118,7 @@ function createAuthenticate(moduleRelativeName, providerName, _config) {
     config.loginURL = ctx.meta.base.getAbsoluteUrl(_config.loginURL);
     config.callbackURL = ctx.meta.base.getAbsoluteUrl(_config.callbackURL);
     config.state = ctx.request.query.state;
-
-    // module
-    const module = this.app.meta.modules[moduleRelativeName];
-    // provider
-    const provider = module.main.meta.auth.providers[providerName];
+    config.successRedirect = config.successReturnToOrRedirect = provider.meta.mode === 'redirect';
 
     // config functions
     if (provider.configFunctions) {
