@@ -20,6 +20,8 @@ export default {
   'Select Roles': '选择角色',
   'Search User': '搜索用户',
   'User Management': '用户管理',
+  'Login URL': '登录URL',
+  'Callback URL': '回调URL',
   Atoms: '原子',
   Build: '构建',
   Catalog: '目录',
@@ -51,6 +53,4 @@ export default {
   System: '系统',
   User: '用户',
   Users: '用户',
-
-
 };

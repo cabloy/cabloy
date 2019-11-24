@@ -7,10 +7,13 @@
     </eb-navbar>
     <eb-box @size="onSize">
       <textarea ref="textarea" type="textarea" :value="content" @input="onInput" class="json-textarea"></textarea>
-      <template v-if="meta">
-        <f7-block-title>{{$text('Info')}}</f7-block-title>
-        <div class="json-textarea">{{meta}}</div>
-      </template>
+      <f7-list v-if="meta">
+        <f7-list-group>
+          <f7-list-item group-title :title="$text('Info')"></f7-list-item>
+          <f7-list-input readonly :label="$text('Login URL')" :value="meta.loginURL"></f7-list-input>
+          <f7-list-input readonly :label="$text('Callback URL')" :value="meta.callbackURL"></f7-list-input>
+        </f7-list-group>
+      </f7-list>
     </eb-box>
   </eb-page>
 </template>
@@ -24,7 +27,7 @@ export default {
       id: parseInt(this.$f7route.query.id),
       item: null,
       content: '{}',
-      meta: '',
+      meta: null,
     };
   },
   created() {
@@ -37,11 +40,7 @@ export default {
         this.content = JSON.stringify(JSON.parse(data.config), null, 2);
       }
       // meta
-      if (!data._meta) {
-        this.meta = '';
-      } else {
-        this.meta = JSON.stringify(data._meta, null, 2);
-      }
+      this.meta = data._meta;
     });
   },
   methods: {
