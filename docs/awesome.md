@@ -13,7 +13,7 @@ Cabloy-CMS is a `combination of static and dynamic` CMS based on the CabloyJS fu
 
 ### Cabloy-Community
 
- Cabloy-Community is a community (forum) web application based on Cabloy-CMS
+Cabloy-Community is a community (forum) web application based on Cabloy-CMS
 
 - Demonstration: [CabloyJS Community](https://community.cabloy.com)
 - Docs: [https://cabloy.com/articles/community-introduce.html](https://cabloy.com/articles/community-introduce.html)
