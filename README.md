@@ -44,14 +44,14 @@ The potential needs of customers are changing day by day, so the development sce
 ### How to deal with CabloyJS
 
 1. The special style of `PC = Mobile + Pad` is adopted to bring the development experience and UI experience of the mobile into the PC scenario
-2. CabloyJS is not only a `technical framework`, but also a `business framework`. It precipitates many functional features such as `user management`, `role management`, `right management` into core modules, so as to provide strong support for rapid business development
+2. CabloyJS is not only a `technical framework`, but also a `business framework`. It precipitates many functional features such as `user management`, `role management`, `permission management` into core modules, so as to provide strong support for rapid business development
 3. The complete `frontend and backend separation` mechanism makes the whole CabloyJS architecture highly flexible and extensible
 
 ## Ideas
 
 > Developed quickly and customized flexibly
 
-To achieve this ideas, CabloyJS built-in developed a large number of core modules, so that you can build a complete web project in the shortest possible time. For example, when you build a new web project, you already have a complete user login and authentication system, also has `user management`, `role management`, `authority management`, and other functions
+To achieve this ideas, CabloyJS built-in developed a large number of core modules, so that you can build a complete web project in the shortest possible time. For example, when you build a new web project, you already have a complete user login and authentication system, also has `user management`, `role management`, `permission management`, and other features
 
 In addition, these built-in modules provide flexible customization features. You can also develop new modules to replace the built-in modules to achieve customization of the system
 
@@ -78,7 +78,7 @@ The most prominent pain-point on CabloyJS: Through modular architecture design, 
 | Wechat Enterprise| CabloyJS Frontend + Wechat API |CabloyJS Backend|
 | DingTalk | CabloyJS Frontend + DingTalk API |CabloyJS Backend|
 
-* Backend: Because of the complete frontend and backend separation design, only a set of CabloyJS backend code can be developed
+* Backend: Because of the complete `frontend and backend separation` design, only a set of CabloyJS backend code should be developed
 * Frontend: All scenarios that can be based on H5 need only develop a set of CabloyJS frontend code
 
 ##  Development Process of CabloyJS
@@ -95,11 +95,11 @@ This is why all business modules are prefixed with `egg-born-module-`
 
 ### 2. Stage Two: CabloyJS
 
-EggBornJS is only a basic full-stack development framework. Considering business development, many business-related supporting features need to be provided, such as `User Management`, `Role Management`, `Permission Management`, `Menu Management`, `Settings Management`, `Form Validation`, `Login Mechanism`, and so on. Especially in the case of frontend and backend separation, the requirement of authority management is raised to a higher level
+EggBornJS is only a basic full-stack development framework. Considering business development, many business-related supporting features need to be provided, such as `User Management`, `Role Management`, `Permission Management`, `Menu Management`, `Settings Management`, `Form Validation`, `Login Mechanism`, and so on. Especially in the case of `frontend and backend separation`, the requirement of permission management is raised to a higher level
 
 On the basis of EggBornJS, CabloyJS provided a set of core business modules, so as to realize a series of supporting features, which are organically combined to form a complete and flexible upper ecological architecture, thus supporting the specific business development process
 
-## CabloyJS架构图
+## CabloyJS Architecture Diagram
 
 ![](./docs/assets/images/cabloy.png)
 
