@@ -24,7 +24,9 @@ Cabloy-CMS is a `combination of static and dynamic` CMS based on the CabloyJS fu
 
 [egg-born-module-test-party](https://github.com/zhennann/egg-born-module-test-party)
 
-> The new project automatically includes a demonstration module `test-party`, which contains a large number of `test cases` and `Kitchen-sink`, and continues to add new content. It is not only convenient to learn all aspects of CabloyJS knowledge quickly, but also convenient to start the actual business development quickly
+> When a new project is created, the module `test-party` is automatically downloaded to the directory where the project is located. Contains a large number of `test-cases` and `kitchen-sink`, and continues to add more content. It is not only convenient to quickly learn all aspects of knowledge points of `CabloyJS`, but also convenient to quickly start the actual business development
+
+> It is recommended that you pay attention to and keep the update of the module `test-party`, so as to get the latest sample codes in time
 
 ### Built-in Modules
 
