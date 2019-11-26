@@ -1,8 +1,8 @@
-简体中文 | [English](./README.en-US.md)
+English | [简体中文](./README.zh-CN.md)
 
 # CabloyJS
 
-CabloyJS是一款顶级NodeJS全栈业务开发框架, 基于KoaJS + EggJS + VueJS + Framework7
+CabloyJS: The Ultimate NodeJS Full Stack Business Development Platform, based on KoaJS + EggJS + VueJS + Framework7
 
 [![NPM version][npm-image]][npm-url]
 [![David deps][david-image]][david-url]
@@ -15,158 +15,141 @@ CabloyJS是一款顶级NodeJS全栈业务开发框架, 基于KoaJS + EggJS + Vue
 [download-image]: https://img.shields.io/npm/dm/cabloy.svg?style=flat-square
 [download-url]: https://npmjs.org/package/cabloy
 
-## 文章
+## Documentations
 
-- [一文读懂NodeJS全栈开发利器：CabloyJS（万字长文）](https://community.cabloy.com/zh-cn/articles/known-cabloyjs.html)
+- [Website && Documentations](https://cabloy.com)
 
-## 视频
-
-- [网易免费课程 - CabloyJS全栈业务开发实战](https://study.163.com/course/courseMain.htm?courseId=1209403891)
-
-## 文档
-
-- [官网 && 文档](https://cabloy.com)
-
-## 演示
+## Demonstration
 
 - PC：[https://admin.cabloy.com](https://admin.cabloy.com)
 - Mobile：
 
 ![](./docs/assets/images/cabloy-demo-qrcode.png)
 
-## 核心资源一览表
+## Awesome
 
-- [CabloyJS Awesome](./awesome.md)
+- [CabloyJS Awesome](./docs/awesome.md)
 
-## 定位
+## Goals
 
-CabloyJS是面向`中小开发团队`和`接单侠`开发的NodeJS全栈业务快速开发框架，支持全场景业务开发，省时、省力
+CabloyJS is a rapid development framework for NodeJS full-stack business developement for small and medium-sized development teams and freelancers. It supports full scenario business development, saving time and effort
 
-### 中小开发团队或接单侠所面临的困境
+### Difficulties faced by small and medium-sized development teams or freelancers
 
-1. `多场景需求`：PC、Android、IOS、微信、钉钉，等等
-2. `多种要素平衡`：技术、人才、时间、质量 -> 成本、收益
+1. `Multi Scenario`：PC, Android, IOS, Slack, Wechat, DingTalk, etc.
+2. `Multi Factor`：Technology, Talent, Time, Quality -> Cost, Revenue
 
-客户的潜在需求日益多变，因此开发场景日益碎片化，不同的场景又面临着不同的技术选择，从而又决定着人员的配备，`技术选择`与`人员配置`影响着项目开发的`时间`与`质量`，从而又最终体现在`成本`与`收益`的平衡上
+The potential needs of customers are changing day by day, so the development scenarios are becoming more fragmented. Different scenarios are faced with different technical options, which determine the staffing. The `technical options` and `staffing` affect the `time` and `quality` of project development, and finally balance the `cost` and `revenue`
 
-### CabloyJS应对之法
+### How to deal with CabloyJS
 
-1. 采用`pc = mobile + pad`的独特页面风格，把移动端的开发体验与用户操控体验带入pc端，一套代码适应全场景需求
-2. CabloyJS不仅是`技术框架`，更是`业务框架`，将`用户管理`、`角色管理`、`权限管理`等诸多功能特性沉淀成核心模块，从而为快速业务开发提供强有力的支撑
-3. 彻底的`前后端分离`体系，从而实现`前端灵活多变，后端不变应万变`，使整个CabloyJS架构具有很强的灵活性和延展性
+1. The special style of `PC = Mobile + Pad` is adopted to bring the development experience and UI experience of the mobile into the PC scenario
+2. CabloyJS is not only a `technical framework`, but also a `business framework`. It precipitates many functional features such as `user management`, `role management`, `right management` into core modules, so as to provide strong support for rapid business development
+3. The complete `frontend and backend separation` mechanism makes the whole CabloyJS architecture highly flexible and extensible
 
-## 理念
+## Ideas
 
-> 既可快速开发，又可灵活定制
+> Developed quickly and customized flexibly
 
-为了实现此理念，CabloyJS内置开发了大量核心模块，使您可以在最短的时间内架构一个完整的Web项目。比如，当您新建一个Web项目时，就已经具备完整的用户登录与认证系统，也具有验证码功能，同时也具备`用户管理`、`角色管理`、`权限管理`等功能
+To achieve this ideas, CabloyJS built-in developed a large number of core modules, so that you can build a complete web project in the shortest possible time. For example, when you build a new web project, you already have a complete user login and authentication system, also has `user management`, `role management`, `authority management`, and other functions
 
-此外，这些内置模块提供了灵活的定制特性，您也可以开发全新的模块来替换内置模块，从而实现系统的定制化
+In addition, these built-in modules provide flexible customization features. You can also develop new modules to replace the built-in modules to achieve customization of the system
 
-## 风格
+## Bright-point and Pain-point
 
-CabloyJS决不重复制造轮子，而是在业界流行技术框架基础之上做的`继承再创新`，比如前端基于`VueJS + Framework7`，后端基于`KoaJS + EggJS`
+### 1. Bright-point: pc = mobile + pad
 
-有了这些底层框架的强大支撑，CabloyJS就可以放开手脚在业务层面做大量的创新与沉淀，从而将`NodeJS全栈开发`的体验带入一个新的层面
-
-因此，CabloyJS的风格就是`别具一格`，一旦用上就会`爱不释手`，因为`顺畅而愉悦`的全栈开发体验本来就应该是这样
-
-## 亮点与痛点
-
-### 1. 亮点：pc = mobile + pad
-
-CabloyJS最大的亮点是：通过`pc=mobile+pad`的模式，把mobile场景的`操控体验`和`开发模式`带⼊pc场景。既显著减少了代码开发量，提升了开发效率，⼜保持了用户操控体验的⼀致性
+The most prominent bright-point on CabloyJS: Through the mode of `pc = mobile + pad`, the `manipulation experience` and `development mode` of the mobile scene are brought into the PC scene. It not only significantly reduces the amount of code development and improves the efficiency of development, but also maintains the consistency of user manipulation experience
 
 ![pc-mobile-layout](./docs/assets/images/pc-mobile-layout.gif)
 
-### 2. 痛点：全场景业务开发
+### 2. Pain-point：Full-scene Business Development
 
-CabloyJS最大的痛点是：通过模块化的架构设计，可以快速开发全场景业务
+The most prominent pain-point on CabloyJS: Through modular architecture design, full-scene business can be rapidly developed
 
-|场景|前端|后端|
+|Scene|Frontend|Backend|
 |--|--|--|
-| PC：Web | CabloyJS前端 |CabloyJS后端|
-| PC：Exe | CabloyJS前端 + Electron |CabloyJS后端|
-| Mobile：IOS | CabloyJS前端 + Cordova |CabloyJS后端|
-| Mobile：Android | CabloyJS前端 + Cordova |CabloyJS后端|
-|微信公共号| CabloyJS前端 + 微信API |CabloyJS后端|
-|企业微信| CabloyJS前端 + 微信API |CabloyJS后端|
-| 钉钉 | CabloyJS前端 + 钉钉API |CabloyJS后端|
-| Slack | CabloyJS前端 + Slack API |CabloyJS后端|
-| 小程序：微信、支付宝、百度等 |小程序框架|CabloyJS后端|
+| PC: Web | CabloyJS Frontend |CabloyJS Backend|
+| PC: Exe | CabloyJS Frontend + Electron |CabloyJS Backend|
+| Mobile: IOS | CabloyJS Frontend + Cordova |CabloyJS Backend|
+| Mobile: Android | CabloyJS Frontend + Cordova |CabloyJS Backend|
+| Slack | CabloyJS Frontend + Slack API |CabloyJS Backend|
+| Wechat| CabloyJS Frontend + Wechat API |CabloyJS Backend|
+| Wechat Enterprise| CabloyJS Frontend + Wechat API |CabloyJS Backend|
+| DingTalk | CabloyJS Frontend + DingTalk API |CabloyJS Backend|
 
-* 后端：由于完整的前后端分离设计，只需开发一套CabloyJS后端代码即可
-* 前端：所有可基于H5的场景，只需开发一套CabloyJS前端代码即可
+* Backend: Because of the complete frontend and backend separation design, only a set of CabloyJS backend code can be developed
+* Frontend: All scenarios that can be based on H5 need only develop a set of CabloyJS frontend code
 
-## CabloyJS的开发历程
+##  Development Process of CabloyJS
 
-CabloyJS从2016年启动开发，主要历经两个开发阶段：
+The development of CabloyJS started in 2016. It has gone through two stages:
 
-### 1. 第一阶段：EggBornJS
+### 1. Stage One: EggBornJS
 
-EggBornJS关注的核心就是`模块化`与`模块隔离`，并以此实现一套完整的全栈开发框架
+EggBornJS implements a full-stack development framework with business modules as its core
 
-比如模块`egg-born-front`是框架前端的核心模块，模块`egg-born-backend`是框架后端的核心模块，模块`egg-born`是框架的命令行工具，用于创建项目骨架
+For example, the module `egg-born-front` is the core module of the frontend of the framework, while the module `egg-born-backend` is the core module of the backend of the framework, and the module `egg-born` is the command-line tool of the framework for creating the project skeleton
 
-这也是为什么所有业务模块都是以`egg-born-module-`为命名前缀的原因
+This is why all business modules are prefixed with `egg-born-module-`
 
-### 2. 第二阶段：CabloyJS
+### 2. Stage Two: CabloyJS
 
-EggBornJS只是一个基础的全栈开发框架，如果要进行业务开发，还需要考虑许多与业务相关的支撑特性，如：`用户管理`、`角色管理`、`权限管理`、`菜单管理`、`参数设置管理`、`表单验证`、`登录机制`，等等。特别是在前后端分离的场景下，对`权限管理`的要求就提升到一个更高的水平
+EggBornJS is only a basic full-stack development framework. Considering business development, many business-related supporting features need to be provided, such as `User Management`, `Role Management`, `Permission Management`, `Menu Management`, `Settings Management`, `Form Validation`, `Login Mechanism`, and so on. Especially in the case of frontend and backend separation, the requirement of authority management is raised to a higher level
 
-CabloyJS在EggBornJS的基础上，提供了一套核心业务模块，从而实现了一系列业务支撑特性，并将这些特性进行有机的组合，形成完整而灵活的上层生态架构，从而支持具体的业务开发进程
+On the basis of EggBornJS, CabloyJS provided a set of core business modules, so as to realize a series of supporting features, which are organically combined to form a complete and flexible upper ecological architecture, thus supporting the specific business development process
 
 ## CabloyJS架构图
 
 ![](./docs/assets/images/cabloy.png)
 
-## 特性
+## Features
 
-## EggBornJS特性
+## EggBornJS Features
 
-- **前后端分离**：前后端分离开发，深度解耦
-- **业务模块化**：`页面组件`和`业务逻辑`按模块组织
-- **加载方式灵活**：模块既可`异步加载`，也可`同步加载`
-- **模块高度内聚**：模块包括`前端页面组件`和`后端业务逻辑`
-- **参数配置灵活**：模块中的前后端可以单独进行`参数配置`
-- **国际化**：模块中的前后端均支持独立的`国际化`
-- **模块隔离**：模块的`页面、数据、逻辑、路由、配置`等元素均进行了`命名空间隔离`处理，避免模块之间的变量污染与冲突
-- **超级易用的事务处理**：只需在路由记录上配置一个参数，即可完美实现数据库的`事务处理`
-- **渐进式开发**：由于模块的高度内聚，可以将业务以模块的形式沉淀，在多个项目中重复使用，既可贡献到npm开源社区，也可部署到公司内部私有npm仓库
+- **Frontend and Backend Separation**：separating Frontend and Backend, so as for decoupling
+- **Business Modularization**：The `page components` and `business logics` are arranged as modules
+- **Loading Flexibility**：Modules can be loaded `asynchronously` or `synchronously`
+- **Highly Modular Cohesion**：The module includes `frontend page components` and `backend business logics`
+- **Parameter Configuration Flexibility**：Both frontend and backend of the module can be configured separately
+- **i18n**：Both frontend and backend of the module support i18n separately
+- **Module Isolation**：Module’s `pages, data, logic, routing, configuration and other elements` have been through `namespace isolation` processing, which avoids the variable pollutions and conflicts
+- **Easy Transaction Processing**：Just configuring a parameter on the routing record can process the database transaction perfectly
+- **Progressive Development**：Due to the high degree of cohesion of the module, EggBornJS can deposit the business in the form of module, which can be reused in multiple projects. Business modules can be contributed to the npm Open Source Community, and can also be deployed to the company’s internal private npm registry
 
-> 有了EggBornJS，从此可复用的不仅仅是组件，还有业务模块
+> With EggBornJS, not only the components can be reused, but also the business modules do from now
 
-## CabloyJS特性
+## CabloyJS Features
 
-- **移动优先，完美的PC布局适配：pc = mobile + pad**
-- **统一的原子数据管理**
-- **统一的用户角色权限管理**
-- **对多种运行环境的精细支持**
-- **支持多域名多实例运行**
-- **灵活的测试驱动开发**
-- **内置众多核心模块，提供大量核心特性**
+- **Mobile First, Perfect PC Layout Adaptation：pc = mobile + pad**
+- **Unified Atom Data Management**
+- **Unified User Role Privilege Management**
+- **Fine support for multiple runtime environments**
+- **Support multi-domain multi-instance operation**
+- **Flexible test-driven development**
+- **Built-in many core modules, providing a large number of core features**
 
-> 有了CabloyJS，您就可以快速开发各类业务应用
+> With CabloyJS, you can quickly develop all kinds of business applications
 
-## 信念
+## The Faith
 
-> 凡是可以用JavaScript来写的应用，最终都会用JavaScript来写 | Atwood定律
+> Any application that can be written in Javascript, will eventually be written in Javascript | Jeff Atwood (2007)
 
-相信，Javascript的深度探索者都会被这句名言激发，共同努力，为Javascript生态添砖加瓦，构建更繁荣的应用生态
+It is believed that the deep explorers of Javascript will be inspired by Atwood's law and work together to build a more prosperous application ecosystem for Javascript
 
-CabloyJS正是对这一名言的探索之作。CabloyJS不重复造轮子，而是采用业界最新的开源技术，进行全栈开发的最佳组合
+CabloyJS is just an exploration of Atwood's law. Instead of repeating wheels, CabloyJS uses the latest open source technology in the industry to optimize full-stack development
 
-欢迎您也加入CabloyJS的社区生态，一起促进Javascript的繁荣与应用
+Welcome to join the community ecology of CabloyJS to promote the prosperity and application of Javascript
 
-## 名称的由来
+## The Origin of Framework Name
 
 ### 1. EggBorn
 
-这个名称的由来比较简单，因为有了Egg(后端框架)，所以就有了EggBorn。有一部动画片叫《天书奇谭》，里面的萌主就叫“蛋生”，我很喜欢看（不小心暴露了年龄😅）
+The origin of this name is relatively simple, because there is Egg (backend framework), so there is EggBorn. There is an animated film called "Tianshu Qitan". Its originator is called "DanSheng". I like to watch it very much (inadvertently exposed the age😅)
 
 ### 2. Cabloy
 
-Cabloy来自蓝精灵的魔法咒语，拼对了Cabloy这个单词就会有神奇的效果。同样，CabloyJS是有关化学的魔法，基于模块的组合与生化反应，您将实现您想要的任何东西
+Cabloy comes from the magic spell of the Smurfs. If you spell the word Cabloy correctly, it will have a magical effect. Likewise, CabloyJS is a magic about chemistry. Based on the combination and biochemical reactions of business modules, you will achieve whatever you want
 
 ## License
 
