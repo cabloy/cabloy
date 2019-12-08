@@ -2,7 +2,7 @@ English | [简体中文](./README.zh-CN.md)
 
 # CabloyJS
 
-CabloyJS: The Ultimate NodeJS Full Stack Business Development Platform, based on KoaJS + EggJS + VueJS + Framework7
+CabloyJS: The Ultimate NodeJS Full Stack Business Development Framework, based on KoaJS + EggJS + VueJS + Framework7
 
 [![NPM version][npm-image]][npm-url]
 [![David deps][david-image]][david-url]
