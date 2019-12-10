@@ -19,7 +19,7 @@ export default {
     },
   },
   data() {
-    const atomClass = { module: 'a-cms', atomClassName: 'article' };
+    const atomClass = { module: 'cms-sitecommunity', atomClassName: 'post' };
     return {
       atomClass,
       moduleCMS: null,
@@ -34,10 +34,11 @@ export default {
   created() {
     // load module:cms
     this.$meta.module.use('a-cms', module => {
-      this.moduleCMS = module;
       // languages
       this.$store.dispatch('a/cms/getLanguages', {
         atomClass: this.atomClass,
+      }).then(() => {
+        this.moduleCMS = module;
       });
     });
   },
