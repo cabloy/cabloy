@@ -15,14 +15,6 @@ CabloyJS是一款顶级NodeJS全栈业务开发框架, 基于KoaJS + EggJS + Vue
 [download-image]: https://img.shields.io/npm/dm/cabloy.svg?style=flat-square
 [download-url]: https://npmjs.org/package/cabloy
 
-## 文章
-
-- [一文读懂NodeJS全栈开发利器：CabloyJS（万字长文）](https://community.cabloy.com/zh-cn/articles/known-cabloyjs.html)
-
-## 视频
-
-- [网易免费课程 - CabloyJS全栈业务开发实战](https://study.163.com/course/courseMain.htm?courseId=1209403891)
-
 ## 文档
 
 - [官网 && 文档](https://cabloy.com)
@@ -34,9 +26,19 @@ CabloyJS是一款顶级NodeJS全栈业务开发框架, 基于KoaJS + EggJS + Vue
 
 ![](./docs/assets/images/cabloy-demo-qrcode.png)
 
-## 核心资源一览表
+## 资源
 
+- [CabloyJS 商店](https://store.cabloy.com)
+- [CabloyJS 社区](https://community.cabloy.com)
 - [CabloyJS Awesome](./docs/awesome.zh-CN.md)
+
+### 文章
+
+- [一文读懂NodeJS全栈开发利器：CabloyJS（万字长文）](https://community.cabloy.com/zh-cn/articles/known-cabloyjs.html)
+
+### 视频
+
+- [网易免费课程 - CabloyJS全栈业务开发实战](https://study.163.com/course/courseMain.htm?courseId=1209403891)
 
 ## 定位
 
