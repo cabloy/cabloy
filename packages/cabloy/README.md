@@ -65,11 +65,11 @@ The most prominent bright-point on CabloyJS: Through the style of `pc = mobile +
 
 ![pc-mobile-layout](./docs/assets/images/pc-mobile-layout.gif)
 
-### 2. Pain-point：Full-scene Business Development
+### 2. Pain-point：Multi-scenario Business Development
 
-The most prominent pain-point on CabloyJS: Through modular architecture design, full-scene business can be rapidly developed
+The most prominent pain-point on CabloyJS: Through modular architecture, multi-scenario business can be rapidly developed
 
-|Scene|Frontend|Backend|
+|Scenario|Frontend|Backend|
 |--|--|--|
 | PC: Web | CabloyJS Frontend |CabloyJS Backend|
 | PC: Exe | CabloyJS Frontend + Electron |CabloyJS Backend|
