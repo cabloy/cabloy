@@ -142,17 +142,17 @@ It is believed that the deep explorers of Javascript will be inspired by Atwood'
 
 CabloyJS is just an exploration of Atwood's law. Instead of repeating wheels, CabloyJS uses the latest open source technology in the industry to optimize full-stack development
 
-Welcome to join the community ecology of CabloyJS to promote the prosperity and application of Javascript
+More welcome to contribute code and build a prosperous ecosystem of CabloyJS👏
 
 ## The Origin of Framework Name
 
 ### 1. EggBorn
 
-The origin of this name is relatively simple, because there is Egg (backend framework), so there is EggBorn. There is an animated film called "Tianshu Qitan". Its originator is called "DanSheng". I like to watch it very much (inadvertently exposed the age😅)
+The origin of this name is relatively simple, because there is Egg (backend framework), so there is EggBorn. There is an animated cartoon called "Tianshu Qitan". Its originator is called "DanSheng". I like to watch it very much (inadvertently exposed the age😅)
 
 ### 2. Cabloy
 
-Cabloy comes from the magic spell of the Smurfs. If you spell the word Cabloy correctly, it will have a magical effect. Likewise, CabloyJS is a magic about chemistry. Based on the combination and biochemical reactions of business modules, you will achieve whatever you want
+Cabloy comes from the magic spell of the Smurfs. If you spell the word Cabloy correctly, it will have a magical effect. Likewise, CabloyJS is a magic about business development. Based on the combination and biochemical reactions of business modules, you will achieve whatever you want
 
 ## License
 
