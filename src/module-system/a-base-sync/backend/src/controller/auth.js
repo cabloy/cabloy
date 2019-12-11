@@ -41,7 +41,7 @@ module.exports = app => {
       // register all authProviders
       await this.ctx.service.auth.registerAllProviders();
       // verify
-      this.app.passport.verify(async function(ctx, profileUser) {
+      this.app.passport.verify(async (ctx, profileUser) => {
         // state: login/associate
         const state = ctx.request.query.state || 'login';
         // user verify
@@ -53,6 +53,19 @@ module.exports = app => {
         // ready
         return verifyUser;
       });
+      // // serializeUser
+      // app.passport.serializeUser(async (ctx, user) => {
+      //   return {
+      //     agent: { id: user.agent.id, iid: user.agent.iid },
+      //     op: { id: user.op.id, iid: user.op.iid },
+      //     provider: user.provider,
+      //   };
+      // });
+      // // deserializeUser
+      // app.passport.deserializeUser(async (ctx, user) => {
+      //   return user;
+      // });
+      // ok
       this.ctx.success();
     }
 
