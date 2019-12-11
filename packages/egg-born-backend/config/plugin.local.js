@@ -14,9 +14,4 @@ module.exports = {
     package: 'egg-passport',
   },
 
-  proxyagent: {
-    enable: true,
-    package: 'egg-development-proxyagent',
-  },
-
 };
