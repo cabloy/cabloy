@@ -26,8 +26,10 @@ CabloyJS: The Ultimate NodeJS Full Stack Business Development Framework, based o
 
 ![](./docs/assets/images/cabloy-demo-qrcode.png)
 
-## Awesome
+## Resources
 
+- [CabloyJS Store](https://store.cabloy.com)
+- [CabloyJS Community](https://community.cabloy.com)
 - [CabloyJS Awesome](./docs/awesome.md)
 
 ## Goals
