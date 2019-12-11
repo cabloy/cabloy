@@ -34,19 +34,19 @@ CabloyJS: The Ultimate NodeJS Full Stack Business Development Framework, based o
 
 ## Goals
 
-CabloyJS is a rapid development framework for NodeJS full-stack business developement for small and medium-sized development teams and freelancers. It supports full scenario business development, saving time and effort
+CabloyJS is a rapid NodeJS full-stack business developement framework for small and medium-sized development teams and freelancers. It supports full scenario business development, saving time and effort
 
 ### Difficulties faced by small and medium-sized development teams or freelancers
 
 1. `Multi Scenario`：PC, Android, IOS, Slack, Wechat, DingTalk, etc.
-2. `Multi Factor`：Technology, Talent, Time, Quality -> Cost, Revenue
+2. `Multi Factor`：Technology, Staffing, Time, Quality -> Cost, Revenue
 
 The potential needs of customers are changing day by day, so the development scenarios are becoming more fragmented. Different scenarios are faced with different technical options, which determine the staffing. The `technical options` and `staffing` affect the `time` and `quality` of project development, and finally balance the `cost` and `revenue`
 
 ### How to deal with CabloyJS
 
-1. The special style of `PC = Mobile + Pad` is adopted to bring the development experience and UI experience of the mobile into the PC scenario
-2. CabloyJS is not only a `technical framework`, but also a `business framework`. It precipitates many functional features such as `user management`, `role management`, `permission management` into core modules, so as to provide strong support for rapid business development
+1. Through the style of `pc = mobile + pad`, the `UI interaction experience` and `development mode` of the mobile scene are brought into the PC scene
+2. CabloyJS is not only a `technical framework`, but also a `business framework`. It precipitates many functional features such as `user management`, `role management` and `permission management`, etc. into core modules, so as to provide strong support for rapid business development
 3. The complete `frontend and backend separation` mechanism makes the whole CabloyJS architecture highly flexible and extensible
 
 ## Ideas
@@ -61,7 +61,7 @@ In addition, these built-in modules provide flexible customization features. You
 
 ### 1. Bright-point: pc = mobile + pad
 
-The most prominent bright-point on CabloyJS: Through the mode of `pc = mobile + pad`, the `manipulation experience` and `development mode` of the mobile scene are brought into the PC scene. It not only significantly reduces the amount of code development and improves the efficiency of development, but also maintains the consistency of user manipulation experience
+The most prominent bright-point on CabloyJS: Through the style of `pc = mobile + pad`, the `UI interaction experience` and `development mode` of the mobile scene are brought into the PC scene. It not only significantly reduces the amount of code development and improves the efficiency of development, but also maintains the consistency of user manipulation experience
 
 ![pc-mobile-layout](./docs/assets/images/pc-mobile-layout.gif)
 
@@ -89,15 +89,16 @@ The development of CabloyJS started in 2016. It has gone through two stages:
 
 ### 1. Stage One: EggBornJS
 
-EggBornJS implements a full-stack development framework with business modules as its core
+EggBornJS mainly provides two core features:
 
-For example, the module `egg-born-front` is the core module of the frontend of the framework, while the module `egg-born-backend` is the core module of the backend of the framework, and the module `egg-born` is the command-line tool of the framework for creating the project skeleton
+ - **Frontend and Backend Separation**: Separating Frontend and Backend, so as for decoupling
+ - **Business Modularization**: The `page components` and `business logics` are arranged as modules
 
-This is why all business modules are prefixed with `egg-born-module-`
+> This is why all business modules are prefixed with `egg-born-module-`
 
 ### 2. Stage Two: CabloyJS
 
-EggBornJS is only a basic full-stack development framework. Considering business development, many business-related supporting features need to be provided, such as `User Management`, `Role Management`, `Permission Management`, `Menu Management`, `Settings Management`, `Form Validation`, `Login Mechanism`, and so on. Especially in the case of `frontend and backend separation`, the requirement of permission management is raised to a higher level
+EggBornJS is only a basic full-stack development framework. Considering business development, many business-related supporting features need to be provided, such as `User Management`, `Role Management`, `Permission Management`, `Menu Management`, `Settings Management`, `Form Validation`, `Login Mechanism`, and so on
 
 On the basis of EggBornJS, CabloyJS provided a set of core business modules, so as to realize a series of supporting features, which are organically combined to form a complete and flexible upper ecological architecture, thus supporting the specific business development process
 
@@ -109,21 +110,21 @@ On the basis of EggBornJS, CabloyJS provided a set of core business modules, so 
 
 ## EggBornJS Features
 
-- **Frontend and Backend Separation**：separating Frontend and Backend, so as for decoupling
-- **Business Modularization**：The `page components` and `business logics` are arranged as modules
-- **Loading Flexibility**：Modules can be loaded `asynchronously` or `synchronously`
-- **Highly Modular Cohesion**：The module includes `frontend page components` and `backend business logics`
-- **Parameter Configuration Flexibility**：Both frontend and backend of the module can be configured separately
-- **i18n**：Both frontend and backend of the module support i18n separately
-- **Module Isolation**：Module’s `pages, data, logic, routing, configuration and other elements` have been through `namespace isolation` processing, which avoids the variable pollutions and conflicts
-- **Easy Transaction Processing**：Just configuring a parameter on the routing record can process the database transaction perfectly
-- **Progressive Development**：Due to the high degree of cohesion of the module, EggBornJS can deposit the business in the form of module, which can be reused in multiple projects. Business modules can be contributed to the npm Open Source Community, and can also be deployed to the company’s internal private npm registry
+- **Frontend and Backend Separation**: Separating Frontend and Backend, so as for decoupling
+- **Business Modularization**: The `page components` and `business logics` are arranged as modules
+- **Loading Flexibility**: Modules can be loaded `asynchronously` or `synchronously`
+- **Highly Modular Cohesion**: The module includes `frontend page components` and `backend business logics`
+- **Parameter Configuration Flexibility**: Both frontend and backend of the module can be configured separately
+- **i18n**: Both frontend and backend of the module support i18n separately
+- **Module Isolation**: Module’s `pages, data, logic, routing, configuration and other elements` have been through `namespace isolation` processing, which avoids the variable pollutions and conflicts
+- **Easy Transaction Processing**: Just configuring a parameter on the routing record can process the database transaction perfectly
+- **Progressive Development**: Due to the high degree of cohesion of the module, EggBornJS can deposit the business in the form of module, which can be reused in multiple projects. Business modules can be contributed to the npm Open Source Community, and can also be deployed to the company’s internal private npm registry
 
 > With EggBornJS, not only the components can be reused, but also the business modules do from now
 
 ## CabloyJS Features
 
-- **Mobile First, Perfect PC Layout Adaptation：pc = mobile + pad**
+- **Mobile First, Perfect PC Layout Adaptation: pc = mobile + pad**
 - **Unified Atom Data Management**
 - **Unified User Role Privilege Management**
 - **Fine support for multiple runtime environments**
