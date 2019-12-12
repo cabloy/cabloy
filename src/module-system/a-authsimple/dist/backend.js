@@ -765,6 +765,16 @@ module.exports = appInfo => {
     timeout: 30 * 60 * 1000, // 30 minutes
   };
 
+  // account
+  config.account = {
+    url: {
+      emailConfirm: '/a/authsimple/emailConfirm',
+      passwordChange: '/a/authsimple/passwordChange',
+      passwordForgot: '/a/authsimple/passwordForgot',
+      passwordReset: '/a/authsimple/passwordReset',
+    },
+  };
+
   return config;
 };
 
