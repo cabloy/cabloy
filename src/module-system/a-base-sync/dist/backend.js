@@ -1739,12 +1739,17 @@ module.exports = appInfo => {
   config.account = {
     needActivation: true,
     activationWays: 'mobile,email',
+    activationProviders: {
+      mobile: '',
+      email: 'a-authsimple',
+    },
     url: {
-      emailConfirm: '/a/authsimple/emailConfirm',
-      mobileVerify: '',
-      passwordChange: '/a/authsimple/passwordChange',
-      passwordForgot: '/a/authsimple/passwordForgot',
-      passwordReset: '/a/authsimple/passwordReset',
+      // url is specified by activation provider
+      //   emailConfirm: '/a/authsimple/emailConfirm',
+      //   mobileVerify: '',
+      //   passwordChange: '/a/authsimple/passwordChange',
+      //   passwordForgot: '/a/authsimple/passwordForgot',
+      //   passwordReset: '/a/authsimple/passwordReset',
     },
     //  default is 'activated', if need activating by mobile/email, then add to 'registered' first
     activatedRoles: 'activated',
@@ -5016,7 +5021,7 @@ module.exports = app => {
       // register all authProviders
       await this.ctx.service.auth.registerAllProviders();
       // verify
-      this.app.passport.verify(async function(ctx, profileUser) {
+      this.app.passport.verify(async (ctx, profileUser) => {
         // state: login/associate
         const state = ctx.request.query.state || 'login';
         // user verify
@@ -5028,6 +5033,19 @@ module.exports = app => {
         // ready
         return verifyUser;
       });
+      // // serializeUser
+      // app.passport.serializeUser(async (ctx, user) => {
+      //   return {
+      //     agent: { id: user.agent.id, iid: user.agent.iid },
+      //     op: { id: user.op.id, iid: user.op.iid },
+      //     provider: user.provider,
+      //   };
+      // });
+      // // deserializeUser
+      // app.passport.deserializeUser(async (ctx, user) => {
+      //   return user;
+      // });
+      // ok
       this.ctx.success();
     }
 
@@ -5042,8 +5060,8 @@ module.exports = app => {
     async getLoginInfo() {
       const info = {
         user: this.ctx.user,
-        instance: this.getInstance(),
-        config: this.getConfig(),
+        instance: this._getInstance(),
+        config: this._getConfig(),
       };
       // login info event
       await this.ctx.meta.event.invoke({
@@ -5052,26 +5070,38 @@ module.exports = app => {
       return info;
     }
 
-    getInstance() {
+    _getInstance() {
       return {
         name: this.ctx.instance.name,
         title: this.ctx.instance.title,
       };
     }
 
-    getConfig() {
-      // account
-      const account = extend(true, {}, this.ctx.config.account);
-      account.activatedRoles = undefined;
+    _getConfig() {
       // config
       const config = {
         modules: {
           'a-base': {
-            account,
+            account: this._getAccount(),
           },
         },
       };
       return config;
+    }
+
+    _getAccount() {
+      // account
+      const account = extend(true, {}, this.ctx.config.account);
+      account.activatedRoles = undefined;
+      // url
+      for (const key in account.activationProviders) {
+        const relativeName = account.activationProviders[key];
+        if (relativeName) {
+          const moduleConfig = this.ctx.config.module(relativeName);
+          extend(true, account.url, moduleConfig.account.url);
+        }
+      }
+      return account;
     }
 
   }

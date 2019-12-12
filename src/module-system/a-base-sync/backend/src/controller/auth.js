@@ -80,8 +80,8 @@ module.exports = app => {
     async getLoginInfo() {
       const info = {
         user: this.ctx.user,
-        instance: this.getInstance(),
-        config: this.getConfig(),
+        instance: this._getInstance(),
+        config: this._getConfig(),
       };
       // login info event
       await this.ctx.meta.event.invoke({
@@ -90,26 +90,38 @@ module.exports = app => {
       return info;
     }
 
-    getInstance() {
+    _getInstance() {
       return {
         name: this.ctx.instance.name,
         title: this.ctx.instance.title,
       };
     }
 
-    getConfig() {
-      // account
-      const account = extend(true, {}, this.ctx.config.account);
-      account.activatedRoles = undefined;
+    _getConfig() {
       // config
       const config = {
         modules: {
           'a-base': {
-            account,
+            account: this._getAccount(),
           },
         },
       };
       return config;
+    }
+
+    _getAccount() {
+      // account
+      const account = extend(true, {}, this.ctx.config.account);
+      account.activatedRoles = undefined;
+      // url
+      for (const key in account.activationProviders) {
+        const relativeName = account.activationProviders[key];
+        if (relativeName) {
+          const moduleConfig = this.ctx.config.module(relativeName);
+          extend(true, account.url, moduleConfig.account.url);
+        }
+      }
+      return account;
     }
 
   }

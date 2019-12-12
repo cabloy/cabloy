@@ -79,12 +79,17 @@ module.exports = appInfo => {
   config.account = {
     needActivation: true,
     activationWays: 'mobile,email',
+    activationProviders: {
+      mobile: '',
+      email: 'a-authsimple',
+    },
     url: {
-      emailConfirm: '/a/authsimple/emailConfirm',
-      mobileVerify: '',
-      passwordChange: '/a/authsimple/passwordChange',
-      passwordForgot: '/a/authsimple/passwordForgot',
-      passwordReset: '/a/authsimple/passwordReset',
+      // url is specified by activation provider
+      //   emailConfirm: '/a/authsimple/emailConfirm',
+      //   mobileVerify: '',
+      //   passwordChange: '/a/authsimple/passwordChange',
+      //   passwordForgot: '/a/authsimple/passwordForgot',
+      //   passwordReset: '/a/authsimple/passwordReset',
     },
     //  default is 'activated', if need activating by mobile/email, then add to 'registered' first
     activatedRoles: 'activated',
