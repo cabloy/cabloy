@@ -22,6 +22,15 @@ module.exports = app => {
       this.ctx.success();
     }
 
+    async requestXML() {
+      // payload
+      const payload = await this.ctx.getPayload();
+      // return
+      this.ctx.status = 200;
+      this.ctx.type = 'text/xml';
+      this.ctx.body = payload.toString();
+    }
+
   }
 
   return RequestController;

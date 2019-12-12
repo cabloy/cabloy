@@ -429,6 +429,7 @@ module.exports = app => {
       { method: 'post', path: 'test/ctx/session/echo2', controller: testCtxSession, middlewares: 'test' },
       // test/ctx/request
       { method: 'post', path: 'test/ctx/request/:id', controller: testCtxRequest, action: 'request', middlewares: 'test', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/ctx/requestXML', controller: testCtxRequest, middlewares: 'test', meta: { auth: { enable: false } } },
       // test/ctx/response
       { method: 'post', path: 'test/ctx/response/success', controller: testCtxResponse, middlewares: 'test', meta: { auth: { enable: false } } },
       { method: 'post', path: 'test/ctx/response/successMore', controller: testCtxResponse, middlewares: 'test', meta: { auth: { enable: false } } },
@@ -1537,6 +1538,15 @@ module.exports = app => {
 
       // done
       this.ctx.success();
+    }
+
+    async requestXML() {
+      // payload
+      const payload = await this.ctx.getPayload();
+      // return
+      this.ctx.status = 200;
+      this.ctx.type = 'text/xml';
+      this.ctx.body = payload.toString();
     }
 
   }

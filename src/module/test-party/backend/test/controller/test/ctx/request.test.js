@@ -8,4 +8,17 @@ describe('test/controller/test/ctx/request.test.js', () => {
     });
     assert.equal(result.body.code, 0);
   });
+
+  it('action:requestXML', async () => {
+    const xml =
+`<xml>
+   <return_code><![CDATA[SUCCESS]]></return_code>
+   <return_msg><![CDATA[OK]]></return_msg>
+</xml>
+`;
+    const result = await app.httpRequest().post(mockUrl('test/ctx/requestXML'))
+      .type('xml')
+      .send(xml);
+    assert.equal(result.text, xml);
+  });
 });
