@@ -5,6 +5,8 @@ const statuses = require('statuses');
 const isJSON = require('koa-is-json');
 const Stream = require('stream');
 const is = require('is-type-of');
+const raw = require('raw-body');
+const inflate = require('inflation');
 const mparse = require('egg-born-mparse').default;
 const util = require('../../lib/module/util.js');
 
@@ -132,6 +134,10 @@ module.exports = {
 
   successMore(list, index, size) {
     this.success({ list, index: index + list.length, finished: (size === -1 || size === 0) || list.length < size });
+  },
+
+  async getPayload(options) {
+    return await raw(inflate(this.req), options);
   },
 
 };
