@@ -23,13 +23,15 @@ const utils = {
     }
   },
   versionPrompt(moduleName, moduleVersion) {
-    if (!moduleVersion) return;
-    const _pkg = require('cabloy/package.json');
-    const diffType = semverDiff(_pkg.version, moduleVersion);
-    if (!diffType) return;
-    // log
-    const message = `[${chalk.keyword('cyan')(moduleName)}] new version available: ${chalk.keyword('yellow')(_pkg.version)} → ${chalk.keyword('orange')(moduleVersion)}`;
-    console.log('\n' + boxen(message, boxenOptions));
+    try {
+      if (!moduleVersion) return;
+      const _pkg = require('cabloy/package.json');
+      const diffType = semverDiff(_pkg.version, moduleVersion);
+      if (!diffType) return;
+      // log
+      const message = `[${chalk.keyword('cyan')(moduleName)}] new version available: ${chalk.keyword('yellow')(_pkg.version)} → ${chalk.keyword('orange')(moduleVersion)}`;
+      console.log('\n' + boxen(message, boxenOptions));
+    } catch (err) { }
   },
 };
 module.exports = utils;
