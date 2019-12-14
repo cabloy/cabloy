@@ -1,4 +1,5 @@
 const DebugCommand = require('egg-bin').DebugCommand;
+const utils = require('../utils.js');
 
 class BackendDebugCommand extends DebugCommand {
 
@@ -10,6 +11,10 @@ class BackendDebugCommand extends DebugCommand {
   * run(context) {
 
     if (!context.argv.baseDir) context.argv.baseDir = 'src/backend';
+
+    utils.versionCheck('cabloy', 'debug').then(data => {
+      utils.versionPrompt('cabloy', data);
+    });
 
     yield super.run(context);
 
