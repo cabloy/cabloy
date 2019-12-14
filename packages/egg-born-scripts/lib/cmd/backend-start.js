@@ -1,4 +1,5 @@
 const StartCommand = require('egg-scripts').StartCommand;
+const utils = require('../utils.js');
 
 class BackendStartCommand extends StartCommand {
 
@@ -10,6 +11,10 @@ class BackendStartCommand extends StartCommand {
   * run(context) {
 
     if (!context.argv._ || context.argv._.length === 0) context.argv._ = [ 'src/backend' ];
+
+    utils.versionCheck('cabloy', 'start').then(data => {
+      utils.versionPrompt('cabloy', data);
+    });
 
     yield super.run(context);
 
