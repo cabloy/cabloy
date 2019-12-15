@@ -425,6 +425,7 @@ class Build {
     ejs.clearCache();
     // site
     const site = await this.getSite({ language });
+    site.render = { scene: 'all' };
     // render static
     await this._renderStatic({ site });
     // render articles
@@ -441,6 +442,7 @@ class Build {
     ejs.clearCache();
     // site
     const site = await this.getSite({ language: article.language });
+    site.render = { scene: 'single', inner };
     // render article
     await this._renderArticle({ site, article });
     if (!inner) {
