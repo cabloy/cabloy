@@ -72,12 +72,9 @@ module.exports = {
     this.dbMeta = value.dbMeta;
   },
   tail(cb) {
-    if (this.ctxCaller) {
+    if (this.ctxCaller && this.ctxCaller[TAILCALLBACKS]) {
       this.ctxCaller.tail(cb);
     } else {
-      if (!this[TAILCALLBACKS]) {
-        this[TAILCALLBACKS] = [];
-      }
       this[TAILCALLBACKS].push(cb);
     }
   },

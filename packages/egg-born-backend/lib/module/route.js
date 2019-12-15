@@ -44,6 +44,8 @@ module.exports = function(loader, modules) {
 
         // middlewares: start
         const fnStart = async (ctx, next) => {
+          // callbacks
+          ctx[TAILCALLBACKS] = [];
           // status
           ctx[MWSTATUS] = {};
           // route
@@ -54,10 +56,8 @@ module.exports = function(loader, modules) {
           // next
           await next();
           // invoke callbackes
-          if (ctx[TAILCALLBACKS]) {
-            for (const cb of ctx[TAILCALLBACKS]) {
-              await cb();
-            }
+          for (const cb of ctx[TAILCALLBACKS]) {
+            await cb();
           }
         };
         fnStart._name = 'start';
