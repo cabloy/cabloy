@@ -1,0 +1,16 @@
+<%
+  // check
+  if(typeof article!=='undefined' && site.render && site.render.scene==='single' && !site.render.inner){
+    const articleLink=url(article.url);
+    // submit
+    const res = await ctx.performAction({
+      method: 'post',
+      url: '/cms/pluginsubmit/util/submit',
+      body: {
+        links:[articleLink],
+        config:site.plugins['cms-pluginsubmit'],
+      },
+    });
+  }
+
+%>

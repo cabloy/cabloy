@@ -1,9 +1,12 @@
 {
   "name": "egg-born-module-cms-pluginsubmit",
-  "version": "1.0.0",
-  "title": "cms-pluginsubmit",
+  "version": "1.0.1",
+  "title": "cms:plugin:submit",
   "eggBornModule": {
-    "fileVersion": 0,
+    "cms": {
+      "name": "submit",
+      "plugin": true
+    },
     "dependencies": {
       "a-instance": "2.0.0",
       "a-base": "2.0.0"
