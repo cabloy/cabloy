@@ -82,5 +82,7 @@ Cabloy-Community is a community (forum) web application based on Cabloy-CMS
 |[egg-born-module-cms-pluginrss](https://github.com/zhennann/egg-born-module-cms-pluginrss)|Plugin: RSS|
 |[egg-born-module-cms-pluginsidebar](https://github.com/zhennann/egg-born-module-cms-pluginsidebar)|Plugin: Sidebar Components|
 |[egg-born-module-cms-pluginsocialshare](https://github.com/zhennann/egg-born-module-cms-pluginsocialshare)|Plugin: Social Share (a set of buttons)|
+|[egg-born-module-cms-pluginsubmit](https://github.com/zhennann/egg-born-module-cms-pluginsubmit)|Plugin: Automatically submit articles to Baidu search engine to speed up article indexing|
 |[egg-born-module-cms-plugintrack](https://github.com/zhennann/egg-born-module-cms-plugintrack)|Plugin: Google/Baidu/QQ Statistics|
+|[egg-born-module-cms-pluginuser](https://github.com/zhennann/egg-born-module-cms-pluginuser)|Plugin: Display the current user status and user menu in the navigation bar|
 

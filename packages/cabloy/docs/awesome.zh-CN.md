@@ -80,5 +80,7 @@ Cabloy-Community是基于Cabloy-CMS开发的社区（论坛）Web应用
 |[egg-born-module-cms-pluginrss](https://github.com/zhennann/egg-born-module-cms-pluginrss)|插件：RSS|
 |[egg-born-module-cms-pluginsidebar](https://github.com/zhennann/egg-born-module-cms-pluginsidebar)|插件：侧边栏组件|
 |[egg-born-module-cms-pluginsocialshare](https://github.com/zhennann/egg-born-module-cms-pluginsocialshare)|插件：社会化分享（一组按钮）|
+|[egg-born-module-cms-pluginsubmit](https://github.com/zhennann/egg-born-module-cms-pluginsubmit)|插件：自动提交文章到百度搜索引擎，加快文章收录|
 |[egg-born-module-cms-plugintrack](https://github.com/zhennann/egg-born-module-cms-plugintrack)|插件：Google统计、百度统计、腾讯统计|
+|[egg-born-module-cms-pluginuser](https://github.com/zhennann/egg-born-module-cms-pluginuser)|插件：在导航栏显示当前用户状态及用户菜单|
 
