@@ -695,13 +695,20 @@ $(document).ready(function() {
     }
   }
 
+  _checkIfPluginEnable({ site, moduleName }) {
+    const config = site.plugins[moduleName];
+    return !config || config.enable !== false;
+  }
+
   async _loadPluginIncludes({ site, language }) {
     // if exists
     if (site._pluginIncludes) return site._pluginIncludes;
     // modulesArray
     let pluginIncludes = '';
     for (const module of this.app.meta.modulesArray) {
-      if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin) {
+      if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin
+        && this._checkIfPluginEnable({ site, moduleName: module.info.relativeName })
+      ) {
         // path intermediate
         const pathIntermediate = await this.getPathIntermediate(language);
         let incudeFileName = path.join(pathIntermediate, `plugins/${module.info.relativeName}/include.ejs`);
