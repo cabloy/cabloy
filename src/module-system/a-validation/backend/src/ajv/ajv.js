@@ -2,11 +2,13 @@ const require3 = require('require3');
 const Ajv = require3('ajv');
 const AjvLocalize = require3('ajv-i18n');
 const AjvKeywords = require3('ajv-keywords');
+const jsBeautify = require3('js-beautify');
 const systemKeywords = require('./keywords.js');
 
-module.exports = {
-  create({ options, keywords, schemas, schemaRoot }) {
-    const _options = Object.assign({
+module.exports = app => {
+  Ajv.create = function({ options, keywords, schemas, schemaRoot }) {
+    // default
+    const _options = {
       $data: true,
       allErrors: true,
       verbose: false,
@@ -18,7 +20,14 @@ module.exports = {
       transpile: false,
       passContext: true,
       removeAdditional: 'all',
-    }, options);
+    };
+      // processCode
+    if (app.meta.isTest || app.meta.isLocal) {
+      _options.processCode = jsBeautify.js_beautify;
+    }
+    // override
+    Object.assign(_options, options);
+    // ajv
     const ajv = new Ajv(_options);
     AjvKeywords(ajv);
     ajv.v = createValidate(schemaRoot);
@@ -39,7 +48,8 @@ module.exports = {
       }
     }
     return ajv;
-  },
+  };
+  return Ajv;
 };
 
 function createValidate(schemaRoot) {

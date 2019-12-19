@@ -5,7 +5,6 @@ const locales = require('./config/locales.js');
 const errors = require('./config/errors.js');
 const middlewares = require('./config/middlewares.js');
 const constants = require('./config/constants.js');
-const ajv = require('./ajv/ajv.js');
 
 // eslint-disable-next-line
 module.exports = app => {
@@ -15,7 +14,7 @@ module.exports = app => {
   const routes = require('./routes.js')(app);
 
   // ajv
-  app.meta.ajv = ajv;
+  app.meta.ajv = require('./ajv/ajv.js')(app);
 
   return {
     routes,

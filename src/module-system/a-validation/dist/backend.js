@@ -82,37 +82,30 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
-
-module.exports = require("require3");
-
-/***/ }),
-/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const services = __webpack_require__(2);
-const models = __webpack_require__(4);
-const config = __webpack_require__(5);
-const locales = __webpack_require__(6);
-const errors = __webpack_require__(8);
-const middlewares = __webpack_require__(9);
-const constants = __webpack_require__(13);
-const ajv = __webpack_require__(14);
+const services = __webpack_require__(1);
+const models = __webpack_require__(3);
+const config = __webpack_require__(4);
+const locales = __webpack_require__(5);
+const errors = __webpack_require__(7);
+const middlewares = __webpack_require__(8);
+const constants = __webpack_require__(12);
 
 // eslint-disable-next-line
 module.exports = app => {
 
   // meta
-  const meta = __webpack_require__(17)(app);
-  const routes = __webpack_require__(20)(app);
+  const meta = __webpack_require__(13)(app);
+  const routes = __webpack_require__(16)(app);
 
   // ajv
-  app.meta.ajv = ajv;
+  app.meta.ajv = __webpack_require__(18)(app);
 
   return {
     routes,
@@ -130,10 +123,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 2 */
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const validation = __webpack_require__(3);
+const validation = __webpack_require__(2);
 
 module.exports = {
   validation,
@@ -141,7 +134,7 @@ module.exports = {
 
 
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -159,7 +152,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -167,7 +160,7 @@ module.exports = {
 
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports) {
 
 // eslint-disable-next-line
@@ -190,16 +183,16 @@ module.exports = appInfo => {
 
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
-  'zh-cn': __webpack_require__(7),
+  'zh-cn': __webpack_require__(6),
 };
 
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -211,7 +204,7 @@ module.exports = {
 
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports) {
 
 // error code should start from 1001
@@ -221,11 +214,11 @@ module.exports = {
 
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const validation = __webpack_require__(10);
-const validate = __webpack_require__(12);
+const validation = __webpack_require__(9);
+const validate = __webpack_require__(11);
 
 module.exports = {
   validation,
@@ -234,11 +227,11 @@ module.exports = {
 
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // validation
-const ValidationFn = __webpack_require__(11);
+const ValidationFn = __webpack_require__(10);
 const VALIDATION = Symbol('CTX#__VALIDATION');
 
 module.exports = (options, app) => {
@@ -259,7 +252,7 @@ module.exports = (options, app) => {
 
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports) {
 
 const Fn = module.exports = ctx => {
@@ -318,7 +311,7 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, exports) {
 
 // request.body
@@ -348,122 +341,24 @@ module.exports = (options2, app) => {
 
 
 /***/ }),
+/* 12 */
+/***/ (function(module, exports) {
+
+module.exports = {
+};
+
+
+/***/ }),
 /* 13 */
-/***/ (function(module, exports) {
-
-module.exports = {
-};
-
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const require3 = __webpack_require__(0);
-const Ajv = require3('ajv');
-const AjvLocalize = require3('ajv-i18n');
-const AjvKeywords = require3('ajv-keywords');
-const systemKeywords = __webpack_require__(15);
-
-module.exports = {
-  create({ options, keywords, schemas, schemaRoot }) {
-    const _options = Object.assign({
-      $data: true,
-      allErrors: true,
-      verbose: false,
-      jsonPointers: true,
-      format: 'full',
-      unknownFormats: true,
-      useDefaults: true,
-      coerceTypes: true,
-      transpile: false,
-      passContext: true,
-      removeAdditional: 'all',
-    }, options);
-    const ajv = new Ajv(_options);
-    AjvKeywords(ajv);
-    ajv.v = createValidate(schemaRoot);
-    // systemKeywords
-    for (const _keyword in systemKeywords) {
-      ajv.addKeyword(_keyword, systemKeywords[_keyword]);
-    }
-    // keywords
-    if (keywords) {
-      for (const _keyword in keywords) {
-        ajv.addKeyword(_keyword, keywords[_keyword]);
-      }
-    }
-    // schemas
-    if (schemas) {
-      for (const key in schemas) {
-        ajv.addSchema(schemas[key], key);
-      }
-    }
-    return ajv;
-  },
-};
-
-function createValidate(schemaRoot) {
-  return async function({ ctx, schema, data }) {
-    const validate = this.getSchema(schema || schemaRoot);
-    try {
-      const res = await validate.call(ctx, data);
-      return res;
-    } catch (e) {
-      const locale = ctx.locale.split('-')[0];
-      if (locale !== 'en' && AjvLocalize[locale]) AjvLocalize[locale](e.errors);
-      ctx.logger.error(e);
-      // error
-      throw ctx.createError({
-        ...e,
-        code: 422, message: e.errors,
-      });
-    }
-  };
-}
-
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const notEmpty = __webpack_require__(16);
-
-module.exports = {
-  notEmpty,
-};
-
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports) {
-
-module.exports = {
-  errors: true,
-  compile(schema) {
-    const fun = function(data) {
-      const res = schema ? !!data : !data;
-      if (!res) {
-        fun.errors = [{ keyword: 'notEmpty', params: [], message: this.text('Not empty') }];
-      }
-      return res;
-    };
-    return fun;
-  },
-};
-
-
-/***/ }),
-/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
   const meta = {};
   if (app.meta.isTest || app.meta.isLocal) {
     // schemas
-    const schemas = __webpack_require__(18)(app);
+    const schemas = __webpack_require__(14)(app);
     // keywords
-    const keywords = __webpack_require__(19)(app);
+    const keywords = __webpack_require__(15)(app);
     // meta
     Object.assign(meta, {
       validation: {
@@ -487,7 +382,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 18 */
+/* 14 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -562,11 +457,8 @@ module.exports = app => {
 
 
 /***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const require3 = __webpack_require__(0);
-const Ajv = require3('ajv');
+/* 15 */
+/***/ (function(module, exports) {
 
 module.exports = app => {
   const keywords = {};
@@ -581,7 +473,7 @@ module.exports = app => {
           const res = [ 'zh-cn', 'en-us' ].indexOf(data) > -1;
           if (!res) {
             const errors = [{ keyword: 'x-languages', params: [], message: ctx.text('Not expected value') }];
-            return reject(new Ajv.ValidationError(errors));
+            return reject(new app.meta.ajv.ValidationError(errors));
           }
           return resolve(res);
         });
@@ -593,10 +485,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 20 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const validation = __webpack_require__(21);
+const validation = __webpack_require__(17);
 
 module.exports = app => {
   const routes = [
@@ -607,7 +499,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 21 */
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -620,6 +512,120 @@ module.exports = app => {
 
   }
   return ValidationController;
+};
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(19);
+const Ajv = require3('ajv');
+const AjvLocalize = require3('ajv-i18n');
+const AjvKeywords = require3('ajv-keywords');
+const jsBeautify = require3('js-beautify');
+const systemKeywords = __webpack_require__(20);
+
+module.exports = app => {
+  Ajv.create = function({ options, keywords, schemas, schemaRoot }) {
+    // default
+    const _options = {
+      $data: true,
+      allErrors: true,
+      verbose: false,
+      jsonPointers: true,
+      format: 'full',
+      unknownFormats: true,
+      useDefaults: true,
+      coerceTypes: true,
+      transpile: false,
+      passContext: true,
+      removeAdditional: 'all',
+    };
+      // processCode
+    if (app.meta.isTest || app.meta.isLocal) {
+      _options.processCode = jsBeautify.js_beautify;
+    }
+    // override
+    Object.assign(_options, options);
+    // ajv
+    const ajv = new Ajv(_options);
+    AjvKeywords(ajv);
+    ajv.v = createValidate(schemaRoot);
+    // systemKeywords
+    for (const _keyword in systemKeywords) {
+      ajv.addKeyword(_keyword, systemKeywords[_keyword]);
+    }
+    // keywords
+    if (keywords) {
+      for (const _keyword in keywords) {
+        ajv.addKeyword(_keyword, keywords[_keyword]);
+      }
+    }
+    // schemas
+    if (schemas) {
+      for (const key in schemas) {
+        ajv.addSchema(schemas[key], key);
+      }
+    }
+    return ajv;
+  };
+  return Ajv;
+};
+
+function createValidate(schemaRoot) {
+  return async function({ ctx, schema, data }) {
+    const validate = this.getSchema(schema || schemaRoot);
+    try {
+      const res = await validate.call(ctx, data);
+      return res;
+    } catch (e) {
+      const locale = ctx.locale.split('-')[0];
+      if (locale !== 'en' && AjvLocalize[locale]) AjvLocalize[locale](e.errors);
+      ctx.logger.error(e);
+      // error
+      throw ctx.createError({
+        ...e,
+        code: 422, message: e.errors,
+      });
+    }
+  };
+}
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports) {
+
+module.exports = require("require3");
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const notEmpty = __webpack_require__(21);
+
+module.exports = {
+  notEmpty,
+};
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports) {
+
+module.exports = {
+  errors: true,
+  compile(schema) {
+    const fun = function(data) {
+      const res = schema ? !!data : !data;
+      if (!res) {
+        fun.errors = [{ keyword: 'notEmpty', params: [], message: this.text('Not empty') }];
+      }
+      return res;
+    };
+    return fun;
+  },
 };
 
 
