@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const Ajv = require3('ajv');
-
 module.exports = app => {
   const keywords = {};
   keywords.slug = {
@@ -23,7 +20,7 @@ module.exports = app => {
           `, [ ctx.instance.id, atomClass.id, rootData.language, data ]);
         if (items[0] && items[0].id !== rootData.atomId) {
           const errors = [{ keyword: 'x-slug', params: [], message: ctx.text('Slug Exists') }];
-          throw new Ajv.ValidationError(errors);
+          throw new app.meta.ajv.ValidationError(errors);
         }
         return true;
       };

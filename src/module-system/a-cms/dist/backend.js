@@ -89,12 +89,6 @@ module.exports =
 /* 0 */
 /***/ (function(module, exports) {
 
-module.exports = require("require3");
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports) {
-
 
 /**
   escapeHtml: based on markdown-it
@@ -178,11 +172,17 @@ module.exports = {
 
 
 /***/ }),
+/* 1 */
+/***/ (function(module, exports) {
+
+module.exports = require("require3");
+
+/***/ }),
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const path = __webpack_require__(19);
-const require3 = __webpack_require__(0);
+const require3 = __webpack_require__(1);
 const ejs = require3('@zhennann/ejs');
 const pMap = require3('p-map');
 const extend = require3('extend2');
@@ -195,7 +195,7 @@ const shajs = require3('sha.js');
 const babel = require3('@babel/core');
 const UglifyJS = require3('uglify-js');
 const time = __webpack_require__(20);
-const utils = __webpack_require__(1);
+const utils = __webpack_require__(0);
 
 class Build {
 
@@ -1589,9 +1589,9 @@ module.exports = app => {
 /* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(0);
+const require3 = __webpack_require__(1);
 const extend = require3('extend2');
-const utils = __webpack_require__(1);
+const utils = __webpack_require__(0);
 
 module.exports = app => {
 
@@ -1802,7 +1802,7 @@ module.exports = app => {
 /* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const utils = __webpack_require__(1);
+const utils = __webpack_require__(0);
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -1990,9 +1990,9 @@ module.exports = app => {
 /* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(0);
+const require3 = __webpack_require__(1);
 const extend = require3('extend2');
-const utils = __webpack_require__(1);
+const utils = __webpack_require__(0);
 
 module.exports = app => {
 
@@ -2416,9 +2416,9 @@ module.exports = app => {
 /* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(0);
+const require3 = __webpack_require__(1);
 const uuid = require3('uuid');
-const utils = __webpack_require__(1);
+const utils = __webpack_require__(0);
 
 module.exports = app => {
 
@@ -2823,7 +2823,7 @@ module.exports = app => {
 /* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(0);
+const require3 = __webpack_require__(1);
 const trimHtml = require3('@zhennann/trim-html');
 const markdown = require3('@zhennann/markdown');
 const markdonw_it_block = require3('@zhennann/markdown-it-block');
@@ -3117,7 +3117,7 @@ module.exports = app => {
 /* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const utils = __webpack_require__(1);
+const utils = __webpack_require__(0);
 
 module.exports = app => {
 
@@ -3295,7 +3295,7 @@ module.exports = app => {
 /* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(0);
+const require3 = __webpack_require__(1);
 const fse = require3('fs-extra');
 const extend = require3('extend2');
 const Build = __webpack_require__(2);
@@ -3461,7 +3461,7 @@ module.exports = app => {
 /* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const utils = __webpack_require__(1);
+const utils = __webpack_require__(0);
 
 module.exports = app => {
 
@@ -3827,10 +3827,7 @@ module.exports = app => {
 
 /***/ }),
 /* 39 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const require3 = __webpack_require__(0);
-const Ajv = require3('ajv');
+/***/ (function(module, exports) {
 
 module.exports = app => {
   const keywords = {};
@@ -3854,7 +3851,7 @@ module.exports = app => {
           `, [ ctx.instance.id, atomClass.id, rootData.language, data ]);
         if (items[0] && items[0].id !== rootData.atomId) {
           const errors = [{ keyword: 'x-slug', params: [], message: ctx.text('Slug Exists') }];
-          throw new Ajv.ValidationError(errors);
+          throw new app.meta.ajv.ValidationError(errors);
         }
         return true;
       };
