@@ -82,7 +82,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -93,16 +93,10 @@ module.exports = require("util");
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports) {
-
-module.exports = require("require3");
-
-/***/ }),
-/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const routes = __webpack_require__(3);
-const services = __webpack_require__(6);
+const routes = __webpack_require__(2);
+const services = __webpack_require__(5);
 const models = __webpack_require__(12);
 const config = __webpack_require__(15);
 const locales = __webpack_require__(16);
@@ -123,11 +117,11 @@ module.exports = app => {
 
 
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(4);
-const auth = __webpack_require__(5);
+const version = __webpack_require__(3);
+const auth = __webpack_require__(4);
 
 module.exports = [
   { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
@@ -156,7 +150,7 @@ module.exports = [
 
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -183,7 +177,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -250,11 +244,11 @@ module.exports = app => {
 
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(7);
-const auth = __webpack_require__(8);
+const version = __webpack_require__(6);
+const auth = __webpack_require__(7);
 module.exports = {
   version,
   auth,
@@ -262,7 +256,7 @@ module.exports = {
 
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -309,12 +303,12 @@ module.exports = app => {
 
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const util = __webpack_require__(0);
-const passwordFn = __webpack_require__(9); // should compile
-const require3 = __webpack_require__(1);
+const passwordFn = __webpack_require__(8); // should compile
+const require3 = __webpack_require__(11);
 const uuid = require3('uuid');
 
 module.exports = app => {
@@ -606,22 +600,22 @@ module.exports = app => {
 
 
 /***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = __webpack_require__(9);
+
+/***/ }),
 /* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(10);
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var crypto = __webpack_require__(11);
+var crypto = __webpack_require__(10);
 
 var iterations = 10000;
 var password = function(password) {
@@ -689,10 +683,16 @@ module.exports = password;
 
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports) {
 
 module.exports = require("crypto");
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports) {
+
+module.exports = require("require3");
 
 /***/ }),
 /* 12 */
@@ -1137,10 +1137,7 @@ module.exports = Strategy;
 
 /***/ }),
 /* 25 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const require3 = __webpack_require__(1);
-const Ajv = require3('ajv');
+/***/ (function(module, exports) {
 
 module.exports = app => {
   const keywords = {};
@@ -1154,11 +1151,11 @@ module.exports = app => {
         const res = await ctx.meta.user.exists({ [name]: data });
         if (res && res.id !== ctx.user.agent.id) {
           const errors = [{ keyword: 'x-exists', params: [], message: ctx.text('Element exists') }];
-          throw new Ajv.ValidationError(errors);
+          throw new app.meta.ajv.ValidationError(errors);
         }
         if (!res && data.indexOf('__') > -1) {
           const errors = [{ keyword: 'x-exists', params: [], message: ctx.text('Cannot contain __') }];
-          throw new Ajv.ValidationError(errors);
+          throw new app.meta.ajv.ValidationError(errors);
         }
         return true;
       };
@@ -1174,7 +1171,7 @@ module.exports = app => {
         const res = await ctx.meta.user.exists({ [name]: data });
         if (!res) {
           const errors = [{ keyword: 'x-passwordForgotEmail', params: [], message: ctx.text('Email address does not exist') }];
-          throw new Ajv.ValidationError(errors);
+          throw new app.meta.ajv.ValidationError(errors);
         }
         return true;
       };
