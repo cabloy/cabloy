@@ -185,7 +185,7 @@ module.exports = app => {
         ebOptionsUrlParams: null,
         ebOptionsBlankAuto: true,
         'x-languages': true,
-        notEmpty: true,
+        // notEmpty: true,
       },
       avatar: {
         type: 'string',
