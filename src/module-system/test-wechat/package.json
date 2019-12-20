@@ -1,0 +1,25 @@
+{
+  "name": "egg-born-module-test-wechat",
+  "version": "1.0.0",
+  "title": "test-wechat",
+  "eggBornModule": {
+    "fileVersion": 0,
+    "dependencies": {
+      "a-instance": "2.0.0",
+      "a-base": "2.0.0"
+    }
+  },
+  "description": "test module for egg-born-module-a-wechat",
+  "scripts": {
+    "build:front": "node build/front/build.js",
+    "build:backend": "node build/backend/build.js",
+    "lint": "eslint front backend"
+  },
+  "author": "zhennann",
+  "devDependencies": {},
+  "dependencies": {
+    "require3": "^1.0.3",
+    "extend2": "^1.0.0",
+    "egg-born-module-a-wechat": "^1.0.0"
+  }
+}
