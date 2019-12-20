@@ -19,6 +19,9 @@
   "devDependencies": {},
   "dependencies": {
     "require3": "^1.0.3",
-    "extend2": "^1.0.0"
+    "extend2": "^1.0.0",
+    "wechat-crypto": "^0.0.2",
+    "xml2js": "^0.4.23",
+    "@zhennann/passport-wechat": "^2.0.5"
   }
 }
