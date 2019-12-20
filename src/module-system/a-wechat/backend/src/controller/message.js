@@ -26,7 +26,7 @@ module.exports = app => {
         messageIn = await this._parseMessagePost({ query, config, encrypted, wechatCrypto });
         // handle
         let resXML;
-        const messageOut = await this.ctx.service.message.index({ messageIn });
+        const messageOut = await this.ctx.service.message.index({ message: messageIn });
         if (!messageOut) {
           resXML = '';
         } else {

@@ -11,6 +11,9 @@ module.exports = appInfo => {
     appSecret: '',
     token: '',
     encodingAESKey: '',
+    message: {
+      autoReply: '',
+    },
   };
 
   return config;
