@@ -1,5 +1,5 @@
 module.exports = app => {
-  const schemas = require('./config/validation/schemas.js')(app);
+  // const schemas = require('./config/validation/schemas.js')(app);
   const meta = {
     base: {
       atoms: {
@@ -12,6 +12,11 @@ module.exports = app => {
       },
       keywords: {},
       schemas: {
+      },
+    },
+    event: {
+      implementations: {
+        'a-wechat:wechatMessage': 'event/wechatMessage',
       },
     },
   };
