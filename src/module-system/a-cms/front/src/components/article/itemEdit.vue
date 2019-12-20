@@ -60,6 +60,10 @@ export default {
   created() {
     this.$local.dispatch('getLanguages', {
       atomClass: this.atomClass,
+    }).then(res => {
+      if (res.length === 1) {
+        this.item.language = res[0].value;
+      }
     });
   },
   methods: {
