@@ -1435,6 +1435,13 @@ module.exports = ctx => {
       } else {
         ctx.session.maxAge = profileUser.maxAge || this.config.authenticated.maxAge;
       }
+
+      // user verify event
+      await ctx.meta.event.invoke({
+        module: moduleInfo.relativeName, name: 'userVerify', data: { verifyUser, profileUser },
+      });
+
+      // ok
       return verifyUser;
     }
 
@@ -5025,13 +5032,7 @@ module.exports = app => {
         // state: login/associate
         const state = ctx.request.query.state || 'login';
         // user verify
-        const verifyUser = await ctx.meta.user.verify({ state, profileUser });
-        // user verify event
-        await ctx.meta.event.invoke({
-          module: 'a-base', name: 'userVerify', data: { verifyUser, profileUser },
-        });
-        // ready
-        return verifyUser;
+        return await ctx.meta.user.verify({ state, profileUser });
       });
       // // serializeUser
       // app.passport.serializeUser(async (ctx, user) => {

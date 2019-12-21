@@ -430,6 +430,13 @@ module.exports = ctx => {
       } else {
         ctx.session.maxAge = profileUser.maxAge || this.config.authenticated.maxAge;
       }
+
+      // user verify event
+      await ctx.meta.event.invoke({
+        module: moduleInfo.relativeName, name: 'userVerify', data: { verifyUser, profileUser },
+      });
+
+      // ok
       return verifyUser;
     }
 
