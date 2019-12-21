@@ -2,8 +2,10 @@ module.exports = app => {
 
   class Event extends app.Service {
 
-    async wechatMessage({ message }) {
+    async wechatMessage({ event, data }) {
+      const message = data.message;
       if (message.MsgType === 'text') {
+        event.break = true;
         return {
           ToUserName: message.FromUserName,
           FromUserName: message.ToUserName,

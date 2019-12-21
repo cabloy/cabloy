@@ -3,7 +3,8 @@ module.exports = app => {
 
     async wechatMessage() {
       const res = await this.service.event.wechatMessage({
-        message: this.ctx.request.body.data.message,
+        event: this.ctx.request.body.event,
+        data: this.ctx.request.body.data,
       });
       this.ctx.success(res);
     }
