@@ -13,6 +13,7 @@ module.exports = app => {
             updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             deleted int(11) DEFAULT '0',
             iid int(11) DEFAULT '0',
+            userId int(11) DEFAULT '0',
             openid varchar(255) DEFAULT NULL,
             unionid varchar(255) DEFAULT NULL,
             nickname varchar(50) DEFAULT NULL,

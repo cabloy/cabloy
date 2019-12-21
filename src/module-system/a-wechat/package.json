@@ -23,6 +23,6 @@
     "wechat-crypto": "^0.0.2",
     "xml2js": "^0.4.23",
     "co-wechat-api": "^3.10.0",
-    "@zhennann/passport-wechat": "^2.0.5"
+    "@zhennann/passport-wechat": "^3.0.0"
   }
 }

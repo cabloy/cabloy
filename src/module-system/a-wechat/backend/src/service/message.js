@@ -35,9 +35,11 @@ module.exports = app => {
       // user info
       const userInfo = await this.ctx.meta.wechat.getUser({ openid });
       // ensure wechat user
-      await this._ensureWechatUser({ openid, userInfo });
+      const userWechatId = await this._ensureWechatUser({ openid, userInfo });
       // ensure auth user
-      await this._ensureAuthUser({ openid, userInfo });
+      const verifyUser = await this._ensureAuthUser({ openid, userInfo });
+      // update wechat userId
+      await this.ctx.model.wechatUser.update({ id: userWechatId, userId: verifyUser.agent.id });
       // ok
       return {
         ToUserName: message.FromUserName,
@@ -67,16 +69,19 @@ module.exports = app => {
     }
 
     async _ensureWechatUser({ openid, userInfo }) {
+      let userWechatId;
       // wechat user
       let userWechat = await this.ctx.model.wechatUser.get({ openid });
       const exists = !!userWechat;
       if (!userWechat) {
         userWechat = {};
       } else {
+        userWechatId = userWechat.id;
         delete userWechat.createdAt;
         delete userWechat.updatedAt;
         delete userWechat.deleted;
         delete userWechat.iid;
+        delete userWechat.userId;
       }
       // check fields
       let needUpdate = false;
@@ -92,15 +97,75 @@ module.exports = app => {
       // update
       if (needUpdate) {
         if (!exists) {
-          await this.ctx.model.wechatUser.insert(userWechat);
+          const res = await this.ctx.model.wechatUser.insert(userWechat);
+          userWechatId = res.insertId;
         } else {
           await this.ctx.model.wechatUser.update(userWechat);
         }
       }
+      // ok
+      return userWechatId;
     }
 
+    // profileId : unionid:openid
     async _ensureAuthUser({ openid, userInfo }) {
-
+      const unionid = userInfo.unionid || '';
+      const profileId = `${unionid}:${openid}`;
+      const profileUser = {
+        module: moduleInfo.relativeName,
+        provider: 'wechat',
+        profileId,
+        profile: {
+          id: profileId,
+          userName: userInfo.nickname,
+          realName: userInfo.nickname,
+          avatar: userInfo.headimgurl,
+          profile: userInfo,
+        },
+      };
+      // provider
+      const providerItem = await this.ctx.meta.user.getAuthProvider({
+        module: moduleInfo.relativeName,
+        providerName: 'wechat',
+      });
+      // check auth
+      let authId;
+      let authUserId;
+      const authItem = await this.ctx.model.query(
+        `select * from aAuth a where a.deleted=0 and a.iid=? and a.providerId=? and a.profileId like '%:${openid}'`,
+        [ this.ctx.instance.id, providerItem.id ]
+      );
+      if (!authItem) {
+        // insert auth
+        const res = await this.ctx.model.auth.insert({
+          providerId: providerItem.id,
+          profileId,
+          profile: JSON.stringify(profileUser.profile),
+        });
+        authId = res.insertId;
+      } else {
+        // always update
+        await this.ctx.model.auth.update({
+          id: authItem.id,
+          profileId,
+          profile: JSON.stringify(profileUser.profile),
+        });
+        authId = authItem.id;
+        authUserId = authItem.userId;
+      }
+      // check if has userId for unionid
+      if (unionid) {
+        const _authOther = await this.ctx.model.query(
+          `select * from aAuth a where a.deleted=0 and a.iid=? and a.profileId like '${unionid}:%' and a.id<>?`,
+          [ this.ctx.instance.id, authId ]
+        );
+        if (_authOther && _authOther.userId !== authUserId) {
+          // update userId for this auth
+          await this.ctx.model.auth.update({ id: authId, userId: _authOther.userId });
+        }
+      }
+      // verify
+      return await this.ctx.meta.user.verify({ state: 'login', profileUser });
     }
 
 

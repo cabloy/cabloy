@@ -1,3 +1,5 @@
+const authFn = require('./passport/auth.js');
+
 module.exports = app => {
   // const schemas = require('./config/validation/schemas.js')(app);
   const meta = {
@@ -24,6 +26,7 @@ module.exports = app => {
         aWechatUser: 'createdAt,updatedAt,openid,unionid',
       },
     },
+    auth: authFn(app),
   };
   return meta;
 };
