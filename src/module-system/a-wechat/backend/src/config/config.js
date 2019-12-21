@@ -2,6 +2,14 @@
 module.exports = appInfo => {
   const config = {};
 
+  // middlewares
+  config.middlewares = {
+    wechat: {
+      global: false,
+      dependencies: 'instance',
+    },
+  };
+
   // account
   config.account = {};
 
@@ -12,7 +20,10 @@ module.exports = appInfo => {
     token: '',
     encodingAESKey: '',
     message: {
-      autoReply: '',
+      reply: {
+        default: '',
+        subscribe: '',
+      },
     },
   };
 

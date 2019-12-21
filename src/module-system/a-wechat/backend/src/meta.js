@@ -19,6 +19,11 @@ module.exports = app => {
         wechatMessage: 'Wechat Message',
       },
     },
+    index: {
+      indexes: {
+        aWechatUser: 'createdAt,updatedAt,openid,unionid',
+      },
+    },
   };
   return meta;
 };

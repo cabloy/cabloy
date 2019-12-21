@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "title": "a-wechat",
   "eggBornModule": {
-    "fileVersion": 0,
+    "fileVersion": 1,
     "dependencies": {
       "a-instance": "2.0.0",
       "a-base": "2.0.0"
@@ -22,6 +22,7 @@
     "extend2": "^1.0.0",
     "wechat-crypto": "^0.0.2",
     "xml2js": "^0.4.23",
+    "co-wechat-api": "^3.10.0",
     "@zhennann/passport-wechat": "^2.0.5"
   }
 }
