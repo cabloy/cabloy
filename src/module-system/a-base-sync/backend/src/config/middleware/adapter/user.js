@@ -326,6 +326,39 @@ module.exports = ctx => {
         `, [ ctx.instance.id, userId ]);
     }
 
+    async _prepareAvatar({ authItem, profile }) {
+      // avatar
+      let avatarOld;
+      if (authItem) {
+        const _profile = JSON.parse(authItem.profile);
+        avatarOld = _profile.avatar;
+      }
+      if (!profile.avatar || profile.avatar === avatarOld) return;
+      // download image
+      const res = await ctx.curl(profile.avatar, { method: 'GET', timeout: 10000 });
+      // meta
+      const meta = {
+        filename: '',
+        encoding: '7bit',
+        mime: res.headers['content-type'],
+        fields: {
+          mode: 1,
+          flag: `user-avatar:${profile.avatar}`,
+        },
+      };
+      // upload
+      const res2 = await ctx.performAction({
+        method: 'post',
+        url: '/a/file/file/uploadInner',
+        body: {
+          file: res.data,
+          meta,
+        },
+      });
+      // hold
+      profile._avatar = res2.downloadUrl;
+    }
+
     // state: login/associate
     async verify({ state = 'login', profileUser }) {
       // verifyUser
@@ -336,13 +369,15 @@ module.exports = ctx => {
         module: profileUser.module,
         providerName: profileUser.provider,
       });
-      // const config = JSON.parse(providerItem.config);
 
       // check if auth exists
       const authItem = await this.modelAuth.get({
         providerId: providerItem.id,
         profileId: profileUser.profileId,
       });
+      // avatar
+      await this._prepareAvatar({ authItem, profile: profileUser.profile });
+      // auth
       let authId;
       let authUserId;
       if (authItem) {
@@ -444,7 +479,7 @@ module.exports = ctx => {
       const user = {};
       for (const column of columns) {
         // others
-        await this._setUserInfoColumn(user, column, profile[column]);
+        await this._setUserInfoColumn(user, column, profile);
       }
       // add user
       const userId = await this.add(user);
@@ -465,6 +500,7 @@ module.exports = ctx => {
       // ok
       return userId;
     }
+
     async _updateUserInfo(userId, profile, columns) {
       const users = await this.model.select({
         where: { id: userId },
@@ -472,13 +508,20 @@ module.exports = ctx => {
       });
       const user = users[0];
       for (const column of columns) {
-        await this._setUserInfoColumn(user, column, profile[column]);
+        await this._setUserInfoColumn(user, column, profile);
       }
       user.id = userId;
       await this.save({ user });
     }
 
-    async _setUserInfoColumn(user, column, value) {
+    async _setUserInfoColumn(user, column, profile) {
+      // value
+      let value = profile[column];
+      // avatar
+      if (column === 'avatar' && profile._avatar) {
+        user[column] = profile._avatar;
+        return;
+      }
       // only set when empty
       if (user[column] || !value) return;
       // userName
