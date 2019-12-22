@@ -1,5 +1,6 @@
 const require3 = require('require3');
 const strategy = require3('@zhennann/passport-wechat').Strategy;
+const WechatHelperFn = require('../common/wechatUtils.js');
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -43,29 +44,15 @@ module.exports = app => {
         handler: app => {
           return {
             strategy,
-            callback: (req, accessToken, refreshToken, profile, expires_in, done) => {
-              console.log(profile);
-              const user = {
-                module: moduleInfo.relativeName,
-                provider: providerName,
-                profileId: profile.openid,
-                profile: {
-                  id: profile.openid,
-                  userName: profile.nickname,
-                  realName: profile.nickname,
-                  avatar: profile.headimgurl,
-                  sex: 1,
-                  language: 'zh_CN',
-                  city: 'Puyang',
-                  province: 'Henan',
-                  country: 'China',
-                  accessToken,
-                  refreshToken,
-                  profile,
-                  expires_in,
+            callback: (req, accessToken, refreshToken, userInfo, expires_in, done) => {
+              const wechatHelper = new (WechatHelperFn(this.ctx))();
+              wechatHelper.verifyAuthUser({
+                openid: userInfo.openid,
+                userInfo,
+                cbVerify: (profileUser, cb) => {
+                  app.passport.doVerify(req, profileUser, cb);
                 },
-              };
-              app.passport.doVerify(req, user, done);
+              }).then(done).catch(done);
             },
           };
         },

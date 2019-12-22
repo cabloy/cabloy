@@ -1,6 +1,6 @@
 const require3 = require('require3');
 const WechatCrypto = require3('wechat-crypto');
-const wechatUtils = require('../common/wechat.js');
+const wechatUtils = require('../common/wechatUtils.js');
 
 module.exports = app => {
   class MessageController extends app.Controller {
