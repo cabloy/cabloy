@@ -24,7 +24,9 @@ module.exports = app => {
         const key = `${item.module}:${item.provider}`;
         const provider = listMap[key];
         if (provider) {
-          res.push(provider);
+          if (item.disable !== true) {
+            res.push(provider);
+          }
           delete listMap[key];
         }
       }
