@@ -6,7 +6,8 @@
     "fileVersion": 0,
     "dependencies": {
       "a-instance": "2.0.0",
-      "a-base": "2.0.0"
+      "a-base": "2.0.0",
+      "a-wechat": "1.0.0"
     }
   },
   "description": "test module for egg-born-module-a-wechat",
