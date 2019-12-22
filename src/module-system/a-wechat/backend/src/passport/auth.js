@@ -1,6 +1,6 @@
 const require3 = require('require3');
 const strategy = require3('@zhennann/passport-wechat').Strategy;
-const WechatHelperFn = require('../common/wechatUtils.js');
+const WechatHelperFn = require('../common/wechatHelper.js');
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -27,32 +27,33 @@ module.exports = app => {
           },
           getToken(ctx, openid, cb) {
             const name = `wechat-public:${openid}`;
-            ctx.cache.db.module(moduleInfo.relativeName).get(name).then(token => {
-              console.log('----------get:', openid, ':', token);
-              cb(null, token);
-            });
+            ctx.cache.db.module(moduleInfo.relativeName).get(name)
+              .then(token => {
+                cb(null, token);
+              })
+              .catch(cb);
           },
           saveToken(ctx, openid, token, cb) {
             const name = `wechat-public:${openid}`;
-            console.log('------------save:', openid, ':', token); // expires_in
-            ctx.cache.db.module(moduleInfo.relativeName).set(name, token, (token.expires_in - 10) * 1000).then(() => {
-              console.log('------------save:', openid, ':', token);
-              cb(null);
-            });
+            ctx.cache.db.module(moduleInfo.relativeName).set(name, token, (token.expires_in - 10) * 1000)
+              .then(() => {
+                cb(null);
+              })
+              .catch(cb);
           },
         },
         handler: app => {
           return {
             strategy,
             callback: (req, accessToken, refreshToken, userInfo, expires_in, done) => {
-              const wechatHelper = new (WechatHelperFn(this.ctx))();
+              const wechatHelper = new (WechatHelperFn(req.ctx))();
               wechatHelper.verifyAuthUser({
                 openid: userInfo.openid,
                 userInfo,
                 cbVerify: (profileUser, cb) => {
                   app.passport.doVerify(req, profileUser, cb);
                 },
-              }).then(done).catch(done);
+              }).then(verifyUser => { done(null, verifyUser); }).catch(done);
             },
           };
         },
