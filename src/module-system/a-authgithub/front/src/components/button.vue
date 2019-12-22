@@ -5,7 +5,7 @@
 export default {
   meta: {
     global: false,
-    disable: () => {
+    disable: ( /*{ ctx, provider }*/ ) => {
       return new Promise((resolve, reject) => {
         resolve(false);
       });
