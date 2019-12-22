@@ -20,6 +20,9 @@ module.exports = app => {
       declarations: {
         wechatMessage: 'Wechat Message',
       },
+      implementations: {
+        'a-base:loginInfo': 'event/loginInfo',
+      },
     },
     index: {
       indexes: {
