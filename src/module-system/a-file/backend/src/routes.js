@@ -8,6 +8,7 @@ module.exports = app => {
     { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/test', controller: version, middlewares: 'test' },
     // file
+    { method: 'post', path: 'file/uploadInner', controller: file, middlewares: 'inner' },
     { method: 'post', path: 'file/upload', controller: file, meta: { auth: { user: true } } },
     { method: 'get', path: 'file/download/:downloadId', controller: file, action: 'download' },
     { method: 'post', path: 'file/list', controller: file },

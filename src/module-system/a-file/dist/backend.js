@@ -179,6 +179,7 @@ module.exports = app => {
     { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/test', controller: version, middlewares: 'test' },
     // file
+    { method: 'post', path: 'file/uploadInner', controller: file, middlewares: 'inner' },
     { method: 'post', path: 'file/upload', controller: file, meta: { auth: { user: true } } },
     { method: 'get', path: 'file/download/:downloadId', controller: file, action: 'download' },
     { method: 'post', path: 'file/list', controller: file },
@@ -265,6 +266,15 @@ module.exports = app => {
       }
       //
       const res = await this.ctx.service.file.delete({ data });
+      this.ctx.success(res);
+    }
+
+    async uploadInner() {
+      const res = await this.service.file.uploadInner({
+        file: this.ctx.request.body.file,
+        meta: this.ctx.request.body.meta,
+        user: this.ctx.user ? this.ctx.user.op : null,
+      });
       this.ctx.success(res);
     }
 
@@ -422,99 +432,118 @@ module.exports = app => {
       }
     }
 
+    async uploadInner({ file, meta, user }) {
+      return await this._upload({ fileContent: file, meta, user });
+    }
+
     async upload({ user }) {
       const stream = await this.ctx.getFileStream();
       try {
-        // info
-        const fileInfo = path.parse(stream.filename);
-        const encoding = stream.encoding;
-        const mime = stream.mime;
-        const fields = stream.fields;
-        const mode = parseInt(fields.mode || 2);
-        const atomId = parseInt(fields.atomId || 0);
-        const attachment = parseInt(fields.attachment || 0);
-        const flag = fields.flag || '';
-        let imgWidth = 0;
-        let imgHeight = 0;
-
-        // dest
-        const downloadId = uuid.v4().replace(/-/g, '');
-        const _filePath = `file/${mode === 1 ? 'image' : (mode === 2 ? 'file' : 'audio')}/${this.ctx.meta.util.today()}`;
-        const _fileName = uuid.v4().replace(/-/g, '');
-        const destDir = await this.ctx.meta.base.getPath(_filePath, true);
-        const destFile = path.join(destDir, `${_fileName}${fileInfo.ext}`);
-
-        // write
-        if (mode === 1) {
-          // image
-          await bb.fromCallback(cb => {
-            let img = gm(stream);
-            if (fields.cropped === 'true') {
-              const cropbox = JSON.parse(fields.cropbox);
-              img = img.crop(parseInt(cropbox.width), parseInt(cropbox.height), parseInt(cropbox.x), parseInt(cropbox.y));
-            }
-            img.quality(93).write(destFile, cb);
-          });
-          // size
-          const imgSize = await bb.fromCallback(cb => {
-            gm(destFile).size(cb);
-          });
-          imgWidth = imgSize.width;
-          imgHeight = imgSize.height;
-        } else if (mode === 2 || mode === 3) {
-          // check right only for file
-          if (mode === 2) {
-            await this.checkRightWrite(atomId, user);
-          }
-          // file
-          const writeStream = fs.createWriteStream(destFile);
-          await bb.fromCallback(cb => {
-            pump(stream, writeStream, cb);
-          });
-        }
-
-        // fileSize
-        const stat = await fse.stat(destFile);
-        const fileSize = stat.size;
-
-        // save
-        const res = await this.ctx.model.file.insert({
-          userId: user.id,
-          downloadId,
-          atomId,
-          mode,
-          fileSize,
-          width: imgWidth,
-          height: imgHeight,
-          filePath: _filePath,
-          fileName: _fileName,
-          realName: fileInfo.name,
-          fileExt: fileInfo.ext,
-          encoding,
-          mime,
-          attachment,
-          flag,
-        });
-        const fileId = res.insertId;
-
-        // attachmentCount
-        if (atomId && attachment) {
-          await this.ctx.meta.atom.attachment({ key: { atomId }, atom: { attachment: 1 }, user });
-        }
-
-        // ok
-        const downloadUrl = this.getDownloadUrl({ downloadId, mode, fileExt: fileInfo.ext });
-        return {
-          fileId,
-          realName: fileInfo.name,
-          downloadId,
-          downloadUrl,
+        const meta = {
+          filename: stream.filename,
+          encoding: stream.encoding,
+          mime: stream.mime,
+          fields: stream.fields,
         };
-
+        return await this._upload({ fileContent: stream, meta, user });
       } catch (e) {
         await sendToWormhole(stream);
         throw e;
       }
+    }
+    async _upload({ fileContent, meta, user }) {
+      // info
+      const fileInfo = path.parse(meta.filename);
+      const encoding = meta.encoding;
+      const mime = meta.mime;
+      const fields = meta.fields;
+      const mode = parseInt(fields.mode || 2);
+      const atomId = parseInt(fields.atomId || 0);
+      const attachment = parseInt(fields.attachment || 0);
+      const flag = fields.flag || '';
+      let imgWidth = 0;
+      let imgHeight = 0;
+
+      // dest
+      const downloadId = uuid.v4().replace(/-/g, '');
+      const _filePath = `file/${mode === 1 ? 'image' : (mode === 2 ? 'file' : 'audio')}/${this.ctx.meta.util.today()}`;
+      const _fileName = uuid.v4().replace(/-/g, '');
+      const destDir = await this.ctx.meta.base.getPath(_filePath, true);
+      const destFile = path.join(destDir, `${_fileName}${fileInfo.ext}`);
+
+      // write
+      if (mode === 1) {
+        // image
+        await bb.fromCallback(cb => {
+          let img = gm(fileContent);
+          if (fields.cropped === 'true') {
+            const cropbox = JSON.parse(fields.cropbox);
+            img = img.crop(parseInt(cropbox.width), parseInt(cropbox.height), parseInt(cropbox.x), parseInt(cropbox.y));
+          }
+          img.quality(93).write(destFile, cb);
+        });
+        // size
+        const imgSize = await bb.fromCallback(cb => {
+          gm(destFile).size(cb);
+        });
+        imgWidth = imgSize.width;
+        imgHeight = imgSize.height;
+      } else if (mode === 2 || mode === 3) {
+        // check right only for file
+        if (mode === 2) {
+          await this.checkRightWrite(atomId, user);
+        }
+        // file
+        if (Buffer.isBuffer(fileContent)) {
+          // buffer
+          await fse.outputFile(destFile, fileContent);
+        } else {
+          // stream
+          const writeStream = fs.createWriteStream(destFile);
+          await bb.fromCallback(cb => {
+            pump(fileContent, writeStream, cb);
+          });
+        }
+      }
+
+      // fileSize
+      const stat = await fse.stat(destFile);
+      const fileSize = stat.size;
+
+      // save
+      const res = await this.ctx.model.file.insert({
+        userId: user ? user.id : 0,
+        downloadId,
+        atomId,
+        mode,
+        fileSize,
+        width: imgWidth,
+        height: imgHeight,
+        filePath: _filePath,
+        fileName: _fileName,
+        realName: fileInfo.name,
+        fileExt: fileInfo.ext,
+        encoding,
+        mime,
+        attachment,
+        flag,
+      });
+      const fileId = res.insertId;
+
+      // attachmentCount
+      if (atomId && attachment) {
+        await this.ctx.meta.atom.attachment({ key: { atomId }, atom: { attachment: 1 }, user });
+      }
+
+      // ok
+      const downloadUrl = this.getDownloadUrl({ downloadId, mode, fileExt: fileInfo.ext });
+      return {
+        fileId,
+        realName: fileInfo.name,
+        downloadId,
+        downloadUrl,
+      };
+
     }
 
     getDownloadUrl({ downloadId, mode, fileExt }) {
