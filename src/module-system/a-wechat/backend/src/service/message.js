@@ -1,4 +1,4 @@
-const WechatHelperFn = require('../common/wechatUtils.js');
+const WechatHelperFn = require('../common/wechatHelper.js');
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
