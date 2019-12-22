@@ -28,6 +28,7 @@ export default {
     });
   },
   render(c) {
+    if (!this.providers) return c('div');
     const children = [];
     // close
     if (this.showClose) {
@@ -140,7 +141,7 @@ export default {
         this.$meta.module.use(item.module, module => {
           // checkIfDisable
           const component = module.options.components[item.meta.component];
-          this._checkIfDisable(component).then(disable => {
+          this._checkIfDisable(component, item).then(disable => {
             if (!disable) {
               resolve({ provider: item, component });
             } else {
@@ -150,11 +151,11 @@ export default {
         });
       });
     },
-    _checkIfDisable(component) {
+    _checkIfDisable(component, provider) {
       return new Promise((resolve, reject) => {
         if (!component.meta) return resolve(false);
         if (typeof component.meta.disable !== 'function') return resolve(component.meta.disable);
-        this.$meta.util.wrapPromise(component.meta.disable()).then(res => resolve(res));
+        this.$meta.util.wrapPromise(component.meta.disable({ ctx: this, provider })).then(res => resolve(res));
       });
     },
   },
