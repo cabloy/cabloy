@@ -179,7 +179,14 @@ module.exports = app => {
       for (const item of this.ctx.config.providers) {
         const key = `${item.module}:${item.provider}`;
         const provider = listMap[key];
-        if (provider) res.push(provider);
+        if (provider) {
+          res.push(provider);
+          delete listMap[key];
+        }
+      }
+      // the rest
+      for (const key in listMap) {
+        res.push(listMap[key]);
       }
       // ok
       return res;

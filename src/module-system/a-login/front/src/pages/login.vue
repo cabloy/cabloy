@@ -52,7 +52,7 @@ export default {
     // loginLine
     let loginLine;
     if (loginTop && loginBottom) {
-      loginLine = c('div', { staticClass: 'line' }, [ c('div', { staticClass: 'text', domProps: { innerText: this.$text('or') } }) ]);
+      loginLine = c('div', { staticClass: 'line' }, [c('div', { staticClass: 'text', domProps: { innerText: this.$text('or') } })]);
     }
     // add top
     if (loginTop) children.push(loginTop);
@@ -105,7 +105,7 @@ export default {
             id: `tab-${index}`,
             'tab-active': parseInt(index) === 0,
           },
-        }, [ c(provider.component) ]));
+        }, [c(provider.component)]));
       }
       const tabbar = c('f7-toolbar', {
         attrs: {
@@ -114,7 +114,7 @@ export default {
         },
       }, buttons);
       const tabblock = c('f7-tabs', tabs);
-      return c('div', [ tabbar, tabblock ]);
+      return c('div', [tabbar, tabblock]);
     },
     combineLoginBottom(c) {
       if (!this.providers) return null;
