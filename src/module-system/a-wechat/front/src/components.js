@@ -1,7 +1,7 @@
 import button from './components/button.vue';
-import jsapi from './components/jsapi.js';
+import jssdk from './components/jssdk.js';
 
 export default {
   button,
-  jsapi,
+  jssdk,
 };
