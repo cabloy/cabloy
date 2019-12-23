@@ -6,17 +6,32 @@ module.exports = (options, app) => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
   function _createWechatApi({ ctx }) {
-    const cacheKey = 'wechat-token';
     // config
     const config = ctx.config.module(moduleInfo.relativeName).account.public;
     // api
-    return new WechatAPI(config.appID, config.appSecret,
+    const api = new WechatAPI(config.appID, config.appSecret,
       async function() {
+        const cacheKey = 'wechat-token';
         return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
       },
       async function(token) {
+        const cacheKey = 'wechat-token';
         await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
-      });
+      }
+    );
+    // registerTicketHandle
+    api.registerTicketHandle(
+      async function(type) {
+        const cacheKey = `wechat-jsticket:${type}`;
+        return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
+      },
+      async function(type, token) {
+        const cacheKey = `wechat-jsticket:${type}`;
+        await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
+      }
+    );
+    // ready
+    return api;
   }
 
   return async function event(ctx, next) {
