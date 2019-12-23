@@ -7,7 +7,7 @@ export default {
       if (action.name === 'config') {
         return new Promise((resolve, reject) => {
           const url = location.href.split('#')[0];
-          this.$api.post('jssdk/config', { url }).then(res => {
+          this.$api.post('jssdk/jsconfig', { url }).then(res => {
             resolve(res);
           });
         });

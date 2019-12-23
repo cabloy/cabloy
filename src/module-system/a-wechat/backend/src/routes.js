@@ -13,7 +13,7 @@ module.exports = app => {
     { method: 'get', path: 'message/index', controller: message, middlewares: 'wechat', meta: { auth: { enable: false } } },
     { method: 'post', path: 'message/index', controller: message, middlewares: 'wechat', meta: { auth: { enable: false } } },
     // jsapi
-    { method: 'post', path: 'jssdk/config', controller: jssdk, middlewares: 'wechat' },
+    { method: 'post', path: 'jssdk/jsconfig', controller: jssdk, middlewares: 'wechat' },
     // event
     { method: 'post', path: 'event/loginInfo', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
   ];

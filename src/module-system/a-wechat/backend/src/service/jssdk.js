@@ -2,7 +2,7 @@ module.exports = app => {
 
   class JSSDK extends app.Service {
 
-    async config({ url }) {
+    async jsconfig({ url }) {
       // config
       const config = this.ctx.config.account.public;
       // params
