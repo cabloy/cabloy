@@ -65,7 +65,10 @@ module.exports = appInfo => {
         subscribe: 'You are subscribed!',
       },
     },
-    jsApiList,
+    jssdk: {
+      debug: false,
+      jsApiList,
+    },
   };
 
   return config;

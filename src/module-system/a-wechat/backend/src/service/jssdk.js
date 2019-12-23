@@ -7,8 +7,8 @@ module.exports = app => {
       const config = this.ctx.config.account.public;
       // params
       const params = {
-        debug: app.meta.isLocal,
-        jsApiList: config.jsApiList,
+        debug: config.jssdk.debug,
+        jsApiList: config.jssdk.jsApiList,
         url,
       };
       return await this.ctx.meta.wechat.getJsConfig(params);
