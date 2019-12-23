@@ -1,6 +1,6 @@
 module.exports = app => {
 
-  class JSApi extends app.Service {
+  class JSSDK extends app.Service {
 
     async config({ url }) {
       // config
@@ -16,5 +16,5 @@ module.exports = app => {
 
   }
 
-  return JSApi;
+  return JSSDK;
 };

@@ -1,13 +1,13 @@
 module.exports = app => {
-  class JSApiController extends app.Controller {
+  class JSSDKController extends app.Controller {
 
     async config() {
-      const res = await this.service.jsapi.config({
+      const res = await this.service.jssdk.config({
         url: this.ctx.request.body.url,
       });
       this.ctx.success(res);
     }
 
   }
-  return JSApiController;
+  return JSSDKController;
 };
