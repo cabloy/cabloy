@@ -3,4 +3,5 @@ function load(name) {
 }
 
 export default [
+  { path: 'test/index', component: load('test/index') },
 ];

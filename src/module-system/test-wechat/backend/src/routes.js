@@ -7,8 +7,9 @@ module.exports = app => {
     { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/test', controller: version, middlewares: 'test' },
-    // event/wechatMessage
+    // event
     { method: 'post', path: 'event/wechatMessage', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'event/loginInfo', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
 
   ];
   return routes;
