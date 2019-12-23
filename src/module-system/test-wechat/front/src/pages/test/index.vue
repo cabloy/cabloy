@@ -1,7 +1,7 @@
 <template>
   <eb-page>
     <eb-navbar :title="$text('Test')" eb-back-link="Back"></eb-navbar>
-    <eb-list no-hairlines-md>
+    <eb-list v-if="wx" no-hairlines-md>
       <eb-list-item title="微信扫一扫" link="#" :onPerform="onPerformScanQRCode"></eb-list-item>
     </eb-list>
   </eb-page>
@@ -11,6 +11,7 @@ export default {
   data() {
     return {
       moduleWechat: null,
+      wx: null,
     };
   },
   created() {
@@ -19,14 +20,21 @@ export default {
       actionComponent: 'jssdk',
       name: 'config',
     };
-    const item = { flag: 'test' };
-    this.$meta.util.performAction({ ctx: this, action, item }).then(res => {
-      console.log(res);
-    });
+    this.$meta.util.performAction({ ctx: this, action }).then(res => {
+      this.wx = res && res.wx;
+    }).catch(e => {
+      this.$view.toast.show({ text: e.errMsg });
+    })
   },
   methods: {
     onPerformScanQRCode() {
-      console.log('0000');
+      this.wx.scanQRCode({
+        needResult: 1,
+        scanType: ['qrCode', 'barCode'],
+        success: (res) => {
+          this.$view.toast.show({ text: res.resultStr });
+        }
+      });
     }
   }
 };
