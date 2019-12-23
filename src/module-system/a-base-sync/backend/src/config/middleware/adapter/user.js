@@ -326,39 +326,6 @@ module.exports = ctx => {
         `, [ ctx.instance.id, userId ]);
     }
 
-    async _prepareAvatar({ authItem, profile }) {
-      // avatar
-      let avatarOld;
-      if (authItem) {
-        const _profile = JSON.parse(authItem.profile);
-        avatarOld = _profile.avatar;
-      }
-      if (!profile.avatar || profile.avatar === avatarOld) return;
-      // download image
-      const res = await ctx.curl(profile.avatar, { method: 'GET', timeout: 10000 });
-      // meta
-      const meta = {
-        filename: '',
-        encoding: '7bit',
-        mime: res.headers['content-type'],
-        fields: {
-          mode: 1,
-          flag: `user-avatar:${profile.avatar}`,
-        },
-      };
-      // upload
-      const res2 = await ctx.performAction({
-        method: 'post',
-        url: '/a/file/file/uploadInner',
-        body: {
-          file: res.data,
-          meta,
-        },
-      });
-      // hold
-      profile._avatar = res2.downloadUrl;
-    }
-
     // state: login/associate
     async verify({ state = 'login', profileUser }) {
       // verifyUser
@@ -473,6 +440,41 @@ module.exports = ctx => {
 
       // ok
       return verifyUser;
+    }
+
+    async _prepareAvatar({ authItem, profile }) {
+      // avatar
+      let avatarOld;
+      if (authItem) {
+        const _profile = JSON.parse(authItem.profile);
+        avatarOld = _profile.avatar;
+      }
+      if (!profile.avatar || profile.avatar === avatarOld) return;
+      // download image
+      const res = await ctx.curl(profile.avatar, { method: 'GET', timeout: 10000 });
+      // meta
+      const mime = res.headers['content-type'] || '';
+      const ext = mime.split('/')[1] || '';
+      const meta = {
+        filename: `user-avatar.${ext}`,
+        encoding: '7bit',
+        mime,
+        fields: {
+          mode: 1,
+          flag: `user-avatar:${profile.avatar}`,
+        },
+      };
+      // upload
+      const res2 = await ctx.performAction({
+        method: 'post',
+        url: '/a/file/file/uploadInner',
+        body: {
+          file: res.data,
+          meta,
+        },
+      });
+      // hold
+      profile._avatar = res2.downloadUrl;
     }
 
     async _addUserInfo(profile, columns) {
