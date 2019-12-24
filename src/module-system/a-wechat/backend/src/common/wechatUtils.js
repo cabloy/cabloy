@@ -4,11 +4,11 @@ const bb = require3('bluebird');
 const xml2js = require3('xml2js');
 
 module.exports = {
-  createNonce() {
+  createNonceStr() {
     return Math.random().toString(36).substr(2, 15);
   },
-  createTimeStamp() {
-    return parseInt(new Date().getTime() / 1000) + '';
+  createTimestamp() {
+    return '' + Math.floor(Date.now() / 1000);
   },
   calcSignature({ options, join = '', hash = 'sha1' }) {
     const hashsum = crypto.createHash(hash);

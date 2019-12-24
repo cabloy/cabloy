@@ -34,8 +34,8 @@ module.exports = app => {
           if (encrypted) {
             const wrap = {};
             wrap.Encrypt = wechatCrypto.encrypt(resXML);
-            wrap.TimeStamp = wechatUtils.createTimeStamp();
-            wrap.Nonce = wechatUtils.createNonce();
+            wrap.TimeStamp = wechatUtils.createTimestamp();
+            wrap.Nonce = wechatUtils.createNonceStr();
             wrap.MsgSignature = wechatCrypto.getSignature(wrap.TimeStamp, wrap.Nonce, wrap.Encrypt);
             resXML = wechatUtils.buildXML({ xml: wrap });
           }
