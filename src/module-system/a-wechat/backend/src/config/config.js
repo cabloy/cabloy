@@ -75,5 +75,13 @@ module.exports = appInfo => {
     },
   };
 
+  // account.mini
+  config.account.mini = {
+    appID: '',
+    appSecret: '',
+    token: appInfo.name,
+    encodingAESKey: '',
+  };
+
   return config;
 };
