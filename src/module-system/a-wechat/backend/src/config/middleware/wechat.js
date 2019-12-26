@@ -1,5 +1,5 @@
 const require3 = require('require3');
-const WechatAPI = require3('co-wechat-api');
+const WechatAPI = require3('@zhennann/co-wechat-api');
 const WECHAT = Symbol('CTX#WECHAT');
 
 module.exports = (options, app) => {

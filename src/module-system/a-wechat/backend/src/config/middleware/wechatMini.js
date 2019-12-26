@@ -1,5 +1,5 @@
 const require3 = require('require3');
-const WechatAPI = require3('co-wechat-api');
+const WechatAPI = require3('@zhennann/co-wechat-api');
 const WECHATMINI = Symbol('CTX#WECHATMINI');
 
 module.exports = (options, app) => {
@@ -7,7 +7,7 @@ module.exports = (options, app) => {
 
   function _createWechatMiniApi({ ctx }) {
     // config
-    const config = ctx.config.module(moduleInfo.relativeName).account.public;
+    const config = ctx.config.module(moduleInfo.relativeName).account.mini;
     // api
     const api = new WechatAPI(config.appID, config.appSecret,
       async function() {
@@ -36,7 +36,7 @@ module.exports = (options, app) => {
 
   return async function event(ctx, next) {
     ctx.meta = ctx.meta || {};
-    Object.defineProperty(ctx.meta, 'wechat', {
+    Object.defineProperty(ctx.meta, 'wechatMini', {
       get() {
         if (ctx.meta[WECHATMINI] === undefined) {
           ctx.meta[WECHATMINI] = _createWechatMiniApi({ ctx });
