@@ -23,16 +23,8 @@ module.exports = app => {
       const message = data.message;
       if (message.MsgType === 'text') {
         event.break = true;
-        // todo: https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN
-        // https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/customer-message/customerServiceMessage.send.html
-        const messageOut = {
-          touser: message.FromUserName,
-          msgtype: 'text',
-          text: {
-            content: `${this.ctx.text.locale('zh-cn', 'Reply')}: ${message.Content}`,
-          },
-        };
-
+        const text = `${this.ctx.text.locale('zh-cn', 'Reply')}: ${message.Content}`;
+        await this.ctx.meta.wechatMini.sendText(message.FromUserName, text);
       }
     }
 
