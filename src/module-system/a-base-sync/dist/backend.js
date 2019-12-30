@@ -5135,10 +5135,7 @@ module.exports = app => {
 
 /***/ }),
 /* 52 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const require3 = __webpack_require__(0);
-const extend = require3('extend2');
+/***/ (function(module, exports) {
 
 module.exports = app => {
 
