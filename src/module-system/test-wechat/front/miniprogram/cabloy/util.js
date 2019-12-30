@@ -27,6 +27,7 @@ module.exports = function(cabloy) {
         });
       });
     },
+
     __login({ code, detail }) {
       // 后台登录
       return cabloy.api.post('/a/wechat/authMini/login', { code, detail }).then(data => {
@@ -38,14 +39,13 @@ module.exports = function(cabloy) {
         cabloy.data.instance = data.instance;
         // ok
         return data.user;
-      }).catch(err => {
-        console.log(err);
       });
     },
 
     isObject(o) {
       return typeof o === 'object' && o !== null && o.constructor && o.constructor === Object;
     },
+
     extend(...args) {
       let deep = true;
       let to;
