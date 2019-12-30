@@ -5,6 +5,7 @@ const WechatHelperFn = require('../common/wechatHelper.js');
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const providerName = 'wechat';
+  const providerNameMini = 'wechatMini';
   return {
     providers: {
       [providerName]: {
@@ -47,6 +48,7 @@ module.exports = app => {
             callback: (req, accessToken, refreshToken, userInfo, expires_in, done) => {
               const wechatHelper = new (WechatHelperFn(req.ctx))();
               wechatHelper.verifyAuthUser({
+                scene: 1,
                 openid: userInfo.openid,
                 userInfo,
                 cbVerify: (profileUser, cb) => {
@@ -54,6 +56,20 @@ module.exports = app => {
                 },
               }).then(verifyUser => { done(null, verifyUser); }).catch(done);
             },
+          };
+        },
+      },
+      [providerNameMini]: {
+        meta: {
+          title: 'Wechat Miniprogram',
+          mode: 'direct',
+        },
+        config: {
+        },
+        handler: () => {
+          return {
+            strategy: null,
+            callback: null,
           };
         },
       },

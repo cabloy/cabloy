@@ -5,11 +5,17 @@ module.exports = function(ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class WechatHelper {
 
-    async verifyAuthUser({ openid, userInfo, cbVerify }) {
+    getSceneInfo(scene) {
+      if (scene === 1) return { authProvider: 'wechat' };
+      if (scene === 2) return { authProvider: 'wechatMini' };
+    }
+
+    // scene: 1/wechat 2/wechatMini
+    async verifyAuthUser({ scene, openid, userInfo, cbVerify }) {
       // ensure wechat user
-      const userWechatId = await this._ensureWechatUser({ openid, userInfo });
+      const userWechatId = await this._ensureWechatUser({ scene, openid, userInfo });
       // ensure auth user
-      const profileUser = await this._ensureAuthUser({ openid, userInfo });
+      const profileUser = await this._ensureAuthUser({ scene, openid, userInfo });
       // verify
       let verifyUser;
       if (!cbVerify) {
@@ -25,7 +31,7 @@ module.exports = function(ctx) {
       return verifyUser;
     }
 
-    async _ensureWechatUser({ openid, userInfo }) {
+    async _ensureWechatUser({ scene, openid, userInfo }) {
       let userWechatId;
       // wechat user
       let userWechat = await ctx.model.wechatUser.get({ openid });
@@ -42,7 +48,8 @@ module.exports = function(ctx) {
       }
       // check fields
       let needUpdate = false;
-      const fields = [ 'openid', 'unionid', 'nickname', 'subscribe', 'sex', 'language', 'city', 'province', 'country', 'headimgurl', 'subscribe_time', 'remark', 'groupid', 'subscribe_scene', 'qr_scene', 'qr_scene_str' ];
+      const fields = [ 'scene', 'openid', 'unionid', 'nickname', 'subscribe', 'sex', 'language', 'city', 'province', 'country', 'headimgurl', 'subscribe_time', 'remark', 'groupid', 'subscribe_scene', 'qr_scene', 'qr_scene_str' ];
+      userInfo.scene = scene;
       for (const field of fields) {
         if (userInfo[field] === undefined || userInfo[field] === userWechat[field]) {
           delete userWechat[field];
@@ -65,12 +72,13 @@ module.exports = function(ctx) {
     }
 
     // profileId : unionid:openid
-    async _ensureAuthUser({ openid, userInfo }) {
+    async _ensureAuthUser({ scene, openid, userInfo }) {
+      const sceneInfo = this.getSceneInfo(scene);
       const unionid = userInfo.unionid || '';
       const profileId = `${unionid}:${openid}`;
       const profileUser = {
         module: moduleInfo.relativeName,
-        provider: 'wechat',
+        provider: sceneInfo.authProvider,
         profileId,
         profile: {
           id: profileId,
@@ -83,7 +91,7 @@ module.exports = function(ctx) {
       // provider
       const providerItem = await ctx.meta.user.getAuthProvider({
         module: moduleInfo.relativeName,
-        providerName: 'wechat',
+        providerName: sceneInfo.authProvider,
       });
       // check auth
       let authId;
