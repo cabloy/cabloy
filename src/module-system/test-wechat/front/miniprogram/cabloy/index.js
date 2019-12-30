@@ -1,18 +1,18 @@
-const Data=require('./data.js');
+const Data = require('./data.js');
 const Api = require('./api.js');
-const Util=require('./util.js');
+const Util = require('./util.js');
 
-const cabloy={
+const cabloy = {
   __app: getApp(),
-  get app(){
+  get app() {
     return this.__app;
   },
-  set app(value){
-    this.__app=value;
+  set app(value) {
+    this.__app = value;
   },
 };
-cabloy.data=Data(cabloy);
+cabloy.data = Data(cabloy);
 cabloy.api = Api(cabloy);
-cabloy.util=Util(cabloy);
+cabloy.util = Util(cabloy);
 
 module.exports = cabloy;

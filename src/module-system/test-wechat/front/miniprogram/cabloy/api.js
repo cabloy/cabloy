@@ -9,7 +9,7 @@ module.exports = function(cabloy) {
       const cookie = cabloy.data.cookie;
       if (cookie) {
         if (!options.header) options.header = {};
-        header.Cookie = cookie;
+        options.header.Cookie = cookie;
       }
       // promise
       return new Promise((resolve, reject) => {
@@ -18,9 +18,9 @@ module.exports = function(cabloy) {
           // cookie
           const cookie = res.header && res.header['Set-Cookie'];
           if (cookie) {
-            cabloy.data.cookie=cookie;
+            cabloy.data.cookie = cookie;
           }
-          if (res.statusCode != 200) {
+          if (res.statusCode !== 200) {
             const error = new Error();
             error.code = res.statusCode;
             return reject(error);
@@ -52,6 +52,6 @@ module.exports = function(cabloy) {
       options.method = 'POST';
       options.data = data;
       return this.request(options);
-    }
+    },
   };
 };
