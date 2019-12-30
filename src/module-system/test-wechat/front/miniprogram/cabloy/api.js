@@ -3,7 +3,7 @@ module.exports = function(cabloy) {
     request(options) {
       // url
       if (options.url.indexOf('/') === 0) {
-        options.url = `${cabloy.data.config.api.baseUrl}/api${options.url}`;
+        options.url = `${cabloy.data.config.api.baseURL}/api${options.url}`;
       }
       // cookie
       const cookie = cabloy.data.cookie;

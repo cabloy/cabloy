@@ -1,6 +1,6 @@
 const configDefault = {
   api: {
-    baseUrl: 'https://demo.cabloy.com',
+    baseURL: 'https://demo.cabloy.com',
   },
 };
 
