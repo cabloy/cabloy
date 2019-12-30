@@ -20,6 +20,7 @@ module.exports = function(ctx) {
       let verifyUser;
       if (!cbVerify) {
         verifyUser = await ctx.meta.user.verify({ state: 'login', profileUser });
+        await ctx.login(verifyUser);
       } else {
         verifyUser = await bb.fromCallback(cb => {
           cbVerify(profileUser, cb);

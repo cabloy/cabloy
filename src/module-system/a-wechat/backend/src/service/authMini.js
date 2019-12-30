@@ -30,10 +30,7 @@ module.exports = app => {
       const wechatHelper = new (WechatHelperFn(this.ctx))();
       await wechatHelper.verifyAuthUser({ scene: 2, openid, userInfo });
       // echo
-      return await this.ctx.performAction({
-        method: 'post',
-        url: '/a/base/auth/echo',
-      });
+      return await this.ctx.meta.auth.echo();
     }
 
   }

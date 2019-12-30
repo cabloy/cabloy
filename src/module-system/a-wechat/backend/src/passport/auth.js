@@ -66,12 +66,7 @@ module.exports = app => {
         },
         config: {
         },
-        handler: () => {
-          return {
-            strategy: null,
-            callback: null,
-          };
-        },
+        handler: null,
       },
     },
   };
