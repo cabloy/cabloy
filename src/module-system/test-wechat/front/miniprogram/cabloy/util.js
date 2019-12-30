@@ -37,7 +37,7 @@ module.exports = function(cabloy) {
         // instance
         cabloy.data.instance = data.instance;
         // ok
-        return data;
+        return data.user;
       }).catch(err => {
         console.log(err);
       });
