@@ -12,14 +12,14 @@ module.exports = function(cabloy) {
                 if (res.authSetting['scope.userInfo']) {
                   // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
                   wx.getUserInfo({
-                    success: userInfo => {
+                    success: detail => {
                       // 后台登录
-                      this.__login({ code, userInfo }).then(resolve).catch(reject);
+                      this.__login({ code, detail }).then(resolve).catch(reject);
                     },
                   });
                 } else {
                   // 虽然没有userInfo，但有openid，仍然可以进行后台登录
-                  this.__login({ code, userInfo: null }).then(resolve).catch(reject);
+                  this.__login({ code, detail: null }).then(resolve).catch(reject);
                 }
               },
             });
@@ -27,9 +27,9 @@ module.exports = function(cabloy) {
         });
       });
     },
-    __login() {
+    __login({ code, detail }) {
       // 后台登录
-      return cabloy.api.post('/a/base/auth/echo').then(data => {
+      return cabloy.api.post('/a/wechat/authMini/login', { code, detail }).then(data => {
         // user
         cabloy.data.user = data.user;
         // config
