@@ -1,5 +1,5 @@
 module.exports = (options, app) => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   return async function auth(ctx, next) {
     // always has anonymous id
     ctx.meta.user.anonymousId();

@@ -8,32 +8,17 @@ module.exports = app => {
     // return current user auth info
     //   { op:{id},agent:{id},provider}
     async echo() {
-      try {
-        if (!this.ctx.isAuthenticated() || !this.ctx.user.op || !this.ctx.user.agent) {
-          // anonymous
-          await this.ctx.meta.user.loginAsAnonymous();
-        } else {
-          // check if deleted,disabled,agent
-          await this.ctx.meta.user.check();
-        }
-        // logined
-        const info = await this.getLoginInfo();
-        this.ctx.success(info);
-      } catch (e) {
-        // deleted,disabled
-        await this.logout();
-      }
+      const info = await this.ctx.meta.auth.echo();
+      this.ctx.success(info);
     }
 
     async check() {
-      const info = await this.getLoginInfo();
+      const info = await this.ctx.meta.auth.check();
       this.ctx.success(info);
     }
 
     async logout() {
-      await this.ctx.logout();
-      await this.ctx.meta.user.loginAsAnonymous();
-      const info = await this.getLoginInfo();
+      const info = await this.ctx.meta.auth.logout();
       this.ctx.success(info);
     }
 
@@ -69,53 +54,6 @@ module.exports = app => {
         providerName: this.ctx.request.body.providerName,
       });
       this.ctx.success(res);
-    }
-
-    async getLoginInfo() {
-      const info = {
-        user: this.ctx.user,
-        instance: this._getInstance(),
-        config: this._getConfig(),
-      };
-      // login info event
-      await this.ctx.meta.event.invoke({
-        name: 'loginInfo', data: { info },
-      });
-      return info;
-    }
-
-    _getInstance() {
-      return {
-        name: this.ctx.instance.name,
-        title: this.ctx.instance.title,
-      };
-    }
-
-    _getConfig() {
-      // config
-      const config = {
-        modules: {
-          'a-base': {
-            account: this._getAccount(),
-          },
-        },
-      };
-      return config;
-    }
-
-    _getAccount() {
-      // account
-      const account = extend(true, {}, this.ctx.config.account);
-      account.activatedRoles = undefined;
-      // url
-      for (const key in account.activationProviders) {
-        const relativeName = account.activationProviders[key];
-        if (relativeName) {
-          const moduleConfig = this.ctx.config.module(relativeName);
-          extend(true, account.url, moduleConfig.account.url);
-        }
-      }
-      return account;
     }
 
   }

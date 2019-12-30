@@ -26,6 +26,10 @@ const ROLE = Symbol('CTX#__ROLE');
 const UserFn = require('./adapter/user.js');
 const USER = Symbol('CTX#__USER');
 
+// user
+const AuthFn = require('./adapter/auth.js');
+const AUTH = Symbol('CTX#__AUTH');
+
 // util
 const UtilFn = require('./adapter/util.js');
 const UTIL = Symbol('CTX#__UTIL');
@@ -94,6 +98,15 @@ module.exports = () => {
           ctx.meta[USER] = new (UserFn(ctx))();
         }
         return ctx.meta[USER];
+      },
+    });
+    // auth
+    Object.defineProperty(ctx.meta, 'auth', {
+      get() {
+        if (ctx.meta[AUTH] === undefined) {
+          ctx.meta[AUTH] = new (AuthFn(ctx))();
+        }
+        return ctx.meta[AUTH];
       },
     });
     // util
