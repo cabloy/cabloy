@@ -6462,17 +6462,19 @@ module.exports = app => {
         const module = this.app.meta.modules[moduleRelativeName];
         // provider
         const provider = module.main.meta.auth.providers[providerName];
-        // config
-        const config = JSON.parse(providerItem.config);
-        config.passReqToCallback = true;
-        config.failWithError = false;
-        config.successRedirect = config.successReturnToOrRedirect = (provider.meta.mode === 'redirect') ? '/' : false;
-        // handler
-        const handler = provider.handler(this.app);
-        // install strategy
-        const strategyName = `${iid}:${moduleRelativeName}:${providerName}`;
-        this.app.passport.unuse(strategyName);
-        this.app.passport.use(strategyName, new handler.strategy(config, handler.callback));
+        if (provider.handler) {
+          // config
+          const config = JSON.parse(providerItem.config);
+          config.passReqToCallback = true;
+          config.failWithError = false;
+          config.successRedirect = config.successReturnToOrRedirect = (provider.meta.mode === 'redirect') ? '/' : false;
+          // handler
+          const handler = provider.handler(this.app);
+          // install strategy
+          const strategyName = `${iid}:${moduleRelativeName}:${providerName}`;
+          this.app.passport.unuse(strategyName);
+          this.app.passport.use(strategyName, new handler.strategy(config, handler.callback));
+        }
       }
     }
 
