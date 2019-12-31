@@ -140,6 +140,7 @@ export default {
         // load module
         this.$meta.module.use(item.module, module => {
           // checkIfDisable
+          if (!item.meta.component) return resolve(null);
           const component = module.options.components[item.meta.component];
           this._checkIfDisable(component, item).then(disable => {
             if (!disable) {
