@@ -31,11 +31,14 @@ Page({
     }
   },
   getUserInfo(e) {
-    console.log(e);
-    app.globalData.userInfo = e.detail.userInfo;
-    this.setData({
-      userInfo: e.detail.userInfo,
-      hasUserInfo: true,
+    // 登录
+    app.cabloy.util.login({ detail: e.detail }).then(res => {
+      this.setData({
+        user: res.op,
+        hasUserInfo: !!res.op.userName,
+      });
+    }).catch(err => {
+      console.log(err);
     });
   },
 });

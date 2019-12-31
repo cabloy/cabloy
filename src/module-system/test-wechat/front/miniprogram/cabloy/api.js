@@ -1,3 +1,20 @@
+function __adjustCookies(cookies) {
+  const res = {};
+  for (const item of cookies) {
+    const arr = item.split(';')[0].split('=');
+    res[decodeURIComponent(arr[0])] = decodeURIComponent(arr[1]);
+  }
+  return res;
+}
+
+function __combineCookies(cookies) {
+  const res = [];
+  for (const key in cookies) {
+    res.push(`${encodeURIComponent(key)}=${encodeURIComponent(cookies[key])}`);
+  }
+  return res.join('; ');
+}
+
 module.exports = function(cabloy) {
   return {
     request(options) {
@@ -5,20 +22,19 @@ module.exports = function(cabloy) {
       if (options.url.indexOf('/') === 0) {
         options.url = `${cabloy.data.config.api.baseURL}/api${options.url}`;
       }
-      // cookie
-      const cookie = cabloy.data.cookie;
-      if (cookie) {
+      // cookies
+      const cookies = cabloy.data.cookies;
+      if (cookies) {
         if (!options.header) options.header = {};
-        options.header.Cookie = cookie;
+        options.header.cookie = __combineCookies(cookies);
       }
       // promise
       return new Promise((resolve, reject) => {
         // callback
         options.success = res => {
-          // cookie
-          const cookie = res.header && res.header['Set-Cookie'];
-          if (cookie) {
-            cabloy.data.cookie = cookie;
+          // cookies
+          if (res.cookies && res.cookies.length > 0) {
+            cabloy.data.cookies = __adjustCookies(res.cookies);
           }
           if (res.statusCode !== 200) {
             const error = new Error();

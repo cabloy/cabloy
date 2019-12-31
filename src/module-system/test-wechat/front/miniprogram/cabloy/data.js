@@ -6,11 +6,11 @@ const configDefault = {
 
 module.exports = function(cabloy) {
   return {
-    get cookie() {
-      return wx.getStorageSync('__cabloy_cookie');
+    get cookies() {
+      return cabloy.app.globalData.__cabloy_cookies;
     },
-    set cookie(value) {
-      wx.setStorageSync('__cabloy_cookie', value);
+    set cookies(value) {
+      cabloy.app.globalData.__cabloy_cookies = cabloy.util.extend({}, cabloy.app.globalData.__cabloy_cookies, value);
     },
     get user() {
       return cabloy.app.globalData.__cabloy_user;

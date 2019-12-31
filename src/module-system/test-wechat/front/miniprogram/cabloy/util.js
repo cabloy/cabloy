@@ -1,30 +1,35 @@
 module.exports = function(cabloy) {
   return {
-    login() {
+    login(options) {
       return new Promise((resolve, reject) => {
-        // 小程序登录
-        wx.login({
-          success: res => {
-            const code = res.code;
-            // 获取用户信息
-            wx.getSetting({
-              success: res => {
-                if (res.authSetting['scope.userInfo']) {
-                  // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
-                  wx.getUserInfo({
-                    success: detail => {
-                      // 后台登录
-                      this.__login({ code, detail }).then(resolve).catch(reject);
-                    },
-                  });
-                } else {
-                  // 虽然没有userInfo，但有openid，仍然可以进行后台登录
-                  this.__login({ code, detail: null }).then(resolve).catch(reject);
-                }
-              },
-            });
-          },
-        });
+        if (options && options.detail) {
+          // 直接进行后台登录
+          this.__login({ code: null, detail: options.detail }).then(resolve).catch(reject);
+        } else {
+          // 小程序登录
+          wx.login({
+            success: res => {
+              const code = res.code;
+              // 获取用户信息
+              wx.getSetting({
+                success: res => {
+                  if (res.authSetting['scope.userInfo']) {
+                    // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
+                    wx.getUserInfo({
+                      success: detail => {
+                        // 后台登录
+                        this.__login({ code, detail }).then(resolve).catch(reject);
+                      },
+                    });
+                  } else {
+                    // 虽然没有userInfo，但有openid，仍然可以进行后台登录
+                    this.__login({ code, detail: null }).then(resolve).catch(reject);
+                  }
+                },
+              });
+            },
+          });
+        }
       });
     },
 
