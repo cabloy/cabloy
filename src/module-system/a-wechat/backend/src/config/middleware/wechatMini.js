@@ -30,6 +30,17 @@ module.exports = (options, app) => {
         await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
       }
     );
+    // registerSessionKeyHandle
+    api.registerSessionKeyHandle(
+      async function() {
+        const cacheKey = `wechatmini-sessionKey:${ctx.user.agent.id}`;
+        return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
+      },
+      async function(sessionKey) {
+        const cacheKey = `wechatmini-sessionKey:${ctx.user.agent.id}`;
+        await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, sessionKey);
+      }
+    );
     // ready
     return api;
   }
