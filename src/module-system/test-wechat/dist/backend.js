@@ -99,11 +99,11 @@ module.exports = app => {
   // routes
   const routes = __webpack_require__(6)(app);
   // services
-  const services = __webpack_require__(8)(app);
+  const services = __webpack_require__(9)(app);
   // models
-  const models = __webpack_require__(10)(app);
+  const models = __webpack_require__(13)(app);
   // meta
-  const meta = __webpack_require__(11)(app);
+  const meta = __webpack_require__(14)(app);
 
   return {
     routes,
@@ -144,6 +144,7 @@ module.exports = {
 /***/ (function(module, exports) {
 
 module.exports = {
+  Reply: '回复',
 };
 
 
@@ -169,6 +170,7 @@ module.exports = {
 /***/ (function(module, exports, __webpack_require__) {
 
 const version = __webpack_require__(7);
+const event = __webpack_require__(8);
 
 module.exports = app => {
   const routes = [
@@ -176,6 +178,11 @@ module.exports = app => {
     { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/test', controller: version, middlewares: 'test' },
+    // event
+    { method: 'post', path: 'event/wechatMessage', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'event/wechatMessageMini', controller: event, middlewares: 'inner,wechatMini', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'event/loginInfo', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
+
   ];
   return routes;
 };
@@ -210,20 +217,58 @@ module.exports = app => {
 
 /***/ }),
 /* 8 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+  class EventController extends app.Controller {
+
+    async wechatMessage() {
+      const res = await this.service.event.wechatMessage({
+        event: this.ctx.request.body.event,
+        data: this.ctx.request.body.data,
+      });
+      this.ctx.success(res);
+    }
+
+    async wechatMessageMini() {
+      const res = await this.service.event.wechatMessageMini({
+        event: this.ctx.request.body.event,
+        data: this.ctx.request.body.data,
+      });
+      this.ctx.success(res);
+    }
+
+    async loginInfo() {
+      const res = await this.service.event.loginInfo({
+        event: this.ctx.request.body.event,
+        data: this.ctx.request.body.data,
+      });
+      this.ctx.success(res);
+    }
+
+  }
+  return EventController;
+};
+
+
+/***/ }),
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(9);
+const version = __webpack_require__(10);
+const event = __webpack_require__(11);
 
 module.exports = app => {
   const services = {
     version,
+    event,
   };
   return services;
 };
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -246,7 +291,78 @@ module.exports = app => {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(12);
+const extend = require3('extend2');
+
+module.exports = app => {
+
+  class Event extends app.Service {
+
+    async wechatMessage({ event, data }) {
+      const message = data.message;
+      if (message.MsgType === 'text') {
+        event.break = true;
+        return {
+          ToUserName: message.FromUserName,
+          FromUserName: message.ToUserName,
+          CreateTime: new Date().getTime(),
+          MsgType: 'text',
+          Content: `${this.ctx.text.locale('zh-cn', 'Reply')}: ${message.Content}`,
+        };
+      }
+    }
+
+    async wechatMessageMini({ event, data }) {
+      const message = data.message;
+      if (message.MsgType === 'text') {
+        event.break = true;
+        const text = `${this.ctx.text.locale('zh-cn', 'Reply')}: ${message.Content}`;
+        await this.ctx.meta.wechatMini.sendText(message.FromUserName, text);
+      }
+    }
+
+    async loginInfo({ /* event,*/ data }) {
+      const info = data.info;
+      const provider = info.user && info.user.provider;
+      if (provider && provider.module === 'a-wechat' && provider.providerName === 'wechat') {
+        info.config = extend(true, info.config, {
+          modules: {
+            'a-layoutmobile': {
+              layout: {
+                login: '/a/login/login',
+                loginOnStart: true,
+                toolbar: {
+                  tabbar: true, labels: true, bottomMd: true,
+                },
+                tabs: [
+                  { name: 'Test', tabLinkActive: true, iconMaterial: 'group_work', url: '/test/wechat/test/index' },
+                  { name: 'Home', tabLinkActive: false, iconMaterial: 'home', url: '/a/base/menu/list' },
+                  { name: 'Mine', tabLinkActive: false, iconMaterial: 'person', url: '/a/user/user/mine' },
+                ],
+              },
+            },
+          },
+        });
+      }
+    }
+
+  }
+
+  return Event;
+};
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports) {
+
+module.exports = require("require3");
+
+/***/ }),
+/* 13 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -257,11 +373,11 @@ module.exports = app => {
 
 
 /***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 14 */
+/***/ (function(module, exports) {
 
 module.exports = app => {
-  const schemas = __webpack_require__(12)(app);
+  // const schemas = require('./config/validation/schemas.js')(app);
   const meta = {
     base: {
       atoms: {
@@ -276,18 +392,15 @@ module.exports = app => {
       schemas: {
       },
     },
+    event: {
+      implementations: {
+        'a-wechat:wechatMessage': 'event/wechatMessage',
+        'a-wechat:wechatMessageMini': 'event/wechatMessageMini',
+        'a-base:loginInfo': 'event/loginInfo',
+      },
+    },
   };
   return meta;
-};
-
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports) {
-
-module.exports = app => {
-  const schemas = {};
-  return schemas;
 };
 
 
