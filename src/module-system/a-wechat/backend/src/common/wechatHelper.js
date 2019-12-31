@@ -97,10 +97,11 @@ module.exports = function(ctx) {
       // check auth
       let authId;
       let authUserId;
-      const authItem = await ctx.model.query(
+      const authItems = await ctx.model.query(
         `select * from aAuth a where a.deleted=0 and a.iid=? and a.providerId=? and a.profileId like '%:${openid}'`,
         [ ctx.instance.id, providerItem.id ]
       );
+      const authItem = authItems[0];
       if (!authItem) {
         // insert auth
         const res = await ctx.model.auth.insert({
@@ -121,10 +122,11 @@ module.exports = function(ctx) {
       }
       // check if has userId for unionid
       if (unionid) {
-        const _authOther = await ctx.model.query(
+        const _authOthers = await ctx.model.query(
           `select * from aAuth a where a.deleted=0 and a.iid=? and a.profileId like '${unionid}:%' and a.id<>?`,
           [ ctx.instance.id, authId ]
         );
+        const _authOther = _authOthers[0];
         if (_authOther && _authOther.userId !== authUserId) {
           // update userId for this auth
           await ctx.model.auth.update({ id: authId, userId: _authOther.userId });
