@@ -16,6 +16,7 @@ const front = {
   },
   dev: {
     title,
+    hostname: '',
     port: 9092,
   },
 };
