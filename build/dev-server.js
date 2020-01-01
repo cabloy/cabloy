@@ -16,7 +16,8 @@ const utils = require('./utils.js');
 // copy modules
 utils.copyModules();
 
-// default port where dev server listens for incoming traffic
+// default hostname/port where dev server listens for incoming traffic
+const hostname = process.env.HOSTNAME || config.dev.hostname;
 const port = process.env.PORT || config.dev.port;
 // automatically open browser, if not set will be false
 const autoOpenBrowser = !!config.dev.autoOpenBrowser;
@@ -68,13 +69,15 @@ app.use(staticPath, express.static('./static'));
 // use modules static
 app.use(express.static(config.build.assetsRoot));
 
-const uri = 'http://localhost:' + port;
+const uri = `http://${hostname || 'localhost'}:${port}`;
 
 devMiddleware.waitUntilValid(function() {
   console.log('> Listening at ' + uri + '\n');
 });
 
-module.exports = app.listen(port, function(err) {
+const listenOptions = { port };
+if (hostname) listenOptions.host = hostname;
+module.exports = app.listen(listenOptions, function(err) {
   if (err) {
     console.log(err);
     return;
