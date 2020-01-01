@@ -11,6 +11,10 @@
     }
   },
   "description": "test module for egg-born-module-a-wechat",
+  "keywords": [
+    "Cabloy Module",
+    "Wechat Test"
+  ],
   "scripts": {
     "build:front": "node build/front/build.js",
     "build:backend": "node build/backend/build.js",
