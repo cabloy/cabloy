@@ -12,6 +12,9 @@
     }
   },
   "description": "{{description}}",
+  "keywords": [
+    "Cabloy Module"
+  ],
   "scripts":
   {
     "build:front": "node build/front/build.js",
@@ -19,7 +22,8 @@
     "lint": "eslint front backend"
   },
   "author": "{{author}}",
-  "devDependencies": {},
+  "devDependencies":
+  {},
   "dependencies":
   {
     "require3": "^1.0.3",
