@@ -1,5 +1,9 @@
 const require3 = require('require3');
 const extend = require3('extend2');
+const chalk = require3('chalk');
+const boxen = require3('boxen');
+
+const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' };
 
 module.exports = () => {
   return async function instance(ctx, next) {
@@ -35,7 +39,16 @@ module.exports = () => {
     }
 
     if (!/\/version\/init/.test(ctx.request.url) && (!instance || instance.disabled)) {
-      ctx.throw(423); // locked
+      // prompt
+      if (!instance && ctx.app.meta.isLocal) {
+        const urlInfo = ctx.locale === 'zh-cn' ? 'https://cabloy.com/zh-cn/articles/multi-instance.html' : 'https://cabloy.com/articles/multi-instance.html';
+        let message = `Please add instance in ${chalk.keyword('cyan')('src/backend/config/config.local.js')}`;
+        message += '\n' + chalk.keyword('orange')(`{ subdomain: '${ctx.subdomain}', password: '', title: '' }`);
+        message += `\nMore info: ${chalk.keyword('cyan')(urlInfo)}`;
+        console.log('\n' + boxen(message, boxenOptions));
+      }
+      // locked
+      ctx.throw(423);
     }
 
     ctx.instance = instance;
