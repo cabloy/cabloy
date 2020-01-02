@@ -99,11 +99,11 @@ module.exports = app => {
   // routes
   const routes = __webpack_require__(6)(app);
   // services
-  const services = __webpack_require__(9)(app);
+  const services = __webpack_require__(10)(app);
   // models
-  const models = __webpack_require__(13)(app);
+  const models = __webpack_require__(15)(app);
   // meta
-  const meta = __webpack_require__(14)(app);
+  const meta = __webpack_require__(17)(app);
 
   return {
     routes,
@@ -171,6 +171,7 @@ module.exports = {
 
 const version = __webpack_require__(7);
 const event = __webpack_require__(8);
+const test = __webpack_require__(9);
 
 module.exports = app => {
   const routes = [
@@ -182,7 +183,9 @@ module.exports = app => {
     { method: 'post', path: 'event/wechatMessage', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
     { method: 'post', path: 'event/wechatMessageMini', controller: event, middlewares: 'inner,wechatMini', meta: { auth: { enable: false } } },
     { method: 'post', path: 'event/loginInfo', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
-
+    // test
+    { method: 'post', path: 'test/getOpenid', controller: test, middlewares: 'inWechat' },
+    { method: 'post', path: 'test/getOpenidMini', controller: test, middlewares: 'inWechatMini' },
   ];
   return routes;
 };
@@ -253,22 +256,51 @@ module.exports = app => {
 
 /***/ }),
 /* 9 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+  class TestController extends app.Controller {
+
+    async getOpenid() {
+      const res = await this.service.test.getOpenid({
+        user: this.ctx.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async getOpenidMini() {
+      const res = await this.service.test.getOpenidMini({
+        user: this.ctx.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+
+  }
+  return TestController;
+};
+
+
+/***/ }),
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(10);
-const event = __webpack_require__(11);
+const version = __webpack_require__(11);
+const event = __webpack_require__(12);
+const test = __webpack_require__(14);
 
 module.exports = app => {
   const services = {
     version,
     event,
+    test,
   };
   return services;
 };
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -291,10 +323,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(12);
+const require3 = __webpack_require__(13);
 const extend = require3('extend2');
 
 module.exports = app => {
@@ -356,24 +388,71 @@ module.exports = app => {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports) {
 
 module.exports = require("require3");
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
+
+  class Test extends app.Service {
+
+    async getOpenid({ user }) {
+      const wechatUser = await this.ctx.model.wechatUser.get({ userId: user.id, scene: 1 });
+      return {
+        openid: wechatUser.openid,
+        unionid: wechatUser.unionid,
+      };
+    }
+
+    async getOpenidMini({ user }) {
+      const wechatUser = await this.ctx.model.wechatUser.get({ userId: user.id, scene: 2 });
+      return {
+        openid: wechatUser.openid,
+        unionid: wechatUser.unionid,
+      };
+    }
+
+  }
+
+  return Test;
+};
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const wechatUser = __webpack_require__(16);
+
+module.exports = app => {
   const models = {
+    wechatUser,
   };
   return models;
 };
 
 
 /***/ }),
-/* 14 */
+/* 16 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+  class WechatUser extends app.meta.Model {
+    constructor(ctx) {
+      super(ctx, { table: 'aWechatUser', options: { disableDeleted: false } });
+    }
+  }
+  return WechatUser;
+};
+
+
+/***/ }),
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = app => {

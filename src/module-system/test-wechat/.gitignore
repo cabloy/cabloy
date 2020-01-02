@@ -3,7 +3,6 @@ coverage
 *.log
 npm-debug.log
 .logs
-logs
 *.swp
 run
 *-run

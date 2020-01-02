@@ -8,6 +8,7 @@ Page({
     user: null,
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
+    openid: null,
   },
   // 事件处理函数
   bindViewTap() {
@@ -41,6 +42,13 @@ Page({
       });
     }).catch(err => {
       console.log(err);
+    });
+  },
+  getOpenid() {
+    app.cabloy.api.post('/test/wechat/test/getOpenidMini').then(data => {
+      this.setData({
+        openid: data.openid,
+      });
     });
   },
 });
