@@ -34,7 +34,7 @@ module.exports = (options, app) => {
     return api;
   }
 
-  return async function event(ctx, next) {
+  return async function wechat(ctx, next) {
     ctx.meta = ctx.meta || {};
     Object.defineProperty(ctx.meta, 'wechat', {
       get() {

@@ -52,6 +52,14 @@ module.exports = appInfo => {
       global: false,
       dependencies: 'instance',
     },
+    inWechat: {
+      global: false,
+      dependencies: 'instance',
+    },
+    inWechatMini: {
+      global: false,
+      dependencies: 'instance',
+    },
   };
 
   // account

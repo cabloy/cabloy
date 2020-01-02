@@ -24,6 +24,8 @@ module.exports = app => {
         openid = res.openId;
         unionid = res.unionId;
       }
+      // check openid
+      if (!openid) this.ctx.throw(403);
       // userInfo
       const userInfo = { openid, unionid };
       if (detail && detail.userInfo) {
