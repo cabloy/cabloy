@@ -243,7 +243,7 @@ module.exports = function(ctx) {
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const crypto = __webpack_require__(14);
+const crypto = __webpack_require__(16);
 const require3 = __webpack_require__(0);
 const bb = require3('bluebird');
 const xml2js = require3('xml2js');
@@ -284,13 +284,13 @@ const middlewares = __webpack_require__(8);
 module.exports = app => {
 
   // routes
-  const routes = __webpack_require__(11)(app);
+  const routes = __webpack_require__(13)(app);
   // services
-  const services = __webpack_require__(19)(app);
+  const services = __webpack_require__(21)(app);
   // models
-  const models = __webpack_require__(26)(app);
+  const models = __webpack_require__(28)(app);
   // meta
-  const meta = __webpack_require__(29)(app);
+  const meta = __webpack_require__(31)(app);
 
   return {
     routes,
@@ -364,6 +364,14 @@ module.exports = appInfo => {
       global: false,
       dependencies: 'instance',
     },
+    inWechat: {
+      global: false,
+      dependencies: 'instance',
+    },
+    inWechatMini: {
+      global: false,
+      dependencies: 'instance',
+    },
   };
 
   // account
@@ -413,6 +421,8 @@ module.exports = {
 /***/ (function(module, exports) {
 
 module.exports = {
+  'Not In Wechat': '不在微信内部',
+  'Not In Wechat Miniprogram': '不在微信小程序内部',
 };
 
 
@@ -422,6 +432,8 @@ module.exports = {
 
 // error code should start from 1001
 module.exports = {
+  1001: 'Not In Wechat',
+  1002: 'Not In Wechat Miniprogram',
 };
 
 
@@ -431,10 +443,14 @@ module.exports = {
 
 const wechat = __webpack_require__(9);
 const wechatMini = __webpack_require__(10);
+const inWechat = __webpack_require__(11);
+const inWechatMini = __webpack_require__(12);
 
 module.exports = {
   wechat,
   wechatMini,
+  inWechat,
+  inWechatMini,
 };
 
 
@@ -478,7 +494,7 @@ module.exports = (options, app) => {
     return api;
   }
 
-  return async function event(ctx, next) {
+  return async function wechat(ctx, next) {
     ctx.meta = ctx.meta || {};
     Object.defineProperty(ctx.meta, 'wechat', {
       get() {
@@ -548,7 +564,7 @@ module.exports = (options, app) => {
     return api;
   }
 
-  return async function event(ctx, next) {
+  return async function wechatMini(ctx, next) {
     ctx.meta = ctx.meta || {};
     Object.defineProperty(ctx.meta, 'wechatMini', {
       get() {
@@ -569,14 +585,46 @@ module.exports = (options, app) => {
 
 /***/ }),
 /* 11 */
+/***/ (function(module, exports) {
+
+module.exports = (options, app) => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  return async function inWechat(ctx, next) {
+    const provider = ctx.user && ctx.user.provider;
+    const ok = (provider && provider.module === moduleInfo.relativeName && provider.providerName === 'wechat');
+    if (!ok) ctx.throw.module(moduleInfo.relativeName, 1001);
+    // next
+    await next();
+  };
+};
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports) {
+
+module.exports = (options, app) => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  return async function inWechatMini(ctx, next) {
+    const provider = ctx.user && ctx.user.provider;
+    const ok = (provider && provider.module === moduleInfo.relativeName && provider.providerName === 'wechatMini');
+    if (!ok) ctx.throw.module(moduleInfo.relativeName, 1002);
+    // next
+    await next();
+  };
+};
+
+
+/***/ }),
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(12);
-const message = __webpack_require__(13);
-const event = __webpack_require__(15);
-const jssdk = __webpack_require__(16);
-const messageMini = __webpack_require__(17);
-const authMini = __webpack_require__(18);
+const version = __webpack_require__(14);
+const message = __webpack_require__(15);
+const event = __webpack_require__(17);
+const jssdk = __webpack_require__(18);
+const messageMini = __webpack_require__(19);
+const authMini = __webpack_require__(20);
 
 module.exports = app => {
   const routes = [
@@ -604,7 +652,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -631,7 +679,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -734,13 +782,13 @@ module.exports = app => {
 
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, exports) {
 
 module.exports = require("crypto");
 
 /***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -760,7 +808,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -779,7 +827,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -859,7 +907,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -879,15 +927,15 @@ module.exports = app => {
 
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(20);
-const message = __webpack_require__(21);
-const event = __webpack_require__(22);
-const jssdk = __webpack_require__(23);
-const messageMini = __webpack_require__(24);
-const authMini = __webpack_require__(25);
+const version = __webpack_require__(22);
+const message = __webpack_require__(23);
+const event = __webpack_require__(24);
+const jssdk = __webpack_require__(25);
+const messageMini = __webpack_require__(26);
+const authMini = __webpack_require__(27);
 
 module.exports = app => {
   const services = {
@@ -903,7 +951,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -959,7 +1007,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const WechatHelperFn = __webpack_require__(1);
@@ -1038,7 +1086,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -1071,7 +1119,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1097,7 +1145,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 24 */
+/* 26 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1119,7 +1167,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const WechatHelperFn = __webpack_require__(1);
@@ -1148,6 +1196,8 @@ module.exports = app => {
         openid = res.openId;
         unionid = res.unionId;
       }
+      // check openid
+      if (!openid) this.ctx.throw(403);
       // userInfo
       const userInfo = { openid, unionid };
       if (detail && detail.userInfo) {
@@ -1175,11 +1225,11 @@ module.exports = app => {
 
 
 /***/ }),
-/* 26 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const wechatUser = __webpack_require__(27);
-const auth = __webpack_require__(28);
+const wechatUser = __webpack_require__(29);
+const auth = __webpack_require__(30);
 
 module.exports = app => {
   const models = {
@@ -1191,7 +1241,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 27 */
+/* 29 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1205,7 +1255,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 28 */
+/* 30 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1223,10 +1273,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 29 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const authFn = __webpack_require__(30);
+const authFn = __webpack_require__(32);
 
 module.exports = app => {
   // const schemas = require('./config/validation/schemas.js')(app);
@@ -1265,7 +1315,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 30 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
