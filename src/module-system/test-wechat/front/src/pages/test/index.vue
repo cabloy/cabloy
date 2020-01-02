@@ -3,6 +3,10 @@
     <eb-navbar :title="$text('Test')" eb-back-link="Back"></eb-navbar>
     <eb-list v-if="wx" no-hairlines-md>
       <eb-list-item title="微信扫一扫" link="#" :onPerform="onPerformScanQRCode"></eb-list-item>
+      <eb-list-item title="获取openid" link="#" :onPerform="onPerformOpenid"></eb-list-item>
+      <eb-list-item title="openid">
+        <div slot="after">{{openid}}</div>
+      </eb-list-item>
     </eb-list>
   </eb-page>
 </template>
@@ -12,6 +16,7 @@ export default {
     return {
       moduleWechat: null,
       wx: null,
+      openid: null,
     };
   },
   created() {
@@ -35,6 +40,11 @@ export default {
           this.$view.toast.show({ text: res.resultStr });
         }
       });
+    },
+    onPerformOpenid() {
+      return this.$api.post('test/getOpenid').then(data => {
+        this.openid = data.openid;
+      })
     }
   }
 };

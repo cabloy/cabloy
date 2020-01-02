@@ -31,6 +31,8 @@ Page({
     }
   },
   getUserInfo(e) {
+    // 判断是否成功取得用户授权
+    if (e.detail.errMsg.indexOf(':fail') > -1) return;
     // 登录
     app.cabloy.util.login({ detail: e.detail }).then(res => {
       this.setData({

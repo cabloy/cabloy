@@ -7,8 +7,10 @@
       <text class="userinfo-nickname">{{user.userName}}</text>
     </block>
   </view>
+  <view class="testblock">
+    <button open-type="contact">进入客服会话</button>
+  </view>
   <view class="usermotto">
     <text class="user-motto">{{motto}}</text>
-    <button open-type="contact">进入客服会话</button>
   </view>
 </view>
