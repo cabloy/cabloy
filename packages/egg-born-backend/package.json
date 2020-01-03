@@ -1,6 +1,6 @@
 {
   "name": "egg-born-backend",
-  "version": "2.2.9",
+  "version": "2.3.1",
   "description": "egg-born-backend",
   "scripts": {
     "lint": "eslint ."
@@ -43,7 +43,9 @@
     "uuid": "^3.2.1",
     "object-get-o-a": "^1.0.2",
     "supertest": "^4.0.2",
-    "semver": "^6.1.1"
+    "semver": "^6.1.1",
+    "module-alias": "^2.2.2",
+    "@zhennann/ali-rds": "^3.3.2"
   },
   "devDependencies": {}
 }

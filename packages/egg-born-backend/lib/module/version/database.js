@@ -1,26 +1,5 @@
 const moment = require('moment');
 const chalk = require('chalk');
-const RDSClient = require('ali-rds');
-const RDSConnection = require('ali-rds/lib/connection');
-
-// RDSClient
-RDSClient.prototype.getConnection = function() {
-  return this.pool.getConnection().then(onConnection, onError);
-  async function onConnection(conn) {
-    const rdsConn = new RDSConnection(conn);
-    if (!conn.__eb_inited) {
-      await sessionVariablesSet(rdsConn);
-      conn.__eb_inited = true;
-    }
-    return rdsConn;
-  }
-  function onError(err) {
-    if (err.name === 'Error') {
-      err.name = 'RDSClientGetConnectionError';
-    }
-    throw err;
-  }
-};
 
 // database
 module.exports = async function(app) {
@@ -66,17 +45,3 @@ module.exports = async function(app) {
     console.log(chalk.cyan(`  database: ${database}`));
   }
 };
-
-async function sessionVariablesSet(rdsConn) {
-  sessionVariableSet(rdsConn, 'SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED');
-  sessionVariableSet(rdsConn, 'SET SESSION explicit_defaults_for_timestamp=ON');
-}
-
-async function sessionVariableSet(rdsConn, sql) {
-  try {
-    await rdsConn.query(sql);
-    return true;
-  } catch (error) {
-    return false;
-  }
-}

@@ -7,6 +7,20 @@ module.exports = appInfo => {
   // proxy
   config.proxy = true;
 
+  // mysql
+  config.mysql = {
+    clients: {
+      // donnot change the name
+      __ebdb: {
+        hook: {
+          meta: {
+            long_query_time: 0,
+          },
+        },
+      },
+    },
+  };
+
   // add http_proxy to httpclient
   if (process.env.http_proxy) {
     config.httpclient = {
