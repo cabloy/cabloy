@@ -1584,6 +1584,7 @@ module.exports = ctx => {
         module,
         providerName,
         config: JSON.stringify(_provider.config),
+        disabled: 0,
       };
       // insert
       const res2 = await this.modelAuthProvider.insert(data);
