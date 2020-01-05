@@ -18,6 +18,11 @@ module.exports = appInfo => {
         user: 'root',
         password: '',
         database: 'sys', // recommended
+        hook: {
+          meta: {
+            long_query_time: 0,
+          },
+        },
       },
     },
   };

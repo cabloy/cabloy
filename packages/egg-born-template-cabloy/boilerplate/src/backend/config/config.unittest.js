@@ -18,6 +18,11 @@ module.exports = appInfo => {
         user: 'root',
         password: '',
         database: 'sys', // donnot change the name
+        hook: {
+          meta: {
+            long_query_time: 200,
+          },
+        },
       },
     },
   };
