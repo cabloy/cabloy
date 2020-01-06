@@ -1,0 +1,41 @@
+<%
+// config
+const config = ctx.config.module('a-wechat').account.public;
+const configExists=config.appID && config.appSecret;
+%>
+
+$(document).on('echo-ready', function() {
+  _wechatsdkinit();
+});
+
+function _wechatsdkinit() {
+  // check config
+  <%- `const _configExists=${configExists?'true':'false'};`  %>
+  if(!_configExists) return;
+  // wechat
+  const ua = navigator.userAgent.toLowerCase();
+  const inWechat = ua && (ua.indexOf('micromessenger') > -1 || ua.indexOf('micromessage') > -1);
+  if(!inWechat) return;
+  util.performAction({
+    method: 'post',
+    url: '/a/wechat/jssdk/jsconfig',
+    body: {
+      url: location.href.split('#')[0],
+    },
+  }).then(params => {
+   _wechatwxinit(params);
+  });
+}
+
+function _wechatwxinit(params){
+  if(window.wx) return;
+  util.loadScript('https://res.wx.qq.com/open/js/jweixin-1.4.0.js', function() {
+    window.wx.config(params);
+    window.wx.error(e => {
+      console.log(e);
+    });
+    window.wx.ready(() => {
+      $(document).trigger('wechatsdk-ready',window.wx);
+    });
+  });
+}
