@@ -1,0 +1,25 @@
+$(document).on('echo-ready', function() {
+  _wechatsdk();
+});
+
+function _wechatsdk() {
+  if (!env.article) return;
+  util.performAction({
+    method: 'post',
+    url: '/a/wechat/jssdk/jsconfig',
+    body: {
+      url: location.href.split('#')[0],
+    },
+  }).then(params => {
+    window.wx.config(params);
+    window.wx.error(e => {
+      reject(e);
+    });
+    window.wx.ready(() => {
+      _wxInstance = window.wx;
+      resolve({ wx: window.wx });
+    });
+
+    $(document).trigger('wechatsdk-ready', data);
+  });
+}
