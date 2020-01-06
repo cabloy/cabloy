@@ -1,0 +1,27 @@
+$(document).on('wechatsdk-ready', function(event, wx) {
+  _wechatshareinit(wx);
+});
+
+function _wechatshareinit(wx) {
+  if (!env.article) return;
+  const _article = env.article;
+  // 分享给朋友
+  wx.updateAppMessageShareData({
+    title: _article.atomName,
+    desc: _article.description || _article._meta.summary || '',
+    link: util.url(_article.url),
+    imgUrl: _article.imageFirst || '',
+    success() {
+      // 设置成功
+    },
+  });
+  // 分享给朋友圈
+  wx.updateTimelineShareData({
+    title: _article.atomName,
+    link: util.url(_article.url),
+    imgUrl: _article.imageFirst || '',
+    success() {
+      // 设置成功
+    },
+  });
+}
