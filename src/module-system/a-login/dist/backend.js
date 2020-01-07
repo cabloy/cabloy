@@ -161,7 +161,7 @@ module.exports = app => {
     async list() {
       // list
       const list = await this.ctx.model.query(`
-        select a.module,a.providerName from aAuthProvider a
+        select a.id, a.module,a.providerName from aAuthProvider a
           where a.iid=? and a.disabled=0
         `, [ this.ctx.instance.id ]);
       // list map
