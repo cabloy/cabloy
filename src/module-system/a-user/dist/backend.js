@@ -380,13 +380,22 @@ module.exports = app => {
     }
 
     async authentications({ user }) {
-      // list
+      // 1. get auth providers list from a-login
+      const listLogin = await this.ctx.performAction({
+        method: 'post',
+        url: '/a/login/auth/list',
+      });
+      if (listLogin.length === 0) return [];
+      const ids = listLogin.map(item => item.id);
+      // 2. list with aAuth
       const sql = `
         select a.id as providerId,a.module,a.providerName,b.id as authId from aAuthProvider a
           left join aAuth b on a.id=b.providerId and b.userId=?
-            where a.iid=? and a.disabled=0
+            where a.id in (${ids.join(',')})
       `;
-      const list = await this.ctx.model.query(sql, [ user.id, this.ctx.instance.id ]);
+      let list = await this.ctx.model.query(sql, [ user.id ]);
+      // sort
+      list.sort((a, b) => ids.findIndex(item => item === a.providerId) - ids.findIndex(item => item === b.providerId));
       // meta
       const authProviders = this.ctx.meta.base.authProviders();
       for (const item of list) {
@@ -394,6 +403,8 @@ module.exports = app => {
         const authProvider = authProviders[key];
         item.meta = authProvider.meta;
       }
+      // filter
+      list = list.filter(item => !!item.meta.component);
       // ok
       return list;
     }
