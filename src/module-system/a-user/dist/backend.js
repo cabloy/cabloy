@@ -393,7 +393,7 @@ module.exports = app => {
           left join aAuth b on a.id=b.providerId and b.userId=?
             where a.id in (${ids.join(',')})
       `;
-      let list = await this.ctx.model.query(sql, [ user.id ]);
+      const list = await this.ctx.model.query(sql, [ user.id ]);
       // sort
       list.sort((a, b) => ids.findIndex(item => item === a.providerId) - ids.findIndex(item => item === b.providerId));
       // meta
@@ -403,8 +403,6 @@ module.exports = app => {
         const authProvider = authProviders[key];
         item.meta = authProvider.meta;
       }
-      // filter
-      list = list.filter(item => !!item.meta.component);
       // ok
       return list;
     }

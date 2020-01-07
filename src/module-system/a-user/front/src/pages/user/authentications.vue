@@ -5,7 +5,7 @@
       <eb-list-item v-for="item of items" :key="item.providerId" :title="authTitle(item)">
         <div slot="after">
           <f7-badge v-if="item.authId">{{$text('Enabled')}}</f7-badge>
-          <eb-link v-if="!item.authId" :context="item" :onPerform="onPerformEnable">{{$text('Enable')}}</eb-link>
+          <eb-link v-if="!item.authId && !!item.meta.component" :context="item" :onPerform="onPerformEnable">{{$text('Enable')}}</eb-link>
           <eb-link v-if="item.authId && user.provider.id !== item.providerId" :context="item" :onPerform="onPerformDisable">{{$text('Disable')}}</eb-link>
         </div>
       </eb-list-item>
