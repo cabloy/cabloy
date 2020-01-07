@@ -364,6 +364,7 @@ module.exports = ctx => {
       }
       verifyUser.provider = {
         id: authId,
+        providerId: providerItem.id,
         module: profileUser.module,
         providerName: profileUser.provider,
         // profile: profileUser.profile,  // maybe has private info
