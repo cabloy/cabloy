@@ -107,7 +107,7 @@ import ebAtomClasses from '../../common/atomClasses.js';
 import ebAtomActions from '../../common/atomActions.js';
 import ebAtomOrders from '../../common/atomOrders.js';
 export default {
-  mixins: [ ebAtomClasses, ebAtomActions, ebAtomOrders ],
+  mixins: [ebAtomClasses, ebAtomActions, ebAtomOrders],
   meta: {
     global: false,
   },
@@ -132,7 +132,7 @@ export default {
   data() {
     return {
       radioName: Vue.prototype.$meta.util.nextId('radio'),
-      items: this.itemShow ? [ this.itemShow ] : [],
+      items: this.itemShow ? [this.itemShow] : [],
       atomOrderSelected: null,
       selectedAtomIds: null,
       selectedAtoms: null,
@@ -312,7 +312,7 @@ export default {
       // order
       const atomOrderCurrent = this.atomOrderSelected || this.atomOrderDefault;
       options.orders = [
-        [ this.getAtomOrderKey(atomOrderCurrent), atomOrderCurrent.by ],
+        [this.getAtomOrderKey(atomOrderCurrent), atomOrderCurrent.by],
       ];
       // mode
       options.mode = this.mode2;
@@ -549,7 +549,7 @@ export default {
     onItemChange(event, item) {
       if (this.params.selectMode === 'single') {
         if (event.target.checked) {
-          this.selectedAtoms = [ item ];
+          this.selectedAtoms = [item];
         }
       } else {
         if (!this.selectedAtoms) this.selectedAtoms = [];
@@ -573,7 +573,7 @@ export default {
       if (!selectedAtoms || selectedAtoms.length === 0) return;
       let needReload = false;
       if (this.params.selectMode === 'single') {
-        this.selectedAtomIds = [ selectedAtoms[0].atomId ];
+        this.selectedAtomIds = [selectedAtoms[0].atomId];
         needReload = true;
       } else {
         if (!this.selectedAtomIds) this.selectedAtomIds = [];
