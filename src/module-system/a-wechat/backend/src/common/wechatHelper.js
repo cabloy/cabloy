@@ -1,5 +1,6 @@
 const require3 = require('require3');
 const bb = require3('bluebird');
+const extend = require3('extend2');
 
 module.exports = function(ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -103,19 +104,26 @@ module.exports = function(ctx) {
       );
       const authItem = authItems[0];
       if (!authItem) {
+        // always set avatar empty
+        const _profile = extend(true, {}, profileUser.profile);
+        delete _profile.avatar;
         // insert auth
         const res = await ctx.model.auth.insert({
           providerId: providerItem.id,
           profileId,
-          profile: JSON.stringify(profileUser.profile),
+          profile: JSON.stringify(_profile),
         });
         authId = res.insertId;
       } else {
+        // hold old avatar empty
+        const _profile = extend(true, {}, profileUser.profile);
+        const _profileOld = JSON.parse(authItem.profile);
+        _profile.avatar = _profileOld.avatar;
         // always update
         await ctx.model.auth.update({
           id: authItem.id,
           profileId,
-          profile: JSON.stringify(profileUser.profile),
+          profile: JSON.stringify(_profile),
         });
         authId = authItem.id;
         authUserId = authItem.userId;
