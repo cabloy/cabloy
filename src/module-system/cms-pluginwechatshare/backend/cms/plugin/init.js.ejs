@@ -3,6 +3,7 @@ $(document).on('wechatsdk-ready', function(event, wx) {
 });
 
 function _wechatshareinit(wx) {
+  // 如果不是文章页面就不执行
   if (!env.article) return;
   const _article = env.article;
   // 分享给朋友
