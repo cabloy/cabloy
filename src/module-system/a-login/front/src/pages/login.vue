@@ -28,44 +28,45 @@ export default {
     });
   },
   render(c) {
-    if (!this.providers) return c('div');
     const children = [];
-    // close
-    if (this.showClose) {
-      children.push(c('f7-icon', {
-        staticClass: 'close',
-        attrs: {
-          material: 'close',
-        },
-        nativeOn: {
-          click: this.onClose,
-        },
+    if (this.providers) {
+      // close
+      if (this.showClose) {
+        children.push(c('f7-icon', {
+          staticClass: 'close',
+          attrs: {
+            material: 'close',
+          },
+          nativeOn: {
+            click: this.onClose,
+          },
+        }));
+      }
+      // title
+      children.push(c('f7-login-screen-title', {
+        domProps: { innerText: this.title },
       }));
+      // loginTop
+      const loginTop = this.combineLoginTop(c);
+      // loginBottom
+      const loginBottom = this.combineLoginBottom(c);
+      // loginLine
+      let loginLine;
+      if (loginTop && loginBottom) {
+        loginLine = c('div', { staticClass: 'line' }, [c('div', { staticClass: 'text', domProps: { innerText: this.$text('or') } })]);
+      }
+      // add top
+      if (loginTop) children.push(loginTop);
+      // add line and bottom
+      let lineAndBottom;
+      if (loginLine || loginBottom) {
+        const children = [];
+        if (loginLine) children.push(loginLine);
+        if (loginBottom) children.push(loginBottom);
+        lineAndBottom = c('f7-block', children);
+      }
+      if (lineAndBottom) children.push(lineAndBottom);
     }
-    // title
-    children.push(c('f7-login-screen-title', {
-      domProps: { innerText: this.title },
-    }));
-    // loginTop
-    const loginTop = this.combineLoginTop(c);
-    // loginBottom
-    const loginBottom = this.combineLoginBottom(c);
-    // loginLine
-    let loginLine;
-    if (loginTop && loginBottom) {
-      loginLine = c('div', { staticClass: 'line' }, [c('div', { staticClass: 'text', domProps: { innerText: this.$text('or') } })]);
-    }
-    // add top
-    if (loginTop) children.push(loginTop);
-    // add line and bottom
-    let lineAndBottom;
-    if (loginLine || loginBottom) {
-      const children = [];
-      if (loginLine) children.push(loginLine);
-      if (loginBottom) children.push(loginBottom);
-      lineAndBottom = c('f7-block', children);
-    }
-    if (lineAndBottom) children.push(lineAndBottom);
     // page
     return c('eb-page', {
       attrs: {
