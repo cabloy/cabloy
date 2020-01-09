@@ -1,6 +1,6 @@
 {
   "name": "egg-born-front",
-  "version": "4.2.6",
+  "version": "4.2.7",
   "description": "egg-born-front",
   "scripts": {
     "lint": "eslint src",
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/zhennann/egg-born-front#readme",
   "dependencies": {
-    "@zhennann/framework7": "^4.4.11",
+    "@zhennann/framework7": "^4.4.12",
     "@zhennann/vue": "^2.6.10",
     "autoprefixer": "^9.5.1",
     "axios": "^0.19.0",
