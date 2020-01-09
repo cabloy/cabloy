@@ -8,7 +8,15 @@ export default {
     onPageAfterIn(event) {
       this.dispatchEvent('page:afterin pageAfterIn', event, event.detail);
       // title
-      const title = this.$$(event.target).find('.navbar .title').text();
+      let title = this.$$(event.target).find('.navbar .title').text();
+      if (!title) {
+        // try get meta
+        const page = this.$page;
+        const _title = page && page.$options.meta && page.$options.meta.title;
+        if (_title) {
+          title = this.$text(_title);
+        }
+      }
       this.onTitleChange(title, true);
     },
     onTitleChange(title, force) {
