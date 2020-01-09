@@ -7,7 +7,7 @@ delete f7Link.props.href;
 export default {
   name: 'eb-link',
   extends: f7Link,
-  mixins: [ perform, link ],
+  mixins: [perform, link],
   methods: {
     getLinkEl() {
       return this.$$(this.$el);
