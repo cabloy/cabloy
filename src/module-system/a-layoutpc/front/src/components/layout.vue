@@ -22,7 +22,7 @@ export default {
         top: `${this.size.spacing}px`,
       },
     });
-    return c('div', { staticClass: 'eb-layout-container eb-layout-container-pc' }, [ header, groups ]);
+    return c('div', { staticClass: 'eb-layout-container eb-layout-container-pc' }, [header, groups]);
   },
   data() {
     return {

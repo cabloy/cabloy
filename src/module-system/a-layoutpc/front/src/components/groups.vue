@@ -18,7 +18,7 @@ export default {
         staticClass: `eb-layout-group${group.dashboard ? ' eb-layout-group-dashboard' : ''}`,
         attrs: { id: group.id, 'data-groupId': group.id },
         on: { 'tab:show': this.onTabShow },
-      }, [ _group ]));
+      }, [_group]));
     }
     return c('f7-tabs', { staticClass: 'eb-layout-groups' }, children);
   },
@@ -54,6 +54,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>

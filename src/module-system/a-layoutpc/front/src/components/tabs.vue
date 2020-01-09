@@ -24,7 +24,7 @@ export default {
             this.$f7.tab.show(`#${group.id}`);
           },
         },
-      }, [ text, close ]));
+      }, [text, close]));
     }
     const toolbar = c('f7-toolbar', {
       ref: 'toolbar',

@@ -34,7 +34,7 @@ export default {
       }));
     }
     const tabList = c('f7-list', { attrs: { inset: true } }, tabButtons);
-    children.push(c('f7-popover', { attrs: { id: this.popoverId } }, [ tabList ]));
+    children.push(c('f7-popover', { attrs: { id: this.popoverId } }, [tabList]));
     return c('div', children);
   },
   data() {
@@ -54,6 +54,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>

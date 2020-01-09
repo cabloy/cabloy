@@ -24,7 +24,7 @@ export default {
     const mine = c('eb-mine', {
       staticClass: 'mine',
     });
-    return c('div', { staticClass: 'eb-layout-header' }, [ title, tabs, buttons, mine ]);
+    return c('div', { staticClass: 'eb-layout-header' }, [title, tabs, buttons, mine]);
   },
   computed: {
     title() {
