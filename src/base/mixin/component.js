@@ -9,7 +9,7 @@ export default function() {
     });
     Object.defineProperty(ctx, '$page', {
       get() {
-        const pageEl = ctx.$$(ctx.$el).parents('.page');
+        const pageEl = ctx.$$(ctx.$el).closest('.page');
         let page = pageEl.length > 0 && pageEl[0].__vue__;
         if (!page) return null;
         while (page.$parent.$options._componentTag !== 'eb-view') {
