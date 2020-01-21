@@ -9,10 +9,10 @@ module.exports = () => {
       await next();
 
       // check if success
-      if (ctx.response.body && ctx.response.body.code !== 0) {
-        await handleTransaction(ctx, false);
-      } else {
+      if (checkIfSucess(ctx)) {
         await handleTransaction(ctx, true);
+      } else {
+        await handleTransaction(ctx, false);
       }
     } catch (err) {
       await handleTransaction(ctx, false);
@@ -21,6 +21,13 @@ module.exports = () => {
 
   };
 };
+
+function checkIfSucess(ctx) {
+  if (typeof ctx.response.body === 'object' && ctx.response.body && ctx.response.body.code !== undefined) {
+    return ctx.response.body.code === 0;
+  }
+  return ctx.response.status === 200;
+}
 
 async function handleTransaction(ctx, success) {
   if (!ctx.dbMeta.master) return;
