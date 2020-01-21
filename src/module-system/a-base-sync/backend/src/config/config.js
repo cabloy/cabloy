@@ -113,7 +113,7 @@ module.exports = appInfo => {
   // auth
   config.auth = {
     avatar: {
-      timeout: 10000,
+      timeout: 5000,
       default: 'https://cabloy.com/plugins/cms-pluginbase/assets/images/avatar_user.png',
     },
   };
