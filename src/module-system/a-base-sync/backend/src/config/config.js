@@ -110,5 +110,13 @@ module.exports = appInfo => {
   // httpLog
   config.httpLog = true;
 
+  // auth
+  config.auth = {
+    avatar: {
+      timeout: 10000,
+      default: 'https://cabloy.com/plugins/cms-pluginbase/assets/images/avatar_user.png',
+    },
+  };
+
   return config;
 };

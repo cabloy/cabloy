@@ -1448,6 +1448,17 @@ module.exports = ctx => {
       return verifyUser;
     }
 
+    async _downloadAvatar({ avatar }) {
+      const timeout = this.config.auth.avatar.timeout;
+      let res;
+      try {
+        res = await ctx.curl(avatar, { method: 'GET', timeout });
+      } catch (err) {
+        res = await ctx.curl(this.config.auth.avatar.default, { method: 'GET', timeout });
+      }
+      return res;
+    }
+
     async _prepareAvatar({ authItem, profile }) {
       // avatar
       let avatarOld;
@@ -1457,7 +1468,7 @@ module.exports = ctx => {
       }
       if (!profile.avatar || profile.avatar === avatarOld) return;
       // download image
-      const res = await ctx.curl(profile.avatar, { method: 'GET', timeout: 10000 });
+      const res = await this._downloadAvatar({ avatar: profile.avatar });
       // meta
       const mime = res.headers['content-type'] || '';
       const ext = mime.split('/')[1] || '';
@@ -1823,6 +1834,14 @@ module.exports = appInfo => {
 
   // httpLog
   config.httpLog = true;
+
+  // auth
+  config.auth = {
+    avatar: {
+      timeout: 10000,
+      default: 'https://cabloy.com/plugins/cms-pluginbase/assets/images/avatar_user.png',
+    },
+  };
 
   return config;
 };
