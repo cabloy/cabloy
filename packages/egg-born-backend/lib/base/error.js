@@ -20,7 +20,7 @@ module.exports = ebErrors => {
 
       this.ctx.response.status = 200;
       this.ctx.response.type = 'application/json';
-      this.ctx.response.body = body;
+      this.ctx.response.body = { code: body.code, message: body.message }; // body maybe Error
     }
     // code/message,args
     throw(module, code, ...args) {
