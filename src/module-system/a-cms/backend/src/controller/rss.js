@@ -156,6 +156,7 @@ module.exports = app => {
       const atomId = this.ctx.params.atomId;
       // article
       const article = await this.ctx.service.article._getArticle({ key: { atomId }, inner: false });
+      if (!article) this.ctx.throw.module('a-base', 1002);
       // language
       const language = article.language;
       // options

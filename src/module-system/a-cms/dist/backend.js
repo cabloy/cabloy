@@ -1809,13 +1809,18 @@ module.exports = app => {
   class SiteController extends app.Controller {
 
     async getSite() {
-      const atomClass = this.ctx.request.body.atomClass;
-      const site = await this.ctx.service.site.getSite({
-        atomClass,
-        language: this.ctx.request.body.language,
-        options: this.ctx.request.body.options,
-      });
-      this.ctx.success(site);
+      // not log the error
+      try {
+        const atomClass = this.ctx.request.body.atomClass;
+        const site = await this.ctx.service.site.getSite({
+          atomClass,
+          language: this.ctx.request.body.language,
+          options: this.ctx.request.body.options,
+        });
+        this.ctx.success(site);
+      } catch (err) {
+        this.ctx.fail(err);
+      }
     }
 
     async getConfigSiteBase() {
@@ -2187,6 +2192,7 @@ module.exports = app => {
       const atomId = this.ctx.params.atomId;
       // article
       const article = await this.ctx.service.article._getArticle({ key: { atomId }, inner: false });
+      if (!article) this.ctx.throw.module('a-base', 1002);
       // language
       const language = article.language;
       // options
