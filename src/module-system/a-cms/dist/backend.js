@@ -1201,6 +1201,7 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
       if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.site) {
         // may be more atoms
         for (const key in module.main.meta.base.atoms) {
+          if (module.main.meta.base.atoms[key].info.cms === false) continue;
           // atomClass
           const atomClass = {
             module: module.info.relativeName,
