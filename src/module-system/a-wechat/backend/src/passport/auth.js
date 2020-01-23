@@ -25,22 +25,22 @@ module.exports = app => {
             const config = ctx.config.module(moduleInfo.relativeName).account.public;
             return { appID: config.appID, appSecret: config.appSecret };
           },
-          // getToken(ctx, openid, cb) {
-          //   const name = `wechat-public:${openid}`;
-          //   ctx.cache.db.module(moduleInfo.relativeName).get(name)
-          //     .then(token => {
-          //       cb(null, token);
-          //     })
-          //     .catch(cb);
-          // },
-          // saveToken(ctx, openid, token, cb) {
-          //   const name = `wechat-public:${openid}`;
-          //   ctx.cache.db.module(moduleInfo.relativeName).set(name, token, (token.expires_in - 10) * 1000)
-          //     .then(() => {
-          //       cb(null);
-          //     })
-          //     .catch(cb);
-          // },
+          getToken(ctx, openid, cb) {
+            const name = `wechat-public:${openid}`;
+            ctx.cache.db.module(moduleInfo.relativeName).get(name)
+              .then(token => {
+                cb(null, token);
+              })
+              .catch(cb);
+          },
+          saveToken(ctx, openid, token, cb) {
+            const name = `wechat-public:${openid}`;
+            ctx.cache.db.module(moduleInfo.relativeName).set(name, token, (token.expires_in - 10) * 1000)
+              .then(() => {
+                cb(null);
+              })
+              .catch(cb);
+          },
         },
         handler: app => {
           return {
