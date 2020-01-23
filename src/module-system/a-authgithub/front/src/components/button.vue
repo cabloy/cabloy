@@ -1,5 +1,5 @@
 <template>
-  <img src="../asserts/img/github.png" @click="signIn">
+  <img src="../assets/img/github.png" @click="signIn">
 </template>
 <script>
 export default {

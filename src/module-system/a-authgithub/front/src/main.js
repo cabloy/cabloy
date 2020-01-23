@@ -1,5 +1,5 @@
 import button from './components/button.vue';
-import './asserts/css/module.css';
+import './assets/css/module.css';
 
 let Vue;
 
