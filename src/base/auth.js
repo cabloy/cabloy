@@ -6,6 +6,7 @@ export default function(Vue) {
       instance: null,
       loginInfo: null,
       hashInit: null,
+      reload: false,
     },
     getters: {
       title(state) {
@@ -38,6 +39,9 @@ export default function(Vue) {
       },
       setHashInit(state, hashInit) {
         state.hashInit = hashInit;
+      },
+      setReload(state, reload) {
+        state.reload = reload;
       },
     },
   };

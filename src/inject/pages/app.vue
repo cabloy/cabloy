@@ -78,6 +78,8 @@ export default {
       ops = ops || { echo: false, hash: null };
       // hash
       if (ops.hash && ops.hash !== '/') this.$store.commit('auth/setHashInit', ops.hash);
+      // reload
+      this.$store.commit('auth/setReload', true);
       // echo
       if (ops.echo) {
         this._authEcho(() => {
