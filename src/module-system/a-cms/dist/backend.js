@@ -987,7 +987,7 @@ var env=${JSON.stringify(env, null, 2)};
       // dist
       const pathDist = await this.getPathDist(site, language);
       //   solution: 1
-      // const distPaths = [ 'articles', 'asserts', 'plugins', 'static', 'index.html', 'robots.txt', 'sitemap.xml', 'sitemapindex.xml' ];
+      // const distPaths = [ 'articles', 'assets', 'plugins', 'static', 'index.html', 'robots.txt', 'sitemap.xml', 'sitemapindex.xml' ];
       // for (const item of distPaths) {
       //   await fse.remove(path.join(pathDist, item));
       // }
