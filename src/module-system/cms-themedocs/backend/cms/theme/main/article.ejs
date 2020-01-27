@@ -1,17 +1,5 @@
 <%- await include('../layout/header.ejs') %>
 <%
-
-function _find(categoryId,list){
-  for(const item of list){
-    if(item.id===categoryId) return true;
-    if(item.children && item.children.length>0){
-      const res=_find(categoryId,item.children);
-      if(res) return true;
-    }
-  }
-  return false;
-}
-
   // cache
   if(!site._docTree){
     site._docTree={
@@ -49,15 +37,6 @@ function _find(categoryId,list){
   if(relativeTop){
     env('_docTree.relativeTop',relativeTop);
     env('_docTree.tree',site._docTree.tree[relativeTop.id]);
-    if(!site._docTree.tree[relativeTop.id]){
-      console.log('+ null article: ',relativeTop.id, article.url);
-    }else{
-      if(!_find(article.categoryId,site._docTree.tree[relativeTop.id].list)){
-        console.log('----- article: ',article.url);
-      }else{
-        //console.log('+ article:',article.url);
-      }
-    }
   }
 %>
 <div class="doc-container">
