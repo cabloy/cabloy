@@ -1,5 +1,17 @@
 <%- await include('../layout/header.ejs') %>
 <%
+
+function _find(categoryId,list){
+  for(const item of list){
+    if(item.id===categoryId) return true;
+    if(item.children && item.children.length>0){
+      const res=_find(categoryId,item.children);
+      if(res) return true;
+    }
+  }
+  return false;
+}
+
   // cache
   if(!site._docTree){
     site._docTree={
@@ -15,11 +27,10 @@
       url: '/a/cms/category/relativeTop',
       body: { categoryId: article.categoryId },
     });
-    site._docTree.relativeTop[article.categoryId]=relativeTop;
     // tree
-    let tree=null;
+    let relativeTopTree=null;
     if(relativeTop){
-      tree=await ctx.performAction({
+      relativeTopTree=await ctx.performAction({
         method: 'post',
         url: '/a/cms/category/tree',
         body: {
@@ -27,13 +38,26 @@
           categoryId: relativeTop.id,
         },
       });
-      site._docTree.tree[relativeTop.id]=tree;
+    }
+    // save
+    site._docTree.relativeTop[article.categoryId]=relativeTop;
+    if(relativeTop) {
+      site._docTree.tree[relativeTop.id]=relativeTopTree;
     }
   }
   // env
   if(relativeTop){
     env('_docTree.relativeTop',relativeTop);
     env('_docTree.tree',site._docTree.tree[relativeTop.id]);
+    if(!site._docTree.tree[relativeTop.id]){
+      console.log('+ null article: ',relativeTop.id, article.url);
+    }else{
+      if(!_find(article.categoryId,site._docTree.tree[relativeTop.id].list)){
+        console.log('----- article: ',article.url);
+      }else{
+        //console.log('+ article:',article.url);
+      }
+    }
   }
 %>
 <div class="doc-container">
