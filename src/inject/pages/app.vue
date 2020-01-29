@@ -54,7 +54,9 @@ export default {
     resize() {
       // layout
       const breakpoint = this.$meta.config.layout.breakpoint;
-      let layout = window.document.documentElement.clientWidth > breakpoint ? 'pc' : 'mobile';
+      const windowWidth = window.document.documentElement.clientWidth;
+      const windowHeight = window.document.documentElement.clientHeight;
+      let layout = ((windowWidth < windowHeight) || (windowWidth <= breakpoint)) ? 'mobile' : 'pc';
       if (!this._getLayoutItem(layout)) {
         layout = layout === 'pc' ? 'mobile' : 'pc';
       }
