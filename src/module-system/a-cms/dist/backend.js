@@ -1528,7 +1528,7 @@ module.exports = app => {
     { method: 'post', path: 'category/item', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings', allowInner: true } } },
     { method: 'post', path: 'category/save', controller: category, middlewares: 'validate', meta: {
       validate: { validator: 'category' },
-      right: { type: 'function', module: 'a-settings', name: 'settings', allowInner: true },
+      right: { type: 'function', module: 'a-settings', name: 'settings' },
     } },
     { method: 'post', path: 'category/tree', controller: category }, // not set function right
     { method: 'post', path: 'category/children', controller: category }, // not set function right
