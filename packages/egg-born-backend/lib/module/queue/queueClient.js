@@ -36,7 +36,7 @@ module.exports = function(app) {
         app.meta.messenger.addProvider({
           name: 'queuePush',
           handler: info => {
-            const queueKey = this._combileQueueKey(info);
+            const queueKey = this._combineQueueKey(info);
             // queue
             let queue = this._queues[queueKey];
             if (!queue) {
@@ -68,7 +68,7 @@ module.exports = function(app) {
       });
     }
 
-    _combileQueueKey({ subdomain = '', module = '', queueName = '', queueNameSub = '' }) {
+    _combineQueueKey({ subdomain = '', module = '', queueName = '', queueNameSub = '' }) {
       let queueKey = `${subdomain}||${module}||${queueName}`;
       if (queueNameSub) {
         queueKey += `##${queueNameSub}`;
