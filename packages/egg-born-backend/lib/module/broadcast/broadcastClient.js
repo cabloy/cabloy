@@ -27,12 +27,26 @@ module.exports = function(app) {
             this._performTask(info);
           },
         });
+        app.meta.messenger.addProvider({
+          name: 'reloadEmit',
+          handler: () => {
+            process.send({
+              to: 'master',
+              action: 'reload-worker',
+            });
+          },
+        });
       }
     }
 
     // { subdomain, module, broadcastName, data }
     emit(info) {
       app.meta.messenger.callAgent({ name: 'broadcastEmit', data: info });
+    }
+
+    // this is a special feature
+    reload() {
+      app.meta.messenger.callAgent({ name: 'reloadEmit', data: null });
     }
 
     _performTask({ locale, subdomain, module, broadcastName, data }) {
