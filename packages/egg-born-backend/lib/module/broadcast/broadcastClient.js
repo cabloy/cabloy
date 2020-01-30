@@ -13,6 +13,12 @@ module.exports = function(app) {
         app.meta.messenger.addProvider({
           name: 'broadcastCall',
           handler: async info => {
+            // pid
+            if (info.pid === process.pid) {
+              if (!info.body) info.body = {};
+              info.body.sameAsCaller = true;
+            }
+            // perform
             const ctx = app.createAnonymousContext({
               method: 'post',
               url: info.url,
@@ -41,6 +47,7 @@ module.exports = function(app) {
 
     // { subdomain, module, broadcastName, data }
     emit(info) {
+      info.pid = process.pid;
       app.meta.messenger.callAgent({ name: 'broadcastEmit', data: info });
     }
 
@@ -49,7 +56,7 @@ module.exports = function(app) {
       app.meta.messenger.callAgent({ name: 'reloadEmit', data: null });
     }
 
-    _performTask({ locale, subdomain, module, broadcastName, data }) {
+    _performTask({ pid, locale, subdomain, module, broadcastName, data }) {
       // broadcast config
       const broadcastConfig = app.meta.broadcasts[`${module}:${broadcastName}`];
       // url
@@ -62,6 +69,7 @@ module.exports = function(app) {
       app.meta.messenger.callAll({
         name: 'broadcastCall',
         data: {
+          pid,
           subdomain,
           method: 'post',
           url,
