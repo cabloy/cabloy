@@ -9,6 +9,7 @@ const loadErrors = require('./errors.js');
 const loadConstants = require('./constant.js');
 const loadMessenger = require('./messenger.js');
 const loadQueues = require('./queue/queue.js');
+const loadBroadcasts = require('./broadcast/broadcast.js');
 const loadSchedules = require('./schedule.js');
 const loadStartups = require('./startup.js');
 const loadClusterApp = require('./cluster/app.js');
@@ -32,6 +33,7 @@ module.exports = function(loader) {
     loadModels(loader, modules);
     loadMessenger(loader, modules);
     loadQueues(loader, modules);
+    loadBroadcasts(loader, modules);
     loadSchedules(loader, modules);
     loadStartups(loader, modules);
     loadClusterApp(loader, modules);
@@ -39,6 +41,7 @@ module.exports = function(loader) {
     loadConfig(loader, modules);
     loadMessenger(loader, modules);
     loadQueues(loader, modules);
+    loadBroadcasts(loader, modules);
     loadSchedules(loader, modules);
     loadClusterAgent(loader, modules);
   }
