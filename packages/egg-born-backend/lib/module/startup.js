@@ -3,6 +3,9 @@ const util = require('./util.js');
 
 module.exports = function(loader, modules) {
 
+  // use modulesArray
+  const ebModulesArray = loader.app.meta.modulesArray;
+
   // all startups
   const ebStartups = loader.app.meta.startups = {};
 
@@ -25,8 +28,7 @@ module.exports = function(loader, modules) {
   };
 
   function loadStartups() {
-    Object.keys(modules).forEach(key => {
-      const module = modules[key];
+    for (const module of ebModulesArray) {
       const config = loader.app.meta.configs[module.info.relativeName];
       // module startups
       if (config.startups) {
@@ -40,7 +42,7 @@ module.exports = function(loader, modules) {
           };
         });
       }
-    });
+    }
   }
 
   function wrapTask(key, startup, info) {
