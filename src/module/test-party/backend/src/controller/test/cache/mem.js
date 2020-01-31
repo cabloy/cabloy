@@ -39,7 +39,7 @@ module.exports = app => {
       assert.equal(value, 'zhennann');
 
       // get after timeout
-      await sleep(1200);
+      await sleep(1500);
       value = this.ctx.cache.mem.get(name);
       assert.equal(value, null);
 

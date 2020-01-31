@@ -36,6 +36,12 @@ module.exports = appInfo => {
         path: 'test/feat/queue',
       },
     };
+    // broadcasts
+    config.broadcasts = {
+      broadcastTest: {
+        path: 'test/feat/broadcast',
+      },
+    };
   }
 
   if (appInfo.env === 'unittest' || appInfo.env === 'local') {
