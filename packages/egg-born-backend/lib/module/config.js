@@ -29,7 +29,8 @@ module.exports = function(loader, modules) {
             let _configs;
             let useCache;
             if (context.cache && context.cache.mem) {
-              _configs = context.cache.mem.get('instanceConfigs');
+              const cacheMem = context.cache.mem.module('a-instance');
+              _configs = cacheMem.get('instanceConfigs');
             }
             if (!_configs) {
               _configs = loader.app.meta.configs;
