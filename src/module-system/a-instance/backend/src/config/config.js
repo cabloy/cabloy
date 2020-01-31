@@ -11,9 +11,20 @@ module.exports = appInfo => {
     },
   };
 
-  // cache
-  config.cache = {
-    timeout: 3 * 1000, // 3s
+  // startups
+  config.startups = {
+    startupInstance: {
+      type: 'all',
+      instance: true,
+      path: 'instance/startup',
+    },
+  };
+
+  // broadcasts
+  config.broadcasts = {
+    resetCache: {
+      path: 'instance/broadcast/resetCache',
+    },
   };
 
   return config;

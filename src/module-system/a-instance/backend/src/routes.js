@@ -14,4 +14,6 @@ module.exports = [
     },
   },
   { method: 'post', path: 'instance/getConfigsPreview', controller: instance, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
+  { method: 'post', path: 'instance/startup', controller: instance, middlewares: 'inner', meta: { instance: { enable: true } } },
+  { method: 'post', path: 'instance/broadcast/resetCache', controller: instance, middlewares: 'inner' },
 ];

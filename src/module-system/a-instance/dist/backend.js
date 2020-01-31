@@ -144,6 +144,8 @@ module.exports = [
     },
   },
   { method: 'post', path: 'instance/getConfigsPreview', controller: instance, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
+  { method: 'post', path: 'instance/startup', controller: instance, middlewares: 'inner', meta: { instance: { enable: true } } },
+  { method: 'post', path: 'instance/broadcast/resetCache', controller: instance, middlewares: 'inner' },
 ];
 
 
@@ -191,6 +193,16 @@ module.exports = app => {
     async getConfigsPreview() {
       const res = await this.service.instance.getConfigsPreview();
       this.ctx.success(res);
+    }
+
+    async startup() {
+      // do nothing
+      this.ctx.success();
+    }
+
+    async resetCache() {
+      // do nothing
+      this.ctx.success();
     }
 
   }
@@ -306,10 +318,18 @@ module.exports = app => {
     }
 
     async save({ data }) {
+      // update
       await this.ctx.db.update('aInstance', {
         id: this.ctx.instance.id,
         title: data.title,
         config: data.config,
+      });
+      // broadcast
+      this.ctx.app.meta.broadcast.emit({
+        subdomain: this.ctx.subdomain,
+        module: 'a-instance',
+        broadcastName: 'resetCache',
+        data: null,
       });
     }
 
@@ -344,9 +364,20 @@ module.exports = appInfo => {
     },
   };
 
-  // cache
-  config.cache = {
-    timeout: 3 * 1000, // 3s
+  // startups
+  config.startups = {
+    startupInstance: {
+      type: 'all',
+      instance: true,
+      path: 'instance/startup',
+    },
+  };
+
+  // broadcasts
+  config.broadcasts = {
+    resetCache: {
+      path: 'instance/broadcast/resetCache',
+    },
   };
 
   return config;
@@ -402,40 +433,50 @@ const boxen = require3('boxen');
 
 const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' };
 
-module.exports = () => {
-  return async function instance(ctx, next) {
+const regexURL_resetCache = /\/a\/instance\/instance\/broadcast\/resetCache/;
+const regexURL_versionInit = /\/version\/init/;
 
-    const timeout = ctx.config.module('a-instance').cache.timeout;
-    let instance = timeout > 0 ? ctx.cache.mem.get('instance') : null;
+module.exports = (options, app) => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  return async function instance(ctx, next) {
+    // cache
+    const cacheMem = ctx.cache.mem.module(moduleInfo.relativeName);
+    let instance = regexURL_resetCache.test(ctx.url) ? null : cacheMem.get('instance');
     if (!instance) {
       instance = await ctx.db.get('aInstance', { name: ctx.subdomain });
       if (instance) {
         // config
         instance.config = JSON.parse(instance.config) || {};
-        // ctx.host ctx.protocol
-        if (ctxHostValid(ctx)) {
-          if (!instance.config['a-base']) instance.config['a-base'] = {};
-          const aBase = instance.config['a-base'];
-          if (aBase.host !== ctx.host || aBase.protocol !== ctx.protocol) {
-            aBase.host = ctx.host;
-            aBase.protocol = ctx.protocol;
-            await ctx.db.update('aInstance', {
-              id: instance.id,
-              config: JSON.stringify(instance.config) });
-          }
-        }
         // cache configs
         const instanceConfigs = extend(true, {}, ctx.app.meta.configs, instance.config);
-        ctx.cache.mem.set('instanceConfigs', instanceConfigs);
-        // cache
-        //   if !host && !protocol then try to get them on next call
-        if (ctxHostValid(ctx) && timeout > 0) {
-          ctx.cache.mem.set('instance', instance, timeout);
-        }
+        cacheMem.set('instanceConfigs', instanceConfigs);
+        // cache instance
+        cacheMem.set('instance', instance);
       }
     }
 
-    if (!/\/version\/init/.test(ctx.request.url) && (!instance || instance.disabled)) {
+    // try to save host/protocol to config
+    if (instance && !instance.disabled && ctxHostValid(ctx)) {
+      if (!instance.config['a-base']) instance.config['a-base'] = {};
+      const aBase = instance.config['a-base'];
+      if (aBase.host !== ctx.host || aBase.protocol !== ctx.protocol) {
+        aBase.host = ctx.host;
+        aBase.protocol = ctx.protocol;
+        // update
+        await ctx.db.update('aInstance', {
+          id: instance.id,
+          config: JSON.stringify(instance.config) });
+        // broadcast
+        ctx.app.meta.broadcast.emit({
+          subdomain: ctx.subdomain,
+          module: 'a-instance',
+          broadcastName: 'resetCache',
+          data: null,
+        });
+      }
+    }
+
+    if (!regexURL_versionInit.test(ctx.request.url) && (!instance || instance.disabled)) {
       // prompt
       if (!instance && ctx.app.meta.isLocal) {
         const urlInfo = ctx.locale === 'zh-cn' ? 'https://cabloy.com/zh-cn/articles/multi-instance.html' : 'https://cabloy.com/articles/multi-instance.html';
@@ -456,7 +497,7 @@ module.exports = () => {
 };
 
 function ctxHostValid(ctx) {
-  return ctx.host && ctx.protocol && ctx.host !== '127.0.0.1' && ctx.host !== 'localhost';
+  return !ctx.innerAccess && ctx.host && ctx.protocol && ctx.host !== '127.0.0.1' && ctx.host !== 'localhost';
 }
 
 

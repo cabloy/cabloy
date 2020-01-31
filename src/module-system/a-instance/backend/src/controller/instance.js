@@ -18,6 +18,16 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async startup() {
+      // do nothing
+      this.ctx.success();
+    }
+
+    async resetCache() {
+      // do nothing
+      this.ctx.success();
+    }
+
   }
   return InstanceController;
 };

@@ -10,10 +10,18 @@ module.exports = app => {
     }
 
     async save({ data }) {
+      // update
       await this.ctx.db.update('aInstance', {
         id: this.ctx.instance.id,
         title: data.title,
         config: data.config,
+      });
+      // broadcast
+      this.ctx.app.meta.broadcast.emit({
+        subdomain: this.ctx.subdomain,
+        module: 'a-instance',
+        broadcastName: 'resetCache',
+        data: null,
       });
     }
 
