@@ -6,7 +6,10 @@ module.exports = app => {
   class BroadcastController extends app.Controller {
 
     async broadcast() {
-      const message = this.ctx.request.body.message;
+      const { sameAsCaller, message } = this.ctx.request.body;
+      if (!sameAsCaller) {
+        // do something
+      }
       assert.equal(message, 'hello');
       this.ctx.success();
     }
