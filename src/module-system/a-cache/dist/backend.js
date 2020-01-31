@@ -221,6 +221,16 @@ module.exports = appInfo => {
     },
   };
 
+  // broadcasts
+  config.broadcasts = {
+    memRemove: {
+      path: 'broadcast/memRemove',
+    },
+    memClear: {
+      path: 'broadcast/memClear',
+    },
+  };
+
   return config;
 };
 
@@ -446,10 +456,36 @@ const Fn = module.exports = ctx => {
     }
 
     remove(name) {
+      // remove this
+      this._remove(name);
+      // broadcast
+      ctx.app.meta.broadcast.emit({
+        subdomain: ctx.subdomain,
+        module: 'a-cache',
+        broadcastName: 'memRemove',
+        data: { moduleName: this.moduleName, name },
+      });
+    }
+
+    // by broadcast
+    _remove(name) {
       delete this.memory[name];
     }
 
     clear() {
+      // clear this
+      this._clear();
+      // broadcast
+      ctx.app.meta.broadcast.emit({
+        subdomain: ctx.subdomain,
+        module: 'a-cache',
+        broadcastName: 'memClear',
+        data: { moduleName: this.moduleName },
+      });
+    }
+
+    // by broadcast
+    _clear() {
       ctx.app[CACHEMEMORY][ctx.subdomain][this.moduleName] = {};
     }
 
@@ -465,6 +501,7 @@ const Fn = module.exports = ctx => {
 
 const version = __webpack_require__(14);
 const db = __webpack_require__(15);
+const broadcast = __webpack_require__(16);
 
 module.exports = app => {
   const routes = [
@@ -472,6 +509,9 @@ module.exports = app => {
     { method: 'post', path: 'db/set', controller: db, middlewares: 'inner',
       meta: { auth: { enable: false } },
     },
+    // broadcast
+    { method: 'post', path: 'broadcast/memRemove', controller: broadcast, middlewares: 'inner' },
+    { method: 'post', path: 'broadcast/memClear', controller: broadcast, middlewares: 'inner' },
   ];
   return routes;
 };
@@ -510,6 +550,39 @@ module.exports = app => {
   }
 
   return DbController;
+};
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+
+  class BroadcastController extends app.Controller {
+
+    async memRemove() {
+      const { sameAsCaller, moduleName, name } = this.ctx.request.body;
+      if (!sameAsCaller) {
+        const moduleCache = this.ctx.cache.mem.module(moduleName);
+        moduleCache._remove(name);
+      }
+      this.ctx.success();
+    }
+
+    async memClear() {
+      const { sameAsCaller, moduleName } = this.ctx.request.body;
+      if (!sameAsCaller) {
+        const moduleCache = this.ctx.cache.mem.module(moduleName);
+        moduleCache._clear();
+      }
+      this.ctx.success();
+    }
+
+  }
+
+  return BroadcastController;
+
 };
 
 

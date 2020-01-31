@@ -20,5 +20,15 @@ module.exports = appInfo => {
     },
   };
 
+  // broadcasts
+  config.broadcasts = {
+    memRemove: {
+      path: 'broadcast/memRemove',
+    },
+    memClear: {
+      path: 'broadcast/memClear',
+    },
+  };
+
   return config;
 };

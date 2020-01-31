@@ -37,10 +37,36 @@ const Fn = module.exports = ctx => {
     }
 
     remove(name) {
+      // remove this
+      this._remove(name);
+      // broadcast
+      ctx.app.meta.broadcast.emit({
+        subdomain: ctx.subdomain,
+        module: 'a-cache',
+        broadcastName: 'memRemove',
+        data: { moduleName: this.moduleName, name },
+      });
+    }
+
+    // by broadcast
+    _remove(name) {
       delete this.memory[name];
     }
 
     clear() {
+      // clear this
+      this._clear();
+      // broadcast
+      ctx.app.meta.broadcast.emit({
+        subdomain: ctx.subdomain,
+        module: 'a-cache',
+        broadcastName: 'memClear',
+        data: { moduleName: this.moduleName },
+      });
+    }
+
+    // by broadcast
+    _clear() {
       ctx.app[CACHEMEMORY][ctx.subdomain][this.moduleName] = {};
     }
 
