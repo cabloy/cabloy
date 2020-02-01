@@ -1,7 +1,7 @@
 <template>
   <eb-page>
     <eb-navbar title="Fraction Pagination" eb-back-link="Back"></eb-navbar>
-    <div data-pagination="{'el': '.swiper-pagination', 'type': 'fraction'}" class="swiper-container swiper-init demo-swiper">
+    <div data-pagination='{"el": ".swiper-pagination", "type": "fraction"}' class="swiper-container swiper-init demo-swiper">
       <div class="swiper-pagination"></div>
       <div class="swiper-wrapper">
         <div class="swiper-slide">Slide 1</div>

@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar title="Custom Controls" eb-back-link="Back"></eb-navbar>
     <div class="demo-swiper-custom">
-      <div data-pagination="{'el': '.swiper-pagination', 'clickable': true}" data-navigation="{'nextEl': '.swiper-button-next', 'prevEl': '.swiper-button-prev'}" data-space-between="0" class="swiper-container swiper-init">
+      <div data-pagination='{"el": ".swiper-pagination", "clickable": true}' data-navigation='{"nextEl": ".swiper-button-next", "prevEl": ".swiper-button-prev"}' data-space-between="0" class="swiper-container swiper-init">
         <div class="swiper-pagination"></div>
         <div class="swiper-wrapper">
           <div style="background-image:url(https://cdn.framework7.io/placeholder/nightlife-1024x1024-1.jpg)" class="swiper-slide"></div>

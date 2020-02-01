@@ -1,7 +1,7 @@
 <template>
   <eb-page>
     <eb-navbar title="Vertical Swiper" eb-back-link="Back"></eb-navbar>
-    <div data-direction="vertical" data-pagination="{'el': '.swiper-pagination', 'hideOnClick': true}" class="swiper-container swiper-init demo-swiper">
+    <div data-direction="vertical" data-pagination='{"el": ".swiper-pagination", "hideOnClick": true}' class="swiper-container swiper-init demo-swiper">
       <div class="swiper-pagination"></div>
       <div class="swiper-wrapper">
         <div class="swiper-slide">Slide 1</div>

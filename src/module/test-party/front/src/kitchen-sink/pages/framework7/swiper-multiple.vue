@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar title="Multiple Swipers" eb-back-link="Back"></eb-navbar>
     <f7-block-title>1 Slide Per View, 50px Between</f7-block-title>
-    <div data-pagination="{'el': '.swiper-pagination'}" data-space-between="50" class="swiper-container swiper-init demo-swiper-multiple">
+    <div data-pagination='{"el": ".swiper-pagination"}' data-space-between="50" class="swiper-container swiper-init demo-swiper-multiple">
       <div class="swiper-pagination"></div>
       <div class="swiper-wrapper">
         <div class="swiper-slide">Slide 1</div>
@@ -18,7 +18,7 @@
       </div>
     </div>
     <f7-block-title>2 Slides Per View, 20px Between</f7-block-title>
-    <div data-pagination="{'el': '.swiper-pagination'}" data-space-between="20" data-slides-per-view="2" class="swiper-container swiper-init demo-swiper-multiple">
+    <div data-pagination='{"el": ".swiper-pagination"}' data-space-between="20" data-slides-per-view="2" class="swiper-container swiper-init demo-swiper-multiple">
       <div class="swiper-pagination"></div>
       <div class="swiper-wrapper">
         <div class="swiper-slide">Slide 1</div>
@@ -34,7 +34,7 @@
       </div>
     </div>
     <f7-block-title>3 Slides Per View, 10px Between</f7-block-title>
-    <div data-pagination="{'el': '.swiper-pagination'}" data-space-between="10" data-slides-per-view="3" class="swiper-container swiper-init demo-swiper-multiple">
+    <div data-pagination='{"el": ".swiper-pagination"}' data-space-between="10" data-slides-per-view="3" class="swiper-container swiper-init demo-swiper-multiple">
       <div class="swiper-pagination"></div>
       <div class="swiper-wrapper">
         <div class="swiper-slide">Slide 1</div>
@@ -50,7 +50,7 @@
       </div>
     </div>
     <f7-block-title>Auto Slides Per View + Centered</f7-block-title>
-    <div data-pagination="{'el': '.swiper-pagination'}" data-space-between="10" data-slides-per-view="auto" data-centered-slides="true" class="swiper-container swiper-init demo-swiper-multiple demo-swiper-multiple-auto">
+    <div data-pagination='{"el": ".swiper-pagination"}' data-space-between="10" data-slides-per-view="auto" data-centered-slides="true" class="swiper-container swiper-init demo-swiper-multiple demo-swiper-multiple-auto">
       <div class="swiper-pagination"></div>
       <div class="swiper-wrapper">
         <div class="swiper-slide">Slide 1</div>
@@ -66,7 +66,7 @@
       </div>
     </div>
     <f7-block-title>Vertical, 10px Between</f7-block-title>
-    <div data-pagination="{'el': '.swiper-pagination'}" data-space-between="10" data-direction="vertical" class="swiper-container swiper-init demo-swiper-multiple">
+    <div data-pagination='{"el": ".swiper-pagination"}' data-space-between="10" data-direction="vertical" class="swiper-container swiper-init demo-swiper-multiple">
       <div class="swiper-pagination"></div>
       <div class="swiper-wrapper">
         <div class="swiper-slide">Slide 1</div>
@@ -77,7 +77,7 @@
       </div>
     </div>
     <f7-block-title>Slow speed</f7-block-title>
-    <div data-speed="900" data-pagination="{'el': '.swiper-pagination'}" data-space-between="50" class="swiper-container swiper-init demo-swiper-multiple">
+    <div data-speed="900" data-pagination='{"el": ".swiper-pagination"}' data-space-between="50" class="swiper-container swiper-init demo-swiper-multiple">
       <div class="swiper-pagination"></div>
       <div class="swiper-wrapper">
         <div class="swiper-slide">Slide 1</div>

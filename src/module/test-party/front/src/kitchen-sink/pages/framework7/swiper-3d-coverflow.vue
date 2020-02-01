@@ -1,7 +1,7 @@
 <template>
   <eb-page>
     <eb-navbar title="3D Coverflow Effect" eb-back-link="Back"></eb-navbar>
-    <div data-pagination="{'el': '.swiper-pagination'}" data-effect="coverflow" data-slides-per-view="auto" data-centered-slides="true" class="swiper-container swiper-init demo-swiper demo-swiper-coverflow">
+    <div data-pagination='{"el": ".swiper-pagination"}' data-effect="coverflow" data-slides-per-view="auto" data-centered-slides="true" class="swiper-container swiper-init demo-swiper demo-swiper-coverflow">
       <div class="swiper-pagination"></div>
       <div class="swiper-wrapper">
         <div style="background-image:url(https://cdn.framework7.io/placeholder/nature-800x800-1.jpg)" class="swiper-slide">Slide 1</div>

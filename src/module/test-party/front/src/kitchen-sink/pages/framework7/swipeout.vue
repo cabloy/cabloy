@@ -172,20 +172,20 @@ export default {
         hostEl,
         buttons: [
           [{
-            text: 'Here comes some optional description or warning for actions below',
-            label: true,
-          },
-          {
-            text: 'Action 1',
-          },
-          {
-            text: 'Action 2',
-          },
+              text: 'Here comes some optional description or warning for actions below',
+              label: true,
+            },
+            {
+              text: 'Action 1',
+            },
+            {
+              text: 'Action 2',
+            },
           ],
           [{
             text: 'Cancel',
             bold: true,
-          },],
+          }, ],
         ],
       });
     },

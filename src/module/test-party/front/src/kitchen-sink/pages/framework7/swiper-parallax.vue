@@ -1,7 +1,7 @@
 <template>
   <eb-page>
     <eb-navbar title="Parallax" eb-back-link="Back"></eb-navbar>
-    <div data-pagination="{'el': '.swiper-pagination'}" data-navigation="{'nextEl': '.swiper-button-next', 'prevEl': '.swiper-button-prev'}" data-parallax="true" data-speed="600" class="swiper-container swiper-init demo-swiper-parallax">
+    <div data-pagination='{"el": ".swiper-pagination"}' data-navigation='{"nextEl": ".swiper-button-next", "prevEl": ".swiper-button-prev"}' data-parallax="true" data-speed="600" class="swiper-container swiper-init demo-swiper-parallax">
       <div data-swiper-parallax="-23%" style="background-image:url(https://cdn.framework7.io/placeholder/nightlife-1024x1024-2.jpg)" class="swiper-parallax-bg"></div>
       <div class="swiper-pagination color-white"></div>
       <div class="swiper-button-next color-white"></div>
