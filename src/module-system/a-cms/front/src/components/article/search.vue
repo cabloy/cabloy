@@ -1,11 +1,11 @@
 <template>
-  <f7-list>
+  <eb-list form no-hairlines-md @submit="onSubmit">
     <eb-list-item-validate dataKey="language" :meta="{options:languages}" @change="onChangeLanguage"></eb-list-item-validate>
     <eb-list-item-choose link="#" dataPath="categoryId" :title="$text('Category')" :onChoose="onChooseCategory">
       <div slot="after">{{data.categoryName}}</div>
     </eb-list-item-choose>
     <eb-list-item-validate dataKey="content"></eb-list-item-validate>
-  </f7-list>
+  </eb-list>
 </template>
 <script>
 import utils from '../../common/utils.js';
@@ -35,6 +35,9 @@ export default {
     });
   },
   methods: {
+    onSubmit(event) {
+      this.$emit('submit', event);
+    },
     combineAtomClass(url) {
       return utils.combineAtomClass(this.atomClass, url);
     },
