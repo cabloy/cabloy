@@ -16,7 +16,7 @@
         <div slot="after">{{atomClassTitle}}</div>
       </f7-list-item>
     </eb-list>
-    <eb-validate v-if="item && validateParams" ref="validate" auto :data="item" :params="validateParams">
+    <eb-validate v-if="item && validateParams" ref="validate" auto :data="item" :params="validateParams" @submit.prevent="onFormSubmit">
     </eb-validate>
   </eb-page>
 </template>
@@ -25,7 +25,7 @@ import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.components.ebPageContext;
 import ebAtomClasses from '../../common/atomClasses.js';
 export default {
-  mixins: [ ebPageContext, ebAtomClasses ],
+  mixins: [ebPageContext, ebAtomClasses],
   data() {
     const query = this.$f7route.query;
     const module = query && query.module;
