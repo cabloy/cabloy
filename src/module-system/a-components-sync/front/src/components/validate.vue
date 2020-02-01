@@ -160,10 +160,10 @@ export default {
     renderSchema(c) {
       const children = this.renderProperties(c, this.data, this.schema.properties, '');
       return c('eb-list', {
-        attrs: { form: true, noHairlinesMd: true },
-        on: { submit: this.onSubmit },
-      },
-      children);
+          attrs: { form: true, noHairlinesMd: true },
+          on: { submit: this.onSubmit },
+        },
+        children);
     },
     renderProperties(c, data, properties, pathParent) {
       const children = [];
