@@ -884,8 +884,8 @@ var env=${JSON.stringify(env, null, 2)};
       env(name, value) {
         _envs[name] = value;
       },
-      text(str) {
-        return this.ctx.text.locale(site.language.current, str);
+      text(...args) {
+        return this.ctx.text.locale(site.language.current, ...args);
       },
       util: {
         time,
