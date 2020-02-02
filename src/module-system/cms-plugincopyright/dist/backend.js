@@ -91,19 +91,19 @@ module.exports =
 
 const config = __webpack_require__(1);
 const locales = __webpack_require__(2);
-const errors = __webpack_require__(4);
-const middlewares = __webpack_require__(5);
+const errors = __webpack_require__(5);
+const middlewares = __webpack_require__(6);
 
 module.exports = app => {
 
   // routes
-  const routes = __webpack_require__(6)(app);
+  const routes = __webpack_require__(7)(app);
   // services
-  const services = __webpack_require__(8)(app);
+  const services = __webpack_require__(10)(app);
   // models
-  const models = __webpack_require__(10)(app);
+  const models = __webpack_require__(12)(app);
   // meta
-  const meta = __webpack_require__(11)(app);
+  const meta = __webpack_require__(13)(app);
 
   return {
     routes,
@@ -129,10 +129,24 @@ module.exports = appInfo => {
 
   // plugin
   config.plugin = {
-    track: {
-      google: '',
-      baidu: '',
-      qq: '',
+    default: 'simple',
+    copyrights: {
+      none: null,
+      simple: {
+        fields: [
+          { title: 'Author', value: '{{params.article.userName}}' },
+          { title: 'Link', value: '<a href="{{params.url(params.article.url)}}">{{params.url(params.article.url)}}</a>' },
+          { title: 'MarkdownSource', value: '<a href="{{`${params.site.serverUrl}/api/cms/plugincopyright/util/md/${params.article.atomId}`}}">{{`${params.site.serverUrl}/api/cms/plugincopyright/util/md/${params.article.atomId}`}}</a>' },
+        ],
+      },
+      license: {
+        fields: [
+          { title: 'Author', value: '{{params.article.userName}}' },
+          { title: 'Link', value: '<a href="{{params.url(params.article.url)}}">{{params.url(params.article.url)}}</a>' },
+          { title: 'MarkdownSource', value: '<a href="{{`${params.site.serverUrl}/api/cms/plugincopyright/util/md/${params.article.atomId}`}}">{{`${params.site.serverUrl}/api/cms/plugincopyright/util/md/${params.article.atomId}`}}</a>' },
+          { title: 'CopyrightLicenseTitle', value: '{{params.text(\'CopyrightLicenseContent\',\'<a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><span class="glyphicon glyphicon-subtitles"></span> BY-NC-SA 4.0</a>\')}}' },
+        ],
+      },
     },
   };
 
@@ -145,7 +159,8 @@ module.exports = appInfo => {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
-  'zh-cn': __webpack_require__(3),
+  'en-us': __webpack_require__(3),
+  'zh-cn': __webpack_require__(4),
 };
 
 
@@ -154,11 +169,27 @@ module.exports = {
 /***/ (function(module, exports) {
 
 module.exports = {
+  MarkdownSource: 'Markdown Source',
+  CopyrightLicenseTitle: 'Copyright Notice',
+  CopyrightLicenseContent: 'All articles in this blog are licensed under %s unless stating additionally.',
 };
 
 
 /***/ }),
 /* 4 */
+/***/ (function(module, exports) {
+
+module.exports = {
+  Author: '作者',
+  Link: '链接',
+  MarkdownSource: 'Markdown源文件',
+  CopyrightLicenseTitle: '版权声明',
+  CopyrightLicenseContent: '本博客所有文章除特别声明外，均采用 %s 许可协议。转载请注明出处！',
+};
+
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports) {
 
 // error code should start from 1001
@@ -167,7 +198,7 @@ module.exports = {
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -175,10 +206,11 @@ module.exports = {
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(7);
+const version = __webpack_require__(8);
+const util = __webpack_require__(9);
 
 module.exports = app => {
   const routes = [
@@ -186,13 +218,15 @@ module.exports = app => {
     { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/test', controller: version, middlewares: 'test' },
+    // util
+    { method: 'get', path: 'util/md/:atomId', controller: util, action: 'md' },
   ];
   return routes;
 };
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -219,10 +253,36 @@ module.exports = app => {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+
+  class UtilController extends app.Controller {
+
+    async md() {
+      // atomId
+      const atomId = this.ctx.params.atomId;
+      // article
+      const article = await this.ctx.meta.atom.read({ key: { atomId }, user: this.ctx.user.op });
+      if (!article) this.ctx.throw.module('a-base', 1002);
+      // ok
+      this.ctx.status = 200;
+      this.ctx.body = article.content;
+      this.ctx.set('content-type', 'text/x-markdown; charset=UTF-8');
+    }
+
+  }
+  return UtilController;
+};
+
+
+
+/***/ }),
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(9);
+const version = __webpack_require__(11);
 
 module.exports = app => {
   const services = {
@@ -233,7 +293,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -256,7 +316,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -267,11 +327,11 @@ module.exports = app => {
 
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
-  const schemas = __webpack_require__(12)(app);
+  const schemas = __webpack_require__(14)(app);
   const meta = {
     base: {
       atoms: {
@@ -292,7 +352,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
