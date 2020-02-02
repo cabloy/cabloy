@@ -1,0 +1,27 @@
+{
+  "name": "egg-born-module-cms-plugincopyright",
+  "version": "1.0.0",
+  "title": "cms:plugin:copyright",
+  "eggBornModule": {
+    "cms": {
+      "name": "copyright",
+      "plugin": true
+    },
+    "dependencies": {
+      "a-instance": "2.0.0",
+      "cms-pluginbase": "2.0.0"
+    }
+  },
+  "description": "",
+  "scripts": {
+    "build:front": "node build/front/build.js",
+    "build:backend": "node build/backend/build.js",
+    "lint": "eslint front backend"
+  },
+  "author": "zhennann",
+  "devDependencies": {},
+  "dependencies": {
+    "require3": "^1.0.1",
+    "extend2": "^1.0.0"
+  }
+}

@@ -1,0 +1,29 @@
+<%
+  const _copyrightReplaceParams={
+    ctx,site,require,url,css,js,env,text,util,article,_filename,_path
+  };
+  function _copyrightReplace(content){
+    if (!content) return '';
+    return content.toString().replace(/(\\)?{{(.*?)}}/g, (block, skip, key) => {
+      if (skip) {
+        return block.substring(skip.length);
+      }
+      const _fn=new Function('params',`return (${key});`);
+      return _fn(_copyrightReplaceParams);
+    });
+  }
+  const copyrightExtra=article.extra?JSON.parse(article.extra):null;
+  const configCopyright=site.plugins['cms-plugincopyright'];
+  const copyright=configCopyright.copyrights[(copyrightExtra && copyrightExtra.copyright) || configCopyright.default];
+%>
+<% if(copyright && copyright.fields){ %>
+<div class="article-copyright">
+<ul>
+  <% for(const field of copyright.fields) { %>
+    <li>
+      <span class="copyright-title"><%=text(field.title)%></span>: <span class="copyright-value"><%-_copyrightReplace(field.value)%></span>
+    </li>
+  <% } %>
+</ul>
+</div>
+<% } %>
