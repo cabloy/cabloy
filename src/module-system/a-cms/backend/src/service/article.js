@@ -47,8 +47,8 @@ module.exports = app => {
     }
 
     async read({ atomClass, key, item, user }) {
-      // read
-      this._getMeta(item, false);
+      // read: showSorting=true
+      this._getMeta(item, true);
     }
 
     async select({ atomClass, options, items, user }) {
