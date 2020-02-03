@@ -16,8 +16,9 @@ const front = {
   },
   dev: {
     title,
-    hostname: '',
+    hostname: 'localhost',
     port: 9092,
+    // proxyBaseURL: 'http://localhost:7002',
   },
 };
 
