@@ -33,7 +33,7 @@ import Vue from 'vue';
 import atoms from './list.vue';
 import ebAtomActions from '../../common/atomActions.js';
 export default {
-  mixins: [ ebAtomActions ],
+  mixins: [ebAtomActions],
   meta: {
     global: false,
   },
