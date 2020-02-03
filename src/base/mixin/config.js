@@ -22,6 +22,9 @@ export default function(Vue) {
         module: 'a-markdownstyle',
       },
     },
+    api: {
+      baseURL: '',
+    },
   };
 
   // beforeCreate

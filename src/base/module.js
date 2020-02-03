@@ -240,9 +240,13 @@ export default function(Vue) {
     _registerConfig(module) {
       if (module.name === 'main') {
         Vue.prototype.$utils.extend(Vue.prototype.$meta.config, module.options.config);
+        // baseURL
+        if(Vue.prototype.$meta.config.api.baseURL){
+          Vue.prototype.$meta.axios.defaults.baseURL=Vue.prototype.$meta.config.api.baseURL;
+        }
       } else {
         Vue.prototype.$meta.config.modules[module.info.relativeName] =
-       Vue.prototype.$utils.extend({}, module.options.config, Vue.prototype.$meta.config.modules[module.info.relativeName]);
+        Vue.prototype.$utils.extend({}, module.options.config, Vue.prototype.$meta.config.modules[module.info.relativeName]);
       }
     },
     _registerLocales(module) {

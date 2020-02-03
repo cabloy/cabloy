@@ -3,6 +3,8 @@ const path = require('path');
 const merge = require('webpack-merge');
 const config = require('../../../build/config.js');
 
+const proxyTarget = config.front.dev.proxyBaseURL || `http://${config.backend.hostname}:${config.backend.port}`;
+
 module.exports = merge({
   build: {
     env: require('./prod.env'),
@@ -21,15 +23,15 @@ module.exports = merge({
     assetsPublicPath: '',
     proxyTable: {
       '/favicon.ico': {
-        target: `http://${config.backend.hostname}:${config.backend.port}`,
+        target: proxyTarget,
         xfwd: true,
       },
       '/api': {
-        target: `http://${config.backend.hostname}:${config.backend.port}`,
+        target: proxyTarget,
         xfwd: true,
       },
       '/public': {
-        target: `http://${config.backend.hostname}:${config.backend.port}`,
+        target: proxyTarget,
         xfwd: true,
       },
     },

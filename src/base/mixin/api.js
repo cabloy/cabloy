@@ -2,6 +2,9 @@ import axios from 'axios';
 
 export default function(Vue) {
 
+  // axios
+  Vue.prototype.$meta.axios = axios;
+
   // api
   Vue.prototype.$meta.api = {};
   wrapApi(Vue, Vue.prototype.$meta.api, axios, null);

@@ -25,7 +25,7 @@ require('./base/mixin.js').default(Vue);
 // install module main
 const instanceMain = require('../../../src/front/main.js');
 meta.module.install(instanceMain, { relativeName: 'main' }, module => {
-// vue parameters
+  // vue parameters
   require('./inject/framework7.js').default(Vue, module.options, parameters => {
     meta.parameters = parameters;
     // new vue
