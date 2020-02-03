@@ -16,17 +16,22 @@ $ npm i egg-born-module-cms-pluginsubmit
 
 ### 配置参数
 
-只需提供百度分配的token即可
+只需在`站点配置`或`语言配置`中提供百度分配的token即可
+
 
 ``` javascript
-  // plugin
-  config.plugin = {
-    submit: {
-      baidu: {
-        token: '',
-      },
-    },
-  };
+{
+  ...
+  "plugins": {
+    "cms-pluginsubmit": {
+      "submit": {
+        "baidu": {
+          "token": ""
+        }
+      }
+    }
+  }
+}
 ```
 
 > 关于token详情，请参见：[百度-搜索资源平台](https://ziyuan.baidu.com/linksubmit/index)
