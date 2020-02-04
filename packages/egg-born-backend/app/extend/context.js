@@ -55,7 +55,7 @@ module.exports = {
     this[INNERACCESS] = value;
   },
   get subdomain() {
-    return this[SUBDOMAIN] || this.subdomains.join('.');
+    return typeof this[SUBDOMAIN] === 'undefined' ? this.subdomains.join('.') : this[SUBDOMAIN];
   },
   set subdomain(value) {
     this[SUBDOMAIN] = value;
@@ -151,7 +151,7 @@ function appCallback() {
     onFinished(res, ctx.onerror);
 
     // subdomain
-    ctx.subdomain = subdomain || ctxCaller.subdomain;
+    ctx.subdomain = typeof subdomain === 'undefined' ? ctxCaller.subdomain : subdomain;
 
     // query params body
     if (query) ctx.query = query;
