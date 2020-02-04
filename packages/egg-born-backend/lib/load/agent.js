@@ -7,6 +7,7 @@ module.exports = class CustomAgentWorkerLoader extends AgentWorkerLoader {
   }
   loadConfig() {
     super.loadConfig();
+    this.app.subdomainOffset = this.config.subdomainOffset || 2;
   }
   load() {
     super.load();
