@@ -19,12 +19,20 @@ CabloyJS是一款顶级NodeJS全栈业务开发框架, 基于KoaJS + EggJS + Vue
 
 - [官网 && 文档](https://cabloy.com)
 
-## 演示
+## 在线演示
 
-- PC：[https://admin.cabloy.com](https://admin.cabloy.com)
-- Mobile：
-
-![](./docs/assets/images/cabloy-demo-qrcode.png)
+|网站类型|网站链接|
+|--|--|
+|管理系统（PC布局）|[https://admin.cabloy.com](https://admin.cabloy.com)|
+|管理系统（Mobile布局）|![](./docs/assets/images/cabloy-demo-qrcode.png)|
+|||
+|博客|[https://zhennann.com](https://zhennann.com)|
+|技术文档（英文）|[https://cabloy.com/index.html](https://cabloy.com/index.html)|
+|技术文档（中文）|[https://cabloy.com/zh-cn/index.html](https://cabloy.com/zh-cn/index.html)|
+|社区（英文）|[https://community.cabloy.com/index.html](https://community.cabloy.com/index.html)|
+|社区（中文）|[https://community.cabloy.com/zh-cn/index.html](https://community.cabloy.com/zh-cn/index.html)|
+|Cabloy商店（英文）|[https://store.cabloy.com/index.html](https://store.cabloy.com/index.html)|
+|Cabloy商店（中文）|[https://store.cabloy.com/zh-cn/index.html](https://store.cabloy.com/zh-cn/index.html)|
 
 ## 资源
 
