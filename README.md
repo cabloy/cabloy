@@ -23,8 +23,8 @@ CabloyJS: The Ultimate NodeJS Full Stack Business Development Framework, based o
 
 |Website Type|Website Link|
 |--|--|
-|Admin System(PC)|[https://admin.cabloy.com](https://admin.cabloy.com)|
-|Admin System(Mobile)|![](./docs/assets/images/cabloy-demo-qrcode.png)|
+|Admin System(PC Layout)|[https://admin.cabloy.com](https://admin.cabloy.com)|
+|Admin System(Mobile Layout)|![](./docs/assets/images/cabloy-demo-qrcode.png)|
 |||
 |Blog|[https://zhennann.com](https://zhennann.com)|
 |Technical Documentations(English)|[https://cabloy.com/index.html](https://cabloy.com/index.html)|
