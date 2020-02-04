@@ -21,10 +21,18 @@ CabloyJS: The Ultimate NodeJS Full Stack Business Development Framework, based o
 
 ## Demonstration
 
-- PC：[https://admin.cabloy.com](https://admin.cabloy.com)
-- Mobile：
-
-![](./docs/assets/images/cabloy-demo-qrcode.png)
+|Website Type|Website Link|
+|--|--|
+|Admin System(PC)|[https://admin.cabloy.com](https://admin.cabloy.com)|
+|Admin System(Mobile)|![](./docs/assets/images/cabloy-demo-qrcode.png)|
+|||
+|Blog|[https://zhennann.com](https://zhennann.com)|
+|Technical Documentations(English)|[https://cabloy.com/index.html](https://cabloy.com/index.html)|
+|Technical Documentations(Chinese)|[https://cabloy.com/zh-cn/index.html](https://cabloy.com/zh-cn/index.html)|
+|Community(English)|[https://community.cabloy.com/index.html](https://community.cabloy.com/index.html)|
+|Community(Chinese)|[https://community.cabloy.com/zh-cn/index.html](https://community.cabloy.com/zh-cn/index.html)|
+|Cabloy Store(English)|[https://store.cabloy.com/index.html](https://store.cabloy.com/index.html)|
+|Cabloy Store(Chinese)|[https://store.cabloy.com/zh-cn/index.html](https://store.cabloy.com/zh-cn/index.html)|
 
 ## Resources
 
