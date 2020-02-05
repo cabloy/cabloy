@@ -1,5 +1,5 @@
 <template>
-  <img :src="src" @click="onClick" class="captcha"></img>
+  <img :src="src" @click="onClick" class="captcha" crossorigin="use-credentials"></img>
 </template>
 <script>
 export default {
@@ -16,7 +16,7 @@ export default {
   },
   methods: {
     changeSrc() {
-      this.src = `/api/a/captchasimple/simple/getCaptcha?t=${Math.random()}`;
+      this.src = this.$meta.util.combineFetchPath('a-captchasimple', `simple/getCaptcha?t=${Math.random()}`);
     },
     onClick() {
       this.changeSrc();
