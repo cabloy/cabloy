@@ -8,7 +8,7 @@ module.exports = appInfo => {
     license: {
       link: 'http://creativecommons.org/licenses/by-nc-sa/4.0/',
       version: 'BY-NC-SA 4.0',
-      content: '',
+      content: null,
     },
     titles: {
       title: 'Title',
@@ -18,6 +18,9 @@ module.exports = appInfo => {
       link: 'Link',
       markdown: 'MarkdownSource',
       license: 'CopyrightLicenseTitle',
+    },
+    values: {
+      author: null,
     },
     copyrights: {
       none: null,

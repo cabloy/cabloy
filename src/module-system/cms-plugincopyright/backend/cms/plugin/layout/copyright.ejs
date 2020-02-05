@@ -10,7 +10,7 @@
         content=article.atomName;
         break;
       case 'author':
-        content=article.userName;
+        content=util.escapeHtml(configCopyright.values.author || '') || article.userName;
         break;
       case 'createdAt':
         content=util.formatDateTime(article.atomCreatedAt);
