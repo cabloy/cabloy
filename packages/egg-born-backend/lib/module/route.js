@@ -26,7 +26,7 @@ module.exports = function(loader, modules) {
         // name
         if (route.name) args.push(route.name);
         // path
-        args.push(util.combineFetchPath(info, route.path));
+        args.push(typeof route.path === 'string' ? util.combineFetchPath(info, route.path) : route.path);
 
         // constroller
         let Controller;
