@@ -5,22 +5,30 @@ module.exports = appInfo => {
   // plugin
   config.plugin = {
     default: 'simple',
+    license: {
+      link: 'http://creativecommons.org/licenses/by-nc-sa/4.0/',
+      version: 'BY-NC-SA 4.0',
+      content: '',
+    },
+    titles: {
+      title: 'Title',
+      author: 'Author',
+      createdAt: 'Created Time',
+      updatedAt: 'Modification Time',
+      link: 'Link',
+      markdown: 'MarkdownSource',
+      license: 'CopyrightLicenseTitle',
+    },
     copyrights: {
       none: null,
       simple: {
-        fields: [
-          { title: 'Author', value: '{{params.article.userName}}' },
-          { title: 'Link', value: '<a href="{{params.url(params.article.url)}}">{{params.url(params.article.url)}}</a>' },
-          { title: 'MarkdownSource', value: '<a href="{{`${params.site.serverUrl}/api/cms/plugincopyright/util/md/${params.article.atomId}`}}">{{`${params.site.serverUrl}/api/cms/plugincopyright/util/md/${params.article.atomId}`}}</a>' },
-        ],
+        fields: 'author,link,markdown',
       },
       license: {
-        fields: [
-          { title: 'Author', value: '{{params.article.userName}}' },
-          { title: 'Link', value: '<a href="{{params.url(params.article.url)}}">{{params.url(params.article.url)}}</a>' },
-          { title: 'MarkdownSource', value: '<a href="{{`${params.site.serverUrl}/api/cms/plugincopyright/util/md/${params.article.atomId}`}}">{{`${params.site.serverUrl}/api/cms/plugincopyright/util/md/${params.article.atomId}`}}</a>' },
-          { title: 'CopyrightLicenseTitle', value: '{{params.text(\'CopyrightLicenseContent\',\'<a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><span class="glyphicon glyphicon-subtitles"></span> BY-NC-SA 4.0</a>\')}}' },
-        ],
+        fields: 'author,link,markdown,license',
+      },
+      full: {
+        fields: 'title,author,createdAt,updatedAt,link,markdown,license',
       },
     },
   };

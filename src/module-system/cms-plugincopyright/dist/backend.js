@@ -130,22 +130,30 @@ module.exports = appInfo => {
   // plugin
   config.plugin = {
     default: 'simple',
+    license: {
+      link: 'http://creativecommons.org/licenses/by-nc-sa/4.0/',
+      version: 'BY-NC-SA 4.0',
+      content: '',
+    },
+    titles: {
+      title: 'Title',
+      author: 'Author',
+      createdAt: 'Created Time',
+      updatedAt: 'Modification Time',
+      link: 'Link',
+      markdown: 'MarkdownSource',
+      license: 'CopyrightLicenseTitle',
+    },
     copyrights: {
       none: null,
       simple: {
-        fields: [
-          { title: 'Author', value: '{{params.article.userName}}' },
-          { title: 'Link', value: '<a href="{{params.url(params.article.url)}}">{{params.url(params.article.url)}}</a>' },
-          { title: 'MarkdownSource', value: '<a href="{{`${params.site.serverUrl}/api/cms/plugincopyright/util/md/${params.article.atomId}`}}">{{`${params.site.serverUrl}/api/cms/plugincopyright/util/md/${params.article.atomId}`}}</a>' },
-        ],
+        fields: 'author,link,markdown',
       },
       license: {
-        fields: [
-          { title: 'Author', value: '{{params.article.userName}}' },
-          { title: 'Link', value: '<a href="{{params.url(params.article.url)}}">{{params.url(params.article.url)}}</a>' },
-          { title: 'MarkdownSource', value: '<a href="{{`${params.site.serverUrl}/api/cms/plugincopyright/util/md/${params.article.atomId}`}}">{{`${params.site.serverUrl}/api/cms/plugincopyright/util/md/${params.article.atomId}`}}</a>' },
-          { title: 'CopyrightLicenseTitle', value: '{{params.text(\'CopyrightLicenseContent\',\'<a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><span class="glyphicon glyphicon-subtitles"></span> BY-NC-SA 4.0</a>\')}}' },
-        ],
+        fields: 'author,link,markdown,license',
+      },
+      full: {
+        fields: 'title,author,createdAt,updatedAt,link,markdown,license',
       },
     },
   };
@@ -171,7 +179,7 @@ module.exports = {
 module.exports = {
   MarkdownSource: 'Markdown Source',
   CopyrightLicenseTitle: 'Copyright Notice',
-  CopyrightLicenseContent: 'All articles in this blog are licensed under %s unless stating additionally.',
+  CopyrightLicenseContent: 'All articles in this website are licensed under %s unless stating additionally.',
 };
 
 
@@ -180,11 +188,14 @@ module.exports = {
 /***/ (function(module, exports) {
 
 module.exports = {
+  Title: '标题',
   Author: '作者',
   Link: '链接',
+  'Created Time': '创建时间',
+  'Modification Time': '修改时间',
   MarkdownSource: 'Markdown源文件',
   CopyrightLicenseTitle: '版权声明',
-  CopyrightLicenseContent: '本博客所有文章除特别声明外，均采用 %s 许可协议。转载请注明出处！',
+  CopyrightLicenseContent: '本站所有文章除特别声明外，均采用 %s 许可协议。转载请注明出处！',
 };
 
 

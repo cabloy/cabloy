@@ -1,27 +1,42 @@
 <%
-  const _copyrightReplaceParams={
-    ctx,site,require,url,css,js,env,text,util,article,_filename,_path
-  };
-  function _copyrightReplace(content){
-    if (!content) return '';
-    return content.toString().replace(/(\\)?{{(.*?)}}/g, (block, skip, key) => {
-      if (skip) {
-        return block.substring(skip.length);
-      }
-      const _fn=new Function('params',`return (${key});`);
-      return _fn(_copyrightReplaceParams);
-    });
-  }
   const copyrightExtra=article.extra?JSON.parse(article.extra):null;
   const configCopyright=site.plugins['cms-plugincopyright'];
   const copyright=configCopyright.copyrights[(copyrightExtra && copyrightExtra.copyright) || configCopyright.default];
+
+  function _copyrightFieldContent(field){
+    let content='';
+    switch(field){
+      case 'title':
+        content=article.atomName;
+        break;
+      case 'author':
+        content=article.userName;
+        break;
+      case 'createdAt':
+        content=util.formatDateTime(article.atomCreatedAt);
+        break;
+      case 'updatedAt':
+        content=util.formatDateTime(article.atomUpdatedAt);
+        break;
+      case 'link':
+        content=`<a href="${url(article.url)}">${url(article.url)}</a>`;
+        break;
+      case 'markdown':
+        content=`<a href="${site.serverUrl}/api/cms/plugincopyright/util/md/${article.atomId}">${site.serverUrl}/api/cms/plugincopyright/util/md/${article.atomId}</a>`;
+        break;
+      case 'license':
+        content= util.safeHtml(text(configCopyright.license.content || 'CopyrightLicenseContent',`<a href="${configCopyright.license.link}"><span class="glyphicon glyphicon-subtitles"></span> ${configCopyright.license.version}</a>`));
+        break;
+    }
+    return content;
+  }
 %>
 <% if(copyright && copyright.fields){ %>
 <div class="article-copyright">
 <ul>
-  <% for(const field of copyright.fields) { %>
+  <% for(const field of copyright.fields.split(',')) { %>
     <li>
-      <span class="copyright-title"><%=text(field.title)%></span>: <span class="copyright-value"><%-_copyrightReplace(field.value)%></span>
+      <span class="copyright-title"><%=text(configCopyright.titles[field])%></span>: <span class="copyright-value"><%-_copyrightFieldContent(field)%></span>
     </li>
   <% } %>
 </ul>
