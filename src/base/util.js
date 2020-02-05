@@ -143,6 +143,13 @@ export default function(Vue) {
       return `/${moduleInfo.url}/${arg}`;
     },
     combineFetchPath(moduleName, arg) {
+      let url = this._combineFetchPath(moduleName, arg);
+      if (Vue.prototype.$meta.config.api.baseURL) {
+        url = `${Vue.prototype.$meta.config.api.baseURL}${url}`;
+      }
+      return url;
+    },
+    _combineFetchPath(moduleName, arg) {
       if (arg.substr(0, 2) === '//') return arg.substr(1);
       if (arg.charAt(0) === '/') return `/api${arg}`;
       const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;

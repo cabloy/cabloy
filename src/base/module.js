@@ -243,6 +243,7 @@ export default function(Vue) {
         // baseURL
         if(Vue.prototype.$meta.config.api.baseURL){
           Vue.prototype.$meta.axios.defaults.baseURL=Vue.prototype.$meta.config.api.baseURL;
+          Vue.prototype.$meta.axios.defaults.withCredentials = true;
         }
       } else {
         Vue.prototype.$meta.config.modules[module.info.relativeName] =
