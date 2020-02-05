@@ -20,7 +20,7 @@ $ npm i egg-born-module-cms-plugincopyright
 
 在`站点配置`或`语言配置`中修改插件的参数即可
 
-此插件提供了三种显示风格：`none/simple/license`, 其中`simple`是默认风格
+此插件提供了四种显示风格：`none/simple/license/full`, 其中`simple`是默认风格
 
 ``` javascript
 {
@@ -44,6 +44,10 @@ $ npm i egg-born-module-cms-plugincopyright
 #### 3. license
 
 ![](./docs/zh-cn/assets/images/license.png)
+
+#### 4. full
+
+![](./docs/zh-cn/assets/images/full.png)
 
 ### 文章参数
 

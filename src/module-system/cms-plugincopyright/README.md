@@ -45,6 +45,10 @@ Display nothing
 
 ![](./docs/en-us/assets/images/license.png)
 
+#### 4. full
+
+![](./docs/en-us/assets/images/full.png)
+
 ### Article Parameters
 
 We can also set the display style for the article separately
