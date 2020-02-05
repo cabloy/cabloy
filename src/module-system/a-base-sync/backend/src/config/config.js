@@ -4,6 +4,10 @@ module.exports = appInfo => {
 
   // middlewares
   config.middlewares = {
+    cors: {
+      global: true,
+      dependencies: 'instance',
+    },
     base: {
       global: true,
       dependencies: 'instance,event',
@@ -19,6 +23,7 @@ module.exports = appInfo => {
     },
     jsonp: {
       global: false,
+      dependencies: 'instance',
     },
     httpLog: {
       global: false,

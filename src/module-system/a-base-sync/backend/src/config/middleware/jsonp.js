@@ -9,7 +9,7 @@ module.exports = (options, app) => {
     } else {
       const _config = ctx.config.module(moduleInfo.relativeName);
       const _whiteList = _config && _config.jsonp && _config.jsonp.whiteList;
-      const hostSelf = ctx.host.split(':')[0];
+      const hostSelf = ctx.hostname;
       if (_whiteList) {
         if (!Array.isArray(_whiteList)) {
           options.whiteList = _whiteList.split(',');
