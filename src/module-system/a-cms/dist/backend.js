@@ -892,6 +892,9 @@ var env=${JSON.stringify(env, null, 2)};
         formatDateTime(date) {
           return this.time.formatDateTime(date, `${site.env.format.date} ${site.env.format.time}`);
         },
+        safeHtml(str) {
+          return self.ctx.helper.shtml(str);
+        },
         escapeHtml(str) {
           return utils.escapeHtml(str);
         },
