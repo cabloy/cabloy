@@ -9,7 +9,7 @@
       <div class="motto"><%=site.profile.motto%></div>
     <% } %>
     <% if(site.profile.extra){ %>
-      <div class="extra"><%-site.profile.extra%></div>
+      <div class="extra"><%-util.safeHtml(site.profile.extra)%></div>
     <% } %>
   </div>
 </div>
