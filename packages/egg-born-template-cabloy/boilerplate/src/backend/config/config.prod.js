@@ -10,6 +10,7 @@ module.exports = appInfo => {
       config: {
         'a-base': {
           jsonp: { whiteList: '' },
+          cors: { whiteList: '' },
         },
       },
     },
