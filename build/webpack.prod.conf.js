@@ -16,7 +16,7 @@ function resolve(dir) {
 
 const env = config.build.env;
 
-const plugins = [
+let plugins = [
   new webpack.DefinePlugin({
     'process.env': env,
   }),
@@ -50,6 +50,10 @@ const plugins = [
     entryOnly: true,
   }),
 ];
+
+if (config.build.plugins) {
+  plugins = plugins.concat(config.build.plugins);
+}
 
 const webpackConfig = merge(baseWebpackConfig, {
   mode: 'production',
