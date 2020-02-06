@@ -176,11 +176,10 @@ const util = {
     const _url = path ? `${urlRoot}/${path}` : urlRoot;
     return this.escapeURL(_url);
   },
-  ajax({ url, body, cache = true }) {
+  ajax({ url, body }) {
     return this.promise((resolve, reject) => {
       $.ajax({
         type: 'GET',
-        cache,
         url: `<%=site.serverUrl%>/api${url}`,
         data: body,
         dataType: 'jsonp',
@@ -196,7 +195,34 @@ const util = {
       });
     });
   },
+  cors({ method, url, body }) {
+    return this.promise((resolve, reject) => {
+      const ajaxMethod = method.toUpperCase();
+      $.ajax({
+        type: ajaxMethod,
+        url: `<%=site.serverUrl%>/api${url}`,
+        data: ajaxMethod === 'POST' ? JSON.stringify(body) : body,
+        contentType: ajaxMethod === 'POST' ? 'application/json' : undefined,
+        dataType: 'json',
+        timeout: 8000,
+        xhrFields: {
+          withCredentials: true,
+        },
+      }).done(function(data) {
+        if (data.code === 0) {
+          resolve(data.data);
+        } else {
+          reject(data.message);
+        }
+      }).fail(function(xhr, status) {
+        reject((xhr.responseJSON && xhr.responseJSON.message) || status);
+      });
+    });
+  },
   performAction(params) {
+    if ($.support && $.support.cors) {
+      return this.cors(params);
+    }
     return this.ajax({
       url: '/a/base/base/performAction',
       body: {
