@@ -1,4 +1,13 @@
 export default function(Vue) {
+
+  function _setUser(state, user) {
+    state.user = Object.assign({}, state.user, user);
+    // agent rather then op
+    if (user && user.agent && user.agent.locale) {
+      Vue.prototype.$meta.util.cookies.set('locale', user.agent.locale);
+    }
+  }
+
   return {
     state: {
       loggedIn: false,
@@ -17,10 +26,10 @@ export default function(Vue) {
     mutations: {
       login(state, { loggedIn, user }) {
         state.loggedIn = loggedIn;
-        state.user = user;
-        if (user && user.op && user.op.locale) {
-          Vue.prototype.$meta.util.cookies.set('locale', user.op.locale);
-        }
+        _setUser(state, user);
+      },
+      setUser(state, user) {
+        _setUser(state, user);
       },
       logout(state) {
         state.loggedIn = false;
