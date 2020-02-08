@@ -7,7 +7,7 @@ module.exports = app => {
     providers: {
       [provider]: {
         meta: {
-          title: 'Github',
+          title: 'GitHub',
           mode: 'redirect',
           component: 'button',
         },

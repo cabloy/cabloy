@@ -1,3 +1,3 @@
 module.exports = {
-  'Auth-Github': '认证-Github',
+  'Auth-GitHub': '认证-GitHub',
 };

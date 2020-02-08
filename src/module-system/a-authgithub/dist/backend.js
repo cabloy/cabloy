@@ -210,7 +210,7 @@ module.exports = {
 /***/ (function(module, exports) {
 
 module.exports = {
-  'Auth-Github': '认证-Github',
+  'Auth-GitHub': '认证-GitHub',
 };
 
 
@@ -248,7 +248,7 @@ module.exports = app => {
     providers: {
       [provider]: {
         meta: {
-          title: 'Github',
+          title: 'GitHub',
           mode: 'redirect',
           component: 'button',
         },
