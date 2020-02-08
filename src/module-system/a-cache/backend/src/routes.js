@@ -9,8 +9,8 @@ module.exports = app => {
       meta: { auth: { enable: false } },
     },
     // broadcast
-    { method: 'post', path: 'broadcast/memRemove', controller: broadcast, middlewares: 'inner' },
-    { method: 'post', path: 'broadcast/memClear', controller: broadcast, middlewares: 'inner' },
+    { method: 'post', path: 'broadcast/memRemove', controller: broadcast, middlewares: 'inner', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'broadcast/memClear', controller: broadcast, middlewares: 'inner', meta: { auth: { enable: false } } },
   ];
   return routes;
 };
