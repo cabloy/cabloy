@@ -20,7 +20,20 @@ module.exports = app => {
     }
 
     async disable({ id, disabled }) {
+      // update
       await this.ctx.model.authProvider.update({ id, disabled });
+      // item
+      const item = await this.ctx.model.authProvider.get({ id });
+      // broadcast
+      this.ctx.app.meta.broadcast.emit({
+        subdomain: this.ctx.subdomain,
+        module: 'a-base',
+        broadcastName: 'authProviderChanged',
+        data: {
+          module: item.module,
+          providerName: item.providerName,
+        },
+      });
     }
 
     async item({ id }) {
@@ -43,7 +56,20 @@ module.exports = app => {
     }
 
     async save({ id, config }) {
+      // update
       await this.ctx.model.authProvider.update({ id, config: JSON.stringify(config) });
+      // item
+      const item = await this.ctx.model.authProvider.get({ id });
+      // broadcast
+      this.ctx.app.meta.broadcast.emit({
+        subdomain: this.ctx.subdomain,
+        module: 'a-base',
+        broadcastName: 'authProviderChanged',
+        data: {
+          module: item.module,
+          providerName: item.providerName,
+        },
+      });
     }
 
   }
