@@ -188,7 +188,7 @@ module.exports = app => {
       { method: 'post', path: 'test/feat/push', controller: testFeatQueue, middlewares: 'test' },
 
       // test/feat/broadcast
-      { method: 'post', path: 'test/feat/broadcast', controller: testFeatBroadcast, middlewares: 'inner' },
+      { method: 'post', path: 'test/feat/broadcast', controller: testFeatBroadcast, middlewares: 'inner', meta: { auth: { enable: false } } },
       { method: 'post', path: 'test/feat/broadcast/emit', controller: testFeatBroadcast, middlewares: 'test' },
 
       // kitchen-sink/guide
