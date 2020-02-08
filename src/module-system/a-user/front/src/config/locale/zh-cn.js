@@ -29,4 +29,5 @@ export default {
   Switch: '切换',
   'Switch Off': '关闭',
   'Not Found': '未发现',
+  'Do you want to reload for the new locale to take effect?': '您是否想重新加载让新语言生效？',
 };

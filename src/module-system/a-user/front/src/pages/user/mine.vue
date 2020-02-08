@@ -62,7 +62,7 @@ export default {
       });
     },
     onClickAvatar() {
-      if (this.user.agent.anonymous || this.user.op.id !== this.user.agent.id);
+      if (this.user.agent.anonymous || this.user.op.id !== this.user.agent.id) return;
       this.$view.navigate('/a/file/file/upload', {
         context: {
           params: {
@@ -73,14 +73,13 @@ export default {
               return this.$api.post('user/saveAvatar', {
                 data: { avatar: res.downloadUrl },
               }).then(() => {
-                this.$store.state.auth.user.agent.avatar = res.downloadUrl;
-                this.$store.state.auth.user.op.avatar = res.downloadUrl;
+                const userNew = Object.assign({}, this.$store.state.auth.user.agent, { avatar: res.downloadUrl });
+                this.$store.commit('auth/setUser', { op: userNew, agent: userNew });
               });
             }
           },
         },
       });
-
     },
   },
 };
