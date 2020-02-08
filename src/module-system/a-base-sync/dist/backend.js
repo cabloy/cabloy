@@ -1462,11 +1462,16 @@ module.exports = ctx => {
     async _prepareAvatar({ authItem, profile }) {
       // avatar
       let avatarOld;
+      let _avatarOld;
       if (authItem) {
         const _profile = JSON.parse(authItem.profile);
         avatarOld = _profile.avatar;
+        _avatarOld = _profile._avatar;
       }
-      if (!profile.avatar || profile.avatar === avatarOld) return;
+      if (!profile.avatar || profile.avatar === avatarOld) {
+        profile._avatar = _avatarOld;
+        return;
+      }
       // download image
       const res = await this._downloadAvatar({ avatar: profile.avatar });
       // meta
@@ -1534,13 +1539,13 @@ module.exports = ctx => {
     }
 
     async _setUserInfoColumn(user, column, profile) {
-      // value
-      let value = profile[column];
       // avatar
-      if (column === 'avatar' && profile._avatar) {
+      if (column === 'avatar' && !user[column] && profile._avatar) {
         user[column] = profile._avatar;
         return;
       }
+      // value
+      let value = profile[column];
       // only set when empty
       if (user[column] || !value) return;
       // userName
