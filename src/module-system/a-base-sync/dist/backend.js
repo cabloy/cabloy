@@ -1787,6 +1787,13 @@ module.exports = appInfo => {
     },
   };
 
+  // broadcasts
+  config.broadcasts = {
+    authProviderChanged: {
+      path: 'auth/providerChanged',
+    },
+  };
+
   // pageSize
   config.pageSize = 20;
 
@@ -4819,6 +4826,9 @@ module.exports = app => {
     { method: 'post', path: 'auth/register', controller: auth, middlewares: 'inner',
       meta: { auth: { enable: false } },
     },
+    { method: 'post', path: 'auth/providerChanged', controller: auth, middlewares: 'inner',
+      meta: { auth: { enable: false } },
+    },
     // cors
     { method: 'options', path: /.*/ },
   ];
@@ -5267,7 +5277,7 @@ module.exports = app => {
 
     async installAuthProviders() {
       // register all authProviders
-      await this.ctx.service.auth.registerAllProviders();
+      await this.ctx.service.auth.installAuthProviders();
       // verify
       this.app.passport.verify(async (ctx, profileUser) => {
         // state: login/associate
@@ -5293,6 +5303,14 @@ module.exports = app => {
 
     async register() {
       const res = await this.ctx.service.auth.register({
+        module: this.ctx.request.body.module,
+        providerName: this.ctx.request.body.providerName,
+      });
+      this.ctx.success(res);
+    }
+
+    async providerChanged() {
+      const res = await this.ctx.service.auth.providerChanged({
         module: this.ctx.request.body.module,
         providerName: this.ctx.request.body.providerName,
       });
@@ -6553,23 +6571,25 @@ module.exports = app => {
   class Auth extends app.Service {
 
     // register all authProviders
-    async registerAllProviders() {
+    async installAuthProviders() {
+      // registerAllRouters
+      this._registerAllRouters();
+      // registerAllProviders
+      await this._registerAllProviders();
+    }
+
+    _registerAllRouters() {
       for (const relativeName in this.app.meta.modules) {
         const module = this.app.meta.modules[relativeName];
         if (module.main.meta && module.main.meta.auth && module.main.meta.auth.providers) {
           for (const providerName in module.main.meta.auth.providers) {
-            await this.registerProviderInstances(module.info.relativeName, providerName);
+            this._registerProviderRouters(module.info.relativeName, providerName);
           }
         }
       }
     }
 
-    async registerProviderInstances(moduleRelativeName, providerName) {
-      // all instances
-      const instances = await this.ctx.model.query('select * from aInstance a where a.disabled=0');
-      for (const instance of instances) {
-        await this.registerProviderInstance(instance.name, instance.id, moduleRelativeName, providerName);
-      }
+    _registerProviderRouters(moduleRelativeName, providerName) {
       // config
       const moduleInfo = mparse.parseInfo(moduleRelativeName);
       const config = {
@@ -6597,7 +6617,26 @@ module.exports = app => {
       }
     }
 
-    async registerProviderInstance(subdomain, iid, moduleRelativeName, providerName) {
+    async _registerAllProviders() {
+      // all instances
+      const instances = await this.ctx.model.query('select * from aInstance a where a.disabled=0');
+      for (const instance of instances) {
+        await this._registerInstanceProviders(instance.name, instance.id);
+      }
+    }
+
+    async _registerInstanceProviders(subdomain, iid) {
+      for (const relativeName in this.app.meta.modules) {
+        const module = this.app.meta.modules[relativeName];
+        if (module.main.meta && module.main.meta.auth && module.main.meta.auth.providers) {
+          for (const providerName in module.main.meta.auth.providers) {
+            await this._registerInstanceProvider(subdomain, iid, module.info.relativeName, providerName);
+          }
+        }
+      }
+    }
+
+    async _registerInstanceProvider(subdomain, iid, moduleRelativeName, providerName) {
       // provider of db
       const user = new (UserFn(this.ctx))();
       const providerItem = await user.getAuthProvider({
@@ -6606,7 +6645,11 @@ module.exports = app => {
         module: moduleRelativeName,
         providerName,
       });
-      if (providerItem && providerItem.disabled === 0) {
+      if (!providerItem) return;
+      // strategy
+      const strategyName = `${iid}:${moduleRelativeName}:${providerName}`;
+      // unuse/use
+      if (providerItem.disabled === 0) {
         // module
         const module = this.app.meta.modules[moduleRelativeName];
         // provider
@@ -6619,16 +6662,22 @@ module.exports = app => {
           config.successRedirect = config.successReturnToOrRedirect = (provider.meta.mode === 'redirect') ? '/' : false;
           // handler
           const handler = provider.handler(this.app);
-          // install strategy
-          const strategyName = `${iid}:${moduleRelativeName}:${providerName}`;
+          // use strategy
           this.app.passport.unuse(strategyName);
           this.app.passport.use(strategyName, new handler.strategy(config, handler.callback));
         }
+      } else {
+        // unuse strategy
+        this.app.passport.unuse(strategyName);
       }
     }
 
     async register({ module, providerName }) {
       return await this.ctx.meta.user.registerAuthProvider({ module, providerName });
+    }
+
+    async providerChanged({ module, providerName }) {
+      await this._registerInstanceProvider(this.ctx.subdomain, this.ctx.instance.id, module, providerName);
     }
 
   }

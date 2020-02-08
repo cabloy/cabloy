@@ -62,6 +62,13 @@ module.exports = appInfo => {
     },
   };
 
+  // broadcasts
+  config.broadcasts = {
+    authProviderChanged: {
+      path: 'auth/providerChanged',
+    },
+  };
+
   // pageSize
   config.pageSize = 20;
 

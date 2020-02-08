@@ -21,7 +21,7 @@ module.exports = app => {
 
     async installAuthProviders() {
       // register all authProviders
-      await this.ctx.service.auth.registerAllProviders();
+      await this.ctx.service.auth.installAuthProviders();
       // verify
       this.app.passport.verify(async (ctx, profileUser) => {
         // state: login/associate
@@ -47,6 +47,14 @@ module.exports = app => {
 
     async register() {
       const res = await this.ctx.service.auth.register({
+        module: this.ctx.request.body.module,
+        providerName: this.ctx.request.body.providerName,
+      });
+      this.ctx.success(res);
+    }
+
+    async providerChanged() {
+      const res = await this.ctx.service.auth.providerChanged({
         module: this.ctx.request.body.module,
         providerName: this.ctx.request.body.providerName,
       });

@@ -124,6 +124,9 @@ module.exports = app => {
     { method: 'post', path: 'auth/register', controller: auth, middlewares: 'inner',
       meta: { auth: { enable: false } },
     },
+    { method: 'post', path: 'auth/providerChanged', controller: auth, middlewares: 'inner',
+      meta: { auth: { enable: false } },
+    },
     // cors
     { method: 'options', path: /.*/ },
   ];
