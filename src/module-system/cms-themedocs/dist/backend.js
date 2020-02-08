@@ -153,7 +153,7 @@ module.exports = appInfo => {
       logo: 'assets/images/logo.png',
       logoMask: 'assets/images/logo-mask.png',
       buttons: [
-        { title: 'Github', color: 'primary', url: 'https://github.com/zhennann/cabloy' },
+        { title: 'GitHub', color: 'primary', url: 'https://github.com/zhennann/cabloy' },
         { title: 'Documentation', color: 'primary', url: 'articles/introduce.html' },
         { title: 'Demo Online', url: 'https://admin.cabloy.com' },
       ],
