@@ -464,7 +464,7 @@ module.exports = ctx => {
         _avatarOld = _profile._avatar;
       }
       if (!profile.avatar || profile.avatar === avatarOld) {
-        profile._avatar = _avatarOld;
+        profile._avatar2 = _avatarOld;
         return;
       }
       // download image
@@ -534,8 +534,13 @@ module.exports = ctx => {
     }
 
     async _setUserInfoColumn(user, column, profile) {
-      // avatar
-      if (column === 'avatar' && !user[column] && profile._avatar) {
+      // avatar / if empty
+      if (column === 'avatar' && !user[column] && profile._avatar2) {
+        user[column] = profile._avatar2;
+        return;
+      }
+      // avatar / if changed
+      if (column === 'avatar' && profile._avatar) {
         user[column] = profile._avatar;
         return;
       }
