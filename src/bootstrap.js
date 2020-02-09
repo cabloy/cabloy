@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import Framework7 from '@zhennann/framework7/packages/core/framework7.esm.bundle.js';
+import Framework7 from '@zhennann/framework7/packages/core/framework7-lite.esm.bundle.js';
 import Framework7Vue from '@zhennann/framework7/packages/vue/framework7-vue.esm.bundle.js';
 
 import 'framework7-icons';
