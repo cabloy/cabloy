@@ -1,6 +1,6 @@
 {
   "name": "@zhennann/markdown",
-  "version": "1.0.8",
+  "version": "2.0.0",
   "description": "markdown",
   "main": "index.js",
   "repository": {
@@ -17,22 +17,22 @@
   },
   "homepage": "https://github.com/zhennann/markdown#readme",
   "devDependencies": {
-    "babel-eslint": "^8.0.2",
-    "eslint": "^4.11.0",
-    "eslint-config-egg": "^5.1.1",
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.8.0",
+    "eslint-config-egg": "^8.0.1",
     "eslint-plugin-vuefix": "^0.2.1"
   },
   "dependencies": {
-    "markdown-it": "^8.4.2",
+    "markdown-it": "^10.0.0",
     "markdown-it-abbr": "^1.0.4",
     "markdown-it-container": "^2.0.0",
     "markdown-it-deflist": "^2.0.3",
     "markdown-it-emoji": "^1.4.0",
-    "markdown-it-footnote": "^3.0.1",
+    "markdown-it-footnote": "^3.0.2",
     "markdown-it-highlightjs": "^3.0.0",
-    "markdown-it-ins": "^2.0.0",
+    "markdown-it-ins": "^3.0.0",
     "markdown-it-katex": "^2.0.3",
-    "markdown-it-mark": "^2.0.0",
+    "markdown-it-mark": "^3.0.0",
     "markdown-it-sub": "^1.0.0",
     "markdown-it-sup": "^1.0.0",
     "markdown-it-task-lists": "^2.1.1",
