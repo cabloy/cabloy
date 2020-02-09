@@ -1,6 +1,6 @@
 {
   "name": "@zhennann/markdown-it-block",
-  "version": "1.0.7",
+  "version": "2.0.0",
   "description": "Plugin to create block-level custom tags for markdown-it markdown parser on Cabloy-CMS",
   "main": "index.js",
   "repository": {
@@ -17,9 +17,9 @@
     "markdown"
   ],
   "devDependencies": {
-    "eslint": "^3.5.0",
+    "eslint": "^6.8.0",
     "markdown-it": "markdown-it/markdown-it",
-    "markdown-it-testgen": "~0.1.0",
+    "markdown-it-testgen": "~0.1.6",
     "mocha": "*"
   }
 }
