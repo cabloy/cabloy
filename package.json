@@ -1,6 +1,6 @@
 {
   "name": "egg-born-front",
-  "version": "5.0.3",
+  "version": "5.0.4",
   "description": "egg-born-front",
   "scripts": {
     "lint": "eslint src",
@@ -26,6 +26,7 @@
   "dependencies": {
     "@zhennann/framework7": "^5.4.1",
     "@zhennann/vue": "^2.6.11",
+    "@vue/compiler-sfc": "^3.0.0-alpha.4",
     "autoprefixer": "^9.7.4",
     "axios": "^0.19.2",
     "@babel/core": "^7.8.4",
@@ -68,7 +69,7 @@
     "semver": "^7.1.2",
     "uglifyjs-webpack-plugin": "^2.2.0",
     "url-loader": "^3.0.0",
-    "vue-loader": "^16.0.0-alpha.3",
+    "vue-loader": "^15.8.3",
     "vue-style-loader": "^4.1.2",
     "vue-template-compiler": "^2.6.11",
     "vuex": "^3.1.2",
