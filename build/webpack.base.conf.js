@@ -29,6 +29,7 @@ module.exports = {
     publicPath: process.env.NODE_ENV === 'production'
       ? config.build.assetsPublicPath
       : config.dev.assetsPublicPath,
+    ecmaVersion: 5,
   },
   resolve: {
     extensions: [ '.js', '.vue', '.json' ],
@@ -49,7 +50,7 @@ module.exports = {
         options: {
           limit: 1000,
           name(file) {
-            return hasHash(file) ? utils.assetsPath('img/[name].[ext]') : utils.assetsPath('img/[name].[hash].[ext]');
+            return hasHash(file) ? utils.assetsPath('img/[name].[ext]') : utils.assetsPath('img/[name].[contenthash].[ext]');
           },
         },
       },
@@ -59,7 +60,7 @@ module.exports = {
         options: {
           limit: 1000,
           name(file) {
-            return hasHash(file) ? utils.assetsPath('fonts/[name].[ext]') : utils.assetsPath('fonts/[name].[hash].[ext]');
+            return hasHash(file) ? utils.assetsPath('fonts/[name].[ext]') : utils.assetsPath('fonts/[name].[contenthash].[ext]');
           },
         },
       },
