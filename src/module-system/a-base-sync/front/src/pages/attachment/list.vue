@@ -45,7 +45,7 @@ export default {
     this.fetchActions();
   },
   methods: {
-    onRefresh(event, done) { // eslint-disable-line
+    onRefresh(done) {
       done();
       this.reload();
     },
@@ -64,7 +64,7 @@ export default {
           attachment: 1,
         },
         orders: [
-          [ 'createdAt', 'asc' ],
+          ['createdAt', 'asc'],
         ],
         page: { index },
       };

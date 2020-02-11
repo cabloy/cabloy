@@ -36,7 +36,7 @@
 <script>
 import ebAtomActions from '../../common/atomActions.js';
 export default {
-  mixins: [ ebAtomActions ],
+  mixins: [ebAtomActions],
   data() {
     const query = this.$f7route.query;
     let where = (query && query.where) ? JSON.parse(query.where) : null;
@@ -84,7 +84,7 @@ export default {
     this.$meta.eventHub.$off('comment:action', this.onCommentChanged);
   },
   methods: {
-    onRefresh(event, done) { // eslint-disable-line
+    onRefresh(done) {
       done();
       this.reload();
     },
@@ -99,7 +99,7 @@ export default {
       // options
       const options = {
         orders: [
-          [ 'h_updatedAt', this.order ],
+          ['h_updatedAt', this.order],
         ],
         page: { index },
       };

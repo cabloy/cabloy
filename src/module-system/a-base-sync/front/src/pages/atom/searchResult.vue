@@ -14,7 +14,7 @@ import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.components.ebPageContext;
 import atoms from '../../components/atom/list.vue';
 export default {
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   components: {
     atoms,
   },
@@ -43,7 +43,7 @@ export default {
     this.$refs.list.reload(true);
   },
   methods: {
-    onRefresh(event, done) { // eslint-disable-line
+    onRefresh(done) {
       done();
       this.$refs.list.reload();
     },

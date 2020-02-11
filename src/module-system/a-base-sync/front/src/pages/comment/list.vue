@@ -55,7 +55,7 @@ export default {
     this.$meta.eventHub.$off('comment:action', this.onCommentChanged);
   },
   methods: {
-    onRefresh(event, done) { // eslint-disable-line
+    onRefresh(done) {
       done();
       this.reload();
     },
@@ -70,7 +70,7 @@ export default {
       // options
       const options = {
         orders: [
-          [ 'updatedAt', this.order ],
+          ['updatedAt', this.order],
         ],
         page: { index },
       };

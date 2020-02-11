@@ -15,7 +15,7 @@ const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.com
 import ebAtomClasses from '../../common/atomClasses.js';
 import atoms from '../../components/atom/list.vue';
 export default {
-  mixins: [ ebPageContext, ebAtomClasses ],
+  mixins: [ebPageContext, ebAtomClasses],
   components: {
     atoms,
   },
@@ -51,7 +51,7 @@ export default {
     // params
     let selectedAtomIds;
     if (contextParams.selectMode === 'single') {
-      selectedAtomIds = contextParams.selectedAtomId ? [ contextParams.selectedAtomId ] : null;
+      selectedAtomIds = contextParams.selectedAtomId ? [contextParams.selectedAtomId] : null;
     } else {
       selectedAtomIds = contextParams.selectedAtomIds ? contextParams.selectedAtomIds.concat() : null;
     }
@@ -65,7 +65,7 @@ export default {
     });
   },
   methods: {
-    onRefresh(event, done) { // eslint-disable-line
+    onRefresh(done) {
       done();
       this.$refs.list.reload();
     },
