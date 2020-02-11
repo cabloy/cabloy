@@ -1,9 +1,9 @@
 {
   "name": "egg-born-module-a-validation",
-  "version": "2.0.8",
+  "version": "3.0.0",
   "eggBornModule": {
     "dependencies": {
-      "a-instance": "2.0.0"
+      "a-instance": "3.0.0"
     }
   },
   "description": "",
@@ -15,10 +15,10 @@
   "author": "zhennann",
   "devDependencies": {},
   "dependencies": {
-    "require3": "^1.0.1",
-    "ajv": "^6.10.0",
-    "ajv-i18n": "^3.4.0",
-    "ajv-keywords": "^3.4.0",
-    "js-beautify": "^1.10.2"
+    "require3": "^1.0.3",
+    "ajv": "^6.11.0",
+    "ajv-i18n": "^3.5.0",
+    "ajv-keywords": "^3.4.1",
+    "js-beautify": "^1.10.3"
   }
 }
