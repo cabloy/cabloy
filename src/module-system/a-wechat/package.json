@@ -1,12 +1,12 @@
 {
   "name": "egg-born-module-a-wechat",
-  "version": "1.0.5",
+  "version": "3.0.0",
   "title": "a-wechat",
   "eggBornModule": {
     "fileVersion": 1,
     "dependencies": {
-      "a-instance": "2.0.0",
-      "a-base": "2.0.0"
+      "a-instance": "3.0.0",
+      "a-base": "3.0.0"
     }
   },
   "description": "wechat api for CabloyJS",
@@ -26,7 +26,7 @@
     "extend2": "^1.0.0",
     "wechat-crypto": "^0.0.2",
     "xml2js": "^0.4.23",
-    "@zhennann/co-wechat-api": "^3.10.0",
-    "@zhennann/passport-wechat": "^3.0.0"
+    "@zhennann/co-wechat-api": "^3.10.6",
+    "@zhennann/passport-wechat": "^3.0.2"
   }
 }
