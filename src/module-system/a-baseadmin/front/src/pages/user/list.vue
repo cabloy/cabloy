@@ -21,7 +21,7 @@ export default {
     this.$refs.users.reload(true);
   },
   methods: {
-    onRefresh(event, done) { // eslint-disable-line
+    onRefresh(done) {
       done();
       this.$refs.users.reload();
     },
