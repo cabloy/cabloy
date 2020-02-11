@@ -1,12 +1,12 @@
 {
   "name": "egg-born-module-a-captcha",
-  "version": "2.0.4",
+  "version": "3.0.0",
   "title": "a-captcha",
   "eggBornModule": {
     "fileVersion": 0,
     "dependencies": {
-      "a-instance": "2.0.0",
-      "a-base": "2.0.0"
+      "a-instance": "3.0.0",
+      "a-base": "3.0.0"
     }
   },
   "description": "",
