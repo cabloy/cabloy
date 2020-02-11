@@ -1,9 +1,9 @@
 {
   "name": "egg-born-module-a-event",
-  "version": "2.0.3",
+  "version": "3.0.0",
   "eggBornModule": {
     "dependencies": {
-      "a-instance": "2.0.0"
+      "a-instance": "3.0.0"
     }
   },
   "description": "",
@@ -15,7 +15,7 @@
   "author": "zhennann",
   "devDependencies": {},
   "dependencies": {
-    "require3": "^1.0.1",
-    "assert": "^1.4.1"
+    "require3": "^1.0.3",
+    "assert": "^2.0.0"
   }
 }
