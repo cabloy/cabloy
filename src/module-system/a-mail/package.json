@@ -1,12 +1,12 @@
 {
   "name": "egg-born-module-a-mail",
-  "version": "2.0.7",
+  "version": "3.0.0",
   "title": "a-mail",
   "eggBornModule": {
     "fileVersion": 1,
     "dependencies": {
-      "a-instance": "2.0.0",
-      "a-base": "2.0.0"
+      "a-instance": "3.0.0",
+      "a-base": "3.0.0"
     }
   },
   "description": "",
@@ -20,7 +20,7 @@
   "dependencies": {
     "require3": "^1.0.3",
     "extend2": "^1.0.0",
-    "nodemailer": "^6.1.0",
-    "boxen": "^4.1.0"
+    "nodemailer": "^6.4.2",
+    "boxen": "^4.2.0"
   }
 }
