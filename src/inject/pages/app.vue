@@ -7,8 +7,6 @@ const F7Locales = {
 export default {
   render(c) {
     const children = [];
-    // statusbar
-    children.push(c('f7-statusbar', { ref: 'statusbar' }));
     // layout
     if (this.layout) {
       children.push(c(this.layout, {
