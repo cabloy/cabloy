@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-components-sync",
-  "version": "2.0.29",
+  "version": "3.0.0",
   "eggBornModule": {
     "dependencies": {}
   },
@@ -13,7 +13,7 @@
   "author": "zhennann",
   "devDependencies": {},
   "dependencies": {
-    "require3": "^1.0.1",
+    "require3": "^1.0.3",
     "@zhennann/liquor-tree": "^0.2.30"
   }
 }
