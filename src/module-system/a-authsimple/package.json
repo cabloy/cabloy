@@ -1,12 +1,12 @@
 {
   "name": "egg-born-module-a-authsimple",
-  "version": "2.0.13",
+  "version": "3.0.0",
   "title": "Auth-Simple",
   "eggBornModule": {
     "fileVersion": 1,
     "dependencies": {
-      "a-instance": "2.0.0",
-      "a-base": "2.0.0"
+      "a-instance": "3.0.0",
+      "a-base": "3.0.0"
     }
   },
   "description": "",
@@ -18,7 +18,7 @@
   "author": "zhennann",
   "devDependencies": {},
   "dependencies": {
-    "require3": "^1.0.1",
+    "require3": "^1.0.3",
     "passport-strategy": "^1.0.0",
     "password-hash-and-salt": "^0.1.4"
   }
