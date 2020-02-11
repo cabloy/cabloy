@@ -1,12 +1,12 @@
 {
   "name": "egg-born-module-a-file",
-  "version": "2.0.8",
+  "version": "3.0.0",
   "title": "File",
   "eggBornModule": {
     "fileVersion": 1,
     "dependencies": {
-      "a-instance": "2.0.0",
-      "a-base": "2.0.0"
+      "a-instance": "3.0.0",
+      "a-base": "3.0.0"
     }
   },
   "description": "",
@@ -18,14 +18,14 @@
   "author": "zhennann",
   "devDependencies": {},
   "dependencies": {
-    "require3": "^1.0.1",
+    "require3": "^1.0.3",
     "extend2": "^1.0.0",
-    "cropperjs": "^1.4.1",
+    "cropperjs": "^1.5.6",
     "stream-wormhole": "^1.1.0",
-    "fs-extra": "^7.0.0",
-    "uuid": "^3.2.1",
+    "fs-extra": "^8.1.0",
+    "uuid": "^3.4.0",
     "gm": "^1.23.1",
-    "bluebird": "^3.5.1",
+    "bluebird": "^3.7.2",
     "pump": "^3.0.0"
   }
 }
