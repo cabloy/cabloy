@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-pluginmarkdowngithub",
-  "version": "2.0.4",
+  "version": "3.0.0",
   "title": "cms:plugin:markdowngithub",
   "eggBornModule": {
     "cms": {
@@ -8,8 +8,8 @@
       "plugin": true
     },
     "dependencies": {
-      "a-instance": "2.0.0",
-      "cms-pluginbase": "2.0.0"
+      "a-instance": "3.0.0",
+      "cms-pluginbase": "3.0.0"
     }
   },
   "description": "",
@@ -21,7 +21,7 @@
   "author": "zhennann",
   "devDependencies": {},
   "dependencies": {
-    "require3": "^1.0.1",
+    "require3": "^1.0.3",
     "extend2": "^1.0.0"
   }
 }
