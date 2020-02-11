@@ -1,13 +1,13 @@
 {
   "name": "egg-born-module-test-wechat",
-  "version": "1.0.2",
+  "version": "3.0.0",
   "title": "test-wechat",
   "eggBornModule": {
     "fileVersion": 0,
     "dependencies": {
-      "a-instance": "2.0.0",
-      "a-base": "2.0.0",
-      "a-wechat": "1.0.0"
+      "a-instance": "3.0.0",
+      "a-base": "3.0.0",
+      "a-wechat": "3.0.0"
     }
   },
   "description": "test module for egg-born-module-a-wechat",
@@ -25,6 +25,6 @@
   "dependencies": {
     "require3": "^1.0.3",
     "extend2": "^1.0.0",
-    "egg-born-module-a-wechat": "^1.0.0"
+    "egg-born-module-a-wechat": "^3.0.0"
   }
 }
