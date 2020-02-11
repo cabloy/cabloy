@@ -1,12 +1,12 @@
 {
   "name": "egg-born-module-test-party",
-  "version": "2.1.53",
+  "version": "3.0.0",
   "title": "Party",
   "eggBornModule": {
     "fileVersion": 4,
     "dependencies": {
-      "a-instance": "2.0.0",
-      "a-base": "2.0.0"
+      "a-instance": "3.0.0",
+      "a-base": "3.0.0"
     }
   },
   "description": "",
@@ -24,50 +24,6 @@
   },
   "dependencies": {
     "extend2": "^1.0.0",
-    "require3": "^1.0.3",
-    "@babel/core": "^7.1.0",
-    "@babel/register": "^7.0.0",
-    "@babel/preset-env": "^7.1.0",
-    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
-    "@babel/plugin-transform-runtime": "^7.1.0",
-    "babel-loader": "^8.0.2",
-    "chalk": "^2.1.0",
-    "connect-history-api-fallback": "^1.3.0",
-    "copy-webpack-plugin": "^5.0.3",
-    "css-loader": "^2.1.1",
-    "egg-born-localeutil": "^1.0.2",
-    "egg-born-mparse": "^1.0.2",
-    "eventsource-polyfill": "^0.9.6",
-    "express": "^4.15.4",
-    "file-loader": "^3.0.1",
-    "framework7-icons": "^2.3.1",
-    "friendly-errors-webpack-plugin": "^1.6.1",
-    "fs-extra": "^8.0.1",
-    "function-bind": "^1.1.1",
-    "glob": "^7.1.2",
-    "html-webpack-plugin": "^3.2.0",
-    "http-proxy-middleware": "^0.18.0",
-    "is-type-of": "^1.2.0",
-    "js-cookie": "^2.1.4",
-    "less": "^3.0.2",
-    "less-loader": "^5.0.0",
-    "mini-css-extract-plugin": "^0.4.0",
-    "moment": "^2.22.1",
-    "opn": "^6.0.0",
-    "optimize-css-assets-webpack-plugin": "^5.0.1",
-    "ora": "^4.0.3",
-    "rimraf": "^3.0.0",
-    "semver": "^6.1.1",
-    "uglifyjs-webpack-plugin": "^2.1.3",
-    "url-loader": "^1.0.1",
-    "vue-loader": "^15.0.0-beta.7",
-    "vue-style-loader": "^4.1.0",
-    "vue-template-compiler": "^2.5.16",
-    "vuex": "^3.0.0",
-    "webpack": "4.28.4",
-    "webpack-bundle-analyzer": "^3.3.2",
-    "webpack-dev-middleware": "^3.1.0",
-    "webpack-hot-middleware": "^2.21.2",
-    "webpack-merge": "^4.1.2"
+    "require3": "^1.0.3"
   }
 }

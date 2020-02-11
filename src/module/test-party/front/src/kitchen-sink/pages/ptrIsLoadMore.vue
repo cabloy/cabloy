@@ -21,7 +21,7 @@ export default {
     };
   },
   methods: {
-    onRefresh(event, done) { // eslint-disable-line
+    onRefresh(done) {
       done();
       this.reload();
     },

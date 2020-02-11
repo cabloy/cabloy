@@ -1,7 +1,7 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('About')" eb-back-link="Back"> </eb-navbar>
-    <f7-block-title>{{$text('Welcome to Framework7')}}</f7-block-title>
+    <eb-navbar large largeTransparent :title="$text('About')" eb-back-link="Back"> </eb-navbar>
+    <f7-block-title medium>{{$text('Welcome to Framework7')}}</f7-block-title>
     <f7-block strong>
       <p>{{$text('F7AboutTip1')}}</p>
       <p>{{$text('F7AboutTip2')}}</p>

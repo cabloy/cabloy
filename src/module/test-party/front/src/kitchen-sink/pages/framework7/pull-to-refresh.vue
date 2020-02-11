@@ -16,27 +16,27 @@ export default {
   data() {
     return {
       items: [{
-        title: 'Yellow Submarine',
-        author: 'Beatles',
-        cover: 'https://cdn.framework7.io/placeholder/abstract-88x88-1.jpg',
-      },
-      {
-        title: 'Don\'t Stop Me Now',
-        author: 'Queen',
-        cover: 'https://cdn.framework7.io/placeholder/abstract-88x88-2.jpg',
-      },
-      {
-        title: 'Billie Jean',
-        author: 'Michael Jackson',
-        cover: 'https://cdn.framework7.io/placeholder/abstract-88x88-3.jpg',
-      },
+          title: 'Yellow Submarine',
+          author: 'Beatles',
+          cover: 'https://cdn.framework7.io/placeholder/abstract-88x88-1.jpg',
+        },
+        {
+          title: 'Don\'t Stop Me Now',
+          author: 'Queen',
+          cover: 'https://cdn.framework7.io/placeholder/abstract-88x88-2.jpg',
+        },
+        {
+          title: 'Billie Jean',
+          author: 'Michael Jackson',
+          cover: 'https://cdn.framework7.io/placeholder/abstract-88x88-3.jpg',
+        },
       ],
-      songs: [ 'Yellow Submarine', 'Don\'t Stop Me Now', 'Billie Jean', 'Californication' ],
-      authors: [ 'Beatles', 'Queen', 'Michael Jackson', 'Red Hot Chili Peppers' ],
+      songs: ['Yellow Submarine', 'Don\'t Stop Me Now', 'Billie Jean', 'Californication'],
+      authors: ['Beatles', 'Queen', 'Michael Jackson', 'Red Hot Chili Peppers'],
     };
   },
   methods: {
-    loadMore(event, done) {
+    loadMore(done) {
       const self = this;
 
       setTimeout(() => {

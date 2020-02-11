@@ -54,7 +54,7 @@ module.exports = {
         loader: 'url-loader',
         options: {
           limit: 1000,
-          name: utils.assetsPath('img/[name].[hash].[ext]'),
+          name: utils.assetsPath('img/[name].[contenthash].[ext]'),
         },
       },
       {
@@ -62,7 +62,7 @@ module.exports = {
         loader: 'url-loader',
         options: {
           limit: 1000,
-          name: utils.assetsPath('fonts/[name].[hash].[ext]'),
+          name: utils.assetsPath('fonts/[name].[contenthash].[ext]'),
         },
       },
     ],
