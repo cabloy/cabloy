@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-instance",
-  "version": "2.0.6",
+  "version": "3.0.0",
   "title": "Instance",
   "eggBornModule": {
     "fileVersion": 4,
@@ -15,9 +15,9 @@
   "author": "zhennann",
   "devDependencies": {},
   "dependencies": {
-    "require3": "^1.0.1",
-    "assert": "^1.4.1",
-    "chalk": "^2.3.0",
-    "boxen": "^4.1.0"
+    "require3": "^1.0.3",
+    "assert": "^2.0.0",
+    "chalk": "^3.0.0",
+    "boxen": "^4.2.0"
   }
 }
