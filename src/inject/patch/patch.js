@@ -56,7 +56,7 @@ export default function(ctx, router) {
     const view = router.view;
     if (view && view.$el.hasClass('eb-layout-view')) {
       if (ctx.$meta.util.historyUrlEmpty(router.history[router.history.length - 2])) {
-        ctx.$meta.vueLayout.hideView(view, true);
+        ctx.$meta.vueLayout.hideView(view);
       }
     }
     return back.call(router, ...args);
