@@ -1,130 +1,37 @@
 <script>
-import LayoutView from './layoutView.vue';
+import TabViews from './tabViews.vue';
+import Group from './group.vue';
 
 export default {
   meta: {
     global: false,
   },
-  render(c) {
-    // pushStateMain: disabled for ios
-    const pushStateMain = !this.$device.ios;
-
-    // links and tabs
-    const toolbarLinks = [];
-    const tabs = [];
-    this.$config.layout.tabs.forEach(tab => {
-      // tab id
-      const id = `eb-layout-tab-${tab.name}`;
-      // link
-      const _linkAttrs = this.$utils.extend({}, tab);
-      _linkAttrs.text = this.$text(_linkAttrs.text || _linkAttrs.name);
-      _linkAttrs.tabLink = `#${id}`;
-      toolbarLinks.push(c('f7-link', { attrs: _linkAttrs }));
-      // view
-      const _viewAttrs = {
-        id,
-        tab: true,
-        'data-url': tab.url,
-        init: true,
-        tabActive: tab.tabLinkActive,
-        pushState: false,
-        stackPages: true,
-        pushStateOnLoad: false,
-        preloadPreviousPage: false,
-      };
-      tabs.push(c('eb-view', {
-        key: id,
-        staticClass: 'eb-layout-tab eb-layout-view-size-small',
-        attrs: _viewAttrs,
-        props: {
-          size: 'small',
-          sizeExtent: this.sizeExtent,
-        },
-        on: { 'tab:show': this.onTabShow },
-      }));
-    });
-    // toolbar
-    const _toolbarAttrs = this.$utils.extend({}, this.$config.layout.toolbar);
-    const toolbar = c('f7-toolbar', { attrs: _toolbarAttrs }, toolbarLinks);
-    // views
-    const views = c('f7-views', { attrs: { tabs: true } }, [ toolbar, ...tabs ]);
-    // view main
-    const viewMain = c('eb-layout-view', {
-      ref: 'main',
-      attrs: {
-        name: 'main',
-        pushState: pushStateMain,
-        stackPages: true,
-        pushStateOnLoad: false,
-        preloadPreviousPage: false,
-        size: 'small',
-        sizeExtent: this.sizeExtent,
-      },
-    });
-    // view login
-    const viewLogin = c('eb-layout-view', {
-      ref: 'login',
-      attrs: {
-        name: 'login',
-        pushState: pushStateMain,
-        stackPages: true,
-        pushStateOnLoad: false,
-        preloadPreviousPage: false,
-        size: 'small',
-        sizeExtent: this.sizeExtent,
-      },
-    });
-    // ready
-    return c('div', { staticClass: 'eb-layout-container eb-layout-container-mobile' }, [ views, viewMain, viewLogin ]);
-  },
   components: {
-    ebLayoutView: LayoutView,
+    ebTabViews: TabViews,
+    ebGroup: Group,
+  },
+  render(c) {
+    // children
+    const children = [];
+
+    // tab views
+    if (this.tabShowed) {
+      children.push(c('eb-tab-views', { ref: 'tabViews' }));
+    }
+
+    // group
+    children.push(c('eb-group', { ref: 'group' }));
+
+    // ready
+    return c('div', { staticClass: 'eb-layout-container eb-layout-container-mobile' }, children);
   },
   data() {
     return {
       started: false,
-      viewMainVisible: false,
-      viewLoginVisible: false,
       tabShowed: false,
       sizeExtent: null,
+      size: null,
     };
-  },
-  computed: {
-    viewTabsVisible() {
-      return this.started && !this.viewMainVisible && !this.viewLoginVisible;
-    },
-  },
-  watch: {
-    viewTabsVisible(value) {
-      // avoid warn: Duplicate keys detected
-      this.$nextTick(() => {
-        if (value) {
-          this.onTabShow();
-        }
-      });
-    },
-    viewMainVisible(value) {
-      this.$nextTick(() => {
-        if (value) {
-          this.$f7.loginScreen.open(this.$refs.main.$el);
-        } else {
-          this.$f7.loginScreen.close(this.$refs.main.$el);
-        }
-      });
-    },
-    viewLoginVisible(value) {
-      this.$nextTick(() => {
-        if (value) {
-          // open
-          this.$f7.loginScreen.open(this.$refs.login.$el);
-        } else {
-          // close
-          this.$f7.loginScreen.close(this.$refs.login.$el);
-          // clear hashInit
-          this.$store.commit('auth/setHashInit', null);
-        }
-      });
-    },
   },
   created() {
     this._onSize();
@@ -140,11 +47,20 @@ export default {
       this._onSize();
     },
     _onSize() {
+      const width = this.$$(window).width();
+      const height = this.$$(window).height();
+
       // sizeExtent
-      this.sizeExtent = {
-        width: this.$$(window).width(),
-        height: this.$$(window).height(),
-      };
+      this.sizeExtent = { width, height };
+
+      // size
+      if (width <= this.$config.layout.size.small * 2) {
+        this.size = 'small';
+      } else if (width > this.$config.layout.size.small * 3) {
+        this.size = 'large';
+      } else {
+        this.size = 'middle';
+      }
     },
     start() {
       // loginOnStart
@@ -156,12 +72,17 @@ export default {
         const hashInit = vueApp.popupHashInit();
         if (hashInit) {
           this.navigate(hashInit);
+        } else {
+          this.openHome();
         }
       }
       // started
       this.$nextTick(() => {
         this.started = true;
       });
+    },
+    openHome() {
+      this.tabShowed = true;
     },
     navigate(url, options) {
       if (!url) return;
@@ -175,43 +96,28 @@ export default {
       if (target === '_self') {
         ctx.$view.f7View.router.navigate(url, options);
       } else {
-        const viewName = (ctx && ctx.$view.$el.f7View.name) || 'main';
-        this.$f7.views[viewName].router.navigate(url, options);
-        if (viewName === 'main') {
-          this.viewMainVisible = true;
-          this.viewLoginVisible = false;
-        } else if (viewName === 'login') {
-          this.viewMainVisible = false;
-          this.viewLoginVisible = true;
+        // check if target===_view/_group or in views
+        if (!ctx || !ctx.$view || target === '_view' || target === '_group' || this.$$(ctx.$view.$el).parents('.eb-layout-group-tool').length > 0) {
+          // in new view
+          this.$refs.group.createView({ ctx, url }).then(res => {
+            if (res) {
+              if (res.options) this.$utils.extend(options, res.options);
+              res.view.f7View.router.navigate(url, options);
+            }
+          });
+        } else {
+          // in current view
+          ctx.$view.f7View.router.navigate(url, options);
         }
       }
     },
     openLogin(routeTo) {
       const hashInit = (!routeTo || typeof routeTo === 'string') ? routeTo : routeTo.url.url;
       if (hashInit && hashInit !== '/') this.$store.commit('auth/setHashInit', hashInit);
-      this.$f7.views.login.router.navigate(this.$config.layout.login);
-      this.viewLoginVisible = true;
+      this.navigate(this.$config.layout.login);
     },
-    hideView(view, cancel = false) {
-      view = typeof view === 'string' ? this.$f7.views[view] : view;
-      // close
-      if (view.name === 'main') this.viewMainVisible = false;
-      if (view.name === 'login') this.viewLoginVisible = false;
-      // close directly
-      if (!cancel) {
-        // adjust history
-        view.router.navigate('/', { reloadAll: true });
-      }
-    },
-    onTabShow(e) {
-      const target = e ? this.$$(e.target) : this.$$('.view.eb-layout-tab.tab-active');
-      if (target.hasClass('eb-layout-tab')) {
-        const path = target[0].f7View.router.currentRoute.path;
-        if (!path || path === '/') {
-          target[0].f7View.router.navigate(target.data('url'));
-          this.tabShowed = true;
-        }
-      }
+    hideView(view) {
+      this.$refs.group.closeView(view);
     },
     backLink(ctx) {
       let backLink = false;
@@ -219,9 +125,8 @@ export default {
         backLink = true;
       } else {
         const $el = ctx.$$(ctx.$el);
-        const $view = $el.parents('.view');
-        if ($view.hasClass('eb-layout-view-main')) backLink = true;
-        else if ($view.hasClass('eb-layout-view-login') && this.tabShowed) backLink = true;
+        const $view = $el.parents('.eb-layout-view');
+        if ($view.length > 0) backLink = true;
       }
       return backLink;
     },

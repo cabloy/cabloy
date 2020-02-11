@@ -10,5 +10,8 @@ export default {
       { name: 'Atom', tabLinkActive: false, iconMaterial: 'group_work', url: '/a/base/atom/list' },
       { name: 'Mine', tabLinkActive: false, iconMaterial: 'person', url: '/a/user/user/mine' },
     ],
+    size: {
+      small: 320,
+    },
   },
 };
