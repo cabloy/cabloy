@@ -1,12 +1,12 @@
 {
   "name": "egg-born-module-a-progress",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "title": "a-progress",
   "eggBornModule": {
     "fileVersion": 1,
     "dependencies": {
-      "a-instance": "2.0.0",
-      "a-base": "2.0.0"
+      "a-instance": "3.0.0",
+      "a-base": "3.0.0"
     }
   },
   "description": "",
