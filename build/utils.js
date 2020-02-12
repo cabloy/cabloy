@@ -19,6 +19,7 @@ exports.cssLoaders = function(options) {
     loader: 'css-loader',
     options: {
       sourceMap: options.sourceMap,
+      esModule: false,
     },
   };
 

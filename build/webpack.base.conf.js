@@ -45,22 +45,24 @@ module.exports = {
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
-        loader: 'url-loader',
+        loader: 'file-loader',
         options: {
           limit: 1000,
           name(file) {
             return hasHash(file) ? utils.assetsPath('img/[name].[ext]') : utils.assetsPath('img/[name].[contenthash].[ext]');
           },
+          esModule: false,
         },
       },
       {
         test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-        loader: 'url-loader',
+        loader: 'file-loader',
         options: {
           limit: 1000,
           name(file) {
             return hasHash(file) ? utils.assetsPath('fonts/[name].[ext]') : utils.assetsPath('fonts/[name].[contenthash].[ext]');
           },
+          esModule: false,
         },
       },
     ],
