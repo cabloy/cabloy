@@ -116,7 +116,7 @@ export default {
       if (hashInit && hashInit !== '/') this.$store.commit('auth/setHashInit', hashInit);
       this.navigate(this.$config.layout.login);
     },
-    hideView(view) {
+    closeView(view) {
       this.$refs.group.closeView(view);
     },
     backLink(ctx) {

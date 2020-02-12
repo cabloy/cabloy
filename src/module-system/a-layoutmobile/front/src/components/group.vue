@@ -11,12 +11,13 @@ export default {
       const view = this.views[index];
       const _viewAttrs = {
         id: view.id,
+        name: view.zIndex + '',
         init: false,
         pushState: pushStateView,
         stackPages: true,
         pushStateOnLoad: false,
         preloadPreviousPage: false,
-        'data-index': index,
+        'data-zindex': view.zIndex,
       };
       children.push(c('eb-view', {
         ref: view.id,
@@ -61,17 +62,20 @@ export default {
   },
   methods: {
     closeView(view) {
-      const viewIndex = parseInt(this.$$(view.$el).data('index'));
-      window.setTimeout(() => {
-        this.views.splice(viewIndex, 1);
+      // remove
+      const viewzIndex = parseInt(this.$$(view.$el).data('zindex'));
+      const index = this.views.findIndex(item => item.zIndex === viewzIndex);
+      if (index > -1) {
+        this.views.splice(index, 1);
         if (this.views.length === 0) {
           // hide group
           this.$$(this.$el).hide();
-
-          // force tab show
-          this.layout.tabShowed = true;
+          // tab show
+          if (!this.layout.tabShowed) {
+            this.layout.tabShowed = true;
+          }
         }
-      }, 1000);
+      }
     },
     createView({ ctx, url }) {
       return new Promise(resolve => {

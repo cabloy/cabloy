@@ -15,6 +15,7 @@ export default {
       // view
       const _viewAttrs = {
         id,
+        name: tab.name,
         tab: true,
         'data-url': tab.url,
         init: true,
