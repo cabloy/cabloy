@@ -40,10 +40,9 @@ export default {
     getView(groupId, viewId) {
       return this.$refs[groupId].getView(viewId);
     },
-    onTabShow(e) {
-      if (!e) return;
+    onTabShow(el) {
       this.$nextTick(() => {
-        const groupId = this.$$(e.target).data('groupId');
+        const groupId = this.$$(el).data('groupId');
         const tabLink = this.layout.$refs.header.$refs.tabs.$refs[groupId];
         if (tabLink) {
           tabLink.$el.scrollIntoView(false);
