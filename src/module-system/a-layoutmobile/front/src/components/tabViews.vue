@@ -60,8 +60,8 @@ export default {
     this.onTabShow();
   },
   methods: {
-    onTabShow(e) {
-      const target = e ? this.$$(e.target) : this.$$('.view.eb-layout-tab.tab-active');
+    onTabShow(el) {
+      const target = el ? this.$$(el) : this.$$('.view.eb-layout-tab.tab-active');
       if (target.hasClass('eb-layout-tab')) {
         const path = target[0].f7View.router.currentRoute.path;
         if (!path || path === '/') {
