@@ -237,7 +237,7 @@ export default {
       if (hashInit && hashInit !== '/') this.$store.commit('auth/setHashInit', hashInit);
       this.navigate(this.$config.layout.login);
     },
-    hideView(view) {
+    closeView(view) {
       const viewIndex = parseInt(this.$$(view.$el).data('index'));
       const groupId = this.$$(view.$el).parents('.eb-layout-group').data('groupId');
       const group = this.getGroup({ id: groupId });
