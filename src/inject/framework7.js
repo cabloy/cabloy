@@ -43,6 +43,9 @@ export default function(Vue, options, cb) {
         smartSelect: {
           routableModals: false,
         },
+        router: {
+          initEmpty: true,
+        },
         routes,
       },
       components: {
