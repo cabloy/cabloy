@@ -39,8 +39,8 @@ export default {
     onInfinite() {
       this.list && this.list.loadMore();
     },
-    onTabShow(event) {
-      this.$emit('tab:show', event);
+    onTabShow(el) {
+      this.$emit('tab:show', el);
       if (!this.inited && this.list) {
         this.inited = true;
         this.list.reload(true);
