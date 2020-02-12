@@ -38,9 +38,8 @@ export default {
       };
       return size;
     },
-    close(options) {
-      const ctx = (options && options.ctx) || this;
-      this.$meta.vueLayout.closeView(ctx.$view.f7View);
+    close() {
+      this.$f7router.close();
     }
   },
   mounted() {
