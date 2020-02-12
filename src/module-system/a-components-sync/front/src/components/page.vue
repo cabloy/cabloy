@@ -5,10 +5,15 @@ export default {
   name: 'eb-page',
   extends: f7Page,
   methods: {
-    onPageAfterIn(event) {
-      this.dispatchEvent('page:afterin pageAfterIn', event, event.detail);
+    onPageAfterIn(page) {
+      if (this.eventTargetEl !== page.el) return;
+      this.setState({
+        routerPositionClass: 'page-current'
+      });
+      this.dispatchEvent('page:afterin pageAfterIn', page);
+
       // title
-      let title = this.$$(event.target).find('.navbar .title').text();
+      let title = page.$el.find('.navbar .title').text();
       if (!title) {
         // try get meta
         const page = this.$page;
