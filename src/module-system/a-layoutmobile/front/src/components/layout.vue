@@ -97,7 +97,7 @@ export default {
         ctx.$view.f7View.router.navigate(url, options);
       } else {
         // check if target===_view/_group or in views
-        if (!ctx || !ctx.$view || target === '_view' || target === '_group' || this.$$(ctx.$view.$el).parents('.eb-layout-group-tool').length > 0) {
+        if (!ctx || !ctx.$view || target === '_view' || this.$$(ctx.$view.$el).parents('.eb-layout-scene').length > 0) {
           // in new view
           this.$refs.group.createView({ ctx, url }).then(res => {
             if (res) {

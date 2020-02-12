@@ -41,7 +41,7 @@ export default {
     const toolbar = c('f7-toolbar', { attrs: _toolbarAttrs }, toolbarLinks);
     // views
     return c('f7-views', {
-      staticClass: 'eb-layout-group-tool',
+      staticClass: 'eb-layout-scene eb-layout-scene-tool',
       attrs: { tabs: true }
     }, [toolbar, ...tabs]);
   },
