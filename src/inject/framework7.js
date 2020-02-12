@@ -44,7 +44,7 @@ export default function(Vue, options, cb) {
           routableModals: false,
         },
         router: {
-          initEmpty: true,
+          initEmpty: '/',
         },
         routes,
       },
