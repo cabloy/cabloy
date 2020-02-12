@@ -85,7 +85,7 @@
 <script>
 export default {
   methods: {
-    onPageInit(e) {
+    onPageInit() {
       const self = this;
       const today = new Date();
       const app = self.$f7;
@@ -94,7 +94,7 @@ export default {
         inputEl: '#demo-picker-device',
         cols: [{
           textAlign: 'center',
-          values: [ 'iPhone 4', 'iPhone 4S', 'iPhone 5', 'iPhone 5S', 'iPhone 6', 'iPhone 6 Plus', 'iPad 2', 'iPad Retina', 'iPad Air', 'iPad mini', 'iPad mini 2', 'iPad mini 3' ],
+          values: ['iPhone 4', 'iPhone 4S', 'iPhone 5', 'iPhone 5S', 'iPhone 6', 'iPhone 6 Plus', 'iPad 2', 'iPad Retina', 'iPad Air', 'iPad mini', 'iPad mini 2', 'iPad mini 3'],
         }, ],
       });
 
@@ -103,20 +103,20 @@ export default {
         inputEl: '#demo-picker-describe',
         rotateEffect: true,
         cols: [{
-          textAlign: 'left',
-          values: ('Super Amazing Bat Iron Rocket Lex Beautiful Wonderful Raining Happy Funny Cool Hot').split(' '),
-        },
-        {
-          values: ('Man Luthor Woman Boy Girl Person Cutie Babe Raccoon').split(' '),
-        },
+            textAlign: 'left',
+            values: ('Super Amazing Bat Iron Rocket Lex Beautiful Wonderful Raining Happy Funny Cool Hot').split(' '),
+          },
+          {
+            values: ('Man Luthor Woman Boy Girl Person Cutie Babe Raccoon').split(' '),
+          },
         ],
       });
 
       // Dependent values
       const carVendors = {
-        Japanese: [ 'Honda', 'Lexus', 'Mazda', 'Nissan', 'Toyota' ],
-        German: [ 'Audi', 'BMW', 'Mercedes', 'Volkswagen', 'Volvo' ],
-        American: [ 'Cadillac', 'Chrysler', 'Dodge', 'Ford' ],
+        Japanese: ['Honda', 'Lexus', 'Mazda', 'Nissan', 'Toyota'],
+        German: ['Audi', 'BMW', 'Mercedes', 'Volkswagen', 'Volvo'],
+        American: ['Cadillac', 'Chrysler', 'Dodge', 'Ford'],
       };
       self.pickerDependent = app.picker.create({
         inputEl: '#demo-picker-dependent',
@@ -125,18 +125,18 @@ export default {
           return values[1];
         },
         cols: [{
-          textAlign: 'left',
-          values: [ 'Japanese', 'German', 'American' ],
-          onChange(picker, country) {
-            if (picker.cols[1].replaceValues) {
-              picker.cols[1].replaceValues(carVendors[country]);
-            }
+            textAlign: 'left',
+            values: ['Japanese', 'German', 'American'],
+            onChange(picker, country) {
+              if (picker.cols[1].replaceValues) {
+                picker.cols[1].replaceValues(carVendors[country]);
+              }
+            },
           },
-        },
-        {
-          values: carVendors.Japanese,
-          width: 160,
-        },
+          {
+            values: carVendors.Japanese,
+            width: 160,
+          },
         ],
       });
 
@@ -157,15 +157,15 @@ export default {
             '</div>';
         },
         cols: [{
-          values: [ 'Mr', 'Ms' ],
-        },
-        {
-          textAlign: 'left',
-          values: ('Super Amazing Bat Iron Rocket Lex Beautiful Wonderful Raining Happy Funny Cool Hot').split(' '),
-        },
-        {
-          values: ('Man Luthor Woman Boy Girl Person Cutie Babe Raccoon').split(' '),
-        },
+            values: ['Mr', 'Ms'],
+          },
+          {
+            textAlign: 'left',
+            values: ('Super Amazing Bat Iron Rocket Lex Beautiful Wonderful Raining Happy Funny Cool Hot').split(' '),
+          },
+          {
+            values: ('Man Luthor Woman Boy Girl Person Cutie Babe Raccoon').split(' '),
+          },
         ],
         on: {
           open(picker) {
@@ -179,7 +179,7 @@ export default {
               const col2Values = picker.cols[2].values;
               const col2Random = col2Values[Math.floor(Math.random() * col2Values.length)];
 
-              picker.setValue([ col0Random, col1Random, col2Random ]);
+              picker.setValue([col0Random, col1Random, col2Random]);
             });
           },
         },
@@ -209,7 +209,7 @@ export default {
           },
           // Days
           {
-            values: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 ],
+            values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
           },
           // Years
           {

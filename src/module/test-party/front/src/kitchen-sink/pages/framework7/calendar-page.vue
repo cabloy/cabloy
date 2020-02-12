@@ -26,40 +26,40 @@ export default {
     return {
       today: new Date(year, month, day),
       events: [{
-        date: new Date(year, month, day),
-        hours: 12,
-        minutes: 30,
-        title: 'Meeting with Vladimir',
-        color: '#2196f3',
-      },
-      {
-        date: new Date(year, month, day),
-        hours: 18,
-        minutes: 0,
-        title: 'Shopping',
-        color: '#4caf50',
-      },
-      {
-        date: new Date(year, month, day),
-        hours: 21,
-        minutes: 0,
-        title: 'Gym',
-        color: '#e91e63',
-      },
-      {
-        date: new Date(year, month, day + 2),
-        hours: 16,
-        minutes: 0,
-        title: 'Pay loan',
-        color: '#2196f3',
-      },
-      {
-        date: new Date(year, month, day + 2),
-        hours: 21,
-        minutes: 0,
-        title: 'Gym',
-        color: '#ff9800',
-      },
+          date: new Date(year, month, day),
+          hours: 12,
+          minutes: 30,
+          title: 'Meeting with Vladimir',
+          color: '#2196f3',
+        },
+        {
+          date: new Date(year, month, day),
+          hours: 18,
+          minutes: 0,
+          title: 'Shopping',
+          color: '#4caf50',
+        },
+        {
+          date: new Date(year, month, day),
+          hours: 21,
+          minutes: 0,
+          title: 'Gym',
+          color: '#e91e63',
+        },
+        {
+          date: new Date(year, month, day + 2),
+          hours: 16,
+          minutes: 0,
+          title: 'Pay loan',
+          color: '#2196f3',
+        },
+        {
+          date: new Date(year, month, day + 2),
+          hours: 21,
+          minutes: 0,
+          title: 'Gym',
+          color: '#ff9800',
+        },
       ],
       eventItems: [],
     };
@@ -89,15 +89,15 @@ export default {
       }
       self.eventItems = eventItems;
     },
-    onPageInit(e, page) {
+    onPageInit(page) {
       const self = this;
       const app = self.$f7;
       const $ = self.$$;
-      const monthNames = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
       self.calendar = app.calendar.create({
         containerEl: '#calendar',
         toolbar: false,
-        value: [ self.today ],
+        value: [self.today],
         events: self.events,
         on: {
           init(calendar) {
