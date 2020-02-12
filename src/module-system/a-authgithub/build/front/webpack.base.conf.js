@@ -51,18 +51,20 @@ module.exports = {
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
-        loader: 'url-loader',
+        loader: 'file-loader',
         options: {
           limit: 1000,
           name: utils.assetsPath('img/[name].[contenthash].[ext]'),
+          esModule: false,
         },
       },
       {
         test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-        loader: 'url-loader',
+        loader: 'file-loader',
         options: {
           limit: 1000,
           name: utils.assetsPath('fonts/[name].[contenthash].[ext]'),
+          esModule: false,
         },
       },
     ],
