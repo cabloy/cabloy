@@ -47,7 +47,7 @@ import ebAtomClasses from '../../common/atomClasses.js';
 import ebAtomActions from '../../common/atomActions.js';
 import ebMenus from '../../common/menus.js';
 export default {
-  mixins: [ ebAtomClasses, ebAtomActions, ebMenus ],
+  mixins: [ebAtomClasses, ebAtomActions, ebMenus],
   components: {
     atoms,
   },
@@ -99,7 +99,7 @@ export default {
     const options = {
       where: { menu: 1, scene: 1 },
       orders: [
-        [ 'sorting', 'asc' ],
+        ['sorting', 'asc'],
       ],
     };
     if (this.atomClass) {

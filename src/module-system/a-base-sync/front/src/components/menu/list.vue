@@ -44,7 +44,7 @@ export default {
   meta: {
     global: false,
   },
-  mixins: [ ebModules, ebMenus ],
+  mixins: [ebModules, ebMenus],
   props: {
     mode: {
       type: String,
@@ -122,8 +122,8 @@ export default {
         options = {
           where: { menu: 1 },
           orders: [
-            [ 'scene', 'asc' ],
-            [ 'sorting', 'asc' ],
+            ['scene', 'asc'],
+            ['sorting', 'asc'],
           ],
           page: { index },
         };
@@ -131,9 +131,9 @@ export default {
         options = {
           where: { menu: 1 },
           orders: [
-            [ 'module', 'asc' ],
-            [ 'scene', 'asc' ],
-            [ 'sorting', 'asc' ],
+            ['module', 'asc'],
+            ['scene', 'asc'],
+            ['sorting', 'asc'],
           ],
           page: { index },
         };
@@ -141,7 +141,7 @@ export default {
         options = {
           where: { menu: 1 },
           orders: [
-            [ 'd.updatedAt', 'desc' ],
+            ['d.updatedAt', 'desc'],
           ],
           star: 1,
           page: { index },
@@ -150,7 +150,7 @@ export default {
         options = {
           where: { menu: 1, titleLocale: { val: this.query, op: 'like' } },
           orders: [
-            [ 'titleLocale', 'asc' ],
+            ['titleLocale', 'asc'],
           ],
           page: { index },
         };
