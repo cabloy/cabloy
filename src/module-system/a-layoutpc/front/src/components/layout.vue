@@ -119,15 +119,20 @@ export default {
       if (target === '_self') {
         ctx.$view.f7View.router.navigate(url, options);
       } else {
+
         // groupId
         let groupId;
-        if (!ctx || !ctx.$view || this.$$(ctx.$view.$el).parents('.eb-layout-scene').length > 0) {
+        let groupForceNew;
+        if (window.event && (window.event.metaKey || window.event.ctrlKey || window.event.button === 1)) {
+          groupId = null;
+          groupForceNew = true;
+        } else if (!ctx || !ctx.$view || this.$$(ctx.$view.$el).parents('.eb-layout-scene').length > 0) {
           groupId = null;
         } else {
           groupId = this.$$(ctx.$view.$el).parents('.eb-layout-group').data('groupId');
         }
         // get view
-        this.$refs.groups.createView({ ctx, groupId, url, scene: options._scene, sceneName: options._sceneName }).then(res => {
+        this.$refs.groups.createView({ ctx, groupId, groupForceNew, url, scene: options._scene, sceneName: options._sceneName }).then(res => {
           if (res) {
             if (res.options) options = this.$utils.extend({}, options, res.options);
             res.view.f7View.router.navigate(url, options);

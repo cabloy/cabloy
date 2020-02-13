@@ -61,10 +61,10 @@ export default {
       if (id) return this.groups.find(group => group.id === id);
       return this.groups.find(group => group.url === url);
     },
-    createView({ ctx, groupId, url, scene, sceneName }) {
+    createView({ ctx, groupId, groupForceNew, url, scene, sceneName }) {
       return new Promise(resolve => {
         // group
-        let group = this.getGroup({ id: groupId, url });
+        let group = groupForceNew ? null : this.getGroup({ id: groupId, url });
         if (!group) {
           group = {
             id: this.$meta.util.nextId('layoutgroup'),
