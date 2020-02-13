@@ -2,14 +2,14 @@
 export default {
   render(c) {
     const children = [];
-    for (const group of this.groups) {
+    for (const group of this.layout.groups) {
       const text = c('div', { domProps: { innerText: group.title } });
       const close = c('f7-icon', {
         staticClass: 'close',
         attrs: { material: 'close' },
         nativeOn: {
           click: event => {
-            this.layout.removeGroup(group.id);
+            this.groups.removeGroup(group.id);
             event.stopPropagation();
             event.preventDefault();
           },
@@ -21,7 +21,7 @@ export default {
         attrs: { tabLink: `#${group.id}` },
         props: {
           onPerform: () => {
-            this.$f7.tab.show(`#${group.id}`);
+            this.groups.switchGroup(group.id);
           },
         },
       }, [text, close]));
@@ -37,7 +37,7 @@ export default {
       return this.$parent.$parent;
     },
     groups() {
-      return this.layout.groups;
+      return this.layout.$refs.groups;
     },
   },
   methods: {

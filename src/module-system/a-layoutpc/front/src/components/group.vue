@@ -7,6 +7,7 @@ export default {
         const view = this.views[index];
         const _viewAttrs = {
           id: view.id,
+          name: view.id,
           init: false,
           pushState: false,
           stackPages: true,
@@ -46,11 +47,14 @@ export default {
     },
   },
   computed: {
-    size() {
-      return this.$parent.$parent.$parent.$parent.size;
-    },
     groups() {
-      return this.$parent.$parent.$parent.$parent.groups;
+      return this.$parent.$parent.$parent;
+    },
+    layout() {
+      return this.groups.layout;
+    },
+    size() {
+      return this.layout.size;
     },
   },
   methods: {
@@ -95,15 +99,13 @@ export default {
     },
     _resize() {
       for (const view of this.views) {
-        const _view = this.$refs[view.id];
-        const width = this.size[view.size];
-        this.$$(_view.$el).css({
-          width: `${width}px`,
-        });
         view.sizeExtent = {
           width: this.size[view.size],
           height: this.size.main,
         };
+        this.$$(this.$refs[view.id].$el).css({
+          width: `${view.sizeExtent.width}px`,
+        });
       }
     },
     reLayout() {
@@ -170,11 +172,7 @@ export default {
       }
     },
     onViewTitle(data) {
-      const viewIndex = parseInt(this.$$(data.page.$view.$el).data('index'));
-      if (viewIndex === 0) {
-        const group = this.groups.find(group => group.id === this.groupId);
-        if (data.title) group.title = data.title;
-      }
+      this.groups.onViewTitle(this.groupId, data);
     },
     getView(viewId) {
       return this.$refs[viewId];

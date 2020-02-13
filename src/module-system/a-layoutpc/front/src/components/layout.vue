@@ -33,13 +33,11 @@ export default {
         small: 0,
         middle: 0,
         large: 0,
-        enough: false,
         top: 0,
         main: 0,
         spacing: 0,
       },
       groups: [],
-      router: null,
     };
   },
   mounted() {
@@ -52,12 +50,7 @@ export default {
     onResize() {
       if (!this.started) return;
       this.setSize();
-      this.resizeGroups();
-    },
-    resizeGroups() {
-      for (const group of this.groups) {
-        this.$refs.groups.resizeGroup(group.id);
-      }
+      this.$refs.groups.resize();
     },
     setSize() {
       const width = this.size.width = this.$$(this.$el).width();
@@ -67,20 +60,21 @@ export default {
       const spacing = this.size.spacing = this.$config.layout.size.spacing;
 
       // width
-      const small = parseInt((width - spacing * 3) / 3);
+      let enoughLarge = true;
+      let enoughMiddle = true;
+      let small = parseInt((width - spacing * 4) / 3);
       if (small < this.$config.layout.size.small) {
-        this.size.small = parseInt((width - spacing * 2) / 2);
-        this.size.enough = false;
-      } else {
-        this.size.small = small;
-        this.size.enough = true;
+        enoughLarge = false;
+        small = parseInt((width - spacing * 3) / 2);
+        if (small < this.$config.layout.size.small) {
+          enoughMiddle = false;
+          small = parseInt(width - spacing * 2);
+        }
       }
-      this.size.middle = this.size.small * 2;
-      if (this.size.enough) {
-        this.size.large = this.size.small * 3 + spacing;
-      } else {
-        this.size.large = this.size.middle;
-      }
+      // size
+      this.size.small = small;
+      this.size.middle = enoughMiddle ? small * 2 + (enoughLarge ? spacing : 0) : small;
+      this.size.large = enoughLarge ? small * 3 + spacing * 2 : middle;
 
       // height
       this.size.top = this.$config.layout.size.top;
@@ -108,8 +102,10 @@ export default {
       });
     },
     openHome() {
-      const button = this.$config.layout.header.buttons.find(button => button.name === 'Home');
-      if (button) this.navigate(button.url, { target: '_dashboard' });
+      const button = this.$config.layout.header.buttons.find(button => button.sceneName === 'home');
+      if (button) {
+        this.navigate(button.url, { _scene: button.scene, _sceneName: button.sceneName });
+      }
     },
     navigate(url, options) {
       if (!url) return;
@@ -125,112 +121,19 @@ export default {
       } else {
         // groupId
         let groupId;
-        if (!ctx || !ctx.$view || target === '_group' || this.$$(ctx.$view.$el).parents('.eb-layout-group-dashboard').length > 0) {
+        if (!ctx || !ctx.$view || this.$$(ctx.$view.$el).parents('.eb-layout-scene').length > 0) {
           groupId = null;
         } else {
           groupId = this.$$(ctx.$view.$el).parents('.eb-layout-group').data('groupId');
         }
         // get view
-        this.getView({ ctx, groupId, url, dashboard: target === '_dashboard' }).then(res => {
+        this.$refs.groups.createView({ ctx, groupId, url, scene: options._scene, sceneName: options._sceneName }).then(res => {
           if (res) {
-            if (res.options) this.$utils.extend(options, res.options);
+            if (res.options) options = this.$utils.extend({}, options, res.options);
             res.view.f7View.router.navigate(url, options);
           }
         });
       }
-    },
-    getGroup({ id, url }) {
-      if (id) return this.groups.find(group => group.id === id);
-      return this.groups.find(group => group.url === url);
-    },
-    getView({ ctx, groupId, url, dashboard }) {
-      return new Promise(resolve => {
-        let group = this.getGroup({ id: groupId, url });
-        if (!group) {
-          groupId = this.$meta.util.nextId('layoutgroup');
-          group = {
-            id: groupId,
-            url,
-            title: '',
-            dashboard,
-            views: [],
-          };
-          if (dashboard) {
-            this.groups.unshift(group);
-          } else {
-            this.groups.push(group);
-          }
-        }
-        if (group.url === url && group.views.length > 0) {
-          this.$f7.tab.show(`#${group.id}`);
-          resolve(null);
-        } else {
-          let viewIndex = -1;
-          if (ctx && ctx.$view) {
-            viewIndex = parseInt(this.$$(ctx.$view.$el).data('index'));
-            if (viewIndex >= group.views.length - 1) {
-              viewIndex = -1;
-            }
-          }
-          if (viewIndex === -1) {
-            const viewId = this.$meta.util.nextId('layoutgroupview');
-            group.views.push({
-              id: viewId,
-              url,
-              size: 'small',
-              sizeExtent: {
-                width: this.size.small,
-                height: this.size.main,
-              },
-              callback: ({ view, title }) => {
-                // title
-                if (title) group.title = title;
-                this.$nextTick(() => {
-                  this.$f7.tab.show(`#${group.id}`);
-                  resolve({ view, options: null });
-                });
-              },
-            });
-          } else {
-            // remove last views
-            for (let i = group.views.length - 1; i >= 0; i--) {
-              if (i > viewIndex + 1) {
-                group.views.splice(i, 1);
-              }
-            }
-            this.$refs.groups.reLayout(groupId);
-            // return next view
-            const view = this.$refs.groups.getView(group.id, group.views[viewIndex + 1].id);
-            resolve({ view, options: { reloadAll: true } });
-          }
-        }
-      });
-    },
-    removeGroup(groupId) {
-      // current
-      const index = this.groups.findIndex(group => group.id === groupId);
-      const groupCurrent = this.groups[index];
-      // next
-      let groupIdNext;
-      if (this.$refs.header.isTabActive(groupId)) {
-        if (this.groups.length - 1 > index) {
-          groupIdNext = this.groups[index + 1].id;
-        } else if (index > 0) {
-          groupIdNext = this.groups[index - 1].id;
-        }
-      }
-      // remove
-      this.groups.splice(index, 1);
-      this.$nextTick(() => {
-        // next
-        if (groupIdNext) {
-          this.$f7.tab.show(`#${groupIdNext}`);
-        }
-        // check if openHome
-        if (this.groups.length === 0 && !groupCurrent.dashboard) {
-          this.openHome();
-        }
-      });
     },
     openLogin(routeTo) {
       const hashInit = (!routeTo || typeof routeTo === 'string') ? routeTo : routeTo.url.url;
@@ -238,19 +141,7 @@ export default {
       this.navigate(this.$config.layout.login);
     },
     closeView(view) {
-      const viewIndex = parseInt(this.$$(view.$el).data('index'));
-      const groupId = this.$$(view.$el).parents('.eb-layout-group').data('groupId');
-      const group = this.getGroup({ id: groupId });
-      for (let i = group.views.length - 1; i >= 0; i--) {
-        if (i >= viewIndex) {
-          group.views.splice(i, 1);
-        }
-      }
-      if (group.views.length === 0) {
-        this.removeGroup(groupId);
-      } else {
-        this.$refs.groups.reLayout(groupId);
-      }
+      this.$refs.groups.closeView(view);
     },
     backLink(ctx) {
       let backLink = false;
@@ -258,7 +149,7 @@ export default {
         backLink = true;
       } else {
         const $el = ctx.$$(ctx.$el);
-        const $view = $el.parents('.view');
+        const $view = $el.parents('.eb-layout-view');
         if (parseInt($view.data('index')) > 0) backLink = true;
       }
       return backLink;

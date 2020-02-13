@@ -4,7 +4,7 @@ export default {
   render(c) {
     const children = [];
     // more
-    if (this.groups.length > 2) {
+    if (this.layout.groups.length > 2) {
       children.push(c('f7-link', {
         props: {
           iconMaterial: 'expand_more',
@@ -16,20 +16,33 @@ export default {
     for (const button of this.$config.layout.header.buttons) {
       const props = {
         iconMaterial: button.iconMaterial,
-        ebHref: button.url,
-        ebTarget: button.target,
       };
-      children.push(c('eb-link', { key: button.name, props }));
+      children.push(c('eb-link', {
+        key: button.name,
+        props,
+        nativeOn: {
+          click: event => {
+            this.layout.navigate(button.url, { _scene: button.scene, _sceneName: button.sceneName });
+            event.stopPropagation();
+            event.preventDefault();
+          },
+        },
+      }));
     }
     // popover
     const tabButtons = [];
-    for (const group of this.groups) {
+    for (const group of this.layout.groups) {
       tabButtons.push(c('eb-list-item', {
         key: group.id,
         props: {
+          link: "#",
           popoverClose: true,
-          ebHref: group.url,
           title: group.title,
+        },
+        on: {
+          click: event => {
+            this.groups.switchGroup(group.id);
+          },
         },
       }));
     }
@@ -47,7 +60,7 @@ export default {
       return this.$parent.$parent;
     },
     groups() {
-      return this.layout.groups;
+      return this.layout.$refs.groups;
     },
   },
 };
