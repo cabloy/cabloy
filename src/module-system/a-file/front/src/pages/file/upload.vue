@@ -18,7 +18,7 @@ import Vue from 'vue';
 import Cropper from 'cropperjs';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.components.ebPageContext;
 export default {
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   data() {
     return {
       cropped: false,
