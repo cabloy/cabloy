@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Test')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Test')" eb-back-link="Back"></eb-navbar>
     <eb-list v-if="wx" no-hairlines-md>
       <eb-list-item title="微信扫一扫" link="#" :onPerform="onPerformScanQRCode"></eb-list-item>
       <eb-list-item title="获取openid" link="#" :onPerform="onPerformOpenid"></eb-list-item>
