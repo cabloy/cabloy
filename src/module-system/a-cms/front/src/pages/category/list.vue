@@ -62,10 +62,10 @@ export default {
       }
       // children
       return this.$api.post('category/children', {
-        atomClass: this.atomClass,
-        language: this.language,
-        categoryId: node.data.id,
-      })
+          atomClass: this.atomClass,
+          language: this.language,
+          categoryId: node.data.id,
+        })
         .then(data => {
           const list = data.list.map(item => {
             const node = {
@@ -126,7 +126,7 @@ export default {
               if (node.data.categoryIdParent !== categoryIdParent) {
                 this.$api.post('category/move', { categoryId, categoryIdParent })
                   .then(() => {
-                    for (const id of [ node.data.categoryIdParent, categoryIdParent ]) {
+                    for (const id of [node.data.categoryIdParent, categoryIdParent]) {
                       const node = this.findNode(id);
                       this.reloadChildren(node && node[0]);
                     }

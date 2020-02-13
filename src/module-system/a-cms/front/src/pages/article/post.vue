@@ -1,6 +1,6 @@
 <template>
   <eb-page @page:afterin="onPageAfterIn">
-    <eb-navbar :title="$text('Post')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Post')" eb-back-link="Back"></eb-navbar>
     <f7-block class="text-align-center">
       <f7-preloader></f7-preloader>
     </f7-block>

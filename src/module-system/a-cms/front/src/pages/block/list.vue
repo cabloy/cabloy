@@ -1,6 +1,6 @@
 <template>
   <eb-page @page:afterin="onPageAfterIn">
-    <eb-navbar :title="$text('Block')" eb-back-link="Back"> </eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Block')" eb-back-link="Back"> </eb-navbar>
     <f7-list>
       <eb-list-item v-for="item of blocks" :key="item.meta.name" :title="item.meta.titleLocale" link="#" :context="item" :onPerform="onPerformItem">
       </eb-list-item>
@@ -11,7 +11,7 @@
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.components.ebPageContext;
 export default {
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   data() {
     return {
       blocks: null,

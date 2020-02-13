@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="pageTitle" eb-back-link="Back"> </eb-navbar>
+    <eb-navbar large largeTransparent :title="pageTitle" eb-back-link="Back"> </eb-navbar>
     <f7-list>
       <eb-list-item :title="$text('Site')">
         <div slot="after">
@@ -29,7 +29,7 @@ import Vue from 'vue';
 const ebModules = Vue.prototype.$meta.module.get('a-base').options.components.ebModules;
 import utils from '../../common/utils.js';
 export default {
-  mixins: [ ebModules ],
+  mixins: [ebModules],
   data() {
     const atomClass = utils.parseAtomClass(this.$f7route.query);
     return {

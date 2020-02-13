@@ -1,7 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Default')" eb-back-link="Back">
-    </eb-navbar>
+    <eb-navbar :title="$text('Default')" eb-back-link="Back"></eb-navbar>
     <eb-box @size="onSize">
       <textarea ref="textarea" type="textarea" readonly="readonly" :value="content" class="json-textarea"></textarea>
     </eb-box>

@@ -1,6 +1,6 @@
 <template>
   <eb-page :page-content="false">
-    <eb-navbar :title="title" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="title" eb-back-link="Back">
       <f7-nav-right>
         <f7-link v-if="showPopover" iconMaterial="add" :popover-open="`#${popoverId}`"></f7-link>
         <eb-link iconMaterial="search" :onPerform="onPerformSearch"></eb-link>
@@ -23,7 +23,7 @@ const ebMenus = Vue.prototype.$meta.module.get('a-base').options.components.ebMe
 const ebAtoms = Vue.prototype.$meta.module.get('a-base').options.components.ebAtoms;
 import utils from '../../common/utils.js';
 export default {
-  mixins: [ ebMenus ],
+  mixins: [ebMenus],
   components: {
     ebAtoms,
   },
@@ -51,7 +51,7 @@ export default {
     const options = {
       where: { menu: 1, scene: 1 },
       orders: [
-        [ 'sorting', 'asc' ],
+        ['sorting', 'asc'],
       ],
     };
     if (this.atomClass) {

@@ -1,7 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Preview')" eb-back-link="Back">
-    </eb-navbar>
+    <eb-navbar :title="$text('Preview')" eb-back-link="Back"></eb-navbar>
     <eb-box @size="onSize">
       <textarea ref="textarea" type="textarea" readonly="readonly" :value="content" class="json-textarea"></textarea>
     </eb-box>
@@ -12,7 +11,7 @@ import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.components.ebPageContext;
 import utils from '../../common/utils.js';
 export default {
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   data() {
     const atomClass = utils.parseAtomClass(this.$f7route.query);
     return {

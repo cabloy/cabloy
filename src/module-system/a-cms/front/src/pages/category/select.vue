@@ -17,7 +17,7 @@ import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.components.ebPageContext;
 import utils from '../../common/utils.js';
 export default {
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   data() {
     const atomClass = utils.parseAtomClass(this.$f7route.query);
     return {
@@ -69,10 +69,10 @@ export default {
       // children
       const categoryId = node.id === 'root' ? this.categoryIdStart : node.data.id;
       return this.$api.post('category/children', {
-        atomClass: this.atomClass,
-        language: this.language,
-        categoryId,
-      })
+          atomClass: this.atomClass,
+          language: this.language,
+          categoryId,
+        })
         .then(data => {
           let list = data.list.map(item => {
             const node = {

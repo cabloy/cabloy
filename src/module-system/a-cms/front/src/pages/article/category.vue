@@ -29,7 +29,7 @@ const ebMenus = Vue.prototype.$meta.module.get('a-base').options.components.ebMe
 import categoryList from '../../components/category/list.vue';
 import utils from '../../common/utils.js';
 export default {
-  mixins: [ ebAtomClasses, ebMenus ],
+  mixins: [ebAtomClasses, ebMenus],
   components: {
     categoryList,
   },

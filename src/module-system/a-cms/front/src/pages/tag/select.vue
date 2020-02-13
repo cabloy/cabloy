@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Select Tags')" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="$text('Select Tags')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link ref="buttonSubmit" iconMaterial="done" :onPerform="onPerformDone"></eb-link>
       </f7-nav-right>
@@ -24,7 +24,7 @@ import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.components.ebPageContext;
 import utils from '../../common/utils.js';
 export default {
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   data() {
     const atomClass = utils.parseAtomClass(this.$f7route.query);
     return {
@@ -47,7 +47,7 @@ export default {
     const options = {
       where: { language: this.language },
       orders: [
-        [ 'tagName', 'asc' ],
+        ['tagName', 'asc'],
       ],
     };
     this.$api.post('tag/list', {
