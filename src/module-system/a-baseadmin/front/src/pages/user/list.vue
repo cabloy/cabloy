@@ -1,6 +1,6 @@
 <template>
   <eb-page ptr ptrMousewheel @ptr:refresh="onRefresh" infinite :infinitePreloader="false" @infinite="onInfinite">
-    <eb-navbar :title="$text('User Management')" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="$text('User Management')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="search" eb-target="_self" eb-href="user/search"></eb-link>
       </f7-nav-right>

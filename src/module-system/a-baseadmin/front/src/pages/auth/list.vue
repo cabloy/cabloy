@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Auth Management')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Auth Management')" eb-back-link="Back"></eb-navbar>
     <f7-list v-if="ready">
       <eb-list-item v-for="item of items" :key="item.id" link="#" :eb-href="`auth/edit?id=${item.id}`" :title="item.meta.titleLocale" swipeout>
         <div slot="after">

@@ -7,7 +7,8 @@
     </eb-navbar>
     <eb-tree ref="tree" :options="treeOptions">
       <span slot-scope="{node}" @click.stop="onNodeClick(node)">
-        <f7-icon v-if="node.states._selected" material="check_box"></f7-icon>{{node.text}}</span>
+        <f7-icon v-if="node.states._selected" material="check_box"></f7-icon>{{node.text}}
+      </span>
     </eb-tree>
   </eb-page>
 </template>
@@ -15,7 +16,7 @@
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.components.ebPageContext;
 export default {
-  mixins: [ ebPageContext ],
+  mixins: [ebPageContext],
   data() {
     return {
       treeOptions: {

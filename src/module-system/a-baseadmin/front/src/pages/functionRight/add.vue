@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text(menu===1?'New Menu Right':'New Function Right')" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="$text(menu===1?'New Menu Right':'New Function Right')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link ref="buttonSubmit" iconMaterial="save" :onPerform="onSave"></eb-link>
       </f7-nav-right>
@@ -20,7 +20,7 @@ import Vue from 'vue';
 const ebModules = Vue.prototype.$meta.module.get('a-base').options.components.ebModules;
 const ebFunctions = Vue.prototype.$meta.module.get('a-base').options.components.ebFunctions;
 export default {
-  mixins: [ ebModules, ebFunctions ],
+  mixins: [ebModules, ebFunctions],
   data() {
     return {
       roleId: parseInt(this.$f7route.query.roleId),
@@ -80,10 +80,10 @@ export default {
     onSave() {
       if (!this.module || !this.func) return;
       return this.$api.post(`${this.apiPath}/add`, {
-        roleId: this.roleId,
-        module: this.module,
-        name: this.func.name,
-      })
+          roleId: this.roleId,
+          module: this.module,
+          name: this.func.name,
+        })
         .then(() => {
           this.$meta.eventHub.$emit('functionRight:add', { roleId: this.roleId });
           this.$f7router.back();

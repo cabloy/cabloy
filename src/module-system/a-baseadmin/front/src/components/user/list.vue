@@ -88,8 +88,8 @@ export default {
     onPerformDelete(event, item) {
       return this.$view.dialog.confirm().then(() => {
         return this.$api.post('user/delete', {
-          userId: item.id,
-        })
+            userId: item.id,
+          })
           .then(() => {
             this.$meta.eventHub.$emit('user:delete', { userId: item.id });
             this.$meta.util.swipeoutDelete(event.target);
@@ -99,9 +99,9 @@ export default {
     },
     disableUser(event, item, disabled) {
       return this.$api.post('user/disable', {
-        userId: item.id,
-        disabled,
-      })
+          userId: item.id,
+          disabled,
+        })
         .then(() => {
           this.$meta.eventHub.$emit('user:disable', { userId: item.id, disabled });
           this.$meta.util.swipeoutClose(event.target);

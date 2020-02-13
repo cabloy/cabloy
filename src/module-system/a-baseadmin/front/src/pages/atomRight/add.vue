@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('New Atom Right')" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="$text('New Atom Right')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link ref="buttonSubmit" iconMaterial="save" :onPerform="onSave"></eb-link>
       </f7-nav-right>
@@ -26,7 +26,7 @@
 import Vue from 'vue';
 const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.components.ebAtomActions;
 export default {
-  mixins: [ ebAtomActions ],
+  mixins: [ebAtomActions],
   data() {
     return {
       roleId: parseInt(this.$f7route.query.roleId),
@@ -53,12 +53,12 @@ export default {
       return this.scope.map(item => item.roleName).join(',');
     },
     scopeSelfEnable() {
-      return this.actionCode && [ '3', '4' ].indexOf(this.actionCode) > -1;
+      return this.actionCode && ['3', '4'].indexOf(this.actionCode) > -1;
     },
     scopeEnable() {
       if (!this.actionCode) return false;
       if (this.actionCode === '1') return false;
-      if ([ '3', '4' ].indexOf(this.actionCode) > -1 && this.scopeSelf) return false;
+      if (['3', '4'].indexOf(this.actionCode) > -1 && this.scopeSelf) return false;
       return true;
     },
   },
@@ -106,12 +106,12 @@ export default {
     onSave() {
       if (!this.atomClass || !this.actionCode) return;
       return this.$api.post('atomRight/add', {
-        roleId: this.roleId,
-        atomClass: this.atomClass,
-        actionCode: parseInt(this.actionCode),
-        scopeSelf: this.scopeSelf,
-        scope: this.scope ? this.scope.map(item => item.id) : [],
-      })
+          roleId: this.roleId,
+          atomClass: this.atomClass,
+          actionCode: parseInt(this.actionCode),
+          scopeSelf: this.scopeSelf,
+          scope: this.scope ? this.scope.map(item => item.id) : [],
+        })
         .then(() => {
           this.$meta.eventHub.$emit('atomRight:add', { roleId: this.roleId });
           this.$f7router.back();
