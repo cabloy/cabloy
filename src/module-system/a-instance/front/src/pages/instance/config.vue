@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Instance')" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="$text('Instance')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="save" :onPerform="onPerformSave"></eb-link>
         <eb-link iconMaterial="visibility" :onPerform="onPerformPreview"></eb-link>
