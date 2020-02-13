@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="title" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="title" eb-back-link="Back">
       <f7-nav-right>
         <eb-link v-if="ready" iconMaterial="save" :onPerform="onSave"></eb-link>
       </f7-nav-right>
@@ -13,7 +13,7 @@
 import Vue from 'vue';
 const ebModules = Vue.prototype.$meta.module.get('a-base').options.components.ebModules;
 export default {
-  mixins: [ ebModules ],
+  mixins: [ebModules],
   data() {
     return {
       scene: this.$f7route.params.scene,
@@ -59,6 +59,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>

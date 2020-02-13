@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Settings')" eb-back-link="Back"> </eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Settings')" eb-back-link="Back"> </eb-navbar>
     <f7-list v-if="ready">
       <eb-list-item class="item" v-for="item of items" :key="item.module" :title="getModule(item.module).titleLocale" link="#" :context="item" :onPerform="onItemClick">
       </eb-list-item>
@@ -12,7 +12,7 @@
 import Vue from 'vue';
 const ebModules = Vue.prototype.$meta.module.get('a-base').options.components.ebModules;
 export default {
-  mixins: [ ebModules ],
+  mixins: [ebModules],
   data() {
     return {
       scene: this.$f7route.params.scene,
