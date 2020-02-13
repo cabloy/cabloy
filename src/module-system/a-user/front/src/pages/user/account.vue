@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Account')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Account')" eb-back-link="Back"></eb-navbar>
     <f7-list>
       <template v-if="user.op.id===user.agent.id">
         <eb-list-item :title="$text('Info')" link="#" eb-href="user/edit"></eb-list-item>

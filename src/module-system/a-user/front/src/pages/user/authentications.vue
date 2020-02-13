@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Authentications')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Authentications')" eb-back-link="Back"></eb-navbar>
     <f7-list v-if="ready">
       <eb-list-item v-for="item of items" :key="item.providerId" :title="authTitle(item)">
         <div slot="after">

@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Agent')" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="$text('Agent')" eb-back-link="Back">
     </eb-navbar>
     <f7-list>
       <eb-list-item :title="$text('Agent')" group-title></eb-list-item>

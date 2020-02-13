@@ -1,7 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Mine')" eb-back-link="Back">
-    </eb-navbar>
+    <eb-navbar :title="$text('Mine')" eb-back-link="Back"></eb-navbar>
     <div class="me">
       <div>
         <img class="avatar avatar48" :src="userAvatar" style="cursor:pointer;" @click="onClickAvatar">

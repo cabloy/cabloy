@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Functions')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Functions')" eb-back-link="Back"></eb-navbar>
     <f7-list v-if="items">
       <f7-list-group v-for="group of itemGroups" :key="group">
         <f7-list-item :title="getModule(group).titleLocale" group-title></f7-list-item>
@@ -14,7 +14,7 @@
 import Vue from 'vue';
 const ebModules = Vue.prototype.$meta.module.get('a-base').options.components.ebModules;
 export default {
-  mixins: [ ebModules ],
+  mixins: [ebModules],
   data() {
     return {
       items: null,
