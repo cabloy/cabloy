@@ -7,7 +7,7 @@ delete f7ListItem.props.href;
 export default {
   name: 'eb-list-item',
   extends: f7ListItem,
-  mixins: [ perform, link ],
+  mixins: [perform, link],
   mounted() {
     this.$$(this.$el).on('contextmenu', this.onContextMenu);
     if (this.externalLink) {
