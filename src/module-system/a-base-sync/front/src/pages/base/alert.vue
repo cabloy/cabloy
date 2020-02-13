@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="pageTitle" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="pageTitle" eb-back-link="Back"></eb-navbar>
     <f7-card>
       <f7-card-header>{{data.title || $text('Friendly Tips')}}</f7-card-header>
       <f7-card-content>

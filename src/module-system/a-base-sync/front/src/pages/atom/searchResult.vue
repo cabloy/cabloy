@@ -1,6 +1,6 @@
 <template>
   <eb-page ptr ptrMousewheel @ptr:refresh="onRefresh" infinite :infinitePreloader="false" @infinite="onInfinite">
-    <eb-navbar :title="$text('Search Result')" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="$text('Search Result')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="sort" :onPerform="onPerformAtomOrders"></eb-link>
         <eb-link v-if="mode==='selectSearch'" iconMaterial="done" :onPerform="onPerformDone"></eb-link>

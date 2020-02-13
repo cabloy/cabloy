@@ -1,6 +1,6 @@
 <template>
   <eb-page ptr ptrMousewheel @ptr:refresh="onRefresh" infinite :infinitePreloader="false" @infinite="onInfinite">
-    <eb-navbar :title="$text('Comment List')" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="$text('Comment List')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link :iconMaterial="order==='desc'?'arrow_downward':'arrow_upward'" :onPerform="onPerformSort"></eb-link>
       </f7-nav-right>

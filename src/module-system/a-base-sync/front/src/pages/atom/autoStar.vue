@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Star')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Star')" eb-back-link="Back"></eb-navbar>
     <f7-block>
     </f7-block>
   </eb-page>

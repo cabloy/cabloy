@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="title" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="title" eb-back-link="Back">
       <f7-nav-right>
         <eb-link ref="buttonSave" v-if="ready && findAction('write')" :iconMaterial="this.mode==='edit'?'save':'edit'" :context="this.mode==='edit'?'save':'write'" :onPerform="onAction"></eb-link>
         <f7-link v-if="showPopover" iconMaterial="more_horiz" :popover-open="`#${popoverId}`"></f7-link>

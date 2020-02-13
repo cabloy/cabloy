@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Labels')" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="$text('Labels')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="add" @click.prevent="onAddLabel"></eb-link>
       </f7-nav-right>

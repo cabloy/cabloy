@@ -1,6 +1,6 @@
 <template>
   <eb-page @page:afterin="onPageAfterIn">
-    <eb-navbar :title="pageTitle" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="pageTitle" eb-back-link="Back">
       <f7-nav-right>
         <eb-link ref="buttonSubmit" iconMaterial="search" :onPerform="onPerformSearch"></eb-link>
       </f7-nav-right>
