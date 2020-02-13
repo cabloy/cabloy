@@ -1,6 +1,6 @@
 <template>
   <eb-page @page:init="onPageInit" @page:beforeremove="onPageBeforeRemove">
-    <eb-navbar :title="$text('Tooltip')" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="$text('Tooltip')" eb-back-link="Back">
       <f7-nav-right>
         <f7-link class="navbar-tooltip">
           <f7-icon ios="f7:info_round_fill" aurora="f7:info_round_fill" md="material:info_outline" />

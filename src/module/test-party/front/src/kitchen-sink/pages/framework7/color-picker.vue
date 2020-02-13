@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Color Picker')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Color Picker')" eb-back-link="Back"></eb-navbar>
     <f7-block strong>
       <p>Framework7 comes with ultimate modular Color Picker component that allows to create color picker with limitless combinations of color modules.</p>
     </f7-block>
@@ -202,7 +202,7 @@ export default {
     self.colorPickerInline = app.colorPicker.create({
       value: self.inlinePickerValue,
       containerEl: '#demo-color-picker-inline',
-      modules: [ 'sb-spectrum', 'hsb-sliders', 'alpha-slider' ],
+      modules: ['sb-spectrum', 'hsb-sliders', 'alpha-slider'],
       on: {
         change(cp, value) {
           self.inlinePickerValue = value;

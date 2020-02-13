@@ -1,6 +1,6 @@
 <template>
   <eb-page @page:beforeremove="onPageBeforeRemove" @page:init="onPageInit">
-    <eb-navbar :title="$text('Swipeout')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Swipeout')" eb-back-link="Back"></eb-navbar>
     <f7-block>
       <p>
         Swipe out actions on list elements is one of the most awesome F7 features. It allows you to call hidden menu for each list element where you can put default ready-to use delete button or any other buttons for some required actions.

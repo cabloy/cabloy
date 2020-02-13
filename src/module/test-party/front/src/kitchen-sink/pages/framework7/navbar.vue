@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Navbar')" subtitle="Subtitle" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="$text('Navbar')" subtitle="Subtitle" eb-back-link="Back">
       <f7-nav-right>
         <f7-link>Right</f7-link>
       </f7-nav-right>

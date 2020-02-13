@@ -1,6 +1,6 @@
 <template>
   <eb-page @page:afterin="onPageAfterIn">
-    <eb-navbar :title="$text('Menu')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Menu')" eb-back-link="Back"></eb-navbar>
     <f7-block strong>
       <p>Menu component is designed to be used as overlay control. It can be very helpful when you need controls on top of the map, images, some text/code editor, etc.</p>
     </f7-block>
@@ -132,7 +132,7 @@ export default {
     },
     initMap() {
       const self = this;
-      const mymap = L.map(self.$refs.map, { zoomControl: false }).setView([ 51.505, -0.09 ], 10);
+      const mymap = L.map(self.$refs.map, { zoomControl: false }).setView([51.505, -0.09], 10);
       L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoibm9saW1pdHM0d2ViIiwiYSI6ImNqcXA4NTdmczBocm8zeG13Zm1zNTdyeDAifQ.HoJgmqQ_uH4zLyNJmiY98A', {
         maxZoom: 18,
         attribution: `Map data &copy; <a class="external" target="_blank" href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors,

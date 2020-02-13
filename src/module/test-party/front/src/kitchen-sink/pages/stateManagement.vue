@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('State Management')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('State Management')" eb-back-link="Back"></eb-navbar>
   </eb-page>
 </template>
 <script>

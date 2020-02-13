@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Searchbar')" eb-back-link="Back">
+    <eb-navbar large :title="$text('Searchbar')" eb-back-link="Back">
       <f7-subnavbar :inner="false">
         <f7-searchbar search-container=".search-list" search-in=".item-title" :disable-button="!$theme.aurora"></f7-searchbar>
       </f7-subnavbar>

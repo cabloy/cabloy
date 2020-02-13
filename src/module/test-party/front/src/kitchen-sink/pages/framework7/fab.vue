@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Floating Action Button')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Floating Action Button')" eb-back-link="Back"></eb-navbar>
     <f7-fab position="right-top" slot="fixed">
       <f7-icon ios="f7:add" aurora="f7:add" md="material:add"></f7-icon>
       <f7-icon ios="f7:close" aurora="f7:close" md="material:close"></f7-icon>

@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Form / Captcha')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Form / Captcha')" eb-back-link="Back"></eb-navbar>
     <f7-block-title>Form</f7-block-title>
     <f7-block>
       <eb-validate v-if="item" ref="validate" :auto="false" :data="item" :params="validateParams" :onPerform="onPerformValidate">

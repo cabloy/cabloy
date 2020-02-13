@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('ToggleSwitch')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('ToggleSwitch')" eb-back-link="Back"></eb-navbar>
     <f7-block-title>Super Heroes</f7-block-title>
     <f7-list simple-list>
       <f7-list-item>

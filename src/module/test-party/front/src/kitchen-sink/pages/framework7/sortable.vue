@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Sortable List')" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="$text('Sortable List')" eb-back-link="Back">
       <f7-nav-right>
         <f7-link sortable-toggle=".sortable">Toggle</f7-link>
       </f7-nav-right>

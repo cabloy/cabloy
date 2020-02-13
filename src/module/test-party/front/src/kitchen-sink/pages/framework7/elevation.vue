@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Elevation')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Elevation')" eb-back-link="Back"></eb-navbar>
     <f7-block strong>
       <p>Shadows provide important visual cues about objects' depth and directional movement. They are the only visual cue indicating the amount of separation between surfaces. An object’s elevation determines the appearance of its shadow. The elevation values are mapped out in a "z-space" and range from 1 to 24.</p>
       <p>Elevation can be added to any element by adding <code>elevation-0</code>, <code>elevation-1</code>, ..., <code>elevation-24</code> classes.</p>

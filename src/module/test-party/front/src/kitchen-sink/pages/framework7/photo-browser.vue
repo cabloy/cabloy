@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Photo Browser')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Photo Browser')" eb-back-link="Back"></eb-navbar>
     <f7-block>
       <p>Photo Browser is a standalone and highly configurable component that allows to open window with photo viewer and navigation elements with the following features:</p>
       <ul>
@@ -40,19 +40,19 @@ export default {
   data() {
     return {
       photos: [{
-        url: imgBeach,
-        caption: 'Amazing beach in Goa, India',
-      },
-      'http://placekitten.com/1024/1024',
-      imgLock,
-      {
-        url: imgMonkey,
-        caption: 'I met this monkey in Chinese mountains',
-      },
-      {
-        url: imgMountains,
-        caption: 'Beautiful mountains in Zhangjiajie, China',
-      },
+          url: imgBeach,
+          caption: 'Amazing beach in Goa, India',
+        },
+        'http://placekitten.com/1024/1024',
+        imgLock,
+        {
+          url: imgMonkey,
+          caption: 'I met this monkey in Chinese mountains',
+        },
+        {
+          url: imgMountains,
+          caption: 'Beautiful mountains in Zhangjiajie, China',
+        },
       ],
     };
   },

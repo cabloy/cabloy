@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Stepper')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Stepper')" eb-back-link="Back"></eb-navbar>
     <f7-block-title>Shape and size</f7-block-title>
     <f7-block strong class="text-align-center">
       <f7-row>

@@ -1,6 +1,6 @@
 <template>
   <eb-page infinite :infinite-distance="50" :infinite-preloader="showPreloader" @infinite="loadMore">
-    <eb-navbar :title="$text('Infinite Scroll')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Infinite Scroll')" eb-back-link="Back"></eb-navbar>
     <f7-block-title>Scroll bottom</f7-block-title>
     <f7-list>
       <f7-list-item v-for="(item, index) in items" :title="`Item ${item}`" :key="index"></f7-list-item>
@@ -11,7 +11,7 @@
 export default {
   data() {
     return {
-      items: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 ],
+      items: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
       allowInfinite: true,
       showPreloader: true,
     };

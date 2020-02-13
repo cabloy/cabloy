@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar eb-back-link="Back" :title="$text('Badge')">
+    <eb-navbar large largeTransparent eb-back-link="Back" :title="$text('Badge')">
       <f7-nav-right>
         <f7-link icon-only>
           <f7-icon ios="f7:person_round_fill" aurora="f7:person_round_fill" md="material:person">

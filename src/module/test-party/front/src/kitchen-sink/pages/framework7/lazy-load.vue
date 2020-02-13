@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Lazy Load Images')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Lazy Load Images')" eb-back-link="Back"></eb-navbar>
     <f7-block strong>
       <p>Lazy Load delays loading of images on page while they are outside of viewport until user scrolls to them.</p>
       <p>It will make the page load faster, improve scrolling performance and also save traffic.</p>

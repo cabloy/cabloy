@@ -1,6 +1,6 @@
 <template>
   <eb-page @page:beforeremove="onPageBeforeRemove" @page:init="onPageInit">
-    <eb-navbar :title="$text('Calendar / Date Picker')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Calendar / Date Picker')" eb-back-link="Back"></eb-navbar>
     <f7-block>
       <p>Calendar is a touch optimized component that provides an easy way to handle dates.</p>
       <p>Calendar could be used as inline component or as overlay. Overlay Calendar will be automatically converted to Popover on tablets (iPad).</p>

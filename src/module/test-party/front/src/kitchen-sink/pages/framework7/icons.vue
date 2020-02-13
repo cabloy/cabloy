@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Icons')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Icons')" eb-back-link="Back"></eb-navbar>
     <f7-block-title>Scroll bottom</f7-block-title>
     <f7-block strong>
       <p>Framework7 comes with the premium and free <a href="https://github.com/framework7io/framework7-icons" class="external" target="_blank">Framework7 Icons</a> iOS-icons font developed specially to be used with iOS theme of Framework7. As for Material theme we recommend to use great-designed <a href="https://material.io/icons/" class="external" target="_blank">Material Icons</a> font. Both of these fonts use a typographic feature called <a href="http://alistapart.com/article/the-era-of-symbol-fonts" class="external" target="_blank">ligatures</a>. It’s easy to incorporate icons into your app. Here’s a small example:</p>

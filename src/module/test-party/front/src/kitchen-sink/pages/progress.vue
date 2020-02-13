@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Progress Bar')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Progress Bar')" eb-back-link="Back"></eb-navbar>
     <f7-block>
       <eb-button :onPerform="onPerformStart">{{$text('Start Working')}}</eb-button>
     </f7-block>

@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Messsages')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Messsages')" eb-back-link="Back"></eb-navbar>
     <f7-messagebar :placeholder="placeholder" ref="messagebar" :attachments-visible="attachmentsVisible" :sheet-visible="sheetVisible" :value="messageText" @input="messageText = $event.target.value">
       <f7-link icon-ios="f7:camera_fill" icon-aurora="f7:camera_fill" icon-md="material:camera_alt" slot="inner-start" @click="sheetVisible = !sheetVisible"></f7-link>
       <f7-link icon-ios="f7:arrow_up_round_fill" icon-aurora="f7:arrow_up_round_fill" icon-md="material:send" slot="inner-end" @click="sendMessage"></f7-link>
@@ -29,56 +29,56 @@ export default {
       typingMessage: null,
       messageText: '',
       messagesData: [{
-        type: 'sent',
-        text: 'Hi, Kate',
-      },
-      {
-        type: 'sent',
-        text: 'How are you?',
-      },
-      {
-        name: 'Kate',
-        type: 'received',
-        text: 'Hi, I am good!',
-        avatar: 'https://cdn.framework7.io/placeholder/people-100x100-9.jpg',
-      },
-      {
-        name: 'Blue Ninja',
-        type: 'received',
-        text: 'Hi there, I am also fine, thanks! And how are you?',
-        avatar: 'https://cdn.framework7.io/placeholder/people-100x100-7.jpg',
-      },
-      {
-        type: 'sent',
-        text: 'Hey, Blue Ninja! Glad to see you ;)',
-      },
-      {
-        type: 'sent',
-        text: 'Hey, look, cutest kitten ever!',
-      },
-      {
-        type: 'sent',
-        image: 'https://cdn.framework7.io/placeholder/cats-200x260-4.jpg',
+          type: 'sent',
+          text: 'Hi, Kate',
+        },
+        {
+          type: 'sent',
+          text: 'How are you?',
+        },
+        {
+          name: 'Kate',
+          type: 'received',
+          text: 'Hi, I am good!',
+          avatar: 'https://cdn.framework7.io/placeholder/people-100x100-9.jpg',
+        },
+        {
+          name: 'Blue Ninja',
+          type: 'received',
+          text: 'Hi there, I am also fine, thanks! And how are you?',
+          avatar: 'https://cdn.framework7.io/placeholder/people-100x100-7.jpg',
+        },
+        {
+          type: 'sent',
+          text: 'Hey, Blue Ninja! Glad to see you ;)',
+        },
+        {
+          type: 'sent',
+          text: 'Hey, look, cutest kitten ever!',
+        },
+        {
+          type: 'sent',
+          image: 'https://cdn.framework7.io/placeholder/cats-200x260-4.jpg',
 
-      },
-      {
-        name: 'Kate',
-        type: 'received',
-        text: 'Nice!',
-        avatar: 'https://cdn.framework7.io/placeholder/people-100x100-9.jpg',
-      },
-      {
-        name: 'Kate',
-        type: 'received',
-        text: 'Like it very much!',
-        avatar: 'https://cdn.framework7.io/placeholder/people-100x100-9.jpg',
-      },
-      {
-        name: 'Blue Ninja',
-        type: 'received',
-        text: 'Awesome!',
-        avatar: 'https://cdn.framework7.io/placeholder/people-100x100-7.jpg',
-      },
+        },
+        {
+          name: 'Kate',
+          type: 'received',
+          text: 'Nice!',
+          avatar: 'https://cdn.framework7.io/placeholder/people-100x100-9.jpg',
+        },
+        {
+          name: 'Kate',
+          type: 'received',
+          text: 'Like it very much!',
+          avatar: 'https://cdn.framework7.io/placeholder/people-100x100-9.jpg',
+        },
+        {
+          name: 'Blue Ninja',
+          type: 'received',
+          text: 'Awesome!',
+          avatar: 'https://cdn.framework7.io/placeholder/people-100x100-7.jpg',
+        },
       ],
       images: [
         'https://cdn.framework7.io/placeholder/cats-300x300-1.jpg',
@@ -93,13 +93,13 @@ export default {
         'https://cdn.framework7.io/placeholder/cats-300x150-10.jpg',
       ],
       people: [{
-        name: 'Kate Johnson',
-        avatar: 'https://cdn.framework7.io/placeholder/people-100x100-9.jpg',
-      },
-      {
-        name: 'Blue Ninja',
-        avatar: 'https://cdn.framework7.io/placeholder/people-100x100-7.jpg',
-      },
+          name: 'Kate Johnson',
+          avatar: 'https://cdn.framework7.io/placeholder/people-100x100-9.jpg',
+        },
+        {
+          name: 'Blue Ninja',
+          avatar: 'https://cdn.framework7.io/placeholder/people-100x100-7.jpg',
+        },
       ],
       answers: [
         'Yes!',

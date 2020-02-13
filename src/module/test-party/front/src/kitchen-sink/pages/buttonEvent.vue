@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Button Event')" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="$text('Button Event')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="save" :onPerform="onPerformTrue"></eb-link>
       </f7-nav-right>

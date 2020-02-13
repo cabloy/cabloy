@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Searchbar Expandable')" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="$text('Searchbar Expandable')" eb-back-link="Back">
       <f7-nav-right>
         <f7-link class="searchbar-enable" data-searchbar=".searchbar-demo" icon-ios="f7:search" icon-md="material:search" icon-aurora="f7:search"></f7-link>
       </f7-nav-right>

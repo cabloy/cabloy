@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Global Component')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Global Component')" eb-back-link="Back"></eb-navbar>
     <hello-global></hello-global>
   </eb-page>
 </template>

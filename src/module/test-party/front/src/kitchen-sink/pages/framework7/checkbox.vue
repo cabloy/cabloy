@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Checkbox')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Checkbox')" eb-back-link="Back"></eb-navbar>
     <f7-block-title>Inline</f7-block-title>
     <f7-block strong>
       <p>Lorem <f7-checkbox name="checkbox-1"></f7-checkbox> ipsum dolor sit amet, consectetur adipisicing elit. Alias beatae illo nihil aut eius commodi sint eveniet aliquid eligendi <f7-checkbox name="checkbox-2" checked></f7-checkbox> ad delectus impedit tempore nemo, enim vel praesentium consequatur nulla mollitia!</p>
@@ -34,7 +34,7 @@
 export default {
   data() {
     return {
-      movies: [ 'Movie 1' ],
+      movies: ['Movie 1'],
     };
   },
   methods: {
@@ -52,7 +52,7 @@ export default {
       const self = this;
       const movies = self.movies;
       if (movies.length === 1 || movies.length === 0) {
-        self.movies = [ 'Movie 1', 'Movie 2' ];
+        self.movies = ['Movie 1', 'Movie 2'];
       } else if (movies.length === 2) {
         self.movies = [];
       }

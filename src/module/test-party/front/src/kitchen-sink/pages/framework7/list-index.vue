@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('List Index')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('List Index')" eb-back-link="Back"></eb-navbar>
     <f7-list-index indexes="auto" list-el=".list.contacts-list" :scroll-list="true" :label="true" @listindex:select="onIndexSelect"></f7-list-index>
     <f7-list contacts-list>
       <f7-list-group>

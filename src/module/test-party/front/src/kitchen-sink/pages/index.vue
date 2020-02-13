@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Kitchen-sink')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Kitchen-sink')" eb-back-link="Back"></eb-navbar>
     <eb-list no-hairlines-md>
       <eb-list-item v-for="item of items" :key="item.title" :title="item.titleLocale" link="#" :eb-href="item.path"></eb-list-item>
     </eb-list>

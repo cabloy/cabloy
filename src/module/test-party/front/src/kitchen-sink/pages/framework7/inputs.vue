@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Form Inputs')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Form Inputs')" eb-back-link="Back"></eb-navbar>
     <f7-block-title>Full Layout / Inline Labels</f7-block-title>
     <f7-list inline-labels no-hairlines-md>
       <f7-list-input label="Name" type="text" placeholder="Your name" clear-button>

@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('File Upload')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('File Upload')" eb-back-link="Back"></eb-navbar>
     <f7-card>
       <f7-card-header>{{$text('Image')}}</f7-card-header>
       <f7-card-content>

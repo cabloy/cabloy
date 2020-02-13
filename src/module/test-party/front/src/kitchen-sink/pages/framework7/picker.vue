@@ -1,6 +1,6 @@
 <template>
   <eb-page :page-content="false" @page:beforeremove="onPageBeforeRemove" @page:init="onPageInit">
-    <eb-navbar :title="$text('Picker')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Picker')" eb-back-link="Back"></eb-navbar>
     <div class="page-content">
       <div class="block">
         <p>Picker is a powerful component that allows you to create custom overlay pickers which looks like native picker.</p>

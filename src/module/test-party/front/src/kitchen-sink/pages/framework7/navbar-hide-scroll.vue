@@ -1,6 +1,6 @@
 <template>
   <eb-page hide-navbar-on-scroll>
-    <eb-navbar title="Hide Navbar On Scroll" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent title="Hide Navbar On Scroll" eb-back-link="Back"></eb-navbar>
     <f7-block strong>
       <p>Navbar will be hidden if you scroll bottom</p>
     </f7-block>

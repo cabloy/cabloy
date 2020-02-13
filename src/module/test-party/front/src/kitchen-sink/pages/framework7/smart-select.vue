@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Smart Select')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Smart Select')" eb-back-link="Back"></eb-navbar>
     <f7-block>
       Framework7 allows you to easily convert your usual form selects to dynamic pages with radios:
     </f7-block>

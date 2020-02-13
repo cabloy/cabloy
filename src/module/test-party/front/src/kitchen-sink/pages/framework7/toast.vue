@@ -1,6 +1,6 @@
 <template>
   <eb-page @page:beforeremove="onPageBeforeRemove" @page:beforeout="onPageBeforeOut">
-    <eb-navbar :title="$text('Toast')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Toast')" eb-back-link="Back"></eb-navbar>
     <f7-block>
       <p>Toasts provide brief feedback about an operation through a message on the screen.</p>
       <p>

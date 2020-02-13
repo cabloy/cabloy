@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Buttons')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Buttons')" eb-back-link="Back"></eb-navbar>
     <f7-block-title>Usual Buttons</f7-block-title>
     <f7-block>
       <f7-row>

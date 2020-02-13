@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Atom')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Atom')" eb-back-link="Back"></eb-navbar>
     <eb-list class="item" no-hairlines-md>
       <eb-list-item :title="$text('Create Party')" link="#" :onPerform="onPerformCreate"></eb-list-item>
       <eb-list-item :title="$text('Party List')" link="#" eb-href="/a/base/atom/list?module=test-party&atomClassName=party"></eb-list-item>
@@ -21,7 +21,7 @@
 import Vue from 'vue';
 const ebMenus = Vue.prototype.$meta.module.get('a-base').options.components.ebMenus;
 export default {
-  mixins: [ ebMenus ],
+  mixins: [ebMenus],
   data() {
     return {
       atom: null,

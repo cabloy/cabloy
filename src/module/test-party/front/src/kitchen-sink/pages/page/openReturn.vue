@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Page Open & Return Value')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Page Open & Return Value')" eb-back-link="Back"></eb-navbar>
     <f7-block>
       <div class="alert-info">{{value}}</div>
       <eb-button :onPerform="onPerformOpen">{{$text('Open Page')}}</eb-button>

@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('RadioBox')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('RadioBox')" eb-back-link="Back"></eb-navbar>
     <f7-block-title>Inline</f7-block-title>
     <f7-block strong>
       <p>Lorem <f7-radio name="demo-radio-inline"></f7-radio> ipsum dolor sit amet, consectetur adipisicing elit. Alias beatae illo nihil aut eius commodi sint eveniet aliquid eligendi <f7-radio name="demo-radio-inline" checked></f7-radio> ad delectus impedit tempore nemo, enim vel praesentium consequatur nulla mollitia!</p>

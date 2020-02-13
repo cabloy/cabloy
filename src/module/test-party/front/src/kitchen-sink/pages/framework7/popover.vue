@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Popover')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Popover')" eb-back-link="Back"></eb-navbar>
     <f7-toolbar bottom>
       <f7-link>Dummy Link</f7-link>
       <f7-link popover-open=".popover-menu">Open Popover</f7-link>

@@ -1,6 +1,6 @@
 <template>
   <eb-page hide-toolbar-on-scroll>
-    <eb-navbar title="Hide Toolbar On Scroll" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent title="Hide Toolbar On Scroll" eb-back-link="Back"></eb-navbar>
     <f7-toolbar bottom>
       <f7-link>Left Link</f7-link>
       <f7-link>Right Link</f7-link>

@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Treeview')" eb-back-link="Back" />
+    <eb-navbar large largeTransparent :title="$text('Treeview')" eb-back-link="Back" />
     <f7-block-title>Basic tree view</f7-block-title>
     <f7-block strong class="no-padding-horizontal">
       <f7-treeview>
@@ -156,14 +156,14 @@ export default {
         // call done() to hide preloader
         done();
         self.loadedChildren = [{
-          name: 'John Doe',
-        },
-        {
-          name: 'Jane Doe',
-        },
-        {
-          name: 'Calvin Johnson',
-        },
+            name: 'John Doe',
+          },
+          {
+            name: 'Jane Doe',
+          },
+          {
+            name: 'Calvin Johnson',
+          },
         ];
       }, 2000);
     },

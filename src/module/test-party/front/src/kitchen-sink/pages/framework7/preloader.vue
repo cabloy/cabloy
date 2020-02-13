@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Preloader')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Preloader')" eb-back-link="Back"></eb-navbar>
     <f7-block>
       <p>How about an activity indicator? Framework 7 has a nice one. The F7 Preloader is made with SVG and animated with CSS so it can be easily resized.</p>
     </f7-block>

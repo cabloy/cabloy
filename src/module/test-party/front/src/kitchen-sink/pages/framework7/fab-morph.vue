@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Floating Action Button Morph')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Floating Action Button Morph')" eb-back-link="Back"></eb-navbar>
     <f7-toolbar tabbar labels bottom class="fab-morph-target">
       <f7-link tab-link tab-link-active icon-ios="f7:email_fill" icon-aurora="f7:email_fill" icon-md="material:email" text="Inbox" />
       <f7-link tab-link icon-ios="f7:calendar_fill" icon-aurora="f7:calendar_fill" icon-md="material:today" text="Calendar" />

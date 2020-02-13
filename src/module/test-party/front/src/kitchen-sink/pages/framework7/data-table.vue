@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Data Table')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Data Table')" eb-back-link="Back"></eb-navbar>
     <f7-block-title>Plain table</f7-block-title>
     <div class="data-table">
       <table>

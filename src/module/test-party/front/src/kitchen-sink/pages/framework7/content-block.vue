@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Content Block')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Content Block')" eb-back-link="Back"></eb-navbar>
     <p>This paragraph is outside of content block. Not cool, but useful for any custom elements with custom styling.</p>
     <f7-block>
       <p>Here comes paragraph within content block. Donec et nulla auctor massa pharetra adipiscing ut sit amet sem. Suspendisse molestie velit vitae mattis tincidunt. Ut sit amet quam mollis, vulputate turpis vel, sagittis felis. </p>

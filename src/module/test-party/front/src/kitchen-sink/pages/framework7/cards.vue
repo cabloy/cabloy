@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Cards')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Cards')" eb-back-link="Back"></eb-navbar>
     <f7-block>
       <p>Cards are a great way to contain and organize your information, especially when combined with List Views. Cards can contain unique related data, like for example photos, text or links about a particular subject. Cards are typically an entry point to more complex and detailed information.</p>
     </f7-block>

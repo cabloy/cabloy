@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Progress Bar')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Progress Bar')" eb-back-link="Back"></eb-navbar>
     <f7-block>
       <p>In addition to <a href="/preloader/">Preloader</a>, Framework7 also comes with fancy animated determinate and infinite/indeterminate progress bars to indicate some activity.</p>
     </f7-block>

@@ -1,6 +1,6 @@
 <template>
   <eb-page @page:beforeremove="onPageBeforeRemove" @page:beforeout="onPageBeforeOut">
-    <eb-navbar :title="$text('Sheet Modal')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Sheet Modal')" eb-back-link="Back"></eb-navbar>
     <f7-block strong>
       <p>Sheet Modals slide up from the bottom of the screen to reveal more content. Such modals allow to create custom overlays with custom content.</p>
       <f7-row tag="p">

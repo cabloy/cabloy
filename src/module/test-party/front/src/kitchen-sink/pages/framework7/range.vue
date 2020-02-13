@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Range Slider')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Range Slider')" eb-back-link="Back"></eb-navbar>
     <f7-block-title>Volume</f7-block-title>
     <f7-list simple-list>
       <f7-list-item>

@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Guide')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Guide')" eb-back-link="Back"></eb-navbar>
     <!-- Basic process of frontend and backend development -->
     <f7-card>
       <f7-card-header>

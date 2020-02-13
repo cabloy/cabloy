@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar title="Vertical Timeline" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent title="Vertical Timeline" eb-back-link="Back"></eb-navbar>
     <f7-block-title>Default</f7-block-title>
     <div class="timeline">
       <div class="timeline-item">

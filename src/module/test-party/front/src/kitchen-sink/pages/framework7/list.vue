@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('List View')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('List View')" eb-back-link="Back"></eb-navbar>
     <f7-block>
       <p>Framework7 allows you to be flexible with list views (table views). You can make them as navigation menus, you can use there icons, inputs, and any elements inside of the list, and even make them nested:</p>
     </f7-block>

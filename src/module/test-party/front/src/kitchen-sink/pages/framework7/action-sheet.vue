@@ -1,6 +1,6 @@
 <template>
   <eb-page @page:beforeremove="onPageBeforeRemove">
-    <eb-navbar :title="$text('Action Sheet')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Action Sheet')" eb-back-link="Back"></eb-navbar>
     <f7-block strong>
       <p class="row">
         <!-- One group, open by direct accessing instance .open() method -->
@@ -91,20 +91,20 @@ export default {
         self.actionsToPopover = app.actions.create({
           hostEl,
           buttons: [{
-            text: 'Do something',
-            label: true,
-          },
-          {
-            text: 'Button 1',
-            bold: true,
-          },
-          {
-            text: 'Button 2',
-          },
-          {
-            text: 'Cancel',
-            color: 'red',
-          },
+              text: 'Do something',
+              label: true,
+            },
+            {
+              text: 'Button 1',
+              bold: true,
+            },
+            {
+              text: 'Button 2',
+            },
+            {
+              text: 'Cancel',
+              color: 'red',
+            },
           ],
           // Need to specify popover target
           targetEl,

@@ -1,6 +1,6 @@
 <template>
   <eb-page ptr :ptr-mousewheel="true" @ptr:refresh="loadMore">
-    <eb-navbar :title="$text('Pull To Refresh')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Pull To Refresh')" eb-back-link="Back"></eb-navbar>
     <f7-list media-list>
       <f7-list-item v-for="(item, index) in items" :key="index" :title="item.title" :subtitle="item.author">
         <img slot="media" :src="item.cover" width="44" />

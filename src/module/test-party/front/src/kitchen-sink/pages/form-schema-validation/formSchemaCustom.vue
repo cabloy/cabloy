@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Form / Schema (Custom) / Validation')" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="$text('Form / Schema (Custom) / Validation')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link ref="buttonSubmit" iconMaterial="save" :onPerform="onPerformSave"></eb-link>
       </f7-nav-right>

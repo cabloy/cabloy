@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('GaugeChart')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('GaugeChart')" eb-back-link="Back"></eb-navbar>
     <f7-block strong>
       <p>Framework7 comes with Gauge component. It produces nice looking fully responsive SVG gauges.</p>
     </f7-block>

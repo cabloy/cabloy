@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Chips / Tags')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Chips / Tags')" eb-back-link="Back"></eb-navbar>
     <f7-block-title>Chips With Text</f7-block-title>
     <f7-block strong>
       <f7-chip text="Example Chip"></f7-chip>

@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('About')" eb-back-link="Back"> </eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('About')" eb-back-link="Back"> </eb-navbar>
     <f7-block-title>{{$text('Welcome to CabloyJS')}}</f7-block-title>
     <f7-block strong>
       <div class="alert-info">{{$text('CabloyAboutTip1')}}</div>

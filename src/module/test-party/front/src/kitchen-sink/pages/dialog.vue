@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Dialog')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Dialog')" eb-back-link="Back"></eb-navbar>
     <f7-block strong>
       <p>There are 1:1 replacements of native Alert, Prompt and Confirm modals. They support callbacks, have very easy api and can be combined with each other. Check these examples:</p>
       <f7-row tag="p">
@@ -67,14 +67,14 @@ export default {
       this.$view.dialog.create({
         title: 'Vertical Buttons',
         buttons: [{
-          text: 'Button 1',
-        },
-        {
-          text: 'Button 2',
-        },
-        {
-          text: 'Button 3',
-        },
+            text: 'Button 1',
+          },
+          {
+            text: 'Button 2',
+          },
+          {
+            text: 'Button 3',
+          },
         ],
         verticalButtons: true,
       }).open();

@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Accordion')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Accordion')" eb-back-link="Back"></eb-navbar>
     <f7-block-title>List View Accordion</f7-block-title>
     <f7-list accordion-list>
       <f7-list-item accordion-item title="Lorem Ipsum">

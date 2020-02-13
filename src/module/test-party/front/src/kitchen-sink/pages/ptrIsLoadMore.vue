@@ -1,6 +1,6 @@
 <template>
   <eb-page ptr ptrMousewheel @ptr:refresh="onRefresh" infinite :infinitePreloader="false" @infinite="onInfinite">
-    <eb-navbar :title="$text('Pull To Refresh / Infinite Scroll / Load More')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Pull To Refresh / Infinite Scroll / Load More')" eb-back-link="Back"></eb-navbar>
     <f7-list>
       <eb-list-item v-for="item of items" :key="item.id" :title="item.title" link="#" :context="item" :onPerform="onItemClick" swipeout>
         <eb-context-menu>
