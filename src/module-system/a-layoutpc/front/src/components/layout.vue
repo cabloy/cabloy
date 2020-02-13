@@ -119,17 +119,23 @@ export default {
       if (target === '_self') {
         ctx.$view.f7View.router.navigate(url, options);
       } else {
-
+        // view
+        const $viewEl = ctx && ctx.$view && this.$$(ctx.$view.$el);
         // groupId
         let groupId;
         let groupForceNew;
-        if (window.event && (window.event.metaKey || window.event.ctrlKey || window.event.button === 1)) {
+        if (target === '_view' && $viewEl && $viewEl.hasClass('eb-layout-view')) {
+          // open at right even in eb-layout-scene
+          groupId = $viewEl.parents('.eb-layout-group').data('groupId');
+        } else if (window.event && (window.event.metaKey || window.event.ctrlKey || window.event.button === 1)) {
           groupId = null;
           groupForceNew = true;
-        } else if (!ctx || !ctx.$view || this.$$(ctx.$view.$el).parents('.eb-layout-scene').length > 0) {
+        } else if (!$viewEl || $viewEl.parents('.eb-layout-scene').length > 0) {
           groupId = null;
+          groupForceNew = false;
         } else {
-          groupId = this.$$(ctx.$view.$el).parents('.eb-layout-group').data('groupId');
+          // open at right
+          groupId = $viewEl.parents('.eb-layout-group').data('groupId');
         }
         // get view
         this.$refs.groups.createView({ ctx, groupId, groupForceNew, url, scene: options._scene, sceneName: options._sceneName }).then(res => {
