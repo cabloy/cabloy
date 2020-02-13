@@ -96,12 +96,12 @@ export default {
       if (target === '_self') {
         ctx.$view.f7View.router.navigate(url, options);
       } else {
-        // check if target===_view/_group or in views
+        // check if target===_view or in views
         if (!ctx || !ctx.$view || target === '_view' || this.$$(ctx.$view.$el).parents('.eb-layout-scene').length > 0) {
           // in new view
           this.$refs.group.createView({ ctx, url }).then(res => {
             if (res) {
-              if (res.options) this.$utils.extend(options, res.options);
+              if (res.options) options = this.$utils.extend({}, options, res.options);
               res.view.f7View.router.navigate(url, options);
             }
           });
