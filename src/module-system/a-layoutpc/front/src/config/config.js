@@ -13,7 +13,7 @@ export default {
     size: {
       small: 320,
       top: 60,
-      spacing: 10,
+      spacing: 8,
     },
   },
 };
