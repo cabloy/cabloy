@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Email confirmation')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Email confirmation')" eb-back-link="Back"></eb-navbar>
     <f7-block>
       <template v-if="sent">{{$text('emailConfirmSentAlert')}}</template>
       <template v-else>

@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Sign up')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Sign up')" eb-back-link="Back"></eb-navbar>
     <f7-block>
       <eb-validate ref="validate" :auto="false" :data="data" :params="{validator: 'signup'}" :onPerform="onPerformValidate" @schema:ready="onSchemaReady">
         <eb-list form no-hairlines-md @submit.prevent="onSubmit">

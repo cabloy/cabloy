@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Change password')" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="$text('Change password')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="done" ref="buttonSubmit" :onPerform="onPerformOk"></eb-link>
       </f7-nav-right>
