@@ -1,6 +1,6 @@
 {
   "name": "egg-born",
-  "version": "1.5.2",
+  "version": "1.6.0",
   "description": "The Ultimate Javascript Full Stack Framework",
   "preferGlobal": true,
   "bin": {
@@ -22,14 +22,14 @@
   },
   "homepage": "https://github.com/zhennann/egg-born#readme",
   "devDependencies": {
-    "babel-eslint": "^8.0.2",
-    "eslint": "^4.11.0",
-    "eslint-config-egg": "^5.1.1"
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.8.0",
+    "eslint-config-egg": "^8.0.1"
   },
   "dependencies": {
     "co": "^4.6.0",
     "egg-born-init-config": "^1.0.5",
-    "@zhennann/egg-init": "^1.17.2",
-    "fs-extra": "^7.0.1"
+    "@zhennann/egg-init": "^1.17.3",
+    "fs-extra": "^8.1.0"
   }
 }
