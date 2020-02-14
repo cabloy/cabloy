@@ -1,6 +1,6 @@
 {
   "name": "create-cabloy",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "so you could use `npm init cabloy showcase` to init cabloy project",
   "bin": "./bin/create-cabloy.js",
   "repository": {
@@ -14,11 +14,11 @@
   },
   "homepage": "https://github.com/zhennann/create-cabloy#readme",
   "dependencies": {
-    "egg-born": "^1.5.2"
+    "egg-born": "^1.6.0"
   },
   "devDependencies": {
-    "babel-eslint": "^8.0.2",
-    "eslint": "^4.11.0",
-    "eslint-config-egg": "^5.1.1"
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.8.0",
+    "eslint-config-egg": "^8.0.1"
   }
 }
