@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-cms",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "title": "CMS",
   "eggBornModule": {
     "fileVersion": 6,
@@ -36,6 +36,8 @@
     "uglify-js": "^3.7.7",
     "sha.js": "^2.4.11",
     "fs-extra": "^8.1.0",
+    "chokidar": "^2.1.8",
+    "less": "^3.11.1",
     "@babel/core": "^7.8.4",
     "@babel/register": "^7.8.3",
     "@babel/preset-env": "^7.8.4",

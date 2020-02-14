@@ -194,6 +194,7 @@ const CleanCSS = require3('clean-css');
 const shajs = require3('sha.js');
 const babel = require3('@babel/core');
 const UglifyJS = require3('uglify-js');
+const less = require3('less');
 const time = __webpack_require__(20);
 const utils = __webpack_require__(0);
 
@@ -755,7 +756,18 @@ $(document).ready(function() {
         }
         // minify
         if (type === 'CSS') {
-          if (item.indexOf('.min.css') === -1) {
+          let _needMinify = false;
+          if (item.indexOf('.less') > -1) {
+            // less
+            const output = await less.render(_content, { filename: item });
+            _content = output.css;
+            _needMinify = true;
+          } else if (item.indexOf('.min.css') === -1) {
+            // normal
+            _needMinify = true;
+          }
+          if (_needMinify) {
+            // minify
             const output = new CleanCSS().minify(_content);
             _content = output.styles;
           }
