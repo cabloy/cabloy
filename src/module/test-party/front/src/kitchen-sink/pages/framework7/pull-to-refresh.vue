@@ -1,5 +1,5 @@
 <template>
-  <eb-page ptr :ptr-mousewheel="true" @ptr:refresh="loadMore">
+  <eb-page ptr @ptr:refresh="loadMore">
     <eb-navbar large largeTransparent :title="$text('Pull To Refresh')" eb-back-link="Back"></eb-navbar>
     <f7-list media-list>
       <f7-list-item v-for="(item, index) in items" :key="index" :title="item.title" :subtitle="item.author">
