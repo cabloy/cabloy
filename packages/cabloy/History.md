@@ -2,7 +2,7 @@
 
 ## 2020-02-14, Version 3.0.0-beta.4
 
-> [Migration to CabloyJS v3](https://community.cabloy.com/articles/v2-to-v3.html)
+> [Migration to CabloyJS v3 🎉](https://community.cabloy.com/articles/v2-to-v3.html)
 
 * **features**
   * updated to Framework7 V5 🎉
