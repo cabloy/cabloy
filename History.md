@@ -1,10 +1,15 @@
 # History
 
+## 2020-02-14, Version 3.0.0-beta.4
+
+* **features**
+  * updated to Framework7 V5 🎉
+
 ## 2019-05-29, Version 2.1.0
 
 * **features**
   * support module prebuild, so as to reduce project build time 🎉
-  
+
 ## 2019-05-16, Version 2.0.0
 
 * **features**
