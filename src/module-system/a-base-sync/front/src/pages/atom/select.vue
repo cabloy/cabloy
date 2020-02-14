@@ -1,5 +1,5 @@
 <template>
-  <eb-page ptr ptrMousewheel @ptr:refresh="onRefresh" infinite :infinitePreloader="false" @infinite="onInfinite">
+  <eb-page ptr @ptr:refresh="onRefresh" infinite :infinitePreloader="false" @infinite="onInfinite">
     <eb-navbar large largeTransparent :title="pageTitle" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="add" :onPerform="onPerformAdd"></eb-link>
