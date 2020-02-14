@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-test-wechat",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "title": "test-wechat",
   "eggBornModule": {
     "fileVersion": 0,
