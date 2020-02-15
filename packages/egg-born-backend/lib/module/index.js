@@ -20,6 +20,9 @@ module.exports = function(loader) {
   // meta
   const meta = loadMeta(loader);
 
+  // messenger
+  loadMessenger(loader);
+
   // modules
   const modules = loadModules(loader);
 
@@ -31,7 +34,6 @@ module.exports = function(loader) {
     loadRoutes(loader, modules);
     loadServices(loader, modules);
     loadModels(loader, modules);
-    loadMessenger(loader, modules);
     loadQueues(loader, modules);
     loadBroadcasts(loader, modules);
     loadSchedules(loader, modules);
@@ -39,7 +41,6 @@ module.exports = function(loader) {
     loadClusterApp(loader, modules);
   } else {
     loadConfig(loader, modules);
-    loadMessenger(loader, modules);
     loadQueues(loader, modules);
     loadBroadcasts(loader, modules);
     loadSchedules(loader, modules);

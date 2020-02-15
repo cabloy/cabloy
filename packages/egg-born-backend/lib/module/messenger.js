@@ -2,7 +2,7 @@ const uuid = require('uuid');
 const util = require('./util.js');
 const eventMessengerCall = 'eb:event:messengerCall';
 
-module.exports = function(loader, modules) {
+module.exports = function(loader) {
 
   class Messenger {
     constructor() {
