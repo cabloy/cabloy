@@ -3,7 +3,7 @@ const chokidar = require3('chokidar');
 const debounce = require3('debounce');
 
 module.exports = function(app) {
-
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Watcher {
 
     constructor() {
@@ -52,10 +52,16 @@ module.exports = function(app) {
       // key
       const atomClasskey = JSON.stringify(info.atomClass);
       // clear
-      const _module = this._watchers.geto(info.subdomain).geto(info.atomClass.module);
-      _module[atomClasskey] = null;
+      const _arr = this._watchers.geto(info.subdomain).geto(info.atomClass.module).geto(atomClasskey);
+      for (const language in _arr) {
+        const watcherEntry = _arr[language];
+        if (watcherEntry.watcher) {
+          watcherEntry.watcher.close();
+          watcherEntry.watcher = null;
+        }
+      }
       // register
-      for (const watcherInfo in watcherInfos) {
+      for (const watcherInfo of watcherInfos) {
         this._register(watcherInfo);
       }
     }
@@ -88,7 +94,7 @@ module.exports = function(app) {
     async _change({ subdomain, atomClass, language }) {
       app.meta.queue.push({
         subdomain,
-        module: atomClass.module,
+        module: moduleInfo.relativeName,
         queueName: 'render',
         queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
         data: {

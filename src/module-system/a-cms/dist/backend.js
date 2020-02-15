@@ -1579,6 +1579,8 @@ module.exports = {
   Block: '区块',
   'Slug Exists': 'Slug已存在',
   'Build Site First': '请先构建站点',
+  'Cannot delete if has children': '有子元素时不允许删除',
+  'Cannot delete if has articles': '有文章时不允许删除',
 };
 
 
@@ -1614,7 +1616,7 @@ const chokidar = require3('chokidar');
 const debounce = require3('debounce');
 
 module.exports = function(app) {
-
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Watcher {
 
     constructor() {
@@ -1663,10 +1665,16 @@ module.exports = function(app) {
       // key
       const atomClasskey = JSON.stringify(info.atomClass);
       // clear
-      const _module = this._watchers.geto(info.subdomain).geto(info.atomClass.module);
-      _module[atomClasskey] = null;
+      const _arr = this._watchers.geto(info.subdomain).geto(info.atomClass.module).geto(atomClasskey);
+      for (const language in _arr) {
+        const watcherEntry = _arr[language];
+        if (watcherEntry.watcher) {
+          watcherEntry.watcher.close();
+          watcherEntry.watcher = null;
+        }
+      }
       // register
-      for (const watcherInfo in watcherInfos) {
+      for (const watcherInfo of watcherInfos) {
         this._register(watcherInfo);
       }
     }
@@ -1699,7 +1707,7 @@ module.exports = function(app) {
     async _change({ subdomain, atomClass, language }) {
       app.meta.queue.push({
         subdomain,
-        module: atomClass.module,
+        module: moduleInfo.relativeName,
         queueName: 'render',
         queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
         data: {
@@ -3374,6 +3382,8 @@ module.exports = app => {
         flag: data.flag,
         url: data.url,
       });
+      // only in development
+      await this._rebuild({ categoryId });
     }
 
     async children({ atomClass, language, categoryId, hidden, flag }) {
@@ -3411,6 +3421,8 @@ module.exports = app => {
       });
       // adjust catalog
       await this.adjustCatalog(data.categoryIdParent);
+      // only in development
+      await this._rebuild({ categoryId: res.insertId });
 
       return res.insertId;
     }
@@ -3422,14 +3434,22 @@ module.exports = app => {
       // check children
       const children = await this.children({ categoryId });
       if (children.length > 0) this.ctx.throw(1004);
+
       // category
       const category = await this.ctx.model.category.get({ id: categoryId });
       // parent
       const categoryIdParent = category.categoryIdParent;
+
       // delete
       await this.ctx.model.category.delete({ id: categoryId });
       // adjust catalog
       await this.adjustCatalog(categoryIdParent);
+
+      // only in development
+      if (this.ctx.app.meta.isLocal) {
+        const atomClass = await this.ctx.meta.atomClass.get({ id: category.atomClassId });
+        await this._rebuild({ atomClass, language: category.language });
+      }
     }
 
     async move({ categoryId, categoryIdParent }) {
@@ -3445,6 +3465,8 @@ module.exports = app => {
       // adjust catalog
       await this.adjustCatalog(categoryIdParentOld);
       await this.adjustCatalog(categoryIdParent);
+      // only in development
+      await this._rebuild({ categoryId });
     }
 
     // for donothing on categoryId === 0, so need not input param:atomClass
@@ -3481,6 +3503,17 @@ module.exports = app => {
       if (!category) return null;
       if (category.url) return category;
       return await this._relativeTop({ categoryId: category.categoryIdParent });
+    }
+
+    async _rebuild({ categoryId, atomClass, language }) {
+      // only in development
+      if (this.ctx.app.meta.isLocal) {
+        // atomClass
+        const item = categoryId ? await this.ctx.model.category.get({ id: categoryId }) : null;
+        const _atomClass = atomClass || await this.ctx.meta.atomClass.get({ id: item.atomClassId });
+        // build site
+        this.ctx.service.site.buildLanguageQueue({ atomClass: _atomClass, language: language || item.language });
+      }
     }
 
   }
