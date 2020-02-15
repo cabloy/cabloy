@@ -6,8 +6,10 @@ const WatcherFn = require('./common/watcher.js');
 
 module.exports = app => {
 
-  // watcher
-  app.meta['a-cms:watcher'] = new (WatcherFn(app))();
+  // watcher: only in development
+  if (app.meta.isLocal) {
+    app.meta['a-cms:watcher'] = new (WatcherFn(app))();
+  }
 
   // routes
   const routes = require('./routes.js')(app);

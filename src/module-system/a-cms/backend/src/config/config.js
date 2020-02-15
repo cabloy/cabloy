@@ -9,6 +9,15 @@ module.exports = appInfo => {
     },
   };
 
+  // startups
+  config.startups = {
+    registerWatchers: {
+      type: 'worker',
+      instance: true,
+      path: 'site/registerWatchers',
+    },
+  };
+
   // article
   config.article = {
     trim: {

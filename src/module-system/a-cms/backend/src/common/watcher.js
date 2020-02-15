@@ -1,5 +1,6 @@
 const require3 = require('require3');
 const chokidar = require3('chokidar');
+const debounce = require3('debounce');
 
 module.exports = function(app) {
 
@@ -50,22 +51,30 @@ module.exports = function(app) {
       }
       // watcher
       watcherEntry.watcher = chokidar.watch(info.watchers)
-        .on('change', (path, stats) => {
-          console.log(path, stats);
-        });
+        .on('change', debounce(function() {
+          app.meta.messenger.callRandom({
+            name: 'a-cms:watcherChange',
+            data: keys,
+          });
+        }, 300));
     }
 
     // invoked in app
-    async _change(info) {
-      const ctx = app.createAnonymousContext({
-        method: 'post',
-        url: info.url,
+    async _change({ subdomain, atomClass, language }) {
+      app.meta.queue.push({
+        subdomain,
+        module: atomClass.module,
+        queueName: 'render',
+        queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
+        data: {
+          queueAction: 'buildLanguage',
+          atomClass,
+          language,
+        },
       });
-      await ctx.performAction(info);
     }
 
   }
 
   return Watcher;
 };
-

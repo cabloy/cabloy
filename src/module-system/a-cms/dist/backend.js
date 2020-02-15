@@ -89,6 +89,12 @@ module.exports =
 /* 0 */
 /***/ (function(module, exports) {
 
+module.exports = require("require3");
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports) {
+
 
 /**
   escapeHtml: based on markdown-it
@@ -172,17 +178,11 @@ module.exports = {
 
 
 /***/ }),
-/* 1 */
-/***/ (function(module, exports) {
-
-module.exports = require("require3");
-
-/***/ }),
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const path = __webpack_require__(19);
-const require3 = __webpack_require__(1);
+const path = __webpack_require__(20);
+const require3 = __webpack_require__(0);
 const ejs = require3('@zhennann/ejs');
 const pMap = require3('p-map');
 const extend = require3('extend2');
@@ -195,8 +195,8 @@ const shajs = require3('sha.js');
 const babel = require3('@babel/core');
 const UglifyJS = require3('uglify-js');
 const less = require3('less');
-const time = __webpack_require__(20);
-const utils = __webpack_require__(0);
+const time = __webpack_require__(21);
+const utils = __webpack_require__(1);
 
 class Build {
 
@@ -500,13 +500,15 @@ class Build {
     // concurrency
     const mapper = async article => {
       // progress: initialize
-      await this.ctx.meta.progress.update({
-        progressId,
-        progressNo,
-        total: progress1_Total,
-        progress: progress1_progress++,
-        text: article.atomName,
-      });
+      if (progressId) {
+        await this.ctx.meta.progress.update({
+          progressId,
+          progressNo,
+          total: progress1_Total,
+          progress: progress1_progress++,
+          text: article.atomName,
+        });
+      }
       // render article
       await this._renderArticle({ site, article });
     };
@@ -935,13 +937,15 @@ var env=${JSON.stringify(env, null, 2)};
 
       for (const language of languages) {
         // progress: language
-        await this.ctx.meta.progress.update({
-          progressId,
-          progressNo,
-          total: progress0_Total,
-          progress: progress0_progress++,
-          text: `${this.ctx.text('Build')} ${this.ctx.text(language)}`,
-        });
+        if (progressId) {
+          await this.ctx.meta.progress.update({
+            progressId,
+            progressNo,
+            total: progress0_Total,
+            progress: progress0_progress++,
+            text: `${this.ctx.text('Build')} ${this.ctx.text(language)}`,
+          });
+        }
 
         // build
         await this.buildLanguage({ language, progressId, progressNo: progressNo + 1 });
@@ -952,11 +956,13 @@ var env=${JSON.stringify(env, null, 2)};
       const time = (timeEnd.valueOf() - timeStart.valueOf()) / 1000; // second
 
       // progress: done
-      if (progressNo === 0) {
-        await this.ctx.meta.progress.done({
-          progressId,
-          message: `${this.ctx.text('Time Used')}: ${parseInt(time)}${this.ctx.text('second2')}`,
-        });
+      if (progressId) {
+        if (progressNo === 0) {
+          await this.ctx.meta.progress.done({
+            progressId,
+            message: `${this.ctx.text('Time Used')}: ${parseInt(time)}${this.ctx.text('second2')}`,
+          });
+        }
       }
 
       // ok
@@ -965,8 +971,10 @@ var env=${JSON.stringify(env, null, 2)};
       };
     } catch (err) {
       // error
-      if (progressNo === 0) {
-        await this.ctx.meta.progress.error({ progressId, message: err.message });
+      if (progressId) {
+        if (progressNo === 0) {
+          await this.ctx.meta.progress.error({ progressId, message: err.message });
+        }
       }
       throw err;
     }
@@ -982,13 +990,15 @@ var env=${JSON.stringify(env, null, 2)};
       const progress0_Total = 2;
       let progress0_progress = 0;
       // progress: initialize
-      await this.ctx.meta.progress.update({
-        progressId,
-        progressNo,
-        total: progress0_Total,
-        progress: progress0_progress++,
-        text: this.ctx.text('Initialize'),
-      });
+      if (progressId) {
+        await this.ctx.meta.progress.update({
+          progressId,
+          progressNo,
+          total: progress0_Total,
+          progress: progress0_progress++,
+          text: this.ctx.text('Initialize'),
+        });
+      }
 
       // site
       const site = await this.getSite({ language });
@@ -1094,13 +1104,15 @@ var env=${JSON.stringify(env, null, 2)};
       await this.createSitemapIndex({ site });
 
       // progress: render files
-      await this.ctx.meta.progress.update({
-        progressId,
-        progressNo,
-        total: progress0_Total,
-        progress: progress0_progress++,
-        text: this.ctx.text('Render Files'),
-      });
+      if (progressId) {
+        await this.ctx.meta.progress.update({
+          progressId,
+          progressNo,
+          total: progress0_Total,
+          progress: progress0_progress++,
+          text: this.ctx.text('Render Files'),
+        });
+      }
 
       // render all files
       await this.renderAllFiles({ language, progressId, progressNo: progressNo + 1 });
@@ -1110,11 +1122,13 @@ var env=${JSON.stringify(env, null, 2)};
       const time = (timeEnd.valueOf() - timeStart.valueOf()) / 1000; // second
 
       // progress: done
-      if (progressNo === 0) {
-        await this.ctx.meta.progress.done({
-          progressId,
-          message: `${this.ctx.text('Time Used')}: ${parseInt(time)}${this.ctx.text('second2')}`,
-        });
+      if (progressId) {
+        if (progressNo === 0) {
+          await this.ctx.meta.progress.done({
+            progressId,
+            message: `${this.ctx.text('Time Used')}: ${parseInt(time)}${this.ctx.text('second2')}`,
+          });
+        }
       }
 
       // ok
@@ -1123,11 +1137,61 @@ var env=${JSON.stringify(env, null, 2)};
       };
     } catch (err) {
       // error
-      if (progressNo === 0) {
-        await this.ctx.meta.progress.error({ progressId, message: err.message });
+      if (progressId) {
+        if (progressNo === 0) {
+          await this.ctx.meta.progress.error({ progressId, message: err.message });
+        }
       }
       throw err;
     }
+  }
+
+  // register watchers
+  async registerWatchers() {
+    // site
+    const site = await this.combineSiteBase();
+    const languages = site.language.items.split(',');
+    // loop languages
+    for (const language of languages) {
+      // build
+      await this.registerWatcher({ language });
+    }
+  }
+
+  async registerWatcher({ language }) {
+    // site
+    const site = await this.getSite({ language });
+
+    // watcher
+    site._watchers = [];
+
+    // / files
+    // /  plugins<theme<custom
+
+    // plugins
+    for (const relativeName in this.app.meta.modules) {
+      const module = this.app.meta.modules[relativeName];
+      if (!module.info.public && module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin) {
+        site._watchers.push(path.join(module.root, 'backend/cms'));
+        // site._watchers.push(path.join(module.root, 'backend/src'));
+      }
+    }
+
+    // theme
+    if (!site.themes[language]) this.ctx.throw(1002, this.atomClass.module, this.atomClass.atomClassName, language);
+    this.watcherThemes(site, site.themes[language]);
+
+    // custom
+    const customPath = await this.getPathCustom(language);
+    site._watchers.push(customPath);
+
+    // register
+    this.app.meta['a-cms:watcher'].register({
+      subdomain: this.ctx.subdomain,
+      atomClass: this.atomClass,
+      language,
+      watchers: site._watchers,
+    });
   }
 
   async createSitemapIndex({ site }) {
@@ -1185,6 +1249,27 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
     });
     for (const item of themeFiles) {
       await fse.copy(item, path.join(pathIntermediate, path.basename(item)));
+    }
+  }
+
+  // theme extend
+  watcherThemes(site, themeModuleName) {
+    this._watcherThemes(site, themeModuleName);
+  }
+
+  _watcherThemes(site, themeModuleName) {
+    // module
+    const module = this.app.meta.modules[themeModuleName];
+    if (!module) this.ctx.throw(1003, themeModuleName);
+    // extend
+    const moduleExtend = module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.extend;
+    if (moduleExtend) {
+      this._watcherThemes(site, moduleExtend);
+    }
+    // current
+    if (!module.info.public) {
+      site._watchers.push(path.join(module.root, 'backend/cms'));
+      // site._watchers.push(path.join(module.root, 'backend/src'));
     }
   }
 
@@ -1271,17 +1356,23 @@ const config = __webpack_require__(4);
 const locales = __webpack_require__(5);
 const errors = __webpack_require__(8);
 const middlewares = __webpack_require__(9);
+const WatcherFn = __webpack_require__(10);
 
 module.exports = app => {
 
+  // watcher: only in development
+  if (app.meta.isLocal) {
+    app.meta['a-cms:watcher'] = new (WatcherFn(app))();
+  }
+
   // routes
-  const routes = __webpack_require__(10)(app);
+  const routes = __webpack_require__(11)(app);
   // services
-  const services = __webpack_require__(23)(app);
+  const services = __webpack_require__(24)(app);
   // models
-  const models = __webpack_require__(31)(app);
+  const models = __webpack_require__(32)(app);
   // meta
-  const meta = __webpack_require__(38)(app);
+  const meta = __webpack_require__(39)(app);
 
   return {
     routes,
@@ -1309,6 +1400,15 @@ module.exports = appInfo => {
   config.queues = {
     render: {
       path: 'queue/render',
+    },
+  };
+
+  // startups
+  config.startups = {
+    registerWatchers: {
+      type: 'worker',
+      instance: true,
+      path: 'site/registerWatchers',
     },
   };
 
@@ -1491,16 +1591,102 @@ module.exports = {
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(11);
-const article = __webpack_require__(12);
-const category = __webpack_require__(13);
-const render = __webpack_require__(14);
-const site = __webpack_require__(15);
-const tag = __webpack_require__(16);
-const comment = __webpack_require__(17);
-const rss = __webpack_require__(18);
-const queue = __webpack_require__(21);
-const event = __webpack_require__(22);
+const require3 = __webpack_require__(0);
+const chokidar = require3('chokidar');
+const debounce = require3('debounce');
+
+module.exports = function(app) {
+
+  class Watcher {
+
+    constructor() {
+      this._watchers = {};
+      this._init();
+    }
+
+    _init() {
+      if (app.meta.inApp) {
+        // app
+        app.meta.messenger.addProvider({
+          name: 'a-cms:watcherChange',
+          handler: async info => {
+            await this._change(info);
+          },
+        });
+      } else {
+        // agent
+        app.meta.messenger.addProvider({
+          name: 'a-cms:watcherRegister',
+          handler: info => {
+            this._register(info);
+          },
+        });
+      }
+    }
+
+    // called by app
+    register(info) {
+      app.meta.messenger.callAgent({ name: 'a-cms:watcherRegister', data: info });
+    }
+
+    // invoked in agent
+    _register(info) {
+      // key
+      const keys = { subdomain: info.subdomain, atomClass: info.atomClass, language: info.language };
+      const key = JSON.stringify(keys);
+      // watcherEntry
+      let watcherEntry = this._watchers[key];
+      if (watcherEntry) {
+        watcherEntry.watcher.close();
+        watcherEntry.watcher = null;
+      } else {
+        watcherEntry = this._watchers[key] = { info };
+      }
+      // watcher
+      watcherEntry.watcher = chokidar.watch(info.watchers)
+        .on('change', debounce(function() {
+          app.meta.messenger.callRandom({
+            name: 'a-cms:watcherChange',
+            data: keys,
+          });
+        }, 300));
+    }
+
+    // invoked in app
+    async _change({ subdomain, atomClass, language }) {
+      app.meta.queue.push({
+        subdomain,
+        module: atomClass.module,
+        queueName: 'render',
+        queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
+        data: {
+          queueAction: 'buildLanguage',
+          atomClass,
+          language,
+        },
+      });
+    }
+
+  }
+
+  return Watcher;
+};
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const version = __webpack_require__(12);
+const article = __webpack_require__(13);
+const category = __webpack_require__(14);
+const render = __webpack_require__(15);
+const site = __webpack_require__(16);
+const tag = __webpack_require__(17);
+const comment = __webpack_require__(18);
+const rss = __webpack_require__(19);
+const queue = __webpack_require__(22);
+const event = __webpack_require__(23);
 
 module.exports = app => {
   let routes = [
@@ -1539,6 +1725,7 @@ module.exports = app => {
     { method: 'post', path: 'site/getBlocks', controller: site },
     { method: 'post', path: 'site/getBlockArray', controller: site },
     { method: 'post', path: 'site/blockSave', controller: site },
+    { method: 'post', path: 'site/registerWatchers', controller: site, middlewares: 'inner', meta: { auth: { enable: false } } },
     // category
     { method: 'post', path: 'category/item', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'category/save', controller: category, middlewares: 'validate', meta: {
@@ -1575,7 +1762,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1602,12 +1789,12 @@ module.exports = app => {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(1);
+const require3 = __webpack_require__(0);
 const extend = require3('extend2');
-const utils = __webpack_require__(0);
+const utils = __webpack_require__(1);
 
 module.exports = app => {
 
@@ -1704,7 +1891,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1793,7 +1980,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1815,10 +2002,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const utils = __webpack_require__(0);
+const utils = __webpack_require__(1);
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -1978,6 +2165,11 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async registerWatchers() {
+      await this.ctx.service.site.registerWatchers();
+      this.ctx.success();
+    }
+
   }
   return SiteController;
 };
@@ -1985,7 +2177,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2008,12 +2200,12 @@ module.exports = app => {
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(1);
+const require3 = __webpack_require__(0);
 const extend = require3('extend2');
-const utils = __webpack_require__(0);
+const utils = __webpack_require__(1);
 
 module.exports = app => {
 
@@ -2047,7 +2239,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const Build = __webpack_require__(2);
@@ -2283,13 +2475,13 @@ module.exports = app => {
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports) {
 
 module.exports = require("path");
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports) {
 
 const _formatDateTime = function(date, fmt) { // original author: meizz
@@ -2332,7 +2524,7 @@ module.exports = {
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2387,7 +2579,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2409,16 +2601,16 @@ module.exports = app => {
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(24);
-const article = __webpack_require__(25);
-const category = __webpack_require__(26);
-const render = __webpack_require__(27);
-const site = __webpack_require__(28);
-const tag = __webpack_require__(29);
-const event = __webpack_require__(30);
+const version = __webpack_require__(25);
+const article = __webpack_require__(26);
+const category = __webpack_require__(27);
+const render = __webpack_require__(28);
+const site = __webpack_require__(29);
+const tag = __webpack_require__(30);
+const event = __webpack_require__(31);
 
 module.exports = app => {
   const services = {
@@ -2435,12 +2627,12 @@ module.exports = app => {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(1);
+const require3 = __webpack_require__(0);
 const uuid = require3('uuid');
-const utils = __webpack_require__(0);
+const utils = __webpack_require__(1);
 
 module.exports = app => {
 
@@ -2842,10 +3034,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(1);
+const require3 = __webpack_require__(0);
 const trimHtml = require3('@zhennann/trim-html');
 const markdown = require3('@zhennann/markdown');
 const markdonw_it_block = require3('@zhennann/markdown-it-block');
@@ -3136,10 +3328,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const utils = __webpack_require__(0);
+const utils = __webpack_require__(1);
 
 module.exports = app => {
 
@@ -3274,7 +3466,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const Build = __webpack_require__(2);
@@ -3314,10 +3506,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(1);
+const require3 = __webpack_require__(0);
 const fse = require3('fs-extra');
 const extend = require3('extend2');
 const Build = __webpack_require__(2);
@@ -3383,6 +3575,29 @@ module.exports = app => {
     async buildLanguage({ atomClass, language, progressId }) {
       const build = Build.create(this.ctx, atomClass);
       return await build.buildLanguage({ language, progressId });
+    }
+
+    async registerWatchers() {
+      // only in development
+      if (!this.ctx.app.meta.isLocal) return;
+      // loop modules
+      for (const module of this.ctx.app.meta.modulesArray) {
+        // cms.site=true
+        if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.site) {
+          // loop atomClasses
+          for (const key in module.main.meta.base.atoms) {
+            if (module.main.meta.base.atoms[key].info.cms === false) continue;
+            // atomClass
+            const atomClass = {
+              module: module.info.relativeName,
+              atomClassName: key,
+              atomClassIdParent: 0,
+            };
+            const build = Build.create(this.ctx, atomClass);
+            await build.registerWatchers();
+          }
+        }
+      }
     }
 
     async checkFile({ file, mtime }) {
@@ -3480,10 +3695,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const utils = __webpack_require__(0);
+const utils = __webpack_require__(1);
 
 module.exports = app => {
 
@@ -3611,7 +3826,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3629,15 +3844,15 @@ module.exports = app => {
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const article = __webpack_require__(32);
-const category = __webpack_require__(33);
-const content = __webpack_require__(34);
-const tag = __webpack_require__(35);
-const articleTag = __webpack_require__(36);
-const articleTagRef = __webpack_require__(37);
+const article = __webpack_require__(33);
+const category = __webpack_require__(34);
+const content = __webpack_require__(35);
+const tag = __webpack_require__(36);
+const articleTag = __webpack_require__(37);
+const articleTagRef = __webpack_require__(38);
 
 module.exports = app => {
   const models = {
@@ -3653,7 +3868,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3667,7 +3882,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3681,7 +3896,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3695,7 +3910,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3709,7 +3924,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3723,7 +3938,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3737,12 +3952,12 @@ module.exports = app => {
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
-  const keywords = __webpack_require__(39)(app);
-  const schemas = __webpack_require__(40)(app);
+  const keywords = __webpack_require__(40)(app);
+  const schemas = __webpack_require__(41)(app);
   const meta = {
     base: {
       atoms: {
@@ -3848,7 +4063,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3884,7 +4099,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports) {
 
 module.exports = app => {

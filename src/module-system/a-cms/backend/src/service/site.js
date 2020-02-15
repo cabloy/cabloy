@@ -66,6 +66,29 @@ module.exports = app => {
       return await build.buildLanguage({ language, progressId });
     }
 
+    async registerWatchers() {
+      // only in development
+      if (!this.ctx.app.meta.isLocal) return;
+      // loop modules
+      for (const module of this.ctx.app.meta.modulesArray) {
+        // cms.site=true
+        if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.site) {
+          // loop atomClasses
+          for (const key in module.main.meta.base.atoms) {
+            if (module.main.meta.base.atoms[key].info.cms === false) continue;
+            // atomClass
+            const atomClass = {
+              module: module.info.relativeName,
+              atomClassName: key,
+              atomClassIdParent: 0,
+            };
+            const build = Build.create(this.ctx, atomClass);
+            await build.registerWatchers();
+          }
+        }
+      }
+    }
+
     async checkFile({ file, mtime }) {
       // loop
       const timeStart = new Date();

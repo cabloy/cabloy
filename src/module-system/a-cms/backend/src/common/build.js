@@ -317,13 +317,15 @@ class Build {
     // concurrency
     const mapper = async article => {
       // progress: initialize
-      await this.ctx.meta.progress.update({
-        progressId,
-        progressNo,
-        total: progress1_Total,
-        progress: progress1_progress++,
-        text: article.atomName,
-      });
+      if (progressId) {
+        await this.ctx.meta.progress.update({
+          progressId,
+          progressNo,
+          total: progress1_Total,
+          progress: progress1_progress++,
+          text: article.atomName,
+        });
+      }
       // render article
       await this._renderArticle({ site, article });
     };
@@ -752,13 +754,15 @@ var env=${JSON.stringify(env, null, 2)};
 
       for (const language of languages) {
         // progress: language
-        await this.ctx.meta.progress.update({
-          progressId,
-          progressNo,
-          total: progress0_Total,
-          progress: progress0_progress++,
-          text: `${this.ctx.text('Build')} ${this.ctx.text(language)}`,
-        });
+        if (progressId) {
+          await this.ctx.meta.progress.update({
+            progressId,
+            progressNo,
+            total: progress0_Total,
+            progress: progress0_progress++,
+            text: `${this.ctx.text('Build')} ${this.ctx.text(language)}`,
+          });
+        }
 
         // build
         await this.buildLanguage({ language, progressId, progressNo: progressNo + 1 });
@@ -769,11 +773,13 @@ var env=${JSON.stringify(env, null, 2)};
       const time = (timeEnd.valueOf() - timeStart.valueOf()) / 1000; // second
 
       // progress: done
-      if (progressNo === 0) {
-        await this.ctx.meta.progress.done({
-          progressId,
-          message: `${this.ctx.text('Time Used')}: ${parseInt(time)}${this.ctx.text('second2')}`,
-        });
+      if (progressId) {
+        if (progressNo === 0) {
+          await this.ctx.meta.progress.done({
+            progressId,
+            message: `${this.ctx.text('Time Used')}: ${parseInt(time)}${this.ctx.text('second2')}`,
+          });
+        }
       }
 
       // ok
@@ -782,8 +788,10 @@ var env=${JSON.stringify(env, null, 2)};
       };
     } catch (err) {
       // error
-      if (progressNo === 0) {
-        await this.ctx.meta.progress.error({ progressId, message: err.message });
+      if (progressId) {
+        if (progressNo === 0) {
+          await this.ctx.meta.progress.error({ progressId, message: err.message });
+        }
       }
       throw err;
     }
@@ -799,13 +807,15 @@ var env=${JSON.stringify(env, null, 2)};
       const progress0_Total = 2;
       let progress0_progress = 0;
       // progress: initialize
-      await this.ctx.meta.progress.update({
-        progressId,
-        progressNo,
-        total: progress0_Total,
-        progress: progress0_progress++,
-        text: this.ctx.text('Initialize'),
-      });
+      if (progressId) {
+        await this.ctx.meta.progress.update({
+          progressId,
+          progressNo,
+          total: progress0_Total,
+          progress: progress0_progress++,
+          text: this.ctx.text('Initialize'),
+        });
+      }
 
       // site
       const site = await this.getSite({ language });
@@ -911,13 +921,15 @@ var env=${JSON.stringify(env, null, 2)};
       await this.createSitemapIndex({ site });
 
       // progress: render files
-      await this.ctx.meta.progress.update({
-        progressId,
-        progressNo,
-        total: progress0_Total,
-        progress: progress0_progress++,
-        text: this.ctx.text('Render Files'),
-      });
+      if (progressId) {
+        await this.ctx.meta.progress.update({
+          progressId,
+          progressNo,
+          total: progress0_Total,
+          progress: progress0_progress++,
+          text: this.ctx.text('Render Files'),
+        });
+      }
 
       // render all files
       await this.renderAllFiles({ language, progressId, progressNo: progressNo + 1 });
@@ -927,11 +939,13 @@ var env=${JSON.stringify(env, null, 2)};
       const time = (timeEnd.valueOf() - timeStart.valueOf()) / 1000; // second
 
       // progress: done
-      if (progressNo === 0) {
-        await this.ctx.meta.progress.done({
-          progressId,
-          message: `${this.ctx.text('Time Used')}: ${parseInt(time)}${this.ctx.text('second2')}`,
-        });
+      if (progressId) {
+        if (progressNo === 0) {
+          await this.ctx.meta.progress.done({
+            progressId,
+            message: `${this.ctx.text('Time Used')}: ${parseInt(time)}${this.ctx.text('second2')}`,
+          });
+        }
       }
 
       // ok
@@ -940,10 +954,24 @@ var env=${JSON.stringify(env, null, 2)};
       };
     } catch (err) {
       // error
-      if (progressNo === 0) {
-        await this.ctx.meta.progress.error({ progressId, message: err.message });
+      if (progressId) {
+        if (progressNo === 0) {
+          await this.ctx.meta.progress.error({ progressId, message: err.message });
+        }
       }
       throw err;
+    }
+  }
+
+  // register watchers
+  async registerWatchers() {
+    // site
+    const site = await this.combineSiteBase();
+    const languages = site.language.items.split(',');
+    // loop languages
+    for (const language of languages) {
+      // build
+      await this.registerWatcher({ language });
     }
   }
 
@@ -962,7 +990,7 @@ var env=${JSON.stringify(env, null, 2)};
       const module = this.app.meta.modules[relativeName];
       if (!module.info.public && module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin) {
         site._watchers.push(path.join(module.root, 'backend/cms'));
-        site._watchers.push(path.join(module.root, 'backend/src'));
+        // site._watchers.push(path.join(module.root, 'backend/src'));
       }
     }
 
@@ -1058,7 +1086,7 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
     // current
     if (!module.info.public) {
       site._watchers.push(path.join(module.root, 'backend/cms'));
-      site._watchers.push(path.join(module.root, 'backend/src'));
+      // site._watchers.push(path.join(module.root, 'backend/src'));
     }
   }
 

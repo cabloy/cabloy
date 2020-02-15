@@ -158,6 +158,11 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async registerWatchers() {
+      await this.ctx.service.site.registerWatchers();
+      this.ctx.success();
+    }
+
   }
   return SiteController;
 };

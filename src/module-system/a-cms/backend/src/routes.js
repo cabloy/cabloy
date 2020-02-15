@@ -46,6 +46,7 @@ module.exports = app => {
     { method: 'post', path: 'site/getBlocks', controller: site },
     { method: 'post', path: 'site/getBlockArray', controller: site },
     { method: 'post', path: 'site/blockSave', controller: site },
+    { method: 'post', path: 'site/registerWatchers', controller: site, middlewares: 'inner', meta: { auth: { enable: false } } },
     // category
     { method: 'post', path: 'category/item', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'category/save', controller: category, middlewares: 'validate', meta: {
