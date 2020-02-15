@@ -947,6 +947,42 @@ var env=${JSON.stringify(env, null, 2)};
     }
   }
 
+  async registerWatcher({ language }) {
+    // site
+    const site = await this.getSite({ language });
+
+    // watcher
+    site._watchers = [];
+
+    // / files
+    // /  plugins<theme<custom
+
+    // plugins
+    for (const relativeName in this.app.meta.modules) {
+      const module = this.app.meta.modules[relativeName];
+      if (!module.info.public && module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.plugin) {
+        site._watchers.push(path.join(module.root, 'backend/cms'));
+        site._watchers.push(path.join(module.root, 'backend/src'));
+      }
+    }
+
+    // theme
+    if (!site.themes[language]) this.ctx.throw(1002, this.atomClass.module, this.atomClass.atomClassName, language);
+    this.watcherThemes(site, site.themes[language]);
+
+    // custom
+    const customPath = await this.getPathCustom(language);
+    site._watchers.push(customPath);
+
+    // register
+    this.app.meta['a-cms:watcher'].register({
+      subdomain: this.ctx.subdomain,
+      atomClass: this.atomClass,
+      language,
+      watchers: site._watchers,
+    });
+  }
+
   async createSitemapIndex({ site }) {
     // content
     const urlRawRoot = this.getUrlRawRoot(site);
@@ -1002,6 +1038,27 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
     });
     for (const item of themeFiles) {
       await fse.copy(item, path.join(pathIntermediate, path.basename(item)));
+    }
+  }
+
+  // theme extend
+  watcherThemes(site, themeModuleName) {
+    this._watcherThemes(site, themeModuleName);
+  }
+
+  _watcherThemes(site, themeModuleName) {
+    // module
+    const module = this.app.meta.modules[themeModuleName];
+    if (!module) this.ctx.throw(1003, themeModuleName);
+    // extend
+    const moduleExtend = module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.extend;
+    if (moduleExtend) {
+      this._watcherThemes(site, moduleExtend);
+    }
+    // current
+    if (!module.info.public) {
+      site._watchers.push(path.join(module.root, 'backend/cms'));
+      site._watchers.push(path.join(module.root, 'backend/src'));
     }
   }
 
