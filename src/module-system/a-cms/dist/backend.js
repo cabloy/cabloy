@@ -1148,17 +1148,35 @@ var env=${JSON.stringify(env, null, 2)};
 
   // register watchers
   async registerWatchers() {
+    // info
+    const watcherInfos = [];
     // site
     const site = await this.combineSiteBase();
     const languages = site.language.items.split(',');
     // loop languages
     for (const language of languages) {
-      // build
-      await this.registerWatcher({ language });
+      // info
+      const watcherInfo = await this._collectWatcher({ language });
+      watcherInfos.push(watcherInfo);
     }
+    // register
+    this.app.meta['a-cms:watcher'].registerLanguages({
+      info: {
+        subdomain: this.ctx.subdomain,
+        atomClass: this.atomClass,
+      },
+      watcherInfos,
+    });
   }
 
   async registerWatcher({ language }) {
+    // info
+    const watcherInfo = await this._collectWatcher({ language });
+    // register
+    this.app.meta['a-cms:watcher'].register(watcherInfo);
+  }
+
+  async _collectWatcher({ language }) {
     // site
     const site = await this.getSite({ language });
 
@@ -1185,13 +1203,13 @@ var env=${JSON.stringify(env, null, 2)};
     const customPath = await this.getPathCustom(language);
     site._watchers.push(customPath);
 
-    // register
-    this.app.meta['a-cms:watcher'].register({
+    // watcherInfo
+    return {
       subdomain: this.ctx.subdomain,
       atomClass: this.atomClass,
       language,
       watchers: site._watchers,
-    });
+    };
   }
 
   async createSitemapIndex({ site }) {
@@ -1405,10 +1423,10 @@ module.exports = appInfo => {
 
   // startups
   config.startups = {
-    registerWatchers: {
+    registerAllWatchers: {
       type: 'worker',
       instance: true,
-      path: 'site/registerWatchers',
+      path: 'site/registerAllWatchers',
     },
   };
 
@@ -1621,6 +1639,12 @@ module.exports = function(app) {
             this._register(info);
           },
         });
+        app.meta.messenger.addProvider({
+          name: 'a-cms:watcherRegisterLanguages',
+          handler: info => {
+            this._registerLanguages(info);
+          },
+        });
       }
     }
 
@@ -1629,25 +1653,44 @@ module.exports = function(app) {
       app.meta.messenger.callAgent({ name: 'a-cms:watcherRegister', data: info });
     }
 
+    // called by app
+    registerLanguages(info) {
+      app.meta.messenger.callAgent({ name: 'a-cms:watcherRegisterLanguages', data: info });
+    }
+
     // invoked in agent
-    _register(info) {
+    _registerLanguages({ info, watcherInfos }) {
       // key
-      const keys = { subdomain: info.subdomain, atomClass: info.atomClass, language: info.language };
-      const key = JSON.stringify(keys);
+      const atomClasskey = JSON.stringify(info.atomClass);
+      // clear
+      const _module = this._watchers.geto(info.subdomain).geto(info.atomClass.module);
+      _module[atomClasskey] = null;
+      // register
+      for (const watcherInfo in watcherInfos) {
+        this._register(watcherInfo);
+      }
+    }
+
+    // invoked in agent
+    _register({ subdomain, atomClass, language, watchers }) {
+      // key
+      const atomClasskey = JSON.stringify(atomClass);
       // watcherEntry
-      let watcherEntry = this._watchers[key];
-      if (watcherEntry) {
+      const watcherEntry = this._watchers
+        .geto(subdomain).geto(atomClass.module).geto(atomClasskey)
+        .geto(language);
+      if (watcherEntry.watcher) {
         watcherEntry.watcher.close();
         watcherEntry.watcher = null;
       } else {
-        watcherEntry = this._watchers[key] = { info };
+        watcherEntry.info = { subdomain, atomClass, language, watchers };
       }
       // watcher
-      watcherEntry.watcher = chokidar.watch(info.watchers)
+      watcherEntry.watcher = chokidar.watch(watchers)
         .on('change', debounce(function() {
           app.meta.messenger.callRandom({
             name: 'a-cms:watcherChange',
-            data: keys,
+            data: { subdomain, atomClass, language },
           });
         }, 300));
     }
@@ -1725,7 +1768,7 @@ module.exports = app => {
     { method: 'post', path: 'site/getBlocks', controller: site },
     { method: 'post', path: 'site/getBlockArray', controller: site },
     { method: 'post', path: 'site/blockSave', controller: site },
-    { method: 'post', path: 'site/registerWatchers', controller: site, middlewares: 'inner', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'site/registerAllWatchers', controller: site, middlewares: 'inner', meta: { auth: { enable: false } } },
     // category
     { method: 'post', path: 'category/item', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'category/save', controller: category, middlewares: 'validate', meta: {
@@ -2081,20 +2124,8 @@ module.exports = app => {
       const language = this.ctx.request.body.language;
       // progress
       const progressId = await this.ctx.meta.progress.create();
-      // queue
-      this.ctx.app.meta.queue.push({
-        locale: this.ctx.locale,
-        subdomain: this.ctx.subdomain,
-        module: moduleInfo.relativeName,
-        queueName: 'render',
-        queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
-        data: {
-          queueAction: 'buildLanguage',
-          atomClass,
-          language,
-          progressId,
-        },
-      });
+      // build
+      this.ctx.service.site.buildLanguageQueue({ atomClass, language, progressId });
       this.ctx.success({ progressId });
     }
 
@@ -2103,19 +2134,8 @@ module.exports = app => {
       const atomClass = utils.atomClass(this.ctx.request.body.atomClass);
       // progress
       const progressId = await this.ctx.meta.progress.create();
-      // queue
-      this.ctx.app.meta.queue.push({
-        locale: this.ctx.locale,
-        subdomain: this.ctx.subdomain,
-        module: moduleInfo.relativeName,
-        queueName: 'render',
-        queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
-        data: {
-          queueAction: 'buildLanguages',
-          atomClass,
-          progressId,
-        },
-      });
+      // build
+      this.ctx.service.site.buildLanguagesQueue({ atomClass, progressId });
       this.ctx.success({ progressId });
     }
 
@@ -2165,8 +2185,8 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async registerWatchers() {
-      await this.ctx.service.site.registerWatchers();
+    async registerAllWatchers() {
+      await this.ctx.service.site.registerAllWatchers();
       this.ctx.success();
     }
 
@@ -2525,7 +2545,9 @@ module.exports = {
 
 /***/ }),
 /* 22 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+const Build = __webpack_require__(2);
 
 module.exports = app => {
 
@@ -2537,19 +2559,21 @@ module.exports = app => {
     }
 
     async buildLanguage() {
-      const res = await this.ctx.service.site.buildLanguage({
-        atomClass: this.ctx.request.body.atomClass,
-        language: this.ctx.request.body.language,
-        progressId: this.ctx.request.body.progressId,
-      });
+      const atomClass = this.ctx.request.body.atomClass;
+      const language = this.ctx.request.body.language;
+      const progressId = this.ctx.request.body.progressId;
+
+      const build = Build.create(this.ctx, atomClass);
+      const res = await build.buildLanguage({ language, progressId });
       this.ctx.success(res);
     }
 
     async buildLanguages() {
-      const res = await this.ctx.service.site.buildLanguages({
-        atomClass: this.ctx.request.body.atomClass,
-        progressId: this.ctx.request.body.progressId,
-      });
+      const atomClass = this.ctx.request.body.atomClass;
+      const progressId = this.ctx.request.body.progressId;
+
+      const build = Build.create(this.ctx, atomClass);
+      const res = await build.buildLanguages({ progressId });
       this.ctx.success(res);
     }
 
@@ -3518,7 +3542,7 @@ const _blocksLocales = {};
 const _blockArrayLocales = {};
 
 module.exports = app => {
-
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Site extends app.Service {
 
     async getSite({ atomClass, language, options }) {
@@ -3536,9 +3560,19 @@ module.exports = app => {
       return await build.getConfigSite();
     }
 
+    // save site config
     async setConfigSite({ atomClass, data }) {
+      // build
       const build = Build.create(this.ctx, atomClass);
+      // save
       await build.setConfigSite({ data });
+      // only in development
+      if (this.ctx.app.meta.isLocal) {
+        // build site
+        this.buildLanguagesQueue({ atomClass });
+        // register watchers
+        await build.registerWatchers();
+      }
     }
 
     async getConfigLanguagePreview({ atomClass, language }) {
@@ -3551,9 +3585,19 @@ module.exports = app => {
       return await build.getConfigLanguage({ language });
     }
 
+    // save language config
     async setConfigLanguage({ atomClass, language, data }) {
+      // build
       const build = Build.create(this.ctx, atomClass);
+      // save
       await build.setConfigLanguage({ language, data });
+      // only in development
+      if (this.ctx.app.meta.isLocal) {
+        // build site
+        this.buildLanguageQueue({ atomClass, language });
+        // register watcher
+        await build.registerWatcher({ language });
+      }
     }
 
     async getLanguages({ atomClass }) {
@@ -3567,17 +3611,40 @@ module.exports = app => {
       return build.getUrl(site, language, path);
     }
 
-    async buildLanguages({ atomClass, progressId }) {
-      const build = Build.create(this.ctx, atomClass);
-      return await build.buildLanguages({ progressId });
+    buildLanguagesQueue({ atomClass, progressId }) {
+      // queue
+      this.ctx.app.meta.queue.push({
+        locale: this.ctx.locale,
+        subdomain: this.ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'render',
+        queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
+        data: {
+          queueAction: 'buildLanguages',
+          atomClass,
+          progressId,
+        },
+      });
     }
 
-    async buildLanguage({ atomClass, language, progressId }) {
-      const build = Build.create(this.ctx, atomClass);
-      return await build.buildLanguage({ language, progressId });
+    buildLanguageQueue({ atomClass, language, progressId }) {
+      // queue
+      this.ctx.app.meta.queue.push({
+        locale: this.ctx.locale,
+        subdomain: this.ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'render',
+        queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
+        data: {
+          queueAction: 'buildLanguage',
+          atomClass,
+          language,
+          progressId,
+        },
+      });
     }
 
-    async registerWatchers() {
+    async registerAllWatchers() {
       // only in development
       if (!this.ctx.app.meta.isLocal) return;
       // loop modules

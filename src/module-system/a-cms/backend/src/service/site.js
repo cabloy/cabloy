@@ -7,7 +7,7 @@ const _blocksLocales = {};
 const _blockArrayLocales = {};
 
 module.exports = app => {
-
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Site extends app.Service {
 
     async getSite({ atomClass, language, options }) {
@@ -25,9 +25,19 @@ module.exports = app => {
       return await build.getConfigSite();
     }
 
+    // save site config
     async setConfigSite({ atomClass, data }) {
+      // build
       const build = Build.create(this.ctx, atomClass);
+      // save
       await build.setConfigSite({ data });
+      // only in development
+      if (this.ctx.app.meta.isLocal) {
+        // build site
+        this.buildLanguagesQueue({ atomClass });
+        // register watchers
+        await build.registerWatchers();
+      }
     }
 
     async getConfigLanguagePreview({ atomClass, language }) {
@@ -40,9 +50,19 @@ module.exports = app => {
       return await build.getConfigLanguage({ language });
     }
 
+    // save language config
     async setConfigLanguage({ atomClass, language, data }) {
+      // build
       const build = Build.create(this.ctx, atomClass);
+      // save
       await build.setConfigLanguage({ language, data });
+      // only in development
+      if (this.ctx.app.meta.isLocal) {
+        // build site
+        this.buildLanguageQueue({ atomClass, language });
+        // register watcher
+        await build.registerWatcher({ language });
+      }
     }
 
     async getLanguages({ atomClass }) {
@@ -56,17 +76,40 @@ module.exports = app => {
       return build.getUrl(site, language, path);
     }
 
-    async buildLanguages({ atomClass, progressId }) {
-      const build = Build.create(this.ctx, atomClass);
-      return await build.buildLanguages({ progressId });
+    buildLanguagesQueue({ atomClass, progressId }) {
+      // queue
+      this.ctx.app.meta.queue.push({
+        locale: this.ctx.locale,
+        subdomain: this.ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'render',
+        queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
+        data: {
+          queueAction: 'buildLanguages',
+          atomClass,
+          progressId,
+        },
+      });
     }
 
-    async buildLanguage({ atomClass, language, progressId }) {
-      const build = Build.create(this.ctx, atomClass);
-      return await build.buildLanguage({ language, progressId });
+    buildLanguageQueue({ atomClass, language, progressId }) {
+      // queue
+      this.ctx.app.meta.queue.push({
+        locale: this.ctx.locale,
+        subdomain: this.ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'render',
+        queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
+        data: {
+          queueAction: 'buildLanguage',
+          atomClass,
+          language,
+          progressId,
+        },
+      });
     }
 
-    async registerWatchers() {
+    async registerAllWatchers() {
       // only in development
       if (!this.ctx.app.meta.isLocal) return;
       // loop modules

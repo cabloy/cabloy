@@ -965,17 +965,35 @@ var env=${JSON.stringify(env, null, 2)};
 
   // register watchers
   async registerWatchers() {
+    // info
+    const watcherInfos = [];
     // site
     const site = await this.combineSiteBase();
     const languages = site.language.items.split(',');
     // loop languages
     for (const language of languages) {
-      // build
-      await this.registerWatcher({ language });
+      // info
+      const watcherInfo = await this._collectWatcher({ language });
+      watcherInfos.push(watcherInfo);
     }
+    // register
+    this.app.meta['a-cms:watcher'].registerLanguages({
+      info: {
+        subdomain: this.ctx.subdomain,
+        atomClass: this.atomClass,
+      },
+      watcherInfos,
+    });
   }
 
   async registerWatcher({ language }) {
+    // info
+    const watcherInfo = await this._collectWatcher({ language });
+    // register
+    this.app.meta['a-cms:watcher'].register(watcherInfo);
+  }
+
+  async _collectWatcher({ language }) {
     // site
     const site = await this.getSite({ language });
 
@@ -1002,13 +1020,13 @@ var env=${JSON.stringify(env, null, 2)};
     const customPath = await this.getPathCustom(language);
     site._watchers.push(customPath);
 
-    // register
-    this.app.meta['a-cms:watcher'].register({
+    // watcherInfo
+    return {
       subdomain: this.ctx.subdomain,
       atomClass: this.atomClass,
       language,
       watchers: site._watchers,
-    });
+    };
   }
 
   async createSitemapIndex({ site }) {

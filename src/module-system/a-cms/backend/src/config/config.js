@@ -11,10 +11,10 @@ module.exports = appInfo => {
 
   // startups
   config.startups = {
-    registerWatchers: {
+    registerAllWatchers: {
       type: 'worker',
       instance: true,
-      path: 'site/registerWatchers',
+      path: 'site/registerAllWatchers',
     },
   };
 

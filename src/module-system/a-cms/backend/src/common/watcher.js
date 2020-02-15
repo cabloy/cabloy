@@ -28,6 +28,12 @@ module.exports = function(app) {
             this._register(info);
           },
         });
+        app.meta.messenger.addProvider({
+          name: 'a-cms:watcherRegisterLanguages',
+          handler: info => {
+            this._registerLanguages(info);
+          },
+        });
       }
     }
 
@@ -36,25 +42,44 @@ module.exports = function(app) {
       app.meta.messenger.callAgent({ name: 'a-cms:watcherRegister', data: info });
     }
 
+    // called by app
+    registerLanguages(info) {
+      app.meta.messenger.callAgent({ name: 'a-cms:watcherRegisterLanguages', data: info });
+    }
+
     // invoked in agent
-    _register(info) {
+    _registerLanguages({ info, watcherInfos }) {
       // key
-      const keys = { subdomain: info.subdomain, atomClass: info.atomClass, language: info.language };
-      const key = JSON.stringify(keys);
+      const atomClasskey = JSON.stringify(info.atomClass);
+      // clear
+      const _module = this._watchers.geto(info.subdomain).geto(info.atomClass.module);
+      _module[atomClasskey] = null;
+      // register
+      for (const watcherInfo in watcherInfos) {
+        this._register(watcherInfo);
+      }
+    }
+
+    // invoked in agent
+    _register({ subdomain, atomClass, language, watchers }) {
+      // key
+      const atomClasskey = JSON.stringify(atomClass);
       // watcherEntry
-      let watcherEntry = this._watchers[key];
-      if (watcherEntry) {
+      const watcherEntry = this._watchers
+        .geto(subdomain).geto(atomClass.module).geto(atomClasskey)
+        .geto(language);
+      if (watcherEntry.watcher) {
         watcherEntry.watcher.close();
         watcherEntry.watcher = null;
       } else {
-        watcherEntry = this._watchers[key] = { info };
+        watcherEntry.info = { subdomain, atomClass, language, watchers };
       }
       // watcher
-      watcherEntry.watcher = chokidar.watch(info.watchers)
+      watcherEntry.watcher = chokidar.watch(watchers)
         .on('change', debounce(function() {
           app.meta.messenger.callRandom({
             name: 'a-cms:watcherChange',
-            data: keys,
+            data: { subdomain, atomClass, language },
           });
         }, 300));
     }

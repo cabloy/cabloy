@@ -1,3 +1,5 @@
+const Build = require('../common/build.js');
+
 module.exports = app => {
 
   class QueueController extends app.Controller {
@@ -8,19 +10,21 @@ module.exports = app => {
     }
 
     async buildLanguage() {
-      const res = await this.ctx.service.site.buildLanguage({
-        atomClass: this.ctx.request.body.atomClass,
-        language: this.ctx.request.body.language,
-        progressId: this.ctx.request.body.progressId,
-      });
+      const atomClass = this.ctx.request.body.atomClass;
+      const language = this.ctx.request.body.language;
+      const progressId = this.ctx.request.body.progressId;
+
+      const build = Build.create(this.ctx, atomClass);
+      const res = await build.buildLanguage({ language, progressId });
       this.ctx.success(res);
     }
 
     async buildLanguages() {
-      const res = await this.ctx.service.site.buildLanguages({
-        atomClass: this.ctx.request.body.atomClass,
-        progressId: this.ctx.request.body.progressId,
-      });
+      const atomClass = this.ctx.request.body.atomClass;
+      const progressId = this.ctx.request.body.progressId;
+
+      const build = Build.create(this.ctx, atomClass);
+      const res = await build.buildLanguages({ progressId });
       this.ctx.success(res);
     }
 

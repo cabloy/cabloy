@@ -74,20 +74,8 @@ module.exports = app => {
       const language = this.ctx.request.body.language;
       // progress
       const progressId = await this.ctx.meta.progress.create();
-      // queue
-      this.ctx.app.meta.queue.push({
-        locale: this.ctx.locale,
-        subdomain: this.ctx.subdomain,
-        module: moduleInfo.relativeName,
-        queueName: 'render',
-        queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
-        data: {
-          queueAction: 'buildLanguage',
-          atomClass,
-          language,
-          progressId,
-        },
-      });
+      // build
+      this.ctx.service.site.buildLanguageQueue({ atomClass, language, progressId });
       this.ctx.success({ progressId });
     }
 
@@ -96,19 +84,8 @@ module.exports = app => {
       const atomClass = utils.atomClass(this.ctx.request.body.atomClass);
       // progress
       const progressId = await this.ctx.meta.progress.create();
-      // queue
-      this.ctx.app.meta.queue.push({
-        locale: this.ctx.locale,
-        subdomain: this.ctx.subdomain,
-        module: moduleInfo.relativeName,
-        queueName: 'render',
-        queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
-        data: {
-          queueAction: 'buildLanguages',
-          atomClass,
-          progressId,
-        },
-      });
+      // build
+      this.ctx.service.site.buildLanguagesQueue({ atomClass, progressId });
       this.ctx.success({ progressId });
     }
 
@@ -158,8 +135,8 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async registerWatchers() {
-      await this.ctx.service.site.registerWatchers();
+    async registerAllWatchers() {
+      await this.ctx.service.site.registerAllWatchers();
       this.ctx.success();
     }
 
