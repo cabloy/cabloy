@@ -15,7 +15,7 @@ module.exports = function(loader) {
   const _ebModulesLast = [];
 
   // parse/order modules
-  orderModules(parseModules(loader));
+  orderModules(parseModules());
   // load modules
   loadModules();
   // log modules
@@ -89,12 +89,12 @@ module.exports = function(loader) {
     }
   }
 
-  function parseModules(loader) {
+  function parseModules() {
     // project first, then nodeModules
-    return _parseModules(_parseModules({}, policy.projectModules, loader), policy.nodeModules, loader);
+    return _parseModules(_parseModules({}, policy.projectModules, false), policy.nodeModules, true);
   }
 
-  function _parseModules(modules, policy, loader) {
+  function _parseModules(modules, policy, _public) {
     const files = glob.sync(`${policy.modulesPath}*${policy.jsPath}`);
     files.forEach(file => {
       const pos1 = policy.modulesPath.length;
@@ -102,6 +102,7 @@ module.exports = function(loader) {
       const name = file.substr(pos1, pos2 - pos1);
 
       const info = mparse.parseInfo(name);
+      info.public = _public;
       if (!modules[info.relativeName]) {
         const pkg = util.lookupPackage(file);
         const root = path.dirname(pkg);
