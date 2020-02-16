@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-themeaws",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "title": "cms:theme:aws",
   "eggBornModule": {
     "cms": {
