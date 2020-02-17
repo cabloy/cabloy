@@ -5,6 +5,7 @@ import Framework7Vue from '@zhennann/framework7/packages/vue/framework7-vue.esm.
 import 'framework7-icons';
 import '@zhennann/framework7/packages/core/framework7.bundle.less';
 import './assets/css/iconfont/material-icons.css';
+import './assets/css/app.less';
 
 // use
 Framework7.use(Framework7Vue);

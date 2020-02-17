@@ -13,6 +13,23 @@ export default {
         ref: 'layout',
       }));
     }
+    // error
+    if (this.error) {
+      const elError = c('div', { staticClass: 'eb-breathe' });
+      const elButton = c('f7-button', {
+        attrs: {
+          text: this.$text('Try Again'),
+        },
+        on: {
+          click: this.onClickTryAgain,
+        }
+      })
+      const elErrorContainer = c('div', {
+        staticClass: 'eb-init-error-container',
+      }, [c('div', [elError, elButton])]);
+      children.push(elErrorContainer);
+    }
+    // app
     const app = c('f7-app', {
       staticClass: this.$meta.config.layout.color ? `color-theme-${this.$meta.config.layout.color}` : '',
       props: { params: this.$root.$options.framework7 },
@@ -22,6 +39,7 @@ export default {
   data() {
     return {
       layout: null,
+      error: null,
     };
   },
   methods: {
@@ -40,11 +58,8 @@ export default {
       if (hashInit && hashInit !== '/') this.$store.commit('auth/setHashInit', hashInit);
       // on resize
       this.$f7.on('resize', this.onResize);
-      // auth echo first
-      this._authEcho(() => {
-        // resize
-        this.resize();
-      });
+      // auth echo init
+      this._authEchoInit();
     },
     getLayout() {
       return this.$refs.layout;
@@ -92,6 +107,12 @@ export default {
     onResize: Vue.prototype.$meta.util.debounce(function() {
       this.resize();
     }, 300),
+    _authEchoInit() {
+      this._authEcho(() => {
+        // resize
+        this.resize();
+      });
+    },
     _authEcho(cb) {
       // get auth first
       this.$api.post('/a/base/auth/echo').then(data => {
@@ -110,10 +131,20 @@ export default {
         this._checkActivation();
         // set locale resource
         this._setLocaleResource();
+        // error
+        this.error = null;
         // ok
         return cb && cb();
-      }).catch(() => {
-        return cb && cb();
+      }).catch(err => {
+        // err
+        this.error = err.message;
+        this.layout = null; // force to null
+        const notification = this.$f7.notification.create({
+          icon: '<i class="material-icons">error</i>',
+          title: err.message,
+          closeTimeout: 3000,
+        });
+        notification.open();
       });
     },
     _reloadLayout() {
@@ -201,6 +232,10 @@ export default {
       });
       location.assign(url);
     },
+    onClickTryAgain() {
+      this.error = null;
+      this._authEchoInit();
+    }
   },
   beforeDestroy() {
     this.$f7.off('resize', this.onResize);
