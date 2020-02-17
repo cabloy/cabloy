@@ -13,4 +13,5 @@ export default {
   'Loading... ': '加载中... ',
   Done: '完成',
   'Advanced Search': '高级搜索',
+  'Try Again': '请重试',
 };
