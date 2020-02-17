@@ -2,11 +2,18 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Instance')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link iconMaterial="save" :onPerform="onPerformSave"></eb-link>
+        <eb-link iconMaterial="save" ref="buttonSubmit" :onPerform="onPerformSave"></eb-link>
         <eb-link iconMaterial="visibility" :onPerform="onPerformPreview"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-validate ref="validate" auto :data="instance" :params="{validator: 'instance'}" :onPerform="onPerformValidate">
+    <eb-validate v-if="instance" ref="validate" :auto="false" :params="{validator: 'instance'}" :onPerform="onPerformValidate">
+      <eb-list form no-hairlines-md @submit.prevent="onSubmit">
+        <eb-list-input type="text" disabled :value="instance.name || $text('Empty')" dataPath="name" :label="$text('Subdomain')" :placeholder="$text('Subdomain')" floating-label></eb-list-input>
+        <eb-list-input type="text" v-model="instance.title" dataPath="title" :label="$text('Title')" :placeholder="$text('Title')" floating-label clear-button></eb-list-input>
+        <eb-list-input type="textarea" :input="false" v-model="instance.config" dataPath="config" :label="$text('Config')" :placeholder="$text('Config')">
+          <textarea slot="input" type="textarea" v-model="instance.config" class="json-textarea config-edit"></textarea>
+        </eb-list-input>
+      </eb-list>
     </eb-validate>
   </eb-page>
 </template>
@@ -50,7 +57,19 @@ export default {
         },
       });
     },
+    onSubmit() {
+      this.$refs.buttonSubmit.onClick();
+    },
   },
 };
 
 </script>
+<style lang="less" scoped>
+.config-edit {
+  width: 100%;
+  height: 400px;
+  margin: 8px 0 0 0;
+  padding: 6px;
+}
+
+</style>

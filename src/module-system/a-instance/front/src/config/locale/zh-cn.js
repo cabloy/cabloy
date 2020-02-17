@@ -4,4 +4,5 @@ export default {
   Preview: '预览',
   Subdomain: '子域名',
   Title: '标题',
+  Empty: '空',
 };
