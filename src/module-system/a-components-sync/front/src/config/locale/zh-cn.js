@@ -12,4 +12,5 @@ export default {
   Upload: '上传',
   'Loading... ': '加载中... ',
   Done: '完成',
+  'Advanced Search': '高级搜索',
 };
