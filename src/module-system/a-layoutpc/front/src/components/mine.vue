@@ -57,6 +57,13 @@ export default {
       this.$f7.dialog.confirm(this.$text('Are you sure to perform this operation?'), () => {
         this.$api.post('/a/base/auth/logout').then(() => {
           this.$meta.vueApp.reload({ echo: true });
+        }).catch(err => {
+          const notification = this.$f7.notification.create({
+            icon: '<i class="material-icons">error</i>',
+            title: err.message,
+            closeTimeout: 3000,
+          });
+          notification.open();
         });
       });
     },
