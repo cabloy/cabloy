@@ -63,7 +63,7 @@ export default {
       this.reloadChildren(node && node[0]);
     },
     onRoleMove(data) {
-      for (const roleIdParent of [ 'roleIdFrom', 'roleIdTo' ]) {
+      for (const roleIdParent of ['roleIdFrom', 'roleIdTo']) {
         const node = this.tree.find(node => node.id === data[roleIdParent]);
         this.reloadChildren(node && node[0]);
       }
