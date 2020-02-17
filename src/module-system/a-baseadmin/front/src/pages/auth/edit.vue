@@ -1,12 +1,12 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Edit')" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="$text('Edit')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="save" :onPerform="onPerformSave"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-box @size="onSize">
-      <textarea ref="textarea" type="textarea" :value="content" @input="onInput" class="json-textarea"></textarea>
+    <f7-block>
+      <textarea type="textarea" :value="content" @input="onInput" class="json-textarea auth-edit"></textarea>
       <f7-list v-if="meta">
         <f7-list-group>
           <f7-list-item group-title :title="$text('Info')"></f7-list-item>
@@ -14,7 +14,7 @@
           <f7-list-input readonly :label="$text('Callback URL')" :value="meta.callbackURL"></f7-list-input>
         </f7-list-group>
       </f7-list>
-    </eb-box>
+    </f7-block>
   </eb-page>
 </template>
 <script>
@@ -44,12 +44,6 @@ export default {
     });
   },
   methods: {
-    onSize(size) {
-      this.$$(this.$refs.textarea).css({
-        height: '200px', // `${size.height - 20}px`,
-        width: `${size.width - 20}px`,
-      });
-    },
     onInput(event) {
       this.content = event.target.value;
     },
@@ -66,4 +60,11 @@ export default {
 
 </script>
 <style lang="less" scoped>
+.auth-edit {
+  width: 100%;
+  height: 200px;
+  margin: 0;
+  padding: 6px;
+}
+
 </style>
