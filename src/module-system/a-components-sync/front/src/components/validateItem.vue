@@ -212,7 +212,7 @@ export default {
       if ((this.validate.readOnly || property.ebReadOnly) && !property.ebTextarea) {
         return c('f7-list-item', {
           key,
-          staticClass: property.ebReadOnly ? 'text-color-gray' : '',
+          staticClass: '',
           attrs: {
             title,
             after: data[key] ? data[key].toString() : null,

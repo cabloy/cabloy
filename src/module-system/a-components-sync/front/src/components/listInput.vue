@@ -5,7 +5,7 @@ const f7ListInput = Vue.options.components['f7-list-input'].extendOptions;
 export default {
   name: 'eb-list-input',
   extends: f7ListInput,
-  mixins: [ validate ],
+  mixins: [validate],
   mounted() {
     this.$nextTick(() => {
       this.checkEmptyState();
