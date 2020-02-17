@@ -54,7 +54,7 @@ export default {
       this.$meta.vueLayout.openLogin();
     },
     onPerformLogout() {
-      this.$view.dialog.confirm().then(() => {
+      return this.$view.dialog.confirm().then(() => {
         return this.$api.post('/a/base/auth/logout').then(() => {
           this.$meta.vueApp.reload({ echo: true });
         });
