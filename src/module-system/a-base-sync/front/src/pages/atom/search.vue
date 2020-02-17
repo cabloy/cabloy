@@ -1,5 +1,5 @@
 <template>
-  <eb-page @page:afterin="onPageAfterIn">
+  <eb-page>
     <eb-navbar large largeTransparent :title="pageTitle" eb-back-link="Back">
       <f7-nav-right>
         <eb-link ref="buttonSubmit" iconMaterial="search" :onPerform="onPerformSearch"></eb-link>
@@ -44,7 +44,6 @@ export default {
       atomClassInit: atomClass,
       mode,
       selectMode,
-      closeOnPageAfterIn: false,
     };
   },
   computed: {
@@ -125,13 +124,6 @@ export default {
         },
       });
     },
-    onPageAfterIn() {
-      if (this.closeOnPageAfterIn) {
-        this.$nextTick(() => {
-          this.$f7router.back();
-        });
-      }
-    },
     onPerformSearch() {
       // atomClassExtra
       let atomClassExtra;
@@ -174,7 +166,6 @@ export default {
             if (code === 200) {
               if (this.mode === 'selectSearch') {
                 this.contextCallback(200, data);
-                this.closeOnPageAfterIn = true;
               }
             }
           },

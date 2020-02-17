@@ -123,7 +123,7 @@ export default {
       if (this.where) {
         queries.where = JSON.stringify(this.where);
       }
-      const url = this.$meta.util.combineQueries('/a/base/atom/search', queries);
+      const url = this.$meta.util.combineQueries('/a/base/atom/searchQuick', queries);
       this.$view.navigate(url, { target: '_self' });
     },
     onAction(event, item) {

@@ -86,7 +86,7 @@ export default {
       queries.selectMode = this.selectMode;
       const url = this.$meta.util.combineQueries('/a/base/atom/search', queries);
       this.$view.navigate(url, {
-        target: '_self',
+        target: '_view',
         context: {
           params: {},
           callback: (code, data) => {

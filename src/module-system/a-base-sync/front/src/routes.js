@@ -8,6 +8,7 @@ export default [
   { path: 'menu/selectFunction', component: load('menu/selectFunction') },
   { path: 'atom/list', component: load('atom/list') },
   { path: 'atom/search', component: load('atom/search') },
+  { path: 'atom/searchQuick', component: load('atom/searchQuick') },
   { path: 'atom/searchResult', component: load('atom/searchResult') },
   { path: 'atom/labels', component: load('atom/labels') },
   { path: 'atom/edit', component: load('atom/edit') },

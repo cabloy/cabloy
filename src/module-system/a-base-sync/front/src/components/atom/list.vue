@@ -136,6 +136,7 @@ export default {
       atomOrderSelected: null,
       selectedAtomIds: null,
       selectedAtoms: null,
+      query: '',
     };
   },
   computed: {
@@ -277,8 +278,10 @@ export default {
       } else if (this.mode === 'search' || this.mode === 'selectSearch') {
         // where
         const where = {};
-        if (this.params && this.params.atomName) {
-          where['a.atomName'] = { val: this.params.atomName, op: 'like' };
+        // advanced search / quick search
+        const _query = (this.params && this.params.atomName) || this.query;
+        if (_query) {
+          where['a.atomName'] = { val: _query, op: 'like' };
         }
         if (this.params && this.params.atomClassExtra) {
           this.$utils.extend(where, this.params.atomClassExtra);
@@ -592,6 +595,14 @@ export default {
     getAtomOrderKey(atomOrder) {
       return atomOrder ? `${atomOrder.tableAlias}.${atomOrder.name}` : null;
     },
+    onSearch(query) {
+      this.query = query;
+      if (!this.query) {
+        this.items = [];
+      } else {
+        this.reload(true);
+      }
+    }
   },
 };
 

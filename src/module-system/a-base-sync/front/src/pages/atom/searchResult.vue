@@ -54,9 +54,12 @@ export default {
       this.$refs.list.openPopoverForAtomOrders(event.currentTarget);
     },
     onPerformDone(event) {
+      // selected atoms
       const selectedAtoms = this.$refs.list.getSelectedAtoms();
+      // callback
       this.contextCallback(200, selectedAtoms);
-      this.$f7router.back();
+      // close view
+      this.$view.close();
     },
   },
 };
