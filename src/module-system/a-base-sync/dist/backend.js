@@ -295,7 +295,7 @@ module.exports = ctx => {
 
       // for safe
       tableName = tableName ? ctx.model.format('??', tableName) : null;
-      where = where ? ctx.model._where2(where) : null;
+      where = where ? ctx.model._where(where) : null;
       orders = orders ? ctx.model._orders(orders) : null;
       const limit = page ? ctx.model._limit(page.size, page.index) : null;
 
@@ -396,7 +396,7 @@ module.exports = ctx => {
 
       // for safe
       tableName = tableName ? ctx.model.format('??', tableName) : null;
-      where = where ? ctx.model._where2(where) : null;
+      where = where ? ctx.model._where(where) : null;
       orders = orders ? ctx.model._orders(orders) : null;
       const limit = page ? ctx.model._limit(page.size, page.index) : null;
 
@@ -746,7 +746,7 @@ module.exports = ctx => {
       // -- e: aAtomClass
 
       // for safe
-      where = where ? ctx.model._where2(where) : null;
+      where = where ? ctx.model._where(where) : null;
       orders = orders ? ctx.model._orders(orders) : null;
       const limit = page ? ctx.model._limit(page.size, page.index) : null;
 
@@ -1305,10 +1305,10 @@ module.exports = ctx => {
 
     async list({ roleId, query, anonymous, page }) {
       const roleJoin = roleId ? 'left join aUserRole b on a.id=b.userId' : '';
-      const roleWhere = roleId ? `and b.roleId=${ctx.model._format2(roleId)}` : '';
-      const queryLike = query ? ctx.model._format2({ op: 'like', val: query }) : '';
+      const roleWhere = roleId ? `and b.roleId=${ctx.model._format(roleId)}` : '';
+      const queryLike = query ? ctx.model._format({ op: 'like', val: query }) : '';
       const queryWhere = query ? `and ( a.userName like ${queryLike} or a.realName like ${queryLike} or a.mobile like ${queryLike} )` : '';
-      const anonymousWhere = anonymous !== undefined ? `and a.anonymous=${ctx.model._format2(anonymous)}` : '';
+      const anonymousWhere = anonymous !== undefined ? `and a.anonymous=${ctx.model._format(anonymous)}` : '';
       const _limit = ctx.model._limit(page.size, page.index);
       const sql = `
         select a.* from aUser a
@@ -6846,7 +6846,7 @@ module.exports = app => {
         _options.offset = options.page.index;
       }
       // sql
-      const _where = this.ctx.model._where2(_options.where);
+      const _where = this.ctx.model._where(_options.where);
       const _orders = this.ctx.model._orders(_options.orders);
       const _limit = this.ctx.model._limit(_options.limit, _options.offset);
       const sql = `select a.*,(select d2.heart from aCommentHeart d2 where d2.iid=? and d2.commentId=a.id and d2.userId=?) as heart from aViewComment a

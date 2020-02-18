@@ -27,7 +27,7 @@ module.exports = ctx => {
 
       // for safe
       tableName = tableName ? ctx.model.format('??', tableName) : null;
-      where = where ? ctx.model._where2(where) : null;
+      where = where ? ctx.model._where(where) : null;
       orders = orders ? ctx.model._orders(orders) : null;
       const limit = page ? ctx.model._limit(page.size, page.index) : null;
 
@@ -128,7 +128,7 @@ module.exports = ctx => {
 
       // for safe
       tableName = tableName ? ctx.model.format('??', tableName) : null;
-      where = where ? ctx.model._where2(where) : null;
+      where = where ? ctx.model._where(where) : null;
       orders = orders ? ctx.model._orders(orders) : null;
       const limit = page ? ctx.model._limit(page.size, page.index) : null;
 
@@ -478,7 +478,7 @@ module.exports = ctx => {
       // -- e: aAtomClass
 
       // for safe
-      where = where ? ctx.model._where2(where) : null;
+      where = where ? ctx.model._where(where) : null;
       orders = orders ? ctx.model._orders(orders) : null;
       const limit = page ? ctx.model._limit(page.size, page.index) : null;
 

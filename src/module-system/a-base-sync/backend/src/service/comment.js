@@ -22,7 +22,7 @@ module.exports = app => {
         _options.offset = options.page.index;
       }
       // sql
-      const _where = this.ctx.model._where2(_options.where);
+      const _where = this.ctx.model._where(_options.where);
       const _orders = this.ctx.model._orders(_options.orders);
       const _limit = this.ctx.model._limit(_options.limit, _options.offset);
       const sql = `select a.*,(select d2.heart from aCommentHeart d2 where d2.iid=? and d2.commentId=a.id and d2.userId=?) as heart from aViewComment a
