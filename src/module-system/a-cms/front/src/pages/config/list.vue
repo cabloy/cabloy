@@ -35,7 +35,9 @@
                     <div>{{getStat(item.value,'categories')}}</div>
                   </f7-col>
                   <f7-col class="flex-direction-column text-align-center">
-                    <div>{{$text('Tags')}}</div>
+                    <div>
+                      <eb-link :eb-href="combineAtomClass(`tag/list?language=${item.value}`)">{{$text('Tags')}}</eb-link>
+                    </div>
                     <div>{{getStat(item.value,'tags')}}</div>
                   </f7-col>
                 </f7-row>
@@ -83,6 +85,8 @@ export default {
   created() {
     this.$local.dispatch('getLanguages', {
       atomClass: this.atomClass,
+    }).then(value => {
+      this.getStats(value);
     });
   },
   methods: {

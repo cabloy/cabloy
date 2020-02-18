@@ -1792,6 +1792,9 @@ module.exports = app => {
     { method: 'post', path: 'category/relativeTop', controller: category }, // not set function right
     // tag
     { method: 'post', path: 'tag/list', controller: tag },
+    { method: 'post', path: 'tag/add', controller: tag, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
+    { method: 'post', path: 'tag/save', controller: tag, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
+    { method: 'post', path: 'tag/delete', controller: tag, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     // rss
     { method: 'get', path: 'rss/feed/article/comments/:atomId', controller: rss, action: 'articleComments' },
     { method: 'get', path: 'rss/feed/comments/:module/:atomClassName/:language', controller: rss, action: 'feedComments' },
@@ -2229,6 +2232,32 @@ module.exports = app => {
         options: this.ctx.request.body.options,
       });
       this.ctx.success({ list });
+    }
+
+    async add() {
+      const atomClass = this.ctx.request.body.atomClass;
+      const res = await this.ctx.service.tag.add({
+        atomClass,
+        data: this.ctx.request.body.data,
+      });
+      this.ctx.success(res);
+    }
+
+    async save() {
+      // need not param:atomClass
+      const res = await this.ctx.service.tag.save({
+        tagId: this.ctx.request.body.tagId,
+        data: this.ctx.request.body.data,
+      });
+      this.ctx.success(res);
+    }
+
+    async delete() {
+      // need not param:atomClass
+      const res = await this.ctx.service.tag.delete({
+        tagId: this.ctx.request.body.tagId,
+      });
+      this.ctx.success(res);
     }
 
   }
@@ -3876,17 +3905,38 @@ module.exports = app => {
       return await this.ctx.model.tag.select(options);
     }
 
-    async create({ atomClassId, language, tagName }) {
-      // check if exists
-      const tag = await this.ctx.model.tag.get({
-        atomClassId, language, tagName,
-      });
-      if (tag) return tag.id;
-      // insert
+    async add({ atomClass, data }) {
+      const _atomClass = await utils.atomClass2(this.ctx, atomClass);
+      // add
       const res = await this.ctx.model.tag.insert({
-        atomClassId, language, tagName, articleCount: 0,
+        atomClassId: _atomClass.id,
+        language: data.language,
+        tagName: data.tagName,
+        articleCount: 0,
       });
       return res.insertId;
+    }
+
+    async save({ tagId, data }) {
+      await this.ctx.model.tag.update({
+        id: tagId,
+        tagName: data.tagName,
+      });
+    }
+
+    async delete({ tagId }) {
+      // check articles
+      const tag = await this.ctx.model.tag.get({ id: tagId });
+      if (tag.articleCount > 0) this.ctx.throw(1005);
+
+      // delete
+      await this.ctx.model.tag.delete({ id: tagId });
+
+      // only in development
+      if (this.ctx.app.meta.isLocal) {
+        const atomClass = await this.ctx.meta.atomClass.get({ id: tag.atomClassId });
+        await this._rebuild({ atomClass, language: tag.language });
+      }
     }
 
     async updateArticleTags({ atomClass, key, item }) {
@@ -3982,6 +4032,17 @@ module.exports = app => {
         `,
       [ this.ctx.instance.id, id ]);
       return res[0].articleCount;
+    }
+
+    async _rebuild({ tagId, atomClass, language }) {
+      // only in development
+      if (this.ctx.app.meta.isLocal) {
+        // atomClass
+        const item = tagId ? await this.ctx.model.tag.get({ id: tagId }) : null;
+        const _atomClass = atomClass || await this.ctx.meta.atomClass.get({ id: item.atomClassId });
+        // build site
+        this.ctx.service.site.buildLanguageQueue({ atomClass: _atomClass, language: language || item.language });
+      }
     }
 
   }

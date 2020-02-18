@@ -11,17 +11,38 @@ module.exports = app => {
       return await this.ctx.model.tag.select(options);
     }
 
-    async create({ atomClassId, language, tagName }) {
-      // check if exists
-      const tag = await this.ctx.model.tag.get({
-        atomClassId, language, tagName,
-      });
-      if (tag) return tag.id;
-      // insert
+    async add({ atomClass, data }) {
+      const _atomClass = await utils.atomClass2(this.ctx, atomClass);
+      // add
       const res = await this.ctx.model.tag.insert({
-        atomClassId, language, tagName, articleCount: 0,
+        atomClassId: _atomClass.id,
+        language: data.language,
+        tagName: data.tagName,
+        articleCount: 0,
       });
       return res.insertId;
+    }
+
+    async save({ tagId, data }) {
+      await this.ctx.model.tag.update({
+        id: tagId,
+        tagName: data.tagName,
+      });
+    }
+
+    async delete({ tagId }) {
+      // check articles
+      const tag = await this.ctx.model.tag.get({ id: tagId });
+      if (tag.articleCount > 0) this.ctx.throw(1005);
+
+      // delete
+      await this.ctx.model.tag.delete({ id: tagId });
+
+      // only in development
+      if (this.ctx.app.meta.isLocal) {
+        const atomClass = await this.ctx.meta.atomClass.get({ id: tag.atomClassId });
+        await this._rebuild({ atomClass, language: tag.language });
+      }
     }
 
     async updateArticleTags({ atomClass, key, item }) {
@@ -117,6 +138,17 @@ module.exports = app => {
         `,
       [ this.ctx.instance.id, id ]);
       return res[0].articleCount;
+    }
+
+    async _rebuild({ tagId, atomClass, language }) {
+      // only in development
+      if (this.ctx.app.meta.isLocal) {
+        // atomClass
+        const item = tagId ? await this.ctx.model.tag.get({ id: tagId }) : null;
+        const _atomClass = atomClass || await this.ctx.meta.atomClass.get({ id: item.atomClassId });
+        // build site
+        this.ctx.service.site.buildLanguageQueue({ atomClass: _atomClass, language: language || item.language });
+      }
     }
 
   }

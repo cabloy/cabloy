@@ -37,6 +37,8 @@ export default {
   'Category name': '目录名称',
   'Extra Attributes': '额外属性',
   'Language Configuration': '语言配置',
+  'Please specify the tag name': '请指定标签名称',
+  'Please specify the new tag name': '请指定新标签名称',
   'Please specify the category name': '请指定目录名称',
   'Please specify the language': '请指定语言',
   'Select Category': '选择目录',
