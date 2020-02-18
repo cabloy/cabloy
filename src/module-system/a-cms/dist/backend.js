@@ -3931,12 +3931,6 @@ module.exports = app => {
 
       // delete
       await this.ctx.model.tag.delete({ id: tagId });
-
-      // only in development
-      if (this.ctx.app.meta.isLocal) {
-        const atomClass = await this.ctx.meta.atomClass.get({ id: tag.atomClassId });
-        await this._rebuild({ atomClass, language: tag.language });
-      }
     }
 
     async updateArticleTags({ atomClass, key, item }) {
@@ -4032,17 +4026,6 @@ module.exports = app => {
         `,
       [ this.ctx.instance.id, id ]);
       return res[0].articleCount;
-    }
-
-    async _rebuild({ tagId, atomClass, language }) {
-      // only in development
-      if (this.ctx.app.meta.isLocal) {
-        // atomClass
-        const item = tagId ? await this.ctx.model.tag.get({ id: tagId }) : null;
-        const _atomClass = atomClass || await this.ctx.meta.atomClass.get({ id: item.atomClassId });
-        // build site
-        this.ctx.service.site.buildLanguageQueue({ atomClass: _atomClass, language: language || item.language });
-      }
     }
 
   }
