@@ -32,6 +32,16 @@ module.exports = app => {
       this.ctx.successMore(items, options.page.index, options.page.size);
     }
 
+    async count() {
+      const options = this.ctx.request.body.options;
+      const count = await this.ctx.service.atom.count({
+        atomClass: this.ctx.request.body.atomClass,
+        options,
+        user: this.ctx.user.op,
+      });
+      this.ctx.success(count);
+    }
+
     async write() {
       await this.ctx.service.atom.write({
         key: this.ctx.request.body.key,

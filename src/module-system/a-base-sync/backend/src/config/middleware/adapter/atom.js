@@ -151,8 +151,13 @@ const Fn = module.exports = ctx => {
       return item;
     }
 
+    // count
+    async count({ atomClass, options, user }) {
+      return await this.select({ atomClass, options, user, count: 1 });
+    }
+
     // select
-    async select({ atomClass, options, user, pageForce = true }) {
+    async select({ atomClass, options, user, pageForce = true, count = 0 }) {
       // atomClass
       let _atomClass;
       if (atomClass) {
@@ -173,10 +178,11 @@ const Fn = module.exports = ctx => {
         options,
         user,
         pageForce,
+        count,
       });
 
       // select items
-      if (atomClass) {
+      if (!count && atomClass) {
         const _moduleInfo = mparse.parseInfo(atomClass.module);
         await ctx.performAction({
           method: 'post',
@@ -511,16 +517,17 @@ const Fn = module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    async _list({ tableName, options: { where, orders, page, star = 0, label = 0, comment = 0, file = 0 }, user, pageForce = true }) {
+    async _list({ tableName, options: { where, orders, page, star = 0, label = 0, comment = 0, file = 0 }, user, pageForce = true, count = 0 }) {
       page = ctx.meta.util.page(page, pageForce);
 
       const sql = this.sqlProcedure.selectAtoms({
         iid: ctx.instance.id,
         userIdWho: user ? user.id : 0,
         tableName, where, orders, page,
-        star, label, comment, file,
+        star, label, comment, file, count,
       });
-      return await ctx.model.query(sql);
+      const res = await ctx.model.query(sql);
+      return count ? res[0]._count : res;
     }
 
     // right

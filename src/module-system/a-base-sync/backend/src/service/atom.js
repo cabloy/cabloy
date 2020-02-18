@@ -14,6 +14,10 @@ module.exports = app => {
       return await this.ctx.meta.atom.select({ atomClass, options, user });
     }
 
+    async count({ atomClass, options, user }) {
+      return await this.ctx.meta.atom.count({ atomClass, options, user });
+    }
+
     async write({ key, item, user }) {
       return await this.ctx.meta.atom.write({ key, item, user });
     }

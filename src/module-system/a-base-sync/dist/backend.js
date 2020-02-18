@@ -269,7 +269,7 @@ module.exports = app => {
 module.exports = ctx => {
   class Procedure {
 
-    selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file }) {
+    selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count }) {
       iid = parseInt(iid);
       userIdWho = parseInt(userIdWho);
       star = parseInt(star);
@@ -277,11 +277,11 @@ module.exports = ctx => {
       comment = parseInt(comment);
       file = parseInt(file);
 
-      if (userIdWho === 0) return this._selectAtoms_0({ iid, tableName, where, orders, page, comment, file });
-      return this._selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file });
+      if (userIdWho === 0) return this._selectAtoms_0({ iid, tableName, where, orders, page, comment, file, count });
+      return this._selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count });
     }
 
-    _selectAtoms_0({ iid, tableName, where, orders, page, comment, file }) {
+    _selectAtoms_0({ iid, tableName, where, orders, page, comment, file, count }) {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass
@@ -346,15 +346,21 @@ module.exports = ctx => {
         _itemJoin = '';
       }
 
-      // sql
-      const _sql =
-        `select ${_itemField}
+      // fields
+      let _selectFields;
+      if (count) {
+        _selectFields = 'count(*) as _count';
+      } else {
+        _selectFields = `${_itemField}
                 a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomFlow,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
                 g.userName,g.avatar
-                ${_commentField} ${_fileField}
-          from aAtom a
+                ${_commentField} ${_fileField}`;
+      }
 
+      // sql
+      const _sql =
+        `select ${_selectFields} from aAtom a
             inner join aAtomClass b on a.atomClassId=b.id
             inner join aUser g on a.userIdCreated=g.id
             ${_itemJoin}
@@ -368,15 +374,15 @@ module.exports = ctx => {
              ${_fileWhere}
            )
 
-          ${_orders}
-          ${_limit}
+          ${count ? '' : _orders}
+          ${count ? '' : _limit}
         `;
 
       // ok
       return _sql;
     }
 
-    _selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file }) {
+    _selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count }) {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass
@@ -470,15 +476,21 @@ module.exports = ctx => {
         _itemJoin = '';
       }
 
-      // sql
-      const _sql =
-        `select ${_itemField}
+      // fields
+      let _selectFields;
+      if (count) {
+        _selectFields = 'count(*) as _count';
+      } else {
+        _selectFields = `${_itemField}
                 a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomFlow,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
                 g.userName,g.avatar
-                ${_starField} ${_labelField} ${_commentField} ${_fileField}
-          from aAtom a
+                ${_starField} ${_labelField} ${_commentField} ${_fileField}`;
+      }
 
+      // sql
+      const _sql =
+        `select ${_selectFields} from aAtom a
             inner join aAtomClass b on a.atomClassId=b.id
             inner join aUser g on a.userIdCreated=g.id
             ${_itemJoin}
@@ -528,8 +540,8 @@ module.exports = ctx => {
                  )
            )
 
-          ${_orders}
-          ${_limit}
+          ${count ? '' : _orders}
+          ${count ? '' : _limit}
         `;
 
       // ok
@@ -2995,8 +3007,13 @@ const Fn = module.exports = ctx => {
       return item;
     }
 
+    // count
+    async count({ atomClass, options, user }) {
+      return await this.select({ atomClass, options, user, count: 1 });
+    }
+
     // select
-    async select({ atomClass, options, user, pageForce = true }) {
+    async select({ atomClass, options, user, pageForce = true, count = 0 }) {
       // atomClass
       let _atomClass;
       if (atomClass) {
@@ -3017,10 +3034,11 @@ const Fn = module.exports = ctx => {
         options,
         user,
         pageForce,
+        count,
       });
 
       // select items
-      if (atomClass) {
+      if (!count && atomClass) {
         const _moduleInfo = mparse.parseInfo(atomClass.module);
         await ctx.performAction({
           method: 'post',
@@ -3355,16 +3373,17 @@ const Fn = module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    async _list({ tableName, options: { where, orders, page, star = 0, label = 0, comment = 0, file = 0 }, user, pageForce = true }) {
+    async _list({ tableName, options: { where, orders, page, star = 0, label = 0, comment = 0, file = 0 }, user, pageForce = true, count = 0 }) {
       page = ctx.meta.util.page(page, pageForce);
 
       const sql = this.sqlProcedure.selectAtoms({
         iid: ctx.instance.id,
         userIdWho: user ? user.id : 0,
         tableName, where, orders, page,
-        star, label, comment, file,
+        star, label, comment, file, count,
       });
-      return await ctx.model.query(sql);
+      const res = await ctx.model.query(sql);
+      return count ? res[0]._count : res;
     }
 
     // right
@@ -4744,6 +4763,7 @@ module.exports = app => {
       meta: { right: { type: 'atom', action: 2 } },
     },
     { method: 'post', path: 'atom/select', controller: atom },
+    { method: 'post', path: 'atom/count', controller: atom },
     { method: 'post', path: 'atom/write', controller: atom, middlewares: 'transaction',
       meta: { right: { type: 'atom', action: 3 } },
     },
@@ -5012,6 +5032,16 @@ module.exports = app => {
         user: this.ctx.user.op,
       });
       this.ctx.successMore(items, options.page.index, options.page.size);
+    }
+
+    async count() {
+      const options = this.ctx.request.body.options;
+      const count = await this.ctx.service.atom.count({
+        atomClass: this.ctx.request.body.atomClass,
+        options,
+        user: this.ctx.user.op,
+      });
+      this.ctx.success(count);
     }
 
     async write() {
@@ -6476,6 +6506,10 @@ module.exports = app => {
 
     async select({ atomClass, options, user }) {
       return await this.ctx.meta.atom.select({ atomClass, options, user });
+    }
+
+    async count({ atomClass, options, user }) {
+      return await this.ctx.meta.atom.count({ atomClass, options, user });
     }
 
     async write({ key, item, user }) {

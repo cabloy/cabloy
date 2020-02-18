@@ -1,7 +1,7 @@
 module.exports = ctx => {
   class Procedure {
 
-    selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file }) {
+    selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count }) {
       iid = parseInt(iid);
       userIdWho = parseInt(userIdWho);
       star = parseInt(star);
@@ -9,11 +9,11 @@ module.exports = ctx => {
       comment = parseInt(comment);
       file = parseInt(file);
 
-      if (userIdWho === 0) return this._selectAtoms_0({ iid, tableName, where, orders, page, comment, file });
-      return this._selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file });
+      if (userIdWho === 0) return this._selectAtoms_0({ iid, tableName, where, orders, page, comment, file, count });
+      return this._selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count });
     }
 
-    _selectAtoms_0({ iid, tableName, where, orders, page, comment, file }) {
+    _selectAtoms_0({ iid, tableName, where, orders, page, comment, file, count }) {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass
@@ -78,15 +78,21 @@ module.exports = ctx => {
         _itemJoin = '';
       }
 
-      // sql
-      const _sql =
-        `select ${_itemField}
+      // fields
+      let _selectFields;
+      if (count) {
+        _selectFields = 'count(*) as _count';
+      } else {
+        _selectFields = `${_itemField}
                 a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomFlow,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
                 g.userName,g.avatar
-                ${_commentField} ${_fileField}
-          from aAtom a
+                ${_commentField} ${_fileField}`;
+      }
 
+      // sql
+      const _sql =
+        `select ${_selectFields} from aAtom a
             inner join aAtomClass b on a.atomClassId=b.id
             inner join aUser g on a.userIdCreated=g.id
             ${_itemJoin}
@@ -100,15 +106,15 @@ module.exports = ctx => {
              ${_fileWhere}
            )
 
-          ${_orders}
-          ${_limit}
+          ${count ? '' : _orders}
+          ${count ? '' : _limit}
         `;
 
       // ok
       return _sql;
     }
 
-    _selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file }) {
+    _selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count }) {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass
@@ -202,15 +208,21 @@ module.exports = ctx => {
         _itemJoin = '';
       }
 
-      // sql
-      const _sql =
-        `select ${_itemField}
+      // fields
+      let _selectFields;
+      if (count) {
+        _selectFields = 'count(*) as _count';
+      } else {
+        _selectFields = `${_itemField}
                 a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomFlow,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
                 g.userName,g.avatar
-                ${_starField} ${_labelField} ${_commentField} ${_fileField}
-          from aAtom a
+                ${_starField} ${_labelField} ${_commentField} ${_fileField}`;
+      }
 
+      // sql
+      const _sql =
+        `select ${_selectFields} from aAtom a
             inner join aAtomClass b on a.atomClassId=b.id
             inner join aUser g on a.userIdCreated=g.id
             ${_itemJoin}
@@ -260,8 +272,8 @@ module.exports = ctx => {
                  )
            )
 
-          ${_orders}
-          ${_limit}
+          ${count ? '' : _orders}
+          ${count ? '' : _limit}
         `;
 
       // ok
