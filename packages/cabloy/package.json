@@ -1,6 +1,6 @@
 {
   "name": "cabloy",
-  "version": "3.0.0-beta.7",
+  "version": "3.0.0-beta.8",
   "description": "The Ultimate Javascript Full Stack Framework",
   "repository": {
     "type": "git",
@@ -26,13 +26,13 @@
   },
   "dependencies": {
     "egg-born-front": "^5.0.17",
-    "egg-born-backend": "^3.0.3",
+    "egg-born-backend": "^3.0.4",
     "egg-born-bin": "^2.0.0",
     "egg-born-scripts": "^2.0.0",
     "egg-born-module-a-version": "^3.0.1",
     "egg-born-module-a-authgithub": "^3.0.1",
     "egg-born-module-a-authsimple": "^3.0.1",
-    "egg-born-module-a-base-sync": "^3.0.2",
+    "egg-born-module-a-base-sync": "^3.0.5",
     "egg-born-module-a-baseadmin": "^3.0.4",
     "egg-born-module-a-cache": "^3.0.1",
     "egg-born-module-a-captcha": "^3.0.1",
