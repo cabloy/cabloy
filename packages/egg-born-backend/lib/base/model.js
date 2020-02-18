@@ -1,5 +1,6 @@
 const is = require('is-type-of');
 const moment = require('moment');
+const RDSClient = require('ali-rds');
 
 module.exports = app => {
   class Model extends app.BaseContextClass {
@@ -164,33 +165,54 @@ module.exports = app => {
   });
 
   [
-    '_where2',
+    '_format',
   ].forEach(method => {
     Object.defineProperty(Model.prototype, method, {
       get() {
         return function() {
-          return _where2(this.ctx.db, arguments[0]);
+          return _format(this.ctx.db, arguments[0]);
         };
       },
     });
   });
 
-  [
-    '_format2',
-  ].forEach(method => {
-    Object.defineProperty(Model.prototype, method, {
-      get() {
-        return function() {
-          return _format2(this.ctx.db, arguments[0]);
-        };
-      },
-    });
-  });
+  // replace _where
+  RDSClient.prototype._where = function(where) {
+    if (!where) {
+      return '';
+    }
+
+    const wheres = [];
+    const values = [];
+    for (const key in where) {
+      let ignore = false;
+      const value = where[key];
+      if (Array.isArray(value)) {
+        wheres.push('?? IN (?)');
+      } else if (value === null || value === undefined) {
+        wheres.push('?? IS ?');
+      } else if (value && typeof value === 'object' && value.op) {
+        const op = value.op.indexOf('like') > -1 ? 'LIKE' : value.op;
+        wheres.push(`${this.format('??', key)} ${op} ${_format(this, value)}`);
+        ignore = true;
+      } else {
+        wheres.push('?? = ?');
+      }
+      if (!ignore) {
+        values.push(key);
+        values.push(value);
+      }
+    }
+    if (wheres.length > 0) {
+      return this.format(` WHERE (${wheres.join(' AND ')})`, values);
+    }
+    return '';
+  };
 
   return Model;
 };
 
-function _format2(db, value) {
+function _format(db, value) {
   if (typeof value !== 'object') return db.format('?', value);
   let val;
   if (value.type === 'Date') {
@@ -213,32 +235,3 @@ function _format2(db, value) {
   return val;
 }
 
-function _where2(db, where) {
-  if (!where) {
-    return '';
-  }
-
-  const wheres = [];
-  const values = [];
-  for (const key in where) {
-    let ignore = false;
-    const value = where[key];
-    if (Array.isArray(value)) {
-      wheres.push('?? IN (?)');
-    } else if (value && typeof value === 'object') {
-      const op = value.op.indexOf('like') > -1 ? 'LIKE' : value.op;
-      wheres.push(`${db.format('??', key)} ${op} ${_format2(db, value)}`);
-      ignore = true;
-    } else {
-      wheres.push('?? = ?');
-    }
-    if (!ignore) {
-      values.push(key);
-      values.push(value);
-    }
-  }
-  if (wheres.length > 0) {
-    return db.format(` WHERE (${wheres.join(' AND ')})`, values);
-  }
-  return '';
-}
