@@ -140,6 +140,15 @@ module.exports = app => {
       this.ctx.success();
     }
 
+    async getStats() {
+      const atomClass = this.ctx.request.body.atomClass;
+      const res = await this.ctx.service.site.getStats({
+        atomClass,
+        languages: this.ctx.request.body.languages,
+      });
+      this.ctx.success(res);
+    }
+
   }
   return SiteController;
 };

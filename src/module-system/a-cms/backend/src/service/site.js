@@ -197,6 +197,37 @@ module.exports = app => {
       return await block.data.output({ ctx: this.ctx, block, data: item });
     }
 
+    async getStats({ atomClass, languages }) {
+      const res = {};
+      for (const language of languages) {
+        res[language] = await this._getStatsLanguange({ atomClass, language });
+      }
+      return res;
+    }
+
+    async _getStatsLanguange({ atomClass, language }) {
+      const stats = {};
+
+      // articles
+      const articles = await this.ctx.meta.atom.select({
+        atomClass,
+        options: {
+          where: {
+            'f.language': language,
+          },
+          mode: 'list', // atomEnabled=1
+        },
+      });
+      stats.articles = articles.length;
+
+      // comments
+      // catagories
+      // tags
+
+      // ok
+      return stats;
+    }
+
     _prepareBlocks({ locale }) {
       const blocks = {};
       // modulesArray for block override

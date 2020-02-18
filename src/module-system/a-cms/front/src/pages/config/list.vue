@@ -4,21 +4,49 @@
     <f7-list>
       <eb-list-item :title="$text('Site')">
         <div slot="after">
-          <eb-link :eb-href="combineAtomClass('config/site')">{{$text('Config')}}</eb-link>
-          <eb-link :onPerform="onPerformBuild">{{$text('Build')}}</eb-link>
+          <eb-link iconMaterial="settings" :eb-href="combineAtomClass('config/site')">{{$text('Config')}}</eb-link>
+          <eb-link iconMaterial="build" :onPerform="onPerformBuild">{{$text('Build')}}</eb-link>
         </div>
       </eb-list-item>
       <f7-list-group>
         <f7-list-item :title="$text('Languages')" group-title></f7-list-item>
         <template v-if="languages">
-          <eb-list-item v-for="item of languages" :key="item.value" :title="item.title">
-            <div slot="after">
-              <eb-link :eb-href="combineAtomClass(`category/list?language=${item.value}`)">{{$text('Categories')}}</eb-link>
-              <eb-link :eb-href="combineAtomClass(`config/language?language=${item.value}`)">{{$text('Config')}}</eb-link>
-              <eb-link :context="item" :onPerform="onPerformBuildLanguage">{{$text('Build')}}</eb-link>
-              <eb-link v-if="!!$device.desktop" :context="item" :onPerform="onPerformPreview">{{$text('Preview')}}</eb-link>
-            </div>
-          </eb-list-item>
+          <div v-for="item of languages" :key="item.value">
+            <f7-block-title medium>{{item.title}}</f7-block-title>
+            <f7-card>
+              <f7-card-content>
+                <f7-row>
+                  <f7-col class="flex-direction-column text-align-center">
+                    <div>
+                      <eb-link :eb-href="combineLinkArticles(item.value)">{{$text('Articles')}}</eb-link>
+                    </div>
+                    <div>{{getStat(item.value,'articles')}}</div>
+                  </f7-col>
+                  <f7-col class="flex-direction-column text-align-center">
+                    <div>
+                      <eb-link :eb-href="combineLinkComments(item.value)">{{$text('Comments')}}</eb-link>
+                    </div>
+                    <div>19</div>
+                  </f7-col>
+                  <f7-col class="flex-direction-column text-align-center">
+                    <div>
+                      <eb-link :eb-href="combineAtomClass(`category/list?language=${item.value}`)">{{$text('Categories')}}</eb-link>
+                    </div>
+                    <div>19</div>
+                  </f7-col>
+                  <f7-col class="flex-direction-column text-align-center">
+                    <div>{{$text('Tags')}}</div>
+                    <div>19</div>
+                  </f7-col>
+                </f7-row>
+              </f7-card-content>
+              <f7-card-footer>
+                <eb-link iconMaterial="settings" :eb-href="combineAtomClass(`config/language?language=${item.value}`)">{{$text('Config')}}</eb-link>
+                <eb-link iconMaterial="build" :context="item" :onPerform="onPerformBuildLanguage">{{$text('Build')}}</eb-link>
+                <eb-link v-if="!!$device.desktop" iconMaterial="visibility" :context="item" :onPerform="onPerformPreview">{{$text('Preview')}}</eb-link>
+              </f7-card-footer>
+            </f7-card>
+          </div>
         </template>
       </f7-list-group>
     </f7-list>
@@ -34,6 +62,7 @@ export default {
     const atomClass = utils.parseAtomClass(this.$f7route.query);
     return {
       atomClass,
+      stats: null,
     };
   },
   computed: {
@@ -44,6 +73,11 @@ export default {
       const module = this.getModule(this.atomClass.module);
       if (module) return module.titleLocale;
       return '';
+    },
+  },
+  watch: {
+    languages(value) {
+      this.getStats(value);
     },
   },
   created() {
@@ -85,6 +119,35 @@ export default {
         window.open(data, `cms_site_${this.atomClass.module}_${context.value}`);
       });
     },
+    combineLinkArticles(language) {
+      const where = {
+        'f.language': language
+      };
+      return this.combineAtomClass(`/a/base/atom/list?where=${encodeURIComponent(JSON.stringify(where))}`);
+    },
+    combineLinkComments(language) {
+      const where = {
+        'f.language': language
+      };
+      return this.combineAtomClass(`/a/base/comment/all?where=${encodeURIComponent(JSON.stringify(where))}`);
+    },
+    getStats(languages) {
+      if (!languages) {
+        return this.stats = null;
+      }
+      this.$api.post('site/getStats', {
+        atomClass: this.atomClass,
+        languages: languages.map(item => item.value),
+      }).then(data => {
+        this.stats = data;
+      });
+    },
+    getStat(language, fieldName) {
+      if (!this.stats) return '--';
+      const stats = this.stats[language];
+      if (!stats) return '--';
+      return stats[fieldName];
+    }
   },
 };
 
