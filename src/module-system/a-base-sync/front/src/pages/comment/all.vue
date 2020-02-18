@@ -39,6 +39,9 @@ export default {
   mixins: [ebAtomActions],
   data() {
     const query = this.$f7route.query;
+    const module = query && query.module;
+    const atomClassName = query && query.atomClassName;
+    const atomClass = (module && atomClassName) ? { module, atomClassName } : null;
     let where = (query && query.where) ? JSON.parse(query.where) : null;
     // scene
     const scene = query && query.scene;
@@ -49,6 +52,7 @@ export default {
     }
     // ok
     return {
+      atomClass,
       where,
       order: 'desc',
       items: [],
@@ -109,6 +113,7 @@ export default {
       }
       // fetch
       return this.$api.post('comment/all', {
+        atomClass: this.atomClass,
         options,
       }).then(data => {
         this.items = this.items.concat(data.list);
