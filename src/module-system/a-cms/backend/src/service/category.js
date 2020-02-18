@@ -21,13 +21,20 @@ module.exports = app => {
       await this._rebuild({ categoryId });
     }
 
-    async children({ atomClass, language, categoryId, hidden, flag }) {
+    async count({ atomClass, language, categoryId, hidden, flag }) {
+      return await this.children({ atomClass, language, categoryId, hidden, flag, count: 1 });
+    }
+
+    async children({ atomClass, language, categoryId, hidden, flag, count = 0 }) {
       //
-      const where = {
-        categoryIdParent: categoryId || 0,
-      };
+      const where = { };
+      if (count) {
+        if (categoryId !== undefined) where.categoryIdParent = categoryId;
+      } else {
+        where.categoryIdParent = categoryId || 0;
+      }
       // atomClassId
-      if (where.categoryIdParent === 0) {
+      if (!where.categoryIdParent) {
         const _atomClass = await utils.atomClass2(this.ctx, atomClass);
         where.atomClassId = _atomClass.id;
       }
@@ -35,11 +42,14 @@ module.exports = app => {
       if (language !== undefined) where.language = language;
       if (hidden !== undefined) where.hidden = hidden;
       if (flag !== undefined) where.flag = flag;
-      const list = await this.ctx.model.category.select({
+      //
+      if (count) {
+        return await this.ctx.model.category.count(where);
+      }
+      return await this.ctx.model.category.select({
         where,
         orders: [[ 'sorting', 'asc' ], [ 'createdAt', 'asc' ]],
       });
-      return list;
     }
 
     async add({ atomClass, data }) {

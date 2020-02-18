@@ -26,17 +26,17 @@
                     <div>
                       <eb-link :eb-href="combineLinkComments(item.value)">{{$text('Comments')}}</eb-link>
                     </div>
-                    <div>19</div>
+                    <div>{{getStat(item.value,'comments')}}</div>
                   </f7-col>
                   <f7-col class="flex-direction-column text-align-center">
                     <div>
                       <eb-link :eb-href="combineAtomClass(`category/list?language=${item.value}`)">{{$text('Categories')}}</eb-link>
                     </div>
-                    <div>19</div>
+                    <div>{{getStat(item.value,'categories')}}</div>
                   </f7-col>
                   <f7-col class="flex-direction-column text-align-center">
                     <div>{{$text('Tags')}}</div>
-                    <div>19</div>
+                    <div>{{getStat(item.value,'tags')}}</div>
                   </f7-col>
                 </f7-row>
               </f7-card-content>

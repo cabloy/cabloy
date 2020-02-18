@@ -209,7 +209,7 @@ module.exports = app => {
       const stats = {};
 
       // articles
-      const articles = await this.ctx.meta.atom.select({
+      stats.articles = await this.ctx.meta.atom.count({
         atomClass,
         options: {
           where: {
@@ -218,10 +218,24 @@ module.exports = app => {
           mode: 'list', // atomEnabled=1
         },
       });
-      stats.articles = articles.length;
 
       // comments
-      // catagories
+      stats.comments = await this.ctx.meta.atom.count({
+        atomClass,
+        options: {
+          where: {
+            'f.language': language,
+          },
+          mode: 'list', // atomEnabled=1
+          comment: 1,
+        },
+      });
+
+      // categories
+      stats.categories = await this.ctx.service.category.count({
+        atomClass, language,
+      });
+
       // tags
 
       // ok

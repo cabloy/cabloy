@@ -1777,6 +1777,7 @@ module.exports = app => {
     { method: 'post', path: 'site/getBlockArray', controller: site },
     { method: 'post', path: 'site/blockSave', controller: site },
     { method: 'post', path: 'site/registerAllWatchers', controller: site, middlewares: 'inner', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'site/getStats', controller: site, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     // category
     { method: 'post', path: 'category/item', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'category/save', controller: category, middlewares: 'validate', meta: {
@@ -2196,6 +2197,15 @@ module.exports = app => {
     async registerAllWatchers() {
       await this.ctx.service.site.registerAllWatchers();
       this.ctx.success();
+    }
+
+    async getStats() {
+      const atomClass = this.ctx.request.body.atomClass;
+      const res = await this.ctx.service.site.getStats({
+        atomClass,
+        languages: this.ctx.request.body.languages,
+      });
+      this.ctx.success(res);
     }
 
   }
@@ -3386,13 +3396,20 @@ module.exports = app => {
       await this._rebuild({ categoryId });
     }
 
-    async children({ atomClass, language, categoryId, hidden, flag }) {
+    async count({ atomClass, language, categoryId, hidden, flag }) {
+      return await this.children({ atomClass, language, categoryId, hidden, flag, count: 1 });
+    }
+
+    async children({ atomClass, language, categoryId, hidden, flag, count = 0 }) {
       //
-      const where = {
-        categoryIdParent: categoryId || 0,
-      };
+      const where = { };
+      if (count) {
+        if (categoryId !== undefined) where.categoryIdParent = categoryId;
+      } else {
+        where.categoryIdParent = categoryId || 0;
+      }
       // atomClassId
-      if (where.categoryIdParent === 0) {
+      if (!where.categoryIdParent) {
         const _atomClass = await utils.atomClass2(this.ctx, atomClass);
         where.atomClassId = _atomClass.id;
       }
@@ -3400,11 +3417,14 @@ module.exports = app => {
       if (language !== undefined) where.language = language;
       if (hidden !== undefined) where.hidden = hidden;
       if (flag !== undefined) where.flag = flag;
-      const list = await this.ctx.model.category.select({
+      //
+      if (count) {
+        return await this.ctx.model.category.count(where);
+      }
+      return await this.ctx.model.category.select({
         where,
         orders: [[ 'sorting', 'asc' ], [ 'createdAt', 'asc' ]],
       });
-      return list;
     }
 
     async add({ atomClass, data }) {
@@ -3763,6 +3783,51 @@ module.exports = app => {
       // output
       if (!block.data.output) return item;
       return await block.data.output({ ctx: this.ctx, block, data: item });
+    }
+
+    async getStats({ atomClass, languages }) {
+      const res = {};
+      for (const language of languages) {
+        res[language] = await this._getStatsLanguange({ atomClass, language });
+      }
+      return res;
+    }
+
+    async _getStatsLanguange({ atomClass, language }) {
+      const stats = {};
+
+      // articles
+      stats.articles = await this.ctx.meta.atom.count({
+        atomClass,
+        options: {
+          where: {
+            'f.language': language,
+          },
+          mode: 'list', // atomEnabled=1
+        },
+      });
+
+      // comments
+      stats.comments = await this.ctx.meta.atom.count({
+        atomClass,
+        options: {
+          where: {
+            'f.language': language,
+          },
+          mode: 'list', // atomEnabled=1
+          comment: 1,
+        },
+      });
+
+      // categories
+      stats.categories = await this.ctx.service.category.count({
+        atomClass, language,
+      });
+
+      // tags
+
+      // ok
+      return stats;
     }
 
     _prepareBlocks({ locale }) {
