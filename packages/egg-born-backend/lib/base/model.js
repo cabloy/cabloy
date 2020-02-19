@@ -191,9 +191,10 @@ module.exports = app => {
         wheres.push('?? IN (?)');
       } else if (value === null || value === undefined) {
         wheres.push('?? IS ?');
-      } else if (value && typeof value === 'object' && value.op) {
-        const op = value.op.indexOf('like') > -1 ? 'LIKE' : value.op;
-        wheres.push(`${this.format('??', key)} ${op} ${_format(this, value)}`);
+      } else if (value && typeof value === 'object') {
+        let op = value.op || '='; // default is =
+        op = op.indexOf('like') > -1 ? 'LIKE' : op;
+        wheres.push(`${this.format('??', key)} ${_safeOp(op)} ${_format(this, value)}`);
         ignore = true;
       } else {
         wheres.push('?? = ?');
@@ -233,5 +234,9 @@ function _format(db, value) {
     return `(${arrVal.join(',')})`;
   }
   return val;
+}
+
+function _safeOp(op) {
+  return op.replace(/\W/g, '');
 }
 
