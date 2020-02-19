@@ -2,7 +2,7 @@
 import validate from '../common/validate.js';
 export default {
   name: 'eb-select',
-  mixins: [ validate ],
+  mixins: [validate],
   props: {
     readOnly: {
       type: Boolean,
@@ -38,6 +38,7 @@ export default {
   data() {
     return {
       voptions: null,
+      valueSetting: false,
     };
   },
   watch: {
@@ -62,8 +63,10 @@ export default {
   },
   methods: {
     setValue() {
+      this.valueSetting = true;
       const f7Select = this.$$(this.$el).parents('.smart-select')[0].f7SmartSelect;
       f7Select.setValue(this.value);
+      this.valueSetting = false;
     },
     onValidateError(error) {
       const panel = this.$$(this.$el).parents('.item-content');
@@ -120,6 +123,7 @@ export default {
       });
     },
     onChange(event) {
+      if (this.valueSetting) return;
       let value;
       if (!this.multiple) {
         value = event.target.value;
