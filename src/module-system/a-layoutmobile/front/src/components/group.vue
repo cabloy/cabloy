@@ -62,20 +62,23 @@ export default {
   },
   methods: {
     closeView(view) {
-      // remove
-      const viewzIndex = parseInt(this.$$(view.$el).data('zindex'));
-      const index = this.views.findIndex(item => item.zIndex === viewzIndex);
-      if (index > -1) {
-        this.views.splice(index, 1);
-        if (this.views.length === 0) {
-          // hide group
-          this.$$(this.$el).hide();
-          // tab show
-          if (!this.layout.tabShowed) {
-            this.layout.tabShowed = true;
+      const $view = this.$$(view.$el);
+      $view.addClass('eb-transition-close').animationEnd(() => {
+        // remove
+        const viewzIndex = parseInt($view.data('zindex'));
+        const index = this.views.findIndex(item => item.zIndex === viewzIndex);
+        if (index > -1) {
+          this.views.splice(index, 1);
+          if (this.views.length === 0) {
+            // hide group
+            this.$$(this.$el).hide();
+            // tab show
+            if (!this.layout.tabShowed) {
+              this.layout.tabShowed = true;
+            }
           }
         }
-      }
+      });
     },
     createView({ ctx, url }) {
       return new Promise(resolve => {
