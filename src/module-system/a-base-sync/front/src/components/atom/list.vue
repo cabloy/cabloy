@@ -68,16 +68,16 @@
         <eb-context-menu>
           <div slot="left">
             <template v-if="mode==='stars'">
-              <div color="orange" :context="item" :onPerform="onStarOff">{{$text('Unstar')}}</div>
+              <div color="green" :context="item" :onPerform="onStarOff">{{$text('Unstar')}}</div>
             </template>
             <template v-else>
-              <div color="orange" :context="item" :onPerform="onStarSwitch">{{item.star?$text('Unstar'):$text('Star')}}</div>
+              <div color="green" :context="item" :onPerform="onStarSwitch">{{item.star?$text('Unstar'):$text('Star')}}</div>
             </template>
-            <div color="yellow" :context="item" :onPerform="onLabel">{{$text('Labels')}}</div>
+            <div color="blue" :context="item" :onPerform="onLabel">{{$text('Labels')}}</div>
           </div>
           <template v-if="mode==='select'">
             <div slot="right">
-              <div color="yellow" :context="item" :onPerform="onItemSelectRemove">{{$text('Remove')}}</div>
+              <div color="red" :context="item" :onPerform="onItemSelectRemove">{{$text('Remove')}}</div>
             </div>
           </template>
           <template v-if="mode!=='select'">
@@ -462,7 +462,7 @@ export default {
     },
     getActionColor(action, index) {
       if (index === 0) return 'orange';
-      else if (index === 1) return 'yellow';
+      else if (index === 1) return 'red';
       return 'blue';
     },
     getItemMetaFlags(item) {
