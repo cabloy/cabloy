@@ -68,6 +68,7 @@ export default function(ctx, router) {
       // clear hash
       if (view.params.pushState) {
         window.history.go(-(view.router.history.length - 1));
+        router.url = view.router.history[0];
       }
       // close view
       ctx.$meta.vueLayout.closeView(view);
