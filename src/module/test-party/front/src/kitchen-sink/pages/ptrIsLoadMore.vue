@@ -5,7 +5,7 @@
       <eb-list-item v-for="item of items" :key="item.id" :title="item.title" link="#" :context="item" :onPerform="onItemClick" swipeout>
         <eb-context-menu>
           <div slot="right">
-            <div color="orange" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
+            <div color="red" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
           </div>
         </eb-context-menu>
       </eb-list-item>
