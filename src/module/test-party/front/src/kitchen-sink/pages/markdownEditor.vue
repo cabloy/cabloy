@@ -197,6 +197,7 @@ Right
     onBlockAdd() {
       return new Promise((resolve, reject) => {
         this.$view.navigate('/a/cms/block/list', {
+          target: '_view',
           context: {
             params: {},
             callback: (code, data) => {
