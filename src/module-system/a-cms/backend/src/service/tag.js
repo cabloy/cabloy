@@ -4,6 +4,14 @@ module.exports = app => {
 
   class Tag extends app.Service {
 
+    async count({ atomClass, language }) {
+      const _atomClass = await utils.atomClass2(this.ctx, atomClass);
+      return await this.ctx.model.tag.count({
+        atomClassId: _atomClass.id,
+        language,
+      });
+    }
+
     async list({ atomClass, options }) {
       const _atomClass = await utils.atomClass2(this.ctx, atomClass);
       if (!options.where) options.where = {};
@@ -32,8 +40,8 @@ module.exports = app => {
 
     async delete({ tagId }) {
       // check articles
-      const tag = await this.ctx.model.tag.get({ id: tagId });
-      if (tag.articleCount > 0) this.ctx.throw(1005);
+      const count = await this.ctx.model.articleTagRef.count({ tagId });
+      if (count > 0) this.ctx.throw(1005);
 
       // delete
       await this.ctx.model.tag.delete({ id: tagId });
@@ -99,20 +107,8 @@ module.exports = app => {
       // loop
       for (const id in tags) {
         const articleCount = await this.calcArticleCount({ id });
-        if (articleCount > 0) {
-          // update
-          await this.ctx.model.tag.update({ id, articleCount });
-        } else {
-          // check if referenced by items of deleted or other flag status
-          const articleCount2 = await this.calcArticleCount2({ id });
-          if (articleCount2 > 0) {
-            // update
-            await this.ctx.model.tag.update({ id, articleCount });
-          } else {
-            // delete
-            await this.ctx.model.tag.delete({ id });
-          }
-        }
+        // update
+        await this.ctx.model.tag.update({ id, articleCount });
       }
     }
 
@@ -123,14 +119,6 @@ module.exports = app => {
           where a.iid=? and a.tagId=? and b.iid=? and b.deleted=0 and b.atomFlag=2
         `,
       [ this.ctx.instance.id, id, this.ctx.instance.id ]);
-      return res[0].articleCount;
-    }
-
-    async calcArticleCount2({ id }) {
-      const res = await this.ctx.model.query(`
-        select count(*) articleCount from aCmsArticleTagRef a where a.iid=? and a.tagId=?
-        `,
-      [ this.ctx.instance.id, id ]);
       return res[0].articleCount;
     }
 

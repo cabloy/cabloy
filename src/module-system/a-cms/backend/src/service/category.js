@@ -74,8 +74,8 @@ module.exports = app => {
 
     async delete({ categoryId }) {
       // check articles
-      const list = await this.ctx.model.article.select({ where: { categoryId } });
-      if (list.length > 0) this.ctx.throw(1005);
+      const count = await this.ctx.model.article.count({ categoryId });
+      if (count > 0) this.ctx.throw(1005);
       // check children
       const children = await this.children({ categoryId });
       if (children.length > 0) this.ctx.throw(1004);

@@ -237,6 +237,9 @@ module.exports = app => {
       });
 
       // tags
+      stats.tags = await this.ctx.service.tag.count({
+        atomClass, language,
+      });
 
       // ok
       return stats;

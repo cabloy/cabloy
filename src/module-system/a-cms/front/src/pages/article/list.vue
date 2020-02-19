@@ -2,13 +2,13 @@
   <eb-page :page-content="false">
     <eb-navbar large largeTransparent :title="title" eb-back-link="Back">
       <f7-nav-right>
-        <f7-link v-if="showPopover" iconMaterial="add" :popover-open="`#${popoverId}`"></f7-link>
+        <f7-link v-if="showPopover && categoryId" iconMaterial="add" :popover-open="`#${popoverId}`"></f7-link>
         <eb-link iconMaterial="search" :onPerform="onPerformSearch"></eb-link>
         <eb-link iconMaterial="sort" :onPerform="onPerformAtomOrders"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <eb-tab-page-content :tab="false" tab-active>
-      <eb-atoms ref="all" slot="list" mode="all" :atomClass="atomClass" :where="{categoryId}"></eb-atoms>
+      <eb-atoms ref="all" slot="list" :mode="categoryId?'all':'tag'" :atomClass="atomClass" :where="where"></eb-atoms>
     </eb-tab-page-content>
     <f7-popover :id="popoverId">
       <f7-list v-if="showPopover" inset>
@@ -18,6 +18,7 @@
   </eb-page>
 </template>
 <script>
+//  articles of category / tag
 import Vue from 'vue';
 const ebMenus = Vue.prototype.$meta.module.get('a-base').options.components.ebMenus;
 const ebAtoms = Vue.prototype.$meta.module.get('a-base').options.components.ebAtoms;
@@ -34,13 +35,20 @@ export default {
       language: this.$f7route.query.language,
       categoryId: this.$f7route.query.categoryId,
       categoryName: this.$f7route.query.categoryName,
+      tagId: this.$f7route.query.tagId,
+      tagName: this.$f7route.query.tagName,
       popoverId: Vue.prototype.$meta.util.nextId('popover'),
       actions: null,
     };
   },
   computed: {
     title() {
-      return `${this.$text('Category')}: ${this.categoryName}`;
+      return this.categoryId ?
+        `${this.$text('Category')}: ${this.categoryName}` :
+        `${this.$text('Tag')}: ${this.tagName}`;
+    },
+    where() {
+      return this.categoryId ? { categoryId: this.categoryId } : { tagId: this.tagId };
     },
     showPopover() {
       return this.actions && this.actions.length > 0;

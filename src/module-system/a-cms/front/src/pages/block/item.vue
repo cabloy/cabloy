@@ -48,8 +48,10 @@ export default {
         blockName,
         item: this.item,
       }).then(data => {
+        // callback
         this.contextCallback(200, { name: blockName, content: data });
-        this.$f7router.back();
+        // close view
+        this.$view.close();
       });
     },
     onPerformDone() {

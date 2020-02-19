@@ -9,7 +9,8 @@
       <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.tagName" :badge="item.articleCount" link="#" :context="item" :onPerform="onItemClick" swipeout>
         <eb-context-menu>
           <div slot="right">
-            <div color="orange" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
+            <div color="orange" close :context="item" :onPerform="onPerformEdit">{{$text('Edit')}}</div>
+            <div color="red" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
           </div>
         </eb-context-menu>
       </eb-list-item>
@@ -38,6 +39,9 @@ export default {
     this.reload();
   },
   methods: {
+    combineAtomClass(url) {
+      return utils.combineAtomClass(this.atomClass, url);
+    },
     onRefresh(done) {
       done();
       this.reload();
@@ -72,6 +76,10 @@ export default {
       }).catch(() => {});
     },
     onItemClick(event, item) {
+      const url = this.combineAtomClass(`/a/cms/article/list?language=${item.language}&tagId=${item.id}&tagName=${encodeURIComponent(item.tagName)}`);
+      this.$view.navigate(url, { target: '_self' });
+    },
+    onPerformEdit(event, item) {
       this.$view.dialog.prompt(this.$text('Please specify the new tag name')).then(tagName => {
         if (!tagName) return;
         this.$api.post('tag/save', {
@@ -80,7 +88,10 @@ export default {
             tagName,
           },
         }).then(() => {
-          item.tagName = tagName;
+          const index = this.items.findIndex(_item => _item.id === item.id);
+          if (index !== -1) {
+            this.items.splice(index, 1, { ...item, tagName });
+          }
         });
       }).catch(() => {});
     },

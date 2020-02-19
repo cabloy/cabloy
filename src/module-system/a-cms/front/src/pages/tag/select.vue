@@ -2,16 +2,19 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Select Tags')" eb-back-link="Back">
       <f7-nav-right>
+        <eb-link iconMaterial="search" :onPerform="onPerformSearch"></eb-link>
         <eb-link ref="buttonSubmit" iconMaterial="done" :onPerform="onPerformDone"></eb-link>
       </f7-nav-right>
+      <f7-searchbar ref="searchbar" expandable @searchbar:search="onSearch" @searchbar:disable="onDisable" :backdrop="false" :disable-button="true" :clear-button="true" :custom-search="true">
+      </f7-searchbar>
     </eb-navbar>
-    <eb-list form no-hairlines-md @submit="onFormSubmit">
-      <eb-list-input :label="$text('Tags')" floating-label type="text" clear-button :placeholder="$text('Tags')" v-model="tagsText">
-      </eb-list-input>
-    </eb-list>
+    <f7-block-title>{{$text('Selected Tags')}}</f7-block-title>
+    <f7-block class="selected-tags">
+      <f7-badge v-for="item of tagsCurrent" :key="item.id">{{item.name}}</f7-badge>
+    </f7-block>
     <f7-block>
       <div class="row tags">
-        <div :class="{'chip':true, 'col-33':true, 'chip-outline':tagIndex(item)===-1}" v-for="item of tagsAll" :key="item.id" @click="onTagSwitch(item)">
+        <div :class="{'chip':true, 'col-33':true, 'chip-outline':tagIndex(item)===-1}" v-for="item of tagsAll2" :key="item.id" @click="onTagSwitch(item)">
           <div class="chip-media">{{item.articleCount}}</div>
           <div class="chip-label">{{item.tagName}}</div>
         </div>
@@ -29,8 +32,9 @@ export default {
     const atomClass = utils.parseAtomClass(this.$f7route.query);
     return {
       atomClass,
-      tagsText: '',
+      tagsCurrent: [],
       tagsAll: null,
+      searchQuery: null,
     };
   },
   computed: {
@@ -40,9 +44,13 @@ export default {
     tags() {
       return this.contextParams.tags;
     },
+    tagsAll2() {
+      if (!this.tagsAll || !this.searchQuery) return this.tagsAll;
+      return this.tagsAll.filter(item => item.tagName.toLowerCase().indexOf(this.searchQuery.toLowerCase()) > -1);
+    }
   },
   created() {
-    this.tagsText = this.adjustTags();
+    this.initTagsCurrent();
     // all tags
     const options = {
       where: { language: this.language },
@@ -58,55 +66,44 @@ export default {
     });
   },
   methods: {
-    onFormSubmit() {
-      this.$refs.buttonSubmit.onClick();
-    },
-    adjustTags() {
-      if (!this.tags) return '';
-      const tags = JSON.parse(this.tags);
-      return tags.map(item => item.name).join(',');
+    initTagsCurrent() {
+      // for disconnected from reaction
+      if (!this.tags) return this.tagsCurrent = [];
+      this.tagsCurrent = JSON.parse(this.tags).concat();
     },
     tagIndex(item) {
-      if (!this.tagsText) return -1;
-      const tags = this.tagsText.split(',');
-      return tags.findIndex(name => name === item.tagName);
+      return this.tagsCurrent.findIndex(_item => _item.id === item.id);
     },
     onTagSwitch(item) {
-      const tags = this.tagsText ? this.tagsText.split(',') : [];
       const index = this.tagIndex(item);
       if (index > -1) {
-        tags.splice(index, 1);
+        this.tagsCurrent.splice(index, 1);
       } else {
-        tags.push(item.tagName);
+        this.tagsCurrent.push({ id: item.id, name: item.tagName });
       }
-      this.tagsText = tags.join(',');
     },
     onPerformDone() {
-      let selected = null;
-      if (this.tagsText) {
-        selected = [];
-        const exists = {};
-        const tags = this.tagsText.split(',');
-        for (const name of tags) {
-          if (!exists[name]) {
-            exists[name] = true;
-            const tag = this.tagsAll.find(item => item.tagName === name);
-            if (tag) {
-              selected.push({ id: tag.id, name });
-            } else {
-              selected.push({ id: 0, name });
-            }
-          }
-        }
-      }
-      this.contextCallback(200, selected ? JSON.stringify(selected) : null);
+      this.contextCallback(200, this.tagsCurrent.length > 0 ? JSON.stringify(this.tagsCurrent) : null);
       this.$f7router.back();
+    },
+    onPerformSearch() {
+      this.$refs.searchbar.f7Searchbar.enable();
+    },
+    onSearch: Vue.prototype.$meta.util.debounce(function(searchbar, query) {
+      this.searchQuery = query;
+    }, 200),
+    onDisable() {
+      this.searchQuery = null;
     },
   },
 };
 
 </script>
 <style lang="less" scoped>
+.selected-tags {
+  min-height: 24px;
+}
+
 .tags {
   justify-content: space-around;
 

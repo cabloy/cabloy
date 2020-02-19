@@ -10,48 +10,46 @@
       </eb-list-item>
       <f7-list-group>
         <f7-list-item :title="$text('Languages')" group-title></f7-list-item>
-        <template v-if="languages">
-          <div v-for="item of languages" :key="item.value">
-            <f7-block-title medium>{{item.title}}</f7-block-title>
-            <f7-card>
-              <f7-card-content>
-                <f7-row>
-                  <f7-col class="flex-direction-column text-align-center">
-                    <div>
-                      <eb-link :eb-href="combineLinkArticles(item.value)">{{$text('Articles')}}</eb-link>
-                    </div>
-                    <div>{{getStat(item.value,'articles')}}</div>
-                  </f7-col>
-                  <f7-col class="flex-direction-column text-align-center">
-                    <div>
-                      <eb-link :eb-href="combineLinkComments(item.value)">{{$text('Comments')}}</eb-link>
-                    </div>
-                    <div>{{getStat(item.value,'comments')}}</div>
-                  </f7-col>
-                  <f7-col class="flex-direction-column text-align-center">
-                    <div>
-                      <eb-link :eb-href="combineAtomClass(`category/list?language=${item.value}`)">{{$text('Categories')}}</eb-link>
-                    </div>
-                    <div>{{getStat(item.value,'categories')}}</div>
-                  </f7-col>
-                  <f7-col class="flex-direction-column text-align-center">
-                    <div>
-                      <eb-link :eb-href="combineAtomClass(`tag/list?language=${item.value}`)">{{$text('Tags')}}</eb-link>
-                    </div>
-                    <div>{{getStat(item.value,'tags')}}</div>
-                  </f7-col>
-                </f7-row>
-              </f7-card-content>
-              <f7-card-footer>
-                <eb-link iconMaterial="settings" :eb-href="combineAtomClass(`config/language?language=${item.value}`)">{{$text('Config')}}</eb-link>
-                <eb-link iconMaterial="build" :context="item" :onPerform="onPerformBuildLanguage">{{$text('Build')}}</eb-link>
-                <eb-link v-if="!!$device.desktop" iconMaterial="visibility" :context="item" :onPerform="onPerformPreview">{{$text('Preview')}}</eb-link>
-              </f7-card-footer>
-            </f7-card>
-          </div>
-        </template>
       </f7-list-group>
     </f7-list>
+    <div v-for="item of languages" :key="item.value">
+      <f7-block-title medium>{{item.title}}</f7-block-title>
+      <f7-card>
+        <f7-card-content>
+          <f7-row>
+            <f7-col class="flex-direction-column text-align-center">
+              <div>
+                <eb-link :eb-href="combineLinkArticles(item.value)">{{$text('Articles')}}</eb-link>
+              </div>
+              <div>{{getStat(item.value,'articles')}}</div>
+            </f7-col>
+            <f7-col class="flex-direction-column text-align-center">
+              <div>
+                <eb-link :eb-href="combineLinkComments(item.value)">{{$text('Comments')}}</eb-link>
+              </div>
+              <div>{{getStat(item.value,'comments')}}</div>
+            </f7-col>
+            <f7-col class="flex-direction-column text-align-center">
+              <div>
+                <eb-link :eb-href="combineAtomClass(`category/list?language=${item.value}`)">{{$text('Categories')}}</eb-link>
+              </div>
+              <div>{{getStat(item.value,'categories')}}</div>
+            </f7-col>
+            <f7-col class="flex-direction-column text-align-center">
+              <div>
+                <eb-link :eb-href="combineAtomClass(`tag/list?language=${item.value}`)">{{$text('Tags')}}</eb-link>
+              </div>
+              <div>{{getStat(item.value,'tags')}}</div>
+            </f7-col>
+          </f7-row>
+        </f7-card-content>
+        <f7-card-footer>
+          <eb-link iconMaterial="settings" :eb-href="combineAtomClass(`config/language?language=${item.value}`)">{{$text('Config')}}</eb-link>
+          <eb-link iconMaterial="build" :context="item" :onPerform="onPerformBuildLanguage">{{$text('Build')}}</eb-link>
+          <eb-link v-if="!!$device.desktop" iconMaterial="visibility" :context="item" :onPerform="onPerformPreview">{{$text('Preview')}}</eb-link>
+        </f7-card-footer>
+      </f7-card>
+    </div>
   </eb-page>
 </template>
 <script>

@@ -1,5 +1,5 @@
 <template>
-  <eb-page @page:afterin="onPageAfterIn">
+  <eb-page>
     <eb-navbar large largeTransparent :title="$text('Block')" eb-back-link="Back"> </eb-navbar>
     <f7-list>
       <eb-list-item v-for="item of blocks" :key="item.meta.name" :title="item.meta.titleLocale" link="#" :context="item" :onPerform="onPerformItem">
@@ -15,7 +15,6 @@ export default {
   data() {
     return {
       blocks: null,
-      closeOnPageAfterIn: false,
     };
   },
   created() {
@@ -24,13 +23,6 @@ export default {
     });
   },
   methods: {
-    onPageAfterIn() {
-      if (this.closeOnPageAfterIn) {
-        this.$nextTick(() => {
-          this.$f7router.back();
-        });
-      }
-    },
     onPerformItem(event, block) {
       const atomId = this.contextParams.atomId;
       this.$view.navigate('/a/cms/block/item', {
@@ -44,7 +36,6 @@ export default {
             if (code === 200) {
               // data: {name,content}
               this.contextCallback(200, data);
-              this.closeOnPageAfterIn = true;
             }
             if (code === false) {
               // donothing
