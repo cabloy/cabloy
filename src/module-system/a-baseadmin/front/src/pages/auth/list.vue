@@ -9,7 +9,7 @@
         </div>
         <eb-context-menu>
           <div slot="right">
-            <div v-if="item.disabled===0" color="orange" :context="item" :onPerform="onPerformDisable">{{$text('Disable')}}</div>
+            <div v-if="item.disabled===0" color="red" :context="item" :onPerform="onPerformDisable">{{$text('Disable')}}</div>
             <div v-else color="orange" :context="item" :onPerform="onPerformEnable">{{$text('Enable')}}</div>
           </div>
         </eb-context-menu>

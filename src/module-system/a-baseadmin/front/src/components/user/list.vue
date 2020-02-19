@@ -11,7 +11,7 @@
           <div slot="right">
             <div v-if="item.disabled===0" color="orange" :context="item" :onPerform="onPerformDisable">{{$text('Disable')}}</div>
             <div v-if="item.disabled===1" color="orange" :context="item" :onPerform="onPerformEnable">{{$text('Enable')}}</div>
-            <div color="yellow" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
+            <div color="red" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
           </div>
         </eb-context-menu>
       </eb-list-item>
