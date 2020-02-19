@@ -10,7 +10,7 @@
     </eb-navbar>
     <f7-block-title>{{$text('Selected Tags')}}</f7-block-title>
     <f7-block class="selected-tags">
-      <f7-badge v-for="item of tagsCurrent" :key="item.id">{{item.name}}</f7-badge>
+      <f7-chip v-for="item of tagsCurrent" :key="item.id" :text="item.name" deleteable @click="onTagRemove(item)"></f7-chip>
     </f7-block>
     <f7-block>
       <div class="row tags">
@@ -74,6 +74,12 @@ export default {
     tagIndex(item) {
       return this.tagsCurrent.findIndex(_item => _item.id === item.id);
     },
+    onTagRemove(item) {
+      const index = this.tagIndex(item);
+      if (index > -1) {
+        this.tagsCurrent.splice(index, 1);
+      }
+    },
     onTagSwitch(item) {
       const index = this.tagIndex(item);
       if (index > -1) {
@@ -101,7 +107,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .selected-tags {
-  min-height: 24px;
+  min-height: 40px;
 }
 
 .tags {
