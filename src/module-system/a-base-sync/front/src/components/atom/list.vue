@@ -192,12 +192,6 @@ export default {
           by: 'desc',
           tableAlias: 'e',
         };
-      } else if (this.mode === 'all') {
-        atomOrder = {
-          name: 'updatedAt',
-          by: 'desc',
-          tableAlias: 'a',
-        };
       } else if (this.mode === 'search') {
         atomOrder = {
           name: 'updatedAt',
@@ -214,6 +208,13 @@ export default {
         atomOrder = {
           name: 'atomName',
           by: 'asc',
+          tableAlias: 'a',
+        };
+      } else {
+        // default = all
+        atomOrder = {
+          name: 'updatedAt',
+          by: 'desc',
           tableAlias: 'a',
         };
       }
@@ -270,11 +271,6 @@ export default {
           label: this.mode.split('-')[1],
           page: { index },
         };
-      } else if (this.mode === 'all') {
-        // special: all = list + atomEnabled=0
-        options = {
-          page: { index },
-        };
       } else if (this.mode === 'search' || this.mode === 'selectSearch') {
         // where
         const where = {};
@@ -305,6 +301,12 @@ export default {
         // options
         options = {
           where,
+          page: { index },
+        };
+      } else {
+        // default = all
+        // special: all = list + atomEnabled=0
+        options = {
           page: { index },
         };
       }
