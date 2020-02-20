@@ -14,7 +14,7 @@ export default {
       this.$nextTick(() => {
         const linkEl = this.getLinkEl();
         if (linkEl) {
-          linkEl.addClass('external');
+          linkEl.addClass('eb-external');
         }
       });
     }

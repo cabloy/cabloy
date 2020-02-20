@@ -11,7 +11,7 @@ export default {
     options: {
       type: Object
     },
-    onPerform: {
+    onNodePerform: {
       type: Function,
     },
   },
@@ -57,8 +57,8 @@ export default {
         node.attrs = this.$utils.extend({}, _node.attrs);
         // attrs id
         node.attrs.id = `${attrIdParent}-${node.id}`;
-        // attrs onPerform
-        if (this.onPerform && !node.attrs.onPerform) {
+        // attrs onNodePerform
+        if (this.onNodePerform && !node.attrs.onPerform) {
           node.attrs.onPerform = (e, context) => {
             return this.onNodePerform(e, context, node);
           };
@@ -78,6 +78,9 @@ export default {
             'treeview:loadchildren': (e, done) => {
               this.onNodeLoadChildren(e, done, node)
             },
+            'click': e => {
+              this.$emit('node:click', e, node);
+            }
           }
         }, slots.concat(childrenNode)));
       }
@@ -109,9 +112,6 @@ export default {
         done();
       })
     },
-    onNodePerform(e, context, node) {
-      return this.onPerform(e, context, node);
-    }
   },
 };
 

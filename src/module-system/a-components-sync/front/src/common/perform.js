@@ -21,25 +21,29 @@ export default {
   },
   methods: {
     onClick(event) {
+      // link
+      const $clickedLinkEl = this.getLinkEl && this.getLinkEl();
+      const isLink = $clickedLinkEl && $clickedLinkEl.length > 0;
+
+      // only preventDefault for link
+      if (isLink) {
+        event && event.preventDefault();
+      }
+
+      // Prevent Router
+      if (event && event.preventF7Router) return;
+      if ($clickedLinkEl &&
+        ($clickedLinkEl.hasClass('prevent-router') || $clickedLinkEl.hasClass('router-prevent'))
+      ) return;
+
+      // only once
       if (this._preloader) return;
       this.$emit('click', event);
 
-      const linkEl = this.getLinkEl && this.getLinkEl();
-      if (linkEl && linkEl.length > 0) {
-        // popover
-        if (linkEl.hasClass('popover-close')) {
-          this.$f7.popover.close(linkEl.parents('.popover'));
-        }
-
-        // only preventDefault for link
-        if (event) {
-          event.stopPropagation();
-          event.preventDefault();
-        }
-      }
-
+      // linkClick
       if (!this.onPerform) return this.onLinkClick && this.onLinkClick(event);
 
+      // onPerform
       try {
         const res = this.onPerform(event, this.context);
         if (this.$meta.util.isPromise(res)) {

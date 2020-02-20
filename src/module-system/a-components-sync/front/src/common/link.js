@@ -28,7 +28,7 @@ export default {
     this.href = this.getHref(this.ebHref);
     // class
     if (this.externalLink) {
-      this.$$(this.$el).addClass('external');
+      this.$$(this.$el).addClass('eb-external');
     }
   },
   methods: {
