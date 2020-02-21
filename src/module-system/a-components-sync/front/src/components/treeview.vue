@@ -61,19 +61,45 @@ export default {
       this._initRootNode();
       this._loadChildren(this.treeviewRoot);
     },
+    treeUp(nodeStart, cb) {
+      nodeStart = nodeStart || this.treeviewRoot;
+      if (!nodeStart) return;
+      this._treeUp(nodeStart.children, cb);
+    },
     treeDown(nodeStart, cb) {
       nodeStart = nodeStart || this.treeviewRoot;
       if (!nodeStart) return;
       this._treeDown(nodeStart.children, cb);
     },
-    _treeDown(nodes, cb) {
+    treeParent(nodeStart, cb) {
+      if (!nodeStart) return;
+      this._treeParent(nodeStart.parent, cb);
+    },
+    _treeParent(node, cb) {
+      if (!node) return;
+      const res = cb(node);
+      if (res === false) return false; // return immediately
+      return this._treeParent(node.parent, cb);
+    },
+    _treeUp(nodes, cb) {
       // children
       for (const node of nodes) {
         // children first
-        let res = this._treeDown(node.children, cb);
+        let res = this._treeUp(node.children, cb);
         if (res === false) return false; // return immediately
         // current
         res = cb(node);
+        if (res === false) return false; // return immediately
+      }
+    },
+    _treeDown(nodes, cb) {
+      // children
+      for (const node of nodes) {
+        // current first
+        let res = cb(node);
+        if (res === false) return false; // return immediately
+        // children
+        res = this._treeDown(node.children, cb);
         if (res === false) return false; // return immediately
       }
     },
@@ -116,6 +142,7 @@ export default {
           slot: 'content-start',
           attrs: {
             checked: _node.attrs.checked,
+            indeterminate: _node.attrs.indeterminate,
           },
           on: {
             change: e => {
@@ -227,9 +254,26 @@ export default {
     _onNodeChange(node, checked) {
       // node current
       this.$set(node.attrs, 'checked', checked);
+      this.$set(node.attrs, 'indeterminate', false);
       // children to checked
-      this.treeDown(node, item => {
+      this.treeUp(node, item => {
         this.$set(item.attrs, 'checked', checked);
+        this.$set(item.attrs, 'indeterminate', false);
+      });
+      // parent to checked/indeterminate
+      this.treeParent(node, item => {
+        const every = item.children.every(_item => _item.attrs.checked);
+        const some = item.children.some(_item => _item.attrs.checked || _item.attrs.indeterminate);
+        if (every) {
+          this.$set(item.attrs, 'checked', true);
+          this.$set(item.attrs, 'indeterminate', false);
+        } else if (some) {
+          this.$set(item.attrs, 'checked', false);
+          this.$set(item.attrs, 'indeterminate', true);
+        } else {
+          this.$set(item.attrs, 'checked', false);
+          this.$set(item.attrs, 'indeterminate', false);
+        }
       });
 
     }
