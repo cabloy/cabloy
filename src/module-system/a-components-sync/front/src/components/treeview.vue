@@ -8,17 +8,21 @@ export default {
   name: 'eb-treeview',
   extends: f7Treeview,
   props: {
-    options: {
-      type: Object
+    root: {
+      type: Object,
     },
     onNodePerform: {
       type: Function,
+    },
+    onLoadChildren: {
+      type: Function
     },
   },
   data() {
     return {
       treeNodes: [],
       treeviewId: Vue.prototype.$meta.util.nextId('treeview'),
+      treeviewNode: null,
     };
   },
   render() {
@@ -33,7 +37,7 @@ export default {
     const classes = Utils.classNames(className, 'treeview', Mixins.colorClasses(props));
 
     // nodes
-    const nodes = this._renderNodes(_h, this.treeNodes, this.treeviewId);
+    const nodes = this.treeviewNode ? this._renderNodes(_h, this.treeviewNode.children, this.treeviewId) : [];
 
     //
     return _h('div', {
@@ -44,36 +48,62 @@ export default {
       }
     }, nodes);
   },
+  watch: {
+    root() {
+      this.reload();
+    }
+  },
   created() {
-    this.loadChildren();
+    this.reload();
   },
   methods: {
+    reload() {
+      this.treeNodes = [];
+      this._initRootNode();
+      this._loadChildren(this.treeviewNode);
+    },
+    _initRootNode() {
+      const _root = this.$utils.extend({}, this.root);
+      // root
+      _root.root = true;
+      // attrs
+      if (!_root.attrs) _root.attrs = {};
+      // loadChildren
+      if (_root.attrs.loadChildren === undefined && this.onLoadChildren) _root.attrs.loadChildren = true;
+      // children
+      if (!_root.children) {
+        _root.children = this.treeNodes;
+      } else {
+        _root.children = _root.children.concat(this.treeNodes);
+      }
+      // ready
+      this.treeviewNode = _root;
+    },
     _renderNodes(_h, nodes, attrIdParent) {
       const children = [];
       if (!nodes) return children;
-      for (const _node of nodes) {
+      for (const node of nodes) {
         // node
-        const node = { ..._node };
-        node.attrs = this.$utils.extend({}, _node.attrs);
+        const _node = { ...node };
+        _node.attrs = this.$utils.extend({}, node.attrs);
         // attrs id
-        node.attrs.id = `${attrIdParent}-${node.id}`;
+        _node.attrs.id = `${attrIdParent}-${node.id}`;
         // attrs onNodePerform
-        if (this.onNodePerform && !node.attrs.onPerform) {
-          node.attrs.onPerform = (e, context) => {
+        if (this.onNodePerform && node.attrs.onPerform === undefined) {
+          _node.attrs.onPerform = (e, context) => {
             return this.onNodePerform(e, context, node);
           };
         }
         // scopedSlots
-        const slots = this._renderScopeSlots(_h, _node);
+        const slots = this._renderScopeSlots(_h, node);
         // children of node
-        const childrenNode = this._renderNodes(_h, _node.children, node.attrs.id);
+        const childrenNode = this._renderNodes(_h, node.children, _node.attrs.id);
         // push
         children.push(_h('eb-treeview-item', {
-          key: node.id,
-          attrs: node.attrs,
-          class: node.class,
-          style: node.style,
-          //scopedSlots,
+          key: _node.id,
+          attrs: _node.attrs,
+          class: _node.class,
+          style: _node.style,
           on: {
             'treeview:loadchildren': (e, done) => {
               this.onNodeLoadChildren(e, done, node)
@@ -95,10 +125,10 @@ export default {
       }
       return slots;
     },
-    loadChildren(node) {
-      if (!this.options.loadChildren) return;
-      return this.options.loadChildren(node).then(data => {
-        const nodeChildren = node ? node.children : this.treeNodes;
+    _loadChildren(node) {
+      if (!this.onLoadChildren || !node || !node.attrs.loadChildren) return;
+      return this.onLoadChildren(node).then(data => {
+        const nodeChildren = node.root ? this.treeNodes : node.children;
         for (const item of data) {
           if (!item.children) item.children = [];
           nodeChildren.push(item);
@@ -106,8 +136,13 @@ export default {
       });
     },
     onNodeLoadChildren(e, done, node) {
-      const fn = this.loadChildren(node);
-      if (!fn) return done();
+      const fn = this._loadChildren(node);
+      if (!fn) {
+        this.$nextTick(() => {
+          return done();
+        });
+        return;
+      }
       fn.then(() => {
         done();
       })
