@@ -38,7 +38,12 @@ export default {
 
       // only once
       if (this._preloader) return;
+
+      // emit click
       this.$emit('click', event);
+
+      // check again !!!
+      if (event && event.preventF7Router) return;
 
       // linkClick
       if (!this.onPerform) return this.onLinkClick && this.onLinkClick(event);

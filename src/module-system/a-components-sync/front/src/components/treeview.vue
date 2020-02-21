@@ -23,6 +23,7 @@ export default {
       treeNodes: [],
       treeviewId: Vue.prototype.$meta.util.nextId('treeview'),
       treeviewNode: null,
+      selectedItem: null,
     };
   },
   render() {
@@ -79,40 +80,67 @@ export default {
       // ready
       this.treeviewNode = _root;
     },
+    _renderNode(_h, node, attrIdParent) {
+      // node
+      const _node = { ...node };
+      _node.attrs = this.$utils.extend({}, node.attrs);
+      // attrs id
+      _node.attrs.id = `${attrIdParent}-${node.id}`;
+      // attrs
+      if (_node.attrs.itemToggle === undefined) _node.attrs.itemToggle = this.treeviewNode.attrs.itemToggle;
+      if (_node.attrs.opened === undefined) _node.attrs.opened = this.treeviewNode.attrs.opened;
+      if (_node.attrs.checkbox === undefined) _node.attrs.checkbox = this.treeviewNode.attrs.checkbox;
+      if (_node.attrs.selectable === undefined) _node.attrs.selectable = this.treeviewNode.attrs.selectable;
+      if (_node.attrs.selectable) _node.attrs.selected = (this.selectedItem && this.selectedItem.id === node.id);
+      // attrs onNodePerform
+      if (this.onNodePerform && node.attrs.onPerform === undefined) {
+        _node.attrs.onPerform = (e, context) => {
+          return this.onNodePerform(e, context, node);
+        };
+      }
+      // children
+      let children = [];
+      // checkbox
+      if (_node.attrs.checkbox) {
+        children.push(_h('f7-checkbox', {
+          slot: 'content-start',
+          attrs: {
+            checked: _node.attrs.checked,
+          },
+          on: {
+            change(e) {
+              console.log('change:', e.target.checked);
+            },
+          }
+        }));
+      }
+      // scopedSlots
+      const slots = this._renderScopeSlots(_h, node);
+      if (slots && slots.length > 0) children = children.concat(slots);
+      // children of node
+      const childrenNode = this._renderNodes(_h, node.children, _node.attrs.id);
+      if (childrenNode && childrenNode.length > 0) children = children.concat(childrenNode);
+      // ok
+      return _h('eb-treeview-item', {
+        key: _node.id,
+        attrs: _node.attrs,
+        class: _node.class,
+        style: _node.style,
+        on: {
+          'treeview:loadchildren': (e, done) => {
+            this.onNodeLoadChildren(e, done, node)
+          },
+          'click': e => {
+            this.onNodeClick(e, node);
+          }
+        }
+      }, children);
+    },
     _renderNodes(_h, nodes, attrIdParent) {
       const children = [];
       if (!nodes) return children;
       for (const node of nodes) {
-        // node
-        const _node = { ...node };
-        _node.attrs = this.$utils.extend({}, node.attrs);
-        // attrs id
-        _node.attrs.id = `${attrIdParent}-${node.id}`;
-        // attrs onNodePerform
-        if (this.onNodePerform && node.attrs.onPerform === undefined) {
-          _node.attrs.onPerform = (e, context) => {
-            return this.onNodePerform(e, context, node);
-          };
-        }
-        // scopedSlots
-        const slots = this._renderScopeSlots(_h, node);
-        // children of node
-        const childrenNode = this._renderNodes(_h, node.children, _node.attrs.id);
-        // push
-        children.push(_h('eb-treeview-item', {
-          key: _node.id,
-          attrs: _node.attrs,
-          class: _node.class,
-          style: _node.style,
-          on: {
-            'treeview:loadchildren': (e, done) => {
-              this.onNodeLoadChildren(e, done, node)
-            },
-            'click': e => {
-              this.$emit('node:click', e, node);
-            }
-          }
-        }, slots.concat(childrenNode)));
+        children.push(this._renderNode(_h, node, attrIdParent));
       }
       return children;
     },
@@ -130,7 +158,9 @@ export default {
       return this.onLoadChildren(node).then(data => {
         const nodeChildren = node.root ? this.treeNodes : node.children;
         for (const item of data) {
+          // children
           if (!item.children) item.children = [];
+          // push
           nodeChildren.push(item);
         }
       });
@@ -147,6 +177,36 @@ export default {
         done();
       })
     },
+    onNodeClick(e, node) {
+      // target
+      const $target = this.$$(e.target);
+
+      // ignore
+      let ignore = false;
+      if ($target.is('input') || $target.is('.icon-checkbox')) ignore = true;
+
+      if (ignore) {
+        e.preventF7Router = true;
+        return;
+      }
+
+      // node:click
+      this.$emit('node:click', e, node);
+
+      // selectable
+      if (!$target.is('.treeview-toggle')) {
+        this.selectedItem = node;
+      }
+      // checkbox
+      const checkbox = node.attrs.checkbox === undefined ? this.treeviewNode.attrs.checkbox : node.attrs.checkbox;
+      const checkOnLabel = node.attrs.checkOnLabel === undefined ? this.treeviewNode.attrs.checkOnLabel : node.attrs.checkOnLabel;
+      if (checkbox && checkOnLabel) {
+        this._nodeCheck(node, !node.attrs.checked);
+      }
+    },
+    _nodeCheck(node, checked) {
+
+    }
   },
 };
 
