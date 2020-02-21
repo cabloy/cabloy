@@ -197,6 +197,10 @@ export default {
         for (const item of data) {
           // children
           if (!item.children) item.children = [];
+          // checked
+          if (this.treeviewRoot.attrs.multiple && node.attrs.checked) {
+            item.attrs.checked = true;
+          }
           // push
           nodeChildren.push(item);
         }
@@ -255,27 +259,40 @@ export default {
       // node current
       this.$set(node.attrs, 'checked', checked);
       this.$set(node.attrs, 'indeterminate', false);
-      // children to checked
-      this.treeUp(node, item => {
-        this.$set(item.attrs, 'checked', checked);
-        this.$set(item.attrs, 'indeterminate', false);
-      });
-      // parent to checked/indeterminate
-      this.treeParent(node, item => {
-        const every = item.children.every(_item => _item.attrs.checked);
-        const some = item.children.some(_item => _item.attrs.checked || _item.attrs.indeterminate);
-        if (every) {
-          this.$set(item.attrs, 'checked', true);
-          this.$set(item.attrs, 'indeterminate', false);
-        } else if (some) {
-          this.$set(item.attrs, 'checked', false);
-          this.$set(item.attrs, 'indeterminate', true);
-        } else {
-          this.$set(item.attrs, 'checked', false);
-          this.$set(item.attrs, 'indeterminate', false);
+      if (!this.treeviewRoot.attrs.multiple) {
+        // single
+        if (checked) {
+          // uncheckall
+          this.treeUp(null, item => {
+            if (item.id !== node.id && item.attrs.checked) {
+              this.$set(item.attrs, 'checked', false);
+              return false; // break
+            }
+          });
         }
-      });
-
+      } else {
+        // multiple
+        // children to checked
+        this.treeUp(node, item => {
+          this.$set(item.attrs, 'checked', checked);
+          this.$set(item.attrs, 'indeterminate', false);
+        });
+        // parent to checked/indeterminate
+        this.treeParent(node, item => {
+          const every = item.children.every(_item => _item.attrs.checked);
+          const some = item.children.some(_item => _item.attrs.checked || _item.attrs.indeterminate);
+          if (every) {
+            this.$set(item.attrs, 'checked', true);
+            this.$set(item.attrs, 'indeterminate', false);
+          } else if (some) {
+            this.$set(item.attrs, 'checked', false);
+            this.$set(item.attrs, 'indeterminate', true);
+          } else {
+            this.$set(item.attrs, 'checked', false);
+            this.$set(item.attrs, 'indeterminate', false);
+          }
+        });
+      }
     }
 
   },
