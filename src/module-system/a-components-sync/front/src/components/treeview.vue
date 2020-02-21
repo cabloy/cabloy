@@ -108,8 +108,8 @@ export default {
             checked: _node.attrs.checked,
           },
           on: {
-            change(e) {
-              console.log('change:', e.target.checked);
+            change: e => {
+              this.onNodeChange(node, !e.target.checked);
             },
           }
         }));
@@ -181,9 +181,25 @@ export default {
       // target
       const $target = this.$$(e.target);
 
+      // selectable
+      const selectable = node.attrs.selectable === undefined ? this.treeviewNode.attrs.selectable : node.attrs.selectable;
+      if (selectable && !$target.is('.treeview-toggle')) {
+        this.selectedItem = node;
+      }
+
       // ignore
       let ignore = false;
+
+      // checkbox
       if ($target.is('input') || $target.is('.icon-checkbox')) ignore = true;
+
+      // checkbox
+      const checkbox = node.attrs.checkbox === undefined ? this.treeviewNode.attrs.checkbox : node.attrs.checkbox;
+      const checkOnLabel = node.attrs.checkOnLabel === undefined ? this.treeviewNode.attrs.checkOnLabel : node.attrs.checkOnLabel;
+      if (checkbox && checkOnLabel) {
+        this.onNodeChange(node, !node.attrs.checked);
+        ignore = true;
+      }
 
       if (ignore) {
         e.preventF7Router = true;
@@ -193,19 +209,9 @@ export default {
       // node:click
       this.$emit('node:click', e, node);
 
-      // selectable
-      if (!$target.is('.treeview-toggle')) {
-        this.selectedItem = node;
-      }
-      // checkbox
-      const checkbox = node.attrs.checkbox === undefined ? this.treeviewNode.attrs.checkbox : node.attrs.checkbox;
-      const checkOnLabel = node.attrs.checkOnLabel === undefined ? this.treeviewNode.attrs.checkOnLabel : node.attrs.checkOnLabel;
-      if (checkbox && checkOnLabel) {
-        this._nodeCheck(node, !node.attrs.checked);
-      }
     },
-    _nodeCheck(node, checked) {
-
+    onNodeChange(node, checked) {
+      this.$set(node.attrs, 'checked', checked);
     }
   },
 };
