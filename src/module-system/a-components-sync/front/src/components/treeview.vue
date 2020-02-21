@@ -20,9 +20,8 @@ export default {
   },
   data() {
     return {
-      treeNodes: [],
       treeviewId: Vue.prototype.$meta.util.nextId('treeview'),
-      treeviewNode: null,
+      treeviewRoot: null,
       selectedItem: null,
     };
   },
@@ -38,7 +37,7 @@ export default {
     const classes = Utils.classNames(className, 'treeview', Mixins.colorClasses(props));
 
     // nodes
-    const nodes = this.treeviewNode ? this._renderNodes(_h, this.treeviewNode.children, this.treeviewId) : [];
+    const nodes = this.treeviewRoot ? this._renderNodes(_h, this.treeviewRoot.children, this.treeviewId) : [];
 
     //
     return _h('div', {
@@ -59,9 +58,24 @@ export default {
   },
   methods: {
     reload() {
-      this.treeNodes = [];
       this._initRootNode();
-      this._loadChildren(this.treeviewNode);
+      this._loadChildren(this.treeviewRoot);
+    },
+    treeDown(nodeStart, cb) {
+      nodeStart = nodeStart || this.treeviewRoot;
+      if (!nodeStart) return;
+      this._treeDown(nodeStart.children, cb);
+    },
+    _treeDown(nodes, cb) {
+      // children
+      for (const node of nodes) {
+        // children first
+        let res = this._treeDown(node.children, cb);
+        if (res === false) return false; // return immediately
+        // current
+        res = cb(node);
+        if (res === false) return false; // return immediately
+      }
     },
     _initRootNode() {
       const _root = this.$utils.extend({}, this.root);
@@ -72,13 +86,9 @@ export default {
       // loadChildren
       if (_root.attrs.loadChildren === undefined && this.onLoadChildren) _root.attrs.loadChildren = true;
       // children
-      if (!_root.children) {
-        _root.children = this.treeNodes;
-      } else {
-        _root.children = _root.children.concat(this.treeNodes);
-      }
+      if (!_root.children) _root.children = [];
       // ready
-      this.treeviewNode = _root;
+      this.treeviewRoot = _root;
     },
     _renderNode(_h, node, attrIdParent) {
       // node
@@ -87,10 +97,10 @@ export default {
       // attrs id
       _node.attrs.id = `${attrIdParent}-${node.id}`;
       // attrs
-      if (_node.attrs.itemToggle === undefined) _node.attrs.itemToggle = this.treeviewNode.attrs.itemToggle;
-      if (_node.attrs.opened === undefined) _node.attrs.opened = this.treeviewNode.attrs.opened;
-      if (_node.attrs.checkbox === undefined) _node.attrs.checkbox = this.treeviewNode.attrs.checkbox;
-      if (_node.attrs.selectable === undefined) _node.attrs.selectable = this.treeviewNode.attrs.selectable;
+      if (_node.attrs.itemToggle === undefined) _node.attrs.itemToggle = this.treeviewRoot.attrs.itemToggle;
+      if (_node.attrs.opened === undefined) _node.attrs.opened = this.treeviewRoot.attrs.opened;
+      if (_node.attrs.checkbox === undefined) _node.attrs.checkbox = this.treeviewRoot.attrs.checkbox;
+      if (_node.attrs.selectable === undefined) _node.attrs.selectable = this.treeviewRoot.attrs.selectable;
       if (_node.attrs.selectable) _node.attrs.selected = (this.selectedItem && this.selectedItem.id === node.id);
       // attrs onNodePerform
       if (this.onNodePerform && node.attrs.onPerform === undefined) {
@@ -109,7 +119,7 @@ export default {
           },
           on: {
             change: e => {
-              this.onNodeChange(node, !e.target.checked);
+              this._onNodeChange(node, !node.attrs.checked);
             },
           }
         }));
@@ -131,7 +141,7 @@ export default {
             this.onNodeLoadChildren(e, done, node)
           },
           'click': e => {
-            this.onNodeClick(e, node);
+            this._onNodeClick(e, node);
           }
         }
       }, children);
@@ -156,12 +166,16 @@ export default {
     _loadChildren(node) {
       if (!this.onLoadChildren || !node || !node.attrs.loadChildren) return;
       return this.onLoadChildren(node).then(data => {
-        const nodeChildren = node.root ? this.treeNodes : node.children;
+        const nodeChildren = node.children;
         for (const item of data) {
           // children
           if (!item.children) item.children = [];
           // push
           nodeChildren.push(item);
+        }
+        // record parent
+        for (const item of nodeChildren) {
+          item.parent = node;
         }
       });
     },
@@ -177,12 +191,12 @@ export default {
         done();
       })
     },
-    onNodeClick(e, node) {
+    _onNodeClick(e, node) {
       // target
       const $target = this.$$(e.target);
 
       // selectable
-      const selectable = node.attrs.selectable === undefined ? this.treeviewNode.attrs.selectable : node.attrs.selectable;
+      const selectable = node.attrs.selectable === undefined ? this.treeviewRoot.attrs.selectable : node.attrs.selectable;
       if (selectable && !$target.is('.treeview-toggle')) {
         this.selectedItem = node;
       }
@@ -194,10 +208,10 @@ export default {
       if ($target.is('input') || $target.is('.icon-checkbox')) ignore = true;
 
       // checkbox
-      const checkbox = node.attrs.checkbox === undefined ? this.treeviewNode.attrs.checkbox : node.attrs.checkbox;
-      const checkOnLabel = node.attrs.checkOnLabel === undefined ? this.treeviewNode.attrs.checkOnLabel : node.attrs.checkOnLabel;
+      const checkbox = node.attrs.checkbox === undefined ? this.treeviewRoot.attrs.checkbox : node.attrs.checkbox;
+      const checkOnLabel = node.attrs.checkOnLabel === undefined ? this.treeviewRoot.attrs.checkOnLabel : node.attrs.checkOnLabel;
       if (checkbox && checkOnLabel) {
-        this.onNodeChange(node, !node.attrs.checked);
+        this._onNodeChange(node, !node.attrs.checked);
         ignore = true;
       }
 
@@ -210,9 +224,16 @@ export default {
       this.$emit('node:click', e, node);
 
     },
-    onNodeChange(node, checked) {
+    _onNodeChange(node, checked) {
+      // node current
       this.$set(node.attrs, 'checked', checked);
+      // children to checked
+      this.treeDown(node, item => {
+        this.$set(item.attrs, 'checked', checked);
+      });
+
     }
+
   },
 };
 
