@@ -1,7 +1,6 @@
 <template>
-  <eb-tree ref="tree" :options="treeOptions">
-    <span slot-scope="{node}" @click.stop="onNodeClick(node)">{{node.text}}</span>
-  </eb-tree>
+  <eb-treeview ref="tree" :root="root" :onLoadChildren="onLoadChildren" @node:click="onNodeClick">
+  </eb-treeview>
 </template>
 <script>
 export default {
@@ -15,10 +14,11 @@ export default {
   },
   data() {
     return {
-      treeOptions: {
-        fetchData: node => {
-          return this.fetchChildren(node.id);
-        },
+      root: {
+        attrs: {
+          itemToggle: false,
+          selectable: true,
+        }
       },
     };
   },
@@ -28,17 +28,19 @@ export default {
     },
   },
   methods: {
-    fetchChildren(roleId) {
-      if (roleId === 'root') roleId = this.roleIdStart;
+    onLoadChildren(node) {
+      const roleId = node.root ? this.roleIdStart : node.id;
       return this.$api.post('role/children', { roleId, page: { size: 0 } })
         .then(data => {
           const list = data.list.map(item => {
             const node = {
               id: item.id,
-              text: item.roleName || '[New Role]',
+              attrs: {
+                label: item.roleName || `[${this.$text('New Role')}]`,
+                toggle: item.catalog === 1,
+                loadChildren: item.catalog === 1,
+              },
               data: item,
-              showChildren: item.catalog === 1,
-              isBatch: item.catalog === 1,
             };
             return node;
           });
@@ -46,9 +48,10 @@ export default {
         })
         .catch(err => {
           this.$view.toast.show({ text: err.message });
+          throw err;
         });
     },
-    onNodeClick(node) {
+    onNodeClick(e, node) {
       this.$emit('node:click', node);
     },
   },

@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Role Management')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Role Management')" eb-back-link="Back"></eb-navbar>
     <role-list ref="roleList" :roleIdStart="roleIdStart" @node:click="onNodeClick"></role-list>
     <f7-fab v-if="roleDirty" color="pink">
       <f7-icon material="add"></f7-icon>
@@ -49,28 +49,27 @@ export default {
     onNodeClick(node) {
       this.$view.navigate(`/a/baseadmin/role/edit?roleId=${node.id}`);
     },
-    reloadChildren(node) {
+    reloadNode(node) {
       if (!node) return;
-      node.isBatch = true;
-      node.collapse().empty().expand();
+      this.tree.reloadNode(node);
     },
     onRoleSave(data) {
-      const node = this.tree.find(node => node.id === data.roleIdParent);
-      this.reloadChildren(node && node[0]);
+      const node = this.tree.find(null, node => node.id === data.roleIdParent);
+      this.reloadNode(node);
     },
     onRoleAdd(data) {
-      const node = this.tree.find(node => node.id === data.roleIdParent);
-      this.reloadChildren(node && node[0]);
+      const node = this.tree.find(null, node => node.id === data.roleIdParent);
+      this.reloadNode(node);
     },
     onRoleMove(data) {
       for (const roleIdParent of ['roleIdFrom', 'roleIdTo']) {
-        const node = this.tree.find(node => node.id === data[roleIdParent]);
-        this.reloadChildren(node && node[0]);
+        const node = this.tree.find(null, node => node.id === data[roleIdParent]);
+        this.reloadNode(node);
       }
     },
     onRoleDelete(data) {
-      const node = this.tree.find(node => node.id === data.roleId);
-      if (node) node.remove();
+      const node = this.tree.find(null, node => node.id === data.roleId);
+      if (node) this.tree.removeNode(node);
     },
     onRoleDirty(data) {
       this.roleDirty = data.dirty;

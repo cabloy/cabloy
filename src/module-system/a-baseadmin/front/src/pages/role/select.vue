@@ -1,15 +1,12 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Select Roles')" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="$text('Select Roles')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="done" @click.prevent="onDone"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-tree ref="tree" :options="treeOptions">
-      <span slot-scope="{node}" @click.stop="onNodeClick(node)">
-        <f7-icon v-if="node.states._selected" material="check_box"></f7-icon>{{node.text}}
-      </span>
-    </eb-tree>
+    <eb-treeview ref="tree" :root="root" :onLoadChildren="onLoadChildren">
+    </eb-treeview>
   </eb-page>
 </template>
 <script>
@@ -18,13 +15,7 @@ const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.com
 export default {
   mixins: [ebPageContext],
   data() {
-    return {
-      treeOptions: {
-        fetchData: node => {
-          return this.fetchChildren(node.id);
-        },
-      },
-    };
+    return {};
   },
   computed: {
     roleIdStart() {
@@ -39,19 +30,33 @@ export default {
     roleIdDisable() {
       return this.contextParams.roleIdDisable;
     },
+    root() {
+      return {
+        attrs: {
+          itemToggle: false,
+          selectable: false,
+          multiple: this.multiple,
+          checkbox: true,
+          checkOnLabel: true,
+        }
+      };
+    }
   },
   methods: {
-    fetchChildren(roleId) {
-      if (roleId === 'root') roleId = this.roleIdStart;
+    onLoadChildren(node) {
+      const roleId = node.root ? this.roleIdStart : node.id;
       return this.$api.post('role/children', { roleId, page: { size: 0 } })
         .then(data => {
           let list = data.list.map(item => {
             const node = {
               id: item.id,
-              text: item.roleName,
+              attrs: {
+                link: '#',
+                label: item.roleName,
+                toggle: item.catalog === 1,
+                loadChildren: item.catalog === 1,
+              },
               data: item,
-              showChildren: item.catalog === 1,
-              isBatch: item.catalog === 1,
             };
             return node;
           });
@@ -62,39 +67,15 @@ export default {
         })
         .catch(err => {
           this.$view.toast.show({ text: err.message });
+          throw err;
         });
     },
     onDone() {
-      const selected = this.getSelected();
-      if (!selected) return;
+      const checked = this.$refs.tree.checked();
+      if (!checked || checked.length === 0) return;
 
-      this.contextCallback(200, selected);
+      this.contextCallback(200, checked);
       this.$f7router.back();
-    },
-    onNodeClick(node) {
-      if (node.states._selected) {
-        this.$set(node.states, '_selected', false);
-      } else {
-        if (this.multiple) {
-          this.$set(node.states, '_selected', true);
-        } else {
-          this.unSelectAll();
-          this.$set(node.states, '_selected', true);
-        }
-      }
-    },
-    unSelectAll() {
-      const selection = this.$refs.tree.find({ state: { _selected: true } }, true);
-      if (selection) {
-        for (const item of selection) {
-          this.$set(item.states, '_selected', false);
-        }
-      }
-    },
-    getSelected() {
-      const selection = this.$refs.tree.find({ state: { _selected: true } }, this.multiple);
-      if (!selection) return null;
-      return this.multiple ? selection.map(node => node.data) : selection[0].data;
     },
   },
 };

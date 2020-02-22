@@ -61,7 +61,7 @@ export default {
               const roleIdParent = data.id;
               if (this.role.roleIdParent !== roleIdParent) {
                 this.$api.post('role/move', { roleId: this.role.id, roleIdParent })
-                  .then(data => {
+                  .then(() => {
                     this.$meta.eventHub.$emit('role:move', { roleId: this.role.id, roleIdFrom: this.role.roleIdParent, roleIdTo: roleIdParent });
                     this.$meta.eventHub.$emit('role:dirty', { dirty: true });
                     this.$view.toast.show({ text: this.$text('Operation succeeded') });

@@ -50,7 +50,7 @@ export default {
     },
     scopeTitle() {
       if (!this.scope) return null;
-      return this.scope.map(item => item.roleName).join(',');
+      return this.scope.map(item => item.data.roleName).join(',');
     },
     scopeSelfEnable() {
       return this.actionCode && ['3', '4'].indexOf(this.actionCode) > -1;

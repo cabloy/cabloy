@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Function Right Management')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Function Right Management')" eb-back-link="Back"></eb-navbar>
     <role-list ref="roleList" :roleIdStart="roleIdStart" @node:click="onNodeClick"></role-list>
   </eb-page>
 </template>
