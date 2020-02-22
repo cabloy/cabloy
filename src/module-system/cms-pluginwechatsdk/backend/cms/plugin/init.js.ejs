@@ -5,17 +5,36 @@ const configExists=config.appID && config.appSecret;
 %>
 
 $(document).on('echo-ready', function() {
-  _wechatsdkinit();
+  // wechat
+  if(_wechatcheckenv()) {
+    _wechatsdkinit();
+    _wechatautologin();
+  }
 });
 
-function _wechatsdkinit() {
+function _wechatcheckenv(){
   // check config
   <%- `const _configExists=${configExists?'true':'false'};`  %>
-  if(!_configExists) return;
-  // wechat
+  if(!_configExists) return false;
   const ua = navigator.userAgent.toLowerCase();
   const inWechat = ua && (ua.indexOf('micromessenger') > -1 || ua.indexOf('micromessage') > -1);
-  if(!inWechat) return;
+  return inWechat;
+}
+
+function _wechatautologin(){
+  if(util.user.op.anonymous){
+    // auto login
+    const url=`${env.site.serverUrl}/#!${location.href}`;
+    window.assign(url);
+  }else{
+    window.setTimeout(function(){
+      $('.navbar-user .user-logout').remove();
+    },0);
+  }
+}
+
+function _wechatsdkinit() {
+  // jsconfig
   util.performAction({
     method: 'post',
     url: '/a/wechat/jssdk/jsconfig',
