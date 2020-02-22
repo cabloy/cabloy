@@ -1,7 +1,5 @@
 let Vue;
 
-import LiquorTree from '@zhennann/liquor-tree';
-
 import './assets/css/module.less';
 
 // install
@@ -9,9 +7,6 @@ function install(_Vue, cb) {
   if (Vue) return console.error('already installed.');
 
   Vue = _Vue;
-
-  // register components
-  Vue.component('ebTree', LiquorTree);
 
   //
   return cb({

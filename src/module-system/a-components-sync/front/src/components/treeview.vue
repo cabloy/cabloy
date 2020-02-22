@@ -58,8 +58,36 @@ export default {
   },
   methods: {
     reload() {
-      this._initRootNode();
-      this._loadChildren(this.treeviewRoot);
+      if (this.root) {
+        this._initRootNode();
+        this._loadChildren(this.treeviewRoot);
+      }
+    },
+    reloadNode(node, nodeNew) {
+      if (node.root) return;
+      // empty
+      node.children.splice(0, node.children.length);
+      // splice
+      const nodeParent = node.parent;
+      if (nodeNew) {
+        const index = nodeParent.children.findIndex(item => item.id === node.id);
+        node = this.$utils.extend({}, node, nodeNew);
+        nodeParent.children.splice(index, 1, node);
+      }
+      // load again
+      if (node._loaded) {
+        node._loaded = false;
+        this._loadChildren(node);
+      }
+    },
+    removeNode(node) {
+      if (node.root) return;
+      // splice
+      const nodeParent = node.parent;
+      const index = nodeParent.children.findIndex(item => item.id === node.id);
+      nodeParent.children.splice(index, 1);
+      // selected
+      if (this.selectedItem && this.selectedItem.id === node.id) this.selectedItem = null;
     },
     treeUp(nodeStart, cb) {
       nodeStart = nodeStart || this.treeviewRoot;
@@ -75,37 +103,45 @@ export default {
       if (!nodeStart) return;
       this._treeParent(nodeStart.parent, cb);
     },
+    find(nodeStart, cb) {
+      let node = null;
+      this.treeDown(nodeStart, item => {
+        if (cb(item)) {
+          node = item;
+          return false; //break
+        }
+      });
+      return node;
+    },
     selected() {
       return this.selectedItem;
     },
     checked(options) {
-      return new Promise((resolve, reject) => {
-        if (!this.treeviewRoot) return resolve(null);
+      if (!this.treeviewRoot) return this.treeviewRoot.attrs.multiple ? [] : null;
 
-        // single
-        if (!this.treeviewRoot.attrs.multiple) {
-          let checkedNode = null;
-          this.treeDown(null, item => {
-            if (item.attrs.checked) {
-              checkedNode = item;
-              return false; // break
-            }
-          });
-          return resolve(checkedNode);
-        }
-
-        // multiple
-        const checkedNodes = [];
+      // single
+      if (!this.treeviewRoot.attrs.multiple) {
+        let checkedNode = null;
         this.treeDown(null, item => {
           if (item.attrs.checked) {
-            // push this
-            checkedNodes.push(item);
-            // break children
-            return true;
+            checkedNode = item;
+            return false; // break
           }
         });
-        return resolve(checkedNodes);
+        return checkedNode;
+      }
+
+      // multiple
+      const checkedNodes = [];
+      this.treeDown(null, item => {
+        if (item.attrs.checked) {
+          // push this
+          checkedNodes.push(item);
+          // break children
+          return true;
+        }
       });
+      return checkedNodes;
     },
     _treeParent(node, cb) {
       if (!node) return;
