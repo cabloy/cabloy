@@ -25,7 +25,7 @@ function _wechatautologin(){
   if(util.user.op.anonymous){
     // auto login
     const url=`${env.site.serverUrl}/#!${location.href}`;
-    window.assign(url);
+    window.location.assign(url);
   }else{
     window.setTimeout(function(){
       $('.navbar-user .user-logout').remove();
