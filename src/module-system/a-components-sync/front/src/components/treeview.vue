@@ -64,16 +64,48 @@ export default {
     treeUp(nodeStart, cb) {
       nodeStart = nodeStart || this.treeviewRoot;
       if (!nodeStart) return;
-      this._treeUp(nodeStart.children, cb);
+      this._treeUp(nodeStart, cb);
     },
     treeDown(nodeStart, cb) {
       nodeStart = nodeStart || this.treeviewRoot;
       if (!nodeStart) return;
-      this._treeDown(nodeStart.children, cb);
+      this._treeDown(nodeStart, cb);
     },
     treeParent(nodeStart, cb) {
       if (!nodeStart) return;
       this._treeParent(nodeStart.parent, cb);
+    },
+    selected() {
+      return this.selectedItem;
+    },
+    checked(options) {
+      return new Promise((resolve, reject) => {
+        if (!this.treeviewRoot) return resolve(null);
+
+        // single
+        if (!this.treeviewRoot.attrs.multiple) {
+          let checkedNode = null;
+          this.treeDown(null, item => {
+            if (item.attrs.checked) {
+              checkedNode = item;
+              return false; // break
+            }
+          });
+          return resolve(checkedNode);
+        }
+
+        // multiple
+        const checkedNodes = [];
+        this.treeDown(null, item => {
+          if (item.attrs.checked) {
+            // push this
+            checkedNodes.push(item);
+            // break children
+            return true;
+          }
+        });
+        return resolve(checkedNodes);
+      });
     },
     _treeParent(node, cb) {
       if (!node) return;
@@ -81,26 +113,30 @@ export default {
       if (res === false) return false; // return immediately
       return this._treeParent(node.parent, cb);
     },
-    _treeUp(nodes, cb) {
+    _treeUp(nodeParent, cb) {
       // children
-      for (const node of nodes) {
+      for (const node of nodeParent.children) {
         // children first
-        let res = this._treeUp(node.children, cb);
+        let res = this._treeUp(node, cb);
         if (res === false) return false; // return immediately
-        // current
-        res = cb(node);
-        if (res === false) return false; // return immediately
+        if (res !== true) {
+          // current
+          res = cb(node, nodeParent);
+          if (res === false) return false; // return immediately
+        }
       }
     },
-    _treeDown(nodes, cb) {
+    _treeDown(nodeParent, cb) {
       // children
-      for (const node of nodes) {
+      for (const node of nodeParent.children) {
         // current first
-        let res = cb(node);
+        let res = cb(node, nodeParent);
         if (res === false) return false; // return immediately
-        // children
-        res = this._treeDown(node.children, cb);
-        if (res === false) return false; // return immediately
+        if (res !== true) {
+          // children
+          res = this._treeDown(node, cb);
+          if (res === false) return false; // return immediately
+        }
       }
     },
     _initRootNode() {
@@ -113,6 +149,10 @@ export default {
       if (_root.attrs.loadChildren === undefined && this.onLoadChildren) _root.attrs.loadChildren = true;
       // children
       if (!_root.children) _root.children = [];
+      // record parent
+      this.treeDown(_root, (item, itemParent) => {
+        item.parent = itemParent;
+      });
       // ready
       this.treeviewRoot = _root;
     },
@@ -165,7 +205,7 @@ export default {
         style: _node.style,
         on: {
           'treeview:loadchildren': (e, done) => {
-            this.onNodeLoadChildren(e, done, node)
+            this._onNodeLoadChildren(e, done, node)
           },
           'click': e => {
             this._onNodeClick(e, node);
@@ -190,37 +230,40 @@ export default {
       }
       return slots;
     },
+    _needLoadChildren(node) {
+      return (this.onLoadChildren && node.attrs.loadChildren && !node._loaded);
+    },
     _loadChildren(node) {
-      if (!this.onLoadChildren || !node || !node.attrs.loadChildren) return;
-      return this.onLoadChildren(node).then(data => {
-        const nodeChildren = node.children;
-        for (const item of data) {
-          // children
-          if (!item.children) item.children = [];
-          // checked
-          if (this.treeviewRoot.attrs.multiple && node.attrs.checked) {
-            item.attrs.checked = true;
+      return new Promise((resolve, reject) => {
+        if (!this._needLoadChildren(node)) return resolve(node.children);
+        this.onLoadChildren(node).then(data => {
+          this.$set(node, '_loaded', true);
+          const nodeChildren = node.children;
+          for (const item of data) {
+            // children
+            if (!item.children) item.children = [];
+            // checked
+            if (this.treeviewRoot.attrs.multiple && node.attrs.checked) {
+              item.attrs.checked = true;
+            }
+            // push
+            nodeChildren.push(item);
           }
-          // push
-          nodeChildren.push(item);
-        }
-        // record parent
-        for (const item of nodeChildren) {
-          item.parent = node;
-        }
+          // record parent
+          for (const item of nodeChildren) {
+            item.parent = node;
+          }
+          // ok
+          return resolve(nodeChildren);
+        }).catch(reject);
       });
     },
-    onNodeLoadChildren(e, done, node) {
-      const fn = this._loadChildren(node);
-      if (!fn) {
+    _onNodeLoadChildren(e, done, node) {
+      this._loadChildren(node).then(() => {
         this.$nextTick(() => {
           return done();
         });
-        return;
-      }
-      fn.then(() => {
-        done();
-      })
+      }).catch(done);
     },
     _onNodeClick(e, node) {
       // target
