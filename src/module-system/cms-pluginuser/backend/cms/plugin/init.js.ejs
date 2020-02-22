@@ -36,7 +36,7 @@ function _renderNavbarUser({ container }) {
         <ul class="dropdown-menu">
           <%- userLinks %>
           <%- userLinks?'<li role="separator" class="divider"></li>':'' %>
-          <li><a href="#" onclick="return onClickUserLogout();"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> <%=text('Log Out')%></a></li>
+          <li class="user-logout"><a href="#" onclick="return onClickUserLogout();"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> <%=text('Log Out')%></a></li>
         </ul>
       </li>
     `;
