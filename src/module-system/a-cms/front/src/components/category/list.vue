@@ -1,7 +1,6 @@
 <template>
-  <eb-tree ref="tree" :options="treeOptions">
-    <span slot-scope="{node}" @click.stop="onNodeClick(node)">{{node.text}}</span>
-  </eb-tree>
+  <eb-treeview :root="root" :onLoadChildren="onLoadChildren" @node:click="onNodeClick">
+  </eb-treeview>
 </template>
 <script>
 export default {
@@ -27,45 +26,50 @@ export default {
   },
   data() {
     return {
-      treeOptions: {
-        fetchData: node => {
-          return this.fetchChildren(node);
-        },
+      root: {
+        attrs: {
+          itemToggle: false,
+          selectable: true,
+        }
       },
     };
   },
   methods: {
-    fetchChildren(node) {
+    onLoadChildren(node) {
       // root
-      if (node.id === 'root' && this.categoryIdStart === undefined) {
+      if (node.root && this.categoryIdStart === undefined) {
         return new Promise(resolve => {
           resolve([{
-            id: '_root',
-            text: 'Root',
+            id: 0,
+            attrs: {
+              label: this.$text('Root'),
+              toggle: true,
+              loadChildren: true,
+            },
             data: {
               id: 0,
               catalog: 1,
             },
-            showChildren: true,
-            isBatch: true,
           }]);
         });
       }
       // children
-      const categoryId = node.id === 'root' ? this.categoryIdStart : node.data.id;
+      const categoryId = node.root ? this.categoryIdStart : node.id;
       return this.$api.post('category/children', {
-        atomClass: this.atomClass,
-        language: this.language,
-        categoryId,
-      })
+          atomClass: this.atomClass,
+          language: this.language,
+          categoryId,
+        })
         .then(data => {
           let list = data.list.map(item => {
             const node = {
               id: item.id,
-              text: item.categoryName || '[New Category]',
+              attrs: {
+                label: item.categoryName || `[${this.$text('New Category')}]`,
+                toggle: item.catalog === 1,
+                loadChildren: item.catalog === 1,
+              },
               data: item,
-              showChildren: item.catalog === 1,
-              isBatch: item.catalog === 1,
             };
             return node;
           });
@@ -77,9 +81,10 @@ export default {
         })
         .catch(err => {
           this.$view.toast.show({ text: err.message });
+          throw err;
         });
     },
-    onNodeClick(node) {
+    onNodeClick(e, node) {
       this.$emit('node:click', node);
     },
   },

@@ -119,10 +119,10 @@ export default {
               categoryIdStart: 0,
               leafOnly: true,
             },
-            callback: (code, data) => {
+            callback: (code, node) => {
               if (code === 200) {
-                this.item.categoryId = data.id;
-                this.item.categoryName = data.categoryName;
+                this.item.categoryId = node.id;
+                this.item.categoryName = node.data.categoryName;
                 resolve(true);
               } else if (code === false) {
                 resolve(false);

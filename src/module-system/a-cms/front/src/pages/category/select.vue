@@ -1,15 +1,12 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Select Category')" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="$text('Select Category')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="done" @click.prevent="onDone"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-tree ref="tree" :options="treeOptions">
-      <span slot-scope="{node}" @click.stop="onNodeClick(node)">
-        <f7-icon v-if="node.states._selected" material="check_box"></f7-icon>{{node.text}}
-      </span>
-    </eb-tree>
+    <eb-treeview ref="tree" :root="root" :onLoadChildren="onLoadChildren">
+    </eb-treeview>
   </eb-page>
 </template>
 <script>
@@ -22,11 +19,6 @@ export default {
     const atomClass = utils.parseAtomClass(this.$f7route.query);
     return {
       atomClass,
-      treeOptions: {
-        fetchData: node => {
-          return this.fetchChildren(node);
-        },
-      },
     };
   },
   computed: {
@@ -48,26 +40,44 @@ export default {
     categoryIdDisable() {
       return this.contextParams.categoryIdDisable;
     },
+    root() {
+      return {
+        attrs: {
+          itemToggle: false,
+          selectable: false,
+          multiple: this.multiple,
+          checkbox: true,
+          checkOnLabel: true,
+        }
+      };
+    }
   },
   methods: {
-    fetchChildren(node) {
+    onLoadChildren(node) {
       // root
-      if (node.id === 'root' && this.categoryIdStart === undefined) {
+      if (node.root && this.categoryIdStart === undefined) {
         return new Promise(resolve => {
+          const checkbox = !this.leafOnly;
           resolve([{
-            id: '_root',
-            text: 'Root',
+            id: 0,
+            attrs: {
+              label: this.$text('Root'),
+              toggle: true,
+              loadChildren: true,
+              checkbox,
+              checkOnLabel: checkbox,
+              selectable: checkbox,
+              itemToggle: !checkbox,
+            },
             data: {
               id: 0,
               catalog: 1,
             },
-            showChildren: true,
-            isBatch: true,
           }]);
         });
       }
       // children
-      const categoryId = node.id === 'root' ? this.categoryIdStart : node.data.id;
+      const categoryId = node.root ? this.categoryIdStart : node.id;
       return this.$api.post('category/children', {
           atomClass: this.atomClass,
           language: this.language,
@@ -75,12 +85,19 @@ export default {
         })
         .then(data => {
           let list = data.list.map(item => {
+            const checkbox = !this.leafOnly || item.catalog === 0;
             const node = {
               id: item.id,
-              text: item.categoryName || '[New Category]',
+              attrs: {
+                label: item.categoryName || `[${this.$text('New Category')}]`,
+                toggle: item.catalog === 1,
+                loadChildren: item.catalog === 1,
+                checkbox,
+                checkOnLabel: checkbox,
+                selectable: checkbox,
+                itemToggle: !checkbox,
+              },
               data: item,
-              showChildren: item.catalog === 1,
-              isBatch: item.catalog === 1,
             };
             return node;
           });
@@ -92,40 +109,15 @@ export default {
         })
         .catch(err => {
           this.$view.toast.show({ text: err.message });
+          throw err;
         });
     },
     onDone() {
-      const selected = this.getSelected();
-      if (!selected) return;
+      const checked = this.$refs.tree.checked();
+      if (!checked || checked.length === 0) return;
 
-      this.contextCallback(200, selected);
+      this.contextCallback(200, checked);
       this.$f7router.back();
-    },
-    onNodeClick(node) {
-      if (this.leafOnly && node.data.catalog === 1) return;
-      if (node.states._selected) {
-        this.$set(node.states, '_selected', false);
-      } else {
-        if (this.multiple) {
-          this.$set(node.states, '_selected', true);
-        } else {
-          this.unSelectAll();
-          this.$set(node.states, '_selected', true);
-        }
-      }
-    },
-    unSelectAll() {
-      const selection = this.$refs.tree.find({ state: { _selected: true } }, true);
-      if (selection) {
-        for (const item of selection) {
-          this.$set(item.states, '_selected', false);
-        }
-      }
-    },
-    getSelected() {
-      const selection = this.$refs.tree.find({ state: { _selected: true } }, this.multiple);
-      if (!selection) return null;
-      return this.multiple ? selection.map(node => node.data) : selection[0].data;
     },
   },
 };

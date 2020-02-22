@@ -32,6 +32,7 @@ export default {
   Tags: '标签',
   Title: '标题',
   Url: '链接',
+  Root: '根',
   'Atom Name': '原子名称',
   'Basic Info': '基本信息',
   'Category name': '目录名称',
@@ -49,4 +50,5 @@ export default {
   'Build Language': '构建语言',
   'Build All Languages': '构建所有语言',
   'Selected Tags': '已选标签',
+  'New Category': '新目录',
 };

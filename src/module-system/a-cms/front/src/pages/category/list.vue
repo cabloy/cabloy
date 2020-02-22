@@ -1,16 +1,13 @@
 <template>
   <eb-page>
-    <eb-navbar :title="title" eb-back-link="Back"></eb-navbar>
-    <eb-tree ref="tree" :options="treeOptions">
-      <div class="category-node" slot-scope="{node}">
-        <span @click.stop="onNodeClickEdit(node)">{{node.text}}</span>
-        <span>
-          <span @click.stop="onNodeClickAdd(node)">{{$text('Add')}}</span>
-          <span v-if="node.data.id" @click.stop="onNodeClickMove(node)">{{$text('Move')}}</span>
-          <span v-if="node.data.id" @click.stop="onNodeClickDelete(node)">{{$text('Delete')}}</span>
-        </span>
+    <eb-navbar large largeTransparent :title="title" eb-back-link="Back"></eb-navbar>
+    <eb-treeview ref="tree" :root="root" :onLoadChildren="onLoadChildren" @node:click="onNodeClick">
+      <div class="category-node" slot="root-end" slot-scope="{node}">
+        <f7-link class="category-action" @click.stop="onNodeClickAdd(node)">{{$text('Add')}}</f7-link>
+        <f7-link class="category-action" v-if="node.id>0" @click.stop="onNodeClickMove(node)">{{$text('Move')}}</f7-link>
+        <f7-link class="category-action" v-if="node.id>0" @click.stop="onNodeClickDelete(node)">{{$text('Delete')}}</f7-link>
       </div>
-    </eb-tree>
+    </eb-treeview>
   </eb-page>
 </template>
 <script>
@@ -21,10 +18,11 @@ export default {
     return {
       atomClass,
       language: this.$f7route.query.language,
-      treeOptions: {
-        fetchData: node => {
-          return this.fetchChildren(node);
-        },
+      root: {
+        attrs: {
+          itemToggle: false,
+          selectable: true,
+        }
       },
     };
   },
@@ -44,19 +42,22 @@ export default {
     combineAtomClass(url) {
       return utils.combineAtomClass(this.atomClass, url);
     },
-    fetchChildren(node) {
+    onLoadChildren(node) {
       // root
-      if (node.id === 'root') {
+      if (node.root) {
         return new Promise(resolve => {
           resolve([{
-            id: '_root',
-            text: 'Root',
+            id: 0,
+            attrs: {
+              link: '#',
+              label: this.$text('Root'),
+              toggle: true,
+              loadChildren: true,
+            },
             data: {
               id: 0,
               catalog: 1,
             },
-            showChildren: true,
-            isBatch: true,
           }]);
         });
       }
@@ -64,16 +65,19 @@ export default {
       return this.$api.post('category/children', {
           atomClass: this.atomClass,
           language: this.language,
-          categoryId: node.data.id,
+          categoryId: node.id,
         })
         .then(data => {
           const list = data.list.map(item => {
             const node = {
               id: item.id,
-              text: item.categoryName || '[New Category]',
+              attrs: {
+                link: '#',
+                label: item.categoryName || `[${this.$text('New Category')}]`,
+                toggle: item.catalog === 1,
+                loadChildren: item.catalog === 1,
+              },
               data: item,
-              showChildren: item.catalog === 1,
-              isBatch: item.catalog === 1,
             };
             return node;
           });
@@ -81,11 +85,12 @@ export default {
         })
         .catch(err => {
           this.$view.toast.show({ text: err.message });
+          throw err;
         });
     },
-    onNodeClickEdit(node) {
-      if (!node.data.id) return;
-      const url = this.combineAtomClass(`/a/cms/category/edit?categoryId=${node.data.id}`);
+    onNodeClick(e, node) {
+      if (!node.id) return;
+      const url = this.combineAtomClass(`/a/cms/category/edit?categoryId=${node.id}`);
       this.$view.navigate(url);
     },
     onNodeClickAdd(node) {
@@ -100,14 +105,19 @@ export default {
             categoryIdParent: categoryId,
           },
         }).then(() => {
-          this.reloadChildren(node);
+          this.reloadNode(node, {
+            attrs: {
+              toggle: true,
+              loadChildren: true,
+            },
+          });
         });
       }).catch(() => {});
     },
     onNodeClickDelete(node) {
       return this.$view.dialog.confirm().then(() => {
         return this.$api.post('category/delete', { categoryId: node.data.id }).then(() => {
-          this.reloadChildren(node.parent);
+          this.reloadNode(node.parent);
         }).catch(err => this.$view.dialog.alert(err.message));
       });
     },
@@ -126,10 +136,13 @@ export default {
               if (node.data.categoryIdParent !== categoryIdParent) {
                 this.$api.post('category/move', { categoryId, categoryIdParent })
                   .then(() => {
-                    for (const id of [node.data.categoryIdParent, categoryIdParent]) {
-                      const node = this.findNode(id);
-                      this.reloadChildren(node && node[0]);
-                    }
+                    this.reloadNode(this.findNode(node.data.categoryIdParent));
+                    this.reloadNode(this.findNode(categoryIdParent), {
+                      attrs: {
+                        toggle: true,
+                        loadChildren: true,
+                      }
+                    });
                   });
               }
             }
@@ -137,18 +150,17 @@ export default {
         },
       });
     },
-    reloadChildren(node) {
+    reloadNode(node, nodeNew) {
       if (!node) return;
-      node.isBatch = true;
-      node.collapse().empty().expand();
+      this.$refs.tree.reloadNode(node, nodeNew);
     },
     findNode(id) {
-      return this.$refs.tree.find(node => node.data.id === id);
+      return this.$refs.tree.find(null, node => node.id === id);
     },
     onCategorySave(data) {
       if (data.atomClass.module !== this.atomClass.module) return;
       const node = this.findNode(data.categoryIdParent);
-      this.reloadChildren(node && node[0]);
+      this.reloadNode(node);
     },
   },
 };
@@ -158,7 +170,11 @@ export default {
 .category-node {
   flex-grow: 1;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
+
+  .category-action+.category-action {
+    margin-left: 4px;
+  }
 }
 
 </style>

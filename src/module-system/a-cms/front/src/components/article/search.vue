@@ -59,10 +59,10 @@ export default {
               categoryIdStart: 0,
               leafOnly: true,
             },
-            callback: (code, data) => {
+            callback: (code, node) => {
               if (code === 200) {
-                this.$set(this.data, 'categoryId', data.id);
-                this.$set(this.data, 'categoryName', data.categoryName);
+                this.$set(this.data, 'categoryId', node.id);
+                this.$set(this.data, 'categoryName', node.data.categoryName);
                 resolve(true);
               } else if (code === false) {
                 resolve(false);
