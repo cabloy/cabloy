@@ -6,7 +6,7 @@
         <eb-list-item v-for="item of group.items" :key="item.id" :title="item.titleLocale || item.title" swipeout>
           <eb-context-menu>
             <div slot="right">
-              <div color="orange" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
+              <div color="red" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
             </div>
           </eb-context-menu>
         </eb-list-item>
@@ -22,7 +22,7 @@ export default {
   meta: {
     global: false,
   },
-  mixins: [ ebModules ],
+  mixins: [ebModules],
   props: {
     role: {
       type: Object,

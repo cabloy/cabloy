@@ -4,7 +4,7 @@
       <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.roleName" link="#" :eb-href="`role/edit?roleId=${item.roleId}`" swipeout>
         <eb-context-menu>
           <div slot="right">
-            <div color="orange" :context="item" :onPerform="onRemove">{{$text('Remove')}}</div>
+            <div color="red" :context="item" :onPerform="onRemove">{{$text('Remove')}}</div>
           </div>
         </eb-context-menu>
       </eb-list-item>

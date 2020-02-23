@@ -10,18 +10,25 @@
       <f7-list v-if="meta">
         <f7-list-group>
           <f7-list-item group-title :title="$text('Info')"></f7-list-item>
-          <f7-list-input readonly :label="$text('Login URL')" :value="meta.loginURL"></f7-list-input>
-          <f7-list-input readonly :label="$text('Callback URL')" :value="meta.callbackURL"></f7-list-input>
+          <f7-list-input readonly :label="$text('Login URL')" :value="meta.loginURL">
+            <f7-link ref="loginURL" class="float-right" slot="label">{{$text('Copy')}}</f7-link>
+          </f7-list-input>
+          <f7-list-input readonly :label="$text('Callback URL')" :value="meta.callbackURL">
+            <f7-link ref="callbackURL" class="float-right" slot="label">{{$text('Copy')}}</f7-link>
+          </f7-list-input>
         </f7-list-group>
       </f7-list>
     </f7-block>
   </eb-page>
 </template>
 <script>
+import Vue from 'vue';
+const ebClipboard = Vue.prototype.$meta.module.get('a-components').options.components.ebClipboard;
 export default {
   meta: {
     global: false,
   },
+  mixins: [ebClipboard],
   data() {
     return {
       id: parseInt(this.$f7route.query.id),
@@ -41,6 +48,8 @@ export default {
       }
       // meta
       this.meta = data._meta;
+      // clipboard
+      this.clipboardCreate();
     });
   },
   methods: {
@@ -55,6 +64,18 @@ export default {
         this.$f7router.back();
       });
     },
+    clipboardCreate() {
+      if (!this.meta) return;
+      this.$nextTick(() => {
+        for (let btn of ['loginURL', 'callbackURL']) {
+          this.addClipboardTrigger(this.$refs[btn].$el, {
+            text: trigger => {
+              return this.meta[btn];
+            },
+          });
+        }
+      });
+    }
   },
 };
 

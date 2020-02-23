@@ -53,4 +53,6 @@ export default {
   System: '系统',
   User: '用户',
   Users: '用户',
+  Copy: '复制',
+  Copied: '已复制',
 };

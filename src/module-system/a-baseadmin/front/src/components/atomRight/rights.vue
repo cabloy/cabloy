@@ -12,7 +12,7 @@
           </div>
           <eb-context-menu>
             <div slot="right">
-              <div color="orange" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
+              <div color="red" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
             </div>
           </eb-context-menu>
         </eb-list-item>
@@ -29,7 +29,7 @@ export default {
   meta: {
     global: false,
   },
-  mixins: [ ebModules, ebAtomClasses ],
+  mixins: [ebModules, ebAtomClasses],
   props: {
     role: {
       type: Object,
