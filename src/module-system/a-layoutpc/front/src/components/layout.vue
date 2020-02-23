@@ -74,7 +74,7 @@ export default {
       // size
       this.size.small = small;
       this.size.middle = enoughMiddle ? small * 2 + (enoughLarge ? spacing : 0) : small;
-      this.size.large = enoughLarge ? small * 3 + spacing * 2 : middle;
+      this.size.large = enoughLarge ? small * 3 + spacing * 2 : this.size.middle;
 
       // height
       this.size.top = this.$config.layout.size.top;
