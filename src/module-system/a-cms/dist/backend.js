@@ -646,6 +646,7 @@ class Build {
     data.env('site.path', data._path);
     // load src
     let contentSrc = await fse.readFile(fileName);
+    contentSrc = contentSrc ? contentSrc.toString() : '';
     // load includes of plugins
     const pluginIncludes = await this._loadPluginIncludes({ site, language });
     contentSrc = `${pluginIncludes}\n${contentSrc}`;
@@ -755,6 +756,7 @@ $(document).ready(function() {
           _content = await ejs.renderFile(item, data, this.getOptions());
         } else {
           _content = await fse.readFile(item);
+          _content = _content ? _content.toString() : '';
         }
         // minify
         if (type === 'CSS') {
