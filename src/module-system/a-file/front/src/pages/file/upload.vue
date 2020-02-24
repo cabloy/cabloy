@@ -1,7 +1,7 @@
 <template>
   <eb-page>
     <eb-navbar :title="title" eb-back-link="Back"></eb-navbar>
-    <eb-box ref="box" @size="onSize">
+    <eb-box @size="onSize" toolbar>
       <img ref="image" class="image">
     </eb-box>
     <input ref="file" type="file" :accept="accept" @change="onFileChange" style="display: none;" />
@@ -74,10 +74,7 @@ export default {
         });
       }
     },
-    onSize(size) {
-      this.$$(this.$refs.box.$el).css({
-        height: `${size.height - 40}px`,
-      });
+    onSize() {
       this.createCropper();
     },
     onClickSelect() {
