@@ -3,6 +3,7 @@ import Vue from 'vue';
 const F7Locales = {
   dialog: ['buttonCancel', 'buttonOk', 'passwordPlaceholder', 'preloaderTitle', 'progressTitle', 'usernamePlaceholder'],
   picker: ['toolbarCloseText'],
+  calendar: ['timePickerPlaceholder', 'headerPlaceholder', 'toolbarCloseText'],
 };
 export default {
   render(c) {
