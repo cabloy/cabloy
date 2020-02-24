@@ -534,22 +534,20 @@ export default {
       this.reload(true);
     },
     onItemSelectRemove(event, item) {
-      this.$view.dialog.confirm().then(() => {
-        // remove from selectedAtomIds
-        if (this.selectedAtomIds) {
-          const index = this.selectedAtomIds.findIndex(_item => _item === item.atomId);
-          if (index !== -1) {
-            this.selectedAtomIds.splice(index, 1);
-          }
-        }
-        // remove from list
-        const index = this.items.findIndex(_item => _item.atomId === item.atomId);
-        if (index !== -1) {
-          this.items.splice(index, 1);
-        }
-      });
       // close
-      // this.$meta.util.swipeoutClose(event.target);
+      this.$meta.util.swipeoutClose(event.target);
+      // remove from selectedAtomIds
+      if (this.selectedAtomIds) {
+        const index = this.selectedAtomIds.findIndex(_item => _item === item.atomId);
+        if (index !== -1) {
+          this.selectedAtomIds.splice(index, 1);
+        }
+      }
+      // remove from list
+      const index = this.items.findIndex(_item => _item.atomId === item.atomId);
+      if (index !== -1) {
+        this.items.splice(index, 1);
+      }
     },
     onItemChange(event, item) {
       if (this.params.selectMode === 'single') {
