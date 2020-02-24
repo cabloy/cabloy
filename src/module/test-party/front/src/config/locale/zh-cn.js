@@ -40,6 +40,7 @@ export default {
   Treeview: '树型列表',
   Male: '男',
   Female: '女',
+  Birthday: '生日',
   English: '英语',
   Chinese: '中文',
   Upload: '上传',

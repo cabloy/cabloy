@@ -3643,6 +3643,19 @@ module.exports = app => {
         },
         notEmpty: true,
       },
+      birthday: {
+        type: 'string',
+        ebType: 'datepicker',
+        ebTitle: 'Birthday',
+        ebParams: {
+          dateFormat: 'DD, MM dd, yyyy',
+          header: false,
+          toolbar: false,
+          // backdrop: true,
+        },
+        format: 'date-time',
+        // notEmpty: true,
+      },
       language: {
         type: 'string',
         ebType: 'select',

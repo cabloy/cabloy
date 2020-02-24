@@ -13,6 +13,7 @@
           <eb-list-item-validate dataKey="password"></eb-list-item-validate>
           <eb-list-item-validate dataKey="passwordAgain"></eb-list-item-validate>
           <eb-list-item-validate dataKey="sex"></eb-list-item-validate>
+          <eb-list-item-validate dataKey="birthday"></eb-list-item-validate>
           <eb-list-item-validate dataKey="language"></eb-list-item-validate>
           <eb-list-item-validate dataKey="avatar"></eb-list-item-validate>
           <f7-list-item v-if="item.avatar">
