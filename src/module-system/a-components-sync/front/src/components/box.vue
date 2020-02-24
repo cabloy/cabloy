@@ -1,8 +1,17 @@
 <script>
+const _heightHeader = 56;
+const _heightToolbar = 48;
+const _diffDesktop = 8;
 export default {
   name: 'eb-box',
   render(c) {
     return c('div', { ref: 'box' }, this.$slots.default);
+  },
+  props: {
+    toolbar: {
+      type: Boolean,
+      default: false,
+    }
   },
   data() {
     return {
@@ -25,7 +34,10 @@ export default {
     onSize() {
       const size = this.$view.getSizeExtent();
       if (size) {
-        const height = size.height - (this.$device.desktop ? 64 : 56);
+        let height = size.height - (this.$device.desktop ? _heightHeader + _diffDesktop : _heightHeader);
+        if (this.toolbar) {
+          height -= _heightToolbar;
+        }
         this.$$(this.$refs.box).css({
           position: 'absolute',
           height: `${height}px`,
