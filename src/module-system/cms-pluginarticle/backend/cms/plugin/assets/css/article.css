@@ -116,3 +116,7 @@ article .stat .read-count {
 .comments .comment .article-title {
   text-align: right;
 }
+
+.comments .comment .content {
+  word-break: break-word;
+}
