@@ -18,6 +18,7 @@ export default {
         pushStateOnLoad: false,
         preloadPreviousPage: false,
         'data-zindex': view.zIndex,
+        'data-size': this.size,
       };
       children.push(c('eb-view', {
         ref: view.id,

@@ -24,6 +24,7 @@ export default {
         stackPages: true,
         pushStateOnLoad: false,
         preloadPreviousPage: false,
+        'data-size': this.size,
       };
       tabs.push(c('eb-view', {
         key: id,
