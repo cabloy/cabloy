@@ -14,4 +14,6 @@ export default {
   Done: '完成',
   'Advanced Search': '高级搜索',
   'Try Again': '请重试',
+  'Select time': '选择时间',
+  'Select date': '选择日期',
 };

@@ -132,10 +132,14 @@ export default {
       else if (property.ebType === 'file') {
         return this.renderFile(c, data, pathParent, key, property);
       }
+      // file
+      else if (property.ebType === 'datepicker') {
+        return this.renderDatepicker(c, data, pathParent, key, property);
+      }
       // not support
       return c('div', {
         domProps: {
-          innerText: 'not support',
+          innerText: `not support: ${property.ebType}`,
         },
       });
     },
@@ -245,6 +249,58 @@ export default {
           input: value => {
             this.setValue(data, key, value, property);
           },
+        },
+      });
+    },
+    renderDatepicker(c, data, pathParent, key, property) {
+      const title = this.getTitle(key, property);
+      // should format date
+      // // the form is readOnly
+      // if (this.validate.readOnly || property.ebDisabled) {
+      //   return c('f7-list-item', {
+      //     key,
+      //     staticClass: '',
+      //     attrs: {
+      //       title,
+      //       after: data[key] ? data[key].toString() : null,
+      //     },
+      //   });
+      // }
+      const placeholder = property.ebDescription ? this.$text(property.ebDescription) : title;
+      // value
+      let value = this.getValue(data, key, property);
+      if (!value) {
+        value = [];
+      } else if (!Array.isArray(value)) {
+        value = [value];
+      }
+      // input
+      return c('eb-list-input', {
+        key,
+        attrs: {
+          label: title,
+          floatingLabel: true,
+          type: 'datepicker',
+          placeholder,
+          resizable: false,
+          clearButton: !this.validate.readOnly && !property.ebDisabled,
+          dataPath: pathParent + key,
+          value,
+          readonly: true, // always
+          disabled: this.validate.readOnly || property.ebDisabled,
+        },
+        props: {
+          calendarParams: property.ebParams,
+        },
+        on: {
+          'calendar:change': values => {
+            // date or array of date
+            if (property.type === 'array') {
+              this.setValue(data, key, values, property);
+            } else {
+              this.setValue(data, key, values[0], property);
+            }
+          }
         },
       });
     },
