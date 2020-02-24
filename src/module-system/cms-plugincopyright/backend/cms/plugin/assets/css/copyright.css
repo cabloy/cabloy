@@ -3,6 +3,7 @@
   border-left: 3px solid #EB5B55;
   margin: 2em 0 0;
   padding: .5em 1em;
+  word-break: break-word;
 }
 
 .article-copyright ul {
