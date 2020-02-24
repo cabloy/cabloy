@@ -29,7 +29,7 @@ export default {
       // popover
       const attrs = {};
       if (ready !== undefined) attrs.ready = ready;
-      return c('eb-popover', { attrs }, [ list ]);
+      return c('eb-popover', { attrs }, [list]);
     }
 
     // mobile
@@ -66,6 +66,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>
