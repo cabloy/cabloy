@@ -7,8 +7,8 @@
     "fileVersion": 1,
     "dependencies":
     {
-      "a-instance": "2.0.0",
-      "a-base": "2.0.0"
+      "a-instance": "3.0.0",
+      "a-base": "3.0.0"
     }
   },
   "description": "{{description}}",
