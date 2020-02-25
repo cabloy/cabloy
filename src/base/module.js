@@ -1,7 +1,6 @@
 import mparse from 'egg-born-mparse';
 const rLocalJSs = require.context('../../../../src/module/', true, /-sync\/front\/src\/main\.js$/);
 const rGlobalJSs = require.context('../../build/__module/', true, /-sync\/dist\/front\.js$/);
-const rCustomCSSs = require.context('../../../../src/front/assets/css/module/', true, /-sync\/custom\.less$/);
 
 export default function(Vue) {
   const loadingQueue = {
@@ -88,12 +87,7 @@ export default function(Vue) {
       this._import2(moduleInfo, instance => {
         // instance
         this.install(instance, moduleInfo, module => {
-          // custom css
-          import(`../../../../src/front/assets/css/module/${moduleInfo.relativeName}/custom.less`).then(() => {
-            cb(module);
-          }).catch(() => {
-            cb(module);
-          });
+          cb(module);
         });
       });
     },
@@ -158,11 +152,6 @@ export default function(Vue) {
       }
       // install
       this.install(instance, moduleInfo, module => {
-        // custom css, must after instance installed
-        const keyCss = this._requireFindKey(rCustomCSSs, moduleInfo.relativeName);
-        if (keyCss) {
-          this._requireCSS(rCustomCSSs, keyCss);
-        }
         // ok
         cb && cb(module);
       });

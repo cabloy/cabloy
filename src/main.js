@@ -17,6 +17,8 @@ meta.modulesWaiting = {};
 meta.module = require('./base/module.js').default(Vue);
 // util
 meta.util = require('./base/util.js').default(Vue);
+// theme
+meta.theme = require('./base/theme.js').default(Vue);
 // moment
 meta.moment = moment;
 // mixin

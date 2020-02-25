@@ -32,7 +32,7 @@ export default {
     }
     // app
     const app = c('f7-app', {
-      staticClass: this.$meta.config.layout.color ? `color-theme-${this.$meta.config.layout.color}` : '',
+      staticClass: '',
       props: { params: this.$root.$options.framework7 },
     }, children);
     return c('div', [app]);
@@ -114,6 +114,9 @@ export default {
         this.resize();
       });
     },
+    _setTheme(cb) {
+      this.$meta.theme.set(null).then(cb);
+    },
     _authEcho(cb) {
       // get auth first
       this.$api.post('/a/base/auth/echo').then(data => {
@@ -132,10 +135,13 @@ export default {
         this._checkActivation();
         // set locale resource
         this._setLocaleResource();
-        // error
-        this.error = null;
-        // ok
-        return cb && cb();
+        // theme
+        this._setTheme(() => {
+          // error
+          this.error = null;
+          // ok
+          return cb && cb();
+        });
       }).catch(err => {
         // err
         this.error = err.message;

@@ -3,8 +3,10 @@ export default function(Vue) {
   // config
   const config = {
     modules: {},
+    api: {
+      baseURL: '',
+    },
     layout: {
-      color: '',
       breakpoint: 800,
       items: {
         mobile: {
@@ -22,8 +24,15 @@ export default function(Vue) {
         module: 'a-markdownstyle',
       },
     },
-    api: {
-      baseURL: '',
+    theme: {
+      type: 'builtIn',
+      builtIn: {
+        layout: 'light',
+        bars: 'empty',
+        color: 'blue',
+        customColor: null,
+      },
+      thirdParty: null,
     },
   };
 
