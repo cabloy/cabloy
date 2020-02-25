@@ -80,6 +80,21 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async themeLoad() {
+      const res = await this.service.user.themeLoad({
+        user: this.ctx.user.agent,
+      });
+      this.ctx.success(res);
+    }
+
+    async themeSave() {
+      await this.service.user.themeSave({
+        theme: this.ctx.request.body.theme,
+        user: this.ctx.user.agent,
+      });
+      this.ctx.success();
+    }
+
   }
   return UserController;
 };

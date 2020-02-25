@@ -89,6 +89,16 @@ module.exports = app => {
       return _functions[this.ctx.locale];
     }
 
+    async themeLoad({ user }) {
+      const name = `user-theme:${user.id}`;
+      return await this.ctx.meta.status.get(name);
+    }
+
+    async themeSave({ theme, user }) {
+      const name = `user-theme:${user.id}`;
+      await this.ctx.meta.status.set(name, theme);
+    }
+
     _prepareFunctions() {
       const functions = {};
       for (const relativeName in this.ctx.app.meta.modules) {

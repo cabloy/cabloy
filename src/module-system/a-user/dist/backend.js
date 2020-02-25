@@ -192,8 +192,10 @@ module.exports = app => {
     { method: 'post', path: 'user/functions', controller: user },
     { method: 'post', path: 'user/authentications', controller: user },
     { method: 'post', path: 'user/authenticationDisable', controller: user },
+    { method: 'post', path: 'user/themeLoad', controller: user },
+    { method: 'post', path: 'user/themeSave', controller: user },
+    // public
     { method: 'post', path: 'public/profile', controller: public2 },
-
   ];
   return routes;
 };
@@ -283,6 +285,21 @@ module.exports = app => {
     functions() {
       const res = this.service.user.functions();
       this.ctx.success(res);
+    }
+
+    async themeLoad() {
+      const res = await this.service.user.themeLoad({
+        user: this.ctx.user.agent,
+      });
+      this.ctx.success(res);
+    }
+
+    async themeSave() {
+      await this.service.user.themeSave({
+        theme: this.ctx.request.body.theme,
+        user: this.ctx.user.agent,
+      });
+      this.ctx.success();
     }
 
   }
@@ -418,6 +435,16 @@ module.exports = app => {
         _functions[this.ctx.locale] = this._prepareFunctions();
       }
       return _functions[this.ctx.locale];
+    }
+
+    async themeLoad({ user }) {
+      const name = `user-theme:${user.id}`;
+      return await this.ctx.meta.status.get(name);
+    }
+
+    async themeSave({ theme, user }) {
+      const name = `user-theme:${user.id}`;
+      await this.ctx.meta.status.set(name, theme);
     }
 
     _prepareFunctions() {

@@ -18,8 +18,10 @@ module.exports = app => {
     { method: 'post', path: 'user/functions', controller: user },
     { method: 'post', path: 'user/authentications', controller: user },
     { method: 'post', path: 'user/authenticationDisable', controller: user },
+    { method: 'post', path: 'user/themeLoad', controller: user },
+    { method: 'post', path: 'user/themeSave', controller: user },
+    // public
     { method: 'post', path: 'public/profile', controller: public2 },
-
   ];
   return routes;
 };
