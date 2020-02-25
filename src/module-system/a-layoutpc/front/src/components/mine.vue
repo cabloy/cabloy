@@ -12,6 +12,7 @@
         <eb-list-item popover-close :title="$text('Mine')" link="#" :eb-href="$config.layout.header.mine.url">
           <f7-icon slot="media" :material="$config.layout.header.mine.iconMaterial"></f7-icon>
         </eb-list-item>
+        <eb-list-item popover-close link="#" :onPerform="onTheme">{{$text('Theme')}}</eb-list-item>
         <eb-list-item v-if="!loggedIn" popover-close link="#" :onPerform="onSignin">{{$text('Sign in')}}</eb-list-item>
         <eb-list-item v-if="loggedIn" popover-close link="#" :onPerform="onLogout">{{$text('Log Out')}}</eb-list-item>
       </f7-list>
@@ -67,6 +68,9 @@ export default {
         });
       });
     },
+    onTheme() {
+      this.$meta.vueLayout.navigate('/a/user/theme');
+    }
   },
 };
 
