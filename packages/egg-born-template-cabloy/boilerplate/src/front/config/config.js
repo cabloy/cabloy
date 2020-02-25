@@ -3,7 +3,6 @@ export default{
     baseURL: '',
   },
   layout: {
-    color: '',
   },
   modules: {
   },
