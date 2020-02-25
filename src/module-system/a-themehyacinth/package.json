@@ -1,0 +1,28 @@
+{
+  "name": "egg-born-module-a-themehyacinth",
+  "version": "1.0.0",
+  "title": "Hyacinth",
+  "eggBornModule": {
+    "fileVersion": 0,
+    "theme": true,
+    "dependencies": {
+      "a-instance": "3.0.0",
+      "a-base": "3.0.0"
+    }
+  },
+  "description": "cabloy theme of hyacinth",
+  "keywords": [
+    "Cabloy Module"
+  ],
+  "scripts": {
+    "build:front": "node build/front/build.js",
+    "build:backend": "node build/backend/build.js",
+    "lint": "eslint front backend"
+  },
+  "author": "zhennann",
+  "devDependencies": {},
+  "dependencies": {
+    "require3": "^1.0.3",
+    "extend2": "^1.0.0"
+  }
+}
