@@ -36,10 +36,11 @@ module.exports = ctx => {
     }
 
     async getLoginInfo() {
+      const config = await this._getConfig();
       const info = {
         user: ctx.user,
         instance: this._getInstance(),
-        config: this._getConfig(),
+        config,
       };
       // login info event
       await ctx.meta.event.invoke({
@@ -55,7 +56,7 @@ module.exports = ctx => {
       };
     }
 
-    _getConfig() {
+    async _getConfig() {
       // config
       const config = {
         modules: {
@@ -64,6 +65,13 @@ module.exports = ctx => {
           },
         },
       };
+      // theme
+      const themeStatus = `user-theme:${ctx.user.agent.id}`;
+      const theme = await ctx.meta.status.module('a-user').get(themeStatus);
+      if (theme) {
+        config.theme = theme;
+      }
+      // ok
       return config;
     }
 

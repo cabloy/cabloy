@@ -2179,6 +2179,7 @@ const fse = require3('fs-extra');
 const constants = __webpack_require__(2);
 
 const _modulesLocales = {};
+const _themesLocales = {};
 const _locales = {};
 const _atomClasses = {};
 const _actions = {};
@@ -2259,6 +2260,13 @@ const Fn = module.exports = ctx => {
         _modulesLocales[ctx.locale] = this._prepareModules();
       }
       return _modulesLocales[ctx.locale];
+    }
+
+    themes() {
+      if (!_themesLocales[ctx.locale]) {
+        _themesLocales[ctx.locale] = this._prepareThemes();
+      }
+      return _themesLocales[ctx.locale];
     }
 
     locales() {
@@ -2377,6 +2385,24 @@ const Fn = module.exports = ctx => {
         };
         _module.titleLocale = ctx.text(_module.title);
         modules[relativeName] = _module;
+      }
+      return modules;
+    }
+
+    _prepareThemes() {
+      const modules = {};
+      for (const relativeName in ctx.app.meta.modules) {
+        const module = ctx.app.meta.modules[relativeName];
+        if (module.package.eggBornModule && module.package.eggBornModule.theme) {
+          const _module = {
+            name: relativeName,
+            title: module.package.title || module.info.name,
+            description: ctx.text(module.package.description),
+            info: module.info,
+          };
+          _module.titleLocale = ctx.text(_module.title);
+          modules[relativeName] = _module;
+        }
       }
       return modules;
     }
@@ -4381,10 +4407,11 @@ module.exports = ctx => {
     }
 
     async getLoginInfo() {
+      const config = await this._getConfig();
       const info = {
         user: ctx.user,
         instance: this._getInstance(),
-        config: this._getConfig(),
+        config,
       };
       // login info event
       await ctx.meta.event.invoke({
@@ -4400,7 +4427,7 @@ module.exports = ctx => {
       };
     }
 
-    _getConfig() {
+    async _getConfig() {
       // config
       const config = {
         modules: {
@@ -4409,6 +4436,13 @@ module.exports = ctx => {
           },
         },
       };
+      // theme
+      const themeStatus = `user-theme:${ctx.user.agent.id}`;
+      const theme = await ctx.meta.status.module('a-user').get(themeStatus);
+      if (theme) {
+        config.theme = theme;
+      }
+      // ok
       return config;
     }
 
@@ -4755,6 +4789,7 @@ module.exports = app => {
     { method: 'post', path: 'base/functions', controller: base },
     { method: 'get', path: 'base/performAction', controller: base, middlewares: 'jsonp', meta: { auth: { enable: false } } },
     { method: 'get', path: 'base/qrcode', controller: base, meta: { auth: { enable: false } } },
+    { method: 'post', path: 'base/themes', controller: base },
     // atom
     { method: 'post', path: 'atom/create', controller: atom, middlewares: 'transaction',
       meta: { right: { type: 'atom', action: 1 } },
@@ -4936,6 +4971,11 @@ module.exports = app => {
 
     functions() {
       const res = this.ctx.service.base.functions();
+      this.ctx.success(res);
+    }
+
+    themes() {
+      const res = this.ctx.service.base.themes();
       this.ctx.success(res);
     }
 
@@ -6441,6 +6481,10 @@ module.exports = app => {
 
     functions() {
       return this.ctx.meta.base.functions();
+    }
+
+    themes() {
+      return this.ctx.meta.base.themes();
     }
 
   }

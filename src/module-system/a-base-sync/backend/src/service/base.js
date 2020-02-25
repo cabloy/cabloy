@@ -34,6 +34,10 @@ module.exports = app => {
       return this.ctx.meta.base.functions();
     }
 
+    themes() {
+      return this.ctx.meta.base.themes();
+    }
+
   }
 
   return Base;

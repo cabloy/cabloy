@@ -45,6 +45,11 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    themes() {
+      const res = this.ctx.service.base.themes();
+      this.ctx.success(res);
+    }
+
     async performAction() {
       // params
       const params = JSON.parse(this.ctx.request.query.params);
