@@ -1,0 +1,18 @@
+:root {
+  .markdown-body {
+    @import './themes/github.less';
+    @import './highlight/atom-one-light.less';
+    @import './katex/katex.less';
+    @import './extra.less';
+
+    word-break: break-word;
+  }
+
+}
+
+:root.theme-dark {
+  .markdown-body {
+    @import './themes/night.less';
+    @import './highlight/atom-one-dark.less';
+  }
+}
