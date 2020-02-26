@@ -188,6 +188,7 @@ module.exports = app => {
           // backdrop: true,
         },
         format: 'date-time',
+        'x-date': true,
         // notEmpty: true,
       },
       language: {

@@ -2651,6 +2651,7 @@ module.exports = app => {
           password: '',
           passwordAgain: '',
           sex: 0,
+          birthday: null,
           language: '',
           avatar: '',
           rememberMe: false,
@@ -3654,6 +3655,7 @@ module.exports = app => {
           // backdrop: true,
         },
         format: 'date-time',
+        'x-date': true,
         // notEmpty: true,
       },
       language: {

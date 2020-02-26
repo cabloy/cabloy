@@ -12,6 +12,7 @@ module.exports = app => {
           password: '',
           passwordAgain: '',
           sex: 0,
+          birthday: null,
           language: '',
           avatar: '',
           rememberMe: false,
