@@ -1,3 +1,29 @@
+:root {
+  ::-webkit-scrollbar {
+    width: 6px;
+    background-color: #F4F7F8;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 0;
+    background-color: #D3E4E7;
+  }
+
+}
+
+:root.theme-dark {
+  ::-webkit-scrollbar {
+    width: 6px;
+    background-color: var(--f7-text-editor-toolbar-bg-color);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 0;
+    background-color: var(--f7-text-editor-border-color);
+  }
+
+}
+
 .page.eb-page-empty {
   background-color: transparent;
 }
@@ -8,30 +34,29 @@
   top: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 13000;
   visibility: hidden;
   opacity: 0;
-  -webkit-transition-duration: 400ms;
   transition-duration: 400ms;
-  z-index: 10500;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-}
 
-.button-backdrop.not-animated {
-  -webkit-transition-duration: 0ms;
-  transition-duration: 0ms;
-}
+  &.not-animated {
+    transition-duration: 0ms;
+  }
 
-.button-backdrop.backdrop-in {
-  visibility: visible;
-  opacity: 1;
-}
+  &.backdrop-in {
+    visibility: visible;
+    opacity: 1;
+  }
 
-.button-backdrop .preloader-inner-left {
-  margin-left: auto !important;
+  .preloader-inner-left {
+    margin-left: auto !important;
+  }
+
 }
 
 .item-panel-invalid {
