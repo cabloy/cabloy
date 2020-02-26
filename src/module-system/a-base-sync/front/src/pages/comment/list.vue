@@ -10,7 +10,7 @@
       <f7-card class="comment" v-for="item of items" :key="item.id">
         <f7-card-header>
           <div class="title">
-            <img class="avatar avatar32" :src="$meta.util.combineImageUrl(item.avatar,32)">
+            <img class="avatar avatar32" :src="getItemMedia(item)">
             <div class="name">{{item.userName}}</div>
             <div class="date">#{{item.sorting}} · {{$meta.util.formatDateTimeRelative(item.createdAt)}}</div>
           </div>
@@ -147,6 +147,10 @@ export default {
     onPerformSort() {
       this.order = this.order === 'desc' ? 'asc' : 'desc';
       this.reload();
+    },
+    getItemMedia(item) {
+      const media = item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
+      return this.$meta.util.combineImageUrl(media, 32);
     },
   },
 };

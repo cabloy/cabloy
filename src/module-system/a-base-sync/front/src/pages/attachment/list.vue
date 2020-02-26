@@ -8,7 +8,7 @@
     <f7-list>
       <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.realName" link="#" :context="item" :onPerform="onItemClick" :swipeout="item.userId===user.id">
         <div slot="media">
-          <img class="avatar avatar32" :src="$meta.util.combineImageUrl(item.avatar,32)">
+          <img class="avatar avatar32" :src="getItemMedia(item)">
         </div>
         <div slot="root-start" class="header">
           <div class="userName">
@@ -135,6 +135,10 @@ export default {
     },
     onItemClick(event, item) {
       window.open(item.downloadUrl);
+    },
+    getItemMedia(item) {
+      const media = item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
+      return this.$meta.util.combineImageUrl(media, 32);
     },
   },
 };

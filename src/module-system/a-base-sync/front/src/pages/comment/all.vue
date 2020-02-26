@@ -14,7 +14,7 @@
             </div>
             <div class="header-comment">
               <div class="title">
-                <img class="avatar avatar32" :src="$meta.util.combineImageUrl(item.h_avatar,32)">
+                <img class="avatar avatar32" :src="getItemMedia(item)">
                 <div class="name">{{item.h_userName}}</div>
                 <div class="date">#{{item.h_sorting}} · {{$meta.util.formatDateTimeRelative(item.h_createdAt)}}</div>
               </div>
@@ -194,6 +194,10 @@ export default {
       });
       if (!_action) return;
       return this.$meta.util.performAction({ ctx: this, action: _action, item });
+    },
+    getItemMedia(item) {
+      const media = item.h_avatar || this.$meta.config.modules['a-base'].user.avatar.default;
+      return this.$meta.util.combineImageUrl(media, 32);
     },
   },
 };
