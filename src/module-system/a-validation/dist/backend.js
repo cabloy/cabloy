@@ -82,30 +82,36 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports) {
+
+module.exports = require("require3");
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const services = __webpack_require__(1);
-const models = __webpack_require__(3);
-const config = __webpack_require__(4);
-const locales = __webpack_require__(5);
-const errors = __webpack_require__(7);
-const middlewares = __webpack_require__(8);
-const constants = __webpack_require__(12);
+const services = __webpack_require__(2);
+const models = __webpack_require__(4);
+const config = __webpack_require__(5);
+const locales = __webpack_require__(6);
+const errors = __webpack_require__(8);
+const middlewares = __webpack_require__(9);
+const constants = __webpack_require__(13);
 
 // eslint-disable-next-line
 module.exports = app => {
 
   // meta
-  const meta = __webpack_require__(13)(app);
-  const routes = __webpack_require__(16)(app);
+  const meta = __webpack_require__(14)(app);
+  const routes = __webpack_require__(17)(app);
 
   // ajv
-  app.meta.ajv = __webpack_require__(18)(app);
+  app.meta.ajv = __webpack_require__(19)(app);
 
   return {
     routes,
@@ -123,10 +129,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const validation = __webpack_require__(2);
+const validation = __webpack_require__(3);
 
 module.exports = {
   validation,
@@ -134,7 +140,7 @@ module.exports = {
 
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -152,7 +158,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -160,7 +166,7 @@ module.exports = {
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports) {
 
 // eslint-disable-next-line
@@ -183,28 +189,29 @@ module.exports = appInfo => {
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
-  'zh-cn': __webpack_require__(6),
+  'zh-cn': __webpack_require__(7),
 };
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports) {
 
 module.exports = {
   test: '测试',
-  'Not empty': '不允许为空',
+  Required: '必需的',
+  'Invalid Date': '无效的日期',
   'Not expected value': '不是期望的值',
   'validator not specified': '没有指定validator',
 };
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports) {
 
 // error code should start from 1001
@@ -214,11 +221,11 @@ module.exports = {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const validation = __webpack_require__(9);
-const validate = __webpack_require__(11);
+const validation = __webpack_require__(10);
+const validate = __webpack_require__(12);
 
 module.exports = {
   validation,
@@ -227,11 +234,11 @@ module.exports = {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // validation
-const ValidationFn = __webpack_require__(10);
+const ValidationFn = __webpack_require__(11);
 const VALIDATION = Symbol('CTX#__VALIDATION');
 
 module.exports = (options, app) => {
@@ -252,7 +259,7 @@ module.exports = (options, app) => {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports) {
 
 const Fn = module.exports = ctx => {
@@ -311,7 +318,7 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports) {
 
 // request.body
@@ -341,7 +348,7 @@ module.exports = (options2, app) => {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -349,16 +356,16 @@ module.exports = {
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
   const meta = {};
   if (app.meta.isTest || app.meta.isLocal) {
     // schemas
-    const schemas = __webpack_require__(14)(app);
+    const schemas = __webpack_require__(15)(app);
     // keywords
-    const keywords = __webpack_require__(15)(app);
+    const keywords = __webpack_require__(16)(app);
     // meta
     Object.assign(meta, {
       validation: {
@@ -382,7 +389,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -457,7 +464,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -485,10 +492,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const validation = __webpack_require__(17);
+const validation = __webpack_require__(18);
 
 module.exports = app => {
   const routes = [
@@ -499,7 +506,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -516,10 +523,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(19);
+const require3 = __webpack_require__(0);
 const Ajv = require3('ajv');
 const AjvLocalize = require3('ajv-i18n');
 const AjvKeywords = require3('ajv-keywords');
@@ -594,19 +601,14 @@ function createValidate(schemaRoot) {
 
 
 /***/ }),
-/* 19 */
-/***/ (function(module, exports) {
-
-module.exports = require("require3");
-
-/***/ }),
 /* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const notEmpty = __webpack_require__(21);
-
+const date = __webpack_require__(22);
 module.exports = {
   notEmpty,
+  'x-date': date,
 };
 
 
@@ -620,9 +622,34 @@ module.exports = {
     const fun = function(data) {
       const res = schema ? !!data : !data;
       if (!res) {
-        fun.errors = [{ keyword: 'notEmpty', params: [], message: this.text('Not empty') }];
+        fun.errors = [{ keyword: 'notEmpty', params: [], message: this.text('Required') }];
       }
       return res;
+    };
+    return fun;
+  },
+};
+
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(0);
+const moment = require3('moment');
+
+module.exports = {
+  errors: true,
+  compile(schema) {
+    const fun = function(data, path, rootData, name) {
+      if (!schema) return true;
+      const _date = moment(data);
+      if (!_date.isValid()) {
+        fun.errors = [{ keyword: 'x-date', params: [], message: this.text('Invalid Date') }];
+        return false;
+      }
+      rootData[name] = _date.toDate();
+      return true;
     };
     return fun;
   },

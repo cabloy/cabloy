@@ -4,7 +4,7 @@ module.exports = {
     const fun = function(data) {
       const res = schema ? !!data : !data;
       if (!res) {
-        fun.errors = [{ keyword: 'notEmpty', params: [], message: this.text('Not empty') }];
+        fun.errors = [{ keyword: 'notEmpty', params: [], message: this.text('Required') }];
       }
       return res;
     };
