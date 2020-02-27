@@ -12,6 +12,7 @@ export default {
   Upload: '上传',
   'Loading... ': '加载中... ',
   Done: '完成',
+  Color: '颜色',
   'Advanced Search': '高级搜索',
   'Try Again': '请重试',
   'Select time': '选择时间',
