@@ -128,10 +128,10 @@ export default {
 
 .fileName {
   text-align: center;
-  color: #fff;
+  color: var(--f7-text-editor-button-text-color);
   padding: 20px 20px;
-  background: #555;
-  opacity: 0.4;
+  background: var(--f7-text-editor-toolbar-bg-color);
+  opacity: 0.6;
   user-select: none;
 }
 
