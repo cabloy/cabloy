@@ -28,7 +28,7 @@ export default {
   meta: {
     global: false,
   },
-  mixins: [ ebModules, ebAtomClasses ],
+  mixins: [ebModules, ebAtomClasses],
   props: {
     role: {
       type: Object,
@@ -127,7 +127,7 @@ export default {
     align-items: center;
     margin: 2px 8px -8px 16px;
     font-size: 12px;
-    color: rgba(0, 0, 0, 0.65);
+    color: var(--f7-block-header-text-color);
   }
 }
 
