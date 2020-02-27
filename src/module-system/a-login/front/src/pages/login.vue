@@ -176,12 +176,12 @@ export default {
   height: 1px;
   margin: 30px 0;
   text-align: center;
-  border-top: 1px solid #e2e2e2;
+  border-top: 1px solid var(--f7-text-editor-border-color);
 
   .text {
     position: relative;
     top: -10px;
-    background: #fff;
+    background: var(--f7-page-bg-color);
     display: inline-block;
     padding: 0 8px;
   }
