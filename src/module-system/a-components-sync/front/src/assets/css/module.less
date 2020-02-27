@@ -1,7 +1,7 @@
 html {
   ::-webkit-scrollbar {
     width: 6px;
-    background-color: #FFF;
+    background-color: var(--f7-page-bg-color);
   }
 
   ::-webkit-scrollbar-thumb {
@@ -27,7 +27,6 @@ html.theme-dark {
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    border-radius: 3px;
     background-color: var(--f7-text-editor-button-divider-color);
   }
 
@@ -82,7 +81,7 @@ html.theme-dark {
 }
 
 .avatar {
-  border-radius: 4px;
+  border-radius: 6px;
   border: 1px solid transparent;
 }
 
@@ -103,7 +102,7 @@ html.theme-dark {
 
 .eb-loadmore {
   text-align: center;
-  color: #8e8e93;
+  color: var(--f7-block-footer-text-color);
   margin-top: 10px;
   margin-bottom: 10px;
   position: relative;
@@ -116,7 +115,7 @@ html.theme-dark {
 }
 
 .json-textarea {
-  border: 1px solid #C3D4E7;
+  border: 1px solid var(--f7-text-editor-border-color);
   margin: 10px;
   padding: 6px;
   line-height: 1.5;
@@ -128,7 +127,7 @@ html.theme-dark {
   right: 50px;
   bottom: 10px;
   font-size: 12px;
-  background-color: #ebebeb;
+  background-color: var(--f7-text-editor-border-color);
   display: none;
 }
 
