@@ -620,15 +620,20 @@ module.exports = {
   errors: true,
   compile(schema) {
     const fun = function(data) {
-      const res = schema ? !!data : !data;
-      if (!res) {
+      if (schema && checkIfEmpty(data)) {
         fun.errors = [{ keyword: 'notEmpty', params: [], message: this.text('Required') }];
+        return false;
       }
-      return res;
+      return true;
     };
     return fun;
   },
 };
+
+function checkIfEmpty(value) {
+  // except 0
+  return value === '' || value === undefined || value === null;
+}
 
 
 /***/ }),
@@ -647,14 +652,14 @@ module.exports = {
         const res = [];
         for (const item of data) {
           const _date = transformDate(fun, this, item);
-          if (!_date) return false;
+          if (_date === false) return false;
           res.push(_date);
         }
         rootData[name] = res;
         return true;
       }
       const _date = transformDate(fun, this, data);
-      if (!_date) return false;
+      if (_date === false) return false;
       rootData[name] = _date;
       return true;
     };
@@ -663,10 +668,11 @@ module.exports = {
 };
 
 function transformDate(fun, ctx, data) {
+  if (!data) return null; // support null
   const _date = moment(data);
   if (!_date.isValid()) {
     fun.errors = [{ keyword: 'x-date', params: [], message: ctx.text('Invalid Date') }];
-    return null;
+    return false;
   }
   return _date.toDate();
 }
