@@ -90,8 +90,8 @@ export default {
   display: flex;
   align-items: center;
   height: 100px;
-  background-color: #F4F4F4;
-  color: dimgray;
+  background-color: var(--f7-text-editor-toolbar-bg-color);
+  color: var(--f7-block-header-text-color);
   padding-left: 24px;
 
   div {
