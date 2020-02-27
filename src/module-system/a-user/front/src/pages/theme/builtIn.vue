@@ -40,7 +40,7 @@
       <f7-list>
         <f7-list-input type="colorpicker" :label="$text('HEX Color')" :placeholder="`${$text('e.g.')} #ff0000`" readonly :value="{hex: builtIn.customColor || themeColor}" :color-picker-params="{
           modules: ['initial-current-colors', 'sb-spectrum', 'rgb-sliders', 'hex', 'palette'],
-          openIn: 'auto',
+          openIn: 'page',
           sliderValue: true,
           sliderValueEditable: true,
           sliderLabel: true,
