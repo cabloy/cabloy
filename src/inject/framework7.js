@@ -36,6 +36,7 @@ export default function(Vue, options, cb) {
         },
         colorPicker: {
           routableModals: false,
+          openInPhone: 'sheet',
         },
         picker: {
           routableModals: false,
