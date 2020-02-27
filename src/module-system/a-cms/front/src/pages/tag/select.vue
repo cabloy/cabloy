@@ -18,6 +18,8 @@
           <div class="chip-media">{{item.articleCount}}</div>
           <div class="chip-label">{{item.tagName}}</div>
         </div>
+        <div class="col-33"></div>
+        <div class="col-33"></div>
       </div>
     </f7-block>
   </eb-page>
@@ -108,6 +110,13 @@ export default {
 <style lang="less" scoped>
 .selected-tags {
   min-height: 40px;
+
+  .chip {
+
+    &+.chip {
+      margin-left: 6px;
+    }
+  }
 }
 
 .tags {
@@ -119,9 +128,10 @@ export default {
     .chip-media {
       min-width: 32px;
       width: auto;
-      border: 1px solid orange;
-      color: orange;
+      border: 1px solid var(--f7-block-header-text-color);
+      color: var(--f7-block-header-text-color);
     }
+
   }
 
 }
