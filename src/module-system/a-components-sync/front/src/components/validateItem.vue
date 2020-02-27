@@ -298,7 +298,7 @@ export default {
             if (property.type === 'array') {
               this.setValue(data, key, values, property);
             } else {
-              this.setValue(data, key, values[0], property);
+              this.setValue(data, key, values[0] || null, property);
             }
           }
         },

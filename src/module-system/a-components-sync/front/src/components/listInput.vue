@@ -15,10 +15,13 @@ export default {
     onValidateError(error) {
       const input = this._findText();
       input[0].setCustomValidity(error);
+      input[0].ebCustomError = error;
       this.$f7.input.validate(input);
       this.checkEmptyState();
     },
     onInput(event) {
+      const input = this._findText();
+      input[0].ebCustomError = null;
       this.$emit('input', event.target.value);
       this.clearValidateError();
     },
