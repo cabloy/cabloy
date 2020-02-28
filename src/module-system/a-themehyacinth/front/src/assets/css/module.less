@@ -1,4 +1,7 @@
 :root.eb-theme-a-themehyacinth {
+
+  /* general */
+
   --f7-font-family: monospace;
 
   --f7-theme-color: #2cb2d4;
@@ -7,6 +10,62 @@
   --f7-theme-color-tint: #4ebedb;
 
   --f7-searchbar-link-color: var(--f7-theme-color);
+
+  /* layout pc */
+
+  .eb-layout-container-pc {
+    background: linear-gradient(to right bottom, rgba(109, 147, 136, 0.4) 0%, rgba(109, 147, 136, 0.6) 40%, rgba(187, 209, 187, 0.6) 50%, rgba(187, 209, 187, 0.7) 80%, rgba(187, 209, 187, 0.8) 100%); //#C3D4E7;
+
+    .eb-layout-header {
+      background: #3C4F4C; //#343D46;
+
+      &:after {
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 40%, rgba(0, 0, 0, 0.05) 50%, rgba(0, 0, 0, 0) 80%, rgba(0, 0, 0, 0) 100%);
+      }
+
+      .title {
+        color: #C3D4E7;
+      }
+
+      .tabs {
+        background: #3C4F4C !important; //#343D46 !important;
+      }
+
+      .buttons {
+        border-right: 1px solid rgba(109, 147, 136, 0.3); //#414D5B;
+
+        a {
+          color: #C3D4E7;
+          padding: 6px;
+        }
+
+        a:hover {
+          background: hsla(0, 0%, 100%, .12);
+        }
+      }
+
+      .mine {
+        color: #C3D4E7;
+
+        a {
+          color: #C3D4E7;
+        }
+
+        &:hover {
+          background: hsla(0, 0%, 100%, .12);
+        }
+      }
+    }
+
+  }
+
+  /* markdown style */
+
+  .markdown-body {
+    @import './markdown/themes/night.less';
+    @import './markdown/highlight/atom-one-dark.less';
+  }
+
 }
 
 :root.eb-theme-a-themehyacinth {
