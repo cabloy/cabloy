@@ -3481,6 +3481,7 @@ module.exports = app => {
         type: 'number',
         ebType: 'text',
         ebTitle: 'Person Count',
+        minimum: 1,
         notEmpty: true,
       },
       partyTypeId: {
