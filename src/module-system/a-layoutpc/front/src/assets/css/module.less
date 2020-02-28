@@ -2,7 +2,7 @@
   position: relative;
   height: 100%;
   width: 100%;
-  background-color: #C3D4E7;
+  background: #C3D4E7;
 
   .eb-layout-header {
     position: relative;
@@ -10,7 +10,7 @@
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-    background-color: #343D46;
+    background: #343D46;
     white-space: nowrap;
 
     &:after {
@@ -22,8 +22,6 @@
       bottom: auto;
       height: 10px;
       pointer-events: none;
-      background: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0.3)), color-stop(40%, rgba(0, 0, 0, 0.1)), color-stop(50%, rgba(0, 0, 0, 0.05)), color-stop(80%, rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0)));
-      background: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 40%, rgba(0, 0, 0, 0.05) 50%, rgba(0, 0, 0, 0) 80%, rgba(0, 0, 0, 0) 100%);
       background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 40%, rgba(0, 0, 0, 0.05) 50%, rgba(0, 0, 0, 0) 80%, rgba(0, 0, 0, 0) 100%);
     }
 
@@ -45,7 +43,7 @@
       align-items: center;
       flex-grow: 1;
       height: 100%;
-      background-color: #343D46 !important;
+      background: #343D46 !important;
 
       .tab-link {
         color: #C3D4E7;
@@ -60,7 +58,7 @@
           height: 16px;
           line-height: 16px;
           font-size: 16px;
-          background-color: hsla(0, 0%, 100%, .12);
+          background: hsla(0, 0%, 100%, .12);
           border-radius: 8px;
           visibility: hidden;
           color: #C3D4E7;
@@ -75,7 +73,7 @@
 
       .tab-link:hover {
         color: var(--f7-tabbar-link-active-color, var(--f7-theme-color));
-        background-color: hsla(0, 0%, 100%, .12);
+        background: hsla(0, 0%, 100%, .12);
 
         .close {
           visibility: visible;
@@ -101,7 +99,7 @@
       }
 
       a:hover {
-        background-color: hsla(0, 0%, 100%, .12);
+        background: hsla(0, 0%, 100%, .12);
         border-radius: 4px;
       }
     }
@@ -128,7 +126,7 @@
       }
 
       &:hover {
-        background-color: hsla(0, 0%, 100%, .12);
+        background: hsla(0, 0%, 100%, .12);
         border-radius: 4px;
       }
     }
