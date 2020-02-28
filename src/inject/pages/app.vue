@@ -115,8 +115,8 @@ export default {
         this.resize();
       });
     },
-    _setTheme(cb) {
-      this.$meta.theme.set(null).then(cb);
+    _setTheme(theme, cb) {
+      this.$meta.theme.set(theme).then(cb);
     },
     _authEcho(cb) {
       // get auth first
@@ -137,7 +137,7 @@ export default {
         // set locale resource
         this._setLocaleResource();
         // theme
-        this._setTheme(() => {
+        this._setTheme(data.config.theme, () => {
           // error
           this.error = null;
           // ok

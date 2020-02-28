@@ -126,13 +126,26 @@ export default function(Vue) {
     return styles.trim();
   }
 
+  function __storageLoad() {
+    const theme = window.localStorage['eb-theme'];
+    return theme ? JSON.parse(theme) : null;
+  }
+
+  function __storageSave(theme) {
+    window.localStorage['eb-theme'] = JSON.stringify(theme);
+  }
+
   return {
-    set(theme) {
-      theme = theme || this.default();
+    set(_theme) {
+      const theme = _theme || __storageLoad() || this.default();
       return new Promise(resolve => {
+        function done() {
+          if (_theme) __storageSave(_theme);
+          resolve();
+        }
         if (theme.type === 'thirdParty' && !theme.thirdParty) {
           _setTheme(theme, null); // means just clear theme
-          return resolve();
+          return done();
         }
         // use module first
         if (theme.type === 'thirdParty') {
@@ -140,16 +153,16 @@ export default function(Vue) {
             Vue.prototype.$meta.module.use(theme.thirdParty, module => {
               // third-party
               _setTheme(theme, module);
-              return resolve();
+              return done();
             });
           } catch (err) {
             _setTheme(theme, null); // means just clear theme
-            return resolve();
+            return done();
           }
         } else {
           // built-in
           _setTheme(theme, null);
-          return resolve();
+          return done();
         }
       });
     },
