@@ -1,36 +1,39 @@
-.eb-layout-container-mobile {
-  position: relative;
-  height: 100%;
-  width: 100%;
-
-  .eb-layout-scene-tool,
-  .eb-layout-group {
-    position: absolute;
-    width: 100%;
+:root {
+  .eb-layout-container-mobile {
+    position: relative;
     height: 100%;
-    overflow: hidden;
-    box-sizing: border-box;
-  }
-
-  .eb-layout-scene-tool {
-    z-index: 5000;
-  }
-
-  .eb-layout-group {
-    z-index: 5001;
-    display: none;
-  }
-
-  .view.eb-layout-view {
-    position: absolute;
     width: 100%;
-    height: 100%;
-    overflow: hidden;
-    box-sizing: border-box;
-  }
+    background: var(--f7-page-bg-color);
 
-  .view.eb-layout-view.eb-transition-close {
-    animation: md-page-current-to-next var(--f7-page-transition-duration) forwards;
-  }
+    .eb-layout-scene-tool,
+    .eb-layout-group {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
 
+    .eb-layout-scene-tool {
+      z-index: 5000;
+    }
+
+    .eb-layout-group {
+      z-index: 5001;
+      display: none;
+    }
+
+    .view.eb-layout-view {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    .view.eb-layout-view.eb-transition-close {
+      animation: md-page-current-to-next var(--f7-page-transition-duration) forwards;
+    }
+
+  }
 }
