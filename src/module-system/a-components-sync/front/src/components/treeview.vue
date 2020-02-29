@@ -213,7 +213,20 @@ export default {
       // children
       let children = [];
       // checkbox
-      if (_node.attrs.checkbox) {
+      const radio = !this.treeviewRoot.attrs.multiple;
+      if (_node.attrs.checkbox && radio) {
+        children.push(_h('f7-radio', {
+          slot: 'content-start',
+          attrs: {
+            checked: _node.attrs.checked,
+          },
+          on: {
+            change: e => {
+              this._onNodeChange(node, e.target.checked);
+            },
+          }
+        }));
+      } else if (_node.attrs.checkbox && !radio) {
         children.push(_h('f7-checkbox', {
           slot: 'content-start',
           attrs: {
@@ -311,17 +324,25 @@ export default {
         this.selectedItem = node;
       }
 
+      // checkbox
+      if ($target.is('input') || $target.is('.icon-checkbox') || $target.is('.icon-radio')) {
+        e.preventF7Router = true;
+        return;
+      }
+
       // ignore
       let ignore = false;
-
-      // checkbox
-      if ($target.is('input') || $target.is('.icon-checkbox')) ignore = true;
 
       // checkbox
       const checkbox = node.attrs.checkbox === undefined ? this.treeviewRoot.attrs.checkbox : node.attrs.checkbox;
       const checkOnLabel = node.attrs.checkOnLabel === undefined ? this.treeviewRoot.attrs.checkOnLabel : node.attrs.checkOnLabel;
       if (checkbox && checkOnLabel) {
-        this._onNodeChange(node, !node.attrs.checked);
+        const radio = !this.treeviewRoot.attrs.multiple;
+        if (radio) {
+          if (!node.attrs.checked) this._onNodeChange(node, true);
+        } else {
+          this._onNodeChange(node, !node.attrs.checked);
+        }
         ignore = true;
       }
 
