@@ -3,7 +3,7 @@ module.exports = {
   compile(schema) {
     const fun = function(data) {
       if (schema && checkIfEmpty(data)) {
-        fun.errors = [{ keyword: 'notEmpty', params: [], message: this.text('Required') }];
+        fun.errors = [{ keyword: 'notEmpty', params: [], message: this.text('RequiredField') }];
         return false;
       }
       return true;

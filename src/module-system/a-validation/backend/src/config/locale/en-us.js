@@ -1,0 +1,3 @@
+module.exports = {
+  RequiredField: 'Required',
+};
