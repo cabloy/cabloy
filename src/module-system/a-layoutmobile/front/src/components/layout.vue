@@ -59,7 +59,7 @@ export default {
       } else if (width > this.$config.layout.size.small * 3) {
         this.size = 'large';
       } else {
-        this.size = 'middle';
+        this.size = 'medium';
       }
     },
     start() {
@@ -138,11 +138,11 @@ export default {
         case 'small':
           sizeClass = 'eb-view-size-small';
           break;
-        case 'middle':
-          sizeClass = 'eb-view-size-small eb-view-size-middle';
+        case 'medium':
+          sizeClass = 'eb-view-size-small eb-view-size-medium';
           break;
         case 'large':
-          sizeClass = 'eb-view-size-small eb-view-size-middle eb-view-size-large';
+          sizeClass = 'eb-view-size-small eb-view-size-medium eb-view-size-large';
           break;
       };
       return sizeClass;
