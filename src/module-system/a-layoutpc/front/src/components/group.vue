@@ -5,6 +5,11 @@ export default {
     if (this.views) {
       for (let index = 0; index < this.views.length; index++) {
         const view = this.views[index];
+        const viewSize = this.layout._combineViewSize(view.sizeWill);
+        const viewSizeExtent = {
+          width: this.size[viewSize],
+          height: this.size.main,
+        };
         const _viewAttrs = {
           id: view.id,
           name: view.id,
@@ -14,17 +19,17 @@ export default {
           pushStateOnLoad: false,
           preloadPreviousPage: false,
           'data-index': index,
-          'data-size': view.size,
+          'data-size': viewSize,
         };
         children.push(c('eb-view', {
           ref: view.id,
           id: view.id,
           key: view.id,
-          staticClass: `eb-layout-view eb-layout-view-size-${view.size}`,
+          staticClass: `eb-layout-view ${this.layout._combineViewSizeClass(viewSize)}`,
           attrs: _viewAttrs,
           props: {
-            size: view.size,
-            sizeExtent: view.sizeExtent,
+            size: viewSize,
+            sizeExtent: viewSizeExtent,
           },
           on: {
             'view:ready': view => {
@@ -67,7 +72,8 @@ export default {
         if (!route) throw new Error(`not found route: ${_view.url}`);
         // width
         const meta = route.route.component.meta;
-        const size = (meta && meta.size) || 'small';
+        const sizeWill = (meta && meta.size) || 'small';
+        const size = this.layout._combineViewSize(sizeWill);
         const width = this.size[size];
         this.$$(view.$el).css({
           width: `${width}px`,
@@ -80,11 +86,7 @@ export default {
           if (title) title = this.$text(title);
         }
         // size
-        _view.size = size;
-        _view.sizeExtent = {
-          width: this.size[size],
-          height: this.size.main,
-        };
+        _view.sizeWill = sizeWill;
         // reLayout
         this.reLayout();
         // callback
@@ -100,12 +102,10 @@ export default {
     },
     _resize() {
       for (const view of this.views) {
-        view.sizeExtent = {
-          width: this.size[view.size],
-          height: this.size.main,
-        };
+        const viewSize = this.layout._combineViewSize(view.sizeWill);
+        const viewWidth = this.size[viewSize];
         this.$$(this.$refs[view.id].$el).css({
-          width: `${view.sizeExtent.width}px`,
+          width: `${viewWidth}px`,
         });
       }
     },
@@ -141,7 +141,7 @@ export default {
         // solution: 1
         if (left < 0 && spacingLeft === null) {
           const _viewPrev = this.views[i + 1];
-          spacingLeft = (left + width + spacing < spacing * 2) && _viewPrev.size !== 'small';
+          spacingLeft = (left + width + spacing < spacing * 2) && this.layout._combineViewSize(_viewPrev.sizeWill) !== 'small';
         }
         // fix
         if (left < 0 && left + width > 0) {

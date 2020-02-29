@@ -98,11 +98,7 @@ export default {
             group.views.push({
               id: this.$meta.util.nextId('layoutgroupview'),
               url,
-              size: 'small',
-              sizeExtent: {
-                width: this.layout.size.small,
-                height: this.layout.size.main,
-              },
+              sizeWill: 'small',
               callback: ({ view, title }) => {
                 // title
                 if (title) group.title = title;

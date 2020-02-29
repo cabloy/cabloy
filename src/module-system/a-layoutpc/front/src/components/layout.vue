@@ -36,6 +36,8 @@ export default {
         top: 0,
         main: 0,
         spacing: 0,
+        enoughMiddle: false,
+        enoughLarge: false,
       },
       groups: [],
     };
@@ -75,6 +77,9 @@ export default {
       this.size.small = small;
       this.size.middle = enoughMiddle ? small * 2 + (enoughLarge ? spacing : 0) : small;
       this.size.large = enoughLarge ? small * 3 + spacing * 2 : this.size.middle;
+
+      this.enoughMiddle = enoughMiddle;
+      this.enoughLarge = enoughLarge;
 
       // height
       this.size.top = this.$config.layout.size.top;
@@ -164,6 +169,26 @@ export default {
         if (parseInt($view.data('index')) > 0) backLink = true;
       }
       return backLink;
+    },
+    _combineViewSize(sizeWill) {
+      if (sizeWill === 'large') return this.enoughLarge ? 'large' : (this.enoughMiddle ? 'middle' : 'small');
+      if (sizeWill === 'middle') return this.enoughMiddle ? 'middle' : 'small';
+      return 'small';
+    },
+    _combineViewSizeClass(size) {
+      let sizeClass = '';
+      switch (size) {
+        case 'small':
+          sizeClass = 'eb-view-size-small';
+          break;
+        case 'middle':
+          sizeClass = 'eb-view-size-small eb-view-size-middle';
+          break;
+        case 'large':
+          sizeClass = 'eb-view-size-small eb-view-size-middle eb-view-size-large';
+          break;
+      };
+      return sizeClass;
     },
   },
 };
