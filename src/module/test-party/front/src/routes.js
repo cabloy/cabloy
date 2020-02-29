@@ -20,7 +20,7 @@ export default [
   { path: 'kitchen-sink/settings', component: loadKitchenSink('settings') },
   { path: 'kitchen-sink/view/sizeTarget', component: loadKitchenSink('view/sizeTarget') },
   { path: 'kitchen-sink/view/sizeSmall', component: loadKitchenSink('view/sizeSmall') },
-  { path: 'kitchen-sink/view/sizeMiddle', component: loadKitchenSink('view/sizeMiddle') },
+  { path: 'kitchen-sink/view/sizeMedium', component: loadKitchenSink('view/sizeMedium') },
   { path: 'kitchen-sink/view/sizeLarge', component: loadKitchenSink('view/sizeLarge') },
   { path: 'kitchen-sink/page/openReturn', component: loadKitchenSink('page/openReturn') },
   { path: 'kitchen-sink/page/pageReturn', component: loadKitchenSink('page/pageReturn') },
