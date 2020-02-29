@@ -132,6 +132,21 @@ export default {
       }
       return backLink;
     },
+    _combineViewSizeClass() {
+      let sizeClass = '';
+      switch (this.size) {
+        case 'small':
+          sizeClass = 'eb-view-size-small';
+          break;
+        case 'middle':
+          sizeClass = 'eb-view-size-small eb-view-size-middle';
+          break;
+        case 'large':
+          sizeClass = 'eb-view-size-small eb-view-size-middle eb-view-size-large';
+          break;
+      };
+      return sizeClass;
+    },
   },
 };
 

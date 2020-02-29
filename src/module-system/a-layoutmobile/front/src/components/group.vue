@@ -24,7 +24,7 @@ export default {
         ref: view.id,
         id: view.id,
         key: view.id,
-        staticClass: `eb-layout-view eb-layout-view-size-${this.size}`,
+        staticClass: `eb-layout-view ${this.layout._combineViewSizeClass()}`,
         style: {
           zIndex: view.zIndex + '',
         },

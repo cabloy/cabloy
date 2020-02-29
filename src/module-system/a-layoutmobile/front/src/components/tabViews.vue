@@ -28,7 +28,7 @@ export default {
       };
       tabs.push(c('eb-view', {
         key: id,
-        staticClass: `eb-layout-tab eb-layout-view-size-${this.size}`,
+        staticClass: `eb-layout-tab ${this.layout._combineViewSizeClass()}`,
         attrs: _viewAttrs,
         props: {
           size: this.size,
