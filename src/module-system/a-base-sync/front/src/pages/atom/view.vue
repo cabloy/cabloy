@@ -5,7 +5,7 @@
 import item from '../../components/atom/item.vue';
 export default {
   meta: {
-    size: 'middle',
+    size: 'medium',
   },
   components: {
     item,
@@ -19,6 +19,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>

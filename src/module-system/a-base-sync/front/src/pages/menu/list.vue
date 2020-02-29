@@ -30,7 +30,7 @@ import Vue from 'vue';
 import menus from '../../components/menu/list.vue';
 export default {
   meta: {
-    size: 'middle',
+    size: 'medium',
   },
   components: {
     menus,
