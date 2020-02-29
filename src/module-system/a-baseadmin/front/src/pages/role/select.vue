@@ -34,7 +34,7 @@ export default {
       return {
         attrs: {
           itemToggle: false,
-          selectable: false,
+          selectable: true,
           multiple: this.multiple,
           checkbox: true,
           checkOnLabel: true,
@@ -51,7 +51,6 @@ export default {
             const node = {
               id: item.id,
               attrs: {
-                link: '#',
                 label: item.roleName,
                 toggle: item.catalog === 1,
                 loadChildren: item.catalog === 1,

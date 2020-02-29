@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-baseadmin",
-  "version": "3.0.8",
+  "version": "3.0.9",
   "title": "Basic Admin",
   "eggBornModule": {
     "fileVersion": 1,
