@@ -31,12 +31,12 @@ export default {
         width: 0,
         height: 0,
         small: 0,
-        middle: 0,
+        medium: 0,
         large: 0,
         top: 0,
         main: 0,
         spacing: 0,
-        enoughMiddle: false,
+        enoughMedium: false,
         enoughLarge: false,
       },
       groups: [],
@@ -63,22 +63,22 @@ export default {
 
       // width
       let enoughLarge = true;
-      let enoughMiddle = true;
+      let enoughMedium = true;
       let small = parseInt((width - spacing * 4) / 3);
       if (small < this.$config.layout.size.small) {
         enoughLarge = false;
         small = parseInt((width - spacing * 3) / 2);
         if (small < this.$config.layout.size.small) {
-          enoughMiddle = false;
+          enoughMedium = false;
           small = parseInt(width - spacing * 2);
         }
       }
       // size
       this.size.small = small;
-      this.size.middle = enoughMiddle ? small * 2 + (enoughLarge ? spacing : 0) : small;
-      this.size.large = enoughLarge ? small * 3 + spacing * 2 : this.size.middle;
+      this.size.medium = enoughMedium ? small * 2 + (enoughLarge ? spacing : 0) : small;
+      this.size.large = enoughLarge ? small * 3 + spacing * 2 : this.size.medium;
 
-      this.enoughMiddle = enoughMiddle;
+      this.enoughMedium = enoughMedium;
       this.enoughLarge = enoughLarge;
 
       // height
@@ -171,8 +171,8 @@ export default {
       return backLink;
     },
     _combineViewSize(sizeWill) {
-      if (sizeWill === 'large') return this.enoughLarge ? 'large' : (this.enoughMiddle ? 'middle' : 'small');
-      if (sizeWill === 'middle') return this.enoughMiddle ? 'middle' : 'small';
+      if (sizeWill === 'large') return this.enoughLarge ? 'large' : (this.enoughMedium ? 'medium' : 'small');
+      if (sizeWill === 'medium') return this.enoughMedium ? 'medium' : 'small';
       return 'small';
     },
     _combineViewSizeClass(size) {
@@ -181,11 +181,11 @@ export default {
         case 'small':
           sizeClass = 'eb-view-size-small';
           break;
-        case 'middle':
-          sizeClass = 'eb-view-size-small eb-view-size-middle';
+        case 'medium':
+          sizeClass = 'eb-view-size-small eb-view-size-medium';
           break;
         case 'large':
-          sizeClass = 'eb-view-size-small eb-view-size-middle eb-view-size-large';
+          sizeClass = 'eb-view-size-small eb-view-size-medium eb-view-size-large';
           break;
       };
       return sizeClass;
