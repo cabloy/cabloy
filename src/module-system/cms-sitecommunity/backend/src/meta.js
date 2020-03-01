@@ -17,6 +17,7 @@ module.exports = app => {
             tableNameSearch: 'aCmsArticleViewSearch',
             tableNameTag: 'aCmsArticleViewTag',
             flow: 1,
+            cms: true,
           },
           actions: {
             publish: {
