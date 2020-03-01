@@ -1,5 +1,6 @@
 <script>
 import Header from './header.vue';
+import Sidebar from './sidebar.vue';
 import Groups from './groups.vue';
 
 export default {
@@ -8,6 +9,7 @@ export default {
   },
   components: {
     ebHeader: Header,
+    ebSidebar: Sidebar,
     ebGroups: Groups,
   },
   render(c) {
@@ -15,14 +17,24 @@ export default {
       ref: 'header',
       style: { height: `${this.size.top}px` },
     });
+    const sidebarLeft = c('eb-sidebar', {
+      ref: 'sidebar',
+      props: {
+        side: 'left',
+      },
+      style: {
+        height: `${this.size.height - this.size.top}px`,
+        top: `${ this.size.top}px`,
+      },
+    });
     const groups = c('eb-groups', {
       ref: 'groups',
       style: {
         height: `${this.size.height - this.size.top - this.size.spacing * 2}px`,
-        top: `${this.size.spacing}px`,
+        top: `${ this.size.top + this.size.spacing}px`,
       },
     });
-    return c('div', { staticClass: 'eb-layout-container eb-layout-container-pc' }, [header, groups]);
+    return c('div', { staticClass: 'eb-layout-container eb-layout-container-pc' }, [header, sidebarLeft, groups]);
   },
   data() {
     return {

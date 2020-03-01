@@ -1,0 +1,50 @@
+.eb-layout-container-pc {
+
+  --eb-layout-sidebar-tabs-width: 24px;
+  --f7-panel-bg-color: transparent;
+
+  .eb-layout-sidebar {
+    position: absolute;
+
+    .panel {
+      &.panel-left {
+        left: var(--eb-layout-sidebar-tabs-width);
+      }
+    }
+
+    .eb-layout-sidebar-tabs {
+      position: absolute;
+      height: 100%;
+      width: var(--eb-layout-sidebar-tabs-width);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      background: #343D46;
+
+      a.link {
+        writing-mode: vertical-lr;
+        word-break: keep-all;
+        color: #C3D4E7;
+        padding: 10px 2px;
+
+        &.active,
+        &:hover {
+          background: hsla(0, 0%, 100%, .12);
+          opacity: 0.6;
+        }
+      }
+
+      .eb-layout-sidebar-tabs-left {
+        left: 0;
+      }
+
+    }
+
+    .eb-layout-group.eb-layout-scene-panel {
+      height: 100%;
+    }
+
+  }
+
+}

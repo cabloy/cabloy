@@ -10,6 +10,12 @@ export default {
       mine:
         { name: 'Mine', iconMaterial: 'person', url: '/a/user/user/mine' },
     },
+    panel: {
+      left: [
+        { name: 'menu', url: '/a/base/menu/list' },
+        { name: 'search' },
+      ],
+    },
     size: {
       small: 320,
       top: 60,
