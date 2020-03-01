@@ -237,6 +237,6 @@ function _format(db, value) {
 }
 
 function _safeOp(op) {
-  return op.replace(/\W/g, '');
+  return op.replace(/[\\\.*#%'"`;, ]/g, '');
 }
 
