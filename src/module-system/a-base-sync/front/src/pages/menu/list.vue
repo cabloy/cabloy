@@ -1,6 +1,6 @@
 <template>
   <eb-page :page-content="false" tabs with-subnavbar>
-    <eb-navbar :title="$text('Home')" eb-back-link="Back">
+    <eb-navbar :title="$text('Menu')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="search" eb-target="_self" eb-href="menu/search"></eb-link>
       </f7-nav-right>

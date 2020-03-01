@@ -1,4 +1,5 @@
 export default {
+  Menu: '菜单',
   Scenes: '场景',
   Modules: '模块',
   Stars: '星标',
