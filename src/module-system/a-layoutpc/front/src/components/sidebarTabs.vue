@@ -41,10 +41,7 @@ export default {
     onClickTab(event, panel) {
       event.stopPropagation();
       event.preventDefault();
-
-      const sceneOptions = this.$utils.extend({ side: 'left' }, panel);
-      this.layout.navigate(panel.url, { scene: 'panel', sceneOptions });
-
+      this.sidebar.createView({ ctx: null, panel });
       this.sidebar.options.panelActive = panel.fullName || panel.name;
     }
   }

@@ -68,15 +68,19 @@ export default {
     }
   },
   mounted() {
-    let options = {};
-    const url = '/a/base/menu/list';
-    this.$refs.sidebarGroup.createView({ ctx: null, url }).then(res => {
-      if (res) {
-        if (res.options) options = this.$utils.extend({}, options, res.options);
-        res.view.f7View.router.navigate(url, options);
-      }
-    });
+
   },
+  methods: {
+    createView({ ctx, panel }) {
+      let options = {};
+      return this.$refs.sidebarGroup.createView({ ctx, panel }).then(res => {
+        if (res) {
+          if (res.options) options = this.$utils.extend({}, options, res.options);
+          res.view.f7View.router.navigate(panel.url, options);
+        }
+      });
+    }
+  }
 }
 
 </script>

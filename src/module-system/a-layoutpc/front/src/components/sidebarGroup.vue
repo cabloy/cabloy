@@ -62,11 +62,11 @@ export default {
     }
   },
   methods: {
-    createView({ ctx, url }) {
+    createView({ ctx, panel }) {
       return new Promise(resolve => {
         this.views.push({
           id: this.$meta.util.nextId('layoutgroupview'),
-          url,
+          panel,
           callback: ({ view }) => {
             this.$nextTick(() => {
               resolve({ view, options: null });
@@ -79,8 +79,9 @@ export default {
       // view
       const _view = this.views.find(item => item.id === view.id);
       // route
-      this.$meta.vueLayout._patchRouter.loadRoute(_view.url, route => {
-        if (!route) throw new Error(`not found route: ${_view.url}`);
+      const url = _view.panel.url;
+      this.$meta.vueLayout._patchRouter.loadRoute(url, route => {
+        if (!route) throw new Error(`not found route: ${url}`);
         // width
         const width = this.sidebar.options.panelWidth;
         this.$$(view.$el).css({
