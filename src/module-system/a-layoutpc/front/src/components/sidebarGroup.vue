@@ -24,7 +24,7 @@ export default {
         ref: view.id,
         id: view.id,
         key: view.id,
-        staticClass: `eb-layout-panel-view ${this.layout._combineViewSizeClass(viewSize)}`,
+        staticClass: `eb-layout-panel-view eb-layout-view ${this.layout._combineViewSizeClass(viewSize)}`,
         style: {},
         attrs: _viewAttrs,
         props: {

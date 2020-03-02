@@ -25,7 +25,7 @@ export default {
           ref: view.id,
           id: view.id,
           key: view.id,
-          staticClass: `eb-layout-view ${this.layout._combineViewSizeClass(viewSize)}`,
+          staticClass: `eb-layout-group-view eb-layout-view ${this.layout._combineViewSizeClass(viewSize)}`,
           attrs: _viewAttrs,
           props: {
             size: viewSize,
@@ -114,13 +114,29 @@ export default {
         this._reLayout();
       });
     },
+    _tryExpandViewSmall(_view) {
+      let viewSize;
+      if (_view.sizeWill === 'small' && this.views.length === 1) {
+        viewSize = this.layout._combineViewSize('medium');
+      } else {
+        viewSize = this.layout._combineViewSize(_view.sizeWill);
+      }
+      return this.size[viewSize];
+    },
     _reLayout() {
       // space
       let space = this.size.width;
       let spacing = 0;
       for (let i = this.views.length - 1; i >= 0; i--) {
         const view = this.$refs[this.views[i].id];
-        const space2 = space - this.$$(view.$el).width() - spacing;
+        // width
+        let width = this.$$(view.$el).width();
+        const _widthTry = this._tryExpandViewSmall(this.views[i]);
+        if (_widthTry !== width) {
+          width = _widthTry;
+        }
+        // space
+        const space2 = space - width - spacing;
         if (space2 > 0) {
           space = space2;
           spacing = this.size.spacing;
@@ -136,7 +152,15 @@ export default {
       let spacingLeft = null;
       for (let i = this.views.length - 1; i >= 0; i--) {
         const view = this.$refs[this.views[i].id];
-        const width = this.$$(view.$el).width();
+        // width
+        let width = this.$$(view.$el).width();
+        let widthChange = false;
+        const _widthTry = this._tryExpandViewSmall(this.views[i]);
+        if (_widthTry !== width) {
+          width = _widthTry;
+          widthChange = true;
+        }
+        // space
         left -= width + spacing;
         spacing = this.size.spacing;
 
@@ -160,18 +184,13 @@ export default {
         // left = left >= 0 ? left : left - 20;
 
         // left
-        const _left = this.$$(view.$el).css('left');
-        if (_left === 'auto' || _left === '0px') {
-          this.$$(view.$el).css({
-            left: `${left}px`,
-          });
-        } else {
-          if (parseInt(_left) !== left) {
-            this.$$(view.$el).animate({
-              left,
-            }, { duration: 600 });
-          }
+        const newStyle = {
+          left: `${left}px`,
+        };
+        if (widthChange) {
+          newStyle.width = `${width}px`;
         }
+        this.$$(view.$el).css(newStyle);
       }
     },
     onViewTitle(data) {

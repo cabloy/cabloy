@@ -204,7 +204,9 @@ export default {
       } else {
         const $el = ctx.$$(ctx.$el);
         const $view = $el.parents('.eb-layout-view');
-        if (parseInt($view.data('index')) > 0) backLink = true;
+        if ($view.is('.eb-layout-group-view') && parseInt($view.data('index')) > 0) {
+          backLink = true;
+        }
       }
       return backLink;
     },
