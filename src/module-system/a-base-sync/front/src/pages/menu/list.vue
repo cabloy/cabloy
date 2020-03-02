@@ -1,6 +1,6 @@
 <template>
   <eb-page :page-content="false" tabs with-subnavbar>
-    <eb-navbar :title="$text('Menu')" eb-back-link="Back">
+    <eb-navbar :title="pageTitle" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="search" eb-target="_self" eb-href="menu/search"></eb-link>
       </f7-nav-right>
@@ -37,11 +37,21 @@ export default {
   },
   data() {
     return {
+      pageTitle: null,
       tabIdScenes: Vue.prototype.$meta.util.nextId('tab'),
       tabIdModules: Vue.prototype.$meta.util.nextId('tab'),
       tabIdStars: Vue.prototype.$meta.util.nextId('tab'),
     };
   },
+  mounted() {
+    const $el = this.$$(this.$el);
+    const $view = $el.parents('.eb-layout-view');
+    if ($view.is('.eb-layout-panel-view')) {
+      this.pageTitle = this.$text('Menu');
+    } else {
+      this.pageTitle = this.$text('Home');
+    }
+  }
 };
 
 </script>
