@@ -61,7 +61,7 @@ export default {
       if (id) return this.groups.find(group => group.id === id);
       return this.groups.find(group => group.url === url);
     },
-    createView({ ctx, groupId, groupForceNew, url, scene, sceneName }) {
+    createView({ ctx, groupId, groupForceNew, url, scene, sceneOptions }) {
       return new Promise(resolve => {
         // group
         let group = groupForceNew ? null : this.getGroup({ id: groupId, url });
@@ -71,10 +71,10 @@ export default {
             url,
             title: '',
             scene,
-            sceneName,
+            sceneOptions,
             views: [],
           };
-          if (sceneName === 'home') {
+          if (sceneOptions && sceneOptions.name === 'home') {
             this.groups.unshift(group);
           } else {
             this.groups.push(group);
@@ -148,7 +148,7 @@ export default {
           this.switchGroup(groupIdNext);
         }
         // check if openHome
-        if (this.groups.length === 0 && groupCurrent.sceneName !== 'home') {
+        if (this.groups.length === 0 && (!groupCurrent.sceneOptions || groupCurrent.sceneOptions.name !== 'home')) {
           this.layout.openHome();
         }
       });

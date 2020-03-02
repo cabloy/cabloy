@@ -119,9 +119,9 @@ export default {
       });
     },
     openHome() {
-      const button = this.$config.layout.header.buttons.find(button => button.sceneName === 'home');
+      const button = this.$config.layout.header.buttons.find(button => button.sceneOptions && button.sceneOptions.name === 'home');
       if (button) {
-        this.navigate(button.url, { _scene: button.scene, _sceneName: button.sceneName });
+        this.navigate(button.url, { scene: button.scene, sceneOptions: button.sceneOptions });
       }
     },
     navigate(url, options) {
@@ -155,7 +155,7 @@ export default {
           groupId = $viewEl.parents('.eb-layout-group').data('groupId');
         }
         // get view
-        this.$refs.groups.createView({ ctx, groupId, groupForceNew, url, scene: options._scene, sceneName: options._sceneName }).then(res => {
+        this.$refs.groups.createView({ ctx, groupId, groupForceNew, url, scene: options.scene, sceneOptions: options.sceneOptions }).then(res => {
           if (res) {
             if (res.options) options = this.$utils.extend({}, options, res.options);
             res.view.f7View.router.navigate(url, options);

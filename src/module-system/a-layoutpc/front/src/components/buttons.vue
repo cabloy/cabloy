@@ -22,7 +22,7 @@ export default {
         props,
         nativeOn: {
           click: event => {
-            this.layout.navigate(button.url, { _scene: button.scene, _sceneName: button.sceneName });
+            this.layout.navigate(button.url, { scene: button.scene, sceneOptions: button.sceneOptions });
             event.stopPropagation();
             event.preventDefault();
           },
