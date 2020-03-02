@@ -35,14 +35,13 @@ export default {
   props: {
     side: {
       type: String,
+    },
+    options: {
+      type: Object,
     }
   },
   data() {
-    return {
-      effect: 'cover',
-      views: [],
-      panelWidth: 320,
-    }
+    return {}
   },
   computed: {
     layout() {
@@ -50,7 +49,7 @@ export default {
     },
     viewSize() {
       let size;
-      const width = this.panelWidth;
+      const width = this.options.panelWidth;
       if (width <= this.$config.layout.size.small * 2) {
         size = 'small';
       } else if (width > this.$config.layout.size.small * 3) {

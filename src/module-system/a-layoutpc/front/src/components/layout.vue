@@ -21,6 +21,7 @@ export default {
       ref: 'sidebar',
       props: {
         side: 'left',
+        options: this.sidebar.left,
       },
       style: {
         height: `${this.size.height - this.size.top}px`,
@@ -52,6 +53,17 @@ export default {
         enoughLarge: false,
       },
       groups: [],
+      sidebar: {
+        left: {
+          opened: true, //false,
+          cover: false, //true,
+          panels: [],
+          views: [],
+          panelWidth: 280,
+          tabsWidth: 24,
+          panelActive: '',
+        },
+      }
     };
   },
   mounted() {
@@ -67,11 +79,23 @@ export default {
       this.$refs.groups.resize();
     },
     setSize() {
-      const width = this.size.width = this.$$(this.$el).width();
-      const height = this.size.height = this.$$(this.$el).height();
+      const layoutWidth = this.$$(this.$el).width();
+      const layoutHeight = this.$$(this.$el).height();
 
       // spacing
       const spacing = this.size.spacing = this.$config.layout.size.spacing;
+
+      let width = layoutWidth;
+      let height = layoutHeight;
+
+      // sidebar
+      width -= this.sidebar.left.tabsWidth;
+      if (this.sidebar.left.opened && !this.sidebar.left.cover) {
+        width -= this.sidebar.left.panelWidth;
+      }
+
+      this.size.width = width;
+      this.size.height = height;
 
       // width
       let enoughLarge = true;
@@ -98,6 +122,8 @@ export default {
       this.size.main = height - this.size.top - spacing * 2;
     },
     start() {
+      // init
+      this.sidebar.left.panels = this.$config.layout.sidebar.left.panels;
       // size
       this.setSize();
       // loginOnStart
@@ -201,6 +227,13 @@ export default {
           break;
       };
       return sizeClass;
+    },
+    _sidebarLeftWidth() {
+      let width = this.sidebar.left.tabsWidth;
+      if (this.sidebar.left.opened && !this.sidebar.left.cover) {
+        width += this.sidebar.left.panelWidth;
+      }
+      return width;
     },
   },
 };

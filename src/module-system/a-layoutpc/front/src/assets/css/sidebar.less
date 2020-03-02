@@ -5,6 +5,7 @@
 
   .eb-layout-sidebar {
     position: absolute;
+    z-index: 5900;
 
     .panel {
       &.panel-left {
@@ -35,8 +36,12 @@
         }
       }
 
-      .eb-layout-sidebar-tabs-left {
-        left: 0;
+      .eb-layout-sidebar-tabs {
+
+        .panel-left & {
+          left: 0;
+        }
+
       }
 
     }

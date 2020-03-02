@@ -128,8 +128,10 @@ export default {
           break;
         }
       }
+      // sidebar left
+      const sidebarLeft = this.layout._sidebarLeftWidth();
       // left
-      let left = parseInt(this.size.width - space / 2);
+      let left = parseInt(this.size.width - space / 2 + sidebarLeft);
       spacing = 0;
       let spacingLeft = null;
       for (let i = this.views.length - 1; i >= 0; i--) {

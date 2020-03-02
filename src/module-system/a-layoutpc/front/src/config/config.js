@@ -10,11 +10,13 @@ export default {
       mine:
         { name: 'Mine', iconMaterial: 'person', url: '/a/user/user/mine' },
     },
-    panel: {
-      left: [
-        { name: 'menu', url: '/a/base/menu/list' },
-        { name: 'search' },
-      ],
+    sidebar: {
+      left: {
+        panels: [
+          { name: 'menu', url: '/a/base/menu/list' },
+          { name: 'search', url: '/a/base/atom/searchQuick' },
+        ],
+      },
     },
     size: {
       small: 320,

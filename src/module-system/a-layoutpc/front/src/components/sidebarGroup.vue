@@ -39,7 +39,7 @@ export default {
       }));
     }
     return c('div', {
-      staticClass: `eb-layout-group eb-layout-scene eb-layout-scene-panel eb-layout-scene-panel-${this.side}`,
+      staticClass: 'eb-layout-group eb-layout-scene eb-layout-scene-panel',
     }, children);
   },
   props: {
@@ -58,7 +58,7 @@ export default {
       return this.$parent.$parent;
     },
     views() {
-      return this.sidebar.views;
+      return this.sidebar.options.views;
     }
   },
   methods: {
@@ -73,8 +73,6 @@ export default {
             });
           },
         });
-        //  this.$$(this.$el).show();
-
       });
     },
     onViewReady(view) {
@@ -83,6 +81,11 @@ export default {
       // route
       this.$meta.vueLayout._patchRouter.loadRoute(_view.url, route => {
         if (!route) throw new Error(`not found route: ${_view.url}`);
+        // width
+        const width = this.sidebar.options.panelWidth;
+        this.$$(view.$el).css({
+          width: `${width}px`,
+        });
         // callback
         _view.callback({ view });
         delete _view.callback;
