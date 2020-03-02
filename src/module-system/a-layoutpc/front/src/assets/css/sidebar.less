@@ -8,13 +8,30 @@
     z-index: 5900;
 
     .panel {
+      height: 100%;
+      display: block !important;
+
       &.panel-left {
         left: var(--eb-layout-sidebar-tabs-width);
+
+        .panel-resize-handler {
+          background: linear-gradient(to right, rgba(0, 0, 0, 0.04) 0%, rgba(0, 0, 0, 0.03) 50%, rgba(0, 0, 0, 0.02) 100%);
+        }
       }
+
+      &.panel-left.panel-show {
+        transform: translate3d(0, 0, 0) !important;
+      }
+
+      &.panel-left.panel-hide {
+        transform: translate3d(-100%, 0, 0) !important;
+      }
+
     }
 
     .eb-layout-sidebar-tabs {
       position: absolute;
+      z-index: 6001;
       height: 100%;
       width: var(--eb-layout-sidebar-tabs-width);
       display: flex;
@@ -43,6 +60,11 @@
 
       .eb-layout-panel-view {
         position: absolute;
+        display: none;
+
+        &.active {
+          display: block;
+        }
       }
     }
 

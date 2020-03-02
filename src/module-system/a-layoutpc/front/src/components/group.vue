@@ -5,7 +5,7 @@ export default {
     if (this.views) {
       for (let index = 0; index < this.views.length; index++) {
         const view = this.views[index];
-        const viewSize = this.layout._combineViewSize(view.sizeWill);
+        const viewSize = this._combineViewSize(view.sizeWill);
         const viewSizeExtent = {
           width: this.size[viewSize],
           height: this.size.main,
@@ -30,6 +30,9 @@ export default {
           props: {
             size: viewSize,
             sizeExtent: viewSizeExtent,
+          },
+          style: {
+            width: `${viewSizeExtent.width}px`,
           },
           on: {
             'view:ready': view => {
@@ -73,11 +76,6 @@ export default {
         // width
         const meta = route.route.component.meta;
         const sizeWill = (meta && meta.size) || 'small';
-        const size = this.layout._combineViewSize(sizeWill);
-        const width = this.size[size];
-        this.$$(view.$el).css({
-          width: `${width}px`,
-        });
         // title
         let title;
         const viewIndex = parseInt(this.$$(view.$el).data('index'));
@@ -96,32 +94,19 @@ export default {
     },
     resize() {
       this.$nextTick(() => {
-        this._resize();
         this._reLayout();
       });
-    },
-    _resize() {
-      for (const view of this.views) {
-        const viewSize = this.layout._combineViewSize(view.sizeWill);
-        const viewWidth = this.size[viewSize];
-        this.$$(this.$refs[view.id].$el).css({
-          width: `${viewWidth}px`,
-        });
-      }
     },
     reLayout() {
       this.$nextTick(() => {
         this._reLayout();
       });
     },
-    _tryExpandViewSmall(_view) {
-      let viewSize;
-      if (_view.sizeWill === 'small' && this.views.length === 1) {
-        viewSize = this.layout._combineViewSize('medium');
-      } else {
-        viewSize = this.layout._combineViewSize(_view.sizeWill);
-      }
-      return this.size[viewSize];
+    _combineViewSize(sizeWill) {
+      if (sizeWill === 'small' && this.views.length === 1) sizeWill = 'medium';
+      if (sizeWill === 'large') return this.layout.enoughLarge ? 'large' : (this.layout.enoughMedium ? 'medium' : 'small');
+      if (sizeWill === 'medium') return this.layout.enoughMedium ? 'medium' : 'small';
+      return 'small';
     },
     _reLayout() {
       // space
@@ -130,11 +115,8 @@ export default {
       for (let i = this.views.length - 1; i >= 0; i--) {
         const view = this.$refs[this.views[i].id];
         // width
-        let width = this.$$(view.$el).width();
-        const _widthTry = this._tryExpandViewSmall(this.views[i]);
-        if (_widthTry !== width) {
-          width = _widthTry;
-        }
+        const viewSize = this._combineViewSize(this.views[i].sizeWill);
+        const width = this.size[viewSize];
         // space
         const space2 = space - width - spacing;
         if (space2 > 0) {
@@ -153,13 +135,8 @@ export default {
       for (let i = this.views.length - 1; i >= 0; i--) {
         const view = this.$refs[this.views[i].id];
         // width
-        let width = this.$$(view.$el).width();
-        let widthChange = false;
-        const _widthTry = this._tryExpandViewSmall(this.views[i]);
-        if (_widthTry !== width) {
-          width = _widthTry;
-          widthChange = true;
-        }
+        const viewSize = this._combineViewSize(this.views[i].sizeWill);
+        const width = this.size[viewSize];
         // space
         left -= width + spacing;
         spacing = this.size.spacing;
@@ -167,7 +144,7 @@ export default {
         // solution: 1
         if (left < 0 && spacingLeft === null) {
           const _viewPrev = this.views[i + 1];
-          spacingLeft = (left + width + spacing < spacing * 2) && this.layout._combineViewSize(_viewPrev.sizeWill) !== 'small';
+          spacingLeft = (left + width + spacing < spacing * 2) && this._combineViewSize(_viewPrev.sizeWill) !== 'small';
         }
         // fix
         if (left < 0 && left + width > 0) {
@@ -187,9 +164,6 @@ export default {
         const newStyle = {
           left: `${left}px`,
         };
-        if (widthChange) {
-          newStyle.width = `${width}px`;
-        }
         this.$$(view.$el).css(newStyle);
       }
     },

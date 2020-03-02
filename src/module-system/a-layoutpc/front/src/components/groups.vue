@@ -154,19 +154,22 @@ export default {
       });
     },
     closeView(view) {
-      const viewIndex = parseInt(this.$$(view.$el).data('index'));
-      const groupId = this.$$(view.$el).parents('.eb-layout-group').data('groupId');
-      const group = this.getGroup({ id: groupId });
-      for (let i = group.views.length - 1; i >= 0; i--) {
-        if (i >= viewIndex) {
-          group.views.splice(i, 1);
+      const $view = this.$$(view.$el);
+      $view.addClass('eb-transition-close').animationEnd(() => {
+        const viewIndex = parseInt($view.data('index'));
+        const groupId = $view.parents('.eb-layout-group').data('groupId');
+        const group = this.getGroup({ id: groupId });
+        for (let i = group.views.length - 1; i >= 0; i--) {
+          if (i >= viewIndex) {
+            group.views.splice(i, 1);
+          }
         }
-      }
-      if (group.views.length === 0) {
-        this.removeGroup(groupId);
-      } else {
-        this.reLayout(groupId);
-      }
+        if (group.views.length === 0) {
+          this.removeGroup(groupId);
+        } else {
+          this.reLayout(groupId);
+        }
+      });
     },
     onViewTitle(groupId, data) {
       const viewIndex = parseInt(this.$$(data.page.$view.$el).data('index'));

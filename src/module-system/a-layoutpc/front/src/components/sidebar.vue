@@ -19,14 +19,16 @@ export default {
         side: this.side,
       }
     });
+    const viewSizeExtent = this.viewSizeExtent;
     const panel = c('f7-panel', {
+      staticClass: (this.options.opened || !this.options.cover) ? 'panel-show' : 'panel-hide',
+      style: {
+        width: `${viewSizeExtent.width}px`,
+      },
       props: {
         side: this.side,
-        //opened: true,
-        //backdrop: true,
         visibleBreakpoint: 0,
-        //collapsedBreakpoint: 0,
-        effect: 'cover', //'reveal',
+        effect: 'cover',
         resizable: true,
       },
     }, [group]);
@@ -62,7 +64,7 @@ export default {
     viewSizeExtent() {
       const layout = this.layout;
       return {
-        width: this.panelWidth,
+        width: this.options.panelWidth,
         height: layout.size.height - layout.size.top,
       };
     }
@@ -72,13 +74,43 @@ export default {
   },
   methods: {
     createView({ ctx, panel }) {
+      // panelName
+      const panelName = this._panelFullName(panel);
+      // find by name
+      const view = this.options.views.find(item => this._panelFullName(item.panel) === panelName);
+      if (view) {
+        const $view = this.$$(`#${view.id}`);
+        // navigate
+        if (panel.url && panel.url !== view.panel.url) {
+          $view[0].f7View.router.navigate(panel.url, { reloadAll: true });
+        }
+        // active
+        this._activeView(panel, $view);
+        return;
+      }
+      // new view
       let options = {};
       return this.$refs.sidebarGroup.createView({ ctx, panel }).then(res => {
         if (res) {
           if (res.options) options = this.$utils.extend({}, options, res.options);
           res.view.f7View.router.navigate(panel.url, options);
+          // active
+          this._activeView(panel, this.$$(res.view.$el));
         }
       });
+    },
+    _activeView(panel, $view) {
+      // view active
+      this.$$(`.eb-layout-sidebar-${this.side} .eb-layout-panel-view`).removeClass('active');
+      $view.addClass('active');
+      // tab active
+      this.options.panelActive = this._panelFullName(panel);
+      // opened
+      this.options.opened = true;
+    },
+    _panelFullName(panel) {
+      if (panel.module) return `${panel.module}:${panel.name}`;
+      return panel.name;
     }
   }
 }

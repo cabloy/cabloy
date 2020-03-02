@@ -55,8 +55,8 @@ export default {
       groups: [],
       sidebar: {
         left: {
-          opened: true, //false,
-          cover: false, //true,
+          opened: false,
+          cover: true,
           panels: [],
           views: [],
           panelWidth: 280,
@@ -209,11 +209,6 @@ export default {
         }
       }
       return backLink;
-    },
-    _combineViewSize(sizeWill) {
-      if (sizeWill === 'large') return this.enoughLarge ? 'large' : (this.enoughMedium ? 'medium' : 'small');
-      if (sizeWill === 'medium') return this.enoughMedium ? 'medium' : 'small';
-      return 'small';
     },
     _combineViewSizeClass(size) {
       let sizeClass = '';
