@@ -4,8 +4,27 @@ export default {
     const children = [];
     children.push(c('f7-link', {
       props: {
-        iconMaterial: 'save',
-      }
+        iconMaterial: 'delete',
+      },
+      on: {
+        click: this.onClickClose,
+      },
+    }));
+    children.push(c('f7-link', {
+      props: {
+        iconMaterial: 'remove',
+      },
+      on: {
+        click: this.onClickHide,
+      },
+    }));
+    children.push(c('f7-link', {
+      props: {
+        iconMaterial: this.sidebar.options.cover ? 'chevron_left' : 'expand_more',
+      },
+      on: {
+        click: this.onClickCover,
+      },
     }));
     const toolbar = c('f7-toolbar', {
       ref: 'toolbar',
@@ -31,11 +50,19 @@ export default {
     },
   },
   methods: {
-    onClickTab(event, panel) {
-      event.stopPropagation();
-      event.preventDefault();
-      this.sidebar.createView({ ctx: null, panel });
-    }
+    onClickCover() {
+      this.sidebar.options.cover = !this.sidebar.options.cover;
+      this.layout.onResize();
+    },
+    onClickHide() {
+      this.sidebar.setOpened(!this.sidebar.options.opened);
+    },
+    onClickClose() {
+      const view = this.sidebar._getTopView();
+      if (view) {
+        this.sidebar.closeView(this.$$('#' + view.id)[0].f7View);
+      }
+    },
   }
 }
 

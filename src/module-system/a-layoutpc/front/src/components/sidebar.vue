@@ -134,7 +134,7 @@ export default {
         // remove
         this.options.views.splice(viewIndex, 1);
         if (this.options.views.length === 0) {
-          this.options.opened = false;
+          this.setOpened(false);
         }
         // remove panel
         const panelIndex = this.options.panels.findIndex(item => this._panelFullName(item) === this._panelFullName(_view.panel));
@@ -144,10 +144,17 @@ export default {
         }
       });
     },
+    setOpened(opened) {
+      if (this.options.opened === opened) return;
+      this.options.opened = opened;
+      if (!this.options.cover) {
+        this.layout.onResize();
+      }
+    },
     _getTopView(skip) {
       if (this.options.views.length === 0) return null;
       return this.options.views.reduce((prev, current) => {
-        if (current.id === skip.id) return prev;
+        if (skip && current.id === skip.id) return prev;
         if (!prev) return current;
         return prev.zIndex > current.zIndex ? prev : current;
       }, null);
@@ -156,7 +163,7 @@ export default {
       // tab active
       this.options.panelActive = this._panelFullName(panel);
       // opened
-      this.options.opened = true;
+      this.setOpened(true);
     },
     _panelFullName(panel) {
       if (panel.module) return `${panel.module}:${panel.name}`;

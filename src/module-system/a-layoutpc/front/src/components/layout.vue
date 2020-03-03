@@ -257,7 +257,7 @@ export default {
       const $clickedSidebarEl = $clickedEl.closest('.eb-layout-sidebar');
       if ($clickedSidebarEl.length === 0) {
         if (this.sidebar.left.cover && this.sidebar.left.opened) {
-          this.sidebar.left.opened = false;
+          this.$refs.sidebarLeft.setOpened(false);
         }
       }
     },
