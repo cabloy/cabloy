@@ -47,6 +47,9 @@ export default {
         effect: 'cover',
         resizable: true,
       },
+      on: {
+        'panel:resize': this.onPanelResize,
+      },
     }, [toolbar, group]);
     children.push(panel);
     // ok
@@ -151,6 +154,20 @@ export default {
         this.layout.onResize();
       }
     },
+    setPanelWidth(newPanelWidth) {
+      const width = parseInt(newPanelWidth);
+      if (this.options.panelWidth === width) return;
+      this.options.panelWidth = width;
+      if (!this.options.cover) {
+        this._onPanelResizeDelay();
+      }
+    },
+    onPanelResize(panel, newPanelWidth) {
+      this.setPanelWidth(newPanelWidth);
+    },
+    _onPanelResizeDelay: Vue.prototype.$meta.util.debounce(function() {
+      this.layout.onResize();
+    }, 300),
     _getTopView(skip) {
       if (this.options.views.length === 0) return null;
       return this.options.views.reduce((prev, current) => {
