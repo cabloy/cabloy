@@ -105,8 +105,9 @@ export default {
       // view
       const $view = this.$$(view.$el);
       const viewIndex = parseInt($view.data('index'));
+      const _view = this.options.views[viewIndex];
       // top view
-      const _viewTop = this._getTopView(this.options.views[viewIndex]);
+      const _viewTop = this._getTopView(_view);
       if (_viewTop) {
         this._activeView(_viewTop.panel);
       }
@@ -114,6 +115,15 @@ export default {
       $view.addClass('eb-transition-close').animationEnd(() => {
         // remove
         this.options.views.splice(viewIndex, 1);
+        if (this.options.views.length === 0) {
+          this.options.opened = false;
+        }
+        // remove panel
+        const panelIndex = this.options.panels.findIndex(item => this._panelFullName(item) === this._panelFullName(_view.panel));
+        this.options.panels.splice(panelIndex, 1);
+        if (this.options.panels.length === 0) {
+          this.layout.onResize();
+        }
       });
     },
     _getTopView(skip) {

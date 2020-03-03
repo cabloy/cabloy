@@ -13,21 +13,29 @@ export default {
     ebGroups: Groups,
   },
   render(c) {
+    const children = [];
+    // header
     const header = c('eb-header', {
       ref: 'header',
       style: { height: `${this.size.top}px` },
     });
-    const sidebarLeft = c('eb-sidebar', {
-      ref: 'sidebarLeft',
-      props: {
-        side: 'left',
-        options: this.sidebar.left,
-      },
-      style: {
-        height: `${this.size.height - this.size.top}px`,
-        top: `${ this.size.top}px`,
-      },
-    });
+    children.push(header);
+    // sidebar
+    if (this.sidebar.left.panels.length > 0) {
+      const sidebarLeft = c('eb-sidebar', {
+        ref: 'sidebarLeft',
+        props: {
+          side: 'left',
+          options: this.sidebar.left,
+        },
+        style: {
+          height: `${this.size.height - this.size.top}px`,
+          top: `${ this.size.top}px`,
+        },
+      });
+      children.push(sidebarLeft);
+    }
+    // groups
     const groups = c('eb-groups', {
       ref: 'groups',
       style: {
@@ -35,7 +43,9 @@ export default {
         top: `${ this.size.top + this.size.spacing}px`,
       },
     });
-    return c('div', { staticClass: 'eb-layout-container eb-layout-container-pc' }, [header, sidebarLeft, groups]);
+    children.push(groups);
+    // ok
+    return c('div', { staticClass: 'eb-layout-container eb-layout-container-pc' }, children);
   },
   data() {
     return {
@@ -66,8 +76,14 @@ export default {
       }
     };
   },
+  beforeDestroy() {
+    // click
+    this.$f7.off('click', this._handleClicks);
+  },
   mounted() {
     this.$f7ready(() => {
+      // click
+      this.$f7.on('click', this._handleClicks);
       // start
       this.start();
     });
@@ -89,10 +105,7 @@ export default {
       let height = layoutHeight;
 
       // sidebar
-      width -= this.sidebar.left.tabsWidth;
-      if (this.sidebar.left.opened && !this.sidebar.left.cover) {
-        width -= this.sidebar.left.panelWidth;
-      }
+      width -= this._sidebarLeftWidth();
 
       this.size.width = width;
       this.size.height = height;
@@ -229,11 +242,23 @@ export default {
       return sizeClass;
     },
     _sidebarLeftWidth() {
-      let width = this.sidebar.left.tabsWidth;
+      let width = 0;
+      if (this.sidebar.left.panels.length > 0) {
+        width += this.sidebar.left.tabsWidth;
+      }
       if (this.sidebar.left.opened && !this.sidebar.left.cover) {
         width += this.sidebar.left.panelWidth;
       }
       return width;
+    },
+    _handleClicks(event) {
+      const $clickedEl = this.$$(event.target);
+      const $clickedSidebarEl = $clickedEl.closest('.eb-layout-sidebar');
+      if ($clickedSidebarEl.length === 0) {
+        if (this.sidebar.left.cover && this.sidebar.left.opened) {
+          this.sidebar.left.opened = false;
+        }
+      }
     },
   },
 };

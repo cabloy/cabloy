@@ -16,7 +16,9 @@ export default {
         },
       }));
     }
-    return c('div', { staticClass: 'eb-layout-sidebar-tabs' }, tabs);
+    return c('div', {
+      staticClass: `eb-layout-sidebar-tabs`,
+    }, tabs);
   },
   props: {
     side: {
