@@ -6,7 +6,7 @@ export default {
   name: 'eb-navbar',
   extends: f7Navbar,
   props: {
-    ebBackLink: [ Boolean, String ],
+    ebBackLink: [Boolean, String],
   },
   data() {
     return {
@@ -21,6 +21,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>
