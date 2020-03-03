@@ -1,23 +1,39 @@
 <script>
 import SidebarTabs from './sidebarTabs.vue';
 import SidebarGroup from './SidebarGroup.vue';
+import SidebarToolbar from './SidebarToolbar.vue';
 
 export default {
   components: {
     ebSidebarTabs: SidebarTabs,
     ebSidebarGroup: SidebarGroup,
+    ebSidebarToolbar: SidebarToolbar,
   },
   render(c) {
+    const children = [];
+    // tabs
     const tabs = c('eb-sidebar-tabs', {
       props: {
         side: this.side,
       },
     });
+    children.push(tabs);
+    // toolbar
+    const toolbar = c('eb-sidebar-toolbar', {
+      props: {
+        side: this.side,
+      },
+    });
+    // panel
     const group = c('eb-sidebar-group', {
       ref: 'sidebarGroup',
       props: {
         side: this.side,
-      }
+      },
+      style: {
+        height: `${this.layout.size.height - this.layout.size.top - this.options.toolbarHeight}px`,
+        top: `${this.options.toolbarHeight}px`,
+      },
     });
     const viewSizeExtent = this.viewSizeExtent;
     const panel = c('f7-panel', {
@@ -31,8 +47,10 @@ export default {
         effect: 'cover',
         resizable: true,
       },
-    }, [group]);
-    return c('div', { staticClass: `eb-layout-sidebar eb-layout-sidebar-${this.side}` }, [tabs, panel]);
+    }, [toolbar, group]);
+    children.push(panel);
+    // ok
+    return c('div', { staticClass: `eb-layout-sidebar eb-layout-sidebar-${this.side}` }, children);
   },
   props: {
     side: {
@@ -65,7 +83,7 @@ export default {
       const layout = this.layout;
       return {
         width: this.options.panelWidth,
-        height: layout.size.height - layout.size.top,
+        height: layout.size.height - layout.size.top - this.options.toolbarHeight,
       };
     }
   },

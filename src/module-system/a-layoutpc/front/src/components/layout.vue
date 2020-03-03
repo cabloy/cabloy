@@ -71,6 +71,7 @@ export default {
           views: [],
           panelWidth: 280,
           tabsWidth: 24,
+          toolbarHeight: 24,
           panelActive: '',
         },
       }

@@ -1,7 +1,8 @@
 .eb-layout-container-pc {
 
   --eb-layout-sidebar-tabs-width: 24px;
-  --f7-panel-bg-color: transparent;
+  --eb-layout-sidebar-toolbar-height: 24px;
+  --f7-panel-bg-color: var(--f7-page-bg-color);
 
   .eb-layout-sidebar {
     position: absolute;
@@ -26,6 +27,20 @@
 
       &.panel-left.panel-hide {
         transform: translate3d(-100%, 0, 0) !important;
+      }
+
+      .panel-toolbar.toolbar {
+        position: absolute;
+        height: var(--eb-layout-sidebar-toolbar-height);
+        background: hsla(0, 0%, 100%, .12);
+
+        .toolbar-inner {
+          justify-content: flex-end;
+
+          a.link {
+            color: #C3D4E7;
+          }
+        }
       }
 
     }
@@ -57,11 +72,12 @@
     }
 
     .eb-layout-group.eb-layout-scene-panel {
-      height: 100%;
+      position: absolute;
 
       .eb-layout-panel-view {
         position: absolute;
       }
+
     }
 
   }
