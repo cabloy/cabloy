@@ -17,6 +17,10 @@
         <f7-col class="demo-col" width="100" medium="50" large="25">4</f7-col>
       </f7-row>
     </f7-block>
+    <f7-block-title>Layout</f7-block-title>
+    <f7-block>
+      <eb-link eb-href="kitchen-sink/view/sizeSmall">Open on the right</eb-link>
+    </f7-block>
   </eb-page>
 </template>
 <script>
