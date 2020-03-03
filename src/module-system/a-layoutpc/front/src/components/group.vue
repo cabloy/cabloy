@@ -5,7 +5,7 @@ export default {
     if (this.views) {
       for (let index = 0; index < this.views.length; index++) {
         const view = this.views[index];
-        const viewSize = this._combineViewSize(view.sizeWill);
+        const viewSize = this._combineViewSize(view.sizeWill, index);
         const viewSizeExtent = {
           width: this.size[viewSize],
           height: this.size.main,
@@ -102,8 +102,14 @@ export default {
         this._reLayout();
       });
     },
-    _combineViewSize(sizeWill) {
-      if (sizeWill === 'small' && this.views.length === 1) sizeWill = 'medium';
+    _combineViewSize(sizeWill, indexCurrent) {
+      // try
+      if (sizeWill === 'small' && this.views.length === 1) {
+        sizeWill = 'medium';
+      } else if (sizeWill === 'large' && this.views.length > indexCurrent + 1 && this.views[indexCurrent + 1].sizeWill === 'small') {
+        sizeWill = 'medium';
+      }
+      // adjust
       if (sizeWill === 'large') return this.layout.enoughLarge ? 'large' : (this.layout.enoughMedium ? 'medium' : 'small');
       if (sizeWill === 'medium') return this.layout.enoughMedium ? 'medium' : 'small';
       return 'small';
@@ -115,7 +121,7 @@ export default {
       for (let i = this.views.length - 1; i >= 0; i--) {
         const view = this.$refs[this.views[i].id];
         // width
-        const viewSize = this._combineViewSize(this.views[i].sizeWill);
+        const viewSize = this._combineViewSize(this.views[i].sizeWill, i);
         const width = this.size[viewSize];
         // space
         const space2 = space - width - spacing;
@@ -135,7 +141,7 @@ export default {
       for (let i = this.views.length - 1; i >= 0; i--) {
         const view = this.$refs[this.views[i].id];
         // width
-        const viewSize = this._combineViewSize(this.views[i].sizeWill);
+        const viewSize = this._combineViewSize(this.views[i].sizeWill, i);
         const width = this.size[viewSize];
         // space
         left -= width + spacing;
@@ -144,7 +150,7 @@ export default {
         // solution: 1
         if (left < 0 && spacingLeft === null) {
           const _viewPrev = this.views[i + 1];
-          spacingLeft = (left + width + spacing < spacing * 2) && this._combineViewSize(_viewPrev.sizeWill) !== 'small';
+          spacingLeft = (left + width + spacing < spacing * 2) && this._combineViewSize(_viewPrev.sizeWill, i + 1) !== 'small';
         }
         // fix
         if (left < 0 && left + width > 0) {

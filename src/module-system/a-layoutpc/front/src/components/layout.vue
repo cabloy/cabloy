@@ -18,7 +18,7 @@ export default {
       style: { height: `${this.size.top}px` },
     });
     const sidebarLeft = c('eb-sidebar', {
-      ref: 'sidebar',
+      ref: 'sidebarLeft',
       props: {
         side: 'left',
         options: this.sidebar.left,
@@ -195,6 +195,9 @@ export default {
       this.navigate(this.$config.layout.login);
     },
     closeView(view) {
+      if (view.$el.parents('.eb-layout-sidebar-left').length > 0) {
+        return this.$refs.sidebarLeft.closeView(view);
+      }
       this.$refs.groups.closeView(view);
     },
     backLink(ctx) {

@@ -21,7 +21,7 @@ export default {
     });
     const viewSizeExtent = this.viewSizeExtent;
     const panel = c('f7-panel', {
-      staticClass: (this.options.opened || !this.options.cover) ? 'panel-show' : 'panel-hide',
+      staticClass: this.options.opened ? 'panel-show' : 'panel-hide',
       style: {
         width: `${viewSizeExtent.width}px`,
       },
@@ -84,8 +84,10 @@ export default {
         if (panel.url && panel.url !== view.panel.url) {
           $view[0].f7View.router.navigate(panel.url, { reloadAll: true });
         }
+        // change zIndex
+        view.zIndex = ++this.$refs.sidebarGroup.viewIndex;
         // active
-        this._activeView(panel, $view);
+        this._activeView(panel);
         return;
       }
       // new view
@@ -95,14 +97,34 @@ export default {
           if (res.options) options = this.$utils.extend({}, options, res.options);
           res.view.f7View.router.navigate(panel.url, options);
           // active
-          this._activeView(panel, this.$$(res.view.$el));
+          this._activeView(panel);
         }
       });
     },
-    _activeView(panel, $view) {
-      // view active
-      this.$$(`.eb-layout-sidebar-${this.side} .eb-layout-panel-view`).removeClass('active');
-      $view.addClass('active');
+    closeView(view) {
+      // view
+      const $view = this.$$(view.$el);
+      const viewIndex = parseInt($view.data('index'));
+      // top view
+      const _viewTop = this._getTopView(this.options.views[viewIndex]);
+      if (_viewTop) {
+        this._activeView(_viewTop.panel);
+      }
+      // close
+      $view.addClass('eb-transition-close').animationEnd(() => {
+        // remove
+        this.options.views.splice(viewIndex, 1);
+      });
+    },
+    _getTopView(skip) {
+      if (this.options.views.length === 0) return null;
+      return this.options.views.reduce((prev, current) => {
+        if (current.id === skip.id) return prev;
+        if (!prev) return current;
+        return prev.zIndex > current.zIndex ? prev : current;
+      }, null);
+    },
+    _activeView(panel) {
       // tab active
       this.options.panelActive = this._panelFullName(panel);
       // opened

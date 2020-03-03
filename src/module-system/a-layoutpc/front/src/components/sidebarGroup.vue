@@ -25,7 +25,10 @@ export default {
         id: view.id,
         key: view.id,
         staticClass: `eb-layout-panel-view eb-layout-view ${this.layout._combineViewSizeClass(viewSize)}`,
-        style: {},
+        style: {
+          zIndex: view.zIndex + '',
+          width: `${viewSizeExtent.width}px`,
+        },
         attrs: _viewAttrs,
         props: {
           size: viewSize,
@@ -48,7 +51,9 @@ export default {
     }
   },
   data() {
-    return {}
+    return {
+      viewIndex: 1,
+    }
   },
   computed: {
     layout() {
@@ -64,9 +69,11 @@ export default {
   methods: {
     createView({ ctx, panel }) {
       return new Promise(resolve => {
+        const _viewIndex = ++this.viewIndex;
         this.views.push({
           id: this.$meta.util.nextId('layoutgroupview'),
           panel,
+          zIndex: _viewIndex,
           callback: ({ view }) => {
             this.$nextTick(() => {
               resolve({ view, options: null });
@@ -82,11 +89,6 @@ export default {
       const url = _view.panel.url;
       this.$meta.vueLayout._patchRouter.loadRoute(url, route => {
         if (!route) throw new Error(`not found route: ${url}`);
-        // width
-        const width = this.sidebar.options.panelWidth;
-        this.$$(view.$el).css({
-          width: `${width}px`,
-        });
         // callback
         _view.callback({ view });
         delete _view.callback;
