@@ -87,11 +87,9 @@ export default {
       const url = _view.panel.url;
       this.$meta.vueLayout._patchRouter.loadRoute(url, route => {
         if (!route) throw new Error(`not found route: ${url}`);
-        // callback
-        if (_view.callback) {
-          _view.callback({ view });
-          delete _view.callback;
-        }
+        // callback must not be null
+        _view.callback({ view });
+        delete _view.callback;
       });
     },
     getView(viewId) {

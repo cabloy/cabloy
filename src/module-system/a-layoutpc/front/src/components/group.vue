@@ -87,11 +87,9 @@ export default {
         _view.sizeWill = sizeWill;
         // reLayout
         this.reLayout();
-        // callback
-        if (_view.callback) {
-          _view.callback({ view, title });
-          delete _view.callback;
-        }
+        // callback must not be null
+        _view.callback({ view, title });
+        delete _view.callback;
       });
     },
     resize() {
