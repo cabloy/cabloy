@@ -20,7 +20,7 @@ export default {
   meta: {
     global: false,
   },
-  mixins: [ ebModules ],
+  mixins: [ebModules],
   props: {
     role: {
       type: Object,
@@ -57,9 +57,6 @@ export default {
       }
       return groups;
     },
-    apiPath() {
-      return this.menu === 1 ? 'menuRight' : 'functionRight';
-    },
   },
   mounted() {
     this.$meta.eventHub.$on('functionRight:add', this.onFunctionRightAdd);
@@ -83,14 +80,22 @@ export default {
     onLoadMore({ index }) {
       if (this.role) {
         // role
-        return this.$api.post(`${this.apiPath}/spreads`, { roleId: this.role.id, menu: this.menu, page: { index } })
+        return this.$api.post('functionRight/spreads', {
+            roleId: this.role.id,
+            menu: this.menu,
+            page: { index }
+          })
           .then(data => {
             this.items = this.items.concat(data.list);
             return data;
           });
       }
       // user
-      return this.$api.post('user/functionRights', { userId: this.user.id, menu: this.menu, page: { index } })
+      return this.$api.post('user/functionRights', {
+          userId: this.user.id,
+          menu: this.menu,
+          page: { index }
+        })
         .then(data => {
           this.items = this.items.concat(data.list);
           return data;

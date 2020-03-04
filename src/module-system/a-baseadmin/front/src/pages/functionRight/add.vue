@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar large largeTransparent :title="$text(menu===1?'New Menu Right':'New Function Right')" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="pageTitle" eb-back-link="Back">
       <f7-nav-right>
         <eb-link ref="buttonSubmit" iconMaterial="save" :onPerform="onSave"></eb-link>
       </f7-nav-right>
@@ -9,7 +9,7 @@
       <f7-list-item smartSelect :title="$text('Module')" :smartSelectParams="{openIn: 'page', closeOnSelect: true}">
         <eb-select name="module" v-model="module" :options="modules"></eb-select>
       </f7-list-item>
-      <f7-list-item v-if="!!module" :title="$text(menu===1?'Menu':'Function')" link="#" @click="onSelectFunction">
+      <f7-list-item v-if="!!module" :title="buttonTitle" link="#" @click="onSelectFunction">
         <div slot="after">{{func && func.title}}</div>
       </f7-list-item>
     </eb-list>
@@ -19,6 +19,7 @@
 import Vue from 'vue';
 const ebModules = Vue.prototype.$meta.module.get('a-base').options.components.ebModules;
 const ebFunctions = Vue.prototype.$meta.module.get('a-base').options.components.ebFunctions;
+const _types = ['Function', 'Menu', 'Panel', 'Widget'];
 export default {
   mixins: [ebModules, ebFunctions],
   data() {
@@ -46,9 +47,12 @@ export default {
       }
       return options;
     },
-    apiPath() {
-      return this.menu === 1 ? 'menuRight' : 'functionRight';
+    pageTitle() {
+      return this.$text(`New ${_types[this.menu]} Right`);
     },
+    buttonTitle() {
+      return this.$text(_types[this.menu]);
+    }
   },
   watch: {
     module(value) {
@@ -79,8 +83,9 @@ export default {
     },
     onSave() {
       if (!this.module || !this.func) return;
-      return this.$api.post(`${this.apiPath}/add`, {
+      return this.$api.post('functionRight/add', {
           roleId: this.roleId,
+          menu: this.menu,
           module: this.module,
           name: this.func.name,
         })

@@ -56,9 +56,6 @@ export default {
       }
       return groups;
     },
-    apiPath() {
-      return this.menu === 1 ? 'menuRight' : 'functionRight';
-    },
   },
   mounted() {
     this.$meta.eventHub.$on('functionRight:add', this.onFunctionRightAdd);
@@ -80,7 +77,11 @@ export default {
       done();
     },
     onLoadMore({ index }) {
-      return this.$api.post(`${this.apiPath}/rights`, { roleId: this.role.id, page: { index } })
+      return this.$api.post('functionRight/rights', {
+          roleId: this.role.id,
+          menu: this.menu,
+          page: { index }
+        })
         .then(data => {
           this.items = this.items.concat(data.list);
           return data;
@@ -92,9 +93,9 @@ export default {
     onPerformDelete(event, item) {
       return this.$view.dialog.confirm()
         .then(() => {
-          return this.$api.post(`${this.apiPath}/delete`, { id: item.id })
+          return this.$api.post('functionRight/delete', { id: item.id })
             .then(() => {
-              this.$meta.eventHub.$emit('functionRight:delete', { id: item.id, roleId: this.role.id });
+              this.$meta.eventHub.$emit('functionRight:delete', { id: item.id, roleId: this.role.id, menu: this.menu });
               this.$meta.util.swipeoutDelete(event.target);
               return true;
             });

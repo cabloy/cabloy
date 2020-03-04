@@ -4,8 +4,10 @@
       <f7-subnavbar>
         <f7-toolbar v-if="user" top tabbar>
           <f7-link :tab-link="`#${tabIdAtoms}`" tab-link-active>{{$text('Atoms')}}</f7-link>
-          <f7-link :tab-link="`#${tabIdMenus}`">{{$text('Menus')}}</f7-link>
           <f7-link :tab-link="`#${tabIdFunctions}`">{{$text('Functions')}}</f7-link>
+          <f7-link :tab-link="`#${tabIdMenus}`">{{$text('Menus')}}</f7-link>
+          <f7-link :tab-link="`#${tabIdPanels}`">{{$text('Panels')}}</f7-link>
+          <f7-link :tab-link="`#${tabIdWidgets}`">{{$text('Widgets')}}</f7-link>
         </f7-toolbar>
       </f7-subnavbar>
     </eb-navbar>
@@ -13,11 +15,17 @@
       <eb-tab-page-content :id="tabIdAtoms" tab-active @tab:show="tabName='atoms'">
         <atoms-spreads ref="atoms" slot="list" :user="user"></atoms-spreads>
       </eb-tab-page-content>
+      <eb-tab-page-content :id="tabIdFunctions" @tab:show="tabName='functions'">
+        <functions-spreads ref="functions" slot="list" :user="user" :menu="0"></functions-spreads>
+      </eb-tab-page-content>
       <eb-tab-page-content :id="tabIdMenus" @tab:show="tabName='menus'">
         <functions-spreads ref="menus" slot="list" :user="user" :menu="1"></functions-spreads>
       </eb-tab-page-content>
-      <eb-tab-page-content :id="tabIdFunctions" @tab:show="tabName='functions'">
-        <functions-spreads ref="functions" slot="list" :user="user" :menu="0"></functions-spreads>
+      <eb-tab-page-content :id="tabIdPanels" @tab:show="tabName='panels'">
+        <functions-spreads ref="panels" slot="list" :user="user" :menu="2"></functions-spreads>
+      </eb-tab-page-content>
+      <eb-tab-page-content :id="tabIdWidgets" @tab:show="tabName='widgets'">
+        <functions-spreads ref="widgets" slot="list" :user="user" :menu="3"></functions-spreads>
       </eb-tab-page-content>
     </f7-tabs>
   </eb-page>
@@ -36,8 +44,10 @@ export default {
       userId: parseInt(this.$f7route.query.userId),
       user: null,
       tabIdAtoms: Vue.prototype.$meta.util.nextId('tab'),
-      tabIdMenus: Vue.prototype.$meta.util.nextId('tab'),
       tabIdFunctions: Vue.prototype.$meta.util.nextId('tab'),
+      tabIdMenus: Vue.prototype.$meta.util.nextId('tab'),
+      tabIdPanels: Vue.prototype.$meta.util.nextId('tab'),
+      tabIdWidgets: Vue.prototype.$meta.util.nextId('tab'),
       tabName: 'atoms',
     };
   },

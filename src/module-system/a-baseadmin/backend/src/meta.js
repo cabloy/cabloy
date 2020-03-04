@@ -32,7 +32,7 @@ module.exports = app => {
         functionRight: {
           title: 'Function Right Management',
           scene: 'tools',
-          actionPath: 'functionRight/list',
+          actionPath: 'functionRight/types',
           sorting: 14,
           menu: 1,
         },

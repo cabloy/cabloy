@@ -1,6 +1,6 @@
 <template>
   <eb-page :page-content="false" tabs with-subnavbar>
-    <eb-navbar :title="getPageTitle()" eb-back-link="Back">
+    <eb-navbar :title="pageTitle" eb-back-link="Back">
       <f7-subnavbar>
         <f7-toolbar v-if="role" top tabbar>
           <f7-link :tab-link="`#${tabIdRights}`" tab-link-active>{{$text('Rights')}}</f7-link>
@@ -17,7 +17,7 @@
       </eb-tab-page-content>
     </f7-tabs>
     <f7-toolbar v-if="tabName==='rights'" bottom-md>
-      <eb-link :onPerform="onPerformRightsAdd">{{$text(menu===1?'New Menu Right':'New Function Right')}}</eb-link>
+      <eb-link :onPerform="onPerformRightsAdd">{{buttonTitle}}</eb-link>
     </f7-toolbar>
   </eb-page>
 </template>
@@ -25,6 +25,7 @@
 import Vue from 'vue';
 import rights from '../../components/functionRight/rights.vue';
 import spreads from '../../components/functionRight/spreads.vue';
+const _types = ['Function', 'Menu', 'Panel', 'Widget'];
 export default {
   components: {
     rights,
@@ -46,12 +47,17 @@ export default {
         this.role = data;
       });
   },
-  methods: {
-    getPageTitle() {
-      let title = this.$text(this.menu === 1 ? 'Menu Right' : 'Function Right');
+  computed: {
+    pageTitle() {
+      let title = this.$text(`${_types[this.menu]} Right`);
       if (this.role) title = `${title}: ${this.role.roleName}`;
       return title;
     },
+    buttonTitle() {
+      return this.$text(`New ${_types[this.menu]} Right`);
+    },
+  },
+  methods: {
     onPerformRightsAdd() {
       return this.$refs.rights.onPerformAdd();
     },
