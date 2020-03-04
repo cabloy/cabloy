@@ -480,37 +480,50 @@ const Fn = module.exports = ctx => {
 
     _prepareFunctionsModule(module, _functions) {
       const functions = {};
-      for (const key in _functions) {
-        const _func = _functions[key];
-        const func = {
-          name: key,
-          title: _func.title || key,
-          scene: _func.scene,
-          autoRight: _func.autoRight || 0,
-          atomClassName: _func.atomClassName,
-          action: _func.action,
-          actionModule: _func.actionModule || module.info.relativeName,
-          actionComponent: _func.actionComponent,
-          actionPath: _func.actionPath,
-          sorting: _func.sorting || 0,
-          menu: _func.menu || 0,
-          public: _func.public ? 1 : 0,
-        };
-        func.titleLocale = ctx.text(func.title);
-        // create
-        if (func.action === 'create' && !func.actionComponent && !func.actionPath) {
-          func.actionModule = 'a-base';
-          func.actionComponent = 'action';
-          // func.actionPath = '/a/base/atom/edit?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}';
+      if (Array.isArray(_functions)) {
+        // array
+        for (const _func of _functions) {
+          const key = _functions.name;
+          functions[key] = this._prepareFunctionsModule_function(module, _func, key);
         }
-        // list
-        if (func.action === 'read' && !func.actionComponent && !func.actionPath) {
-          func.actionPath = '/a/base/atom/list?module={{module}}&atomClassName={{atomClassName}}';
+      } else {
+        // object
+        for (const key in _functions) {
+          functions[key] = this._prepareFunctionsModule_function(module, _functions[key], key);
         }
-        // ok
-        functions[key] = func;
       }
       return functions;
+    }
+
+    _prepareFunctionsModule_function(module, _func, key) {
+      const func = {
+        name: key,
+        title: _func.title || key,
+        scene: _func.scene,
+        autoRight: _func.autoRight || 0,
+        atomClassName: _func.atomClassName,
+        action: _func.action,
+        actionModule: _func.actionModule || module.info.relativeName,
+        actionComponent: _func.actionComponent,
+        actionPath: _func.actionPath,
+        sorting: _func.sorting || 0,
+        menu: _func.menu || 0,
+        public: _func.public ? 1 : 0,
+        url: _func.url,
+      };
+      func.titleLocale = ctx.text(func.title);
+      // create
+      if (func.action === 'create' && !func.actionComponent && !func.actionPath) {
+        func.actionModule = 'a-base';
+        func.actionComponent = 'action';
+        // func.actionPath = '/a/base/atom/edit?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}';
+      }
+      // list
+      if (func.action === 'read' && !func.actionComponent && !func.actionPath) {
+        func.actionPath = '/a/base/atom/list?module={{module}}&atomClassName={{atomClassName}}';
+      }
+      // ok
+      return func;
     }
 
   }

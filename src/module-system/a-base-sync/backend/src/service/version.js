@@ -7,6 +7,8 @@ const VersionInit2Fn = require('./version/init2.js');
 const VersionInit4Fn = require('./version/init4.js');
 const VersionInit5Fn = require('./version/init5.js');
 const VersionInit7Fn = require('./version/init7.js');
+const VersionInit8Fn = require('./version/init8.js');
+
 
 module.exports = app => {
 
@@ -56,6 +58,10 @@ module.exports = app => {
       if (options.version === 7) {
         const versionInit7 = new (VersionInit7Fn(this.ctx))();
         await versionInit7.run(options);
+      }
+      if (options.version === 8) {
+        const versionInit8 = new (VersionInit8Fn(this.ctx))();
+        await versionInit8.run(options);
       }
     }
 

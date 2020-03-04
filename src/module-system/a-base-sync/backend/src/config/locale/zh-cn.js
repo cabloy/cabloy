@@ -24,4 +24,6 @@ module.exports = {
   Save: '保存',
   Submit: '提交',
   Atom: '原子',
+  Menu: '菜单',
+  Search: '搜索',
 };

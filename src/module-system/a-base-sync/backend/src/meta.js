@@ -18,6 +18,19 @@ module.exports = app => {
           title: 'Delete Comment',
           menu: 0,
         },
+        // panels
+        panelMenu: {
+          title: 'Menu',
+          menu: 2,
+        },
+        panelAtom: {
+          title: 'Atom',
+          menu: 2,
+        },
+        panelSearch: {
+          title: 'Search',
+          menu: 2,
+        },
       },
     },
     sequence: {
