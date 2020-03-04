@@ -50,6 +50,8 @@ export default {
   'Select Atom Class': '选择原子类型',
   'Select Menu': '选择菜单',
   'Select Function': '选择功能',
+  'Select Panel': '选择边栏',
+  'Select Widget': '选择部件',
   'Atom Class': '原子类型',
   'Allow Comment': '允许评论',
   'Attachment List': '附件列表',

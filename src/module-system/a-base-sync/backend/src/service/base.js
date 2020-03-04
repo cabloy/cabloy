@@ -30,6 +30,14 @@ module.exports = app => {
       return this.ctx.meta.base.menus();
     }
 
+    panels() {
+      return this.ctx.meta.base.panels();
+    }
+
+    widgets() {
+      return this.ctx.meta.base.widgets();
+    }
+
     functions() {
       return this.ctx.meta.base.functions();
     }

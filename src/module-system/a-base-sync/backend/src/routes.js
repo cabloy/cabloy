@@ -21,6 +21,8 @@ module.exports = app => {
     { method: 'post', path: 'base/flags', controller: base },
     { method: 'post', path: 'base/orders', controller: base },
     { method: 'post', path: 'base/menus', controller: base },
+    { method: 'post', path: 'base/panels', controller: base },
+    { method: 'post', path: 'base/widgets', controller: base },
     { method: 'post', path: 'base/functions', controller: base },
     { method: 'get', path: 'base/performAction', controller: base, middlewares: 'jsonp', meta: { auth: { enable: false } } },
     { method: 'get', path: 'base/qrcode', controller: base, meta: { auth: { enable: false } } },

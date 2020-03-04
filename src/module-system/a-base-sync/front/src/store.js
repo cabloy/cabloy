@@ -11,6 +11,8 @@ export default function(Vue) {
       orders: null,
       menus: null,
       functions: null,
+      panels: null,
+      widgets: null,
     },
     getters: {
       userLabels(state) {
@@ -43,6 +45,12 @@ export default function(Vue) {
       },
       setMenus(state, menus) {
         state.menus = menus;
+      },
+      setPanels(state, panels) {
+        state.panels = panels;
+      },
+      setWidgets(state, widgets) {
+        state.widgets = widgets;
       },
       setFunctions(state, functions) {
         state.functions = functions;
@@ -128,6 +136,30 @@ export default function(Vue) {
           Vue.prototype.$meta.api.post('/a/base/base/menus').then(data => {
             data = data || {};
             commit('setMenus', data);
+            resolve(data);
+          }).catch(err => {
+            reject(err);
+          });
+        });
+      },
+      getPanels({ state, commit }) {
+        return new Promise((resolve, reject) => {
+          if (state.panels) return resolve(state.panels);
+          Vue.prototype.$meta.api.post('/a/base/base/panels').then(data => {
+            data = data || {};
+            commit('setPanels', data);
+            resolve(data);
+          }).catch(err => {
+            reject(err);
+          });
+        });
+      },
+      getWidgets({ state, commit }) {
+        return new Promise((resolve, reject) => {
+          if (state.widgets) return resolve(state.widgets);
+          Vue.prototype.$meta.api.post('/a/base/base/widgets').then(data => {
+            data = data || {};
+            commit('setWidgets', data);
             resolve(data);
           }).catch(err => {
             reject(err);

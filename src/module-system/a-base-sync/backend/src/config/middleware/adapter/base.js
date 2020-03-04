@@ -12,6 +12,8 @@ const _flags = {};
 const _orders = {};
 const _functions = {};
 const _menus = {};
+const _panels = {};
+const _widgets = {};
 const _authProvidersLocales = {};
 
 const Fn = module.exports = ctx => {
@@ -144,9 +146,23 @@ const Fn = module.exports = ctx => {
 
     menus() {
       if (!_menus[ctx.locale]) {
-        _menus[ctx.locale] = this._prepareMenus();
+        _menus[ctx.locale] = this._prepareMenus(1);
       }
       return _menus[ctx.locale];
+    }
+
+    panels() {
+      if (!_panels[ctx.locale]) {
+        _panels[ctx.locale] = this._prepareMenus(2);
+      }
+      return _panels[ctx.locale];
+    }
+
+    widgets() {
+      if (!_widgets[ctx.locale]) {
+        _widgets[ctx.locale] = this._prepareMenus(3);
+      }
+      return _widgets[ctx.locale];
     }
 
     functions() {
@@ -430,7 +446,7 @@ const Fn = module.exports = ctx => {
       return actions;
     }
 
-    _prepareMenus() {
+    _prepareMenus(functionType) {
       const menus = {};
       const functions = this._prepareFunctions();
       for (const relativeName in functions) {
@@ -439,7 +455,11 @@ const Fn = module.exports = ctx => {
         for (const key in functionsModule) {
           const func = functionsModule[key];
           // 2018.12.22 menu maybe 0 for special scene
-          if (func.menu === 1 || (func.actionComponent || func.actionPath)) {
+          if (functionType === 1) {
+            if (func.menu === 1 || (func.actionComponent || func.actionPath)) {
+              menus[relativeName][key] = func;
+            }
+          } else if (func.menu === functionType) {
             menus[relativeName][key] = func;
           }
         }
@@ -473,7 +493,7 @@ const Fn = module.exports = ctx => {
           actionComponent: _func.actionComponent,
           actionPath: _func.actionPath,
           sorting: _func.sorting || 0,
-          menu: _func.menu ? 1 : 0,
+          menu: _func.menu || 0,
           public: _func.public ? 1 : 0,
         };
         func.titleLocale = ctx.text(func.title);
