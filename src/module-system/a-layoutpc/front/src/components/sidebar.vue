@@ -120,11 +120,20 @@ export default {
         }
       });
     },
+    closePanel(panel) {
+      const viewIndex = this.options.views.findIndex(item => this.layout._panelFullName(item.panel) === this.layout._panelFullName(panel));
+      this._closeView(viewIndex);
+    },
     closeView(view) {
       // view
       const $view = this.$$(view.$el);
       const viewIndex = parseInt($view.data('index'));
+      this._closeView(viewIndex);
+    },
+    _closeView(viewIndex) {
+      // view
       const _view = this.options.views[viewIndex];
+      const $view = this.$$('#' + _view.id);
       // top view
       const _viewTop = this._getTopView(_view);
       if (_viewTop) {

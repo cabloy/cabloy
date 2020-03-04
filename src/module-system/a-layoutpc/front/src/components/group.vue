@@ -88,8 +88,10 @@ export default {
         // reLayout
         this.reLayout();
         // callback
-        _view.callback({ view, title });
-        delete _view.callback;
+        if (_view.callback) {
+          _view.callback({ view, title });
+          delete _view.callback;
+        }
       });
     },
     resize() {

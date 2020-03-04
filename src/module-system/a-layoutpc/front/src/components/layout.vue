@@ -230,6 +230,10 @@ export default {
       }
       this.$refs.groups.closeView(view);
     },
+    closePanel(side, panel) {
+      const sideUpperCase = side.replace(side[0], side[0].toUpperCase());
+      this.$refs[`sidebar${sideUpperCase}`].closePanel(panel);
+    },
     backLink(ctx) {
       let backLink = false;
       if (!this.$meta.util.historyUrlEmpty(ctx.$f7router.history[ctx.$f7router.history.length - 1])) {
