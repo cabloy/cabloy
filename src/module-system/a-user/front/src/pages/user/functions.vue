@@ -37,7 +37,8 @@ export default {
       return Object.values(this.items[group]);
     },
     onItemClick(event, item) {
-      return this.$meta.util.performAction({ ctx: this, action: item, item });
+      const action = this.$utils.extend({}, item, { navigateOptions: { target: '_self' } });
+      return this.$meta.util.performAction({ ctx: this, action, item });
     },
   },
 };

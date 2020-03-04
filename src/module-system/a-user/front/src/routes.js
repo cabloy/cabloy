@@ -11,6 +11,8 @@ export default [
   { path: 'user/authentications', component: load('user/authentications') },
   { path: 'theme', component: load('theme/theme') },
   { path: 'theme/builtIn', component: load('theme/builtIn') },
+  { path: 'view', component: load('view/view') },
+  { path: 'view/edit', component: load('view/viewEdit') },
   { path: 'my/atoms', component: load('my/atoms') },
   { path: 'public/profile', component: load('public/profile') },
 ];

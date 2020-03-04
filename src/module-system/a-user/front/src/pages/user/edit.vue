@@ -13,7 +13,7 @@
         <eb-list-item :title="$text('Email')">
           <div slot="after">
             <span>{{user.email}}</span>
-            <eb-link v-if="configAccount.url.emailConfirm" :eb-href="configAccount.url.emailConfirm">
+            <eb-link v-if="configAccount.url.emailConfirm" :eb-href="configAccount.url.emailConfirm" eb-target="_self">
               {{emailConfirmButtonText}}
             </eb-link>
           </div>
@@ -21,7 +21,7 @@
         <eb-list-item :title="$text('Mobile')">
           <div slot="after">
             <span>{{user.mobile}}</span>
-            <eb-link v-if="configAccount.url.mobileVerify" :eb-href="configAccount.url.mobileVerify">
+            <eb-link v-if="configAccount.url.mobileVerify" :eb-href="configAccount.url.mobileVerify" eb-target="_self">
               {{mobileVerifyButtonText}}
             </eb-link>
           </div>
