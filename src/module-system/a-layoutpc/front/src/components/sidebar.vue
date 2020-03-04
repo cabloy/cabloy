@@ -90,15 +90,13 @@ export default {
       };
     }
   },
-  mounted() {
-
-  },
+  mounted() {},
   methods: {
     createView({ ctx, panel }) {
       // panelName
-      const panelName = this._panelFullName(panel);
+      const panelName = this.layout._panelFullName(panel);
       // find by name
-      const view = this.options.views.find(item => this._panelFullName(item.panel) === panelName);
+      const view = this.options.views.find(item => this.layout._panelFullName(item.panel) === panelName);
       if (view) {
         const $view = this.$$(`#${view.id}`);
         // navigate
@@ -140,7 +138,7 @@ export default {
           this.setOpened(false);
         }
         // remove panel
-        const panelIndex = this.options.panels.findIndex(item => this._panelFullName(item) === this._panelFullName(_view.panel));
+        const panelIndex = this.options.panels.findIndex(item => this.layout._panelFullName(item) === this.layout._panelFullName(_view.panel));
         this.options.panels.splice(panelIndex, 1);
         if (this.options.panels.length === 0) {
           this.layout.onResize();
@@ -178,14 +176,10 @@ export default {
     },
     _activeView(panel) {
       // tab active
-      this.options.panelActive = this._panelFullName(panel);
+      this.options.panelActive = this.layout._panelFullName(panel);
       // opened
       this.setOpened(true);
     },
-    _panelFullName(panel) {
-      if (panel.module) return `${panel.module}:${panel.name}`;
-      return panel.name;
-    }
   }
 }
 

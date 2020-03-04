@@ -4,18 +4,21 @@ export default {
     loginOnStart: true,
     header: {
       buttons: [
-        { name: 'Home', iconMaterial: 'dashboard', url: '/a/base/menu/list', scene: 'tool', sceneOptions: { name: 'home' } },
-        { name: 'Atom', iconMaterial: 'group_work', url: '/a/base/atom/list' },
+        { name: 'Home', iconMaterial: 'dashboard', url: '/a/base/menu/list', scene: 'dashboard', sceneOptions: { name: 'home' } },
       ],
       mine:
-        { name: 'Mine', iconMaterial: 'person', url: '/a/user/user/mine' },
+        { name: 'Mine', iconMaterial: 'person', url: '/a/user/user/mine', scene: 'sidebar', sceneOptions: { side: 'right', name: 'mine', title: 'Mine' } },
     },
     sidebar: {
       left: {
         panels: [
-          { name: 'menu', url: '/a/base/menu/list' },
-          { name: 'search', url: '/a/base/atom/searchQuick' },
+          { module: 'a-base', name: 'panelMenu' },
+          { module: 'a-base', name: 'panelAtom' },
+          { module: 'a-base', name: 'panelSearch' },
         ],
+      },
+      right: {
+        panels: [],
       },
     },
     size: {

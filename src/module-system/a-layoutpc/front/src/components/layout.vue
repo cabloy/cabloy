@@ -21,20 +21,10 @@ export default {
     });
     children.push(header);
     // sidebar
-    if (this.sidebar.left.panels.length > 0) {
-      const sidebarLeft = c('eb-sidebar', {
-        ref: 'sidebarLeft',
-        props: {
-          side: 'left',
-          options: this.sidebar.left,
-        },
-        style: {
-          height: `${this.size.height - this.size.top}px`,
-          top: `${ this.size.top}px`,
-        },
-      });
-      children.push(sidebarLeft);
-    }
+    const sidebarLeft = this._renderSidebar(c, 'left');
+    if (sidebarLeft) children.push(sidebarLeft);
+    const sidebarRight = this._renderSidebar(c, 'right');
+    if (sidebarRight) children.push(sidebarRight);
     // groups
     const groups = c('eb-groups', {
       ref: 'groups',
@@ -74,7 +64,18 @@ export default {
           toolbarHeight: 24,
           panelActive: '',
         },
-      }
+        right: {
+          opened: false,
+          cover: true,
+          panels: [],
+          views: [],
+          panelWidth: 280,
+          tabsWidth: 24,
+          toolbarHeight: 24,
+          panelActive: '',
+        },
+      },
+      panelsAll: null,
     };
   },
   beforeDestroy() {
@@ -83,10 +84,12 @@ export default {
   },
   mounted() {
     this.$f7ready(() => {
-      // click
-      this.$f7.on('click', this._handleClicks);
-      // start
-      this.start();
+      this.__init(() => {
+        // click
+        this.$f7.on('click', this._handleClicks);
+        // start
+        this.start();
+      })
     });
   },
   methods: {
@@ -106,7 +109,8 @@ export default {
       let height = layoutHeight;
 
       // sidebar
-      width -= this._sidebarLeftWidth();
+      width -= this._sidebarWidth('left');
+      width -= this._sidebarWidth('right');
 
       this.size.width = width;
       this.size.height = height;
@@ -136,8 +140,6 @@ export default {
       this.size.main = height - this.size.top - spacing * 2;
     },
     start() {
-      // init
-      this.sidebar.left.panels = this.$config.layout.sidebar.left.panels;
       // size
       this.setSize();
       // loginOnStart
@@ -165,14 +167,26 @@ export default {
       }
     },
     navigate(url, options) {
+      // options
+      options = options || {};
+      const ctx = options.ctx;
+      const target = options.target;
+
+      // sidebar
+      if (options.scene === 'sidebar') {
+        const side = options.sceneOptions.side;
+        this._createSidebar({ side, panel: options.sceneOptions, url });
+        return;
+      }
+
+      // url
       if (!url) return;
       // check if http
       if (url.indexOf('https://') === 0 || url.indexOf('http://') === 0) {
         return location.assign(url);
       }
-      options = options || {};
-      const ctx = options.ctx;
-      const target = options.target;
+
+      // view
       if (target === '_self') {
         ctx.$view.f7View.router.navigate(url, options);
       } else {
@@ -180,7 +194,7 @@ export default {
         const $viewEl = ctx && ctx.$view && this.$$(ctx.$view.$el);
         // groupId
         let groupId;
-        let groupForceNew;
+        let groupForceNew = false;
         if (target === '_view' && $viewEl && $viewEl.hasClass('eb-layout-view')) {
           // open at right even in eb-layout-scene
           groupId = $viewEl.parents('.eb-layout-group').data('groupId');
@@ -211,6 +225,8 @@ export default {
     closeView(view) {
       if (view.$el.parents('.eb-layout-sidebar-left').length > 0) {
         return this.$refs.sidebarLeft.closeView(view);
+      } else if (view.$el.parents('.eb-layout-sidebar-right').length > 0) {
+        return this.$refs.sidebarRight.closeView(view);
       }
       this.$refs.groups.closeView(view);
     },
@@ -242,13 +258,13 @@ export default {
       };
       return sizeClass;
     },
-    _sidebarLeftWidth() {
+    _sidebarWidth(side) {
       let width = 0;
-      if (this.sidebar.left.panels.length > 0) {
-        width += this.sidebar.left.tabsWidth;
+      if (this.sidebar[side].panels.length > 0) {
+        width += this.sidebar[side].tabsWidth;
       }
-      if (this.sidebar.left.opened && !this.sidebar.left.cover) {
-        width += this.sidebar.left.panelWidth;
+      if (this.sidebar[side].opened && !this.sidebar[side].cover) {
+        width += this.sidebar[side].panelWidth;
       }
       return width;
     },
@@ -259,8 +275,79 @@ export default {
         if (this.sidebar.left.cover && this.sidebar.left.opened) {
           this.$refs.sidebarLeft.setOpened(false);
         }
+        if (this.sidebar.right.cover && this.sidebar.right.opened) {
+          this.$refs.sidebarRight.setOpened(false);
+        }
       }
     },
+    __init(cb) {
+      this.$store.dispatch('a/base/getPanels').then(panels => {
+        this.panelsAll = panels;
+        // init sidebar
+        this.__initSidebar('left');
+        this.__initSidebar('right');
+        cb();
+      });
+    },
+    __initSidebar(side) {
+      const configSidebar = this.$config.layout.sidebar;
+      const configPanels = configSidebar[side] && configSidebar[side].panels;
+      if (!configPanels) return;
+      for (const panel of configPanels) {
+        this.sidebar[side].panels.push(this._preparePanel(panel));
+      }
+    },
+    _findPanelStock(panel) {
+      if (!this.panelsAll || !panel.module) return null;
+      const panels = this.panelsAll[panel.module];
+      return panels[panel.name];
+    },
+    _preparePanel(panel, url) {
+      // url
+      if (url) panel.url = url;
+      // title
+      if (panel.title) panel.titleLocale = this.$text(panel.title);
+      // stock
+      const panelStock = this._findPanelStock(panel);
+      if (!panelStock) return panel;
+      return this.$utils.extend({}, panelStock, panel);
+    },
+    _renderSidebar(c, side) {
+      if (this.sidebar[side].panels.length === 0) return;
+      const sideUpperCase = side.replace(side[0], side[0].toUpperCase());
+      return c('eb-sidebar', {
+        ref: `sidebar${sideUpperCase}`,
+        props: {
+          side,
+          options: this.sidebar[side],
+        },
+        style: {
+          height: `${this.size.height - this.size.top}px`,
+          top: `${ this.size.top}px`,
+        },
+      });
+    },
+    _createSidebar({ side, panel, url }) {
+      const sideUpperCase = side.replace(side[0], side[0].toUpperCase());
+      // prepare panel
+      panel = this._preparePanel(panel, url);
+      // check if has exists
+      const _panelTab = this.sidebar[side].panels.find(item => this._panelFullName(item) === this._panelFullName(panel));
+      if (!_panelTab) {
+        this.sidebar[side].panels.push(panel);
+        if (this.sidebar[side].panels.length === 1) {
+          this.onResize();
+        }
+      }
+      // create view
+      this.$nextTick(() => {
+        this.$refs[`sidebar${sideUpperCase}`].createView({ ctx: null, panel });
+      });
+    },
+    _panelFullName(panel) {
+      if (panel.module) return `${panel.module}:${panel.name}`;
+      return panel.name;
+    }
   },
 };
 

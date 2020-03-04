@@ -4,7 +4,7 @@ export default {
     const tabs = [];
     for (const panel of this.panels) {
       tabs.push(c('f7-link', {
-        key: this.sidebar._panelFullName(panel),
+        key: this.layout._panelFullName(panel),
         staticClass: panel.name === this.sidebar.options.panelActive ? 'active' : '',
         props: {
           text: panel.titleLocale || this.$text(panel.title) || panel.name,

@@ -132,8 +132,9 @@ export default {
           break;
         }
       }
-      // sidebar left
-      const sidebarLeft = this.layout._sidebarLeftWidth();
+      // sidebar
+      const sidebarLeft = this.layout._sidebarWidth('left');
+
       // left
       let left = parseInt(this.size.width - space / 2 + sidebarLeft);
       spacing = 0;
