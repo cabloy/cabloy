@@ -500,6 +500,7 @@ const Fn = module.exports = ctx => {
 
     _prepareFunctionsModule_function(module, _func, key) {
       const func = {
+        module: module.info.relativeName,
         name: key,
         title: _func.title || key,
         scene: _func.scene,
