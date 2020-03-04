@@ -451,17 +451,20 @@ const Fn = module.exports = ctx => {
       const functions = this._prepareFunctions();
       for (const relativeName in functions) {
         const functionsModule = functions[relativeName];
-        menus[relativeName] = {};
+        const _menus = {};
         for (const key in functionsModule) {
           const func = functionsModule[key];
           // 2018.12.22 menu maybe 0 for special scene
           if (functionType === 1) {
             if (func.menu === 1 || (func.actionComponent || func.actionPath)) {
-              menus[relativeName][key] = func;
+              _menus[key] = func;
             }
           } else if (func.menu === functionType) {
-            menus[relativeName][key] = func;
+            _menus[key] = func;
           }
+        }
+        if (Object.keys(_menus).length > 0) {
+          menus[relativeName] = _menus;
         }
       }
       return menus;
@@ -509,7 +512,7 @@ const Fn = module.exports = ctx => {
         sorting: _func.sorting || 0,
         menu: _func.menu || 0,
         public: _func.public ? 1 : 0,
-        url: _func.url,
+        url: ctx.meta.util.combinePagePath(module.info, _func.url),
       };
       func.titleLocale = ctx.text(func.title);
       // create

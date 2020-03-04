@@ -1,5 +1,6 @@
 const require3 = require('require3');
 const moment = require3('moment');
+const mparse = require3('egg-born-mparse');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -62,6 +63,14 @@ module.exports = ctx => {
 
     sleep(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    combinePagePath(moduleName, arg) {
+      if (!arg || typeof arg !== 'string') return arg;
+      const first = arg.charAt(0);
+      if (first === '/' || first === '#') return arg;
+      const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;
+      return `/${moduleInfo.url}/${arg}`;
     }
 
   }

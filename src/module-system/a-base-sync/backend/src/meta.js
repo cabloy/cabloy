@@ -21,14 +21,17 @@ module.exports = app => {
         // panels
         panelMenu: {
           title: 'Menu',
+          url: '/a/base/menu/list',
           menu: 2,
         },
         panelAtom: {
           title: 'Atom',
+          url: '/a/base/atom/list',
           menu: 2,
         },
         panelSearch: {
           title: 'Search',
+          url: '/a/base/atom/searchQuick',
           menu: 2,
         },
       },
