@@ -175,7 +175,7 @@ export default {
       // sidebar
       if (options.scene === 'sidebar') {
         const side = options.sceneOptions.side;
-        this._createSidebar({ side, panel: options.sceneOptions, url });
+        this._createPanel({ side, panel: options.sceneOptions, url });
         return;
       }
 
@@ -317,10 +317,10 @@ export default {
       return this.$utils.extend({}, panelStock, panel);
     },
     _renderSidebar(c, side) {
-      if (this.sidebar[side].panels.length === 0) return;
       const sideUpperCase = side.replace(side[0], side[0].toUpperCase());
       return c('eb-sidebar', {
         ref: `sidebar${sideUpperCase}`,
+        staticClass: this.sidebar[side].panels.length === 0 ? 'display-none' : '',
         props: {
           side,
           options: this.sidebar[side],
@@ -331,7 +331,7 @@ export default {
         },
       });
     },
-    _createSidebar({ side, panel, url }) {
+    _createPanel({ side, panel, url }) {
       const sideUpperCase = side.replace(side[0], side[0].toUpperCase());
       // prepare panel
       panel = this._preparePanel(panel, url);
