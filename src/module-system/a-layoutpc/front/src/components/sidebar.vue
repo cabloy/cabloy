@@ -121,18 +121,19 @@ export default {
       });
     },
     closePanel(panel) {
-      const viewIndex = this.options.views.findIndex(item => this.layout._panelFullName(item.panel) === this.layout._panelFullName(panel));
-      this._closeView(viewIndex);
+      const view = this.options.views.find(item => this.layout._panelFullName(item.panel) === this.layout._panelFullName(panel));
+      if (view) {
+        this._closeView(view.id);
+      } else {
+        this._removePanel(panel);
+      }
     },
     closeView(view) {
-      // view
-      const $view = this.$$(view.$el);
-      const viewIndex = parseInt($view.data('index'));
-      this._closeView(viewIndex);
+      this._closeView(view.id);
     },
-    _closeView(viewIndex) {
+    _closeView(viewId) {
       // view
-      const _view = this.options.views[viewIndex];
+      const _view = this._getViewById(viewId);
       const $view = this.$$('#' + _view.id);
       // top view
       const _viewTop = this._getTopView(_view);
@@ -142,17 +143,32 @@ export default {
       // close
       $view.addClass('eb-transition-close').animationEnd(() => {
         // remove
-        this.options.views.splice(viewIndex, 1);
-        if (this.options.views.length === 0) {
-          this.setOpened(false);
-        }
+        this._removeView(viewId);
         // remove panel
-        const panelIndex = this.options.panels.findIndex(item => this.layout._panelFullName(item) === this.layout._panelFullName(_view.panel));
-        this.options.panels.splice(panelIndex, 1);
-        if (this.options.panels.length === 0) {
-          this.layout.onResize();
-        }
+        this._removePanel(_view.panel);
       });
+    },
+    _getViewById(viewId) {
+      return this.options.views.find(item => item.id === viewId);
+    },
+    _getViewIndexById(viewId) {
+      return this.options.views.findIndex(item => item.id === viewId);
+    },
+    _removeView(viewId) {
+      const viewIndex = this._getViewIndexById(viewId);
+      if (viewIndex === -1) return;
+      this.options.views.splice(viewIndex, 1);
+      if (this.options.views.length === 0) {
+        this.setOpened(false);
+      }
+    },
+    _removePanel(panel) {
+      const panelIndex = this.options.panels.findIndex(item => this.layout._panelFullName(item) === this.layout._panelFullName(panel));
+      if (panelIndex === -1) return;
+      this.options.panels.splice(panelIndex, 1);
+      if (this.options.panels.length === 0) {
+        this.layout.onResize();
+      }
     },
     setOpened(opened) {
       if (this.options.opened === opened) return;

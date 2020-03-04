@@ -307,14 +307,14 @@ export default {
       return panels[panel.name];
     },
     _preparePanel(panel, url) {
-      // url
-      if (url) panel.url = url;
-      // title
-      if (panel.title) panel.titleLocale = this.$text(panel.title);
+      // extra
+      const _panelExtra = {};
+      if (url) _panelExtra.url = url;
+      if (panel.title) _panelExtra.titleLocale = this.$text(panel.title);
       // stock
       const panelStock = this._findPanelStock(panel);
-      if (!panelStock) return panel;
-      return this.$utils.extend({}, panelStock, panel);
+      // extend
+      return this.$utils.extend({}, panelStock, panel, _panelExtra);
     },
     _renderSidebar(c, side) {
       const sideUpperCase = side.replace(side[0], side[0].toUpperCase());
