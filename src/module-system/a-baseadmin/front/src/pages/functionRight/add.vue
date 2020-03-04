@@ -90,7 +90,7 @@ export default {
           name: this.func.name,
         })
         .then(() => {
-          this.$meta.eventHub.$emit('functionRight:add', { roleId: this.roleId });
+          this.$meta.eventHub.$emit('functionRight:add', { roleId: this.roleId, menu: this.menu });
           this.$f7router.back();
         });
     },

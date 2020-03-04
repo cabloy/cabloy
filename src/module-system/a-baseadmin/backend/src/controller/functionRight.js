@@ -4,8 +4,8 @@ module.exports = app => {
     async rights() {
       const page = this.ctx.request.body.page;
       const items = await this.service.functionRight.rights({
-        menu: 0,
         roleId: this.ctx.request.body.roleId,
+        menu: this.ctx.request.body.menu,
         page,
       });
       this.ctx.successMore(items, page.index, page.size);
@@ -30,8 +30,8 @@ module.exports = app => {
     async spreads() {
       const page = this.ctx.request.body.page;
       const items = await this.service.functionRight.spreads({
-        menu: 0,
         roleId: this.ctx.request.body.roleId,
+        menu: this.ctx.request.body.menu,
         page,
       });
       this.ctx.successMore(items, page.index, page.size);

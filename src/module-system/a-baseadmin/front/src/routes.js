@@ -14,6 +14,7 @@ export default [
   { path: 'atomRight/edit', component: load('atomRight/edit') },
   { path: 'atomRight/add', component: load('atomRight/add') },
   { path: 'menuRight/list', component: load('menuRight/list') },
+  { path: 'functionRight/types', component: load('functionRight/types') },
   { path: 'functionRight/list', component: load('functionRight/list') },
   { path: 'functionRight/edit', component: load('functionRight/edit') },
   { path: 'functionRight/add', component: load('functionRight/add') },

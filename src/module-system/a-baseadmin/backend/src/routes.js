@@ -2,7 +2,6 @@ const version = require('./controller/version.js');
 const role = require('./controller/role.js');
 const user = require('./controller/user.js');
 const atomRight = require('./controller/atomRight.js');
-const menuRight = require('./controller/menuRight.js');
 const functionRight = require('./controller/functionRight.js');
 const auth = require('./controller/auth.js');
 
@@ -41,11 +40,6 @@ module.exports = app => {
     { method: 'post', path: 'atomRight/add', controller: atomRight, meta: { right: { type: 'function', name: 'atomRight' } } },
     { method: 'post', path: 'atomRight/delete', controller: atomRight, meta: { right: { type: 'function', name: 'atomRight' } } },
     { method: 'post', path: 'atomRight/spreads', controller: atomRight, meta: { right: { type: 'function', name: 'atomRight' } } },
-    // menuRight
-    { method: 'post', path: 'menuRight/rights', controller: menuRight, meta: { right: { type: 'function', name: 'menuRight' } } },
-    { method: 'post', path: 'menuRight/add', controller: menuRight, meta: { right: { type: 'function', name: 'menuRight' } } },
-    { method: 'post', path: 'menuRight/delete', controller: menuRight, meta: { right: { type: 'function', name: 'menuRight' } } },
-    { method: 'post', path: 'menuRight/spreads', controller: menuRight, meta: { right: { type: 'function', name: 'menuRight' } } },
     // functionRight
     { method: 'post', path: 'functionRight/rights', controller: functionRight, meta: { right: { type: 'function', name: 'functionRight' } } },
     { method: 'post', path: 'functionRight/add', controller: functionRight, meta: { right: { type: 'function', name: 'functionRight' } } },
