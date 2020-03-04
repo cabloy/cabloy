@@ -94,10 +94,15 @@ const Fn = module.exports = ctx => {
       }
     }
 
-    async get({ id, module, name }) {
+    async _get({ id, module, name }) {
       if (id) return await this.model.get({ id });
       module = module || this.moduleName;
-      const res = await this.model.get({ module, name });
+      return await this.model.get({ module, name });
+    }
+
+    async get({ id, module, name }) {
+      module = module || this.moduleName;
+      const res = await this._get({ id, module, name });
       if (res) return res;
       // queue
       return await ctx.app.meta.queue.pushAsync({
