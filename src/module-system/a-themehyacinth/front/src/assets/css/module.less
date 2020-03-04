@@ -57,6 +57,55 @@
       }
     }
 
+    .eb-layout-sidebar {
+
+      .panel {
+
+        &.panel-left {
+
+          .panel-resize-handler {
+            background: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.04) 20%, rgba(0, 0, 0, 0.08) 40%, rgba(0, 0, 0, 0.08) 60%, rgba(0, 0, 0, 0.04) 80%, rgba(0, 0, 0, 0) 100%);
+          }
+        }
+
+        &.panel-right {
+
+          .panel-resize-handler {
+            background: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.04) 20%, rgba(0, 0, 0, 0.08) 40%, rgba(0, 0, 0, 0.08) 60%, rgba(0, 0, 0, 0.04) 80%, rgba(0, 0, 0, 0) 100%);
+          }
+        }
+
+        .panel-toolbar.toolbar {
+          background: hsla(0, 0%, 100%, .12);
+
+          .toolbar-inner {
+            justify-content: flex-end;
+
+            a.link {
+              color: #C3D4E7;
+            }
+          }
+        }
+
+      }
+
+      .eb-layout-sidebar-tabs {
+        background: #3C4F4C; //#343D46;
+
+        a.link {
+          color: #C3D4E7;
+
+          &.active,
+          &:hover {
+            background: hsla(0, 0%, 100%, .12);
+            opacity: 0.6;
+          }
+        }
+
+      }
+
+    }
+
   }
 
   /* markdown style */
