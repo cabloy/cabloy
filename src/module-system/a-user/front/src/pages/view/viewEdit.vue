@@ -1,12 +1,9 @@
 <template>
   <eb-page>
     <eb-navbar large largeTransparent :title="pageTitle" eb-back-link="Back"></eb-navbar>
-    <f7-list v-if="panelsAll">
-      <f7-list-group v-for="group of itemGroups" :key="group">
-        <f7-list-item :title="getModule(group).titleLocale" group-title></f7-list-item>
-        <eb-list-item v-for="panel of getGroupPanels(group)" :key="_panelFullName(panel)" checkbox :checked="getPanelChecked(panel)" @change="onPanelChange($event,panel)" :title="panel.titleLocale">
-        </eb-list-item>
-      </f7-list-group>
+    <f7-list v-if="panelsUser">
+      <eb-list-item v-for="panel of panelsUser" :key="_panelFullName(panel)" checkbox :checked="getPanelChecked(panel)" @change="onPanelChange($event,panel)" :title="panel.titleLocale">
+      </eb-list-item>
     </f7-list>
   </eb-page>
 </template>
@@ -18,13 +15,12 @@ export default {
   data() {
     return {
       side: this.$f7route.query.side,
-      panelsAll: null,
+      panelsUser: null,
     };
   },
   created() {
-    this.$store.dispatch('a/base/getPanels').then(panels => {
-      this.panelsAll = panels;
-      console.log(this.panelsAll);
+    this.$store.dispatch('a/base/getUserPanels').then(panels => {
+      this.panelsUser = panels;
     });
   },
   computed: {
@@ -35,10 +31,6 @@ export default {
     },
     panelsShow() {
       return this.$meta.vueLayout.sidebar[this.side].panels;
-    },
-    itemGroups() {
-      if (!this.panelsAll) return [];
-      return Object.keys(this.panelsAll);
     },
   },
   methods: {
@@ -52,9 +44,6 @@ export default {
           this.$meta.vueLayout.closePanel(this.side, panel);
         }
       });
-    },
-    getGroupPanels(group) {
-      return Object.values(this.panelsAll[group]);
     },
     getPanelChecked(panel) {
       const _item = this.panelsShow.find(item => this._panelFullName(item) === this._panelFullName(panel));

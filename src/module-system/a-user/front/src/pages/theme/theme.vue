@@ -40,7 +40,8 @@ export default {
   },
   methods: {
     save() {
-      if (this.user.agent.anonymous) return;
+      // user.op
+      if (this.user.op.anonymous) return;
       this.$api.post('user/themeSave', {
         theme: this.theme
       }).then(() => {

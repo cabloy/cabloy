@@ -82,7 +82,7 @@ module.exports = app => {
 
     async themeLoad() {
       const res = await this.service.user.themeLoad({
-        user: this.ctx.user.agent,
+        user: this.ctx.user.op,
       });
       this.ctx.success(res);
     }
@@ -90,7 +90,7 @@ module.exports = app => {
     async themeSave() {
       await this.service.user.themeSave({
         theme: this.ctx.request.body.theme,
-        user: this.ctx.user.agent,
+        user: this.ctx.user.op,
       });
       this.ctx.success();
     }
