@@ -53,6 +53,7 @@ export default {
     onClickCover() {
       this.sidebar.options.cover = !this.sidebar.options.cover;
       this.layout.onResize();
+      this.layout.__saveLayoutConfig();
     },
     onClickHide() {
       this.sidebar.setOpened(!this.sidebar.options.opened);

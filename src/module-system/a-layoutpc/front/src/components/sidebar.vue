@@ -64,7 +64,9 @@ export default {
     }
   },
   data() {
-    return {}
+    return {
+      initOpened: false,
+    }
   },
   computed: {
     layout() {
@@ -92,19 +94,21 @@ export default {
   },
   created() {
     // opened=false if cover
-    if (this.options.cover) this.options.opened = false;
-    const _opened = this.options.opened;
-    this.options.opened = false;
-    if (_opened && this.options.panelActive) {
-      const [module, name] = this.options.panelActive.split(':');
-      this.layout._createPanel({ side: this.side, panel: { module, name } });
+    if (this.options.cover) {
+      this.options.opened = false;
+      this.options.panelActive = '';
     }
+    this.initOpened = this.options.opened;
+    this.options.opened = false;
   },
   mounted() {
-
+    if (this.initOpened && this.options.panelActive && this.options.panelActive.indexOf(':') > -1) {
+      const [module, name] = this.options.panelActive.split(':');
+      this.layout._createPanel({ side: this.side, panel: { module, name }, init: true });
+    }
   },
   methods: {
-    createView({ ctx, panel }) {
+    createView({ ctx, panel, init }) {
       // panelName
       const panelName = this.layout._panelFullName(panel);
       // find by name
@@ -118,7 +122,7 @@ export default {
         // change zIndex
         view.zIndex = ++this.$refs.sidebarGroup.viewIndex;
         // active
-        this._activeView(panel);
+        this._activeView(panel, init);
         return;
       }
       // new view
@@ -128,7 +132,7 @@ export default {
           if (res.options) options = this.$utils.extend({}, options, res.options);
           res.view.f7View.router.navigate(panel.url, options);
           // active
-          this._activeView(panel);
+          this._activeView(panel, init);
         }
       });
     },
@@ -182,13 +186,15 @@ export default {
         this.layout.onResize();
       }
     },
-    setOpened(opened) {
+    setOpened(opened, init) {
       if (this.options.opened === opened) return;
       this.options.opened = opened;
       if (!this.options.cover) {
         this.layout.onResize();
       }
-      this.layout.__saveLayoutConfig();
+      if (!init) {
+        this.layout.__saveLayoutConfig();
+      }
     },
     setPanelWidth(newPanelWidth) {
       const width = parseInt(newPanelWidth);
@@ -212,11 +218,17 @@ export default {
         return prev.zIndex > current.zIndex ? prev : current;
       }, null);
     },
-    _activeView(panel) {
+    _activeView(panel, init) {
       // tab active
-      this.options.panelActive = this.layout._panelFullName(panel);
+      const panelName = this.layout._panelFullName(panel);
+      if (this.options.panelActive !== panelName) {
+        this.options.panelActive = panelName;
+        if (!init) {
+          this.layout.__saveLayoutConfig();
+        }
+      }
       // opened
-      this.setOpened(true);
+      this.setOpened(true, init);
     },
   }
 }

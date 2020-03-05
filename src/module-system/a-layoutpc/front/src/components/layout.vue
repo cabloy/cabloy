@@ -306,8 +306,9 @@ export default {
         });
       });
     },
-    __saveLayoutConfig() {
-      const value = this.$utils.extend({}, this.sidebar, {
+    __saveLayoutConfig: Vue.prototype.$meta.util.debounce(function() {
+      // override
+      let value = this.$utils.extend({}, this.sidebar, {
         left: {
           views: [],
         },
@@ -315,20 +316,39 @@ export default {
           views: [],
         },
       });
+      value = JSON.parse(JSON.stringify(value));
+      // remove dynamic panels
+      this.__removeDynamicPanels(value.left.panels);
+      this.__removeDynamicPanels(value.right.panels);
+      // save
       this.$store.commit('a/base/setLayoutConfigKey', { module: 'a-layoutpc', key: 'sidebar', value });
-    },
+    }, 1000),
     __initLayoutConfig(layoutConfig) {
       this.sidebar = this.$utils.extend({}, this.sidebar, layoutConfig.sidebar);
     },
+    __removeDynamicPanels(panels) {
+      for (let index = panels.length - 1; index >= 0; index--) {
+        const panel = panels[index];
+        if (!panel.module) {
+          panels.splice(index, 1);
+        } else {
+          panels[index] = { module: panel.module, name: panel.name };
+        }
+      }
+    },
     __initSidebar(side, configFirst) {
       // panels from layoutConfig or frontConfig
+      let panels;
       if (configFirst) {
         const configSidebar = this.$config.layout.sidebar;
-        const configPanels = configSidebar[side] && configSidebar[side].panels;
-        if (!configPanels) return;
-        for (const panel of configPanels) {
-          this.sidebar[side].panels.push(this._preparePanel(panel));
-        }
+        panels = configSidebar[side] && configSidebar[side].panels;
+      } else {
+        panels = this.sidebar[side].panels;
+      }
+      if (!panels) return;
+      this.sidebar[side].panels = [];
+      for (const panel of panels) {
+        this.sidebar[side].panels.push(this._preparePanel(panel));
       }
     },
     _findPanelStock(panel) {
@@ -361,7 +381,7 @@ export default {
         },
       });
     },
-    _createPanel({ side, panel, url }) {
+    _createPanel({ side, panel, url, init }) {
       const sideUpperCase = side.replace(side[0], side[0].toUpperCase());
       // prepare panel
       panel = this._preparePanel(panel, url);
@@ -375,7 +395,7 @@ export default {
       }
       // create view
       this.$nextTick(() => {
-        this.$refs[`sidebar${sideUpperCase}`].createView({ ctx: null, panel });
+        this.$refs[`sidebar${sideUpperCase}`].createView({ ctx: null, panel, init });
       });
     },
     _panelFullName(panel) {
