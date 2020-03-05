@@ -21,10 +21,12 @@ export default {
     });
     children.push(header);
     // sidebar
-    const sidebarLeft = this._renderSidebar(c, 'left');
-    if (sidebarLeft) children.push(sidebarLeft);
-    const sidebarRight = this._renderSidebar(c, 'right');
-    if (sidebarRight) children.push(sidebarRight);
+    if (this.sidebarInited) {
+      const sidebarLeft = this._renderSidebar(c, 'left');
+      if (sidebarLeft) children.push(sidebarLeft);
+      const sidebarRight = this._renderSidebar(c, 'right');
+      if (sidebarRight) children.push(sidebarRight);
+    }
     // groups
     const groups = c('eb-groups', {
       ref: 'groups',
@@ -34,12 +36,14 @@ export default {
       },
     });
     children.push(groups);
+
     // ok
     return c('div', { staticClass: 'eb-layout-container eb-layout-container-pc' }, children);
   },
   data() {
     return {
       started: false,
+      sidebarInited: false,
       size: {
         width: 0,
         height: 0,
@@ -285,20 +289,46 @@ export default {
       }
     },
     __init(cb) {
+      // panelsAll
       this.$store.dispatch('a/base/getPanels').then(panels => {
         this.panelsAll = panels;
-        // init sidebar
-        this.__initSidebar('left');
-        this.__initSidebar('right');
-        cb();
+        // layoutConfig
+        this.$store.dispatch('a/base/getLayoutConfig', 'a-layoutpc').then(layoutConfig => {
+          // init layoutConfig
+          this.__initLayoutConfig(layoutConfig);
+          // init sidebar
+          const configFirst = !layoutConfig.sidebar;
+          this.__initSidebar('left', configFirst);
+          this.__initSidebar('right', configFirst);
+          // inited
+          this.sidebarInited = true;
+          cb();
+        });
       });
     },
-    __initSidebar(side) {
-      const configSidebar = this.$config.layout.sidebar;
-      const configPanels = configSidebar[side] && configSidebar[side].panels;
-      if (!configPanels) return;
-      for (const panel of configPanels) {
-        this.sidebar[side].panels.push(this._preparePanel(panel));
+    __saveLayoutConfig() {
+      const value = this.$utils.extend({}, this.sidebar, {
+        left: {
+          views: [],
+        },
+        right: {
+          views: [],
+        },
+      });
+      this.$store.commit('a/base/setLayoutConfigKey', { module: 'a-layoutpc', key: 'sidebar', value });
+    },
+    __initLayoutConfig(layoutConfig) {
+      this.sidebar = this.$utils.extend({}, this.sidebar, layoutConfig.sidebar);
+    },
+    __initSidebar(side, configFirst) {
+      // panels from layoutConfig or frontConfig
+      if (configFirst) {
+        const configSidebar = this.$config.layout.sidebar;
+        const configPanels = configSidebar[side] && configSidebar[side].panels;
+        if (!configPanels) return;
+        for (const panel of configPanels) {
+          this.sidebar[side].panels.push(this._preparePanel(panel));
+        }
       }
     },
     _findPanelStock(panel) {

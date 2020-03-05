@@ -90,7 +90,19 @@ export default {
       };
     }
   },
-  mounted() {},
+  created() {
+    // opened=false if cover
+    if (this.options.cover) this.options.opened = false;
+    const _opened = this.options.opened;
+    this.options.opened = false;
+    if (_opened && this.options.panelActive) {
+      const [module, name] = this.options.panelActive.split(':');
+      this.layout._createPanel({ side: this.side, panel: { module, name } });
+    }
+  },
+  mounted() {
+
+  },
   methods: {
     createView({ ctx, panel }) {
       // panelName
@@ -176,6 +188,7 @@ export default {
       if (!this.options.cover) {
         this.layout.onResize();
       }
+      this.layout.__saveLayoutConfig();
     },
     setPanelWidth(newPanelWidth) {
       const width = parseInt(newPanelWidth);
