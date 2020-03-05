@@ -51,7 +51,7 @@ export default {
       return this.$meta.util.combineImageUrl(avatar, 48);
     },
     viewEnable() {
-      return this.$meta.vueApp.layout === 'pc';
+      return this.$meta.vueApp.layout === 'pc' && this.$meta.vueLayout.closePanel;
     },
   },
   created() {},
