@@ -10,6 +10,7 @@ export default function(Vue) {
       // user
       labels: null,
       layoutConfig: {},
+      userPanels: null,
       // global
       modules: null,
       atomClasses: null,
@@ -38,6 +39,15 @@ export default function(Vue) {
       setLabels(state, labels) {
         state.labels = labels;
       },
+      setLayoutConfig(state, { module, data }) {
+        state.layoutConfig = {
+          ...state.layoutConfig,
+          [module]: data,
+        };
+      },
+      setUserPanels(state, panels) {
+        state.userPanels = panels;
+      },
       setModules(state, modules) {
         state.modules = modules;
       },
@@ -64,12 +74,6 @@ export default function(Vue) {
       },
       setFunctions(state, functions) {
         state.functions = functions;
-      },
-      setLayoutConfig(state, { module, data }) {
-        state.layoutConfig = {
-          ...state.layoutConfig,
-          [module]: data,
-        };
       },
     },
     actions: {
@@ -201,6 +205,24 @@ export default function(Vue) {
             data = data || {};
             commit('setLayoutConfig', { module, data });
             resolve(data);
+          }).catch(err => {
+            reject(err);
+          });
+        });
+      },
+      getUserPanels({ state, commit }) {
+        return new Promise((resolve, reject) => {
+          if (state.userPanels) return resolve(state.userPanels);
+          const options = {
+            where: { menu: 2 },
+            orders: [
+              [ 'titleLocale', 'asc' ],
+            ],
+            page: { size: 0 },
+          };
+          Vue.prototype.$meta.api.post('/a/base/function/list', { options }).then(data => {
+            commit('setUserPanels', data.list);
+            resolve(data.list);
           }).catch(err => {
             reject(err);
           });
