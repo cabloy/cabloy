@@ -13,6 +13,7 @@ export default {
     ebGroups: Groups,
   },
   render(c) {
+    if (!this.sidebarInited) return;
     const children = [];
     // header
     const header = c('eb-header', {
@@ -20,13 +21,6 @@ export default {
       style: { height: `${this.size.top}px` },
     });
     children.push(header);
-    // sidebar
-    if (this.sidebarInited) {
-      const sidebarLeft = this._renderSidebar(c, 'left');
-      if (sidebarLeft) children.push(sidebarLeft);
-      const sidebarRight = this._renderSidebar(c, 'right');
-      if (sidebarRight) children.push(sidebarRight);
-    }
     // groups
     const groups = c('eb-groups', {
       ref: 'groups',
@@ -36,7 +30,11 @@ export default {
       },
     });
     children.push(groups);
-
+    // sidebar
+    const sidebarLeft = this._renderSidebar(c, 'left');
+    if (sidebarLeft) children.push(sidebarLeft);
+    const sidebarRight = this._renderSidebar(c, 'right');
+    if (sidebarRight) children.push(sidebarRight);
     // ok
     return c('div', { staticClass: 'eb-layout-container eb-layout-container-pc' }, children);
   },
@@ -91,8 +89,10 @@ export default {
       this.__init(() => {
         // click
         this.$f7.on('click', this._handleClicks);
-        // start
-        this.start();
+        this.$nextTick(() => {
+          // start
+          this.start();
+        })
       })
     });
   },
@@ -308,25 +308,21 @@ export default {
     },
     __saveLayoutConfig: Vue.prototype.$meta.util.debounce(function() {
       // override
-      let value = this.$utils.extend({}, this.sidebar, {
-        left: {
-          views: [],
-        },
-        right: {
-          views: [],
-        },
-      });
-      value = JSON.parse(JSON.stringify(value));
+      let value = JSON.parse(JSON.stringify(this.sidebar));
       // remove dynamic panels
-      this.__removeDynamicPanels(value.left.panels);
-      this.__removeDynamicPanels(value.right.panels);
+      this.__removeDynamicPanels(value.left);
+      this.__removeDynamicPanels(value.right);
       // save
       this.$store.commit('a/base/setLayoutConfigKey', { module: 'a-layoutpc', key: 'sidebar', value });
     }, 1000),
     __initLayoutConfig(layoutConfig) {
-      this.sidebar = this.$utils.extend({}, this.sidebar, layoutConfig.sidebar);
+      if (layoutConfig.sidebar) {
+        this.sidebar = this.$utils.extend({}, this.sidebar, JSON.parse(JSON.stringify(layoutConfig.sidebar)));
+      }
     },
-    __removeDynamicPanels(panels) {
+    __removeDynamicPanels(side) {
+      // panels
+      const panels = side.panels;
       for (let index = panels.length - 1; index >= 0; index--) {
         const panel = panels[index];
         if (!panel.module) {
@@ -335,6 +331,8 @@ export default {
           panels[index] = { module: panel.module, name: panel.name };
         }
       }
+      // views
+      side.views = [];
     },
     __initSidebar(side, configFirst) {
       // panels from layoutConfig or frontConfig
