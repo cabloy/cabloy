@@ -1,9 +1,16 @@
 // eslint-disable-next-line
 export default function(Vue) {
 
+  Vue.prototype.$meta.eventHub.$on('auth:login', data => {
+    Vue.prototype.$meta.store.commit('a/base/authLogin', data);
+  });
+
   return {
     state: {
+      // user
       labels: null,
+      layoutConfig: {},
+      // global
       modules: null,
       atomClasses: null,
       actions: null,
@@ -16,17 +23,20 @@ export default function(Vue) {
     },
     getters: {
       userLabels(state) {
-        if (!state.labels) return null;
-        const user = Vue.prototype.$meta.store.getState('auth/user');
-        return state.labels[user.op.id];
+        return state.labels;
+      },
+      layoutConfigModule(state) {
+        return state.layoutConfig[module];
       },
     },
     mutations: {
+      authLogin(state) {
+        // clear user
+        state.labels = null;
+        state.layoutConfig = {};
+      },
       setLabels(state, labels) {
-        const user = Vue.prototype.$meta.store.getState('auth/user');
-        state.labels = {
-          [user.op.id]: labels,
-        };
+        state.labels = labels;
       },
       setModules(state, modules) {
         state.modules = modules;
@@ -54,6 +64,12 @@ export default function(Vue) {
       },
       setFunctions(state, functions) {
         state.functions = functions;
+      },
+      setLayoutConfig(state, { module, data }) {
+        state.layoutConfig = {
+          ...state.layoutConfig,
+          [module]: data,
+        };
       },
     },
     actions: {
@@ -172,6 +188,18 @@ export default function(Vue) {
           Vue.prototype.$meta.api.post('/a/base/base/functions').then(data => {
             data = data || {};
             commit('setFunctions', data);
+            resolve(data);
+          }).catch(err => {
+            reject(err);
+          });
+        });
+      },
+      getLayoutConfig({ state, commit }, module) {
+        return new Promise((resolve, reject) => {
+          if (state.layoutConfig[module]) return resolve(state.layoutConfig[module]);
+          Vue.prototype.$meta.api.post('/a/base/layoutConfig/load', { module }).then(data => {
+            data = data || {};
+            commit('setLayoutConfig', { module, data });
             resolve(data);
           }).catch(err => {
             reject(err);

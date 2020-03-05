@@ -7,6 +7,7 @@ const atomAction = require('./controller/atomAction.js');
 const func = require('./controller/function.js');
 const auth = require('./controller/auth.js');
 const comment = require('./controller/comment.js');
+const layoutConfig = require('./controller/layoutConfig.js');
 
 module.exports = app => {
   const routes = [
@@ -133,6 +134,10 @@ module.exports = app => {
     },
     // cors
     { method: 'options', path: /.*/ },
+    // layoutConfig
+    { method: 'post', path: 'layoutConfig/load', controller: layoutConfig },
+    { method: 'post', path: 'layoutConfig/save', controller: layoutConfig },
+    { method: 'post', path: 'layoutConfig/saveKey', controller: layoutConfig },
   ];
   return routes;
 };
