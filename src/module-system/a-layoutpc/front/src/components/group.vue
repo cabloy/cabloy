@@ -136,9 +136,8 @@ export default {
       const sidebarLeft = this.layout._sidebarWidth('left');
 
       // left
-      let left = parseInt(this.size.width - space / 2 + sidebarLeft);
+      let left = parseInt(this.size.width - space / 2);
       spacing = 0;
-      let spacingLeft = null;
       for (let i = this.views.length - 1; i >= 0; i--) {
         const view = this.$refs[this.views[i].id];
         // width
@@ -147,31 +146,16 @@ export default {
         // space
         left -= width + spacing;
         spacing = this.size.spacing;
-
-        // solution: 1
-        if (left < 0 && spacingLeft === null) {
-          const _viewPrev = this.views[i + 1];
-          spacingLeft = (left + width + spacing < spacing * 2) && this._combineViewSize(_viewPrev.sizeWill, i + 1) !== 'small';
-        }
-        // fix
-        if (left < 0 && left + width > 0) {
-          left -= left + width;
-        }
-        // display
-        if (spacingLeft !== true) {
-          this.$$(view.$el).show();
+        // check
+        if (left > 0) {
+          const newStyle = {
+            left: `${left+sidebarLeft}px`,
+          };
+          this.$$(view.$el).css(newStyle);
+          this.$$(view.$el).removeClass('view-hide');
         } else {
-          this.$$(view.$el).hide();
+          this.$$(view.$el).addClass('view-hide');
         }
-
-        // solution: 2
-        // left = left >= 0 ? left : left - 20;
-
-        // left
-        const newStyle = {
-          left: `${left}px`,
-        };
-        this.$$(view.$el).css(newStyle);
       }
     },
     onViewTitle(data) {

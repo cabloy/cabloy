@@ -129,7 +129,7 @@ export default {
       }
     },
     closeView(view) {
-      this._closeView(view.id);
+      this._closeView(view.$el[0].id);
     },
     _closeView(viewId) {
       // view

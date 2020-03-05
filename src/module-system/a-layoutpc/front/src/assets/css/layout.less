@@ -147,6 +147,13 @@
       .eb-layout-view {
         position: absolute;
         transition-duration: 400ms;
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+
+        &.view-hide {
+          transform: translate3d(0, 56px, 0);
+          opacity: 0;
+        }
       }
     }
   }
