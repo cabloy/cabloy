@@ -26,9 +26,6 @@ export default function(Vue) {
       userLabels(state) {
         return state.labels;
       },
-      layoutConfigModule(state) {
-        return state.layoutConfig[module];
-      },
     },
     mutations: {
       authLogin(state) {
@@ -44,6 +41,26 @@ export default function(Vue) {
           ...state.layoutConfig,
           [module]: data,
         };
+      },
+      setLayoutConfigKey(state, { module, key, value }) {
+        let layoutConfigModule = state.layoutConfig[module] || {};
+        layoutConfigModule = {
+          ...layoutConfigModule,
+          [key]: value,
+        };
+        state.layoutConfig = {
+          ...state.layoutConfig,
+          [module]: layoutConfigModule,
+        };
+        // try to save
+        const user = Vue.prototype.$meta.store.getState('auth/user');
+        if (!user.op.anonymous) {
+          Vue.prototype.$meta.api.post('/a/base/layoutConfig/saveKey', { module, key, value }).then(() => {
+            // donothing
+          }).catch(err => {
+            console.log(err);
+          });
+        }
       },
       setUserPanels(state, panels) {
         state.userPanels = panels;
