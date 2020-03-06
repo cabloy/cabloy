@@ -127,9 +127,12 @@ export default {
     switchGroup(groupId) {
       this.$f7.tab.show(`#${groupId}`);
     },
+    _getGroupIndex(groupId) {
+      return this.groups.findIndex(group => group.id === groupId);
+    },
     removeGroup(groupId) {
       // current
-      const index = this.groups.findIndex(group => group.id === groupId);
+      const index = this._getGroupIndex(groupId);
       const groupCurrent = this.groups[index];
       // next
       let groupIdNext;
