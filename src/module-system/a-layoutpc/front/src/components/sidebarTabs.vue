@@ -19,11 +19,14 @@ export default {
           name: 'eb-dragdrop',
           value: {
             scene: this.dragdropScene,
+            panel,
+            onDragStart: this.onDragStart,
             onDragElement: this.onDragElement,
             onDropElement: this.onDropElement,
             onDropLeave: this.onDropLeave,
             onDropEnter: this.onDropEnter,
-            onDropDone: this.onDropDone,
+            onDragEnd: this.onDragEnd,
+            onDragDone: this.onDragDone,
           }
         }],
       }));
@@ -59,11 +62,25 @@ export default {
       event.preventDefault();
       this.sidebar.createView({ ctx: null, panel });
     },
+    onDragStart({ $el, context, dragElement }) {},
     onDragElement({ $el, context }) {},
-    onDropElement({ $el, context, dragElement, dragConext }) {},
+    onDropElement({ $el, context, dragElement, dragConext }) {
+      const panelIndexDrop = this.sidebar._getPanelIndex(context.panel);
+      const panelIndexDrag = this.sidebar._getPanelIndex(dragConext.panel);
+      if (panelIndexDrop === panelIndexDrag || panelIndexDrop == panelIndexDrag + 1) return null;
+      return $el;
+    },
     onDropLeave({ $el, context, dropElement }) {},
     onDropEnter({ $el, context, dropElement }) {},
-    onDropDone({ $el, context, dropElement, dropContext }) {},
+    onDragEnd({ $el, context, dragElement }) {},
+    onDragDone({ $el, context, dragElement, dropElement, dropContext }) {
+      const panelIndexDrag = this.sidebar._getPanelIndex(context.panel);
+      this.panels.splice(panelIndexDrag, 1);
+      const panelIndexDrop = this.sidebar._getPanelIndex(dropContext.panel);
+      this.panels.splice(panelIndexDrop, 0, context.panel);
+      // save
+      this.layout.__saveLayoutConfig();
+    },
   }
 }
 

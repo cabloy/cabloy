@@ -181,8 +181,11 @@ export default {
         this.setOpened(false);
       }
     },
+    _getPanelIndex(panel) {
+      return this.options.panels.findIndex(item => this.layout._panelFullName(item) === this.layout._panelFullName(panel));
+    },
     _removePanel(panel) {
-      const panelIndex = this.options.panels.findIndex(item => this.layout._panelFullName(item) === this.layout._panelFullName(panel));
+      const panelIndex = this._getPanelIndex(panel);
       if (panelIndex === -1) return;
       this.options.panels.splice(panelIndex, 1);
       if (this.options.panels.length === 0) {
