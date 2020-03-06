@@ -14,6 +14,9 @@ export default {
             this.onClickTab(event, panel);
           },
         },
+        directives: [{
+          name: 'eb-dragdrop',
+        }],
       }));
     }
     return c('div', {
