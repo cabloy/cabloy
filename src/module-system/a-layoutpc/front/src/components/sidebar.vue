@@ -98,6 +98,9 @@ export default {
       this.options.opened = false;
       this.options.panelActive = '';
     }
+    if (!this.options.opened) {
+      this.options.panelActive = '';
+    }
     this.initOpened = this.options.opened;
     this.options.opened = false;
   },
