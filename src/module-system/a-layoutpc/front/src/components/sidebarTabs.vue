@@ -1,4 +1,5 @@
 <script>
+import Vue from 'vue';
 export default {
   render(c) {
     const tabs = [];
@@ -16,6 +17,14 @@ export default {
         },
         directives: [{
           name: 'eb-dragdrop',
+          value: {
+            scene: this.dragdropScene,
+            onDragElement: this.onDragElement,
+            onDropElement: this.onDropElement,
+            onDropLeave: this.onDropLeave,
+            onDropEnter: this.onDropEnter,
+            onDropDone: this.onDropDone,
+          }
         }],
       }));
     }
@@ -29,7 +38,9 @@ export default {
     }
   },
   data() {
-    return {}
+    return {
+      dragdropScene: Vue.prototype.$meta.util.nextId('dragdrop'),
+    }
   },
   computed: {
     layout() {
@@ -47,7 +58,12 @@ export default {
       event.stopPropagation();
       event.preventDefault();
       this.sidebar.createView({ ctx: null, panel });
-    }
+    },
+    onDragElement({ $el, context }) {},
+    onDropElement({ $el, context, dragElement, dragConext }) {},
+    onDropLeave({ $el, context, dropElement }) {},
+    onDropEnter({ $el, context, dropElement }) {},
+    onDropDone({ $el, context, dropElement, dropContext }) {},
   }
 }
 
