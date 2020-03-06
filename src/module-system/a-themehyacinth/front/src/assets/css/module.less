@@ -29,6 +29,28 @@
 
       .tabs {
         background: #3C4F4C !important; //#343D46 !important;
+
+        .tab-link {
+          color: #C3D4E7;
+
+          .close {
+            background: hsla(0, 0%, 100%, .12);
+            color: #C3D4E7;
+          }
+
+          &.eb-dragdrop-drop {
+            border-left: 1px solid #C3D4E7;
+          }
+        }
+
+        .tab-link.tab-link-active {
+          color: var(--f7-tabbar-link-active-color, var(--f7-theme-color));
+        }
+
+        .tab-link:hover {
+          color: var(--f7-tabbar-link-active-color, var(--f7-theme-color));
+          background: hsla(0, 0%, 100%, .12);
+        }
       }
 
       .buttons {
