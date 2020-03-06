@@ -1,5 +1,7 @@
 export default function(Vue) {
 
+  const proxyOffset = 6;
+
   let _inited = false;
 
   let _isDragging = false;
@@ -34,7 +36,7 @@ export default function(Vue) {
   function handeTouchStart(e) {
     const $$ = Vue.prototype.$$;
     // el
-    const $el = $$(e.target).closest('.eb-dragdrop');
+    const $el = $$(e.target).closest('.eb-dragdrop-handler');
     if ($el.length === 0) return;
     // context
     const context = $el[0].__eb_dragContext;
@@ -61,12 +63,15 @@ export default function(Vue) {
       }
       // proxy size
       _proxyElement.css({
-        left: `${_touchStart.x - _dragElementSize.width / 2}px`,
-        top: `${_touchStart.y - _dragElementSize.height / 2}px`,
-        width: `${_dragElementSize.width}px`,
-        height: `${_dragElementSize.height}px`,
+        left: `${_touchStart.x + proxyOffset}px`,
+        top: `${_touchStart.y + proxyOffset}px`,
+        width: `${_dragElementSize.width / 2}px`,
+        height: `${_dragElementSize.height / 2}px`,
       });
       _proxyElement.show();
+      // start
+      context.onDragStart && context.onDragStart({ $el, context, dragElement: _dragElement });
+      _dragElement.addClass('eb-dragdrop-drag');
       // ready
       _isMoved = false;
       _isDragging = true;
@@ -78,32 +83,45 @@ export default function(Vue) {
     }, 200);
   }
 
+  function _checkMoveElement($el) {
+    if ($el.length === 0) return null;
+    if ($el.is(_dragHandler)) return null; // not self
+    // context
+    const context = $el[0].__eb_dragContext;
+    if (!context) return null;
+    if (context.scene !== _dragContext.scene) return null; // not same scene
+
+    // check if can drop
+    return _getDropElement($el, context, _dragElement, _dragContext);
+  }
+
   function handeTouchMove(e) {
     if (!_isDragging) return;
     const $$ = Vue.prototype.$$;
     // el
-    const $el = $$(e.target).closest('.eb-dragdrop');
-    if ($el.length === 0) return;
-    if ($el.is(_dragHandler)) return; // not self
-    // context
-    const context = $el[0].__eb_dragContext;
-    if (!context) return;
-    if (context.scene !== _dragContext.scene) return; // not same scene
+    const $el = $$(e.target).closest('.eb-dragdrop-handler');
+    // drop element
+    const dropElementNew = _checkMoveElement($el);
+    const dropContextNew = dropElementNew ? $el[0].__eb_dragContext : null;
+    const dropHandlerNew = dropElementNew ? $el : null;
 
-    // check if can drop
-    const dropElementNew = _getDropElement($el, context, _dragElement, _dragContext);
-    if (!dropElementNew) return;
-    if (_dropElement !== dropElementNew) {
+    const _dropElementEl = _dropElement ? _dropElement[0] : null;
+    const dropElementNewEl = dropElementNew ? dropElementNew[0] : null;
+    if (_dropElementEl !== dropElementNewEl) {
       // leave
       if (_dropElement) {
         _dropContext.onDropLeave && _dropContext.onDropLeave({ $el: _dropHandler, context: _dropContext, dropElement: _dropElement });
+        _dropElement.removeClass('eb-dragdrop-drop');
       }
       // enter
-      context.onDropEnter && context.onDropEnter({ $el, context, dropElement: dropElementNew });
+      if (dropElementNew) {
+        dropContextNew.onDropEnter && dropContextNew.onDropEnter({ $el: dropHandlerNew, context: dropContextNew, dropElement: dropElementNew });
+        dropElementNew.addClass('eb-dragdrop-drop');
+      }
       // switch
       _dropElement = dropElementNew;
-      _dropContext = context;
-      _dropHandler = $el;
+      _dropContext = dropContextNew;
+      _dropHandler = dropHandlerNew;
     }
 
     _isMoved = true;
@@ -113,8 +131,8 @@ export default function(Vue) {
     const pageX = e.type === 'touchmove' ? e.targetTouches[0].pageX : e.pageX;
     const pageY = e.type === 'touchmove' ? e.targetTouches[0].pageY : e.pageY;
     _proxyElement.css({
-      left: `${pageX - _dragElementSize.width / 2}px`,
-      top: `${pageY - _dragElementSize.height / 2}px`,
+      left: `${pageX + proxyOffset}px`,
+      top: `${pageY + proxyOffset}px`,
     });
 
   }
@@ -128,6 +146,12 @@ export default function(Vue) {
       // dropElement
       if (_dropElement) {
         _dropContext.onDropLeave && _dropContext.onDropLeave({ $el: _dropHandler, context: _dropContext, dropElement: _dropElement });
+        _dropElement.removeClass('eb-dragdrop-drop');
+      }
+      // dragElement
+      if (_dragElement) {
+        _dragContext.onDragEnd && _dragContext.onDragEnd({ $el: _dragHandler, context: _dragContext, dragElement: _dragElement });
+        _dragElement.removeClass('eb-dragdrop-drag');
       }
     }
     _isMoved = false;
@@ -154,8 +178,8 @@ export default function(Vue) {
 
     // drop done
     if (_dropElement) {
-      _dragContext.onDropDone && _dragContext.onDropDone({
-        $el: _dragHandler, context: _dragContext,
+      _dragContext.onDragDone && _dragContext.onDragDone({
+        $el: _dragHandler, context: _dragContext, dragElement: _dragElement,
         dropElement: _dropElement, dropContext: _dropContext,
       });
     }
@@ -164,28 +188,38 @@ export default function(Vue) {
     _clearDragdrop();
   }
 
+  function _bind(el, binding) {
+    const $el = Vue.prototype.$$(el);
+    // class
+    $el.addClass('eb-dragdrop-handler');
+    // context
+    el.__eb_dragContext = binding.value;
+    if (!el.__eb_dragContext) {
+      console.warn('should specify the value of eb-dragdrop: ', el);
+    }
+  }
+
   return {
     bind(el, binding) {
-      const app = Vue.prototype.$f7;
       // init
       if (!_inited) {
         _inited = true;
+        const app = Vue.prototype.$f7;
         app.on('touchstart:passive', handeTouchStart);
         app.on('touchmove:active', handeTouchMove);
         app.on('touchend:passive', handeTouchEnd);
       }
-      // className
-      const $el = Vue.prototype.$$(el);
-      $el.addClass('eb-dragdrop');
-      // context
-      el.__eb_dragContext = binding.value;
-      if (!el.__eb_dragContext) {
-        console.warn('should specify the value of eb-dragdrop: ', el);
-      }
+
+      // bind
+      _bind(el, binding);
+    },
+    update(el, binding) {
+      // bind
+      _bind(el, binding);
     },
     unbind(el) {
       const $el = Vue.prototype.$$(el);
-      $el.removeClass('eb-dragdrop');
+      $el.removeClass('eb-dragdrop-handler');
       el.__eb_dragContext = null;
     },
   };
