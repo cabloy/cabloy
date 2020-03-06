@@ -104,7 +104,15 @@ export default {
     },
     _combineViewSize(sizeWill, indexCurrent) {
       // try
-      if (sizeWill === 'small' && this.views.length === 1) {
+      if ((sizeWill === 'small' || sizeWill === 'medium') && this.views.length === 1) {
+        sizeWill = 'large';
+      } else if (sizeWill === 'small' && this.views.length === 2 && indexCurrent === 0 && this.views[indexCurrent + 1].sizeWill === 'small' &&
+        this.layout.enoughLarge
+      ) {
+        sizeWill = 'medium';
+      } else if (sizeWill === 'small' && this.views.length >= 2 && indexCurrent === this.views.length - 1 && this.views[indexCurrent - 1].sizeWill !== 'small' &&
+        !this.layout.enoughLarge && this.layout.enoughMedium
+      ) {
         sizeWill = 'medium';
       } else if (sizeWill === 'large' && this.views.length > indexCurrent + 1 && this.views[indexCurrent + 1].sizeWill === 'small') {
         sizeWill = 'medium';
