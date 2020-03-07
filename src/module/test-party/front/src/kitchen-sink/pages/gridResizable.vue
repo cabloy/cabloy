@@ -202,8 +202,6 @@ export default {
         if (colWidthNewNext) {
           colNext[viewSize] = colWidthNewNext;
         }
-        console.log(diffPercent);
-        console.log(colWidthCurrent, colWidthNew, colWidthCurrentNext, colWidthNewNext);
       }
       return true;
     },
