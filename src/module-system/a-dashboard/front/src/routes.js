@@ -3,4 +3,5 @@ function load(name) {
 }
 
 export default [
+  { path: 'dashboard', component: load('dashboard') },
 ];
