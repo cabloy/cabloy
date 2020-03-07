@@ -2,7 +2,6 @@ export default function(dragdrop) {
 
   return {
     bind(el, binding) {
-      dragdrop.initialize();
       dragdrop.bind(el, binding.value);
     },
     update(el, binding) {

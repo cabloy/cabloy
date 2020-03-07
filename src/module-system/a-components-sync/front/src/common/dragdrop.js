@@ -5,6 +5,7 @@ export default function(Vue) {
   const proxySizeMax = 32;
 
   let _inited = false;
+  let _stylesheet = null;
 
   let _isDragging = false;
   let _isMoved = false;
@@ -78,6 +79,10 @@ export default function(Vue) {
         });
         _proxyElement.show();
       }
+      // cursor
+      const cursor = context.resizable === 'true' ? (context.resizeDirection === 'row' ? 'row-resize' : 'col-resize') : 'move';
+      const style = `html, html a.link {cursor: ${cursor} !important;}`;
+      _stylesheet.innerHTML = style;
       // start
       context.onDragStart && context.onDragStart({ $el, context, dragElement: _dragElement });
       _dragElement.addClass('eb-dragdrop-drag');
@@ -154,6 +159,8 @@ export default function(Vue) {
       if (_proxyElement) {
         _proxyElement.hide();
       }
+      // cursor
+      _stylesheet.innerHTML = '';
       // dropElement
       if (_dropElement) {
         _dropContext.onDropLeave && _dropContext.onDropLeave({ $el: _dropHandler, context: _dropContext, dropElement: _dropElement });
@@ -202,6 +209,10 @@ export default function(Vue) {
   function initialize() {
     if (_inited) return;
     _inited = true;
+    // style
+    _stylesheet = document.createElement('style');
+    document.head.appendChild(_stylesheet);
+    // events
     const app = Vue.prototype.$f7;
     app.on('touchstart:passive', handeTouchStart);
     app.on('touchmove:active', handeTouchMove);
@@ -209,19 +220,17 @@ export default function(Vue) {
   }
 
   function bind(el, context) {
-    const $el = Vue.prototype.$$(el);
-    $el.addClass('eb-dragdrop-handler');
+    initialize();
+    Vue.prototype.$$(el).addClass('eb-dragdrop-handler');
     el.__eb_dragContext = context;
   }
 
   function unbind(el) {
-    const $el = Vue.prototype.$$(el);
-    $el.removeClass('eb-dragdrop-handler');
+    Vue.prototype.$$(el).removeClass('eb-dragdrop-handler');
     el.__eb_dragContext = null;
   }
 
   return {
-    initialize,
     bind,
     unbind,
   };
