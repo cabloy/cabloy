@@ -108,7 +108,7 @@
       </f7-block>
       <f7-block-title>Responsive Grid</f7-block-title>
       <f7-block>
-        <p>Grid cells have different size on Phone/Tablet</p>
+        <p>Grid cells have different size on Phone(Small)/Tablet(Medium)</p>
         <f7-row>
           <f7-col width="100" medium="50">.col-100.tablet-50</f7-col>
           <f7-col width="100" medium="50">.col-100.tablet-50</f7-col>
