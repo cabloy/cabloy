@@ -2,6 +2,7 @@ let Vue;
 
 import './assets/css/module.less';
 
+import dragdropUtilFn from './common/dragdrop.js';
 import dragdrop from './directives/dragdrop.js';
 
 // install
@@ -11,7 +12,11 @@ function install(_Vue, cb) {
   Vue = _Vue;
 
   // dragdrop
-  Vue.directive('eb-dragdrop', dragdrop(Vue));
+  const dragdropUtil = dragdropUtilFn(Vue);
+  Vue.directive('eb-dragdrop', dragdrop(dragdropUtil));
+
+  // utils
+  const utils = { dragdrop: dragdropUtil };
 
   //
   return cb({
@@ -20,6 +25,7 @@ function install(_Vue, cb) {
     config: require('./config/config.js').default,
     locales: require('./config/locales.js').default,
     components: require('./components.js').default,
+    utils,
   });
 }
 
