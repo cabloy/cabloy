@@ -24,6 +24,7 @@ const items = [
   { title: 'Pull To Refresh / Infinite Scroll / Load More', path: 'kitchen-sink/ptrIsLoadMore' },
   { title: 'Button Event', path: 'kitchen-sink/buttonEvent' },
   { title: 'Atom', path: 'kitchen-sink/atom' },
+  { title: 'Grid / Layout', path: 'kitchen-sink/grid' },
 ];
 export default {
   data() {

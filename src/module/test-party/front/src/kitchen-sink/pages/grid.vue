@@ -2,8 +2,15 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Grid / Layout')" eb-back-link="Back"></eb-navbar>
     <div class="grid-demo">
-      <f7-block>
+      <f7-block medium>
         <p>Columns within a row are automatically set to have equal width. Otherwise you can define your column with pourcentage of screen you want.</p>
+      </f7-block>
+      <f7-block-title>Responsive Grid (Resizable)</f7-block-title>
+      <f7-block>
+        <p>Grid cells have different size on Small/Medium/Large</p>
+        <f7-row>
+          <f7-col v-for="col of resizableCols" resizable :width="col.small" :medium="col.medium" :large="col.large">{{col[getViewSize()]}}</f7-col>
+        </f7-row>
       </f7-block>
       <f7-block-title>Columns with gap</f7-block-title>
       <f7-block>
@@ -130,9 +137,25 @@
   </eb-page>
 </template>
 <script>
+//5, 10, 15, 20, 25, 30, 100 / 3, 35, 40, 45, 50, 55, 60, 65, 100 * (2 / 3), 70, 75, 80, 85, 90, 95, 100
 export default {
   meta: {
-    size: 'medium',
+    size: 'large',
+  },
+  data() {
+    return {
+      resizableCols: [
+        { small: 50, medium: 25, large: 25 },
+        { small: 50, medium: 25, large: 25 },
+        { small: 50, medium: 25, large: 25 },
+        { small: 50, medium: 25, large: 25 },
+      ],
+    };
+  },
+  methods: {
+    getViewSize() {
+      return this.$view.size;
+    }
   },
 };
 

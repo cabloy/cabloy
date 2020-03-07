@@ -35,6 +35,7 @@ export default [
   { path: 'kitchen-sink/ptrIsLoadMore', component: loadKitchenSink('ptrIsLoadMore') },
   { path: 'kitchen-sink/buttonEvent', component: loadKitchenSink('buttonEvent') },
   { path: 'kitchen-sink/atom', component: loadKitchenSink('atom') },
+  { path: 'kitchen-sink/grid', component: loadKitchenSink('grid') },
   { path: 'kitchen-sink/component/global', component: loadKitchenSink('component/global') },
   // framework7
   { path: 'kitchen-sink/framework7/index', component: loadKitchenSinkFramework7('index') },
