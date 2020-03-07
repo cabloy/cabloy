@@ -1,6 +1,8 @@
 export default function(Vue) {
 
   const proxyOffset = 6;
+  const proxySizeMin = 16;
+  const proxySizeMax = 32;
 
   let _inited = false;
 
@@ -57,18 +59,25 @@ export default function(Vue) {
       _touchStart.x = e.type === 'touchstart' ? e.targetTouches[0].pageX : e.pageX;
       _touchStart.y = e.type === 'touchstart' ? e.targetTouches[0].pageY : e.pageY;
       // proxy
-      if (!_proxyElement) {
-        _proxyElement = $$('<div class="eb-dragdrop-proxy"></div>');
-        $$('body').append(_proxyElement);
+      if (context.proxy !== false) {
+        if (!_proxyElement) {
+          _proxyElement = $$('<div class="eb-dragdrop-proxy"></div>');
+          $$('body').append(_proxyElement);
+        }
+        const _size = _dragElementSize.width <= _dragElementSize.height ? { min: _dragElementSize.width, max: _dragElementSize.height } : { min: _dragElementSize.height, max: _dragElementSize.width };
+        const _proxySize = {
+          min: proxySizeMin,
+          max: Math.min(parseInt(_size.max * proxySizeMin / _size.min), proxySizeMax),
+        };
+        // proxy size
+        _proxyElement.css({
+          left: `${_touchStart.x + proxyOffset}px`,
+          top: `${_touchStart.y + proxyOffset}px`,
+          width: `${_dragElementSize.width <= _dragElementSize.height ? _proxySize.min : _proxySize.max}px`,
+          height: `${_dragElementSize.width <= _dragElementSize.height ? _proxySize.max : _proxySize.min}px`,
+        });
+        _proxyElement.show();
       }
-      // proxy size
-      _proxyElement.css({
-        left: `${_touchStart.x + proxyOffset}px`,
-        top: `${_touchStart.y + proxyOffset}px`,
-        width: `${_dragElementSize.width / 2}px`,
-        height: `${_dragElementSize.height / 2}px`,
-      });
-      _proxyElement.show();
       // start
       context.onDragStart && context.onDragStart({ $el, context, dragElement: _dragElement });
       _dragElement.addClass('eb-dragdrop-drag');
@@ -128,12 +137,14 @@ export default function(Vue) {
     e.preventDefault();
 
     // proxy position
-    const pageX = e.type === 'touchmove' ? e.targetTouches[0].pageX : e.pageX;
-    const pageY = e.type === 'touchmove' ? e.targetTouches[0].pageY : e.pageY;
-    _proxyElement.css({
-      left: `${pageX + proxyOffset}px`,
-      top: `${pageY + proxyOffset}px`,
-    });
+    if (_dragContext.proxy !== false) {
+      const pageX = e.type === 'touchmove' ? e.targetTouches[0].pageX : e.pageX;
+      const pageY = e.type === 'touchmove' ? e.targetTouches[0].pageY : e.pageY;
+      _proxyElement.css({
+        left: `${pageX + proxyOffset}px`,
+        top: `${pageY + proxyOffset}px`,
+      });
+    }
 
   }
 
