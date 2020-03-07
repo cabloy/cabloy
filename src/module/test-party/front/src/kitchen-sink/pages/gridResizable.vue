@@ -8,7 +8,7 @@
       <f7-block-title>Responsive Grid (Resizable)</f7-block-title>
       <f7-block>
         <p>Grid cells have different size on Small/Medium/Large</p>
-        <f7-row>
+        <f7-row ref="resizableRow">
           <f7-col v-for="col of resizableCols" resizable :width="col.small" :medium="col.medium" :large="col.large">{{col[getViewSize()]}}</f7-col>
         </f7-row>
       </f7-block>
@@ -150,12 +150,42 @@ export default {
         { small: 50, medium: 25, large: 25 },
         { small: 50, medium: 25, large: 25 },
       ],
+      dragdrop: null,
+      dragdropScene: Vue.prototype.$meta.util.nextId('dragdrop'),
     };
+  },
+  mounted() {
+    this.dragdrop = Vue.prototype.$meta.module.get('a-components').options.utils.dragdrop;
+    this.dragdrop.initialize();
+    const $resizableRow = this.$$(this.$refs.resizableRow.$el);
+    const $handlers = $resizableRow.find('.resize-handler');
+    for (let index = 0; index < $handlers.length; i++) {
+      this.dragdrop.bind($handlers[index], {
+        scene: this.dragdropScene,
+        resizable: true,
+        colIndex: index,
+        onDragStart: this.onDragStart,
+        onDragElement: this.onDragElement,
+        onDragEnd: this.onDragEnd,
+        onDragDone: this.onDragDone,
+      });
+    }
   },
   methods: {
     getViewSize() {
       return this.$view.size;
-    }
+    },
+    onDragStart({ $el, context, dragElement }) {},
+    onDragElement({ $el, context }) {},
+    onDragEnd({ $el, context, dragElement }) {},
+    onDragDone({ $el, context, dragElement, dropElement, dropContext }) {
+      const panelIndexDrag = this.sidebar._getPanelIndex(context.panel);
+      this.panels.splice(panelIndexDrag, 1);
+      const panelIndexDrop = this.sidebar._getPanelIndex(dropContext.panel);
+      this.panels.splice(panelIndexDrop, 0, context.panel);
+      // save
+      this.layout.__saveLayoutConfig();
+    },
   },
 };
 
