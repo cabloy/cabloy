@@ -6,6 +6,7 @@ export default function(Vue) {
 
   let _inited = false;
   let _stylesheet = null;
+  const _windowSize = {};
 
   let _isDragging = false;
   let _isMoved = false;
@@ -17,8 +18,17 @@ export default function(Vue) {
   let _dropContext = null;
   let _proxyElement = null;
   let _dragElementSize = {};
-  const _touchStart = {};
+  let _dragContainerSize = {};
+  let _touchStart = {};
   let _delayTimeout = 0;
+
+  function _getDragContainerSize($el, context) {
+    if (!context.onDragContainerSize) return _windowSize;
+    const res = context.onDragContainerSize({ $el, context });
+    if (res === undefined) return _windowSize;
+    if (res) return res;
+    return null;
+  }
 
   function _getDragElement($el, context) {
     if (!context.onDragElement) return $el;
@@ -49,18 +59,24 @@ export default function(Vue) {
       if (!_delayTimeout) return;
       _delayTimeout = 0;
       // get drag element
-      _dragElement = _getDragElement($el, context);
-      if (!_dragElement) return; // break
-      // size
-      _dragElementSize = {
-        width: _dragElement.width(),
-        height: _dragElement.height(),
-      };
+      if (context.resizable !== true) {
+        _dragElement = _getDragElement($el, context);
+        if (!_dragElement) return; // break
+        // size
+        _dragElementSize = {
+          width: _dragElement.width(),
+          height: _dragElement.height(),
+        };
+      } else {
+        // get container size
+        _dragContainerSize = _getDragContainerSize($el, context);
+        if (!_dragContainerSize) return; // break
+      }
       // touch
       _touchStart.x = e.type === 'touchstart' ? e.targetTouches[0].pageX : e.pageX;
       _touchStart.y = e.type === 'touchstart' ? e.targetTouches[0].pageY : e.pageY;
       // proxy
-      if (context.proxy !== false) {
+      if (context.resizable !== true && context.proxy !== false) {
         if (!_proxyElement) {
           _proxyElement = $$('<div class="eb-dragdrop-proxy"></div>');
           $$('body').append(_proxyElement);
@@ -80,12 +96,12 @@ export default function(Vue) {
         _proxyElement.show();
       }
       // cursor
-      const cursor = context.resizable === 'true' ? (context.resizeDirection === 'row' ? 'row-resize' : 'col-resize') : 'move';
+      const cursor = context.resizable === true ? (context.resizeDirection === 'row' ? 'row-resize' : 'col-resize') : 'move';
       const style = `html, html a.link {cursor: ${cursor} !important;}`;
       _stylesheet.innerHTML = style;
       // start
       context.onDragStart && context.onDragStart({ $el, context, dragElement: _dragElement });
-      _dragElement.addClass('eb-dragdrop-drag');
+      if (context.resizable !== true) _dragElement.addClass('eb-dragdrop-drag');
       // ready
       _isMoved = false;
       _isDragging = true;
@@ -109,8 +125,7 @@ export default function(Vue) {
     return _getDropElement($el, context, _dragElement, _dragContext);
   }
 
-  function handeTouchMove(e) {
-    if (!_isDragging) return;
+  function _handeTouchMove(e) {
     const $$ = Vue.prototype.$$;
     // el
     const $el = $$(e.target).closest('.eb-dragdrop-handler');
@@ -153,6 +168,51 @@ export default function(Vue) {
 
   }
 
+  function _handeTouchResize(e) {
+    if (!_dragContext.onDragMove) return;
+    _isMoved = true;
+
+    const bRow = _dragContext.resizeDirection === 'row';
+
+    const touchCurrentX = e.type === 'touchmove' ? e.targetTouches[0].pageX : e.pageX;
+    const touchCurrentY = e.type === 'touchmove' ? e.targetTouches[0].pageY : e.pageY;
+
+    const abs = {
+      x: !bRow ? touchCurrentX - _touchStart.x : undefined,
+      y: bRow ? touchCurrentY - _touchStart.y : undefined,
+    };
+
+    const percent = {
+      x: !bRow ? abs.x / _dragContainerSize.width : undefined,
+      y: bRow ? abs.y / _dragContainerSize.height : undefined,
+    };
+
+    const diff = { abs, percent };
+
+    if (!bRow && abs.x === 0) return;
+    if (bRow && abs.y === 0) return;
+
+    // if (!bRow && Math.abs(abs.y) > Math.abs(abs.x)) return;
+    // if (bRow && Math.abs(abs.x) > Math.abs(abs.y)) return;
+
+    const res = _dragContext.onDragMove({ $el: _dragHandler, context: _dragContext, diff });
+    if (res !== true) return;
+
+    // reset
+    _touchStart = { x: touchCurrentX, y: touchCurrentY };
+    e.preventDefault();
+
+  }
+
+  function handeTouchMove(e) {
+    if (!_isDragging) return;
+    if (_dragContext.resizable !== true) {
+      _handeTouchMove(e);
+    } else {
+      _handeTouchResize(e);
+    }
+  }
+
   function _clearDragdrop() {
     if (_isDragging) {
       // proxy
@@ -189,6 +249,11 @@ export default function(Vue) {
       _delayTimeout = 0;
     }
 
+    if (_dragContext && _dragContext.resizable === true) {
+      _clearDragdrop();
+      return;
+    }
+
     if (!_isDragging || !_isMoved) {
       _clearDragdrop();
       return;
@@ -212,6 +277,9 @@ export default function(Vue) {
     // style
     _stylesheet = document.createElement('style');
     document.head.appendChild(_stylesheet);
+    // width/height
+    _windowSize.width = document.documentElement.clientWidth;
+    _windowSize.height = document.documentElement.clientHeight;
     // events
     const app = Vue.prototype.$f7;
     app.on('touchstart:passive', handeTouchStart);
