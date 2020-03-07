@@ -4,7 +4,7 @@ export default {
     loginOnStart: true,
     header: {
       buttons: [
-        { name: 'Home', iconMaterial: 'dashboard', url: '/a/base/menu/list', scene: 'dashboard', sceneOptions: { name: 'home' } },
+        { name: 'Home', iconMaterial: 'dashboard', url: '/a/dashboard/dashboard', scene: 'dashboard', sceneOptions: { name: 'home' } },
       ],
       mine:
         { name: 'Mine', iconMaterial: 'person', url: '/a/user/user/mine', scene: 'sidebar', sceneOptions: { side: 'right', name: 'mine', title: 'Mine' } },
