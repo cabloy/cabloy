@@ -9,7 +9,7 @@
       <f7-block>
         <p>Grid cells have different size on Small/Medium/Large</p>
         <f7-row ref="resizableRow">
-          <f7-col v-for="col of resizableCols" resizable :width="col.small" :medium="col.medium" :large="col.large">{{col[getViewSize()]}}</f7-col>
+          <f7-col v-for="(col,index) of resizableCols" :key="index" resizable :width="col.small" :medium="col.medium" :large="col.large">{{col[getViewSize()]}}</f7-col>
         </f7-row>
       </f7-block>
       <f7-block-title>Columns with gap</f7-block-title>
@@ -156,10 +156,9 @@ export default {
   },
   mounted() {
     this.dragdrop = Vue.prototype.$meta.module.get('a-components').options.utils.dragdrop;
-    this.dragdrop.initialize();
     const $resizableRow = this.$$(this.$refs.resizableRow.$el);
     const $handlers = $resizableRow.find('.resize-handler');
-    for (let index = 0; index < $handlers.length; i++) {
+    for (let index = 0; index < $handlers.length; index++) {
       this.dragdrop.bind($handlers[index], {
         scene: this.dragdropScene,
         resizable: true,
