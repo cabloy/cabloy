@@ -1,7 +1,7 @@
 {
   "name": "egg-born-module-a-dashboard",
   "version": "3.0.0",
-  "title": "a-dashboard",
+  "title": "Dashboard",
   "eggBornModule": {
     "fileVersion": 0,
     "dependencies": {
