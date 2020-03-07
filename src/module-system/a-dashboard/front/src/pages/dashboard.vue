@@ -1,13 +1,25 @@
 <template>
   <eb-page>
-    <div>b</div>
-    <eb-link eb-href="testc">link c</eb-link>
+    <template v-if="ready">
+      <test-party:widgetProducts></test-party:widgetProducts>
+    </template>
   </eb-page>
 </template>
 <script>
 export default {
   meta: {
     title: 'Dashboard',
+  },
+  data() {
+    return {
+      ready: false,
+    };
+  },
+  created() {
+    this.$meta.module.use('test-party', module => {
+      this.$options.components['test-party:widgetProducts'] = module.options.components.widgetProducts;
+      this.ready = true;
+    });
   }
 }
 
