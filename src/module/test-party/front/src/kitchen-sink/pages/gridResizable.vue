@@ -137,7 +137,7 @@
   </eb-page>
 </template>
 <script>
-//5, 10, 15, 20, 25, 30, 100 / 3, 35, 40, 45, 50, 55, 60, 65, 100 * (2 / 3), 70, 75, 80, 85, 90, 95, 100
+const _colWidths = [5, 10, 15, 20, 25, 30, 33, 35, 40, 45, 50, 55, 60, 65, 66, 70, 75, 80, 85, 90, 95, 100];
 export default {
   meta: {
     size: 'large',
@@ -164,9 +164,9 @@ export default {
         resizable: true,
         colIndex: index,
         onDragStart: this.onDragStart,
-        onDragElement: this.onDragElement,
+        onDragContainerSize: this.onDragContainerSize,
+        onDragMove: this.onDragMove,
         onDragEnd: this.onDragEnd,
-        onDragDone: this.onDragDone,
       });
     }
   },
@@ -174,17 +174,51 @@ export default {
     getViewSize() {
       return this.$view.size;
     },
-    onDragStart({ $el, context, dragElement }) {},
-    onDragElement({ $el, context }) {},
-    onDragEnd({ $el, context, dragElement }) {},
-    onDragDone({ $el, context, dragElement, dropElement, dropContext }) {
-      const panelIndexDrag = this.sidebar._getPanelIndex(context.panel);
-      this.panels.splice(panelIndexDrag, 1);
-      const panelIndexDrop = this.sidebar._getPanelIndex(dropContext.panel);
-      this.panels.splice(panelIndexDrop, 0, context.panel);
-      // save
-      this.layout.__saveLayoutConfig();
+    onDragStart({ $el, context }) {},
+    onDragContainerSize({ $el, context }) {
+      const $resizableRow = this.$$(this.$refs.resizableRow.$el);
+      return { width: $resizableRow.width() };
     },
+    onDragMove({ $el, context, diff }) {
+      const viewSize = this.getViewSize();
+      // diff
+      const diffPercent = parseInt(diff.percent.x * 100);
+      if (diffPercent === 0) return;
+      const minus = diffPercent < 0;
+      // this col
+      const col = this.resizableCols[context.colIndex];
+      const colWidthCurrent = col[viewSize];
+      let colWidthNew = colWidthCurrent + diffPercent;
+      colWidthNew = this._getPreferWidth(colWidthCurrent, colWidthNew, false, minus);
+      if (!colWidthNew) return false;
+      if (colWidthCurrent === colWidthNew) return false;
+      col[viewSize] = colWidthNew;
+      // next col
+      const colNext = this.resizableCols[context.colIndex + 1];
+      if (colNext) {
+        const colWidthCurrentNext = colNext[viewSize];
+        let colWidthNewNext = colWidthCurrentNext - (colWidthNew - colWidthCurrent);
+        colWidthNewNext = this._getPreferWidth(colWidthCurrentNext, colWidthNewNext, true, !minus);
+        if (colWidthNewNext) {
+          colNext[viewSize] = colWidthNewNext;
+        }
+        console.log(diffPercent);
+        console.log(colWidthCurrent, colWidthNew, colWidthCurrentNext, colWidthNewNext);
+      }
+      return true;
+    },
+    onDragEnd({ $el, context }) {},
+    _getPreferWidth(widthCurrent, widthNew, force, minus) {
+      const loop = force ? 5 : 2;
+      for (let i = 0; i < loop; i++) {
+        for (const item of _colWidths) {
+          if (minus && item < widthCurrent && widthNew - item <= i) return item;
+          if (!minus && item > widthCurrent && item - widthNew <= i) return item;
+        }
+      }
+      return null;
+    }
+
   },
 };
 
