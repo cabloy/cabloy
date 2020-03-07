@@ -7,7 +7,7 @@ export default function(Vue) {
       baseURL: '',
     },
     layout: {
-      breakpoint: 800,
+      breakpoint: 600,
       items: {
         mobile: {
           module: 'a-layoutmobile',
