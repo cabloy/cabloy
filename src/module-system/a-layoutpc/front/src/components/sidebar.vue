@@ -209,6 +209,8 @@ export default {
       if (!this.options.cover) {
         this._onPanelResizeDelay();
       }
+      // save
+      this.layout.__saveLayoutConfig();
     },
     onPanelResize(panel, newPanelWidth) {
       this.setPanelWidth(newPanelWidth);
