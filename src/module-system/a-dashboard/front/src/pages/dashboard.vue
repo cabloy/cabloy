@@ -17,7 +17,7 @@ export default {
   },
   created() {
     this.$meta.module.use('test-party', module => {
-      this.$options.components['test-party:widgetProducts'] = module.options.components.widgetProducts;
+      this.$options.components['test-party:widgetProducts'] = module.options.components.widgetAbout;
       this.ready = true;
     });
   }
