@@ -39,9 +39,9 @@ export default function(Vue) {
     return null;
   }
 
-  function _getDropElement($el, context, dragElement, dragConext) {
+  function _getDropElement($el, context, dragElement, dragContext) {
     if (!context.onDropElement) return $el;
-    const res = context.onDropElement({ $el, context, dragElement, dragConext });
+    const res = context.onDropElement({ $el, context, dragElement, dragContext });
     if (res === undefined) return $el;
     if (res) return res;
     return null;
@@ -50,7 +50,7 @@ export default function(Vue) {
   function handeTouchStart(e) {
     const $$ = Vue.prototype.$$;
     // el
-    const $el = $$(e.target).closest('.eb-dragdrop-handler');
+    const $el = $$(e.target).closest('.eb-dragdrop-handler, .eb-dragdrop-handler-resizable');
     if ($el.length === 0) return;
     // context
     const context = $el[0].__eb_dragContext;
@@ -137,7 +137,13 @@ export default function(Vue) {
   function _handeTouchMove(e) {
     const $$ = Vue.prototype.$$;
     // el
-    const $el = $$(e.target).closest('.eb-dragdrop-handler');
+    let $el = $$(e.target).closest('.eb-dragdrop-handler');
+    if ($el.length === 0) {
+      const $dragdropElement = $$(e.target).closest('.eb-dragdrop-element');
+      if ($dragdropElement.length !== 0) {
+        $el = $dragdropElement.find('.eb-dragdrop-handler');
+      }
+    }
     // drop element
     const dropElementNew = _checkMoveElement($el);
     const dropContextNew = dropElementNew ? $el[0].__eb_dragContext : null;
@@ -330,6 +336,10 @@ export default function(Vue) {
     _clearDragdrop();
   }
 
+  function __handlerClassName(isResizable) {
+    return isResizable ? 'eb-dragdrop-handler-resizable' : 'eb-dragdrop-handler';
+  }
+
   function initialize() {
     if (_inited) return;
     _inited = true;
@@ -348,12 +358,13 @@ export default function(Vue) {
 
   function bind(el, context) {
     initialize();
-    Vue.prototype.$$(el).addClass('eb-dragdrop-handler');
+    Vue.prototype.$$(el).addClass(__handlerClassName(context.resizable));
     el.__eb_dragContext = context;
   }
 
   function unbind(el) {
-    Vue.prototype.$$(el).removeClass('eb-dragdrop-handler');
+    const context = el.__eb_dragContext;
+    context && Vue.prototype.$$(el).removeClass(__handlerClassName(context.resizable));
     el.__eb_dragContext = null;
   }
 
