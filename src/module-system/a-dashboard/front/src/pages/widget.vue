@@ -3,11 +3,9 @@ export default {
   render(c) {
     const children = [];
     if (this.ready) {
-      children.push(c(this.__getFullName(), {
-        attrs: {}
-      }));
+      children.push(c(this.__getFullName(), {}));
     }
-    return c('div', {}, children);
+    return c('div', { staticClass: 'widget-inner' }, children);
   },
   props: {
     options: {
