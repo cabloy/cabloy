@@ -112,6 +112,7 @@ export default {
   },
   methods: {
     createView({ ctx, panel, options, init }) {
+      options = options || {};
       // panelName
       const panelName = this.layout._panelFullName(panel);
       // find by name
@@ -120,8 +121,11 @@ export default {
         const $view = this.$$(`#${view.id}`);
         // navigate
         if (panel.url && panel.url !== view.panel.url) {
-          $view[0].f7View.router.navigate(panel.url, { reloadAll: true });
+          options = this.$utils.extend({}, options, { reloadAll: true });
+          $view[0].f7View.router.navigate(panel.url, options);
         }
+        // always update, maybe some properties have changed
+        view.panel = panel;
         // change zIndex
         view.zIndex = ++this.$refs.sidebarGroup.viewIndex;
         // active
@@ -129,7 +133,6 @@ export default {
         return;
       }
       // new view
-      options = options || {};
       return this.$refs.sidebarGroup.createView({ ctx, panel }).then(res => {
         if (res) {
           if (res.options) options = this.$utils.extend({}, options, res.options);

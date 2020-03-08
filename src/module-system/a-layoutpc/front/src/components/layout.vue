@@ -384,12 +384,15 @@ export default {
       // prepare panel
       panel = this._preparePanel(panel, url);
       // check if has exists
-      const _panelTab = this.sidebar[side].panels.find(item => this._panelFullName(item) === this._panelFullName(panel));
-      if (!_panelTab) {
+      const _panelTabIndex = this.sidebar[side].panels.findIndex(item => this._panelFullName(item) === this._panelFullName(panel));
+      if (_panelTabIndex === -1) {
         this.sidebar[side].panels.push(panel);
         if (this.sidebar[side].panels.length === 1) {
           this.onResize();
         }
+      } else {
+        // always update, maybe some properties have changed
+        this.sidebar[side].panels.splice(_panelTabIndex, 1, panel);
       }
       // create view
       this.$nextTick(() => {
