@@ -8,8 +8,8 @@
       <p>{{$text('CabloyAboutTip4')}}</p>
     </f7-card-content>
     <f7-card-footer>
-      <span></span>
-      <span></span>
+      <f7-link external target="_blank" href="https://cabloy.com">{{$text('Documentation')}}</f7-link>
+      <f7-link external target="_blank" href="https://community.cabloy.com">{{$text('Community')}}</f7-link>
       <f7-link external target="_blank" href="https://github.com/zhennann/cabloy">GitHub</f7-link>
     </f7-card-footer>
   </f7-card>
