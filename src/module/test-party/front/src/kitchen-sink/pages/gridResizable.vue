@@ -162,9 +162,10 @@ export default {
       this.dragdrop.bind($handlers[index], {
         scene: this.dragdropScene,
         resizable: true,
+        //resizeDirection: 'row',
         colIndex: index,
         onDragStart: this.onDragStart,
-        onDragContainerSize: this.onDragContainerSize,
+        onDragContainer: this.onDragContainer,
         onDragMove: this.onDragMove,
         onDragEnd: this.onDragEnd,
       });
@@ -175,9 +176,11 @@ export default {
       return this.$view.size;
     },
     onDragStart({ $el, context }) {},
-    onDragContainerSize({ $el, context }) {
+    onDragContainer({ $el, context }) {
       const $resizableRow = this.$$(this.$refs.resizableRow.$el);
-      return { width: $resizableRow.width() };
+      const size = { width: $resizableRow.width() };
+      const tip = this._getTip(context);
+      return { size, tip };
     },
     onDragMove({ $el, context, diff }) {
       const viewSize = this.getViewSize();
@@ -193,6 +196,7 @@ export default {
       if (!colWidthNew) return false;
       if (colWidthCurrent === colWidthNew) return false;
       col[viewSize] = colWidthNew;
+      let tip = col[viewSize];
       // next col
       const colNext = this.resizableCols[context.colIndex + 1];
       if (colNext) {
@@ -202,10 +206,22 @@ export default {
         if (colWidthNewNext) {
           colNext[viewSize] = colWidthNewNext;
         }
+        tip = `${tip}:${colNext[viewSize]}`;
       }
-      return true;
+      return { tip };
     },
     onDragEnd({ $el, context }) {},
+    _getTip(context) {
+      const viewSize = this.getViewSize();
+      let tip;
+      const col = this.resizableCols[context.colIndex];
+      tip = col[viewSize];
+      const colNext = this.resizableCols[context.colIndex + 1];
+      if (colNext) {
+        tip = `${tip}:${colNext[viewSize]}`;
+      }
+      return tip;
+    },
     _getPreferWidth(widthCurrent, widthNew, force, minus) {
       const loop = force ? 5 : 2;
       for (let i = 0; i < loop; i++) {
