@@ -64,9 +64,9 @@ export default {
     },
     onDragStart({ $el, context, dragElement }) {},
     onDragElement({ $el, context }) {},
-    onDropElement({ $el, context, dragElement, dragConext }) {
+    onDropElement({ $el, context, dragElement, dragContext }) {
       const panelIndexDrop = this.sidebar._getPanelIndex(context.panel);
-      const panelIndexDrag = this.sidebar._getPanelIndex(dragConext.panel);
+      const panelIndexDrag = this.sidebar._getPanelIndex(dragContext.panel);
       if (panelIndexDrop === panelIndexDrag || panelIndexDrop == panelIndexDrag + 1) return null;
       return $el;
     },

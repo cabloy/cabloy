@@ -58,9 +58,9 @@ export default {
     isTabActive(groupId) {
       return this.$$(this.$refs[groupId].$el).hasClass('tab-link-active');
     },
-    onDropElement({ $el, context, dragElement, dragConext }) {
+    onDropElement({ $el, context, dragElement, dragContext }) {
       const groupIndexDrop = this.groups._getGroupIndex(context.group.id);
-      const groupIndexDrag = this.groups._getGroupIndex(dragConext.group.id);
+      const groupIndexDrag = this.groups._getGroupIndex(dragContext.group.id);
       if (groupIndexDrop === groupIndexDrag || groupIndexDrop == groupIndexDrag + 1) return null;
       return $el;
     },
