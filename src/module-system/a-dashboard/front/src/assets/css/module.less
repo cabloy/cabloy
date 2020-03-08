@@ -15,4 +15,25 @@
     left: auto;
     right: 0;
   }
+
+  .widget {
+    .widget-toolbar {
+      position: absolute;
+      top: 0;
+      right: 0;
+
+      a.link {
+        color: var(--f7-grid-resize-handler-bg-color);
+
+        .icon {
+          font-size: 16px;
+        }
+
+        &+a.link {
+          margin-left: 8px;
+        }
+      }
+
+    }
+  }
 }

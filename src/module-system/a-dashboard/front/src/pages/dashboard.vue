@@ -1,12 +1,14 @@
 <script>
 const _colWidths = [5, 10, 15, 20, 25, 30, 33, 35, 40, 45, 50, 55, 60, 65, 66, 70, 75, 80, 85, 90, 95, 100];
 import widget from './widget.vue';
+import widgetToolbar from './widgetToolbar.vue';
 export default {
   meta: {
     title: 'Dashboard',
   },
   components: {
     widget,
+    widgetToolbar,
   },
   render(c) {
     const children = [];
@@ -31,7 +33,7 @@ export default {
       ready: false,
       widgetsAll: null,
       profile: null,
-      dragdrop: null,
+      dragdropSceneResize: Vue.prototype.$meta.util.nextId('dragdrop'),
       dragdropScene: Vue.prototype.$meta.util.nextId('dragdrop'),
     };
   },
@@ -48,12 +50,18 @@ export default {
             options: item,
           }
         });
+        const toolbar = c('widget-toolbar', {
+          staticClass: 'widget-toolbar',
+          props: {
+            widget: item,
+          },
+        });
         const resizeHandler = c('span', {
           staticClass: 'resize-handler',
           directives: [{
             name: 'eb-dragdrop',
             value: {
-              scene: this.dragdropScene,
+              scene: this.dragdropSceneResize,
               resizable: true,
               widgetId: item.id,
               onDragContainer: this.onDragContainer,
@@ -77,7 +85,7 @@ export default {
           style: {
             height: item.properties.height,
           }
-        }, [widget, resizeHandler]));
+        }, [widget, toolbar, resizeHandler]));
       }
       //last
       cols.push(c('f7-col', {
