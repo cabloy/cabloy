@@ -20,7 +20,7 @@ export default {
       directives: [{
         name: 'eb-dragdrop',
         value: {
-          scene: this.dashboard.dragdropScene,
+          scene: this.dragdropScene,
           widgetId: this.widget.id,
           onDragStart: this.onDragStart,
           onDragElement: this.onDragElement,
@@ -39,39 +39,36 @@ export default {
   props: {
     widget: {
       type: Object,
-    }
+    },
+    dragdropScene: {
+      type: String,
+    },
+    onDragStart: {
+      type: Function,
+    },
+    onDragElement: {
+      type: Function,
+    },
+    onDropElement: {
+      type: Function,
+    },
+    onDropLeave: {
+      type: Function,
+    },
+    onDropEnter: {
+      type: Function,
+    },
+    onDragEnd: {
+      type: Function,
+    },
+    onDragDone: {
+      type: Function,
+    },
   },
   data() {
-    return {
-      dragdropScene: Vue.prototype.$meta.util.nextId('dragdrop'),
-    }
+    return {}
   },
-  computed: {
-    dashboard() {
-      return this.$parent;
-    },
-  },
-  methods: {
-    onDragStart({ $el, context, dragElement }) {},
-    onDragElement({ $el, context }) {},
-    onDropElement({ $el, context, dragElement, dragConext }) {
-      const panelIndexDrop = this.sidebar._getPanelIndex(context.panel);
-      const panelIndexDrag = this.sidebar._getPanelIndex(dragConext.panel);
-      if (panelIndexDrop === panelIndexDrag || panelIndexDrop == panelIndexDrag + 1) return null;
-      return $el;
-    },
-    onDropLeave({ $el, context, dropElement }) {},
-    onDropEnter({ $el, context, dropElement }) {},
-    onDragEnd({ $el, context, dragElement }) {},
-    onDragDone({ $el, context, dragElement, dropElement, dropContext }) {
-      const panelIndexDrag = this.sidebar._getPanelIndex(context.panel);
-      this.panels.splice(panelIndexDrag, 1);
-      const panelIndexDrop = this.sidebar._getPanelIndex(dropContext.panel);
-      this.panels.splice(panelIndexDrop, 0, context.panel);
-      // save
-      this.layout.__saveLayoutConfig();
-    },
-  }
+  methods: {}
 }
 
 </script>

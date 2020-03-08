@@ -54,6 +54,14 @@ export default {
           staticClass: 'widget-toolbar',
           props: {
             widget: item,
+            dragdropScene: this.dragdropScene,
+            onDragStart: this.onDragStart,
+            onDragElement: this.onDragElement,
+            onDropElement: this.onDropElement,
+            onDropLeave: this.onDropLeave,
+            onDropEnter: this.onDropEnter,
+            onDragEnd: this.onDragEnd,
+            onDragDone: this.onDragDone,
           },
         });
         const resizeHandler = c('span', {
@@ -71,7 +79,7 @@ export default {
         });
         cols.push(c('f7-col', {
           key: item.id,
-          staticClass: `widget widget-${item.id}`,
+          staticClass: `widget widget-${item.id} eb-dragdrop-element`,
           attrs: {
             'data-widget-id': item.id,
           },
@@ -190,7 +198,28 @@ export default {
     },
     onClickSettings() {
       console.log('---settings');
-    }
+    },
+    onDragStart({ $el, context, dragElement }) {},
+    onDragElement({ $el, context }) {
+      return this.$$(`.widget-${context.widgetId}`);
+    },
+    onDropElement({ $el, context, dragElement, dragContext }) {
+      const [widgetDrop, indexDrop] = this.__getWidgetById(context.widgetId);
+      const [widgetDrag, indexDrag] = this.__getWidgetById(dragContext.widgetId);
+      if (indexDrop === indexDrag || indexDrop == indexDrag + 1) return null;
+      return this.$$(`.widget-${context.widgetId}`);
+    },
+    onDropLeave({ $el, context, dropElement }) {},
+    onDropEnter({ $el, context, dropElement }) {},
+    onDragEnd({ $el, context, dragElement }) {},
+    onDragDone({ $el, context, dragElement, dropElement, dropContext }) {
+      const [widgetDrag, indexDrag] = this.__getWidgetById(context.widgetId);
+      this.profile.widgets.splice(indexDrag, 1);
+      const [widgetDrop, indexDrop] = this.__getWidgetById(dropContext.widgetId);
+      this.profile.widgets.splice(indexDrop, 0, widgetDrag);
+      // save
+      //this.layout.__saveLayoutConfig();
+    },
   }
 }
 

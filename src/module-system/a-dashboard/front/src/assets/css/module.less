@@ -21,6 +21,9 @@
       position: absolute;
       top: 0;
       right: 0;
+      opacity: 0;
+      transition-duration: 400ms;
+      z-index: 200;
 
       a.link {
         color: var(--f7-grid-resize-handler-bg-color);
@@ -34,6 +37,16 @@
         }
       }
 
+    }
+
+    &:hover {
+      .widget-toolbar {
+        opacity: 1;
+      }
+    }
+
+    &.eb-dragdrop-drop {
+      background: hsla(0, 0%, 100%, .12);
     }
   }
 }
