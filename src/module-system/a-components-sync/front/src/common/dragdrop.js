@@ -1,5 +1,6 @@
 export default function(Vue) {
 
+  const proxyResizeOffset = 16;
   const proxyOffset = 6;
   const proxySizeMin = 16;
   const proxySizeMax = 32;
@@ -18,14 +19,14 @@ export default function(Vue) {
   let _dropContext = null;
   let _proxyElement = null;
   let _dragElementSize = {};
-  let _dragContainerSize = {};
+  let _dragContainer = {};
   let _touchStart = {};
   let _delayTimeout = 0;
 
-  function _getDragContainerSize($el, context) {
-    if (!context.onDragContainerSize) return _windowSize;
-    const res = context.onDragContainerSize({ $el, context });
-    if (res === undefined) return _windowSize;
+  function _getDragContainer($el, context) {
+    if (!context.onDragContainer) return { size: _windowSize };
+    const res = context.onDragContainer({ $el, context });
+    if (res === undefined) return { size: _windowSize };
     if (res) return res;
     return null;
   }
@@ -58,8 +59,12 @@ export default function(Vue) {
     _delayTimeout = window.setTimeout(() => {
       if (!_delayTimeout) return;
       _delayTimeout = 0;
+
+      const isResizable = context.resizable === true;
+      const isRow = context.resizeDirection === 'row';
+
       // get drag element
-      if (context.resizable !== true) {
+      if (!isResizable) {
         _dragElement = _getDragElement($el, context);
         if (!_dragElement) return; // break
         // size
@@ -69,14 +74,14 @@ export default function(Vue) {
         };
       } else {
         // get container size
-        _dragContainerSize = _getDragContainerSize($el, context);
-        if (!_dragContainerSize) return; // break
+        _dragContainer = _getDragContainer($el, context);
+        if (!_dragContainer) return; // break
       }
       // touch
       _touchStart.x = e.type === 'touchstart' ? e.targetTouches[0].pageX : e.pageX;
       _touchStart.y = e.type === 'touchstart' ? e.targetTouches[0].pageY : e.pageY;
-      // proxy
-      if (context.resizable !== true && context.proxy !== false) {
+      // proxy: move
+      if (!isResizable && context.proxy !== false) {
         if (!_proxyElement) {
           _proxyElement = $$('<div class="eb-dragdrop-proxy"></div>');
           $$('body').append(_proxyElement);
@@ -95,13 +100,17 @@ export default function(Vue) {
         });
         _proxyElement.show();
       }
+      // proxy: resize
+      if (isResizable && _dragContainer.tip) {
+        _adjustResizeProxy(context, _touchStart.x, _touchStart.y, _dragContainer.tip);
+      }
       // cursor
-      const cursor = context.resizable === true ? (context.resizeDirection === 'row' ? 'row-resize' : 'col-resize') : 'move';
+      const cursor = isResizable ? (isRow ? 'row-resize' : 'col-resize') : 'move';
       const style = `html, html a.link {cursor: ${cursor} !important;}`;
       _stylesheet.innerHTML = style;
       // start
       context.onDragStart && context.onDragStart({ $el, context, dragElement: _dragElement });
-      if (context.resizable !== true) _dragElement.addClass('eb-dragdrop-drag');
+      if (!isResizable) _dragElement.addClass('eb-dragdrop-drag');
       // ready
       _isMoved = false;
       _isDragging = true;
@@ -168,37 +177,87 @@ export default function(Vue) {
 
   }
 
+  function _adjustResizeProxy(context, x, y, tip) {
+    const $$ = Vue.prototype.$$;
+    const isRow = context.resizeDirection === 'row';
+
+    if (!_proxyElement) {
+      _proxyElement = $$('<div class="eb-dragdrop-proxy"></div>');
+      $$('body').append(_proxyElement);
+    }
+    _proxyElement.show();
+    _proxyElement.css({
+      width: 'auto',
+      height: 'auto',
+    });
+    _proxyElement.text(tip);
+    const _proxySize = {
+      width: _proxyElement.width(),
+      height: _proxyElement.height(),
+    };
+    // proxy size
+    _proxyElement.css({
+      left: `${isRow ? x + proxyResizeOffset : x - _proxySize.width / 2}px`,
+      top: `${isRow ? y - _proxySize.height / 2 : y + proxyResizeOffset}px`,
+    });
+  }
+
   function _handeTouchResize(e) {
     if (!_dragContext.onDragMove) return;
     _isMoved = true;
 
-    const bRow = _dragContext.resizeDirection === 'row';
+    const isRow = _dragContext.resizeDirection === 'row';
 
     const touchCurrentX = e.type === 'touchmove' ? e.targetTouches[0].pageX : e.pageX;
     const touchCurrentY = e.type === 'touchmove' ? e.targetTouches[0].pageY : e.pageY;
 
     const abs = {
-      x: !bRow ? touchCurrentX - _touchStart.x : undefined,
-      y: bRow ? touchCurrentY - _touchStart.y : undefined,
+      x: !isRow ? touchCurrentX - _touchStart.x : undefined,
+      y: isRow ? touchCurrentY - _touchStart.y : undefined,
     };
 
     const percent = {
-      x: !bRow ? abs.x / _dragContainerSize.width : undefined,
-      y: bRow ? abs.y / _dragContainerSize.height : undefined,
+      x: !isRow ? abs.x / _dragContainer.size.width : undefined,
+      y: isRow ? abs.y / _dragContainer.size.height : undefined,
     };
 
     const diff = { abs, percent };
 
-    if (!bRow && abs.x === 0) return;
-    if (bRow && abs.y === 0) return;
+    if (!isRow && abs.x === 0) return;
+    if (isRow && abs.y === 0) return;
 
-    // if (!bRow && Math.abs(abs.y) > Math.abs(abs.x)) return;
-    // if (bRow && Math.abs(abs.x) > Math.abs(abs.y)) return;
+    // if (!isRow && Math.abs(abs.y) > Math.abs(abs.x)) return;
+    // if (isRow && Math.abs(abs.x) > Math.abs(abs.y)) return;
 
     const res = _dragContext.onDragMove({ $el: _dragHandler, context: _dragContext, diff });
-    if (res !== true) return;
+    if (!res) {
+      if (_dragContainer.tip && _proxyElement) {
+        // proxy: just adjust position
+        const _proxySize = {
+          width: _proxyElement.width(),
+          height: _proxyElement.height(),
+        };
+        _proxyElement.css({
+          left: `${isRow ? touchCurrentX + proxyResizeOffset : touchCurrentX - _proxySize.width / 2}px`,
+          top: `${isRow ? touchCurrentY - _proxySize.height / 2 : touchCurrentY + proxyResizeOffset}px`,
+        });
+      }
+      return;
+    }
+
+    // proxy position
+    const isResizable = _dragContext.resizable === true;
+    const tip = res.tip;
+    if (isResizable) {
+      if (!tip) {
+        _proxyElement && _proxyElement.hide();
+      } else {
+        _adjustResizeProxy(_dragContext, touchCurrentX, touchCurrentY, tip);
+      }
+    }
 
     // reset
+    _dragContainer.tip = tip;
     _touchStart = { x: touchCurrentX, y: touchCurrentY };
     e.preventDefault();
 
