@@ -179,7 +179,7 @@ export default {
       // sidebar
       if (options.scene === 'sidebar') {
         const side = options.sceneOptions.side;
-        this._createPanel({ side, panel: options.sceneOptions, url });
+        this._createPanel({ side, panel: options.sceneOptions, url, options });
         return;
       }
 
@@ -379,7 +379,7 @@ export default {
         },
       });
     },
-    _createPanel({ side, panel, url, init }) {
+    _createPanel({ side, panel, url, options, init }) {
       const sideUpperCase = side.replace(side[0], side[0].toUpperCase());
       // prepare panel
       panel = this._preparePanel(panel, url);
@@ -393,7 +393,7 @@ export default {
       }
       // create view
       this.$nextTick(() => {
-        this.$refs[`sidebar${sideUpperCase}`].createView({ ctx: null, panel, init });
+        this.$refs[`sidebar${sideUpperCase}`].createView({ ctx: null, panel, options, init });
       });
     },
     _panelFullName(panel) {

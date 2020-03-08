@@ -111,7 +111,7 @@ export default {
     }
   },
   methods: {
-    createView({ ctx, panel, init }) {
+    createView({ ctx, panel, options, init }) {
       // panelName
       const panelName = this.layout._panelFullName(panel);
       // find by name
@@ -129,7 +129,7 @@ export default {
         return;
       }
       // new view
-      let options = {};
+      options = options || {};
       return this.$refs.sidebarGroup.createView({ ctx, panel }).then(res => {
         if (res) {
           if (res.options) options = this.$utils.extend({}, options, res.options);
