@@ -1,1 +1,18 @@
+.dashboard-settings {
+  position: fixed;
+  bottom: 6px;
+  right: 6px;
 
+  &.link {
+    color: var(--f7-grid-resize-handler-bg-color);
+  }
+}
+
+.dashboard {
+
+  [class*="col-"]>.resize-handler,
+  .col>.resize-handler {
+    left: auto;
+    right: 0;
+  }
+}

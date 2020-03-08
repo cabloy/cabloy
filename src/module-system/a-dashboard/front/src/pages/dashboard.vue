@@ -11,7 +11,18 @@ export default {
   render(c) {
     const children = [];
     if (this.ready) {
+      // row
       children.push(this.__renderRow(c));
+      // settings
+      children.push(c('f7-link', {
+        staticClass: 'dashboard-settings',
+        attrs: {
+          iconMaterial: 'settings'
+        },
+        on: {
+          click: this.onClickSettings,
+        }
+      }));
     }
     return c('eb-page', {}, children);
   },
@@ -29,6 +40,7 @@ export default {
   },
   methods: {
     __renderRow(c) {
+      // cols
       const cols = [];
       for (const item of this.profile.widgets) {
         const widget = c('widget', {
@@ -67,6 +79,16 @@ export default {
           }
         }, [widget, resizeHandler]));
       }
+      //last
+      cols.push(c('f7-col', {
+        staticClass: 'widget widget-last',
+        props: {
+          resizable: true,
+          resizableHandler: false,
+          width: 100,
+        }
+      }));
+      // row
       return c('f7-row', {
         ref: 'container',
         staticClass: 'dashboard',
@@ -157,6 +179,9 @@ export default {
         }
       }
       return null;
+    },
+    onClickSettings() {
+      console.log('---settings');
     }
   }
 }
