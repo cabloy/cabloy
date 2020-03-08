@@ -62,6 +62,8 @@ export default {
             onDropEnter: this.onDropEnter,
             onDragEnd: this.onDragEnd,
             onDragDone: this.onDragDone,
+            onWidgetDelete: this.onWidgetDelete,
+            onWidgetProperties: this.onWidgetProperties,
           },
         });
         const resizeHandler = c('span', {
@@ -124,12 +126,26 @@ export default {
       });
     },
     __initLayoutConfig(layoutConfig) {
+      // profile
+      let profile;
       if (layoutConfig.profile) {
-        this.profile = JSON.parse(JSON.stringify(layoutConfig.profile));
+        profile = JSON.parse(JSON.stringify(layoutConfig.profile));
       } else {
         const profileDefault = this.$config.profile.default;
-        this.profile = JSON.parse(JSON.stringify(profileDefault));
+        profile = JSON.parse(JSON.stringify(profileDefault));
       }
+      // widget id
+      for (const widget of profile.widgets) {
+        // uuid
+        if (!widget.id) {
+          widget.id = this.__generateUUID();
+        }
+        if (!widget.properties) {
+          widget.properties = this.$utils.extend({}, this.$config.profile.meta.widget.properties);
+        }
+      }
+      // ok
+      this.profile = profile;
     },
     onDragContainerResizable({ $el, context }) {
       const $container = this.$$(this.$refs.container.$el);
@@ -197,7 +213,20 @@ export default {
       return null;
     },
     onClickSettings() {
-      console.log('---settings');
+      this.$view.navigate('/a/dashboard/dashboard/settings', {
+        scene: 'sidebar',
+        sceneOptions: { side: 'right', name: 'settings', title: 'Settings' },
+        context: {
+          params: {
+
+          },
+          callback: (code, selectedAtom) => {
+            if (code === 200) {
+              //this.atom = selectedAtom;
+            }
+          },
+        },
+      });
     },
     onDragStart({ $el, context, dragElement }) {},
     onDragElement({ $el, context }) {
@@ -220,6 +249,28 @@ export default {
       // save
       //this.layout.__saveLayoutConfig();
     },
+    onWidgetDelete(widget) {
+      return this.$view.dialog.confirm().then(() => {
+        const [_widget, index] = this.__getWidgetById(widget.id);
+        if (index === -1) return;
+        this.profile.widgets.splice(index, 1);
+      });
+    },
+    onWidgetProperties(widget) {
+
+    },
+    __generateUUID() {
+      var d = new Date().getTime();
+      if (window.performance && typeof window.performance.now === "function") {
+        d += performance.now(); //use high-precision timer if available
+      }
+      var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = (d + Math.random() * 16) % 16 | 0;
+        d = Math.floor(d / 16);
+        return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+      });
+      return uuid;
+    }
   }
 }
 
