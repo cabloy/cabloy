@@ -10,13 +10,15 @@
 
 .dashboard {
 
-  [class*="col-"]>.resize-handler,
-  .col>.resize-handler {
-    left: auto;
-    right: 0;
-  }
-
   .widget {
+
+    .resize-handler {
+      left: auto;
+      right: 0;
+      opacity: 0;
+      transition-duration: 400ms;
+    }
+
     .widget-toolbar {
       position: absolute;
       top: 0;
@@ -40,6 +42,13 @@
     }
 
     &:hover {
+
+      .resize-handler {
+        left: auto;
+        right: 0;
+        opacity: 1;
+      }
+
       .widget-toolbar {
         opacity: 1;
       }

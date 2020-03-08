@@ -72,8 +72,8 @@ export default {
               scene: this.dragdropSceneResize,
               resizable: true,
               widgetId: item.id,
-              onDragContainer: this.onDragContainer,
-              onDragMove: this.onDragMove,
+              onDragContainer: this.onDragContainerResizable,
+              onDragMove: this.onDragMoveResizable,
             }
           }],
         });
@@ -131,13 +131,13 @@ export default {
         this.profile = JSON.parse(JSON.stringify(profileDefault));
       }
     },
-    onDragContainer({ $el, context }) {
+    onDragContainerResizable({ $el, context }) {
       const $container = this.$$(this.$refs.container.$el);
       const size = { width: $container.width() };
       const tip = this.__getTip(context);
       return { size, tip };
     },
-    onDragMove({ $el, context, diff }) {
+    onDragMoveResizable({ $el, context, diff }) {
       const viewSize = this.getViewSize();
       // diff
       const diffPercent = parseInt(diff.percent.x * 100);
