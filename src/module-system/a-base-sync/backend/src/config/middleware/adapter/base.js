@@ -514,6 +514,7 @@ const Fn = module.exports = ctx => {
         menu: _func.menu || 0,
         public: _func.public ? 1 : 0,
         url: ctx.meta.util.combinePagePath(module.info, _func.url),
+        component: _func.component,
       };
       func.titleLocale = ctx.text(func.title);
       // create
