@@ -85,6 +85,8 @@ export default function(Vue) {
         if (!_proxyElement) {
           _proxyElement = $$('<div class="eb-dragdrop-proxy"></div>');
           $$('body').append(_proxyElement);
+        } else {
+          _proxyElement.text('');
         }
         const _size = _dragElementSize.width <= _dragElementSize.height ? { min: _dragElementSize.width, max: _dragElementSize.height } : { min: _dragElementSize.height, max: _dragElementSize.width };
         const _proxySize = {
@@ -305,6 +307,9 @@ export default function(Vue) {
     _dropHandler = null;
     _dropElement = null;
     _dropContext = null;
+    _dragElementSize = {};
+    _dragContainer = {};
+    _touchStart = {};
   }
 
   function handeTouchEnd(e) {
