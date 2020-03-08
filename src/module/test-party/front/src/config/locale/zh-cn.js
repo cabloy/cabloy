@@ -129,5 +129,6 @@ export default {
   'State Management': '状态管理',
   'Sign Up': '注册',
   'Switch Tab': '切换Tab',
+  'About CabloyJS': '关于CabloyJS',
 };
 

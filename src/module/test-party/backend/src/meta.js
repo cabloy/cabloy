@@ -66,6 +66,17 @@ module.exports = app => {
             sorting: 1,
             menu: 1,
           },
+          // widgets
+          widgetProducts: {
+            title: 'Products',
+            component: 'widgetProducts',
+            menu: 3,
+          },
+          widgetAbout: {
+            title: 'About',
+            component: 'widgetAbout',
+            menu: 3,
+          },
         },
       },
       validation: {
