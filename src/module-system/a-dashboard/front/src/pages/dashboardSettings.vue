@@ -13,10 +13,27 @@
   </eb-page>
 </template>
 <script>
+import Vue from 'vue';
+const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.components.ebPageContext;
 export default {
+  mixins: [ebPageContext],
+  computed: {
+    dashboard() {
+      return this.contextParams.dashboard;
+    },
+  },
   methods: {
     onPerformAddWidget() {
-
+      this.$view.navigate('/a/dashboard/widget/add', {
+        target: '_self',
+        context: {
+          callback: (code, widget) => {
+            if (code === 200) {
+              this.dashboard.onWidgetAdd(widget);
+            }
+          },
+        },
+      });
     },
     onPerformSaveAs() {}
   },

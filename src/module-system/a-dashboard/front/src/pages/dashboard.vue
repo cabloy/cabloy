@@ -212,22 +212,6 @@ export default {
       }
       return null;
     },
-    onClickSettings() {
-      this.$view.navigate('/a/dashboard/dashboard/settings', {
-        scene: 'sidebar',
-        sceneOptions: { side: 'right', name: 'settings', title: 'Settings' },
-        context: {
-          params: {
-
-          },
-          callback: (code, selectedAtom) => {
-            if (code === 200) {
-              //this.atom = selectedAtom;
-            }
-          },
-        },
-      });
-    },
     onDragStart({ $el, context, dragElement }) {},
     onDragElement({ $el, context }) {
       return this.$$(`.widget-${context.widgetId}`);
@@ -249,6 +233,20 @@ export default {
       // save
       //this.layout.__saveLayoutConfig();
     },
+    onClickSettings() {
+      this.$view.navigate('/a/dashboard/dashboard/settings', {
+        scene: 'sidebar',
+        sceneOptions: { side: 'right', name: 'settings', title: 'Settings' },
+        context: {
+          params: {
+            dashboard: this,
+          },
+        },
+      });
+    },
+    onWidgetAdd(widget) {
+
+    },
     onWidgetDelete(widget) {
       return this.$view.dialog.confirm().then(() => {
         const [_widget, index] = this.__getWidgetById(widget.id);
@@ -264,7 +262,7 @@ export default {
       if (window.performance && typeof window.performance.now === "function") {
         d += performance.now(); //use high-precision timer if available
       }
-      var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var uuid = 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
         var r = (d + Math.random() * 16) % 16 | 0;
         d = Math.floor(d / 16);
         return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
