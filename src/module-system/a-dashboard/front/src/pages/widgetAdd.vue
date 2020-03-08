@@ -12,10 +12,15 @@ import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.components.ebPageContext;
 export default {
   mixins: [ebPageContext],
+  data() {
+    return {
+      widgetSelected: null,
+    };
+  },
   methods: {
     onPerformDone() {
-      const valueNew = this.value + 1;
-      this.contextCallback(200, { value: valueNew });
+      if (!this.widgetSelected) return;
+      this.contextCallback(200, { widget: this.widgetSelected });
       this.$f7router.back();
     },
   },

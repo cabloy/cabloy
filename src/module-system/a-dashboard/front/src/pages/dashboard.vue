@@ -134,6 +134,10 @@ export default {
         const profileDefault = this.$config.profile.default;
         profile = JSON.parse(JSON.stringify(profileDefault));
       }
+      // profile id
+      if (!profile.id) {
+        profile.id = this.__generateUUID();
+      }
       // widget id
       for (const widget of profile.widgets) {
         // uuid
@@ -234,9 +238,9 @@ export default {
       //this.layout.__saveLayoutConfig();
     },
     onClickSettings() {
-      this.$view.navigate('/a/dashboard/dashboard/settings', {
+      this.$view.navigate(`/a/dashboard/dashboard/settings?id=${this.profile.id}`, {
         scene: 'sidebar',
-        sceneOptions: { side: 'right', name: 'settings', title: 'Settings' },
+        sceneOptions: { side: 'right', name: 'profile', title: 'Profile2' },
         context: {
           params: {
             dashboard: this,
