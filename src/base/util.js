@@ -303,5 +303,22 @@ export default function(Vue) {
       }
       head.appendChild(link);
     },
+    removeClassLike($el, className) {
+      const classes = className.split(' ');
+      for (let i = 0; i < classes.length; i += 1) {
+        for (let j = 0; j < $el.length; j += 1) {
+          if (typeof $el[j] !== 'undefined' && typeof $el[j].classList !== 'undefined') {
+            __removeClassLike($el[j].classList, classes[i]);
+          }
+        }
+      }
+    },
   };
+}
+
+function __removeClassLike(classList, classNameLike) {
+  for (let i = classList.length - 1; i >= 0; i--) {
+    const item = classList.item(i);
+    if (item.indexOf(classNameLike) > -1) classList.remove(item);
+  }
 }
