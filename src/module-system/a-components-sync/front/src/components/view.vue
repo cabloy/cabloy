@@ -62,6 +62,10 @@ export default {
       this.$emit('view:ready', self);
     });
   },
+  beforeDestroy() {
+    const self = this;
+    this.$emit('view:destroy', self);
+  },
 };
 
 function noUndefinedProps(obj) {
