@@ -27,9 +27,9 @@ export default {
       this.$view.navigate('/a/dashboard/widget/add', {
         target: '_self',
         context: {
-          callback: (code, widget) => {
+          callback: (code, data) => {
             if (code === 200) {
-              this.dashboard.onWidgetAdd(widget);
+              this.dashboard.onWidgetAdd(data);
             }
           },
         },

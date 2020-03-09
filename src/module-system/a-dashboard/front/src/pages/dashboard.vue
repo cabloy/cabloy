@@ -140,16 +140,19 @@ export default {
       }
       // widget id
       for (const widget of profile.widgets) {
-        // uuid
-        if (!widget.id) {
-          widget.id = this.__generateUUID();
-        }
-        if (!widget.properties) {
-          widget.properties = this.$utils.extend({}, this.$config.profile.meta.widget.properties);
-        }
+        this.__initWidget(widget);
       }
       // ok
       this.profile = profile;
+    },
+    __initWidget(widget) {
+      // uuid
+      if (!widget.id) {
+        widget.id = this.__generateUUID();
+      }
+      if (!widget.properties) {
+        widget.properties = this.$utils.extend({}, this.$config.profile.meta.widget.properties);
+      }
     },
     onDragContainerResizable({ $el, context }) {
       const $container = this.$$(this.$refs.container.$el);
@@ -248,8 +251,9 @@ export default {
         },
       });
     },
-    onWidgetAdd(widget) {
-
+    onWidgetAdd({ widget }) {
+      this.__initWidget(widget);
+      this.profile.widgets.push(widget);
     },
     onWidgetDelete(widget) {
       return this.$view.dialog.confirm().then(() => {
