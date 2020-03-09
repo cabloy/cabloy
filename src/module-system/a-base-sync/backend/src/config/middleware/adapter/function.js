@@ -119,6 +119,7 @@ const Fn = module.exports = ctx => {
       const res = await this.model.get({ module, name });
       if (res) return res;
       const func = ctx.meta.base.function({ module, name });
+      if (!func) throw new Error(`function not found: ${module}:${name}`);
       let atomClassId = 0;
       if (func.atomClassName) {
         const atomClass = await ctx.meta.atomClass.get({ module, atomClassName: func.atomClassName });
