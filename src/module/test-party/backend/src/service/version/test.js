@@ -95,7 +95,13 @@ module.exports = function(ctx) {
 
     // role rights
     async _testRoleRights() {
+      // atomClass
       await ctx.meta.role.addRoleRightBatch({ atomClassName: 'party', roleRights: testData.roleRights });
+      // function
+      const roleFunctions = [
+        { roleName: null, name: 'testFunctionPublic' },
+      ];
+      await ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
     }
 
     // auths
