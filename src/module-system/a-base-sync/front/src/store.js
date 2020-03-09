@@ -11,6 +11,7 @@ export default function(Vue) {
       labels: null,
       layoutConfig: {},
       userPanels: null,
+      userWidgets: null,
       // global
       modules: null,
       atomClasses: null,
@@ -64,6 +65,9 @@ export default function(Vue) {
       },
       setUserPanels(state, panels) {
         state.userPanels = panels;
+      },
+      setUserWidgets(state, widgets) {
+        state.userWidgets = widgets;
       },
       setModules(state, modules) {
         state.modules = modules;
@@ -239,6 +243,24 @@ export default function(Vue) {
           };
           Vue.prototype.$meta.api.post('/a/base/function/list', { options }).then(data => {
             commit('setUserPanels', data.list);
+            resolve(data.list);
+          }).catch(err => {
+            reject(err);
+          });
+        });
+      },
+      getUserWidgets({ state, commit }) {
+        return new Promise((resolve, reject) => {
+          if (state.userWidgets) return resolve(state.userWidgets);
+          const options = {
+            where: { menu: 3 },
+            orders: [
+              [ 'titleLocale', 'asc' ],
+            ],
+            page: { size: 0 },
+          };
+          Vue.prototype.$meta.api.post('/a/base/function/list', { options }).then(data => {
+            commit('setUserWidgets', data.list);
             resolve(data.list);
           }).catch(err => {
             reject(err);
