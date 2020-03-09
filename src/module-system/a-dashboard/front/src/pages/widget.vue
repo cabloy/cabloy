@@ -1,15 +1,85 @@
 <script>
+import widgetToolbar from './widgetToolbar.vue';
+
+const _colWidths = [5, 10, 15, 20, 25, 30, 33, 35, 40, 45, 50, 55, 60, 65, 66, 70, 75, 80, 85, 90, 95, 100];
 export default {
+  components: {
+    widgetToolbar,
+  },
   render(c) {
     const children = [];
+    // toolbar
+    const toolbar = c('widget-toolbar', {
+      staticClass: 'widget-toolbar',
+      props: {
+        widget: this.options,
+        dragdropScene: this.dragdropScene,
+        onDragStart: this.onDragStart,
+        onDragElement: this.onDragElement,
+        onDropElement: this.onDropElement,
+        onDropLeave: this.onDropLeave,
+        onDropEnter: this.onDropEnter,
+        onDragEnd: this.onDragEnd,
+        onDragDone: this.onDragDone,
+        onWidgetDelete: this.onWidgetDelete,
+        onWidgetProperties: this.onWidgetProperties,
+      },
+    });
+    children.push(toolbar);
+    // resize handler
+    const resizeHandler = c('span', {
+      staticClass: 'resize-handler',
+      directives: [{
+        name: 'eb-dragdrop',
+        value: {
+          scene: this.dragdropSceneResize,
+          resizable: true,
+          widgetId: this.options.id,
+          onDragContainer: this.onDragContainerResizable,
+          onDragMove: this.onDragMoveResizable,
+        }
+      }],
+    });
+    children.push(resizeHandler);
+    // widget
     if (this.ready) {
-      children.push(c(this.__getFullName(), {}));
+      children.push(c(this.__getFullName(), {
+        staticClass: 'widget-inner',
+      }));
     }
-    return c('div', { staticClass: 'widget-inner' }, children);
+    // f7-col
+    return c('f7-col', {
+      staticClass: `widget widget-id-${this.options.id} widget-name-${this.options.module}-${this.options.name}`,
+      attrs: {
+        'data-widget-id': this.options.id,
+      },
+      props: {
+        resizable: true,
+        resizableHandler: false,
+        width: this.options.properties.width.small,
+        medium: this.options.properties.width.medium,
+        large: this.options.properties.width.large,
+      },
+      style: {
+        height: this.options.properties.height,
+      }
+    }, children);
   },
   props: {
+    dashboard: {
+      type: Object,
+    },
+    group: {
+      type: Object,
+    },
     options: {
       type: Object,
+    },
+    dragdropSceneResize: {
+      type: String,
+    },
+    dragdropScene: {
+      type: String,
     }
   },
   data() {
@@ -29,7 +99,98 @@ export default {
     },
     __getFullName() {
       return `${this.options.module}:${this.options.name}`;
-    }
+    },
+    onDragContainerResizable({ $el, context }) {
+      const $container = this.$$(this.dashboard.$el);
+      const size = { width: $container.width() };
+      const tip = this.__getTip(context);
+      return { size, tip };
+    },
+    onDragMoveResizable({ $el, context, diff }) {
+      const viewSize = this.getViewSize();
+      // diff
+      const diffPercent = parseInt(diff.percent.x * 100);
+      if (diffPercent === 0) return;
+      const minus = diffPercent < 0;
+      // this widget
+      const [widget, index] = this.group.__getWidgetById(context.widgetId);
+      const widgetWidthCurrent = widget.properties.width[viewSize];
+      let widgetWidthNew = widgetWidthCurrent + diffPercent;
+      widgetWidthNew = this.__getPreferWidth(widgetWidthCurrent, widgetWidthNew, false, minus);
+      if (!widgetWidthNew) return false;
+      if (widgetWidthCurrent === widgetWidthNew) return false;
+      // set width
+      widget.properties.width[viewSize] = widgetWidthNew;
+      // tip
+      let tip = widget.properties.width[viewSize];
+      // next col
+      const widgetNext = this.group.widgets[index + 1];
+      if (widgetNext) {
+        const widgetWidthNext = widgetNext.properties.width[viewSize];
+        let widgetWidthNewNext = widgetWidthNext - (widgetWidthNew - widgetWidthCurrent);
+        widgetWidthNewNext = this.__getPreferWidth(widgetWidthNext, widgetWidthNewNext, true, !minus);
+        if (widgetWidthNewNext) {
+          widgetNext.properties.width[viewSize] = widgetWidthNewNext;
+        }
+        tip = `${tip}:${widgetNext.properties.width[viewSize]}`;
+      }
+      return { tip };
+    },
+    __getTip(context) {
+      const viewSize = this.getViewSize();
+      let tip;
+      const [widget, index] = this.group.__getWidgetById(context.widgetId);
+      tip = widget.properties.width[viewSize];
+      const widgetNext = this.group.widgets[index + 1];
+      if (widgetNext) {
+        tip = `${tip}:${widgetNext.properties.width[viewSize]}`;
+      }
+      return tip;
+    },
+    getViewSize() {
+      return this.$view.size;
+    },
+    __getPreferWidth(widthCurrent, widthNew, force, minus) {
+      const loop = force ? 5 : 2;
+      for (let i = 0; i < loop; i++) {
+        for (const item of _colWidths) {
+          if (minus && item < widthCurrent && widthNew - item <= i) return item;
+          if (!minus && item > widthCurrent && item - widthNew <= i) return item;
+        }
+      }
+      return null;
+    },
+    onDragStart({ $el, context, dragElement }) {},
+    onDragElement({ $el, context }) {
+      return this.$$(`.widget-${context.widgetId}`);
+    },
+    onDropElement({ $el, context, dragElement, dragContext }) {
+      const [widgetDrop, indexDrop] = this.group.__getWidgetById(context.widgetId);
+      const [widgetDrag, indexDrag] = this.group.__getWidgetById(dragContext.widgetId);
+      if (indexDrop === indexDrag || indexDrop == indexDrag + 1) return null;
+      return this.$$(`.widget-${context.widgetId}`);
+    },
+    onDropLeave({ $el, context, dropElement }) {},
+    onDropEnter({ $el, context, dropElement }) {},
+    onDragEnd({ $el, context, dragElement }) {},
+    onDragDone({ $el, context, dragElement, dropElement, dropContext }) {
+      const [widgetDrag, indexDrag] = this.group.__getWidgetById(context.widgetId);
+      this.group.widgets.splice(indexDrag, 1);
+      const [widgetDrop, indexDrop] = this.group.__getWidgetById(dropContext.widgetId);
+      this.group.widgets.splice(indexDrop, 0, widgetDrag);
+      // save
+      //this.layout.__saveLayoutConfig();
+    },
+    onWidgetDelete(widget) {
+      this.$view.dialog.confirm().then(() => {
+        const [_widget, index] = this.group.__getWidgetById(widget.id);
+        if (index === -1) return;
+        this.group.widgets.splice(index, 1);
+      }).catch(() => {});
+    },
+    onWidgetProperties(widget) {
+
+    },
 
   }
 }

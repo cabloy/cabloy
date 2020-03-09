@@ -1,29 +1,20 @@
 <script>
-const _colWidths = [5, 10, 15, 20, 25, 30, 33, 35, 40, 45, 50, 55, 60, 65, 66, 70, 75, 80, 85, 90, 95, 100];
 import widget from './widget.vue';
-import widgetToolbar from './widgetToolbar.vue';
+
 export default {
   components: {
     widget,
-    widgetToolbar,
   },
   render(c) {
-    const children = [];
-    if (this.ready) {
-      // row
-      children.push(this.__renderRow(c));
-      // settings
-      children.push(c('f7-link', {
-        staticClass: 'dashboard-settings',
-        attrs: {
-          iconMaterial: 'settings'
-        },
-        on: {
-          click: this.onClickSettings,
-        }
-      }));
+    return this.__renderRow(c);
+  },
+  props: {
+    dashboard: {
+      type: Object,
+    },
+    widgets: {
+      type: Array,
     }
-    return c('eb-page', {}, children);
   },
   data() {
     return {
@@ -35,4 +26,43 @@ export default {
       dragdropScene: Vue.prototype.$meta.util.nextId('dragdrop'),
     };
   },
+  methods: {
+    __renderRow(c) {
+      // cols
+      const cols = [];
+      for (const item of this.widgets) {
+        const col = c('widget', {
+          key: item.id,
+          props: {
+            dashboard: this.dashboard,
+            group: this,
+            options: item,
+            dragdropSceneResize: this.dragdropSceneResize,
+            dragdropScene: this.dragdropScene,
+          }
+        });
+        cols.push(col);
+      }
+      //last
+      cols.push(c('f7-col', {
+        staticClass: 'widget widget-last',
+        props: {
+          resizable: true,
+          resizableHandler: false,
+          width: 100,
+        }
+      }));
+      // row
+      return c('f7-row', {
+        staticClass: 'widget-group',
+      }, cols);
+    },
+    __getWidgetById(widgetId) {
+      const index = this.widgets.findIndex(item => item.id === widgetId);
+      if (index === -1) return [null, -1];
+      return [this.widgets[index], index];
+    },
+  }
 }
+
+</script>
