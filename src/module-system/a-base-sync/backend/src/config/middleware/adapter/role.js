@@ -530,10 +530,13 @@ const Fn = module.exports = ctx => {
     //   { roleName: 'root', action: 'read', scopeNames: 'authenticated' },
     // ];
     async addRoleRightBatch({ module, atomClassName, atomClassIdParent = 0, roleRights }) {
-      if (!roleRights || !roleRights.length) return;
+      // module
       module = module || this.moduleName;
       const _module = ctx.app.meta.modules[module];
+      // atomClass
       const atomClass = await ctx.meta.atomClass.get({ module, atomClassName, atomClassIdParent });
+      // roleRights
+      if (!roleRights || !roleRights.length) return;
       for (const roleRight of roleRights) {
         // role
         const role = await this.get({ roleName: roleRight.roleName });
