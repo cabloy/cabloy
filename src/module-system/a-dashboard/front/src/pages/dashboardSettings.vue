@@ -45,10 +45,13 @@ export default {
     });
   },
   mounted() {
-    this.dashboard.$view.$on('view:destroy', this.onViewDestroy);
+    this.dashboard.$on('dashboard:destroy', this.onDashboardDestroy);
+  },
+  beforeDestroy() {
+    this.dashboard.$off('dashboard:destroy', this.onDashboardDestroy);
   },
   methods: {
-    onViewDestroy() {
+    onDashboardDestroy() {
       this.$view.close();
     },
     onPerformAddGroup() {

@@ -5,6 +5,9 @@ export default {
     return this.__renderRow(c);
   },
   props: {
+    root: {
+      type: Boolean,
+    },
     dashboard: {
       type: Object,
     },
@@ -55,7 +58,7 @@ export default {
       return [this.widgets[index], index];
     },
     onWidgetAdd(widget) {
-      this.dashboard.__initWidget(widget, 'widget');
+      this.dashboard.__initWidget(widget, this.root ? 'widget' : 'group');
       this.widgets.push(widget);
     },
   }

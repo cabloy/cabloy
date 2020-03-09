@@ -15,6 +15,7 @@ export default {
       children.push(c('widget-group', {
         ref: 'group',
         props: {
+          root: true,
           dashboard: this,
           widgets: this.profile.root.widgets,
         },
@@ -46,6 +47,9 @@ export default {
   },
   created() {
     this.__init();
+  },
+  beforeDestroy() {
+    this.$emit('dashboard:destroy');
   },
   methods: {
     __init() {
@@ -146,7 +150,7 @@ export default {
         group: true,
         widgets: [],
       };
-      this.__initWidget(widgetGroup, 'group');
+      this.__initWidget(widgetGroup, 'widget');
       this.profile.root.widgets.push(widgetGroup);
     },
     __generateUUID() {

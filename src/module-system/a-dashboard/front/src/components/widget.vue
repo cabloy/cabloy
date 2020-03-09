@@ -47,6 +47,7 @@ export default {
       children.push(c('eb-dashboard-widget-group', {
         ref: 'group',
         props: {
+          root: false,
           dashboard: this.dashboard,
           widgets: this.options.widgets,
         },
@@ -100,6 +101,9 @@ export default {
   },
   created() {
     this.__init();
+  },
+  beforeDestroy() {
+    this.$emit('widget:destroy');
   },
   methods: {
     __init() {
@@ -205,9 +209,22 @@ export default {
       }).catch(() => {});
     },
     onWidgetProperties(widget) {
-
+      this.$view.navigate(`/a/dashboard/widget/properties?widgetId=${this.options.id}`, {
+        scene: 'sidebar',
+        sceneOptions: { side: 'right', name: 'properties', title: 'Properties' },
+        context: {
+          params: {
+            dashboard: this.dashboard,
+            widget: this,
+          },
+        },
+      });
     },
-
+    onWidgetsAdd({ widgets }) {
+      for (const widget of widgets) {
+        this.$refs.group.onWidgetAdd(widget);
+      }
+    },
   }
 }
 

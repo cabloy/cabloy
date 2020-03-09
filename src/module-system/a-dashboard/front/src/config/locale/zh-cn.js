@@ -5,6 +5,7 @@ export default {
   Default: '缺省',
   Settings: '设置',
   Profile2: '配置',
+  Properties: '属性',
   'Add Group': '添加组',
   'Add Widget': '添加部件',
   'Save As': '保存为',
