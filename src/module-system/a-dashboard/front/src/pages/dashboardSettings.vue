@@ -29,7 +29,7 @@ export default {
         context: {
           callback: (code, data) => {
             if (code === 200) {
-              this.dashboard.onWidgetAdd(data);
+              this.dashboard.onWidgetsAdd(data);
             }
           },
         },

@@ -251,16 +251,21 @@ export default {
         },
       });
     },
-    onWidgetAdd({ widget }) {
+    onWidgetsAdd({ widgets }) {
+      for (const widget of widgets) {
+        this.onWidgetAdd(widget);
+      }
+    },
+    onWidgetAdd(widget) {
       this.__initWidget(widget);
       this.profile.widgets.push(widget);
     },
     onWidgetDelete(widget) {
-      return this.$view.dialog.confirm().then(() => {
+      this.$view.dialog.confirm().then(() => {
         const [_widget, index] = this.__getWidgetById(widget.id);
         if (index === -1) return;
         this.profile.widgets.splice(index, 1);
-      });
+      }).catch(() => {});
     },
     onWidgetProperties(widget) {
 
