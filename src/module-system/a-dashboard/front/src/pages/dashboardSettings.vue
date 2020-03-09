@@ -2,23 +2,22 @@
   <eb-page>
     <eb-navbar :title="$text('Profile2')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link iconMaterial="add" :onPerform="onPerformAddWidget"></eb-link>
+        <eb-link iconMaterial="add" :onPerform="onPerformNewProfile"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <f7-list>
       <eb-list-item v-for="item of profiles" :key="item.id" :title="item.profileName" radio :checked="item.id===profileIdCurrent" :context="item" :onPerform="onPerformProfile" swipeout>
         <eb-context-menu>
           <div slot="right">
-            <div color="orange" :context="item" :onPerform="onPerformClone">{{$text('Clone')}}</div>
+            <div v-if="item.id===profileIdCurrent" color="orange" :context="item" :onPerform="onPerformClone">{{$text('Clone')}}</div>
             <div v-if="item.id>0 && item.id!==profileIdCurrent" color="red" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
           </div>
         </eb-context-menu>
       </eb-list-item>
     </f7-list>
     <f7-toolbar bottom-md>
-      <f7-button></f7-button>
-      <f7-button></f7-button>
-      <eb-button :onPerform="onPerformNewProfile">{{$text('New Profile')}}</eb-button>
+      <eb-button :onPerform="onPerformAddGroup">{{$text('Add Group')}}</eb-button>
+      <eb-button :onPerform="onPerformAddWidget">{{$text('Add Widget')}}</eb-button>
     </f7-toolbar>
   </eb-page>
 </template>
@@ -45,7 +44,16 @@ export default {
       this.profiles = _default.concat(data);
     });
   },
+  mounted() {
+    this.dashboard.$view.$on('view:destroy', this.onViewDestroy);
+  },
   methods: {
+    onViewDestroy() {
+      this.$view.close();
+    },
+    onPerformAddGroup() {
+      this.dashboard.onGroupAdd();
+    },
     onPerformAddWidget() {
       this.$view.navigate('/a/dashboard/widget/add', {
         target: '_self',
@@ -59,32 +67,44 @@ export default {
       });
     },
     onPerformNewProfile() {
-      this.$view.dialog.prompt(this.$text('Please specify the profile name')).then(profileName => {
+      return this.$view.dialog.prompt(this.$text('Please specify the profile name')).then(profileName => {
         if (!profileName) return;
         const profile = {
           profileName,
           profileValue: null,
         }
-        this.$api.post('profile/create', {
+        return this.$api.post('profile/create', {
           data: profile,
         }).then(data => {
           profile.id = data.profileId;
           this.profiles.push(profile);
+          return true;
         });
-      }).catch(() => {});
+      });
     },
     onPerformClone(e, item) {
-      // return this.$api.post('auth/disable', { id: item.id, disabled }).then(() => {
-      //   const index = this.items.findIndex(_item => _item.id === item.id);
-      //   this.items[index].disabled = disabled;
-      //   this.$meta.util.swipeoutClose(event.target);
-      //   return true;
-      // });
+      const profileId = item.id;
+      if (profileId !== this.profileIdCurrent) return;
+      return this.$view.dialog.prompt(this.$text('Please specify the profile name')).then(profileName => {
+        if (!profileName) return;
+        const profile = {
+          profileName,
+          profileValue: JSON.stringify(this.dashboard.profile),
+        }
+        return this.$api.post('profile/create', {
+          data: profile,
+        }).then(data => {
+          profile.id = data.profileId;
+          this.profiles.push(profile);
+          this.$meta.util.swipeoutClose(e.target);
+          return true;
+        });
+      });
     },
     onPerformDelete(e, item) {
       if (item.id === 0) return;
       return this.$view.dialog.confirm().then(() => {
-        return this.dashboard.__deleteProfile(item.id).then(() => {
+        return this.$api.post('profile/delete', { profileId: item.id }).then(() => {
           const index = this.__getProfileIndexById(item.id);
           this.profiles.splice(index, 1);
           this.$meta.util.swipeoutClose(e.target);
@@ -93,10 +113,11 @@ export default {
       });
     },
     onPerformProfile(e, item) {
-      if (this.profileIdCurrent === item.id) return;
-      return this.dashboard.__switchProfile(item.id).then(() => {
-        this.profileIdCurrent = item.id;
-        return true;
+      const profileId = item.id;
+      if (this.profileIdCurrent === profileId) return;
+      return this.dashboard.__switchProfile(profileId).then(() => {
+        this.profileIdCurrent = profileId;
+        //return true;
       });
     },
     __getProfileIndexById(profileId) {

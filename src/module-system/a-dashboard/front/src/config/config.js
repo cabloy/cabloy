@@ -19,6 +19,12 @@ export default {
           height: 'auto',
         },
       },
+      group: {
+        properties: {
+          width: { small: 100, medium: 100, large: 100 },
+          height: 'auto',
+        },
+      },
     },
   },
 };

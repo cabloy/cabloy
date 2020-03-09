@@ -1,5 +1,5 @@
 <script>
-import widgetGroup from './widgetGroup.vue';
+import widgetGroup from '../components/widgetGroup.vue';
 
 export default {
   meta: {
@@ -63,9 +63,6 @@ export default {
         });
       });
     },
-    __deleteProfile(profileId) {
-      return this.$api.post('profile/delete', { profileId });
-    },
     __switchProfile(profileId) {
       return new Promise((resolve, reject) => {
         // default
@@ -107,7 +104,7 @@ export default {
       if (!profile.root.id) profile.root.id = this.__generateUUID();
       // widget id
       for (const widget of profile.root.widgets) {
-        this.__initWidget(widget);
+        this.__initWidget(widget, 'widget');
       }
       return profile;
     },
@@ -119,13 +116,13 @@ export default {
         },
       };
     },
-    __initWidget(widget) {
+    __initWidget(widget, type) {
       // uuid
       if (!widget.id) {
         widget.id = this.__generateUUID();
       }
       if (!widget.properties) {
-        widget.properties = this.$utils.extend({}, this.$config.profile.meta.widget.properties);
+        widget.properties = this.$utils.extend({}, this.$config.profile.meta[type].properties);
       }
     },
     onClickSettings() {
@@ -143,6 +140,14 @@ export default {
       for (const widget of widgets) {
         this.$refs.group.onWidgetAdd(widget);
       }
+    },
+    onGroupAdd() {
+      const widgetGroup = {
+        group: true,
+        widgets: [],
+      };
+      this.__initWidget(widgetGroup, 'group');
+      this.profile.root.widgets.push(widgetGroup);
     },
     __generateUUID() {
       var d = new Date().getTime();

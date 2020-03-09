@@ -1,10 +1,6 @@
 <script>
-import widget from './widget.vue';
-
 export default {
-  components: {
-    widget,
-  },
+  name: 'eb-dashboard-widget-group',
   render(c) {
     return this.__renderRow(c);
   },
@@ -18,10 +14,6 @@ export default {
   },
   data() {
     return {
-      ready: false,
-      widgetsAll: null,
-      profile: null,
-      profileId: 0,
       dragdropSceneResize: Vue.prototype.$meta.util.nextId('dragdrop'),
       dragdropScene: Vue.prototype.$meta.util.nextId('dragdrop'),
     };
@@ -31,7 +23,7 @@ export default {
       // cols
       const cols = [];
       for (const item of this.widgets) {
-        const col = c('widget', {
+        const col = c('eb-dashboard-widget', {
           key: item.id,
           props: {
             dashboard: this.dashboard,
@@ -54,7 +46,7 @@ export default {
       }));
       // row
       return c('f7-row', {
-        staticClass: 'widget-group',
+        staticClass: `widget-group ${this.widgets.length===0?'widget-group-empty':''}`,
       }, cols);
     },
     __getWidgetById(widgetId) {
@@ -63,7 +55,7 @@ export default {
       return [this.widgets[index], index];
     },
     onWidgetAdd(widget) {
-      this.dashboard.__initWidget(widget);
+      this.dashboard.__initWidget(widget, 'widget');
       this.widgets.push(widget);
     },
   }

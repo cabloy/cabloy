@@ -3,6 +3,7 @@ import widgetToolbar from './widgetToolbar.vue';
 
 const _colWidths = [5, 10, 15, 20, 25, 30, 33, 35, 40, 45, 50, 55, 60, 65, 66, 70, 75, 80, 85, 90, 95, 100];
 export default {
+  name: 'eb-dashboard-widget',
   components: {
     widgetToolbar,
   },
@@ -41,15 +42,25 @@ export default {
       }],
     });
     children.push(resizeHandler);
-    // widget
-    if (this.ready) {
-      children.push(c(this.__getFullName(), {
-        staticClass: 'widget-inner',
+    // group/widget
+    if (this.options.group) {
+      children.push(c('eb-dashboard-widget-group', {
+        ref: 'group',
+        props: {
+          dashboard: this.dashboard,
+          widgets: this.options.widgets,
+        },
       }));
+    } else {
+      if (this.ready) {
+        children.push(c(this.__getFullName(), {
+          staticClass: 'widget-inner',
+        }));
+      }
     }
     // f7-col
     return c('f7-col', {
-      staticClass: `widget widget-id-${this.options.id} widget-name-${this.options.module}-${this.options.name}`,
+      staticClass: this.__getClassName(),
       attrs: {
         'data-widget-id': this.options.id,
       },
@@ -92,10 +103,15 @@ export default {
   },
   methods: {
     __init() {
+      if (this.options.group) return;
       this.$meta.module.use(this.options.module, module => {
         this.$options.components[this.__getFullName()] = module.options.components[this.options.name];
         this.ready = true;
       });
+    },
+    __getClassName() {
+      if (this.options.group) return `widget widget-id-${this.options.id}`;
+      return `widget widget-id-${this.options.id} widget-name-${this.options.module}-${this.options.name}`;
     },
     __getFullName() {
       return `${this.options.module}:${this.options.name}`;
