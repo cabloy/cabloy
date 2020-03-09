@@ -81,7 +81,7 @@ export default {
         });
         cols.push(c('f7-col', {
           key: item.id,
-          staticClass: `widget widget-${item.id} eb-dragdrop-element`,
+          staticClass: `widget widget-${item.id}`,
           attrs: {
             'data-widget-id': item.id,
           },
