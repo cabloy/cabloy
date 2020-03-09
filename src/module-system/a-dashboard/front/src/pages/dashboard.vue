@@ -13,6 +13,7 @@ export default {
     if (this.ready) {
       // root group
       children.push(c('widget-group', {
+        ref: 'group',
         props: {
           dashboard: this,
           widgets: this.profile.root.widgets,
@@ -47,7 +48,6 @@ export default {
     this.__init();
   },
   methods: {
-
     __init() {
       // widgetsAll
       this.$store.dispatch('a/base/getWidgets').then(widgets => {
@@ -125,7 +125,6 @@ export default {
         widget.properties = this.$utils.extend({}, this.$config.profile.meta.widget.properties);
       }
     },
-
     onClickSettings() {
       this.$view.navigate(`/a/dashboard/dashboard/settings?id=${this.profile.id}`, {
         scene: 'sidebar',
@@ -139,14 +138,9 @@ export default {
     },
     onWidgetsAdd({ widgets }) {
       for (const widget of widgets) {
-        this.onWidgetAdd(widget);
+        this.$refs.group.onWidgetAdd(widget);
       }
     },
-    onWidgetAdd(widget) {
-      this.__initWidget(widget);
-      this.profile.widgets.push(widget);
-    },
-
     __generateUUID() {
       var d = new Date().getTime();
       if (window.performance && typeof window.performance.now === "function") {

@@ -162,13 +162,13 @@ export default {
     },
     onDragStart({ $el, context, dragElement }) {},
     onDragElement({ $el, context }) {
-      return this.$$(`.widget-${context.widgetId}`);
+      return this.$$(`.widget-id-${context.widgetId}`);
     },
     onDropElement({ $el, context, dragElement, dragContext }) {
       const [widgetDrop, indexDrop] = this.group.__getWidgetById(context.widgetId);
       const [widgetDrag, indexDrag] = this.group.__getWidgetById(dragContext.widgetId);
       if (indexDrop === indexDrag || indexDrop == indexDrag + 1) return null;
-      return this.$$(`.widget-${context.widgetId}`);
+      return this.$$(`.widget-id-${context.widgetId}`);
     },
     onDropLeave({ $el, context, dropElement }) {},
     onDropEnter({ $el, context, dropElement }) {},

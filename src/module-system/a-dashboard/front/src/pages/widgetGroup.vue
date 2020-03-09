@@ -62,6 +62,10 @@ export default {
       if (index === -1) return [null, -1];
       return [this.widgets[index], index];
     },
+    onWidgetAdd(widget) {
+      this.dashboard.__initWidget(widget);
+      this.widgets.push(widget);
+    },
   }
 }
 
