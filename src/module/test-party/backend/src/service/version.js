@@ -113,6 +113,17 @@ module.exports = app => {
         await this.ctx.meta.role.addRoleRightBatch({ atomClassName: 'party', roleRights });
       }
 
+      //
+      if (options.version === 5) {
+        // roleFunctions: widgets
+        const roleFunctions = [
+          { roleName: 'root', name: 'widgetProducts' },
+          { roleName: 'root', name: 'widgetAbout' },
+          { roleName: null, name: 'testFunctionPublic' },
+        ];
+        await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
+      }
+
     }
 
     async test() {

@@ -1,8 +1,6 @@
 const require3 = require('require3');
 const assert = require3('assert');
 
-const functionCount = 3;
-
 module.exports = app => {
 
   class AllController extends app.Controller {
@@ -11,6 +9,9 @@ module.exports = app => {
       // userIds
       const userIds = this.ctx.cache.mem.get('userIds');
       const userTom = { id: userIds.Tom };
+
+      // function all: including panels/widgets
+      const functionCount = Object.keys(this.ctx.module.main.meta.base.functions).length;
 
       // Tom list all
       let list = await this.ctx.meta.function.list({
