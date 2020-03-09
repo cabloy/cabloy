@@ -50,7 +50,7 @@ export default function(Vue) {
   function handeTouchStart(e) {
     const $$ = Vue.prototype.$$;
     // el
-    const $el = $$(e.target).closest('.eb-dragdrop-handler, .eb-dragdrop-handler-resizable');
+    const $el = $$(e.target).closest('.eb-dragdrop-handler');
     if ($el.length === 0) return;
     // context
     const context = $el[0].__eb_dragContext;
@@ -65,7 +65,7 @@ export default function(Vue) {
 
       // get drag element
       if (!isResizable) {
-        _dragElement = _getDragElement($el, context);
+        _dragElement = $el[0].__eb_dragElement;
         if (!_dragElement) return; // break
         // size
         _dragElementSize = {
@@ -139,11 +139,13 @@ export default function(Vue) {
   function _handeTouchMove(e) {
     const $$ = Vue.prototype.$$;
     // el
-    let $el = $$(e.target).closest('.eb-dragdrop-handler');
+    const handlerClassName = `.eb-dragdrop-handler-${_dragContext.scene}`;
+    const elementClassName = `.eb-dragdrop-element-${_dragContext.scene}`;
+    let $el = $$(e.target).closest(handlerClassName);
     if ($el.length === 0) {
-      const $dragdropElement = $$(e.target).closest('.eb-dragdrop-element');
+      const $dragdropElement = $$(e.target).closest(elementClassName);
       if ($dragdropElement.length !== 0) {
-        $el = $dragdropElement.find('.eb-dragdrop-handler');
+        $el = $dragdropElement.find(handlerClassName);
       }
     }
     // drop element
@@ -341,10 +343,6 @@ export default function(Vue) {
     _clearDragdrop();
   }
 
-  function __handlerClassName(isResizable) {
-    return isResizable ? 'eb-dragdrop-handler-resizable' : 'eb-dragdrop-handler';
-  }
-
   function initialize() {
     if (_inited) return;
     _inited = true;
@@ -363,14 +361,31 @@ export default function(Vue) {
 
   function bind(el, context) {
     initialize();
-    Vue.prototype.$$(el).addClass(__handlerClassName(context.resizable));
+    // unbind
+    unbind(el);
+    // handler
+    const $el = Vue.prototype.$$(el);
+    $el.addClass(`eb-dragdrop-handler eb-dragdrop-handler-${context.scene}`);
+    // element
+    const $dragElement = _getDragElement($el, context);
+    if ($dragElement) {
+      $dragElement.addClass(`eb-dragdrop-element eb-dragdrop-element-${context.scene}`);
+    }
+    // context
     el.__eb_dragContext = context;
+    el.__eb_dragElement = $dragElement;
   }
 
   function unbind(el) {
-    const context = el.__eb_dragContext;
-    context && Vue.prototype.$$(el).removeClass(__handlerClassName(context.resizable));
+    // handler
+    const $el = Vue.prototype.$$(el);
+    Vue.prototype.$meta.util.removeClassLike($el, 'eb-dragdrop-handler');
+    // element
+    const $dragElement = el.__eb_dragElement;
+    $dragElement && Vue.prototype.$meta.util.removeClassLike($dragElement, 'eb-dragdrop-element');
+    // context
     el.__eb_dragContext = null;
+    el.__eb_dragElement = null;
   }
 
   return {

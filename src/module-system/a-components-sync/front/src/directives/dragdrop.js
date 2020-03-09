@@ -1,10 +1,10 @@
 export default function(dragdrop) {
 
   return {
-    bind(el, binding) {
+    inserted(el, binding) {
       dragdrop.bind(el, binding.value);
     },
-    update(el, binding) {
+    componentUpdated(el, binding) {
       dragdrop.bind(el, binding.value);
     },
     unbind(el) {
