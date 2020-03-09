@@ -367,13 +367,15 @@ export default function(Vue) {
     const $el = Vue.prototype.$$(el);
     $el.addClass(`eb-dragdrop-handler eb-dragdrop-handler-${context.scene}`);
     // element
-    const $dragElement = _getDragElement($el, context);
-    if ($dragElement) {
-      $dragElement.addClass(`eb-dragdrop-element eb-dragdrop-element-${context.scene}`);
+    if (!context.resizable) {
+      const $dragElement = _getDragElement($el, context);
+      if ($dragElement) {
+        $dragElement.addClass(`eb-dragdrop-element eb-dragdrop-element-${context.scene}`);
+      }
+      el.__eb_dragElement = $dragElement;
     }
     // context
     el.__eb_dragContext = context;
-    el.__eb_dragElement = $dragElement;
   }
 
   function unbind(el) {
@@ -382,10 +384,12 @@ export default function(Vue) {
     Vue.prototype.$meta.util.removeClassLike($el, 'eb-dragdrop-handler');
     // element
     const $dragElement = el.__eb_dragElement;
-    $dragElement && Vue.prototype.$meta.util.removeClassLike($dragElement, 'eb-dragdrop-element');
+    if ($dragElement) {
+      Vue.prototype.$meta.util.removeClassLike($dragElement, 'eb-dragdrop-element');
+      el.__eb_dragElement = null;
+    }
     // context
     el.__eb_dragContext = null;
-    el.__eb_dragElement = null;
   }
 
   return {
