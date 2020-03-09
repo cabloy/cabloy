@@ -15,15 +15,24 @@
     justify-content: space-evenly;
   }
 
-  .widget-group {
+  .widget {
 
     &.widget-group-empty {
-      background: hsla(0, 0%, 100%, .12);
-      height: 100px;
+      .widget-group {
+        background: hsla(0, 0%, 100%, .12);
+        height: 100px;
+      }
     }
-  }
 
-  .widget {
+    &.widget-group-some:hover {
+      >.resize-handler {
+        right: 50%;
+      }
+
+      >.widget-toolbar {
+        right: 50%;
+      }
+    }
 
     .resize-handler {
       left: auto;

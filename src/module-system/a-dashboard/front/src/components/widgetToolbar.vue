@@ -43,7 +43,7 @@ export default {
       }],
     }));
     return c('div', {
-      staticClass: 'widget-toolbar-inner',
+      staticClass: '',
     }, buttons);
   },
   props: {

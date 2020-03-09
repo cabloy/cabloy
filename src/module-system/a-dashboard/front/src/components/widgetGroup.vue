@@ -49,7 +49,7 @@ export default {
       }));
       // row
       return c('f7-row', {
-        staticClass: `widget-group ${this.widgets.length===0?'widget-group-empty':''}`,
+        staticClass: `widget-group`,
       }, cols);
     },
     __getWidgetById(widgetId) {
