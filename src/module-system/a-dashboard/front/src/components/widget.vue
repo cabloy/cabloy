@@ -114,7 +114,7 @@ export default {
       });
     },
     __getClassName() {
-      if (this.options.group) return `widget widget-id-${this.options.id} ${this.options.widgets.length===0?'widget-group-empty':'widget-group-some'}`;
+      if (this.options.group) return `widget widget-id-${this.options.id} widget-group ${this.options.widgets.length===0?'widget-group-empty':'widget-group-some'}`;
       return `widget widget-id-${this.options.id} widget-name-${this.options.module}-${this.options.name}`;
     },
     __getFullName() {

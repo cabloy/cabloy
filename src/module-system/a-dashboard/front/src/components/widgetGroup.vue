@@ -49,7 +49,7 @@ export default {
       }));
       // row
       return c('f7-row', {
-        staticClass: `widget-group`,
+        staticClass: `group`,
       }, cols);
     },
     __getWidgetById(widgetId) {
