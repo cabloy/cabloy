@@ -1,14 +1,16 @@
 export default {
   profile: {
     default: {
-      widgets: [
-        {
-          module: 'test-party', name: 'widgetProducts',
-        },
-        {
-          module: 'test-party', name: 'widgetAbout',
-        },
-      ],
+      root: {
+        widgets: [
+          {
+            module: 'test-party', name: 'widgetProducts',
+          },
+          {
+            module: 'test-party', name: 'widgetAbout',
+          },
+        ],
+      },
     },
     meta: {
       widget: {

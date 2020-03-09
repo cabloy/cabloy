@@ -1,20 +1,22 @@
 <script>
-const _colWidths = [5, 10, 15, 20, 25, 30, 33, 35, 40, 45, 50, 55, 60, 65, 66, 70, 75, 80, 85, 90, 95, 100];
 import widget from './widget.vue';
-import widgetToolbar from './widgetToolbar.vue';
+
 export default {
   meta: {
     title: 'Dashboard',
   },
   components: {
     widget,
-    widgetToolbar,
   },
   render(c) {
     const children = [];
     if (this.ready) {
-      // row
-      children.push(this.__renderRow(c));
+      // root group
+      children.push(c('widget', {
+        attrs: {
+          widgets: this.profile.widgets,
+        },
+      }));
       // settings
       children.push(c('f7-link', {
         staticClass: 'dashboard-settings',
@@ -26,13 +28,16 @@ export default {
         }
       }));
     }
-    return c('eb-page', {}, children);
+    return c('eb-page', {
+      staticClass: `dashboard dashboard-profile-${this.profileId}`,
+    }, children);
   },
   data() {
     return {
       ready: false,
       widgetsAll: null,
       profile: null,
+      profileId: 0,
       dragdropSceneResize: Vue.prototype.$meta.util.nextId('dragdrop'),
       dragdropScene: Vue.prototype.$meta.util.nextId('dragdrop'),
     };
@@ -118,32 +123,67 @@ export default {
         this.widgetsAll = widgets;
         // layoutConfig
         this.$store.dispatch('a/base/getLayoutConfig', 'a-dashboard').then(layoutConfig => {
-          // init layoutConfig
-          this.__initLayoutConfig(layoutConfig);
-          // ready
-          this.ready = true;
+          // profile id
+          const profileId = layoutConfig.profileId || 0;
+          this.__switchProfile(profileId).then(() => {
+            // ready
+            this.ready = true;
+          });
         });
       });
     },
-    __initLayoutConfig(layoutConfig) {
-      // profile
-      let profile;
-      if (layoutConfig.profile) {
-        profile = JSON.parse(JSON.stringify(layoutConfig.profile));
-      } else {
-        const profileDefault = this.$config.profile.default;
-        profile = JSON.parse(JSON.stringify(profileDefault));
-      }
-      // profile id
-      if (!profile.id) {
-        profile.id = this.__generateUUID();
-      }
+    __switchProfile(profileId) {
+      return new Promise((resolve, reject) => {
+        // default
+        if (profileId === 0) {
+          this.$store.dispatch('a/base/getLayoutConfig', 'a-dashboard').then(layoutConfig => {
+            let profile;
+            if (layoutConfig.profile) {
+              // default of user
+              profile = JSON.parse(JSON.stringify(layoutConfig.profile));
+            } else {
+              // default
+              profile = this.__getProfileDefault();
+            }
+            this.profile = profile;
+            this.profileId = profileId;
+            return resolve();
+          }).catch(err => reject(err));
+          return;
+        }
+        // profile of user
+        this.$api.post('profile/item', { profileId }).then(data => {
+          if (!data) throw new Error('Profile not found!');
+          let profile;
+          if (data.profileValue) {
+            profile = JSON.parse(data.profileValue);
+          } else {
+            profile = this.__getProfileEmpty();
+          }
+          this.profile = profile;
+          this.profileId = profileId;
+          return resolve();
+        }).catch(err => reject(err));
+      });
+    },
+    __getProfileDefault() {
+      const profileDefault = this.$config.profile.default;
+      const profile = JSON.parse(JSON.stringify(profileDefault));
+      // root id
+      if (!profile.root.id) profile.root.id = this.__generateUUID();
       // widget id
-      for (const widget of profile.widgets) {
+      for (const widget of profile.root.widgets) {
         this.__initWidget(widget);
       }
-      // ok
-      this.profile = profile;
+      return profile;
+    },
+    __getProfileEmpty() {
+      return {
+        root: {
+          id: this.__generateUUID(),
+          widgets: [],
+        },
+      };
     },
     __initWidget(widget) {
       // uuid
