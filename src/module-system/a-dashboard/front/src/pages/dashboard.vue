@@ -63,6 +63,9 @@ export default {
         });
       });
     },
+    __deleteProfile(profileId) {
+      return this.$api.post('profile/delete', { profileId });
+    },
     __switchProfile(profileId) {
       return new Promise((resolve, reject) => {
         // default
@@ -126,7 +129,7 @@ export default {
       }
     },
     onClickSettings() {
-      this.$view.navigate(`/a/dashboard/dashboard/settings?id=${this.profile.id}`, {
+      this.$view.navigate(`/a/dashboard/dashboard/settings?profileId=${this.profileId}`, {
         scene: 'sidebar',
         sceneOptions: { side: 'right', name: 'profile', title: 'Profile2' },
         context: {

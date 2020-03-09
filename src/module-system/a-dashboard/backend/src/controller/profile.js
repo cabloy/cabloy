@@ -24,6 +24,14 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async delete() {
+      const res = await this.service.profile.delete({
+        profileId: this.ctx.request.body.profileId,
+        user: this.ctx.user.op,
+      });
+      this.ctx.success(res);
+    }
+
   }
   return ProfileController;
 };

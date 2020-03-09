@@ -6,11 +6,11 @@
       </f7-nav-right>
     </eb-navbar>
     <f7-list>
-      <eb-list-item v-for="item of profiles" :key="item.id" :title="item.profileName" swipeout>
+      <eb-list-item v-for="item of profiles" :key="item.id" :title="item.profileName" radio :checked="item.id===profileIdCurrent" :context="item" :onPerform="onPerformProfile" swipeout>
         <eb-context-menu>
           <div slot="right">
             <div color="orange" :context="item" :onPerform="onPerformClone">{{$text('Clone')}}</div>
-            <div v-if="!!item.id" color="red" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
+            <div v-if="item.id>0 && item.id!==profileIdCurrent" color="red" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
           </div>
         </eb-context-menu>
       </eb-list-item>
@@ -29,6 +29,7 @@ export default {
   mixins: [ebPageContext],
   data() {
     return {
+      profileIdCurrent: parseInt(this.$f7route.query.profileId || 0),
       profiles: null,
     };
   },
@@ -81,8 +82,29 @@ export default {
       // });
     },
     onPerformDelete(e, item) {
-
+      if (item.id === 0) return;
+      return this.$view.dialog.confirm().then(() => {
+        return this.dashboard.__deleteProfile(item.id).then(() => {
+          const index = this.__getProfileIndexById(item.id);
+          this.profiles.splice(index, 1);
+          this.$meta.util.swipeoutClose(e.target);
+          return true;
+        });
+      });
     },
+    onPerformProfile(e, item) {
+      if (this.profileIdCurrent === item.id) return;
+      return this.dashboard.__switchProfile(item.id).then(() => {
+        this.profileIdCurrent = item.id;
+        return true;
+      });
+    },
+    __getProfileIndexById(profileId) {
+      return this.profiles.findIndex(item => item.id === profileId);
+    },
+    __getProfileTitle(item) {
+      return this.profileIdCurrent === item.id ? `${item.profileName} ⭐` : item.profileName;
+    }
   },
 }
 

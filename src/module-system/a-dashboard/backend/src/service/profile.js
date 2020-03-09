@@ -17,7 +17,11 @@ module.exports = app => {
     }
 
     async item({ profileId, user }) {
-      return await this.ctx.model.read({ id: profileId, userId: user.id });
+      return await this.ctx.model.profile.get({ id: profileId, userId: user.id });
+    }
+
+    async delete({ profileId, user }) {
+      return await this.ctx.model.profile.delete({ id: profileId, userId: user.id });
     }
 
   }
