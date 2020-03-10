@@ -17,4 +17,7 @@ module.exports = {
   'Well Done': '干得好',
   'Error Test': '错误测试',
   'Hello World': '世界，您好',
+  'Fruit Sales': '水果销量',
+  'Fruit Sales(Line Chart)': '水果销量（折线图）',
+  'Fruit Sales(Pie Chart)': '水果销量（饼图）',
 };

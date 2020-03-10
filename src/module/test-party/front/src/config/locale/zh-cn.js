@@ -132,5 +132,8 @@ export default {
   'Sign Up': '注册',
   'Switch Tab': '切换Tab',
   'About CabloyJS': '关于CabloyJS',
+  'Fruit Sales': '水果销量',
+  'Fruit Sales(Line Chart)': '水果销量（折线图）',
+  'Fruit Sales(Pie Chart)': '水果销量（饼图）',
 };
 

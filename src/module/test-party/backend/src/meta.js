@@ -67,9 +67,21 @@ module.exports = app => {
             menu: 1,
           },
           // widgets
-          widgetProducts: {
-            title: 'Products',
-            component: 'widgetProducts',
+          widgetSales: {
+            title: 'Fruit Sales',
+            component: 'widgetSales',
+            menu: 3,
+            public: 1,
+          },
+          widgetSalesLine: {
+            title: 'Fruit Sales(Line Chart)',
+            component: 'widgetSalesLine',
+            menu: 3,
+            public: 1,
+          },
+          widgetSalesPie: {
+            title: 'Fruit Sales(Pie Chart)',
+            component: 'widgetSalesPie',
             menu: 3,
             public: 1,
           },
