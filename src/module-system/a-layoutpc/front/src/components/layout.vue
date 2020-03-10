@@ -14,28 +14,29 @@ export default {
     ebGroups: Groups,
   },
   render(c) {
-    if (!this.sidebarInited) return;
     const children = [];
-    // header
-    const header = c('eb-header', {
-      ref: 'header',
-      style: { height: `${this.size.top}px` },
-    });
-    children.push(header);
-    // groups
-    const groups = c('eb-groups', {
-      ref: 'groups',
-      style: {
-        height: `${this.size.height - this.size.top - this.size.spacing * 2}px`,
-        top: `${ this.size.top + this.size.spacing}px`,
-      },
-    });
-    children.push(groups);
-    // sidebar
-    const sidebarLeft = this._renderSidebar(c, 'left');
-    if (sidebarLeft) children.push(sidebarLeft);
-    const sidebarRight = this._renderSidebar(c, 'right');
-    if (sidebarRight) children.push(sidebarRight);
+    if (this.sidebarInited) {
+      // header
+      const header = c('eb-header', {
+        ref: 'header',
+        style: { height: `${this.size.top}px` },
+      });
+      children.push(header);
+      // groups
+      const groups = c('eb-groups', {
+        ref: 'groups',
+        style: {
+          height: `${this.size.height - this.size.top - this.size.spacing * 2}px`,
+          top: `${ this.size.top + this.size.spacing}px`,
+        },
+      });
+      children.push(groups);
+      // sidebar
+      const sidebarLeft = this._renderSidebar(c, 'left');
+      if (sidebarLeft) children.push(sidebarLeft);
+      const sidebarRight = this._renderSidebar(c, 'right');
+      if (sidebarRight) children.push(sidebarRight);
+    }
     // ok
     return c('div', { staticClass: 'eb-layout-container eb-layout-container-pc' }, children);
   },
