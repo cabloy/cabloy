@@ -8,7 +8,7 @@ export default {
         key: this.layout._panelFullName(panel),
         staticClass: this.layout._panelFullName(panel) === this.sidebar.options.panelActive ? 'active' : '',
         props: {
-          text: panel.titleLocale || this.$text(panel.title) || panel.name,
+          text: this.__getPanelTitle(panel),
         },
         nativeOn: {
           click: event => {
@@ -62,13 +62,22 @@ export default {
       event.preventDefault();
       this.sidebar.createView({ ctx: null, panel });
     },
-    onDragStart({ $el, context, dragElement }) {},
+    onDragStart({ $el, context, dragElement }) {
+      const [panel, panelIndexDrag] = this.sidebar._getPanelAndIndex(context.panel);
+      const tooltip = this.__getPanelTitle(panel);
+      return { tooltip };
+    },
     onDragElement({ $el, context }) {},
     onDropElement({ $el, context, dragElement, dragContext }) {
-      const panelIndexDrop = this.sidebar._getPanelIndex(context.panel);
-      const panelIndexDrag = this.sidebar._getPanelIndex(dragContext.panel);
+      const [panelDrop, panelIndexDrop] = this.sidebar._getPanelAndIndex(context.panel);
+      const [panelDrag, panelIndexDrag] = this.sidebar._getPanelAndIndex(dragContext.panel);
       if (panelIndexDrop === panelIndexDrag || panelIndexDrop == panelIndexDrag + 1) return null;
-      return $el;
+      // dropElement
+      const dropElement = $el;
+      // tooltip
+      const tooltip = this.__getPanelTitle(panelDrop);
+      // ok
+      return { dropElement, tooltip };
     },
     onDropLeave({ $el, context, dropElement }) {},
     onDropEnter({ $el, context, dropElement }) {},
@@ -80,6 +89,9 @@ export default {
       this.panels.splice(panelIndexDrop, 0, context.panel);
       // save
       this.layout.__saveLayoutConfig();
+    },
+    __getPanelTitle(panel) {
+      return panel.titleLocale || this.$text(panel.title) || panel.name;
     },
   }
 }

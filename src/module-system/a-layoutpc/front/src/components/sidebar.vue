@@ -187,6 +187,11 @@ export default {
     _getPanelIndex(panel) {
       return this.options.panels.findIndex(item => this.layout._panelFullName(item) === this.layout._panelFullName(panel));
     },
+    _getPanelAndIndex(panel) {
+      const panelIndex = this._getPanelIndex(panel);
+      if (panelIndex === -1) return [null, -1];
+      return [this.options.panels[panelIndex], panelIndex];
+    },
     _removePanel(panel) {
       const panelIndex = this._getPanelIndex(panel);
       if (panelIndex === -1) return;

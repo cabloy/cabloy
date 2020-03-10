@@ -130,6 +130,11 @@ export default {
     _getGroupIndex(groupId) {
       return this.groups.findIndex(group => group.id === groupId);
     },
+    _getGroupAndIndex(groupId) {
+      const groupIndex = this._getGroupIndex(groupId);
+      if (groupIndex === -1) return [null, -1];
+      return [this.groups[groupIndex], groupIndex];
+    },
     removeGroup(groupId) {
       // current
       const index = this._getGroupIndex(groupId);

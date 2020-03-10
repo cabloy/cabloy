@@ -29,6 +29,7 @@ export default {
           value: {
             scene: this.dragdropScene,
             group,
+            onDragStart: this.onDragStart,
             onDropElement: this.onDropElement,
             onDragDone: this.onDragDone,
           }
@@ -58,11 +59,21 @@ export default {
     isTabActive(groupId) {
       return this.$$(this.$refs[groupId].$el).hasClass('tab-link-active');
     },
+    onDragStart({ $el, context, dragElement }) {
+      const [group, groupIndexDrag] = this.groups._getGroupAndIndex(context.group.id);
+      const tooltip = group.title;
+      return { tooltip };
+    },
     onDropElement({ $el, context, dragElement, dragContext }) {
-      const groupIndexDrop = this.groups._getGroupIndex(context.group.id);
-      const groupIndexDrag = this.groups._getGroupIndex(dragContext.group.id);
+      const [groupDrop, groupIndexDrop] = this.groups._getGroupAndIndex(context.group.id);
+      const [groupDrag, groupIndexDrag] = this.groups._getGroupAndIndex(dragContext.group.id);
       if (groupIndexDrop === groupIndexDrag || groupIndexDrop == groupIndexDrag + 1) return null;
-      return $el;
+      // dropElement
+      const dropElement = $el;
+      // tooltip
+      const tooltip = groupDrop.title;
+      // ok
+      return { dropElement, tooltip };
     },
     onDragDone({ $el, context, dragElement, dropElement, dropContext }) {
       const groupIndexDrag = this.groups._getGroupIndex(context.group.id);
