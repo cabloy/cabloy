@@ -570,12 +570,12 @@ const Fn = module.exports = ctx => {
       if (!roleFunctions || !roleFunctions.length) return;
       module = module || this.moduleName;
       for (const roleFunction of roleFunctions) {
-        // role
-        const role = roleFunction.roleName ? await this.get({ roleName: roleFunction.roleName }) : null;
         // func
         const func = await ctx.meta.function.get({ module, name: roleFunction.name });
-        // add role function
-        if (role) {
+        if (roleFunction.roleName) {
+          // role
+          const role = await this.get({ roleName: roleFunction.roleName });
+          // add role function
           await this.addRoleFunction({
             roleId: role.id,
             functionId: func.id,
