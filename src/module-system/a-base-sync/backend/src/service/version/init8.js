@@ -5,9 +5,9 @@ module.exports = function(ctx) {
     async run(options) {
       // roleFunctions: panels
       const roleFunctions = [
-        { roleName: 'root', name: 'panelMenu' },
-        { roleName: 'root', name: 'panelAtom' },
-        { roleName: 'root', name: 'panelSearch' },
+        { roleName: null, name: 'panelMenu' },
+        { roleName: null, name: 'panelAtom' },
+        { roleName: null, name: 'panelSearch' },
       ];
       await ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
     }
