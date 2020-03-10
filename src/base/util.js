@@ -1,9 +1,11 @@
 import mparse from 'egg-born-mparse';
 import cookies from 'js-cookie';
+import queue from 'async/queue.js';
 
 export default function(Vue) {
   const _ids = { };
   return {
+    queue,
     cookies,
     overrideProperty({ obj, key, objBase, vueComponent, combinePath }) {
       Object.defineProperty(obj, key, {
