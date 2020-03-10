@@ -16,6 +16,7 @@ export default function(Vue) {
   let _dropElement = null;
   let _dropContext = null;
   let _tooltipElement = null;
+  let _tooltipDrag = '';
   let _tooltipText = '';
   let _dragContainer = {};
   let _touchStart = {};
@@ -190,7 +191,7 @@ export default function(Vue) {
     const res = _dragContext.onDragMove({ $el: _dragHandler, context: _dragContext, diff });
 
     // tooltip
-    _adjustTooltip(false, _dragHandler, touchCurrentX, touchCurrentY, res ? res.tooltip : undefined);
+    _adjustTooltip(false, _dragContext, touchCurrentX, touchCurrentY, res ? res.tooltip : undefined);
 
     if (!res || res.eaten !== true) {
       return; // continue
@@ -228,9 +229,21 @@ export default function(Vue) {
       _tooltipElement.show();
     }
     // text
-    if (tooltipText !== undefined && tooltipText !== _tooltipText) {
+    if (bStart) {
       _tooltipElement.text(tooltipText);
+      _tooltipDrag = tooltipText;
       _tooltipText = tooltipText;
+    } else {
+      let tooltipTextNew;
+      if (!isResizable) {
+        tooltipTextNew = tooltipText ? `${_tooltipDrag} -> ${tooltipText || ''}` : _tooltipDrag;
+      } else {
+        tooltipTextNew = tooltipText || _tooltipText;
+      }
+      if (tooltipTextNew !== _tooltipText) {
+        _tooltipElement.text(tooltipTextNew);
+        _tooltipText = tooltipTextNew;
+      }
     }
     const _tooltipSize = {
       width: _tooltipElement.width(),
@@ -280,6 +293,7 @@ export default function(Vue) {
     _dropContext = null;
     _dragContainer = {};
     _touchStart = {};
+    _tooltipDrag = '';
     _tooltipText = '';
   }
 
