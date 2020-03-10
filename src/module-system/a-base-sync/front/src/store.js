@@ -1,6 +1,18 @@
 // eslint-disable-next-line
 export default function(Vue) {
 
+  const queueLayoutConfig = Vue.prototype.$meta.util.queue((info, cb) => {
+    const user = Vue.prototype.$meta.store.getState('auth/user');
+    if (user.op.id !== info.userId) return cb();
+    Vue.prototype.$meta.api.post('/a/base/layoutConfig/saveKey', info.data).then(() => {
+      // donothing
+      cb();
+    }).catch(err => {
+      console.log(err);
+      cb();
+    });
+  });
+
   Vue.prototype.$meta.eventHub.$on('auth:login', data => {
     Vue.prototype.$meta.store.commit('a/base/authLogin', data);
   });
@@ -33,6 +45,8 @@ export default function(Vue) {
         // clear user
         state.labels = null;
         state.layoutConfig = {};
+        state.userPanels = null;
+        state.userWidgets = null;
       },
       setLabels(state, labels) {
         state.labels = labels;
@@ -56,11 +70,8 @@ export default function(Vue) {
         // try to save
         const user = Vue.prototype.$meta.store.getState('auth/user');
         if (!user.op.anonymous) {
-          Vue.prototype.$meta.api.post('/a/base/layoutConfig/saveKey', { module, key, value }).then(() => {
-            // donothing
-          }).catch(err => {
-            console.log(err);
-          });
+          const data = { module, key, value };
+          queueLayoutConfig.push({ userId: user.op.id, data });
         }
       },
       setUserPanels(state, panels) {
