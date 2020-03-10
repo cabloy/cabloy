@@ -2,14 +2,7 @@ export default {
   profile: {
     default: {
       root: {
-        widgets: [
-          {
-            module: 'test-party', name: 'widgetProducts',
-          },
-          {
-            module: 'test-party', name: 'widgetAbout',
-          },
-        ],
+        widgets: [],
       },
     },
     meta: {

@@ -57,6 +57,11 @@ export default {
         children.push(c(this.__getFullName(), {
           staticClass: 'widget-inner',
         }));
+      } else if (this.errorMessage) {
+        children.push(c('div', {
+          staticClass: 'widget-inner widget-inner-error',
+          domProps: { innerText: this.errorMessage },
+        }));
       }
     }
     // f7-col
@@ -97,6 +102,7 @@ export default {
   data() {
     return {
       ready: false,
+      errorMessage: null,
     };
   },
   created() {
@@ -109,8 +115,16 @@ export default {
     __init() {
       if (this.options.group) return;
       this.$meta.module.use(this.options.module, module => {
-        this.$options.components[this.__getFullName()] = module.options.components[this.options.name];
-        this.ready = true;
+        const fullName = this.__getFullName();
+        const component = module.options.components[this.options.name];
+        if (!component) {
+          this.errorMessage = `${this.$text('Widget Not Found')}: ${fullName}`;
+          this.ready = false;
+        } else {
+          this.$options.components[fullName] = component;
+          this.ready = true;
+          this.errorMessage = null;
+        }
       });
     },
     __getClassName() {

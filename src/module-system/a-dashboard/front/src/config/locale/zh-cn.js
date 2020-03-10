@@ -12,4 +12,5 @@ export default {
   'Save As': '保存为',
   'New Profile': '新建配置',
   'Please specify the profile name': '请指定配置名称',
+  'Widget Not Found': '部件未发现',
 };
