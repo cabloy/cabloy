@@ -39,7 +39,7 @@ module.exports = app => {
       assert.equal(list.length, functionCount);
 
       // delete function
-      await this.ctx.model.query('delete from aFunction where id=?', [ list[0].id ]);
+      await this.ctx.model.query('delete from aFunction where id=?', [ pass.id ]);
 
       // done
       this.ctx.success();
