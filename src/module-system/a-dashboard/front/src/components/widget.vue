@@ -15,7 +15,6 @@ export default {
       props: {
         widget: this.options,
         dragdropScene: this.dragdropScene,
-        onDragContainer: this.onDragContainer,
         onDragStart: this.onDragStart,
         onDragElement: this.onDragElement,
         onDropElement: this.onDropElement,
@@ -37,7 +36,7 @@ export default {
           scene: this.dragdropSceneResize,
           resizable: true,
           widgetId: this.options.id,
-          onDragContainer: this.onDragContainerResizable,
+          onDragStart: this.onDragStartResizable,
           onDragMove: this.onDragMoveResizable,
         }
       }],
@@ -121,7 +120,7 @@ export default {
     __getFullName() {
       return `${this.options.module}:${this.options.name}`;
     },
-    onDragContainerResizable({ $el, context }) {
+    onDragStartResizable({ $el, context, dragElement }) {
       const $container = this.$$(this.dashboard.$el);
       const size = { width: $container.width() };
       const tooltip = this.__getTooltipResizable(context);
@@ -181,12 +180,11 @@ export default {
       }
       return null;
     },
-    onDragContainer({ $el, context }) {
+    onDragStart({ $el, context, dragElement }) {
       const [widgetDrag, indexDrag] = this.group.__getWidgetById(context.widgetId);
       const tooltip = `${this.dashboard.__findWidgetStock(widgetDrag).titleLocale}`;
       return { tooltip };
     },
-    onDragStart({ $el, context, dragElement }) {},
     onDragElement({ $el, context }) {
       return this.$$(`.widget-id-${context.widgetId}`);
     },
