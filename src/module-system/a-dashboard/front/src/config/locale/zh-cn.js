@@ -3,6 +3,7 @@ export default {
   Dashboard: '仪表盘',
   Delete: '删除',
   Default: '缺省',
+  Group: '组',
   Settings: '设置',
   Profile2: '配置',
   Properties: '属性',

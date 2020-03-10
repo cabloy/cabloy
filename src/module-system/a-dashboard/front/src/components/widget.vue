@@ -182,7 +182,7 @@ export default {
     },
     onDragStart({ $el, context, dragElement }) {
       const [widgetDrag, indexDrag] = this.group.__getWidgetById(context.widgetId);
-      const tooltip = `${this.dashboard.__findWidgetStock(widgetDrag).titleLocale}`;
+      const tooltip = `${this.dashboard.__getWidgetTitle(widgetDrag)}`;
       return { tooltip };
     },
     onDragElement({ $el, context }) {
@@ -195,7 +195,7 @@ export default {
       // dropElement
       const dropElement = this.$$(`.widget-id-${context.widgetId}`);
       // tooltip
-      const tooltip = this.dashboard.__findWidgetStock(widgetDrop).titleLocale;
+      const tooltip = this.dashboard.__getWidgetTitle(widgetDrop);
       // ok
       return { dropElement, tooltip };
     },
