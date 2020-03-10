@@ -82,6 +82,7 @@ export default {
             }
             this.profile = profile;
             this.profileId = profileId;
+            this.__onTitleChange(this.$text('Dashboard')); // default
             return resolve();
           }).catch(err => reject(err));
           return;
@@ -97,6 +98,7 @@ export default {
           }
           this.profile = profile;
           this.profileId = profileId;
+          this.__onTitleChange(`${this.$text('Dashboard')}-${data.profileName}`);
           return resolve();
         }).catch(err => reject(err));
       });
@@ -176,7 +178,10 @@ export default {
         return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
       });
       return uuid;
-    }
+    },
+    __onTitleChange(title) {
+      this.$view.$emit('view:title', { title });
+    },
   }
 }
 
