@@ -18,13 +18,13 @@ export default function(Vue) {
   let _tooltipElement = null;
   let _tooltipDrag = '';
   let _tooltipText = '';
-  let _dragContainer = {};
+  let _dragContainerSize = {};
   let _touchStart = {};
   let _delayTimeout = 0;
 
-  function _getDragContainer($el, context) {
-    if (!context.onDragContainer) return { size: _windowSize, tooltip: undefined };
-    const res = context.onDragContainer({ $el, context });
+  function _onDragStart($el, context, dragElement) {
+    if (!context.onDragStart) return { size: _windowSize, tooltip: undefined };
+    const res = context.onDragStart({ $el, context, dragElement });
     if (res === undefined) return { size: _windowSize, tooltip: undefined };
     if (res) return res;
     return null;
@@ -71,21 +71,23 @@ export default function(Vue) {
         _dragElement = $el[0].__eb_dragElement;
         if (!_dragElement) return; // break
       }
-      // get container size
-      _dragContainer = _getDragContainer($el, context);
-      if (!_dragContainer) return; // break
+      // dragStart {size,tooltip}
+      const res = _onDragStart($el, context, _dragElement);
+      if (!res) return; // break
+
+      // size
+      _dragContainerSize = res.size;
 
       // tooltip
-      _adjustTooltip(true, context, _touchStart.x, _touchStart.y, _dragContainer.tooltip);
+      _adjustTooltip(true, context, _touchStart.x, _touchStart.y, res.tooltip);
+
+      // class
+      if (!isResizable) _dragElement.attr('data-dragdrop-drag', context.scene);
 
       // cursor
       const cursor = isResizable ? (isRow ? 'row-resize' : 'col-resize') : 'move';
       const style = `html, html a.link {cursor: ${cursor} !important;}`;
       _stylesheet.innerHTML = style;
-
-      // start
-      context.onDragStart && context.onDragStart({ $el, context, dragElement: _dragElement });
-      if (!isResizable) _dragElement.attr('data-dragdrop-drag', context.scene);
 
       // ready
       _isMoved = false;
@@ -176,8 +178,8 @@ export default function(Vue) {
     };
 
     const percent = {
-      x: !isRow ? abs.x / _dragContainer.size.width : undefined,
-      y: isRow ? abs.y / _dragContainer.size.height : undefined,
+      x: !isRow ? abs.x / _dragContainerSize.width : undefined,
+      y: isRow ? abs.y / _dragContainerSize.height : undefined,
     };
 
     const diff = { abs, percent };
@@ -291,7 +293,7 @@ export default function(Vue) {
     _dropHandler = null;
     _dropElement = null;
     _dropContext = null;
-    _dragContainer = {};
+    _dragContainerSize = {};
     _touchStart = {};
     _tooltipDrag = '';
     _tooltipText = '';
