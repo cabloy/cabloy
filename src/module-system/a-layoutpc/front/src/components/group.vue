@@ -39,7 +39,7 @@ export default {
               this.onViewReady(view);
             },
             'view:title': data => {
-              this.onViewTitle(data);
+              this.onViewTitle(view.id, data);
             },
           },
         }));
@@ -166,8 +166,14 @@ export default {
         }
       }
     },
-    onViewTitle(data) {
-      this.groups.onViewTitle(this.groupId, data);
+    __getViewIndex(viewId) {
+      return this.views.findIndex(item => item.id === viewId);
+    },
+    onViewTitle(viewId, data) {
+      const viewIndex = this.__getViewIndex(viewId);
+      if (viewIndex === 0) {
+        this.groups.onViewTitle(this.groupId, data.title);
+      }
     },
     getView(viewId) {
       return this.$refs[viewId];

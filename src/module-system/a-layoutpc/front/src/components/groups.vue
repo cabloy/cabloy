@@ -179,11 +179,10 @@ export default {
         }
       });
     },
-    onViewTitle(groupId, data) {
-      const viewIndex = parseInt(this.$$(data.page.$view.$el).data('index'));
-      if (viewIndex === 0) {
+    onViewTitle(groupId, title) {
+      if (title) {
         const group = this.groups.find(group => group.id === groupId);
-        if (data.title) group.title = data.title;
+        group.title = title;
       }
     },
   },
