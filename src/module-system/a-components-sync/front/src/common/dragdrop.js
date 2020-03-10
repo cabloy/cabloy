@@ -1,9 +1,7 @@
 export default function(Vue) {
 
-  const proxyResizeOffset = 16;
-  const proxyOffset = 6;
-  const proxySizeMin = 16;
-  const proxySizeMax = 32;
+  const tooltipResizeOffset = 16;
+  const tooltipOffset = 6;
 
   let _inited = false;
   let _stylesheet = null;
@@ -17,16 +15,16 @@ export default function(Vue) {
   let _dropHandler = null;
   let _dropElement = null;
   let _dropContext = null;
-  let _proxyElement = null;
-  let _dragElementSize = {};
+  let _tooltipElement = null;
+  let _tooltipText = '';
   let _dragContainer = {};
   let _touchStart = {};
   let _delayTimeout = 0;
 
   function _getDragContainer($el, context) {
-    if (!context.onDragContainer) return { size: _windowSize };
+    if (!context.onDragContainer) return { size: _windowSize, tooltip: undefined };
     const res = context.onDragContainer({ $el, context });
-    if (res === undefined) return { size: _windowSize };
+    if (res === undefined) return { size: _windowSize, tooltip: undefined };
     if (res) return res;
     return null;
   }
@@ -40,9 +38,9 @@ export default function(Vue) {
   }
 
   function _getDropElement($el, context, dragElement, dragContext) {
-    if (!context.onDropElement) return $el;
+    if (!context.onDropElement) return { dropElement: $el, tooltip: undefined };
     const res = context.onDropElement({ $el, context, dragElement, dragContext });
-    if (res === undefined) return $el;
+    if (res === undefined) return { dropElement: $el, tooltip: undefined };
     if (res) return res;
     return null;
   }
@@ -63,56 +61,29 @@ export default function(Vue) {
       const isResizable = context.resizable === true;
       const isRow = context.resizeDirection === 'row';
 
+      // touch
+      _touchStart.x = e.type === 'touchstart' ? e.targetTouches[0].pageX : e.pageX;
+      _touchStart.y = e.type === 'touchstart' ? e.targetTouches[0].pageY : e.pageY;
+
       // get drag element
       if (!isResizable) {
         _dragElement = $el[0].__eb_dragElement;
         if (!_dragElement) return; // break
-        // size
-        _dragElementSize = {
-          width: _dragElement.width(),
-          height: _dragElement.height(),
-        };
-      } else {
-        // get container size
-        _dragContainer = _getDragContainer($el, context);
-        if (!_dragContainer) return; // break
       }
-      // touch
-      _touchStart.x = e.type === 'touchstart' ? e.targetTouches[0].pageX : e.pageX;
-      _touchStart.y = e.type === 'touchstart' ? e.targetTouches[0].pageY : e.pageY;
-      // proxy: move
-      if (!isResizable && context.proxy !== false) {
-        if (!_proxyElement) {
-          _proxyElement = $$('<div class="eb-dragdrop-proxy"></div>');
-          $$('body').append(_proxyElement);
-        } else {
-          _proxyElement.text('');
-        }
-        const _size = _dragElementSize.width <= _dragElementSize.height ? { min: _dragElementSize.width, max: _dragElementSize.height } : { min: _dragElementSize.height, max: _dragElementSize.width };
-        const _proxySize = {
-          min: proxySizeMin,
-          max: Math.min(parseInt(_size.max * proxySizeMin / _size.min), proxySizeMax),
-        };
-        // proxy size
-        _proxyElement.css({
-          left: `${_touchStart.x + proxyOffset}px`,
-          top: `${_touchStart.y + proxyOffset}px`,
-          width: `${_dragElementSize.width <= _dragElementSize.height ? _proxySize.min : _proxySize.max}px`,
-          height: `${_dragElementSize.width <= _dragElementSize.height ? _proxySize.max : _proxySize.min}px`,
-        });
-        _proxyElement.show();
-      }
-      // proxy: resize
-      if (isResizable && _dragContainer.tip) {
-        _adjustResizeProxy(context, _touchStart.x, _touchStart.y, _dragContainer.tip);
-      }
+      // get container size
+      _dragContainer = _getDragContainer($el, context);
+      if (!_dragContainer) return; // break
+
+      // tooltip
+      _adjustTooltip(true, context, _touchStart.x, _touchStart.y, _dragContainer.tooltip);
+
       // cursor
       const cursor = isResizable ? (isRow ? 'row-resize' : 'col-resize') : 'move';
       const style = `html, html a.link {cursor: ${cursor} !important;}`;
       _stylesheet.innerHTML = style;
       // start
       context.onDragStart && context.onDragStart({ $el, context, dragElement: _dragElement });
-      if (!isResizable) _dragElement.addClass('eb-dragdrop-drag');
+      if (!isResizable) _dragElement.attr('data-dragdrop-drag', context.scene);
       // ready
       _isMoved = false;
       _isDragging = true;
@@ -138,6 +109,7 @@ export default function(Vue) {
 
   function _handeTouchMove(e) {
     const $$ = Vue.prototype.$$;
+
     // el
     const handlerClassName = `*[data-dragdrop-handler="${_dragContext.scene}"]`;
     const elementClassName = `*[data-dragdrop-element="${_dragContext.scene}"]`;
@@ -148,8 +120,16 @@ export default function(Vue) {
         $el = $dragdropElement.find(handlerClassName);
       }
     }
+
     // drop element
-    const dropElementNew = _checkMoveElement($el);
+    const res = _checkMoveElement($el);
+
+    // tooltip
+    const touchCurrentX = e.type === 'touchmove' ? e.targetTouches[0].pageX : e.pageX;
+    const touchCurrentY = e.type === 'touchmove' ? e.targetTouches[0].pageY : e.pageY;
+    _adjustTooltip(false, _dragContext, touchCurrentX, touchCurrentY, res ? res.tooltip : undefined);
+
+    const dropElementNew = res ? res.dropElement : null;
     const dropContextNew = dropElementNew ? $el[0].__eb_dragContext : null;
     const dropHandlerNew = dropElementNew ? $el : null;
 
@@ -159,12 +139,12 @@ export default function(Vue) {
       // leave
       if (_dropElement) {
         _dropContext.onDropLeave && _dropContext.onDropLeave({ $el: _dropHandler, context: _dropContext, dropElement: _dropElement });
-        _dropElement.removeClass('eb-dragdrop-drop');
+        _dropElement.removeAttr('data-dragdrop-drop');
       }
       // enter
       if (dropElementNew) {
         dropContextNew.onDropEnter && dropContextNew.onDropEnter({ $el: dropHandlerNew, context: dropContextNew, dropElement: dropElementNew });
-        dropElementNew.addClass('eb-dragdrop-drop');
+        dropElementNew.attr('data-dragdrop-drop', dropContextNew.scene);
       }
       // switch
       _dropElement = dropElementNew;
@@ -175,41 +155,45 @@ export default function(Vue) {
     _isMoved = true;
     e.preventDefault();
 
-    // proxy position
-    if (_dragContext.proxy !== false) {
-      const pageX = e.type === 'touchmove' ? e.targetTouches[0].pageX : e.pageX;
-      const pageY = e.type === 'touchmove' ? e.targetTouches[0].pageY : e.pageY;
-      _proxyElement.css({
-        left: `${pageX + proxyOffset}px`,
-        top: `${pageY + proxyOffset}px`,
-      });
-    }
-
   }
 
-  function _adjustResizeProxy(context, x, y, tip) {
+  function _adjustTooltip(bStart, context, x, y, tooltipText) {
     const $$ = Vue.prototype.$$;
+    const isResizable = context.resizable === true;
     const isRow = context.resizeDirection === 'row';
 
-    if (!_proxyElement) {
-      _proxyElement = $$('<div class="eb-dragdrop-proxy"></div>');
-      $$('body').append(_proxyElement);
+    // default enabled
+    if (context.tooltip === false) return;
+
+    // element
+    if (bStart) {
+      if (!_tooltipElement) {
+        _tooltipElement = $$('<div class="eb-dragdrop-tooltip"></div>');
+        $$('body').append(_tooltipElement);
+      }
+      _tooltipElement.show();
     }
-    _proxyElement.show();
-    _proxyElement.css({
-      width: 'auto',
-      height: 'auto',
-    });
-    _proxyElement.text(tip);
-    const _proxySize = {
-      width: _proxyElement.width(),
-      height: _proxyElement.height(),
+    // text
+    if (tooltipText !== undefined && tooltipText !== _tooltipText) {
+      _tooltipElement.text(tooltipText);
+      _tooltipText = tooltipText;
+    }
+    const _tooltipSize = {
+      width: _tooltipElement.width(),
+      height: _tooltipElement.height(),
     };
-    // proxy size
-    _proxyElement.css({
-      left: `${isRow ? x + proxyResizeOffset : x - _proxySize.width / 2}px`,
-      top: `${isRow ? y - _proxySize.height / 2 : y + proxyResizeOffset}px`,
-    });
+    // position
+    if (!isResizable) {
+      _tooltipElement.css({
+        left: `${x + tooltipOffset}px`,
+        top: `${y + tooltipOffset}px`,
+      });
+    } else {
+      _tooltipElement.css({
+        left: `${isRow ? x + tooltipResizeOffset : x - _tooltipSize.width / 2}px`,
+        top: `${isRow ? y - _tooltipSize.height / 2 : y + tooltipResizeOffset}px`,
+      });
+    }
   }
 
   function _handeTouchResize(e) {
@@ -240,34 +224,15 @@ export default function(Vue) {
     // if (isRow && Math.abs(abs.x) > Math.abs(abs.y)) return;
 
     const res = _dragContext.onDragMove({ $el: _dragHandler, context: _dragContext, diff });
-    if (!res) {
-      if (_dragContainer.tip && _proxyElement) {
-        // proxy: just adjust position
-        const _proxySize = {
-          width: _proxyElement.width(),
-          height: _proxyElement.height(),
-        };
-        _proxyElement.css({
-          left: `${isRow ? touchCurrentX + proxyResizeOffset : touchCurrentX - _proxySize.width / 2}px`,
-          top: `${isRow ? touchCurrentY - _proxySize.height / 2 : touchCurrentY + proxyResizeOffset}px`,
-        });
-      }
-      return;
-    }
 
-    // proxy position
-    const isResizable = _dragContext.resizable === true;
-    const tip = res.tip;
-    if (isResizable) {
-      if (!tip) {
-        _proxyElement && _proxyElement.hide();
-      } else {
-        _adjustResizeProxy(_dragContext, touchCurrentX, touchCurrentY, tip);
-      }
+    // tooltip
+    _adjustTooltip(false, _dragHandler, touchCurrentX, touchCurrentY, res ? res.tooltip : undefined);
+
+    if (!res) {
+      return; // continue
     }
 
     // reset
-    _dragContainer.tip = tip;
     _touchStart = { x: touchCurrentX, y: touchCurrentY };
     e.preventDefault();
 
@@ -284,21 +249,22 @@ export default function(Vue) {
 
   function _clearDragdrop() {
     if (_isDragging) {
-      // proxy
-      if (_proxyElement) {
-        _proxyElement.hide();
+      // tooltip
+      if (_tooltipElement) {
+        _tooltipElement.hide();
       }
+      _tooltipText = '';
       // cursor
       _stylesheet.innerHTML = '';
       // dropElement
       if (_dropElement) {
         _dropContext.onDropLeave && _dropContext.onDropLeave({ $el: _dropHandler, context: _dropContext, dropElement: _dropElement });
-        _dropElement.removeClass('eb-dragdrop-drop');
+        _dropElement.removeAttr('data-dragdrop-drop');
       }
       // dragElement
       if (_dragElement) {
         _dragContext.onDragEnd && _dragContext.onDragEnd({ $el: _dragHandler, context: _dragContext, dragElement: _dragElement });
-        _dragElement.removeClass('eb-dragdrop-drag');
+        _dragElement.removeAttr('data-dragdrop-drag');
       }
     }
     _isMoved = false;
@@ -309,7 +275,6 @@ export default function(Vue) {
     _dropHandler = null;
     _dropElement = null;
     _dropContext = null;
-    _dragElementSize = {};
     _dragContainer = {};
     _touchStart = {};
   }
