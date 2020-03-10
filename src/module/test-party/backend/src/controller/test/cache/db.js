@@ -27,7 +27,7 @@ module.exports = app => {
       assert.equal(res, null);
 
       // set with timeout
-      await this.ctx.cache.db.set(name, 'zhennann', 1000);
+      await this.ctx.cache.db.set(name, 'zhennann', 2000);
 
       // get
       value = await this.ctx.cache.db.get(name);
@@ -39,7 +39,7 @@ module.exports = app => {
       assert.equal(value, 'zhennann');
 
       // get after timeout
-      await sleep(1500);
+      await sleep(3000);
       value = await this.ctx.cache.db.get(name);
       assert.equal(value, undefined);
 

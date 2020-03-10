@@ -10,6 +10,9 @@ module.exports = app => {
       const userIds = this.ctx.cache.mem.get('userIds');
       const userTom = { id: userIds.Tom };
 
+      // function all: including panels/widgets
+      const functionCount = Object.values(this.ctx.module.main.meta.base.functions).filter(item => item.public === 1).length;
+
       // check right function
       const pass = await this.ctx.meta.function.checkRightFunction({
         function: {
@@ -33,7 +36,7 @@ module.exports = app => {
         },
         user: userTom,
       });
-      assert.equal(list.length, 1);
+      assert.equal(list.length, functionCount);
 
       // delete function
       await this.ctx.model.query('delete from aFunction where id=?', [ list[0].id ]);

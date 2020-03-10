@@ -117,8 +117,8 @@ module.exports = app => {
       if (options.version === 5) {
         // roleFunctions: widgets
         const roleFunctions = [
-          { roleName: 'root', name: 'widgetProducts' },
-          { roleName: 'root', name: 'widgetAbout' },
+          { roleName: null, name: 'widgetProducts' },
+          { roleName: null, name: 'widgetAbout' },
         ];
         await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
       }
