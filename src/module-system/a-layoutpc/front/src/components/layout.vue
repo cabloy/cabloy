@@ -3,6 +3,7 @@ import Header from './header.vue';
 import Sidebar from './sidebar.vue';
 import Groups from './groups.vue';
 
+import Vue from 'vue';
 export default {
   meta: {
     global: false,
