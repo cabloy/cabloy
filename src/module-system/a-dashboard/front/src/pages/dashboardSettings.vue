@@ -119,6 +119,7 @@ export default {
       const profileId = item.id;
       if (this.profileIdCurrent === profileId) return;
       return this.dashboard.__switchProfile(profileId).then(() => {
+        this.dashboard.__saveProfileId();
         this.profileIdCurrent = profileId;
         //return true;
       });

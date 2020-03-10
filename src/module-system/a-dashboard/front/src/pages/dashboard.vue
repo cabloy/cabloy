@@ -1,6 +1,7 @@
 <script>
 import widgetGroup from '../components/widgetGroup.vue';
 
+import Vue from 'vue';
 export default {
   meta: {
     title: 'Dashboard',
@@ -41,8 +42,6 @@ export default {
       widgetsAll: null,
       profile: null,
       profileId: 0,
-      dragdropSceneResize: Vue.prototype.$meta.util.nextId('dragdrop'),
-      dragdropScene: Vue.prototype.$meta.util.nextId('dragdrop'),
     };
   },
   created() {
@@ -66,6 +65,26 @@ export default {
           });
         });
       });
+    },
+    __saveProfileId() {
+      this.$store.commit('a/base/setLayoutConfigKey', { module: 'a-dashboard', key: 'profileId', value: this.profileId });
+    },
+    __saveLayoutConfig: Vue.prototype.$meta.util.debounce(function() {
+      // override
+      let profileValue = JSON.parse(JSON.stringify(this.profile));
+      // save
+      if (this.profileId === 0) {
+        // save
+        this.$store.commit('a/base/setLayoutConfigKey', { module: 'a-dashboard', key: 'profile', value: profileValue });
+        this.__saveProfileId();
+      } else {
+        this.$api.post('profile/save', { profileId: this.profileId, profileValue }).then(() => {
+          this.__saveProfileId();
+        });
+      }
+    }, 1000),
+    __onTitleChange(title) {
+      this.$view.$emit('view:title', { title });
     },
     __switchProfile(profileId) {
       return new Promise((resolve, reject) => {
@@ -166,6 +185,8 @@ export default {
       };
       this.__initWidget(widgetGroup, 'widget');
       this.profile.root.widgets.push(widgetGroup);
+      // save
+      this.__saveLayoutConfig();
     },
     __generateUUID() {
       var d = new Date().getTime();
@@ -178,9 +199,6 @@ export default {
         return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
       });
       return uuid;
-    },
-    __onTitleChange(title) {
-      this.$view.$emit('view:title', { title });
     },
   }
 }

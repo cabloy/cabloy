@@ -24,6 +24,16 @@ module.exports = app => {
       return await this.ctx.model.profile.delete({ id: profileId, userId: user.id });
     }
 
+    async save({ profileId, profileValue, user }) {
+      // try get item of user
+      const item = await this.item({ profileId, user });
+      if (!item) return;
+      await this.ctx.model.profile.update({
+        id: profileId,
+        profileValue: JSON.stringify(profileValue),
+      });
+    }
+
   }
 
   return Profile;

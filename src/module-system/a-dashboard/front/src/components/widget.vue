@@ -141,6 +141,8 @@ export default {
       if (widgetWidthCurrent === widgetWidthNew) return false;
       // set width
       widget.properties.width[viewSize] = widgetWidthNew;
+      // save
+      this.dashboard.__saveLayoutConfig();
       // tooltip
       let tooltip = widget.properties.width[viewSize];
       // next col
@@ -208,13 +210,15 @@ export default {
       const [widgetDrop, indexDrop] = this.group.__getWidgetById(dropContext.widgetId);
       this.group.widgets.splice(indexDrop, 0, widgetDrag);
       // save
-      //this.layout.__saveLayoutConfig();
+      this.dashboard.__saveLayoutConfig();
     },
     onWidgetDelete(widget) {
       this.$view.dialog.confirm().then(() => {
         const [_widget, index] = this.group.__getWidgetById(widget.id);
         if (index === -1) return;
         this.group.widgets.splice(index, 1);
+        // save
+        this.dashboard.__saveLayoutConfig();
       }).catch(() => {});
     },
     onWidgetProperties(widget) {

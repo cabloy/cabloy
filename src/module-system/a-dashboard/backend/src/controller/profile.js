@@ -32,6 +32,15 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async save() {
+      const res = await this.service.profile.save({
+        profileId: this.ctx.request.body.profileId,
+        profileValue: this.ctx.request.body.profileValue,
+        user: this.ctx.user.op,
+      });
+      this.ctx.success(res);
+    }
+
   }
   return ProfileController;
 };

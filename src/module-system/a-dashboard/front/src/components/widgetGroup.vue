@@ -61,6 +61,8 @@ export default {
       const _widget = { module: widget.module, name: widget.name };
       this.dashboard.__initWidget(_widget, this.root ? 'widget' : 'group');
       this.widgets.push(_widget);
+      // save
+      this.dashboard.__saveLayoutConfig();
     },
   }
 }
