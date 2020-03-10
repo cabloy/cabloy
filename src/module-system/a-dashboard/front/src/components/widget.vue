@@ -15,6 +15,7 @@ export default {
       props: {
         widget: this.options,
         dragdropScene: this.dragdropScene,
+        onDragContainer: this.onDragContainer,
         onDragStart: this.onDragStart,
         onDragElement: this.onDragElement,
         onDropElement: this.onDropElement,
@@ -123,8 +124,8 @@ export default {
     onDragContainerResizable({ $el, context }) {
       const $container = this.$$(this.dashboard.$el);
       const size = { width: $container.width() };
-      const tip = this.__getTip(context);
-      return { size, tip };
+      const tooltip = this.__getTooltipResizable(context);
+      return { size, tooltip };
     },
     onDragMoveResizable({ $el, context, diff }) {
       const viewSize = this.getViewSize();
@@ -141,8 +142,8 @@ export default {
       if (widgetWidthCurrent === widgetWidthNew) return false;
       // set width
       widget.properties.width[viewSize] = widgetWidthNew;
-      // tip
-      let tip = widget.properties.width[viewSize];
+      // tooltip
+      let tooltip = widget.properties.width[viewSize];
       // next col
       const widgetNext = this.group.widgets[index + 1];
       if (widgetNext) {
@@ -152,20 +153,20 @@ export default {
         if (widgetWidthNewNext) {
           widgetNext.properties.width[viewSize] = widgetWidthNewNext;
         }
-        tip = `${tip}:${widgetNext.properties.width[viewSize]}`;
+        tooltip = `${tooltip}:${widgetNext.properties.width[viewSize]}`;
       }
-      return { tip };
+      return { eaten: true, tooltip };
     },
-    __getTip(context) {
+    __getTooltipResizable(context) {
       const viewSize = this.getViewSize();
-      let tip;
+      let tooltip;
       const [widget, index] = this.group.__getWidgetById(context.widgetId);
-      tip = widget.properties.width[viewSize];
+      tooltip = widget.properties.width[viewSize];
       const widgetNext = this.group.widgets[index + 1];
       if (widgetNext) {
-        tip = `${tip}:${widgetNext.properties.width[viewSize]}`;
+        tooltip = `${tooltip}:${widgetNext.properties.width[viewSize]}`;
       }
-      return tip;
+      return tooltip;
     },
     getViewSize() {
       return this.$view.size;
@@ -180,6 +181,11 @@ export default {
       }
       return null;
     },
+    onDragContainer({ $el, context }) {
+      const [widgetDrag, indexDrag] = this.group.__getWidgetById(context.widgetId);
+      const tooltip = `${this.dashboard.__findWidgetStock(widgetDrag).titleLocale}`;
+      return { tooltip };
+    },
     onDragStart({ $el, context, dragElement }) {},
     onDragElement({ $el, context }) {
       return this.$$(`.widget-id-${context.widgetId}`);
@@ -188,7 +194,12 @@ export default {
       const [widgetDrop, indexDrop] = this.group.__getWidgetById(context.widgetId);
       const [widgetDrag, indexDrag] = this.group.__getWidgetById(dragContext.widgetId);
       if (indexDrop === indexDrag || indexDrop == indexDrag + 1) return null;
-      return this.$$(`.widget-id-${context.widgetId}`);
+      // dropElement
+      const dropElement = this.$$(`.widget-id-${context.widgetId}`);
+      // tooltip
+      const tooltip = this.dashboard.__findWidgetStock(widgetDrop).titleLocale;
+      // ok
+      return { dropElement, tooltip };
     },
     onDropLeave({ $el, context, dropElement }) {},
     onDropEnter({ $el, context, dropElement }) {},

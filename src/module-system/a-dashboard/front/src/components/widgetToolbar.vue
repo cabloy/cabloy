@@ -32,6 +32,7 @@ export default {
         value: {
           scene: this.dragdropScene,
           widgetId: this.widget.id,
+          onDragContainer: this.onDragContainer,
           onDragStart: this.onDragStart,
           onDragElement: this.onDragElement,
           onDropElement: this.onDropElement,
@@ -52,6 +53,9 @@ export default {
     },
     dragdropScene: {
       type: String,
+    },
+    onDragContainer: {
+      type: Function,
     },
     onDragStart: {
       type: Function,

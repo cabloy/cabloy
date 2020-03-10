@@ -129,6 +129,11 @@ export default {
         widget.properties = this.$utils.extend({}, this.$config.profile.meta[type].properties);
       }
     },
+    __findWidgetStock(widget) {
+      if (!this.widgetsAll) return null;
+      const widgets = this.widgetsAll[widget.module];
+      return widgets[widget.name];
+    },
     onClickSettings() {
       this.$view.navigate(`/a/dashboard/dashboard/settings?profileId=${this.profileId}`, {
         scene: 'sidebar',
