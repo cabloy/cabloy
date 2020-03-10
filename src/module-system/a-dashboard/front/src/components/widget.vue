@@ -231,7 +231,7 @@ export default {
     },
     onWidgetsAdd({ widgets }) {
       for (const widget of widgets) {
-        this.$refs.group.onWidgetAdd(widget);
+        this.dashboard.onWidgetAdd(this.options.widgets, widget);
       }
     },
   }

@@ -30,9 +30,10 @@ export default {
   methods: {
     onPerformDone() {
       if (this.widgetsSelected.length === 0) return;
-      this.contextCallback(200, {
-        widgets: this.widgetsSelected,
+      const widgets = this.widgetsSelected.map(item => {
+        return { module: item.module, name: item.name };
       });
+      this.contextCallback(200, { widgets });
       this.$f7router.back();
     },
     onWidgetChange(e, widget) {
