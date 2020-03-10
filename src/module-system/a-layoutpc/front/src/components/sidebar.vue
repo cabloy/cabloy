@@ -130,6 +130,8 @@ export default {
         view.zIndex = ++this.$refs.sidebarGroup.viewIndex;
         // active
         this._activeView(panel, init);
+        // opened
+        this.setOpened(true, init);
         return;
       }
       // new view
@@ -139,6 +141,8 @@ export default {
           res.view.f7View.router.navigate(panel.url, options);
           // active
           this._activeView(panel, init);
+          // opened
+          this.setOpened(true, init);
         }
       });
     },
@@ -243,8 +247,6 @@ export default {
           this.layout.__saveLayoutConfig();
         }
       }
-      // opened
-      this.setOpened(true, init);
     },
   }
 }
