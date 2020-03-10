@@ -50,7 +50,7 @@ export default function(Vue) {
   function handeTouchStart(e) {
     const $$ = Vue.prototype.$$;
     // el
-    const $el = $$(e.target).closest('.eb-dragdrop-handler');
+    const $el = $$(e.target).closest('*[data-dragdrop-handler]');
     if ($el.length === 0) return;
     // context
     const context = $el[0].__eb_dragContext;
@@ -139,8 +139,8 @@ export default function(Vue) {
   function _handeTouchMove(e) {
     const $$ = Vue.prototype.$$;
     // el
-    const handlerClassName = `.eb-dragdrop-handler-${_dragContext.scene}`;
-    const elementClassName = `.eb-dragdrop-element-${_dragContext.scene}`;
+    const handlerClassName = `*[data-dragdrop-handler="${_dragContext.scene}"]`;
+    const elementClassName = `*[data-dragdrop-element="${_dragContext.scene}"]`;
     let $el = $$(e.target).closest(handlerClassName);
     if ($el.length === 0) {
       const $dragdropElement = $$(e.target).closest(elementClassName);
@@ -365,12 +365,12 @@ export default function(Vue) {
     unbind(el);
     // handler
     const $el = Vue.prototype.$$(el);
-    $el.addClass(`eb-dragdrop-handler eb-dragdrop-handler-${context.scene}`);
+    $el.attr('data-dragdrop-handler', context.scene);
     // element
     if (!context.resizable) {
       const $dragElement = _getDragElement($el, context);
       if ($dragElement) {
-        $dragElement.addClass(`eb-dragdrop-element eb-dragdrop-element-${context.scene}`);
+        $dragElement.attr('data-dragdrop-element', context.scene);
       }
       el.__eb_dragElement = $dragElement;
     }
@@ -381,11 +381,11 @@ export default function(Vue) {
   function unbind(el) {
     // handler
     const $el = Vue.prototype.$$(el);
-    Vue.prototype.$meta.util.removeClassLike($el, 'eb-dragdrop-handler');
+    $el.removeAttr('data-dragdrop-handler');
     // element
     const $dragElement = el.__eb_dragElement;
     if ($dragElement) {
-      Vue.prototype.$meta.util.removeClassLike($dragElement, 'eb-dragdrop-element');
+      $dragElement.removeAttr('data-dragdrop-element');
       el.__eb_dragElement = null;
     }
     // context
