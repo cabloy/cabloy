@@ -165,7 +165,6 @@ export default {
         //resizeDirection: 'row',
         colIndex: index,
         onDragStart: this.onDragStart,
-        onDragContainer: this.onDragContainer,
         onDragMove: this.onDragMove,
         onDragEnd: this.onDragEnd,
       });
@@ -175,12 +174,11 @@ export default {
     getViewSize() {
       return this.$view.size;
     },
-    onDragStart({ $el, context }) {},
-    onDragContainer({ $el, context }) {
+    onDragStart({ $el, context, dragElement }) {
       const $resizableRow = this.$$(this.$refs.resizableRow.$el);
       const size = { width: $resizableRow.width() };
-      const tip = this._getTip(context);
-      return { size, tip };
+      const tooltip = this._getTooltip(context);
+      return { size, tooltip };
     },
     onDragMove({ $el, context, diff }) {
       const viewSize = this.getViewSize();
@@ -196,7 +194,7 @@ export default {
       if (!colWidthNew) return false;
       if (colWidthCurrent === colWidthNew) return false;
       col[viewSize] = colWidthNew;
-      let tip = col[viewSize];
+      let tooltip = col[viewSize];
       // next col
       const colNext = this.resizableCols[context.colIndex + 1];
       if (colNext) {
@@ -206,21 +204,21 @@ export default {
         if (colWidthNewNext) {
           colNext[viewSize] = colWidthNewNext;
         }
-        tip = `${tip}:${colNext[viewSize]}`;
+        tooltip = `${tooltip}:${colNext[viewSize]}`;
       }
-      return { tip };
+      return { eaten: true, tooltip };
     },
     onDragEnd({ $el, context }) {},
-    _getTip(context) {
+    _getTooltip(context) {
       const viewSize = this.getViewSize();
-      let tip;
+      let tooltip;
       const col = this.resizableCols[context.colIndex];
-      tip = col[viewSize];
+      tooltip = col[viewSize];
       const colNext = this.resizableCols[context.colIndex + 1];
       if (colNext) {
-        tip = `${tip}:${colNext[viewSize]}`;
+        tooltip = `${tooltip}:${colNext[viewSize]}`;
       }
-      return tip;
+      return tooltip;
     },
     _getPreferWidth(widthCurrent, widthNew, force, minus) {
       const loop = force ? 5 : 2;
