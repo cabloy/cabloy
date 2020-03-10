@@ -15,7 +15,7 @@ export default {
     meta: {
       widget: {
         properties: {
-          width: { small: 100, medium: 50, large: 50 },
+          width: { small: 100, medium: 50, large: 25 },
           height: 'auto',
         },
       },
