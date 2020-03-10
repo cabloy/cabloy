@@ -2,15 +2,15 @@
   <eb-page>
     <eb-navbar :title="$text('Profile2')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link iconMaterial="add" :onPerform="onPerformNewProfile"></eb-link>
+        <eb-link v-if="user.op.anonymous!==1" iconMaterial="add" :onPerform="onPerformNewProfile"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <f7-list>
       <eb-list-item v-for="item of profiles" :key="item.id" :title="item.profileName" radio :checked="item.id===profileIdCurrent" :context="item" :onPerform="onPerformProfile" swipeout>
         <eb-context-menu>
           <div slot="right">
-            <div v-if="item.id===profileIdCurrent" color="orange" :context="item" :onPerform="onPerformClone">{{$text('Clone')}}</div>
-            <div v-if="item.id>0 && item.id!==profileIdCurrent" color="red" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
+            <div v-if="user.op.anonymous!==1 && item.id===profileIdCurrent" color="orange" :context="item" :onPerform="onPerformClone">{{$text('Clone')}}</div>
+            <div v-if="user.op.anonymous!==1 && item.id>0 && item.id!==profileIdCurrent" color="red" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
           </div>
         </eb-context-menu>
       </eb-list-item>
@@ -36,13 +36,12 @@ export default {
     dashboard() {
       return this.contextParams.dashboard;
     },
+    user() {
+      return this.$store.state.auth.user;
+    },
   },
   created() {
-    // list
-    this.$api.post('profile/list').then(data => {
-      const _default = [{ id: 0, profileName: this.$text('Default') }];
-      this.profiles = _default.concat(data);
-    });
+    this.__init();
   },
   mounted() {
     this.dashboard.$on('dashboard:destroy', this.onDashboardDestroy);
@@ -51,6 +50,18 @@ export default {
     this.dashboard.$off('dashboard:destroy', this.onDashboardDestroy);
   },
   methods: {
+    __init() {
+      // default
+      const _default = [{ id: 0, profileName: this.$text('Default') }];
+      if (this.user.op.anonymous === 1) {
+        this.profiles = _default;
+      } else {
+        // list
+        this.$api.post('profile/list').then(data => {
+          this.profiles = _default.concat(data);
+        });
+      }
+    },
     onDashboardDestroy() {
       this.$view.close();
     },
