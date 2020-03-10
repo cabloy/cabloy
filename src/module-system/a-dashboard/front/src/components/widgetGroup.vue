@@ -57,6 +57,11 @@ export default {
       if (index === -1) return [null, -1];
       return [this.widgets[index], index];
     },
+    onWidgetAdd(widget) {
+      const _widget = { module: widget.module, name: widget.name };
+      this.dashboard.__initWidget(_widget, this.root ? 'widget' : 'group');
+      this.widgets.push(_widget);
+    },
   }
 }
 

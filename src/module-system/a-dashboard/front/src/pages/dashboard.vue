@@ -154,12 +154,8 @@ export default {
     },
     onWidgetsAdd({ widgets }) {
       for (const widget of widgets) {
-        this.onWidgetAdd(this.profile.root.widgets, widget);
+        this.$refs.group.onWidgetAdd(widget);
       }
-    },
-    onWidgetAdd(widgets, widget) {
-      this.__initWidget(widget, this.root ? 'widget' : 'group');
-      widgets.push(widget);
     },
     onGroupAdd() {
       const widgetGroup = {
