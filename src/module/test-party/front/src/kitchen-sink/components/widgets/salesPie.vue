@@ -92,6 +92,11 @@ export default {
       const chartOptions = {
         maintainAspectRatio: false,
         responsive: true,
+        animation: {
+          onComplete: () => {
+            this.__createSnapshot();
+          }
+        },
         title: {
           display: true,
           position: 'top',
@@ -138,7 +143,6 @@ export default {
         this.chart.options = this.__prepareOptions();
         this.chart.update();
       }
-      this.__createSnapshot();
     },
   },
 };
