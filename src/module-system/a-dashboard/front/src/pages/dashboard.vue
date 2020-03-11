@@ -72,7 +72,7 @@ export default {
     },
     __saveLayoutConfig: Vue.prototype.$meta.util.debounce(function() {
       // override
-      let profileValue = JSON.parse(JSON.stringify(this.profile));
+      let profileValue = this.$meta.util.extend({}, this.profile);
       // save
       if (this.profileId === 0) {
         // save
@@ -95,7 +95,7 @@ export default {
             let profile;
             if (layoutConfig.profile) {
               // default of user
-              profile = JSON.parse(JSON.stringify(layoutConfig.profile));
+              profile = this.$meta.util.extend({}, layoutConfig.profile);
             } else {
               // default
               profile = this.__getProfileDefault();
@@ -125,7 +125,7 @@ export default {
     },
     __getProfileDefault() {
       const profileDefault = this.$config.profile.default;
-      const profile = JSON.parse(JSON.stringify(profileDefault));
+      const profile = this.$meta.util.extend({}, profileDefault);
       // root id
       if (!profile.root.id) profile.root.id = this.__generateUUID();
       // widget id
