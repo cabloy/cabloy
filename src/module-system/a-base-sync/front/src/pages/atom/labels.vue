@@ -86,7 +86,7 @@ export default {
     },
     onSubmit() {
       if (!this.labelText || !this.labelColor) return;
-      const labels = this.$utils.extend({}, this.labelsAll);
+      const labels = this.$meta.util.extend({}, this.labelsAll);
       if (this.labelId === 0) {
         labels[this.newLabelId()] = { text: this.labelText, color: this.labelColor };
       } else {
