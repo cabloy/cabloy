@@ -7,12 +7,16 @@
           <thead>
             <tr>
               <th class="label-cell"></th>
-              <th v-for="(col,index) of data.cols" :key="index" class="numeric-cell">{{col}}</th>
+              <th v-for="(col,index) of data.cols" :key="index" class="numeric-cell">
+                <f7-link @click="onClickFruit(col)">{{col}}</f7-link>
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(row,index) of data.rows" :key="index">
-              <th class="label-cell">{{row}}</th>
+              <th class="label-cell">
+                <f7-link @click="onClickSeason(row)">{{row}}</f7-link>
+              </th>
               <td v-for="(col,colIndex) of data.cols" :key="colIndex" class="numeric-cell">{{data.dataset[index][colIndex]}}</td>
             </tr>
           </tbody>
@@ -42,7 +46,9 @@ export default {
       return this.data.dataset.reduce((total, row) => {
         return total + row[2];
       }, 0);
-    }
+    },
+    onClickFruit(fruit) {},
+    onClickSeason(season) {},
   },
 };
 

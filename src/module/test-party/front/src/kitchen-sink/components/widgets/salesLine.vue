@@ -35,10 +35,7 @@ export default {
         this.__fillChart();
       });
     },
-    __fillChart() {
-      // canvas
-      const chartCanvas = this.$refs.chart.getContext('2d');
-      // data
+    __prepareData() {
       const fruitIndex = this.dataSource.cols.findIndex(item => item === this.fruit);
       const chartData = {
         labels: this.dataSource.rows,
@@ -47,6 +44,13 @@ export default {
           data: this.dataSource.dataset.map(item => item[fruitIndex]),
         }, ],
       };
+      return chartData;
+    },
+    __fillChart() {
+      // canvas
+      const chartCanvas = this.$refs.chart.getContext('2d');
+      // data
+      const chartData = this.__prepareData();
       // options
       const chartOptions = {
         maintainAspectRatio: false,
@@ -86,7 +90,13 @@ export default {
         data: chartData,
         options: chartOptions,
       });
-    }
+    },
+    __updateChart(fruit) {
+      this.fruit = fruit;
+      this.chart.config.data = this.__prepareData();
+      this.chart.config.options.title.text = this.fruit;
+      this.chart.update();
+    },
   },
 };
 

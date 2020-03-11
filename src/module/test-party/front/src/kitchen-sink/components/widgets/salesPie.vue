@@ -36,10 +36,7 @@ export default {
         this.__fillChart();
       });
     },
-    __fillChart() {
-      // canvas
-      const chartCanvas = this.$refs.chart.getContext('2d');
-      // data
+    __prepareData() {
       const seasonIndex = this.dataSource.rows.findIndex(item => item === this.season);
       const chartData = {
         labels: this.labels,
@@ -48,6 +45,13 @@ export default {
           data: this.dataSource.dataset[seasonIndex].slice(0, 2),
         }, ],
       };
+      return chartData;
+    },
+    __fillChart() {
+      // canvas
+      const chartCanvas = this.$refs.chart.getContext('2d');
+      // data
+      const chartData = this.__prepareData();
       // options
       const chartOptions = {
         maintainAspectRatio: false,
@@ -75,7 +79,13 @@ export default {
         data: chartData,
         options: chartOptions,
       });
-    }
+    },
+    __updateChart(season) {
+      this.season = season;
+      this.chart.config.data = this.__prepareData();
+      this.chart.config.options.title.text = this.season;
+      this.chart.update();
+    },
   },
 };
 
