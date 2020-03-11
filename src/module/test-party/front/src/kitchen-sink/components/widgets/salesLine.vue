@@ -1,6 +1,6 @@
 <template>
   <f7-card>
-    <f7-card-header>Fruit Sales(Line Chart)</f7-card-header>
+    <f7-card-header>{{$text('Fruit Sales(Line Chart)')}}</f7-card-header>
     <f7-card-content>
       <canvas ref="chart"></canvas>
     </f7-card-content>

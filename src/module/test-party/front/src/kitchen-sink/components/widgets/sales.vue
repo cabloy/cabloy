@@ -1,6 +1,6 @@
 <template>
   <f7-card>
-    <f7-card-header>Fruit Sales</f7-card-header>
+    <f7-card-header>{{$text('Fruit Sales')}}</f7-card-header>
     <f7-card-content>
       <div class="data-table">
         <table>
