@@ -16,10 +16,17 @@ export default {
     return {
       chartjs: null,
       chart: null,
+      dataSource,
+      fruit: 'All', //'Apples',
     };
   },
   mounted() {
     this.__init();
+  },
+  beforeDestroy() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
   },
   methods: {
     __init() {
@@ -32,18 +39,24 @@ export default {
       // canvas
       const chartCanvas = this.$refs.chart.getContext('2d');
       // data
+      const fruitIndex = this.dataSource.cols.findIndex(item => item === this.fruit);
       const chartData = {
-        labels: dataSource.rows,
+        labels: this.dataSource.rows,
         datasets: [{
-          label: 'Apple',
           fill: false,
-          data: dataSource.dataset.map(item => item[0]),
+          data: this.dataSource.dataset.map(item => item[fruitIndex]),
         }, ],
       };
       // options
       const chartOptions = {
         maintainAspectRatio: false,
         responsive: true,
+        title: {
+          display: true,
+          position: 'top',
+          text: this.fruit,
+          fontColor: 'rgba(255, 255, 255, 0.4)',
+        },
         legend: {
           display: false,
         },
@@ -72,7 +85,7 @@ export default {
         type: 'line',
         data: chartData,
         options: chartOptions,
-      })
+      });
     }
   },
 };

@@ -47,5 +47,13 @@ export default {
 };
 
 </script>
-<style scoped>
+<style lang="less" scoped>
+.data-table {
+
+  th,
+  td {
+    padding: 0 6px;
+  }
+}
+
 </style>

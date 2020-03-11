@@ -1,47 +1,80 @@
 <template>
   <f7-card>
-    <f7-card-header>Fruit Sales(Pie Chart)</f7-card-header>
+    <f7-card-header>Fruit Sales(Line Chart)</f7-card-header>
     <f7-card-content>
-      <div class="data-table">
-        <table>
-          <thead>
-            <tr>
-              <th class="label-cell"></th>
-              <th v-for="(col,index) of data.cols" :key="index" class="numeric-cell">{{col}}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(row,index) of data.rows" :key="index">
-              <th class="label-cell">{{row}}</th>
-              <td v-for="(col,colIndex) of data.cols" :key="colIndex" class="numeric-cell">{{data.dataset[index][colIndex]}}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <canvas ref="chart"></canvas>
     </f7-card-content>
-    <f7-card-footer>
-      <span></span>
-      <span></span>
-      <span>Amount: {{getAmount()}}</span>
-    </f7-card-footer>
   </f7-card>
 </template>
 <script>
-import data from './data.js';
+import dataSource from './data.js';
 export default {
   meta: {
     global: false,
   },
   data() {
     return {
-      data,
+      chartjs: null,
+      chart: null,
+      dataSource,
+      season: 'Summer', //'Spring',
+      labels: ['Apples', 'Pears'],
     };
   },
+  mounted() {
+    this.__init();
+  },
+  beforeDestroy() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+  },
   methods: {
-    getAmount() {
-      return this.data.dataset.reduce((total, row) => {
-        return total + row[2];
-      }, 0);
+    __init() {
+      this.$meta.module.use('a-chartjs', module => {
+        this.chartjs = module.options.utils.chartjs;
+        this.__fillChart();
+      });
+    },
+    __fillChart() {
+      // canvas
+      const chartCanvas = this.$refs.chart.getContext('2d');
+      // data
+      const seasonIndex = this.dataSource.rows.findIndex(item => item === this.season);
+      const chartData = {
+        labels: this.labels,
+        datasets: [{
+          backgroundColor: ['#f56954', '#f39c12'],
+          data: this.dataSource.dataset[seasonIndex].slice(0, 2),
+        }, ],
+      };
+      // options
+      const chartOptions = {
+        maintainAspectRatio: false,
+        responsive: true,
+        title: {
+          display: true,
+          position: 'top',
+          text: this.season,
+          fontColor: 'rgba(255, 255, 255, 0.4)',
+        },
+        legend: {
+          display: true,
+          position: 'left',
+          labels: {
+            fontColor: 'rgba(255, 255, 255, 0.4)',
+          },
+        },
+        scales: {
+
+        },
+      };
+      // fill
+      this.chart = new this.chartjs(chartCanvas, {
+        type: 'doughnut',
+        data: chartData,
+        options: chartOptions,
+      });
     }
   },
 };
