@@ -85,6 +85,12 @@ module.exports = app => {
             menu: 3,
             public: 1,
           },
+          widgetSnapshot: {
+            title: 'Snapshots',
+            component: 'widgetSnapshot',
+            menu: 3,
+            public: 1,
+          },
           widgetAbout: {
             title: 'About',
             component: 'widgetAbout',

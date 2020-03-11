@@ -8,6 +8,7 @@ module.exports = {
   Garden: '花园',
   Item: '条目',
   Products: '产品',
+  Snapshots: '快照',
   About: '关于',
   'Create Party': '新建宴会',
   'Party List': '宴会列表',
