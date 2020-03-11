@@ -7,11 +7,14 @@
   </f7-card>
 </template>
 <script>
-import dataSource from './data.js';
-
 const propsSchema = {
   type: 'object',
   properties: {
+    dataSource: {
+      type: 'object',
+      ebTitle: 'Data Source',
+      ebReadOnly: true,
+    },
     fruit: {
       type: 'string',
       ebType: 'select',
@@ -32,10 +35,13 @@ export default {
     global: false,
     schema: {
       props: propsSchema,
-    }
+    },
   },
   mixins: [ebDashboardWidgetBase],
   props: {
+    dataSource: {
+      type: Object,
+    },
     fruit: {
       type: String,
     },
@@ -44,10 +50,12 @@ export default {
     return {
       chartjs: null,
       chart: null,
-      dataSource,
     };
   },
   watch: {
+    dataSource() {
+      this.__updateChart();
+    },
     fruit() {
       this.__updateChart();
     },

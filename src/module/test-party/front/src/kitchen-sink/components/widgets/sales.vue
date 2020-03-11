@@ -7,17 +7,17 @@
           <thead>
             <tr>
               <th class="label-cell"></th>
-              <th v-for="(col,index) of data.cols" :key="index" class="numeric-cell">
+              <th v-for="(col,index) of dataSource.cols" :key="index" class="numeric-cell">
                 <f7-link :class="col===fruit?'selected':''" @click="onClickFruit(col)">{{col}}</f7-link>
               </th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(row,index) of data.rows" :key="index">
+            <tr v-for="(row,index) of dataSource.rows" :key="index">
               <th class="label-cell">
                 <f7-link :class="row===season?'selected':''" @click="onClickSeason(row)">{{row}}</f7-link>
               </th>
-              <td v-for="(col,colIndex) of data.cols" :key="colIndex" class="numeric-cell">{{data.dataset[index][colIndex]}}</td>
+              <td v-for="(col,colIndex) of dataSource.cols" :key="colIndex" class="numeric-cell">{{dataSource.dataset[index][colIndex]}}</td>
             </tr>
           </tbody>
         </table>
@@ -31,7 +31,7 @@
   </f7-card>
 </template>
 <script>
-import data from './data.js';
+import dataSource from './data.js';
 const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').options.components.ebDashboardWidgetBase;
 export default {
   meta: {
@@ -40,14 +40,14 @@ export default {
   mixins: [ebDashboardWidgetBase],
   data() {
     return {
-      data,
       fruit: 'All',
       season: 'Spring',
+      dataSource,
     };
   },
   methods: {
     getAmount() {
-      return this.data.dataset.reduce((total, row) => {
+      return this.dataSource.dataset.reduce((total, row) => {
         return total + row[2];
       }, 0);
     },

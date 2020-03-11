@@ -7,21 +7,59 @@
   </f7-card>
 </template>
 <script>
-import dataSource from './data.js';
+const propsSchema = {
+  type: 'object',
+  properties: {
+    dataSource: {
+      type: 'object',
+      ebTitle: 'Data Source',
+      ebReadOnly: true,
+    },
+    season: {
+      type: 'string',
+      ebType: 'select',
+      ebTitle: 'Season',
+      ebOptions: [
+        { title: 'Spring', value: 'Spring' },
+        { title: 'Summer', value: 'Summer' },
+        { title: 'Autumn', value: 'Autumn' },
+        { title: 'Winter', value: 'Winter' },
+      ],
+      ebOptionsBlankAuto: true,
+    },
+  },
+};
+
 const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').options.components.ebDashboardWidgetBase;
 export default {
   meta: {
     global: false,
+    schema: {
+      props: propsSchema,
+    },
   },
   mixins: [ebDashboardWidgetBase],
+  props: {
+    dataSource: {
+      type: Object,
+    },
+    season: {
+      type: String,
+    },
+  },
   data() {
     return {
       chartjs: null,
       chart: null,
-      dataSource,
-      season: 'Summer', //'Spring',
-      labels: ['Apples', 'Pears'],
     };
+  },
+  watch: {
+    dataSource() {
+      this.__updateChart();
+    },
+    season() {
+      this.__updateChart();
+    },
   },
   mounted() {
     this.__init();
@@ -35,13 +73,13 @@ export default {
     __init() {
       this.$meta.module.use('a-chartjs', module => {
         this.chartjs = module.options.utils.chartjs;
-        this.__fillChart();
+        this.__updateChart();
       });
     },
     __prepareData() {
       const seasonIndex = this.dataSource.rows.findIndex(item => item === this.season);
       const chartData = {
-        labels: this.labels,
+        labels: this.dataSource.cols.slice(0, 2),
         datasets: [{
           backgroundColor: this.dataSource.colors.slice(0, 2),
           data: this.dataSource.dataset[seasonIndex].slice(0, 2),
@@ -49,12 +87,7 @@ export default {
       };
       return chartData;
     },
-    __fillChart() {
-      // canvas
-      const chartCanvas = this.$refs.chart.getContext('2d');
-      // data
-      const chartData = this.__prepareData();
-      // options
+    __prepareOptions() {
       const chartOptions = {
         maintainAspectRatio: false,
         responsive: true,
@@ -71,22 +104,32 @@ export default {
             fontColor: 'rgba(255, 255, 255, 0.4)',
           },
         },
-        scales: {
-
-        },
       };
-      // fill
-      this.chart = new this.chartjs(chartCanvas, {
-        type: 'doughnut',
-        data: chartData,
-        options: chartOptions,
-      });
+      return chartOptions;
     },
-    __updateChart(season) {
-      this.season = season;
-      this.chart.config.data = this.__prepareData();
-      this.chart.config.options.title.text = this.season;
-      this.chart.update();
+    __updateChart() {
+      if (!this.dataSource || !this.season) {
+        if (this.chart) {
+          this.chart.clear();
+        }
+        return;
+      }
+      const chartData = this.__prepareData();
+      const chartOptions = this.__prepareOptions();
+      if (!this.chart) {
+        // canvas
+        const chartCanvas = this.$refs.chart.getContext('2d');
+        // fill
+        this.chart = new this.chartjs(chartCanvas, {
+          type: 'doughnut',
+          data: chartData,
+          options: chartOptions,
+        });
+      } else {
+        this.chart.data = this.__prepareData();
+        this.chart.options = this.__prepareOptions();
+        this.chart.update();
+      }
     },
   },
 };
