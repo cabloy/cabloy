@@ -8,16 +8,20 @@ export default {
     meta: {
       widget: {
         properties: {
-          title: '',
-          width: { small: 100, medium: 50, large: 25 },
-          height: 'auto',
+          title: { value: '' },
+          widthSmall: { value: 100 },
+          widthMedium: { value: 50 },
+          widthLarge: { value: 25 },
+          height: { value: 'auto' },
         },
       },
       group: {
         properties: {
-          title: '',
-          width: { small: 100, medium: 100, large: 100 },
-          height: 'auto',
+          title: { value: '' },
+          widthSmall: { value: 100 },
+          widthMedium: { value: 100 },
+          widthLarge: { value: 100 },
+          height: { value: 'auto' },
         },
       },
     },

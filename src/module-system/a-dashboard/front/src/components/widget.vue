@@ -83,9 +83,9 @@ export default {
       props: {
         resizable: true,
         resizableHandler: false,
-        width: this.options.properties.width.small,
-        medium: this.options.properties.width.medium,
-        large: this.options.properties.width.large,
+        width: this.__getPropertyRealValue('widthSmall'),
+        medium: this.__getPropertyRealValue('widthMedium'),
+        large: this.__getPropertyRealValue('widthLarge'),
       },
       style: {
         height: this.options.properties.height,
@@ -163,8 +163,8 @@ export default {
       }
       return values;
     },
-    __getPropertyRealValue(propertyName) {
-      const propertyReal = this.options.properties[propertyName];
+    __getPropertyRealValue2(options, propertyName) {
+      const propertyReal = options.properties[propertyName];
       if (!propertyReal) return undefined;
 
       try {
@@ -185,6 +185,22 @@ export default {
         this.$set(propertyReal, 'error', err.message);
         return undefined;
       }
+    },
+    __getPropertyRealValue(propertyName) {
+      return this.__getPropertyRealValue2(this.options, propertyName);
+    },
+    __setPropertyRealValue2(options, propertyName, data) {
+      if (!data) data = {};
+      if (typeof data !== 'object') data = { value: data };
+      // old
+      const propertyRealOld = options.properties[propertyName] || {};
+      // retain the old value maybe
+      const propertyRealNew = this.$utils.extend({}, propertyRealOld, { bind: null, binds: null, error: null }, data);
+      this.$set(options.properties, propertyName, propertyRealNew);
+      return propertyRealNew;
+    },
+    __setPropertyRealValue(propertyName, data) {
+      return this.__setPropertyRealValue2(this.options, propertyName, data);
     },
     __combineWidgetProps(props) {
       const propsSchema = this.component.meta && this.component.meta.schema && this.component.meta.schema.props;
@@ -211,44 +227,48 @@ export default {
     },
     onDragMoveResizable({ $el, context, diff }) {
       const viewSize = this.getViewSize();
+      const viewSizeUpperCase = viewSize.replace(viewSize[0], viewSize[0].toUpperCase());
+      const propertyNameWidth = `width${viewSizeUpperCase}`;
       // diff
       const diffPercent = parseInt(diff.percent.x * 100);
       if (diffPercent === 0) return;
       const minus = diffPercent < 0;
       // this widget
       const [widget, index] = this.group.__getWidgetById(context.widgetId);
-      const widgetWidthCurrent = widget.properties.width[viewSize];
+      const widgetWidthCurrent = this.__getPropertyRealValue2(widget, propertyNameWidth);
       let widgetWidthNew = widgetWidthCurrent + diffPercent;
       widgetWidthNew = this.__getPreferWidth(widgetWidthCurrent, widgetWidthNew, false, minus);
       if (!widgetWidthNew) return false;
       if (widgetWidthCurrent === widgetWidthNew) return false;
       // set width
-      widget.properties.width[viewSize] = widgetWidthNew;
+      this.__setPropertyRealValue2(widget, propertyNameWidth, widgetWidthNew);
       // save
       this.dashboard.__saveLayoutConfig();
       // tooltip
-      let tooltip = widget.properties.width[viewSize];
+      let tooltip = this.__getPropertyRealValue2(widget, propertyNameWidth); // dynamically maybe
       // next col
       const widgetNext = this.group.widgets[index + 1];
       if (widgetNext) {
-        const widgetWidthNext = widgetNext.properties.width[viewSize];
+        const widgetWidthNext = this.__getPropertyRealValue2(widgetNext, propertyNameWidth);
         let widgetWidthNewNext = widgetWidthNext - (widgetWidthNew - widgetWidthCurrent);
         widgetWidthNewNext = this.__getPreferWidth(widgetWidthNext, widgetWidthNewNext, true, !minus);
         if (widgetWidthNewNext) {
-          widgetNext.properties.width[viewSize] = widgetWidthNewNext;
+          this.__setPropertyRealValue2(widgetNext, propertyNameWidth, widgetWidthNewNext);
         }
-        tooltip = `${tooltip}:${widgetNext.properties.width[viewSize]}`;
+        tooltip = `${tooltip}:${this.__getPropertyRealValue2(widgetNext, propertyNameWidth)}`;
       }
       return { eaten: true, tooltip };
     },
     __getTooltipResizable(context) {
       const viewSize = this.getViewSize();
+      const viewSizeUpperCase = viewSize.replace(viewSize[0], viewSize[0].toUpperCase());
+      const propertyNameWidth = `width${viewSizeUpperCase}`;
       let tooltip;
       const [widget, index] = this.group.__getWidgetById(context.widgetId);
-      tooltip = widget.properties.width[viewSize];
+      tooltip = this.__getPropertyRealValue2(widget, propertyNameWidth);
       const widgetNext = this.group.widgets[index + 1];
       if (widgetNext) {
-        tooltip = `${tooltip}:${widgetNext.properties.width[viewSize]}`;
+        tooltip = `${tooltip}:${this.__getPropertyRealValue2(widgetNext, propertyNameWidth)}`;
       }
       return tooltip;
     },
