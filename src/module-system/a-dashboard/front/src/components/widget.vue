@@ -56,6 +56,9 @@ export default {
       if (this.ready) {
         children.push(c(this.__getFullName(), {
           staticClass: 'widget-inner',
+          props: {
+            widget: this, // for more extensible
+          },
         }));
       } else if (this.errorMessage) {
         children.push(c('div', {
