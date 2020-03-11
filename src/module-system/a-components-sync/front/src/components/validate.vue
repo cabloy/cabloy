@@ -129,6 +129,10 @@ export default {
       return dataPath;
     },
     fetchSchema() {
+      if (this.meta.schema) {
+        this.__schemaReady(this.meta.schema);
+        return;
+      }
       if (!this.params) return;
       if (!this.params.module) this.params.module = this.$page.$module.name;
       this.$meta.module.use(this.params.module, module => {
@@ -138,24 +142,27 @@ export default {
           validator: this.params.validator,
           schema: this.params.schema,
         }).then(data => {
-          this.schema = data;
-          if (this.errors) this.verrors = this.errors;
-          // custom
-          const _componentName = this.schema.meta && this.schema.meta.custom && this.schema.meta.custom.component;
-          if (_componentName) {
-            const _component = module.options.components[_componentName];
-            if (!_component) {
-              this.customNotFound = true;
-            } else {
-              this.$meta.util.setComponentModule(_component, module);
-              this.$options.components.custom = _component;
-            }
-            this.custom = true;
-          }
-          // event
-          this.$emit('schema:ready', this.schema);
+          this.__schemaReady(data);
         });
       });
+    },
+    __schemaReady(schema) {
+      this.schema = schema;
+      if (this.errors) this.verrors = this.errors;
+      // custom
+      const _componentName = this.schema.meta && this.schema.meta.custom && this.schema.meta.custom.component;
+      if (_componentName) {
+        const _component = module.options.components[_componentName];
+        if (!_component) {
+          this.customNotFound = true;
+        } else {
+          this.$meta.util.setComponentModule(_component, module);
+          this.$options.components.custom = _component;
+        }
+        this.custom = true;
+      }
+      // event
+      this.$emit('schema:ready', this.schema);
     },
     renderSchema(c) {
       const children = this.renderProperties(c, this.data, this.schema.properties, '');
