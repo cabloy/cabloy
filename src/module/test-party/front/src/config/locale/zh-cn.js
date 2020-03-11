@@ -51,6 +51,8 @@ export default {
   Documentation: '文档',
   Community: '社区',
   Snapshots: '快照',
+  Fruit: '水果',
+  Season: '季节',
   CabloyAboutTip1: 'CabloyJS - 是一款顶级NodeJS全栈业务开发框架',
   CabloyAboutTip2: '前端采用VueJS + Framework7 + Webpack，后端采用KoaJS + EggJS，数据库采用MySQL',
   CabloyAboutTip3: '在纵向上，将前端和后端打通，形成一个有机的整体，避免前端和后端各自为政的状况',
