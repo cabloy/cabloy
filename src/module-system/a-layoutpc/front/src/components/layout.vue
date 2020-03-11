@@ -364,7 +364,7 @@ export default {
       // stock
       const panelStock = this._findPanelStock(panel);
       // extend
-      return this.$utils.extend({}, panelStock, panel, _panelExtra);
+      return this.$meta.util.extend({}, panelStock, panel, _panelExtra);
     },
     _renderSidebar(c, side) {
       const sideUpperCase = side.replace(side[0], side[0].toUpperCase());
