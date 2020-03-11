@@ -3,41 +3,47 @@
     <f7-card-header>{{$text('Snapshots')}}</f7-card-header>
     <f7-card-content>
       <div v-for="item of snapshots" :key="item.key">
-        <f7-block-title>{{item.data.title}}</f7-block-title>
-        <f7-block class="snapshot">
-          <img :src="item.data.image">
-        </f7-block>
+        <template v-if="item.value">
+          <f7-block-title>{{item.value.title}}</f7-block-title>
+          <f7-block class="snapshot">
+            <img :src="item.value.image">
+          </f7-block>
+        </template>
       </div>
     </f7-card-content>
   </f7-card>
 </template>
 <script>
+const propsSchema = {
+  type: 'object',
+  properties: {
+    snapshots: {
+      type: 'array',
+      ebTitle: 'Snapshots',
+      ebReadOnly: true,
+      ebBindArray: true,
+    },
+  },
+};
+
 const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').options.components.ebDashboardWidgetBase;
 export default {
   meta: {
     global: false,
-  },
-  mixins: [ebDashboardWidgetBase],
-  data() {
-    return {
-      snapshots: [],
-    };
-  },
-  mounted() {
-    this.__init();
-  },
-  methods: {
-    __init() {
-      const data = {
-        title: 'Apples',
-        image: 'https://admin.cabloy.com/api/a/file/file/download/385ca5c51d594e05974e668ad61bd012.JPG',
-      };
-      this.snapshots.push({
-        key: '1',
-        data,
-      });
+    schema: {
+      props: propsSchema,
     },
   },
+  mixins: [ebDashboardWidgetBase],
+  props: {
+    snapshots: {
+      type: Array,
+    },
+  },
+  data() {
+    return {};
+  },
+  methods: {},
 };
 
 </script>

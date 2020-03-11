@@ -50,6 +50,7 @@ export default {
     return {
       chartjs: null,
       chart: null,
+      snapshot: null,
     };
   },
   watch: {
@@ -122,6 +123,13 @@ export default {
       };
       return chartOptions;
     },
+    __createSnapshot() {
+      const image = this.chart.toBase64Image();
+      this.snapshot = {
+        title: this.$text('Fruit Sales(Line Chart)'),
+        image,
+      };
+    },
     __updateChart() {
       if (!this.dataSource || !this.fruit) {
         if (this.chart) {
@@ -145,6 +153,7 @@ export default {
         this.chart.options = this.__prepareOptions();
         this.chart.update();
       }
+      this.__createSnapshot();
     },
   },
 };
