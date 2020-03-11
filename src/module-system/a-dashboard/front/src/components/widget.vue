@@ -195,7 +195,7 @@ export default {
       // old
       const propertyRealOld = options.properties[propertyName] || {};
       // retain the old value maybe
-      const propertyRealNew = this.$utils.extend({}, propertyRealOld, { bind: null, binds: null, error: null }, data);
+      const propertyRealNew = this.$meta.util.extend({}, propertyRealOld, { bind: null, binds: null, error: null }, data);
       this.$set(options.properties, propertyName, propertyRealNew);
       return propertyRealNew;
     },

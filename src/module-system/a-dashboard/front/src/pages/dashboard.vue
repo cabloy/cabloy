@@ -149,7 +149,7 @@ export default {
       }
       // properties
       if (!widget.properties) {
-        widget.properties = this.$utils.extend({}, this.$config.profile.meta[type].properties);
+        widget.properties = this.$meta.util.extend({}, this.$config.profile.meta[type].properties);
       }
     },
     __findWidgetStock(widget) {
