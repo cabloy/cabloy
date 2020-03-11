@@ -41,6 +41,7 @@ export default {
         labels: this.dataSource.rows,
         datasets: [{
           fill: false,
+          backgroundColor: this.dataSource.colors[fruitIndex],
           data: this.dataSource.dataset.map(item => item[fruitIndex]),
         }, ],
       };

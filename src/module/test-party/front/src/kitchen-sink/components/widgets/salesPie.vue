@@ -41,7 +41,7 @@ export default {
       const chartData = {
         labels: this.labels,
         datasets: [{
-          backgroundColor: ['#f56954', '#f39c12'],
+          backgroundColor: this.dataSource.colors.slice(0, 2),
           data: this.dataSource.dataset[seasonIndex].slice(0, 2),
         }, ],
       };
