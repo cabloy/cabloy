@@ -12,10 +12,12 @@
   </f7-card>
 </template>
 <script>
+const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').options.components.ebDashboardWidgetBase;
 export default {
   meta: {
     global: false,
   },
+  mixins: [ebDashboardWidgetBase],
   data() {
     return {
       snapshots: [],

@@ -8,10 +8,12 @@
 </template>
 <script>
 import dataSource from './data.js';
+const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').options.components.ebDashboardWidgetBase;
 export default {
   meta: {
     global: false,
   },
+  mixins: [ebDashboardWidgetBase],
   data() {
     return {
       chartjs: null,
