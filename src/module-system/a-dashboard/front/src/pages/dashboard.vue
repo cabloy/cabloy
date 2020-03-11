@@ -42,6 +42,7 @@ export default {
       widgetsAll: null,
       profile: null,
       profileId: 0,
+      widgetsReal: [],
     };
   },
   created() {
@@ -200,6 +201,21 @@ export default {
       });
       return uuid;
     },
+    __onWidgetRealReady(widgetId, widgetReal) {
+      this.__onWidgetRealDestroy();
+      this.widgetsReal.push({ widgetId, widgetReal });
+    },
+    __onWidgetRealDestroy(widgetId, widgetReal) {
+      const [widget, index] = this.__findWidgetRealById(widgetId);
+      if (index > -1) {
+        this.widgetsReal.splice(index, 1);
+      }
+    },
+    __findWidgetRealById(widgetId) {
+      const index = this.widgetsReal.findIndex(item => item.widgetId === widgetId);
+      if (index === -1) return [null, -1];
+      return [this.widgetsReal[index], index];
+    }
   }
 }
 

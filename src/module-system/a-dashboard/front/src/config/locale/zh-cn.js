@@ -13,4 +13,5 @@ export default {
   'New Profile': '新建配置',
   'Please specify the profile name': '请指定配置名称',
   'Widget Not Found': '部件未发现',
+  'Source Widget of %s Not Found': '%s的源部件未发现',
 };

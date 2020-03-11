@@ -53,11 +53,18 @@ export default {
         },
       }));
     } else {
-      if (this.ready) {
+      if (!this.errorMessage && this.ready) {
+        // props
+        const props = {
+          widget: this, // for more extensible
+        };
+        this.__combineWidgetProps(props);
         children.push(c(this.__getFullName(), {
           staticClass: 'widget-inner',
-          props: {
-            widget: this, // for more extensible
+          props,
+          on: {
+            'widgetReal:ready': this.__onWidgetRealReady,
+            'widgetReal:destroy': this.__onWidgetRealDestroy,
           },
         }));
       } else if (this.errorMessage) {
@@ -106,6 +113,7 @@ export default {
     return {
       ready: false,
       errorMessage: null,
+      component: null,
     };
   },
   created() {
@@ -119,16 +127,50 @@ export default {
       if (this.options.group) return;
       this.$meta.module.use(this.options.module, module => {
         const fullName = this.__getFullName();
-        const component = module.options.components[this.options.name];
-        if (!component) {
+        this.component = module.options.components[this.options.name];
+        if (!this.component) {
           this.errorMessage = `${this.$text('Widget Not Found')}: ${fullName}`;
           this.ready = false;
         } else {
-          this.$options.components[fullName] = component;
+          this.$options.components[fullName] = this.component;
           this.ready = true;
           this.errorMessage = null;
         }
       });
+    },
+    __onWidgetRealReady(widgetReal) {
+      this.dashboard.__onWidgetRealReady(this.options.id, widgetReal);
+    },
+    __onWidgetRealDestroy(widgetReal) {
+      this.dashboard.__onWidgetRealDestroy(this.options.id, widgetReal);
+    },
+    __combineWidgetProps(props) {
+      const propsSchema = this.component.meta && this.component.meta.schema && this.component.meta.schema.props;
+      if (!propsSchema) return;
+      for (const propertyName in propsSchema.properties) {
+        const propertyReal = this.options.properties[propertyName];
+        if (propertyReal) {
+          if (!propertyReal.bind) {
+            // static
+            props[propertyName] = propertyReal.value;
+          } else {
+            // bind
+            const [widgetSource] = this.dashboard.__findWidgetRealById(propertyReal.bind.widgetId);
+            if (!widgetSource) {
+              // source not found
+              this.errorMessage = this.$text('Source Widget of %s Not Found', propertyName);
+            } else {
+              // source value
+              props[propertyName] = widgetSource.widgetReal[propertyReal.bind.propertyName];
+            }
+          }
+        } else {
+          // has no value
+        }
+      }
+    },
+    getBindValue({ propertyName }) {
+
     },
     __getClassName() {
       if (this.options.group) return `widget widget-id-${this.options.id} widget-group ${this.options.widgets.length===0?'widget-group-empty':'widget-group-some'}`;
