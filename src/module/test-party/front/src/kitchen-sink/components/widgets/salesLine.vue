@@ -8,22 +8,53 @@
 </template>
 <script>
 import dataSource from './data.js';
+
+const propsSchema = {
+  type: 'object',
+  properties: {
+    fruit: {
+      type: 'string',
+      ebType: 'select',
+      ebTitle: 'Fruit',
+      ebOptions: [
+        { title: 'All', value: 'All' },
+        { title: 'Apples', value: 'Apples' },
+        { title: 'Pears', value: 'Pears' },
+      ],
+      ebOptionsBlankAuto: true,
+    },
+  },
+};
 export default {
   meta: {
     global: false,
+    schema: {
+      props: propsSchema,
+    }
+  },
+  props: {
+    fruit: {
+      type: String,
+    },
   },
   data() {
     return {
       chartjs: null,
       chart: null,
       dataSource,
-      fruit: 'All', //'Apples',
     };
+  },
+  watch: {
+    fruit() {
+      this.__updateChart();
+    },
   },
   mounted() {
     this.__init();
+    this.$emit('widgetReal:ready', this);
   },
   beforeDestroy() {
+    this.$emit('widgetReal:destroy', this);
     if (this.chart) {
       this.chart.destroy();
     }
@@ -32,7 +63,7 @@ export default {
     __init() {
       this.$meta.module.use('a-chartjs', module => {
         this.chartjs = module.options.utils.chartjs;
-        this.__fillChart();
+        this.__updateChart();
       });
     },
     __prepareData() {
@@ -47,12 +78,7 @@ export default {
       };
       return chartData;
     },
-    __fillChart() {
-      // canvas
-      const chartCanvas = this.$refs.chart.getContext('2d');
-      // data
-      const chartData = this.__prepareData();
-      // options
+    __prepareOptions() {
       const chartOptions = {
         maintainAspectRatio: false,
         responsive: true,
@@ -85,18 +111,31 @@ export default {
           }],
         },
       };
-      // fill
-      this.chart = new this.chartjs(chartCanvas, {
-        type: 'line',
-        data: chartData,
-        options: chartOptions,
-      });
+      return chartOptions;
     },
-    __updateChart(fruit) {
-      this.fruit = fruit;
-      this.chart.config.data = this.__prepareData();
-      this.chart.config.options.title.text = this.fruit;
-      this.chart.update();
+    __updateChart() {
+      if (!this.dataSource || !this.fruit) {
+        if (this.chart) {
+          this.chart.clear();
+        }
+        return;
+      }
+      const chartData = this.__prepareData();
+      const chartOptions = this.__prepareOptions();
+      if (!this.chart) {
+        // canvas
+        const chartCanvas = this.$refs.chart.getContext('2d');
+        // fill
+        this.chart = new this.chartjs(chartCanvas, {
+          type: 'line',
+          data: chartData,
+          options: chartOptions,
+        });
+      } else {
+        this.chart.config.data = this.__prepareData();
+        this.chart.config.options = this.__prepareOptions();
+        this.chart.update();
+      }
     },
   },
 };

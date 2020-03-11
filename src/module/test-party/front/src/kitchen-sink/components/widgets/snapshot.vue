@@ -2,7 +2,7 @@
   <f7-card>
     <f7-card-header>{{$text('Snapshots')}}</f7-card-header>
     <f7-card-content>
-      <div v-for="item of snapshots" :key="item.widgetId">
+      <div v-for="item of snapshots" :key="item.key">
         <f7-block-title>{{item.data.title}}</f7-block-title>
         <f7-block class="snapshot">
           <img :src="item.data.image">
@@ -31,7 +31,7 @@ export default {
         image: 'https://admin.cabloy.com/api/a/file/file/download/385ca5c51d594e05974e668ad61bd012.JPG',
       };
       this.snapshots.push({
-        widgetId: '1',
+        key: '1',
         data,
       });
     },

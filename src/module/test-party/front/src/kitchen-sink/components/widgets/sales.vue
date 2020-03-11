@@ -8,14 +8,14 @@
             <tr>
               <th class="label-cell"></th>
               <th v-for="(col,index) of data.cols" :key="index" class="numeric-cell">
-                <f7-link @click="onClickFruit(col)">{{col}}</f7-link>
+                <f7-link :class="col===fruit?'selected':''" @click="onClickFruit(col)">{{col}}</f7-link>
               </th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(row,index) of data.rows" :key="index">
               <th class="label-cell">
-                <f7-link @click="onClickSeason(row)">{{row}}</f7-link>
+                <f7-link :class="row===season?'selected':''" @click="onClickSeason(row)">{{row}}</f7-link>
               </th>
               <td v-for="(col,colIndex) of data.cols" :key="colIndex" class="numeric-cell">{{data.dataset[index][colIndex]}}</td>
             </tr>
@@ -39,7 +39,15 @@ export default {
   data() {
     return {
       data,
+      fruit: null,
+      season: null,
     };
+  },
+  mounted() {
+    this.$emit('widgetReal:ready', this);
+  },
+  beforeDestroy() {
+    this.$emit('widgetReal:destroy', this);
   },
   methods: {
     getAmount() {
@@ -47,8 +55,12 @@ export default {
         return total + row[2];
       }, 0);
     },
-    onClickFruit(fruit) {},
-    onClickSeason(season) {},
+    onClickFruit(fruit) {
+      this.fruit = fruit;
+    },
+    onClickSeason(season) {
+      this.season = season;
+    },
   },
 };
 
@@ -59,6 +71,12 @@ export default {
   th,
   td {
     padding: 0 6px;
+  }
+
+  th {
+    .link.selected {
+      font-size: larger;
+    }
   }
 }
 
