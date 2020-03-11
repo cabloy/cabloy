@@ -158,11 +158,6 @@ export default {
       const widgets = this.widgetsAll[widget.module];
       return widgets[widget.name];
     },
-    __getWidgetTitle(widget) {
-      if (widget.properties.title) return widget.properties.title;
-      if (widget.group) return this.$text('Group');
-      return this.__findWidgetStock(widget).titleLocale;
-    },
     onClickSettings() {
       this.$view.navigate(`/a/dashboard/dashboard/settings?profileId=${this.profileId}`, {
         scene: 'sidebar',

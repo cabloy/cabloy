@@ -179,6 +179,15 @@ export default {
           // static
           value = propertyReal.value;
         }
+        // special for title
+        if (propertyName === 'title' && !value) {
+          if (options.group) {
+            value = this.$text('Group');
+          } else {
+            value = this.dashboard.__findWidgetStock(options).titleLocale;
+          }
+        }
+        // ok
         this.$set(propertyReal, 'error', null);
         return value;
       } catch (err) {
@@ -287,7 +296,7 @@ export default {
     },
     onDragStart({ $el, context, dragElement }) {
       const [widgetDrag, indexDrag] = this.group.__getWidgetById(context.widgetId);
-      const tooltip = `${this.dashboard.__getWidgetTitle(widgetDrag)}`;
+      const tooltip = `${this.__getPropertyRealValue2(widgetDrag,'title')}`;
       return { tooltip };
     },
     onDragElement({ $el, context }) {
@@ -300,7 +309,7 @@ export default {
       // dropElement
       const dropElement = this.$$(`.widget-id-${context.widgetId}`);
       // tooltip
-      const tooltip = this.dashboard.__getWidgetTitle(widgetDrop);
+      const tooltip = this.__getPropertyRealValue2(widgetDrop, 'title');
       // ok
       return { dropElement, tooltip };
     },
