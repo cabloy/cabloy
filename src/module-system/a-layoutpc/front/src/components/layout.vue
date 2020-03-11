@@ -310,7 +310,7 @@ export default {
     },
     __saveLayoutConfig: Vue.prototype.$meta.util.debounce(function() {
       // override
-      let value = JSON.parse(JSON.stringify(this.sidebar));
+      let value = this.$meta.util.extend({}, this.sidebar);
       // remove dynamic panels
       this.__removeDynamicPanels(value.left);
       this.__removeDynamicPanels(value.right);
@@ -319,7 +319,7 @@ export default {
     }, 1000),
     __initLayoutConfig(layoutConfig) {
       if (layoutConfig.sidebar) {
-        this.sidebar = this.$utils.extend({}, this.sidebar, JSON.parse(JSON.stringify(layoutConfig.sidebar)));
+        this.sidebar = this.$meta.util.extend({}, this.sidebar, layoutConfig.sidebar);
       }
     },
     __removeDynamicPanels(side) {
