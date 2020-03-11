@@ -32,22 +32,18 @@
 </template>
 <script>
 import data from './data.js';
+const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').options.components.ebDashboardWidgetBase;
 export default {
   meta: {
     global: false,
   },
+  mixins: [ebDashboardWidgetBase],
   data() {
     return {
       data,
-      fruit: null,
-      season: null,
+      fruit: 'All',
+      season: 'Spring',
     };
-  },
-  mounted() {
-    this.$emit('widgetReal:ready', this);
-  },
-  beforeDestroy() {
-    this.$emit('widgetReal:destroy', this);
   },
   methods: {
     getAmount() {

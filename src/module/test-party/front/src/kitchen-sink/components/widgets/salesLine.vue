@@ -25,6 +25,8 @@ const propsSchema = {
     },
   },
 };
+
+const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').options.components.ebDashboardWidgetBase;
 export default {
   meta: {
     global: false,
@@ -32,6 +34,7 @@ export default {
       props: propsSchema,
     }
   },
+  mixins: [ebDashboardWidgetBase],
   props: {
     fruit: {
       type: String,
@@ -51,10 +54,8 @@ export default {
   },
   mounted() {
     this.__init();
-    this.$emit('widgetReal:ready', this);
   },
   beforeDestroy() {
-    this.$emit('widgetReal:destroy', this);
     if (this.chart) {
       this.chart.destroy();
     }
@@ -132,8 +133,8 @@ export default {
           options: chartOptions,
         });
       } else {
-        this.chart.config.data = this.__prepareData();
-        this.chart.config.options = this.__prepareOptions();
+        this.chart.data = this.__prepareData();
+        this.chart.options = this.__prepareOptions();
         this.chart.update();
       }
     },
