@@ -144,29 +144,53 @@ export default {
     __onWidgetRealDestroy(widgetReal) {
       this.dashboard.__onWidgetRealDestroy(this.options.id, widgetReal);
     },
+    __getBindValue(bind) {
+      const [widgetSource] = this.dashboard.__findWidgetRealById(bind.widgetId);
+      if (!widgetSource) {
+        // source not found
+        throw new Error(this.$text('Source Widget Not Found'));
+      }
+      return widgetSource.widgetReal[bind.propertyName];
+    },
+    __getBindsValue(binds) {
+      const values = [];
+      for (const bind of binds) {
+        const value = this.__getBindValue(bind);
+        values.push({
+          key: `${bind.widgetId}:${bind.propertyName}`,
+          value,
+        });
+      }
+      return values;
+    },
+    __getPropertyRealValue(propertyName) {
+      const propertyReal = this.options.properties[propertyName];
+      if (!propertyReal) return undefined;
+
+      try {
+        let value;
+        if (propertyReal.bind) {
+          // bind
+          value = this.__getBindValue(propertyReal.bind);
+        } else if (propertyReal.binds) {
+          // binds
+          value = this.__getBindsValue(propertyReal.binds);
+        } else {
+          // static
+          value = propertyReal.value;
+        }
+        this.$set(propertyReal, 'error', null);
+        return value;
+      } catch (err) {
+        this.$set(propertyReal, 'error', err.message);
+        return undefined;
+      }
+    },
     __combineWidgetProps(props) {
       const propsSchema = this.component.meta && this.component.meta.schema && this.component.meta.schema.props;
       if (!propsSchema) return;
       for (const propertyName in propsSchema.properties) {
-        const propertyReal = this.options.properties[propertyName];
-        if (propertyReal) {
-          if (!propertyReal.bind) {
-            // static
-            props[propertyName] = propertyReal.value;
-          } else {
-            // bind
-            const [widgetSource] = this.dashboard.__findWidgetRealById(propertyReal.bind.widgetId);
-            if (!widgetSource) {
-              // source not found
-              this.errorMessage = this.$text('Source Widget of %s Not Found', propertyName);
-            } else {
-              // source value
-              props[propertyName] = widgetSource.widgetReal[propertyReal.bind.propertyName];
-            }
-          }
-        } else {
-          // has no value
-        }
+        props[propertyName] = this.__getPropertyRealValue(propertyName);
       }
     },
     getBindValue({ propertyName }) {
