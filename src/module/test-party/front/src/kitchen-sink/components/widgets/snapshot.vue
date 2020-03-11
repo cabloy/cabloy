@@ -2,57 +2,47 @@
   <f7-card>
     <f7-card-header>{{$text('Snapshots')}}</f7-card-header>
     <f7-card-content>
-      <div class="data-table">
-        <table>
-          <thead>
-            <tr>
-              <th class="label-cell"></th>
-              <th v-for="(col,index) of data.cols" :key="index" class="numeric-cell">{{col}}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(row,index) of data.rows" :key="index">
-              <th class="label-cell">{{row}}</th>
-              <td v-for="(col,colIndex) of data.cols" :key="colIndex" class="numeric-cell">{{data.dataset[index][colIndex]}}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <template v-for="item of snapshots">
+        <f7-block-title>{{item.title}}</f7-block-title>
+        <f7-block class="snapshot">
+          <img :src="item.image">
+        </f7-block>
+      </template>
     </f7-card-content>
-    <f7-card-footer>
-      <span></span>
-      <span></span>
-      <span>Amount: {{getAmount()}}</span>
-    </f7-card-footer>
   </f7-card>
 </template>
 <script>
-import data from './data.js';
 export default {
   meta: {
     global: false,
   },
   data() {
     return {
-      data,
+      snapshots: [],
     };
   },
+  mounted() {
+    this.__init();
+  },
   methods: {
-    getAmount() {
-      return this.data.dataset.reduce((total, row) => {
-        return total + row[2];
-      }, 0);
-    }
+    __init() {
+      this.snapshots.push({
+        name: 'fruit',
+        title: 'Apples',
+        image: 'https://admin.cabloy.com/api/a/file/file/download/385ca5c51d594e05974e668ad61bd012.JPG',
+      });
+    },
   },
 };
 
 </script>
 <style lang="less" scoped>
-.data-table {
+.snapshot {
+  padding: 8px;
+  text-align: center;
 
-  th,
-  td {
-    padding: 0 6px;
+  img {
+    width: 80%;
   }
 }
 
