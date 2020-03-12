@@ -12,6 +12,7 @@ const propsSchema = {
   properties: {
     dataSource: {
       type: 'object',
+      ebType: 'text',
       ebTitle: 'Data Source',
       ebBindOnly: true,
     },
