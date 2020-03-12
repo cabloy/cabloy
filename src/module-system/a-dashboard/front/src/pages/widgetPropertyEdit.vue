@@ -39,22 +39,12 @@ export default {
     }, children);
   },
   methods: {
-    _getPropsSchemaBasic() {
-      return this.$config.widget.schema.basic;
-    },
-    _getPropsSchemaGeneral() {
-      const [widgetItem] = this.dashboard.__findWidgetRealById(this.widgetId);
-      const component = widgetItem.widgetReal.$options;
-      return (component.meta && component.meta.schema && component.meta.schema.props) || null;
-    },
     _getPageTitle() {
       return `${this.$text('Property')}: ${this.$text(this.propertySchema.ebTitle)}`;
     },
-    _setPropertyValue(data) {
-      this.$nextTick(() => {
-        this.widget.__setPropertyRealValue(this.propertyName, data);
-      });
-    },
+    _setPropertyValue: Vue.prototype.$meta.util.debounce(function(data) {
+      this.widget.__setPropertyRealValue(this.propertyName, data);
+    }, 600),
     _renderNavbar(c) {
       return c('eb-navbar', {
         props: {

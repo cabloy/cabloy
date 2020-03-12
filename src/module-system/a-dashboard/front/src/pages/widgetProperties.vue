@@ -64,14 +64,6 @@ export default {
         },
       });
     },
-    _getPropsSchemaBasic() {
-      return this.$config.widget.schema.basic;
-    },
-    _getPropsSchemaGeneral() {
-      const [widgetItem] = this.dashboard.__findWidgetRealById(this.widgetId);
-      const component = widgetItem.widgetReal.$options;
-      return (component.meta && component.meta.schema && component.meta.schema.props) || null;
-    },
     _getSchemaData(propsSchema) {
       const data = {};
       for (const propertyName in propsSchema.properties) {
@@ -138,8 +130,8 @@ export default {
     },
     _renderList(c) {
       // schema
-      let propsSchemaBasic = this._getPropsSchemaBasic();
-      let propsSchemaGeneral = this.widget.options.group ? null : this._getPropsSchemaGeneral();
+      let propsSchemaBasic = this.dashboard._getPropsSchemaBasic();
+      let propsSchemaGeneral = this.widget.options.group ? null : this.dashboard._getPropsSchemaGeneral(this.widgetId);
       let propsSchema = this.$utils.extend({}, propsSchemaBasic, propsSchemaGeneral);
       const basicOnly = this.widget.options.group || !propsSchemaGeneral;
       // schema data

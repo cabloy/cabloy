@@ -62,6 +62,9 @@ export default {
         children.push(c(this.__getFullName(), {
           staticClass: 'widget-inner',
           props,
+          style: {
+            height: this.__getPropertyRealValue('height'),
+          },
           on: {
             'widgetReal:ready': this.__onWidgetRealReady,
             'widgetReal:destroy': this.__onWidgetRealDestroy,
@@ -71,6 +74,9 @@ export default {
         children.push(c('div', {
           staticClass: 'widget-inner widget-inner-error',
           domProps: { innerText: this.errorMessage },
+          style: {
+            height: this.__getPropertyRealValue('height'),
+          },
         }));
       }
     }
@@ -87,9 +93,6 @@ export default {
         medium: this.__getPropertyRealValue('widthMedium'),
         large: this.__getPropertyRealValue('widthLarge'),
       },
-      style: {
-        height: this.options.properties.height,
-      }
     }, children);
   },
   props: {
@@ -212,6 +215,9 @@ export default {
       // retain the old value maybe
       const propertyRealNew = this.$meta.util.extend({}, propertyRealOld, { bind: null, binds: null, error: null }, data);
       this.$set(options.properties, propertyName, propertyRealNew);
+      // save
+      this.dashboard.__saveLayoutConfig();
+      // ok
       return propertyRealNew;
     },
     __setPropertyRealValue(propertyName, data) {
@@ -224,12 +230,9 @@ export default {
         props[propertyName] = this.__getPropertyRealValue(propertyName);
       }
     },
-    getBindValue({ propertyName }) {
-
-    },
     __getClassName() {
       if (this.options.group) return `widget widget-id-${this.options.id} widget-group ${this.options.widgets.length===0?'widget-group-empty':'widget-group-some'}`;
-      return `widget widget-id-${this.options.id} widget-name-${this.options.module}-${this.options.name}`;
+      return `widget widget-id-${this.options.id} widget-item widget-name-${this.options.module}-${this.options.name}`;
     },
     __getFullName() {
       return `${this.options.module}:${this.options.name}`;

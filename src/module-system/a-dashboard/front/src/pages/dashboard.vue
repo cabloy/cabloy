@@ -210,7 +210,16 @@ export default {
       const index = this.widgetsReal.findIndex(item => item.widgetId === widgetId);
       if (index === -1) return [null, -1];
       return [this.widgetsReal[index], index];
-    }
+    },
+    _getPropsSchemaBasic(bGroup) {
+      if (bGroup) return this.$config.schema.basic.group;
+      return this.$config.schema.basic.widget;
+    },
+    _getPropsSchemaGeneral(widgetId) {
+      const [widgetItem] = this.__findWidgetRealById(widgetId);
+      const component = widgetItem.widgetReal.$options;
+      return (component.meta && component.meta.schema && component.meta.schema.props) || null;
+    },
   }
 }
 
