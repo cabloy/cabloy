@@ -69,6 +69,7 @@ export default {
 
       if (_valueOld !== _value) {
         this.$emit('change', _value);
+        this.validate.$emit('validateItem:change', key, _value);
       }
     },
     checkIfEmptyForSelect(value) {

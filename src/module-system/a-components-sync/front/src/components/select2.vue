@@ -64,8 +64,17 @@ export default {
   methods: {
     setValue() {
       this.valueSetting = true;
-      const f7Select = this.$$(this.$el).parents('.smart-select')[0].f7SmartSelect;
-      f7Select.setValue(this.value);
+      //
+      const $select = this.$$(this.$el).parents('.smart-select');
+      if ($select.length > 0) {
+        const f7Select = $select[0].f7SmartSelect;
+        f7Select.setValue(this.value);
+      } else {
+        const option = this.findOption(this.value);
+        const title = option ? option.title : '';
+        this.$$(this.$el).text(title);
+      }
+      //
       this.valueSetting = false;
     },
     onValidateError(error) {
@@ -135,11 +144,14 @@ export default {
       this.$emit('input', value);
       this.clearValidateError();
     },
+    findOption(value) {
+      return this.voptions.find(opt => this.equal(this.optionValue(opt), value));
+    },
     getSelectedOptions() {
       if (!this.voptions) return null;
       if (this.checkIfEmptyForSelect(this.value)) return null;
       if (!this.multiple) {
-        return this.voptions.find(opt => this.equal(this.optionValue(opt), this.value));
+        return this.findOption(this.value);
       }
       // multiple
       const options = [];

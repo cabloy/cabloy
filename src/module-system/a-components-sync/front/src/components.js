@@ -7,7 +7,7 @@ import button from './components/button.vue';
 import input from './components/input.vue';
 import toggle from './components/toggle.vue';
 import radio from './components/radio.vue';
-import select from './components/select.vue';
+import select from './components/select2.vue';
 import validate from './components/validate.vue';
 import validateItem from './components/validateItem.vue';
 import list from './components/list.vue';
