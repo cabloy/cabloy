@@ -129,7 +129,7 @@ export default {
       return dataPath;
     },
     fetchSchema() {
-      if (this.meta.schema) {
+      if (this.meta && this.meta.schema) {
         this.__schemaReady(this.meta.schema);
         return;
       }
