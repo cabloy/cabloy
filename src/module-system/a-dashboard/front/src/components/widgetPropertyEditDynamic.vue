@@ -36,6 +36,7 @@ export default {
     onInputSourceWidget(value) {
       this.bindCurrent.widgetId = value;
       this.bindCurrent.propertyName = '';
+      this.$emit('bind:change', this.bindCurrent);
     },
     onInputPropertyName(value) {
       this.bindCurrent.propertyName = value;

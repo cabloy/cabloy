@@ -32,6 +32,10 @@ export default {
     const isDynamic = this.propertySchema.ebBindOnly || (propertyReal && propertyReal.type === 2);
     // navbar
     children.push(this._renderNavbar(c));
+    // toolbar
+    if (this.propertySchema.ebBindArray) {
+      children.push(this._renderToolbar(c));
+    }
     // valueType
     children.push(this._renderValueTypes(c, propertyReal, isDynamic));
     // static
@@ -59,13 +63,36 @@ export default {
       if (this.propertySchema.ebBindArray) {
         // array
         const propertyReal = this.widget.__getPropertyReal(this.propertyName);
-        const binds = propertyReal.binds || [];
-        binds.push(bind);
+        const binds = (propertyReal && propertyReal.binds) || [];
+        const index = binds.findIndex(item => item.id === bind.id);
+        if (index > -1) {
+          binds.splice(index, 1, bind);
+        } else {
+          binds.push(bind);
+        }
         this._setPropertyValue({ type: 2, binds });
       } else {
         // single
         this._setPropertyValue({ type: 2, bind });
       }
+    },
+    _onPerformAddBind() {
+      this.$view.navigate(`/a/dashboard/widget/property/bind/add?widgetId=${this.widgetId}&propertyName=${this.propertyName}`, {
+        target: '_self',
+        context: {
+          params: {
+            dashboard: this.dashboard,
+            widget: this.widget,
+            propertySchema: this.propertySchema,
+            propertyBind: { id: this.dashboard.__generateUUID() },
+          },
+          callback: (code, bind) => {
+            if (code === 200) {
+              this._onBindChange(bind);
+            }
+          },
+        },
+      });
     },
     _renderNavbar(c) {
       return c('eb-navbar', {
@@ -74,6 +101,35 @@ export default {
           ebBackLink: 'Back',
         },
       });
+    },
+    _renderToolbar(c) {
+      const children = [];
+      children.push(c('div'));
+      children.push(c('eb-button', {
+        props: {
+          text: this.$text('Add Data Source'),
+          onPerform: this._onPerformAddBind,
+        },
+      }));
+      return c('f7-toolbar', {
+        props: {
+          bottomMd: true,
+        },
+      }, children);
+    },
+    _renderValueDynamicArray(c, propertyBinds) {
+      const children = [];
+      if (propertyBinds) {
+        for (const propertyBind of propertyBinds) {
+          children.push(c('eb-list-item'), {
+            props: {
+              title: propertyBind.propertyName,
+              after: propertyBind.widgetId,
+            },
+          });
+        }
+      }
+      return c('f7-list', {}, children);
     },
     _renderValueDynamicSingle(c, propertyBind) {
       return c('widget-property-edit-dynamic', {
@@ -92,6 +148,7 @@ export default {
       // dynamic
       if (this.propertySchema.ebBindArray) {
         // array
+        return this._renderValueDynamicArray(c, propertyReal && propertyReal.binds);
       } else {
         // single
         return this._renderValueDynamicSingle(c, propertyReal && propertyReal.bind);

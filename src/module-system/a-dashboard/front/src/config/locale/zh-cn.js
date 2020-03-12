@@ -16,6 +16,7 @@ export default {
   Dynamic: '动态',
   'Add Group': '添加组',
   'Add Widget': '添加部件',
+  'Add Data Source': '添加数据源',
   'Data Source': '数据源',
   'Save As': '保存为',
   'New Profile': '新建配置',

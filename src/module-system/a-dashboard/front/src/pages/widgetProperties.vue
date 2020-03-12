@@ -60,11 +60,7 @@ export default {
             widget: this.widget,
             propertySchema,
           },
-          callback: (code, data) => {
-            if (code === 200) {
-              //this.dashboard.onWidgetsAdd(data);
-            }
-          },
+          callback: (code, data) => {},
         },
       });
     },
@@ -73,7 +69,11 @@ export default {
       for (const propertyName in propsSchema.properties) {
         const property = propsSchema.properties[propertyName];
         const propertyValue = this.widget.__getPropertyRealValue(propertyName);
-        data[propertyName] = propertyValue;
+        if (propertyValue && (Array.isArray(propertyValue) || typeof propertyValue === 'object')) {
+          data[propertyName] = '➡️';
+        } else {
+          data[propertyName] = propertyValue;
+        }
       }
       return data;
     },

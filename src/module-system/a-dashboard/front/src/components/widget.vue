@@ -160,10 +160,10 @@ export default {
       const values = [];
       for (const bind of binds) {
         if (bind.widgetId && bind.propertyName) {
-          const value = this.__getBindValue(bind);
+          const data = this.__getBindValue(bind);
           values.push({
-            key: `${bind.widgetId}:${bind.propertyName}`,
-            value,
+            id: bind.id,
+            data,
           });
         }
       }
