@@ -20,7 +20,7 @@ const propsSchema = {
     snapshots: {
       type: 'array',
       ebTitle: 'Snapshots',
-      ebReadOnly: true,
+      ebBindOnly: true,
       ebBindArray: true,
     },
   },

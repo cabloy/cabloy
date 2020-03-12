@@ -13,7 +13,7 @@ const propsSchema = {
     dataSource: {
       type: 'object',
       ebTitle: 'Data Source',
-      ebReadOnly: true,
+      ebBindOnly: true,
     },
     fruit: {
       type: 'string',
