@@ -12,6 +12,8 @@ export default {
   Property: '属性',
   Properties: '属性',
   Title: '标题',
+  Static: '静态',
+  Dynamic: '动态',
   'Add Group': '添加组',
   'Add Widget': '添加部件',
   'Data Source': '数据源',

@@ -47,16 +47,6 @@ export default {
         },
       });
     },
-    onFormSubmit(e) {
-      e.preventDefault();
-    },
-    onPerformValidate() {
-      return this.$api.post('kitchen-sink/form-schema-validation/saveValidation', {
-        data: this.item,
-      }).then(() => {
-        return true;
-      });
-    },
     onPerformPropertyEdit(e, { propertySchema, propertyName }) {
       this.$view.navigate(`/a/dashboard/widget/property/edit?widgetId=${this.widgetId}&propertyName=${propertyName}`, {
         target: '_self',
@@ -173,12 +163,8 @@ export default {
       // list
       const list = c('eb-list', {
         props: {
-          form: true,
           noHairlinesMd: true,
           accordionList: true,
-        },
-        on: {
-          submit: this.onFormSubmit,
         },
       }, children);
       // validate
@@ -191,7 +177,6 @@ export default {
           meta: {
             schema: propsSchema,
           },
-          onPerform: this.onPerformValidate,
         },
       }, [list]);
     },

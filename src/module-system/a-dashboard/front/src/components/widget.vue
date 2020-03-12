@@ -163,8 +163,14 @@ export default {
       }
       return values;
     },
+    __getPropertyReal2(options, propertyName) {
+      return options.properties[propertyName];
+    },
+    __getPropertyReal(propertyName) {
+      return this.__getPropertyReal2(this.options, propertyName);
+    },
     __getPropertyRealValue2(options, propertyName) {
-      const propertyReal = options.properties[propertyName];
+      const propertyReal = this.__getPropertyReal2(options, propertyName);
       if (!propertyReal) return undefined;
 
       try {

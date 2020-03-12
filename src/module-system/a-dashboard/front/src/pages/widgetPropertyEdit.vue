@@ -25,40 +25,14 @@ export default {
     const children = [];
     // navbar
     children.push(this._renderNavbar(c));
-    // list
-    children.push(this._renderList(c));
+    // valueType
+    children.push(this._renderValueTypes(c));
     // ok
-    return c('eb-page', {}, children);
+    return c('eb-page', {
+      staticClass: 'widget-property-edit',
+    }, children);
   },
   methods: {
-    onWidgetDestroy() {
-      this.$view.close();
-    },
-    onPerformAddWidget() {
-      this.$view.navigate('/a/dashboard/widget/add', {
-        target: '_self',
-        context: {
-          callback: (code, data) => {
-            if (code === 200) {
-              this.widget.onWidgetsAdd(data);
-            }
-          },
-        },
-      });
-    },
-    onFormSubmit(e) {
-      e.preventDefault();
-    },
-    onPerformValidate() {
-      return this.$api.post('kitchen-sink/form-schema-validation/saveValidation', {
-        data: this.item,
-      }).then(() => {
-        return true;
-      });
-    },
-    onPerformEdit(e, context) {
-      console.log(context.propertySchema, context.propertyName);
-    },
     _getPropsSchemaBasic() {
       return this.$config.widget.schema.basic;
     },
@@ -67,119 +41,54 @@ export default {
       const component = widgetItem.widgetReal.$options;
       return (component.meta && component.meta.schema && component.meta.schema.props) || null;
     },
-    _getSchemaData(propsSchema) {
-      const data = {};
-      for (const propertyName in propsSchema.properties) {
-        const property = propsSchema.properties[propertyName];
-        const propertyValue = this.widget.__getPropertyRealValue(propertyName);
-        data[propertyName] = propertyValue;
-      }
-      return data;
-    },
     _getPageTitle() {
       const title = this.$text('Property');
       if (!this.propertySchema) return title;
       return `${title}: ${this.$text(this.propertySchema.ebTitle)}`;
     },
     _renderNavbar(c) {
-      const children = [];
-      if (this.widget.options.group) {
-        children.push(c('eb-link', {
-          props: {
-            text: this._getPageTitle(),
-            onPerform: this.onPerformAddWidget,
-          },
-        }));
-      }
-      const navRight = c('f7-nav-right', {}, children);
       return c('eb-navbar', {
         props: {
           title: this._getPageTitle(),
           ebBackLink: 'Back',
         },
-      }, [navRight]);
+      });
     },
-    _renderListGroup({ c, title, opened, propsSchema }) {
-      // children
+    _renderValueTypes(c) {
       const children = [];
-      for (const propertyName in propsSchema.properties) {
-        const propertySchema = propsSchema.properties[propertyName];
-        const validateItem = c('eb-list-item-validate', {
+      const propertyReal = this.widget.__getPropertyReal(this.propertyName);
+      const isDynamic = this.propertySchema.ebBindOnly || (propertyReal && (propertyReal.bind || propertyReal.binds));
+      // static
+      if (!this.propertySchema.ebBindOnly) {
+        children.push(c('f7-radio', {
           props: {
-            dataKey: propertyName,
+            name: 'valueType',
+            value: 'static',
+            checked: !isDynamic,
           },
-        });
-        const link = c('eb-link', {
-          staticClass: 'no-ripple display-block',
-          props: {
-            context: { propertySchema, propertyName },
-            onPerform: this.onPerformEdit,
+        }));
+        children.push(c('span', {
+          domProps: {
+            innerText: this.$text('Static'),
           },
-        }, [validateItem]);
-        children.push(link);
-      }
-      // list
-      const list = c('f7-list', {
-        props: {
-          inset: true,
-        },
-      }, children);
-      const content = c('f7-accordion-content', {}, [list]);
-      return c('f7-list-item', {
-        props: {
-          title: this.$text(title),
-          accordionItem: true,
-          accordionItemOpened: opened,
-        },
-      }, [content]);
-    },
-    _renderList(c) {
-      // schema
-      let propsSchemaBasic = this._getPropsSchemaBasic();
-      let propsSchemaGeneral = this.widget.options.group ? null : this._getPropsSchemaGeneral();
-      let propsSchema = this.$utils.extend({}, propsSchemaBasic, propsSchemaGeneral);
-      // schema data
-      let schemaData = this._getSchemaData(propsSchema);
-      // list
-      const children = [];
-      children.push(this._renderListGroup({
-        c,
-        title: 'Basic',
-        opened: !!this.widget.options.group,
-        propsSchema: propsSchemaBasic,
-      }));
-      if (!this.widget.options.group) {
-        children.push(this._renderListGroup({
-          c,
-          title: 'General',
-          opened: true,
-          propsSchema: propsSchemaGeneral,
         }));
       }
-      // list
-      const list = c('eb-list', {
+      // dynamic
+      children.push(c('f7-radio', {
         props: {
-          form: true,
-          noHairlinesMd: true,
-          accordionList: true,
+          name: 'valueType',
+          value: 'dynamic',
+          checked: isDynamic,
         },
-        on: {
-          submit: this.onFormSubmit,
+      }));
+      children.push(c('span', {
+        domProps: {
+          innerText: this.$text('Dynamic'),
         },
+      }));
+      return c('div', {
+        staticClass: 'value-types',
       }, children);
-      // validate
-      return c('eb-validate', {
-        ref: 'validate',
-        props: {
-          auto: false,
-          readOnly: true,
-          data: schemaData,
-          meta: {
-            schema: propsSchema,
-          },
-          onPerform: this.onPerformValidate,
-        },
-      }, [list]);
     },
   },
 
