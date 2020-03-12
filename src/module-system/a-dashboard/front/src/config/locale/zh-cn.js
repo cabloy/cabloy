@@ -9,6 +9,7 @@ export default {
   Height: '高度',
   Settings: '设置',
   Profile2: '配置',
+  Property: '属性',
   Properties: '属性',
   Title: '标题',
   'Add Group': '添加组',

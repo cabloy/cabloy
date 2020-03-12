@@ -7,4 +7,5 @@ export default [
   { path: 'dashboard/settings', component: load('dashboardSettings') },
   { path: 'widget/add', component: load('widgetAdd') },
   { path: 'widget/properties', component: load('widgetProperties') },
+  { path: 'widget/property/edit', component: load('widgetPropertyEdit') },
 ];

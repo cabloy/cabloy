@@ -6,6 +6,7 @@ export default {
   data() {
     return {
       widgetId: this.$f7route.query.widgetId,
+      propertyName: this.$f7route.query.propertyName,
     };
   },
   computed: {
@@ -15,13 +16,11 @@ export default {
     widget() {
       return this.contextParams.widget;
     },
+    propertySchema() {
+      return this.contextParams.propertySchema;
+    },
   },
-  mounted() {
-    this.widget.$on('widget:destroy', this.onWidgetDestroy);
-  },
-  beforeDestroy() {
-    this.widget.$off('widget:destroy', this.onWidgetDestroy);
-  },
+  created() {},
   render(c) {
     const children = [];
     // navbar
@@ -57,22 +56,8 @@ export default {
         return true;
       });
     },
-    onPerformPropertyEdit(e, { propertySchema, propertyName }) {
-      this.$view.navigate(`/a/dashboard/widget/property/edit?widgetId=${this.widgetId}&propertyName=${propertyName}`, {
-        target: '_self',
-        context: {
-          params: {
-            dashboard: this.dashboard,
-            widget: this.widget,
-            propertySchema,
-          },
-          callback: (code, data) => {
-            if (code === 200) {
-              //this.dashboard.onWidgetsAdd(data);
-            }
-          },
-        },
-      });
+    onPerformEdit(e, context) {
+      console.log(context.propertySchema, context.propertyName);
     },
     _getPropsSchemaBasic() {
       return this.$config.widget.schema.basic;
@@ -92,14 +77,16 @@ export default {
       return data;
     },
     _getPageTitle() {
-      return `${this.$text('Properties')}: ${this.widget.__getPropertyRealValue('title')}`;
+      const title = this.$text('Property');
+      if (!this.propertySchema) return title;
+      return `${title}: ${this.$text(this.propertySchema.ebTitle)}`;
     },
     _renderNavbar(c) {
       const children = [];
       if (this.widget.options.group) {
         children.push(c('eb-link', {
           props: {
-            text: this.$text('Add Widget'),
+            text: this._getPageTitle(),
             onPerform: this.onPerformAddWidget,
           },
         }));
@@ -126,7 +113,7 @@ export default {
           staticClass: 'no-ripple display-block',
           props: {
             context: { propertySchema, propertyName },
-            onPerform: this.onPerformPropertyEdit,
+            onPerform: this.onPerformEdit,
           },
         }, [validateItem]);
         children.push(link);
@@ -151,7 +138,6 @@ export default {
       let propsSchemaBasic = this._getPropsSchemaBasic();
       let propsSchemaGeneral = this.widget.options.group ? null : this._getPropsSchemaGeneral();
       let propsSchema = this.$utils.extend({}, propsSchemaBasic, propsSchemaGeneral);
-      const basicOnly = this.widget.options.group || !propsSchemaGeneral;
       // schema data
       let schemaData = this._getSchemaData(propsSchema);
       // list
@@ -159,10 +145,10 @@ export default {
       children.push(this._renderListGroup({
         c,
         title: 'Basic',
-        opened: basicOnly,
+        opened: !!this.widget.options.group,
         propsSchema: propsSchemaBasic,
       }));
-      if (!basicOnly) {
+      if (!this.widget.options.group) {
         children.push(this._renderListGroup({
           c,
           title: 'General',
