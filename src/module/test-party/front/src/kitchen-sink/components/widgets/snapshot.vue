@@ -2,11 +2,11 @@
   <f7-card>
     <f7-card-header>{{$text('Snapshots')}}</f7-card-header>
     <f7-card-content>
-      <div v-for="item of snapshots" :key="item.key">
-        <template v-if="item.value">
-          <f7-block-title>{{item.value.title}}</f7-block-title>
+      <div v-for="item of snapshots" :key="item.id">
+        <template v-if="item.data">
+          <f7-block-title>{{item.data.title}}</f7-block-title>
           <f7-block class="snapshot">
-            <img :src="item.value.image">
+            <img :src="item.data.image">
           </f7-block>
         </template>
       </div>

@@ -50,6 +50,7 @@ export default {
   Captcha: '验证码',
   Documentation: '文档',
   Community: '社区',
+  Snapshot: '快照',
   Snapshots: '快照',
   Fruit: '水果',
   Season: '季节',
