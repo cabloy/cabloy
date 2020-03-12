@@ -25,4 +25,6 @@ export default {
   'Width(Small)': '宽度(小页面)',
   'Width(Medium)': '宽度(中页面)',
   'Width(Large)': '宽度(大页面)',
+  'Source Widget': '源部件',
+  'Property Name': '属性名',
 };

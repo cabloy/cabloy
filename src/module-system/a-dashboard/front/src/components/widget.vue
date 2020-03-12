@@ -148,6 +148,7 @@ export default {
       this.dashboard.__onWidgetRealDestroy(this.options.id, widgetReal);
     },
     __getBindValue(bind) {
+      if (!bind || !bind.widgetId || !bind.propertyName) return undefined;
       const [widgetSource] = this.dashboard.__findWidgetRealById(bind.widgetId);
       if (!widgetSource) {
         // source not found
@@ -158,11 +159,13 @@ export default {
     __getBindsValue(binds) {
       const values = [];
       for (const bind of binds) {
-        const value = this.__getBindValue(bind);
-        values.push({
-          key: `${bind.widgetId}:${bind.propertyName}`,
-          value,
-        });
+        if (bind.widgetId && bind.propertyName) {
+          const value = this.__getBindValue(bind);
+          values.push({
+            key: `${bind.widgetId}:${bind.propertyName}`,
+            value,
+          });
+        }
       }
       return values;
     },
@@ -228,7 +231,7 @@ export default {
       return this.__setPropertyRealValue2(this.options, propertyName, data);
     },
     __combineWidgetProps(props) {
-      const propsSchema = this.component.meta && this.component.meta.schema && this.component.meta.schema.props;
+      const propsSchema = this.component.meta && this.component.meta.widget && this.component.meta.widget.schema && this.component.meta.widget.schema.props;
       if (!propsSchema) return;
       for (const propertyName in propsSchema.properties) {
         props[propertyName] = this.__getPropertyRealValue(propertyName);

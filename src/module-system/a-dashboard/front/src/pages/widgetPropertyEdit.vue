@@ -1,8 +1,13 @@
 <script>
+import widgetPropertyEditDynamic from '../components/widgetPropertyEditDynamic.vue';
+
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.components.ebPageContext;
 export default {
   mixins: [ebPageContext],
+  components: {
+    widgetPropertyEditDynamic,
+  },
   data() {
     return {
       widgetId: this.$f7route.query.widgetId,
@@ -24,7 +29,7 @@ export default {
   render(c) {
     const children = [];
     const propertyReal = this.widget.__getPropertyReal(this.propertyName);
-    const isDynamic = this.propertySchema.ebBindOnly || (propertyReal && (propertyReal.bind || propertyReal.binds));
+    const isDynamic = this.propertySchema.ebBindOnly || (propertyReal && propertyReal.type === 2);
     // navbar
     children.push(this._renderNavbar(c));
     // valueType
@@ -32,7 +37,9 @@ export default {
     // static
     if (!isDynamic) {
       children.push(this._renderValueStatic(c, propertyReal));
-    } else {}
+    } else {
+      children.push(this._renderValueDynamic(c, propertyReal));
+    }
     // ok
     return c('eb-page', {
       staticClass: 'widget-property-edit',
@@ -48,6 +55,18 @@ export default {
     _onChangeValueType(bDynamic) {
       this._setPropertyValue({ type: bDynamic ? 2 : 1 });
     },
+    _onBindChange(bind) {
+      if (this.propertySchema.ebBindArray) {
+        // array
+        const propertyReal = this.widget.__getPropertyReal(this.propertyName);
+        const binds = propertyReal.binds || [];
+        binds.push(bind);
+        this._setPropertyValue({ type: 2, binds });
+      } else {
+        // single
+        this._setPropertyValue({ type: 2, bind });
+      }
+    },
     _renderNavbar(c) {
       return c('eb-navbar', {
         props: {
@@ -55,6 +74,28 @@ export default {
           ebBackLink: 'Back',
         },
       });
+    },
+    _renderValueDynamicSingle(c, propertyBind) {
+      return c('widget-property-edit-dynamic', {
+        props: {
+          dashboard: this.dashboard,
+          widgetId: this.widgetId,
+          propertyName: this.propertyName,
+          propertyBind,
+        },
+        on: {
+          'bind:change': this._onBindChange,
+        },
+      });
+    },
+    _renderValueDynamic(c, propertyReal) {
+      // dynamic
+      if (this.propertySchema.ebBindArray) {
+        // array
+      } else {
+        // single
+        return this._renderValueDynamicSingle(c, propertyReal && propertyReal.bind);
+      }
     },
     _renderValueStatic(c, propertyReal) {
       // schema
@@ -122,7 +163,7 @@ export default {
           innerText: this.$text('Dynamic'),
         },
       }));
-      return c('div', {
+      return c('f7-block', {
         staticClass: 'value-types',
       }, children);
     },

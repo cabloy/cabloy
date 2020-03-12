@@ -218,7 +218,7 @@ export default {
     _getPropsSchemaGeneral(widgetId) {
       const [widgetItem] = this.__findWidgetRealById(widgetId);
       const component = widgetItem.widgetReal.$options;
-      return (component.meta && component.meta.schema && component.meta.schema.props) || null;
+      return (component.meta && component.meta.widget && component.meta.widget.schema && component.meta.widget.schema.props) || null;
     },
   }
 }
