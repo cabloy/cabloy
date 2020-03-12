@@ -45,6 +45,9 @@ export default {
     _setPropertyValue: Vue.prototype.$meta.util.debounce(function(data) {
       this.widget.__setPropertyRealValue(this.propertyName, data);
     }, 600),
+    _onChangeValueType(bDynamic) {
+      this._setPropertyValue({ type: bDynamic ? 2 : 1 });
+    },
     _renderNavbar(c) {
       return c('eb-navbar', {
         props: {
@@ -78,7 +81,7 @@ export default {
         },
         on: {
           'validateItem:change': (key, value) => {
-            return this._setPropertyValue({ value });
+            return this._setPropertyValue({ type: 1, value });
           }
         }
       });
@@ -93,6 +96,9 @@ export default {
             value: 'static',
             checked: !isDynamic,
           },
+          on: {
+            change: () => this._onChangeValueType(false),
+          },
         }));
         children.push(c('span', {
           domProps: {
@@ -106,6 +112,9 @@ export default {
           name: 'valueType',
           value: 'dynamic',
           checked: isDynamic,
+        },
+        on: {
+          change: () => this._onChangeValueType(true),
         },
       }));
       children.push(c('span', {

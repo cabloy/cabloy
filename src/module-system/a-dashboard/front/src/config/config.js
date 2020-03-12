@@ -62,20 +62,20 @@ export default function(Vue) {
       meta: {
         widget: {
           properties: {
-            title: { value: '' },
-            widthSmall: { value: 100 },
-            widthMedium: { value: 50 },
-            widthLarge: { value: 25 },
-            height: { value: 'auto' },
+            title: { type: 1, value: '' },
+            widthSmall: { type: 1, value: 100 },
+            widthMedium: { type: 1, value: 50 },
+            widthLarge: { type: 1, value: 25 },
+            height: { type: 1, value: 'auto' },
           },
         },
         group: {
           properties: {
-            title: { value: '' },
-            widthSmall: { value: 100 },
-            widthMedium: { value: 100 },
-            widthLarge: { value: 100 },
-            height: { value: 'auto' },
+            title: { type: 1, value: '' },
+            widthSmall: { type: 1, value: 100 },
+            widthMedium: { type: 1, value: 100 },
+            widthLarge: { type: 1, value: 100 },
+            height: { type: 1, value: 'auto' },
           },
         },
       },

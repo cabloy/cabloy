@@ -178,15 +178,18 @@ export default {
 
       try {
         let value;
-        if (propertyReal.bind) {
-          // bind
-          value = this.__getBindValue(propertyReal.bind);
-        } else if (propertyReal.binds) {
-          // binds
-          value = this.__getBindsValue(propertyReal.binds);
-        } else {
+        if (propertyReal.type === 1) {
           // static
           value = propertyReal.value;
+        } else if (propertyReal.type === 2) {
+          // dynamic
+          if (propertyReal.bind) {
+            // bind
+            value = this.__getBindValue(propertyReal.bind);
+          } else if (propertyReal.binds) {
+            // binds
+            value = this.__getBindsValue(propertyReal.binds);
+          }
         }
         // special for title
         if (propertyName === 'title' && !value) {
@@ -197,7 +200,7 @@ export default {
           }
         }
         // ok
-        this.$set(propertyReal, 'error', null);
+        this.$set(propertyReal, 'error', undefined);
         return value;
       } catch (err) {
         this.$set(propertyReal, 'error', err.message);
@@ -209,11 +212,12 @@ export default {
     },
     __setPropertyRealValue2(options, propertyName, data) {
       if (!data) data = {};
-      if (typeof data !== 'object') data = { value: data };
+      if (typeof data !== 'object') data = { type: 1, value: data };
+      if (!data.type) data.type = 1;
       // old
       const propertyRealOld = options.properties[propertyName] || {};
-      // retain the old value maybe
-      const propertyRealNew = this.$meta.util.extend({}, propertyRealOld, { bind: null, binds: null, error: null }, data);
+      // retain the old value
+      const propertyRealNew = this.$meta.util.extend({}, propertyRealOld, data);
       this.$set(options.properties, propertyName, propertyRealNew);
       // save
       this.dashboard.__saveLayoutConfig();
