@@ -1,6 +1,7 @@
 const require3 = require('require3');
 const extend = require3('extend2');
 const assert = require3('assert');
+const dashboardProfileDefault = require('./dashboardProfile.json');
 
 module.exports = app => {
 
@@ -36,6 +37,21 @@ module.exports = app => {
           },
         });
       }
+      this.ctx.success();
+    }
+
+    async loginInfoDashboard() {
+      const data = this.ctx.request.body.data;
+      const info = data.info;
+      info.config = extend(true, info.config, {
+        modules: {
+          'a-dashboard': {
+            profile: {
+              default: dashboardProfileDefault,
+            },
+          },
+        },
+      });
       this.ctx.success();
     }
 
