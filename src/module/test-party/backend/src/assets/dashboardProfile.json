@@ -1,234 +1,98 @@
 {
-  "profile":
+  "root":
   {
-    "root":
+    "id": "968030adeabd4fb88ba131f37130e871",
+    "widgets": [
     {
-      "id": "968030adeabd4fb88ba131f37130e871",
+      "id": "89af17d0693247ba8b7241a9222b6698",
+      "module": "test-party",
+      "name": "widgetSales",
+      "properties":
+      {
+        "height":
+        {
+          "type": 1,
+          "value": "auto"
+        },
+        "title":
+        {
+          "type": 1,
+          "value": ""
+        },
+        "widthLarge":
+        {
+          "type": 1,
+          "value": 25
+        },
+        "widthMedium":
+        {
+          "type": 1,
+          "value": 50
+        },
+        "widthSmall":
+        {
+          "type": 1,
+          "value": 100
+        }
+      }
+    },
+    {
+      "group": true,
+      "id": "92594c5e1ce443578eadff9b7938a3f0",
+      "properties":
+      {
+        "height":
+        {
+          "type": 1,
+          "value": "auto"
+        },
+        "title":
+        {
+          "type": 1,
+          "value": ""
+        },
+        "widthLarge":
+        {
+          "type": 1,
+          "value": 25
+        },
+        "widthMedium":
+        {
+          "type": 1,
+          "value": 50
+        },
+        "widthSmall":
+        {
+          "type": 1,
+          "value": 100
+        }
+      },
       "widgets": [
       {
-        "id": "89af17d0693247ba8b7241a9222b6698",
+        "id": "426aa9e9844c4e8ca9429894d60e8d68",
         "module": "test-party",
-        "name": "widgetSales",
+        "name": "widgetSalesLine",
         "properties":
         {
-          "height":
+          "dataSource":
           {
-            "type": 1,
-            "value": "auto"
-          },
-          "title":
-          {
-            "type": 1,
-            "value": ""
-          },
-          "widthLarge":
-          {
-            "type": 1,
-            "value": 25
-          },
-          "widthMedium":
-          {
-            "type": 1,
-            "value": 50
-          },
-          "widthSmall":
-          {
-            "type": 1,
-            "value": 100
-          }
-        }
-      },
-      {
-        "group": true,
-        "id": "92594c5e1ce443578eadff9b7938a3f0",
-        "properties":
-        {
-          "height":
-          {
-            "type": 1,
-            "value": "auto"
-          },
-          "title":
-          {
-            "type": 1,
-            "value": ""
-          },
-          "widthLarge":
-          {
-            "type": 1,
-            "value": 25
-          },
-          "widthMedium":
-          {
-            "type": 1,
-            "value": 50
-          },
-          "widthSmall":
-          {
-            "type": 1,
-            "value": 100
-          }
-        },
-        "widgets": [
-        {
-          "id": "426aa9e9844c4e8ca9429894d60e8d68",
-          "module": "test-party",
-          "name": "widgetSalesLine",
-          "properties":
-          {
-            "dataSource":
+            "bind":
             {
-              "bind":
-              {
-                "propertyName": "dataSource",
-                "widgetId": "89af17d0693247ba8b7241a9222b6698"
-              },
-              "type": 2
+              "propertyName": "dataSource",
+              "widgetId": "89af17d0693247ba8b7241a9222b6698"
             },
-            "fruit":
-            {
-              "bind":
-              {
-                "propertyName": "fruit",
-                "widgetId": "89af17d0693247ba8b7241a9222b6698"
-              },
-              "type": 2,
-              "value": "Pears"
-            },
-            "height":
-            {
-              "type": 1,
-              "value": "auto"
-            },
-            "title":
-            {
-              "type": 1,
-              "value": ""
-            },
-            "widthLarge":
-            {
-              "type": 1,
-              "value": 100
-            },
-            "widthMedium":
-            {
-              "type": 1,
-              "value": 100
-            },
-            "widthSmall":
-            {
-              "type": 1,
-              "value": 100
-            }
-          }
-        },
-        {
-          "id": "2dbc65a4e5fe47d8a82b86e3ba8512ac",
-          "module": "test-party",
-          "name": "widgetSalesPie",
-          "properties":
-          {
-            "dataSource":
-            {
-              "bind":
-              {
-                "propertyName": "dataSource",
-                "widgetId": "89af17d0693247ba8b7241a9222b6698"
-              },
-              "type": 2
-            },
-            "height":
-            {
-              "type": 1,
-              "value": "auto"
-            },
-            "season":
-            {
-              "bind":
-              {
-                "propertyName": "season",
-                "widgetId": "89af17d0693247ba8b7241a9222b6698"
-              },
-              "type": 2,
-              "value": "Summer"
-            },
-            "title":
-            {
-              "type": 1,
-              "value": ""
-            },
-            "widthLarge":
-            {
-              "type": 1,
-              "value": 100
-            },
-            "widthMedium":
-            {
-              "type": 1,
-              "value": 100
-            },
-            "widthSmall":
-            {
-              "type": 1,
-              "value": 100
-            }
-          }
-        }]
-      },
-      {
-        "id": "73a1da6929c7439aa434b134d6c5cc7a",
-        "module": "test-party",
-        "name": "widgetSnapshot",
-        "properties":
-        {
-          "height":
-          {
-            "type": 1,
-            "value": "auto"
-          },
-          "snapshots":
-          {
-            "binds": [
-            {
-              "id": "ebdfaada3c2f41f1a66bd43f7008cad4",
-              "propertyName": "snapshot",
-              "widgetId": "426aa9e9844c4e8ca9429894d60e8d68"
-            },
-            {
-              "id": "ccc4c3f15c2844a0a4d446d88104a994",
-              "propertyName": "snapshot",
-              "widgetId": "2dbc65a4e5fe47d8a82b86e3ba8512ac"
-            }],
             "type": 2
           },
-          "title":
+          "fruit":
           {
-            "type": 1,
-            "value": ""
+            "bind":
+            {
+              "propertyName": "fruit",
+              "widgetId": "89af17d0693247ba8b7241a9222b6698"
+            },
+            "type": 2,
+            "value": "Pears"
           },
-          "widthLarge":
-          {
-            "type": 1,
-            "value": 25
-          },
-          "widthMedium":
-          {
-            "type": 1,
-            "value": 50
-          },
-          "widthSmall":
-          {
-            "type": 1,
-            "value": 100
-          }
-        }
-      },
-      {
-        "id": "c3856681eff446e2b1e3b2cf216a9d8f",
-        "module": "test-party",
-        "name": "widgetAbout",
-        "properties":
-        {
           "height":
           {
             "type": 1,
@@ -242,12 +106,64 @@
           "widthLarge":
           {
             "type": 1,
-            "value": 25
+            "value": 100
           },
           "widthMedium":
           {
             "type": 1,
-            "value": 50
+            "value": 100
+          },
+          "widthSmall":
+          {
+            "type": 1,
+            "value": 100
+          }
+        }
+      },
+      {
+        "id": "2dbc65a4e5fe47d8a82b86e3ba8512ac",
+        "module": "test-party",
+        "name": "widgetSalesPie",
+        "properties":
+        {
+          "dataSource":
+          {
+            "bind":
+            {
+              "propertyName": "dataSource",
+              "widgetId": "89af17d0693247ba8b7241a9222b6698"
+            },
+            "type": 2
+          },
+          "height":
+          {
+            "type": 1,
+            "value": "auto"
+          },
+          "season":
+          {
+            "bind":
+            {
+              "propertyName": "season",
+              "widgetId": "89af17d0693247ba8b7241a9222b6698"
+            },
+            "type": 2,
+            "value": "Summer"
+          },
+          "title":
+          {
+            "type": 1,
+            "value": ""
+          },
+          "widthLarge":
+          {
+            "type": 1,
+            "value": 100
+          },
+          "widthMedium":
+          {
+            "type": 1,
+            "value": 100
           },
           "widthSmall":
           {
@@ -256,7 +172,87 @@
           }
         }
       }]
-    }
-  },
-  "profileId": "7de0befbeb5743ee86c40a4907bb4ece"
+    },
+    {
+      "id": "73a1da6929c7439aa434b134d6c5cc7a",
+      "module": "test-party",
+      "name": "widgetSnapshot",
+      "properties":
+      {
+        "height":
+        {
+          "type": 1,
+          "value": "auto"
+        },
+        "snapshots":
+        {
+          "binds": [
+          {
+            "id": "ebdfaada3c2f41f1a66bd43f7008cad4",
+            "propertyName": "snapshot",
+            "widgetId": "426aa9e9844c4e8ca9429894d60e8d68"
+          },
+          {
+            "id": "ccc4c3f15c2844a0a4d446d88104a994",
+            "propertyName": "snapshot",
+            "widgetId": "2dbc65a4e5fe47d8a82b86e3ba8512ac"
+          }],
+          "type": 2
+        },
+        "title":
+        {
+          "type": 1,
+          "value": ""
+        },
+        "widthLarge":
+        {
+          "type": 1,
+          "value": 25
+        },
+        "widthMedium":
+        {
+          "type": 1,
+          "value": 50
+        },
+        "widthSmall":
+        {
+          "type": 1,
+          "value": 100
+        }
+      }
+    },
+    {
+      "id": "c3856681eff446e2b1e3b2cf216a9d8f",
+      "module": "test-party",
+      "name": "widgetAbout",
+      "properties":
+      {
+        "height":
+        {
+          "type": 1,
+          "value": "auto"
+        },
+        "title":
+        {
+          "type": 1,
+          "value": ""
+        },
+        "widthLarge":
+        {
+          "type": 1,
+          "value": 25
+        },
+        "widthMedium":
+        {
+          "type": 1,
+          "value": 50
+        },
+        "widthSmall":
+        {
+          "type": 1,
+          "value": 100
+        }
+      }
+    }]
+  }
 }
