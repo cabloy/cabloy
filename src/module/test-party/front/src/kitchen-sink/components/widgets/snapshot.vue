@@ -19,6 +19,7 @@ const propsSchema = {
   properties: {
     snapshots: {
       type: 'array',
+      ebType: 'text',
       ebTitle: 'Snapshots',
       ebBindOnly: true,
       ebBindArray: true,
