@@ -15,6 +15,7 @@ const propsSchema = {
       ebType: 'text',
       ebTitle: 'Data Source',
       ebBindOnly: true,
+      notEmpty: true,
     },
     fruit: {
       type: 'string',
@@ -26,6 +27,7 @@ const propsSchema = {
         { title: 'Pears', value: 'Pears' },
       ],
       ebOptionsBlankAuto: true,
+      notEmpty: true,
     },
   },
 };

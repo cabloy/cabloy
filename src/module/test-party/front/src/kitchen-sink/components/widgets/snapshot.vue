@@ -22,6 +22,7 @@ const propsSchema = {
       ebTitle: 'Snapshots',
       ebBindOnly: true,
       ebBindArray: true,
+      notEmpty: true,
     },
   },
 };

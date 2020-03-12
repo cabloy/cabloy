@@ -14,6 +14,7 @@ const propsSchema = {
       type: 'object',
       ebTitle: 'Data Source',
       ebBindOnly: true,
+      notEmpty: true,
     },
     season: {
       type: 'string',
@@ -26,6 +27,7 @@ const propsSchema = {
         { title: 'Winter', value: 'Winter' },
       ],
       ebOptionsBlankAuto: true,
+      notEmpty: true,
     },
   },
 };
