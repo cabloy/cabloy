@@ -28,6 +28,10 @@ export default {
     children.push(this._renderNavbar(c));
     // list
     children.push(this._renderList(c));
+    // toolbar
+    if (this.widget.options.group) {
+      children.push(this._renderToolbar(c));
+    }
     // ok
     return c('eb-page', {}, children);
   },
@@ -77,22 +81,27 @@ export default {
       return `${this.$text('Properties')}: ${this.widget.__getPropertyRealValue('title')}`;
     },
     _renderNavbar(c) {
-      const children = [];
-      if (this.widget.options.group) {
-        children.push(c('eb-link', {
-          props: {
-            text: this.$text('Add Widget'),
-            onPerform: this.onPerformAddWidget,
-          },
-        }));
-      }
-      const navRight = c('f7-nav-right', {}, children);
       return c('eb-navbar', {
         props: {
           title: this._getPageTitle(),
           ebBackLink: 'Back',
         },
-      }, [navRight]);
+      });
+    },
+    _renderToolbar(c) {
+      const children = [];
+      children.push(c('div'));
+      children.push(c('eb-button', {
+        props: {
+          text: this.$text('Add Widget'),
+          onPerform: this.onPerformAddWidget,
+        },
+      }));
+      return c('f7-toolbar', {
+        props: {
+          bottomMd: true,
+        },
+      }, children);
     },
     _renderListGroup({ c, title, opened, propsSchema }) {
       // children
@@ -130,7 +139,7 @@ export default {
     },
     _renderList(c) {
       // schema
-      let propsSchemaBasic = this.dashboard._getPropsSchemaBasic();
+      let propsSchemaBasic = this.dashboard._getPropsSchemaBasic(this.widget.options.group);
       let propsSchemaGeneral = this.widget.options.group ? null : this.dashboard._getPropsSchemaGeneral(this.widgetId);
       let propsSchema = this.$utils.extend({}, propsSchemaBasic, propsSchemaGeneral);
       const basicOnly = this.widget.options.group || !propsSchemaGeneral;
