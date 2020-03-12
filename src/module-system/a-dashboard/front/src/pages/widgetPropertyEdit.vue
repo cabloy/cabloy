@@ -31,10 +31,8 @@ export default {
     children.push(this._renderValueTypes(c, propertyReal, isDynamic));
     // static
     if (!isDynamic) {
-
-    } else {
       children.push(this._renderValueStatic(c, propertyReal));
-    }
+    } else {}
     // ok
     return c('eb-page', {
       staticClass: 'widget-property-edit',
@@ -50,9 +48,12 @@ export default {
       return (component.meta && component.meta.schema && component.meta.schema.props) || null;
     },
     _getPageTitle() {
-      const title = this.$text('Property');
-      if (!this.propertySchema) return title;
-      return `${title}: ${this.$text(this.propertySchema.ebTitle)}`;
+      return `${this.$text('Property')}: ${this.$text(this.propertySchema.ebTitle)}`;
+    },
+    _setPropertyValue(data) {
+      this.$nextTick(() => {
+        this.widget.__setPropertyRealValue(this.propertyName, data);
+      });
     },
     _renderNavbar(c) {
       return c('eb-navbar', {
@@ -72,7 +73,7 @@ export default {
       };
       // data
       const data = {
-        [this.propertyName]: this.widget.__getPropertyReal(this.propertyName);
+        [this.propertyName]: this.widget.__getPropertyRealValue(this.propertyName),
       };
       // validate
       return c('eb-validate', {
@@ -85,6 +86,11 @@ export default {
             schema,
           },
         },
+        on: {
+          'validateItem:change': (key, value) => {
+            return this._setPropertyValue({ value });
+          }
+        }
       });
     },
     _renderValueTypes(c, propertyReal, isDynamic) {
