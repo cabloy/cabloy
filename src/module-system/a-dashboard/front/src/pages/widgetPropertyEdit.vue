@@ -76,7 +76,24 @@ export default {
         this._setPropertyValue({ type: 2, bind });
       }
     },
-    _onPerformAddBind() {
+    _onPerformBindDelete(e, bind) {
+      const propertyReal = this.widget.__getPropertyReal(this.propertyName);
+      const binds = (propertyReal && propertyReal.binds) || [];
+      const index = binds.findIndex(item => item.id === bind.id);
+      if (index > -1) {
+        binds.splice(index, 1);
+        this._setPropertyValue({ type: 2, binds });
+      }
+      this.$meta.util.swipeoutClose(e.target);
+    },
+    _onPerformBindEdit(e, bind) {
+      this._bindAddOrEdit(bind);
+      this.$meta.util.swipeoutClose(e.target);
+    },
+    _onPerformBindAdd() {
+      this._bindAddOrEdit({ id: this.dashboard.__generateUUID() });
+    },
+    _bindAddOrEdit(propertyBind) {
       this.$view.navigate(`/a/dashboard/widget/property/bind/add?widgetId=${this.widgetId}&propertyName=${this.propertyName}`, {
         target: '_self',
         context: {
@@ -84,7 +101,7 @@ export default {
             dashboard: this.dashboard,
             widget: this.widget,
             propertySchema: this.propertySchema,
-            propertyBind: { id: this.dashboard.__generateUUID() },
+            propertyBind,
           },
           callback: (code, bind) => {
             if (code === 200) {
@@ -108,7 +125,7 @@ export default {
       children.push(c('eb-button', {
         props: {
           text: this.$text('Add Data Source'),
-          onPerform: this._onPerformAddBind,
+          onPerform: this._onPerformBindAdd,
         },
       }));
       return c('f7-toolbar', {
@@ -121,12 +138,46 @@ export default {
       const children = [];
       if (propertyBinds) {
         for (const propertyBind of propertyBinds) {
-          children.push(c('eb-list-item'), {
-            props: {
-              title: propertyBind.propertyName,
-              after: propertyBind.widgetId,
+          // buttons
+          const buttons = [];
+          buttons.push(c('div', {
+            attrs: {
+              color: 'orange',
+              context: propertyBind,
+              onPerform: this._onPerformBindEdit,
             },
-          });
+          }, [c('span', {
+            domProps: {
+              innerText: this.$text('Edit'),
+            }
+          })]));
+          buttons.push(c('div', {
+            attrs: {
+              color: 'red',
+              context: propertyBind,
+              onPerform: this._onPerformBindDelete,
+            },
+          }, [c('span', {
+            domProps: {
+              innerText: this.$text('Delete'),
+            }
+          })]));
+          // right
+          const right = c('div', {
+            slot: 'right',
+          }, buttons);
+          // context menu
+          const menu = c('eb-context-menu', {}, [right]);
+          // list item
+          const [title, propertyTitle] = this.dashboard._getBindSourceTitleAndPropertyTitle(propertyBind.widgetId, propertyBind.propertyName);
+          children.push(c('eb-list-item', {
+            key: propertyBind.id,
+            props: {
+              title: propertyTitle,
+              after: title,
+              swipeout: true,
+            },
+          }, [menu]));
         }
       }
       return c('f7-list', {}, children);
