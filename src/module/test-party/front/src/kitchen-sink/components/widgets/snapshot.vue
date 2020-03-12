@@ -31,8 +31,10 @@ const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').opti
 export default {
   meta: {
     global: false,
-    schema: {
-      props: propsSchema,
+    widget: {
+      schema: {
+        props: propsSchema,
+      },
     },
   },
   mixins: [ebDashboardWidgetBase],

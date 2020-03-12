@@ -32,12 +32,21 @@ const propsSchema = {
   },
 };
 
+const attrs = {
+  snapshot: {
+    title: 'Snapshot',
+  },
+};
+
 const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').options.components.ebDashboardWidgetBase;
 export default {
   meta: {
     global: false,
-    schema: {
-      props: propsSchema,
+    widget: {
+      schema: {
+        props: propsSchema,
+      },
+      attrs,
     },
   },
   mixins: [ebDashboardWidgetBase],

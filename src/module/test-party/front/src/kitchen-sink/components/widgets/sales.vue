@@ -31,18 +31,33 @@
   </f7-card>
 </template>
 <script>
+const attrs = {
+  dataSource: {
+    title: 'Data Source',
+  },
+  fruit: {
+    title: 'Fruit',
+  },
+  season: {
+    title: 'Season',
+  },
+};
+
 import dataSource from './data.js';
 const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').options.components.ebDashboardWidgetBase;
 export default {
   meta: {
     global: false,
+    widget: {
+      attrs,
+    },
   },
   mixins: [ebDashboardWidgetBase],
   data() {
     return {
+      dataSource,
       fruit: 'All',
       season: 'Spring',
-      dataSource,
     };
   },
   methods: {
