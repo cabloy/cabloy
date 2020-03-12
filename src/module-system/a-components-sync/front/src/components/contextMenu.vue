@@ -25,7 +25,7 @@ export default {
       // ready
       let ready;
       if (slotLeft) ready = slotLeft[0].data.attrs.ready;
-      if (ready === undefined && slotRight) ready = slotRight[0].data.attrs.ready;
+      if (ready === undefined && slotRight) ready = slotRight[0].data.attrs ? slotRight[0].data.attrs.ready : undefined;
       // popover
       const attrs = {};
       if (ready !== undefined) attrs.ready = ready;
