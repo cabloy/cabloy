@@ -138,5 +138,7 @@ export default {
   'Fruit Sales': '水果销量',
   'Fruit Sales(Line Chart)': '水果销量（折线图）',
   'Fruit Sales(Pie Chart)': '水果销量（饼图）',
+  'There may be a binding error': '可能有绑定错误',
+  'Please set data source': '请设置数据源',
 };
 

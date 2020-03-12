@@ -3,6 +3,7 @@
     <f7-card-header>{{$text('Fruit Sales(Line Chart)')}}</f7-card-header>
     <f7-card-content>
       <canvas ref="chart"></canvas>
+      <div class="error" v-if="errorMessage">{{errorMessage}}</div>
     </f7-card-content>
   </f7-card>
 </template>
@@ -63,6 +64,7 @@ export default {
       chartjs: null,
       chart: null,
       snapshot: null,
+      errorMessage: null,
     };
   },
   watch: {
@@ -90,6 +92,7 @@ export default {
     },
     __prepareData() {
       const fruitIndex = this.dataSource.cols.findIndex(item => item === this.fruit);
+      if (fruitIndex === -1) throw new Error();
       const chartData = {
         labels: this.dataSource.rows,
         datasets: [{
@@ -147,33 +150,51 @@ export default {
         image,
       };
     },
-    __updateChart() {
-      if (!this.dataSource || !this.fruit) {
-        if (this.chart) {
-          this.chart.clear();
-        }
-        return;
+    __clearChart() {
+      if (this.chart) {
+        this.chart.clear();
       }
-      const chartData = this.__prepareData();
-      const chartOptions = this.__prepareOptions();
-      if (!this.chart) {
-        // canvas
-        const chartCanvas = this.$refs.chart.getContext('2d');
-        // fill
-        this.chart = new this.chartjs(chartCanvas, {
-          type: 'line',
-          data: chartData,
-          options: chartOptions,
-        });
-      } else {
-        this.chart.data = this.__prepareData();
-        this.chart.options = this.__prepareOptions();
-        this.chart.update();
+    },
+    __updateChart() {
+      try {
+        if (!this.dataSource || !this.fruit) {
+          this.__clearChart();
+          this.errorMessage = this.$text('Please set data source');
+          return;
+        }
+        const chartData = this.__prepareData();
+        const chartOptions = this.__prepareOptions();
+        if (!this.chart) {
+          // canvas
+          const chartCanvas = this.$refs.chart.getContext('2d');
+          // fill
+          this.chart = new this.chartjs(chartCanvas, {
+            type: 'line',
+            data: chartData,
+            options: chartOptions,
+          });
+        } else {
+          this.chart.data = this.__prepareData();
+          this.chart.options = this.__prepareOptions();
+          this.chart.update();
+        }
+        this.errorMessage = null;
+        return;
+      } catch (err) {
+        this.__clearChart();
+        this.errorMessage = this.$text('There may be a binding error');
       }
     },
   },
 };
 
 </script>
-<style scoped>
+<style lang="less" scoped>
+.error {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  font-size: smaller;
+}
+
 </style>

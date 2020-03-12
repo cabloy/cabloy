@@ -10,6 +10,7 @@
           </f7-block>
         </template>
       </div>
+      <div class="error" v-if="!snapshots">{{$text('Please set data source')}}</div>
     </f7-card-content>
   </f7-card>
 </template>
@@ -52,6 +53,13 @@ export default {
 
 </script>
 <style lang="less" scoped>
+.error {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  font-size: smaller;
+}
+
 .snapshot {
   padding: 8px;
   text-align: center;
