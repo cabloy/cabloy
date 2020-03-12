@@ -23,10 +23,18 @@ export default {
   created() {},
   render(c) {
     const children = [];
+    const propertyReal = this.widget.__getPropertyReal(this.propertyName);
+    const isDynamic = this.propertySchema.ebBindOnly || (propertyReal && (propertyReal.bind || propertyReal.binds));
     // navbar
     children.push(this._renderNavbar(c));
     // valueType
-    children.push(this._renderValueTypes(c));
+    children.push(this._renderValueTypes(c, propertyReal, isDynamic));
+    // static
+    if (!isDynamic) {
+
+    } else {
+      children.push(this._renderValueStatic(c, propertyReal));
+    }
     // ok
     return c('eb-page', {
       staticClass: 'widget-property-edit',
@@ -54,10 +62,33 @@ export default {
         },
       });
     },
-    _renderValueTypes(c) {
+    _renderValueStatic(c, propertyReal) {
+      // schema
+      const schema = {
+        type: 'object',
+        properties: {
+          [this.propertyName]: this.propertySchema,
+        },
+      };
+      // data
+      const data = {
+        [this.propertyName]: this.widget.__getPropertyReal(this.propertyName);
+      };
+      // validate
+      return c('eb-validate', {
+        ref: 'validate',
+        props: {
+          auto: true,
+          readOnly: false,
+          data,
+          meta: {
+            schema,
+          },
+        },
+      });
+    },
+    _renderValueTypes(c, propertyReal, isDynamic) {
       const children = [];
-      const propertyReal = this.widget.__getPropertyReal(this.propertyName);
-      const isDynamic = this.propertySchema.ebBindOnly || (propertyReal && (propertyReal.bind || propertyReal.binds));
       // static
       if (!this.propertySchema.ebBindOnly) {
         children.push(c('f7-radio', {
