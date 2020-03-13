@@ -10,7 +10,7 @@
       <eb-list form no-hairlines-md @submit.prevent="onSubmit">
         <eb-list-input type="text" disabled :value="instance.name || $text('Empty')" dataPath="name" :label="$text('Subdomain')" :placeholder="$text('Subdomain')" floating-label></eb-list-input>
         <eb-list-input type="text" v-model="instance.title" dataPath="title" :label="$text('Title')" :placeholder="$text('Title')" floating-label clear-button></eb-list-input>
-        <eb-list-input type="textarea" :input="false" v-model="instance.config" dataPath="config" :label="$text('Config')" :placeholder="$text('Config')">
+        <eb-list-input type="textarea" :input="false" dataPath="config" :label="$text('Config')" :placeholder="$text('Config')">
           <textarea slot="input" type="textarea" v-model="instance.config" class="json-textarea config-edit"></textarea>
         </eb-list-input>
       </eb-list>
@@ -26,15 +26,15 @@ export default {
   },
   created() {
     this.$api.post('instance/item').then(data => {
-      data.config = JSON.stringify(JSON.parse(data.config || '{}'), null, 2);
+      data.config = JSON5.stringify(JSON.parse(data.config || '{}'), null, 2);
       this.instance = data;
     });
   },
   methods: {
     onPerformValidate() {
-      return this.$api.post('instance/save', {
-        data: this.instance,
-      }).then(() => {
+      const data = this.$utils.extend({}, this.instance);
+      data.config = JSON.stringify(JSON5.parse(data.config || '{}'));
+      return this.$api.post('instance/save', { data }).then(() => {
         // change preview
         this.$emit('preview');
         // instance

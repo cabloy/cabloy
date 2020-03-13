@@ -48,7 +48,7 @@ export default {
         if (!res.data) {
           this.content = '{}';
         } else {
-          this.content = JSON.stringify(res.data, null, 2);
+          this.content = JSON5.stringify(res.data, null, 2);
         }
       });
     },
