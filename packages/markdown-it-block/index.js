@@ -15,7 +15,7 @@ module.exports = function block_plugin(md, options) {
     var content;
     var errorMessage;
     try {
-      content = token.content ? JSON.parse(token.content) : {};
+      content = token.content ? JSON5.parse(token.content) : {};
     } catch (err) {
       errorMessage = err.message;
     }
@@ -31,7 +31,7 @@ module.exports = function block_plugin(md, options) {
     // render
     if (!block || !block.render) {
       // placeholder
-      var res = JSON.stringify(content, null, 2);
+      var res = JSON5.stringify(content, null, 2);
       return `<div class="alert-info">
 <p><strong>${blockTitle}: ${md.utils.escapeHtml(blockName)}</strong></p>
 <pre><code>${md.utils.escapeHtml(res)}</code></pre>
