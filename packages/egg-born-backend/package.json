@@ -1,6 +1,6 @@
 {
   "name": "egg-born-backend",
-  "version": "3.0.8",
+  "version": "3.0.9",
   "description": "egg-born-backend",
   "scripts": {
     "lint": "eslint ."
@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/zhennann/egg-born-backend#readme",
   "dependencies": {
+    "@zhennann/ali-rds": "^3.3.3",
     "autod": "^3.1.0",
     "autod-egg": "^1.0.0",
     "async": "^3.1.1",
@@ -45,8 +46,7 @@
     "object-get-o-a": "^1.0.2",
     "supertest": "^4.0.2",
     "semver": "^7.1.2",
-    "module-alias": "^2.2.2",
-    "@zhennann/ali-rds": "^3.3.2"
+    "module-alias": "^2.2.2"
   },
   "devDependencies": {}
 }
