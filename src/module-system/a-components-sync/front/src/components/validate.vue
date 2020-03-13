@@ -130,37 +130,42 @@ export default {
     },
     fetchSchema() {
       if (this.meta && this.meta.schema) {
-        this.__schemaReady(this.meta.schema);
+        this.__schemaReady(this.meta.schema, this.$page.$module.name);
         return;
       }
       if (!this.params) return;
       if (!this.params.module) this.params.module = this.$page.$module.name;
-      this.$meta.module.use(this.params.module, module => {
-        this.module = module;
-        this.$api.post('/a/validation/validation/schema', {
-          module: this.params.module,
-          validator: this.params.validator,
-          schema: this.params.schema,
-        }).then(data => {
-          this.__schemaReady(data);
-        });
+      this.$api.post('/a/validation/validation/schema', {
+        module: this.params.module,
+        validator: this.params.validator,
+        schema: this.params.schema,
+      }).then(data => {
+        this.__schemaReady(data, this.params.module);
       });
     },
-    __schemaReady(schema) {
-      this.schema = schema;
-      if (this.errors) this.verrors = this.errors;
+    __schemaReady(schema, moduleMaybe) {
+      const _componentName = schema.meta && schema.meta.custom && schema.meta.custom.component;
+      if (!_componentName) {
+        this.__schemaReady2(schema);
+        return;
+      }
       // custom
-      const _componentName = this.schema.meta && this.schema.meta.custom && this.schema.meta.custom.component;
-      if (_componentName) {
+      const moduleName = schema.meta.custom.module || moduleMaybe;
+      this.$meta.module.use(moduleName, module => {
         const _component = module.options.components[_componentName];
         if (!_component) {
           this.customNotFound = true;
         } else {
-          this.$meta.util.setComponentModule(_component, module);
           this.$options.components.custom = _component;
         }
+        this.module = module;
         this.custom = true;
-      }
+        this.__schemaReady2(schema);
+      });
+    },
+    __schemaReady2(schema) {
+      this.schema = schema;
+      if (this.errors) this.verrors = this.errors;
       // event
       this.$emit('schema:ready', this.schema);
     },
