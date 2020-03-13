@@ -209,34 +209,14 @@ export default function(Vue) {
     _registerComponents(module) {
       for(const key in module.options.components){
         const component = module.options.components[key];
-        // always try to set module
-        this._registerComponent_module(component,module);
-        // register component
-        if(!component.install){
-          this._registerComponent_component(key,component);
-        }else{
-          const _component = Vue.util.mergeOptions(component, component.install(Vue));
-          _component._Ctor = {};
-          delete _component.install;
-          Vue.extend(_component);
-          this._registerComponent_module(_component,module);
-          this._registerComponent_component(key,_component);
-          // save back
-          module.options.components[key]=_component;
+        const isComponent = !component.meta || component.meta.component !== false;
+        const isGlobal = !component.meta || component.meta.global !== false;
+        if (isComponent) {
+          Vue.prototype.$meta.util.setComponentModule(component, module);
         }
-      }
-    },
-    _registerComponent_module(component,module){
-      const isComponent=!component.meta || component.meta.component !== false;
-      if (isComponent) {
-        Vue.prototype.$meta.util.setComponentModule(component, module);
-      }
-    },
-    _registerComponent_component(key,component){
-      const isComponent=!component.meta || component.meta.component !== false;
-      const isGlobal=!component.meta || component.meta.global !== false;
-      if (isComponent && isGlobal) {
-        Vue.component(key, component);
+        if (isComponent && isGlobal) {
+          Vue.component(key, component);
+        }
       }
     },
     _registerStore(module) {
