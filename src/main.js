@@ -3,6 +3,9 @@ import Vue from 'vue';
 // Vue
 window.Vue = Vue;
 
+// json
+require('./base/json.js');
+
 // meta
 const meta = Vue.prototype.$meta = {};
 

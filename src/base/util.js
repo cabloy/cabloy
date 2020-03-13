@@ -3,7 +3,6 @@ import moment from 'moment';
 import cookies from 'js-cookie';
 import queue from 'async/queue';
 import extend from '@zhennann/extend';
-import json5 from 'json5';
 
 export default function(Vue) {
   const _ids = { };
@@ -327,7 +326,6 @@ export default function(Vue) {
     extend(...args) {
       return extend(true, ...args);
     },
-    json5: __patchJSON(),
   });
 
   return util;
@@ -338,35 +336,4 @@ function __removeClassLike(classList, classNameLike) {
     const item = classList.item(i);
     if (item.indexOf(classNameLike) > -1) classList.remove(item);
   }
-}
-
-function __patchJSON() {
-  // 2020-03-13T00:44:15.149Z
-  // 2020-03-13T00:44:15Z
-  const __dateTest = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$/;
-  function __jsonReviver(k, v, reviver) {
-    if (v && typeof v === 'string' && __dateTest.test(v)) {
-      v = new Date(v);
-    }
-    if (!reviver) return v;
-    return reviver(k, v);
-  }
-
-  // json
-  const _jsonParse = JSON.parse;
-  JSON.parse = function(source, reviver) {
-    return _jsonParse(source, function(k, v) {
-      return __jsonReviver(k, v, reviver);
-    });
-  };
-
-  // json5
-  const _json5Parse = json5.parse;
-  json5.parse = function(source, reviver) {
-    return _json5Parse(source, function(k, v) {
-      return __jsonReviver(k, v, reviver);
-    });
-  };
-
-  return json5;
 }
