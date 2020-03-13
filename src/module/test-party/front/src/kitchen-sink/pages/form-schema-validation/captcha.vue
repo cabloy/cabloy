@@ -44,7 +44,7 @@ export default {
   },
   computed: {
     form2() {
-      return JSON.stringify(this.item, null, 2);
+      return JSON5.stringify(this.item, null, 2);
     },
   },
   created() {

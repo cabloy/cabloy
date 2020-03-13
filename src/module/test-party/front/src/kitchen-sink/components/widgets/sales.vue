@@ -31,48 +31,59 @@
   </f7-card>
 </template>
 <script>
-const attrs = {
-  dataSource: {
-    title: 'Data Source',
-  },
-  fruit: {
-    title: 'Fruit',
-  },
-  season: {
-    title: 'Season',
-  },
-};
+import dataSource from './data/sales.js';
 
-import dataSource from './data.js';
-const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').options.components.ebDashboardWidgetBase;
+// install
+function install(_Vue) {
+  const Vue = _Vue;
+  const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').options.components.ebDashboardWidgetBase;
+
+  const attrs = {
+    dataSource: {
+      title: 'Data Source',
+    },
+    fruit: {
+      title: 'Fruit',
+    },
+    season: {
+      title: 'Season',
+    },
+  };
+
+  return {
+    meta: {
+      global: false,
+      widget: {
+        attrs,
+      },
+    },
+    mixins: [ebDashboardWidgetBase],
+    data() {
+      return {
+        dataSource,
+        fruit: 'All',
+        season: 'Spring',
+      };
+    },
+    methods: {
+      getAmount() {
+        return this.dataSource.dataset.reduce((total, row) => {
+          return total + row[2];
+        }, 0);
+      },
+      onClickFruit(fruit) {
+        this.fruit = fruit;
+      },
+      onClickSeason(season) {
+        this.season = season;
+      },
+    },
+  };
+}
+
+// export
 export default {
-  meta: {
-    global: false,
-    widget: {
-      attrs,
-    },
-  },
-  mixins: [ebDashboardWidgetBase],
-  data() {
-    return {
-      dataSource,
-      fruit: 'All',
-      season: 'Spring',
-    };
-  },
-  methods: {
-    getAmount() {
-      return this.dataSource.dataset.reduce((total, row) => {
-        return total + row[2];
-      }, 0);
-    },
-    onClickFruit(fruit) {
-      this.fruit = fruit;
-    },
-    onClickSeason(season) {
-      this.season = season;
-    },
-  },
+  install,
 };
 
 </script>

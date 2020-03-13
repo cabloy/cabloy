@@ -199,17 +199,17 @@ export default {
     },
     onPerformClick6() {
       return this.$api.post('kitchen-sink/guide/echo6').then(data => {
-        this.message6 = JSON.stringify(data, null, 2);
+        this.message6 = JSON5.stringify(data, null, 2);
       });
     },
     onPerformClick7() {
       return this.$api.post('kitchen-sink/guide/echo7').then(data => {
-        this.message6 = JSON.stringify(data, null, 2);
+        this.message6 = JSON5.stringify(data, null, 2);
       });
     },
     onPerformClick8() {
       return this.$api.post('kitchen-sink/guide/echo8').then(data => {
-        this.message8 = JSON.stringify(data, null, 2);
+        this.message8 = JSON5.stringify(data, null, 2);
       });
     },
     onPerformClick9() {

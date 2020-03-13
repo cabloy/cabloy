@@ -15,40 +15,51 @@
   </f7-card>
 </template>
 <script>
-const propsSchema = {
-  type: 'object',
-  properties: {
-    snapshots: {
-      type: 'array',
-      ebType: 'text',
-      ebTitle: 'Snapshots',
-      ebBindOnly: true,
-      ebBindArray: true,
-      notEmpty: true,
-    },
-  },
-};
+// install
+function install(_Vue) {
+  const Vue = _Vue;
+  const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').options.components.ebDashboardWidgetBase;
 
-const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').options.components.ebDashboardWidgetBase;
-export default {
-  meta: {
-    global: false,
-    widget: {
-      schema: {
-        props: propsSchema,
+  const propsSchema = {
+    type: 'object',
+    properties: {
+      snapshots: {
+        type: 'array',
+        ebType: 'text',
+        ebTitle: 'Snapshots',
+        ebBindOnly: true,
+        ebBindArray: true,
+        notEmpty: true,
       },
     },
-  },
-  mixins: [ebDashboardWidgetBase],
-  props: {
-    snapshots: {
-      type: Array,
+  };
+
+  return {
+    meta: {
+      global: false,
+      widget: {
+        schema: {
+          props: propsSchema,
+        },
+      },
     },
-  },
-  data() {
-    return {};
-  },
-  methods: {},
+    mixins: [ebDashboardWidgetBase],
+    props: {
+      snapshots: {
+        type: Array,
+      },
+    },
+    data() {
+      return {};
+    },
+    methods: {},
+  };
+
+}
+
+// export
+export default {
+  install,
 };
 
 </script>

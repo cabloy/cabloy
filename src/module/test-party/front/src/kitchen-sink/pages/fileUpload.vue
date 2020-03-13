@@ -18,7 +18,7 @@
     <f7-card>
       <f7-card-header>{{$text('File')}}</f7-card-header>
       <f7-card-content>
-        <pre v-if="file">{{JSON.stringify(this.file,null,2)}}</pre>
+        <pre v-if="file">{{getFileJSON(this.file)}}</pre>
         <f7-button @click="onClickFile">{{$text('Select And Upload')}}</f7-button>
       </f7-card-content>
     </f7-card>
@@ -84,6 +84,9 @@ export default {
           },
         },
       });
+    },
+    getFileJSON(file) {
+      return JSON5.stringify(this.file, null, 2);
     },
   },
 };

@@ -23,7 +23,7 @@ export default {
       userName: 'zhennann',
       sex: 'Male',
     };
-    this.content = JSON.stringify(data, null, 2);
+    this.content = JSON5.stringify(data, null, 2);
   },
   methods: {
     onSize(size) {
