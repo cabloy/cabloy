@@ -1,6 +1,6 @@
 {
   "name": "egg-born-backend",
-  "version": "3.0.7",
+  "version": "3.0.8",
   "description": "egg-born-backend",
   "scripts": {
     "lint": "eslint ."
@@ -39,6 +39,7 @@
     "extend2": "^1.0.0",
     "glob": "^7.1.4",
     "is-type-of": "^1.2.0",
+    "json5": "^2.1.1",
     "moment": "^2.19.2",
     "uuid": "^3.4.0",
     "object-get-o-a": "^1.0.2",
