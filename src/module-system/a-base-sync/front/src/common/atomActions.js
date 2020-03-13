@@ -1,7 +1,4 @@
 export default {
-  meta: {
-    component: false,
-  },
   computed: {
     actionsAll() {
       return this.$store.getState('a/base/actions');

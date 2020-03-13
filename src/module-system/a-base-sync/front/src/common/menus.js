@@ -1,7 +1,4 @@
 export default {
-  meta: {
-    component: false,
-  },
   computed: {
     menusAll() {
       return this.$store.getState('a/base/menus');

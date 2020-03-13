@@ -1,7 +1,4 @@
 export default {
-  meta: {
-    component: false,
-  },
   computed: {
     atomClassesAll() {
       return this.$store.getState('a/base/atomClasses');

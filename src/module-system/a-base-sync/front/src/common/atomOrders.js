@@ -1,7 +1,4 @@
 export default {
-  meta: {
-    component: false,
-  },
   computed: {
     ordersAll() {
       return this.$store.getState('a/base/orders');

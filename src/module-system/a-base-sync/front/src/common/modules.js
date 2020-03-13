@@ -1,11 +1,4 @@
 export default {
-  meta: {
-    component: false,
-  },
-  data() {
-    return {
-    };
-  },
   computed: {
     modulesAll() {
       return this.$store.getState('a/base/modules');
