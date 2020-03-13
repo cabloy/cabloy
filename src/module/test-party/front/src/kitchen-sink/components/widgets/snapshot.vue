@@ -50,7 +50,7 @@ export default {
 // install
 function install(_Vue) {
   const Vue = _Vue;
-  const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').options.components.ebDashboardWidgetBase;
+  const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').options.mixins.ebDashboardWidgetBase;
   return {
     mixins: [ebDashboardWidgetBase],
     data() {

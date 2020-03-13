@@ -19,7 +19,7 @@
 </template>
 <script>
 import Vue from 'vue';
-const ebMenus = Vue.prototype.$meta.module.get('a-base').options.components.ebMenus;
+const ebMenus = Vue.prototype.$meta.module.get('a-base').options.mixins.ebMenus;
 export default {
   mixins: [ebMenus],
   data() {
