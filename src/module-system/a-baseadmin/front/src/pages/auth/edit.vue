@@ -44,7 +44,7 @@ export default {
       if (!data.config) {
         this.content = '{}';
       } else {
-        this.content = JSON.stringify(JSON.parse(data.config), null, 2);
+        this.content = JSON5.stringify(JSON5.parse(data.config), null, 2);
       }
       // meta
       this.meta = data._meta;
@@ -59,7 +59,7 @@ export default {
     onPerformSave() {
       return this.$api.post('auth/save', {
         id: this.id,
-        data: JSON.parse(this.content),
+        data: JSON5.parse(this.content),
       }).then(() => {
         this.$f7router.back();
       });
