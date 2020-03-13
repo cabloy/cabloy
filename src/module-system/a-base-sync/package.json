@@ -27,6 +27,6 @@
     "@koa/cors": "^3.0.0",
     "@zhennann/markdown": "^2.0.0",
     "@zhennann/trim-html": "^0.1.12",
-    "@zhennann/markdown-it-block": "^2.0.0"
+    "@zhennann/markdown-it-block": "^2.0.1"
   }
 }
