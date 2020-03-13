@@ -18,6 +18,6 @@
   "dependencies": {
     "require3": "^1.0.3",
     "extend2": "^1.0.0",
-    "@zhennann/mavon-editor": "^3.0.0"
+    "@zhennann/mavon-editor": "^3.0.1"
   }
 }
