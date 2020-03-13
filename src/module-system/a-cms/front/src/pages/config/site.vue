@@ -28,7 +28,7 @@ export default {
       if (!data) {
         this.content = '{}';
       } else {
-        this.content = JSON.stringify(data, null, 2);
+        this.content = JSON5.stringify(data, null, 2);
       }
     });
   },
@@ -46,7 +46,7 @@ export default {
       this.content = event.target.value;
     },
     onPerformSave() {
-      const data = JSON.parse(this.content);
+      const data = JSON5.parse(this.content);
       return this.$api.post('site/setConfigSite', {
         atomClass: this.atomClass,
         data,

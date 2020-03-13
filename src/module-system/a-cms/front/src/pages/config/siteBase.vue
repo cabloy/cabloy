@@ -23,7 +23,7 @@ export default {
       if (!data) {
         this.content = '{}';
       } else {
-        this.content = JSON.stringify(data, null, 2);
+        this.content = JSON5.stringify(data, null, 2);
       }
     });
   },
