@@ -24,8 +24,8 @@
 </template>
 <script>
 import Vue from 'vue';
-const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.components.ebAtomClasses;
-const ebMenus = Vue.prototype.$meta.module.get('a-base').options.components.ebMenus;
+const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
+const ebMenus = Vue.prototype.$meta.module.get('a-base').options.mixins.ebMenus;
 import categoryList from '../../components/category/list.vue';
 import utils from '../../common/utils.js';
 export default {

@@ -20,8 +20,8 @@
 <script>
 //  articles of category / tag
 import Vue from 'vue';
-const ebMenus = Vue.prototype.$meta.module.get('a-base').options.components.ebMenus;
-const ebAtoms = Vue.prototype.$meta.module.get('a-base').options.components.ebAtoms;
+const ebMenus = Vue.prototype.$meta.module.get('a-base').options.mixins.ebMenus;
+const ebAtoms = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtoms;
 import utils from '../../common/utils.js';
 export default {
   mixins: [ebMenus],

@@ -8,7 +8,7 @@
 </template>
 <script>
 import Vue from 'vue';
-const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.components.ebPageContext;
+const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 import utils from '../../common/utils.js';
 export default {
   mixins: [ebPageContext],
