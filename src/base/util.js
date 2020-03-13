@@ -1,16 +1,14 @@
 import mparse from 'egg-born-mparse';
+import moment from 'moment';
 import cookies from 'js-cookie';
 import queue from 'async/queue';
 import extend from '@zhennann/extend';
+import json5 from 'json5';
 
 export default function(Vue) {
   const _ids = { };
-  return {
-    queue,
-    cookies,
-    extend(...args) {
-      return extend(true, ...args);
-    },
+
+  const util = {
     overrideProperty({ obj, key, objBase, vueComponent, combinePath }) {
       Object.defineProperty(obj, key, {
         get() {
@@ -101,13 +99,13 @@ export default function(Vue) {
     },
     fromNow(date) {
       if (typeof (date) !== 'object') date = new Date(date);
-      return Vue.prototype.$meta.moment(date).fromNow();
+      return moment(date).fromNow();
     },
     formatDateTime(date, fmt) {
       fmt = fmt || 'YYYY-MM-DD HH:mm:ss';
       date = date || new Date();
       if (typeof (date) !== 'object') date = new Date(date);
-      return Vue.prototype.$meta.moment(date).format(fmt);
+      return moment(date).format(fmt);
     },
     formatDate(date, sep) {
       if (sep === undefined) sep = '-';
@@ -122,7 +120,7 @@ export default function(Vue) {
     formatDateTimeRelative(date, fmt) {
       date = date || new Date();
       if (typeof (date) !== 'object') date = new Date(date);
-      if (Vue.prototype.$meta.moment().diff(date, 'days') == 0) return this.formatTime(date);
+      if (moment().diff(date, 'days') === 0) return this.formatTime(date);
       return this.formatDateTime(date, fmt);
     },
     swipeoutClose(target) {
@@ -320,6 +318,19 @@ export default function(Vue) {
       }
     },
   };
+
+  // mixin
+  Object.assign(util, {
+    moment,
+    queue,
+    cookies,
+    extend(...args) {
+      return extend(true, ...args);
+    },
+    json5: __patchJSON(),
+  });
+
+  return util;
 }
 
 function __removeClassLike(classList, classNameLike) {
@@ -327,4 +338,35 @@ function __removeClassLike(classList, classNameLike) {
     const item = classList.item(i);
     if (item.indexOf(classNameLike) > -1) classList.remove(item);
   }
+}
+
+function __patchJSON() {
+  // 2020-03-13T00:44:15.149Z
+  // 2020-03-13T00:44:15Z
+  const __dateTest = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$/;
+  function __jsonReviver(k, v, reviver) {
+    if (v && typeof v === 'string' && __dateTest.test(v)) {
+      v = new Date(v);
+    }
+    if (!reviver) return v;
+    return reviver(k, v);
+  }
+
+  // json
+  const _jsonParse = JSON.parse;
+  JSON.parse = function(source, reviver) {
+    return _jsonParse(source, function(k, v) {
+      return __jsonReviver(k, v, reviver);
+    });
+  };
+
+  // json5
+  const _json5Parse = json5.parse;
+  json5.parse = function(source, reviver) {
+    return _json5Parse(source, function(k, v) {
+      return __jsonReviver(k, v, reviver);
+    });
+  };
+
+  return json5;
 }
