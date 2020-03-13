@@ -207,15 +207,37 @@ export default function(Vue) {
       module.options.locales && this._registerLocales(module);
     },
     _registerComponents(module) {
-      Object.keys(module.options.components).forEach(key => {
+      for(const key in module.options.components){
         const component = module.options.components[key];
-        if (!component.meta || component.meta.component !== false) {
-          Vue.prototype.$meta.util.setComponentModule(component, module);
-          if (!component.meta || component.meta.global !== false) {
-            Vue.component(key, component);
-          }
+        // always try to set module
+        this._registerComponent_module(component,module);
+        // register component
+        if(!component.install){
+          this._registerComponent_component(key,component);
+        }else{
+          const _component = Vue.util.mergeOptions(component, component.install(Vue));
+          _component._Ctor = {};
+          delete _component.install;
+          Vue.extend(_component);
+          this._registerComponent_module(_component,module);
+          this._registerComponent_component(key,_component);
+          // save back
+          module.options.components[key]=_component;
         }
-      });
+      }
+    },
+    _registerComponent_module(component,module){
+      const isComponent=!component.meta || component.meta.component !== false;
+      if (isComponent) {
+        Vue.prototype.$meta.util.setComponentModule(component, module);
+      }
+    },
+    _registerComponent_component(key,component){
+      const isComponent=!component.meta || component.meta.component !== false;
+      const isGlobal=!component.meta || component.meta.global !== false;
+      if (isComponent && isGlobal) {
+        Vue.component(key, component);
+      }
     },
     _registerStore(module) {
       if (!Vue.prototype.$meta.store._modulesNamespaceMap[`${module.info.pid}/`]) {
