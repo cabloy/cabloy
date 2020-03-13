@@ -1,7 +1,4 @@
 export default {
-  meta: {
-    component: false,
-  },
   props: {
     widget: {
       type: Object,
