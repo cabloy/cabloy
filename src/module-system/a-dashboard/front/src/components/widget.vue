@@ -116,7 +116,6 @@ export default {
     return {
       ready: false,
       errorMessage: null,
-      component: null,
     };
   },
   created() {
@@ -130,12 +129,12 @@ export default {
       if (this.options.group) return;
       this.$meta.module.use(this.options.module, module => {
         const fullName = this.__getFullName();
-        this.component = module.options.components[this.options.name];
-        if (!this.component) {
+        const component = module.options.components[this.options.name];
+        if (!component) {
           this.errorMessage = `${this.$text('Widget Not Found')}: ${fullName}`;
           this.ready = false;
         } else {
-          this.$options.components[fullName] = this.component;
+          this.$options.components[fullName] = component;
           this.ready = true;
           this.errorMessage = null;
         }
@@ -231,7 +230,8 @@ export default {
       return this.__setPropertyRealValue2(this.options, propertyName, data);
     },
     __combineWidgetProps(props) {
-      const propsSchema = this.component.meta && this.component.meta.widget && this.component.meta.widget.schema && this.component.meta.widget.schema.props;
+      const component = this.$options.components[this.__getFullName()];
+      const propsSchema = component.meta && component.meta.widget && component.meta.widget.schema && component.meta.widget.schema.props;
       if (!propsSchema) return;
       for (const propertyName in propsSchema.properties) {
         props[propertyName] = this.__getPropertyRealValue(propertyName);
