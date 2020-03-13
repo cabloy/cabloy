@@ -17,8 +17,8 @@
 </template>
 <script>
 import Vue from 'vue';
-const ebModules = Vue.prototype.$meta.module.get('a-base').options.components.ebModules;
-const ebFunctions = Vue.prototype.$meta.module.get('a-base').options.components.ebFunctions;
+const ebModules = Vue.prototype.$meta.module.get('a-base').options.mixins.ebModules;
+const ebFunctions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebFunctions;
 const _types = ['Function', 'Menu', 'Panel', 'Widget'];
 export default {
   mixins: [ebModules, ebFunctions],

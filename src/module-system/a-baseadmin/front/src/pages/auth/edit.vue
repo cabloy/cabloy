@@ -23,7 +23,7 @@
 </template>
 <script>
 import Vue from 'vue';
-const ebClipboard = Vue.prototype.$meta.module.get('a-components').options.components.ebClipboard;
+const ebClipboard = Vue.prototype.$meta.module.get('a-components').options.mixins.ebClipboard;
 export default {
   meta: {
     global: false,

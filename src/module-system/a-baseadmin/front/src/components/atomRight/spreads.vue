@@ -22,8 +22,8 @@
 </template>
 <script>
 import Vue from 'vue';
-const ebModules = Vue.prototype.$meta.module.get('a-base').options.components.ebModules;
-const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.components.ebAtomClasses;
+const ebModules = Vue.prototype.$meta.module.get('a-base').options.mixins.ebModules;
+const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
 export default {
   meta: {
     global: false,
