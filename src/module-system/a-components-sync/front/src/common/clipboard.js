@@ -1,8 +1,5 @@
 import ClipboardJS from 'clipboard';
 export default {
-  meta: {
-    component: false,
-  },
   data() {
     return {
       clipboards: {},

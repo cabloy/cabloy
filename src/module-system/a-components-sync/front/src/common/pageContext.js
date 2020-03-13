@@ -1,7 +1,4 @@
 export default {
-  meta: {
-    component: false,
-  },
   data() {
     return {
       pageContext: this.$f7route.context,
@@ -22,4 +19,3 @@ export default {
     }
   },
 };
-

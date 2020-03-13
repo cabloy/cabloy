@@ -26,8 +26,6 @@ import contextMenu from './components/contextMenu.vue';
 import box from './components/box.vue';
 import treeview from './components/treeview.vue';
 import treeviewItem from './components/treeviewItem.vue';
-import pageContext from './common/pageContext.js';
-import clipboard from './common/clipboard.js';
 
 export default {
   ebLoadMore: loadMore,
@@ -58,6 +56,4 @@ export default {
   ebBox: box,
   ebTreeview: treeview,
   ebTreeviewItem: treeviewItem,
-  ebPageContext: pageContext,
-  ebClipboard: clipboard,
 };
