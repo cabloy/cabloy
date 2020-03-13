@@ -15,40 +15,44 @@
   </f7-card>
 </template>
 <script>
+const propsSchema = {
+  type: 'object',
+  properties: {
+    snapshots: {
+      type: 'array',
+      ebType: 'text',
+      ebTitle: 'Snapshots',
+      ebBindOnly: true,
+      ebBindArray: true,
+      notEmpty: true,
+    },
+  },
+};
+
+// export
+export default {
+  install,
+  meta: {
+    global: false,
+    widget: {
+      schema: {
+        props: propsSchema,
+      },
+    },
+  },
+  props: {
+    snapshots: {
+      type: Array,
+    },
+  },
+};
+
 // install
 function install(_Vue) {
   const Vue = _Vue;
   const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').options.components.ebDashboardWidgetBase;
-
-  const propsSchema = {
-    type: 'object',
-    properties: {
-      snapshots: {
-        type: 'array',
-        ebType: 'text',
-        ebTitle: 'Snapshots',
-        ebBindOnly: true,
-        ebBindArray: true,
-        notEmpty: true,
-      },
-    },
-  };
-
   return {
-    meta: {
-      global: false,
-      widget: {
-        schema: {
-          props: propsSchema,
-        },
-      },
-    },
     mixins: [ebDashboardWidgetBase],
-    props: {
-      snapshots: {
-        type: Array,
-      },
-    },
     data() {
       return {};
     },
@@ -56,11 +60,6 @@ function install(_Vue) {
   };
 
 }
-
-// export
-export default {
-  install,
-};
 
 </script>
 <style lang="less" scoped>

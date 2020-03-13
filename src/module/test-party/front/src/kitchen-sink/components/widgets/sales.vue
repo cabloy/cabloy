@@ -33,30 +33,34 @@
 <script>
 import dataSource from './data/sales.js';
 
+const attrs = {
+  dataSource: {
+    title: 'Data Source',
+  },
+  fruit: {
+    title: 'Fruit',
+  },
+  season: {
+    title: 'Season',
+  },
+};
+
+// export
+export default {
+  install,
+  meta: {
+    global: false,
+    widget: {
+      attrs,
+    },
+  },
+};
+
 // install
 function install(_Vue) {
   const Vue = _Vue;
   const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').options.components.ebDashboardWidgetBase;
-
-  const attrs = {
-    dataSource: {
-      title: 'Data Source',
-    },
-    fruit: {
-      title: 'Fruit',
-    },
-    season: {
-      title: 'Season',
-    },
-  };
-
   return {
-    meta: {
-      global: false,
-      widget: {
-        attrs,
-      },
-    },
     mixins: [ebDashboardWidgetBase],
     data() {
       return {
@@ -80,11 +84,6 @@ function install(_Vue) {
     },
   };
 }
-
-// export
-export default {
-  install,
-};
 
 </script>
 <style lang="less" scoped>

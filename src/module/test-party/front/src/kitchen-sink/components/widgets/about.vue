@@ -15,22 +15,21 @@
   </f7-card>
 </template>
 <script>
+// export
+export default {
+  install,
+  meta: {
+    global: false,
+  },
+};
+
 // install
 function install(_Vue) {
   const Vue = _Vue;
   const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').options.components.ebDashboardWidgetBase;
-
   return {
-    meta: {
-      global: false,
-    },
     mixins: [ebDashboardWidgetBase],
   };
 }
-
-// export
-export default {
-  install,
-};
 
 </script>

@@ -8,61 +8,65 @@
   </f7-card>
 </template>
 <script>
+const propsSchema = {
+  type: 'object',
+  properties: {
+    dataSource: {
+      type: 'object',
+      ebType: 'text',
+      ebTitle: 'Data Source',
+      ebBindOnly: true,
+      notEmpty: true,
+    },
+    fruit: {
+      type: 'string',
+      ebType: 'select',
+      ebTitle: 'Fruit',
+      ebOptions: [
+        { title: 'All', value: 'All' },
+        { title: 'Apples', value: 'Apples' },
+        { title: 'Pears', value: 'Pears' },
+      ],
+      ebOptionsBlankAuto: true,
+      notEmpty: true,
+    },
+  },
+};
+
+const attrs = {
+  snapshot: {
+    title: 'Snapshot',
+  },
+};
+
+// export
+export default {
+  install,
+  meta: {
+    global: false,
+    widget: {
+      schema: {
+        props: propsSchema,
+      },
+      attrs,
+    },
+  },
+  props: {
+    dataSource: {
+      type: Object,
+    },
+    fruit: {
+      type: String,
+    },
+  },
+};
+
 // install
 function install(_Vue) {
   const Vue = _Vue;
   const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').options.components.ebDashboardWidgetBase;
-
-  const propsSchema = {
-    type: 'object',
-    properties: {
-      dataSource: {
-        type: 'object',
-        ebType: 'text',
-        ebTitle: 'Data Source',
-        ebBindOnly: true,
-        notEmpty: true,
-      },
-      fruit: {
-        type: 'string',
-        ebType: 'select',
-        ebTitle: 'Fruit',
-        ebOptions: [
-          { title: 'All', value: 'All' },
-          { title: 'Apples', value: 'Apples' },
-          { title: 'Pears', value: 'Pears' },
-        ],
-        ebOptionsBlankAuto: true,
-        notEmpty: true,
-      },
-    },
-  };
-
-  const attrs = {
-    snapshot: {
-      title: 'Snapshot',
-    },
-  };
-
   return {
-    meta: {
-      global: false,
-      widget: {
-        schema: {
-          props: propsSchema,
-        },
-        attrs,
-      },
-    },
     mixins: [ebDashboardWidgetBase],
-    props: {
-      dataSource: {
-        type: Object,
-      },
-      fruit: {
-        type: String,
-      },
-    },
     data() {
       return {
         chartjs: null,
@@ -193,11 +197,6 @@ function install(_Vue) {
   };
 
 }
-
-// export
-export default {
-  install,
-};
 
 </script>
 <style lang="less" scoped>

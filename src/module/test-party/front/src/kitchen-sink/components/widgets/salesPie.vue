@@ -8,62 +8,66 @@
   </f7-card>
 </template>
 <script>
+const propsSchema = {
+  type: 'object',
+  properties: {
+    dataSource: {
+      type: 'object',
+      ebType: 'text',
+      ebTitle: 'Data Source',
+      ebBindOnly: true,
+      notEmpty: true,
+    },
+    season: {
+      type: 'string',
+      ebType: 'select',
+      ebTitle: 'Season',
+      ebOptions: [
+        { title: 'Spring', value: 'Spring' },
+        { title: 'Summer', value: 'Summer' },
+        { title: 'Autumn', value: 'Autumn' },
+        { title: 'Winter', value: 'Winter' },
+      ],
+      ebOptionsBlankAuto: true,
+      notEmpty: true,
+    },
+  },
+};
+
+const attrs = {
+  snapshot: {
+    title: 'Snapshot',
+  },
+};
+
+// export
+export default {
+  install,
+  meta: {
+    global: false,
+    widget: {
+      schema: {
+        props: propsSchema,
+      },
+      attrs,
+    },
+  },
+  props: {
+    dataSource: {
+      type: Object,
+    },
+    season: {
+      type: String,
+    },
+  },
+};
+
 // install
 function install(_Vue) {
   const Vue = _Vue;
   const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').options.components.ebDashboardWidgetBase;
-
-  const propsSchema = {
-    type: 'object',
-    properties: {
-      dataSource: {
-        type: 'object',
-        ebType: 'text',
-        ebTitle: 'Data Source',
-        ebBindOnly: true,
-        notEmpty: true,
-      },
-      season: {
-        type: 'string',
-        ebType: 'select',
-        ebTitle: 'Season',
-        ebOptions: [
-          { title: 'Spring', value: 'Spring' },
-          { title: 'Summer', value: 'Summer' },
-          { title: 'Autumn', value: 'Autumn' },
-          { title: 'Winter', value: 'Winter' },
-        ],
-        ebOptionsBlankAuto: true,
-        notEmpty: true,
-      },
-    },
-  };
-
-  const attrs = {
-    snapshot: {
-      title: 'Snapshot',
-    },
-  };
-
   return {
-    meta: {
-      global: false,
-      widget: {
-        schema: {
-          props: propsSchema,
-        },
-        attrs,
-      },
-    },
     mixins: [ebDashboardWidgetBase],
-    props: {
-      dataSource: {
-        type: Object,
-      },
-      season: {
-        type: String,
-      },
-    },
     data() {
       return {
         chartjs: null,
@@ -178,11 +182,6 @@ function install(_Vue) {
   };
 
 }
-
-// export
-export default {
-  install,
-};
 
 </script>
 <style lang="less" scoped>
