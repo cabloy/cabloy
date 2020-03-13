@@ -27,7 +27,7 @@
     "@zhennann/ejs": "^3.0.1",
     "@zhennann/markdown": "^2.0.0",
     "@zhennann/trim-html": "^0.1.12",
-    "@zhennann/markdown-it-block": "^2.0.0",
+    "@zhennann/markdown-it-block": "^2.0.1",
     "p-map": "^3.0.0",
     "moment": "^2.24.0",
     "glob": "^7.1.6",
