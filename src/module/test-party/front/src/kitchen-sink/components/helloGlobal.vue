@@ -9,8 +9,7 @@
 <script>
 export default {
   meta: {
-    // component: true,
-    // global: true,
+    global: true,
   },
   data() {
     return {};

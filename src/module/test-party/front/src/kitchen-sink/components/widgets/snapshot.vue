@@ -40,11 +40,6 @@ export default {
       },
     },
   },
-  props: {
-    snapshots: {
-      type: Array,
-    },
-  },
 };
 
 // install
@@ -53,6 +48,11 @@ function install(_Vue) {
   const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').options.mixins.ebDashboardWidgetBase;
   return {
     mixins: [ebDashboardWidgetBase],
+    props: {
+      snapshots: {
+        type: Array,
+      },
+    },
     data() {
       return {};
     },

@@ -55,14 +55,6 @@ export default {
       },
     },
   },
-  props: {
-    dataSource: {
-      type: Object,
-    },
-    fruit: {
-      type: String,
-    },
-  },
 };
 
 // install
@@ -71,6 +63,14 @@ function install(_Vue) {
   const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').options.mixins.ebDashboardWidgetBase;
   return {
     mixins: [ebDashboardWidgetBase],
+    props: {
+      dataSource: {
+        type: Object,
+      },
+      fruit: {
+        type: String,
+      },
+    },
     data() {
       return {
         chartjs: null,
