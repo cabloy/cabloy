@@ -219,8 +219,9 @@ export default {
       const attrs = component.meta && component.meta.widget && component.meta.widget.attrs;
       if (!attrs) return '';
       for (const attrKey in attrs) {
-        if (attrKey === propertyName) return this.$text(attrs[attrKey].title);
+        if (attrKey === propertyName) return this.$text(attrs[attrKey].ebTitle);
       }
+      return '';
     },
     _getBindSourceTitleAndPropertyTitle(widgetId, propertyName) {
       // widget

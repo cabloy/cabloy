@@ -67,7 +67,7 @@ export default {
       if (!attrs) return options;
       for (const attrKey in attrs) {
         options.push({
-          title: this.$text(attrs[attrKey].title),
+          title: this.$text(attrs[attrKey].ebTitle),
           value: attrKey,
         });
       }
