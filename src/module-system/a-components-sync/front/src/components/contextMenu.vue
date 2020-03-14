@@ -1,5 +1,8 @@
 <script>
 export default {
+  meta: {
+    global: true,
+  },
   name: 'eb-context-menu',
   render(c) {
     const slotLeft = this.$slots.left;

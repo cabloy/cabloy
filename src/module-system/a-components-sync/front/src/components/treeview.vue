@@ -5,6 +5,9 @@ import Mixins from '@zhennann/framework7/packages/vue/utils/mixins';
 const f7Treeview = Vue.options.components['f7-treeview'].extendOptions;
 
 export default {
+  meta: {
+    global: true,
+  },
   name: 'eb-treeview',
   extends: f7Treeview,
   props: {

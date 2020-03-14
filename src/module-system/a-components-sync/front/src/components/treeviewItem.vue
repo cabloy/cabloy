@@ -5,6 +5,9 @@ import link from '../common/link.js';
 const f7TreeviewItem = Vue.options.components['f7-treeview-item'].extendOptions;
 delete f7TreeviewItem.props.href;
 export default {
+  meta: {
+    global: true,
+  },
   name: 'eb-treeview-item',
   extends: f7TreeviewItem,
   mixins: [perform, link],

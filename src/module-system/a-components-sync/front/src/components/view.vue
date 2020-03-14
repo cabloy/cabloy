@@ -3,6 +3,9 @@ import Vue from 'vue';
 import appMethods from '../common/appMethods.js';
 const f7View = Vue.options.components['f7-view'].extendOptions;
 export default {
+  meta: {
+    global: true,
+  },
   name: 'eb-view',
   extends: f7View,
   props: {

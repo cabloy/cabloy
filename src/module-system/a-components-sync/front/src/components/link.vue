@@ -5,6 +5,9 @@ import link from '../common/link.js';
 const f7Link = Vue.options.components['f7-link'].extendOptions;
 delete f7Link.props.href;
 export default {
+  meta: {
+    global: true,
+  },
   name: 'eb-link',
   extends: f7Link,
   mixins: [perform, link],

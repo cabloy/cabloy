@@ -2,6 +2,9 @@
 import Vue from 'vue';
 const f7List = Vue.options.components['f7-list'].extendOptions;
 export default {
+  meta: {
+    global: true,
+  },
   name: 'eb-list',
   extends: f7List,
   mounted() {

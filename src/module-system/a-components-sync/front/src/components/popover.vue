@@ -2,6 +2,9 @@
 import Vue from 'vue';
 const f7Popover = Vue.options.components['f7-popover'].extendOptions;
 export default {
+  meta: {
+    global: true,
+  },
   name: 'eb-popover',
   extends: f7Popover,
   props: {
@@ -30,6 +33,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>

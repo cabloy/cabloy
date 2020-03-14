@@ -11,6 +11,9 @@
 <script>
 import Vue from 'vue';
 export default {
+  meta: {
+    global: true,
+  },
   name: 'eb-search-page',
   props: {
     title: {

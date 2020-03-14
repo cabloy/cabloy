@@ -4,11 +4,14 @@ const f7Toggle = Vue.options.components['f7-toggle'].extendOptions;
 delete f7Toggle.props.checked;
 delete f7Toggle.props.value;
 export default {
+  meta: {
+    global: true,
+  },
   name: 'eb-toggle',
   extends: f7Toggle,
   props: {
     value: {
-      type: [ Boolean, Number ],
+      type: [Boolean, Number],
       default: false,
     },
   },
@@ -31,6 +34,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>

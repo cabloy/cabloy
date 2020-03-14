@@ -3,6 +3,9 @@ import Vue from 'vue';
 import validate from '../common/validate.js';
 const f7Input = Vue.options.components['f7-input'].extendOptions;
 export default {
+  meta: {
+    global: true,
+  },
   name: 'eb-input',
   extends: f7Input,
   mixins: [validate],

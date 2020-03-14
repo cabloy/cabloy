@@ -3,9 +3,12 @@ import Vue from 'vue';
 import validate from '../common/validate.js';
 const f7ListItem = Vue.options.components['f7-list-item'].extendOptions;
 export default {
+  meta: {
+    global: true,
+  },
   name: 'eb-list-item-choose',
   extends: f7ListItem,
-  mixins: [ validate ],
+  mixins: [validate],
   props: {
     onChoose: {
       type: Function,
@@ -41,6 +44,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>

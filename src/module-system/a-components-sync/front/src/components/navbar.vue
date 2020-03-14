@@ -3,6 +3,9 @@ import Vue from 'vue';
 const f7Navbar = Vue.options.components['f7-navbar'].extendOptions;
 delete f7Navbar.props.backLink;
 export default {
+  meta: {
+    global: true,
+  },
   name: 'eb-navbar',
   extends: f7Navbar,
   props: {

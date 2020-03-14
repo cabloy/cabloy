@@ -10,6 +10,9 @@
 </template>
 <script>
 export default {
+  meta: {
+    global: true,
+  },
   name: 'eb-loadmore',
   props: {
     autoInit: {

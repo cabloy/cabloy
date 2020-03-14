@@ -1,5 +1,8 @@
 <script>
 export default {
+  meta: {
+    global: true,
+  },
   name: 'eb-list-item-validate',
   render(c) {
     return this.renderItem(c);

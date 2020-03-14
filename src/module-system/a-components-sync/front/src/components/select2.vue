@@ -1,6 +1,9 @@
 <script>
 import validate from '../common/validate.js';
 export default {
+  meta: {
+    global: true,
+  },
   name: 'eb-select',
   mixins: [validate],
   props: {

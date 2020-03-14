@@ -5,6 +5,9 @@
 </template>
 <script>
 export default {
+  meta: {
+    global: true,
+  },
   name: 'eb-tab-page-content',
   props: {
     tab: {

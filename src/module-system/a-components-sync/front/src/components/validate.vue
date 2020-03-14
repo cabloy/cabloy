@@ -1,6 +1,9 @@
 <script>
 import validateItem from './validateItem.vue';
 export default {
+  meta: {
+    global: true,
+  },
   name: 'eb-validate',
   components: {
     validateItem,

@@ -2,6 +2,9 @@
 import Vue from 'vue';
 const f7Page = Vue.options.components['f7-page'].extendOptions;
 export default {
+  meta: {
+    global: true,
+  },
   name: 'eb-page',
   extends: f7Page,
   methods: {
