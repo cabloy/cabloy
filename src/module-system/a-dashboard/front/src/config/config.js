@@ -115,13 +115,15 @@ export default function(Vue) {
       },
     },
     schema: {
-      props: {
-        widget: schemaPropsWidget,
-        group: schemaPropsGroup,
-      },
-      attrs: {
-        widget: schemaAttrsWidget,
-        group: schemaAttrsGroup,
+      basic: {
+        widget: {
+          props: schemaPropsWidget,
+          attrs: schemaAttrsWidget,
+        },
+        group: {
+          props: schemaPropsGroup,
+          attrs: schemaAttrsGroup,
+        },
       },
     },
   };

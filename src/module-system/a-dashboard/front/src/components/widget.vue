@@ -285,8 +285,8 @@ export default {
       return null;
     },
     _getAttrsSchemaBasic(bGroup) {
-      if (bGroup) return this.$config.schema.attrs.group;
-      return this.$config.schema.attrs.widget;
+      if (bGroup) return this.$config.schema.basic.group.attrs;
+      return this.$config.schema.basic.widget.attrs;
     },
     _getAttrsSchemaGeneral(options) {
       const component = this.$options.components[this.__getFullName(options)];
@@ -294,8 +294,8 @@ export default {
       return attrsSchema || null;
     },
     _getPropsSchemaBasic(bGroup) {
-      if (bGroup) return this.$config.schema.props.group;
-      return this.$config.schema.props.widget;
+      if (bGroup) return this.$config.schema.basic.group.props;
+      return this.$config.schema.basic.widget.props;
     },
     _getPropsSchemaGeneral(options) {
       const component = this.$options.components[this.__getFullName(options)];
