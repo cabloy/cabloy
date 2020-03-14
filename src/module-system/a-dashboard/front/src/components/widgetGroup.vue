@@ -1,5 +1,8 @@
 <script>
 export default {
+  meta: {
+    global: true,
+  },
   name: 'eb-dashboard-widget-group',
   render(c) {
     return this.__renderRow(c);
