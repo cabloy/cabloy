@@ -33,18 +33,21 @@
 <script>
 import dataSource from './data/sales.js';
 
-const attrs = {
-  dataSource: {
-    ebTitle: 'Data Source',
-    ebClue: 'salesDataSource',
-  },
-  fruit: {
-    ebTitle: 'Fruit',
-    ebClue: 'salesFruit',
-  },
-  season: {
-    ebTitle: 'Season',
-    ebClue: 'salesSeason',
+const attrsSchema = {
+  type: 'object',
+  properties: {
+    dataSource: {
+      ebTitle: 'Data Source',
+      ebClue: 'salesDataSource',
+    },
+    fruit: {
+      ebTitle: 'Fruit',
+      ebClue: 'salesFruit',
+    },
+    season: {
+      ebTitle: 'Season',
+      ebClue: 'salesSeason',
+    },
   },
 };
 
@@ -54,7 +57,9 @@ export default {
   meta: {
     global: false,
     widget: {
-      attrs,
+      schema: {
+        attrs: attrsSchema,
+      },
     },
   },
 };

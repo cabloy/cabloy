@@ -33,10 +33,13 @@ const propsSchema = {
   },
 };
 
-const attrs = {
-  snapshot: {
-    ebTitle: 'Snapshot',
-    ebClue: 'snapshot',
+const attrsSchema = {
+  type: 'object',
+  properties: {
+    snapshot: {
+      ebTitle: 'Snapshot',
+      ebClue: 'snapshot',
+    },
   },
 };
 
@@ -48,8 +51,8 @@ export default {
     widget: {
       schema: {
         props: propsSchema,
+        attrs: attrsSchema,
       },
-      attrs,
     },
   },
   props: {
