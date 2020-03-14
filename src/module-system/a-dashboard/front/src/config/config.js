@@ -57,19 +57,19 @@ export default function(Vue) {
   const schemaAttrsGroup = {
     type: 'object',
     properties: {
-      title: {
+      attrTitle: {
         ebTitle: 'Title',
         ebClue: 'title',
       },
-      widthSmall: {
+      attrWidthSmall: {
         ebTitle: 'Width(Small)',
         ebClue: 'width',
       },
-      widthMedium: {
+      attrWidthMedium: {
         ebTitle: 'Width(Medium)',
         ebClue: 'width',
       },
-      widthLarge: {
+      attrWidthLarge: {
         ebTitle: 'Width(Large)',
         ebClue: 'width',
       },
@@ -79,7 +79,7 @@ export default function(Vue) {
   const schemaAttrsWidget = Vue.prototype.$utils.extend({}, schemaAttrsGroup, {
     type: 'object',
     properties: {
-      height: {
+      attrHeight: {
         ebTitle: 'Height',
         ebClue: 'height',
       },

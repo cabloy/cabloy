@@ -61,7 +61,7 @@ export default {
         const props = {
           widget: this, // for more extensible
         };
-        this.__combineWidgetGeneralProps(props);
+        this.__combineWidgetProps(props);
         children.push(c(this.__getFullName(), {
           staticClass: 'widget-inner',
           props,
@@ -305,8 +305,15 @@ export default {
       const propsSchema = component.meta && component.meta.widget && component.meta.widget.schema && component.meta.widget.schema.props;
       return propsSchema || null;
     },
-    __combineWidgetGeneralProps(props) {
-      const propsSchema = this._getPropsSchemaGeneral(this.options);
+    __combineWidgetProps(props) {
+      // basic
+      const propsSchemaBasic = this._getPropsSchemaBasic(this.options.group);
+      this.__combineWidgetPropsSchema(props, propsSchemaBasic);
+      // general
+      const propsSchemaGeneral = this._getPropsSchemaGeneral(this.options);
+      this.__combineWidgetPropsSchema(props, propsSchemaGeneral);
+    },
+    __combineWidgetPropsSchema(props, propsSchema) {
       if (!propsSchema) return;
       for (const propertyName in propsSchema.properties) {
         props[propertyName] = this.__getPropertyRealValue(propertyName);
