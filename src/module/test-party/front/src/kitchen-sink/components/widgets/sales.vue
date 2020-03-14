@@ -35,13 +35,16 @@ import dataSource from './data/sales.js';
 
 const attrs = {
   dataSource: {
-    title: 'Data Source',
+    ebTitle: 'Data Source',
+    ebClue: 'salesDataSource',
   },
   fruit: {
-    title: 'Fruit',
+    ebTitle: 'Fruit',
+    ebClue: 'salesFruit',
   },
   season: {
-    title: 'Season',
+    ebTitle: 'Season',
+    ebClue: 'salesSeason',
   },
 };
 

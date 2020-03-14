@@ -16,7 +16,7 @@ const propsSchema = {
       ebType: 'text',
       ebTitle: 'Data Source',
       ebBindOnly: true,
-      notEmpty: true,
+      ebClue: 'salesDataSource',
     },
     season: {
       type: 'string',
@@ -29,14 +29,15 @@ const propsSchema = {
         { title: 'Winter', value: 'Winter' },
       ],
       ebOptionsBlankAuto: true,
-      notEmpty: true,
+      ebClue: 'salesSeason',
     },
   },
 };
 
 const attrs = {
   snapshot: {
-    title: 'Snapshot',
+    ebTitle: 'Snapshot',
+    ebClue: 'snapshot',
   },
 };
 

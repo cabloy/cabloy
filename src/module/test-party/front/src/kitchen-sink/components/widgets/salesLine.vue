@@ -16,7 +16,7 @@ const propsSchema = {
       ebType: 'text',
       ebTitle: 'Data Source',
       ebBindOnly: true,
-      notEmpty: true,
+      ebClue: 'salesDataSource',
     },
     fruit: {
       type: 'string',
@@ -28,14 +28,15 @@ const propsSchema = {
         { title: 'Pears', value: 'Pears' },
       ],
       ebOptionsBlankAuto: true,
-      notEmpty: true,
+      ebClue: 'salesFruit',
     },
   },
 };
 
 const attrs = {
   snapshot: {
-    title: 'Snapshot',
+    ebTitle: 'Snapshot',
+    ebClue: 'snapshot',
   },
 };
 
