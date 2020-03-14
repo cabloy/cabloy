@@ -206,38 +206,32 @@ export default {
       const propertyReal = this.__getPropertyReal2(options, propertyName);
       if (!propertyReal) return undefined;
 
-      try {
-        let value;
-        if (propertyReal.type === 1) {
-          // static
-          value = propertyReal.value;
-        } else if (propertyReal.type === 2) {
-          // dynamic
-          if (propertyReal.bind) {
-            // bind
-            value = this.__getBindValue(propertyReal.bind);
-          } else if (propertyReal.binds) {
-            // binds
-            value = this.__getBindsValue(propertyReal.binds);
-          }
+      let value;
+      if (propertyReal.type === 1) {
+        // static
+        value = propertyReal.value;
+      } else if (propertyReal.type === 2) {
+        // dynamic
+        if (propertyReal.bind) {
+          // bind
+          value = this.__getBindValue(propertyReal.bind);
+        } else if (propertyReal.binds) {
+          // binds
+          value = this.__getBindsValue(propertyReal.binds);
         }
-        // special for title
-        if (propertyName === 'title' && !value) {
-          if (options.group) {
-            value = this.$text('Group');
-          } else {
-            value = this.dashboard.__findWidgetStock(options).titleLocale;
-          }
-        }
-        // convert
-        value = this.__convertPropertyRealValue(options, propertyName, value);
-        // ok
-        this.$set(propertyReal, 'error', undefined);
-        return value;
-      } catch (err) {
-        this.$set(propertyReal, 'error', err.message);
-        return undefined;
       }
+      // special for title
+      if (propertyName === 'title' && !value) {
+        if (options.group) {
+          value = this.$text('Group');
+        } else {
+          value = this.dashboard.__findWidgetStock(options).titleLocale;
+        }
+      }
+      // convert
+      value = this.__convertPropertyRealValue(options, propertyName, value);
+      // ok
+      return value;
     },
     __getPropertyRealValue(propertyName) {
       return this.__getPropertyRealValue2(this.options, propertyName);
