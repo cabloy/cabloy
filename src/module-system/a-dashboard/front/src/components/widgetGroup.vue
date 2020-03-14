@@ -13,7 +13,7 @@ export default {
     },
     widgets: {
       type: Array,
-    }
+    },
   },
   data() {
     return {

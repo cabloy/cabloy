@@ -58,7 +58,7 @@ export default {
         const props = {
           widget: this, // for more extensible
         };
-        this.__combineWidgetProps(props);
+        this.__combineWidgetGeneralProps(props);
         children.push(c(this.__getFullName(), {
           staticClass: 'widget-inner',
           props,
@@ -174,6 +174,29 @@ export default {
     __getPropertyReal(propertyName) {
       return this.__getPropertyReal2(this.options, propertyName);
     },
+    __convertPropertyRealValue(options, propertyName, value) {
+      if (value === undefined || value === null) return value;
+      const propSchema = this._getPropSchema(options, propertyName);
+      if (!propSchema) return value;
+      // number, integer, string, boolean, array, object
+      switch (propSchema.type) {
+        case 'number':
+          return Number(value);
+        case 'integer':
+          return parseInt(value);
+        case 'string':
+          return value.toString();
+        case 'boolean':
+          if (value === 'true') return true;
+          if (value === 'false') return false;
+          return Boolean(value);
+        case 'array':
+          if (typeof value === 'string') return value.split(',');
+          return value;
+        default:
+          return value;
+      }
+    },
     __getPropertyRealValue2(options, propertyName) {
       const propertyReal = this.__getPropertyReal2(options, propertyName);
       if (!propertyReal) return undefined;
@@ -201,6 +224,8 @@ export default {
             value = this.dashboard.__findWidgetStock(options).titleLocale;
           }
         }
+        // convert
+        value = this.__convertPropertyRealValue(options, propertyName, value);
         // ok
         this.$set(propertyReal, 'error', undefined);
         return value;
@@ -229,9 +254,32 @@ export default {
     __setPropertyRealValue(propertyName, data) {
       return this.__setPropertyRealValue2(this.options, propertyName, data);
     },
-    __combineWidgetProps(props) {
-      const component = this.$options.components[this.__getFullName()];
+    _getPropSchema(options, propertyName) {
+      // basic
+      let propsSchema = this._getPropsSchemaBasic(options.group);
+      if (propsSchema) {
+        let propSchema = propsSchema.properties[propertyName];
+        if (propSchema) return propSchema;
+      }
+      // general
+      propsSchema = this._getPropsSchemaGeneral(options);
+      if (propsSchema) {
+        let propSchema = propsSchema.properties[propertyName];
+        if (propSchema) return propSchema;
+      }
+      return null;
+    },
+    _getPropsSchemaBasic(bGroup) {
+      if (bGroup) return this.$config.schema.basic.group;
+      return this.$config.schema.basic.widget;
+    },
+    _getPropsSchemaGeneral(options) {
+      const component = this.$options.components[this.__getFullName(options)];
       const propsSchema = component.meta && component.meta.widget && component.meta.widget.schema && component.meta.widget.schema.props;
+      return propsSchema || null;
+    },
+    __combineWidgetGeneralProps(props) {
+      const propsSchema = this._getPropsSchemaGeneral(this.options);
       if (!propsSchema) return;
       for (const propertyName in propsSchema.properties) {
         props[propertyName] = this.__getPropertyRealValue(propertyName);
@@ -241,11 +289,12 @@ export default {
       if (this.options.group) return `widget widget-id-${this.options.id} widget-group ${this.options.widgets.length===0?'widget-group-empty':'widget-group-some'}`;
       return `widget widget-id-${this.options.id} widget-item widget-name-${this.options.module}-${this.options.name}`;
     },
-    __getFullName() {
-      return `${this.options.module}:${this.options.name}`;
+    __getFullName(options) {
+      if (!options) options = this.options;
+      return `${options.module}:${options.name}`;
     },
     onDragStartResizable({ $el, context, dragElement }) {
-      const $container = this.$$(this.dashboard.$el);
+      const $container = this.$$(this.group.$el);
       const size = { width: $container.width() };
       const tooltip = this.__getTooltipResizable(context);
       return { size, tooltip };

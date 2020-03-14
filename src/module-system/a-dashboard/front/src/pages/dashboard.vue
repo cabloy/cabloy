@@ -211,15 +211,6 @@ export default {
       if (index === -1) return [null, -1];
       return [this.widgetsReal[index], index];
     },
-    _getPropsSchemaBasic(bGroup) {
-      if (bGroup) return this.$config.schema.basic.group;
-      return this.$config.schema.basic.widget;
-    },
-    _getPropsSchemaGeneral(widgetId) {
-      const [widgetItem] = this.__findWidgetRealById(widgetId);
-      const component = widgetItem.widgetReal.$options;
-      return (component.meta && component.meta.widget && component.meta.widget.schema && component.meta.widget.schema.props) || null;
-    },
     _getBindSourceTitle(widgetItem) {
       return widgetItem.widgetReal.widget.__getPropertyRealValue('title');
     },

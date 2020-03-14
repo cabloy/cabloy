@@ -139,8 +139,8 @@ export default {
     },
     _renderList(c) {
       // schema
-      let propsSchemaBasic = this.dashboard._getPropsSchemaBasic(this.widget.options.group);
-      let propsSchemaGeneral = this.widget.options.group ? null : this.dashboard._getPropsSchemaGeneral(this.widgetId);
+      let propsSchemaBasic = this.widget._getPropsSchemaBasic(this.widget.options.group);
+      let propsSchemaGeneral = this.widget.options.group ? null : this.widget._getPropsSchemaGeneral(this.widget.options);
       let propsSchema = this.$utils.extend({}, propsSchemaBasic, propsSchemaGeneral);
       const basicOnly = this.widget.options.group || !propsSchemaGeneral;
       // schema data
