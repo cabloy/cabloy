@@ -169,7 +169,7 @@ export default {
           // context menu
           const menu = c('eb-context-menu', {}, [right]);
           // list item
-          const [title, propertyTitle] = this.dashboard._getBindSourceTitleAndPropertyTitle(propertyBind.widgetId, propertyBind.propertyName);
+          const [title, propertyTitle] = this.widget._getBindSourceTitleAndPropertyTitle(propertyBind.widgetId, propertyBind.propertyName);
           children.push(c('eb-list-item', {
             key: propertyBind.id,
             props: {

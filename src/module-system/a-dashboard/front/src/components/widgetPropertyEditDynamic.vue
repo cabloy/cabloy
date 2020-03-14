@@ -46,7 +46,7 @@ export default {
       const options = [{ title: '', value: '' }];
       for (const widgetItem of this.dashboard.widgetsReal) {
         const component = widgetItem.widgetReal.$options;
-        const attrs = component.meta && component.meta.widget && component.meta.widget.attrs;
+        const attrs = component.meta && component.meta.widget && component.meta.widget.schema && component.meta.widget.schema.attrs;
         const widgetId = widgetItem.widgetReal.widget.options.id;
         if (widgetId !== this.widgetId && attrs) {
           options.push({
@@ -63,11 +63,11 @@ export default {
       const [widgetItem] = this.dashboard.__findWidgetRealById(this.bindCurrent.widgetId);
       if (!widgetItem) return options;
       const component = widgetItem.widgetReal.$options;
-      const attrs = component.meta && component.meta.widget && component.meta.widget.attrs;
+      const attrs = component.meta && component.meta.widget && component.meta.widget.schema && component.meta.widget.schema.attrs;
       if (!attrs) return options;
-      for (const attrKey in attrs) {
+      for (const attrKey in attrs.properties) {
         options.push({
-          title: this.$text(attrs[attrKey].ebTitle),
+          title: this.$text(attrs.properties[attrKey].ebTitle),
           value: attrKey,
         });
       }

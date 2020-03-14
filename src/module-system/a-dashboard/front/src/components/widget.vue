@@ -269,9 +269,33 @@ export default {
       }
       return null;
     },
+    _getAttrSchema(options, propertyName) {
+      // basic
+      let attrsSchema = this._getAttrsSchemaBasic(options.group);
+      if (attrsSchema) {
+        let attrSchema = attrsSchema.properties[propertyName];
+        if (attrSchema) return attrSchema;
+      }
+      // general
+      attrsSchema = this._getAttrsSchemaGeneral(options);
+      if (attrsSchema) {
+        let attrSchema = attrsSchema.properties[propertyName];
+        if (attrSchema) return attrSchema;
+      }
+      return null;
+    },
+    _getAttrsSchemaBasic(bGroup) {
+      if (bGroup) return this.$config.schema.attrs.group;
+      return this.$config.schema.attrs.widget;
+    },
+    _getAttrsSchemaGeneral(options) {
+      const component = this.$options.components[this.__getFullName(options)];
+      const attrsSchema = component.meta && component.meta.widget && component.meta.widget.schema && component.meta.widget.schema.attrs;
+      return attrsSchema || null;
+    },
     _getPropsSchemaBasic(bGroup) {
-      if (bGroup) return this.$config.schema.basic.group;
-      return this.$config.schema.basic.widget;
+      if (bGroup) return this.$config.schema.props.group;
+      return this.$config.schema.props.widget;
     },
     _getPropsSchemaGeneral(options) {
       const component = this.$options.components[this.__getFullName(options)];
@@ -284,6 +308,25 @@ export default {
       for (const propertyName in propsSchema.properties) {
         props[propertyName] = this.__getPropertyRealValue(propertyName);
       }
+    },
+    _getBindSourceTitle(widgetItem) {
+      return widgetItem.widgetReal.widget.__getPropertyRealValue('title');
+    },
+    _getBindSourcePropertyTitle(widgetItem, propertyName) {
+      const attrSchema = this._getAttrSchema(widgetItem.widgetReal.widget.options, propertyName);
+      if (!attrSchema) return '';
+      return this.$text(attrSchema.ebTitle);
+    },
+    _getBindSourceTitleAndPropertyTitle(widgetId, propertyName) {
+      // widget
+      const [widgetItem] = this.dashboard.__findWidgetRealById(widgetId);
+      if (!widgetItem) return ['', ''];
+      // title
+      const title = this._getBindSourceTitle(widgetItem);
+      // property title
+      const propertyTitle = this._getBindSourcePropertyTitle(widgetItem, propertyName);
+      // ok
+      return [title, propertyTitle];
     },
     __getClassName() {
       if (this.options.group) return `widget widget-id-${this.options.id} widget-group ${this.options.widgets.length===0?'widget-group-empty':'widget-group-some'}`;

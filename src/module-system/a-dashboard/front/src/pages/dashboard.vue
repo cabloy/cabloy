@@ -211,29 +211,6 @@ export default {
       if (index === -1) return [null, -1];
       return [this.widgetsReal[index], index];
     },
-    _getBindSourceTitle(widgetItem) {
-      return widgetItem.widgetReal.widget.__getPropertyRealValue('title');
-    },
-    _getBindSourcePropertyTitle(widgetItem, propertyName) {
-      const component = widgetItem.widgetReal.$options;
-      const attrs = component.meta && component.meta.widget && component.meta.widget.attrs;
-      if (!attrs) return '';
-      for (const attrKey in attrs) {
-        if (attrKey === propertyName) return this.$text(attrs[attrKey].ebTitle);
-      }
-      return '';
-    },
-    _getBindSourceTitleAndPropertyTitle(widgetId, propertyName) {
-      // widget
-      const [widgetItem] = this.__findWidgetRealById(widgetId);
-      if (!widgetItem) return ['', ''];
-      // title
-      const title = this._getBindSourceTitle(widgetItem);
-      // property title
-      const propertyTitle = this._getBindSourcePropertyTitle(widgetItem, propertyName);
-      // ok
-      return [title, propertyTitle];
-    },
   }
 }
 

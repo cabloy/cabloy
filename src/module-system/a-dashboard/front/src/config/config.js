@@ -7,47 +7,81 @@ export default function(Vue) {
     _widthOptions.push({ title: `${width}%`, value: width });
   }
 
-  // schema group
-  const schemaGroup = {
+  // schema prop group
+  const schemaPropsGroup = {
     type: 'object',
     properties: {
       title: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Title',
+        ebClue: 'title',
       },
       widthSmall: {
         type: 'integer',
         ebType: 'select',
         ebTitle: 'Width(Small)',
         ebOptions: _widthOptions,
-        notEmpty: true,
+        ebClue: 'width',
       },
       widthMedium: {
         type: 'integer',
         ebType: 'select',
         ebTitle: 'Width(Medium)',
         ebOptions: _widthOptions,
-        notEmpty: true,
+        ebClue: 'width',
       },
       widthLarge: {
         type: 'integer',
         ebType: 'select',
         ebTitle: 'Width(Large)',
         ebOptions: _widthOptions,
-        notEmpty: true,
+        ebClue: 'width',
       },
     },
   };
   // schema widget
-  const schemaWidget = Vue.prototype.$utils.extend({}, schemaGroup, {
+  const schemaPropsWidget = Vue.prototype.$utils.extend({}, schemaPropsGroup, {
     type: 'object',
     properties: {
       height: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Height',
-        notEmpty: true,
+        ebClue: 'height',
+      },
+    },
+  });
+
+  // schema attr group
+  const schemaAttrsGroup = {
+    type: 'object',
+    properties: {
+      title: {
+        ebTitle: 'Title',
+        ebClue: 'title',
+      },
+      widthSmall: {
+        ebTitle: 'Width(Small)',
+        ebClue: 'width',
+      },
+      widthMedium: {
+        ebTitle: 'Width(Medium)',
+        ebClue: 'width',
+      },
+      widthLarge: {
+        ebTitle: 'Width(Large)',
+        ebClue: 'width',
+      },
+    },
+  };
+  // schema widget
+  const schemaAttrsWidget = Vue.prototype.$utils.extend({}, schemaAttrsGroup, {
+    type: 'object',
+    properties: {
+      height: {
+        ebTitle: 'Height',
+        ebClue: 'height',
       },
     },
   });
@@ -81,9 +115,13 @@ export default function(Vue) {
       },
     },
     schema: {
-      basic: {
-        widget: schemaWidget,
-        group: schemaGroup,
+      props: {
+        widget: schemaPropsWidget,
+        group: schemaPropsGroup,
+      },
+      attrs: {
+        widget: schemaAttrsWidget,
+        group: schemaAttrsGroup,
       },
     },
   };
