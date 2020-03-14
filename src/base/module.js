@@ -210,8 +210,7 @@ export default function(Vue) {
       for(const key in module.options.components){
         const component = module.options.components[key];
         Vue.prototype.$meta.util.setComponentModule(component, module);
-        const isGlobal = !component.meta || component.meta.global !== false;
-        if (isGlobal) {
+        if (component.meta && component.meta.global === true) {
           Vue.component(key, component);
         }
       }
