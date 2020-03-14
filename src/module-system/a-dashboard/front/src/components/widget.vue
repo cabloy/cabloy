@@ -154,7 +154,9 @@ export default {
       const [widgetSource] = this.dashboard.__findWidgetRealById(bind.widgetId);
       if (!widgetSource) {
         // source not found
-        throw new Error(this.$text('Source Widget Not Found'));
+        //throw new Error(this.$text('Source Widget Not Found'));
+        // maybe load slowly
+        return undefined;
       }
       return widgetSource.widgetReal[bind.propertyName];
     },
