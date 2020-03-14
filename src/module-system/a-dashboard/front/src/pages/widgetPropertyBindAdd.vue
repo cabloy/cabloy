@@ -57,6 +57,7 @@ export default {
       return c('widget-property-edit-dynamic', {
         props: {
           dashboard: this.dashboard,
+          widget: this.widget,
           widgetId: this.widgetId,
           propertyName: this.propertyName,
           propertyBind,

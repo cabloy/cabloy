@@ -1,10 +1,10 @@
 <template>
   <f7-list>
     <f7-list-item smartSelect :smartSelectParams="{ openIn: 'page', closeOnSelect: true }" :title="$text('Source Widget')">
-      <eb-select name="sourceWidget" :value="bindCurrent.widgetId" :options="getOptionsSourceWidget()" @input="onInputSourceWidget"></eb-select>
+      <eb-select name="sourceWidget" :value="bindCurrent.widgetId" :options="optionsSourceWidget" @input="onInputSourceWidget"></eb-select>
     </f7-list-item>
     <f7-list-item smartSelect :smartSelectParams="{ openIn: 'page', closeOnSelect: true }" :title="$text('Property Name')">
-      <eb-select name="propertyName" :value="bindCurrent.propertyName" :options="getOptionsPropertyName()" @input="onInputPropertyName"></eb-select>
+      <eb-select name="propertyName" :value="bindCurrent.propertyName" :options="optionsPropertyName[this.bindCurrent.widgetId] || []" @input="onInputPropertyName"></eb-select>
     </f7-list-item>
   </f7-list>
 </template>
@@ -12,6 +12,9 @@
 export default {
   props: {
     dashboard: {
+      type: Object,
+    },
+    widget: {
       type: Object,
     },
     widgetId: {
@@ -27,10 +30,13 @@ export default {
   data() {
     return {
       bindCurrent: null,
+      optionsSourceWidget: [],
+      optionsPropertyName: {},
     };
   },
   created() {
     this.bindCurrent = this.$meta.util.extend({ widgetId: '', propertyName: '' }, this.propertyBind);
+    this.combineOptionsSourceWidget();
   },
   methods: {
     onInputSourceWidget(value) {
@@ -42,36 +48,55 @@ export default {
       this.bindCurrent.propertyName = value;
       this.$emit('bind:change', this.bindCurrent);
     },
-    getOptionsSourceWidget() {
+    combineOptionsSourceWidget() {
+      // options
       const options = [{ title: '', value: '' }];
+      const optionsPropertyName = {};
+      // propSchema
+      const propSchema = this.widget._getPropSchema(this.widget.options, this.propertyName);
+      const propClues = (propSchema.ebClue || '').split(',');
+      // loop
       for (const widgetItem of this.dashboard.widgetsReal) {
-        const component = widgetItem.widgetReal.$options;
-        const attrs = component.meta && component.meta.widget && component.meta.widget.schema && component.meta.widget.schema.attrs;
-        const widgetId = widgetItem.widgetReal.widget.options.id;
-        if (widgetId !== this.widgetId && attrs) {
+        const widgetIdSource = widgetItem.widgetReal.widget.options.id;
+        // ignore self
+        if (widgetIdSource === this.widgetId) continue;
+        // optionsPropertyName
+        const _optionsPropertyName = this._getOptionsPropertyName(widgetItem, propClues);
+        if (_optionsPropertyName.length > 1) {
+          optionsPropertyName[widgetIdSource] = _optionsPropertyName;
           options.push({
             title: widgetItem.widgetReal.widget.__getPropertyRealValue('title'),
-            value: widgetId,
+            value: widgetIdSource,
           })
         }
       }
+      this.optionsSourceWidget = options;
+      this.optionsPropertyName = optionsPropertyName;
+    },
+    _getOptionsPropertyName(widgetItem, propClues) {
+      const options = [{ title: '', value: '' }];
+      // basic
+      const schemaBasic = this.widget._getAttrsSchemaBasic(widgetItem.widgetReal.widget.options.group);
+      this._combineOptionsSourceWidgetSchema(options, schemaBasic, propClues);
+      // general
+      const schemaGeneral = this.widget._getAttrsSchemaGeneral(widgetItem.widgetReal.widget.options);
+      this._combineOptionsSourceWidgetSchema(options, schemaGeneral, propClues);
       return options;
     },
-    getOptionsPropertyName() {
-      const options = [{ title: '', value: '' }];
-      if (!this.bindCurrent.widgetId) return options;
-      const [widgetItem] = this.dashboard.__findWidgetRealById(this.bindCurrent.widgetId);
-      if (!widgetItem) return options;
-      const component = widgetItem.widgetReal.$options;
-      const attrs = component.meta && component.meta.widget && component.meta.widget.schema && component.meta.widget.schema.attrs;
-      if (!attrs) return options;
-      for (const attrKey in attrs.properties) {
-        options.push({
-          title: this.$text(attrs.properties[attrKey].ebTitle),
-          value: attrKey,
-        });
+    _combineOptionsSourceWidgetSchema(options, attrsSchema, propClues) {
+      if (!attrsSchema) return;
+      for (const attrKey in attrsSchema.properties) {
+        const attrSource = attrsSchema.properties[attrKey];
+        const attrSourceClues = (attrSource.ebClue || '').split(',');
+        // intersection
+        var intersection = propClues.filter(item => attrSourceClues.indexOf(item) > -1);
+        if (intersection.length > 0) {
+          options.push({
+            title: this.$text(attrSource.ebTitle),
+            value: attrKey,
+          });
+        }
       }
-      return options;
     },
   },
 };
