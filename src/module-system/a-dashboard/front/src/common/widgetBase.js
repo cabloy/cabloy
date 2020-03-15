@@ -15,6 +15,7 @@ export default function(Vue, bGroup) {
         ebType: 'text',
         ebTitle: 'Title',
         ebClue: 'title',
+        ebScene: 'Basic',
       },
       widthSmall: {
         type: 'integer',
@@ -22,6 +23,7 @@ export default function(Vue, bGroup) {
         ebTitle: 'Width(Small)',
         ebOptions: _widthOptions,
         ebClue: 'width',
+        ebScene: 'Basic',
       },
       widthMedium: {
         type: 'integer',
@@ -29,6 +31,7 @@ export default function(Vue, bGroup) {
         ebTitle: 'Width(Medium)',
         ebOptions: _widthOptions,
         ebClue: 'width',
+        ebScene: 'Basic',
       },
       widthLarge: {
         type: 'integer',
@@ -36,6 +39,7 @@ export default function(Vue, bGroup) {
         ebTitle: 'Width(Large)',
         ebOptions: _widthOptions,
         ebClue: 'width',
+        ebScene: 'Basic',
       },
     },
   };
@@ -48,6 +52,7 @@ export default function(Vue, bGroup) {
         ebType: 'text',
         ebTitle: 'Height',
         ebClue: 'height',
+        ebScene: 'Basic',
       },
     },
   });
@@ -59,18 +64,22 @@ export default function(Vue, bGroup) {
       attrTitle: {
         ebTitle: 'Title',
         ebClue: 'title',
+        ebScene: 'Basic',
       },
       attrWidthSmall: {
         ebTitle: 'Width(Small)',
         ebClue: 'width',
+        ebScene: 'Basic',
       },
       attrWidthMedium: {
         ebTitle: 'Width(Medium)',
         ebClue: 'width',
+        ebScene: 'Basic',
       },
       attrWidthLarge: {
         ebTitle: 'Width(Large)',
         ebClue: 'width',
+        ebScene: 'Basic',
       },
     },
   };
@@ -81,6 +90,7 @@ export default function(Vue, bGroup) {
       attrHeight: {
         ebTitle: 'Height',
         ebClue: 'height',
+        ebScene: 'Basic',
       },
     },
   });

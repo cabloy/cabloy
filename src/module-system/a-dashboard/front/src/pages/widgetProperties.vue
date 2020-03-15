@@ -106,8 +106,8 @@ export default {
     _renderListGroup({ c, title, opened, propsSchema }) {
       // children
       const children = [];
-      for (const propertyName in propsSchema.properties) {
-        const propertySchema = propsSchema.properties[propertyName];
+      for (const propertyName in propsSchema) {
+        const propertySchema = propsSchema[propertyName];
         const validateItem = c('eb-list-item-validate', {
           props: {
             dataKey: propertyName,
@@ -139,26 +139,18 @@ export default {
     },
     _renderList(c) {
       // schema
-      let propsSchemaBasic = this.widget._getPropsSchemaBasic(this.widget.options.group);
-      let propsSchemaGeneral = this.widget.options.group ? null : this.widget._getPropsSchemaGeneral(this.widget.options);
-      let propsSchema = this.$utils.extend({}, propsSchemaBasic, propsSchemaGeneral);
-      const basicOnly = this.widget.options.group || !propsSchemaGeneral;
+      let [propsSchema, propsScenes] = this.widget._getPropsSchemaSceneGrouping(this.widget.options);
+      const basicOnly = Object.keys(propsScenes) === 1;
       // schema data
       let schemaData = this._getSchemaData(propsSchema);
       // list
       const children = [];
-      children.push(this._renderListGroup({
-        c,
-        title: 'Basic',
-        opened: basicOnly,
-        propsSchema: propsSchemaBasic,
-      }));
-      if (!basicOnly) {
+      for (const propsSceneKey in propsScenes) {
         children.push(this._renderListGroup({
           c,
-          title: 'General',
-          opened: true,
-          propsSchema: propsSchemaGeneral,
+          title: propsSceneKey || 'General',
+          opened: propsSceneKey !== 'Basic' || basicOnly,
+          propsSchema: propsScenes[propsSceneKey],
         }));
       }
       // list

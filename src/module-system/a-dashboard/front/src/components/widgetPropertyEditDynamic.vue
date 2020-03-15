@@ -79,7 +79,7 @@ export default {
       const schemaBasic = this.widget._getAttrsSchemaBasic(widgetItem.widgetReal.widget.options.group);
       this._combineOptionsSourceWidgetSchema(options, schemaBasic, propClues);
       // general
-      const schemaGeneral = this.widget._getAttrsSchemaGeneral(widgetItem.widgetReal.widget.options);
+      const schemaGeneral = this.widget._getAttrsSchema(widgetItem.widgetReal.widget.options);
       this._combineOptionsSourceWidgetSchema(options, schemaGeneral, propClues);
       return options;
     },

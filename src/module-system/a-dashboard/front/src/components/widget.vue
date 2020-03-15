@@ -132,11 +132,12 @@ export default {
       if (this.options.group) return;
       this.$meta.module.use(this.options.module, module => {
         const fullName = this.__getFullName();
-        const component = module.options.components[this.options.name];
+        let component = module.options.components[this.options.name];
         if (!component) {
           this.errorMessage = `${this.$text('Widget Not Found')}: ${fullName}`;
           this.ready = false;
         } else {
+          component = this.$meta.util.createComponentOptions(component);
           this.$options.components[fullName] = component;
           this.ready = true;
           this.errorMessage = null;
@@ -254,31 +255,17 @@ export default {
       return this.__setPropertyRealValue2(this.options, propertyName, data);
     },
     _getPropSchema(options, propertyName) {
-      // basic
-      let propsSchema = this._getPropsSchemaBasic(options.group);
+      const propsSchema = this._getPropsSchema(options);
       if (propsSchema) {
-        let propSchema = propsSchema.properties[propertyName];
-        if (propSchema) return propSchema;
-      }
-      // general
-      propsSchema = this._getPropsSchemaGeneral(options);
-      if (propsSchema) {
-        let propSchema = propsSchema.properties[propertyName];
+        const propSchema = propsSchema.properties[propertyName];
         if (propSchema) return propSchema;
       }
       return null;
     },
     _getAttrSchema(options, propertyName) {
-      // basic
-      let attrsSchema = this._getAttrsSchemaBasic(options.group);
+      const attrsSchema = this._getAttrsSchema(options);
       if (attrsSchema) {
-        let attrSchema = attrsSchema.properties[propertyName];
-        if (attrSchema) return attrSchema;
-      }
-      // general
-      attrsSchema = this._getAttrsSchemaGeneral(options);
-      if (attrsSchema) {
-        let attrSchema = attrsSchema.properties[propertyName];
+        const attrSchema = attrsSchema.properties[propertyName];
         if (attrSchema) return attrSchema;
       }
       return null;
@@ -287,27 +274,31 @@ export default {
       if (bGroup) return this.$config.schema.basic.group.attrs;
       return this.$config.schema.basic.widget.attrs;
     },
-    _getAttrsSchemaGeneral(options) {
+    _getAttrsSchema(options) {
       const component = this.$options.components[this.__getFullName(options)];
-      const attrsSchema = component.meta && component.meta.widget && component.meta.widget.schema && component.meta.widget.schema.attrs;
+      const attrsSchema = component && component.meta && component.meta.widget && component.meta.widget.schema && component.meta.widget.schema.attrs;
       return attrsSchema || null;
     },
-    _getPropsSchemaBasic(bGroup) {
-      if (bGroup) return this.$config.schema.basic.group.props;
-      return this.$config.schema.basic.widget.props;
-    },
-    _getPropsSchemaGeneral(options) {
+    _getPropsSchema(options) {
       const component = this.$options.components[this.__getFullName(options)];
-      const propsSchema = component.meta && component.meta.widget && component.meta.widget.schema && component.meta.widget.schema.props;
+      const propsSchema = component && component.meta && component.meta.widget && component.meta.widget.schema && component.meta.widget.schema.props;
       return propsSchema || null;
     },
+    _getPropsSchemaSceneGrouping(options) {
+      const propsSchema = this._getPropsSchema(options);
+      if (!propsSchema) return [null, null];
+      const propsScenes = {};
+      for (const propertyName in propsSchema.properties) {
+        const propSchema = propsSchema.properties[propertyName];
+        const scene = propSchema.ebScene || '';
+        if (!propsScenes[scene]) propsScenes[scene] = {};
+        propsScenes[scene][propertyName] = propSchema;
+      }
+      return [propsSchema, propsScenes];
+    },
     __combineWidgetProps(props) {
-      // basic
-      const propsSchemaBasic = this._getPropsSchemaBasic(this.options.group);
-      this.__combineWidgetPropsSchema(props, propsSchemaBasic);
-      // general
-      const propsSchemaGeneral = this._getPropsSchemaGeneral(this.options);
-      this.__combineWidgetPropsSchema(props, propsSchemaGeneral);
+      const propsSchema = this._getPropsSchema(this.options);
+      this.__combineWidgetPropsSchema(props, propsSchema);
     },
     __combineWidgetPropsSchema(props, propsSchema) {
       if (!propsSchema) return;
