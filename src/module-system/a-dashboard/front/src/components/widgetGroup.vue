@@ -1,9 +1,11 @@
 <script>
+import widgetBaseFn from '../common/widgetBase.js';
 export default {
   meta: {
     global: true,
   },
   name: 'eb-dashboard-widget-group',
+  mixins: [widgetBaseFn(Vue, false)],
   render(c) {
     return this.__renderRow(c);
   },

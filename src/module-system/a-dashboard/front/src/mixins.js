@@ -1,5 +1,7 @@
-import widgetBase from './components/widgetBase.js';
+import widgetBaseFn from './common/widgetBase.js';
 
-export default {
-  ebDashboardWidgetBase: widgetBase,
-};
+export default function(Vue) {
+  return {
+    ebDashboardWidgetBase: widgetBaseFn(Vue, false),
+  };
+}
