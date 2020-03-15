@@ -35,7 +35,24 @@ export default function(Vue) {
         if (key.indexOf('f7router-') === 0) window.localStorage.removeItem(key);
       });
     },
-    setComponentModule(component, module) {
+    createComponentOptions(component) {
+      // install
+      if (component.install) {
+        component = Vue.util.mergeOptions(component, component.install(Vue));
+        component._Ctor = {};
+        delete component.install;
+        Vue.extend(component);
+      }
+      return this._setComponentGlobal(component);
+    },
+    _setComponentGlobal(component) {
+      // register
+      if (component.meta && component.meta.global === true) {
+        Vue.component(component.name, component);
+      }
+      return component;
+    },
+    _setComponentModule(component, module) {
       component.__ebModuleRelativeName = module.info.relativeName;
     },
     parseHash(url) {

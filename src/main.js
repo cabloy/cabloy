@@ -1,7 +1,5 @@
-import Vue from 'vue';
-
-// Vue
-window.Vue = Vue;
+// vue
+const Vue = require('./base/vue.js').default;
 
 // json
 require('./base/json.js');

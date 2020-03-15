@@ -159,7 +159,7 @@ export default function(Vue) {
     _registerRoutes(module) {
       if (!module.options.routes) return null;
       const routes = module.options.routes.map(route => {
-        Vue.prototype.$meta.util.setComponentModule(route.component, module);
+        Vue.prototype.$meta.util._setComponentModule(route.component, module);
         // path
         route.path = `/${module.info.pid}/${module.info.name}/${route.path}`;
         // meta.modal
@@ -209,10 +209,8 @@ export default function(Vue) {
     _registerComponents(module) {
       for(const key in module.options.components){
         const component = module.options.components[key];
-        Vue.prototype.$meta.util.setComponentModule(component, module);
-        if (component.meta && component.meta.global === true) {
-          Vue.component(key, component);
-        }
+        Vue.prototype.$meta.util._setComponentModule(component, module);
+        Vue.prototype.$meta.util._setComponentGlobal(component);
       }
     },
     _registerStore(module) {
