@@ -27,6 +27,10 @@ module.exports = app => {
       await this.ctx.model.query('delete from aFunctionLocale');
     }
 
+    async setSceneSorting() {
+      await this.ctx.meta.function.setSceneSorting();
+    }
+
   }
 
   return Function;

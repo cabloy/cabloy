@@ -48,8 +48,15 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    // startup
     async clearLocales() {
       const res = await this.ctx.service.function.clearLocales();
+      this.ctx.success(res);
+    }
+
+    // startup
+    async setSceneSorting() {
+      const res = await this.ctx.service.function.setSceneSorting();
       this.ctx.success(res);
     }
 
