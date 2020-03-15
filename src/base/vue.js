@@ -7,7 +7,7 @@ window.Vue = Vue;
 // meta
 const strats = Vue.config.optionMergeStrategies;
 strats.meta = function(parentVal, childVal, vm, key) {
-  return Vue.prototype.$meta.util.extend({}, parentVal, childVal);
+  return Vue.prototype.$meta.util.extend({}, childVal, parentVal);
 };
 
 export default Vue;
