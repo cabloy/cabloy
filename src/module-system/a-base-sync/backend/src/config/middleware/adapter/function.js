@@ -129,7 +129,7 @@ const Fn = module.exports = ctx => {
         module,
         name: func.name,
         title: func.title,
-        scene: ctx.constant.module(moduleInfo.relativeName).function.scene[func.scene],
+        scene: func.scene,
         autoRight: func.autoRight,
         atomClassId,
         action: func.action ? ctx.constant.module(moduleInfo.relativeName).atom.action[func.action] : 0,

@@ -77,6 +77,17 @@ module.exports = appInfo => {
     'en-us': 'English',
     'zh-cn': 'Chinese',
   };
+
+  // function
+  config.function = {
+    menu: {
+      sorting: {
+        basic: [ 'create,list' ],
+        last: [ 'tools' ],
+      },
+    },
+  };
+
   // anonymous
   config.anonymous = {
     maxAge: 365 * 24 * 3600 * 1000, // 365 天
