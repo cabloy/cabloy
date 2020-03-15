@@ -41,6 +41,7 @@ export default {
   data() {
     return {
       layout: null,
+      sticky: false,
       error: null,
     };
   },
@@ -66,8 +67,8 @@ export default {
     getLayout() {
       return this.$refs.layout;
     },
-    resize() {
-      // layout
+    _calcLayout() {
+      if (this.sticky && this.layout) return this.layout;
       const breakpoint = this.$meta.config.layout.breakpoint;
       const windowWidth = window.document.documentElement.clientWidth;
       const windowHeight = window.document.documentElement.clientHeight;
@@ -75,6 +76,12 @@ export default {
       if (!this._getLayoutItem(layout)) {
         layout = layout === 'pc' ? 'mobile' : 'pc';
       }
+      this.sticky = true;
+      return layout;
+    },
+    resize() {
+      // layout
+      const layout = this._calcLayout();
       // check if switch
       if (this.layout === layout) {
         const component = this.getLayout();
