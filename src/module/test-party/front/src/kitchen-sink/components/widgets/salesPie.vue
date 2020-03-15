@@ -127,13 +127,13 @@ function install(_Vue) {
             display: true,
             position: 'top',
             text: this.season,
-            fontColor: 'rgba(255, 255, 255, 0.4)',
+            fontColor: 'rgba(128, 128, 128, 0.6)',
           },
           legend: {
             display: true,
             position: 'left',
             labels: {
-              fontColor: 'rgba(255, 255, 255, 0.4)',
+              fontColor: 'rgba(128, 128, 128, 0.6)',
             },
           },
         };

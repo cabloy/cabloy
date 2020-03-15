@@ -127,7 +127,7 @@ function install(_Vue) {
             display: true,
             position: 'top',
             text: this.fruit,
-            fontColor: 'rgba(255, 255, 255, 0.4)',
+            fontColor: 'rgba(128, 128, 128, 0.6)',
           },
           legend: {
             display: false,
@@ -138,7 +138,7 @@ function install(_Vue) {
                 display: false,
               },
               ticks: {
-                fontColor: 'rgba(255, 255, 255, 0.4)',
+                fontColor: 'rgba(128, 128, 128, 0.6)',
               },
             }],
             yAxes: [{
@@ -146,7 +146,7 @@ function install(_Vue) {
                 display: true,
               },
               ticks: {
-                fontColor: 'rgba(255, 255, 255, 0.4)',
+                fontColor: 'rgba(128, 128, 128, 0.6)',
                 stepSize: 200,
               },
             }],
