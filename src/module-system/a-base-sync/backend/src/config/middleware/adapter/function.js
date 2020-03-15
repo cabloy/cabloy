@@ -1,6 +1,7 @@
 const modelFn = require('../../../model/function.js');
 const modelFunctionStarFn = require('../../../model/functionStar.js');
 const modelFunctionLocaleFn = require('../../../model/functionLocale.js');
+const modelFunctionSceneFn = require('../../../model/functionScene.js');
 const sqlProcedureFn = require('../../sql/procedure.js');
 
 const Fn = module.exports = ctx => {
@@ -12,6 +13,7 @@ const Fn = module.exports = ctx => {
       this._model = null;
       this._modelFunctionStar = null;
       this._modelFunctionLocale = null;
+      this._modelFunctionScene = null;
       this._sqlProcedure = null;
     }
 
@@ -33,6 +35,11 @@ const Fn = module.exports = ctx => {
     get modelFunctionLocale() {
       if (!this._modelFunctionLocale) this._modelFunctionLocale = new (modelFunctionLocaleFn(ctx.app))(ctx);
       return this._modelFunctionLocale;
+    }
+
+    get modelFunctionScene() {
+      if (!this._modelFunctionScene) this._modelFunctionScene = new (modelFunctionSceneFn(ctx.app))(ctx);
+      return this._modelFunctionScene;
     }
 
     get sqlProcedure() {
@@ -120,16 +127,32 @@ const Fn = module.exports = ctx => {
       if (res) return res;
       const func = ctx.meta.base.function({ module, name });
       if (!func) throw new Error(`function not found: ${module}:${name}`);
+      // atomClassId
       let atomClassId = 0;
       if (func.atomClassName) {
         const atomClass = await ctx.meta.atomClass.get({ module, atomClassName: func.atomClassName });
         atomClassId = atomClass.id;
       }
+      // sceneId
+      let sceneId;
+      const sceneName = func.scene;
+      if (!sceneName) {
+        sceneId = 0;
+      } else {
+        const sceneItem = await this.modelFunctionScene.get({ scene: sceneName, menu: func.menu });
+        if (sceneItem) {
+          sceneId = sceneItem.id;
+        } else {
+          const res = await this.modelFunctionScene.insert({ scene: sceneName, menu: func.menu });
+          sceneId = res.insertId;
+        }
+      }
+      // insert
       const data = {
         module,
         name: func.name,
         title: func.title,
-        scene: func.scene,
+        sceneId,
         autoRight: func.autoRight,
         atomClassId,
         action: func.action ? ctx.constant.module(moduleInfo.relativeName).atom.action[func.action] : 0,
