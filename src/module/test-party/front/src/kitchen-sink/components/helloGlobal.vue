@@ -11,6 +11,7 @@ export default {
   meta: {
     global: true,
   },
+  name: 'hello-global',
   data() {
     return {};
   },

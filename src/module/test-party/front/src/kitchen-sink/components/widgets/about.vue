@@ -18,9 +18,6 @@
 // export
 export default {
   install,
-  meta: {
-    global: false,
-  },
 };
 
 // install

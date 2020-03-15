@@ -54,14 +54,6 @@ const attrsSchema = {
 // export
 export default {
   install,
-  meta: {
-    global: false,
-    widget: {
-      schema: {
-        attrs: attrsSchema,
-      },
-    },
-  },
 };
 
 // install
@@ -69,6 +61,13 @@ function install(_Vue) {
   const Vue = _Vue;
   const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').options.mixins.ebDashboardWidgetBase;
   return {
+    meta: {
+      widget: {
+        schema: {
+          attrs: attrsSchema,
+        },
+      },
+    },
     mixins: [ebDashboardWidgetBase],
     data() {
       return {

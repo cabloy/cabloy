@@ -32,14 +32,6 @@ const propsSchema = {
 // export
 export default {
   install,
-  meta: {
-    global: false,
-    widget: {
-      schema: {
-        props: propsSchema,
-      },
-    },
-  },
 };
 
 // install
@@ -47,6 +39,13 @@ function install(_Vue) {
   const Vue = _Vue;
   const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').options.mixins.ebDashboardWidgetBase;
   return {
+    meta: {
+      widget: {
+        schema: {
+          props: propsSchema,
+        },
+      },
+    },
     mixins: [ebDashboardWidgetBase],
     props: {
       snapshots: {
