@@ -87,6 +87,12 @@ export default {
     sizeSpacing() {
       return this.size.verySmall ? 0 : this.size.spacing;
     },
+    sidebarCoverLeft() {
+      return this.size.verySmall ? true : this.sidebar.left.cover;
+    },
+    sidebarCoverRight() {
+      return this.size.verySmall ? true : this.sidebar.right.cover;
+    },
   },
   beforeDestroy() {
     // click
@@ -285,7 +291,8 @@ export default {
       if (this.sidebar[side].panels.length > 0) {
         width += this.sidebar[side].tabsWidth;
       }
-      if (this.sidebar[side].opened && !this.sidebar[side].cover) {
+      const sideUpperCase = side.replace(side[0], side[0].toUpperCase());
+      if (this.sidebar[side].opened && !this[`sidebarCover${sideUpperCase}`]) {
         width += this.sidebar[side].panelWidth;
       }
       return width;
@@ -294,10 +301,10 @@ export default {
       const $clickedEl = this.$$(event.target);
       const $clickedSidebarEl = $clickedEl.closest('.eb-layout-sidebar');
       if ($clickedSidebarEl.length === 0) {
-        if (this.sidebar.left.cover && this.sidebar.left.opened) {
+        if (this.sidebarCoverLeft && this.sidebar.left.opened) {
           this.$refs.sidebarLeft.setOpened(false);
         }
-        if (this.sidebar.right.cover && this.sidebar.right.opened) {
+        if (this.sidebarCoverRight && this.sidebar.right.opened) {
           this.$refs.sidebarRight.setOpened(false);
         }
       }

@@ -1,6 +1,9 @@
 <script>
 export default {
   render(c) {
+    const side = this.sidebar.side;
+    const sideUpperCase = side.replace(side[0], side[0].toUpperCase());
+
     const children = [];
     children.push(c('f7-link', {
       props: {
@@ -18,14 +21,16 @@ export default {
         click: this.onClickHide,
       },
     }));
-    children.push(c('f7-link', {
-      props: {
-        iconMaterial: this.sidebar.options.cover ? 'chevron_left' : 'expand_more',
-      },
-      on: {
-        click: this.onClickCover,
-      },
-    }));
+    if (!this.layout.size.verySmall) {
+      children.push(c('f7-link', {
+        props: {
+          iconMaterial: this.layout[`sidebarCover${sideUpperCase}`] ? 'chevron_left' : 'expand_more',
+        },
+        on: {
+          click: this.onClickCover,
+        },
+      }));
+    }
     const toolbar = c('f7-toolbar', {
       ref: 'toolbar',
       staticClass: 'panel-toolbar',
@@ -51,6 +56,7 @@ export default {
   },
   methods: {
     onClickCover() {
+      if (this.layout.size.verySmall) return;
       this.sidebar.options.cover = !this.sidebar.options.cover;
       this.layout.onResize();
       this.layout.__saveLayoutConfig();

@@ -93,8 +93,10 @@ export default {
     }
   },
   created() {
+    const side = this.side;
+    const sideUpperCase = side.replace(side[0], side[0].toUpperCase());
     // opened=false if cover
-    if (this.options.cover) {
+    if (this.layout[`sidebarCover${sideUpperCase}`]) {
       this.options.opened = false;
       this.options.panelActive = '';
     }
@@ -207,9 +209,13 @@ export default {
     setOpened(opened, init) {
       if (this.options.opened === opened) return;
       this.options.opened = opened;
-      if (!this.options.cover) {
+
+      const side = this.side;
+      const sideUpperCase = side.replace(side[0], side[0].toUpperCase());
+      if (!this.layout[`sidebarCover${sideUpperCase}`]) {
         this.layout.onResize();
       }
+
       if (!init) {
         this.layout.__saveLayoutConfig();
       }
@@ -218,7 +224,10 @@ export default {
       const width = parseInt(newPanelWidth);
       if (this.options.panelWidth === width) return;
       this.options.panelWidth = width;
-      if (!this.options.cover) {
+
+      const side = this.side;
+      const sideUpperCase = side.replace(side[0], side[0].toUpperCase());
+      if (!this.layout[`sidebarCover${sideUpperCase}`]) {
         this._onPanelResizeDelay();
       }
       // save
