@@ -26,8 +26,8 @@ export default {
       const groups = c('eb-groups', {
         ref: 'groups',
         style: {
-          height: `${this.size.height - this.size.top - this.size.spacing * 2}px`,
-          top: `${ this.size.top + this.size.spacing}px`,
+          height: `${this.size.height - this.size.top - this.sizeSpacing * 2}px`,
+          top: `${ this.size.top + this.sizeSpacing}px`,
         },
       });
       children.push(groups);
@@ -55,6 +55,7 @@ export default {
         spacing: 0,
         enoughMedium: false,
         enoughLarge: false,
+        verySmall: false,
       },
       groups: [],
       sidebar: {
@@ -82,9 +83,17 @@ export default {
       panelsAll: null,
     };
   },
+  computed: {
+    sizeSpacing() {
+      return this.size.verySmall ? 0 : this.size.spacing;
+    },
+  },
   beforeDestroy() {
     // click
     this.$f7.off('click', this._handleClicks);
+  },
+  created() {
+    this.size.spacing = this.$config.layout.size.spacing;
   },
   mounted() {
     this.$f7ready(() => {
@@ -108,8 +117,11 @@ export default {
       const layoutWidth = this.$$(this.$el).width();
       const layoutHeight = this.$$(this.$el).height();
 
+      // verySmall
+      this.size.verySmall = (layoutWidth < layoutHeight) || (layoutWidth <= this.$config.layout.size.small);
+
       // spacing
-      const spacing = this.size.spacing = this.$config.layout.size.spacing;
+      const spacing = this.sizeSpacing;
 
       let width = layoutWidth;
       let height = layoutHeight;

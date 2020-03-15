@@ -4,7 +4,7 @@ export default {
   render(c) {
     const children = [];
     // more
-    if (this.layout.groups.length > 2) {
+    if (this.layout.size.verySmall || this.layout.groups.length > 2) {
       children.push(c('f7-link', {
         props: {
           iconMaterial: 'expand_more',

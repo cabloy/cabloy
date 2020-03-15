@@ -133,9 +133,9 @@ export default {
         const width = this.size[viewSize];
         // space
         const space2 = space - width - spacing;
-        if (space2 > 0) {
+        if (space2 >= 0) {
           space = space2;
-          spacing = this.size.spacing;
+          spacing = this.layout.sizeSpacing;
         } else {
           break;
         }
@@ -153,9 +153,9 @@ export default {
         const width = this.size[viewSize];
         // space
         left -= width + spacing;
-        spacing = this.size.spacing;
+        spacing = this.layout.sizeSpacing;
         // check
-        if (left > 0) {
+        if (left >= 0) {
           const newStyle = {
             left: `${left+sidebarLeft}px`,
           };
