@@ -13,7 +13,7 @@ export default {
   meta: {
     global: true,
   },
-  name: 'eb-loadmore',
+  name: 'eb-load-more',
   props: {
     autoInit: {
       type: Boolean,
