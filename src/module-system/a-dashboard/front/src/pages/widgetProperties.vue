@@ -139,18 +139,18 @@ export default {
     },
     _renderList(c) {
       // schema
-      let [propsSchema, propsScenes] = this.widget._getPropsSchemaSceneGrouping(this.widget.options);
-      const basicOnly = Object.keys(propsScenes) === 1;
+      let [propsSchema, propsCategories] = this.widget._getPropsSchemaCategoryGrouping(this.widget.options);
+      const basicOnly = Object.keys(propsCategories).length === 1;
       // schema data
       let schemaData = this._getSchemaData(propsSchema);
       // list
       const children = [];
-      for (const propsSceneKey in propsScenes) {
+      for (const propsCategoryKey in propsCategories) {
         children.push(this._renderListGroup({
           c,
-          title: propsSceneKey || 'General',
-          opened: propsSceneKey !== 'Basic' || basicOnly,
-          propsSchema: propsScenes[propsSceneKey],
+          title: propsCategoryKey || 'General',
+          opened: propsCategoryKey !== 'Basic' || basicOnly,
+          propsSchema: propsCategories[propsCategoryKey],
         }));
       }
       // list

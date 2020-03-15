@@ -47,12 +47,20 @@ export default {
     children.push(resizeHandler);
     // group/widget
     if (this.options.group) {
+      // props
+      const props = {
+        widget: this, // for more extensible
+        root: false,
+        dashboard: this.dashboard,
+        widgets: this.options.widgets,
+      };
+      this.__combineWidgetProps(props);
       children.push(c('eb-dashboard-widget-group', {
         ref: 'group',
-        props: {
-          root: false,
-          dashboard: this.dashboard,
-          widgets: this.options.widgets,
+        props,
+        on: {
+          'widgetReal:ready': this.__onWidgetRealReady,
+          'widgetReal:destroy': this.__onWidgetRealDestroy,
         },
       }));
     } else {
@@ -270,31 +278,33 @@ export default {
       }
       return null;
     },
-    _getAttrsSchemaBasic(bGroup) {
-      if (bGroup) return this.$config.schema.basic.group.attrs;
-      return this.$config.schema.basic.widget.attrs;
-    },
     _getAttrsSchema(options) {
+      // group
+      if (options.group) return this.$options.components["eb-dashboard-widget-group"].options.meta.widget.schema.attrs;
+      // widget
       const component = this.$options.components[this.__getFullName(options)];
       const attrsSchema = component && component.meta && component.meta.widget && component.meta.widget.schema && component.meta.widget.schema.attrs;
       return attrsSchema || null;
     },
     _getPropsSchema(options) {
+      // group
+      if (options.group) return this.$options.components["eb-dashboard-widget-group"].options.meta.widget.schema.props;
+      // widget
       const component = this.$options.components[this.__getFullName(options)];
       const propsSchema = component && component.meta && component.meta.widget && component.meta.widget.schema && component.meta.widget.schema.props;
       return propsSchema || null;
     },
-    _getPropsSchemaSceneGrouping(options) {
+    _getPropsSchemaCategoryGrouping(options) {
       const propsSchema = this._getPropsSchema(options);
       if (!propsSchema) return [null, null];
-      const propsScenes = {};
+      const propsCategories = {};
       for (const propertyName in propsSchema.properties) {
         const propSchema = propsSchema.properties[propertyName];
-        const scene = propSchema.ebScene || '';
-        if (!propsScenes[scene]) propsScenes[scene] = {};
-        propsScenes[scene][propertyName] = propSchema;
+        const category = propSchema.ebCategory || '';
+        if (!propsCategories[category]) propsCategories[category] = {};
+        propsCategories[category][propertyName] = propSchema;
       }
-      return [propsSchema, propsScenes];
+      return [propsSchema, propsCategories];
     },
     __combineWidgetProps(props) {
       const propsSchema = this._getPropsSchema(this.options);

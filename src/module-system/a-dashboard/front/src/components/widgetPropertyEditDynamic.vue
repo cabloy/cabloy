@@ -75,12 +75,9 @@ export default {
     },
     _getOptionsPropertyName(widgetItem, propClues) {
       const options = [{ title: '', value: '' }];
-      // basic
-      const schemaBasic = this.widget._getAttrsSchemaBasic(widgetItem.widgetReal.widget.options.group);
-      this._combineOptionsSourceWidgetSchema(options, schemaBasic, propClues);
-      // general
-      const schemaGeneral = this.widget._getAttrsSchema(widgetItem.widgetReal.widget.options);
-      this._combineOptionsSourceWidgetSchema(options, schemaGeneral, propClues);
+      // schema
+      const attrsSchema = this.widget._getAttrsSchema(widgetItem.widgetReal.widget.options);
+      this._combineOptionsSourceWidgetSchema(options, attrsSchema, propClues);
       return options;
     },
     _combineOptionsSourceWidgetSchema(options, attrsSchema, propClues) {

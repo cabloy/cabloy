@@ -5,7 +5,7 @@ export default {
     global: true,
   },
   name: 'eb-dashboard-widget-group',
-  mixins: [widgetBaseFn(Vue, false)],
+  mixins: [widgetBaseFn(Vue, true)],
   render(c) {
     return this.__renderRow(c);
   },
