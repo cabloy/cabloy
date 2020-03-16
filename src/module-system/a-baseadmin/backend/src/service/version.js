@@ -38,7 +38,7 @@ module.exports = app => {
       if (options.version === 3) {
         // roleFunctions
         const roleFunctions = [
-          { roleName: 'system', name: 'menuScene' },
+          { roleName: 'system', name: 'menuManagement' },
         ];
         await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
       }

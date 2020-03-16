@@ -43,8 +43,8 @@ module.exports = app => {
           sorting: 15,
           menu: 1,
         },
-        menuScene: {
-          title: 'Menu Category',
+        menuManagement: {
+          title: 'Menu Management',
           actionPath: 'function/scene?menu=1',
           sorting: 1,
           menu: 0,

@@ -52,8 +52,8 @@ module.exports = app => {
     { method: 'post', path: 'auth/item', controller: auth, meta: { right: { type: 'function', name: 'auth' } } },
     { method: 'post', path: 'auth/save', controller: auth, meta: { right: { type: 'function', name: 'auth' } } },
     // function
-    { method: 'post', path: 'function/scenesLoad', controller: _function, meta: { right: { type: 'function', name: 'menuScene' } } },
-    { method: 'post', path: 'function/scenesSaveSortings', controller: _function, meta: { right: { type: 'function', name: 'menuScene' } } },
+    { method: 'post', path: 'function/scenesLoad', controller: _function, meta: { right: { type: 'function', name: 'menuManagement' } } },
+    { method: 'post', path: 'function/scenesSaveSortings', controller: _function, meta: { right: { type: 'function', name: 'menuManagement' } } },
   ];
   return routes;
 };

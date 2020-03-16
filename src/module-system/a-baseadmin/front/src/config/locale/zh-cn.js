@@ -12,6 +12,8 @@ export default {
   'Function Right': '功能权限',
   'Panel Right': '边栏权限',
   'Widget Right': '部件权限',
+  'Function Management': '功能管理',
+  'Menu Management': '菜单管理',
   'Menu Right Management': '菜单权限管理',
   'Panel Right Management': '边栏权限管理',
   'Widget Right Management': '部件权限管理',

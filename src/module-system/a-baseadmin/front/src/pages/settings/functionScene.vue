@@ -22,8 +22,8 @@ export default {
   },
   methods: {
     getPageTitle() {
-      if (this.menu === 0) return this.$text('Function Category');
-      if (this.menu === 1) return this.$text('Menu Category');
+      if (this.menu === 0) return this.$text('Function Management');
+      if (this.menu === 1) return this.$text('Menu Management');
     },
     getDragdropContext(item) {
       return {
