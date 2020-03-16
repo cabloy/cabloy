@@ -21,7 +21,7 @@
 //  articles of category / tag
 import Vue from 'vue';
 const ebMenus = Vue.prototype.$meta.module.get('a-base').options.mixins.ebMenus;
-const ebAtoms = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtoms;
+const ebAtoms = Vue.prototype.$meta.module.get('a-base').options.components.ebAtoms;
 import utils from '../../common/utils.js';
 export default {
   mixins: [ebMenus],
@@ -57,7 +57,7 @@ export default {
   created() {
     // functionList
     const options = {
-      where: { menu: 1, scene: 1 },
+      where: { menu: 1, sceneName: 'create' },
       orders: [
         ['sorting', 'asc'],
       ],
