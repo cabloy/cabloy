@@ -10,6 +10,7 @@ module.exports = {
   Products: '产品',
   Snapshots: '快照',
   About: '关于',
+  Demonstration: '演示',
   'Create Party': '新建宴会',
   'Party List': '宴会列表',
   'Level One': '层级1',

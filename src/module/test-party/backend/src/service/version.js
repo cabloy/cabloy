@@ -126,6 +126,14 @@ module.exports = app => {
         await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
       }
 
+      //
+      if (options.version === 6) {
+        // function: kitchenSink scene->demonstration
+        const sceneId = await this.ctx.meta.function.getSceneId({ sceneName: 'demonstration', sceneMenu: 1 });
+        const func = await this.ctx.meta.function.get({ name: 'kitchenSink' });
+        await this.ctx.meta.function.model.update({ id: func.id, sceneId });
+      }
+
     }
 
     async test() {

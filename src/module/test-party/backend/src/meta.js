@@ -61,7 +61,7 @@ module.exports = app => {
           },
           kitchenSink: {
             title: 'Kitchen-sink',
-            scene: 'tools',
+            scene: 'demonstration',
             actionPath: 'kitchen-sink/index',
             sorting: 1,
             menu: 1,
