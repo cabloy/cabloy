@@ -42,11 +42,6 @@ module.exports = appInfo => {
       instance: true,
       path: 'function/setLocales',
     },
-    setFunctionSceneSorting: {
-      type: 'worker',
-      instance: true,
-      path: 'function/setSceneSorting',
-    },
   };
 
   // queues

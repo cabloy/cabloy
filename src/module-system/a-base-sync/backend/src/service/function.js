@@ -23,10 +23,6 @@ module.exports = app => {
       await this.ctx.meta.function.setLocales();
     }
 
-    async setSceneSorting() {
-      await this.ctx.meta.function.setSceneSorting();
-    }
-
     async scenes({ sceneMenu }) {
       return await this.ctx.meta.function.scenes({ sceneMenu });
     }

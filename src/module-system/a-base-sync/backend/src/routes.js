@@ -109,9 +109,6 @@ module.exports = app => {
     { method: 'post', path: 'function/setLocales', controller: func, middlewares: 'inner',
       meta: { auth: { enable: false } },
     },
-    { method: 'post', path: 'function/setSceneSorting', controller: func, middlewares: 'inner',
-      meta: { auth: { enable: false } },
-    },
     // atomAction
     { method: 'post', path: 'atomAction/register', controller: atomAction, middlewares: 'inner',
       meta: { auth: { enable: false } },

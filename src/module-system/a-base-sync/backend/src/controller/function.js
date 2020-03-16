@@ -47,12 +47,6 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    // startup
-    async setSceneSorting() {
-      const res = await this.ctx.service.function.setSceneSorting();
-      this.ctx.success(res);
-    }
-
     async scenes() {
       const res = await this.ctx.service.function.scenes({
         sceneMenu: this.ctx.request.body.sceneMenu,

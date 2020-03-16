@@ -200,14 +200,6 @@ const Fn = module.exports = ctx => {
       return data;
     }
 
-    async setSceneSorting() {
-      // check status cache
-      // get scenes from base
-      // update all sortings
-      // set status cache
-
-    }
-
     async checkRightFunction({
       function: { module, name },
       user,
