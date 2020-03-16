@@ -27,6 +27,7 @@ module.exports = app => {
       assert(!list[0].titleLocale);
 
       // Tom menu list zh-cn
+      //   testFunctionPublic is handled in version/test, so have not locale info
       list = await this.ctx.meta.function.list({
         options: {
           where: { 'a.module': 'test-party' },
@@ -36,7 +37,7 @@ module.exports = app => {
         },
         user: userTom,
       });
-      assert.equal(list.length, functionCount);
+      assert.equal(list.length, functionCount - 1);
       assert.equal(!!list[0].titleLocale, true);
 
       // hold first
