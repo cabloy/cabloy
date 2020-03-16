@@ -3,7 +3,7 @@
   "version": "3.0.9",
   "title": "Basic Admin",
   "eggBornModule": {
-    "fileVersion": 4,
+    "fileVersion": 3,
     "dependencies": {
       "a-base": "3.0.0"
     }

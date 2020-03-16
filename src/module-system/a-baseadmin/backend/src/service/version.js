@@ -35,7 +35,7 @@ module.exports = app => {
         }
       }
 
-      if (options.version === 4) {
+      if (options.version === 3) {
         // roleFunctions
         const roleFunctions = [
           { roleName: 'system', name: 'menu' },
