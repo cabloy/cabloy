@@ -227,6 +227,10 @@ export default {
           data,
           meta: {
             schema,
+            hint: {
+              optional: '',
+              must: '',
+            },
           },
         },
         on: {
