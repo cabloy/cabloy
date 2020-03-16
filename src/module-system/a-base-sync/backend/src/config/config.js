@@ -85,11 +85,8 @@ module.exports = appInfo => {
 
   // function
   config.function = {
-    menu: {
-      sorting: {
-        basic: [ 'create,list' ],
-        last: [ 'tools' ],
-      },
+    scenes: {
+      1: 'create,list,tools', // menu
     },
   };
 

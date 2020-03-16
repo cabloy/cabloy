@@ -120,6 +120,22 @@ const Fn = module.exports = ctx => {
       });
     }
 
+    // iid maybe undefined
+    async getSceneId({ iid, scene, menu }) {
+      const sceneItem = await this.modelFunctionScene.get({ iid, scene, menu });
+      if (sceneItem) return sceneItem.id;
+      // scene sorting
+      const scenes = (ctx.config.module(moduleInfo.relativeName).function.scenes[menu] || '').split(',');
+      const sorting = scenes.indexOf(scene) + 1;
+      const res = await this.modelFunctionScene.insert({
+        iid,
+        scene,
+        menu,
+        sorting,
+      });
+      return res.insertId;
+    }
+
     async register({ module, name }) {
       module = module || this.moduleName;
       // get
@@ -139,13 +155,7 @@ const Fn = module.exports = ctx => {
       if (!sceneName) {
         sceneId = 0;
       } else {
-        const sceneItem = await this.modelFunctionScene.get({ scene: sceneName, menu: func.menu });
-        if (sceneItem) {
-          sceneId = sceneItem.id;
-        } else {
-          const res = await this.modelFunctionScene.insert({ scene: sceneName, menu: func.menu });
-          sceneId = res.insertId;
-        }
+        sceneId = await this.getSceneId({ scene: sceneName, menu: func.menu });
       }
       // insert
       const data = {
