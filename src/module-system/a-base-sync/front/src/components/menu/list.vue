@@ -120,26 +120,26 @@ export default {
       let options;
       if (this.mode === 'scenes') {
         options = {
-          where: { menu: 1 },
+          where: { 'a.menu': 1 },
           orders: [
-            ['scene', 'asc'],
-            ['sorting', 'asc'],
+            ['a.sceneId', 'asc'],
+            ['a.sorting', 'asc'],
           ],
           page: { index },
         };
       } else if (this.mode === 'modules') {
         options = {
-          where: { menu: 1 },
+          where: { 'a.menu': 1 },
           orders: [
-            ['module', 'asc'],
-            ['scene', 'asc'],
-            ['sorting', 'asc'],
+            ['a.module', 'asc'],
+            ['a.sceneId', 'asc'],
+            ['a.sorting', 'asc'],
           ],
           page: { index },
         };
       } else if (this.mode === 'stars') {
         options = {
-          where: { menu: 1 },
+          where: { 'a.menu': 1 },
           orders: [
             ['d.updatedAt', 'desc'],
           ],
@@ -148,9 +148,9 @@ export default {
         };
       } else if (this.mode === 'search') {
         options = {
-          where: { menu: 1, titleLocale: { val: this.query, op: 'like' } },
+          where: { 'a.menu': 1, 'b.titleLocale': { val: this.query, op: 'like' } },
           orders: [
-            ['titleLocale', 'asc'],
+            ['b.titleLocale', 'asc'],
           ],
           page: { index },
         };

@@ -476,6 +476,7 @@ module.exports = ctx => {
       // -- c: aViewUserRightFunction
       // -- d: aFunctionStar
       // -- e: aAtomClass
+      // -- f: aFunctionScene
 
       // for safe
       where = where ? ctx.model._where(where) : null;
@@ -533,6 +534,7 @@ module.exports = ctx => {
            from aFunction a
 
              left join aAtomClass e on a.atomClassId=e.id
+             left join aFunctionScene f on a.sceneId=f.id
              ${_localeJoin}
              ${_starJoin}
 
