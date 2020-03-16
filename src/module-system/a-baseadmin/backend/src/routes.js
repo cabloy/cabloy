@@ -54,6 +54,8 @@ module.exports = app => {
     // function
     { method: 'post', path: 'function/scenesLoad', controller: _function, meta: { right: { type: 'function', name: 'menuManagement' } } },
     { method: 'post', path: 'function/scenesSaveSortings', controller: _function, meta: { right: { type: 'function', name: 'menuManagement' } } },
+    { method: 'post', path: 'function/sceneItemsLoad', controller: _function, meta: { right: { type: 'function', name: 'menuManagement' } } },
+    { method: 'post', path: 'function/sceneItemsSaveSortings', controller: _function, meta: { right: { type: 'function', name: 'menuManagement' } } },
   ];
   return routes;
 };

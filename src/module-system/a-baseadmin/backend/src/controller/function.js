@@ -16,6 +16,23 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async sceneItemsLoad() {
+      const res = await this.ctx.service.function.sceneItemsLoad({
+        sceneMenu: this.ctx.request.body.sceneMenu,
+        sceneId: this.ctx.request.body.sceneId,
+      });
+      this.ctx.success(res);
+    }
+
+    async sceneItemsSaveSortings() {
+      const res = await this.ctx.service.function.sceneItemsSaveSortings({
+        sceneMenu: this.ctx.request.body.sceneMenu,
+        sceneId: this.ctx.request.body.sceneId,
+        sortings: this.ctx.request.body.sortings,
+      });
+      this.ctx.success(res);
+    }
+
   }
   return FunctionController;
 };

@@ -15,16 +15,23 @@ export default {
       sceneMenu: parseInt(this.$f7route.query.sceneMenu),
       sceneId: parseInt(this.$f7route.query.sceneId),
       functionItems: null,
+      functionScenes: null,
       dragdropScene: Vue.prototype.$meta.util.nextId('dragdrop'),
     };
   },
   created() {
+    this.$store.dispatch('a/base/getFunctionScenes', { sceneMenu: this.sceneMenu }).then(data => {
+      this.functionScenes = data;
+    });
     this.__functionSceneItemsLoad();
   },
   methods: {
     getPageTitle() {
-      if (this.menu === 0) return this.$text('Function Management');
-      if (this.menu === 1) return this.$text('Menu Management');
+      let title;
+      if (this.sceneMenu === 0) title = this.$text('Function Management');
+      if (this.sceneMenu === 1) title = this.$text('Menu Management');
+      if (!this.functionScenes) return title;
+      return `${title}: ${this.functionScenes[this.sceneId].titleLocale}`;
     },
     getDragdropContext(item) {
       return {
@@ -52,25 +59,25 @@ export default {
     },
     onDragDone({ $el, context, dragElement, dropElement, dropContext }) {
       const indexDrag = this.__getSceneIndex(context.item);
-      this.functionScenes.splice(indexDrag, 1);
+      this.functionItems.splice(indexDrag, 1);
       const indexDrop = this.__getSceneIndex(dropContext.item);
-      this.functionScenes.splice(indexDrop, 0, context.item);
+      this.functionItems.splice(indexDrop, 0, context.item);
       // save
-      this.__functionScenesSaveSortings();
+      this.__functionSceneItemsSaveSortings();
     },
     __getSceneIndex(item) {
-      return this.functionScenes.findIndex(_item => _item.id === item.id);
+      return this.functionItems.findIndex(_item => _item.id === item.id);
     },
-    __functionScenesLoad() {
-      this.$api.post('function/scenesLoad', { sceneMenu: this.menu }).then(data => {
-        this.functionScenes = data;
+    __functionSceneItemsLoad() {
+      this.$api.post('function/sceneItemsLoad', { sceneMenu: this.sceneMenu, sceneId: this.sceneId }).then(data => {
+        this.functionItems = data;
       });
     },
-    __functionScenesSaveSortings() {
-      const sortings = this.functionScenes.map((item, index) => {
+    __functionSceneItemsSaveSortings() {
+      const sortings = this.functionItems.map((item, index) => {
         return { id: item.id, sorting: index + 1 }
       });
-      this.$api.post('function/scenesSaveSortings', { sceneMenu: this.menu, sortings }).then(() => {
+      this.$api.post('function/sceneItemsSaveSortings', { sceneMenu: this.sceneMenu, sceneId: this.sceneId, sortings }).then(() => {
         this.$view.toast.show();
       });
     }
