@@ -584,7 +584,7 @@ module.exports = ctx => {
       // sql
       const _sql =
         `select a.* from aFunction a
-            where a.iid=${iid} and a.menu>0
+            where a.iid=${iid}
               and not exists(
                 select b.id from aFunctionLocale b
                   where b.iid=${iid} and b.locale=${locale} and b.functionId=a.id

@@ -52,9 +52,6 @@ const Fn = module.exports = ctx => {
     async list({ options: { where, orders, page, star = 0, locale = '' }, user }) {
       // page = ctx.meta.util.page(page); // has set in controller
 
-      // check locale
-      if (locale) await this.checkLocale({ locale });
-
       // sql
       const sql = this.sqlProcedure.selectFunctions({
         iid: ctx.instance.id,
@@ -224,38 +221,26 @@ const Fn = module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    async _checkFunctionLocales({ locale }) {
-      locale = locale || ctx.locale;
-      const sql = this.sqlProcedure.checkFunctionLocales({
-        iid: ctx.instance.id,
-        locale,
-      });
-      return await ctx.model.query(sql);
-    }
-
-    async checkLocale({ locale }) {
-      const res = await this._checkFunctionLocales({ locale });
-      if (res.length === 0) return;
-      // queue
-      await ctx.app.meta.queue.pushAsync({
-        subdomain: ctx.subdomain,
-        module: moduleInfo.relativeName,
-        queueName: 'checkFunctionLocale',
-        data: { locale },
-      });
-    }
-
-    async _checkLocale({ locale }) {
-      const res = await this._checkFunctionLocales({ locale });
-      if (res.length === 0) return;
+    async _setLocale({ locale }) {
+      const functions = await this.model.select();
       // insert locales
-      for (const menu of res) {
-        const titleLocale = ctx.text.locale(locale, menu.title);
+      for (const func of functions) {
+        const titleLocale = ctx.text.locale(locale, func.title);
         await this.modelFunctionLocale.insert({
-          functionId: menu.id,
+          functionId: func.id,
           locale,
           titleLocale,
         });
+      }
+    }
+
+    async setLocales() {
+      // clear
+      await this.clearLocales();
+      // setLocales
+      const locales = ctx.config.module(moduleInfo.relativeName).locales;
+      for (const locale in locales) {
+        await this._setLocale({ locale });
       }
     }
 

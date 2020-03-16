@@ -37,9 +37,10 @@ module.exports = appInfo => {
       type: 'all',
       path: 'auth/installAuthProviders',
     },
-    clearFunctionLocales: {
+    setFunctionLocales: {
       type: 'worker',
-      path: 'function/clearLocales',
+      instance: true,
+      path: 'function/setLocales',
     },
     setFunctionSceneSorting: {
       type: 'worker',
@@ -50,9 +51,6 @@ module.exports = appInfo => {
 
   // queues
   config.queues = {
-    checkFunctionLocale: {
-      path: 'function/checkLocale',
-    },
     registerFunction: {
       path: 'function/register',
     },

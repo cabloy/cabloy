@@ -33,13 +33,6 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async checkLocale() {
-      const res = await this.ctx.service.function.checkLocale({
-        locale: this.ctx.request.body.locale,
-      });
-      this.ctx.success(res);
-    }
-
     async register() {
       const res = await this.ctx.service.function.register({
         module: this.ctx.request.body.module,
@@ -49,8 +42,8 @@ module.exports = app => {
     }
 
     // startup
-    async clearLocales() {
-      const res = await this.ctx.service.function.clearLocales();
+    async setLocales() {
+      const res = await this.ctx.service.function.setLocales();
       this.ctx.success(res);
     }
 

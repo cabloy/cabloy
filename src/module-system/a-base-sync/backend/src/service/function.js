@@ -14,17 +14,13 @@ module.exports = app => {
       return await this.ctx.meta.function.check({ functions, user });
     }
 
-    async checkLocale({ locale }) {
-      return await this.ctx.meta.function._checkLocale({ locale });
-    }
-
     async register({ module, name }) {
       return await this.ctx.meta.function.register({ module, name });
     }
 
-    async clearLocales() {
-      // clear all instances
-      await this.ctx.model.query('delete from aFunctionLocale');
+    async setLocales() {
+      // set instance
+      await this.ctx.meta.function.setLocales();
     }
 
     async setSceneSorting() {

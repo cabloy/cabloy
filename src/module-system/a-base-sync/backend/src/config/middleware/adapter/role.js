@@ -369,7 +369,6 @@ const Fn = module.exports = ctx => {
     async functionRights({ menu, roleId, page }) {
       // check locale
       const locale = ctx.locale;
-      if (locale) await ctx.meta.function.checkLocale({ locale });
       // list
       page = ctx.meta.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
@@ -388,7 +387,6 @@ const Fn = module.exports = ctx => {
     async functionSpreads({ menu, roleId, page }) {
       // check locale
       const locale = ctx.locale;
-      if (locale) await ctx.meta.function.checkLocale({ locale });
       // list
       page = ctx.meta.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
@@ -409,7 +407,6 @@ const Fn = module.exports = ctx => {
     async functionRightsOfUser({ menu, userId, page }) {
       // check locale
       const locale = ctx.locale;
-      if (locale) await ctx.meta.function.checkLocale({ locale });
       // list
       page = ctx.meta.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
