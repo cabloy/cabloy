@@ -21,4 +21,5 @@ export default [
   { path: 'auth/list', component: load('auth/list') },
   { path: 'auth/edit', component: load('auth/edit') },
   { path: 'settings/list', component: load('settings/list') },
+  { path: 'function/scene', component: load('settings/functionScene') },
 ];

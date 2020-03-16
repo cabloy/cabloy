@@ -6,4 +6,5 @@ module.exports = {
   'Menu Right Management': '菜单权限管理',
   'Function Right Management': '功能权限管理',
   'Auth Management': '认证管理',
+  'Menu Category': '菜单分类',
 };

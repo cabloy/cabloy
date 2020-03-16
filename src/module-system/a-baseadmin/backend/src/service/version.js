@@ -34,6 +34,15 @@ module.exports = app => {
           await this.ctx.model.delete('aRoleFunction', { functionId: fun.id });
         }
       }
+
+      if (options.version === 3) {
+        // roleFunctions
+        const roleFunctions = [
+          { roleName: 'system', name: 'menuScene' },
+        ];
+        await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
+      }
+
     }
 
   }
