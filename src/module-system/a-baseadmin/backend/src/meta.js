@@ -60,6 +60,11 @@ module.exports = app => {
         auth: schemas.auth,
       },
     },
+    settings: {
+      instance: {
+        actionPath: 'settings/list',
+      },
+    },
   };
 
   return meta;

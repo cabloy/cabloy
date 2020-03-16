@@ -20,4 +20,5 @@ export default [
   { path: 'functionRight/add', component: load('functionRight/add') },
   { path: 'auth/list', component: load('auth/list') },
   { path: 'auth/edit', component: load('auth/edit') },
+  { path: 'settings/list', component: load('settings/list') },
 ];
