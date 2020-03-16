@@ -35,15 +35,19 @@ module.exports = app => {
         }
       }
 
-      if (options.version === 3) {
+      if (options.version === 4) {
         // roleFunctions
         const roleFunctions = [
           { roleName: 'system', name: 'menu' },
         ];
         await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
-        // auth: menu:1->0
-        const func = await this.ctx.meta.function.get({ name: 'auth' });
-        await this.ctx.model.function.update({ id: func.id, sceneId: 0, menu: 0 });
+
+        // menu: 1->0
+        const functions = 'user,role,atomRight,functionRight,auth'.split(',');
+        for (const name of functions) {
+          const func = await this.ctx.meta.function.get({ name });
+          await this.ctx.model.function.update({ id: func.id, sceneId: 0, menu: 0 });
+        }
       }
 
     }
