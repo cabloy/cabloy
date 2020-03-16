@@ -86,7 +86,7 @@ module.exports = appInfo => {
   // function
   config.function = {
     scenes: {
-      1: 'create,list,tools', // menu
+      1: 'demonstration,create,list,tools', // menu
     },
   };
 
