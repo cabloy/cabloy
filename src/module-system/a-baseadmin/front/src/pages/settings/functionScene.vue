@@ -18,7 +18,7 @@ export default {
     };
   },
   created() {
-    this.__loadFunctionScenes();
+    this.__functionScenesLoad();
   },
   methods: {
     getPageTitle() {
@@ -39,29 +39,40 @@ export default {
       return { tooltip };
     },
     onDropElement({ $el, context, dragElement, dragContext }) {
-      const [panelDrop, panelIndexDrop] = this.sidebar._getPanelAndIndex(context.panel);
-      const [panelDrag, panelIndexDrag] = this.sidebar._getPanelAndIndex(dragContext.panel);
-      if (panelIndexDrop === panelIndexDrag || panelIndexDrop == panelIndexDrag + 1) return null;
+      const indexDrop = this.__getSceneIndex(context.item);
+      const indexDrag = this.__getSceneIndex(dragContext.item);
+      if (indexDrop === indexDrag || indexDrop == indexDrag + 1) return null;
       // dropElement
       const dropElement = $el;
       // tooltip
-      const tooltip = this.__getPanelTitle(panelDrop);
+      const tooltip = context.item.titleLocale;
       // ok
       return { dropElement, tooltip };
     },
     onDragDone({ $el, context, dragElement, dropElement, dropContext }) {
-      const panelIndexDrag = this.sidebar._getPanelIndex(context.panel);
-      this.panels.splice(panelIndexDrag, 1);
-      const panelIndexDrop = this.sidebar._getPanelIndex(dropContext.panel);
-      this.panels.splice(panelIndexDrop, 0, context.panel);
+      const indexDrag = this.__getSceneIndex(context.item);
+      this.functionScenes.splice(indexDrag, 1);
+      const indexDrop = this.__getSceneIndex(dropContext.item);
+      this.functionScenes.splice(indexDrop, 0, context.item);
       // save
-      this.layout.__saveLayoutConfig();
+      this.__functionScenesSaveSortings();
     },
-    __loadFunctionScenes() {
+    __getSceneIndex(item) {
+      return this.functionScenes.findIndex(_item => _item.id === item.id);
+    },
+    __functionScenesLoad() {
       this.$api.post('function/scenesLoad', { sceneMenu: this.menu }).then(data => {
         this.functionScenes = data;
       });
     },
+    __functionScenesSaveSortings() {
+      const sortings = this.functionScenes.map((item, index) => {
+        return { id: item.id, sorting: index + 1 }
+      });
+      this.$api.post('function/scenesSaveSortings', { sceneMenu: this.menu, sortings }).then(() => {
+        this.$view.toast.show();
+      });
+    }
   },
 };
 
