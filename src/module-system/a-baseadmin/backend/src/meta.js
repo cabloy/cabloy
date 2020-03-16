@@ -45,7 +45,7 @@ module.exports = app => {
         },
         menuManagement: {
           title: 'Menu Management',
-          actionPath: 'function/scene?menu=1',
+          actionPath: 'function/scene?sceneMenu=1',
           sorting: 1,
           menu: 0,
         },
