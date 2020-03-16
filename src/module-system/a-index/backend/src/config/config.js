@@ -26,7 +26,7 @@ module.exports = appInfo => {
       aFunction: 'createdAt,updatedAt,module+name,sceneId,atomClassId+action,sorting',
       aFunctionLocale: 'createdAt,updatedAt,functionId',
       aFunctionStar: 'createdAt,updatedAt,userId,functionId',
-      aFunctionScene: 'createdAt,updatedAt,scene,menu,sorting',
+      aFunctionScene: 'createdAt,updatedAt,sceneName,sceneMenu,sceneSorting',
       aLabel: 'createdAt,updatedAt,userId',
       aRole: 'createdAt,updatedAt,roleName,sorting,roleIdParent',
       aRoleExpand: 'createdAt,updatedAt,roleId,roleIdBase',
