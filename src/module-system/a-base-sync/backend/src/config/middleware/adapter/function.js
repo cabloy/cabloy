@@ -95,21 +95,24 @@ const Fn = module.exports = ctx => {
       return functions;
     }
 
-    async scenes({ sceneMenu }) {
+    async scenesArray({ sceneMenu }) {
       const list = await this.modelFunctionScene.select({
         where: { sceneMenu },
         orders: [[ 'sceneSorting', 'asc' ]],
       });
-      const scenes = {};
       for (const item of list) {
         const sceneName = item.sceneName;
-        const title = sceneName.replace(sceneName[0], sceneName[0].toUpperCase());
-        scenes[item.id] = {
-          name: sceneName,
-          title,
-          titleLocale: ctx.text(title),
-          sorting: item.sceneSorting,
-        };
+        item.title = sceneName.replace(sceneName[0], sceneName[0].toUpperCase());
+        item.titleLocale = ctx.text(item.title);
+      }
+      return list;
+    }
+
+    async scenes({ sceneMenu }) {
+      const list = await this.scenesArray({ sceneMenu });
+      const scenes = {};
+      for (const item of list) {
+        scenes[item.id] = item;
       }
       return scenes;
     }

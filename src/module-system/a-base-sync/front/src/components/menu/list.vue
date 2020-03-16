@@ -69,7 +69,7 @@ export default {
       for (const item of this.items) {
         if (!group || group.id !== item.sceneId) {
           const scene = this.functionScenes[item.sceneId];
-          group = { id: item.sceneId, name: scene.name, title: scene.titleLocale, items: [] };
+          group = { id: item.sceneId, name: scene.sceneName, title: scene.titleLocale, items: [] };
           groups.push(group);
         }
         group.items.push(item);
