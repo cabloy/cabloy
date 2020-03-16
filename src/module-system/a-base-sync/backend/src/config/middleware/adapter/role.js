@@ -373,13 +373,14 @@ const Fn = module.exports = ctx => {
       page = ctx.meta.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       const list = await ctx.model.query(`
-        select a.*,b.module,b.name,b.title,b.scene,b.sorting${menu ? ',f.titleLocale' : ''} from aRoleFunction a
+        select a.*,b.module,b.name,b.title,b.sceneId,g.sceneName,b.sorting,f.titleLocale from aRoleFunction a
           left join aFunction b on a.functionId=b.id
-          ${menu ? 'left join aFunctionLocale f on a.functionId=f.functionId' : ''}
-            where a.iid=? and a.roleId=? and b.menu=? ${menu ? 'and f.locale=\'' + locale + '\'' : ''}
-            order by b.module,b.scene,b.sorting
+          left join aFunctionLocale f on a.functionId=f.functionId
+          left join aFunctionScene g on g.id=b.sceneId
+            where a.iid=? and a.roleId=? and b.menu=? and f.locale=?
+            order by b.module,g.sceneSorting,b.sorting
             ${_limit}
-        `, [ ctx.instance.id, roleId, menu ]);
+        `, [ ctx.instance.id, roleId, menu, locale ]);
       return list;
     }
 
@@ -391,15 +392,16 @@ const Fn = module.exports = ctx => {
       page = ctx.meta.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       const list = await ctx.model.query(`
-        select d.*,d.id as roleExpandId,a.id as roleFunctionId,b.module,b.name,b.title,b.scene,e.roleName${menu ? ',f.titleLocale' : ''} from aRoleFunction a
+        select d.*,d.id as roleExpandId,a.id as roleFunctionId,b.module,b.name,b.title,b.sceneId,g.sceneName,e.roleName,f.titleLocale from aRoleFunction a
           left join aFunction b on a.functionId=b.id
           left join aRoleExpand d on a.roleId=d.roleIdBase
           left join aRole e on d.roleIdBase=e.id
-          ${menu ? 'left join aFunctionLocale f on a.functionId=f.functionId' : ''}
-            where d.iid=? and d.roleId=? and b.menu=? ${menu ? 'and f.locale=\'' + locale + '\'' : ''}
-            order by b.module,b.scene,b.sorting
+          left join aFunctionLocale f on a.functionId=f.functionId
+          left join aFunctionScene g on g.id=b.sceneId
+            where d.iid=? and d.roleId=? and b.menu=? and f.locale=?
+            order by b.module,g.sceneSorting,b.sorting
             ${_limit}
-        `, [ ctx.instance.id, roleId, menu ]);
+        `, [ ctx.instance.id, roleId, menu, locale ]);
       return list;
     }
 
@@ -411,14 +413,15 @@ const Fn = module.exports = ctx => {
       page = ctx.meta.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       const list = await ctx.model.query(`
-        select a.*,b.module,b.name,b.title,b.scene,b.sorting${menu ? ',f.titleLocale' : ''},e.roleName from aViewUserRightFunction a
+        select a.*,b.module,b.name,b.title,b.sceneId,g.sceneName,b.sorting,f.titleLocale,e.roleName from aViewUserRightFunction a
           left join aFunction b on a.functionId=b.id
-          ${menu ? 'left join aFunctionLocale f on a.functionId=f.functionId' : ''}
+          left join aFunctionLocale f on a.functionId=f.functionId
+          left join aFunctionScene g on g.id=b.sceneId
           left join aRole e on a.roleIdBase=e.id
-            where a.iid=? and a.userIdWho=? and b.menu=? ${menu ? 'and f.locale=\'' + locale + '\'' : ''}
-            order by b.module,b.scene,b.sorting
+            where a.iid=? and a.userIdWho=? and b.menu=? and f.locale=?
+            order by b.module,g.sceneSorting,b.sorting
             ${_limit}
-        `, [ ctx.instance.id, userId, menu ]);
+        `, [ ctx.instance.id, userId, menu, locale ]);
 
       return list;
     }
