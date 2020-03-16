@@ -4,6 +4,7 @@ const user = require('./controller/user.js');
 const atomRight = require('./controller/atomRight.js');
 const functionRight = require('./controller/functionRight.js');
 const auth = require('./controller/auth.js');
+const _function = require('./controller/function.js');
 
 module.exports = app => {
   const routes = [
@@ -50,6 +51,9 @@ module.exports = app => {
     { method: 'post', path: 'auth/disable', controller: auth, meta: { right: { type: 'function', name: 'auth' } } },
     { method: 'post', path: 'auth/item', controller: auth, meta: { right: { type: 'function', name: 'auth' } } },
     { method: 'post', path: 'auth/save', controller: auth, meta: { right: { type: 'function', name: 'auth' } } },
+    // function
+    { method: 'post', path: 'function/scenesLoad', controller: _function, meta: { right: { type: 'function', name: 'menuScene' } } },
+    { method: 'post', path: 'function/scenesSave', controller: _function, meta: { right: { type: 'function', name: 'menuScene' } } },
   ];
   return routes;
 };

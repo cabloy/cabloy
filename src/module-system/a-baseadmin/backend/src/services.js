@@ -4,6 +4,7 @@ const user = require('./service/user.js');
 const atomRight = require('./service/atomRight.js');
 const functionRight = require('./service/functionRight.js');
 const auth = require('./service/auth.js');
+const _function = require('./service/function.js');
 
 module.exports = app => {
   const services = {
@@ -13,6 +14,7 @@ module.exports = app => {
     atomRight,
     functionRight,
     auth,
+    function: _function,
   };
   return services;
 };
