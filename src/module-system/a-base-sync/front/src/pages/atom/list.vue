@@ -97,7 +97,7 @@ export default {
     this.$local.dispatch('getLabels');
     // functionList
     const options = {
-      where: { menu: 1, scene: 1 },
+      where: { menu: 1, sceneName: 'create' },
       orders: [
         ['sorting', 'asc'],
       ],

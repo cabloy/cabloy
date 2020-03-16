@@ -99,6 +99,7 @@ module.exports = app => {
     { method: 'post', path: 'user/getLabels', controller: user },
     { method: 'post', path: 'user/setLabels', controller: user },
     // function
+    { method: 'post', path: 'function/scenes', controller: func },
     { method: 'post', path: 'function/list', controller: func },
     { method: 'post', path: 'function/star', controller: func },
     { method: 'post', path: 'function/check', controller: func },

@@ -16,9 +16,9 @@ module.exports = function(ctx) {
             updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             deleted int(11) DEFAULT '0',
             iid int(11) DEFAULT '0',
-            scene varchar(50) DEFAULT NULL,
-            menu int(11) DEFAULT '0',
-            sorting int(11) DEFAULT '0',
+            sceneName varchar(50) DEFAULT NULL,
+            sceneMenu int(11) DEFAULT '0',
+            sceneSorting int(11) DEFAULT '0',
             PRIMARY KEY (id)
           )
         `;
@@ -49,7 +49,7 @@ module.exports = function(ctx) {
       const scenes = constants.function.scene;
       for (const sceneName in scenes) {
         const sceneValue = scenes[sceneName];
-        const sceneId = await ctx.meta.function.getSceneId({ iid, scene: sceneName, menu: 1 });
+        const sceneId = await ctx.meta.function.getSceneId({ iid, sceneName, sceneMenu: 1 });
         await ctx.model.query('update aFunction set sceneId=? where iid=? and sceneId=?',
           [ sceneId, iid, sceneValue ]);
       }

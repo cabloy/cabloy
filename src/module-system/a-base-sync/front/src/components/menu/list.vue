@@ -54,6 +54,7 @@ export default {
     return {
       items: [],
       query: '',
+      functionScenes: null,
     };
   },
   computed: {
@@ -106,6 +107,13 @@ export default {
       }
     },
     reload(force) {
+      // scenes
+      if (!this.functionScenes) {
+        this.$store.dispatch('a/base/getFunctionScenes', { sceneMenu: 1 }).then(data => {
+          this.functionScenes = data;
+        });
+      }
+      // reload
       this.$refs.loadMore.reload(force);
     },
     loadMore() {
@@ -122,7 +130,7 @@ export default {
         options = {
           where: { 'a.menu': 1 },
           orders: [
-            ['a.sceneId', 'asc'],
+            ['f.sceneSorting', 'asc'],
             ['a.sorting', 'asc'],
           ],
           page: { index },
@@ -132,7 +140,7 @@ export default {
           where: { 'a.menu': 1 },
           orders: [
             ['a.module', 'asc'],
-            ['a.sceneId', 'asc'],
+            ['f.sceneSorting', 'asc'],
             ['a.sorting', 'asc'],
           ],
           page: { index },

@@ -90,6 +90,13 @@ const Fn = module.exports = ctx => {
       return functions;
     }
 
+    async scenes({ sceneMenu }) {
+      return await this.modelFunctionScene.select({
+        where: { sceneMenu },
+        orders: [[ 'sceneSorting', 'asc' ]],
+      });
+    }
+
     //
 
     async delete({ id, module, name }) {
@@ -121,17 +128,17 @@ const Fn = module.exports = ctx => {
     }
 
     // iid maybe undefined
-    async getSceneId({ iid, scene, menu }) {
-      const sceneItem = await this.modelFunctionScene.get({ iid, scene, menu });
+    async getSceneId({ iid, sceneName, sceneMenu }) {
+      const sceneItem = await this.modelFunctionScene.get({ iid, sceneName, sceneMenu });
       if (sceneItem) return sceneItem.id;
       // scene sorting
-      const scenes = (ctx.config.module(moduleInfo.relativeName).function.scenes[menu] || '').split(',');
-      const sorting = scenes.indexOf(scene) + 1;
+      const scenes = (ctx.config.module(moduleInfo.relativeName).function.scenes[sceneMenu] || '').split(',');
+      const sceneSorting = scenes.indexOf(sceneName) + 1;
       const res = await this.modelFunctionScene.insert({
         iid,
-        scene,
-        menu,
-        sorting,
+        sceneName,
+        sceneMenu,
+        sceneSorting,
       });
       return res.insertId;
     }
@@ -155,7 +162,7 @@ const Fn = module.exports = ctx => {
       if (!sceneName) {
         sceneId = 0;
       } else {
-        sceneId = await this.getSceneId({ scene: sceneName, menu: func.menu });
+        sceneId = await this.getSceneId({ sceneName, sceneMenu: func.menu });
       }
       // insert
       const data = {

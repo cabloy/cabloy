@@ -30,8 +30,9 @@ export default function(Vue) {
       actions: null,
       flags: null,
       orders: null,
-      menus: null,
+      functionScenes: {},
       functions: null,
+      menus: null,
       panels: null,
       widgets: null,
     },
@@ -106,6 +107,12 @@ export default function(Vue) {
       },
       setFunctions(state, functions) {
         state.functions = functions;
+      },
+      setFunctionScenes(state, { sceneMenu, scenes }) {
+        state.functionScenes = {
+          ...state.functionScenes,
+          [sceneMenu]: scenes,
+        };
       },
     },
     actions: {
@@ -212,6 +219,18 @@ export default function(Vue) {
           Vue.prototype.$meta.api.post('/a/base/base/widgets').then(data => {
             data = data || {};
             commit('setWidgets', data);
+            resolve(data);
+          }).catch(err => {
+            reject(err);
+          });
+        });
+      },
+      getFunctionScenes({ state, commit }, { sceneMenu }) {
+        return new Promise((resolve, reject) => {
+          if (state.functionScenes[sceneMenu]) return resolve(state.functionScenes[sceneMenu]);
+          Vue.prototype.$meta.api.post('/a/base/function/scenes', { sceneMenu }).then(data => {
+            data = data || [];
+            commit('setFunctionScenes', { sceneMenu, scenes: data });
             resolve(data);
           }).catch(err => {
             reject(err);
