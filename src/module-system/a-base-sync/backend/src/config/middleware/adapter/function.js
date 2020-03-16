@@ -85,7 +85,12 @@ const Fn = module.exports = ctx => {
     async check({ functions, user }) {
       for (const func of functions) {
         const res = await this.checkRightFunction({ function: func, user });
-        func.passed = !!res;
+        if (res) {
+          func.passed = true;
+          func.id = res.id;
+        } else {
+          func.passed = false;
+        }
       }
       return functions;
     }
