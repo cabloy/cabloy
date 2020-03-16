@@ -18,6 +18,8 @@ module.exports = {
   English: '英文',
   Chinese: '中文',
   Create: '新建',
+  List: '列表',
+  Tools: '工具',
   View: '查看',
   Edit: '编辑',
   Delete: '删除',

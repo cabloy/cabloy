@@ -91,10 +91,22 @@ const Fn = module.exports = ctx => {
     }
 
     async scenes({ sceneMenu }) {
-      return await this.modelFunctionScene.select({
+      const list = await this.modelFunctionScene.select({
         where: { sceneMenu },
         orders: [[ 'sceneSorting', 'asc' ]],
       });
+      const scenes = {};
+      for (const item of list) {
+        const sceneName = item.sceneName;
+        const title = sceneName.replace(sceneName[0], sceneName[0].toUpperCase());
+        scenes[item.id] = {
+          name: sceneName,
+          title,
+          titleLocale: ctx.text(title),
+          sorting: item.sceneSorting,
+        };
+      }
+      return scenes;
     }
 
     //

@@ -63,13 +63,13 @@ export default {
       if (this.mode === 'modules') return this.itemGroupsModules;
     },
     itemGroupsScenes() {
+      if (!this.functionScenes) return [];
       const groups = [];
       let group = null;
       for (const item of this.items) {
-        if (!group || group.id !== item.scene) {
-          const name = this.$config.menu.scene[item.scene];
-          const title = this.$text(name);
-          group = { id: item.scene, name, title, items: [] };
+        if (!group || group.id !== item.sceneId) {
+          const scene = this.functionScenes[item.sceneId];
+          group = { id: item.sceneId, name: scene.name, title: scene.titleLocale, items: [] };
           groups.push(group);
         }
         group.items.push(item);

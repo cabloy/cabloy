@@ -229,7 +229,7 @@ export default function(Vue) {
         return new Promise((resolve, reject) => {
           if (state.functionScenes[sceneMenu]) return resolve(state.functionScenes[sceneMenu]);
           Vue.prototype.$meta.api.post('/a/base/function/scenes', { sceneMenu }).then(data => {
-            data = data || [];
+            data = data || {};
             commit('setFunctionScenes', { sceneMenu, scenes: data });
             resolve(data);
           }).catch(err => {
