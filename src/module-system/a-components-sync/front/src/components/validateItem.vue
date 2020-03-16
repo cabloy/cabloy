@@ -91,8 +91,9 @@ export default {
       // only edit
       if (this.validate.readOnly || property.ebReadOnly) return title;
       // config
-      const hintOptional = this.$config.validate.hint.optional;
-      const hintMust = this.$config.validate.hint.must;
+      const hint = this.getMetaValue('hint') || this.$config.validate.hint;
+      const hintOptional = hint.optional;
+      const hintMust = hint.must;
       // check optional
       if (hintOptional && !property.notEmpty) {
         return `${title}(${this.$text(hintOptional)})`;
