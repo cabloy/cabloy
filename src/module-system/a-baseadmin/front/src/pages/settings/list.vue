@@ -22,7 +22,7 @@ export default {
   methods: {
     __loadFunctions() {
       const functions = [
-        { module: 'a-baseadmin', name: 'menuManagement' },
+        { module: 'a-baseadmin', name: 'menu' },
       ];
       this.$api.post('/a/base/function/check', { functions }).then(data => {
         this.functions = data.filter(item => item.passed);

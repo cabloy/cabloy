@@ -38,12 +38,11 @@ module.exports = app => {
         },
         auth: {
           title: 'Auth Management',
-          scene: 'tools',
           actionPath: 'auth/list',
-          sorting: 15,
-          menu: 1,
+          sorting: 1,
+          menu: 0,
         },
-        menuManagement: {
+        menu: {
           title: 'Menu Management',
           actionPath: 'function/scene?sceneMenu=1',
           sorting: 1,

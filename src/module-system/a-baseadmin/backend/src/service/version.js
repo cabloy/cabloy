@@ -38,9 +38,12 @@ module.exports = app => {
       if (options.version === 3) {
         // roleFunctions
         const roleFunctions = [
-          { roleName: 'system', name: 'menuManagement' },
+          { roleName: 'system', name: 'menu' },
         ];
         await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
+        // auth: menu:1->0
+        const func = await this.ctx.meta.function.get({ name: 'auth' });
+        await this.ctx.model.function.update({ id: func.id, sceneId: 0, menu: 0 });
       }
 
     }
