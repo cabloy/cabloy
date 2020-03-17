@@ -16,7 +16,10 @@ class FrontBuildCommand extends Command {
       cwd: path.join(cwd, 'node_modules/egg-born-front'),
     };
 
-    yield this.helper.forkNode(build, [], ops);
+    const args = [];
+    if (argv.scene) args.push(`--scene=${argv.scene}`);
+
+    yield this.helper.forkNode(build, args, ops);
   }
 
   description() {
