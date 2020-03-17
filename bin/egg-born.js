@@ -65,14 +65,22 @@ co(function* () {
 
       // mergeDependencies
       const targetPathProject=path.join(targetDir,'package.json');
-      const targetPackageProject=require(targetPathProject);
       const sourcePathTest=path.join(destDir,'test-party/package.json');
-      const sourcePackageTest=require(sourcePathTest);
-      Object.assign(targetPackageProject.dependencies,sourcePackageTest.dependencies);
-      // version save
-      fse.outputFileSync(targetPathProject, JSON.stringify(targetPackageProject, null, 2) + '\n');
+      this.mergeDependencies(targetPathProject,sourcePathTest);
     }
   };
+
+  command.mergeDependencies=function(targetPathProject,sourcePathTest){
+    const ignores=['extend2','require3'];
+    const targetPackageProject=require(targetPathProject);
+    const sourcePackageTest=require(sourcePathTest);
+    for(const item of ignores){
+      delete sourcePackageTest.dependencies[item];
+    }
+    Object.assign(targetPackageProject.dependencies,sourcePackageTest.dependencies);
+    // version save
+    fse.outputFileSync(targetPathProject, JSON.stringify(targetPackageProject, null, 2) + '\n');
+  }
 
   command.downloadModule = function* (pkgName) {
     const result = yield this.getPackageInfo(pkgName, false);
