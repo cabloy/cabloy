@@ -6,7 +6,6 @@ const boxen = require3('boxen');
 const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' };
 
 const regexURL_resetCache = /\/a\/instance\/instance\/broadcast\/resetCache/;
-const regexURL_versionInit = /\/version\/init/;
 
 module.exports = (options, app) => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -48,7 +47,7 @@ module.exports = (options, app) => {
       }
     }
 
-    if (!regexURL_versionInit.test(ctx.request.url) && (!instance || instance.disabled)) {
+    if (!ctx.innerAccess && (!instance || instance.disabled)) {
       // prompt
       if (!instance && ctx.app.meta.isLocal) {
         const urlInfo = ctx.locale === 'zh-cn' ? 'https://cabloy.com/zh-cn/articles/multi-instance.html' : 'https://cabloy.com/articles/multi-instance.html';

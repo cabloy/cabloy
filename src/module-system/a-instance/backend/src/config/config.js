@@ -7,7 +7,7 @@ module.exports = appInfo => {
     instance: {
       global: true,
       dependencies: 'cachemem',
-      ignore: /(\/version\/(update))/,
+      ignore: /\/version\/update$/,
     },
   };
 
