@@ -62,6 +62,15 @@ co(function* () {
       fse.moveSync(testPartyDir, path.join(destDir, 'test-party'));
       // delete .gitkeep
       fse.removeSync(path.join(destDir, '.gitkeep'));
+
+      // mergeDependencies
+      const targetPathProject=path.join(targetDir,'package.json');
+      const targetPackageProject=require(targetPathProject);
+      const sourcePathTest=path.join(destDir,'test-party/package.json');
+      const sourcePackageTest=require(sourcePathTest);
+      Object.assign(targetPackageProject.dependencies,sourcePackageTest.dependencies);
+      // version save
+      fse.outputFileSync(targetPathProject, JSON.stringify(targetPackageProject, null, 2) + '\n');
     }
   };
 
