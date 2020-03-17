@@ -233,11 +233,16 @@ const Fn = module.exports = ctx => {
       if (functions.length === 0) return;
       // insert locales
       for (const func of functions) {
-        const titleLocale = ctx.text.locale(locale, func.title);
+        // title
+        const funcBase = ctx.meta.base.function({ module: func.module, name: func.name });
+        if (!funcBase) throw new Error(`function not found: ${func.module}:${func.nam}`);
+        if (func.title !== funcBase.title) {
+          await this.model.update({ id: func.id, title: funcBase.title });
+        }
+        // titleLocale
+        const titleLocale = ctx.text.locale(locale, funcBase.title);
         await this.modelFunctionLocale.insert({
-          functionId: func.id,
-          locale,
-          titleLocale,
+          functionId: func.id, locale, titleLocale,
         });
       }
     }
