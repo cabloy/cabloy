@@ -11,6 +11,11 @@ module.exports = app => {
       this.ctx.success();
     }
 
+    async update8() {
+      await this.service.version.update8(this.ctx.request.body);
+      this.ctx.success();
+    }
+
   }
   return VersionController;
 };

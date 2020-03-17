@@ -48,6 +48,7 @@ module.exports = app => {
     }
 
     async init(options) {
+
       if (options.version === 2) {
         const versionInit2 = new (VersionInit2Fn(this.ctx))();
         await versionInit2.run(options);
@@ -68,6 +69,11 @@ module.exports = app => {
         const versionInit8 = new (VersionInit8Fn(this.ctx))();
         await versionInit8.run(options);
       }
+    }
+
+    async update8(options) {
+      const versionUpdate8 = new (VersionUpdate8Fn(this.ctx))();
+      await versionUpdate8._updateFunctionsInstance(options);
     }
 
   }
