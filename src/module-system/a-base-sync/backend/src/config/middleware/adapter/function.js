@@ -213,8 +213,24 @@ const Fn = module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    async _setLocale({ locale }) {
-      const functions = await this.model.select();
+    async _checkFunctionLocales({ locale }) {
+      locale = locale || ctx.locale;
+      const sql = this.sqlProcedure.checkFunctionLocales({
+        iid: ctx.instance.id,
+        locale,
+      });
+      return await ctx.model.query(sql);
+    }
+
+    async _setLocale({ locale, reset }) {
+      let functions;
+      // functions
+      if (reset) {
+        functions = await this.model.select();
+      } else {
+        functions = await this._checkFunctionLocales({ locale });
+      }
+      if (functions.length === 0) return;
       // insert locales
       for (const func of functions) {
         const titleLocale = ctx.text.locale(locale, func.title);
@@ -226,13 +242,17 @@ const Fn = module.exports = ctx => {
       }
     }
 
-    async setLocales() {
+    async setLocales(options) {
+      options = options || {};
+      const reset = options.reset;
       // clear
-      await this.clearLocales();
+      if (reset) {
+        await this.clearLocales();
+      }
       // setLocales
       const locales = ctx.config.module(moduleInfo.relativeName).locales;
       for (const locale in locales) {
-        await this._setLocale({ locale });
+        await this._setLocale({ locale, reset });
       }
     }
 
