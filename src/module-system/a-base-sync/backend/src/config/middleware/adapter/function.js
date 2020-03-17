@@ -145,14 +145,13 @@ const Fn = module.exports = ctx => {
     }
 
     // iid maybe undefined
-    async getSceneId({ iid, sceneName, sceneMenu }) {
-      const sceneItem = await this.modelFunctionScene.get({ iid, sceneName, sceneMenu });
+    async getSceneId({ sceneName, sceneMenu }) {
+      const sceneItem = await this.modelFunctionScene.get({ sceneName, sceneMenu });
       if (sceneItem) return sceneItem.id;
       // scene sorting
       const scenes = (ctx.config.module(moduleInfo.relativeName).function.scenes[sceneMenu] || '').split(',');
       const sceneSorting = scenes.indexOf(sceneName) + 1;
       const res = await this.modelFunctionScene.insert({
-        iid,
         sceneName,
         sceneMenu,
         sceneSorting,

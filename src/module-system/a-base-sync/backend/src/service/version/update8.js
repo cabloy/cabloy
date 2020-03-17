@@ -1,8 +1,6 @@
-const constants = require('../../config/constants.js');
-
 module.exports = function(ctx) {
 
-  class VersionUpdate9 {
+  class VersionUpdate8 {
 
     async run() {
 
@@ -31,31 +29,9 @@ module.exports = function(ctx) {
                   `;
       await ctx.model.query(sql);
 
-      // update exists functions
-      await this._updateFunctions();
-
-    }
-
-    async _updateFunctions() {
-      // all instances
-      const instances = await ctx.model.query('select * from aInstance');
-      for (const instance of instances) {
-        await this._updateFunctionsInstance(instance.id);
-      }
-    }
-
-    async _updateFunctionsInstance(iid) {
-      // update sceneName
-      const scenes = constants.function.scene;
-      for (const sceneName in scenes) {
-        const sceneValue = scenes[sceneName];
-        const sceneId = await ctx.meta.function.getSceneId({ iid, sceneName, sceneMenu: 1 });
-        await ctx.model.query('update aFunction set sceneId=? where iid=? and sceneId=?',
-          [ sceneId, iid, sceneValue ]);
-      }
     }
 
   }
 
-  return VersionUpdate9;
+  return VersionUpdate8;
 };
