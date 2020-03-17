@@ -3,7 +3,7 @@ import 'egg-born-front/src/bootstrap.js';
 import './assets/css/app.less';
 
 import config from './config/config.js';
-import locales from './config/locales.js';
+import locales from './locales.js';
 
 let Vue;
 
