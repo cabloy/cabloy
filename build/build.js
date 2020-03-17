@@ -31,7 +31,8 @@ rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
       chunkModules: false,
     }) + '\n\n');
 
-    const dest = path.join(__dirname, '../../../dist');
+    const sceneValue = JSON.parse(config.build.env.SCENE);
+    const dest = path.join(__dirname, `../../../dist${sceneValue ? '/' + sceneValue : ''}`);
     fse.removeSync(path.join(dest, 'index.html'));
     fse.removeSync(path.join(dest, 'static'));
     fse.copySync(config.build.assetsRoot, dest);
