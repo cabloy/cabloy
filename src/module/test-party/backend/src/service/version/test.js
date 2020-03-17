@@ -103,6 +103,8 @@ module.exports = function(ctx) {
         { roleName: null, name: 'testFunctionPublic' },
       ];
       await ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
+      // set locales of new functions
+      await ctx.meta.function.setLocales();
     }
 
     // auths
