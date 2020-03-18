@@ -5,6 +5,8 @@ export default {
   methods: {
     onAction({ ctx, action, item }) {
       if (action.name === 'create' || action.action === 'create') {
+        // get preferred roles
+
         // create
         return ctx.$api.post('/a/base/atom/create', {
           atomClass: {

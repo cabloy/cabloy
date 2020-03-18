@@ -265,7 +265,10 @@ const Fn = module.exports = ctx => {
       for (const relativeName in ctx.app.meta.modules) {
         const module = ctx.app.meta.modules[relativeName];
         if (module.main.meta && module.main.meta.base && module.main.meta.base.atoms) {
-          atomClasses[relativeName] = this._prepareAtomClassesModule(module, module.main.meta.base.atoms);
+          const res = this._prepareAtomClassesModule(module, module.main.meta.base.atoms);
+          if (Object.keys(res).length > 0) {
+            atomClasses[relativeName] = res;
+          }
         }
       }
       return atomClasses;

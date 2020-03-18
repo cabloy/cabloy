@@ -34,6 +34,14 @@ module.exports = function(ctx) {
       // update exists functions
       await this._updateFunctions(options);
 
+
+      // aAtom: add field roleIdOwner
+      sql = `
+        ALTER TABLE aAtom
+          ADD COLUMN roleIdOwner int(11) DEFAULT '0',
+                  `;
+      await ctx.model.query(sql);
+
     }
 
     async _updateFunctions(options) {
