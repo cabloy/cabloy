@@ -34,15 +34,16 @@ export default {
     },
   },
   methods: {
-    onPerformCreate() {
+    onPerformCreate(event) {
       // menu
-      const _menu = this.getMenu({ module: 'test-party', name: 'createParty' });
+      let _menu = this.getMenu({ module: 'test-party', name: 'createParty' });
       if (!_menu || _menu.action !== 'create') return;
       const item = {
         module: 'test-party',
         atomClassName: 'party',
         atomClassIdParent: 0,
       };
+      _menu = this.$utils.extend({}, _menu, { targetEl: event.target });
       // add
       return this.$meta.util.performAction({ ctx: this, action: _menu, item });
     },
