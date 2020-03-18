@@ -54,6 +54,7 @@ export default {
     _onActionCreate({ ctx, action, item }) {
       // get roleIdOwner
       return this._onActionCreateGetRoleIdOwner({ ctx, action, item }).then(roleIdOwner => {
+        if (!roleIdOwner) return;
         // create
         item.roleIdOwner = roleIdOwner;
         return ctx.$api.post('/a/base/atom/create', {
@@ -64,7 +65,7 @@ export default {
           },
           item,
         }).then(key => {
-        // event
+          // event
           ctx.$meta.eventHub.$emit('atom:action', { key, action });
           // menu
           if (action.menu === 1 || (action.actionComponent || action.actionPath)) {
@@ -112,32 +113,33 @@ export default {
       });
     },
     _onActionCreateSelectPreferredRole({ ctx, action, roles }) {
-      return new Promise((resolve, reject) => {
+      return new Promise(resolve => {
         const hostEl = ctx.$view.getHostEl();
         const targetEl = action.targetEl;
-        const actions = ctx.$f7.actions.create({
-          hostEl,
-          buttons: [{
-            text: 'Do something',
-            label: true,
-          },
-          {
-            text: 'Button 1',
-            bold: true,
-          },
-          {
-            text: 'Button 2',
-          },
-          {
-            text: 'Cancel',
-            color: 'red',
-          },
-          ],
-          targetEl,
-        });
+        const buttons = [{
+          text: ctx.$text('AtomClassSelectRoleTip'),
+          label: true,
+        }];
+        let resolved = false;
+        function onButtonClick(roleIdOwner) {
+          resolved = true;
+          resolve(roleIdOwner);
+        }
+        for (const role of roles) {
+          buttons.push({
+            text: role.roleNameWho,
+            onClick: () => {
+              onButtonClick(role.roleIdWho);
+            },
+          });
+        }
+        const actions = ctx.$f7.actions.create({ hostEl, buttons, targetEl });
         actions.open();
         actions.once('actionsClosed', () => {
           actions.destroy();
+          if (!resolved) {
+            resolve();
+          }
         });
       });
     },

@@ -39,6 +39,7 @@ export default {
   Remove: '移除',
   Heart2: '点赞',
   Hearted: '已点赞',
+  AtomClassSelectRoleTip: '选择角色',
   'Atom Flag': '原子标记',
   'Atom Name': '原子名称',
   'Modification Time': '修改时间',
