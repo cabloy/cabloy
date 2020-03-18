@@ -78,7 +78,7 @@ export default {
     },
     onAction(event, item) {
       // menu
-      const _menu = this.getMenu(item);
+      let _menu = this.getMenu(item);
       if (!_menu) return;
       if (_menu.action === 'create') {
         item = {
@@ -89,6 +89,7 @@ export default {
           language: this.language,
           categoryId: this.categoryId,
         };
+        _menu = this.$utils.extend({}, _menu, { targetEl: event.target });
       }
       // add
       return this.$meta.util.performAction({ ctx: this, action: _menu, item });
