@@ -16,7 +16,7 @@ export default {
         pushStateOnLoad: false,
         preloadPreviousPage: false,
         'data-index': index,
-        'data-size': this.sidebar.size,
+        'data-size': viewSize,
       };
       children.push(c('eb-view', {
         ref: view.id,
