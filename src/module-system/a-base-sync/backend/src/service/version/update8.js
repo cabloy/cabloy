@@ -50,6 +50,24 @@ module.exports = function(ctx) {
           `;
       await ctx.model.query(sql);
 
+      // aViewUserRightAtomClassRole
+      sql = `
+        create view aViewUserRightAtomClassRole as
+          select a.iid,a.userId as userIdWho,b.atomClassId,b.action,c.roleId as roleIdWhom from aViewUserRoleExpand a
+            inner join aRoleRightRef b on a.roleIdBase=b.roleId
+            inner join aRoleRef c on b.roleIdScope=c.roleIdParent
+          `;
+      await ctx.model.query(sql);
+
+      // aViewUserRightAtomRole
+      sql = `
+        create view aViewUserRightAtomRole as
+          select a.iid, a.id as atomId,a.roleIdOwner as roleIdWhom,b.userIdWho,b.action from aAtom a,aViewUserRightAtomClassRole b
+            where a.deleted=0 and a.atomEnabled=1
+              and a.atomClassId=b.atomClassId
+              and a.roleIdOwner=b.roleIdWhom
+        `;
+      await ctx.model.query(sql);
     }
 
     async _updateFunctions(options) {

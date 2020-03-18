@@ -17,7 +17,7 @@ module.exports = ctx => {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass
-      // -- c: aViewUserRightAtom
+      // -- c: aViewUserRightAtomRole
       // -- d: aAtomStar
       // -- e: aAtomLabelRef
       // -- f: {item}
@@ -118,7 +118,7 @@ module.exports = ctx => {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass
-      // -- c: aViewUserRightAtom
+      // -- c: aViewUserRightAtomRole
       // -- d: aAtomStar
       // -- e: aAtomLabelRef
       // -- f: {item}
@@ -248,7 +248,7 @@ module.exports = ctx => {
                                    (
                                      (
                                        exists(
-                                               select c.atomId from aViewUserRightAtom c where c.iid=${iid} and a.id=c.atomId and c.action>2 and c.userIdWho=${userIdWho}
+                                               select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action>2 and c.userIdWho=${userIdWho}
                                              )
                                      ) or
                                      (
@@ -263,7 +263,7 @@ module.exports = ctx => {
                                    (
                                      b.public=1 or
                                      exists(
-                                             select c.atomId from aViewUserRightAtom c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.userIdWho=${userIdWho}
+                                             select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.userIdWho=${userIdWho}
                                            )
                                    )
                                )
@@ -373,7 +373,7 @@ module.exports = ctx => {
                                   (
                                       (
                                         exists(
-                                                select c.atomId from aViewUserRightAtom c where c.iid=${iid} and a.id=c.atomId and c.action>2 and c.userIdWho=${userIdWho}
+                                                select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action>2 and c.userIdWho=${userIdWho}
                                               )
                                       )
                                       or
@@ -391,7 +391,7 @@ module.exports = ctx => {
                                   (
                                       b.public=1 or
                                       exists(
-                                              select c.atomId from aViewUserRightAtom c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.userIdWho=${userIdWho}
+                                              select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.userIdWho=${userIdWho}
                                             )
                                   )
                               )
@@ -421,7 +421,7 @@ module.exports = ctx => {
              and (
                   (a.atomEnabled=0 and a.userIdCreated=${userIdWho}) or
                   (a.atomEnabled=1 and (
-                    (exists(select c.atomId from aViewUserRightAtom c where c.iid=${iid} and a.id=c.atomId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.userIdWho=${userIdWho})) or
+                    (exists(select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.userIdWho=${userIdWho})) or
                     (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.scope=0 and c.userIdWho=${userIdWho}))
                   ))
                 )
@@ -446,7 +446,7 @@ module.exports = ctx => {
             (
                a.deleted=0 and a.iid=${iid} and a.id=${atomId} and a.atomEnabled=1
                and (
-                      (exists(select c.atomId from aViewUserRightAtom c where c.iid=${iid} and a.id=c.atomId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.userIdWho=${userIdWho})) or
+                      (exists(select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.userIdWho=${userIdWho})) or
                       (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.scope=0 and c.userIdWho=${userIdWho}))
                    )
             )

@@ -42,15 +42,30 @@ async function checkAtom(moduleInfo, options, ctx) {
     }
     // roleIdOwner
     const roleIdOwner = ctx.request.body.roleIdOwner;
-    const res = await ctx.meta.atom.checkRightCreateRole({
-      atomClass: {
-        id: atomClassId,
-      },
-      roleIdOwner,
-      user: ctx.user.op,
-    });
-    if (!res) ctx.throw(403);
-    ctx.meta._atomClass = res;
+    if (roleIdOwner) {
+      // check
+      const res = await ctx.meta.atom.checkRightCreateRole({
+        atomClass: {
+          id: atomClassId,
+        },
+        roleIdOwner,
+        user: ctx.user.op,
+      });
+      if (!res) ctx.throw(403);
+      ctx.meta._atomClass = res;
+    } else {
+      // retrieve default one
+      const roles = await ctx.service.atom.preferredRoles({
+        atomClass: {
+          id: atomClassId,
+        },
+        user: ctx.user.op,
+      });
+      if (roles.length === 0) ctx.throw(403);
+      ctx.request.body.roleIdOwner = roles[0].roleIdWho;
+      ctx.meta._atomClass = { id: atomClassId };
+    }
+
   }
 
   // read
