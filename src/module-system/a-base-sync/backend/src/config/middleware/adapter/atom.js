@@ -88,7 +88,7 @@ const Fn = module.exports = ctx => {
     }
 
     // create
-    async create({ atomClass, item, user }) {
+    async create({ atomClass, roleIdOwner, item, user }) {
       // atomClass
       atomClass = await ctx.meta.atomClass.get(atomClass);
       // item
@@ -98,6 +98,7 @@ const Fn = module.exports = ctx => {
         const draftId = await this.sequence.next('draft');
         item.atomName = `${ctx.text('Draft')}-${draftId}`;
       }
+      item.roleIdOwner = roleIdOwner;
       const atomId = await this._add({
         atomClass,
         atom: item,
@@ -111,6 +112,7 @@ const Fn = module.exports = ctx => {
         url: `/${_moduleInfo.url}/${atomClass.atomClassName}/create`,
         body: {
           atomClass,
+          roleIdOwner,
           key: { atomId },
           item,
           user,
@@ -480,7 +482,7 @@ const Fn = module.exports = ctx => {
 
     async _add({
       atomClass: { id, atomClassName, atomClassIdParent = 0 },
-      atom: { itemId, atomName, atomFlag = 0, atomFlow = 0 },
+      atom: { itemId, atomName, atomFlag = 0, atomFlow = 0, roleIdOwner = 0 },
       user,
     }) {
       let atomClassId = id;
@@ -494,6 +496,7 @@ const Fn = module.exports = ctx => {
         atomName,
         userIdCreated: user.id,
         userIdUpdated: user.id,
+        roleIdOwner,
       });
       return res.insertId;
     }
@@ -606,6 +609,22 @@ const Fn = module.exports = ctx => {
         iid: ctx.instance.id,
         userIdWho: user.id,
         atomClassId: id,
+      });
+      return await ctx.model.queryOne(sql);
+    }
+
+    async checkRightCreateRole({
+      atomClass: { id, module, atomClassName, atomClassIdParent = 0 },
+      roleIdOwner,
+      user,
+    }) {
+      if (!roleIdOwner) return null;
+      if (!id) id = await this.getAtomClassId({ module, atomClassName, atomClassIdParent });
+      const sql = this.sqlProcedure.checkRightCreateRole({
+        iid: ctx.instance.id,
+        userIdWho: user.id,
+        atomClassId: id,
+        roleIdOwner,
       });
       return await ctx.model.queryOne(sql);
     }

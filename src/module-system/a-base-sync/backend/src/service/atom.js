@@ -6,8 +6,8 @@ module.exports = app => {
       return await this.ctx.meta.atom.preferredRoles({ atomClass, user });
     }
 
-    async create({ atomClass, item, user }) {
-      return await this.ctx.meta.atom.create({ atomClass, item, user });
+    async create({ atomClass, roleIdOwner, item, user }) {
+      return await this.ctx.meta.atom.create({ atomClass, roleIdOwner, item, user });
     }
 
     async read({ key, user }) {

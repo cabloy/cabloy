@@ -56,13 +56,13 @@ export default {
       return this._onActionCreateGetRoleIdOwner({ ctx, action, item }).then(roleIdOwner => {
         if (!roleIdOwner) return;
         // create
-        item.roleIdOwner = roleIdOwner;
         return ctx.$api.post('/a/base/atom/create', {
           atomClass: {
             id: item.atomClassId,
             module: item.module,
             atomClassName: item.atomClassName,
           },
+          roleIdOwner,
           item,
         }).then(key => {
           // event

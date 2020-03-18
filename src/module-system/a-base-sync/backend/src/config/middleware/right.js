@@ -40,10 +40,13 @@ async function checkAtom(moduleInfo, options, ctx) {
       });
       atomClassId = res.id;
     }
-    const res = await ctx.meta.atom.checkRightCreate({
+    // roleIdOwner
+    const roleIdOwner = ctx.request.body.roleIdOwner;
+    const res = await ctx.meta.atom.checkRightCreateRole({
       atomClass: {
         id: atomClassId,
       },
+      roleIdOwner,
       user: ctx.user.op,
     });
     if (!res) ctx.throw(403);

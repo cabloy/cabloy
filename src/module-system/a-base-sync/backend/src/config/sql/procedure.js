@@ -469,6 +469,22 @@ module.exports = ctx => {
       return _sql;
     }
 
+    checkRightCreateRole({ iid, userIdWho, atomClassId, roleIdOwner }) {
+      // for safe
+      iid = parseInt(iid);
+      userIdWho = parseInt(userIdWho);
+      atomClassId = parseInt(atomClassId);
+      roleIdOwner = parseInt(roleIdOwner);
+
+      // sql
+      const _sql =
+        `select a.* from aAtomClass a
+            inner join aViewUserRightAtomClass b on a.id=b.atomClassId
+              where b.iid=${iid} and b.atomClassId=${atomClassId} and b.action=1 and b.userIdWho=${userIdWho} and b.roleId=${roleIdOwner}
+        `;
+      return _sql;
+    }
+
     selectFunctions({ iid, locale, userIdWho, where, orders, page, star }) {
       // -- tables
       // -- a: aFunction
