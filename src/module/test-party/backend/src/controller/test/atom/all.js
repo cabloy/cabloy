@@ -5,6 +5,14 @@ module.exports = app => {
 
   class AllController extends app.Controller {
 
+    async getRoleIdOwner(atomClass, userId) {
+      const roles = await this.ctx.meta.atom.preferredRoles({
+        atomClass,
+        user: { id: userId },
+      });
+      return roles[0].roleIdWho;
+    }
+
     async all() {
       // atomClass
       const atomClass = await this.ctx.meta.atomClass.get({ atomClassName: 'party' });
@@ -23,8 +31,10 @@ module.exports = app => {
       });
 
       // Tom add party
+      const roleIdOwnerTom = await this.getRoleIdOwner(atomClass, userIds.Tom);
       const partyKey = await this.ctx.meta.atom.create({
         atomClass,
+        roleIdOwner: roleIdOwnerTom,
         user: { id: userIds.Tom },
       });
       await this.ctx.meta.atom.write({
