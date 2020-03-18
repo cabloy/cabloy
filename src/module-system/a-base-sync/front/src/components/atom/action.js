@@ -108,7 +108,12 @@ export default {
             ctx.$store.commit('a/base/setUserAtomClassRolesPreferred', { atomClassId, roleIdOwner });
             return roleIdOwner;
           }
-          return this._onActionCreateSelectPreferredRole({ ctx, action, roles });
+          return this._onActionCreateSelectPreferredRole({ ctx, action, roles }).then(roleIdOwner => {
+            if (roleIdOwner) {
+              ctx.$store.commit('a/base/setUserAtomClassRolesPreferred', { atomClassId, roleIdOwner });
+            }
+            return roleIdOwner;
+          });
         });
       });
     },
