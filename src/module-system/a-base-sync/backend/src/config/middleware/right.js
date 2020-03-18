@@ -55,7 +55,7 @@ async function checkAtom(moduleInfo, options, ctx) {
       ctx.meta._atomClass = res;
     } else {
       // retrieve default one
-      const roles = await ctx.service.atom.preferredRoles({
+      const roles = await ctx.meta.atom.preferredRoles({
         atomClass: {
           id: atomClassId,
         },
