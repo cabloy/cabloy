@@ -23,7 +23,8 @@ const users = [
   [ 'Tom', 'father' ], [ 'Jane', 'mother' ], [ 'Tomson', 'son' ], [ 'Jannie', 'daughter' ],
   [ 'Jimmy', 'friend' ], [ 'Rose', 'friend' ],
   [ 'Smith', 'life' ],
-  [ 'Rose', 'superuser' ], // for muilti-roles
+  [ 'Jone', 'work' ],
+  [ 'Jone', 'superuser' ], // for muilti-roles
 ];
 
 // roleRights
