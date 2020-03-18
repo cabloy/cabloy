@@ -139,13 +139,16 @@ export default {
           });
         }
         const actions = ctx.$f7.actions.create({ hostEl, buttons, targetEl });
-        actions.open();
-        actions.once('actionsClosed', () => {
+        function onActionsClosed() {
           actions.destroy();
           if (!resolved) {
+            resolved = true;
             resolve();
           }
-        });
+        }
+        actions.open()
+          .once('actionsClosed', onActionsClosed)
+          .once('popoverClosed', onActionsClosed);
       });
     },
   },

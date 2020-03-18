@@ -127,7 +127,7 @@ export default {
       this.$view.navigate(url, { target: '_self' });
     },
     onAction(event, item) {
-      const _menu = this.getMenu(item);
+      let _menu = this.getMenu(item);
       if (!_menu) return;
       if (_menu.action === 'create') {
         item = {
@@ -136,8 +136,9 @@ export default {
           atomClassName: item.atomClassName,
           atomClassIdParent: item.atomClassIdParent,
         };
+        _menu = this.$utils.extend({}, _menu, { targetEl: event.target });
       }
-      return this.$meta.util.performAction({ ctx: this, action: _menu, item });
+      this.$meta.util.performAction({ ctx: this, action: _menu, item });
     },
     onPerformAtomOrders(event) {
       const tab = this.$$(this.$refs.tabs.$el).find('.tab-active');
