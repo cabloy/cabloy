@@ -24,6 +24,7 @@ const users = [
   [ 'Jimmy', 'friend' ], [ 'Rose', 'friend' ],
   [ 'Smith', 'life' ],
   [ 'Jone', 'work' ],
+  [ 'Rose', 'superuser' ], // for muilti-roles
   [ 'Jone', 'superuser' ], // for muilti-roles
 ];
 
