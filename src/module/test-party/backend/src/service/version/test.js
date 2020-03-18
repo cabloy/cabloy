@@ -69,14 +69,16 @@ module.exports = function(ctx) {
       const userIds = {};
       for (const [ userName, roleName ] of testData.users) {
         // add
-        userIds[userName] = await ctx.meta.user.add({
-          userName,
-          realName: userName,
-        });
-        // activated
-        await ctx.meta.user.save({
-          user: { id: userIds[userName], activated: 1 },
-        });
+        if (!userIds[userName]) {
+          userIds[userName] = await ctx.meta.user.add({
+            userName,
+            realName: userName,
+          });
+          // activated
+          await ctx.meta.user.save({
+            user: { id: userIds[userName], activated: 1 },
+          });
+        }
         // role
         await ctx.meta.role.addUserRole({
           userId: userIds[userName],
