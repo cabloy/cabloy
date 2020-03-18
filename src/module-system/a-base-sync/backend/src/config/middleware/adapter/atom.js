@@ -72,21 +72,6 @@ const Fn = module.exports = ctx => {
 
     // atom and item
 
-    // preffered roles
-    async preferredRoles({ atomClass, user }) {
-      // atomClass
-      atomClass = await ctx.meta.atomClass.get(atomClass);
-
-      const roles = await ctx.model.query(
-        `select a.*,b.userId,c.roleName as roleNameWho from aViewRoleRightAtomClass a
-          inner join aUserRole b on a.roleIdWho=b.roleId
-          left join aRole c on a.roleIdWho=c.id
-          where a.iid=? and a.atomClassId=? and a.action=1 and b.userId=?
-          order by a.roleIdWho desc`,
-        [ ctx.instance.id, atomClass.id, user.id ]);
-      return roles;
-    }
-
     // create
     async create({ atomClass, roleIdOwner, item, user }) {
       // atomClass
@@ -627,6 +612,21 @@ const Fn = module.exports = ctx => {
         roleIdOwner,
       });
       return await ctx.model.queryOne(sql);
+    }
+
+    // preffered roles
+    async preferredRoles({ atomClass, user }) {
+      // atomClass
+      atomClass = await ctx.meta.atomClass.get(atomClass);
+
+      const roles = await ctx.model.query(
+        `select a.*,b.userId,c.roleName as roleNameWho from aViewRoleRightAtomClass a
+          inner join aUserRole b on a.roleIdWho=b.roleId
+          left join aRole c on a.roleIdWho=c.id
+          where a.iid=? and a.atomClassId=? and a.action=1 and b.userId=?
+          order by a.roleIdWho desc`,
+        [ ctx.instance.id, atomClass.id, user.id ]);
+      return roles;
     }
 
     _upperCaseFirstChar(str) {
