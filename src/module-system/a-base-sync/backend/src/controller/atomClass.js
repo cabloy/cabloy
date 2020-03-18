@@ -26,6 +26,13 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async atomClass() {
+      const res = await this.ctx.service.atomClass.atomClass({
+        atomClass: this.ctx.request.body.atomClass,
+      });
+      this.ctx.success(res);
+    }
+
   }
 
   return AtomClassController;

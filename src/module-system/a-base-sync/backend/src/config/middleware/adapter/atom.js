@@ -81,7 +81,8 @@ const Fn = module.exports = ctx => {
         `select a.*,b.userId,c.roleName as roleNameWho from aViewRoleRightAtomClass a
           inner join aUserRole b on a.roleIdWho=b.roleId
           left join aRole c on a.roleIdWho=c.id
-          where a.iid=? and a.atomClassId=? and a.action=1 and b.userId=?`,
+          where a.iid=? and a.atomClassId=? and a.action=1 and b.userId=?
+          order by a.roleIdWho desc`,
         [ ctx.instance.id, atomClass.id, user.id ]);
       return roles;
     }

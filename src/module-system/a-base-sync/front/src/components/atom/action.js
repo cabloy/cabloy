@@ -53,7 +53,7 @@ export default {
     },
     _onActionCreate({ ctx, action, item }) {
       // get roleIdOwner
-      return this._onActionCreateGetRoleIdOwner().then(roleIdOwner => {
+      return this._onActionCreateGetRoleIdOwner({ ctx, action, item }).then(roleIdOwner => {
         // create
         item.roleIdOwner = roleIdOwner;
         return ctx.$api.post('/a/base/atom/create', {
@@ -81,8 +81,38 @@ export default {
         });
       });
     },
-    _onActionCreateGetRoleIdOwner() {
-      // get preferred roles
+    _onActionCreateGetAtomClassId({ ctx, action, item }) {
+      if (item.atomClassId) return Promise.resolve(item.atomClassId);
+      return ctx.$api.post('/a/base/atomClass/atomClass', {
+        atomClass: {
+          module: item.module,
+          atomClassName: item.atomClassName,
+        },
+      }).then(atomClass => {
+        return atomClass.id;
+      });
+    },
+    _onActionCreateSelectPreferredRole({ ctx, roles }) {
+
+    },
+    _onActionCreateGetRoleIdOwner({ ctx, action, item }) {
+      return this._onActionCreateGetAtomClassId({ ctx, action, item }).then(atomClassId => {
+        // check cache from vuex
+        const userAtomClassRolesPreferred = ctx.$store.getState('a/base/userAtomClassRolesPreferred');
+        if (userAtomClassRolesPreferred[atomClassId]) return userAtomClassRolesPreferred[atomClassId];
+        // get preferred roles
+        return ctx.$api.post('/a/base/atom/preferredRoles', {
+          atomClass: { id: atomClassId },
+        }).then(roles => {
+          if (roles.length === 0) return Promise.reject(new Error('Error'));
+          if (roles.length === 1) {
+            const roleIdOwner = roles[0].roleIdWho;
+            ctx.$store.commit('/a/base/atom/setUserAtomClassRolesPreferred', { atomClassId, roleIdOwner });
+            return roleIdOwner;
+          }
+          return this._onActionCreateSelectPreferredRole({ ctx, roles });
+        });
+      });
     },
   },
 };

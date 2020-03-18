@@ -24,6 +24,7 @@ export default function(Vue) {
       layoutConfig: {},
       userPanels: null,
       userWidgets: null,
+      userAtomClassRolesPreferred: {},
       // global
       modules: null,
       atomClasses: null,
@@ -48,6 +49,7 @@ export default function(Vue) {
         state.layoutConfig = {};
         state.userPanels = null;
         state.userWidgets = null;
+        state.userAtomClassRolesPreferred = {};
       },
       setLabels(state, labels) {
         state.labels = labels;
@@ -80,6 +82,12 @@ export default function(Vue) {
       },
       setUserWidgets(state, widgets) {
         state.userWidgets = widgets;
+      },
+      setUserAtomClassRolesPreferred(state, { atomClassId, roleIdOwner }) {
+        state.userAtomClassRolesPreferred = {
+          ...state.userAtomClassRolesPreferred,
+          [atomClassId]: roleIdOwner,
+        };
       },
       setModules(state, modules) {
         state.modules = modules;

@@ -14,6 +14,10 @@ module.exports = app => {
       return await this.ctx.meta.atom.checkRightCreate({ atomClass, user });
     }
 
+    async atomClass({ atomClass }) {
+      return await this.ctx.meta.atomClass.get(atomClass);
+    }
+
   }
 
   return AtomClass;
