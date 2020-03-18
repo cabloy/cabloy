@@ -30,6 +30,7 @@ module.exports = app => {
     { method: 'get', path: 'base/qrcode', controller: base, meta: { auth: { enable: false } } },
     { method: 'post', path: 'base/themes', controller: base },
     // atom
+    { method: 'post', path: 'atom/getPreferredRoles', controller: atom },
     { method: 'post', path: 'atom/create', controller: atom, middlewares: 'transaction',
       meta: { right: { type: 'atom', action: 1 } },
     },

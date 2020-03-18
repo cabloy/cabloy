@@ -2,6 +2,10 @@ module.exports = app => {
 
   class Atom extends app.Service {
 
+    async getPreferredRoles({ atomClass, user }) {
+      return await this.ctx.meta.atom.getPreferredRoles({ atomClass, user });
+    }
+
     async create({ atomClass, item, user }) {
       return await this.ctx.meta.atom.create({ atomClass, item, user });
     }

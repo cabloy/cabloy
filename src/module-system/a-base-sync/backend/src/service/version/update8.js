@@ -38,8 +38,16 @@ module.exports = function(ctx) {
       // aAtom: add field roleIdOwner
       sql = `
         ALTER TABLE aAtom
-          ADD COLUMN roleIdOwner int(11) DEFAULT '0',
+          ADD COLUMN roleIdOwner int(11) DEFAULT '0'
                   `;
+      await ctx.model.query(sql);
+
+      // aViewRoleRightAtomClass
+      sql = `
+        create view aViewRoleRightAtomClass as
+          select a.iid,a.roleId as roleIdWho,a.roleIdBase,b.id as roleRightId,b.atomClassId,b.action,b.scope from aRoleExpand a
+            inner join aRoleRight b on a.roleIdBase=b.roleId
+          `;
       await ctx.model.query(sql);
 
     }

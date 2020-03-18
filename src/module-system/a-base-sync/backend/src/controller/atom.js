@@ -2,6 +2,13 @@ module.exports = app => {
 
   class AtomController extends app.Controller {
 
+    async getPreferredRoles() {
+      const res = await this.ctx.service.atom.getPreferredRoles({
+        atomClass: this.ctx.request.body.atomClass,
+        user: this.ctx.user.op,
+      });
+      this.ctx.success(res);
+    }
     async create() {
       const res = await this.ctx.service.atom.create({
         atomClass: this.ctx.request.body.atomClass,
