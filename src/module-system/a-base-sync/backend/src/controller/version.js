@@ -11,8 +11,8 @@ module.exports = app => {
       this.ctx.success();
     }
 
-    async update8() {
-      await this.service.version.update8(this.ctx.request.body);
+    async update8FunctionScenes() {
+      await this.service.version.update8FunctionScenes(this.ctx.request.body);
       this.ctx.success();
     }
 

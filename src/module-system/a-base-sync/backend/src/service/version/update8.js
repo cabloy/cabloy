@@ -43,7 +43,7 @@ module.exports = function(ctx) {
         await ctx.performAction({
           subdomain: instance.name,
           method: 'post',
-          url: 'version/update8',
+          url: 'version/update8FunctionScenes',
           body: options,
         });
       }
