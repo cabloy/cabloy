@@ -2,8 +2,8 @@ module.exports = app => {
 
   class AtomController extends app.Controller {
 
-    async getPreferredRoles() {
-      const res = await this.ctx.service.atom.getPreferredRoles({
+    async preferredRoles() {
+      const res = await this.ctx.service.atom.preferredRoles({
         atomClass: this.ctx.request.body.atomClass,
         user: this.ctx.user.op,
       });

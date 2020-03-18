@@ -72,20 +72,18 @@ const Fn = module.exports = ctx => {
 
     // atom and item
 
-    // get preffered roles
-    async getPreferredRoles({ atomClass, user }) {
+    // preffered roles
+    async preferredRoles({ atomClass, user }) {
       // atomClass
       atomClass = await this.meta.atomClass.get(atomClass);
 
       const roles = await ctx.model.query(
-        `select a.*,b.userId,c.roleName from aViewRoleRightAtomClass a
+        `select a.*,b.userId,c.roleName as roleNameWho from aViewRoleRightAtomClass a
           inner join aUserRole b on a.roleIdWho=b.roleId
           left join aRole c on a.roleIdWho=c.id
           where a.iid=? and a.atomClassId=? and a.action=1 and b.userId=?`,
         [ ctx.instance.id, atomClass.id, user.id ]);
-      return {
-        roles, atomClass,
-      };
+      return roles;
     }
 
     // create
