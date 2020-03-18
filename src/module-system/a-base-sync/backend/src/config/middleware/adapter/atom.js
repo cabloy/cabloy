@@ -75,7 +75,7 @@ const Fn = module.exports = ctx => {
     // preffered roles
     async preferredRoles({ atomClass, user }) {
       // atomClass
-      atomClass = await this.meta.atomClass.get(atomClass);
+      atomClass = await ctx.meta.atomClass.get(atomClass);
 
       const roles = await ctx.model.query(
         `select a.*,b.userId,c.roleName as roleNameWho from aViewRoleRightAtomClass a

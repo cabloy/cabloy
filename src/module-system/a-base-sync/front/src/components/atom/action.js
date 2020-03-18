@@ -92,9 +92,6 @@ export default {
         return atomClass.id;
       });
     },
-    _onActionCreateSelectPreferredRole({ ctx, roles }) {
-
-    },
     _onActionCreateGetRoleIdOwner({ ctx, action, item }) {
       return this._onActionCreateGetAtomClassId({ ctx, action, item }).then(atomClassId => {
         // check cache from vuex
@@ -107,10 +104,40 @@ export default {
           if (roles.length === 0) return Promise.reject(new Error('Error'));
           if (roles.length === 1) {
             const roleIdOwner = roles[0].roleIdWho;
-            ctx.$store.commit('/a/base/atom/setUserAtomClassRolesPreferred', { atomClassId, roleIdOwner });
+            ctx.$store.commit('a/base/setUserAtomClassRolesPreferred', { atomClassId, roleIdOwner });
             return roleIdOwner;
           }
-          return this._onActionCreateSelectPreferredRole({ ctx, roles });
+          return this._onActionCreateSelectPreferredRole({ ctx, action, roles });
+        });
+      });
+    },
+    _onActionCreateSelectPreferredRole({ ctx, action, roles }) {
+      return new Promise((resolve, reject) => {
+        const hostEl = ctx.$view.getHostEl();
+        const targetEl = action.targetEl;
+        const actions = ctx.$f7.actions.create({
+          hostEl,
+          buttons: [{
+            text: 'Do something',
+            label: true,
+          },
+          {
+            text: 'Button 1',
+            bold: true,
+          },
+          {
+            text: 'Button 2',
+          },
+          {
+            text: 'Cancel',
+            color: 'red',
+          },
+          ],
+          targetEl,
+        });
+        actions.open();
+        actions.once('actionsClosed', () => {
+          actions.destroy();
         });
       });
     },
