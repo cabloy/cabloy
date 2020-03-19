@@ -36,6 +36,8 @@ export default {
       if (sidebarLeft) children.push(sidebarLeft);
       const sidebarRight = this._renderSidebar(c, 'right');
       if (sidebarRight) children.push(sidebarRight);
+      const sidebarBottom = this._renderSidebar(c, 'bottom');
+      if (sidebarBottom) children.push(sidebarBottom);
     }
     // ok
     return c('div', { staticClass: 'eb-layout-container eb-layout-container-pc' }, children);
@@ -79,8 +81,20 @@ export default {
           toolbarHeight: 24,
           panelActive: '',
         },
+        bottom: {
+          opened: false,
+          cover: true,
+          panels: [],
+          views: [],
+          sections: [],
+          panelHeight: 280,
+          tabsHeight: 24,
+          toolbarHeight: 24,
+          panelActive: '',
+        },
       },
       panelsAll: null,
+      sectionsAll: null,
     };
   },
   computed: {
@@ -92,6 +106,9 @@ export default {
     },
     sidebarCoverRight() {
       return this.size.verySmall ? true : this.sidebar.right.cover;
+    },
+    sidebarCoverBottom() {
+      return this.sidebar.bottom.cover;
     },
   },
   beforeDestroy() {
@@ -135,6 +152,7 @@ export default {
       // sidebar
       width -= this._sidebarWidth('left');
       width -= this._sidebarWidth('right');
+      height -= this._sidebarHeight('bottom');
 
       this.size.width = width;
       this.size.height = height;
@@ -297,6 +315,17 @@ export default {
       }
       return width;
     },
+    _sidebarHeight(side) {
+      let height = 0;
+      if (this.sidebar[side].panels.length > 0 || this.sidebar[side].sections.length > 0) {
+        height += this.sidebar[side].tabsHeight;
+      }
+      const sideUpperCase = side.replace(side[0], side[0].toUpperCase());
+      if (this.sidebar[side].opened && !this[`sidebarCover${sideUpperCase}`]) {
+        height += this.sidebar[side].panelHeight;
+      }
+      return height;
+    },
     _handleClicks(event) {
       const $clickedEl = this.$$(event.target);
       const $clickedSidebarEl = $clickedEl.closest('.eb-layout-sidebar');
@@ -307,12 +336,28 @@ export default {
         if (this.sidebarCoverRight && this.sidebar.right.opened) {
           this.$refs.sidebarRight.setOpened(false);
         }
+        if (this.sidebarCoverBottom && this.sidebar.bottom.opened) {
+          this.$refs.sidebarBottom.setOpened(false);
+        }
       }
     },
+    __getPanelsAllAndSctionsAll() {
+      const promises = [];
+      promises.push(
+        this.$store.dispatch('a/base/getPanels').then(panels => {
+          this.panelsAll = panels;
+        })
+      );
+      promises.push(
+        this.$store.dispatch('a/base/getSections').then(sections => {
+          this.sectionsAll = sections;
+        })
+      );
+      return Promise.all(promises);
+    },
     __init(cb) {
-      // panelsAll
-      this.$store.dispatch('a/base/getPanels').then(panels => {
-        this.panelsAll = panels;
+      // panelsAll & sectionsAll
+      this.__getPanelsAllAndSctionsAll().then(() => {
         // layoutConfig
         this.$store.dispatch('a/base/getLayoutConfig', 'a-layoutpc').then(layoutConfig => {
           // init layoutConfig
@@ -321,6 +366,7 @@ export default {
           const configFirst = !layoutConfig.sidebar;
           this.__initSidebar('left', configFirst);
           this.__initSidebar('right', configFirst);
+          this.__initSidebar('bottom', configFirst);
           // inited
           this.sidebarInited = true;
           cb();
@@ -333,6 +379,7 @@ export default {
       // remove dynamic panels
       this.__removeDynamicPanels(value.left);
       this.__removeDynamicPanels(value.right);
+      this.__removeDynamicPanels(value.bottom);
       // save
       this.$store.commit('a/base/setLayoutConfigKey', { module: 'a-layoutpc', key: 'sidebar', value });
     }, 1000),
@@ -354,26 +401,52 @@ export default {
       }
       // views
       side.views = [];
+      // sections
+      if (side.sections) {
+        const sections = side.sections;
+        for (let index = sections.length - 1; index >= 0; index--) {
+          const section = sections[index];
+          if (!section.module) {
+            sections.splice(index, 1);
+          } else {
+            sections[index] = { module: section.module, name: section.name };
+          }
+        }
+      }
     },
     __initSidebar(side, configFirst) {
       // panels from layoutConfig or frontConfig
       let panels;
+      let sections;
       if (configFirst) {
         const configSidebar = this.$config.layout.sidebar;
         panels = configSidebar[side] && configSidebar[side].panels;
+        sections = configSidebar[side] && configSidebar[side].sections;
       } else {
-        panels = this.sidebar[side].panels;
+        sections = this.sidebar[side].sections;
       }
-      if (!panels) return;
-      this.sidebar[side].panels = [];
-      for (const panel of panels) {
-        this.sidebar[side].panels.push(this._preparePanel(panel));
+      if (panels) {
+        this.sidebar[side].panels = [];
+        for (const panel of panels) {
+          this.sidebar[side].panels.push(this._preparePanel(panel));
+        }
+      }
+      if (sections) {
+        this.sidebar[side].sections = [];
+        for (const section of sections) {
+          this.sidebar[side].sections.push(this._prepareSection(section));
+        }
       }
     },
     _findPanelStock(panel) {
       if (!this.panelsAll || !panel.module) return null;
       const panels = this.panelsAll[panel.module];
       return panels[panel.name];
+    },
+    _findSectionStock(section) {
+      if (!this.sectionsAll || !section.module) return null;
+      const sections = this.sectionsAll[section.module];
+      return sections[section.name];
     },
     _preparePanel(panel, url) {
       // extra
@@ -384,6 +457,12 @@ export default {
       const panelStock = this._findPanelStock(panel);
       // extend
       return this.$meta.util.extend({}, panelStock, panel, _panelExtra);
+    },
+    _prepareSection(section) {
+      // stock
+      const sectionStock = this._findSectionStock(section);
+      // extend
+      return this.$meta.util.extend({}, sectionStock, section);
     },
     _renderSidebar(c, side) {
       const sideUpperCase = side.replace(side[0], side[0].toUpperCase());

@@ -20,6 +20,11 @@ export default {
       right: {
         panels: [],
       },
+      bottom: {
+        sections: [
+          { module: 'a-base', name: 'sectionCopyright' },
+        ],
+      },
     },
     size: {
       small: 320,
