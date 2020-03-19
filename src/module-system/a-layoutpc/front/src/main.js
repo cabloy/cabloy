@@ -1,4 +1,3 @@
-import layout from './components/layout.vue';
 import './assets/css/module.less';
 
 let Vue;
@@ -15,9 +14,8 @@ function install(_Vue, cb) {
     store: require('./store.js').default(Vue),
     config: require('./config/config.js').default,
     locales: require('./config/locales.js').default,
-    components: {
-      layout,
-    },
+    components: require('./components.js').default,
+    mixins: require('./mixins.js').default(Vue),
   });
 }
 
