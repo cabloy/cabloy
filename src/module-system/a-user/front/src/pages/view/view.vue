@@ -4,6 +4,8 @@
     <f7-list>
       <eb-list-item :title="$text('Sidebar (Left)')" link="#" eb-href="view/edit?side=left" eb-target="_self"></eb-list-item>
       <eb-list-item :title="$text('Sidebar (Right)')" link="#" eb-href="view/edit?side=right" eb-target="_self"></eb-list-item>
+      <eb-list-item :title="$text('Statusbar (Left)')" link="#" eb-href="view/edit?side=bottom" eb-target="_self"></eb-list-item>
+      <eb-list-item :title="$text('Statusbar (Right)')" link="#" eb-href="view/edit?side=bottom" eb-target="_self"></eb-list-item>
     </f7-list>
   </eb-page>
 </template>
