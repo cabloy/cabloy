@@ -4,7 +4,9 @@ export default function(Vue) {
     profile: {
       default: {
         root: {
-          widgets: [],
+          widgets: [
+            { module: 'a-base', name: 'widgetAbout' },
+          ],
         },
       },
       meta: {
