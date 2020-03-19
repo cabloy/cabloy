@@ -25,15 +25,24 @@ export default {
       },
     });
     // group
+    let style;
+    if (this.side === 'left' || this.side === 'right') {
+      style = {
+        height: `${this.layout.size.height - this.options.toolbarHeight}px`,
+        top: `${this.options.toolbarHeight}px`,
+      };
+    } else {
+      style = {
+        width: `100%`,
+        top: `${this.options.toolbarHeight}px`,
+      };
+    }
     const group = c('eb-sidebar-group', {
       ref: 'sidebarGroup',
       props: {
         side: this.side,
       },
-      style: {
-        height: `${this.layout.size.height - this.layout.size.top - this.options.toolbarHeight}px`,
-        top: `${this.options.toolbarHeight}px`,
-      },
+      style,
     });
     // resize handler
     const resizeHandler = c('div', {
@@ -94,10 +103,19 @@ export default {
     },
     viewSizeExtent() {
       const layout = this.layout;
-      return {
-        width: this.options.panelWidth,
-        height: layout.size.height - layout.size.top - this.options.toolbarHeight,
-      };
+      let size;
+      if (this.side === 'left' || this.side === 'right') {
+        size = {
+          width: this.options.panelWidth,
+          height: layout.size.height - this.options.toolbarHeight,
+        };
+      } else {
+        size = {
+          width: '100%',
+          height: layout.size.height - this.options.toolbarHeight,
+        };
+      }
+      return size;
     }
   },
   created() {

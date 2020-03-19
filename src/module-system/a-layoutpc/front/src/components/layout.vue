@@ -26,7 +26,7 @@ export default {
       const groups = c('eb-groups', {
         ref: 'groups',
         style: {
-          height: `${this.size.height - this.size.top - this.sizeSpacing * 2}px`,
+          height: `${this.size.main}px`,
           top: `${ this.size.top + this.sizeSpacing}px`,
         },
       });
@@ -83,7 +83,6 @@ export default {
           opened: false,
           cover: true,
           panels: [],
-          views: [],
           sections: [],
           panelHeight: 280,
           tabsHeight: 24,
@@ -145,15 +144,12 @@ export default {
       const spacing = this.sizeSpacing;
 
       let width = layoutWidth;
-      let height = layoutHeight;
 
       // sidebar
       width -= this._sidebarWidth('left');
       width -= this._sidebarWidth('right');
-      height -= this._sidebarHeight('bottom');
 
       this.size.width = width;
-      this.size.height = height;
 
       // width
       let enoughLarge = true;
@@ -176,8 +172,14 @@ export default {
       this.enoughLarge = enoughLarge;
 
       // height
+      let height = layoutHeight;
       this.size.top = this.$config.layout.size.top;
-      this.size.main = height - this.size.top - spacing * 2;
+
+      height -= this.size.top;
+      height -= this._sidebarHeight('bottom');
+
+      this.size.height = height;
+      this.size.main = height - spacing * 2;
     },
     start() {
       // size
@@ -463,6 +465,18 @@ export default {
     },
     _renderSidebar(c, side) {
       const sideUpperCase = side.replace(side[0], side[0].toUpperCase());
+      let style;
+      if (side === 'left' || side === 'right') {
+        style = {
+          height: `${this.size.height}px`,
+          top: `${ this.size.top}px`,
+        };
+      } else {
+        style = {
+          width: `100%`,
+          bottom: `0`,
+        };
+      }
       return c('eb-sidebar', {
         ref: `sidebar${sideUpperCase}`,
         staticClass: this.sidebar[side].panels.length === 0 ? 'display-none' : '',
@@ -470,10 +484,7 @@ export default {
           side,
           options: this.sidebar[side],
         },
-        style: {
-          height: `${this.size.height - this.size.top}px`,
-          top: `${ this.size.top}px`,
-        },
+        style,
       });
     },
     _createPanel({ side, panel, url, options, init }) {
