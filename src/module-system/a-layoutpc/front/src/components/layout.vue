@@ -47,6 +47,8 @@ export default {
       started: false,
       sidebarInited: false,
       size: {
+        layoutWidth: 0,
+        layoutHeight: 0,
         width: 0,
         height: 0,
         small: 0,
@@ -136,6 +138,9 @@ export default {
     setSize() {
       const layoutWidth = this.$$(this.$el).width();
       const layoutHeight = this.$$(this.$el).height();
+
+      this.layoutWidth = layoutWidth;
+      this.layoutHeight = layoutHeight;
 
       // verySmall
       this.size.verySmall = (layoutWidth < layoutHeight) || (layoutWidth <= this.$config.layout.size.small);
@@ -474,7 +479,7 @@ export default {
       } else {
         style = {
           width: `100%`,
-          bottom: `0`,
+          bottom: '0',
         };
       }
       return c('eb-sidebar', {

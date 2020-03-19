@@ -18,15 +18,24 @@ export default {
         'data-index': index,
         'data-size': viewSize,
       };
+      let style;
+      if (this.side === 'left' || this.side === 'right') {
+        style = {
+          zIndex: view.zIndex + '',
+          width: `${viewSizeExtent.width}px`,
+        };
+      } else {
+        style = {
+          zIndex: view.zIndex + '',
+          height: `${this.sidebar.options.panelHeight-this.sidebar.options.toolbarHeight}px`,
+        };
+      }
       children.push(c('eb-view', {
         ref: view.id,
         id: view.id,
         key: view.id,
         staticClass: `eb-layout-panel-view eb-layout-view ${this.layout._combineViewSizeClass(viewSize)}`,
-        style: {
-          zIndex: view.zIndex + '',
-          width: `${viewSizeExtent.width}px`,
-        },
+        style,
         attrs: _viewAttrs,
         props: {
           size: viewSize,

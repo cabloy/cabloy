@@ -33,7 +33,7 @@ export default {
       };
     } else {
       style = {
-        width: `100%`,
+        height: `${this.options.panelHeight-this.options.toolbarHeight}px`,
         top: `${this.options.toolbarHeight}px`,
       };
     }
@@ -60,11 +60,18 @@ export default {
     });
     // panel
     const viewSizeExtent = this.viewSizeExtent;
+    if (this.side === 'left' || this.side === 'right') {
+      style = {
+        width: `${viewSizeExtent.width}px`,
+      };
+    } else {
+      style = {
+        height: `${viewSizeExtent.height}px`,
+      };
+    }
     const panel = c('div', {
       staticClass: this._getPanelClassName(),
-      style: {
-        width: `${viewSizeExtent.width}px`,
-      },
+      style,
     }, [toolbar, group, resizeHandler]);
     children.push(panel);
     // ok
@@ -111,8 +118,8 @@ export default {
         };
       } else {
         size = {
-          width: '100%',
-          height: layout.size.height - this.options.toolbarHeight,
+          width: layout.size.layoutWidth,
+          height: this.options.panelHeight,
         };
       }
       return size;
@@ -247,9 +254,15 @@ export default {
       }
     },
     setPanelWidth(newPanelWidth) {
+      const isRow = this._getResizeDirection() === 'row';
       const width = parseInt(newPanelWidth);
-      if (this.options.panelWidth === width) return;
-      this.options.panelWidth = width;
+      if (!isRow) {
+        if (this.options.panelWidth === width) return;
+        this.options.panelWidth = width;
+      } else {
+        if (this.options.panelHeight === width) return;
+        this.options.panelHeight = width;
+      }
 
       const side = this.side;
       const sideUpperCase = side.replace(side[0], side[0].toUpperCase());
@@ -289,8 +302,9 @@ export default {
       return (this.side === 'left' || this.side === 'right') ? 'column' : 'row';
     },
     onDragStartResizable({ $el, context, dragElement }) {
+      const isRow = this._getResizeDirection() === 'row';
       const viewSizeExtent = this.viewSizeExtent;
-      const tooltip = viewSizeExtent.width;
+      const tooltip = isRow ? viewSizeExtent.height : viewSizeExtent.width;
       return { size: null, tooltip };
     },
     onDragMoveResizable({ $el, context, diff }) {
@@ -303,6 +317,15 @@ export default {
         const newPanelWidth = viewSizeExtent.width + diffAbs;
         this.setPanelWidth(newPanelWidth);
         const tooltip = newPanelWidth;
+        return { eaten: true, tooltip };
+      } else {
+        let diffAbs = parseInt(diff.abs.y);
+        if (diffAbs === 0) return;
+        if (this.side === 'bottom') diffAbs = -diffAbs;
+        const viewSizeExtent = this.viewSizeExtent;
+        const newPanelHeight = viewSizeExtent.height + diffAbs;
+        this.setPanelWidth(newPanelHeight);
+        const tooltip = newPanelHeight;
         return { eaten: true, tooltip };
       }
 
