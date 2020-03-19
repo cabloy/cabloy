@@ -214,10 +214,12 @@ export default function(Vue) {
               })
               .catch(err => {
                 componentInstance.$destroy();
+                console.log(err);
                 reject(err);
               });
           } catch (err) {
             componentInstance.$destroy();
+            console.log(err);
             reject(err);
           }
         });
