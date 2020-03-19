@@ -68,6 +68,9 @@ module.exports = function(ctx) {
               and a.roleIdOwner=b.roleIdWhom
         `;
       await ctx.model.query(sql);
+
+      // update exists atoms
+      await this._updateAtoms(options);
     }
 
     async _updateFunctions(options) {
@@ -93,6 +96,47 @@ module.exports = function(ctx) {
           [ sceneId, ctx.instance.id, sceneValue ]);
       }
     }
+
+    async _updateAtoms(options) {
+      // all instances
+      const instances = await ctx.model.query('select * from aInstance');
+      for (const instance of instances) {
+        await ctx.performAction({
+          subdomain: instance.name,
+          method: 'post',
+          url: 'version/update8Atoms',
+          body: options,
+        });
+      }
+    }
+
+    async _updateAtomsInstance() {
+      // cache
+      const mapUserAtomClassRole = {};
+      // atoms
+      const atoms = await ctx.model.query('select id, atomClassId, userIdCreated from aAtom where iid=? and deleted=0',
+        [ ctx.instance.id ]);
+      for (const atom of atoms) {
+        const mapKey = `${atom.userIdCreated}:${atom.atomClassId}`;
+        let mapValue = mapUserAtomClassRole[mapKey];
+        if (mapValue === undefined) {
+          mapValue = mapUserAtomClassRole[mapKey] = await this._getRoleIdOwner(atom.atomClassId, atom.userIdCreated);
+        }
+        if (mapValue > 0) {
+          await ctx.model.query('update aAtom set roleIdOwner=? where id=?', [ mapValue, atom.id ]);
+        }
+      }
+    }
+
+    async _getRoleIdOwner(atomClassId, userId) {
+      const roles = await ctx.meta.atom.preferredRoles({
+        atomClass: { id: atomClassId },
+        user: { id: userId },
+      });
+      if (roles.length === 0) return 0;
+      return roles[0].roleIdWho;
+    }
+
 
   }
 

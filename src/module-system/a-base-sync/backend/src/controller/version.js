@@ -16,6 +16,11 @@ module.exports = app => {
       this.ctx.success();
     }
 
+    async update8Atoms() {
+      await this.service.version.update8Atoms(this.ctx.request.body);
+      this.ctx.success();
+    }
+
   }
   return VersionController;
 };

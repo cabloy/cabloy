@@ -15,6 +15,7 @@ module.exports = app => {
     { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/update8FunctionScenes', controller: version, middlewares: 'inner' },
+    { method: 'post', path: 'version/update8Atoms', controller: version, middlewares: 'inner' },
     // base
     { method: 'post', path: 'base/modules', controller: base },
     { method: 'post', path: 'base/locales', controller: base },
