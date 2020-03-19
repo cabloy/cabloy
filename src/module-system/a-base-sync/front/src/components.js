@@ -3,6 +3,7 @@ import atoms from './components/atom/list.vue';
 import item from './components/atom/item.vue';
 import action from './components/atom/action.js';
 import widgetAbout from './components/widgets/about.vue';
+import sectionCopyright from './components/sections/copyright.vue';
 
 export default {
   menus,
@@ -10,4 +11,5 @@ export default {
   action,
   ebAtoms: atoms,
   widgetAbout,
+  sectionCopyright,
 };
