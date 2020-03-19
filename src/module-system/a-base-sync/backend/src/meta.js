@@ -37,6 +37,20 @@ module.exports = app => {
           menu: 2,
           public: 1,
         },
+        // widgets
+        widgetAbout: {
+          title: 'About',
+          component: 'widgetAbout',
+          menu: 3,
+          public: 1,
+        },
+        // sections
+        sectionCopyright: {
+          title: 'Copyright',
+          component: 'sectionCopyright',
+          menu: 4,
+          public: 1,
+        },
       },
     },
     sequence: {

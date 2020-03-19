@@ -38,6 +38,10 @@ module.exports = app => {
       return this.ctx.meta.base.widgets();
     }
 
+    sections() {
+      return this.ctx.meta.base.sections();
+    }
+
     functions() {
       return this.ctx.meta.base.functions();
     }

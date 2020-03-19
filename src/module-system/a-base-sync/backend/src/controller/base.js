@@ -50,6 +50,11 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    sections() {
+      const res = this.ctx.service.base.sections();
+      this.ctx.success(res);
+    }
+
     functions() {
       const res = this.ctx.service.base.functions();
       this.ctx.success(res);

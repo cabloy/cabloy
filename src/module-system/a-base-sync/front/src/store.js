@@ -36,6 +36,7 @@ export default function(Vue) {
       menus: null,
       panels: null,
       widgets: null,
+      sections: null,
     },
     getters: {
       userLabels(state) {
@@ -112,6 +113,9 @@ export default function(Vue) {
       },
       setWidgets(state, widgets) {
         state.widgets = widgets;
+      },
+      setSections(state, sections) {
+        state.sections = sections;
       },
       setFunctions(state, functions) {
         state.functions = functions;
@@ -227,6 +231,18 @@ export default function(Vue) {
           Vue.prototype.$meta.api.post('/a/base/base/widgets').then(data => {
             data = data || {};
             commit('setWidgets', data);
+            resolve(data);
+          }).catch(err => {
+            reject(err);
+          });
+        });
+      },
+      getSections({ state, commit }) {
+        return new Promise((resolve, reject) => {
+          if (state.sections) return resolve(state.sections);
+          Vue.prototype.$meta.api.post('/a/base/base/sections').then(data => {
+            data = data || {};
+            commit('setSections', data);
             resolve(data);
           }).catch(err => {
             reject(err);
