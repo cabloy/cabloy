@@ -91,12 +91,6 @@ module.exports = app => {
             menu: 3,
             public: 1,
           },
-          widgetAbout: {
-            title: 'About',
-            component: 'widgetAbout',
-            menu: 3,
-            public: 1,
-          },
         },
       },
       validation: {

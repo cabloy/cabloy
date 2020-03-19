@@ -121,7 +121,6 @@ module.exports = app => {
           { roleName: null, name: 'widgetSalesLine' },
           { roleName: null, name: 'widgetSalesPie' },
           { roleName: null, name: 'widgetSnapshot' },
-          { roleName: null, name: 'widgetAbout' },
         ];
         await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
       }

@@ -222,7 +222,7 @@
     {
       "id": "8a04bfa743fb42b2a65a104e018ab924",
       "name": "widgetAbout",
-      "module": "test-party",
+      "module": "a-base",
       "properties":
       {
         "title":
