@@ -58,7 +58,7 @@ export default {
       return this.sidebar.layout;
     },
     sidebar() {
-      return this.$parent.$parent;
+      return this.$parent;
     },
     views() {
       return this.sidebar.options.views;

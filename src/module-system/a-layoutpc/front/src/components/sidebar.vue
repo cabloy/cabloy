@@ -24,7 +24,7 @@ export default {
         side: this.side,
       },
     });
-    // panel
+    // group
     const group = c('eb-sidebar-group', {
       ref: 'sidebarGroup',
       props: {
@@ -35,22 +35,28 @@ export default {
         top: `${this.options.toolbarHeight}px`,
       },
     });
+    // resize handler
+    const resizeHandler = c('div', {
+      staticClass: 'panel-resize-handler',
+      directives: [{
+        name: 'eb-dragdrop',
+        value: {
+          scene: this.dragdropSceneResize,
+          resizable: true,
+          resizeDirection: this._getResizeDirection(),
+          onDragStart: this.onDragStartResizable,
+          onDragMove: this.onDragMoveResizable,
+        }
+      }],
+    });
+    // panel
     const viewSizeExtent = this.viewSizeExtent;
-    const panel = c('f7-panel', {
-      staticClass: this.options.opened ? 'panel-show' : 'panel-hide',
+    const panel = c('div', {
+      staticClass: this._getPanelClassName(),
       style: {
         width: `${viewSizeExtent.width}px`,
       },
-      props: {
-        side: this.side,
-        visibleBreakpoint: 0,
-        effect: 'cover',
-        resizable: true,
-      },
-      on: {
-        'panel:resize': this.onPanelResize,
-      },
-    }, [toolbar, group]);
+    }, [toolbar, group, resizeHandler]);
     children.push(panel);
     // ok
     return c('div', { staticClass: `eb-layout-sidebar eb-layout-sidebar-${this.side}` }, children);
@@ -66,6 +72,7 @@ export default {
   data() {
     return {
       initOpened: false,
+      dragdropSceneResize: Vue.prototype.$meta.util.nextId('dragdrop'),
     }
   },
   computed: {
@@ -233,9 +240,6 @@ export default {
       // save
       this.layout.__saveLayoutConfig();
     },
-    onPanelResize(panel, newPanelWidth) {
-      this.setPanelWidth(newPanelWidth);
-    },
     _onPanelResizeDelay: Vue.prototype.$meta.util.debounce(function() {
       this.layout.onResize();
     }, 300),
@@ -256,6 +260,33 @@ export default {
           this.layout.__saveLayoutConfig();
         }
       }
+    },
+    _getPanelClassName() {
+      const classNameOpened = this.options.opened ? 'panel-show' : 'panel-hide';
+      const classNameSide = `panel-${this.side}`;
+      return `panel panel-cover panel-resizable ${classNameSide} ${classNameOpened}`;
+    },
+    _getResizeDirection() {
+      return (this.side === 'left' || this.side === 'right') ? 'column' : 'row';
+    },
+    onDragStartResizable({ $el, context, dragElement }) {
+      const viewSizeExtent = this.viewSizeExtent;
+      const tooltip = viewSizeExtent.width;
+      return { size: null, tooltip };
+    },
+    onDragMoveResizable({ $el, context, diff }) {
+      const isRow = this._getResizeDirection() === 'row';
+      if (!isRow) {
+        let diffAbs = parseInt(diff.abs.x);
+        if (diffAbs === 0) return;
+        if (this.side === 'right') diffAbs = -diffAbs;
+        const viewSizeExtent = this.viewSizeExtent;
+        const newPanelWidth = viewSizeExtent.width + diffAbs;
+        this.setPanelWidth(newPanelWidth);
+        const tooltip = newPanelWidth;
+        return { eaten: true, tooltip };
+      }
+
     },
   }
 }

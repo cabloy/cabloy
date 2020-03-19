@@ -51,7 +51,7 @@ export default {
       return this.sidebar.layout;
     },
     sidebar() {
-      return this.$parent.$parent;
+      return this.$parent;
     },
   },
   methods: {
