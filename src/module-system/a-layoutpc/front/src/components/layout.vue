@@ -65,7 +65,6 @@ export default {
           opened: false,
           cover: true,
           panels: [],
-          views: [],
           panelWidth: 280,
           tabsWidth: 24,
           toolbarHeight: 24,
@@ -75,7 +74,6 @@ export default {
           opened: false,
           cover: true,
           panels: [],
-          views: [],
           panelWidth: 280,
           tabsWidth: 24,
           toolbarHeight: 24,
@@ -399,8 +397,6 @@ export default {
           panels[index] = { module: panel.module, name: panel.name };
         }
       }
-      // views
-      side.views = [];
       // sections
       if (side.sections) {
         const sections = side.sections;
@@ -423,6 +419,7 @@ export default {
         panels = configSidebar[side] && configSidebar[side].panels;
         sections = configSidebar[side] && configSidebar[side].sections;
       } else {
+        panels = this.sidebar[side].panels;
         sections = this.sidebar[side].sections;
       }
       if (panels) {

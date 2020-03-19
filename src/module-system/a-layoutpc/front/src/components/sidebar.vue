@@ -72,6 +72,7 @@ export default {
   data() {
     return {
       initOpened: false,
+      views: [],
       dragdropSceneResize: Vue.prototype.$meta.util.nextId('dragdrop'),
     }
   },
@@ -125,7 +126,7 @@ export default {
       // panelName
       const panelName = this.layout._panelFullName(panel);
       // find by name
-      const view = this.options.views.find(item => this.layout._panelFullName(item.panel) === panelName);
+      const view = this.views.find(item => this.layout._panelFullName(item.panel) === panelName);
       if (view) {
         const $view = this.$$(`#${view.id}`);
         // navigate
@@ -156,7 +157,7 @@ export default {
       });
     },
     closePanel(panel) {
-      const view = this.options.views.find(item => this.layout._panelFullName(item.panel) === this.layout._panelFullName(panel));
+      const view = this.views.find(item => this.layout._panelFullName(item.panel) === this.layout._panelFullName(panel));
       if (view) {
         this._closeView(view.id);
       } else {
@@ -184,16 +185,16 @@ export default {
       });
     },
     _getViewById(viewId) {
-      return this.options.views.find(item => item.id === viewId);
+      return this.views.find(item => item.id === viewId);
     },
     _getViewIndexById(viewId) {
-      return this.options.views.findIndex(item => item.id === viewId);
+      return this.views.findIndex(item => item.id === viewId);
     },
     _removeView(viewId) {
       const viewIndex = this._getViewIndexById(viewId);
       if (viewIndex === -1) return;
-      this.options.views.splice(viewIndex, 1);
-      if (this.options.views.length === 0) {
+      this.views.splice(viewIndex, 1);
+      if (this.views.length === 0) {
         this.setOpened(false);
       }
     },
@@ -244,8 +245,8 @@ export default {
       this.layout.onResize();
     }, 300),
     _getTopView(skip) {
-      if (this.options.views.length === 0) return null;
-      return this.options.views.reduce((prev, current) => {
+      if (this.views.length === 0) return null;
+      return this.views.reduce((prev, current) => {
         if (skip && current.id === skip.id) return prev;
         if (!prev) return current;
         return prev.zIndex > current.zIndex ? prev : current;

@@ -61,7 +61,7 @@ export default {
       return this.$parent;
     },
     views() {
-      return this.sidebar.options.views;
+      return this.sidebar.views;
     }
   },
   methods: {
