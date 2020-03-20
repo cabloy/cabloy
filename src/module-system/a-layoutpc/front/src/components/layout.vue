@@ -518,6 +518,26 @@ export default {
         this.$refs[`sidebar${sideUpperCase}`].createView({ ctx: null, panel, options, init });
       });
     },
+    closeSection(side, section) {
+      const _sectionIndex = this.sidebar[side].sections.findIndex(item => this._sectionFullName(item) === this._sectionFullName(section));
+      if (_sectionIndex === -1) return;
+      this.sidebar[side].sections.splice(_sectionIndex, 1);
+      if (this.sidebar[side].sections.length === 0) {
+        this.onResize();
+      }
+      this.__saveLayoutConfig();
+    },
+    openSection(side, section) {
+      const _sectionIndex = this.sidebar[side].sections.findIndex(item => this._sectionFullName(item) === this._sectionFullName(section));
+      if (_sectionIndex > -1) return;
+      // prepare section
+      section = this._prepareSection(section);
+      this.sidebar[side].sections.push(section);
+      if (this.sidebar[side].sections.length === 1) {
+        this.onResize();
+      }
+      this.__saveLayoutConfig();
+    },
     _panelFullName(panel) {
       if (panel.module) return `${panel.module}:${panel.name}`;
       return panel.name;
