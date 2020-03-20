@@ -1,5 +1,5 @@
 <template>
-  <span>{{getClockText()}}</span>
+  <span class="clock-text" @click="onClickSettings">{{clockText}}</span>
 </template>
 <script>
 // export
@@ -13,17 +13,17 @@ const schema = {
   properties: {
     weekDay: {
       type: 'boolean',
-      ebType: 'Toggle',
+      ebType: 'toggle',
       ebTitle: 'Day of Week',
     },
     date: {
       type: 'boolean',
-      ebType: 'Toggle',
+      ebType: 'toggle',
       ebTitle: 'Date',
     },
     time: {
       type: 'boolean',
-      ebType: 'Toggle',
+      ebType: 'toggle',
       ebTitle: 'Time',
     },
     customFormat: {
@@ -51,10 +51,15 @@ function install(_Vue) {
       return {
         options: null,
         ready: false,
+        timerId: 0,
+        clockText: '',
       };
     },
     created() {
       this.__init();
+    },
+    beforeDestroy() {
+      this.__setTimer(false);
     },
     methods: {
       __init() {
@@ -70,19 +75,67 @@ function install(_Vue) {
           }
           this.options = options;
           this.ready = true;
+          this.__setTimer(true);
         });
       },
+      __setTimer(set) {
+        if (set) {
+          // timer
+          this.timerId = window.setInterval(() => {
+            this.updateClockText();
+          }, 1000);
+        } else {
+          if (this.timerId) {
+            window.clearInterval(this.timerId);
+            this.timerId = 0;
+          }
+        }
+      },
+      updateClockText() {
+        this.clockText = this.getClockText();
+      },
       getClockText() {
-        if (!this.ready) return;
+        if (!this.ready) return '';
         const moment = this.$meta.util.moment();
+        if (this.options.customFormat) return moment.format(this.options.customFormat);
         let text = '';
         if (this.options.weekDay) text = `${text} ${moment.format('ddd')}`;
-        if (this.options.date) text = `${text} ${moment.format('YYYY-MM-DD')}`;
-        if (this.options.time) text = `${text} ${moment.format('HH:mm:ss')}`;
+        if (this.options.date) text = `${text} ${moment.format('DD/MM')}`;
+        if (this.options.time) text = `${text} ${moment.format('HH:mm')}`;
         return text.trim();
+      },
+      onClickSettings() {
+        this.$meta.vueLayout.navigate('/a/base/section/clock/preferences', {
+          scene: 'sidebar',
+          sceneOptions: { side: 'right', name: 'preferences', title: 'Preferences' },
+          context: {
+            params: {
+              clock: this,
+              schema,
+              item: this.options,
+            },
+            callback: (code, data) => {
+              if (code === 200) {
+                this.options = {
+                  ...this.options,
+                  [data.key]: data.value,
+                };
+                this.updateClockText();
+                // save
+                this.$store.commit('a/base/setLayoutConfigKey', { module: 'a-base', key: 'sectionClockOptions', value: this.options });
+              }
+            },
+          },
+        });
       },
     },
   };
 }
 
 </script>
+<style lang="less" scoped>
+.clock-text {
+  cursor: pointer;
+}
+
+</style>
