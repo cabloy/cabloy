@@ -338,7 +338,7 @@ export default {
       return Promise.all(promises);
     },
     __init(cb) {
-      // panelsAll & sectionsAll
+      // panelsAll & sectionsAll & buttonsAll
       this.__getResourcesAll().then(() => {
         // layoutConfig
         this.$store.dispatch('a/base/getLayoutConfig', 'a-layoutpc').then(layoutConfig => {
@@ -359,6 +359,7 @@ export default {
       // override
       let value = this.$meta.util.extend({}, this.sidebar);
       // remove dynamic panels
+      this.__removeDynamicPanels(value.top);
       this.__removeDynamicPanels(value.left);
       this.__removeDynamicPanels(value.right);
       this.__removeDynamicPanels(value.bottom);
@@ -375,13 +376,15 @@ export default {
     },
     __removeDynamicPanels(side) {
       // panels
-      const panels = side.panels;
-      for (let index = panels.length - 1; index >= 0; index--) {
-        const panel = panels[index];
-        if (!panel.module) {
-          panels.splice(index, 1);
-        } else {
-          panels[index] = { module: panel.module, name: panel.name };
+      if (side.panels) {
+        const panels = side.panels;
+        for (let index = panels.length - 1; index >= 0; index--) {
+          const panel = panels[index];
+          if (!panel.module) {
+            panels.splice(index, 1);
+          } else {
+            panels[index] = { module: panel.module, name: panel.name };
+          }
         }
       }
       // sections
@@ -393,6 +396,18 @@ export default {
             sections.splice(index, 1);
           } else {
             sections[index] = { module: section.module, name: section.name };
+          }
+        }
+      }
+      // buttons
+      if (side.buttons) {
+        const buttons = side.buttons;
+        for (let index = buttons.length - 1; index >= 0; index--) {
+          const button = buttons[index];
+          if (!button.module) {
+            buttons.splice(index, 1);
+          } else {
+            buttons[index] = { module: button.module, name: button.name };
           }
         }
       }
@@ -536,6 +551,10 @@ export default {
       if (section.module) return `${section.module}:${section.name}`;
       return section.name;
     },
+    _buttonFullName(button) {
+      if (button.module) return `${button.module}:${button.name}`;
+      return button.name;
+    }
   },
 };
 

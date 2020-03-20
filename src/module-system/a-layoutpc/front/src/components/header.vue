@@ -1,12 +1,12 @@
 <script>
 import Tabs from './tabs.vue';
-import Buttons from './buttons.vue';
+import HeaderButtons from './headerButtons.vue';
 import Mine from './mine.vue';
 
 export default {
   components: {
     ebTabs: Tabs,
-    ebButtons: Buttons,
+    ebHeaderButtons: HeaderButtons,
     ebMine: Mine,
   },
   render(c) {
@@ -18,8 +18,11 @@ export default {
       ref: 'tabs',
       staticClass: 'tabs',
     });
-    const buttons = c('eb-buttons', {
+    const buttons = c('eb-header-buttons', {
       staticClass: 'buttons',
+      props: {
+        buttons: this.layout.sidebar.top.buttons,
+      },
     });
     const mine = c('eb-mine', {
       staticClass: 'mine',
@@ -29,6 +32,9 @@ export default {
   computed: {
     title() {
       return this.$store.getters['auth/title'];
+    },
+    layout() {
+      return this.$parent;
     },
   },
   methods: {

@@ -93,16 +93,25 @@
       display: flex;
       align-items: center;
       height: 100%;
-      border-right: 1px solid #414D5B;
+      //border-right: 1px solid #414D5B;
       padding-left: 6px;
-      padding-right: 6px;
+      //padding-right: 6px;
 
-      a {
+      .header-button {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        word-break: keep-all;
+        padding: 0 10px;
+        user-select: none;
+      }
+
+      a.link {
         color: #C3D4E7;
         padding: 6px;
       }
 
-      a:hover {
+      a.link:hover {
         background: hsla(0, 0%, 100%, .12);
         border-radius: 4px;
       }

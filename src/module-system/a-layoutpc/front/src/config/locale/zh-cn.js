@@ -7,4 +7,5 @@ export default {
   'Sign in': '登录',
   'Log Out': '退出登录',
   'Section Not Found': '区段未发现',
+  'Button Not Found': '按钮未发现',
 };
