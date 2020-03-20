@@ -330,7 +330,7 @@ const util = {
         error = false;
         fetching = false;
       }).catch(err => {
-        console.log(err);
+        console.error(err);
         const $buttonTry = $('<button type="button" class="btn btn-warning btn-xs"><%=text("Load error, try again")%></button>');
         $buttonTry.click(() => {
           _onFetch();
