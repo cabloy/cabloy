@@ -20,6 +20,7 @@ module.exports = function(ctx) {
       // roleFunctions: sections
       const roleSections = [
         { roleName: null, name: 'sectionCopyright' },
+        { roleName: null, name: 'sectionClock' },
       ];
       await ctx.meta.role.addRoleFunctionBatch({ roleFunctions: roleSections });
 

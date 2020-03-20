@@ -4,6 +4,7 @@ import item from './components/atom/item.vue';
 import action from './components/atom/action.js';
 import widgetAbout from './components/widgets/about.vue';
 import sectionCopyright from './components/sections/copyright.vue';
+import clock from './components/sections/clock.vue';
 
 export default {
   menus,
@@ -12,4 +13,5 @@ export default {
   ebAtoms: atoms,
   widgetAbout,
   sectionCopyright,
+  clock,
 };

@@ -18,6 +18,7 @@ module.exports = {
   Draft: '草稿',
   Base: '基本',
   Copyright: '版权',
+  Clock: '时钟',
   English: '英文',
   Chinese: '中文',
   Create: '新建',

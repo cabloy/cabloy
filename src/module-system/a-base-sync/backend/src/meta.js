@@ -51,6 +51,12 @@ module.exports = app => {
           menu: 4,
           public: 1,
         },
+        sectionClock: {
+          title: 'Clock',
+          component: 'sectionClock',
+          menu: 4,
+          public: 1,
+        },
       },
     },
     sequence: {
