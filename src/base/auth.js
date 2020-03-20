@@ -4,8 +4,12 @@ export default function(Vue) {
     state.user = Object.assign({}, state.user, user);
     // agent rather then op
     if (user && user.agent && user.agent.locale) {
+      // cookie
       Vue.prototype.$meta.util.cookies.set('locale', user.agent.locale);
     }
+    // moment
+    const locale = Vue.prototype.$meta.util.cookies.get('locale') || 'en-us';
+    Vue.prototype.$meta.util.moment.locale(locale);
   }
 
   return {
