@@ -5,6 +5,7 @@ import action from './components/atom/action.js';
 import widgetAbout from './components/widgets/about.vue';
 import sectionCopyright from './components/sections/copyright.vue';
 import sectionClock from './components/sections/clock.vue';
+import buttonDashboard from './components/button/buttonDashboard.vue';
 
 export default {
   menus,
@@ -14,4 +15,5 @@ export default {
   widgetAbout,
   sectionCopyright,
   sectionClock,
+  buttonDashboard,
 };
