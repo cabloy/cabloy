@@ -23,6 +23,16 @@ export default {
     }
     return c('div', {
       staticClass: 'section',
+      directives: [{
+        name: 'eb-dragdrop',
+        value: {
+          scene: this.dragdropScene,
+          section: this.options,
+          onDragStart: this.onDragStart,
+          onDropElement: this.onDropElement,
+          onDragDone: this.onDragDone,
+        }
+      }],
     }, children);
   },
   props: {
@@ -45,6 +55,9 @@ export default {
     },
     sidebar() {
       return this.$parent.$parent;
+    },
+    sections() {
+      return this.group.sections;
     },
     group() {
       return this.$parent;
@@ -71,6 +84,33 @@ export default {
           this.errorMessage = null;
         }
       });
+    },
+    onDragStart({ $el, context, dragElement }) {
+      const [section, sectionIndexDrag] = this.sidebar._getSectionAndIndex(context.section);
+      const tooltip = this.__getSectionTitle(section);
+      return { tooltip };
+    },
+    onDropElement({ $el, context, dragElement, dragContext }) {
+      const [sectionDrop, sectionIndexDrop] = this.sidebar._getSectionAndIndex(context.section);
+      const [sectionDrag, sectionIndexDrag] = this.sidebar._getSectionAndIndex(dragContext.section);
+      if (sectionIndexDrop === sectionIndexDrag || sectionIndexDrop == sectionIndexDrag + 1) return null;
+      // dropElement
+      const dropElement = $el;
+      // tooltip
+      const tooltip = this.__getSectionTitle(sectionDrop);
+      // ok
+      return { dropElement, tooltip };
+    },
+    onDragDone({ $el, context, dragElement, dropElement, dropContext }) {
+      const sectionIndexDrag = this.sidebar._getSectionIndex(context.section);
+      this.sections.splice(sectionIndexDrag, 1);
+      const sectionIndexDrop = this.sidebar._getSectionIndex(dropContext.section);
+      this.sections.splice(sectionIndexDrop, 0, context.section);
+      // save
+      this.layout.__saveLayoutConfig();
+    },
+    __getSectionTitle(section) {
+      return section.titleLocale || this.$text(section.title) || section.name;
     },
     __onSectionRealReady(sectionReal) {
       const fullName = this.layout._sectionFullName(this.options);

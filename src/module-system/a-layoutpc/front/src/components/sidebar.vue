@@ -247,6 +247,14 @@ export default {
         this.setOpened(false);
       }
     },
+    _getSectionIndex(section) {
+      return this.options.sections.findIndex(item => this.layout._sectionFullName(item) === this.layout._sectionFullName(section));
+    },
+    _getSectionAndIndex(section) {
+      const sectionIndex = this._getSectionIndex(section);
+      if (sectionIndex === -1) return [null, -1];
+      return [this.options.sections[sectionIndex], sectionIndex];
+    },
     _getPanelIndex(panel) {
       return this.options.panels.findIndex(item => this.layout._panelFullName(item) === this.layout._panelFullName(panel));
     },
