@@ -41,7 +41,7 @@ Page({
         hasUserInfo: !!res.op.userName,
       });
     }).catch(err => {
-      console.log(err);
+      console.error(err);
     });
   },
   getOpenid() {
