@@ -62,36 +62,7 @@ export default {
         verySmall: false,
       },
       groups: [],
-      sidebar: {
-        left: {
-          opened: false,
-          cover: true,
-          panels: [],
-          panelWidth: 280,
-          tabsWidth: 24,
-          toolbarHeight: 24,
-          panelActive: '',
-        },
-        right: {
-          opened: false,
-          cover: true,
-          panels: [],
-          panelWidth: 280,
-          tabsWidth: 24,
-          toolbarHeight: 24,
-          panelActive: '',
-        },
-        bottom: {
-          opened: false,
-          cover: true,
-          panels: [],
-          sections: [],
-          panelHeight: 280,
-          tabsHeight: 24,
-          toolbarHeight: 24,
-          panelActive: '',
-        },
-      },
+      sidebar: null,
       panelsAll: null,
       sectionsAll: null,
       buttonsAll: null,
@@ -209,7 +180,7 @@ export default {
       });
     },
     openHome() {
-      const button = this.$config.layout.header.buttons.find(button => button.sceneOptions && button.sceneOptions.name === 'home');
+      const button = this.sidebar.top.buttonHome;
       if (button) {
         this.navigate(button.url, { scene: button.scene, sceneOptions: button.sceneOptions });
       }
@@ -395,8 +366,11 @@ export default {
       this.$store.commit('a/base/setLayoutConfigKey', { module: 'a-layoutpc', key: 'sidebar', value });
     }, 1000),
     __initLayoutConfig(layoutConfig) {
+      const sidebarDefault = this.$config.layout.sidebar;
       if (layoutConfig.sidebar) {
-        this.sidebar = this.$meta.util.extend({}, this.sidebar, layoutConfig.sidebar);
+        this.sidebar = this.$meta.util.extend({}, sidebarDefault, layoutConfig.sidebar);
+      } else {
+        this.sidebar = this.$meta.util.extend({}, sidebarDefault);
       }
     },
     __removeDynamicPanels(side) {
@@ -425,16 +399,9 @@ export default {
     },
     __initSidebar(side, configFirst) {
       // panels from layoutConfig or frontConfig
-      let panels;
-      let sections;
-      if (configFirst) {
-        const configSidebar = this.$config.layout.sidebar;
-        panels = configSidebar[side] && configSidebar[side].panels;
-        sections = configSidebar[side] && configSidebar[side].sections;
-      } else {
-        panels = this.sidebar[side].panels;
-        sections = this.sidebar[side].sections;
-      }
+      let panels = this.sidebar[side].panels;
+      let sections = this.sidebar[side].sections;
+
       if (panels) {
         this.sidebar[side].panels = [];
         for (const panel of panels) {
