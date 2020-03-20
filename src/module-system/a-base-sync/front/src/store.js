@@ -24,6 +24,7 @@ export default function(Vue) {
       layoutConfig: {},
       userPanels: null,
       userWidgets: null,
+      userSections: null,
       userAtomClassRolesPreferred: {},
       // global
       modules: null,
@@ -50,6 +51,7 @@ export default function(Vue) {
         state.layoutConfig = {};
         state.userPanels = null;
         state.userWidgets = null;
+        state.userSections = null;
         state.userAtomClassRolesPreferred = {};
       },
       setLabels(state, labels) {
@@ -83,6 +85,9 @@ export default function(Vue) {
       },
       setUserWidgets(state, widgets) {
         state.userWidgets = widgets;
+      },
+      setUserSections(state, sections) {
+        state.userSections = sections;
       },
       setUserAtomClassRolesPreferred(state, { atomClassId, roleIdOwner }) {
         state.userAtomClassRolesPreferred = {
@@ -315,6 +320,24 @@ export default function(Vue) {
           };
           Vue.prototype.$meta.api.post('/a/base/function/list', { options }).then(data => {
             commit('setUserWidgets', data.list);
+            resolve(data.list);
+          }).catch(err => {
+            reject(err);
+          });
+        });
+      },
+      getUserSections({ state, commit }) {
+        return new Promise((resolve, reject) => {
+          if (state.userSections) return resolve(state.userSections);
+          const options = {
+            where: { menu: 4 },
+            orders: [
+              [ 'titleLocale', 'asc' ],
+            ],
+            page: { size: 0 },
+          };
+          Vue.prototype.$meta.api.post('/a/base/function/list', { options }).then(data => {
+            commit('setUserSections', data.list);
             resolve(data.list);
           }).catch(err => {
             reject(err);
