@@ -26,6 +26,7 @@ export default {
   computed: {
     pageTitle() {
       const side = this.side;
+      if (side === 'bottom') return this.$text('Statusbar (Left)');
       const sideUpperCase = side.replace(side[0], side[0].toUpperCase());
       return this.$text(`Sidebar (${sideUpperCase})`);
     },
