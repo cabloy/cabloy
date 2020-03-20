@@ -345,10 +345,10 @@ export default {
           // init layoutConfig
           this.__initLayoutConfig(layoutConfig);
           // init sidebar
-          const configFirst = !layoutConfig.sidebar;
-          this.__initSidebar('left', configFirst);
-          this.__initSidebar('right', configFirst);
-          this.__initSidebar('bottom', configFirst);
+          this.__initSidebar('top');
+          this.__initSidebar('left');
+          this.__initSidebar('right');
+          this.__initSidebar('bottom');
           // inited
           this.sidebarInited = true;
           cb();
@@ -397,10 +397,10 @@ export default {
         }
       }
     },
-    __initSidebar(side, configFirst) {
-      // panels from layoutConfig or frontConfig
+    __initSidebar(side) {
       let panels = this.sidebar[side].panels;
       let sections = this.sidebar[side].sections;
+      let buttons = this.sidebar[side].buttons;
 
       if (panels) {
         this.sidebar[side].panels = [];
@@ -414,6 +414,12 @@ export default {
           this.sidebar[side].sections.push(this._prepareSection(section));
         }
       }
+      if (buttons) {
+        this.sidebar[side].buttons = [];
+        for (const button of buttons) {
+          this.sidebar[side].buttons.push(this._prepareButton(button));
+        }
+      }
     },
     _findPanelStock(panel) {
       if (!this.panelsAll || !panel.module) return null;
@@ -424,6 +430,11 @@ export default {
       if (!this.sectionsAll || !section.module) return null;
       const sections = this.sectionsAll[section.module];
       return sections[section.name];
+    },
+    _findButtonStock(button) {
+      if (!this.buttonsAll || !button.module) return null;
+      const buttons = this.buttonsAll[button.module];
+      return buttons[button.name];
     },
     _preparePanel(panel, url) {
       // extra
@@ -440,6 +451,12 @@ export default {
       const sectionStock = this._findSectionStock(section);
       // extend
       return this.$meta.util.extend({}, sectionStock, section);
+    },
+    _prepareButton(button) {
+      // stock
+      const buttonStock = this._findButtonStock(button);
+      // extend
+      return this.$meta.util.extend({}, buttonStock, button);
     },
     _renderSidebar(c, side) {
       const sideUpperCase = side.replace(side[0], side[0].toUpperCase());

@@ -13,9 +13,9 @@ export default {
       }));
     }
     // buttons
-    for (const button of this.$config.layout.header.buttons) {
+    for (const button of this.layout.sidebar.top.buttons) {
       const props = {
-        iconMaterial: button.iconMaterial,
+        iconMaterial: 'dashboard',
       };
       children.push(c('eb-link', {
         key: button.name,
