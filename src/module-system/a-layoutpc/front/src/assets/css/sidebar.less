@@ -108,6 +108,15 @@
         justify-content: flex-start;
         align-items: center;
         background: #343D46;
+        white-space: nowrap;
+
+        .eb-layout-sidebar-tabs-buttons {
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+          white-space: nowrap;
+          flex-grow: 1,
+        }
 
         a.link {
           color: #C3D4E7;
@@ -143,6 +152,10 @@
         width: var(--eb-layout-sidebar-tabs-width);
         flex-direction: column;
 
+        .eb-layout-sidebar-tabs-buttons {
+          flex-direction: column;
+        }
+
         a.link {
           writing-mode: vertical-lr;
           word-break: keep-all;
@@ -162,6 +175,10 @@
         width: 100%;
         height: var(--eb-layout-sidebar-tabs-width);
         flex-direction: row;
+
+        .eb-layout-sidebar-tabs-buttons {
+          flex-direction: row;
+        }
 
         a.link {
           word-break: keep-all;

@@ -1,79 +1,22 @@
 <script>
-import SidebarTabs from './sidebarTabs.vue';
+import SidebarTabButtons from './sidebarTabButtons.vue';
+//import SidebarTabSections from './sidebarTabSections.vue';
 import SidebarGroup from './SidebarGroup.vue';
 import SidebarToolbar from './SidebarToolbar.vue';
 
 export default {
   components: {
-    ebSidebarTabs: SidebarTabs,
+    ebSidebarTabButtons: SidebarTabButtons,
+    //ebSidebarTabSections: SidebarTabSections,
     ebSidebarGroup: SidebarGroup,
     ebSidebarToolbar: SidebarToolbar,
   },
   render(c) {
     const children = [];
     // tabs
-    const tabs = c('eb-sidebar-tabs', {
-      props: {
-        side: this.side,
-      },
-    });
-    children.push(tabs);
-    // toolbar
-    const toolbar = c('eb-sidebar-toolbar', {
-      props: {
-        side: this.side,
-      },
-    });
-    // group
-    let style;
-    if (this.side === 'left' || this.side === 'right') {
-      style = {
-        height: `${this.layout.size.height - this.options.toolbarHeight}px`,
-        top: `${this.options.toolbarHeight}px`,
-      };
-    } else {
-      style = {
-        height: `${this.options.panelHeight-this.options.toolbarHeight}px`,
-        top: `${this.options.toolbarHeight}px`,
-      };
-    }
-    const group = c('eb-sidebar-group', {
-      ref: 'sidebarGroup',
-      props: {
-        side: this.side,
-      },
-      style,
-    });
-    // resize handler
-    const resizeHandler = c('div', {
-      staticClass: 'panel-resize-handler',
-      directives: [{
-        name: 'eb-dragdrop',
-        value: {
-          scene: this.dragdropSceneResize,
-          resizable: true,
-          resizeDirection: this._getResizeDirection(),
-          onDragStart: this.onDragStartResizable,
-          onDragMove: this.onDragMoveResizable,
-        }
-      }],
-    });
+    children.push(this._renderSidebarTabs(c));
     // panel
-    const viewSizeExtent = this.viewSizeExtent;
-    if (this.side === 'left' || this.side === 'right') {
-      style = {
-        width: `${viewSizeExtent.width}px`,
-      };
-    } else {
-      style = {
-        height: `${viewSizeExtent.height}px`,
-      };
-    }
-    const panel = c('div', {
-      staticClass: this._getPanelClassName(),
-      style,
-    }, [toolbar, group, resizeHandler]);
-    children.push(panel);
+    children.push(this._renderSidebarPanel(c));
     // ok
     return c('div', { staticClass: `eb-layout-sidebar eb-layout-sidebar-${this.side}` }, children);
   },
@@ -146,6 +89,76 @@ export default {
     }
   },
   methods: {
+    _renderSidebarTabs(c) {
+      // buttons
+      const buttons = c('eb-sidebar-tab-buttons', {
+        props: {
+          side: this.side,
+        }
+      });
+      // tabs
+      return c('div', {
+        staticClass: 'eb-layout-sidebar-tabs',
+      }, [buttons]);
+    },
+    _renderSidebarPanel(c) {
+      // toolbar
+      const toolbar = c('eb-sidebar-toolbar', {
+        props: {
+          side: this.side,
+        },
+      });
+      // group
+      let style;
+      if (this.side === 'left' || this.side === 'right') {
+        style = {
+          height: `${this.layout.size.height - this.options.toolbarHeight}px`,
+          top: `${this.options.toolbarHeight}px`,
+        };
+      } else {
+        style = {
+          height: `${this.options.panelHeight-this.options.toolbarHeight}px`,
+          top: `${this.options.toolbarHeight}px`,
+        };
+      }
+      const group = c('eb-sidebar-group', {
+        ref: 'sidebarGroup',
+        props: {
+          side: this.side,
+        },
+        style,
+      });
+      // resize handler
+      const resizeHandler = c('div', {
+        staticClass: 'panel-resize-handler',
+        directives: [{
+          name: 'eb-dragdrop',
+          value: {
+            scene: this.dragdropSceneResize,
+            resizable: true,
+            resizeDirection: this._getResizeDirection(),
+            onDragStart: this.onDragStartResizable,
+            onDragMove: this.onDragMoveResizable,
+          }
+        }],
+      });
+      // panel
+      const viewSizeExtent = this.viewSizeExtent;
+      if (this.side === 'left' || this.side === 'right') {
+        style = {
+          width: `${viewSizeExtent.width}px`,
+        };
+      } else {
+        style = {
+          height: `${viewSizeExtent.height}px`,
+        };
+      }
+      const panel = c('div', {
+        staticClass: this._getPanelClassName(),
+        style,
+      }, [toolbar, group, resizeHandler]);
+      return panel;
+    },
     createView({ ctx, panel, options, init }) {
       options = options || {};
       // panelName
