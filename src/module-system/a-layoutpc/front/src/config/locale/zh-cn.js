@@ -6,4 +6,5 @@ export default {
   'Not LoggedIn': '未登录',
   'Sign in': '登录',
   'Log Out': '退出登录',
+  'Section Not Found': '区段未发现',
 };

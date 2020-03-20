@@ -515,7 +515,11 @@ export default {
     _panelFullName(panel) {
       if (panel.module) return `${panel.module}:${panel.name}`;
       return panel.name;
-    }
+    },
+    _sectionFullName(section) {
+      if (section.module) return `${section.module}:${section.name}`;
+      return section.name;
+    },
   },
 };
 

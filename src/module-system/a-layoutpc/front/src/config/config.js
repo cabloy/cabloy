@@ -23,6 +23,7 @@ export default {
       bottom: {
         sections: [
           { module: 'a-base', name: 'sectionCopyright' },
+          { module: 'a-base', name: 'sectionCopyright' },
         ],
       },
     },
