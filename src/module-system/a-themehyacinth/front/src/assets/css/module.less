@@ -71,28 +71,25 @@
       }
 
       .buttons {
-        border-right: 1px solid rgba(109, 147, 136, 0.3); //#414D5B;
 
-        a {
-          color: #C3D4E7;
-          padding: 6px;
+        .header-button {
+
+          &[data-dragdrop-drop] {
+            border-left: 1px solid #C3D4E7;
+          }
         }
 
-        a:hover {
+        a.link {
+          color: #C3D4E7;
+        }
+
+        a.link:hover {
           background: hsla(0, 0%, 100%, .12);
         }
       }
 
-      .mine {
-        color: #C3D4E7;
-
-        a {
-          color: #C3D4E7;
-        }
-
-        &:hover {
-          background: hsla(0, 0%, 100%, .12);
-        }
+      .mine.link {
+        border-left: 1px solid rgba(109, 147, 136, 0.3); //#414D5B;
       }
     }
 
