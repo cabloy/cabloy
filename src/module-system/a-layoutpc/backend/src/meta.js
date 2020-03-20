@@ -42,12 +42,6 @@ module.exports = app => {
           menu: 5,
           public: 1,
         },
-        buttonSeparator: {
-          title: 'Separator2',
-          component: 'buttonSeparator',
-          menu: 5,
-          public: 1,
-        },
         buttonMine: {
           title: 'Mine',
           component: 'buttonMine',

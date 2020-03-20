@@ -29,7 +29,6 @@ module.exports = app => {
         const roleButtons = [
           { roleName: null, name: 'buttonDashboard' },
           { roleName: null, name: 'buttonMine' },
-          { roleName: null, name: 'buttonSeparator' },
         ];
         await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions: roleButtons });
 

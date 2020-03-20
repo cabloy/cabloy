@@ -12,7 +12,6 @@ export default {
       top: {
         buttons: [
           { module: 'a-layoutpc', name: 'buttonDashboard' },
-          { module: 'a-layoutpc', name: 'buttonSeparator' },
           { module: 'a-layoutpc', name: 'buttonMine' },
         ],
       },
