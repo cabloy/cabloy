@@ -94,6 +94,7 @@ export default {
       },
       panelsAll: null,
       sectionsAll: null,
+      buttonsAll: null,
     };
   },
   computed: {
@@ -346,7 +347,7 @@ export default {
         }
       }
     },
-    __getPanelsAllAndSctionsAll() {
+    __getResourcesAll() {
       const promises = [];
       promises.push(
         this.$store.dispatch('a/base/getPanels').then(panels => {
@@ -358,11 +359,16 @@ export default {
           this.sectionsAll = sections;
         })
       );
+      promises.push(
+        this.$store.dispatch('a/base/getButtons').then(buttons => {
+          this.buttonsAll = buttons;
+        })
+      );
       return Promise.all(promises);
     },
     __init(cb) {
       // panelsAll & sectionsAll
-      this.__getPanelsAllAndSctionsAll().then(() => {
+      this.__getResourcesAll().then(() => {
         // layoutConfig
         this.$store.dispatch('a/base/getLayoutConfig', 'a-layoutpc').then(layoutConfig => {
           // init layoutConfig
