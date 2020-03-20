@@ -51,7 +51,7 @@ function _wechatwxinit(params){
   util.loadScript('https://res.wx.qq.com/open/js/jweixin-1.4.0.js', function() {
     window.wx.config(params);
     window.wx.error(e => {
-      console.log(e);
+      console.error(e);
     });
     window.wx.ready(() => {
       $(document).trigger('wechatsdk-ready',window.wx);
