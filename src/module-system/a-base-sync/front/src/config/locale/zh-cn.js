@@ -42,6 +42,8 @@ export default {
   AtomClassSelectRoleTip: '选择角色',
   Documentation: '文档',
   Community: '社区',
+  Date: '日期',
+  Time: '时间',
   CopyrightTip: 'Powered by Cabloy',
   CabloyAboutTip1: 'CabloyJS - 是一款顶级NodeJS全栈业务开发框架',
   CabloyAboutTip2: '前端采用VueJS + Framework7 + Webpack，后端采用KoaJS + EggJS，数据库采用MySQL',
@@ -67,4 +69,6 @@ export default {
   'Friendly Tips': '友情提示',
   'Please sign in': '请登录',
   'About CabloyJS': '关于CabloyJS',
+  'Day of Week': '星期',
+  'Custom Format': '自定义格式',
 };
