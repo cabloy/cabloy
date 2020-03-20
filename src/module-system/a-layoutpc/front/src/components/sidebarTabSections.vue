@@ -32,7 +32,7 @@ export default {
       }));
     }
     return c('div', {
-      staticClass: `eb-layout-sidebar-tabs`,
+      staticClass: `eb-layout-sidebar-tabs-sections`,
     }, tabs);
   },
   props: {

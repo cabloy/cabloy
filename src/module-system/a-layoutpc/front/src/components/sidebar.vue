@@ -1,13 +1,13 @@
 <script>
 import SidebarTabButtons from './sidebarTabButtons.vue';
-//import SidebarTabSections from './sidebarTabSections.vue';
+import SidebarTabSections from './sidebarTabSections.vue';
 import SidebarGroup from './SidebarGroup.vue';
 import SidebarToolbar from './SidebarToolbar.vue';
 
 export default {
   components: {
     ebSidebarTabButtons: SidebarTabButtons,
-    //ebSidebarTabSections: SidebarTabSections,
+    ebSidebarTabSections: SidebarTabSections,
     ebSidebarGroup: SidebarGroup,
     ebSidebarToolbar: SidebarToolbar,
   },
@@ -90,16 +90,27 @@ export default {
   },
   methods: {
     _renderSidebarTabs(c) {
+      const children = [];
       // buttons
       const buttons = c('eb-sidebar-tab-buttons', {
         props: {
           side: this.side,
         }
       });
+      children.push(buttons);
+      // sections
+      if (this.side === 'bottom') {
+        const sections = c('eb-sidebar-tab-sections', {
+          props: {
+            side: this.side,
+          }
+        });
+        children.push(sections);
+      }
       // tabs
       return c('div', {
         staticClass: 'eb-layout-sidebar-tabs',
-      }, [buttons]);
+      }, children);
     },
     _renderSidebarPanel(c) {
       // toolbar
