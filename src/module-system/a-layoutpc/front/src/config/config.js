@@ -2,15 +2,19 @@ export default {
   layout: {
     login: '/a/login/login',
     loginOnStart: true,
+    header: {
+      button: {
+        home: { name: 'Home', iconMaterial: 'dashboard', url: '/a/dashboard/dashboard', scene: 'dashboard', sceneOptions: { name: 'home' } },
+      },
+    },
     sidebar: {
       top: {
         buttons: [
-          { module: 'a-base', name: 'buttonDashboard' },
+          { module: 'a-layoutpc', name: 'buttonDashboard' },
         ],
         buttonMine:
         { name: 'Mine', iconMaterial: 'person', url: '/a/user/user/mine', scene: 'sidebar', sceneOptions: { side: 'right', name: 'mine', title: 'Mine' } },
-        buttonHome:
-        { name: 'Home', iconMaterial: 'dashboard', url: '/a/dashboard/dashboard', scene: 'dashboard', sceneOptions: { name: 'home' } },
+
       },
       left: {
         opened: false,
@@ -20,9 +24,9 @@ export default {
         toolbarHeight: 24,
         panelActive: '',
         panels: [
-          { module: 'a-base', name: 'panelMenu' },
-          { module: 'a-base', name: 'panelAtom' },
-          { module: 'a-base', name: 'panelSearch' },
+          { module: 'a-layoutpc', name: 'panelMenu' },
+          { module: 'a-layoutpc', name: 'panelAtom' },
+          { module: 'a-layoutpc', name: 'panelSearch' },
         ],
       },
       right: {
@@ -43,8 +47,8 @@ export default {
         panelActive: '',
         panels: [],
         sections: [
-          { module: 'a-base', name: 'sectionClock' },
-          { module: 'a-base', name: 'sectionCopyright' },
+          { module: 'a-layoutpc', name: 'sectionClock' },
+          { module: 'a-layoutpc', name: 'sectionCopyright' },
         ],
       },
     },

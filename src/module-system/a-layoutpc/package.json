@@ -2,7 +2,11 @@
   "name": "egg-born-module-a-layoutpc",
   "version": "3.0.9",
   "eggBornModule": {
-    "dependencies": {}
+    "fileVersion": 1,
+    "dependencies": {
+      "a-instance": "3.0.0",
+      "a-base": "3.0.0"
+    }
   },
   "description": "",
   "scripts": {

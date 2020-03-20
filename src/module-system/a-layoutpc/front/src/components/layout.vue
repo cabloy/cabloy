@@ -180,7 +180,7 @@ export default {
       });
     },
     openHome() {
-      const button = this.sidebar.top.buttonHome;
+      const button = this.$config.layout.header.button.home;
       if (button) {
         this.navigate(button.url, { scene: button.scene, sceneOptions: button.sceneOptions });
       }

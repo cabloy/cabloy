@@ -6,6 +6,11 @@ module.exports = app => {
       this.ctx.success();
     }
 
+    async init() {
+      await this.service.version.init(this.ctx.request.body);
+      this.ctx.success();
+    }
+
   }
   return VersionController;
 };
