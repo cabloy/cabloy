@@ -66,6 +66,7 @@ export default {
           this._handleResult(res);
         }
       } catch (err) {
+        console.error(err);
         this.$view.toast.show({ text: err.message });
       }
 
