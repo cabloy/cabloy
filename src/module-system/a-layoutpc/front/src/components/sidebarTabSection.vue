@@ -22,7 +22,7 @@ export default {
       }));
     }
     return c('div', {
-
+      staticClass: 'section',
     }, children);
   },
   props: {
@@ -52,6 +52,9 @@ export default {
   },
   created() {
     this.__init();
+  },
+  beforeDestroy() {
+    this.$emit('section:destroy');
   },
   methods: {
     __init() {

@@ -115,7 +115,18 @@
           justify-content: flex-start;
           align-items: center;
           white-space: nowrap;
-          flex-grow: 1,
+          flex-grow: 1;
+
+          a.link {
+            color: #C3D4E7;
+
+            &.active,
+            &:hover {
+              background: hsla(0, 0%, 100%, .12);
+              opacity: 0.6;
+            }
+          }
+
         }
 
         .eb-layout-sidebar-tabs-sections {
@@ -123,15 +134,10 @@
           justify-content: flex-end;
           align-items: center;
           white-space: nowrap;
-        }
 
-        a.link {
-          color: #C3D4E7;
-
-          &.active,
-          &:hover {
-            background: hsla(0, 0%, 100%, .12);
-            opacity: 0.6;
+          .section {
+            color: #C3D4E7;
+            opacity: 0.2;
           }
 
         }
@@ -147,8 +153,6 @@
 
       }
 
-
-
     }
 
     .eb-layout-sidebar-left,
@@ -161,20 +165,31 @@
 
         .eb-layout-sidebar-tabs-buttons {
           flex-direction: column;
+
+          a.link {
+            writing-mode: vertical-lr;
+            word-break: keep-all;
+            padding: 10px 2px;
+
+            &[data-dragdrop-drop] {
+              border-top: 1px solid #C3D4E7;
+            }
+          }
         }
 
         .eb-layout-sidebar-tabs-sections {
           flex-direction: column;
-        }
 
-        a.link {
-          writing-mode: vertical-lr;
-          word-break: keep-all;
-          padding: 10px 2px;
+          .section {
+            writing-mode: vertical-lr;
+            word-break: keep-all;
+            padding: 10px 2px;
 
-          &[data-dragdrop-drop] {
-            border-top: 1px solid #C3D4E7;
+            &[data-dragdrop-drop] {
+              border-top: 1px solid #C3D4E7;
+            }
           }
+
         }
 
       }
@@ -189,19 +204,30 @@
 
         .eb-layout-sidebar-tabs-buttons {
           flex-direction: row;
+
+          a.link {
+            word-break: keep-all;
+            padding: 2px 10px;
+
+            &[data-dragdrop-drop] {
+              border-left: 1px solid #C3D4E7;
+            }
+          }
+
         }
 
         .eb-layout-sidebar-tabs-sections {
           flex-direction: row;
-        }
 
-        a.link {
-          word-break: keep-all;
-          padding: 2px 10px;
+          .section {
+            word-break: keep-all;
+            padding: 2px 10px;
 
-          &[data-dragdrop-drop] {
-            border-left: 1px solid #C3D4E7;
+            &[data-dragdrop-drop] {
+              border-left: 1px solid #C3D4E7;
+            }
           }
+
         }
 
       }

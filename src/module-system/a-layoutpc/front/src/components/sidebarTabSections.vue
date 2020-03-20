@@ -8,6 +8,7 @@ export default {
   },
   render(c) {
     const tabs = [];
+    let index = 0;
     for (const section of this.sections) {
       tabs.push(c('eb-sidebar-tab-section', {
         key: this.layout._sectionFullName(section),

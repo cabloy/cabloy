@@ -311,7 +311,7 @@ export default {
     },
     _sidebarWidth(side) {
       let width = 0;
-      if (this.sidebar[side].panels.length > 0) {
+      if (this._getSidebarDisplay(side)) {
         width += this.sidebar[side].tabsWidth;
       }
       const sideUpperCase = side.replace(side[0], side[0].toUpperCase());
@@ -322,7 +322,7 @@ export default {
     },
     _sidebarHeight(side) {
       let height = 0;
-      if (this.sidebar[side].panels.length > 0 || this.sidebar[side].sections.length > 0) {
+      if (this._getSidebarDisplay(side)) {
         height += this.sidebar[side].tabsHeight;
       }
       const sideUpperCase = side.replace(side[0], side[0].toUpperCase());
@@ -484,13 +484,19 @@ export default {
       }
       return c('eb-sidebar', {
         ref: `sidebar${sideUpperCase}`,
-        staticClass: this.sidebar[side].panels.length === 0 ? 'display-none' : '',
+        staticClass: this._getSidebarDisplay(side) ? '' : 'display-none',
         props: {
           side,
           options: this.sidebar[side],
         },
         style,
       });
+    },
+    _getSidebarDisplay(side) {
+      if (side === 'left' || side === 'right') {
+        return this.sidebar[side].panels.length > 0;
+      }
+      return this.sidebar[side].panels.length > 0 || this.sidebar[side].sections.length > 0;
     },
     _createPanel({ side, panel, url, options, init }) {
       const sideUpperCase = side.replace(side[0], side[0].toUpperCase());
