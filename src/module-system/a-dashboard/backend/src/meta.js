@@ -5,6 +5,13 @@ module.exports = app => {
       atoms: {
       },
       functions: {
+        // widgets
+        widgetAbout: {
+          title: 'About',
+          component: 'widgetAbout',
+          menu: 3,
+          public: 1,
+        },
       },
     },
     validation: {

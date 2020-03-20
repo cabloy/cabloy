@@ -5,7 +5,7 @@ export default function(Vue) {
       default: {
         root: {
           widgets: [
-            { module: 'a-base', name: 'widgetAbout' },
+            { module: 'a-dashboard', name: 'widgetAbout' },
           ],
         },
       },
