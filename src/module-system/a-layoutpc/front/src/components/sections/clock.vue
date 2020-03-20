@@ -44,8 +44,7 @@ const configDefault = {
 // install
 function install(_Vue) {
   const Vue = _Vue;
-  //const ebLayoutSectionBase = Vue.prototype.$meta.module.get('a-layoutpc').options.mixins.ebLayoutSectionBase;
-  import ebLayoutSectionBase from '../../common/sectionBase.js';
+  const ebLayoutSectionBase = Vue.prototype.$meta.module.get('a-layoutpc').options.mixins.ebLayoutSectionBase;
   return {
     mixins: [ebLayoutSectionBase],
     data() {

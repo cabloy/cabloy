@@ -1,13 +1,11 @@
 <script>
 import Tabs from './tabs.vue';
 import HeaderButtons from './headerButtons.vue';
-import Mine from './mine.vue';
 
 export default {
   components: {
     ebTabs: Tabs,
     ebHeaderButtons: HeaderButtons,
-    ebMine: Mine,
   },
   render(c) {
     const title = c('div', {
@@ -24,10 +22,7 @@ export default {
         buttons: this.layout.sidebar.top.buttons,
       },
     });
-    const mine = c('eb-mine', {
-      staticClass: 'mine',
-    });
-    return c('div', { staticClass: 'eb-layout-header' }, [title, tabs, buttons, mine]);
+    return c('div', { staticClass: 'eb-layout-header' }, [title, tabs, buttons]);
   },
   computed: {
     title() {

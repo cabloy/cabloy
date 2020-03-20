@@ -5,16 +5,16 @@ export default {
     header: {
       button: {
         home: { name: 'Home', iconMaterial: 'dashboard', url: '/a/dashboard/dashboard', scene: 'dashboard', sceneOptions: { name: 'home' } },
+        mine: { name: 'Mine', iconMaterial: 'person', url: '/a/user/user/mine', scene: 'sidebar', sceneOptions: { side: 'right', name: 'mine', title: 'Mine' } },
       },
     },
     sidebar: {
       top: {
         buttons: [
           { module: 'a-layoutpc', name: 'buttonDashboard' },
+          { module: 'a-layoutpc', name: 'buttonSeparator' },
+          { module: 'a-layoutpc', name: 'buttonMine' },
         ],
-        buttonMine:
-        { name: 'Mine', iconMaterial: 'person', url: '/a/user/user/mine', scene: 'sidebar', sceneOptions: { side: 'right', name: 'mine', title: 'Mine' } },
-
       },
       left: {
         opened: false,
