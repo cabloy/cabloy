@@ -25,6 +25,7 @@ export default function(Vue) {
       userPanels: null,
       userWidgets: null,
       userSections: null,
+      userButtons: null,
       userAtomClassRolesPreferred: {},
       // global
       modules: null,
@@ -38,6 +39,7 @@ export default function(Vue) {
       panels: null,
       widgets: null,
       sections: null,
+      buttons: null,
     },
     getters: {
       userLabels(state) {
@@ -52,6 +54,7 @@ export default function(Vue) {
         state.userPanels = null;
         state.userWidgets = null;
         state.userSections = null;
+        state.userButtons = null;
         state.userAtomClassRolesPreferred = {};
       },
       setLabels(state, labels) {
@@ -89,6 +92,9 @@ export default function(Vue) {
       setUserSections(state, sections) {
         state.userSections = sections;
       },
+      setUserButtons(state, buttons) {
+        state.userButtons = buttons;
+      },
       setUserAtomClassRolesPreferred(state, { atomClassId, roleIdOwner }) {
         state.userAtomClassRolesPreferred = {
           ...state.userAtomClassRolesPreferred,
@@ -121,6 +127,9 @@ export default function(Vue) {
       },
       setSections(state, sections) {
         state.sections = sections;
+      },
+      setButtons(state, buttons) {
+        state.buttons = buttons;
       },
       setFunctions(state, functions) {
         state.functions = functions;
@@ -254,6 +263,18 @@ export default function(Vue) {
           });
         });
       },
+      getButtons({ state, commit }) {
+        return new Promise((resolve, reject) => {
+          if (state.buttons) return resolve(state.buttons);
+          Vue.prototype.$meta.api.post('/a/base/base/buttons').then(data => {
+            data = data || {};
+            commit('setButtons', data);
+            resolve(data);
+          }).catch(err => {
+            reject(err);
+          });
+        });
+      },
       getFunctionScenes({ state, commit }, { sceneMenu }) {
         return new Promise((resolve, reject) => {
           if (state.functionScenes[sceneMenu]) return resolve(state.functionScenes[sceneMenu]);
@@ -338,6 +359,24 @@ export default function(Vue) {
           };
           Vue.prototype.$meta.api.post('/a/base/function/list', { options }).then(data => {
             commit('setUserSections', data.list);
+            resolve(data.list);
+          }).catch(err => {
+            reject(err);
+          });
+        });
+      },
+      getUserButtons({ state, commit }) {
+        return new Promise((resolve, reject) => {
+          if (state.userButtons) return resolve(state.userButtons);
+          const options = {
+            where: { menu: 5 },
+            orders: [
+              [ 'titleLocale', 'asc' ],
+            ],
+            page: { size: 0 },
+          };
+          Vue.prototype.$meta.api.post('/a/base/function/list', { options }).then(data => {
+            commit('setUserButtons', data.list);
             resolve(data.list);
           }).catch(err => {
             reject(err);

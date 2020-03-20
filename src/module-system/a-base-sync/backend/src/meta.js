@@ -57,6 +57,13 @@ module.exports = app => {
           menu: 4,
           public: 1,
         },
+        // header buttons
+        buttonDashboard: {
+          title: 'Dashboard',
+          component: 'buttonDashboard',
+          menu: 5,
+          public: 1,
+        },
       },
     },
     sequence: {

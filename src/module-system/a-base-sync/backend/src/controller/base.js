@@ -55,6 +55,11 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    buttons() {
+      const res = this.ctx.service.base.buttons();
+      this.ctx.success(res);
+    }
+
     functions() {
       const res = this.ctx.service.base.functions();
       this.ctx.success(res);

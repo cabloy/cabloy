@@ -24,6 +24,13 @@ module.exports = function(ctx) {
       ];
       await ctx.meta.role.addRoleFunctionBatch({ roleFunctions: roleSections });
 
+      // roleFunctions: buttons
+      const roleButtons = [
+        { roleName: null, name: 'buttonDashboard' },
+      ];
+      await ctx.meta.role.addRoleFunctionBatch({ roleFunctions: roleButtons });
+
+
     }
 
   }

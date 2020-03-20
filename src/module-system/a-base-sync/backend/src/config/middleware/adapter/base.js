@@ -15,6 +15,7 @@ const _menus = {};
 const _panels = {};
 const _widgets = {};
 const _sections = {};
+const _buttons = {};
 const _authProvidersLocales = {};
 
 const Fn = module.exports = ctx => {
@@ -171,6 +172,13 @@ const Fn = module.exports = ctx => {
         _sections[ctx.locale] = this._prepareMenus(4);
       }
       return _sections[ctx.locale];
+    }
+
+    buttons() {
+      if (!_buttons[ctx.locale]) {
+        _buttons[ctx.locale] = this._prepareMenus(5);
+      }
+      return _buttons[ctx.locale];
     }
 
     functions() {

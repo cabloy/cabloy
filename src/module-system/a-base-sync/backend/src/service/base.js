@@ -42,6 +42,10 @@ module.exports = app => {
       return this.ctx.meta.base.sections();
     }
 
+    buttons() {
+      return this.ctx.meta.base.buttons();
+    }
+
     functions() {
       return this.ctx.meta.base.functions();
     }
