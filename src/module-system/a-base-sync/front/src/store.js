@@ -8,7 +8,7 @@ export default function(Vue) {
       // donothing
       cb();
     }).catch(err => {
-      console.log(err);
+      console.error(err);
       cb();
     });
   });
