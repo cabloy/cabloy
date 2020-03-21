@@ -1,7 +1,7 @@
-const captchaContainer = require('./middleware/captchaContainer.js');
+const captcha = require('./middleware/captcha.js');
 const captchaVerify = require('./middleware/captchaVerify.js');
 
 module.exports = {
-  captchaContainer,
+  captcha,
   captchaVerify,
 };

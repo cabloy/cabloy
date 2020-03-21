@@ -4,9 +4,9 @@ module.exports = appInfo => {
 
   // middlewares
   config.middlewares = {
-    captchaContainer: {
+    captcha: {
       global: false,
-      dependencies: 'cachedb',
+      dependencies: 'auth,cachedb',
     },
     captchaVerify: {
       global: false,
@@ -14,10 +14,20 @@ module.exports = appInfo => {
     },
   };
 
-  // provider
-  config.provider = {
-    module: 'a-captchasimple',
-    name: 'simple',
+  // scenes
+  config.scenes = {
+    modules: {
+      'a-authsimple': {
+        signup: {
+          module: 'a-captchasimple',
+          name: 'simple',
+        },
+        signin: {
+          module: 'a-captchasimple',
+          name: 'simple',
+        },
+      },
+    },
   };
 
   // cache timeout

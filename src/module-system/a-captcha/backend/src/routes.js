@@ -8,7 +8,7 @@ module.exports = app => {
     { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/test', controller: version, middlewares: 'test' },
     // captcha
-    { method: 'post', path: 'captcha/getProvider', controller: captcha },
+    { method: 'post', path: 'captcha/createProviderInstance', controller: captcha, middlewares: 'captcha' },
   ];
   return routes;
 };
