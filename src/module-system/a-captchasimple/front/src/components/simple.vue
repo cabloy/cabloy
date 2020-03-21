@@ -6,6 +6,18 @@ export default {
   meta: {
     global: false,
   },
+  props: {
+    module: {
+      type: String,
+    },
+    sceneName: {
+      type: String,
+    },
+    context: {},
+    providerInstance: {
+      type: Object,
+    },
+  },
   data() {
     return {
       src: null,
