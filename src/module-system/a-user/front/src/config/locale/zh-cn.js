@@ -31,6 +31,7 @@ export default {
   Select: '选择',
   Edit: '编辑',
   ViewLayout: '视图',
+  'Header Buttons': '头部按钮',
   'Sidebar (Left)': '左边栏',
   'Sidebar (Right)': '右边栏',
   'Statusbar (Left)': '状态栏（左）',

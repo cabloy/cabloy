@@ -14,6 +14,7 @@ export default [
   { path: 'view', component: load('view/view') },
   { path: 'view/panels', component: load('view/viewPanels') },
   { path: 'view/sections', component: load('view/viewSections') },
+  { path: 'view/buttons', component: load('view/viewButtons') },
   { path: 'my/atoms', component: load('my/atoms') },
   { path: 'public/profile', component: load('public/profile') },
 ];
