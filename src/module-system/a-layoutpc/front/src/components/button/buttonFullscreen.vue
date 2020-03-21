@@ -1,5 +1,5 @@
 <template>
-  <eb-link :iconMaterial="isFullscreen?'fullscreen_ex':'fullscreen'" :onPerform="onPerform"></eb-link>
+  <eb-link :iconMaterial="isFullscreen?'fullscreen_exit':'fullscreen'" :onPerform="onPerform"></eb-link>
 </template>
 <script>
 import screenfull from 'screenfull';
