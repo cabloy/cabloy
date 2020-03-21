@@ -17,6 +17,7 @@
   "author": "zhennann",
   "devDependencies": {},
   "dependencies": {
-    "require3": "^1.0.3"
+    "require3": "^1.0.3",
+    "screenfull": "^5.0.2"
   }
 }

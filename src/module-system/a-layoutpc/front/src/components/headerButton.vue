@@ -22,7 +22,7 @@ export default {
       }));
     }
     return c('div', {
-      staticClass: 'header-button',
+      staticClass: `header-button ${this.showing?'':'display-none'}`,
       directives: [{
         name: 'eb-dragdrop',
         value: {
@@ -47,6 +47,7 @@ export default {
     return {
       ready: false,
       errorMessage: null,
+      showing: true,
     };
   },
   computed: {
@@ -81,6 +82,12 @@ export default {
           this.errorMessage = null;
         }
       });
+    },
+    show() {
+      this.showing = true;
+    },
+    hide() {
+      this.showing = false;
     },
     onDragStart({ $el, context, dragElement }) {
       const [button, buttonIndexDrag] = this.group._getButtonAndIndex(context.button);

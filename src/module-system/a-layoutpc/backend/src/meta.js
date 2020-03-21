@@ -42,6 +42,12 @@ module.exports = app => {
           menu: 5,
           public: 1,
         },
+        buttonFullscreen: {
+          title: 'Fullscreen',
+          component: 'buttonFullscreen',
+          menu: 5,
+          public: 1,
+        },
         buttonMine: {
           title: 'Mine',
           component: 'buttonMine',
