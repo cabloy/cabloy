@@ -1,0 +1,194 @@
+:root.eb-theme-a-themehyacinth {
+
+  .eb-layout-container-pc {
+    background: linear-gradient(to right bottom, rgba(109, 147, 136, 0.4) 0%, rgba(109, 147, 136, 0.6) 40%, rgba(187, 209, 187, 0.6) 50%, rgba(187, 209, 187, 0.7) 80%, rgba(187, 209, 187, 0.8) 100%); //#C3D4E7;
+
+    .eb-layout-header {
+      background: #3C4F4C; //#343D46;
+
+      &:after {
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 40%, rgba(0, 0, 0, 0.05) 50%, rgba(0, 0, 0, 0) 80%, rgba(0, 0, 0, 0) 100%);
+      }
+
+      .title {
+        color: #C3D4E7;
+      }
+
+      .tabs {
+        background: #3C4F4C !important; //#343D46 !important;
+
+        .tab-link {
+          color: #C3D4E7;
+
+          .close {
+            background: hsla(0, 0%, 100%, .12);
+            color: #C3D4E7;
+          }
+
+          &[data-dragdrop-drop] {
+            border-left: 1px solid #C3D4E7;
+          }
+        }
+
+        .tab-link.tab-link-active {
+          color: var(--f7-tabbar-link-active-color, var(--f7-theme-color));
+        }
+
+        .tab-link:hover {
+          color: var(--f7-tabbar-link-active-color, var(--f7-theme-color));
+          background: hsla(0, 0%, 100%, .12);
+        }
+      }
+
+      .buttons {
+
+        .header-button {
+
+          &[data-dragdrop-drop] {
+            border-left: 1px solid #C3D4E7;
+          }
+        }
+
+        a.link {
+          color: #C3D4E7;
+        }
+
+        a.link:hover {
+          background: hsla(0, 0%, 100%, .12);
+        }
+      }
+
+      .mine.link {
+        border-left: 1px solid rgba(109, 147, 136, 0.3); //#414D5B;
+      }
+
+    }
+
+    .eb-layout-sidebar {
+
+      .panel {
+
+        &.panel-left {
+
+          .panel-resize-handler {
+            background: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 0.06) 40%, rgba(0, 0, 0, 0.06) 60%, rgba(0, 0, 0, 0) 80%, rgba(0, 0, 0, 0) 100%);
+          }
+        }
+
+        &.panel-right {
+
+          .panel-resize-handler {
+            background: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 0.06) 40%, rgba(0, 0, 0, 0.06) 60%, rgba(0, 0, 0, 0) 80%, rgba(0, 0, 0, 0) 100%);
+          }
+        }
+
+        &.panel-bottom {
+
+          .panel-resize-handler {
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 0.06) 40%, rgba(0, 0, 0, 0.06) 60%, rgba(0, 0, 0, 0) 80%, rgba(0, 0, 0, 0) 100%);
+          }
+        }
+
+        .panel-toolbar.toolbar {
+          background: hsla(0, 0%, 100%, .12);
+
+          .toolbar-inner {
+
+            a.link {
+              color: #C3D4E7;
+            }
+          }
+        }
+
+      }
+
+      .eb-layout-sidebar-tabs {
+        background: #3C4F4C; //#343D46;
+
+        .eb-layout-sidebar-tabs-buttons {
+
+          a.link {
+            color: #C3D4E7;
+
+            &.active,
+            &:hover {
+              background: hsla(0, 0%, 100%, .12);
+              opacity: 0.6;
+            }
+          }
+
+        }
+
+        .eb-layout-sidebar-tabs-sections {
+
+          .section {
+            color: #C3D4E7;
+            opacity: 0.2;
+          }
+
+        }
+
+      }
+
+    }
+
+    .eb-layout-sidebar-left,
+    .eb-layout-sidebar-right {
+      .eb-layout-sidebar-tabs {
+
+        .eb-layout-sidebar-tabs-buttons {
+
+          a.link {
+
+            &[data-dragdrop-drop] {
+              border-top: 1px solid #C3D4E7;
+            }
+          }
+        }
+
+        .eb-layout-sidebar-tabs-sections {
+
+          .section {
+
+            &[data-dragdrop-drop] {
+              border-top: 1px solid #C3D4E7;
+            }
+          }
+
+        }
+
+      }
+    }
+
+    .eb-layout-sidebar-bottom {
+      .eb-layout-sidebar-tabs {
+
+        .eb-layout-sidebar-tabs-buttons {
+
+          a.link {
+
+            &[data-dragdrop-drop] {
+              border-left: 1px solid #C3D4E7;
+            }
+          }
+
+        }
+
+        .eb-layout-sidebar-tabs-sections {
+
+          .section {
+
+            &[data-dragdrop-drop] {
+              border-left: 1px solid #C3D4E7;
+            }
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+}
