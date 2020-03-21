@@ -127,12 +127,17 @@ module.exports = function(loader, modules) {
 };
 
 function wrapMiddlewareApp(key, route, loader) {
-  const middleware = loader.app.middlewares[key];
-  const optionsRoute = route.meta ? route.meta[key] : null;
-  const options = optionsRoute ? extend(true, {}, loader.app.config.mws[key], optionsRoute) : loader.app.config.mws[key];
-  const mw = middleware(options, loader.app);
-  mw._name = key;
-  return mw;
+  try {
+    const middleware = loader.app.middlewares[key];
+    const optionsRoute = route.meta ? route.meta[key] : null;
+    const options = optionsRoute ? extend(true, {}, loader.app.config.mws[key], optionsRoute) : loader.app.config.mws[key];
+    const mw = middleware(options, loader.app);
+    mw._name = key;
+    return mw;
+  } catch (err) {
+    console.log(`\nmiddleware error: ${key}\n`);
+    throw err;
+  }
 }
 
 function wrapMiddleware(item, route, loader) {
