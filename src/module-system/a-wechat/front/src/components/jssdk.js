@@ -9,8 +9,8 @@ export default {
       if (action.name === 'config') return this._createConfig({ ctx, item });
     },
     _createConfig(/* { ctx, item }*/) {
-      if (!this.$device.wechat) return null;
-      if (_wxInstance) return { wx: _wxInstance };
+      if (!this.$device.wechat) return Promise.resolve(null);
+      if (_wxInstance) return Promise.resolve({ wx: _wxInstance });
       return new Promise((resolve, reject) => {
         // load jweixin-1.4.0.js
         this.$meta.util.loadScript(this.$config.jssdk.url.jweixin, () => {
