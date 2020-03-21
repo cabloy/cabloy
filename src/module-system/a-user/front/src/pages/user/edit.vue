@@ -78,7 +78,8 @@ export default {
         // check if locale changed
         if (localeOld !== this.user.locale) {
           this.$view.dialog.confirm(localeConfirm).then(() => {
-            this.$meta.vueApp.reload({ echo: false });
+            //this.$meta.vueApp.reload({ echo: false });
+            window.location.reload();
           });
         } else {
           this.$f7router.back();
