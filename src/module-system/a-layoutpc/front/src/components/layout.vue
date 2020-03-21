@@ -543,6 +543,20 @@ export default {
       }
       this.__saveLayoutConfig();
     },
+    closeButton(side, button) {
+      const _buttonIndex = this.sidebar[side].buttons.findIndex(item => this._buttonFullName(item) === this._buttonFullName(button));
+      if (_buttonIndex === -1) return;
+      this.sidebar[side].buttons.splice(_buttonIndex, 1);
+      this.__saveLayoutConfig();
+    },
+    openButton(side, button) {
+      const _buttonIndex = this.sidebar[side].buttons.findIndex(item => this._buttonFullName(item) === this._buttonFullName(button));
+      if (_buttonIndex > -1) return;
+      // prepare button
+      button = this._prepareButton(button);
+      this.sidebar[side].buttons.push(button);
+      this.__saveLayoutConfig();
+    },
     _panelFullName(panel) {
       if (panel.module) return `${panel.module}:${panel.name}`;
       return panel.name;
