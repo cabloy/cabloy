@@ -13,7 +13,7 @@
             <f7-list-item>
               <f7-icon slot="media"></f7-icon>
               <template v-if="moduleCaptcha">
-                <captchaContainer></captchaContainer>
+                <captchaContainer module="a-authsimple" sceneName="signin"></captchaContainer>
               </template>
             </f7-list-item>
             <eb-list-input :label="$text('Captcha code')" floating-label type="text" clear-button :placeholder="$text('Captcha code')" v-model="captcha.code" dataPath="captcha/code">
