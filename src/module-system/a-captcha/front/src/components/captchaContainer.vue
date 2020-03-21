@@ -1,7 +1,7 @@
 <template>
   <div>
-    <template v-if="moduleCaptcha">
-      <captcha></captcha>
+    <template v-if="providerInstance">
+      <captcha :module="module" :sceneName="sceneName" :context="context" :providerInstance="providerInstance"></captcha>
     </template>
   </div>
 </template>
@@ -10,18 +10,31 @@ export default {
   meta: {
     global: false,
   },
+  props: {
+    module: {
+      type: String,
+    },
+    sceneName: {
+      type: String,
+    },
+    context: {},
+  },
   data() {
     return {
       moduleCaptcha: null,
-      provider: null,
+      providerInstance: null,
     };
   },
   created() {
-    this.$api.post('captcha/getProvider').then(data => {
-      this.provider = data.provider;
-      this.$meta.module.use(this.provider.module, module => {
-        this.$options.components.captcha = module.options.components[this.provider.name];
+    this.$api.post('captcha/createProviderInstance', {
+      module: this.module,
+      sceneName: this.sceneName,
+      context: this.context,
+    }).then(providerInstance => {
+      this.$meta.module.use(providerInstance.provider.module, module => {
+        this.$options.components.captcha = module.options.components[providerInstance.provider.name];
         this.moduleCaptcha = module;
+        this.providerInstance = providerInstance;
       });
     });
   },

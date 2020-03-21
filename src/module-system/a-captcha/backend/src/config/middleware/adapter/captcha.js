@@ -18,7 +18,7 @@ const Fn = module.exports = ctx => {
     // create provider instance
     async createProviderInstance({ module, sceneName, context }) {
       // config
-      const config = this.ctx.config.module(moduleInfo.relativeName);
+      const config = ctx.config.module(moduleInfo.relativeName);
       // provider
       const provider = config.scenes.modules[module][sceneName];
       // timeout
@@ -29,7 +29,7 @@ const Fn = module.exports = ctx => {
       const key = utils.getCacheKey({ ctx, providerInstanceId });
       await ctx.cache.db.module(moduleInfo.relativeName).set(key, { providerInstanceId, module, sceneName, context }, timeout);
       // ok
-      return { provider, providerInstanceId };
+      return { providerInstanceId, provider };
     }
 
     // save
