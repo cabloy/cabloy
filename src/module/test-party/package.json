@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "extend2": "^1.0.0",
-    "require3": "^1.0.3"
+    "require3": "^1.0.3",
+    "egg-born-module-a-chartjs": "^3.0.0"
   }
 }
