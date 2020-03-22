@@ -212,8 +212,11 @@ module.exports = app => {
       { method: 'post', path: 'kitchen-sink/form-schema-validation/saveValidation', controller: testKitchensinkFormSchemaValidation, middlewares: 'validate',
         meta: { validate: { validator: 'formTest' } },
       },
-      { method: 'post', path: 'kitchen-sink/form-captcha/signup', controller: testKitchensinkFormSchemaValidation, middlewares: 'validate,captchaVerify',
-        meta: { validate: { validator: 'formCaptchaTest' } },
+      { method: 'post', path: 'kitchen-sink/form-captcha/signup', controller: testKitchensinkFormSchemaValidation, middlewares: 'captchaVerify,validate',
+        meta: {
+          captchaVerify: { scene: { name: 'formCaptchaTest' } },
+          validate: { validator: 'formCaptchaTest' },
+        },
       },
       // kitchen-sink/ptr-is-loadmore
       { method: 'post', path: 'kitchen-sink/ptr-is-loadmore/list', controller: testKitchensinkPtrIsLoadMore },

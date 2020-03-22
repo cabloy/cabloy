@@ -7,12 +7,12 @@
         <eb-list form no-hairlines-md @submit.prevent="onFormSubmit">
           <eb-list-item-validate dataKey="userName"></eb-list-item-validate>
           <eb-list-item-validate dataKey="password"></eb-list-item-validate>
-          <f7-list-item>
-            <template v-if="moduleCaptcha">
-              <captchaContainer></captchaContainer>
-            </template>
-          </f7-list-item>
-          <eb-list-input :label="$text('Captcha code')" floating-label type="text" clear-button :placeholder="$text('Captcha code')" v-model="captcha.code" dataPath="captcha/code">
+          <eb-list-input :label="$text('Captcha code')" floating-label type="text" clear-button :placeholder="$text('Captcha code')" v-model="captcha.token" dataPath="captcha/token">
+            <div slot="content">
+              <template v-if="moduleCaptcha">
+                <captchaContainer ref="captchaContainer" class="captcha-container" module="test-party" sceneName="formCaptchaTest"></captchaContainer>
+              </template>
+            </div>
           </eb-list-input>
           <f7-list-item divider>
             <eb-button ref="buttonSubmit" :onPerform="onPerformSignUp">{{$text('Sign Up')}}</eb-button>
@@ -37,7 +37,7 @@ export default {
         validator: 'formCaptchaTest',
       },
       captcha: {
-        code: null,
+        token: null,
       },
       moduleCaptcha: null,
     };
@@ -64,7 +64,7 @@ export default {
     onPerformValidate() {
       return this.$api.post('kitchen-sink/form-captcha/signup', {
         data: this.item,
-        captcha: this.captcha,
+        captcha: this.$refs.captchaContainer.captchaData({ token: this.captcha.token }),
       }).then(() => {
         return true;
       });
