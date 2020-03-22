@@ -6,7 +6,7 @@ module.exports = app => {
 
     async getCaptcha() {
       // providerInstanceId
-      const providerInstanceId = parseInt(this.ctx.query.providerInstanceId);
+      const providerInstanceId = this.ctx.query.providerInstanceId;
       // create
       const { token, buffer } = await captcha();
       // update
