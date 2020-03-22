@@ -184,7 +184,7 @@ function appCallback() {
         }
       } else {
         const error = ctx.createError({
-          code: ctx.status, message: ctx.body,
+          code: ctx.status, message: ctx.message || ctx.body,
         });
         reject(error);
       }
