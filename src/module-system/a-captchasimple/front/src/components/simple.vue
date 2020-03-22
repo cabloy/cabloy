@@ -28,7 +28,7 @@ export default {
   },
   methods: {
     changeSrc() {
-      this.src = this.$meta.util.combineFetchPath('a-captchasimple', `simple/getCaptcha?t=${Math.random()}`);
+      this.src = this.$meta.util.combineFetchPath('a-captchasimple', `simple/getCaptcha?providerInstanceId=${this.providerInstance.providerInstanceId}&t=${Math.random()}`);
     },
     onClick() {
       this.changeSrc();
