@@ -98,7 +98,7 @@ module.exports = appInfo => {
     needActivation: true,
     activationWays: 'mobile,email',
     activationProviders: {
-      mobile: '',
+      mobile: '', // a-authsms recommended
       email: 'a-authsimple',
     },
     url: {
