@@ -29,7 +29,7 @@ const Fn = module.exports = ctx => {
     // create provider instance
     async createProviderInstance({ module, sceneName, context }) {
       // provider
-      const provider = this.getProvider({ module, sceneName });
+      const provider = await this.getProvider({ module, sceneName });
       // instance id
       const providerInstanceId = uuid.v4().replace(/-/g, '');
       // cache
@@ -48,7 +48,7 @@ const Fn = module.exports = ctx => {
       const providerInstance = await cache.get(key);
       if (!providerInstance) ctx.throw(403);
       // provider
-      const provider = this.getProvider({ module: providerInstance.module, sceneName: providerInstance.sceneName });
+      const provider = await this.getProvider({ module: providerInstance.module, sceneName: providerInstance.sceneName });
       // update
       providerInstance.data = data;
       await cache.set(key, providerInstance, provider.timeout);
