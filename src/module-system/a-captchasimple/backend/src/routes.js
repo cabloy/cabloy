@@ -9,6 +9,7 @@ module.exports = app => {
     { method: 'post', path: 'version/test', controller: version, middlewares: 'test' },
     // simple
     { method: 'get', path: 'simple/getCaptcha', controller: simple, middlewares: 'captcha' },
+    { method: 'post', path: 'simple/verify', controller: simple, middlewares: 'inner' },
   ];
   return routes;
 };
