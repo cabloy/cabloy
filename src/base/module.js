@@ -103,7 +103,7 @@ export default function(Vue) {
     },
     requireAll() {
       // local
-      rLocalJSs.keys().every(key => {
+      rLocalJSs.keys().forEach(key => {
         const moduleInfo = mparse.parseInfo(mparse.parseName(key));
         const module = this._get(moduleInfo.relativeName);
         if (!module) {
@@ -111,7 +111,7 @@ export default function(Vue) {
         }
       });
       // global
-      rGlobalJSs.keys().every(key => {
+      rGlobalJSs.keys().forEach(key => {
         const moduleInfo = mparse.parseInfo(mparse.parseName(key));
         const module = this._get(moduleInfo.relativeName);
         if (!module) {
