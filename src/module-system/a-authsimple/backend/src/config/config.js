@@ -29,6 +29,7 @@ module.exports = appInfo => {
   // captcha scenes
   config.captcha = {
     scenes: {
+      passwordChange: null,
       signup: null,
       signin: null, // means  using default
       // signin: {

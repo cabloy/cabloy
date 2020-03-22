@@ -8,16 +8,20 @@ module.exports = [
   { method: 'post', path: 'auth/add', controller: auth, middlewares: 'inner', meta: { auth: { enable: false } } },
   { method: 'post', path: 'auth/signin', controller: auth, middlewares: 'captchaVerify',
     meta: {
-      captchaVerify: {
-        scene: { name: 'signin' },
-      },
+      captchaVerify: { scene: { name: 'signin' } },
     },
   },
   { method: 'post', path: 'auth/signup', controller: auth, middlewares: 'captchaVerify,validate',
-    meta: { validate: { validator: 'signup' } },
+    meta: {
+      captchaVerify: { scene: { name: 'signup' } },
+      validate: { validator: 'signup' },
+    },
   },
   { method: 'post', path: 'auth/passwordChange', controller: auth, middlewares: 'captchaVerify,validate',
-    meta: { validate: { validator: 'passwordChange' } },
+    meta: {
+      captchaVerify: { scene: { name: 'passwordChange' } },
+      validate: { validator: 'passwordChange' },
+    },
   },
   { method: 'post', path: 'auth/passwordForgot', controller: auth, middlewares: 'validate,mail',
     meta: { validate: { validator: 'passwordForgot' } },
