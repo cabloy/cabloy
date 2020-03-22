@@ -13,8 +13,8 @@ module.exports = (options2, app) => {
     const providerInstanceId = captchaData.providerInstanceId;
     const dataInput = captchaData.data;
     // verify
-    const _captcha = new (CaptchaFn(ctx))();
     try {
+      const _captcha = new (CaptchaFn(ctx))();
       await _captcha.verify({ module, sceneName, providerInstanceId, dataInput });
     } catch (err) {
       throw combineCaptchaError({
