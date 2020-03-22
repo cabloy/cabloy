@@ -43,8 +43,8 @@ const Fn = module.exports = ctx => {
     async update({ providerInstanceId, data }) {
       // cache
       const cache = ctx.cache.db.module(moduleInfo.relativeName);
-      // get
       const key = utils.getCacheKey({ ctx, providerInstanceId });
+      // get
       const providerInstance = await cache.get(key);
       if (!providerInstance) ctx.throw(403);
       // provider
