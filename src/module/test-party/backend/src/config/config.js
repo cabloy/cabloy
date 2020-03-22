@@ -71,6 +71,18 @@ module.exports = appInfo => {
         },
       },
     };
+
+    // captcha scenes
+    config.captcha = {
+      scenes: {
+        formCaptchaTest: null, // means using default
+      // formCaptchaTest: {
+      //   module: 'a-captchasimple',
+      //   name: 'captcha',
+      // },
+      },
+    };
+
   }
 
 
