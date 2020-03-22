@@ -26,5 +26,18 @@ module.exports = appInfo => {
     },
   };
 
+  // captcha scenes
+  config.captcha = {
+    scenes: {
+      signup: null,
+      signin: null, // means  using default
+      // signin: {
+      //   module: 'a-captchasimple',
+      //   name: 'simple',
+      // },
+    },
+
+  };
+
   return config;
 };
