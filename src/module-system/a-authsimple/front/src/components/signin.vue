@@ -63,7 +63,7 @@ export default {
     onPerformValidate() {
       return this.$api.post('auth/signin', {
         data: this.data,
-        captcha: this.$refs.captchaContainer.captchaData({ token: this.captcha.code }),
+        captcha: this.$refs.captchaContainer.captchaData({ token: this.captcha.token }),
       }).then(() => {
         this.$meta.vueApp.reload({ echo: true });
       });
