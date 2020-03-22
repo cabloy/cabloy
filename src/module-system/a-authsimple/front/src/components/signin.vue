@@ -10,14 +10,13 @@
             <eb-list-input :label="$text('Your password')" floating-label type="password" clear-button :placeholder="$text('Your password')" v-model="data.password" dataPath="password">
               <f7-icon material="lock_outline" slot="media"></f7-icon>
             </eb-list-input>
-            <f7-list-item>
-              <f7-icon slot="media"></f7-icon>
-              <template v-if="moduleCaptcha">
-                <captchaContainer module="a-authsimple" sceneName="signin"></captchaContainer>
-              </template>
-            </f7-list-item>
             <eb-list-input :label="$text('Captcha code')" floating-label type="text" clear-button :placeholder="$text('Captcha code')" v-model="captcha.code" dataPath="captcha/code">
               <f7-icon slot="media"></f7-icon>
+              <div slot="content">
+                <template v-if="moduleCaptcha">
+                  <captchaContainer class="captcha-container" module="a-authsimple" sceneName="signin"></captchaContainer>
+                </template>
+              </div>
             </eb-list-input>
             <f7-list-item>
               <f7-icon slot="media"></f7-icon>
