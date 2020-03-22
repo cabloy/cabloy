@@ -31,13 +31,12 @@ module.exports = appInfo => {
     scenes: {
       passwordChange: null,
       signup: null,
-      signin: null, // means  using default
+      signin: null, // means using default
       // signin: {
       //   module: 'a-captchasimple',
-      //   name: 'simple',
+      //   name: 'captcha',
       // },
     },
-
   };
 
   return config;
