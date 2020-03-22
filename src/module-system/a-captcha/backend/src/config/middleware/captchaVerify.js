@@ -1,35 +1,26 @@
-const utils = require('../../common/utils.js');
+const CaptchaFn = require('./adapter/captcha.js');
 
-module.exports = (options, app) => {
+module.exports = (options2, app) => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  return async function captchaVerify(ctx, next) {
-    // config
-    const config = ctx.config.module(moduleInfo.relativeName);
-    // cache
-    const cache = ctx.cache.db.module(moduleInfo.relativeName);
-    // timeout
-    const timeout = config.cache.timeout;
-    // get
-    const key = utils.getCacheKey({ ctx });
-    const value = await cache.get(key);
-    if (!value || !value.code) {
-      // error
-      throw combineCaptchaError({
-        message: ctx.text('Verification code is invalid, please retrieve again'),
-      });
-    }
+  return async function captchaVerify(ctx, next, options) {
+    // must exists
+    const scene = options.scene;
+    if (!scene) ctx.throw.module(moduleInfo.relativeName, 1001);
+    // params
+    const module = scene.module || ctx.module.info.relativeName;
+    const sceneName = scene.name;
+    const captchaData = ctx.request.body[options.data || 'captcha'];
+    const providerInstanceId = captchaData.providerInstanceId;
+    const dataInput = captchaData.data;
     // verify
-    if (ctx.request.body.captcha.code !== value.code) {
-      // error
+    const _captcha = new (CaptchaFn(ctx))();
+    try {
+      await _captcha.verify({ module, sceneName, providerInstanceId, dataInput });
+    } catch (err) {
       throw combineCaptchaError({
-        message: ctx.text('Mismatch Captcha Code'),
+        message: err.message,
       });
     }
-    // clear
-    // await cache.remove(key);
-    value.code = undefined;
-    await cache.set(key, value, timeout);
-
     // next
     await next();
   };
@@ -44,8 +35,8 @@ function combineCaptchaError({ message }) {
       keyword: 'x-captcha',
       params: [],
       message,
-      dataPath: '/captcha/code',
-      schemaPath: '#/properties/captcha/code/x-captcha',
+      dataPath: '/captcha/token',
+      schemaPath: '#/properties/captcha/token/x-captcha',
     },
   ];
   return error;

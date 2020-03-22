@@ -38,7 +38,14 @@ export default {
       });
     });
   },
-  methods: {},
+  methods: {
+    captchaData({ token }) {
+      return {
+        providerInstanceId: this.providerInstance.providerInstanceId,
+        data: { token },
+      }
+    },
+  },
 };
 
 </script>

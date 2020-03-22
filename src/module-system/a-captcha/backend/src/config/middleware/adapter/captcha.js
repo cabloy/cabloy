@@ -1,4 +1,5 @@
 const require3 = require('require3');
+const mparse = require3('egg-born-mparse').default;
 const extend = require3('extend2');
 const uuid = require3('uuid');
 const utils = require('../../../common/utils.js');
@@ -51,6 +52,37 @@ const Fn = module.exports = ctx => {
       const provider = await this.getProvider({ module: providerInstance.module, sceneName: providerInstance.sceneName });
       // update
       providerInstance.data = data;
+      await cache.set(key, providerInstance, provider.timeout);
+    }
+
+    async verify({ module, sceneName, providerInstanceId, dataInput }) {
+      // cache
+      const cache = ctx.cache.db.module(moduleInfo.relativeName);
+      const key = utils.getCacheKey({ ctx, providerInstanceId });
+      // get
+      const providerInstance = await cache.get(key);
+      if (!providerInstance) ctx.throw(403);
+      // check if the same scene
+      if (module !== providerInstance.module || sceneName !== providerInstance.sceneName) ctx.throw(403);
+      // invoke provider verify
+      const _moduleInfo = mparse.parseInfo(providerInstance.module);
+      await ctx.performAction({
+        method: 'post',
+        url: `/${_moduleInfo.url}/${providerInstance.sceneName}/verify`,
+        body: {
+          providerInstanceId,
+          context: providerInstance.context,
+          data: providerInstance.data,
+          dataInput,
+        },
+      });
+      // // clear
+      // await cache.remove(key);
+      // should hold the cache item
+      // provider
+      const provider = await this.getProvider({ module: providerInstance.module, sceneName: providerInstance.sceneName });
+      // update
+      providerInstance.data = null;
       await cache.set(key, providerInstance, provider.timeout);
     }
 
