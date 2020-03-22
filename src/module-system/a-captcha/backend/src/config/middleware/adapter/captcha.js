@@ -64,11 +64,13 @@ const Fn = module.exports = ctx => {
       if (!providerInstance) ctx.throw(403);
       // check if the same scene
       if (module !== providerInstance.module || sceneName !== providerInstance.sceneName) ctx.throw(403);
+      // provider
+      const provider = await this.getProvider({ module: providerInstance.module, sceneName: providerInstance.sceneName });
       // invoke provider verify
-      const _moduleInfo = mparse.parseInfo(providerInstance.module);
+      const _moduleInfo = mparse.parseInfo(provider.module);
       await ctx.performAction({
         method: 'post',
-        url: `/${_moduleInfo.url}/${providerInstance.sceneName}/verify`,
+        url: `/${_moduleInfo.url}/${provider.name}/verify`,
         body: {
           providerInstanceId,
           context: providerInstance.context,
@@ -79,8 +81,6 @@ const Fn = module.exports = ctx => {
       // // clear
       // await cache.remove(key);
       // should hold the cache item
-      // provider
-      const provider = await this.getProvider({ module: providerInstance.module, sceneName: providerInstance.sceneName });
       // update
       providerInstance.data = null;
       await cache.set(key, providerInstance, provider.timeout);
