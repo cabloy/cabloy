@@ -10,11 +10,11 @@
             <eb-list-input :label="$text('Your password')" floating-label type="password" clear-button :placeholder="$text('Your password')" v-model="data.password" dataPath="password">
               <f7-icon material="lock_outline" slot="media"></f7-icon>
             </eb-list-input>
-            <eb-list-input :label="$text('Captcha code')" floating-label type="text" clear-button :placeholder="$text('Captcha code')" v-model="captcha.code" dataPath="captcha/code">
+            <eb-list-input :label="$text('Captcha code')" floating-label type="text" clear-button :placeholder="$text('Captcha code')" v-model="captcha.token" dataPath="captcha/token">
               <f7-icon slot="media"></f7-icon>
               <div slot="content">
                 <template v-if="moduleCaptcha">
-                  <captchaContainer class="captcha-container" module="a-authsimple" sceneName="signin"></captchaContainer>
+                  <captchaContainer ref="captchaContainer" class="captcha-container" module="a-authsimple" sceneName="signin"></captchaContainer>
                 </template>
               </div>
             </eb-list-input>
@@ -48,7 +48,7 @@ export default {
         rememberMe: false,
       },
       captcha: {
-        code: null,
+        token: null,
       },
       moduleCaptcha: null,
     };
@@ -63,7 +63,7 @@ export default {
     onPerformValidate() {
       return this.$api.post('auth/signin', {
         data: this.data,
-        captcha: this.captcha,
+        captcha: this.$refs.captchaContainer.captchaData({ token: this.captcha.code }),
       }).then(() => {
         this.$meta.vueApp.reload({ echo: true });
       });
