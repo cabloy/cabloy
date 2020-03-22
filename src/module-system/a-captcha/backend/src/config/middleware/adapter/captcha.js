@@ -1,4 +1,5 @@
 const require3 = require('require3');
+const extend = require3('extend2');
 const uuid = require3('uuid');
 const utils = require('../../../common/utils.js');
 
@@ -15,40 +16,42 @@ const Fn = module.exports = ctx => {
       return new (Fn(ctx))(moduleName);
     }
 
+    async getProvider({ module, sceneName }) {
+      // default scene
+      const configDefault = ctx.config.module(moduleInfo.relativeName);
+      const sceneDefault = configDefault.captcha.scenes.default;
+      // module scene
+      const configModule = ctx.config.module(module);
+      const sceneModule = (configModule.captcha && configModule.captcha.scenes && configModule.captcha.scenes[sceneName]) || null;
+      return extend(true, {}, sceneDefault, sceneModule);
+    }
+
     // create provider instance
     async createProviderInstance({ module, sceneName, context }) {
-      // config
-      const config = ctx.config.module(moduleInfo.relativeName);
       // provider
-      const provider = config.scenes.modules[module][sceneName];
-      // timeout
-      const timeout = provider.timeout || config.cache.timeout;
-      // instance
+      const provider = this.getProvider({ module, sceneName });
+      // instance id
       const providerInstanceId = uuid.v4().replace(/-/g, '');
       // cache
       const key = utils.getCacheKey({ ctx, providerInstanceId });
-      await ctx.cache.db.module(moduleInfo.relativeName).set(key, { providerInstanceId, module, sceneName, context }, timeout);
+      await ctx.cache.db.module(moduleInfo.relativeName).set(key, { providerInstanceId, module, sceneName, context }, provider.timeout);
       // ok
       return { providerInstanceId, provider };
     }
 
-    // save
-    async save({ provider, code }) {
-      // config
-      const config = ctx.config.module(moduleInfo.relativeName);
+    // update
+    async update({ providerInstanceId, data }) {
       // cache
       const cache = ctx.cache.db.module(moduleInfo.relativeName);
-      // timeout
-      const timeout = config.cache.timeout;
       // get
-      const key = utils.getCacheKey({ ctx });
-      const value = await cache.get(key);
-      if (!value) ctx.throw(403);
-      // verify provider
-      if (provider.module !== value.provider.module || provider.name !== value.provider.name) ctx.throw(403);
-      // save
-      value.code = code;
-      await cache.set(key, value, timeout);
+      const key = utils.getCacheKey({ ctx, providerInstanceId });
+      const providerInstance = await cache.get(key);
+      if (!providerInstance) ctx.throw(403);
+      // provider
+      const provider = this.getProvider({ module: providerInstance.module, sceneName: providerInstance.sceneName });
+      // update
+      providerInstance.data = data;
+      await cache.set(key, providerInstance, provider.timeout);
     }
 
   }

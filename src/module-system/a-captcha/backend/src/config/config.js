@@ -14,25 +14,15 @@ module.exports = appInfo => {
     },
   };
 
-  // scenes
-  config.scenes = {
-    modules: {
-      'a-authsimple': {
-        signup: {
-          module: 'a-captchasimple',
-          name: 'simple',
-        },
-        signin: {
-          module: 'a-captchasimple',
-          name: 'simple',
-        },
+  // captcha scenes
+  config.captcha = {
+    scenes: {
+      default: {
+        module: 'a-captchasimple',
+        name: 'simple',
+        timeout: 20 * 60 * 1000,
       },
     },
-  };
-
-  // cache timeout
-  config.cache = {
-    timeout: 20 * 60 * 1000,
   };
 
   return config;
