@@ -2,9 +2,9 @@ const require3 = require('require3');
 const captcha = require3('trek-captcha');
 
 module.exports = app => {
-  class SimpleController extends app.Controller {
+  class CaptchaController extends app.Controller {
 
-    async getCaptcha() {
+    async image() {
       // providerInstanceId
       const providerInstanceId = this.ctx.query.providerInstanceId;
       // create
@@ -24,8 +24,9 @@ module.exports = app => {
       const { data, dataInput } = this.ctx.request.body;
       if (!data) this.ctx.throw(1001);
       if (data.token !== dataInput.token) this.ctx.throw(1002);
+      this.ctx.success();
     }
 
   }
-  return SimpleController;
+  return CaptchaController;
 };

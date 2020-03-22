@@ -1,4 +1,4 @@
 module.exports = {
-  CaptchaMismatch: 'Mismatch Captcha Code',
   CaptchaInvalid: 'Verification code is invalid, please retrieve again',
+  CaptchaMismatch: 'Mismatch Captcha Code',
 };

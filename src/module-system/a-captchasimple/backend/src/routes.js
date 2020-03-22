@@ -1,5 +1,5 @@
 const version = require('./controller/version.js');
-const simple = require('./controller/simple.js');
+const captcha = require('./controller/captcha.js');
 
 module.exports = app => {
   const routes = [
@@ -7,9 +7,9 @@ module.exports = app => {
     { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/test', controller: version, middlewares: 'test' },
-    // simple
-    { method: 'get', path: 'simple/getCaptcha', controller: simple, middlewares: 'captcha' },
-    { method: 'post', path: 'simple/verify', controller: simple, middlewares: 'inner' },
+    // captcha
+    { method: 'get', path: 'captcha/image', controller: captcha, middlewares: 'captcha' },
+    { method: 'post', path: 'captcha/verify', controller: captcha, middlewares: 'inner' },
   ];
   return routes;
 };
