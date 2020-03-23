@@ -41,7 +41,7 @@ const Fn = module.exports = ctx => {
     }
 
     // update
-    async update({ providerInstanceId, data }) {
+    async update({ providerInstanceId, data, context }) {
       // cache
       const cache = ctx.cache.db.module(moduleInfo.relativeName);
       const key = utils.getCacheKey({ ctx, providerInstanceId });
@@ -52,6 +52,7 @@ const Fn = module.exports = ctx => {
       const provider = await this.getProvider({ module: providerInstance.module, sceneName: providerInstance.sceneName });
       // update
       providerInstance.data = data;
+      providerInstance.context = context;
       await cache.set(key, providerInstance, provider.timeout);
     }
 
