@@ -39,7 +39,7 @@ export default {
 </script>
 <style scoped>
 .captcha {
-  height: 100%;
+  height: 48px;
   cursor: pointer;
 }
 
