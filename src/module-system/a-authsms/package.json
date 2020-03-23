@@ -22,6 +22,8 @@
   "devDependencies": {},
   "dependencies": {
     "require3": "^1.0.3",
-    "extend2": "^1.0.0"
+    "extend2": "^1.0.0",
+    "chalk": "^3.0.0",
+    "boxen": "^4.2.0"
   }
 }

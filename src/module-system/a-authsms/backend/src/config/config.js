@@ -21,5 +21,10 @@ module.exports = appInfo => {
     },
   };
 
+  // sms provider
+  config.sms = {
+    provider: '',
+  };
+
   return config;
 };

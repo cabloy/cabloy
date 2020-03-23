@@ -1,5 +1,5 @@
 <template>
-  <eb-link class="captcha" :onPerform="onPerformSend">{{getSendText()}}</eb-link>
+  <eb-button class="captcha" :disabled="buttonDisabled" :onPerform="onPerformSend">{{getSendText()}}</eb-button>
 </template>
 <script>
 export default {
@@ -13,23 +13,28 @@ export default {
     sceneName: {
       type: String,
     },
-    context: {},
+    context: {
+      type: Object,
+    },
     providerInstance: {
       type: Object,
     },
   },
   data() {
     return {
-      src: null,
       sendTimer: 0,
       sendTimerCounter: 0,
     };
   },
-  created() {
-    this.changeSrc();
+  computed: {
+    buttonDisabled() {
+      return !!this.sendTimer || !this.context.mobile;
+    },
   },
+  created() {},
   methods: {
     onPerformSend() {
+      if (this.sendTimer) return;
       return this.$api.post('captcha/sendCode', {
         providerInstanceId: this.providerInstance.providerInstanceId,
         context: this.context,

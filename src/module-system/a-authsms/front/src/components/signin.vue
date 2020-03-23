@@ -11,7 +11,7 @@
               <f7-icon slot="media"></f7-icon>
               <div slot="content">
                 <template v-if="moduleCaptcha">
-                  <captchaContainer ref="captchaContainer" class="captcha-container" module="a-authsms" sceneName="signin"></captchaContainer>
+                  <captchaContainer ref="captchaContainer" class="captcha-container" module="a-authsms" sceneName="signin" :context="captchaContext"></captchaContainer>
                 </template>
               </div>
             </eb-list-input>
@@ -47,6 +47,11 @@ export default {
       },
       moduleCaptcha: null,
     };
+  },
+  computed: {
+    captchaContext() {
+      return { mobile: this.data.mobile };
+    },
   },
   created() {
     this.$meta.module.use('a-captcha', module => {
