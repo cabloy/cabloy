@@ -35,6 +35,11 @@ module.exports = app => {
       });
     }
 
+    async verify({ /* providerInstanceId, context,*/ data, dataInput }) {
+      if (!data) this.ctx.throw(1002);
+      if (data.token !== dataInput.token) this.ctx.throw(1003);
+    }
+
 
   }
 

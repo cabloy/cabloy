@@ -10,10 +10,8 @@ module.exports = app => {
     }
 
     async verify() {
-      // const { providerInstanceId, context } = this.ctx.request.body;
-      const { data, dataInput } = this.ctx.request.body;
-      if (!data) this.ctx.throw(1001);
-      if (data.token !== dataInput.token) this.ctx.throw(1002);
+      const { providerInstanceId, context, data, dataInput } = this.ctx.request.body;
+      await this.ctx.service.captcha.verify({ providerInstanceId, context, data, dataInput });
       this.ctx.success();
     }
 

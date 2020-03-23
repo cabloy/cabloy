@@ -10,7 +10,7 @@ module.exports = function(ctx) {
 
     async sendCode({ context }) {
       // token
-      const token = parseInt(Math.random() * 10000).toString();
+      const token = this.__prefix0(parseInt(Math.random() * 10000), 4);
       // prompt
       const message = chalk.keyword('cyan')('Test SMS Verification Code To: ')
                         + chalk.keyword('yellow')(context.mobile)
@@ -18,6 +18,10 @@ module.exports = function(ctx) {
       console.log('\n' + boxen(message, boxenOptions));
       // ok
       return { token };
+    }
+
+    __prefix0(num, length) {
+      return (Array(length).join('0') + num).slice(-length);
     }
 
   }

@@ -1,5 +1,6 @@
 const version = require('./controller/version.js');
 const captcha = require('./controller/captcha.js');
+const auth = require('./controller/auth.js');
 
 module.exports = app => {
   const routes = [
@@ -10,6 +11,12 @@ module.exports = app => {
     // captcha
     { method: 'post', path: 'captcha/sendCode', controller: captcha, middlewares: 'captcha' },
     { method: 'post', path: 'captcha/verify', controller: captcha, middlewares: 'inner' },
+    // auth
+    { method: 'post', path: 'auth/signin', controller: auth, middlewares: 'captchaVerify',
+      meta: {
+        captchaVerify: { scene: { name: 'signin' } },
+      },
+    },
   ];
   return routes;
 };
