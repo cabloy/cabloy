@@ -3,4 +3,5 @@ function load(name) {
 }
 
 export default [
+  { path: 'signup', component: load('signup') },
 ];
