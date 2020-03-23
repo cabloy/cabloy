@@ -3,24 +3,21 @@ module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const provider = moduleInfo.name;
   async function verify(ctx, body) {
-    const { auth, password, rememberMe } = body;
+    const { mobile, rememberMe } = body;
     // validate
     await ctx.meta.validation.validate({ validator: 'signin', data: body });
     // exists
-    const user = await ctx.meta.user.exists({ userName: auth, email: auth, mobile: auth });
-    if (!user) return ctx.throw(1001);
+    const user = await ctx.meta.user.exists({ mobile });
+    if (!user) return ctx.throw(1004);
     // disabled
-    if (user.disabled) return ctx.throw(1002);
-    // verify
-    const authSimple = await ctx.service.auth.verify({ userId: user.id, password });
-    if (!authSimple) return ctx.throw(1001);
+    if (user.disabled) return ctx.throw(1005);
     return {
       module: moduleInfo.relativeName,
       provider,
-      profileId: authSimple.id,
+      profileId: mobile,
       maxAge: rememberMe ? null : 0,
       profile: {
-        authSimpleId: authSimple.id,
+        mobile,
         rememberMe,
       },
     };
