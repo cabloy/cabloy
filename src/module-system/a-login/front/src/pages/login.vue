@@ -1,7 +1,7 @@
 <script>
 export default {
   meta: {
-    title: 'Sign in',
+    title: 'Sign In',
   },
   data() {
     return {
