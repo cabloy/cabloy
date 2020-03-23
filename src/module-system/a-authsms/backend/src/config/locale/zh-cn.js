@@ -1,4 +1,6 @@
 module.exports = {
-  'Element exists': '元素已存在',
-  'Cannot contain __': '不能包含__',
+  SMS: '短信',
+  'Element Exists': '元素已存在',
+  'Cannot Contain __': '不能包含__',
+  'SMS Verification': '短信认证',
 };
