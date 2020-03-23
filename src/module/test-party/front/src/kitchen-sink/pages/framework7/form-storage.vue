@@ -20,7 +20,7 @@
           <div class="item-inner">
             <div class="item-title item-label">Password</div>
             <div class="item-input-wrap">
-              <input name="password" type="password" placeholder="Your password">
+              <input name="password" type="password" placeholder="Your Password">
               <span class="input-clear-button"></span>
             </div>
           </div>

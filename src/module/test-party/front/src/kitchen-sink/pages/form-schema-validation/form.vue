@@ -9,7 +9,7 @@
     <eb-list v-if="item" form no-hairlines-md @submit.prevent="onFormSubmit">
       <eb-list-input :label="$text('Username')" floating-label type="text" clear-button :placeholder="$text('Username')" v-model="item.userName"></eb-list-input>
       <eb-list-input :label="$text('Password')" floating-label type="password" clear-button :placeholder="$text('Password')" v-model="item.password"></eb-list-input>
-      <eb-list-input :label="$text('Password again')" floating-label type="Password" clear-button :placeholder="$text('Password again')" v-model="item.passwordAgain"></eb-list-input>
+      <eb-list-input :label="$text('Password Again')" floating-label type="Password" clear-button :placeholder="$text('Password Again')" v-model="item.passwordAgain"></eb-list-input>
       <f7-list-item smartSelect :title="$text('Sex')" :smartSelectParams="{openIn: 'page', closeOnSelect: true}">
         <eb-select name="sex" v-model="item.sex" optionsBlankAuto :multiple="false" :options="sexes"></eb-select>
       </f7-list-item>
@@ -23,7 +23,7 @@
         <img class="avatar avatar48" :src="getAvatarUrl(item.avatar,48)">
       </f7-list-item>
       <f7-list-item>
-        <span slot="title">{{$text('Remember me')}}</span>
+        <span slot="title">{{$text('Remember Me')}}</span>
         <eb-toggle slot="after" v-model="item.rememberMe"></eb-toggle>
       </f7-list-item>
     </eb-list>

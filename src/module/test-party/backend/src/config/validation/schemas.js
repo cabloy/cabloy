@@ -157,7 +157,7 @@ module.exports = app => {
       passwordAgain: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Password again',
+        ebTitle: 'Password Again',
         ebSecure: true,
         notEmpty: true,
         const: { $data: '1/password' },
@@ -212,7 +212,7 @@ module.exports = app => {
       rememberMe: {
         type: 'boolean',
         ebType: 'toggle',
-        ebTitle: 'Remember me',
+        ebTitle: 'Remember Me',
       },
     },
   };

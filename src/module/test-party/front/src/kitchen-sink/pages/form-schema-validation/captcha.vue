@@ -7,7 +7,7 @@
         <eb-list form no-hairlines-md @submit.prevent="onFormSubmit">
           <eb-list-item-validate dataKey="userName"></eb-list-item-validate>
           <eb-list-item-validate dataKey="password"></eb-list-item-validate>
-          <eb-list-input :label="$text('Captcha code')" floating-label type="text" clear-button :placeholder="$text('Captcha code')" v-model="captcha.token" dataPath="captcha/token">
+          <eb-list-input :label="$text('Captcha Code')" floating-label type="text" clear-button :placeholder="$text('Captcha Code')" v-model="captcha.token" dataPath="captcha/token">
             <div slot="content">
               <template v-if="moduleCaptcha">
                 <captchaContainer ref="captchaContainer" class="captcha-container" module="test-party" sceneName="formCaptchaTest"></captchaContainer>

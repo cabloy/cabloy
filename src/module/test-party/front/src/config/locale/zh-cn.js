@@ -122,7 +122,7 @@ export default {
   'Form / Schema (Auto) / Validation': '表单 / Schema (自动) / 验证',
   'Form / Schema (Custom) / Validation': '表单 / Schema (自定义) / 验证',
   'Form / Captcha': '表单 / 验证码',
-  'Password again': '重复密码',
+  'Password Again': '重复密码',
   'Pull To Refresh / Infinite Scroll / Load More': '上拉刷新 / 无限滚动 / 加载更多',
   'Button Event': '按钮事件',
   'Create Party': '新建宴会',

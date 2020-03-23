@@ -6,7 +6,7 @@
       <f7-list-input label="Name" type="text" placeholder="Your name" clear-button>
         <f7-icon icon="demo-list-icon" slot="media"></f7-icon>
       </f7-list-input>
-      <f7-list-input label="Password" type="password" placeholder="Your password" clear-button>
+      <f7-list-input label="Password" type="password" placeholder="Your Password" clear-button>
         <f7-icon icon="demo-list-icon" slot="media"></f7-icon>
       </f7-list-input>
       <f7-list-input label="E-mail" type="email" placeholder="Your e-mail" clear-button>
@@ -45,7 +45,7 @@
       <f7-list-input label="Name" type="text" placeholder="Your name" clear-button>
         <f7-icon icon="demo-list-icon" slot="media"></f7-icon>
       </f7-list-input>
-      <f7-list-input label="Password" type="password" placeholder="Your password" clear-button>
+      <f7-list-input label="Password" type="password" placeholder="Your Password" clear-button>
         <f7-icon icon="demo-list-icon" slot="media"></f7-icon>
       </f7-list-input>
       <f7-list-input label="E-mail" type="email" placeholder="Your e-mail" clear-button>
@@ -84,7 +84,7 @@
       <f7-list-input label="Name" floating-label type="text" placeholder="Your name" clear-button>
         <f7-icon icon="demo-list-icon" slot="media"></f7-icon>
       </f7-list-input>
-      <f7-list-input label="Password" floating-label type="password" placeholder="Your password" clear-button>
+      <f7-list-input label="Password" floating-label type="password" placeholder="Your Password" clear-button>
         <f7-icon icon="demo-list-icon" slot="media"></f7-icon>
       </f7-list-input>
       <f7-list-input label="E-mail" floating-label type="email" placeholder="Your e-mail" clear-button>
@@ -105,7 +105,7 @@
       <f7-list-input outline label="Name" floating-label type="text" placeholder="Your name" clear-button>
         <f7-icon icon="demo-list-icon" slot="media"></f7-icon>
       </f7-list-input>
-      <f7-list-input outline label="Password" floating-label type="password" placeholder="Your password" clear-button>
+      <f7-list-input outline label="Password" floating-label type="password" placeholder="Your Password" clear-button>
         <f7-icon icon="demo-list-icon" slot="media"></f7-icon>
       </f7-list-input>
       <f7-list-input outline label="E-mail" floating-label type="email" placeholder="Your e-mail" clear-button>
@@ -145,7 +145,7 @@
       <f7-list-input type="text" placeholder="Your name" clear-button>
         <f7-icon material="person_outline" slot="media"></f7-icon>
       </f7-list-input>
-      <f7-list-input type="password" placeholder="Your password" clear-button>
+      <f7-list-input type="password" placeholder="Your Password" clear-button>
         <f7-icon material="lock_outline" slot="media"></f7-icon>
       </f7-list-input>
       <f7-list-input type="email" placeholder="Your e-mail" clear-button>
@@ -158,28 +158,28 @@
     <f7-block-title>Label + Input</f7-block-title>
     <f7-list no-hairlines-md>
       <f7-list-input label="Name" type="text" placeholder="Your name" clear-button></f7-list-input>
-      <f7-list-input label="Password" type="password" placeholder="Your password" clear-button></f7-list-input>
+      <f7-list-input label="Password" type="password" placeholder="Your Password" clear-button></f7-list-input>
       <f7-list-input label="E-mail" type="email" placeholder="Your e-mail" clear-button></f7-list-input>
       <f7-list-input label="URL" type="url" placeholder="URL" clear-button></f7-list-input>
     </f7-list>
     <f7-block-title>Only Inputs</f7-block-title>
     <f7-list no-hairlines-md>
       <f7-list-input type="text" placeholder="Your name" clear-button></f7-list-input>
-      <f7-list-input type="password" placeholder="Your password" clear-button></f7-list-input>
+      <f7-list-input type="password" placeholder="Your Password" clear-button></f7-list-input>
       <f7-list-input type="email" placeholder="Your e-mail" clear-button></f7-list-input>
       <f7-list-input type="url" placeholder="URL" clear-button></f7-list-input>
     </f7-list>
     <f7-block-title>Inputs + Additional Info</f7-block-title>
     <f7-list no-hairlines-md>
       <f7-list-input type="text" placeholder="Your name" info="Full name please" clear-button></f7-list-input>
-      <f7-list-input type="password" placeholder="Your password" info="8 characters minimum" clear-button></f7-list-input>
+      <f7-list-input type="password" placeholder="Your Password" info="8 characters minimum" clear-button></f7-list-input>
       <f7-list-input type="email" placeholder="Your e-mail" info="Your work e-mail address" clear-button></f7-list-input>
       <f7-list-input type="url" placeholder="URL" info="Your website URL" clear-button></f7-list-input>
     </f7-list>
     <f7-block-title>Only Inputs Inset</f7-block-title>
     <f7-list inset>
       <f7-list-input type="text" placeholder="Your name" clear-button></f7-list-input>
-      <f7-list-input type="password" placeholder="Your password" clear-button></f7-list-input>
+      <f7-list-input type="password" placeholder="Your Password" clear-button></f7-list-input>
       <f7-list-input type="email" placeholder="Your e-mail" clear-button></f7-list-input>
       <f7-list-input type="url" placeholder="URL" clear-button></f7-list-input>
     </f7-list>
