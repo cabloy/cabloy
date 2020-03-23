@@ -234,6 +234,8 @@ export default {
         type = 'password';
       } else if (property.ebTextarea) {
         type = 'textarea';
+      } else if (property.ebInputType) {
+        type = property.ebInputType;
       } else {
         type = 'text';
       }
