@@ -71,7 +71,7 @@ export default {
     return c('eb-page', {
       attrs: {
         'login-screen': true,
-        'no-toolbar': true,
+        'no-toolbar': false,
         'no-navbar': true,
         'no-swipeback': true,
       },
