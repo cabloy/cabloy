@@ -16,7 +16,9 @@ export default {
         },
       }));
     }
-    return c('div', {}, children);
+    return c('div', {
+      staticClass: 'captcha-container',
+    }, children);
   },
   props: {
     module: {
