@@ -18,7 +18,7 @@ export default {
   'Please specify the mobile': '请指定手机号',
   Functions: '功能',
   Account: '账户',
-  'Change password': '修改密码',
+  'Change Password': '修改密码',
   Change: '修改',
   Confirm: '确认',
   Verify: '验证',
