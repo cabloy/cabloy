@@ -9,7 +9,7 @@ export default {
   Time: '时间',
   Preferences: '配置',
   'Not LoggedIn': '未登录',
-  'Sign in': '登录',
+  'Sign In': '登录',
   'Log Out': '退出登录',
   'Section Not Found': '区段未发现',
   'Button Not Found': '按钮未发现',
