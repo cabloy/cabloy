@@ -17,6 +17,15 @@ module.exports = app => {
         captchaVerify: { scene: { name: 'signin' } },
       },
     },
+    { method: 'post', path: 'auth/signup', controller: auth, middlewares: 'captchaVerify,validate',
+      meta: {
+        captchaVerify: [
+          { scene: { name: 'signupCode' } },
+          { scene: { name: 'signup' } },
+        ],
+        validate: { validator: 'signup' },
+      },
+    },
   ];
   return routes;
 };

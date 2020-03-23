@@ -11,7 +11,7 @@
               <f7-icon slot="media"></f7-icon>
               <div slot="content">
                 <template v-if="moduleCaptcha">
-                  <captchaContainer ref="captchaContainer" class="captcha-container" module="a-authsms" sceneName="signin" :context="captchaContext"></captchaContainer>
+                  <captchaContainer ref="captchaContainer" module="a-authsms" sceneName="signin" :context="captchaContext"></captchaContainer>
                 </template>
               </div>
             </eb-list-input>
@@ -26,7 +26,7 @@
       </f7-card-content>
       <f7-card-footer>
         <div></div>
-        <eb-link eb-href="/a/authsimple/signup" eb-target="_self" class="text-smaller">{{$text('Sign Up')}}</eb-link>
+        <eb-link eb-href="/a/authsms/signup" eb-target="_self" class="text-smaller">{{$text('Sign Up')}}</eb-link>
       </f7-card-footer>
     </f7-card>
   </div>
