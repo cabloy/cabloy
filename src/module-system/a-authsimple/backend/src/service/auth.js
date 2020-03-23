@@ -60,19 +60,12 @@ module.exports = app => {
     }
 
     async signin({ auth, password, rememberMe }) {
-      try {
-        const res = await this.ctx.performAction({
-          method: 'post',
-          url: 'passport/a-authsimple/authsimple',
-          body: { auth, password, rememberMe },
-        });
-        return res;
-      } catch (err) {
-        const error = new Error();
-        error.code = err.code;
-        error.message = err.message;
-        throw error;
-      }
+      const res = await this.ctx.performAction({
+        method: 'post',
+        url: 'passport/a-authsimple/authsimple',
+        body: { auth, password, rememberMe },
+      });
+      return res;
     }
 
     async _addAuthSimple({ password }) {
