@@ -14,7 +14,7 @@
               <f7-icon slot="media"></f7-icon>
               <div slot="content">
                 <template v-if="moduleCaptcha">
-                  <captchaContainer ref="captchaContainer" class="captcha-container" module="a-authsimple" sceneName="signin"></captchaContainer>
+                  <captchaContainer ref="captchaContainer" module="a-authsimple" sceneName="signin"></captchaContainer>
                 </template>
               </div>
             </eb-list-input>

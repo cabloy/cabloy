@@ -12,7 +12,7 @@
           <eb-list-input :label="$text('Captcha Code')" floating-label type="text" clear-button :placeholder="$text('Captcha Code')" v-model="captcha.token" dataPath="captcha/token">
             <div slot="content">
               <template v-if="moduleCaptcha">
-                <captchaContainer ref="captchaContainer" class="captcha-container" module="a-authsimple" sceneName="signup"></captchaContainer>
+                <captchaContainer ref="captchaContainer" module="a-authsimple" sceneName="signup"></captchaContainer>
               </template>
             </div>
           </eb-list-input>
