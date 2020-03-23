@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar large largeTransparent :title="$text('Reset password')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Reset Password')" eb-back-link="Back"></eb-navbar>
     <f7-block>
       <eb-validate ref="validate" :auto="false" :data="data" :params="{validator: 'passwordReset'}" :onPerform="onPerformValidate">
         <eb-list form no-hairlines-md @submit.prevent="onSubmit">

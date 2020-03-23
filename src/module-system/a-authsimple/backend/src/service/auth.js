@@ -249,7 +249,7 @@ module.exports = app => {
         const data = {
           message: this.ctx.text('confirmationEmailExpired'),
           link: '/a/authsimple/emailConfirm',
-          linkText: this.ctx.text('Resend confirmation email'),
+          linkText: this.ctx.text('Resend Confirmation Email'),
         };
         const url = this.ctx.meta.base.getAlertUrl({ data });
         return this.ctx.redirect(url);

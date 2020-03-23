@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar large largeTransparent :title="$text('Sign up')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Sign Up')" eb-back-link="Back"></eb-navbar>
     <f7-block>
       <eb-validate ref="validate" :auto="false" :data="data" :params="{validator: 'signup'}" :onPerform="onPerformValidate" @schema:ready="onSchemaReady">
         <eb-list form no-hairlines-md @submit.prevent="onSubmit">
@@ -9,7 +9,7 @@
           <eb-list-item-validate dataKey="email"></eb-list-item-validate>
           <eb-list-item-validate dataKey="password"></eb-list-item-validate>
           <eb-list-item-validate dataKey="passwordAgain"></eb-list-item-validate>
-          <eb-list-input :label="$text('Captcha code')" floating-label type="text" clear-button :placeholder="$text('Captcha code')" v-model="captcha.token" dataPath="captcha/token">
+          <eb-list-input :label="$text('Captcha Code')" floating-label type="text" clear-button :placeholder="$text('Captcha Code')" v-model="captcha.token" dataPath="captcha/token">
             <div slot="content">
               <template v-if="moduleCaptcha">
                 <captchaContainer ref="captchaContainer" class="captcha-container" module="a-authsimple" sceneName="signup"></captchaContainer>
@@ -17,7 +17,7 @@
             </div>
           </eb-list-input>
           <f7-list-item divider>
-            <eb-button ref="buttonSubmit" :onPerform="signUp">{{$text('Sign up')}}</eb-button>
+            <eb-button ref="buttonSubmit" :onPerform="signUp">{{$text('Sign Up')}}</eb-button>
           </f7-list-item>
         </eb-list>
       </eb-validate>

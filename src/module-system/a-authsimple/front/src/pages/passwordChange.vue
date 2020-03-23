@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar large largeTransparent :title="$text('Change password')" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="$text('Change Password')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="done" ref="buttonSubmit" :onPerform="onPerformOk"></eb-link>
       </f7-nav-right>
@@ -11,7 +11,7 @@
           <eb-list-item-validate dataKey="passwordOld"></eb-list-item-validate>
           <eb-list-item-validate dataKey="passwordNew"></eb-list-item-validate>
           <eb-list-item-validate dataKey="passwordNewAgain"></eb-list-item-validate>
-          <eb-list-input :label="$text('Captcha code')" floating-label type="text" clear-button :placeholder="$text('Captcha code')" v-model="captcha.token" dataPath="captcha/token">
+          <eb-list-input :label="$text('Captcha Code')" floating-label type="text" clear-button :placeholder="$text('Captcha Code')" v-model="captcha.token" dataPath="captcha/token">
             <div slot="content">
               <template v-if="moduleCaptcha">
                 <captchaContainer ref="captchaContainer" class="captcha-container" module="a-authsimple" sceneName="passwordChange"></captchaContainer>

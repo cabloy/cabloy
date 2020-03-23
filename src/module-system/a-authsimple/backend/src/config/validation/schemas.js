@@ -42,7 +42,7 @@ module.exports = app => {
       passwordAgain: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Password again',
+        ebTitle: 'Password Again',
         ebSecure: true,
         notEmpty: true,
         const: { $data: '1/password' },
@@ -55,13 +55,13 @@ module.exports = app => {
       auth: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Your mobile/email',
+        ebTitle: 'Your Username/Mobile/Email',
         notEmpty: true,
       },
       password: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Your password',
+        ebTitle: 'Your Password',
         ebSecure: true,
         notEmpty: true,
         minLength: 6,
@@ -69,7 +69,7 @@ module.exports = app => {
       rememberMe: {
         type: 'boolean',
         ebType: 'toggle',
-        ebTitle: 'Remember me',
+        ebTitle: 'Remember Me',
       },
     },
   };
@@ -79,7 +79,7 @@ module.exports = app => {
       passwordOld: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Old password',
+        ebTitle: 'Old Password',
         ebSecure: true,
         notEmpty: true,
         minLength: 6,
@@ -87,7 +87,7 @@ module.exports = app => {
       passwordNew: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'New password',
+        ebTitle: 'New Password',
         ebSecure: true,
         notEmpty: true,
         minLength: 6,
@@ -95,7 +95,7 @@ module.exports = app => {
       passwordNewAgain: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'New password again',
+        ebTitle: 'New Password Again',
         ebSecure: true,
         notEmpty: true,
         const: { $data: '1/passwordNew' },
@@ -140,7 +140,7 @@ module.exports = app => {
       passwordNew: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'New password',
+        ebTitle: 'New Password',
         ebSecure: true,
         notEmpty: true,
         minLength: 6,
@@ -148,7 +148,7 @@ module.exports = app => {
       passwordNewAgain: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'New password again',
+        ebTitle: 'New Password Again',
         ebSecure: true,
         notEmpty: true,
         const: { $data: '1/passwordNew' },

@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar large largeTransparent :title="$text('Email confirmation')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Email Confirmation')" eb-back-link="Back"></eb-navbar>
     <f7-block>
       <template v-if="sent">{{$text('emailConfirmSentAlert')}}</template>
       <template v-else>
@@ -9,7 +9,7 @@
             <eb-list-item-validate dataKey="userName"></eb-list-item-validate>
             <eb-list-item-validate dataKey="email"></eb-list-item-validate>
             <f7-list-item divider>
-              <eb-button ref="buttonSubmit" :onPerform="onPerformOk">{{$text('Send confirmation email')}}</eb-button>
+              <eb-button ref="buttonSubmit" :onPerform="onPerformOk">{{$text('Send Confirmation Email')}}</eb-button>
             </f7-list-item>
           </eb-list>
         </eb-validate>
