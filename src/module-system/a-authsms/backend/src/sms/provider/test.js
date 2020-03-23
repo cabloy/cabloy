@@ -20,6 +20,11 @@ module.exports = function(ctx) {
       return { token };
     }
 
+    async verify({ data, dataInput }) {
+      if (!data) ctx.throw(1002);
+      if (data.token !== dataInput.token) ctx.throw(1003);
+    }
+
     __prefix0(num, length) {
       return (Array(length).join('0') + num).slice(-length);
     }

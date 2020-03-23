@@ -1,5 +1,5 @@
 export default {
   sendCode: {
-    counter: 60,
+    counter: 3, // 60,
   },
 };

@@ -9,6 +9,24 @@ module.exports = app => {
 
   class Captcha extends app.Service {
 
+    async sendCode({ providerInstanceId, context }) {
+      // sms provider
+      const smsProvider = this.__createSMSProvider();
+      // sendCode
+      const data = await smsProvider.sendCode({ context });
+      // update
+      await this.ctx.meta.captcha.update({
+        providerInstanceId, data, context,
+      });
+    }
+
+    async verify({ providerInstanceId, context, data, dataInput }) {
+      // sms provider
+      const smsProvider = this.__createSMSProvider();
+      // verify
+      await smsProvider.verify({ providerInstanceId, context, data, dataInput });
+    }
+
     __createSMSProvider() {
       // providrName
       let providerName = this.ctx.config.sms.provider;
@@ -24,22 +42,6 @@ module.exports = app => {
       // provider
       return new (SMSProviders[providerName](this.ctx))();
     }
-
-    async sendCode({ providerInstanceId, context }) {
-      // sms provider
-      const smsProvider = this.__createSMSProvider();
-      const data = await smsProvider.sendCode({ context });
-      // update
-      await this.ctx.meta.captcha.update({
-        providerInstanceId, data,
-      });
-    }
-
-    async verify({ /* providerInstanceId, context,*/ data, dataInput }) {
-      if (!data) this.ctx.throw(1002);
-      if (data.token !== dataInput.token) this.ctx.throw(1003);
-    }
-
 
   }
 
