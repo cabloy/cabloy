@@ -19,10 +19,12 @@ module.exports = app => {
     },
     { method: 'post', path: 'auth/signup', controller: auth, middlewares: 'captchaVerify,validate',
       meta: {
-        captchaVerify: [
-          { scene: { name: 'signupCode' } },
-          { scene: { name: 'signup' } },
-        ],
+        captchaVerify: {
+          scenes: [
+            { name: 'signupCode', dataKey: 'captchaCode', fieldKey: 'tokenCode' },
+            { name: 'signup', dataKey: 'captcha', fieldKey: 'token' },
+          ],
+        },
         validate: { validator: 'signup' },
       },
     },

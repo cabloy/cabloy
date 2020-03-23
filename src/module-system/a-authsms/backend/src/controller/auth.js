@@ -8,12 +8,12 @@ module.exports = app => {
     }
 
     async signup() {
-      const { userName, realName, email, mobile, password } = this.ctx.request.body.data;
+      const { userName, realName, mobile } = this.ctx.request.body.data;
       const state = this.ctx.request.body.state;
       const res = await this.service.auth.signup({
         user: this.ctx.user.agent,
         state,
-        userName, realName, email, mobile, password,
+        userName, realName, mobile,
       });
       this.ctx.success(res);
     }

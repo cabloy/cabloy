@@ -9,7 +9,7 @@ function Strategy(options, verify) {
   if (!verify) { throw new TypeError('LocalStrategy requires a verify callback'); }
 
   passport.Strategy.call(this);
-  this.name = 'simple';
+  this.name = 'sms';
   this._verify = verify;
   this._passReqToCallback = options.passReqToCallback;
 }
@@ -27,7 +27,7 @@ Strategy.prototype.authenticate = function(req) {
   if (req.method === 'GET') {
     if (req.query.state === 'associate') {
       // goto signup
-      let url = '/#!/a/authsimple/signup?state=associate';
+      let url = '/#!/a/authsms/signup?state=associate';
       if (req.query.returnTo) {
         url = `${url}&returnTo=${encodeURIComponent(req.query.returnTo)}`;
       }
