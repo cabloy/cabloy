@@ -50,7 +50,9 @@ export default {
         this._setTimer(false);
         this.sendTimerCounter = this.$config.sendCode.counter;
         this.sendTimer = window.setInterval(() => {
-          this.sendTimerCounter--;
+          if (--this.sendTimerCounter === 0) {
+            this._setTimer(false);
+          }
         }, 1000);
       } else {
         if (this.sendTimer) {
