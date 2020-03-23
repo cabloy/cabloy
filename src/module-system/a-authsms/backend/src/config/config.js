@@ -14,11 +14,10 @@ module.exports = appInfo => {
     scenes: {
       mobileVerify: null,
       signup: null,
-      signin: null, // means using default
-      // signin: {
-      //   module: 'a-captchasms',
-      //   name: 'captcha',
-      // },
+      signin: {
+        module: 'a-authsms',
+        name: 'captcha',
+      },
     },
   };
 
