@@ -1,14 +1,22 @@
-<template>
-  <div>
-    <template v-if="providerInstance">
-      <captcha :module="module" :sceneName="sceneName" :context="context" :providerInstance="providerInstance"></captcha>
-    </template>
-  </div>
-</template>
 <script>
 export default {
   meta: {
     global: false,
+  },
+  render(c) {
+    const children = [];
+    if (this.providerInstance) {
+      const componentName = this.__getComponentName();
+      children.push(c(componentName, {
+        props: {
+          module: this.module,
+          sceneName: this.sceneName,
+          context: this.context,
+          providerInstance: this.providerInstance,
+        },
+      }));
+    }
+    return c('div', {}, children);
   },
   props: {
     module: {
@@ -32,9 +40,10 @@ export default {
       context: this.context,
     }).then(providerInstance => {
       this.$meta.module.use(providerInstance.provider.module, module => {
-        this.$options.components.captcha = module.options.components[providerInstance.provider.name];
         this.moduleCaptcha = module;
         this.providerInstance = providerInstance;
+        const componentName = this.__getComponentName();
+        this.$options.components[componentName] = module.options.components[providerInstance.provider.name];
       });
     });
   },
@@ -45,6 +54,9 @@ export default {
         data: { token },
       }
     },
+    __getComponentName() {
+      return `${this.providerInstance.provider.module}:${this.providerInstance.provider.name}`;
+    }
   },
 };
 
