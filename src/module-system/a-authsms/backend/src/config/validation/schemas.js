@@ -28,16 +28,17 @@ module.exports = app => {
   schemas.signin = {
     type: 'object',
     properties: {
-      auth: {
+      mobile: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Your mobile/email',
+        ebInputType: 'tel',
+        ebTitle: 'Phone Number',
         notEmpty: true,
       },
       rememberMe: {
         type: 'boolean',
         ebType: 'toggle',
-        ebTitle: 'Remember me',
+        ebTitle: 'Remember Me',
       },
     },
   };

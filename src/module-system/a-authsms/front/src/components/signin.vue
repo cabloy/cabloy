@@ -4,7 +4,7 @@
       <f7-card-content>
         <eb-validate ref="validate" :onPerform="onPerformValidate">
           <eb-list form no-hairlines-md @submit.prevent="onSubmit">
-            <eb-list-input :label="$text('Your username/mobile/email')" floating-label type="text" clear-button :placeholder="$text('Your username/mobile/email')" v-model="data.auth" dataPath="auth">
+            <eb-list-input :label="$text('Phone Number')" floating-label type="text" clear-button :placeholder="$text('Phone Number')" v-model="data.mobile" dataPath="mobile">
               <f7-icon material="person_outline" slot="media"></f7-icon>
             </eb-list-input>
             <eb-list-input :label="$text('Your password')" floating-label type="password" clear-button :placeholder="$text('Your password')" v-model="data.password" dataPath="password">
@@ -43,8 +43,7 @@ export default {
   data() {
     return {
       data: {
-        auth: null,
-        password: null,
+        mobile: null,
         rememberMe: false,
       },
       captcha: {

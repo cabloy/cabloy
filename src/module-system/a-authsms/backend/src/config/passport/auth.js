@@ -29,7 +29,7 @@ module.exports = app => {
     providers: {
       [provider]: {
         meta: {
-          title: 'User/Password',
+          title: 'SMS',
           mode: 'direct',
           component: 'signin',
         },
