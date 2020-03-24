@@ -78,7 +78,7 @@ const webpackConfig = merge(baseWebpackConfig, {
           resolve('src'),
           resolve('../../src'),
           resolve('../../modules'),
-          // resolve('build/__module'),
+          // resolve('build/__runtime/modules'),
           resolve('../@zhennann/framework7/packages'),
         ],
       },
@@ -127,7 +127,7 @@ const webpackConfig = merge(baseWebpackConfig, {
         chunkFilter: chunk => {
           if (!chunk._modules) return true;
           for (const module of chunk._modules.values()) {
-            if (module.resource && module.resource.indexOf('/build/__module') > -1) {
+            if (module.resource && module.resource.indexOf('/build/__runtime/modules') > -1) {
               return false;
             }
           }

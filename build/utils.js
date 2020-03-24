@@ -2,8 +2,10 @@ const path = require('path');
 const config = require('../config');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const glob = require('glob');
+const bb = require('bluebird');
 const fse = require('fs-extra');
 const chalk = require('chalk');
+const mparse = require('egg-born-mparse').default;
 
 exports.assetsPath = function(_path) {
   const assetsSubDirectory = process.env.NODE_ENV === 'production'
@@ -70,41 +72,70 @@ exports.styleLoaders = function(options) {
 };
 
 // copy modules
-exports.copyModules = function() {
+exports.copyModules = async function() {
 
+  const modulesLocal = {};
+  const modulesGlobal = {};
+
+  // path
+  const projectPath = path.join(__dirname, '../../..');
   const nodeModulesPath = path.join(__dirname, '../..');
-  if (!fse.existsSync(nodeModulesPath)) {
-    return console.log('\nnot found egg-born modules.');
+
+  // clear
+  fse.emptyDirSync(path.join(__dirname, '__runtime'));
+  fse.emptyDirSync(path.join(__dirname, '__runtime/modules'));
+
+  // local modules
+  let files = await bb.fromCallback(cb => {
+    glob(`${projectPath}/src/module/*`, cb);
+  });
+  files.forEach(modulePath => {
+    const moduleName = modulePath.substr(projectPath.length + '/src/module/'.length);
+    const moduleInfo = mparse.parseInfo(moduleName);
+    modulesLocal[moduleInfo.relativeName] = true;
+  });
+
+  // global modules
+  files = await bb.fromCallback(cb => {
+    glob(`${nodeModulesPath}/egg-born-module-*`, cb);
+  });
+  files.forEach(modulePath => {
+    const moduleName = modulePath.substr(nodeModulesPath.length + '/egg-born-module-'.length);
+    const moduleInfo = mparse.parseInfo(moduleName);
+    if (!modulesLocal[moduleInfo.relativeName]) {
+      modulesGlobal[moduleInfo.relativeName] = true;
+      // copy js
+      let fileSrc = `${modulePath}/dist/front.js`;
+      let fileDest = path.join(__dirname, '__runtime/modules', modulePath.substr(nodeModulesPath.length + '/egg-born-module-'.length) + '/dist/front.js');
+      fse.copySync(fileSrc, fileDest);
+      // copy static
+      fileSrc = `${modulePath}/dist/static`;
+      fileDest = path.join(config.build.assetsRoot, config.build.assetsSubDirectory);
+      if (fse.existsSync(fileSrc)) fse.copySync(fileSrc, fileDest);
+      fileDest = path.join(__dirname, '__runtime/modules', modulePath.substr(nodeModulesPath.length + '/egg-born-module-'.length) + '/dist/static');
+      if (fse.existsSync(fileSrc)) fse.copySync(fileSrc, fileDest);
+    }
+  });
+
+  // save to modules.js
+  const modulesJS =
+`export default {
+  modulesLocal: ${JSON.stringify(modulesLocal)},
+  modulesGlobal: ${JSON.stringify(modulesGlobal)},
+}
+`;
+  fse.outputFileSync(path.join(__dirname, '__runtime/modules.js'), modulesJS);
+
+  // log
+  console.log(chalk.yellow('\n=== Local Modules ==='));
+  for (const key in modulesLocal) {
+    console.log(chalk.cyan('> ' + key));
   }
-
-  fse.emptyDirSync(path.join(__dirname, '__module'));
-
-  // copy js css
-  glob(`${nodeModulesPath}/egg-born-module-*/dist/front.*`, (err, files) => {
-    files.forEach(file => {
-      const dest = path.join(__dirname, '__module', file.substr(nodeModulesPath.length + '/egg-born-module-'.length));
-      fse.copySync(file, dest);
-    });
-  });
-
-  // copy static
-  glob(`${nodeModulesPath}/egg-born-module-*/dist/static`, (err, files) => {
-    files.forEach(file => {
-      const dest = path.join(config.build.assetsRoot, config.build.assetsSubDirectory);
-      fse.copySync(file, dest);
-      const dest2 = path.join(__dirname, '__module', file.substr(nodeModulesPath.length + '/egg-born-module-'.length));
-      fse.copySync(file, dest2);
-    });
-  });
-
-  // stat
-  glob(`${nodeModulesPath}/egg-born-module-*`, (err, files) => {
-    if (files.length > 0)console.log('\n');
-    files.forEach(file => {
-      console.log(chalk.yellow(`${file.substr(nodeModulesPath.length + 1)}`));
-    });
-    console.log(chalk.cyan(`\n${files.length} egg-born modules found.`));
-  });
+  console.log(chalk.yellow('\n=== Global Modules ==='));
+  for (const key in modulesGlobal) {
+    console.log(chalk.cyan('> ' + key));
+  }
+  console.log('\n');
 
 };
 

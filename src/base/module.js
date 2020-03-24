@@ -1,6 +1,8 @@
 import mparse from 'egg-born-mparse';
+import modulesInfo from '../../build/__runtime/modules.js';
+
 const rLocalJSs = require.context('../../../../src/module/', true, /-sync\/front\/src\/main\.js$/);
-const rGlobalJSs = require.context('../../build/__module/', true, /-sync\/dist\/front\.js$/);
+const rGlobalJSs = require.context('../../build/__runtime/modules/', true, /-sync\/dist\/front\.js$/);
 
 export default function(Vue) {
   const loadingQueue = {
@@ -92,14 +94,16 @@ export default function(Vue) {
       });
     },
     _import2(moduleInfo, cb) {
-      import(`../../../../src/module/${moduleInfo.relativeName}/front/src/main.js`).then(instance => {
-        cb(instance);
-      }).catch(err => {
-        if (err.message.indexOf('/front/src/main.js') === -1) throw err;
-        import(`../../build/__module/${moduleInfo.relativeName}/dist/front.js`).then(() => {
-          cb(window[moduleInfo.relativeName]);
+      const relativeName=moduleInfo.relativeName;
+      if(modulesInfo.modulesLocal[relativeName]){
+        import(`../../../../src/module/${relativeName}/front/src/main.js`).then(instance => {
+          cb(instance);
         });
-      });
+      } else if (modulesInfo.modulesGlobal[relativeName]){
+        import(`../../build/__runtime/modules/${relativeName}/dist/front.js`).then(() => {
+          cb(window[relativeName]);
+        });
+      }
     },
     requireAll() {
       // local

@@ -28,5 +28,4 @@ yarn.lock
 sftp-config.json
 
 dist
-build/__module
-
+build/__runtime
