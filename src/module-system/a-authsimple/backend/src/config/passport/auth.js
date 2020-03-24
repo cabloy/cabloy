@@ -19,6 +19,7 @@ module.exports = app => {
       provider,
       profileId: authSimple.id,
       maxAge: rememberMe ? null : 0,
+      authShouldExists: true,
       profile: {
         authSimpleId: authSimple.id,
         rememberMe,
