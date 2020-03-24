@@ -58,5 +58,5 @@ export default {
   'Attachment List': '附件列表',
   'Flag Not Found': 'Flag未发现',
   'Friendly Tips': '友情提示',
-  'Please sign in': '请登录',
+  'Please Sign In': '请登录',
 };

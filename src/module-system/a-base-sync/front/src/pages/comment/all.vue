@@ -138,7 +138,7 @@ export default {
     onPerformHeart(event, item) {
       // anonymous
       if (this.user.anonymous) {
-        this.$view.dialog.confirm(this.$text('Please sign in')).then(() => {
+        this.$view.dialog.confirm(this.$text('Please Sign In')).then(() => {
           // login
           this.$meta.vueLayout.openLogin();
         });
