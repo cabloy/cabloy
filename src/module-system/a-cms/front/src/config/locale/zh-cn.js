@@ -35,7 +35,7 @@ export default {
   Root: '根',
   'Atom Name': '原子名称',
   'Basic Info': '基本信息',
-  'Category name': '目录名称',
+  'Category Name': '目录名称',
   'Extra Attributes': '额外属性',
   'Language Configuration': '语言配置',
   'Please specify the tag name': '请指定标签名称',

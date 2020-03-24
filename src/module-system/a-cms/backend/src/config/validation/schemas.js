@@ -132,7 +132,7 @@ module.exports = app => {
       categoryName: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Category name',
+        ebTitle: 'Category Name',
         notEmpty: true,
       },
       hidden: {

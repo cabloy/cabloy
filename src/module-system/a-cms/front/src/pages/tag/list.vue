@@ -15,7 +15,7 @@
         </eb-context-menu>
       </eb-list-item>
     </f7-list>
-    <div v-if="items && items.length===0" class="text-align-center">{{$text('No data')}}</div>
+    <div v-if="items && items.length===0" class="text-align-center">{{$text('No Data')}}</div>
   </eb-page>
 </template>
 <script>
