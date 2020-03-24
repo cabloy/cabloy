@@ -16,6 +16,7 @@ module.exports = app => {
       provider,
       profileId: mobile,
       maxAge: rememberMe ? null : 0,
+      authShouldExists: true,
       profile: {
         mobile,
         rememberMe,
