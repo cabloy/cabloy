@@ -24,9 +24,14 @@ module.exports = app => {
       const userId = verifyUser.agent.id;
 
       // override user's info: userName/realName/mobile
-      const userNew = { id: userId, realName };
-      if (state === 'login' || !user.userName || user.userName.indexOf('__') > -1) {
-        userNew.userName = userName;
+      const userNew = { id: userId };
+      if (userName) {
+        if (state === 'login' || !user.userName || user.userName.indexOf('__') > -1) {
+          userNew.userName = userName;
+        }
+      }
+      if (realName) {
+        userNew.realName = realName;
       }
       await this.ctx.meta.user.save({
         user: userNew,
@@ -54,10 +59,7 @@ module.exports = app => {
     }
 
     async mobileVerify({ user, mobile }) {
-      // save mobile
-      await this.ctx.meta.user.setActivated({
-        user: { id: user.id, mobile, mobileVerified: 1 },
-      });
+      await this.signup({ user, state: 'associate', userName: null, realName: null, mobile });
     }
 
   }
