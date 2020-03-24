@@ -119,10 +119,30 @@ module.exports = app => {
 
     async passwordChange({ passwordOld, passwordNew, userId }) {
       // verify old
-      const res = await this.verify({ userId, password: passwordOld });
-      if (!res) this.ctx.throw(403);
+      const authSimple = await this.verify({ userId, password: passwordOld });
+      if (!authSimple) this.ctx.throw(403);
       // save new
       await this._passwordSaveNew({ passwordNew, userId });
+
+      // profileUser
+      const authSimpleId = authSimple.id;
+      const profileUser = {
+        module: moduleInfo.relativeName,
+        provider: 'authsimple',
+        profileId: authSimpleId,
+        maxAge: 0,
+        profile: {
+          authSimpleId,
+          rememberMe: false,
+        },
+      };
+
+      // verify
+      const verifyUser = await this.ctx.meta.user.verify({ state: 'associate', profileUser });
+      if (!verifyUser) this.ctx.throw(403);
+      // login now
+      //   always no matter login/associate
+      // await this.ctx.login(verifyUser);
     }
 
     async _passwordSaveNew({ passwordNew, userId }) {
