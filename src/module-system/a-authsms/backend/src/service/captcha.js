@@ -11,9 +11,9 @@ module.exports = app => {
 
     async sendCode({ providerInstanceId, context }) {
       // sms provider
-      const smsProvider = this.__createSMSProvider();
+      const { provider, config } = this.__createSMSProvider();
       // sendCode
-      const data = await smsProvider.sendCode({ context });
+      const data = await provider.sendCode({ providerInstanceId, context, config });
       // update
       await this.ctx.meta.captcha.update({
         providerInstanceId, data, context,
@@ -22,14 +22,14 @@ module.exports = app => {
 
     async verify({ providerInstanceId, context, data, dataInput }) {
       // sms provider
-      const smsProvider = this.__createSMSProvider();
+      const { provider, config } = this.__createSMSProvider();
       // verify
-      await smsProvider.verify({ providerInstanceId, context, data, dataInput });
+      await provider.verify({ providerInstanceId, context, data, dataInput, config });
     }
 
     __createSMSProvider() {
-      // providrName
-      let providerName = this.ctx.config.sms.provider;
+      // providerName
+      let providerName = this.ctx.config.sms.provider.default;
       if (!providerName && (app.meta.isTest || app.meta.isLocal)) {
         providerName = 'test';
       }
@@ -40,7 +40,9 @@ module.exports = app => {
         this.ctx.throw(1001);
       }
       // provider
-      return new (SMSProviders[providerName](this.ctx))();
+      const provider = new (SMSProviders[providerName](this.ctx))();
+      const config = this.ctx.config.sms.providers[providerName];
+      return { provider, config };
     }
 
   }

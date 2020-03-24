@@ -29,7 +29,23 @@ module.exports = appInfo => {
 
   // sms provider
   config.sms = {
-    provider: '',
+    provider: {
+      default: '',
+    },
+    providers: {
+      aliyun: {
+        accessKeyId: '',
+        secretAccessKey: '',
+        endpoint: 'https://dysmsapi.aliyuncs.com',
+        apiVersion: '2017-05-25',
+        signName: '',
+        templates: {
+          mobileVerify: '',
+          signup: '',
+          signin: '',
+        },
+      },
+    },
   };
 
   return config;
