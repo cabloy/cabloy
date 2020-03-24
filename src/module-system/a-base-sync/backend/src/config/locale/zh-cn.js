@@ -10,6 +10,7 @@ module.exports = {
   'Incomplete information': '信息不完整',
   'Should delete children first': '应该先删除子角色',
   'Cannot Contain __': '不能包含__',
+  'The Auth should be Enabled': '此认证需要被启用',
   'Atom Flag': '原子标记',
   'Atom Name': '原子名称',
   'Modification Time': '修改时间',

@@ -354,6 +354,7 @@ module.exports = ctx => {
         authId = authItem.id;
         authUserId = authItem.userId;
       } else {
+        if (profileUser.authShouldExists === true) ctx.throw.module(moduleInfo.relativeName, 1009);
         // add
         const res = await this.modelAuth.insert({
           providerId: providerItem.id,

@@ -8,4 +8,5 @@ module.exports = {
   1006: 'Agent user does not exist',
   1007: 'Incomplete information',
   1008: 'Should delete children first',
+  1009: 'The Auth should be Enabled',
 };
