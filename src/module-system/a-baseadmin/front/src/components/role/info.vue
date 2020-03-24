@@ -64,7 +64,7 @@ export default {
                   .then(() => {
                     this.$meta.eventHub.$emit('role:move', { roleId: this.role.id, roleIdFrom: this.role.roleIdParent, roleIdTo: roleIdParent });
                     this.$meta.eventHub.$emit('role:dirty', { dirty: true });
-                    this.$view.toast.show({ text: this.$text('Operation succeeded') });
+                    this.$view.toast.show({ text: this.$text('Operation Succeeded') });
                   });
               }
             }

@@ -67,7 +67,7 @@ export default {
                 .then(() => {
                   this.$meta.eventHub.$emit('user:addRole', { userId: this.user.id, roleId: data.id });
                   this.reload();
-                  this.$view.toast.show({ text: this.$text('Operation succeeded') });
+                  this.$view.toast.show({ text: this.$text('Operation Succeeded') });
                 });
             }
           },

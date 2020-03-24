@@ -67,7 +67,7 @@ export default {
                 .then(data => {
                   this.$meta.eventHub.$emit('role:dirty', { dirty: true });
                   this.reload();
-                  this.$view.toast.show({ text: this.$text('Operation succeeded') });
+                  this.$view.toast.show({ text: this.$text('Operation Succeeded') });
                 });
             }
           },
