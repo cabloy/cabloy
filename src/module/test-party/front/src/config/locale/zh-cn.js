@@ -68,6 +68,7 @@ export default {
   TipBackendDatabase: '后端数据库的操作方法',
   TipBackendDatabaseTransaction: '后端数据库事务的用法',
   TipMenuAuthorization: '菜单授权的用法',
+  TipInstallAuthSMS: '请先安装模块a-authsms：https://store.cabloy.com/zh-cn/articles/a-authsms.html',
   'Instance Settings': '实例设置',
   'User Settings': '用户设置',
   'My Name': '我的姓名',
@@ -122,6 +123,7 @@ export default {
   'Form / Schema (Auto) / Validation': '表单 / Schema (自动) / 验证',
   'Form / Schema (Custom) / Validation': '表单 / Schema (自定义) / 验证',
   'Form / Captcha': '表单 / 验证码',
+  'Form / SMS Verification': '表单 / 短信认证',
   'Password Again': '重复密码',
   'Pull To Refresh / Infinite Scroll / Load More': '上拉刷新 / 无限滚动 / 加载更多',
   'Button Event': '按钮事件',
@@ -141,5 +143,8 @@ export default {
   'Fruit Sales(Pie Chart)': '水果销量（饼图）',
   'There may be a binding error': '可能有绑定错误',
   'Please set data source': '请设置数据源',
+  'Phone Number': '电话号码',
+  'SMS Verification Code': '短信认证码',
+  'Verify Now': '现在认证',
 };
 

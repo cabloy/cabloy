@@ -73,8 +73,13 @@ module.exports = appInfo => {
     };
 
     // captcha scenes
+    const _captchaSMS = {
+      module: 'a-authsms',
+      name: 'captcha',
+    };
     config.captcha = {
       scenes: {
+        formMobileVerifyTest: _captchaSMS,
         formCaptchaTest: null, // means using default
       // formCaptchaTest: {
       //   module: 'a-captchasimple',

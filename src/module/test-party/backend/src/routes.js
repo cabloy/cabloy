@@ -218,6 +218,12 @@ module.exports = app => {
           validate: { validator: 'formCaptchaTest' },
         },
       },
+      { method: 'post', path: 'kitchen-sink/form-mobile-verify/mobileVerify', controller: testKitchensinkFormSchemaValidation, middlewares: 'captchaVerify,validate',
+        meta: {
+          captchaVerify: { scene: { name: 'formMobileVerifyTest' } },
+          validate: { validator: 'formMobileVerifyTest' },
+        },
+      },
       // kitchen-sink/ptr-is-loadmore
       { method: 'post', path: 'kitchen-sink/ptr-is-loadmore/list', controller: testKitchensinkPtrIsLoadMore },
 

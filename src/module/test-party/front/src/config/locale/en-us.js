@@ -16,4 +16,5 @@ export default {
   TipBackendDatabase: 'Backend Database',
   TipBackendDatabaseTransaction: 'Backend Database Transaction',
   TipMenuAuthorization: 'Menu Authorization',
+  TipInstallAuthSMS: 'Please install module a-authsms first: https://store.cabloy.com/articles/a-authsms.html',
 };

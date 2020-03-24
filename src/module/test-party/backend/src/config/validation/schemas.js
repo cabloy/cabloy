@@ -235,6 +235,18 @@ module.exports = app => {
       },
     },
   };
+  schemas.formMobileVerifyTest = {
+    type: 'object',
+    properties: {
+      mobile: {
+        type: 'string',
+        ebType: 'text',
+        ebInputType: 'tel',
+        ebTitle: 'Phone Number',
+        notEmpty: true,
+      },
+    },
+  };
 
   return schemas;
 };

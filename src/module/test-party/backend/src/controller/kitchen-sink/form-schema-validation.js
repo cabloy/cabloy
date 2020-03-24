@@ -41,6 +41,11 @@ module.exports = app => {
       this.ctx.success();
     }
 
+    // form-mobile-verify
+    mobileVerify() {
+      this.ctx.success();
+    }
+
     _getCacheName() {
       // get the operation user
       const user = this.ctx.user.op;

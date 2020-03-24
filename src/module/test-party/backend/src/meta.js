@@ -113,6 +113,9 @@ module.exports = app => {
           formCaptchaTest: {
             schemas: 'formCaptchaTest',
           },
+          formMobileVerifyTest: {
+            schemas: 'formMobileVerifyTest',
+          },
         },
         keywords: {
           'x-languages': keywords.languages,
@@ -125,6 +128,7 @@ module.exports = app => {
           settingsInstance: schemas.settingsInstance,
           formTest: schemas.formTest,
           formCaptchaTest: schemas.formCaptchaTest,
+          formMobileVerifyTest: schemas.formMobileVerifyTest,
         },
       },
       settings: {
