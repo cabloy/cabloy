@@ -1,4 +1,4 @@
 export default {
-  or: '或',
+  OR: '或',
   'Sign In': '登录',
 };

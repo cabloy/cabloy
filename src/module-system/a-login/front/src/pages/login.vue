@@ -53,7 +53,7 @@ export default {
       // loginLine
       let loginLine;
       if (loginTop && loginBottom) {
-        loginLine = c('div', { staticClass: 'line' }, [c('div', { staticClass: 'text', domProps: { innerText: this.$text('or') } })]);
+        loginLine = c('div', { staticClass: 'line' }, [c('div', { staticClass: 'text', domProps: { innerText: this.$text('OR') } })]);
       }
       // add top
       if (loginTop) children.push(loginTop);
