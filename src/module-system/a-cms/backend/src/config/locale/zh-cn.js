@@ -18,7 +18,7 @@ module.exports = {
   Url: '链接',
   'Are You Sure?': '您确认吗？',
   'Article List': '文章清单',
-  'Article List(by category)': '文章清单(按目录)',
+  'Article List(by Category)': '文章清单(按目录)',
   'Category Name': '目录名称',
   'Comment Disabled': '禁止评论',
   'Create Article': '新建文章',
