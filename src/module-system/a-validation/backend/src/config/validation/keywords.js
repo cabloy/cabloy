@@ -10,7 +10,7 @@ module.exports = app => {
         return new Promise((resolve, reject) => {
           const res = [ 'zh-cn', 'en-us' ].indexOf(data) > -1;
           if (!res) {
-            const errors = [{ keyword: 'x-languages', params: [], message: ctx.text('Not expected value') }];
+            const errors = [{ keyword: 'x-languages', params: [], message: ctx.text('Not Expected Value') }];
             return reject(new app.meta.ajv.ValidationError(errors));
           }
           return resolve(res);
