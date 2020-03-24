@@ -17,7 +17,7 @@ export default function(ctx) {
         hostEl: ctx.getHostEl(),
       });
       if (!_params.text) {
-        _params.text = ctx.$text('Operation succeeded');
+        _params.text = ctx.$text('Operation Succeeded');
       }
       return _params;
     },

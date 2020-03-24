@@ -100,7 +100,7 @@ export default function({ ctx, progressId, title, canAbort = true, interval = 10
         } else if (item.done === 1) {
         // alert
           const data = item.data ? JSON.parse(item.data) : {};
-          const progress = { total: 0, progress: 100, text: data.message || ctx.$text('Operation succeeded') };
+          const progress = { total: 0, progress: 100, text: data.message || ctx.$text('Operation Succeeded') };
           setProgresses([ progress ]);
           // hide buttons
           dialog.$el.find('.dialog-buttons').hide();

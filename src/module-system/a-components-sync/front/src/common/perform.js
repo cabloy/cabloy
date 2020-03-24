@@ -73,7 +73,7 @@ export default {
     },
     _handleResult(res) {
       if (res === true) {
-        this.$view.toast.show({ text: this.$text('Operation succeeded') });
+        this.$view.toast.show({ text: this.$text('Operation Succeeded') });
       } else if (typeof res === 'string') {
         this.$view.toast.show({ text: res });
       }

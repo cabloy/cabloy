@@ -1,10 +1,10 @@
 <template>
   <div class="eb-loadmore" v-if="doing || none || nomore || retry">
     <f7-preloader class="eb-preloader" v-if="doing"></f7-preloader>
-    <div v-if="none">{{$text('No data')}}</div>
-    <div v-if="nomore">{{$text('No more data')}}</div>
+    <div v-if="none">{{$text('No Data')}}</div>
+    <div v-if="nomore">{{$text('No More Data')}}</div>
     <div v-if="retry">
-      <f7-button round class="color-orange" @click="onRetry">{{$text('Load error, try again')}}</f7-button>
+      <f7-button round class="color-orange" @click="onRetry">{{$text('Load Error, Try Again')}}</f7-button>
     </div>
   </div>
 </template>
