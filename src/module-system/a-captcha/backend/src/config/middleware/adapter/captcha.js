@@ -40,13 +40,22 @@ const Fn = module.exports = ctx => {
       return { providerInstanceId, provider };
     }
 
+    // get
+    async getProviderInstance({ providerInstanceId }) {
+      // cache
+      const cache = ctx.cache.db.module(moduleInfo.relativeName);
+      const key = utils.getCacheKey({ ctx, providerInstanceId });
+      // get
+      return await cache.get(key);
+    }
+
     // update
     async update({ providerInstanceId, data, context }) {
       // cache
       const cache = ctx.cache.db.module(moduleInfo.relativeName);
       const key = utils.getCacheKey({ ctx, providerInstanceId });
       // get
-      const providerInstance = await cache.get(key);
+      const providerInstance = await this.getProviderInstance({ providerInstanceId });
       if (!providerInstance) ctx.throw(403);
       // provider
       const provider = await this.getProvider({ module: providerInstance.module, sceneName: providerInstance.sceneName });
@@ -61,7 +70,7 @@ const Fn = module.exports = ctx => {
       const cache = ctx.cache.db.module(moduleInfo.relativeName);
       const key = utils.getCacheKey({ ctx, providerInstanceId });
       // get
-      const providerInstance = await cache.get(key);
+      const providerInstance = await this.getProviderInstance({ providerInstanceId });
       if (!providerInstance) ctx.throw(403);
       // check if the same scene
       if (module !== providerInstance.module || sceneName !== providerInstance.sceneName) ctx.throw(403);
