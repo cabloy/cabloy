@@ -28,6 +28,11 @@ module.exports = app => {
         validate: { validator: 'signup' },
       },
     },
+    { method: 'post', path: 'auth/mobileVerify', controller: auth, middlewares: 'captchaVerify',
+      meta: {
+        captchaVerify: { scene: { name: 'mobileVerify' } },
+      },
+    },
   ];
   return routes;
 };

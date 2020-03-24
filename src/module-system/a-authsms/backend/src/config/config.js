@@ -10,20 +10,20 @@ module.exports = appInfo => {
   };
 
   // captcha scenes
-  const _captchaSimple = {
-    module: 'a-captchasimple',
-    name: 'captcha',
-  };
+  // const _captchaSimple = {
+  //   module: 'a-captchasimple',
+  //   name: 'captcha',
+  // };
   const _captchaSMS = {
     module: 'a-authsms',
     name: 'captcha',
   };
   config.captcha = {
     scenes: {
-      mobileVerify: null,
-      signupCode: _captchaSimple,
+      mobileVerify: _captchaSMS,
       signup: _captchaSMS,
       signin: _captchaSMS,
+      signupCode: null, // _captchaSimple,
     },
   };
 

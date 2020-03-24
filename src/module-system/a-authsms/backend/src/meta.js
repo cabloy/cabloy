@@ -15,6 +15,9 @@ module.exports = app => {
         signin: {
           schemas: 'signin',
         },
+        mobileVerify: {
+          schemas: 'mobileVerify',
+        },
       },
       keywords: {
         'x-exists': keywords.exists,
@@ -22,6 +25,7 @@ module.exports = app => {
       schemas: {
         signup: schemas.signup,
         signin: schemas.signin,
+        mobileVerify: schemas.mobileVerify,
       },
     },
   };

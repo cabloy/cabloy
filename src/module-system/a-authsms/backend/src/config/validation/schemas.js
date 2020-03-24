@@ -19,7 +19,8 @@ module.exports = app => {
       mobile: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Mobile',
+        ebInputType: 'tel',
+        ebTitle: 'Phone Number',
         notEmpty: true,
         'x-exists': true,
       },
@@ -39,6 +40,25 @@ module.exports = app => {
         type: 'boolean',
         ebType: 'toggle',
         ebTitle: 'Remember Me',
+      },
+    },
+  };
+  schemas.mobileVerify = {
+    type: 'object',
+    properties: {
+      userName: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Username',
+        ebReadOnly: true,
+      },
+      mobile: {
+        type: 'string',
+        ebType: 'text',
+        ebInputType: 'tel',
+        ebTitle: 'Phone Number',
+        notEmpty: true,
+        'x-exists': true,
       },
     },
   };

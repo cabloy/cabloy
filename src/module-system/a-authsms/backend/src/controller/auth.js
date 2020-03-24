@@ -18,6 +18,15 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async mobileVerify() {
+      const { mobile } = this.ctx.request.body.data;
+      const res = await this.service.auth.mobileVerify({
+        user: this.ctx.user.agent,
+        mobile,
+      });
+      this.ctx.success(res);
+    }
+
 
   }
   return AuthController;

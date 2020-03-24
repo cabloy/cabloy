@@ -53,6 +53,13 @@ module.exports = app => {
       return res;
     }
 
+    async mobileVerify({ user, mobile }) {
+      // save mobile
+      await this.ctx.meta.user.setActivated({
+        user: { id: user.id, mobile, mobileVerified: 1 },
+      });
+    }
+
   }
 
   return Auth;
