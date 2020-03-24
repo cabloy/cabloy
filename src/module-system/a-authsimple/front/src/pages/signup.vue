@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar large largeTransparent :title="$text('Sign Up')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="getPageTitle()" eb-back-link="Back"></eb-navbar>
     <f7-block>
       <eb-validate ref="validate" :auto="false" :data="data" :params="{validator: 'signup'}" :onPerform="onPerformValidate" @schema:ready="onSchemaReady">
         <eb-list form no-hairlines-md @submit.prevent="onSubmit">
@@ -17,7 +17,7 @@
             </div>
           </eb-list-input>
           <f7-list-item divider>
-            <eb-button ref="buttonSubmit" :onPerform="signUp">{{$text('Sign Up')}}</eb-button>
+            <eb-button ref="buttonSubmit" :onPerform="signUp">{{getButtonText()}}</eb-button>
           </f7-list-item>
         </eb-list>
       </eb-validate>
@@ -67,6 +67,12 @@ export default {
     });
   },
   methods: {
+    getPageTitle() {
+      return this.state === 'associate' ? this.$text('Associate Account') : this.$text('Sign Up');
+    },
+    getButtonText() {
+      return this.state === 'associate' ? this.$text('Associate Now') : this.$text('Sign Up');
+    },
     onSchemaReady(schema) {
       if (this.userNameReadOnly) {
         schema.properties.userName.ebReadOnly = true;

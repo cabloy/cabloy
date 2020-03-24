@@ -7,6 +7,8 @@ export default {
   'Your Username/Mobile/Email': '您的用户名/手机号/邮箱',
   'Your Password': '您的密码',
   'Remember Me': '记住我',
+  'Associate Account': '关联账户',
+  'Associate Now': '现在关联',
   Username: '用户名',
   Realname: '真实姓名',
   Email: '电子邮箱',
