@@ -14,7 +14,7 @@ module.exports = app => {
         });
         const index = locales.findIndex(item => item.value === data);
         if (index > -1) return true;
-        const errors = [{ keyword: 'x-languages', params: [], message: ctx.text('Not expected value') }];
+        const errors = [{ keyword: 'x-languages', params: [], message: ctx.text('Not Expected Value') }];
         throw new app.meta.ajv.ValidationError(errors);
       };
     },
