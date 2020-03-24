@@ -63,7 +63,7 @@ module.exports = app => {
           menu: 1,
         },
         listPostByCategory: {
-          title: 'Post List(by category)',
+          title: 'Post List(by Category)',
           scene: 'list',
           autoRight: 1,
           atomClassName: 'post',
