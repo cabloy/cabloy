@@ -1,3 +1,3 @@
 module.exports = {
-  'module %s is old': '模块过旧',
+  'Module %s is Old': '模块过旧',
 };
