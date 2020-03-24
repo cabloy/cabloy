@@ -2,7 +2,7 @@
 import Vue from 'vue';
 import perform from '../common/perform.js';
 import link from '../common/link.js';
-const f7TreeviewItem = Vue.options.components['f7-treeview-item'].extendOptions;
+const f7TreeviewItem = Vue.prototype.$meta.util.extend({}, Vue.options.components['f7-treeview-item'].extendOptions);
 delete f7TreeviewItem.props.href;
 export default {
   meta: {

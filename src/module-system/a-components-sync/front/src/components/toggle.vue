@@ -1,6 +1,6 @@
 <script>
 import Vue from 'vue';
-const f7Toggle = Vue.options.components['f7-toggle'].extendOptions;
+const f7Toggle = Vue.prototype.$meta.util.extend({}, Vue.options.components['f7-toggle'].extendOptions);
 delete f7Toggle.props.checked;
 delete f7Toggle.props.value;
 export default {
