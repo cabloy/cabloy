@@ -94,15 +94,17 @@ export default function(Vue) {
       });
     },
     _import2(moduleInfo, cb) {
-      const relativeName=moduleInfo.relativeName;
-      if(modulesInfo.modulesLocal[relativeName]){
-        import(`../../../../src/module/${relativeName}/front/src/main.js`).then(instance => {
+      const relativeName = moduleInfo.relativeName;
+      if (modulesInfo.modulesLocal[relativeName]) {
+        import('../../../../src/module/' + relativeName + '/front/src/main.js').then(instance => {
           cb(instance);
         });
-      } else if (modulesInfo.modulesGlobal[relativeName]){
-        import(`../../build/__runtime/modules/${relativeName}/dist/front.js`).then(() => {
+      } else if (modulesInfo.modulesGlobal[relativeName]) {
+        import('../../build/__runtime/modules/' + relativeName + '/dist/front.js').then(() => {
           cb(window[relativeName]);
         });
+      } else {
+        throw new Error(`Module ${relativeName} not found!!!`);
       }
     },
     requireAll() {
@@ -211,7 +213,7 @@ export default function(Vue) {
       module.options.locales && this._registerLocales(module);
     },
     _registerComponents(module) {
-      for(const key in module.options.components){
+      for (const key in module.options.components) {
         const component = module.options.components[key];
         Vue.prototype.$meta.util._setComponentModule(component, module);
         Vue.prototype.$meta.util._setComponentGlobal(component);
@@ -230,8 +232,8 @@ export default function(Vue) {
       if (module.name === 'main') {
         Vue.prototype.$utils.extend(Vue.prototype.$meta.config, module.options.config);
         // baseURL
-        if(Vue.prototype.$meta.config.api.baseURL){
-          Vue.prototype.$meta.axios.defaults.baseURL=Vue.prototype.$meta.config.api.baseURL;
+        if (Vue.prototype.$meta.config.api.baseURL) {
+          Vue.prototype.$meta.axios.defaults.baseURL = Vue.prototype.$meta.config.api.baseURL;
           Vue.prototype.$meta.axios.defaults.withCredentials = true;
         }
       } else {

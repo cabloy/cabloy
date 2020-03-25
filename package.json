@@ -1,6 +1,6 @@
 {
   "name": "egg-born-front",
-  "version": "6.0.12",
+  "version": "6.0.13",
   "description": "egg-born-front",
   "scripts": {
     "lint": "eslint src",
