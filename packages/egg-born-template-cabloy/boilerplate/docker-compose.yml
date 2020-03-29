@@ -1,0 +1,56 @@
+version: "3.7"
+
+services:
+
+  web:
+    depends_on:
+      - mysql
+    build:
+      context: .
+      dockerfile: docker-compose-dockerfile-web
+    restart: always
+    ports:
+      - "7002:7002"
+    volumes:
+      - ./docker-compose/output/web/dist:/root/output/web/dist
+      - ./docker-compose/output/web/cabloy:/root/cabloy
+      - ./docker-compose/logs/web:/root/logs
+    command: ["./scripts/wait-for-it.sh", "mysql:3306", "--", "./scripts/web-init.sh"]
+
+  nginx:
+    image: nginx:latest
+    depends_on:
+      - web
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker-compose/output/web/dist:/usr/share/nginx/web/dist
+      - ./docker-compose/output/web/cabloy:/usr/share/nginx/web/cabloy
+      - ./docker-compose/logs/nginx:/var/log/nginx
+      - ./docker-compose/config/nginx/conf.d:/etc/nginx/conf.d
+
+  mysql:
+    image: mysql:latest
+    command:
+      - --default-authentication-plugin=mysql_native_password
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_general_ci
+      - --character-set-client-handshake=FALSE
+      - --skip-host-cache
+      - --skip-name-resolve
+      - --slow_query_log=1
+      - --long_query_time=0.5
+      - --log-queries-not-using-indexes=1
+    restart: always
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./docker-compose/data/mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: "18bc923*!ZcAc3B"
+      MYSQL_DATABASE: {{name}}
+      MYSQL_USER: web_user
+      MYSQL_PASSWORD: "1x23*!ZcAB"
+    security_opt:
+      - seccomp:unconfined
