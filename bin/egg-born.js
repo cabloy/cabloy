@@ -7,6 +7,7 @@ const path = require('path');
 const fse = require('fs-extra');
 const rimraf = require('mz-modules/rimraf');
 const compressing = require('compressing');
+const randomize = require('randomatic');
 
 co(function* () {
 
@@ -41,6 +42,11 @@ co(function* () {
     locals.targetDir = this.targetDir.replace(/\\/gi, '/');
     // publicDir
     locals.publicDir = path.join(require('os').homedir(), 'cabloy', locals.name).replace(/\\/gi, '/');
+    // mysql
+    locals.mysqlRootPassword = randomize('*', 16, { exclude: '\\\'"' });
+    locals.mysqlUserPassword = randomize('*', 16, { exclude: '\\\'"' });
+    locals.mysqlUserName = 'web_user';
+    // ready
     return locals;
   };
 
@@ -64,23 +70,23 @@ co(function* () {
       fse.removeSync(path.join(destDir, '.gitkeep'));
 
       // mergeDependencies
-      const targetPathProject=path.join(targetDir,'package.json');
-      const sourcePathTest=path.join(destDir,'test-party/package.json');
-      this.mergeDependencies(targetPathProject,sourcePathTest);
+      const targetPathProject = path.join(targetDir, 'package.json');
+      const sourcePathTest = path.join(destDir, 'test-party/package.json');
+      this.mergeDependencies(targetPathProject, sourcePathTest);
     }
   };
 
-  command.mergeDependencies=function(targetPathProject,sourcePathTest){
-    const ignores=['extend2','require3'];
-    const targetPackageProject=require(targetPathProject);
-    const sourcePackageTest=require(sourcePathTest);
-    for(const item of ignores){
+  command.mergeDependencies = function(targetPathProject, sourcePathTest) {
+    const ignores = [ 'extend2', 'require3' ];
+    const targetPackageProject = require(targetPathProject);
+    const sourcePackageTest = require(sourcePathTest);
+    for (const item of ignores) {
       delete sourcePackageTest.dependencies[item];
     }
-    Object.assign(targetPackageProject.dependencies,sourcePackageTest.dependencies);
+    Object.assign(targetPackageProject.dependencies, sourcePackageTest.dependencies);
     // version save
     fse.outputFileSync(targetPathProject, JSON.stringify(targetPackageProject, null, 2) + '\n');
-  }
+  };
 
   command.downloadModule = function* (pkgName) {
     const result = yield this.getPackageInfo(pkgName, false);
