@@ -48,9 +48,9 @@ services:
     volumes:
       - ./docker-compose/data/mysql:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: "18bc923*!ZcAc3B"
+      MYSQL_ROOT_PASSWORD: "{{mysqlRootPassword}}"
       MYSQL_DATABASE: {{name}}
-      MYSQL_USER: web_user
-      MYSQL_PASSWORD: "1x23*!ZcAB"
+      MYSQL_USER: {{mysqlUserName}}
+      MYSQL_PASSWORD: "{{mysqlUserPassword}}"
     security_opt:
       - seccomp:unconfined
