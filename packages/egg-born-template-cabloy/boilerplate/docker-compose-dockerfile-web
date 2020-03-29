@@ -21,8 +21,8 @@ RUN chmod +x  /opt/node/web/scripts/*.sh
 # COPY ./node_modules /opt/node/web/node_modules
 # COPY ./dist /opt/node/web/dist
 
-# RUN npm i
-RUN npm i --registry=https://registry.npm.taobao.org
+RUN npm i
+# RUN npm i --registry=https://registry.npm.taobao.org
 RUN npm run build:front
 
 # start
