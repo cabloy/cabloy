@@ -38,7 +38,8 @@ module.exports = merge(baseWebpackConfig, {
     }),
     new FriendlyErrorsPlugin(),
   ],
-  // watchOptions: {
-  //   ignored: /node_modules/,
-  // },
+  watchOptions: {
+    aggregateTimeout: 1000,
+    // ignored: /node_modules/,
+  },
 });
