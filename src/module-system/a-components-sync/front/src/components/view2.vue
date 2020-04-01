@@ -34,12 +34,14 @@ export default {
       this.$meta.vueLayout.navigate(url, _options);
     },
     getSizeExtent() {
-      const view = this.$$(this.$el);
-      const size = {
-        width: view.width(),
-        height: view.height(),
-      };
-      return size;
+      return this.sizeExtent;
+      // not valid if the group of views is hidden
+      // const view = this.$$(this.$el);
+      // const size = {
+      //   width: view.width(),
+      //   height: view.height(),
+      // };
+      // return size;
     },
     close() {
       this.$f7router.close();

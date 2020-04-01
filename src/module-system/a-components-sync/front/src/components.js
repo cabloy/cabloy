@@ -1,5 +1,5 @@
 import loadMore from './components/loadMore.vue';
-import view from './components/view.vue';
+import view from './components/view2.vue';
 import page from './components/page.vue';
 import navbar from './components/navbar.vue';
 import link from './components/link.vue';
