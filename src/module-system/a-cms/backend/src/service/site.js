@@ -247,7 +247,7 @@ module.exports = app => {
 
     _prepareBlocks({ locale }) {
       const blocks = {};
-      // modulesArray for block override
+      // (X) modulesArray for block override
       for (const module of this.app.meta.modulesArray) {
         if (module.main.meta && module.main.meta.cms &&
           module.main.meta.cms.plugin && module.main.meta.cms.plugin.blocks) {
@@ -259,11 +259,17 @@ module.exports = app => {
     }
 
     _prepareBlocksModule({ locale, module, blocks }) {
-      const blocksModule = extend(true, {}, blocks);
-      for (const key in blocksModule) {
-        const block = blocksModule[key];
-        block.meta.module = module.info.relativeName;
-        block.meta.titleLocale = this.ctx.text.locale(locale, block.meta.title);
+      const blocksModule = {};
+      const moduleName = module.info.relativeName;
+      for (const key in blocks) {
+        const fullName = `${moduleName}:${key}`;
+        blocksModule[fullName] = extend(true, {}, blocks[key], {
+          meta: {
+            fullName,
+            module: moduleName,
+            titleLocale: this.ctx.text.locale(locale, blocks[key].meta.title),
+          },
+        });
       }
       return blocksModule;
     }

@@ -5,7 +5,7 @@
         <eb-link iconMaterial="done" :onPerform="onPerformDone"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-validate ref="validate" :readOnly="false" auto :data="item" :params="validateParams" :meta="meta" :onPerform="onPerformValidate" @submit.prevent="onSubmit">
+    <eb-validate v-if="moduleBlock" ref="validate" :readOnly="false" auto :data="item" :params="validateParams" :meta="meta" :onPerform="onPerformValidate" @submit.prevent="onSubmit">
     </eb-validate>
   </eb-page>
 </template>
@@ -19,6 +19,7 @@ export default {
       block: null,
       item: null,
       meta: null,
+      moduleBlock: null,
     };
   },
   computed: {
@@ -40,10 +41,13 @@ export default {
     this.meta = {
       atomId: this.contextParams.atomId,
     };
+    this.$meta.module.use(this.block.meta.module, module => {
+      this.moduleBlock = module;
+    });
   },
   methods: {
     onPerformValidate() {
-      const blockName = this.block.meta.name;
+      const blockName = this.block.meta.fullName;
       return this.$api.post('site/blockSave', {
         blockName,
         item: this.item,

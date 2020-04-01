@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Block')" eb-back-link="Back"> </eb-navbar>
     <f7-list>
-      <eb-list-item v-for="item of blocks" :key="item.meta.name" :title="item.meta.titleLocale" link="#" :context="item" :onPerform="onPerformItem">
+      <eb-list-item v-for="item of blocks" :key="item.meta.fullName" :title="item.meta.titleLocale" link="#" :context="item" :onPerform="onPerformItem">
       </eb-list-item>
     </f7-list>
   </eb-page>
