@@ -122,22 +122,22 @@ describe('test/controller/test.test.js', () => {
   console.log(foo(5));
   \`\`\`
 
-  ::: warning
+  ::: alert-warning
   <script>window.alert('test');</script>
   :::
 
-  ::: audio
+  $$$ cms-pluginblock:audio
 {
-  "autoplay": true,
-  "audio":
-  {
-    "name": "Yadikar",
-    "url": "https://zhennann.cabloy.com/api/a/file/file/download/9d373acea45549fa9fcd90152c73928f.aac",
-    "artist": "Retim",
-    "cover": "https://zhennann.cabloy.com/api/a/file/file/download/73878ed9a1ce4100ad32580b0fd98db2.jpg"
-  }
+  audio: {
+    name: 'Yadikar',
+    url: 'https://zhennann.cabloy.com/api/a/file/file/download/9d373acea45549fa9fcd90152c73928f.aac',
+    artist: 'Retim',
+    cover: 'https://zhennann.cabloy.com/api/a/file/file/download/73878ed9a1ce4100ad32580b0fd98db2.jpg',
+  },
+  autoplay: false,
+  loop: true,
 }
-:::
+  $$$
 
         `,
       },
