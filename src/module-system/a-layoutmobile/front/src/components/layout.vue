@@ -33,9 +33,7 @@ export default {
       size: null,
     };
   },
-  created() {
-    this._onSize();
-  },
+  created() {},
   mounted() {
     this.$f7ready(() => {
       // start
@@ -44,11 +42,12 @@ export default {
   },
   methods: {
     onResize() {
-      this._onSize();
+      if (!this.started) return;
+      this.setSize();
     },
-    _onSize() {
-      const width = this.$$(window).width();
-      const height = this.$$(window).height();
+    setSize() {
+      const width = this.$$(this.$el).width();
+      const height = this.$$(this.$el).height();
 
       // sizeExtent
       this.sizeExtent = { width, height };
@@ -63,6 +62,8 @@ export default {
       }
     },
     start() {
+      // size
+      this.setSize();
       // loginOnStart
       const vueApp = this.$meta.vueApp;
       if (vueApp.checkIfNeedOpenLogin()) {
