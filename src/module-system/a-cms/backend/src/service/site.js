@@ -262,12 +262,13 @@ module.exports = app => {
       const blocksModule = {};
       const moduleName = module.info.relativeName;
       for (const key in blocks) {
+        const block = blocks[key];
         const fullName = `${moduleName}:${key}`;
-        blocksModule[fullName] = extend(true, {}, blocks[key], {
+        blocksModule[fullName] = extend(true, {}, block, {
           meta: {
             fullName,
-            module: moduleName,
-            titleLocale: this.ctx.text.locale(locale, blocks[key].meta.title),
+            module: block.meta.module || moduleName,
+            titleLocale: this.ctx.text.locale(locale, block.meta.title),
           },
         });
       }
