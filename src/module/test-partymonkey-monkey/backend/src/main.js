@@ -13,6 +13,8 @@ module.exports = app => {
   const models = require('./models.js')(app);
   // meta
   const meta = require('./meta.js')(app);
+  // monkey
+  const monkey = require('./monkey.js')(app);
 
   return {
     routes,
@@ -23,6 +25,7 @@ module.exports = app => {
     errors,
     middlewares,
     meta,
+    monkey,
   };
 
 };
