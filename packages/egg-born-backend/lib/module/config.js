@@ -1,4 +1,5 @@
 const extend = require('extend2');
+const util = require('./util.js');
 
 const CTXCONFIG = Symbol.for('Context#__config');
 
@@ -60,7 +61,11 @@ module.exports = function(loader, modules) {
       const ebConfig = loader.app.meta.configs[module.info.relativeName] = {};
 
       // module config
-      if (module.main.config) extend(true, ebConfig, module.main.config(loader.appInfo));
+      if (module.main.config) {
+        const config = module.main.config(loader.appInfo);
+        util.monkeyModule(loader.app.meta.modulesMonkey, 'configLoaded', { module, config });
+        extend(true, ebConfig, config);
+      }
 
       // application config
       if (loader.config.modules && loader.config.modules[module.info.relativeName]) { extend(true, ebConfig, loader.config.modules[module.info.relativeName]); }

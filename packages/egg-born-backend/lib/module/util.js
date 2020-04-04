@@ -59,6 +59,14 @@ const util = {
     if (data.sql) error.sql = data.sql;
     return error;
   },
+  monkeyModule(ebModulesMonkey, monkeyName, monkeyData) {
+    for (const key in ebModulesMonkey) {
+      const moduleMonkey = ebModulesMonkey[key];
+      if (moduleMonkey.main.monkey && moduleMonkey.main.monkey[monkeyName]) {
+        moduleMonkey.main.monkey[monkeyName](monkeyData);
+      }
+    }
+  },
 };
 
 module.exports = util;

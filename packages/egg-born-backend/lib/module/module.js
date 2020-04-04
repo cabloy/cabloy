@@ -40,16 +40,7 @@ module.exports = function(loader) {
 
   function monkeyModules() {
     for (const module of ebModulesArray) {
-      monkeyModule('moduleLoaded', { module });
-    }
-  }
-
-  function monkeyModule(monkeyName, monkeyData) {
-    for (const key in ebModulesMonkey) {
-      const moduleMonkey = ebModulesMonkey[key];
-      if (moduleMonkey.main.monkey && moduleMonkey.main.monkey[monkeyName]) {
-        moduleMonkey.main.monkey[monkeyName](monkeyData);
-      }
+      util.monkeyModule(ebModulesMonkey, 'moduleLoaded', { module });
     }
   }
 
