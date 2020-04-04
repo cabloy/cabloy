@@ -42,6 +42,8 @@ module.exports = appInfo => {
         path: 'test/feat/broadcast',
       },
     };
+    // monkey
+    config.monkeyed = false;
   }
 
   if (appInfo.env === 'unittest' || appInfo.env === 'local') {
