@@ -11,6 +11,7 @@ module.exports = function(loader) {
   // all modules
   const ebModules = loader.app.meta.modules = {};
   const ebModulesArray = loader.app.meta.modulesArray = [];
+  const ebModulesMonkey = loader.app.meta.modulesMonkey = {};
 
   const _ebModulesLast = [];
 
@@ -18,6 +19,8 @@ module.exports = function(loader) {
   orderModules(parseModules());
   // load modules
   loadModules();
+  // monkey modules
+  monkeyModules();
   // log modules
   logModules();
 
@@ -32,6 +35,21 @@ module.exports = function(loader) {
   function loadModules() {
     for (const module of ebModulesArray) {
       module.main = loader.loadFile(module.file, loader.app, module);
+    }
+  }
+
+  function monkeyModules() {
+    for (const module of ebModulesArray) {
+      monkeyModule('moduleLoaded', { module });
+    }
+  }
+
+  function monkeyModule(monkeyName, monkeyData) {
+    for (const key in ebModulesMonkey) {
+      const moduleMonkey = ebModulesMonkey[key];
+      if (moduleMonkey.main.monkey && moduleMonkey.main.monkey[monkeyName]) {
+        moduleMonkey.main.monkey[monkeyName](monkeyData);
+      }
     }
   }
 
@@ -107,6 +125,9 @@ module.exports = function(loader) {
         const pkg = util.lookupPackage(file);
         const root = path.dirname(pkg);
         modules[info.relativeName] = { root, file, name, info, pkg, package: require(pkg) };
+        if (info.monkey) {
+          ebModulesMonkey[info.relativeName] = modules[info.relativeName];
+        }
       }
     });
     return modules;
