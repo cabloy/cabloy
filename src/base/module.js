@@ -245,7 +245,7 @@ export default function(Vue) {
     _registerComponents(module) {
       for (const key in module.options.components) {
         const component = module.options.components[key];
-        Vue.prototype.$meta.util._setComponentModule(component, module);
+        Vue.prototype.$meta.util._setComponentModule(component, component.module || module);
         Vue.prototype.$meta.util._setComponentGlobal(component);
       }
     },
