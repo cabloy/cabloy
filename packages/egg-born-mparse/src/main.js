@@ -21,6 +21,7 @@ export default {
       relativeName: `${parts[0]}-${parts[1]}`,
       url: `${parts[0]}/${parts[1]}`,
       sync: parts[2] === 'sync',
+      monkey: parts[2] === 'monkey',
     };
   },
   // /api/aa/hello/home/index
