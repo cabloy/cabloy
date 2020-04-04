@@ -1,4 +1,4 @@
 export default {
-  MonkeyerTestTip1: 'This is a monkey page',
+  MonkeyerTestTip1: '这是一个Monkey页面',
   'Monkey Test': 'Monkey测试',
 };

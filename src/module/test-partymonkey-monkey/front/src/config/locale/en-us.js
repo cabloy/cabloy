@@ -1,3 +1,3 @@
 export default {
-  MonkeyerTestTip1: '这是一个Monkey页面',
+  MonkeyerTestTip1: 'This is a monkey page',
 };
