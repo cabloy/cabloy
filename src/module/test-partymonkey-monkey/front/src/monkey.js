@@ -1,4 +1,5 @@
-import pageMonkey from './pages/monkey.vue';
+import monkeyerPage from './pages/monkeyer.vue';
+import monkeyerComponent from './components/monkeyerComponent.vue';
 
 // eslint-disable-next-line
 export default function(Vue) {
@@ -6,8 +7,8 @@ export default function(Vue) {
   function monkeyRoute(moduleSelf, module, routePath, routeComponent) {
     const route = module.options.routes.find(item => item.path === routePath);
     if (route) {
-      route.component = routeComponent;
       route.module = moduleSelf;
+      route.component = routeComponent;
     }
   }
 
@@ -28,14 +29,28 @@ export default function(Vue) {
     };
   }
 
+  function monkeyConfig(moduleSelf, module) {
+    const config = module.options.config;
+    config.monkeyed = true;
+  }
+
+  function monkeyComponent(moduleSelf, module, componentName, component) {
+    component.module = moduleSelf;
+    module.options.components[componentName] = component;
+  }
+
   return {
     moduleLoaded({ module }) {
       if (module.name !== 'test-party') return;
       const moduleSelf = Vue.prototype.$meta.module.get('test-partymonkey');
       // route
-      monkeyRoute(moduleSelf, module, 'willBeMonkeyed', pageMonkey);
+      monkeyRoute(moduleSelf, module, 'kitchen-sink/monkey/monkeyee', monkeyerPage);
       // store
       monkeyStore(moduleSelf, module);
+      // config
+      monkeyConfig(moduleSelf, module);
+      // component
+      monkeyComponent(moduleSelf, module, 'monkeyeeComponent', monkeyerComponent);
     },
   };
 

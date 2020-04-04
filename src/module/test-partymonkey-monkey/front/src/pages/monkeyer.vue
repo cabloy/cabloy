@@ -3,13 +3,18 @@
     <eb-navbar large largeTransparent :title="$text('Monkey Test')" eb-back-link="Back"> </eb-navbar>
     <f7-block strong>
       <div class="alert-info">{{$text('MonkeyerTestTip1')}}</div>
+      <template v-if="moduleTestParty">
+        <monkeyeeComponent></monkeyeeComponent>
+      </template>
     </f7-block>
   </eb-page>
 </template>
 <script>
 export default {
   data() {
-    return {};
+    return {
+      moduleTestParty: null,
+    };
   },
   created() {
     // monkey route
@@ -23,7 +28,13 @@ export default {
     const messageNew = this.$store.getState('test/party/message');
     console.log('monkey-store setMessage:', messageNew);
     this.$store.commit('test/party/setMessage', messageOld);
-
+    // monkey config
+    console.log('monkey-config monkeyed:', this.$meta.config.modules['test-party'].monkeyed);
+    // monkey component
+    this.$meta.module.use('test-party', module => {
+      this.$options.components.monkeyeeComponent = module.options.components.monkeyeeComponent;
+      this.moduleTestParty = module;
+    });
   },
 };
 
