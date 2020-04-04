@@ -3,6 +3,8 @@ import modulesInfo from '../../build/__runtime/modules.js';
 
 const rLocalJSs = require.context('../../../../src/module/', true, /-sync\/front\/src\/main\.js$/);
 const rGlobalJSs = require.context('../../build/__runtime/modules/', true, /-sync\/dist\/front\.js$/);
+const rMonkeyLocalJSs = require.context('../../../../src/module/', true, /-monkey\/front\/src\/main\.js$/);
+const rMonkeyGlobalJSs = require.context('../../build/__runtime/modules/', true, /-monkey\/dist\/front\.js$/);
 
 export default function(Vue) {
   const loadingQueue = {
@@ -61,6 +63,14 @@ export default function(Vue) {
         this._registerRoutes(Vue.prototype.$meta.modulesWaiting[key]);
       }
     },
+    monkeyModule(monkeyName, monkeyData) {
+      for (const key in Vue.prototype.$meta.modules) {
+        const moduleMonkey = Vue.prototype.$meta.modules[key];
+        if (moduleMonkey.info.monkey) {
+          moduleMonkey.options.monkey[monkeyName](monkeyData);
+        }
+      }
+    },
     install(instance, moduleInfo, cb) {
       // install
       Vue.use(instance.default, options => {
@@ -73,6 +83,8 @@ export default function(Vue) {
         };
         // set
         this.set(moduleInfo.relativeName, module);
+        // monkey
+        this.monkeyModule('moduleLoaded', { module });
         // routes
         if (!Vue.prototype.$f7) {
           Vue.prototype.$meta.modulesWaiting[moduleInfo.relativeName] = module;
@@ -107,7 +119,25 @@ export default function(Vue) {
         throw new Error(`Module ${relativeName} not found!!!`);
       }
     },
-    requireAll() {
+    requireAllMonkeys() {
+      // local
+      rMonkeyLocalJSs.keys().forEach(key => {
+        const moduleInfo = mparse.parseInfo(mparse.parseName(key));
+        const module = this._get(moduleInfo.relativeName);
+        if (!module) {
+          this._requireJS(rMonkeyLocalJSs, key, moduleInfo);
+        }
+      });
+      // global
+      rMonkeyGlobalJSs.keys().forEach(key => {
+        const moduleInfo = mparse.parseInfo(mparse.parseName(key));
+        const module = this._get(moduleInfo.relativeName);
+        if (!module) {
+          this._requireGlobalCSSJS(rMonkeyGlobalJSs, key, moduleInfo);
+        }
+      });
+    },
+    requireAllSyncs() {
       // local
       rLocalJSs.keys().forEach(key => {
         const moduleInfo = mparse.parseInfo(mparse.parseName(key));
@@ -121,7 +151,7 @@ export default function(Vue) {
         const moduleInfo = mparse.parseInfo(mparse.parseName(key));
         const module = this._get(moduleInfo.relativeName);
         if (!module) {
-          this._requireGlobalCSSJS(key, moduleInfo);
+          this._requireGlobalCSSJS(rGlobalJSs, key, moduleInfo);
         }
       });
     },
@@ -132,7 +162,7 @@ export default function(Vue) {
       } else {
         key = this._requireFindKey(rGlobalJSs, moduleInfo.relativeName);
         if (key) {
-          this._requireGlobalCSSJS(key, moduleInfo, cb);
+          this._requireGlobalCSSJS(rGlobalJSs, key, moduleInfo, cb);
         } else {
           throw new Error(`Module ${moduleInfo.relativeName} not exists`);
         }
@@ -144,8 +174,8 @@ export default function(Vue) {
         return moduleRelativeName === moduleInfo.relativeName;
       });
     },
-    _requireGlobalCSSJS(key, moduleInfo, cb) {
-      this._requireJS(rGlobalJSs, key, moduleInfo, cb);
+    _requireGlobalCSSJS(r, key, moduleInfo, cb) {
+      this._requireJS(r, key, moduleInfo, cb);
     },
     _requireCSS(r, key) {
       return r(key);
@@ -165,7 +195,7 @@ export default function(Vue) {
     _registerRoutes(module) {
       if (!module.options.routes) return null;
       const routes = module.options.routes.map(route => {
-        Vue.prototype.$meta.util._setComponentModule(route.component, module);
+        Vue.prototype.$meta.util._setComponentModule(route.component, route.module || module);
         // path
         route.path = `/${module.info.pid}/${module.info.name}/${route.path}`;
         // meta.modal

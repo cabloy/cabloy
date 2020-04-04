@@ -8,8 +8,10 @@ export default function(Vue, options, cb) {
   patchDevice(Vue);
   // patch router
   patchRouter(Vue);
+  // load monkey modules
+  Vue.prototype.$meta.module.requireAllMonkeys();
   // load sync modules
-  Vue.prototype.$meta.module.requireAll();
+  Vue.prototype.$meta.module.requireAllSyncs();
   // prepare parameters
   return cb(prepareParameters(options));
 
