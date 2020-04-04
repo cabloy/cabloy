@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 function load(name) {
   return require(`./pages/${name}.vue`).default;
 }
@@ -11,8 +12,6 @@ function loadKitchenSinkFramework7(name) {
 }
 
 export default [
-  // monkey
-  { path: 'willBeMonkeyed', component: load('willBeMonkeyed') },
   // cabloy
   { path: 'kitchen-sink/index', component: loadKitchenSink('index') },
   { path: 'kitchen-sink/about', component: loadKitchenSink('about') },
@@ -40,6 +39,7 @@ export default [
   { path: 'kitchen-sink/atom', component: loadKitchenSink('atom') },
   { path: 'kitchen-sink/grid', component: loadKitchenSink('gridResizable') },
   { path: 'kitchen-sink/component/global', component: loadKitchenSink('component/global') },
+  { path: 'kitchen-sink/monkey/monkeyee', component: loadKitchenSink('monkey/monkeyee') },
   // framework7
   { path: 'kitchen-sink/framework7/index', component: loadKitchenSinkFramework7('index') },
   { path: 'kitchen-sink/framework7/about', component: loadKitchenSinkFramework7('about') },

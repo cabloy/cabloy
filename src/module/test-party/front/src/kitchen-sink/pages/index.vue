@@ -26,6 +26,7 @@ const items = [
   { title: 'Button Event', path: 'kitchen-sink/buttonEvent' },
   { title: 'Atom', path: 'kitchen-sink/atom' },
   { title: 'Grid / Layout', path: 'kitchen-sink/grid' },
+  { title: 'Monkey', path: 'kitchen-sink/monkey/monkeyee' },
 ];
 export default {
   data() {
