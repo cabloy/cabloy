@@ -11,6 +11,8 @@ function loadKitchenSinkFramework7(name) {
 }
 
 export default [
+  // monkey
+  { path: 'willBeMonkeyed', component: load('willBeMonkeyed') },
   // cabloy
   { path: 'kitchen-sink/index', component: loadKitchenSink('index') },
   { path: 'kitchen-sink/about', component: loadKitchenSink('about') },
