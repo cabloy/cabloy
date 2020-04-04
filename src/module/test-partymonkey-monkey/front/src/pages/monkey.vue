@@ -12,7 +12,18 @@ export default {
     return {};
   },
   created() {
-    console.log(this.$module);
+    // monkey route
+    console.log('monkey-route module:', this.$module.name);
+    // monkey store: getters
+    const message2 = this.$store.getters['test/party/message2'];
+    console.log('monkey-store message2:', message2);
+    // monkey store: mutations
+    const messageOld = this.$store.getState('test/party/message');
+    this.$store.commit('test/party/setMessage', 'test for monkey');
+    const messageNew = this.$store.getState('test/party/message');
+    console.log('monkey-store setMessage:', messageNew);
+    this.$store.commit('test/party/setMessage', messageOld);
+
   },
 };
 
