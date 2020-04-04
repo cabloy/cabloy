@@ -42,6 +42,9 @@ export default function(Vue) {
     },
     set(moduleRelativeName, module) {
       Vue.prototype.$meta.modules[moduleRelativeName] = module;
+      if (module.info.monkey) {
+        Vue.prototype.$meta.modulesMonkey[moduleRelativeName] = module;
+      }
     },
     // use
     //   moduleRelativeName / moduleRelativeName-sync
@@ -64,9 +67,9 @@ export default function(Vue) {
       }
     },
     monkeyModule(monkeyName, monkeyData) {
-      for (const key in Vue.prototype.$meta.modules) {
-        const moduleMonkey = Vue.prototype.$meta.modules[key];
-        if (moduleMonkey.info.monkey) {
+      for (const key in Vue.prototype.$meta.modulesMonkey) {
+        const moduleMonkey = Vue.prototype.$meta.modulesMonkey[key];
+        if (moduleMonkey.options.monkey && moduleMonkey.options.monkey[monkeyName]) {
           moduleMonkey.options.monkey[monkeyName](monkeyData);
         }
       }
