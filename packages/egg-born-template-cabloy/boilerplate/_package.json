@@ -9,7 +9,7 @@
   {
     "dev:front": "egg-born-bin front-dev",
     "build:front": "egg-born-bin front-build",
-    "dev:backend": "egg-born-bin backend-dev",
+    "dev:backend": "egg-born-bin backend-dev --workers=2",
     "debug:backend": "egg-born-bin backend-debug",
     "lint": "eslint src",
     "test:backend": "egg-born-bin backend-test --timeout=3600000",

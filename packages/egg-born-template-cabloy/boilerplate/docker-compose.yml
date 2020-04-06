@@ -2,31 +2,31 @@ version: "3.7"
 
 services:
 
-  web:
+  app:
     depends_on:
       - mysql
     build:
       context: .
-      dockerfile: docker-compose-dockerfile-web
+      dockerfile: docker-compose-dockerfile-app
     restart: always
     ports:
       - "7002:7002"
     volumes:
-      - ./docker-compose/output/web/dist:/root/output/web/dist
-      - ./docker-compose/output/web/cabloy:/root/cabloy
-      - ./docker-compose/logs/web:/root/logs
-    command: ["./scripts/wait-for-it.sh", "mysql:3306", "--", "./scripts/web-init.sh"]
+      - ./docker-compose/output/app/dist:/root/output/app/dist
+      - ./docker-compose/output/app/cabloy:/root/cabloy
+      - ./docker-compose/logs/app:/root/logs
+    command: ["./scripts/wait-for-it.sh", "mysql:3306", "--", "./scripts/app-init.sh"]
 
   nginx:
     image: nginx:latest
     depends_on:
-      - web
+      - app
     restart: always
     ports:
       - "80:80"
     volumes:
-      - ./docker-compose/output/web/dist:/usr/share/nginx/web/dist
-      - ./docker-compose/output/web/cabloy:/usr/share/nginx/web/cabloy
+      - ./docker-compose/output/app/dist:/usr/share/nginx/app/dist
+      - ./docker-compose/output/app/cabloy:/usr/share/nginx/app/cabloy
       - ./docker-compose/logs/nginx:/var/log/nginx
       - ./docker-compose/config/nginx/conf.d:/etc/nginx/conf.d
 
