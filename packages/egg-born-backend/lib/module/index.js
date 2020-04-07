@@ -12,6 +12,7 @@ const loadQueues = require('./queue/queue.js');
 const loadBroadcasts = require('./broadcast/broadcast.js');
 const loadSchedules = require('./schedule.js');
 const loadStartups = require('./startup.js');
+const loadRedis = require('./redis.js');
 const loadClusterApp = require('./cluster/app.js');
 const loadClusterAgent = require('./cluster/agent.js');
 
@@ -38,10 +39,10 @@ module.exports = function(loader) {
     loadBroadcasts(loader, modules);
     loadSchedules(loader, modules);
     loadStartups(loader, modules);
+    loadRedis(loader, modules);
     loadClusterApp(loader, modules);
   } else {
     loadConfig(loader, modules);
-    loadQueues(loader, modules);
     loadBroadcasts(loader, modules);
     loadSchedules(loader, modules);
     loadClusterAgent(loader, modules);

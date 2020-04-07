@@ -1,6 +1,6 @@
 {
   "name": "egg-born-backend",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "egg-born-backend",
   "scripts": {
     "lint": "eslint ."
@@ -27,6 +27,8 @@
     "autod-egg": "^1.0.0",
     "async": "^3.1.1",
     "babel-eslint": "^10.0.1",
+    "bottleneck": "^2.19.5",
+    "bullmq": "^1.8.5",
     "chalk": "^3.0.0",
     "egg": "^2.26.0",
     "egg-born-localeutil": "^1.0.5",
@@ -34,6 +36,7 @@
     "egg-born-mparse": "^1.1.1",
     "egg-mysql": "^3.0.0",
     "egg-passport": "^2.0.0",
+    "egg-redis": "^2.4.0",
     "egg-schedule": "^3.6.2",
     "eslint": "^6.8.0",
     "eslint-config-egg": "^8.0.1",

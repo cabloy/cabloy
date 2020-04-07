@@ -1,55 +1,43 @@
-const qs = require('querystring');
 const database = require('../version/database.js');
 const versionCheck = require('../version/check.js');
 const versionReady = require('../version/ready.js');
 const constant = require('../../base/constants.js');
 
-module.exports = function(loader, modules) {
+module.exports = function(loader) {
 
-  let _firstCheck = false;
-  let _versionReady = false;
+  async function _databaseInit() {
+    await database(loader.app);
+    await versionCheck(loader.app);
+  }
 
-  // messenger
-  loader.app.meta.messenger.addProvider({
-    name: 'versionCheck',
-    handler: async () => {
-      _firstCheck = true;
-      await database(loader.app);
-      await versionCheck(loader.app);
-    },
-  });
-  loader.app.meta.messenger.addProvider({
-    name: 'versionReady',
-    handler: async () => {
-      await handleVersionReady();
-    },
-  });
+  async function databaseInit(app) {
+    // limiter
+    const limiterOptions = {
+      maxConcurrent: 1,
+      minTime: null,
+      reservoir: null,
+      id: `${app.name}:databaseInit`,
+      clearDatastore: !!app.meta.isTest,
+    };
+    const limiter = app.meta.limiter.create(limiterOptions);
+    const jobOptions = { expiration: 1000 * 60 };
+    await limiter.schedule(jobOptions, () => _databaseInit());
+    limiter.disconnect();
+  }
 
   // egg-ready
-  loader.app.messenger.once('egg-ready', () => {
+  loader.app.messenger.once('egg-ready', async () => {
+    // database init
+    await databaseInit(loader.app);
+    // version ready
+    await versionReady(loader.app);
+    // event: appReady
+    loader.app.emit(constant.event.appReady);
+    // event to agent
     loader.app.meta.messenger.callAgent({
-      name: 'versionReadyAsk',
-      data: null,
-    }, async info => {
-      if (info.data) {
-        await handleVersionReady();
-      }
+      name: 'appReady',
+      data: { pid: process.pid },
     });
   });
-
-  async function handleVersionReady() {
-    if (!_versionReady) {
-      _versionReady = true;
-      if (!_firstCheck) {
-        _firstCheck = true;
-        // database
-        await database(loader.app);
-      }
-      // version ready
-      await versionReady(loader.app);
-      // event: appReady
-      loader.app.emit(constant.event.appReady);
-    }
-  }
 
 };

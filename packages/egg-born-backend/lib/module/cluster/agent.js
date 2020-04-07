@@ -1,34 +1,22 @@
 const constant = require('../../base/constants.js');
-const util = require('../util.js');
 
-module.exports = function(loader, modules) {
+module.exports = function(loader) {
 
   // ready
   let _ready = false;
+  const pids = {};
 
   // messenger
   loader.app.meta.messenger.addProvider({
-    name: 'versionReadyAsk',
-    handler: () => {
-      return _ready;
+    name: 'appReady',
+    handler: data => {
+      pids[data.pid] = true;
+      if (!_ready) {
+        _ready = true;
+        // for agent: event: appReady
+        loader.app.emit(constant.event.appReady);
+      }
     },
-  });
-
-  // egg-ready
-  loader.app.messenger.once('egg-ready', async () => {
-    // call
-    loader.app.meta.messenger.callRandom({
-      name: 'versionCheck',
-      data: null,
-    }, info => {
-      if (info.err) throw util.createError(info.err);
-      // for agent: event: appReady
-      loader.app.emit(constant.event.appReady);
-      // version ready
-      loader.app.meta.messenger.callAll({ name: 'versionReady' });
-      // ready
-      _ready = true;
-    });
   });
 
 };
