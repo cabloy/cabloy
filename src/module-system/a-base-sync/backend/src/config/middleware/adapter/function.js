@@ -247,6 +247,16 @@ const Fn = module.exports = ctx => {
     }
 
     async setLocales(options) {
+      // queue
+      return await ctx.app.meta.queue.pushAsync({
+        subdomain: ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'setFunctionLocales',
+        data: { options },
+      });
+    }
+
+    async setLocalesQueue(options) {
       options = options || {};
       const reset = options.reset;
       // clear

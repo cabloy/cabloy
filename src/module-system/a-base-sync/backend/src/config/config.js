@@ -34,11 +34,9 @@ module.exports = appInfo => {
   // startups
   config.startups = {
     installAuthProviders: {
-      type: 'all',
       path: 'auth/installAuthProviders',
     },
     setFunctionLocales: {
-      type: 'worker',
       instance: true,
       path: 'function/setLocales',
     },
@@ -46,6 +44,9 @@ module.exports = appInfo => {
 
   // queues
   config.queues = {
+    setFunctionLocales: {
+      path: 'function/setLocalesQueue',
+    },
     registerFunction: {
       path: 'function/register',
     },
