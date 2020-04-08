@@ -20,11 +20,11 @@ module.exports = appInfo => {
   // schedules
   config.schedules = {
     pushQueue: {
-      type: 'worker',
       path: 'mail/schedulePushQueueInstance',
       instance: true,
-      interval: '120s',
-      // interval: '5s',
+      repeat: {
+        every: 120 * 1000,
+      },
     },
   };
 
