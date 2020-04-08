@@ -9,13 +9,4 @@ module.exports = async function(app) {
     method: 'post',
     url: '/a/version/version/start',
   });
-  // run startups: worker
-  if (!app.meta.isTest) {
-    for (const key in app.meta.startups) {
-      const startup = app.meta.startups[key];
-      if (!startup.startup.disable && startup.startup.type === 'worker') {
-        await app.meta.runStartup(key);
-      }
-    }
-  }
 };

@@ -1,7 +1,7 @@
 const qs = require('querystring');
 const util = require('./util.js');
 
-module.exports = function(loader, modules) {
+module.exports = function(loader) {
 
   // use modulesArray
   const ebModulesArray = loader.app.meta.modulesArray;

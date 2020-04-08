@@ -60,7 +60,7 @@ module.exports = function(loader) {
     // info: { name, data }
     _call(pid, info, cb) {
       if (cb) {
-        info.echo = uuid.v1();
+        info.echo = uuid.v4();
         loader.app.messenger.once(info.echo, info => {
           return cb(info);
         });

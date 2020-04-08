@@ -71,7 +71,7 @@ module.exports = function(app) {
         this._queues[queueKey] = this._createQueue(info, queueKey);
       }
       // add job
-      const jobName = uuid.v1();
+      const jobName = uuid.v4();
       this._queues[queueKey].add(jobName, info);
 
       // async
