@@ -13,7 +13,6 @@ module.exports = appInfo => {
   // startups
   config.startups = {
     installHooks: {
-      type: 'all',
       path: 'hook/installHooks',
     },
   };
