@@ -43,7 +43,6 @@ module.exports = function(loader) {
     loadClusterApp(loader, modules);
   } else {
     loadConfig(loader, modules);
-    loadSchedules(loader, modules);
     loadClusterAgent(loader, modules);
   }
 

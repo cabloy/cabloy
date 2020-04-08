@@ -22,7 +22,7 @@ module.exports = function(app) {
 
     _createQueue(info, queueKey) {
       // queue config
-      const queueConfig = app.meta.queues[`${info.module}:${info.queueName}`];
+      const queueConfig = info.queueConfig || app.meta.queues[`${info.module}:${info.queueName}`];
       // limiter
       const limiterOptions = {
         maxConcurrent: 1,
@@ -34,15 +34,21 @@ module.exports = function(app) {
       const limiter = app.meta.limiter.create(limiterOptions);
       // create queue
       const prefix = `bull_${app.name}`;
-      const connection = app.redis.get('queue').duplicate();
-      const _queue = new bull.Queue(queueKey, { prefix, connection });
+      if (info.queueName === '__schedule') {
+        const connectionScheduler = app.redis.get('queue').duplicate();
+        // eslint-disable-next-line
+        const _queueScheduler = new bull.QueueScheduler(queueKey, { prefix, connection: connectionScheduler });
+      }
+      const connectionQueue = app.redis.get('queue').duplicate();
+      const _queue = new bull.Queue(queueKey, { prefix, connection: connectionQueue });
       // create work
+      const connectionWorker = app.redis.get('queue').duplicate();
       const worker = new bull.Worker(queueKey, async job => {
-        const jobOptions = {
+        const limiterJobOptions = {
           expiration: queueConfig.expiration || 1000 * 60,
         };
-        return await limiter.schedule(jobOptions, () => this._performTask(job.data));
-      }, { prefix: `bull_${app.name}`, connection });
+        return await limiter.schedule(limiterJobOptions, () => this._performTask(job.data));
+      }, { prefix: `bull_${app.name}`, connection: connectionWorker });
 
       worker.on('completed', job => {
         this._callCallback(job.name, null, job.returnvalue);
@@ -71,9 +77,9 @@ module.exports = function(app) {
         this._queues[queueKey] = this._createQueue(info, queueKey);
       }
       // add job
-      const jobName = uuid.v4();
-      this._queues[queueKey].add(jobName, info);
-
+      const jobName = info.jobName || uuid.v4();
+      const jobOptions = info.jobOptions;
+      this._queues[queueKey].add(jobName, info, jobOptions);
       // async
       if (!isAsync) return;
       return new Promise((resolve, reject) => {
@@ -94,6 +100,10 @@ module.exports = function(app) {
     }
 
     async _performTask({ locale, subdomain, module, queueName, queueNameSub, data }) {
+      // special for schedule
+      if (queueName === '__schedule') {
+        return await app.meta.runSchedule(data.scheduleKey);
+      }
       // queue config
       const queueConfig = app.meta.queues[`${module}:${queueName}`];
       // url
