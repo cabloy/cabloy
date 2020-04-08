@@ -14,7 +14,6 @@ module.exports = appInfo => {
   // startups
   config.startups = {
     startupInstance: {
-      type: 'all',
       instance: true,
       path: 'instance/startup',
     },
