@@ -6,9 +6,11 @@ module.exports = appInfo => {
   config.middlewares = {
     cachedb: {
       global: true,
-      dependencies: 'instance',
     },
     cachemem: {
+      global: true,
+    },
+    cacheredis: {
       global: true,
     },
   };
@@ -28,6 +30,11 @@ module.exports = appInfo => {
     memClear: {
       path: 'broadcast/memClear',
     },
+  };
+
+  // db
+  config.db = {
+    redis: true,
   };
 
   return config;

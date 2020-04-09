@@ -12,7 +12,7 @@ const Fn = module.exports = ctx => {
     }
 
     async get(name) {
-      const res = await this.has(name);
+      const res = await this._has(name);
       return res ? JSON.parse(res.value) : undefined;
     }
 
@@ -26,7 +26,7 @@ const Fn = module.exports = ctx => {
       // expired
       const expired = second ? `TIMESTAMPADD(SECOND,${second},CURRENT_TIMESTAMP)` : 'null';
       const res = await ctx.db.get('aCache', {
-        iid: ctx.instance.id,
+        iid: ctx.instance ? ctx.instance.id : 0,
         module: this.moduleName,
         name,
       });
@@ -51,20 +51,25 @@ const Fn = module.exports = ctx => {
         } else {
           await ctx.db.query(`
             insert into aCache(iid,module,name,value,expired) values(?,?,?,?,${expired})
-            `, [ ctx.instance.id, this.moduleName, name, JSON.stringify(value) ]);
+            `, [ ctx.instance ? ctx.instance.id : 0, this.moduleName, name, JSON.stringify(value) ]);
         }
       }
     }
 
     async has(name) {
+      const res = await this._has(name);
+      return !!res;
+    }
+
+    async _has(name) {
       const sql = 'select * from aCache where iid=? and module=? and name=? and (expired is null or expired>CURRENT_TIMESTAMP)';
-      const res = await ctx.db.queryOne(sql, [ ctx.instance.id, this.moduleName, name ]);
+      const res = await ctx.db.queryOne(sql, [ ctx.instance ? ctx.instance.id : 0, this.moduleName, name ]);
       return res;
     }
 
     async remove(name) {
       await ctx.db.delete('aCache', {
-        iid: ctx.instance.id,
+        iid: ctx.instance ? ctx.instance.id : 0,
         module: this.moduleName,
         name,
       });
@@ -72,7 +77,7 @@ const Fn = module.exports = ctx => {
 
     async clear() {
       await ctx.db.delete('aCache', {
-        iid: ctx.instance.id,
+        iid: ctx.instance ? ctx.instance.id : 0,
         module: this.moduleName,
       });
     }
