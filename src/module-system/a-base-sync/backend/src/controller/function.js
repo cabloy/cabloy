@@ -41,9 +41,8 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    // startup
-    async setLocales() {
-      const res = await this.ctx.service.function.setLocales();
+    async setLocalesStartup() {
+      const res = await this.ctx.service.function.setLocalesStartup();
       this.ctx.success(res);
     }
 

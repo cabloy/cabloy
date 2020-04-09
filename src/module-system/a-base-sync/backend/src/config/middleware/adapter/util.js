@@ -1,6 +1,6 @@
 const require3 = require('require3');
 const moment = require3('moment');
-const mparse = require3('egg-born-mparse');
+const mparse = require3('egg-born-mparse').default;
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);

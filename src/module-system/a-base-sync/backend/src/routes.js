@@ -5,6 +5,7 @@ const atom = require('./controller/atom.js');
 const atomClass = require('./controller/atomClass.js');
 const atomAction = require('./controller/atomAction.js');
 const func = require('./controller/function.js');
+const schedule = require('./controller/schedule.js');
 const auth = require('./controller/auth.js');
 const comment = require('./controller/comment.js');
 const layoutConfig = require('./controller/layoutConfig.js');
@@ -114,7 +115,7 @@ module.exports = app => {
     { method: 'post', path: 'function/setLocalesQueue', controller: func, middlewares: 'inner',
       meta: { auth: { enable: false } },
     },
-    { method: 'post', path: 'function/setLocales', controller: func, middlewares: 'inner',
+    { method: 'post', path: 'function/setLocalesStartup', controller: func, middlewares: 'inner',
       meta: { auth: { enable: false } },
     },
     // atomAction
@@ -128,6 +129,13 @@ module.exports = app => {
     { method: 'post', path: 'atomClass/validatorSearch', controller: atomClass },
     { method: 'post', path: 'atomClass/checkRightCreate', controller: atomClass },
     { method: 'post', path: 'atomClass/atomClass', controller: atomClass },
+    // schedule
+    { method: 'post', path: 'schedule/installAllSchedules', controller: schedule, middlewares: 'inner',
+      meta: { instance: { enable: false } },
+    },
+    { method: 'post', path: 'schedule/scheduleQueue', controller: schedule, middlewares: 'inner',
+      meta: { instance: { enable: false } },
+    },
     // auth
     { method: 'post', path: 'auth/echo', controller: auth, meta: { auth: { enable: false } } },
     { method: 'post', path: 'auth/check', controller: auth, meta: { auth: { user: true } } },

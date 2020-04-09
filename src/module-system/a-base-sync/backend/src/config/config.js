@@ -4,6 +4,9 @@ module.exports = appInfo => {
 
   // middlewares
   config.middlewares = {
+    util: {
+      global: true,
+    },
     cors: {
       global: true,
       dependencies: 'instance',
@@ -33,12 +36,15 @@ module.exports = appInfo => {
 
   // startups
   config.startups = {
+    installAllSchedules: {
+      path: 'schedule/installAllSchedules',
+    },
     installAuthProviders: {
       path: 'auth/installAuthProviders',
     },
     setFunctionLocales: {
       instance: true,
-      path: 'function/setLocales',
+      path: 'function/setLocalesStartup',
     },
   };
 
@@ -58,6 +64,10 @@ module.exports = appInfo => {
     },
     registerAuthProvider: {
       path: 'auth/register',
+    },
+    schedule: {
+      path: 'schedule/scheduleQueue',
+      repeat: true,
     },
   };
 

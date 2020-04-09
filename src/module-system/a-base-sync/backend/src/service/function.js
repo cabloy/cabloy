@@ -18,7 +18,7 @@ module.exports = app => {
       return await this.ctx.meta.function.register({ module, name });
     }
 
-    async setLocales() {
+    async setLocalesStartup() {
       await this.ctx.meta.function.setLocales({ reset: true });
     }
 

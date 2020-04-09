@@ -30,10 +30,6 @@ const USER = Symbol('CTX#__USER');
 const AuthFn = require('./adapter/auth.js');
 const AUTH = Symbol('CTX#__AUTH');
 
-// util
-const UtilFn = require('./adapter/util.js');
-const UTIL = Symbol('CTX#__UTIL');
-
 module.exports = () => {
   return async function base(ctx, next) {
     ctx.meta = ctx.meta || {};
@@ -107,15 +103,6 @@ module.exports = () => {
           ctx.meta[AUTH] = new (AuthFn(ctx))();
         }
         return ctx.meta[AUTH];
-      },
-    });
-    // util
-    Object.defineProperty(ctx.meta, 'util', {
-      get() {
-        if (ctx.meta[UTIL] === undefined) {
-          ctx.meta[UTIL] = new (UtilFn(ctx))();
-        }
-        return ctx.meta[UTIL];
       },
     });
 
