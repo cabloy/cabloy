@@ -6,6 +6,8 @@ const Build = require('../common/build.js');
 const _blocksLocales = {};
 const _blockArrayLocales = {};
 
+const __cacheRegisterAllWatchersStartup = '__registerAllWatchersStartup';
+
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Site extends app.Service {
@@ -109,9 +111,27 @@ module.exports = app => {
       });
     }
 
-    async registerAllWatchers() {
+    async registerAllWatchersStartup() {
       // only in development
       if (!this.ctx.app.meta.isLocal) return;
+      // queue
+      this.ctx.app.meta.queue.push({
+        subdomain: this.ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'registerAllWatchers',
+        data: null,
+      });
+    }
+
+    async registerAllWatchersQueue() {
+      // only in development
+      if (!this.ctx.app.meta.isLocal) return;
+      // check cache
+      const cache = this.ctx.cache.db.module(moduleInfo.relativeName);
+      const flag = await cache.get(__cacheRegisterAllWatchersStartup);
+      if (flag) return;
+      // set cache
+      await cache.set(__cacheRegisterAllWatchersStartup, true, 6 * 1000);
       // loop modules
       for (const module of this.ctx.app.meta.modulesArray) {
         // cms.site=true

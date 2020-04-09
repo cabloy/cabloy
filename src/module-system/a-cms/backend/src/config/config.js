@@ -7,13 +7,16 @@ module.exports = appInfo => {
     render: {
       path: 'queue/render',
     },
+    registerAllWatchers: {
+      path: 'site/registerAllWatchersQueue',
+    },
   };
 
   // startups
   config.startups = {
     registerAllWatchers: {
       instance: true,
-      path: 'site/registerAllWatchers',
+      path: 'site/registerAllWatchersStartup',
     },
   };
 

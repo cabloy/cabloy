@@ -135,8 +135,13 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async registerAllWatchers() {
-      await this.ctx.service.site.registerAllWatchers();
+    async registerAllWatchersStartup() {
+      await this.ctx.service.site.registerAllWatchersStartup();
+      this.ctx.success();
+    }
+
+    async registerAllWatchersQueue() {
+      await this.ctx.service.site.registerAllWatchersQueue();
       this.ctx.success();
     }
 
