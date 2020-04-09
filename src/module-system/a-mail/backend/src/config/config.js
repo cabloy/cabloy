@@ -24,6 +24,7 @@ module.exports = appInfo => {
       instance: true,
       repeat: {
         every: 120 * 1000,
+        // every: 5 * 1000,
       },
     },
   };
