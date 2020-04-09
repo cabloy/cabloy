@@ -1,6 +1,7 @@
 const version = require('./controller/version.js');
 
 module.exports = [
+  { method: 'post', path: 'version/databaseInitQueue', controller: version, middlewares: 'inner', meta: { instance: { enable: false }, auth: { enable: false } } },
   { method: 'post', path: 'version/start', controller: version, middlewares: 'inner', meta: { instance: { enable: false }, auth: { enable: false } } },
   { method: 'post', path: 'version/check', controller: version, middlewares: 'inner', meta: { instance: { enable: false }, auth: { enable: false } } },
   { method: 'post', path: 'version/updateModule', controller: version, middlewares: 'inner,transaction', meta: { instance: { enable: false }, auth: { enable: false } } },
