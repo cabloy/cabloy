@@ -18,6 +18,7 @@ const testCtxConfig = require('./controller/test/ctx/config.js');
 const testCtxLocale = require('./controller/test/ctx/locale.js');
 const testCacheMem = require('./controller/test/cache/mem.js');
 const testCacheDb = require('./controller/test/cache/db.js');
+const testCacheRedis = require('./controller/test/cache/redis.js');
 const testRoleUserRole = require('./controller/test/role/userRole.js');
 const testEventHello = require('./controller/test/event/hello.js');
 const testEventUserVerify = require('./controller/test/event/userVerify.js');
@@ -135,6 +136,7 @@ module.exports = app => {
       // test/cache
       { method: 'post', path: 'test/cache/mem', controller: testCacheMem, middlewares: 'test', meta: { auth: { enable: false } } },
       { method: 'post', path: 'test/cache/db', controller: testCacheDb, middlewares: 'test', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/cache/redis', controller: testCacheRedis, middlewares: 'test', meta: { auth: { enable: false } } },
 
       // test/feat/httpLog
       { method: 'post', path: 'test/feat/httpLog', controller: testFeatHttpLog, middlewares: 'test,httpLog', meta: { auth: { enable: false } } },

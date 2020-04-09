@@ -8,7 +8,7 @@ module.exports = app => {
     async mem() {
 
       // name
-      const name = '__test:name';
+      const name = '__test:name:mem';
 
       // set
       this.ctx.cache.mem.set(name, 'zhennann');
@@ -42,10 +42,6 @@ module.exports = app => {
       await sleep(1500);
       value = this.ctx.cache.mem.get(name);
       assert.equal(value, null);
-
-      // clear
-      //   not clear, hold other caches
-      // this.ctx.cache.mem.clear();
 
       // done
       this.ctx.success();

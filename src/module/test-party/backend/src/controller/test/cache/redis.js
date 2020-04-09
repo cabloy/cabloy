@@ -3,44 +3,44 @@ const assert = require3('assert');
 
 module.exports = app => {
 
-  class DbController extends app.Controller {
+  class RedisController extends app.Controller {
 
-    async db() {
+    async redis() {
 
       // name
-      const name = '__test:name:db';
+      const name = '__test:name:redis';
 
       // set
-      await this.ctx.cache.db.set(name, 'zhennann');
+      await this.ctx.cache.redis.set(name, 'zhennann');
 
       // has
-      let res = await this.ctx.cache.db.has(name);
+      let res = await this.ctx.cache.redis.has(name);
       assert.equal(res, true);
 
       // get
-      let value = await this.ctx.cache.db.get(name);
+      let value = await this.ctx.cache.redis.get(name);
       assert.equal(value, 'zhennann');
 
       // remove
-      await this.ctx.cache.db.remove(name);
-      res = await this.ctx.cache.db.has(name);
+      await this.ctx.cache.redis.remove(name);
+      res = await this.ctx.cache.redis.has(name);
       assert.equal(res, false);
 
       // set with timeout
-      await this.ctx.cache.db.set(name, 'zhennann', 2000);
+      await this.ctx.cache.redis.set(name, 'zhennann', 2000);
 
       // get
-      value = await this.ctx.cache.db.get(name);
+      value = await this.ctx.cache.redis.get(name);
       assert.equal(value, 'zhennann');
 
       // other module's cache
-      const moduleCache = this.ctx.cache.db.module(this.ctx.module.info.relativeName);
+      const moduleCache = this.ctx.cache.redis.module(this.ctx.module.info.relativeName);
       value = await moduleCache.get(name);
       assert.equal(value, 'zhennann');
 
       // get after timeout
       await sleep(3000);
-      value = await this.ctx.cache.db.get(name);
+      value = await this.ctx.cache.redis.get(name);
       assert.equal(value, undefined);
 
       // done
@@ -48,7 +48,7 @@ module.exports = app => {
     }
 
   }
-  return DbController;
+  return RedisController;
 };
 
 function sleep(ms) {
