@@ -1,15 +1,12 @@
+const versionInit = require('../version/init.js');
 const versionReady = require('../version/ready.js');
 const constant = require('../../base/constants.js');
 
 module.exports = function(loader) {
   // egg-ready
   loader.app.messenger.once('egg-ready', async () => {
-    // database init
-    await loader.app.meta.queue.pushAsync({
-      module: 'a-version',
-      queueName: 'databaseInit',
-      data: null,
-    });
+    // version init
+    await versionInit(loader.app);
     // version ready
     await versionReady(loader.app);
     // event: appReady
@@ -20,5 +17,4 @@ module.exports = function(loader) {
       data: { pid: process.pid },
     });
   });
-
 };

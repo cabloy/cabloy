@@ -57,7 +57,9 @@ module.exports = function(app) {
         }
         // bottleneck limiter
         const _limiterOptions = Object.assign({}, { expiration: 1000 * 60 }, limiterOptions);
-        return await limiterBottleneck.schedule(_limiterOptions, () => this._performTask(job.data));
+        return await limiterBottleneck.schedule(_limiterOptions, () => {
+          return this._performTask(job.data);
+        });
       }, _workerOptions);
       _worker.on('failed', (job, err) => {
         console.error(err);
@@ -78,7 +80,7 @@ module.exports = function(app) {
     _callCallback(jobId, failedReason, data) {
       const _callback = this._queueCallbacks[jobId];
       if (_callback) {
-        _callback(failedReason ? new Error(failedReason) : null, data);
+        _callback.callback(failedReason ? new Error(failedReason) : null, data);
         delete this._queueCallbacks[jobId];
       }
     }
@@ -98,19 +100,24 @@ module.exports = function(app) {
       const jobId = uuid.v4();
       const jobName = info.jobName || jobId;
       const _jobOptions = Object.assign({}, jobOptions, info.jobOptions, { jobId });
+      // not async
+      if (!isAsync) {
+        // add job
+        return this._queues[queueKey].add(jobName, info, _jobOptions);
+      }
       // async
-      const res = !isAsync ? null :
-        new Promise((resolve, reject) => {
-          // callback
-          this._queueCallbacks[jobId] = (err, data) => {
+      return new Promise((resolve, reject) => {
+        // callback
+        this._queueCallbacks[jobId] = {
+          info,
+          callback: (err, data) => {
             if (err) return reject(err);
             resolve(data);
-          };
-        });
-      // add job
-      this._queues[queueKey].add(jobName, info, _jobOptions);
-      // ok
-      return res;
+          },
+        };
+        // add job
+        return this._queues[queueKey].add(jobName, info, _jobOptions);
+      });
     }
 
     _combineQueueKey({ subdomain = undefined, module = '', queueName = '', queueNameSub = '' }) {
