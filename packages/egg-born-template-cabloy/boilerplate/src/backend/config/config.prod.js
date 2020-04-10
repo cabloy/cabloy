@@ -39,5 +39,25 @@ module.exports = appInfo => {
     },
   };
 
+  // redis
+  config.redisDefault = {
+    host: 'redis', // see: docker-compose.yml
+    port: 6379,
+    password: '',
+    db: 0,
+  };
+  config.redisDefaultCache = Object.assign({}, config.redisDefault, {
+    keyPrefix: `cache_${appInfo.name}:`,
+  });
+
+  config.redis = {
+    clients: {
+      limiter: config.redisDefault,
+      queue: config.redisDefault,
+      broadcast: config.redisDefault,
+      cache: config.redisDefaultCache,
+    },
+  };
+
   return config;
 };
