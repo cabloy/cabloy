@@ -131,7 +131,7 @@ module.exports = app => {
       const flag = await cache.get(__cacheRegisterAllWatchersStartup);
       if (flag) return;
       // set cache
-      await cache.set(__cacheRegisterAllWatchersStartup, true, 6 * 1000);
+      await cache.set(__cacheRegisterAllWatchersStartup, true, this.ctx.app.config.queue.startup.cache);
       // loop modules
       for (const module of this.ctx.app.meta.modulesArray) {
         // cms.site=true
