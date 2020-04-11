@@ -14,6 +14,8 @@ class BackendTestCommand extends TestCommand {
 
   * run(context) {
 
+    if (context.argv.timeout === undefined) context.argv.timeout = 3600 * 1000;
+
     if (!context.env.EGG_BASE_DIR) context.env.EGG_BASE_DIR = path.join(process.cwd(), 'src/backend');
 
     if (!context.argv._ || context.argv._.length === 0) context.argv._ = [ 'src/**/test/**/*.test.js' ];
