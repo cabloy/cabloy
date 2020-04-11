@@ -26,4 +26,4 @@ RUN npm i
 RUN npm run build:front
 
 # start
-CMD npx egg-born-scripts backend-start
+CMD npm run start:backend
