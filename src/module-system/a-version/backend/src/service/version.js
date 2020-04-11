@@ -28,7 +28,7 @@ module.exports = app => {
         const flag = await cache.get(__cacheDatabaseInitQueue);
         if (flag) return databaseName;
         // set
-        await cache.set(__cacheDatabaseInitQueue, true, 6 * 1000);
+        await cache.set(__cacheDatabaseInitQueue, true, this.ctx.app.config.queue.startup.cache);
       }
       // version start
       await this.ctx.performAction({
