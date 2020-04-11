@@ -10,6 +10,8 @@ class BackendStartCommand extends StartCommand {
 
   * run(context) {
 
+    if (context.argv.sticky === undefined) context.argv.sticky = true;
+
     if (!context.argv._ || context.argv._.length === 0) context.argv._ = [ 'src/backend' ];
 
     utils.versionCheck('cabloy', 'start').then(data => {
