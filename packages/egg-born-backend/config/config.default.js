@@ -77,6 +77,16 @@ module.exports = appInfo => {
     '/favicon.ico': fs.readFileSync(path.join(__dirname, 'favicon.ico')),
   };
 
+  // queue
+  config.queue = {
+    bottleneck: {
+      expiration: 20 * 1000,
+    },
+    startup: {
+      cache: 6 * 1000,
+    },
+  };
+
   // mysql
   config.mysql = {
     clients: {

@@ -56,13 +56,13 @@ module.exports = function(app) {
           return await this._performTask(job.data);
         }
         // bottleneck limiter
-        const _limiterOptions = Object.assign({}, { expiration: 1000 * 60 }, limiterOptions);
+        const _limiterOptions = Object.assign({}, { expiration: app.config.queue.bottleneck.expiration }, limiterOptions);
         return await limiterBottleneck.schedule(_limiterOptions, () => {
           return this._performTask(job.data);
         });
       }, _workerOptions);
       _worker.on('failed', (job, err) => {
-        console.error(err);
+        app.logger.error(err);
       });
       // create events
       const connectionEvents = app.redis.get('queue').duplicate();
