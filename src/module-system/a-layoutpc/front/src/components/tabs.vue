@@ -3,7 +3,7 @@ export default {
   render(c) {
     const children = [];
     for (const group of this.layout.groups) {
-      const text = c('div', { domProps: { innerText: group.title } });
+      const text = c('span', { domProps: { innerText: group.title } });
       const close = c('f7-icon', {
         staticClass: 'close',
         attrs: { material: 'close' },
