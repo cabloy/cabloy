@@ -23,7 +23,7 @@ module.exports = app => {
       // const { providerInstanceId, context } = this.ctx.request.body;
       const { data, dataInput } = this.ctx.request.body;
       if (!data) this.ctx.throw(1001);
-      if (data.token !== dataInput.token) this.ctx.throw(1002);
+      if (!dataInput.token || dataInput.token.toLowerCase() !== data.token.toLowerCase()) this.ctx.throw(1002);
       this.ctx.success();
     }
 
