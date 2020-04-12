@@ -89,7 +89,7 @@ export default function(Vue) {
 
       // cursor
       const cursor = isResizable ? (isRow ? 'row-resize' : 'col-resize') : 'move';
-      const style = `html, html a.link {cursor: ${cursor} !important;}`;
+      const style = `html, html a.link {cursor: ${cursor} !important; -webkit-user-select: none !important;}`;
       _stylesheet.innerHTML = style;
 
       // ready
