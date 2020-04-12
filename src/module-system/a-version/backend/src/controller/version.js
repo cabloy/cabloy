@@ -4,8 +4,8 @@ const chalk = require3('chalk');
 module.exports = app => {
   class VersionController extends app.Controller {
 
-    async databaseInit() {
-      const res = await this.service.version.databaseInit();
+    async databaseInitStartup() {
+      const res = await this.service.version.databaseInitStartup();
       this.ctx.success(res);
     }
 

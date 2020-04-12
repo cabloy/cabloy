@@ -8,7 +8,7 @@ module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Version extends app.Service {
 
-    async databaseInit() {
+    async databaseInitStartup() {
       // queue
       const databaseName = await app.meta.queue.pushAsync({
         module: moduleInfo.relativeName,
