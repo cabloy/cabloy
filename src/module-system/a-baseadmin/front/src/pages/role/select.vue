@@ -27,6 +27,9 @@ export default {
     catalogOnly() {
       return this.contextParams.catalogOnly;
     },
+    leafOnly() {
+      return this.contextParams.leafOnly;
+    },
     roleIdDisable() {
       return this.contextParams.roleIdDisable;
     },
@@ -48,12 +51,17 @@ export default {
       return this.$api.post('role/children', { roleId, page: { size: 0 } })
         .then(data => {
           let list = data.list.map(item => {
+            const checkbox = !this.leafOnly || item.catalog === 0;
             const node = {
               id: item.id,
               attrs: {
                 label: item.roleName,
                 toggle: item.catalog === 1,
                 loadChildren: item.catalog === 1,
+                checkbox,
+                checkOnLabel: checkbox,
+                selectable: checkbox,
+                itemToggle: !checkbox,
               },
               data: item,
             };

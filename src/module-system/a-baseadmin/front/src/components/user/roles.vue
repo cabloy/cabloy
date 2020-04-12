@@ -60,6 +60,7 @@ export default {
           params: {
             roleIdStart: null,
             multiple: false,
+            leafOnly: true,
           },
           callback: (code, data) => {
             if (code === 200) {
