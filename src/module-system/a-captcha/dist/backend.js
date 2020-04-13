@@ -87,12 +87,108 @@ module.exports =
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = {
-  getCacheKey({ ctx }) {
-    return `captcha:${ctx.meta.user.anonymousId()}`;
-  },
+const require3 = __webpack_require__(8);
+const mparse = require3('egg-born-mparse').default;
+const extend = require3('extend2');
+const uuid = require3('uuid');
+const utils = __webpack_require__(9);
+
+const Fn = module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Captcha {
+
+    constructor(moduleName) {
+      this.moduleName = moduleName || ctx.module.info.relativeName;
+    }
+
+    // other module's captcha
+    module(moduleName) {
+      return new (Fn(ctx))(moduleName);
+    }
+
+    async getProvider({ module, sceneName }) {
+      // default scene
+      const configDefault = ctx.config.module(moduleInfo.relativeName);
+      const sceneDefault = configDefault.captcha.scenes.default;
+      // module scene
+      const configModule = ctx.config.module(module);
+      const sceneModule = (configModule.captcha && configModule.captcha.scenes && configModule.captcha.scenes[sceneName]) || null;
+      return extend(true, {}, sceneDefault, sceneModule);
+    }
+
+    // create provider instance
+    async createProviderInstance({ module, sceneName, context }) {
+      // provider
+      const provider = await this.getProvider({ module, sceneName });
+      // instance id
+      const providerInstanceId = uuid.v4().replace(/-/g, '');
+      // cache
+      const key = utils.getCacheKey({ ctx, providerInstanceId });
+      await ctx.cache.db.module(moduleInfo.relativeName).set(key, { providerInstanceId, module, sceneName, context }, provider.timeout);
+      // ok
+      return { providerInstanceId, provider };
+    }
+
+    // get
+    async getProviderInstance({ providerInstanceId }) {
+      // cache
+      const cache = ctx.cache.db.module(moduleInfo.relativeName);
+      const key = utils.getCacheKey({ ctx, providerInstanceId });
+      // get
+      return await cache.get(key);
+    }
+
+    // update
+    async update({ providerInstanceId, data, context }) {
+      // cache
+      const cache = ctx.cache.db.module(moduleInfo.relativeName);
+      const key = utils.getCacheKey({ ctx, providerInstanceId });
+      // get
+      const providerInstance = await this.getProviderInstance({ providerInstanceId });
+      if (!providerInstance) ctx.throw(403);
+      // provider
+      const provider = await this.getProvider({ module: providerInstance.module, sceneName: providerInstance.sceneName });
+      // update
+      providerInstance.data = data;
+      providerInstance.context = context;
+      await cache.set(key, providerInstance, provider.timeout);
+    }
+
+    async verify({ module, sceneName, providerInstanceId, dataInput }) {
+      // cache
+      const cache = ctx.cache.db.module(moduleInfo.relativeName);
+      const key = utils.getCacheKey({ ctx, providerInstanceId });
+      // get
+      const providerInstance = await this.getProviderInstance({ providerInstanceId });
+      if (!providerInstance) ctx.throw(403);
+      // check if the same scene
+      if (module !== providerInstance.module || sceneName !== providerInstance.sceneName) ctx.throw(403);
+      // provider
+      const provider = await this.getProvider({ module: providerInstance.module, sceneName: providerInstance.sceneName });
+      // invoke provider verify
+      const _moduleInfo = mparse.parseInfo(provider.module);
+      await ctx.performAction({
+        method: 'post',
+        url: `/${_moduleInfo.url}/${provider.name}/verify`,
+        body: {
+          providerInstanceId,
+          context: providerInstance.context,
+          data: providerInstance.data,
+          dataInput,
+        },
+      });
+      // // clear
+      // await cache.remove(key);
+      // should hold the cache item
+      // update
+      providerInstance.data = null;
+      await cache.set(key, providerInstance, provider.timeout);
+    }
+
+  }
+  return Captcha;
 };
 
 
@@ -108,13 +204,13 @@ const middlewares = __webpack_require__(6);
 module.exports = app => {
 
   // routes
-  const routes = __webpack_require__(10)(app);
+  const routes = __webpack_require__(11)(app);
   // services
-  const services = __webpack_require__(13)(app);
+  const services = __webpack_require__(14)(app);
   // models
-  const models = __webpack_require__(16)(app);
+  const models = __webpack_require__(17)(app);
   // meta
-  const meta = __webpack_require__(17)(app);
+  const meta = __webpack_require__(18)(app);
 
   return {
     routes,
@@ -140,9 +236,9 @@ module.exports = appInfo => {
 
   // middlewares
   config.middlewares = {
-    captchaContainer: {
+    captcha: {
       global: false,
-      dependencies: 'cachedb',
+      dependencies: 'auth,cachedb',
     },
     captchaVerify: {
       global: false,
@@ -150,15 +246,15 @@ module.exports = appInfo => {
     },
   };
 
-  // provider
-  config.provider = {
-    module: 'a-captchasimple',
-    name: 'simple',
-  };
-
-  // cache timeout
-  config.cache = {
-    timeout: 20 * 60 * 1000,
+  // captcha scenes
+  config.captcha = {
+    scenes: {
+      default: {
+        module: 'a-captchasimple',
+        name: 'captcha',
+        timeout: 20 * 60 * 1000,
+      },
+    },
   };
 
   return config;
@@ -179,8 +275,7 @@ module.exports = {
 /***/ (function(module, exports) {
 
 module.exports = {
-  'Mismatch Captcha Code': '验证码不匹配',
-  'Verification code is invalid, please retrieve again': '验证码已失效，请重新获取',
+  'Scene Not Specified': '场景未指定',
 };
 
 
@@ -190,6 +285,7 @@ module.exports = {
 
 // error code should start from 1001
 module.exports = {
+  1001: 'Scene Not Specified',
 };
 
 
@@ -197,11 +293,11 @@ module.exports = {
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const captchaContainer = __webpack_require__(7);
-const captchaVerify = __webpack_require__(9);
+const captcha = __webpack_require__(7);
+const captchaVerify = __webpack_require__(10);
 
 module.exports = {
-  captchaContainer,
+  captcha,
   captchaVerify,
 };
 
@@ -210,21 +306,20 @@ module.exports = {
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// captchaContainer
-const CaptchaContainerFn = __webpack_require__(8);
-const CaptchaController = Symbol('CTX#__CaptchaController');
-
+// captcha
+const CaptchaFn = __webpack_require__(0);
+const CAPTCHA = Symbol('CTX#__CAPTCHA');
 
 module.exports = () => {
-  return async function captchaContainer(ctx, next) {
+  return async function captcha(ctx, next) {
     ctx.meta = ctx.meta || {};
     // captchaContainer
     Object.defineProperty(ctx.meta, 'captcha', {
       get() {
-        if (ctx.meta[CaptchaController] === undefined) {
-          ctx.meta[CaptchaController] = new (CaptchaContainerFn(ctx))();
+        if (ctx.meta[CAPTCHA] === undefined) {
+          ctx.meta[CAPTCHA] = new (CaptchaFn(ctx))();
         }
-        return ctx.meta[CaptchaController];
+        return ctx.meta[CAPTCHA];
       },
     });
     // next
@@ -235,89 +330,69 @@ module.exports = () => {
 
 /***/ }),
 /* 8 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-const utils = __webpack_require__(0);
+module.exports = require("require3");
 
-const Fn = module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class CaptchaContainer {
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
 
-    constructor(moduleName) {
-      this.moduleName = moduleName || ctx.module.info.relativeName;
-    }
-
-    // other module's mail
-    module(moduleName) {
-      return new (Fn(ctx))(moduleName);
-    }
-
-    // save
-    async save({ provider, code }) {
-      // config
-      const config = ctx.config.module(moduleInfo.relativeName);
-      // cache
-      const cache = ctx.cache.db.module(moduleInfo.relativeName);
-      // timeout
-      const timeout = config.cache.timeout;
-      // get
-      const key = utils.getCacheKey({ ctx });
-      const value = await cache.get(key);
-      if (!value) ctx.throw(403);
-      // verify provider
-      if (provider.module !== value.provider.module || provider.name !== value.provider.name) ctx.throw(403);
-      // save
-      value.code = code;
-      await cache.set(key, value, timeout);
-    }
-
-  }
-  return CaptchaContainer;
+module.exports = {
+  getCacheKey({ ctx, providerInstanceId }) {
+    return `captcha:${ctx.meta.user.anonymousId()}:${providerInstanceId}`;
+  },
 };
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const utils = __webpack_require__(0);
+const CaptchaFn = __webpack_require__(0);
 
-module.exports = (options, app) => {
+module.exports = (options2, app) => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  return async function captchaVerify(ctx, next) {
-    // config
-    const config = ctx.config.module(moduleInfo.relativeName);
-    // cache
-    const cache = ctx.cache.db.module(moduleInfo.relativeName);
-    // timeout
-    const timeout = config.cache.timeout;
-    // get
-    const key = utils.getCacheKey({ ctx });
-    const value = await cache.get(key);
-    if (!value || !value.code) {
-      // error
-      throw combineCaptchaError({
-        message: ctx.text('Verification code is invalid, please retrieve again'),
-      });
+  return async function captchaVerify(ctx, next, options) {
+    // must exists
+    const scene = options.scene;
+    const scenes = options.scenes;
+    if (!scene && !scenes) ctx.throw.module(moduleInfo.relativeName, 1001);
+
+    // scene
+    if (scene) {
+      await sceneVerify({ ctx, scene });
+    } else if (scenes) {
+      for (const scene of scenes) {
+        await sceneVerify({ ctx, scene });
+      }
     }
-    // verify
-    if (ctx.request.body.captcha.code !== value.code) {
-      // error
-      throw combineCaptchaError({
-        message: ctx.text('Mismatch Captcha Code'),
-      });
-    }
-    // clear
-    // await cache.remove(key);
-    value.code = undefined;
-    await cache.set(key, value, timeout);
 
     // next
     await next();
   };
 };
 
-function combineCaptchaError({ message }) {
+async function sceneVerify({ ctx, scene }) {
+  // params
+  const module = scene.module || ctx.module.info.relativeName;
+  const sceneName = scene.name;
+  const captchaData = ctx.request.body[scene.dataKey || 'captcha'];
+  const providerInstanceId = captchaData.providerInstanceId;
+  const dataInput = captchaData.data;
+  // verify
+  try {
+    const _captcha = new (CaptchaFn(ctx))();
+    await _captcha.verify({ module, sceneName, providerInstanceId, dataInput });
+  } catch (err) {
+    throw combineCaptchaError({
+      fieldKey: scene.fieldKey || 'token',
+      message: err.message,
+    });
+  }
+}
+
+function combineCaptchaError({ fieldKey, message }) {
   // error
   const error = new Error();
   error.code = 422;
@@ -326,8 +401,8 @@ function combineCaptchaError({ message }) {
       keyword: 'x-captcha',
       params: [],
       message,
-      dataPath: '/captcha/code',
-      schemaPath: '#/properties/captcha/code/x-captcha',
+      dataPath: `/captcha/${fieldKey}`,
+      schemaPath: `#/properties/captcha/${fieldKey}/x-captcha`,
     },
   ];
   return error;
@@ -335,11 +410,11 @@ function combineCaptchaError({ message }) {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(11);
-const captcha = __webpack_require__(12);
+const version = __webpack_require__(12);
+const captcha = __webpack_require__(13);
 
 module.exports = app => {
   const routes = [
@@ -348,14 +423,14 @@ module.exports = app => {
     { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/test', controller: version, middlewares: 'test' },
     // captcha
-    { method: 'post', path: 'captcha/getProvider', controller: captcha },
+    { method: 'post', path: 'captcha/createProviderInstance', controller: captcha, middlewares: 'captcha' },
   ];
   return routes;
 };
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -382,14 +457,18 @@ module.exports = app => {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
   class CaptchaController extends app.Controller {
 
-    async getProvider() {
-      const res = await this.service.captcha.getProvider();
+    async createProviderInstance() {
+      const res = await this.service.captcha.createProviderInstance({
+        module: this.ctx.request.body.module,
+        sceneName: this.ctx.request.body.sceneName,
+        context: this.ctx.request.body.context,
+      });
       this.ctx.success(res);
     }
 
@@ -399,11 +478,11 @@ module.exports = app => {
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(14);
-const captcha = __webpack_require__(15);
+const version = __webpack_require__(15);
+const captcha = __webpack_require__(16);
 
 module.exports = app => {
   const services = {
@@ -415,7 +494,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -438,25 +517,15 @@ module.exports = app => {
 
 
 /***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const utils = __webpack_require__(0);
+/* 16 */
+/***/ (function(module, exports) {
 
 module.exports = app => {
 
   class Captcha extends app.Service {
 
-    async getProvider() {
-      // timeout
-      const timeout = this.ctx.config.cache.timeout;
-      // provider
-      const provider = this.ctx.config.provider;
-      // cache
-      const key = utils.getCacheKey({ ctx: this.ctx });
-      await this.ctx.cache.db.set(key, { provider }, timeout);
-      // ok
-      return { provider };
+    async createProviderInstance({ module, sceneName, context }) {
+      return await this.ctx.meta.captcha.createProviderInstance({ module, sceneName, context });
     }
 
   }
@@ -466,7 +535,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -477,11 +546,11 @@ module.exports = app => {
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
-  const schemas = __webpack_require__(18)(app);
+  const schemas = __webpack_require__(19)(app);
   const meta = {
     base: {
       atoms: {
@@ -502,7 +571,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
