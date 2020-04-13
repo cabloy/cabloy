@@ -206,7 +206,7 @@ module.exports = {
   Post2: '帖子',
   'Create Post': '新建帖子',
   'Post List': '帖子列表',
-  'Post List(by category)': '帖子列表(按目录)',
+  'Post List(by Category)': '帖子列表(按目录)',
 };
 
 
@@ -688,7 +688,7 @@ module.exports = app => {
           menu: 1,
         },
         listPostByCategory: {
-          title: 'Post List(by category)',
+          title: 'Post List(by Category)',
           scene: 'list',
           autoRight: 1,
           atomClassName: 'post',
