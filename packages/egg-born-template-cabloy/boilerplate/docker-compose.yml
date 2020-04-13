@@ -16,7 +16,7 @@ services:
       - ./docker-compose/output/app/dist:/root/output/app/dist
       - ./docker-compose/output/app/cabloy:/root/cabloy
       - ./docker-compose/logs/app:/root/logs
-    command: ["./scripts/wait-for-it.sh", "mysql:3306", "--","./scripts/wait-for-it.sh", "redis:6379", "--", "./scripts/app-init.sh"]
+    command: ["./scripts/wait-for-it.sh", "mysql:3306", "redis:6379", "-s", "--", "./scripts/app-init.sh"]
 
   nginx:
     image: nginx:latest
@@ -58,8 +58,7 @@ services:
 
   redis:
     image: redis:latest
-    command:
-      - --appendonly=yes
+    command: ["redis-server", "--appendonly", "yes"]
     restart: always
     ports:
       - "6379:6379"
