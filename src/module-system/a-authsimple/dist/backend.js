@@ -128,12 +128,22 @@ module.exports = [
   { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
   { method: 'post', path: 'version/test', controller: version, middlewares: 'test' },
   { method: 'post', path: 'auth/add', controller: auth, middlewares: 'inner', meta: { auth: { enable: false } } },
-  { method: 'post', path: 'auth/signin', controller: auth, middlewares: 'captchaVerify' },
+  { method: 'post', path: 'auth/signin', controller: auth, middlewares: 'captchaVerify',
+    meta: {
+      captchaVerify: { scene: { name: 'signin' } },
+    },
+  },
   { method: 'post', path: 'auth/signup', controller: auth, middlewares: 'captchaVerify,validate',
-    meta: { validate: { validator: 'signup' } },
+    meta: {
+      captchaVerify: { scene: { name: 'signup' } },
+      validate: { validator: 'signup' },
+    },
   },
   { method: 'post', path: 'auth/passwordChange', controller: auth, middlewares: 'captchaVerify,validate',
-    meta: { validate: { validator: 'passwordChange' } },
+    meta: {
+      captchaVerify: { scene: { name: 'passwordChange' } },
+      validate: { validator: 'passwordChange' },
+    },
   },
   { method: 'post', path: 'auth/passwordForgot', controller: auth, middlewares: 'validate,mail',
     meta: { validate: { validator: 'passwordForgot' } },
@@ -368,19 +378,12 @@ module.exports = app => {
     }
 
     async signin({ auth, password, rememberMe }) {
-      try {
-        const res = await this.ctx.performAction({
-          method: 'post',
-          url: 'passport/a-authsimple/authsimple',
-          body: { auth, password, rememberMe },
-        });
-        return res;
-      } catch (err) {
-        const error = new Error();
-        error.code = err.code;
-        error.message = err.message;
-        throw error;
-      }
+      const res = await this.ctx.performAction({
+        method: 'post',
+        url: 'passport/a-authsimple/authsimple',
+        body: { auth, password, rememberMe },
+      });
+      return res;
     }
 
     async _addAuthSimple({ password }) {
@@ -434,10 +437,30 @@ module.exports = app => {
 
     async passwordChange({ passwordOld, passwordNew, userId }) {
       // verify old
-      const res = await this.verify({ userId, password: passwordOld });
-      if (!res) this.ctx.throw(403);
+      const authSimple = await this.verify({ userId, password: passwordOld });
+      if (!authSimple) this.ctx.throw(403);
       // save new
       await this._passwordSaveNew({ passwordNew, userId });
+
+      // profileUser
+      const authSimpleId = authSimple.id;
+      const profileUser = {
+        module: moduleInfo.relativeName,
+        provider: 'authsimple',
+        profileId: authSimpleId,
+        maxAge: 0,
+        profile: {
+          authSimpleId,
+          rememberMe: false,
+        },
+      };
+
+      // verify
+      const verifyUser = await this.ctx.meta.user.verify({ state: 'associate', profileUser });
+      if (!verifyUser) this.ctx.throw(403);
+      // login now
+      //   always no matter login/associate
+      // await this.ctx.login(verifyUser);
     }
 
     async _passwordSaveNew({ passwordNew, userId }) {
@@ -557,7 +580,7 @@ module.exports = app => {
         const data = {
           message: this.ctx.text('confirmationEmailExpired'),
           link: '/a/authsimple/emailConfirm',
-          linkText: this.ctx.text('Resend confirmation email'),
+          linkText: this.ctx.text('Resend Confirmation Email'),
         };
         const url = this.ctx.meta.base.getAlertUrl({ data });
         return this.ctx.redirect(url);
@@ -775,6 +798,19 @@ module.exports = appInfo => {
     },
   };
 
+  // captcha scenes
+  config.captcha = {
+    scenes: {
+      passwordChange: null,
+      signup: null,
+      signin: null, // means using default
+      // signin: {
+      //   module: 'a-captchasimple',
+      //   name: 'captcha',
+      // },
+    },
+  };
+
   return config;
 };
 
@@ -876,14 +912,14 @@ const passwordResetEmailBody =
 module.exports = {
   Close: '关闭',
   'User/Password': '用户/密码',
-  'Authentication failed': '认证失败',
-  'User is disabled': '用户被禁用',
+  'Authentication Failed': '认证失败',
+  'User is Disabled': '用户被禁用',
   'Auth-Simple': '认证-简单',
-  'Reset password': '重置密码',
-  'Element exists': '元素已存在',
-  'Cannot contain __': '不能包含__',
-  'Resend confirmation email': '重新发送确认邮件',
-  'Email address does not exist': '邮件地址不存在',
+  'Reset Password': '重置密码',
+  'Element Exists': '元素已存在',
+  'Cannot Contain __': '不能包含__',
+  'Resend Confirmation Email': '重新发送确认邮件',
+  'Email Address does not Exist': '邮件地址不存在',
   confirmationEmailExpired: '确认邮件链接已经过期',
   confirmationEmailSucceeded: '您的邮件地址已经确认',
   confirmationEmailSubject,
@@ -900,8 +936,8 @@ module.exports = {
 
 // error code should start from 1001
 module.exports = {
-  1001: 'Authentication failed',
-  1002: 'User is disabled',
+  1001: 'Authentication Failed',
+  1002: 'User is Disabled',
   1003: 'passwordResetEmailExpired',
 };
 
@@ -982,6 +1018,7 @@ module.exports = app => {
       provider,
       profileId: authSimple.id,
       maxAge: rememberMe ? null : 0,
+      authShouldExists: true,
       profile: {
         authSimpleId: authSimple.id,
         rememberMe,
@@ -1150,11 +1187,11 @@ module.exports = app => {
         const ctx = this;
         const res = await ctx.meta.user.exists({ [name]: data });
         if (res && res.id !== ctx.user.agent.id) {
-          const errors = [{ keyword: 'x-exists', params: [], message: ctx.text('Element exists') }];
+          const errors = [{ keyword: 'x-exists', params: [], message: ctx.text('Element Exists') }];
           throw new app.meta.ajv.ValidationError(errors);
         }
         if (!res && data.indexOf('__') > -1) {
-          const errors = [{ keyword: 'x-exists', params: [], message: ctx.text('Cannot contain __') }];
+          const errors = [{ keyword: 'x-exists', params: [], message: ctx.text('Cannot Contain __') }];
           throw new app.meta.ajv.ValidationError(errors);
         }
         return true;
@@ -1170,7 +1207,7 @@ module.exports = app => {
         const ctx = this;
         const res = await ctx.meta.user.exists({ [name]: data });
         if (!res) {
-          const errors = [{ keyword: 'x-passwordForgotEmail', params: [], message: ctx.text('Email address does not exist') }];
+          const errors = [{ keyword: 'x-passwordForgotEmail', params: [], message: ctx.text('Email Address does not Exist') }];
           throw new app.meta.ajv.ValidationError(errors);
         }
         return true;
@@ -1229,7 +1266,7 @@ module.exports = app => {
       passwordAgain: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Password again',
+        ebTitle: 'Password Again',
         ebSecure: true,
         notEmpty: true,
         const: { $data: '1/password' },
@@ -1242,13 +1279,13 @@ module.exports = app => {
       auth: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Your mobile/email',
+        ebTitle: 'Your Username/Mobile/Email',
         notEmpty: true,
       },
       password: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Your password',
+        ebTitle: 'Your Password',
         ebSecure: true,
         notEmpty: true,
         minLength: 6,
@@ -1256,7 +1293,7 @@ module.exports = app => {
       rememberMe: {
         type: 'boolean',
         ebType: 'toggle',
-        ebTitle: 'Remember me',
+        ebTitle: 'Remember Me',
       },
     },
   };
@@ -1266,7 +1303,7 @@ module.exports = app => {
       passwordOld: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Old password',
+        ebTitle: 'Old Password',
         ebSecure: true,
         notEmpty: true,
         minLength: 6,
@@ -1274,7 +1311,7 @@ module.exports = app => {
       passwordNew: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'New password',
+        ebTitle: 'New Password',
         ebSecure: true,
         notEmpty: true,
         minLength: 6,
@@ -1282,7 +1319,7 @@ module.exports = app => {
       passwordNewAgain: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'New password again',
+        ebTitle: 'New Password Again',
         ebSecure: true,
         notEmpty: true,
         const: { $data: '1/passwordNew' },
@@ -1327,7 +1364,7 @@ module.exports = app => {
       passwordNew: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'New password',
+        ebTitle: 'New Password',
         ebSecure: true,
         notEmpty: true,
         minLength: 6,
@@ -1335,7 +1372,7 @@ module.exports = app => {
       passwordNewAgain: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'New password again',
+        ebTitle: 'New Password Again',
         ebSecure: true,
         notEmpty: true,
         const: { $data: '1/passwordNew' },
