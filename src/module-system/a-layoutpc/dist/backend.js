@@ -93,10 +93,13 @@ const routes = __webpack_require__(1);
 const services = __webpack_require__(3);
 const config = __webpack_require__(5);
 const locales = __webpack_require__(6);
-const errors = __webpack_require__(8);
+const errors = __webpack_require__(9);
 
 // eslint-disable-next-line
 module.exports = app => {
+
+  // meta
+  const meta = __webpack_require__(10)(app);
 
   return {
     routes,
@@ -104,6 +107,7 @@ module.exports = app => {
     config,
     locales,
     errors,
+    meta,
   };
 
 };
@@ -117,6 +121,7 @@ const version = __webpack_require__(2);
 
 module.exports = [
   { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
+  { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
 ];
 
 
@@ -129,6 +134,11 @@ module.exports = app => {
 
     async update() {
       await this.service.version.update(this.ctx.request.body);
+      this.ctx.success();
+    }
+
+    async init() {
+      await this.service.version.init(this.ctx.request.body);
       this.ctx.success();
     }
 
@@ -160,6 +170,37 @@ module.exports = app => {
     async update(options) {
     }
 
+    async init(options) {
+
+      if (options.version === 1) {
+
+        // roleFunctions: panels
+        const rolePanels = [
+          { roleName: null, name: 'panelMenu' },
+          { roleName: null, name: 'panelAtom' },
+          { roleName: null, name: 'panelSearch' },
+        ];
+        await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions: rolePanels });
+
+        // roleFunctions: sections
+        const roleSections = [
+          { roleName: null, name: 'sectionCopyright' },
+          { roleName: null, name: 'sectionClock' },
+        ];
+        await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions: roleSections });
+
+        // roleFunctions: buttons
+        const roleButtons = [
+          { roleName: null, name: 'buttonDashboard' },
+          { roleName: null, name: 'buttonFullscreen' },
+          { roleName: null, name: 'buttonMine' },
+        ];
+        await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions: roleButtons });
+
+      }
+
+    }
+
   }
 
   return Version;
@@ -183,7 +224,8 @@ module.exports = appInfo => {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
-  'zh-cn': __webpack_require__(7),
+  'en-us': __webpack_require__(7),
+  'zh-cn': __webpack_require__(8),
 };
 
 
@@ -199,8 +241,88 @@ module.exports = {
 /* 8 */
 /***/ (function(module, exports) {
 
+module.exports = {
+  Copyright: '版权',
+  Clock: '时钟',
+  Dashboard: '仪表盘',
+  Mine: '我的',
+  Fullscreen: '全屏',
+};
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
 // error code should start from 1001
 module.exports = {
+};
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+  // meta
+  const meta = {
+    base: {
+      functions: {
+        // panels
+        panelMenu: {
+          title: 'Menu',
+          url: '/a/base/menu/list',
+          menu: 2,
+          public: 1,
+        },
+        panelAtom: {
+          title: 'Atom',
+          url: '/a/base/atom/list',
+          menu: 2,
+          public: 1,
+        },
+        panelSearch: {
+          title: 'Search',
+          url: '/a/base/atom/searchQuick',
+          menu: 2,
+          public: 1,
+        },
+        // sections
+        sectionCopyright: {
+          title: 'Copyright',
+          component: 'sectionCopyright',
+          menu: 4,
+          public: 1,
+        },
+        sectionClock: {
+          title: 'Clock',
+          component: 'sectionClock',
+          menu: 4,
+          public: 1,
+        },
+        // header buttons
+        buttonDashboard: {
+          title: 'Dashboard',
+          component: 'buttonDashboard',
+          menu: 5,
+          public: 1,
+        },
+        buttonFullscreen: {
+          title: 'Fullscreen',
+          component: 'buttonFullscreen',
+          menu: 5,
+          public: 1,
+        },
+        buttonMine: {
+          title: 'Mine',
+          component: 'buttonMine',
+          menu: 5,
+          public: 1,
+        },
+      },
+    },
+  };
+  return meta;
 };
 
 
