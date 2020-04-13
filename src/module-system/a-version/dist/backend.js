@@ -82,14 +82,20 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports) {
+
+module.exports = require("require3");
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const routes = __webpack_require__(1);
+const routes = __webpack_require__(2);
 const services = __webpack_require__(4);
 const config = __webpack_require__(6);
 const locales = __webpack_require__(7);
@@ -112,12 +118,14 @@ module.exports = app => {
 
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(2);
+const version = __webpack_require__(3);
 
 module.exports = [
+  { method: 'post', path: 'version/databaseInitStartup', controller: version, middlewares: 'inner', meta: { instance: { enable: false }, auth: { enable: false } } },
+  { method: 'post', path: 'version/databaseInitQueue', controller: version, middlewares: 'inner', meta: { instance: { enable: false }, auth: { enable: false } } },
   { method: 'post', path: 'version/start', controller: version, middlewares: 'inner', meta: { instance: { enable: false }, auth: { enable: false } } },
   { method: 'post', path: 'version/check', controller: version, middlewares: 'inner', meta: { instance: { enable: false }, auth: { enable: false } } },
   { method: 'post', path: 'version/updateModule', controller: version, middlewares: 'inner,transaction', meta: { instance: { enable: false }, auth: { enable: false } } },
@@ -129,14 +137,24 @@ module.exports = [
 
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(3);
+const require3 = __webpack_require__(0);
 const chalk = require3('chalk');
 
 module.exports = app => {
   class VersionController extends app.Controller {
+
+    async databaseInitStartup() {
+      const res = await this.service.version.databaseInitStartup();
+      this.ctx.success(res);
+    }
+
+    async databaseInitQueue() {
+      const res = await this.service.version.databaseInitQueue();
+      this.ctx.success(res);
+    }
 
     async start() {
       // update all modules
@@ -235,12 +253,6 @@ module.exports = app => {
 
 
 /***/ }),
-/* 3 */
-/***/ (function(module, exports) {
-
-module.exports = require("require3");
-
-/***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -253,11 +265,98 @@ module.exports = {
 
 /***/ }),
 /* 5 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(0);
+const moment = require3('moment');
+const chalk = require3('chalk');
+
+const __cacheDatabaseInitQueue = '__databaseInitQueue';
 
 module.exports = app => {
-
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Version extends app.Service {
+
+    async databaseInitStartup() {
+      // queue
+      const databaseName = await app.meta.queue.pushAsync({
+        module: moduleInfo.relativeName,
+        queueName: 'databaseInit',
+        data: null,
+      });
+      // database again
+      await this.__database(databaseName);
+    }
+
+    async databaseInitQueue() {
+      // database
+      const databaseName = await this.__database();
+      // check cache
+      if (!app.meta.isTest) {
+        const cache = this.ctx.cache.redis.module(moduleInfo.relativeName);
+        const flag = await cache.get(__cacheDatabaseInitQueue);
+        if (flag) return databaseName;
+        // set
+        await cache.set(__cacheDatabaseInitQueue, true, this.ctx.app.config.queue.startup.cache);
+      }
+      // version start
+      await this.ctx.performAction({
+        method: 'post',
+        url: '/a/version/version/start',
+      });
+      // ok
+      return databaseName;
+    }
+
+    async __database(databaseName) {
+      // db prefix
+      const dbPrefix = `egg-born-test-${app.name}`;
+      // dev/debug db
+      if (app.meta.isLocal) {
+        const mysqlConfig = app.config.mysql.clients.__ebdb;
+        if (mysqlConfig.database === 'sys' && !app.mysql.__ebdb_test) {
+          if (!databaseName) {
+            const mysql = app.mysql.get('__ebdb');
+            const dbs = await mysql.query(`show databases like \'${dbPrefix}-%\'`);
+            if (dbs.length === 0) {
+              databaseName = `${dbPrefix}-${moment().format('YYYYMMDD-HHmmss')}`;
+              await mysql.query(`CREATE DATABASE \`${databaseName}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci`);
+            } else {
+              const db = dbs[0];
+              databaseName = db[Object.keys(db)[0]];
+            }
+          }
+          mysqlConfig.database = databaseName;
+          // create test mysql
+          app.mysql.__ebdb_test = app.mysql.createInstance(mysqlConfig);
+          // database ready
+          console.log(chalk.cyan(`  database: ${mysqlConfig.database}`));
+        }
+      }
+      // test db
+      if (app.meta.isTest && !app.mysql.__ebdb_test) {
+        if (!databaseName) {
+          // drop old databases
+          const mysql = app.mysql.get('__ebdb');
+          const dbs = await mysql.query(`show databases like \'${dbPrefix}-%\'`);
+          for (const db of dbs) {
+            const name = db[Object.keys(db)[0]];
+            await mysql.query(`drop database \`${name}\``);
+          }
+          // create database
+          databaseName = `${dbPrefix}-${moment().format('YYYYMMDD-HHmmss')}`;
+          await mysql.query(`CREATE DATABASE \`${databaseName}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci`);
+        }
+        // create test mysql
+        const mysqlConfig = app.config.mysql.clients.__ebdb;
+        mysqlConfig.database = databaseName;
+        app.mysql.__ebdb_test = app.mysql.createInstance(mysqlConfig);
+        // database ready
+        console.log(chalk.cyan(`  database: ${mysqlConfig.database}`));
+      }
+      // ok
+      return databaseName;
+    }
 
     async check(options) {
 
@@ -515,6 +614,21 @@ module.exports = app => {
 // eslint-disable-next-line
 module.exports = appInfo => {
   const config = {};
+
+  // startups
+  config.startups = {
+    databaseInit: {
+      path: 'version/databaseInitStartup',
+    },
+  };
+
+  // queues
+  config.queues = {
+    databaseInit: {
+      path: 'version/databaseInitQueue',
+    },
+  };
+
   return config;
 };
 
@@ -533,7 +647,7 @@ module.exports = {
 /***/ (function(module, exports) {
 
 module.exports = {
-  'module %s is old': '模块过旧',
+  'Module %s is Old': '模块过旧',
 };
 
 
@@ -542,7 +656,7 @@ module.exports = {
 /***/ (function(module, exports) {
 
 module.exports = {
-  1001: 'module %s is old',
+  1001: 'Module %s is Old',
 };
 
 
