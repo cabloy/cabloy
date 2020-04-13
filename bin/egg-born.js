@@ -52,28 +52,41 @@ co(function* () {
 
   const processFiles = command.processFiles;
   command.processFiles = function* (targetDir, templateDir) {
-    // download test-party
-    let testPartyDir;
+    // download modules
+    let modules;
     const pkg = require(path.join(templateDir, 'package.json'));
     if (pkg.name === 'egg-born-template-cabloy') {
       // download
-      testPartyDir = yield this.downloadModule('egg-born-module-test-party');
+      modules = {};
+      for (const moduleName of [ 'test-party', 'test-partymonkey-monkey' ]) {
+        modules[moduleName] = yield this.__downloadCabloyModule(moduleName);
+      }
     }
     // process files
     yield processFiles.call(command, targetDir, templateDir);
-    // move test-party
-    if (testPartyDir) {
-      const destDir = path.join(targetDir, 'src/module');
-      // move
-      fse.moveSync(testPartyDir, path.join(destDir, 'test-party'));
-      // delete .gitkeep
-      fse.removeSync(path.join(destDir, '.gitkeep'));
-
-      // mergeDependencies
-      const targetPathProject = path.join(targetDir, 'package.json');
-      const sourcePathTest = path.join(destDir, 'test-party/package.json');
-      this.mergeDependencies(targetPathProject, sourcePathTest);
+    // move modules
+    if (modules) {
+      for (const moduleName in modules) {
+        this.__moveCabloyModule(moduleName, modules[moduleName], targetDir);
+      }
     }
+  };
+
+  command.__downloadCabloyModule = function* (moduleName) {
+    return yield this.downloadModule(`egg-born-module-${moduleName}`);
+  };
+
+  command.__moveCabloyModule = function(moduleName, moduleSrcDir, targetDir) {
+    const destDir = path.join(targetDir, 'src/module');
+    // move
+    fse.moveSync(moduleSrcDir, path.join(destDir, moduleName));
+    // delete .gitkeep
+    fse.removeSync(path.join(destDir, '.gitkeep'));
+
+    // mergeDependencies
+    const targetPathProject = path.join(targetDir, 'package.json');
+    const sourcePathTest = path.join(destDir, `${moduleName}/package.json`);
+    this.mergeDependencies(targetPathProject, sourcePathTest);
   };
 
   command.mergeDependencies = function(targetPathProject, sourcePathTest) {
