@@ -82,35 +82,29 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
-
-module.exports = require("require3");
-
-/***/ }),
-/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const config = __webpack_require__(2);
-const locales = __webpack_require__(3);
-const errors = __webpack_require__(5);
-const middlewares = __webpack_require__(6);
+const config = __webpack_require__(1);
+const locales = __webpack_require__(2);
+const errors = __webpack_require__(4);
+const middlewares = __webpack_require__(5);
 
 // eslint-disable-next-line
 module.exports = app => {
 
   // routes
-  const routes = __webpack_require__(7)(app);
+  const routes = __webpack_require__(6)(app);
   // services
-  const services = __webpack_require__(15)(app);
+  const services = __webpack_require__(14)(app);
   // models
-  const models = __webpack_require__(22)(app);
+  const models = __webpack_require__(23)(app);
   // meta
-  const meta = __webpack_require__(24)(app);
+  const meta = __webpack_require__(27)(app);
 
   return {
     routes,
@@ -127,7 +121,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 2 */
+/* 1 */
 /***/ (function(module, exports) {
 
 // eslint-disable-next-line
@@ -138,16 +132,16 @@ module.exports = appInfo => {
 
 
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
-  'zh-cn': __webpack_require__(4),
+  'zh-cn': __webpack_require__(3),
 };
 
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -158,11 +152,12 @@ module.exports = {
   'Menu Right Management': '菜单权限管理',
   'Function Right Management': '功能权限管理',
   'Auth Management': '认证管理',
+  'Menu Management': '菜单管理',
 };
 
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports) {
 
 // error code should start from 1001
@@ -171,7 +166,7 @@ module.exports = {
 
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -179,16 +174,16 @@ module.exports = {
 
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(8);
-const role = __webpack_require__(9);
-const user = __webpack_require__(10);
-const atomRight = __webpack_require__(11);
-const menuRight = __webpack_require__(12);
-const functionRight = __webpack_require__(13);
-const auth = __webpack_require__(14);
+const version = __webpack_require__(7);
+const role = __webpack_require__(8);
+const user = __webpack_require__(9);
+const atomRight = __webpack_require__(10);
+const functionRight = __webpack_require__(11);
+const auth = __webpack_require__(12);
+const _function = __webpack_require__(13);
 
 module.exports = app => {
   const routes = [
@@ -225,11 +220,6 @@ module.exports = app => {
     { method: 'post', path: 'atomRight/add', controller: atomRight, meta: { right: { type: 'function', name: 'atomRight' } } },
     { method: 'post', path: 'atomRight/delete', controller: atomRight, meta: { right: { type: 'function', name: 'atomRight' } } },
     { method: 'post', path: 'atomRight/spreads', controller: atomRight, meta: { right: { type: 'function', name: 'atomRight' } } },
-    // menuRight
-    { method: 'post', path: 'menuRight/rights', controller: menuRight, meta: { right: { type: 'function', name: 'menuRight' } } },
-    { method: 'post', path: 'menuRight/add', controller: menuRight, meta: { right: { type: 'function', name: 'menuRight' } } },
-    { method: 'post', path: 'menuRight/delete', controller: menuRight, meta: { right: { type: 'function', name: 'menuRight' } } },
-    { method: 'post', path: 'menuRight/spreads', controller: menuRight, meta: { right: { type: 'function', name: 'menuRight' } } },
     // functionRight
     { method: 'post', path: 'functionRight/rights', controller: functionRight, meta: { right: { type: 'function', name: 'functionRight' } } },
     { method: 'post', path: 'functionRight/add', controller: functionRight, meta: { right: { type: 'function', name: 'functionRight' } } },
@@ -240,13 +230,18 @@ module.exports = app => {
     { method: 'post', path: 'auth/disable', controller: auth, meta: { right: { type: 'function', name: 'auth' } } },
     { method: 'post', path: 'auth/item', controller: auth, meta: { right: { type: 'function', name: 'auth' } } },
     { method: 'post', path: 'auth/save', controller: auth, meta: { right: { type: 'function', name: 'auth' } } },
+    // function
+    { method: 'post', path: 'function/scenesLoad', controller: _function, meta: { right: { type: 'function', name: 'menu' } } },
+    { method: 'post', path: 'function/scenesSaveSortings', controller: _function, meta: { right: { type: 'function', name: 'menu' } } },
+    { method: 'post', path: 'function/sceneItemsLoad', controller: _function, meta: { right: { type: 'function', name: 'menu' } } },
+    { method: 'post', path: 'function/sceneItemsSaveSortings', controller: _function, meta: { right: { type: 'function', name: 'menu' } } },
   ];
   return routes;
 };
 
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -268,7 +263,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -369,7 +364,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -457,7 +452,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -505,55 +500,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 12 */
-/***/ (function(module, exports) {
-
-module.exports = app => {
-  class MenuRightController extends app.Controller {
-
-    async rights() {
-      const page = this.ctx.request.body.page;
-      const items = await this.service.functionRight.rights({
-        menu: 1,
-        roleId: this.ctx.request.body.roleId,
-        page,
-      });
-      this.ctx.successMore(items, page.index, page.size);
-    }
-
-    async add() {
-      const res = await this.service.functionRight.add({
-        roleId: this.ctx.request.body.roleId,
-        module: this.ctx.request.body.module,
-        name: this.ctx.request.body.name,
-      });
-      this.ctx.success(res);
-    }
-
-    async delete() {
-      const res = await this.service.functionRight.delete({
-        id: this.ctx.request.body.id,
-      });
-      this.ctx.success(res);
-    }
-
-    async spreads() {
-      const page = this.ctx.request.body.page;
-      const items = await this.service.functionRight.spreads({
-        menu: 1,
-        roleId: this.ctx.request.body.roleId,
-        page,
-      });
-      this.ctx.successMore(items, page.index, page.size);
-    }
-
-  }
-  return MenuRightController;
-};
-
-
-/***/ }),
-/* 13 */
+/* 11 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -562,8 +509,8 @@ module.exports = app => {
     async rights() {
       const page = this.ctx.request.body.page;
       const items = await this.service.functionRight.rights({
-        menu: 0,
         roleId: this.ctx.request.body.roleId,
+        menu: this.ctx.request.body.menu,
         page,
       });
       this.ctx.successMore(items, page.index, page.size);
@@ -588,8 +535,8 @@ module.exports = app => {
     async spreads() {
       const page = this.ctx.request.body.page;
       const items = await this.service.functionRight.spreads({
-        menu: 0,
         roleId: this.ctx.request.body.roleId,
+        menu: this.ctx.request.body.menu,
         page,
       });
       this.ctx.successMore(items, page.index, page.size);
@@ -601,7 +548,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 14 */
+/* 12 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -641,15 +588,60 @@ module.exports = app => {
 
 
 /***/ }),
-/* 15 */
+/* 13 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+  class FunctionController extends app.Controller {
+
+    async scenesLoad() {
+      const res = await this.ctx.service.function.scenesLoad({
+        sceneMenu: this.ctx.request.body.sceneMenu,
+      });
+      this.ctx.success(res);
+    }
+
+    async scenesSaveSortings() {
+      const res = await this.ctx.service.function.scenesSaveSortings({
+        sceneMenu: this.ctx.request.body.sceneMenu,
+        sortings: this.ctx.request.body.sortings,
+      });
+      this.ctx.success(res);
+    }
+
+    async sceneItemsLoad() {
+      const res = await this.ctx.service.function.sceneItemsLoad({
+        sceneMenu: this.ctx.request.body.sceneMenu,
+        sceneId: this.ctx.request.body.sceneId,
+      });
+      this.ctx.success(res);
+    }
+
+    async sceneItemsSaveSortings() {
+      const res = await this.ctx.service.function.sceneItemsSaveSortings({
+        sceneMenu: this.ctx.request.body.sceneMenu,
+        sceneId: this.ctx.request.body.sceneId,
+        sortings: this.ctx.request.body.sortings,
+      });
+      this.ctx.success(res);
+    }
+
+  }
+  return FunctionController;
+};
+
+
+/***/ }),
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(16);
-const role = __webpack_require__(17);
-const user = __webpack_require__(18);
-const atomRight = __webpack_require__(19);
-const functionRight = __webpack_require__(20);
-const auth = __webpack_require__(21);
+const version = __webpack_require__(15);
+const role = __webpack_require__(16);
+const user = __webpack_require__(17);
+const atomRight = __webpack_require__(18);
+const functionRight = __webpack_require__(19);
+const auth = __webpack_require__(20);
+const _function = __webpack_require__(22);
 
 module.exports = app => {
   const services = {
@@ -659,17 +651,18 @@ module.exports = app => {
     atomRight,
     functionRight,
     auth,
+    function: _function,
   };
   return services;
 };
 
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
-
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Version extends app.Service {
 
     async update(options) {
@@ -684,12 +677,42 @@ module.exports = app => {
           { roleName: 'system', name: 'user' },
           { roleName: 'system', name: 'role' },
           { roleName: 'system', name: 'atomRight' },
-          { roleName: 'system', name: 'menuRight' },
           { roleName: 'system', name: 'functionRight' },
           { roleName: 'system', name: 'auth' },
         ];
         await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
       }
+
+      if (options.version === 2) {
+        // remove menuRight
+        const fun = await this.ctx.meta.function._get({ module: moduleInfo.relativeName, name: 'menuRight' });
+        if (fun) {
+          //  1. aFunction
+          await this.ctx.model.delete('aFunction', { id: fun.id });
+          //  2. aFunctionLocale
+          await this.ctx.model.delete('aFunctionLocale', { functionId: fun.id });
+          //  3. aFunctionStar
+          await this.ctx.model.delete('aFunctionStar', { functionId: fun.id });
+          //  4. aRoleFunction
+          await this.ctx.model.delete('aRoleFunction', { functionId: fun.id });
+        }
+      }
+
+      if (options.version === 3) {
+        // roleFunctions
+        const roleFunctions = [
+          { roleName: 'system', name: 'menu' },
+        ];
+        await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
+
+        // menu: 1->0
+        const functions = 'user,role,atomRight,functionRight,auth'.split(',');
+        for (const name of functions) {
+          const func = await this.ctx.meta.function.get({ name });
+          await this.ctx.model.function.update({ id: func.id, sceneId: 0, menu: 0 });
+        }
+      }
+
     }
 
   }
@@ -699,7 +722,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -769,7 +792,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 18 */
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -820,7 +843,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -857,7 +880,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 20 */
+/* 19 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -909,10 +932,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 21 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(0);
+const require3 = __webpack_require__(21);
 const mparse = require3('egg-born-mparse').default;
 
 module.exports = app => {
@@ -993,21 +1016,72 @@ module.exports = app => {
 
 
 /***/ }),
+/* 21 */
+/***/ (function(module, exports) {
+
+module.exports = require("require3");
+
+/***/ }),
 /* 22 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+
+  class _Function extends app.Service {
+
+    async scenesLoad({ sceneMenu }) {
+      return await this.ctx.meta.function.scenesArray({ sceneMenu });
+    }
+
+    async scenesSaveSortings({ sceneMenu, sortings }) {
+      for (const item of sortings) {
+        await this.ctx.model.functionScene.update({ id: item.id, sceneSorting: item.sorting });
+      }
+    }
+
+    async sceneItemsLoad({ sceneMenu, sceneId }) {
+      const list = await this.ctx.model.query(`
+        select b.id,b.module,b.name,b.title,b.sorting,f.titleLocale from aFunction b
+          left join aFunctionLocale f on b.id=f.functionId
+          left join aFunctionScene g on g.id=b.sceneId
+            where b.iid=? and b.sceneId=? and f.locale=?
+            order by b.sorting
+        `, [ this.ctx.instance.id, sceneId, this.ctx.locale ]);
+      return list;
+    }
+
+    async sceneItemsSaveSortings({ sceneMenu, sceneId, sortings }) {
+      for (const item of sortings) {
+        await this.ctx.model.function.update({ id: item.id, sorting: item.sorting });
+      }
+    }
+
+  }
+
+  return _Function;
+};
+
+
+/***/ }),
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const authProvider = __webpack_require__(23);
+const authProvider = __webpack_require__(24);
+const _function = __webpack_require__(25);
+const functionScene = __webpack_require__(26);
 
 module.exports = app => {
   const models = {
     authProvider,
+    function: _function,
+    functionScene,
   };
   return models;
 };
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1025,60 +1099,87 @@ module.exports = app => {
 
 
 /***/ }),
-/* 24 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 25 */
+/***/ (function(module, exports) {
 
-const require3 = __webpack_require__(0);
-const extend = require3('extend2');
+module.exports = app => {
+
+  class Function extends app.meta.Model {
+
+    constructor(ctx) {
+      super(ctx, { table: 'aFunction', options: { disableDeleted: true } });
+    }
+
+  }
+
+  return Function;
+};
+
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+
+  class FunctionScene extends app.meta.Model {
+
+    constructor(ctx) {
+      super(ctx, { table: 'aFunctionScene', options: { disableDeleted: true } });
+    }
+
+  }
+
+  return FunctionScene;
+};
+
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
   // schemas
-  const schemas = __webpack_require__(25)(app);
+  const schemas = __webpack_require__(28)(app);
   // meta
   const meta = {
     base: {
       functions: {
         user: {
           title: 'User Management',
-          scene: 'tools',
           actionPath: 'user/list',
-          sorting: 11,
-          menu: 1,
+          sorting: 1,
+          menu: 0,
         },
         role: {
           title: 'Role Management',
-          scene: 'tools',
           actionPath: 'role/list',
-          sorting: 12,
-          menu: 1,
+          sorting: 1,
+          menu: 0,
         },
         atomRight: {
           title: 'Atom Right Management',
-          scene: 'tools',
           actionPath: 'atomRight/list',
-          sorting: 13,
-          menu: 1,
-        },
-        menuRight: {
-          title: 'Menu Right Management',
-          scene: 'tools',
-          actionPath: 'menuRight/list',
-          sorting: 14,
-          menu: 1,
+          sorting: 1,
+          menu: 0,
         },
         functionRight: {
           title: 'Function Right Management',
-          scene: 'tools',
-          actionPath: 'functionRight/list',
-          sorting: 15,
-          menu: 1,
+          actionPath: 'functionRight/types',
+          sorting: 1,
+          menu: 0,
         },
         auth: {
           title: 'Auth Management',
-          scene: 'tools',
           actionPath: 'auth/list',
-          sorting: 16,
-          menu: 1,
+          sorting: 1,
+          menu: 0,
+        },
+        menu: {
+          title: 'Menu Management',
+          actionPath: 'function/scene?sceneMenu=1',
+          sorting: 1,
+          menu: 0,
         },
       },
     },
@@ -1097,6 +1198,11 @@ module.exports = app => {
         auth: schemas.auth,
       },
     },
+    settings: {
+      instance: {
+        actionPath: 'settings/list',
+      },
+    },
   };
 
   return meta;
@@ -1104,7 +1210,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 25 */
+/* 28 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
