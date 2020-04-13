@@ -91,19 +91,19 @@ module.exports =
 
 const config = __webpack_require__(1);
 const locales = __webpack_require__(2);
-const errors = __webpack_require__(4);
-const middlewares = __webpack_require__(5);
+const errors = __webpack_require__(5);
+const middlewares = __webpack_require__(6);
 
 module.exports = app => {
 
   // routes
-  const routes = __webpack_require__(6)(app);
+  const routes = __webpack_require__(7)(app);
   // services
-  const services = __webpack_require__(10)(app);
+  const services = __webpack_require__(11)(app);
   // models
-  const models = __webpack_require__(12)(app);
+  const models = __webpack_require__(13)(app);
   // meta
-  const meta = __webpack_require__(13)(app);
+  const meta = __webpack_require__(14)(app);
 
   return {
     routes,
@@ -135,7 +135,8 @@ module.exports = appInfo => {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
-  'zh-cn': __webpack_require__(3),
+  'en-us': __webpack_require__(3),
+  'zh-cn': __webpack_require__(4),
 };
 
 
@@ -144,6 +145,8 @@ module.exports = {
 /***/ (function(module, exports) {
 
 module.exports = {
+  CaptchaInvalid: 'Verification code is invalid, please retrieve again',
+  CaptchaMismatch: 'Mismatch Captcha Code',
 };
 
 
@@ -151,8 +154,9 @@ module.exports = {
 /* 4 */
 /***/ (function(module, exports) {
 
-// error code should start from 1001
 module.exports = {
+  CaptchaInvalid: '验证码已失效，请重新获取',
+  CaptchaMismatch: '验证码不匹配',
 };
 
 
@@ -160,16 +164,27 @@ module.exports = {
 /* 5 */
 /***/ (function(module, exports) {
 
+// error code should start from 1001
 module.exports = {
+  1001: 'CaptchaInvalid',
+  1002: 'CaptchaMismatch',
 };
 
 
 /***/ }),
 /* 6 */
+/***/ (function(module, exports) {
+
+module.exports = {
+};
+
+
+/***/ }),
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(7);
-const simple = __webpack_require__(8);
+const version = __webpack_require__(8);
+const captcha = __webpack_require__(9);
 
 module.exports = app => {
   const routes = [
@@ -177,15 +192,16 @@ module.exports = app => {
     { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/test', controller: version, middlewares: 'test' },
-    // simple
-    { method: 'get', path: 'simple/getCaptcha', controller: simple, middlewares: 'captchaContainer' },
+    // captcha
+    { method: 'get', path: 'captcha/image', controller: captcha, middlewares: 'captcha' },
+    { method: 'post', path: 'captcha/verify', controller: captcha, middlewares: 'inner' },
   ];
   return routes;
 };
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -212,48 +228,54 @@ module.exports = app => {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(9);
+const require3 = __webpack_require__(10);
 const captcha = require3('trek-captcha');
 
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class SimpleController extends app.Controller {
+  class CaptchaController extends app.Controller {
 
-    async getCaptcha() {
+    async image() {
+      // providerInstanceId
+      const providerInstanceId = this.ctx.query.providerInstanceId;
       // create
       const { token, buffer } = await captcha();
-      // save
-      await this.ctx.meta.captcha.save({
-        provider: {
-          module: moduleInfo.relativeName,
-          name: 'simple',
-        },
-        code: token });
+      // update
+      await this.ctx.meta.captcha.update({
+        providerInstanceId, data: { token },
+      });
       // ok
       this.ctx.status = 200;
       this.ctx.type = 'image/gif';
       this.ctx.body = buffer;
     }
 
+    async verify() {
+      // const { providerInstanceId, context } = this.ctx.request.body;
+      const { data, dataInput } = this.ctx.request.body;
+      if (!data) this.ctx.throw(1001);
+      if (!dataInput.token || dataInput.token.toLowerCase() !== data.token.toLowerCase()) this.ctx.throw(1002);
+      this.ctx.success();
+    }
+
   }
-  return SimpleController;
+  return CaptchaController;
 };
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports) {
 
 module.exports = require("require3");
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(11);
+const version = __webpack_require__(12);
 
 module.exports = app => {
   const services = {
@@ -264,7 +286,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -287,7 +309,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -298,11 +320,11 @@ module.exports = app => {
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
-  const schemas = __webpack_require__(14)(app);
+  const schemas = __webpack_require__(15)(app);
   const meta = {
     base: {
       atoms: {
@@ -323,7 +345,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
