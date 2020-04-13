@@ -82,23 +82,79 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports) {
+
+const Fn = module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class RedisDb {
+
+    constructor(moduleName) {
+      this.moduleName = moduleName || ctx.module.info.relativeName;
+    }
+
+    // other module's cache
+    module(moduleName) {
+      return new (Fn(ctx))(moduleName);
+    }
+
+    _getKey(name) {
+      return `${ctx.instance ? ctx.instance.id : 0}:${this.moduleName}:${name}`;
+    }
+
+    async get(name) {
+      const redis = ctx.app.redis.get('cache');
+      const key = this._getKey(name);
+      const value = await redis.get(key);
+      return value ? JSON.parse(value) : undefined;
+    }
+
+    async set(name, value, timeout) {
+      const redis = ctx.app.redis.get('cache');
+      const key = this._getKey(name);
+      if (timeout) {
+        await redis.set(key, JSON.stringify(value), 'PX', timeout);
+      } else {
+        await redis.set(key, JSON.stringify(value));
+      }
+    }
+
+    async has(name) {
+      const redis = ctx.app.redis.get('cache');
+      const key = this._getKey(name);
+      return await redis.exists(key) > 0;
+    }
+
+    async remove(name) {
+      const redis = ctx.app.redis.get('cache');
+      const key = this._getKey(name);
+      await redis.del(key);
+    }
+
+  }
+
+  return RedisDb;
+};
+
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const services = __webpack_require__(1);
-const config = __webpack_require__(4);
-const locales = __webpack_require__(5);
-const errors = __webpack_require__(7);
-const middlewares = __webpack_require__(8);
+const services = __webpack_require__(2);
+const config = __webpack_require__(5);
+const locales = __webpack_require__(6);
+const errors = __webpack_require__(8);
+const middlewares = __webpack_require__(9);
 
 // eslint-disable-next-line
 module.exports = app => {
 
-  const routes = __webpack_require__(13)(app);
+  const routes = __webpack_require__(15)(app);
 
   return {
     routes,
@@ -113,11 +169,11 @@ module.exports = app => {
 
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(2);
-const db = __webpack_require__(3);
+const version = __webpack_require__(3);
+const db = __webpack_require__(4);
 
 module.exports = {
   version,
@@ -126,7 +182,7 @@ module.exports = {
 
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -177,7 +233,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -196,7 +252,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports) {
 
 // eslint-disable-next-line
@@ -207,9 +263,11 @@ module.exports = appInfo => {
   config.middlewares = {
     cachedb: {
       global: true,
-      dependencies: 'instance',
     },
     cachemem: {
+      global: true,
+    },
+    cacheredis: {
       global: true,
     },
   };
@@ -231,21 +289,26 @@ module.exports = appInfo => {
     },
   };
 
+  // db
+  config.db = {
+    redis: true,
+  };
+
   return config;
 };
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
-  'zh-cn': __webpack_require__(6),
+  'zh-cn': __webpack_require__(7),
 };
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -253,7 +316,7 @@ module.exports = {
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports) {
 
 // error code should start from 1001
@@ -262,32 +325,41 @@ module.exports = {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const cachedb = __webpack_require__(9);
-const cachemem = __webpack_require__(11);
+const cachedb = __webpack_require__(10);
+const cachemem = __webpack_require__(12);
+const cacheredis = __webpack_require__(14);
 
 module.exports = {
   cachedb,
   cachemem,
+  cacheredis,
 };
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const dbFn = __webpack_require__(10);
+const dbFn = __webpack_require__(11);
+const redisFn = __webpack_require__(0);
 const CACHE = Symbol('CTX#__CACHE');
 
-module.exports = () => {
+module.exports = (options, app) => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   return async function cachedb(ctx, next) {
     ctx.cache = ctx.cache || {};
     Object.defineProperty(ctx.cache, 'db', {
       get() {
         if (ctx.cache[CACHE] === undefined) {
-          ctx.cache[CACHE] = new (dbFn(ctx))();
+          const config = ctx.config.module(moduleInfo.relativeName);
+          if (config.db.redis) {
+            ctx.cache[CACHE] = new (redisFn(ctx))();
+          } else {
+            ctx.cache[CACHE] = new (dbFn(ctx))();
+          }
         }
         return ctx.cache[CACHE];
       },
@@ -300,7 +372,7 @@ module.exports = () => {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports) {
 
 const Fn = module.exports = ctx => {
@@ -317,7 +389,7 @@ const Fn = module.exports = ctx => {
     }
 
     async get(name) {
-      const res = await this.has(name);
+      const res = await this._has(name);
       return res ? JSON.parse(res.value) : undefined;
     }
 
@@ -331,7 +403,7 @@ const Fn = module.exports = ctx => {
       // expired
       const expired = second ? `TIMESTAMPADD(SECOND,${second},CURRENT_TIMESTAMP)` : 'null';
       const res = await ctx.db.get('aCache', {
-        iid: ctx.instance.id,
+        iid: ctx.instance ? ctx.instance.id : 0,
         module: this.moduleName,
         name,
       });
@@ -356,20 +428,25 @@ const Fn = module.exports = ctx => {
         } else {
           await ctx.db.query(`
             insert into aCache(iid,module,name,value,expired) values(?,?,?,?,${expired})
-            `, [ ctx.instance.id, this.moduleName, name, JSON.stringify(value) ]);
+            `, [ ctx.instance ? ctx.instance.id : 0, this.moduleName, name, JSON.stringify(value) ]);
         }
       }
     }
 
     async has(name) {
+      const res = await this._has(name);
+      return !!res;
+    }
+
+    async _has(name) {
       const sql = 'select * from aCache where iid=? and module=? and name=? and (expired is null or expired>CURRENT_TIMESTAMP)';
-      const res = await ctx.db.queryOne(sql, [ ctx.instance.id, this.moduleName, name ]);
+      const res = await ctx.db.queryOne(sql, [ ctx.instance ? ctx.instance.id : 0, this.moduleName, name ]);
       return res;
     }
 
     async remove(name) {
       await ctx.db.delete('aCache', {
-        iid: ctx.instance.id,
+        iid: ctx.instance ? ctx.instance.id : 0,
         module: this.moduleName,
         name,
       });
@@ -377,7 +454,7 @@ const Fn = module.exports = ctx => {
 
     async clear() {
       await ctx.db.delete('aCache', {
-        iid: ctx.instance.id,
+        iid: ctx.instance ? ctx.instance.id : 0,
         module: this.moduleName,
       });
     }
@@ -389,10 +466,10 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const memFn = __webpack_require__(12);
+const memFn = __webpack_require__(13);
 const CACHE = Symbol('CTX#__CACHE');
 
 module.exports = () => {
@@ -414,7 +491,7 @@ module.exports = () => {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports) {
 
 const CACHEMEMORY = Symbol('APP#__CACHEMEMORY');
@@ -496,12 +573,37 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(14);
-const db = __webpack_require__(15);
-const broadcast = __webpack_require__(16);
+const redisFn = __webpack_require__(0);
+const CACHE = Symbol('CTX#__CACHE');
+
+module.exports = () => {
+  return async function cachedb(ctx, next) {
+    ctx.cache = ctx.cache || {};
+    Object.defineProperty(ctx.cache, 'redis', {
+      get() {
+        if (ctx.cache[CACHE] === undefined) {
+          ctx.cache[CACHE] = new (redisFn(ctx))();
+        }
+        return ctx.cache[CACHE];
+      },
+    });
+
+    // next
+    await next();
+  };
+};
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const version = __webpack_require__(16);
+const db = __webpack_require__(17);
+const broadcast = __webpack_require__(18);
 
 module.exports = app => {
   const routes = [
@@ -518,7 +620,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -535,7 +637,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -554,7 +656,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
