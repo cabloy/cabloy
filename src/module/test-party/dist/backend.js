@@ -105,11 +105,11 @@ module.exports = app => {
   // routes
   const routes = __webpack_require__(10)(app);
   // services
-  const services = __webpack_require__(52)(app);
+  const services = __webpack_require__(55)(app);
   // models
-  const models = __webpack_require__(58)(app);
+  const models = __webpack_require__(61)(app);
   // meta
-  const meta = __webpack_require__(62)(app);
+  const meta = __webpack_require__(65)(app);
 
   return {
     routes,
@@ -137,11 +137,9 @@ module.exports = appInfo => {
     // startups
     config.startups = {
       startupAll: {
-        type: 'worker',
         path: 'test/feat/startup/all',
       },
       startupInstance: {
-        type: 'worker',
         instance: true,
         path: 'test/feat/startup/instance',
       },
@@ -173,6 +171,8 @@ module.exports = appInfo => {
         path: 'test/feat/broadcast',
       },
     };
+    // monkey
+    config.monkeyed = false;
   }
 
   if (appInfo.env === 'unittest' || appInfo.env === 'local') {
@@ -202,6 +202,23 @@ module.exports = appInfo => {
         },
       },
     };
+
+    // captcha scenes
+    const _captchaSMS = {
+      module: 'a-authsms',
+      name: 'captcha',
+    };
+    config.captcha = {
+      scenes: {
+        formMobileVerifyTest: _captchaSMS,
+        formCaptchaTest: null, // means using default
+      // formCaptchaTest: {
+      //   module: 'a-captchasimple',
+      //   name: 'captcha',
+      // },
+      },
+    };
+
   }
 
 
@@ -231,6 +248,10 @@ module.exports = {
   Dance: '跳舞',
   Garden: '花园',
   Item: '条目',
+  Products: '产品',
+  Snapshots: '快照',
+  About: '关于',
+  Demonstration: '演示',
   'Create Party': '新建宴会',
   'Party List': '宴会列表',
   'Level One': '层级1',
@@ -239,6 +260,9 @@ module.exports = {
   'Well Done': '干得好',
   'Error Test': '错误测试',
   'Hello World': '世界，您好',
+  'Fruit Sales': '水果销量',
+  'Fruit Sales(Line Chart)': '水果销量（折线图）',
+  'Fruit Sales(Pie Chart)': '水果销量（饼图）',
 };
 
 
@@ -342,26 +366,28 @@ const testCtxConfig = __webpack_require__(27);
 const testCtxLocale = __webpack_require__(28);
 const testCacheMem = __webpack_require__(29);
 const testCacheDb = __webpack_require__(30);
-const testRoleUserRole = __webpack_require__(31);
-const testEventHello = __webpack_require__(32);
-const testEventUserVerify = __webpack_require__(33);
-const testFeatHttpLog = __webpack_require__(34);
-const testFeatStartup = __webpack_require__(35);
-const testFeatSendMail = __webpack_require__(36);
-const testFeatHook = __webpack_require__(37);
-const testFeatInstance = __webpack_require__(38);
-const testFeatProgress = __webpack_require__(39);
-const testFeatSequence = __webpack_require__(40);
-const testFeatSettings = __webpack_require__(41);
-const testFeatStatus = __webpack_require__(42);
-const testFeatValidation = __webpack_require__(43);
-const testFeatMiddleware = __webpack_require__(44);
-const testFeatQueue = __webpack_require__(45);
-const testFeatBroadcast = __webpack_require__(46);
-const testKitchensinkAutocomplete = __webpack_require__(47);
-const testKitchensinkGuide = __webpack_require__(49);
-const testKitchensinkFormSchemaValidation = __webpack_require__(50);
-const testKitchensinkPtrIsLoadMore = __webpack_require__(51);
+const testCacheRedis = __webpack_require__(31);
+const testRoleUserRole = __webpack_require__(32);
+const testEventHello = __webpack_require__(33);
+const testEventUserVerify = __webpack_require__(34);
+const testFeatHttpLog = __webpack_require__(36);
+const testFeatStartup = __webpack_require__(37);
+const testFeatSendMail = __webpack_require__(38);
+const testFeatHook = __webpack_require__(39);
+const testFeatInstance = __webpack_require__(40);
+const testFeatProgress = __webpack_require__(41);
+const testFeatSequence = __webpack_require__(42);
+const testFeatSettings = __webpack_require__(43);
+const testFeatStatus = __webpack_require__(44);
+const testFeatValidation = __webpack_require__(45);
+const testFeatMiddleware = __webpack_require__(46);
+const testFeatQueue = __webpack_require__(47);
+const testFeatBroadcast = __webpack_require__(48);
+const testMonkeyee = __webpack_require__(49);
+const testKitchensinkAutocomplete = __webpack_require__(50);
+const testKitchensinkGuide = __webpack_require__(52);
+const testKitchensinkFormSchemaValidation = __webpack_require__(53);
+const testKitchensinkPtrIsLoadMore = __webpack_require__(54);
 
 module.exports = app => {
   let routes = [
@@ -454,10 +480,11 @@ module.exports = app => {
       // test/event/userVerify
       { method: 'post', path: 'test/event/userVerify', controller: testEventUserVerify, middlewares: 'test', meta: { auth: { enable: false } } },
       { method: 'post', path: 'test/event/loginInfo', controller: testEventUserVerify, middlewares: 'test', meta: { auth: { enable: false } } },
-
+      { method: 'post', path: 'test/event/loginInfoDashboard', controller: testEventUserVerify, meta: { auth: { enable: false } } },
       // test/cache
       { method: 'post', path: 'test/cache/mem', controller: testCacheMem, middlewares: 'test', meta: { auth: { enable: false } } },
       { method: 'post', path: 'test/cache/db', controller: testCacheDb, middlewares: 'test', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/cache/redis', controller: testCacheRedis, middlewares: 'test', meta: { auth: { enable: false } } },
 
       // test/feat/httpLog
       { method: 'post', path: 'test/feat/httpLog', controller: testFeatHttpLog, middlewares: 'test,httpLog', meta: { auth: { enable: false } } },
@@ -515,6 +542,9 @@ module.exports = app => {
       { method: 'post', path: 'test/feat/broadcast', controller: testFeatBroadcast, middlewares: 'inner', meta: { auth: { enable: false } } },
       { method: 'post', path: 'test/feat/broadcast/emit', controller: testFeatBroadcast, middlewares: 'test' },
 
+      // test/monkey/monkeyee
+      { method: 'post', path: 'test/monkey/monkeyee/test', controller: testMonkeyee, middlewares: 'test' },
+
       // kitchen-sink/guide
       { method: 'post', path: 'kitchen-sink/guide/echo', controller: testKitchensinkGuide },
       { method: 'post', path: 'kitchen-sink/guide/echo3', controller: testKitchensinkGuide },
@@ -536,8 +566,17 @@ module.exports = app => {
       { method: 'post', path: 'kitchen-sink/form-schema-validation/saveValidation', controller: testKitchensinkFormSchemaValidation, middlewares: 'validate',
         meta: { validate: { validator: 'formTest' } },
       },
-      { method: 'post', path: 'kitchen-sink/form-captcha/signup', controller: testKitchensinkFormSchemaValidation, middlewares: 'validate,captchaVerify',
-        meta: { validate: { validator: 'formCaptchaTest' } },
+      { method: 'post', path: 'kitchen-sink/form-captcha/signup', controller: testKitchensinkFormSchemaValidation, middlewares: 'captchaVerify,validate',
+        meta: {
+          captchaVerify: { scene: { name: 'formCaptchaTest' } },
+          validate: { validator: 'formCaptchaTest' },
+        },
+      },
+      { method: 'post', path: 'kitchen-sink/form-mobile-verify/mobileVerify', controller: testKitchensinkFormSchemaValidation, middlewares: 'captchaVerify,validate',
+        meta: {
+          captchaVerify: { scene: { name: 'formMobileVerifyTest' } },
+          validate: { validator: 'formMobileVerifyTest' },
+        },
       },
       // kitchen-sink/ptr-is-loadmore
       { method: 'post', path: 'kitchen-sink/ptr-is-loadmore/list', controller: testKitchensinkPtrIsLoadMore },
@@ -788,6 +827,14 @@ module.exports = app => {
 
   class AllController extends app.Controller {
 
+    async getRoleIdOwner(atomClass, userId) {
+      const roles = await this.ctx.meta.atom.preferredRoles({
+        atomClass,
+        user: { id: userId },
+      });
+      return roles[0].roleIdWho;
+    }
+
     async all() {
       // atomClass
       const atomClass = await this.ctx.meta.atomClass.get({ atomClassName: 'party' });
@@ -806,8 +853,10 @@ module.exports = app => {
       });
 
       // Tom add party
+      const roleIdOwnerTom = await this.getRoleIdOwner(atomClass, userIds.Tom);
       const partyKey = await this.ctx.meta.atom.create({
         atomClass,
+        roleIdOwner: roleIdOwnerTom,
         user: { id: userIds.Tom },
       });
       await this.ctx.meta.atom.write({
@@ -1200,8 +1249,6 @@ module.exports = app => {
 const require3 = __webpack_require__(0);
 const assert = require3('assert');
 
-const functionCount = 3;
-
 module.exports = app => {
 
   class AllController extends app.Controller {
@@ -1210,6 +1257,9 @@ module.exports = app => {
       // userIds
       const userIds = this.ctx.cache.mem.get('userIds');
       const userTom = { id: userIds.Tom };
+
+      // function all: including panels/widgets
+      const functionCount = Object.keys(this.ctx.module.main.meta.base.functions).length;
 
       // Tom list all
       let list = await this.ctx.meta.function.list({
@@ -1322,6 +1372,9 @@ module.exports = app => {
       const userIds = this.ctx.cache.mem.get('userIds');
       const userTom = { id: userIds.Tom };
 
+      // function all: including panels/widgets
+      const functionCount = Object.values(this.ctx.module.main.meta.base.functions).filter(item => item.public === 1).length;
+
       // check right function
       const pass = await this.ctx.meta.function.checkRightFunction({
         function: {
@@ -1345,10 +1398,10 @@ module.exports = app => {
         },
         user: userTom,
       });
-      assert.equal(list.length, 1);
+      assert.equal(list.length, functionCount);
 
       // delete function
-      await this.ctx.model.query('delete from aFunction where id=?', [ list[0].id ]);
+      await this.ctx.model.query('delete from aFunction where id=?', [ pass.id ]);
 
       // done
       this.ctx.success();
@@ -1688,7 +1741,7 @@ module.exports = app => {
     async mem() {
 
       // name
-      const name = '__test:name';
+      const name = '__test:name:mem';
 
       // set
       this.ctx.cache.mem.set(name, 'zhennann');
@@ -1723,10 +1776,6 @@ module.exports = app => {
       value = this.ctx.cache.mem.get(name);
       assert.equal(value, null);
 
-      // clear
-      //   not clear, hold other caches
-      // this.ctx.cache.mem.clear();
-
       // done
       this.ctx.success();
     }
@@ -1754,14 +1803,14 @@ module.exports = app => {
     async db() {
 
       // name
-      const name = '__test:name';
+      const name = '__test:name:db';
 
       // set
       await this.ctx.cache.db.set(name, 'zhennann');
 
       // has
       let res = await this.ctx.cache.db.has(name);
-      assert.equal(!!res, true);
+      assert.equal(res, true);
 
       // get
       let value = await this.ctx.cache.db.get(name);
@@ -1770,10 +1819,10 @@ module.exports = app => {
       // remove
       await this.ctx.cache.db.remove(name);
       res = await this.ctx.cache.db.has(name);
-      assert.equal(res, null);
+      assert.equal(res, false);
 
       // set with timeout
-      await this.ctx.cache.db.set(name, 'zhennann', 1000);
+      await this.ctx.cache.db.set(name, 'zhennann', 2000);
 
       // get
       value = await this.ctx.cache.db.get(name);
@@ -1785,13 +1834,9 @@ module.exports = app => {
       assert.equal(value, 'zhennann');
 
       // get after timeout
-      await sleep(1500);
+      await sleep(3000);
       value = await this.ctx.cache.db.get(name);
       assert.equal(value, undefined);
-
-      // clear
-      //   not clear, hold other caches
-      // await this.ctx.cache.db.clear();
 
       // done
       this.ctx.success();
@@ -1808,6 +1853,68 @@ function sleep(ms) {
 
 /***/ }),
 /* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(0);
+const assert = require3('assert');
+
+module.exports = app => {
+
+  class RedisController extends app.Controller {
+
+    async redis() {
+
+      // name
+      const name = '__test:name:redis';
+
+      // set
+      await this.ctx.cache.redis.set(name, 'zhennann');
+
+      // has
+      let res = await this.ctx.cache.redis.has(name);
+      assert.equal(res, true);
+
+      // get
+      let value = await this.ctx.cache.redis.get(name);
+      assert.equal(value, 'zhennann');
+
+      // remove
+      await this.ctx.cache.redis.remove(name);
+      res = await this.ctx.cache.redis.has(name);
+      assert.equal(res, false);
+
+      // set with timeout
+      await this.ctx.cache.redis.set(name, 'zhennann', 2000);
+
+      // get
+      value = await this.ctx.cache.redis.get(name);
+      assert.equal(value, 'zhennann');
+
+      // other module's cache
+      const moduleCache = this.ctx.cache.redis.module(this.ctx.module.info.relativeName);
+      value = await moduleCache.get(name);
+      assert.equal(value, 'zhennann');
+
+      // get after timeout
+      await sleep(3000);
+      value = await this.ctx.cache.redis.get(name);
+      assert.equal(value, undefined);
+
+      // done
+      this.ctx.success();
+    }
+
+  }
+  return RedisController;
+};
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
+/***/ }),
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -1861,7 +1968,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -1900,12 +2007,13 @@ module.exports = app => {
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
 const extend = require3('extend2');
 const assert = require3('assert');
+const dashboardProfileDefault = __webpack_require__(35);
 
 module.exports = app => {
 
@@ -1944,6 +2052,21 @@ module.exports = app => {
       this.ctx.success();
     }
 
+    async loginInfoDashboard() {
+      const data = this.ctx.request.body.data;
+      const info = data.info;
+      info.config = extend(true, info.config, {
+        modules: {
+          'a-dashboard': {
+            profile: {
+              default: dashboardProfileDefault,
+            },
+          },
+        },
+      });
+      this.ctx.success();
+    }
+
   }
 
   return UserVerifyController;
@@ -1952,7 +2075,13 @@ module.exports = app => {
 
 
 /***/ }),
-/* 34 */
+/* 35 */
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"root\":{\"id\":\"e341b99ef3bc495db8a8c09e6ad6203e\",\"widgets\":[{\"id\":\"a0031e5e2aef421f8434856512dec714\",\"name\":\"widgetSales\",\"module\":\"test-party\",\"properties\":{\"title\":{\"type\":1,\"value\":\"\"},\"height\":{\"type\":1,\"value\":\"auto\"},\"widthLarge\":{\"type\":1,\"value\":25},\"widthSmall\":{\"type\":1,\"value\":100},\"widthMedium\":{\"type\":1,\"value\":50}}},{\"id\":\"7aefb0431ef24996ba35b596b53372e7\",\"group\":true,\"widgets\":[{\"id\":\"fe96b7ede7f5480a9590e92184272455\",\"name\":\"widgetSalesLine\",\"module\":\"test-party\",\"properties\":{\"fruit\":{\"bind\":{\"widgetId\":\"a0031e5e2aef421f8434856512dec714\",\"propertyName\":\"fruit\"},\"type\":2},\"title\":{\"type\":1,\"value\":\"\"},\"height\":{\"type\":1,\"value\":\"auto\"},\"dataSource\":{\"bind\":{\"widgetId\":\"a0031e5e2aef421f8434856512dec714\",\"propertyName\":\"dataSource\"},\"type\":2},\"widthLarge\":{\"type\":1,\"value\":100},\"widthSmall\":{\"type\":1,\"value\":100},\"widthMedium\":{\"type\":1,\"value\":100}}},{\"id\":\"9ee4b1234b4a477890ce094e8eb5e332\",\"name\":\"widgetSalesPie\",\"module\":\"test-party\",\"properties\":{\"title\":{\"type\":1,\"value\":\"\"},\"height\":{\"type\":1,\"value\":\"auto\"},\"season\":{\"bind\":{\"widgetId\":\"a0031e5e2aef421f8434856512dec714\",\"propertyName\":\"season\"},\"type\":2},\"dataSource\":{\"bind\":{\"widgetId\":\"a0031e5e2aef421f8434856512dec714\",\"propertyName\":\"dataSource\"},\"type\":2},\"widthLarge\":{\"type\":1,\"value\":100},\"widthSmall\":{\"type\":1,\"value\":100},\"widthMedium\":{\"type\":1,\"value\":100}}}],\"properties\":{\"title\":{\"type\":1,\"value\":\"\"},\"height\":{\"type\":1,\"value\":\"auto\"},\"widthLarge\":{\"type\":1,\"value\":25},\"widthSmall\":{\"type\":1,\"value\":100},\"widthMedium\":{\"type\":1,\"value\":50}}},{\"id\":\"64f7c356b78f45799e4b3072af73866e\",\"name\":\"widgetSnapshot\",\"module\":\"test-party\",\"properties\":{\"title\":{\"type\":1,\"value\":\"\"},\"height\":{\"type\":1,\"value\":\"auto\"},\"snapshots\":{\"type\":2,\"binds\":[{\"id\":\"fb3eac5b678e488cb4da60a2bddb0f60\",\"widgetId\":\"fe96b7ede7f5480a9590e92184272455\",\"propertyName\":\"snapshot\"},{\"id\":\"40b8e8ea3007418992f0489cba98129e\",\"widgetId\":\"9ee4b1234b4a477890ce094e8eb5e332\",\"propertyName\":\"snapshot\"}]},\"widthLarge\":{\"type\":1,\"value\":25},\"widthSmall\":{\"type\":1,\"value\":100},\"widthMedium\":{\"type\":1,\"value\":50}}},{\"id\":\"8a04bfa743fb42b2a65a104e018ab924\",\"name\":\"widgetAbout\",\"module\":\"a-dashboard\",\"properties\":{\"title\":{\"type\":1,\"value\":\"\"},\"height\":{\"type\":1,\"value\":\"auto\"},\"widthLarge\":{\"type\":1,\"value\":25},\"widthSmall\":{\"type\":1,\"value\":100},\"widthMedium\":{\"type\":1,\"value\":50}}}]}}");
+
+/***/ }),
+/* 36 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1972,7 +2101,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 35 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -2001,7 +2130,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2030,7 +2159,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -2067,7 +2196,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -2089,7 +2218,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2189,7 +2318,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 40 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -2251,7 +2380,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 41 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -2310,7 +2439,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 42 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -2359,7 +2488,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 43 */
+/* 45 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2386,7 +2515,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 44 */
+/* 46 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2419,7 +2548,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 45 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -2464,7 +2593,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 46 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -2501,10 +2630,29 @@ module.exports = app => {
 
 
 /***/ }),
-/* 47 */
+/* 49 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class MonkeyeeController extends app.Controller {
+
+    async test() {
+      this.ctx.success(moduleInfo.relativeName);
+    }
+
+  }
+
+  return MonkeyeeController;
+};
+
+
+
+/***/ }),
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const languages = __webpack_require__(48);
+const languages = __webpack_require__(51);
 
 module.exports = app => {
 
@@ -2531,13 +2679,13 @@ module.exports = app => {
 
 
 /***/ }),
-/* 48 */
+/* 51 */
 /***/ (function(module) {
 
 module.exports = JSON.parse("[{\"id\":0,\"name\":\"A# .NET\"},{\"id\":1,\"name\":\"A# (Axiom)\"},{\"id\":2,\"name\":\"A-0 System\"},{\"id\":3,\"name\":\"A+\"},{\"id\":4,\"name\":\"A++\"},{\"id\":5,\"name\":\"ABAP\"},{\"id\":6,\"name\":\"ABC\"},{\"id\":7,\"name\":\"ABC ALGOL\"},{\"id\":8,\"name\":\"ABLE\"},{\"id\":9,\"name\":\"ABSET\"},{\"id\":10,\"name\":\"ABSYS\"},{\"id\":11,\"name\":\"ACC\"},{\"id\":12,\"name\":\"Accent\"},{\"id\":13,\"name\":\"Ace DASL\"},{\"id\":14,\"name\":\"ACL2\"},{\"id\":15,\"name\":\"ACT-III\"},{\"id\":16,\"name\":\"Action!\"},{\"id\":17,\"name\":\"ActionScript\"},{\"id\":18,\"name\":\"Ada\"},{\"id\":19,\"name\":\"Adenine\"},{\"id\":20,\"name\":\"Agda\"},{\"id\":21,\"name\":\"Agilent VEE\"},{\"id\":22,\"name\":\"Agora\"},{\"id\":23,\"name\":\"AIMMS\"},{\"id\":24,\"name\":\"Alef\"},{\"id\":25,\"name\":\"ALF\"},{\"id\":26,\"name\":\"ALGOL 58\"},{\"id\":27,\"name\":\"ALGOL 60\"},{\"id\":28,\"name\":\"ALGOL 68\"},{\"id\":29,\"name\":\"ALGOL W\"},{\"id\":30,\"name\":\"Alice\"},{\"id\":31,\"name\":\"Alma-0\"},{\"id\":32,\"name\":\"AmbientTalk\"},{\"id\":33,\"name\":\"Amiga E\"},{\"id\":34,\"name\":\"AMOS\"},{\"id\":35,\"name\":\"AMPL\"},{\"id\":36,\"name\":\"Apex\"},{\"id\":37,\"name\":\"APL\"},{\"id\":38,\"name\":\"App Inventor for Android's visual block language\"},{\"id\":39,\"name\":\"AppleScript\"},{\"id\":40,\"name\":\"Arc\"},{\"id\":41,\"name\":\"ARexx\"},{\"id\":42,\"name\":\"Argus\"},{\"id\":43,\"name\":\"AspectJ\"},{\"id\":44,\"name\":\"Assembly language\"},{\"id\":45,\"name\":\"ATS\"},{\"id\":46,\"name\":\"Ateji PX\"},{\"id\":47,\"name\":\"AutoHotkey\"},{\"id\":48,\"name\":\"Autocoder\"},{\"id\":49,\"name\":\"AutoIt\"},{\"id\":50,\"name\":\"AutoLISP / Visual LISP\"},{\"id\":51,\"name\":\"Averest\"},{\"id\":52,\"name\":\"AWK\"},{\"id\":53,\"name\":\"Axum\"},{\"id\":54,\"name\":\"B\"},{\"id\":55,\"name\":\"Babbage\"},{\"id\":56,\"name\":\"Bash\"},{\"id\":57,\"name\":\"BASIC\"},{\"id\":58,\"name\":\"bc\"},{\"id\":59,\"name\":\"BCPL\"},{\"id\":60,\"name\":\"BeanShell\"},{\"id\":61,\"name\":\"Batch (Windows/Dos)\"},{\"id\":62,\"name\":\"Bertrand\"},{\"id\":63,\"name\":\"BETA\"},{\"id\":64,\"name\":\"Bigwig\"},{\"id\":65,\"name\":\"Bistro\"},{\"id\":66,\"name\":\"BitC\"},{\"id\":67,\"name\":\"BLISS\"},{\"id\":68,\"name\":\"Blue\"},{\"id\":69,\"name\":\"Boo\"},{\"id\":70,\"name\":\"Boomerang\"},{\"id\":71,\"name\":\"Bourne shell\"},{\"id\":72,\"name\":\"bash\"},{\"id\":73,\"name\":\"ksh\"},{\"id\":74,\"name\":\"BREW\"},{\"id\":75,\"name\":\"BPEL\"},{\"id\":76,\"name\":\"C\"},{\"id\":77,\"name\":\"C--\"},{\"id\":78,\"name\":\"C++\"},{\"id\":79,\"name\":\"C#\"},{\"id\":80,\"name\":\"C/AL\"},{\"id\":81,\"name\":\"Caché ObjectScript\"},{\"id\":82,\"name\":\"C Shell\"},{\"id\":83,\"name\":\"Caml\"},{\"id\":84,\"name\":\"Cayenne\"},{\"id\":85,\"name\":\"CDuce\"},{\"id\":86,\"name\":\"Cecil\"},{\"id\":87,\"name\":\"Cel\"},{\"id\":88,\"name\":\"Cesil\"},{\"id\":89,\"name\":\"Ceylon\"},{\"id\":90,\"name\":\"CFEngine\"},{\"id\":91,\"name\":\"CFML\"},{\"id\":92,\"name\":\"Cg\"},{\"id\":93,\"name\":\"Ch\"},{\"id\":94,\"name\":\"Chapel\"},{\"id\":95,\"name\":\"CHAIN\"},{\"id\":96,\"name\":\"Charity\"},{\"id\":97,\"name\":\"Charm\"},{\"id\":98,\"name\":\"Chef\"},{\"id\":99,\"name\":\"CHILL\"},{\"id\":100,\"name\":\"CHIP-8\"},{\"id\":101,\"name\":\"chomski\"},{\"id\":102,\"name\":\"ChucK\"},{\"id\":103,\"name\":\"CICS\"},{\"id\":104,\"name\":\"Cilk\"},{\"id\":105,\"name\":\"CL\"},{\"id\":106,\"name\":\"Claire\"},{\"id\":107,\"name\":\"Clarion\"},{\"id\":108,\"name\":\"Clean\"},{\"id\":109,\"name\":\"Clipper\"},{\"id\":110,\"name\":\"CLIST\"},{\"id\":111,\"name\":\"Clojure\"},{\"id\":112,\"name\":\"CLU\"},{\"id\":113,\"name\":\"CMS-2\"},{\"id\":114,\"name\":\"COBOL\"},{\"id\":115,\"name\":\"Cobra\"},{\"id\":116,\"name\":\"CODE\"},{\"id\":117,\"name\":\"CoffeeScript\"},{\"id\":118,\"name\":\"Cola\"},{\"id\":119,\"name\":\"ColdC\"},{\"id\":120,\"name\":\"ColdFusion\"},{\"id\":121,\"name\":\"COMAL\"},{\"id\":122,\"name\":\"Combined Programming Language\"},{\"id\":123,\"name\":\"COMIT\"},{\"id\":124,\"name\":\"Common Intermediate Language\"},{\"id\":125,\"name\":\"Common Lisp\"},{\"id\":126,\"name\":\"COMPASS\"},{\"id\":127,\"name\":\"Component Pascal\"},{\"id\":128,\"name\":\"Constraint Handling Rules\"},{\"id\":129,\"name\":\"Converge\"},{\"id\":130,\"name\":\"Cool\"},{\"id\":131,\"name\":\"Coq\"},{\"id\":132,\"name\":\"Coral 66\"},{\"id\":133,\"name\":\"Corn\"},{\"id\":134,\"name\":\"CorVision\"},{\"id\":135,\"name\":\"COWSEL\"},{\"id\":136,\"name\":\"CPL\"},{\"id\":137,\"name\":\"csh\"},{\"id\":138,\"name\":\"CSP\"},{\"id\":139,\"name\":\"Cryptol\"},{\"id\":140,\"name\":\"Csound\"},{\"id\":141,\"name\":\"CUDA\"},{\"id\":142,\"name\":\"Curl\"},{\"id\":143,\"name\":\"Curry\"},{\"id\":144,\"name\":\"Cyclone\"},{\"id\":145,\"name\":\"Cython\"},{\"id\":146,\"name\":\"D\"},{\"id\":147,\"name\":\"DASL\"},{\"id\":148,\"name\":\"DASL\"},{\"id\":149,\"name\":\"Dart\"},{\"id\":150,\"name\":\"DataFlex\"},{\"id\":151,\"name\":\"Datalog\"},{\"id\":152,\"name\":\"DATATRIEVE\"},{\"id\":153,\"name\":\"dBase\"},{\"id\":154,\"name\":\"dc\"},{\"id\":155,\"name\":\"DCL\"},{\"id\":156,\"name\":\"Deesel\"},{\"id\":157,\"name\":\"Delphi\"},{\"id\":158,\"name\":\"DinkC\"},{\"id\":159,\"name\":\"DIBOL\"},{\"id\":160,\"name\":\"Dog\"},{\"id\":161,\"name\":\"Draco\"},{\"id\":162,\"name\":\"DRAKON\"},{\"id\":163,\"name\":\"Dylan\"},{\"id\":164,\"name\":\"DYNAMO\"},{\"id\":165,\"name\":\"E\"},{\"id\":166,\"name\":\"E#\"},{\"id\":167,\"name\":\"Ease\"},{\"id\":168,\"name\":\"Easy PL/I\"},{\"id\":169,\"name\":\"Easy Programming Language\"},{\"id\":170,\"name\":\"EASYTRIEVE PLUS\"},{\"id\":171,\"name\":\"ECMAScript\"},{\"id\":172,\"name\":\"Edinburgh IMP\"},{\"id\":173,\"name\":\"EGL\"},{\"id\":174,\"name\":\"Eiffel\"},{\"id\":175,\"name\":\"ELAN\"},{\"id\":176,\"name\":\"Elixir\"},{\"id\":177,\"name\":\"Elm\"},{\"id\":178,\"name\":\"Emacs Lisp\"},{\"id\":179,\"name\":\"Emerald\"},{\"id\":180,\"name\":\"Epigram\"},{\"id\":181,\"name\":\"EPL\"},{\"id\":182,\"name\":\"Erlang\"},{\"id\":183,\"name\":\"es\"},{\"id\":184,\"name\":\"Escher\"},{\"id\":185,\"name\":\"ESPOL\"},{\"id\":186,\"name\":\"Esterel\"},{\"id\":187,\"name\":\"Etoys\"},{\"id\":188,\"name\":\"Euclid\"},{\"id\":189,\"name\":\"Euler\"},{\"id\":190,\"name\":\"Euphoria\"},{\"id\":191,\"name\":\"EusLisp Robot Programming Language\"},{\"id\":192,\"name\":\"CMS EXEC\"},{\"id\":193,\"name\":\"EXEC 2\"},{\"id\":194,\"name\":\"Executable UML\"},{\"id\":195,\"name\":\"F\"},{\"id\":196,\"name\":\"F#\"},{\"id\":197,\"name\":\"Factor\"},{\"id\":198,\"name\":\"Falcon\"},{\"id\":199,\"name\":\"Fantom\"},{\"id\":200,\"name\":\"FAUST\"},{\"id\":201,\"name\":\"FFP\"},{\"id\":202,\"name\":\"Fjölnir\"},{\"id\":203,\"name\":\"FL\"},{\"id\":204,\"name\":\"Flavors\"},{\"id\":205,\"name\":\"Flex\"},{\"id\":206,\"name\":\"FLOW-MATIC\"},{\"id\":207,\"name\":\"FOCAL\"},{\"id\":208,\"name\":\"FOCUS\"},{\"id\":209,\"name\":\"FOIL\"},{\"id\":210,\"name\":\"FORMAC\"},{\"id\":211,\"name\":\"@Formula\"},{\"id\":212,\"name\":\"Forth\"},{\"id\":213,\"name\":\"Fortran\"},{\"id\":214,\"name\":\"Fortress\"},{\"id\":215,\"name\":\"FoxBase\"},{\"id\":216,\"name\":\"FoxPro\"},{\"id\":217,\"name\":\"FP\"},{\"id\":218,\"name\":\"FPr\"},{\"id\":219,\"name\":\"Franz Lisp\"},{\"id\":220,\"name\":\"Frege\"},{\"id\":221,\"name\":\"F-Script\"},{\"id\":222,\"name\":\"G\"},{\"id\":223,\"name\":\"Google Apps Script\"},{\"id\":224,\"name\":\"Game Maker Language\"},{\"id\":225,\"name\":\"GameMonkey Script\"},{\"id\":226,\"name\":\"GAMS\"},{\"id\":227,\"name\":\"GAP\"},{\"id\":228,\"name\":\"G-code\"},{\"id\":229,\"name\":\"Genie\"},{\"id\":230,\"name\":\"GDL\"},{\"id\":231,\"name\":\"GJ\"},{\"id\":232,\"name\":\"GEORGE\"},{\"id\":233,\"name\":\"GLSL\"},{\"id\":234,\"name\":\"GNU E\"},{\"id\":235,\"name\":\"GM\"},{\"id\":236,\"name\":\"Go\"},{\"id\":237,\"name\":\"Go!\"},{\"id\":238,\"name\":\"GOAL\"},{\"id\":239,\"name\":\"Gödel\"},{\"id\":240,\"name\":\"Godiva\"},{\"id\":241,\"name\":\"GOM (Good Old Mad)\"},{\"id\":242,\"name\":\"Goo\"},{\"id\":243,\"name\":\"Gosu\"},{\"id\":244,\"name\":\"GOTRAN\"},{\"id\":245,\"name\":\"GPSS\"},{\"id\":246,\"name\":\"GraphTalk\"},{\"id\":247,\"name\":\"GRASS\"},{\"id\":248,\"name\":\"Groovy\"},{\"id\":249,\"name\":\"Hack\"},{\"id\":250,\"name\":\"HAL/S\"},{\"id\":251,\"name\":\"Hamilton C shell\"},{\"id\":252,\"name\":\"Harbour\"},{\"id\":253,\"name\":\"Hartmann pipelines\"},{\"id\":254,\"name\":\"Haskell\"},{\"id\":255,\"name\":\"Haxe\"},{\"id\":256,\"name\":\"High Level Assembly\"},{\"id\":257,\"name\":\"HLSL\"},{\"id\":258,\"name\":\"Hop\"},{\"id\":259,\"name\":\"Hope\"},{\"id\":260,\"name\":\"Hugo\"},{\"id\":261,\"name\":\"Hume\"},{\"id\":262,\"name\":\"HyperTalk\"},{\"id\":263,\"name\":\"IBM Basic assembly language\"},{\"id\":264,\"name\":\"IBM HAScript\"},{\"id\":265,\"name\":\"IBM Informix-4GL\"},{\"id\":266,\"name\":\"IBM RPG\"},{\"id\":267,\"name\":\"ICI\"},{\"id\":268,\"name\":\"Icon\"},{\"id\":269,\"name\":\"Id\"},{\"id\":270,\"name\":\"IDL\"},{\"id\":271,\"name\":\"Idris\"},{\"id\":272,\"name\":\"IMP\"},{\"id\":273,\"name\":\"Inform\"},{\"id\":274,\"name\":\"Io\"},{\"id\":275,\"name\":\"Ioke\"},{\"id\":276,\"name\":\"IPL\"},{\"id\":277,\"name\":\"IPTSCRAE\"},{\"id\":278,\"name\":\"ISLISP\"},{\"id\":279,\"name\":\"ISPF\"},{\"id\":280,\"name\":\"ISWIM\"},{\"id\":281,\"name\":\"J\"},{\"id\":282,\"name\":\"J#\"},{\"id\":283,\"name\":\"J++\"},{\"id\":284,\"name\":\"JADE\"},{\"id\":285,\"name\":\"Jako\"},{\"id\":286,\"name\":\"JAL\"},{\"id\":287,\"name\":\"Janus\"},{\"id\":288,\"name\":\"JASS\"},{\"id\":289,\"name\":\"Java\"},{\"id\":290,\"name\":\"JavaScript\"},{\"id\":291,\"name\":\"JCL\"},{\"id\":292,\"name\":\"JEAN\"},{\"id\":293,\"name\":\"Join Java\"},{\"id\":294,\"name\":\"JOSS\"},{\"id\":295,\"name\":\"Joule\"},{\"id\":296,\"name\":\"JOVIAL\"},{\"id\":297,\"name\":\"Joy\"},{\"id\":298,\"name\":\"JScript\"},{\"id\":299,\"name\":\"JScript .NET\"},{\"id\":300,\"name\":\"JavaFX Script\"},{\"id\":301,\"name\":\"Julia\"},{\"id\":302,\"name\":\"Jython\"},{\"id\":303,\"name\":\"K\"},{\"id\":304,\"name\":\"Kaleidoscope\"},{\"id\":305,\"name\":\"Karel\"},{\"id\":306,\"name\":\"Karel++\"},{\"id\":307,\"name\":\"KEE\"},{\"id\":308,\"name\":\"Kixtart\"},{\"id\":309,\"name\":\"Klerer-May System\"},{\"id\":310,\"name\":\"KIF\"},{\"id\":311,\"name\":\"Kojo\"},{\"id\":312,\"name\":\"Kotlin\"},{\"id\":313,\"name\":\"KRC\"},{\"id\":314,\"name\":\"KRL\"},{\"id\":315,\"name\":\"KUKA\"},{\"id\":316,\"name\":\"KRYPTON\"},{\"id\":317,\"name\":\"ksh\"},{\"id\":318,\"name\":\"L\"},{\"id\":319,\"name\":\"L# .NET\"},{\"id\":320,\"name\":\"LabVIEW\"},{\"id\":321,\"name\":\"Ladder\"},{\"id\":322,\"name\":\"Lagoona\"},{\"id\":323,\"name\":\"LANSA\"},{\"id\":324,\"name\":\"Lasso\"},{\"id\":325,\"name\":\"LaTeX\"},{\"id\":326,\"name\":\"Lava\"},{\"id\":327,\"name\":\"LC-3\"},{\"id\":328,\"name\":\"Leda\"},{\"id\":329,\"name\":\"Legoscript\"},{\"id\":330,\"name\":\"LIL\"},{\"id\":331,\"name\":\"LilyPond\"},{\"id\":332,\"name\":\"Limbo\"},{\"id\":333,\"name\":\"Limnor\"},{\"id\":334,\"name\":\"LINC\"},{\"id\":335,\"name\":\"Lingo\"},{\"id\":336,\"name\":\"Linoleum\"},{\"id\":337,\"name\":\"LIS\"},{\"id\":338,\"name\":\"LISA\"},{\"id\":339,\"name\":\"Lisaac\"},{\"id\":340,\"name\":\"Lisp\"},{\"id\":341,\"name\":\"Lite-C\"},{\"id\":342,\"name\":\"Lithe\"},{\"id\":343,\"name\":\"Little b\"},{\"id\":344,\"name\":\"Logo\"},{\"id\":345,\"name\":\"Logtalk\"},{\"id\":346,\"name\":\"LotusScript\"},{\"id\":347,\"name\":\"LPC\"},{\"id\":348,\"name\":\"LSE\"},{\"id\":349,\"name\":\"LSL\"},{\"id\":350,\"name\":\"LiveCode\"},{\"id\":351,\"name\":\"LiveScript\"},{\"id\":352,\"name\":\"Lua\"},{\"id\":353,\"name\":\"Lucid\"},{\"id\":354,\"name\":\"Lustre\"},{\"id\":355,\"name\":\"LYaPAS\"},{\"id\":356,\"name\":\"Lynx\"},{\"id\":357,\"name\":\"M2001\"},{\"id\":358,\"name\":\"M4\"},{\"id\":359,\"name\":\"M#\"},{\"id\":360,\"name\":\"Machine code\"},{\"id\":361,\"name\":\"MAD\"},{\"id\":362,\"name\":\"MAD/I\"},{\"id\":363,\"name\":\"Magik\"},{\"id\":364,\"name\":\"Magma\"},{\"id\":365,\"name\":\"make\"},{\"id\":366,\"name\":\"Maple\"},{\"id\":367,\"name\":\"MAPPER\"},{\"id\":368,\"name\":\"MARK-IV\"},{\"id\":369,\"name\":\"Mary\"},{\"id\":370,\"name\":\"MASM Microsoft Assembly x86\"},{\"id\":371,\"name\":\"Mathematica\"},{\"id\":372,\"name\":\"MATLAB\"},{\"id\":373,\"name\":\"Maxima\"},{\"id\":374,\"name\":\"Macsyma\"},{\"id\":375,\"name\":\"Max\"},{\"id\":376,\"name\":\"MaxScript\"},{\"id\":377,\"name\":\"Maya (MEL)\"},{\"id\":378,\"name\":\"MDL\"},{\"id\":379,\"name\":\"Mercury\"},{\"id\":380,\"name\":\"Mesa\"},{\"id\":381,\"name\":\"Metacard\"},{\"id\":382,\"name\":\"Metafont\"},{\"id\":383,\"name\":\"Microcode\"},{\"id\":384,\"name\":\"MicroScript\"},{\"id\":385,\"name\":\"MIIS\"},{\"id\":386,\"name\":\"MillScript\"},{\"id\":387,\"name\":\"MIMIC\"},{\"id\":388,\"name\":\"Mirah\"},{\"id\":389,\"name\":\"Miranda\"},{\"id\":390,\"name\":\"MIVA Script\"},{\"id\":391,\"name\":\"ML\"},{\"id\":392,\"name\":\"Moby\"},{\"id\":393,\"name\":\"Model 204\"},{\"id\":394,\"name\":\"Modelica\"},{\"id\":395,\"name\":\"Modula\"},{\"id\":396,\"name\":\"Modula-2\"},{\"id\":397,\"name\":\"Modula-3\"},{\"id\":398,\"name\":\"Mohol\"},{\"id\":399,\"name\":\"MOO\"},{\"id\":400,\"name\":\"Mortran\"},{\"id\":401,\"name\":\"Mouse\"},{\"id\":402,\"name\":\"MPD\"},{\"id\":403,\"name\":\"CIL\"},{\"id\":404,\"name\":\"MSL\"},{\"id\":405,\"name\":\"MUMPS\"},{\"id\":406,\"name\":\"Mystic Programming Language\"},{\"id\":407,\"name\":\"NASM\"},{\"id\":408,\"name\":\"NATURAL\"},{\"id\":409,\"name\":\"Napier88\"},{\"id\":410,\"name\":\"Neko\"},{\"id\":411,\"name\":\"Nemerle\"},{\"id\":412,\"name\":\"nesC\"},{\"id\":413,\"name\":\"NESL\"},{\"id\":414,\"name\":\"Net.Data\"},{\"id\":415,\"name\":\"NetLogo\"},{\"id\":416,\"name\":\"NetRexx\"},{\"id\":417,\"name\":\"NewLISP\"},{\"id\":418,\"name\":\"NEWP\"},{\"id\":419,\"name\":\"Newspeak\"},{\"id\":420,\"name\":\"NewtonScript\"},{\"id\":421,\"name\":\"NGL\"},{\"id\":422,\"name\":\"Nial\"},{\"id\":423,\"name\":\"Nice\"},{\"id\":424,\"name\":\"Nickle\"},{\"id\":425,\"name\":\"Nim\"},{\"id\":426,\"name\":\"NPL\"},{\"id\":427,\"name\":\"Not eXactly C\"},{\"id\":428,\"name\":\"Not Quite C\"},{\"id\":429,\"name\":\"NSIS\"},{\"id\":430,\"name\":\"Nu\"},{\"id\":431,\"name\":\"NWScript\"},{\"id\":432,\"name\":\"NXT-G\"},{\"id\":433,\"name\":\"o:XML\"},{\"id\":434,\"name\":\"Oak\"},{\"id\":435,\"name\":\"Oberon\"},{\"id\":436,\"name\":\"OBJ2\"},{\"id\":437,\"name\":\"Object Lisp\"},{\"id\":438,\"name\":\"ObjectLOGO\"},{\"id\":439,\"name\":\"Object REXX\"},{\"id\":440,\"name\":\"Object Pascal\"},{\"id\":441,\"name\":\"Objective-C\"},{\"id\":442,\"name\":\"Objective-J\"},{\"id\":443,\"name\":\"Obliq\"},{\"id\":444,\"name\":\"OCaml\"},{\"id\":445,\"name\":\"occam\"},{\"id\":446,\"name\":\"occam-π\"},{\"id\":447,\"name\":\"Octave\"},{\"id\":448,\"name\":\"OmniMark\"},{\"id\":449,\"name\":\"Onyx\"},{\"id\":450,\"name\":\"Opa\"},{\"id\":451,\"name\":\"Opal\"},{\"id\":452,\"name\":\"OpenCL\"},{\"id\":453,\"name\":\"OpenEdge ABL\"},{\"id\":454,\"name\":\"OPL\"},{\"id\":455,\"name\":\"OPS5\"},{\"id\":456,\"name\":\"OptimJ\"},{\"id\":457,\"name\":\"Orc\"},{\"id\":458,\"name\":\"ORCA/Modula-2\"},{\"id\":459,\"name\":\"Oriel\"},{\"id\":460,\"name\":\"Orwell\"},{\"id\":461,\"name\":\"Oxygene\"},{\"id\":462,\"name\":\"Oz\"},{\"id\":463,\"name\":\"P′′\"},{\"id\":464,\"name\":\"P#\"},{\"id\":465,\"name\":\"ParaSail (programming language)\"},{\"id\":466,\"name\":\"PARI/GP\"},{\"id\":467,\"name\":\"Pascal\"},{\"id\":468,\"name\":\"PCASTL\"},{\"id\":469,\"name\":\"PCF\"},{\"id\":470,\"name\":\"PEARL\"},{\"id\":471,\"name\":\"PeopleCode\"},{\"id\":472,\"name\":\"Perl\"},{\"id\":473,\"name\":\"PDL\"},{\"id\":474,\"name\":\"Perl6\"},{\"id\":475,\"name\":\"PHP\"},{\"id\":476,\"name\":\"Phrogram\"},{\"id\":477,\"name\":\"Pico\"},{\"id\":478,\"name\":\"Picolisp\"},{\"id\":479,\"name\":\"Pict\"},{\"id\":480,\"name\":\"Pike\"},{\"id\":481,\"name\":\"PIKT\"},{\"id\":482,\"name\":\"PILOT\"},{\"id\":483,\"name\":\"Pipelines\"},{\"id\":484,\"name\":\"Pizza\"},{\"id\":485,\"name\":\"PL-11\"},{\"id\":486,\"name\":\"PL/0\"},{\"id\":487,\"name\":\"PL/B\"},{\"id\":488,\"name\":\"PL/C\"},{\"id\":489,\"name\":\"PL/I\"},{\"id\":490,\"name\":\"PL/M\"},{\"id\":491,\"name\":\"PL/P\"},{\"id\":492,\"name\":\"PL/SQL\"},{\"id\":493,\"name\":\"PL360\"},{\"id\":494,\"name\":\"PLANC\"},{\"id\":495,\"name\":\"Plankalkül\"},{\"id\":496,\"name\":\"Planner\"},{\"id\":497,\"name\":\"PLEX\"},{\"id\":498,\"name\":\"PLEXIL\"},{\"id\":499,\"name\":\"Plus\"},{\"id\":500,\"name\":\"POP-11\"},{\"id\":501,\"name\":\"PostScript\"},{\"id\":502,\"name\":\"PortablE\"},{\"id\":503,\"name\":\"Powerhouse\"},{\"id\":504,\"name\":\"PowerBuilder\"},{\"id\":505,\"name\":\"PowerShell\"},{\"id\":506,\"name\":\"PPL\"},{\"id\":507,\"name\":\"Processing\"},{\"id\":508,\"name\":\"Processing.js\"},{\"id\":509,\"name\":\"Prograph\"},{\"id\":510,\"name\":\"PROIV\"},{\"id\":511,\"name\":\"Prolog\"},{\"id\":512,\"name\":\"PROMAL\"},{\"id\":513,\"name\":\"Promela\"},{\"id\":514,\"name\":\"PROSE modeling language\"},{\"id\":515,\"name\":\"PROTEL\"},{\"id\":516,\"name\":\"ProvideX\"},{\"id\":517,\"name\":\"Pro*C\"},{\"id\":518,\"name\":\"Pure\"},{\"id\":519,\"name\":\"Python\"},{\"id\":520,\"name\":\"Q (equational programming language)\"},{\"id\":521,\"name\":\"Q (programming language from Kx Systems)\"},{\"id\":522,\"name\":\"Qalb\"},{\"id\":523,\"name\":\"QtScript\"},{\"id\":524,\"name\":\"QuakeC\"},{\"id\":525,\"name\":\"QPL\"},{\"id\":526,\"name\":\"R\"},{\"id\":527,\"name\":\"R++\"},{\"id\":528,\"name\":\"Racket\"},{\"id\":529,\"name\":\"RAPID\"},{\"id\":530,\"name\":\"Rapira\"},{\"id\":531,\"name\":\"Ratfiv\"},{\"id\":532,\"name\":\"Ratfor\"},{\"id\":533,\"name\":\"rc\"},{\"id\":534,\"name\":\"REBOL\"},{\"id\":535,\"name\":\"Red\"},{\"id\":536,\"name\":\"Redcode\"},{\"id\":537,\"name\":\"REFAL\"},{\"id\":538,\"name\":\"Reia\"},{\"id\":539,\"name\":\"Revolution\"},{\"id\":540,\"name\":\"rex\"},{\"id\":541,\"name\":\"REXX\"},{\"id\":542,\"name\":\"Rlab\"},{\"id\":543,\"name\":\"ROOP\"},{\"id\":544,\"name\":\"RPG\"},{\"id\":545,\"name\":\"RPL\"},{\"id\":546,\"name\":\"RSL\"},{\"id\":547,\"name\":\"RTL/2\"},{\"id\":548,\"name\":\"Ruby\"},{\"id\":549,\"name\":\"RuneScript\"},{\"id\":550,\"name\":\"Rust\"},{\"id\":551,\"name\":\"S\"},{\"id\":552,\"name\":\"S2\"},{\"id\":553,\"name\":\"S3\"},{\"id\":554,\"name\":\"S-Lang\"},{\"id\":555,\"name\":\"S-PLUS\"},{\"id\":556,\"name\":\"SA-C\"},{\"id\":557,\"name\":\"SabreTalk\"},{\"id\":558,\"name\":\"SAIL\"},{\"id\":559,\"name\":\"SALSA\"},{\"id\":560,\"name\":\"SAM76\"},{\"id\":561,\"name\":\"SAS\"},{\"id\":562,\"name\":\"SASL\"},{\"id\":563,\"name\":\"Sather\"},{\"id\":564,\"name\":\"Sawzall\"},{\"id\":565,\"name\":\"SBL\"},{\"id\":566,\"name\":\"Scala\"},{\"id\":567,\"name\":\"Scheme\"},{\"id\":568,\"name\":\"Scilab\"},{\"id\":569,\"name\":\"Scratch\"},{\"id\":570,\"name\":\"Script.NET\"},{\"id\":571,\"name\":\"Sed\"},{\"id\":572,\"name\":\"Seed7\"},{\"id\":573,\"name\":\"Self\"},{\"id\":574,\"name\":\"SenseTalk\"},{\"id\":575,\"name\":\"SequenceL\"},{\"id\":576,\"name\":\"SETL\"},{\"id\":577,\"name\":\"SIMPOL\"},{\"id\":578,\"name\":\"SIGNAL\"},{\"id\":579,\"name\":\"SiMPLE\"},{\"id\":580,\"name\":\"SIMSCRIPT\"},{\"id\":581,\"name\":\"Simula\"},{\"id\":582,\"name\":\"Simulink\"},{\"id\":583,\"name\":\"SISAL\"},{\"id\":584,\"name\":\"SLIP\"},{\"id\":585,\"name\":\"SMALL\"},{\"id\":586,\"name\":\"Smalltalk\"},{\"id\":587,\"name\":\"Small Basic\"},{\"id\":588,\"name\":\"SML\"},{\"id\":589,\"name\":\"Snap!\"},{\"id\":590,\"name\":\"SNOBOL\"},{\"id\":591,\"name\":\"SPITBOL\"},{\"id\":592,\"name\":\"Snowball\"},{\"id\":593,\"name\":\"SOL\"},{\"id\":594,\"name\":\"Span\"},{\"id\":595,\"name\":\"SPARK\"},{\"id\":596,\"name\":\"Speedcode\"},{\"id\":597,\"name\":\"SPIN\"},{\"id\":598,\"name\":\"SP/k\"},{\"id\":599,\"name\":\"SPS\"},{\"id\":600,\"name\":\"SQR\"},{\"id\":601,\"name\":\"Squeak\"},{\"id\":602,\"name\":\"Squirrel\"},{\"id\":603,\"name\":\"SR\"},{\"id\":604,\"name\":\"S/SL\"},{\"id\":605,\"name\":\"Stackless Python\"},{\"id\":606,\"name\":\"Starlogo\"},{\"id\":607,\"name\":\"Strand\"},{\"id\":608,\"name\":\"Stata\"},{\"id\":609,\"name\":\"Stateflow\"},{\"id\":610,\"name\":\"Subtext\"},{\"id\":611,\"name\":\"SuperCollider\"},{\"id\":612,\"name\":\"SuperTalk\"},{\"id\":613,\"name\":\"Swift (Apple programming language)\"},{\"id\":614,\"name\":\"Swift (parallel scripting language)\"},{\"id\":615,\"name\":\"SYMPL\"},{\"id\":616,\"name\":\"SyncCharts\"},{\"id\":617,\"name\":\"SystemVerilog\"},{\"id\":618,\"name\":\"T\"},{\"id\":619,\"name\":\"TACL\"},{\"id\":620,\"name\":\"TACPOL\"},{\"id\":621,\"name\":\"TADS\"},{\"id\":622,\"name\":\"TAL\"},{\"id\":623,\"name\":\"Tcl\"},{\"id\":624,\"name\":\"Tea\"},{\"id\":625,\"name\":\"TECO\"},{\"id\":626,\"name\":\"TELCOMP\"},{\"id\":627,\"name\":\"TeX\"},{\"id\":628,\"name\":\"TEX\"},{\"id\":629,\"name\":\"TIE\"},{\"id\":630,\"name\":\"Timber\"},{\"id\":631,\"name\":\"TMG\"},{\"id\":632,\"name\":\"Tom\"},{\"id\":633,\"name\":\"TOM\"},{\"id\":634,\"name\":\"TouchDevelop\"},{\"id\":635,\"name\":\"Topspeed\"},{\"id\":636,\"name\":\"TPU\"},{\"id\":637,\"name\":\"Trac\"},{\"id\":638,\"name\":\"TTM\"},{\"id\":639,\"name\":\"T-SQL\"},{\"id\":640,\"name\":\"TTCN\"},{\"id\":641,\"name\":\"Turing\"},{\"id\":642,\"name\":\"TUTOR\"},{\"id\":643,\"name\":\"TXL\"},{\"id\":644,\"name\":\"TypeScript\"},{\"id\":645,\"name\":\"Turbo C++\"},{\"id\":646,\"name\":\"Ubercode\"},{\"id\":647,\"name\":\"UCSD Pascal\"},{\"id\":648,\"name\":\"Umple\"},{\"id\":649,\"name\":\"Unicon\"},{\"id\":650,\"name\":\"Uniface\"},{\"id\":651,\"name\":\"UNITY\"},{\"id\":652,\"name\":\"Unix shell\"},{\"id\":653,\"name\":\"UnrealScript\"},{\"id\":654,\"name\":\"Vala\"},{\"id\":655,\"name\":\"VBA\"},{\"id\":656,\"name\":\"VBScript\"},{\"id\":657,\"name\":\"Verilog\"},{\"id\":658,\"name\":\"VHDL\"},{\"id\":659,\"name\":\"Visual Basic\"},{\"id\":660,\"name\":\"Visual Basic .NET\"},{\"id\":661,\"name\":\"Visual DataFlex\"},{\"id\":662,\"name\":\"Visual DialogScript\"},{\"id\":663,\"name\":\"Visual Fortran\"},{\"id\":664,\"name\":\"Visual FoxPro\"},{\"id\":665,\"name\":\"Visual J++\"},{\"id\":666,\"name\":\"Visual J#\"},{\"id\":667,\"name\":\"Visual Objects\"},{\"id\":668,\"name\":\"Visual Prolog\"},{\"id\":669,\"name\":\"VSXu\"},{\"id\":670,\"name\":\"vvvv\"},{\"id\":671,\"name\":\"WATFIV, WATFOR\"},{\"id\":672,\"name\":\"WebDNA\"},{\"id\":673,\"name\":\"WebQL\"},{\"id\":674,\"name\":\"Windows PowerShell\"},{\"id\":675,\"name\":\"Winbatch\"},{\"id\":676,\"name\":\"Wolfram Language\"},{\"id\":677,\"name\":\"Wyvern\"},{\"id\":678,\"name\":\"X++\"},{\"id\":679,\"name\":\"X#\"},{\"id\":680,\"name\":\"X10\"},{\"id\":681,\"name\":\"XBL\"},{\"id\":682,\"name\":\"XC\"},{\"id\":683,\"name\":\"XMOS architecture\"},{\"id\":684,\"name\":\"xHarbour\"},{\"id\":685,\"name\":\"XL\"},{\"id\":686,\"name\":\"Xojo\"},{\"id\":687,\"name\":\"XOTcl\"},{\"id\":688,\"name\":\"XPL\"},{\"id\":689,\"name\":\"XPL0\"},{\"id\":690,\"name\":\"XQuery\"},{\"id\":691,\"name\":\"XSB\"},{\"id\":692,\"name\":\"XSLT\"},{\"id\":693,\"name\":\"XPath\"},{\"id\":694,\"name\":\"Xtend\"},{\"id\":695,\"name\":\"Yorick\"},{\"id\":696,\"name\":\"YQL\"},{\"id\":697,\"name\":\"Z notation\"},{\"id\":698,\"name\":\"Zeno\"},{\"id\":699,\"name\":\"ZOPL\"},{\"id\":700,\"name\":\"ZPL\"}]");
 
 /***/ }),
-/* 49 */
+/* 52 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2634,7 +2782,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 50 */
+/* 53 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -2680,6 +2828,11 @@ module.exports = app => {
       this.ctx.success();
     }
 
+    // form-mobile-verify
+    mobileVerify() {
+      this.ctx.success();
+    }
+
     _getCacheName() {
       // get the operation user
       const user = this.ctx.user.op;
@@ -2694,7 +2847,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 51 */
+/* 54 */
 /***/ (function(module, exports) {
 
 
@@ -2731,12 +2884,12 @@ module.exports = app => {
 
 
 /***/ }),
-/* 52 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(53);
-const party = __webpack_require__(56);
-const partyPublic = __webpack_require__(57);
+const version = __webpack_require__(56);
+const party = __webpack_require__(59);
+const partyPublic = __webpack_require__(60);
 
 module.exports = app => {
   const services = {
@@ -2753,10 +2906,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 53 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const VersionTestFn = __webpack_require__(54);
+const VersionTestFn = __webpack_require__(57);
 
 module.exports = app => {
 
@@ -2871,6 +3024,26 @@ module.exports = app => {
         await this.ctx.meta.role.addRoleRightBatch({ atomClassName: 'party', roleRights });
       }
 
+      //
+      if (options.version === 5) {
+        // roleFunctions: widgets
+        const roleFunctions = [
+          { roleName: null, name: 'widgetSales' },
+          { roleName: null, name: 'widgetSalesLine' },
+          { roleName: null, name: 'widgetSalesPie' },
+          { roleName: null, name: 'widgetSnapshot' },
+        ];
+        await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
+      }
+
+      //
+      if (options.version === 6) {
+        // function: kitchenSink scene->demonstration
+        const sceneId = await this.ctx.meta.function.getSceneId({ sceneName: 'demonstration', sceneMenu: 1 });
+        const func = await this.ctx.meta.function.get({ name: 'kitchenSink' });
+        await this.ctx.meta.function.model.update({ id: func.id, sceneId });
+      }
+
     }
 
     async test() {
@@ -2885,10 +3058,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 54 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const testData = __webpack_require__(55);
+const testData = __webpack_require__(58);
 
 module.exports = function(ctx) {
 
@@ -2959,14 +3132,16 @@ module.exports = function(ctx) {
       const userIds = {};
       for (const [ userName, roleName ] of testData.users) {
         // add
-        userIds[userName] = await ctx.meta.user.add({
-          userName,
-          realName: userName,
-        });
-        // activated
-        await ctx.meta.user.save({
-          user: { id: userIds[userName], activated: 1 },
-        });
+        if (!userIds[userName]) {
+          userIds[userName] = await ctx.meta.user.add({
+            userName,
+            realName: userName,
+          });
+          // activated
+          await ctx.meta.user.save({
+            user: { id: userIds[userName], activated: 1 },
+          });
+        }
         // role
         await ctx.meta.role.addUserRole({
           userId: userIds[userName],
@@ -2985,7 +3160,16 @@ module.exports = function(ctx) {
 
     // role rights
     async _testRoleRights() {
+      // atomClass
       await ctx.meta.role.addRoleRightBatch({ atomClassName: 'party', roleRights: testData.roleRights });
+      await ctx.meta.role.addRoleRightBatch({ atomClassName: 'partyPublic', roleRights: null });
+      // function
+      const roleFunctions = [
+        { roleName: null, name: 'testFunctionPublic' },
+      ];
+      await ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
+      // set locales of new functions
+      await ctx.meta.function.setLocales();
     }
 
     // auths
@@ -3009,7 +3193,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 55 */
+/* 58 */
 /***/ (function(module, exports) {
 
 // roleName, leader, catalog, roleNameParent
@@ -3037,6 +3221,9 @@ const users = [
   [ 'Tom', 'father' ], [ 'Jane', 'mother' ], [ 'Tomson', 'son' ], [ 'Jannie', 'daughter' ],
   [ 'Jimmy', 'friend' ], [ 'Rose', 'friend' ],
   [ 'Smith', 'life' ],
+  [ 'Jone', 'work' ],
+  [ 'Rose', 'superuser' ], // for muilti-roles
+  [ 'Jone', 'superuser' ], // for muilti-roles
 ];
 
 // roleRights
@@ -3058,7 +3245,7 @@ module.exports = {
 
 
 /***/ }),
-/* 56 */
+/* 59 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3166,7 +3353,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 57 */
+/* 60 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3208,12 +3395,12 @@ module.exports = app => {
 
 
 /***/ }),
-/* 58 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const party = __webpack_require__(59);
-const partyType = __webpack_require__(60);
-const partyPublic = __webpack_require__(61);
+const party = __webpack_require__(62);
+const partyType = __webpack_require__(63);
+const partyPublic = __webpack_require__(64);
 
 module.exports = app => {
   const models = {
@@ -3230,7 +3417,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 59 */
+/* 62 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3248,7 +3435,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 60 */
+/* 63 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3266,7 +3453,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 61 */
+/* 64 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3284,7 +3471,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 62 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -3295,9 +3482,9 @@ module.exports = app => {
   };
   if (app.meta.isTest || app.meta.isLocal) {
     // schemas
-    const schemas = __webpack_require__(63)(app);
+    const schemas = __webpack_require__(66)(app);
     // keywords
-    const keywords = __webpack_require__(64)(app);
+    const keywords = __webpack_require__(67)(app);
     // meta
     extend(true, meta, {
       base: {
@@ -3350,10 +3537,35 @@ module.exports = app => {
           },
           kitchenSink: {
             title: 'Kitchen-sink',
-            scene: 'tools',
+            scene: 'demonstration',
             actionPath: 'kitchen-sink/index',
             sorting: 1,
             menu: 1,
+          },
+          // widgets
+          widgetSales: {
+            title: 'Fruit Sales',
+            component: 'widgetSales',
+            menu: 3,
+            public: 1,
+          },
+          widgetSalesLine: {
+            title: 'Fruit Sales(Line Chart)',
+            component: 'widgetSalesLine',
+            menu: 3,
+            public: 1,
+          },
+          widgetSalesPie: {
+            title: 'Fruit Sales(Pie Chart)',
+            component: 'widgetSalesPie',
+            menu: 3,
+            public: 1,
+          },
+          widgetSnapshot: {
+            title: 'Snapshots',
+            component: 'widgetSnapshot',
+            menu: 3,
+            public: 1,
           },
         },
       },
@@ -3377,6 +3589,9 @@ module.exports = app => {
           formCaptchaTest: {
             schemas: 'formCaptchaTest',
           },
+          formMobileVerifyTest: {
+            schemas: 'formMobileVerifyTest',
+          },
         },
         keywords: {
           'x-languages': keywords.languages,
@@ -3389,6 +3604,7 @@ module.exports = app => {
           settingsInstance: schemas.settingsInstance,
           formTest: schemas.formTest,
           formCaptchaTest: schemas.formCaptchaTest,
+          formMobileVerifyTest: schemas.formMobileVerifyTest,
         },
       },
       settings: {
@@ -3397,6 +3613,11 @@ module.exports = app => {
         },
         instance: {
           validator: 'instanceTest',
+        },
+      },
+      event: {
+        implementations: {
+          'a-base:loginInfo': 'test/event/loginInfoDashboard',
         },
       },
       index: {
@@ -3462,7 +3683,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 63 */
+/* 66 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3624,7 +3845,7 @@ module.exports = app => {
       passwordAgain: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Password again',
+        ebTitle: 'Password Again',
         ebSecure: true,
         notEmpty: true,
         const: { $data: '1/password' },
@@ -3679,7 +3900,7 @@ module.exports = app => {
       rememberMe: {
         type: 'boolean',
         ebType: 'toggle',
-        ebTitle: 'Remember me',
+        ebTitle: 'Remember Me',
       },
     },
   };
@@ -3702,13 +3923,25 @@ module.exports = app => {
       },
     },
   };
+  schemas.formMobileVerifyTest = {
+    type: 'object',
+    properties: {
+      mobile: {
+        type: 'string',
+        ebType: 'text',
+        ebInputType: 'tel',
+        ebTitle: 'Phone Number',
+        notEmpty: true,
+      },
+    },
+  };
 
   return schemas;
 };
 
 
 /***/ }),
-/* 64 */
+/* 67 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -3727,7 +3960,7 @@ module.exports = app => {
         });
         const index = locales.findIndex(item => item.value === data);
         if (index > -1) return true;
-        const errors = [{ keyword: 'x-languages', params: [], message: ctx.text('Not expected value') }];
+        const errors = [{ keyword: 'x-languages', params: [], message: ctx.text('Not Expected Value') }];
         throw new app.meta.ajv.ValidationError(errors);
       };
     },
