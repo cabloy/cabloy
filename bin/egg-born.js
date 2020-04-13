@@ -73,7 +73,20 @@ co(function* () {
   };
 
   command.__downloadCabloyModule = function* (moduleName) {
-    return yield this.downloadModule(`egg-born-module-${moduleName}`);
+    const pkgName = `egg-born-module-${moduleName}`;
+    const result = yield this.getPackageInfo(pkgName, false);
+    const tgzUrl = result.dist.tarball;
+
+    this.log(`downloading ${tgzUrl}`);
+
+    const saveDir = path.join(os.tmpdir(), pkgName);
+    yield rimraf(saveDir);
+
+    const response = yield this.curl(tgzUrl, { streaming: true, followRedirect: true });
+    yield compressing.tgz.uncompress(response.res, saveDir);
+
+    this.log(`extract to ${saveDir}`);
+    return path.join(saveDir, '/package');
   };
 
   command.__moveCabloyModule = function(moduleName, moduleSrcDir, targetDir) {
@@ -99,22 +112,6 @@ co(function* () {
     Object.assign(targetPackageProject.dependencies, sourcePackageTest.dependencies);
     // version save
     fse.outputFileSync(targetPathProject, JSON.stringify(targetPackageProject, null, 2) + '\n');
-  };
-
-  command.downloadModule = function* (pkgName) {
-    const result = yield this.getPackageInfo(pkgName, false);
-    const tgzUrl = result.dist.tarball;
-
-    this.log(`downloading ${tgzUrl}`);
-
-    const saveDir = path.join(os.tmpdir(), 'egg-born-module');
-    yield rimraf(saveDir);
-
-    const response = yield this.curl(tgzUrl, { streaming: true, followRedirect: true });
-    yield compressing.tgz.uncompress(response.res, saveDir);
-
-    this.log(`extract to ${saveDir}`);
-    return path.join(saveDir, '/package');
   };
 
   // run
