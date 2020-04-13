@@ -82,7 +82,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 23);
+/******/ 	return __webpack_require__(__webpack_require__.s = 24);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -93,24 +93,6 @@ module.exports = require("require3");
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports) {
-
-module.exports = app => {
-
-  class Function extends app.meta.Model {
-
-    constructor(ctx) {
-      super(ctx, { table: 'aFunction', options: { disableDeleted: true } });
-    }
-
-  }
-
-  return Function;
-};
-
-
-/***/ }),
-/* 2 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -143,14 +125,32 @@ module.exports = {
   },
   function: {
     scene: {
-      default: 0,
+      // default: 0,
       create: 1,
       list: 2,
-      report: 20,
+      // report: 20,
       tools: 50,
-      custom: 100,
+      // custom: 100,
     },
   },
+};
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+
+  class Function extends app.meta.Model {
+
+    constructor(ctx) {
+      super(ctx, { table: 'aFunction', options: { disableDeleted: true } });
+    }
+
+  }
+
+  return Function;
 };
 
 
@@ -285,7 +285,7 @@ module.exports = ctx => {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass
-      // -- c: aViewUserRightAtom
+      // -- c: aViewUserRightAtomRole
       // -- d: aAtomStar
       // -- e: aAtomLabelRef
       // -- f: {item}
@@ -386,7 +386,7 @@ module.exports = ctx => {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass
-      // -- c: aViewUserRightAtom
+      // -- c: aViewUserRightAtomRole
       // -- d: aAtomStar
       // -- e: aAtomLabelRef
       // -- f: {item}
@@ -516,7 +516,7 @@ module.exports = ctx => {
                                    (
                                      (
                                        exists(
-                                               select c.atomId from aViewUserRightAtom c where c.iid=${iid} and a.id=c.atomId and c.action>2 and c.userIdWho=${userIdWho}
+                                               select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action>2 and c.userIdWho=${userIdWho}
                                              )
                                      ) or
                                      (
@@ -531,7 +531,7 @@ module.exports = ctx => {
                                    (
                                      b.public=1 or
                                      exists(
-                                             select c.atomId from aViewUserRightAtom c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.userIdWho=${userIdWho}
+                                             select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.userIdWho=${userIdWho}
                                            )
                                    )
                                )
@@ -641,7 +641,7 @@ module.exports = ctx => {
                                   (
                                       (
                                         exists(
-                                                select c.atomId from aViewUserRightAtom c where c.iid=${iid} and a.id=c.atomId and c.action>2 and c.userIdWho=${userIdWho}
+                                                select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action>2 and c.userIdWho=${userIdWho}
                                               )
                                       )
                                       or
@@ -659,7 +659,7 @@ module.exports = ctx => {
                                   (
                                       b.public=1 or
                                       exists(
-                                              select c.atomId from aViewUserRightAtom c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.userIdWho=${userIdWho}
+                                              select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.userIdWho=${userIdWho}
                                             )
                                   )
                               )
@@ -689,7 +689,7 @@ module.exports = ctx => {
              and (
                   (a.atomEnabled=0 and a.userIdCreated=${userIdWho}) or
                   (a.atomEnabled=1 and (
-                    (exists(select c.atomId from aViewUserRightAtom c where c.iid=${iid} and a.id=c.atomId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.userIdWho=${userIdWho})) or
+                    (exists(select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.userIdWho=${userIdWho})) or
                     (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.scope=0 and c.userIdWho=${userIdWho}))
                   ))
                 )
@@ -714,7 +714,7 @@ module.exports = ctx => {
             (
                a.deleted=0 and a.iid=${iid} and a.id=${atomId} and a.atomEnabled=1
                and (
-                      (exists(select c.atomId from aViewUserRightAtom c where c.iid=${iid} and a.id=c.atomId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.userIdWho=${userIdWho})) or
+                      (exists(select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.userIdWho=${userIdWho})) or
                       (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.scope=0 and c.userIdWho=${userIdWho}))
                    )
             )
@@ -737,6 +737,22 @@ module.exports = ctx => {
       return _sql;
     }
 
+    checkRightCreateRole({ iid, userIdWho, atomClassId, roleIdOwner }) {
+      // for safe
+      iid = parseInt(iid);
+      userIdWho = parseInt(userIdWho);
+      atomClassId = parseInt(atomClassId);
+      roleIdOwner = parseInt(roleIdOwner);
+
+      // sql
+      const _sql =
+        `select a.* from aAtomClass a
+            inner join aViewUserRightAtomClass b on a.id=b.atomClassId
+              where b.iid=${iid} and b.atomClassId=${atomClassId} and b.action=1 and b.userIdWho=${userIdWho} and b.roleId=${roleIdOwner}
+        `;
+      return _sql;
+    }
+
     selectFunctions({ iid, locale, userIdWho, where, orders, page, star }) {
       // -- tables
       // -- a: aFunction
@@ -744,6 +760,7 @@ module.exports = ctx => {
       // -- c: aViewUserRightFunction
       // -- d: aFunctionStar
       // -- e: aAtomClass
+      // -- f: aFunctionScene
 
       // for safe
       where = where ? ctx.model._where(where) : null;
@@ -801,6 +818,7 @@ module.exports = ctx => {
            from aFunction a
 
              left join aAtomClass e on a.atomClassId=e.id
+             left join aFunctionScene f on a.sceneId=f.id
              ${_localeJoin}
              ${_starJoin}
 
@@ -850,7 +868,7 @@ module.exports = ctx => {
       // sql
       const _sql =
         `select a.* from aFunction a
-            where a.iid=${iid} and a.menu=1
+            where a.iid=${iid}
               and not exists(
                 select b.id from aFunctionLocale b
                   where b.iid=${iid} and b.locale=${locale} and b.functionId=a.id
@@ -909,6 +927,24 @@ module.exports = app => {
 
 module.exports = app => {
 
+  class FunctionScene extends app.meta.Model {
+
+    constructor(ctx) {
+      super(ctx, { table: 'aFunctionScene', options: { disableDeleted: true } });
+    }
+
+  }
+
+  return FunctionScene;
+};
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+
   class Role extends app.meta.Model {
 
     constructor(ctx) {
@@ -922,7 +958,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -940,7 +976,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -958,7 +994,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -976,7 +1012,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -994,7 +1030,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1012,16 +1048,16 @@ module.exports = app => {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
 const uuid = require3('uuid');
 
-const modelFn = __webpack_require__(19);
-const modelAgentFn = __webpack_require__(20);
-const modelAuthFn = __webpack_require__(21);
-const modelAuthProviderFn = __webpack_require__(22);
+const modelFn = __webpack_require__(20);
+const modelAgentFn = __webpack_require__(21);
+const modelAuthFn = __webpack_require__(22);
+const modelAuthProviderFn = __webpack_require__(23);
 
 const _usersAnonymous = {};
 
@@ -1371,6 +1407,7 @@ module.exports = ctx => {
         authId = authItem.id;
         authUserId = authItem.userId;
       } else {
+        if (profileUser.authShouldExists === true) ctx.throw.module(moduleInfo.relativeName, 1009);
         // add
         const res = await this.modelAuth.insert({
           providerId: providerItem.id,
@@ -1633,7 +1670,7 @@ module.exports = ctx => {
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1651,7 +1688,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1669,7 +1706,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1687,7 +1724,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1705,26 +1742,26 @@ module.exports = app => {
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const config = __webpack_require__(24);
-const locales = __webpack_require__(25);
-const errors = __webpack_require__(27);
-const middlewares = __webpack_require__(28);
-const constants = __webpack_require__(2);
+const config = __webpack_require__(25);
+const locales = __webpack_require__(26);
+const errors = __webpack_require__(28);
+const middlewares = __webpack_require__(29);
+const constants = __webpack_require__(1);
 
 // eslint-disable-next-line
 module.exports = app => {
 
   // routes
-  const routes = __webpack_require__(46)(app);
+  const routes = __webpack_require__(48)(app);
   // services
-  const services = __webpack_require__(56)(app);
+  const services = __webpack_require__(60)(app);
   // models
-  const models = __webpack_require__(77)(app);
+  const models = __webpack_require__(85)(app);
   // meta
-  const meta = __webpack_require__(84)(app);
+  const meta = __webpack_require__(92)(app);
 
   return {
     routes,
@@ -1742,7 +1779,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports) {
 
 // eslint-disable-next-line
@@ -1751,6 +1788,9 @@ module.exports = appInfo => {
 
   // middlewares
   config.middlewares = {
+    util: {
+      global: true,
+    },
     cors: {
       global: true,
       dependencies: 'instance',
@@ -1780,20 +1820,22 @@ module.exports = appInfo => {
 
   // startups
   config.startups = {
+    installAllSchedules: {
+      path: 'schedule/installAllSchedules',
+    },
     installAuthProviders: {
-      type: 'all',
       path: 'auth/installAuthProviders',
     },
-    clearFunctionLocales: {
-      type: 'worker',
-      path: 'function/clearLocales',
+    setFunctionLocales: {
+      instance: true,
+      path: 'function/setLocalesStartup',
     },
   };
 
   // queues
   config.queues = {
-    checkFunctionLocale: {
-      path: 'function/checkLocale',
+    setFunctionLocales: {
+      path: 'function/setLocalesQueue',
     },
     registerFunction: {
       path: 'function/register',
@@ -1806,6 +1848,10 @@ module.exports = appInfo => {
     },
     registerAuthProvider: {
       path: 'auth/register',
+    },
+    schedule: {
+      path: 'schedule/scheduleQueue',
+      repeat: true,
     },
   };
 
@@ -1824,6 +1870,14 @@ module.exports = appInfo => {
     'en-us': 'English',
     'zh-cn': 'Chinese',
   };
+
+  // function
+  config.function = {
+    scenes: {
+      1: 'demonstration,create,list,tools', // menu
+    },
+  };
+
   // anonymous
   config.anonymous = {
     maxAge: 365 * 24 * 3600 * 1000, // 365 天
@@ -1839,7 +1893,7 @@ module.exports = appInfo => {
     needActivation: true,
     activationWays: 'mobile,email',
     activationProviders: {
-      mobile: '',
+      mobile: '', // a-authsms recommended
       email: 'a-authsimple',
     },
     url: {
@@ -1882,29 +1936,31 @@ module.exports = appInfo => {
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
-  'zh-cn': __webpack_require__(26),
+  'zh-cn': __webpack_require__(27),
 };
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports) {
 
 module.exports = {
   'Comment List': '评论列表',
-  'Element exists': '元素已存在',
-  'Element does not exist': '元素不存在',
-  'Operation failed': '操作失败',
-  'User does not exist': '用户不存在',
-  'User is disabled': '用户被禁用',
-  'Agent user does not exist': '代理用户不存在',
-  'Incomplete information': '信息不完整',
-  'Should delete children first': '应该先删除子角色',
-  'Cannot contain __': '不能包含__',
+  'Delete Comment': '删除评论',
+  'Element Exists': '元素已存在',
+  'Element does not Exist': '元素不存在',
+  'Operation Failed': '操作失败',
+  'User does not Exist': '用户不存在',
+  'User is Disabled': '用户被禁用',
+  'Agent user does not Exist': '代理用户不存在',
+  'Incomplete Information': '信息不完整',
+  'Should Delete Children first': '应该先删除子角色',
+  'Cannot Contain __': '不能包含__',
+  'The Auth should be Enabled': '此认证需要被启用',
   'Atom Flag': '原子标记',
   'Atom Name': '原子名称',
   'Modification Time': '修改时间',
@@ -1914,44 +1970,51 @@ module.exports = {
   English: '英文',
   Chinese: '中文',
   Create: '新建',
+  List: '列表',
+  Tools: '工具',
   View: '查看',
   Edit: '编辑',
   Delete: '删除',
   Save: '保存',
   Submit: '提交',
   Atom: '原子',
-};
-
-
-/***/ }),
-/* 27 */
-/***/ (function(module, exports) {
-
-// error code should start from 1001
-module.exports = {
-  1001: 'Element exists',
-  1002: 'Element does not exist',
-  1003: 'Operation failed',
-  1004: 'User does not exist',
-  1005: 'User is disabled',
-  1006: 'Agent user does not exist',
-  1007: 'Incomplete information',
-  1008: 'Should delete children first',
+  Menu: '菜单',
+  Search: '搜索',
 };
 
 
 /***/ }),
 /* 28 */
+/***/ (function(module, exports) {
+
+// error code should start from 1001
+module.exports = {
+  1001: 'Element Exists',
+  1002: 'Element does not Exist',
+  1003: 'Operation Failed',
+  1004: 'User does not Exist',
+  1005: 'User is Disabled',
+  1006: 'Agent user does not Exist',
+  1007: 'Incomplete Information',
+  1008: 'Should Delete Children first',
+  1009: 'The Auth should be Enabled',
+};
+
+
+/***/ }),
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const cors = __webpack_require__(29);
-const base = __webpack_require__(31);
-const auth = __webpack_require__(42);
-const right = __webpack_require__(43);
-const jsonp = __webpack_require__(44);
-const httpLog = __webpack_require__(45);
+const util = __webpack_require__(30);
+const cors = __webpack_require__(32);
+const base = __webpack_require__(34);
+const auth = __webpack_require__(44);
+const right = __webpack_require__(45);
+const jsonp = __webpack_require__(46);
+const httpLog = __webpack_require__(47);
 
 module.exports = {
+  util,
   cors,
   base,
   auth,
@@ -1962,11 +2025,124 @@ module.exports = {
 
 
 /***/ }),
-/* 29 */
+/* 30 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// util
+const UtilFn = __webpack_require__(31);
+const UTIL = Symbol('CTX#__UTIL');
+
+module.exports = () => {
+  return async function util(ctx, next) {
+    ctx.meta = ctx.meta || {};
+
+    // util
+    Object.defineProperty(ctx.meta, 'util', {
+      get() {
+        if (ctx.meta[UTIL] === undefined) {
+          ctx.meta[UTIL] = new (UtilFn(ctx))();
+        }
+        return ctx.meta[UTIL];
+      },
+    });
+
+    // next
+    await next();
+  };
+};
+
+
+/***/ }),
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
-const URL = __webpack_require__(30).URL;
+const moment = require3('moment');
+const mparse = require3('egg-born-mparse').default;
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Util {
+
+    page(_page, force = true) {
+      const pageSize = ctx.config.module(moduleInfo.relativeName).pageSize;
+      if (!_page) {
+        _page = force ? { index: 0 } : { index: 0, size: 0 };
+      }
+      if (_page.size === undefined || (force && (_page.size === 0 || _page.size === -1 || _page.size > pageSize))) _page.size = pageSize;
+      return _page;
+    }
+
+    user(_user) {
+      return _user || ctx.user.op;
+    }
+
+    now() {
+      return moment().format('YYYY-MM-DD HH:mm:ss');
+    }
+
+    today() {
+      return moment().format('YYYY-MM-DD');
+    }
+
+    formatDateTime(date, fmt) {
+      date = date || new Date();
+      fmt = fmt || 'YYYY-MM-DD HH:mm:ss';
+      if (typeof (date) !== 'object') date = new Date(date);
+      return moment(date).format(fmt);
+    }
+
+    formatDate(date, sep) {
+      if (this.isUndefined(sep)) sep = '-';
+      const fmt = `YYYY${sep}MM${sep}DD`;
+      return this.formatDateTime(date, fmt);
+    }
+
+    formatTime(date, sep) {
+      if (this.isUndefined(sep)) sep = ':';
+      const fmt = `HH${sep}mm${sep}ss`;
+      return this.formatDateTime(date, fmt);
+    }
+
+    fromNow(date) {
+      if (typeof (date) !== 'object') date = new Date(date);
+      return moment(date).fromNow();
+    }
+
+    replaceTemplate(content, scope) {
+      if (!content) return null;
+      return content.toString().replace(/(\\)?{{ *(\w+) *}}/g, (block, skip, key) => {
+        if (skip) {
+          return block.substring(skip.length);
+        }
+        return scope[key] !== undefined ? scope[key] : '';
+      });
+    }
+
+    sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    combinePagePath(moduleName, arg) {
+      if (!arg || typeof arg !== 'string') return arg;
+      const first = arg.charAt(0);
+      if (first === '/' || first === '#') return arg;
+      const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;
+      return `/${moduleInfo.url}/${arg}`;
+    }
+
+  }
+
+  return Util;
+};
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(0);
+const URL = __webpack_require__(33).URL;
 const extend = require3('extend2');
 const isSafeDomainUtil = require3('egg-security').utils.isSafeDomain;
 const koaCors = require3('@koa/cors');
@@ -2033,50 +2209,46 @@ module.exports = (options, app) => {
 
 
 /***/ }),
-/* 30 */
+/* 33 */
 /***/ (function(module, exports) {
 
 module.exports = require("url");
 
 /***/ }),
-/* 31 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // base
-const BaseFn = __webpack_require__(32);
+const BaseFn = __webpack_require__(35);
 const BASE = Symbol('CTX#__BASE');
 
 // atomClass
-const AtomClassFn = __webpack_require__(35);
+const AtomClassFn = __webpack_require__(38);
 const ATOMCLASS = Symbol('CTX#__ATOMCLASS');
 
 // atomClass
-const AtomActionFn = __webpack_require__(36);
+const AtomActionFn = __webpack_require__(39);
 const ATOMACTION = Symbol('CTX#__ATOMACTION');
 
 // atom
-const AtomFn = __webpack_require__(37);
+const AtomFn = __webpack_require__(40);
 const ATOM = Symbol('CTX#__ATOM');
 
 // function
-const FunctionFn = __webpack_require__(38);
+const FunctionFn = __webpack_require__(41);
 const FUNCTION = Symbol('CTX#__FUNCTION');
 
 // role
-const RoleFn = __webpack_require__(39);
+const RoleFn = __webpack_require__(42);
 const ROLE = Symbol('CTX#__ROLE');
 
 // user
-const UserFn = __webpack_require__(18);
+const UserFn = __webpack_require__(19);
 const USER = Symbol('CTX#__USER');
 
 // user
-const AuthFn = __webpack_require__(40);
+const AuthFn = __webpack_require__(43);
 const AUTH = Symbol('CTX#__AUTH');
-
-// util
-const UtilFn = __webpack_require__(41);
-const UTIL = Symbol('CTX#__UTIL');
 
 module.exports = () => {
   return async function base(ctx, next) {
@@ -2153,15 +2325,6 @@ module.exports = () => {
         return ctx.meta[AUTH];
       },
     });
-    // util
-    Object.defineProperty(ctx.meta, 'util', {
-      get() {
-        if (ctx.meta[UTIL] === undefined) {
-          ctx.meta[UTIL] = new (UtilFn(ctx))();
-        }
-        return ctx.meta[UTIL];
-      },
-    });
 
     // next
     await next();
@@ -2170,13 +2333,13 @@ module.exports = () => {
 
 
 /***/ }),
-/* 32 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const path = __webpack_require__(33);
+const path = __webpack_require__(36);
 const require3 = __webpack_require__(0);
 const fse = require3('fs-extra');
-const constants = __webpack_require__(2);
+const constants = __webpack_require__(1);
 
 const _modulesLocales = {};
 const _themesLocales = {};
@@ -2187,6 +2350,10 @@ const _flags = {};
 const _orders = {};
 const _functions = {};
 const _menus = {};
+const _panels = {};
+const _widgets = {};
+const _sections = {};
+const _buttons = {};
 const _authProvidersLocales = {};
 
 const Fn = module.exports = ctx => {
@@ -2228,7 +2395,7 @@ const Fn = module.exports = ctx => {
       if (ctx.app.meta.isTest || ctx.app.meta.isLocal) {
         return ctx.app.config.static.dir;
       }
-      const dir = ctx.config.module(moduleInfo.relativeName).publicDir || path.join(__webpack_require__(34).homedir(), 'cabloy', ctx.app.name, 'public');
+      const dir = ctx.config.module(moduleInfo.relativeName).publicDir || path.join(__webpack_require__(37).homedir(), 'cabloy', ctx.app.name, 'public');
       await fse.ensureDir(dir);
       return dir;
     }
@@ -2319,9 +2486,37 @@ const Fn = module.exports = ctx => {
 
     menus() {
       if (!_menus[ctx.locale]) {
-        _menus[ctx.locale] = this._prepareMenus();
+        _menus[ctx.locale] = this._prepareMenus(1);
       }
       return _menus[ctx.locale];
+    }
+
+    panels() {
+      if (!_panels[ctx.locale]) {
+        _panels[ctx.locale] = this._prepareMenus(2);
+      }
+      return _panels[ctx.locale];
+    }
+
+    widgets() {
+      if (!_widgets[ctx.locale]) {
+        _widgets[ctx.locale] = this._prepareMenus(3);
+      }
+      return _widgets[ctx.locale];
+    }
+
+    sections() {
+      if (!_sections[ctx.locale]) {
+        _sections[ctx.locale] = this._prepareMenus(4);
+      }
+      return _sections[ctx.locale];
+    }
+
+    buttons() {
+      if (!_buttons[ctx.locale]) {
+        _buttons[ctx.locale] = this._prepareMenus(5);
+      }
+      return _buttons[ctx.locale];
     }
 
     functions() {
@@ -2424,7 +2619,10 @@ const Fn = module.exports = ctx => {
       for (const relativeName in ctx.app.meta.modules) {
         const module = ctx.app.meta.modules[relativeName];
         if (module.main.meta && module.main.meta.base && module.main.meta.base.atoms) {
-          atomClasses[relativeName] = this._prepareAtomClassesModule(module, module.main.meta.base.atoms);
+          const res = this._prepareAtomClassesModule(module, module.main.meta.base.atoms);
+          if (Object.keys(res).length > 0) {
+            atomClasses[relativeName] = res;
+          }
         }
       }
       return atomClasses;
@@ -2605,18 +2803,25 @@ const Fn = module.exports = ctx => {
       return actions;
     }
 
-    _prepareMenus() {
+    _prepareMenus(functionType) {
       const menus = {};
       const functions = this._prepareFunctions();
       for (const relativeName in functions) {
         const functionsModule = functions[relativeName];
-        menus[relativeName] = {};
+        const _menus = {};
         for (const key in functionsModule) {
           const func = functionsModule[key];
           // 2018.12.22 menu maybe 0 for special scene
-          if (func.menu === 1 || (func.actionComponent || func.actionPath)) {
-            menus[relativeName][key] = func;
+          if (functionType === 1) {
+            if (func.menu === 1 || (func.actionComponent || func.actionPath)) {
+              _menus[key] = func;
+            }
+          } else if (func.menu === functionType) {
+            _menus[key] = func;
           }
+        }
+        if (Object.keys(_menus).length > 0) {
+          menus[relativeName] = _menus;
         }
       }
       return menus;
@@ -2635,37 +2840,52 @@ const Fn = module.exports = ctx => {
 
     _prepareFunctionsModule(module, _functions) {
       const functions = {};
-      for (const key in _functions) {
-        const _func = _functions[key];
-        const func = {
-          name: key,
-          title: _func.title || key,
-          scene: _func.scene,
-          autoRight: _func.autoRight || 0,
-          atomClassName: _func.atomClassName,
-          action: _func.action,
-          actionModule: _func.actionModule || module.info.relativeName,
-          actionComponent: _func.actionComponent,
-          actionPath: _func.actionPath,
-          sorting: _func.sorting || 0,
-          menu: _func.menu ? 1 : 0,
-          public: _func.public ? 1 : 0,
-        };
-        func.titleLocale = ctx.text(func.title);
-        // create
-        if (func.action === 'create' && !func.actionComponent && !func.actionPath) {
-          func.actionModule = 'a-base';
-          func.actionComponent = 'action';
-          // func.actionPath = '/a/base/atom/edit?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}';
+      if (Array.isArray(_functions)) {
+        // array
+        for (const _func of _functions) {
+          const key = _functions.name;
+          functions[key] = this._prepareFunctionsModule_function(module, _func, key);
         }
-        // list
-        if (func.action === 'read' && !func.actionComponent && !func.actionPath) {
-          func.actionPath = '/a/base/atom/list?module={{module}}&atomClassName={{atomClassName}}';
+      } else {
+        // object
+        for (const key in _functions) {
+          functions[key] = this._prepareFunctionsModule_function(module, _functions[key], key);
         }
-        // ok
-        functions[key] = func;
       }
       return functions;
+    }
+
+    _prepareFunctionsModule_function(module, _func, key) {
+      const func = {
+        module: module.info.relativeName,
+        name: key,
+        title: _func.title || key,
+        scene: _func.scene,
+        autoRight: _func.autoRight || 0,
+        atomClassName: _func.atomClassName,
+        action: _func.action,
+        actionModule: _func.actionModule || module.info.relativeName,
+        actionComponent: _func.actionComponent,
+        actionPath: _func.actionPath,
+        sorting: _func.sorting || 0,
+        menu: _func.menu || 0,
+        public: _func.public ? 1 : 0,
+        url: ctx.meta.util.combinePagePath(module.info, _func.url),
+        component: _func.component,
+      };
+      func.titleLocale = ctx.text(func.title);
+      // create
+      if (func.action === 'create' && !func.actionComponent && !func.actionPath) {
+        func.actionModule = 'a-base';
+        func.actionComponent = 'action';
+        // func.actionPath = '/a/base/atom/edit?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}';
+      }
+      // list
+      if (func.action === 'read' && !func.actionComponent && !func.actionPath) {
+        func.actionPath = '/a/base/atom/list?module={{module}}&atomClassName={{atomClassName}}';
+      }
+      // ok
+      return func;
     }
 
   }
@@ -2675,19 +2895,19 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 33 */
+/* 36 */
 /***/ (function(module, exports) {
 
 module.exports = require("path");
 
 /***/ }),
-/* 34 */
+/* 37 */
 /***/ (function(module, exports) {
 
 module.exports = require("os");
 
 /***/ }),
-/* 35 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const modelFn = __webpack_require__(3);
@@ -2810,7 +3030,7 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 36 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const modelFn = __webpack_require__(4);
@@ -2877,7 +3097,7 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 37 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -2955,7 +3175,7 @@ const Fn = module.exports = ctx => {
     // atom and item
 
     // create
-    async create({ atomClass, item, user }) {
+    async create({ atomClass, roleIdOwner, item, user }) {
       // atomClass
       atomClass = await ctx.meta.atomClass.get(atomClass);
       // item
@@ -2965,6 +3185,7 @@ const Fn = module.exports = ctx => {
         const draftId = await this.sequence.next('draft');
         item.atomName = `${ctx.text('Draft')}-${draftId}`;
       }
+      item.roleIdOwner = roleIdOwner;
       const atomId = await this._add({
         atomClass,
         atom: item,
@@ -2978,6 +3199,7 @@ const Fn = module.exports = ctx => {
         url: `/${_moduleInfo.url}/${atomClass.atomClassName}/create`,
         body: {
           atomClass,
+          roleIdOwner,
           key: { atomId },
           item,
           user,
@@ -3347,7 +3569,7 @@ const Fn = module.exports = ctx => {
 
     async _add({
       atomClass: { id, atomClassName, atomClassIdParent = 0 },
-      atom: { itemId, atomName, atomFlag = 0, atomFlow = 0 },
+      atom: { itemId, atomName, atomFlag = 0, atomFlow = 0, roleIdOwner = 0 },
       user,
     }) {
       let atomClassId = id;
@@ -3361,6 +3583,7 @@ const Fn = module.exports = ctx => {
         atomName,
         userIdCreated: user.id,
         userIdUpdated: user.id,
+        roleIdOwner,
       });
       return res.insertId;
     }
@@ -3477,6 +3700,37 @@ const Fn = module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
+    async checkRightCreateRole({
+      atomClass: { id, module, atomClassName, atomClassIdParent = 0 },
+      roleIdOwner,
+      user,
+    }) {
+      if (!roleIdOwner) return null;
+      if (!id) id = await this.getAtomClassId({ module, atomClassName, atomClassIdParent });
+      const sql = this.sqlProcedure.checkRightCreateRole({
+        iid: ctx.instance.id,
+        userIdWho: user.id,
+        atomClassId: id,
+        roleIdOwner,
+      });
+      return await ctx.model.queryOne(sql);
+    }
+
+    // preffered roles
+    async preferredRoles({ atomClass, user }) {
+      // atomClass
+      atomClass = await ctx.meta.atomClass.get(atomClass);
+
+      const roles = await ctx.model.query(
+        `select a.*,b.userId,c.roleName as roleNameWho from aViewRoleRightAtomClass a
+          inner join aUserRole b on a.roleIdWho=b.roleId
+          left join aRole c on a.roleIdWho=c.id
+          where a.iid=? and a.atomClassId=? and a.action=1 and b.userId=?
+          order by a.roleIdWho desc`,
+        [ ctx.instance.id, atomClass.id, user.id ]);
+      return roles;
+    }
+
     _upperCaseFirstChar(str) {
       if (!str) return '';
       return str.substring(0, 1).toUpperCase() + str.substring(1);
@@ -3498,13 +3752,16 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 38 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const modelFn = __webpack_require__(1);
+const modelFn = __webpack_require__(2);
 const modelFunctionStarFn = __webpack_require__(10);
 const modelFunctionLocaleFn = __webpack_require__(11);
+const modelFunctionSceneFn = __webpack_require__(12);
 const sqlProcedureFn = __webpack_require__(9);
+
+const __cacheSetLocalesStartup = '__setLocalesStartup';
 
 const Fn = module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -3515,6 +3772,7 @@ const Fn = module.exports = ctx => {
       this._model = null;
       this._modelFunctionStar = null;
       this._modelFunctionLocale = null;
+      this._modelFunctionScene = null;
       this._sqlProcedure = null;
     }
 
@@ -3538,6 +3796,11 @@ const Fn = module.exports = ctx => {
       return this._modelFunctionLocale;
     }
 
+    get modelFunctionScene() {
+      if (!this._modelFunctionScene) this._modelFunctionScene = new (modelFunctionSceneFn(ctx.app))(ctx);
+      return this._modelFunctionScene;
+    }
+
     get sqlProcedure() {
       if (!this._sqlProcedure) this._sqlProcedure = new (sqlProcedureFn(ctx))();
       return this._sqlProcedure;
@@ -3547,9 +3810,6 @@ const Fn = module.exports = ctx => {
     //   locale maybe '' for selectAllFunctions beside menus
     async list({ options: { where, orders, page, star = 0, locale = '' }, user }) {
       // page = ctx.meta.util.page(page); // has set in controller
-
-      // check locale
-      if (locale) await this.checkLocale({ locale });
 
       // sql
       const sql = this.sqlProcedure.selectFunctions({
@@ -3581,9 +3841,36 @@ const Fn = module.exports = ctx => {
     async check({ functions, user }) {
       for (const func of functions) {
         const res = await this.checkRightFunction({ function: func, user });
-        func.passed = !!res;
+        if (res) {
+          func.passed = true;
+          func.id = res.id;
+        } else {
+          func.passed = false;
+        }
       }
       return functions;
+    }
+
+    async scenesArray({ sceneMenu }) {
+      const list = await this.modelFunctionScene.select({
+        where: { sceneMenu },
+        orders: [[ 'sceneSorting', 'asc' ]],
+      });
+      for (const item of list) {
+        const sceneName = item.sceneName;
+        item.title = sceneName.replace(sceneName[0], sceneName[0].toUpperCase());
+        item.titleLocale = ctx.text(item.title);
+      }
+      return list;
+    }
+
+    async scenes({ sceneMenu }) {
+      const list = await this.scenesArray({ sceneMenu });
+      const scenes = {};
+      for (const item of list) {
+        scenes[item.id] = item;
+      }
+      return scenes;
     }
 
     //
@@ -3597,10 +3884,15 @@ const Fn = module.exports = ctx => {
       }
     }
 
-    async get({ id, module, name }) {
+    async _get({ id, module, name }) {
       if (id) return await this.model.get({ id });
       module = module || this.moduleName;
-      const res = await this.model.get({ module, name });
+      return await this.model.get({ module, name });
+    }
+
+    async get({ id, module, name }) {
+      module = module || this.moduleName;
+      const res = await this._get({ id, module, name });
       if (res) return res;
       // queue
       return await ctx.app.meta.queue.pushAsync({
@@ -3611,22 +3903,48 @@ const Fn = module.exports = ctx => {
       });
     }
 
+    // iid maybe undefined
+    async getSceneId({ sceneName, sceneMenu }) {
+      const sceneItem = await this.modelFunctionScene.get({ sceneName, sceneMenu });
+      if (sceneItem) return sceneItem.id;
+      // scene sorting
+      const scenes = (ctx.config.module(moduleInfo.relativeName).function.scenes[sceneMenu] || '').split(',');
+      const sceneSorting = scenes.indexOf(sceneName) + 1;
+      const res = await this.modelFunctionScene.insert({
+        sceneName,
+        sceneMenu,
+        sceneSorting,
+      });
+      return res.insertId;
+    }
+
     async register({ module, name }) {
       module = module || this.moduleName;
       // get
       const res = await this.model.get({ module, name });
       if (res) return res;
       const func = ctx.meta.base.function({ module, name });
+      if (!func) throw new Error(`function not found: ${module}:${name}`);
+      // atomClassId
       let atomClassId = 0;
       if (func.atomClassName) {
         const atomClass = await ctx.meta.atomClass.get({ module, atomClassName: func.atomClassName });
         atomClassId = atomClass.id;
       }
+      // sceneId
+      let sceneId;
+      const sceneName = func.scene;
+      if (!sceneName) {
+        sceneId = 0;
+      } else {
+        sceneId = await this.getSceneId({ sceneName, sceneMenu: func.menu });
+      }
+      // insert
       const data = {
         module,
         name: func.name,
         title: func.title,
-        scene: ctx.constant.module(moduleInfo.relativeName).function.scene[func.scene],
+        sceneId,
         autoRight: func.autoRight,
         atomClassId,
         action: func.action ? ctx.constant.module(moduleInfo.relativeName).atom.action[func.action] : 0,
@@ -3662,29 +3980,60 @@ const Fn = module.exports = ctx => {
       return await ctx.model.query(sql);
     }
 
-    async checkLocale({ locale }) {
-      const res = await this._checkFunctionLocales({ locale });
-      if (res.length === 0) return;
+    async _setLocale({ locale, reset }) {
+      let functions;
+      // functions
+      if (reset) {
+        functions = await this.model.select();
+      } else {
+        functions = await this._checkFunctionLocales({ locale });
+      }
+      if (functions.length === 0) return;
+      // insert locales
+      for (const func of functions) {
+        // title
+        const funcBase = ctx.meta.base.function({ module: func.module, name: func.name });
+        if (!funcBase) throw new Error(`function not found: ${func.module}:${func.nam}`);
+        if (func.title !== funcBase.title) {
+          await this.model.update({ id: func.id, title: funcBase.title });
+        }
+        // titleLocale
+        const titleLocale = ctx.text.locale(locale, funcBase.title);
+        await this.modelFunctionLocale.insert({
+          functionId: func.id, locale, titleLocale,
+        });
+      }
+    }
+
+    async setLocales(options) {
       // queue
-      await ctx.app.meta.queue.pushAsync({
+      return await ctx.app.meta.queue.pushAsync({
         subdomain: ctx.subdomain,
         module: moduleInfo.relativeName,
-        queueName: 'checkFunctionLocale',
-        data: { locale },
+        queueName: 'setFunctionLocales',
+        data: { options },
       });
     }
 
-    async _checkLocale({ locale }) {
-      const res = await this._checkFunctionLocales({ locale });
-      if (res.length === 0) return;
-      // insert locales
-      for (const menu of res) {
-        const titleLocale = ctx.text.locale(locale, menu.title);
-        await this.modelFunctionLocale.insert({
-          functionId: menu.id,
-          locale,
-          titleLocale,
-        });
+    async setLocalesQueue(options) {
+      options = options || {};
+      const reset = options.reset;
+      // check cache
+      if (reset && !ctx.app.meta.isTest) {
+        const cache = ctx.cache.db.module(moduleInfo.relativeName);
+        const flag = await cache.get(__cacheSetLocalesStartup);
+        if (flag) return;
+        // set
+        await cache.set(__cacheSetLocalesStartup, true, ctx.app.config.queue.startup.cache);
+      }
+      // clear
+      if (reset) {
+        await this.clearLocales();
+      }
+      // setLocales
+      const locales = ctx.config.module(moduleInfo.relativeName).locales;
+      for (const locale in locales) {
+        await this._setLocale({ locale, reset });
       }
     }
 
@@ -3699,16 +4048,16 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 39 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const modelFn = __webpack_require__(12);
-const modelRoleIncFn = __webpack_require__(13);
-const modelUserRoleFn = __webpack_require__(14);
-const modelRoleRightFn = __webpack_require__(15);
-const modelRoleRightRefFn = __webpack_require__(16);
-const modelFunctionFn = __webpack_require__(1);
-const modelRoleFunctionFn = __webpack_require__(17);
+const modelFn = __webpack_require__(13);
+const modelRoleIncFn = __webpack_require__(14);
+const modelUserRoleFn = __webpack_require__(15);
+const modelRoleRightFn = __webpack_require__(16);
+const modelRoleRightRefFn = __webpack_require__(17);
+const modelFunctionFn = __webpack_require__(2);
+const modelRoleFunctionFn = __webpack_require__(18);
 
 const Fn = module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -4073,18 +4422,18 @@ const Fn = module.exports = ctx => {
     async functionRights({ menu, roleId, page }) {
       // check locale
       const locale = ctx.locale;
-      if (locale) await ctx.meta.function.checkLocale({ locale });
       // list
       page = ctx.meta.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       const list = await ctx.model.query(`
-        select a.*,b.module,b.name,b.title,b.scene,b.sorting${menu ? ',f.titleLocale' : ''} from aRoleFunction a
+        select a.*,b.module,b.name,b.title,b.sceneId,g.sceneName,b.sorting,f.titleLocale from aRoleFunction a
           left join aFunction b on a.functionId=b.id
-          ${menu ? 'left join aFunctionLocale f on a.functionId=f.functionId' : ''}
-            where a.iid=? and a.roleId=? and b.menu=? ${menu ? 'and f.locale=\'' + locale + '\'' : ''}
-            order by b.module,b.scene,b.sorting
+          left join aFunctionLocale f on a.functionId=f.functionId
+          left join aFunctionScene g on g.id=b.sceneId
+            where a.iid=? and a.roleId=? and b.menu=? and f.locale=?
+            order by b.module,g.sceneSorting,b.sorting
             ${_limit}
-        `, [ ctx.instance.id, roleId, menu ]);
+        `, [ ctx.instance.id, roleId, menu, locale ]);
       return list;
     }
 
@@ -4092,20 +4441,20 @@ const Fn = module.exports = ctx => {
     async functionSpreads({ menu, roleId, page }) {
       // check locale
       const locale = ctx.locale;
-      if (locale) await ctx.meta.function.checkLocale({ locale });
       // list
       page = ctx.meta.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       const list = await ctx.model.query(`
-        select d.*,d.id as roleExpandId,a.id as roleFunctionId,b.module,b.name,b.title,b.scene,e.roleName${menu ? ',f.titleLocale' : ''} from aRoleFunction a
+        select d.*,d.id as roleExpandId,a.id as roleFunctionId,b.module,b.name,b.title,b.sceneId,g.sceneName,e.roleName,f.titleLocale from aRoleFunction a
           left join aFunction b on a.functionId=b.id
           left join aRoleExpand d on a.roleId=d.roleIdBase
           left join aRole e on d.roleIdBase=e.id
-          ${menu ? 'left join aFunctionLocale f on a.functionId=f.functionId' : ''}
-            where d.iid=? and d.roleId=? and b.menu=? ${menu ? 'and f.locale=\'' + locale + '\'' : ''}
-            order by b.module,b.scene,b.sorting
+          left join aFunctionLocale f on a.functionId=f.functionId
+          left join aFunctionScene g on g.id=b.sceneId
+            where d.iid=? and d.roleId=? and b.menu=? and f.locale=?
+            order by b.module,g.sceneSorting,b.sorting
             ${_limit}
-        `, [ ctx.instance.id, roleId, menu ]);
+        `, [ ctx.instance.id, roleId, menu, locale ]);
       return list;
     }
 
@@ -4113,19 +4462,19 @@ const Fn = module.exports = ctx => {
     async functionRightsOfUser({ menu, userId, page }) {
       // check locale
       const locale = ctx.locale;
-      if (locale) await ctx.meta.function.checkLocale({ locale });
       // list
       page = ctx.meta.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       const list = await ctx.model.query(`
-        select a.*,b.module,b.name,b.title,b.scene,b.sorting${menu ? ',f.titleLocale' : ''},e.roleName from aViewUserRightFunction a
+        select a.*,b.module,b.name,b.title,b.sceneId,g.sceneName,b.sorting,f.titleLocale,e.roleName from aViewUserRightFunction a
           left join aFunction b on a.functionId=b.id
-          ${menu ? 'left join aFunctionLocale f on a.functionId=f.functionId' : ''}
+          left join aFunctionLocale f on a.functionId=f.functionId
+          left join aFunctionScene g on g.id=b.sceneId
           left join aRole e on a.roleIdBase=e.id
-            where a.iid=? and a.userIdWho=? and b.menu=? ${menu ? 'and f.locale=\'' + locale + '\'' : ''}
-            order by b.module,b.scene,b.sorting
+            where a.iid=? and a.userIdWho=? and b.menu=? and f.locale=?
+            order by b.module,g.sceneSorting,b.sorting
             ${_limit}
-        `, [ ctx.instance.id, userId, menu ]);
+        `, [ ctx.instance.id, userId, menu, locale ]);
 
       return list;
     }
@@ -4234,10 +4583,13 @@ const Fn = module.exports = ctx => {
     //   { roleName: 'root', action: 'read', scopeNames: 'authenticated' },
     // ];
     async addRoleRightBatch({ module, atomClassName, atomClassIdParent = 0, roleRights }) {
-      if (!roleRights || !roleRights.length) return;
+      // module
       module = module || this.moduleName;
       const _module = ctx.app.meta.modules[module];
+      // atomClass
       const atomClass = await ctx.meta.atomClass.get({ module, atomClassName, atomClassIdParent });
+      // roleRights
+      if (!roleRights || !roleRights.length) return;
       for (const roleRight of roleRights) {
         // role
         const role = await this.get({ roleName: roleRight.roleName });
@@ -4271,15 +4623,17 @@ const Fn = module.exports = ctx => {
       if (!roleFunctions || !roleFunctions.length) return;
       module = module || this.moduleName;
       for (const roleFunction of roleFunctions) {
-        // role
-        const role = await this.get({ roleName: roleFunction.roleName });
         // func
         const func = await ctx.meta.function.get({ module, name: roleFunction.name });
-        // add role function
-        await this.addRoleFunction({
-          roleId: role.id,
-          functionId: func.id,
-        });
+        if (roleFunction.roleName) {
+          // role
+          const role = await this.get({ roleName: roleFunction.roleName });
+          // add role function
+          await this.addRoleFunction({
+            roleId: role.id,
+            functionId: func.id,
+          });
+        }
       }
     }
 
@@ -4366,7 +4720,7 @@ const Fn = module.exports = ctx => {
 
 
 /***/ }),
-/* 40 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -4468,83 +4822,7 @@ module.exports = ctx => {
 
 
 /***/ }),
-/* 41 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const require3 = __webpack_require__(0);
-const moment = require3('moment');
-
-module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class Util {
-
-    page(_page, force = true) {
-      const pageSize = ctx.config.module(moduleInfo.relativeName).pageSize;
-      if (!_page) {
-        _page = force ? { index: 0 } : { index: 0, size: 0 };
-      }
-      if (_page.size === undefined || (force && (_page.size === 0 || _page.size === -1 || _page.size > pageSize))) _page.size = pageSize;
-      return _page;
-    }
-
-    user(_user) {
-      return _user || ctx.user.op;
-    }
-
-    now() {
-      return moment().format('YYYY-MM-DD HH:mm:ss');
-    }
-
-    today() {
-      return moment().format('YYYY-MM-DD');
-    }
-
-    formatDateTime(date, fmt) {
-      date = date || new Date();
-      fmt = fmt || 'YYYY-MM-DD HH:mm:ss';
-      if (typeof (date) !== 'object') date = new Date(date);
-      return moment(date).format(fmt);
-    }
-
-    formatDate(date, sep) {
-      if (this.isUndefined(sep)) sep = '-';
-      const fmt = `YYYY${sep}MM${sep}DD`;
-      return this.formatDateTime(date, fmt);
-    }
-
-    formatTime(date, sep) {
-      if (this.isUndefined(sep)) sep = ':';
-      const fmt = `HH${sep}mm${sep}ss`;
-      return this.formatDateTime(date, fmt);
-    }
-
-    fromNow(date) {
-      if (typeof (date) !== 'object') date = new Date(date);
-      return moment(date).fromNow();
-    }
-
-    replaceTemplate(content, scope) {
-      if (!content) return null;
-      return content.toString().replace(/(\\)?{{ *(\w+) *}}/g, (block, skip, key) => {
-        if (skip) {
-          return block.substring(skip.length);
-        }
-        return scope[key] !== undefined ? scope[key] : '';
-      });
-    }
-
-    sleep(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-  }
-
-  return Util;
-};
-
-
-/***/ }),
-/* 42 */
+/* 44 */
 /***/ (function(module, exports) {
 
 module.exports = (options, app) => {
@@ -4571,7 +4849,7 @@ module.exports = (options, app) => {
 
 
 /***/ }),
-/* 43 */
+/* 45 */
 /***/ (function(module, exports) {
 
 // request.body
@@ -4616,14 +4894,32 @@ async function checkAtom(moduleInfo, options, ctx) {
       });
       atomClassId = res.id;
     }
-    const res = await ctx.meta.atom.checkRightCreate({
-      atomClass: {
-        id: atomClassId,
-      },
-      user: ctx.user.op,
-    });
-    if (!res) ctx.throw(403);
-    ctx.meta._atomClass = res;
+    // roleIdOwner
+    const roleIdOwner = ctx.request.body.roleIdOwner;
+    if (roleIdOwner) {
+      // check
+      const res = await ctx.meta.atom.checkRightCreateRole({
+        atomClass: {
+          id: atomClassId,
+        },
+        roleIdOwner,
+        user: ctx.user.op,
+      });
+      if (!res) ctx.throw(403);
+      ctx.meta._atomClass = res;
+    } else {
+      // retrieve default one
+      const roles = await ctx.meta.atom.preferredRoles({
+        atomClass: {
+          id: atomClassId,
+        },
+        user: ctx.user.op,
+      });
+      if (roles.length === 0) ctx.throw(403);
+      ctx.request.body.roleIdOwner = roles[0].roleIdWho;
+      ctx.meta._atomClass = { id: atomClassId };
+    }
+
   }
 
   // read
@@ -4676,7 +4972,7 @@ async function checkFunction(moduleInfo, options, ctx) {
 
 
 /***/ }),
-/* 44 */
+/* 46 */
 /***/ (function(module, exports) {
 
 module.exports = (options, app) => {
@@ -4710,7 +5006,7 @@ module.exports = (options, app) => {
 
 
 /***/ }),
-/* 45 */
+/* 47 */
 /***/ (function(module, exports) {
 
 module.exports = (options, app) => {
@@ -4760,24 +5056,28 @@ module.exports = (options, app) => {
 
 
 /***/ }),
-/* 46 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(47);
-const base = __webpack_require__(48);
-const user = __webpack_require__(49);
-const atom = __webpack_require__(50);
-const atomClass = __webpack_require__(51);
-const atomAction = __webpack_require__(52);
-const func = __webpack_require__(53);
-const auth = __webpack_require__(54);
-const comment = __webpack_require__(55);
+const version = __webpack_require__(49);
+const base = __webpack_require__(50);
+const user = __webpack_require__(51);
+const atom = __webpack_require__(52);
+const atomClass = __webpack_require__(53);
+const atomAction = __webpack_require__(54);
+const func = __webpack_require__(55);
+const schedule = __webpack_require__(56);
+const auth = __webpack_require__(57);
+const comment = __webpack_require__(58);
+const layoutConfig = __webpack_require__(59);
 
 module.exports = app => {
   const routes = [
     // version
     { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
+    { method: 'post', path: 'version/update8FunctionScenes', controller: version, middlewares: 'inner' },
+    { method: 'post', path: 'version/update8Atoms', controller: version, middlewares: 'inner' },
     // base
     { method: 'post', path: 'base/modules', controller: base },
     { method: 'post', path: 'base/locales', controller: base },
@@ -4786,11 +5086,16 @@ module.exports = app => {
     { method: 'post', path: 'base/flags', controller: base },
     { method: 'post', path: 'base/orders', controller: base },
     { method: 'post', path: 'base/menus', controller: base },
+    { method: 'post', path: 'base/panels', controller: base },
+    { method: 'post', path: 'base/widgets', controller: base },
+    { method: 'post', path: 'base/sections', controller: base },
+    { method: 'post', path: 'base/buttons', controller: base },
     { method: 'post', path: 'base/functions', controller: base },
     { method: 'get', path: 'base/performAction', controller: base, middlewares: 'jsonp', meta: { auth: { enable: false } } },
     { method: 'get', path: 'base/qrcode', controller: base, meta: { auth: { enable: false } } },
     { method: 'post', path: 'base/themes', controller: base },
     // atom
+    { method: 'post', path: 'atom/preferredRoles', controller: atom },
     { method: 'post', path: 'atom/create', controller: atom, middlewares: 'transaction',
       meta: { right: { type: 'atom', action: 1 } },
     },
@@ -4861,15 +5166,18 @@ module.exports = app => {
     { method: 'post', path: 'user/getLabels', controller: user },
     { method: 'post', path: 'user/setLabels', controller: user },
     // function
+    { method: 'post', path: 'function/scenes', controller: func },
     { method: 'post', path: 'function/list', controller: func },
     { method: 'post', path: 'function/star', controller: func },
     { method: 'post', path: 'function/check', controller: func },
-    { method: 'post', path: 'function/checkLocale', controller: func, middlewares: 'inner', meta: { auth: { enable: false } } },
     { method: 'post', path: 'function/register', controller: func, middlewares: 'inner',
       meta: { auth: { enable: false } },
     },
-    { method: 'post', path: 'function/clearLocales', controller: func, middlewares: 'inner',
-      meta: { instance: { enable: false } },
+    { method: 'post', path: 'function/setLocalesQueue', controller: func, middlewares: 'inner',
+      meta: { auth: { enable: false } },
+    },
+    { method: 'post', path: 'function/setLocalesStartup', controller: func, middlewares: 'inner',
+      meta: { auth: { enable: false } },
     },
     // atomAction
     { method: 'post', path: 'atomAction/register', controller: atomAction, middlewares: 'inner',
@@ -4881,6 +5189,14 @@ module.exports = app => {
     },
     { method: 'post', path: 'atomClass/validatorSearch', controller: atomClass },
     { method: 'post', path: 'atomClass/checkRightCreate', controller: atomClass },
+    { method: 'post', path: 'atomClass/atomClass', controller: atomClass },
+    // schedule
+    { method: 'post', path: 'schedule/installAllSchedules', controller: schedule, middlewares: 'inner',
+      meta: { instance: { enable: false } },
+    },
+    { method: 'post', path: 'schedule/scheduleQueue', controller: schedule, middlewares: 'inner',
+      meta: { instance: { enable: false } },
+    },
     // auth
     { method: 'post', path: 'auth/echo', controller: auth, meta: { auth: { enable: false } } },
     { method: 'post', path: 'auth/check', controller: auth, meta: { auth: { user: true } } },
@@ -4896,13 +5212,17 @@ module.exports = app => {
     },
     // cors
     { method: 'options', path: /.*/ },
+    // layoutConfig
+    { method: 'post', path: 'layoutConfig/load', controller: layoutConfig },
+    { method: 'post', path: 'layoutConfig/save', controller: layoutConfig },
+    { method: 'post', path: 'layoutConfig/saveKey', controller: layoutConfig },
   ];
   return routes;
 };
 
 
 /***/ }),
-/* 47 */
+/* 49 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -4918,13 +5238,23 @@ module.exports = app => {
       this.ctx.success();
     }
 
+    async update8FunctionScenes() {
+      await this.service.version.update8FunctionScenes(this.ctx.request.body);
+      this.ctx.success();
+    }
+
+    async update8Atoms() {
+      await this.service.version.update8Atoms(this.ctx.request.body);
+      this.ctx.success();
+    }
+
   }
   return VersionController;
 };
 
 
 /***/ }),
-/* 48 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -4969,6 +5299,26 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    panels() {
+      const res = this.ctx.service.base.panels();
+      this.ctx.success(res);
+    }
+
+    widgets() {
+      const res = this.ctx.service.base.widgets();
+      this.ctx.success(res);
+    }
+
+    sections() {
+      const res = this.ctx.service.base.sections();
+      this.ctx.success(res);
+    }
+
+    buttons() {
+      const res = this.ctx.service.base.buttons();
+      this.ctx.success(res);
+    }
+
     functions() {
       const res = this.ctx.service.base.functions();
       this.ctx.success(res);
@@ -5008,7 +5358,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 49 */
+/* 51 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5037,16 +5387,24 @@ module.exports = app => {
 
 
 /***/ }),
-/* 50 */
+/* 52 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
 
   class AtomController extends app.Controller {
 
+    async preferredRoles() {
+      const res = await this.ctx.service.atom.preferredRoles({
+        atomClass: this.ctx.request.body.atomClass,
+        user: this.ctx.user.op,
+      });
+      this.ctx.success(res);
+    }
     async create() {
       const res = await this.ctx.service.atom.create({
         atomClass: this.ctx.request.body.atomClass,
+        roleIdOwner: this.ctx.request.body.roleIdOwner,
         item: this.ctx.request.body.item,
         user: this.ctx.user.op,
       });
@@ -5206,7 +5564,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 51 */
+/* 53 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5237,6 +5595,13 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async atomClass() {
+      const res = await this.ctx.service.atomClass.atomClass({
+        atomClass: this.ctx.request.body.atomClass,
+      });
+      this.ctx.success(res);
+    }
+
   }
 
   return AtomClassController;
@@ -5244,7 +5609,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 52 */
+/* 54 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5266,7 +5631,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 53 */
+/* 55 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5304,13 +5669,6 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async checkLocale() {
-      const res = await this.ctx.service.function.checkLocale({
-        locale: this.ctx.request.body.locale,
-      });
-      this.ctx.success(res);
-    }
-
     async register() {
       const res = await this.ctx.service.function.register({
         module: this.ctx.request.body.module,
@@ -5319,8 +5677,22 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async clearLocales() {
-      const res = await this.ctx.service.function.clearLocales();
+    async setLocalesStartup() {
+      const res = await this.ctx.service.function.setLocalesStartup();
+      this.ctx.success(res);
+    }
+
+    async setLocalesQueue() {
+      const res = await this.ctx.service.function.setLocalesQueue({
+        options: this.ctx.request.body.options,
+      });
+      this.ctx.success(res);
+    }
+
+    async scenes() {
+      const res = await this.ctx.service.function.scenes({
+        sceneMenu: this.ctx.request.body.sceneMenu,
+      });
       this.ctx.success(res);
     }
 
@@ -5331,7 +5703,34 @@ module.exports = app => {
 
 
 /***/ }),
-/* 54 */
+/* 56 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+
+  class ScheduleController extends app.Controller {
+
+    async installAllSchedules() {
+      await this.ctx.service.schedule.installAllSchedules();
+      this.ctx.success();
+    }
+
+    async scheduleQueue() {
+      await this.ctx.service.schedule.scheduleQueue({
+        module: this.ctx.request.body.module,
+        schedule: this.ctx.request.body.schedule,
+      });
+      this.ctx.success();
+    }
+
+  }
+
+  return ScheduleController;
+};
+
+
+/***/ }),
+/* 57 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5404,7 +5803,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 55 */
+/* 58 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -5478,18 +5877,59 @@ module.exports = app => {
 
 
 /***/ }),
-/* 56 */
+/* 59 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+  class LayoutConfigController extends app.Controller {
+
+    async load() {
+      const res = await this.service.layoutConfig.load({
+        module: this.ctx.request.body.module,
+        user: this.ctx.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async save() {
+      const res = await this.service.layoutConfig.save({
+        module: this.ctx.request.body.module,
+        data: this.ctx.request.body.data,
+        user: this.ctx.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async saveKey() {
+      const res = await this.service.layoutConfig.saveKey({
+        module: this.ctx.request.body.module,
+        key: this.ctx.request.body.key,
+        value: this.ctx.request.body.value,
+        user: this.ctx.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+  }
+  return LayoutConfigController;
+};
+
+
+/***/ }),
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(57);
-const base = __webpack_require__(69);
-const user = __webpack_require__(70);
-const atom = __webpack_require__(71);
-const atomClass = __webpack_require__(72);
-const atomAction = __webpack_require__(73);
-const auth = __webpack_require__(74);
-const func = __webpack_require__(75);
-const comment = __webpack_require__(76);
+const version = __webpack_require__(61);
+const base = __webpack_require__(75);
+const user = __webpack_require__(76);
+const atom = __webpack_require__(77);
+const atomClass = __webpack_require__(78);
+const atomAction = __webpack_require__(79);
+const schedule = __webpack_require__(80);
+const auth = __webpack_require__(81);
+const func = __webpack_require__(82);
+const comment = __webpack_require__(83);
+const layoutConfig = __webpack_require__(84);
 
 module.exports = app => {
   const services = {
@@ -5499,33 +5939,42 @@ module.exports = app => {
     atom,
     atomClass,
     atomAction,
+    schedule,
     auth,
     function: func,
     comment,
+    layoutConfig,
   };
   return services;
 };
 
 
 /***/ }),
-/* 57 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const VersionUpdate1Fn = __webpack_require__(58);
-const VersionUpdate2Fn = __webpack_require__(60);
-const VersionUpdate3Fn = __webpack_require__(61);
-const VersionUpdate4Fn = __webpack_require__(62);
-const VersionUpdate6Fn = __webpack_require__(63);
-const VersionInit2Fn = __webpack_require__(64);
-const VersionInit4Fn = __webpack_require__(66);
-const VersionInit5Fn = __webpack_require__(67);
-const VersionInit7Fn = __webpack_require__(68);
+const VersionUpdate1Fn = __webpack_require__(62);
+const VersionUpdate2Fn = __webpack_require__(64);
+const VersionUpdate3Fn = __webpack_require__(65);
+const VersionUpdate4Fn = __webpack_require__(66);
+const VersionUpdate6Fn = __webpack_require__(67);
+const VersionUpdate8Fn = __webpack_require__(68);
+const VersionInit2Fn = __webpack_require__(69);
+const VersionInit4Fn = __webpack_require__(71);
+const VersionInit5Fn = __webpack_require__(72);
+const VersionInit7Fn = __webpack_require__(73);
+const VersionInit8Fn = __webpack_require__(74);
 
 module.exports = app => {
 
   class Version extends app.Service {
 
     async update(options) {
+
+      if (options.version === 8) {
+        const versionUpdate8 = new (VersionUpdate8Fn(this.ctx))();
+        await versionUpdate8.run();
+      }
 
       if (options.version === 6) {
         const versionUpdate6 = new (VersionUpdate6Fn(this.ctx))();
@@ -5554,6 +6003,7 @@ module.exports = app => {
     }
 
     async init(options) {
+
       if (options.version === 2) {
         const versionInit2 = new (VersionInit2Fn(this.ctx))();
         await versionInit2.run(options);
@@ -5570,6 +6020,20 @@ module.exports = app => {
         const versionInit7 = new (VersionInit7Fn(this.ctx))();
         await versionInit7.run(options);
       }
+      if (options.version === 8) {
+        const versionInit8 = new (VersionInit8Fn(this.ctx))();
+        await versionInit8.run(options);
+      }
+    }
+
+    async update8FunctionScenes(options) {
+      const versionUpdate8 = new (VersionUpdate8Fn(this.ctx))();
+      await versionUpdate8._updateFunctionsInstance(options);
+    }
+
+    async update8Atoms(options) {
+      const versionUpdate8 = new (VersionUpdate8Fn(this.ctx))();
+      await versionUpdate8._updateAtomsInstance(options);
     }
 
   }
@@ -5579,10 +6043,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 58 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const update1Data = __webpack_require__(59);
+const update1Data = __webpack_require__(63);
 
 module.exports = function(ctx) {
 
@@ -5631,7 +6095,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 59 */
+/* 63 */
 /***/ (function(module, exports) {
 
 const tables = {
@@ -6006,7 +6470,7 @@ module.exports = {
 
 
 /***/ }),
-/* 60 */
+/* 64 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -6043,7 +6507,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 61 */
+/* 65 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -6107,7 +6571,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 62 */
+/* 66 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -6186,7 +6650,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 63 */
+/* 67 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -6213,12 +6677,162 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 64 */
+/* 68 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const constants = __webpack_require__(1);
+
+module.exports = function(ctx) {
+
+  class VersionUpdate8 {
+
+    async run(options) {
+
+      let sql;
+
+      // aFunctionScene
+      sql = `
+          CREATE TABLE aFunctionScene (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            deleted int(11) DEFAULT '0',
+            iid int(11) DEFAULT '0',
+            sceneName varchar(50) DEFAULT NULL,
+            sceneMenu int(11) DEFAULT '0',
+            sceneSorting int(11) DEFAULT '0',
+            PRIMARY KEY (id)
+          )
+        `;
+      await ctx.model.query(sql);
+
+      // aFunction: scene -> sceneId
+      sql = `
+        ALTER TABLE aFunction
+          CHANGE COLUMN scene sceneId int(11) DEFAULT '0'
+                  `;
+      await ctx.model.query(sql);
+
+      // update exists functions
+      await this._updateFunctions(options);
+
+
+      // aAtom: add field roleIdOwner
+      sql = `
+        ALTER TABLE aAtom
+          ADD COLUMN roleIdOwner int(11) DEFAULT '0'
+                  `;
+      await ctx.model.query(sql);
+
+      // aViewRoleRightAtomClass
+      sql = `
+        create view aViewRoleRightAtomClass as
+          select a.iid,a.roleId as roleIdWho,a.roleIdBase,b.id as roleRightId,b.atomClassId,b.action,b.scope from aRoleExpand a
+            inner join aRoleRight b on a.roleIdBase=b.roleId
+          `;
+      await ctx.model.query(sql);
+
+      // aViewUserRightAtomClassRole
+      sql = `
+        create view aViewUserRightAtomClassRole as
+          select a.iid,a.userId as userIdWho,b.atomClassId,b.action,c.roleId as roleIdWhom from aViewUserRoleExpand a
+            inner join aRoleRightRef b on a.roleIdBase=b.roleId
+            inner join aRoleRef c on b.roleIdScope=c.roleIdParent
+          `;
+      await ctx.model.query(sql);
+
+      // aViewUserRightAtomRole
+      sql = `
+        create view aViewUserRightAtomRole as
+          select a.iid, a.id as atomId,a.roleIdOwner as roleIdWhom,b.userIdWho,b.action from aAtom a,aViewUserRightAtomClassRole b
+            where a.deleted=0 and a.atomEnabled=1
+              and a.atomClassId=b.atomClassId
+              and a.roleIdOwner=b.roleIdWhom
+        `;
+      await ctx.model.query(sql);
+
+      // update exists atoms
+      await this._updateAtoms(options);
+    }
+
+    async _updateFunctions(options) {
+      // all instances
+      const instances = await ctx.model.query('select * from aInstance');
+      for (const instance of instances) {
+        await ctx.performAction({
+          subdomain: instance.name,
+          method: 'post',
+          url: 'version/update8FunctionScenes',
+          body: options,
+        });
+      }
+    }
+
+    async _updateFunctionsInstance() {
+      // update sceneName
+      const scenes = constants.function.scene;
+      for (const sceneName in scenes) {
+        const sceneValue = scenes[sceneName];
+        const sceneId = await ctx.meta.function.getSceneId({ sceneName, sceneMenu: 1 });
+        await ctx.model.query('update aFunction set sceneId=? where iid=? and sceneId=?',
+          [ sceneId, ctx.instance.id, sceneValue ]);
+      }
+    }
+
+    async _updateAtoms(options) {
+      // all instances
+      const instances = await ctx.model.query('select * from aInstance');
+      for (const instance of instances) {
+        await ctx.performAction({
+          subdomain: instance.name,
+          method: 'post',
+          url: 'version/update8Atoms',
+          body: options,
+        });
+      }
+    }
+
+    async _updateAtomsInstance() {
+      // cache
+      const mapUserAtomClassRole = {};
+      // atoms
+      const atoms = await ctx.model.query('select id, atomClassId, userIdCreated from aAtom where iid=? and deleted=0',
+        [ ctx.instance.id ]);
+      for (const atom of atoms) {
+        const mapKey = `${atom.userIdCreated}:${atom.atomClassId}`;
+        let mapValue = mapUserAtomClassRole[mapKey];
+        if (mapValue === undefined) {
+          mapValue = mapUserAtomClassRole[mapKey] = await this._getRoleIdOwner(atom.atomClassId, atom.userIdCreated);
+        }
+        if (mapValue > 0) {
+          await ctx.model.query('update aAtom set roleIdOwner=? where id=?', [ mapValue, atom.id ]);
+        }
+      }
+    }
+
+    async _getRoleIdOwner(atomClassId, userId) {
+      const roles = await ctx.meta.atom.preferredRoles({
+        atomClass: { id: atomClassId },
+        user: { id: userId },
+      });
+      if (roles.length === 0) return 0;
+      return roles[0].roleIdWho;
+    }
+
+
+  }
+
+  return VersionUpdate8;
+};
+
+
+/***/ }),
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
 const extend = require3('extend2');
-const initData = __webpack_require__(65);
+const initData = __webpack_require__(70);
 
 module.exports = function(ctx) {
 
@@ -6280,7 +6894,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 65 */
+/* 70 */
 /***/ (function(module, exports) {
 
 // roles
@@ -6347,7 +6961,7 @@ module.exports = {
 
 
 /***/ }),
-/* 66 */
+/* 71 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -6369,7 +6983,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 67 */
+/* 72 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -6422,7 +7036,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 68 */
+/* 73 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -6444,7 +7058,24 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 69 */
+/* 74 */
+/***/ (function(module, exports) {
+
+module.exports = function(ctx) {
+
+  class VersionInit {
+
+    async run() {
+    }
+
+  }
+
+  return VersionInit;
+};
+
+
+/***/ }),
+/* 75 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6479,6 +7110,22 @@ module.exports = app => {
       return this.ctx.meta.base.menus();
     }
 
+    panels() {
+      return this.ctx.meta.base.panels();
+    }
+
+    widgets() {
+      return this.ctx.meta.base.widgets();
+    }
+
+    sections() {
+      return this.ctx.meta.base.sections();
+    }
+
+    buttons() {
+      return this.ctx.meta.base.buttons();
+    }
+
     functions() {
       return this.ctx.meta.base.functions();
     }
@@ -6494,7 +7141,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 70 */
+/* 76 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6533,15 +7180,19 @@ module.exports = app => {
 
 
 /***/ }),
-/* 71 */
+/* 77 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
 
   class Atom extends app.Service {
 
-    async create({ atomClass, item, user }) {
-      return await this.ctx.meta.atom.create({ atomClass, item, user });
+    async preferredRoles({ atomClass, user }) {
+      return await this.ctx.meta.atom.preferredRoles({ atomClass, user });
+    }
+
+    async create({ atomClass, roleIdOwner, item, user }) {
+      return await this.ctx.meta.atom.create({ atomClass, roleIdOwner, item, user });
     }
 
     async read({ key, user }) {
@@ -6603,7 +7254,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 72 */
+/* 78 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6622,6 +7273,10 @@ module.exports = app => {
       return await this.ctx.meta.atom.checkRightCreate({ atomClass, user });
     }
 
+    async atomClass({ atomClass }) {
+      return await this.ctx.meta.atomClass.get(atomClass);
+    }
+
   }
 
   return AtomClass;
@@ -6629,7 +7284,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 73 */
+/* 79 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6647,12 +7302,81 @@ module.exports = app => {
 
 
 /***/ }),
-/* 74 */
+/* 80 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Schedule extends app.Service {
+
+    async installAllSchedules() {
+      this.__installSchedules();
+    }
+
+    async scheduleQueue({ module, schedule }) {
+      // schedule config
+      const config = app.meta.configs[module];
+      const scheduleConfig = config.schedules[schedule];
+      // url
+      const url = this.ctx.meta.util.combinePagePath(module, scheduleConfig.path);
+      // performAction
+      if (!scheduleConfig.instance) {
+        return await this.ctx.performAction({
+          method: 'post',
+          url,
+        });
+      }
+      // all instances
+      const instances = await this.ctx.db.query('select * from aInstance a where a.disabled=0');
+      for (const instance of instances) {
+        await this.ctx.performAction({
+          subdomain: instance.name,
+          method: 'post',
+          url,
+        });
+      }
+    }
+
+    __installSchedules() {
+      for (const module of app.meta.modulesArray) {
+        const config = app.meta.configs[module.info.relativeName];
+        // module schedules
+        if (config.schedules) {
+          Object.keys(config.schedules).forEach(scheduleKey => {
+            const fullKey = `${module.info.relativeName}:${scheduleKey}`;
+            const scheduleConfig = config.schedules[scheduleKey];
+            if (!scheduleConfig.disable && scheduleConfig.repeat) {
+              app.meta.queue.push({
+                module: moduleInfo.relativeName,
+                queueName: 'schedule',
+                jobName: fullKey,
+                jobOptions: {
+                  repeat: scheduleConfig.repeat,
+                },
+                data: {
+                  module: module.info.relativeName,
+                  schedule: scheduleKey,
+                },
+              });
+            }
+          });
+        }
+      }
+    }
+
+  }
+
+  return Schedule;
+};
+
+
+/***/ }),
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
 const mparse = require3('egg-born-mparse').default;
-const UserFn = __webpack_require__(18);
+const UserFn = __webpack_require__(19);
 
 module.exports = app => {
 
@@ -6824,7 +7548,7 @@ function createAuthenticate(moduleRelativeName, providerName, _config) {
 
 
 /***/ }),
-/* 75 */
+/* 82 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -6843,17 +7567,20 @@ module.exports = app => {
       return await this.ctx.meta.function.check({ functions, user });
     }
 
-    async checkLocale({ locale }) {
-      return await this.ctx.meta.function._checkLocale({ locale });
-    }
-
     async register({ module, name }) {
       return await this.ctx.meta.function.register({ module, name });
     }
 
-    async clearLocales() {
-      // clear all instances
-      await this.ctx.model.query('delete from aFunctionLocale');
+    async setLocalesStartup() {
+      await this.ctx.meta.function.setLocales({ reset: true });
+    }
+
+    async setLocalesQueue({ options }) {
+      await this.ctx.meta.function.setLocalesQueue(options);
+    }
+
+    async scenes({ sceneMenu }) {
+      return await this.ctx.meta.function.scenes({ sceneMenu });
     }
 
   }
@@ -6863,7 +7590,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 76 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -7098,34 +7825,68 @@ ${replyContent}
 
 
 /***/ }),
-/* 77 */
+/* 84 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(0);
+const extend = require3('extend2');
+
+module.exports = app => {
+
+  class Settings extends app.Service {
+
+    async load({ module, user }) {
+      const name = `user-layoutConfig:${module}:${user.id}`;
+      return await this.ctx.meta.status.get(name);
+    }
+
+    async save({ module, data, user }) {
+      const name = `user-layoutConfig:${module}:${user.id}`;
+      await this.ctx.meta.status.set(name, data);
+    }
+
+    async saveKey({ module, key, value, user }) {
+      const layoutConfig = await this.load({ module, user });
+      const data = extend(true, {}, layoutConfig || {}, { [key]: value });
+      await this.save({ module, data, user });
+    }
+
+  }
+
+  return Settings;
+};
+
+
+/***/ }),
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const atom = __webpack_require__(5);
 const atomAction = __webpack_require__(4);
 const atomClass = __webpack_require__(3);
-const auth = __webpack_require__(21);
-const authProvider = __webpack_require__(22);
-const role = __webpack_require__(12);
-const roleInc = __webpack_require__(13);
-const roleIncRef = __webpack_require__(78);
-const roleRef = __webpack_require__(79);
-const roleRight = __webpack_require__(15);
-const roleRightRef = __webpack_require__(16);
-const user = __webpack_require__(19);
-const userAgent = __webpack_require__(20);
-const userRole = __webpack_require__(14);
-const label = __webpack_require__(80);
+const auth = __webpack_require__(22);
+const authProvider = __webpack_require__(23);
+const role = __webpack_require__(13);
+const roleInc = __webpack_require__(14);
+const roleIncRef = __webpack_require__(86);
+const roleRef = __webpack_require__(87);
+const roleRight = __webpack_require__(16);
+const roleRightRef = __webpack_require__(17);
+const user = __webpack_require__(20);
+const userAgent = __webpack_require__(21);
+const userRole = __webpack_require__(15);
+const label = __webpack_require__(88);
 const atomLabel = __webpack_require__(7);
 const atomLabelRef = __webpack_require__(8);
 const atomStar = __webpack_require__(6);
-const func = __webpack_require__(1);
+const func = __webpack_require__(2);
 const functionStar = __webpack_require__(10);
 const functionLocale = __webpack_require__(11);
-const roleFunction = __webpack_require__(17);
-const comment = __webpack_require__(81);
-const commentView = __webpack_require__(82);
-const commentHeart = __webpack_require__(83);
+const functionScene = __webpack_require__(12);
+const roleFunction = __webpack_require__(18);
+const comment = __webpack_require__(89);
+const commentView = __webpack_require__(90);
+const commentHeart = __webpack_require__(91);
 
 module.exports = app => {
   const models = {
@@ -7150,6 +7911,7 @@ module.exports = app => {
     function: func,
     functionStar,
     functionLocale,
+    functionScene,
     roleFunction,
     comment,
     commentView,
@@ -7160,7 +7922,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 78 */
+/* 86 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -7178,7 +7940,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 79 */
+/* 87 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -7204,7 +7966,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 80 */
+/* 88 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -7222,7 +7984,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 81 */
+/* 89 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -7240,7 +8002,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 82 */
+/* 90 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -7258,7 +8020,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 83 */
+/* 91 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -7276,14 +8038,14 @@ module.exports = app => {
 
 
 /***/ }),
-/* 84 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
   // keywords
-  const keywords = __webpack_require__(85)(app);
+  const keywords = __webpack_require__(93)(app);
   // schemas
-  const schemas = __webpack_require__(86)(app);
+  const schemas = __webpack_require__(94)(app);
   // meta
   const meta = {
     base: {
@@ -7343,7 +8105,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 85 */
+/* 93 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -7357,11 +8119,11 @@ module.exports = app => {
         const ctx = this;
         const res = await ctx.meta.user.exists({ [name]: data });
         if (res && res.id !== ctx.user.agent.id) {
-          const errors = [{ keyword: 'x-exists', params: [], message: ctx.text('Element exists') }];
+          const errors = [{ keyword: 'x-exists', params: [], message: ctx.text('Element Exists') }];
           throw new app.meta.ajv.ValidationError(errors);
         }
         if (!res && data.indexOf('__') > -1) {
-          const errors = [{ keyword: 'x-exists', params: [], message: ctx.text('Cannot contain __') }];
+          const errors = [{ keyword: 'x-exists', params: [], message: ctx.text('Cannot Contain __') }];
           throw new app.meta.ajv.ValidationError(errors);
         }
         return true;
@@ -7373,7 +8135,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 86 */
+/* 94 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
