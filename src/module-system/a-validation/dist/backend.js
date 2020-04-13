@@ -216,8 +216,8 @@ module.exports = {
   Required: '必需的',
   RequiredField: '不允许为空',
   'Invalid Date': '无效的日期',
-  'Not expected value': '不是期望的值',
-  'validator not specified': '没有指定validator',
+  'Not Expected Value': '不是期望的值',
+  'Validator Not Specified': '没有指定validator',
 };
 
 
@@ -227,7 +227,7 @@ module.exports = {
 
 // error code should start from 1001
 module.exports = {
-  1001: 'validator not specified',
+  1001: 'Validator Not Specified',
 };
 
 
@@ -490,7 +490,7 @@ module.exports = app => {
         return new Promise((resolve, reject) => {
           const res = [ 'zh-cn', 'en-us' ].indexOf(data) > -1;
           if (!res) {
-            const errors = [{ keyword: 'x-languages', params: [], message: ctx.text('Not expected value') }];
+            const errors = [{ keyword: 'x-languages', params: [], message: ctx.text('Not Expected Value') }];
             return reject(new app.meta.ajv.ValidationError(errors));
           }
           return resolve(res);
