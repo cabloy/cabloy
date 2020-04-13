@@ -43,8 +43,8 @@ co(function* () {
     // publicDir
     locals.publicDir = path.join(require('os').homedir(), 'cabloy', locals.name).replace(/\\/gi, '/');
     // mysql
-    locals.mysqlRootPassword = randomize('*', 16, { exclude: '\\\'"' });
-    locals.mysqlUserPassword = randomize('*', 16, { exclude: '\\\'"' });
+    locals.mysqlRootPassword = randomize('*', 16, { exclude: '\\\'"$' });
+    locals.mysqlUserPassword = randomize('*', 16, { exclude: '\\\'"$' });
     locals.mysqlUserName = 'web_user';
     // ready
     return locals;
