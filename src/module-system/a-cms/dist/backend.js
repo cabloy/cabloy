@@ -1421,14 +1421,16 @@ module.exports = appInfo => {
     render: {
       path: 'queue/render',
     },
+    registerAllWatchers: {
+      path: 'site/registerAllWatchersQueue',
+    },
   };
 
   // startups
   config.startups = {
     registerAllWatchers: {
-      type: 'worker',
       instance: true,
-      path: 'site/registerAllWatchers',
+      path: 'site/registerAllWatchersStartup',
     },
   };
 
@@ -1551,18 +1553,18 @@ module.exports = {
   Tag: '标签',
   Tags: '标签',
   Url: '链接',
-  'Are you sure?': '您确认吗？',
+  'Are You Sure?': '您确认吗？',
   'Article List': '文章清单',
-  'Article List(by category)': '文章清单(按目录)',
-  'Category name': '目录名称',
+  'Article List(by Category)': '文章清单(按目录)',
+  'Category Name': '目录名称',
   'Comment Disabled': '禁止评论',
   'Create Article': '新建文章',
-  'Language must not be empty': '语言不允许为空',
+  'Language must not be Empty': '语言不允许为空',
   'Load More': '加载更多',
   'Post Comment': '发表评论',
   'Recent Comments': '最近评论',
-  'Theme %s:%s:%s not set': '没有设置主题%s:%s:%s',
-  'Theme %s not found': '没有找到主题%s',
+  'Theme %s:%s:%s not Set': '没有设置主题%s:%s:%s',
+  'Theme %s not Found': '没有找到主题%s',
   'en-us': '英语',
   'zh-cn': '简体中文',
   PersonalProfile: '个人信息',
@@ -1592,9 +1594,9 @@ module.exports = {
 
 // error code should start from 1001
 module.exports = {
-  1001: 'Language must not be empty',
-  1002: 'Theme %s:%s:%s not set',
-  1003: 'Theme %s not found',
+  1001: 'Language must not be Empty',
+  1002: 'Theme %s:%s:%s not Set',
+  1003: 'Theme %s not Found',
   1004: 'Cannot delete if has children',
   1005: 'Cannot delete if has articles',
   1006: 'Build Site First',
@@ -1778,7 +1780,8 @@ module.exports = app => {
     { method: 'post', path: 'site/getBlocks', controller: site },
     { method: 'post', path: 'site/getBlockArray', controller: site },
     { method: 'post', path: 'site/blockSave', controller: site },
-    { method: 'post', path: 'site/registerAllWatchers', controller: site, middlewares: 'inner', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'site/registerAllWatchersStartup', controller: site, middlewares: 'inner', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'site/registerAllWatchersQueue', controller: site, middlewares: 'inner', meta: { auth: { enable: false } } },
     { method: 'post', path: 'site/getStats', controller: site, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     // category
     { method: 'post', path: 'category/item', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
@@ -2199,8 +2202,13 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async registerAllWatchers() {
-      await this.ctx.service.site.registerAllWatchers();
+    async registerAllWatchersStartup() {
+      await this.ctx.service.site.registerAllWatchersStartup();
+      this.ctx.success();
+    }
+
+    async registerAllWatchersQueue() {
+      await this.ctx.service.site.registerAllWatchersQueue();
       this.ctx.success();
     }
 
@@ -3625,6 +3633,8 @@ const Build = __webpack_require__(2);
 const _blocksLocales = {};
 const _blockArrayLocales = {};
 
+const __cacheRegisterAllWatchersStartup = '__registerAllWatchersStartup';
+
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Site extends app.Service {
@@ -3728,9 +3738,27 @@ module.exports = app => {
       });
     }
 
-    async registerAllWatchers() {
+    async registerAllWatchersStartup() {
       // only in development
       if (!this.ctx.app.meta.isLocal) return;
+      // queue
+      this.ctx.app.meta.queue.push({
+        subdomain: this.ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'registerAllWatchers',
+        data: null,
+      });
+    }
+
+    async registerAllWatchersQueue() {
+      // only in development
+      if (!this.ctx.app.meta.isLocal) return;
+      // check cache
+      const cache = this.ctx.cache.db.module(moduleInfo.relativeName);
+      const flag = await cache.get(__cacheRegisterAllWatchersStartup);
+      if (flag) return;
+      // set cache
+      await cache.set(__cacheRegisterAllWatchersStartup, true, this.ctx.app.config.queue.startup.cache);
       // loop modules
       for (const module of this.ctx.app.meta.modulesArray) {
         // cms.site=true
@@ -3866,7 +3894,7 @@ module.exports = app => {
 
     _prepareBlocks({ locale }) {
       const blocks = {};
-      // modulesArray for block override
+      // (X) modulesArray for block override
       for (const module of this.app.meta.modulesArray) {
         if (module.main.meta && module.main.meta.cms &&
           module.main.meta.cms.plugin && module.main.meta.cms.plugin.blocks) {
@@ -3878,11 +3906,18 @@ module.exports = app => {
     }
 
     _prepareBlocksModule({ locale, module, blocks }) {
-      const blocksModule = extend(true, {}, blocks);
-      for (const key in blocksModule) {
-        const block = blocksModule[key];
-        block.meta.module = module.info.relativeName;
-        block.meta.titleLocale = this.ctx.text.locale(locale, block.meta.title);
+      const blocksModule = {};
+      const moduleName = module.info.relativeName;
+      for (const key in blocks) {
+        const block = blocks[key];
+        const fullName = `${moduleName}:${key}`;
+        blocksModule[fullName] = extend(true, {}, block, {
+          meta: {
+            fullName,
+            module: block.meta.module || moduleName,
+            titleLocale: this.ctx.text.locale(locale, block.meta.title),
+          },
+        });
       }
       return blocksModule;
     }
@@ -4218,7 +4253,7 @@ module.exports = app => {
           menu: 1,
         },
         listArticleByCategory: {
-          title: 'Article List(by category)',
+          title: 'Article List(by Category)',
           scene: 'list',
           autoRight: 1,
           atomClassName: 'article',
@@ -4439,7 +4474,7 @@ module.exports = app => {
       categoryName: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Category name',
+        ebTitle: 'Category Name',
         notEmpty: true,
       },
       hidden: {
