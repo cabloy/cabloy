@@ -3,6 +3,23 @@
   .markdown-body {
     @import './markdown/themes/night.less';
     @import './markdown/highlight/atom-one-dark.less';
+
+    table {
+      tr {
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        background-color: rgba(0, 0, 0, 0.3);
+      }
+
+      tr:nth-child(2n) {
+        background-color: rgba(0, 0, 0, 0.15);
+      }
+
+      thead tr {
+        background-color: rgba(0, 0, 0, 0.4);
+      }
+
+    }
+
   }
 
 }
