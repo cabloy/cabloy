@@ -3,7 +3,7 @@
 ## 2020-04-15, Version 3.0.1-beta.1
 
 * **features - backend **
-  * [Cluster](https://cabloy.com/zh-cn/articles/guide-quick-start.html#Redis_30): Cluster now becomes the first class citizen of CabloyJS
+  * [Cluster](https://cabloy.com/articles/guide-quick-start.html#Configure_Redis_24): Cluster now becomes the first class citizen of CabloyJS
     * Redis: Cluster is based on Redis
     * [Queue](https://cabloy.com/articles/queue.html): Reconstructed based on [bottleneck](https://github.com/SGrondin/bottleneck/) & [bullmq](https://github.com/taskforcesh/bullmq)
     * [Schedule](https://cabloy.com/articles/schedule.html): Reconstructed based on Queue
