@@ -81,6 +81,7 @@ const webpackConfig = merge(baseWebpackConfig, {
           // resolve('build/__runtime/modules'),
           resolve('../@zhennann/framework7/packages'),
         ],
+        exclude: /\.min\.js$/,
       },
       ...utils.styleLoaders({
         sourceMap: config.build.productionSourceMap,
@@ -127,7 +128,7 @@ const webpackConfig = merge(baseWebpackConfig, {
         chunkFilter: chunk => {
           if (!chunk._modules) return true;
           for (const module of chunk._modules.values()) {
-            if (module.resource && module.resource.indexOf('/build/__runtime/modules') > -1) {
+            if (module.resource && (module.resource.indexOf('.min.js') > -1 || module.resource.indexOf('/build/__runtime/modules') > -1)) {
               return false;
             }
           }

@@ -1,11 +1,22 @@
 import Vue from 'vue';
-import Framework7 from '@zhennann/framework7/packages/core/framework7-lite.esm.bundle.js';
-import Framework7Vue from '@zhennann/framework7/packages/vue/framework7-vue.esm.bundle.js';
 
 import 'framework7-icons';
-import '@zhennann/framework7/packages/core/framework7.bundle.less';
 import './assets/css/iconfont/material-icons.css';
 import './assets/css/app.less';
+
+let Framework7;
+let Framework7Vue;
+if (process.env.NODE_ENV === 'production') {
+  Framework7 = require('@zhennann/framework7/packages/core/js/framework7-lite.bundle.min.js').default;
+  Framework7Vue = require('@zhennann/framework7/packages/vue/framework7-vue.bundle.min.js').default;
+  // eslint-disable-next-line
+  const Framework7Style = require('@zhennann/framework7/packages/core/css/framework7.bundle.min.css').default;
+} else {
+  Framework7 = require('@zhennann/framework7/packages/core/framework7-lite.esm.bundle.js').default;
+  Framework7Vue = require('@zhennann/framework7/packages/vue/framework7-vue.esm.bundle.js').default;
+  // eslint-disable-next-line
+  const Framework7Style = require('@zhennann/framework7/packages/core/framework7.bundle.less').default;
+}
 
 // use
 Framework7.use(Framework7Vue);
