@@ -1,6 +1,6 @@
 # History
 
-## 2020-02-14, Version 3.0.1-beta.1
+## 2020-04-15, Version 3.0.1-beta.1
 
 * **features - backend **
   * Cluster: Cluster becomes first class citizen of CabloyJS
@@ -14,14 +14,15 @@
   * [Module Monkey](https://cabloy.com/articles/module-monkey.html): Easy to replace some functionalities of modules just like a monkey🐒
 
 * **features - frontend **
-  * Build Scene:
-  * Drag Drop:
-
+  * Theme: Docs to be done
+  * Adaptive Layout: Docs to be done
+  * Build Scene: Docs to be done
+  * Drag Drop: Docs to be done
 
 * **features - modules **
-  * CMS Block:
-  * Dashboard:
-  * Layout PC:
+  * CMS Block: Docs to be done
+  * Dashboard: Docs to be done
+  * Layout PC: Docs to be done
 
 ## 2020-02-14, Version 3.0.0-beta.4
 
