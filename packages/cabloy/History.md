@@ -10,7 +10,7 @@
     * [Broadcast](https://cabloy.com/articles/broadcast.html): Reconstructed based on Redis
     * [Cache](https://cabloy.com/articles/cache.html): Reconstructed based on Redis
     * [Startup](https://cabloy.com/articles/startup.html): Reconstructed
-    * Docker Compose: There is a `docker-compose.yml` configuration file in the root directory of the project. If you have installed the docker compose environment, you can start all services of CabloyJS with only one command, including Redis, MySQL, Nginx and CabloyJS backend service
+    * [Docker Compose](https://cabloy.com/articles/guide-quick-start.html#Docker_Compose_189): There is a `docker-compose.yml` configuration file in the root directory of the project. If you have installed the docker compose environment, you can start all services of CabloyJS with only one command, including Redis, MySQL, Nginx and CabloyJS backend service
   * [Module Monkey](https://cabloy.com/articles/module-monkey.html): Easy to replace some functionalities of modules just like a monkey🐒
 
 * **features - frontend **
