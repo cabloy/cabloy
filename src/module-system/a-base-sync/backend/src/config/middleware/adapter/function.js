@@ -236,7 +236,7 @@ const Fn = module.exports = ctx => {
       for (const func of functions) {
         // title
         const funcBase = ctx.meta.base.function({ module: func.module, name: func.name });
-        if (!funcBase) throw new Error(`function not found: ${func.module}:${func.nam}`);
+        if (!funcBase) throw new Error(`function not found: ${func.module}:${func.name}`);
         if (func.title !== funcBase.title) {
           await this.model.update({ id: func.id, title: funcBase.title });
         }
