@@ -1,4 +1,4 @@
 module.exports = {
   productionSourceMap: true,
-  uglify: false,
+  uglify: true,
 };
