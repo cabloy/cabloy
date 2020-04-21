@@ -91,7 +91,7 @@ export default {
       };
     },
     enableFootbar() {
-      return this.enableComment && this.enableAttachment;
+      return this.enableComment || this.enableAttachment;
     },
     enableComment() {
       const atomClassInfo = this.getAtomClass(this.atomClass);
