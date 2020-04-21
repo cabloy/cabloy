@@ -39,7 +39,6 @@ export default {
     onSize() {
       this.currentViewSize = this.$view.size;
     },
-
   },
 };
 
