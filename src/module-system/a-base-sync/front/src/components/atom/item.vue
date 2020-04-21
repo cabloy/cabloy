@@ -22,18 +22,19 @@
         </f7-list>
       </f7-popover>
     </template>
-    <f7-toolbar v-if="ready" bottom-md>
-      <eb-link iconMaterial="comment" :eb-href="`comment/list?atomId=${item.atomId}`">{{item.commentCount}}</eb-link>
-      <eb-link iconMaterial="attach_file" :eb-href="`attachment/list?atomId=${item.atomId}`">{{item.attachmentCount}}</eb-link>
+    <f7-toolbar v-if="ready && enableFootbar" bottom-md>
+      <eb-link v-if="enableComment" iconMaterial="comment" :eb-href="`comment/list?atomId=${item.atomId}`">{{item.commentCount}}</eb-link>
+      <eb-link v-if="enableAttachment" iconMaterial="attach_file" :eb-href="`attachment/list?atomId=${item.atomId}`">{{item.attachmentCount}}</eb-link>
     </f7-toolbar>
   </eb-page>
 </template>
 <script>
 import Vue from 'vue';
 import atoms from './list.vue';
+import ebAtomClasses from '../../common/atomClasses.js';
 import ebAtomActions from '../../common/atomActions.js';
 export default {
-  mixins: [ebAtomActions],
+  mixins: [ebAtomClasses, ebAtomActions],
   meta: {
     global: false,
   },
@@ -64,7 +65,7 @@ export default {
   },
   computed: {
     ready() {
-      return this.item && this.module && this.validateParams && this.actions && this.actionsAll;
+      return this.item && this.module && this.validateParams && this.actions && this.atomClassesAll && this.actionsAll;
     },
     title() {
       const name = this.mode === 'edit' ? this.$text('Edit') : this.$text('View');
@@ -81,6 +82,26 @@ export default {
         if (action.name !== 'write') return true;
       }
       return false;
+    },
+    atomClass() {
+      if (!this.item) return null;
+      return {
+        module: this.item.module,
+        atomClassName: this.item.atomClassName,
+      };
+    },
+    enableFootbar() {
+      return this.enableComment && this.enableAttachment;
+    },
+    enableComment() {
+      const atomClassInfo = this.getAtomClass(this.atomClass);
+      if (!atomClassInfo) return false;
+      return !(atomClassInfo.meta && atomClassInfo.meta.comment === false);
+    },
+    enableAttachment() {
+      const atomClassInfo = this.getAtomClass(this.atomClass);
+      if (!atomClassInfo) return false;
+      return !(atomClassInfo.meta && atomClassInfo.meta.attachment === false);
     },
   },
   mounted() {

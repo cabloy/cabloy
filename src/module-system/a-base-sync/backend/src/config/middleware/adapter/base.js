@@ -300,6 +300,7 @@ const Fn = module.exports = ctx => {
           title: _atom.title || key,
           public: _atom.public ? 1 : 0,
           flow: _atom.flow ? 1 : 0,
+          meta: _atom.meta,
         };
         // tableName
         for (const key in _atom) {
