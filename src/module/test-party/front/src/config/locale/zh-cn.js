@@ -149,5 +149,8 @@ export default {
   'SMS Verification Code': '短信认证码',
   'Verify Now': '现在认证',
   'Monkey Test': 'Monkey测试',
+  'Layout(Grid)': '布局（网格）',
+  'Layout(Adaptive)': '布局（自适应）',
+  'Current View Size': '当前视图大小',
 };
 

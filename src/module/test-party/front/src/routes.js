@@ -37,7 +37,8 @@ export default [
   { path: 'kitchen-sink/ptrIsLoadMore', component: loadKitchenSink('ptrIsLoadMore') },
   { path: 'kitchen-sink/buttonEvent', component: loadKitchenSink('buttonEvent') },
   { path: 'kitchen-sink/atom', component: loadKitchenSink('atom') },
-  { path: 'kitchen-sink/grid', component: loadKitchenSink('gridResizable') },
+  { path: 'kitchen-sink/layout/grid', component: loadKitchenSink('layout/gridResizable') },
+  { path: 'kitchen-sink/layout/adaptive', component: loadKitchenSink('layout/adaptive') },
   { path: 'kitchen-sink/component/global', component: loadKitchenSink('component/global') },
   { path: 'kitchen-sink/monkey/monkeyee', component: loadKitchenSink('monkey/monkeyee') },
   // framework7

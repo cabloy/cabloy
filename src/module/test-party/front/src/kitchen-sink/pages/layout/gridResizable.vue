@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar large largeTransparent :title="$text('Grid / Layout')" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('Layout(Grid)')" eb-back-link="Back"></eb-navbar>
     <div class="grid-demo">
       <f7-block medium>
         <p>Columns within a row are automatically set to have equal width. Otherwise you can define your column with pourcentage of screen you want.</p>
