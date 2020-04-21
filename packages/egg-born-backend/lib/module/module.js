@@ -110,6 +110,10 @@ module.exports = function(loader) {
       const pos2 = file.indexOf('/', pos1);
       const name = file.substr(pos1, pos2 - pos1);
 
+      if (!_public && name.indexOf('egg-born-module-') > -1) {
+        throw new Error(`Should use relative name for private module: ${name}`);
+      }
+
       const info = mparse.parseInfo(name);
       info.public = _public;
       if (!modules[info.relativeName]) {
