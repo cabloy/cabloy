@@ -24,23 +24,26 @@ $(document).on('echo-ready', function() {
 function _renderNavbarUser({ container }) {
   const $container = $(container);
   if ($container.length === 0) return;
+  const $menu=$('.dropdown-menu',$container);
+  const $avatar=$('.avatar-user',$container);
   if (util.user.op.anonymous) {
+    const avatar=util.url('plugins/cms-pluginbase/assets/images/avatar_user.png');
+    $avatar.attr('src',avatar);
     const html = `
-      <li><a href="${env.site.serverUrl}/#!${location.href}"><%=text('Sign In')%></a></li>
+      <li class="user-signin"><a href="${env.site.serverUrl}/#!${location.href}"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> <%=text('Sign In')%></a></li>
     `;
-    $container.append(html);
+    $menu.append(html);
   } else {
+    const avatar=util.user.op.avatar || util.url('plugins/cms-pluginbase/assets/images/avatar_user.png');
+    $avatar.attr('src',avatar);
     const html = `
-      <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><img class="avatar avatar16 avatar-user" src="${util.user.op.avatar || util.url('plugins/cms-pluginbase/assets/images/avatar_user.png')}">${util.user.op.userName}</a>
-        <ul class="dropdown-menu">
-          <%- userLinks %>
-          <%- userLinks?'<li role="separator" class="divider"></li>':'' %>
-          <li class="user-logout"><a href="#" onclick="return onClickUserLogout();"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> <%=text('Log Out')%></a></li>
-        </ul>
-      </li>
+      <li class="user-name">${util.user.op.userName}</li>
+      <li role="separator" class="divider"></li>
+      <%- userLinks %>
+      <%- userLinks?'<li role="separator" class="divider"></li>':'' %>
+      <li class="user-logout"><a href="#" onclick="return onClickUserLogout();"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> <%=text('Log Out')%></a></li>
     `;
-    $container.append(html);
+    $menu.append(html);
   }
 }
 
