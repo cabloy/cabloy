@@ -68,12 +68,13 @@ if(!site._menuItems){
         </div>
         <button type="submit" class="btn btn-default"><%=text('Submit')%></button>
       </form>
-      <ul class="nav navbar-nav navbar-right navbar-user">
+      <ul class="nav navbar-nav navbar-right">
         <%if(site._github && site._github.user && site._github.repo){%>
           <li class="github"><a target="_blank" href="<%=`https://github.com/${site._github.user}/${site._github.repo}`%>"><img src="<%=url('assets/images/github.png')%>"></img></a></li>
         <%}%>
         <li><a href="<%=url('static/comments.html')%>"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span></a></li>
         <%- await include('./language.ejs') %>
+        <%- await include('./user.ejs') %>
       </ul>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
