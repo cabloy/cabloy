@@ -15,8 +15,8 @@
 
 * **features - frontend **
   * Theme: Docs to be done
-  * Adaptive Layout: Docs to be done
-  * Build Scene: Docs to be done
+  * [Adaptive Layout](https://cabloy.com/articles/013d5e01ae5a40ae90a536d2cafd50cd.html)
+  * [Scene Config & Scene Build](https://cabloy.com/articles/config-front.html)
   * Drag Drop: Docs to be done
 
 * **features - modules **
