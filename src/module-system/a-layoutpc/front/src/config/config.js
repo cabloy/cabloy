@@ -2,6 +2,7 @@ export default {
   layout: {
     login: '/a/login/login',
     loginOnStart: true,
+    autoHideSidebarOnOpenUrl: true,
     header: {
       button: {
         home: { name: 'Home', iconMaterial: 'dashboard', url: '/a/dashboard/dashboard', scene: 'dashboard', sceneOptions: { name: 'home' } },

@@ -233,6 +233,8 @@ export default {
             if (res.options) options = this.$utils.extend({}, options, res.options);
             res.view.f7View.router.navigate(url, options);
           }
+          // autohide
+          this._autoHideAllSidebars();
         });
       }
     },
@@ -307,16 +309,23 @@ export default {
       const $clickedEl = this.$$(event.target);
       const $clickedSidebarEl = $clickedEl.closest('.eb-layout-sidebar');
       if ($clickedSidebarEl.length === 0) {
-        if (this.sidebarCoverLeft && this.sidebar.left.opened) {
-          this.$refs.sidebarLeft.setOpened(false);
-        }
-        if (this.sidebarCoverRight && this.sidebar.right.opened) {
-          this.$refs.sidebarRight.setOpened(false);
-        }
-        if (this.sidebarCoverBottom && this.sidebar.bottom.opened) {
-          this.$refs.sidebarBottom.setOpened(false);
-        }
+        this._hideAllSidebars();
       }
+    },
+    _hideAllSidebars() {
+      if (this.sidebarCoverLeft && this.sidebar.left.opened) {
+        this.$refs.sidebarLeft.setOpened(false);
+      }
+      if (this.sidebarCoverRight && this.sidebar.right.opened) {
+        this.$refs.sidebarRight.setOpened(false);
+      }
+      if (this.sidebarCoverBottom && this.sidebar.bottom.opened) {
+        this.$refs.sidebarBottom.setOpened(false);
+      }
+    },
+    _autoHideAllSidebars() {
+      if (!this.$config.layout.autoHideSidebarOnOpenUrl) return;
+      this._hideAllSidebars();
     },
     __getResourcesAll() {
       const promises = [];
