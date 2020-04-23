@@ -5,6 +5,7 @@ export default function(Vue) {
 
   let _inited = false;
   let _stylesheet = null;
+  let _supportTouch = false;
   const _windowSize = {};
 
   let _isDragging = false;
@@ -115,13 +116,22 @@ export default function(Vue) {
     return _getDropElement($el, context, _dragElement, _dragContext);
   }
 
+  function _getTouchTarget(e) {
+    if (_supportTouch) {
+      const clientX = e.targetTouches[0].clientX;
+      const clientY = e.targetTouches[0].clientY;
+      return document.elementFromPoint(clientX, clientY);
+    }
+    return e.target;
+  }
+
   function _handeTouchMove(e) {
     const $$ = Vue.prototype.$$;
-
     // el
     const handlerClassName = `*[data-dragdrop-handler="${_dragContext.scene}"]`;
     const elementClassName = `*[data-dragdrop-element="${_dragContext.scene}"]`;
-    let $el = $$(e.target).closest(handlerClassName);
+    const _target = _getTouchTarget(e);
+    let $el = $$(_target).closest(handlerClassName);
     if ($el.length === 0) {
       const $dragdropElement = $$(e.target).closest(elementClassName);
       if ($dragdropElement.length !== 0) {
@@ -342,6 +352,7 @@ export default function(Vue) {
     _windowSize.height = document.documentElement.clientHeight;
     // events
     const app = Vue.prototype.$f7;
+    _supportTouch = app.support.touch;
     app.on('touchstart:passive', handeTouchStart);
     app.on('touchmove:active', handeTouchMove);
     app.on('touchend:passive', handeTouchEnd);
