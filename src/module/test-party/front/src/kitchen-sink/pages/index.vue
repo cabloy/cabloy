@@ -28,6 +28,8 @@ const items = [
   { title: 'Layout(Grid)', path: 'kitchen-sink/layout/grid' },
   { title: 'Layout(Adaptive)', path: 'kitchen-sink/layout/adaptive' },
   { title: 'Monkey', path: 'kitchen-sink/monkey/monkeyee' },
+  { title: 'Dragdrop(Move)', path: 'kitchen-sink/dragdrop/move' },
+  { title: 'Dragdrop(Resize)', path: 'kitchen-sink/dragdrop/resize' },
 ];
 export default {
   data() {

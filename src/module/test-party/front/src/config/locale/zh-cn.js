@@ -152,5 +152,7 @@ export default {
   'Layout(Grid)': '布局（网格）',
   'Layout(Adaptive)': '布局（自适应）',
   'Current View Size': '当前视图大小',
+  'Dragdrop(Move)': '拖拽(移动)',
+  'Dragdrop(Resize)': '拖拽(调整尺寸)',
 };
 
