@@ -27,7 +27,7 @@ export default {
         onDragEnd: this.onDragEnd,
       };
     },
-    onDragStart({ $el, context, dragElement }) {
+    onDragStart({ $el, context }) {
       const isRow = context.resizeDirection === 'row';
       const size = this.$view.sizeExtent;
       const tooltip = isRow ? this.height : this.width;

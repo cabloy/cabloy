@@ -27,23 +27,23 @@ export default {
       return {
         scene: this.dragdropScene,
         item,
-        onDragStart: this.onDragStart,
         onDragElement: this.onDragElement,
+        onDragStart: this.onDragStart,
         onDropElement: this.onDropElement,
         onDropLeave: this.onDropLeave,
         onDropEnter: this.onDropEnter,
-        onDragEnd: this.onDragEnd,
         onDragDone: this.onDragDone,
+        onDragEnd: this.onDragEnd,
       }
+    },
+    onDragElement({ $el, context }) {
+      // do nothing
     },
     onDragStart({ $el, context, dragElement }) {
       const indexDrag = this.__getItemIndex(context.item);
       this.indexDragIndex = indexDrag;
       const tooltip = context.item;
       return { tooltip };
-    },
-    onDragElement({ $el, context }) {
-      // do nothing
     },
     onDropElement({ $el, context, dragElement, dragContext }) {
       const indexDrop = this.__getItemIndex(context.item);
@@ -63,14 +63,14 @@ export default {
       const indexDrop = this.__getItemIndex(context.item);
       this.indexDropIndex = indexDrop;
     },
-    onDragEnd({ $el, context, dragElement }) {
-      this.indexDragIndex = -1;
-    },
     onDragDone({ $el, context, dragElement, dropElement, dropContext }) {
       const indexDrag = this.__getItemIndex(context.item);
       this.items.splice(indexDrag, 1);
       const indexDrop = this.__getItemIndex(dropContext.item);
       this.items.splice(indexDrop, 0, context.item);
+    },
+    onDragEnd({ $el, context, dragElement }) {
+      this.indexDragIndex = -1;
     },
     __getItemIndex(item) {
       return this.items.findIndex(_item => _item === item);
