@@ -59,9 +59,7 @@ export default {
       });
     },
     onPerformDone() {
-      return this.$view.dialog.confirm().then(() => {
-        return this.$refs.validate.perform();
-      });
+      return this.$refs.validate.perform();
     },
     onSubmit() {
       return this.onPerformDone();
