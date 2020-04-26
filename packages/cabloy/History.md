@@ -21,7 +21,7 @@
   * [Dragdrop: Resize](https://cabloy.com/articles/dragdrop-resize.html)
 
 * **features - modules **
-  * CMS Block: Docs to be done
+  * [CMS Block](https://cabloy.com/zh-cn/articles/0c81b4e499a04fc5b358a5ba63c0b2e0.html)
   * Dashboard: Docs to be done
   * Layout PC: Docs to be done
 
