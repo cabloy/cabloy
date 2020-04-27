@@ -2,6 +2,8 @@ English | [简体中文](./README.zh-CN.md)
 
 # CabloyJS
 
+[![Join the chat at https://gitter.im/cabloy/main](https://badges.gitter.im/cabloy/main.svg)](https://gitter.im/cabloy/main?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 CabloyJS: The Ultimate NodeJS Full Stack Business Development Framework, based on KoaJS + EggJS + VueJS + Framework7
 
 [![NPM version][npm-image]][npm-url]
