@@ -22,7 +22,7 @@
 
 * **features - modules **
   * [CMS Block](https://cabloy.com/zh-cn/articles/0c81b4e499a04fc5b358a5ba63c0b2e0.html)
-  * Dashboard: Docs to be done
+  * [Dashboard](https://cabloy.com/articles/e6848b3c477b4807b78986e1e0342717.html)
   * Layout PC: Docs to be done
 
 ## 2020-02-14, Version 3.0.0-beta.4
