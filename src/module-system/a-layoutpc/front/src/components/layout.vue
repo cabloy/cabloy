@@ -248,6 +248,8 @@ export default {
         return this.$refs.sidebarLeft.closeView(view);
       } else if (view.$el.parents('.eb-layout-sidebar-right').length > 0) {
         return this.$refs.sidebarRight.closeView(view);
+      } else if (view.$el.parents('.eb-layout-sidebar-bottom').length > 0) {
+        return this.$refs.sidebarBottom.closeView(view);
       }
       this.$refs.groups.closeView(view);
     },
