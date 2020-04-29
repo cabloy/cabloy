@@ -7,6 +7,11 @@ module.exports = appInfo => {
   // subdomainOffset
   config.subdomainOffset = 2;
 
+  // cookies
+  config.cookies = {
+    sameSite: 'none',
+  };
+
   // i18n
   // config.i18n = {
   //   defaultLocale: 'zh-cn',
