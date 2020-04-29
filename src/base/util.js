@@ -3,6 +3,7 @@ import moment from 'moment';
 import cookies from 'js-cookie';
 import queue from 'async/queue';
 import extend from '@zhennann/extend';
+// eslint-disable-next-line
 import localeZhcn from 'moment/locale/zh-cn.js';
 
 export default function(Vue) {
@@ -337,9 +338,6 @@ export default function(Vue) {
       }
     },
   };
-
-  // moment
-  moment.locale('zh-cn', localeZhcn);
 
   // mixin
   Object.assign(util, {
