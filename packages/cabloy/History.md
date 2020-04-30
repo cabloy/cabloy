@@ -2,7 +2,7 @@
 
 ## 2020-04-15, Version 3.0.1-beta.1
 
-* **features - backend **
+* **features - backend core **
   * [Cluster](https://cabloy.com/articles/guide-quick-start.html#Configure_Redis_24): Cluster now becomes the first class citizen of CabloyJS
     * Redis: Cluster is based on Redis
     * [Queue](https://cabloy.com/articles/queue.html): Reconstructed based on [bottleneck](https://github.com/SGrondin/bottleneck/) & [bullmq](https://github.com/taskforcesh/bullmq)
@@ -13,7 +13,7 @@
     * [Docker Compose](https://cabloy.com/articles/guide-quick-start.html#Docker_Compose_189): There is a `docker-compose.yml` configuration file in the root directory of the project. If you have installed the docker compose environment, you can start all services of CabloyJS with only one command, including Redis, MySQL, Nginx and CabloyJS backend service
   * [Module Monkey](https://cabloy.com/articles/module-monkey.html): Easy to replace some functionalities of modules just like a monkey🐒
 
-* **features - frontend **
+* **features - frontend core **
   * [Theme](https://cabloy.com/articles/theme.html)
   * [Adaptive Layout](https://cabloy.com/articles/013d5e01ae5a40ae90a536d2cafd50cd.html)
   * [Scene Config & Scene Build](https://cabloy.com/articles/config-front.html)
