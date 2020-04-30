@@ -21,7 +21,7 @@
   * [Dragdrop: Resize](https://cabloy.com/articles/dragdrop-resize.html)
 
 * **features - modules **
-  * [CMS Block](https://cabloy.com/zh-cn/articles/0c81b4e499a04fc5b358a5ba63c0b2e0.html)
+  * [CMS Block](https://cabloy.com/articles/a676865a6f9b4658a3f7f2319b4193dd.html)
   * [Dashboard](https://cabloy.com/articles/e6848b3c477b4807b78986e1e0342717.html)
   * [Layout PC](https://cabloy.com/articles/8635ddb9fba041778ef3621f257e1da4.html)
 
