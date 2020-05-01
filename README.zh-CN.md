@@ -87,8 +87,6 @@ CabloyJS决不重复制造轮子，而是在业界流行技术框架基础之上
 
 CabloyJS最大的亮点是：通过`pc=mobile+pad`的模式，把mobile场景的`操控体验`和`开发模式`带⼊pc场景。既显著减少了代码开发量，提升了开发效率，⼜保持了用户操控体验的⼀致性
 
-![pc-mobile-layout](./docs/assets/images/pc-mobile-layout.gif)
-
 ### 2. 痛点：全场景业务开发
 
 CabloyJS最大的痛点是：通过模块化的架构设计，可以快速开发全场景业务

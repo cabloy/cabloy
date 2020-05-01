@@ -25,7 +25,7 @@ CabloyJS: The Ultimate NodeJS Full Stack Business Development Framework, based o
 |Website Type|Website Link|
 |--|--|
 |Admin System(PC Layout)|[https://admin.cabloy.com](https://admin.cabloy.com)|
-|Admin System(Mobile Layout)|![](./docs/assets/images/cabloy-demo-qrcode.png)|
+|Admin System(Mobile Layout)|![cabloy-demo-qrcode](https://admin.cabloy.com/api/a/file/file/download/f4f26271d3134ff88a993f8d6374ea9d.png)|
 |||
 |Blog|[https://zhennann.com](https://zhennann.com)|
 |Technical Documentations(English)|[https://cabloy.com/index.html](https://cabloy.com/index.html)|
@@ -40,6 +40,68 @@ CabloyJS: The Ultimate NodeJS Full Stack Business Development Framework, based o
 - [CabloyJS Store](https://store.cabloy.com)
 - [CabloyJS Community](https://community.cabloy.com)
 - [CabloyJS Awesome](./docs/awesome.md)
+
+## Screenshots
+
+### 1. Adaptive Layout
+
+#### 1.1 Layout PC
+
+![layoutpc-enus](https://admin.cabloy.com/api/a/file/file/download/e5db62a0fd7b4e168ac1b5ab02a4c254.gif)
+
+#### 1.2 Layout Mobile
+
+![layoutmobile-enus](https://admin.cabloy.com/api/a/file/file/download/1aa84beb8e4340aba56b994f1d5a0aa1.gif)
+
+### 2. I18N
+
+![i18n](https://admin.cabloy.com/api/a/file/file/download/412fb208b3c2476595b85483da03d996.gif)
+
+### 3. Theme
+
+![theme-enus](https://admin.cabloy.com/api/a/file/file/download/2de5d9d2a77e484ebec1bf19312fbcd0.gif)
+
+### 4. Drag & Drop
+
+#### 4.1 Move
+
+![move-enus](https://admin.cabloy.com/api/a/file/file/download/3d94d804485e42ec963c766e2c141da5.gif)
+
+#### 4.2 Resize
+
+![resize-enus](https://admin.cabloy.com/api/a/file/file/download/e7f8e91dad09403a8228c56827d773c6.gif)
+
+### 5. Dashboard
+
+#### 5.1 How to use dashboard
+
+![use-enus](https://admin.cabloy.com/api/a/file/file/download/82022ecd7b2d451a91de123d88272a24.gif)
+
+#### 5.2 How to create dashboard profile
+
+![profile-enus](https://admin.cabloy.com/api/a/file/file/download/220b6c45d8104dd69223988a6398c73d.gif)
+
+### 6. Layout PC
+
+#### 6.1 Header Buttons
+
+![header-enus](https://admin.cabloy.com/api/a/file/file/download/c90bb755df9f447b831b0503c70e610e.gif)
+
+#### 6.2 Sidebar - Left
+
+![sidebar-left-enus](https://admin.cabloy.com/api/a/file/file/download/77c3a5874b9f4162be79c3f782e8aa3f.gif)
+
+#### 6.3 Sidebar - Right
+
+![sidebar-right-enus](https://admin.cabloy.com/api/a/file/file/download/7886d9fe6b8048fa977dd5a178e9cc15.gif)
+
+#### 6.4 Statusbar - Left
+
+![statusbar-left-enus](https://admin.cabloy.com/api/a/file/file/download/0369b42b542f46489f7486f41f222a84.gif)
+
+#### 6.5 Statusbar - Right
+
+![statusbar-right-enus](https://admin.cabloy.com/api/a/file/file/download/4e066b93019a4f17be49d4887841e437.gif)
 
 ## Goals
 
@@ -71,8 +133,6 @@ In addition, these built-in modules provide flexible customization features. You
 ### 1. Bright-point: pc = mobile + pad
 
 The most prominent bright-point on CabloyJS: Through the style of `pc = mobile + pad`, the `UI interaction experience` and `development mode` of the mobile scene are brought into the PC scene. It not only significantly reduces the amount of code development and improves the efficiency of development, but also maintains the consistency of user manipulation experience
-
-![pc-mobile-layout](./docs/assets/images/pc-mobile-layout.gif)
 
 ### 2. Pain-point：Multi-scenario Business Development
 
