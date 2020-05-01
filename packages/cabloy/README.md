@@ -47,61 +47,61 @@ CabloyJS: The Ultimate NodeJS Full Stack Business Development Framework, based o
 
 #### 1.1 Layout PC
 
-![layoutpc-enus](https://admin.cabloy.com/api/a/file/file/download/e5db62a0fd7b4e168ac1b5ab02a4c254.gif)
+![layoutpc-enus](./docs/assets/screenshots/layout/layoutpc-enus.gif)
 
 #### 1.2 Layout Mobile
 
-![layoutmobile-enus](https://admin.cabloy.com/api/a/file/file/download/1aa84beb8e4340aba56b994f1d5a0aa1.gif)
+![layoutmobile-enus](./docs/assets/screenshots/layout/layoutmobile-enus.gif)
 
 ### 2. I18N
 
-![i18n](https://admin.cabloy.com/api/a/file/file/download/412fb208b3c2476595b85483da03d996.gif)
+![i18n](./docs/assets/screenshots/i18n/i18n.gif)
 
 ### 3. Theme
 
-![theme-enus](https://admin.cabloy.com/api/a/file/file/download/2de5d9d2a77e484ebec1bf19312fbcd0.gif)
+![theme-enus](./docs/assets/screenshots/theme/theme-enus.gif)
 
 ### 4. Drag & Drop
 
 #### 4.1 Move
 
-![move-enus](https://admin.cabloy.com/api/a/file/file/download/3d94d804485e42ec963c766e2c141da5.gif)
+![move-enus](./docs/assets/screenshots/dragdrop/move-enus.gif)
 
 #### 4.2 Resize
 
-![resize-enus](https://admin.cabloy.com/api/a/file/file/download/e7f8e91dad09403a8228c56827d773c6.gif)
+![resize-enus](./docs/assets/screenshots/dragdrop/resize-enus.gif)
 
 ### 5. Dashboard
 
 #### 5.1 How to use dashboard
 
-![use-enus](https://admin.cabloy.com/api/a/file/file/download/82022ecd7b2d451a91de123d88272a24.gif)
+![use-enus](./docs/assets/screenshots/dashboard/use-enus.gif)
 
 #### 5.2 How to create dashboard profile
 
-![profile-enus](https://admin.cabloy.com/api/a/file/file/download/220b6c45d8104dd69223988a6398c73d.gif)
+![profile-enus](./docs/assets/screenshots/dashboard/profile-enus.gif)
 
 ### 6. Layout PC
 
 #### 6.1 Header Buttons
 
-![header-enus](https://admin.cabloy.com/api/a/file/file/download/c90bb755df9f447b831b0503c70e610e.gif)
+![header-enus](./docs/assets/screenshots/layoutpc/enus/header-enus.gif)
 
 #### 6.2 Sidebar - Left
 
-![sidebar-left-enus](https://admin.cabloy.com/api/a/file/file/download/77c3a5874b9f4162be79c3f782e8aa3f.gif)
+![sidebar-left-enus](./docs/assets/screenshots/layoutpc/enus/sidebar-left-enus.gif)
 
 #### 6.3 Sidebar - Right
 
-![sidebar-right-enus](https://admin.cabloy.com/api/a/file/file/download/7886d9fe6b8048fa977dd5a178e9cc15.gif)
+![sidebar-right-enus](./docs/assets/screenshots/layoutpc/enus/sidebar-right-enus.gif)
 
 #### 6.4 Statusbar - Left
 
-![statusbar-left-enus](https://admin.cabloy.com/api/a/file/file/download/0369b42b542f46489f7486f41f222a84.gif)
+![statusbar-left-enus](./docs/assets/screenshots/layoutpc/enus/statusbar-left-enus.gif)
 
 #### 6.5 Statusbar - Right
 
-![statusbar-right-enus](https://admin.cabloy.com/api/a/file/file/download/4e066b93019a4f17be49d4887841e437.gif)
+![statusbar-right-enus](./docs/assets/screenshots/layoutpc/enus/statusbar-right-enus.gif)
 
 ## Goals
 
