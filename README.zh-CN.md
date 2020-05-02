@@ -7,6 +7,7 @@ CabloyJS是一款顶级NodeJS全栈业务开发框架, 基于KoaJS + EggJS + Vue
 [![NPM version][npm-image]][npm-url]
 [![David deps][david-image]][david-url]
 [![NPM download][download-image]][download-url]
+[![Join the chat at https://gitter.im/cabloy/main](https://badges.gitter.im/cabloy/main.svg)](https://gitter.im/cabloy/main?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 [npm-image]: https://img.shields.io/npm/v/cabloy.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/cabloy
@@ -47,6 +48,68 @@ CabloyJS是一款顶级NodeJS全栈业务开发框架, 基于KoaJS + EggJS + Vue
 ### 视频
 
 - [网易免费课程 - CabloyJS全栈业务开发实战](https://study.163.com/course/courseMain.htm?courseId=1209403891)
+
+## 截图
+
+### 1. 自适应布局
+
+#### 1.1 PC布局
+
+![layoutpc-zhcn](./docs/assets/screenshots/layout/layoutpc-zhcn.gif)
+
+#### 1.2 Mobile布局
+
+![layoutmobile-zhcn](./docs/assets/screenshots/layout/layoutmobile-zhcn.gif)
+
+### 2. 国际化
+
+![i18n](./docs/assets/screenshots/i18n/i18n.gif)
+
+### 3. 主题
+
+![theme-zhcn](./docs/assets/screenshots/theme/theme-zhcn.gif)
+
+### 4. 拖拽
+
+#### 4.1 移动
+
+![move-zhcn](./docs/assets/screenshots/dragdrop/move-zhcn.gif)
+
+#### 4.2 调整尺寸
+
+![resize-zhcn](./docs/assets/screenshots/dragdrop/resize-zhcn.gif)
+
+### 5. 仪表盘
+
+#### 5.1 如何使用仪表盘
+
+![use-zhcn](./docs/assets/screenshots/dashboard/use-zhcn.gif)
+
+#### 5.2 如何创建一个新的仪表盘
+
+![profile-zhcn](./docs/assets/screenshots/dashboard/profile-zhcn.gif)
+
+### 6. PC布局
+
+#### 6.1 头部按钮
+
+![header-zhcn](./docs/assets/screenshots/layoutpc/zhcn/header-zhcn.gif)
+
+#### 6.2 左边栏
+
+![sidebar-left-zhcn](./docs/assets/screenshots/layoutpc/zhcn/sidebar-left-zhcn.gif)
+
+#### 6.3 右边栏
+
+![sidebar-right-zhcn](./docs/assets/screenshots/layoutpc/zhcn/sidebar-right-zhcn.gif)
+
+#### 6.4 状态栏（左）
+
+![statusbar-left-zhcn](./docs/assets/screenshots/layoutpc/zhcn/statusbar-left-zhcn.gif)
+
+#### 6.5 状态栏（右）
+
+![statusbar-right-zhcn](./docs/assets/screenshots/layoutpc/zhcn/statusbar-right-zhcn.gif)
 
 ## 定位
 
