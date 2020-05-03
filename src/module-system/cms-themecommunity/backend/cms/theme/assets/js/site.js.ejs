@@ -67,8 +67,8 @@ function breadcrumb(query) {
   }
   // show
   if (env.site.path !== 'main/index/index') {
-    $('.parent', $container).removeClass('hidden');
-    $('.current', $container).removeClass('hidden');
+    $('.parent', $container).removeClass('d-none');
+    $('.current', $container).removeClass('d-none');
   }
 }
 
@@ -132,9 +132,9 @@ function _loadMore({ categoryId, tagId, search }) {
       });
     },
     onParse(item) {
-      const sticky = !item.sticky ? '' : '<span class="glyphicon glyphicon-pushpin"></span> ';
-      const audio = !item.audioFirst ? '' : '<span class="glyphicon glyphicon-music"></span> ';
-      const attachment = item.attachmentCount === 0 ? '' : '<span class="glyphicon glyphicon-paperclip"></span> ';
+      const sticky = !item.sticky ? '' : '<i class="fas fa-thumbtack"></i> ';
+      const audio = !item.audioFirst ? '' : '<i class="fas fa-music"></i> ';
+      const attachment = item.attachmentCount === 0 ? '' : '<i class="fas fa-paperclip"></i> ';
       const mediaUrl = item.imageFirst || item.audioCoverFirst;
       const media = !mediaUrl ? '' : `
 <div class="media-right">
@@ -149,7 +149,7 @@ function _loadMore({ categoryId, tagId, search }) {
       let tagsText = '';
       const tags = item.tags ? JSON.parse(item.tags) : null;
       if (tags && tags.length > 0) {
-        tagsText += '<span class="num glyphicon glyphicon-tags"></span> ';
+        tagsText += '<i class="fas fa-tags"></i> ';
         for (let i = 0; i < tags.length; i++) {
           const tag = tags[i];
           tagsText += `<a target="_blank" href="${util.url('static/articles.html')}?tagId=${tag.id}&tagName=${encodeURIComponent(tag.name)}"><span class="num tag">${util.escapeHtml(tag.name)}</span></a>`;
@@ -165,9 +165,9 @@ function _loadMore({ categoryId, tagId, search }) {
 <span>${util.escapeHtml(item.userName)}</span>
 <span class="num date">${util.formatDateTime(item.updatedAt)}</span>
 ${category}
-<span class="glyphicon glyphicon-eye-open"></span><span class="num readCount">${item.readCount}</span>
-<span class="glyphicon glyphicon-heart"></span><span class="num starCount">${item.starCount}</span>
-<a target="_blank" href="${util.url(item.url)}#comments"><span class="glyphicon glyphicon-comment"></span><span class="num commentCount">${item.commentCount}</span></a>
+<i class="fas fa-eye"></i><span class="num readCount">${item.readCount}</span>
+<i class="fas fa-heart"></i><span class="num starCount">${item.starCount}</span>
+<a target="_blank" href="${util.url(item.url)}#comments"><i class="fas fa-comment"></i><span class="num commentCount">${item.commentCount}</span></a>
 ${tagsText}
 </div>
         `;
