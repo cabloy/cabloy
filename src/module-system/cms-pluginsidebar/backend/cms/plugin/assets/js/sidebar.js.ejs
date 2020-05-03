@@ -35,8 +35,8 @@ function _onParseProfileAuthor(data) {
 }
 
 function _onParseArticleRecent(item, atomClass) {
-  const audio = !item.audioFirst ? '' : '<span class="glyphicon glyphicon-music"></span> ';
-  const attachment = item.attachmentCount === 0 ? '' : '<span class="glyphicon glyphicon-paperclip"></span> ';
+  const audio = !item.audioFirst ? '' : '<i class="fas fa-music"></i> ';
+  const attachment = item.attachmentCount === 0 ? '' : '<i class="fas fa-paperclip"></i> ';
   // avatar
   const userAvatar = item.avatar || util.url('plugins/cms-pluginsidebar/assets/images/user.png');
   const stat = `
@@ -44,9 +44,9 @@ function _onParseArticleRecent(item, atomClass) {
 <img class="avatar avatar16" src="${util.combineImageUrl(userAvatar, 16, 16)}">
 <span>${util.escapeHtml(item.userName)}</span>
 <span class="num date">${util.time.formatDateTime(item.updatedAt, 'MM-DD HH:mm')}</span>
-<span class="glyphicon glyphicon-eye-open"></span><span class="num readCount">${item.readCount}</span>
-<span class="glyphicon glyphicon-heart"></span><span class="num starCount">${item.starCount}</span>
-<a target="_blank" href="${util.url(item.url)}#comments"><span class="glyphicon glyphicon-comment"></span><span class="num commentCount">${item.commentCount}</span></a>
+<i class="fas fa-eye"></i><span class="num readCount">${item.readCount}</span>
+<i class="fas fa-heart"></i><span class="num starCount">${item.starCount}</span>
+<a target="_blank" href="${util.url(item.url)}#comments"><i class="fas fa-comment"></i><span class="num commentCount">${item.commentCount}</span></a>
 </div>
         `;
   return `
