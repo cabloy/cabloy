@@ -15,9 +15,9 @@
     <div class="row features">
       <%for(const feature of site._project.features){%>
       <div class="col-sm-<%=12/site._project.columns%> feature">
-        <div class="panel panel-default">
-          <div class="panel-heading"><%=feature.title%></div>
-          <div class="panel-body">
+        <div class="card panel-default">
+          <div class="card-header"><%=feature.title%></div>
+          <div class="card-body">
             <%=feature.description%>
           </div>
         </div>
