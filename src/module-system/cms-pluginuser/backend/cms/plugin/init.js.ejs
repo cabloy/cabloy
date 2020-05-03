@@ -10,7 +10,7 @@
     }else{
       _url=`${url(link.url)}`;
     }
-    userLinks+=`<li><a href="${_url}">${text(link.title)}</a></li>`;
+    userLinks+=`<li class="nav-item"><a class="nav-link" href="${_url}">${text(link.title)}</a></li>`;
   }
 %>
 
@@ -24,24 +24,24 @@ $(document).on('echo-ready', function() {
 function _renderNavbarUser({ container }) {
   const $container = $(container);
   if ($container.length === 0) return;
-  const $menu=$('.dropdown-menu',$container);
+  const $menu=$('.navbar-nav',$container);
   const $avatar=$('.avatar-user',$container);
   if (util.user.op.anonymous) {
     const avatar=util.url('plugins/cms-pluginbase/assets/images/avatar_user.png');
     $avatar.attr('src',avatar);
     const html = `
-      <li class="user-signin"><a href="${env.site.serverUrl}/#!${location.href}"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> <%=text('Sign In')%></a></li>
+      <li class="nav-item user-signin"><a class="nav-link" href="${env.site.serverUrl}/#!${location.href}"><i class="fas fa-sign-in-alt"></i> <%=text('Sign In')%></a></li>
     `;
     $menu.append(html);
   } else {
     const avatar=util.user.op.avatar || util.url('plugins/cms-pluginbase/assets/images/avatar_user.png');
     $avatar.attr('src',avatar);
     const html = `
-      <li class="user-name">${util.user.op.userName}</li>
-      <li role="separator" class="divider"></li>
+      <li class="nav-item user-name"><span class="navbar-text">${util.user.op.userName}</span></li>
+      <li class="nav-item dropdown-divider"></li>
       <%- userLinks %>
-      <%- userLinks?'<li role="separator" class="divider"></li>':'' %>
-      <li class="user-logout"><a href="#" onclick="return onClickUserLogout();"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> <%=text('Log Out')%></a></li>
+      <%- userLinks?'<li class="nav-item dropdown-divider"></li>':'' %>
+      <li class="nav-item user-logout"><a class="nav-link" href="#" onclick="return onClickUserLogout();"><i class="fas fa-sign-out-alt"></i> <%=text('Log Out')%></a></li>
     `;
     $menu.append(html);
   }
