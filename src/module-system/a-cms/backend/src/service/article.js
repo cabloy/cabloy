@@ -85,10 +85,10 @@ module.exports = app => {
       let audioFirst = '';
       let audioCoverFirst = '';
       if (item.editMode === 1) {
-        const matches = item.content && item.content.match(/\$\$\$\s*audio([\s\S]*?)\$\$\$/);
+        const matches = item.content && item.content.match(/\$\$\$\s*cms-pluginblock:audio([\s\S]*?)\$\$\$/);
         let options = matches && matches[1];
         if (options) {
-          options = JSON.parse(options);
+          options = global.JSON5.parse(options);
           if (options && options.audio) {
             if (Array.isArray(options.audio)) {
               audioFirst = options.audio[0].url;
