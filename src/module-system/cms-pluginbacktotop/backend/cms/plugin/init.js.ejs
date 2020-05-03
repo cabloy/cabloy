@@ -8,7 +8,7 @@ function _backtotop() {
   const $body = $('body');
   const $htmlBody=$('html, body');
   // button
-  const $button = $('<a class="backtotop"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a>');
+  const $button = $('<a class="backtotop"><i class="fas fa-angle-up"></i></a>');
   $button.click(()=>{
     $htmlBody.animate({scrollTop:0},<%=site.plugins['cms-pluginbacktotop'].animateSpeed%>);
   });
