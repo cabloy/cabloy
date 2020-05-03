@@ -1,14 +1,14 @@
 function _onParseComment(item) {
   const actionsEdit = item.userId !== util.user.op.id ? '' : `
-      <a href="${util.article.commentUrl({ atomId: item.atomId, id: item.id, replyId: 0 })}" class="action" target="_self"><span class="glyphicon glyphicon-pencil"></span></a>
-      <a href="#" class="action delete"><span class="glyphicon glyphicon-trash"></span></a>
+      <a href="${util.article.commentUrl({ atomId: item.atomId, id: item.id, replyId: 0 })}" class="action" target="_self"><i class="fas fa-edit"></i></a>
+      <a href="#" class="action delete"><i class="fas fa-trash"></i></a>
   `;
   const reply = !env.article.allowComment ? '' : `
-    <a href="${util.article.commentUrl({ atomId: item.atomId, id: 0, replyId: item.id })}" class="action" target="_self"><span class="glyphicon glyphicon-share-alt"></span></a>
+    <a href="${util.article.commentUrl({ atomId: item.atomId, id: 0, replyId: item.id })}" class="action" target="_self"><i class="fas fa-reply"></i></a>
   `;
   return `
-<div class="comment panel panel-default" data-atom-id="${item.atomId}" data-comment-id="${item.id}">
-  <div class="header panel-heading">
+<div class="comment card panel-default" data-atom-id="${item.atomId}" data-comment-id="${item.id}">
+  <div class="header card-header">
     <div class="user">
       <img class="avatar avatar32" src="${util.combineImageUrl(item.avatar, 32, 32)}" />
       <h3 class="name panel-title">${util.escapeHtml(item.userName)}</h3>
@@ -17,14 +17,14 @@ function _onParseComment(item) {
     <div class="actions">
       ${actionsEdit}
       <a href="#" class="action heart">
-        <span class="glyphicon glyphicon-heart heart-on ${item.heart ? '' : 'hidden'}"></span>
-        <span class="glyphicon glyphicon-heart-empty heart-off ${item.heart ? 'hidden' : ''}"></span>
+        <i class="fas fa-heart heart-on ${item.heart ? '' : 'd-none'}"></i>
+        <i class="far fa-heart heart-off ${item.heart ? 'd-none' : ''}"></i>
         <span class="num">${item.heartCount}</span>
       </a>
       ${reply}
     </div>
   </div>
-  <div class="content panel-body">
+  <div class="content card-body">
     ${item.html}
   </div>
 </div>
@@ -33,15 +33,15 @@ function _onParseComment(item) {
 
 function _onParseCommentAll(item) {
   const actionsEdit = item.h_userId !== util.user.op.id ? '' : `
-      <a href="${util.article.commentUrl({ atomId: item.atomId, id: item.h_id, replyId: 0 })}" class="action" target="_self"><span class="glyphicon glyphicon-pencil"></span></a>
-      <a href="#" class="action delete"><span class="glyphicon glyphicon-trash"></span></a>
+      <a href="${util.article.commentUrl({ atomId: item.atomId, id: item.h_id, replyId: 0 })}" class="action" target="_self"><i class="fas fa-edit"></i></a>
+      <a href="#" class="action delete"><i class="fas fa-trash"></i></a>
   `;
   const reply = !item.allowComment ? '' : `
-    <a href="${util.article.commentUrl({ atomId: item.atomId, id: 0, replyId: item.h_id })}" class="action" target="_self"><span class="glyphicon glyphicon-share-alt"></span></a>
+    <a href="${util.article.commentUrl({ atomId: item.atomId, id: 0, replyId: item.h_id })}" class="action" target="_self"><i class="fas fa-reply"></i></a>
   `;
   return `
-<div class="comment panel panel-default" data-atom-id="${item.atomId}" data-comment-id="${item.h_id}">
-  <div class="header panel-heading">
+<div class="comment card panel-default" data-atom-id="${item.atomId}" data-comment-id="${item.h_id}">
+  <div class="header card-header">
     <h5 class="article-title"><a target="_blank" href="${util.url(item.url, item.language)}#comments">Re: ${util.escapeHtml(item.atomName)}</a></h5>
     <div class="user">
       <img class="avatar avatar32" src="${util.combineImageUrl(item.h_avatar, 32, 32)}" />
@@ -51,14 +51,14 @@ function _onParseCommentAll(item) {
     <div class="actions">
       ${actionsEdit}
       <a href="#" class="action heart">
-        <span class="glyphicon glyphicon-heart heart-on ${item.h_heart ? '' : 'hidden'}"></span>
-        <span class="glyphicon glyphicon-heart-empty heart-off ${item.h_heart ? 'hidden' : ''}"></span>
+        <i class="fas fa-heart heart-on ${item.h_heart ? '' : 'd-none'}"></i>
+        <i class="far fa-heart heart-off ${item.h_heart ? 'd-none' : ''}"></i>
         <span class="num">${item.h_heartCount}</span>
       </a>
       ${reply}
     </div>
   </div>
-  <div class="content panel-body">
+  <div class="content card-body">
     ${item.h_html}
   </div>
 </div>
@@ -140,7 +140,7 @@ util.article = {
           this._commentActionDelete({ comment, atomId, id: commentId });
         } else if (link.hasClass('heart')) {
           event.preventDefault();
-          const heart = $('.heart-on', link).hasClass('hidden') ? 1 : 0;
+          const heart = $('.heart-on', link).hasClass('d-none') ? 1 : 0;
           this._commentActionHeart({ link, atomId, id: commentId, heart });
         }
       }
@@ -156,7 +156,7 @@ util.article = {
     if ($container.length === 0) return;
     if (env.article.userIdCreated === util.user.op.id) {
       const editUrl = `${env.site.serverUrl}/#!/a/base/atom/edit?atomId=${env.article.atomId}&itemId=${env.article.itemId}&module=${env.site.atomClass.module}&atomClassName=${env.site.atomClass.atomClassName}&atomClassIdParent=${env.site.atomClass.atomClassIdParent}`;
-      const edit = `<a href="${editUrl}" target="_blank"><span class="glyphicon glyphicon-pencil"></span></a>`;
+      const edit = `<a href="${editUrl}" target="_blank"><i class="fas fa-edit"></i></a>`;
       $container.append($(edit));
     }
   },
@@ -262,11 +262,11 @@ util.article = {
     // order
     if (res) {
       if (order === 'asc') {
-        $('.order .asc', $container).removeClass('hidden');
-        $('.order .desc', $container).addClass('hidden');
+        $('.order .asc', $container).removeClass('d-none');
+        $('.order .desc', $container).addClass('d-none');
       } else {
-        $('.order .asc', $container).addClass('hidden');
-        $('.order .desc', $container).removeClass('hidden');
+        $('.order .asc', $container).addClass('d-none');
+        $('.order .desc', $container).removeClass('d-none');
       }
     }
   },
@@ -314,8 +314,8 @@ util.article = {
 
     $brotherLink.attr('href', `${util.url(article.url)}`);
     $brotherLink.text(article.atomName);
-    $brother.removeClass('hidden');
-    $container.removeClass('hidden');
+    $brother.removeClass('d-none');
+    $container.removeClass('d-none');
   },
   _setStats(atoms) {
     for (const atom of atoms) {
@@ -341,7 +341,7 @@ util.article = {
     } else {
       // star
       const $stat = $(`.stat[data-article-id=${atomId}]`);
-      const star = $('.button-starCount .star-on', $stat).hasClass('hidden') ? 1 : 0;
+      const star = $('.button-starCount .star-on', $stat).hasClass('d-none') ? 1 : 0;
       util.performAction({
         method: 'post',
         url: '/a/base/atom/star',
@@ -358,11 +358,11 @@ util.article = {
     const $stat = $(`.stat[data-article-id=${atomId}]`);
     $('.num.starCount', $stat).text(starCount);
     if (star) {
-      $('.button-starCount .star-on').removeClass('hidden');
-      $('.button-starCount .star-off').addClass('hidden');
+      $('.button-starCount .star-on').removeClass('d-none');
+      $('.button-starCount .star-off').addClass('d-none');
     } else {
-      $('.button-starCount .star-on').addClass('hidden');
-      $('.button-starCount .star-off').removeClass('hidden');
+      $('.button-starCount .star-on').addClass('d-none');
+      $('.button-starCount .star-off').removeClass('d-none');
     }
   },
   _readCountInc(atomId, num) {
@@ -381,11 +381,11 @@ util.article = {
     $heartCount.text(parseInt($($heartCount[0]).text()) + (heart ? 1 : -1));
     // icon
     if (heart) {
-      $('.heart-on', link).removeClass('hidden');
-      $('.heart-off', link).addClass('hidden');
+      $('.heart-on', link).removeClass('d-none');
+      $('.heart-off', link).addClass('d-none');
     } else {
-      $('.heart-on', link).addClass('hidden');
-      $('.heart-off', link).removeClass('hidden');
+      $('.heart-on', link).addClass('d-none');
+      $('.heart-off', link).removeClass('d-none');
     }
   },
 };
