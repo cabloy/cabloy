@@ -214,7 +214,7 @@ const util = {
         url: `<%=site.serverUrl%>/api${url}`,
         data: body,
         dataType: 'jsonp',
-        timeout: 8000,
+        timeout: 18000,
       }).done(function(data) {
         if (data.code === 0) {
           resolve(data.data);
@@ -235,7 +235,7 @@ const util = {
         data: ajaxMethod === 'POST' ? JSON.stringify(body) : body,
         contentType: ajaxMethod === 'POST' ? 'application/json' : undefined,
         dataType: 'json',
-        timeout: 8000,
+        timeout: 18000,
         xhrFields: {
           withCredentials: true,
         },
@@ -310,7 +310,7 @@ const util = {
     _onFetch = function() {
       fetching = true;
       $loadMoreContainer.empty();
-      $loadMoreContainer.append($('<span class="glyphicon glyphicon-refresh spinning"></span>'));
+      $loadMoreContainer.append($('<i class="fas fa-sync"></i>'));
       const res = onFetch({ index, context });
       res.then(data => {
         //

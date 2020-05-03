@@ -103,7 +103,8 @@ article img,
   width: 48px;
 }
 
-.glyphicon.spinning {
+.fa-sync,
+.fa-spinner {
   animation: spin 1s infinite linear;
   -webkit-animation: spin2 1s infinite linear;
 }
