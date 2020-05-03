@@ -25,7 +25,7 @@
         content=`<a href="${site.serverUrl}/api/cms/plugincopyright/util/md/${article.atomId}">${site.serverUrl}/api/cms/plugincopyright/util/md/${article.atomId}</a>`;
         break;
       case 'license':
-        content=text(util.escapeHtml(configCopyright.license.content || '') || 'CopyrightLicenseContent',`<a href="${util.escapeURL(configCopyright.license.link)}"><span class="glyphicon glyphicon-subtitles"></span> ${util.escapeHtml(configCopyright.license.version)}</a>`);
+        content=text(util.escapeHtml(configCopyright.license.content || '') || 'CopyrightLicenseContent',`<a href="${util.escapeURL(configCopyright.license.link)}"><i class="fas fa-closed-captioning"></i> ${util.escapeHtml(configCopyright.license.version)}</a>`);
         break;
     }
     return content;
