@@ -4,13 +4,13 @@ function _menuItems(categories,submenu) {
   let res = '';
   for (const item of categories) {
     if (!item.catalog) {
-      res += `<li><a class="category-${item.id}" data-category-name="${item.categoryName}" href="${url('static/articles.html')}?categoryId=${item.id}&categoryName=${item.categoryName}">${item.categoryName}</a></li>`;
+      res += `<li class="nav-item"><a class="nav-link category-${item.id}" data-category-name="${item.categoryName}" href="${url('static/articles.html')}?categoryId=${item.id}&categoryName=${item.categoryName}">${item.categoryName}</a></li>`;
     } else {
       const _items = _menuItems(item.children,true);
       res += `
-        <li class="${submenu?'dropdown-submenu':'dropdown'}">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">${item.categoryName}${submenu?'':' <span class="caret"></span>'}</a>
-          <ul class="dropdown-menu">
+        <li class="nav-item ${submenu?'':'dropdown'}">
+          <a href="#" class="nav-link">${item.categoryName} <i class="caret"></i></a>
+          <ul class="navbar-nav">
             ${_items}
           </ul>
         </li>`;
@@ -39,32 +39,28 @@ if(!site._menuItems){
 }
 
 %>
-<nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#cabloy-cms-navbar-collapse" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="<%=url('index.html')%>"><%=text('Home')%></a>
-    </div>
-    <div class="collapse navbar-collapse" id="cabloy-cms-navbar-collapse">
-      <ul class="nav navbar-nav">
+<nav class="navbar navbar-default navbar-expand-lg bsnav">
+    <a class="navbar-brand" href="<%=url('index.html')%>"><%=text('Home')%></a>
+    <button class="navbar-toggler toggler-spring">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-between">
+      <ul class="navbar-nav navbar-mobile mr-0">
         <%- site._menuItems %>
       </ul>
-      <form class="navbar-form navbar-right search" action="<%=url('static/articles.html')%>">
-        <div class="form-group">
-          <input name="search" type="text" class="form-control" placeholder="<%=text('Search')%>">
-        </div>
-        <button type="submit" class="btn btn-default"><%=text('Submit')%></button>
-      </form>
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="<%=url('static/comments.html')%>"><i class="fas fa-comment"></i></a></li>
-        <%- await include('./language.ejs') %>
-        <%- await include('./user.ejs') %>
-      </ul>
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
+
+      <div class="d-flex">
+        <ul class="navbar-nav navbar-mobile mr-0">
+          <li class="nav-item"><a class="nav-link" href="<%=url('static/comments.html')%>"><i class="fas fa-comment"></i></a></li>
+          <%- await include('./language.ejs') %>
+          <%- await include('./user.ejs') %>
+        </ul>
+        <form class="form-inline my-2 my-lg-0 search" action="<%=url('static/articles.html')%>">
+          <input class="form-control mr-sm-2" name="search" type="search" placeholder="<%=text('Submit')%>" aria-label="Search">
+          <button class="btn btn-default btn-outline-success my-2 my-sm-0" type="submit"><%=text('Submit')%></button>
+        </form>
+      </div>
+    </div>
+
 </nav>
