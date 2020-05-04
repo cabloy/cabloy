@@ -1,6 +1,5 @@
 
 body {
-  font-size:14px;
   color:#666;
   background: #FAFAFA;
   overflow-y: scroll;
@@ -63,6 +62,7 @@ footer {
   border: 0;
   margin-top:-16px;
   z-index:1;
+  padding: 0 1rem;
 
   .navbar-brand{
     color: #333;
@@ -70,18 +70,18 @@ footer {
     text-transform: uppercase;
   }
 
-  .navbar-nav>li>a{
+  .navbar-nav>li.nav-item>a{
     color: #333;
     text-shadow: rgba(255, 255, 255, 0.2) 0 1px 0;
     text-transform: uppercase;
   }
 
-  .navbar-nav>.active>a, .navbar-nav>.active>a:focus, .navbar-nav>.active>a:hover {
+  .navbar-nav>li.nav-item.active>a, .navbar-nav>li.nav-item.active>a:focus, .navbar-nav>li.nav-item.active>a:hover {
     color: #e47911;
     background-color: #EEE;
   }
 
-  .navbar-nav>li>a:focus, .navbar-nav>li>a:hover {
+  .navbar-nav>li.nav-item>a:focus, .navbar-nav>li.nav-item>a:hover {
     color: #e47911;
     background-color: #EEE;
   }
@@ -89,7 +89,7 @@ footer {
 }
 
 .container-site {
-  padding-top: 40px;
+  padding-top: 38px;
 }
 
 .btn-default,.btn-default:focus{
@@ -104,6 +104,7 @@ footer {
 }
 
 .btn-warning,.btn-warning:focus{
+  color: #777;
   outline: 0;
 }
 
