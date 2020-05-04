@@ -16,7 +16,7 @@ function _onParseTag(item) {
   <div class="media-body">
     <div class="media-heading"><a href="${util.url('static/articles.html')}?tagId=${item.id}&tagName=${encodeURIComponent(item.tagName)}">${util.escapeHtml(item.tagName)}</a></div>
   </div>
-  <div class="media-right"><span class="badge">${item.articleCount}</span></div>
+  <div class="media-right"><span class="badge badge-secondary">${item.articleCount}</span></div>
 </li>
   `;
 }
