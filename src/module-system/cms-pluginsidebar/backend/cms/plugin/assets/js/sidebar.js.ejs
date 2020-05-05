@@ -208,7 +208,7 @@ util.sidebar = {
         userId: env.article.userIdCreated,
       },
     }).then(data => {
-      const $panelBody = $('.panel-body', $container);
+      const $panelBody = $('.card-body', $container);
       $panelBody.append($(onParse(data)));
     });
   },
