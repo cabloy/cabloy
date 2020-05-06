@@ -171,12 +171,24 @@ section {
   transition: margin-left .4s ease-in;
 }
 
-.doc-container.sidebar-collapse .category-sidebar {
-  left: -280px;
+@media (max-width: 767px){
+  .doc-container.sidebar-collapse-mobile .category-sidebar {
+    left: -280px;
+  }
+
+  .doc-container.sidebar-collapse-mobile .article-doc {
+    margin-left: 0;
+  }
 }
 
-.doc-container.sidebar-collapse .article-doc {
-  margin-left: 0;
+@media (min-width: 768px){
+  .doc-container.sidebar-collapse .category-sidebar {
+    left: -280px;
+  }
+
+  .doc-container.sidebar-collapse .article-doc {
+    margin-left: 0;
+  }
 }
 
 .category-sidebar-toggle {

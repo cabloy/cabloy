@@ -27,30 +27,20 @@ $(document).on('echo-ready', function() {
 });
 
 function categoryTreeToggle($toggle, $container) {
+  const _breakpointMd = 768;
   const $window = $(window);
-  const keyName = '_doc_tree_collapse';
-  function _toggle() {
-    let collapse = window.localStorage.getItem(keyName) || 'false';
-    if (collapse === 'false') {
-      collapse = 'true';
-      $container.addClass('sidebar-collapse');
-    } else {
-      collapse = 'false';
-      $container.removeClass('sidebar-collapse');
-    }
-    window.localStorage.setItem(keyName, collapse);
-  }
   function _initOrSet(collapse) {
-    if (collapse === undefined) {
-      collapse = window.localStorage.getItem(keyName) || 'false';
+    const className = $window.width() < _breakpointMd ? 'sidebar-collapse-mobile' : 'sidebar-collapse';
+    if (collapse) {
+      $container.addClass(className);
     } else {
-      window.localStorage.setItem(keyName, collapse);
+      $container.removeClass(className);
     }
-    if (collapse === 'false') {
-      $container.removeClass('sidebar-collapse');
-    } else {
-      $container.addClass('sidebar-collapse');
-    }
+  }
+  function _toggle() {
+    const className = $window.width() < _breakpointMd ? 'sidebar-collapse-mobile' : 'sidebar-collapse';
+    const collapse = $container.hasClass(className);
+    _initOrSet(!collapse);
   }
 
   $toggle.on('click', e => {
@@ -58,14 +48,12 @@ function categoryTreeToggle($toggle, $container) {
     _toggle();
   });
   $window.resize(() => {
-    if ($window.width() <= 768) {
-      _initOrSet('true');
+    if ($window.width() < _breakpointMd) {
+      _initOrSet(true);
     } else {
-      _initOrSet('false');
+      _initOrSet(false);
     }
   });
-
-  _initOrSet();
 }
 
 function categoryTree($treeContainer) {
