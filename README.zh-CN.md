@@ -41,6 +41,10 @@ CabloyJS是一款顶级NodeJS全栈业务开发框架, 基于KoaJS + EggJS + Vue
 - [CabloyJS 社区](https://community.cabloy.com)
 - [CabloyJS Awesome](./docs/awesome.zh-CN.md)
 
+### QQ官方交流群
+
+  ![IMG_8136](./docs/assets/images/qq-group.jpg)
+
 ### 文章
 
 - [一文读懂NodeJS全栈开发利器：CabloyJS（万字长文）](https://community.cabloy.com/zh-cn/articles/known-cabloyjs.html)
