@@ -437,9 +437,13 @@ class Build {
       const data = await this.getData({ site });
       // path
       const _fileSrc = item.substr(pathIntermediate.length + 1);
+      let _fileDest = _fileSrc.replace('.ejs', '');
+      if (_fileDest.indexOf('.') === -1) {
+        _fileDest = `${_fileDest}.html`;
+      }
       await this._renderFile({
         fileSrc: _fileSrc,
-        fileDest: _fileSrc.replace('.ejs', '.html'),
+        fileDest: _fileDest,
         data,
       });
     }
@@ -474,7 +478,7 @@ class Build {
     content = await this._renderEnvs({ data, content });
     content = await this._renderCSSJSes({ data, content });
     // hot load
-    if (this.app.meta.isTest || this.app.meta.isLocal) {
+    if ((this.app.meta.isTest || this.app.meta.isLocal) && fileDest.indexOf('.html') > -1) {
       const fileWrite2 = fileWrite.replace(/\\/g, '\\\\');
       content += `
 <script language="javascript">
