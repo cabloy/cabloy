@@ -1,0 +1,21 @@
+<%
+// options
+const options = {
+  where: { language: site.language.current },
+  orders: [
+    [ 'articleCount', 'desc' ],
+  ],
+};
+// tags
+const tags = await ctx.performAction({
+  method: 'post',
+  url: '/a/cms/tag/list',
+  body: {
+    atomClass: site.atomClass,
+    options,
+  },
+});
+// output
+const js=`var _tags=${JSON.stringify(tags)};`;
+echo(js);
+%>

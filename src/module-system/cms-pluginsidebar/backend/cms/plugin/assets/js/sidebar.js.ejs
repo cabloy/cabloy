@@ -144,27 +144,10 @@ util.sidebar = {
     });
   },
   _loadTags({ $container, onParse }) {
-    // options
-    const options = {
-      where: { language: env.language.current },
-      orders: [
-        [ 'articleCount', 'desc' ],
-      ],
-    };
-    // select
-    util.performAction({
-      method: 'post',
-      url: '/a/cms/tag/list',
-      body: {
-        atomClass: env.site.atomClass,
-        options,
-      },
-    }).then(data => {
-      const $list = $('.list', $container);
-      for (let i = 0; i < data.list.length; i++) {
-        $list.append($(onParse(data.list[i])));
-      }
-    });
+    const $list = $('.list', $container);
+    for (let i = 0; i < window._tags.list.length; i++) {
+      $list.append($(onParse(window._tags.list[i])));
+    }
   },
   _loadCommentsRecent({ $container, onParse }) {
     let atomClass;
