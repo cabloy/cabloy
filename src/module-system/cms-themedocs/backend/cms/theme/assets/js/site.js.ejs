@@ -101,19 +101,17 @@ function categoryTree($treeContainer) {
         const self = this;
         if (node.id === '#') {
           // articleCategoryTop
-          _loadRelativeTop(category => {
-            if (!category) return cb.call(self, []);
-            // menu active
-            menuActive({ categoryId: category.id });
-            // title
-            $title.text(category.categoryName);
-            // tree
-            _loadTree(category.id, tree => {
-              // prepare tree data
-              const data = _prepareTreeData(tree.list);
-              cb.call(self, data);
-            });
-          });
+          const category = _getRelativeTop();
+          if (!category) return cb.call(self, []);
+          // menu active
+          menuActive({ categoryId: category.id });
+          // title
+          $title.text(category.categoryName);
+          // tree
+          const tree = _getTree(category.id);
+          // prepare tree data
+          const data = _prepareTreeData(tree);
+          cb.call(self, data);
         } else {
           // articles
           _fetchArticles({
@@ -135,31 +133,25 @@ function categoryTree($treeContainer) {
   });
 }
 
-function _loadRelativeTop(cb) {
-  const relativeTop = env._docTree && env._docTree.relativeTop;
-  if (relativeTop) return cb(relativeTop);
-  util.performAction({
-    method: 'post',
-    url: '/a/cms/category/relativeTop',
-    body: { categoryId: env.article.categoryId },
-  }).then(category => {
-    return cb(category);
-  });
+function _getRelativeTop() {
+  return env._docTree && env._docTree.relativeTop;
 }
 
-function _loadTree(categoryId, cb) {
-  const tree = env._docTree && env._docTree.tree;
-  if (tree) return cb(tree);
-  util.performAction({
-    method: 'post',
-    url: '/a/cms/category/tree',
-    body: {
-      atomClass: env.site.atomClass,
-      categoryId,
-    },
-  }).then(tree => {
-    return cb(tree);
-  });
+function _getTree(categoryId) {
+  return _findTreeSub(window._categories.list, categoryId);
+}
+
+function _findTreeSub(children, categoryId) {
+  const _category = children.find(item => item.id === categoryId);
+  if (_category) return _category.children;
+  for (let i = 0; i < children.length; i++) {
+    const item = children[i];
+    if (item.children) {
+      const _categories = _findTreeSub(item.children, categoryId);
+      if (_categories) return _categories;
+    }
+  }
+  return null;
 }
 
 function _fillArticleH2es($tree) {

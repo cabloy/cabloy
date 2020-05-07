@@ -4,7 +4,6 @@
   if(!site._docTree){
     site._docTree={
       relativeTop:{},
-      tree:{},
     };
   }
   // relativeTop
@@ -15,28 +14,12 @@
       url: '/a/cms/category/relativeTop',
       body: { categoryId: article.categoryId },
     });
-    // tree
-    let relativeTopTree=null;
-    if(relativeTop){
-      relativeTopTree=await ctx.performAction({
-        method: 'post',
-        url: '/a/cms/category/tree',
-        body: {
-          atomClass: site.atomClass,
-          categoryId: relativeTop.id,
-        },
-      });
-    }
     // save
     site._docTree.relativeTop[article.categoryId]=relativeTop;
-    if(relativeTop) {
-      site._docTree.tree[relativeTop.id]=relativeTopTree;
-    }
   }
   // env
   if(relativeTop){
     env('_docTree.relativeTop',relativeTop);
-    env('_docTree.tree',site._docTree.tree[relativeTop.id]);
   }
 %>
 <div class="doc-container sidebar-collapse-mobile">
