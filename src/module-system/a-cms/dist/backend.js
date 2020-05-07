@@ -541,7 +541,10 @@ class Build {
       const data = await this.getData({ site });
       // path
       const _fileSrc = item.substr(pathIntermediate.length + 1);
-      const _fileDest = _fileSrc.substr('main/index/'.length).replace('.ejs', '.html');
+      let _fileDest = _fileSrc.substr('main/index/'.length).replace('.ejs', '');
+      if (_fileDest.indexOf('.') === -1) {
+        _fileDest = `${_fileDest}.html`;
+      }
       await this._renderFile({
         fileSrc: _fileSrc,
         fileDest: _fileDest,
