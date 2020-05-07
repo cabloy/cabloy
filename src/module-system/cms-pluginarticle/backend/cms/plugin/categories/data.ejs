@@ -1,0 +1,16 @@
+<%
+// categories
+const categories = await ctx.performAction({
+  method: 'post',
+  url: '/a/cms/category/tree',
+  body: {
+    atomClass: site.atomClass,
+    language: site.language.current,
+    categoryId: 0,
+    hidden: 0,
+  },
+});
+// output
+const js=`var _categories=${JSON.stringify(categories)};`;
+echo(js);
+%>
