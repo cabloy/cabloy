@@ -46,21 +46,21 @@ if(!site._menuItems){
     </button>
 
     <div class="collapse navbar-collapse justify-content-between">
-      <ul class="navbar-nav navbar-mobile mr-0">
+      <ul class="navbar-nav navbar-mobile mr-0 mt-0">
         <%- site._menuItems %>
       </ul>
 
-      <div class="d-flex">
-        <ul class="navbar-nav navbar-mobile mr-0">
-          <li class="nav-item"><a class="nav-link" href="<%=url('static/comments.html')%>"><i class="fas fa-comment"></i></a></li>
-          <%- await include('./language.ejs') %>
-          <%- await include('./user.ejs') %>
-        </ul>
-        <form class="form-inline my-2 my-lg-0 search" action="<%=url('static/articles.html')%>">
-          <input class="form-control mr-sm-2" name="search" type="search" placeholder="<%=text('Search')%>" aria-label="Search">
-          <button class="btn btn-default btn-outline-success my-2 my-sm-0" type="submit"><%=text('Submit')%></button>
-        </form>
-      </div>
+      <ul class="navbar-nav navbar-mobile mr-0 mt-0">
+        <li class="nav-item"><a class="nav-link" href="<%=url('static/comments.html')%>"><i class="fas fa-comment"></i></a></li>
+        <%- await include('./language.ejs') %>
+        <%- await include('./user.ejs') %>
+        <li class="nav-item d-flex">
+          <form class="form-inline my-2 my-lg-0 search" action="<%=url('static/articles.html')%>">
+            <input class="form-control mr-sm-2" name="search" type="search" placeholder="<%=text('Search')%>" aria-label="Search">
+            <button class="btn btn-default btn-outline-success my-2 my-sm-0" type="submit"><%=text('Submit')%></button>
+          </form>
+        </li>
+      </ul>
     </div>
 
 </nav>
