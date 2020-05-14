@@ -27,6 +27,6 @@ yarn.lock
 .sync-config.cson
 sftp-config.json
 
-./backend
-./front
-./build
+backend/**
+front/**
+build/**
