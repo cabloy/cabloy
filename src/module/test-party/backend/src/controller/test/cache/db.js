@@ -7,40 +7,47 @@ module.exports = app => {
 
     async db() {
 
+      let res;
+      let value;
+
       // name
       const name = '__test:name:db';
 
-      // set
-      await this.ctx.cache.db.set(name, 'zhennann');
+      // getset
+      value = await this.ctx.cache._db.getset(name, 'zhen.nann');
+      assert.equal(value, undefined);
+
+      value = await this.ctx.cache._db.getset(name, 'zhennann');
+      assert.equal(value, 'zhen.nann');
 
       // has
-      let res = await this.ctx.cache.db.has(name);
+      res = await this.ctx.cache._db.has(name);
       assert.equal(res, true);
 
       // get
-      let value = await this.ctx.cache.db.get(name);
+      value = await this.ctx.cache._db.get(name);
       assert.equal(value, 'zhennann');
 
       // remove
-      await this.ctx.cache.db.remove(name);
-      res = await this.ctx.cache.db.has(name);
+      await this.ctx.cache._db.remove(name);
+      res = await this.ctx.cache._db.has(name);
       assert.equal(res, false);
 
       // set with timeout
-      await this.ctx.cache.db.set(name, 'zhennann', 2000);
+      await this.ctx.cache._db.set(name, 'zhennann', 2000);
 
       // get
-      value = await this.ctx.cache.db.get(name);
+      value = await this.ctx.cache._db.get(name);
       assert.equal(value, 'zhennann');
 
       // other module's cache
-      const moduleCache = this.ctx.cache.db.module(this.ctx.module.info.relativeName);
+      const moduleCache = this.ctx.cache._db.module(this.ctx.module.info.relativeName);
       value = await moduleCache.get(name);
       assert.equal(value, 'zhennann');
 
       // get after timeout
       await sleep(3000);
-      value = await this.ctx.cache.db.get(name);
+      value = await this.ctx.cache._db.get(name);
       assert.equal(value, undefined);
 
       // done

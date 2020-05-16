@@ -7,18 +7,25 @@ module.exports = app => {
 
     async redis() {
 
+      let res;
+      let value;
+
       // name
       const name = '__test:name:redis';
 
-      // set
-      await this.ctx.cache.redis.set(name, 'zhennann');
+      // getset
+      value = await this.ctx.cache.redis.getset(name, 'zhen.nann');
+      assert.equal(value, undefined);
+
+      value = await this.ctx.cache.redis.getset(name, 'zhennann');
+      assert.equal(value, 'zhen.nann');
 
       // has
-      let res = await this.ctx.cache.redis.has(name);
+      res = await this.ctx.cache.redis.has(name);
       assert.equal(res, true);
 
       // get
-      let value = await this.ctx.cache.redis.get(name);
+      value = await this.ctx.cache.redis.get(name);
       assert.equal(value, 'zhennann');
 
       // remove

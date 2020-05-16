@@ -7,18 +7,25 @@ module.exports = app => {
 
     async mem() {
 
+      let res;
+      let value;
+
       // name
       const name = '__test:name:mem';
 
       // set
-      this.ctx.cache.mem.set(name, 'zhennann');
+      value = this.ctx.cache.mem.getset(name, 'zhen.nann');
+      assert.equal(value, undefined);
+
+      value = this.ctx.cache.mem.getset(name, 'zhennann');
+      assert.equal(value, 'zhen.nann');
 
       // has
-      let res = this.ctx.cache.mem.has(name);
+      res = this.ctx.cache.mem.has(name);
       assert.equal(!!res, true);
 
       // get
-      let value = this.ctx.cache.mem.get(name);
+      value = this.ctx.cache.mem.get(name);
       assert.equal(value, 'zhennann');
 
       // remove
