@@ -263,6 +263,9 @@ export default function(Vue) {
     },
     _registerConfig(module) {
       if (module.name === 'main') {
+        // scene
+        module.options.config.scene = process.env.SCENE;
+        // extend
         Vue.prototype.$utils.extend(Vue.prototype.$meta.config, module.options.config);
         // baseURL
         if (Vue.prototype.$meta.config.api.baseURL) {
