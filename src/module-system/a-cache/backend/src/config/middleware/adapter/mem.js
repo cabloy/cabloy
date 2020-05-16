@@ -30,6 +30,16 @@ const Fn = module.exports = ctx => {
       };
     }
 
+    getset(name, value, timeout) {
+      const valueOld = this.get(name);
+      this.memory[name] = {
+        value,
+        timeout: timeout || 0,
+        timestamp: new Date(),
+      };
+      return valueOld;
+    }
+
     has(name) {
       const res = this.memory[name];
       if (!res) return null;

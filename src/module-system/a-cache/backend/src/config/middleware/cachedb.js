@@ -1,6 +1,7 @@
 const dbFn = require('./adapter/db.js');
 const redisFn = require('./adapter/redis.js');
 const CACHE = Symbol('CTX#__CACHE');
+const CACHEDB = Symbol('CTX#__CACHEDB');
 
 module.exports = (options, app) => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -17,6 +18,14 @@ module.exports = (options, app) => {
           }
         }
         return ctx.cache[CACHE];
+      },
+    });
+    Object.defineProperty(ctx.cache, '_db', {
+      get() {
+        if (ctx.cache[CACHEDB] === undefined) {
+          ctx.cache[CACHEDB] = new (dbFn(ctx))();
+        }
+        return ctx.cache[CACHEDB];
       },
     });
 

@@ -32,6 +32,18 @@ const Fn = module.exports = ctx => {
       }
     }
 
+    async getset(name, value, timeout) {
+      const redis = ctx.app.redis.get('cache');
+      const key = this._getKey(name);
+      let valuePrev;
+      if (timeout) {
+        valuePrev = await redis.getset(key, JSON.stringify(value), 'PX', timeout);
+      } else {
+        valuePrev = await redis.getset(key, JSON.stringify(value));
+      }
+      return valuePrev ? JSON.parse(valuePrev) : undefined;
+    }
+
     async has(name) {
       const redis = ctx.app.redis.get('cache');
       const key = this._getKey(name);

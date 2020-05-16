@@ -20,6 +20,11 @@ const Fn = module.exports = ctx => {
       await this._set({ name, value, timeout, queue: true });
     }
 
+    async getset(name, value, timeout) {
+      const res = await this._set({ name, value, timeout, queue: true });
+      return res ? JSON.parse(res.value) : undefined;
+    }
+
     async _set({ name, value, timeout, queue }) {
       // second
       const second = timeout ? parseInt(timeout / 1000) : timeout;
@@ -54,6 +59,10 @@ const Fn = module.exports = ctx => {
             `, [ ctx.instance ? ctx.instance.id : 0, this.moduleName, name, JSON.stringify(value) ]);
         }
       }
+      // return old value
+      if (!res) return null;
+      if (!res.expired || res.expired.getTime() > new Date().getTime()) return res;
+      return null;
     }
 
     async has(name) {

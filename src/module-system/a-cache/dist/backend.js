@@ -123,6 +123,18 @@ const Fn = module.exports = ctx => {
       }
     }
 
+    async getset(name, value, timeout) {
+      const redis = ctx.app.redis.get('cache');
+      const key = this._getKey(name);
+      let valuePrev;
+      if (timeout) {
+        valuePrev = await redis.getset(key, JSON.stringify(value), 'PX', timeout);
+      } else {
+        valuePrev = await redis.getset(key, JSON.stringify(value));
+      }
+      return valuePrev ? JSON.parse(valuePrev) : undefined;
+    }
+
     async has(name) {
       const redis = ctx.app.redis.get('cache');
       const key = this._getKey(name);
@@ -241,7 +253,7 @@ module.exports = app => {
   class Db extends app.Service {
 
     async set({ module, name, value, timeout }) {
-      const res = await this.ctx.cache.db.module(module)._set({ name, value, timeout, queue: false });
+      const res = await this.ctx.cache._db.module(module)._set({ name, value, timeout, queue: false });
       return res;
     }
 
@@ -346,6 +358,7 @@ module.exports = {
 const dbFn = __webpack_require__(11);
 const redisFn = __webpack_require__(0);
 const CACHE = Symbol('CTX#__CACHE');
+const CACHEDB = Symbol('CTX#__CACHEDB');
 
 module.exports = (options, app) => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -362,6 +375,14 @@ module.exports = (options, app) => {
           }
         }
         return ctx.cache[CACHE];
+      },
+    });
+    Object.defineProperty(ctx.cache, '_db', {
+      get() {
+        if (ctx.cache[CACHEDB] === undefined) {
+          ctx.cache[CACHEDB] = new (dbFn(ctx))();
+        }
+        return ctx.cache[CACHEDB];
       },
     });
 
@@ -395,6 +416,11 @@ const Fn = module.exports = ctx => {
 
     async set(name, value, timeout) {
       await this._set({ name, value, timeout, queue: true });
+    }
+
+    async getset(name, value, timeout) {
+      const res = await this._set({ name, value, timeout, queue: true });
+      return res ? JSON.parse(res.value) : undefined;
     }
 
     async _set({ name, value, timeout, queue }) {
@@ -431,6 +457,10 @@ const Fn = module.exports = ctx => {
             `, [ ctx.instance ? ctx.instance.id : 0, this.moduleName, name, JSON.stringify(value) ]);
         }
       }
+      // return old value
+      if (!res) return null;
+      if (!res.expired || res.expired.getTime() > new Date().getTime()) return res;
+      return null;
     }
 
     async has(name) {
@@ -524,6 +554,16 @@ const Fn = module.exports = ctx => {
         timeout: timeout || 0,
         timestamp: new Date(),
       };
+    }
+
+    getset(name, value, timeout) {
+      const valueOld = this.get(name);
+      this.memory[name] = {
+        value,
+        timeout: timeout || 0,
+        timestamp: new Date(),
+      };
+      return valueOld;
     }
 
     has(name) {
