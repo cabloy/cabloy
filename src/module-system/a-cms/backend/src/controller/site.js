@@ -140,11 +140,6 @@ module.exports = app => {
       this.ctx.success();
     }
 
-    async registerAllWatchersQueue() {
-      await this.ctx.service.site.registerAllWatchersQueue();
-      this.ctx.success();
-    }
-
     async getStats() {
       const atomClass = this.ctx.request.body.atomClass;
       const res = await this.ctx.service.site.getStats({

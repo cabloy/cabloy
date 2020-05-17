@@ -7,9 +7,6 @@ module.exports = appInfo => {
     render: {
       path: 'queue/render',
     },
-    registerAllWatchers: {
-      path: 'site/registerAllWatchersQueue',
-    },
   };
 
   // startups
@@ -17,6 +14,7 @@ module.exports = appInfo => {
     registerAllWatchers: {
       instance: true,
       path: 'site/registerAllWatchersStartup',
+      debounce: true,
     },
   };
 

@@ -1428,9 +1428,6 @@ module.exports = appInfo => {
     render: {
       path: 'queue/render',
     },
-    registerAllWatchers: {
-      path: 'site/registerAllWatchersQueue',
-    },
   };
 
   // startups
@@ -1438,6 +1435,7 @@ module.exports = appInfo => {
     registerAllWatchers: {
       instance: true,
       path: 'site/registerAllWatchersStartup',
+      debounce: true,
     },
   };
 
@@ -1787,7 +1785,6 @@ module.exports = app => {
     { method: 'post', path: 'site/getBlockArray', controller: site },
     { method: 'post', path: 'site/blockSave', controller: site },
     { method: 'post', path: 'site/registerAllWatchersStartup', controller: site, middlewares: 'inner', meta: { auth: { enable: false } } },
-    { method: 'post', path: 'site/registerAllWatchersQueue', controller: site, middlewares: 'inner', meta: { auth: { enable: false } } },
     { method: 'post', path: 'site/getStats', controller: site, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     // category
     { method: 'post', path: 'category/item', controller: category, meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
@@ -2210,11 +2207,6 @@ module.exports = app => {
 
     async registerAllWatchersStartup() {
       await this.ctx.service.site.registerAllWatchersStartup();
-      this.ctx.success();
-    }
-
-    async registerAllWatchersQueue() {
-      await this.ctx.service.site.registerAllWatchersQueue();
       this.ctx.success();
     }
 
@@ -3637,8 +3629,6 @@ const Build = __webpack_require__(2);
 const _blocksLocales = {};
 const _blockArrayLocales = {};
 
-const __cacheRegisterAllWatchersStartup = '__registerAllWatchersStartup';
-
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Site extends app.Service {
@@ -3743,24 +3733,6 @@ module.exports = app => {
     async registerAllWatchersStartup() {
       // only in development
       if (!this.ctx.app.meta.isLocal) return;
-      // queue
-      this.ctx.app.meta.queue.push({
-        subdomain: this.ctx.subdomain,
-        module: moduleInfo.relativeName,
-        queueName: 'registerAllWatchers',
-        data: null,
-      });
-    }
-
-    async registerAllWatchersQueue() {
-      // only in development
-      if (!this.ctx.app.meta.isLocal) return;
-      // check cache
-      const cache = this.ctx.cache.db.module(moduleInfo.relativeName);
-      const flag = await cache.get(__cacheRegisterAllWatchersStartup);
-      if (flag) return;
-      // set cache
-      await cache.set(__cacheRegisterAllWatchersStartup, true, this.ctx.app.config.queue.startup.debounce);
       // loop modules
       for (const module of this.ctx.app.meta.modulesArray) {
         // cms.site=true
