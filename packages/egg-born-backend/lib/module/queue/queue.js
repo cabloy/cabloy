@@ -17,12 +17,27 @@ module.exports = function(loader, modules) {
       const config = loader.app.meta.configs[module.info.relativeName];
       // module queues
       if (config.queues) {
-        Object.keys(config.queues).forEach(queueKey => {
-          const fullKey = `${module.info.relativeName}:${queueKey}`;
-          ebQueues[fullKey] = { config: config.queues[queueKey] };
+        Object.keys(config.queues).forEach(queueName => {
+          const fullKey = `${module.info.relativeName}:${queueName}`;
+          ebQueues[fullKey] = {
+            module: module.info.relativeName,
+            name: queueName,
+            config: config.queues[queueName],
+          };
         });
       }
     });
   }
+
+  loader.app.meta._loadQueueWorkers = () => {
+    for (const fullKey in ebQueues) {
+      const queue = ebQueues[fullKey];
+      const info = {
+        module: queue.module,
+        queueName: queue.name,
+      };
+      loader.app.meta.queue._ensureWorker(info);
+    }
+  };
 
 };

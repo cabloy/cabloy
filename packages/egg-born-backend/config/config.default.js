@@ -83,7 +83,7 @@ module.exports = appInfo => {
       expiration: 20 * 1000,
     },
     startup: {
-      cache: 6 * 1000,
+      debounce: 6 * 1000,
     },
   };
 

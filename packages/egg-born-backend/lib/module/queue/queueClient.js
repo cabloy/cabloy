@@ -7,6 +7,7 @@ module.exports = function(app) {
   class QueueClient {
 
     constructor() {
+      this._workers = {};
       this._queues = {};
       this._queueCallbacks = {};
     }
@@ -20,13 +21,11 @@ module.exports = function(app) {
       return this._queuePush(info, true);
     }
 
-    _createQueue(info, queueKey) {
+    _createWorker(info, queueKey) {
       // queue config
       const queueConfig = app.meta.queues[`${info.module}:${info.queueName}`].config;
       // queueConfig.options: queue/worker/job/limiter
-      const queueOptions = (queueConfig.options && queueConfig.options.queue) || null;
       const workerOptions = (queueConfig.options && queueConfig.options.worker) || null;
-      // const jobOptions = (queueConfig.options && queueConfig.options.job) || null;
       const limiterOptions = (queueConfig.options && queueConfig.options.limiter) || null;
       // limiter
       const bottleneckOptions = {
@@ -37,22 +36,14 @@ module.exports = function(app) {
         clearDatastore: !!app.meta.isTest,
       };
       const limiterBottleneck = app.meta.limiter.create(bottleneckOptions);
-      // create queue
       const prefix = `bull_${app.name}`;
-      if (queueConfig.repeat) {
-        const connectionScheduler = app.redis.get('queue').duplicate();
-        // eslint-disable-next-line
-        const _queueScheduler = new bull.QueueScheduler(queueKey, { prefix, connection: connectionScheduler });
-      }
-      const connectionQueue = app.redis.get('queue').duplicate();
-      const _queueOptions = Object.assign({}, queueOptions, { prefix, connection: connectionQueue });
-      const _queue = new bull.Queue(queueKey, _queueOptions);
+
       // create work
       const connectionWorker = app.redis.get('queue').duplicate();
       const _workerOptions = Object.assign({}, workerOptions, { prefix, connection: connectionWorker });
       const _worker = new bull.Worker(queueKey, async job => {
-        // bull limiter
-        if (_queueOptions.limiter) {
+        // concurrency
+        if (queueConfig.concurrency) {
           return await this._performTask(job.data);
         }
         // bottleneck limiter
@@ -64,6 +55,27 @@ module.exports = function(app) {
       _worker.on('failed', (job, err) => {
         app.logger.error(err);
       });
+      // ok
+      return _worker;
+    }
+
+    _createQueue(info, queueKey) {
+      // queue config
+      const queueConfig = app.meta.queues[`${info.module}:${info.queueName}`].config;
+      // queueConfig.options: queue/worker/job/limiter
+      const queueOptions = (queueConfig.options && queueConfig.options.queue) || null;
+      const prefix = `bull_${app.name}`;
+
+      // create queue
+      if (queueConfig.repeat) {
+        const connectionScheduler = app.redis.get('queue').duplicate();
+        // eslint-disable-next-line
+        const _queueScheduler = new bull.QueueScheduler(queueKey, { prefix, connection: connectionScheduler });
+      }
+      const connectionQueue = app.redis.get('queue').duplicate();
+      const _queueOptions = Object.assign({}, queueOptions, { prefix, connection: connectionQueue });
+      const _queue = new bull.Queue(queueKey, _queueOptions);
+
       // create events
       const connectionEvents = app.redis.get('queue').duplicate();
       const queueEvents = new bull.QueueEvents(queueKey, { prefix, connection: connectionEvents });
@@ -73,8 +85,33 @@ module.exports = function(app) {
       queueEvents.on('failed', ({ jobId, failedReason }) => {
         this._callCallback(jobId, failedReason, null);
       });
+
       // ok
       return _queue;
+    }
+
+    _ensureWorker(info) {
+      // queueKey
+      const queueKey = this._combineQueueKey(info);
+      // worker
+      if (!this._workers[queueKey]) {
+        this._workers[queueKey] = this._createWorker(info, queueKey);
+      }
+    }
+
+    _ensureQueue(info) {
+      // queueKey
+      const queueKey = this._combineQueueKey(info);
+      // worker
+      if (!this._workers[queueKey]) {
+        this._workers[queueKey] = this._createWorker(info, queueKey);
+      }
+      // queue
+      if (!this._queues[queueKey]) {
+        this._queues[queueKey] = this._createQueue(info, queueKey);
+      }
+      // ok
+      return this._queues[queueKey];
     }
 
     _callCallback(jobId, failedReason, data) {
@@ -90,12 +127,8 @@ module.exports = function(app) {
       const queueConfig = app.meta.queues[`${info.module}:${info.queueName}`].config;
       // queueConfig.options: queue/worker/job/limiter
       const jobOptions = (queueConfig.options && queueConfig.options.job) || null;
-      // queueKey
-      const queueKey = this._combineQueueKey(info);
       // queue
-      if (!this._queues[queueKey]) {
-        this._queues[queueKey] = this._createQueue(info, queueKey);
-      }
+      const queue = this._ensureQueue(info);
       // job
       const jobId = uuid.v4();
       const jobName = info.jobName || jobId;
@@ -103,7 +136,7 @@ module.exports = function(app) {
       // not async
       if (!isAsync) {
         // add job
-        return this._queues[queueKey].add(jobName, info, _jobOptions);
+        return queue.add(jobName, info, _jobOptions);
       }
       // async
       return new Promise((resolve, reject) => {
@@ -116,16 +149,12 @@ module.exports = function(app) {
           },
         };
         // add job
-        return this._queues[queueKey].add(jobName, info, _jobOptions);
+        return queue.add(jobName, info, _jobOptions);
       });
     }
 
-    _combineQueueKey({ subdomain = undefined, module = '', queueName = '', queueNameSub = '' }) {
-      let queueKey = `${subdomain || '~'}||${module}||${queueName}`;
-      if (queueNameSub) {
-        queueKey += `##${queueNameSub}`;
-      }
-      return queueKey;
+    _combineQueueKey({ module = '', queueName = '' }) {
+      return `${module}||${queueName}`;
     }
 
     async _performTask({ locale, subdomain, module, queueName, queueNameSub, data }) {

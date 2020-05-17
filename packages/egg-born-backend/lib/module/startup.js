@@ -27,6 +27,25 @@ module.exports = function(loader) {
     return startup.task(ctx);
   };
 
+  loader.app.meta._runStartup = async (ctx, startup, info) => {
+    const url = util.combineApiPath(info, startup.path);
+    if (!startup.instance) {
+      return await ctx.performAction({
+        method: 'post',
+        url,
+      });
+    }
+    // all instances
+    const instances = await ctx.db.query('select * from aInstance a where a.disabled=0');
+    for (const instance of instances) {
+      await ctx.performAction({
+        subdomain: instance.name,
+        method: 'post',
+        url,
+      });
+    }
+  };
+
   function loadStartups() {
     for (const module of ebModulesArray) {
       const config = loader.app.meta.configs[module.info.relativeName];
@@ -47,22 +66,16 @@ module.exports = function(loader) {
 
   function wrapTask(key, startup, info) {
     return async function(ctx) {
-      const url = util.combineApiPath(info, startup.path);
-      if (!startup.instance) {
-        return await ctx.performAction({
-          method: 'post',
-          url,
-        });
+      // normal
+      if (!startup.debounce) {
+        return await loader.app.meta._runStartup(ctx, startup, info);
       }
-      // all instances
-      const instances = await ctx.db.query('select * from aInstance a where a.disabled=0');
-      for (const instance of instances) {
-        await ctx.performAction({
-          subdomain: instance.name,
-          method: 'post',
-          url,
-        });
-      }
+      // debounce: queue
+      await loader.app.meta.queue.pushAsync({
+        module: 'a-base',
+        queueName: 'startup',
+        data: { key, startup, info },
+      });
     };
   }
 

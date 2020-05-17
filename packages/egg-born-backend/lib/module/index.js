@@ -8,10 +8,10 @@ const loadLocales = require('./locales.js');
 const loadErrors = require('./errors.js');
 const loadConstants = require('./constant.js');
 const loadMessenger = require('./messenger.js');
+const loadRedis = require('./redis.js');
 const loadQueues = require('./queue/queue.js');
 const loadBroadcasts = require('./broadcast/broadcast.js');
 const loadStartups = require('./startup.js');
-const loadRedis = require('./redis.js');
 const loadClusterApp = require('./cluster/app.js');
 const loadClusterAgent = require('./cluster/agent.js');
 
@@ -34,10 +34,10 @@ module.exports = function(loader) {
     loadRoutes(loader, modules);
     loadServices(loader, modules);
     loadModels(loader, modules);
+    loadRedis(loader, modules);
     loadQueues(loader, modules);
     loadBroadcasts(loader, modules);
     loadStartups(loader, modules);
-    loadRedis(loader, modules);
     loadClusterApp(loader, modules);
   } else {
     loadConfig(loader, modules);
