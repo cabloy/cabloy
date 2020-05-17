@@ -267,7 +267,7 @@ const Fn = module.exports = ctx => {
         const flag = await cache.get(__cacheSetLocalesStartup);
         if (flag) return;
         // set
-        await cache.set(__cacheSetLocalesStartup, true, ctx.app.config.queue.startup.cache);
+        await cache.set(__cacheSetLocalesStartup, true, ctx.app.config.queue.startup.debounce);
       }
       // clear
       if (reset) {

@@ -69,6 +69,9 @@ module.exports = appInfo => {
       path: 'schedule/scheduleQueue',
       repeat: true,
     },
+    startup: {
+      path: 'startup/startupQueue',
+    },
   };
 
   // broadcasts

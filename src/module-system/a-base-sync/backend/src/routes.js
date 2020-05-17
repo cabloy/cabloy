@@ -6,6 +6,7 @@ const atomClass = require('./controller/atomClass.js');
 const atomAction = require('./controller/atomAction.js');
 const func = require('./controller/function.js');
 const schedule = require('./controller/schedule.js');
+const startup = require('./controller/startup.js');
 const auth = require('./controller/auth.js');
 const comment = require('./controller/comment.js');
 const layoutConfig = require('./controller/layoutConfig.js');
@@ -134,6 +135,10 @@ module.exports = app => {
       meta: { instance: { enable: false } },
     },
     { method: 'post', path: 'schedule/scheduleQueue', controller: schedule, middlewares: 'inner',
+      meta: { instance: { enable: false } },
+    },
+    // startup
+    { method: 'post', path: 'startup/startupQueue', controller: startup, middlewares: 'inner',
       meta: { instance: { enable: false } },
     },
     // auth
