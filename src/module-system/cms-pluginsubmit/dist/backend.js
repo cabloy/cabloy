@@ -293,7 +293,6 @@ module.exports = app => {
           subdomain: this.ctx.subdomain,
           module: moduleInfo.relativeName,
           queueName: 'submit',
-          queueNameSub: target,
           data: {
             target, targetConfig,
             hostname, links,
