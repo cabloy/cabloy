@@ -1829,14 +1829,12 @@ module.exports = appInfo => {
     setFunctionLocales: {
       instance: true,
       path: 'function/setLocalesStartup',
+      debounce: true,
     },
   };
 
   // queues
   config.queues = {
-    setFunctionLocales: {
-      path: 'function/setLocalesQueue',
-    },
     registerFunction: {
       path: 'function/register',
     },
@@ -3765,8 +3763,6 @@ const modelFunctionLocaleFn = __webpack_require__(11);
 const modelFunctionSceneFn = __webpack_require__(12);
 const sqlProcedureFn = __webpack_require__(9);
 
-const __cacheSetLocalesStartup = '__setLocalesStartup';
-
 const Fn = module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Function {
@@ -4010,26 +4006,8 @@ const Fn = module.exports = ctx => {
     }
 
     async setLocales(options) {
-      // queue
-      return await ctx.app.meta.queue.pushAsync({
-        subdomain: ctx.subdomain,
-        module: moduleInfo.relativeName,
-        queueName: 'setFunctionLocales',
-        data: { options },
-      });
-    }
-
-    async setLocalesQueue(options) {
       options = options || {};
       const reset = options.reset;
-      // check cache
-      if (reset && !ctx.app.meta.isTest) {
-        const cache = ctx.cache.db.module(moduleInfo.relativeName);
-        const flag = await cache.get(__cacheSetLocalesStartup);
-        if (flag) return;
-        // set
-        await cache.set(__cacheSetLocalesStartup, true, ctx.app.config.queue.startup.debounce);
-      }
       // clear
       if (reset) {
         await this.clearLocales();
@@ -5178,9 +5156,6 @@ module.exports = app => {
     { method: 'post', path: 'function/register', controller: func, middlewares: 'inner',
       meta: { auth: { enable: false } },
     },
-    { method: 'post', path: 'function/setLocalesQueue', controller: func, middlewares: 'inner',
-      meta: { auth: { enable: false } },
-    },
     { method: 'post', path: 'function/setLocalesStartup', controller: func, middlewares: 'inner',
       meta: { auth: { enable: false } },
     },
@@ -5688,13 +5663,6 @@ module.exports = app => {
 
     async setLocalesStartup() {
       const res = await this.ctx.service.function.setLocalesStartup();
-      this.ctx.success(res);
-    }
-
-    async setLocalesQueue() {
-      const res = await this.ctx.service.function.setLocalesQueue({
-        options: this.ctx.request.body.options,
-      });
       this.ctx.success(res);
     }
 
@@ -7412,10 +7380,13 @@ module.exports = app => {
   class Startup extends app.Service {
 
     async startupQueue({ key, startup, info }) {
-      const cacheKey = `startupDebounce:${key}`;
-      const debounce = typeof startup.debounce === 'number' ? startup.debounce : app.config.queue.startup.debounce;
-      const flag = await this.ctx.cache.db.getset(cacheKey, true, debounce);
-      if (flag) return;
+      // ignore debounce for test
+      if (!app.meta.isTest) {
+        const cacheKey = `startupDebounce:${key}`;
+        const debounce = typeof startup.debounce === 'number' ? startup.debounce : app.config.queue.startup.debounce;
+        const flag = await this.ctx.cache.db.getset(cacheKey, true, debounce);
+        if (flag) return;
+      }
       // perform
       await app.meta._runStartup(this.ctx, startup, info);
     }
@@ -7629,10 +7600,6 @@ module.exports = app => {
 
     async setLocalesStartup() {
       await this.ctx.meta.function.setLocales({ reset: true });
-    }
-
-    async setLocalesQueue({ options }) {
-      await this.ctx.meta.function.setLocalesQueue(options);
     }
 
     async scenes({ sceneMenu }) {

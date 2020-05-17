@@ -45,14 +45,12 @@ module.exports = appInfo => {
     setFunctionLocales: {
       instance: true,
       path: 'function/setLocalesStartup',
+      debounce: true,
     },
   };
 
   // queues
   config.queues = {
-    setFunctionLocales: {
-      path: 'function/setLocalesQueue',
-    },
     registerFunction: {
       path: 'function/register',
     },

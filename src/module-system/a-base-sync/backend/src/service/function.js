@@ -22,10 +22,6 @@ module.exports = app => {
       await this.ctx.meta.function.setLocales({ reset: true });
     }
 
-    async setLocalesQueue({ options }) {
-      await this.ctx.meta.function.setLocalesQueue(options);
-    }
-
     async scenes({ sceneMenu }) {
       return await this.ctx.meta.function.scenes({ sceneMenu });
     }

@@ -4,8 +4,6 @@ const modelFunctionLocaleFn = require('../../../model/functionLocale.js');
 const modelFunctionSceneFn = require('../../../model/functionScene.js');
 const sqlProcedureFn = require('../../sql/procedure.js');
 
-const __cacheSetLocalesStartup = '__setLocalesStartup';
-
 const Fn = module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Function {
@@ -249,26 +247,8 @@ const Fn = module.exports = ctx => {
     }
 
     async setLocales(options) {
-      // queue
-      return await ctx.app.meta.queue.pushAsync({
-        subdomain: ctx.subdomain,
-        module: moduleInfo.relativeName,
-        queueName: 'setFunctionLocales',
-        data: { options },
-      });
-    }
-
-    async setLocalesQueue(options) {
       options = options || {};
       const reset = options.reset;
-      // check cache
-      if (reset && !ctx.app.meta.isTest) {
-        const cache = ctx.cache.db.module(moduleInfo.relativeName);
-        const flag = await cache.get(__cacheSetLocalesStartup);
-        if (flag) return;
-        // set
-        await cache.set(__cacheSetLocalesStartup, true, ctx.app.config.queue.startup.debounce);
-      }
       // clear
       if (reset) {
         await this.clearLocales();
