@@ -37,9 +37,17 @@ const Fn = module.exports = ctx => {
       const key = this._getKey(name);
       let valuePrev;
       if (timeout) {
-        valuePrev = await redis.getset(key, JSON.stringify(value), 'PX', timeout);
+        const res = await redis.multi()
+          .get(key)
+          .set(key, JSON.stringify(value), 'PX', timeout)
+          .exec();
+        valuePrev = res[0][1];
       } else {
-        valuePrev = await redis.getset(key, JSON.stringify(value));
+        const res = await redis.multi()
+          .get(key)
+          .set(key, JSON.stringify(value))
+          .exec();
+        valuePrev = res[0][1];
       }
       return valuePrev ? JSON.parse(valuePrev) : undefined;
     }
