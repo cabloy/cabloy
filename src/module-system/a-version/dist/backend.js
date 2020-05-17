@@ -125,7 +125,8 @@ const version = __webpack_require__(3);
 
 module.exports = [
   { method: 'post', path: 'version/databaseInitStartup', controller: version, middlewares: 'inner', meta: { instance: { enable: false }, auth: { enable: false } } },
-  { method: 'post', path: 'version/databaseInitQueue', controller: version, middlewares: 'inner', meta: { instance: { enable: false }, auth: { enable: false } } },
+  { method: 'post', path: 'version/databaseNameStartup', controller: version, middlewares: 'inner', meta: { instance: { enable: false }, auth: { enable: false } } },
+  { method: 'post', path: 'version/loadQueueWorkersStartup', controller: version, middlewares: 'inner', meta: { instance: { enable: false }, auth: { enable: false } } },
   { method: 'post', path: 'version/start', controller: version, middlewares: 'inner', meta: { instance: { enable: false }, auth: { enable: false } } },
   { method: 'post', path: 'version/check', controller: version, middlewares: 'inner', meta: { instance: { enable: false }, auth: { enable: false } } },
   { method: 'post', path: 'version/updateModule', controller: version, middlewares: 'inner,transaction', meta: { instance: { enable: false }, auth: { enable: false } } },
@@ -151,8 +152,13 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async databaseInitQueue() {
-      const res = await this.service.version.databaseInitQueue();
+    async databaseNameStartup() {
+      const res = await this.service.version.databaseNameStartup();
+      this.ctx.success(res);
+    }
+
+    async loadQueueWorkersStartup() {
+      const res = await this.service.version.loadQueueWorkersStartup();
       this.ctx.success(res);
     }
 
@@ -271,82 +277,64 @@ const require3 = __webpack_require__(0);
 const moment = require3('moment');
 const chalk = require3('chalk');
 
-const __cacheDatabaseInitQueue = '__databaseInitQueue';
-
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Version extends app.Service {
 
     async databaseInitStartup() {
-      // queue
-      const databaseName = await app.meta.queue.pushAsync({
-        module: moduleInfo.relativeName,
-        queueName: 'databaseInit',
-        data: null,
-      });
-      // database again
-      await this.__database(databaseName);
-    }
-
-    async databaseInitQueue() {
       // database
-      const databaseName = await this.__database();
-      // check cache
-      if (!app.meta.isTest) {
-        const cache = this.ctx.cache.redis.module(moduleInfo.relativeName);
-        const flag = await cache.get(__cacheDatabaseInitQueue);
-        if (flag) return databaseName;
-        // set
-        await cache.set(__cacheDatabaseInitQueue, true, this.ctx.app.config.queue.startup.cache);
-      }
+      await this.__database();
       // version start
       await this.ctx.performAction({
         method: 'post',
         url: '/a/version/version/start',
       });
-      // ok
-      return databaseName;
     }
 
-    async __database(databaseName) {
+    async databaseNameStartup() {
+      // database
+      await this.__database();
+    }
+
+    async loadQueueWorkersStartup() {
+      // load queue workers
+      app.meta._loadQueueWorkers();
+    }
+
+    async __database() {
       // db prefix
       const dbPrefix = `egg-born-test-${app.name}`;
       // dev/debug db
       if (app.meta.isLocal) {
         const mysqlConfig = app.config.mysql.clients.__ebdb;
         if (mysqlConfig.database === 'sys' && !app.mysql.__ebdb_test) {
-          if (!databaseName) {
-            const mysql = app.mysql.get('__ebdb');
-            const dbs = await mysql.query(`show databases like \'${dbPrefix}-%\'`);
-            if (dbs.length === 0) {
-              databaseName = `${dbPrefix}-${moment().format('YYYYMMDD-HHmmss')}`;
-              await mysql.query(`CREATE DATABASE \`${databaseName}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci`);
-            } else {
-              const db = dbs[0];
-              databaseName = db[Object.keys(db)[0]];
-            }
+          let databaseName;
+          const mysql = app.mysql.get('__ebdb');
+          const dbs = await mysql.query(`show databases like \'${dbPrefix}-%\'`);
+          if (dbs.length === 0) {
+            databaseName = `${dbPrefix}-${moment().format('YYYYMMDD-HHmmss')}`;
+            await mysql.query(`CREATE DATABASE \`${databaseName}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci`);
+          } else {
+            const db = dbs[0];
+            databaseName = db[Object.keys(db)[0]];
           }
-          mysqlConfig.database = databaseName;
           // create test mysql
-          app.mysql.__ebdb_test = app.mysql.createInstance(mysqlConfig);
-          // database ready
+          mysqlConfig.database = databaseName;
+          app.mysql.__ebdb_test = app.mysql.createInstance(mysqlConfig);// database ready
           console.log(chalk.cyan(`  database: ${mysqlConfig.database}`));
         }
       }
       // test db
       if (app.meta.isTest && !app.mysql.__ebdb_test) {
-        if (!databaseName) {
-          // drop old databases
-          const mysql = app.mysql.get('__ebdb');
-          const dbs = await mysql.query(`show databases like \'${dbPrefix}-%\'`);
-          for (const db of dbs) {
-            const name = db[Object.keys(db)[0]];
-            await mysql.query(`drop database \`${name}\``);
-          }
-          // create database
-          databaseName = `${dbPrefix}-${moment().format('YYYYMMDD-HHmmss')}`;
-          await mysql.query(`CREATE DATABASE \`${databaseName}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci`);
+        // drop old databases
+        const mysql = app.mysql.get('__ebdb');
+        const dbs = await mysql.query(`show databases like \'${dbPrefix}-%\'`);
+        for (const db of dbs) {
+          const name = db[Object.keys(db)[0]];
+          await mysql.query(`drop database \`${name}\``);
         }
+        // create database
+        const databaseName = `${dbPrefix}-${moment().format('YYYYMMDD-HHmmss')}`;
+        await mysql.query(`CREATE DATABASE \`${databaseName}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci`);
         // create test mysql
         const mysqlConfig = app.config.mysql.clients.__ebdb;
         mysqlConfig.database = databaseName;
@@ -354,8 +342,6 @@ module.exports = app => {
         // database ready
         console.log(chalk.cyan(`  database: ${mysqlConfig.database}`));
       }
-      // ok
-      return databaseName;
     }
 
     async check(options) {
@@ -619,13 +605,13 @@ module.exports = appInfo => {
   config.startups = {
     databaseInit: {
       path: 'version/databaseInitStartup',
+      debounce: true,
     },
-  };
-
-  // queues
-  config.queues = {
-    databaseInit: {
-      path: 'version/databaseInitQueue',
+    databaseName: {
+      path: 'version/databaseNameStartup',
+    },
+    loadQueueWorkers: {
+      path: 'version/loadQueueWorkersStartup',
     },
   };
 

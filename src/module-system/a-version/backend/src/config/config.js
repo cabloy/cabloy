@@ -6,13 +6,13 @@ module.exports = appInfo => {
   config.startups = {
     databaseInit: {
       path: 'version/databaseInitStartup',
+      debounce: true,
     },
-  };
-
-  // queues
-  config.queues = {
-    databaseInit: {
-      path: 'version/databaseInitQueue',
+    databaseName: {
+      path: 'version/databaseNameStartup',
+    },
+    loadQueueWorkers: {
+      path: 'version/loadQueueWorkersStartup',
     },
   };
 

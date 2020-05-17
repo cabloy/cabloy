@@ -9,8 +9,13 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async databaseInitQueue() {
-      const res = await this.service.version.databaseInitQueue();
+    async databaseNameStartup() {
+      const res = await this.service.version.databaseNameStartup();
+      this.ctx.success(res);
+    }
+
+    async loadQueueWorkersStartup() {
+      const res = await this.service.version.loadQueueWorkersStartup();
       this.ctx.success(res);
     }
 
