@@ -1720,7 +1720,6 @@ module.exports = function(app) {
         subdomain,
         module: moduleInfo.relativeName,
         queueName: 'render',
-        queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
         data: {
           queueAction: 'buildLanguage',
           atomClass,
@@ -3368,7 +3367,6 @@ module.exports = app => {
           subdomain: this.ctx.subdomain,
           module: moduleInfo.relativeName,
           queueName: 'render',
-          queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
           data: {
             queueAction: 'deleteArticle',
             atomClass, key, article, inner,
@@ -3385,7 +3383,6 @@ module.exports = app => {
           subdomain: this.ctx.subdomain,
           module: moduleInfo.relativeName,
           queueName: 'render',
-          queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
           data: {
             queueAction: 'renderArticle',
             atomClass, key, inner,
@@ -3719,7 +3716,6 @@ module.exports = app => {
         subdomain: this.ctx.subdomain,
         module: moduleInfo.relativeName,
         queueName: 'render',
-        queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
         data: {
           queueAction: 'buildLanguages',
           atomClass,
@@ -3735,7 +3731,6 @@ module.exports = app => {
         subdomain: this.ctx.subdomain,
         module: moduleInfo.relativeName,
         queueName: 'render',
-        queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
         data: {
           queueAction: 'buildLanguage',
           atomClass,
@@ -3765,7 +3760,7 @@ module.exports = app => {
       const flag = await cache.get(__cacheRegisterAllWatchersStartup);
       if (flag) return;
       // set cache
-      await cache.set(__cacheRegisterAllWatchersStartup, true, this.ctx.app.config.queue.startup.cache);
+      await cache.set(__cacheRegisterAllWatchersStartup, true, this.ctx.app.config.queue.startup.debounce);
       // loop modules
       for (const module of this.ctx.app.meta.modulesArray) {
         // cms.site=true
