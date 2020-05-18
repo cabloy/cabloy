@@ -20,11 +20,6 @@ module.exports = app => {
       await this.__database();
     }
 
-    async loadQueueWorkersStartup() {
-      // load queue workers
-      app.meta._loadQueueWorkers();
-    }
-
     async __database() {
       // db prefix
       const dbPrefix = `egg-born-test-${app.name}`;

@@ -11,9 +11,6 @@ module.exports = appInfo => {
     databaseName: {
       path: 'version/databaseNameStartup',
     },
-    loadQueueWorkers: {
-      path: 'version/loadQueueWorkersStartup',
-    },
   };
 
   return config;

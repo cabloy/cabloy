@@ -126,7 +126,6 @@ const version = __webpack_require__(3);
 module.exports = [
   { method: 'post', path: 'version/databaseInitStartup', controller: version, middlewares: 'inner', meta: { instance: { enable: false }, auth: { enable: false } } },
   { method: 'post', path: 'version/databaseNameStartup', controller: version, middlewares: 'inner', meta: { instance: { enable: false }, auth: { enable: false } } },
-  { method: 'post', path: 'version/loadQueueWorkersStartup', controller: version, middlewares: 'inner', meta: { instance: { enable: false }, auth: { enable: false } } },
   { method: 'post', path: 'version/start', controller: version, middlewares: 'inner', meta: { instance: { enable: false }, auth: { enable: false } } },
   { method: 'post', path: 'version/check', controller: version, middlewares: 'inner', meta: { instance: { enable: false }, auth: { enable: false } } },
   { method: 'post', path: 'version/updateModule', controller: version, middlewares: 'inner,transaction', meta: { instance: { enable: false }, auth: { enable: false } } },
@@ -154,11 +153,6 @@ module.exports = app => {
 
     async databaseNameStartup() {
       const res = await this.service.version.databaseNameStartup();
-      this.ctx.success(res);
-    }
-
-    async loadQueueWorkersStartup() {
-      const res = await this.service.version.loadQueueWorkersStartup();
       this.ctx.success(res);
     }
 
@@ -293,11 +287,6 @@ module.exports = app => {
     async databaseNameStartup() {
       // database
       await this.__database();
-    }
-
-    async loadQueueWorkersStartup() {
-      // load queue workers
-      app.meta._loadQueueWorkers();
     }
 
     async __database() {
@@ -609,9 +598,6 @@ module.exports = appInfo => {
     },
     databaseName: {
       path: 'version/databaseNameStartup',
-    },
-    loadQueueWorkers: {
-      path: 'version/loadQueueWorkersStartup',
     },
   };
 

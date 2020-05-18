@@ -14,11 +14,6 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async loadQueueWorkersStartup() {
-      const res = await this.service.version.loadQueueWorkersStartup();
-      this.ctx.success(res);
-    }
-
     async start() {
       // update all modules
       let result;
