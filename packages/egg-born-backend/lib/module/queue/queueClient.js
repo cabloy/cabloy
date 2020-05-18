@@ -22,37 +22,42 @@ module.exports = function(app) {
     }
 
     _createWorker(info, queueKey) {
+      // worker
+      const _worker = {};
+      // prefix
+      const prefix = `bull_${app.name}`;
       // queue config
       const queueConfig = app.meta.queues[`${info.module}:${info.queueName}`].config;
       // queueConfig.options: queue/worker/job/limiter
       const workerOptions = (queueConfig.options && queueConfig.options.worker) || null;
       const limiterOptions = (queueConfig.options && queueConfig.options.limiter) || null;
       // limiter
-      const bottleneckOptions = {
-        maxConcurrent: 1,
-        minTime: null,
-        reservoir: null,
-        id: `${app.name}:bullmq:${queueKey}`,
-        clearDatastore: !!app.meta.isTest,
-      };
-      const limiterBottleneck = app.meta.limiter.create(bottleneckOptions);
-      const prefix = `bull_${app.name}`;
+      if (!queueConfig.concurrency) {
+        const bottleneckOptions = {
+          maxConcurrent: 1,
+          minTime: null,
+          reservoir: null,
+          id: `${app.name}:bullmq:${queueKey}`,
+          clearDatastore: !!app.meta.isTest,
+        };
+        _worker.limiterBottleneck = app.meta.limiter.create(bottleneckOptions);
+      }
 
       // create work
       const connectionWorker = app.redis.get('queue').duplicate();
       const _workerOptions = Object.assign({}, workerOptions, { prefix, connection: connectionWorker });
-      const _worker = new bull.Worker(queueKey, async job => {
+      _worker.worker = new bull.Worker(queueKey, async job => {
         // concurrency
         if (queueConfig.concurrency) {
           return await this._performTask(job.data);
         }
         // bottleneck limiter
         const _limiterOptions = Object.assign({}, { expiration: app.config.queue.bottleneck.expiration }, limiterOptions);
-        return await limiterBottleneck.schedule(_limiterOptions, () => {
+        return await _worker.limiterBottleneck.schedule(_limiterOptions, () => {
           return this._performTask(job.data);
         });
       }, _workerOptions);
-      _worker.on('failed', (job, err) => {
+      _worker.worker.on('failed', (job, err) => {
         app.logger.error(err);
       });
       // ok
@@ -60,29 +65,32 @@ module.exports = function(app) {
     }
 
     _createQueue(info, queueKey) {
+      // queue
+      const _queue = {};
+      // prefix
+      const prefix = `bull_${app.name}`;
       // queue config
       const queueConfig = app.meta.queues[`${info.module}:${info.queueName}`].config;
       // queueConfig.options: queue/worker/job/limiter
       const queueOptions = (queueConfig.options && queueConfig.options.queue) || null;
-      const prefix = `bull_${app.name}`;
 
       // create queue
       if (queueConfig.repeat) {
         const connectionScheduler = app.redis.get('queue').duplicate();
         // eslint-disable-next-line
-        const _queueScheduler = new bull.QueueScheduler(queueKey, { prefix, connection: connectionScheduler });
+        _queue.queueScheduler = new bull.QueueScheduler(queueKey, { prefix, connection: connectionScheduler });
       }
       const connectionQueue = app.redis.get('queue').duplicate();
       const _queueOptions = Object.assign({}, queueOptions, { prefix, connection: connectionQueue });
-      const _queue = new bull.Queue(queueKey, _queueOptions);
+      _queue.queue = new bull.Queue(queueKey, _queueOptions);
 
       // create events
       const connectionEvents = app.redis.get('queue').duplicate();
-      const queueEvents = new bull.QueueEvents(queueKey, { prefix, connection: connectionEvents });
-      queueEvents.on('completed', ({ jobId, returnvalue }) => {
+      _queue.queueEvents = new bull.QueueEvents(queueKey, { prefix, connection: connectionEvents });
+      _queue.queueEvents.on('completed', ({ jobId, returnvalue }) => {
         this._callCallback(jobId, null, returnvalue);
       });
-      queueEvents.on('failed', ({ jobId, failedReason }) => {
+      _queue.queueEvents.on('failed', ({ jobId, failedReason }) => {
         this._callCallback(jobId, failedReason, null);
       });
 
@@ -128,7 +136,7 @@ module.exports = function(app) {
       // queueConfig.options: queue/worker/job/limiter
       const jobOptions = (queueConfig.options && queueConfig.options.job) || null;
       // queue
-      const queue = this._ensureQueue(info);
+      const queue = this._ensureQueue(info).queue;
       // job
       const jobId = uuid.v4();
       const jobName = info.jobName || jobId;
