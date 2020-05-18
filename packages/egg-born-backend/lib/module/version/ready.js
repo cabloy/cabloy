@@ -22,4 +22,8 @@ module.exports = async function(app) {
       },
     });
   }
+  // queue workers
+  if (!app.meta.isTest) {
+    app.meta._loadQueueWorkers();
+  }
 };
