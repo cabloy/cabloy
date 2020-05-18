@@ -38,6 +38,7 @@ module.exports = appInfo => {
   config.startups = {
     installAllSchedules: {
       path: 'schedule/installAllSchedules',
+      debounce: true,
     },
     installAuthProviders: {
       path: 'auth/installAuthProviders',

@@ -7,6 +7,8 @@ module.exports = app => {
     }
 
     async scheduleQueue({ module, schedule }) {
+      // ignore on test
+      if (app.meta.isTest) return;
       // schedule config
       const config = app.meta.configs[module];
       const scheduleConfig = config.schedules[schedule];
