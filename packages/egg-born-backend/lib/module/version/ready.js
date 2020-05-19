@@ -1,4 +1,10 @@
 module.exports = async function(app) {
+  // clear keys
+  if (app.meta.isTest) {
+    await _clearRedisKeys(app.redis.get('limiter'), `b_${app.name}:*`);
+    await _clearRedisKeys(app.redis.get('queue'), `bull_${app.name}:*`);
+    await _clearRedisKeys(app.redis.get('cache'), `cache_${app.name}:*`);
+  }
   // run startups
   for (const key in app.meta.startups) {
     const startup = app.meta.startups[key];
@@ -27,3 +33,10 @@ module.exports = async function(app) {
     app.meta._loadQueueWorkers();
   }
 };
+
+async function _clearRedisKeys(redis, pattern) {
+  const keys = await redis.keys(pattern);
+  for (const key of keys) {
+    await redis.del(key);
+  }
+}
