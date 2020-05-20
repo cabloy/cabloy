@@ -5,10 +5,10 @@ export default {
     global: false,
   },
   methods: {
-    onAction({ ctx, action, item }) {
-      if (action.name === 'config') return this._createConfig({ ctx, item });
+    onAction({ ctx, action }) {
+      if (action.name === 'config') return this._createConfig({ ctx });
     },
-    _createConfig(/* { ctx, item }*/) {
+    _createConfig(/* { ctx } */) {
       if (!this.$device.wechat) return Promise.resolve(null);
       if (_wxInstance) return Promise.resolve({ wx: _wxInstance });
       return new Promise((resolve, reject) => {
