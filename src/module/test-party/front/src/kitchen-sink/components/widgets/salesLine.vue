@@ -96,8 +96,13 @@ function install(_Vue) {
     },
     methods: {
       __init() {
-        this.$meta.module.use('a-chartjs', module => {
-          this.chartjs = module.options.utils.chartjs;
+        const action = {
+          actionModule: 'a-chartjs',
+          actionComponent: 'chartjs',
+          name: 'instance',
+        };
+        this.$meta.util.performAction({ ctx: this, action }).then(chartjs => {
+          this.chartjs = chartjs;
           this.__updateChart();
         });
       },
