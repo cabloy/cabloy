@@ -1,4 +1,4 @@
-const CACHEMEMORY = Symbol('APP#__CACHEMEMORY');
+const CACHEMEMORY = Symbol.for('APP#__CACHEMEMORY');
 
 const Fn = module.exports = ctx => {
 
