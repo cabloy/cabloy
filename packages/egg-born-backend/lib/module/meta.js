@@ -18,6 +18,9 @@ module.exports = function(loader) {
   // isLocal
   meta.isLocal = loader.app.config.env === 'local';
 
+  // util
+  meta.util = util;
+
   // mockUtil
   meta.mockUtil = createMockUtil();
 

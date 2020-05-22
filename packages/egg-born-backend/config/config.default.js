@@ -8,7 +8,7 @@ const {
   isProd,
   detectStatus,
   detectErrorMessage,
-  accepts,
+  /* accepts,*/
 } = require('egg-onerror/lib/utils');
 
 // eslint-disable-next-line
@@ -34,6 +34,18 @@ module.exports = appInfo => {
   config.mysql = {
     app: true,
     agent: false,
+  };
+
+  // io
+  config.io = {
+    init: {
+    },
+    namespace: {
+      '/': {
+        connectionMiddleware: [ 'connection' ],
+        packetMiddleware: [ 'packet' ],
+      },
+    },
   };
 
   // middlewares
@@ -80,10 +92,17 @@ module.exports = appInfo => {
   // queue
   config.queue = {
     bottleneck: {
-      expiration: 20 * 1000,
+      expiration: 10 * 1000,
     },
     startup: {
       debounce: 6 * 1000,
+    },
+    worker: {
+      lockDuration: 10 * 1000,
+    },
+    scheduler: {
+      maxStalledCount: 1000,
+      stalledInterval: 10 * 1000,
     },
   };
 

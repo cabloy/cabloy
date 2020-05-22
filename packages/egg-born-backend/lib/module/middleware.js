@@ -1,35 +1,44 @@
 const extend = require('extend2');
 
-module.exports = function(loader, modules) {
+module.exports = function(loader) {
+
+  // use modulesArray
+  const ebModulesArray = loader.app.meta.modulesArray;
+
+  loader.app.meta.lookupMiddlewares = function(cb) {
+    for (const module of ebModulesArray) {
+      // module middlewares
+      if (module.main.middlewares) {
+        for (const middlewareKey in module.main.middlewares) {
+          const middleware = module.main.middlewares[middlewareKey];
+          const config = loader.app.meta.configs[module.info.relativeName];
+          const middlewareConfig = config.middlewares ? config.middlewares[middlewareKey] : null;
+          const options = extend(true, {}, middlewareConfig, loader.app.config.mws[middlewareKey]);
+          cb({ options, middleware, key: middlewareKey });
+        }
+      }
+    }
+  };
 
   // all middlewares
   const ebMiddlewares = {};
 
   // load middlewares
-  const ebMiddlewaresGlobal = loadMiddlewares(ebMiddlewares, loader, modules);
+  const ebMiddlewaresGlobal = loadMiddlewares(ebMiddlewares, loader);
 
   return [ ebMiddlewares, ebMiddlewaresGlobal ];
 };
 
-function loadMiddlewares(ebMiddlewares, loader, modules) {
+
+function loadMiddlewares(ebMiddlewares, loader) {
   const globals = [];
+
   // load
-  Object.keys(modules).forEach(key => {
-    const module = modules[key];
-    // module middlewares
-    if (module.main.middlewares) {
-      Object.keys(module.main.middlewares).forEach(middlewareKey => {
-        const middleware = module.main.middlewares[middlewareKey];
-        const config = loader.app.meta.configs[module.info.relativeName];
-        const middlewareConfig = config.middlewares ? config.middlewares[middlewareKey] : null;
-        const options = extend(true, {}, middlewareConfig, loader.app.config.mws[middlewareKey]);
-        ebMiddlewares[middlewareKey] = {
-          options,
-          middleware,
-          key: middlewareKey,
-        };
-        if (options.global) globals.push(middlewareKey);
-      });
+  loader.app.meta.lookupMiddlewares(function({ options, middleware, key }) {
+    // ignore other types, such as: socketio.connection/socketio.packet
+    if (!options.type) {
+      ebMiddlewares[key] = { options, middleware, key };
+      if (options.global) globals.push(key);
     }
   });
 

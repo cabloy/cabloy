@@ -6,10 +6,9 @@ module.exports = async function(app) {
     await _clearRedisKeys(app.redis.get('cache'), `cache_${app.name}:*`);
   }
   // run startups
-  for (const key in app.meta.startups) {
-    const startup = app.meta.startups[key];
+  for (const startup of app.meta.startupsArray) {
     if (!startup.startup.disable) {
-      await app.meta.runStartup(key);
+      await app.meta.runStartup(startup.key);
     }
   }
   // version test

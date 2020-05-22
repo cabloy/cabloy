@@ -1,6 +1,8 @@
 const mparse = require('egg-born-mparse').default;
 const fse = require('fs-extra');
 const path = require('path');
+const URL = require('url').URL;
+const isSafeDomainUtil = require('egg-security').utils.isSafeDomain;
 
 const util = {
   lookupPackage(dir) {
@@ -66,6 +68,43 @@ const util = {
         moduleMonkey.main.monkey[monkeyName](monkeyData);
       }
     }
+  },
+  getWhiteListCors(ctx) {
+    let whiteListCors;
+    const _config = ctx.config.module('a-base');
+    const _whiteList = (_config && _config.cors && _config.cors.whiteList) || [];
+    if (!Array.isArray(_whiteList)) {
+      whiteListCors = _whiteList.split(',');
+    } else {
+      whiteListCors = _whiteList.concat();
+    }
+    // inherits from jsonp
+    let _whiteListJsonp = _config && _config.jsonp && _config.jsonp.whiteList;
+    if (_whiteListJsonp) {
+      if (!Array.isArray(_whiteListJsonp)) {
+        _whiteListJsonp = _whiteListJsonp.split(',');
+      }
+      whiteListCors = whiteListCors.concat(_whiteListJsonp);
+    }
+    return whiteListCors;
+  },
+  isSafeDomain(ctx, origin) {
+    // origin is {protocol}{hostname}{port}...
+    if (!origin || origin === 'null' || origin === null) return true;
+
+    let parsedUrl;
+    try {
+      parsedUrl = new URL(origin);
+    } catch (err) {
+      return false;
+    }
+
+    // whiteList
+    const whiteListCors = this.getWhiteListCors(ctx);
+    if (isSafeDomainUtil(parsedUrl.hostname, whiteListCors) || isSafeDomainUtil(origin, whiteListCors)) {
+      return true;
+    }
+    return false;
   },
 };
 

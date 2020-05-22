@@ -21,6 +21,14 @@ module.exports = function(app) {
       return this._queuePush(info, true);
     }
 
+    async _clearWorkers() {
+      for (const queueKey in this._workers) {
+        const _worker = this._workers[queueKey];
+        await _worker.worker.close();
+      }
+      this._workers = {};
+    }
+
     _createWorker(info, queueKey) {
       // worker
       const _worker = {};
@@ -45,7 +53,7 @@ module.exports = function(app) {
 
       // create work
       const connectionWorker = app.redis.get('queue').duplicate();
-      const _workerOptions = Object.assign({}, workerOptions, { prefix, connection: connectionWorker });
+      const _workerOptions = Object.assign({}, app.config.queue.worker, workerOptions, { prefix, connection: connectionWorker });
       _worker.worker = new bull.Worker(queueKey, async job => {
         // concurrency
         if (queueConfig.concurrency) {
@@ -71,15 +79,14 @@ module.exports = function(app) {
       const prefix = `bull_${app.name}`;
       // queue config
       const queueConfig = app.meta.queues[`${info.module}:${info.queueName}`].config;
-      // queueConfig.options: queue/worker/job/limiter
+      // queueConfig.options: scheduler/queue/worker/job/limiter
+      const schedulerOptions = (queueConfig.options && queueConfig.options.scheduler) || null;
       const queueOptions = (queueConfig.options && queueConfig.options.queue) || null;
 
       // create queue
-      if (queueConfig.repeat) {
-        const connectionScheduler = app.redis.get('queue').duplicate();
-        // eslint-disable-next-line
-        _queue.queueScheduler = new bull.QueueScheduler(queueKey, { prefix, connection: connectionScheduler });
-      }
+      const connectionScheduler = app.redis.get('queue').duplicate();
+      const _schedulerOptions = Object.assign({}, app.config.queue.scheduler, schedulerOptions, { prefix, connection: connectionScheduler });
+      _queue.queueScheduler = new bull.QueueScheduler(queueKey, _schedulerOptions);
       const connectionQueue = app.redis.get('queue').duplicate();
       const _queueOptions = Object.assign({}, queueOptions, { prefix, connection: connectionQueue });
       _queue.queue = new bull.Queue(queueKey, _queueOptions);

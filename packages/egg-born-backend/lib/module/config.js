@@ -2,6 +2,7 @@ const extend = require('extend2');
 const util = require('./util.js');
 
 const CTXCONFIG = Symbol.for('Context#__config');
+const CACHEMEMORY = Symbol.for('APP#__CACHEMEMORY');
 
 module.exports = function(loader, modules) {
 
@@ -27,12 +28,9 @@ module.exports = function(loader, modules) {
             // check cache
             if (context[CTXCONFIG]) return context[CTXCONFIG];
             // get
-            let _configs;
             let useCache;
-            if (context.cache && context.cache.mem) {
-              const cacheMem = context.cache.mem.module('a-instance');
-              _configs = cacheMem.get('instanceConfigs');
-            }
+            let _configs = getCacheMemory(context, 'a-instance').instanceConfigs;
+            _configs = _configs ? _configs.value : null;
             if (!_configs) {
               _configs = loader.app.meta.configs;
               useCache = false;
@@ -70,6 +68,10 @@ module.exports = function(loader, modules) {
       // application config
       if (loader.config.modules && loader.config.modules[module.info.relativeName]) { extend(true, ebConfig, loader.config.modules[module.info.relativeName]); }
     });
+  }
+
+  function getCacheMemory(ctx, moduleName) {
+    return loader.app.geto(CACHEMEMORY).geto(ctx.subdomain).geto(moduleName);
   }
 
 };

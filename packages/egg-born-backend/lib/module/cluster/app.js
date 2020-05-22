@@ -14,4 +14,9 @@ module.exports = function(loader) {
       data: { pid: process.pid },
     });
   });
+  // eb_clear
+  loader.app.messenger.once('eb_clear', async data => {
+    await loader.app.meta.queue._clearWorkers();
+    process.send({ to: 'master', action: 'eb_clear_done', data: { id: data.id } });
+  });
 };

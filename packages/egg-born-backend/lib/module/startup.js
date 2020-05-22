@@ -8,6 +8,7 @@ module.exports = function(loader) {
 
   // all startups
   const ebStartups = loader.app.meta.startups = {};
+  const ebStartupsArray = loader.app.meta.startupsArray = [];
 
   // load startups
   loadStartups();
@@ -51,7 +52,7 @@ module.exports = function(loader) {
       const config = loader.app.meta.configs[module.info.relativeName];
       // module startups
       if (config.startups) {
-        Object.keys(config.startups).forEach(startupKey => {
+        for (const startupKey in config.startups) {
           const fullKey = `${module.info.relativeName}:${startupKey}`;
           const startupConfig = config.startups[startupKey];
           ebStartups[fullKey] = {
@@ -59,7 +60,8 @@ module.exports = function(loader) {
             task: wrapTask(fullKey, startupConfig, module.info),
             key: fullKey,
           };
-        });
+          ebStartupsArray.push(ebStartups[fullKey]);
+        }
       }
     }
   }
