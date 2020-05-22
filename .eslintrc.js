@@ -15,6 +15,10 @@ module.exports = {
   rules: {
     'vuefix/vuefix': [ 2, { auto: true }],
   },
+  env: {
+    browser: true,
+    node:true,
+  },
   globals: {
   },
 };

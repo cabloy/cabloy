@@ -57,6 +57,10 @@ module.exports = merge({
         target: proxyTarget,
         xfwd: true,
       },
+      '/socket.io': {
+        target: proxyTarget,
+        xfwd: true,
+      },
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
