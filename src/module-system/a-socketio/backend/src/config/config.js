@@ -7,8 +7,8 @@ module.exports = appInfo => {
     connection: {
       type: 'socketio.connection',
     },
-    test: {
-      type: 'socketio.connection',
+    packet: {
+      type: 'socketio.packet',
     },
   };
 

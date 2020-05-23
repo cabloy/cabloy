@@ -1,7 +1,7 @@
 const connection = require('./middleware/connection.js');
-const test = require('./middleware/test.js');
+const packet = require('./middleware/packet.js');
 
 module.exports = {
   connection,
-  test,
+  packet,
 };
