@@ -16,6 +16,14 @@ module.exports = (options, app) => {
   return async function cors(ctx, next) {
     // not cors (safari not send sec-fetch-mode)
     // if (ctx.headers['sec-fetch-mode'] !== 'cors') return await next();
+    if (ctx.innerAccess) return await next();
+
+    let origin = ctx.get('origin');
+    if (origin === 'null' || origin === null) origin = '*';
+    if (!origin || origin === '*') return await next();
+
+    const host = ctx.host;
+    if (host && origin.indexOf(host) > -1) return await next();
 
     // options
     const optionsCors = extend(true, {}, optionsDefault, options);
@@ -24,7 +32,6 @@ module.exports = (options, app) => {
     // if security plugin enabled, and origin config is not provided, will only allow safe domains support CORS.
     optionsCors.origin = optionsCors.origin || function corsOrigin(ctx) {
       // origin is {protocol}{hostname}{port}...
-      const origin = ctx.get('origin');
       if (app.meta.util.isSafeDomain(ctx, origin)) {
         return origin;
       }
