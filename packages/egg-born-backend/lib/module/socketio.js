@@ -5,8 +5,8 @@ module.exports = function(loader) {
   });
 
   function checkRequest(req, fn) {
-    // not cors
-    if (req.headers['sec-fetch-mode'] !== 'cors') return fn(null, true);
+    // not cors (safari not send sec-fetch-mode)
+    // if (req.headers['sec-fetch-mode'] !== 'cors') return fn(null, true);
 
     // origin
     let origin = req.headers.origin || req.headers.referer;
@@ -14,6 +14,9 @@ module.exports = function(loader) {
     // file:// URLs produce a null Origin which can't be authorized via echo-back
     if (origin === 'null' || origin === null) origin = '*';
     if (!origin || origin === '*') return fn(null, true);
+
+    const host = req.headers['x-forwarded-host'] || req.headers.host;
+    if (host && origin.indexOf(host) > -1) return fn(null, true);
 
     // check
     const url = '/api/a/base/';

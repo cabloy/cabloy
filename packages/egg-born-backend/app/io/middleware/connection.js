@@ -3,24 +3,24 @@ const compose = require('koa-compose');
 module.exports = app => {
 
   function loadMiddlewares() {
-    const connectionMiddlewares = [];
+    const _middlewares = [];
     app.meta.lookupMiddlewares(function({ options, middleware, key }) {
       if (options.type === 'socketio.connection') {
         const mw = middleware(options, app);
         mw._name = key;
-        connectionMiddlewares.push(mw);
+        _middlewares.push(mw);
       }
     });
-    return compose(connectionMiddlewares);
+    return compose(_middlewares);
   }
 
-  let connectionMiddlewares = null;
+  let _middlewares = null;
 
   return async (ctx, next) => {
-    if (!connectionMiddlewares) {
-      connectionMiddlewares = loadMiddlewares();
+    if (!_middlewares) {
+      _middlewares = loadMiddlewares();
     }
-    await connectionMiddlewares(ctx, next);
+    await _middlewares(ctx, next);
   };
 
 };
