@@ -7,6 +7,7 @@ const Fn = module.exports = ctx => {
     constructor(moduleName) {
       this.moduleName = moduleName || ctx.module.info.relativeName;
       // this._modelMail = null;
+      this._redis = null;
     }
 
     // other module's io
@@ -21,6 +22,33 @@ const Fn = module.exports = ctx => {
 
     get clientId() {
       return ctx.user.op.anonymous ? ctx.meta.user.anonymousId() : ctx.user.op.id;
+    }
+
+    get redis() {
+      if (!this._redis) this._redis = ctx.app.redis.get('io') || ctx.app.redis.get('cache');
+      return this._redis;
+    }
+
+    // subcribe
+    //    hash key: clientId:path
+    //    hash value: scene -> workerId:socketId
+    async subscribe({ subscribes, socketId, clientId }) {
+      for (const item of subscribes) {
+        const path = item.path;
+        const scene = item.scene || '';
+        const key = `${clientId}:${path}`;
+        const value = `${ctx.app.meta.workerId}:${socketId}`;
+        await this.redis.hset(key, scene, value);
+      }
+    }
+
+    async unsubscribe({ subscribes, clientId }) {
+      for (const item of subscribes) {
+        const path = item.path;
+        const scene = item.scene || '';
+        const key = `${clientId}:${path}`;
+        await this.redis.hdel(key, scene);
+      }
     }
 
   }

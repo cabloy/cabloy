@@ -4,6 +4,7 @@ module.exports = app => {
     async subscribe() {
       const res = await this.service.io.subscribe({
         subscribes: this.ctx.request.body.subscribes,
+        socketId: this.ctx.request.body.socketId,
         clientId: this.ctx.meta.io.clientId,
       });
       this.ctx.success(res);

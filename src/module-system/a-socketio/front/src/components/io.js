@@ -101,7 +101,7 @@ const _io = {
     }
     // subscribe
     this._subscribesWaitingDoing = true;
-    Vue.prototype.$meta.api.post('/a/socketio/subscribe', { subscribes })
+    Vue.prototype.$meta.api.post('/a/socketio/subscribe', { subscribes, socketId: this._socket.id })
       .then(() => {
         // loop
         for (const _item of subscribes) {
