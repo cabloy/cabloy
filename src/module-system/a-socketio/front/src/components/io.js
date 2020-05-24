@@ -15,6 +15,11 @@ const _io = {
     if (options.scene === true) {
       options.scene = Vue.prototype.$meta.config.scene;
     }
+    // socket
+    const _socket = this._getSocket();
+    if (!_socket.connected) {
+      _socket.connect();
+    }
     // record to All
     const subscribeId = ++this._subscribeCounter;
     this._subscribesAll[subscribeId] = {
@@ -22,20 +27,28 @@ const _io = {
     };
     // record to path
     let _itemPath = this._subscribesPath[path];
+    let _newPathSubscribe = false;
     if (!_itemPath) {
       _itemPath = this._subscribesPath[path] = { scene: options.scene, items: {} };
+      _newPathSubscribe = true;
     }
     _itemPath.items[subscribeId] = true;
-    // socket
-    const _socket = this._getSocket();
-    if (!_socket.connected) {
-      _socket.connect();
-    }
+
     // check waitings
     if (_socket.connected) {
-      this._subscribesWaiting[path] = true;
-      this._checkSubscribesWaiting();
+      if (_newPathSubscribe) {
+        this._subscribesWaiting[path] = true;
+        this._checkSubscribesWaiting();
+      } else {
+        if (!this._subscribesWaiting[path]) {
+          // invoke cbSubscribed directly
+          if (cbSubscribed) {
+            cbSubscribed();
+          }
+        }
+      }
     }
+
     // ok
     return subscribeId;
   },
@@ -43,13 +56,17 @@ const _io = {
     const _item = this._subscribesAll[subscribeId];
     if (!_item) return;
 
-    delete this._subscribesWaiting[_item.path];
-
     const _itemPath = this._subscribesPath[_item.path];
     if (_itemPath) {
       delete _itemPath.items[subscribeId];
       if (Object.keys(_itemPath.items).length === 0) {
+        // delete path
         delete this._subscribesPath[_item.path];
+        // delete waiting
+        delete this._subscribesWaiting[_item.path];
+        // unsubscribe
+        const subscribes = [{ path: _item.path, scene: _itemPath.scene }];
+        Vue.prototype.$meta.api.post('/a/socketio/unsubscribe', { subscribes }).then(() => {}).catch(() => {});
       }
     }
 
@@ -133,7 +150,20 @@ const _io = {
       this._socket.connect();
     }
   },
+  _reset() {
+    this._subscribesWaiting = {};
+    this._subscribesAll = {};
+    this._subscribesPath = {};
+    if (this._socket && this._socket.connected) {
+      this._socket.disconnect();
+    }
+  },
 };
+
+Vue.prototype.$meta.eventHub.$on('auth:login', () => {
+  // reset
+  _io._reset();
+});
 
 export default {
   meta: {

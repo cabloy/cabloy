@@ -10,6 +10,10 @@ module.exports = appInfo => {
     packet: {
       type: 'socketio.packet',
     },
+    io: {
+      global: false,
+      dependencies: 'instance',
+    },
   };
 
   return config;
