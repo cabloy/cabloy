@@ -1,3 +1,4 @@
+const uuid = require('uuid');
 const mparse = require('egg-born-mparse').default;
 const util = require('./util.js');
 const ModelClass = require('../base/model.js');
@@ -6,6 +7,9 @@ module.exports = function(loader) {
 
   // meta
   const meta = loader.app.geto('meta');
+
+  // workerId
+  meta.workerId = uuid.v4();
 
   // app or agent
   meta.inApp = loader.app.type === 'application';

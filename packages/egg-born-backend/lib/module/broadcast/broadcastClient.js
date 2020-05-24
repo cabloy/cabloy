@@ -1,4 +1,3 @@
-const uuid = require('uuid');
 const util = require('../util.js');
 
 module.exports = function(app) {
@@ -6,7 +5,7 @@ module.exports = function(app) {
   class BroadcastClient {
 
     constructor() {
-      this.__callerId = uuid.v4();
+      this.__callerId = app.meta.workerId;
       this.channelName = null;
       this.sub = null;
       this.pub = null;
