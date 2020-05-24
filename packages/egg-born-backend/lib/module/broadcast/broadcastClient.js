@@ -14,7 +14,7 @@ module.exports = function(app) {
     }
 
     init() {
-      this.channelName = `${app.name}:broadcast`;
+      this.channelName = `broadcast_${app.name}:`;
       this.pub = app.redis.get('broadcast').duplicate();
       this.sub = app.redis.get('broadcast').duplicate();
       this.sub.subscribe(this.channelName, function() {});

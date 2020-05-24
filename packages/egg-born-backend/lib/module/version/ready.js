@@ -3,7 +3,9 @@ module.exports = async function(app) {
   if (app.meta.isTest) {
     await _clearRedisKeys(app.redis.get('limiter'), `b_${app.name}:*`);
     await _clearRedisKeys(app.redis.get('queue'), `bull_${app.name}:*`);
+    await _clearRedisKeys(app.redis.get('broadcast'), `broadcast_${app.name}:*`);
     await _clearRedisKeys(app.redis.get('cache'), `cache_${app.name}:*`);
+    await _clearRedisKeys(app.redis.get('io'), `io_${app.name}:*`);
   }
   // run startups
   for (const startup of app.meta.startupsArray) {
@@ -34,6 +36,7 @@ module.exports = async function(app) {
 };
 
 async function _clearRedisKeys(redis, pattern) {
+  if (!redis) return;
   const keys = await redis.keys(pattern);
   for (const key of keys) {
     await redis.del(key);

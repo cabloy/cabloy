@@ -15,7 +15,6 @@ module.exports = app => {
   }
 
   let _middlewares = null;
-  console.log('------packet middleware init:');
 
   return async (ctx, next) => {
     if (!_middlewares) {
