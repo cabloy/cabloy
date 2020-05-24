@@ -1,8 +1,12 @@
+const IOFn = require('./adapter/io.js');
 module.exports = (options, app) => {
   return async (ctx, next) => {
-    ctx.socket.emit('res', 'connected!');
+    const io = new (IOFn(ctx))();
+    // cache clientId/socketId for disconnect
+    const clientId = io.clientId;
+    const socketId = ctx.socket.socketId;
     await next();
-    // execute when disconnect.
-    console.log('disconnection 1!!');
+    // execute when disconnect
+    await io.unsubscribeWhenDisconnect({ clientId, socketId });
   };
 };

@@ -1,18 +1,12 @@
 // const modelMailFn = require('../../../model/mail.js');
 
-const Fn = module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class IO {
 
-    constructor(moduleName) {
-      this.moduleName = moduleName || ctx.module.info.relativeName;
+    constructor() {
       // this._modelMail = null;
       this._redis = null;
-    }
-
-    // other module's io
-    module(moduleName) {
-      return new (Fn(ctx))(moduleName);
     }
 
     // get modelMail() {
@@ -21,7 +15,9 @@ const Fn = module.exports = ctx => {
     // }
 
     get clientId() {
-      return ctx.user.op.anonymous ? ctx.meta.user.anonymousId() : ctx.user.op.id;
+      if (ctx.user) return ctx.user.op.anonymous ? ctx.meta.user.anonymousId() : ctx.user.op.id;
+      const user = ctx.session.passport.user;
+      return user.op.anonymous ? ctx.cookies.get('anonymous', { encrypt: true }) : user.op.id;
     }
 
     get redis() {
@@ -49,6 +45,10 @@ const Fn = module.exports = ctx => {
         const key = `${clientId}:${path}`;
         await this.redis.hdel(key, scene);
       }
+    }
+
+    async unsubscribeWhenDisconnect({ clientId, socketId }) {
+
     }
 
   }
