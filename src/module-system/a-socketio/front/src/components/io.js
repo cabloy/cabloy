@@ -2,13 +2,21 @@ import ioc from 'socket.io-client';
 import Vue from 'vue';
 
 const _io = {
+  // socket
   _socket: null,
+  // subscribes
   _subscribeCounter: 0,
-  _subscribesWaitingTimeoutId: 0,
-  _subscribesWaitingDoing: false,
   _subscribesAll: {},
   _subscribesPath: {},
+  // subscribes waiting
+  _subscribesWaitingTimeoutId: 0,
+  _subscribesWaitingDoing: false,
   _subscribesWaiting: {},
+  // unsubscribes waiting
+  _unsubscribesWaitingTimeoutId: 0,
+  _unsubscribesWaitingDoing: false,
+  _unsubscribesWaiting: {},
+  // methods
   subscribe(path, cbMessage, cbSubscribed, options) {
     // options
     options = options || {};
@@ -38,7 +46,7 @@ const _io = {
     if (_socket.connected) {
       if (_newPathSubscribe) {
         this._subscribesWaiting[path] = true;
-        this._checkSubscribesWaiting();
+        this._doSubscribesWaiting();
       } else {
         if (!this._subscribesWaiting[path]) {
           // invoke cbSubscribed directly
@@ -65,8 +73,8 @@ const _io = {
         // delete waiting
         delete this._subscribesWaiting[_item.path];
         // unsubscribe
-        const subscribes = [{ path: _item.path, scene: _itemPath.scene }];
-        Vue.prototype.$meta.api.post('/a/socketio/unsubscribe', { subscribes }).then(() => {}).catch(() => {});
+        this._unsubscribesWaiting[_item.path] = { scene: _itemPath.scene };
+        this._doUnsubscribesWaiting();
       }
     }
 
@@ -79,7 +87,7 @@ const _io = {
       }
     }
   },
-  _checkSubscribesWaiting() {
+  _doSubscribesWaiting() {
     if (this._subscribesWaitingDoing) return;
     if (this._subscribesWaitingTimeoutId !== 0) return;
     if (Object.keys(this._subscribesWaiting).length === 0) return;
@@ -113,7 +121,7 @@ const _io = {
         // done
         this._subscribesWaitingDoing = false;
         // next
-        this._checkSubscribesWaiting();
+        this._doSubscribesWaiting();
       })
       .catch(() => {
         // done
@@ -121,7 +129,46 @@ const _io = {
         // timeout
         this._subscribesWaitingTimeoutId = window.setTimeout(() => {
           this._subscribesWaitingTimeoutId = 0;
-          this._checkSubscribesWaiting();
+          this._doSubscribesWaiting();
+        }, 2000);
+      });
+  },
+  _doUnsubscribesWaiting() {
+    if (this._unsubscribesWaitingDoing) return;
+    if (this._unsubscribesWaitingTimeoutId !== 0) return;
+    if (Object.keys(this._unsubscribesWaiting).length === 0) return;
+    // combine
+    const subscribes = [];
+    for (const path in this._unsubscribesWaiting) {
+      const _itemPath = this._subscribesPath[path];
+      if (_itemPath) {
+        // delete waiting
+        delete this._unsubscribesWaiting[path];
+      } else {
+        subscribes.push({ path, scene: this._unsubscribesWaiting[path].scene });
+      }
+    }
+    // unsubscribe
+    this._unsubscribesWaitingDoing = true;
+    Vue.prototype.$meta.api.post('/a/socketio/unsubscribe', { subscribes })
+      .then(() => {
+        // loop
+        for (const _item of subscribes) {
+          // delete waiting
+          delete this._unsubscribesWaiting[_item.path];
+        }
+        // done
+        this._unsubscribesWaitingDoing = false;
+        // next
+        this._doUnsubscribesWaiting();
+      })
+      .catch(() => {
+        // done
+        this._unsubscribesWaitingDoing = false;
+        // timeout
+        this._unsubscribesWaitingTimeoutId = window.setTimeout(() => {
+          this._unsubscribesWaitingTimeoutId = 0;
+          this._doUnsubscribesWaiting();
         }, 2000);
       });
   },
@@ -140,7 +187,7 @@ const _io = {
     for (const path in this._subscribesPath) {
       this._subscribesWaiting[path] = true;
     }
-    this._checkSubscribesWaiting();
+    this._doSubscribesWaiting();
   },
   _onDisconnect(reason) {
     this._subscribesWaiting = {};
@@ -151,6 +198,7 @@ const _io = {
     }
   },
   _reset() {
+    this._unsubscribesWaiting = {};
     this._subscribesWaiting = {};
     this._subscribesAll = {};
     this._subscribesPath = {};
