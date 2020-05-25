@@ -39,6 +39,8 @@ const _io = {
     if (!_itemPath) {
       _itemPath = this._subscribesPath[path] = { scene: options.scene, items: {} };
       _newPathSubscribe = true;
+      // delete waiting
+      delete this._unsubscribesWaiting[path];
     }
     _itemPath.items[subscribeId] = true;
 
@@ -73,8 +75,10 @@ const _io = {
         // delete waiting
         delete this._subscribesWaiting[_item.path];
         // unsubscribe
-        this._unsubscribesWaiting[_item.path] = { scene: _itemPath.scene };
-        this._doUnsubscribesWaiting();
+        if (_itemPath.socketId) {
+          this._unsubscribesWaiting[_item.path] = { scene: _itemPath.scene, socketId: _itemPath.socketId };
+          this._doUnsubscribesWaiting();
+        }
       }
     }
 
@@ -91,6 +95,7 @@ const _io = {
     if (this._subscribesWaitingDoing) return;
     if (this._subscribesWaitingTimeoutId !== 0) return;
     if (Object.keys(this._subscribesWaiting).length === 0) return;
+    if (!this._socket.connected) return;
     // combine
     const subscribes = [];
     for (const path in this._subscribesWaiting) {
@@ -110,6 +115,7 @@ const _io = {
           // cbSubscribed
           const _itemPath = this._subscribesPath[_item.path];
           if (_itemPath) {
+            _itemPath.socketId = this._socket.id;
             for (const subscribeId in _itemPath.items) {
               const _subscribe = this._subscribesAll[subscribeId];
               if (_subscribe && _subscribe.cbSubscribed) {
@@ -145,7 +151,8 @@ const _io = {
         // delete waiting
         delete this._unsubscribesWaiting[path];
       } else {
-        subscribes.push({ path, scene: this._unsubscribesWaiting[path].scene });
+        const _item = this._unsubscribesWaiting[path];
+        subscribes.push({ path, scene: _item.scene, socketId: _item.socketId });
       }
     }
     // unsubscribe

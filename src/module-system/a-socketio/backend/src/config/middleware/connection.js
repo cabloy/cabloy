@@ -4,7 +4,7 @@ module.exports = (options, app) => {
     const io = new (IOFn(ctx))();
     // cache clientId/socketId for disconnect
     const clientId = io.clientId;
-    const socketId = ctx.socket.socketId;
+    const socketId = ctx.socket.id;
     await next();
     // execute when disconnect
     await io.unsubscribeWhenDisconnect({ clientId, socketId });

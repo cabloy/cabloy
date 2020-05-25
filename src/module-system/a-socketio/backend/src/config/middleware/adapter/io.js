@@ -42,13 +42,32 @@ module.exports = ctx => {
       for (const item of subscribes) {
         const path = item.path;
         const scene = item.scene || '';
+        const socketId = item.socketId;
+        if (!socketId) continue;
         const key = `${clientId}:${path}`;
-        await this.redis.hdel(key, scene);
+        // check if socketId is consistent
+        const value = await this.redis.hget(key, scene);
+        if (value && value.indexOf(socketId) > -1) {
+          await this.redis.hdel(key, scene);
+        }
       }
     }
 
     async unsubscribeWhenDisconnect({ clientId, socketId }) {
-
+      const keyPrefix = this.redis.options.keyPrefix;
+      const keyPatern = `${keyPrefix}${clientId}:*`;
+      const keys = await this.redis.keys(keyPatern);
+      for (const fullKey of keys) {
+        const key = fullKey.substr(keyPrefix.length);
+        const values = await this.redis.hgetall(key);
+        if (!values) continue;
+        for (const field in values) {
+          const value = values[field];
+          if (value && value.indexOf(socketId) > -1) {
+            await this.redis.hdel(key, field);
+          }
+        }
+      }
     }
 
   }
