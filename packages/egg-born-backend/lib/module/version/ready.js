@@ -3,10 +3,12 @@ module.exports = async function(app) {
   if (app.meta.isTest) {
     await _clearRedisKeys(app.redis.get('limiter'), `b_${app.name}:*`);
     await _clearRedisKeys(app.redis.get('queue'), `bull_${app.name}:*`);
-    await _clearRedisKeys(app.redis.get('broadcast'), `broadcast_${app.name}:*`);
+    // broadcast channel has subscribed
+    // await _clearRedisKeys(app.redis.get('broadcast'), `broadcast_${app.name}:*`);
     await _clearRedisKeys(app.redis.get('cache'), `cache_${app.name}:*`);
     await _clearRedisKeys(app.redis.get('io'), `io_${app.name}:*`);
   }
+
   // run startups
   for (const startup of app.meta.startupsArray) {
     if (!startup.startup.disable) {
@@ -37,8 +39,10 @@ module.exports = async function(app) {
 
 async function _clearRedisKeys(redis, pattern) {
   if (!redis) return;
+  const keyPrefix = redis.options.keyPrefix;
   const keys = await redis.keys(pattern);
-  for (const key of keys) {
+  for (const fullKey of keys) {
+    const key = keyPrefix ? fullKey.substr(keyPrefix.length) : fullKey;
     await redis.del(key);
   }
 }
