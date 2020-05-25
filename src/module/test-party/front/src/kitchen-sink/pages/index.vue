@@ -30,6 +30,7 @@ const items = [
   { title: 'Monkey', path: 'kitchen-sink/monkey/monkeyee' },
   { title: 'Dragdrop(Move)', path: 'kitchen-sink/dragdrop/move' },
   { title: 'Dragdrop(Resize)', path: 'kitchen-sink/dragdrop/resize' },
+  { title: 'Socket IO', path: 'kitchen-sink/socketio' },
 ];
 export default {
   data() {

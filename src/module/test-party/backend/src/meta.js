@@ -9,6 +9,8 @@ module.exports = app => {
     const schemas = require('./config/validation/schemas.js')(app);
     // keywords
     const keywords = require('./config/validation/keywords.js')(app);
+    // socketio
+    const socketioTest = require('./config/socketio/test.js')(app);
     // meta
     extend(true, meta, {
       base: {
@@ -147,6 +149,11 @@ module.exports = app => {
       index: {
         indexes: {
           testParty: 'createdAt,updatedAt,atomId,partyTypeId',
+        },
+      },
+      socketio: {
+        messages: {
+          test: socketioTest,
         },
       },
     });

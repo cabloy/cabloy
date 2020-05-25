@@ -43,6 +43,7 @@ export default [
   { path: 'kitchen-sink/monkey/monkeyee', component: loadKitchenSink('monkey/monkeyee') },
   { path: 'kitchen-sink/dragdrop/move', component: loadKitchenSink('dragdrop/dragdropMove') },
   { path: 'kitchen-sink/dragdrop/resize', component: loadKitchenSink('dragdrop/dragdropResize') },
+  { path: 'kitchen-sink/socketio', component: loadKitchenSink('socketio') },
   // framework7
   { path: 'kitchen-sink/framework7/index', component: loadKitchenSinkFramework7('index') },
   { path: 'kitchen-sink/framework7/about', component: loadKitchenSinkFramework7('about') },
