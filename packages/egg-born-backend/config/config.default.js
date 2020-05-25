@@ -96,7 +96,7 @@ module.exports = appInfo => {
   // queue
   config.queue = {
     bottleneck: {
-      expiration: 10 * 1000,
+      expiration: 60 * 1000,
     },
     startup: {
       debounce: 6 * 1000,
