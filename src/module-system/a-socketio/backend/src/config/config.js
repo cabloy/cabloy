@@ -16,5 +16,12 @@ module.exports = appInfo => {
     },
   };
 
+  // queues
+  config.queues = {
+    registerMessageClass: {
+      path: 'messageClass/register',
+    },
+  };
+
   return config;
 };

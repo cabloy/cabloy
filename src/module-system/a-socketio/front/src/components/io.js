@@ -86,9 +86,7 @@ const _io = {
 
     if (Object.keys(this._subscribesAll).length === 0) {
       const _socket = this._getSocket();
-      if (_socket.connected) {
-        _socket.disconnect();
-      }
+      _socket.disconnect();
     }
   },
   _doSubscribesWaiting() {
@@ -189,12 +187,16 @@ const _io = {
     return this._socket;
   },
   _onConnect() {
-    // -> waitings
     this._subscribesWaiting = {};
-    for (const path in this._subscribesPath) {
-      this._subscribesWaiting[path] = true;
+    if (Object.keys(this._subscribesPath).length === 0) {
+      this._socket.disconnect();
+    } else {
+      // -> waitings
+      for (const path in this._subscribesPath) {
+        this._subscribesWaiting[path] = true;
+      }
+      this._doSubscribesWaiting();
     }
-    this._doSubscribesWaiting();
   },
   _onDisconnect(reason) {
     this._subscribesWaiting = {};
@@ -209,7 +211,7 @@ const _io = {
     this._subscribesWaiting = {};
     this._subscribesAll = {};
     this._subscribesPath = {};
-    if (this._socket && this._socket.connected) {
+    if (this._socket) {
       this._socket.disconnect();
     }
   },
