@@ -36,7 +36,7 @@ module.exports = app => {
             sessionId varchar(255) DEFAULT NULL,
             userIdTo int(11) DEFAULT '0',
             userIdFrom int(11) DEFAULT '0',
-            content text DEFAULT NULL,
+            content json DEFAULT NULL,
             PRIMARY KEY (id)
           )
         `;

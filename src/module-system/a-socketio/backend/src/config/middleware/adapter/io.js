@@ -78,9 +78,22 @@ module.exports = ctx => {
       // message
       const _message = {
         messageClassId: messageClass.id,
-
+        messageType: message.messageType,
+        messageFilter: message.messageFilter,
+        messageGroup: message.messageGroup,
+        content: JSON.stringify(message.content),
+        messageRead: 0,
+        userIdTo: message.userIdTo,
+        userIdFrom: user.id,
+        sessionId: message.messageGroup ? message.userIdTo : this._combineSessionId(message.userIdTo, user.id),
       };
+      // check by provider
+      // _messageClass
       return _message;
+    }
+
+    _combineSessionId(userIdTo, userIdFrom) {
+
     }
 
   }
