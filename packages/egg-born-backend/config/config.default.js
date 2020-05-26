@@ -95,6 +95,16 @@ module.exports = appInfo => {
 
   // queue
   config.queue = {
+    redlock: {
+      clients: [ 'redlock' ],
+      options: {
+        driftFactor: 0.01,
+        retryCount: -1,
+        retryDelay: 200,
+        retryJitter: 100,
+        lockTTL: 60 * 1000,
+      },
+    },
     bottleneck: {
       expiration: 60 * 1000,
     },

@@ -33,22 +33,17 @@ module.exports = function(app) {
       // worker
       const _worker = {};
       // prefix
-      const prefix = `bull_${app.name}`;
+      const prefix = `bull_${app.name}:queue`;
       // queue config
       const queueConfig = app.meta.queues[`${info.module}:${info.queueName}`].config;
-      // queueConfig.options: queue/worker/job/limiter
+      // queueConfig.options: queue/worker/job/redlock
       const workerOptions = (queueConfig.options && queueConfig.options.worker) || null;
-      const limiterOptions = (queueConfig.options && queueConfig.options.limiter) || null;
-      // limiter
+      const redlockOptions = (queueConfig.options && queueConfig.options.redlock) || null;
+      const _redlockOptions = Object.assign({}, app.config.queue.redlock.options, redlockOptions);
+
+      // redlock
       if (!queueConfig.concurrency) {
-        const bottleneckOptions = {
-          maxConcurrent: 1,
-          minTime: null,
-          reservoir: null,
-          id: `${app.name}:bullmq:${queueKey}`,
-          clearDatastore: !!app.meta.isTest,
-        };
-        _worker.limiterBottleneck = app.meta.limiter.create(bottleneckOptions);
+        _worker.redlock = app.meta.redlock.create(_redlockOptions);
       }
 
       // create work
@@ -59,11 +54,24 @@ module.exports = function(app) {
         if (queueConfig.concurrency) {
           return await this._performTask(job.data);
         }
-        // bottleneck limiter
-        const _limiterOptions = Object.assign({}, { expiration: app.config.queue.bottleneck.expiration }, limiterOptions);
-        return await _worker.limiterBottleneck.schedule(_limiterOptions, () => {
-          return this._performTask(job.data);
-        });
+        // redlock
+        const _lockResource = `redlock_${app.name}:queue:${queueKey}`;
+        let _lock = await _worker.redlock.lock(_lockResource, _redlockOptions.lockTTL);
+        try {
+          job.data.redlock = {
+            async extend(_ttl) {
+              _lock = await _lock.extend(_ttl || _redlockOptions.lockTTL);
+            },
+          };
+          const res = await this._performTask(job.data);
+          job.data.redlock = null;
+          await _lock.unlock();
+          return res;
+        } catch (err) {
+          job.data.redlock = null;
+          await _lock.unlock();
+          throw err;
+        }
       }, _workerOptions);
       _worker.worker.on('failed', (job, err) => {
         app.logger.error(err);
@@ -76,7 +84,7 @@ module.exports = function(app) {
       // queue
       const _queue = {};
       // prefix
-      const prefix = `bull_${app.name}`;
+      const prefix = `bull_${app.name}:queue`;
       // queue config
       const queueConfig = app.meta.queues[`${info.module}:${info.queueName}`].config;
       // queueConfig.options: scheduler/queue/worker/job/limiter

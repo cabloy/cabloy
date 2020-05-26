@@ -1,6 +1,6 @@
 {
   "name": "egg-born-backend",
-  "version": "5.0.6",
+  "version": "5.0.7",
   "description": "egg-born-backend",
   "scripts": {
     "lint": "eslint ."
@@ -50,7 +50,8 @@
     "object-get-o-a": "^1.0.2",
     "supertest": "^4.0.2",
     "semver": "^7.1.2",
-    "module-alias": "^2.2.2"
+    "module-alias": "^2.2.2",
+    "redlock": "^4.1.0"
   },
   "devDependencies": {}
 }

@@ -7,6 +7,10 @@ module.exports = async function(app) {
     // await _clearRedisKeys(app.redis.get('broadcast'), `broadcast_${app.name}:*`);
     await _clearRedisKeys(app.redis.get('cache'), `cache_${app.name}:*`);
     await _clearRedisKeys(app.redis.get('io'), `io_${app.name}:*`);
+    // redlock
+    for (const clientName of app.config.queue.redlock.clients) {
+      await _clearRedisKeys(app.redis.get(clientName), `redlock_${app.name}:*`);
+    }
   }
 
   // run startups
