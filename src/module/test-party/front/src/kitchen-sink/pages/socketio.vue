@@ -7,7 +7,7 @@
     <f7-messages ref="messages">
       <f7-messages-title>{{new Date()}}</f7-messages-title>
       <f7-message v-for="(item,index) in messagesData" :key="index" :type="item.message.type" :name="item.author.name" :avatar="item.author.avatar" :first="isFirstMessage(item, index)" :last="isLastMessage(item, index)" :tail="isTailMessage(item, index)">
-        <span slot="text" v-if="item.message.content.text" v-text="item.message.content.text"></span>
+        <span slot="text" v-if="item.message.content.text" v-text="`${item.message.id || ''}:${item.message.content.text}`"></span>
       </f7-message>
     </f7-messages>
   </eb-page>
@@ -79,6 +79,7 @@ export default {
     onSubmit(value, clear) {
       // message
       const message = {
+        id: null,
         messageType: 1, // text
         content: {
           text: value,
@@ -105,6 +106,8 @@ export default {
         options: {
           scene: null,
         },
+      }).then(data => {
+        message.id = data.id;
       });
 
     }
