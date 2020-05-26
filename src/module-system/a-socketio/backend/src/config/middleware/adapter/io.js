@@ -1,4 +1,5 @@
 const modelMessageFn = require('../../../model/message.js');
+const modelMessageSyncFn = require('../../../model/messageSync.js');
 const MessageClassFn = require('./messageClass.js');
 
 module.exports = ctx => {
@@ -7,6 +8,7 @@ module.exports = ctx => {
 
     constructor() {
       this._modelMessage = null;
+      this._modelMessageSync = null;
       this._messageClass = null;
       this._redis = null;
     }
@@ -14,6 +16,11 @@ module.exports = ctx => {
     get modelMessage() {
       if (!this._modelMessage) this._modelMessage = new (modelMessageFn(ctx.app))(ctx);
       return this._modelMessage;
+    }
+
+    get modelMessageSync() {
+      if (!this._modelMessageSync) this._modelMessageSync = new (modelMessageSyncFn(ctx.app))(ctx);
+      return this._modelMessageSync;
     }
 
     get messageClass() {
@@ -72,29 +79,68 @@ module.exports = ctx => {
     }
 
     async publish({ path, message, messageClass, options, user }) {
+      // options
+      const messageScene = (options && options.scene) || null;
       // messageClass
       messageClass = await this.messageClass.get(messageClass);
       const _messageClass = this.messageClass.messageClass(messageClass);
+      // onPublish by provider
+      let sessionId;
+      if (_messageClass.callbacks.onPublish) {
+        sessionId = await _messageClass.callbacks.onPublish({ ctx, path, message, options, user });
+      }
+      // userId
+      const userIdFrom = user.id;
+      const userIdTo = message.userIdTo || userIdFrom;
+      // sessionId
+      if (!sessionId) {
+        sessionId = message.messageGroup ? userIdTo : this._combineSessionId(userIdFrom, userIdTo);
+      }
       // message
       const _message = {
         messageClassId: messageClass.id,
         messageType: message.messageType,
         messageFilter: message.messageFilter,
         messageGroup: message.messageGroup,
+        messageScene,
+        userIdTo,
+        userIdFrom,
+        sessionId,
         content: JSON.stringify(message.content),
-        messageRead: 0,
-        userIdTo: message.userIdTo,
-        userIdFrom: user.id,
-        sessionId: message.messageGroup ? message.userIdTo : this._combineSessionId(message.userIdTo, user.id),
       };
-      // check by provider
-      // _messageClass
-      return _message;
+      const res = await this.modelMessage.insert(_message);
+      const messageId = res.insertId;
+      // message sync
+      //  :userIdFrom
+      const isSame = userIdTo === userIdFrom;
+      await this.modelMessageSync.insert({
+        messageId,
+        userId: userIdFrom,
+        messageDirection: isSame ? 0 : 1, // self/send
+        messageRead: 1,
+      });
+      //  :userIdTo
+      if (!isSame) {
+        await this.modelMessageSync.insert({
+          messageId,
+          userId: userIdTo,
+          messageDirection: 2, // receive
+          messageRead: 0,
+        });
+      }
+
+      // ok
+      return {
+        id: messageId,
+      };
     }
 
-    _combineSessionId(userIdTo, userIdFrom) {
-
+    // combine sessionid
+    _combineSessionId(userIdFrom, userIdTo) {
+      if (userIdFrom === userIdTo) return userIdFrom;
+      return `${userIdFrom > userIdTo ? userIdFrom : userIdTo}:${userIdFrom < userIdTo ? userIdFrom : userIdTo}`;
     }
+
 
   }
   return IO;

@@ -69,7 +69,7 @@ module.exports = ctx => {
       for (const relativeName in ctx.app.meta.modules) {
         const module = ctx.app.meta.modules[relativeName];
         if (module.main.meta && module.main.meta.socketio && module.main.meta.socketio.messages) {
-          const res = this._prepareMessageClassesModule(module, module.main.meta.base.messages);
+          const res = this._prepareMessageClassesModule(module, module.main.meta.socketio.messages);
           if (Object.keys(res).length > 0) {
             messageClasses[relativeName] = res;
           }
