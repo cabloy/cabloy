@@ -70,6 +70,7 @@ module.exports = appInfo => {
     },
     startup: {
       path: 'startup/startupQueue',
+      // concurrency: true,
     },
   };
 
