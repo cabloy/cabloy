@@ -32,7 +32,7 @@ module.exports = app => {
     async queueProcess() {
       const res = await this.service.io.queueProcess({
         path: this.ctx.request.body.path,
-        scene: this.ctx.request.body.scene,
+        options: this.ctx.request.body.options,
         message: this.ctx.request.body.message,
         messageSyncs: this.ctx.request.body.messageSyncs,
         messageClass: this.ctx.request.body.messageClass,

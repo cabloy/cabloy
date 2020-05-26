@@ -83,11 +83,11 @@ module.exports = ctx => {
       const messageScene = (options && options.scene) || '';
       // messageClass
       messageClass = await this.messageClass.get(messageClass);
-      const _messageClass = this.messageClass.messageClass(messageClass);
+      const messageClassBase = this.messageClass.messageClass(messageClass);
       // onPublish by provider
       let info;
-      if (_messageClass.callbacks.onPublish) {
-        info = await _messageClass.callbacks.onPublish({ ctx, path, message, options, user });
+      if (messageClassBase.callbacks.onPublish) {
+        info = await messageClassBase.callbacks.onPublish({ io: this, ctx, path, message, options, user });
       }
       // userId
       const userIdFrom = user.id;
@@ -163,7 +163,7 @@ module.exports = ctx => {
         queueName: 'process',
         data: {
           path,
-          scene: messageScene,
+          options,
           message: _message,
           messageSyncs,
           messageClass,
@@ -176,9 +176,13 @@ module.exports = ctx => {
       };
     }
 
-    async queueProcess({ path, scene, message, messageSyncs, messageClass }) {
+    async queueProcess({ path, options, message, messageSyncs, messageClass }) {
       console.log('----queueProcess:', message.id);
-
+      const messageClassBase = this.messageClass.messageClass(messageClass);
+      if (!messageClassBase.callbacks.onProcess) return;
+      for (const messageSync of messageSyncs) {
+        await messageClassBase.callbacks.onProcess({ io: this, path, options, message, messageSync, messageClass });
+      }
     }
 
     // combine sessionId
