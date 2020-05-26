@@ -12,8 +12,11 @@ module.exports = app => {
     { method: 'post', path: 'subscribe', controller: io, middlewares: 'io', meta: { auth: { user: true } } },
     { method: 'post', path: 'unsubscribe', controller: io, middlewares: 'io', meta: { auth: { user: true } } },
     { method: 'post', path: 'publish', controller: io, middlewares: 'io', meta: { auth: { user: true } } },
+    { method: 'post', path: 'queueProcess', controller: io, middlewares: 'inner,io',
+      meta: { auth: { enable: false } },
+    },
     // messageClass
-    { method: 'post', path: 'messageClass/register', controller: messageClass, middlewares: 'inner,io',
+    { method: 'post', path: 'messageClass/queueRegister', controller: messageClass, middlewares: 'inner,io',
       meta: { auth: { enable: false } },
     },
     { method: 'post', path: 'messageClass/messageClass', controller: messageClass, middlewares: 'io', meta: { auth: { user: true } } },

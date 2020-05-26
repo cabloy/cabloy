@@ -19,7 +19,11 @@ module.exports = appInfo => {
   // queues
   config.queues = {
     registerMessageClass: {
-      path: 'messageClass/register',
+      path: 'messageClass/queueRegister',
+    },
+    process: {
+      path: 'queueProcess',
+      concurrency: true,
     },
   };
 

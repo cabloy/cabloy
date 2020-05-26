@@ -3,7 +3,7 @@ const modelMessageSyncFn = require('../../../model/messageSync.js');
 const MessageClassFn = require('./messageClass.js');
 
 module.exports = ctx => {
-  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class IO {
 
     constructor() {
@@ -80,19 +80,20 @@ module.exports = ctx => {
 
     async publish({ path, message, messageClass, options, user }) {
       // options
-      const messageScene = (options && options.scene) || null;
+      const messageScene = (options && options.scene) || '';
       // messageClass
       messageClass = await this.messageClass.get(messageClass);
       const _messageClass = this.messageClass.messageClass(messageClass);
       // onPublish by provider
-      let sessionId;
+      let info;
       if (_messageClass.callbacks.onPublish) {
-        sessionId = await _messageClass.callbacks.onPublish({ ctx, path, message, options, user });
+        info = await _messageClass.callbacks.onPublish({ ctx, path, message, options, user });
       }
       // userId
       const userIdFrom = user.id;
-      const userIdTo = message.userIdTo || userIdFrom;
+      const userIdTo = message.userIdTo || 0;
       // sessionId
+      let sessionId = info && info.sessionId;
       if (!sessionId) {
         sessionId = message.messageGroup ? userIdTo : this._combineSessionId(userIdFrom, userIdTo);
       }
@@ -106,28 +107,68 @@ module.exports = ctx => {
         userIdTo,
         userIdFrom,
         sessionId,
-        content: JSON.stringify(message.content),
+        content: JSON.stringify(message.content), // should use string for db/queue
       };
       const res = await this.modelMessage.insert(_message);
       const messageId = res.insertId;
+      _message.id = messageId;
       // message sync
+      const messageSyncs = [];
       //  :userIdFrom
       const isSame = userIdTo === userIdFrom;
-      await this.modelMessageSync.insert({
+      messageSyncs.push({
         messageId,
         userId: userIdFrom,
         messageDirection: isSame ? 0 : 1, // self/send
         messageRead: 1,
       });
       //  :userIdTo
-      if (!isSame) {
-        await this.modelMessageSync.insert({
-          messageId,
-          userId: userIdTo,
-          messageDirection: 2, // receive
-          messageRead: 0,
-        });
+      if (!message.messageGroup) {
+        // single chat
+        if (!isSame) {
+          messageSyncs.push({
+            messageId,
+            userId: userIdTo,
+            messageDirection: 2, // receive
+            messageRead: 0,
+          });
+        }
+      } else {
+        // group chat
+        const groupUsers = info && info.groupUsers;
+        if (groupUsers) {
+          for (const groupUser of groupUsers) {
+            const _userIdTo = groupUser.userId;
+            if (_userIdTo !== userIdFrom) {
+              messageSyncs.push({
+                messageId,
+                userId: _userIdTo,
+                messageDirection: 2, // receive
+                messageRead: 0,
+              });
+            }
+          }
+        }
       }
+      //  :save
+      for (const messageSync of messageSyncs) {
+        const res = await this.modelMessageSync.insert(messageSync);
+        messageSync.messageSyncId = res.insertId;
+      }
+
+      // to queue
+      ctx.app.meta.queue.push({
+        subdomain: ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'process',
+        data: {
+          path,
+          scene: messageScene,
+          message: _message,
+          messageSyncs,
+          messageClass,
+        },
+      });
 
       // ok
       return {
@@ -135,12 +176,16 @@ module.exports = ctx => {
       };
     }
 
-    // combine sessionid
+    async queueProcess({ path, scene, message, messageSyncs, messageClass }) {
+      console.log('----queueProcess:', message.id);
+
+    }
+
+    // combine sessionId
     _combineSessionId(userIdFrom, userIdTo) {
       if (userIdFrom === userIdTo) return userIdFrom;
       return `${userIdFrom > userIdTo ? userIdFrom : userIdTo}:${userIdFrom < userIdTo ? userIdFrom : userIdTo}`;
     }
-
 
   }
   return IO;

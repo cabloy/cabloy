@@ -1,8 +1,8 @@
 module.exports = app => {
   class MessageClassController extends app.Controller {
 
-    async register() {
-      const res = await this.ctx.service.messageClass.register({
+    async queueRegister() {
+      const res = await this.ctx.service.messageClass.queueRegister({
         module: this.ctx.request.body.module,
         messageClassName: this.ctx.request.body.messageClassName,
       });

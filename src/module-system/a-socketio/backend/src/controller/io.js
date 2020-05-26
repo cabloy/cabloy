@@ -29,6 +29,17 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async queueProcess() {
+      const res = await this.service.io.queueProcess({
+        path: this.ctx.request.body.path,
+        scene: this.ctx.request.body.scene,
+        message: this.ctx.request.body.message,
+        messageSyncs: this.ctx.request.body.messageSyncs,
+        messageClass: this.ctx.request.body.messageClass,
+      });
+      this.ctx.success(res);
+    }
+
   }
   return IOController;
 };

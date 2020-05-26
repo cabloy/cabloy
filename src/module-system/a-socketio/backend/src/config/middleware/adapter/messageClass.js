@@ -35,7 +35,7 @@ module.exports = ctx => {
       });
     }
 
-    async register({ module, messageClassName }) {
+    async queueRegister({ module, messageClassName }) {
       // get
       const res = await this.modelMessageClass.get({ module, messageClassName });
       if (res) return res;
