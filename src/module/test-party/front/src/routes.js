@@ -17,7 +17,7 @@ export default [
   { path: 'kitchen-sink/about', component: loadKitchenSink('about') },
   { path: 'kitchen-sink/guide', component: loadKitchenSink('guide') },
   { path: 'kitchen-sink/fileUpload', component: loadKitchenSink('fileUpload') },
-  { path: 'kitchen-sink/progress', component: loadKitchenSink('progress') },
+  { path: 'kitchen-sink/progress', component: loadKitchenSink('progress'), meta: { auth: true } },
   { path: 'kitchen-sink/settings', component: loadKitchenSink('settings') },
   { path: 'kitchen-sink/view/sizeTarget', component: loadKitchenSink('view/sizeTarget') },
   { path: 'kitchen-sink/view/sizeSmall', component: loadKitchenSink('view/sizeSmall') },
@@ -43,7 +43,7 @@ export default [
   { path: 'kitchen-sink/monkey/monkeyee', component: loadKitchenSink('monkey/monkeyee') },
   { path: 'kitchen-sink/dragdrop/move', component: loadKitchenSink('dragdrop/dragdropMove') },
   { path: 'kitchen-sink/dragdrop/resize', component: loadKitchenSink('dragdrop/dragdropResize') },
-  { path: 'kitchen-sink/socketio', component: loadKitchenSink('socketio') },
+  { path: 'kitchen-sink/socketio', component: loadKitchenSink('socketio'), meta: { auth: true } },
   // framework7
   { path: 'kitchen-sink/framework7/index', component: loadKitchenSinkFramework7('index') },
   { path: 'kitchen-sink/framework7/about', component: loadKitchenSinkFramework7('about') },
