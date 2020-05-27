@@ -23,9 +23,8 @@ async function onProcess({ io, path, options, message, messageSync, messageClass
     };
     return await io.publish({ path, message: _message, messageClass, options, user: { id: 0 } });
   }
-  // send by socket
-
-
+  // emit
+  await io.emit({ path, options, message, messageSync, messageClass });
 }
 
 module.exports = app => {

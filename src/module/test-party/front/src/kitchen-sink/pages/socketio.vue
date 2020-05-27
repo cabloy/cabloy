@@ -13,6 +13,7 @@
   </eb-page>
 </template>
 <script>
+const _subscribePath = '/test/party/test';
 export default {
   data() {
     return {
@@ -48,7 +49,7 @@ export default {
     this.$meta.util.performAction({ ctx: this, action }).then(io => {
       this.io = io;
       this.io.subscribe(
-        '/a/base/sss',
+        _subscribePath,
         this.onMessage.bind(this),
         this.onSubscribed.bind(this), { scene: true },
       );
@@ -97,14 +98,14 @@ export default {
       }
       // send
       this.$api.post('/a/socketio/publish', {
-        path: '/test/party/test',
+        path: _subscribePath,
         message,
         messageClass: {
           module: 'test-party',
           messageClassName: 'test',
         },
         options: {
-          scene: null,
+          scene: true,
         },
       }).then(data => {
         message.id = data.id;
