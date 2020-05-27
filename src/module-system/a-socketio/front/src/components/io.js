@@ -20,9 +20,6 @@ const _io = {
   subscribe(path, cbMessage, cbSubscribed, options) {
     // options
     options = options || {};
-    if (options.scene === true) {
-      options.scene = Vue.prototype.$meta.config.scene;
-    }
     // socket
     const _socket = this._getSocket();
     if (!_socket.connected) {
