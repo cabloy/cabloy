@@ -180,8 +180,12 @@ const _io = {
       this._socket = ioc(url, { autoConnect: false });
       this._socket.on('connect', this._onConnect.bind(this));
       this._socket.on('disconnect', this._onDisconnect.bind(this));
+      this._socket.on('message', this._onMessage.bind(this));
     }
     return this._socket;
+  },
+  _onMessage(data) {
+    console.log(data);
   },
   _onConnect() {
     this._subscribesWaiting = {};

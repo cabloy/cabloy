@@ -2,6 +2,8 @@ const modelMessageFn = require('../../../model/message.js');
 const modelMessageSyncFn = require('../../../model/messageSync.js');
 const MessageClassFn = require('./messageClass.js');
 
+const SOCKETSONLINE = Symbol.for('APP#__SOCKETSONLINE');
+
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class IO {
@@ -31,6 +33,16 @@ module.exports = ctx => {
     get redis() {
       if (!this._redis) this._redis = ctx.app.redis.get('io') || ctx.app.redis.get('cache');
       return this._redis;
+    }
+
+    _registerSocket(socketId, socket) {
+      const socketsOnline = ctx.app.geto(SOCKETSONLINE);
+      socketsOnline[socketId] = socket;
+    }
+
+    _unRegisterSocket(socketId) {
+      const socketsOnline = ctx.app.geto(SOCKETSONLINE);
+      delete socketsOnline[socketId];
     }
 
     // subcribe
@@ -189,7 +201,7 @@ module.exports = ctx => {
     // offline: return false
     //    hash key: userId:path
     //    hash value: scene -> workerId:socketId
-    async emit({ path, options, message, messageSync, messageClass }) {
+    async emit({ path, options, message, messageSync/* , messageClass*/ }) {
       // userId
       const userId = messageSync.userId;
       if (!userId) return true;
@@ -201,12 +213,19 @@ module.exports = ctx => {
         // ignore self
         if (message.userIdFrom === userId) return true;
         // get hash value
-        console.log('---------tobesend:', key, messageScene);
         const value = await this.redis.hget(key, messageScene);
         if (!value) return false; // offline
-        console.log('---------tobesend:', value);
+        // broadcast
+        const [ workerId, socketId ] = value.split(':');
+        ctx.app.meta.broadcast.emit({
+          subdomain: ctx.subdomain,
+          module: moduleInfo.relativeName,
+          broadcastName: 'socketEmit',
+          data: { path, message, workerId, socketId },
+        });
         return true;
       }
+      // scene
 
 
     }

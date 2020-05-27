@@ -6,7 +6,9 @@ module.exports = (options, app) => {
     const user = ctx.session.passport.user.op;
     if (user.anonymous) return ctx.throw(401);
     const socketId = ctx.socket.id;
+    io._registerSocket(socketId, ctx.socket);
     await next();
+    io._unRegisterSocket(socketId);
     // execute when disconnect
     await io.unsubscribeWhenDisconnect({ user, socketId });
   };
