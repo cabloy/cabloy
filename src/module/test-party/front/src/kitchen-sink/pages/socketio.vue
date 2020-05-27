@@ -14,11 +14,13 @@
 </template>
 <script>
 const _subscribePath = '/test/party/test';
+import Vue from 'vue';
 export default {
   data() {
     return {
       io: null,
       messagesData: [],
+      messageScene: '', // Vue.prototype.$meta.config.scene,
     }
   },
   computed: {
@@ -51,7 +53,7 @@ export default {
       this.io.subscribe(
         _subscribePath,
         this.onMessage.bind(this),
-        this.onSubscribed.bind(this), { scene: true },
+        this.onSubscribed.bind(this), { scene: this.messageScene },
       );
     });
   },
@@ -105,7 +107,7 @@ export default {
           messageClassName: 'test',
         },
         options: {
-          scene: true,
+          scene: this.messageScene,
         },
       }).then(data => {
         message.id = data.id;
