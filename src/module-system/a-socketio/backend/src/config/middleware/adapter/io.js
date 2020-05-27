@@ -54,7 +54,6 @@ module.exports = ctx => {
         const scene = item.scene || '';
         const key = `${user.id}:${path}`;
         const value = `${ctx.app.meta.workerId}:${socketId}`;
-        console.log('----subscribe:', key, scene, value);
         await this.redis.hset(key, scene, value);
       }
     }
@@ -190,7 +189,6 @@ module.exports = ctx => {
     }
 
     async queueProcess({ path, options, message, messageSyncs, messageClass }) {
-      console.log('----queueProcess:', message.id);
       const messageClassBase = this.messageClass.messageClass(messageClass);
       if (!messageClassBase.callbacks.onProcess) return;
       for (const messageSync of messageSyncs) {
@@ -239,7 +237,6 @@ module.exports = ctx => {
     }
 
     async _emitScene({ path, message, messageSync, messageScene }) {
-      console.log('-----_emitScene:', messageSync.messageSyncId, messageSync.userId);
       // userId
       const userId = messageSync.userId;
       const isSender = message.userIdFrom === userId;

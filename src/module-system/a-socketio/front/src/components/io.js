@@ -185,7 +185,14 @@ const _io = {
     return this._socket;
   },
   _onMessage(data) {
-    console.log(data);
+    const _itemPath = this._subscribesPath[data.path];
+    if (!_itemPath) return;
+    for (const subscribeId in _itemPath.items) {
+      const _subscribe = this._subscribesAll[subscribeId];
+      if (_subscribe && _subscribe.cbMessage) {
+        _subscribe.cbMessage({ message: data.message });
+      }
+    }
   },
   _onConnect() {
     this._subscribesWaiting = {};
