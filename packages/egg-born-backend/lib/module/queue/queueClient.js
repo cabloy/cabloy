@@ -73,9 +73,19 @@ module.exports = function(app) {
           throw err;
         }
       }, _workerOptions);
+
       _worker.worker.on('failed', (job, err) => {
         app.logger.error(err);
       });
+
+      _worker.worker.on('error', err => {
+        if (err.message && err.message.indexOf('Missing lock for job') > -1) {
+          _worker.worker.run().catch(error => {
+            console.error(error);
+          });
+        }
+      });
+
       // ok
       return _worker;
     }
