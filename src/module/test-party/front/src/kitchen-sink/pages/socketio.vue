@@ -22,7 +22,7 @@ export default {
       messagesData: [],
       messageScene: Vue.prototype.$meta.config.scene,
       messageOffset: -1,
-      messageOffsetPending: 0,
+      messageOffsetPending: -1,
       messageOfflineFetching: false,
       messageClass: {
         module: 'test-party',
@@ -106,8 +106,48 @@ export default {
           messageClass: this.messageClass,
         }).then(data => {
           this.messageOffset = data.offset;
+          this._offlineFetch();
+        }).catch(err => {
+          this._offlineFetchStop();
         });
+      } else {
+        this._offlineFetch();
       }
+    },
+    _offlineFetch() {
+      this.$api.post('/a/socketio/offline/fetch', {
+        messageClass: this.messageClass,
+        options: {
+          offset: this.messageOffset,
+        },
+      }).then(data => {
+        // push
+        const list = data.list;
+        if (list.length > 0) {
+          // offset
+          this.messageOffset = list[list.length - 1].id;
+          for (const message of list) {
+            message.content = JSON.parse(message.content);
+            this.messagesData.push({
+              type: message.userIdTo === this.user.id ? 'received' : 'sent',
+              message,
+              author: message.userIdTo === this.user.id ? this.userAuthor : this.userSystem,
+            });
+          }
+        }
+        // next
+        if (data.finished) {
+          this._offlineFetchStop();
+        } else {
+          this._offlineFetch();
+        }
+      }).catch(err => {
+        this._offlineFetchStop();
+      });
+    },
+    _offlineFetchStop() {
+      this.messageOfflineFetching = false;
+      this.setMessageOffset(this.messageOffsetPending);
     },
     isFirstMessage(item, index) {
       const previousItem = this.messagesData[index - 1];
