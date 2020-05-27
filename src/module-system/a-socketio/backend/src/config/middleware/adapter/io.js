@@ -194,7 +194,13 @@ module.exports = ctx => {
       const messageClassBase = this.messageClass.messageClass(messageClass);
       if (!messageClassBase.callbacks.onProcess) return;
       for (const messageSync of messageSyncs) {
-        await messageClassBase.callbacks.onProcess({ io: this, path, options, message, messageSync, messageClass });
+        if (messageClassBase.callbacks.onProcess) {
+          // custom
+          await messageClassBase.callbacks.onProcess({ io: this, path, options, message, messageSync, messageClass });
+        } else {
+          // default
+          await this.emit({ path, options, message, messageSync, messageClass });
+        }
       }
     }
 
@@ -207,27 +213,70 @@ module.exports = ctx => {
       if (!userId) return true;
       // options
       const messageScene = (options && options.scene) || '';
-      const key = `${userId}:${path}`;
-      // not check scene
+      // no scene
       if (!messageScene) {
-        // ignore self
-        if (message.userIdFrom === userId) return true;
-        // get hash value
-        const value = await this.redis.hget(key, messageScene);
-        if (!value) return false; // offline
-        // broadcast
-        const [ workerId, socketId ] = value.split(':');
-        ctx.app.meta.broadcast.emit({
-          subdomain: ctx.subdomain,
-          module: moduleInfo.relativeName,
-          broadcastName: 'socketEmit',
-          data: { path, message, workerId, socketId },
-        });
-        return true;
+        return await this._emitNoScene({ path, message, messageSync, messageScene });
       }
       // scene
+      return await this._emitScene({ path, message, messageSync, messageScene });
+    }
 
+    async _emitNoScene({ path, message, messageSync, messageScene }) {
+      // userId
+      const userId = messageSync.userId;
+      const isSender = message.userIdFrom === userId;
+      // ignore sender
+      if (isSender) return true;
+      // get hash value
+      const key = `${userId}:${path}`;
+      const value = await this.redis.hget(key, messageScene);
+      if (!value) return false; // offline
+      // emit
+      const [ workerId, socketId ] = value.split(':');
+      this._emitSocket({ path, message, workerId, socketId });
+      // done
+      return true;
+    }
 
+    async _emitScene({ path, message, messageSync, messageScene }) {
+      console.log('-----_emitScene:', messageSync.messageSyncId, messageSync.userId);
+      // userId
+      const userId = messageSync.userId;
+      const isSender = message.userIdFrom === userId;
+      // get hash value
+      const key = `${userId}:${path}`;
+      const values = await this.redis.hgetall(key);
+      if (!values) {
+        // offline
+        //  only support offline-notification for receiver
+        return !!isSender;
+      }
+      let bSent = false;
+      for (const field in values) {
+        if (!isSender || field !== messageScene) {
+          bSent = true;
+          const value = values[field];
+          const [ workerId, socketId ] = value.split(':');
+          this._emitSocket({ path, message, workerId, socketId });
+        }
+      }
+      if (!bSent) {
+        // offline
+        //  only support offline-notification for receiver
+        return !!isSender;
+      }
+      // done
+      return true;
+    }
+
+    _emitSocket({ path, message, workerId, socketId }) {
+      // broadcast
+      ctx.app.meta.broadcast.emit({
+        subdomain: ctx.subdomain,
+        module: moduleInfo.relativeName,
+        broadcastName: 'socketEmit',
+        data: { path, message, workerId, socketId },
+      });
     }
 
     // combine sessionId
