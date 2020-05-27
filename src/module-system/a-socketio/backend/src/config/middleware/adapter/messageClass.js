@@ -4,7 +4,7 @@ const _cacheAtomClasses = {};
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class IO {
+  class MessageClass {
 
     constructor() {
       this._modelMessageClass = null;
@@ -92,5 +92,5 @@ module.exports = ctx => {
 
 
   }
-  return IO;
+  return MessageClass;
 };

@@ -14,6 +14,13 @@ module.exports = app => {
       schemas: {
       },
     },
+    index: {
+      indexes: {
+        aSocketIOMessageClass: 'createdAt,updatedAt,module+messageClassName',
+        aSocketIOMessage: 'createdAt,updatedAt,messageClassId,messageFilter,sessionId',
+        aSocketIOMessageSync: 'createdAt,updatedAt,messageId,userId,messageRead',
+      },
+    },
   };
   return meta;
 };

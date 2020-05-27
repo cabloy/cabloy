@@ -1,6 +1,7 @@
 const modelMessageFn = require('../../../model/message.js');
 const modelMessageSyncFn = require('../../../model/messageSync.js');
 const MessageClassFn = require('./messageClass.js');
+const OfflineFn = require('./offline.js');
 
 const SOCKETSONLINE = Symbol.for('APP#__SOCKETSONLINE');
 
@@ -12,6 +13,7 @@ module.exports = ctx => {
       this._modelMessage = null;
       this._modelMessageSync = null;
       this._messageClass = null;
+      this._offline = null;
       this._redis = null;
     }
 
@@ -28,6 +30,11 @@ module.exports = ctx => {
     get messageClass() {
       if (!this._messageClass) this._messageClass = new (MessageClassFn(ctx))();
       return this._messageClass;
+    }
+
+    get offline() {
+      if (!this._offline) this._offline = new (OfflineFn(ctx))();
+      return this._offline;
     }
 
     get redis() {

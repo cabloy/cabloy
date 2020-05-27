@@ -1,6 +1,7 @@
 const version = require('./controller/version.js');
 const io = require('./controller/io.js');
 const messageClass = require('./controller/messageClass.js');
+const offline = require('./controller/offline.js');
 
 module.exports = app => {
   const routes = [
@@ -20,7 +21,8 @@ module.exports = app => {
       meta: { auth: { enable: false } },
     },
     { method: 'post', path: 'messageClass/messageClass', controller: messageClass, middlewares: 'io', meta: { auth: { user: true } } },
-
+    // offline
+    { method: 'post', path: 'offline/offset', controller: offline, middlewares: 'io', meta: { auth: { user: true } } },
   ];
   return routes;
 };

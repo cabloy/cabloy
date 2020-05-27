@@ -31,7 +31,7 @@ module.exports = app => {
             iid int(11) DEFAULT '0',
             messageClassId int(11) DEFAULT '0',
             messageType int(11) DEFAULT '0',
-            messageFilter int(11) DEFAULT '0',
+            messageFilter varchar(255) DEFAULT NULL,
             messageGroup int(11) DEFAULT '0',
             messageScene varchar(50) DEFAULT NULL,
             userIdTo int(11) DEFAULT '0',
