@@ -20,6 +20,8 @@ module.exports = function(app) {
       this.sub.on('message', (channel, info) => {
         this._performTask(JSON.parse(info)).then(() => {
           // do nothing
+        }).catch(err => {
+          app.logger.error(err);
         });
       });
     }
@@ -38,6 +40,11 @@ module.exports = function(app) {
       }
       // broadcast config
       const broadcastConfig = app.meta.broadcasts[`${module}:${broadcastName}`];
+      // callback
+      if (broadcastConfig.config.callback) {
+        const _callback = broadcastConfig.config.callback(app);
+        return await _callback({ locale, subdomain, data });
+      }
       // url
       let url = util.combineApiPath(module, broadcastConfig.config.path);
       // queries
