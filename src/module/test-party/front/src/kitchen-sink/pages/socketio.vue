@@ -21,6 +21,13 @@ export default {
       io: null,
       messagesData: [],
       messageScene: Vue.prototype.$meta.config.scene,
+      messageOffset: -1,
+      messageOffsetPending: 0,
+      messageOfflineFetching: false,
+      messageClass: {
+        module: 'test-party',
+        messageClassName: 'test',
+      },
     }
   },
   computed: {
@@ -72,6 +79,16 @@ export default {
     this.messages = this.$refs.messages.f7Messages;
   },
   methods: {
+    setMessageOffset(offset) {
+      if (this.messageOfflineFetching) {
+        if (offset > this.messageOffsetPending) this.messageOffsetPending = offset;
+        return;
+      }
+      if (offset > this.messageOffset) {
+        this.messageOffset = offset;
+        console.log('---current message offset:', this.messageOffset);
+      }
+    },
     onMessage({ message }) {
       message.content = JSON.parse(message.content);
       this.messagesData.push({
@@ -79,8 +96,19 @@ export default {
         message,
         author: this.userSystem,
       });
+      this.setMessageOffset(message.id);
     },
-    onSubscribed() {},
+    onSubscribed() {
+      this.messageOfflineFetching = true;
+      // get offset
+      if (this.messageOffset === -1) {
+        this.$api.post('/a/socketio/offline/offset', {
+          messageClass: this.messageClass,
+        }).then(data => {
+          this.messageOffset = data.offset;
+        });
+      }
+    },
     isFirstMessage(item, index) {
       const previousItem = this.messagesData[index - 1];
       if (item.isTitle) return false;
@@ -125,15 +153,13 @@ export default {
       this.$api.post('/a/socketio/publish', {
         path: _subscribePath,
         message,
-        messageClass: {
-          module: 'test-party',
-          messageClassName: 'test',
-        },
+        messageClass: this.messageClass,
         options: {
           scene: this.messageScene,
         },
       }).then(data => {
         message.id = data.id;
+        this.setMessageOffset(message.id);
       });
 
     }
