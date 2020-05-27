@@ -6,7 +6,7 @@
     </f7-messagebar>
     <f7-messages ref="messages">
       <f7-messages-title>{{new Date()}}</f7-messages-title>
-      <f7-message v-for="(item,index) in messagesData" :key="index" :type="item.message.type" :name="item.author.name" :avatar="item.author.avatar" :first="isFirstMessage(item, index)" :last="isLastMessage(item, index)" :tail="isTailMessage(item, index)">
+      <f7-message v-for="(item,index) in messagesData" :key="index" :type="item.type" :name="item.author.name" :avatar="item.author.avatar" :first="isFirstMessage(item, index)" :last="isLastMessage(item, index)" :tail="isTailMessage(item, index)">
         <span slot="text" v-if="item.message.content.text" v-text="`${item.message.id || ''}:${item.message.content.text}`"></span>
       </f7-message>
     </f7-messages>
@@ -35,10 +35,20 @@ export default {
       }
       return this.$meta.util.combineImageUrl(avatar, 48);
     },
-    author() {
+    userAuthor() {
       return {
+        userId: this.user.id,
         name: this.user.userName,
         avatar: this.userAvatar,
+      };
+    },
+    userSystem() {
+      const configBase = this.$meta.config.modules['a-base'];
+      const avatar = this.$meta.util.combineImageUrl(configBase.user.avatar.default, 48);
+      return {
+        userId: 0,
+        name: 'System',
+        avatar,
       };
     },
   },
@@ -62,18 +72,25 @@ export default {
     this.messages = this.$refs.messages.f7Messages;
   },
   methods: {
-    onMessage() {},
+    onMessage({ message }) {
+      message.content = JSON.parse(message.content);
+      this.messagesData.push({
+        type: message.userIdTo === this.user.id ? 'received' : 'sent',
+        message,
+        author: this.userSystem,
+      });
+    },
     onSubscribed() {},
     isFirstMessage(item, index) {
       const previousItem = this.messagesData[index - 1];
-      if (item.message.isTitle) return false;
-      if (!previousItem || previousItem.message.type !== item.message.type || previousItem.message.name !== item.message.name) return true;
+      if (item.isTitle) return false;
+      if (!previousItem || previousItem.type !== item.type || previousItem.author.userId !== item.author.userId) return true;
       return false;
     },
     isLastMessage(item, index) {
       const nextItem = this.messagesData[index + 1];
-      if (item.message.isTitle) return false;
-      if (!nextItem || nextItem.message.type !== item.message.type || nextItem.message.name !== item.message.name) return true;
+      if (item.isTitle) return false;
+      if (!nextItem || nextItem.type !== item.type || nextItem.author.userId !== item.author.userId) return true;
       return false;
     },
     isTailMessage(item, index) {
@@ -84,13 +101,19 @@ export default {
       const message = {
         id: null,
         messageType: 1, // text
+        messageFilter: 0,
+        messageGroup: 0,
+        messageScene: this.messageScene,
+        userIdTo: 0,
+        userIdFrom: this.user.id,
         content: {
           text: value,
         }
       };
       this.messagesData.push({
+        type: 'sent',
         message,
-        author: this.author,
+        author: this.userAuthor,
       });
       // clear
       clear();
