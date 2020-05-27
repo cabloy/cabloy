@@ -23,6 +23,8 @@ module.exports = app => {
     { method: 'post', path: 'messageClass/messageClass', controller: messageClass, middlewares: 'io', meta: { auth: { user: true } } },
     // offline
     { method: 'post', path: 'offline/offset', controller: offline, middlewares: 'io', meta: { auth: { user: true } } },
+    { method: 'post', path: 'offline/fetch', controller: offline, middlewares: 'io', meta: { auth: { user: true } } },
+    { method: 'post', path: 'offline/count', controller: offline, middlewares: 'io', meta: { auth: { user: true } } },
   ];
   return routes;
 };
