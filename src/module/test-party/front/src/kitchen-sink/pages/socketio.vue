@@ -20,7 +20,7 @@ export default {
     return {
       io: null,
       messagesData: [],
-      messageScene: '', // Vue.prototype.$meta.config.scene,
+      messageScene: Vue.prototype.$meta.config.scene,
     }
   },
   computed: {
