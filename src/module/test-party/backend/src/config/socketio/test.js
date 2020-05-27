@@ -6,10 +6,8 @@ async function onPublish({ io, ctx, path, message, options, user }) {
 async function onProcess({ io, path, options, message, messageSync, messageClass }) {
   // options
   const messageScene = (options && options.scene) || '';
-  // ignore self
-  if (message.userIdFrom === messageSync.userId) return;
   // send back
-  if (messageSync.userId === 0) {
+  if (messageSync.messageDirection === 2 && messageSync.userId === 0) {
     const content = JSON.parse(message.content);
     const _message = {
       messageType: message.messageType,
