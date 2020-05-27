@@ -42,6 +42,7 @@ module.exports = ctx => {
         const scene = item.scene || '';
         const key = `${user.id}:${path}`;
         const value = `${ctx.app.meta.workerId}:${socketId}`;
+        console.log('----subscribe:', key, scene, value);
         await this.redis.hset(key, scene, value);
       }
     }
@@ -183,6 +184,31 @@ module.exports = ctx => {
       for (const messageSync of messageSyncs) {
         await messageClassBase.callbacks.onProcess({ io: this, path, options, message, messageSync, messageClass });
       }
+    }
+
+    // offline: return false
+    //    hash key: userId:path
+    //    hash value: scene -> workerId:socketId
+    async emit({ path, options, message, messageSync, messageClass }) {
+      // userId
+      const userId = messageSync.userId;
+      if (!userId) return true;
+      // options
+      const messageScene = (options && options.scene) || '';
+      const key = `${userId}:${path}`;
+      // not check scene
+      if (!messageScene) {
+        // ignore self
+        if (message.userIdFrom === userId) return true;
+        // get hash value
+        console.log('---------tobesend:', key, messageScene);
+        const value = await this.redis.hget(key, messageScene);
+        if (!value) return false; // offline
+        console.log('---------tobesend:', value);
+        return true;
+      }
+
+
     }
 
     // combine sessionId
