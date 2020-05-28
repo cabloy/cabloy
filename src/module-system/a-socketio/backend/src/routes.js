@@ -1,7 +1,7 @@
 const version = require('./controller/version.js');
 const io = require('./controller/io.js');
 const messageClass = require('./controller/messageClass.js');
-const offline = require('./controller/offline.js');
+const message = require('./controller/message.js');
 
 module.exports = app => {
   const routes = [
@@ -21,10 +21,12 @@ module.exports = app => {
       meta: { auth: { enable: false } },
     },
     { method: 'post', path: 'messageClass/messageClass', controller: messageClass, middlewares: 'io', meta: { auth: { user: true } } },
-    // offline
-    { method: 'post', path: 'offline/offset', controller: offline, middlewares: 'io', meta: { auth: { user: true } } },
-    { method: 'post', path: 'offline/fetch', controller: offline, middlewares: 'io', meta: { auth: { user: true } } },
-    { method: 'post', path: 'offline/count', controller: offline, middlewares: 'io', meta: { auth: { user: true } } },
+    // message
+    { method: 'post', path: 'message/offset', controller: message, middlewares: 'io', meta: { auth: { user: true } } },
+    { method: 'post', path: 'message/select', controller: message, middlewares: 'io', meta: { auth: { user: true } } },
+    { method: 'post', path: 'message/count', controller: message, middlewares: 'io', meta: { auth: { user: true } } },
+    { method: 'post', path: 'message/setRead', controller: message, middlewares: 'io', meta: { auth: { user: true } } },
+    { method: 'post', path: 'message/delete', controller: message, middlewares: 'io', meta: { auth: { user: true } } },
   ];
   return routes;
 };

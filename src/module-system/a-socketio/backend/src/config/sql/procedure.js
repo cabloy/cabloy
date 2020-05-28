@@ -34,11 +34,39 @@ module.exports = ctx => {
         `select ${_selectFields} from aSocketIOMessageView a
           ${_where}
            (
-             a.deleted=0 and a.iid=${iid}
+             a.deleted=0 and a.syncDeleted=0 and a.iid=${iid}
              ${_offsetWhere}
            )
           ${count ? '' : _orders}
           ${count ? '' : _limit}
+        `;
+
+      // ok
+      return _sql;
+    }
+
+    setRead({ iid, messageIds, userId }) {
+
+      const _messageIds = messageIds.map(item => parseInt(item)).join(',');
+
+      // sql
+      const _sql =
+        `update aSocketIOMessageSync set messageRead=1
+          where iid=${iid} and userId=${userId} and messageId in (${_messageIds})
+        `;
+
+      // ok
+      return _sql;
+    }
+
+    delete({ iid, messageIds, userId }) {
+
+      const _messageIds = messageIds.map(item => parseInt(item)).join(',');
+
+      // sql
+      const _sql =
+        `update aSocketIOMessageSync set deleted=1
+          where iid=${iid} and userId=${userId} and messageId in (${_messageIds})
         `;
 
       // ok

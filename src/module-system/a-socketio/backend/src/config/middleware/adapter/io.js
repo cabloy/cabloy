@@ -1,7 +1,5 @@
-const modelMessageFn = require('../../../model/message.js');
-const modelMessageSyncFn = require('../../../model/messageSync.js');
 const MessageClassFn = require('./messageClass.js');
-const OfflineFn = require('./offline.js');
+const MessageFn = require('./message.js');
 
 const SOCKETSONLINE = Symbol.for('APP#__SOCKETSONLINE');
 
@@ -10,21 +8,9 @@ module.exports = ctx => {
   class IO {
 
     constructor() {
-      this._modelMessage = null;
-      this._modelMessageSync = null;
       this._messageClass = null;
-      this._offline = null;
+      this._message = null;
       this._redis = null;
-    }
-
-    get modelMessage() {
-      if (!this._modelMessage) this._modelMessage = new (modelMessageFn(ctx.app))(ctx);
-      return this._modelMessage;
-    }
-
-    get modelMessageSync() {
-      if (!this._modelMessageSync) this._modelMessageSync = new (modelMessageSyncFn(ctx.app))(ctx);
-      return this._modelMessageSync;
     }
 
     get messageClass() {
@@ -32,9 +18,9 @@ module.exports = ctx => {
       return this._messageClass;
     }
 
-    get offline() {
-      if (!this._offline) this._offline = new (OfflineFn(ctx))();
-      return this._offline;
+    get message() {
+      if (!this._message) this._message = new (MessageFn(ctx))();
+      return this._message;
     }
 
     get redis() {
@@ -116,6 +102,8 @@ module.exports = ctx => {
       if (!sessionId) {
         sessionId = message.messageGroup ? userIdTo : this._combineSessionId(userIdFrom, userIdTo);
       }
+      // groupUsers
+      const groupUsers = info && info.groupUsers;
       // message
       const _message = {
         messageClassId: messageClass.id,
@@ -128,52 +116,11 @@ module.exports = ctx => {
         sessionId,
         content: JSON.stringify(message.content), // should use string for db/queue
       };
-      const res = await this.modelMessage.insert(_message);
-      const messageId = res.insertId;
-      _message.id = messageId;
-      // message sync
-      const messageSyncs = [];
-      //  :userIdFrom
-      const isSame = userIdTo === userIdFrom;
-      messageSyncs.push({
-        messageId,
-        userId: userIdFrom,
-        messageDirection: isSame ? 0 : 1, // self/send
-        messageRead: 1,
-      });
-      //  :userIdTo
-      if (!message.messageGroup) {
-        // single chat
-        if (!isSame) {
-          messageSyncs.push({
-            messageId,
-            userId: userIdTo,
-            messageDirection: 2, // receive
-            messageRead: 0,
-          });
-        }
-      } else {
-        // group chat
-        const groupUsers = info && info.groupUsers;
-        if (groupUsers) {
-          for (const groupUser of groupUsers) {
-            const _userIdTo = groupUser.userId;
-            if (_userIdTo !== userIdFrom) {
-              messageSyncs.push({
-                messageId,
-                userId: _userIdTo,
-                messageDirection: 2, // receive
-                messageRead: 0,
-              });
-            }
-          }
-        }
-      }
-      //  :save
-      for (const messageSync of messageSyncs) {
-        const res = await this.modelMessageSync.insert(messageSync);
-        messageSync.messageSyncId = res.insertId;
-      }
+
+      // save
+      const res = await this.message.save({ message: _message, groupUsers });
+      _message.id = res.messageId;
+      const messageSyncs = res.messageSyncs;
 
       // to queue
       ctx.app.meta.queue.push({
@@ -191,7 +138,7 @@ module.exports = ctx => {
 
       // ok
       return {
-        id: messageId,
+        id: _message.id,
       };
     }
 
@@ -201,7 +148,7 @@ module.exports = ctx => {
       for (const messageSync of messageSyncs) {
         if (messageClassBase.callbacks.onProcess) {
           // custom
-          await messageClassBase.callbacks.onProcess({ io: this, path, options, message, messageSync, messageClass });
+          await messageClassBase.callbacks.onProcess({ io: this, ctx, path, options, message, messageSync, messageClass });
         } else {
           // default
           await this.emit({ path, options, message, messageSync, messageClass });

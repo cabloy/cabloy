@@ -63,7 +63,7 @@ module.exports = app => {
         // create view: aSocketIOMessageView
         sql = `
           CREATE VIEW aSocketIOMessageView as
-            select a.*,b.userId,b.messageDirection,b.messageRead from aSocketIOMessage a
+            select a.*,b.userId,b.messageDirection,b.messageRead,b.deleted as syncDeleted from aSocketIOMessage a
               left join aSocketIOMessageSync b on a.id=b.messageId
         `;
         await this.ctx.model.query(sql);
