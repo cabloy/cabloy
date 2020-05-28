@@ -3,7 +3,7 @@ async function onPublish({ io, ctx, path, message, options, user }) {
   // donothing
 }
 
-async function onProcess({ io, path, options, message, messageSync, messageClass }) {
+async function onProcess({ io, ctx, path, options, message, messageSync, messageClass }) {
   // options
   const messageScene = (options && options.scene) || '';
   // send back
