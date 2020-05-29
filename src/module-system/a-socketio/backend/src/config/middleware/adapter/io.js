@@ -118,9 +118,7 @@ module.exports = ctx => {
       };
 
       // save
-      const res = await this.message.save({ message: _message, groupUsers });
-      _message.id = res.messageId;
-      const messageSyncs = res.messageSyncs;
+      _message.id = await this.message.save({ message: _message });
 
       // to queue
       ctx.app.meta.queue.push({
@@ -131,7 +129,7 @@ module.exports = ctx => {
           path,
           options,
           message: _message,
-          messageSyncs,
+          groupUsers,
           messageClass,
         },
       });
@@ -142,13 +140,30 @@ module.exports = ctx => {
       };
     }
 
-    async queueProcess({ path, options, message, messageSyncs, messageClass }) {
+    async queueProcess({ path, options, message, groupUsers, messageClass }) {
+      // save syncs
+      const messageSyncs = await this.message.saveSyncs({ message, groupUsers });
+      // to queue
+      ctx.app.meta.queue.push({
+        subdomain: ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'delivery',
+        data: {
+          path,
+          options,
+          message,
+          messageSyncs,
+          messageClass,
+        },
+      });
+    }
+
+    async queueDelivery({ path, options, message, messageSyncs, messageClass }) {
       const messageClassBase = this.messageClass.messageClass(messageClass);
-      if (!messageClassBase.callbacks.onProcess) return;
       for (const messageSync of messageSyncs) {
-        if (messageClassBase.callbacks.onProcess) {
+        if (messageClassBase.callbacks.onDelivery) {
           // custom
-          await messageClassBase.callbacks.onProcess({ io: this, ctx, path, options, message, messageSync, messageClass });
+          await messageClassBase.callbacks.onDelivery({ io: this, ctx, path, options, message, messageSync, messageClass });
         } else {
           // default
           await this.emit({ path, options, message, messageSync, messageClass });

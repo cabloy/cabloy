@@ -14,8 +14,12 @@ module.exports = app => {
       return await this.ctx.meta.io.publish({ path, message, messageClass, options, user });
     }
 
-    async queueProcess({ path, options, message, messageSyncs, messageClass }) {
-      return await this.ctx.meta.io.queueProcess({ path, options, message, messageSyncs, messageClass });
+    async queueProcess({ path, options, message, groupUsers, messageClass }) {
+      return await this.ctx.meta.io.queueProcess({ path, options, message, groupUsers, messageClass });
+    }
+
+    async queueDelivery({ path, options, message, messageSyncs, messageClass }) {
+      return await this.ctx.meta.io.queueDelivery({ path, options, message, messageSyncs, messageClass });
     }
 
   }

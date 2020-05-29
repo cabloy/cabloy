@@ -27,10 +27,15 @@ module.exports = ctx => {
       return this._sqlProcedure;
     }
 
-    async save({ message, groupUsers }) {
+    async save({ message }) {
       // insert
       const res = await this.modelMessage.insert(message);
-      const messageId = res.insertId;
+      return res.insertId;
+    }
+
+    async saveSyncs({ message, groupUsers }) {
+      // messageId
+      const messageId = message.id;
       // message sync
       const messageSyncs = [];
       //  :userIdFrom
@@ -74,7 +79,7 @@ module.exports = ctx => {
         messageSync.messageSyncId = res.insertId;
       }
       // ok
-      return { messageId, messageSyncs };
+      return messageSyncs;
     }
 
     // the first unread message

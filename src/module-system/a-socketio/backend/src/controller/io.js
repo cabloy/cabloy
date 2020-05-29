@@ -34,6 +34,17 @@ module.exports = app => {
         path: this.ctx.request.body.path,
         options: this.ctx.request.body.options,
         message: this.ctx.request.body.message,
+        groupUsers: this.ctx.request.body.groupUsers,
+        messageClass: this.ctx.request.body.messageClass,
+      });
+      this.ctx.success(res);
+    }
+
+    async queueDelivery() {
+      const res = await this.service.io.queueDelivery({
+        path: this.ctx.request.body.path,
+        options: this.ctx.request.body.options,
+        message: this.ctx.request.body.message,
         messageSyncs: this.ctx.request.body.messageSyncs,
         messageClass: this.ctx.request.body.messageClass,
       });
