@@ -95,6 +95,7 @@ export default {
       this.setMessageOffset(message.id);
     },
     onSubscribed() {
+      if (this.messageOfflineFetching) return;
       this.messageOfflineFetching = true;
       // get offset
       if (this.messageOffset === -1) {
