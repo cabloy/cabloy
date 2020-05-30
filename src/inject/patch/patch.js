@@ -15,6 +15,19 @@ export default function(ctx, router) {
       return cb(route);
     });
   }
+  // load route component
+  function loadRouteComponent(url, cb) {
+    loadRoute(url, route => {
+      if (!route) throw new Error(`not found route: ${url}`);
+      if (!route.route.async) return cb(route.route.component);
+      route.route.async(url, null, data => {
+        return cb(data.component);
+      }, () => {
+        // do nothing
+        //   maybe need login
+      });
+    });
+  }
   // navigate
   const navigate = router.navigate;
   router.navigate = (navigateParams, navigateOptions, cb) => {
@@ -78,5 +91,6 @@ export default function(ctx, router) {
 
   return {
     loadRoute,
+    loadRouteComponent,
   };
 }
