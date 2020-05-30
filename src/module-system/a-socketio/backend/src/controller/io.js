@@ -19,12 +19,21 @@ module.exports = app => {
     }
 
     async publish() {
+      // check inner or user
+      let user;
+      if (this.ctx.innerAccess) {
+        user = this.ctx.request.body.user || this.ctx.user.op;
+      } else {
+        if (this.ctx.user.op.anonymous) this.ctx.throw(403);
+        user = this.ctx.user.op;
+      }
+      //
       const res = await this.service.io.publish({
         path: this.ctx.request.body.path,
         message: this.ctx.request.body.message,
         messageClass: this.ctx.request.body.messageClass,
         options: this.ctx.request.body.options,
-        user: this.ctx.user.op,
+        user,
       });
       this.ctx.success(res);
     }

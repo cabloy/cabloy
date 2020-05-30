@@ -12,7 +12,7 @@ module.exports = app => {
     // io
     { method: 'post', path: 'subscribe', controller: io, middlewares: 'io', meta: { auth: { user: true } } },
     { method: 'post', path: 'unsubscribe', controller: io, middlewares: 'io', meta: { auth: { user: true } } },
-    { method: 'post', path: 'publish', controller: io, middlewares: 'io', meta: { auth: { user: true } } },
+    { method: 'post', path: 'publish', controller: io, middlewares: 'io' /* , meta: { auth: { user: true } } */ },
     { method: 'post', path: 'queueProcess', controller: io, middlewares: 'inner,io',
       meta: { auth: { enable: false } },
     },

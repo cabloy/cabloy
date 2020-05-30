@@ -4,7 +4,7 @@ module.exports = (options, app) => {
     const io = new (IOFn(ctx))();
     // cache userId/socketId for disconnect
     const user = ctx.session.passport.user.op;
-    if (user.anonymous) return ctx.throw(401);
+    if (user.anonymous) return ctx.throw(403);
     const socketId = ctx.socket.id;
     io._registerSocket(socketId, ctx.socket);
     await next();

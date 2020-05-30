@@ -125,6 +125,7 @@ module.exports = ctx => {
         _message.id = await this.message.save({ message: _message });
       } else {
         _message.id = message.id || uuid.v4();
+        _message.createdAt = new Date();
       }
 
       // to queue
