@@ -22,6 +22,16 @@ module.exports = app => {
                   `;
         await this.ctx.model.query(sql);
       }
+
+      if (options.version === 2) {
+        // aProgress: add field userId
+        const sql = `
+        ALTER TABLE aProgress
+          ADD COLUMN userId int(11) DEFAULT '0'
+                  `;
+        await this.ctx.model.query(sql);
+      }
+
     }
 
     async init(options) {

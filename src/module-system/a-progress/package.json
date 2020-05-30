@@ -3,7 +3,7 @@
   "version": "3.0.2",
   "title": "a-progress",
   "eggBornModule": {
-    "fileVersion": 1,
+    "fileVersion": 2,
     "dependencies": {
       "a-instance": "3.0.0",
       "a-base": "3.0.0"

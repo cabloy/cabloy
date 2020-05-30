@@ -8,8 +8,9 @@ module.exports = app => {
     { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/test', controller: version, middlewares: 'test' },
     // progress
-    { method: 'post', path: 'progress/check', controller: progress },
-    { method: 'post', path: 'progress/abort', controller: progress },
+    { method: 'post', path: 'progress/check', controller: progress, meta: { auth: { user: true } } },
+    { method: 'post', path: 'progress/abort', controller: progress, meta: { auth: { user: true } } },
+    { method: 'post', path: 'progress/delete', controller: progress, meta: { auth: { user: true } } },
   ];
   return routes;
 };

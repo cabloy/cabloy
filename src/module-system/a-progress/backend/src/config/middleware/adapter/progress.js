@@ -24,12 +24,17 @@ const Fn = module.exports = ctx => {
 
     async create() {
       const progressId = uuid.v4().replace(/-/g, '');
-      await this.modelProgress.insert({ progressId });
+      await this.modelProgress.insert({ progressId, userId: ctx.user.op.id });
       return progressId;
     }
 
     async update({ progressId, progressNo = 0, total, progress, text }) {
       const item = await this.modelProgress.get({ progressId });
+      if (!item) {
+        // same as abort
+        // 1001: 'Operation Aborted',
+        ctx.throw.module(moduleInfo.relativeName, 1001);
+      }
       // abort
       if (item.abort) {
         // 1001: 'Operation Aborted',
@@ -43,6 +48,16 @@ const Fn = module.exports = ctx => {
       data[progressNo] = { total, progress, text };
       // update
       await this.modelProgress.update({ id: item.id, counter: item.counter + 1, data: JSON.stringify(data) });
+      // publish
+      const ioMessage = {
+        userIdTo: item.userId,
+        content: {
+          ...item,
+          counter: item.counter + 1,
+          data,
+        },
+      };
+      await this._publish({ progressId, ioMessage });
     }
 
     async done({ progressId, message }) {
@@ -51,6 +66,17 @@ const Fn = module.exports = ctx => {
       const data = { message };
       // update
       await this.modelProgress.update({ id: item.id, counter: item.counter + 1, done: 1, data: JSON.stringify(data) });
+      // publish
+      const ioMessage = {
+        userIdTo: item.userId,
+        content: {
+          ...item,
+          counter: item.counter + 1,
+          done: 1,
+          data,
+        },
+      };
+      await this._publish({ progressId, ioMessage });
     }
 
     async error({ progressId, message }) {
@@ -59,8 +85,34 @@ const Fn = module.exports = ctx => {
       const data = { message };
       // update
       await this.modelProgress.update({ id: item.id, counter: item.counter + 1, done: -1, data: JSON.stringify(data) });
+      // publish
+      const ioMessage = {
+        userIdTo: item.userId,
+        content: {
+          ...item,
+          counter: item.counter + 1,
+          done: -1,
+          data,
+        },
+      };
+      await this._publish({ progressId, ioMessage });
     }
 
+    async _publish({ progressId, ioMessage }) {
+      await ctx.performAction({
+        method: 'post',
+        url: '/a/socketio/publish',
+        body: {
+          path: `/a/progress/update/${progressId}`,
+          message: ioMessage,
+          messageClass: {
+            module: moduleInfo.relativeName,
+            messageClassName: 'progress',
+          },
+          user: { id: 0 },
+        },
+      });
+    }
 
   }
   return Progress;
