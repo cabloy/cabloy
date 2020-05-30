@@ -2,6 +2,7 @@ export default function({ ctx, progressId, title, canAbort = true, interval = 10
   return new Promise((resolve, reject) => {
     let dialog;
     let counter = 0;
+    let abortModalOpened = false;
     const app = ctx.$f7;
     const hostEl = ctx.getHostEl();
     const buttons = [];
@@ -13,11 +14,14 @@ export default function({ ctx, progressId, title, canAbort = true, interval = 10
     }
     //
     function callbackBreak() {
+      abortModalOpened = true;
       ctx.dialog.confirm().then(() => {
+        abortModalOpened = false;
         return ctx.$api.post('/a/progress/progress/abort', {
           progressId,
         }).then(() => {});
       }).catch(() => {
+        abortModalOpened = false;
         dialog.open();
       });
     }
@@ -37,7 +41,7 @@ export default function({ ctx, progressId, title, canAbort = true, interval = 10
     }
     //
     function setProgress({ progressNo = 0, total = 0, progress = 0, text = '' }) {
-    // prepare progressbar
+      // prepare progressbar
       const progressbars = dialog.$el.find('.progressbar-item');
       const progressbar = ctx.$$(progressbars[progressNo]);
       // setProgress
@@ -90,15 +94,15 @@ export default function({ ctx, progressId, title, canAbort = true, interval = 10
           checking();
         } else if (item.done === -1) {
           // done:1 error:-1
-          // close
-          dialog.close();
+          // destroy directly, not close
+          onDestroy();
           // alert
           const data = item.data ? JSON.parse(item.data) : {};
-          ctx.toast.show({ text: data.message });
+          // ctx.toast.show({ text: data.message });
           // reject
           reject(data);
         } else if (item.done === 1) {
-        // alert
+          // alert
           const data = item.data ? JSON.parse(item.data) : {};
           const progress = { total: 0, progress: 100, text: data.message || ctx.$text('Operation Succeeded') };
           setProgresses([ progress ]);
@@ -115,6 +119,19 @@ export default function({ ctx, progressId, title, canAbort = true, interval = 10
       // check again
         checking();
       });
+    }
+    //
+    function onClosed() {
+      if (!abortModalOpened) {
+        onDestroy();
+      }
+    }
+    //
+    function onDestroy() {
+      dialog.off('closed', onClosed);
+      setTimeout(() => {
+        dialog.destroy();
+      }, 0);
     }
     // dialog
     dialog = app.dialog.create({
@@ -133,6 +150,8 @@ export default function({ ctx, progressId, title, canAbort = true, interval = 10
     });
     // start check
     checking();
+    // closed
+    dialog.on('closed', onClosed);
     // open
     return dialog.open();
   });
