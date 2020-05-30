@@ -20,8 +20,7 @@ export default {
             console.log(data);
             resolve();
           }).catch(err => {
-            console.error(err);
-            reject();
+            reject(err);
           });
         });
       });
