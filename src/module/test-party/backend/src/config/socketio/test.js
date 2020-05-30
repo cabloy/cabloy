@@ -29,6 +29,7 @@ module.exports = app => {
   const test = {
     info: {
       title: 'Test',
+      persistence: true,
     },
     callbacks: {
       onPublish,
