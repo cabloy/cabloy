@@ -1,3 +1,6 @@
+const require3 = require('require3');
+const uuid = require3('uuid');
+
 const MessageClassFn = require('./messageClass.js');
 const MessageFn = require('./message.js');
 
@@ -90,20 +93,20 @@ module.exports = ctx => {
       messageClass = await this.messageClass.get(messageClass);
       const messageClassBase = this.messageClass.messageClass(messageClass);
       // onPublish by provider
-      let info;
+      let infoPublish;
       if (messageClassBase.callbacks.onPublish) {
-        info = await messageClassBase.callbacks.onPublish({ io: this, ctx, path, message, options, user });
+        infoPublish = await messageClassBase.callbacks.onPublish({ io: this, ctx, path, message, options, user });
       }
       // userId
       const userIdFrom = user.id;
       const userIdTo = message.userIdTo || 0;
       // sessionId
-      let sessionId = info && info.sessionId;
+      let sessionId = infoPublish && infoPublish.sessionId;
       if (!sessionId) {
         sessionId = message.messageGroup ? userIdTo : this._combineSessionId(userIdFrom, userIdTo);
       }
       // groupUsers
-      const groupUsers = info && info.groupUsers;
+      const groupUsers = infoPublish && infoPublish.groupUsers;
       // message
       const _message = {
         messageClassId: messageClass.id,
@@ -118,7 +121,11 @@ module.exports = ctx => {
       };
 
       // save
-      _message.id = await this.message.save({ message: _message });
+      if (messageClassBase.info.persistence) {
+        _message.id = await this.message.save({ message: _message });
+      } else {
+        _message.id = message.id || uuid.v4();
+      }
 
       // to queue
       ctx.app.meta.queue.push({
@@ -141,8 +148,23 @@ module.exports = ctx => {
     }
 
     async queueProcess({ path, options, message, groupUsers, messageClass }) {
-      // save syncs
-      const messageSyncs = await this.message.saveSyncs({ message, groupUsers });
+      // messageClass
+      const messageClassBase = this.messageClass.messageClass(messageClass);
+      // onProcess
+      let infoProcess;
+      if (messageClassBase.callbacks.onProcess) {
+        infoProcess = await messageClassBase.callbacks.onProcess({ io: this, ctx, path, options, message, groupUsers, messageClass });
+      }
+      // syncs
+      let messageSyncs = infoProcess && infoProcess.messageSyncs;
+      if (!messageSyncs) {
+        // save syncs
+        messageSyncs = await this.message.saveSyncs({
+          message,
+          groupUsers,
+          persistence: messageClassBase.info.persistence,
+        });
+      }
       // to queue
       ctx.app.meta.queue.push({
         subdomain: ctx.subdomain,

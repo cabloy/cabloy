@@ -1,3 +1,6 @@
+const require3 = require('require3');
+const uuid = require3('uuid');
+
 const modelMessageFn = require('../../../model/message.js');
 const modelMessageSyncFn = require('../../../model/messageSync.js');
 const sqlProcedureFn = require('../../sql/procedure.js');
@@ -33,7 +36,7 @@ module.exports = ctx => {
       return res.insertId;
     }
 
-    async saveSyncs({ message, groupUsers }) {
+    async saveSyncs({ message, groupUsers, persistence }) {
       // messageId
       const messageId = message.id;
       // message sync
@@ -75,8 +78,12 @@ module.exports = ctx => {
       }
       //  :save
       for (const messageSync of messageSyncs) {
-        const res = await this.modelMessageSync.insert(messageSync);
-        messageSync.messageSyncId = res.insertId;
+        if (persistence) {
+          const res = await this.modelMessageSync.insert(messageSync);
+          messageSync.messageSyncId = res.insertId;
+        } else {
+          messageSync.messageSyncId = uuid.v4();
+        }
       }
       // ok
       return messageSyncs;
