@@ -7,6 +7,7 @@ module.exports = function(loader) {
     // version ready
     await versionReady(loader.app);
     // event: appReady
+    loader.app.meta.appReady = true;
     loader.app.emit(constant.event.appReady);
     // event to agent
     loader.app.meta.messenger.callAgent({
