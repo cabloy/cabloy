@@ -62,6 +62,11 @@ const Fn = module.exports = ctx => {
 
     async done({ progressId, message }) {
       const item = await this.modelProgress.get({ progressId });
+      if (!item) {
+        // same as abort
+        // 1001: 'Operation Aborted',
+        ctx.throw.module(moduleInfo.relativeName, 1001);
+      }
       // data
       const data = { message };
       // update
@@ -81,6 +86,11 @@ const Fn = module.exports = ctx => {
 
     async error({ progressId, message }) {
       const item = await this.modelProgress.get({ progressId });
+      if (!item) {
+        // same as abort
+        // 1001: 'Operation Aborted',
+        ctx.throw.module(moduleInfo.relativeName, 1001);
+      }
       // data
       const data = { message };
       // update
