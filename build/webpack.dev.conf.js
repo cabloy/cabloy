@@ -39,7 +39,7 @@ module.exports = merge(baseWebpackConfig, {
     new FriendlyErrorsPlugin(),
   ],
   watchOptions: {
-    aggregateTimeout: 3000,
+    aggregateTimeout: 1000,
     ignored: [ /\/backend\/cms\//, /\/backend\/test\//, /\/src\/module\/.*?\/build\//, /\/src\/module\/.*?\/dist\//, /\/\.git\// ],
   },
 });
