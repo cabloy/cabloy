@@ -16,6 +16,7 @@ function _progressbar({ io, ctx, progressId, title, canAbort, resolve, reject })
   let counter = 0;
   const app = ctx.$f7;
   const hostEl = ctx.getHostEl();
+  let subscribeId = null;
   const subscribePath = `/a/progress/update/${progressId}`;
   // buttons
   const buttons = [];
@@ -120,6 +121,11 @@ function _progressbar({ io, ctx, progressId, title, canAbort, resolve, reject })
   }
   //
   function onDestroy() {
+    // unsubscribe
+    if (subscribeId) {
+      io.unsubscribe(subscribeId);
+      subscribeId = null;
+    }
     // delete progress
     ctx.$api.post('/a/progress/progress/delete', {
       progressId,
@@ -149,7 +155,7 @@ function _progressbar({ io, ctx, progressId, title, canAbort, resolve, reject })
     });
   }
   // socket io
-  io.subscribe(subscribePath, onMessage, onSubscribed);
+  subscribeId = io.subscribe(subscribePath, onMessage, onSubscribed);
   // dialog
   dialog = app.dialog.create({
     hostEl,
