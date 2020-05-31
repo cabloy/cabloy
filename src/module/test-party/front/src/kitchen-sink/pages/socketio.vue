@@ -21,6 +21,7 @@ export default {
       io: null,
       messagesData: [],
       messageScene: Vue.prototype.$meta.config.scene,
+      subscribeId: null,
       messageOffset: -1,
       messageOffsetPending: -1,
       messageOfflineFetching: false,
@@ -60,6 +61,12 @@ export default {
       };
     },
   },
+  beforeDestroy() {
+    if (this.subscribeId) {
+      this.io.unsubscribe(this.subscribeId);
+      this.subscribeId = null;
+    }
+  },
   created() {
     const action = {
       actionModule: 'a-socketio',
@@ -68,7 +75,7 @@ export default {
     };
     this.$meta.util.performAction({ ctx: this, action }).then(io => {
       this.io = io;
-      this.io.subscribe(
+      this.subscribeId = this.io.subscribe(
         _subscribePath,
         this.onMessage.bind(this),
         this.onSubscribed.bind(this), { scene: this.messageScene },
