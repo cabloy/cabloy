@@ -105,14 +105,6 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async checkFile() {
-      const res = await this.ctx.service.site.checkFile({
-        file: this.ctx.request.body.file,
-        mtime: this.ctx.request.body.mtime,
-      });
-      this.ctx.success(res);
-    }
-
     async getBlocks() {
       const res = await this.ctx.service.site.getBlocks({
         locale: this.ctx.locale,

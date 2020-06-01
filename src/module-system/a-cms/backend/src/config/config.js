@@ -28,12 +28,6 @@ module.exports = appInfo => {
     // publishOnSubmit: true,
   };
 
-  // checkFile
-  config.checkFile = {
-    timeout: 1000,
-    timeoutDelay: 5000,
-  };
-
   // site
   config.site = {
     base: {

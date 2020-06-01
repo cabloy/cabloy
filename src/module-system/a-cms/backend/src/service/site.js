@@ -130,35 +130,6 @@ module.exports = app => {
       }
     }
 
-    async checkFile({ file, mtime }) {
-      // loop
-      const timeStart = new Date();
-      while (true) {
-        // exists
-        const exists = await fse.pathExists(file);
-        if (!exists) {
-          // deleted
-          return null;
-        }
-        // stat
-        const stat = await fse.stat(file);
-        const mtimeCurrent = stat.mtime.valueOf();
-        if (mtime !== mtimeCurrent) {
-          // different
-          return { mtime: mtimeCurrent };
-        }
-        // check the delayTimeout if the same
-        const timeEnd = new Date();
-        const time = (timeEnd.valueOf() - timeStart.valueOf());
-        if (time >= this.ctx.config.checkFile.timeoutDelay) {
-          // timeout
-          return { mtime: mtimeCurrent };
-        }
-        // sleep 1s then continue
-        await this.ctx.meta.util.sleep(1000);
-      }
-    }
-
     getBlocks({ locale }) {
       if (!_blocksLocales[locale]) {
         const blocks = this._prepareBlocks({ locale });

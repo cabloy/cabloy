@@ -78,8 +78,6 @@ module.exports = app => {
   ];
   if (app.meta.isTest || app.meta.isLocal) {
     routes = routes.concat([
-      // site
-      { method: 'post', path: 'site/checkFile', controller: site },
     ]);
   }
   return routes;
