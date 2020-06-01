@@ -73,6 +73,8 @@ module.exports = app => {
     async performAction() {
       // params
       const params = JSON.parse(this.ctx.request.query.params);
+      // force innerAccess as false
+      params.innerAccess = false;
       // performAction
       const res = await this.ctx.performAction(params);
       this.ctx.success(res);
