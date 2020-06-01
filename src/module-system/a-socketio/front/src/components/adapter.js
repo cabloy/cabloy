@@ -1,5 +1,11 @@
-import ioc from 'socket.io-client';
 import Vue from 'vue';
+
+let ioc;
+if (process.env.NODE_ENV === 'production') {
+  ioc = require('socket.io-client/dist/socket.io.js');
+} else {
+  ioc = require('socket.io-client');
+}
 
 export default {
   _io: null,
