@@ -1,6 +1,7 @@
 module.exports = app => {
   const keywords = require('./config/validation/keywords.js')(app);
   const schemas = require('./config/validation/schemas.js')(app);
+  const socketioHotloadFile = require('./config/socketio/hotloadFile.js')(app);
   const meta = {
     base: {
       atoms: {
@@ -99,6 +100,11 @@ module.exports = app => {
     event: {
       implementations: {
         // 'a-base:atomClassValidator': 'event/atomClassValidator',
+      },
+    },
+    socketio: {
+      messages: {
+        hotloadFile: socketioHotloadFile,
       },
     },
   };
