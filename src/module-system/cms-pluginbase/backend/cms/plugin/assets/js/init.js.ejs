@@ -14,7 +14,7 @@ $(document).ready(function() {
 
 $(document).on('echo-ready', function() {
   // hotload file
-  if (env.site.hotloadFile) {
+  if (env.site.hotloadFile && !util.user.op.anonymous) {
     window.setTimeout(() => {
       const subscribePath = `/a/cms/hotloadFile/${env.site.hotloadFile}`;
       util.io.subscribe(subscribePath, () => {
