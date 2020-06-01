@@ -184,13 +184,42 @@ module.exports = ctx => {
     async queueDelivery({ path, options, message, messageSyncs, messageClass }) {
       const messageClassBase = this.messageClass.messageClass(messageClass);
       for (const messageSync of messageSyncs) {
-        if (messageClassBase.callbacks.onDelivery) {
-          // custom
-          await messageClassBase.callbacks.onDelivery({ io: this, ctx, path, options, message, messageSync, messageClass });
+        if (messageSync.userId === -1) {
+          // broadcast
+          const userIds = await this._getPathUsersOnline({ path });
+          for (const userId of userIds) {
+            const _messageSync = {
+              ...messageSync,
+              userId,
+            };
+            await this._queueDeliveryMessageSync({ messageClassBase, path, options, message, messageSync: _messageSync, messageClass });
+          }
         } else {
-          // default
-          await this.emit({ path, options, message, messageSync, messageClass });
+          // normal
+          await this._queueDeliveryMessageSync({ messageClassBase, path, options, message, messageSync, messageClass });
         }
+      }
+    }
+
+    async _getPathUsersOnline({ path }) {
+      const userIds = [];
+      const keyPrefix = this.redis.options.keyPrefix;
+      const keyPatern = `${keyPrefix}*:${path}`;
+      const keys = await this.redis.keys(keyPatern);
+      for (const fullKey of keys) {
+        const key = fullKey.substr(keyPrefix.length);
+        userIds.push(parseInt(key.split(':')[0]));
+      }
+      return userIds;
+    }
+
+    async _queueDeliveryMessageSync({ messageClassBase, path, options, message, messageSync, messageClass }) {
+      if (messageClassBase.callbacks.onDelivery) {
+        // custom
+        await messageClassBase.callbacks.onDelivery({ io: this, ctx, path, options, message, messageSync, messageClass });
+      } else {
+        // default
+        await this.emit({ path, options, message, messageSync, messageClass });
       }
     }
 

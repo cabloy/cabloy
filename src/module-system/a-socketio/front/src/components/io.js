@@ -2,7 +2,7 @@ import adapter from './adapter.js';
 
 let IOFn;
 if (process.env.NODE_ENV === 'production') {
-  IOFn = require('@zhennann/socketio');
+  IOFn = require('@zhennann/socketio').default;
 } else {
   IOFn = require('@zhennann/socketio/src/main.js').default;
 }
