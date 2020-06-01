@@ -95,7 +95,7 @@ module.exports = {
    * @param  {json} options.data   data(optional)
    * @return {promise}                response.body.data or throw error
    */
-  performAction({ subdomain, method, url, query, params, headers, body }) {
+  performAction({ innerAccess, subdomain, method, url, query, params, headers, body }) {
     return new Promise((resolve, reject) => {
       const handleRequest = appCallback.call(this.app);
       const request = createRequest({
@@ -103,7 +103,7 @@ module.exports = {
         url: util.combineFetchPath(this.module && this.module.info, url),
       }, this);
       const response = new http.ServerResponse(request);
-      handleRequest(this, subdomain, request, response, resolve, reject, query, params, headers, body);
+      handleRequest(this, innerAccess, subdomain, request, response, resolve, reject, query, params, headers, body);
     });
   },
 
@@ -145,7 +145,7 @@ function appCallback() {
 
   if (!this.listeners('error').length) this.on('error', this.onerror);
 
-  return function handleRequest(ctxCaller, subdomain, req, res, resolve, reject, query, params, headers, body) {
+  return function handleRequest(ctxCaller, innerAccess, subdomain, req, res, resolve, reject, query, params, headers, body) {
     res.statusCode = 404;
     const ctx = self.createContext(req, res);
     onFinished(res, ctx.onerror);
@@ -171,6 +171,9 @@ function appCallback() {
 
     // ctxCaller
     ctx.ctxCaller = ctxCaller;
+
+    // innerAccess
+    if (innerAccess !== undefined) ctx.innerAccess = innerAccess;
 
     // call
     fn(ctx).then(function handleResponse() {
