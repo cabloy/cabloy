@@ -1,5 +1,39 @@
-// article
-util.io={
-
-
+// socketio adapter
+const __socketioAdapter= {
+  _io: null,
+  initialize(io) {
+    this._io = io;
+    $(document).on('echo-ready', function() {
+      // reset
+      this._io.reset();
+    });
+  },
+  subscribe({ subscribes, socketId }) {
+    return util.performAction({
+      method: 'post',
+      url: '/a/socketio/subscribe',
+      body: { subscribes, socketId },
+    });
+  },
+  unsubscribe({ subscribes }) {
+    return util.performAction({
+      method: 'post',
+      url: '/a/socketio/unsubscribe',
+      body: { subscribes },
+    });
+  },
+  socket() {
+    const url = '<%=site.serverUrl%>';
+    return io(url, { autoConnect: false });
+  },
 };
+
+// socketio
+Object.defineProperty(util, 'io', {
+  get() {
+    if (!util.__io) {
+      util.__io = socketio.default(__socketioAdapter);
+    }
+    return util.__io;
+  },
+});

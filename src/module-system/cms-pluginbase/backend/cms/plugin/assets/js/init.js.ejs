@@ -11,3 +11,15 @@ $(document).ready(function() {
     $(item).removeClass('img-delay');
   });
 });
+
+$(document).on('echo-ready', function() {
+  // hotload file
+  if (env.site.hotloadFile) {
+    window.setTimeout(() => {
+      const subscribePath = `/a/cms/hotloadFile/${env.site.hotloadFile}`;
+      util.io.subscribe(subscribePath, () => {
+        location.reload(true);
+      }, null);
+    }, 0);
+  }
+});
