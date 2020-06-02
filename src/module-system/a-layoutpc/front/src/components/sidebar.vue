@@ -1,8 +1,8 @@
 <script>
 import SidebarTabButtons from './sidebarTabButtons.vue';
 import SidebarTabSections from './sidebarTabSections.vue';
-import SidebarGroup from './SidebarGroup.vue';
-import SidebarToolbar from './SidebarToolbar.vue';
+import SidebarGroup from './sidebarGroup.vue';
+import SidebarToolbar from './sidebarToolbar.vue';
 
 export default {
   components: {
