@@ -234,15 +234,19 @@ const Fn = module.exports = ctx => {
       for (const func of functions) {
         // title
         const funcBase = ctx.meta.base.function({ module: func.module, name: func.name });
-        if (!funcBase) throw new Error(`function not found: ${func.module}:${func.name}`);
-        if (func.title !== funcBase.title) {
-          await this.model.update({ id: func.id, title: funcBase.title });
+        if (!funcBase) {
+          // not throw error
+          ctx.logger.info(`function not found: ${func.module}:${func.name}`);
+        } else {
+          if (func.title !== funcBase.title) {
+            await this.model.update({ id: func.id, title: funcBase.title });
+          }
+          // titleLocale
+          const titleLocale = ctx.text.locale(locale, funcBase.title);
+          await this.modelFunctionLocale.insert({
+            functionId: func.id, locale, titleLocale,
+          });
         }
-        // titleLocale
-        const titleLocale = ctx.text.locale(locale, funcBase.title);
-        await this.modelFunctionLocale.insert({
-          functionId: func.id, locale, titleLocale,
-        });
       }
     }
 
