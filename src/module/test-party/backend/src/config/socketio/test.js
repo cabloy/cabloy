@@ -1,5 +1,18 @@
 
-async function onPublish({ io, ctx, path, message, options, user }) {
+async function onCheck({ io, ctx, path, message, options, user }) {
+  // not check only for test
+  return true;
+}
+
+async function onSessionId({ io, ctx, path, message, options, user }) {
+  // donothing
+}
+
+async function onGroupUsers({ io, ctx, path, message, options, user }) {
+  // donothing
+}
+
+async function onProcess({ io, ctx, path, options, message, groupUsers, messageClass }) {
   // donothing
 }
 
@@ -22,7 +35,7 @@ async function onDelivery({ io, ctx, path, options, message, messageSync, messag
     return await io.publish({ path, message: _message, messageClass, options, user: { id: 0 } });
   }
   // emit
-  await io.emit({ path, options, message, messageSync, messageClass });
+  await io.delivery({ path, options, message, messageSync, messageClass });
 }
 
 module.exports = app => {
@@ -32,7 +45,10 @@ module.exports = app => {
       persistence: true,
     },
     callbacks: {
-      onPublish,
+      onCheck,
+      onSessionId,
+      onGroupUsers,
+      onProcess,
       onDelivery,
     },
   };
