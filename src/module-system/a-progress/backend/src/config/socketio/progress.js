@@ -1,22 +1,16 @@
 module.exports = app => {
-  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  async function onPublish({ io, ctx, path, message, options, user }) {
+  async function onCheck({ io, ctx, path, message, options, user }) {
     // only by system
-    if (user.id !== 0) {
-      ctx.throw(403);
-    }
+    return user.id === 0;
   }
 
-  // async function onDelivery({ io, ctx, path, options, message, messageSync, messageClass }) {
-  // }
   const progress = {
     info: {
       title: 'Progress',
       persistence: false,
     },
     callbacks: {
-      onPublish,
-      // onDelivery,
+      onCheck,
     },
   };
   return progress;
