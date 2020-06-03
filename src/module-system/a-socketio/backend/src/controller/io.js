@@ -43,7 +43,6 @@ module.exports = app => {
         path: this.ctx.request.body.path,
         options: this.ctx.request.body.options,
         message: this.ctx.request.body.message,
-        groupUsers: this.ctx.request.body.groupUsers,
         messageClass: this.ctx.request.body.messageClass,
       });
       this.ctx.success(res);

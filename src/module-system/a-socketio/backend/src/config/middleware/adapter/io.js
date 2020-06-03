@@ -92,21 +92,25 @@ module.exports = ctx => {
       // messageClass
       messageClass = await this.messageClass.get(messageClass);
       const messageClassBase = this.messageClass.messageClass(messageClass);
-      // onPublish by provider
-      let infoPublish;
-      if (messageClassBase.callbacks.onPublish) {
-        infoPublish = await messageClassBase.callbacks.onPublish({ io: this, ctx, path, message, options, user });
+      // message/userId
+      message.userIdFrom = user.id;
+      message.userIdTo = parseInt(message.userIdTo || 0);
+      const userIdFrom = message.userIdFrom;
+      const userIdTo = message.userIdTo;
+      // onCheck must be provided by provider
+      let checkPassed = false;
+      if (messageClassBase.callbacks.onCheck) {
+        checkPassed = await messageClassBase.callbacks.onCheck({ io: this, ctx, path, message, options, user });
       }
-      // userId
-      const userIdFrom = user.id;
-      const userIdTo = message.userIdTo || 0;
+      if (!checkPassed) ctx.throw(403);
       // sessionId
-      let sessionId = infoPublish && infoPublish.sessionId;
+      let sessionId;
+      if (messageClassBase.callbacks.onSessionId) {
+        sessionId = await messageClassBase.callbacks.onSessionId({ io: this, ctx, path, message, options, user });
+      }
       if (!sessionId) {
         sessionId = message.messageGroup ? userIdTo : this._combineSessionId(userIdFrom, userIdTo);
       }
-      // groupUsers
-      const groupUsers = infoPublish && infoPublish.groupUsers;
       // message
       const _message = {
         messageClassId: messageClass.id,
@@ -137,7 +141,6 @@ module.exports = ctx => {
           path,
           options,
           message: _message,
-          groupUsers,
           messageClass,
         },
       });
@@ -148,24 +151,24 @@ module.exports = ctx => {
       };
     }
 
-    async queueProcess({ path, options, message, groupUsers, messageClass }) {
+    async queueProcess({ path, options, message, messageClass }) {
       // messageClass
       const messageClassBase = this.messageClass.messageClass(messageClass);
+      // groupUsers
+      let groupUsers;
+      if (messageClassBase.callbacks.onGroupUsers) {
+        groupUsers = await messageClassBase.callbacks.onGroupUsers({ io: this, ctx, path, message, options });
+      }
       // onProcess
-      let infoProcess;
       if (messageClassBase.callbacks.onProcess) {
-        infoProcess = await messageClassBase.callbacks.onProcess({ io: this, ctx, path, options, message, groupUsers, messageClass });
+        await messageClassBase.callbacks.onProcess({ io: this, ctx, path, options, message, groupUsers, messageClass });
       }
-      // syncs
-      let messageSyncs = infoProcess && infoProcess.messageSyncs;
-      if (!messageSyncs) {
-        // save syncs
-        messageSyncs = await this.message.saveSyncs({
-          message,
-          groupUsers,
-          persistence: messageClassBase.info.persistence,
-        });
-      }
+      // save syncs
+      const messageSyncs = await this.message.saveSyncs({
+        message,
+        groupUsers,
+        persistence: messageClassBase.info.persistence,
+      });
       // to queue
       ctx.app.meta.queue.push({
         subdomain: ctx.subdomain,
@@ -219,8 +222,14 @@ module.exports = ctx => {
         await messageClassBase.callbacks.onDelivery({ io: this, ctx, path, options, message, messageSync, messageClass });
       } else {
         // default
-        await this.emit({ path, options, message, messageSync, messageClass });
+        await this.delivery({ path, options, message, messageSync, messageClass });
       }
+    }
+
+    async delivery({ path, options, message, messageSync, messageClass }) {
+      const deliveryDone = await this.emit({ path, options, message, messageSync, messageClass });
+      if (deliveryDone) return;
+      // todo: push
     }
 
     // offline: return false
