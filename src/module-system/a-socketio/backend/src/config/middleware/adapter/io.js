@@ -47,6 +47,7 @@ module.exports = ctx => {
     async subscribe({ subscribes, socketId, user }) {
       for (const item of subscribes) {
         const path = item.path;
+        if (!path) ctx.throw(403);
         const scene = item.scene || '';
         const key = `${ctx.instance.id}:${user.id}:${path}`;
         const value = `${ctx.app.meta.workerId}:${socketId}`;
@@ -57,6 +58,7 @@ module.exports = ctx => {
     async unsubscribe({ subscribes, user }) {
       for (const item of subscribes) {
         const path = item.path;
+        if (!path) ctx.throw(403);
         const scene = item.scene || '';
         const socketId = item.socketId;
         if (!socketId) continue;
@@ -187,7 +189,7 @@ module.exports = ctx => {
     async queueDelivery({ path, options, message, messageSyncs, messageClass }) {
       const messageClassBase = this.messageClass.messageClass(messageClass);
       for (const messageSync of messageSyncs) {
-        if (messageSync.userId === -1) {
+        if (messageSync.userId === -1 && path) {
           // broadcast
           const userIds = await this._getPathUsersOnline({ path });
           for (const userId of userIds) {
@@ -227,8 +229,11 @@ module.exports = ctx => {
     }
 
     async delivery({ path, options, message, messageSync, messageClass }) {
-      const deliveryDone = await this.emit({ path, options, message, messageSync, messageClass });
-      if (deliveryDone) return;
+      // ignore delivery online if !path
+      if (path) {
+        const deliveryDone = await this.emit({ path, options, message, messageSync, messageClass });
+        if (deliveryDone) return;
+      }
       // todo: push
     }
 
