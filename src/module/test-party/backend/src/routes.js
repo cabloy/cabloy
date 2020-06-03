@@ -146,7 +146,7 @@ module.exports = app => {
       { method: 'post', path: 'test/feat/startup/instance', controller: testFeatStartup, middlewares: 'inner', meta: { auth: { enable: false } } },
 
       // test/feat/sendMail
-      { method: 'post', path: 'test/feat/sendMail', controller: testFeatSendMail, middlewares: 'test,mail', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/feat/sendMail', controller: testFeatSendMail, middlewares: 'mail', meta: { auth: { enable: false } } },
 
       // test/feat/hook
       { method: 'post', path: 'test/feat/hook/echo', controller: testFeatHook, middlewares: 'test', meta: { auth: { enable: false } } },

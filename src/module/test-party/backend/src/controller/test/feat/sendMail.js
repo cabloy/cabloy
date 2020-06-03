@@ -4,13 +4,10 @@ module.exports = app => {
 
     async sendMail() {
       // send
+      const message = this.ctx.request.body.data;
       await this.ctx.meta.mail.send({
         scene: 'test',
-        message: {
-          to: 'test@cabloy.com',
-          subject: 'this is a test',
-          text: 'message body!',
-        },
+        message,
       });
       // done
       this.ctx.success();

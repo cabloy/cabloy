@@ -31,6 +31,7 @@ const items = [
   { title: 'Dragdrop(Move)', path: 'kitchen-sink/dragdrop/move' },
   { title: 'Dragdrop(Resize)', path: 'kitchen-sink/dragdrop/resize' },
   { title: 'Socket IO', path: 'kitchen-sink/socketio' },
+  { title: 'Mail', path: 'kitchen-sink/mail' },
 ];
 export default {
   data() {
