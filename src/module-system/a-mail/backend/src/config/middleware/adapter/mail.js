@@ -22,20 +22,31 @@ const Fn = module.exports = ctx => {
     // send
     async send({ scene, message }) {
       // save to db
-      await this.modelMail.insert({
+      const res = await this.modelMail.insert({
         scene,
         status: 0,
         mailto: message.to,
         mailSubject: message.subject,
         message: JSON.stringify(message),
       });
-      // queue not async
+      const mailId = res.insertId;
+      // publish
       ctx.tail(async () => {
-        await ctx.app.meta.queue.push({
-          subdomain: ctx.subdomain,
-          module: moduleInfo.relativeName,
-          queueName: 'send',
-          data: null,
+        await ctx.performAction({
+          method: 'post',
+          url: '/a/socketio/publish',
+          body: {
+            path: null,
+            message: {
+              userIdTo: -2, // different from -1/0
+              content: { mailId },
+            },
+            messageClass: {
+              module: moduleInfo.relativeName,
+              messageClassName: 'mail',
+            },
+            user: { id: 0 },
+          },
         });
       });
     }

@@ -10,25 +10,6 @@ module.exports = appInfo => {
     },
   };
 
-  // queues
-  config.queues = {
-    send: {
-      path: 'mail/queueSend',
-    },
-  };
-
-  // schedules
-  config.schedules = {
-    pushQueue: {
-      path: 'mail/schedulePushQueueInstance',
-      instance: true,
-      repeat: {
-        every: 120 * 1000,
-        // every: 5 * 1000,
-      },
-    },
-  };
-
   // scenes
   config.scenes = {
     system: {
