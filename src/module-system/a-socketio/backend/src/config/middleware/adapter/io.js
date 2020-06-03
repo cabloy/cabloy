@@ -216,7 +216,74 @@ module.exports = ctx => {
 
     // queue: push
     async queuePush({ options, message, messageSyncs, messageSync, messageClass }) {
+      const messageClassBase = this.messageClass.messageClass(messageClass);
+      if (messageSync) {
+        // only one message
+        return await this._queuePushMessageSync({ messageClassBase, options, message, messageSync, messageClass });
+      }
+      // more messages
+      for (const messageSync of messageSyncs) {
+        await this._queuePushMessageSync({ messageClassBase, options, message, messageSync, messageClass });
+      }
+    }
 
+    async _queuePushMessageSync({ messageClassBase, options, message, messageSync, messageClass }) {
+      if (messageClassBase.callbacks.onPush) {
+        // custom
+        await messageClassBase.callbacks.onPush({ io: this, ctx, options, message, messageSync, messageClass });
+      } else {
+        // default
+        await this.push({ options, message, messageSync, messageClass });
+      }
+    }
+
+    async push({ options, message, messageSync, messageClass }) {
+      const messageClassBase = this.messageClass.messageClass(messageClass);
+      // userId
+      const userId = messageSync.userId;
+      const isSender = message.userIdFrom === userId;
+      // ignore sender
+      if (isSender) return true;
+      // options maybe set push.channels
+      let channels = options && options.push && options.channels;
+      if (!channels) channels = messageClassBase.info.push.channels;
+      if (!channels) return false;
+      // adjust auto
+      let autoFirstValid = false;
+      if (channels === 'auto') {
+        autoFirstValid = true;
+        channels = Object.keys(messageClassBase.channels);
+      }
+      // loop
+      for (const channelFullName of channels) {
+        const res = await this._pushChannel({ messageClassBase, options, message, messageSync, messageClass, channelFullName });
+        if (!res) continue;
+        if (autoFirstValid) break;
+      }
+      // done
+      return true;
+    }
+
+    async _pushChannel({ messageClassBase, options, message, messageSync, messageClass, channelFullName }) {
+      // render message content
+      const onRender = messageClassBase.channels[channelFullName].onRender;
+      if (!onRender) return false;
+      const pushContent = await onRender({ io: this, ctx, options, message, messageSync, messageClass });
+      if (!pushContent) return false;
+      // get channel base
+      const channelBase = this.messageClass.channel(channelFullName);
+      if (!channelBase) {
+        ctx.logger.info(`channel not found: ${channelFullName}`);
+        return false;
+      }
+      // push
+      let pushDone = false;
+      if (channelBase.callbacks.onPush) {
+        pushDone = await channelBase.callbacks.onPush({ io: this, ctx, options, message, messageSync, messageClass, pushContent });
+      }
+      if (!pushDone) return false;
+      // done this channel
+      return true;
     }
 
     _pushQueuePush({ options, message, messageSyncs, messageSync, messageClass }) {
