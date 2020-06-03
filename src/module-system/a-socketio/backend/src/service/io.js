@@ -22,6 +22,10 @@ module.exports = app => {
       return await this.ctx.meta.io.queueDelivery({ path, options, message, messageSyncs, messageClass });
     }
 
+    async queuePush({ options, message, messageSyncs, messageSync, messageClass }) {
+      return await this.ctx.meta.io.queuePush({ options, message, messageSyncs, messageSync, messageClass });
+    }
+
   }
 
   return IO;

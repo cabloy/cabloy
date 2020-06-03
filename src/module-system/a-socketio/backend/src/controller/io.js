@@ -59,6 +59,18 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async queuePush() {
+      // messageSyncs/messageSync
+      const res = await this.service.io.queuePush({
+        options: this.ctx.request.body.options,
+        message: this.ctx.request.body.message,
+        messageSyncs: this.ctx.request.body.messageSyncs,
+        messageSync: this.ctx.request.body.messageSync,
+        messageClass: this.ctx.request.body.messageClass,
+      });
+      this.ctx.success(res);
+    }
+
   }
   return IOController;
 };

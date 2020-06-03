@@ -153,6 +153,7 @@ module.exports = ctx => {
       };
     }
 
+    // queue: process
     async queueProcess({ path, options, message, messageClass }) {
       // messageClass
       const messageClassBase = this.messageClass.messageClass(messageClass);
@@ -171,26 +172,33 @@ module.exports = ctx => {
         groupUsers,
         persistence: messageClassBase.info.persistence,
       });
-      // to queue
-      ctx.app.meta.queue.push({
-        subdomain: ctx.subdomain,
-        module: moduleInfo.relativeName,
-        queueName: 'delivery',
-        data: {
-          path,
-          options,
-          message,
-          messageSyncs,
-          messageClass,
-        },
-      });
+      // to queue: delivery/push
+      if (path) {
+        // delivery
+        ctx.app.meta.queue.push({
+          subdomain: ctx.subdomain,
+          module: moduleInfo.relativeName,
+          queueName: 'delivery',
+          data: {
+            path,
+            options,
+            message,
+            messageSyncs,
+            messageClass,
+          },
+        });
+      } else {
+        // push
+        this._pushQueuePush({ options, message, messageSyncs, messageClass });
+      }
     }
 
+    // queue: delivery
     async queueDelivery({ path, options, message, messageSyncs, messageClass }) {
       const messageClassBase = this.messageClass.messageClass(messageClass);
       for (const messageSync of messageSyncs) {
         if (messageSync.userId === -1 && path) {
-          // broadcast
+          // broadcast to online users
           const userIds = await this._getPathUsersOnline({ path });
           for (const userId of userIds) {
             const _messageSync = {
@@ -203,6 +211,31 @@ module.exports = ctx => {
           // normal
           await this._queueDeliveryMessageSync({ messageClassBase, path, options, message, messageSync, messageClass });
         }
+      }
+    }
+
+    // queue: push
+    async queuePush({ options, message, messageSyncs, messageSync, messageClass }) {
+
+    }
+
+    _pushQueuePush({ options, message, messageSyncs, messageSync, messageClass }) {
+      const messageClassBase = this.messageClass.messageClass(messageClass);
+      // check if enable push
+      const infoPush = messageClassBase.info && messageClassBase.info.push;
+      if (infoPush && infoPush.channels) {
+        ctx.app.meta.queue.push({
+          subdomain: ctx.subdomain,
+          module: moduleInfo.relativeName,
+          queueName: 'push',
+          data: {
+            options,
+            message,
+            messageSyncs,
+            messageSync,
+            messageClass,
+          },
+        });
       }
     }
 
@@ -234,7 +267,8 @@ module.exports = ctx => {
         const deliveryDone = await this.emit({ path, options, message, messageSync, messageClass });
         if (deliveryDone) return;
       }
-      // todo: push
+      // to queue: push
+      this._pushQueuePush({ options, message, messageSync, messageClass });
     }
 
     // offline: return false
