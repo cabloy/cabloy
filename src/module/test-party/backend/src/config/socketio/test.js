@@ -38,11 +38,19 @@ async function onDelivery({ io, ctx, path, options, message, messageSync, messag
   await io.delivery({ path, options, message, messageSync, messageClass });
 }
 
+async function onChannelValid({ io, ctx, options, message, messageSync, messageClass }) {
+
+}
+
 module.exports = app => {
   const test = {
     info: {
       title: 'Test',
       persistence: true,
+      push: {
+        channelsSupported: '', // empty(means all) / array
+        channels: 'auto', // empty(means disable) / auto(auto fetch first valid one) / array(use valid items)
+      },
     },
     callbacks: {
       onCheck,
@@ -50,6 +58,7 @@ module.exports = app => {
       onGroupUsers,
       onProcess,
       onDelivery,
+      onChannelValid,
     },
   };
   return test;
