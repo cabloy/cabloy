@@ -49,18 +49,24 @@ module.exports = appInfo => {
   const __redisConnectionDefaultCache = Object.assign({}, __redisConnectionDefault, {
     keyPrefix: `cache_${appInfo.name}:`,
   });
+  const __redisConnectionDefaultIO = Object.assign({}, __redisConnectionDefault, {
+    keyPrefix: `io_${appInfo.name}:`,
+  });
 
   config.redisConnection = {
     default: __redisConnectionDefault,
     cache: __redisConnectionDefaultCache,
+    io: __redisConnectionDefaultIO,
   };
 
   config.redis = {
     clients: {
+      redlock: config.redisConnection.default,
       limiter: config.redisConnection.default,
       queue: config.redisConnection.default,
       broadcast: config.redisConnection.default,
       cache: config.redisConnection.cache,
+      io: config.redisConnection.io,
     },
   };
 
