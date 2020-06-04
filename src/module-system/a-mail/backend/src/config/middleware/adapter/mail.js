@@ -33,9 +33,7 @@ const Fn = module.exports = ctx => {
       // publish
       ctx.tail(async () => {
         await ctx.meta.io.publish({
-          path: null,
           message: {
-            userIdTo: -2, // different from -1/0
             content: { mailId },
           },
           messageClass: {

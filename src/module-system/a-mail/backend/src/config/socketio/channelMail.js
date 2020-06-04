@@ -8,39 +8,33 @@ const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yel
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   async function onPush({ io, ctx, options, message, messageSync, messageClass, pushContent }) {
-    try {
-      // scene
-      let scene;
-      if (pushContent.scene === 'test') {
-        scene = await _createSceneTest();
-      } else {
-        scene = ctx.config.module(moduleInfo.relativeName).scenes[pushContent.scene];
-      }
-      // check if empty
-      if (!scene.transport.host) {
-        const message = chalk.keyword('orange')(ctx.text('mailhostNotConfigAlert'));
-        console.log('\n' + boxen(message, boxenOptions));
-        return false;
-      }
-      // transporter
-      const transporter = nodemailer.createTransport(scene.transport, scene.defaults);
-      // send
-      const res = await transporter.sendMail(pushContent.message);
-      // log
-      if (pushContent.scene === 'test') {
-        const url = nodemailer.getTestMessageUrl(res);
-        const message = chalk.keyword('cyan')('Test Mail To: ')
-                        + chalk.keyword('yellow')(pushContent.message.to)
-                        + chalk.keyword('orange')('\n' + url);
-        console.log('\n' + boxen(message, boxenOptions));
-      }
-      // done
-      return true;
-    } catch (err) {
-      // log
-      ctx.logger.error(err);
+    // scene
+    let scene;
+    if (pushContent.scene === 'test') {
+      scene = await _createSceneTest();
+    } else {
+      scene = ctx.config.module(moduleInfo.relativeName).scenes[pushContent.scene];
+    }
+    // check if empty
+    if (!scene.transport.host) {
+      const message = chalk.keyword('orange')(ctx.text('mailhostNotConfigAlert'));
+      console.log('\n' + boxen(message, boxenOptions));
       return false;
     }
+    // transporter
+    const transporter = nodemailer.createTransport(scene.transport, scene.defaults);
+    // send
+    const res = await transporter.sendMail(pushContent.message);
+    // log
+    if (pushContent.scene === 'test') {
+      const url = nodemailer.getTestMessageUrl(res);
+      const message = chalk.keyword('cyan')('Test Mail To: ')
+                        + chalk.keyword('yellow')(pushContent.message.to)
+                        + chalk.keyword('orange')('\n' + url);
+      console.log('\n' + boxen(message, boxenOptions));
+    }
+    // done
+    return true;
   }
 
   async function _createSceneTest() {
