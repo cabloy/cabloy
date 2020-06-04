@@ -106,9 +106,9 @@ const middlewares = __webpack_require__(12);
 module.exports = app => {
 
   // models
-  const models = __webpack_require__(14)(app);
+  const models = __webpack_require__(15)(app);
   // meta
-  const meta = __webpack_require__(15)(app);
+  const meta = __webpack_require__(16)(app);
 
   return {
     routes,
@@ -359,8 +359,11 @@ module.exports = appInfo => {
   config.middlewares = {
     instance: {
       global: true,
-      dependencies: 'cachemem',
+      dependencies: 'appReady,cachemem',
       ignore: /\/version\/update$/,
+    },
+    appReady: {
+      global: true,
     },
   };
 
@@ -415,9 +418,11 @@ module.exports = {
 /***/ (function(module, exports, __webpack_require__) {
 
 const instance = __webpack_require__(13);
+const appReady = __webpack_require__(14);
 
 module.exports = {
   instance,
+  appReady,
 };
 
 
@@ -503,6 +508,32 @@ function ctxHostValid(ctx) {
 /* 14 */
 /***/ (function(module, exports) {
 
+const eventAppReady = 'eb:event:appReady';
+
+function checkAppReady(app) {
+  return new Promise(resolve => {
+    app.once(eventAppReady, () => {
+      resolve();
+    });
+  });
+}
+
+module.exports = (options, app) => {
+  return async function appReady(ctx, next) {
+    if (!ctx.innerAccess && !app.meta.appReady) {
+      await checkAppReady(app);
+    }
+
+    // next
+    await next();
+  };
+};
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports) {
+
 module.exports = app => {
   const models = {
   };
@@ -511,11 +542,11 @@ module.exports = app => {
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
-  const schemas = __webpack_require__(16)(app);
+  const schemas = __webpack_require__(17)(app);
   const meta = {
     validation: {
       validators: {
@@ -539,7 +570,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
