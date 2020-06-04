@@ -113,11 +113,11 @@ module.exports = app => {
   // routes
   const routes = __webpack_require__(10)(app);
   // services
-  const services = __webpack_require__(13)(app);
+  const services = __webpack_require__(12)(app);
   // models
-  const models = __webpack_require__(17)(app);
+  const models = __webpack_require__(15)(app);
   // meta
-  const meta = __webpack_require__(18)(app);
+  const meta = __webpack_require__(16)(app);
 
   return {
     routes,
@@ -146,25 +146,6 @@ module.exports = appInfo => {
     mail: {
       global: false,
       dependencies: 'instance',
-    },
-  };
-
-  // queues
-  config.queues = {
-    send: {
-      path: 'mail/queueSend',
-    },
-  };
-
-  // schedules
-  config.schedules = {
-    pushQueue: {
-      path: 'mail/schedulePushQueueInstance',
-      instance: true,
-      repeat: {
-        every: 120 * 1000,
-        // every: 5 * 1000,
-      },
     },
   };
 
@@ -248,7 +229,6 @@ module.exports = {
 const MailFn = __webpack_require__(9);
 const MAIL = Symbol('CTX#__MAIL');
 
-
 module.exports = () => {
   return async function mail(ctx, next) {
     ctx.meta = ctx.meta || {};
@@ -295,20 +275,24 @@ const Fn = module.exports = ctx => {
     // send
     async send({ scene, message }) {
       // save to db
-      await this.modelMail.insert({
+      const res = await this.modelMail.insert({
         scene,
         status: 0,
         mailto: message.to,
         mailSubject: message.subject,
         message: JSON.stringify(message),
       });
-      // queue not async
+      const mailId = res.insertId;
+      // publish
       ctx.tail(async () => {
-        await ctx.app.meta.queue.push({
-          subdomain: ctx.subdomain,
-          module: moduleInfo.relativeName,
-          queueName: 'send',
-          data: null,
+        await ctx.meta.io.publish({
+          message: {
+            content: { mailId },
+          },
+          messageClass: {
+            module: moduleInfo.relativeName,
+            messageClassName: 'mail',
+          },
         });
       });
     }
@@ -322,7 +306,6 @@ const Fn = module.exports = ctx => {
 /***/ (function(module, exports, __webpack_require__) {
 
 const version = __webpack_require__(11);
-const mail = __webpack_require__(12);
 
 module.exports = app => {
   const routes = [
@@ -330,13 +313,6 @@ module.exports = app => {
     { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/test', controller: version, middlewares: 'test' },
-    // mail
-    { method: 'post', path: 'mail/queueSend', controller: mail, middlewares: 'inner',
-      meta: { auth: { enable: false } },
-    },
-    { method: 'post', path: 'mail/schedulePushQueueInstance', controller: mail, middlewares: 'inner',
-      meta: { auth: { enable: false } },
-    },
   ];
   return routes;
 };
@@ -371,34 +347,10 @@ module.exports = app => {
 
 /***/ }),
 /* 12 */
-/***/ (function(module, exports) {
-
-module.exports = app => {
-
-  class MailController extends app.Controller {
-
-    async queueSend() {
-      await this.service.mail.queueSend();
-      this.ctx.success();
-    }
-
-    async schedulePushQueueInstance() {
-      await this.service.mail.schedulePushQueueInstance();
-      this.ctx.success();
-    }
-
-  }
-  return MailController;
-};
-
-
-
-/***/ }),
-/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(14);
-const mail = __webpack_require__(15);
+const version = __webpack_require__(13);
+const mail = __webpack_require__(14);
 
 module.exports = app => {
   const services = {
@@ -410,7 +362,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -454,138 +406,20 @@ module.exports = app => {
 
 
 /***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const require3 = __webpack_require__(16);
-const nodemailer = require3('nodemailer');
-const chalk = require3('chalk');
-const boxen = require3('boxen');
-
-const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' };
+/* 14 */
+/***/ (function(module, exports) {
 
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+
   class Mail extends app.Service {
 
-    async schedulePushQueueInstance() {
-      await this.ctx.app.meta.queue.push({
-        subdomain: this.ctx.subdomain,
-        module: moduleInfo.relativeName,
-        queueName: 'send',
-        data: null,
-      });
-    }
-
-    // mail:status
-    //      0:unsend
-    //      1:sent
-    //      -1: error
-    async queueSend() {
-      // // reset
-      // await this.ctx.model.query(`
-      //     update aMail set status=0 where status=-1 where iid=? and deleted=0
-      //       `, [ this.ctx.instance.id ]);
-
-      // loop
-      while (true) {
-        // get
-        const mail = await this.ctx.model.mail.get({ status: 0 });
-        if (!mail) break;
-        // send
-        const res = await this._send({ mail });
-        if (!res) break;
-      }
-    }
-
-    async _send({ mail }) {
-      try {
-        // scene
-        let scene;
-        if (mail.scene === 'test') {
-          scene = await this._createSceneTest();
-        } else {
-          scene = this.ctx.config.scenes[mail.scene];
-        }
-        // check if empty
-        if (!scene.transport.host) {
-          const message = chalk.keyword('orange')(this.ctx.text('mailhostNotConfigAlert'));
-          console.log('\n' + boxen(message, boxenOptions));
-          return false;
-        }
-        // transporter
-        const transporter = nodemailer.createTransport(scene.transport, scene.defaults);
-        // send
-        const message = mail.message ? JSON.parse(mail.message) : null;
-        const res = await transporter.sendMail(message);
-        // log
-        if (mail.scene === 'test') {
-          const url = nodemailer.getTestMessageUrl(res);
-          const message = chalk.keyword('cyan')('Test Mail To: ')
-                        + chalk.keyword('yellow')(mail.mailTo)
-                        + chalk.keyword('orange')('\n' + url);
-          console.log('\n' + boxen(message, boxenOptions));
-        }
-        // status
-        await this.ctx.model.mail.update({
-          id: mail.id,
-          status: 1,
-        });
-        // continue
-        return true;
-      } catch (err) {
-        // log
-        this.ctx.logger.error(err);
-        // error
-        if (err.responseCode === 559) {
-          // status
-          await this.ctx.model.mail.update({
-            id: mail.id,
-            status: -1,
-          });
-          // continue
-          return true;
-        }
-        // break
-        return false;
-      }
-    }
-
-    async _createSceneTest() {
-      const account = await nodemailer.createTestAccount();
-      return {
-        transport: {
-          host: account.smtp.host,
-          port: account.smtp.port,
-          secure: account.smtp.secure,
-          auth: {
-            user: account.user,
-            pass: account.pass,
-          },
-          logger: false,
-          debug: false,
-        },
-        defaults: {
-          // sender info
-          from: 'Nodemailer <example@nodemailer.com>',
-        },
-      };
-    }
-
   }
-
   return Mail;
 };
 
 
 /***/ }),
-/* 16 */
-/***/ (function(module, exports) {
-
-module.exports = require("require3");
-
-/***/ }),
-/* 17 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const mail = __webpack_require__(0);
@@ -599,11 +433,14 @@ module.exports = app => {
 
 
 /***/ }),
-/* 18 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
-  const schemas = __webpack_require__(19)(app);
+  // const schemas = require('./config/validation/schemas.js')(app);
+  // socketio
+  const socketioMessageMail = __webpack_require__(17)(app);
+  const socketioChannelMail = __webpack_require__(18)(app);
   const meta = {
     base: {
       atoms: {
@@ -618,8 +455,129 @@ module.exports = app => {
       schemas: {
       },
     },
+    socketio: {
+      messages: {
+        mail: socketioMessageMail,
+      },
+      channels: {
+        mail: socketioChannelMail,
+      },
+    },
   };
   return meta;
+};
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const modelMailFn = __webpack_require__(0);
+
+module.exports = app => {
+  async function onRender({ io, ctx, options, message, messageSync, messageClass }) {
+    const content = JSON.parse(message.content);
+    const modelMail = new (modelMailFn(ctx.app))(ctx);
+    const mail = await modelMail.get({ id: content.mailId });
+    return {
+      scene: mail.scene,
+      message: JSON.parse(mail.message),
+    };
+  }
+
+  const MessageMail = {
+    info: {
+      title: 'Mail',
+      persistence: false,
+      push: {
+        channels: [ 'a-mail:mail' ],
+      },
+    },
+    callbacks: {
+    },
+    channels: {
+      'a-mail:mail': {
+        onRender,
+      },
+    },
+  };
+  return MessageMail;
+};
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(19);
+const nodemailer = require3('nodemailer');
+const chalk = require3('chalk');
+const boxen = require3('boxen');
+
+const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' };
+
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  async function onPush({ io, ctx, options, message, messageSync, messageClass, pushContent }) {
+    // scene
+    let scene;
+    if (pushContent.scene === 'test') {
+      scene = await _createSceneTest();
+    } else {
+      scene = ctx.config.module(moduleInfo.relativeName).scenes[pushContent.scene];
+    }
+    // check if empty
+    if (!scene.transport.host) {
+      const message = chalk.keyword('orange')(ctx.text('mailhostNotConfigAlert'));
+      console.log('\n' + boxen(message, boxenOptions));
+      return false;
+    }
+    // transporter
+    const transporter = nodemailer.createTransport(scene.transport, scene.defaults);
+    // send
+    const res = await transporter.sendMail(pushContent.message);
+    // log
+    if (pushContent.scene === 'test') {
+      const url = nodemailer.getTestMessageUrl(res);
+      const message = chalk.keyword('cyan')('Test Mail To: ')
+                        + chalk.keyword('yellow')(pushContent.message.to)
+                        + chalk.keyword('orange')('\n' + url);
+      console.log('\n' + boxen(message, boxenOptions));
+    }
+    // done
+    return true;
+  }
+
+  async function _createSceneTest() {
+    const account = await nodemailer.createTestAccount();
+    return {
+      transport: {
+        host: account.smtp.host,
+        port: account.smtp.port,
+        secure: account.smtp.secure,
+        auth: {
+          user: account.user,
+          pass: account.pass,
+        },
+        logger: false,
+        debug: false,
+      },
+      defaults: {
+        // sender info
+        from: 'Nodemailer <example@nodemailer.com>',
+      },
+    };
+  }
+
+  const ChannelMail = {
+    info: {
+      title: 'Mail',
+    },
+    callbacks: {
+      onPush,
+    },
+  };
+  return ChannelMail;
 };
 
 
@@ -627,11 +585,7 @@ module.exports = app => {
 /* 19 */
 /***/ (function(module, exports) {
 
-module.exports = app => {
-  const schemas = {};
-  return schemas;
-};
-
+module.exports = require("require3");
 
 /***/ })
 /******/ ]);
