@@ -149,11 +149,6 @@ module.exports = appInfo => {
     },
   };
 
-  // check
-  config.check = {
-    timeoutDelay: 5000,
-  };
-
   return config;
 };
 
@@ -254,12 +249,17 @@ const Fn = module.exports = ctx => {
 
     async create() {
       const progressId = uuid.v4().replace(/-/g, '');
-      await this.modelProgress.insert({ progressId });
+      await this.modelProgress.insert({ progressId, userId: ctx.user.op.id });
       return progressId;
     }
 
     async update({ progressId, progressNo = 0, total, progress, text }) {
       const item = await this.modelProgress.get({ progressId });
+      if (!item) {
+        // same as abort
+        // 1001: 'Operation Aborted',
+        ctx.throw.module(moduleInfo.relativeName, 1001);
+      }
       // abort
       if (item.abort) {
         // 1001: 'Operation Aborted',
@@ -273,24 +273,76 @@ const Fn = module.exports = ctx => {
       data[progressNo] = { total, progress, text };
       // update
       await this.modelProgress.update({ id: item.id, counter: item.counter + 1, data: JSON.stringify(data) });
+      // publish
+      const ioMessage = {
+        userIdTo: item.userId,
+        content: {
+          ...item,
+          counter: item.counter + 1,
+          data,
+        },
+      };
+      await this._publish({ progressId, ioMessage });
     }
 
     async done({ progressId, message }) {
       const item = await this.modelProgress.get({ progressId });
+      if (!item) {
+        // same as abort
+        // 1001: 'Operation Aborted',
+        ctx.throw.module(moduleInfo.relativeName, 1001);
+      }
       // data
       const data = { message };
       // update
       await this.modelProgress.update({ id: item.id, counter: item.counter + 1, done: 1, data: JSON.stringify(data) });
+      // publish
+      const ioMessage = {
+        userIdTo: item.userId,
+        content: {
+          ...item,
+          counter: item.counter + 1,
+          done: 1,
+          data,
+        },
+      };
+      await this._publish({ progressId, ioMessage });
     }
 
     async error({ progressId, message }) {
       const item = await this.modelProgress.get({ progressId });
+      if (!item) {
+        // same as abort
+        // 1001: 'Operation Aborted',
+        ctx.throw.module(moduleInfo.relativeName, 1001);
+      }
       // data
       const data = { message };
       // update
       await this.modelProgress.update({ id: item.id, counter: item.counter + 1, done: -1, data: JSON.stringify(data) });
+      // publish
+      const ioMessage = {
+        userIdTo: item.userId,
+        content: {
+          ...item,
+          counter: item.counter + 1,
+          done: -1,
+          data,
+        },
+      };
+      await this._publish({ progressId, ioMessage });
     }
 
+    async _publish({ progressId, ioMessage }) {
+      await ctx.meta.io.publish({
+        path: `/a/progress/update/${progressId}`,
+        message: ioMessage,
+        messageClass: {
+          module: moduleInfo.relativeName,
+          messageClassName: 'progress',
+        },
+      });
+    }
 
   }
   return Progress;
@@ -317,8 +369,9 @@ module.exports = app => {
     { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/test', controller: version, middlewares: 'test' },
     // progress
-    { method: 'post', path: 'progress/check', controller: progress },
-    { method: 'post', path: 'progress/abort', controller: progress },
+    { method: 'post', path: 'progress/check', controller: progress, meta: { auth: { user: true } } },
+    { method: 'post', path: 'progress/abort', controller: progress, meta: { auth: { user: true } } },
+    { method: 'post', path: 'progress/delete', controller: progress, meta: { auth: { user: true } } },
   ];
   return routes;
 };
@@ -362,6 +415,7 @@ module.exports = app => {
       const res = await this.service.progress.check({
         progressId: this.ctx.request.body.progressId,
         counter: this.ctx.request.body.counter,
+        user: this.ctx.user.op,
       });
       this.ctx.success(res);
     }
@@ -369,6 +423,15 @@ module.exports = app => {
     async abort() {
       await this.service.progress.abort({
         progressId: this.ctx.request.body.progressId,
+        user: this.ctx.user.op,
+      });
+      this.ctx.success();
+    }
+
+    async delete() {
+      await this.service.progress.delete({
+        progressId: this.ctx.request.body.progressId,
+        user: this.ctx.user.op,
       });
       this.ctx.success();
     }
@@ -422,6 +485,16 @@ module.exports = app => {
                   `;
         await this.ctx.model.query(sql);
       }
+
+      if (options.version === 2) {
+        // aProgress: add field userId
+        const sql = `
+        ALTER TABLE aProgress
+          ADD COLUMN userId int(11) DEFAULT '0'
+                  `;
+        await this.ctx.model.query(sql);
+      }
+
     }
 
     async init(options) {
@@ -444,38 +517,25 @@ module.exports = app => {
 
   class Progress extends app.Service {
 
-    async check({ progressId, counter }) {
-      // loop
-      const timeStart = new Date();
-      while (true) {
-        // item
-        const item = await this.ctx.model.queryOne(`
+    async check({ progressId, counter, user }) {
+      return await this.ctx.model.queryOne(`
         select * from aProgress a
-          where a.iid=? and a.progressId=? and a.counter>?
-        `, [ this.ctx.instance.id, progressId, counter ]);
-        // delete
-        if (item && item.done !== 0) {
-          await this.ctx.model.progress.delete({ id: item.id });
-        }
-        // return if found
-        if (item) return item;
-        // check the delayTimeout if the same
-        const timeEnd = new Date();
-        const time = (timeEnd.valueOf() - timeStart.valueOf());
-        if (time >= this.ctx.config.check.timeoutDelay) {
-          // timeout
-          return null;
-        }
-        // sleep 1s then continue
-        await this.ctx.meta.util.sleep(1000);
-      }
+          where a.iid=? and a.progressId=? and a.counter>? and a.userId=?
+        `, [ this.ctx.instance.id, progressId, counter, user.id ]);
     }
 
-    async abort({ progressId }) {
+    async abort({ progressId, user }) {
       await this.ctx.model.query(`
         update aProgress set abort=1
-          where iid=? and progressId=?
-        `, [ this.ctx.instance.id, progressId ]);
+          where iid=? and progressId=? and userId=?
+        `, [ this.ctx.instance.id, progressId, user.id ]);
+    }
+
+    async delete({ progressId, user }) {
+      await this.ctx.model.query(`
+        delete from aProgress
+          where iid=? and progressId=? and userId=?
+        `, [ this.ctx.instance.id, progressId, user.id ]);
     }
 
   }
@@ -503,7 +563,9 @@ module.exports = app => {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
-  const schemas = __webpack_require__(18)(app);
+  // const schemas = require('./config/validation/schemas.js')(app);
+  // socketio
+  const socketioProgress = __webpack_require__(18)(app);
   const meta = {
     base: {
       atoms: {
@@ -518,6 +580,11 @@ module.exports = app => {
       schemas: {
       },
     },
+    socketio: {
+      messages: {
+        progress: socketioProgress,
+      },
+    },
   };
   return meta;
 };
@@ -528,8 +595,16 @@ module.exports = app => {
 /***/ (function(module, exports) {
 
 module.exports = app => {
-  const schemas = {};
-  return schemas;
+
+  const progress = {
+    info: {
+      title: 'Progress',
+      persistence: false,
+    },
+    callbacks: {
+    },
+  };
+  return progress;
 };
 
 
