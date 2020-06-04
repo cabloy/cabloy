@@ -3,7 +3,7 @@
 ## 2020-06-04, Version 3.2.0-beta.2
 
 * **features**
-  * socketio
+  * [Socket IO](https://community.cabloy.com/articles/91a8d0a883d248c29538cac9f7e7bb0e.html)
 
 ## 2020-04-15, Version 3.0.1-beta.1
 
