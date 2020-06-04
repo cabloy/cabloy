@@ -506,17 +506,12 @@ class Build {
         mtime: new Date(),
       },
     };
-    await this.ctx.performAction({
-      method: 'post',
-      url: '/a/socketio/publish',
-      body: {
-        path: `/a/cms/hotloadFile/${hotloadFile}`,
-        message,
-        messageClass: {
-          module: 'a-cms',
-          messageClassName: 'hotloadFile',
-        },
-        user: { id: 0 },
+    await this.ctx.meta.io.publish({
+      path: `/a/cms/hotloadFile/${hotloadFile}`,
+      message,
+      messageClass: {
+        module: 'a-cms',
+        messageClassName: 'hotloadFile',
       },
     });
   }
