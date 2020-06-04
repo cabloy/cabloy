@@ -267,25 +267,31 @@ module.exports = ctx => {
     }
 
     async _pushChannel({ messageClassBase, options, message, messageSync, messageClass, channelFullName }) {
-      // render message content
-      const onRender = messageClassBase.channels[channelFullName].onRender;
-      if (!onRender) return false;
-      const pushContent = await onRender({ io: this, ctx, options, message, messageSync, messageClass });
-      if (!pushContent) return false;
-      // get channel base
-      const channelBase = this.messageClass.channel(channelFullName);
-      if (!channelBase) {
-        ctx.logger.info(`channel not found: ${channelFullName}`);
+      try {
+        // render message content
+        const onRender = messageClassBase.channels[channelFullName] && messageClassBase.channels[channelFullName].onRender;
+        if (!onRender) return false;
+        const pushContent = await onRender({ io: this, ctx, options, message, messageSync, messageClass });
+        if (!pushContent) return false;
+        // get channel base
+        const channelBase = this.messageClass.channel(channelFullName);
+        if (!channelBase) {
+          ctx.logger.info(`channel not found: ${channelFullName}`);
+          return false;
+        }
+        // push
+        let pushDone = false;
+        if (channelBase.callbacks.onPush) {
+          pushDone = await channelBase.callbacks.onPush({ io: this, ctx, options, message, messageSync, messageClass, pushContent });
+        }
+        if (!pushDone) return false;
+        // done this channel
+        return true;
+      } catch (err) {
+        // log
+        ctx.logger.error(err);
         return false;
       }
-      // push
-      let pushDone = false;
-      if (channelBase.callbacks.onPush) {
-        pushDone = await channelBase.callbacks.onPush({ io: this, ctx, options, message, messageSync, messageClass, pushContent });
-      }
-      if (!pushDone) return false;
-      // done this channel
-      return true;
     }
 
     _pushQueuePush({ options, message, messageSyncs, messageSync, messageClass }) {
