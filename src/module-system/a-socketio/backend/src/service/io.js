@@ -10,10 +10,6 @@ module.exports = app => {
       return await this.ctx.meta.io.unsubscribe({ subscribes, user });
     }
 
-    async publish({ path, message, messageClass, options, user }) {
-      return await this.ctx.meta.io.publish({ path, message, messageClass, options, user });
-    }
-
     async queueProcess({ path, options, message, messageClass }) {
       return await this.ctx.meta.io.queueProcess({ path, options, message, messageClass });
     }

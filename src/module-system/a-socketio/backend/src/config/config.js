@@ -13,7 +13,7 @@ module.exports = appInfo => {
       type: 'socketio.packet',
     },
     io: {
-      global: false,
+      global: true,
       dependencies: 'instance',
     },
   };
@@ -24,15 +24,15 @@ module.exports = appInfo => {
       path: 'messageClass/queueRegister',
     },
     process: {
-      path: 'queueProcess',
+      path: 'io/queueProcess',
       concurrency: true,
     },
     delivery: {
-      path: 'queueDelivery',
+      path: 'io/queueDelivery',
       concurrency: true,
     },
     push: {
-      path: 'queuePush',
+      path: 'io/queuePush',
       concurrency: true,
     },
   };

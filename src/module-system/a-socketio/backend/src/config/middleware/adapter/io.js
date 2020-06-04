@@ -88,27 +88,22 @@ module.exports = ctx => {
       }
     }
 
-    async publish({ path, message, messageClass, options, user }) {
+    async publish({ path, message, messageClass, options }) {
       // options
       const messageScene = (options && options.scene) || '';
       // messageClass
       messageClass = await this.messageClass.get(messageClass);
       const messageClassBase = this.messageClass.messageClass(messageClass);
       // message/userId
-      message.userIdFrom = user.id;
+      message.userIdFrom = parseInt(message.userIdFrom || 0);
+      if (message.userIdTo === undefined || message.userIdTo === null) message.userIdTo = -2;
       message.userIdTo = parseInt(message.userIdTo || 0);
       const userIdFrom = message.userIdFrom;
       const userIdTo = message.userIdTo;
-      // onCheck must be provided by provider
-      let checkPassed = false;
-      if (messageClassBase.callbacks.onCheck) {
-        checkPassed = await messageClassBase.callbacks.onCheck({ io: this, ctx, path, message, options, user });
-      }
-      if (!checkPassed) ctx.throw(403);
       // sessionId
       let sessionId;
       if (messageClassBase.callbacks.onSessionId) {
-        sessionId = await messageClassBase.callbacks.onSessionId({ io: this, ctx, path, message, options, user });
+        sessionId = await messageClassBase.callbacks.onSessionId({ io: this, ctx, path, message, options });
       }
       if (!sessionId) {
         sessionId = message.messageGroup ? userIdTo : this._combineSessionId(userIdFrom, userIdTo);
@@ -255,10 +250,17 @@ module.exports = ctx => {
         channels = Object.keys(messageClassBase.channels);
       }
       // loop
+      let atLeastDone = false;
       for (const channelFullName of channels) {
         const res = await this._pushChannel({ messageClassBase, options, message, messageSync, messageClass, channelFullName });
         if (!res) continue;
+        atLeastDone = true;
         if (autoFirstValid) break;
+      }
+      // log
+      if (!atLeastDone) {
+        ctx.logger.info('not found any valid channel for this message:', message);
+        return false;
       }
       // done
       return true;
