@@ -1,8 +1,4 @@
 module.exports = app => {
-  async function onCheck({ io, ctx, path, message, options, user }) {
-    // only by system
-    return user.id === 0;
-  }
 
   const progress = {
     info: {
@@ -10,7 +6,6 @@ module.exports = app => {
       persistence: false,
     },
     callbacks: {
-      onCheck,
     },
   };
   return progress;

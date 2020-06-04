@@ -109,17 +109,12 @@ const Fn = module.exports = ctx => {
     }
 
     async _publish({ progressId, ioMessage }) {
-      await ctx.performAction({
-        method: 'post',
-        url: '/a/socketio/publish',
-        body: {
-          path: `/a/progress/update/${progressId}`,
-          message: ioMessage,
-          messageClass: {
-            module: moduleInfo.relativeName,
-            messageClassName: 'progress',
-          },
-          user: { id: 0 },
+      await ctx.meta.io.publish({
+        path: `/a/progress/update/${progressId}`,
+        message: ioMessage,
+        messageClass: {
+          module: moduleInfo.relativeName,
+          messageClassName: 'progress',
         },
       });
     }
