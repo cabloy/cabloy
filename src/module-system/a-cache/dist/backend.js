@@ -532,7 +532,7 @@ module.exports = () => {
 /* 13 */
 /***/ (function(module, exports) {
 
-const CACHEMEMORY = Symbol('APP#__CACHEMEMORY');
+const CACHEMEMORY = Symbol.for('APP#__CACHEMEMORY');
 
 const Fn = module.exports = ctx => {
 
