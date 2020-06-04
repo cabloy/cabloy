@@ -1,5 +1,10 @@
 # History
 
+## 2020-06-04, Version 3.2.0-beta.2
+
+* **features**
+  * socketio
+
 ## 2020-04-15, Version 3.0.1-beta.1
 
 * **features - backend core **
