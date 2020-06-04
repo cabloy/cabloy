@@ -651,6 +651,12 @@ class Build {
     data._path = fileSrc.replace('.ejs', '');
     // env site
     data.env('site.path', data._path);
+    // destFile for hot load
+    let hotloadFile;
+    if ((this.app.meta.isTest || this.app.meta.isLocal) && fileDest.indexOf('.html') > -1) {
+      hotloadFile = fileWrite;
+      data.env('site.hotloadFile', hotloadFile);
+    }
     // load src
     let contentSrc = await fse.readFile(fileName);
     contentSrc = contentSrc ? contentSrc.toString() : '';
@@ -663,40 +669,6 @@ class Build {
     let content = await ejs.render(contentSrc, data, options);
     content = await this._renderEnvs({ data, content });
     content = await this._renderCSSJSes({ data, content });
-    // hot load
-    if ((this.app.meta.isTest || this.app.meta.isLocal) && fileDest.indexOf('.html') > -1) {
-      const fileWrite2 = fileWrite.replace(/\\/g, '\\\\');
-      content += `
-<script language="javascript">
-$(document).ready(function() {
-  var __checkFileTimeout = ${this.ctx.config.checkFile.timeout};
-  var __fileTime=0;
-  function __checkFile() {
-    util.performAction({
-      method: 'post',
-      url: '/a/cms/site/checkFile',
-      body: { file: '${fileWrite2}', mtime: __fileTime }
-    }).then(function(stat) {
-      if (!stat) {
-        return window.setTimeout(__checkFile, __checkFileTimeout);
-      }
-      if (!__fileTime) {
-        __fileTime = stat.mtime;
-        return window.setTimeout(__checkFile, __checkFileTimeout);
-      }
-      if (__fileTime === stat.mtime) {
-        return window.setTimeout(__checkFile, __checkFileTimeout);
-      }
-      location.reload(true);
-    }).catch(function(){
-      return window.setTimeout(__checkFile, __checkFileTimeout);
-    });
-  }
-  __checkFile();
-});
-</script>
-          `;
-    }
     // write
     await fse.outputFile(fileWrite, content);
     // alternative url
@@ -704,6 +676,27 @@ $(document).ready(function() {
       const fileWriteAlt = path.join(pathDist, fileDestAlt);
       await fse.outputFile(fileWriteAlt, content);
     }
+    // socketio publish
+    if (hotloadFile) {
+      await this._socketioPublish({ hotloadFile });
+    }
+  }
+
+  async _socketioPublish({ hotloadFile }) {
+    const message = {
+      userIdTo: -1,
+      content: {
+        mtime: new Date(),
+      },
+    };
+    await this.ctx.meta.io.publish({
+      path: `/a/cms/hotloadFile/${hotloadFile}`,
+      message,
+      messageClass: {
+        module: 'a-cms',
+        messageClassName: 'hotloadFile',
+      },
+    });
   }
 
   _checkIfPluginEnable({ site, moduleName }) {
@@ -1449,12 +1442,6 @@ module.exports = appInfo => {
     // publishOnSubmit: true,
   };
 
-  // checkFile
-  config.checkFile = {
-    timeout: 1000,
-    timeoutDelay: 5000,
-  };
-
   // site
   config.site = {
     base: {
@@ -1816,8 +1803,6 @@ module.exports = app => {
   ];
   if (app.meta.isTest || app.meta.isLocal) {
     routes = routes.concat([
-      // site
-      { method: 'post', path: 'site/checkFile', controller: site },
     ]);
   }
   return routes;
@@ -2171,14 +2156,6 @@ module.exports = app => {
         atomClass,
         language: this.ctx.request.body.language,
         path: this.ctx.request.body.path,
-      });
-      this.ctx.success(res);
-    }
-
-    async checkFile() {
-      const res = await this.ctx.service.site.checkFile({
-        file: this.ctx.request.body.file,
-        mtime: this.ctx.request.body.mtime,
       });
       this.ctx.success(res);
     }
@@ -3753,35 +3730,6 @@ module.exports = app => {
       }
     }
 
-    async checkFile({ file, mtime }) {
-      // loop
-      const timeStart = new Date();
-      while (true) {
-        // exists
-        const exists = await fse.pathExists(file);
-        if (!exists) {
-          // deleted
-          return null;
-        }
-        // stat
-        const stat = await fse.stat(file);
-        const mtimeCurrent = stat.mtime.valueOf();
-        if (mtime !== mtimeCurrent) {
-          // different
-          return { mtime: mtimeCurrent };
-        }
-        // check the delayTimeout if the same
-        const timeEnd = new Date();
-        const time = (timeEnd.valueOf() - timeStart.valueOf());
-        if (time >= this.ctx.config.checkFile.timeoutDelay) {
-          // timeout
-          return { mtime: mtimeCurrent };
-        }
-        // sleep 1s then continue
-        await this.ctx.meta.util.sleep(1000);
-      }
-    }
-
     getBlocks({ locale }) {
       if (!_blocksLocales[locale]) {
         const blocks = this._prepareBlocks({ locale });
@@ -4169,6 +4117,7 @@ module.exports = app => {
 module.exports = app => {
   const keywords = __webpack_require__(40)(app);
   const schemas = __webpack_require__(41)(app);
+  const socketioHotloadFile = __webpack_require__(42)(app);
   const meta = {
     base: {
       atoms: {
@@ -4267,6 +4216,11 @@ module.exports = app => {
     event: {
       implementations: {
         // 'a-base:atomClassValidator': 'event/atomClassValidator',
+      },
+    },
+    socketio: {
+      messages: {
+        hotloadFile: socketioHotloadFile,
       },
     },
   };
@@ -4490,6 +4444,23 @@ module.exports = app => {
   };
 
   return schemas;
+};
+
+
+/***/ }),
+/* 42 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
+  const progress = {
+    info: {
+      title: 'Hotload File',
+      persistence: false,
+    },
+    callbacks: {
+    },
+  };
+  return progress;
 };
 
 
