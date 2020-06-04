@@ -32,20 +32,15 @@ const Fn = module.exports = ctx => {
       const mailId = res.insertId;
       // publish
       ctx.tail(async () => {
-        await ctx.performAction({
-          method: 'post',
-          url: '/a/socketio/publish',
-          body: {
-            path: null,
-            message: {
-              userIdTo: -2, // different from -1/0
-              content: { mailId },
-            },
-            messageClass: {
-              module: moduleInfo.relativeName,
-              messageClassName: 'mail',
-            },
-            user: { id: 0 },
+        await ctx.meta.io.publish({
+          path: null,
+          message: {
+            userIdTo: -2, // different from -1/0
+            content: { mailId },
+          },
+          messageClass: {
+            module: moduleInfo.relativeName,
+            messageClassName: 'mail',
           },
         });
       });

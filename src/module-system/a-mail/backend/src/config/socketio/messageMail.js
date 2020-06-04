@@ -1,12 +1,6 @@
 const modelMailFn = require('../../model/mail.js');
 
 module.exports = app => {
-  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  async function onCheck({ io, ctx, path, message, options, user }) {
-    // only by system
-    return user.id === 0;
-  }
-
   async function onRender({ io, ctx, options, message, messageSync, messageClass }) {
     const content = JSON.parse(message.content);
     const modelMail = new (modelMailFn(ctx.app))(ctx);
@@ -26,7 +20,6 @@ module.exports = app => {
       },
     },
     callbacks: {
-      onCheck,
     },
     channels: {
       'a-mail:mail': {
