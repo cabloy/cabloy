@@ -159,7 +159,7 @@ export default {
       this.messagesData.push({
         type: message.userIdTo === this.user.id ? 'received' : 'sent',
         message,
-        author: message.userIdTo === this.user.id ? this.userAuthor : this.userSystem,
+        author: message.userIdFrom === this.user.id ? this.userAuthor : this.userSystem,
       });
       this._messageToRead(message);
     },
