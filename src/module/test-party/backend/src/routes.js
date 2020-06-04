@@ -25,6 +25,7 @@ const testEventUserVerify = require('./controller/test/event/userVerify.js');
 const testFeatHttpLog = require('./controller/test/feat/httpLog.js');
 const testFeatStartup = require('./controller/test/feat/startup.js');
 const testFeatSendMail = require('./controller/test/feat/sendMail.js');
+const testFeatSocketIO = require('./controller/test/feat/socketio.js');
 const testFeatHook = require('./controller/test/feat/hook.js');
 const testFeatInstance = require('./controller/test/feat/instance.js');
 const testFeatProgress = require('./controller/test/feat/progress.js');
@@ -147,6 +148,9 @@ module.exports = app => {
 
       // test/feat/sendMail
       { method: 'post', path: 'test/feat/sendMail', controller: testFeatSendMail, middlewares: 'mail', meta: { auth: { enable: false } } },
+
+      // test/feat/socketio
+      { method: 'post', path: 'test/feat/socketio/publish', controller: testFeatSocketIO, middlewares: '', meta: { auth: { user: true } } },
 
       // test/feat/hook
       { method: 'post', path: 'test/feat/hook/echo', controller: testFeatHook, middlewares: 'test', meta: { auth: { enable: false } } },

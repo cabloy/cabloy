@@ -221,10 +221,8 @@ export default {
         this.messagebar.focus();
       }
       // send
-      this.$api.post('/a/socketio/publish', {
-        path: _subscribePath,
+      this.$api.post('test/feat/socketio/publish', {
         message,
-        messageClass: this.messageClass,
         options: {
           scene: this.messageScene,
         },

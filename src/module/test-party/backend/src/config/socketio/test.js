@@ -1,14 +1,9 @@
 
-async function onCheck({ io, ctx, path, message, options, user }) {
-  // not check only for test
-  return true;
-}
-
-async function onSessionId({ io, ctx, path, message, options, user }) {
+async function onSessionId({ io, ctx, path, message, options }) {
   // donothing
 }
 
-async function onGroupUsers({ io, ctx, path, message, options, user }) {
+async function onGroupUsers({ io, ctx, path, message, options }) {
   // donothing
 }
 
@@ -38,27 +33,20 @@ async function onDelivery({ io, ctx, path, options, message, messageSync, messag
   await io.delivery({ path, options, message, messageSync, messageClass });
 }
 
-async function onChannelValid({ io, ctx, options, message, messageSync, messageClass }) {
-
-}
-
 module.exports = app => {
   const test = {
     info: {
       title: 'Test',
       persistence: true,
       push: {
-        channelsSupported: '', // empty(means all) / array
         channels: 'auto', // empty(means disable) / auto(auto fetch first valid one) / array(use valid items)
       },
     },
     callbacks: {
-      onCheck,
       onSessionId,
       onGroupUsers,
       onProcess,
       onDelivery,
-      onChannelValid,
     },
   };
   return test;
