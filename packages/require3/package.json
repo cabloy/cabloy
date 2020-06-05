@@ -1,6 +1,6 @@
 {
   "name": "require3",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "require3",
   "main": "index.js",
   "repository": {
@@ -11,7 +11,7 @@
     "require3"
   ],
   "author": "zhennann",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/zhennann/require3/issues"
   },
