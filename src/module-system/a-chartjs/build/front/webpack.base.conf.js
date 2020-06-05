@@ -22,6 +22,7 @@ module.exports = {
   },
   externals: {
     vue: 'Vue',
+    moment: 'moment',
   },
   resolve: {
     extensions: [ '.js', '.vue', '.json' ],
