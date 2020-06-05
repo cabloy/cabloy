@@ -1,6 +1,6 @@
 {
   "name": "egg-born-localeutil",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "egg-born-localeutil",
   "main": "dist/index.js",
   "scripts": {
@@ -17,7 +17,7 @@
     "util"
   ],
   "author": "zhennann",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/zhennann/egg-born-localeutil/issues"
   },
