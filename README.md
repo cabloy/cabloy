@@ -41,6 +41,18 @@ CabloyJS: The Ultimate NodeJS Full Stack Business Development Framework, based o
 - [CabloyJS Community](https://community.cabloy.com)
 - [CabloyJS Awesome](./docs/awesome.md)
 
+### QQ官方交流群
+
+  ![IMG_8136](./docs/assets/images/qq-group.jpg)
+
+### 文章
+
+- [一文读懂NodeJS全栈开发利器：CabloyJS（万字长文）](https://community.cabloy.com/zh-cn/articles/known-cabloyjs.html)
+
+### 视频
+
+- [网易免费课程 - CabloyJS全栈业务开发实战](https://study.163.com/course/courseMain.htm?courseId=1209403891)
+
 ## Screenshots
 
 ### 1. Adaptive Layout
