@@ -1,6 +1,6 @@
 {
   "name": "egg-born-scripts",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "egg-born-scripts",
   "main": "index.js",
   "bin": {
@@ -16,7 +16,7 @@
     "scripts"
   ],
   "author": "zhennann",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/zhennann/egg-born-scripts/issues"
   },
