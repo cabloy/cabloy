@@ -37,9 +37,17 @@ CabloyJS: The Ultimate NodeJS Full Stack Business Development Framework, based o
 
 ## Resources
 
-- [CabloyJS Store](https://store.cabloy.com)
-- [CabloyJS Community](https://community.cabloy.com)
+### Version - English
+
+- [CabloyJS Store](https://store.cabloy.com/index.html)
+- [CabloyJS Community](https://community.cabloy.com/index.html)
 - [CabloyJS Awesome](./docs/awesome.md)
+
+### Version - Chinese
+
+- [CabloyJS 商店](https://store.cabloy.com/zh-cn/index.html)
+- [CabloyJS 社区](https://community.cabloy.com/zh-cn/index.html)
+- [CabloyJS Awesome](./docs/awesome.zh-CN.md)
 
 ### QQ官方交流群
 
