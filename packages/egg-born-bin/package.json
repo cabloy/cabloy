@@ -1,6 +1,6 @@
 {
   "name": "egg-born-bin",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "egg-born-bin",
   "main": "index.js",
   "bin": {
@@ -16,7 +16,7 @@
     "bin"
   ],
   "author": "zhennann",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/zhennann/egg-born-bin/issues"
   },
