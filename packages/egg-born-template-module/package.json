@@ -1,6 +1,6 @@
 {
   "name": "egg-born-template-module",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "egg-born-template-module",
   "scripts": {},
   "repository": {
@@ -16,7 +16,7 @@
     "module"
   ],
   "author": "zhennann",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/zhennann/egg-born-template-module/issues"
   },
