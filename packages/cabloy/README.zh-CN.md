@@ -268,4 +268,4 @@ Cabloy来自蓝精灵的魔法咒语，拼对了Cabloy这个单词就会有神�
 
 ## License
 
-[LGPL](./LICENSE)
+[MIT](./LICENSE)

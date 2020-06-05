@@ -260,4 +260,4 @@ Cabloy comes from the magic spell of the Smurfs. If you spell the word Cabloy co
 
 ## License
 
-[LGPL](./LICENSE)
+[MIT](./LICENSE)
