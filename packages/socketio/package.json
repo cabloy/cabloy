@@ -1,6 +1,6 @@
 {
   "name": "@zhennann/socketio",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "socketio",
   "main": "dist/socketio.min.js",
   "scripts": {
@@ -17,7 +17,7 @@
     "socketio"
   ],
   "author": "zhennann",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/zhennann/socketio/issues"
   },
