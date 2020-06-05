@@ -1,6 +1,6 @@
 {
   "name": "object-get-o-a",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "object-get-o-a",
   "main": "dist/index.js",
   "scripts": {
@@ -14,7 +14,7 @@
     "util"
   ],
   "author": "zhennann",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/zhennann/object-get-o-a/issues"
   },
