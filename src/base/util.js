@@ -339,6 +339,9 @@ export default function(Vue) {
     },
   };
 
+  // moment
+  window.moment = moment;
+
   // mixin
   Object.assign(util, {
     moment,
