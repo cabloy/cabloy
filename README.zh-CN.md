@@ -115,6 +115,21 @@ CabloyJS是一款顶级NodeJS全栈业务开发框架, 基于KoaJS + EggJS + Vue
 
 ![statusbar-right-zhcn](./docs/assets/screenshots/layoutpc/zhcn/statusbar-right-zhcn.gif)
 
+### 7. Socket IO
+
+#### 7.1 IM
+
+用户向系统发送一条消息，系统通过`websocket在线通道`向用户推送一条回复
+
+![im-zhcn](./docs/assets/screenshots/socketio/im-zhcn.gif)
+
+#### 7.2 进度条
+
+系统通过`websocket在线通道`向前端实时推送任务的进度
+
+![progress-zhcn](./docs/assets/screenshots/socketio/progress-zhcn.gif)
+
+
 ## 定位
 
 CabloyJS是面向`中小开发团队`和`接单侠`开发的NodeJS全栈业务快速开发框架，支持全场景业务开发，省时、省力
