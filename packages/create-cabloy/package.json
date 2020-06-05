@@ -1,6 +1,6 @@
 {
   "name": "create-cabloy",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "so you could use `npm init cabloy showcase` to init cabloy project",
   "bin": "./bin/create-cabloy.js",
   "repository": {
@@ -8,7 +8,7 @@
     "url": "git+https://github.com/zhennann/create-cabloy.git"
   },
   "author": "zhennann",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/zhennann/create-cabloy/issues"
   },
