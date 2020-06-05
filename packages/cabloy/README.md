@@ -103,6 +103,21 @@ CabloyJS: The Ultimate NodeJS Full Stack Business Development Framework, based o
 
 ![statusbar-right-enus](./docs/assets/screenshots/layoutpc/enus/statusbar-right-enus.gif)
 
+### 7. Socket IO
+
+#### 7.1 IM
+
+The user sends a message to the system, and the system pushes a reply to the user through `websocket online channel`
+
+![im-enus](./docs/assets/screenshots/socketio/im-enus.gif)
+
+#### 7.2 Progress Bar
+
+The system pushes task progress to the frontend in real time through `websocket online channel`
+
+![progress-enus](./docs/assets/screenshots/socketio/progress-enus.gif)
+
+
 ## Goals
 
 CabloyJS is a rapid NodeJS full-stack business developement framework for small and medium-sized development teams and freelancers. It supports full scenario business development, saving time and effort
