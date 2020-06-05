@@ -1,6 +1,6 @@
 {
   "name": "egg-born-mock",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "egg-born-mock",
   "main": "src/main.js",
   "repository": {
@@ -13,7 +13,7 @@
     "mock"
   ],
   "author": "zhennann",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/zhennann/egg-born-mock/issues"
   },
