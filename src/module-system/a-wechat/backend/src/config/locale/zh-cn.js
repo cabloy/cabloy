@@ -1,4 +1,5 @@
 module.exports = {
+  Wechat: '微信',
   'Wechat Public': '微信公众号',
   'Wechat Miniprogram': '微信小程序',
   'Not In Wechat': '不在微信内部',

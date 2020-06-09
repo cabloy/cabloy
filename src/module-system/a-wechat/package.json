@@ -1,7 +1,7 @@
 {
   "name": "egg-born-module-a-wechat",
   "version": "3.0.3",
-  "title": "a-wechat",
+  "title": "Wechat",
   "eggBornModule": {
     "fileVersion": 1,
     "dependencies": {
