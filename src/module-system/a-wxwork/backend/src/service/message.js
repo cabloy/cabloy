@@ -5,6 +5,10 @@ module.exports = app => {
   class Message extends app.Service {
 
     async index({ message }) {
+      // config
+      const config = this.ctx.config.account.wxwork;
+      const configAppSelfBuilt = config.apps.selfBuilt;
+      // res
       let res;
       // event: subscribe
       if (message.MsgType === 'event') {
@@ -17,20 +21,23 @@ module.exports = app => {
       // raise event
       const res2 = await this.ctx.meta.event.invoke({
         module: moduleInfo.relativeName,
-        name: 'wechatMessage',
+        name: 'wxworkMessage',
         data: { message },
       });
       if (res2) res = res2;
       // check if ready
       if (res) return res;
       // default reply
-      return {
-        ToUserName: message.FromUserName,
-        FromUserName: message.ToUserName,
-        CreateTime: new Date().getTime(),
-        MsgType: 'text',
-        Content: this.ctx.config.account.public.message.reply.default,
-      };
+      if (message.MsgType !== 'event') {
+        return {
+          ToUserName: message.FromUserName,
+          FromUserName: message.ToUserName,
+          CreateTime: new Date().getTime(),
+          MsgType: 'text',
+          Content: configAppSelfBuilt.message.reply.default,
+        };
+      }
+      return null;
     }
 
     async _subscribeUser({ openid, message }) {
@@ -40,13 +47,7 @@ module.exports = app => {
       const wechatHelper = new (WechatHelperFn(this.ctx))();
       await wechatHelper.verifyAuthUser({ scene: 1, openid, userInfo });
       // ok
-      return {
-        ToUserName: message.FromUserName,
-        FromUserName: message.ToUserName,
-        CreateTime: new Date().getTime(),
-        MsgType: 'text',
-        Content: this.ctx.config.account.public.message.reply.subscribe,
-      };
+      return null;
     }
 
     async _unsubscribeUser({ openid, message }) {

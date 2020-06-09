@@ -65,21 +65,26 @@ module.exports = appInfo => {
   // account
   config.account = {};
 
-  // account.public
-  config.account.public = {
-    appID: '',
-    appSecret: '',
-    token: appInfo.name,
-    encodingAESKey: '',
-    message: {
-      reply: {
-        default: 'You are welcome!',
-        subscribe: 'You are subscribed!',
+  // account.wxwork
+  config.account.wxwork = {
+    corpid: '',
+    apps: {
+      selfBuilt: {
+        agentId: '',
+        secret: '-XXs',
+        token: appInfo.name,
+        encodingAESKey: '',
+        message: {
+          reply: {
+            default: 'You are welcome!',
+            subscribe: 'You are subscribed!',
+          },
+        },
+        jssdk: {
+          debug: false,
+          jsApiList,
+        },
       },
-    },
-    jssdk: {
-      debug: false,
-      jsApiList,
     },
   };
 

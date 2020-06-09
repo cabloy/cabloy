@@ -1,9 +1,9 @@
-const wechatUser = require('./model/wechatUser.js');
+const wxworkDepartment = require('./model/wxworkDepartment.js');
 const auth = require('./model/auth.js');
 
 module.exports = app => {
   const models = {
-    wechatUser,
+    wxworkDepartment,
     auth,
   };
   return models;
