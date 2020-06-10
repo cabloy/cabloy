@@ -1,10 +1,10 @@
-const wechat = require('./middleware/wechat.js');
+const wxwork = require('./middleware/wxwork.js');
 const wechatMini = require('./middleware/wechatMini.js');
 const inWechat = require('./middleware/inWechat.js');
 const inWechatMini = require('./middleware/inWechatMini.js');
 
 module.exports = {
-  wechat,
+  wxwork,
   wechatMini,
   inWechat,
   inWechatMini,

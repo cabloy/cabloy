@@ -6,28 +6,40 @@ module.exports = app => {
   class MessageController extends app.Controller {
 
     async index() {
+      await this._handleMessage('selfBuilt', async ({ message }) => {
+        return await this.ctx.service.message.index({ message });
+      });
+    }
+
+    async contacts() {
+      await this._handleMessage('contacts', async ({ message }) => {
+        return await this.ctx.service.message.contacts({ message });
+      });
+    }
+
+    async _handleMessage(appName, handler) {
       // query
       const query = this.ctx.query;
       // config
       const config = this.ctx.config.account.wxwork;
-      const configAppSelfBuilt = config.apps.selfBuilt;
+      const configApp = config.apps[appName];
       // encrypted: always true
       const encrypted = true; // query.encrypt_type === 'aes';
       // wechat crypto
-      const wechatCrypto = encrypted ? new WechatCrypto(configAppSelfBuilt.token, configAppSelfBuilt.encodingAESKey, config.corpid) : null;
+      const wechatCrypto = encrypted ? new WechatCrypto(configApp.token, configApp.encodingAESKey, config.corpid) : null;
       // parse
       let messageIn;
       if (this.ctx.method === 'GET') {
-        messageIn = await this._parseMessageGet({ query, configAppSelfBuilt, encrypted, wechatCrypto });
+        messageIn = await this._parseMessageGet({ query, configApp, encrypted, wechatCrypto });
         // ok
         this.ctx.status = 200;
         this.ctx.type = 'text/plain';
         this.ctx.body = messageIn.echostr;
       } else {
-        messageIn = await this._parseMessagePost({ query, configAppSelfBuilt, encrypted, wechatCrypto });
+        messageIn = await this._parseMessagePost({ query, configApp, encrypted, wechatCrypto });
         // handle
         let resXML;
-        const messageOut = await this.ctx.service.message.index({ message: messageIn });
+        const messageOut = await handler({ message: messageIn });
         if (!messageOut) {
           resXML = '';
         } else {
@@ -48,13 +60,13 @@ module.exports = app => {
       }
     }
 
-    async _parseMessageGet({ query, configAppSelfBuilt, encrypted, wechatCrypto }) {
+    async _parseMessageGet({ query, configApp, encrypted, wechatCrypto }) {
       // check if valid
       let valid = false;
       if (encrypted) {
         valid = query.msg_signature === wechatCrypto.getSignature(query.timestamp, query.nonce, query.echostr);
       } else {
-        valid = query.signature === wechatUtils.calcSignature({ options: [ configAppSelfBuilt.token, query.timestamp, query.nonce ].sort() });
+        valid = query.signature === wechatUtils.calcSignature({ options: [ configApp.token, query.timestamp, query.nonce ].sort() });
       }
       if (!valid) this.ctx.throw(401);
       // decrypt
@@ -65,7 +77,7 @@ module.exports = app => {
       return { echostr: query.echostr };
     }
 
-    async _parseMessagePost({ query, configAppSelfBuilt, encrypted, wechatCrypto }) {
+    async _parseMessagePost({ query, configApp, encrypted, wechatCrypto }) {
       // xml raw
       let xmlRaw;
       if (typeof this.ctx.request.body === 'string') {
@@ -81,7 +93,7 @@ module.exports = app => {
       if (encrypted) {
         valid = query.msg_signature === wechatCrypto.getSignature(query.timestamp, query.nonce, xml.Encrypt);
       } else {
-        valid = query.signature === wechatUtils.calcSignature({ options: [ configAppSelfBuilt.token, query.timestamp, query.nonce ].sort() });
+        valid = query.signature === wechatUtils.calcSignature({ options: [ configApp.token, query.timestamp, query.nonce ].sort() });
       }
       if (!valid) this.ctx.throw(401);
       // decrypt

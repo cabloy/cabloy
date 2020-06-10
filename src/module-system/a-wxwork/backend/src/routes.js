@@ -12,8 +12,10 @@ module.exports = app => {
     { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/test', controller: version, middlewares: 'test' },
     // message
-    { method: 'get', path: 'message/index', controller: message, middlewares: 'wechat', meta: { auth: { enable: false } } },
-    { method: 'post', path: 'message/index', controller: message, middlewares: 'wechat', meta: { auth: { enable: false } } },
+    { method: 'get', path: 'message/index', controller: message, middlewares: 'wxwork', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'message/index', controller: message, middlewares: 'wxwork', meta: { auth: { enable: false } } },
+    { method: 'get', path: 'message/contacts', controller: message, middlewares: 'wxwork', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'message/contacts', controller: message, middlewares: 'wxwork', meta: { auth: { enable: false } } },
     // jsapi
     { method: 'post', path: 'jssdk/jsconfig', controller: jssdk, middlewares: 'wechat' },
     // event

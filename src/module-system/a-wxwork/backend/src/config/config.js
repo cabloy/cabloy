@@ -44,7 +44,7 @@ module.exports = appInfo => {
 
   // middlewares
   config.middlewares = {
-    wechat: {
+    wxwork: {
       global: false,
       dependencies: 'instance',
     },
@@ -71,19 +71,23 @@ module.exports = appInfo => {
     apps: {
       selfBuilt: {
         agentId: '',
-        secret: '-XXs',
+        secret: '',
         token: appInfo.name,
         encodingAESKey: '',
         message: {
           reply: {
             default: 'You are welcome!',
-            subscribe: 'You are subscribed!',
           },
         },
         jssdk: {
           debug: false,
           jsApiList,
         },
+      },
+      contacts: {
+        secret: '',
+        token: appInfo.name,
+        encodingAESKey: '',
       },
     },
   };
