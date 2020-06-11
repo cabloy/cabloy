@@ -75,6 +75,9 @@ module.exports = function(ctx) {
 
     // profileId : unionid:openid
     async _ensureAuthUser({ scene, openid, userInfo }) {
+      // model auth
+      const modelAuth = ctx.model.module('a-base').auth;
+      //
       const sceneInfo = this.getSceneInfo(scene);
       const unionid = userInfo.unionid || '';
       const profileId = `${unionid}:${openid}`;
@@ -108,7 +111,7 @@ module.exports = function(ctx) {
         const _profile = extend(true, {}, profileUser.profile);
         delete _profile.avatar;
         // insert auth
-        const res = await ctx.model.auth.insert({
+        const res = await modelAuth.insert({
           providerId: providerItem.id,
           profileId,
           profile: JSON.stringify(_profile),
@@ -120,7 +123,7 @@ module.exports = function(ctx) {
         const _profileOld = JSON.parse(authItem.profile);
         _profile.avatar = _profileOld.avatar;
         // always update
-        await ctx.model.auth.update({
+        await modelAuth.update({
           id: authItem.id,
           profileId,
           profile: JSON.stringify(_profile),
@@ -137,7 +140,7 @@ module.exports = function(ctx) {
         const _authOther = _authOthers[0];
         if (_authOther && _authOther.userId !== authUserId) {
           // update userId for this auth
-          await ctx.model.auth.update({ id: authId, userId: _authOther.userId });
+          await modelAuth.update({ id: authId, userId: _authOther.userId });
         }
       }
       // ready
