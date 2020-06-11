@@ -1,8 +1,8 @@
-const wxworkDepartment = require('./model/wxworkDepartment.js');
+const department = require('./model/department.js');
 
 module.exports = app => {
   const models = {
-    wxworkDepartment,
+    department,
   };
   return models;
 };

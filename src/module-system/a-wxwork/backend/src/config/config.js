@@ -69,6 +69,11 @@ module.exports = appInfo => {
     },
   };
 
+  // sync
+  config.sync = {
+    departmentRoot: 'internal',
+  };
+
   // account
   config.account = {};
 
