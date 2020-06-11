@@ -83,6 +83,7 @@ module.exports = app => {
         subdomain: this.ctx.subdomain,
         module: moduleInfo.relativeName,
         queueName: 'render',
+        queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
         data: {
           queueAction: 'buildLanguages',
           atomClass,
@@ -98,6 +99,7 @@ module.exports = app => {
         subdomain: this.ctx.subdomain,
         module: moduleInfo.relativeName,
         queueName: 'render',
+        queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
         data: {
           queueAction: 'buildLanguage',
           atomClass,

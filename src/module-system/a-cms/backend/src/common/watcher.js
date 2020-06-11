@@ -96,6 +96,7 @@ module.exports = function(app) {
         subdomain,
         module: moduleInfo.relativeName,
         queueName: 'render',
+        queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
         data: {
           queueAction: 'buildLanguage',
           atomClass,

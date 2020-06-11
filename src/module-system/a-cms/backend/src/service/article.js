@@ -241,6 +241,7 @@ module.exports = app => {
           subdomain: this.ctx.subdomain,
           module: moduleInfo.relativeName,
           queueName: 'render',
+          queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
           data: {
             queueAction: 'deleteArticle',
             atomClass, key, article, inner,
@@ -257,6 +258,7 @@ module.exports = app => {
           subdomain: this.ctx.subdomain,
           module: moduleInfo.relativeName,
           queueName: 'render',
+          queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
           data: {
             queueAction: 'renderArticle',
             atomClass, key, inner,
