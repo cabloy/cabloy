@@ -43,6 +43,7 @@ module.exports = (options, app) => {
         return obj[prop];
       },
     });
+    return api;
   }
 
   return async function wxwork(ctx, next) {
