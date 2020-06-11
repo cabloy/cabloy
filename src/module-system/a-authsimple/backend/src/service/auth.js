@@ -91,7 +91,8 @@ module.exports = app => {
         module: moduleInfo.relativeName,
         providerName: 'authsimple',
       });
-      await this.ctx.model.auth.insert({
+      const modelAuth = this.ctx.model.module('a-base').auth;
+      await modelAuth.insert({
         userId,
         providerId: providerItem.id,
         profileId: authSimpleId,
