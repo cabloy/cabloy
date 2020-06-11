@@ -45,7 +45,7 @@ module.exports = (options, app) => {
     });
   }
 
-  return async function wechat(ctx, next) {
+  return async function wxwork(ctx, next) {
     ctx.meta = ctx.meta || {};
     Object.defineProperty(ctx.meta, 'wxwork', {
       get() {
