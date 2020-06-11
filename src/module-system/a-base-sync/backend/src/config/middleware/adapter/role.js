@@ -274,11 +274,12 @@ const Fn = module.exports = ctx => {
     }
 
     // save
-    async save({ roleId, data: { roleName, leader, sorting } }) {
+    async save({ roleId, data: { roleName, leader, sorting, catalog } }) {
       const role = await this.get({ id: roleId });
-      role.roleName = roleName;
-      role.leader = leader;
-      role.sorting = sorting;
+      if (roleName !== undefined) role.roleName = roleName;
+      if (leader !== undefined) role.leader = leader;
+      if (sorting !== undefined) role.sorting = sorting;
+      if (catalog !== undefined) role.catalog = catalog;
       await this.model.update(role);
     }
 
