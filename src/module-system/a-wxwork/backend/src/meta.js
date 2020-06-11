@@ -9,7 +9,7 @@ module.exports = app => {
       functions: {
         contacts: {
           title: 'Contacts Management',
-          actionPath: 'settings/contacts',
+          actionPath: 'contacts/management',
           sorting: 1,
           menu: 0,
         },

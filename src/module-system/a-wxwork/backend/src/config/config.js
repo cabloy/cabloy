@@ -42,6 +42,13 @@ const jsApiList = [
 module.exports = appInfo => {
   const config = {};
 
+  // queues
+  config.queues = {
+    contacts: {
+      path: 'contacts/queue',
+    },
+  };
+
   // middlewares
   config.middlewares = {
     wxwork: {
