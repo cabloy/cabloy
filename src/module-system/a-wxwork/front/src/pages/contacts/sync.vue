@@ -19,14 +19,6 @@ export default {
       content: '',
     };
   },
-  computed: {
-    params() {
-      return this.contextParams;
-    },
-    source() {
-      return this.contextParams && this.contextParams.source;
-    },
-  },
   methods: {
     getPageTitle() {
       const type = this.type === 'departments' ? 'Departments' : 'Members';
