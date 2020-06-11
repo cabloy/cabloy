@@ -34,20 +34,20 @@ module.exports = (options, app) => {
     return api;
   }
   function _createWxworkApi({ ctx }) {
-    return {
-      getApp(appName) {
-        const key = `_${appName}`;
-        if (this[key] === undefined) {
-          this[key] = _createWxworkApiApp({ ctx, appName });
+    const api = { };
+    api.app = new Proxy({}, {
+      get(obj, prop) {
+        if (!obj[prop]) {
+          obj[prop] = _createWxworkApiApp({ ctx, appName: prop });
         }
-        return this[key];
+        return obj[prop];
       },
-    };
+    });
   }
 
   return async function wechat(ctx, next) {
     ctx.meta = ctx.meta || {};
-    Object.defineProperty(ctx.meta, 'wechat', {
+    Object.defineProperty(ctx.meta, 'wxwork', {
       get() {
         if (ctx.meta[WXWORK] === undefined) {
           ctx.meta[WXWORK] = _createWxworkApi({ ctx });
