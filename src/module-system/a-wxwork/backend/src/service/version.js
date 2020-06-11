@@ -35,7 +35,7 @@ module.exports = app => {
             deleted int(11) DEFAULT '0',
             iid int(11) DEFAULT '0',
             userId int(11) DEFAULT '0',
-            corpUserId varchar(255) DEFAULT NULL,
+            memberId varchar(255) DEFAULT NULL,
             name varchar(255) DEFAULT NULL,
             alias varchar(255) DEFAULT NULL,
             mobile varchar(255) DEFAULT NULL,
@@ -63,6 +63,13 @@ module.exports = app => {
     }
 
     async init(options) {
+      if (options.version === 1) {
+        // roleFunctions
+        const roleFunctions = [
+          { roleName: 'system', name: 'contacts' },
+        ];
+        await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
+      }
     }
 
     async test() {

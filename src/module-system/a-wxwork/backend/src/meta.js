@@ -7,6 +7,12 @@ module.exports = app => {
       atoms: {
       },
       functions: {
+        contacts: {
+          title: 'Contacts Management',
+          actionPath: 'settings/contacts',
+          sorting: 1,
+          menu: 0,
+        },
       },
     },
     validation: {
@@ -16,9 +22,14 @@ module.exports = app => {
       schemas: {
       },
     },
+    settings: {
+      instance: {
+        actionPath: 'settings/list',
+      },
+    },
     event: {
       declarations: {
-        wechatMessage: 'Wechat Message',
+        wxworkMessage: 'Wechat Work Message',
         wechatMessageMini: 'Miniprogram Message',
       },
       implementations: {

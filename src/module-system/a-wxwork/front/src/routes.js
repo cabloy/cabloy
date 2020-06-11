@@ -3,4 +3,6 @@ function load(name) {
 }
 
 export default [
+  { path: 'settings/list', component: load('settings/list') },
+  { path: 'settings/contacts', component: load('settings/contacts') },
 ];
