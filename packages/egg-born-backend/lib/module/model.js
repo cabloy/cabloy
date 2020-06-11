@@ -18,31 +18,47 @@ module.exports = function(loader, modules) {
 
       // maybe /favicon.ico
       if (context.module) {
-        const ebModelClass = ebModelClasses[context.module.info.relativeName];
-        if (ebModelClass) {
-          context.model = new (ModelClass(loader.app))(context, { table: null });
-          context.model.__ebCache = new Map();
-          Object.keys(ebModelClass).forEach(key => {
-            defineProperty(context, key, ebModelClass[key]);
-          });
-        }
+        context.model = createModelContainer(context, context.module.info.relativeName);
       }
 
       return context;
     };
   }
 
-  function defineProperty(context, key, value) {
-    Object.defineProperty(context.model, key, {
+  function createModelContainer(context, relativeName) {
+    let modelContainer;
+    const ebModelClass = ebModelClasses[relativeName];
+    if (ebModelClass) {
+      modelContainer = new (ModelClass(loader.app))(context, { table: null });
+      modelContainer.__ebCache = new Map();
+      Object.keys(ebModelClass).forEach(key => {
+        defineProperty(modelContainer, context, key, ebModelClass[key]);
+      });
+      // other module's models
+      modelContainer.__ebCacheModule = new Map();
+      modelContainer.module = function(moduleName) {
+        let _modelContainer = modelContainer.__ebCacheModule.get(moduleName);
+        if (!_modelContainer) {
+          _modelContainer = createModelContainer(context, moduleName);
+          modelContainer.__ebCacheModule.set(moduleName, _modelContainer);
+        }
+        return _modelContainer;
+      };
+    }
+    return modelContainer;
+  }
+
+  function defineProperty(modelContainer, context, key, value) {
+    Object.defineProperty(modelContainer, key, {
       get() {
-        let instance = context.model.__ebCache.get(key);
+        let instance = modelContainer.__ebCache.get(key);
         if (!instance) {
           if (typeof value === 'function') {
             instance = new value(context);
           } else {
             instance = new (ModelClass(loader.app))(context, value);
           }
-          context.model.__ebCache.set(key, instance);
+          modelContainer.__ebCache.set(key, instance);
         }
         return instance;
       },
