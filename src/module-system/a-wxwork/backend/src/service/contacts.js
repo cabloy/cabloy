@@ -15,9 +15,9 @@ module.exports = app => {
 
   class Contacts extends app.Service {
 
-    async queueSync({ type }) {
+    async queueSync({ type, progressId }) {
       if (type === 'departments') {
-        await this._queueSyncDepartments({ });
+        await this._queueSyncDepartments({ progressId });
       } else {
 
       }
@@ -56,37 +56,53 @@ module.exports = app => {
 
     }
 
-    async _queueSyncDepartments({ }) {
-      // prepare context
-      const context = {
-        remoteDepartments: null,
-      };
-      // remote departments
-      const res = await this.ctx.meta.wxwork.app.contacts.getDepartmentList();
-      if (res.errcode) {
-        throw new Error(res.errmsg);
-      }
-      context.remoteDepartments = res.department;
-      // local departments
-      context.localDepartments = await this.ctx.model.department.select();
-      context.localDepartmentsMap = {};
-      for (const localDepartment of context.localDepartments) {
-        localDepartment.__status = 0;
-        context.localDepartmentsMap[localDepartment.departmentId] = localDepartment;
-      }
-      // loop create/update
-      for (const remoteDepartment of context.remoteDepartments) {
-        await this._queueSyncDepartment({ context, remoteDepartment });
-      }
-      // delete __status===0
-      for (const departmentId in context.localDepartmentsMap) {
-        const localDepartment = context.localDepartmentsMap[departmentId];
-        if (localDepartment.__status === 0) {
-          await this._deleteRoleAndDepartment({ localDepartment, department: null });
+    async _queueSyncDepartments({ progressId }) {
+      try {
+        // prepare context
+        const context = {
+          remoteDepartments: null,
+          progressId,
+        };
+        // progress
+        await this.ctx.meta.progress.update({ progressId, text: `--- ${this.ctx.text('Sync Started')} ---` });
+        // remote departments
+        const res = await this.ctx.meta.wxwork.app.contacts.getDepartmentList();
+        if (res.errcode) {
+          throw new Error(res.errmsg);
         }
+        context.remoteDepartments = res.department;
+        // progress
+        await this.ctx.meta.progress.update({ progressId, text: `--- ${this.ctx.text('Department Count')}: ${context.remoteDepartments.length} ---` });
+        // local departments
+        context.localDepartments = await this.ctx.model.department.select();
+        context.localDepartmentsMap = {};
+        for (const localDepartment of context.localDepartments) {
+          localDepartment.__status = 0;
+          context.localDepartmentsMap[localDepartment.departmentId] = localDepartment;
+        }
+        // loop create/update
+        for (const remoteDepartment of context.remoteDepartments) {
+          await this._queueSyncDepartment({ context, remoteDepartment });
+        }
+        // delete __status===0
+        for (const departmentId in context.localDepartmentsMap) {
+          const localDepartment = context.localDepartmentsMap[departmentId];
+          if (localDepartment.__status === 0) {
+            await this._deleteRoleAndDepartment({ localDepartment, department: null });
+            // progress
+            await this.ctx.meta.progress.update({ progressId, text: `- ${localDepartment.departmentName}` });
+          }
+        }
+        // build roles
+        await this.ctx.meta.role.build();
+        // progress done
+        await this.ctx.meta.progress.done({ progressId, message: `--- ${this.ctx.text('Sync Completed')} ---` });
+      } catch (err) {
+        // progress error
+        await this.ctx.meta.progress.error({ progressId, message: err.message });
+        // throw err
+        throw err;
       }
-      // build roles
-      await this.ctx.meta.role.build();
     }
 
     async _queueSyncDepartment({ context, remoteDepartment }) {
@@ -98,11 +114,14 @@ module.exports = app => {
       // new department
       if (!localDepartment) {
         await this._createRoleAndDepartment({ department });
+        // progress
+        await this.ctx.meta.progress.update({ progressId: context.progressId, text: `+ ${department.departmentName}` });
         // done
         return;
       }
       // update
       await this._updateRoleAndDepartment({ localDepartment, department });
+      // progress: not prompt
       // done
       localDepartment.__status = 1; // handled
       return;

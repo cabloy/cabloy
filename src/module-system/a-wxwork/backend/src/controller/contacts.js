@@ -25,6 +25,7 @@ module.exports = app => {
       if (queueAction === 'sync') {
         await this.service.contacts.queueSync({
           type: this.ctx.request.body.type,
+          progressId: this.ctx.request.body.progressId,
         });
       } else if (queueAction === 'changeContact') {
         await this.service.contacts.queueChangeContact({

@@ -5,4 +5,7 @@ module.exports = {
   'Not In Wechat': '不在微信内部',
   'Not In Wechat Miniprogram': '不在微信小程序内部',
   'Contacts Management': '通讯录管理',
+  'Sync Started': '同步已启动',
+  'Sync Completed': '同步已完成',
+  'Department Count': '部门数量',
 };
