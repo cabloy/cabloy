@@ -41,11 +41,18 @@ module.exports = app => {
     }
 
     async contacts({ message }) {
-      console.log(message);
-      // config
-      const config = this.ctx.config.account.wxwork;
-      const configApp = config.apps.contacts;
-      //
+      // queue
+      this.ctx.app.meta.queue.push({
+        locale: this.ctx.locale,
+        subdomain: this.ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'contacts',
+        data: {
+          queueAction: 'changeContact',
+          message,
+        },
+      });
+      // ok
       return null;
     }
 

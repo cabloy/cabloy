@@ -15,21 +15,18 @@ export default {
   data() {
     return {
       type: this.$f7route.query.type,
-      mode: this.$f7route.query.mode,
       content: '',
     };
   },
   methods: {
     getPageTitle() {
       const type = this.type === 'departments' ? 'Departments' : 'Members';
-      const mode = this.mode === 'inc' ? 'Sync (Incremental)' : 'Sync (Full)';
-      return `${this.$text(type)}: ${this.$text(mode)}`;
+      return `${this.$text(type)}: ${this.$text('Sync')}`;
     },
     onPerformSync() {
       return this.$view.dialog.confirm().then(() => {
         return this.$api.post(`contacts/sync`, {
           type: this.type,
-          mode: this.mode,
         }).then(res => {
           console.log(res);
         });

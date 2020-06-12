@@ -2,25 +2,58 @@
 const __departmentFieldMap = [
   [ 'departmentId', 'departmentParentId', 'departmentName', 'departmentNameEn', 'departmentOrder' ],
   [ 'id', 'parentid', 'name', 'name_en', 'order' ],
+  [ 'number', 'number', 'string', 'string', 'number' ],
+];
+
+const __departmentFieldMap_XML = [
+  [ 'departmentId', 'departmentParentId', 'departmentName', 'departmentOrder' ],
+  [ 'Id', 'ParentId', 'Name', 'Order' ],
+  [ 'number', 'number', 'string', 'number' ],
 ];
 
 module.exports = app => {
 
   class Contacts extends app.Service {
 
-    async queueSync({ type, mode }) {
+    async queueSync({ type }) {
       if (type === 'departments') {
-        await this._queueSyncDepartments({ mode });
+        await this._queueSyncDepartments({ });
       } else {
 
       }
 
     }
 
-    async _queueSyncDepartments({ mode }) {
+    async queueChangeContact({ message }) {
+      if (message.ChangeType.indexOf('_party') > -1) {
+        await this._queueChangeContactDepartment({ message });
+      } else if (message.ChangeType.indexOf('_user') > -1) {
+        await this._queueChangeContactMember({ message });
+      }
+    }
+
+    async _queueChangeContactDepartment({ message }) {
+      // department
+      const department = {};
+      this._adjustFields(department, message, __departmentFieldMap_XML);
+      const departmentId = department.departmentId;
+      // do
+      if (message.ChangeType === 'create_party') {
+        // create
+        await this._createRoleAndDepartment({ department });
+      } else if (message.ChangeType === 'update_party') {
+        // update
+        await this._updateRoleAndDepartment({ localDepartment: null, department });
+      }
+    }
+
+    async _queueChangeContactMember({ message }) {
+
+    }
+
+    async _queueSyncDepartments({ }) {
       // prepare context
       const context = {
-        mode,
         remoteDepartments: null,
       };
       // remote departments
@@ -29,9 +62,26 @@ module.exports = app => {
         throw new Error(res.errmsg);
       }
       context.remoteDepartments = res.department;
-      // loop
+      // local departments
+      context.localDepartments = await this.ctx.model.department.select();
+      context.localDepartmentsMap = {};
+      for (const localDepartment of context.localDepartments) {
+        localDepartment.__status = 0;
+        context.localDepartmentsMap[localDepartment.departmentId] = localDepartment;
+      }
+      // loop create/update
       for (const remoteDepartment of context.remoteDepartments) {
         await this._queueSyncDepartment({ context, remoteDepartment });
+      }
+      // delete __status===0
+      for (const departmentId in context.localDepartmentsMap) {
+        const localDepartment = context.localDepartmentsMap[departmentId];
+        if (localDepartment.__status === 0) {
+          // delete role
+          await this.ctx.meta.role.delete({ roleId: localDepartment.roleId, force: true });
+          // delete department
+          await this.ctx.model.department.delete({ id: localDepartment.id });
+        }
       }
       // build roles
       await this.ctx.meta.role.build();
@@ -42,33 +92,62 @@ module.exports = app => {
       this._adjustFields(department, remoteDepartment, __departmentFieldMap);
       const departmentId = department.departmentId;
       // check if local department exists
-      const localDepartment = await this.ctx.model.department.get({ departmentId });
+      const localDepartment = context.localDepartmentsMap[departmentId];
       // new department
       if (!localDepartment) {
-        // get parent role
-        const roleParent = await this._getRoleOfDepartment({ departmentId: department.departmentParentId });
-        if (!roleParent) {
-          this.ctx.throw(1003, department.departmentParentId);
-        }
-        // create current role
-        const roleIdCurrent = await this.ctx.meta.role.add({
-          roleName: department.departmentName,
-          catalog: 0, // update by sub role
-          sorting: department.departmentOrder,
-          roleIdParent: roleParent.id,
-        });
-        // change parent role
-        await this.ctx.meta.role.save({
-          roleId: roleParent.id,
-          data: { catalog: 1 },
-        });
-        // creat department
-        department.roleId = roleIdCurrent;
-        await this.ctx.model.department.insert(department);
+        await this._createRoleAndDepartment({ department });
+        // done
         return;
       }
-      // update department
+      // update
+      await this._updateRoleAndDepartment({ localDepartment, department });
+      // done
+      localDepartment.__status = 1; // handled
+      return;
+    }
 
+    async _updateRoleAndDepartment({ localDepartment, department }) {
+      // localDepartment
+      if (!localDepartment) {
+        localDepartment = await this.ctx.model.department.get({ departmentId: department.departmentId });
+        if (!localDepartment) {
+          this.ctx.throw(1004, department.departmentId);
+        }
+      }
+      // update role name
+      if (department.departmentName) {
+        await this.ctx.meta.role.save({
+          roleId: localDepartment.roleId,
+          data: { roleName: department.departmentName },
+        });
+      }
+      // update department
+      department.id = localDepartment.id;
+      await this.ctx.model.department.update(department);
+    }
+
+    async _createRoleAndDepartment({ department }) {
+      // get parent role
+      const roleParent = await this._getRoleOfDepartment({ departmentId: department.departmentParentId });
+      if (!roleParent) {
+        this.ctx.throw(1003, department.departmentParentId);
+      }
+      // create current role
+      const roleIdCurrent = await this.ctx.meta.role.add({
+        roleName: department.departmentName,
+        catalog: 0, // update by sub role
+        sorting: department.departmentOrder,
+        roleIdParent: roleParent.id,
+      });
+        // force change parent role to catalog=1
+      await this.ctx.meta.role.save({
+        roleId: roleParent.id,
+        data: { catalog: 1 },
+      });
+      // creat department
+      department.roleId = roleIdCurrent;
+      const res = await this.ctx.model.department.insert(department);
+      return res.insertId;
     }
 
     // not create new role here
@@ -88,9 +167,14 @@ module.exports = app => {
         const field = fieldMap[1][index];
         if (itemSrc[field] !== undefined) {
           const fieldDest = fieldMap[0][index];
-          itemDest[fieldDest] = itemSrc[field];
+          itemDest[fieldDest] = this._adjustFieldType(itemSrc[field], fieldMap[2][index]);
         }
       }
+    }
+    _adjustFieldType(value, type) {
+      if (type === 'number') return Number(value);
+      else if (type === 'string') return String(value);
+      return value;
     }
 
   }
