@@ -102,14 +102,14 @@ const Fn = module.exports = ctx => {
       await this.setDirty(true);
     }
 
-    async delete({ roleId }) {
+    async delete({ roleId, force = false }) {
       // role
       const role = await this.get({ id: roleId });
 
       // check if system
       if (role.system) ctx.throw(403);
       // check if children
-      if (role.catalog) {
+      if (role.catalog && !force) {
         const children = await this.children({ roleId });
         if (children.length > 0) ctx.throw.module(moduleInfo.relativeName, 1008);
       }
