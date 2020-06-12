@@ -36,14 +36,19 @@ module.exports = app => {
       // department
       const department = {};
       this._adjustFields(department, message, __departmentFieldMap_XML);
-      const departmentId = department.departmentId;
       // do
       if (message.ChangeType === 'create_party') {
         // create
         await this._createRoleAndDepartment({ department });
+        // build roles
+        await this.ctx.meta.role.build();
       } else if (message.ChangeType === 'update_party') {
         // update
         await this._updateRoleAndDepartment({ localDepartment: null, department });
+      } else if (message.ChangeType === 'delete_party') {
+        await this._deleteRoleAndDepartment({ localDepartment: null, department });
+        // build roles
+        await this.ctx.meta.role.build();
       }
     }
 
@@ -77,10 +82,7 @@ module.exports = app => {
       for (const departmentId in context.localDepartmentsMap) {
         const localDepartment = context.localDepartmentsMap[departmentId];
         if (localDepartment.__status === 0) {
-          // delete role
-          await this.ctx.meta.role.delete({ roleId: localDepartment.roleId, force: true });
-          // delete department
-          await this.ctx.model.department.delete({ id: localDepartment.id });
+          await this._deleteRoleAndDepartment({ localDepartment, department: null });
         }
       }
       // build roles
@@ -104,6 +106,20 @@ module.exports = app => {
       // done
       localDepartment.__status = 1; // handled
       return;
+    }
+
+    async _deleteRoleAndDepartment({ localDepartment, department }) {
+      // localDepartment
+      if (!localDepartment) {
+        localDepartment = await this.ctx.model.department.get({ departmentId: department.departmentId });
+        if (!localDepartment) {
+          this.ctx.throw(1004, department.departmentId);
+        }
+      }
+      // delete role
+      await this.ctx.meta.role.delete({ roleId: localDepartment.roleId, force: true });
+      // delete department
+      await this.ctx.model.department.delete({ id: localDepartment.id });
     }
 
     async _updateRoleAndDepartment({ localDepartment, department }) {
