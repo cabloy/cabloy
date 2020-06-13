@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar :title="getPageTitle()" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link v-if="io" :onPerform="onPerformSync">{{$text('Sync Now')}}</eb-link>
+        <eb-link v-if="ioHelper" :onPerform="onPerformSync">{{$text('Sync Now')}}</eb-link>
       </f7-nav-right>
     </eb-navbar>
     <eb-box @size="onSize">
@@ -15,14 +15,10 @@ export default {
   data() {
     return {
       type: this.$f7route.query.type,
-      io: null,
       progressId: null,
-      subscribeId: null,
       messagesData: [],
-      messageOffset: -1,
-      messageOffsetPending: -1,
-      messageOfflineFetching: false,
-      messageIdsToRead: {},
+      ioHelper: null,
+      ioSimple: null,
       messageClass: {
         module: 'a-wxwork',
         messageClassName: 'progress',
@@ -38,10 +34,10 @@ export default {
     const action = {
       actionModule: 'a-socketio',
       actionComponent: 'io',
-      name: 'instance',
+      name: 'helper',
     };
-    this.$meta.util.performAction({ ctx: this, action }).then(io => {
-      this.io = io;
+    this.$meta.util.performAction({ ctx: this, action }).then(helper => {
+      this.ioHelper = helper;
     });
   },
   beforeDestroy() {
@@ -59,15 +55,8 @@ export default {
       });
     },
     onPerformSync() {
-      if (this.subscribeId) return;
+      if (this.ioSimple) return;
       return this.$view.dialog.confirm().then(() => {
-        // init
-        this.progressId = null;
-        this.messagesData = [];
-        this.messageOffset = -1;
-        this.messageOffsetPending = -1;
-        this.messageOfflineFetching = false;
-        this.messageIdsToRead = {};
         return this.$api.post(`contacts/sync`, {
           type: this.type,
         }).then(res => {
@@ -77,139 +66,62 @@ export default {
       });
     },
     _startSubscribe() {
+      // init
+      this.messagesData = [];
       // socket io
-      const subscribePath = `/a/wxwork/progress/${this.progressId}`;
-      this.subscribeId = this.io.subscribe(subscribePath, this._onMessage.bind(this), this._onSubscribed.bind(this));
+      const path = `/a/wxwork/progress/${this.progressId}`;
+      this.ioSimple = this.ioHelper.simple();
+      this.ioSimple.subscribe({
+        path,
+        onMessageOffset: this._onMessageOffset.bind(this),
+        onMessageSelect: this._onMessageSelect.bind(this),
+        onMessageSetRead: this._onMessageSetRead.bind(this),
+        onMessagePush: this._onMessagePush.bind(this),
+      });
     },
     _stopSubscribe() {
-      if (!this.subscribeId) return;
+      if (!this.ioSimple) return;
       // unsubscribe
-      this.io.unsubscribe(this.subscribeId);
-      this.subscribeId = null;
+      this.ioSimple.unsubscribe();
+      this.ioSimple = null;
     },
-    _setMessageOffset(offset) {
-      if (this.messageOfflineFetching) {
-        if (offset > this.messageOffsetPending) this.messageOffsetPending = offset;
-        return;
-      }
-      if (offset > this.messageOffset) {
-        this.messageOffset = offset;
-      }
-    },
-    _onMessage({ message }) {
-      this._setMessageOffset(message.id);
-      this._checking(message);
-    },
-    _onSubscribed() {
-      if (this.messageOfflineFetching) return;
-      this.messageOfflineFetching = true;
-      // get offset
-      this.$api.post('/a/socketio/message/offset', {
+    _onMessageOffset() {
+      return this.$api.post('/a/socketio/message/offset', {
         messageClass: this.messageClass,
         options: {
           where: {
             messageFilter: this.progressId,
-          }
+          },
         },
-      }).then(data => {
-        this.messageOffset = data.offset;
-        if (this.messageOffset === -1) {
-          this._offlineFetchStop();
-        } else {
-          this._offlineFetch();
-        }
-      }).catch(err => {
-        this._offlineFetchStop();
       });
     },
-    _offlineFetch() {
-      this.$api.post('/a/socketio/message/select', {
+    _onMessageSelect({ offset }) {
+      return this.$api.post('/a/socketio/message/select', {
         messageClass: this.messageClass,
         options: {
-          offset: this.messageOffset,
+          offset,
           where: {
             messageFilter: this.progressId,
             messageRead: 0,
-          }
+          },
         },
-      }).then(data => {
-        // push
-        const list = data.list;
-        if (list.length > 0) {
-          // offset
-          this.messageOffset = list[list.length - 1].id;
-          for (const message of list) {
-            this._checking(message);
-          }
-        }
-        // next
-        if (data.finished) {
-          this._offlineFetchStop();
-        } else {
-          this._offlineFetch();
-        }
-      }).catch(err => {
-        this._offlineFetchStop();
       });
     },
-    _offlineFetchStop() {
-      this.messageOfflineFetching = false;
-      this._setMessageOffset(this.messageOffsetPending);
-    },
-    _pushMessage(message) {
-      const inserted = this._insertMessage(message);
-      if (!inserted) return false;
-      if (typeof message.content === 'string') {
-        message.content = JSON.parse(message.content);
-      }
-      this._messageToRead(message);
-      return true;
-    },
-    _insertMessage(message) {
-      let indexBase = -1;
-      for (let index = this.messagesData.length - 1; index >= 0; index--) {
-        const _message = this.messagesData[index];
-        if (_message.id === message.id) {
-          return false; // ignore if exists
-        }
-        if (_message.id < message.id) {
-          indexBase = index;
-          break;
-        }
-      }
-      this.messagesData.splice(indexBase + 1, 0, message);
-      return true;
-    },
-    _messageToRead(message) {
-      if (message.messageRead === 1) return;
-      this.messageIdsToRead[message.id] = true;
-      this._performRead();
-    },
-    _performRead: Vue.prototype.$meta.util.debounce(function() {
-      this._performRead2();
-    }, 300),
-    _performRead2() {
-      const messageIds = Object.keys(this.messageIdsToRead);
-      this.messageIdsToRead = {};
-      this.$api.post('/a/socketio/message/setRead', { messageIds }).then(() => {
-        // do nothing
-      }).catch(() => {
-        // save back
-        for (const messageId of messageIds) {
-          this.messageIdsToRead[messageId] = true;
-        }
+    _onMessageSetRead({ messageIds }) {
+      return this.$api.post('/a/socketio/message/setRead', {
+        messageIds,
       });
     },
-    _checking(message) {
-      // push message
-      const inserted = this._pushMessage(message);
-      if (!inserted) return;
+    _onMessagePush({ messages, message }) {
+      // messages
+      this.messagesData = messages;
+      // message
       const content = message.content;
       if (content.done === 1 || content.done === -1) {
         // stop subscribe
         this._stopSubscribe();
       }
-    }
+    },
   },
 };
 
