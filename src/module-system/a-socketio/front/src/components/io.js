@@ -1,4 +1,5 @@
 import adapter from './adapter.js';
+import helperFn from './helper.js';
 
 let IOFn;
 if (process.env.NODE_ENV === 'production') {
@@ -16,6 +17,7 @@ export default {
   methods: {
     onAction({ action }) {
       if (action.name === 'instance') return this._getInstance();
+      if (action.name === 'helper') return helperFn(this._getInstance());
     },
     _getInstance() {
       if (!_io) {
