@@ -2,6 +2,8 @@ const authFn = require('./passport/auth.js');
 
 module.exports = app => {
   // const schemas = require('./config/validation/schemas.js')(app);
+  // socketio
+  const socketioProgress = require('./config/socketio/progress.js')(app);
   const meta = {
     base: {
       atoms: {
@@ -39,6 +41,11 @@ module.exports = app => {
     index: {
       indexes: {
         aWechatUser: 'createdAt,updatedAt,openid,unionid',
+      },
+    },
+    socketio: {
+      messages: {
+        progress: socketioProgress,
       },
     },
     auth: authFn(app),

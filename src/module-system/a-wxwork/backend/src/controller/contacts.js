@@ -1,10 +1,13 @@
+const require3 = require('require3');
+const uuid = require3('uuid');
+
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class ContactsController extends app.Controller {
 
     async sync() {
       // progress
-      const progressId = await this.ctx.meta.progress.create();
+      const progressId = uuid.v4().replace(/-/g, '');
       // queue
       this.ctx.app.meta.queue.push({
         locale: this.ctx.locale,
@@ -15,6 +18,7 @@ module.exports = app => {
           queueAction: 'sync',
           type: this.ctx.request.body.type,
           progressId,
+          user: this.ctx.user.op,
         },
       });
       this.ctx.success({ progressId });
@@ -26,6 +30,7 @@ module.exports = app => {
         await this.service.contacts.queueSync({
           type: this.ctx.request.body.type,
           progressId: this.ctx.request.body.progressId,
+          user: this.ctx.request.body.user,
         });
       } else if (queueAction === 'changeContact') {
         await this.service.contacts.queueChangeContact({
