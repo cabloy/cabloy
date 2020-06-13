@@ -129,6 +129,7 @@ export default {
           offset: this.messageOffset,
           where: {
             messageFilter: this.progressId,
+            messageRead: 0,
           }
         },
       }).then(data => {
