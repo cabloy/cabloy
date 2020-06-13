@@ -120,7 +120,7 @@ module.exports = app => {
           messageClassName: 'progress',
         },
         options: {
-          asyncSaveMessage: true,
+          saveMessageAsync: true,
         },
       });
     }

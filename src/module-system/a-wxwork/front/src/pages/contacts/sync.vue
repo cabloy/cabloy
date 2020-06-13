@@ -60,15 +60,14 @@ export default {
     },
     onPerformSync() {
       if (this.subscribeId) return;
-      // init
-      this.progressId = null;
-      this.messagesData = [];
-      this.messageOffset = -1;
-      this.messageOffsetPending = -1;
-      this.messageOfflineFetching = false;
-      this.messageIdsToRead = {};
-      // sync
       return this.$view.dialog.confirm().then(() => {
+        // init
+        this.progressId = null;
+        this.messagesData = [];
+        this.messageOffset = -1;
+        this.messageOffsetPending = -1;
+        this.messageOfflineFetching = false;
+        this.messageIdsToRead = {};
         return this.$api.post(`contacts/sync`, {
           type: this.type,
         }).then(res => {
@@ -105,27 +104,23 @@ export default {
       if (this.messageOfflineFetching) return;
       this.messageOfflineFetching = true;
       // get offset
-      if (this.messageOffset === -1) {
-        this.$api.post('/a/socketio/message/offset', {
-          messageClass: this.messageClass,
-          options: {
-            where: {
-              messageFilter: this.progressId,
-            }
-          },
-        }).then(data => {
-          this.messageOffset = data.offset;
-          if (this.messageOffset === -1) {
-            this._offlineFetchStop();
-          } else {
-            this._offlineFetch();
+      this.$api.post('/a/socketio/message/offset', {
+        messageClass: this.messageClass,
+        options: {
+          where: {
+            messageFilter: this.progressId,
           }
-        }).catch(err => {
+        },
+      }).then(data => {
+        this.messageOffset = data.offset;
+        if (this.messageOffset === -1) {
           this._offlineFetchStop();
-        });
-      } else {
-        this._offlineFetch();
-      }
+        } else {
+          this._offlineFetch();
+        }
+      }).catch(err => {
+        this._offlineFetchStop();
+      });
     },
     _offlineFetch() {
       this.$api.post('/a/socketio/message/select', {
@@ -171,7 +166,7 @@ export default {
     },
     _insertMessage(message) {
       let indexBase = -1;
-      for (const index = this.messagesData.length - 1; index >= 0; index--) {
+      for (let index = this.messagesData.length - 1; index >= 0; index--) {
         const _message = this.messagesData[index];
         if (_message.id === message.id) {
           return false; // ignore if exists
@@ -181,12 +176,8 @@ export default {
           break;
         }
       }
-      console.log(message);
-      if (indexBase === -1) {
-        this.messagesData.push(message);
-      } else {
-        this.messagesData.splice(indexBase + 1, 0, message);
-      }
+      this.messagesData.splice(indexBase + 1, 0, message);
+      return true;
     },
     _messageToRead(message) {
       if (message.messageRead === 1) return;
