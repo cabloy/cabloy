@@ -91,6 +91,7 @@ module.exports = ctx => {
     async publish({ path, message, messageClass, options }) {
       // options
       const messageScene = (options && options.scene) || '';
+      const saveMessageAsync = (options && options.saveMessageAsync) || false;
       // messageClass
       messageClass = await this.messageClass.get(messageClass);
       const messageClassBase = this.messageClass.messageClass(messageClass);
@@ -123,7 +124,9 @@ module.exports = ctx => {
 
       // save
       if (messageClassBase.info.persistence) {
-        _message.id = await this.message.save({ message: _message });
+        if (!saveMessageAsync) {
+          _message.id = await this.message.save({ message: _message });
+        }
       } else {
         _message.id = message.id || uuid.v4();
         _message.createdAt = new Date();
@@ -150,8 +153,14 @@ module.exports = ctx => {
 
     // queue: process
     async queueProcess({ path, options, message, messageClass }) {
+      // options
+      const saveMessageAsync = (options && options.saveMessageAsync) || false;
       // messageClass
       const messageClassBase = this.messageClass.messageClass(messageClass);
+      // save message async
+      if (messageClassBase.info.persistence && saveMessageAsync) {
+        message.id = await this.message.save({ message });
+      }
       // groupUsers
       let groupUsers;
       if (messageClassBase.callbacks.onGroupUsers) {
