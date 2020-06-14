@@ -5,7 +5,7 @@ export default function(io) {
 
     this.subscribe = function({
       path, options,
-      onMessageOffset, onMessageSelect, onMessageSetRead, onMessagePush,
+      onMessageOffset, onMessageSelect, onMessagePush,
     }) {
       this.messagesData = [];
       this.messageOffset = -1;
@@ -15,7 +15,6 @@ export default function(io) {
 
       this.onMessageOffset = onMessageOffset;
       this.onMessageSelect = onMessageSelect;
-      this.onMessageSetRead = onMessageSetRead;
       this.onMessagePush = onMessagePush;
 
       this.subscribeId = io.subscribe(path, this._onMessage.bind(this), this._onSubscribed.bind(this), options);
@@ -131,7 +130,7 @@ export default function(io) {
     this._performRead2 = function() {
       const messageIds = Object.keys(this.messageIdsToRead);
       this.messageIdsToRead = {};
-      this.onMessageSetRead({ messageIds }).then(() => {
+      Vue.prototype.$meta.api.post('/a/socketio/message/setRead', { messageIds }).then(() => {
         // do nothing
       }).catch(() => {
         // save back
