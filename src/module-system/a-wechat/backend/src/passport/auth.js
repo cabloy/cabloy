@@ -46,11 +46,14 @@ module.exports = app => {
           return {
             strategy,
             callback: (req, accessToken, refreshToken, userInfo, expires_in, done) => {
-              const wechatHelper = new (WechatHelperFn(req.ctx))();
+              const ctx = req.ctx;
+              const state = ctx.request.query.state || 'login';
+              const wechatHelper = new (WechatHelperFn(ctx))();
               wechatHelper.verifyAuthUser({
                 scene: 1,
                 openid: userInfo.openid,
                 userInfo,
+                state,
                 cbVerify: (profileUser, cb) => {
                   app.passport.doVerify(req, profileUser, cb);
                 },

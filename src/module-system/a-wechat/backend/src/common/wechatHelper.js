@@ -12,15 +12,19 @@ module.exports = function(ctx) {
     }
 
     // scene: 1/wechat 2/wechatMini
-    async verifyAuthUser({ scene, openid, userInfo, cbVerify }) {
+    async verifyAuthUser({ scene, openid, userInfo, cbVerify, state = 'login' }) {
+      if (state === 'associate') {
+        // check if ctx.user exists
+        if (!ctx.user || ctx.user.agent.anonymous) return ctx.throw(403);
+      }
       // ensure wechat user
       const userWechatId = await this._ensureWechatUser({ scene, openid, userInfo });
       // ensure auth user
-      const profileUser = await this._ensureAuthUser({ scene, openid, userInfo });
+      const profileUser = await this._ensureAuthUser({ scene, openid, userInfo, state });
       // verify
       let verifyUser;
       if (!cbVerify) {
-        verifyUser = await ctx.meta.user.verify({ state: 'login', profileUser });
+        verifyUser = await ctx.meta.user.verify({ state, profileUser });
         await ctx.login(verifyUser);
       } else {
         verifyUser = await bb.fromCallback(cb => {
@@ -74,7 +78,7 @@ module.exports = function(ctx) {
     }
 
     // profileId : unionid:openid
-    async _ensureAuthUser({ scene, openid, userInfo }) {
+    async _ensureAuthUser({ scene, openid, userInfo, state }) {
       // model auth
       const modelAuth = ctx.model.module('a-base').auth;
       //
@@ -133,14 +137,21 @@ module.exports = function(ctx) {
       }
       // check if has userId for unionid
       if (unionid) {
-        const _authOthers = await ctx.model.query(
-          `select * from aAuth a where a.deleted=0 and a.iid=? and a.profileId like '${unionid}:%' and a.id<>?`,
-          [ ctx.instance.id, authId ]
-        );
-        const _authOther = _authOthers[0];
-        if (_authOther && _authOther.userId !== authUserId) {
-          // update userId for this auth
-          await modelAuth.update({ id: authId, userId: _authOther.userId });
+        if (state === 'associate') {
+          await ctx.model.query(
+            `update aAuth set userId=? where a.deleted=0 and a.iid=? and a.profileId like '${unionid}:%'`,
+            [ ctx.user.agent.id, ctx.instance.id ]
+          );
+        } else {
+          const _authOthers = await ctx.model.query(
+            `select * from aAuth a where a.deleted=0 and a.iid=? and a.profileId like '${unionid}:%' and a.id<>?`,
+            [ ctx.instance.id, authId ]
+          );
+          const _authOther = _authOthers[0];
+          if (_authOther && _authOther.userId !== authUserId) {
+            // update userId for this auth
+            await modelAuth.update({ id: authId, userId: _authOther.userId });
+          }
         }
       }
       // ready
