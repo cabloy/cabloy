@@ -75,7 +75,6 @@ export default {
         path,
         onMessageOffset: this._onMessageOffset.bind(this),
         onMessageSelect: this._onMessageSelect.bind(this),
-        onMessageSetRead: this._onMessageSetRead.bind(this),
         onMessagePush: this._onMessagePush.bind(this),
       });
     },
@@ -105,11 +104,6 @@ export default {
             messageRead: 0,
           },
         },
-      });
-    },
-    _onMessageSetRead({ messageIds }) {
-      return this.$api.post('/a/socketio/message/setRead', {
-        messageIds,
       });
     },
     _onMessagePush({ messages, message }) {
