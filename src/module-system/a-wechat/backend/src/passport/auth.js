@@ -66,6 +66,7 @@ module.exports = app => {
         meta: {
           title: 'Wechat Miniprogram',
           mode: 'direct',
+          disableAssociate: true,
         },
         config: {
         },
