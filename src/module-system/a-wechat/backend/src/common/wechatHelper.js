@@ -104,7 +104,6 @@ module.exports = function(ctx) {
         provider: sceneInfo.authProvider,
         profileId,
         profile: {
-          id: profileId,
           userName: userInfo.nickname,
           realName: userInfo.nickname,
           avatar: userInfo.headimgurl,
