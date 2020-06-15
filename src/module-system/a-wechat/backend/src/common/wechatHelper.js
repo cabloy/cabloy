@@ -32,7 +32,7 @@ module.exports = function(ctx) {
         });
       }
       // update wechat userId
-      await ctx.model.wechatUser.update({ id: userWechatId, userId: verifyUser.agent.id });
+      await this._updateWechatUser({ userId: verifyUser.agent.id, userWechatId, userInfo, state });
       // ok
       return verifyUser;
     }
@@ -75,6 +75,20 @@ module.exports = function(ctx) {
       }
       // ok
       return userWechatId;
+    }
+
+    async _updateWechatUser({ userId, userWechatId, userInfo }) {
+      const unionid = userInfo.unionid || '';
+      if (unionid) {
+        // update all
+        await ctx.model.query(
+          'update aWechatUser a set a.userId=? where a.deleted=0 and a.iid=? and a.unionid=?',
+          [ userId, ctx.instance.id, unionid ]
+        );
+      } else {
+        // update this
+        await ctx.model.wechatUser.update({ id: userWechatId, userId });
+      }
     }
 
     // profileId : unionid:openid
@@ -139,7 +153,7 @@ module.exports = function(ctx) {
       if (unionid) {
         if (state === 'associate') {
           await ctx.model.query(
-            `update aAuth set userId=? where a.deleted=0 and a.iid=? and a.profileId like '${unionid}:%'`,
+            `update aAuth a set a.userId=? where a.deleted=0 and a.iid=? and a.profileId like '${unionid}:%'`,
             [ ctx.user.agent.id, ctx.instance.id ]
           );
         } else {
