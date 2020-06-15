@@ -82,7 +82,7 @@ module.exports = appInfo => {
     corpid: '',
     apps: {
       selfBuilt: {
-        agentId: '',
+        agentid: '',
         secret: '',
         token: appInfo.name,
         encodingAESKey: '',

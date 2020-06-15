@@ -18,7 +18,7 @@ module.exports = app => {
           queueAction: 'sync',
           type: this.ctx.request.body.type,
           progressId,
-          user: this.ctx.user.op,
+          userOp: this.ctx.user.op,
         },
       });
       this.ctx.success({ progressId });
@@ -30,7 +30,7 @@ module.exports = app => {
         await this.service.contacts.queueSync({
           type: this.ctx.request.body.type,
           progressId: this.ctx.request.body.progressId,
-          user: this.ctx.request.body.user,
+          userOp: this.ctx.request.body.userOp,
         });
       } else if (queueAction === 'changeContact') {
         await this.service.contacts.queueChangeContact({

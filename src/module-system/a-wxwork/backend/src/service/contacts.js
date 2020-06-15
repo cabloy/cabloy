@@ -1,3 +1,6 @@
+const WxworkHelperFn = require('../common/wxworkHelper.js');
+
+// department
 
 const __departmentFieldMap = [
   [ 'departmentId', 'departmentParentId', 'departmentName', 'departmentNameEn', 'departmentOrder' ],
@@ -11,17 +14,30 @@ const __departmentFieldMap_XML = [
   [ 'number', 'number', 'string', 'number' ],
 ];
 
+// member
+
+const __memberFieldMap = [
+  [ 'memberId', 'name', 'alias', 'mobile', 'department', 'sorting', 'position', 'gender', 'email', 'telephone', 'is_leader_in_dept', 'avatar', 'thumb_avatar', 'qr_code', 'status', 'extattr', 'external_profile', 'external_position', 'address', 'hide_mobile', 'english_name', 'open_userid', 'main_department' ],
+  [ 'userid', 'name', 'alias', 'mobile', 'department', 'order', 'position', 'gender', 'email', 'telephone', 'is_leader_in_dept', 'avatar', 'thumb_avatar', 'qr_code', 'status', 'extattr', 'external_profile', 'external_position', 'address', 'hide_mobile', 'english_name', 'open_userid', 'main_department' ],
+  [ 'string', 'string', 'string', 'string', 'array', 'array', 'string', 'number', 'string', 'string', 'array', 'string', 'string', 'string', 'number', 'json', 'json', 'string', 'string', 'number', 'string', 'string', 'number' ],
+];
+
+// const __memberFieldMap_XML = [
+//   [ 'memberIdNew', 'memberId', 'name', 'alias', 'mobile', 'department', 'position', 'gender', 'email', 'telephone', 'is_leader_in_dept', 'avatar', 'status', 'extattr', 'address' ],
+//   [ 'NewUserID', 'UserID', 'Name', 'Alias', 'Mobile', 'Department', 'Position', 'Gender', 'Email', 'Telephone', 'IsLeaderInDept', 'Avatar', 'Status', 'ExtAttr', 'Address' ],
+//   [ 'string', 'string', 'string', 'string', 'string', 'array', 'string', 'number', 'string', 'string', 'array', 'string', 'number', 'json', 'string' ],
+// ];
+
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Contacts extends app.Service {
 
-    async queueSync({ type, progressId, user }) {
+    async queueSync({ type, progressId, userOp }) {
       if (type === 'departments') {
-        await this._queueSyncDepartments({ progressId, user });
-      } else {
-
+        await this._queueSyncDepartments({ progressId, userOp });
+      } else if (type === 'members') {
+        await this._queueSyncMembers({ progressId, userOp });
       }
-
     }
 
     async queueChangeContact({ message }) {
@@ -56,13 +72,14 @@ module.exports = app => {
 
     }
 
-    async _queueSyncDepartments({ progressId, user }) {
+    // queue sync departments
+    async _queueSyncDepartments({ progressId, userOp }) {
       try {
         // prepare context
         const context = {
           remoteDepartments: null,
           progressId,
-          user,
+          userOp,
         };
         // progress
         await this._progressPublish({ context, done: 0, text: `--- ${this.ctx.text('Sync Started')} ---` });
@@ -106,9 +123,58 @@ module.exports = app => {
       }
     }
 
+    // queue sync members
+    async _queueSyncMembers({ progressId, userOp }) {
+      try {
+        // prepare context
+        const context = {
+          remoteMembers: null,
+          progressId,
+          userOp,
+        };
+        // progress
+        await this._progressPublish({ context, done: 0, text: `--- ${this.ctx.text('Sync Started')} ---` });
+        // remote departments
+        const res = await this.ctx.meta.wxwork.app.contacts.getDepartmentUserList(0, 1);
+        if (res.errcode) {
+          throw new Error(res.errmsg);
+        }
+        context.remoteMembers = res.userlist;
+        // progress
+        await this._progressPublish({ context, done: 0, text: `--- ${this.ctx.text('Member Count')}: ${context.remoteMembers.length} ---` });
+        // local members
+        context.localMembers = await this.ctx.model.member.select();
+        context.localMembersMap = {};
+        for (const localMember of context.localMembers) {
+          localMember.__status = 0;
+          context.localMembersMap[localMember.memberId] = localMember;
+        }
+        // loop create/update
+        for (const remoteMember of context.remoteMembers) {
+          await this._queueSyncMember({ context, remoteMember });
+        }
+        // delete __status===0
+        for (const memberId in context.localMembersMap) {
+          const localMember = context.localMembersMap[memberId];
+          if (localMember.__status === 0) {
+            await this._deleteUserAndMember({ localMember, member: null });
+            // progress
+            await this._progressPublish({ context, done: 0, text: `- ${localMember.name}` });
+          }
+        }
+        // progress done
+        await this._progressPublish({ context, done: 1, text: `--- ${this.ctx.text('Sync Completed')} ---` });
+      } catch (err) {
+        // progress error
+        await this._progressPublish({ context, done: -1, text: err.message });
+        // throw err
+        throw err;
+      }
+    }
+
     async _progressPublish({ context, done, text }) {
       const ioMessage = {
-        userIdTo: context.user.id,
+        userIdTo: context.userOp.id,
         messageFilter: context.progressId,
         content: { done, text },
       };
@@ -147,6 +213,28 @@ module.exports = app => {
       return;
     }
 
+    async _queueSyncMember({ context, remoteMember }) {
+      const member = {};
+      this._adjustFields(member, remoteMember, __memberFieldMap);
+      const memberId = member.memberId;
+      // check if local member exists
+      const localMember = context.localMembersMap[memberId];
+      // new member
+      if (!localMember) {
+        await this._createUserAndMember({ member });
+        // progress
+        await this._progressPublish({ context, done: 0, text: `+ ${member.name}` });
+        // done
+        return;
+      }
+      // update
+      await this._updateUserAndMember({ localMember, member });
+      // progress: not prompt
+      // done
+      localMember.__status = 1; // handled
+      return;
+    }
+
     async _deleteRoleAndDepartment({ localDepartment, department }) {
       // localDepartment
       if (!localDepartment) {
@@ -181,6 +269,51 @@ module.exports = app => {
       await this.ctx.model.department.update(department);
     }
 
+    async _updateUserRoles({ userId, departmentIdsOld, departmentIdsNew }) {
+      const departmentIdsAdd = [];
+      const departmentIdsDelete = [];
+      for (const departmentId of departmentIdsNew) {
+        if (departmentIdsOld.indexOf(departmentId) === -1) {
+          departmentIdsAdd.push(departmentId);
+        }
+      }
+      for (const departmentId of departmentIdsOld) {
+        if (departmentIdsNew.indexOf(departmentId) === -1) {
+          departmentIdsDelete.push(departmentId);
+        }
+      }
+      // add
+      await this._addUserRoles({ userId, departmentIds: departmentIdsAdd });
+      // delete
+      await this._deleteUserRoles({ userId, departmentIds: departmentIdsDelete });
+    }
+
+    async _updateUserAndMember({ localMember, member }) {
+      // localMember
+      if (!localMember) {
+        localMember = await this.ctx.model.member.get({ memberId: member.memberId });
+        if (!localMember) {
+          this.ctx.throw(1005, member.memberId);
+        }
+      }
+      const userId = localMember.userId;
+      // roles
+      if (member.department !== undefined && member.department !== localMember.department) {
+        await this._updateUserRoles({
+          userId,
+          departmentIdsOld: (localMember.department || '').split(','),
+          departmentIdsNew: (member.department || '').split(','),
+        });
+      }
+      // status
+      if (member.status !== undefined && member.status !== localMember.status) {
+        await this.ctx.meta.user.disable({ userId, disabled: member.status !== 1 });
+      }
+      // update member
+      member.id = localMember.id;
+      await this.ctx.model.member.update(member);
+    }
+
     async _createRoleAndDepartment({ department }) {
       // get parent role
       const roleParent = await this._getRoleOfDepartment({ departmentId: department.departmentParentId });
@@ -205,9 +338,52 @@ module.exports = app => {
       return res.insertId;
     }
 
+    // [1,2]
+    async _addUserRoles({ userId, departmentIds }) {
+      for (const departmentId of departmentIds) {
+        // get role of department
+        const roleCurrent = await this._getRoleOfDepartment({ departmentId });
+        if (!roleCurrent) {
+          this.ctx.throw(1003, departmentId);
+        }
+        // add user role
+        await this.ctx.meta.role.addUserRole({ userId, roleId: roleCurrent.id });
+      }
+    }
+
+    async _deleteUserRoles({ userId, departmentIds }) {
+      for (const departmentId of departmentIds) {
+        // get role of department
+        const roleCurrent = await this._getRoleOfDepartment({ departmentId });
+        if (!roleCurrent) {
+          this.ctx.throw(1003, departmentId);
+        }
+        // add user role
+        await this.ctx.meta.role.deleteUserRole({ userId, roleId: roleCurrent.id });
+      }
+    }
+
+    async _createUserAndMember({ member }) {
+      // 1. create user&auth
+      // verify auth user
+      const wxworkHelper = new (WxworkHelperFn(this.ctx))();
+      const verifyUser = await wxworkHelper.verifyAuthUser({ scene: 1, member, needLogin: false });
+      const userId = verifyUser.agent.id;
+
+      // 2. add user to role
+      if (member.department) {
+        await this._addUserRoles({ userId, departmentIds: member.department.split(',') });
+      }
+
+      // 3. create member
+      member.userId = userId;
+      const res = await this.ctx.model.member.insert(member);
+      return res.insertId;
+    }
+
     // not create new role here
     async _getRoleOfDepartment({ departmentId }) {
-      // user root
+      // role root
       if (departmentId === 0) {
         return await this.ctx.meta.role.get({ roleName: this.ctx.config.sync.departmentRoot });
       }
@@ -229,6 +405,8 @@ module.exports = app => {
     _adjustFieldType(value, type) {
       if (type === 'number') return Number(value);
       else if (type === 'string') return String(value);
+      else if (type === 'array') return value.join(',');
+      else if (type === 'json') return JSON.stringify(value);
       return value;
     }
 

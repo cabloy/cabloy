@@ -4,4 +4,5 @@ module.exports = {
   1002: 'Not In Wechat Miniprogram',
   1003: 'Role not Found for department: %d',
   1004: 'Department not Found: %d',
+  1005: 'Member not Found: %d',
 };
