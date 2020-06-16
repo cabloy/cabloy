@@ -26,9 +26,9 @@ module.exports = app => {
         `;
         await this.ctx.model.query(sql);
 
-        // create table: aWxworkUser
+        // create table: aWxworkMember
         sql = `
-          CREATE TABLE aWxworkUser (
+          CREATE TABLE aWxworkMember (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

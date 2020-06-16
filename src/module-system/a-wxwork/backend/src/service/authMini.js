@@ -1,4 +1,4 @@
-const WechatHelperFn = require('../common/wechatHelper.js');
+const WxworkHelperFn = require('../common/wxworkHelper.js');
 
 module.exports = app => {
 
@@ -38,7 +38,7 @@ module.exports = app => {
         userInfo.headimgurl = detail.userInfo.avatarUrl;
       }
       // verify
-      const wechatHelper = new (WechatHelperFn(this.ctx))();
+      const wechatHelper = new (WxworkHelperFn(this.ctx))();
       await wechatHelper.verifyAuthUser({ scene: 2, openid, userInfo });
       // save session_key, because ctx.user maybe changed
       await this.ctx.meta.wechatMini.saveSessionKey(session_key);

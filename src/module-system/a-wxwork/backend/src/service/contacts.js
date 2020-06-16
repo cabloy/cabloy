@@ -108,13 +108,13 @@ module.exports = app => {
 
     // queue sync departments
     async _queueSyncDepartments({ progressId, userOp }) {
+      // prepare context
+      const context = {
+        remoteDepartments: null,
+        progressId,
+        userOp,
+      };
       try {
-        // prepare context
-        const context = {
-          remoteDepartments: null,
-          progressId,
-          userOp,
-        };
         // progress
         await this._progressPublish({ context, done: 0, text: `--- ${this.ctx.text('Sync Started')} ---` });
         // remote departments
@@ -159,17 +159,19 @@ module.exports = app => {
 
     // queue sync members
     async _queueSyncMembers({ progressId, userOp }) {
+      // prepare context
+      const context = {
+        remoteMembers: null,
+        progressId,
+        userOp,
+      };
       try {
-        // prepare context
-        const context = {
-          remoteMembers: null,
-          progressId,
-          userOp,
-        };
         // progress
         await this._progressPublish({ context, done: 0, text: `--- ${this.ctx.text('Sync Started')} ---` });
-        // remote departments
-        const res = await this.ctx.meta.wxwork.app.contacts.getDepartmentUserList(0, 1);
+        // remote members
+        const departmentRoot = await this.ctx.model.department.get({ departmentParentId: 0 });
+        if (!departmentRoot) return this.ctx.throw(1006);
+        const res = await this.ctx.meta.wxwork.app.contacts.getDepartmentUserList(departmentRoot.departmentId, 1);
         if (res.errcode) {
           throw new Error(res.errmsg);
         }

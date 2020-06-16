@@ -1,5 +1,4 @@
-const require3 = require('require3');
-const strategy = require3('./strategy-wxwork.js');
+const strategy = require('./strategy-wxwork.js');
 const WxworkHelperFn = require('../common/wxworkHelper.js');
 
 module.exports = app => {

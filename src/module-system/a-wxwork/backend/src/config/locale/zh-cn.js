@@ -9,4 +9,5 @@ module.exports = {
   'Sync Started': '同步已启动',
   'Sync Completed': '同步已完成',
   'Department Count': '部门数量',
+  'Sync Departments First': '请先同步部门',
 };

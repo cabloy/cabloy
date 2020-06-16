@@ -5,4 +5,5 @@ module.exports = {
   1003: 'Role not Found for department: %d',
   1004: 'Department not Found: %d',
   1005: 'Member not Found: %d',
+  1006: 'Sync Departments First',
 };

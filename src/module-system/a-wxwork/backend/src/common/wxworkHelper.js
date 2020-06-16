@@ -13,11 +13,12 @@ module.exports = function(ctx) {
     }
 
     createWxworkApi() {
+      const self = this;
       const api = { };
       api.app = new Proxy({}, {
         get(obj, prop) {
           if (!obj[prop]) {
-            obj[prop] = this._createWxworkApiApp({ appName: prop });
+            obj[prop] = self._createWxworkApiApp({ appName: prop });
           }
           return obj[prop];
         },
