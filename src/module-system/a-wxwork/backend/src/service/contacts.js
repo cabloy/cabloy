@@ -249,6 +249,21 @@ module.exports = app => {
       await this.ctx.model.department.delete({ id: localDepartment.id });
     }
 
+    async _deleteUserAndMember({ localMember, member }) {
+      // localMember
+      if (!localMember) {
+        localMember = await this.ctx.model.member.get({ memberId: member.memberId });
+        if (!localMember) {
+          this.ctx.throw(1005, member.memberId);
+        }
+      }
+      const userId = localMember.userId;
+      // delete user: including roles/auth
+      await this.ctx.meta.user.delete({ userId });
+      // delete member
+      await this.ctx.model.member.delete({ id: localMember.id });
+    }
+
     async _updateRoleAndDepartment({ localDepartment, department }) {
       // localDepartment
       if (!localDepartment) {
