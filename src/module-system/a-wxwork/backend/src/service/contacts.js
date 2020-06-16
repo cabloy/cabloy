@@ -25,7 +25,7 @@ const __memberFieldMap = [
 const __memberFieldMap_XML = [
   [ 'memberIdNew', 'memberId', 'name', 'alias', 'mobile', 'department', 'position', 'gender', 'email', 'telephone', 'is_leader_in_dept', 'avatar', 'status', 'extattr', 'address' ],
   [ 'NewUserID', 'UserID', 'Name', 'Alias', 'Mobile', 'Department', 'Position', 'Gender', 'Email', 'Telephone', 'IsLeaderInDept', 'Avatar', 'Status', 'ExtAttr', 'Address' ],
-  [ 'string', 'string', 'string', 'string', 'string', 'array', 'string', 'number', 'string', 'string', 'array', 'string', 'number', 'json', 'string' ],
+  [ 'string', 'string', 'string', 'string', 'string', 'string', 'string', 'number', 'string', 'string', 'string', 'string', 'number', 'json', 'string' ],
 ];
 
 module.exports = app => {
@@ -79,7 +79,9 @@ module.exports = app => {
           throw new Error(res.errmsg);
         }
         // create
-        await this._createUserAndMember({ member: res });
+        const _member = {};
+        this._adjustFields(_member, res, __memberFieldMap);
+        await this._createUserAndMember({ member: _member });
       } else if (message.ChangeType === 'update_user') {
         // check if memberId changed
         if (member.memberIdNew) {
@@ -100,7 +102,9 @@ module.exports = app => {
           throw new Error(res.errmsg);
         }
         // update
-        await this._updateUserAndMember({ localMember: null, member: res });
+        const _member = {};
+        this._adjustFields(_member, res, __memberFieldMap);
+        await this._updateUserAndMember({ localMember: null, member: _member });
       } else if (message.ChangeType === 'delete_user') {
         await this._deleteUserAndMember({ localMember: null, member });
       }
@@ -426,7 +430,12 @@ module.exports = app => {
         await this._addUserRoles({ userId, departmentIds: member.department.split(',') });
       }
 
-      // 3. create member
+      // 3. status
+      if (member.status !== 1) {
+        await this.ctx.meta.user.disable({ userId, disabled: true });
+      }
+
+      // 4. create member
       member.userId = userId;
       const res = await this.ctx.model.member.insert(member);
       return res.insertId;
