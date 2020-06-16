@@ -311,6 +311,7 @@ module.exports = ctx => {
 
     async delete({ userId }) {
       await ctx.meta.role.deleteAllUserRoles({ userId });
+      await this.modelAuth.delete({ userId });
       await this.model.delete({ id: userId });
     }
 
