@@ -11,7 +11,7 @@ module.exports = app => {
         meta: {
           title: 'Wechat Work',
           mode: 'redirect',
-          component: 'button',
+          component: `button${providerName}`,
         },
         config: {
           corpid: '',

@@ -1,14 +1,14 @@
 <template>
-  <img src="../assets/img/icon64_wx_logo.png" @click="signIn">
+  <img src="../assets/img/wxwork-48.png" @click="signIn">
 </template>
 <script>
-const urlLogin = '/api/a/wechat/passport/a-wechat/wechat';
+const urlLogin = '/api/a/wxwork/passport/a-wxwork/wxwork';
 export default {
   meta: {
     global: false,
     disable: ({ ctx, provider }) => {
       return new Promise((resolve, reject) => {
-        if (ctx.$device.wechat) {
+        if (ctx.$device.wxwork) {
           const reload = ctx.$store.state.auth.reload;
           if (reload) return resolve(false);
           // auto redirect in wechat
