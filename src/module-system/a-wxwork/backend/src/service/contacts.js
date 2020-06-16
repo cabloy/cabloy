@@ -22,11 +22,11 @@ const __memberFieldMap = [
   [ 'string', 'string', 'string', 'string', 'array', 'array', 'string', 'number', 'string', 'string', 'array', 'string', 'string', 'string', 'number', 'json', 'json', 'string', 'string', 'number', 'string', 'string', 'number' ],
 ];
 
-// const __memberFieldMap_XML = [
-//   [ 'memberIdNew', 'memberId', 'name', 'alias', 'mobile', 'department', 'position', 'gender', 'email', 'telephone', 'is_leader_in_dept', 'avatar', 'status', 'extattr', 'address' ],
-//   [ 'NewUserID', 'UserID', 'Name', 'Alias', 'Mobile', 'Department', 'Position', 'Gender', 'Email', 'Telephone', 'IsLeaderInDept', 'Avatar', 'Status', 'ExtAttr', 'Address' ],
-//   [ 'string', 'string', 'string', 'string', 'string', 'array', 'string', 'number', 'string', 'string', 'array', 'string', 'number', 'json', 'string' ],
-// ];
+const __memberFieldMap_XML = [
+  [ 'memberIdNew', 'memberId', 'name', 'alias', 'mobile', 'department', 'position', 'gender', 'email', 'telephone', 'is_leader_in_dept', 'avatar', 'status', 'extattr', 'address' ],
+  [ 'NewUserID', 'UserID', 'Name', 'Alias', 'Mobile', 'Department', 'Position', 'Gender', 'Email', 'Telephone', 'IsLeaderInDept', 'Avatar', 'Status', 'ExtAttr', 'Address' ],
+  [ 'string', 'string', 'string', 'string', 'string', 'array', 'string', 'number', 'string', 'string', 'array', 'string', 'number', 'json', 'string' ],
+];
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -69,7 +69,41 @@ module.exports = app => {
     }
 
     async _queueChangeContactMember({ message }) {
-
+      const member = {};
+      this._adjustFields(member, message, __memberFieldMap_XML);
+      // do
+      if (message.ChangeType === 'create_user') {
+        // get member remotely
+        const res = await this.ctx.meta.wxwork.app.contacts.getUser(member.memberId);
+        if (res.errcode) {
+          throw new Error(res.errmsg);
+        }
+        // create
+        await this._createUserAndMember({ member: res });
+      } else if (message.ChangeType === 'update_user') {
+        // check if memberId changed
+        if (member.memberIdNew) {
+          // upate memberId of member
+          await this.ctx.model.query(
+            'update aWxworkUser a set a.memberId=? where a.iid=? and a.memberId=?',
+            [ member.memberIdNew, this.ctx.instance.id, member.memberId ]
+          );
+          // upate profileId of auth
+          await this.ctx.model.query(
+            'update aAuth a set a.profileId=? where a.iid=? and a.profileId=?',
+            [ `wxwork:${member.memberIdNew}`, this.ctx.instance.id, `wxwork:${member.memberId}` ]
+          );
+        }
+        // get member remotely
+        const res = await this.ctx.meta.wxwork.app.contacts.getUser(member.memberIdNew || member.memberId);
+        if (res.errcode) {
+          throw new Error(res.errmsg);
+        }
+        // update
+        await this._updateUserAndMember({ localMember: null, member: res });
+      } else if (message.ChangeType === 'delete_user') {
+        await this._deleteUserAndMember({ localMember: null, member });
+      }
     }
 
     // queue sync departments
