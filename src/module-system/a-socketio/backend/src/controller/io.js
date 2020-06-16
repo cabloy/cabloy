@@ -18,6 +18,16 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async queueSaveMessage() {
+      const res = await this.service.io.queueSaveMessage({
+        path: this.ctx.request.body.path,
+        options: this.ctx.request.body.options,
+        message: this.ctx.request.body.message,
+        messageClass: this.ctx.request.body.messageClass,
+      });
+      this.ctx.success(res);
+    }
+
     async queueProcess() {
       const res = await this.service.io.queueProcess({
         path: this.ctx.request.body.path,

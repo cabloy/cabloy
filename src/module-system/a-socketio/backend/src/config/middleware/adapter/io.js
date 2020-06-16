@@ -122,11 +122,25 @@ module.exports = ctx => {
         content: JSON.stringify(message.content), // should use string for db/queue
       };
 
+      // save message async
+      if (messageClassBase.info.persistence && saveMessageAsync) {
+        // must use pushAsync for the correct order of message id
+        return await ctx.app.meta.queue.pushAsync({
+          subdomain: ctx.subdomain,
+          module: moduleInfo.relativeName,
+          queueName: 'saveMessage',
+          data: {
+            path,
+            options,
+            message: _message,
+            messageClass,
+          },
+        });
+      }
+
       // save
       if (messageClassBase.info.persistence) {
-        if (!saveMessageAsync) {
-          _message.id = await this.message.save({ message: _message });
-        }
+        _message.id = await this.message.save({ message: _message });
       } else {
         _message.id = message.id || uuid.v4();
         _message.createdAt = new Date();
@@ -151,16 +165,32 @@ module.exports = ctx => {
       };
     }
 
+    // queue: saveMessage async
+    async queueSaveMessage({ path, options, message, messageClass }) {
+      // save message async
+      message.id = await this.message.save({ message });
+      // to queue
+      ctx.app.meta.queue.push({
+        subdomain: ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'process',
+        data: {
+          path,
+          options,
+          message,
+          messageClass,
+        },
+      });
+      // ok
+      return {
+        id: message.id,
+      };
+    }
+
     // queue: process
     async queueProcess({ path, options, message, messageClass }) {
-      // options
-      const saveMessageAsync = (options && options.saveMessageAsync) || false;
       // messageClass
       const messageClassBase = this.messageClass.messageClass(messageClass);
-      // save message async
-      if (messageClassBase.info.persistence && saveMessageAsync) {
-        message.id = await this.message.save({ message });
-      }
       // groupUsers
       let groupUsers;
       if (messageClassBase.callbacks.onGroupUsers) {
