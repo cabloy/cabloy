@@ -14,7 +14,6 @@
 export default {
   data() {
     return {
-      moduleWechat: null,
       wx: null,
       openid: null,
     };
