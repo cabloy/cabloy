@@ -28,7 +28,7 @@ export default {
     this.$meta.util.performAction({ ctx: this, action }).then(res => {
       this.wx = res && res.wx;
     }).catch(e => {
-      this.$view.toast.show({ text: e.errMsg });
+      this.$view.toast.show({ text: e.message });
     })
   },
   methods: {
