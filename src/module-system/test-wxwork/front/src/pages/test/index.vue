@@ -3,8 +3,8 @@
     <eb-navbar large largeTransparent :title="$text('Test')" eb-back-link="Back"></eb-navbar>
     <eb-list v-if="wx" no-hairlines-md>
       <eb-list-item title="微信扫一扫" link="#" :onPerform="onPerformScanQRCode"></eb-list-item>
-      <eb-list-item title="获取openid" link="#" :onPerform="onPerformOpenid"></eb-list-item>
-      <eb-list-item title="openid">
+      <eb-list-item title="获取UserId" link="#" :onPerform="onPerformOpenid"></eb-list-item>
+      <eb-list-item title="UserId">
         <div slot="after">{{openid}}</div>
       </eb-list-item>
     </eb-list>
@@ -21,14 +21,14 @@ export default {
   },
   created() {
     const action = {
-      actionModule: 'a-wechat',
+      actionModule: 'a-wxwork',
       actionComponent: 'jssdk',
       name: 'config',
     };
     this.$meta.util.performAction({ ctx: this, action }).then(res => {
       this.wx = res && res.wx;
     }).catch(e => {
-      this.$view.toast.show({ text: e.errMsg });
+      this.$view.toast.show({ text: e.message });
     })
   },
   methods: {

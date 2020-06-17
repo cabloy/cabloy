@@ -31,7 +31,7 @@ module.exports = app => {
     async loginInfo({ /* event,*/ data }) {
       const info = data.info;
       const provider = info.user && info.user.provider;
-      if (provider && provider.module === 'a-wechat' && provider.providerName === 'wechat') {
+      if (provider && provider.module === 'a-wxwork') {
         info.config = extend(true, info.config, {
           modules: {
             'a-layoutmobile': {
@@ -42,7 +42,7 @@ module.exports = app => {
                   tabbar: true, labels: true, bottomMd: true,
                 },
                 tabs: [
-                  { name: 'Test', tabLinkActive: true, iconMaterial: 'group_work', url: '/test/wechat/test/index' },
+                  { name: 'Test', tabLinkActive: true, iconMaterial: 'group_work', url: '/test/wxwork/test/index' },
                   { name: 'Home', tabLinkActive: false, iconMaterial: 'home', url: '/a/base/menu/list' },
                   { name: 'Mine', tabLinkActive: false, iconMaterial: 'person', url: '/a/user/user/mine' },
                 ],
