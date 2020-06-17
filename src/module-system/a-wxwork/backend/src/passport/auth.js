@@ -10,6 +10,7 @@ module.exports = app => {
       meta: {
         title: sceneInfo.title,
         mode: 'redirect',
+        disableAssociate: true,
         component: `button${sceneInfo.authProvider}`,
       },
       config: {
@@ -45,13 +46,14 @@ module.exports = app => {
     };
   }
 
-  const providerNameMini = 'wxworkMini';
+  const providerNameMini = 'wxworkmini';
   const metaAuth = {
     providers: {
       [providerNameMini]: {
         meta: {
           title: 'Wechat Work Miniprogram',
           mode: 'direct',
+          disableAssociate: true,
         },
         config: {
         },

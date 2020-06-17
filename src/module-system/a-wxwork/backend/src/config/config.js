@@ -123,15 +123,7 @@ module.exports = appInfo => {
       global: false,
       dependencies: 'instance',
     },
-    wechatMini: {
-      global: false,
-      dependencies: 'instance',
-    },
-    inWechat: {
-      global: false,
-      dependencies: 'instance',
-    },
-    inWechatMini: {
+    inWxwork: {
       global: false,
       dependencies: 'instance',
     },
