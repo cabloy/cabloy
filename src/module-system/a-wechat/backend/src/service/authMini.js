@@ -10,17 +10,17 @@ module.exports = app => {
       let unionid;
       if (code) {
         // code2Session
-        const res = await this.ctx.meta.wechatMini.code2Session(code);
+        const res = await this.ctx.meta.wechatmini.code2Session(code);
         session_key = res.session_key;
         openid = res.openid;
         unionid = res.unionid;
       } else {
         // from cache
-        session_key = await this.ctx.meta.wechatMini.getSessionKey();
+        session_key = await this.ctx.meta.wechatmini.getSessionKey();
       }
       // openid/unionid
       if ((!openid || !unionid) && detail && detail.encryptedData) {
-        const res = await this.ctx.meta.wechatMini.decryptMini(detail.encryptedData, detail.iv, session_key);
+        const res = await this.ctx.meta.wechatmini.decryptMini(detail.encryptedData, detail.iv, session_key);
         openid = res.openId;
         unionid = res.unionId;
       }
@@ -41,7 +41,7 @@ module.exports = app => {
       const wechatHelper = new (WechatHelperFn(this.ctx))();
       await wechatHelper.verifyAuthUser({ scene: 2, openid, userInfo });
       // save session_key, because ctx.user maybe changed
-      await this.ctx.meta.wechatMini.saveSessionKey(session_key);
+      await this.ctx.meta.wechatmini.saveSessionKey(session_key);
       // echo
       return await this.ctx.meta.auth.echo();
     }

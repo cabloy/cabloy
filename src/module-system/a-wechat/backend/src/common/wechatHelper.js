@@ -8,10 +8,10 @@ module.exports = function(ctx) {
 
     getSceneInfo(scene) {
       if (scene === 1) return { authProvider: 'wechat' };
-      if (scene === 2) return { authProvider: 'wechatMini' };
+      if (scene === 2) return { authProvider: 'wechatmini' };
     }
 
-    // scene: 1/wechat 2/wechatMini
+    // scene: 1/wechat 2/wechatmini
     async verifyAuthUser({ scene, openid, userInfo, cbVerify, state = 'login' }) {
       if (state === 'associate') {
         // check if ctx.user exists

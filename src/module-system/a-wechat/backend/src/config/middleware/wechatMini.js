@@ -45,9 +45,9 @@ module.exports = (options, app) => {
     return api;
   }
 
-  return async function wechatMini(ctx, next) {
+  return async function wechatmini(ctx, next) {
     ctx.meta = ctx.meta || {};
-    Object.defineProperty(ctx.meta, 'wechatMini', {
+    Object.defineProperty(ctx.meta, 'wechatmini', {
       get() {
         if (ctx.meta[WECHATMINI] === undefined) {
           ctx.meta[WECHATMINI] = _createWechatMiniApi({ ctx });

@@ -5,7 +5,7 @@ const WechatHelperFn = require('../common/wechatHelper.js');
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const providerName = 'wechat';
-  const providerNameMini = 'wechatMini';
+  const providerNameMini = 'wechatmini';
   return {
     providers: {
       [providerName]: {

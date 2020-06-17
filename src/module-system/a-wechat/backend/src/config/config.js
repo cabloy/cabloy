@@ -48,7 +48,7 @@ module.exports = appInfo => {
       global: false,
       dependencies: 'instance',
     },
-    wechatMini: {
+    wechatmini: {
       global: false,
       dependencies: 'instance',
     },
