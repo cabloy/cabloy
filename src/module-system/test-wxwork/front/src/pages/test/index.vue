@@ -3,9 +3,9 @@
     <eb-navbar large largeTransparent :title="$text('Test')" eb-back-link="Back"></eb-navbar>
     <eb-list v-if="wx" no-hairlines-md>
       <eb-list-item title="微信扫一扫" link="#" :onPerform="onPerformScanQRCode"></eb-list-item>
-      <eb-list-item title="获取UserId" link="#" :onPerform="onPerformOpenid"></eb-list-item>
-      <eb-list-item title="UserId">
-        <div slot="after">{{openid}}</div>
+      <eb-list-item title="获取MemberId" link="#" :onPerform="onPerformMemberId"></eb-list-item>
+      <eb-list-item title="MemberId">
+        <div slot="after">{{memberId}}</div>
       </eb-list-item>
     </eb-list>
   </eb-page>
@@ -14,9 +14,8 @@
 export default {
   data() {
     return {
-      moduleWechat: null,
       wx: null,
-      openid: null,
+      memberId: null,
     };
   },
   created() {
@@ -36,14 +35,17 @@ export default {
       this.wx.scanQRCode({
         needResult: 1,
         scanType: ['qrCode', 'barCode'],
-        success: (res) => {
+        success: res => {
           this.$view.toast.show({ text: res.resultStr });
+        },
+        fail: res => {
+          this.$view.toast.show({ text: res.errMsg });
         }
       });
     },
-    onPerformOpenid() {
-      return this.$api.post('test/getOpenid').then(data => {
-        this.openid = data.openid;
+    onPerformMemberId() {
+      return this.$api.post('test/getMemberId').then(data => {
+        this.memberId = data.memberId;
       })
     }
   }
