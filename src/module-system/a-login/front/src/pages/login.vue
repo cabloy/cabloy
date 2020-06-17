@@ -197,6 +197,7 @@ export default {
   .btn {
     width: 36px;
     height: 36px;
+    margin: 8px;
     cursor: pointer;
   }
 }
