@@ -2,14 +2,14 @@ const require3 = require('require3');
 const bb = require3('bluebird');
 const extend = require3('extend2');
 const WxworkAPI = require3('@zhennann/co-wxwork-api');
+const authProviderScenes = require('./authProviderScenes.js');
 
 module.exports = function(ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class WechatHelper {
 
     getSceneInfo(scene) {
-      if (scene === 1) return { authProvider: 'wxwork' };
-      if (scene === 2) return { authProvider: 'wxworkMini' };
+      return authProviderScenes.getScene(scene);
     }
 
     createWxworkApi() {
