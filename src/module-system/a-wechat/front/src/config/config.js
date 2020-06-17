@@ -1,7 +1,7 @@
 export default {
   jssdk: {
     url: {
-      jweixin: 'https://res.wx.qq.com/open/js/jweixin-1.4.0.js',
+      jweixin: 'https://res.wx.qq.com/open/js/jweixin-1.6.0.js',
     },
   },
 };

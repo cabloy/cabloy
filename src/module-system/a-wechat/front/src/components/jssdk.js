@@ -14,16 +14,26 @@ export default {
       return new Promise((resolve, reject) => {
         // load jweixin-1.4.0.js
         this.$meta.util.loadScript(this.$config.jssdk.url.jweixin, () => {
-          this.$api.post('jssdk/jsconfig', { url: location.href.split('#')[0] }).then(params => {
-            window.wx.config(params);
-            window.wx.error(e => {
-              reject(e);
-            });
-            window.wx.ready(() => {
-              _wxInstance = window.wx;
-              resolve({ wx: window.wx });
-            });
+          const url = location.href.split('#')[0];
+          this._jsconfig(url).then(() => {
+            _wxInstance = window.wx;
+            resolve({ wx: window.wx });
+          }).catch(e => reject(e));
+        });
+      });
+    },
+    _jsconfig(url) {
+      return new Promise((resolve, reject) => {
+        this.$api.post('jssdk/jsconfig', { url }).then(params => {
+          window.wx.config(params);
+          window.wx.error(e => {
+            reject(e.errMsg);
           });
+          window.wx.ready(() => {
+            resolve();
+          });
+        }).catch(e => {
+          reject(e);
         });
       });
     },
