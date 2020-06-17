@@ -8,7 +8,7 @@ module.exports = app => {
     async loginInfo({ /* event,*/ data }) {
       const info = data.info;
       const provider = info.user && info.user.provider;
-      if (provider && provider.module === 'a-wechat' && provider.providerName === 'wechat') {
+      if (provider && provider.module === 'a-wxwork') {
         info.config = extend(true, info.config, {
           modules: {
             'a-base': {

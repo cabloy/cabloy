@@ -26,7 +26,8 @@ module.exports = app => {
     },
 
     // jsapi
-    { method: 'post', path: 'jssdk/jsconfig', controller: jssdk, middlewares: 'wechat' },
+    { method: 'post', path: 'jssdk/jsconfig', controller: jssdk, middlewares: 'wxwork' },
+    { method: 'post', path: 'jssdk/jsconfigAgent', controller: jssdk, middlewares: 'wxwork' },
     // event
     { method: 'post', path: 'event/loginInfo', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
 
