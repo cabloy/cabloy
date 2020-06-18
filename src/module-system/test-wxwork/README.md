@@ -1,4 +1,4 @@
-# egg-born-module-test-wechat
+# egg-born-module-test-wxwork
 
 CabloyJS的微信测试模块
 

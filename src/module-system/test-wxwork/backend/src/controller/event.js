@@ -1,16 +1,8 @@
 module.exports = app => {
   class EventController extends app.Controller {
 
-    async wechatMessage() {
-      const res = await this.service.event.wechatMessage({
-        event: this.ctx.request.body.event,
-        data: this.ctx.request.body.data,
-      });
-      this.ctx.success(res);
-    }
-
-    async wechatMessageMini() {
-      const res = await this.service.event.wechatMessageMini({
+    async wxworkMessage() {
+      const res = await this.service.event.wxworkMessage({
         event: this.ctx.request.body.event,
         data: this.ctx.request.body.data,
       });

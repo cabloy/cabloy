@@ -5,7 +5,7 @@ module.exports = app => {
 
   class Event extends app.Service {
 
-    async wechatMessage({ event, data }) {
+    async wxworkMessage({ event, data }) {
       const message = data.message;
       if (message.MsgType === 'text') {
         event.break = true;
@@ -16,15 +16,6 @@ module.exports = app => {
           MsgType: 'text',
           Content: `${this.ctx.text.locale('zh-cn', 'Reply')}: ${message.Content}`,
         };
-      }
-    }
-
-    async wechatMessageMini({ event, data }) {
-      const message = data.message;
-      if (message.MsgType === 'text') {
-        event.break = true;
-        const text = `${this.ctx.text.locale('zh-cn', 'Reply')}: ${message.Content}`;
-        await this.ctx.meta.wechatmini.sendText(message.FromUserName, text);
       }
     }
 
