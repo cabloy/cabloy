@@ -40,14 +40,15 @@ module.exports = function(ctx) {
     }
 
     // scene: 1/wxwork 2/wxworkmini 3/wxworkweb
-    async verifyAuthUser({ scene, member, code, cbVerify, state = 'login', needLogin = true }) {
+    async verifyAuthUser({ scene, memberId, member, cbVerify, state = 'login', needLogin = true }) {
       if (state === 'associate') {
         // not allowed associate
         return ctx.throw(403);
       }
       // userInfo(member)
       if (!member) {
-        member = await this._getMemberByCode({ code });
+        member = await this._getMemberByMemberId({ memberId });
+        if (!member) return ctx.throw(403);
       }
       // ensure auth user
       const profileUser = await this._ensureAuthUser({ scene, memberId: member.memberId, member });
@@ -67,20 +68,10 @@ module.exports = function(ctx) {
       return verifyUser;
     }
 
-    async _getMemberByCode({ code }) {
-      // code->userId(memberId)
-      const api = this.createWxworkApi();
-      const res = await api.app.selfBuilt.getUserIdByCode(code);
-      if (res.errcode) {
-        throw new Error(res.errmsg);
-      }
-      const memberId = res.UserId;
-      if (!memberId) return ctx.throw(403);
+    async _getMemberByMemberId({ memberId }) {
       // model member
       const modelMember = ctx.model.module(moduleInfo.relativeName).member;
-      const member = await modelMember.get({ memberId });
-      if (!member) return ctx.throw(403);
-      return member;
+      return await modelMember.get({ memberId });
     }
 
     // profileId: wxwork:memberId

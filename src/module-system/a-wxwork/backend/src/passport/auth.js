@@ -29,17 +29,24 @@ module.exports = app => {
         return {
           strategy,
           callback: (req, code, done) => {
+            // ctx/state
             const ctx = req.ctx;
             const state = ctx.request.query.state || 'login';
+            // code/memberId
             const wxworkHelper = new (WxworkHelperFn(ctx))();
-            wxworkHelper.verifyAuthUser({
-              scene: sceneInfo.scene,
-              code,
-              state,
-              cbVerify: (profileUser, cb) => {
-                app.passport.doVerify(req, profileUser, cb);
-              },
-            }).then(verifyUser => { done(null, verifyUser); }).catch(done);
+            const api = wxworkHelper.createWxworkApi();
+            api.app.selfBuilt.getUserIdByCode(code).then(res => {
+              if (res.errcode) throw new Error(res.errmsg);
+              const memberId = res.UserId;
+              wxworkHelper.verifyAuthUser({
+                scene: sceneInfo.scene,
+                memberId,
+                state,
+                cbVerify: (profileUser, cb) => {
+                  app.passport.doVerify(req, profileUser, cb);
+                },
+              }).then(verifyUser => { done(null, verifyUser); }).catch(done);
+            }).catch(done);
           },
         };
       },
