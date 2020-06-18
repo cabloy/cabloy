@@ -32,6 +32,7 @@ module.exports = function(ctx) {
             // mini
             obj[prop] = self._createWxworkApiMini();
           } else if (prop === 'util') {
+            // util
             obj[prop] = self._createWxworkApiUtil();
           }
           return obj[prop];
