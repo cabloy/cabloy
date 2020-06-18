@@ -75,6 +75,12 @@ module.exports = appInfo => {
     },
   };
 
+  // account.web
+  config.account.web = {
+    appID: '',
+    appSecret: '',
+  };
+
   // account.mini
   config.account.mini = {
     appID: '',
