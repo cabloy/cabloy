@@ -35,7 +35,7 @@ module.exports = app => {
 
     async _subscribeUser({ openid, message }) {
       // user info
-      const userInfo = await this.ctx.meta.wechat.getUser({ openid });
+      const userInfo = await this.ctx.meta.wechat.app.getUser({ openid });
       // verify auth user
       const wechatHelper = new (WechatHelperFn(this.ctx))();
       await wechatHelper.verifyAuthUser({ scene: 1, openid, userInfo });

@@ -20,10 +20,10 @@ module.exports = app => {
     { method: 'post', path: 'event/loginInfo', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
 
     // messageMini
-    { method: 'get', path: 'messageMini/index', controller: messageMini, middlewares: 'wechatmini', meta: { auth: { enable: false } } },
-    { method: 'post', path: 'messageMini/index', controller: messageMini, middlewares: 'wechatmini', meta: { auth: { enable: false } } },
+    { method: 'get', path: 'messageMini/index', controller: messageMini, middlewares: 'wechat', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'messageMini/index', controller: messageMini, middlewares: 'wechat', meta: { auth: { enable: false } } },
     // authMini
-    { method: 'post', path: 'authMini/login', controller: authMini, middlewares: 'wechatmini', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'authMini/login', controller: authMini, middlewares: 'wechat', meta: { auth: { enable: false } } },
 
   ];
   return routes;

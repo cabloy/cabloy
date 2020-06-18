@@ -1,45 +1,15 @@
-const require3 = require('require3');
-const WechatAPI = require3('@zhennann/co-wechat-api');
+const WechatHelperFn = require('../../common/wechatHelper.js');
 const WECHAT = Symbol('CTX#WECHAT');
 
 module.exports = (options, app) => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-
-  function _createWechatApi({ ctx }) {
-    // config
-    const config = ctx.config.module(moduleInfo.relativeName).account.public;
-    // api
-    const api = new WechatAPI(config.appID, config.appSecret,
-      async function() {
-        const cacheKey = 'wechat-token';
-        return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
-      },
-      async function(token) {
-        const cacheKey = 'wechat-token';
-        await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
-      }
-    );
-    // registerTicketHandle
-    api.registerTicketHandle(
-      async function(type) {
-        const cacheKey = `wechat-jsticket:${type}`;
-        return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
-      },
-      async function(type, token) {
-        const cacheKey = `wechat-jsticket:${type}`;
-        await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
-      }
-    );
-    // ready
-    return api;
-  }
-
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   return async function wechat(ctx, next) {
     ctx.meta = ctx.meta || {};
     Object.defineProperty(ctx.meta, 'wechat', {
       get() {
         if (ctx.meta[WECHAT] === undefined) {
-          ctx.meta[WECHAT] = _createWechatApi({ ctx });
+          const wechatHelper = new (WechatHelperFn(ctx))();
+          ctx.meta[WECHAT] = wechatHelper.createWechatApi();
         }
         return ctx.meta[WECHAT];
       },
