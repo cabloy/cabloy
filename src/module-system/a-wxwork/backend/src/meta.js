@@ -32,7 +32,6 @@ module.exports = app => {
     event: {
       declarations: {
         wxworkMessage: 'Wechat Work Message',
-        wechatMessageMini: 'Miniprogram Message',
       },
       implementations: {
         'a-base:loginInfo': 'event/loginInfo',
@@ -40,7 +39,8 @@ module.exports = app => {
     },
     index: {
       indexes: {
-        aWechatUser: 'createdAt,updatedAt,openid,unionid',
+        aWxworkDepartment: 'createdAt,updatedAt,roleId,departmentId,departmentParentId',
+        aWxworkMember: 'createdAt,updatedAt,userId,memberId',
       },
     },
     socketio: {

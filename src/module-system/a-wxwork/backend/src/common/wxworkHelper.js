@@ -7,7 +7,7 @@ const authProviderScenes = require('./authProviderScenes.js');
 
 module.exports = function(ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class WechatHelper {
+  class WxworkHelper {
 
     getSceneInfo(scene) {
       return authProviderScenes.getScene(scene);
@@ -239,5 +239,5 @@ module.exports = function(ctx) {
 
   }
 
-  return WechatHelper;
+  return WxworkHelper;
 };

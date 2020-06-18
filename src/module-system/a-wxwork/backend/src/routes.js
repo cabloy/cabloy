@@ -4,7 +4,6 @@ const contacts = require('./controller/contacts.js');
 
 const event = require('./controller/event.js');
 const jssdk = require('./controller/jssdk.js');
-const messageMini = require('./controller/messageMini.js');
 const authMini = require('./controller/authMini.js');
 
 module.exports = app => {
