@@ -12,7 +12,7 @@ export default {
       if (!this.$device.wxwork) return Promise.resolve(null);
       if (_wxInstance) return Promise.resolve({ wx: _wxInstance });
       return new Promise((resolve, reject) => {
-        // load jweixin-1.2.0.js
+        // load jweixin-1.0.0.js
         this.$meta.util.loadScript(this.$config.jssdk.url.jweixin, () => {
           const url = location.href.split('#')[0];
           this._jsconfig(url).then(() => {
