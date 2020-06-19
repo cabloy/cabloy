@@ -596,8 +596,8 @@ module.exports = ctx => {
       const res = await this.modelAuthProvider.get({ module, providerName });
       if (res) return res;
       // data
-      const _module = ctx.app.meta.modules[module];
-      const _provider = _module.main.meta.auth.providers[providerName];
+      const _authProviders = ctx.meta.util.authProviders();
+      const _provider = _authProviders[`${module}:${providerName}`];
       if (!_provider) throw new Error(`authProvider ${module}:${providerName} not found!`);
       const data = {
         module,

@@ -16,7 +16,6 @@ const _panels = {};
 const _widgets = {};
 const _sections = {};
 const _buttons = {};
-const _authProvidersLocales = {};
 
 const Fn = module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -78,10 +77,7 @@ const Fn = module.exports = ctx => {
     }
 
     authProviders() {
-      if (!_authProvidersLocales[ctx.locale]) {
-        _authProvidersLocales[ctx.locale] = this._prepareAuthProviders();
-      }
-      return _authProvidersLocales[ctx.locale];
+      return ctx.meta.util.authProviders();
     }
 
     modules() {
@@ -207,28 +203,6 @@ const Fn = module.exports = ctx => {
     }
 
     // inner methods
-
-    _prepareAuthProviders() {
-      const authProviders = {};
-      for (const relativeName in ctx.app.meta.modules) {
-        const module = ctx.app.meta.modules[relativeName];
-        if (module.main.meta && module.main.meta.auth && module.main.meta.auth.providers) {
-          for (const providerName in module.main.meta.auth.providers) {
-            const _authProvider = module.main.meta.auth.providers[providerName];
-            const authProvider = {
-              meta: _authProvider.meta,
-              config: _authProvider.config,
-              handler: _authProvider.handler,
-            };
-            if (authProvider.meta && authProvider.meta.title) {
-              authProvider.meta.titleLocale = ctx.text(authProvider.meta.title);
-            }
-            authProviders[`${relativeName}:${providerName}`] = authProvider;
-          }
-        }
-      }
-      return authProviders;
-    }
 
     _prepareModules() {
       const modules = {};

@@ -2,6 +2,8 @@ const require3 = require('require3');
 const moment = require3('moment');
 const mparse = require3('egg-born-mparse').default;
 
+const _authProvidersLocales = {};
+
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Util {
@@ -71,6 +73,43 @@ module.exports = ctx => {
       if (first === '/' || first === '#') return arg;
       const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;
       return `/${moduleInfo.url}/${arg}`;
+    }
+
+    authProviders() {
+      if (!_authProvidersLocales[ctx.locale]) {
+        _authProvidersLocales[ctx.locale] = this._prepareAuthProviders();
+      }
+      return _authProvidersLocales[ctx.locale];
+    }
+
+    // inner methods
+
+    _prepareAuthProviders() {
+      const authProviders = {};
+      for (const relativeName in ctx.app.meta.modules) {
+        const module = ctx.app.meta.modules[relativeName];
+        let metaAuth = module.main.meta && module.main.meta.auth;
+        if (!metaAuth) continue;
+        if (typeof metaAuth === 'function') {
+          metaAuth = metaAuth(ctx.app);
+        }
+        if (!metaAuth.providers) continue;
+        // loop
+        for (const providerName in metaAuth.providers) {
+          const _authProvider = metaAuth.providers[providerName];
+          const authProvider = {
+            meta: _authProvider.meta,
+            config: _authProvider.config,
+            configFunctions: _authProvider.configFunctions,
+            handler: _authProvider.handler,
+          };
+          if (authProvider.meta && authProvider.meta.title) {
+            authProvider.meta.titleLocale = ctx.text(authProvider.meta.title);
+          }
+          authProviders[`${relativeName}:${providerName}`] = authProvider;
+        }
+      }
+      return authProviders;
     }
 
   }

@@ -13,7 +13,7 @@ module.exports = appInfo => {
     },
     base: {
       global: true,
-      dependencies: 'instance,event',
+      dependencies: 'util,instance,event',
     },
     auth: {
       global: true,

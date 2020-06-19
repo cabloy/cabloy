@@ -15,13 +15,10 @@ module.exports = app => {
     }
 
     _registerAllRouters() {
-      for (const relativeName in this.app.meta.modules) {
-        const module = this.app.meta.modules[relativeName];
-        if (module.main.meta && module.main.meta.auth && module.main.meta.auth.providers) {
-          for (const providerName in module.main.meta.auth.providers) {
-            this._registerProviderRouters(module.info.relativeName, providerName);
-          }
-        }
+      const authProviders = this.ctx.meta.util.authProviders();
+      for (const key in authProviders) {
+        const [ moduleRelativeName, providerName ] = key.split(':');
+        this._registerProviderRouters(moduleRelativeName, providerName);
       }
     }
 
@@ -62,13 +59,10 @@ module.exports = app => {
     }
 
     async _registerInstanceProviders(subdomain, iid) {
-      for (const relativeName in this.app.meta.modules) {
-        const module = this.app.meta.modules[relativeName];
-        if (module.main.meta && module.main.meta.auth && module.main.meta.auth.providers) {
-          for (const providerName in module.main.meta.auth.providers) {
-            await this._registerInstanceProvider(subdomain, iid, module.info.relativeName, providerName);
-          }
-        }
+      const authProviders = this.ctx.meta.util.authProviders();
+      for (const key in authProviders) {
+        const [ moduleRelativeName, providerName ] = key.split(':');
+        await this._registerInstanceProvider(subdomain, iid, moduleRelativeName, providerName);
       }
     }
 
@@ -86,10 +80,9 @@ module.exports = app => {
       const strategyName = `${iid}:${moduleRelativeName}:${providerName}`;
       // unuse/use
       if (providerItem.disabled === 0) {
-        // module
-        const module = this.app.meta.modules[moduleRelativeName];
         // provider
-        const provider = module.main.meta.auth.providers[providerName];
+        const authProviders = this.ctx.meta.util.authProviders();
+        const provider = authProviders[`${moduleRelativeName}:${providerName}`];
         if (provider.handler) {
           // config
           const config = JSON.parse(providerItem.config);
@@ -139,10 +132,9 @@ function createAuthenticate(moduleRelativeName, providerName, _config) {
       }
     }
 
-    // module
-    const module = this.app.meta.modules[moduleRelativeName];
     // provider
-    const provider = module.main.meta.auth.providers[providerName];
+    const authProviders = ctx.meta.util.authProviders();
+    const provider = authProviders[`${moduleRelativeName}:${providerName}`];
 
     // config
     const config = JSON.parse(providerItem.config);
