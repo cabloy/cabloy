@@ -15,7 +15,7 @@ module.exports = app => {
     { method: 'post', path: 'test/getMemberId', controller: test, middlewares: 'inWxwork',
       meta: {
         inWxwork: {
-          scene: 'wxwork,wxworkmini',
+          scene: 'wxwork,wxworkmini,wxworkweb',
         },
       },
     },

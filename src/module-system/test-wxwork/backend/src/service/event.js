@@ -22,7 +22,7 @@ module.exports = app => {
     async loginInfo({ /* event,*/ data }) {
       const info = data.info;
       const provider = info.user && info.user.provider;
-      if (provider && provider.module === 'a-wxwork') {
+      if (provider && provider.module === 'a-wxwork' && provider.providerName === 'wxwork') {
         info.config = extend(true, info.config, {
           modules: {
             'a-layoutmobile': {
