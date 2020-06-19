@@ -53,26 +53,39 @@ module.exports = app => {
     };
   }
 
-  const providerNameMini = 'wxworkmini';
+  function _createProviderMini(sceneInfo) {
+    return {
+      meta: {
+        title: sceneInfo.title,
+        mode: 'direct',
+        disableAssociate: true,
+      },
+      config: {
+      },
+      handler: null,
+    };
+  }
+
   const metaAuth = {
     providers: {
-      [providerNameMini]: {
-        meta: {
-          title: 'Wechat Work Miniprogram',
-          mode: 'direct',
-          disableAssociate: true,
-        },
-        config: {
-        },
-        handler: null,
-      },
     },
   };
+
   // wxwork/wxworkweb
-  for (const scene of [ 1, 3 ]) {
+  for (const scene of [ 'wxwork', 'wxworkweb' ]) {
     const sceneInfo = authProviderScenes.getScene(scene);
     metaAuth.providers[sceneInfo.authProvider] = _createProvider(sceneInfo);
   }
+
+  // minis
+  const moduleConfig = app.meta.configs[moduleInfo.relativeName];
+  const minis = moduleConfig.account.wxwork.minis;
+  for (const sceneShort in minis) {
+    const scene = `wxworkmini${sceneShort}`;
+    const sceneInfo = authProviderScenes.getScene(scene);
+    metaAuth.providers[sceneInfo.authProvider] = _createProviderMini(sceneInfo);
+  }
+
   // ok
   return metaAuth;
 };

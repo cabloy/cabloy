@@ -140,6 +140,7 @@ module.exports = appInfo => {
   // account.wxwork
   config.account.wxwork = {
     corpid: '',
+    // apps
     apps: {
       selfBuilt: {
         agentid: '',
@@ -165,14 +166,14 @@ module.exports = appInfo => {
         encodingAESKey: '',
       },
     },
-  };
-
-  // account.mini
-  config.account.mini = {
-    appID: '',
-    appSecret: '',
-    token: appInfo.name,
-    encodingAESKey: '',
+    // minis
+    minis: {
+      default: {
+        secret: '',
+        appID: '',
+        appSecret: '',
+      },
+    },
   };
 
   return config;

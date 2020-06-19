@@ -48,7 +48,7 @@ module.exports = app => {
         progress: socketioProgress,
       },
     },
-    auth: authFn(app),
+    auth: authFn,
   };
   return meta;
 };

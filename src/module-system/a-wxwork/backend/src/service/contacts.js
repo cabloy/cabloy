@@ -422,7 +422,7 @@ module.exports = app => {
       // 1. create user&auth
       // verify auth user
       const wxworkHelper = new (WxworkHelperFn(this.ctx))();
-      const verifyUser = await wxworkHelper.verifyAuthUser({ scene: 1, member, needLogin: false });
+      const verifyUser = await wxworkHelper.verifyAuthUser({ scene: 'wxwork', member, needLogin: false });
       const userId = verifyUser.agent.id;
 
       // 2. add user to role
