@@ -203,7 +203,11 @@ module.exports = function(ctx) {
         },
         async function(token) {
           const cacheKey = 'wechat-token';
-          await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
+          if (token) {
+            await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
+          } else {
+            await ctx.cache.db.module(moduleInfo.relativeName).remove(cacheKey);
+          }
         }
       );
       // registerTicketHandle
@@ -214,7 +218,11 @@ module.exports = function(ctx) {
         },
         async function(type, token) {
           const cacheKey = `wechat-jsticket:${type}`;
-          await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
+          if (token) {
+            await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
+          } else {
+            await ctx.cache.db.module(moduleInfo.relativeName).remove(cacheKey);
+          }
         }
       );
       // ready
@@ -232,7 +240,11 @@ module.exports = function(ctx) {
         },
         async function(token) {
           const cacheKey = 'wechatmini-token';
-          await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
+          if (token) {
+            await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
+          } else {
+            await ctx.cache.db.module(moduleInfo.relativeName).remove(cacheKey);
+          }
         }
       );
       // registerTicketHandle
@@ -243,7 +255,11 @@ module.exports = function(ctx) {
         },
         async function(type, token) {
           const cacheKey = `wechatmini-jsticket:${type}`;
-          await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
+          if (token) {
+            await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
+          } else {
+            await ctx.cache.db.module(moduleInfo.relativeName).remove(cacheKey);
+          }
         }
       );
       // registerSessionKeyHandle
