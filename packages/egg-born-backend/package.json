@@ -1,6 +1,6 @@
 {
   "name": "egg-born-backend",
-  "version": "5.1.3",
+  "version": "5.1.4",
   "description": "egg-born-backend",
   "scripts": {
     "lint": "eslint ."
@@ -28,7 +28,7 @@
     "async": "^3.1.1",
     "babel-eslint": "^10.0.1",
     "bottleneck": "^2.19.5",
-    "bullmq": "^1.8.9",
+    "bullmq": "^1.8.13",
     "chalk": "^3.0.0",
     "egg": "^2.26.0",
     "egg-born-localeutil": "^1.0.6",

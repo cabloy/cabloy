@@ -139,7 +139,7 @@ module.exports = function(app) {
       const schedulerOptions = (queueConfig.options && queueConfig.options.scheduler) || null;
 
       // create queue
-      const connectionScheduler = app.redis.get('queue').duplicate();
+      const connectionScheduler = app.redis.get('queue'); // need not duplicate
       const _schedulerOptions = Object.assign({}, app.config.queue.scheduler, schedulerOptions, { prefix, connection: connectionScheduler });
       return new bull.QueueScheduler(queueKey, _schedulerOptions);
     }
