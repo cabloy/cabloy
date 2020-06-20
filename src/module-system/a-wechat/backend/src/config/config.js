@@ -81,12 +81,14 @@ module.exports = appInfo => {
     appSecret: '',
   };
 
-  // account.mini
-  config.account.mini = {
-    appID: '',
-    appSecret: '',
-    token: appInfo.name,
-    encodingAESKey: '',
+  // account.minis
+  config.account.minis = {
+    default: {
+      appID: '',
+      appSecret: '',
+      token: appInfo.name,
+      encodingAESKey: '',
+    },
   };
 
   return config;

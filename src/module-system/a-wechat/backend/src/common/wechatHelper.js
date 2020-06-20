@@ -22,7 +22,14 @@ module.exports = function(ctx) {
             obj[prop] = self._createWechatApiApp();
           } else if (prop === 'mini') {
             // mini
-            obj[prop] = self._createWechatApiMini();
+            obj[prop] = new Proxy({}, {
+              get(obj, prop) {
+                if (!obj[prop]) {
+                  obj[prop] = self._createWechatApiMini({ sceneShort: prop });
+                }
+                return obj[prop];
+              },
+            });
           } else if (prop === 'util') {
             // util
             obj[prop] = self._createWechatApiUtil();
@@ -32,7 +39,7 @@ module.exports = function(ctx) {
       });
     }
 
-    // scene: 1/wechat 2/wechatmini
+    // scene: wechat/wechatweb/wechatmini
     async verifyAuthUser({ scene, openid, userInfo, cbVerify, state = 'login' }) {
       if (state === 'associate') {
         // check if ctx.user exists
@@ -229,9 +236,9 @@ module.exports = function(ctx) {
       return api;
     }
 
-    _createWechatApiMini() {
+    _createWechatApiMini({ sceneShort }) {
       // config
-      const config = ctx.config.module(moduleInfo.relativeName).account.mini;
+      const config = ctx.config.module(moduleInfo.relativeName).account.minis[sceneShort];
       // api
       const api = new WechatAPI(config.appID, config.appSecret,
         async function() {
@@ -279,17 +286,17 @@ module.exports = function(ctx) {
 
     _createWechatApiUtil() {
       return {
-        // scene: empty/wechat/wechatmini/wechatweb/xxx,xxx,xxx
+        // scene: empty/wechat/wechatweb/wechatmini/xxx,xxx,xxx
         in(scene) {
           // scene
           if (!scene) scene = 'wechat';
           if (typeof scene === 'string') scene = scene.split(',');
           // provider
           const provider = ctx.user && ctx.user.provider;
-          if (!provider) return false;
+          if (!provider || provider.module !== moduleInfo.relativeName) return false;
           // find any match
           for (const item of scene) {
-            const ok = (provider.module === moduleInfo.relativeName && provider.providerName === item);
+            const ok = (provider.providerName === item) || (item === 'wechatmini' && provider.providerName.indexOf(item) > -1);
             if (ok) return true;
           }
           // not found

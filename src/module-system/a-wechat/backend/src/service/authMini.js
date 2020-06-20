@@ -4,23 +4,28 @@ module.exports = app => {
 
   class AuthMini extends app.Service {
 
-    async login({ code, detail }) {
+    async login({ scene, code, detail }) {
       let session_key;
       let openid;
       let unionid;
+
+      // mini
+      const apiMini = this.ctx.meta.wechat.mini[scene];
+
+      // code
       if (code) {
         // code2Session
-        const res = await this.ctx.meta.wechat.mini.code2Session(code);
+        const res = await apiMini.code2Session(code);
         session_key = res.session_key;
         openid = res.openid;
         unionid = res.unionid;
       } else {
         // from cache
-        session_key = await this.ctx.meta.wechat.mini.getSessionKey();
+        session_key = await apiMini.getSessionKey();
       }
       // openid/unionid
       if ((!openid || !unionid) && detail && detail.encryptedData) {
-        const res = await this.ctx.meta.wechat.mini.decryptMini(detail.encryptedData, detail.iv, session_key);
+        const res = await apiMini.decryptMini(detail.encryptedData, detail.iv, session_key);
         openid = res.openId;
         unionid = res.unionId;
       }
@@ -39,9 +44,9 @@ module.exports = app => {
       }
       // verify
       const wechatHelper = new (WechatHelperFn(this.ctx))();
-      await wechatHelper.verifyAuthUser({ scene: 2, openid, userInfo });
+      await wechatHelper.verifyAuthUser({ scene: `wechatmini${scene}`, openid, userInfo });
       // save session_key, because ctx.user maybe changed
-      await this.ctx.meta.wechat.mini.saveSessionKey(session_key);
+      await apiMini.saveSessionKey(session_key);
       // echo
       return await this.ctx.meta.auth.echo();
     }

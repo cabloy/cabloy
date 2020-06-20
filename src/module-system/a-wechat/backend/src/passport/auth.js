@@ -63,26 +63,39 @@ module.exports = app => {
     };
   }
 
-  const providerNameMini = 'wechatmini';
+  function _createProviderMini(sceneInfo) {
+    return {
+      meta: {
+        title: sceneInfo.title,
+        mode: 'direct',
+        disableAssociate: true,
+      },
+      config: {
+      },
+      handler: null,
+    };
+  }
+
   const metaAuth = {
     providers: {
-      [providerNameMini]: {
-        meta: {
-          title: 'Wechat Miniprogram',
-          mode: 'direct',
-          disableAssociate: true,
-        },
-        config: {
-        },
-        handler: null,
-      },
     },
   };
+
   // wechat/wechatweb
-  for (const scene of [ 1, 3 ]) {
+  for (const scene of [ 'wechat', 'wechatweb' ]) {
     const sceneInfo = authProviderScenes.getScene(scene);
     metaAuth.providers[sceneInfo.authProvider] = _createProvider(sceneInfo);
   }
+
+  // minis
+  const moduleConfig = app.meta.configs[moduleInfo.relativeName];
+  const minis = moduleConfig.account.minis;
+  for (const sceneShort in minis) {
+    const scene = `wechatmini${sceneShort}`;
+    const sceneInfo = authProviderScenes.getScene(scene);
+    metaAuth.providers[sceneInfo.authProvider] = _createProviderMini(sceneInfo);
+  }
+
   // ok
   return metaAuth;
 };

@@ -30,7 +30,7 @@ module.exports = app => {
         aWechatUser: 'createdAt,updatedAt,openid,unionid',
       },
     },
-    auth: authFn(app),
+    auth: authFn,
   };
   return meta;
 };

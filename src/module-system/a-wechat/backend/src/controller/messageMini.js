@@ -6,10 +6,14 @@ module.exports = app => {
   class MessageMiniController extends app.Controller {
 
     async index() {
+      // scene
+      let scene = this.ctx.params.scene || 'default';
+      // compatible with the old 'index'
+      if (scene === 'index') scene = 'default';
       // query
       const query = this.ctx.query;
       // config
-      const config = this.ctx.config.account.mini;
+      const config = this.ctx.config.account.minis[scene];
       // encrypted
       const encrypted = query.encrypt_type === 'aes';
       // wechat crypto
@@ -25,7 +29,7 @@ module.exports = app => {
       } else {
         messageIn = await this._parseMessagePost({ query, config, encrypted, wechatCrypto });
         // handle
-        await this.ctx.service.messageMini.index({ message: messageIn });
+        await this.ctx.service.messageMini.index({ scene, message: messageIn });
         // ok
         this.ctx.status = 200;
         this.ctx.type = 'text/plain';
