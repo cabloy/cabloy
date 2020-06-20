@@ -4,16 +4,16 @@ module.exports = app => {
 
     async getOpenid({ user }) {
       const modelWechatUser = this.ctx.model.module('a-wechat').wechatUser;
-      const wechatUser = await modelWechatUser.get({ userId: user.id, scene: 1 });
+      const wechatUser = await modelWechatUser.get({ userId: user.id, scene: 'wechat' });
       return {
         openid: wechatUser.openid,
         unionid: wechatUser.unionid,
       };
     }
 
-    async getOpenidMini({ user }) {
+    async getOpenidMini({ scene, user }) {
       const modelWechatUser = this.ctx.model.module('a-wechat').wechatUser;
-      const wechatUser = await modelWechatUser.get({ userId: user.id, scene: 2 });
+      const wechatUser = await modelWechatUser.get({ userId: user.id, scene: `wechatmini${scene}` });
       return {
         openid: wechatUser.openid,
         unionid: wechatUser.unionid,

@@ -20,11 +20,14 @@ module.exports = app => {
     }
 
     async wechatMessageMini({ event, data }) {
+      // scene
+      const scene = data.scene;
+      // message
       const message = data.message;
       if (message.MsgType === 'text') {
         event.break = true;
         const text = `${this.ctx.text.locale('zh-cn', 'Reply')}: ${message.Content}`;
-        await this.ctx.meta.wechat.mini.sendText(message.FromUserName, text);
+        await this.ctx.meta.wechat.mini[scene].sendText(message.FromUserName, text);
       }
     }
 
