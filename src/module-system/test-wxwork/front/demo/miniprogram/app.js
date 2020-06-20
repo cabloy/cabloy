@@ -10,7 +10,7 @@ App({
     wx.setStorageSync('logs', logs);
 
     // 初始化cabloy
-    this.cabloy = Cabloy(this);
+    this.cabloy = Cabloy(this, { scene: 'default' });
     // 登录
     this.cabloy.util.login().then(res => {
       // 由于 login 是网络请求，可能会在 Page.onLoad 之后才返回
@@ -19,7 +19,7 @@ App({
         this.cabloyLoginReadyCallback(res);
       }
     }).catch(err => {
-      console.error(err);
+      console.log(err);
     });
   },
   globalData: {

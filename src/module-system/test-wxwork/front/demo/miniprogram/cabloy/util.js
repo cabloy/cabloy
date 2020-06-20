@@ -1,10 +1,16 @@
 module.exports = function(cabloy) {
   return {
     login(options) {
+      if (!cabloy.data.wxwork) return this.__login_wechat(options);
+      return this.__login_wxwork(options);
+    },
+
+    __login_wechat(options) {
       return new Promise((resolve, reject) => {
+        const scene = cabloy.data.scene;
         if (options && options.detail) {
           // 直接进行后台登录
-          this.__login({ code: null, detail: options.detail }).then(resolve).catch(reject);
+          this.__login({ scene, code: null, detail: options.detail }).then(resolve).catch(reject);
         } else {
           // 小程序登录
           wx.login({
@@ -18,12 +24,12 @@ module.exports = function(cabloy) {
                     wx.getUserInfo({
                       success: detail => {
                         // 后台登录
-                        this.__login({ code, detail }).then(resolve).catch(reject);
+                        this.__login({ scene, code, detail }).then(resolve).catch(reject);
                       },
                     });
                   } else {
                     // 虽然没有userInfo，但有openid，仍然可以进行后台登录
-                    this.__login({ code, detail: null }).then(resolve).catch(reject);
+                    this.__login({ scene, code, detail: null }).then(resolve).catch(reject);
                   }
                 },
               });
@@ -33,9 +39,23 @@ module.exports = function(cabloy) {
       });
     },
 
-    __login({ code, detail }) {
+    __login_wxwork(options) {
+      return new Promise((resolve, reject) => {
+        // 小程序登录
+        wx.qy.login({
+          success: res => {
+            const scene = cabloy.data.scene;
+            const code = res.code;
+            this.__login({ scene, code }).then(resolve).catch(reject);
+          },
+        });
+      });
+    },
+
+    __login({ scene, code, detail }) {
       // 后台登录
-      return cabloy.api.post('/a/wechat/authMini/login', { code, detail }).then(data => {
+      const url = cabloy.data.wxwork ? '/a/wxwork/authMini/login' : '/a/wechat/authMini/login';
+      return cabloy.api.post(url, { scene, code, detail }).then(data => {
         // user
         cabloy.data.user = data.user;
         // config

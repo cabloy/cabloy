@@ -4,8 +4,20 @@ const configDefault = {
   },
 };
 
-module.exports = function(cabloy) {
+module.exports = function(cabloy, options) {
+  options = options || {};
+  options.scene = options.scene || 'default';
   return {
+    scene: options.scene,
+    get systemInfo() {
+      if (!cabloy.app.globalData.__cabloy_systemInfo) {
+        cabloy.app.globalData.__cabloy_systemInfo = wx.getSystemInfoSync();
+      }
+      return cabloy.app.globalData.__cabloy_systemInfo;
+    },
+    get wxwork() {
+      return this.systemInfo.environment === 'wxwork';
+    },
     get cookies() {
       return cabloy.app.globalData.__cabloy_cookies;
     },
