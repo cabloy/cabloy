@@ -102,17 +102,17 @@ module.exports = appInfo => {
         retryCount: -1,
         retryDelay: 200,
         retryJitter: 100,
-        lockTTL: 60 * 1000,
+        lockTTL: 20 * 1000,
       },
     },
     bottleneck: {
       expiration: 60 * 1000,
     },
     startup: {
-      debounce: 6 * 1000,
+      debounce: 10 * 1000,
     },
     worker: {
-      lockDuration: 10 * 1000,
+      lockDuration: 20 * 1000,
     },
     scheduler: {
       maxStalledCount: 1000,
