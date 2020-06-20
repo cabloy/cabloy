@@ -39,6 +39,10 @@ module.exports = appInfo => {
       path: 'io/queuePush',
       concurrency: true,
     },
+    pushDirect: {
+      path: 'io/queuePushDirect',
+      concurrency: true,
+    },
   };
 
   // broadcasts

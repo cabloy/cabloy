@@ -88,6 +88,19 @@ module.exports = ctx => {
       }
     }
 
+    async pushDirect({ content, channel, options }) {
+      ctx.app.meta.queue.push({
+        subdomain: ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'pushDirect',
+        data: {
+          content,
+          channel,
+          options,
+        },
+      });
+    }
+
     async publish({ path, message, messageClass, options }) {
       // options
       const messageScene = (options && options.scene) || '';
@@ -310,8 +323,8 @@ module.exports = ctx => {
         // render message content
         const onRender = messageClassBase.channels[channelFullName] && messageClassBase.channels[channelFullName].onRender;
         if (!onRender) return false;
-        const pushContent = await onRender({ io: this, ctx, options, message, messageSync, messageClass });
-        if (!pushContent) return false;
+        const content = await onRender({ io: this, ctx, options, message, messageSync, messageClass });
+        if (!content) return false;
         // get channel base
         const channelBase = this.messageClass.channel(channelFullName);
         if (!channelBase) {
@@ -321,7 +334,7 @@ module.exports = ctx => {
         // push
         let pushDone = false;
         if (channelBase.callbacks.onPush) {
-          pushDone = await channelBase.callbacks.onPush({ io: this, ctx, options, message, messageSync, messageClass, pushContent });
+          pushDone = await channelBase.callbacks.onPush({ io: this, ctx, content, options, message, messageSync, messageClass });
         }
         if (!pushDone) return false;
         // done this channel
@@ -331,6 +344,20 @@ module.exports = ctx => {
         ctx.logger.error(err);
         return false;
       }
+    }
+
+    async queuePushDirect({ content, options, channel }) {
+      // get channel base
+      const channelFullName = `${channel.module}:${channel.name}`;
+      const channelBase = this.messageClass.channel(channelFullName);
+      if (!channelBase) {
+        ctx.logger.info(`channel not found: ${channelFullName}`);
+        return false;
+      }
+      if (!channelBase.callbacks.onPush) return false;
+      const pushDone = await channelBase.callbacks.onPush({ io: this, ctx, content, options });
+      // done
+      return pushDone;
     }
 
     _pushQueuePush({ options, message, messageSyncs, messageSync, messageClass }) {

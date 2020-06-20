@@ -24,6 +24,9 @@ module.exports = app => {
     { method: 'post', path: 'io/queuePush', controller: io, middlewares: 'inner',
       meta: { auth: { enable: false } },
     },
+    { method: 'post', path: 'io/queuePushDirect', controller: io, middlewares: 'inner',
+      meta: { auth: { enable: false } },
+    },
     // messageClass
     { method: 'post', path: 'messageClass/queueRegister', controller: messageClass, middlewares: 'inner',
       meta: { auth: { enable: false } },

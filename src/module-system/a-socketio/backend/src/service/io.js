@@ -26,6 +26,10 @@ module.exports = app => {
       return await this.ctx.meta.io.queuePush({ options, message, messageSyncs, messageSync, messageClass });
     }
 
+    async queuePushDirect({ options, content, channel }) {
+      return await this.ctx.meta.io.queuePushDirect({ options, content, channel });
+    }
+
   }
 
   return IO;

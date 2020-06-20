@@ -61,6 +61,15 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async queuePushDirect() {
+      const res = await this.service.io.queuePushDirect({
+        options: this.ctx.request.body.options,
+        content: this.ctx.request.body.content,
+        channel: this.ctx.request.body.channel,
+      });
+      this.ctx.success(res);
+    }
+
   }
   return IOController;
 };
