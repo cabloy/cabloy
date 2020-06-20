@@ -2,6 +2,8 @@ const version = require('./controller/version.js');
 const event = require('./controller/event.js');
 const test = require('./controller/test.js');
 
+const _sceneAll = 'wxwork,wxworkweb,wxworkmini';
+
 module.exports = app => {
   const routes = [
     // version
@@ -15,7 +17,14 @@ module.exports = app => {
     { method: 'post', path: 'test/getMemberId', controller: test, middlewares: 'inWxwork',
       meta: {
         inWxwork: {
-          scene: 'wxwork,wxworkweb,wxworkmini',
+          scene: _sceneAll,
+        },
+      },
+    },
+    { method: 'post', path: 'test/sendAppMessage', controller: test, middlewares: 'inWxwork',
+      meta: {
+        inWxwork: {
+          scene: _sceneAll,
         },
       },
     },

@@ -1,6 +1,9 @@
 <template>
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Test')" eb-back-link="Back"></eb-navbar>
+    <f7-messagebar ref="messagebar" class="test-messagebar" placeholder="Message" @submit="onSubmitSendMessage">
+      <f7-icon md="material:send" slot="send-link"></f7-icon>
+    </f7-messagebar>
     <eb-list v-if="wx" no-hairlines-md>
       <eb-list-item title="微信扫一扫" link="#" :onPerform="onPerformScanQRCode"></eb-list-item>
       <eb-list-item title="获取MemberId" link="#" :onPerform="onPerformMemberId"></eb-list-item>
@@ -30,6 +33,9 @@ export default {
       this.$view.toast.show({ text: e.message });
     })
   },
+  mounted() {
+    this.messagebar = this.$refs.messagebar.f7Messagebar;
+  },
   methods: {
     onPerformScanQRCode() {
       this.wx.scanQRCode({
@@ -47,8 +53,31 @@ export default {
       return this.$api.post('test/getMemberId').then(data => {
         this.memberId = data.memberId;
       })
+    },
+    onSubmitSendMessage(value, clear) {
+      // clear
+      clear();
+      // focus
+      if (value) {
+        this.messagebar.focus();
+      }
+      // send
+      this.$api.post('test/sendAppMessage', {
+        message: {
+          text: value,
+        },
+      }).then(() => {
+        // donothing
+      });
     }
+
   }
 };
 
 </script>
+<style scoped>
+.test-messagebar {
+  margin-bottom: 56px;
+}
+
+</style>
