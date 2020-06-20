@@ -7,13 +7,13 @@ const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yel
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  async function onPush({ io, ctx, options, message, messageSync, messageClass, pushContent }) {
+  async function onPush({ ctx, content }) {
     // scene
     let scene;
-    if (pushContent.scene === 'test') {
+    if (content.scene === 'test') {
       scene = await _createSceneTest();
     } else {
-      scene = ctx.config.module(moduleInfo.relativeName).scenes[pushContent.scene];
+      scene = ctx.config.module(moduleInfo.relativeName).scenes[content.scene];
     }
     // check if empty
     if (!scene.transport.host) {
@@ -24,12 +24,12 @@ module.exports = app => {
     // transporter
     const transporter = nodemailer.createTransport(scene.transport, scene.defaults);
     // send
-    const res = await transporter.sendMail(pushContent.message);
+    const res = await transporter.sendMail(content.message);
     // log
-    if (pushContent.scene === 'test') {
+    if (content.scene === 'test') {
       const url = nodemailer.getTestMessageUrl(res);
       const message = chalk.keyword('cyan')('Test Mail To: ')
-                        + chalk.keyword('yellow')(pushContent.message.to)
+                        + chalk.keyword('yellow')(content.message.to)
                         + chalk.keyword('orange')('\n' + url);
       console.log('\n' + boxen(message, boxenOptions));
     }
