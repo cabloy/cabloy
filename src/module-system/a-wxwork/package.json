@@ -28,6 +28,6 @@
     "xml2js": "^0.4.23",
     "@zhennann/co-wechat-api": "^3.10.6",
     "@zhennann/passport-wechat": "^3.0.2",
-    "@zhennann/co-wxwork-api": "^0.0.6"
+    "@zhennann/co-wxwork-api": "^0.0.7"
   }
 }

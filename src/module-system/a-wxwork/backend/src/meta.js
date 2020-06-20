@@ -3,7 +3,8 @@ const authFn = require('./passport/auth.js');
 module.exports = app => {
   // const schemas = require('./config/validation/schemas.js')(app);
   // socketio
-  const socketioProgress = require('./config/socketio/progress.js')(app);
+  const socketioMessageProgress = require('./config/socketio/messageProgress.js')(app);
+  const socketioChannelApp = require('./config/socketio/channelApp.js')(app);
   const meta = {
     base: {
       atoms: {
@@ -45,7 +46,10 @@ module.exports = app => {
     },
     socketio: {
       messages: {
-        progress: socketioProgress,
+        progress: socketioMessageProgress,
+      },
+      channels: {
+        app: socketioChannelApp,
       },
     },
     auth: authFn,
