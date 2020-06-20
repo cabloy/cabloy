@@ -26,3 +26,5 @@ yarn.lock
 .sync-config.cson
 sftp-config.json
 
+project.config.json
+
