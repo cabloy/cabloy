@@ -7,13 +7,20 @@
       <text class="userinfo-nickname">{{user.userName}}</text>
     </block>
   </view>
-  <view class="testblock">
+  <view wx:if="{{!inWxwork}}" class="testblock">
     <button bindtap="getOpenid">获取用户openid</button>
     <view>
       <view>openid: </view>
       <view>{{openid || ''}}</view>
     </view>
     <button open-type="contact">进入客服会话</button>
+  </view>
+  <view wx:if="{{inWxwork}}" class="testblock">
+    <button bindtap="getMemberId">获取用户memberId</button>
+    <view>
+      <view>memberId: </view>
+      <view>{{memberId || ''}}</view>
+    </view>
   </view>
   <view class="usermotto">
     <text class="user-motto">{{motto}}</text>

@@ -9,6 +9,8 @@ Page({
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
     openid: null,
+    memberId: null, // for wxwork
+    inWxwork: app.cabloy.data.wxwork,
   },
   // 事件处理函数
   bindViewTap() {
@@ -41,13 +43,22 @@ Page({
         hasUserInfo: !!res.op.userName,
       });
     }).catch(err => {
-      console.error(err);
+      console.log(err);
     });
   },
   getOpenid() {
-    app.cabloy.api.post('/test/wechat/test/getOpenidMini').then(data => {
+    app.cabloy.api.post('/test/wechat/test/getOpenidMini', {
+      scene: app.cabloy.data.scene,
+    }).then(data => {
       this.setData({
         openid: data.openid,
+      });
+    });
+  },
+  getMemberId() {
+    app.cabloy.api.post('/test/wxwork/test/getMemberId').then(data => {
+      this.setData({
+        memberId: data.memberId,
       });
     });
   },
