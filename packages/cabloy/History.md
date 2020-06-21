@@ -1,5 +1,9 @@
 # History
 
+## 2020-06-21, Version 3.3.0-beta.0
+
+* feature: support wechat work
+
 ## 2020-06-05, Version 3.2.0-beta.4
 
 * chore: change to MIT License
