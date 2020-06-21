@@ -1364,6 +1364,7 @@ module.exports = ctx => {
 
     async delete({ userId }) {
       await ctx.meta.role.deleteAllUserRoles({ userId });
+      await this.modelAuth.delete({ userId });
       await this.model.delete({ id: userId });
     }
 
@@ -1648,8 +1649,8 @@ module.exports = ctx => {
       const res = await this.modelAuthProvider.get({ module, providerName });
       if (res) return res;
       // data
-      const _module = ctx.app.meta.modules[module];
-      const _provider = _module.main.meta.auth.providers[providerName];
+      const _authProviders = ctx.meta.util.authProviders();
+      const _provider = _authProviders[`${module}:${providerName}`];
       if (!_provider) throw new Error(`authProvider ${module}:${providerName} not found!`);
       const data = {
         module,
@@ -1797,7 +1798,7 @@ module.exports = appInfo => {
     },
     base: {
       global: true,
-      dependencies: 'instance,event',
+      dependencies: 'util,instance,event',
     },
     auth: {
       global: true,
@@ -2063,6 +2064,8 @@ const require3 = __webpack_require__(0);
 const moment = require3('moment');
 const mparse = require3('egg-born-mparse').default;
 
+const _authProvidersLocales = {};
+
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Util {
@@ -2132,6 +2135,43 @@ module.exports = ctx => {
       if (first === '/' || first === '#') return arg;
       const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;
       return `/${moduleInfo.url}/${arg}`;
+    }
+
+    authProviders() {
+      if (!_authProvidersLocales[ctx.locale]) {
+        _authProvidersLocales[ctx.locale] = this._prepareAuthProviders();
+      }
+      return _authProvidersLocales[ctx.locale];
+    }
+
+    // inner methods
+
+    _prepareAuthProviders() {
+      const authProviders = {};
+      for (const relativeName in ctx.app.meta.modules) {
+        const module = ctx.app.meta.modules[relativeName];
+        let metaAuth = module.main.meta && module.main.meta.auth;
+        if (!metaAuth) continue;
+        if (typeof metaAuth === 'function') {
+          metaAuth = metaAuth(ctx.app);
+        }
+        if (!metaAuth.providers) continue;
+        // loop
+        for (const providerName in metaAuth.providers) {
+          const _authProvider = metaAuth.providers[providerName];
+          const authProvider = {
+            meta: _authProvider.meta,
+            config: _authProvider.config,
+            configFunctions: _authProvider.configFunctions,
+            handler: _authProvider.handler,
+          };
+          if (authProvider.meta && authProvider.meta.title) {
+            authProvider.meta.titleLocale = ctx.text(authProvider.meta.title);
+          }
+          authProviders[`${relativeName}:${providerName}`] = authProvider;
+        }
+      }
+      return authProviders;
     }
 
   }
@@ -2331,7 +2371,6 @@ const _panels = {};
 const _widgets = {};
 const _sections = {};
 const _buttons = {};
-const _authProvidersLocales = {};
 
 const Fn = module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -2393,10 +2432,7 @@ const Fn = module.exports = ctx => {
     }
 
     authProviders() {
-      if (!_authProvidersLocales[ctx.locale]) {
-        _authProvidersLocales[ctx.locale] = this._prepareAuthProviders();
-      }
-      return _authProvidersLocales[ctx.locale];
+      return ctx.meta.util.authProviders();
     }
 
     modules() {
@@ -2522,28 +2558,6 @@ const Fn = module.exports = ctx => {
     }
 
     // inner methods
-
-    _prepareAuthProviders() {
-      const authProviders = {};
-      for (const relativeName in ctx.app.meta.modules) {
-        const module = ctx.app.meta.modules[relativeName];
-        if (module.main.meta && module.main.meta.auth && module.main.meta.auth.providers) {
-          for (const providerName in module.main.meta.auth.providers) {
-            const _authProvider = module.main.meta.auth.providers[providerName];
-            const authProvider = {
-              meta: _authProvider.meta,
-              config: _authProvider.config,
-              handler: _authProvider.handler,
-            };
-            if (authProvider.meta && authProvider.meta.title) {
-              authProvider.meta.titleLocale = ctx.text(authProvider.meta.title);
-            }
-            authProviders[`${relativeName}:${providerName}`] = authProvider;
-          }
-        }
-      }
-      return authProviders;
-    }
 
     _prepareModules() {
       const modules = {};
@@ -4117,14 +4131,14 @@ const Fn = module.exports = ctx => {
       await this.setDirty(true);
     }
 
-    async delete({ roleId }) {
+    async delete({ roleId, force = false }) {
       // role
       const role = await this.get({ id: roleId });
 
       // check if system
       if (role.system) ctx.throw(403);
       // check if children
-      if (role.catalog) {
+      if (role.catalog && !force) {
         const children = await this.children({ roleId });
         if (children.length > 0) ctx.throw.module(moduleInfo.relativeName, 1008);
       }
@@ -4289,11 +4303,12 @@ const Fn = module.exports = ctx => {
     }
 
     // save
-    async save({ roleId, data: { roleName, leader, sorting } }) {
+    async save({ roleId, data: { roleName, leader, sorting, catalog } }) {
       const role = await this.get({ id: roleId });
-      role.roleName = roleName;
-      role.leader = leader;
-      role.sorting = sorting;
+      if (roleName !== undefined) role.roleName = roleName;
+      if (leader !== undefined) role.leader = leader;
+      if (sorting !== undefined) role.sorting = sorting;
+      if (catalog !== undefined) role.catalog = catalog;
       await this.model.update(role);
     }
 
@@ -7402,13 +7417,10 @@ module.exports = app => {
     }
 
     _registerAllRouters() {
-      for (const relativeName in this.app.meta.modules) {
-        const module = this.app.meta.modules[relativeName];
-        if (module.main.meta && module.main.meta.auth && module.main.meta.auth.providers) {
-          for (const providerName in module.main.meta.auth.providers) {
-            this._registerProviderRouters(module.info.relativeName, providerName);
-          }
-        }
+      const authProviders = this.ctx.meta.util.authProviders();
+      for (const key in authProviders) {
+        const [ moduleRelativeName, providerName ] = key.split(':');
+        this._registerProviderRouters(moduleRelativeName, providerName);
       }
     }
 
@@ -7449,13 +7461,10 @@ module.exports = app => {
     }
 
     async _registerInstanceProviders(subdomain, iid) {
-      for (const relativeName in this.app.meta.modules) {
-        const module = this.app.meta.modules[relativeName];
-        if (module.main.meta && module.main.meta.auth && module.main.meta.auth.providers) {
-          for (const providerName in module.main.meta.auth.providers) {
-            await this._registerInstanceProvider(subdomain, iid, module.info.relativeName, providerName);
-          }
-        }
+      const authProviders = this.ctx.meta.util.authProviders();
+      for (const key in authProviders) {
+        const [ moduleRelativeName, providerName ] = key.split(':');
+        await this._registerInstanceProvider(subdomain, iid, moduleRelativeName, providerName);
       }
     }
 
@@ -7473,10 +7482,9 @@ module.exports = app => {
       const strategyName = `${iid}:${moduleRelativeName}:${providerName}`;
       // unuse/use
       if (providerItem.disabled === 0) {
-        // module
-        const module = this.app.meta.modules[moduleRelativeName];
         // provider
-        const provider = module.main.meta.auth.providers[providerName];
+        const authProviders = this.ctx.meta.util.authProviders();
+        const provider = authProviders[`${moduleRelativeName}:${providerName}`];
         if (provider.handler) {
           // config
           const config = JSON.parse(providerItem.config);
@@ -7526,10 +7534,9 @@ function createAuthenticate(moduleRelativeName, providerName, _config) {
       }
     }
 
-    // module
-    const module = this.app.meta.modules[moduleRelativeName];
     // provider
-    const provider = module.main.meta.auth.providers[providerName];
+    const authProviders = ctx.meta.util.authProviders();
+    const provider = authProviders[`${moduleRelativeName}:${providerName}`];
 
     // config
     const config = JSON.parse(providerItem.config);
