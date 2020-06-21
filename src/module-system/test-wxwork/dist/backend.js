@@ -103,7 +103,7 @@ module.exports = app => {
   // models
   const models = __webpack_require__(15)(app);
   // meta
-  const meta = __webpack_require__(17)(app);
+  const meta = __webpack_require__(16)(app);
 
   return {
     routes,
@@ -173,6 +173,8 @@ const version = __webpack_require__(7);
 const event = __webpack_require__(8);
 const test = __webpack_require__(9);
 
+const _sceneAll = 'wxwork,wxworkweb,wxworkmini';
+
 module.exports = app => {
   const routes = [
     // version
@@ -180,12 +182,23 @@ module.exports = app => {
     { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/test', controller: version, middlewares: 'test' },
     // event
-    { method: 'post', path: 'event/wechatMessage', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
-    { method: 'post', path: 'event/wechatMessageMini', controller: event, middlewares: 'inner,wechatMini', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'event/wxworkMessage', controller: event, middlewares: 'inner,wxwork', meta: { auth: { enable: false } } },
     { method: 'post', path: 'event/loginInfo', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
     // test
-    { method: 'post', path: 'test/getOpenid', controller: test, middlewares: 'inWechat' },
-    { method: 'post', path: 'test/getOpenidMini', controller: test, middlewares: 'inWechatMini' },
+    { method: 'post', path: 'test/getMemberId', controller: test, middlewares: 'inWxwork',
+      meta: {
+        inWxwork: {
+          scene: _sceneAll,
+        },
+      },
+    },
+    { method: 'post', path: 'test/sendAppMessage', controller: test, middlewares: 'inWxwork',
+      meta: {
+        inWxwork: {
+          scene: _sceneAll,
+        },
+      },
+    },
   ];
   return routes;
 };
@@ -225,16 +238,8 @@ module.exports = app => {
 module.exports = app => {
   class EventController extends app.Controller {
 
-    async wechatMessage() {
-      const res = await this.service.event.wechatMessage({
-        event: this.ctx.request.body.event,
-        data: this.ctx.request.body.data,
-      });
-      this.ctx.success(res);
-    }
-
-    async wechatMessageMini() {
-      const res = await this.service.event.wechatMessageMini({
+    async wxworkMessage() {
+      const res = await this.service.event.wxworkMessage({
         event: this.ctx.request.body.event,
         data: this.ctx.request.body.data,
       });
@@ -261,20 +266,20 @@ module.exports = app => {
 module.exports = app => {
   class TestController extends app.Controller {
 
-    async getOpenid() {
-      const res = await this.service.test.getOpenid({
+    async getMemberId() {
+      const res = await this.service.test.getMemberId({
         user: this.ctx.user.op,
       });
       this.ctx.success(res);
     }
 
-    async getOpenidMini() {
-      const res = await this.service.test.getOpenidMini({
+    async sendAppMessage() {
+      const res = await this.service.test.sendAppMessage({
+        message: this.ctx.request.body.message,
         user: this.ctx.user.op,
       });
       this.ctx.success(res);
     }
-
 
   }
   return TestController;
@@ -333,7 +338,7 @@ module.exports = app => {
 
   class Event extends app.Service {
 
-    async wechatMessage({ event, data }) {
+    async wxworkMessage({ event, data }) {
       const message = data.message;
       if (message.MsgType === 'text') {
         event.break = true;
@@ -347,19 +352,10 @@ module.exports = app => {
       }
     }
 
-    async wechatMessageMini({ event, data }) {
-      const message = data.message;
-      if (message.MsgType === 'text') {
-        event.break = true;
-        const text = `${this.ctx.text.locale('zh-cn', 'Reply')}: ${message.Content}`;
-        await this.ctx.meta.wechatMini.sendText(message.FromUserName, text);
-      }
-    }
-
     async loginInfo({ /* event,*/ data }) {
       const info = data.info;
       const provider = info.user && info.user.provider;
-      if (provider && provider.module === 'a-wechat' && provider.providerName === 'wechat') {
+      if (provider && provider.module === 'a-wxwork' && provider.providerName === 'wxwork') {
         info.config = extend(true, info.config, {
           modules: {
             'a-layoutmobile': {
@@ -370,7 +366,7 @@ module.exports = app => {
                   tabbar: true, labels: true, bottomMd: true,
                 },
                 tabs: [
-                  { name: 'Test', tabLinkActive: true, iconMaterial: 'group_work', url: '/test/wechat/test/index' },
+                  { name: 'Test', tabLinkActive: true, iconMaterial: 'group_work', url: '/test/wxwork/test/index' },
                   { name: 'Home', tabLinkActive: false, iconMaterial: 'home', url: '/a/base/menu/list' },
                   { name: 'Mine', tabLinkActive: false, iconMaterial: 'person', url: '/a/user/user/mine' },
                 ],
@@ -401,20 +397,28 @@ module.exports = app => {
 
   class Test extends app.Service {
 
-    async getOpenid({ user }) {
-      const wechatUser = await this.ctx.model.wechatUser.get({ userId: user.id, scene: 1 });
+    async getMemberId({ user }) {
+      const modelMember = this.ctx.model.module('a-wxwork').member;
+      const member = await modelMember.get({ userId: user.id });
       return {
-        openid: wechatUser.openid,
-        unionid: wechatUser.unionid,
+        memberId: member.memberId,
       };
     }
 
-    async getOpenidMini({ user }) {
-      const wechatUser = await this.ctx.model.wechatUser.get({ userId: user.id, scene: 2 });
-      return {
-        openid: wechatUser.openid,
-        unionid: wechatUser.unionid,
+    async sendAppMessage({ message, user }) {
+      const content = {
+        userIds: [ user.id ],
+        data: {
+          msgtype: 'text',
+          text: {
+            content: message.text,
+          },
+        },
       };
+      await this.ctx.meta.io.pushDirect({
+        content,
+        channel: { module: 'a-wxwork', name: 'app' },
+      });
     }
 
   }
@@ -425,13 +429,10 @@ module.exports = app => {
 
 /***/ }),
 /* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const wechatUser = __webpack_require__(16);
+/***/ (function(module, exports) {
 
 module.exports = app => {
   const models = {
-    wechatUser,
   };
   return models;
 };
@@ -439,20 +440,6 @@ module.exports = app => {
 
 /***/ }),
 /* 16 */
-/***/ (function(module, exports) {
-
-module.exports = app => {
-  class WechatUser extends app.meta.Model {
-    constructor(ctx) {
-      super(ctx, { table: 'aWechatUser', options: { disableDeleted: false } });
-    }
-  }
-  return WechatUser;
-};
-
-
-/***/ }),
-/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -473,8 +460,7 @@ module.exports = app => {
     },
     event: {
       implementations: {
-        'a-wechat:wechatMessage': 'event/wechatMessage',
-        'a-wechat:wechatMessageMini': 'event/wechatMessageMini',
+        'a-wxwork:wxworkMessage': 'event/wxworkMessage',
         'a-base:loginInfo': 'event/loginInfo',
       },
     },
