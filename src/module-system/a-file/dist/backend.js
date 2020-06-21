@@ -464,6 +464,9 @@ module.exports = app => {
       let imgWidth = 0;
       let imgHeight = 0;
 
+      // jpeg->jpg
+      if (fileInfo.ext === '.jpeg') fileInfo.ext = '.jpg';
+
       // dest
       const downloadId = uuid.v4().replace(/-/g, '');
       const _filePath = `file/${mode === 1 ? 'image' : (mode === 2 ? 'file' : 'audio')}/${this.ctx.meta.util.today()}`;
