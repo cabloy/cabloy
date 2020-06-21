@@ -98,10 +98,10 @@ module.exports = require("util");
 const routes = __webpack_require__(2);
 const services = __webpack_require__(5);
 const models = __webpack_require__(12);
-const config = __webpack_require__(15);
-const locales = __webpack_require__(16);
-const errors = __webpack_require__(19);
-const metaFn = __webpack_require__(20);
+const config = __webpack_require__(14);
+const locales = __webpack_require__(15);
+const errors = __webpack_require__(18);
+const metaFn = __webpack_require__(19);
 
 module.exports = app => {
   return {
@@ -409,7 +409,8 @@ module.exports = app => {
         module: moduleInfo.relativeName,
         providerName: 'authsimple',
       });
-      await this.ctx.model.auth.insert({
+      const modelAuth = this.ctx.model.module('a-base').auth;
+      await modelAuth.insert({
         userId,
         providerId: providerItem.id,
         profileId: authSimpleId,
@@ -721,35 +722,15 @@ module.exports = require("require3");
 /* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const auth = __webpack_require__(13);
-const authSimple = __webpack_require__(14);
+const authSimple = __webpack_require__(13);
 
 module.exports = {
-  auth,
   authSimple,
 };
 
 
 /***/ }),
 /* 13 */
-/***/ (function(module, exports) {
-
-module.exports = app => {
-
-  class Auth extends app.meta.Model {
-
-    constructor(ctx) {
-      super(ctx, { table: 'aAuth', options: { disableDeleted: true } });
-    }
-
-  }
-
-  return Auth;
-};
-
-
-/***/ }),
-/* 14 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -767,7 +748,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports) {
 
 // eslint-disable-next-line
@@ -816,17 +797,17 @@ module.exports = appInfo => {
 
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
-  'en-us': __webpack_require__(17),
-  'zh-cn': __webpack_require__(18),
+  'en-us': __webpack_require__(16),
+  'zh-cn': __webpack_require__(17),
 };
 
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, exports) {
 
 // confirmationEmail
@@ -874,7 +855,7 @@ module.exports = {
 
 
 /***/ }),
-/* 18 */
+/* 17 */
 /***/ (function(module, exports) {
 
 // confirmationEmail
@@ -931,7 +912,7 @@ module.exports = {
 
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, exports) {
 
 // error code should start from 1001
@@ -943,16 +924,16 @@ module.exports = {
 
 
 /***/ }),
-/* 20 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
   // auth
-  const auth = __webpack_require__(21)(app);
+  const auth = __webpack_require__(20)(app);
   // keywords
-  const keywords = __webpack_require__(25)(app);
+  const keywords = __webpack_require__(24)(app);
   // schemas
-  const schemas = __webpack_require__(26)(app);
+  const schemas = __webpack_require__(25)(app);
   return {
     auth,
     validation: {
@@ -994,10 +975,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 21 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const strategy = __webpack_require__(22);
+const strategy = __webpack_require__(21);
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const provider = moduleInfo.name;
@@ -1052,10 +1033,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 22 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const passport = __webpack_require__(23);
+const passport = __webpack_require__(22);
 const util = __webpack_require__(0);
 
 function Strategy(options, verify) {
@@ -1118,13 +1099,13 @@ module.exports = Strategy;
 
 
 /***/ }),
-/* 23 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
  * Module dependencies.
  */
-var Strategy = __webpack_require__(24);
+var Strategy = __webpack_require__(23);
 
 
 /**
@@ -1139,7 +1120,7 @@ exports.Strategy = Strategy;
 
 
 /***/ }),
-/* 24 */
+/* 23 */
 /***/ (function(module, exports) {
 
 /**
@@ -1173,7 +1154,7 @@ module.exports = Strategy;
 
 
 /***/ }),
-/* 25 */
+/* 24 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1219,7 +1200,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 26 */
+/* 25 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
