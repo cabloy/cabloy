@@ -82,7 +82,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -98,26 +98,58 @@ module.exports = require("require3");
 const require3 = __webpack_require__(0);
 const bb = require3('bluebird');
 const extend = require3('extend2');
+const WechatAPI = require3('@zhennann/co-wechat-api');
+const authProviderScenes = __webpack_require__(2);
 
 module.exports = function(ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class WechatHelper {
 
     getSceneInfo(scene) {
-      if (scene === 1) return { authProvider: 'wechat' };
-      if (scene === 2) return { authProvider: 'wechatMini' };
+      return authProviderScenes.getScene(scene);
     }
 
-    // scene: 1/wechat 2/wechatMini
-    async verifyAuthUser({ scene, openid, userInfo, cbVerify }) {
+    createWechatApi() {
+      const self = this;
+      return new Proxy({}, {
+        get(obj, prop) {
+          if (obj[prop]) return obj[prop];
+          if (prop === 'app') {
+            // app
+            obj[prop] = self._createWechatApiApp();
+          } else if (prop === 'mini') {
+            // mini
+            obj[prop] = new Proxy({}, {
+              get(obj, prop) {
+                if (!obj[prop]) {
+                  obj[prop] = self._createWechatApiMini({ sceneShort: prop });
+                }
+                return obj[prop];
+              },
+            });
+          } else if (prop === 'util') {
+            // util
+            obj[prop] = self._createWechatApiUtil();
+          }
+          return obj[prop];
+        },
+      });
+    }
+
+    // scene: wechat/wechatweb/wechatmini
+    async verifyAuthUser({ scene, openid, userInfo, cbVerify, state = 'login' }) {
+      if (state === 'associate') {
+        // check if ctx.user exists
+        if (!ctx.user || ctx.user.agent.anonymous) return ctx.throw(403);
+      }
       // ensure wechat user
       const userWechatId = await this._ensureWechatUser({ scene, openid, userInfo });
       // ensure auth user
-      const profileUser = await this._ensureAuthUser({ scene, openid, userInfo });
+      const profileUser = await this._ensureAuthUser({ scene, openid, userInfo, state });
       // verify
       let verifyUser;
       if (!cbVerify) {
-        verifyUser = await ctx.meta.user.verify({ state: 'login', profileUser });
+        verifyUser = await ctx.meta.user.verify({ state, profileUser });
         await ctx.login(verifyUser);
       } else {
         verifyUser = await bb.fromCallback(cb => {
@@ -125,7 +157,7 @@ module.exports = function(ctx) {
         });
       }
       // update wechat userId
-      await ctx.model.wechatUser.update({ id: userWechatId, userId: verifyUser.agent.id });
+      await this._updateWechatUser({ userId: verifyUser.agent.id, userWechatId, userInfo, state });
       // ok
       return verifyUser;
     }
@@ -170,8 +202,25 @@ module.exports = function(ctx) {
       return userWechatId;
     }
 
+    async _updateWechatUser({ userId, userWechatId, userInfo }) {
+      const unionid = userInfo.unionid || '';
+      if (unionid) {
+        // update all
+        await ctx.model.query(
+          'update aWechatUser a set a.userId=? where a.deleted=0 and a.iid=? and a.unionid=?',
+          [ userId, ctx.instance.id, unionid ]
+        );
+      } else {
+        // update this
+        await ctx.model.wechatUser.update({ id: userWechatId, userId });
+      }
+    }
+
     // profileId : unionid:openid
-    async _ensureAuthUser({ scene, openid, userInfo }) {
+    async _ensureAuthUser({ scene, openid, userInfo, state }) {
+      // model auth
+      const modelAuth = ctx.model.module('a-base').auth;
+      //
       const sceneInfo = this.getSceneInfo(scene);
       const unionid = userInfo.unionid || '';
       const profileId = `${unionid}:${openid}`;
@@ -180,7 +229,6 @@ module.exports = function(ctx) {
         provider: sceneInfo.authProvider,
         profileId,
         profile: {
-          id: profileId,
           userName: userInfo.nickname,
           realName: userInfo.nickname,
           avatar: userInfo.headimgurl,
@@ -205,7 +253,7 @@ module.exports = function(ctx) {
         const _profile = extend(true, {}, profileUser.profile);
         delete _profile.avatar;
         // insert auth
-        const res = await ctx.model.auth.insert({
+        const res = await modelAuth.insert({
           providerId: providerItem.id,
           profileId,
           profile: JSON.stringify(_profile),
@@ -217,7 +265,7 @@ module.exports = function(ctx) {
         const _profileOld = JSON.parse(authItem.profile);
         _profile.avatar = _profileOld.avatar;
         // always update
-        await ctx.model.auth.update({
+        await modelAuth.update({
           id: authItem.id,
           profileId,
           profile: JSON.stringify(_profile),
@@ -227,18 +275,131 @@ module.exports = function(ctx) {
       }
       // check if has userId for unionid
       if (unionid) {
-        const _authOthers = await ctx.model.query(
-          `select * from aAuth a where a.deleted=0 and a.iid=? and a.profileId like '${unionid}:%' and a.id<>?`,
-          [ ctx.instance.id, authId ]
-        );
-        const _authOther = _authOthers[0];
-        if (_authOther && _authOther.userId !== authUserId) {
-          // update userId for this auth
-          await ctx.model.auth.update({ id: authId, userId: _authOther.userId });
+        if (state === 'associate') {
+          await ctx.model.query(
+            `update aAuth a set a.userId=? where a.deleted=0 and a.iid=? and a.profileId like '${unionid}:%'`,
+            [ ctx.user.agent.id, ctx.instance.id ]
+          );
+        } else {
+          const _authOthers = await ctx.model.query(
+            `select * from aAuth a where a.deleted=0 and a.iid=? and a.profileId like '${unionid}:%' and a.id<>?`,
+            [ ctx.instance.id, authId ]
+          );
+          const _authOther = _authOthers[0];
+          if (_authOther && _authOther.userId !== authUserId) {
+            // update userId for this auth
+            await modelAuth.update({ id: authId, userId: _authOther.userId });
+          }
         }
       }
       // ready
       return profileUser;
+    }
+
+    _createWechatApiApp() {
+      // config
+      const config = ctx.config.module(moduleInfo.relativeName).account.public;
+      // api
+      const api = new WechatAPI(config.appID, config.appSecret,
+        async function() {
+          const cacheKey = 'wechat-token';
+          return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
+        },
+        async function(token) {
+          const cacheKey = 'wechat-token';
+          if (token) {
+            await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
+          } else {
+            await ctx.cache.db.module(moduleInfo.relativeName).remove(cacheKey);
+          }
+        }
+      );
+      // registerTicketHandle
+      api.registerTicketHandle(
+        async function(type) {
+          const cacheKey = `wechat-jsticket:${type}`;
+          return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
+        },
+        async function(type, token) {
+          const cacheKey = `wechat-jsticket:${type}`;
+          if (token) {
+            await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
+          } else {
+            await ctx.cache.db.module(moduleInfo.relativeName).remove(cacheKey);
+          }
+        }
+      );
+      // ready
+      return api;
+    }
+
+    _createWechatApiMini({ sceneShort }) {
+      // config
+      const config = ctx.config.module(moduleInfo.relativeName).account.minis[sceneShort];
+      // api
+      const api = new WechatAPI(config.appID, config.appSecret,
+        async function() {
+          const cacheKey = 'wechatmini-token';
+          return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
+        },
+        async function(token) {
+          const cacheKey = 'wechatmini-token';
+          if (token) {
+            await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
+          } else {
+            await ctx.cache.db.module(moduleInfo.relativeName).remove(cacheKey);
+          }
+        }
+      );
+      // registerTicketHandle
+      api.registerTicketHandle(
+        async function(type) {
+          const cacheKey = `wechatmini-jsticket:${type}`;
+          return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
+        },
+        async function(type, token) {
+          const cacheKey = `wechatmini-jsticket:${type}`;
+          if (token) {
+            await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
+          } else {
+            await ctx.cache.db.module(moduleInfo.relativeName).remove(cacheKey);
+          }
+        }
+      );
+      // registerSessionKeyHandle
+      api.registerSessionKeyHandle(
+        async function() {
+          const cacheKey = `wechatmini-sessionKey:${ctx.user.agent.id}`;
+          return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
+        },
+        async function(sessionKey) {
+          const cacheKey = `wechatmini-sessionKey:${ctx.user.agent.id}`;
+          await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, sessionKey);
+        }
+      );
+      // ready
+      return api;
+    }
+
+    _createWechatApiUtil() {
+      return {
+        // scene: empty/wechat/wechatweb/wechatmini/xxx,xxx,xxx
+        in(scene) {
+          // scene
+          if (!scene) scene = 'wechat';
+          if (typeof scene === 'string') scene = scene.split(',');
+          // provider
+          const provider = ctx.user && ctx.user.provider;
+          if (!provider || provider.module !== moduleInfo.relativeName) return false;
+          // find any match
+          for (const item of scene) {
+            const ok = (provider.providerName === item) || (item === 'wechatmini' && provider.providerName.indexOf(item) > -1);
+            if (ok) return true;
+          }
+          // not found
+          return false;
+        },
+      };
     }
 
   }
@@ -249,9 +410,49 @@ module.exports = function(ctx) {
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports) {
+
+const _scenes = {
+  wechat: {
+    scene: 'wechat', authProvider: 'wechat', title: 'Wechat Public', client: 'wechat', configKey: 'public',
+  },
+  wechatweb: {
+    scene: 'wechatweb', authProvider: 'wechatweb', title: 'Wechat Web', client: 'wechatweb', configKey: 'web',
+  },
+  wechatmini: {
+    scene: 'wechatmini', authProvider: 'wechatmini', title: 'Wechat Miniprogram',
+  },
+};
+
+function _upperCaseFirstChar(str) {
+  if (!str) return '';
+  return str.substring(0, 1).toUpperCase() + str.substring(1);
+}
+
+module.exports = {
+  scenes: _scenes,
+  getScene(scene) {
+    if (scene.indexOf('wechatmini') > -1) {
+      const sceneShort = scene.substr('wechatmini'.length);
+      // wechatmini
+      const base = _scenes.wechatmini;
+      return {
+        scene,
+        authProvider: scene,
+        title: `${base.title} - ${_upperCaseFirstChar(sceneShort)}`,
+      };
+    }
+    // else
+    return _scenes[scene];
+  },
+};
+
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const crypto = __webpack_require__(16);
+const crypto = __webpack_require__(15);
 const require3 = __webpack_require__(0);
 const bb = require3('bluebird');
 const xml2js = require3('xml2js');
@@ -281,24 +482,24 @@ module.exports = {
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const config = __webpack_require__(4);
-const locales = __webpack_require__(5);
-const errors = __webpack_require__(7);
-const middlewares = __webpack_require__(8);
+const config = __webpack_require__(5);
+const locales = __webpack_require__(6);
+const errors = __webpack_require__(8);
+const middlewares = __webpack_require__(9);
 
 module.exports = app => {
 
   // routes
-  const routes = __webpack_require__(13)(app);
+  const routes = __webpack_require__(12)(app);
   // services
-  const services = __webpack_require__(21)(app);
+  const services = __webpack_require__(20)(app);
   // models
-  const models = __webpack_require__(28)(app);
+  const models = __webpack_require__(27)(app);
   // meta
-  const meta = __webpack_require__(31)(app);
+  const meta = __webpack_require__(29)(app);
 
   return {
     routes,
@@ -315,7 +516,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports) {
 
 
@@ -368,15 +569,7 @@ module.exports = appInfo => {
       global: false,
       dependencies: 'instance',
     },
-    wechatMini: {
-      global: false,
-      dependencies: 'instance',
-    },
     inWechat: {
-      global: false,
-      dependencies: 'instance',
-    },
-    inWechatMini: {
       global: false,
       dependencies: 'instance',
     },
@@ -403,12 +596,20 @@ module.exports = appInfo => {
     },
   };
 
-  // account.mini
-  config.account.mini = {
+  // account.web
+  config.account.web = {
     appID: '',
     appSecret: '',
-    token: appInfo.name,
-    encodingAESKey: '',
+  };
+
+  // account.minis
+  config.account.minis = {
+    default: {
+      appID: '',
+      appSecret: '',
+      token: appInfo.name,
+      encodingAESKey: '',
+    },
   };
 
   return config;
@@ -416,28 +617,31 @@ module.exports = appInfo => {
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
-  'zh-cn': __webpack_require__(6),
+  'zh-cn': __webpack_require__(7),
 };
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports) {
 
 module.exports = {
+  Wechat: '微信',
   'Wechat Public': '微信公众号',
   'Wechat Miniprogram': '微信小程序',
+  'Wechat Miniprogram - Default': '微信小程序 - 默认',
+  'Wechat Web': '微信Web',
   'Not In Wechat': '不在微信内部',
   'Not In Wechat Miniprogram': '不在微信小程序内部',
 };
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports) {
 
 // error code should start from 1001
@@ -448,68 +652,34 @@ module.exports = {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const wechat = __webpack_require__(9);
-const wechatMini = __webpack_require__(10);
+const wechat = __webpack_require__(10);
 const inWechat = __webpack_require__(11);
-const inWechatMini = __webpack_require__(12);
 
 module.exports = {
   wechat,
-  wechatMini,
   inWechat,
-  inWechatMini,
 };
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(0);
-const WechatAPI = require3('@zhennann/co-wechat-api');
+const WechatHelperFn = __webpack_require__(1);
 const WECHAT = Symbol('CTX#WECHAT');
 
 module.exports = (options, app) => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-
-  function _createWechatApi({ ctx }) {
-    // config
-    const config = ctx.config.module(moduleInfo.relativeName).account.public;
-    // api
-    const api = new WechatAPI(config.appID, config.appSecret,
-      async function() {
-        const cacheKey = 'wechat-token';
-        return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
-      },
-      async function(token) {
-        const cacheKey = 'wechat-token';
-        await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
-      }
-    );
-    // registerTicketHandle
-    api.registerTicketHandle(
-      async function(type) {
-        const cacheKey = `wechat-jsticket:${type}`;
-        return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
-      },
-      async function(type, token) {
-        const cacheKey = `wechat-jsticket:${type}`;
-        await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
-      }
-    );
-    // ready
-    return api;
-  }
-
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   return async function wechat(ctx, next) {
     ctx.meta = ctx.meta || {};
     Object.defineProperty(ctx.meta, 'wechat', {
       get() {
         if (ctx.meta[WECHAT] === undefined) {
-          ctx.meta[WECHAT] = _createWechatApi({ ctx });
+          const wechatHelper = new (WechatHelperFn(ctx))();
+          ctx.meta[WECHAT] = wechatHelper.createWechatApi();
         }
         return ctx.meta[WECHAT];
       },
@@ -524,85 +694,17 @@ module.exports = (options, app) => {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(0);
-const WechatAPI = require3('@zhennann/co-wechat-api');
-const WECHATMINI = Symbol('CTX#WECHATMINI');
-
-module.exports = (options, app) => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-
-  function _createWechatMiniApi({ ctx }) {
-    // config
-    const config = ctx.config.module(moduleInfo.relativeName).account.mini;
-    // api
-    const api = new WechatAPI(config.appID, config.appSecret,
-      async function() {
-        const cacheKey = 'wechatmini-token';
-        return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
-      },
-      async function(token) {
-        const cacheKey = 'wechatmini-token';
-        await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
-      }
-    );
-    // registerTicketHandle
-    api.registerTicketHandle(
-      async function(type) {
-        const cacheKey = `wechatmini-jsticket:${type}`;
-        return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
-      },
-      async function(type, token) {
-        const cacheKey = `wechatmini-jsticket:${type}`;
-        await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
-      }
-    );
-    // registerSessionKeyHandle
-    api.registerSessionKeyHandle(
-      async function() {
-        const cacheKey = `wechatmini-sessionKey:${ctx.user.agent.id}`;
-        return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
-      },
-      async function(sessionKey) {
-        const cacheKey = `wechatmini-sessionKey:${ctx.user.agent.id}`;
-        await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, sessionKey);
-      }
-    );
-    // ready
-    return api;
-  }
-
-  return async function wechatMini(ctx, next) {
-    ctx.meta = ctx.meta || {};
-    Object.defineProperty(ctx.meta, 'wechatMini', {
-      get() {
-        if (ctx.meta[WECHATMINI] === undefined) {
-          ctx.meta[WECHATMINI] = _createWechatMiniApi({ ctx });
-        }
-        return ctx.meta[WECHATMINI];
-      },
-    });
-
-    // next
-    await next();
-  };
-
-};
-
-
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports) {
+const WechatHelperFn = __webpack_require__(1);
 
 module.exports = (options, app) => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   return async function inWechat(ctx, next) {
-    const provider = ctx.user && ctx.user.provider;
-    const ok = (provider && provider.module === moduleInfo.relativeName && provider.providerName === 'wechat');
-    if (!ok) ctx.throw.module(moduleInfo.relativeName, 1001);
+    const wechatHelper = new (WechatHelperFn(ctx))();
+    const api = wechatHelper.createWechatApi();
+    if (!api.util.in(options.scene)) return ctx.throw.module(moduleInfo.relativeName, 1001);
     // next
     await next();
   };
@@ -611,30 +713,14 @@ module.exports = (options, app) => {
 
 /***/ }),
 /* 12 */
-/***/ (function(module, exports) {
-
-module.exports = (options, app) => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  return async function inWechatMini(ctx, next) {
-    const provider = ctx.user && ctx.user.provider;
-    const ok = (provider && provider.module === moduleInfo.relativeName && provider.providerName === 'wechatMini');
-    if (!ok) ctx.throw.module(moduleInfo.relativeName, 1002);
-    // next
-    await next();
-  };
-};
-
-
-/***/ }),
-/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(14);
-const message = __webpack_require__(15);
-const event = __webpack_require__(17);
-const jssdk = __webpack_require__(18);
-const messageMini = __webpack_require__(19);
-const authMini = __webpack_require__(20);
+const version = __webpack_require__(13);
+const message = __webpack_require__(14);
+const event = __webpack_require__(16);
+const jssdk = __webpack_require__(17);
+const messageMini = __webpack_require__(18);
+const authMini = __webpack_require__(19);
 
 module.exports = app => {
   const routes = [
@@ -651,10 +737,10 @@ module.exports = app => {
     { method: 'post', path: 'event/loginInfo', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
 
     // messageMini
-    { method: 'get', path: 'messageMini/index', controller: messageMini, middlewares: 'wechatMini', meta: { auth: { enable: false } } },
-    { method: 'post', path: 'messageMini/index', controller: messageMini, middlewares: 'wechatMini', meta: { auth: { enable: false } } },
+    { method: 'get', path: 'messageMini/:scene', controller: messageMini, action: 'index', middlewares: 'wechat', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'messageMini/:scene', controller: messageMini, action: 'index', middlewares: 'wechat', meta: { auth: { enable: false } } },
     // authMini
-    { method: 'post', path: 'authMini/login', controller: authMini, middlewares: 'wechatMini', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'authMini/login', controller: authMini, middlewares: 'wechat', meta: { auth: { enable: false } } },
 
   ];
   return routes;
@@ -662,7 +748,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -689,12 +775,12 @@ module.exports = app => {
 
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
 const WechatCrypto = require3('wechat-crypto');
-const wechatUtils = __webpack_require__(2);
+const wechatUtils = __webpack_require__(3);
 
 module.exports = app => {
   class MessageController extends app.Controller {
@@ -792,13 +878,13 @@ module.exports = app => {
 
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports) {
 
 module.exports = require("crypto");
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -818,7 +904,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 18 */
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -837,21 +923,25 @@ module.exports = app => {
 
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
 const WechatCrypto = require3('wechat-crypto');
-const wechatUtils = __webpack_require__(2);
+const wechatUtils = __webpack_require__(3);
 
 module.exports = app => {
   class MessageMiniController extends app.Controller {
 
     async index() {
+      // scene
+      let scene = this.ctx.params.scene || 'default';
+      // compatible with the old 'index'
+      if (scene === 'index') scene = 'default';
       // query
       const query = this.ctx.query;
       // config
-      const config = this.ctx.config.account.mini;
+      const config = this.ctx.config.account.minis[scene];
       // encrypted
       const encrypted = query.encrypt_type === 'aes';
       // wechat crypto
@@ -867,7 +957,7 @@ module.exports = app => {
       } else {
         messageIn = await this._parseMessagePost({ query, config, encrypted, wechatCrypto });
         // handle
-        await this.ctx.service.messageMini.index({ message: messageIn });
+        await this.ctx.service.messageMini.index({ scene, message: messageIn });
         // ok
         this.ctx.status = 200;
         this.ctx.type = 'text/plain';
@@ -917,7 +1007,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 20 */
+/* 19 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -925,6 +1015,7 @@ module.exports = app => {
 
     async login() {
       const res = await this.service.authMini.login({
+        scene: this.ctx.request.body.scene,
         code: this.ctx.request.body.code,
         detail: this.ctx.request.body.detail,
       });
@@ -937,15 +1028,15 @@ module.exports = app => {
 
 
 /***/ }),
-/* 21 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(22);
-const message = __webpack_require__(23);
-const event = __webpack_require__(24);
-const jssdk = __webpack_require__(25);
-const messageMini = __webpack_require__(26);
-const authMini = __webpack_require__(27);
+const version = __webpack_require__(21);
+const message = __webpack_require__(22);
+const event = __webpack_require__(23);
+const jssdk = __webpack_require__(24);
+const messageMini = __webpack_require__(25);
+const authMini = __webpack_require__(26);
 
 module.exports = app => {
   const services = {
@@ -961,7 +1052,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 22 */
+/* 21 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1002,6 +1093,15 @@ module.exports = app => {
         `;
         await this.ctx.model.query(sql);
       }
+
+      if (options.version === 2) {
+        const sql = `
+          ALTER TABLE aWechatUser
+            CHANGE COLUMN scene scene varchar(255) DEFAULT NULL
+        `;
+        await this.ctx.model.query(sql);
+      }
+
     }
 
     async init(options) {
@@ -1017,7 +1117,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 23 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const WechatHelperFn = __webpack_require__(1);
@@ -1057,10 +1157,10 @@ module.exports = app => {
 
     async _subscribeUser({ openid, message }) {
       // user info
-      const userInfo = await this.ctx.meta.wechat.getUser({ openid });
+      const userInfo = await this.ctx.meta.wechat.app.getUser({ openid });
       // verify auth user
       const wechatHelper = new (WechatHelperFn(this.ctx))();
-      await wechatHelper.verifyAuthUser({ scene: 1, openid, userInfo });
+      await wechatHelper.verifyAuthUser({ scene: 'wechat', openid, userInfo });
       // ok
       return {
         ToUserName: message.FromUserName,
@@ -1096,7 +1196,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 24 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -1109,7 +1209,7 @@ module.exports = app => {
     async loginInfo({ /* event,*/ data }) {
       const info = data.info;
       const provider = info.user && info.user.provider;
-      if (provider && provider.module === 'a-wechat' && provider.providerName === 'wechat') {
+      if (provider && provider.module === 'a-wechat') {
         info.config = extend(true, info.config, {
           modules: {
             'a-base': {
@@ -1129,7 +1229,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 25 */
+/* 24 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1145,7 +1245,7 @@ module.exports = app => {
         jsApiList: config.jssdk.jsApiList,
         url,
       };
-      return await this.ctx.meta.wechat.getJsConfig(params);
+      return await this.ctx.meta.wechat.app.getJsConfig(params);
     }
 
   }
@@ -1155,19 +1255,19 @@ module.exports = app => {
 
 
 /***/ }),
-/* 26 */
+/* 25 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Message extends app.Service {
 
-    async index({ message }) {
+    async index({ scene, message }) {
       // raise event
       await this.ctx.meta.event.invoke({
         module: moduleInfo.relativeName,
         name: 'wechatMessageMini',
-        data: { message },
+        data: { scene, message },
       });
     }
   }
@@ -1177,7 +1277,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 27 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const WechatHelperFn = __webpack_require__(1);
@@ -1186,23 +1286,28 @@ module.exports = app => {
 
   class AuthMini extends app.Service {
 
-    async login({ code, detail }) {
+    async login({ scene, code, detail }) {
       let session_key;
       let openid;
       let unionid;
+
+      // mini
+      const apiMini = this.ctx.meta.wechat.mini[scene];
+
+      // code
       if (code) {
         // code2Session
-        const res = await this.ctx.meta.wechatMini.code2Session(code);
+        const res = await apiMini.code2Session(code);
         session_key = res.session_key;
         openid = res.openid;
         unionid = res.unionid;
       } else {
         // from cache
-        session_key = await this.ctx.meta.wechatMini.getSessionKey();
+        session_key = await apiMini.getSessionKey();
       }
       // openid/unionid
       if ((!openid || !unionid) && detail && detail.encryptedData) {
-        const res = await this.ctx.meta.wechatMini.decryptMini(detail.encryptedData, detail.iv, session_key);
+        const res = await apiMini.decryptMini(detail.encryptedData, detail.iv, session_key);
         openid = res.openId;
         unionid = res.unionId;
       }
@@ -1221,9 +1326,9 @@ module.exports = app => {
       }
       // verify
       const wechatHelper = new (WechatHelperFn(this.ctx))();
-      await wechatHelper.verifyAuthUser({ scene: 2, openid, userInfo });
+      await wechatHelper.verifyAuthUser({ scene: `wechatmini${scene}`, openid, userInfo });
       // save session_key, because ctx.user maybe changed
-      await this.ctx.meta.wechatMini.saveSessionKey(session_key);
+      await apiMini.saveSessionKey(session_key);
       // echo
       return await this.ctx.meta.auth.echo();
     }
@@ -1235,23 +1340,21 @@ module.exports = app => {
 
 
 /***/ }),
-/* 28 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const wechatUser = __webpack_require__(29);
-const auth = __webpack_require__(30);
+const wechatUser = __webpack_require__(28);
 
 module.exports = app => {
   const models = {
     wechatUser,
-    auth,
   };
   return models;
 };
 
 
 /***/ }),
-/* 29 */
+/* 28 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -1265,28 +1368,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 30 */
-/***/ (function(module, exports) {
-
-module.exports = app => {
-
-  class Auth extends app.meta.Model {
-
-    constructor(ctx) {
-      super(ctx, { table: 'aAuth', options: { disableDeleted: true } });
-    }
-
-  }
-
-  return Auth;
-};
-
-
-/***/ }),
-/* 31 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const authFn = __webpack_require__(32);
+const authFn = __webpack_require__(30);
 
 module.exports = app => {
   // const schemas = require('./config/validation/schemas.js')(app);
@@ -1318,88 +1403,116 @@ module.exports = app => {
         aWechatUser: 'createdAt,updatedAt,openid,unionid',
       },
     },
-    auth: authFn(app),
+    auth: authFn,
   };
   return meta;
 };
 
 
 /***/ }),
-/* 32 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
 const strategy = require3('@zhennann/passport-wechat').Strategy;
 const WechatHelperFn = __webpack_require__(1);
+const authProviderScenes = __webpack_require__(2);
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  const providerName = 'wechat';
-  const providerNameMini = 'wechatMini';
-  return {
+
+  function _createProvider(sceneInfo) {
+    return {
+      meta: {
+        title: sceneInfo.title,
+        mode: 'redirect',
+        component: `button${sceneInfo.authProvider}`,
+      },
+      config: {
+        appID: '',
+        appSecret: '',
+        client: sceneInfo.client,
+        scope: 'snsapi_userinfo',
+      },
+      configFunctions: {
+        getConfig(ctx) {
+          const config = ctx.config.module(moduleInfo.relativeName).account[sceneInfo.configKey];
+          return { appID: config.appID, appSecret: config.appSecret };
+        },
+        getToken(ctx, openid, cb) {
+          const name = `wechat-webtoken:${sceneInfo.authProvider}:${openid}`;
+          ctx.cache.db.module(moduleInfo.relativeName).get(name)
+            .then(token => {
+              cb(null, token);
+            })
+            .catch(cb);
+        },
+        saveToken(ctx, openid, token, cb) {
+          const name = `wechat-webtoken:${sceneInfo.authProvider}:${openid}`;
+          ctx.cache.db.module(moduleInfo.relativeName).set(name, token, (token.expires_in - 10) * 1000)
+            .then(() => {
+              cb(null);
+            })
+            .catch(cb);
+        },
+      },
+      handler: app => {
+        return {
+          strategy,
+          callback: (req, accessToken, refreshToken, userInfo, expires_in, done) => {
+            const ctx = req.ctx;
+            const state = ctx.request.query.state || 'login';
+            const wechatHelper = new (WechatHelperFn(ctx))();
+            wechatHelper.verifyAuthUser({
+              scene: sceneInfo.scene,
+              openid: userInfo.openid,
+              userInfo,
+              state,
+              cbVerify: (profileUser, cb) => {
+                app.passport.doVerify(req, profileUser, cb);
+              },
+            }).then(verifyUser => { done(null, verifyUser); }).catch(done);
+          },
+        };
+      },
+    };
+  }
+
+  function _createProviderMini(sceneInfo) {
+    return {
+      meta: {
+        title: sceneInfo.title,
+        mode: 'direct',
+        disableAssociate: true,
+      },
+      config: {
+      },
+      handler: null,
+    };
+  }
+
+  const metaAuth = {
     providers: {
-      [providerName]: {
-        meta: {
-          title: 'Wechat Public',
-          mode: 'redirect',
-          component: 'button',
-        },
-        config: {
-          appID: '',
-          appSecret: '',
-          client: 'wechat',
-          scope: 'snsapi_userinfo',
-        },
-        configFunctions: {
-          getConfig(ctx) {
-            const config = ctx.config.module(moduleInfo.relativeName).account.public;
-            return { appID: config.appID, appSecret: config.appSecret };
-          },
-          getToken(ctx, openid, cb) {
-            const name = `wechat-public:${openid}`;
-            ctx.cache.db.module(moduleInfo.relativeName).get(name)
-              .then(token => {
-                cb(null, token);
-              })
-              .catch(cb);
-          },
-          saveToken(ctx, openid, token, cb) {
-            const name = `wechat-public:${openid}`;
-            ctx.cache.db.module(moduleInfo.relativeName).set(name, token, (token.expires_in - 10) * 1000)
-              .then(() => {
-                cb(null);
-              })
-              .catch(cb);
-          },
-        },
-        handler: app => {
-          return {
-            strategy,
-            callback: (req, accessToken, refreshToken, userInfo, expires_in, done) => {
-              const wechatHelper = new (WechatHelperFn(req.ctx))();
-              wechatHelper.verifyAuthUser({
-                scene: 1,
-                openid: userInfo.openid,
-                userInfo,
-                cbVerify: (profileUser, cb) => {
-                  app.passport.doVerify(req, profileUser, cb);
-                },
-              }).then(verifyUser => { done(null, verifyUser); }).catch(done);
-            },
-          };
-        },
-      },
-      [providerNameMini]: {
-        meta: {
-          title: 'Wechat Miniprogram',
-          mode: 'direct',
-        },
-        config: {
-        },
-        handler: null,
-      },
     },
   };
+
+  // wechat/wechatweb
+  for (const scene of [ 'wechat', 'wechatweb' ]) {
+    const sceneInfo = authProviderScenes.getScene(scene);
+    metaAuth.providers[sceneInfo.authProvider] = _createProvider(sceneInfo);
+  }
+
+  // minis
+  const moduleConfig = app.meta.configs[moduleInfo.relativeName];
+  const minis = moduleConfig.account.minis;
+  for (const sceneShort in minis) {
+    const scene = `wechatmini${sceneShort}`;
+    const sceneInfo = authProviderScenes.getScene(scene);
+    metaAuth.providers[sceneInfo.authProvider] = _createProviderMini(sceneInfo);
+  }
+
+  // ok
+  return metaAuth;
 };
 
 
