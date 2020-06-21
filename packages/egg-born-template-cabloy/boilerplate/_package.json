@@ -20,13 +20,13 @@
   "author": "{{author}}",
   "devDependencies":
   {
-    "babel-eslint": "^10.0.1",
-    "eslint": "^5.16.0",
-    "eslint-config-egg": "^7.4.1",
+    "babel-eslint": "^10.0.3",
+    "eslint": "^7.3.0",
+    "eslint-config-egg": "^8.0.1",
     "eslint-plugin-vuefix": "^0.2.1"
   },
   "dependencies":
   {
-    "cabloy": "^3.2.0-beta.5"
+    "cabloy": "^3.3.0-beta.0"
   }
 }
