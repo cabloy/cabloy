@@ -179,9 +179,23 @@ module.exports = ctx => {
       }
     }
 
+    async pushDirect({ content, channel, options }) {
+      ctx.app.meta.queue.push({
+        subdomain: ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'pushDirect',
+        data: {
+          content,
+          channel,
+          options,
+        },
+      });
+    }
+
     async publish({ path, message, messageClass, options }) {
       // options
       const messageScene = (options && options.scene) || '';
+      const saveMessageAsync = (options && options.saveMessageAsync) || false;
       // messageClass
       messageClass = await this.messageClass.get(messageClass);
       const messageClassBase = this.messageClass.messageClass(messageClass);
@@ -212,6 +226,22 @@ module.exports = ctx => {
         content: JSON.stringify(message.content), // should use string for db/queue
       };
 
+      // save message async
+      if (messageClassBase.info.persistence && saveMessageAsync) {
+        // must use pushAsync for the correct order of message id
+        return await ctx.app.meta.queue.pushAsync({
+          subdomain: ctx.subdomain,
+          module: moduleInfo.relativeName,
+          queueName: 'saveMessage',
+          data: {
+            path,
+            options,
+            message: _message,
+            messageClass,
+          },
+        });
+      }
+
       // save
       if (messageClassBase.info.persistence) {
         _message.id = await this.message.save({ message: _message });
@@ -236,6 +266,28 @@ module.exports = ctx => {
       // ok
       return {
         id: _message.id,
+      };
+    }
+
+    // queue: saveMessage async
+    async queueSaveMessage({ path, options, message, messageClass }) {
+      // save message async
+      message.id = await this.message.save({ message });
+      // to queue
+      ctx.app.meta.queue.push({
+        subdomain: ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'process',
+        data: {
+          path,
+          options,
+          message,
+          messageClass,
+        },
+      });
+      // ok
+      return {
+        id: message.id,
       };
     }
 
@@ -362,8 +414,8 @@ module.exports = ctx => {
         // render message content
         const onRender = messageClassBase.channels[channelFullName] && messageClassBase.channels[channelFullName].onRender;
         if (!onRender) return false;
-        const pushContent = await onRender({ io: this, ctx, options, message, messageSync, messageClass });
-        if (!pushContent) return false;
+        const content = await onRender({ io: this, ctx, options, message, messageSync, messageClass });
+        if (!content) return false;
         // get channel base
         const channelBase = this.messageClass.channel(channelFullName);
         if (!channelBase) {
@@ -373,7 +425,7 @@ module.exports = ctx => {
         // push
         let pushDone = false;
         if (channelBase.callbacks.onPush) {
-          pushDone = await channelBase.callbacks.onPush({ io: this, ctx, options, message, messageSync, messageClass, pushContent });
+          pushDone = await channelBase.callbacks.onPush({ io: this, ctx, content, options, message, messageSync, messageClass });
         }
         if (!pushDone) return false;
         // done this channel
@@ -383,6 +435,20 @@ module.exports = ctx => {
         ctx.logger.error(err);
         return false;
       }
+    }
+
+    async queuePushDirect({ content, options, channel }) {
+      // get channel base
+      const channelFullName = `${channel.module}:${channel.name}`;
+      const channelBase = this.messageClass.channel(channelFullName);
+      if (!channelBase) {
+        ctx.logger.info(`channel not found: ${channelFullName}`);
+        return false;
+      }
+      if (!channelBase.callbacks.onPush) return false;
+      const pushDone = await channelBase.callbacks.onPush({ io: this, ctx, content, options });
+      // done
+      return pushDone;
     }
 
     _pushQueuePush({ options, message, messageSyncs, messageSync, messageClass }) {
@@ -633,6 +699,10 @@ module.exports = appInfo => {
     registerMessageClass: {
       path: 'messageClass/queueRegister',
     },
+    saveMessage: {
+      path: 'io/queueSaveMessage',
+      concurrency: true,
+    },
     process: {
       path: 'io/queueProcess',
       concurrency: true,
@@ -643,6 +713,10 @@ module.exports = appInfo => {
     },
     push: {
       path: 'io/queuePush',
+      concurrency: true,
+    },
+    pushDirect: {
+      path: 'io/queuePushDirect',
       concurrency: true,
     },
   };
@@ -1218,6 +1292,9 @@ module.exports = app => {
     // io
     { method: 'post', path: 'subscribe', controller: io, meta: { auth: { user: true } } },
     { method: 'post', path: 'unsubscribe', controller: io, meta: { auth: { user: true } } },
+    { method: 'post', path: 'io/queueSaveMessage', controller: io, middlewares: 'inner',
+      meta: { auth: { enable: false } },
+    },
     { method: 'post', path: 'io/queueProcess', controller: io, middlewares: 'inner',
       meta: { auth: { enable: false } },
     },
@@ -1225,6 +1302,9 @@ module.exports = app => {
       meta: { auth: { enable: false } },
     },
     { method: 'post', path: 'io/queuePush', controller: io, middlewares: 'inner',
+      meta: { auth: { enable: false } },
+    },
+    { method: 'post', path: 'io/queuePushDirect', controller: io, middlewares: 'inner',
       meta: { auth: { enable: false } },
     },
     // messageClass
@@ -1294,6 +1374,16 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async queueSaveMessage() {
+      const res = await this.service.io.queueSaveMessage({
+        path: this.ctx.request.body.path,
+        options: this.ctx.request.body.options,
+        message: this.ctx.request.body.message,
+        messageClass: this.ctx.request.body.messageClass,
+      });
+      this.ctx.success(res);
+    }
+
     async queueProcess() {
       const res = await this.service.io.queueProcess({
         path: this.ctx.request.body.path,
@@ -1323,6 +1413,15 @@ module.exports = app => {
         messageSyncs: this.ctx.request.body.messageSyncs,
         messageSync: this.ctx.request.body.messageSync,
         messageClass: this.ctx.request.body.messageClass,
+      });
+      this.ctx.success(res);
+    }
+
+    async queuePushDirect() {
+      const res = await this.service.io.queuePushDirect({
+        options: this.ctx.request.body.options,
+        content: this.ctx.request.body.content,
+        channel: this.ctx.request.body.channel,
       });
       this.ctx.success(res);
     }
@@ -1542,6 +1641,10 @@ module.exports = app => {
       return await this.ctx.meta.io.unsubscribe({ subscribes, user });
     }
 
+    async queueSaveMessage({ path, options, message, messageClass }) {
+      return await this.ctx.meta.io.queueSaveMessage({ path, options, message, messageClass });
+    }
+
     async queueProcess({ path, options, message, messageClass }) {
       return await this.ctx.meta.io.queueProcess({ path, options, message, messageClass });
     }
@@ -1552,6 +1655,10 @@ module.exports = app => {
 
     async queuePush({ options, message, messageSyncs, messageSync, messageClass }) {
       return await this.ctx.meta.io.queuePush({ options, message, messageSyncs, messageSync, messageClass });
+    }
+
+    async queuePushDirect({ options, content, channel }) {
+      return await this.ctx.meta.io.queuePushDirect({ options, content, channel });
     }
 
   }
