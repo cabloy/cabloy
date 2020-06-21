@@ -265,7 +265,6 @@ module.exports = app => {
                 provider,
                 profileId: profile.id,
                 profile: {
-                  id: profile.id,
                   userName: profile.username,
                   realName: profile.displayName,
                   avatar: profile.photos && profile.photos[0] && profile.photos[0].value,
