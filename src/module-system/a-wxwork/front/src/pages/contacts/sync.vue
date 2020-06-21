@@ -31,6 +31,7 @@ export default {
     },
   },
   created() {
+    // io helper
     const action = {
       actionModule: 'a-socketio',
       actionComponent: 'io',
@@ -39,6 +40,8 @@ export default {
     this.$meta.util.performAction({ ctx: this, action }).then(helper => {
       this.ioHelper = helper;
     });
+    // queueScroll
+    this._queueScroll = this.$meta.util.queue(this._queueTaskScroll.bind(this));
   },
   beforeDestroy() {
     this._stopSubscribe();
@@ -68,6 +71,7 @@ export default {
     _startSubscribe() {
       // init
       this.messagesData = [];
+      this._scroll(true);
       // socket io
       const path = `/a/wxwork/progress/${this.progressId}`;
       this.ioSimple = this.ioHelper.simple();
@@ -115,7 +119,26 @@ export default {
         // stop subscribe
         this._stopSubscribe();
       }
+      // scroll
+      this._scroll(false);
     },
+    _scroll(init) {
+      this.$nextTick(() => {
+        this._queueScroll.push(init);
+      });
+    },
+    _queueTaskScroll(init, cb) {
+      const textarea = this.$$(this.$refs.textarea);
+      if (init) {
+        textarea.scrollTop(0);
+        cb();
+      } else {
+        const scrollTop = textarea[0].scrollHeight - textarea[0].offsetHeight;
+        if (scrollTop <= 0) return cb();
+        textarea.scrollTop(scrollTop);
+        cb();
+      }
+    }
   },
 };
 
