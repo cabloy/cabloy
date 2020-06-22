@@ -128,16 +128,16 @@ export default {
       });
     },
     _queueTaskScroll(init, cb) {
+      let scrollTopNew;
       const textarea = this.$$(this.$refs.textarea);
       if (init) {
-        textarea.scrollTop(0);
-        cb();
+        scrollTopNew = 0;
       } else {
-        const scrollTop = textarea[0].scrollHeight - textarea[0].offsetHeight;
-        if (scrollTop <= 0) return cb();
-        textarea.scrollTop(scrollTop);
-        cb();
+        scrollTopNew = textarea[0].scrollHeight - textarea[0].offsetHeight;
+        if (scrollTopNew <= 0) return cb();
       }
+      if (textarea.scrollTop() === scrollTopNew) return cb();
+      textarea.scrollTop(scrollTopNew, 300, cb);
     }
   },
 };
