@@ -7,9 +7,9 @@ module.exports = app => {
 
         let sql;
 
-        // create table: aWxworkDepartment
+        // create table: aDingtalkDepartment
         sql = `
-          CREATE TABLE aWxworkDepartment (
+          CREATE TABLE aDingtalkDepartment (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -19,16 +19,25 @@ module.exports = app => {
             departmentId int(11) DEFAULT '0',
             departmentParentId int(11) DEFAULT '0',
             departmentName varchar(255) DEFAULT NULL,
-            departmentNameEn varchar(255) DEFAULT NULL,
             departmentOrder int(11) DEFAULT '0',
+            createDeptGroup int(11) DEFAULT '0',
+            deptHiding int(11) DEFAULT '0',
+            deptPermits TEXT DEFAULT NULL,
+            userPermits TEXT DEFAULT NULL,
+            outerDept int(11) DEFAULT '0',
+            outerPermitDepts TEXT DEFAULT NULL,
+            outerPermitUsers TEXT DEFAULT NULL,
+            outerDeptOnlySelf int(11) DEFAULT '0',
+            sourceIdentifier varchar(255) DEFAULT NULL,
+            ext JSON DEFAULT NULL,
             PRIMARY KEY (id)
           )
         `;
         await this.ctx.model.query(sql);
 
-        // create table: aWxworkMember
+        // create table: aDingtalkMember
         sql = `
-          CREATE TABLE aWxworkMember (
+          CREATE TABLE aDingtalkMember (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -37,27 +46,20 @@ module.exports = app => {
             userId int(11) DEFAULT '0',
             memberId varchar(255) DEFAULT NULL,
             name varchar(255) DEFAULT NULL,
-            alias varchar(255) DEFAULT NULL,
-            mobile varchar(255) DEFAULT NULL,
+            orderInDepts JSON DEFAULT NULL,
             department varchar(255) DEFAULT NULL,
-            sorting varchar(255) DEFAULT NULL,
             position varchar(255) DEFAULT NULL,
-            gender int(11) DEFAULT '0',
+            mobile varchar(255) DEFAULT NULL,
+            tel varchar(255) DEFAULT NULL,
+            workPlace varchar(255) DEFAULT NULL,
+            remark TEXT DEFAULT NULL,
             email varchar(255) DEFAULT NULL,
-            telephone varchar(255) DEFAULT NULL,
-            is_leader_in_dept varchar(255) DEFAULT NULL,
-            avatar varchar(255) DEFAULT NULL,
-            thumb_avatar varchar(255) DEFAULT NULL,
-            qr_code varchar(255) DEFAULT NULL,
-            status int(11) DEFAULT '0',
+            orgEmail varchar(255) DEFAULT NULL,
+            jobnumber varchar(255) DEFAULT NULL,
+            isHide int(11) DEFAULT '0',
+            isSenior int(11) DEFAULT '0',
             extattr JSON DEFAULT NULL,
-            external_profile JSON DEFAULT NULL,
-            external_position varchar(255) DEFAULT NULL,
-            address varchar(255) DEFAULT NULL,
-            hide_mobile int(11) DEFAULT '0',
-            english_name varchar(255) DEFAULT NULL,
-            open_userid varchar(255) DEFAULT NULL,
-            main_department int(11) DEFAULT '0',
+            hiredDate timestamp DEFAULT NULL,
             PRIMARY KEY (id)
           )
         `;

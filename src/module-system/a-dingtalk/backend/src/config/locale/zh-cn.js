@@ -1,5 +1,5 @@
 module.exports = {
-  'Wechat Work': '企业微信',
+  DingTalk: '钉钉',
   'Wechat Work Miniprogram': '企业微信小程序',
   'Wechat Work Miniprogram - Default': '企业微信小程序 - 默认',
   'Wechat Work Web': '企业微信Web',
