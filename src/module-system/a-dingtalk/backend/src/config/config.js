@@ -133,15 +133,15 @@ module.exports = appInfo => {
   config.sync = {
     department: {
       roleContainer: 'internal',
-      roleTop: 'wxwork',
+      roleTop: 'dingtalk',
     },
   };
 
   // account
   config.account = {};
 
-  // account.wxwork
-  config.account.wxwork = {
+  // account.dingtalk
+  config.account.dingtalk = {
     corpid: '',
     // apps
     apps: {
