@@ -1,0 +1,30 @@
+{
+  "name": "egg-born-module-a-dingtalk",
+  "version": "3.0.0",
+  "title": "DingTalk",
+  "eggBornModule": {
+    "fileVersion": 1,
+    "dependencies": {
+      "a-instance": "3.0.0",
+      "a-base": "3.0.0"
+    }
+  },
+  "description": "dingtalk api for CabloyJS",
+  "keywords": [
+    "Cabloy Module",
+    "DingTalk"
+  ],
+  "scripts": {
+    "build:front": "node build/front/build.js",
+    "build:backend": "node build/backend/build.js",
+    "lint": "eslint front backend"
+  },
+  "author": "zhennann",
+  "devDependencies": {},
+  "dependencies": {
+    "require3": "^1.0.3",
+    "extend2": "^1.0.0",
+    "dingtalk-encrypt": "^1.2.1",
+    "@zhennann/node-dingtalk": "^2.1.0"
+  }
+}
