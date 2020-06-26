@@ -590,7 +590,10 @@ module.exports = appInfo => {
 
   // sync
   config.sync = {
-    departmentRoot: 'internal',
+    department: {
+      roleContainer: 'internal',
+      roleTop: 'wxwork',
+    },
   };
 
   // account
@@ -1705,6 +1708,7 @@ module.exports = app => {
       // 2. add user to role
       if (member.department) {
         await this._addUserRoles({ userId, departmentIds: member.department.split(',') });
+        // delete role:activated (need not)
       }
 
       // 3. status
@@ -1720,14 +1724,30 @@ module.exports = app => {
 
     // not create new role here
     async _getRoleOfDepartment({ departmentId }) {
-      // role root
+      // role top
       if (departmentId === 0) {
-        return await this.ctx.meta.role.get({ roleName: this.ctx.config.sync.departmentRoot });
+        return await this._getRoleTop();
       }
       // department
       const department = await this.ctx.model.department.get({ departmentId });
       if (!department) return null;
       return await this.ctx.meta.role.get({ id: department.roleId });
+    }
+
+    // get role top
+    async _getRoleTop() {
+      const roleContainer = await this.ctx.meta.role.get({ roleName: this.ctx.config.sync.department.roleContainer });
+      const roleTop = await this.ctx.meta.role.get({ roleName: this.ctx.config.sync.department.roleTop, roleIdParent: roleContainer.id });
+      if (roleTop) return roleTop;
+      // create role
+      const data = {
+        roleName: this.ctx.config.sync.department.roleTop,
+        catalog: 1,
+        sorting: 0,
+        roleIdParent: roleContainer.id,
+      };
+      data.id = await this.ctx.meta.role.add(data);
+      return data;
     }
 
     _adjustFields(itemDest, itemSrc, fieldMap) {

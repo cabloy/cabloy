@@ -131,7 +131,10 @@ module.exports = appInfo => {
 
   // sync
   config.sync = {
-    departmentRoot: 'internal',
+    department: {
+      roleContainer: 'internal',
+      roleTop: 'wxwork',
+    },
   };
 
   // account
