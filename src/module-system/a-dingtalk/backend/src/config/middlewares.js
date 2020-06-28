@@ -1,7 +1,7 @@
-const wxwork = require('./middleware/wxwork.js');
-const inWxwork = require('./middleware/inWxwork.js');
+const dingtalk = require('./middleware/dingtalk.js');
+const inDingtalk = require('./middleware/inDingtalk.js');
 
 module.exports = {
-  wxwork,
-  inWxwork,
+  dingtalk,
+  inDingtalk,
 };

@@ -1,18 +1,17 @@
 <template>
-  <img src="../assets/img/wxwork-48.png" @click="signIn">
+  <img src="../assets/img/dingtalk-40.png" @click="signIn">
 </template>
 <script>
-const urlLogin = '/api/a/wxwork/passport/a-wxwork/wxwork';
 export default {
   meta: {
     global: false,
     disable: ({ ctx, provider }) => {
       return new Promise((resolve, reject) => {
-        if (ctx.$device.wxwork) {
+        if (ctx.$device.dingtalk) {
           const reload = ctx.$store.state.auth.reload;
           if (reload) return resolve(false);
-          // auto redirect in wechat
-          ctx.$meta.vueApp.toLogin({ url: urlLogin });
+          // login direct
+          this.signIn();
           return reject();
         }
         return resolve(true);
@@ -24,7 +23,7 @@ export default {
   },
   methods: {
     signIn() {
-      this.$meta.vueApp.toLogin({ url: urlLogin });
+      // login direct
     },
   },
 };

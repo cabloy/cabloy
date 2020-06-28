@@ -1,12 +1,15 @@
 const _scenes = {
-  wxwork: {
-    scene: 'wxwork', authProvider: 'wxwork', title: 'Wechat Work', client: 'wxwork',
+  dingtalk: {
+    scene: 'dingtalk', authProvider: 'dingtalk', title: 'DingTalk', client: 'dingtalk',
   },
-  wxworkweb: {
-    scene: 'wxworkweb', authProvider: 'wxworkweb', title: 'Wechat Work Web', client: 'wxworkweb',
+  dingtalkweb: {
+    scene: 'dingtalkweb', authProvider: 'dingtalkweb', title: 'DingTalk Web', client: 'dingtalkweb',
   },
-  wxworkmini: {
-    scene: 'wxworkmini', authProvider: 'wxworkmini', title: 'Wechat Work Miniprogram',
+  dingtalkadmin: {
+    scene: 'dingtalkadmin', authProvider: 'dingtalkadmin', title: 'DingTalk Admin', client: 'dingtalkadmin',
+  },
+  dingtalkmini: {
+    scene: 'dingtalkmini', authProvider: 'dingtalkmini', title: 'DingTalk Miniprogram',
   },
 };
 
@@ -18,10 +21,10 @@ function _upperCaseFirstChar(str) {
 module.exports = {
   scenes: _scenes,
   getScene(scene) {
-    if (scene.indexOf('wxworkmini') > -1) {
-      const sceneShort = scene.substr('wxworkmini'.length);
-      // wxworkmini
-      const base = _scenes.wxworkmini;
+    if (scene.indexOf('dingtalkmini') > -1) {
+      const sceneShort = scene.substr('dingtalkmini'.length);
+      // dingtalkmini
+      const base = _scenes.dingtalkmini;
       return {
         scene,
         authProvider: scene,

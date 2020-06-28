@@ -3,13 +3,13 @@ const util = require3('util');
 const passport = require3('passport-strategy');
 const OAuth = require('./oauth.js');
 
-const __OAUTH = Symbol('WXWORK#__OAUTH');
+const __OAUTH = Symbol('DINGTALK#__OAUTH');
 
-function WxworkStrategy(options, verify) {
+function DingTalkStrategy(options, verify) {
   options = options || {};
 
   if (!verify) {
-    throw new TypeError('WxworkStrategy required a verify callback');
+    throw new TypeError('DingTalkStrategy required a verify callback');
   }
 
   if (typeof verify !== 'function') {
@@ -18,34 +18,32 @@ function WxworkStrategy(options, verify) {
 
   passport.Strategy.call(this, options, verify);
 
-  this.name = options.name || 'wxwork';
-  this._client = options.client || 'wxwork';
+  this.name = options.name || 'dingtalk';
+  this._client = options.client || 'dingtalk';
   this._verify = verify;
   this._callbackURL = options.callbackURL;
   this._lang = options.lang || 'en';
   this._state = options.state;
-  this._scope = options.scope || 'snsapi_base';
+  this._scope = options.scope || 'snsapi_login';
   this._passReqToCallback = options.passReqToCallback;
 
 }
 
-util.inherits(WxworkStrategy, passport.Strategy);
+util.inherits(DingTalkStrategy, passport.Strategy);
 
-WxworkStrategy.prototype.getOAuth = function(options) {
+DingTalkStrategy.prototype.getOAuth = function(options) {
   if (this[__OAUTH] === undefined) {
-    let corpid = options.corpid;
-    let agentid = options.agentid;
-    if (!corpid || !agentid) {
+    let appkey = options.appkey;
+    if (!appkey) {
       const _config = options.getConfig();
-      corpid = _config.corpid;
-      agentid = _config.agentid;
+      appkey = _config.appkey;
     }
-    this[__OAUTH] = new OAuth(corpid, agentid);
+    this[__OAUTH] = new OAuth(appkey);
   }
   return this[__OAUTH];
 };
 
-WxworkStrategy.prototype.authenticate = function(req, options) {
+DingTalkStrategy.prototype.authenticate = function(req, options) {
 
   if (!req._passport) {
     return this.error(new Error('passport.initialize() middleware not in use'));
@@ -101,11 +99,12 @@ WxworkStrategy.prototype.authenticate = function(req, options) {
     const callbackURL = options.callbackURL || self._callbackURL;
     const scope = options.scope || self._scope;
 
-    const methodName = (this._client === 'wxwork') ? 'getAuthorizeURL' : 'getAuthorizeURLForWebsite';
+    // only support dingtalkweb
+    const methodName = (this._client === 'dingtalkweb') ? 'getAuthorizeURLForWebsite' : '';
     const location = _oauth[methodName](callbackURL, state, scope);
 
     self.redirect(location, 302);
   }
 };
 
-module.exports = WxworkStrategy;
+module.exports = DingTalkStrategy;

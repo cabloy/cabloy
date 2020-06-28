@@ -1,14 +1,14 @@
 <template>
-  <img src="../assets/img/wxwork-48.png" @click="signIn">
+  <img src="../assets/img/dingtalk-40.png" @click="signIn">
 </template>
 <script>
-const urlLogin = '/api/a/wxwork/passport/a-wxwork/wxworkweb';
+const urlLogin = '/api/a/dingtalk/passport/a-dingtalk/dingtalkweb';
 export default {
   meta: {
     global: false,
     disable: ({ ctx, provider }) => {
       return new Promise((resolve, reject) => {
-        if (ctx.$device.iphone || ctx.$device.android || ctx.$device.wxwork || ctx.$device.wechat) {
+        if (ctx.$device.iphone || ctx.$device.android || ctx.$device.dingtalk) {
           return resolve(true);
         }
         return resolve(false);

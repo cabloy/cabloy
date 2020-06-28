@@ -1,4 +1,4 @@
-const WxworkHelperFn = require('../common/wxworkHelper.js');
+const DingtalkHelperFn = require('../common/dingtalkHelper.js');
 
 // department
 

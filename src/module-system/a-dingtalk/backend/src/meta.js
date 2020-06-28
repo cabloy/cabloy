@@ -40,8 +40,8 @@ module.exports = app => {
     },
     index: {
       indexes: {
-        aWxworkDepartment: 'createdAt,updatedAt,roleId,departmentId,departmentParentId',
-        aWxworkMember: 'createdAt,updatedAt,userId,memberId',
+        aDingtalkDepartment: 'createdAt,updatedAt,roleId,departmentId,departmentParentId',
+        aDingtalkMember: 'createdAt,updatedAt,userId,memberId',
       },
     },
     socketio: {
