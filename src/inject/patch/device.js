@@ -7,4 +7,6 @@ export default function(Vue) {
   device.wxwork = ua.indexOf('wxwork') > -1;
   // wechat
   device.wechat = !device.wxwork && (ua.indexOf('micromessenger') > -1 || ua.indexOf('micromessage') > -1);
+  // dingtalk
+  device.dingtalk = ua.indexOf('dingtalk') > -1;
 }
