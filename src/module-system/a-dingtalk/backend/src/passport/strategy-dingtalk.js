@@ -72,7 +72,7 @@ DingTalkStrategy.prototype.authenticate = function(req, options) {
 
     // 获取code,并校验相关参数的合法性
     // No code only state --> User has rejected send details. (Fail authentication request).
-    if (req.query && req.query.state && !req.query.code) {
+    if (req.query && !req.query.code) {
       return self.fail(401);
     }
 

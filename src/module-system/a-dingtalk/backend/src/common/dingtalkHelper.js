@@ -170,11 +170,11 @@ module.exports = function(ctx) {
       return profileUser;
     }
 
-    _createDingtalkApiGeneral({ category, appName, appkey, appsecret }) {
+    _createDingtalkApiGeneral({ category, appName, appkey, appsecret, sso }) {
       // api
       const api = new DingtalkAPI(
         {
-          appkey, appsecret,
+          appkey, appsecret, sso,
         },
         async function() {
           const cacheKey = `dingtalk-token:${category}:${appName || ''}`;
@@ -228,6 +228,7 @@ module.exports = function(ctx) {
         appName: '',
         appkey: config.corpid,
         appsecret: config.ssosecret,
+        sso: true,
       });
     }
 

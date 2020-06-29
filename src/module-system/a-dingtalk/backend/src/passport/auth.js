@@ -93,7 +93,7 @@ module.exports = app => {
             // code/memberId
             const dingtalkHelper = new (DingtalkHelperFn(ctx))();
             const api = dingtalkHelper.createDingtalkApi();
-            api.admin.getSSOUserInfo(null, code).then(res => {
+            api.admin.client.getSSOUserInfo(null, code).then(res => {
               const memberId = res.user_info.userid;
               dingtalkHelper.verifyAuthUser({
                 scene: 'dingtalkadmin',
