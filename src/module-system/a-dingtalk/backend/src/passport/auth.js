@@ -34,7 +34,7 @@ module.exports = app => {
       configFunctions: {
         getConfig(ctx) {
           const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk.webs.default;
-          return { appkey: config.appkey, appsecret: config.appsecret };
+          return { appkey: config.appid, appsecret: config.appsecret };
         },
       },
       handler: app => {
@@ -47,7 +47,7 @@ module.exports = app => {
             // code/memberId
             const dingtalkHelper = new (DingtalkHelperFn(ctx))();
             const api = dingtalkHelper.createDingtalkApi();
-            api.web.default.getuserinfo_bycode(loginTmpCode).then(res => {
+            api.web.default.client.getuserinfo_bycode(loginTmpCode).then(res => {
               const unionid = res.user_info.unionid;
               api.app.selfBuilt.user.getUseridByUnionid(unionid).then(res => {
                 if (res.contactType === 1) throw new Error('not support extcontact');
@@ -96,7 +96,7 @@ module.exports = app => {
             api.admin.getSSOUserInfo(null, code).then(res => {
               const memberId = res.user_info.userid;
               dingtalkHelper.verifyAuthUser({
-                scene: 'dingtalkwebadmin',
+                scene: 'dingtalkadmin',
                 memberId,
                 state,
                 cbVerify: (profileUser, cb) => {

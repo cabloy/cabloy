@@ -1,8 +1,7 @@
 const require3 = require('require3');
 const bb = require3('bluebird');
 const extend = require3('extend2');
-const WxworkAPI = require3('@zhennann/co-wxwork-api');
-const WechatAPI = require3('@zhennann/co-wechat-api');
+const DingtalkAPI = require3('@zhennann/node-dingtalk');
 const authProviderScenes = require('./authProviderScenes.js');
 
 module.exports = function(ctx) {
@@ -13,7 +12,11 @@ module.exports = function(ctx) {
       return authProviderScenes.getScene(scene);
     }
 
-    createWxworkApi() {
+    // ctx.meta.dingtalk.app.selfBuilt
+    // ctx.meta.dingtalk.admin
+    // ctx.meta.dingtalk.web.default
+    // ctx.meta.dingtalk.mini.default
+    createDingtalkApi() {
       const self = this;
       return new Proxy({}, {
         get(obj, prop) {
@@ -23,20 +26,19 @@ module.exports = function(ctx) {
             obj[prop] = new Proxy({}, {
               get(obj, prop) {
                 if (!obj[prop]) {
-                  if (prop === 'mini') {
-                    // app.mini
-                    obj[prop] = new Proxy({}, {
-                      get(obj, prop) {
-                        if (!obj[prop]) {
-                          obj[prop] = self._createWxworkApiApp({ appName: prop, mini: true });
-                        }
-                        return obj[prop];
-                      },
-                    });
-                  } else {
-                    // others
-                    obj[prop] = self._createWxworkApiApp({ appName: prop });
-                  }
+                  obj[prop] = self._createDingtalkApiApp({ appName: prop });
+                }
+                return obj[prop];
+              },
+            });
+          } else if (prop === 'admin') {
+            obj[prop] = self._createDingtalkApiAdmin();
+          } else if (prop === 'web') {
+            // web
+            obj[prop] = new Proxy({}, {
+              get(obj, prop) {
+                if (!obj[prop]) {
+                  obj[prop] = self._createDingtalkApiWeb({ webName: prop });
                 }
                 return obj[prop];
               },
@@ -46,21 +48,21 @@ module.exports = function(ctx) {
             obj[prop] = new Proxy({}, {
               get(obj, prop) {
                 if (!obj[prop]) {
-                  obj[prop] = self._createWxworkApiMini({ sceneShort: prop });
+                  obj[prop] = self._createDingtalkApiMini({ sceneShort: prop });
                 }
                 return obj[prop];
               },
             });
           } else if (prop === 'util') {
             // util
-            obj[prop] = self._createWxworkApiUtil();
+            obj[prop] = self._createDingtalkApiUtil();
           }
           return obj[prop];
         },
       });
     }
 
-    // scene: wxwork/wxworkweb/wxworkmini
+    // scene: dingtalk/dingtalkweb/dingtalkadmin/dingtalkmini
     async verifyAuthUser({ scene, memberId, member, cbVerify, state = 'login', needLogin = true }) {
       if (state === 'associate') {
         // not allowed associate
@@ -168,18 +170,18 @@ module.exports = function(ctx) {
       return profileUser;
     }
 
-    _createWxworkApiApp({ appName, mini }) {
-      // config
-      const config = ctx.config.module(moduleInfo.relativeName).account.wxwork;
-      const configApp = mini ? config.minis[appName] : config.apps[appName];
+    _createDingtalkApiGeneral({ category, appName, appkey, appsecret }) {
       // api
-      const api = new WxworkAPI.CorpAPI(config.corpid, configApp.secret,
+      const api = new DingtalkAPI(
+        {
+          appkey, appsecret,
+        },
         async function() {
-          const cacheKey = `wxwork-token:${appName || ''}`;
+          const cacheKey = `dingtalk-token:${category}:${appName || ''}`;
           return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
         },
         async function(token) {
-          const cacheKey = `wxwork-token:${appName || ''}`;
+          const cacheKey = `dingtalk-token:${category}:${appName || ''}`;
           if (token) {
             await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
           } else {
@@ -188,13 +190,13 @@ module.exports = function(ctx) {
         }
       );
       // registerTicketHandle
-      api.registerTicketHandle(
+      api.client.registerTicketHandle(
         async function(type) {
-          const cacheKey = `wxwork-jsticket:${appName}:${type}`;
+          const cacheKey = `dingtalk-jsticket:${category}:${appName}:${type}`;
           return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
         },
         async function(type, token) {
-          const cacheKey = `wxwork-jsticket:${appName}:${type}`;
+          const cacheKey = `dingtalk-jsticket:${category}:${appName}:${type}`;
           if (token) {
             await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
           } else {
@@ -206,68 +208,66 @@ module.exports = function(ctx) {
       return api;
     }
 
-    _createWxworkApiMini({ sceneShort }) {
+    _createDingtalkApiApp({ appName }) {
       // config
-      const config = ctx.config.module(moduleInfo.relativeName).account.wxwork;
+      const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk;
+      const configApp = config.apps[appName];
+      return this._createDingtalkApiGeneral({
+        category: 'app',
+        appName,
+        appkey: configApp.appkey,
+        appsecret: configApp.appsecret,
+      });
+    }
+
+    _createDingtalkApiAdmin() {
+      // config
+      const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk;
+      return this._createDingtalkApiGeneral({
+        category: 'admin',
+        appName: '',
+        appkey: config.corpid,
+        appsecret: config.ssosecret,
+      });
+    }
+
+    _createDingtalkApiWeb({ webName }) {
+      // config
+      const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk;
+      const configWeb = config.webs[webName];
+      return this._createDingtalkApiGeneral({
+        category: 'web',
+        appName: webName,
+        appkey: configWeb.appid,
+        appsecret: configWeb.appsecret,
+      });
+    }
+
+    _createDingtalkApiMini({ sceneShort }) {
+      // config
+      const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk;
       const configMini = config.minis[sceneShort];
-      // api
-      const api = new WechatAPI(configMini.appID, configMini.appSecret,
-        async function() {
-          const cacheKey = `wxworkmini-token:${sceneShort}`;
-          return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
-        },
-        async function(token) {
-          const cacheKey = `wxworkmini-token:${sceneShort}`;
-          if (token) {
-            await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
-          } else {
-            await ctx.cache.db.module(moduleInfo.relativeName).remove(cacheKey);
-          }
-        }
-      );
-      // registerTicketHandle
-      api.registerTicketHandle(
-        async function(type) {
-          const cacheKey = `wxworkmini-jsticket:${sceneShort}:${type}`;
-          return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
-        },
-        async function(type, token) {
-          const cacheKey = `wxworkmini-jsticket:${sceneShort}:${type}`;
-          if (token) {
-            await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
-          } else {
-            await ctx.cache.db.module(moduleInfo.relativeName).remove(cacheKey);
-          }
-        }
-      );
-      // registerSessionKeyHandle
-      api.registerSessionKeyHandle(
-        async function() {
-          const cacheKey = `wxworkmini-sessionKey:${sceneShort}:${ctx.user.agent.id}`;
-          return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
-        },
-        async function(sessionKey) {
-          const cacheKey = `wxworkmini-sessionKey:${sceneShort}:${ctx.user.agent.id}`;
-          await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, sessionKey);
-        }
-      );
-      // ready
-      return api;
+      return this._createDingtalkApiGeneral({
+        category: 'mini',
+        appName: sceneShort,
+        appkey: configMini.appkey,
+        appsecret: configMini.appsecret,
+      });
     }
 
-    _createWxworkApiUtil() {
+    _createDingtalkApiUtil() {
       return {
-        // scene: empty/wxwork/wxworkweb/wxworkmini/wxworkminidefault/xxx,xxx,xxx
+        // scene: empty/dingtalk/dingtalkweb/dingtalkadmin/dingtalkmini/dingtalkminidefault/xxx,xxx,xxx
         in(scene) {
           // scene
-          if (!scene) scene = 'wxwork';
+          if (!scene) scene = 'dingtalk';
           if (typeof scene === 'string') scene = scene.split(',');
           // provider
           const provider = ctx.user && ctx.user.provider;
           if (!provider || provider.module !== moduleInfo.relativeName) return false;
           // find any match
           for (const item of scene) {
-            const ok = (provider.providerName === item) || (item === 'wxworkmini' && provider.providerName.indexOf(item) > -1);
+            const ok = (provider.providerName === item) || (item === 'dingtalkmini' && provider.providerName.indexOf(item) > -1);
             if (ok) return true;
           }
           // not found

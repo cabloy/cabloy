@@ -107,7 +107,7 @@ module.exports = appInfo => {
     // webs
     webs: {
       default: {
-        appkey: '', // means: appid
+        appid: '',
         appsecret: '',
       },
     },
