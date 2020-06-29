@@ -3,9 +3,9 @@ const DingtalkHelperFn = require('../common/dingtalkHelper.js');
 // department
 
 const __departmentFieldMap = [
-  [ 'departmentId', 'departmentParentId', 'departmentName', 'departmentNameEn', 'departmentOrder' ],
-  [ 'id', 'parentid', 'name', 'name_en', 'order' ],
-  [ 'number', 'number', 'string', 'string', 'number' ],
+  [ 'departmentId', 'departmentParentId', 'departmentName', 'departmentOrder', 'createDeptGroup', 'autoAddUser', 'deptHiding', 'deptPermits', 'userPermits', 'outerDept', 'outerPermitDepts', 'outerPermitUsers', 'outerDeptOnlySelf', 'sourceIdentifier', 'ext' ],
+  [ 'id', 'parentid', 'name', 'order', 'createDeptGroup', 'autoAddUser', 'deptHiding', 'deptPermits', 'userPermits', 'outerDept', 'outerPermitDepts', 'outerPermitUsers', 'outerDeptOnlySelf', 'sourceIdentifier', 'ext' ],
+  [ 'number', 'number', 'string', 'number', 'bool', 'bool', 'bool', 'string', 'string', 'bool', 'string', 'string', 'bool', 'string', 'string' ],
 ];
 
 const __departmentFieldMap_XML = [
@@ -122,10 +122,10 @@ module.exports = app => {
         // progress
         await this._progressPublish({ context, done: 0, text: `--- ${this.ctx.text('Sync Started')} ---` });
         // remote departments
-        const res = await this.ctx.meta.wxwork.app.contacts.getDepartmentList();
-        if (res.errcode) {
-          throw new Error(res.errmsg);
-        }
+        const res = await this.ctx.meta.dingtalk.app.selfBuilt.department.list({
+          fetch_child: true,
+          id: 1,
+        });
         context.remoteDepartments = res.department;
         // progress
         await this._progressPublish({ context, done: 0, text: `--- ${this.ctx.text('Department Count')}: ${context.remoteDepartments.length} ---` });
@@ -232,6 +232,9 @@ module.exports = app => {
     }
 
     async _queueSyncDepartment({ context, remoteDepartment }) {
+      // retrieve the department details
+      remoteDepartment = await this.ctx.meta.dingtalk.app.selfBuilt.department.get(remoteDepartment.id);
+      // adjust
       const department = {};
       this._adjustFields(department, remoteDepartment, __departmentFieldMap);
       const departmentId = department.departmentId;
@@ -445,7 +448,7 @@ module.exports = app => {
     // not create new role here
     async _getRoleOfDepartment({ departmentId }) {
       // role top
-      if (departmentId === 0) {
+      if (departmentId === 1) {
         return await this._getRoleTop();
       }
       // department
@@ -481,6 +484,7 @@ module.exports = app => {
     }
     _adjustFieldType(value, type) {
       if (type === 'number') return Number(value);
+      else if (type === 'bool') return Boolean(value);
       else if (type === 'string') return String(value);
       else if (type === 'array') return value.join(',');
       else if (type === 'json') return JSON.stringify(value);

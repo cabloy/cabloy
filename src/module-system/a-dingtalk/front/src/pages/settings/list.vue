@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar large largeTransparent :title="$text('Wechat Work')" eb-back-link="Back"> </eb-navbar>
+    <eb-navbar large largeTransparent :title="$text('DingTalk')" eb-back-link="Back"> </eb-navbar>
     <f7-list v-if="functionsAll">
       <eb-list-item v-for="item of functions" :key="item.id" link="#" :eb-href="getFunction(item).actionPath" :title="getFunctionTitle(item)">
       </eb-list-item>
@@ -23,7 +23,7 @@ export default {
   methods: {
     __loadFunctions() {
       const functions = [
-        { module: 'a-wxwork', name: 'contacts' },
+        { module: 'a-dingtalk', name: 'contacts' },
       ];
       this.$api.post('/a/base/function/check', { functions }).then(data => {
         this.functions = data.filter(item => item.passed);

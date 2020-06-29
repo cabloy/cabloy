@@ -20,7 +20,7 @@ export default {
       ioHelper: null,
       ioSimple: null,
       messageClass: {
-        module: 'a-wxwork',
+        module: 'a-dingtalk',
         messageClassName: 'progress',
       },
     };
@@ -73,7 +73,7 @@ export default {
       this.messagesData = [];
       this._scroll(true);
       // socket io
-      const path = `/a/wxwork/progress/${this.progressId}`;
+      const path = `/a/dingtalk/progress/${this.progressId}`;
       this.ioSimple = this.ioHelper.simple();
       this.ioSimple.subscribe({
         path,

@@ -20,7 +20,7 @@ module.exports = app => {
     // contacts
     { method: 'post', path: 'contacts/sync', controller: contacts, meta: { right: { type: 'function', name: 'contacts' } } },
     // queue
-    { method: 'post', path: 'contacts/queue', controller: contacts, middlewares: 'inner,transaction,wxwork',
+    { method: 'post', path: 'contacts/queue', controller: contacts, middlewares: 'inner,transaction,dingtalk',
       meta: { auth: { enable: false } },
     },
 

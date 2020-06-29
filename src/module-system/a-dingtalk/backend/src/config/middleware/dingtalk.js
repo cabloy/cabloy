@@ -5,7 +5,7 @@ module.exports = (options, app) => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   return async function dingtalk(ctx, next) {
     ctx.meta = ctx.meta || {};
-    Object.defineProperty(ctx.meta, 'wxwork', {
+    Object.defineProperty(ctx.meta, 'dingtalk', {
       get() {
         if (ctx.meta[DINGTALK] === undefined) {
           const dingtalkHelper = new (DingtalkHelperFn(ctx))();

@@ -21,6 +21,7 @@ module.exports = app => {
             departmentName varchar(255) DEFAULT NULL,
             departmentOrder int(11) DEFAULT '0',
             createDeptGroup int(11) DEFAULT '0',
+            autoAddUser int(11) DEFAULT '0',
             deptHiding int(11) DEFAULT '0',
             deptPermits TEXT DEFAULT NULL,
             userPermits TEXT DEFAULT NULL,
