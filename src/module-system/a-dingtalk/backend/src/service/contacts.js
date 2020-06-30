@@ -17,9 +17,9 @@ const __departmentFieldMap_XML = [
 // member
 
 const __memberFieldMap = [
-  [ 'memberId', 'name', 'alias', 'mobile', 'department', 'sorting', 'position', 'gender', 'email', 'telephone', 'is_leader_in_dept', 'avatar', 'thumb_avatar', 'qr_code', 'status', 'extattr', 'external_profile', 'external_position', 'address', 'hide_mobile', 'english_name', 'open_userid', 'main_department' ],
-  [ 'userid', 'name', 'alias', 'mobile', 'department', 'order', 'position', 'gender', 'email', 'telephone', 'is_leader_in_dept', 'avatar', 'thumb_avatar', 'qr_code', 'status', 'extattr', 'external_profile', 'external_position', 'address', 'hide_mobile', 'english_name', 'open_userid', 'main_department' ],
-  [ 'string', 'string', 'string', 'string', 'array', 'array', 'string', 'number', 'string', 'string', 'array', 'string', 'string', 'string', 'number', 'json', 'json', 'string', 'string', 'number', 'string', 'string', 'number' ],
+  [ 'memberId', 'name', 'active', 'avatar', 'orderInDepts', 'department', 'position', 'mobile', 'tel', 'workPlace', 'remark', 'email', 'orgEmail', 'jobnumber', 'isHide', 'isSenior', 'extattr', 'hiredDate' ],
+  [ 'userid', 'name', 'active', 'avatar', 'orderInDepts', 'department', 'position', 'mobile', 'tel', 'workPlace', 'remark', 'email', 'orgEmail', 'jobnumber', 'isHide', 'isSenior', 'extattr', 'hiredDate' ],
+  [ 'string', 'string', 'bool', 'string', 'string', 'array', 'string', 'string', 'string', 'string', 'string', 'string', 'string', 'string', 'bool', 'bool', 'json', 'timestamp' ],
 ];
 
 const __memberFieldMap_XML = [
@@ -126,6 +126,9 @@ module.exports = app => {
           fetch_child: true,
           id: 1,
         });
+        // special for departmentId=1
+        const department1 = await this.ctx.meta.dingtalk.app.selfBuilt.department.get(1);
+        res.department.splice(0, 0, department1);
         context.remoteDepartments = res.department;
         // progress
         await this._progressPublish({ context, done: 0, text: `--- ${this.ctx.text('Department Count')}: ${context.remoteDepartments.length} ---` });
@@ -175,10 +178,7 @@ module.exports = app => {
         // remote members
         const departmentRoot = await this.ctx.model.department.get({ departmentParentId: 0 });
         if (!departmentRoot) return this.ctx.throw(1006);
-        const res = await this.ctx.meta.wxwork.app.contacts.getDepartmentUserList(departmentRoot.departmentId, 1);
-        if (res.errcode) {
-          throw new Error(res.errmsg);
-        }
+        const res = await this.ctx.meta.dingtalk.app.selfBuilt.user.listAll(null, false);
         context.remoteMembers = res.userlist;
         // progress
         await this._progressPublish({ context, done: 0, text: `--- ${this.ctx.text('Member Count')}: ${context.remoteMembers.length} ---` });
@@ -234,6 +234,7 @@ module.exports = app => {
     async _queueSyncDepartment({ context, remoteDepartment }) {
       // retrieve the department details
       remoteDepartment = await this.ctx.meta.dingtalk.app.selfBuilt.department.get(remoteDepartment.id);
+      if (remoteDepartment.id === 1) remoteDepartment.parentid = 0;
       // adjust
       const department = {};
       this._adjustFields(department, remoteDepartment, __departmentFieldMap);
@@ -363,9 +364,9 @@ module.exports = app => {
           departmentIdsNew: (member.department || '').split(','),
         });
       }
-      // status
-      if (member.status !== undefined && member.status !== localMember.status) {
-        await this.ctx.meta.user.disable({ userId, disabled: member.status !== 1 });
+      // active
+      if (member.active !== undefined && member.active !== localMember.active) {
+        await this.ctx.meta.user.disable({ userId, disabled: !member.active });
       }
       // update member
       member.id = localMember.id;
@@ -424,8 +425,8 @@ module.exports = app => {
     async _createUserAndMember({ member }) {
       // 1. create user&auth
       // verify auth user
-      const wxworkHelper = new (WxworkHelperFn(this.ctx))();
-      const verifyUser = await wxworkHelper.verifyAuthUser({ scene: 'wxwork', member, needLogin: false });
+      const dingtalkHelper = new (DingtalkHelperFn(this.ctx))();
+      const verifyUser = await dingtalkHelper.verifyAuthUser({ scene: 'dingtalk', member, needLogin: false });
       const userId = verifyUser.agent.id;
 
       // 2. add user to role
@@ -434,8 +435,8 @@ module.exports = app => {
         // delete role:activated (need not)
       }
 
-      // 3. status
-      if (member.status !== 1) {
+      // 3. active
+      if (!member.active) {
         await this.ctx.meta.user.disable({ userId, disabled: true });
       }
 
@@ -448,7 +449,7 @@ module.exports = app => {
     // not create new role here
     async _getRoleOfDepartment({ departmentId }) {
       // role top
-      if (departmentId === 1) {
+      if (departmentId === 0) {
         return await this._getRoleTop();
       }
       // department
@@ -488,6 +489,7 @@ module.exports = app => {
       else if (type === 'string') return String(value);
       else if (type === 'array') return value.join(',');
       else if (type === 'json') return JSON.stringify(value);
+      else if (type === 'timestamp') return new Date(value);
       return value;
     }
 

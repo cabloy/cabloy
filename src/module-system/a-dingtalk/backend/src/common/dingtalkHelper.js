@@ -97,19 +97,19 @@ module.exports = function(ctx) {
       return await modelMember.get({ memberId });
     }
 
-    // profileId: wxwork:memberId
+    // profileId: dingtalk:memberId
     async _ensureAuthUser({ scene, memberId, member }) {
       // model auth
       const modelAuth = ctx.model.module('a-base').auth;
       //
       const sceneInfo = this.getSceneInfo(scene);
-      const profileId = `wxwork:${memberId}`;
+      const profileId = `dingtalk:${memberId}`;
       const profileUser = {
         module: moduleInfo.relativeName,
         provider: sceneInfo.authProvider,
         profileId,
         profile: {
-          userName: member.alias || member.name,
+          userName: member.name,
           realName: member.name,
           avatar: member.avatar,
           email: member.email,

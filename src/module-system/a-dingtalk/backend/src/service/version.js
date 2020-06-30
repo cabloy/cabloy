@@ -47,6 +47,8 @@ module.exports = app => {
             userId int(11) DEFAULT '0',
             memberId varchar(255) DEFAULT NULL,
             name varchar(255) DEFAULT NULL,
+            active int(11) DEFAULT '0',
+            avatar varchar(255) DEFAULT NULL,
             orderInDepts JSON DEFAULT NULL,
             department varchar(255) DEFAULT NULL,
             position varchar(255) DEFAULT NULL,
