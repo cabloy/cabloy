@@ -25,6 +25,6 @@
     "require3": "^1.0.3",
     "extend2": "^1.0.0",
     "dingtalk-encrypt": "^1.2.1",
-    "@zhennann/node-dingtalk": "^2.1.5"
+    "@zhennann/node-dingtalk": "^2.1.8"
   }
 }

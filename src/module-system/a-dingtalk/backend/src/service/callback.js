@@ -1,6 +1,8 @@
+const require3 = require('require3');
+
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class Message extends app.Service {
+  class Callback extends app.Service {
 
     async index({ message }) {
       // config
@@ -40,6 +42,40 @@ module.exports = app => {
       return null;
     }
 
+    async registerList() {
+      // config
+      const config = this.ctx.config.account.dingtalk.apps.selfBuilt.businessCallback;
+      const host = config.host;
+      const token = config.token;
+      const encodingAESKey = config.encodingAESKey;
+      const callbackList = config.list;
+      const callbackUrl = `${this.ctx.meta.base.protocol}://${this.ctx.meta.base.host}/api/a/dingtalk/callback/index`;
+      // check
+      if (this.ctx.meta.base.host !== host || !token || !encodingAESKey || !callbackList) return;
+      // check status
+      const res = await this._tryGetList();
+      if (!res) {
+        // register
+        await this.ctx.meta.dingtalk.app.selfBuilt.callback.register_call_back({
+          call_back_tag: callbackList,
+          token,
+          aes_key: encodingAESKey,
+          url: callbackUrl,
+        });
+      } else {
+        // update
+      }
+    }
+
+    async _tryGetList() {
+      try {
+        return await this.ctx.meta.dingtalk.app.selfBuilt.callback.get_call_back();
+      } catch (err) {
+        if (err.code === 71007) return null;
+        throw err;
+      }
+    }
+
     async contacts({ message }) {
       // queue
       this.ctx.app.meta.queue.push({
@@ -58,5 +94,5 @@ module.exports = app => {
 
   }
 
-  return Message;
+  return Callback;
 };

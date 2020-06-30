@@ -1,5 +1,5 @@
 const version = require('./controller/version.js');
-const message = require('./controller/message.js');
+const callback = require('./controller/callback.js');
 const contacts = require('./controller/contacts.js');
 
 const event = require('./controller/event.js');
@@ -13,10 +13,8 @@ module.exports = app => {
     { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/test', controller: version, middlewares: 'test' },
     // message
-    { method: 'get', path: 'message/index', controller: message, middlewares: 'wxwork', meta: { auth: { enable: false } } },
-    { method: 'post', path: 'message/index', controller: message, middlewares: 'wxwork', meta: { auth: { enable: false } } },
-    { method: 'get', path: 'message/contacts', controller: message, middlewares: 'wxwork', meta: { auth: { enable: false } } },
-    { method: 'post', path: 'message/contacts', controller: message, middlewares: 'wxwork', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'callback/index', controller: callback, middlewares: 'dingtalk', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'callback/registerList', controller: callback, middlewares: 'dingtalk', meta: { auth: { enable: false } } },
     // contacts
     { method: 'post', path: 'contacts/sync', controller: contacts, meta: { right: { type: 'function', name: 'contacts' } } },
     // queue
