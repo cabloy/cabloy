@@ -1,3 +1,5 @@
+const constant = require('../../base/constants.js');
+
 module.exports = async function(app) {
   // clear keys
   if (app.meta.isTest) {
@@ -13,12 +15,13 @@ module.exports = async function(app) {
     }
   }
 
-  // run startups
+  // run startups: not after
   for (const startup of app.meta.startupsArray) {
-    if (!startup.startup.disable) {
+    if (!startup.startup.disable && startup.startup.after !== true) {
       await app.meta.runStartup(startup.key);
     }
   }
+
   // version test
   if (app.meta.isTest) {
     // ctx
@@ -35,10 +38,28 @@ module.exports = async function(app) {
       },
     });
   }
+
   // queue workers
   if (!app.meta.isTest) {
     app.meta._loadQueueWorkers();
   }
+
+  // event: appReady
+  app.meta.appReady = true;
+  app.emit(constant.event.appReady);
+  // event to agent
+  app.meta.messenger.callAgent({
+    name: 'appReady',
+    data: { pid: process.pid },
+  });
+
+  // run startups: after
+  for (const startup of app.meta.startupsArray) {
+    if (!startup.startup.disable && startup.startup.after === true) {
+      await app.meta.runStartup(startup.key);
+    }
+  }
+
 };
 
 async function _clearRedisKeys(redis, pattern) {
