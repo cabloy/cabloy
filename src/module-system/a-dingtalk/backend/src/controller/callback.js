@@ -1,5 +1,6 @@
 const require3 = require('require3');
 const DingTalkEncryptor = require3('dingtalk-encrypt');
+const dingtalkUtils = require('../common/dingtalkUtils.js');
 
 module.exports = app => {
   class CallbackController extends app.Controller {
@@ -24,35 +25,20 @@ module.exports = app => {
       // dingtalk crypto
       const encryptor = new DingTalkEncryptor(configApp.businessCallback.token, configApp.businessCallback.encodingAESKey, config.corpid);
       // parse
-      const messageIn = await this._parseMessagePost({ query, encryptor });
-      console.log(messageIn);
+      const message = await this._parseMessagePost({ query, encryptor });
       // handle
-      let resXML;
-      const messageOut = await handler({ message: messageIn });
-      if (!messageOut) {
-        resXML = '';
-      } else {
-        resXML = wechatUtils.buildXML({ xml: messageOut });
-        if (encrypted) {
-          const wrap = {};
-          wrap.Encrypt = wechatCrypto.encrypt(resXML);
-          wrap.TimeStamp = wechatUtils.createTimestamp();
-          wrap.Nonce = wechatUtils.createNonceStr();
-          wrap.MsgSignature = wechatCrypto.getSignature(wrap.TimeStamp, wrap.Nonce, wrap.Encrypt);
-          resXML = wechatUtils.buildXML({ xml: wrap });
-        }
-      }
+      await handler({ message });
       // ok
+      const res = encryptor.getEncryptedMap('success', dingtalkUtils.createTimestamp(), dingtalkUtils.createNonceStr());
       this.ctx.status = 200;
-      this.ctx.type = 'text/xml';
-      this.ctx.body = resXML;
+      this.ctx.type = 'application/json';
+      this.ctx.body = res;
     }
 
     async _parseMessagePost({ query, encryptor }) {
       const plainText = encryptor.getDecryptMsg(
         query.signature, query.timestamp, query.nonce,
         this.ctx.request.body.encrypt);
-      console.log('DEBUG plainText: ' + plainText);
       return JSON.parse(plainText);
     }
 

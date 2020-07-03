@@ -55,7 +55,7 @@ const jsApiList = [
 ];
 
 const businessCallbackList = [
-// 通讯录
+  // 通讯录
   'user_add_org',
   'user_modify_org',
   'user_leave_org',

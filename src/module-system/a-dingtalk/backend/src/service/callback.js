@@ -1,45 +1,21 @@
-const require3 = require('require3');
+const dingtalkUtils = require('../common/dingtalkUtils.js');
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Callback extends app.Service {
 
     async index({ message }) {
-      // config
-      const config = this.ctx.config.account.wxwork;
-      const configAppSelfBuilt = config.apps.selfBuilt;
-      // res
-      let res;
-      // event: subscribe
-      if (message.MsgType === 'event') {
-        if (message.Event === 'subscribe') {
-          // donothing，具体逻辑在通讯录回调通知中实现
-          return null;
-        } else if (message.Event === 'unsubscribe') {
-          // donothing，具体逻辑在通讯录回调通知中实现
-          return null;
-        }
+      // event: check_url
+      if (message.EventType === 'check_url') {
+        // just return
+        return;
       }
       // raise event
-      const res2 = await this.ctx.meta.event.invoke({
+      await this.ctx.meta.event.invoke({
         module: moduleInfo.relativeName,
-        name: 'wxworkMessage',
+        name: 'dingtalkCallback',
         data: { message },
       });
-      if (res2) res = res2;
-      // check if ready
-      if (res) return res;
-      // default reply
-      if (message.MsgType !== 'event') {
-        return {
-          ToUserName: message.FromUserName,
-          FromUserName: message.ToUserName,
-          CreateTime: new Date().getTime(),
-          MsgType: 'text',
-          Content: configAppSelfBuilt.message.reply.default,
-        };
-      }
-      return null;
     }
 
     async registerList() {
@@ -64,6 +40,20 @@ module.exports = app => {
         });
       } else {
         // update
+        const call_back_tag_setRemote = new Set(res.call_back_tag);
+        const call_back_tag_setConfig = new Set(callbackList);
+        const diff = dingtalkUtils.symmetricDifference(call_back_tag_setRemote, call_back_tag_setConfig);
+        if (diff.size === 0) {
+          // do nothing
+        } else {
+          // difference
+          await this.ctx.meta.dingtalk.app.selfBuilt.callback.update_call_back({
+            call_back_tag: callbackList,
+            token,
+            aes_key: encodingAESKey,
+            url: callbackUrl,
+          });
+        }
       }
     }
 
