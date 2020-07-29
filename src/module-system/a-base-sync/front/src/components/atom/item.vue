@@ -156,6 +156,7 @@ export default {
       });
     },
     findAction(actionName) {
+      if (!this.actions) return null;
       return this.actions.find(item => item.name === actionName);
     },
     onSave(event) {
