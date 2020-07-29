@@ -48,14 +48,16 @@ export default {
       return validateMeta ? validateMeta[key] : undefined;
     },
     getValue(data, key, property) {
-      if (data[key] === undefined) return property.default;
-      return data[key];
+      const _value = data[key];
+      if (!this.checkIfEmptyForSelect(_value)) return _value;
+      if (this.checkIfEmptyForSelect(property.default)) return _value;
+      return property.default;
     },
     setValue(data, key, value, property) {
       let _value;
 
       if (property.ebType === 'select' && this.checkIfEmptyForSelect(value)) {
-        _value = undefined; // for distinguish from 0
+        _value = null; // for distinguish from 0
       } else {
         if (property.type === 'number') {
           _value = Number(value);
