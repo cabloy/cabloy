@@ -3931,7 +3931,7 @@ module.exports = app => {
         notEmpty: true,
       },
       birthday: {
-        type: 'string',
+        type: 'object',
         ebType: 'datepicker',
         ebTitle: 'Birthday',
         ebParams: {
