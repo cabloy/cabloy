@@ -231,6 +231,7 @@ export default {
         });
       }
       const placeholder = property.ebDescription ? this.$text(property.ebDescription) : title;
+      const info = property.ebInfo ? this.$text(property.ebInfo) : undefined;
       let type;
       if (property.ebSecure) {
         type = 'password';
@@ -248,6 +249,7 @@ export default {
           floatingLabel: true,
           type,
           placeholder,
+          info,
           resizable: property.ebTextarea,
           clearButton: !this.validate.readOnly && !property.ebReadOnly,
           dataPath: pathParent + key,
@@ -276,6 +278,7 @@ export default {
       //   });
       // }
       const placeholder = property.ebDescription ? this.$text(property.ebDescription) : title;
+      const info = property.ebInfo ? this.$text(property.ebInfo) : undefined;
       // value
       let value = this.getValue(data, key, property);
       if (!value) {
@@ -291,6 +294,7 @@ export default {
           floatingLabel: true,
           type: 'datepicker',
           placeholder,
+          info,
           resizable: false,
           clearButton: !this.validate.readOnly && !property.ebDisabled,
           dataPath: pathParent + key,
@@ -326,6 +330,7 @@ export default {
         });
       }
       const placeholder = property.ebDescription ? this.$text(property.ebDescription) : title;
+      const info = property.ebInfo ? this.$text(property.ebInfo) : undefined;
       let type;
       if (property.ebSecure) {
         type = 'password';
@@ -352,6 +357,7 @@ export default {
           floatingLabel: true,
           type,
           placeholder,
+          info,
           resizable: property.ebTextarea,
           clearButton: !this.validate.readOnly && !property.ebReadOnly,
           dataPath: pathParent + key,
