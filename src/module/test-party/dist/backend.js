@@ -3896,6 +3896,8 @@ module.exports = app => {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Username',
+        ebDescription: 'Your Name',
+        ebInfo: 'Please type your name',
         notEmpty: true,
       },
       password: {

@@ -131,6 +131,8 @@ export default {
   'Form / Captcha': '表单 / 验证码',
   'Form / SMS Verification': '表单 / 短信认证',
   'Password Again': '重复密码',
+  'Your Name': '您的姓名',
+  'Please type your name': '请输入您的姓名',
   'Pull To Refresh / Infinite Scroll / Load More': '上拉刷新 / 无限滚动 / 加载更多',
   'Button Event': '按钮事件',
   'Create Party': '新建宴会',
