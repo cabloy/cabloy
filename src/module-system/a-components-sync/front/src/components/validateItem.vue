@@ -231,7 +231,7 @@ export default {
         });
       }
       const placeholder = property.ebDescription ? this.$text(property.ebDescription) : title;
-      const info = property.ebInfo ? this.$text(property.ebInfo) : undefined;
+      const info = property.ebHelp ? this.$text(property.ebHelp) : undefined;
       let type;
       if (property.ebSecure) {
         type = 'password';
@@ -278,7 +278,7 @@ export default {
       //   });
       // }
       const placeholder = property.ebDescription ? this.$text(property.ebDescription) : title;
-      const info = property.ebInfo ? this.$text(property.ebInfo) : undefined;
+      const info = property.ebHelp ? this.$text(property.ebHelp) : undefined;
       // value
       let value = this.getValue(data, key, property);
       if (!value) {
@@ -330,7 +330,7 @@ export default {
         });
       }
       const placeholder = property.ebDescription ? this.$text(property.ebDescription) : title;
-      const info = property.ebInfo ? this.$text(property.ebInfo) : undefined;
+      const info = property.ebHelp ? this.$text(property.ebHelp) : undefined;
       let type;
       if (property.ebSecure) {
         type = 'password';
