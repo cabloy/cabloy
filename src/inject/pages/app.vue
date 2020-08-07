@@ -52,9 +52,11 @@ export default {
         return;
       }
       // check query
-      const documentUrl = location.href.substr(location.origin.length);
-      if (documentUrl && documentUrl.indexOf('/?') === 0) {
-        history.replaceState(null, '', location.origin);
+      if (location.origin !== 'file://') {
+        const documentUrl = location.href.substr(location.origin.length);
+        if (documentUrl && documentUrl.indexOf('/?') === 0) {
+          history.replaceState(null, '', location.origin);
+        }
       }
       // hash init
       const hashInit = this.$meta.util.parseHash(location.href);

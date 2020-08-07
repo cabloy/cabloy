@@ -5,10 +5,10 @@ export default function(Vue) {
     // agent rather then op
     if (user && user.agent && user.agent.locale) {
       // cookie
-      Vue.prototype.$meta.util.cookies.set('locale', user.agent.locale);
+      Vue.prototype.$meta.util.setLocale(user.agent.locale);
     }
     // moment
-    const locale = Vue.prototype.$meta.util.cookies.get('locale') || 'en-us';
+    const locale = Vue.prototype.$meta.util.getLocale();
     Vue.prototype.$meta.util.moment.locale(locale);
   }
 

@@ -13,7 +13,7 @@ export default function(Vue) {
         return function(key) {
           if (arguments.length === 0 || !key) return null;
           // locale
-          const locale = cookies.get('locale') || 'en-us';
+          const locale = Vue.prototype.$meta.util.getLocale();
 
           // try locale
           let resource = locales[locale] || {};

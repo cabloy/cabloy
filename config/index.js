@@ -34,7 +34,7 @@ module.exports = merge({
     index: path.resolve(distPath, 'index.html'),
     assetsRoot: distPath,
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    assetsPublicPath: '',
     productionSourceMap: true,
     uglify: true,
   },

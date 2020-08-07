@@ -6,8 +6,8 @@ const merge = require('webpack-merge');
 const baseWebpackConfig = require('./webpack.base.conf');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+// const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+// const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
 function resolve(dir) {
@@ -21,12 +21,12 @@ let plugins = [
     'process.env': env,
   }),
   new VueLoaderPlugin(),
-  new MiniCssExtractPlugin({
-    filename: utils.assetsPath('css/[name].[contenthash].css'),
-  }),
-  new OptimizeCssAssetsPlugin({
-    cssProcessorOptions: { safe: true, discardComments: { removeAll: true } },
-  }),
+  // new MiniCssExtractPlugin({
+  //   filename: utils.assetsPath('css/[name].[contenthash].css'),
+  // }),
+  // new OptimizeCssAssetsPlugin({
+  //   cssProcessorOptions: { safe: true, discardComments: { removeAll: true } },
+  // }),
   // generate dist index.html with correct asset hash for caching.
   // you can customize output by editing /index.html
   // see https://github.com/ampedandwired/html-webpack-plugin

@@ -57,9 +57,13 @@ export default function(Vue) {
     _setComponentModule(component, module) {
       component.__ebModuleRelativeName = module.info.relativeName;
     },
+    _locationHostPrefix() {
+      return location.origin !== 'file://' ? location.origin : location.origin + location.pathname;
+    },
     parseHash(url) {
       if (!url || url === '/') return '/';
-      let documentUrl = url.substr(location.origin.length);
+      const locationHostPrefix = this._locationHostPrefix();
+      let documentUrl = url.substr(locationHostPrefix.length);
       if (documentUrl.indexOf('https://') === 0 || documentUrl.indexOf('http://') === 0) return documentUrl;
       const router = Vue.prototype.$f7.router;
       if (router.params.pushStateRoot && documentUrl.indexOf(router.params.pushStateRoot) >= 0) {
@@ -336,6 +340,16 @@ export default function(Vue) {
           }
         }
       }
+    },
+    setLocale(locale) {
+      this.cookies.set('locale', locale);
+      window.localStorage['eb-locale'] = locale;
+    },
+    getLocale() {
+      const locale = this.cookies.get('locale') || window.localStorage['eb-locale'];
+      if (locale) return locale;
+      const configBase = Vue.prototype.$meta.config.base;
+      return (configBase && configBase.locale) || 'en-us';
     },
   };
 

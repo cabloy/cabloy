@@ -1,6 +1,6 @@
 const path = require('path');
 const config = require('../config');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+// const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const glob = require('glob');
 const bb = require('bluebird');
 const fse = require('fs-extra');
@@ -39,9 +39,9 @@ exports.cssLoaders = function(options) {
 
     // Extract CSS when that option is specified
     // (which is the case during production build)
-    if (options.extract) {
-      return [ MiniCssExtractPlugin.loader ].concat(loaders);
-    }
+    // if (options.extract) {
+    //   return [ MiniCssExtractPlugin.loader ].concat(loaders);
+    // }
     return [ 'vue-style-loader' ].concat(loaders);
   }
 
