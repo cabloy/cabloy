@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-dingtalk",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "title": "DingTalk",
   "eggBornModule": {
     "fileVersion": 1,

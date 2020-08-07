@@ -8,6 +8,7 @@ export default {
     global: false,
     disable: ({ ctx, provider }) => {
       return new Promise((resolve, reject) => {
+        if (location.origin === 'file://') return resolve(true);
         if (ctx.$device.iphone || ctx.$device.android || ctx.$device.dingtalk) {
           return resolve(true);
         }

@@ -82,24 +82,17 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
-
-module.exports = require("require3");
-
-/***/ }),
-/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(0);
+const require3 = __webpack_require__(1);
 const bb = require3('bluebird');
 const extend = require3('extend2');
-const WxworkAPI = require3('@zhennann/co-wxwork-api');
-const WechatAPI = require3('@zhennann/co-wechat-api');
+const DingtalkAPI = require3('@zhennann/node-dingtalk');
 const authProviderScenes = __webpack_require__(2);
 
 module.exports = function(ctx) {
@@ -110,7 +103,11 @@ module.exports = function(ctx) {
       return authProviderScenes.getScene(scene);
     }
 
-    createWxworkApi() {
+    // ctx.meta.dingtalk.app.selfBuilt
+    // ctx.meta.dingtalk.admin
+    // ctx.meta.dingtalk.web.default
+    // ctx.meta.dingtalk.mini.default
+    createDingtalkApi() {
       const self = this;
       return new Proxy({}, {
         get(obj, prop) {
@@ -120,20 +117,19 @@ module.exports = function(ctx) {
             obj[prop] = new Proxy({}, {
               get(obj, prop) {
                 if (!obj[prop]) {
-                  if (prop === 'mini') {
-                    // app.mini
-                    obj[prop] = new Proxy({}, {
-                      get(obj, prop) {
-                        if (!obj[prop]) {
-                          obj[prop] = self._createWxworkApiApp({ appName: prop, mini: true });
-                        }
-                        return obj[prop];
-                      },
-                    });
-                  } else {
-                    // others
-                    obj[prop] = self._createWxworkApiApp({ appName: prop });
-                  }
+                  obj[prop] = self._createDingtalkApiApp({ appName: prop });
+                }
+                return obj[prop];
+              },
+            });
+          } else if (prop === 'admin') {
+            obj[prop] = self._createDingtalkApiAdmin();
+          } else if (prop === 'web') {
+            // web
+            obj[prop] = new Proxy({}, {
+              get(obj, prop) {
+                if (!obj[prop]) {
+                  obj[prop] = self._createDingtalkApiWeb({ webName: prop });
                 }
                 return obj[prop];
               },
@@ -143,21 +139,21 @@ module.exports = function(ctx) {
             obj[prop] = new Proxy({}, {
               get(obj, prop) {
                 if (!obj[prop]) {
-                  obj[prop] = self._createWxworkApiMini({ sceneShort: prop });
+                  obj[prop] = self._createDingtalkApiMini({ sceneShort: prop });
                 }
                 return obj[prop];
               },
             });
           } else if (prop === 'util') {
             // util
-            obj[prop] = self._createWxworkApiUtil();
+            obj[prop] = self._createDingtalkApiUtil();
           }
           return obj[prop];
         },
       });
     }
 
-    // scene: wxwork/wxworkweb/wxworkmini
+    // scene: dingtalk/dingtalkweb/dingtalkadmin/dingtalkmini
     async verifyAuthUser({ scene, memberId, member, cbVerify, state = 'login', needLogin = true }) {
       if (state === 'associate') {
         // not allowed associate
@@ -192,19 +188,19 @@ module.exports = function(ctx) {
       return await modelMember.get({ memberId });
     }
 
-    // profileId: wxwork:memberId
+    // profileId: dingtalk:memberId
     async _ensureAuthUser({ scene, memberId, member }) {
       // model auth
       const modelAuth = ctx.model.module('a-base').auth;
       //
       const sceneInfo = this.getSceneInfo(scene);
-      const profileId = `wxwork:${memberId}`;
+      const profileId = `dingtalk:${memberId}`;
       const profileUser = {
         module: moduleInfo.relativeName,
         provider: sceneInfo.authProvider,
         profileId,
         profile: {
-          userName: member.alias || member.name,
+          userName: member.name,
           realName: member.name,
           avatar: member.avatar,
           email: member.email,
@@ -265,18 +261,18 @@ module.exports = function(ctx) {
       return profileUser;
     }
 
-    _createWxworkApiApp({ appName, mini }) {
-      // config
-      const config = ctx.config.module(moduleInfo.relativeName).account.wxwork;
-      const configApp = mini ? config.minis[appName] : config.apps[appName];
+    _createDingtalkApiGeneral({ category, appName, appkey, appsecret, sso }) {
       // api
-      const api = new WxworkAPI.CorpAPI(config.corpid, configApp.secret,
+      const api = new DingtalkAPI(
+        {
+          appkey, appsecret, sso,
+        },
         async function() {
-          const cacheKey = `wxwork-token:${appName || ''}`;
+          const cacheKey = `dingtalk-token:${category}:${appName || ''}`;
           return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
         },
         async function(token) {
-          const cacheKey = `wxwork-token:${appName || ''}`;
+          const cacheKey = `dingtalk-token:${category}:${appName || ''}`;
           if (token) {
             await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
           } else {
@@ -285,13 +281,13 @@ module.exports = function(ctx) {
         }
       );
       // registerTicketHandle
-      api.registerTicketHandle(
+      api.client.registerTicketHandle(
         async function(type) {
-          const cacheKey = `wxwork-jsticket:${appName}:${type}`;
+          const cacheKey = `dingtalk-jsticket:${category}:${appName}:${type}`;
           return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
         },
         async function(type, token) {
-          const cacheKey = `wxwork-jsticket:${appName}:${type}`;
+          const cacheKey = `dingtalk-jsticket:${category}:${appName}:${type}`;
           if (token) {
             await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
           } else {
@@ -303,68 +299,67 @@ module.exports = function(ctx) {
       return api;
     }
 
-    _createWxworkApiMini({ sceneShort }) {
+    _createDingtalkApiApp({ appName }) {
       // config
-      const config = ctx.config.module(moduleInfo.relativeName).account.wxwork;
+      const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk;
+      const configApp = config.apps[appName];
+      return this._createDingtalkApiGeneral({
+        category: 'app',
+        appName,
+        appkey: configApp.appkey,
+        appsecret: configApp.appsecret,
+      });
+    }
+
+    _createDingtalkApiAdmin() {
+      // config
+      const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk;
+      return this._createDingtalkApiGeneral({
+        category: 'admin',
+        appName: '',
+        appkey: config.corpid,
+        appsecret: config.ssosecret,
+        sso: true,
+      });
+    }
+
+    _createDingtalkApiWeb({ webName }) {
+      // config
+      const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk;
+      const configWeb = config.webs[webName];
+      return this._createDingtalkApiGeneral({
+        category: 'web',
+        appName: webName,
+        appkey: configWeb.appid,
+        appsecret: configWeb.appsecret,
+      });
+    }
+
+    _createDingtalkApiMini({ sceneShort }) {
+      // config
+      const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk;
       const configMini = config.minis[sceneShort];
-      // api
-      const api = new WechatAPI(configMini.appID, configMini.appSecret,
-        async function() {
-          const cacheKey = `wxworkmini-token:${sceneShort}`;
-          return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
-        },
-        async function(token) {
-          const cacheKey = `wxworkmini-token:${sceneShort}`;
-          if (token) {
-            await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
-          } else {
-            await ctx.cache.db.module(moduleInfo.relativeName).remove(cacheKey);
-          }
-        }
-      );
-      // registerTicketHandle
-      api.registerTicketHandle(
-        async function(type) {
-          const cacheKey = `wxworkmini-jsticket:${sceneShort}:${type}`;
-          return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
-        },
-        async function(type, token) {
-          const cacheKey = `wxworkmini-jsticket:${sceneShort}:${type}`;
-          if (token) {
-            await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, token, token.expireTime - Date.now());
-          } else {
-            await ctx.cache.db.module(moduleInfo.relativeName).remove(cacheKey);
-          }
-        }
-      );
-      // registerSessionKeyHandle
-      api.registerSessionKeyHandle(
-        async function() {
-          const cacheKey = `wxworkmini-sessionKey:${sceneShort}:${ctx.user.agent.id}`;
-          return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
-        },
-        async function(sessionKey) {
-          const cacheKey = `wxworkmini-sessionKey:${sceneShort}:${ctx.user.agent.id}`;
-          await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, sessionKey);
-        }
-      );
-      // ready
-      return api;
+      return this._createDingtalkApiGeneral({
+        category: 'mini',
+        appName: sceneShort,
+        appkey: configMini.appkey,
+        appsecret: configMini.appsecret,
+      });
     }
 
-    _createWxworkApiUtil() {
+    _createDingtalkApiUtil() {
       return {
-        // scene: empty/wxwork/wxworkweb/wxworkmini/wxworkminidefault/xxx,xxx,xxx
+        // scene: empty/dingtalk/dingtalkweb/dingtalkadmin/dingtalkmini/dingtalkminidefault/xxx,xxx,xxx
         in(scene) {
           // scene
-          if (!scene) scene = 'wxwork';
+          if (!scene) scene = 'dingtalk';
           if (typeof scene === 'string') scene = scene.split(',');
           // provider
           const provider = ctx.user && ctx.user.provider;
           if (!provider || provider.module !== moduleInfo.relativeName) return false;
           // find any match
           for (const item of scene) {
-            const ok = (provider.providerName === item) || (item === 'wxworkmini' && provider.providerName.indexOf(item) > -1);
+            const ok = (provider.providerName === item) || (item === 'dingtalkmini' && provider.providerName.indexOf(item) > -1);
             if (ok) return true;
           }
           // not found
@@ -380,18 +375,27 @@ module.exports = function(ctx) {
 
 
 /***/ }),
+/* 1 */
+/***/ (function(module, exports) {
+
+module.exports = require("require3");
+
+/***/ }),
 /* 2 */
 /***/ (function(module, exports) {
 
 const _scenes = {
-  wxwork: {
-    scene: 'wxwork', authProvider: 'wxwork', title: 'Wechat Work', client: 'wxwork',
+  dingtalk: {
+    scene: 'dingtalk', authProvider: 'dingtalk', title: 'DingTalk', client: 'dingtalk',
   },
-  wxworkweb: {
-    scene: 'wxworkweb', authProvider: 'wxworkweb', title: 'Wechat Work Web', client: 'wxworkweb',
+  dingtalkweb: {
+    scene: 'dingtalkweb', authProvider: 'dingtalkweb', title: 'DingTalk Web', client: 'dingtalkweb',
   },
-  wxworkmini: {
-    scene: 'wxworkmini', authProvider: 'wxworkmini', title: 'Wechat Work Miniprogram',
+  dingtalkadmin: {
+    scene: 'dingtalkadmin', authProvider: 'dingtalkadmin', title: 'DingTalk Admin', client: 'dingtalkadmin',
+  },
+  dingtalkmini: {
+    scene: 'dingtalkmini', authProvider: 'dingtalkmini', title: 'DingTalk Miniprogram',
   },
 };
 
@@ -403,10 +407,10 @@ function _upperCaseFirstChar(str) {
 module.exports = {
   scenes: _scenes,
   getScene(scene) {
-    if (scene.indexOf('wxworkmini') > -1) {
-      const sceneShort = scene.substr('wxworkmini'.length);
-      // wxworkmini
-      const base = _scenes.wxworkmini;
+    if (scene.indexOf('dingtalkmini') > -1) {
+      const sceneShort = scene.substr('dingtalkmini'.length);
+      // dingtalkmini
+      const base = _scenes.dingtalkmini;
       return {
         scene,
         authProvider: scene,
@@ -423,15 +427,47 @@ module.exports = {
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const config = __webpack_require__(4);
-const locales = __webpack_require__(5);
-const errors = __webpack_require__(7);
-const middlewares = __webpack_require__(8);
+const crypto = __webpack_require__(15);
+
+module.exports = {
+  createNonceStr() {
+    return Math.random().toString(36).substr(2, 15);
+  },
+  createTimestamp() {
+    return '' + Date.now();
+  },
+  calcSignature({ options, join = '', hash = 'sha1' }) {
+    const hashsum = crypto.createHash(hash);
+    hashsum.update(options.join(join));
+    return hashsum.digest('hex');
+  },
+  symmetricDifference(setA, setB) {
+    const _difference = new Set(setA);
+    for (const elem of setB) {
+      if (_difference.has(elem)) {
+        _difference.delete(elem);
+      } else {
+        _difference.add(elem);
+      }
+    }
+    return _difference;
+  },
+};
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const config = __webpack_require__(5);
+const locales = __webpack_require__(6);
+const errors = __webpack_require__(8);
+const middlewares = __webpack_require__(9);
 
 module.exports = app => {
 
   // routes
-  const routes = __webpack_require__(11)(app);
+  const routes = __webpack_require__(12)(app);
   // services
   const services = __webpack_require__(20)(app);
   // models
@@ -454,116 +490,101 @@ module.exports = app => {
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports) {
 
 
 const jsApiList = [
-  'checkJsApi',
-  'agentConfig',
-  'onMenuShareWechat',
-  // 'onMenuShareTimeline',
-  // 'onMenuShareAppMessage',
-  'startRecord',
-  'stopRecord',
-  'onVoiceRecordEnd',
-  'playVoice',
-  'pauseVoice',
-  'stopVoice',
-  'onVoicePlayEnd',
-  'uploadVoice',
-  'downloadVoice',
-  'chooseImage',
-  'previewImage',
-  'uploadImage',
-  'downloadImage',
-  'getLocalImgData',
-  'getNetworkType',
-  'onNetworkStatusChange',
-  'openLocation',
-  'getLocation',
-  'startAutoLBS',
-  'stopAutoLBS',
-  'onLocationChange',
-  'onHistoryBack',
-  'hideOptionMenu',
-  'showOptionMenu',
-  'hideMenuItems',
-  'showMenuItems',
-  'hideAllNonBaseMenuItem',
-  'showAllNonBaseMenuItem',
-  'closeWindow',
-  'openDefaultBrowser',
-  'scanQRCode',
-  'selectEnterpriseContact',
-  'openEnterpriseChat',
-  'chooseInvoice',
-  'selectExternalContact',
-  'getCurExternalContact',
-  'openUserProfile',
-  'shareAppMessage',
-  'shareWechatMessage',
-  'startWifi',
-  'stopWifi',
-  'connectWifi',
-  'getWifiList',
-  'onGetWifiList',
-  'onWifiConnected',
-  'getConnectedWifi',
-  'setClipboardData',
+  'device.base.getUUID',
+  'device.base.getInterface',
+  'device.nfc.nfcWrite',
+  'runtime.permission.requestOperateAuthCode',
+  'biz.util.scanCard',
+  'device.geolocation.get',
+  'device.geolocation.start',
+  'device.geolocation.stop',
+  'biz.map.locate',
+  'biz.map.search',
+  'biz.map.view',
+  'biz.clipboardData.setData',
+  'biz.util.ut',
+  'biz.util.open',
+  'biz.telephone.call',
+  'biz.telephone.showCallMenu',
+  'biz.telephone.checkBizCall',
+  'biz.telephone.quickCallList',
+  'biz.ding.create',
+  'biz.ding.post',
+  'biz.contact.choose',
+  'biz.contact.chooseMobileContacts',
+  'biz.contact.complexPicker',
+  'biz.contact.departmentsPicker',
+  'biz.contact.createGroup',
+  'biz.contact.setRule',
+  'biz.contact.externalComplexPicker',
+  'biz.contact.externalEditForm',
+  'biz.customContact.choose',
+  'biz.customContact.multipleChoose',
+  'biz.chat.pickConversation',
+  'biz.chat.chooseConversationByCorpId',
+  'biz.chat.openSingleChat',
+  'biz.chat.toConversation',
+  'biz.cspace.saveFile',
+  'biz.cspace.preview',
+  'biz.cspace.chooseSpaceDir',
+  'biz.util.uploadAttachment',
+  'device.audio.startRecord',
+  'device.audio.stopRecord',
+  'device.audio.onRecordEnd',
+  'device.audio.download',
+  'device.audio.play',
+  'device.audio.pause',
+  'device.audio.resume',
+  'device.audio.stop',
+  'device.audio.onPlayEnd',
+  'device.audio.translateVoice',
+  'biz.conference.videoConfCall',
+  'biz.alipay.pay',
+  'biz.util.encrypt',
+  'biz.util.decrypt',
 ];
 
-const jsApiListAgent = [
-  'onMenuShareWechat',
-  // 'onMenuShareTimeline',
-  // 'onMenuShareAppMessage',
-  'startRecord',
-  'stopRecord',
-  'onVoiceRecordEnd',
-  'playVoice',
-  'pauseVoice',
-  'stopVoice',
-  'onVoicePlayEnd',
-  'uploadVoice',
-  'downloadVoice',
-  'chooseImage',
-  'previewImage',
-  'uploadImage',
-  'downloadImage',
-  'getLocalImgData',
-  'getNetworkType',
-  'onNetworkStatusChange',
-  'openLocation',
-  'getLocation',
-  'startAutoLBS',
-  'stopAutoLBS',
-  'onLocationChange',
-  'onHistoryBack',
-  'hideOptionMenu',
-  'showOptionMenu',
-  'hideMenuItems',
-  'showMenuItems',
-  'hideAllNonBaseMenuItem',
-  'showAllNonBaseMenuItem',
-  'closeWindow',
-  'openDefaultBrowser',
-  'scanQRCode',
-  'selectEnterpriseContact',
-  'openEnterpriseChat',
-  'chooseInvoice',
-  'selectExternalContact',
-  'getCurExternalContact',
-  'openUserProfile',
-  'shareAppMessage',
-  'shareWechatMessage',
-  'startWifi',
-  'stopWifi',
-  'connectWifi',
-  'getWifiList',
-  'onGetWifiList',
-  'onWifiConnected',
-  'getConnectedWifi',
-  'setClipboardData',
+const businessCallbackList = [
+  // 通讯录
+  'user_add_org',
+  'user_modify_org',
+  'user_leave_org',
+  'user_active_org',
+  'org_admin_add',
+  'org_admin_remove',
+  'org_dept_create',
+  'org_dept_modify',
+  'org_dept_remove',
+  'org_remove',
+  'org_change',
+  'label_user_change',
+  'label_conf_add',
+  'label_conf_del',
+  'label_conf_modify',
+  // 审批
+  'bpms_task_change',
+  'bpms_instance_change',
+  // 群会话
+  'chat_add_member',
+  'chat_remove_member',
+  'chat_quit',
+  'chat_update_owner',
+  'chat_update_title',
+  'chat_disband',
+  // 签到
+  'check_in',
+  // 考勤
+  'attendance_check_record',
+  'attendance_schedule_change',
+  'attendance_overtime_duration',
+  // 会议室
+  'meetingroom_book',
+  'meetingroom_room_info',
 ];
 
 module.exports = appInfo => {
@@ -576,13 +597,23 @@ module.exports = appInfo => {
     },
   };
 
+  // startups
+  config.startups = {
+    registerBusinessCallbackList: {
+      instance: true,
+      path: 'callback/registerList',
+      debounce: true,
+      after: true,
+    },
+  };
+
   // middlewares
   config.middlewares = {
-    wxwork: {
+    dingtalk: {
       global: false,
       dependencies: 'instance',
     },
-    inWxwork: {
+    inDingtalk: {
       global: false,
       dependencies: 'instance',
     },
@@ -592,48 +623,47 @@ module.exports = appInfo => {
   config.sync = {
     department: {
       roleContainer: 'internal',
-      roleTop: 'wxwork',
+      roleTop: 'dingtalk',
     },
   };
 
   // account
   config.account = {};
 
-  // account.wxwork
-  config.account.wxwork = {
+  // account.dingtalk
+  config.account.dingtalk = {
     corpid: '',
+    ssosecret: '',
     // apps
     apps: {
       selfBuilt: {
         agentid: '',
-        secret: '',
-        token: appInfo.name,
-        encodingAESKey: '',
-        message: {
-          reply: {
-            default: 'You are welcome!',
-          },
-        },
+        appkey: '',
+        appsecret: '',
         jssdk: {
-          debug: false,
           jsApiList,
         },
-        jssdkAgent: {
-          jsApiList: jsApiListAgent,
+        businessCallback: {
+          host: '',
+          token: appInfo.name,
+          encodingAESKey: '',
+          list: businessCallbackList,
         },
       },
-      contacts: {
-        secret: '',
-        token: appInfo.name,
-        encodingAESKey: '',
+    },
+    // webs
+    webs: {
+      default: {
+        appid: '',
+        appsecret: '',
       },
     },
     // minis
     minis: {
       default: {
-        secret: '',
-        appID: '',
-        appSecret: '',
+        agentid: '',
+        appkey: '',
+        appsecret: '',
       },
     },
   };
@@ -643,27 +673,25 @@ module.exports = appInfo => {
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
-  'zh-cn': __webpack_require__(6),
+  'zh-cn': __webpack_require__(7),
 };
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports) {
 
 module.exports = {
-  'Wechat Work': '企业微信',
-  'Wechat Work Miniprogram': '企业微信小程序',
-  'Wechat Work Miniprogram - Default': '企业微信小程序 - 默认',
-  'Wechat Work Web': '企业微信Web',
-  'Wechat Public': '微信公众号',
-  'Wechat Miniprogram': '微信小程序',
-  'Not In Wechat Work': '不在企业微信内部',
-  'Not In Wechat Work Miniprogram': '不在企业微信小程序内部',
+  DingTalk: '钉钉',
+  'DingTalk Miniprogram': '钉钉小程序',
+  'DingTalk Miniprogram - Default': '钉钉小程序 - 默认',
+  'DingTalk Web': '钉钉Web',
+  'Not In DingTalk': '不在钉钉内部',
+  'Not In DingTalk Miniprogram': '不在钉钉小程序内部',
   'Contacts Management': '通讯录管理',
   'Sync Started': '同步已启动',
   'Sync Completed': '同步已完成',
@@ -674,13 +702,13 @@ module.exports = {
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports) {
 
 // error code should start from 1001
 module.exports = {
-  1001: 'Not In Wechat Work',
-  1002: 'Not In Wechat Work Miniprogram',
+  1001: 'Not In DingTalk',
+  1002: 'Not In DingTalk Miniprogram',
   1003: 'Role not Found for department: %d',
   1004: 'Department not Found: %d',
   1005: 'Member not Found: %d',
@@ -689,36 +717,36 @@ module.exports = {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const wxwork = __webpack_require__(9);
-const inWxwork = __webpack_require__(10);
+const dingtalk = __webpack_require__(10);
+const inDingtalk = __webpack_require__(11);
 
 module.exports = {
-  wxwork,
-  inWxwork,
+  dingtalk,
+  inDingtalk,
 };
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const WxworkHelperFn = __webpack_require__(1);
-const WXWORK = Symbol('CTX#WXWORK');
+const DingtalkHelperFn = __webpack_require__(0);
+const DINGTALK = Symbol('CTX#DINGTALK');
 
 module.exports = (options, app) => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  return async function wxwork(ctx, next) {
+  return async function dingtalk(ctx, next) {
     ctx.meta = ctx.meta || {};
-    Object.defineProperty(ctx.meta, 'wxwork', {
+    Object.defineProperty(ctx.meta, 'dingtalk', {
       get() {
-        if (ctx.meta[WXWORK] === undefined) {
-          const wxworkHelper = new (WxworkHelperFn(ctx))();
-          ctx.meta[WXWORK] = wxworkHelper.createWxworkApi();
+        if (ctx.meta[DINGTALK] === undefined) {
+          const dingtalkHelper = new (DingtalkHelperFn(ctx))();
+          ctx.meta[DINGTALK] = dingtalkHelper.createDingtalkApi();
         }
-        return ctx.meta[WXWORK];
+        return ctx.meta[DINGTALK];
       },
     });
 
@@ -731,16 +759,16 @@ module.exports = (options, app) => {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const WxworkHelperFn = __webpack_require__(1);
+const DingtalkHelperFn = __webpack_require__(0);
 
 module.exports = (options, app) => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   return async function inWxwork(ctx, next) {
-    const wxworkHelper = new (WxworkHelperFn(ctx))();
-    const api = wxworkHelper.createWxworkApi();
+    const dingtalkHelper = new (DingtalkHelperFn(ctx))();
+    const api = dingtalkHelper.createDingtalkApi();
     if (!api.util.in(options.scene)) return ctx.throw.module(moduleInfo.relativeName, 1001);
     // next
     await next();
@@ -749,11 +777,11 @@ module.exports = (options, app) => {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(12);
-const message = __webpack_require__(13);
+const version = __webpack_require__(13);
+const callback = __webpack_require__(14);
 const contacts = __webpack_require__(16);
 
 const event = __webpack_require__(17);
@@ -767,14 +795,12 @@ module.exports = app => {
     { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/test', controller: version, middlewares: 'test' },
     // message
-    { method: 'get', path: 'message/index', controller: message, middlewares: 'wxwork', meta: { auth: { enable: false } } },
-    { method: 'post', path: 'message/index', controller: message, middlewares: 'wxwork', meta: { auth: { enable: false } } },
-    { method: 'get', path: 'message/contacts', controller: message, middlewares: 'wxwork', meta: { auth: { enable: false } } },
-    { method: 'post', path: 'message/contacts', controller: message, middlewares: 'wxwork', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'callback/index', controller: callback, middlewares: 'dingtalk', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'callback/registerList', controller: callback, middlewares: 'dingtalk', meta: { auth: { enable: false } } },
     // contacts
     { method: 'post', path: 'contacts/sync', controller: contacts, meta: { right: { type: 'function', name: 'contacts' } } },
     // queue
-    { method: 'post', path: 'contacts/queue', controller: contacts, middlewares: 'inner,transaction,wxwork',
+    { method: 'post', path: 'contacts/queue', controller: contacts, middlewares: 'inner,transaction,dingtalk',
       meta: { auth: { enable: false } },
     },
 
@@ -793,7 +819,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -820,152 +846,57 @@ module.exports = app => {
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(0);
-const WechatCrypto = require3('wechat-crypto');
-const wechatUtils = __webpack_require__(14);
+const require3 = __webpack_require__(1);
+const DingTalkEncryptor = require3('dingtalk-encrypt');
+const dingtalkUtils = __webpack_require__(3);
 
 module.exports = app => {
-  class MessageController extends app.Controller {
+  class CallbackController extends app.Controller {
 
     async index() {
       await this._handleMessage('selfBuilt', async ({ message }) => {
-        return await this.ctx.service.message.index({ message });
+        return await this.ctx.service.callback.index({ message });
       });
     }
 
-    async contacts() {
-      await this._handleMessage('contacts', async ({ message }) => {
-        return await this.ctx.service.message.contacts({ message });
-      });
+    async registerList() {
+      await this.ctx.service.callback.registerList();
+      this.ctx.success();
     }
 
     async _handleMessage(appName, handler) {
       // query
       const query = this.ctx.query;
       // config
-      const config = this.ctx.config.account.wxwork;
+      const config = this.ctx.config.account.dingtalk;
       const configApp = config.apps[appName];
-      // encrypted: always true
-      const encrypted = true; // query.encrypt_type === 'aes';
-      // wechat crypto
-      const wechatCrypto = encrypted ? new WechatCrypto(configApp.token, configApp.encodingAESKey, config.corpid) : null;
+      // dingtalk crypto
+      const encryptor = new DingTalkEncryptor(configApp.businessCallback.token, configApp.businessCallback.encodingAESKey, config.corpid);
       // parse
-      let messageIn;
-      if (this.ctx.method === 'GET') {
-        messageIn = await this._parseMessageGet({ query, configApp, encrypted, wechatCrypto });
-        // ok
-        this.ctx.status = 200;
-        this.ctx.type = 'text/plain';
-        this.ctx.body = messageIn.echostr;
-      } else {
-        messageIn = await this._parseMessagePost({ query, configApp, encrypted, wechatCrypto });
-        // handle
-        let resXML;
-        const messageOut = await handler({ message: messageIn });
-        if (!messageOut) {
-          resXML = '';
-        } else {
-          resXML = wechatUtils.buildXML({ xml: messageOut });
-          if (encrypted) {
-            const wrap = {};
-            wrap.Encrypt = wechatCrypto.encrypt(resXML);
-            wrap.TimeStamp = wechatUtils.createTimestamp();
-            wrap.Nonce = wechatUtils.createNonceStr();
-            wrap.MsgSignature = wechatCrypto.getSignature(wrap.TimeStamp, wrap.Nonce, wrap.Encrypt);
-            resXML = wechatUtils.buildXML({ xml: wrap });
-          }
-        }
-        // ok
-        this.ctx.status = 200;
-        this.ctx.type = 'text/xml';
-        this.ctx.body = resXML;
-      }
+      const message = await this._parseMessagePost({ query, encryptor });
+      // handle
+      await handler({ message });
+      // ok
+      const res = encryptor.getEncryptedMap('success', dingtalkUtils.createTimestamp(), dingtalkUtils.createNonceStr());
+      this.ctx.status = 200;
+      this.ctx.type = 'application/json';
+      this.ctx.body = res;
     }
 
-    async _parseMessageGet({ query, configApp, encrypted, wechatCrypto }) {
-      // check if valid
-      let valid = false;
-      if (encrypted) {
-        valid = query.msg_signature === wechatCrypto.getSignature(query.timestamp, query.nonce, query.echostr);
-      } else {
-        valid = query.signature === wechatUtils.calcSignature({ options: [ configApp.token, query.timestamp, query.nonce ].sort() });
-      }
-      if (!valid) this.ctx.throw(401);
-      // decrypt
-      if (encrypted) {
-        const res = wechatCrypto.decrypt(query.echostr);
-        return { echostr: res.message };
-      }
-      return { echostr: query.echostr };
-    }
-
-    async _parseMessagePost({ query, configApp, encrypted, wechatCrypto }) {
-      // xml raw
-      let xmlRaw;
-      if (typeof this.ctx.request.body === 'string') {
-        xmlRaw = this.ctx.request.body;
-      } else {
-        const payload = await this.ctx.getPayload();
-        xmlRaw = payload.toString();
-      }
-      // parse xml
-      let xml = await wechatUtils.parseXML({ xml: xmlRaw });
-      // check if valid
-      let valid = false;
-      if (encrypted) {
-        valid = query.msg_signature === wechatCrypto.getSignature(query.timestamp, query.nonce, xml.Encrypt);
-      } else {
-        valid = query.signature === wechatUtils.calcSignature({ options: [ configApp.token, query.timestamp, query.nonce ].sort() });
-      }
-      if (!valid) this.ctx.throw(401);
-      // decrypt
-      if (encrypted) {
-        const res = wechatCrypto.decrypt(xml.Encrypt);
-        xml = await wechatUtils.parseXML({ xml: res.message });
-      }
-      return xml;
+    async _parseMessagePost({ query, encryptor }) {
+      const plainText = encryptor.getDecryptMsg(
+        query.signature, query.timestamp, query.nonce,
+        this.ctx.request.body.encrypt);
+      return JSON.parse(plainText);
     }
 
   }
-  return MessageController;
+  return CallbackController;
 };
 
-
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const crypto = __webpack_require__(15);
-const require3 = __webpack_require__(0);
-const bb = require3('bluebird');
-const xml2js = require3('xml2js');
-
-module.exports = {
-  createNonceStr() {
-    return Math.random().toString(36).substr(2, 15);
-  },
-  createTimestamp() {
-    return '' + Math.floor(Date.now() / 1000);
-  },
-  calcSignature({ options, join = '', hash = 'sha1' }) {
-    const hashsum = crypto.createHash(hash);
-    hashsum.update(options.join(join));
-    return hashsum.digest('hex');
-  },
-  async parseXML({ xml, trim = true, explicitArray = false, explicitRoot = false }) {
-    const parser = new xml2js.Parser({ trim, explicitArray, explicitRoot });
-    return await bb.fromCallback(cb => {
-      parser.parseString(xml, cb);
-    });
-  },
-  buildXML({ xml, cdata = true, headless = true, rootName = 'xml' }) {
-    return (new xml2js.Builder({ cdata, headless, rootName })).buildObject(xml);
-  },
-};
 
 
 /***/ }),
@@ -978,7 +909,7 @@ module.exports = require("crypto");
 /* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(0);
+const require3 = __webpack_require__(1);
 const uuid = require3('uuid');
 
 module.exports = app => {
@@ -1096,7 +1027,7 @@ module.exports = app => {
 /***/ (function(module, exports, __webpack_require__) {
 
 const version = __webpack_require__(21);
-const message = __webpack_require__(22);
+const callback = __webpack_require__(22);
 const contacts = __webpack_require__(23);
 const event = __webpack_require__(24);
 const jssdk = __webpack_require__(25);
@@ -1105,7 +1036,7 @@ const authMini = __webpack_require__(26);
 module.exports = app => {
   const services = {
     version,
-    message,
+    callback,
     contacts,
     event,
     jssdk,
@@ -1128,9 +1059,9 @@ module.exports = app => {
 
         let sql;
 
-        // create table: aWxworkDepartment
+        // create table: aDingtalkDepartment
         sql = `
-          CREATE TABLE aWxworkDepartment (
+          CREATE TABLE aDingtalkDepartment (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -1140,16 +1071,26 @@ module.exports = app => {
             departmentId int(11) DEFAULT '0',
             departmentParentId int(11) DEFAULT '0',
             departmentName varchar(255) DEFAULT NULL,
-            departmentNameEn varchar(255) DEFAULT NULL,
             departmentOrder int(11) DEFAULT '0',
+            createDeptGroup int(11) DEFAULT '0',
+            autoAddUser int(11) DEFAULT '0',
+            deptHiding int(11) DEFAULT '0',
+            deptPermits TEXT DEFAULT NULL,
+            userPermits TEXT DEFAULT NULL,
+            outerDept int(11) DEFAULT '0',
+            outerPermitDepts TEXT DEFAULT NULL,
+            outerPermitUsers TEXT DEFAULT NULL,
+            outerDeptOnlySelf int(11) DEFAULT '0',
+            sourceIdentifier varchar(255) DEFAULT NULL,
+            ext JSON DEFAULT NULL,
             PRIMARY KEY (id)
           )
         `;
         await this.ctx.model.query(sql);
 
-        // create table: aWxworkMember
+        // create table: aDingtalkMember
         sql = `
-          CREATE TABLE aWxworkMember (
+          CREATE TABLE aDingtalkMember (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -1158,27 +1099,22 @@ module.exports = app => {
             userId int(11) DEFAULT '0',
             memberId varchar(255) DEFAULT NULL,
             name varchar(255) DEFAULT NULL,
-            alias varchar(255) DEFAULT NULL,
-            mobile varchar(255) DEFAULT NULL,
-            department varchar(255) DEFAULT NULL,
-            sorting varchar(255) DEFAULT NULL,
-            position varchar(255) DEFAULT NULL,
-            gender int(11) DEFAULT '0',
-            email varchar(255) DEFAULT NULL,
-            telephone varchar(255) DEFAULT NULL,
-            is_leader_in_dept varchar(255) DEFAULT NULL,
+            active int(11) DEFAULT '0',
             avatar varchar(255) DEFAULT NULL,
-            thumb_avatar varchar(255) DEFAULT NULL,
-            qr_code varchar(255) DEFAULT NULL,
-            status int(11) DEFAULT '0',
+            orderInDepts JSON DEFAULT NULL,
+            department varchar(255) DEFAULT NULL,
+            position varchar(255) DEFAULT NULL,
+            mobile varchar(255) DEFAULT NULL,
+            tel varchar(255) DEFAULT NULL,
+            workPlace varchar(255) DEFAULT NULL,
+            remark TEXT DEFAULT NULL,
+            email varchar(255) DEFAULT NULL,
+            orgEmail varchar(255) DEFAULT NULL,
+            jobnumber varchar(255) DEFAULT NULL,
+            isHide int(11) DEFAULT '0',
+            isSenior int(11) DEFAULT '0',
             extattr JSON DEFAULT NULL,
-            external_profile JSON DEFAULT NULL,
-            external_position varchar(255) DEFAULT NULL,
-            address varchar(255) DEFAULT NULL,
-            hide_mobile int(11) DEFAULT '0',
-            english_name varchar(255) DEFAULT NULL,
-            open_userid varchar(255) DEFAULT NULL,
-            main_department int(11) DEFAULT '0',
+            hiredDate timestamp DEFAULT NULL,
             PRIMARY KEY (id)
           )
         `;
@@ -1208,48 +1144,74 @@ module.exports = app => {
 
 /***/ }),
 /* 22 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+const dingtalkUtils = __webpack_require__(3);
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class Message extends app.Service {
+  class Callback extends app.Service {
 
     async index({ message }) {
-      // config
-      const config = this.ctx.config.account.wxwork;
-      const configAppSelfBuilt = config.apps.selfBuilt;
-      // res
-      let res;
-      // event: subscribe
-      if (message.MsgType === 'event') {
-        if (message.Event === 'subscribe') {
-          // donothing，具体逻辑在通讯录回调通知中实现
-          return null;
-        } else if (message.Event === 'unsubscribe') {
-          // donothing，具体逻辑在通讯录回调通知中实现
-          return null;
-        }
+      // event: check_url
+      if (message.EventType === 'check_url') {
+        // just return
+        return;
       }
       // raise event
-      const res2 = await this.ctx.meta.event.invoke({
+      await this.ctx.meta.event.invoke({
         module: moduleInfo.relativeName,
-        name: 'wxworkMessage',
+        name: 'dingtalkCallback',
         data: { message },
       });
-      if (res2) res = res2;
-      // check if ready
-      if (res) return res;
-      // default reply
-      if (message.MsgType !== 'event') {
-        return {
-          ToUserName: message.FromUserName,
-          FromUserName: message.ToUserName,
-          CreateTime: new Date().getTime(),
-          MsgType: 'text',
-          Content: configAppSelfBuilt.message.reply.default,
-        };
+    }
+
+    async registerList() {
+      // config
+      const config = this.ctx.config.account.dingtalk.apps.selfBuilt.businessCallback;
+      const host = config.host;
+      const token = config.token;
+      const encodingAESKey = config.encodingAESKey;
+      const callbackList = config.list;
+      const callbackUrl = `${this.ctx.meta.base.protocol}://${this.ctx.meta.base.host}/api/a/dingtalk/callback/index`;
+      // check
+      if (this.ctx.meta.base.host !== host || !token || !encodingAESKey || !callbackList) return;
+      // check status
+      const res = await this._tryGetList();
+      if (!res) {
+        // register
+        await this.ctx.meta.dingtalk.app.selfBuilt.callback.register_call_back({
+          call_back_tag: callbackList,
+          token,
+          aes_key: encodingAESKey,
+          url: callbackUrl,
+        });
+      } else {
+        // update
+        const call_back_tag_setRemote = new Set(res.call_back_tag);
+        const call_back_tag_setConfig = new Set(callbackList);
+        const diff = dingtalkUtils.symmetricDifference(call_back_tag_setRemote, call_back_tag_setConfig);
+        if (diff.size === 0) {
+          // do nothing
+        } else {
+          // difference
+          await this.ctx.meta.dingtalk.app.selfBuilt.callback.update_call_back({
+            call_back_tag: callbackList,
+            token,
+            aes_key: encodingAESKey,
+            url: callbackUrl,
+          });
+        }
       }
-      return null;
+    }
+
+    async _tryGetList() {
+      try {
+        return await this.ctx.meta.dingtalk.app.selfBuilt.callback.get_call_back();
+      } catch (err) {
+        if (err.code === 71007) return null;
+        throw err;
+      }
     }
 
     async contacts({ message }) {
@@ -1270,7 +1232,7 @@ module.exports = app => {
 
   }
 
-  return Message;
+  return Callback;
 };
 
 
@@ -1278,14 +1240,14 @@ module.exports = app => {
 /* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const WxworkHelperFn = __webpack_require__(1);
+const DingtalkHelperFn = __webpack_require__(0);
 
 // department
 
 const __departmentFieldMap = [
-  [ 'departmentId', 'departmentParentId', 'departmentName', 'departmentNameEn', 'departmentOrder' ],
-  [ 'id', 'parentid', 'name', 'name_en', 'order' ],
-  [ 'number', 'number', 'string', 'string', 'number' ],
+  [ 'departmentId', 'departmentParentId', 'departmentName', 'departmentOrder', 'createDeptGroup', 'autoAddUser', 'deptHiding', 'deptPermits', 'userPermits', 'outerDept', 'outerPermitDepts', 'outerPermitUsers', 'outerDeptOnlySelf', 'sourceIdentifier', 'ext' ],
+  [ 'id', 'parentid', 'name', 'order', 'createDeptGroup', 'autoAddUser', 'deptHiding', 'deptPermits', 'userPermits', 'outerDept', 'outerPermitDepts', 'outerPermitUsers', 'outerDeptOnlySelf', 'sourceIdentifier', 'ext' ],
+  [ 'number', 'number', 'string', 'number', 'bool', 'bool', 'bool', 'string', 'string', 'bool', 'string', 'string', 'bool', 'string', 'string' ],
 ];
 
 const __departmentFieldMap_XML = [
@@ -1297,9 +1259,9 @@ const __departmentFieldMap_XML = [
 // member
 
 const __memberFieldMap = [
-  [ 'memberId', 'name', 'alias', 'mobile', 'department', 'sorting', 'position', 'gender', 'email', 'telephone', 'is_leader_in_dept', 'avatar', 'thumb_avatar', 'qr_code', 'status', 'extattr', 'external_profile', 'external_position', 'address', 'hide_mobile', 'english_name', 'open_userid', 'main_department' ],
-  [ 'userid', 'name', 'alias', 'mobile', 'department', 'order', 'position', 'gender', 'email', 'telephone', 'is_leader_in_dept', 'avatar', 'thumb_avatar', 'qr_code', 'status', 'extattr', 'external_profile', 'external_position', 'address', 'hide_mobile', 'english_name', 'open_userid', 'main_department' ],
-  [ 'string', 'string', 'string', 'string', 'array', 'array', 'string', 'number', 'string', 'string', 'array', 'string', 'string', 'string', 'number', 'json', 'json', 'string', 'string', 'number', 'string', 'string', 'number' ],
+  [ 'memberId', 'name', 'active', 'avatar', 'orderInDepts', 'department', 'position', 'mobile', 'tel', 'workPlace', 'remark', 'email', 'orgEmail', 'jobnumber', 'isHide', 'isSenior', 'extattr', 'hiredDate' ],
+  [ 'userid', 'name', 'active', 'avatar', 'orderInDepts', 'department', 'position', 'mobile', 'tel', 'workPlace', 'remark', 'email', 'orgEmail', 'jobnumber', 'isHide', 'isSenior', 'extattr', 'hiredDate' ],
+  [ 'string', 'string', 'bool', 'string', 'string', 'array', 'string', 'string', 'string', 'string', 'string', 'string', 'string', 'string', 'bool', 'bool', 'json', 'timestamp' ],
 ];
 
 const __memberFieldMap_XML = [
@@ -1402,10 +1364,13 @@ module.exports = app => {
         // progress
         await this._progressPublish({ context, done: 0, text: `--- ${this.ctx.text('Sync Started')} ---` });
         // remote departments
-        const res = await this.ctx.meta.wxwork.app.contacts.getDepartmentList();
-        if (res.errcode) {
-          throw new Error(res.errmsg);
-        }
+        const res = await this.ctx.meta.dingtalk.app.selfBuilt.department.list({
+          fetch_child: true,
+          id: 1,
+        });
+        // special for departmentId=1
+        const department1 = await this.ctx.meta.dingtalk.app.selfBuilt.department.get(1);
+        res.department.splice(0, 0, department1);
         context.remoteDepartments = res.department;
         // progress
         await this._progressPublish({ context, done: 0, text: `--- ${this.ctx.text('Department Count')}: ${context.remoteDepartments.length} ---` });
@@ -1455,10 +1420,7 @@ module.exports = app => {
         // remote members
         const departmentRoot = await this.ctx.model.department.get({ departmentParentId: 0 });
         if (!departmentRoot) return this.ctx.throw(1006);
-        const res = await this.ctx.meta.wxwork.app.contacts.getDepartmentUserList(departmentRoot.departmentId, 1);
-        if (res.errcode) {
-          throw new Error(res.errmsg);
-        }
+        const res = await this.ctx.meta.dingtalk.app.selfBuilt.user.listAll(null, false);
         context.remoteMembers = res.userlist;
         // progress
         await this._progressPublish({ context, done: 0, text: `--- ${this.ctx.text('Member Count')}: ${context.remoteMembers.length} ---` });
@@ -1512,6 +1474,10 @@ module.exports = app => {
     }
 
     async _queueSyncDepartment({ context, remoteDepartment }) {
+      // retrieve the department details
+      remoteDepartment = await this.ctx.meta.dingtalk.app.selfBuilt.department.get(remoteDepartment.id);
+      if (remoteDepartment.id === 1) remoteDepartment.parentid = 0;
+      // adjust
       const department = {};
       this._adjustFields(department, remoteDepartment, __departmentFieldMap);
       const departmentId = department.departmentId;
@@ -1640,9 +1606,9 @@ module.exports = app => {
           departmentIdsNew: (member.department || '').split(','),
         });
       }
-      // status
-      if (member.status !== undefined && member.status !== localMember.status) {
-        await this.ctx.meta.user.disable({ userId, disabled: member.status !== 1 });
+      // active
+      if (member.active !== undefined && member.active !== localMember.active) {
+        await this.ctx.meta.user.disable({ userId, disabled: !member.active });
       }
       // update member
       member.id = localMember.id;
@@ -1701,8 +1667,8 @@ module.exports = app => {
     async _createUserAndMember({ member }) {
       // 1. create user&auth
       // verify auth user
-      const wxworkHelper = new (WxworkHelperFn(this.ctx))();
-      const verifyUser = await wxworkHelper.verifyAuthUser({ scene: 'wxwork', member, needLogin: false });
+      const dingtalkHelper = new (DingtalkHelperFn(this.ctx))();
+      const verifyUser = await dingtalkHelper.verifyAuthUser({ scene: 'dingtalk', member, needLogin: false });
       const userId = verifyUser.agent.id;
 
       // 2. add user to role
@@ -1711,8 +1677,8 @@ module.exports = app => {
         // delete role:activated (need not)
       }
 
-      // 3. status
-      if (member.status !== 1) {
+      // 3. active
+      if (!member.active) {
         await this.ctx.meta.user.disable({ userId, disabled: true });
       }
 
@@ -1761,9 +1727,11 @@ module.exports = app => {
     }
     _adjustFieldType(value, type) {
       if (type === 'number') return Number(value);
+      else if (type === 'bool') return Boolean(value);
       else if (type === 'string') return String(value);
       else if (type === 'array') return value.join(',');
       else if (type === 'json') return JSON.stringify(value);
+      else if (type === 'timestamp') return new Date(value);
       return value;
     }
 
@@ -1777,7 +1745,7 @@ module.exports = app => {
 /* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(0);
+const require3 = __webpack_require__(1);
 const extend = require3('extend2');
 
 module.exports = app => {
@@ -1850,7 +1818,7 @@ module.exports = app => {
 /* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const WxworkHelperFn = __webpack_require__(1);
+const DingtalkHelperFn = __webpack_require__(0);
 
 module.exports = app => {
 
@@ -1901,7 +1869,7 @@ module.exports = app => {
 module.exports = app => {
   class Department extends app.meta.Model {
     constructor(ctx) {
-      super(ctx, { table: 'aWxworkDepartment', options: { disableDeleted: true } });
+      super(ctx, { table: 'aDingtalkDepartment', options: { disableDeleted: true } });
     }
   }
   return Department;
@@ -1915,7 +1883,7 @@ module.exports = app => {
 module.exports = app => {
   class Member extends app.meta.Model {
     constructor(ctx) {
-      super(ctx, { table: 'aWxworkMember', options: { disableDeleted: false } });
+      super(ctx, { table: 'aDingtalkMember', options: { disableDeleted: false } });
     }
   }
   return Member;
@@ -1968,8 +1936,8 @@ module.exports = app => {
     },
     index: {
       indexes: {
-        aWxworkDepartment: 'createdAt,updatedAt,roleId,departmentId,departmentParentId',
-        aWxworkMember: 'createdAt,updatedAt,userId,memberId',
+        aDingtalkDepartment: 'createdAt,updatedAt,roleId,departmentId,departmentParentId',
+        aDingtalkMember: 'createdAt,updatedAt,userId,memberId',
       },
     },
     socketio: {
@@ -1991,30 +1959,88 @@ module.exports = app => {
 /***/ (function(module, exports, __webpack_require__) {
 
 const strategy = __webpack_require__(32);
-const WxworkHelperFn = __webpack_require__(1);
+const DingtalkHelperFn = __webpack_require__(0);
 const authProviderScenes = __webpack_require__(2);
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
-  function _createProvider(sceneInfo) {
+  function _createProviderDingTalk() {
     return {
       meta: {
-        title: sceneInfo.title,
-        mode: 'redirect',
+        title: 'DingTalk',
+        mode: 'direct',
         disableAssociate: true,
-        component: `button${sceneInfo.authProvider}`,
+        component: 'buttondingtalk',
       },
       config: {
-        corpid: '',
-        agentid: '',
-        client: sceneInfo.client,
-        scope: 'snsapi_base',
+      },
+      handler: null,
+    };
+  }
+
+  function _createProviderDingTalkWeb() {
+    return {
+      meta: {
+        title: 'DingTalk Web',
+        mode: 'redirect',
+        disableAssociate: true,
+        component: 'buttondingtalkweb',
+      },
+      config: {
+        client: 'dingtalkweb',
+        scope: 'snsapi_login',
       },
       configFunctions: {
         getConfig(ctx) {
-          const config = ctx.config.module(moduleInfo.relativeName).account.wxwork;
-          return { corpid: config.corpid, agentid: config.apps.selfBuilt.agentid };
+          const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk.webs.default;
+          return { appkey: config.appid, appsecret: config.appsecret };
+        },
+      },
+      handler: app => {
+        return {
+          strategy,
+          callback: (req, loginTmpCode, done) => {
+            // ctx/state
+            const ctx = req.ctx;
+            const state = ctx.request.query.state || 'login';
+            // code/memberId
+            const dingtalkHelper = new (DingtalkHelperFn(ctx))();
+            const api = dingtalkHelper.createDingtalkApi();
+            api.web.default.client.getuserinfo_bycode(loginTmpCode).then(res => {
+              const unionid = res.user_info.unionid;
+              api.app.selfBuilt.user.getUseridByUnionid(unionid).then(res => {
+                if (res.contactType === 1) throw new Error('not support extcontact');
+                const memberId = res.userid;
+                dingtalkHelper.verifyAuthUser({
+                  scene: 'dingtalkweb',
+                  memberId,
+                  state,
+                  cbVerify: (profileUser, cb) => {
+                    app.passport.doVerify(req, profileUser, cb);
+                  },
+                }).then(verifyUser => { done(null, verifyUser); }).catch(done);
+              }).catch(done);
+            }).catch(done);
+          },
+        };
+      },
+    };
+  }
+
+  function _createProviderDingTalkAdmin() {
+    return {
+      meta: {
+        title: 'DingTalk Admin',
+        mode: 'redirect',
+        disableAssociate: true,
+      },
+      config: {
+      },
+      configFunctions: {
+        getConfig(ctx) {
+          const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk;
+          return { appkey: config.corpid, appsecret: config.ssosecret };
         },
       },
       handler: app => {
@@ -2025,13 +2051,12 @@ module.exports = app => {
             const ctx = req.ctx;
             const state = ctx.request.query.state || 'login';
             // code/memberId
-            const wxworkHelper = new (WxworkHelperFn(ctx))();
-            const api = wxworkHelper.createWxworkApi();
-            api.app.selfBuilt.getUserIdByCode(code).then(res => {
-              if (res.errcode) throw new Error(res.errmsg);
-              const memberId = res.UserId;
-              wxworkHelper.verifyAuthUser({
-                scene: sceneInfo.scene,
+            const dingtalkHelper = new (DingtalkHelperFn(ctx))();
+            const api = dingtalkHelper.createDingtalkApi();
+            api.admin.client.getSSOUserInfo(null, code).then(res => {
+              const memberId = res.user_info.userid;
+              dingtalkHelper.verifyAuthUser({
+                scene: 'dingtalkadmin',
                 memberId,
                 state,
                 cbVerify: (profileUser, cb) => {
@@ -2063,17 +2088,18 @@ module.exports = app => {
     },
   };
 
-  // wxwork/wxworkweb
-  for (const scene of [ 'wxwork', 'wxworkweb' ]) {
-    const sceneInfo = authProviderScenes.getScene(scene);
-    metaAuth.providers[sceneInfo.authProvider] = _createProvider(sceneInfo);
-  }
+  // dingtalk
+  metaAuth.providers.dingtalk = _createProviderDingTalk();
+  // dingtalkweb
+  metaAuth.providers.dingtalkweb = _createProviderDingTalkWeb();
+  // dingtalkadmin
+  metaAuth.providers.dingtalkadmin = _createProviderDingTalkAdmin();
 
   // minis
   const moduleConfig = app.meta.configs[moduleInfo.relativeName];
-  const minis = moduleConfig.account.wxwork.minis;
+  const minis = moduleConfig.account.dingtalk.minis;
   for (const sceneShort in minis) {
-    const scene = `wxworkmini${sceneShort}`;
+    const scene = `dingtalkmini${sceneShort}`;
     const sceneInfo = authProviderScenes.getScene(scene);
     metaAuth.providers[sceneInfo.authProvider] = _createProviderMini(sceneInfo);
   }
@@ -2087,18 +2113,18 @@ module.exports = app => {
 /* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(0);
+const require3 = __webpack_require__(1);
 const util = require3('util');
 const passport = require3('passport-strategy');
 const OAuth = __webpack_require__(33);
 
-const __OAUTH = Symbol('WXWORK#__OAUTH');
+const __OAUTH = Symbol('DINGTALK#__OAUTH');
 
-function WxworkStrategy(options, verify) {
+function DingTalkStrategy(options, verify) {
   options = options || {};
 
   if (!verify) {
-    throw new TypeError('WxworkStrategy required a verify callback');
+    throw new TypeError('DingTalkStrategy required a verify callback');
   }
 
   if (typeof verify !== 'function') {
@@ -2107,34 +2133,32 @@ function WxworkStrategy(options, verify) {
 
   passport.Strategy.call(this, options, verify);
 
-  this.name = options.name || 'wxwork';
-  this._client = options.client || 'wxwork';
+  this.name = options.name || 'dingtalk';
+  this._client = options.client || 'dingtalk';
   this._verify = verify;
   this._callbackURL = options.callbackURL;
   this._lang = options.lang || 'en';
   this._state = options.state;
-  this._scope = options.scope || 'snsapi_base';
+  this._scope = options.scope || 'snsapi_login';
   this._passReqToCallback = options.passReqToCallback;
 
 }
 
-util.inherits(WxworkStrategy, passport.Strategy);
+util.inherits(DingTalkStrategy, passport.Strategy);
 
-WxworkStrategy.prototype.getOAuth = function(options) {
+DingTalkStrategy.prototype.getOAuth = function(options) {
   if (this[__OAUTH] === undefined) {
-    let corpid = options.corpid;
-    let agentid = options.agentid;
-    if (!corpid || !agentid) {
+    let appkey = options.appkey;
+    if (!appkey) {
       const _config = options.getConfig();
-      corpid = _config.corpid;
-      agentid = _config.agentid;
+      appkey = _config.appkey;
     }
-    this[__OAUTH] = new OAuth(corpid, agentid);
+    this[__OAUTH] = new OAuth(appkey);
   }
   return this[__OAUTH];
 };
 
-WxworkStrategy.prototype.authenticate = function(req, options) {
+DingTalkStrategy.prototype.authenticate = function(req, options) {
 
   if (!req._passport) {
     return this.error(new Error('passport.initialize() middleware not in use'));
@@ -2163,7 +2187,7 @@ WxworkStrategy.prototype.authenticate = function(req, options) {
 
     // 获取code,并校验相关参数的合法性
     // No code only state --> User has rejected send details. (Fail authentication request).
-    if (req.query && req.query.state && !req.query.code) {
+    if (req.query && !req.query.code) {
       return self.fail(401);
     }
 
@@ -2190,48 +2214,36 @@ WxworkStrategy.prototype.authenticate = function(req, options) {
     const callbackURL = options.callbackURL || self._callbackURL;
     const scope = options.scope || self._scope;
 
-    const methodName = (this._client === 'wxwork') ? 'getAuthorizeURL' : 'getAuthorizeURLForWebsite';
+    // only support dingtalkweb
+    const methodName = (this._client === 'dingtalkweb') ? 'getAuthorizeURLForWebsite' : '';
     const location = _oauth[methodName](callbackURL, state, scope);
 
     self.redirect(location, 302);
   }
 };
 
-module.exports = WxworkStrategy;
+module.exports = DingTalkStrategy;
 
 
 /***/ }),
 /* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const require3 = __webpack_require__(0);
+const require3 = __webpack_require__(1);
 const querystring = require3('querystring');
 
-const OAuth = function(appid, agentid) {
-  this.appid = appid;
-  this.agentid = agentid;
-};
-
-OAuth.prototype.getAuthorizeURL = function(redirect, state, scope) {
-  const url = 'https://open.weixin.qq.com/connect/oauth2/authorize';
-  const info = {
-    appid: this.appid,
-    redirect_uri: redirect,
-    response_type: 'code',
-    scope: scope || 'snsapi_base',
-    state: state || '',
-  };
-
-  return url + '?' + querystring.stringify(info) + '#wechat_redirect';
+const OAuth = function(appkey) {
+  this.appkey = appkey;
 };
 
 OAuth.prototype.getAuthorizeURLForWebsite = function(redirect, state) {
-  const url = 'https://open.work.weixin.qq.com/wwopen/sso/qrConnect';
+  const url = 'https://oapi.dingtalk.com/connect/qrconnect';
   const info = {
-    appid: this.appid,
-    agentid: this.agentid,
-    redirect_uri: redirect,
+    appid: this.appkey,
+    response_type: 'code',
+    scope: 'snsapi_login',
     state: state || '',
+    redirect_uri: redirect,
   };
 
   return url + '?' + querystring.stringify(info);
@@ -2261,7 +2273,7 @@ module.exports = app => {
 /* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const WxworkHelperFn = __webpack_require__(1);
+const DingtalkHelperFn = __webpack_require__(0);
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
