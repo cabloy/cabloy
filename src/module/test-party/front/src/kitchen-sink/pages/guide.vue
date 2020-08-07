@@ -128,7 +128,7 @@ export default {
   },
   computed: {
     locale() {
-      return this.$meta.util.cookies.get('locale') || 'en-us';
+      return this.$meta.util.getLocale();
     },
     urlBasicProcess() {
       let url;

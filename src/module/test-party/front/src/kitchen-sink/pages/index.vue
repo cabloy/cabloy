@@ -51,7 +51,7 @@ export default {
     const about = _items.splice(0, 3);
     // sort
     _items = _items.sort((a, b) => {
-      const locale = this.$meta.util.cookies.get('locale') || 'en-us';
+      const locale = this.$meta.util.getLocale();
       return a.titleLocale.localeCompare(b.titleLocale, locale);
     });
     // about
