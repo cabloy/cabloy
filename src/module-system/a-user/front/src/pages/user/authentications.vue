@@ -5,8 +5,8 @@
       <eb-list-item v-for="item of items" :key="item.providerId" :title="authTitle(item)">
         <div slot="after">
           <f7-badge v-if="item.authId">{{$text('Enabled')}}</f7-badge>
-          <eb-link v-if="!item.authId && !item.meta.disableAssociate" :context="item" :onPerform="onPerformEnable">{{$text('Enable')}}</eb-link>
-          <eb-link v-if="item.authId && !isProviderCurrent(item)" :context="item" :onPerform="onPerformDisable">{{$text('Disable')}}</eb-link>
+          <eb-link v-if="checkIfEnable(item)" :context="item" :onPerform="onPerformEnable">{{$text('Enable')}}</eb-link>
+          <eb-link v-if="checkIfDisable(item)" :context="item" :onPerform="onPerformDisable">{{$text('Disable')}}</eb-link>
         </div>
       </eb-list-item>
     </f7-list>
@@ -65,6 +65,14 @@ export default {
         const url = `/api/${info.url}/passport/${info.relativeName}/${item.providerName}?state=associate`;
         this.$meta.vueApp.toLogin({ url, hash: '/a/user/user/authentications' });
       });
+    },
+    checkIfEnable(item) {
+      return !item.authId && !item.meta.disableAssociate &&
+        (location.origin !== 'file://');
+      //(location.origin !== 'file://' || item.meta.mode !== 'redirect');
+    },
+    checkIfDisable(item) {
+      return item.authId && !this.isProviderCurrent(item);
     },
   },
 };
