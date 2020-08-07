@@ -7,6 +7,7 @@ export default {
     global: false,
     disable: ( /*{ ctx, provider }*/ ) => {
       return new Promise((resolve, reject) => {
+        if (location.origin === 'file://') return resolve(true);
         resolve(false);
       });
     },
