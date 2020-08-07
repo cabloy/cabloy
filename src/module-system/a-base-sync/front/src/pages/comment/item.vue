@@ -39,7 +39,7 @@ export default {
       return !this.readOnly;
     },
     language() {
-      const locale = this.$meta.util.cookies.get('locale') || 'en-us';
+      const locale = this.$meta.util.getLocale();
       return locale === 'zh-cn' ? 'zh-CN' : 'en';
     },
     subfield() {

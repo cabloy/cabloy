@@ -2205,8 +2205,8 @@ module.exports = (options, app) => {
     if (ctx.innerAccess) return await next();
 
     let origin = ctx.get('origin');
-    if (origin === 'null' || origin === null) origin = '*';
-    if (!origin || origin === '*') return await next();
+
+    if (!origin || origin === 'null') origin = 'null';
 
     const host = ctx.host;
     if (host && origin.indexOf(host) > -1) return await next();
