@@ -1,6 +1,6 @@
 function trimMessage(ctx, message) {
   if (!message || typeof message !== 'string') return message;
-  const locale = ctx.$meta.util.cookies.get('locale') || 'en-us';
+  const locale = ctx.$meta.util.getLocale();
   const maxLength = ctx.$config.error.message.maxLength[locale] || ctx.$config.error.message.maxLength.default;
   if (message.length >= maxLength) return `${message.substr(0, maxLength)}...`;
   return message;
