@@ -12,11 +12,18 @@ node_modules
 *.tmp
 *.rdb
 
-src/backend/app
-src/backend/config
-src/backend/logs
-src/backend/run
-src/front/config
+/src/backend/app
+/src/backend/config
+/src/backend/logs
+/src/backend/run
+/src/front/config
+
+/src/module/*
+!/src/module/test-party
+!/src/module/test-partymonkey-monkey
+
+package-lock.json
+yarn.lock
 
 .sync-config.cson
 sftp-config.json

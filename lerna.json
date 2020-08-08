@@ -1,7 +1,9 @@
 {
   "version": "independent",
   "packages": [
-    "packages/*"
+    "packages/*",
+    "src/module/*",
+    "src/module-system/*"
   ],
   "command":
   {
