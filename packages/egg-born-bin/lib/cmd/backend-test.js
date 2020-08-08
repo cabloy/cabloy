@@ -18,18 +18,15 @@ class BackendTestCommand extends TestCommand {
 
     if (!context.env.EGG_BASE_DIR) context.env.EGG_BASE_DIR = path.join(process.cwd(), 'src/backend');
 
-    if (!context.argv._ || context.argv._.length === 0) context.argv._ = [ 'src/**/test/**/*.test.js' ];
+    if (!context.argv._ || context.argv._.length === 0) context.argv._ = ['src/**/backend/test/**/*.test.js'];
 
     const testArgv = Object.assign({}, context.argv);
 
     // collect test files
     let files = testArgv._.slice();
-    if (!files.length) {
-      files = [ process.env.TESTS || 'test/**/*.test.js' ];
-    }
 
-    // expand glob and skip node_modules and fixtures
-    files = globby.sync(files.concat('!test/**/{fixtures, node_modules}/**/*.test.js'));
+    // expand glob
+    files = globby.sync(files);
 
     if (!files.length) {
       // options
