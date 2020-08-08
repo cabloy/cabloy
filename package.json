@@ -1,8 +1,40 @@
 {
   "name": "cabloy",
   "private": true,
+  "description": "The Ultimate Javascript Full Stack Framework",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhennann/cabloy.git"
+  },
+  "author": "zhennann",
+  "license": "MIT",
+  "keywords": [
+    "egg",
+    "egg-framework",
+    "framework7",
+    "cabloy"
+  ],
+  "bugs": {
+    "url": "https://github.com/zhennann/cabloy/issues"
+  },
+  "homepage": "https://github.com/zhennann/cabloy#readme",
+  "scripts": {
+    "dev:front": "egg-born-bin front-dev",
+    "build:front": "egg-born-bin front-build",
+    "dev:backend": "egg-born-bin backend-dev",
+    "debug:backend": "egg-born-bin backend-debug",
+    "lint": "eslint src",
+    "test:backend": "egg-born-bin backend-test",
+    "cov:backend": "egg-born-bin backend-cov",
+    "start:backend": "egg-born-scripts backend-start",
+    "stop:backend": "egg-born-scripts backend-stop"
+  },
   "devDependencies": {
+    "babel-eslint": "^10.0.3",
+    "eslint": "^7.3.0",
+    "eslint-config-egg": "^8.0.1",
+    "eslint-plugin-vuefix": "^0.2.1",
     "lerna": "^3.22.1"
   },
-  "scripts": {},
+  "dependencies": {}
 }

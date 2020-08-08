@@ -1,0 +1,29 @@
+FROM node:12
+
+# installing graphicsmagick
+RUN apt update
+RUN apt install -y --no-install-recommends \
+      graphicsmagick \
+      && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /opt/node/app
+WORKDIR /opt/node/app
+
+COPY ./build /opt/node/app/build
+COPY ./scripts /opt/node/app/scripts
+COPY ./src /opt/node/app/src
+COPY ./.babelrc /opt/node/app
+COPY ./package.json /opt/node/app
+COPY ./README.md /opt/node/app
+
+RUN chmod +x  /opt/node/app/scripts/*.sh
+
+# COPY ./node_modules /opt/node/app/node_modules
+# COPY ./dist /opt/node/app/dist
+
+RUN npm i
+# RUN npm i --registry=https://registry.npm.taobao.org
+RUN npm run build:front
+
+# start
+CMD npm run start:backend

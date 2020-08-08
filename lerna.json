@@ -1,13 +1,13 @@
 {
-    "version": "independent",
-    "packages": [
-        "packages/*"
-    ],
-    "command":
+  "version": "independent",
+  "packages": [
+    "packages/*"
+  ],
+  "command":
+  {
+    "bootstrap":
     {
-        "bootstrap":
-        {
-            "hoist": "**"
-        }
+      "hoist": "**"
     }
+  }
 }

@@ -1,0 +1,6 @@
+{
+  "name": "cabloy",
+  "egg": {
+    "framework": "egg-born-backend"
+  }
+}
