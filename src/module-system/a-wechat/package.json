@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-wechat",
-  "version": "4.0.4",
+  "version": "4.0.5",
   "title": "Wechat",
   "eggBornModule": {
     "fileVersion": 2,
@@ -24,7 +24,7 @@
     "@zhennann/co-wechat-api": "^3.10.6",
     "@zhennann/passport-wechat": "^3.0.2",
     "extend2": "^1.0.0",
-    "require3": "^1.0.5",
+    "require3": "^1.0.6",
     "wechat-crypto": "^0.0.2",
     "xml2js": "^0.4.23"
   }

@@ -1,6 +1,6 @@
 {
   "name": "object-get-o-a",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "object-get-o-a",
   "main": "dist/index.js",
   "scripts": {

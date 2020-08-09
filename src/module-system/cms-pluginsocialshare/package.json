@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-pluginsocialshare",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "title": "cms:plugin:SocialShare",
   "eggBornModule": {
     "cms": {
@@ -23,6 +23,6 @@
   "author": "zhennann",
   "dependencies": {
     "extend2": "^1.0.0",
-    "require3": "^1.0.5"
+    "require3": "^1.0.6"
   }
 }

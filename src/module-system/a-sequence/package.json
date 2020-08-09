@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-sequence",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "eggBornModule": {
     "fileVersion": 1,
     "dependencies": {
@@ -17,6 +17,6 @@
   "dependencies": {
     "assert": "^2.0.0",
     "p-map": "^3.0.0",
-    "require3": "^1.0.5"
+    "require3": "^1.0.6"
   }
 }

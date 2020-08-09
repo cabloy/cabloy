@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-flow",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "title": "a-flow",
   "eggBornModule": {
     "dependencies": {
@@ -17,6 +17,6 @@
   "author": "zhennann",
   "dependencies": {
     "extend2": "^1.0.0",
-    "require3": "^1.0.5"
+    "require3": "^1.0.6"
   }
 }

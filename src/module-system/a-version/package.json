@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-version",
-  "version": "3.0.6",
+  "version": "3.0.7",
   "eggBornModule": {
     "fileVersion": 2,
     "dependencies": {}
@@ -30,6 +30,6 @@
   "homepage": "https://github.com/zhennann/egg-born-module-a-version#readme",
   "dependencies": {
     "chalk": "^3.0.0",
-    "require3": "^1.0.5"
+    "require3": "^1.0.6"
   }
 }

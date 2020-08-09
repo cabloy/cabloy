@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-themehyacinth",
-  "version": "3.0.6",
+  "version": "3.0.7",
   "title": "Hyacinth",
   "eggBornModule": {
     "fileVersion": 0,
@@ -22,6 +22,6 @@
   "author": "zhennann",
   "dependencies": {
     "extend2": "^1.0.0",
-    "require3": "^1.0.5"
+    "require3": "^1.0.6"
   }
 }

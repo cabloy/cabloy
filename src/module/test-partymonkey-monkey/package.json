@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-test-partymonkey-monkey",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "title": "test-partymonkey-monkey",
   "eggBornModule": {
     "fileVersion": 0,
@@ -21,6 +21,6 @@
   "author": "zhennann",
   "dependencies": {
     "extend2": "^1.0.0",
-    "require3": "^1.0.5"
+    "require3": "^1.0.6"
   }
 }

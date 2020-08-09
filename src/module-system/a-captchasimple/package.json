@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-captchasimple",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "title": "a-captchasimple",
   "eggBornModule": {
     "fileVersion": 0,
@@ -18,7 +18,7 @@
   "author": "zhennann",
   "dependencies": {
     "extend2": "^1.0.0",
-    "require3": "^1.0.5",
+    "require3": "^1.0.6",
     "trek-captcha": "^0.4.0"
   }
 }
