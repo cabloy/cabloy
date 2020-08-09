@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-test-party",
-  "version": "3.0.30",
+  "version": "3.0.31",
   "title": "Party",
   "eggBornModule": {
     "fileVersion": 6,
@@ -25,6 +25,6 @@
   },
   "dependencies": {
     "extend2": "^1.0.0",
-    "require3": "^1.0.6"
+    "require3": "^1.0.7"
   }
 }

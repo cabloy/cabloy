@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-themeblog",
-  "version": "3.0.12",
+  "version": "3.0.13",
   "title": "cms:theme:blog",
   "eggBornModule": {
     "cms": {
@@ -20,19 +20,19 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "egg-born-module-cms-pluginarticle": "^3.0.7",
-    "egg-born-module-cms-pluginbacktotop": "^3.0.4",
-    "egg-born-module-cms-pluginbase": "^3.0.6",
-    "egg-born-module-cms-pluginblock": "^3.0.4",
-    "egg-born-module-cms-plugincopyright": "^3.0.5",
-    "egg-born-module-cms-pluginmarkdowngithub": "^3.0.3",
-    "egg-born-module-cms-pluginrss": "^3.0.3",
-    "egg-born-module-cms-pluginsidebar": "^3.0.8",
-    "egg-born-module-cms-pluginsocialshare": "^3.0.3",
-    "egg-born-module-cms-pluginsubmit": "^3.0.4",
-    "egg-born-module-cms-plugintrack": "^3.0.3",
-    "egg-born-module-cms-pluginuser": "^3.0.6",
+    "egg-born-module-cms-pluginarticle": "^3.0.8",
+    "egg-born-module-cms-pluginbacktotop": "^3.0.5",
+    "egg-born-module-cms-pluginbase": "^3.0.7",
+    "egg-born-module-cms-pluginblock": "^3.0.5",
+    "egg-born-module-cms-plugincopyright": "^3.0.6",
+    "egg-born-module-cms-pluginmarkdowngithub": "^3.0.4",
+    "egg-born-module-cms-pluginrss": "^3.0.4",
+    "egg-born-module-cms-pluginsidebar": "^3.0.9",
+    "egg-born-module-cms-pluginsocialshare": "^3.0.4",
+    "egg-born-module-cms-pluginsubmit": "^3.0.5",
+    "egg-born-module-cms-plugintrack": "^3.0.4",
+    "egg-born-module-cms-pluginuser": "^3.0.7",
     "extend2": "^1.0.0",
-    "require3": "^1.0.6"
+    "require3": "^1.0.7"
   }
 }

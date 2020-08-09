@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-user",
-  "version": "3.0.11",
+  "version": "3.0.12",
   "title": "User",
   "eggBornModule": {
     "dependencies": {
@@ -16,6 +16,6 @@
   "author": "zhennann",
   "dependencies": {
     "extend2": "^1.0.0",
-    "require3": "^1.0.6"
+    "require3": "^1.0.7"
   }
 }

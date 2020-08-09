@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-layoutmobile",
-  "version": "3.0.10",
+  "version": "3.0.11",
   "eggBornModule": {
     "dependencies": {}
   },
@@ -12,6 +12,6 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "require3": "^1.0.6"
+    "require3": "^1.0.7"
   }
 }

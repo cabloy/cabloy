@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-test-dingtalk",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "title": "test-dingtalk",
   "eggBornModule": {
     "fileVersion": 0,
@@ -22,8 +22,8 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "egg-born-module-a-dingtalk": "^3.0.3",
+    "egg-born-module-a-dingtalk": "^3.0.4",
     "extend2": "^1.0.0",
-    "require3": "^1.0.6"
+    "require3": "^1.0.7"
   }
 }

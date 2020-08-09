@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-authsms",
-  "version": "3.0.6",
+  "version": "3.0.7",
   "title": "a-authsms",
   "eggBornModule": {
     "fileVersion": 0,
@@ -24,6 +24,6 @@
     "boxen": "^4.2.0",
     "chalk": "^3.0.0",
     "extend2": "^1.0.0",
-    "require3": "^1.0.6"
+    "require3": "^1.0.7"
   }
 }

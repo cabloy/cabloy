@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-file",
-  "version": "3.0.7",
+  "version": "3.0.8",
   "title": "File",
   "eggBornModule": {
     "fileVersion": 1,
@@ -23,7 +23,7 @@
     "fs-extra": "^8.1.0",
     "gm": "^1.23.1",
     "pump": "^3.0.0",
-    "require3": "^1.0.6",
+    "require3": "^1.0.7",
     "stream-wormhole": "^1.1.0",
     "uuid": "^3.4.0"
   }

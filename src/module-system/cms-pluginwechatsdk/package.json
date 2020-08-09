@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-pluginwechatsdk",
-  "version": "3.0.7",
+  "version": "3.0.8",
   "title": "cms:plugin:wechatsdk",
   "eggBornModule": {
     "cms": {
@@ -21,8 +21,8 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "egg-born-module-a-wechat": "^4.0.5",
+    "egg-born-module-a-wechat": "^4.0.6",
     "extend2": "^1.0.0",
-    "require3": "^1.0.6"
+    "require3": "^1.0.7"
   }
 }

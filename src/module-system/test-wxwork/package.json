@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-test-wxwork",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "title": "test-wxwork",
   "eggBornModule": {
     "fileVersion": 0,
@@ -22,8 +22,8 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "egg-born-module-a-wxwork": "^3.0.8",
+    "egg-born-module-a-wxwork": "^3.0.9",
     "extend2": "^1.0.0",
-    "require3": "^1.0.6"
+    "require3": "^1.0.7"
   }
 }

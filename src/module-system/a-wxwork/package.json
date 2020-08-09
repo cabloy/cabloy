@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-wxwork",
-  "version": "3.0.8",
+  "version": "3.0.9",
   "title": "Wechat Work",
   "eggBornModule": {
     "fileVersion": 1,
@@ -25,7 +25,7 @@
     "@zhennann/co-wxwork-api": "^0.0.7",
     "@zhennann/passport-wechat": "^3.0.2",
     "extend2": "^1.0.0",
-    "require3": "^1.0.6",
+    "require3": "^1.0.7",
     "wechat-crypto": "^0.0.2",
     "xml2js": "^0.4.23"
   }

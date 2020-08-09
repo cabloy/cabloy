@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-sitecommunity",
-  "version": "3.0.6",
+  "version": "3.0.7",
   "title": "CMS:Community",
   "eggBornModule": {
     "fileVersion": 1,
@@ -23,6 +23,6 @@
   "author": "zhennann",
   "dependencies": {
     "extend2": "^1.0.0",
-    "require3": "^1.0.6"
+    "require3": "^1.0.7"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-socketio",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "title": "a-socketio",
   "eggBornModule": {
     "fileVersion": 1,
@@ -20,9 +20,9 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "@zhennann/socketio": "^1.0.3",
+    "@zhennann/socketio": "^1.0.4",
     "extend2": "^1.0.0",
-    "require3": "^1.0.6",
+    "require3": "^1.0.7",
     "socket.io-client": "^2.3.0"
   }
 }

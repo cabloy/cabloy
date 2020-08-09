@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-cms",
-  "version": "3.0.27",
+  "version": "3.0.28",
   "title": "CMS",
   "eggBornModule": {
     "fileVersion": 6,
@@ -27,8 +27,8 @@
     "@babel/preset-env": "^7.8.4",
     "@babel/register": "^7.8.3",
     "@zhennann/ejs": "^3.0.1",
-    "@zhennann/markdown": "^2.0.3",
-    "@zhennann/markdown-it-block": "^2.0.4",
+    "@zhennann/markdown": "^2.0.4",
+    "@zhennann/markdown-it-block": "^2.0.5",
     "@zhennann/trim-html": "^0.1.12",
     "babel-loader": "^8.1.0",
     "bluebird": "^3.7.2",
@@ -41,7 +41,7 @@
     "less": "^3.11.1",
     "moment": "^2.24.0",
     "p-map": "^3.0.0",
-    "require3": "^1.0.6",
+    "require3": "^1.0.7",
     "sha.js": "^2.4.11",
     "uglify-js": "^3.7.7"
   }
