@@ -9,8 +9,7 @@
   {
     "bootstrap":
     {
-      "hoist": "**",
-      "npmClientArgs": ["--no-package-lock"]
+      "hoist": "**"
     }
   }
 }

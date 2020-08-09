@@ -21,7 +21,7 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "egg-born-module-a-wechat": "^3.0.1",
+    "egg-born-module-a-wechat": "^4.0.5",
     "extend2": "^1.0.0",
     "require3": "^1.0.6"
   }
