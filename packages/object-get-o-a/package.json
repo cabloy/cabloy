@@ -4,7 +4,8 @@
   "description": "object-get-o-a",
   "main": "dist/index.js",
   "scripts": {
-    "build": "node build/front/build.js"
+    "build": "node build/front/build.js",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
