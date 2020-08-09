@@ -1,6 +1,6 @@
 {
   "name": "egg-born-init-config",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "egg-born-init-config",
   "config": {
     "boilerplate": {
@@ -33,7 +33,5 @@
   "bugs": {
     "url": "https://github.com/zhennann/egg-born-init-config/issues"
   },
-  "homepage": "https://github.com/zhennann/egg-born-init-config#readme",
-  "devDependencies": {},
-  "dependencies": {}
+  "homepage": "https://github.com/zhennann/egg-born-init-config#readme"
 }

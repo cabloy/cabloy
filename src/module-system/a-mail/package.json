@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-mail",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "title": "a-mail",
   "eggBornModule": {
     "fileVersion": 1,
@@ -16,11 +16,10 @@
     "lint": "eslint front backend"
   },
   "author": "zhennann",
-  "devDependencies": {},
   "dependencies": {
-    "require3": "^1.0.3",
+    "boxen": "^4.2.0",
     "extend2": "^1.0.0",
     "nodemailer": "^6.4.2",
-    "boxen": "^4.2.0"
+    "require3": "^1.0.5"
   }
 }

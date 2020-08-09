@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-pluginblock",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "title": "cms:plugin:block",
   "eggBornModule": {
     "cms": {
@@ -20,9 +20,8 @@
     "lint": "eslint front backend"
   },
   "author": "zhennann",
-  "devDependencies": {},
   "dependencies": {
-    "require3": "^1.0.3",
-    "extend2": "^1.0.0"
+    "extend2": "^1.0.0",
+    "require3": "^1.0.5"
   }
 }

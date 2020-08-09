@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-progress",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "title": "a-progress",
   "eggBornModule": {
     "fileVersion": 2,
@@ -16,9 +16,8 @@
     "lint": "eslint front backend"
   },
   "author": "zhennann",
-  "devDependencies": {},
   "dependencies": {
-    "require3": "^1.0.3",
-    "extend2": "^1.0.0"
+    "extend2": "^1.0.0",
+    "require3": "^1.0.5"
   }
 }

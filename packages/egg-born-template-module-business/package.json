@@ -1,6 +1,6 @@
 {
   "name": "egg-born-template-module-business",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "egg-born-template-module-business",
   "scripts": {},
   "repository": {
@@ -20,7 +20,5 @@
   "bugs": {
     "url": "https://github.com/zhennann/egg-born-template-module-business/issues"
   },
-  "homepage": "https://github.com/zhennann/egg-born-template-module-business#readme",
-  "devDependencies": {},
-  "dependencies": {}
+  "homepage": "https://github.com/zhennann/egg-born-template-module-business#readme"
 }

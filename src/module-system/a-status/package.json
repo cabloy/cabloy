@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-status",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "eggBornModule": {
     "fileVersion": 1,
     "dependencies": {
@@ -14,9 +14,8 @@
     "lint": "eslint front backend"
   },
   "author": "zhennann",
-  "devDependencies": {},
   "dependencies": {
-    "require3": "^1.0.3",
-    "assert": "^2.0.0"
+    "assert": "^2.0.0",
+    "require3": "^1.0.5"
   }
 }

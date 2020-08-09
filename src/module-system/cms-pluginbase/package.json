@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-pluginbase",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "title": "cms:plugin:base",
   "eggBornModule": {
     "cms": {
@@ -19,9 +19,8 @@
     "lint": "eslint front backend"
   },
   "author": "zhennann",
-  "devDependencies": {},
   "dependencies": {
-    "require3": "^1.0.3",
-    "extend2": "^1.0.0"
+    "extend2": "^1.0.0",
+    "require3": "^1.0.5"
   }
 }

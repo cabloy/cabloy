@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-login",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "eggBornModule": {
     "dependencies": {}
   },
@@ -11,8 +11,7 @@
     "lint": "eslint front backend"
   },
   "author": "zhennann",
-  "devDependencies": {},
   "dependencies": {
-    "require3": "^1.0.3"
+    "require3": "^1.0.5"
   }
 }

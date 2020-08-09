@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-base-sync",
-  "version": "3.0.23",
+  "version": "3.0.24",
   "title": "Base",
   "eggBornModule": {
     "fileVersion": 8,
@@ -17,16 +17,15 @@
     "lint": "eslint front backend"
   },
   "author": "zhennann",
-  "devDependencies": {},
   "dependencies": {
-    "egg-born-mparse": "^1.0.9",
+    "@koa/cors": "^3.0.0",
+    "@zhennann/markdown": "^2.0.2",
+    "@zhennann/markdown-it-block": "^2.0.3",
+    "@zhennann/trim-html": "^0.1.12",
+    "egg-born-mparse": "^1.1.4",
     "extend2": "^1.0.0",
-    "require3": "^1.0.3",
     "moment": "^2.24.0",
     "qr-image": "^3.2.0",
-    "@koa/cors": "^3.0.0",
-    "@zhennann/markdown": "^2.0.0",
-    "@zhennann/trim-html": "^0.1.12",
-    "@zhennann/markdown-it-block": "^2.0.1"
+    "require3": "^1.0.5"
   }
 }

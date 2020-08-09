@@ -1,6 +1,6 @@
 {
   "name": "egg-born-bin",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "egg-born-bin",
   "main": "index.js",
   "bin": {
@@ -28,14 +28,14 @@
     "eslint-plugin-vuefix": "^0.2.1"
   },
   "dependencies": {
+    "boxen": "^4.2.0",
     "chai": "^4.2.0",
     "chalk": "^3.0.0",
     "egg-bin": "^4.14.1",
     "egg-mock": "^3.25.1",
     "nock": "^11.7.2",
-    "should": "^13.2.3",
-    "urllib": "^2.34.2",
     "semver-diff": "^3.1.1",
-    "boxen": "^4.2.0"
+    "should": "^13.2.3",
+    "urllib": "^2.34.2"
   }
 }

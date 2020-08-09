@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-wxwork",
-  "version": "3.0.6",
+  "version": "3.0.7",
   "title": "Wechat Work",
   "eggBornModule": {
     "fileVersion": 1,
@@ -20,14 +20,13 @@
     "lint": "eslint front backend"
   },
   "author": "zhennann",
-  "devDependencies": {},
   "dependencies": {
-    "require3": "^1.0.3",
-    "extend2": "^1.0.0",
-    "wechat-crypto": "^0.0.2",
-    "xml2js": "^0.4.23",
     "@zhennann/co-wechat-api": "^3.10.6",
+    "@zhennann/co-wxwork-api": "^0.0.7",
     "@zhennann/passport-wechat": "^3.0.2",
-    "@zhennann/co-wxwork-api": "^0.0.7"
+    "extend2": "^1.0.0",
+    "require3": "^1.0.5",
+    "wechat-crypto": "^0.0.2",
+    "xml2js": "^0.4.23"
   }
 }

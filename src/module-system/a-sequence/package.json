@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-sequence",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "eggBornModule": {
     "fileVersion": 1,
     "dependencies": {
@@ -14,10 +14,9 @@
     "lint": "eslint front backend"
   },
   "author": "zhennann",
-  "devDependencies": {},
   "dependencies": {
-    "require3": "^1.0.3",
     "assert": "^2.0.0",
-    "p-map": "^3.0.0"
+    "p-map": "^3.0.0",
+    "require3": "^1.0.5"
   }
 }

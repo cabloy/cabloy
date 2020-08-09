@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-chartjs",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "title": "a-chartjs",
   "eggBornModule": {
     "fileVersion": 0,
@@ -19,10 +19,9 @@
     "lint": "eslint front backend"
   },
   "author": "zhennann",
-  "devDependencies": {},
   "dependencies": {
     "chart.js": "^2.9.3",
     "extend2": "^1.0.0",
-    "require3": "^1.0.3"
+    "require3": "^1.0.5"
   }
 }

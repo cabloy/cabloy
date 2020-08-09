@@ -1,6 +1,6 @@
 {
   "name": "egg-born-template-module",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "egg-born-template-module",
   "scripts": {},
   "repository": {
@@ -20,7 +20,5 @@
   "bugs": {
     "url": "https://github.com/zhennann/egg-born-template-module/issues"
   },
-  "homepage": "https://github.com/zhennann/egg-born-template-module#readme",
-  "devDependencies": {},
-  "dependencies": {}
+  "homepage": "https://github.com/zhennann/egg-born-template-module#readme"
 }

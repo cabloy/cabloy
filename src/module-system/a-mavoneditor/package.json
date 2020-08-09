@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-mavoneditor",
-  "version": "3.0.7",
+  "version": "3.0.8",
   "title": "a-mavoneditor",
   "eggBornModule": {
     "dependencies": {
@@ -14,10 +14,9 @@
     "lint": "eslint front backend"
   },
   "author": "zhennann",
-  "devDependencies": {},
   "dependencies": {
-    "require3": "^1.0.3",
+    "@zhennann/mavon-editor": "^3.0.1",
     "extend2": "^1.0.0",
-    "@zhennann/mavon-editor": "^3.0.1"
+    "require3": "^1.0.5"
   }
 }

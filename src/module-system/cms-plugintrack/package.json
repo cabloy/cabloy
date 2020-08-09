@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-plugintrack",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "title": "cms:plugin:track",
   "eggBornModule": {
     "cms": {
@@ -19,9 +19,8 @@
     "lint": "eslint front backend"
   },
   "author": "zhennann",
-  "devDependencies": {},
   "dependencies": {
-    "require3": "^1.0.3",
-    "extend2": "^1.0.0"
+    "extend2": "^1.0.0",
+    "require3": "^1.0.5"
   }
 }

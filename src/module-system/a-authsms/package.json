@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-authsms",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "title": "a-authsms",
   "eggBornModule": {
     "fileVersion": 0,
@@ -19,12 +19,11 @@
     "lint": "eslint front backend"
   },
   "author": "zhennann",
-  "devDependencies": {},
   "dependencies": {
-    "require3": "^1.0.3",
-    "extend2": "^1.0.0",
-    "chalk": "^3.0.0",
+    "@alicloud/pop-core": "^1.7.9",
     "boxen": "^4.2.0",
-    "@alicloud/pop-core": "^1.7.9"
+    "chalk": "^3.0.0",
+    "extend2": "^1.0.0",
+    "require3": "^1.0.5"
   }
 }

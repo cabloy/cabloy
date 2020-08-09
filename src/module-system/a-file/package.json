@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-file",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "title": "File",
   "eggBornModule": {
     "fileVersion": 1,
@@ -16,16 +16,15 @@
     "lint": "eslint front backend"
   },
   "author": "zhennann",
-  "devDependencies": {},
   "dependencies": {
-    "require3": "^1.0.3",
-    "extend2": "^1.0.0",
-    "cropperjs": "^1.5.6",
-    "stream-wormhole": "^1.1.0",
-    "fs-extra": "^8.1.0",
-    "uuid": "^3.4.0",
-    "gm": "^1.23.1",
     "bluebird": "^3.7.2",
-    "pump": "^3.0.0"
+    "cropperjs": "^1.5.6",
+    "extend2": "^1.0.0",
+    "fs-extra": "^8.1.0",
+    "gm": "^1.23.1",
+    "pump": "^3.0.0",
+    "require3": "^1.0.5",
+    "stream-wormhole": "^1.1.0",
+    "uuid": "^3.4.0"
   }
 }
