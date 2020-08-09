@@ -34,7 +34,8 @@
     "eslint": "^7.3.0",
     "eslint-config-egg": "^8.0.1",
     "eslint-plugin-vuefix": "^0.2.1",
-    "lerna": "^3.22.1"
+    "lerna": "^3.22.1",
+    "egg-born-mparse": "^1.1.3"
   },
   "dependencies": {}
 }

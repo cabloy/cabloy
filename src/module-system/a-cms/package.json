@@ -30,7 +30,7 @@
     "@zhennann/markdown": "^2.0.3",
     "@zhennann/markdown-it-block": "^2.0.4",
     "@zhennann/trim-html": "^0.1.12",
-    "babel-loader": "^8.0.2",
+    "babel-loader": "^8.1.0",
     "bluebird": "^3.7.2",
     "chokidar": "^2.1.8",
     "clean-css": "^4.2.3",
