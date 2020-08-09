@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-version",
-  "version": "3.0.7",
+  "version": "3.0.8",
   "eggBornModule": {
     "fileVersion": 2,
     "dependencies": {}
@@ -9,8 +9,7 @@
   "scripts": {
     "build:front": "node build/front/build.js",
     "build:backend": "node build/backend/build.js",
-    "lint": "eslint front backend",
-    "prepublishOnly": "npm run build:front && npm run build:backend"
+    "lint": "eslint front backend"
   },
   "repository": {
     "type": "git",

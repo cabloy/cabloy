@@ -31,12 +31,18 @@ module.exports = {
       {
         test: /\.vue$/,
         loader: 'vue-loader',
-        options: {
-          loaders: utils.cssLoaders({
-            sourceMap: config.build.productionSourceMap,
-            extract: true,
-          }),
-        },
+      },
+      {
+        test: /\.esm\.js$/,
+        loader: 'babel-loader',
+      },
+      {
+        test: /\.esm\.bundle\.js$/,
+        loader: 'babel-loader',
+      },
+      {
+        test: /\.module\.js$/,
+        loader: 'babel-loader',
       },
       {
         test: /\.js$/,
@@ -46,7 +52,7 @@ module.exports = {
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         loader: 'url-loader',
-        query: {
+        options: {
           limit: 10000,
           name: utils.assetsPath('img/[name].[hash].[ext]'),
         },
@@ -54,7 +60,7 @@ module.exports = {
       {
         test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
         loader: 'url-loader',
-        query: {
+        options: {
           limit: 10000,
           name: utils.assetsPath('fonts/[name].[hash].[ext]'),
         },

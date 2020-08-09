@@ -95,28 +95,30 @@ var PREFIX_A = '/api/';
 var PREFIX_B = 'egg-born-module-';
 var PREFIX_C = './egg-born-module-';
 var PREFIX_D = './';
-
 /* harmony default export */ __webpack_exports__["default"] = ({
   parseInfo: function parseInfo(moduleName) {
     if (!moduleName) return null;
     if (moduleName.charAt(0) === '/') moduleName = moduleName.substr(1);
     var parts = moduleName.split('/');
+
     if (parts.length < 2) {
       parts = moduleName.split('-');
       if (parts.length < 2) return null;
     }
+
     return {
       pid: parts[0],
       name: parts[1],
-      fullName: 'egg-born-module-' + parts[0] + '-' + parts[1],
-      relativeName: parts[0] + '-' + parts[1],
-      url: parts[0] + '/' + parts[1],
+      fullName: "egg-born-module-".concat(parts[0], "-").concat(parts[1]),
+      relativeName: "".concat(parts[0], "-").concat(parts[1]),
+      url: "".concat(parts[0], "/").concat(parts[1]),
       sync: parts[2] === 'sync',
       monkey: parts[2] === 'monkey'
     };
   },
   parseName: function parseName(moduleUrl) {
     if (!moduleUrl) return null;
+
     if (moduleUrl.indexOf(PREFIX_A) === 0) {
       var posA = PREFIX_A.length;
       var posB = moduleUrl.indexOf('/', posA) + 1;
@@ -131,6 +133,7 @@ var PREFIX_D = './';
     } else if (moduleUrl.indexOf(PREFIX_D) === 0) {
       return this._parseName(moduleUrl, PREFIX_D);
     }
+
     return null;
   },
   _parseName: function _parseName(moduleUrl, prefix) {
