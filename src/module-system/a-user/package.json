@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-user",
-  "version": "3.0.13",
+  "version": "3.0.14",
   "title": "User",
   "eggBornModule": {
     "dependencies": {
