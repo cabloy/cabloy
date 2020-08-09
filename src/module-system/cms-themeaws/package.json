@@ -16,7 +16,8 @@
   "scripts": {
     "build:front": "node build/front/build.js",
     "build:backend": "node build/backend/build.js",
-    "lint": "eslint front backend"
+    "lint": "eslint front backend",
+    "preversion": "npm run build:front && npm run build:backend"
   },
   "author": "zhennann",
   "dependencies": {
