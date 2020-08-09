@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-pluginbase",
-  "version": "3.0.7",
+  "version": "3.0.8",
   "title": "cms:plugin:base",
   "eggBornModule": {
     "cms": {

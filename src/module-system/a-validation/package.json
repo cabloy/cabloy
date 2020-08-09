@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-validation",
-  "version": "3.0.9",
+  "version": "3.0.10",
   "eggBornModule": {
     "dependencies": {
       "a-instance": "3.0.0"
