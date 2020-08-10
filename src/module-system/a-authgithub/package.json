@@ -14,11 +14,12 @@
     "build:front": "node build/front/build.js",
     "build:backend": "node build/backend/build.js",
     "lint": "eslint front backend",
-    "preversion": "npm run build:front && npm run build:backend"
+    "preversion": "npm run build:front && npm run build:backend && git add ."
   },
   "author": "zhennann",
   "dependencies": {
     "passport-github": "^1.1.0",
-    "require3": "^1.0.7"
+    "require3": "^1.0.7",
+    "egg-born-mparse": "^1.1.6"
   }
 }

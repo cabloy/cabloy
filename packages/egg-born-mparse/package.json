@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "node build/front/build.js",
-    "preversion": "npm run build"
+    "preversion": "npm run build && git add ."
   },
   "repository": {
     "type": "git",
