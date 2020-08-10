@@ -28,6 +28,7 @@
     "extend2": "^1.0.0",
     "require3": "^1.0.7",
     "wechat-crypto": "^0.0.2",
-    "xml2js": "^0.4.23"
+    "xml2js": "^0.4.23",
+    "egg-born-mparse": "^1.1.6"
   }
 }

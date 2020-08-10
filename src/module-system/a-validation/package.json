@@ -19,6 +19,7 @@
     "ajv-i18n": "^3.5.0",
     "ajv-keywords": "^3.4.1",
     "js-beautify": "^1.10.3",
-    "require3": "^1.0.7"
+    "require3": "^1.0.7",
+    "egg-born-mparse": "^1.1.6"
   }
 }

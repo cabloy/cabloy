@@ -20,6 +20,7 @@
   "dependencies": {
     "extend2": "^1.0.0",
     "require3": "^1.0.7",
-    "trek-captcha": "^0.4.0"
+    "trek-captcha": "^0.4.0",
+    "egg-born-mparse": "^1.1.6"
   }
 }

@@ -44,6 +44,7 @@
     "p-map": "^3.0.0",
     "require3": "^1.0.7",
     "sha.js": "^2.4.11",
-    "uglify-js": "^3.7.7"
+    "uglify-js": "^3.7.7",
+    "egg-born-mparse": "^1.1.6"
   }
 }

@@ -26,6 +26,7 @@
     "pump": "^3.0.0",
     "require3": "^1.0.7",
     "stream-wormhole": "^1.1.0",
-    "uuid": "^3.4.0"
+    "uuid": "^3.4.0",
+    "egg-born-mparse": "^1.1.6"
   }
 }

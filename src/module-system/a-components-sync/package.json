@@ -14,6 +14,7 @@
   "author": "zhennann",
   "dependencies": {
     "clipboard": "^2.0.4",
-    "require3": "^1.0.7"
+    "require3": "^1.0.7",
+    "egg-born-mparse": "^1.1.6"
   }
 }

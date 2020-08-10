@@ -24,6 +24,7 @@
     "@zhennann/socketio": "^1.0.4",
     "extend2": "^1.0.0",
     "require3": "^1.0.7",
-    "socket.io-client": "^2.3.0"
+    "socket.io-client": "^2.3.0",
+    "egg-born-mparse": "^1.1.6"
   }
 }

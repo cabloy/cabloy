@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "extend2": "^1.0.0",
-    "require3": "^1.0.7"
+    "require3": "^1.0.7",
+    "egg-born-mparse": "^1.1.6"
   }
 }
