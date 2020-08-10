@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-dingtalk",
-  "version": "3.0.6",
+  "version": "3.0.7",
   "title": "DingTalk",
   "eggBornModule": {
     "fileVersion": 1,
@@ -24,8 +24,8 @@
   "dependencies": {
     "@zhennann/node-dingtalk": "^2.1.8",
     "dingtalk-encrypt": "^1.2.1",
+    "egg-born-mparse": "^1.1.8",
     "extend2": "^1.0.0",
-    "require3": "^1.0.7",
-    "egg-born-mparse": "^1.1.6"
+    "require3": "^1.0.7"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-themeaws",
-  "version": "3.0.10",
+  "version": "3.0.11",
   "title": "cms:theme:aws",
   "eggBornModule": {
     "cms": {
@@ -21,9 +21,9 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "egg-born-module-cms-themeblog": "^3.0.15",
+    "egg-born-module-cms-themeblog": "^3.0.16",
+    "egg-born-mparse": "^1.1.8",
     "extend2": "^1.0.0",
-    "require3": "^1.0.7",
-    "egg-born-mparse": "^1.1.6"
+    "require3": "^1.0.7"
   }
 }

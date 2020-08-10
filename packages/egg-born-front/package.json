@@ -1,6 +1,6 @@
 {
   "name": "egg-born-front",
-  "version": "7.0.15",
+  "version": "7.0.16",
   "description": "egg-born-front",
   "scripts": {
     "lint": "eslint src",
@@ -42,8 +42,8 @@
     "connect-history-api-fallback": "^1.6.0",
     "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^3.4.2",
-    "egg-born-localeutil": "^1.0.10",
-    "egg-born-mparse": "^1.1.7",
+    "egg-born-localeutil": "^1.0.11",
+    "egg-born-mparse": "^1.1.8",
     "eslint": "^7.3.0",
     "eslint-config-egg": "^8.0.1",
     "eslint-plugin-vuefix": "^0.2.1",

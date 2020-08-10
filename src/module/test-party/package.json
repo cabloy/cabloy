@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-test-party",
-  "version": "3.0.32",
+  "version": "3.0.33",
   "title": "Party",
   "eggBornModule": {
     "fileVersion": 6,
@@ -15,7 +15,6 @@
     "build:backend": "node build/backend/build.js",
     "lint": "eslint front backend",
     "preversion": "npm run build:front && npm run build:backend && git add ."
-
   },
   "author": "zhennann",
   "devDependencies": {
@@ -25,8 +24,8 @@
     "eslint-plugin-vuefix": "^0.2.1"
   },
   "dependencies": {
+    "egg-born-mparse": "^1.1.8",
     "extend2": "^1.0.0",
-    "require3": "^1.0.7",
-    "egg-born-mparse": "^1.1.6"
+    "require3": "^1.0.7"
   }
 }

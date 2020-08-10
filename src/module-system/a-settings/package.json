@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-settings",
-  "version": "3.0.7",
+  "version": "3.0.8",
   "title": "Settings",
   "eggBornModule": {
     "fileVersion": 1,
@@ -18,8 +18,8 @@
   "author": "zhennann",
   "dependencies": {
     "assert": "^2.0.0",
+    "egg-born-mparse": "^1.1.8",
     "extend2": "^1.0.0",
-    "require3": "^1.0.7",
-    "egg-born-mparse": "^1.1.6"
+    "require3": "^1.0.7"
   }
 }

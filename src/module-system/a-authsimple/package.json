@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-authsimple",
-  "version": "3.0.8",
+  "version": "3.0.9",
   "title": "Auth-Simple",
   "eggBornModule": {
     "fileVersion": 1,
@@ -18,9 +18,9 @@
   },
   "author": "zhennann",
   "dependencies": {
+    "egg-born-mparse": "^1.1.8",
     "passport-strategy": "^1.0.0",
     "password-hash-and-salt": "^0.1.4",
-    "require3": "^1.0.7",
-    "egg-born-mparse": "^1.1.6"
+    "require3": "^1.0.7"
   }
 }

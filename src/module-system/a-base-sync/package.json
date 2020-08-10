@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-base-sync",
-  "version": "3.0.28",
+  "version": "3.0.29",
   "title": "Base",
   "eggBornModule": {
     "fileVersion": 8,
@@ -23,11 +23,10 @@
     "@zhennann/markdown": "^2.0.4",
     "@zhennann/markdown-it-block": "^2.0.5",
     "@zhennann/trim-html": "^0.1.12",
-    "egg-born-mparse": "^1.1.6",
+    "egg-born-mparse": "^1.1.8",
     "extend2": "^1.0.0",
     "moment": "^2.24.0",
     "qr-image": "^3.2.0",
-    "require3": "^1.0.7",
-    "egg-born-mparse": "^1.1.6"
+    "require3": "^1.0.7"
   }
 }
