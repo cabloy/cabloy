@@ -1,6 +1,6 @@
 {
   "name": "egg-born-mparse",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "egg-born-mparse",
   "main": "dist/index.js",
   "scripts": {

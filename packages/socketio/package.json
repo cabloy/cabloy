@@ -1,6 +1,6 @@
 {
   "name": "@zhennann/socketio",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "socketio",
   "main": "dist/socketio.min.js",
   "scripts": {
