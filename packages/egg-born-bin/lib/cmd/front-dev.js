@@ -11,10 +11,9 @@ class FrontDevCommand extends Command {
   * run({ cwd, argv }) {
     console.log('run front dev at %s', cwd);
 
-    const devServer = path.join(cwd, 'node_modules/egg-born-front/build/dev-server.js');
-    const ops = {
-      cwd: path.join(cwd, 'node_modules/egg-born-front'),
-    };
+    const devServer = require.resolve('egg-born-front/build/dev-server.js');
+
+    const ops = { cwd };
 
     const args = [];
     if (argv.scene) args.push(`--scene=${argv.scene}`);

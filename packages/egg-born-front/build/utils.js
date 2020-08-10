@@ -78,8 +78,8 @@ exports.copyModules = async function() {
   const modulesGlobal = {};
 
   // path
-  const projectPath = path.join(__dirname, '../../..');
-  const nodeModulesPath = path.join(__dirname, '../..');
+  const projectPath = config.projectPath;
+  const nodeModulesPath = path.join(projectPath, 'node_modules');
 
   // clear
   fse.emptyDirSync(path.join(__dirname, '__runtime'));
@@ -141,7 +141,7 @@ exports.copyModules = async function() {
 
 // get index.ejs
 exports.getIndexPath = function() {
-  const index = path.join(__dirname, '../../../src/front/index.ejs');
+  const index = path.join(config.projectPath, 'src/front/index.ejs');
   if (fse.existsSync(index)) return index;
   return path.join(__dirname, '../index.ejs');
 };

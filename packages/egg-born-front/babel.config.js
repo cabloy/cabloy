@@ -14,7 +14,7 @@ module.exports = {
   {
     test:
     {
-      presets: [ 'env' ],
+      presets: [ '@babel/preset-env' ],
       plugins: [ 'istanbul' ],
     },
   },

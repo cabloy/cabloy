@@ -74,18 +74,18 @@ const webpackConfig = merge(baseWebpackConfig, {
       {
         test: /\.js$/,
         loader: 'babel-loader',
-        include: [
-          resolve('src'),
-          resolve('../../src'),
-          resolve('../../modules'),
-          // resolve('build/__runtime/modules'),
-          resolve('../@zhennann/framework7/packages'),
-        ],
+        // include: [
+        //   resolve('src'),
+        //   path.join(config.projectPath, 'src'),
+        //   // path.join(config.projectPath, 'modules'),
+        //   // resolve('build/__runtime/modules'),
+        //   // resolve('../@zhennann/framework7/packages'),
+        // ],
         exclude: /\.min\.js$/,
       },
       ...utils.styleLoaders({
         sourceMap: config.build.productionSourceMap,
-        extract: true,
+        extract: false,
       }) ],
   },
   devtool: config.build.productionSourceMap ? 'source-map' : false,

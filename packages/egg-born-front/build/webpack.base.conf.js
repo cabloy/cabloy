@@ -13,7 +13,7 @@ function hasHash(file) {
 }
 
 // vue module path
-let vueModulePath = resolve('../@zhennann/vue/dist/vue.esm.js');
+let vueModulePath = path.join(config.projectPath, 'node_modules/@zhennann/vue/dist/vue.esm.js');
 if (!fse.existsSync(vueModulePath)) {
   vueModulePath = resolve('node_modules/@zhennann/vue/dist/vue.esm.js');
 }

@@ -25,7 +25,7 @@ meta.theme = require('./base/theme.js').default(Vue);
 require('./base/mixin.js').default(Vue);
 
 // install module main
-const instanceMain = require('../../../src/front/main.js');
+const instanceMain = require(`${process.env.PROJECTPATH}/src/front/main.js`);
 meta.module.install(instanceMain, { relativeName: 'main' }, module => {
   // vue parameters
   require('./inject/framework7.js').default(Vue, module.options, parameters => {

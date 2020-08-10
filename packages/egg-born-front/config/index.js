@@ -2,7 +2,17 @@
 const path = require('path');
 const merge = require('webpack-merge');
 const yargs = require('yargs');
-const config = require('../../../build/config.js');
+
+function __getProjectPath() {
+  return process.cwd();
+}
+
+// path
+const projectPath = __getProjectPath();
+const frontPath = path.join(__dirname, '..');
+
+// config
+const config = require(path.join(projectPath, 'build/config.js'));
 
 // proxyTarget
 const proxyTarget = config.front.dev.proxyBaseURL || `http://${config.backend.hostname}:${config.backend.port}`;
@@ -11,15 +21,19 @@ const proxyTarget = config.front.dev.proxyBaseURL || `http://${config.backend.ho
 const argv = yargs(process.argv).argv;
 const sceneValue = argv.scene || 'web';
 
-const envScene = {
+const envCustom = {
   build: {
     env: {
       SCENE: JSON.stringify(sceneValue),
+      PROJECTPATH: JSON.stringify(projectPath),
+      FRONTPATH: JSON.stringify(frontPath),
     },
   },
   dev: {
     env: {
       SCENE: JSON.stringify(sceneValue),
+      PROJECTPATH: JSON.stringify(projectPath),
+      FRONTPATH: JSON.stringify(frontPath),
     },
   },
 };
@@ -29,6 +43,8 @@ const distPath = path.resolve(__dirname, `../dist${sceneValue ? '/' + sceneValue
 
 // merge
 module.exports = merge({
+  projectPath,
+  frontPath,
   build: {
     env: require('./prod.env'),
     index: path.resolve(distPath, 'index.html'),
@@ -70,4 +86,4 @@ module.exports = merge({
     // just be aware of this issue when enabling this option.
     cssSourceMap: false,
   },
-}, envScene, config.front);
+}, envCustom, config.front);

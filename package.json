@@ -19,8 +19,8 @@
   },
   "homepage": "https://github.com/zhennann/cabloy#readme",
   "scripts": {
-    "dev:front": "egg-born-bin front-dev",
-    "build:front": "egg-born-bin front-build",
+    "dev:front": "npx ./packages/egg-born-bin/bin/egg-born-bin.js front-dev",
+    "build:front": "npx ./packages/egg-born-bin/bin/egg-born-bin.js front-build",
     "dev:backend": "egg-born-bin backend-dev",
     "debug:backend": "egg-born-bin backend-debug",
     "lint": "eslint src",

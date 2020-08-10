@@ -11,10 +11,9 @@ class FrontBuildCommand extends Command {
   * run({ cwd, argv }) {
     console.log('run front build at %s', cwd);
 
-    const build = path.join(cwd, 'node_modules/egg-born-front/build/build.js');
-    const ops = {
-      cwd: path.join(cwd, 'node_modules/egg-born-front'),
-    };
+    const build = require.resolve('egg-born-front/build/build.js');
+
+    const ops = { cwd };
 
     const args = [];
     if (argv.scene) args.push(`--scene=${argv.scene}`);
