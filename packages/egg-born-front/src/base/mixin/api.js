@@ -13,6 +13,7 @@ export default function(Vue) {
   if (!axios.__ebDefaultResponseDisable) {
     // response
     axios.interceptors.response.use(function(response) {
+      if (response.headers['content-type'].indexOf('application/json') === -1) return response;
       if (response.data.code !== 0) {
         const error = new Error();
         error.code = response.data.code;
