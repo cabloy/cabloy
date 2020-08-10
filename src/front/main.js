@@ -4,6 +4,7 @@ import locales from './locales.js';
 
 let Vue;
 
+// eslint-disable-next-line
 const bootstrap = require(`${process.env.FRONTPATH}/src/bootstrap.js`);
 
 // install
