@@ -29,5 +29,5 @@ node_modules
 sftp-config.json
 todo.md
 
+/packages/egg-born-front/dist
 /packages/egg-born-front/build/__runtime
-
