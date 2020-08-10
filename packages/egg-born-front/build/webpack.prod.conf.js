@@ -60,28 +60,12 @@ const webpackConfig = merge(baseWebpackConfig, {
   module: {
     rules: [
       {
-        test: /\.esm\.js$/,
-        loader: 'babel-loader',
-      },
-      {
-        test: /\.esm\.bundle\.js$/,
-        loader: 'babel-loader',
-      },
-      {
-        test: /\.module\.js$/,
-        loader: 'babel-loader',
-      },
-      {
         test: /\.js$/,
         loader: 'babel-loader',
-        // include: [
-        //   resolve('src'),
-        //   path.join(config.projectPath, 'src'),
-        //   // path.join(config.projectPath, 'modules'),
-        //   // resolve('build/__runtime/modules'),
-        //   // resolve('../@zhennann/framework7/packages'),
-        // ],
-        exclude: /\.min\.js$/,
+        exclude: [
+          /\.min\.js$/,
+          resolve('build/__runtime/modules'),
+        ],
       },
       ...utils.styleLoaders({
         sourceMap: config.build.productionSourceMap,
