@@ -61,11 +61,28 @@ const webpackConfig = merge(baseWebpackConfig, {
     rules: [
       {
         test: /\.js$/,
-        loader: 'babel-loader',
+        include: [
+          config.projectPath,
+        ],
         exclude: [
           /\.min\.js$/,
           resolve('build/__runtime/modules'),
         ],
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              [
+                '@babel/preset-env',
+                {
+                  modules: false,
+                  useBuiltIns: false,
+                },
+              ],
+            ],
+            plugins: [ '@babel/plugin-syntax-dynamic-import' ],
+          },
+        },
       },
       ...utils.styleLoaders({
         sourceMap: config.build.productionSourceMap,
@@ -124,4 +141,3 @@ const webpackConfig = merge(baseWebpackConfig, {
 });
 
 module.exports = webpackConfig;
-
