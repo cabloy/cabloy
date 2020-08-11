@@ -101,10 +101,6 @@ module.exports = function(loader) {
     const modules = mglob.glob();
     for (const relativeName in modules) {
       const module = modules[relativeName];
-      const pkg = util.lookupPackage(module.js.backend);
-      module.root = path.dirname(pkg);
-      module.pkg = pkg;
-      module.package = require(pkg);
       if (module.info.monkey) {
         ebModulesMonkey[relativeName] = module;
       }

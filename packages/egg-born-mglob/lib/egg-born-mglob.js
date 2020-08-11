@@ -42,10 +42,17 @@ function eggBornMglob() {
         info.public = __path.public;
         if (!modules[info.relativeName]) {
           // more info
+          const root = file.substr(0, file.length - jsFront.length - 1);
+          const pkg=`${root}/package.json`;
+          const package=require(pkg);
           const jsFrontPath = file;
-          const jsBackendPath = file.substr(0, file.length - jsFront.length) + jsBackend;
+          const jsBackendPath = `${root}/${jsBackend}`;
           // record
-          modules[info.relativeName] = { name, info, js: { front: jsFrontPath, backend: jsBackendPath } };
+          modules[info.relativeName] = {
+            name, info,
+            root,pkg,package,
+            js: { front: jsFrontPath, backend: jsBackendPath }
+          };
         }
       }
     }
