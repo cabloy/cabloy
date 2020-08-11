@@ -30,6 +30,7 @@
   "homepage": "https://github.com/zhennann/egg-born-module-a-version#readme",
   "dependencies": {
     "chalk": "^3.0.0",
+    "egg-born-mock": "^1.1.4",
     "egg-born-mparse": "^1.1.8",
     "require3": "^1.0.7"
   }

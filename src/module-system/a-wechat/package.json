@@ -24,6 +24,7 @@
   "dependencies": {
     "@zhennann/co-wechat-api": "^3.10.6",
     "@zhennann/passport-wechat": "^3.0.2",
+    "egg-born-mock": "^1.1.4",
     "egg-born-mparse": "^1.1.8",
     "extend2": "^1.0.0",
     "require3": "^1.0.7",

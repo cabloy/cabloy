@@ -19,6 +19,7 @@
   "author": "zhennann",
   "dependencies": {
     "boxen": "^4.2.0",
+    "egg-born-mock": "^1.1.4",
     "egg-born-mparse": "^1.1.8",
     "extend2": "^1.0.0",
     "nodemailer": "^6.4.2",

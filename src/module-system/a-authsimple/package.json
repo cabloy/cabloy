@@ -18,6 +18,7 @@
   },
   "author": "zhennann",
   "dependencies": {
+    "egg-born-mock": "^1.1.4",
     "egg-born-mparse": "^1.1.8",
     "passport-strategy": "^1.0.0",
     "password-hash-and-salt": "^0.1.4",

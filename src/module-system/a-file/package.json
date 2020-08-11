@@ -20,6 +20,7 @@
   "dependencies": {
     "bluebird": "^3.7.2",
     "cropperjs": "^1.5.6",
+    "egg-born-mock": "^1.1.4",
     "egg-born-mparse": "^1.1.8",
     "extend2": "^1.0.0",
     "fs-extra": "^8.1.0",

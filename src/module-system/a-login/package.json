@@ -13,6 +13,7 @@
   },
   "author": "zhennann",
   "dependencies": {
+    "egg-born-mock": "^1.1.4",
     "egg-born-mparse": "^1.1.8",
     "require3": "^1.0.7"
   }
