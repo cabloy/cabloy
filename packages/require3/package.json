@@ -21,5 +21,10 @@
     "eslint": "^7.3.0",
     "eslint-config-egg": "^8.0.1",
     "eslint-plugin-vuefix": "^0.2.1"
+  },
+  "dependencies": {
+    "@zhennann/markdown": "^2.0.4",
+    "@zhennann/markdown-it-block": "^2.0.5",
+    "egg-born-mparse": "^1.1.8"
   }
 }

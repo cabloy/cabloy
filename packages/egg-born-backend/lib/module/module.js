@@ -2,8 +2,7 @@ const glob = require('glob');
 const semver = require('semver');
 const chalk = require('chalk');
 const path = require('path');
-const mparse = require('egg-born-mparse').default;
-const policy = require('./policy.js');
+const mglob = require('egg-born-mglob');
 const util = require('./util.js');
 
 module.exports = function(loader) {
@@ -34,7 +33,7 @@ module.exports = function(loader) {
 
   function loadModules() {
     for (const module of ebModulesArray) {
-      module.main = loader.loadFile(module.file, loader.app, module);
+      module.main = loader.loadFile(module.js.backend, loader.app, module);
     }
   }
 
@@ -99,32 +98,17 @@ module.exports = function(loader) {
   }
 
   function parseModules() {
-    // project first, then nodeModules
-    return _parseModules(_parseModules({}, policy.projectModules, false), policy.nodeModules, true);
-  }
-
-  function _parseModules(modules, policy, _public) {
-    const files = glob.sync(`${policy.modulesPath}*${policy.jsPath}`);
-    files.forEach(file => {
-      const pos1 = policy.modulesPath.length;
-      const pos2 = file.indexOf('/', pos1);
-      const name = file.substr(pos1, pos2 - pos1);
-
-      if (!_public && name.indexOf('egg-born-module-') > -1) {
-        throw new Error(`Should use relative name for private module: ${name}`);
+    const modules = mglob.glob();
+    for (const relativeName in modules) {
+      const module = modules[relativeName];
+      const pkg = util.lookupPackage(module.js.backend);
+      module.root = path.dirname(pkg);
+      module.pkg = pkg;
+      module.package = require(pkg);
+      if (module.info.monkey) {
+        ebModulesMonkey[relativeName] = module;
       }
-
-      const info = mparse.parseInfo(name);
-      info.public = _public;
-      if (!modules[info.relativeName]) {
-        const pkg = util.lookupPackage(file);
-        const root = path.dirname(pkg);
-        modules[info.relativeName] = { root, file, name, info, pkg, package: require(pkg) };
-        if (info.monkey) {
-          ebModulesMonkey[info.relativeName] = modules[info.relativeName];
-        }
-      }
-    });
+    }
     return modules;
   }
 

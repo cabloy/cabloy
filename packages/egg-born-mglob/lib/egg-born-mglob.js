@@ -9,38 +9,48 @@ module.exports = {
 };
 
 const __paths = [
-  { path: 'src/module', public: false, jsBackend: 'backend/src/main.js,dist/backend.js' },
-  { path: 'src/module-system', public: false, jsBackend: 'backend/src/main.js,dist/backend.js' },
-  { path: 'node_modules', public: true, jsBackend: 'dist/backend.js' },
+  { prefix: 'src/module/', public: false, jsFront: 'front/src/main.js,dist/front.js', jsBackend: 'backend/src/main.js,dist/backend.js' },
+  { prefix: 'src/module-system/', public: false, jsFront: 'front/src/main.js,dist/front.js', jsBackend: 'backend/src/main.js,dist/backend.js' },
+  { prefix: 'node_modules/egg-born-module-', public: true, jsFront: 'dist/front.js', jsBackend: 'dist/backend.js' },
 ];
 
 function eggBornMglob() {
+  // modules
+  const modules = {};
   // path
   const projectPath = process.cwd();
 
   // loop
   for (const __path of __paths) {
-    const files = glob.sync(`${policy.modulesPath}*${policy.jsPath}`);
-    files.forEach(file => {
-      const pos1 = policy.modulesPath.length;
-      const pos2 = file.indexOf('/', pos1);
-      const name = file.substr(pos1, pos2 - pos1);
-
-      if (!_public && name.indexOf('egg-born-module-') > -1) {
-        throw new Error(`Should use relative name for private module: ${name}`);
-      }
-
-      const info = mparse.parseInfo(name);
-      info.public = _public;
-      if (!modules[info.relativeName]) {
-        const pkg = util.lookupPackage(file);
-        const root = path.dirname(pkg);
-        modules[info.relativeName] = { root, file, name, info, pkg, package: require(pkg) };
-        if (info.monkey) {
-          ebModulesMonkey[info.relativeName] = modules[info.relativeName];
+    const jsFronts = __path.jsFront.split(',');
+    const jsBackends = __path.jsBackend.split(',');
+    for (const index in jsFronts) {
+      const jsFront = jsFronts[index];
+      const jsBackend = jsBackends[index];
+      const prefix = `${projectPath}/${__path.prefix}`;
+      const files = glob.sync(`${prefix}*/${jsFront}`);
+      for (const file of files) {
+        // name
+        const pos1 = prefix.length;
+        const pos2 = file.indexOf('/', pos1);
+        const name = file.substr(pos1, pos2 - pos1);
+        if (!__path.public && name.indexOf('egg-born-module-') > -1) {
+          throw new Error(`Should use relative name for private module: ${name}`);
+        }
+        // info
+        const info = mparse.parseInfo(name);
+        info.public = __path.public;
+        if (!modules[info.relativeName]) {
+          // more info
+          const jsFrontPath = file;
+          const jsBackendPath = file.substr(0, file.length - jsFront.length) + jsBackend;
+          // record
+          modules[info.relativeName] = { name, info, js: { front: jsFrontPath, backend: jsBackendPath } };
         }
       }
-    });
+    }
   }
 
+  // ok
+  return modules;
 }
