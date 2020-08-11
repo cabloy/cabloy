@@ -103,7 +103,7 @@ export default function(Vue) {
       const moduleRepo = modulesRepo.modules[relativeName];
       if (!moduleRepo) throw new Error(`Module ${relativeName} not exists`);
       moduleRepo.instance().then(instance => {
-        if (!instance) {
+        if (!instance || !instance.default || !instance.default.install) {
           instance = window[relativeName];
         }
         this.install(instance, moduleRepo.info, module => {
