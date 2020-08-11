@@ -66,7 +66,7 @@ const webpackConfig = merge(baseWebpackConfig, {
         ],
         exclude: [
           /\.min\.js$/,
-          resolve('build/__runtime/modules'),
+          resolve('build/__runtime/modules/'),
         ],
         use: {
           loader: 'babel-loader',
@@ -129,7 +129,7 @@ const webpackConfig = merge(baseWebpackConfig, {
         chunkFilter: chunk => {
           if (!chunk._modules) return true;
           for (const module of chunk._modules.values()) {
-            if (module.resource && (module.resource.indexOf('.min.js') > -1 || module.resource.indexOf('/build/__runtime/modules') > -1)) {
+            if (module.resource && (module.resource.indexOf('.min.js') > -1 || module.resource.indexOf('/build/__runtime/modules/') > -1)) {
               return false;
             }
           }
