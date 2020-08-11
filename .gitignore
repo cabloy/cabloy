@@ -31,3 +31,8 @@ todo.md
 
 /packages/egg-born-front/dist
 /packages/egg-born-front/build/__runtime
+
+
+/src/module-system/a-authsms/backend
+/src/module-system/a-authsms/front
+/src/module-system/a-authsms/build
