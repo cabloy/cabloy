@@ -5,7 +5,7 @@
   "eggBornModule": {
     "fileVersion": 3,
     "dependencies": {
-      "a-base": "3.0.0"
+      "a-base": "4.0.0"
     }
   },
   "description": "",
