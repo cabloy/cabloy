@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-captcha",
-  "version": "3.0.8",
+  "version": "3.0.9",
   "title": "a-captcha",
   "eggBornModule": {
     "fileVersion": 0,
@@ -21,6 +21,6 @@
     "egg-born-mock": "^1.1.4",
     "egg-born-mparse": "^1.1.8",
     "extend2": "^1.0.0",
-    "require3": "^1.0.7"
+    "require3": "^1.0.8"
   }
 }

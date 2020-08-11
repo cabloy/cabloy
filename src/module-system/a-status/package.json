@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-status",
-  "version": "3.0.8",
+  "version": "3.0.9",
   "eggBornModule": {
     "fileVersion": 1,
     "dependencies": {
@@ -19,6 +19,6 @@
     "assert": "^2.0.0",
     "egg-born-mock": "^1.1.4",
     "egg-born-mparse": "^1.1.8",
-    "require3": "^1.0.7"
+    "require3": "^1.0.8"
   }
 }

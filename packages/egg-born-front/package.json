@@ -1,6 +1,6 @@
 {
   "name": "egg-born-front",
-  "version": "7.0.16",
+  "version": "7.0.17",
   "description": "egg-born-front",
   "scripts": {
     "lint": "eslint src",
@@ -43,7 +43,7 @@
     "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^3.4.2",
     "egg-born-localeutil": "^1.0.11",
-    "egg-born-mglob": "^1.0.0",
+    "egg-born-mglob": "^1.0.1",
     "egg-born-mparse": "^1.1.8",
     "eslint": "^7.3.0",
     "eslint-config-egg": "^8.0.1",

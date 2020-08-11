@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-login",
-  "version": "3.0.10",
+  "version": "3.0.11",
   "eggBornModule": {
     "dependencies": {}
   },
@@ -15,6 +15,6 @@
   "dependencies": {
     "egg-born-mock": "^1.1.4",
     "egg-born-mparse": "^1.1.8",
-    "require3": "^1.0.7"
+    "require3": "^1.0.8"
   }
 }
