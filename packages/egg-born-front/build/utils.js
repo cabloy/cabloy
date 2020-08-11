@@ -6,6 +6,7 @@ const bb = require('bluebird');
 const fse = require('fs-extra');
 const chalk = require('chalk');
 const mparse = require('egg-born-mparse').default;
+const mglob = require('egg-born-mglob');
 
 exports.assetsPath = function(_path) {
   const assetsSubDirectory = process.env.NODE_ENV === 'production'
@@ -116,6 +117,8 @@ exports.copyModules = async function() {
       if (fse.existsSync(fileSrc)) fse.copySync(fileSrc, fileDest);
     }
   });
+
+  mglob.glob();
 
   // save to modules.js
   const modulesJS =

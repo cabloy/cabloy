@@ -7,7 +7,7 @@
   "license": "MIT",
   "main": "lib/egg-born-mglob.js",
   "directories": {
-    "lib": "lib",
+    "lib": "lib"
   },
   "files": [
     "lib"
@@ -21,5 +21,8 @@
   },
   "bugs": {
     "url": "https://github.com/zhennann/cabloy-lerna/issues"
+  },
+  "dependencies": {
+    "egg-born-mparse": "^1.1.8"
   }
 }
