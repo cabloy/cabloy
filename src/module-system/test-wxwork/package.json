@@ -5,7 +5,7 @@
   "eggBornModule": {
     "fileVersion": 0,
     "dependencies": {
-      "a-instance": "3.0.0",
+      "a-instance": "4.0.0",
       "a-base": "3.0.0",
       "a-wxwork": "3.0.0"
     }

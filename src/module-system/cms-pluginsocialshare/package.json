@@ -9,7 +9,7 @@
     },
     "fileVersion": 0,
     "dependencies": {
-      "a-instance": "3.0.0",
+      "a-instance": "4.0.0",
       "a-base": "3.0.0",
       "cms-pluginbase": "3.0.0"
     }

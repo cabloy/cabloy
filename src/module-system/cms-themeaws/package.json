@@ -9,7 +9,7 @@
       "extend": "cms-themeblog"
     },
     "dependencies": {
-      "a-instance": "3.0.0"
+      "a-instance": "4.0.0"
     }
   },
   "description": "",
