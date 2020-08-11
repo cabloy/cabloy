@@ -1,0 +1,25 @@
+{
+  "name": "egg-born-mglob",
+  "version": "1.0.0",
+  "description": "egg-born-mglob",
+  "author": "zhennann <zhen.nann@icloud.com>",
+  "homepage": "https://github.com/zhennann/cabloy/tree/master/packages/egg-born-mglob#readme",
+  "license": "MIT",
+  "main": "lib/egg-born-mglob.js",
+  "directories": {
+    "lib": "lib",
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhennann/cabloy-lerna.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/zhennann/cabloy-lerna/issues"
+  }
+}
