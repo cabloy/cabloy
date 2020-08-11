@@ -186,6 +186,7 @@ const Fn = module.exports = ctx => {
 
     function({ module, name }) {
       const _functions = this.functions();
+      if (!_functions[module]) return null;
       return _functions[module][name];
     }
 
