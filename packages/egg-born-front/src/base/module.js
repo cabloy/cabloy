@@ -1,10 +1,8 @@
 import mparse from 'egg-born-mparse';
-import modulesInfo from '../../build/__runtime/modules.js';
+import modulesRepo from '../../build/__runtime/modules.js';
 
 const rLocalJSs = require.context('../../../../src/module/', true, /-sync\/front\/src\/main\.js$/);
 const rGlobalJSs = require.context('../../build/__runtime/modules/', true, /-sync\/dist\/front\.js$/);
-const rMonkeyLocalJSs = require.context('../../../../src/module/', true, /-monkey\/front\/src\/main\.js$/);
-const rMonkeyGlobalJSs = require.context('../../build/__runtime/modules/', true, /-monkey\/dist\/front\.js$/);
 
 export default function(Vue) {
   const loadingQueue = {
@@ -24,40 +22,41 @@ export default function(Vue) {
   };
 
   const module = {
-    _get(moduleRelativeName) {
-      return Vue.prototype.$meta.modules[moduleRelativeName || 'main'];
+    _get(relativeName) {
+      return Vue.prototype.$meta.modules[relativeName || 'main'];
     },
-    get(moduleRelativeName) {
-      const module = this._get(moduleRelativeName);
+    get(relativeName) {
+      const module = this._get(relativeName);
       if (module) return module;
       // try sync module
       try {
-        const moduleInfo = mparse.parseInfo(moduleRelativeName);
-        if (!moduleInfo) throw new Error('invalid module name!');
-        this._require(moduleInfo);
-        return this._get(moduleRelativeName);
+        this._require(relativeName);
+        return this._get(relativeName);
       } catch (err) {
         return null;
       }
     },
-    set(moduleRelativeName, module) {
-      Vue.prototype.$meta.modules[moduleRelativeName] = module;
+    set(relativeName, module) {
+      Vue.prototype.$meta.modules[relativeName] = module;
       if (module.info.monkey) {
-        Vue.prototype.$meta.modulesMonkey[moduleRelativeName] = module;
+        Vue.prototype.$meta.modulesMonkey[relativeName] = module;
       }
     },
     // use
-    //   moduleRelativeName / moduleRelativeName-sync
+    //   relativeName / relativeName-sync
     use(moduleName, cb) {
       const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;
-      if (!moduleInfo) throw new Error('invalid module name!');
-      const module = this._get(moduleInfo.relativeName);
+      if (!moduleInfo) throw new Error(`invalid module name: ${moduleName}`);
+      const relativeName = moduleInfo.relativeName;
+      const module = this._get(relativeName);
       if (module) return cb(module);
-      if (loadingQueue.push(moduleInfo.relativeName, cb)) {
-        if (moduleInfo.sync) {
-          this._require(moduleInfo, module => loadingQueue.pop(moduleInfo.relativeName, module));
+      const moduleRepo = modulesRepo.modules[relativeName];
+      if (!moduleRepo) throw new Error(`Module ${relativeName} not exists`);
+      if (loadingQueue.push(relativeName, cb)) {
+        if (moduleRepo.info.sync) {
+          this._require(relativeName, module => loadingQueue.pop(relativeName, module));
         } else {
-          this._import(moduleInfo, module => loadingQueue.pop(moduleInfo.relativeName, module));
+          this._import(relativeName, module => loadingQueue.pop(relativeName, module));
         }
       }
     },
@@ -100,97 +99,43 @@ export default function(Vue) {
         return cb && cb(module);
       });
     },
-    _import(moduleInfo, cb) {
-      this._import2(moduleInfo, instance => {
-        // instance
-        this.install(instance, moduleInfo, module => {
+    _import(relativeName, cb) {
+      const moduleRepo = modulesRepo.modules[relativeName];
+      if (!moduleRepo) throw new Error(`Module ${relativeName} not exists`);
+      moduleRepo.instance().then(instance => {
+        if (!instance) {
+          instance = window[relativeName];
+        }
+        this.install(instance, moduleRepo.info, module => {
           cb(module);
         });
       });
     },
-    _import2(moduleInfo, cb) {
-      const relativeName = moduleInfo.relativeName;
-      if (modulesInfo.modulesLocal[relativeName]) {
-        import('../../../../src/module/' + relativeName + '/front/src/main.js').then(instance => {
-          cb(instance);
-        });
-      } else if (modulesInfo.modulesGlobal[relativeName]) {
-        import('../../build/__runtime/modules/' + relativeName + '/dist/front.js').then(() => {
-          cb(window[relativeName]);
-        });
-      } else {
-        throw new Error(`Module ${relativeName} not found!!!`);
-      }
-    },
     requireAllMonkeys() {
-      // local
-      rMonkeyLocalJSs.keys().forEach(key => {
-        const moduleInfo = mparse.parseInfo(mparse.parseName(key));
-        const module = this._get(moduleInfo.relativeName);
-        if (!module) {
-          this._requireJS(rMonkeyLocalJSs, key, moduleInfo);
-        }
-      });
-      // global
-      rMonkeyGlobalJSs.keys().forEach(key => {
-        const moduleInfo = mparse.parseInfo(mparse.parseName(key));
-        const module = this._get(moduleInfo.relativeName);
-        if (!module) {
-          this._requireGlobalCSSJS(rMonkeyGlobalJSs, key, moduleInfo);
-        }
-      });
+      for (const relativeName in modulesRepo.modulesMonkey) {
+        const moduleRepo = modulesRepo.modules[relativeName];
+        this._requireJS(moduleRepo);
+      }
     },
     requireAllSyncs() {
-      // local
-      rLocalJSs.keys().forEach(key => {
-        const moduleInfo = mparse.parseInfo(mparse.parseName(key));
-        const module = this._get(moduleInfo.relativeName);
-        if (!module) {
-          this._requireJS(rLocalJSs, key, moduleInfo);
-        }
-      });
-      // global
-      rGlobalJSs.keys().forEach(key => {
-        const moduleInfo = mparse.parseInfo(mparse.parseName(key));
-        const module = this._get(moduleInfo.relativeName);
-        if (!module) {
-          this._requireGlobalCSSJS(rGlobalJSs, key, moduleInfo);
-        }
-      });
-    },
-    _require(moduleInfo, cb) {
-      let key = this._requireFindKey(rLocalJSs, moduleInfo.relativeName);
-      if (key) {
-        this._requireJS(rLocalJSs, key, moduleInfo, cb);
-      } else {
-        key = this._requireFindKey(rGlobalJSs, moduleInfo.relativeName);
-        if (key) {
-          this._requireGlobalCSSJS(rGlobalJSs, key, moduleInfo, cb);
-        } else {
-          throw new Error(`Module ${moduleInfo.relativeName} not exists`);
-        }
+      for (const relativeName in modulesRepo.modulesSync) {
+        const moduleRepo = modulesRepo.modules[relativeName];
+        this._requireJS(moduleRepo);
       }
     },
-    _requireFindKey(r, moduleRelativeName) {
-      return r.keys().find(key => {
-        const moduleInfo = mparse.parseInfo(mparse.parseName(key));
-        return moduleRelativeName === moduleInfo.relativeName;
-      });
+    _require(relativeName, cb) {
+      const moduleRepo = modulesRepo.modules[relativeName];
+      if (!moduleRepo) throw new Error(`Module ${relativeName} not exists`);
+      this._requireJS(moduleRepo, cb);
     },
-    _requireGlobalCSSJS(r, key, moduleInfo, cb) {
-      this._requireJS(r, key, moduleInfo, cb);
-    },
-    _requireCSS(r, key) {
-      return r(key);
-    },
-    _requireJS(r, key, moduleInfo, cb) {
+    _requireJS(moduleRepo, cb) {
       // instance
-      let instance = r(key);
+      let instance = moduleRepo.instance;
       if (!instance.default) {
-        instance = window[moduleInfo.relativeName];
+        instance = window[moduleRepo.info.relativeName];
       }
       // install
-      this.install(instance, moduleInfo, module => {
+      this.install(instance, moduleRepo.info, module => {
         // ok
         cb && cb(module);
       });

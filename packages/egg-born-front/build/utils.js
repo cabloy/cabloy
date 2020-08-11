@@ -77,6 +77,10 @@ exports.copyModules = async function() {
 
   const modulesLocal = {};
   const modulesGlobal = {};
+  const modulesMonkey = {};
+
+  // modules
+  const modules = mglob.glob();
 
   // path
   const projectPath = config.projectPath;
@@ -86,56 +90,92 @@ exports.copyModules = async function() {
   fse.emptyDirSync(path.join(__dirname, '__runtime'));
   fse.emptyDirSync(path.join(__dirname, '__runtime/modules'));
 
-  // local modules
-  let files = await bb.fromCallback(cb => {
-    glob(`${projectPath}/src/module/*`, cb);
-  });
-  files.forEach(modulePath => {
-    const moduleName = modulePath.substr(projectPath.length + '/src/module/'.length);
-    const moduleInfo = mparse.parseInfo(moduleName);
-    modulesLocal[moduleInfo.relativeName] = true;
-  });
-
   // global modules
-  files = await bb.fromCallback(cb => {
-    glob(`${nodeModulesPath}/egg-born-module-*`, cb);
-  });
-  files.forEach(modulePath => {
-    const moduleName = modulePath.substr(nodeModulesPath.length + '/egg-born-module-'.length);
-    const moduleInfo = mparse.parseInfo(moduleName);
-    if (!modulesLocal[moduleInfo.relativeName]) {
-      modulesGlobal[moduleInfo.relativeName] = true;
-      // copy js
-      let fileSrc = `${modulePath}/dist/front.js`;
-      let fileDest = path.join(__dirname, '__runtime/modules', modulePath.substr(nodeModulesPath.length + '/egg-born-module-'.length) + '/dist/front.js');
-      fse.copySync(fileSrc, fileDest);
-      // copy static
-      fileSrc = `${modulePath}/dist/static`;
-      fileDest = path.join(config.build.assetsRoot, config.build.assetsSubDirectory);
-      if (fse.existsSync(fileSrc)) fse.copySync(fileSrc, fileDest);
-      fileDest = path.join(__dirname, '__runtime/modules', modulePath.substr(nodeModulesPath.length + '/egg-born-module-'.length) + '/dist/static');
-      if (fse.existsSync(fileSrc)) fse.copySync(fileSrc, fileDest);
-    }
-  });
+  for (const relativeName in modules) {
+    const module = modules[relativeName];
+    if (!module.info.public) continue;
+    // copy js
+    let fileSrc = `${module.root}/dist/front.js`;
+    let fileDest = path.join(__dirname, '__runtime/modules', relativeName, 'dist/front.js');
+    fse.copySync(fileSrc, fileDest);
+    // copy static
+    fileSrc = `${module.root}/dist/static`;
+    fileDest = path.join(config.build.assetsRoot, config.build.assetsSubDirectory);
+    if (fse.existsSync(fileSrc)) fse.copySync(fileSrc, fileDest);
+    fileDest = path.join(__dirname, '__runtime/modules', relativeName, 'dist/static');
+    if (fse.existsSync(fileSrc)) fse.copySync(fileSrc, fileDest);
+  }
 
-  mglob.glob();
+  // require/import
+  let jsModules = '';
+  let jsModulesMonkey = '';
+  let jsModulesSync = '';
+  for (const relativeName in modules) {
+    const module = modules[relativeName];
+    // log
+    if (module.info.monkey) {
+      modulesMonkey[relativeName] = module;
+    } else if (module.info.public) {
+      modulesGlobal[relativeName] = module;
+    } else {
+      modulesLocal[relativeName] = module;
+    }
+    // js
+    if (module.info.monkey || module.info.sync) {
+      jsModules +=
+`
+modules['${relativeName}'] = {
+   instance: require('${module.js.front}'),
+   info: ${JSON.stringify(module.info)},
+}
+`;
+    } else {
+      jsModules +=
+`
+modules['${relativeName}'] = {
+   instance: () => import('${module.js.front}'),
+   info: ${JSON.stringify(module.info)},
+};
+`;
+    }
+    // js monkeys
+    // js syncs
+    if (module.info.monkey) {
+      jsModulesMonkey += `modulesMonkey['${relativeName}'] = true;\n`;
+    } else if (module.info.sync) {
+      jsModulesSync += `modulesSync['${relativeName}'] = true;\n`;
+    }
+  }
 
   // save to modules.js
   const modulesJS =
-`export default {
-  modulesLocal: ${JSON.stringify(modulesLocal)},
-  modulesGlobal: ${JSON.stringify(modulesGlobal)},
-}
+`
+const modules = {};
+const modulesSync = {};
+const modulesMonkey = {};
+${jsModules}
+${jsModulesSync}
+${jsModulesMonkey}
+export default {
+  modules,
+  modulesSync,
+  modulesMonkey,
+};
 `;
   fse.outputFileSync(path.join(__dirname, '__runtime/modules.js'), modulesJS);
 
   // log
+  console.log('\n');
   console.log(chalk.yellow('\n=== Local Modules ==='));
   for (const key in modulesLocal) {
     console.log(chalk.cyan('> ' + key));
   }
   console.log(chalk.yellow('\n=== Global Modules ==='));
   for (const key in modulesGlobal) {
+    console.log(chalk.cyan('> ' + key));
+  }
+  console.log(chalk.yellow('\n=== Monkey Modules ==='));
+  for (const key in modulesMonkey) {
     console.log(chalk.cyan('> ' + key));
   }
   console.log('\n');
