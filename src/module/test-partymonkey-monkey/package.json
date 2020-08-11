@@ -23,6 +23,7 @@
   "dependencies": {
     "egg-born-mparse": "^1.1.8",
     "extend2": "^1.0.0",
-    "require3": "^1.0.7"
+    "require3": "^1.0.7",
+    "egg-born-mock": "^1.1.4"
   }
 }

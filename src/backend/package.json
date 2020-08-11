@@ -1,6 +1,6 @@
 {
   "name": "cabloy",
   "egg": {
-    "framework": "egg-born-backend"
+    "framework": "../packages/egg-born-backend"
   }
 }

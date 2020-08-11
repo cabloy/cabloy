@@ -21,13 +21,13 @@
   "scripts": {
     "dev:front": "npx ./packages/egg-born-bin/bin/egg-born-bin.js front-dev",
     "build:front": "npx ./packages/egg-born-bin/bin/egg-born-bin.js front-build",
-    "dev:backend": "egg-born-bin backend-dev",
-    "debug:backend": "egg-born-bin backend-debug",
+    "dev:backend": "npx ./packages/egg-born-bin/bin/egg-born-bin.js backend-dev",
+    "debug:backend": "npx ./packages/egg-born-bin/bin/egg-born-bin.js backend-debug",
     "lint": "eslint src",
-    "test:backend": "egg-born-bin backend-test",
-    "cov:backend": "egg-born-bin backend-cov",
-    "start:backend": "egg-born-scripts backend-start",
-    "stop:backend": "egg-born-scripts backend-stop"
+    "test:backend": "npx ./packages/egg-born-bin/bin/egg-born-bin.js backend-test",
+    "cov:backend": "npx ./packages/egg-born-bin/bin/egg-born-bin.js backend-cov",
+    "start:backend": "npx ./packages/egg-born-bin/bin/egg-born-scripts.js backend-start",
+    "stop:backend": "npx ./packages/egg-born-bin/bin/egg-born-scripts.js backend-stop"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",

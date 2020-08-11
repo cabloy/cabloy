@@ -29,6 +29,7 @@
   {
     "require3": "^1.0.3",
     "extend2": "^1.0.0",
-    "egg-born-mparse": "^1.1.6"
+    "egg-born-mparse": "^1.1.6",
+    "egg-born-mock": "^1.1.4"
   }
 }
