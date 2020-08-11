@@ -18,7 +18,7 @@ module.exports = async function(app) {
   // run startups: not after
   for (const startup of app.meta.startupsArray) {
     if (!startup.startup.disable && startup.startup.after !== true) {
-      // console.log(`---- startup: ${startup.key}, pid: ${process.pid}`);
+      console.log(`---- startup: ${startup.key}, pid: ${process.pid}`);
       await app.meta.runStartup(startup.key);
     }
   }
