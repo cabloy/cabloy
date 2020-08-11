@@ -1,6 +1,6 @@
 {
   "name": "@zhennann/markdown-it-block",
-  "version": "2.0.5",
+  "version": "3.0.0",
   "description": "Plugin to create block-level custom tags for markdown-it markdown parser on Cabloy-CMS",
   "main": "index.js",
   "repository": {

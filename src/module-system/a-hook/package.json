@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-hook",
-  "version": "3.0.9",
+  "version": "4.0.0",
   "eggBornModule": {
     "dependencies": {
       "a-instance": "3.0.0"
@@ -16,8 +16,8 @@
   "author": "zhennann",
   "dependencies": {
     "assert": "^2.0.0",
-    "egg-born-mock": "^1.1.4",
-    "egg-born-mparse": "^1.1.8",
-    "require3": "^1.0.8"
+    "egg-born-mock": "^2.0.0",
+    "egg-born-mparse": "^2.0.0",
+    "require3": "^2.0.0"
   }
 }

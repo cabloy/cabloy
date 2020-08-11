@@ -1,6 +1,6 @@
 {
   "name": "egg-born",
-  "version": "1.8.6",
+  "version": "2.0.0",
   "description": "The Ultimate Javascript Full Stack Framework",
   "preferGlobal": true,
   "bin": {
@@ -29,7 +29,7 @@
   "dependencies": {
     "@zhennann/egg-init": "^1.17.3",
     "co": "^4.6.0",
-    "egg-born-init-config": "^1.0.8",
+    "egg-born-init-config": "^2.0.0",
     "fs-extra": "^8.1.0",
     "randomatic": "^3.1.1"
   }

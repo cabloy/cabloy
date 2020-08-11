@@ -1,6 +1,6 @@
 {
   "name": "egg-born-mglob",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "egg-born-mglob",
   "author": "zhennann <zhen.nann@icloud.com>",
   "homepage": "https://github.com/zhennann/cabloy/tree/master/packages/egg-born-mglob#readme",
@@ -23,6 +23,6 @@
     "url": "https://github.com/zhennann/cabloy-lerna/issues"
   },
   "dependencies": {
-    "egg-born-mparse": "^1.1.8"
+    "egg-born-mparse": "^2.0.0"
   }
 }

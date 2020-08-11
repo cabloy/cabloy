@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-instance",
-  "version": "3.0.12",
+  "version": "4.0.0",
   "title": "Instance",
   "eggBornModule": {
     "fileVersion": 4,
@@ -18,8 +18,8 @@
     "assert": "^2.0.0",
     "boxen": "^4.2.0",
     "chalk": "^3.0.0",
-    "egg-born-mock": "^1.1.4",
-    "egg-born-mparse": "^1.1.8",
-    "require3": "^1.0.8"
+    "egg-born-mock": "^2.0.0",
+    "egg-born-mparse": "^2.0.0",
+    "require3": "^2.0.0"
   }
 }

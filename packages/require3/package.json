@@ -1,6 +1,6 @@
 {
   "name": "require3",
-  "version": "1.0.8",
+  "version": "2.0.0",
   "description": "require3",
   "main": "index.js",
   "repository": {
@@ -23,8 +23,8 @@
     "eslint-plugin-vuefix": "^0.2.1"
   },
   "dependencies": {
-    "@zhennann/markdown": "^2.0.4",
-    "@zhennann/markdown-it-block": "^2.0.5",
-    "egg-born-mparse": "^1.1.8"
+    "@zhennann/markdown": "^3.0.0",
+    "@zhennann/markdown-it-block": "^3.0.0",
+    "egg-born-mparse": "^2.0.0"
   }
 }

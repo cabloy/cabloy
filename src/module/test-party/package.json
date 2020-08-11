@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-test-party",
-  "version": "3.0.34",
+  "version": "4.0.0",
   "title": "Party",
   "eggBornModule": {
     "fileVersion": 6,
@@ -24,9 +24,9 @@
     "eslint-plugin-vuefix": "^0.2.1"
   },
   "dependencies": {
-    "egg-born-mock": "^1.1.4",
-    "egg-born-mparse": "^1.1.8",
+    "egg-born-mock": "^2.0.0",
+    "egg-born-mparse": "^2.0.0",
     "extend2": "^1.0.0",
-    "require3": "^1.0.8"
+    "require3": "^2.0.0"
   }
 }

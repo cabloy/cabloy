@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-test-wechat",
-  "version": "4.0.9",
+  "version": "5.0.0",
   "title": "test-wechat",
   "eggBornModule": {
     "fileVersion": 0,
@@ -23,10 +23,10 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "egg-born-mock": "^1.1.4",
-    "egg-born-module-a-wechat": "^4.0.10",
-    "egg-born-mparse": "^1.1.8",
+    "egg-born-mock": "^2.0.0",
+    "egg-born-module-a-wechat": "^5.0.0",
+    "egg-born-mparse": "^2.0.0",
     "extend2": "^1.0.0",
-    "require3": "^1.0.8"
+    "require3": "^2.0.0"
   }
 }
