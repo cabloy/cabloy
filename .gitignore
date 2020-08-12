@@ -27,11 +27,10 @@ node_modules
 
 .sync-config.cson
 sftp-config.json
-todo.md
+/.assets
 
 /packages/egg-born-front/dist
 /packages/egg-born-front/build/__runtime
-
 
 /src/module-system/a-authsms/backend
 /src/module-system/a-authsms/front
