@@ -9,6 +9,9 @@ module.exports = app => {
       if (message.EventType === 'check_url') {
         // just return
         return;
+      } else if (message.EventType.indexOf('user_') === 0 || message.EventType.indexOf('org_') === 0) {
+        // user events or org events
+        await this.contacts({ message });
       }
       // raise event
       await this.ctx.meta.event.invoke({
@@ -25,8 +28,8 @@ module.exports = app => {
       const token = config.token;
       const encodingAESKey = config.encodingAESKey;
       const callbackList = config.list;
-      const callbackUrl = `${this.ctx.meta.base.protocol}://${this.ctx.meta.base.host}/api/a/dingtalk/callback/index`;
-      // check
+      const callbackUrl = this.ctx.meta.base.getAbsoluteUrl('/api/a/dingtalk/callback/index');
+      // check if valid
       if (this.ctx.meta.base.host !== host || !token || !encodingAESKey || !callbackList) return;
       // check status
       const res = await this._tryGetList();

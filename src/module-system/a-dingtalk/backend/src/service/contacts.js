@@ -41,9 +41,10 @@ module.exports = app => {
     }
 
     async queueChangeContact({ message }) {
-      if (message.ChangeType.indexOf('_party') > -1) {
+      console.log(message);
+      if (message.ChangeType.indexOf('org_') === 0) {
         await this._queueChangeContactDepartment({ message });
-      } else if (message.ChangeType.indexOf('_user') > -1) {
+      } else if (message.ChangeType.indexOf('user_') === 0) {
         await this._queueChangeContactMember({ message });
       }
     }
