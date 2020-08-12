@@ -33,7 +33,7 @@ module.exports = appInfo => {
   }
 
   // development
-  let watchDirs = glob.sync(`${path.join(appInfo.baseDir, '../module')}/*/backend/src`)
+  let watchDirs = glob.sync(`${path.join(appInfo.baseDir, '..')}/*/*/backend/src`)
     .map(file => '../' + file.substr(path.join(appInfo.baseDir, '../').length));
   watchDirs = [
     'config',
