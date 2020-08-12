@@ -27,6 +27,7 @@ node_modules
 
 .sync-config.cson
 sftp-config.json
+sftp-config-.json
 /.assets
 
 /packages/egg-born-front/dist

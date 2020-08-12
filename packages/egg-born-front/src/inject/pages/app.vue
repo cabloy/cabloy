@@ -51,13 +51,6 @@ export default {
         this.$f7.dialog.alert('Supports All Modern Browsers Except IE');
         return;
       }
-      // check query
-      if (location.origin !== 'file://') {
-        const documentUrl = location.href.substr(location.origin.length);
-        if (documentUrl && documentUrl.indexOf('/?') === 0) {
-          history.replaceState(null, '', location.origin);
-        }
-      }
       // hash init
       const hashInit = this.$meta.util.parseHash(location.href);
       if (hashInit && hashInit !== '/') this.$store.commit('auth/setHashInit', hashInit);

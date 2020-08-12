@@ -62,26 +62,12 @@ export default function(Vue) {
     },
     parseHash(url) {
       if (!url || url === '/') return '/';
-      const locationHostPrefix = this._locationHostPrefix();
-      let documentUrl = url.substr(locationHostPrefix.length);
-      if (documentUrl.indexOf('https://') === 0 || documentUrl.indexOf('http://') === 0) return documentUrl;
-      const router = Vue.prototype.$f7.router;
-      if (router.params.pushStateRoot && documentUrl.indexOf(router.params.pushStateRoot) >= 0) {
-        documentUrl = documentUrl.split(router.params.pushStateRoot)[1] || '/';
-      }
-      if (router.params.pushStateSeparator && documentUrl.indexOf(router.params.pushStateSeparator) >= 0) {
-        documentUrl = documentUrl.split(router.params.pushStateSeparator)[1] || '/';
-      }
-      return documentUrl || '/';
+      if (url.indexOf('https://') === 0 || url.indexOf('http://') === 0) return url;
+      return url.split(Vue.prototype.$f7.router.params.pushStateSeparator)[1] || '/';
     },
     combineHash(hash) {
       hash = hash || '';
-      let url = location.origin + '/';
-      const router = Vue.prototype.$f7.router;
-      if (router.params.pushStateRoot) url += router.params.pushStateRoot;
-      if (router.params.pushStateSeparator) url += router.params.pushStateSeparator;
-      url += hash;
-      return url;
+      return `${location.origin}${location.pathname}${location.search}${Vue.prototype.$f7.router.params.pushStateSeparator}${hash}`;
     },
     historyUrlEmpty(historyUrl) {
       if (!historyUrl || historyUrl === '/') return true;
