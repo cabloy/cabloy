@@ -52,7 +52,7 @@ export default {
         return;
       }
       // hash init
-      const hashInit = this.$meta.util.parseHash(location.href);
+      const hashInit = this.$meta.util.parseHash(location.hash);
       if (hashInit && hashInit !== '/') this.$store.commit('auth/setHashInit', hashInit);
       // on resize
       this.$f7.on('resize', this.onResize);
