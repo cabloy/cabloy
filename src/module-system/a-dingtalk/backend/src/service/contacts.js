@@ -42,10 +42,10 @@ module.exports = app => {
 
     async queueChangeContact({ message }) {
       console.log(message);
-      if (message.ChangeType.indexOf('org_') === 0) {
+      if (message.EventType.indexOf('org_') === 0) {
         await this._queueChangeContactDepartment({ message });
-      } else if (message.ChangeType.indexOf('user_') === 0) {
-        await this._queueChangeContactMember({ message });
+      } else if (message.EventType.indexOf('user_') === 0) {
+        await this._queueChangeContactMembers({ message });
       }
     }
 
@@ -54,60 +54,46 @@ module.exports = app => {
       const department = {};
       this._adjustFields(department, message, __departmentFieldMap_XML);
       // do
-      if (message.ChangeType === 'create_party') {
+      if (message.EventType === 'create_party') {
         // create
         await this._createRoleAndDepartment({ department });
         // build roles
         await this.ctx.meta.role.build();
-      } else if (message.ChangeType === 'update_party') {
+      } else if (message.EventType === 'update_party') {
         // update
         await this._updateRoleAndDepartment({ localDepartment: null, department });
-      } else if (message.ChangeType === 'delete_party') {
+      } else if (message.EventType === 'delete_party') {
         await this._deleteRoleAndDepartment({ localDepartment: null, department });
         // build roles
         await this.ctx.meta.role.build();
       }
     }
 
-    async _queueChangeContactMember({ message }) {
-      const member = {};
-      this._adjustFields(member, message, __memberFieldMap_XML);
+    async _queueChangeContactMembers({ message }) {
+      for (const memberId of message.UserId) {
+        await this._queueChangeContactMember({ message, memberId });
+      }
+    }
+
+    async _queueChangeContactMember({ message, memberId }) {
+      // member
+      const member = { memberId };
+      if (message.EventType !== 'user_leave_org') {
+        const remoteMember = await this.ctx.meta.dingtalk.app.selfBuilt.user.get(memberId);
+        this._adjustFields(member, remoteMember, __memberFieldMap);
+      }
       // do
-      if (message.ChangeType === 'create_user') {
-        // get member remotely
-        const res = await this.ctx.meta.wxwork.app.contacts.getUser(member.memberId);
-        if (res.errcode) {
-          throw new Error(res.errmsg);
-        }
-        // create
-        const _member = {};
-        this._adjustFields(_member, res, __memberFieldMap);
-        await this._createUserAndMember({ member: _member });
-      } else if (message.ChangeType === 'update_user') {
-        // check if memberId changed
-        if (member.memberIdNew) {
-          // upate memberId of member
-          await this.ctx.model.query(
-            'update aWxworkUser a set a.memberId=? where a.iid=? and a.memberId=?',
-            [ member.memberIdNew, this.ctx.instance.id, member.memberId ]
-          );
-          // upate profileId of auth
-          await this.ctx.model.query(
-            'update aAuth a set a.profileId=? where a.iid=? and a.profileId=?',
-            [ `wxwork:${member.memberIdNew}`, this.ctx.instance.id, `wxwork:${member.memberId}` ]
-          );
-        }
-        // get member remotely
-        const res = await this.ctx.meta.wxwork.app.contacts.getUser(member.memberIdNew || member.memberId);
-        if (res.errcode) {
-          throw new Error(res.errmsg);
-        }
+      if (message.EventType === 'user_add_org') {
+        // add
+        await this._createUserAndMember({ member });
+      } else if (message.EventType === 'user_modify_org') {
         // update
-        const _member = {};
-        this._adjustFields(_member, res, __memberFieldMap);
-        await this._updateUserAndMember({ localMember: null, member: _member });
-      } else if (message.ChangeType === 'delete_user') {
+        await this._updateUserAndMember({ localMember: null, member });
+      } else if (message.EventType === 'user_leave_org') {
         await this._deleteUserAndMember({ localMember: null, member });
+      } else if (message.EventType === 'user_active_org') {
+        // same as update
+        await this._updateUserAndMember({ localMember: null, member });
       }
     }
 

@@ -49,7 +49,7 @@ module.exports = app => {
             name varchar(255) DEFAULT NULL,
             active int(11) DEFAULT '0',
             avatar varchar(255) DEFAULT NULL,
-            orderInDepts JSON DEFAULT NULL,
+            orderInDepts text DEFAULT NULL,
             department varchar(255) DEFAULT NULL,
             position varchar(255) DEFAULT NULL,
             mobile varchar(255) DEFAULT NULL,
