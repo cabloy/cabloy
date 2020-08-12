@@ -8,24 +8,12 @@ const __departmentFieldMap = [
   [ 'number', 'number', 'string', 'number', 'bool', 'bool', 'bool', 'string', 'string', 'bool', 'string', 'string', 'bool', 'string', 'string' ],
 ];
 
-const __departmentFieldMap_XML = [
-  [ 'departmentId', 'departmentParentId', 'departmentName', 'departmentOrder' ],
-  [ 'Id', 'ParentId', 'Name', 'Order' ],
-  [ 'number', 'number', 'string', 'number' ],
-];
-
 // member
 
 const __memberFieldMap = [
   [ 'memberId', 'name', 'active', 'avatar', 'orderInDepts', 'department', 'position', 'mobile', 'tel', 'workPlace', 'remark', 'email', 'orgEmail', 'jobnumber', 'isHide', 'isSenior', 'extattr', 'hiredDate' ],
   [ 'userid', 'name', 'active', 'avatar', 'orderInDepts', 'department', 'position', 'mobile', 'tel', 'workPlace', 'remark', 'email', 'orgEmail', 'jobnumber', 'isHide', 'isSenior', 'extattr', 'hiredDate' ],
   [ 'string', 'string', 'bool', 'string', 'string', 'array', 'string', 'string', 'string', 'string', 'string', 'string', 'string', 'string', 'bool', 'bool', 'json', 'timestamp' ],
-];
-
-const __memberFieldMap_XML = [
-  [ 'memberIdNew', 'memberId', 'name', 'alias', 'mobile', 'department', 'position', 'gender', 'email', 'telephone', 'is_leader_in_dept', 'avatar', 'status', 'extattr', 'address' ],
-  [ 'NewUserID', 'UserID', 'Name', 'Alias', 'Mobile', 'Department', 'Position', 'Gender', 'Email', 'Telephone', 'IsLeaderInDept', 'Avatar', 'Status', 'ExtAttr', 'Address' ],
-  [ 'string', 'string', 'string', 'string', 'string', 'string', 'string', 'number', 'string', 'string', 'string', 'string', 'number', 'json', 'string' ],
 ];
 
 module.exports = app => {
