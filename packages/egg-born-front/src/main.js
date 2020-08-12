@@ -1,3 +1,6 @@
+// regenerator-runtime
+require('regenerator-runtime/runtime');
+
 // vue
 const Vue = require('./base/vue.js').default;
 
