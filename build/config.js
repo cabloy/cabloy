@@ -3,7 +3,7 @@ const title = 'cabloy';
 
 // backend
 const backend = {
-  port: 7002,
+  port: 7102,
   hostname: '0.0.0.0',
 };
 
@@ -17,7 +17,7 @@ const front = {
   dev: {
     title,
     // hostname: 'localhost',
-    port: 9092,
+    port: 9192,
     // proxyBaseURL: 'http://localhost:7002',
   },
 };
