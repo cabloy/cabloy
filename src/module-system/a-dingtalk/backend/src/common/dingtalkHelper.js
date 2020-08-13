@@ -170,11 +170,11 @@ module.exports = function(ctx) {
       return profileUser;
     }
 
-    _createDingtalkApiGeneral({ category, appName, appkey, appsecret, sso }) {
+    _createDingtalkApiGeneral({ category, appName, appkey, appsecret, corpid, sso }) {
       // api
       const api = new DingtalkAPI(
         {
-          appkey, appsecret, sso,
+          appkey, appsecret, corpid, sso,
         },
         async function() {
           const cacheKey = `dingtalk-token:${category}:${appName || ''}`;
@@ -217,6 +217,7 @@ module.exports = function(ctx) {
         appName,
         appkey: configApp.appkey,
         appsecret: configApp.appsecret,
+        corpid: config.corpid,
       });
     }
 
@@ -228,6 +229,7 @@ module.exports = function(ctx) {
         appName: '',
         appkey: config.corpid,
         appsecret: config.ssosecret,
+        corpid: config.corpid,
         sso: true,
       });
     }
@@ -241,6 +243,7 @@ module.exports = function(ctx) {
         appName: webName,
         appkey: configWeb.appid,
         appsecret: configWeb.appsecret,
+        corpid: config.corpid,
       });
     }
 
@@ -253,6 +256,7 @@ module.exports = function(ctx) {
         appName: sceneShort,
         appkey: configMini.appkey,
         appsecret: configMini.appsecret,
+        corpid: config.corpid,
       });
     }
 

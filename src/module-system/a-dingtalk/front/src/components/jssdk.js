@@ -1,4 +1,4 @@
-let _wxInstance = null;
+let _ddInstance = null;
 
 export default {
   meta: {
@@ -9,49 +9,29 @@ export default {
       if (action.name === 'config') return this._createConfig({ ctx });
     },
     _createConfig(/* { ctx } */) {
-      if (!this.$device.wxwork) return Promise.resolve(null);
-      if (_wxInstance) return Promise.resolve({ wx: _wxInstance });
+      if (!this.$device.dingtalk) return Promise.resolve(null);
+      if (_ddInstance) return Promise.resolve(_ddInstance);
       return new Promise((resolve, reject) => {
-        // load jweixin-1.0.0.js
-        this.$meta.util.loadScript(this.$config.jssdk.url.jweixin, () => {
+        // load jweixin-1.6.0.js
+        this.$meta.util.loadScript(this.$config.jssdk.url.dingtalk, () => {
           const url = location.href.split('#')[0];
-          this._jsconfig(url).then(() => {
-            this._jsconfigAgent(url).then(() => {
-              _wxInstance = window.wx;
-              resolve({ wx: window.wx });
-            }).catch(e => reject(e));
+          this._jsconfig(url).then(config => {
+            _ddInstance = { dd: window.dd, config };
+            resolve(_ddInstance);
           }).catch(e => reject(e));
         });
       });
     },
     _jsconfig(url) {
       return new Promise((resolve, reject) => {
-        this.$api.post('jssdk/jsconfig', { url }).then(params => {
-          window.wx.config(params);
-          window.wx.error(e => {
+        this.$api.post('jssdk/jsconfig', { url }).then(config => {
+          window.dd.config(config);
+          window.dd.error(e => {
             reject(e.errMsg);
           });
-          window.wx.ready(() => {
-            resolve();
+          window.dd.ready(() => {
+            resolve(config);
           });
-        }).catch(e => {
-          reject(e);
-        });
-      });
-    },
-    _jsconfigAgent(url) {
-      return new Promise((resolve, reject) => {
-        this.$api.post('jssdk/jsconfigAgent', { url }).then(params => {
-          params.success = () => {
-            resolve();
-          };
-          params.fail = res => {
-            if (res.errMsg.indexOf('function not exist') > -1) {
-              console.log('企业微信版本过低，请升级');
-            }
-            reject(res.errMsg);
-          };
-          window.wx.agentConfig(params);
         }).catch(e => {
           reject(e);
         });

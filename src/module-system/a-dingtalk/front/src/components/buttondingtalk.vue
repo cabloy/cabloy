@@ -2,6 +2,29 @@
   <img src="../assets/img/dingtalk-40.png" @click="signIn">
 </template>
 <script>
+function __signIn(ctx, cb) {
+  const action = {
+    actionModule: 'a-dingtalk',
+    actionComponent: 'jssdk',
+    name: 'config',
+  };
+  ctx.$meta.util.performAction({ ctx, action }).then(res => {
+    const dd = res.dd;
+    const config = res.config;
+    dd.runtime.permission.requestAuthCode({
+      corpId: config.corpId,
+      onSuccess: function(info) {
+        const code = info.code;
+        ctx.$api.post('/a/dingtalk/auth/login', { scene: 'dingtalk', code }).then(() => {
+          ctx.$meta.vueApp.reload({ echo: true });
+          cb();
+        }).catch(e => {
+          cb();
+        });
+      }
+    });
+  });
+};
 export default {
   meta: {
     global: false,
@@ -11,8 +34,9 @@ export default {
           const reload = ctx.$store.state.auth.reload;
           if (reload) return resolve(false);
           // login direct
-          this.signIn();
-          return reject();
+          return __signIn(ctx, () => {
+            return reject();
+          });
         }
         return resolve(true);
       });
@@ -21,11 +45,7 @@ export default {
   data() {
     return {};
   },
-  methods: {
-    signIn() {
-      // login direct
-    },
-  },
+  methods: {},
 };
 
 </script>
