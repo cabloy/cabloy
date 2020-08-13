@@ -30,6 +30,7 @@
     "egg-born-front": "^8.0.0",
     "egg-born-module-a-authgithub": "^4.0.0",
     "egg-born-module-a-authsimple": "^4.0.0",
+    "egg-born-module-a-authsms": "^4.0.0",
     "egg-born-module-a-base-sync": "^4.0.0",
     "egg-born-module-a-baseadmin": "^4.0.0",
     "egg-born-module-a-cache": "^4.0.0",
