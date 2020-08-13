@@ -9,7 +9,7 @@ module.exports = app => {
       if (message.EventType === 'check_url') {
         // just return
         return;
-      } else if (message.EventType.indexOf('user_') === 0 || message.EventType.indexOf('org_') === 0) {
+      } else if (message.EventType.indexOf('user_') === 0 || message.EventType.indexOf('org_dept_') === 0) {
         // user events or org events
         await this.contacts({ message });
       }

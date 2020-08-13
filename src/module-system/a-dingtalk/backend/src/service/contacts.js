@@ -29,28 +29,36 @@ module.exports = app => {
     }
 
     async queueChangeContact({ message }) {
-      console.log(message);
-      if (message.EventType.indexOf('org_') === 0) {
-        await this._queueChangeContactDepartment({ message });
+      if (message.EventType.indexOf('org_dept_') === 0) {
+        await this._queueChangeContactDepartments({ message });
       } else if (message.EventType.indexOf('user_') === 0) {
         await this._queueChangeContactMembers({ message });
       }
     }
 
-    async _queueChangeContactDepartment({ message }) {
+    async _queueChangeContactDepartments({ message }) {
+      for (const departmentId of message.DeptId) {
+        await this._queueChangeContactDepartment({ message, departmentId });
+      }
+    }
+
+    async _queueChangeContactDepartment({ message, departmentId }) {
       // department
-      const department = {};
-      this._adjustFields(department, message, __departmentFieldMap_XML);
+      const department = { departmentId };
+      if (message.EventType !== 'org_dept_remove') {
+        const remoteDepartment = await this.ctx.meta.dingtalk.app.selfBuilt.department.get(departmentId);
+        this._adjustFields(department, remoteDepartment, __departmentFieldMap);
+      }
       // do
-      if (message.EventType === 'create_party') {
+      if (message.EventType === 'org_dept_create') {
         // create
         await this._createRoleAndDepartment({ department });
         // build roles
         await this.ctx.meta.role.build();
-      } else if (message.EventType === 'update_party') {
+      } else if (message.EventType === 'org_dept_modify') {
         // update
         await this._updateRoleAndDepartment({ localDepartment: null, department });
-      } else if (message.EventType === 'delete_party') {
+      } else if (message.EventType === 'org_dept_remove') {
         await this._deleteRoleAndDepartment({ localDepartment: null, department });
         // build roles
         await this.ctx.meta.role.build();
