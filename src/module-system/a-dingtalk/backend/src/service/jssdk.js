@@ -6,12 +6,15 @@ module.exports = app => {
       // config
       const config = this.ctx.config.account.dingtalk;
       const configAppSelfBuilt = config.apps.selfBuilt;
-      // params
-      const params = {
+      // jsconfig
+      const res = await this.ctx.meta.dingtalk.app.selfBuilt.client.getJSApiConfig(url);
+      return {
+        ...res,
+        agentId: configAppSelfBuilt.agentid,
+        type: configAppSelfBuilt.jssdk.type,
         jsApiList: configAppSelfBuilt.jssdk.jsApiList,
       };
-      // jsconfig
-      return await this.ctx.meta.dingtalk.app.selfBuilt.client.getJSApiConfig(url, params);
+
     }
 
   }

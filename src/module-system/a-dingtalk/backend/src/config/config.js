@@ -146,6 +146,7 @@ module.exports = appInfo => {
         appkey: '',
         appsecret: '',
         jssdk: {
+          type: 0,
           jsApiList,
         },
         businessCallback: {
