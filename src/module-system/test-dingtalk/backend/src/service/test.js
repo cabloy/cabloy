@@ -3,7 +3,7 @@ module.exports = app => {
   class Test extends app.Service {
 
     async getMemberId({ user }) {
-      const modelMember = this.ctx.model.module('a-wxwork').member;
+      const modelMember = this.ctx.model.module('a-dingtalk').member;
       const member = await modelMember.get({ userId: user.id });
       return {
         memberId: member.memberId,
@@ -11,18 +11,19 @@ module.exports = app => {
     }
 
     async sendAppMessage({ message, user }) {
+      const msg = {
+        msgtype: 'text',
+        text: {
+          content: message.text,
+        },
+      };
       const content = {
         userIds: [ user.id ],
-        data: {
-          msgtype: 'text',
-          text: {
-            content: message.text,
-          },
-        },
+        data: { msg },
       };
       await this.ctx.meta.io.pushDirect({
         content,
-        channel: { module: 'a-wxwork', name: 'app' },
+        channel: { module: 'a-dingtalk', name: 'app' },
       });
     }
 

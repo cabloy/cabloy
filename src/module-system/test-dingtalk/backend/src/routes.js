@@ -2,7 +2,7 @@ const version = require('./controller/version.js');
 const event = require('./controller/event.js');
 const test = require('./controller/test.js');
 
-const _sceneAll = 'wxwork,wxworkweb,wxworkmini';
+const _sceneAll = 'dingtalk,dingtalkweb,dingtalkadmin,dingtalkmini';
 
 module.exports = app => {
   const routes = [
@@ -11,19 +11,19 @@ module.exports = app => {
     { method: 'post', path: 'version/init', controller: version, middlewares: 'inner' },
     { method: 'post', path: 'version/test', controller: version, middlewares: 'test' },
     // event
-    { method: 'post', path: 'event/wxworkMessage', controller: event, middlewares: 'inner,wxwork', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'event/dingtalkCallback', controller: event, middlewares: 'inner,dingtalk', meta: { auth: { enable: false } } },
     { method: 'post', path: 'event/loginInfo', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
     // test
-    { method: 'post', path: 'test/getMemberId', controller: test, middlewares: 'inWxwork',
+    { method: 'post', path: 'test/getMemberId', controller: test, middlewares: 'inDingtalk',
       meta: {
-        inWxwork: {
+        inDingtalk: {
           scene: _sceneAll,
         },
       },
     },
-    { method: 'post', path: 'test/sendAppMessage', controller: test, middlewares: 'inWxwork',
+    { method: 'post', path: 'test/sendAppMessage', controller: test, middlewares: 'inDingtalk',
       meta: {
-        inWxwork: {
+        inDingtalk: {
           scene: _sceneAll,
         },
       },

@@ -4,8 +4,8 @@
     <f7-messagebar ref="messagebar" class="test-messagebar" placeholder="Message" @submit="onSubmitSendMessage">
       <f7-icon md="material:send" slot="send-link"></f7-icon>
     </f7-messagebar>
-    <eb-list v-if="wx" no-hairlines-md>
-      <eb-list-item title="微信扫一扫" link="#" :onPerform="onPerformScanQRCode"></eb-list-item>
+    <eb-list v-if="dd" no-hairlines-md>
+      <eb-list-item title="钉钉扫一扫" link="#" :onPerform="onPerformScanQRCode"></eb-list-item>
       <eb-list-item title="获取MemberId" link="#" :onPerform="onPerformMemberId"></eb-list-item>
       <eb-list-item title="MemberId">
         <div slot="after">{{memberId}}</div>
@@ -17,18 +17,18 @@
 export default {
   data() {
     return {
-      wx: null,
+      dd: null,
       memberId: null,
     };
   },
   created() {
     const action = {
-      actionModule: 'a-wxwork',
+      actionModule: 'a-dingtalk',
       actionComponent: 'jssdk',
       name: 'config',
     };
     this.$meta.util.performAction({ ctx: this, action }).then(res => {
-      this.wx = res && res.wx;
+      this.dd = res && res.dd;
     }).catch(e => {
       this.$view.toast.show({ text: e.message });
     })
@@ -38,14 +38,13 @@ export default {
   },
   methods: {
     onPerformScanQRCode() {
-      this.wx.scanQRCode({
-        needResult: 1,
-        scanType: ['qrCode', 'barCode'],
-        success: res => {
-          this.$view.toast.show({ text: res.resultStr });
+      this.dd.biz.util.scan({
+        type: 'all',
+        onSuccess: res => {
+          this.$view.toast.show({ text: res.text });
         },
-        fail: res => {
-          this.$view.toast.show({ text: res.errMsg });
+        onFail: err => {
+          this.$view.toast.show({ text: err.message });
         }
       });
     },
