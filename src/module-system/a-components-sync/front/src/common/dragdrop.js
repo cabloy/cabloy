@@ -2,6 +2,7 @@ export default function(Vue) {
 
   const tooltipResizeOffset = 16;
   const tooltipOffset = 6;
+  const delayTimeout = 400;
 
   let _inited = false;
   let _stylesheet = null;
@@ -21,7 +22,7 @@ export default function(Vue) {
   let _tooltipText = '';
   let _dragContainerSize = {};
   let _touchStart = {};
-  let _delayTimeout = 0;
+  let _delayTimeoutId = 0;
 
   function _onDragStart($el, context, dragElement) {
     if (!context.onDragStart) return { size: _windowSize, tooltip: undefined };
@@ -59,9 +60,9 @@ export default function(Vue) {
     const context = $el[0].__eb_dragContext;
     if (!context) return;
     // delay
-    _delayTimeout = window.setTimeout(() => {
-      if (!_delayTimeout) return;
-      _delayTimeout = 0;
+    _delayTimeoutId = window.setTimeout(() => {
+      if (!_delayTimeoutId) return;
+      _delayTimeoutId = 0;
 
       const isResizable = context.resizable === true;
       const isRow = context.resizeDirection === 'row';
@@ -101,7 +102,7 @@ export default function(Vue) {
       _dropHandler = null;
       _dropElement = null;
       _dropContext = null;
-    }, 200);
+    }, delayTimeout);
   }
 
   function _checkMoveElement($el) {
@@ -314,9 +315,9 @@ export default function(Vue) {
 
   function handeTouchEnd(e) {
     // clear delay
-    if (_delayTimeout) {
-      window.clearTimeout(_delayTimeout);
-      _delayTimeout = 0;
+    if (_delayTimeoutId) {
+      window.clearTimeout(_delayTimeoutId);
+      _delayTimeoutId = 0;
     }
 
     if (_dragContext && _dragContext.resizable === true) {
