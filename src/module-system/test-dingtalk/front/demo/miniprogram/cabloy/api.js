@@ -33,12 +33,15 @@ module.exports = function(cabloy) {
         // callback
         options.success = res => {
           // cookies
-          if (res.cookies && res.cookies.length > 0) {
-            cabloy.data.cookies = __adjustCookies(res.cookies);
+          const _cookies = res.cookies || res.headers['set-cookie'];
+          if (_cookies && _cookies.length > 0) {
+            cabloy.data.cookies = __adjustCookies(_cookies);
           }
-          if (res.statusCode !== 200) {
+          // statusCode
+          const _statusCode = res.statusCode || res.status;
+          if (_statusCode !== 200) {
             const error = new Error();
-            error.code = res.statusCode;
+            error.code = _statusCode;
             return reject(error);
           }
           if (res.data.code !== 0) {
@@ -53,7 +56,11 @@ module.exports = function(cabloy) {
           reject(err);
         };
         // request
-        wx.request(options);
+        if (cabloy.data.dingtalk) {
+          dd.httpRequest(options);
+        } else {
+          wx.request(options);
+        }
       });
     },
     get(url, options) {

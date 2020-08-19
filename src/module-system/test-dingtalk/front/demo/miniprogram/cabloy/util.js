@@ -1,13 +1,18 @@
 module.exports = function(cabloy) {
   return {
     login(options) {
-      if (!cabloy.data.wxwork) return this.__login_wechat(options);
-      return this.__login_wxwork(options);
+      if (cabloy.data.dingtalk) {
+        return this.__login_dingtalk(options);
+      } else if (cabloy.data.wechat) {
+        return this.__login_wechat(options);
+      } else if (cabloy.data.wxwork) {
+        return this.__login_wxwork(options);
+      }
     },
 
     __login_wechat(options) {
       return new Promise((resolve, reject) => {
-        const scene = cabloy.data.scene;
+        const scene = cabloy.data.config.scene;
         if (options && options.detail) {
           // 直接进行后台登录
           this.__login({ scene, code: null, detail: options.detail }).then(resolve).catch(reject);
@@ -44,8 +49,21 @@ module.exports = function(cabloy) {
         // 小程序登录
         wx.qy.login({
           success: res => {
-            const scene = cabloy.data.scene;
+            const scene = cabloy.data.config.scene;
             const code = res.code;
+            this.__login({ scene, code }).then(resolve).catch(reject);
+          },
+        });
+      });
+    },
+
+    __login_dingtalk(options) {
+      return new Promise((resolve, reject) => {
+        // 小程序登录
+        dd.getAuthCode({
+          success: res => {
+            const scene = cabloy.data.config.scene;
+            const code = res.authCode;
             this.__login({ scene, code }).then(resolve).catch(reject);
           },
         });
@@ -54,7 +72,7 @@ module.exports = function(cabloy) {
 
     __login({ scene, code, detail }) {
       // 后台登录
-      const url = cabloy.data.wxwork ? '/a/wxwork/authMini/login' : '/a/wechat/authMini/login';
+      const url = `/a/${cabloy.data.config.container}/authMini/login`;
       return cabloy.api.post(url, { scene, code, detail }).then(data => {
         // user
         cabloy.data.user = data.user;

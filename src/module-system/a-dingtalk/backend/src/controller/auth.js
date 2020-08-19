@@ -9,6 +9,14 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async loginMini() {
+      const res = await this.service.auth.login({
+        scene: `dingtalkmini${this.ctx.request.body.scene}`,
+        code: this.ctx.request.body.code,
+      });
+      this.ctx.success(res);
+    }
+
   }
   return AuthController;
 };

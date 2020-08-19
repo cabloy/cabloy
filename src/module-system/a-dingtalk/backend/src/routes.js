@@ -29,6 +29,7 @@ module.exports = app => {
 
     // auth
     { method: 'post', path: 'auth/login', controller: auth, middlewares: 'dingtalk', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'authMini/login', controller: auth, action: 'loginMini', middlewares: 'dingtalk', meta: { auth: { enable: false } } },
 
   ];
   return routes;

@@ -16,10 +16,10 @@
   color: #aaa;
 }
 
-.usermotto {
-  margin-top: 100px;
+.testblock {
+  margin-top:40px;
 }
 
-.testblock{
-  margin-top:40px;
+.memberId {
+  color: green;
 }

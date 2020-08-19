@@ -19,10 +19,7 @@
     <button bindtap="getMemberId">获取用户memberId</button>
     <view>
       <view>memberId: </view>
-      <view>{{memberId || ''}}</view>
+      <view class="memberId">{{memberId || ''}}</view>
     </view>
-  </view>
-  <view class="usermotto">
-    <text class="user-motto">{{motto}}</text>
   </view>
 </view>

@@ -1,51 +1,73 @@
 const configDefault = {
+  container: null,
+  scene: 'default',
   api: {
     baseURL: 'https://demo.cabloy.com',
   },
 };
 
-module.exports = function(cabloy, options) {
-  options = options || {};
-  options.scene = options.scene || 'default';
+module.exports = function (cabloy, options) {
+  let _instance = null;
+  let _user = null;
+  let _cookies = null;
+
+  // config
+  let _config = cabloy.util.extend({}, configDefault, options);
+
+  // systemInfo 
+  let _wxSystemInfo = typeof wx !== 'undefined' && wx.getSystemInfoSync();
+
+  // container
+  let _container;
+  if (typeof dd !== 'undefined') {
+    _container = 'dingtalk';
+  } else if (typeof wx !== 'undefined' && _wxSystemInfo.environment !== 'wxwork') {
+    _container = 'wechat';
+  } else if (typeof wx !== 'undefined' && _wxSystemInfo.environment === 'wxwork') {
+    _container = 'wxwork';
+  }
+  _config.container = _container;
+
   return {
-    scene: options.scene,
-    get systemInfo() {
-      if (!cabloy.app.globalData.__cabloy_systemInfo) {
-        cabloy.app.globalData.__cabloy_systemInfo = wx.getSystemInfoSync();
-      }
-      return cabloy.app.globalData.__cabloy_systemInfo;
+    get wxSystemInfo() {
+      return _wxSystemInfo;
+    },
+    get dingtalk() {
+      return _container === 'dingtalk';
+    },
+    get wechat() {
+      return _container === 'wechat';
     },
     get wxwork() {
-      return this.systemInfo.environment === 'wxwork';
+      return _container === 'wxwork';
     },
     get cookies() {
-      return cabloy.app.globalData.__cabloy_cookies;
+      return _cookies;
     },
     set cookies(value) {
-      cabloy.app.globalData.__cabloy_cookies = cabloy.util.extend({}, cabloy.app.globalData.__cabloy_cookies, value);
+      _cookies = cabloy.util.extend({}, _cookies, value);
     },
     get user() {
-      return cabloy.app.globalData.__cabloy_user;
+      return _user;
     },
     set user(value) {
-      cabloy.app.globalData.__cabloy_user = value;
+      _user = value;
     },
     get loggedIn() {
       const user = this.user;
       return user && user.agent.anonymous === 0;
     },
     get config() {
-      const config = cabloy.app.globalData.__cabloy_config;
-      return config || configDefault;
+      return _config;
     },
     set config(value) {
-      cabloy.app.globalData.__cabloy_config = cabloy.util.extend({}, configDefault, value);
+      _config = cabloy.util.extend({}, _config, value);
     },
     get instance() {
-      return cabloy.app.globalData.__cabloy_instance;
+      return _instance;
     },
     set instance(value) {
-      cabloy.app.globalData.__cabloy_instance = value;
+      _instance = value;
     },
   };
 };

@@ -4,7 +4,6 @@ const app = getApp();
 
 Page({
   data: {
-    motto: 'Hello World',
     user: null,
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
@@ -26,6 +25,7 @@ Page({
       });
     } else {
       app.cabloyLoginReadyCallback = res => {
+        app.cabloyLoginReadyCallback = null;
         this.setData({
           user: res.op,
           hasUserInfo: !!res.op.userName,

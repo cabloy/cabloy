@@ -12,6 +12,8 @@ module.exports = app => {
       // verify auth user
       const dingtalkHelper = new (DingtalkHelperFn(this.ctx))();
       await dingtalkHelper.verifyAuthUser({ scene: 'dingtalk', memberId });
+      // echo
+      return await this.ctx.meta.auth.echo();
     }
 
   }

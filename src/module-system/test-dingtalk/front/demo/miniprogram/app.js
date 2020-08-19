@@ -1,16 +1,13 @@
-// app.js
-
 const Cabloy = require('./cabloy/index.js');
 
 App({
-  onLaunch() {
-    // 展示本地存储能力
-    const logs = wx.getStorageSync('logs') || [];
-    logs.unshift(Date.now());
-    wx.setStorageSync('logs', logs);
+  onLaunch(options) {
+    // 第一次打开
+    // options.query == {number:1}
+    console.info('App onLaunch');
 
     // 初始化cabloy
-    this.cabloy = Cabloy(this, { scene: 'default' });
+    this.cabloy = Cabloy(this);
     // 登录
     this.cabloy.util.login().then(res => {
       // 由于 login 是网络请求，可能会在 Page.onLoad 之后才返回
@@ -22,6 +19,8 @@ App({
       console.log(err);
     });
   },
-  globalData: {
+  onShow(options) {
+    // 从后台被 scheme 重新打开
+    // options.query == {number:1}
   },
 });
