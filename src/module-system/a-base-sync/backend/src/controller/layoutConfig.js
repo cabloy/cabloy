@@ -4,7 +4,7 @@ module.exports = app => {
     async load() {
       const res = await this.service.layoutConfig.load({
         module: this.ctx.request.body.module,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -13,7 +13,7 @@ module.exports = app => {
       const res = await this.service.layoutConfig.save({
         module: this.ctx.request.body.module,
         data: this.ctx.request.body.data,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -23,7 +23,7 @@ module.exports = app => {
         module: this.ctx.request.body.module,
         key: this.ctx.request.body.key,
         value: this.ctx.request.body.value,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }

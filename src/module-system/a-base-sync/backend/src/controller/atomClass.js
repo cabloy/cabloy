@@ -21,7 +21,7 @@ module.exports = app => {
     async checkRightCreate() {
       const res = await this.ctx.service.atomClass.checkRightCreate({
         atomClass: this.ctx.request.body.atomClass,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }

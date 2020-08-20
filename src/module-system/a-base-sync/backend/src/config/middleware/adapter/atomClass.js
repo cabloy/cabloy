@@ -83,7 +83,7 @@ const Fn = module.exports = ctx => {
 
     async validator({ atomClass, user }) {
       // maybe empty
-      user = user || ctx.user.op;
+      user = user || ctx.state.user.op;
       // event
       const res = await ctx.meta.event.invoke({
         module: moduleInfo.relativeName,

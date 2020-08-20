@@ -49,7 +49,7 @@ async function checkAtom(moduleInfo, options, ctx) {
           id: atomClassId,
         },
         roleIdOwner,
-        user: ctx.user.op,
+        user: ctx.state.user.op,
       });
       if (!res) ctx.throw(403);
       ctx.meta._atomClass = res;
@@ -59,7 +59,7 @@ async function checkAtom(moduleInfo, options, ctx) {
         atomClass: {
           id: atomClassId,
         },
-        user: ctx.user.op,
+        user: ctx.state.user.op,
       });
       if (roles.length === 0) ctx.throw(403);
       ctx.request.body.roleIdOwner = roles[0].roleIdWho;
@@ -72,7 +72,7 @@ async function checkAtom(moduleInfo, options, ctx) {
   if (options.action === constant.atom.action.read) {
     const res = await ctx.meta.atom.checkRightRead({
       atom: { id: ctx.request.body.key.atomId },
-      user: ctx.user.op,
+      user: ctx.state.user.op,
     });
     if (!res) ctx.throw(403);
     ctx.request.body.key.itemId = res.itemId;
@@ -83,7 +83,7 @@ async function checkAtom(moduleInfo, options, ctx) {
   if (options.action === constant.atom.action.write || options.action === constant.atom.action.delete) {
     const res = await ctx.meta.atom.checkRightUpdate({
       atom: { id: ctx.request.body.key.atomId, action: options.action },
-      user: ctx.user.op,
+      user: ctx.state.user.op,
     });
     if (!res) ctx.throw(403);
     ctx.request.body.key.itemId = res.itemId;
@@ -95,7 +95,7 @@ async function checkAtom(moduleInfo, options, ctx) {
   if (actionCustom > constant.atom.action.custom) {
     const res = await ctx.meta.atom.checkRightAction({
       atom: { id: ctx.request.body.key.atomId, action: actionCustom },
-      user: ctx.user.op,
+      user: ctx.state.user.op,
     });
     if (!res) ctx.throw(403);
     ctx.request.body.key.itemId = res.itemId;
@@ -110,7 +110,7 @@ async function checkFunction(moduleInfo, options, ctx) {
     function: {
       module: options.module || ctx.module.info.relativeName,
       name: options.name || ctx.request.body.name },
-    user: ctx.user.op,
+    user: ctx.state.user.op,
   });
   if (!res) ctx.throw(403);
   ctx.meta._function = res;

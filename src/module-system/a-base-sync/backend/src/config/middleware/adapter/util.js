@@ -18,7 +18,7 @@ module.exports = ctx => {
     }
 
     user(_user) {
-      return _user || ctx.user.op;
+      return _user || ctx.state.user.op;
     }
 
     now() {

@@ -11,7 +11,7 @@ module.exports = app => {
       if (options.locale === undefined) options.locale = this.ctx.locale;
       const items = await this.ctx.service.function.list({
         options,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.successMore(items, options.page.index, options.page.size);
     }
@@ -20,7 +20,7 @@ module.exports = app => {
       const res = await this.ctx.service.function.star({
         id: this.ctx.request.body.id,
         star: this.ctx.request.body.star,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -28,7 +28,7 @@ module.exports = app => {
     async check() {
       const res = await this.ctx.service.function.check({
         functions: this.ctx.request.body.functions,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }

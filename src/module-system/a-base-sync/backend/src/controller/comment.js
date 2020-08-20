@@ -22,7 +22,7 @@ module.exports = app => {
       const items = await this.ctx.service.comment.list({
         key: this.ctx.request.body.key,
         options,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.successMore(items, options.page.index, options.page.size);
     }
@@ -31,7 +31,7 @@ module.exports = app => {
       const res = await this.ctx.service.comment.item({
         key: this.ctx.request.body.key,
         data: this.ctx.request.body.data,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -40,7 +40,7 @@ module.exports = app => {
       const res = await this.ctx.service.comment.save({
         key: this.ctx.request.body.key,
         data: this.ctx.request.body.data,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -49,7 +49,7 @@ module.exports = app => {
       const res = await this.ctx.service.comment.delete({
         key: this.ctx.request.body.key,
         data: this.ctx.request.body.data,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -58,7 +58,7 @@ module.exports = app => {
       const res = await this.ctx.service.comment.heart({
         key: this.ctx.request.body.key,
         data: this.ctx.request.body.data,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }

@@ -4,7 +4,7 @@ module.exports = app => {
 
     async getLabels() {
       const res = await this.ctx.service.user.getLabels({
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -12,7 +12,7 @@ module.exports = app => {
     async setLabels() {
       await this.ctx.service.user.setLabels({
         labels: this.ctx.request.body.labels,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success();
     }

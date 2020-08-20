@@ -5,7 +5,7 @@ module.exports = app => {
     async preferredRoles() {
       const res = await this.ctx.service.atom.preferredRoles({
         atomClass: this.ctx.request.body.atomClass,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -14,7 +14,7 @@ module.exports = app => {
         atomClass: this.ctx.request.body.atomClass,
         roleIdOwner: this.ctx.request.body.roleIdOwner,
         item: this.ctx.request.body.item,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -22,7 +22,7 @@ module.exports = app => {
     async read() {
       const res = await this.ctx.service.atom.read({
         key: this.ctx.request.body.key,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -35,7 +35,7 @@ module.exports = app => {
       const items = await this.ctx.service.atom.select({
         atomClass: this.ctx.request.body.atomClass,
         options,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.successMore(items, options.page.index, options.page.size);
     }
@@ -45,7 +45,7 @@ module.exports = app => {
       const count = await this.ctx.service.atom.count({
         atomClass: this.ctx.request.body.atomClass,
         options,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(count);
     }
@@ -54,7 +54,7 @@ module.exports = app => {
       await this.ctx.service.atom.write({
         key: this.ctx.request.body.key,
         item: this.ctx.request.body.item,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success();
     }
@@ -68,7 +68,7 @@ module.exports = app => {
     async delete() {
       await this.ctx.service.atom.delete({
         key: this.ctx.request.body.key,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success();
     }
@@ -77,7 +77,7 @@ module.exports = app => {
       const res = await this.ctx.service.atom.action({
         action: this.ctx.request.body.action,
         key: this.ctx.request.body.key,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -85,7 +85,7 @@ module.exports = app => {
     async enable() {
       // only allowed: draft
       const key = this.ctx.request.body.key;
-      const user = this.ctx.user.op;
+      const user = this.ctx.state.user.op;
       const atom = await this.ctx.meta.atom._get({ atom: { id: key.atomId }, user });
       if (atom.atomEnabled || user.id !== atom.userIdCreated) this.ctx.throw(403);
       // enable
@@ -101,7 +101,7 @@ module.exports = app => {
       const res = await this.ctx.service.atom.star({
         key: this.ctx.request.body.key,
         atom: this.ctx.request.body.atom,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -110,7 +110,7 @@ module.exports = app => {
       const res = await this.ctx.service.atom.readCount({
         key: this.ctx.request.body.key,
         atom: this.ctx.request.body.atom,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -125,7 +125,7 @@ module.exports = app => {
       };
       // select
       const res = await this.ctx.meta.atom.select({
-        options, user: this.ctx.user.op, pageForce: false,
+        options, user: this.ctx.state.user.op, pageForce: false,
       });
       this.ctx.success(res);
     }
@@ -134,7 +134,7 @@ module.exports = app => {
       const res = await this.ctx.service.atom.labels({
         key: this.ctx.request.body.key,
         atom: this.ctx.request.body.atom,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -143,7 +143,7 @@ module.exports = app => {
       const res = await this.ctx.service.atom.actions({
         key: this.ctx.request.body.key,
         basic: this.ctx.request.body.basic,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -152,7 +152,7 @@ module.exports = app => {
       const res = await this.ctx.service.atom.schema({
         atomClass: this.ctx.request.body.atomClass,
         schema: this.ctx.request.body.schema,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -160,7 +160,7 @@ module.exports = app => {
     async validator() {
       const res = await this.ctx.service.atom.validator({
         atomClass: this.ctx.request.body.atomClass,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
