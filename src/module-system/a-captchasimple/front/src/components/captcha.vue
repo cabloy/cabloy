@@ -28,7 +28,24 @@ export default {
   },
   methods: {
     changeSrc() {
-      this.src = this.$meta.util.combineFetchPath('a-captchasimple', `captcha/image?providerInstanceId=${this.providerInstance.providerInstanceId}&t=${Math.random()}`);
+      if (this.$meta.config.base.jwt) {
+        this.$api.post('/a/base/jwt/create').then(res => {
+          this._setSrc(res.jwt);
+        });
+      } else {
+        this._setSrc(null);
+      }
+    },
+    _setSrc(jwt) {
+      const url = this.$meta.util.combineFetchPath('a-captchasimple', 'captcha/image');
+      const query = {
+        providerInstanceId: this.providerInstance.providerInstanceId,
+        t: Math.random(),
+      };
+      if (jwt) {
+        query['eb-jwt'] = jwt;
+      }
+      this.src = this.$meta.util.combineQueries(url, query);
     },
     onClick() {
       this.changeSrc();

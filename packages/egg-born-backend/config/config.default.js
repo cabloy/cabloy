@@ -57,6 +57,9 @@ module.exports = appInfo => {
     secret: null, // default is same as config.keys
     credentialsRequired: false,
     property: 'jwt',
+    query: {
+      maxAge: 60 * 1000, // 60s
+    },
   };
 
   // middlewares

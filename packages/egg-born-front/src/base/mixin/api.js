@@ -21,6 +21,11 @@ export default function(Vue) {
         error.config = response.config;
         return Promise.reject(error);
       }
+      // check jwt
+      if (Vue.prototype.$meta.config.base.jwt && response.data['eb-jwt']) {
+        window.localStorage['eb-jwt'] = response.data['eb-jwt'];
+      }
+      // return data
       return response.data.data;
     }, function(error) {
       if (error.response) {

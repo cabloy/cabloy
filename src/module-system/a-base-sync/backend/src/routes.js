@@ -9,6 +9,7 @@ const schedule = require('./controller/schedule.js');
 const startup = require('./controller/startup.js');
 const auth = require('./controller/auth.js');
 const comment = require('./controller/comment.js');
+const jwt = require('./controller/jwt.js');
 const layoutConfig = require('./controller/layoutConfig.js');
 
 module.exports = app => {
@@ -153,6 +154,8 @@ module.exports = app => {
     },
     // cors
     { method: 'options', path: /.*/ },
+    // jwt
+    { method: 'post', path: 'jwt/create', controller: jwt },
     // layoutConfig
     { method: 'post', path: 'layoutConfig/load', controller: layoutConfig },
     { method: 'post', path: 'layoutConfig/save', controller: layoutConfig },

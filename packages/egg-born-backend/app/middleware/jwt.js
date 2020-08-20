@@ -1,5 +1,6 @@
 const koajwt = require('koa-jwt2');
 const jsonwebtoken = require('jsonwebtoken');
+const utility = require('utility');
 
 function __getToken(ctx) {
   // 1. check header
@@ -66,28 +67,42 @@ module.exports = (options, app) => {
   const _koajwt = koajwt(options);
   return async function jwt(ctx, next) {
     await _koajwt(ctx, async () => {
+      // cookies
+      let cookiesJwt;
       // set cookie
       if (ctx.state.jwt) {
-
+        // check exp
+        const isValid = !ctx.state.jwt.exp || ctx.state.jwt.exp > Date.now();
+        if (isValid) {
+          // token
+          const token = ctx.state.jwt.token;
+          const res = ctx.cookies.keys.decrypt(utility.base64decode(token, true, 'buffer'));
+          cookiesJwt = res ? res.value.toString() : undefined;
+          if (cookiesJwt) {
+          // set cookie
+            ctx.request.headers.cookie = cookiesJwt;
+          }
+        }
       }
       // next
       await next();
       // check cookie
       if (ctx.response.get('set-cookie') && ctx.get('authorization') && ctx.request.method === 'POST' && ctx.response.type === 'application/json') {
         // parse
-        const cookies = __parseCookiesRequest(ctx.get('cookie'));
+        const cookies = cookiesJwt ? __parseCookiesRequest(cookiesJwt) : {};
         const cookiesNew = __parseCookiesResponse(ctx.response.get('set-cookie'));
         // assign
         Object.assign(cookies, cookiesNew);
         // combine
         const cookiesRes = __combineCookies(cookies);
-        const payload = {
-          token: cookiesRes,
-        };
+        // jwt payload
+        const token = utility.base64encode(ctx.cookies.keys.encrypt(cookiesRes), true);
+        const payload = { token };
+        // jwt
         const jwtEncode = jsonwebtoken.sign(payload, options.secret);
         if (!ctx.response.body) ctx.response.body = {};
         ctx.response.body['eb-jwt'] = jwtEncode;
-        // clear response
+        // clear response header
         ctx.res.removeHeader('set-cookie');
       }
     });

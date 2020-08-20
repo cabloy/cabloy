@@ -9,6 +9,7 @@ const startup = require('./service/startup.js');
 const auth = require('./service/auth.js');
 const func = require('./service/function.js');
 const comment = require('./service/comment.js');
+const jwt = require('./service/jwt.js');
 const layoutConfig = require('./service/layoutConfig.js');
 
 module.exports = app => {
@@ -24,6 +25,7 @@ module.exports = app => {
     auth,
     function: func,
     comment,
+    jwt,
     layoutConfig,
   };
   return services;
