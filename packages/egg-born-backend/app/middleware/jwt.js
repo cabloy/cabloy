@@ -79,7 +79,7 @@ module.exports = (options, app) => {
           const res = ctx.cookies.keys.decrypt(utility.base64decode(token, true, 'buffer'));
           cookiesJwt = res ? res.value.toString() : undefined;
           if (cookiesJwt) {
-          // set cookie
+            // set cookie
             ctx.request.headers.cookie = cookiesJwt;
           }
         }
