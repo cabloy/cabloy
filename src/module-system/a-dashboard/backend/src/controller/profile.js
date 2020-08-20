@@ -3,7 +3,7 @@ module.exports = app => {
 
     async list() {
       const res = await this.service.profile.list({
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -11,7 +11,7 @@ module.exports = app => {
     async create() {
       const profileId = await this.service.profile.create({
         data: this.ctx.request.body.data,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success({ profileId });
     }
@@ -19,7 +19,7 @@ module.exports = app => {
     async item() {
       const res = await this.service.profile.item({
         profileId: this.ctx.request.body.profileId,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -27,7 +27,7 @@ module.exports = app => {
     async delete() {
       const res = await this.service.profile.delete({
         profileId: this.ctx.request.body.profileId,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -36,7 +36,7 @@ module.exports = app => {
       const res = await this.service.profile.save({
         profileId: this.ctx.request.body.profileId,
         profileValue: this.ctx.request.body.profileValue,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }

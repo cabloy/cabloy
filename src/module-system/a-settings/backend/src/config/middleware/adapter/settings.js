@@ -79,7 +79,7 @@ const Fn = module.exports = ctx => {
       const res = await this.modelSettingsRef.get({
         module,
         scene: constants.scene[scene],
-        userId: scene === 'user' ? ctx.user.op.id : 0,
+        userId: scene === 'user' ? ctx.state.user.op.id : 0,
         name,
       });
       return res ? JSON.parse(res.value) : this._parse(ctx.config.module(module).settings[scene], name);
@@ -97,7 +97,7 @@ const Fn = module.exports = ctx => {
       const res = await this.modelSettings.get({
         module,
         scene: constants.scene[scene],
-        userId: scene === 'user' ? ctx.user.op.id : 0,
+        userId: scene === 'user' ? ctx.state.user.op.id : 0,
       });
       // always extend config, as maybe has new values
       const config = ctx.config.module(module).settings[scene];
@@ -117,14 +117,14 @@ const Fn = module.exports = ctx => {
       const _data = await this.modelSettings.get({
         module,
         scene: constants.scene[scene],
-        userId: scene === 'user' ? ctx.user.op.id : 0,
+        userId: scene === 'user' ? ctx.state.user.op.id : 0,
       });
       if (!_data) {
         // new
         await this.modelSettings.insert({
           module,
           scene: constants.scene[scene],
-          userId: scene === 'user' ? ctx.user.op.id : 0,
+          userId: scene === 'user' ? ctx.state.user.op.id : 0,
           value: JSON.stringify(data),
         });
       } else {
@@ -142,7 +142,7 @@ const Fn = module.exports = ctx => {
       await this.modelSettingsRef.delete({
         module,
         scene: constants.scene[scene],
-        userId: scene === 'user' ? ctx.user.op.id : 0,
+        userId: scene === 'user' ? ctx.state.user.op.id : 0,
       });
       // update aSettingsRef
       await this._saveSettingsRef1({ scene, module, data, schemaName: null, path: '' });
@@ -166,7 +166,7 @@ const Fn = module.exports = ctx => {
           await this.modelSettingsRef.insert({
             module,
             scene: constants.scene[scene],
-            userId: scene === 'user' ? ctx.user.op.id : 0,
+            userId: scene === 'user' ? ctx.state.user.op.id : 0,
             name: subPath,
             value: JSON.stringify(subData),
           });

@@ -18,7 +18,7 @@ module.exports = app => {
           queueAction: 'sync',
           type: this.ctx.request.body.type,
           progressId,
-          userOp: this.ctx.user.op,
+          userOp: this.ctx.state.user.op,
         },
       });
       this.ctx.success({ progressId });

@@ -13,7 +13,7 @@ module.exports = app => {
         method: 'post',
         url: 'test/ctx/session/echo1',
       });
-      assert.equal(res.user.op.id, this.ctx.user.op.id);
+      assert.equal(res.user.op.id, this.ctx.state.user.op.id);
       assert.equal(res.instance.id, this.ctx.instance.id);
       assert.equal(this.ctx.session._key2, 2);
       // done
@@ -37,7 +37,7 @@ module.exports = app => {
       this.ctx.session._key2 = 2;
       // echo back
       this.ctx.success({
-        user: this.ctx.user,
+        user: this.ctx.state.user,
         instance: this.ctx.instance,
       });
     }

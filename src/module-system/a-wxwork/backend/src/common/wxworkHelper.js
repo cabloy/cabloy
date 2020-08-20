@@ -263,7 +263,7 @@ module.exports = function(ctx) {
           if (!scene) scene = 'wxwork';
           if (typeof scene === 'string') scene = scene.split(',');
           // provider
-          const provider = ctx.user && ctx.user.provider;
+          const provider = ctx.state.user && ctx.state.user.provider;
           if (!provider || provider.module !== moduleInfo.relativeName) return false;
           // find any match
           for (const item of scene) {

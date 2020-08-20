@@ -8,7 +8,7 @@ module.exports = app => {
     async publish() {
       const options = this.ctx.request.body.options;
       const message = this.ctx.request.body.message;
-      message.userIdFrom = this.ctx.user.op.id;
+      message.userIdFrom = this.ctx.state.user.op.id;
       const res = await this.ctx.meta.io.publish({
         path: _subscribePath,
         message,

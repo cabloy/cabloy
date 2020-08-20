@@ -5,7 +5,7 @@ module.exports = app => {
       const res = await this.service.io.subscribe({
         subscribes: this.ctx.request.body.subscribes,
         socketId: this.ctx.request.body.socketId,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -13,7 +13,7 @@ module.exports = app => {
     async unsubscribe() {
       const res = await this.service.io.unsubscribe({
         subscribes: this.ctx.request.body.subscribes,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }

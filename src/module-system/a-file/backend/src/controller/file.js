@@ -2,7 +2,7 @@ module.exports = app => {
   class FileController extends app.Controller {
 
     async list() {
-      const user = this.ctx.user.op;
+      const user = this.ctx.state.user.op;
       const options = this.ctx.request.body.options;
       options.page = this.ctx.meta.util.page(options.page, false);
       // where
@@ -27,7 +27,7 @@ module.exports = app => {
 
     async delete() {
       //
-      const user = this.ctx.user.op;
+      const user = this.ctx.state.user.op;
       const data = this.ctx.request.body.data;
       // file
       const item = await this.ctx.model.file.get({ id: data.fileId });
@@ -50,14 +50,14 @@ module.exports = app => {
       const res = await this.service.file.uploadInner({
         file: this.ctx.request.body.file,
         meta: this.ctx.request.body.meta,
-        user: this.ctx.user ? this.ctx.user.op : null,
+        user: this.ctx.state.user ? this.ctx.state.user.op : null,
       });
       this.ctx.success(res);
     }
 
     async upload() {
       const res = await this.service.file.upload({
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -67,7 +67,7 @@ module.exports = app => {
         downloadId: this.ctx.params.downloadId,
         width: this.ctx.query.width,
         height: this.ctx.query.height,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
     }
 

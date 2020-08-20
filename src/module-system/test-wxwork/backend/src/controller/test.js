@@ -3,7 +3,7 @@ module.exports = app => {
 
     async getMemberId() {
       const res = await this.service.test.getMemberId({
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -11,7 +11,7 @@ module.exports = app => {
     async sendAppMessage() {
       const res = await this.service.test.sendAppMessage({
         message: this.ctx.request.body.message,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }

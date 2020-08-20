@@ -48,7 +48,7 @@ module.exports = app => {
 
     _getCacheName() {
       // get the operation user
-      const user = this.ctx.user.op;
+      const user = this.ctx.state.user.op;
       return `__formTest:${user.id}`;
     }
 

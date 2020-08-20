@@ -42,7 +42,7 @@ module.exports = function(ctx) {
     // scene: wechat/wechatweb/wechatmini
     async verifyAuthUser({ scene, openid, userInfo, cbVerify, state = 'login' }) {
       if (state === 'associate') {
-        // check if ctx.user exists
+        // check if ctx.state.user exists
         if (!ctx.state.user || ctx.state.user.agent.anonymous) return ctx.throw(403);
       }
       // ensure wechat user
@@ -292,7 +292,7 @@ module.exports = function(ctx) {
           if (!scene) scene = 'wechat';
           if (typeof scene === 'string') scene = scene.split(',');
           // provider
-          const provider = ctx.user && ctx.user.provider;
+          const provider = ctx.state.user && ctx.state.user.provider;
           if (!provider || provider.module !== moduleInfo.relativeName) return false;
           // find any match
           for (const item of scene) {

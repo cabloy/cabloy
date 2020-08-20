@@ -358,7 +358,7 @@ module.exports =
                 if (!scene) scene = 'wxwork';
                 if (typeof scene === 'string') scene = scene.split(',');
                 // provider
-                const provider = ctx.user && ctx.user.provider;
+                const provider = ctx.state.user && ctx.state.user.provider;
                 if (!provider || provider.module !== moduleInfo.relativeName) return false;
                 // find any match
                 for (const item of scene) {
@@ -994,7 +994,7 @@ module.exports =
                 queueAction: 'sync',
                 type: this.ctx.request.body.type,
                 progressId,
-                userOp: this.ctx.user.op,
+                userOp: this.ctx.state.user.op,
               },
             });
             this.ctx.success({ progressId });
@@ -1862,7 +1862,7 @@ module.exports =
             // verify
             const wxworkHelper = new (WxworkHelperFn(this.ctx))();
             await wxworkHelper.verifyAuthUser({ scene: `wxworkmini${scene}`, memberId });
-            // save session_key, because ctx.user maybe changed
+            // save session_key, because ctx.state.user maybe changed
             await this.ctx.meta.wxwork.mini[scene].saveSessionKey(session_key);
             // echo
             return await this.ctx.meta.auth.echo();

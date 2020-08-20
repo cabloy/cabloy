@@ -9,7 +9,7 @@ module.exports = app => {
       // atomClass
       const atomClass = await this.ctx.meta.atomClass.get({ atomClassName: 'party' });
       // user
-      const user = this.ctx.user.op;
+      const user = this.ctx.state.user.op;
 
       // add party:star
       const partyKey = await this.ctx.meta.atom.create({

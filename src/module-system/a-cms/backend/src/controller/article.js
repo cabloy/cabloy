@@ -48,7 +48,7 @@ module.exports = app => {
       // options
       const options = this.ctx.request.body.options;
       // user
-      const user = this.ctx.user.op;
+      const user = this.ctx.state.user.op;
       // select
       // filter drafts
       options.where = extend(true, options.where, {

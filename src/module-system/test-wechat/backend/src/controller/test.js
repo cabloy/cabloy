@@ -3,7 +3,7 @@ module.exports = app => {
 
     async getOpenid() {
       const res = await this.service.test.getOpenid({
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -11,7 +11,7 @@ module.exports = app => {
     async getOpenidMini() {
       const res = await this.service.test.getOpenidMini({
         scene: this.ctx.request.body.scene,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }

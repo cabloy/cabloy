@@ -4,7 +4,7 @@ module.exports = app => {
 
     async transaction() {
       // user
-      const user = this.ctx.user.op;
+      const user = this.ctx.state.user.op;
       // atomKey
       const atomKey = this.ctx.request.body.key;
       // itemNew

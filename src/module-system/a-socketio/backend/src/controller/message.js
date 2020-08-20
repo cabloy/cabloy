@@ -5,7 +5,7 @@ module.exports = app => {
       const res = await this.ctx.service.message.offset({
         messageClass: this.ctx.request.body.messageClass,
         options: this.ctx.request.body.options,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -16,7 +16,7 @@ module.exports = app => {
       const items = await this.ctx.service.message.select({
         messageClass: this.ctx.request.body.messageClass,
         options,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.successMore(items, options.page.index, options.page.size);
     }
@@ -26,7 +26,7 @@ module.exports = app => {
       const count = await this.ctx.service.message.count({
         messageClass: this.ctx.request.body.messageClass,
         options,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(count);
     }
@@ -34,7 +34,7 @@ module.exports = app => {
     async setRead() {
       const res = await this.ctx.service.message.setRead({
         messageIds: this.ctx.request.body.messageIds,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -42,7 +42,7 @@ module.exports = app => {
     async delete() {
       const res = await this.ctx.service.message.delete({
         messageIds: this.ctx.request.body.messageIds,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
