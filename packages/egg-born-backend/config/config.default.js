@@ -52,6 +52,13 @@ module.exports = appInfo => {
     },
   };
 
+  // jwt
+  config.jwt = {
+    secret: null, // default is same as config.keys
+    credentialsRequired: false,
+    property: 'jwt',
+  };
+
   // middlewares
   config.mws = {
   };

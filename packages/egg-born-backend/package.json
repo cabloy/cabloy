@@ -52,6 +52,8 @@
     "redlock": "^4.1.0",
     "semver": "^7.1.2",
     "supertest": "^4.0.2",
-    "uuid": "^3.4.0"
+    "uuid": "^3.4.0",
+    "jsonwebtoken": "^8.5.1",
+    "koa-jwt2": "^1.0.3"
   }
 }

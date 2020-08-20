@@ -30,6 +30,17 @@ export default function(Vue) {
       return Promise.reject(error);
     });
 
+    // add a request interceptor
+    axios.interceptors.request.use(function(config) {
+      if (Vue.prototype.$meta.config.base.jwt) {
+        if (!config.headers) config.headers = {};
+        config.headers.Authorization = `Bearer ${window.localStorage['eb-jwt'] || ''}`;
+      }
+      return config;
+    }, function(error) {
+      return Promise.reject(error);
+    });
+
     // response
     axios.interceptors.response.use(function(response) {
       return response;
