@@ -288,7 +288,7 @@ module.exports = ctx => {
     }
 
     async switchOffAgent() {
-      return await this.switchAgent({ userIdAgent: ctx.user.agent.id });
+      return await this.switchAgent({ userIdAgent: ctx.state.user.agent.id });
     }
 
     async list({ roleId, query, anonymous, page }) {
@@ -386,8 +386,8 @@ module.exports = ctx => {
       let userId;
       if (state === 'associate') {
         // check if ctx.user exists
-        if (!ctx.user || ctx.user.agent.anonymous) return false;
-        userId = ctx.user.agent.id;
+        if (!ctx.state.user || ctx.state.user.agent.anonymous) return false;
+        userId = ctx.state.user.agent.id;
         // associated
         // update user
         await this._updateUserInfo(userId, profileUser.profile, columns);
@@ -405,8 +405,8 @@ module.exports = ctx => {
           });
         }
         // ready
-        verifyUser.op = ctx.user.op;
-        verifyUser.agent = ctx.user.agent;
+        verifyUser.op = ctx.state.user.op;
+        verifyUser.agent = ctx.state.user.agent;
       } else if (state === 'login') {
         // check if user exists
         let user;

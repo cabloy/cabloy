@@ -45,7 +45,7 @@ module.exports = app => {
 
     async emailConfirm() {
       const { email } = this.ctx.request.body.data;
-      await this.service.auth.emailConfirm({ email, user: this.ctx.user.agent });
+      await this.service.auth.emailConfirm({ email, user: this.ctx.state.user.agent });
       this.ctx.success();
     }
 

@@ -66,7 +66,7 @@ module.exports = ctx => {
         },
       };
       // theme
-      const themeStatus = `user-theme:${ctx.user.agent.id}`;
+      const themeStatus = `user-theme:${ctx.state.user.agent.id}`;
       const theme = await ctx.meta.status.module('a-user').get(themeStatus);
       if (theme) {
         config.theme = theme;

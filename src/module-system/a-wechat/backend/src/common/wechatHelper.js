@@ -43,7 +43,7 @@ module.exports = function(ctx) {
     async verifyAuthUser({ scene, openid, userInfo, cbVerify, state = 'login' }) {
       if (state === 'associate') {
         // check if ctx.user exists
-        if (!ctx.user || ctx.user.agent.anonymous) return ctx.throw(403);
+        if (!ctx.state.user || ctx.state.user.agent.anonymous) return ctx.throw(403);
       }
       // ensure wechat user
       const userWechatId = await this._ensureWechatUser({ scene, openid, userInfo });
@@ -181,7 +181,7 @@ module.exports = function(ctx) {
         if (state === 'associate') {
           await ctx.model.query(
             `update aAuth a set a.userId=? where a.deleted=0 and a.iid=? and a.profileId like '${unionid}:%'`,
-            [ ctx.user.agent.id, ctx.instance.id ]
+            [ ctx.state.user.agent.id, ctx.instance.id ]
           );
         } else {
           const _authOthers = await ctx.model.query(
@@ -272,11 +272,11 @@ module.exports = function(ctx) {
       // registerSessionKeyHandle
       api.registerSessionKeyHandle(
         async function() {
-          const cacheKey = `wechatmini-sessionKey:${ctx.user.agent.id}`;
+          const cacheKey = `wechatmini-sessionKey:${ctx.state.user.agent.id}`;
           return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
         },
         async function(sessionKey) {
-          const cacheKey = `wechatmini-sessionKey:${ctx.user.agent.id}`;
+          const cacheKey = `wechatmini-sessionKey:${ctx.state.user.agent.id}`;
           await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, sessionKey);
         }
       );

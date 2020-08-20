@@ -4,7 +4,7 @@ module.exports = app => {
     async save() {
       const res = await this.service.user.save({
         data: this.ctx.request.body.data,
-        user: this.ctx.user.agent,
+        user: this.ctx.state.user.agent,
       });
       this.ctx.success(res);
     }
@@ -12,18 +12,18 @@ module.exports = app => {
     async saveAvatar() {
       const res = await this.service.user.saveAvatar({
         data: this.ctx.request.body.data,
-        user: this.ctx.user.agent,
+        user: this.ctx.state.user.agent,
       });
       this.ctx.success(res);
     }
 
     async agent() {
-      const res = await this.service.user.agent({ userId: this.ctx.user.agent.id });
+      const res = await this.service.user.agent({ userId: this.ctx.state.user.agent.id });
       this.ctx.success(res);
     }
 
     async agentsBy() {
-      const res = await this.service.user.agentsBy({ userId: this.ctx.user.agent.id });
+      const res = await this.service.user.agentsBy({ userId: this.ctx.state.user.agent.id });
       this.ctx.success(res);
     }
 
@@ -35,7 +35,7 @@ module.exports = app => {
     async addAgent() {
       const res = await this.service.user.addAgent({
         userIdAgent: this.ctx.request.body.userIdAgent,
-        userId: this.ctx.user.agent.id,
+        userId: this.ctx.state.user.agent.id,
       });
       this.ctx.success(res);
     }
@@ -43,7 +43,7 @@ module.exports = app => {
     async removeAgent() {
       const res = await this.service.user.removeAgent({
         userIdAgent: this.ctx.request.body.userIdAgent,
-        userId: this.ctx.user.agent.id,
+        userId: this.ctx.state.user.agent.id,
       });
       this.ctx.success(res);
     }
@@ -62,7 +62,7 @@ module.exports = app => {
 
     async authentications() {
       const res = await this.service.user.authentications({
-        user: this.ctx.user.agent,
+        user: this.ctx.state.user.agent,
       });
       this.ctx.success(res);
     }
@@ -70,7 +70,7 @@ module.exports = app => {
     async authenticationDisable() {
       const res = await this.service.user.authenticationDisable({
         authId: this.ctx.request.body.authId,
-        user: this.ctx.user.agent,
+        user: this.ctx.state.user.agent,
       });
       this.ctx.success(res);
     }

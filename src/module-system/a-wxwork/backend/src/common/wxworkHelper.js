@@ -243,11 +243,11 @@ module.exports = function(ctx) {
       // registerSessionKeyHandle
       api.registerSessionKeyHandle(
         async function() {
-          const cacheKey = `wxworkmini-sessionKey:${sceneShort}:${ctx.user.agent.id}`;
+          const cacheKey = `wxworkmini-sessionKey:${sceneShort}:${ctx.state.user.agent.id}`;
           return await ctx.cache.db.module(moduleInfo.relativeName).get(cacheKey);
         },
         async function(sessionKey) {
-          const cacheKey = `wxworkmini-sessionKey:${sceneShort}:${ctx.user.agent.id}`;
+          const cacheKey = `wxworkmini-sessionKey:${sceneShort}:${ctx.state.user.agent.id}`;
           await ctx.cache.db.module(moduleInfo.relativeName).set(cacheKey, sessionKey);
         }
       );
