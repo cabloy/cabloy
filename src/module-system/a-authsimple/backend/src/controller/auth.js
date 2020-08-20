@@ -17,7 +17,7 @@ module.exports = app => {
       const { userName, realName, email, mobile, password } = this.ctx.request.body.data;
       const state = this.ctx.request.body.state;
       const res = await this.service.auth.signup({
-        user: this.ctx.user.agent,
+        user: this.ctx.state.user.agent,
         state,
         userName, realName, email, mobile, password,
       });
@@ -26,7 +26,7 @@ module.exports = app => {
 
     async passwordChange() {
       const { passwordOld, passwordNew } = this.ctx.request.body.data;
-      await this.service.auth.passwordChange({ passwordOld, passwordNew, userId: this.ctx.user.agent.id });
+      await this.service.auth.passwordChange({ passwordOld, passwordNew, userId: this.ctx.state.user.agent.id });
       this.ctx.success();
     }
 

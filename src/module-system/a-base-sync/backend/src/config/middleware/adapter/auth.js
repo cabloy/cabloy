@@ -10,7 +10,7 @@ module.exports = ctx => {
     //   { op:{id},agent:{id},provider}
     async echo() {
       try {
-        if (!ctx.isAuthenticated() || !ctx.user.op || !ctx.user.agent) {
+        if (!ctx.isAuthenticated() || !ctx.user.op) {
           // anonymous
           await ctx.meta.user.loginAsAnonymous();
         } else {
@@ -38,7 +38,7 @@ module.exports = ctx => {
     async getLoginInfo() {
       const config = await this._getConfig();
       const info = {
-        user: ctx.user,
+        user: ctx.state.user,
         instance: this._getInstance(),
         config,
       };

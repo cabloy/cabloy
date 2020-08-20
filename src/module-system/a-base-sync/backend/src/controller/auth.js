@@ -29,18 +29,21 @@ module.exports = app => {
         // user verify
         return await ctx.meta.user.verify({ state, profileUser });
       });
-      // // serializeUser
-      // app.passport.serializeUser(async (ctx, user) => {
-      //   return {
-      //     agent: { id: user.agent.id, iid: user.agent.iid },
-      //     op: { id: user.op.id, iid: user.op.iid },
-      //     provider: user.provider,
-      //   };
-      // });
-      // // deserializeUser
-      // app.passport.deserializeUser(async (ctx, user) => {
-      //   return user;
-      // });
+      // serializeUser
+      this.app.passport.serializeUser(async (ctx, user) => {
+        const _user = {
+          op: { id: user.op.id, iid: user.op.iid, anonymous: user.op.anonymous },
+          provider: user.provider,
+        };
+        if (user.agent.id !== user.op.id) {
+          _user.agent = { id: user.agent.id, iid: user.agent.iid, anonymous: user.agent.anonymous };
+        }
+        return _user;
+      });
+      // deserializeUser
+      this.app.passport.deserializeUser(async (ctx, user) => {
+        return user;
+      });
       // ok
       this.ctx.success();
     }

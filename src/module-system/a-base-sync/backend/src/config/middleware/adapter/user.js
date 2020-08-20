@@ -81,6 +81,7 @@ module.exports = ctx => {
         agent: userOp,
         provider: null,
       };
+      ctx.state.user = user;
       await ctx.login(user);
       // maxAge
       const maxAge = this.config.anonymous.maxAge;
@@ -100,8 +101,12 @@ module.exports = ctx => {
     }
 
     async check() {
+      // state
+      ctx.state.user = {
+        provider: ctx.user.provider,
+      };
       // check if has ctx.user
-      if (!ctx.isAuthenticated() || !ctx.user.op || !ctx.user.agent || ctx.user.op.iid !== ctx.instance.id) ctx.throw(401);
+      if (!ctx.isAuthenticated() || !ctx.user.op || ctx.user.op.iid !== ctx.instance.id) ctx.throw(401);
       // check if deleted,disabled,agent
       const userOp = await this.get({ id: ctx.user.op.id });
       // deleted
@@ -109,18 +114,18 @@ module.exports = ctx => {
       // disabled
       if (userOp.disabled) ctx.throw.module(moduleInfo.relativeName, 1005);
       // hold user
-      ctx.user.op = userOp;
+      ctx.state.user.op = userOp;
       // agent
-      if (ctx.user.agent.id !== ctx.user.op.id) {
+      if (ctx.user.agent && ctx.user.agent.id !== ctx.user.op.id) {
         const agent = await this.agent({ userId: ctx.user.op.id });
         if (!agent) ctx.throw.module(moduleInfo.relativeName, 1006);
         if (agent.id !== ctx.user.agent.id) ctx.throw.module(moduleInfo.relativeName, 1006);
         if (agent.disabled) ctx.throw.module(moduleInfo.relativeName, 1005);
         // hold agent
-        ctx.user.agent = agent;
+        ctx.state.user.agent = agent;
       } else {
         // hold agent
-        ctx.user.agent = userOp;
+        ctx.state.user.agent = userOp;
       }
     }
 
