@@ -23,8 +23,19 @@ export default {
     return Vue.prototype.$meta.api.post('/a/socketio/unsubscribe', { subscribes });
   },
   socket() {
+    // url
     const url = Vue.prototype.$meta.config.api.baseURL || location.origin;
-    return ioc(url, { autoConnect: false });
+    // opts
+    const opts = {
+      autoConnect: false,
+    };
+    // jwt
+    if (Vue.prototype.$meta.config.base.jwt) {
+      opts.query = {
+        'eb-jwt': window.localStorage['eb-jwt'] || '',
+      };
+    }
+    return ioc(url, opts);
   },
 
 };
