@@ -3,10 +3,12 @@ const jsonwebtoken = require('jsonwebtoken');
 const utility = require('utility');
 
 function __checkIfJWT(ctx) {
-  return ctx.get('authorization') || ctx.query.hasOwnProperty('eb-jwt');
+  return !ctx.ctxCaller && (!!ctx.get('authorization') || ctx.query.hasOwnProperty('eb-jwt'));
 }
 
 function __getToken(ctx) {
+  // only valid for the top ctx
+  if (ctx.ctxCaller) return null;
   // 1. check header
   let token;
   if (ctx.get('authorization')) {
@@ -73,8 +75,9 @@ module.exports = (options, app) => {
     await _koajwt(ctx, async () => {
       // cookies
       let cookiesJwt;
+      const useJwt = __checkIfJWT(ctx);
       // set cookie
-      if (__checkIfJWT(ctx)) {
+      if (useJwt) {
         // clear cookie forcely
         ctx.request.headers.cookie = '';
         if (ctx.state.jwt) {
@@ -95,7 +98,7 @@ module.exports = (options, app) => {
       // next
       await next();
       // check cookie
-      if (ctx.response.get('set-cookie') && ctx.get('authorization') && ctx.response.type === 'application/json') {
+      if (useJwt && ctx.response.get('set-cookie') && ctx.response.type === 'application/json') {
         // parse
         const cookies = cookiesJwt ? __parseCookiesRequest(cookiesJwt) : {};
         const cookiesNew = __parseCookiesResponse(ctx.response.get('set-cookie'));
