@@ -2,7 +2,10 @@ export default function(Vue) {
 
   // config
   const config = {
-    modules: {},
+    base: {
+      locale: 'en-us',
+      jwt: false,
+    },
     api: {
       baseURL: '',
     },
@@ -34,6 +37,11 @@ export default function(Vue) {
       },
       thirdParty: null,
     },
+    locales: {
+      'en-us': 'English',
+      'zh-cn': 'Chinese',
+    },
+    modules: {},
   };
 
   // beforeCreate

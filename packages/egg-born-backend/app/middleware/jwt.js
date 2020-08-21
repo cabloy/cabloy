@@ -87,7 +87,7 @@ module.exports = (options, app) => {
       // next
       await next();
       // check cookie
-      if (ctx.response.get('set-cookie') && ctx.get('authorization') && ctx.request.method === 'POST' && ctx.response.type === 'application/json') {
+      if (ctx.response.get('set-cookie') && ctx.get('authorization') && ctx.response.type === 'application/json') {
         // parse
         const cookies = cookiesJwt ? __parseCookiesRequest(cookiesJwt) : {};
         const cookiesNew = __parseCookiesResponse(ctx.response.get('set-cookie'));

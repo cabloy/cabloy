@@ -1,13 +1,8 @@
 export default {
-  base: {
-    locale: 'en-us',
-    jwt: false,
-  },
-  api: {
-    baseURL: '',
-  },
-  layout: {
-  },
-  modules: {
-  },
+  base: {},
+  api: {},
+  layout: {},
+  markdown: {},
+  theme: {},
+  modules: {},
 };

@@ -122,7 +122,8 @@ export default {
     },
     _authEcho(cb) {
       // get auth first
-      this.$api.post('/a/base/auth/echo').then(data => {
+      const locale = this.$meta.util.getLocale();
+      this.$api.post(`/a/base/auth/echo?locale=${locale}`).then(data => {
         // login
         this.$store.commit('auth/login', {
           loggedIn: data.user.agent.anonymous === 0,

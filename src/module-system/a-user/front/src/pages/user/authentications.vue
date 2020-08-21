@@ -68,8 +68,8 @@ export default {
     },
     checkIfEnable(item) {
       return !item.authId && !item.meta.disableAssociate &&
-        (location.origin !== 'file://');
-      //(location.origin !== 'file://' || item.meta.mode !== 'redirect');
+        (!ctx.$meta.config.base.jwt);
+      //(!ctx.$meta.config.base.jwt || item.meta.mode !== 'redirect');
     },
     checkIfDisable(item) {
       return item.authId && !this.isProviderCurrent(item);

@@ -328,14 +328,36 @@ export default function(Vue) {
       }
     },
     setLocale(locale) {
-      this.cookies.set('locale', locale);
-      window.localStorage['eb-locale'] = locale;
+      if (Vue.prototype.$meta.config.base.jwt) {
+        window.localStorage['eb-locale'] = locale;
+      } else {
+        this.cookies.set('locale', locale);
+      }
     },
     getLocale() {
-      const locale = this.cookies.get('locale') || window.localStorage['eb-locale'];
+      let locale;
+      // localStorage / cookies
+      if (Vue.prototype.$meta.config.base.jwt) {
+        locale = window.localStorage['eb-locale'];
+      } else {
+        locale = this.cookies.get('locale');
+      }
       if (locale) return locale;
-      const configBase = Vue.prototype.$meta.config.base;
-      return (configBase && configBase.locale) || 'en-us';
+      // navigator.language
+      locale = this.preferredLocale(window.navigator.language.toLowerCase());
+      if (locale) return locale;
+      // config
+      locale = Vue.prototype.$meta.config.base.locale;
+      if (locale) return locale;
+      // default
+      return 'en-us';
+    },
+    preferredLocale(locale) {
+      const locales = Vue.prototype.$meta.config.locales;
+      // match exactly
+      if (locales[locale]) return locale;
+      // match fuzzy
+      return Object.keys(locales).find(item => item.indexOf(locale) === 0);
     },
   };
 
