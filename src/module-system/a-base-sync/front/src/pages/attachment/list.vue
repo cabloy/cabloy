@@ -134,7 +134,20 @@ export default {
       }
     },
     onItemClick(event, item) {
-      window.open(item.downloadUrl);
+      if (this.$meta.config.base.jwt) {
+        this.$api.post('/a/base/jwt/create').then(res => {
+          this._openUrl(item, res.jwt);
+        });
+      } else {
+        this._openUrl(item, null);
+      }
+    },
+    _openUrl(item, jwt) {
+      if (jwt) {
+        window.open(this.$meta.util.combineQueries(item.downloadUrl, { 'eb-jwt': jwt }));
+      } else {
+        window.open(item.downloadUrl);
+      }
     },
     getItemMedia(item) {
       const media = item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
