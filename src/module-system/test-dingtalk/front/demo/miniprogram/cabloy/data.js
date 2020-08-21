@@ -1,21 +1,12 @@
-const configDefault = {
-  container: null,
-  scene: 'default',
-  api: {
-    baseURL: 'https://demo.cabloy.com',
-  },
-};
-
-module.exports = function (cabloy, options) {
+module.exports = function(cabloy, options) {
   let _instance = null;
   let _user = null;
-  let _cookies = null;
+  let _jwt = null;
+  let _locale = null;
 
-  // config
-  let _config = cabloy.util.extend({}, configDefault, options);
-
-  // systemInfo 
-  let _wxSystemInfo = typeof wx !== 'undefined' && wx.getSystemInfoSync();
+  // systemInfo
+  const _wxSystemInfo = typeof wx !== 'undefined' && wx.getSystemInfoSync();
+  const _ddSysmtemInfo = typeof dd !== 'undefined' && dd.getSystemInfoSync();
 
   // container
   let _container;
@@ -26,11 +17,13 @@ module.exports = function (cabloy, options) {
   } else if (typeof wx !== 'undefined' && _wxSystemInfo.environment === 'wxwork') {
     _container = 'wxwork';
   }
-  _config.container = _container;
 
   return {
-    get wxSystemInfo() {
-      return _wxSystemInfo;
+    get systemInfo() {
+      return _wxSystemInfo || _ddSysmtemInfo;
+    },
+    get container() {
+      return _container;
     },
     get dingtalk() {
       return _container === 'dingtalk';
@@ -41,11 +34,11 @@ module.exports = function (cabloy, options) {
     get wxwork() {
       return _container === 'wxwork';
     },
-    get cookies() {
-      return _cookies;
+    get jwt() {
+      return _jwt;
     },
-    set cookies(value) {
-      _cookies = cabloy.util.extend({}, _cookies, value);
+    set jwt(value) {
+      _jwt = value;
     },
     get user() {
       return _user;
@@ -57,17 +50,26 @@ module.exports = function (cabloy, options) {
       const user = this.user;
       return user && user.agent.anonymous === 0;
     },
-    get config() {
-      return _config;
-    },
-    set config(value) {
-      _config = cabloy.util.extend({}, _config, value);
-    },
     get instance() {
       return _instance;
     },
     set instance(value) {
       _instance = value;
+    },
+    get locale() {
+      // systemInfo
+      if (!_locale) {
+        _locale = cabloy.util.preferredLocale(this.systemInfo.language);
+      }
+      // config
+      if (!_locale) {
+        _locale = cabloy.config.base.locale;
+      }
+      // default
+      if (!_locale) {
+        _locale = 'en-us';
+      }
+      return _locale;
     },
   };
 };

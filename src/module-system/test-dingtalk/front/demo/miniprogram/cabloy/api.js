@@ -1,42 +1,22 @@
-function __adjustCookies(cookies) {
-  const res = {};
-  for (const item of cookies) {
-    const arr = item.split(';')[0].split('=');
-    res[decodeURIComponent(arr[0])] = decodeURIComponent(arr[1]);
-  }
-  return res;
-}
-
-function __combineCookies(cookies) {
-  const res = [];
-  for (const key in cookies) {
-    res.push(`${encodeURIComponent(key)}=${encodeURIComponent(cookies[key])}`);
-  }
-  return res.join('; ');
-}
-
 module.exports = function(cabloy) {
   return {
     request(options) {
       // url
       if (options.url.indexOf('/') === 0) {
-        options.url = `${cabloy.data.config.api.baseURL}/api${options.url}`;
+        options.url = `${cabloy.config.api.baseURL}/api${options.url}`;
       }
-      // cookies
-      const cookies = cabloy.data.cookies;
-      if (cookies) {
+      // jwt
+      if (cabloy.data.dingtalk) {
+        if (!options.headers) options.headers = {};
+        options.headers.Authorization = `Bearer ${cabloy.data.jwt || ''}`;
+      } else {
         if (!options.header) options.header = {};
-        options.header.cookie = __combineCookies(cookies);
+        options.header.Authorization = `Bearer ${cabloy.data.jwt || ''}`;
       }
       // promise
       return new Promise((resolve, reject) => {
         // callback
         options.success = res => {
-          // cookies
-          const _cookies = res.cookies || res.headers['set-cookie'];
-          if (_cookies && _cookies.length > 0) {
-            cabloy.data.cookies = __adjustCookies(_cookies);
-          }
           // statusCode
           const _statusCode = res.statusCode || res.status;
           if (_statusCode !== 200) {
@@ -49,6 +29,10 @@ module.exports = function(cabloy) {
             error.code = res.data.code;
             error.message = res.data.message;
             return reject(error);
+          }
+          // check jwt
+          if (res.data['eb-jwt']) {
+            cabloy.data.jwt = res.data['eb-jwt'];
           }
           resolve(res.data.data);
         };

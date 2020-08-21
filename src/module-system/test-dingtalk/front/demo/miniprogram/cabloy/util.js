@@ -1,5 +1,15 @@
 module.exports = function(cabloy) {
   return {
+    preferredLocale(locale) {
+      locale = locale.toLowerCase().replace(/_/g, '-');
+      const locales = cabloy.config.locales;
+      // match exactly
+      if (locales[locale]) return locale;
+      // match fuzzy
+      const localeShort = locale.split('-')[0];
+      return Object.keys(locales).find(item => item.indexOf(localeShort) === 0);
+    },
+
     login(options) {
       if (cabloy.data.dingtalk) {
         return this.__login_dingtalk(options);
@@ -12,7 +22,7 @@ module.exports = function(cabloy) {
 
     __login_wechat(options) {
       return new Promise((resolve, reject) => {
-        const scene = cabloy.data.config.scene;
+        const scene = cabloy.config.base.scene;
         if (options && options.detail) {
           // 直接进行后台登录
           this.__login({ scene, code: null, detail: options.detail }).then(resolve).catch(reject);
@@ -49,7 +59,7 @@ module.exports = function(cabloy) {
         // 小程序登录
         wx.qy.login({
           success: res => {
-            const scene = cabloy.data.config.scene;
+            const scene = cabloy.config.base.scene;
             const code = res.code;
             this.__login({ scene, code }).then(resolve).catch(reject);
           },
@@ -62,7 +72,7 @@ module.exports = function(cabloy) {
         // 小程序登录
         dd.getAuthCode({
           success: res => {
-            const scene = cabloy.data.config.scene;
+            const scene = cabloy.config.base.scene;
             const code = res.authCode;
             this.__login({ scene, code }).then(resolve).catch(reject);
           },
@@ -72,14 +82,14 @@ module.exports = function(cabloy) {
 
     __login({ scene, code, detail }) {
       // 后台登录
-      const url = `/a/${cabloy.data.config.container}/authMini/login`;
+      const url = `/a/${cabloy.data.container}/authMini/login?locale=${cabloy.data.locale}`;
       return cabloy.api.post(url, { scene, code, detail }).then(data => {
         // user
         cabloy.data.user = data.user;
-        // config
-        cabloy.data.config = data.config;
         // instance
         cabloy.data.instance = data.instance;
+        // config
+        cabloy.config = data.config;
         // ok
         return data.user;
       });

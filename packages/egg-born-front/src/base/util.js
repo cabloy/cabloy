@@ -344,7 +344,7 @@ export default function(Vue) {
       }
       if (locale) return locale;
       // navigator.language
-      locale = this.preferredLocale(window.navigator.language.toLowerCase());
+      locale = this.preferredLocale(window.navigator.language);
       if (locale) return locale;
       // config
       locale = Vue.prototype.$meta.config.base.locale;
@@ -353,11 +353,13 @@ export default function(Vue) {
       return 'en-us';
     },
     preferredLocale(locale) {
+      locale = locale.toLowerCase().replace(/_/g, '-');
       const locales = Vue.prototype.$meta.config.locales;
       // match exactly
       if (locales[locale]) return locale;
       // match fuzzy
-      return Object.keys(locales).find(item => item.indexOf(locale) === 0);
+      const localeShort = locale.split('-')[0];
+      return Object.keys(locales).find(item => item.indexOf(localeShort) === 0);
     },
   };
 
