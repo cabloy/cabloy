@@ -2,6 +2,10 @@ const koajwt = require('koa-jwt2');
 const jsonwebtoken = require('jsonwebtoken');
 const utility = require('utility');
 
+function __checkIfJWT(ctx) {
+  return ctx.get('authorization') || ctx.query.hasOwnProperty('eb-jwt');
+}
+
 function __getToken(ctx) {
   // 1. check header
   let token;
@@ -70,17 +74,21 @@ module.exports = (options, app) => {
       // cookies
       let cookiesJwt;
       // set cookie
-      if (ctx.state.jwt) {
-        // check exp
-        const isValid = !ctx.state.jwt.exp || ctx.state.jwt.exp > Date.now();
-        if (isValid) {
-          // token
-          const token = ctx.state.jwt.token;
-          const res = ctx.cookies.keys.decrypt(utility.base64decode(token, true, 'buffer'));
-          cookiesJwt = res ? res.value.toString() : undefined;
-          if (cookiesJwt) {
-            // set cookie
-            ctx.request.headers.cookie = cookiesJwt;
+      if (__checkIfJWT(ctx)) {
+        // clear cookie forcely
+        ctx.request.headers.cookie = '';
+        if (ctx.state.jwt) {
+          // check exp
+          const isValid = !ctx.state.jwt.exp || ctx.state.jwt.exp > Date.now();
+          if (isValid) {
+            // token
+            const token = ctx.state.jwt.token;
+            const res = ctx.cookies.keys.decrypt(utility.base64decode(token, true, 'buffer'));
+            cookiesJwt = res ? res.value.toString() : undefined;
+            if (cookiesJwt) {
+              // set cookie
+              ctx.request.headers.cookie = cookiesJwt;
+            }
           }
         }
       }

@@ -64,6 +64,11 @@ module.exports = appInfo => {
     },
   };
 
+  // cookies
+  config.cookies = {
+    overwrite: true,
+  };
+
   // middlewares
   config.mws = {
   };
