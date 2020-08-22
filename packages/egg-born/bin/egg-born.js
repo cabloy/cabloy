@@ -8,6 +8,7 @@ const fse = require('fs-extra');
 const rimraf = require('mz-modules/rimraf');
 const compressing = require('compressing');
 const randomize = require('randomatic');
+const uuid = require('uuid');
 
 co(function* () {
 
@@ -46,6 +47,8 @@ co(function* () {
     locals.mysqlRootPassword = randomize('*', 16, { exclude: '\\\'"$' });
     locals.mysqlUserPassword = randomize('*', 16, { exclude: '\\\'"$' });
     locals.mysqlUserName = 'web_user';
+    // safeKeys
+    locals.safeKeys = `${uuid.v4()}_${Date.now()}_${random(100, 10000)}`;
     // ready
     return locals;
   };
@@ -121,4 +124,8 @@ co(function* () {
   console.error(err.stack);
   process.exit(1);
 });
+
+function random(start, end) {
+  return Math.floor(Math.random() * (end - start) + start);
+}
 

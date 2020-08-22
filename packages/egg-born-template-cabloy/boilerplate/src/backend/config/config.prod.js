@@ -2,7 +2,7 @@ module.exports = appInfo => {
   const config = {};
 
   // keys
-  config.keys = appInfo.name + '_{{keys}}';
+  config.keys = appInfo.name + '_{{safeKeys}}';
 
   // instances
   config.instances = [
@@ -25,7 +25,7 @@ module.exports = appInfo => {
     clients: {
       // donnot change the name
       __ebdb: {
-        host: 'mysql',  // see: docker-compose.yml
+        host: 'mysql', // see: docker-compose.yml
         port: '3306',
         user: '{{mysqlUserName}}',
         password: '{{mysqlUserPassword}}',
