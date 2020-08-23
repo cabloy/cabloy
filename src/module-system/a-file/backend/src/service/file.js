@@ -166,7 +166,7 @@ module.exports = app => {
       );
     }
 
-    async download({ downloadId, width, height, user }) {
+    async download({ downloadId, width, height }) {
       // downloadId
       if (!downloadId) this.ctx.throw(404);
       const extPos = downloadId.indexOf('.');
@@ -183,7 +183,7 @@ module.exports = app => {
         fileName = await this.adjustImage(file, width, height);
       } else if (file.mode === 2) {
         // check right
-        await this.fileDownloadCheck({ file, user });
+        await this.fileDownloadCheck({ file });
       } else if (file.mode === 3) {
         // do nothing
       }
@@ -271,7 +271,10 @@ module.exports = app => {
       if (!res) this.ctx.throw(403);
     }
 
-    async fileDownloadCheck({ file, user }) {
+    async fileDownloadCheck({ file }) {
+      // check user
+      await this.ctx.meta.user.check();
+      const user = this.ctx.state.user.op;
       // not check if !atomId
       if (file.atomId) {
         const res = await this.ctx.meta.atom.checkRightRead({ atom: { id: file.atomId }, user });

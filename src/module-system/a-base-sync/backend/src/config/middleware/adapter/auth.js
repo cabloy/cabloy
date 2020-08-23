@@ -10,13 +10,8 @@ module.exports = ctx => {
     //   { op:{id},agent:{id},provider}
     async echo() {
       try {
-        if (!ctx.isAuthenticated() || !ctx.user.op) {
-          // anonymous
-          await ctx.meta.user.loginAsAnonymous();
-        } else {
-          // check if deleted,disabled,agent
-          await ctx.meta.user.check();
-        }
+        // check
+        await ctx.meta.user.check();
         // logined
         return await this.getLoginInfo();
       } catch (e) {

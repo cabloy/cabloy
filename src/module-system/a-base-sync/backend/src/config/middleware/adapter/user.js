@@ -99,33 +99,43 @@ module.exports = ctx => {
       return _anonymousId;
     }
 
-    async check() {
-      // state
-      ctx.state.user = {
-        provider: ctx.user.provider,
-      };
+    async check(options) {
+      // options
+      const checkUser = options && options.user;
+      // always has anonymous id
+      ctx.meta.user.anonymousId();
       // check if has ctx.user
-      if (!ctx.isAuthenticated() || !ctx.user.op || ctx.user.op.iid !== ctx.instance.id) ctx.throw(401);
-      // check if deleted,disabled,agent
-      const userOp = await this.get({ id: ctx.user.op.id });
-      // deleted
-      if (!userOp) ctx.throw.module(moduleInfo.relativeName, 1004);
-      // disabled
-      if (userOp.disabled) ctx.throw.module(moduleInfo.relativeName, 1005);
-      // hold user
-      ctx.state.user.op = userOp;
-      // agent
-      if (ctx.user.agent && ctx.user.agent.id !== ctx.user.op.id) {
-        const agent = await this.agent({ userId: ctx.user.op.id });
-        if (!agent) ctx.throw.module(moduleInfo.relativeName, 1006);
-        if (agent.id !== ctx.user.agent.id) ctx.throw.module(moduleInfo.relativeName, 1006);
-        if (agent.disabled) ctx.throw.module(moduleInfo.relativeName, 1005);
-        // hold agent
-        ctx.state.user.agent = agent;
+      if (!ctx.isAuthenticated() || !ctx.user.op || ctx.user.op.iid !== ctx.instance.id) {
+        // anonymous
+        await ctx.meta.user.loginAsAnonymous();
       } else {
-        // hold agent
-        ctx.state.user.agent = userOp;
+        // state
+        ctx.state.user = {
+          provider: ctx.user.provider,
+        };
+        // check if deleted,disabled,agent
+        const userOp = await this.get({ id: ctx.user.op.id });
+        // deleted
+        if (!userOp) ctx.throw.module(moduleInfo.relativeName, 1004);
+        // disabled
+        if (userOp.disabled) ctx.throw.module(moduleInfo.relativeName, 1005);
+        // hold user
+        ctx.state.user.op = userOp;
+        // agent
+        if (ctx.user.agent && ctx.user.agent.id !== ctx.user.op.id) {
+          const agent = await this.agent({ userId: ctx.user.op.id });
+          if (!agent) ctx.throw.module(moduleInfo.relativeName, 1006);
+          if (agent.id !== ctx.user.agent.id) ctx.throw.module(moduleInfo.relativeName, 1006);
+          if (agent.disabled) ctx.throw.module(moduleInfo.relativeName, 1005);
+          // hold agent
+          ctx.state.user.agent = agent;
+        } else {
+          // hold agent
+          ctx.state.user.agent = userOp;
+        }
       }
+      // check user
+      if (checkUser && ctx.state.user.op.anonymous) ctx.throw(401);
     }
 
     async setActivated({ user }) {

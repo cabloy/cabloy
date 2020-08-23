@@ -12,10 +12,10 @@
       </f7-list-group>
       <f7-list-group>
         <f7-list-item group-title :title="$text('Options')"></f7-list-item>
-        <f7-list-item>
+        <!-- <f7-list-item>
           <span class="text-color-gray">{{$text('Leader')}}</span>
           <eb-toggle v-model="role.leader" dataPath="leader"></eb-toggle>
-        </f7-list-item>
+        </f7-list-item> -->
       </f7-list-group>
     </f7-list>
   </eb-page>

@@ -67,7 +67,6 @@ module.exports = app => {
         downloadId: this.ctx.params.downloadId,
         width: this.ctx.query.width,
         height: this.ctx.query.height,
-        user: this.ctx.state.user.op,
       });
     }
 
