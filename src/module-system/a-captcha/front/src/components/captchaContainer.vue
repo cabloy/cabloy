@@ -6,13 +6,18 @@ export default {
   render(c) {
     const children = [];
     if (this.providerInstance) {
-      const componentName = this.__getComponentName();
-      children.push(c(componentName, {
+      children.push(c('eb-component', {
         props: {
-          module: this.module,
-          sceneName: this.sceneName,
-          context: this.context,
-          providerInstance: this.providerInstance,
+          module: this.providerInstance.provider.module,
+          name: this.providerInstance.provider.name,
+          options: {
+            props: {
+              module: this.module,
+              sceneName: this.sceneName,
+              context: this.context,
+              providerInstance: this.providerInstance,
+            },
+          },
         },
       }));
     }
@@ -31,7 +36,6 @@ export default {
   },
   data() {
     return {
-      moduleCaptcha: null,
       providerInstance: null,
     };
   },
@@ -41,12 +45,7 @@ export default {
       sceneName: this.sceneName,
       context: this.context,
     }).then(providerInstance => {
-      this.$meta.module.use(providerInstance.provider.module, module => {
-        this.moduleCaptcha = module;
-        this.providerInstance = providerInstance;
-        const componentName = this.__getComponentName();
-        this.$options.components[componentName] = module.options.components[providerInstance.provider.name];
-      });
+      this.providerInstance = providerInstance;
     });
   },
   methods: {
@@ -56,9 +55,6 @@ export default {
         data: { token },
       }
     },
-    __getComponentName() {
-      return `${this.providerInstance.provider.module}:${this.providerInstance.provider.name}`;
-    }
   },
 };
 

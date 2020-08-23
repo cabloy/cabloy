@@ -14,9 +14,7 @@
             <eb-list-item-validate dataKey="mobile"></eb-list-item-validate>
             <eb-list-input :label="$text('SMS Verification Code')" floating-label type="text" clear-button :placeholder="$text('SMS Verification Code')" v-model="captcha.token" dataPath="captcha/token">
               <div slot="content">
-                <template v-if="moduleCaptcha">
-                  <captchaContainer ref="captchaContainer" module="test-party" sceneName="formMobileVerifyTest" :context="captchaContext"></captchaContainer>
-                </template>
+                <eb-component ref="captchaContainer" module="a-captcha" name="captchaContainer" :options="captchaContainerOptions"></eb-component>
               </div>
             </eb-list-input>
             <f7-list-item divider>
@@ -47,27 +45,28 @@ export default {
       captcha: {
         token: null,
       },
-      moduleCaptcha: null,
     };
   },
   computed: {
     form2() {
       return JSON5.stringify(this.item, null, 2);
     },
-    captchaContext() {
-      return { mobile: this.item.mobile };
+    captchaContainerOptions() {
+      return {
+        props: {
+          module: "test-party",
+          sceneName: "formMobileVerifyTest",
+          context: {
+            mobile: this.item.mobile,
+          },
+        },
+      };
     },
     smsInstalled() {
       return !!this.getModule('a-authsms');
     },
   },
-  created() {
-    // captcha
-    this.$meta.module.use('a-captcha', module => {
-      this.$options.components.captchaContainer = module.options.components.captchaContainer;
-      this.moduleCaptcha = module;
-    });
-  },
+  created() {},
   methods: {
     onFormSubmit() {
       this.$refs.buttonSubmit.onClick();
@@ -78,7 +77,7 @@ export default {
     onPerformValidate() {
       return this.$api.post('kitchen-sink/form-mobile-verify/mobileVerify', {
         data: this.item,
-        captcha: this.$refs.captchaContainer.captchaData({ token: this.captcha.token }),
+        captcha: this.$refs.captchaContainer.getComponentInstance().captchaData({ token: this.captcha.token }),
       }).then(() => {
         return true;
       });

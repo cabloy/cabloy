@@ -9,9 +9,7 @@
           <eb-list-item-validate dataKey="password"></eb-list-item-validate>
           <eb-list-input :label="$text('Captcha Code')" floating-label type="text" clear-button :placeholder="$text('Captcha Code')" v-model="captcha.token" dataPath="captcha/token">
             <div slot="content">
-              <template v-if="moduleCaptcha">
-                <captchaContainer ref="captchaContainer" module="test-party" sceneName="formCaptchaTest"></captchaContainer>
-              </template>
+              <eb-component ref="captchaContainer" module="a-captcha" name="captchaContainer" :options="captchaContainerOptions"></eb-component>
             </div>
           </eb-list-input>
           <f7-list-item divider>
@@ -39,7 +37,12 @@ export default {
       captcha: {
         token: null,
       },
-      moduleCaptcha: null,
+      captchaContainerOptions: {
+        props: {
+          module: "test-party",
+          sceneName: "formCaptchaTest",
+        },
+      },
     };
   },
   computed: {
@@ -47,13 +50,7 @@ export default {
       return JSON5.stringify(this.item, null, 2);
     },
   },
-  created() {
-    // captcha
-    this.$meta.module.use('a-captcha', module => {
-      this.$options.components.captchaContainer = module.options.components.captchaContainer;
-      this.moduleCaptcha = module;
-    });
-  },
+  created() {},
   methods: {
     onFormSubmit() {
       this.$refs.buttonSubmit.onClick();
@@ -64,7 +61,7 @@ export default {
     onPerformValidate() {
       return this.$api.post('kitchen-sink/form-captcha/signup', {
         data: this.item,
-        captcha: this.$refs.captchaContainer.captchaData({ token: this.captcha.token }),
+        captcha: this.$refs.captchaContainer.getComponentInstance().captchaData({ token: this.captcha.token }),
       }).then(() => {
         return true;
       });

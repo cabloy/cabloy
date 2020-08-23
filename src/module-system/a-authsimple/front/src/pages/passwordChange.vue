@@ -13,9 +13,7 @@
           <eb-list-item-validate dataKey="passwordNewAgain"></eb-list-item-validate>
           <eb-list-input :label="$text('Captcha Code')" floating-label type="text" clear-button :placeholder="$text('Captcha Code')" v-model="captcha.token" dataPath="captcha/token">
             <div slot="content">
-              <template v-if="moduleCaptcha">
-                <captchaContainer ref="captchaContainer" module="a-authsimple" sceneName="passwordChange"></captchaContainer>
-              </template>
+              <eb-component ref="captchaContainer" module="a-captcha" name="captchaContainer" :options="captchaContainerOptions"></eb-component>
             </div>
           </eb-list-input>
         </eb-list>
@@ -38,20 +36,20 @@ export default {
       captcha: {
         token: null,
       },
-      moduleCaptcha: null,
+      captchaContainerOptions: {
+        props: {
+          module: "a-authsimple",
+          sceneName: "passwordChange",
+        },
+      },
     };
   },
-  created() {
-    this.$meta.module.use('a-captcha', module => {
-      this.$options.components.captchaContainer = module.options.components.captchaContainer;
-      this.moduleCaptcha = module;
-    });
-  },
+  created() {},
   methods: {
     onPerformValidate() {
       return this.$api.post('auth/passwordChange', {
         data: this.data,
-        captcha: this.$refs.captchaContainer.captchaData({ token: this.captcha.token }),
+        captcha: this.$refs.captchaContainer.getComponentInstance().captchaData({ token: this.captcha.token }),
       }).then(() => {
         this.$f7router.back();
       });

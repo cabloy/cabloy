@@ -1,5 +1,4 @@
 <script>
-import Vue from 'vue';
 export default {
   meta: {
     global: true,
@@ -35,7 +34,7 @@ export default {
       }));
     }
     //
-    return c('div', {}, children);
+    return c('div', children);
   },
   created() {
     this.$meta.module.use(this.module, moduleInstance => {

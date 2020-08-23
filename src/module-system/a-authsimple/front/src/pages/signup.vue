@@ -11,9 +11,7 @@
           <eb-list-item-validate dataKey="passwordAgain"></eb-list-item-validate>
           <eb-list-input :label="$text('Captcha Code')" floating-label type="text" clear-button :placeholder="$text('Captcha Code')" v-model="captcha.token" dataPath="captcha/token">
             <div slot="content">
-              <template v-if="moduleCaptcha">
-                <captchaContainer ref="captchaContainer" module="a-authsimple" sceneName="signup"></captchaContainer>
-              </template>
+              <eb-component ref="captchaContainer" module="a-captcha" name="captchaContainer" :options="captchaContainerOptions"></eb-component>
             </div>
           </eb-list-input>
           <f7-list-item divider>
@@ -44,7 +42,12 @@ export default {
       captcha: {
         token: null,
       },
-      moduleCaptcha: null,
+      captchaContainerOptions: {
+        props: {
+          module: "a-authsimple",
+          sceneName: "signup",
+        },
+      },
       userNameReadOnly: false,
     };
   },
@@ -60,11 +63,6 @@ export default {
         this.userNameReadOnly = true;
       }
     }
-    // captcha
-    this.$meta.module.use('a-captcha', module => {
-      this.$options.components.captchaContainer = module.options.components.captchaContainer;
-      this.moduleCaptcha = module;
-    });
   },
   methods: {
     getPageTitle() {
@@ -82,7 +80,7 @@ export default {
       return this.$api.post('auth/signup', {
         state: this.state,
         data: this.data,
-        captcha: this.$refs.captchaContainer.captchaData({ token: this.captcha.token }),
+        captcha: this.$refs.captchaContainer.getComponentInstance().captchaData({ token: this.captcha.token }),
       }).then(() => {
         let hash;
         if (this.returnTo) {

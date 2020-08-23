@@ -15,18 +15,20 @@ export default {
     if (this.auto && this.ready) {
       // custom
       if (this.custom) {
-        return this.customNotFound ?
-          c('div', {
-            domProps: { innerText: `custom component ${this.schema.meta.custom.component} not found` },
-          }) :
-          c('custom', {
-            props: {
-              data: this.data,
-              readOnly: this.readOnly,
-              onSave: this.onSave,
+        return c('eb-component', {
+          props: {
+            module: this.custom.module,
+            name: this.custom.name,
+            options: {
+              props: {
+                data: this.data,
+                readOnly: this.readOnly,
+                onSave: this.onSave,
+              },
+              on: { submit: this.onSubmit },
             },
-            on: { submit: this.onSubmit },
-          });
+          },
+        });
       }
       // auto
       return this.renderSchema(c);
@@ -66,11 +68,9 @@ export default {
   },
   data() {
     return {
-      module: null,
       schema: null,
       verrors: null,
-      custom: false,
-      customNotFound: false,
+      custom: null,
     };
   },
   computed: {
@@ -80,9 +80,7 @@ export default {
   },
   watch: {
     params() {
-      this.custom = false;
-      this.customNotFound = false;
-      delete this.$options.components.custom;
+      this.custom = null;
       this.$nextTick(() => {
         this.fetchSchema();
       });
@@ -154,15 +152,11 @@ export default {
       }
       // custom
       const moduleName = schema.meta.custom.module || moduleMaybe;
-      this.$meta.module.use(moduleName, module => {
-        const _component = module.options.components[_componentName];
-        if (!_component) {
-          this.customNotFound = true;
-        } else {
-          this.$options.components.custom = _component;
-        }
-        this.module = module;
-        this.custom = true;
+      this.$meta.module.use(moduleName, () => {
+        this.custom = {
+          module: moduleName,
+          name: _componentName,
+        };
         this.__schemaReady2(schema);
       });
     },
