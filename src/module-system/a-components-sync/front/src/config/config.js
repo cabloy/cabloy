@@ -5,6 +5,9 @@ export default {
       must: '',
     },
   },
+  form: {
+    floatingLabel: false,
+  },
   error: {
     message: {
       maxLength: {

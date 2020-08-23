@@ -246,7 +246,7 @@ export default {
         key,
         attrs: {
           label: title,
-          floatingLabel: true,
+          floatingLabel: this.$config.form.floatingLabel,
           type,
           placeholder,
           info,
@@ -291,7 +291,7 @@ export default {
         key,
         attrs: {
           label: title,
-          floatingLabel: true,
+          floatingLabel: this.$config.form.floatingLabel,
           type: 'datepicker',
           placeholder,
           info,
@@ -354,7 +354,7 @@ export default {
         key,
         attrs: {
           label: title,
-          floatingLabel: true,
+          floatingLabel: this.$config.form.floatingLabel,
           type,
           placeholder,
           info,
@@ -420,9 +420,9 @@ export default {
       return c('f7-list-item', {
         key,
       }, [
-        c('span', {
+        c('div', {
           slot: 'title',
-          staticClass: property.ebReadOnly ? 'text-color-gray' : '',
+          staticClass: property.ebReadOnly ? 'text-color-gray' : 'item-label',
           domProps: { innerText: title },
         }),
         c('eb-toggle', {
@@ -473,13 +473,17 @@ export default {
       // render
       return c('eb-list-item', {
         key,
-        staticClass: property.ebReadOnly ? 'text-color-gray' : '',
         attrs: {
           smartSelect: !this.validate.readOnly && !property.ebReadOnly,
-          title,
+          //title,
           smartSelectParams: property.ebParams || { openIn: 'page', closeOnSelect: true },
         },
       }, [
+        c('div', {
+          slot: 'title',
+          staticClass: property.ebReadOnly ? 'text-color-gray' : 'item-label',
+          domProps: { innerText: title }
+        }),
         c('eb-select', {
           attrs,
           on: {

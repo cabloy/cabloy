@@ -168,8 +168,13 @@ export default {
     },
     renderSchema(c) {
       const children = this.renderProperties(c, this.data, this.schema.properties, '');
+      const attrs = {
+        form: true,
+        noHairlinesMd: true,
+        inlineLabels: !this.$config.form.floatingLabel,
+      };
       return c('eb-list', {
-          attrs: { form: true, noHairlinesMd: true },
+          attrs,
           on: { submit: this.onSubmit },
         },
         children);

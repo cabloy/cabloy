@@ -18,8 +18,8 @@
             </eb-list-input>
             <f7-list-item>
               <f7-icon slot="media"></f7-icon>
-              <span class="text-color-gray">{{$text('Remember Me')}}</span>
-              <eb-toggle v-model="data.rememberMe" dataPath="rememberMe"></eb-toggle>
+              <span slot="title" class="item-label">{{$text('Remember Me')}}</span>
+              <eb-toggle slot="after" v-model="data.rememberMe" dataPath="rememberMe"></eb-toggle>
             </f7-list-item>
             <eb-list-button ref="buttonSubmit" :onPerform="signIn">{{$text('Sign In')}}</eb-list-button>
           </eb-list>
