@@ -31,6 +31,7 @@ module.exports = app => {
       });
       // serializeUser
       this.app.passport.serializeUser(async (ctx, user) => {
+        ctx.state.user = user;
         const _user = {
           op: { id: user.op.id, iid: user.op.iid, anonymous: user.op.anonymous },
           provider: user.provider,

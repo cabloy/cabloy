@@ -1,6 +1,6 @@
 // app.js
 
-const Cabloy = require('./cabloy/index.js');
+const Cabloy = require('cabloy-miniprogram');
 
 App({
   onLaunch() {

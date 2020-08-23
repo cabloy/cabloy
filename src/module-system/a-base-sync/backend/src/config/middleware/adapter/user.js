@@ -81,7 +81,6 @@ module.exports = ctx => {
         agent: userOp,
         provider: null,
       };
-      ctx.state.user = user;
       await ctx.login(user);
       // maxAge
       const maxAge = this.config.anonymous.maxAge;

@@ -48,7 +48,7 @@ Page({
   },
   getOpenid() {
     app.cabloy.api.post('/test/wechat/test/getOpenidMini', {
-      scene: app.cabloy.data.scene,
+      scene: app.cabloy.config.base.scene,
     }).then(data => {
       this.setData({
         openid: data.openid,

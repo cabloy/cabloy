@@ -2,7 +2,8 @@
   "pages": [
     "pages/index/index"
   ],
-  "window": {
+  "window":
+  {
     "defaultTitle": "CabloyJS钉钉小程序演示"
   }
 }
