@@ -19,4 +19,5 @@ export default {
   'Select date': '选择日期',
   'Select Time': '选择时间',
   'Select Date': '选择日期',
+  'Component Not Found': '组件未发现',
 };

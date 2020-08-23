@@ -10,13 +10,22 @@
         <f7-list-item group-title :title="$text('Members')"></f7-list-item>
         <eb-list-item link="#" eb-href="contacts/sync?type=members" :title="$text('Sync Remote -> Local')"></eb-list-item>
       </f7-list-group>
+      <f7-list-group>
+        <f7-list-item group-title :title="$text('Options')"></f7-list-item>
+        <f7-list-item>
+          <span class="text-color-gray">{{$text('Leader')}}</span>
+          <eb-toggle v-model="role.leader" dataPath="leader"></eb-toggle>
+        </f7-list-item>
+      </f7-list-group>
     </f7-list>
   </eb-page>
 </template>
 <script>
 export default {
   data() {
-    return {};
+    return {
+
+    };
   },
 };
 

@@ -4,6 +4,7 @@ import page from './components/page.vue';
 import navbar from './components/navbar.vue';
 import link from './components/link.vue';
 import button from './components/button.vue';
+import component from './components/component.vue';
 import input from './components/input.vue';
 import toggle from './components/toggle.vue';
 import radio from './components/radio.vue';
@@ -34,6 +35,7 @@ export default {
   ebNavbar: navbar,
   ebLink: link,
   ebButton: button,
+  ebComponent: component,
   ebInput: input,
   ebToggle: toggle,
   ebRadio: radio,

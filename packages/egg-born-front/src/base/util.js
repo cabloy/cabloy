@@ -44,13 +44,16 @@ export default function(Vue) {
         component._Ctor = {};
         delete component.install;
         Vue.extend(component);
+        this._setComponentGlobal(component);
       }
-      return this._setComponentGlobal(component);
+      return component;
     },
     _setComponentGlobal(component) {
       // register
       if (component.meta && component.meta.global === true) {
-        Vue.component(component.name, component);
+        if (!Vue.options.components[component.name]) {
+          Vue.component(component.name, component);
+        }
       }
       return component;
     },
