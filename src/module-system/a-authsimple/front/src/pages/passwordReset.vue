@@ -3,7 +3,7 @@
     <eb-navbar large largeTransparent :title="$text('Reset Password')" eb-back-link="Back"></eb-navbar>
     <f7-block>
       <eb-validate ref="validate" :auto="false" :data="data" :params="{validator: 'passwordReset'}" :onPerform="onPerformValidate">
-        <eb-list form no-hairlines-md @submit.prevent="onSubmit">
+        <eb-list form inline-labels no-hairlines-md @submit.prevent="onSubmit">
           <eb-list-item-validate dataKey="passwordNew"></eb-list-item-validate>
           <eb-list-item-validate dataKey="passwordNewAgain"></eb-list-item-validate>
           <f7-list-item divider>

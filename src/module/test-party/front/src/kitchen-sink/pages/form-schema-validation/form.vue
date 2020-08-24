@@ -6,24 +6,23 @@
       </f7-nav-right>
     </eb-navbar>
     <f7-block-title>Form</f7-block-title>
-    <eb-list v-if="item" form no-hairlines-md @submit.prevent="onFormSubmit">
-      <eb-list-input :label="$text('Username')" floating-label type="text" clear-button :placeholder="$text('Username')" v-model="item.userName"></eb-list-input>
-      <eb-list-input :label="$text('Password')" floating-label type="password" clear-button :placeholder="$text('Password')" v-model="item.password"></eb-list-input>
-      <eb-list-input :label="$text('Password Again')" floating-label type="Password" clear-button :placeholder="$text('Password Again')" v-model="item.passwordAgain"></eb-list-input>
+    <eb-list v-if="item" form inline-labels no-hairlines-md @submit.prevent="onFormSubmit">
+      <eb-list-input :label="$text('Username')" type="text" clear-button :placeholder="$text('Username')" v-model="item.userName"></eb-list-input>
+      <eb-list-input :label="$text('Password')" type="password" clear-button :placeholder="$text('Password')" v-model="item.password"></eb-list-input>
+      <eb-list-input :label="$text('Password Again')" type="Password" clear-button :placeholder="$text('Password Again')" v-model="item.passwordAgain"></eb-list-input>
       <f7-list-item smartSelect :title="$text('Sex')" :smartSelectParams="{openIn: 'page', closeOnSelect: true}">
         <eb-select name="sex" v-model="item.sex" optionsBlankAuto :multiple="false" :options="sexes"></eb-select>
       </f7-list-item>
       <f7-list-item smartSelect :title="$text('Language')" :smartSelectParams="{openIn: 'page', closeOnSelect: true}">
         <eb-select name="language" v-model="item.language" optionsBlankAuto :multiple="false" :options="languages"></eb-select>
       </f7-list-item>
-      <eb-list-input :label="$text('Avatar')" floatingLabel type="text" clearButton :placeholder="$text('Avatar')" v-model="item.avatar" @focus="onAvatarFocus" @blur="onAvatarBlur">
+      <eb-list-input :label="$text('Avatar')" type="text" clearButton :placeholder="$text('Avatar')" v-model="item.avatar" @focus="onAvatarFocus" @blur="onAvatarBlur">
         <eb-button slot="root-end" class="eb-input-file-upload" :onPerform="onPerformUpload">{{$text('Upload')}}</eb-button>
       </eb-list-input>
       <f7-list-item v-if="item.avatar">
         <img class="avatar avatar48" :src="getAvatarUrl(item.avatar,48)">
       </f7-list-item>
-      <f7-list-item>
-        <span slot="title">{{$text('Remember Me')}}</span>
+      <f7-list-item :title="$text('Remember Me')">
         <eb-toggle slot="after" v-model="item.rememberMe"></eb-toggle>
       </f7-list-item>
     </eb-list>

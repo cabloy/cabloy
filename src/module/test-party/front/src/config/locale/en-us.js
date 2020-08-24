@@ -2,6 +2,8 @@ export default {
   GaugeChart: 'Gauge',
   RadioBox: 'Radio',
   ToggleSwitch: 'Toggle',
+  CaptchaCode: 'Captcha',
+  SMSVerificationCode: 'Code',
   MonkeyeeTestTip1: 'The page will be monkeyed',
   MonkeyeeTestTip2: 'The component will be monkeyed',
   CabloyAboutTip1: 'CabloyJS - The Ultimate NodeJS Full Stack Business Development Platform',

@@ -7,11 +7,11 @@
     </eb-navbar>
     <f7-block>
       <eb-validate ref="validate" :auto="false" :data="data" :params="{validator: 'passwordChange'}" :onPerform="onPerformValidate">
-        <eb-list form no-hairlines-md @submit.prevent="onSubmit">
+        <eb-list form inline-labels no-hairlines-md @submit.prevent="onSubmit">
           <eb-list-item-validate dataKey="passwordOld"></eb-list-item-validate>
           <eb-list-item-validate dataKey="passwordNew"></eb-list-item-validate>
           <eb-list-item-validate dataKey="passwordNewAgain"></eb-list-item-validate>
-          <eb-list-input :label="$text('Captcha Code')" floating-label type="text" clear-button :placeholder="$text('Captcha Code')" v-model="captcha.token" dataPath="captcha/token">
+          <eb-list-input :label="$text('Captcha Code')" type="text" clear-button :placeholder="$text('Captcha Code')" v-model="captcha.token" dataPath="captcha/token">
             <div slot="content">
               <eb-component ref="captchaContainer" module="a-captcha" name="captchaContainer" :options="captchaContainerOptions"></eb-component>
             </div>

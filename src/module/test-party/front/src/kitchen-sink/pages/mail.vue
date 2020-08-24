@@ -5,10 +5,10 @@
         <eb-link ref="buttonSubmit" iconMaterial="send" :onPerform="onPerformSend"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-list v-if="item" form no-hairlines-md @submit.prevent="onFormSubmit">
-      <eb-list-input :label="$text('MailTo')" floating-label type="text" clear-button :placeholder="$text('MailTo')" v-model="item.to"></eb-list-input>
-      <eb-list-input :label="$text('Subject')" floating-label type="text" clear-button :placeholder="$text('Subject')" v-model="item.subject"></eb-list-input>
-      <eb-list-input :label="$text('Text')" floating-label type="text" clear-button :placeholder="$text('Text')" v-model="item.text"></eb-list-input>
+    <eb-list v-if="item" form inline-labels no-hairlines-md @submit.prevent="onFormSubmit">
+      <eb-list-input :label="$text('MailTo')" type="text" clear-button :placeholder="$text('MailTo')" v-model="item.to"></eb-list-input>
+      <eb-list-input :label="$text('Subject')" type="text" clear-button :placeholder="$text('Subject')" v-model="item.subject"></eb-list-input>
+      <eb-list-input :label="$text('Text')" type="text" clear-button :placeholder="$text('Text')" v-model="item.text"></eb-list-input>
     </eb-list>
   </eb-page>
 </template>

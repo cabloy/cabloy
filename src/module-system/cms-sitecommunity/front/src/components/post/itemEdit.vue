@@ -1,5 +1,5 @@
 <template>
-  <eb-list form no-hairlines-md @submit="onSubmit" v-if="moduleCMS">
+  <eb-list form inline-labels no-hairlines-md @submit="onSubmit" v-if="moduleCMS">
     <f7-list-group>
       <f7-list-item group-title :title="$text('Title')"></f7-list-item>
       <eb-list-item-validate dataKey="atomName"></eb-list-item-validate>

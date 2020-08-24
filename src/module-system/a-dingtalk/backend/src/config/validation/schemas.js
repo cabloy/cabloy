@@ -13,8 +13,7 @@ module.exports = app => {
           sendLinkAccountMigration: {
             type: 'boolean',
             ebType: 'toggle',
-            ebTitle: 'Account Migration',
-            ebHelp: 'Auto Send Link',
+            ebTitle: 'Account Migration(Auto Send Link)',
           },
         },
       },

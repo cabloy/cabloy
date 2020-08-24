@@ -3,13 +3,13 @@
     <eb-navbar large largeTransparent :title="getPageTitle()" eb-back-link="Back"></eb-navbar>
     <f7-block>
       <eb-validate ref="validate" :auto="false" :data="data" :params="{validator: 'signup'}" :onPerform="onPerformValidate" @schema:ready="onSchemaReady">
-        <eb-list form no-hairlines-md @submit.prevent="onSubmit">
+        <eb-list form inline-labels no-hairlines-md @submit.prevent="onSubmit">
           <eb-list-item-validate dataKey="userName"></eb-list-item-validate>
           <eb-list-item-validate dataKey="realName"></eb-list-item-validate>
           <eb-list-item-validate dataKey="email"></eb-list-item-validate>
           <eb-list-item-validate dataKey="password"></eb-list-item-validate>
           <eb-list-item-validate dataKey="passwordAgain"></eb-list-item-validate>
-          <eb-list-input :label="$text('Captcha Code')" floating-label type="text" clear-button :placeholder="$text('Captcha Code')" v-model="captcha.token" dataPath="captcha/token">
+          <eb-list-input :label="$text('Captcha Code')" type="text" clear-button :placeholder="$text('Captcha Code')" v-model="captcha.token" dataPath="captcha/token">
             <div slot="content">
               <eb-component ref="captchaContainer" module="a-captcha" name="captchaContainer" :options="captchaContainerOptions"></eb-component>
             </div>

@@ -8,7 +8,7 @@
     <f7-block-title>Form</f7-block-title>
     <f7-block>
       <eb-validate v-if="item" ref="validate" :auto="false" :data="item" :params="validateParams" :onPerform="onPerformValidate">
-        <eb-list form no-hairlines-md @submit.prevent="onFormSubmit">
+        <eb-list form inline-labels no-hairlines-md @submit.prevent="onFormSubmit">
           <eb-list-item-validate dataKey="userName"></eb-list-item-validate>
           <eb-list-item-validate dataKey="password"></eb-list-item-validate>
           <eb-list-item-validate dataKey="passwordAgain"></eb-list-item-validate>

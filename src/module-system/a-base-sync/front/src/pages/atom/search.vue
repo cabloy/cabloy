@@ -5,8 +5,8 @@
         <eb-link ref="buttonSubmit" iconMaterial="search" :onPerform="onPerformSearch"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-list form no-hairlines-md @submit.prevent="onFormSubmit">
-      <eb-list-input :label="$text('Atom Name')" floating-label type="text" clear-button :placeholder="$text('Atom Name')" v-model="atomName">
+    <eb-list form inline-labels no-hairlines-md @submit.prevent="onFormSubmit">
+      <eb-list-input :label="$text('Atom Name')" type="text" clear-button :placeholder="$text('Atom Name')" v-model="atomName">
       </eb-list-input>
       <f7-list-item smartSelect :title="$text('Label')" :smartSelectParams="{openIn: 'page', closeOnSelect: true}">
         <eb-select name="label" v-model="label" :options="labels"></eb-select>

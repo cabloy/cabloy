@@ -85,27 +85,34 @@ export default {
       if (dataPath[0] !== '/') return this.validate.dataPathRoot + dataPath;
       return dataPath;
     },
-    getTitle(key, property) {
+    getTitle(key, property, notHint) {
       const title = this.$text(property.ebTitle || key);
       // ignore panel/group/toggle
       const ebType = property.ebType;
       if (ebType === 'panel' || ebType === 'group' || ebType === 'toggle') return title;
       // only edit
       if (this.validate.readOnly || property.ebReadOnly) return title;
-      // config
-      const hint = this.getMetaValue('hint') || this.$config.validate.hint;
-      const hintOptional = hint.optional;
-      const hintMust = hint.must;
-      // check optional
-      if (hintOptional && !property.notEmpty) {
-        return `${title}(${this.$text(hintOptional)})`;
-      }
-      // check must
-      if (hintMust && property.notEmpty) {
-        return `${title}(${this.$text(hintMust)})`;
+      // hint
+      if (!notHint) {
+        // config
+        const hint = this.getMetaValue('hint') || this.$config.validate.hint;
+        const hintOptional = hint.optional;
+        const hintMust = hint.must;
+        // check optional
+        if (hintOptional && !property.notEmpty) {
+          return `${title}(${this.$text(hintOptional)})`;
+        }
+        // check must
+        if (hintMust && property.notEmpty) {
+          return `${title}(${this.$text(hintMust)})`;
+        }
       }
       // default
       return title;
+    },
+    getPlaceholder(key, property) {
+      if (this.validate.readOnly || property.ebReadOnly) return undefined;
+      return property.ebDescription ? this.$text(property.ebDescription) : this.getTitle(key, property, true);
     },
     renderItem(c) {
       if (!this.validate.data || !this.validate.schema) return c('div');
@@ -235,7 +242,7 @@ export default {
           }),
         ]);
       }
-      const placeholder = property.ebDescription ? this.$text(property.ebDescription) : title;
+      const placeholder = this.getPlaceholder(key, property);
       const info = property.ebHelp ? this.$text(property.ebHelp) : undefined;
       let type;
       if (property.ebSecure) {
@@ -287,7 +294,7 @@ export default {
       //     },
       //   });
       // }
-      const placeholder = property.ebDescription ? this.$text(property.ebDescription) : title;
+      const placeholder = this.getPlaceholder(key, property);
       const info = property.ebHelp ? this.$text(property.ebHelp) : undefined;
       // value
       let value = this.getValue(data, key, property);
@@ -349,7 +356,7 @@ export default {
           }),
         ]);
       }
-      const placeholder = property.ebDescription ? this.$text(property.ebDescription) : title;
+      const placeholder = this.getPlaceholder(key, property);
       const info = property.ebHelp ? this.$text(property.ebHelp) : undefined;
       let type;
       if (property.ebSecure) {

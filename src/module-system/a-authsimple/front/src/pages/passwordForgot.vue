@@ -5,7 +5,7 @@
       <template v-if="sent">{{$text('passwordResetEmailSentAlert')}}</template>
       <template v-else>
         <eb-validate ref="validate" :auto="false" :data="data" :params="{validator: 'passwordForgot'}" :onPerform="onPerformValidate">
-          <eb-list form no-hairlines-md @submit.prevent="onSubmit">
+          <eb-list form inline-labels no-hairlines-md @submit.prevent="onSubmit">
             <eb-list-item-validate dataKey="email"></eb-list-item-validate>
             <f7-list-item divider>
               <eb-button ref="buttonSubmit" :onPerform="onPerformOk">{{$text('Reset Password')}}</eb-button>

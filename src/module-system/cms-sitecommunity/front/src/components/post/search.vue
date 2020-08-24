@@ -1,5 +1,5 @@
 <template>
-  <eb-list form no-hairlines-md @submit="onSubmit" v-if="moduleCMS">
+  <eb-list form inline-labels no-hairlines-md @submit="onSubmit" v-if="moduleCMS">
     <eb-list-item-validate dataKey="language" :meta="{options:languages}" @change="onChangeLanguage"></eb-list-item-validate>
     <eb-list-item-choose link="#" dataPath="categoryId" :title="$text('Category')" :onChoose="onChooseCategory">
       <div slot="after">{{data.categoryName}}</div>

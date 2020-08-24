@@ -4,10 +4,10 @@
     <f7-block-title>Form</f7-block-title>
     <f7-block>
       <eb-validate v-if="item" ref="validate" :auto="false" :data="item" :params="validateParams" :onPerform="onPerformValidate">
-        <eb-list form no-hairlines-md @submit.prevent="onFormSubmit">
+        <eb-list form inline-labels no-hairlines-md @submit.prevent="onFormSubmit">
           <eb-list-item-validate dataKey="userName"></eb-list-item-validate>
           <eb-list-item-validate dataKey="password"></eb-list-item-validate>
-          <eb-list-input :label="$text('Captcha Code')" floating-label type="text" clear-button :placeholder="$text('Captcha Code')" v-model="captcha.token" dataPath="captcha/token">
+          <eb-list-input :label="$text('CaptchaCode')" type="text" clear-button :placeholder="$text('Captcha Code')" v-model="captcha.token" dataPath="captcha/token">
             <div slot="content">
               <eb-component ref="captchaContainer" module="a-captcha" name="captchaContainer" :options="captchaContainerOptions"></eb-component>
             </div>

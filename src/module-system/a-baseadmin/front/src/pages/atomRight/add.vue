@@ -5,7 +5,7 @@
         <eb-link ref="buttonSubmit" iconMaterial="save" :onPerform="onSave"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-list form no-hairlines-md @submit.prevent="onFormSubmit">
+    <eb-list form inline-labels no-hairlines-md @submit.prevent="onFormSubmit">
       <f7-list-item :title="$text('Atom Class')" link="#" @click="onSelectAtomClass">
         <div slot="after">{{atomClass && atomClass.title}}</div>
       </f7-list-item>
