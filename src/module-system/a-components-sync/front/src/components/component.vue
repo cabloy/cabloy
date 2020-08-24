@@ -25,7 +25,8 @@ export default {
   render(c) {
     const children = [];
     if (this.ready && !this.errorMessage) {
-      const options = this.$meta.util.extend({}, this.options, { ref: 'component' });
+      // not use this.$meta.util.extend && this.$utils.extend, so as to hold __ob__
+      const options = Object.assign({}, this.options, { ref: 'component' });
       children.push(c(this.__getFullName(), options));
     } else if (this.errorMessage) {
       children.push(c('div', {
