@@ -160,5 +160,6 @@ export default {
   'Current View Size': '当前视图大小',
   'Dragdrop(Move)': '拖拽(移动)',
   'Dragdrop(Resize)': '拖拽(调整尺寸)',
+  'Remember Me': '记住我',
 };
 

@@ -225,10 +225,15 @@ export default {
           key,
           staticClass: '',
           attrs: {
-            title,
             after: data[key] ? data[key].toString() : null,
           },
-        });
+        }, [
+          c('div', {
+            slot: 'title',
+            staticClass: property.ebReadOnly ? 'text-color-gray' : '',
+            domProps: { innerText: title },
+          }),
+        ]);
       }
       const placeholder = property.ebDescription ? this.$text(property.ebDescription) : title;
       const info = property.ebHelp ? this.$text(property.ebHelp) : undefined;
@@ -245,7 +250,6 @@ export default {
       return c('eb-list-input', {
         key,
         attrs: {
-          label: title,
           floatingLabel: this.$config.form.floatingLabel,
           type,
           placeholder,
@@ -261,7 +265,13 @@ export default {
             this.setValue(data, key, value, property);
           },
         },
-      });
+      }, [
+        c('div', {
+          slot: 'label',
+          staticClass: property.ebReadOnly ? 'text-color-gray' : '',
+          domProps: { innerText: title },
+        }),
+      ]);
     },
     renderDatepicker(c, data, pathParent, key, property) {
       const title = this.getTitle(key, property);
@@ -290,7 +300,6 @@ export default {
       return c('eb-list-input', {
         key,
         attrs: {
-          label: title,
           floatingLabel: this.$config.form.floatingLabel,
           type: 'datepicker',
           placeholder,
@@ -315,7 +324,13 @@ export default {
             }
           }
         },
-      });
+      }, [
+        c('div', {
+          slot: 'label',
+          staticClass: property.ebReadOnly ? 'text-color-gray' : '',
+          domProps: { innerText: title },
+        }),
+      ]);
     },
     renderFile(c, data, pathParent, key, property) {
       const title = this.getTitle(key, property);
@@ -324,10 +339,15 @@ export default {
           key,
           staticClass: property.ebReadOnly ? 'text-color-gray' : '',
           attrs: {
-            title,
             after: data[key] ? data[key].toString() : null,
           },
-        });
+        }, [
+          c('div', {
+            slot: 'title',
+            staticClass: property.ebReadOnly ? 'text-color-gray' : '',
+            domProps: { innerText: title },
+          }),
+        ]);
       }
       const placeholder = property.ebDescription ? this.$text(property.ebDescription) : title;
       const info = property.ebHelp ? this.$text(property.ebHelp) : undefined;
@@ -353,7 +373,6 @@ export default {
       return c('eb-list-input', {
         key,
         attrs: {
-          label: title,
           floatingLabel: this.$config.form.floatingLabel,
           type,
           placeholder,
@@ -387,6 +406,11 @@ export default {
           },
         },
       }, [
+        c('div', {
+          slot: 'label',
+          staticClass: property.ebReadOnly ? 'text-color-gray' : '',
+          domProps: { innerText: title },
+        }),
         c('eb-button', {
           slot: 'root-end',
           staticClass: 'eb-input-file-upload',
@@ -422,7 +446,7 @@ export default {
       }, [
         c('div', {
           slot: 'title',
-          staticClass: property.ebReadOnly ? 'text-color-gray' : 'item-label',
+          staticClass: property.ebReadOnly ? 'text-color-gray' : '',
           domProps: { innerText: title },
         }),
         c('eb-toggle', {
@@ -481,8 +505,8 @@ export default {
       }, [
         c('div', {
           slot: 'title',
-          staticClass: property.ebReadOnly ? 'text-color-gray' : 'item-label',
-          domProps: { innerText: title }
+          staticClass: property.ebReadOnly ? 'text-color-gray' : '',
+          domProps: { innerText: title },
         }),
         c('eb-select', {
           attrs,

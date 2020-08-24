@@ -16,9 +16,8 @@
                 <eb-component ref="captchaContainer" module="a-captcha" name="captchaContainer" :options="captchaContainerOptions"></eb-component>
               </div>
             </eb-list-input>
-            <f7-list-item>
+            <f7-list-item :title="$text('Remember Me')">
               <f7-icon slot="media"></f7-icon>
-              <span slot="title" class="item-label">{{$text('Remember Me')}}</span>
               <eb-toggle slot="after" v-model="data.rememberMe" dataPath="rememberMe"></eb-toggle>
             </f7-list-item>
             <eb-list-button ref="buttonSubmit" :onPerform="signIn">{{$text('Sign In')}}</eb-list-button>
