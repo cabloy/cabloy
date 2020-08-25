@@ -6,8 +6,8 @@ export default {
   Members: '成员',
   Sync: '同步',
   Options: '选项',
+  SendLinkAccountMigration: '账户迁移(自动发送链接)',
   'Contacts Management': '通讯录管理',
   'Sync Remote -> Local': '同步 远程 -> 本地',
   'Sync Now': '现在同步',
-  'Account Migration(Auto Send Link)': '账户迁移(自动发送链接)',
 };

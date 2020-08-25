@@ -150,6 +150,10 @@ export default {
       else if (property.ebType === 'datepicker') {
         return this.renderDatepicker(c, data, pathParent, key, property);
       }
+      // link
+      else if (property.ebType === 'link') {
+        return this.renderLink(c, data, pathParent, key, property);
+      }
       // component
       else if (property.ebType === 'component') {
         return this.renderComponent(c, data, pathParent, key, property);
@@ -528,6 +532,17 @@ export default {
           },
         }),
       ]);
+    },
+    renderLink(c, data, pathParent, key, property) {
+      const title = this.getTitle(key, property, true);
+      const href = this.$meta.util.combineApiPath(this.validate.renderModuleName, property.ebParams.href);
+      return c('eb-list-item', {
+        props: {
+          link: '#',
+          ebHref: href,
+          title,
+        },
+      });
     },
     renderComponent(c, data, pathParent, key, property) {
       const renderProps = this.$meta.util.extend({ options: { props: {} } }, property.ebRender);

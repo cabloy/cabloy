@@ -71,6 +71,8 @@ export default {
       schema: null,
       verrors: null,
       custom: null,
+      schemaModuleName: null,
+      renderModuleName: null,
     };
   },
   computed: {
@@ -131,27 +133,33 @@ export default {
     },
     fetchSchema() {
       if (this.meta && this.meta.schema) {
-        this.__schemaReady(this.meta.schema, this.$page.$module.name);
+        this.schemaModuleName = this.$page.$module.name;
+        this.__schemaReady(this.meta.schema, this.schemaModuleName);
         return;
       }
       if (!this.params) return;
-      if (!this.params.module) this.params.module = this.$page.$module.name;
-      this.$api.post('/a/validation/validation/schema', {
-        module: this.params.module,
-        validator: this.params.validator,
-        schema: this.params.schema,
-      }).then(data => {
-        this.__schemaReady(data, this.params.module);
+      const moduleName = this.params.module || this.$page.$module.name;
+      this.schemaModuleName = moduleName;
+      this.$meta.module.use(moduleName, () => {
+        this.$api.post('/a/validation/validation/schema', {
+          module: moduleName,
+          validator: this.params.validator,
+          schema: this.params.schema,
+        }).then(data => {
+          this.__schemaReady(data, moduleName);
+        });
       });
     },
     __schemaReady(schema, moduleMaybe) {
       const _componentName = schema.meta && schema.meta.custom && schema.meta.custom.component;
       if (!_componentName) {
+        this.renderModuleName = moduleMaybe;
         this.__schemaReady2(schema);
         return;
       }
       // custom
       const moduleName = schema.meta.custom.module || moduleMaybe;
+      this.renderModuleName = moduleName;
       this.$meta.module.use(moduleName, () => {
         this.custom = {
           module: moduleName,

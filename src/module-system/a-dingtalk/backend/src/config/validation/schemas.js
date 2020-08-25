@@ -13,7 +13,21 @@ module.exports = app => {
           sendLinkAccountMigration: {
             type: 'boolean',
             ebType: 'toggle',
-            ebTitle: 'Account Migration(Auto Send Link)',
+            ebTitle: 'SendLinkAccountMigration',
+          },
+        },
+      },
+      groupFunction: {
+        type: 'object',
+        ebType: 'group',
+        ebTitle: 'Function Group',
+        properties: {
+          linkContacts: {
+            ebType: 'link',
+            ebTitle: 'Contacts Management',
+            ebParams: {
+              href: 'contacts/management',
+            },
           },
         },
       },
