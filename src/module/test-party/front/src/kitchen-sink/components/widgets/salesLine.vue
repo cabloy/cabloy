@@ -92,7 +92,7 @@ function install(_Vue) {
     },
     methods: {
       getPropSchemaExtra(propName) {
-        // season
+        // fruit
         if (propName === 'fruit') {
           if (!this.dataSource) return null;
           const ebOptions = this.dataSource.cols.map(item => {
