@@ -206,12 +206,19 @@ export default {
         return this._renderValueDynamicSingle(c, propertyReal && propertyReal.bind);
       }
     },
+    _preparePropSchemaExtra() {
+      const widgetReal = this.dashboard.__getWidgetRealById(this.widget.options.id);
+      const extra = widgetReal.getPropSchemaExtra(this.propertyName);
+      if (!extra) return this.propertySchema;
+      return Object.assign({}, this.propertySchema, extra);
+    },
     _renderValueStatic(c, propertyReal) {
+      // schema extra
       // schema
       const schema = {
         type: 'object',
         properties: {
-          [this.propertyName]: this.propertySchema,
+          [this.propertyName]: this._preparePropSchemaExtra(),
         },
       };
       // data

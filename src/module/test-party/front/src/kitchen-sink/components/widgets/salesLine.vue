@@ -22,11 +22,7 @@ const propsSchema = {
       type: 'string',
       ebType: 'select',
       ebTitle: 'Fruit',
-      ebOptions: [
-        { title: 'All', value: 'All' },
-        { title: 'Apples', value: 'Apples' },
-        { title: 'Pears', value: 'Pears' },
-      ],
+      ebOptions: [],
       ebOptionsBlankAuto: true,
       ebClue: 'salesFruit',
     },
@@ -95,6 +91,17 @@ function install(_Vue) {
       }
     },
     methods: {
+      getPropSchemaExtra(propName) {
+        // season
+        if (propName === 'fruit') {
+          if (!this.dataSource) return null;
+          const ebOptions = this.dataSource.cols.map(item => {
+            return { title: item, value: item };
+          });
+          return { ebOptions };
+        }
+        return null;
+      },
       __init() {
         const action = {
           actionModule: 'a-chartjs',

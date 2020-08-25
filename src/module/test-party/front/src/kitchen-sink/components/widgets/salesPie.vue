@@ -22,12 +22,7 @@ const propsSchema = {
       type: 'string',
       ebType: 'select',
       ebTitle: 'Season',
-      ebOptions: [
-        { title: 'Spring', value: 'Spring' },
-        { title: 'Summer', value: 'Summer' },
-        { title: 'Autumn', value: 'Autumn' },
-        { title: 'Winter', value: 'Winter' },
-      ],
+      ebOptions: [],
       ebOptionsBlankAuto: true,
       ebClue: 'salesSeason',
     },
@@ -96,6 +91,17 @@ function install(_Vue) {
       }
     },
     methods: {
+      getPropSchemaExtra(propName) {
+        // season
+        if (propName === 'season') {
+          if (!this.dataSource) return null;
+          const ebOptions = this.dataSource.rows.map(item => {
+            return { title: item, value: item };
+          });
+          return { ebOptions };
+        }
+        return null;
+      },
       __init() {
         const action = {
           actionModule: 'a-chartjs',

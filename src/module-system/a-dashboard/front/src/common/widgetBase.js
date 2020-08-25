@@ -165,6 +165,11 @@ export default function(Vue, bGroup) {
     beforeDestroy() {
       this.$emit('widgetReal:destroy', this);
     },
+    methods: {
+      getPropSchemaExtra(propName) {
+        return null;
+      },
+    },
   };
 
 }
