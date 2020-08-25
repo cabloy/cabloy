@@ -58,6 +58,7 @@ export default {
   MailTo: '发往',
   Subject: '主题',
   Text: '文本',
+  Motto: '箴言',
   CaptchaCode: '验证码',
   SMSVerificationCode: '认证码',
   MonkeyeeTestTip1: '本页面将被Monkey',

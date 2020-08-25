@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar :title="$text('Box Container')" eb-back-link="Back"> </eb-navbar>
     <eb-box @size="onSize" toolbar>
-      <textarea ref="textarea" type="textarea" :value="content" class="json-textarea"></textarea>
+      <textarea ref="textarea" type="textarea" :value="content" class="json-textarea json-textarea-margin"></textarea>
     </eb-box>
     <f7-toolbar bottom-md>
       <f7-button>left</f7-button>

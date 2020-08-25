@@ -1,4 +1,5 @@
 module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const schemas = {};
   // party
   schemas.party = {
@@ -215,6 +216,19 @@ module.exports = app => {
         type: 'boolean',
         ebType: 'toggle',
         ebTitle: 'Remember Me',
+      },
+      motto: {
+        type: 'string',
+        ebType: 'component',
+        ebRender: {
+          module: moduleInfo.relativeName,
+          name: 'renderMotto',
+          options: {
+            props: {
+              height: '100px',
+            },
+          },
+        },
       },
     },
   };

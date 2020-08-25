@@ -68,8 +68,6 @@ export default {
 .config-edit {
   width: 100%;
   height: 400px;
-  margin: 8px 0 0 0;
-  padding: 6px;
 }
 
 </style>

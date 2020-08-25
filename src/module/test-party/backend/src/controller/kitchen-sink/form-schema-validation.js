@@ -1,3 +1,18 @@
+const require3 = require('require3');
+const extend = require3('extend2');
+
+const __ItemDefault = {
+  userName: '',
+  password: '',
+  passwordAgain: '',
+  sex: 0,
+  birthday: null,
+  language: '',
+  avatar: '',
+  rememberMe: false,
+  motto: '',
+};
+
 module.exports = app => {
 
   class FormSchemaValidationController extends app.Controller {
@@ -6,18 +21,7 @@ module.exports = app => {
       // try load from db cache
       const cacheName = this._getCacheName();
       let item = await this.ctx.cache.db.get(cacheName);
-      if (!item) {
-        item = {
-          userName: '',
-          password: '',
-          passwordAgain: '',
-          sex: 0,
-          birthday: null,
-          language: '',
-          avatar: '',
-          rememberMe: false,
-        };
-      }
+      item = extend(true, {}, __ItemDefault, item);
       // ok
       this.ctx.success(item);
     }

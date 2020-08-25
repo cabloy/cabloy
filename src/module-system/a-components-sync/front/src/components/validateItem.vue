@@ -150,6 +150,10 @@ export default {
       else if (property.ebType === 'datepicker') {
         return this.renderDatepicker(c, data, pathParent, key, property);
       }
+      // component
+      else if (property.ebType === 'component') {
+        return this.renderComponent(c, data, pathParent, key, property);
+      }
       // not support
       return c('div', {
         domProps: {
@@ -524,6 +528,26 @@ export default {
           },
         }),
       ]);
+    },
+    renderComponent(c, data, pathParent, key, property) {
+      const renderProps = this.$meta.util.extend({ options: { props: {} } }, property.ebRender);
+      renderProps.options.props.context = {
+        validateItem: this,
+        data,
+        dataPath: pathParent + key,
+        pathParent,
+        key,
+        property,
+        getValue: () => {
+          return this.getValue(data, key, property);
+        },
+        setValue: value => {
+          this.setValue(data, key, value, property);
+        }
+      };
+      return c('eb-component', {
+        props: renderProps,
+      });
     },
   },
 };

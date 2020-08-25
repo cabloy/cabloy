@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar :title="$text('Preview')" eb-back-link="Back"></eb-navbar>
     <eb-box @size="onSize">
-      <textarea ref="textarea" type="textarea" readonly="readonly" :value="content" class="json-textarea"></textarea>
+      <textarea ref="textarea" type="textarea" readonly="readonly" :value="content" class="json-textarea json-textarea-margin"></textarea>
     </eb-box>
   </eb-page>
 </template>
@@ -72,5 +72,5 @@ export default {
 };
 
 </script>
-<style>
+<style scoped>
 </style>
