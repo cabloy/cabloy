@@ -25,6 +25,7 @@
       <f7-list-item :title="$text('Remember Me')">
         <eb-toggle slot="after" v-model="item.rememberMe"></eb-toggle>
       </f7-list-item>
+      <eb-list-input :label="$text('Motto')" type="textarea" resizable clear-button :placeholder="$text('Motto')" v-model="item.motto"></eb-list-input>
     </eb-list>
     <f7-block-title>Form Value</f7-block-title>
     <pre class="form-data">{{form2}}</pre>

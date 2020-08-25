@@ -20,6 +20,7 @@
             <img class="avatar avatar48" :src="getAvatarUrl(item.avatar,48)">
           </f7-list-item>
           <eb-list-item-validate dataKey="rememberMe"></eb-list-item-validate>
+          <eb-list-item-validate dataKey="motto"></eb-list-item-validate>
         </eb-list>
       </eb-validate>
     </f7-block>
