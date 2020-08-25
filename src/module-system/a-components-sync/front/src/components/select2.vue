@@ -1,5 +1,5 @@
 <script>
-import validate from '../common/validate.js';
+import validate from '../common/validateCheck.js';
 export default {
   meta: {
     global: true,

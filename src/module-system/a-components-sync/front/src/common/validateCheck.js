@@ -36,15 +36,18 @@ export default {
       return parent;
     },
     clearValidateError() {
-      if (this._validate) this._validate.clearError(this.dataPath);
+      if (this._validate) this._validate.clearError(this.getDataPath());
     },
     checkValidateError() {
       // should twice
       this.$nextTick(() => {
         this.$nextTick(() => {
-          this.onValidateError(this._validate.getError(this.dataPath));
+          this.onValidateError(this._validate.getError(this.getDataPath()));
         });
       });
+    },
+    getDataPath() {
+      return this.dataPath || this.getDataPath();
     },
   },
 };

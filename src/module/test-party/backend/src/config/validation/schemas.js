@@ -229,6 +229,7 @@ module.exports = app => {
             },
           },
         },
+        notEmpty: true,
       },
     },
   };
