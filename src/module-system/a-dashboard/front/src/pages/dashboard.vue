@@ -211,6 +211,11 @@ export default {
       if (index === -1) return [null, -1];
       return [this.widgetsReal[index], index];
     },
+    __getWidgetRealById(widgetId) {
+      const [widget] = this.__findWidgetRealById(widgetId);
+      if (!widget) return null;
+      return widget.widgetReal;
+    },
   }
 }
 
