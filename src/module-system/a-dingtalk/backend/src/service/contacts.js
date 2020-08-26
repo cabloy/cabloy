@@ -20,6 +20,12 @@ module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Contacts extends app.Service {
 
+    async syncStatus() {
+      const departments = await this.ctx.meta.status.get('syncDepartments');
+      const members = await this.ctx.meta.status.get('syncMembers');
+      return { departments, members };
+    }
+
     async queueSync({ type, progressId, userOp }) {
       if (type === 'departments') {
         await this._queueSyncDepartments({ progressId, userOp });
@@ -29,9 +35,12 @@ module.exports = app => {
     }
 
     async queueChangeContact({ message }) {
+      const syncStatus = await this.syncStatus();
       if (message.EventType.indexOf('org_dept_') === 0) {
+        if (!syncStatus.departments) return this.ctx.throw(1006);
         await this._queueChangeContactDepartments({ message });
       } else if (message.EventType.indexOf('user_') === 0) {
+        if (!syncStatus.members) return this.ctx.throw(1007);
         await this._queueChangeContactMembers({ message });
       }
     }
@@ -138,6 +147,7 @@ module.exports = app => {
         // build roles
         await this.ctx.meta.role.build();
         // progress done
+        await this.ctx.meta.status.set('syncDepartments', true);
         await this._progressPublish({ context, done: 1, text: `--- ${this.ctx.text('Sync Completed')} ---` });
       } catch (err) {
         // progress error
@@ -158,6 +168,9 @@ module.exports = app => {
       try {
         // progress
         await this._progressPublish({ context, done: 0, text: `--- ${this.ctx.text('Sync Started')} ---` });
+        // check departments syncStatus
+        const syncStatus = await this.syncStatus();
+        if (!syncStatus.departments) return this.ctx.throw(1006);
         // remote members
         const departmentRoot = await this.ctx.model.department.get({ departmentParentId: 0 });
         if (!departmentRoot) return this.ctx.throw(1006);
@@ -186,6 +199,7 @@ module.exports = app => {
           }
         }
         // progress done
+        await this.ctx.meta.status.set('syncMembers', true);
         await this._progressPublish({ context, done: 1, text: `--- ${this.ctx.text('Sync Completed')} ---` });
       } catch (err) {
         // progress error

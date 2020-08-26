@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar :title="getPageTitle()" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link v-if="ioHelper" :onPerform="onPerformSync">{{$text('Sync Now')}}</eb-link>
+        <eb-link v-if="syncStatus && ioHelper" :onPerform="onPerformSync">{{syncStatus[type]?$text('Sync Again'):$text('Sync Now')}}</eb-link>
       </f7-nav-right>
     </eb-navbar>
     <eb-box @size="onSize">
@@ -11,7 +11,9 @@
   </eb-page>
 </template>
 <script>
+import syncStatus from '../../common/syncStatus.js';
 export default {
+  mixins: [syncStatus],
   data() {
     return {
       type: this.$f7route.query.type,
@@ -115,8 +117,14 @@ export default {
       this.messagesData = messages;
       // message
       const content = message.content;
+      // Synchronized
+      if (content.done === 1) {
+        this.$meta.eventHub.$emit('dingtalk:contacts:sync', {
+          [this.type]: true,
+        });
+      }
+      // stop subscribe
       if (content.done === 1 || content.done === -1) {
-        // stop subscribe
         this._stopSubscribe();
       }
       // scroll

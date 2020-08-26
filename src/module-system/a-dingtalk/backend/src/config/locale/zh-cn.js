@@ -11,4 +11,5 @@ module.exports = {
   'Department Count': '部门数量',
   'Member Count': '成员数量',
   'Sync Departments First': '请先同步部门',
+  'Sync Members First': '请先同步成员',
 };

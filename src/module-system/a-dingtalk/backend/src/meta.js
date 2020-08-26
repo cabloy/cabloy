@@ -10,12 +10,6 @@ module.exports = app => {
       atoms: {
       },
       functions: {
-        contacts: {
-          title: 'Contacts Management',
-          actionPath: 'contacts/management',
-          sorting: 1,
-          menu: 0,
-        },
       },
     },
     validation: {

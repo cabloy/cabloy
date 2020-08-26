@@ -156,6 +156,7 @@ const Fn = module.exports = ctx => {
     async _saveSettingsRef2({ scene, module, data, schema, path }) {
       for (const key in schema.properties) {
         const subSchema = schema.properties[key];
+        if (!subSchema.type) continue;
         const subPath = `${path}/${key}`;
         const subData = data[key];
         if (subSchema.$ref) {

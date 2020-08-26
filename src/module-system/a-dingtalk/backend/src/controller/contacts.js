@@ -24,6 +24,11 @@ module.exports = app => {
       this.ctx.success({ progressId });
     }
 
+    async syncStatus() {
+      const res = await this.service.contacts.syncStatus();
+      this.ctx.success(res);
+    }
+
     async queue() {
       const queueAction = this.ctx.request.body.queueAction;
       if (queueAction === 'sync') {

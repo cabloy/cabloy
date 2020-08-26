@@ -6,8 +6,11 @@ export default {
   Members: '成员',
   Sync: '同步',
   Options: '选项',
+  Synchronized: '已同步',
   SendLinkAccountMigration: '账户迁移(自动发送链接)',
   'Contacts Management': '通讯录管理',
   'Sync Remote -> Local': '同步 远程 -> 本地',
   'Sync Now': '现在同步',
+  'Sync Again': '再次同步',
+  'Not Synchronized': '未同步',
 };
