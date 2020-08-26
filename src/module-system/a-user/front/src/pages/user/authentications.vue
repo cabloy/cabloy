@@ -68,7 +68,7 @@ export default {
     },
     checkIfEnable(item) {
       return !item.authId && !item.meta.disableAssociate &&
-        (!ctx.$meta.config.base.jwt);
+        (!this.$meta.config.base.jwt);
       //(!ctx.$meta.config.base.jwt || item.meta.mode !== 'redirect');
     },
     checkIfDisable(item) {

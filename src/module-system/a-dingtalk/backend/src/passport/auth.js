@@ -10,7 +10,7 @@ module.exports = app => {
       meta: {
         title: 'DingTalk',
         mode: 'direct',
-        disableAssociate: true,
+        disableAssociate: false,
         component: 'buttondingtalk',
       },
       config: {
