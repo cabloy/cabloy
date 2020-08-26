@@ -67,13 +67,6 @@ module.exports = app => {
     }
 
     async init(options) {
-      if (options.version === 1) {
-        // roleFunctions
-        const roleFunctions = [
-          { roleName: 'system', name: 'contacts' },
-        ];
-        await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
-      }
     }
 
     async test() {

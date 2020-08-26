@@ -117,7 +117,7 @@ export default {
       this.messagesData = messages;
       // message
       const content = message.content;
-      // Synchronized
+      // synchronized
       if (content.done === 1) {
         this.$meta.eventHub.$emit('dingtalk:contacts:sync', {
           [this.type]: true,

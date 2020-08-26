@@ -179,5 +179,14 @@ module.exports = appInfo => {
     },
   };
 
+  // settings
+  config.settings = {
+    instance: {
+      groupInfo: {
+        sendLinkAccountMigration: false,
+      },
+    },
+  };
+
   return config;
 };

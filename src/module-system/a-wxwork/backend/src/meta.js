@@ -1,7 +1,7 @@
 const authFn = require('./passport/auth.js');
 
 module.exports = app => {
-  // const schemas = require('./config/validation/schemas.js')(app);
+  const schemas = require('./config/validation/schemas.js')(app);
   // socketio
   const socketioMessageProgress = require('./config/socketio/messageProgress.js')(app);
   const socketioChannelApp = require('./config/socketio/channelApp.js')(app);
@@ -10,24 +10,22 @@ module.exports = app => {
       atoms: {
       },
       functions: {
-        contacts: {
-          title: 'Contacts Management',
-          actionPath: 'contacts/management',
-          sorting: 1,
-          menu: 0,
-        },
       },
     },
     validation: {
       validators: {
+        settingsInstance: {
+          schemas: 'settingsInstance',
+        },
       },
       keywords: {},
       schemas: {
+        settingsInstance: schemas.settingsInstance,
       },
     },
     settings: {
       instance: {
-        actionPath: 'settings/list',
+        validator: 'settingsInstance',
       },
     },
     event: {
