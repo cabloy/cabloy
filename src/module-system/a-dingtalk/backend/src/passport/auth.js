@@ -2,10 +2,12 @@ const strategy = require('./strategy-dingtalk.js');
 const DingtalkHelperFn = require('../common/dingtalkHelper.js');
 const authProviderScenes = require('../common/authProviderScenes.js');
 
-module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
   function _createProviderDingTalk() {
+    const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk.apps.selfBuilt;
+    if (!config.appkey || !config.appsecret) return null;
     return {
       meta: {
         title: 'DingTalk',
@@ -20,6 +22,8 @@ module.exports = app => {
   }
 
   function _createProviderDingTalkWeb() {
+    const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk.webs.default;
+    if (!config.appid || !config.appsecret) return null;
     return {
       meta: {
         title: 'DingTalk Web',
@@ -69,6 +73,8 @@ module.exports = app => {
   }
 
   function _createProviderDingTalkAdmin() {
+    const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk;
+    if (!config.corpid || !config.ssosecret) return null;
     return {
       meta: {
         title: 'DingTalk Admin',
@@ -110,7 +116,9 @@ module.exports = app => {
     };
   }
 
-  function _createProviderMini(sceneInfo) {
+  function _createProviderMini(sceneInfo, sceneShort) {
+    const config = ctx.config.module(moduleInfo.relativeName).account.dingtalk.minis[sceneShort];
+    if (!config.appkey || !config.appsecret) return null;
     return {
       meta: {
         title: sceneInfo.title,
@@ -136,12 +144,11 @@ module.exports = app => {
   metaAuth.providers.dingtalkadmin = _createProviderDingTalkAdmin();
 
   // minis
-  const moduleConfig = app.meta.configs[moduleInfo.relativeName];
-  const minis = moduleConfig.account.dingtalk.minis;
+  const minis = ctx.config.module(moduleInfo.relativeName).account.dingtalk.minis;
   for (const sceneShort in minis) {
     const scene = `dingtalkmini${sceneShort}`;
     const sceneInfo = authProviderScenes.getScene(scene);
-    metaAuth.providers[sceneInfo.authProvider] = _createProviderMini(sceneInfo);
+    metaAuth.providers[sceneInfo.authProvider] = _createProviderMini(sceneInfo, sceneShort);
   }
 
   // ok

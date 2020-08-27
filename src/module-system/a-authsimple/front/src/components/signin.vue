@@ -33,9 +33,18 @@
   </div>
 </template>
 <script>
+const urlLogin = '/a/authsimple/signup';
 export default {
   meta: {
     global: false,
+    async disable({ ctx, state }) {
+      return false;
+    },
+    login({ ctx, state, hash }) {
+      if (state === 'associate') {
+        ctx.$meta.vueApp.toLogin({ url: urlLogin, state, hash });
+      }
+    },
   },
   data() {
     return {

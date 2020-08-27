@@ -45,19 +45,27 @@ export default function(Vue) {
     // use
     //   relativeName / relativeName-sync
     use(moduleName, cb) {
-      const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;
-      if (!moduleInfo) throw new Error(`invalid module name: ${moduleName}`);
-      const relativeName = moduleInfo.relativeName;
-      const module = this._get(relativeName);
-      if (module) return cb(module);
-      const moduleRepo = modulesRepo.modules[relativeName];
-      if (!moduleRepo) throw new Error(`Module ${relativeName} not exists`);
-      if (loadingQueue.push(relativeName, cb)) {
-        if (moduleRepo.info.sync) {
-          this._require(relativeName, module => loadingQueue.pop(relativeName, module));
-        } else {
-          this._import(relativeName, module => loadingQueue.pop(relativeName, module));
+      if (cb) {
+        const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;
+        if (!moduleInfo) throw new Error(`invalid module name: ${moduleName}`);
+        const relativeName = moduleInfo.relativeName;
+        const module = this._get(relativeName);
+        if (module) return cb(module);
+        const moduleRepo = modulesRepo.modules[relativeName];
+        if (!moduleRepo) throw new Error(`Module ${relativeName} not exists`);
+        if (loadingQueue.push(relativeName, cb)) {
+          if (moduleRepo.info.sync) {
+            this._require(relativeName, module => loadingQueue.pop(relativeName, module));
+          } else {
+            this._import(relativeName, module => loadingQueue.pop(relativeName, module));
+          }
         }
+      } else {
+        return new Promise(resolve => {
+          this.use(moduleName, module => {
+            resolve(module);
+          });
+        });
       }
     },
     loadWaitings() {

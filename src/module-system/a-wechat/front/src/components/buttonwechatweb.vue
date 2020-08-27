@@ -1,27 +1,30 @@
 <template>
-  <img src="../assets/img/icon64_wx_logo.png" @click="signIn">
+  <eb-button :onPerform="onPerformSignIn"><img src="../assets/img/icon64_wx_logo.png"></eb-button>
 </template>
 <script>
 const urlLogin = '/api/a/wechat/passport/a-wechat/wechatweb';
 export default {
   meta: {
     global: false,
-    disable: ({ ctx, provider }) => {
-      return new Promise((resolve, reject) => {
-        if (ctx.$meta.config.base.jwt) return resolve(true);
-        if (ctx.$device.iphone || ctx.$device.android || ctx.$device.wxwork || ctx.$device.wechat) {
-          return resolve(true);
-        }
-        return resolve(false);
-      });
+    async disable({ ctx, state }) {
+      // jwt
+      if (ctx.$meta.config.base.jwt) return true;
+      // only pc
+      if (ctx.$device.iphone || ctx.$device.android || ctx.$device.wxwork || ctx.$device.wechat) {
+        return true;
+      }
+      return false;
     },
+    login({ ctx, state, hash }) {
+      ctx.$meta.vueApp.toLogin({ url: urlLogin, state, hash });
+    }
   },
   data() {
     return {};
   },
   methods: {
-    signIn() {
-      this.$meta.vueApp.toLogin({ url: urlLogin });
+    onPerformSignIn() {
+      this.$options.meta.login({ ctx: this });
     },
   },
 };

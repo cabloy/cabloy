@@ -10,4 +10,49 @@
     margin-top: unset;
     margin-bottom: unset;
   }
+
+  .login-screen-page {
+    .close {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      cursor: pointer;
+    }
+
+    .line {
+      height: 1px;
+      margin: 30px 0;
+      text-align: center;
+      border-top: 1px solid var(--f7-text-editor-border-color);
+
+      .text {
+        position: relative;
+        top: -10px;
+        background: var(--f7-page-bg-color);
+        display: inline-block;
+        padding: 0 8px;
+      }
+    }
+
+    .btns {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+
+      .btn {
+        width: 36px;
+        height: 36px;
+        margin: 8px;
+        cursor: pointer;
+        padding: 0;
+
+        img {
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+  }
 }

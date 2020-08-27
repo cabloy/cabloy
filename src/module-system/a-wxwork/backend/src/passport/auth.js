@@ -2,20 +2,20 @@ const strategy = require('./strategy-wxwork.js');
 const WxworkHelperFn = require('../common/wxworkHelper.js');
 const authProviderScenes = require('../common/authProviderScenes.js');
 
-module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
   function _createProvider(sceneInfo) {
+    const config = ctx.config.module(moduleInfo.relativeName).account.wxwork;
+    if (!config.corpid || !config.apps.selfBuilt.agentid) return null;
     return {
       meta: {
         title: sceneInfo.title,
         mode: 'redirect',
-        disableAssociate: true,
+        disableAssociate: sceneInfo.disableAssociate,
         component: `button${sceneInfo.authProvider}`,
       },
       config: {
-        corpid: '',
-        agentid: '',
         client: sceneInfo.client,
         scope: 'snsapi_base',
       },
@@ -53,7 +53,9 @@ module.exports = app => {
     };
   }
 
-  function _createProviderMini(sceneInfo) {
+  function _createProviderMini(sceneInfo, sceneShort) {
+    const config = ctx.config.module(moduleInfo.relativeName).account.wxwork.minis[sceneShort];
+    if (!config.appID || !config.appSecret) return null;
     return {
       meta: {
         title: sceneInfo.title,
@@ -78,12 +80,11 @@ module.exports = app => {
   }
 
   // minis
-  const moduleConfig = app.meta.configs[moduleInfo.relativeName];
-  const minis = moduleConfig.account.wxwork.minis;
+  const minis = ctx.config.module(moduleInfo.relativeName).account.wxwork.minis;
   for (const sceneShort in minis) {
     const scene = `wxworkmini${sceneShort}`;
     const sceneInfo = authProviderScenes.getScene(scene);
-    metaAuth.providers[sceneInfo.authProvider] = _createProviderMini(sceneInfo);
+    metaAuth.providers[sceneInfo.authProvider] = _createProviderMini(sceneInfo, sceneShort);
   }
 
   // ok

@@ -20,20 +20,36 @@ export default {
   data() {
     return {
       items: null,
+      providers: null,
+      providersMap: null,
     };
   },
   computed: {
     ready() {
-      return this.modulesAll && this.items;
+      return this.modulesAll && this.items && this.providers;
     },
     user() {
       return this.$store.state.auth.user;
     },
   },
   created() {
-    // fetch
-    return this.$api.post('user/authentications').then(data => {
+    // items
+    this.$api.post('user/authentications').then(data => {
       this.items = data;
+    });
+    // providers
+    const action = {
+      actionModule: 'a-login',
+      actionComponent: 'ebAuthProviders',
+      name: 'loadAuthProviders',
+    };
+    this.$meta.util.performAction({ ctx: this, action, item: { state: 'associate' } }).then(res => {
+      this.providers = res;
+      this.providersMap = {};
+      for (const item of this.providers) {
+        const key = `${item.provider.module}:${item.provider.providerName}`;
+        this.providersMap[key] = item;
+      }
     });
   },
   methods: {
@@ -62,14 +78,13 @@ export default {
       return this.$view.dialog.confirm().then(() => {
         const module = this.getModule(item.module);
         const info = module.info;
-        const url = `/api/${info.url}/passport/${info.relativeName}/${item.providerName}?state=associate`;
-        this.$meta.vueApp.toLogin({ url, hash: '/a/user/user/authentications' });
+        const path = `passport/${info.relativeName}/${item.providerName}?state=associate`;
+        this.$meta.vueApp.toLogin({ module: info, path, hash: '/a/user/user/authentications' });
       });
     },
     checkIfEnable(item) {
-      return !item.authId && !item.meta.disableAssociate &&
-        (!this.$meta.config.base.jwt);
-      //(!ctx.$meta.config.base.jwt || item.meta.mode !== 'redirect');
+      const key = `${item.module}:${item.providerName}`;
+      return !item.authId && !!this.providersMap[key];
     },
     checkIfDisable(item) {
       return item.authId && !this.isProviderCurrent(item);

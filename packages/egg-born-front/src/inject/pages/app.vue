@@ -236,12 +236,30 @@ export default {
       }
       return null;
     },
-    toLogin({ url, hash }) {
+    toLogin({ url, module, path, state, hash }) {
+      // hash
       hash = hash || this.popupHashInit();
+      // url
+      let toApiPage = true;
+      if (!url) {
+        url = this.$meta.util.combineFetchPath(module, path);
+      } else {
+        if (url.indexOf('/api/') === 0) {
+          url = `${this.$meta.config.api.baseURL}${url}`;
+        } else {
+          toApiPage = false;
+        }
+      }
       url = this.$meta.util.combineQueries(url, {
+        state: state || 'login',
         returnTo: this.$meta.util.combineHash(hash),
       });
-      location.assign(url);
+      // go
+      if (toApiPage) {
+        location.assign(url);
+      } else {
+        this.getLayout().navigate(url);
+      }
     },
     onClickTryAgain() {
       this.error = null;

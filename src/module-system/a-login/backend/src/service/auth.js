@@ -15,6 +15,7 @@ module.exports = app => {
       for (const item of list) {
         const key = `${item.module}:${item.providerName}`;
         const authProvider = authProviders[key];
+        if (!authProvider) continue;
         item.meta = authProvider.meta;
         listMap[key] = item;
       }

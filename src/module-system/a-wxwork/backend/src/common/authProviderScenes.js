@@ -1,12 +1,12 @@
 const _scenes = {
   wxwork: {
-    scene: 'wxwork', authProvider: 'wxwork', title: 'Wechat Work', client: 'wxwork',
+    scene: 'wxwork', authProvider: 'wxwork', title: 'Wechat Work', client: 'wxwork', disableAssociate: false,
   },
   wxworkweb: {
-    scene: 'wxworkweb', authProvider: 'wxworkweb', title: 'Wechat Work Web', client: 'wxworkweb',
+    scene: 'wxworkweb', authProvider: 'wxworkweb', title: 'Wechat Work Web', client: 'wxworkweb', disableAssociate: true,
   },
   wxworkmini: {
-    scene: 'wxworkmini', authProvider: 'wxworkmini', title: 'Wechat Work Miniprogram',
+    scene: 'wxworkmini', authProvider: 'wxworkmini', title: 'Wechat Work Miniprogram', disableAssociate: true,
   },
 };
 

@@ -18,13 +18,13 @@ export default {
     this.showClose = this.$meta.vueLayout.backLink(this);
   },
   created() {
-    // list
-    return this.$api.post('auth/list').then(list => {
-      // load providers
-      if (list.length === 0) return;
-      this.loadProviders(list).then(providers => {
-        this.providers = providers.filter(item => !!item);
-      });
+    const action = {
+      actionModule: 'a-login',
+      actionComponent: 'ebAuthProviders',
+      name: 'loadAuthProviders',
+    };
+    this.$meta.util.performAction({ ctx: this, action, item: { state: 'login' } }).then(res => {
+      this.providers = res;
     });
   },
   render(c) {
@@ -83,7 +83,7 @@ export default {
     },
     combineLoginTop(c) {
       if (!this.providers) return null;
-      const providers = this.providers.filter(item => item.provider.meta.mode === 'direct');
+      const providers = this.providers.filter(item => item.provider.meta.inline);
       if (providers.length === 0) return null;
       // check length
       if (providers.length === 1) {
@@ -120,7 +120,7 @@ export default {
     },
     combineLoginBottom(c) {
       if (!this.providers) return null;
-      const providers = this.providers.filter(item => item.provider.meta.mode === 'redirect');
+      const providers = this.providers.filter(item => !item.provider.meta.inline);
       if (providers.length === 0) return null;
       // buttons
       const children = [];
@@ -129,77 +129,9 @@ export default {
       }
       return c('div', { staticClass: 'btns' }, children);
     },
-    loadProviders(list) {
-      const promises = [];
-      for (const item of list) {
-        if (item) promises.push(this._loadProvider(item));
-      }
-      return Promise.all(promises);
-    },
-    _loadProvider(item) {
-      return new Promise((resolve, reject) => {
-        // load module
-        this.$meta.module.use(item.module, module => {
-          // checkIfDisable
-          if (!item.meta.component) return resolve(null);
-          const component = module.options.components[item.meta.component];
-          this._checkIfDisable(component, item).then(disable => {
-            if (!disable) {
-              resolve({ provider: item, component });
-            } else {
-              resolve(null);
-            }
-          });
-        });
-      });
-    },
-    _checkIfDisable(component, provider) {
-      return new Promise((resolve, reject) => {
-        if (!component.meta) return resolve(false);
-        if (typeof component.meta.disable !== 'function') return resolve(component.meta.disable);
-        this.$meta.util.wrapPromise(component.meta.disable({ ctx: this, provider })).then(res => resolve(res));
-      });
-    },
   },
 };
 
 </script>
-<style lang="less" scoped>
-.close {
-  position: absolute;
-  top: 16px;
-  left: 16px;
-  cursor: pointer;
-}
-
-.line {
-  height: 1px;
-  margin: 30px 0;
-  text-align: center;
-  border-top: 1px solid var(--f7-text-editor-border-color);
-
-  .text {
-    position: relative;
-    top: -10px;
-    background: var(--f7-page-bg-color);
-    display: inline-block;
-    padding: 0 8px;
-  }
-}
-
-.btns {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 30px;
-
-  .btn {
-    width: 36px;
-    height: 36px;
-    margin: 8px;
-    cursor: pointer;
-  }
-}
-
+<style>
 </style>

@@ -91,12 +91,13 @@ module.exports = ctx => {
         let metaAuth = module.main.meta && module.main.meta.auth;
         if (!metaAuth) continue;
         if (typeof metaAuth === 'function') {
-          metaAuth = metaAuth(ctx.app);
+          metaAuth = metaAuth(ctx);
         }
         if (!metaAuth.providers) continue;
         // loop
         for (const providerName in metaAuth.providers) {
           const _authProvider = metaAuth.providers[providerName];
+          if (!_authProvider) continue;
           const authProvider = {
             meta: _authProvider.meta,
             config: _authProvider.config,

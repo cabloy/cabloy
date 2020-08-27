@@ -31,6 +31,7 @@ module.exports = app => {
       [provider]: {
         meta: {
           title: 'User/Password',
+          inline: true,
           mode: 'direct',
           component: 'signin',
         },

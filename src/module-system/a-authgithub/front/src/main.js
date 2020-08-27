@@ -1,4 +1,4 @@
-import button from './components/button.vue';
+import buttongithub from './components/buttongithub.vue';
 import './assets/css/module.css';
 
 let Vue;
@@ -15,7 +15,7 @@ function install(_Vue, cb) {
     config: require('./config/config.js').default,
     locales: require('./config/locales.js').default,
     components: {
-      button,
+      buttongithub,
     },
   });
 }
