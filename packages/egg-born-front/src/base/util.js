@@ -60,12 +60,13 @@ export default function(Vue) {
     _setComponentModule(component, module) {
       component.__ebModuleRelativeName = module.info.relativeName;
     },
-    _locationHostPrefix() {
-      return location.origin !== 'file://' ? location.origin : location.origin + location.pathname;
+    _locationFullPathName() {
+      return location.origin + location.pathname;
     },
     parseHash(url) {
       if (!url || url === '/') return '/';
-      if (url.indexOf('https://') === 0 || url.indexOf('http://') === 0) return url;
+      // support external url
+      if ((url.indexOf('https://') === 0 || url.indexOf('http://') === 0) && url.indexOf(this._locationFullPathName()) === -1) return url;
       return url.split(Vue.prototype.$f7.router.params.pushStateSeparator)[1] || '/';
     },
     combineHash(hash) {

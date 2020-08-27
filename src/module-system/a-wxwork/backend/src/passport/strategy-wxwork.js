@@ -3,8 +3,6 @@ const util = require3('util');
 const passport = require3('passport-strategy');
 const OAuth = require('./oauth.js');
 
-const __OAUTH = Symbol('WXWORK#__OAUTH');
-
 function WxworkStrategy(options, verify) {
   options = options || {};
 
@@ -32,17 +30,8 @@ function WxworkStrategy(options, verify) {
 util.inherits(WxworkStrategy, passport.Strategy);
 
 WxworkStrategy.prototype.getOAuth = function(options) {
-  if (this[__OAUTH] === undefined) {
-    let corpid = options.corpid;
-    let agentid = options.agentid;
-    if (!corpid || !agentid) {
-      const _config = options.getConfig();
-      corpid = _config.corpid;
-      agentid = _config.agentid;
-    }
-    this[__OAUTH] = new OAuth(corpid, agentid);
-  }
-  return this[__OAUTH];
+  const _config = options.getConfig();
+  return new OAuth(_config.corpid, _config.agentid);
 };
 
 WxworkStrategy.prototype.authenticate = function(req, options) {

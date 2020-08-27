@@ -395,6 +395,8 @@ module.exports = ctx => {
       //
       let userId;
       if (state === 'associate') {
+        // should check user so as to create ctx.state.user
+        await this.check();
         // check if ctx.user exists
         if (!ctx.state.user || ctx.state.user.agent.anonymous) return false;
         userId = ctx.state.user.agent.id;

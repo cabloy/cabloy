@@ -3,8 +3,6 @@ const util = require3('util');
 const passport = require3('passport-strategy');
 const OAuth = require('./oauth.js');
 
-const __OAUTH = Symbol('DINGTALK#__OAUTH');
-
 function DingTalkStrategy(options, verify) {
   options = options || {};
 
@@ -32,15 +30,8 @@ function DingTalkStrategy(options, verify) {
 util.inherits(DingTalkStrategy, passport.Strategy);
 
 DingTalkStrategy.prototype.getOAuth = function(options) {
-  if (this[__OAUTH] === undefined) {
-    let appkey = options.appkey;
-    if (!appkey) {
-      const _config = options.getConfig();
-      appkey = _config.appkey;
-    }
-    this[__OAUTH] = new OAuth(appkey);
-  }
-  return this[__OAUTH];
+  const _config = options.getConfig();
+  return new OAuth(_config.appkey);
 };
 
 DingTalkStrategy.prototype.authenticate = function(req, options) {

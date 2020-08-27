@@ -74,13 +74,15 @@ export default {
         });
       });
     },
-    onPerformEnable(event, item) {
-      return this.$view.dialog.confirm().then(() => {
-        const module = this.getModule(item.module);
-        const info = module.info;
-        const path = `passport/${info.relativeName}/${item.providerName}?state=associate`;
-        this.$meta.vueApp.toLogin({ module: info, path, hash: '/a/user/user/authentications' });
-      });
+    async onPerformEnable(event, item) {
+      // confirm
+      await this.$view.dialog.confirm();
+      // provider
+      const key = `${item.module}:${item.providerName}`;
+      const provider = this.providersMap[key];
+      // login
+      const login = provider.component.meta.login({ ctx: this, state: 'associate', hash: '/a/user/user/authentications' });
+      await this.$meta.util.wrapPromise(login);
     },
     checkIfEnable(item) {
       const key = `${item.module}:${item.providerName}`;
