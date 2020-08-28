@@ -42,6 +42,8 @@ module.exports = function(ctx) {
     // scene: wechat/wechatweb/wechatmini
     async verifyAuthUser({ scene, openid, userInfo, cbVerify, state = 'login' }) {
       if (state === 'associate') {
+        // should check user so as to create ctx.state.user
+        await ctx.meta.user.check();
         // check if ctx.state.user exists
         if (!ctx.state.user || ctx.state.user.agent.anonymous) return ctx.throw(403);
       }
@@ -60,7 +62,7 @@ module.exports = function(ctx) {
         });
       }
       // update wechat userId
-      await this._updateWechatUser({ userId: verifyUser.agent.id, userWechatId, userInfo, state });
+      await this._updateWechatUser({ userId: verifyUser.agent.id, userWechatId, userInfo });
       // ok
       return verifyUser;
     }
