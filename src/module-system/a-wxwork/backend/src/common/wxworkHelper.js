@@ -176,7 +176,6 @@ module.exports = function(ctx) {
           await modelAuth.update({ id: authId, userId: _authOther.userId });
         }
       }
-
       // ready
       return profileUser;
     }

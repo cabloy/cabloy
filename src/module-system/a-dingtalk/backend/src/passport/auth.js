@@ -28,7 +28,7 @@ module.exports = ctx => {
       meta: {
         title: 'DingTalk Web',
         mode: 'redirect',
-        disableAssociate: true,
+        disableAssociate: false,
         component: 'buttondingtalkweb',
       },
       config: {

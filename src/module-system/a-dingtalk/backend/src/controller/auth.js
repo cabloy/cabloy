@@ -5,6 +5,7 @@ module.exports = app => {
       const res = await this.service.auth.login({
         scene: this.ctx.request.body.scene,
         code: this.ctx.request.body.code,
+        state: this.ctx.request.body.state,
       });
       this.ctx.success(res);
     }
