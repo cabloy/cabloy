@@ -21,6 +21,14 @@ module.exports = app => {
       }
     }
 
+    async accountMigration({ data }) {
+      // aDingtalkMember
+      await this.ctx.model.query(
+        'update aDingtalkMember a set a.userId=? where a.iid=? and a.userId=?',
+        [ data.userIdTo, this.ctx.instance.id, data.userIdFrom ]
+      );
+    }
+
   }
 
   return Event;

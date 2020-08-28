@@ -30,6 +30,7 @@ module.exports = app => {
     { method: 'post', path: 'jssdk/jsconfigAgent', controller: jssdk, middlewares: 'wxwork' },
     // event
     { method: 'post', path: 'event/loginInfo', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'event/accountMigration', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
 
     // authMini
     { method: 'post', path: 'authMini/login', controller: authMini, middlewares: 'wxwork', meta: { auth: { enable: false } } },

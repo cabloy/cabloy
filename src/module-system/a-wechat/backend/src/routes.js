@@ -18,6 +18,7 @@ module.exports = app => {
     { method: 'post', path: 'jssdk/jsconfig', controller: jssdk, middlewares: 'wechat' },
     // event
     { method: 'post', path: 'event/loginInfo', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'event/accountMigration', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
 
     // messageMini
     { method: 'get', path: 'messageMini/:scene', controller: messageMini, action: 'index', middlewares: 'wechat', meta: { auth: { enable: false } } },

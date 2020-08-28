@@ -410,11 +410,15 @@ module.exports = ctx => {
             providerId: providerItem.id,
             userId,
           });
-          // update
-          await this.modelAuth.update({
-            id: authId,
-            userId,
-          });
+          // accountMigration / update
+          if (authUserId) {
+            await this.accountMigration({ userIdFrom: authUserId, userIdTo: userId });
+          } else {
+            await this.modelAuth.update({
+              id: authId,
+              userId,
+            });
+          }
         }
         // ready
         verifyUser.op = ctx.state.user.op;
@@ -460,6 +464,25 @@ module.exports = ctx => {
 
       // ok
       return verifyUser;
+    }
+
+    async accountMigration({ userIdFrom, userIdTo }) {
+      // accountMigration event
+      await ctx.meta.event.invoke({
+        module: moduleInfo.relativeName, name: 'accountMigration', data: { userIdFrom, userIdTo },
+      });
+      // aAuth
+      await ctx.model.query(
+        'update aAuth a set a.userId=? where a.deleted=0 and a.iid=? and a.userId=?',
+        [ userIdTo, ctx.instance.id, userIdFrom ]
+      );
+      // aUserRole
+      await ctx.model.query(
+        'update aUserRole a set a.userId=? where a.iid=? and a.userId=?',
+        [ userIdTo, ctx.instance.id, userIdFrom ]
+      );
+      // delete user
+      await this.model.delete({ id: userIdFrom });
     }
 
     async _downloadAvatar({ avatar }) {

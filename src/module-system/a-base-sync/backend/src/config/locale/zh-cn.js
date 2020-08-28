@@ -15,6 +15,7 @@ module.exports = {
   'Atom Name': '原子名称',
   'Modification Time': '修改时间',
   'Created Time': '创建时间',
+  'Account Migration': '账户迁移',
   Draft: '草稿',
   Base: '基本',
   English: '英文',

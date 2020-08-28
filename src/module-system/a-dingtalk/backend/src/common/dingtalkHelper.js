@@ -63,20 +63,14 @@ module.exports = function(ctx) {
     }
 
     // scene: dingtalk/dingtalkweb/dingtalkadmin/dingtalkmini
-    async verifyAuthUser({ scene, memberId, member, cbVerify, state = 'login', needLogin = true }) {
-      if (state === 'associate') {
-        // should check user so as to create ctx.state.user
-        await ctx.meta.user.check();
-        // check if ctx.state.user exists
-        if (!ctx.state.user || ctx.state.user.agent.anonymous) return ctx.throw(403);
-      }
+    async verifyAuthUser({ scene, memberId, member, cbVerify, state, needLogin = true }) {
       // userInfo(member)
       if (!member) {
         member = await this._getMemberByMemberId({ memberId });
         if (!member) return ctx.throw(403);
       }
       // ensure auth user
-      const profileUser = await this._ensureAuthUser({ scene, memberId: member.memberId, member, state });
+      const profileUser = await this._ensureAuthUser({ scene, memberId: member.memberId, member });
       // verify
       let verifyUser;
       if (!cbVerify) {
@@ -100,7 +94,7 @@ module.exports = function(ctx) {
     }
 
     // profileId: dingtalk:memberId
-    async _ensureAuthUser({ scene, memberId, member, state }) {
+    async _ensureAuthUser({ scene, memberId, member }) {
       // model auth
       const modelAuth = ctx.model.module('a-base').auth;
       //
@@ -158,43 +152,18 @@ module.exports = function(ctx) {
         authId = authItem.id;
         authUserId = authItem.userId;
       }
-      if (state === 'associate') {
-        // update all auths of the same profileId
-        await ctx.model.query(
-          'update aAuth a set a.userId=? where a.deleted=0 and a.iid=? and a.profileId=?',
-          [ ctx.state.user.agent.id, ctx.instance.id, profileId ]
-        );
-        // update userRoleAndMember
-        await this._updateUserRoleAndMember({ userIdFrom: member.userId, userIdTo: ctx.state.user.agent.id });
-      } else {
-        // check if has userId for memberId
-        const _authOthers = await ctx.model.query(
-          'select * from aAuth a where a.deleted=0 and a.iid=? and a.profileId=? and a.id<>?',
-          [ ctx.instance.id, profileId, authId ]
-        );
-        const _authOther = _authOthers[0];
-        if (_authOther && _authOther.userId !== authUserId) {
+      // check if has userId for memberId
+      const _authOthers = await ctx.model.query(
+        'select * from aAuth a where a.deleted=0 and a.iid=? and a.profileId=? and a.id<>?',
+        [ ctx.instance.id, profileId, authId ]
+      );
+      const _authOther = _authOthers[0];
+      if (_authOther && _authOther.userId !== authUserId) {
         // update userId for this auth
-          await modelAuth.update({ id: authId, userId: _authOther.userId });
-        }
+        await modelAuth.update({ id: authId, userId: _authOther.userId });
       }
       // ready
       return profileUser;
-    }
-
-    async _updateUserRoleAndMember({ userIdFrom, userIdTo }) {
-      // aUserRole
-      await ctx.model.query(
-        'update aUserRole a set a.userId=? where a.iid=? and a.userId=?',
-        [ userIdTo, ctx.instance.id, userIdFrom ]
-      );
-      // aDingtalkMember
-      await ctx.model.query(
-        'update aDingtalkMember a set a.userId=? where a.iid=? and a.userId=?',
-        [ userIdTo, ctx.instance.id, userIdFrom ]
-      );
-      // disable old user
-      await ctx.meta.user.disable({ userId: userIdFrom, disabled: true });
     }
 
     _createDingtalkApiGeneral({ category, appName, appkey, appsecret, corpid, sso }) {

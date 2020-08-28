@@ -53,6 +53,7 @@ module.exports = app => {
       declarations: {
         loginInfo: 'Login Info',
         userVerify: 'User Verify',
+        accountMigration: 'Account Migration',
         atomClassValidator: 'Atom Validator',
       },
     },
