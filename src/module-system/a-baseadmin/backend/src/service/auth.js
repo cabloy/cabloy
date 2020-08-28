@@ -13,7 +13,7 @@ module.exports = app => {
       for (const item of list) {
         const key = `${item.module}:${item.providerName}`;
         const authProvider = authProviders[key];
-        item.meta = authProvider.meta;
+        item.meta = authProvider ? authProvider.meta : null;
       }
       // ok
       return list;

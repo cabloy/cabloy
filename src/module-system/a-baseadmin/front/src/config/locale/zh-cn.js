@@ -68,4 +68,5 @@ export default {
   Users: '用户',
   Copy: '复制',
   Copied: '已复制',
+  Others: '其它',
 };

@@ -26,7 +26,7 @@ export default {
   },
   computed: {
     ready() {
-      return this.modulesAll && this.items && this.providers;
+      return this.modulesAll && this.items;
     },
     user() {
       return this.$store.state.auth.user;
@@ -75,6 +75,7 @@ export default {
       });
     },
     async onPerformEnable(event, item) {
+      if (!this.providersMap) return;
       // confirm
       await this.$view.dialog.confirm();
       // provider
@@ -85,6 +86,7 @@ export default {
       await this.$meta.util.wrapPromise(login);
     },
     checkIfEnable(item) {
+      if (!this.providersMap) return false;
       const key = `${item.module}:${item.providerName}`;
       return !item.authId && !!this.providersMap[key];
     },
