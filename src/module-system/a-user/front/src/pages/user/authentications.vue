@@ -1,14 +1,16 @@
 <template>
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Authentications')" eb-back-link="Back"></eb-navbar>
-    <f7-list v-if="ready">
-      <eb-list-item v-for="item of items" :key="item.providerId" :title="authTitle(item)">
-        <div slot="after">
-          <f7-badge v-if="item.authId">{{$text('Enabled')}}</f7-badge>
-          <eb-link v-if="checkIfEnable(item)" :context="item" :onPerform="onPerformEnable">{{$text('Enable')}}</eb-link>
-          <eb-link v-if="checkIfDisable(item)" :context="item" :onPerform="onPerformDisable">{{$text('Disable')}}</eb-link>
-        </div>
-      </eb-list-item>
+    <f7-list form inline-labels no-hairlines-md v-if="ready">
+      <f7-list-group v-for="group of itemsGroups" :key="group.id">
+        <f7-list-item group-title :title="`${group.title} (${group.items.length})`"></f7-list-item>
+        <eb-list-item v-for="item of group.items" :key="item.providerId" :title="authTitle(item)">
+          <div slot="after">
+            <eb-link v-if="checkIfEnable(item)" :context="item" :onPerform="onPerformEnable">{{$text('Enable')}}</eb-link>
+            <eb-link v-if="checkIfDisable(item)" :context="item" :onPerform="onPerformDisable">{{$text('Disable')}}</eb-link>
+          </div>
+        </eb-list-item>
+      </f7-list-group>
     </f7-list>
   </eb-page>
 </template>
@@ -20,6 +22,7 @@ export default {
   data() {
     return {
       items: null,
+      itemsGroups: null,
       providers: null,
       providersMap: null,
     };
@@ -36,6 +39,7 @@ export default {
     // items
     this.$api.post('user/authentications').then(data => {
       this.items = data;
+      this.groupItems();
     });
     // providers
     const action = {
@@ -53,6 +57,19 @@ export default {
     });
   },
   methods: {
+    groupItems() {
+      this.itemsGroups = [
+        { id: 'enabled', title: this.$text('Enabled'), items: [] },
+        { id: 'others', title: this.$text('Others'), items: [] },
+      ];
+      for (const item of this.items) {
+        if (item.authId) {
+          this.itemsGroups[0].items.push(item);
+        } else {
+          this.itemsGroups[1].items.push(item);
+        }
+      }
+    },
     isProviderCurrent(item) {
       return this.user.provider.providerId === item.providerId;
     },
@@ -70,6 +87,7 @@ export default {
           const index = this.items.findIndex(_item => _item.providerId === item.providerId);
           item.authId = null;
           Vue.set(this.items, index, item);
+          this.groupItems();
           return true;
         });
       });
