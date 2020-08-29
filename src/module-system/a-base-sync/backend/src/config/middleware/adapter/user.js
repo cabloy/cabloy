@@ -648,13 +648,13 @@ module.exports = ctx => {
       const res = await this.modelAuthProvider.get({ module, providerName });
       if (res) return res;
       // data
-      const _authProviders = ctx.meta.util.authProviders();
-      const _provider = _authProviders[`${module}:${providerName}`];
-      if (!_provider) throw new Error(`authProvider ${module}:${providerName} not found!`);
+      // const _authProviders = ctx.meta.util.authProviders();
+      // const _provider = _authProviders[`${module}:${providerName}`];
+      // if (!_provider) throw new Error(`authProvider ${module}:${providerName} not found!`);
       const data = {
         module,
         providerName,
-        config: JSON.stringify(_provider.config),
+        // config: JSON.stringify(_provider.config),
         disabled: 0,
       };
       // insert

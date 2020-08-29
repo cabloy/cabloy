@@ -41,5 +41,10 @@ module.exports = app => {
         emailConfirm: schemas.emailConfirm,
       },
     },
+    event: {
+      implementations: {
+        'a-base:accountMigration': 'event/accountMigration',
+      },
+    },
   };
 };

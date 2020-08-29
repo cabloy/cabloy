@@ -1,5 +1,6 @@
 const version = require('./controller/version.js');
 const auth = require('./controller/auth.js');
+const event = require('./controller/event.js');
 
 module.exports = [
   { method: 'post', path: 'version/update', controller: version, middlewares: 'inner' },
@@ -33,5 +34,7 @@ module.exports = [
     meta: { validate: { validator: 'emailConfirm' } },
   },
   { method: 'get', path: 'auth/emailConfirmation', controller: auth },
+  // event
+  { method: 'post', path: 'event/accountMigration', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
 
 ];

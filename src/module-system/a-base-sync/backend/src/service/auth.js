@@ -85,7 +85,7 @@ module.exports = app => {
         const provider = authProviders[`${moduleRelativeName}:${providerName}`];
         if (provider.handler) {
           // config
-          const config = JSON.parse(providerItem.config);
+          const config = provider.config;
           config.passReqToCallback = true;
           config.failWithError = false;
           config.successRedirect = config.successReturnToOrRedirect = (provider.meta.mode === 'redirect') ? '/' : false;
@@ -137,7 +137,7 @@ function createAuthenticate(moduleRelativeName, providerName, _config) {
     const provider = authProviders[`${moduleRelativeName}:${providerName}`];
 
     // config
-    const config = JSON.parse(providerItem.config);
+    const config = provider.config;
     config.passReqToCallback = true;
     config.failWithError = false;
     config.loginURL = ctx.meta.base.getAbsoluteUrl(_config.loginURL);
