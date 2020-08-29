@@ -12,6 +12,9 @@
         </eb-list-item>
       </f7-list-group>
     </f7-list>
+    <f7-block>
+      <eb-button fill :onPerform="onPerformMigrate">{{$text('MigrateToAnotherAccount')}}</eb-button>
+    </f7-block>
   </eb-page>
 </template>
 <script>
@@ -111,6 +114,15 @@ export default {
     checkIfDisable(item) {
       return item.authId && !this.isProviderCurrent(item);
     },
+    async onPerformMigrate() {
+      // confirm
+      await this.$view.dialog.confirm();
+      // open login
+      this.$meta.vueLayout.openLogin({
+        query: { state: 'migrate' },
+        url: '/a/user/user/authentications',
+      });
+    }
   },
 };
 

@@ -59,11 +59,12 @@ module.exports = app => {
       return verifyUser;
     }
 
-    async signin({ auth, password, rememberMe }) {
+    // data: { auth, password, rememberMe }
+    async signin({ data, state }) {
       const res = await this.ctx.performAction({
         method: 'post',
-        url: 'passport/a-authsimple/authsimple',
-        body: { auth, password, rememberMe },
+        url: `passport/a-authsimple/authsimple?state=${state}`,
+        body: { data },
       });
       return res;
     }
@@ -176,7 +177,8 @@ module.exports = app => {
       await this.ctx.cache.db.remove(cacheKey);
       // login antomatically
       const user = await this.ctx.meta.user.get({ id: userId });
-      const user2 = await this.signin({ auth: user.email, password: passwordNew, rememberMe: false });
+      const data = { auth: user.email, password: passwordNew, rememberMe: false };
+      const user2 = await this.signin({ data, state: 'login' });
       // ok
       return user2;
     }

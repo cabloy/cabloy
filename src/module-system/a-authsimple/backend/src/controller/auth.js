@@ -8,8 +8,10 @@ module.exports = app => {
     }
 
     async signin() {
-      const { auth, password, rememberMe } = this.ctx.request.body.data;
-      const res = await this.service.auth.signin({ auth, password, rememberMe });
+      // data: { auth, password, rememberMe }
+      const data = this.ctx.request.body.data;
+      const state = this.ctx.request.body.state;
+      const res = await this.service.auth.signin({ data, state });
       this.ctx.success(res);
     }
 

@@ -239,9 +239,23 @@ export default {
       }
     },
     openLogin(routeTo) {
-      const hashInit = (!routeTo || typeof routeTo === 'string') ? routeTo : routeTo.url.url;
+      // hash init
+      let hashInit;
+      if (!routeTo || typeof routeTo === 'string') {
+        hashInit = routeTo;
+      } else if (!routeTo.url || typeof routeTo.url === 'string') {
+        hashInit = routeTo.url;
+      } else {
+        hashInit = routeTo.url.url;
+      }
       if (hashInit && hashInit !== '/') this.$store.commit('auth/setHashInit', hashInit);
-      this.navigate(this.$config.layout.login);
+      // query
+      const query = routeTo && routeTo.query;
+      // url
+      let url = this.$config.layout.login;
+      url = query ? this.$meta.util.combineQueries(url, query) : url;
+      // navigate
+      this.navigate(url);
     },
     closeView(view) {
       if (view.$el.parents('.eb-layout-sidebar-left').length > 0) {

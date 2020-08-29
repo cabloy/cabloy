@@ -46,6 +46,11 @@ export default {
       }
     },
   },
+  props: {
+    state: {
+      type: String,
+    },
+  },
   data() {
     return {
       data: {
@@ -69,6 +74,7 @@ export default {
     onPerformValidate() {
       return this.$api.post('auth/signin', {
         data: this.data,
+        state: this.state,
         captcha: this.$refs.captchaContainer.getComponentInstance().captchaData({ token: this.captcha.token }),
       }).then(() => {
         this.$meta.vueApp.reload({ echo: true });

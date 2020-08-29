@@ -5,6 +5,7 @@ export default {
   },
   data() {
     return {
+      state: this.$f7route.query.state || 'login',
       providers: null,
       showClose: false,
     };
@@ -88,7 +89,11 @@ export default {
       // check length
       if (providers.length === 1) {
         const provider = providers[0];
-        return c(provider.component);
+        return c(provider.component, {
+          props: {
+            state: this.state,
+          },
+        });
       }
       // >1
       const buttons = [];
@@ -107,7 +112,11 @@ export default {
             id: `tab-${index}`,
             'tab-active': parseInt(index) === 0,
           },
-        }, [c(provider.component)]));
+        }, [c(provider.component, {
+          props: {
+            state: this.state,
+          },
+        })]));
       }
       const tabbar = c('f7-toolbar', {
         attrs: {
@@ -119,6 +128,7 @@ export default {
       return c('div', [tabbar, tabblock]);
     },
     combineLoginBottom(c) {
+      if (this.state === 'migrate') return null;
       if (!this.providers) return null;
       const providers = this.providers.filter(item => !item.provider.meta.inline);
       if (providers.length === 0) return null;

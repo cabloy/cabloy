@@ -342,7 +342,7 @@ module.exports = ctx => {
         `, [ ctx.instance.id, userId ]);
     }
 
-    // state: login/associate
+    // state: login/associate/migrate
     async verify({ state = 'login', profileUser }) {
       // verifyUser
       const verifyUser = {};
@@ -370,7 +370,7 @@ module.exports = ctx => {
         authId = authItem.id;
         authUserId = authItem.userId;
       } else {
-        if (profileUser.authShouldExists === true) ctx.throw.module(moduleInfo.relativeName, 1009);
+        if (state === 'migrate' || profileUser.authShouldExists === true) ctx.throw.module(moduleInfo.relativeName, 1009);
         // add
         const res = await this.modelAuth.insert({
           providerId: providerItem.id,
@@ -394,7 +394,22 @@ module.exports = ctx => {
 
       //
       let userId;
-      if (state === 'associate') {
+      if (state === 'migrate') {
+        // should check user so as to create ctx.state.user
+        await this.check();
+        // check if ctx.user exists
+        if (!ctx.state.user || ctx.state.user.agent.anonymous) return false;
+        userId = ctx.state.user.agent.id;
+        // migrate
+        if (authUserId !== userId) {
+          await this.accountMigration({ userIdFrom: userId, userIdTo: authUserId });
+        }
+        // user
+        const user = await this.model.get({ id: authUserId });
+        // ready
+        verifyUser.op = user;
+        verifyUser.agent = user;
+      } else if (state === 'associate') {
         // should check user so as to create ctx.state.user
         await this.check();
         // check if ctx.user exists

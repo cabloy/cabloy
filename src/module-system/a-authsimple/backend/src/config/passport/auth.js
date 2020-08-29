@@ -3,9 +3,9 @@ module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const provider = moduleInfo.name;
   async function verify(ctx, body) {
-    const { auth, password, rememberMe } = body;
+    const { auth, password, rememberMe } = body.data;
     // validate
-    await ctx.meta.validation.validate({ validator: 'signin', data: body });
+    await ctx.meta.validation.validate({ validator: 'signin', data: body.data });
     // exists
     const user = await ctx.meta.user.exists({ userName: auth, email: auth, mobile: auth });
     if (!user) return ctx.throw(1001);
