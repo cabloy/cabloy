@@ -67,7 +67,7 @@ module.exports = function(ctx) {
       // userInfo(member)
       if (!member) {
         member = await this._getMemberByMemberId({ memberId });
-        if (!member) return ctx.throw(403);
+        if (!member) return ctx.throw.module(moduleInfo.relativeName, 1008);
       }
       // ensure auth user
       const profileUser = await this._ensureAuthUser({ scene, memberId: member.memberId, member });

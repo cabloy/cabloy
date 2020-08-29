@@ -7,4 +7,5 @@ module.exports = {
   1005: 'Member not Found: %d',
   1006: 'Sync Departments First',
   1007: 'Sync Members First',
+  1008: 'Sync Contacts First',
 };

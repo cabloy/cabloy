@@ -13,4 +13,5 @@ module.exports = {
   'Member Count': '成员数量',
   'Sync Departments First': '请先同步部门',
   'Sync Members First': '请先同步成员',
+  'Sync Contacts First': '请先同步通讯录',
 };
