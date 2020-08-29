@@ -56,7 +56,7 @@ module.exports = function(app) {
           return await this._performTask(job.data);
         }
         // redlock
-        const _lockResource = `redlock_${app.name}:queue:${queueKey}:${info.subdomain || '~'}${info.queueNameSub ? '#' + info.queueNameSub : ''}`;
+        const _lockResource = `redlock_${app.name}:queue:${queueKey}:${job.data.subdomain || '~'}${job.data.queueNameSub ? '#' + job.data.queueNameSub : ''}`;
         let _lock = await _worker.redlock.lock(_lockResource, _redlockOptions.lockTTL);
         let _lockTimer = null;
         const _lockDone = () => {
