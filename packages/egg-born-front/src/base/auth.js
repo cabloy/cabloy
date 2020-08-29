@@ -47,10 +47,6 @@ export default function(Vue) {
       },
       setLoginInfo(state, info) {
         state.loginInfo = info;
-        // config
-        if (info.config) {
-          Vue.prototype.$utils.extend(Vue.prototype.$meta.config, info.config);
-        }
       },
       setHashInit(state, hashInit) {
         state.hashInit = hashInit;

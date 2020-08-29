@@ -8,7 +8,7 @@ export default function(Vue) {
   // api
   init('api', require('./mixin/api.js'));
   // config
-  init('config', require('./mixin/config.js'));
+  init(null, require('./mixin/config.js'));
   // locales
   init('locales', require('./mixin/locales.js'));
   // component

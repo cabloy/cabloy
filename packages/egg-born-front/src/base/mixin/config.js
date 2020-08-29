@@ -44,12 +44,22 @@ export default function(Vue) {
     modules: {},
   };
 
+  Vue.prototype.$meta._configOriginal = config;
+  Object.defineProperty(Vue.prototype.$meta, 'config', {
+    get() {
+      const loginInfo = Vue.prototype.$meta.store.getState('auth/loginInfo');
+      const loginConfig = loginInfo && loginInfo.config;
+      if (!loginConfig) return config;
+      return Vue.prototype.$utils.extend({}, config, loginConfig);
+    },
+  });
+
   // beforeCreate
   const beforeCreate = function(ctx) {
     Object.defineProperty(ctx, '$config', {
       get() {
         const moduleInfo = ctx.$module.info;
-        return config.modules[moduleInfo.relativeName];
+        return Vue.prototype.$meta.config.modules[moduleInfo.relativeName];
       },
     });
   };

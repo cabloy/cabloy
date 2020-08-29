@@ -219,15 +219,15 @@ export default function(Vue) {
         // scene
         module.options.config.scene = process.env.SCENE;
         // extend
-        Vue.prototype.$utils.extend(Vue.prototype.$meta.config, module.options.config);
+        Vue.prototype.$utils.extend(Vue.prototype.$meta._configOriginal, module.options.config);
         // baseURL
         if (Vue.prototype.$meta.config.api.baseURL) {
           Vue.prototype.$meta.axios.defaults.baseURL = Vue.prototype.$meta.config.api.baseURL;
           Vue.prototype.$meta.axios.defaults.withCredentials = true;
         }
       } else {
-        Vue.prototype.$meta.config.modules[module.info.relativeName] =
-        Vue.prototype.$utils.extend({}, module.options.config, Vue.prototype.$meta.config.modules[module.info.relativeName]);
+        Vue.prototype.$meta._configOriginal.modules[module.info.relativeName] =
+        Vue.prototype.$utils.extend({}, module.options.config, Vue.prototype.$meta._configOriginal.modules[module.info.relativeName]);
       }
     },
     _registerLocales(module) {

@@ -405,15 +405,15 @@ module.exports = ctx => {
         await this._updateUserInfo(userId, profileUser.profile, columns);
         // force update auth's userId, maybe different
         if (authUserId !== userId) {
-          // delete old records
-          await this.modelAuth.delete({
-            providerId: providerItem.id,
-            userId,
-          });
           // accountMigration / update
           if (authUserId) {
             await this.accountMigration({ userIdFrom: authUserId, userIdTo: userId });
           } else {
+            // delete old record
+            await this.modelAuth.delete({
+              providerId: providerItem.id,
+              userId,
+            });
             await this.modelAuth.update({
               id: authId,
               userId,
@@ -471,7 +471,19 @@ module.exports = ctx => {
       await ctx.meta.event.invoke({
         module: moduleInfo.relativeName, name: 'accountMigration', data: { userIdFrom, userIdTo },
       });
-      // aAuth
+      // aAuth: delete old records
+      const list = await ctx.model.query(
+        'select a.providerId from aAuth a where a.deleted=0 and a.iid=? and a.userId=?',
+        [ ctx.instance.id, userIdFrom ]
+      );
+      if (list.length > 0) {
+        const providerIds = list.map(item => item.providerId).join(',');
+        await ctx.model.query(
+          `delete from aAuth where deleted=0 and iid=? and userId=? and providerId in (${providerIds})`,
+          [ ctx.instance.id, userIdTo, providerIds ]
+        );
+      }
+      // aAuth: update records
       await ctx.model.query(
         'update aAuth a set a.userId=? where a.deleted=0 and a.iid=? and a.userId=?',
         [ userIdTo, ctx.instance.id, userIdFrom ]
