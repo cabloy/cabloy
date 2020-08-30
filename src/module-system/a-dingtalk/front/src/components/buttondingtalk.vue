@@ -16,12 +16,12 @@ export default {
       // login direct for state=login
       try {
         await this.login({ ctx, state });
-        // throw error
-        throw new Error();
       } catch (err) {
         ctx.$view.toast.show({ text: err.message });
         return false;
       }
+      // throw error on success
+      throw new Error();
     },
     async login({ ctx, state, hash }) {
       // jssdk config
