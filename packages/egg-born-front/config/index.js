@@ -69,10 +69,6 @@ module.exports = merge({
         target: proxyTarget,
         xfwd: true,
       },
-      '/public': {
-        target: proxyTarget,
-        xfwd: true,
-      },
       '/socket.io': {
         target: proxyTarget,
         xfwd: true,

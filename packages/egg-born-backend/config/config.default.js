@@ -107,7 +107,7 @@ module.exports = appInfo => {
 
   // static
   config.static = {
-    prefix: '/api/static',
+    prefix: '/api/static/',
     preload: false,
     alias: {
       '/favicon.ico': '/api/static/a/base/img/favicon.ico',
@@ -198,13 +198,20 @@ module.exports = appInfo => {
 
 function getFullPath(ctx, dir, filename, options) {
   const parts = filename.split('/');
-  const moduleRelativeName = `${parts.shift()}-${parts.shift()}`;
+  const wordFirst = parts.shift();
+  // public
+  if (wordFirst === 'public') {
+    return path.normalize(path.join(dir, parts.join('/')));
+  }
+  // static
+  const moduleRelativeName = `${wordFirst}-${parts.shift()}`;
   const module = ctx.app.meta.modules[moduleRelativeName];
   if (!module) return null;
   const fullPath = path.normalize(path.join(module.static.backend, parts.join('/')));
   // files that can be accessd should be under options.dir
   if (fullPath.indexOf(module.static.backend) !== 0) return null;
   return fullPath;
+
 }
 
 function onQuery(hook, ms, sequence, args) {

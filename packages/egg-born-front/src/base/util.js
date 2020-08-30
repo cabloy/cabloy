@@ -171,6 +171,19 @@ export default function(Vue) {
       const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;
       return `/api/${moduleInfo.url}/${arg}`;
     },
+    combineStaticPath(moduleName, arg) {
+      let url = this._combineStaticPath(moduleName, arg);
+      if (Vue.prototype.$meta.config.api.baseURL) {
+        url = `${Vue.prototype.$meta.config.api.baseURL}${url}`;
+      }
+      return url;
+    },
+    _combineStaticPath(moduleName, arg) {
+      if (arg.substr(0, 2) === '//') return arg.substr(1);
+      if (arg.charAt(0) === '/') return `/api/static${arg}`;
+      const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;
+      return `/api/static/${moduleInfo.url}/${arg}`;
+    },
     combineStorePath(moduleName, arg) {
       if (arg.substr(0) === '/') return arg.substr(1);
       const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;

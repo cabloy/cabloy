@@ -197,7 +197,7 @@ class Build {
     if (this.ctx.app.meta.isTest || this.ctx.app.meta.isLocal) {
       // cms or cms.moduleName
       const cmsPathName = this.getCMSPathName();
-      const publicDir = this.ctx.app.config.static.prefix;
+      const publicDir = this.ctx.app.config.static.prefix + 'public/';
       const prefix = this.ctx.meta.base.host ? `${this.ctx.meta.base.protocol}://${this.ctx.meta.base.host}` : '';
       return `${prefix}${publicDir}${this.ctx.instance.id}/${cmsPathName}/dist`;
     }
