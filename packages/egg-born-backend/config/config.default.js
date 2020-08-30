@@ -109,12 +109,10 @@ module.exports = appInfo => {
   config.static = {
     prefix: '/api/static',
     preload: false,
+    alias: {
+      '/favicon.ico': '/api/static/a/base/img/favicon.ico',
+    },
     getFullPath,
-  };
-
-  // siteFile
-  config.siteFile = {
-    '/favicon.ico': fs.readFileSync(path.join(__dirname, 'favicon.ico')),
   };
 
   // queue
