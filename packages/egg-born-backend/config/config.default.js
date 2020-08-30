@@ -201,7 +201,10 @@ function getFullPath(ctx, dir, filename, options) {
   const wordFirst = parts.shift();
   // public
   if (wordFirst === 'public') {
-    return path.normalize(path.join(dir, parts.join('/')));
+    const fullPath = path.normalize(path.join(dir, parts.join('/')));
+    // files that can be accessd should be under options.dir
+    if (fullPath.indexOf(dir) !== 0) return null;
+    return fullPath;
   }
   // static
   const moduleRelativeName = `${wordFirst}-${parts.shift()}`;
@@ -211,7 +214,6 @@ function getFullPath(ctx, dir, filename, options) {
   // files that can be accessd should be under options.dir
   if (fullPath.indexOf(module.static.backend) !== 0) return null;
   return fullPath;
-
 }
 
 function onQuery(hook, ms, sequence, args) {
