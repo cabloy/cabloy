@@ -1,4 +1,6 @@
 module.exports = {
+  AccountMigration: '账户迁移',
+  AccountMigrationDesp: '点击此链接迁移至现有账户',
   'Wechat Work': '企业微信',
   'Wechat Work Miniprogram': '企业微信小程序',
   'Wechat Work Miniprogram - Default': '企业微信小程序 - 默认',
