@@ -12,8 +12,10 @@ describe('test/controller/test/function/right.test.js', () => {
     for (const [ userName, right ] of checkRightFunctions) {
       // login
       await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-        auth: userName,
-        password: '123456',
+        data: {
+          auth: userName,
+          password: '123456',
+        },
       });
       // checkRightFunctionUser
       const result = await app.httpRequest().post(mockUrl('test/function/checkRightFunctionUser'));

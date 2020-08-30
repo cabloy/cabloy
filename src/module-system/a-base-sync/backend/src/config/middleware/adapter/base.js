@@ -71,6 +71,11 @@ const Fn = module.exports = ctx => {
       return dir;
     }
 
+    // static
+    getStaticUrl(path) {
+      return this.getAbsoluteUrl(`/api/static${path}`);
+    }
+
     // alert
     getAlertUrl({ data }) {
       return this.getAbsoluteUrl(`/#!/a/base/base/alert?data=${encodeURIComponent(JSON.stringify(data))}`);

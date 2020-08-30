@@ -14,8 +14,10 @@ describe('test/controller/test/auth/login.test.js', () => {
 
     for (const [ userName, success ] of users) {
       const res = await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-        auth: userName,
-        password: '123456',
+        data: {
+          auth: userName,
+          password: '123456',
+        },
       });
       if (success) {
         assert.equal(res.status, 200, userName);

@@ -1,5 +1,7 @@
 module.exports = {
   DingTalk: '钉钉',
+  AccountMigration: '账户迁移',
+  AccountMigrationDesp: '点击此链接迁移至现有账户',
   'DingTalk Miniprogram': '钉钉小程序',
   'DingTalk Miniprogram - Default': '钉钉小程序 - 默认',
   'DingTalk Web': '钉钉Web',

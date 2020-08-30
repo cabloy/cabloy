@@ -13,8 +13,10 @@ describe('test/controller/test/atom/right.test.js', () => {
     for (const [ userName, right ] of checkRightCreates) {
       // login
       await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-        auth: userName,
-        password: '123456',
+        data: {
+          auth: userName,
+          password: '123456',
+        },
       });
       // checkRightCreate
       const result = await app.httpRequest().post(mockUrl('test/atom/checkRightCreate')).send({
@@ -33,8 +35,10 @@ describe('test/controller/test/atom/right.test.js', () => {
 
     // login
     await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      auth: 'Tom',
-      password: '123456',
+      data: {
+        auth: 'Tom',
+        password: '123456',
+      },
     });
 
     // create
@@ -51,8 +55,10 @@ describe('test/controller/test/atom/right.test.js', () => {
     for (const [ userName, right ] of checkRightReads) {
       // login
       await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-        auth: userName,
-        password: '123456',
+        data: {
+          auth: userName,
+          password: '123456',
+        },
       });
       // checkRightRead
       const result = await app.httpRequest().post(mockUrl('test/atom/checkRightRead')).send({
@@ -73,8 +79,10 @@ describe('test/controller/test/atom/right.test.js', () => {
     for (const [ userName, right ] of checkRightWrites) {
       // login
       await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-        auth: userName,
-        password: '123456',
+        data: {
+          auth: userName,
+          password: '123456',
+        },
       });
       // checkRightWrite
       const result = await app.httpRequest().post(mockUrl('test/atom/checkRightWrite')).send({
@@ -89,8 +97,10 @@ describe('test/controller/test/atom/right.test.js', () => {
 
     // enable
     await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      auth: 'Tom',
-      password: '123456',
+      data: {
+        auth: 'Tom',
+        password: '123456',
+      },
     });
     res = await app.httpRequest().post(mockUrl('/a/base/atom/enable')).send({
       key: partyKey,
@@ -105,8 +115,10 @@ describe('test/controller/test/atom/right.test.js', () => {
     for (const [ userName, right ] of checkRightActions) {
       // login
       await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-        auth: userName,
-        password: '123456',
+        data: {
+          auth: userName,
+          password: '123456',
+        },
       });
       // checkRightAction
       const result = await app.httpRequest().post(mockUrl('test/atom/checkRightAction')).send({
@@ -127,8 +139,10 @@ describe('test/controller/test/atom/right.test.js', () => {
     for (const [ userName, right ] of customActionReviews) {
       // login
       await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-        auth: userName,
-        password: '123456',
+        data: {
+          auth: userName,
+          password: '123456',
+        },
       });
       // action:review
       const result = await app.httpRequest().post(mockUrl('/a/base/atom/action')).send({
@@ -144,8 +158,10 @@ describe('test/controller/test/atom/right.test.js', () => {
 
     // delete
     await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      auth: 'Tom',
-      password: '123456',
+      data: {
+        auth: 'Tom',
+        password: '123456',
+      },
     });
     res = await app.httpRequest().post(mockUrl('/a/base/atom/delete')).send({
       key: partyKey,

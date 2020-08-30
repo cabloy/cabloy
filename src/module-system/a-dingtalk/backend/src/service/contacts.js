@@ -440,7 +440,38 @@ module.exports = app => {
       // 4. create member
       member.userId = userId;
       const res = await this.ctx.model.member.insert(member);
-      return res.insertId;
+      const memberId = res.insertId;
+
+      // 5. send message: account migration
+      const sendLinkAccountMigration = await this.ctx.meta.settings.getInstance({ name: '/groupInfo/sendLinkAccountMigration' });
+      if (sendLinkAccountMigration) {
+        await this._sendLinkAccountMigration({ userId });
+      }
+
+      // ok
+      return memberId;
+    }
+
+    async _sendLinkAccountMigration({ userId }) {
+      this.ctx.tail(async () => {
+        const msg = {
+          msgtype: 'link',
+          link: {
+            messageUrl: this.ctx.meta.base.getAbsoluteUrl('/#!/a/login/migrate'),
+            picUrl: this.ctx.meta.base.getStaticUrl('/a/base/img/cabloy.png'),
+            title: this.ctx.text('AccountMigration'),
+            text: this.ctx.text('AccountMigrationDesp'),
+          },
+        };
+        const content = {
+          userIds: [ userId ],
+          data: { msg },
+        };
+        await this.ctx.meta.io.pushDirect({
+          content,
+          channel: { module: 'a-dingtalk', name: 'app' },
+        });
+      });
     }
 
     // not create new role here

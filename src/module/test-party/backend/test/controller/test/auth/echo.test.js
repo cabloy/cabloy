@@ -7,8 +7,10 @@ describe('test/controller/test/auth/echo.test.js', () => {
 
     // login
     await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      auth: 'root',
-      password: '123456',
+      data: {
+        auth: 'root',
+        password: '123456',
+      },
     });
 
     // echo

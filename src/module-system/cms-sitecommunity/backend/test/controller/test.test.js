@@ -16,8 +16,10 @@ describe('test/controller/test.test.js', () => {
 
     // login as root
     await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      auth: 'root',
-      password: '123456',
+      data: {
+        auth: 'root',
+        password: '123456',
+      },
     });
 
     const result = await app.httpRequest().post(mockUrl('/a/cms/site/setConfigSite')).send({
@@ -46,8 +48,10 @@ describe('test/controller/test.test.js', () => {
 
     // login as root
     await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      auth: 'root',
-      password: '123456',
+      data: {
+        auth: 'root',
+        password: '123456',
+      },
     });
 
     const categories = [
@@ -87,8 +91,10 @@ describe('test/controller/test.test.js', () => {
 
     // login as root
     await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      auth: 'root',
-      password: '123456',
+      data: {
+        auth: 'root',
+        password: '123456',
+      },
     });
 
     const result = await app.httpRequest().post(mockUrl('/a/cms/site/buildLanguages')).send({
@@ -104,8 +110,10 @@ describe('test/controller/test.test.js', () => {
 
     // login as root
     await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      auth: 'root',
-      password: '123456',
+      data: {
+        auth: 'root',
+        password: '123456',
+      },
     });
 
     const articles = [
@@ -200,8 +208,10 @@ describe('test/controller/test.test.js', () => {
 
     // login as root
     await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      auth: 'root',
-      password: '123456',
+      data: {
+        auth: 'root',
+        password: '123456',
+      },
     });
 
     const result = await app.httpRequest().post(mockUrl('/a/cms/site/buildLanguages')).send({

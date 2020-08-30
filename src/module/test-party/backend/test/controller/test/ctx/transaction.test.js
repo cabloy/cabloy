@@ -7,8 +7,10 @@ describe('test/controller/test/ctx/transaction.test.js', () => {
 
     // login
     await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      auth: 'Tom',
-      password: '123456',
+      data: {
+        auth: 'Tom',
+        password: '123456',
+      },
     });
 
     // create
@@ -49,8 +51,10 @@ describe('test/controller/test/ctx/transaction.test.js', () => {
 
     // login
     await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      auth: 'Tom',
-      password: '123456',
+      data: {
+        auth: 'Tom',
+        password: '123456',
+      },
     });
 
     // create
