@@ -261,6 +261,26 @@ export default {
         this.getLayout().navigate(url);
       }
     },
+    openLogin(routeTo, options) {
+      // hash init
+      let hashInit;
+      if (!routeTo || typeof routeTo === 'string') {
+        hashInit = routeTo;
+      } else if (!routeTo.url || typeof routeTo.url === 'string') {
+        hashInit = routeTo.url;
+      } else {
+        hashInit = routeTo.url.url;
+      }
+      if (hashInit && hashInit !== '/') this.$store.commit('auth/setHashInit', hashInit);
+      // query
+      const query = routeTo && routeTo.query;
+      // url
+      const configLayout = this._getLayoutModuleConfig(this.layout);
+      let url = configLayout.layout.login;
+      url = query ? this.$meta.util.combineQueries(url, query) : url;
+      // navigate
+      this.getLayout().navigate(url, options);
+    },
     onClickTryAgain() {
       this.error = null;
       this._authEchoInit();

@@ -47,6 +47,12 @@ export default {
       children.push(c('f7-login-screen-title', {
         domProps: { innerText: this.title },
       }));
+      if (this.state === 'migrate') {
+        children.push(c('f7-login-screen-title', {
+          staticClass: 'sub-title',
+          domProps: { innerText: this.$text('SignInTheTargetAccount') },
+        }));
+      }
       // loginTop
       const loginTop = this.combineLoginTop(c);
       // loginBottom
