@@ -31,9 +31,12 @@ rm(path.join(destPath, 'backend.*'), err => {
       chunkModules: false,
     }) + '\n\n');
 
-    const destStatic = path.join(destPath, config.build.assetsSubDirectory);
-    fse.removeSync(destStatic);
-    fse.copySync(resolve('src/static'), destStatic);
+    const srcStatic = resolve('src/static');
+    if (fse.existsSync(srcStatic)) {
+      const destStatic = path.join(destPath, config.build.assetsSubDirectory);
+      fse.removeSync(destStatic);
+      fse.copySync(srcStatic, destStatic);
+    }
 
     console.log(chalk.cyan('  Build complete.\n'));
   });
