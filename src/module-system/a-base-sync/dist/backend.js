@@ -1152,29 +1152,43 @@ module.exports = ctx => {
       return _anonymousId;
     }
 
-    async check() {
+    async check(options) {
+      // options
+      const checkUser = options && options.user;
+      // always has anonymous id
+      ctx.meta.user.anonymousId();
       // check if has ctx.user
-      if (!ctx.isAuthenticated() || !ctx.user.op || !ctx.user.agent || ctx.user.op.iid !== ctx.instance.id) ctx.throw(401);
-      // check if deleted,disabled,agent
-      const userOp = await this.get({ id: ctx.user.op.id });
-      // deleted
-      if (!userOp) ctx.throw.module(moduleInfo.relativeName, 1004);
-      // disabled
-      if (userOp.disabled) ctx.throw.module(moduleInfo.relativeName, 1005);
-      // hold user
-      ctx.user.op = userOp;
-      // agent
-      if (ctx.user.agent.id !== ctx.user.op.id) {
-        const agent = await this.agent({ userId: ctx.user.op.id });
-        if (!agent) ctx.throw.module(moduleInfo.relativeName, 1006);
-        if (agent.id !== ctx.user.agent.id) ctx.throw.module(moduleInfo.relativeName, 1006);
-        if (agent.disabled) ctx.throw.module(moduleInfo.relativeName, 1005);
-        // hold agent
-        ctx.user.agent = agent;
+      if (!ctx.isAuthenticated() || !ctx.user.op || ctx.user.op.iid !== ctx.instance.id) {
+        // anonymous
+        await ctx.meta.user.loginAsAnonymous();
       } else {
-        // hold agent
-        ctx.user.agent = userOp;
+        // state
+        ctx.state.user = {
+          provider: ctx.user.provider,
+        };
+        // check if deleted,disabled,agent
+        const userOp = await this.get({ id: ctx.user.op.id });
+        // deleted
+        if (!userOp) ctx.throw.module(moduleInfo.relativeName, 1004);
+        // disabled
+        if (userOp.disabled) ctx.throw.module(moduleInfo.relativeName, 1005);
+        // hold user
+        ctx.state.user.op = userOp;
+        // agent
+        if (ctx.user.agent && ctx.user.agent.id !== ctx.user.op.id) {
+          const agent = await this.agent({ userId: ctx.user.op.id });
+          if (!agent) ctx.throw.module(moduleInfo.relativeName, 1006);
+          if (agent.id !== ctx.user.agent.id) ctx.throw.module(moduleInfo.relativeName, 1006);
+          if (agent.disabled) ctx.throw.module(moduleInfo.relativeName, 1005);
+          // hold agent
+          ctx.state.user.agent = agent;
+        } else {
+          // hold agent
+          ctx.state.user.agent = userOp;
+        }
       }
+      // check user
+      if (checkUser && ctx.state.user.op.anonymous) ctx.throw(401);
     }
 
     async setActivated({ user }) {
@@ -1324,11 +1338,12 @@ module.exports = ctx => {
 
     async switchAgent({ userIdAgent }) {
       const op = ctx.user.op;
-      ctx.user.op = await this.get({ id: userIdAgent });
+      const _user = await this.get({ id: userIdAgent });
+      ctx.user.op = { id: _user.id, iid: _user.iid, anonymous: _user.anonymous };
       try {
         await this.check();
-        await ctx.login(ctx.user);
-        return ctx.user;
+        await ctx.login(ctx.state.user);
+        return ctx.state.user;
       } catch (err) {
         ctx.user.op = op;
         throw err;
@@ -1336,7 +1351,7 @@ module.exports = ctx => {
     }
 
     async switchOffAgent() {
-      return await this.switchAgent({ userIdAgent: ctx.user.agent.id });
+      return await this.switchAgent({ userIdAgent: ctx.state.user.agent.id });
     }
 
     async list({ roleId, query, anonymous, page }) {
@@ -1380,7 +1395,7 @@ module.exports = ctx => {
         `, [ ctx.instance.id, userId ]);
     }
 
-    // state: login/associate
+    // state: login/associate/migrate
     async verify({ state = 'login', profileUser }) {
       // verifyUser
       const verifyUser = {};
@@ -1408,7 +1423,7 @@ module.exports = ctx => {
         authId = authItem.id;
         authUserId = authItem.userId;
       } else {
-        if (profileUser.authShouldExists === true) ctx.throw.module(moduleInfo.relativeName, 1009);
+        if (state === 'migrate' || profileUser.authShouldExists === true) ctx.throw.module(moduleInfo.relativeName, 1009);
         // add
         const res = await this.modelAuth.insert({
           providerId: providerItem.id,
@@ -1432,29 +1447,50 @@ module.exports = ctx => {
 
       //
       let userId;
-      if (state === 'associate') {
+      if (state === 'migrate') {
+        // should check user so as to create ctx.state.user
+        await this.check();
         // check if ctx.user exists
-        if (!ctx.user || ctx.user.agent.anonymous) return false;
-        userId = ctx.user.agent.id;
+        if (!ctx.state.user || ctx.state.user.agent.anonymous) return false;
+        userId = ctx.state.user.agent.id;
+        // migrate
+        if (authUserId !== userId) {
+          await this.accountMigration({ userIdFrom: userId, userIdTo: authUserId });
+        }
+        // user
+        const user = await this.model.get({ id: authUserId });
+        // ready
+        verifyUser.op = user;
+        verifyUser.agent = user;
+      } else if (state === 'associate') {
+        // should check user so as to create ctx.state.user
+        await this.check();
+        // check if ctx.user exists
+        if (!ctx.state.user || ctx.state.user.agent.anonymous) return false;
+        userId = ctx.state.user.agent.id;
         // associated
         // update user
         await this._updateUserInfo(userId, profileUser.profile, columns);
         // force update auth's userId, maybe different
         if (authUserId !== userId) {
-          // delete old records
-          await this.modelAuth.delete({
-            providerId: providerItem.id,
-            userId,
-          });
-          // update
-          await this.modelAuth.update({
-            id: authId,
-            userId,
-          });
+          // accountMigration / update
+          if (authUserId) {
+            await this.accountMigration({ userIdFrom: authUserId, userIdTo: userId });
+          } else {
+            // delete old record
+            await this.modelAuth.delete({
+              providerId: providerItem.id,
+              userId,
+            });
+            await this.modelAuth.update({
+              id: authId,
+              userId,
+            });
+          }
         }
         // ready
-        verifyUser.op = ctx.user.op;
-        verifyUser.agent = ctx.user.agent;
+        verifyUser.op = ctx.state.user.op;
+        verifyUser.agent = ctx.state.user.agent;
       } else if (state === 'login') {
         // check if user exists
         let user;
@@ -1496,6 +1532,37 @@ module.exports = ctx => {
 
       // ok
       return verifyUser;
+    }
+
+    async accountMigration({ userIdFrom, userIdTo }) {
+      // accountMigration event
+      await ctx.meta.event.invoke({
+        module: moduleInfo.relativeName, name: 'accountMigration', data: { userIdFrom, userIdTo },
+      });
+      // aAuth: delete old records
+      const list = await ctx.model.query(
+        'select a.providerId from aAuth a where a.deleted=0 and a.iid=? and a.userId=?',
+        [ ctx.instance.id, userIdFrom ]
+      );
+      if (list.length > 0) {
+        const providerIds = list.map(item => item.providerId).join(',');
+        await ctx.model.query(
+          `delete from aAuth where deleted=0 and iid=? and userId=? and providerId in (${providerIds})`,
+          [ ctx.instance.id, userIdTo, providerIds ]
+        );
+      }
+      // aAuth: update records
+      await ctx.model.query(
+        'update aAuth a set a.userId=? where a.deleted=0 and a.iid=? and a.userId=?',
+        [ userIdTo, ctx.instance.id, userIdFrom ]
+      );
+      // aUserRole
+      await ctx.model.query(
+        'update aUserRole a set a.userId=? where a.iid=? and a.userId=?',
+        [ userIdTo, ctx.instance.id, userIdFrom ]
+      );
+      // delete user
+      await this.model.delete({ id: userIdFrom });
     }
 
     async _downloadAvatar({ avatar }) {
@@ -1649,13 +1716,13 @@ module.exports = ctx => {
       const res = await this.modelAuthProvider.get({ module, providerName });
       if (res) return res;
       // data
-      const _authProviders = ctx.meta.util.authProviders();
-      const _provider = _authProviders[`${module}:${providerName}`];
-      if (!_provider) throw new Error(`authProvider ${module}:${providerName} not found!`);
+      // const _authProviders = ctx.meta.util.authProviders();
+      // const _provider = _authProviders[`${module}:${providerName}`];
+      // if (!_provider) throw new Error(`authProvider ${module}:${providerName} not found!`);
       const data = {
         module,
         providerName,
-        config: JSON.stringify(_provider.config),
+        // config: JSON.stringify(_provider.config),
         disabled: 0,
       };
       // insert
@@ -1758,11 +1825,11 @@ module.exports = app => {
   // routes
   const routes = __webpack_require__(47)(app);
   // services
-  const services = __webpack_require__(60)(app);
+  const services = __webpack_require__(61)(app);
   // models
-  const models = __webpack_require__(86)(app);
+  const models = __webpack_require__(88)(app);
   // meta
-  const meta = __webpack_require__(93)(app);
+  const meta = __webpack_require__(95)(app);
 
   return {
     routes,
@@ -1969,6 +2036,7 @@ module.exports = {
   'Atom Name': '原子名称',
   'Modification Time': '修改时间',
   'Created Time': '创建时间',
+  'Account Migration': '账户迁移',
   Draft: '草稿',
   Base: '基本',
   English: '英文',
@@ -2080,7 +2148,7 @@ module.exports = ctx => {
     }
 
     user(_user) {
-      return _user || ctx.user.op;
+      return _user || ctx.state.user.op;
     }
 
     now() {
@@ -2153,12 +2221,13 @@ module.exports = ctx => {
         let metaAuth = module.main.meta && module.main.meta.auth;
         if (!metaAuth) continue;
         if (typeof metaAuth === 'function') {
-          metaAuth = metaAuth(ctx.app);
+          metaAuth = metaAuth(ctx);
         }
         if (!metaAuth.providers) continue;
         // loop
         for (const providerName in metaAuth.providers) {
           const _authProvider = metaAuth.providers[providerName];
+          if (!_authProvider) continue;
           const authProvider = {
             meta: _authProvider.meta,
             config: _authProvider.config,
@@ -2402,7 +2471,7 @@ const Fn = module.exports = ctx => {
 
     // get forward url
     getForwardUrl(path) {
-      const prefix = (ctx.app.meta.isTest || ctx.app.meta.isLocal) ? ctx.app.config.static.prefix : '/public/';
+      const prefix = (ctx.app.meta.isTest || ctx.app.meta.isLocal) ? ctx.app.config.static.prefix + 'public/' : '/public/';
       return `${prefix}${ctx.instance.id}/${path}`;
     }
 
@@ -2424,6 +2493,11 @@ const Fn = module.exports = ctx => {
         await fse.ensureDir(dir);
       }
       return dir;
+    }
+
+    // static
+    getStaticUrl(path) {
+      return this.getAbsoluteUrl(`/api/static${path}`);
     }
 
     // alert
@@ -2988,7 +3062,7 @@ const Fn = module.exports = ctx => {
 
     async validator({ atomClass, user }) {
       // maybe empty
-      user = user || ctx.user.op;
+      user = user || ctx.state.user.op;
       // event
       const res = await ctx.meta.event.invoke({
         module: moduleInfo.relativeName,
@@ -4713,13 +4787,8 @@ module.exports = ctx => {
     //   { op:{id},agent:{id},provider}
     async echo() {
       try {
-        if (!ctx.isAuthenticated() || !ctx.user.op || !ctx.user.agent) {
-          // anonymous
-          await ctx.meta.user.loginAsAnonymous();
-        } else {
-          // check if deleted,disabled,agent
-          await ctx.meta.user.check();
-        }
+        // check
+        await ctx.meta.user.check();
         // logined
         return await this.getLoginInfo();
       } catch (e) {
@@ -4741,7 +4810,7 @@ module.exports = ctx => {
     async getLoginInfo() {
       const config = await this._getConfig();
       const info = {
-        user: ctx.user,
+        user: ctx.state.user,
         instance: this._getInstance(),
         config,
       };
@@ -4769,7 +4838,7 @@ module.exports = ctx => {
         },
       };
       // theme
-      const themeStatus = `user-theme:${ctx.user.agent.id}`;
+      const themeStatus = `user-theme:${ctx.state.user.agent.id}`;
       const theme = await ctx.meta.status.module('a-user').get(themeStatus);
       if (theme) {
         config.theme = theme;
@@ -4806,20 +4875,8 @@ module.exports = ctx => {
 module.exports = (options, app) => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   return async function auth(ctx, next) {
-    // always has anonymous id
-    ctx.meta.user.anonymousId();
     // check
-    if (!ctx.isAuthenticated() || !ctx.user.op || !ctx.user.agent || ctx.user.op.iid !== ctx.instance.id) {
-      // anonymous
-      await ctx.meta.user.loginAsAnonymous();
-    } else {
-      // check if deleted,disabled,agent
-      await ctx.meta.user.check();
-    }
-
-    // if user
-    if (options.user && ctx.user.op.anonymous) ctx.throw(401);
-
+    await ctx.meta.user.check(options);
     // next
     await next();
   };
@@ -4881,7 +4938,7 @@ async function checkAtom(moduleInfo, options, ctx) {
           id: atomClassId,
         },
         roleIdOwner,
-        user: ctx.user.op,
+        user: ctx.state.user.op,
       });
       if (!res) ctx.throw(403);
       ctx.meta._atomClass = res;
@@ -4891,7 +4948,7 @@ async function checkAtom(moduleInfo, options, ctx) {
         atomClass: {
           id: atomClassId,
         },
-        user: ctx.user.op,
+        user: ctx.state.user.op,
       });
       if (roles.length === 0) ctx.throw(403);
       ctx.request.body.roleIdOwner = roles[0].roleIdWho;
@@ -4904,7 +4961,7 @@ async function checkAtom(moduleInfo, options, ctx) {
   if (options.action === constant.atom.action.read) {
     const res = await ctx.meta.atom.checkRightRead({
       atom: { id: ctx.request.body.key.atomId },
-      user: ctx.user.op,
+      user: ctx.state.user.op,
     });
     if (!res) ctx.throw(403);
     ctx.request.body.key.itemId = res.itemId;
@@ -4915,7 +4972,7 @@ async function checkAtom(moduleInfo, options, ctx) {
   if (options.action === constant.atom.action.write || options.action === constant.atom.action.delete) {
     const res = await ctx.meta.atom.checkRightUpdate({
       atom: { id: ctx.request.body.key.atomId, action: options.action },
-      user: ctx.user.op,
+      user: ctx.state.user.op,
     });
     if (!res) ctx.throw(403);
     ctx.request.body.key.itemId = res.itemId;
@@ -4927,7 +4984,7 @@ async function checkAtom(moduleInfo, options, ctx) {
   if (actionCustom > constant.atom.action.custom) {
     const res = await ctx.meta.atom.checkRightAction({
       atom: { id: ctx.request.body.key.atomId, action: actionCustom },
-      user: ctx.user.op,
+      user: ctx.state.user.op,
     });
     if (!res) ctx.throw(403);
     ctx.request.body.key.itemId = res.itemId;
@@ -4942,7 +4999,7 @@ async function checkFunction(moduleInfo, options, ctx) {
     function: {
       module: options.module || ctx.module.info.relativeName,
       name: options.name || ctx.request.body.name },
-    user: ctx.user.op,
+    user: ctx.state.user.op,
   });
   if (!res) ctx.throw(403);
   ctx.meta._function = res;
@@ -5048,7 +5105,8 @@ const schedule = __webpack_require__(55);
 const startup = __webpack_require__(56);
 const auth = __webpack_require__(57);
 const comment = __webpack_require__(58);
-const layoutConfig = __webpack_require__(59);
+const jwt = __webpack_require__(59);
+const layoutConfig = __webpack_require__(60);
 
 module.exports = app => {
   const routes = [
@@ -5192,6 +5250,8 @@ module.exports = app => {
     },
     // cors
     { method: 'options', path: /.*/ },
+    // jwt
+    { method: 'post', path: 'jwt/create', controller: jwt },
     // layoutConfig
     { method: 'post', path: 'layoutConfig/load', controller: layoutConfig },
     { method: 'post', path: 'layoutConfig/save', controller: layoutConfig },
@@ -5349,7 +5409,7 @@ module.exports = app => {
 
     async getLabels() {
       const res = await this.ctx.service.user.getLabels({
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -5357,7 +5417,7 @@ module.exports = app => {
     async setLabels() {
       await this.ctx.service.user.setLabels({
         labels: this.ctx.request.body.labels,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success();
     }
@@ -5379,7 +5439,7 @@ module.exports = app => {
     async preferredRoles() {
       const res = await this.ctx.service.atom.preferredRoles({
         atomClass: this.ctx.request.body.atomClass,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -5388,7 +5448,7 @@ module.exports = app => {
         atomClass: this.ctx.request.body.atomClass,
         roleIdOwner: this.ctx.request.body.roleIdOwner,
         item: this.ctx.request.body.item,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -5396,7 +5456,7 @@ module.exports = app => {
     async read() {
       const res = await this.ctx.service.atom.read({
         key: this.ctx.request.body.key,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -5409,7 +5469,7 @@ module.exports = app => {
       const items = await this.ctx.service.atom.select({
         atomClass: this.ctx.request.body.atomClass,
         options,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.successMore(items, options.page.index, options.page.size);
     }
@@ -5419,7 +5479,7 @@ module.exports = app => {
       const count = await this.ctx.service.atom.count({
         atomClass: this.ctx.request.body.atomClass,
         options,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(count);
     }
@@ -5428,7 +5488,7 @@ module.exports = app => {
       await this.ctx.service.atom.write({
         key: this.ctx.request.body.key,
         item: this.ctx.request.body.item,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success();
     }
@@ -5442,7 +5502,7 @@ module.exports = app => {
     async delete() {
       await this.ctx.service.atom.delete({
         key: this.ctx.request.body.key,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success();
     }
@@ -5451,7 +5511,7 @@ module.exports = app => {
       const res = await this.ctx.service.atom.action({
         action: this.ctx.request.body.action,
         key: this.ctx.request.body.key,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -5459,7 +5519,7 @@ module.exports = app => {
     async enable() {
       // only allowed: draft
       const key = this.ctx.request.body.key;
-      const user = this.ctx.user.op;
+      const user = this.ctx.state.user.op;
       const atom = await this.ctx.meta.atom._get({ atom: { id: key.atomId }, user });
       if (atom.atomEnabled || user.id !== atom.userIdCreated) this.ctx.throw(403);
       // enable
@@ -5475,7 +5535,7 @@ module.exports = app => {
       const res = await this.ctx.service.atom.star({
         key: this.ctx.request.body.key,
         atom: this.ctx.request.body.atom,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -5484,7 +5544,7 @@ module.exports = app => {
       const res = await this.ctx.service.atom.readCount({
         key: this.ctx.request.body.key,
         atom: this.ctx.request.body.atom,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -5499,7 +5559,7 @@ module.exports = app => {
       };
       // select
       const res = await this.ctx.meta.atom.select({
-        options, user: this.ctx.user.op, pageForce: false,
+        options, user: this.ctx.state.user.op, pageForce: false,
       });
       this.ctx.success(res);
     }
@@ -5508,7 +5568,7 @@ module.exports = app => {
       const res = await this.ctx.service.atom.labels({
         key: this.ctx.request.body.key,
         atom: this.ctx.request.body.atom,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -5517,7 +5577,7 @@ module.exports = app => {
       const res = await this.ctx.service.atom.actions({
         key: this.ctx.request.body.key,
         basic: this.ctx.request.body.basic,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -5526,7 +5586,7 @@ module.exports = app => {
       const res = await this.ctx.service.atom.schema({
         atomClass: this.ctx.request.body.atomClass,
         schema: this.ctx.request.body.schema,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -5534,7 +5594,7 @@ module.exports = app => {
     async validator() {
       const res = await this.ctx.service.atom.validator({
         atomClass: this.ctx.request.body.atomClass,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -5572,7 +5632,7 @@ module.exports = app => {
     async checkRightCreate() {
       const res = await this.ctx.service.atomClass.checkRightCreate({
         atomClass: this.ctx.request.body.atomClass,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -5629,7 +5689,7 @@ module.exports = app => {
       if (options.locale === undefined) options.locale = this.ctx.locale;
       const items = await this.ctx.service.function.list({
         options,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.successMore(items, options.page.index, options.page.size);
     }
@@ -5638,7 +5698,7 @@ module.exports = app => {
       const res = await this.ctx.service.function.star({
         id: this.ctx.request.body.id,
         star: this.ctx.request.body.star,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -5646,7 +5706,7 @@ module.exports = app => {
     async check() {
       const res = await this.ctx.service.function.check({
         functions: this.ctx.request.body.functions,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -5762,18 +5822,22 @@ module.exports = app => {
         // user verify
         return await ctx.meta.user.verify({ state, profileUser });
       });
-      // // serializeUser
-      // app.passport.serializeUser(async (ctx, user) => {
-      //   return {
-      //     agent: { id: user.agent.id, iid: user.agent.iid },
-      //     op: { id: user.op.id, iid: user.op.iid },
-      //     provider: user.provider,
-      //   };
-      // });
-      // // deserializeUser
-      // app.passport.deserializeUser(async (ctx, user) => {
-      //   return user;
-      // });
+      // serializeUser
+      this.app.passport.serializeUser(async (ctx, user) => {
+        ctx.state.user = user;
+        const _user = {
+          op: { id: user.op.id, iid: user.op.iid, anonymous: user.op.anonymous },
+          provider: user.provider,
+        };
+        if (user.agent.id !== user.op.id) {
+          _user.agent = { id: user.agent.id, iid: user.agent.iid, anonymous: user.agent.anonymous };
+        }
+        return _user;
+      });
+      // deserializeUser
+      this.app.passport.deserializeUser(async (ctx, user) => {
+        return user;
+      });
       // ok
       this.ctx.success();
     }
@@ -5828,7 +5892,7 @@ module.exports = app => {
       const items = await this.ctx.service.comment.list({
         key: this.ctx.request.body.key,
         options,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.successMore(items, options.page.index, options.page.size);
     }
@@ -5837,7 +5901,7 @@ module.exports = app => {
       const res = await this.ctx.service.comment.item({
         key: this.ctx.request.body.key,
         data: this.ctx.request.body.data,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -5846,7 +5910,7 @@ module.exports = app => {
       const res = await this.ctx.service.comment.save({
         key: this.ctx.request.body.key,
         data: this.ctx.request.body.data,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -5855,7 +5919,7 @@ module.exports = app => {
       const res = await this.ctx.service.comment.delete({
         key: this.ctx.request.body.key,
         data: this.ctx.request.body.data,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -5864,7 +5928,7 @@ module.exports = app => {
       const res = await this.ctx.service.comment.heart({
         key: this.ctx.request.body.key,
         data: this.ctx.request.body.data,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -5879,12 +5943,33 @@ module.exports = app => {
 /***/ (function(module, exports) {
 
 module.exports = app => {
+
+  class JwtController extends app.Controller {
+
+    async create() {
+      const res = await this.ctx.service.jwt.create({
+        scene: this.ctx.request.body.scene,
+      });
+      this.ctx.success(res);
+    }
+
+  }
+  return JwtController;
+};
+
+
+
+/***/ }),
+/* 60 */
+/***/ (function(module, exports) {
+
+module.exports = app => {
   class LayoutConfigController extends app.Controller {
 
     async load() {
       const res = await this.service.layoutConfig.load({
         module: this.ctx.request.body.module,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -5893,7 +5978,7 @@ module.exports = app => {
       const res = await this.service.layoutConfig.save({
         module: this.ctx.request.body.module,
         data: this.ctx.request.body.data,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -5903,7 +5988,7 @@ module.exports = app => {
         module: this.ctx.request.body.module,
         key: this.ctx.request.body.key,
         value: this.ctx.request.body.value,
-        user: this.ctx.user.op,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -5914,21 +5999,22 @@ module.exports = app => {
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const version = __webpack_require__(61);
-const base = __webpack_require__(75);
-const user = __webpack_require__(76);
-const atom = __webpack_require__(77);
-const atomClass = __webpack_require__(78);
-const atomAction = __webpack_require__(79);
-const schedule = __webpack_require__(80);
-const startup = __webpack_require__(81);
-const auth = __webpack_require__(82);
-const func = __webpack_require__(83);
-const comment = __webpack_require__(84);
-const layoutConfig = __webpack_require__(85);
+const version = __webpack_require__(62);
+const base = __webpack_require__(76);
+const user = __webpack_require__(77);
+const atom = __webpack_require__(78);
+const atomClass = __webpack_require__(79);
+const atomAction = __webpack_require__(80);
+const schedule = __webpack_require__(81);
+const startup = __webpack_require__(82);
+const auth = __webpack_require__(83);
+const func = __webpack_require__(84);
+const comment = __webpack_require__(85);
+const jwt = __webpack_require__(86);
+const layoutConfig = __webpack_require__(87);
 
 module.exports = app => {
   const services = {
@@ -5943,6 +6029,7 @@ module.exports = app => {
     auth,
     function: func,
     comment,
+    jwt,
     layoutConfig,
   };
   return services;
@@ -5950,20 +6037,20 @@ module.exports = app => {
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const VersionUpdate1Fn = __webpack_require__(62);
-const VersionUpdate2Fn = __webpack_require__(64);
-const VersionUpdate3Fn = __webpack_require__(65);
-const VersionUpdate4Fn = __webpack_require__(66);
-const VersionUpdate6Fn = __webpack_require__(67);
-const VersionUpdate8Fn = __webpack_require__(68);
-const VersionInit2Fn = __webpack_require__(69);
-const VersionInit4Fn = __webpack_require__(71);
-const VersionInit5Fn = __webpack_require__(72);
-const VersionInit7Fn = __webpack_require__(73);
-const VersionInit8Fn = __webpack_require__(74);
+const VersionUpdate1Fn = __webpack_require__(63);
+const VersionUpdate2Fn = __webpack_require__(65);
+const VersionUpdate3Fn = __webpack_require__(66);
+const VersionUpdate4Fn = __webpack_require__(67);
+const VersionUpdate6Fn = __webpack_require__(68);
+const VersionUpdate8Fn = __webpack_require__(69);
+const VersionInit2Fn = __webpack_require__(70);
+const VersionInit4Fn = __webpack_require__(72);
+const VersionInit5Fn = __webpack_require__(73);
+const VersionInit7Fn = __webpack_require__(74);
+const VersionInit8Fn = __webpack_require__(75);
 
 module.exports = app => {
 
@@ -6043,10 +6130,10 @@ module.exports = app => {
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const update1Data = __webpack_require__(63);
+const update1Data = __webpack_require__(64);
 
 module.exports = function(ctx) {
 
@@ -6095,7 +6182,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports) {
 
 const tables = {
@@ -6470,7 +6557,7 @@ module.exports = {
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -6507,7 +6594,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -6571,7 +6658,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -6650,7 +6737,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -6677,7 +6764,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const constants = __webpack_require__(1);
@@ -6827,12 +6914,12 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
 const extend = require3('extend2');
-const initData = __webpack_require__(70);
+const initData = __webpack_require__(71);
 
 module.exports = function(ctx) {
 
@@ -6894,7 +6981,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports) {
 
 // roles
@@ -6961,7 +7048,7 @@ module.exports = {
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -6983,7 +7070,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -7036,7 +7123,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -7058,7 +7145,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports) {
 
 module.exports = function(ctx) {
@@ -7075,7 +7162,7 @@ module.exports = function(ctx) {
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -7141,7 +7228,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -7180,7 +7267,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -7254,7 +7341,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -7284,7 +7371,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -7302,7 +7389,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -7373,7 +7460,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -7398,7 +7485,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -7488,7 +7575,7 @@ module.exports = app => {
         const provider = authProviders[`${moduleRelativeName}:${providerName}`];
         if (provider.handler) {
           // config
-          const config = JSON.parse(providerItem.config);
+          const config = provider.config;
           config.passReqToCallback = true;
           config.failWithError = false;
           config.successRedirect = config.successReturnToOrRedirect = (provider.meta.mode === 'redirect') ? '/' : false;
@@ -7540,7 +7627,7 @@ function createAuthenticate(moduleRelativeName, providerName, _config) {
     const provider = authProviders[`${moduleRelativeName}:${providerName}`];
 
     // config
-    const config = JSON.parse(providerItem.config);
+    const config = provider.config;
     config.passReqToCallback = true;
     config.failWithError = false;
     config.loginURL = ctx.meta.base.getAbsoluteUrl(_config.loginURL);
@@ -7567,7 +7654,7 @@ function createAuthenticate(moduleRelativeName, providerName, _config) {
 
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -7605,7 +7692,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -7840,7 +7927,40 @@ ${replyContent}
 
 
 /***/ }),
-/* 85 */
+/* 86 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const require3 = __webpack_require__(0);
+const jsonwebtoken = require3('jsonwebtoken');
+
+module.exports = app => {
+
+  class Jwt extends app.Service {
+
+    async create({ scene = 'query' }) {
+      // check
+      if (!this.ctx.state.jwt) ctx.throw(403);
+      // token
+      const token = this.ctx.state.jwt.token;
+      // jwt payload
+      const payload = {
+        token,
+        exp: Date.now() + app.config.jwt.scene[scene].maxAge, // must use exp for safety
+      };
+      // jwt
+      const secret = app.config.jwt.secret || app.config.keys.split(',')[0];
+      const jwt = jsonwebtoken.sign(payload, secret);
+      return { jwt };
+    }
+
+  }
+
+  return Jwt;
+};
+
+
+/***/ }),
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const require3 = __webpack_require__(0);
@@ -7873,7 +7993,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 86 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const atom = __webpack_require__(5);
@@ -7883,14 +8003,14 @@ const auth = __webpack_require__(22);
 const authProvider = __webpack_require__(23);
 const role = __webpack_require__(13);
 const roleInc = __webpack_require__(14);
-const roleIncRef = __webpack_require__(87);
-const roleRef = __webpack_require__(88);
+const roleIncRef = __webpack_require__(89);
+const roleRef = __webpack_require__(90);
 const roleRight = __webpack_require__(16);
 const roleRightRef = __webpack_require__(17);
 const user = __webpack_require__(20);
 const userAgent = __webpack_require__(21);
 const userRole = __webpack_require__(15);
-const label = __webpack_require__(89);
+const label = __webpack_require__(91);
 const atomLabel = __webpack_require__(7);
 const atomLabelRef = __webpack_require__(8);
 const atomStar = __webpack_require__(6);
@@ -7899,9 +8019,9 @@ const functionStar = __webpack_require__(10);
 const functionLocale = __webpack_require__(11);
 const functionScene = __webpack_require__(12);
 const roleFunction = __webpack_require__(18);
-const comment = __webpack_require__(90);
-const commentView = __webpack_require__(91);
-const commentHeart = __webpack_require__(92);
+const comment = __webpack_require__(92);
+const commentView = __webpack_require__(93);
+const commentHeart = __webpack_require__(94);
 
 module.exports = app => {
   const models = {
@@ -7937,7 +8057,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 87 */
+/* 89 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -7955,7 +8075,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 88 */
+/* 90 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -7981,7 +8101,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 89 */
+/* 91 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -7999,7 +8119,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 90 */
+/* 92 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -8017,7 +8137,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 91 */
+/* 93 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -8035,7 +8155,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 92 */
+/* 94 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -8053,14 +8173,14 @@ module.exports = app => {
 
 
 /***/ }),
-/* 93 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = app => {
   // keywords
-  const keywords = __webpack_require__(94)(app);
+  const keywords = __webpack_require__(96)(app);
   // schemas
-  const schemas = __webpack_require__(95)(app);
+  const schemas = __webpack_require__(97)(app);
   // meta
   const meta = {
     base: {
@@ -8111,6 +8231,7 @@ module.exports = app => {
       declarations: {
         loginInfo: 'Login Info',
         userVerify: 'User Verify',
+        accountMigration: 'Account Migration',
         atomClassValidator: 'Atom Validator',
       },
     },
@@ -8120,7 +8241,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 94 */
+/* 96 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
@@ -8133,7 +8254,7 @@ module.exports = app => {
       return async function(data, path, rootData, name) {
         const ctx = this;
         const res = await ctx.meta.user.exists({ [name]: data });
-        if (res && res.id !== ctx.user.agent.id) {
+        if (res && res.id !== ctx.state.user.agent.id) {
           const errors = [{ keyword: 'x-exists', params: [], message: ctx.text('Element Exists') }];
           throw new app.meta.ajv.ValidationError(errors);
         }
@@ -8150,7 +8271,7 @@ module.exports = app => {
 
 
 /***/ }),
-/* 95 */
+/* 97 */
 /***/ (function(module, exports) {
 
 module.exports = app => {
