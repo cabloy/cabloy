@@ -24,7 +24,7 @@ export default {
       actionComponent: 'ebAuthProviders',
       name: 'loadAuthProviders',
     };
-    this.$meta.util.performAction({ ctx: this, action, item: { state: 'login' } }).then(res => {
+    this.$meta.util.performAction({ ctx: this, action, item: { state: this.state } }).then(res => {
       this.providers = res;
     });
   },

@@ -30,6 +30,7 @@ export default {
       const module = await this.$meta.module.use(provider.module);
       // checkIfDisable
       if (!provider.meta.component) return null;
+      if (state === 'migrate' && !provider.meta.inline) return null;
       if (state === 'associate' && provider.meta.disableAssociate) return null;
       const component = module.options.components[provider.meta.component];
       const disable = await this.__checkAuthProviderDisable({ ctx, component, provider, state });

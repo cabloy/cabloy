@@ -1,7 +1,7 @@
 <template>
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Authentications')" eb-back-link="Back"></eb-navbar>
-    <f7-list form inline-labels no-hairlines-md v-if="ready">
+    <f7-list v-if="ready" form inline-labels no-hairlines-md>
       <f7-list-group v-for="group of itemsGroups" :key="group.id">
         <f7-list-item group-title :title="`${group.title} (${group.items.length})`"></f7-list-item>
         <eb-list-item v-for="item of group.items" :key="item.providerId" :title="authTitle(item)">
@@ -12,7 +12,7 @@
         </eb-list-item>
       </f7-list-group>
     </f7-list>
-    <f7-block>
+    <f7-block v-if="ready">
       <eb-button fill :onPerform="onPerformMigrate">{{$text('MigrateToAnotherAccount')}}</eb-button>
     </f7-block>
   </eb-page>
