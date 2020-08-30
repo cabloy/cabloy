@@ -1,8 +1,11 @@
 module.exports = {
 
-  static: false,
-
   view: false,
+
+  static: {
+    enable: true,
+    package: 'egg-static',
+  },
 
   mysql: {
     enable: true,

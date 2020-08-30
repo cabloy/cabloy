@@ -105,6 +105,13 @@ module.exports = appInfo => {
     ],
   };
 
+  // static
+  config.static = {
+    prefix: '/api/static',
+    preload: false,
+    getFullPath,
+  };
+
   // siteFile
   config.siteFile = {
     '/favicon.ico': fs.readFileSync(path.join(__dirname, 'favicon.ico')),
@@ -190,6 +197,17 @@ module.exports = appInfo => {
 
   return config;
 };
+
+function getFullPath(ctx, dir, filename, options) {
+  const parts = filename.split('/');
+  const moduleRelativeName = `${parts.shift()}-${parts.shift()}`;
+  const module = ctx.app.meta.modules[moduleRelativeName];
+  if (!module) return null;
+  const fullPath = path.normalize(path.join(module.static.backend, parts.join('/')));
+  // files that can be accessd should be under options.dir
+  if (fullPath.indexOf(module.static.backend) !== 0) return null;
+  return fullPath;
+}
 
 function onQuery(hook, ms, sequence, args) {
   if (!hook.meta.long_query_time || hook.meta.long_query_time < ms) {

@@ -1,7 +1,5 @@
-const glob = require('glob');
 const semver = require('semver');
 const chalk = require('chalk');
-const path = require('path');
 const mglob = require('egg-born-mglob');
 const util = require('./util.js');
 

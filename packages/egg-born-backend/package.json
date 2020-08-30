@@ -24,6 +24,7 @@
   "dependencies": {
     "@zhennann/ali-rds": "^3.3.3",
     "@zhennann/passport-oauth2": "^1.6.3",
+    "@zhennann/koa-static-cache": "^5.1.6",
     "async": "^3.2.0",
     "autod": "^3.1.0",
     "autod-egg": "^1.0.0",

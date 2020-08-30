@@ -9,9 +9,9 @@ module.exports = {
 };
 
 const __paths = [
-  { prefix: 'src/module/', public: false, jsFront: 'front/src/main.js,dist/front.js', jsBackend: 'backend/src/main.js,dist/backend.js' },
-  { prefix: 'src/module-system/', public: false, jsFront: 'front/src/main.js,dist/front.js', jsBackend: 'backend/src/main.js,dist/backend.js' },
-  { prefix: 'node_modules/egg-born-module-', public: true, jsFront: 'dist/front.js', jsBackend: 'dist/backend.js' },
+  { prefix: 'src/module/', public: false, jsFront: 'front/src/main.js,dist/front.js', jsBackend: 'backend/src/main.js,dist/backend.js', staticBackend: 'backend/src/static,dist/staticBackend' },
+  { prefix: 'src/module-system/', public: false, jsFront: 'front/src/main.js,dist/front.js', jsBackend: 'backend/src/main.js,dist/backend.js', staticBackend: 'backend/src/static,dist/staticBackend' },
+  { prefix: 'node_modules/egg-born-module-', public: true, jsFront: 'dist/front.js', jsBackend: 'dist/backend.js', staticBackend: 'dist/staticBackend' },
 ];
 
 function eggBornMglob() {
@@ -24,9 +24,11 @@ function eggBornMglob() {
   for (const __path of __paths) {
     const jsFronts = __path.jsFront.split(',');
     const jsBackends = __path.jsBackend.split(',');
+    const staticBackends = __path.staticBackend.split(',');
     for (const index in jsFronts) {
       const jsFront = jsFronts[index];
       const jsBackend = jsBackends[index];
+      const staticBackend = staticBackends[index];
       const prefix = `${projectPath}/${__path.prefix}`;
       const files = glob.sync(`${prefix}*/${jsFront}`);
       for (const file of files) {
@@ -43,15 +45,17 @@ function eggBornMglob() {
         if (!modules[info.relativeName]) {
           // more info
           const root = file.substr(0, file.length - jsFront.length - 1);
-          const pkg=`${root}/package.json`;
-          const package=require(pkg);
+          const pkg = `${root}/package.json`;
+          const _package = require(pkg);
           const jsFrontPath = file;
           const jsBackendPath = `${root}/${jsBackend}`;
+          const staticBackendPath = `${root}/${staticBackend}`;
           // record
           modules[info.relativeName] = {
             name, info,
-            root,pkg,package,
-            js: { front: jsFrontPath, backend: jsBackendPath }
+            root, pkg, package: _package,
+            js: { front: jsFrontPath, backend: jsBackendPath },
+            static: { backend: staticBackendPath },
           };
         }
       }
