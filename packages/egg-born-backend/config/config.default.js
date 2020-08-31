@@ -197,11 +197,11 @@ module.exports = appInfo => {
 };
 
 function getFullPath(ctx, dir, filename, options) {
-  const parts = filename.split('/');
+  const parts = filename.split(path.sep);
   const wordFirst = parts.shift();
   // public
   if (wordFirst === 'public') {
-    const fullPath = path.normalize(path.join(dir, parts.join('/')));
+    const fullPath = path.normalize(path.join(dir, parts.join(path.sep)));
     // files that can be accessd should be under options.dir
     if (fullPath.indexOf(dir) !== 0) return null;
     return fullPath;
@@ -210,7 +210,7 @@ function getFullPath(ctx, dir, filename, options) {
   const moduleRelativeName = `${wordFirst}-${parts.shift()}`;
   const module = ctx.app.meta.modules[moduleRelativeName];
   if (!module) return null;
-  const fullPath = path.normalize(path.join(module.static.backend, parts.join('/')));
+  const fullPath = path.normalize(path.join(module.static.backend, parts.join(path.sep)));
   // files that can be accessd should be under options.dir
   if (fullPath.indexOf(module.static.backend) !== 0) return null;
   return fullPath;

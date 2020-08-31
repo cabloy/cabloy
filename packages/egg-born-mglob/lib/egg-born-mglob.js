@@ -49,7 +49,7 @@ function eggBornMglob() {
           const _package = require(pkg);
           const jsFrontPath = file;
           const jsBackendPath = `${root}/${jsBackend}`;
-          const staticBackendPath = `${root}/${staticBackend}`;
+          const staticBackendPath = path.normalize(`${root}/${staticBackend}`);
           // record
           modules[info.relativeName] = {
             name, info,
