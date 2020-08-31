@@ -1,6 +1,4 @@
 const glob = require('glob');
-const semver = require('semver');
-const chalk = require('chalk');
 const path = require('path');
 const mparse = require('egg-born-mparse').default;
 
