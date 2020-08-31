@@ -77,6 +77,7 @@ function install(_Vue) {
     watch: {
       dataSource() {
         this.__updateChart();
+        this.$emit('widget:propsSchemaChange');
       },
       fruit() {
         this.__updateChart();
@@ -91,6 +92,20 @@ function install(_Vue) {
       }
     },
     methods: {
+      getAttrsSchema() {
+        const attrs = [];
+        if (this.snapshot) {
+          attrs.push('snapshot');
+        }
+        return attrs;
+      },
+      getPropsSchema() {
+        const props = ['dataSource'];
+        if (this.dataSource) {
+          props.push('fruit');
+        }
+        return props;
+      },
       getPropSchemaExtra(propName) {
         // fruit
         if (propName === 'fruit') {
@@ -174,6 +189,7 @@ function install(_Vue) {
         };
       },
       __clearChart() {
+        this.snapshot = null;
         if (this.chart) {
           this.chart.clear();
         }
