@@ -1,26 +1,36 @@
 <script>
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
+const _propsBasic = ['title', 'widthSmall', 'widthMedium', 'widthLarge', 'height'];
 export default {
   mixins: [ebPageContext],
   data() {
     return {
       widgetId: this.$f7route.query.widgetId,
+      propsSchemaDynamic: null,
+      widget: null,
+      widgetReal: null,
     };
   },
   computed: {
     dashboard() {
       return this.contextParams.dashboard;
     },
-    widget() {
-      return this.contextParams.widget;
-    },
+  },
+  created() {
+    this.widget = this.contextParams.widget;
+    this.widgetReal = this.dashboard.__getWidgetRealById(this.widget.options.id);
+    this.propsSchemaDynamic = this.widgetReal.getPropsSchema();
   },
   mounted() {
     this.widget.$on('widget:destroy', this.onWidgetDestroy);
+    this.widgetReal.$on('widget:propsSchemaChange', this.onWidgetPropsSchemaChange);
   },
   beforeDestroy() {
     this.widget.$off('widget:destroy', this.onWidgetDestroy);
+    this.widgetReal.$off('widget:propsSchemaChange', this.onWidgetPropsSchemaChange);
+    this.widget = null;
+    this.widgetReal = null;
   },
   render(c) {
     const children = [];
@@ -36,6 +46,9 @@ export default {
     return c('eb-page', {}, children);
   },
   methods: {
+    onWidgetPropsSchemaChange() {
+      this.propsSchemaDynamic = this.widgetReal.getPropsSchema();
+    },
     onWidgetDestroy() {
       this.$view.close();
     },
@@ -103,10 +116,15 @@ export default {
         },
       }, children);
     },
+    _checkPropertyValid(propertyName) {
+      if (!this.propsSchemaDynamic) return true;
+      return _propsBasic.indexOf(propertyName) > -1 || this.propsSchemaDynamic.indexOf(propertyName) > -1;
+    },
     _renderListGroup({ c, title, opened, propsSchema }) {
       // children
       const children = [];
       for (const propertyName in propsSchema) {
+        if (!this._checkPropertyValid(propertyName)) continue;
         const propertySchema = propsSchema[propertyName];
         const validateItem = c('eb-list-item-validate', {
           props: {

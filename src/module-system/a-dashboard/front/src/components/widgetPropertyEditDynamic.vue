@@ -9,6 +9,7 @@
   </f7-list>
 </template>
 <script>
+const _attrsBasic = ['attrTitle', 'attrWidthSmall', 'attrWidthMedium', 'attrWidthLarge', 'attrHeight'];
 export default {
   props: {
     dashboard: {
@@ -77,12 +78,18 @@ export default {
       const options = [{ title: '', value: '' }];
       // schema
       const attrsSchema = this.widget._getAttrsSchema(widgetItem.widgetReal.widget.options);
-      this._combineOptionsSourceWidgetSchema(options, attrsSchema, propClues);
+      const attrsSchemaDynamic = widgetItem.widgetReal.getAttrsSchema();
+      this._combineOptionsSourceWidgetSchema(options, attrsSchema, attrsSchemaDynamic, propClues);
       return options;
     },
-    _combineOptionsSourceWidgetSchema(options, attrsSchema, propClues) {
+    _checkAttrValid(attrsSchemaDynamic, attrKey) {
+      if (!attrsSchemaDynamic) return true;
+      return _attrsBasic.indexOf(attrKey) > -1 || attrsSchemaDynamic.indexOf(attrKey) > -1;
+    },
+    _combineOptionsSourceWidgetSchema(options, attrsSchema, attrsSchemaDynamic, propClues) {
       if (!attrsSchema) return;
       for (const attrKey in attrsSchema.properties) {
+        if (!this._checkAttrValid(attrsSchemaDynamic, attrKey)) continue;
         const attrSource = attrsSchema.properties[attrKey];
         const attrSourceClues = (attrSource.ebClue || '').split(',');
         // intersection
