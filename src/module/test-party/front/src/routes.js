@@ -40,6 +40,7 @@ export default [
   { path: 'kitchen-sink/layout/grid', component: loadKitchenSink('layout/gridResizable') },
   { path: 'kitchen-sink/layout/adaptive', component: loadKitchenSink('layout/adaptive') },
   { path: 'kitchen-sink/component/global', component: loadKitchenSink('component/global') },
+  { path: 'kitchen-sink/component/loadComponentAsync', component: loadKitchenSink('component/loadComponentAsync') },
   { path: 'kitchen-sink/monkey/monkeyee', component: loadKitchenSink('monkey/monkeyee') },
   { path: 'kitchen-sink/dragdrop/move', component: loadKitchenSink('dragdrop/dragdropMove') },
   { path: 'kitchen-sink/dragdrop/resize', component: loadKitchenSink('dragdrop/dragdropResize') },

@@ -165,5 +165,5 @@ export default {
   'Dragdrop(Resize)': '拖拽(调整尺寸)',
   'Remember Me': '记住我',
   'Captcha Code': '验证码',
+  'Load Component Async': '异步加载组件',
 };
-

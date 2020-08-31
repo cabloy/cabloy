@@ -23,19 +23,25 @@ export default {
     };
   },
   render(c) {
-    const children = [];
     if (this.ready && !this.errorMessage) {
-      // not use this.$meta.util.extend && this.$utils.extend, so as to hold __ob__
-      const options = Object.assign({}, this.options, { ref: 'component' });
-      children.push(c(this.__getFullName(), options));
+      // options: not use this.$meta.util.extend && this.$utils.extend, so as to hold __ob__
+      const options = Object.assign({}, this.options, { ref: 'component', scopedSlots: this.$scopedSlots });
+      const children = [];
+      if (this.$slots) {
+        for (let key of Object.keys(this.$slots)) {
+          children.push(c('template', {
+            slot: key,
+          }, this.$slots[key]))
+        }
+      }
+      return c(this.__getFullName(), options, children);
     } else if (this.errorMessage) {
-      children.push(c('div', {
+      return c('div', {
         //staticClass: 'text-align-center',
         domProps: { innerText: this.errorMessage },
-      }));
+      });
     }
-    //
-    return c('div', children);
+    return c('div');
   },
   created() {
     this.$meta.module.use(this.module, moduleInstance => {
