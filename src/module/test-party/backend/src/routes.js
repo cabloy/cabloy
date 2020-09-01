@@ -22,6 +22,7 @@ const testCacheRedis = require('./controller/test/cache/redis.js');
 const testRoleUserRole = require('./controller/test/role/userRole.js');
 const testEventHello = require('./controller/test/event/hello.js');
 const testEventUserVerify = require('./controller/test/event/userVerify.js');
+const testFeatBean = require('./controller/test/feat/bean.js');
 const testFeatHttpLog = require('./controller/test/feat/httpLog.js');
 const testFeatStartup = require('./controller/test/feat/startup.js');
 const testFeatSendMail = require('./controller/test/feat/sendMail.js');
@@ -138,6 +139,9 @@ module.exports = app => {
       { method: 'post', path: 'test/cache/mem', controller: testCacheMem, middlewares: 'test', meta: { auth: { enable: false } } },
       { method: 'post', path: 'test/cache/db', controller: testCacheDb, middlewares: 'test', meta: { auth: { enable: false } } },
       { method: 'post', path: 'test/cache/redis', controller: testCacheRedis, middlewares: 'test', meta: { auth: { enable: false } } },
+
+      // test/feat/bean
+      { method: 'post', path: 'test/feat/bean', controller: testFeatBean, middlewares: 'test', meta: { auth: { enable: false } } },
 
       // test/feat/httpLog
       { method: 'post', path: 'test/feat/httpLog', controller: testFeatHttpLog, middlewares: 'test,httpLog', meta: { auth: { enable: false } } },

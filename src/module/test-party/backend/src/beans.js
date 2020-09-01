@@ -13,11 +13,11 @@ module.exports = app => {
       classBeanTest: {
         mode: 'app',
         bean: classBean,
-        global: true,
       },
       ctxBeanTest: {
         mode: 'ctx',
         bean: ctxBean,
+        global: true,
       },
     });
   }

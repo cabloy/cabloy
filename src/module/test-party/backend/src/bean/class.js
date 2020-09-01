@@ -1,4 +1,4 @@
-class appBean {
+class classBean {
 
   constructor(ctx) {
     this.ctx = ctx;
@@ -14,4 +14,4 @@ class appBean {
 
 }
 
-module.exports = appBean;
+module.exports = classBean;

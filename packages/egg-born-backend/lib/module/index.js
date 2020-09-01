@@ -15,6 +15,7 @@ const loadStartups = require('./startup.js');
 const loadSocketio = require('./socketio.js');
 const loadClusterApp = require('./cluster/app.js');
 const loadClusterAgent = require('./cluster/agent.js');
+const loadBeans = require('./bean/index.js');
 
 module.exports = function(loader) {
 
@@ -32,6 +33,7 @@ module.exports = function(loader) {
     loadLocales(loader, modules);
     loadErrors(loader, modules);
     loadConstants(loader, modules);
+    loadBeans(loader, modules);
     loadRoutes(loader, modules);
     loadServices(loader, modules);
     loadModels(loader, modules);
