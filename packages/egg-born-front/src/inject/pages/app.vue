@@ -5,7 +5,7 @@ const F7Locales = {
   picker: ['toolbarCloseText'],
   colorPicker: ['navbarTitleText', 'navbarCloseText'],
   calendar: ['timePickerPlaceholder', 'headerPlaceholder', 'toolbarCloseText'],
-  smartSelect: ['pageBackLinkText', 'popupCloseLinkText', 'sheetCloseLinkText', 'searchbarPlaceholder', 'searchbarDisableText', ],
+  smartSelect: ['pageBackLinkText', 'popupCloseLinkText', 'sheetCloseLinkText', 'searchbarPlaceholder', 'searchbarDisableText'],
 };
 export default {
   render(c) {
