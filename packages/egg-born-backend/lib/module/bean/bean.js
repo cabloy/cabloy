@@ -49,9 +49,9 @@ module.exports = (app, ctx) => {
       const _aopChains = this._getAopChains(beanFullName);
       if (_aopChains.length === 0) return beanInstance;
       // aop
-      return this._newProxyBeanInstance(beanFullName, beanInstance);
+      return this._newInstanceProxy(beanFullName, beanInstance);
     },
-    _newProxyBeanInstance(beanFullName, beanInstance) {
+    _newInstanceProxy(beanFullName, beanInstance) {
       const self = this;
       return new Proxy(beanInstance, {
         get(target, prop, receiver) {
