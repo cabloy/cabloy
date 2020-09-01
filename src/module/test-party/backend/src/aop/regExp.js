@@ -1,5 +1,5 @@
 module.exports = ctx => {
-  class ctxBean {
+  class regExpAop {
 
     actionSync({ a, b }) {
       return a + b;
@@ -12,5 +12,5 @@ module.exports = ctx => {
 
   }
 
-  return ctxBean;
+  return regExpAop;
 };
