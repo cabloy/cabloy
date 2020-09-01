@@ -1,6 +1,11 @@
 module.exports = ctx => {
   class regExpAop {
 
+    get__name(context, next) {
+      context.value = `${context.value}:regexpaop`;
+      next();
+    }
+
     actionSync({ a, b }) {
       return a + b;
     }

@@ -10,17 +10,20 @@ module.exports = app => {
       const b = 4;
       let res;
 
-      // app.bean
-      assert.equal(app.bean['test-party.appBeanTest'], app.bean['test-party.appBeanTest']);
+      // // app.bean
+      // assert.equal(app.bean['test-party.appBeanTest'], app.bean['test-party.appBeanTest']);
 
-      res = app.bean['test-party.appBeanTest'].actionSync({ a, b });
-      assert.equal(res, a + b);
+      // res = app.bean['test-party.appBeanTest'].actionSync({ a, b });
+      // assert.equal(res, a + b);
 
-      res = await app.bean['test-party.appBeanTest'].actionAsync({ a, b });
-      assert.equal(res, a + b);
+      // res = await app.bean['test-party.appBeanTest'].actionAsync({ a, b });
+      // assert.equal(res, a + b);
 
       // ctx.bean: global
       assert.equal(this.ctx.bean.ctxBeanTest, this.ctx.bean.ctxBeanTest);
+
+      res = this.ctx.bean.ctxBeanTest.name;
+      assert.equal(res, 'test-party:simpleaop:regexpaop');
 
       res = this.ctx.bean.ctxBeanTest.actionSync({ a, b });
       assert.equal(res, a + b);

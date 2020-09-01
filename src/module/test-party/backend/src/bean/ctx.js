@@ -1,6 +1,10 @@
 module.exports = ctx => {
   class ctxBean {
 
+    get name() {
+      return ctx.module.info.relativeName;
+    }
+
     actionSync({ a, b }) {
       return a + b;
     }
