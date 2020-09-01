@@ -33,12 +33,13 @@ export default {
     if (this.providers) {
       // close
       if (this.showClose) {
-        children.push(c('f7-icon', {
+        children.push(c('f7-link', {
           staticClass: 'close',
-          attrs: {
-            material: 'close',
+          props: {
+            iconMaterial: 'chevron_left',
+            text: this.$text('LookAround'),
           },
-          nativeOn: {
+          on: {
             click: this.onClose,
           },
         }));
