@@ -1,8 +1,16 @@
 module.exports = ctx => {
   class ctxBean {
 
+    constructor(moduleName) {
+      this._name = moduleName || ctx.module.info.relativeName;
+    }
+
     get name() {
-      return ctx.module.info.relativeName;
+      return this._name;
+    }
+
+    set name(value) {
+      this._name = value;
     }
 
     actionSync({ a, b }) {

@@ -28,12 +28,7 @@ module.exports = (app, ctx) => {
       return this[beanFullName];
     },
     _newInstance(beanFullName, ...args) {
-      const self = this;
       const _bean = this._getBean(beanFullName);
-      // aop chains
-      if (!_bean.aopChains) {
-        _bean.aopChains = this._createAopChains(beanFullName);
-      }
       // instance
       const bean = _bean.bean;
       let beanInstance;
@@ -51,36 +46,109 @@ module.exports = (app, ctx) => {
         }
       }
       // no aop
-      if (_bean.aopChains.length === 0) return beanInstance;
+      const _aopChains = this._getAopChains(beanFullName);
+      if (_aopChains.length === 0) return beanInstance;
       // aop
-      const beanInstanceProxy = new Proxy(beanInstance, {
-        get(target, prop) {
-          const value = target[prop];
-          // check if function asyncFunction
-          if (is.function(value) && !is.generatorFunction(value) && !is.class(value)) {
-            //
-
-          } else {
-            // normal property
+      return this._newProxyBeanInstance(beanFullName, beanInstance);
+    },
+    _newProxyBeanInstance(beanFullName, beanInstance) {
+      const self = this;
+      return new Proxy(beanInstance, {
+        get(target, prop, receiver) {
+          const descriptor = Object.getOwnPropertyDescriptor(target.__proto__, prop);
+          // get prop
+          if (descriptor.get) {
+            const prefix = 'get__';
+            const _aopChainsProp = self._getAopChainsProp(beanFullName, target, prop, prefix);
+            if (_aopChainsProp.length === 0) return target[prop];
+            // context
             const context = {
               target,
+              receiver,
               prop,
-              value,
+              value: undefined,
             };
             // aop
-            __composeForPropGet(self, _bean.aopChains)(context);
+            __composeForProp(self, _aopChainsProp, prefix)(context, (context, next) => {
+              context.value = target[prop];
+              next();
+            });
             // ok
             return context.value;
           }
+          // method
+          const methodType = descriptor.value && descriptor.value.constructor && descriptor.value.constructor.name;
+          return self._getInstanceMethodProxy(beanFullName, target, prop, methodType);
         },
-        set() {
-
+        set(target, prop, value, receiver) {
+          const prefix = 'set__';
+          const _aopChainsProp = self._getAopChainsProp(beanFullName, target, prop, prefix);
+          if (_aopChainsProp.length === 0) {
+            target[prop] = value;
+            return true;
+          }
+          // context
+          const context = {
+            target,
+            receiver,
+            prop,
+            value,
+          };
+          // aop
+          __composeForProp(self, _aopChainsProp, prefix)(context, (context, next) => {
+            target[prop] = context.value;
+            next();
+          });
+          // ok
+          return true;
         },
       });
-      // ok
-      return beanInstanceProxy;
     },
-    _createAopChains(beanFullName) {
+    _getInstanceMethodProxy(beanFullName, beanInstance, prop, methodType) {
+      const self = this;
+      const _aopChainsProp = self._getAopChainsProp(beanFullName, beanInstance, prop);
+      if (_aopChainsProp.length === 0) return beanInstance[prop];
+      // proxy
+      const methodProxyKey = `_aopproxy_method_${prop}`;
+      if (beanInstance[methodProxyKey]) return beanInstance[methodProxyKey];
+      beanInstance[methodProxyKey] = new Proxy(beanInstance[prop], {
+        apply(target, thisArg, args) {
+          // context
+          const context = {
+            target: beanInstance,
+            receiver: thisArg,
+            prop,
+            arguments: args,
+            result: undefined,
+          };
+          // aop
+          if (methodType === 'Function') {
+            __composeForProp(self, _aopChainsProp)(context, (context, next) => {
+              context.result = target.apply(thisArg, args);
+              next();
+            });
+            // ok
+            return context.result;
+          }
+          if (methodType === 'AsyncFunction') {
+            return new Promise((resolve, reject) => {
+              __composeForPropAsync(self, _aopChainsProp)(context, async (context, next) => {
+                context.result = await target.apply(thisArg, args);
+                await next();
+              }).then(() => {
+                resolve(context.result);
+              }).catch(err => {
+                reject(err);
+              });
+            });
+          }
+        },
+      });
+      return beanInstance[methodProxyKey];
+    },
+    _getAopChains(beanFullName) {
+      const _bean = this._getBean(beanFullName);
+      if (_bean._aopChains) return _bean._aopChains;
       const chains = [];
       for (const key in app.meta.aops) {
         const aop = app.meta.aops[key];
@@ -89,6 +157,23 @@ module.exports = (app, ctx) => {
           chains.push(key);
         }
       }
+      _bean._aopChains = chains;
+      return chains;
+    },
+    _getAopChainsProp(beanFullName, beanInstance, prop, prefix = '') {
+      const methodName = `${prefix}${prop}`;
+      const chainsKey = `_aopChains_${methodName}`;
+      const _bean = this._getBean(beanFullName);
+      if (_bean[chainsKey]) return _bean[chainsKey];
+      const _aopChains = this._getAopChains(beanFullName);
+      const chains = [];
+      for (const key of _aopChains) {
+        const aop = this._getInstance(key);
+        if (aop[methodName]) {
+          chains.push(key);
+        }
+      }
+      _bean[chainsKey] = chains;
       return chains;
     },
   };
@@ -107,7 +192,7 @@ function __aopMatch(match, beanFullName) {
   return match.some(item => __aopMatch(item, beanFullName));
 }
 
-function __composeForPropGet(bean, chains) {
+function __composeForProp(bean, chains, prefix = '') {
   return function(context, next) {
     // last called middleware #
     let index = -1;
@@ -116,18 +201,49 @@ function __composeForPropGet(bean, chains) {
       if (i <= index) return new Error('next() called multiple times');
       index = i;
       let fn;
+      let aop;
       const chain = chains[i];
       if (chain) {
-        const aop = bean._getInstance(chain);
-        const methodName = `get__${context.prop}`;
+        aop = bean._getInstance(chain);
+        const methodName = `${prefix}${context.prop}`;
         if (!aop[methodName]) return dispatch(i + 1);
         fn = aop[methodName];
       }
       if (i === chains.length) fn = next;
       if (!fn) return;
-      return fn(context, function next() {
+      return fn.call(aop, context, function next() {
         return dispatch(i + 1);
       });
+    }
+  };
+}
+
+function __composeForPropAsync(bean, chains) {
+  return function(context, next) {
+    // last called middleware #
+    let index = -1;
+    return dispatch(0);
+    function dispatch(i) {
+      if (i <= index) return Promise.reject(new Error('next() called multiple times'));
+      index = i;
+      let fn;
+      let aop;
+      const chain = chains[i];
+      if (chain) {
+        aop = bean._getInstance(chain);
+        const methodName = context.prop;
+        if (!aop[methodName]) return dispatch(i + 1);
+        fn = aop[methodName];
+      }
+      if (i === chains.length) fn = next;
+      if (!fn) return Promise.resolve();
+      try {
+        return Promise.resolve(fn.call(aop, context, function next() {
+          return dispatch(i + 1);
+        }));
+      } catch (err) {
+        return Promise.reject(err);
+      }
     }
   };
 }
