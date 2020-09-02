@@ -22,7 +22,7 @@ module.exports = app => {
         wechatMessageMini: 'Miniprogram Message',
       },
       implementations: {
-        'a-base:loginInfo': 'event/loginInfo',
+        'a-base:loginInfo': 'loginInfo',
         'a-base:accountMigration': 'event/accountMigration',
       },
     },

@@ -5,6 +5,8 @@ const middlewares = require('./config/middlewares.js');
 
 module.exports = app => {
 
+  // beans
+  const beans = require('./beans.js')(app);
   // routes
   const routes = require('./routes.js')(app);
   // services
@@ -15,6 +17,7 @@ module.exports = app => {
   const meta = require('./meta.js')(app);
 
   return {
+    beans,
     routes,
     services,
     models,

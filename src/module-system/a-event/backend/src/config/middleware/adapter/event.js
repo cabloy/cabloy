@@ -19,24 +19,24 @@ const Fn = module.exports = ctx => {
       const events = ctx.app.meta.geto('events');
       const eventArray = events[key];
       if (!eventArray) return;
-      //
-      let returnValue;
-      for (const eventUrl of eventArray) {
-        const event = {
-          break: false,
+      // context
+      const context = {
+        data,
+        result: undefined,
+      };
+      // invoke
+      const adapter = (context, chain) => {
+        const eventBean = ctx.bean._getBean(chain);
+        if (!eventBean) throw new Error(`event not found: ${chain}`);
+        if (!eventBean.execute) throw new Error(`event.execute not found: ${chain}`);
+        return {
+          receiver: eventBean,
+          fn: eventBean.execute,
         };
-        const res = await ctx.performAction({
-          method: 'post',
-          url: eventUrl,
-          body: { event, data },
-        });
-        // check returnValue
-        if (res !== undefined) returnValue = res;
-        // check break
-        if (event.break) break;
-      }
+      };
+      await ctx.app.meta.util.composeAsync(eventArray, adapter)(context);
       // ok
-      return returnValue;
+      return context.result;
     }
 
   }

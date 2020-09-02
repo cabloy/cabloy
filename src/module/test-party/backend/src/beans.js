@@ -1,6 +1,7 @@
-const appBean = require('./bean/app.js');
-const classBean = require('./bean/class.js');
-const ctxBean = require('./bean/ctx.js');
+const testApp = require('./bean/testApp.js');
+const testClass = require('./bean/testClass.js');
+const testCtx = require('./bean/testCtx.js');
+const eventLoginInfoDashboard = require('./bean/eventLoginInfoDashboard.js');
 
 module.exports = app => {
   const beans = {};
@@ -8,16 +9,20 @@ module.exports = app => {
     Object.assign(beans, {
       appBeanTest: {
         mode: 'app',
-        bean: appBean,
+        bean: testApp,
       },
       classBeanTest: {
         mode: 'app',
-        bean: classBean,
+        bean: testClass,
       },
       ctxBeanTest: {
         mode: 'ctx',
-        bean: ctxBean,
+        bean: testCtx,
         global: true,
+      },
+      'event.loginInfoDashboard': {
+        mode: 'ctx',
+        bean: eventLoginInfoDashboard,
       },
     });
   }

@@ -40,6 +40,7 @@ module.exports = (app, ctx) => {
     },
     _newBean(beanFullName, ...args) {
       const _bean = this._getBeanClass(beanFullName);
+      if (!_bean) throw new Error(`bean not found: ${beanFullName}`);
       // instance
       const bean = _bean.bean;
       let beanInstance;

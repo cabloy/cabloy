@@ -6,7 +6,7 @@ const authProviderScenes = require('./authProviderScenes.js');
 
 module.exports = function(ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class WxworkHelper {
+  class DingtalkHelper {
 
     getSceneInfo(scene) {
       return authProviderScenes.getScene(scene);
@@ -279,5 +279,5 @@ module.exports = function(ctx) {
 
   }
 
-  return WxworkHelper;
+  return DingtalkHelper;
 };

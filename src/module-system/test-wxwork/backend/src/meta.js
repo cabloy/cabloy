@@ -17,7 +17,7 @@ module.exports = app => {
     event: {
       implementations: {
         'a-wxwork:wxworkMessage': 'event/wxworkMessage',
-        'a-base:loginInfo': 'event/loginInfo',
+        'a-base:loginInfo': 'loginInfo',
       },
     },
   };

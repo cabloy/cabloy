@@ -143,7 +143,7 @@ module.exports = app => {
       },
       event: {
         implementations: {
-          'a-base:loginInfo': 'test/event/loginInfoDashboard',
+          'a-base:loginInfo': 'loginInfoDashboard',
         },
       },
       index: {

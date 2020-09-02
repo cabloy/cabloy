@@ -11,7 +11,6 @@ module.exports = app => {
     // event
     { method: 'post', path: 'event/wechatMessage', controller: event, middlewares: 'inner,wechat', meta: { auth: { enable: false } } },
     { method: 'post', path: 'event/wechatMessageMini', controller: event, middlewares: 'inner,wechat', meta: { auth: { enable: false } } },
-    { method: 'post', path: 'event/loginInfo', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
     // test
     { method: 'post', path: 'test/getOpenid', controller: test, middlewares: 'inWechat' },
     { method: 'post', path: 'test/getOpenidMini', controller: test, middlewares: 'inWechat',

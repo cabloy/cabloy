@@ -26,7 +26,6 @@ module.exports = app => {
     // jsapi
     { method: 'post', path: 'jssdk/jsconfig', controller: jssdk, middlewares: 'dingtalk' },
     // event
-    { method: 'post', path: 'event/loginInfo', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
     { method: 'post', path: 'event/accountMigration', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
 
     // auth

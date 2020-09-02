@@ -17,7 +17,7 @@ module.exports = app => {
     event: {
       implementations: {
         'a-dingtalk:dingtalkCallback': 'event/dingtalkCallback',
-        'a-base:loginInfo': 'event/loginInfo',
+        'a-base:loginInfo': 'loginInfo',
       },
     },
   };

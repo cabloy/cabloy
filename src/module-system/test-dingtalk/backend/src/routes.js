@@ -12,7 +12,6 @@ module.exports = app => {
     { method: 'post', path: 'version/test', controller: version, middlewares: 'test' },
     // event
     { method: 'post', path: 'event/dingtalkCallback', controller: event, middlewares: 'inner,dingtalk', meta: { auth: { enable: false } } },
-    { method: 'post', path: 'event/loginInfo', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
     // test
     { method: 'post', path: 'test/getMemberId', controller: test, middlewares: 'inDingtalk',
       meta: {
