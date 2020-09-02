@@ -2,7 +2,7 @@ const uuid = require('uuid');
 const mparse = require('egg-born-mparse').default;
 const util = require('./util.js');
 const ModelClass = require('../base/model.js');
-const BeanBaseClass = require('../base/beanBase.js');
+const BeanBaseClass = require('./bean/beanBase.js');
 
 module.exports = function(loader) {
 
