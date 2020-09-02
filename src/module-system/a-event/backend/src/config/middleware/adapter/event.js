@@ -11,7 +11,7 @@ const Fn = module.exports = ctx => {
       return new (Fn(ctx))(moduleName);
     }
 
-    async invoke({ module, name, data, result }) {
+    async invoke({ module, name, data, next }) {
       //
       module = module || this.moduleName;
       const key = `${module}:${name}`;
@@ -33,11 +33,12 @@ const Fn = module.exports = ctx => {
           fn: eventBean.execute,
         };
       };
-      await ctx.app.meta.util.composeAsync(eventArray, adapter)(context, async (context, next) => {
-        if (result !== undefined && context.result === undefined) {
-          context.result = result;
+      await ctx.app.meta.util.composeAsync(eventArray, adapter)(context, async (context, _next) => {
+        if (next) {
+          await next(context, _next);
+        } else {
+          await _next();
         }
-        await next();
       });
       // ok
       return context.result;
