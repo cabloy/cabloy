@@ -135,8 +135,7 @@ module.exports = app => {
       { method: 'post', path: 'test/cache/redis', controller: testCacheRedis, middlewares: 'test', meta: { auth: { enable: false } } },
 
       // test/feat/bean
-      // { method: 'post', path: 'test/feat/bean', controller: testFeatBean, middlewares: 'test', meta: { auth: { enable: false } } },
-      { method: 'get', path: 'test/feat/bean', controller: testFeatBean, meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/feat/bean', controller: testFeatBean, middlewares: 'test', meta: { auth: { enable: false } } },
 
       // test/feat/httpLog
       { method: 'post', path: 'test/feat/httpLog', controller: testFeatHttpLog, middlewares: 'test,httpLog', meta: { auth: { enable: false } } },
