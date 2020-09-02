@@ -16,8 +16,8 @@ module.exports = app => {
     },
     event: {
       implementations: {
-        'a-wechat:wechatMessage': 'event/wechatMessage',
-        'a-wechat:wechatMessageMini': 'event/wechatMessageMini',
+        'a-wechat:wechatMessage': 'wechatMessage',
+        'a-wechat:wechatMessageMini': 'wechatMessageMini',
         'a-base:loginInfo': 'loginInfo',
       },
     },

@@ -1,6 +1,5 @@
 const version = require('./controller/version.js');
 const message = require('./controller/message.js');
-const event = require('./controller/event.js');
 const jssdk = require('./controller/jssdk.js');
 const messageMini = require('./controller/messageMini.js');
 const authMini = require('./controller/authMini.js');
@@ -16,8 +15,6 @@ module.exports = app => {
     { method: 'post', path: 'message/index', controller: message, middlewares: 'wechat', meta: { auth: { enable: false } } },
     // jsapi
     { method: 'post', path: 'jssdk/jsconfig', controller: jssdk, middlewares: 'wechat' },
-    // event
-    { method: 'post', path: 'event/accountMigration', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
 
     // messageMini
     { method: 'get', path: 'messageMini/:scene', controller: messageMini, action: 'index', middlewares: 'wechat', meta: { auth: { enable: false } } },

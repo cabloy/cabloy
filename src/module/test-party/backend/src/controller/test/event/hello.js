@@ -18,14 +18,6 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async helloEcho() {
-      const event = this.ctx.request.body.event;
-      const data = this.ctx.request.body.data;
-      data.text = 'hello echo';
-      event.break = true;
-      this.ctx.success('returnValue');
-    }
-
   }
 
   return HelloController;

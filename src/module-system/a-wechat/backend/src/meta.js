@@ -23,7 +23,7 @@ module.exports = app => {
       },
       implementations: {
         'a-base:loginInfo': 'loginInfo',
-        'a-base:accountMigration': 'event/accountMigration',
+        'a-base:accountMigration': 'accountMigration',
       },
     },
     index: {

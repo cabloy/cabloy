@@ -1,6 +1,5 @@
 const version = require('./controller/version.js');
 const post = require('./controller/post.js');
-const event = require('./controller/event.js');
 
 module.exports = app => {
   const routes = [
@@ -17,8 +16,6 @@ module.exports = app => {
     { method: 'post', path: 'post/delete', controller: post, middlewares: 'inner', meta: { auth: { enable: false } } },
     { method: 'post', path: 'post/action', controller: post, middlewares: 'inner', meta: { auth: { enable: false } } },
     { method: 'post', path: 'post/enable', controller: post, middlewares: 'inner', meta: { auth: { enable: false } } },
-    // event
-    { method: 'post', path: 'event/atomClassValidator', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
   ];
   return routes;
 };

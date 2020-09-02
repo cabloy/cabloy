@@ -96,7 +96,7 @@ module.exports = app => {
     },
     event: {
       implementations: {
-        'a-base:atomClassValidator': 'event/atomClassValidator',
+        'a-base:atomClassValidator': 'atomClassValidator',
       },
     },
   };

@@ -1,21 +1,12 @@
 const require3 = require('require3');
 const extend = require3('extend2');
-const assert = require3('assert');
 
-module.exports = app => {
+module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class eventBean {
 
-  class UserVerifyController extends app.Controller {
-
-    async userVerify() {
-      const data = this.ctx.request.body.data;
-      // console.log('onUserVerify profileId: ', data.profileUser.profileId);
-      assert(data.profileUser.profileId > 0);
-      this.ctx.success();
-    }
-
-    async loginInfo() {
-      // change the config of mobile layout by checking the user's login status
-      const data = this.ctx.request.body.data;
+    async execute(context, next) {
+      const data = context.data;
       const info = data.info;
       const provider = info.user && info.user.provider;
       if (provider && provider.module === 'a-authgithub' && provider.providerName === 'authgithub') {
@@ -36,11 +27,11 @@ module.exports = app => {
           },
         });
       }
-      this.ctx.success();
+      // next
+      await next();
     }
 
   }
 
-  return UserVerifyController;
+  return eventBean;
 };
-

@@ -21,7 +21,6 @@ const testCacheDb = require('./controller/test/cache/db.js');
 const testCacheRedis = require('./controller/test/cache/redis.js');
 const testRoleUserRole = require('./controller/test/role/userRole.js');
 const testEventHello = require('./controller/test/event/hello.js');
-const testEventUserVerify = require('./controller/test/event/userVerify.js');
 const testFeatBean = require('./controller/test/feat/bean.js');
 const testFeatHttpLog = require('./controller/test/feat/httpLog.js');
 const testFeatStartup = require('./controller/test/feat/startup.js');
@@ -130,10 +129,6 @@ module.exports = app => {
 
       // test/event/hello
       { method: 'post', path: 'test/event/hello', controller: testEventHello, middlewares: 'test', meta: { auth: { enable: false } } },
-      { method: 'post', path: 'test/event/helloEcho', controller: testEventHello, middlewares: 'test,inner', meta: { auth: { enable: false } } },
-      // test/event/userVerify
-      { method: 'post', path: 'test/event/userVerify', controller: testEventUserVerify, middlewares: 'test', meta: { auth: { enable: false } } },
-      { method: 'post', path: 'test/event/loginInfo', controller: testEventUserVerify, middlewares: 'test', meta: { auth: { enable: false } } },
       // test/cache
       { method: 'post', path: 'test/cache/mem', controller: testCacheMem, middlewares: 'test', meta: { auth: { enable: false } } },
       { method: 'post', path: 'test/cache/db', controller: testCacheDb, middlewares: 'test', meta: { auth: { enable: false } } },

@@ -2,7 +2,6 @@ const version = require('./controller/version.js');
 const message = require('./controller/message.js');
 const contacts = require('./controller/contacts.js');
 
-const event = require('./controller/event.js');
 const jssdk = require('./controller/jssdk.js');
 const authMini = require('./controller/authMini.js');
 
@@ -28,8 +27,6 @@ module.exports = app => {
     // jsapi
     { method: 'post', path: 'jssdk/jsconfig', controller: jssdk, middlewares: 'wxwork' },
     { method: 'post', path: 'jssdk/jsconfigAgent', controller: jssdk, middlewares: 'wxwork' },
-    // event
-    { method: 'post', path: 'event/accountMigration', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
 
     // authMini
     { method: 'post', path: 'authMini/login', controller: authMini, middlewares: 'wxwork', meta: { auth: { enable: false } } },

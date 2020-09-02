@@ -184,9 +184,9 @@ module.exports = app => {
           hello: 'This is a test for event',
         },
         implementations: {
-          'test-party:hello': 'test/event/helloEcho',
-          'a-base:userVerify': 'test/event/userVerify',
-          'a-base:loginInfo': 'test/event/loginInfo',
+          'test-party:hello': 'helloEcho',
+          'a-base:userVerify': 'userVerify',
+          'a-base:loginInfo': 'loginInfo',
         },
       },
       hook: {
