@@ -4,7 +4,7 @@ module.exports = (app, ctx) => {
 
   const beanContainer = {
     _register(moduleName, beanName, bean) {
-      const beanFullName = bean.global ? beanName : `${moduleName}.${beanName}`;
+      const beanFullName = bean.global ? beanName : `${typeof moduleName === 'string' ? moduleName : moduleName.relativeName}.${beanName}`;
       app.meta.beans[beanFullName] = bean;
       return beanFullName;
     },
@@ -30,7 +30,7 @@ module.exports = (app, ctx) => {
       if (!moduleName) {
         beanFullName = beanName;
       } else {
-        beanFullName = typeof moduleName === 'string' ? `${moduleName}.${beanName}` : `${moduleName.relativeName}.${beanName}`;
+        beanFullName = `${typeof moduleName === 'string' ? moduleName : moduleName.relativeName}.${beanName}`;
       }
       if (!this[beanFullName]) {
         this[beanFullName] = this._newBean(beanFullName);
