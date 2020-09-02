@@ -43,7 +43,7 @@ module.exports = app => {
     },
     event: {
       implementations: {
-        'a-base:accountMigration': 'event/accountMigration',
+        'a-base:accountMigration': 'accountMigration',
       },
     },
   };

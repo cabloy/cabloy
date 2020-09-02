@@ -7,7 +7,6 @@ const tag = require('./controller/tag.js');
 const comment = require('./controller/comment.js');
 const rss = require('./controller/rss.js');
 const queue = require('./controller/queue.js');
-const event = require('./controller/event.js');
 
 module.exports = app => {
   let routes = [
@@ -73,8 +72,6 @@ module.exports = app => {
     { method: 'post', path: 'queue/render', controller: queue, middlewares: 'inner,progress',
       meta: { auth: { enable: false } },
     },
-    // event
-    { method: 'post', path: 'event/atomClassValidator', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
   ];
   if (app.meta.isTest || app.meta.isLocal) {
     routes = routes.concat([

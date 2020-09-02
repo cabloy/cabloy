@@ -2,7 +2,6 @@ const version = require('./controller/version.js');
 const callback = require('./controller/callback.js');
 const contacts = require('./controller/contacts.js');
 
-const event = require('./controller/event.js');
 const jssdk = require('./controller/jssdk.js');
 const auth = require('./controller/auth.js');
 
@@ -25,8 +24,6 @@ module.exports = app => {
 
     // jsapi
     { method: 'post', path: 'jssdk/jsconfig', controller: jssdk, middlewares: 'dingtalk' },
-    // event
-    { method: 'post', path: 'event/accountMigration', controller: event, middlewares: 'inner', meta: { auth: { enable: false } } },
 
     // auth
     { method: 'post', path: 'auth/login', controller: auth, middlewares: 'dingtalk', meta: { auth: { enable: false } } },

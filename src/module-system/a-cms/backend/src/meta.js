@@ -99,7 +99,6 @@ module.exports = app => {
     },
     event: {
       implementations: {
-        // 'a-base:atomClassValidator': 'event/atomClassValidator',
       },
     },
     socketio: {
