@@ -163,7 +163,7 @@ module.exports = (app, ctx) => {
       for (const key in app.meta.aops) {
         const aop = app.meta.aops[key];
         const match = aop.match;
-        if (__aopMatch(match, beanFullName)) {
+        if (key !== beanFullName && __aopMatch(match, beanFullName)) {
           chains.push(key);
         }
       }
