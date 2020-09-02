@@ -1,4 +1,5 @@
 const is = require('is-type-of');
+const util = require('../util.js');
 
 module.exports = (app, ctx) => {
 
@@ -202,59 +203,30 @@ function __aopMatch(match, beanFullName) {
   return match.some(item => __aopMatch(item, beanFullName));
 }
 
-function __composeForProp(bean, chains, prefix = '') {
-  return function(context, next) {
-    // last called middleware #
-    let index = -1;
-    return dispatch(0);
-    function dispatch(i) {
-      if (i <= index) return new Error('next() called multiple times');
-      index = i;
-      let fn;
-      let aop;
-      const chain = chains[i];
-      if (chain) {
-        aop = bean._getBean(chain);
-        const methodName = `${prefix}${context.prop}`;
-        if (!aop[methodName]) return dispatch(i + 1);
-        fn = aop[methodName];
-      }
-      if (i === chains.length) fn = next;
-      if (!fn) return;
-      return fn.call(aop, context, function next() {
-        return dispatch(i + 1);
-      });
-    }
-  };
+
+function __composeForProp(beanContainer, chains, prefix = '') {
+  return util.compose(chains, (context, chain) => {
+    const aop = beanContainer._getBean(chain);
+    if (!aop) throw new Error(`aop not found: ${chain}`);
+    const methodName = `${prefix}${context.prop}`;
+    if (!aop[methodName]) return null;
+    return {
+      receiver: aop,
+      fn: aop[methodName],
+    };
+  });
 }
 
-function __composeForPropAsync(bean, chains) {
-  return function(context, next) {
-    // last called middleware #
-    let index = -1;
-    return dispatch(0);
-    function dispatch(i) {
-      if (i <= index) return Promise.reject(new Error('next() called multiple times'));
-      index = i;
-      let fn;
-      let aop;
-      const chain = chains[i];
-      if (chain) {
-        aop = bean._getBean(chain);
-        const methodName = context.prop;
-        if (!aop[methodName]) return dispatch(i + 1);
-        fn = aop[methodName];
-      }
-      if (i === chains.length) fn = next;
-      if (!fn) return Promise.resolve();
-      try {
-        return Promise.resolve(fn.call(aop, context, function next() {
-          return dispatch(i + 1);
-        }));
-      } catch (err) {
-        return Promise.reject(err);
-      }
-    }
-  };
+function __composeForPropAsync(beanContainer, chains) {
+  return util.composeAsync(chains, (context, chain) => {
+    const aop = beanContainer._getBean(chain);
+    if (!aop) throw new Error(`aop not found: ${chain}`);
+    const methodName = context.prop;
+    if (!aop[methodName]) return null;
+    return {
+      receiver: aop,
+      fn: aop[methodName],
+    };
+  });
 }
 

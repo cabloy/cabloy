@@ -14,7 +14,15 @@ module.exports = app => {
     async _registerEvents(module, implementations) {
       const events = this.app.meta.geto('events');
       for (const key in implementations) {
-        events.geta(key).push(`/${module.info.url}/${implementations[key]}`);
+        // bean
+        const implementationName = implementations[key];
+        let beanFullName;
+        if (typeof implementationName === 'string') {
+          beanFullName = `${module.info.relativeName}.event.${implementationName}`;
+        } else {
+          beanFullName = `${implementationName.module || module.info.relativeName}.event.${implementationName.name}`;
+        }
+        events.geta(key).push(beanFullName);
       }
     }
 

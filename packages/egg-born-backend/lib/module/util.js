@@ -106,6 +106,60 @@ const util = {
     }
     return false;
   },
+  compose(chains, adapter) {
+    return function(context, next) {
+      // last called middleware #
+      let index = -1;
+      return dispatch(0);
+      function dispatch(i) {
+        if (i <= index) return new Error('next() called multiple times');
+        index = i;
+        let receiver;
+        let fn;
+        const chain = chains[i];
+        if (chain) {
+          const obj = adapter(context, chain);
+          if (!obj) return dispatch(i + 1);
+          receiver = obj.receiver;
+          fn = obj.fn;
+        }
+        if (i === chains.length) fn = next;
+        if (!fn) return;
+        return fn.call(receiver, context, function next() {
+          return dispatch(i + 1);
+        });
+      }
+    };
+  },
+  composeAsync(chains, adapter) {
+    return function(context, next) {
+      // last called middleware #
+      let index = -1;
+      return dispatch(0);
+      function dispatch(i) {
+        if (i <= index) return Promise.reject(new Error('next() called multiple times'));
+        index = i;
+        let receiver;
+        let fn;
+        const chain = chains[i];
+        if (chain) {
+          const obj = adapter(context, chain);
+          if (!obj) return dispatch(i + 1);
+          receiver = obj.receiver;
+          fn = obj.fn;
+        }
+        if (i === chains.length) fn = next;
+        if (!fn) return Promise.resolve();
+        try {
+          return Promise.resolve(fn.call(receiver, context, function next() {
+            return dispatch(i + 1);
+          }));
+        } catch (err) {
+          return Promise.reject(err);
+        }
+      }
+    };
+  },
 };
 
 module.exports = util;
