@@ -1,4 +1,4 @@
-const beanFn = require('./bean.js');
+const beanContainerFn = require('./beanContainer.js');
 
 module.exports = function(loader) {
 
@@ -8,7 +8,7 @@ module.exports = function(loader) {
   // all
   loader.app.meta.aops = {};
   loader.app.meta.beans = {};
-  loader.app.bean = beanFn(loader.app, null);
+  loader.app.bean = beanContainerFn(loader.app, null);
 
   // load beans
   loadBeans();
@@ -27,7 +27,7 @@ module.exports = function(loader) {
       // maybe /favicon.ico
       if (context.module) {
         // bean
-        context.bean = beanFn(loader.app, context);
+        context.bean = beanContainerFn(loader.app, context);
       }
 
       return context;

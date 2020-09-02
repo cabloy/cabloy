@@ -2,7 +2,7 @@ const is = require('is-type-of');
 
 module.exports = (app, ctx) => {
 
-  const beanBase = {
+  const beanContainer = {
     _register(moduleName, beanName, bean) {
       const beanFullName = bean.global ? beanName : `${moduleName}.${beanName}`;
       app.meta.beans[beanFullName] = bean;
@@ -18,17 +18,27 @@ module.exports = (app, ctx) => {
       app.meta.aops[beanFullName] = { match: aop.match };
       return beanFullName;
     },
-    _getBean(beanFullName) {
+    _getBeanClass(beanFullName) {
       return app.meta.beans[beanFullName];
     },
-    _getInstance(beanFullName) {
+    _getBean(moduleName, beanName) {
+      if (!beanName) {
+        beanName = moduleName;
+        moduleName = null;
+      }
+      let beanFullName;
+      if (!moduleName) {
+        beanFullName = beanName;
+      } else {
+        beanFullName = typeof moduleName === 'string' ? `${moduleName}.${beanName}` : `${moduleName.relativeName}.${beanName}`;
+      }
       if (!this[beanFullName]) {
-        this[beanFullName] = this._newInstance(beanFullName);
+        this[beanFullName] = this._newBean(beanFullName);
       }
       return this[beanFullName];
     },
-    _newInstance(beanFullName, ...args) {
-      const _bean = this._getBean(beanFullName);
+    _newBean(beanFullName, ...args) {
+      const _bean = this._getBeanClass(beanFullName);
       // instance
       const bean = _bean.bean;
       let beanInstance;
@@ -49,9 +59,9 @@ module.exports = (app, ctx) => {
       const _aopChains = this._getAopChains(beanFullName);
       if (_aopChains.length === 0) return beanInstance;
       // aop
-      return this._newInstanceProxy(beanFullName, beanInstance);
+      return this._newBeanProxy(beanFullName, beanInstance);
     },
-    _newInstanceProxy(beanFullName, beanInstance) {
+    _newBeanProxy(beanFullName, beanInstance) {
       const self = this;
       return new Proxy(beanInstance, {
         get(target, prop, receiver) {
@@ -147,7 +157,7 @@ module.exports = (app, ctx) => {
       return beanInstance[methodProxyKey];
     },
     _getAopChains(beanFullName) {
-      const _bean = this._getBean(beanFullName);
+      const _bean = this._getBeanClass(beanFullName);
       if (_bean._aopChains) return _bean._aopChains;
       const chains = [];
       for (const key in app.meta.aops) {
@@ -163,12 +173,12 @@ module.exports = (app, ctx) => {
     _getAopChainsProp(beanFullName, beanInstance, prop, prefix = '') {
       const methodName = `${prefix}${prop}`;
       const chainsKey = `_aopChains_${methodName}`;
-      const _bean = this._getBean(beanFullName);
+      const _bean = this._getBeanClass(beanFullName);
       if (_bean[chainsKey]) return _bean[chainsKey];
       const _aopChains = this._getAopChains(beanFullName);
       const chains = [];
       for (const key of _aopChains) {
-        const aop = this._getInstance(key);
+        const aop = this._getBean(key);
         if (aop[methodName]) {
           chains.push(key);
         }
@@ -178,10 +188,10 @@ module.exports = (app, ctx) => {
     },
   };
 
-  return new Proxy(beanBase, {
+  return new Proxy(beanContainer, {
     get(obj, prop) {
       if (obj[prop]) return obj[prop];
-      return beanBase._getInstance(prop);
+      return beanContainer._getBean(prop);
     },
   });
 
@@ -204,7 +214,7 @@ function __composeForProp(bean, chains, prefix = '') {
       let aop;
       const chain = chains[i];
       if (chain) {
-        aop = bean._getInstance(chain);
+        aop = bean._getBean(chain);
         const methodName = `${prefix}${context.prop}`;
         if (!aop[methodName]) return dispatch(i + 1);
         fn = aop[methodName];
@@ -230,7 +240,7 @@ function __composeForPropAsync(bean, chains) {
       let aop;
       const chain = chains[i];
       if (chain) {
-        aop = bean._getInstance(chain);
+        aop = bean._getBean(chain);
         const methodName = context.prop;
         if (!aop[methodName]) return dispatch(i + 1);
         fn = aop[methodName];
