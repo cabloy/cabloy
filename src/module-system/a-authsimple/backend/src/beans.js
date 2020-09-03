@@ -1,4 +1,4 @@
-const eventAccountMigration = require('./bean/eventAccountMigration.js');
+const eventAccountMigration = require('./bean/event.accountMigration.js');
 
 module.exports = app => {
   const beans = {

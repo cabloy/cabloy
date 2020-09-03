@@ -1,6 +1,6 @@
-const eventLoginInfo = require('./bean/eventLoginInfo.js');
-const eventWechatMessage = require('./bean/eventWechatMessage.js');
-const eventWechatMessageMini = require('./bean/eventWechatMessageMini.js');
+const eventLoginInfo = require('./bean/event.loginInfo.js');
+const eventWechatMessage = require('./bean/event.wechatMessage.js');
+const eventWechatMessageMini = require('./bean/event.wechatMessageMini.js');
 
 module.exports = app => {
   const beans = {

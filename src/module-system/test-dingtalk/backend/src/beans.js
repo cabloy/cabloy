@@ -1,5 +1,5 @@
-const eventLoginInfo = require('./bean/eventLoginInfo.js');
-const eventDingtalkCallback = require('./bean/eventDingtalkCallback.js');
+const eventLoginInfo = require('./bean/event.loginInfo.js');
+const eventDingtalkCallback = require('./bean/event.dingtalkCallback.js');
 
 module.exports = app => {
   const beans = {

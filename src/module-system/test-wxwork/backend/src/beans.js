@@ -1,5 +1,5 @@
-const eventLoginInfo = require('./bean/eventLoginInfo.js');
-const eventWxworkMessage = require('./bean/eventWxworkMessage.js');
+const eventLoginInfo = require('./bean/event.loginInfo.js');
+const eventWxworkMessage = require('./bean/event.wxworkMessage.js');
 
 module.exports = app => {
   const beans = {

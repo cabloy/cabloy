@@ -1,4 +1,4 @@
-const eventAtomClassValidator = require('./bean/eventAtomClassValidator.js');
+const eventAtomClassValidator = require('./bean/event.atomClassValidator.js');
 
 module.exports = app => {
   const beans = {

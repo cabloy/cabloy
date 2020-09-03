@@ -1,10 +1,10 @@
 const testApp = require('./bean/testApp.js');
 const testClass = require('./bean/testClass.js');
 const testCtx = require('./bean/testCtx.js');
-const eventLoginInfoDashboard = require('./bean/eventLoginInfoDashboard.js');
-const eventHelloEcho = require('./bean/eventHelloEcho.js');
-const eventUserVerify = require('./bean/eventUserVerify.js');
-const eventLoginInfo = require('./bean/eventLoginInfo.js');
+const eventLoginInfoDashboard = require('./bean/event.loginInfoDashboard.js');
+const eventHelloEcho = require('./bean/event.helloEcho.js');
+const eventUserVerify = require('./bean/event.userVerify.js');
+const eventLoginInfo = require('./bean/event.loginInfo.js');
 
 module.exports = app => {
   const beans = {};
