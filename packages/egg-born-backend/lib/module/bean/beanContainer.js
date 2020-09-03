@@ -4,9 +4,16 @@ const util = require('../util.js');
 module.exports = (app, ctx) => {
 
   const beanContainer = {
-    _register(moduleName, beanName, bean) {
-      const beanFullName = bean.global ? beanName : `${typeof moduleName === 'string' ? moduleName : moduleName.relativeName}.${beanName}`;
-      app.meta.beans[beanFullName] = bean;
+    _register(moduleName, beanName, beanClass) {
+      const beanFullName = beanClass.global ? beanName : `${typeof moduleName === 'string' ? moduleName : moduleName.relativeName}.${beanName}`;
+      let bean = beanClass.bean;
+      if (beanClass.mode === 'app' && is.function(bean) && !is.class(bean)) {
+        bean = bean(app);
+      }
+      app.meta.beans[beanFullName] = {
+        ... beanClass,
+        bean,
+      };
       return beanFullName;
     },
     _registerAop(moduleName, aopName, aop) {
@@ -39,21 +46,21 @@ module.exports = (app, ctx) => {
       return this[beanFullName];
     },
     _newBean(beanFullName, ...args) {
-      const _bean = this._getBeanClass(beanFullName);
-      if (!_bean) throw new Error(`bean not found: ${beanFullName}`);
+      const _beanClass = this._getBeanClass(beanFullName);
+      if (!_beanClass) throw new Error(`bean not found: ${beanFullName}`);
       // instance
-      const bean = _bean.bean;
+      const bean = _beanClass.bean;
       let beanInstance;
       if (is.function(bean) && !is.class(bean)) {
-        if (_bean.mode === 'app') {
+        if (_beanClass.mode === 'app') {
           beanInstance = new (bean(app))(ctx, ...args);
-        } else if (_bean.mode === 'ctx') {
+        } else if (_beanClass.mode === 'ctx') {
           beanInstance = new (bean(ctx))(...args);
         }
       } else if (is.class(bean)) {
-        if (_bean.mode === 'app') {
+        if (_beanClass.mode === 'app') {
           beanInstance = new bean(ctx, ...args);
-        } else if (_bean.mode === 'ctx') {
+        } else if (_beanClass.mode === 'ctx') {
           beanInstance = new bean(...args);
         }
       }
