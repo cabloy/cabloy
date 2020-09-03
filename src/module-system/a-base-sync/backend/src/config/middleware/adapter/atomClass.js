@@ -85,21 +85,25 @@ const Fn = module.exports = ctx => {
       // maybe empty
       user = user || ctx.state.user.op;
       // event
-      const res = await ctx.meta.event.invoke({
+      return await ctx.meta.event.invoke({
         module: moduleInfo.relativeName,
         name: 'atomClassValidator',
         data: {
           atomClass, user,
         },
+        next: async (context, next) => {
+          // default
+          if (context.result === undefined) {
+            const _module = ctx.app.meta.modules[atomClass.module];
+            const validator = _module.main.meta.base.atoms[atomClass.atomClassName].validator;
+            context.result = validator ? {
+              module: atomClass.module,
+              validator,
+            } : null;
+          }
+          await next();
+        },
       });
-      if (res) return res;
-      // default
-      const _module = ctx.app.meta.modules[atomClass.module];
-      const validator = _module.main.meta.base.atoms[atomClass.atomClassName].validator;
-      return validator ? {
-        module: atomClass.module,
-        validator,
-      } : null;
     }
 
     async validatorSearch({ atomClass }) {

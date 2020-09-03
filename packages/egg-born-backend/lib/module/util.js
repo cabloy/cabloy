@@ -107,6 +107,7 @@ const util = {
     return false;
   },
   compose(chains, adapter) {
+    if (!chains) chains = [];
     return function(context, next) {
       // last called middleware #
       let index = -1;
@@ -132,6 +133,7 @@ const util = {
     };
   },
   composeAsync(chains, adapter) {
+    if (!chains) chains = [];
     return function(context, next) {
       // last called middleware #
       let index = -1;

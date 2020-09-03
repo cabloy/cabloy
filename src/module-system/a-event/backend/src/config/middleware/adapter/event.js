@@ -1,5 +1,16 @@
 const Fn = module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+
+  const __adapter = (context, chain) => {
+    const eventBean = ctx.bean._getBean(chain);
+    if (!eventBean) throw new Error(`event not found: ${chain}`);
+    if (!eventBean.execute) throw new Error(`event.execute not found: ${chain}`);
+    return {
+      receiver: eventBean,
+      fn: eventBean.execute,
+    };
+  };
+
   class Event {
 
     constructor(moduleName) {
@@ -17,23 +28,13 @@ const Fn = module.exports = ctx => {
       const key = `${module}:${name}`;
       const events = ctx.app.meta.geto('events');
       const eventArray = events[key];
-      if (!eventArray) return;
       // context
       const context = {
         data,
         result: undefined,
       };
       // invoke
-      const adapter = (context, chain) => {
-        const eventBean = ctx.bean._getBean(chain);
-        if (!eventBean) throw new Error(`event not found: ${chain}`);
-        if (!eventBean.execute) throw new Error(`event.execute not found: ${chain}`);
-        return {
-          receiver: eventBean,
-          fn: eventBean.execute,
-        };
-      };
-      await ctx.app.meta.util.composeAsync(eventArray, adapter)(context, async (context, _next) => {
+      await ctx.app.meta.util.composeAsync(eventArray, __adapter)(context, async (context, _next) => {
         if (next) {
           await next(context, _next);
         } else {

@@ -70,18 +70,19 @@ module.exports = (app, ctx) => {
           const descriptor = Object.getOwnPropertyDescriptor(target.__proto__, prop);
           // get prop
           if (descriptor.get) {
-            const prefix = 'get__';
-            const _aopChainsProp = self._getAopChainsProp(beanFullName, target, prop, prefix);
+            const methodName = `get__${prop}`;
+            const _aopChainsProp = self._getAopChainsProp(beanFullName, target, methodName);
             if (_aopChainsProp.length === 0) return target[prop];
             // context
             const context = {
               target,
               receiver,
               prop,
+              method: methodName,
               value: undefined,
             };
             // aop
-            __composeForProp(self, _aopChainsProp, prefix)(context, (context, next) => {
+            __composeForProp(_aopChainsProp)(context, (context, next) => {
               context.value = target[prop];
               next();
             });
@@ -93,8 +94,8 @@ module.exports = (app, ctx) => {
           return self._getInstanceMethodProxy(beanFullName, target, prop, methodType);
         },
         set(target, prop, value, receiver) {
-          const prefix = 'set__';
-          const _aopChainsProp = self._getAopChainsProp(beanFullName, target, prop, prefix);
+          const methodName = `set__${prop}`;
+          const _aopChainsProp = self._getAopChainsProp(beanFullName, target, methodName);
           if (_aopChainsProp.length === 0) {
             target[prop] = value;
             return true;
@@ -104,10 +105,11 @@ module.exports = (app, ctx) => {
             target,
             receiver,
             prop,
+            method: methodName,
             value,
           };
           // aop
-          __composeForProp(self, _aopChainsProp, prefix)(context, (context, next) => {
+          __composeForProp(_aopChainsProp)(context, (context, next) => {
             target[prop] = context.value;
             next();
           });
@@ -117,8 +119,7 @@ module.exports = (app, ctx) => {
       });
     },
     _getInstanceMethodProxy(beanFullName, beanInstance, prop, methodType) {
-      const self = this;
-      const _aopChainsProp = self._getAopChainsProp(beanFullName, beanInstance, prop);
+      const _aopChainsProp = this._getAopChainsProp(beanFullName, beanInstance, prop);
       if (_aopChainsProp.length === 0) return beanInstance[prop];
       // proxy
       const methodProxyKey = `_aopproxy_method_${prop}`;
@@ -135,7 +136,7 @@ module.exports = (app, ctx) => {
           };
           // aop
           if (methodType === 'Function') {
-            __composeForProp(self, _aopChainsProp)(context, (context, next) => {
+            __composeForProp(_aopChainsProp)(context, (context, next) => {
               context.result = target.apply(thisArg, args);
               next();
             });
@@ -144,7 +145,7 @@ module.exports = (app, ctx) => {
           }
           if (methodType === 'AsyncFunction') {
             return new Promise((resolve, reject) => {
-              __composeForPropAsync(self, _aopChainsProp)(context, async (context, next) => {
+              __composeForPropAsync(_aopChainsProp)(context, async (context, next) => {
                 context.result = await target.apply(thisArg, args);
                 await next();
               }).then(() => {
@@ -159,8 +160,8 @@ module.exports = (app, ctx) => {
       return beanInstance[methodProxyKey];
     },
     _getAopChains(beanFullName) {
-      const _bean = this._getBeanClass(beanFullName);
-      if (_bean._aopChains) return _bean._aopChains;
+      const _beanClass = this._getBeanClass(beanFullName);
+      if (_beanClass._aopChains) return _beanClass._aopChains;
       const chains = [];
       for (const key in app.meta.aops) {
         const aop = app.meta.aops[key];
@@ -169,14 +170,13 @@ module.exports = (app, ctx) => {
           chains.push(key);
         }
       }
-      _bean._aopChains = chains;
+      _beanClass._aopChains = chains;
       return chains;
     },
-    _getAopChainsProp(beanFullName, beanInstance, prop, prefix = '') {
-      const methodName = `${prefix}${prop}`;
+    _getAopChainsProp(beanFullName, beanInstance, methodName) {
       const chainsKey = `_aopChains_${methodName}`;
-      const _bean = this._getBeanClass(beanFullName);
-      if (_bean[chainsKey]) return _bean[chainsKey];
+      const _beanClass = this._getBeanClass(beanFullName);
+      if (_beanClass[chainsKey]) return _beanClass[chainsKey];
       const _aopChains = this._getAopChains(beanFullName);
       const chains = [];
       for (const key of _aopChains) {
@@ -185,10 +185,29 @@ module.exports = (app, ctx) => {
           chains.push(key);
         }
       }
-      _bean[chainsKey] = chains;
+      _beanClass[chainsKey] = chains;
       return chains;
     },
   };
+
+  const __composeForPropAdapter = (context, chain) => {
+    const aop = beanContainer._getBean(chain);
+    if (!aop) throw new Error(`aop not found: ${chain}`);
+    const methodName = context.method || context.prop;
+    if (!aop[methodName]) return null;
+    return {
+      receiver: aop,
+      fn: aop[methodName],
+    };
+  };
+
+  function __composeForProp(chains) {
+    return util.compose(chains, __composeForPropAdapter);
+  }
+
+  function __composeForPropAsync(chains) {
+    return util.composeAsync(chains, __composeForPropAdapter);
+  }
 
   return new Proxy(beanContainer, {
     get(obj, prop) {
@@ -202,32 +221,5 @@ module.exports = (app, ctx) => {
 function __aopMatch(match, beanFullName) {
   if (!Array.isArray(match)) return (typeof match === 'string' && match === beanFullName) || (is.regExp(match) && match.test(beanFullName));
   return match.some(item => __aopMatch(item, beanFullName));
-}
-
-
-function __composeForProp(beanContainer, chains, prefix = '') {
-  return util.compose(chains, (context, chain) => {
-    const aop = beanContainer._getBean(chain);
-    if (!aop) throw new Error(`aop not found: ${chain}`);
-    const methodName = `${prefix}${context.prop}`;
-    if (!aop[methodName]) return null;
-    return {
-      receiver: aop,
-      fn: aop[methodName],
-    };
-  });
-}
-
-function __composeForPropAsync(beanContainer, chains) {
-  return util.composeAsync(chains, (context, chain) => {
-    const aop = beanContainer._getBean(chain);
-    if (!aop) throw new Error(`aop not found: ${chain}`);
-    const methodName = context.prop;
-    if (!aop[methodName]) return null;
-    return {
-      receiver: aop,
-      fn: aop[methodName],
-    };
-  });
 }
 
