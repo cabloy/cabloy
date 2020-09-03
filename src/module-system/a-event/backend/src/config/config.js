@@ -10,12 +10,5 @@ module.exports = appInfo => {
     },
   };
 
-  // startups
-  config.startups = {
-    installEvents: {
-      path: 'event/installEvents',
-    },
-  };
-
   return config;
 };
