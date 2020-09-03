@@ -5,32 +5,35 @@ module.exports = app => {
   class Message extends app.Service {
 
     async index({ message }) {
-      let res;
+      let result;
       // event: subscribe
       if (message.MsgType === 'event') {
         if (message.Event === 'subscribe') {
-          res = await this._subscribeUser({ openid: message.FromUserName, message });
+          result = await this._subscribeUser({ openid: message.FromUserName, message });
         } else if (message.Event === 'unsubscribe') {
-          res = await this._unsubscribeUser({ openid: message.FromUserName, message });
+          result = await this._unsubscribeUser({ openid: message.FromUserName, message });
         }
       }
       // raise event
-      const res2 = await this.ctx.meta.event.invoke({
+      return await this.ctx.meta.event.invoke({
         module: moduleInfo.relativeName,
         name: 'wechatMessage',
         data: { message },
+        result,
+        next: async (context, next) => {
+          // default
+          if (context.result === undefined) {
+            context.result = {
+              ToUserName: message.FromUserName,
+              FromUserName: message.ToUserName,
+              CreateTime: new Date().getTime(),
+              MsgType: 'text',
+              Content: this.ctx.config.account.public.message.reply.default,
+            };
+          }
+          await next();
+        },
       });
-      if (res2) res = res2;
-      // check if ready
-      if (res) return res;
-      // default reply
-      return {
-        ToUserName: message.FromUserName,
-        FromUserName: message.ToUserName,
-        CreateTime: new Date().getTime(),
-        MsgType: 'text',
-        Content: this.ctx.config.account.public.message.reply.default,
-      };
     }
 
     async _subscribeUser({ openid, message }) {

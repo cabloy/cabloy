@@ -6,8 +6,8 @@ module.exports = app => {
       // config
       const config = this.ctx.config.account.wxwork;
       const configAppSelfBuilt = config.apps.selfBuilt;
-      // res
-      let res;
+      // result
+      let result;
       // event: subscribe
       if (message.MsgType === 'event') {
         if (message.Event === 'subscribe') {
@@ -19,25 +19,27 @@ module.exports = app => {
         }
       }
       // raise event
-      const res2 = await this.ctx.meta.event.invoke({
+      return await this.ctx.meta.event.invoke({
         module: moduleInfo.relativeName,
         name: 'wxworkMessage',
         data: { message },
+        result,
+        next: async (context, next) => {
+          // default
+          if (context.result === undefined) {
+            if (message.MsgType !== 'event') {
+              context.result = {
+                ToUserName: message.FromUserName,
+                FromUserName: message.ToUserName,
+                CreateTime: new Date().getTime(),
+                MsgType: 'text',
+                Content: configAppSelfBuilt.message.reply.default,
+              };
+            }
+          }
+          await next();
+        },
       });
-      if (res2) res = res2;
-      // check if ready
-      if (res) return res;
-      // default reply
-      if (message.MsgType !== 'event') {
-        return {
-          ToUserName: message.FromUserName,
-          FromUserName: message.ToUserName,
-          CreateTime: new Date().getTime(),
-          MsgType: 'text',
-          Content: configAppSelfBuilt.message.reply.default,
-        };
-      }
-      return null;
     }
 
     async contacts({ message }) {

@@ -5,9 +5,9 @@ module.exports = ctx => {
     async execute(context, next) {
       const data = context.data;
       data.text = 'hello echo';
-      context.result = 'returnValue';
-      // break
-      return;
+      context.result = `${context.result}.echo`;
+      await next();
+      context.result = `echo.${context.result}`;
     }
 
   }

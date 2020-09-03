@@ -22,7 +22,7 @@ const Fn = module.exports = ctx => {
       return new (Fn(ctx))(moduleName);
     }
 
-    async invoke({ module, name, data, next }) {
+    async invoke({ module, name, data, result, next }) {
       //
       module = module || this.moduleName;
       const key = `${module}:${name}`;
@@ -31,7 +31,7 @@ const Fn = module.exports = ctx => {
       // context
       const context = {
         data,
-        result: undefined,
+        result,
       };
       // invoke
       await ctx.app.meta.util.composeAsync(eventArray, __adapter)(context, async (context, _next) => {

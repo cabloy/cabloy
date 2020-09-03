@@ -6,7 +6,6 @@ describe('test/controller/test/event/hello.test.js', () => {
     app.mockSession({});
     const result = await app.httpRequest().post(mockUrl('test/event/hello'));
     assert.equal(result.body.code, 0);
-    assert.equal(result.body.data, 'returnValue');
   });
 
 });

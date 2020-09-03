@@ -10,12 +10,21 @@ module.exports = app => {
       const data = {
         text: 'hello',
       };
-      const res = await this.ctx.meta.event.invoke({
-        module: moduleInfo.relativeName, name: 'hello', data,
+      let result = 'world';
+      result = await this.ctx.meta.event.invoke({
+        module: moduleInfo.relativeName,
+        name: 'hello',
+        data,
+        result,
+        next: async (context, next) => {
+          context.result = `${context.result}.hello`;
+          await next();
+          context.result = `hello.${context.result}`;
+        },
       });
       assert.equal(data.text, 'hello echo');
-      assert.equal(res, 'returnValue');
-      this.ctx.success(res);
+      assert.equal(result, 'echo.hello.world.echo.hello');
+      this.ctx.success();
     }
 
   }
