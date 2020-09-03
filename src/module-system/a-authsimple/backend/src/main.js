@@ -9,9 +9,12 @@ const metaFn = require('./meta.js');
 module.exports = app => {
   // beans
   const beans = require('./beans.js')(app);
+  // controllers
+  const controllers = require('./controllers.js')(app);
   return {
     beans,
     routes,
+    controllers,
     services,
     models,
     config,

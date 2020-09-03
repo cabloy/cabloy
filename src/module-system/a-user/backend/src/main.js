@@ -8,6 +8,8 @@ module.exports = app => {
 
   // routes
   const routes = require('./routes.js')(app);
+  // controllers
+  const controllers = require('./controllers.js')(app);
   // services
   const services = require('./services.js')(app);
   // models
@@ -17,6 +19,7 @@ module.exports = app => {
 
   return {
     routes,
+    controllers,
     services,
     models,
     config,

@@ -11,10 +11,14 @@ module.exports = app => {
 
   // meta
   const meta = require('./meta.js')(app);
+  // routes
   const routes = require('./routes.js')(app);
+  // controllers
+  const controllers = require('./controllers.js')(app);
 
   return {
     routes,
+    controllers,
     services,
     models,
     config,
