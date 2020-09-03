@@ -1,6 +1,6 @@
-const testApp = require('./bean/testApp.js');
-const testClass = require('./bean/testClass.js');
-const testCtx = require('./bean/testCtx.js');
+const testApp = require('./bean/test.app.js');
+const testClass = require('./bean/test.class.js');
+const testCtx = require('./bean/test.ctx.js');
 const eventLoginInfoDashboard = require('./bean/event.loginInfoDashboard.js');
 const eventHelloEcho = require('./bean/event.helloEcho.js');
 const eventUserVerify = require('./bean/event.userVerify.js');
@@ -10,15 +10,15 @@ module.exports = app => {
   const beans = {};
   if (app.meta.isTest || app.meta.isLocal) {
     Object.assign(beans, {
-      appBeanTest: {
+      'test.app': {
         mode: 'app',
         bean: testApp,
       },
-      classBeanTest: {
+      'test.class': {
         mode: 'app',
         bean: testClass,
       },
-      ctxBeanTest: {
+      'test.ctx': {
         mode: 'ctx',
         bean: testCtx,
         global: true,

@@ -1,19 +1,19 @@
-const regExpAop = require('./aop/regExp.js');
-const simpleAop = require('./aop/simple.js');
+const regExp = require('./aop/regExp.js');
+const simple = require('./aop/simple.js');
 
 module.exports = app => {
   const aops = {};
   if (app.meta.isTest || app.meta.isLocal) {
     Object.assign(aops, {
-      simpleAopTest: {
-        match: 'ctxBeanTest',
+      simple: {
+        match: 'test.ctx',
         mode: 'ctx',
-        bean: simpleAop,
+        bean: simple,
       },
-      regExpAopTest: {
-        match: [ /^test-party\.\w+BeanTest$/, 'ctxBeanTest' ],
+      regExp: {
+        match: [ /^test-party.test\.\w+$/, 'test.ctx' ],
         mode: 'ctx',
-        bean: regExpAop,
+        bean: regExp,
       },
     });
   }
