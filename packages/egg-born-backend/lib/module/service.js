@@ -1,10 +1,6 @@
-const is = require('is-type-of');
 const SERVICEPROXY = Symbol('CTX#__SERVICEPROXY');
 
 module.exports = function(loader, modules) {
-
-  // service classes
-  const ebServiceClasses = {};
 
   // load services
   loadServices();
@@ -53,19 +49,6 @@ module.exports = function(loader, modules) {
         loader.app.bean._register(module.info.relativeName, beanName, bean);
       }
     }
-    Object.keys(modules).forEach(key => {
-
-      const module = modules[key];
-      const ebServiceClass = ebServiceClasses[module.info.relativeName] = {};
-
-      // services
-      const services = module.main.services;
-      if (services) {
-        for (const key in services) {
-          ebServiceClass[key] = services[key](loader.app);
-        }
-      }
-    });
   }
 
 };
