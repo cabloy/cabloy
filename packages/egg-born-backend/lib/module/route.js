@@ -31,7 +31,7 @@ module.exports = function(loader, modules) {
         let controllerBeanFullName;
         let _route;
         if (route.controller) {
-          // if (is.function(route.controller)) throw new Error(`Controller should be bean: ${info.relativeName}.${route.controller(loader.app).name}`);
+          if (is.function(route.controller)) throw new Error(`Controller should be bean: ${info.relativeName}.${route.controller(loader.app).name}`);
           if (typeof route.controller === 'string') {
             controllerBeanFullName = `${info.relativeName}.controller.${route.controller}`;
           } else {

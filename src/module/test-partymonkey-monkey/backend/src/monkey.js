@@ -1,5 +1,3 @@
-const controllerMonkeyer = require('./controller/monkeyer.js');
-
 module.exports = app => {
   // eslint-disable-next-line
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -19,7 +17,10 @@ module.exports = app => {
     moduleLoaded({ module }) {
       if (module.info.relativeName !== 'test-party') return;
       // route
-      monkeyRoute(module, 'test/monkey/monkeyee/test', controllerMonkeyer);
+      monkeyRoute(module, 'test/monkey/monkeyee/test', {
+        module: moduleInfo.relativeName,
+        name: 'monkeyer',
+      });
     },
     configLoaded({ module, config }) {
       if (module.info.relativeName !== 'test-party') return;
