@@ -1,8 +1,8 @@
-const version = require('./controller/version.js');
+const validation = require('./controller/validation.js');
 
 module.exports = app => {
   const controllers = {
-    version,
+    validation,
   };
   return controllers;
 };

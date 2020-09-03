@@ -1,6 +1,3 @@
-const version = require('./controller/version.js');
-const auth = require('./controller/auth.js');
-
 module.exports = [
   { method: 'post', path: 'version/update', controller: 'version', middlewares: 'inner' },
   { method: 'post', path: 'version/init', controller: 'version', middlewares: 'inner' },

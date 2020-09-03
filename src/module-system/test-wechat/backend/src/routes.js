@@ -1,6 +1,3 @@
-const version = require('./controller/version.js');
-const test = require('./controller/test.js');
-
 module.exports = app => {
   const routes = [
     // version

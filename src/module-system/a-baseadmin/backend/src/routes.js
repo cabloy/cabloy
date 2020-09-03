@@ -1,11 +1,3 @@
-const version = require('./controller/version.js');
-const role = require('./controller/role.js');
-const user = require('./controller/user.js');
-const atomRight = require('./controller/atomRight.js');
-const functionRight = require('./controller/functionRight.js');
-const auth = require('./controller/auth.js');
-const _function = require('./controller/function.js');
-
 module.exports = app => {
   const routes = [
     // version
@@ -52,10 +44,10 @@ module.exports = app => {
     { method: 'post', path: 'auth/item', controller: 'auth', meta: { right: { type: 'function', name: 'auth' } } },
     { method: 'post', path: 'auth/save', controller: 'auth', meta: { right: { type: 'function', name: 'auth' } } },
     // function
-    { method: 'post', path: 'function/scenesLoad', controller: '_function', meta: { right: { type: 'function', name: 'menu' } } },
-    { method: 'post', path: 'function/scenesSaveSortings', controller: '_function', meta: { right: { type: 'function', name: 'menu' } } },
-    { method: 'post', path: 'function/sceneItemsLoad', controller: '_function', meta: { right: { type: 'function', name: 'menu' } } },
-    { method: 'post', path: 'function/sceneItemsSaveSortings', controller: '_function', meta: { right: { type: 'function', name: 'menu' } } },
+    { method: 'post', path: 'function/scenesLoad', controller: 'function', meta: { right: { type: 'function', name: 'menu' } } },
+    { method: 'post', path: 'function/scenesSaveSortings', controller: 'function', meta: { right: { type: 'function', name: 'menu' } } },
+    { method: 'post', path: 'function/sceneItemsLoad', controller: 'function', meta: { right: { type: 'function', name: 'menu' } } },
+    { method: 'post', path: 'function/sceneItemsSaveSortings', controller: 'function', meta: { right: { type: 'function', name: 'menu' } } },
   ];
   return routes;
 };

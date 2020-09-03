@@ -1,6 +1,3 @@
-const user = require('./controller/user.js');
-const public2 = require('./controller/public.js');
-
 module.exports = app => {
   const routes = [
     // user
@@ -21,7 +18,7 @@ module.exports = app => {
     { method: 'post', path: 'user/themeLoad', controller: 'user' },
     { method: 'post', path: 'user/themeSave', controller: 'user' },
     // public
-    { method: 'post', path: 'public/profile', controller: 'public2' },
+    { method: 'post', path: 'public/profile', controller: 'public' },
   ];
   return routes;
 };

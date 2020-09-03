@@ -1,6 +1,3 @@
-const version = require('./controller/version.js');
-const test = require('./controller/test.js');
-
 const _sceneAll = 'dingtalk,dingtalkweb,dingtalkadmin,dingtalkmini';
 
 module.exports = app => {

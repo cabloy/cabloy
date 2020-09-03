@@ -1,6 +1,3 @@
-const version = require('./controller/version.js');
-const progress = require('./controller/progress.js');
-
 module.exports = app => {
   const routes = [
     // version

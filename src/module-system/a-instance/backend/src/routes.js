@@ -1,6 +1,3 @@
-const version = require('./controller/version.js');
-const instance = require('./controller/instance.js');
-
 module.exports = [
   // version
   { method: 'post', path: 'version/update', controller: 'version', middlewares: 'inner' },

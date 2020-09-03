@@ -1,8 +1,8 @@
-const version = require('./controller/version.js');
+const hook = require('./controller/hook.js');
 
 module.exports = app => {
   const controllers = {
-    version,
+    hook,
   };
   return controllers;
 };

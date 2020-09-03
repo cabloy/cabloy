@@ -1,6 +1,3 @@
-const version = require('./controller/version.js');
-const test = require('./controller/test.js');
-
 const _sceneAll = 'wxwork,wxworkweb,wxworkmini';
 
 module.exports = app => {
