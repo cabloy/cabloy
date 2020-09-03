@@ -10,7 +10,7 @@ module.exports = app => {
       const b = 4;
       let res;
 
-      // // app.bean
+      // app.bean
       assert.equal(app.bean['test-party.test.app'], app.bean['test-party.test.app']);
 
       res = app.bean['test-party.test.app'].actionSync({ a, b });
