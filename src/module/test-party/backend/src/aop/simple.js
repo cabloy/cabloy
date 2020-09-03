@@ -1,5 +1,14 @@
+class simpleAopBase {
+
+  actionSync(context, next) {
+    next();
+    context.result = `${context.result}:simpleaop`;
+  }
+
+}
+
 module.exports = ctx => {
-  class simpleAop {
+  class simpleAop extends simpleAopBase {
 
     get__name(context, next) {
       next();
@@ -14,11 +23,6 @@ module.exports = ctx => {
       }
       context.value = parts.join(':');
       next();
-    }
-
-    actionSync(context, next) {
-      next();
-      context.result = `${context.result}:simpleaop`;
     }
 
     async actionAsync(context, next) {

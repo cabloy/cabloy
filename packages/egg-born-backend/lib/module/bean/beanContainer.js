@@ -74,7 +74,8 @@ module.exports = (app, ctx) => {
       const self = this;
       return new Proxy(beanInstance, {
         get(target, prop, receiver) {
-          const descriptor = Object.getOwnPropertyDescriptor(target.__proto__, prop);
+          const descriptor = __getPropertyDescriptor(target, prop);
+          if (!descriptor) throw new Error(`property not found: ${beanFullName}.${prop}`);
           // get prop
           if (descriptor.get) {
             const methodName = `get__${prop}`;
@@ -224,6 +225,16 @@ module.exports = (app, ctx) => {
   });
 
 };
+
+function __getPropertyDescriptor(obj, prop) {
+  let proto = obj.__proto__;
+  while (proto) {
+    const descriptor = Object.getOwnPropertyDescriptor(proto, prop);
+    if (descriptor) return descriptor;
+    proto = proto.__proto__;
+  }
+  return null;
+}
 
 function __aopMatch(match, beanFullName) {
   if (!Array.isArray(match)) return (typeof match === 'string' && match === beanFullName) || (is.regExp(match) && match.test(beanFullName));

@@ -1,4 +1,4 @@
-class classBean {
+class classBeanBase {
 
   constructor(ctx) {
     this.ctx = ctx;
@@ -7,6 +7,10 @@ class classBean {
   actionSync({ a, b }) {
     return a + b;
   }
+
+}
+
+class classBean extends classBeanBase {
 
   async actionAsync({ a, b }) {
     return Promise.resolve(a + b);
