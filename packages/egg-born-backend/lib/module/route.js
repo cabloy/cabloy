@@ -1,5 +1,4 @@
 const is = require('is-type-of');
-const co = require('co');
 const extend = require('extend2');
 const pathMatching = require('egg-path-matching');
 const util = require('./util.js');
@@ -29,15 +28,20 @@ module.exports = function(loader, modules) {
         args.push(typeof route.path === 'string' ? util.combineFetchPath(info, route.path) : route.path);
 
         // constroller
-        let Controller;
+        let controllerBeanFullName;
         let _route;
         if (route.controller) {
-          Controller = route.controller(loader.app);
+          // if (is.function(route.controller)) throw new Error(`Controller should be bean: ${info.relativeName}.${route.controller(loader.app).name}`);
+          if (typeof route.controller === 'string') {
+            controllerBeanFullName = `${info.relativeName}.controller.${route.controller}`;
+          } else {
+            controllerBeanFullName = `${route.controller.module || info.relativeName}.controller.${route.controller.name}`;
+          }
           // _route
           _route = {
             pid: info.pid,
             module: info.name,
-            controller: Controller.name.replace(/Controller$/g, '').replace(/^\S/, function(s) { return s.toLowerCase(); }),
+            controller: route.controller,
             action: route.action || route.path.substr(route.path.lastIndexOf('/') + 1),
           };
         }
@@ -90,7 +94,7 @@ module.exports = function(loader, modules) {
         // controller
         if (route.controller) {
           // middleware controller
-          args.push(methodToMiddleware(Controller, _route));
+          args.push(methodToMiddleware(controllerBeanFullName, _route));
         }
 
         // load
@@ -179,19 +183,9 @@ function middlewareDeps(ctx, options) {
   return deps.every(key => ctx[MWSTATUS][key] !== false);
 }
 
-function methodToMiddleware(Controller, _route) {
+function methodToMiddleware(controllerBeanFullName, _route) {
   return function classControllerMiddleware(...args) {
-    const controller = new Controller(this);
-    if (!this.app.config.controller || !this.app.config.controller.supportParams) {
-      args = [ this ];
-    }
-    return callController(controller[_route.action], args, controller);
+    const controller = this.bean._getBean(controllerBeanFullName);
+    return controller[_route.action](...args);
   };
-}
-
-async function callController(fn, args, ctx) {
-  args = args || [];
-  if (!is.function(fn)) return;
-  if (is.generatorFunction(fn)) fn = co.wrap(fn);
-  return ctx ? fn.call(ctx, ...args) : fn(...args);
 }

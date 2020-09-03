@@ -8,8 +8,12 @@ const constants = require('./config/constants.js');
 // eslint-disable-next-line
 module.exports = app => {
 
+  // controllers
+  const controllers = require('./controllers.js')(app);
+
   return {
     routes,
+    controllers,
     services,
     config,
     locales,

@@ -1,6 +1,7 @@
 const loadMeta = require('./meta.js');
 const loadModules = require('./module.js');
 const loadRoutes = require('./route.js');
+const loadControllers = require('./controller.js');
 const loadServices = require('./service.js');
 const loadModels = require('./model.js');
 const loadConfig = require('./config.js');
@@ -35,6 +36,7 @@ module.exports = function(loader) {
     loadConstants(loader, modules);
     loadBeans(loader, modules);
     loadRoutes(loader, modules);
+    loadControllers(loader, modules);
     loadServices(loader, modules);
     loadModels(loader, modules);
     loadRedis(loader, modules);
