@@ -2,19 +2,15 @@ const require3 = require('require3');
 const mparse = require3('egg-born-mparse').default;
 const extend = require3('extend2');
 const uuid = require3('uuid');
-const utils = require('../../../common/utils.js');
+const utils = require('../common/utils.js');
 
-const Fn = module.exports = ctx => {
+module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class Captcha {
+  class Captcha extends ctx.app.meta.BeanModuleBase {
 
     constructor(moduleName) {
+      super(ctx, 'captcha');
       this.moduleName = moduleName || ctx.module.info.relativeName;
-    }
-
-    // other module's captcha
-    module(moduleName) {
-      return new (Fn(ctx))(moduleName);
     }
 
     async getProvider({ module, sceneName }) {

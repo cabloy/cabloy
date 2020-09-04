@@ -4,13 +4,9 @@ module.exports = appInfo => {
 
   // middlewares
   config.middlewares = {
-    captcha: {
-      global: false,
-      dependencies: 'auth,cachedb',
-    },
     captchaVerify: {
       global: false,
-      dependencies: 'auth,cachedb',
+      dependencies: 'auth',
     },
   };
 
