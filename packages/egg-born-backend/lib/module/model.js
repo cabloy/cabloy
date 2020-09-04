@@ -22,23 +22,6 @@ module.exports = function(loader, modules) {
     };
   }
 
-  function defineProperty(modelContainer, context, key, value) {
-    Object.defineProperty(context, 'service', {
-      get() {
-        let service = context[SERVICEPROXY];
-        if (!service) {
-          service = context[SERVICEPROXY] = new Proxy({}, {
-            get(obj, prop) {
-              const beanName = `service.${prop}`;
-              return context.bean._getBean(context.module.info.relativeName, beanName);
-            },
-          });
-        }
-        return service;
-      },
-    });
-  }
-
   function createModelContainer(context, relativeName) {
     // base
     const modelContainer = new (ModelClass(loader.app))(context, { table: null });

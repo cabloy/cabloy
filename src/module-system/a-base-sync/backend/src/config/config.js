@@ -4,25 +4,18 @@ module.exports = appInfo => {
 
   // middlewares
   config.middlewares = {
-    util: {
-      global: true,
-    },
     cors: {
       global: true,
       dependencies: 'instance',
     },
-    base: {
-      global: true,
-      dependencies: 'util,instance,event',
-    },
     auth: {
       global: true,
-      dependencies: 'base,sequence',
+      dependencies: 'instance',
       ignore: /\/version\/(update|init|test)/,
     },
     right: {
       global: true,
-      dependencies: 'auth,validation',
+      dependencies: 'auth',
     },
     jsonp: {
       global: false,

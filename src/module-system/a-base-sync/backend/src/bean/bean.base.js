@@ -1,7 +1,7 @@
 const path = require('path');
 const require3 = require('require3');
 const fse = require3('fs-extra');
-const constants = require('../../constants.js');
+const constants = require('../config/constants.js');
 
 const _modulesLocales = {};
 const _themesLocales = {};
@@ -17,17 +17,13 @@ const _widgets = {};
 const _sections = {};
 const _buttons = {};
 
-const Fn = module.exports = ctx => {
+module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class Base {
+  class Base extends ctx.app.meta.BeanModuleBase {
 
     constructor(moduleName) {
+      super(ctx, 'base');
       this.moduleName = moduleName || ctx.module.info.relativeName;
-    }
-
-    // other module's base
-    module(moduleName) {
-      return new (Fn(ctx))(moduleName);
     }
 
     get host() {

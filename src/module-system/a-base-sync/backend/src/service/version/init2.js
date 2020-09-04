@@ -12,7 +12,7 @@ module.exports = function(ctx) {
       // role includes
       await this._roleIncludes(roleIds);
       // build
-      await ctx.meta.role.setDirty(true);
+      await ctx.bean.role.setDirty(true);
       // users
       await this._initUsers(roleIds, options);
     }
@@ -25,7 +25,7 @@ module.exports = function(ctx) {
       for (const roleName of ctx.constant.systemRoles) {
         const role = extend(true, {}, initData.roles[roleName]);
         role.roleIdParent = roleIds[role.roleIdParent];
-        roleIds[roleName] = await ctx.meta.role.add(role);
+        roleIds[roleName] = await ctx.bean.role.add(role);
       }
       return roleIds;
     }
@@ -33,7 +33,7 @@ module.exports = function(ctx) {
     // role includes
     async _roleIncludes(roleIds) {
       for (const item of initData.includes) {
-        await ctx.meta.role.addRoleInc({ roleId: roleIds[item.from], roleIdInc: roleIds[item.to] });
+        await ctx.bean.role.addRoleInc({ roleId: roleIds[item.from], roleIdInc: roleIds[item.to] });
       }
     }
 
@@ -43,13 +43,13 @@ module.exports = function(ctx) {
       const userRoot = extend(true, {}, initData.users.root);
       userRoot.item.email = options.email;
       userRoot.item.mobile = options.mobile;
-      const userId = await ctx.meta.user.add(userRoot.item);
+      const userId = await ctx.bean.user.add(userRoot.item);
       // activated
-      await ctx.meta.user.save({
+      await ctx.bean.user.save({
         user: { id: userId, activated: 1 },
       });
       // user->role
-      await ctx.meta.role.addUserRole({
+      await ctx.bean.role.addUserRole({
         userId,
         roleId: roleIds[userRoot.roleId],
       });

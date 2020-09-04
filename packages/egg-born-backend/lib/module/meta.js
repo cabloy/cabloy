@@ -3,6 +3,7 @@ const mparse = require('egg-born-mparse').default;
 const util = require('./util.js');
 const ModelClass = require('../base/model.js');
 const BeanBaseClass = require('./bean/beanBase.js');
+const BeanModuleBaseClass = require('./bean/beanModuleBase.js');
 
 module.exports = function(loader) {
 
@@ -34,6 +35,9 @@ module.exports = function(loader) {
 
   // BeanBase
   meta.BeanBase = BeanBaseClass;
+
+  // BeanModuleBase
+  meta.BeanModuleBase = BeanModuleBaseClass;
 
   return meta;
 };

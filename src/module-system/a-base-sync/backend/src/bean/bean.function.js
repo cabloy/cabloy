@@ -1,50 +1,30 @@
-const modelFn = require('../../../model/function.js');
-const modelFunctionStarFn = require('../../../model/functionStar.js');
-const modelFunctionLocaleFn = require('../../../model/functionLocale.js');
-const modelFunctionSceneFn = require('../../../model/functionScene.js');
-const sqlProcedureFn = require('../../sql/procedure.js');
-
-const Fn = module.exports = ctx => {
+module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class Function {
+  class Function extends ctx.app.meta.BeanModuleBase {
 
     constructor(moduleName) {
+      super(ctx, 'function');
       this.moduleName = moduleName || ctx.module.info.relativeName;
-      this._model = null;
-      this._modelFunctionStar = null;
-      this._modelFunctionLocale = null;
-      this._modelFunctionScene = null;
-      this._sqlProcedure = null;
-    }
-
-    // other module's menu
-    module(moduleName) {
-      return new (Fn(ctx))(moduleName);
     }
 
     get model() {
-      if (!this._model) this._model = new (modelFn(ctx.app))(ctx);
-      return this._model;
+      return ctx.model.module(moduleInfo.relativeName).function;
     }
 
     get modelFunctionStar() {
-      if (!this._modelFunctionStar) this._modelFunctionStar = new (modelFunctionStarFn(ctx.app))(ctx);
-      return this._modelFunctionStar;
+      return ctx.model.module(moduleInfo.relativeName).functionStar;
     }
 
     get modelFunctionLocale() {
-      if (!this._modelFunctionLocale) this._modelFunctionLocale = new (modelFunctionLocaleFn(ctx.app))(ctx);
-      return this._modelFunctionLocale;
+      return ctx.model.module(moduleInfo.relativeName).functionLocale;
     }
 
     get modelFunctionScene() {
-      if (!this._modelFunctionScene) this._modelFunctionScene = new (modelFunctionSceneFn(ctx.app))(ctx);
-      return this._modelFunctionScene;
+      return ctx.model.module(moduleInfo.relativeName).functionScene;
     }
 
     get sqlProcedure() {
-      if (!this._sqlProcedure) this._sqlProcedure = new (sqlProcedureFn(ctx))();
-      return this._sqlProcedure;
+      return ctx._getBean(moduleInfo.relativeName, 'local.procedure');
     }
 
     // list

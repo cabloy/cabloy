@@ -1,64 +1,38 @@
-const modelFn = require('../../../model/role.js');
-const modelRoleIncFn = require('../../../model/roleInc.js');
-const modelUserRoleFn = require('../../../model/userRole.js');
-const modelRoleRightFn = require('../../../model/roleRight.js');
-const modelRoleRightRefFn = require('../../../model/roleRightRef.js');
-const modelFunctionFn = require('../../../model/function.js');
-const modelRoleFunctionFn = require('../../../model/roleFunction.js');
-
-const Fn = module.exports = ctx => {
+module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class Role {
+  class Role extends ctx.app.meta.BeanModuleBase {
 
     constructor(moduleName) {
+      super(ctx, 'role');
       this.moduleName = moduleName || ctx.module.info.relativeName;
-      this._model = null;
-      this._modelRoleInc = null;
-      this._modelUserRole = null;
-      this._modelRoleRight = null;
-      this._modelRoleRightRef = null;
-      this._modelFunction = null;
-      this._modelRoleFunction = null;
-    }
-
-    // other module's role
-    module(moduleName) {
-      return new (Fn(ctx))(moduleName);
     }
 
     get model() {
-      if (!this._model) this._model = new (modelFn(ctx.app))(ctx);
-      return this._model;
+      return ctx.model.module(moduleInfo.relativeName).role;
     }
 
     get modelRoleInc() {
-      if (!this._modelRoleInc) this._modelRoleInc = new (modelRoleIncFn(ctx.app))(ctx);
-      return this._modelRoleInc;
+      return ctx.model.module(moduleInfo.relativeName).roleInc;
     }
 
     get modelUserRole() {
-      if (!this._modelUserRole) this._modelUserRole = new (modelUserRoleFn(ctx.app))(ctx);
-      return this._modelUserRole;
+      return ctx.model.module(moduleInfo.relativeName).userRole;
     }
 
     get modelRoleRight() {
-      if (!this._modelRoleRight) this._modelRoleRight = new (modelRoleRightFn(ctx.app))(ctx);
-      return this._modelRoleRight;
+      return ctx.model.module(moduleInfo.relativeName).roleRight;
     }
 
     get modelRoleRightRef() {
-      if (!this._modelRoleRightRef) this._modelRoleRightRef = new (modelRoleRightRefFn(ctx.app))(ctx);
-      return this._modelRoleRightRef;
+      return ctx.model.module(moduleInfo.relativeName).roleRightRef;
     }
 
     get modelFunction() {
-      if (!this._modelFunction) this._modelFunction = new (modelFunctionFn(ctx.app))(ctx);
-      return this._modelFunction;
+      return ctx.model.module(moduleInfo.relativeName).function;
     }
 
     get modelRoleFunction() {
-      if (!this._modelRoleFunction) this._modelRoleFunction = new (modelRoleFunctionFn(ctx.app))(ctx);
-      return this._modelRoleFunction;
+      return ctx.model.module(moduleInfo.relativeName).roleFunction;
     }
 
     async get(where) {

@@ -1,64 +1,41 @@
 const require3 = require('require3');
 const mparse = require3('egg-born-mparse').default;
-const modelAtomFn = require('../../../model/atom.js');
-const modelAtomStarFn = require('../../../model/atomStar.js');
-const modelAtomLabelFn = require('../../../model/atomLabel.js');
-const modelAtomLabelRefFn = require('../../../model/atomLabelRef.js');
-const sqlProcedureFn = require('../../sql/procedure.js');
 
-const Fn = module.exports = ctx => {
+module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class Atom {
+  class Atom extends ctx.app.meta.BeanModuleBase {
 
     constructor(moduleName) {
+      super(ctx, 'atom');
       this.moduleName = moduleName || ctx.module.info.relativeName;
-      this._atomClass = null;
-      this._modelAtom = null;
-      this._modelAtomStar = null;
-      this._modelAtomLabel = null;
-      this._modelAtomLabelRef = null;
-      this._sequence = null;
-      this._sqlProcedure = null;
-    }
-
-    // other module's atom
-    module(moduleName) {
-      return new (Fn(ctx))(moduleName);
     }
 
     get atomClass() {
-      if (!this._atomClass) this._atomClass = ctx.meta.atomClass.module(this.moduleName);
-      return this._atomClass;
+      return ctx.meta.atomClass.module(this.moduleName);
     }
 
     get modelAtom() {
-      if (!this._modelAtom) this._modelAtom = new (modelAtomFn(ctx.app))(ctx);
-      return this._modelAtom;
+      return ctx.model.module(moduleInfo.relativeName).atom;
     }
 
     get modelAtomStar() {
-      if (!this._modelAtomStar) this._modelAtomStar = new (modelAtomStarFn(ctx.app))(ctx);
-      return this._modelAtomStar;
+      return ctx.model.module(moduleInfo.relativeName).atomStar;
     }
 
     get modelAtomLabel() {
-      if (!this._modelAtomLabel) this._modelAtomLabel = new (modelAtomLabelFn(ctx.app))(ctx);
-      return this._modelAtomLabel;
+      return ctx.model.module(moduleInfo.relativeName).atomLabel;
     }
 
     get modelAtomLabelRef() {
-      if (!this._modelAtomLabelRef) this._modelAtomLabelRef = new (modelAtomLabelRefFn(ctx.app))(ctx);
-      return this._modelAtomLabelRef;
+      return ctx.model.module(moduleInfo.relativeName).atomLabelRef;
     }
 
     get sequence() {
-      if (!this._sequence) this._sequence = ctx.meta.sequence.module(moduleInfo.relativeName);
-      return this._sequence;
+      return ctx.meta.sequence.module(moduleInfo.relativeName);
     }
 
     get sqlProcedure() {
-      if (!this._sqlProcedure) this._sqlProcedure = new (sqlProcedureFn(ctx))();
-      return this._sqlProcedure;
+      return ctx._getBean(moduleInfo.relativeName, 'local.procedure');
     }
 
     async getAtomClassId({ module, atomClassName, atomClassIdParent = 0 }) {

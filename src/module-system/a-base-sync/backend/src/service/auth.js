@@ -1,6 +1,5 @@
 const require3 = require('require3');
 const mparse = require3('egg-born-mparse').default;
-const UserFn = require('../config/middleware/adapter/user.js');
 
 module.exports = app => {
 
@@ -68,8 +67,7 @@ module.exports = app => {
 
     async _registerInstanceProvider(subdomain, iid, moduleRelativeName, providerName) {
       // provider of db
-      const user = new (UserFn(this.ctx))();
-      const providerItem = await user.getAuthProvider({
+      const providerItem = await this.ctx.bean.user.getAuthProvider({
         subdomain,
         iid,
         module: moduleRelativeName,

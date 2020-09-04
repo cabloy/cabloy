@@ -1,11 +1,6 @@
 const require3 = require('require3');
 const uuid = require3('uuid');
 
-const modelFn = require('../../../model/user.js');
-const modelAgentFn = require('../../../model/userAgent.js');
-const modelAuthFn = require('../../../model/auth.js');
-const modelAuthProviderFn = require('../../../model/authProvider.js');
-
 const _usersAnonymous = {};
 
 module.exports = ctx => {
@@ -15,32 +10,24 @@ module.exports = ctx => {
   class User {
 
     constructor() {
-      this._model = null;
-      this._modelAgent = null;
-      this._modelAuth = null;
-      this._modelAuthProvider = null;
       this._sequence = null;
       this._config = null;
     }
 
     get model() {
-      if (!this._model) this._model = new (modelFn(ctx.app))(ctx);
-      return this._model;
+      return ctx.model.module(moduleInfo.relativeName).user;
     }
 
     get modelAgent() {
-      if (!this._modelAgent) this._modelAgent = new (modelAgentFn(ctx.app))(ctx);
-      return this._modelAgent;
+      return ctx.model.module(moduleInfo.relativeName).userAgent;
     }
 
     get modelAuth() {
-      if (!this._modelAuth) this._modelAuth = new (modelAuthFn(ctx.app))(ctx);
-      return this._modelAuth;
+      return ctx.model.module(moduleInfo.relativeName).auth;
     }
 
     get modelAuthProvider() {
-      if (!this._modelAuthProvider) this._modelAuthProvider = new (modelAuthProviderFn(ctx.app))(ctx);
-      return this._modelAuthProvider;
+      return ctx.model.module(moduleInfo.relativeName).authProvider;
     }
 
     get sequence() {

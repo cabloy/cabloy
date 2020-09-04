@@ -1,22 +1,14 @@
-const modelFn = require('../../../model/atomClass.js');
-
-const Fn = module.exports = ctx => {
+module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class AtomClass {
+  class AtomClass extends ctx.app.meta.BeanModuleBase {
 
     constructor(moduleName) {
+      super(ctx, 'atomClass');
       this.moduleName = moduleName || ctx.module.info.relativeName;
-      this._model = null;
-    }
-
-    // other module's atomClass
-    module(moduleName) {
-      return new (Fn(ctx))(moduleName);
     }
 
     get model() {
-      if (!this._model) this._model = new (modelFn(ctx.app))(ctx);
-      return this._model;
+      return ctx.model.module(moduleInfo.relativeName).atomClass;
     }
 
     async atomClass(atomClass) {
