@@ -189,14 +189,6 @@ module.exports = app => {
           'a-base:loginInfo': 'loginInfo',
         },
       },
-      hook: {
-        before: [
-          { path: '/test/party/test/feat/hook/echo', route: 'test/feat/hook/echoBefore' },
-        ],
-        after: [
-          { path: '/test/party/test/feat/hook/echo', route: 'test/feat/hook/echoAfter' },
-        ],
-      },
       sequence: {
         providers: {
           test: {

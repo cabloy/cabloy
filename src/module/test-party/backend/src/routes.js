@@ -106,12 +106,7 @@ module.exports = app => {
       // test/feat/socketio
       { method: 'post', path: 'test/feat/socketio/publish', controller: 'testFeatSocketIO', middlewares: '', meta: { auth: { user: true } } },
 
-      // test/feat/hook
-      { method: 'post', path: 'test/feat/hook/echo', controller: 'testFeatHook', middlewares: 'test', meta: { auth: { enable: false } } },
-      { method: 'post', path: 'test/feat/hook/echoBefore', controller: 'testFeatHook', middlewares: 'test', meta: { auth: { enable: false } } },
-      { method: 'post', path: 'test/feat/hook/echoAfter', controller: 'testFeatHook', middlewares: 'test', meta: { auth: { enable: false } } },
-
-      // test/feat/hook
+      // test/feat/instance
       { method: 'post', path: 'test/feat/instance', controller: 'testFeatInstance', middlewares: 'test', meta: { auth: { enable: false } } },
 
       // test/feat/progress

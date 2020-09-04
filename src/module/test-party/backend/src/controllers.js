@@ -26,7 +26,6 @@ const testFeatHttpLog = require('./controller/test/feat/httpLog.js');
 const testFeatStartup = require('./controller/test/feat/startup.js');
 const testFeatSendMail = require('./controller/test/feat/sendMail.js');
 const testFeatSocketIO = require('./controller/test/feat/socketio.js');
-const testFeatHook = require('./controller/test/feat/hook.js');
 const testFeatInstance = require('./controller/test/feat/instance.js');
 const testFeatProgress = require('./controller/test/feat/progress.js');
 const testFeatSequence = require('./controller/test/feat/sequence.js');
@@ -72,7 +71,6 @@ module.exports = app => {
     testFeatStartup,
     testFeatSendMail,
     testFeatSocketIO,
-    testFeatHook,
     testFeatInstance,
     testFeatProgress,
     testFeatSequence,
