@@ -50,7 +50,7 @@ module.exports = ctx => {
             const state = ctx.request.query.state || 'login';
             // code/memberId
             const dingtalkHelper = new (DingtalkHelperFn(ctx))();
-            const api = dingtalkHelper.createDingtalkApi();
+            const api = ctx.bean.dingtalk;
             api.web.default.client.getuserinfo_bycode(loginTmpCode).then(res => {
               const unionid = res.user_info.unionid;
               api.app.selfBuilt.user.getUseridByUnionid(unionid).then(res => {
@@ -98,7 +98,7 @@ module.exports = ctx => {
             const state = ctx.request.query.state || 'login';
             // code/memberId
             const dingtalkHelper = new (DingtalkHelperFn(ctx))();
-            const api = dingtalkHelper.createDingtalkApi();
+            const api = ctx.bean.dingtalk;
             api.admin.client.getSSOUserInfo(null, code).then(res => {
               const memberId = res.user_info.userid;
               dingtalkHelper.verifyAuthUser({

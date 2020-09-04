@@ -1,5 +1,3 @@
-const DingtalkHelperFn = require('../../common/dingtalkHelper.js');
-
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   async function onPush({ ctx, content }) {
@@ -38,9 +36,7 @@ module.exports = app => {
       }
     }
     // send
-    const dingtalkHelper = new (DingtalkHelperFn(ctx))();
-    const api = dingtalkHelper.createDingtalkApi();
-    await api.app.selfBuilt.message.sendMessage(message);
+    await ctx.bean.dingtalk.app.selfBuilt.message.sendMessage(message);
     // done
     return true;
   }

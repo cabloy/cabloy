@@ -48,20 +48,31 @@ module.exports = (app, ctx) => {
     _newBean(beanFullName, ...args) {
       const _beanClass = this._getBeanClass(beanFullName);
       if (!_beanClass) throw new Error(`bean not found: ${beanFullName}`);
-      // instance
+      // class or fn
       const bean = _beanClass.bean;
-      let beanInstance;
-      if (is.function(bean) && !is.class(bean)) {
-        if (_beanClass.mode === 'app') {
-          beanInstance = new (bean(app))(ctx, ...args);
-        } else if (_beanClass.mode === 'ctx') {
-          beanInstance = new (bean(ctx))(...args);
+      let _classOrFn;
+      if (_beanClass.mode === 'app') {
+        _classOrFn = bean;
+      } else if (_beanClass.mode === 'ctx') {
+        if (is.function(bean) && !is.class(bean)) {
+          _classOrFn = bean(ctx);
+        } else {
+          _classOrFn = bean;
         }
-      } else if (is.class(bean)) {
+      }
+      // instance
+      let beanInstance;
+      if (is.function(_classOrFn) && !is.class(_classOrFn)) {
         if (_beanClass.mode === 'app') {
-          beanInstance = new bean(ctx, ...args);
+          beanInstance = _classOrFn(ctx, ...args);
         } else if (_beanClass.mode === 'ctx') {
-          beanInstance = new bean(...args);
+          beanInstance = _classOrFn(...args);
+        }
+      } else if (is.class(_classOrFn)) {
+        if (_beanClass.mode === 'app') {
+          beanInstance = new _classOrFn(ctx, ...args);
+        } else if (_beanClass.mode === 'ctx') {
+          beanInstance = new _classOrFn(...args);
         }
       }
       // no aop

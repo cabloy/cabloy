@@ -114,10 +114,6 @@ module.exports = appInfo => {
 
   // middlewares
   config.middlewares = {
-    dingtalk: {
-      global: false,
-      dependencies: 'instance',
-    },
     inDingtalk: {
       global: false,
       dependencies: 'instance',
