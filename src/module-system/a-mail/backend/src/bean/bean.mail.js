@@ -1,22 +1,14 @@
-const modelMailFn = require('../../../model/mail.js');
-
-const Fn = module.exports = ctx => {
+module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class Mail {
+  class Mail extends ctx.app.meta.BeanModuleBase {
 
     constructor(moduleName) {
+      super(ctx, 'mail');
       this.moduleName = moduleName || ctx.module.info.relativeName;
-      this._modelMail = null;
-    }
-
-    // other module's mail
-    module(moduleName) {
-      return new (Fn(ctx))(moduleName);
     }
 
     get modelMail() {
-      if (!this._modelMail) this._modelMail = new (modelMailFn(ctx.app))(ctx);
-      return this._modelMail;
+      return ctx.model.module(moduleInfo.relativeName).mail;
     }
 
     // send

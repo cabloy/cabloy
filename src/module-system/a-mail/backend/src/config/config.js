@@ -4,10 +4,6 @@ module.exports = appInfo => {
 
   // middlewares
   config.middlewares = {
-    mail: {
-      global: false,
-      dependencies: 'instance',
-    },
   };
 
   // scenes

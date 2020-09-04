@@ -4,10 +4,6 @@ module.exports = appInfo => {
 
   // middlewares
   config.middlewares = {
-    event: {
-      global: true,
-      dependencies: 'instance',
-    },
   };
 
   return config;

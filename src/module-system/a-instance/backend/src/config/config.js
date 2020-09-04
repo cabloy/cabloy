@@ -6,7 +6,7 @@ module.exports = appInfo => {
   config.middlewares = {
     instance: {
       global: true,
-      dependencies: 'appReady,cachemem',
+      dependencies: 'appReady',
       ignore: /\/version\/update$/,
     },
     appReady: {

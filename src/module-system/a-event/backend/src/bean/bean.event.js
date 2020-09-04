@@ -1,4 +1,4 @@
-const Fn = module.exports = ctx => {
+module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
   const __adapter = (context, chain) => {
@@ -11,15 +11,11 @@ const Fn = module.exports = ctx => {
     };
   };
 
-  class Event {
+  class Event extends ctx.app.meta.BeanModuleBase {
 
     constructor(moduleName) {
+      super(ctx, 'event');
       this.moduleName = moduleName || ctx.module.info.relativeName;
-    }
-
-    // other module's event
-    module(moduleName) {
-      return new (Fn(ctx))(moduleName);
     }
 
     async invoke({ module, name, data, result, next }) {
