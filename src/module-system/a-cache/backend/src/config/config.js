@@ -2,19 +2,6 @@
 module.exports = appInfo => {
   const config = {};
 
-  // middlewares
-  config.middlewares = {
-    cachedb: {
-      global: true,
-    },
-    cachemem: {
-      global: true,
-    },
-    cacheredis: {
-      global: true,
-    },
-  };
-
   // queues
   config.queues = {
     cacheDbSet: {

@@ -1,20 +1,16 @@
 const CACHEMEMORY = Symbol.for('APP#__CACHEMEMORY');
 
-const Fn = module.exports = ctx => {
-
-  class CacheMem {
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class CacheMem extends ctx.app.meta.BeanModuleBase {
 
     constructor(moduleName) {
+      super(ctx, `${moduleInfo.relativeName}.local.mem`);
       this.moduleName = moduleName || ctx.module.info.relativeName;
     }
 
     get memory() {
       return ctx.app.geto(CACHEMEMORY).geto(ctx.subdomain).geto(this.moduleName);
-    }
-
-    // other module's cache
-    module(moduleName) {
-      return new (Fn(ctx))(moduleName);
     }
 
     get(name) {

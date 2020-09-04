@@ -1,14 +1,10 @@
-const Fn = module.exports = ctx => {
-  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class RedisDb {
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class RedisDb extends ctx.app.meta.BeanModuleBase {
 
     constructor(moduleName) {
+      super(ctx, `${moduleInfo.relativeName}.local.redis`);
       this.moduleName = moduleName || ctx.module.info.relativeName;
-    }
-
-    // other module's cache
-    module(moduleName) {
-      return new (Fn(ctx))(moduleName);
     }
 
     _getKey(name) {

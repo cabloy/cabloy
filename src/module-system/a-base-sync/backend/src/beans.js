@@ -12,11 +12,12 @@ const beanUtil = require('./bean/bean.util.js');
 
 module.exports = app => {
   const beans = {
+    // local
     'local.procedure': {
       mode: 'ctx',
       bean: localProcedure,
     },
-
+    // global
     atom: {
       mode: 'ctx',
       bean: beanAtom,
