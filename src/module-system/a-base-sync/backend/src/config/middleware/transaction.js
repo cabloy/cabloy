@@ -1,25 +1,26 @@
-module.exports = () => {
-  return async function transaction(ctx, next) {
+module.exports = ctx => {
+  class Middleware {
+    async execute(options, next) {
+      // set flag
+      ctx.dbMeta.transaction = true;
 
-    // set flag
-    ctx.dbMeta.transaction = true;
+      try {
+        // next
+        await next();
 
-    try {
-      // next
-      await next();
-
-      // check if success
-      if (checkIfSucess(ctx)) {
-        await handleTransaction(ctx, true);
-      } else {
+        // check if success
+        if (checkIfSucess(ctx)) {
+          await handleTransaction(ctx, true);
+        } else {
+          await handleTransaction(ctx, false);
+        }
+      } catch (err) {
         await handleTransaction(ctx, false);
+        throw err;
       }
-    } catch (err) {
-      await handleTransaction(ctx, false);
-      throw err;
     }
-
-  };
+  }
+  return Middleware;
 };
 
 function checkIfSucess(ctx) {
