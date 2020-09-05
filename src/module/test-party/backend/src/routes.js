@@ -101,7 +101,7 @@ module.exports = app => {
       { method: 'post', path: 'test/feat/startup/instance', controller: 'testFeatStartup', middlewares: 'inner', meta: { auth: { enable: false } } },
 
       // test/feat/sendMail
-      { method: 'post', path: 'test/feat/sendMail', controller: 'testFeatSendMail', middlewares: 'mail', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/feat/sendMail', controller: 'testFeatSendMail', meta: { auth: { enable: false } } },
 
       // test/feat/socketio
       { method: 'post', path: 'test/feat/socketio/publish', controller: 'testFeatSocketIO', middlewares: '', meta: { auth: { user: true } } },
@@ -110,8 +110,8 @@ module.exports = app => {
       { method: 'post', path: 'test/feat/instance', controller: 'testFeatInstance', middlewares: 'test', meta: { auth: { enable: false } } },
 
       // test/feat/progress
-      { method: 'post', path: 'test/feat/progress', controller: 'testFeatProgress', middlewares: 'progress', meta: { auth: { enable: false } } },
-      { method: 'post', path: 'test/feat/progressInBackground', controller: 'testFeatProgress', middlewares: 'inner,progress', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/feat/progress', controller: 'testFeatProgress', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/feat/progressInBackground', controller: 'testFeatProgress', middlewares: 'inner', meta: { auth: { enable: false } } },
 
       // test/feat/sequence
       { method: 'post', path: 'test/feat/sequence', controller: 'testFeatSequence', middlewares: 'test', meta: { auth: { enable: false } } },

@@ -16,8 +16,8 @@ module.exports = app => {
     { method: 'post', path: 'role/addRoleInc', controller: 'role', meta: { right: { type: 'function', name: 'role' } } },
     { method: 'post', path: 'role/removeRoleInc', controller: 'role', meta: { right: { type: 'function', name: 'role' } } },
     { method: 'post', path: 'role/dirty', controller: 'role', meta: { right: { type: 'function', name: 'role' } } },
-    { method: 'post', path: 'role/build', controller: 'role', middlewares: 'progress', meta: { right: { type: 'function', name: 'role' } } },
-    { method: 'post', path: 'role/buildInBackground', controller: 'role', middlewares: 'inner,progress', meta: { auth: { enable: false } } },
+    { method: 'post', path: 'role/build', controller: 'role', meta: { right: { type: 'function', name: 'role' } } },
+    { method: 'post', path: 'role/buildInBackground', controller: 'role', middlewares: 'inner', meta: { auth: { enable: false } } },
     // user
     { method: 'post', path: 'user/list', controller: 'user', meta: { right: { type: 'function', name: 'user' } } },
     { method: 'post', path: 'user/item', controller: 'user', meta: { right: { type: 'function', name: 'user' } } },
