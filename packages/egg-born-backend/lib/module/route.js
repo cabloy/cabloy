@@ -144,7 +144,7 @@ function wrapMiddlewareApp(key, route, loader) {
 }
 
 function wrapMiddleware(item, route) {
-  const optionsRoute = route.meta ? route.meta[item.key] : null;
+  const optionsRoute = route.meta ? route.meta[item.name] : null;
   const fn = (ctx, next) => {
     // config options
     const config = ctx.config.module(item.module);
@@ -154,8 +154,6 @@ function wrapMiddleware(item, route) {
     // final options
     const options = extend(true, {}, optionsConfig, optionsRoute, optionsDynamic);
     // enable match ignore dependencies
-    console.log(item.name, ctx.url);
-    console.log(options);
     if (options.enable === false || !middlewareMatch(ctx, options) || !middlewareDeps(ctx, options)) {
       ctx[MWSTATUS][item.name] = false;
       return next();
