@@ -1,5 +1,8 @@
-module.exports = (options, app) => {
-  return async (ctx, next) => {
-    await next();
-  };
+module.exports = () => {
+  class Middleware {
+    async execute(options, next) {
+      await next();
+    }
+  }
+  return Middleware;
 };

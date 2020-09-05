@@ -1,8 +1,11 @@
-module.exports = (options, app) => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  return async function inWechat(ctx, next) {
-    if (!ctx.bean.wechat.util.in(options.scene)) return ctx.throw.module(moduleInfo.relativeName, 1001);
-    // next
-    await next();
-  };
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Middleware {
+    async execute(options, next) {
+      if (!ctx.bean.wechat.util.in(options.scene)) return ctx.throw.module(moduleInfo.relativeName, 1001);
+      // next
+      await next();
+    }
+  }
+  return Middleware;
 };

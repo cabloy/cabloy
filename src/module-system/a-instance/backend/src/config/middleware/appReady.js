@@ -19,13 +19,15 @@ async function checkAppReady(app) {
   }
 }
 
-module.exports = (options, app) => {
-  return async function appReady(ctx, next) {
-    if (!ctx.innerAccess && !app.meta.appReady) {
-      await checkAppReady(app);
+module.exports = ctx => {
+  class Middleware {
+    async execute(options, next) {
+      if (!ctx.innerAccess && !ctx.app.meta.appReady) {
+        await checkAppReady(ctx.app);
+      }
+      // next
+      await next();
     }
-
-    // next
-    await next();
-  };
+  }
+  return Middleware;
 };

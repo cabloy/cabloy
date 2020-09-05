@@ -70,7 +70,7 @@ module.exports = function(loader, modules) {
         // middlewares: globals
         ebMiddlewaresGlobal.forEach(key => {
           const item = ebMiddlewares[key];
-          args.push(wrapMiddleware(item, route, loader));
+          args.push(wrapMiddleware(item, route));
         });
 
         // middlewares: route
@@ -81,7 +81,7 @@ module.exports = function(loader, modules) {
             if (is.string(key)) {
               const item = ebMiddlewares[key];
               if (item) {
-                args.push(wrapMiddleware(item, route, loader));
+                args.push(wrapMiddleware(item, route));
               } else {
                 args.push(wrapMiddlewareApp(key, route, loader));
               }
@@ -134,8 +134,7 @@ function wrapMiddlewareApp(key, route, loader) {
   try {
     const middleware = loader.app.middlewares[key];
     const optionsRoute = route.meta ? route.meta[key] : null;
-    const options = optionsRoute ? extend(true, {}, loader.app.config.mws[key], optionsRoute) : loader.app.config.mws[key];
-    const mw = middleware(options, loader.app);
+    const mw = middleware(optionsRoute, loader.app);
     mw._name = key;
     return mw;
   } catch (err) {
@@ -144,28 +143,28 @@ function wrapMiddlewareApp(key, route, loader) {
   }
 }
 
-function wrapMiddleware(item, route, loader) {
+function wrapMiddleware(item, route) {
   const optionsRoute = route.meta ? route.meta[item.key] : null;
-  const options = optionsRoute ? extend(true, {}, item.options, optionsRoute) : item.options;
-  const mw = item.middleware(options, loader.app);
-  mw._name = item.key;
-  return wrapMiddleware2(mw, options);
-}
-
-function wrapMiddleware2(mw, options) {
   const fn = (ctx, next) => {
+    // config options
+    const config = ctx.config.module(item.module);
+    const optionsConfig = config.middlewares ? config.middlewares[item.name] : null;
     // dynamic options
-    const optionsDynamic = ctx.meta.middlewares[mw._name];
-    const options2 = optionsDynamic ? extend(true, {}, options, optionsDynamic) : options;
+    const optionsDynamic = ctx.meta.middlewares[item.name];
+    // final options
+    const options = extend(true, {}, optionsConfig, optionsRoute, optionsDynamic);
     // enable match ignore dependencies
-    if (options2.enable === false || !middlewareMatch(ctx, options2) || !middlewareDeps(ctx, options2)) {
-      ctx[MWSTATUS][mw._name] = false;
+    console.log(item.name, ctx.url);
+    console.log(options);
+    if (options.enable === false || !middlewareMatch(ctx, options) || !middlewareDeps(ctx, options)) {
+      ctx[MWSTATUS][item.name] = false;
       return next();
     }
     // run
-    return mw(ctx, next, options2);
+    const bean = ctx.bean._getBean(item.module, `middleware.${item.name}`);
+    return bean.execute(options, next);
   };
-  fn._name = mw._name + 'middlewareWrapper';
+  fn._name = item.name;
   return fn;
 }
 

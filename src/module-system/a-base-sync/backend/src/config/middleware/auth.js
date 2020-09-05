@@ -1,9 +1,11 @@
-module.exports = (options, app) => {
-  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  return async function auth(ctx, next) {
-    // check
-    await ctx.bean.user.check(options);
-    // next
-    await next();
-  };
+module.exports = ctx => {
+  class Middleware {
+    async execute(options, next) {
+      // check
+      await ctx.bean.user.check(options);
+      // next
+      await next();
+    }
+  }
+  return Middleware;
 };

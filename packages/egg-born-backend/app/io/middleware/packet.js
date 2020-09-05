@@ -4,13 +4,13 @@ module.exports = app => {
 
   function loadMiddlewares() {
     const _middlewares = [];
-    app.meta.lookupMiddlewares(function({ options, middleware, key }) {
-      if (options.type === 'socketio.packet') {
-        const mw = middleware(options, app);
-        mw._name = key;
-        _middlewares.push(mw);
-      }
-    });
+
+    // all middlewares
+    const ebMiddlewaresAll = app.meta.middlewares;
+    for (const item of ebMiddlewaresAll) {
+      if (item.options.type !== 'socketio.packet') continue;
+      _middlewares.push(wrapMiddleware(item));
+    }
     return compose(_middlewares);
   }
 
@@ -23,3 +23,17 @@ module.exports = app => {
     await _middlewares(ctx, next);
   };
 };
+
+function wrapMiddleware(item) {
+  const fn = (ctx, next) => {
+    // enable match ignore dependencies
+    if (item.options.enable === false) {
+      return next();
+    }
+    // run
+    const bean = ctx.bean._getBean(item.module, `middleware.${item.name}`);
+    return bean.execute(item.options, next);
+  };
+  fn._name = item.name;
+  return fn;
+}

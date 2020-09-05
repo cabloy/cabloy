@@ -1,46 +1,32 @@
-const extend = require('extend2');
-
 module.exports = function(loader) {
 
   // use modulesArray
   const ebModulesArray = loader.app.meta.modulesArray;
 
-  loader.app.meta.lookupMiddlewares = function(cb) {
-    for (const module of ebModulesArray) {
-      // module middlewares
-      if (module.main.middlewares) {
-        for (const middlewareKey in module.main.middlewares) {
-          const middleware = module.main.middlewares[middlewareKey];
-          const config = loader.app.meta.configs[module.info.relativeName];
-          const middlewareConfig = config.middlewares ? config.middlewares[middlewareKey] : null;
-          const options = extend(true, {}, middlewareConfig, loader.app.config.mws[middlewareKey]);
-          cb({ options, middleware, key: middlewareKey });
-        }
-      }
-    }
-  };
-
   // all middlewares
+  const ebMiddlewaresAll = loader.app.meta.middlewares = [];
   const ebMiddlewares = {};
 
+  // load middlewares all
+  loadMiddlewaresAll(ebMiddlewaresAll, ebModulesArray, loader);
+
   // load middlewares
-  const ebMiddlewaresGlobal = loadMiddlewares(ebMiddlewares, loader);
+  const ebMiddlewaresGlobal = loadMiddlewares(ebMiddlewares, ebMiddlewaresAll);
 
   return [ ebMiddlewares, ebMiddlewaresGlobal ];
 };
 
-
-function loadMiddlewares(ebMiddlewares, loader) {
+function loadMiddlewares(ebMiddlewares, ebMiddlewaresAll) {
   const globals = [];
 
   // load
-  loader.app.meta.lookupMiddlewares(function({ options, middleware, key }) {
+  for (const item of ebMiddlewaresAll) {
     // ignore other types, such as: socketio.connection/socketio.packet
-    if (!options.type) {
-      ebMiddlewares[key] = { options, middleware, key };
-      if (options.global) globals.push(key);
+    if (!item.options.type) {
+      ebMiddlewares[item.name] = item;
+      if (item.options.global) globals.push(item.name);
     }
-  });
+  }
 
   // global order
   // eslint-disable-next-line
@@ -49,6 +35,26 @@ function loadMiddlewares(ebMiddlewares, loader) {
   }
 
   return globals;
+}
+
+function loadMiddlewaresAll(ebMiddlewaresAll, ebModulesArray, loader) {
+  for (const module of ebModulesArray) {
+    if (!module.main.middlewares) continue;
+    const config = loader.app.meta.configs[module.info.relativeName];
+    for (const middlewareKey in module.main.middlewares) {
+      // register bean
+      const beanName = `middleware.${middlewareKey}`;
+      const bean = {
+        mode: 'ctx',
+        bean: module.main.middlewares[middlewareKey],
+      };
+      loader.app.bean._register(module.info.relativeName, beanName, bean);
+      // options
+      const options = (config.middlewares ? config.middlewares[middlewareKey] : null) || {};
+      // push
+      ebMiddlewaresAll.push({ options, module: module.info.relativeName, name: middlewareKey });
+    }
+  }
 }
 
 function swap(ebMiddlewares, globals) {

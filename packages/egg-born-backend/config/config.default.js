@@ -69,10 +69,6 @@ module.exports = appInfo => {
     overwrite: true,
   };
 
-  // middlewares
-  config.mws = {
-  };
-
   // model
   config.model = {
     disableDeleted: false,

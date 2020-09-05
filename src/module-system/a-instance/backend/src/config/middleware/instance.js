@@ -7,64 +7,67 @@ const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yel
 
 const regexURL_resetCache = /\/a\/instance\/instance\/broadcast\/resetCache/;
 
-module.exports = (options, app) => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  return async function instance(ctx, next) {
-    // cache
-    const cacheMem = ctx.cache.mem.module(moduleInfo.relativeName);
-    let instance = regexURL_resetCache.test(ctx.url) ? null : cacheMem.get('instance');
-    if (!instance) {
-      instance = await ctx.db.get('aInstance', { name: ctx.subdomain });
-      if (instance) {
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Middleware {
+    async execute(options, next) {
+      // cache
+      const cacheMem = ctx.cache.mem.module(moduleInfo.relativeName);
+      let instance = regexURL_resetCache.test(ctx.url) ? null : cacheMem.get('instance');
+      if (!instance) {
+        instance = await ctx.db.get('aInstance', { name: ctx.subdomain });
+        if (instance) {
         // config
-        instance.config = JSON.parse(instance.config) || {};
-        // cache configs
-        const instanceConfigs = extend(true, {}, ctx.app.meta.configs, instance.config);
-        cacheMem.set('instanceConfigs', instanceConfigs);
-        // cache instance
-        cacheMem.set('instance', instance);
+          instance.config = JSON.parse(instance.config) || {};
+          // cache configs
+          const instanceConfigs = extend(true, {}, ctx.app.meta.configs, instance.config);
+          cacheMem.set('instanceConfigs', instanceConfigs);
+          // cache instance
+          cacheMem.set('instance', instance);
+        }
       }
-    }
 
-    // try to save host/protocol to config
-    if (instance && !instance.disabled && ctxHostValid(ctx)) {
-      if (!instance.config['a-base']) instance.config['a-base'] = {};
-      const aBase = instance.config['a-base'];
-      if (aBase.host !== ctx.host || aBase.protocol !== ctx.protocol) {
-        aBase.host = ctx.host;
-        aBase.protocol = ctx.protocol;
-        // update
-        await ctx.db.update('aInstance', {
-          id: instance.id,
-          config: JSON.stringify(instance.config) });
-        // broadcast
-        ctx.app.meta.broadcast.emit({
-          subdomain: ctx.subdomain,
-          module: 'a-instance',
-          broadcastName: 'resetCache',
-          data: null,
-        });
+      // try to save host/protocol to config
+      if (instance && !instance.disabled && ctxHostValid(ctx)) {
+        if (!instance.config['a-base']) instance.config['a-base'] = {};
+        const aBase = instance.config['a-base'];
+        if (aBase.host !== ctx.host || aBase.protocol !== ctx.protocol) {
+          aBase.host = ctx.host;
+          aBase.protocol = ctx.protocol;
+          // update
+          await ctx.db.update('aInstance', {
+            id: instance.id,
+            config: JSON.stringify(instance.config) });
+          // broadcast
+          ctx.app.meta.broadcast.emit({
+            subdomain: ctx.subdomain,
+            module: 'a-instance',
+            broadcastName: 'resetCache',
+            data: null,
+          });
+        }
       }
-    }
 
-    if (!ctx.innerAccess && (!instance || instance.disabled)) {
-      // prompt
-      if (!instance && ctx.app.meta.isLocal) {
-        const urlInfo = ctx.locale === 'zh-cn' ? 'https://cabloy.com/zh-cn/articles/multi-instance.html' : 'https://cabloy.com/articles/multi-instance.html';
-        let message = `Please add instance in ${chalk.keyword('cyan')('src/backend/config/config.local.js')}`;
-        message += '\n' + chalk.keyword('orange')(`{ subdomain: '${ctx.subdomain}', password: '', title: '' }`);
-        message += `\nMore info: ${chalk.keyword('cyan')(urlInfo)}`;
-        console.log('\n' + boxen(message, boxenOptions));
+      if (!ctx.innerAccess && (!instance || instance.disabled)) {
+        // prompt
+        if (!instance && ctx.app.meta.isLocal) {
+          const urlInfo = ctx.locale === 'zh-cn' ? 'https://cabloy.com/zh-cn/articles/multi-instance.html' : 'https://cabloy.com/articles/multi-instance.html';
+          let message = `Please add instance in ${chalk.keyword('cyan')('src/backend/config/config.local.js')}`;
+          message += '\n' + chalk.keyword('orange')(`{ subdomain: '${ctx.subdomain}', password: '', title: '' }`);
+          message += `\nMore info: ${chalk.keyword('cyan')(urlInfo)}`;
+          console.log('\n' + boxen(message, boxenOptions));
+        }
+        // locked
+        ctx.throw(423);
       }
-      // locked
-      ctx.throw(423);
+
+      ctx.instance = instance;
+
+      // next
+      await next();
     }
-
-    ctx.instance = instance;
-
-    // next
-    await next();
-  };
+  }
+  return Middleware;
 };
 
 function ctxHostValid(ctx) {

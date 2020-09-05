@@ -7,21 +7,24 @@
 //   action(atom):
 //   name(function):
 //   module:
-module.exports = (options, app) => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  return async function right(ctx, next) {
-    // ignore
-    if (!options.type) return await next();
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Middleware {
+    async execute(options, next) {
+      // ignore
+      if (!options.type) return await next();
 
-    // atom
-    if (options.type === 'atom') await checkAtom(moduleInfo, options, ctx);
+      // atom
+      if (options.type === 'atom') await checkAtom(moduleInfo, options, ctx);
 
-    // function
-    if (options.type === 'function') await checkFunction(moduleInfo, options, ctx);
+      // function
+      if (options.type === 'function') await checkFunction(moduleInfo, options, ctx);
 
-    // next
-    await next();
-  };
+      // next
+      await next();
+    }
+  }
+  return Middleware;
 };
 
 async function checkAtom(moduleInfo, options, ctx) {

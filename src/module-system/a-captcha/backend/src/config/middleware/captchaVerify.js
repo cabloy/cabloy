@@ -1,23 +1,26 @@
-module.exports = (options2, app) => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  return async function captchaVerify(ctx, next, options) {
-    // must exists
-    const scene = options.scene;
-    const scenes = options.scenes;
-    if (!scene && !scenes) ctx.throw.module(moduleInfo.relativeName, 1001);
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Middleware {
+    async execute(options, next) {
+      // must exists
+      const scene = options.scene;
+      const scenes = options.scenes;
+      if (!scene && !scenes) ctx.throw.module(moduleInfo.relativeName, 1001);
 
-    // scene
-    if (scene) {
-      await sceneVerify({ ctx, scene });
-    } else if (scenes) {
-      for (const scene of scenes) {
+      // scene
+      if (scene) {
         await sceneVerify({ ctx, scene });
+      } else if (scenes) {
+        for (const scene of scenes) {
+          await sceneVerify({ ctx, scene });
+        }
       }
-    }
 
-    // next
-    await next();
-  };
+      // next
+      await next();
+    }
+  }
+  return Middleware;
 };
 
 async function sceneVerify({ ctx, scene }) {
