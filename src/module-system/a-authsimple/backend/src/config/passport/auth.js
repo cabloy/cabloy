@@ -5,9 +5,9 @@ module.exports = app => {
   async function verify(ctx, body) {
     const { auth, password, rememberMe } = body.data;
     // validate
-    await ctx.meta.validation.validate({ validator: 'signin', data: body.data });
+    await ctx.bean.validation.validate({ validator: 'signin', data: body.data });
     // exists
-    const user = await ctx.meta.user.exists({ userName: auth, email: auth, mobile: auth });
+    const user = await ctx.bean.user.exists({ userName: auth, email: auth, mobile: auth });
     if (!user) return ctx.throw(1001);
     // disabled
     if (user.disabled) return ctx.throw(1002);

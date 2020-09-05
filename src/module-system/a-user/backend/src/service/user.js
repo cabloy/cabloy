@@ -12,40 +12,40 @@ module.exports = app => {
       delete data.email;
       delete data.mobile;
       // save
-      return await this.ctx.meta.user.save({ user: data });
+      return await this.ctx.bean.user.save({ user: data });
     }
 
     async saveAvatar({ data, user }) {
       data.id = user.id;
-      return await this.ctx.meta.user.save({ user: data });
+      return await this.ctx.bean.user.save({ user: data });
     }
 
     async agent({ userId }) {
-      return await this.ctx.meta.user.agent({ userId });
+      return await this.ctx.bean.user.agent({ userId });
     }
 
     async agentsBy({ userId }) {
-      return await this.ctx.meta.user.agentsBy({ userId });
+      return await this.ctx.bean.user.agentsBy({ userId });
     }
 
     async userByMobile({ mobile }) {
-      return await this.ctx.meta.user.exists({ mobile });
+      return await this.ctx.bean.user.exists({ mobile });
     }
 
     async addAgent({ userIdAgent, userId }) {
-      return await this.ctx.meta.user.addAgent({ userIdAgent, userId });
+      return await this.ctx.bean.user.addAgent({ userIdAgent, userId });
     }
 
     async removeAgent({ userIdAgent, userId }) {
-      return await this.ctx.meta.user.removeAgent({ userIdAgent, userId });
+      return await this.ctx.bean.user.removeAgent({ userIdAgent, userId });
     }
 
     async switchAgent({ userIdAgent }) {
-      return await this.ctx.meta.user.switchAgent({ userIdAgent });
+      return await this.ctx.bean.user.switchAgent({ userIdAgent });
     }
 
     async switchOffAgent() {
-      return await this.ctx.meta.user.switchOffAgent();
+      return await this.ctx.bean.user.switchOffAgent();
     }
 
     async authentications({ user }) {
@@ -66,7 +66,7 @@ module.exports = app => {
       // sort
       list.sort((a, b) => ids.findIndex(item => item === a.providerId) - ids.findIndex(item => item === b.providerId));
       // meta
-      const authProviders = this.ctx.meta.base.authProviders();
+      const authProviders = this.ctx.bean.base.authProviders();
       for (const item of list) {
         const key = `${item.module}:${item.providerName}`;
         const authProvider = authProviders[key];
@@ -91,12 +91,12 @@ module.exports = app => {
 
     async themeLoad({ user }) {
       const name = `user-theme:${user.id}`;
-      return await this.ctx.meta.status.get(name);
+      return await this.ctx.bean.status.get(name);
     }
 
     async themeSave({ theme, user }) {
       const name = `user-theme:${user.id}`;
-      await this.ctx.meta.status.set(name, theme);
+      await this.ctx.bean.status.set(name, theme);
     }
 
     _prepareFunctions() {

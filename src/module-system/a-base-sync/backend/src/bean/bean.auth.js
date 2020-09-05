@@ -11,7 +11,7 @@ module.exports = ctx => {
     async echo() {
       try {
         // check
-        await ctx.meta.user.check();
+        await ctx.bean.user.check();
         // logined
         return await this.getLoginInfo();
       } catch (e) {
@@ -26,7 +26,7 @@ module.exports = ctx => {
 
     async logout() {
       await ctx.logout();
-      await ctx.meta.user.loginAsAnonymous();
+      await ctx.bean.user.loginAsAnonymous();
       return await this.getLoginInfo();
     }
 
@@ -38,7 +38,7 @@ module.exports = ctx => {
         config,
       };
       // login info event
-      await ctx.meta.event.invoke({
+      await ctx.bean.event.invoke({
         name: 'loginInfo', data: { info },
       });
       return info;
@@ -62,7 +62,7 @@ module.exports = ctx => {
       };
       // theme
       const themeStatus = `user-theme:${ctx.state.user.agent.id}`;
-      const theme = await ctx.meta.status.module('a-user').get(themeStatus);
+      const theme = await ctx.bean.status.module('a-user').get(themeStatus);
       if (theme) {
         config.theme = theme;
       }

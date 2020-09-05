@@ -13,7 +13,7 @@ module.exports = app => {
       const config = app.meta.configs[module];
       const scheduleConfig = config.schedules[schedule];
       // url
-      const url = this.ctx.meta.util.combinePagePath(module, scheduleConfig.path);
+      const url = this.ctx.bean.util.combinePagePath(module, scheduleConfig.path);
       // performAction
       if (!scheduleConfig.instance) {
         return await this.ctx.performAction({

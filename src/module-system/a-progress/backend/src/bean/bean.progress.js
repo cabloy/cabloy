@@ -101,7 +101,7 @@ module.exports = ctx => {
     }
 
     async _publish({ progressId, ioMessage }) {
-      await ctx.meta.io.publish({
+      await ctx.bean.io.publish({
         path: `/a/progress/update/${progressId}`,
         message: ioMessage,
         messageClass: {

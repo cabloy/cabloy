@@ -92,7 +92,7 @@ module.exports = app => {
 
       // only in development
       if (this.ctx.app.meta.isLocal) {
-        const atomClass = await this.ctx.meta.atomClass.get({ id: category.atomClassId });
+        const atomClass = await this.ctx.bean.atomClass.get({ id: category.atomClassId });
         await this._rebuild({ atomClass, language: category.language });
       }
     }
@@ -155,7 +155,7 @@ module.exports = app => {
       if (this.ctx.app.meta.isLocal) {
         // atomClass
         const item = categoryId ? await this.ctx.model.category.get({ id: categoryId }) : null;
-        const _atomClass = atomClass || await this.ctx.meta.atomClass.get({ id: item.atomClassId });
+        const _atomClass = atomClass || await this.ctx.bean.atomClass.get({ id: item.atomClassId });
         // build site
         this.ctx.service.site.buildLanguageQueue({ atomClass: _atomClass, language: language || item.language });
       }

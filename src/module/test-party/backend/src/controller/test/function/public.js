@@ -14,7 +14,7 @@ module.exports = app => {
       const functionCount = Object.values(this.ctx.module.main.meta.base.functions).filter(item => item.public === 1).length;
 
       // check right function
-      const pass = await this.ctx.meta.function.checkRightFunction({
+      const pass = await this.ctx.bean.function.checkRightFunction({
         function: {
           module: 'test-party',
           name: 'testFunctionPublic',
@@ -24,7 +24,7 @@ module.exports = app => {
       assert.equal(!!pass, true);
 
       // Tom list all
-      const list = await this.ctx.meta.function.list({
+      const list = await this.ctx.bean.function.list({
         options: {
           where: {
             'a.module': 'test-party',

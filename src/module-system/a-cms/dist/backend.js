@@ -161,7 +161,7 @@ module.exports =
         async atomClass2(ctx, atomClass) {
           const _atomClass = this.atomClass(atomClass);
           if (!_atomClass.id) {
-            const res = await ctx.meta.atomClass.get(_atomClass);
+            const res = await ctx.bean.atomClass.get(_atomClass);
             _atomClass.id = res.id;
           }
           return _atomClass;
@@ -229,23 +229,23 @@ module.exports =
 
         async getConfigSite() {
           const name = this.default ? 'config-site' : `config-site:${this.atomClass.module}`;
-          return await this.ctx.meta.status.get(name);
+          return await this.ctx.bean.status.get(name);
         }
 
         async setConfigSite({ data }) {
           const name = this.default ? 'config-site' : `config-site:${this.atomClass.module}`;
-          await this.ctx.meta.status.set(name, data);
+          await this.ctx.bean.status.set(name, data);
         }
 
         async getConfigLanguage({ language }) {
           const name = this.default ? `config-${language}` : `config-${language}:${this.atomClass.module}`;
-          return await this.ctx.meta.status.get(name);
+          return await this.ctx.bean.status.get(name);
         }
 
         async setConfigLanguage({ language, data }) {
           const name = this.default ? `config-${language}` : `config-${language}:${this.atomClass.module}`;
           this._adjustConfigLanguange(data);
-          await this.ctx.meta.status.set(name, data);
+          await this.ctx.bean.status.set(name, data);
         }
 
         async getConfigLanguagePreview({ language }) {
@@ -379,7 +379,7 @@ module.exports =
             // cms or cms.moduleName
             const cmsPathName = this.getCMSPathName();
             const publicDir = this.ctx.app.config.static.prefix;
-            const prefix = this.ctx.meta.base.host ? `${this.ctx.meta.base.protocol}://${this.ctx.meta.base.host}` : '';
+            const prefix = this.ctx.bean.base.host ? `${this.ctx.bean.base.protocol}://${this.ctx.bean.base.host}` : '';
             return `${prefix}${publicDir}${this.ctx.instance.id}/${cmsPathName}/dist`;
           }
           return `${site.host.url}${site.host.rootPath ? '/' + site.host.rootPath : ''}`;
@@ -393,7 +393,7 @@ module.exports =
           return path ? `${urlRoot}/${path}` : urlRoot;
         }
         getServerUrl(path) {
-          return this.ctx.meta.base.getAbsoluteUrl(path);
+          return this.ctx.bean.base.getAbsoluteUrl(path);
         }
 
         async getPathCustom(language) {
@@ -410,11 +410,11 @@ module.exports =
         }
         async getPathCms() {
           // cms
-          return await this.ctx.meta.base.getPath(this.getCMSPathName());
+          return await this.ctx.bean.base.getPath(this.getCMSPathName());
         }
         async getPathRawDist() {
           // cms/dist
-          return await this.ctx.meta.base.getPath(`${this.getCMSPathName()}/dist`);
+          return await this.ctx.bean.base.getPath(`${this.getCMSPathName()}/dist`);
         }
 
         // ///////////////////////////////// render
@@ -474,9 +474,9 @@ module.exports =
 
         async _renderArticles({ site, progressId, progressNo }) {
           // anonymous user
-          const user = await this.ctx.meta.user.anonymous();
+          const user = await this.ctx.bean.user.anonymous();
           // articles
-          const articles = await this.ctx.meta.atom.select({
+          const articles = await this.ctx.bean.atom.select({
             atomClass: this.atomClass,
             options: {
               where: {
@@ -499,7 +499,7 @@ module.exports =
           const mapper = async article => {
             // progress: initialize
             if (progressId) {
-              await this.ctx.meta.progress.update({
+              await this.ctx.bean.progress.update({
                 progressId,
                 progressNo,
                 total: progress1_Total,
@@ -687,7 +687,7 @@ module.exports =
               mtime: new Date(),
             },
           };
-          await this.ctx.meta.io.publish({
+          await this.ctx.bean.io.publish({
             path: `/a/cms/hotloadFile/${hotloadFile}`,
             message,
             messageClass: {
@@ -938,7 +938,7 @@ var env=${JSON.stringify(env, null, 2)};
             for (const language of languages) {
               // progress: language
               if (progressId) {
-                await this.ctx.meta.progress.update({
+                await this.ctx.bean.progress.update({
                   progressId,
                   progressNo,
                   total: progress0_Total,
@@ -958,7 +958,7 @@ var env=${JSON.stringify(env, null, 2)};
             // progress: done
             if (progressId) {
               if (progressNo === 0) {
-                await this.ctx.meta.progress.done({
+                await this.ctx.bean.progress.done({
                   progressId,
                   message: `${this.ctx.text('Time Used')}: ${parseInt(time)}${this.ctx.text('second2')}`,
                 });
@@ -973,7 +973,7 @@ var env=${JSON.stringify(env, null, 2)};
             // error
             if (progressId) {
               if (progressNo === 0) {
-                await this.ctx.meta.progress.error({ progressId, message: err.message });
+                await this.ctx.bean.progress.error({ progressId, message: err.message });
               }
             }
             throw err;
@@ -991,7 +991,7 @@ var env=${JSON.stringify(env, null, 2)};
             let progress0_progress = 0;
             // progress: initialize
             if (progressId) {
-              await this.ctx.meta.progress.update({
+              await this.ctx.bean.progress.update({
                 progressId,
                 progressNo,
                 total: progress0_Total,
@@ -1105,7 +1105,7 @@ var env=${JSON.stringify(env, null, 2)};
 
             // progress: render files
             if (progressId) {
-              await this.ctx.meta.progress.update({
+              await this.ctx.bean.progress.update({
                 progressId,
                 progressNo,
                 total: progress0_Total,
@@ -1124,7 +1124,7 @@ var env=${JSON.stringify(env, null, 2)};
             // progress: done
             if (progressId) {
               if (progressNo === 0) {
-                await this.ctx.meta.progress.done({
+                await this.ctx.bean.progress.done({
                   progressId,
                   message: `${this.ctx.text('Time Used')}: ${parseInt(time)}${this.ctx.text('second2')}`,
                 });
@@ -1139,7 +1139,7 @@ var env=${JSON.stringify(env, null, 2)};
             // error
             if (progressId) {
               if (progressNo === 0) {
-                await this.ctx.meta.progress.error({ progressId, message: err.message });
+                await this.ctx.bean.progress.error({ progressId, message: err.message });
               }
             }
             throw err;
@@ -1896,8 +1896,8 @@ module.exports = appInfo => {
               'a.atomFlag': 2, // published
             });
             // select
-            options.page = this.ctx.meta.util.page(options.page, false);
-            const items = await this.ctx.meta.atom.select({ atomClass, options, user, pageForce: false });
+            options.page = this.ctx.bean.util.page(options.page, false);
+            const items = await this.ctx.bean.atom.select({ atomClass, options, user, pageForce: false });
             // ok
             this.ctx.successMore(items, options.page.index, options.page.size);
           }
@@ -2123,7 +2123,7 @@ module.exports = appInfo => {
             const atomClass = utils.atomClass(this.ctx.request.body.atomClass);
             const language = this.ctx.request.body.language;
             // progress
-            const progressId = await this.ctx.meta.progress.create();
+            const progressId = await this.ctx.bean.progress.create();
             // build
             this.ctx.service.site.buildLanguageQueue({ atomClass, language, progressId });
             this.ctx.success({ progressId });
@@ -2133,7 +2133,7 @@ module.exports = appInfo => {
             // atomClass
             const atomClass = utils.atomClass(this.ctx.request.body.atomClass);
             // progress
-            const progressId = await this.ctx.meta.progress.create();
+            const progressId = await this.ctx.bean.progress.create();
             // build
             this.ctx.service.site.buildLanguagesQueue({ atomClass, progressId });
             this.ctx.success({ progressId });
@@ -2465,7 +2465,7 @@ module.exports = appInfo => {
             });
             const list = res.list;
             // atomClass
-            const atomClass = await this.ctx.meta.atomClass.get({ id: article.atomClassId });
+            const atomClass = await this.ctx.bean.atomClass.get({ id: article.atomClassId });
             // build
             const build = Build.create(this.ctx, atomClass);
             // site
@@ -3002,18 +3002,18 @@ module.exports = appInfo => {
             if (options.version === 1) {
               // create roles: cms-writer cms-publisher to template
               const roles = [ 'cms-writer', 'cms-publisher' ];
-              const roleTemplate = await this.ctx.meta.role.getSystemRole({ roleName: 'template' });
-              const roleSuperuser = await this.ctx.meta.role.getSystemRole({ roleName: 'superuser' });
+              const roleTemplate = await this.ctx.bean.role.getSystemRole({ roleName: 'template' });
+              const roleSuperuser = await this.ctx.bean.role.getSystemRole({ roleName: 'superuser' });
               for (const roleName of roles) {
-                const roleId = await this.ctx.meta.role.add({
+                const roleId = await this.ctx.bean.role.add({
                   roleName,
                   roleIdParent: roleTemplate.id,
                 });
                 // role:superuser include cms-writer cms-publisher
-                await this.ctx.meta.role.addRoleInc({ roleId: roleSuperuser.id, roleIdInc: roleId });
+                await this.ctx.bean.role.addRoleInc({ roleId: roleSuperuser.id, roleIdInc: roleId });
               }
               // build roles
-              await this.ctx.meta.role.setDirty(true);
+              await this.ctx.bean.role.setDirty(true);
 
               // add role rights
               const roleRights = [
@@ -3026,7 +3026,7 @@ module.exports = appInfo => {
                 { roleName: 'cms-publisher', action: 'publish', scopeNames: 'authenticated' },
                 { roleName: 'root', action: 'read', scopeNames: 'authenticated' },
               ];
-              await this.ctx.meta.role.addRoleRightBatch({ atomClassName: 'article', roleRights });
+              await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'article', roleRights });
 
             }
 
@@ -3148,7 +3148,7 @@ module.exports = appInfo => {
 
           async write({ atomClass, key, item, user }) {
             // get atom for safety
-            const atomOld = await this.ctx.meta.atom.read({ key, user });
+            const atomOld = await this.ctx.bean.atom.read({ key, user });
             // if undefined then old
             const fields = [ 'slug', 'editMode', 'content', 'language', 'categoryId', 'sticky', 'keywords', 'description', 'sorting', 'flag', 'extra' ];
             for (const field of fields) {
@@ -3247,7 +3247,7 @@ module.exports = appInfo => {
 
           async delete({ atomClass, key, user }) {
             // get atom for safety
-            const atomOld = await this.ctx.meta.atom.read({ key, user });
+            const atomOld = await this.ctx.bean.atom.read({ key, user });
 
             // delete article
             await this.ctx.model.article.delete({
@@ -3273,16 +3273,16 @@ module.exports = appInfo => {
           async action({ action, atomClass, key, user }) {
             if (action === 101) {
               // get atom for safety
-              const atomOld = await this.ctx.meta.atom.read({ key, user });
+              const atomOld = await this.ctx.bean.atom.read({ key, user });
 
               // change flag
-              await this.ctx.meta.atom.flag({
+              await this.ctx.bean.atom.flag({
                 key,
                 atom: { atomFlag: 2 },
                 user,
               });
               // change flow
-              await this.ctx.meta.atom.flow({
+              await this.ctx.bean.atom.flow({
                 key,
                 atom: { atomFlow: 0 },
                 user,
@@ -3306,7 +3306,7 @@ module.exports = appInfo => {
             // enable
             const atomFlag = atom.atomEnabled ? 1 : 0;
             // change flag
-            await this.ctx.meta.atom.flag({
+            await this.ctx.bean.atom.flag({
               key,
               atom: { atomFlag },
               user,
@@ -3357,12 +3357,12 @@ module.exports = appInfo => {
           async _getArticle({ key, inner }) {
             if (!inner) {
               // check right
-              const roleAnonymous = await this.ctx.meta.role.getSystemRole({ roleName: 'anonymous' });
-              const right = await this.ctx.meta.atom.checkRoleRightRead({ atom: { id: key.atomId }, roleId: roleAnonymous.id });
+              const roleAnonymous = await this.ctx.bean.role.getSystemRole({ roleName: 'anonymous' });
+              const right = await this.ctx.bean.atom.checkRoleRightRead({ atom: { id: key.atomId }, roleId: roleAnonymous.id });
               if (!right) return null;
             }
             // article
-            const article = await this.ctx.meta.atom.read({ key, user: { id: 0 } });
+            const article = await this.ctx.bean.atom.read({ key, user: { id: 0 } });
             if (!article) return null;
             // check language
             if (!article.language) this.ctx.throw(1001);
@@ -3473,7 +3473,7 @@ module.exports = appInfo => {
 
             // only in development
             if (this.ctx.app.meta.isLocal) {
-              const atomClass = await this.ctx.meta.atomClass.get({ id: category.atomClassId });
+              const atomClass = await this.ctx.bean.atomClass.get({ id: category.atomClassId });
               await this._rebuild({ atomClass, language: category.language });
             }
           }
@@ -3536,7 +3536,7 @@ module.exports = appInfo => {
             if (this.ctx.app.meta.isLocal) {
               // atomClass
               const item = categoryId ? await this.ctx.model.category.get({ id: categoryId }) : null;
-              const _atomClass = atomClass || await this.ctx.meta.atomClass.get({ id: item.atomClassId });
+              const _atomClass = atomClass || await this.ctx.bean.atomClass.get({ id: item.atomClassId });
               // build site
               this.ctx.service.site.buildLanguageQueue({ atomClass: _atomClass, language: language || item.language });
             }
@@ -3570,7 +3570,7 @@ module.exports = appInfo => {
 
           async getArticleUrl({ atomClass, key }) {
             if (!atomClass) {
-              atomClass = await this.ctx.meta.atomClass.getByAtomId({ atomId: key.atomId });
+              atomClass = await this.ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
             }
             const build = Build.create(this.ctx, atomClass);
             return await build.getArticleUrl({ key });
@@ -3751,7 +3751,7 @@ module.exports = appInfo => {
             const blocks = this.getBlocks({ locale: this.ctx.locale });
             const block = blocks[blockName];
             // validate
-            await this.ctx.meta.validation.validate({
+            await this.ctx.bean.validation.validate({
               module: block.meta.module,
               validator: block.meta.validator,
               schema: null,
@@ -3774,7 +3774,7 @@ module.exports = appInfo => {
             const stats = {};
 
             // articles
-            stats.articles = await this.ctx.meta.atom.count({
+            stats.articles = await this.ctx.bean.atom.count({
               atomClass,
               options: {
                 where: {
@@ -3785,7 +3785,7 @@ module.exports = appInfo => {
             });
 
             // comments
-            stats.comments = await this.ctx.meta.atom.count({
+            stats.comments = await this.ctx.bean.atom.count({
               atomClass,
               options: {
                 where: {
@@ -4241,7 +4241,7 @@ module.exports = appInfo => {
               // unique slug for language and atomClass
               const ctx = this;
               //   atomClass from atomId
-              const atomClass = await ctx.meta.atomClass.getByAtomId({ atomId: rootData.atomId });
+              const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: rootData.atomId });
               //   read by atomClass, language, slug
               const items = await ctx.model.query(`
           select a.id from aAtom a

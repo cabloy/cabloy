@@ -1069,7 +1069,7 @@ module.exports = appInfo => {
           //    where
           async offset({ messageClass, options, user }) {
             // messageClass
-            messageClass = await ctx.meta.io.messageClass.get(messageClass);
+            messageClass = await ctx.bean.io.messageClass.get(messageClass);
             // where
             const where = (options && options.where) || {};
             where.iid = ctx.instance.id;
@@ -1124,7 +1124,7 @@ module.exports = appInfo => {
 
           async _list({ messageClass, options, user, count }) {
             // messageClass
-            messageClass = await ctx.meta.io.messageClass.get(messageClass);
+            messageClass = await ctx.bean.io.messageClass.get(messageClass);
             // where
             const where = (options && options.where) || {};
             where.messageClassId = messageClass.id;
@@ -1474,7 +1474,7 @@ module.exports = appInfo => {
 
           async select() {
             const options = this.ctx.request.body.options;
-            options.page = this.ctx.meta.util.page(options.page);
+            options.page = this.ctx.bean.util.page(options.page);
             const items = await this.ctx.service.message.select({
               messageClass: this.ctx.request.body.messageClass,
               options,
@@ -1632,31 +1632,31 @@ module.exports = appInfo => {
         class IO extends app.Service {
 
           async subscribe({ subscribes, socketId, user }) {
-            return await this.ctx.meta.io.subscribe({ subscribes, socketId, user });
+            return await this.ctx.bean.io.subscribe({ subscribes, socketId, user });
           }
 
           async unsubscribe({ subscribes, user }) {
-            return await this.ctx.meta.io.unsubscribe({ subscribes, user });
+            return await this.ctx.bean.io.unsubscribe({ subscribes, user });
           }
 
           async queueSaveMessage({ path, options, message, messageClass }) {
-            return await this.ctx.meta.io.queueSaveMessage({ path, options, message, messageClass });
+            return await this.ctx.bean.io.queueSaveMessage({ path, options, message, messageClass });
           }
 
           async queueProcess({ path, options, message, messageClass }) {
-            return await this.ctx.meta.io.queueProcess({ path, options, message, messageClass });
+            return await this.ctx.bean.io.queueProcess({ path, options, message, messageClass });
           }
 
           async queueDelivery({ path, options, message, messageSyncs, messageClass }) {
-            return await this.ctx.meta.io.queueDelivery({ path, options, message, messageSyncs, messageClass });
+            return await this.ctx.bean.io.queueDelivery({ path, options, message, messageSyncs, messageClass });
           }
 
           async queuePush({ options, message, messageSyncs, messageSync, messageClass }) {
-            return await this.ctx.meta.io.queuePush({ options, message, messageSyncs, messageSync, messageClass });
+            return await this.ctx.bean.io.queuePush({ options, message, messageSyncs, messageSync, messageClass });
           }
 
           async queuePushDirect({ options, content, channel }) {
-            return await this.ctx.meta.io.queuePushDirect({ options, content, channel });
+            return await this.ctx.bean.io.queuePushDirect({ options, content, channel });
           }
 
         }
@@ -1674,11 +1674,11 @@ module.exports = appInfo => {
         class MessageClass extends app.Service {
 
           async queueRegister({ module, messageClassName }) {
-            return await this.ctx.meta.io.messageClass.queueRegister({ module, messageClassName });
+            return await this.ctx.bean.io.messageClass.queueRegister({ module, messageClassName });
           }
 
           async messageClass({ messageClass }) {
-            return await this.ctx.meta.io.messageClass.get(messageClass);
+            return await this.ctx.bean.io.messageClass.get(messageClass);
           }
 
         }
@@ -1696,23 +1696,23 @@ module.exports = appInfo => {
         class Message extends app.Service {
 
           async offset({ messageClass, options, user }) {
-            return await this.ctx.meta.io.message.offset({ messageClass, options, user });
+            return await this.ctx.bean.io.message.offset({ messageClass, options, user });
           }
 
           async select({ messageClass, options, user }) {
-            return await this.ctx.meta.io.message.select({ messageClass, options, user });
+            return await this.ctx.bean.io.message.select({ messageClass, options, user });
           }
 
           async count({ messageClass, options, user }) {
-            return await this.ctx.meta.io.message.count({ messageClass, options, user });
+            return await this.ctx.bean.io.message.count({ messageClass, options, user });
           }
 
           async setRead({ messageIds, user }) {
-            return await this.ctx.meta.io.message.setRead({ messageIds, user });
+            return await this.ctx.bean.io.message.setRead({ messageIds, user });
           }
 
           async delete({ messageIds, user }) {
-            return await this.ctx.meta.io.message.delete({ messageIds, user });
+            return await this.ctx.bean.io.message.delete({ messageIds, user });
           }
 
         }

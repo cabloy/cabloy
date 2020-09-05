@@ -157,7 +157,7 @@ module.exports = app => {
       const blocks = this.getBlocks({ locale: this.ctx.locale });
       const block = blocks[blockName];
       // validate
-      await this.ctx.meta.validation.validate({
+      await this.ctx.bean.validation.validate({
         module: block.meta.module,
         validator: block.meta.validator,
         schema: null,
@@ -180,7 +180,7 @@ module.exports = app => {
       const stats = {};
 
       // articles
-      stats.articles = await this.ctx.meta.atom.count({
+      stats.articles = await this.ctx.bean.atom.count({
         atomClass,
         options: {
           where: {
@@ -191,7 +191,7 @@ module.exports = app => {
       });
 
       // comments
-      stats.comments = await this.ctx.meta.atom.count({
+      stats.comments = await this.ctx.bean.atom.count({
         atomClass,
         options: {
           where: {

@@ -7,7 +7,7 @@ module.exports = app => {
 
     async publicFlow() {
       // atomClass
-      const atomClass = await this.ctx.meta.atomClass.get({ atomClassName: 'partyPublic' });
+      const atomClass = await this.ctx.bean.atomClass.get({ atomClassName: 'partyPublic' });
       // userIds
       const userIds = this.ctx.cache.mem.get('userIds');
 
@@ -22,11 +22,11 @@ module.exports = app => {
       });
 
       // Tom add party
-      const partyKey = await this.ctx.meta.atom.create({
+      const partyKey = await this.ctx.bean.atom.create({
         atomClass,
         user: { id: userIds.Tom },
       });
-      await this.ctx.meta.atom.write({
+      await this.ctx.bean.atom.write({
         key: partyKey,
         item: { atomName: 'test:publicFlow' },
         user: { id: userIds.Tom },
@@ -42,7 +42,7 @@ module.exports = app => {
       });
 
       // Tom enable(submit) party
-      await this.ctx.meta.atom.enable({
+      await this.ctx.bean.atom.enable({
         key: partyKey,
         atom: {
           atomEnabled: 1,
@@ -62,7 +62,7 @@ module.exports = app => {
       // checkRightRead 1
       let checkRightReads = [[ 'Jane', partyKey.atomId, false ]];
       for (const [ userName, atomId, right ] of checkRightReads) {
-        const res = await this.ctx.meta.atom.checkRightRead({
+        const res = await this.ctx.bean.atom.checkRightRead({
           atom: { id: atomId },
           user: { id: userIds[userName] },
         });
@@ -70,7 +70,7 @@ module.exports = app => {
       }
 
       // close atomFlow
-      await this.ctx.meta.atom.flow({
+      await this.ctx.bean.atom.flow({
         key: partyKey,
         atom: {
           atomFlow: 0,
@@ -90,7 +90,7 @@ module.exports = app => {
       // checkRightRead 2
       checkRightReads = [[ 'Jane', partyKey.atomId, true ]];
       for (const [ userName, atomId, right ] of checkRightReads) {
-        const res = await this.ctx.meta.atom.checkRightRead({
+        const res = await this.ctx.bean.atom.checkRightRead({
           atom: { id: atomId },
           user: { id: userIds[userName] },
         });
@@ -98,11 +98,11 @@ module.exports = app => {
       }
 
       // Jane read party
-      const party = await this.ctx.meta.atom.read({ key: partyKey, user: { id: userIds.Jane } });
+      const party = await this.ctx.bean.atom.read({ key: partyKey, user: { id: userIds.Jane } });
       assert(party);
 
       // Tom delete party
-      await this.ctx.meta.atom.delete({
+      await this.ctx.bean.atom.delete({
         key: partyKey,
         user: { id: userIds.Tom },
       });
@@ -122,7 +122,7 @@ module.exports = app => {
 
     async _testCheckList(userIds, userAtoms, cb) {
       for (const [ userName, atomCountExpected ] of userAtoms) {
-        const list = await this.ctx.meta.atom.select({
+        const list = await this.ctx.bean.atom.select({
           options: {
             where: {
               atomName: 'test:publicFlow',

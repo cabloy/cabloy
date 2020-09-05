@@ -413,7 +413,7 @@ module.exports = appInfo => {
                 },
               },
             };
-            await this.ctx.meta.io.pushDirect({
+            await this.ctx.bean.io.pushDirect({
               content,
               channel: { module: 'a-wxwork', name: 'app' },
             });

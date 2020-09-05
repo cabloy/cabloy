@@ -11,7 +11,7 @@ module.exports = app => {
         jsApiList: config.jssdk.jsApiList,
         url,
       };
-      return await this.ctx.meta.wechat.app.getJsConfig(params);
+      return await this.ctx.bean.wechat.app.getJsConfig(params);
     }
 
   }

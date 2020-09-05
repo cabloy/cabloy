@@ -31,7 +31,7 @@ module.exports = ctx => {
     }
 
     get sequence() {
-      if (!this._sequence) this._sequence = ctx.meta.sequence.module(moduleInfo.relativeName);
+      if (!this._sequence) this._sequence = ctx.bean.sequence.module(moduleInfo.relativeName);
       return this._sequence;
     }
 
@@ -53,8 +53,8 @@ module.exports = ctx => {
       // add user
       const userId = await this.add({ disabled: 0, anonymous: 1 });
       // addRole
-      const role = await ctx.meta.role.getSystemRole({ roleName: 'anonymous' });
-      await ctx.meta.role.addUserRole({ userId, roleId: role.id });
+      const role = await ctx.bean.role.getSystemRole({ roleName: 'anonymous' });
+      await ctx.bean.role.addUserRole({ userId, roleId: role.id });
       // ready
       _userAnonymous = await this.get({ id: userId });
       _usersAnonymous[ctx.instance.id] = _userAnonymous;
@@ -90,11 +90,11 @@ module.exports = ctx => {
       // options
       const checkUser = options && options.user;
       // always has anonymous id
-      ctx.meta.user.anonymousId();
+      ctx.bean.user.anonymousId();
       // check if has ctx.user
       if (!ctx.isAuthenticated() || !ctx.user.op || ctx.user.op.iid !== ctx.instance.id) {
         // anonymous
-        await ctx.meta.user.loginAsAnonymous();
+        await ctx.bean.user.loginAsAnonymous();
       } else {
         // state
         ctx.state.user = {
@@ -141,8 +141,8 @@ module.exports = ctx => {
       let roleNames = this.config.account.needActivation ? 'registered' : this.config.account.activatedRoles;
       roleNames = roleNames.split(',');
       for (const roleName of roleNames) {
-        const role = await ctx.meta.role.get({ roleName });
-        await ctx.meta.role.addUserRole({ userId, roleId: role.id });
+        const role = await ctx.bean.role.get({ roleName });
+        await ctx.bean.role.addUserRole({ userId, roleId: role.id });
       }
     }
 
@@ -154,7 +154,7 @@ module.exports = ctx => {
       // adjust role
       if (this.config.account.needActivation) {
         // userRoles
-        const userRoles = await ctx.meta.role.getUserRolesDirect({ userId });
+        const userRoles = await ctx.bean.role.getUserRolesDirect({ userId });
         // userRolesMap
         const map = {};
         for (const role of userRoles) {
@@ -162,15 +162,15 @@ module.exports = ctx => {
         }
         // remove from registered
         if (map.registered) {
-          const roleRegistered = await ctx.meta.role.getSystemRole({ roleName: 'registered' });
-          await ctx.meta.role.deleteUserRole({ userId, roleId: roleRegistered.id });
+          const roleRegistered = await ctx.bean.role.getSystemRole({ roleName: 'registered' });
+          await ctx.bean.role.deleteUserRole({ userId, roleId: roleRegistered.id });
         }
         // add to activated
         const roleNames = this.config.account.activatedRoles.split(',');
         for (const roleName of roleNames) {
           if (!map[roleName]) {
-            const role = await ctx.meta.role.get({ roleName });
-            await ctx.meta.role.addUserRole({ userId, roleId: role.id });
+            const role = await ctx.bean.role.get({ roleName });
+            await ctx.bean.role.addUserRole({ userId, roleId: role.id });
           }
         }
       }
@@ -312,14 +312,14 @@ module.exports = ctx => {
     }
 
     async delete({ userId }) {
-      await ctx.meta.role.deleteAllUserRoles({ userId });
+      await ctx.bean.role.deleteAllUserRoles({ userId });
       await this.modelAuth.delete({ userId });
       await this.model.delete({ id: userId });
     }
 
     // roles
     async roles({ userId, page }) {
-      page = ctx.meta.util.page(page, false);
+      page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       return await ctx.model.query(`
         select a.*,b.roleName from aUserRole a
@@ -460,7 +460,7 @@ module.exports = ctx => {
       }
 
       // user verify event
-      await ctx.meta.event.invoke({
+      await ctx.bean.event.invoke({
         module: moduleInfo.relativeName, name: 'userVerify', data: { verifyUser, profileUser },
       });
 
@@ -470,7 +470,7 @@ module.exports = ctx => {
 
     async accountMigration({ userIdFrom, userIdTo }) {
       // accountMigration event
-      await ctx.meta.event.invoke({
+      await ctx.bean.event.invoke({
         module: moduleInfo.relativeName, name: 'accountMigration', data: { userIdFrom, userIdTo },
       });
       // aAuth: delete old records
@@ -650,7 +650,7 @@ module.exports = ctx => {
       const res = await this.modelAuthProvider.get({ module, providerName });
       if (res) return res;
       // data
-      // const _authProviders = ctx.meta.util.authProviders();
+      // const _authProviders = ctx.bean.util.authProviders();
       // const _provider = _authProviders[`${module}:${providerName}`];
       // if (!_provider) throw new Error(`authProvider ${module}:${providerName} not found!`);
       const data = {

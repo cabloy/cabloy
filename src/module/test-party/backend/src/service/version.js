@@ -75,13 +75,13 @@ module.exports = app => {
       //
       if (options.version === 2) {
         // // roleFunctions
-        // const roleRoot = await this.ctx.meta.role.getSystemRole({ roleName: 'root' });
+        // const roleRoot = await this.ctx.bean.role.getSystemRole({ roleName: 'root' });
         // const functions = [ 'kichenSink' ];
         // for (const functionName of functions) {
-        //   const func = await this.ctx.meta.function.get({
+        //   const func = await this.ctx.bean.function.get({
         //     name: functionName,
         //   });
-        //   await this.ctx.meta.role.addRoleFunction({
+        //   await this.ctx.bean.role.addRoleFunction({
         //     roleId: roleRoot.id,
         //     functionId: func.id,
         //   });
@@ -91,13 +91,13 @@ module.exports = app => {
       //
       if (options.version === 3) {
         // delete old function
-        await this.ctx.meta.function.delete({ name: 'kichenSink' });
+        await this.ctx.bean.function.delete({ name: 'kichenSink' });
 
         // roleFunctions
         const roleFunctions = [
           { roleName: 'root', name: 'kitchenSink' },
         ];
-        await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
+        await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions });
       }
 
       //
@@ -110,7 +110,7 @@ module.exports = app => {
           { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
           { roleName: 'system', action: 'review', scopeNames: 'authenticated' },
         ];
-        await this.ctx.meta.role.addRoleRightBatch({ atomClassName: 'party', roleRights });
+        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'party', roleRights });
       }
 
       //
@@ -122,15 +122,15 @@ module.exports = app => {
           { roleName: null, name: 'widgetSalesPie' },
           { roleName: null, name: 'widgetSnapshot' },
         ];
-        await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
+        await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions });
       }
 
       //
       if (options.version === 6) {
         // function: kitchenSink scene->demonstration
-        const sceneId = await this.ctx.meta.function.getSceneId({ sceneName: 'demonstration', sceneMenu: 1 });
-        const func = await this.ctx.meta.function.get({ name: 'kitchenSink' });
-        await this.ctx.meta.function.model.update({ id: func.id, sceneId });
+        const sceneId = await this.ctx.bean.function.getSceneId({ sceneName: 'demonstration', sceneMenu: 1 });
+        const func = await this.ctx.bean.function.get({ name: 'kitchenSink' });
+        await this.ctx.bean.function.model.update({ id: func.id, sceneId });
       }
 
     }

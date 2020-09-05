@@ -9,22 +9,22 @@ module.exports = app => {
     async sequence() {
 
       // current
-      let current = await this.ctx.meta.sequence.current('test');
+      let current = await this.ctx.bean.sequence.current('test');
       assert.equal(current, 0);
 
       // next
-      let next = await this.ctx.meta.sequence.next('test');
+      let next = await this.ctx.bean.sequence.next('test');
       assert.equal(next, 1);
 
       // current
-      current = await this.ctx.meta.sequence.current('test');
+      current = await this.ctx.bean.sequence.current('test');
       assert.equal(current, 1);
 
       // reset
-      await this.ctx.meta.sequence.reset('test');
+      await this.ctx.bean.sequence.reset('test');
 
       // other module's sequence
-      const moduleSequence = this.ctx.meta.sequence.module(this.ctx.module.info.relativeName);
+      const moduleSequence = this.ctx.bean.sequence.module(this.ctx.module.info.relativeName);
 
       // next
       next = await moduleSequence.next('test');

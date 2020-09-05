@@ -2,7 +2,7 @@ module.exports = app => {
   class UserController extends app.Controller {
 
     async list() {
-      const page = this.ctx.meta.util.page(this.ctx.request.body.page);
+      const page = this.ctx.bean.util.page(this.ctx.request.body.page);
       const items = await this.service.user.list({
         roleId: this.ctx.request.body.roleId,
         query: this.ctx.request.body.query,

@@ -61,7 +61,7 @@ module.exports = app => {
 
     async write({ atomClass, key, item, user }) {
       // get atom for safety
-      const atomOld = await this.ctx.meta.atom.read({ key, user });
+      const atomOld = await this.ctx.bean.atom.read({ key, user });
       // if undefined then old
       const fields = [ 'slug', 'editMode', 'content', 'language', 'categoryId', 'sticky', 'keywords', 'description', 'sorting', 'flag', 'extra' ];
       for (const field of fields) {
@@ -160,7 +160,7 @@ module.exports = app => {
 
     async delete({ atomClass, key, user }) {
       // get atom for safety
-      const atomOld = await this.ctx.meta.atom.read({ key, user });
+      const atomOld = await this.ctx.bean.atom.read({ key, user });
 
       // delete article
       await this.ctx.model.article.delete({
@@ -186,16 +186,16 @@ module.exports = app => {
     async action({ action, atomClass, key, user }) {
       if (action === 101) {
         // get atom for safety
-        const atomOld = await this.ctx.meta.atom.read({ key, user });
+        const atomOld = await this.ctx.bean.atom.read({ key, user });
 
         // change flag
-        await this.ctx.meta.atom.flag({
+        await this.ctx.bean.atom.flag({
           key,
           atom: { atomFlag: 2 },
           user,
         });
         // change flow
-        await this.ctx.meta.atom.flow({
+        await this.ctx.bean.atom.flow({
           key,
           atom: { atomFlow: 0 },
           user,
@@ -219,7 +219,7 @@ module.exports = app => {
       // enable
       const atomFlag = atom.atomEnabled ? 1 : 0;
       // change flag
-      await this.ctx.meta.atom.flag({
+      await this.ctx.bean.atom.flag({
         key,
         atom: { atomFlag },
         user,
@@ -270,12 +270,12 @@ module.exports = app => {
     async _getArticle({ key, inner }) {
       if (!inner) {
       // check right
-        const roleAnonymous = await this.ctx.meta.role.getSystemRole({ roleName: 'anonymous' });
-        const right = await this.ctx.meta.atom.checkRoleRightRead({ atom: { id: key.atomId }, roleId: roleAnonymous.id });
+        const roleAnonymous = await this.ctx.bean.role.getSystemRole({ roleName: 'anonymous' });
+        const right = await this.ctx.bean.atom.checkRoleRightRead({ atom: { id: key.atomId }, roleId: roleAnonymous.id });
         if (!right) return null;
       }
       // article
-      const article = await this.ctx.meta.atom.read({ key, user: { id: 0 } });
+      const article = await this.ctx.bean.atom.read({ key, user: { id: 0 } });
       if (!article) return null;
       // check language
       if (!article.language) this.ctx.throw(1001);

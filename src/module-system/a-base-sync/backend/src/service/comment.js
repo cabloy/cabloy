@@ -112,7 +112,7 @@ module.exports = app => {
         html,
       });
       // commentCount
-      await this.ctx.meta.atom.comment({ key, atom: { comment: 1 }, user });
+      await this.ctx.bean.atom.comment({ key, atom: { comment: 1 }, user });
       // ok
       return {
         action: 'create',
@@ -127,7 +127,7 @@ module.exports = app => {
       // check right
       let canDeleted = (key.atomId === item.atomId && item.userId === user.id);
       if (!canDeleted) {
-        canDeleted = await this.ctx.meta.function.checkRightFunction({
+        canDeleted = await this.ctx.bean.function.checkRightFunction({
           function: { module: 'a-base', name: 'deleteComment' },
           user,
         });
@@ -138,7 +138,7 @@ module.exports = app => {
       // delete comment
       await this.ctx.model.comment.delete({ id: commentId });
       // commentCount
-      await this.ctx.meta.atom.comment({ key, atom: { comment: -1 }, user });
+      await this.ctx.bean.atom.comment({ key, atom: { comment: -1 }, user });
       // ok
       return {
         action: 'delete',

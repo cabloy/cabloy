@@ -73,7 +73,7 @@ module.exports = app => {
       const atomClass = utils.atomClass(this.ctx.request.body.atomClass);
       const language = this.ctx.request.body.language;
       // progress
-      const progressId = await this.ctx.meta.progress.create();
+      const progressId = await this.ctx.bean.progress.create();
       // build
       this.ctx.service.site.buildLanguageQueue({ atomClass, language, progressId });
       this.ctx.success({ progressId });
@@ -83,7 +83,7 @@ module.exports = app => {
       // atomClass
       const atomClass = utils.atomClass(this.ctx.request.body.atomClass);
       // progress
-      const progressId = await this.ctx.meta.progress.create();
+      const progressId = await this.ctx.bean.progress.create();
       // build
       this.ctx.service.site.buildLanguagesQueue({ atomClass, progressId });
       this.ctx.success({ progressId });

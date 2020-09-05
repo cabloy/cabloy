@@ -6,7 +6,7 @@ module.exports = app => {
   class AllController extends app.Controller {
 
     async getRoleIdOwner(atomClass, userId) {
-      const roles = await this.ctx.meta.atom.preferredRoles({
+      const roles = await this.ctx.bean.atom.preferredRoles({
         atomClass,
         user: { id: userId },
       });
@@ -15,7 +15,7 @@ module.exports = app => {
 
     async all() {
       // atomClass
-      const atomClass = await this.ctx.meta.atomClass.get({ atomClassName: 'party' });
+      const atomClass = await this.ctx.bean.atomClass.get({ atomClassName: 'party' });
       // userIds
       const userIds = this.ctx.cache.mem.get('userIds');
 
@@ -32,12 +32,12 @@ module.exports = app => {
 
       // Tom add party
       const roleIdOwnerTom = await this.getRoleIdOwner(atomClass, userIds.Tom);
-      const partyKey = await this.ctx.meta.atom.create({
+      const partyKey = await this.ctx.bean.atom.create({
         atomClass,
         roleIdOwner: roleIdOwnerTom,
         user: { id: userIds.Tom },
       });
-      await this.ctx.meta.atom.write({
+      await this.ctx.bean.atom.write({
         key: partyKey,
         item: { atomName: 'test:all', personCount: 3 },
         user: { id: userIds.Tom },
@@ -54,7 +54,7 @@ module.exports = app => {
       });
 
       // Tom enable(submit) party
-      await this.ctx.meta.atom.enable({
+      await this.ctx.bean.atom.enable({
         key: partyKey,
         atom: {
           atomEnabled: 1,
@@ -73,18 +73,18 @@ module.exports = app => {
       });
 
       // Tom update party
-      await this.ctx.meta.atom.write({
+      await this.ctx.bean.atom.write({
         key: partyKey,
         item: { personCount: 8 },
         user: { id: userIds.Tom },
       });
 
       // Tom get party
-      const party = await this.ctx.meta.atom.read({ key: partyKey, user: { id: userIds.Tom } });
+      const party = await this.ctx.bean.atom.read({ key: partyKey, user: { id: userIds.Tom } });
       assert.equal(party.personCount, 8);
 
       // Tom list party
-      const parties = await this.ctx.meta.atom.select({
+      const parties = await this.ctx.bean.atom.select({
         atomClass,
         options: {
           where: { atomName: { val: 'test:all', op: 'likeRight' } },
@@ -98,7 +98,7 @@ module.exports = app => {
       // checkRightRead
       const checkRightReads = [[ 'Tom', partyKey.atomId, true ]];
       for (const [ userName, atomId, right ] of checkRightReads) {
-        const res = await this.ctx.meta.atom.checkRightRead({
+        const res = await this.ctx.bean.atom.checkRightRead({
           atom: { id: atomId },
           user: { id: userIds[userName] },
         });
@@ -108,7 +108,7 @@ module.exports = app => {
       // checkRightWrite
       const checkRightWrites = [[ 'Tom', partyKey.atomId, true ], [ 'Tomson', partyKey.atomId, false ]];
       for (const [ userName, atomId, right ] of checkRightWrites) {
-        const res = await this.ctx.meta.atom.checkRightUpdate({
+        const res = await this.ctx.bean.atom.checkRightUpdate({
           atom: { id: atomId, action: this.ctx.constant.module('a-base').atom.action.write },
           user: { id: userIds[userName] },
         });
@@ -118,7 +118,7 @@ module.exports = app => {
       // checkRightDelete
       const checkRightDeletes = [[ 'Tom', partyKey.atomId, true ], [ 'Tomson', partyKey.atomId, false ]];
       for (const [ userName, atomId, right ] of checkRightDeletes) {
-        const res = await this.ctx.meta.atom.checkRightUpdate({
+        const res = await this.ctx.bean.atom.checkRightUpdate({
           atom: { id: atomId, action: this.ctx.constant.module('a-base').atom.action.delete },
           user: { id: userIds[userName] },
         });
@@ -128,7 +128,7 @@ module.exports = app => {
       // checkRightCreate
       const checkRightCreates = [[ 'Tom', true ], [ 'Jimmy', true ], [ 'Smith', false ]];
       for (const [ userName, right ] of checkRightCreates) {
-        const res = await this.ctx.meta.atom.checkRightCreate({
+        const res = await this.ctx.bean.atom.checkRightCreate({
           atomClass,
           user: { id: userIds[userName] },
         });
@@ -138,7 +138,7 @@ module.exports = app => {
       // checkRightAction:review(flag=1)
       const checkRightActions_1 = [[ 'Tom', partyKey.atomId, false ], [ 'Jane', partyKey.atomId, true ]];
       for (const [ userName, atomId, right ] of checkRightActions_1) {
-        const res = await this.ctx.meta.atom.checkRightAction({
+        const res = await this.ctx.bean.atom.checkRightAction({
           atom: { id: atomId, action: 101 },
           user: { id: userIds[userName] },
         });
@@ -146,7 +146,7 @@ module.exports = app => {
       }
 
       // action: review
-      await this.ctx.meta.atom.action({
+      await this.ctx.bean.atom.action({
         action: 101,
         key: partyKey,
         user: { id: userIds.Jane },
@@ -155,7 +155,7 @@ module.exports = app => {
       // checkRightAction:review(flag=2)
       const checkRightActions_2 = [[ 'Tom', partyKey.atomId, false ], [ 'Jane', partyKey.atomId, false ]];
       for (const [ userName, atomId, right ] of checkRightActions_2) {
-        const res = await this.ctx.meta.atom.checkRightAction({
+        const res = await this.ctx.bean.atom.checkRightAction({
           atom: { id: atomId, action: 101 },
           user: { id: userIds[userName] },
         });
@@ -163,14 +163,14 @@ module.exports = app => {
       }
 
       // action: review again
-      await this.ctx.meta.atom.action({
+      await this.ctx.bean.atom.action({
         action: 101,
         key: partyKey,
         user: { id: userIds.Jane },
       });
 
       // Tom delete party
-      await this.ctx.meta.atom.delete({
+      await this.ctx.bean.atom.delete({
         key: partyKey,
         user: { id: userIds.Tom },
       });
@@ -191,7 +191,7 @@ module.exports = app => {
 
     async _testCheckList(userIds, userAtoms, cb) {
       for (const [ userName, atomCountExpected ] of userAtoms) {
-        const list = await this.ctx.meta.atom.select({
+        const list = await this.ctx.bean.atom.select({
           options: {
             where: {
               atomName: 'test:all',

@@ -7,7 +7,7 @@ module.exports = app => {
     compile() {
       return async function(data, path, rootData, name) {
         const ctx = this;
-        const res = await ctx.meta.user.exists({ [name]: data });
+        const res = await ctx.bean.user.exists({ [name]: data });
         if (res && res.id !== ctx.state.user.agent.id) {
           const errors = [{ keyword: 'x-exists', params: [], message: ctx.text('Element Exists') }];
           throw new app.meta.ajv.ValidationError(errors);

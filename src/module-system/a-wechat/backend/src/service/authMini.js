@@ -10,7 +10,7 @@ module.exports = app => {
       let unionid;
 
       // mini
-      const apiMini = this.ctx.meta.wechat.mini[scene];
+      const apiMini = this.ctx.bean.wechat.mini[scene];
 
       // code
       if (code) {
@@ -48,7 +48,7 @@ module.exports = app => {
       // save session_key, because ctx.state.user maybe changed
       await apiMini.saveSessionKey(session_key);
       // echo
-      return await this.ctx.meta.auth.echo();
+      return await this.ctx.bean.auth.echo();
     }
 
   }

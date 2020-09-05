@@ -7,7 +7,7 @@ module.exports = function(ctx) {
       const roleFunctions = [
         { roleName: 'root', name: 'listComment' },
       ];
-      await ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
+      await ctx.bean.role.addRoleFunctionBatch({ roleFunctions });
     }
 
   }

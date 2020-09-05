@@ -11,13 +11,13 @@ module.exports = app => {
       const itemNew = this.ctx.request.body.item;
 
       // write
-      await this.ctx.meta.atom.write({
+      await this.ctx.bean.atom.write({
         key: atomKey,
         item: { atomName: itemNew.atomName },
         user,
       });
       // write: throw error when personCount is 0
-      await this.ctx.meta.atom.write({
+      await this.ctx.bean.atom.write({
         key: atomKey,
         item: { personCount: itemNew.personCount },
         user,

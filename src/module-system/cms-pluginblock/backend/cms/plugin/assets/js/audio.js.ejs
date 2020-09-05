@@ -21,10 +21,10 @@ function _renderAudio($block) {
   // audio
   if (options.audio.concat) {
     for (let i = 0; i < options.audio.length; i++) {
-      if (!options.audio[i].cover) options.audio[i].cover = '<%=ctx.meta.base.getStaticUrl("/a/base/img/audio_cover.jpg")%>';
+      if (!options.audio[i].cover) options.audio[i].cover = '<%=ctx.bean.base.getStaticUrl("/a/base/img/audio_cover.jpg")%>';
     }
   } else {
-    if (!options.audio.cover) options.audio.cover = '<%=ctx.meta.base.getStaticUrl("/a/base/img/audio_cover.jpg")%>';
+    if (!options.audio.cover) options.audio.cover = '<%=ctx.bean.base.getStaticUrl("/a/base/img/audio_cover.jpg")%>';
   }
   // create
   new window.APlayer(options);

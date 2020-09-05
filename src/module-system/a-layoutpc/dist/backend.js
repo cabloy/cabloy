@@ -178,14 +178,14 @@ module.exports = app => {
                 { roleName: null, name: 'panelAtom' },
                 { roleName: null, name: 'panelSearch' },
               ];
-              await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions: rolePanels });
+              await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions: rolePanels });
 
               // roleFunctions: sections
               const roleSections = [
                 { roleName: null, name: 'sectionCopyright' },
                 { roleName: null, name: 'sectionClock' },
               ];
-              await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions: roleSections });
+              await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions: roleSections });
 
               // roleFunctions: buttons
               const roleButtons = [
@@ -193,7 +193,7 @@ module.exports = app => {
                 { roleName: null, name: 'buttonFullscreen' },
                 { roleName: null, name: 'buttonMine' },
               ];
-              await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions: roleButtons });
+              await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions: roleButtons });
 
             }
 

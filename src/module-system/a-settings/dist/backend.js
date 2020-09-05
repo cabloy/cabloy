@@ -231,7 +231,7 @@ module.exports = app => {
               const roleFunctions = [
                 { roleName: 'system', name: 'settings' },
               ];
-              await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
+              await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions });
             }
           }
 
@@ -262,8 +262,8 @@ module.exports = app => {
           }
 
           async instanceLoad({ module }) {
-            const validator = await this.ctx.meta.settings.loadValidatorInstance({ module });
-            const data = await this.ctx.meta.settings.loadSettingsInstance({ module });
+            const validator = await this.ctx.bean.settings.loadValidatorInstance({ module });
+            const data = await this.ctx.bean.settings.loadSettingsInstance({ module });
             return {
               module,
               validator: validator.validator,
@@ -272,7 +272,7 @@ module.exports = app => {
           }
 
           async instanceSave({ module, data }) {
-            await this.ctx.meta.settings.saveSettingsInstance({ module, data });
+            await this.ctx.bean.settings.saveSettingsInstance({ module, data });
           }
 
           // user
@@ -285,8 +285,8 @@ module.exports = app => {
           }
 
           async userLoad({ module }) {
-            const validator = await this.ctx.meta.settings.loadValidatorUser({ module });
-            const data = await this.ctx.meta.settings.loadSettingsUser({ module });
+            const validator = await this.ctx.bean.settings.loadValidatorUser({ module });
+            const data = await this.ctx.bean.settings.loadSettingsUser({ module });
             return {
               module,
               validator: validator.validator,
@@ -295,7 +295,7 @@ module.exports = app => {
           }
 
           async userSave({ module, data }) {
-            await this.ctx.meta.settings.saveSettingsUser({ module, data });
+            await this.ctx.bean.settings.saveSettingsUser({ module, data });
           }
 
           //
@@ -537,7 +537,7 @@ module.exports = appInfo => {
             module = module || this.moduleName;
             const validator = this._getValidator({ scene, module });
             if (!validator) ctx.throw(404); // not found
-            await ctx.meta.validation.validate({
+            await ctx.bean.validation.validate({
               module: validator.module,
               validator: validator.validator,
               schema: null,
@@ -612,7 +612,7 @@ module.exports = appInfo => {
           _getSchema({ scene, module, schemaName }) {
             const validator = this._getValidator({ scene, module });
             if (!validator) return null;
-            const _schema = ctx.meta.validation.getSchema({ module: validator.module, validator: validator.validator, schema: schemaName });
+            const _schema = ctx.bean.validation.getSchema({ module: validator.module, validator: validator.validator, schema: schemaName });
             return extend(true, {}, validator, { schema: _schema });
           }
 

@@ -11,7 +11,7 @@ module.exports = app => {
         text: 'hello',
       };
       let result = 'world';
-      result = await this.ctx.meta.event.invoke({
+      result = await this.ctx.bean.event.invoke({
         module: moduleInfo.relativeName,
         name: 'hello',
         data,

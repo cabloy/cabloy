@@ -20,7 +20,7 @@ module.exports = function(ctx) {
       // verify
       let verifyUser;
       if (!cbVerify) {
-        verifyUser = await ctx.meta.user.verify({ state, profileUser });
+        verifyUser = await ctx.bean.user.verify({ state, profileUser });
         await ctx.login(verifyUser);
       } else {
         verifyUser = await bb.fromCallback(cb => {
@@ -107,7 +107,7 @@ module.exports = function(ctx) {
         },
       };
       // provider
-      const providerItem = await ctx.meta.user.getAuthProvider({
+      const providerItem = await ctx.bean.user.getAuthProvider({
         module: moduleInfo.relativeName,
         providerName: sceneInfo.authProvider,
       });

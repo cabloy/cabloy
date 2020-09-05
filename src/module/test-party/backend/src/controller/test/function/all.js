@@ -14,7 +14,7 @@ module.exports = app => {
       const functionCount = Object.keys(this.ctx.module.main.meta.base.functions).length;
 
       // Tom list all
-      let list = await this.ctx.meta.function.list({
+      let list = await this.ctx.bean.function.list({
         options: {
           where: { 'a.module': 'test-party' },
           orders: [[ 'id', 'asc' ]],
@@ -27,7 +27,7 @@ module.exports = app => {
       assert(!list[0].titleLocale);
 
       // Tom menu list zh-cn
-      list = await this.ctx.meta.function.list({
+      list = await this.ctx.bean.function.list({
         options: {
           where: { 'a.module': 'test-party' },
           orders: [[ 'id', 'asc' ]],
@@ -43,10 +43,10 @@ module.exports = app => {
       const function1 = list[0];
 
       // clear locales
-      await this.ctx.meta.function.clearLocales();
+      await this.ctx.bean.function.clearLocales();
 
       // select star
-      list = await this.ctx.meta.function.list({
+      list = await this.ctx.bean.function.list({
         user: userTom,
         options: {
           where: { 'a.module': 'test-party' },
@@ -57,12 +57,12 @@ module.exports = app => {
       assert.equal(list.length, 0);
 
       // star 1
-      await this.ctx.meta.function.star({
+      await this.ctx.bean.function.star({
         id: function1.id,
         star: 1,
         user: userTom,
       });
-      list = await this.ctx.meta.function.list({
+      list = await this.ctx.bean.function.list({
         user: userTom,
         options: {
           where: { 'a.module': 'test-party' },
@@ -73,12 +73,12 @@ module.exports = app => {
       assert.equal(list.length, 1);
 
       // star 0
-      await this.ctx.meta.function.star({
+      await this.ctx.bean.function.star({
         id: function1.id,
         star: 0,
         user: userTom,
       });
-      list = await this.ctx.meta.function.list({
+      list = await this.ctx.bean.function.list({
         user: userTom,
         options: {
           where: { 'a.module': 'test-party' },
@@ -89,7 +89,7 @@ module.exports = app => {
       assert.equal(list.length, 0);
 
       // check
-      list = await this.ctx.meta.function.check({
+      list = await this.ctx.bean.function.check({
         functions: [
           { module: function1.module, name: function1.name },
         ],

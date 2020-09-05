@@ -7,7 +7,7 @@ module.exports = app => {
       const config = this.ctx.config.account.dingtalk;
       const configAppSelfBuilt = config.apps.selfBuilt;
       // jsconfig
-      const res = await this.ctx.meta.dingtalk.app.selfBuilt.client.getJSApiConfig(url);
+      const res = await this.ctx.bean.dingtalk.app.selfBuilt.client.getJSApiConfig(url);
       return {
         ...res,
         agentId: configAppSelfBuilt.agentid,

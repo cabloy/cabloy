@@ -3,7 +3,7 @@ module.exports = app => {
   class _Function extends app.Service {
 
     async scenesLoad({ sceneMenu }) {
-      return await this.ctx.meta.function.scenesArray({ sceneMenu });
+      return await this.ctx.bean.function.scenesArray({ sceneMenu });
     }
 
     async scenesSaveSortings({ sceneMenu, sortings }) {

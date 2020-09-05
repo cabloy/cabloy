@@ -19,7 +19,7 @@ module.exports = app => {
         }
       }
       // raise event
-      return await this.ctx.meta.event.invoke({
+      return await this.ctx.bean.event.invoke({
         module: moduleInfo.relativeName,
         name: 'wxworkMessage',
         data: { message },

@@ -387,23 +387,23 @@ module.exports = appInfo => {
             if (options.version === 1) {
               // create roles: cms-community-writer to template
               const roles = [ 'cms-community-writer', 'cms-community-publisher' ];
-              const roleTemplate = await this.ctx.meta.role.getSystemRole({ roleName: 'template' });
-              const roleSuperuser = await this.ctx.meta.role.getSystemRole({ roleName: 'superuser' });
-              const roleActivated = await this.ctx.meta.role.getSystemRole({ roleName: 'activated' });
+              const roleTemplate = await this.ctx.bean.role.getSystemRole({ roleName: 'template' });
+              const roleSuperuser = await this.ctx.bean.role.getSystemRole({ roleName: 'superuser' });
+              const roleActivated = await this.ctx.bean.role.getSystemRole({ roleName: 'activated' });
               for (const roleName of roles) {
-                const roleId = await this.ctx.meta.role.add({
+                const roleId = await this.ctx.bean.role.add({
                   roleName,
                   roleIdParent: roleTemplate.id,
                 });
                 // role:superuser include cms-community
-                await this.ctx.meta.role.addRoleInc({ roleId: roleSuperuser.id, roleIdInc: roleId });
+                await this.ctx.bean.role.addRoleInc({ roleId: roleSuperuser.id, roleIdInc: roleId });
                 // role:activated include cms-community-writer
                 if (roleName === 'cms-community-writer') {
-                  await this.ctx.meta.role.addRoleInc({ roleId: roleActivated.id, roleIdInc: roleId });
+                  await this.ctx.bean.role.addRoleInc({ roleId: roleActivated.id, roleIdInc: roleId });
                 }
               }
               // build roles
-              await this.ctx.meta.role.setDirty(true);
+              await this.ctx.bean.role.setDirty(true);
 
               // add role rights
               const roleRights = [
@@ -416,7 +416,7 @@ module.exports = appInfo => {
                 { roleName: 'cms-community-publisher', action: 'publish', scopeNames: 'authenticated' },
                 { roleName: 'root', action: 'read', scopeNames: 'authenticated' },
               ];
-              await this.ctx.meta.role.addRoleRightBatch({ atomClassName: 'post', roleRights });
+              await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'post', roleRights });
 
             }
           }
@@ -568,8 +568,8 @@ module.exports = appInfo => {
           async atomClassValidator({ event, data: { atomClass, user } }) {
             if (atomClass.module === moduleInfo.relativeName && atomClass.atomClassName === 'post') {
               // check if in role:cms-community-publisher
-              const rolePublisher = await this.ctx.meta.role.get({ roleName: 'cms-community-publisher' });
-              const check = await this.ctx.meta.role.userInRoleExpand({ userId: user.id, roleId: rolePublisher.id });
+              const rolePublisher = await this.ctx.bean.role.get({ roleName: 'cms-community-publisher' });
+              const check = await this.ctx.bean.role.userInRoleExpand({ userId: user.id, roleId: rolePublisher.id });
               if (!check) return null;
               // break event
               event.break = true;

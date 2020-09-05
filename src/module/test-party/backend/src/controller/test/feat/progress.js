@@ -4,7 +4,7 @@ module.exports = app => {
 
     async progress() {
       // create progress
-      const progressId = await this.ctx.meta.progress.create();
+      const progressId = await this.ctx.bean.progress.create();
       // background
       this.ctx.performActionInBackground({
         method: 'post',
@@ -23,12 +23,12 @@ module.exports = app => {
         // level one
         await this._levelOne({ progressId, progressNo: 0 });
         // progress done
-        await this.ctx.meta.progress.done({ progressId, message: this.ctx.text('Well Done') });
+        await this.ctx.bean.progress.done({ progressId, message: this.ctx.text('Well Done') });
         // ok
         this.ctx.success(true);
       } catch (err) {
         // progress error
-        await this.ctx.meta.progress.error({ progressId, message: err.message });
+        await this.ctx.bean.progress.error({ progressId, message: err.message });
         // throw err
         throw err;
       }
@@ -39,7 +39,7 @@ module.exports = app => {
       let current = 0;
       for (let i = 0; i < total; i++) {
         const text = `${this.ctx.text('Level One')}: ${i + 1}`;
-        await this.ctx.meta.progress.update({
+        await this.ctx.bean.progress.update({
           progressId,
           progressNo,
           total,
@@ -47,7 +47,7 @@ module.exports = app => {
           text,
         });
         // sleep
-        await this.ctx.meta.util.sleep(1500);
+        await this.ctx.bean.util.sleep(1500);
         // level two
         await this._levelTwo({ progressId, progressNo: progressNo + 1 });
       }
@@ -58,7 +58,7 @@ module.exports = app => {
       let current = 0;
       for (let i = 0; i < total; i++) {
         const text = `${this.ctx.text('Level Two')}: ${i + 1}`;
-        await this.ctx.meta.progress.update({
+        await this.ctx.bean.progress.update({
           progressId,
           progressNo,
           total,
@@ -66,7 +66,7 @@ module.exports = app => {
           text,
         });
         // sleep
-        await this.ctx.meta.util.sleep(1500);
+        await this.ctx.bean.util.sleep(1500);
         // level two
         await this._levelThree({ progressId, progressNo: progressNo + 1 });
       }
@@ -77,7 +77,7 @@ module.exports = app => {
       let current = 0;
       for (let i = 0; i < total; i++) {
         const text = `${this.ctx.text('Level Three')}: ${i + 1}`;
-        await this.ctx.meta.progress.update({
+        await this.ctx.bean.progress.update({
           progressId,
           progressNo,
           total,
@@ -85,7 +85,7 @@ module.exports = app => {
           text,
         });
         // sleep
-        await this.ctx.meta.util.sleep(1500);
+        await this.ctx.bean.util.sleep(1500);
       }
     }
 

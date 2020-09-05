@@ -33,7 +33,7 @@ async function checkAtom(moduleInfo, options, ctx) {
     // atomClassId
     let atomClassId = ctx.request.body.atomClass.id;
     if (!atomClassId) {
-      const res = await ctx.meta.atomClass.get({
+      const res = await ctx.bean.atomClass.get({
         module: ctx.request.body.atomClass.module,
         atomClassName: ctx.request.body.atomClass.atomClassName,
         atomClassIdParent: ctx.request.body.atomClass.atomClassIdParent || 0,
@@ -44,7 +44,7 @@ async function checkAtom(moduleInfo, options, ctx) {
     const roleIdOwner = ctx.request.body.roleIdOwner;
     if (roleIdOwner) {
       // check
-      const res = await ctx.meta.atom.checkRightCreateRole({
+      const res = await ctx.bean.atom.checkRightCreateRole({
         atomClass: {
           id: atomClassId,
         },
@@ -55,7 +55,7 @@ async function checkAtom(moduleInfo, options, ctx) {
       ctx.meta._atomClass = res;
     } else {
       // retrieve default one
-      const roles = await ctx.meta.atom.preferredRoles({
+      const roles = await ctx.bean.atom.preferredRoles({
         atomClass: {
           id: atomClassId,
         },
@@ -70,7 +70,7 @@ async function checkAtom(moduleInfo, options, ctx) {
 
   // read
   if (options.action === constant.atom.action.read) {
-    const res = await ctx.meta.atom.checkRightRead({
+    const res = await ctx.bean.atom.checkRightRead({
       atom: { id: ctx.request.body.key.atomId },
       user: ctx.state.user.op,
     });
@@ -81,7 +81,7 @@ async function checkAtom(moduleInfo, options, ctx) {
 
   // write/delete
   if (options.action === constant.atom.action.write || options.action === constant.atom.action.delete) {
-    const res = await ctx.meta.atom.checkRightUpdate({
+    const res = await ctx.bean.atom.checkRightUpdate({
       atom: { id: ctx.request.body.key.atomId, action: options.action },
       user: ctx.state.user.op,
     });
@@ -93,7 +93,7 @@ async function checkAtom(moduleInfo, options, ctx) {
   // other action
   const actionCustom = options.action || ctx.request.body.action;
   if (actionCustom > constant.atom.action.custom) {
-    const res = await ctx.meta.atom.checkRightAction({
+    const res = await ctx.bean.atom.checkRightAction({
       atom: { id: ctx.request.body.key.atomId, action: actionCustom },
       user: ctx.state.user.op,
     });
@@ -106,7 +106,7 @@ async function checkAtom(moduleInfo, options, ctx) {
 
 async function checkFunction(moduleInfo, options, ctx) {
   if (ctx.innerAccess) return;
-  const res = await ctx.meta.function.checkRightFunction({
+  const res = await ctx.bean.function.checkRightFunction({
     function: {
       module: options.module || ctx.module.info.relativeName,
       name: options.name || ctx.request.body.name },

@@ -171,7 +171,7 @@ module.exports =
             // verify
             let verifyUser;
             if (!cbVerify) {
-              verifyUser = await ctx.meta.user.verify({ state: 'login', profileUser });
+              verifyUser = await ctx.bean.user.verify({ state: 'login', profileUser });
               if (needLogin) {
                 await ctx.login(verifyUser);
               }
@@ -213,7 +213,7 @@ module.exports =
               },
             };
             // provider
-            const providerItem = await ctx.meta.user.getAuthProvider({
+            const providerItem = await ctx.bean.user.getAuthProvider({
               module: moduleInfo.relativeName,
               providerName: sceneInfo.authProvider,
             });
@@ -1189,7 +1189,7 @@ module.exports =
               const roleFunctions = [
                 { roleName: 'system', name: 'contacts' },
               ];
-              await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
+              await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions });
             }
           }
 
@@ -1227,7 +1227,7 @@ module.exports =
               }
             }
             // raise event
-            const res2 = await this.ctx.meta.event.invoke({
+            const res2 = await this.ctx.bean.event.invoke({
               module: moduleInfo.relativeName,
               name: 'wxworkMessage',
               data: { message },
@@ -1333,14 +1333,14 @@ module.exports =
               // create
               await this._createRoleAndDepartment({ department });
               // build roles
-              await this.ctx.meta.role.build();
+              await this.ctx.bean.role.build();
             } else if (message.ChangeType === 'update_party') {
               // update
               await this._updateRoleAndDepartment({ localDepartment: null, department });
             } else if (message.ChangeType === 'delete_party') {
               await this._deleteRoleAndDepartment({ localDepartment: null, department });
               // build roles
-              await this.ctx.meta.role.build();
+              await this.ctx.bean.role.build();
             }
           }
 
@@ -1350,7 +1350,7 @@ module.exports =
             // do
             if (message.ChangeType === 'create_user') {
               // get member remotely
-              const res = await this.ctx.meta.wxwork.app.contacts.getUser(member.memberId);
+              const res = await this.ctx.bean.wxwork.app.contacts.getUser(member.memberId);
               if (res.errcode) {
                 throw new Error(res.errmsg);
               }
@@ -1373,7 +1373,7 @@ module.exports =
                 );
               }
               // get member remotely
-              const res = await this.ctx.meta.wxwork.app.contacts.getUser(member.memberIdNew || member.memberId);
+              const res = await this.ctx.bean.wxwork.app.contacts.getUser(member.memberIdNew || member.memberId);
               if (res.errcode) {
                 throw new Error(res.errmsg);
               }
@@ -1398,7 +1398,7 @@ module.exports =
               // progress
               await this._progressPublish({ context, done: 0, text: `--- ${this.ctx.text('Sync Started')} ---` });
               // remote departments
-              const res = await this.ctx.meta.wxwork.app.contacts.getDepartmentList();
+              const res = await this.ctx.bean.wxwork.app.contacts.getDepartmentList();
               if (res.errcode) {
                 throw new Error(res.errmsg);
               }
@@ -1426,7 +1426,7 @@ module.exports =
                 }
               }
               // build roles
-              await this.ctx.meta.role.build();
+              await this.ctx.bean.role.build();
               // progress done
               await this._progressPublish({ context, done: 1, text: `--- ${this.ctx.text('Sync Completed')} ---` });
             } catch (err) {
@@ -1451,7 +1451,7 @@ module.exports =
               // remote members
               const departmentRoot = await this.ctx.model.department.get({ departmentParentId: 0 });
               if (!departmentRoot) return this.ctx.throw(1006);
-              const res = await this.ctx.meta.wxwork.app.contacts.getDepartmentUserList(departmentRoot.departmentId, 1);
+              const res = await this.ctx.bean.wxwork.app.contacts.getDepartmentUserList(departmentRoot.departmentId, 1);
               if (res.errcode) {
                 throw new Error(res.errmsg);
               }
@@ -1494,7 +1494,7 @@ module.exports =
               messageFilter: context.progressId,
               content: { done, text },
             };
-            await this.ctx.meta.io.publish({
+            await this.ctx.bean.io.publish({
               path: `/${moduleInfo.url}/progress/${context.progressId}`,
               message: ioMessage,
               messageClass: {
@@ -1560,7 +1560,7 @@ module.exports =
               }
             }
             // delete role
-            await this.ctx.meta.role.delete({ roleId: localDepartment.roleId, force: true });
+            await this.ctx.bean.role.delete({ roleId: localDepartment.roleId, force: true });
             // delete department
             await this.ctx.model.department.delete({ id: localDepartment.id });
           }
@@ -1575,7 +1575,7 @@ module.exports =
             }
             const userId = localMember.userId;
             // delete user: including roles/auth
-            await this.ctx.meta.user.delete({ userId });
+            await this.ctx.bean.user.delete({ userId });
             // delete member
             await this.ctx.model.member.delete({ id: localMember.id });
           }
@@ -1590,7 +1590,7 @@ module.exports =
             }
             // update role name
             if (department.departmentName) {
-              await this.ctx.meta.role.save({
+              await this.ctx.bean.role.save({
                 roleId: localDepartment.roleId,
                 data: { roleName: department.departmentName },
               });
@@ -1638,7 +1638,7 @@ module.exports =
             }
             // status
             if (member.status !== undefined && member.status !== localMember.status) {
-              await this.ctx.meta.user.disable({ userId, disabled: member.status !== 1 });
+              await this.ctx.bean.user.disable({ userId, disabled: member.status !== 1 });
             }
             // update member
             member.id = localMember.id;
@@ -1652,14 +1652,14 @@ module.exports =
               this.ctx.throw(1003, department.departmentParentId);
             }
             // create current role
-            const roleIdCurrent = await this.ctx.meta.role.add({
+            const roleIdCurrent = await this.ctx.bean.role.add({
               roleName: department.departmentName,
               catalog: 0, // update by sub role
               sorting: department.departmentOrder,
               roleIdParent: roleParent.id,
             });
             // force change parent role to catalog=1
-            await this.ctx.meta.role.save({
+            await this.ctx.bean.role.save({
               roleId: roleParent.id,
               data: { catalog: 1 },
             });
@@ -1678,7 +1678,7 @@ module.exports =
                 this.ctx.throw(1003, departmentId);
               }
               // add user role
-              await this.ctx.meta.role.addUserRole({ userId, roleId: roleCurrent.id });
+              await this.ctx.bean.role.addUserRole({ userId, roleId: roleCurrent.id });
             }
           }
 
@@ -1690,7 +1690,7 @@ module.exports =
                 this.ctx.throw(1003, departmentId);
               }
               // add user role
-              await this.ctx.meta.role.deleteUserRole({ userId, roleId: roleCurrent.id });
+              await this.ctx.bean.role.deleteUserRole({ userId, roleId: roleCurrent.id });
             }
           }
 
@@ -1709,7 +1709,7 @@ module.exports =
 
             // 3. status
             if (member.status !== 1) {
-              await this.ctx.meta.user.disable({ userId, disabled: true });
+              await this.ctx.bean.user.disable({ userId, disabled: true });
             }
 
             // 4. create member
@@ -1727,13 +1727,13 @@ module.exports =
             // department
             const department = await this.ctx.model.department.get({ departmentId });
             if (!department) return null;
-            return await this.ctx.meta.role.get({ id: department.roleId });
+            return await this.ctx.bean.role.get({ id: department.roleId });
           }
 
           // get role top
           async _getRoleTop() {
-            const roleContainer = await this.ctx.meta.role.get({ roleName: this.ctx.config.sync.department.roleContainer });
-            const roleTop = await this.ctx.meta.role.get({ roleName: this.ctx.config.sync.department.roleTop, roleIdParent: roleContainer.id });
+            const roleContainer = await this.ctx.bean.role.get({ roleName: this.ctx.config.sync.department.roleContainer });
+            const roleTop = await this.ctx.bean.role.get({ roleName: this.ctx.config.sync.department.roleTop, roleIdParent: roleContainer.id });
             if (roleTop) return roleTop;
             // create role
             const data = {
@@ -1742,7 +1742,7 @@ module.exports =
               sorting: 0,
               roleIdParent: roleContainer.id,
             };
-            data.id = await this.ctx.meta.role.add(data);
+            data.id = await this.ctx.bean.role.add(data);
             return data;
           }
 
@@ -1820,7 +1820,7 @@ module.exports =
               jsApiList: configAppSelfBuilt.jssdk.jsApiList,
               url,
             };
-            return await this.ctx.meta.wxwork.app.selfBuilt.getJsConfig(params);
+            return await this.ctx.bean.wxwork.app.selfBuilt.getJsConfig(params);
           }
 
           async jsconfigAgent({ url }) {
@@ -1833,7 +1833,7 @@ module.exports =
               jsApiList: configAppSelfBuilt.jssdkAgent.jsApiList,
               url,
             };
-            return await this.ctx.meta.wxwork.app.selfBuilt.getJsConfigAgent(params);
+            return await this.ctx.bean.wxwork.app.selfBuilt.getJsConfigAgent(params);
           }
 
         }
@@ -1854,7 +1854,7 @@ module.exports =
 
           async login({ scene, code }) {
             if (!code) return this.ctx.throw(403);
-            const res = await this.ctx.meta.wxwork.app.mini[scene].code2Session(code);
+            const res = await this.ctx.bean.wxwork.app.mini[scene].code2Session(code);
             // const res = { errcode: 0, userid: 'YangJian1', session_key: 'kJtdi6RF+Dv67QkbLlPGjw==' };
             if (res.errcode) throw new Error(res.errmsg);
             const session_key = res.session_key;
@@ -1863,9 +1863,9 @@ module.exports =
             const wxworkHelper = new (WxworkHelperFn(this.ctx))();
             await wxworkHelper.verifyAuthUser({ scene: `wxworkmini${scene}`, memberId });
             // save session_key, because ctx.state.user maybe changed
-            await this.ctx.meta.wxwork.mini[scene].saveSessionKey(session_key);
+            await this.ctx.bean.wxwork.mini[scene].saveSessionKey(session_key);
             // echo
-            return await this.ctx.meta.auth.echo();
+            return await this.ctx.bean.auth.echo();
           }
 
         }

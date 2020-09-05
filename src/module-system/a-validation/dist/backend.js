@@ -146,7 +146,7 @@ module.exports = app => {
         class Validation extends app.Service {
 
           schema({ module, validator, schema }) {
-            return this.ctx.meta.validation.getSchema({ module, validator, schema });
+            return this.ctx.bean.validation.getSchema({ module, validator, schema });
           }
 
         }
@@ -344,7 +344,7 @@ module.exports = appInfo => {
           const schema = options.schema || (ctx.meta._validator && ctx.meta._validator.schema);
           const data = ctx.request.body[options.data || 'data'];
           // if error throw 422
-          await ctx.meta.validation.validate({
+          await ctx.bean.validation.validate({
             module,
             validator,
             schema,

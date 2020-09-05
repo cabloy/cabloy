@@ -25,8 +25,8 @@ module.exports = ctx => {
     }
 
     async getFlagByAtomId({ atomId, code, name }) {
-      const atomClass = await ctx.meta.atomClass.getTopByAtomId({ atomId });
-      const action = ctx.meta.base.action({ module: atomClass.module, atomClassName: atomClass.atomClassName, code, name });
+      const atomClass = await ctx.bean.atomClass.getTopByAtomId({ atomId });
+      const action = ctx.bean.base.action({ module: atomClass.module, atomClassName: atomClass.atomClassName, code, name });
       return action.flag.toString();
     }
 
@@ -34,8 +34,8 @@ module.exports = ctx => {
       // get
       const res = await this.model.get({ atomClassId, code });
       if (res) return res;
-      const atomClass = await ctx.meta.atomClass.get({ id: atomClassId });
-      const action = ctx.meta.base.action({ module: atomClass.module, atomClassName: atomClass.atomClassName, code });
+      const atomClass = await ctx.bean.atomClass.get({ id: atomClassId });
+      const action = ctx.bean.base.action({ module: atomClass.module, atomClassName: atomClass.atomClassName, code });
       const data = {
         atomClassId,
         code,

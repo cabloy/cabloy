@@ -85,7 +85,7 @@ module.exports = ctx => {
     //    where
     async offset({ messageClass, options, user }) {
       // messageClass
-      messageClass = await ctx.meta.io.messageClass.get(messageClass);
+      messageClass = await ctx.bean.io.messageClass.get(messageClass);
       // where
       const where = (options && options.where) || {};
       where.iid = ctx.instance.id;
@@ -140,7 +140,7 @@ module.exports = ctx => {
 
     async _list({ messageClass, options, user, count }) {
       // messageClass
-      messageClass = await ctx.meta.io.messageClass.get(messageClass);
+      messageClass = await ctx.bean.io.messageClass.get(messageClass);
       // where
       const where = (options && options.where) || {};
       where.messageClassId = messageClass.id;

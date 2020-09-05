@@ -225,14 +225,14 @@ module.exports = appInfo => {
           async list() {
             const user = this.ctx.state.user.op;
             const options = this.ctx.request.body.options;
-            options.page = this.ctx.meta.util.page(options.page, false);
+            options.page = this.ctx.bean.util.page(options.page, false);
             // where
             options.where = options.where || {};
             // check right: atom.read or user's files
             const key = this.ctx.request.body.key;
             const atomId = key && key.atomId;
             if (atomId) {
-              const res = await this.ctx.meta.atom.checkRightRead({
+              const res = await this.ctx.bean.atom.checkRightRead({
                 atom: { id: atomId },
                 user,
               });
@@ -254,7 +254,7 @@ module.exports = appInfo => {
             const item = await this.ctx.model.file.get({ id: data.fileId });
             // check right: atom.write or user's file
             if (item.atomId) {
-              const res = await this.ctx.meta.atom.checkRightUpdate({
+              const res = await this.ctx.bean.atom.checkRightUpdate({
                 atom: { id: item.atomId, action: 3 },
                 user,
               });
@@ -426,7 +426,7 @@ module.exports = appInfo => {
             await this.ctx.model.file.delete({ id: fileId });
             // attachmentCount
             if (item.atomId && item.attachment) {
-              await this.ctx.meta.atom.attachment({ key: { atomId: item.atomId }, atom: { attachment: -1 } });
+              await this.ctx.bean.atom.attachment({ key: { atomId: item.atomId }, atom: { attachment: -1 } });
             }
           }
 
@@ -467,9 +467,9 @@ module.exports = appInfo => {
 
             // dest
             const downloadId = uuid.v4().replace(/-/g, '');
-            const _filePath = `file/${mode === 1 ? 'image' : (mode === 2 ? 'file' : 'audio')}/${this.ctx.meta.util.today()}`;
+            const _filePath = `file/${mode === 1 ? 'image' : (mode === 2 ? 'file' : 'audio')}/${this.ctx.bean.util.today()}`;
             const _fileName = uuid.v4().replace(/-/g, '');
-            const destDir = await this.ctx.meta.base.getPath(_filePath, true);
+            const destDir = await this.ctx.bean.base.getPath(_filePath, true);
             const destFile = path.join(destDir, `${_fileName}${fileInfo.ext}`);
 
             // write
@@ -533,7 +533,7 @@ module.exports = appInfo => {
 
             // attachmentCount
             if (atomId && attachment) {
-              await this.ctx.meta.atom.attachment({ key: { atomId }, atom: { attachment: 1 }, user });
+              await this.ctx.bean.atom.attachment({ key: { atomId }, atom: { attachment: 1 }, user });
             }
 
             // ok
@@ -548,7 +548,7 @@ module.exports = appInfo => {
           }
 
           getDownloadUrl({ downloadId, mode, fileExt }) {
-            return this.ctx.meta.base.getAbsoluteUrl(
+            return this.ctx.bean.base.getAbsoluteUrl(
               `/api/a/file/file/download/${downloadId}${(mode === 1 || mode === 3) ? fileExt : ''}`
             );
           }
@@ -576,7 +576,7 @@ module.exports = appInfo => {
             }
 
             // forward url
-            const forwardUrl = this.ctx.meta.base.getForwardUrl(
+            const forwardUrl = this.ctx.bean.base.getForwardUrl(
               `${file.filePath}/${fileName}${file.fileExt}`
             );
 
@@ -609,7 +609,7 @@ module.exports = appInfo => {
             if (!file) this.ctx.throw(404);
 
             // absolutePath
-            const destDir = await this.ctx.meta.base.getPath(file.filePath, true);
+            const destDir = await this.ctx.bean.base.getPath(file.filePath, true);
             const absolutePath = path.join(destDir, `${file.fileName}${file.fileExt}`);
             // ok
             return {
@@ -625,7 +625,7 @@ module.exports = appInfo => {
 
             // cannot use * in path on windows
             const fileName = `${file.fileName}-${widthRequire}_${heightRequire}`;
-            const destFile = await this.ctx.meta.base.getPath(
+            const destFile = await this.ctx.bean.base.getPath(
               `${file.filePath}/${fileName}${file.fileExt}`, false
             );
 
@@ -635,7 +635,7 @@ module.exports = appInfo => {
             const width = widthRequire || parseInt(file.width * heightRequire / file.height);
             const height = heightRequire || parseInt(file.height * widthRequire / file.width);
 
-            const srcFile = await this.ctx.meta.base.getPath(
+            const srcFile = await this.ctx.bean.base.getPath(
               `${file.filePath}/${file.fileName}${file.fileExt}`, false
             );
             await bb.fromCallback(cb => {
@@ -651,7 +651,7 @@ module.exports = appInfo => {
           async checkRightWrite(atomId, user) {
             // not check if !atomId
             if (!atomId) return;
-            const res = await this.ctx.meta.atom.checkRightUpdate({
+            const res = await this.ctx.bean.atom.checkRightUpdate({
               atom: { id: atomId, action: this.ctx.constant.module('a-base').atom.action.write },
               user,
             });
@@ -661,11 +661,11 @@ module.exports = appInfo => {
           async fileDownloadCheck({ file, user }) {
             // not check if !atomId
             if (file.atomId) {
-              const res = await this.ctx.meta.atom.checkRightRead({ atom: { id: file.atomId }, user });
+              const res = await this.ctx.bean.atom.checkRightRead({ atom: { id: file.atomId }, user });
               if (!res) this.ctx.throw(403);
             }
             // invoke event
-            const res = await this.ctx.meta.event.invoke({
+            const res = await this.ctx.bean.event.invoke({
               module: moduleInfo.relativeName,
               name: 'fileDownloadCheck',
               data: { file, user },

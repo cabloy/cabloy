@@ -16,7 +16,7 @@ module.exports = app => {
 
     async getArticleUrl({ atomClass, key }) {
       if (!atomClass) {
-        atomClass = await this.ctx.meta.atomClass.getByAtomId({ atomId: key.atomId });
+        atomClass = await this.ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
       }
       const build = Build.create(this.ctx, atomClass);
       return await build.getArticleUrl({ key });

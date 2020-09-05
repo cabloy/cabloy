@@ -11,7 +11,7 @@ module.exports = ctx => {
     }
 
     get atomClass() {
-      return ctx.meta.atomClass.module(this.moduleName);
+      return ctx.bean.atomClass.module(this.moduleName);
     }
 
     get modelAtom() {
@@ -31,7 +31,7 @@ module.exports = ctx => {
     }
 
     get sequence() {
-      return ctx.meta.sequence.module(moduleInfo.relativeName);
+      return ctx.bean.sequence.module(moduleInfo.relativeName);
     }
 
     get sqlProcedure() {
@@ -52,7 +52,7 @@ module.exports = ctx => {
     // create
     async create({ atomClass, roleIdOwner, item, user }) {
       // atomClass
-      atomClass = await ctx.meta.atomClass.get(atomClass);
+      atomClass = await ctx.bean.atomClass.get(atomClass);
       // item
       item = item || { };
       if (!item.atomName) {
@@ -99,8 +99,8 @@ module.exports = ctx => {
 
     // read
     async read({ key, user }) {
-      const atomClass = await ctx.meta.atomClass.getByAtomId({ atomId: key.atomId });
-      const _atomClass = await ctx.meta.atomClass.atomClass(atomClass);
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       // get
       const item = await this._get({
         atom: {
@@ -140,8 +140,8 @@ module.exports = ctx => {
       // atomClass
       let _atomClass;
       if (atomClass) {
-        atomClass = await ctx.meta.atomClass.get(atomClass);
-        _atomClass = await ctx.meta.atomClass.atomClass(atomClass);
+        atomClass = await ctx.bean.atomClass.get(atomClass);
+        _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       }
       // tableName
       let tableName = '';
@@ -180,13 +180,13 @@ module.exports = ctx => {
 
     // write
     async write({ key, item, user }) {
-      const atomClass = await ctx.meta.atomClass.getByAtomId({ atomId: key.atomId });
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
 
       // validator
-      const validator = await ctx.meta.atom.validator({ atomClass, user });
+      const validator = await ctx.bean.atom.validator({ atomClass, user });
       if (validator) {
         // if error throw 422
-        await ctx.meta.validation.validate({
+        await ctx.bean.validation.validate({
           module: validator.module,
           validator: validator.validator,
           schema: validator.schema,
@@ -229,7 +229,7 @@ module.exports = ctx => {
 
     // delete
     async delete({ key, user }) {
-      const atomClass = await ctx.meta.atomClass.getByAtomId({ atomId: key.atomId });
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
       // delete item
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       await ctx.performAction({
@@ -253,7 +253,7 @@ module.exports = ctx => {
 
     // action
     async action({ action, key, user }) {
-      const atomClass = await ctx.meta.atomClass.getByAtomId({ atomId: key.atomId });
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       return await ctx.performAction({
         method: 'post',
@@ -279,7 +279,7 @@ module.exports = ctx => {
       if (res.affectedRows !== 1) ctx.throw.module(moduleInfo.relativeName, 1003);
       _atom.atomEnabled = atomEnabled;
       // enable item
-      const atomClass = await ctx.meta.atomClass.getByAtomId({ atomId: key.atomId });
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       await ctx.performAction({
         method: 'post',
@@ -398,7 +398,7 @@ module.exports = ctx => {
 
     async actions({ key, basic, user }) {
       // atomClass
-      const atomClass = await ctx.meta.atomClass.getByAtomId({ atomId: key.atomId });
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
       // actions
       const _basic = basic ? 'and a.code<100' : '';
       const sql = `
@@ -426,7 +426,7 @@ module.exports = ctx => {
     async schema({ atomClass, schema, user }) {
       const validator = await this.validator({ atomClass, user });
       if (!validator) return null;
-      const _schema = ctx.meta.validation.getSchema({ module: validator.module, validator: validator.validator, schema });
+      const _schema = ctx.bean.validation.getSchema({ module: validator.module, validator: validator.validator, schema });
       return {
         module: validator.module,
         validator: validator.validator,
@@ -498,7 +498,7 @@ module.exports = ctx => {
     }
 
     async _list({ tableName, options: { where, orders, page, star = 0, label = 0, comment = 0, file = 0 }, user, pageForce = true, count = 0 }) {
-      page = ctx.meta.util.page(page, pageForce);
+      page = ctx.bean.util.page(page, pageForce);
 
       const sql = this.sqlProcedure.selectAtoms({
         iid: ctx.instance.id,
@@ -538,7 +538,7 @@ module.exports = ctx => {
       atom: { id, action },
       user,
     }) {
-      const actionFlag = await ctx.meta.atomAction.getFlagByAtomId({ atomId: id, code: action });
+      const actionFlag = await ctx.bean.atomAction.getFlagByAtomId({ atomId: id, code: action });
       const sql = this.sqlProcedure.checkRightUpdate({
         iid: ctx.instance.id,
         userIdWho: user.id,
@@ -552,7 +552,7 @@ module.exports = ctx => {
       atom: { id, action },
       user,
     }) {
-      const actionFlag = await ctx.meta.atomAction.getFlagByAtomId({ atomId: id, code: action });
+      const actionFlag = await ctx.bean.atomAction.getFlagByAtomId({ atomId: id, code: action });
       const sql = this.sqlProcedure.checkRightAction({
         iid: ctx.instance.id,
         userIdWho: user.id,
@@ -594,7 +594,7 @@ module.exports = ctx => {
     // preffered roles
     async preferredRoles({ atomClass, user }) {
       // atomClass
-      atomClass = await ctx.meta.atomClass.get(atomClass);
+      atomClass = await ctx.bean.atomClass.get(atomClass);
 
       const roles = await ctx.model.query(
         `select a.*,b.userId,c.roleName as roleNameWho from aViewRoleRightAtomClass a

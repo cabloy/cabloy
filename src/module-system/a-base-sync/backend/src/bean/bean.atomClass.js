@@ -13,7 +13,7 @@ module.exports = ctx => {
 
     async atomClass(atomClass) {
       atomClass = await this.top(atomClass);
-      return ctx.meta.base.atomClass({ module: atomClass.module, atomClassName: atomClass.atomClassName });
+      return ctx.bean.base.atomClass({ module: atomClass.module, atomClassName: atomClass.atomClassName });
     }
 
     async top(atomClass) {
@@ -44,7 +44,7 @@ module.exports = ctx => {
       const res = await this.model.get({ module, atomClassName, atomClassIdParent });
       if (res) return res;
       // data
-      const atomClass = ctx.meta.base.atomClass({ module, atomClassName });
+      const atomClass = ctx.bean.base.atomClass({ module, atomClassName });
       if (!atomClass) throw new Error(`atomClass ${module}:${atomClassName} not found!`);
       const data = {
         module,
@@ -77,7 +77,7 @@ module.exports = ctx => {
       // maybe empty
       user = user || ctx.state.user.op;
       // event
-      return await ctx.meta.event.invoke({
+      return await ctx.bean.event.invoke({
         module: moduleInfo.relativeName,
         name: 'atomClassValidator',
         data: {

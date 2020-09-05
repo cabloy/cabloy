@@ -23,7 +23,7 @@ module.exports = app => {
     async init(options) {
       if (options.version === 1) {
         // root
-        const user = await this.ctx.meta.user.get({ userName: 'root' });
+        const user = await this.ctx.bean.user.get({ userName: 'root' });
         await this.ctx.service.auth.add({
           userId: user.id,
           password: options.password,

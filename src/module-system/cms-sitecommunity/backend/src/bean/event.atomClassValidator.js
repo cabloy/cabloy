@@ -6,8 +6,8 @@ module.exports = ctx => {
       const data = context.data;
       if (data.atomClass.module === moduleInfo.relativeName && data.atomClass.atomClassName === 'post') {
         // check if in role:cms-community-publisher
-        const rolePublisher = await ctx.meta.role.get({ roleName: 'cms-community-publisher' });
-        const check = await ctx.meta.role.userInRoleExpand({ userId: data.user.id, roleId: rolePublisher.id });
+        const rolePublisher = await ctx.bean.role.get({ roleName: 'cms-community-publisher' });
+        const check = await ctx.bean.role.userInRoleExpand({ userId: data.user.id, roleId: rolePublisher.id });
         if (!check) return await next();
         // result
         context.result = {

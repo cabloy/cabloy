@@ -4,14 +4,14 @@ module.exports = app => {
     async list() {
       const user = this.ctx.state.user.op;
       const options = this.ctx.request.body.options;
-      options.page = this.ctx.meta.util.page(options.page, false);
+      options.page = this.ctx.bean.util.page(options.page, false);
       // where
       options.where = options.where || {};
       // check right: atom.read or user's files
       const key = this.ctx.request.body.key;
       const atomId = key && key.atomId;
       if (atomId) {
-        const res = await this.ctx.meta.atom.checkRightRead({
+        const res = await this.ctx.bean.atom.checkRightRead({
           atom: { id: atomId },
           user,
         });
@@ -33,7 +33,7 @@ module.exports = app => {
       const item = await this.ctx.model.file.get({ id: data.fileId });
       // check right: atom.write or user's file
       if (item.atomId) {
-        const res = await this.ctx.meta.atom.checkRightUpdate({
+        const res = await this.ctx.bean.atom.checkRightUpdate({
           atom: { id: item.atomId, action: 3 },
           user,
         });

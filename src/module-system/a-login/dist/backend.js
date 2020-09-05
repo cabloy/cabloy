@@ -165,7 +165,7 @@ module.exports = (app,module) => {
             // list map
             const listMap = {};
             // meta
-            const authProviders = this.ctx.meta.base.authProviders();
+            const authProviders = this.ctx.bean.base.authProviders();
             for (const item of list) {
               const key = `${item.module}:${item.providerName}`;
               const authProvider = authProviders[key];

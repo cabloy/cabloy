@@ -101,10 +101,10 @@ module.exports =
             return authProviderScenes.getScene(scene);
           }
 
-          // ctx.meta.dingtalk.app.selfBuilt
-          // ctx.meta.dingtalk.admin
-          // ctx.meta.dingtalk.web.default
-          // ctx.meta.dingtalk.mini.default
+          // ctx.bean.dingtalk.app.selfBuilt
+          // ctx.bean.dingtalk.admin
+          // ctx.bean.dingtalk.web.default
+          // ctx.bean.dingtalk.mini.default
           createDingtalkApi() {
             const self = this;
             return new Proxy({}, {
@@ -167,7 +167,7 @@ module.exports =
             // verify
             let verifyUser;
             if (!cbVerify) {
-              verifyUser = await ctx.meta.user.verify({ state: 'login', profileUser });
+              verifyUser = await ctx.bean.user.verify({ state: 'login', profileUser });
               if (needLogin) {
                 await ctx.login(verifyUser);
               }
@@ -209,7 +209,7 @@ module.exports =
               },
             };
             // provider
-            const providerItem = await ctx.meta.user.getAuthProvider({
+            const providerItem = await ctx.bean.user.getAuthProvider({
               module: moduleInfo.relativeName,
               providerName: sceneInfo.authProvider,
             });
@@ -1125,7 +1125,7 @@ module.exports =
               const roleFunctions = [
                 { roleName: 'system', name: 'contacts' },
               ];
-              await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
+              await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions });
             }
           }
 
@@ -1155,7 +1155,7 @@ module.exports =
               return;
             }
             // raise event
-            await this.ctx.meta.event.invoke({
+            await this.ctx.bean.event.invoke({
               module: moduleInfo.relativeName,
               name: 'dingtalkCallback',
               data: { message },
@@ -1169,14 +1169,14 @@ module.exports =
             const token = config.token;
             const encodingAESKey = config.encodingAESKey;
             const callbackList = config.list;
-            const callbackUrl = `${this.ctx.meta.base.protocol}://${this.ctx.meta.base.host}/api/a/dingtalk/callback/index`;
+            const callbackUrl = `${this.ctx.bean.base.protocol}://${this.ctx.bean.base.host}/api/a/dingtalk/callback/index`;
             // check
-            if (this.ctx.meta.base.host !== host || !token || !encodingAESKey || !callbackList) return;
+            if (this.ctx.bean.base.host !== host || !token || !encodingAESKey || !callbackList) return;
             // check status
             const res = await this._tryGetList();
             if (!res) {
               // register
-              await this.ctx.meta.dingtalk.app.selfBuilt.callback.register_call_back({
+              await this.ctx.bean.dingtalk.app.selfBuilt.callback.register_call_back({
                 call_back_tag: callbackList,
                 token,
                 aes_key: encodingAESKey,
@@ -1191,7 +1191,7 @@ module.exports =
                 // do nothing
               } else {
                 // difference
-                await this.ctx.meta.dingtalk.app.selfBuilt.callback.update_call_back({
+                await this.ctx.bean.dingtalk.app.selfBuilt.callback.update_call_back({
                   call_back_tag: callbackList,
                   token,
                   aes_key: encodingAESKey,
@@ -1203,7 +1203,7 @@ module.exports =
 
           async _tryGetList() {
             try {
-              return await this.ctx.meta.dingtalk.app.selfBuilt.callback.get_call_back();
+              return await this.ctx.bean.dingtalk.app.selfBuilt.callback.get_call_back();
             } catch (err) {
               if (err.code === 71007) return null;
               throw err;
@@ -1295,14 +1295,14 @@ module.exports =
               // create
               await this._createRoleAndDepartment({ department });
               // build roles
-              await this.ctx.meta.role.build();
+              await this.ctx.bean.role.build();
             } else if (message.ChangeType === 'update_party') {
               // update
               await this._updateRoleAndDepartment({ localDepartment: null, department });
             } else if (message.ChangeType === 'delete_party') {
               await this._deleteRoleAndDepartment({ localDepartment: null, department });
               // build roles
-              await this.ctx.meta.role.build();
+              await this.ctx.bean.role.build();
             }
           }
 
@@ -1312,7 +1312,7 @@ module.exports =
             // do
             if (message.ChangeType === 'create_user') {
               // get member remotely
-              const res = await this.ctx.meta.wxwork.app.contacts.getUser(member.memberId);
+              const res = await this.ctx.bean.wxwork.app.contacts.getUser(member.memberId);
               if (res.errcode) {
                 throw new Error(res.errmsg);
               }
@@ -1335,7 +1335,7 @@ module.exports =
                 );
               }
               // get member remotely
-              const res = await this.ctx.meta.wxwork.app.contacts.getUser(member.memberIdNew || member.memberId);
+              const res = await this.ctx.bean.wxwork.app.contacts.getUser(member.memberIdNew || member.memberId);
               if (res.errcode) {
                 throw new Error(res.errmsg);
               }
@@ -1360,12 +1360,12 @@ module.exports =
               // progress
               await this._progressPublish({ context, done: 0, text: `--- ${this.ctx.text('Sync Started')} ---` });
               // remote departments
-              const res = await this.ctx.meta.dingtalk.app.selfBuilt.department.list({
+              const res = await this.ctx.bean.dingtalk.app.selfBuilt.department.list({
                 fetch_child: true,
                 id: 1,
               });
               // special for departmentId=1
-              const department1 = await this.ctx.meta.dingtalk.app.selfBuilt.department.get(1);
+              const department1 = await this.ctx.bean.dingtalk.app.selfBuilt.department.get(1);
               res.department.splice(0, 0, department1);
               context.remoteDepartments = res.department;
               // progress
@@ -1391,7 +1391,7 @@ module.exports =
                 }
               }
               // build roles
-              await this.ctx.meta.role.build();
+              await this.ctx.bean.role.build();
               // progress done
               await this._progressPublish({ context, done: 1, text: `--- ${this.ctx.text('Sync Completed')} ---` });
             } catch (err) {
@@ -1416,7 +1416,7 @@ module.exports =
               // remote members
               const departmentRoot = await this.ctx.model.department.get({ departmentParentId: 0 });
               if (!departmentRoot) return this.ctx.throw(1006);
-              const res = await this.ctx.meta.dingtalk.app.selfBuilt.user.listAll(null, false);
+              const res = await this.ctx.bean.dingtalk.app.selfBuilt.user.listAll(null, false);
               context.remoteMembers = res.userlist;
               // progress
               await this._progressPublish({ context, done: 0, text: `--- ${this.ctx.text('Member Count')}: ${context.remoteMembers.length} ---` });
@@ -1456,7 +1456,7 @@ module.exports =
               messageFilter: context.progressId,
               content: { done, text },
             };
-            await this.ctx.meta.io.publish({
+            await this.ctx.bean.io.publish({
               path: `/${moduleInfo.url}/progress/${context.progressId}`,
               message: ioMessage,
               messageClass: {
@@ -1471,7 +1471,7 @@ module.exports =
 
           async _queueSyncDepartment({ context, remoteDepartment }) {
             // retrieve the department details
-            remoteDepartment = await this.ctx.meta.dingtalk.app.selfBuilt.department.get(remoteDepartment.id);
+            remoteDepartment = await this.ctx.bean.dingtalk.app.selfBuilt.department.get(remoteDepartment.id);
             if (remoteDepartment.id === 1) remoteDepartment.parentid = 0;
             // adjust
             const department = {};
@@ -1526,7 +1526,7 @@ module.exports =
               }
             }
             // delete role
-            await this.ctx.meta.role.delete({ roleId: localDepartment.roleId, force: true });
+            await this.ctx.bean.role.delete({ roleId: localDepartment.roleId, force: true });
             // delete department
             await this.ctx.model.department.delete({ id: localDepartment.id });
           }
@@ -1541,7 +1541,7 @@ module.exports =
             }
             const userId = localMember.userId;
             // delete user: including roles/auth
-            await this.ctx.meta.user.delete({ userId });
+            await this.ctx.bean.user.delete({ userId });
             // delete member
             await this.ctx.model.member.delete({ id: localMember.id });
           }
@@ -1556,7 +1556,7 @@ module.exports =
             }
             // update role name
             if (department.departmentName) {
-              await this.ctx.meta.role.save({
+              await this.ctx.bean.role.save({
                 roleId: localDepartment.roleId,
                 data: { roleName: department.departmentName },
               });
@@ -1604,7 +1604,7 @@ module.exports =
             }
             // active
             if (member.active !== undefined && member.active !== localMember.active) {
-              await this.ctx.meta.user.disable({ userId, disabled: !member.active });
+              await this.ctx.bean.user.disable({ userId, disabled: !member.active });
             }
             // update member
             member.id = localMember.id;
@@ -1618,14 +1618,14 @@ module.exports =
               this.ctx.throw(1003, department.departmentParentId);
             }
             // create current role
-            const roleIdCurrent = await this.ctx.meta.role.add({
+            const roleIdCurrent = await this.ctx.bean.role.add({
               roleName: department.departmentName,
               catalog: 0, // update by sub role
               sorting: department.departmentOrder,
               roleIdParent: roleParent.id,
             });
             // force change parent role to catalog=1
-            await this.ctx.meta.role.save({
+            await this.ctx.bean.role.save({
               roleId: roleParent.id,
               data: { catalog: 1 },
             });
@@ -1644,7 +1644,7 @@ module.exports =
                 this.ctx.throw(1003, departmentId);
               }
               // add user role
-              await this.ctx.meta.role.addUserRole({ userId, roleId: roleCurrent.id });
+              await this.ctx.bean.role.addUserRole({ userId, roleId: roleCurrent.id });
             }
           }
 
@@ -1656,7 +1656,7 @@ module.exports =
                 this.ctx.throw(1003, departmentId);
               }
               // add user role
-              await this.ctx.meta.role.deleteUserRole({ userId, roleId: roleCurrent.id });
+              await this.ctx.bean.role.deleteUserRole({ userId, roleId: roleCurrent.id });
             }
           }
 
@@ -1675,7 +1675,7 @@ module.exports =
 
             // 3. active
             if (!member.active) {
-              await this.ctx.meta.user.disable({ userId, disabled: true });
+              await this.ctx.bean.user.disable({ userId, disabled: true });
             }
 
             // 4. create member
@@ -1693,13 +1693,13 @@ module.exports =
             // department
             const department = await this.ctx.model.department.get({ departmentId });
             if (!department) return null;
-            return await this.ctx.meta.role.get({ id: department.roleId });
+            return await this.ctx.bean.role.get({ id: department.roleId });
           }
 
           // get role top
           async _getRoleTop() {
-            const roleContainer = await this.ctx.meta.role.get({ roleName: this.ctx.config.sync.department.roleContainer });
-            const roleTop = await this.ctx.meta.role.get({ roleName: this.ctx.config.sync.department.roleTop, roleIdParent: roleContainer.id });
+            const roleContainer = await this.ctx.bean.role.get({ roleName: this.ctx.config.sync.department.roleContainer });
+            const roleTop = await this.ctx.bean.role.get({ roleName: this.ctx.config.sync.department.roleTop, roleIdParent: roleContainer.id });
             if (roleTop) return roleTop;
             // create role
             const data = {
@@ -1708,7 +1708,7 @@ module.exports =
               sorting: 0,
               roleIdParent: roleContainer.id,
             };
-            data.id = await this.ctx.meta.role.add(data);
+            data.id = await this.ctx.bean.role.add(data);
             return data;
           }
 
@@ -1788,7 +1788,7 @@ module.exports =
               jsApiList: configAppSelfBuilt.jssdk.jsApiList,
               url,
             };
-            return await this.ctx.meta.wxwork.app.selfBuilt.getJsConfig(params);
+            return await this.ctx.bean.wxwork.app.selfBuilt.getJsConfig(params);
           }
 
           async jsconfigAgent({ url }) {
@@ -1801,7 +1801,7 @@ module.exports =
               jsApiList: configAppSelfBuilt.jssdkAgent.jsApiList,
               url,
             };
-            return await this.ctx.meta.wxwork.app.selfBuilt.getJsConfigAgent(params);
+            return await this.ctx.bean.wxwork.app.selfBuilt.getJsConfigAgent(params);
           }
 
         }
@@ -1822,7 +1822,7 @@ module.exports =
 
           async login({ scene, code }) {
             if (!code) return this.ctx.throw(403);
-            const res = await this.ctx.meta.wxwork.app.mini[scene].code2Session(code);
+            const res = await this.ctx.bean.wxwork.app.mini[scene].code2Session(code);
             // const res = { errcode: 0, userid: 'YangJian1', session_key: 'kJtdi6RF+Dv67QkbLlPGjw==' };
             if (res.errcode) throw new Error(res.errmsg);
             const session_key = res.session_key;
@@ -1831,9 +1831,9 @@ module.exports =
             const wxworkHelper = new (WxworkHelperFn(this.ctx))();
             await wxworkHelper.verifyAuthUser({ scene: `wxworkmini${scene}`, memberId });
             // save session_key, because ctx.state.user maybe changed
-            await this.ctx.meta.wxwork.mini[scene].saveSessionKey(session_key);
+            await this.ctx.bean.wxwork.mini[scene].saveSessionKey(session_key);
             // echo
-            return await this.ctx.meta.auth.echo();
+            return await this.ctx.bean.auth.echo();
           }
 
         }

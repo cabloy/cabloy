@@ -241,7 +241,7 @@ module.exports = appInfo => {
             // create
             const { token, buffer } = await captcha();
             // update
-            await this.ctx.meta.captcha.update({
+            await this.ctx.bean.captcha.update({
               providerInstanceId, data: { token },
             });
             // ok

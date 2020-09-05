@@ -11,23 +11,23 @@ module.exports = app => {
       if (options.version === 1) {
         // create roles: cms-community-writer to template
         const roles = [ 'cms-community-writer', 'cms-community-publisher' ];
-        const roleTemplate = await this.ctx.meta.role.getSystemRole({ roleName: 'template' });
-        const roleSuperuser = await this.ctx.meta.role.getSystemRole({ roleName: 'superuser' });
-        const roleActivated = await this.ctx.meta.role.getSystemRole({ roleName: 'activated' });
+        const roleTemplate = await this.ctx.bean.role.getSystemRole({ roleName: 'template' });
+        const roleSuperuser = await this.ctx.bean.role.getSystemRole({ roleName: 'superuser' });
+        const roleActivated = await this.ctx.bean.role.getSystemRole({ roleName: 'activated' });
         for (const roleName of roles) {
-          const roleId = await this.ctx.meta.role.add({
+          const roleId = await this.ctx.bean.role.add({
             roleName,
             roleIdParent: roleTemplate.id,
           });
           // role:superuser include cms-community
-          await this.ctx.meta.role.addRoleInc({ roleId: roleSuperuser.id, roleIdInc: roleId });
+          await this.ctx.bean.role.addRoleInc({ roleId: roleSuperuser.id, roleIdInc: roleId });
           // role:activated include cms-community-writer
           if (roleName === 'cms-community-writer') {
-            await this.ctx.meta.role.addRoleInc({ roleId: roleActivated.id, roleIdInc: roleId });
+            await this.ctx.bean.role.addRoleInc({ roleId: roleActivated.id, roleIdInc: roleId });
           }
         }
         // build roles
-        await this.ctx.meta.role.setDirty(true);
+        await this.ctx.bean.role.setDirty(true);
 
         // add role rights
         const roleRights = [
@@ -40,7 +40,7 @@ module.exports = app => {
           { roleName: 'cms-community-publisher', action: 'publish', scopeNames: 'authenticated' },
           { roleName: 'root', action: 'read', scopeNames: 'authenticated' },
         ];
-        await this.ctx.meta.role.addRoleRightBatch({ atomClassName: 'post', roleRights });
+        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'post', roleRights });
 
       }
     }

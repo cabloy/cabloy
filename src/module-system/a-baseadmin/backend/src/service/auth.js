@@ -9,7 +9,7 @@ module.exports = app => {
       // list
       const list = await this.ctx.model.authProvider.select();
       // meta
-      const authProviders = this.ctx.meta.base.authProviders();
+      const authProviders = this.ctx.bean.base.authProviders();
       for (const item of list) {
         const key = `${item.module}:${item.providerName}`;
         const authProvider = authProviders[key];
@@ -40,12 +40,12 @@ module.exports = app => {
       // item
       const item = await this.ctx.model.authProvider.get({ id });
       // meta
-      const authProviders = this.ctx.meta.base.authProviders();
+      const authProviders = this.ctx.bean.base.authProviders();
       const authProvider = authProviders[`${item.module}:${item.providerName}`];
       if (authProvider.meta.mode === 'redirect') {
         const moduleInfo = mparse.parseInfo(item.module);
-        const loginURL = this.ctx.meta.base.getAbsoluteUrl(`/api/${moduleInfo.url}/passport/${item.module}/${item.providerName}`);
-        const callbackURL = this.ctx.meta.base.getAbsoluteUrl(`/api/${moduleInfo.url}/passport/${item.module}/${item.providerName}/callback`);
+        const loginURL = this.ctx.bean.base.getAbsoluteUrl(`/api/${moduleInfo.url}/passport/${item.module}/${item.providerName}`);
+        const callbackURL = this.ctx.bean.base.getAbsoluteUrl(`/api/${moduleInfo.url}/passport/${item.module}/${item.providerName}/callback`);
         item._meta = {
           loginURL,
           callbackURL,

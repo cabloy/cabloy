@@ -18,7 +18,7 @@ module.exports = app => {
 
     async list() {
       const options = this.ctx.request.body.options;
-      options.page = this.ctx.meta.util.page(options.page);
+      options.page = this.ctx.bean.util.page(options.page);
       const items = await this.ctx.service.comment.list({
         key: this.ctx.request.body.key,
         options,

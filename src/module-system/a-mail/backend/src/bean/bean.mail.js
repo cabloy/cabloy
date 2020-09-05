@@ -24,7 +24,7 @@ module.exports = ctx => {
       const mailId = res.insertId;
       // publish
       ctx.tail(async () => {
-        await ctx.meta.io.publish({
+        await ctx.bean.io.publish({
           message: {
             content: { mailId },
           },

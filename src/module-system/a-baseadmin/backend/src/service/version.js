@@ -17,12 +17,12 @@ module.exports = app => {
           { roleName: 'system', name: 'functionRight' },
           { roleName: 'system', name: 'auth' },
         ];
-        await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
+        await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions });
       }
 
       if (options.version === 2) {
         // remove menuRight
-        const fun = await this.ctx.meta.function._get({ module: moduleInfo.relativeName, name: 'menuRight' });
+        const fun = await this.ctx.bean.function._get({ module: moduleInfo.relativeName, name: 'menuRight' });
         if (fun) {
           //  1. aFunction
           await this.ctx.model.delete('aFunction', { id: fun.id });
@@ -40,12 +40,12 @@ module.exports = app => {
         const roleFunctions = [
           { roleName: 'system', name: 'menu' },
         ];
-        await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
+        await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions });
 
         // menu: 1->0
         const functions = 'user,role,atomRight,functionRight,auth'.split(',');
         for (const name of functions) {
-          const func = await this.ctx.meta.function.get({ name });
+          const func = await this.ctx.bean.function.get({ name });
           await this.ctx.model.function.update({ id: func.id, sceneId: 0, menu: 0 });
         }
       }

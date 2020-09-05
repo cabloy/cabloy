@@ -14,7 +14,7 @@ module.exports = app => {
     }
 
     _registerAllRouters() {
-      const authProviders = this.ctx.meta.util.authProviders();
+      const authProviders = this.ctx.bean.util.authProviders();
       for (const key in authProviders) {
         const [ moduleRelativeName, providerName ] = key.split(':');
         this._registerProviderRouters(moduleRelativeName, providerName);
@@ -58,7 +58,7 @@ module.exports = app => {
     }
 
     async _registerInstanceProviders(subdomain, iid) {
-      const authProviders = this.ctx.meta.util.authProviders();
+      const authProviders = this.ctx.bean.util.authProviders();
       for (const key in authProviders) {
         const [ moduleRelativeName, providerName ] = key.split(':');
         await this._registerInstanceProvider(subdomain, iid, moduleRelativeName, providerName);
@@ -79,7 +79,7 @@ module.exports = app => {
       // unuse/use
       if (providerItem.disabled === 0) {
         // provider
-        const authProviders = this.ctx.meta.util.authProviders();
+        const authProviders = this.ctx.bean.util.authProviders();
         const provider = authProviders[`${moduleRelativeName}:${providerName}`];
         if (provider.handler) {
           // config
@@ -100,7 +100,7 @@ module.exports = app => {
     }
 
     async register({ module, providerName }) {
-      return await this.ctx.meta.user.registerAuthProvider({ module, providerName });
+      return await this.ctx.bean.user.registerAuthProvider({ module, providerName });
     }
 
     async providerChanged({ module, providerName }) {
@@ -115,7 +115,7 @@ module.exports = app => {
 function createAuthenticate(moduleRelativeName, providerName, _config) {
   return async function(ctx, next) {
     // provider of db
-    const providerItem = await ctx.meta.user.getAuthProvider({
+    const providerItem = await ctx.bean.user.getAuthProvider({
       module: moduleRelativeName,
       providerName,
     });
@@ -131,15 +131,15 @@ function createAuthenticate(moduleRelativeName, providerName, _config) {
     }
 
     // provider
-    const authProviders = ctx.meta.util.authProviders();
+    const authProviders = ctx.bean.util.authProviders();
     const provider = authProviders[`${moduleRelativeName}:${providerName}`];
 
     // config
     const config = provider.config;
     config.passReqToCallback = true;
     config.failWithError = false;
-    config.loginURL = ctx.meta.base.getAbsoluteUrl(_config.loginURL);
-    config.callbackURL = ctx.meta.base.getAbsoluteUrl(_config.callbackURL);
+    config.loginURL = ctx.bean.base.getAbsoluteUrl(_config.loginURL);
+    config.callbackURL = ctx.bean.base.getAbsoluteUrl(_config.callbackURL);
     config.state = ctx.request.query.state;
     config.successRedirect = config.successReturnToOrRedirect = (provider.meta.mode === 'redirect') ? '/' : false;
 

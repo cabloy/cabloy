@@ -734,39 +734,39 @@ module.exports = appInfo => {
 
           async starLabel() {
             // atomClass
-            const atomClass = await this.ctx.meta.atomClass.get({ atomClassName: 'party' });
+            const atomClass = await this.ctx.bean.atomClass.get({ atomClassName: 'party' });
             // user
             const user = this.ctx.state.user.op;
 
             // add party:star
-            const partyKey = await this.ctx.meta.atom.create({
+            const partyKey = await this.ctx.bean.atom.create({
               atomClass,
               user,
             });
 
             // write party
-            await this.ctx.meta.atom.write({
+            await this.ctx.bean.atom.write({
               key: partyKey,
               item: { atomName: 'test:starLabel' },
               user,
             });
 
             // get party
-            let party = await this.ctx.meta.atom.read({ key: partyKey, user });
+            let party = await this.ctx.bean.atom.read({ key: partyKey, user });
             assert.equal(party.star, null);
             assert.equal(party.labels, null);
 
             // set star/label
-            await this.ctx.meta.atom.star({ key: partyKey, atom: { star: 1 }, user });
-            await this.ctx.meta.atom.labels({ key: partyKey, atom: { labels: [ 1 ] }, user });
+            await this.ctx.bean.atom.star({ key: partyKey, atom: { star: 1 }, user });
+            await this.ctx.bean.atom.labels({ key: partyKey, atom: { labels: [ 1 ] }, user });
 
             // get party
-            party = await this.ctx.meta.atom.read({ key: partyKey, user });
+            party = await this.ctx.bean.atom.read({ key: partyKey, user });
             assert.equal(party.star, 1);
             assert.equal(party.labels, '[1]');
 
             // select parties
-            let parties = await this.ctx.meta.atom.select({
+            let parties = await this.ctx.bean.atom.select({
               user,
               options: {
                 star: 1,
@@ -775,7 +775,7 @@ module.exports = appInfo => {
             });
             assert.equal(parties.length, 1);
 
-            parties = await this.ctx.meta.atom.select({
+            parties = await this.ctx.bean.atom.select({
               user,
               options: {
                 label: 1,
@@ -784,7 +784,7 @@ module.exports = appInfo => {
             });
             assert.equal(parties.length, 1);
 
-            parties = await this.ctx.meta.atom.select({
+            parties = await this.ctx.bean.atom.select({
               user,
               options: {
                 label: 2,
@@ -794,16 +794,16 @@ module.exports = appInfo => {
             assert.equal(parties.length, 0);
 
             // clear star/label
-            await this.ctx.meta.atom.star({ key: partyKey, atom: { star: 0 }, user });
-            await this.ctx.meta.atom.labels({ key: partyKey, atom: { labels: null }, user });
+            await this.ctx.bean.atom.star({ key: partyKey, atom: { star: 0 }, user });
+            await this.ctx.bean.atom.labels({ key: partyKey, atom: { labels: null }, user });
 
             // get party
-            party = await this.ctx.meta.atom.read({ key: partyKey, user });
+            party = await this.ctx.bean.atom.read({ key: partyKey, user });
             assert.equal(party.star, null);
             assert.equal(party.labels, null);
 
             // delete party
-            await this.ctx.meta.atom.delete({ key: partyKey, user });
+            await this.ctx.bean.atom.delete({ key: partyKey, user });
 
             // done
             this.ctx.success();
@@ -827,7 +827,7 @@ module.exports = appInfo => {
         class AllController extends app.Controller {
 
           async getRoleIdOwner(atomClass, userId) {
-            const roles = await this.ctx.meta.atom.preferredRoles({
+            const roles = await this.ctx.bean.atom.preferredRoles({
               atomClass,
               user: { id: userId },
             });
@@ -836,7 +836,7 @@ module.exports = appInfo => {
 
           async all() {
             // atomClass
-            const atomClass = await this.ctx.meta.atomClass.get({ atomClassName: 'party' });
+            const atomClass = await this.ctx.bean.atomClass.get({ atomClassName: 'party' });
             // userIds
             const userIds = this.ctx.cache.mem.get('userIds');
 
@@ -853,12 +853,12 @@ module.exports = appInfo => {
 
             // Tom add party
             const roleIdOwnerTom = await this.getRoleIdOwner(atomClass, userIds.Tom);
-            const partyKey = await this.ctx.meta.atom.create({
+            const partyKey = await this.ctx.bean.atom.create({
               atomClass,
               roleIdOwner: roleIdOwnerTom,
               user: { id: userIds.Tom },
             });
-            await this.ctx.meta.atom.write({
+            await this.ctx.bean.atom.write({
               key: partyKey,
               item: { atomName: 'test:all', personCount: 3 },
               user: { id: userIds.Tom },
@@ -875,7 +875,7 @@ module.exports = appInfo => {
             });
 
             // Tom enable(submit) party
-            await this.ctx.meta.atom.enable({
+            await this.ctx.bean.atom.enable({
               key: partyKey,
               atom: {
                 atomEnabled: 1,
@@ -894,18 +894,18 @@ module.exports = appInfo => {
             });
 
             // Tom update party
-            await this.ctx.meta.atom.write({
+            await this.ctx.bean.atom.write({
               key: partyKey,
               item: { personCount: 8 },
               user: { id: userIds.Tom },
             });
 
             // Tom get party
-            const party = await this.ctx.meta.atom.read({ key: partyKey, user: { id: userIds.Tom } });
+            const party = await this.ctx.bean.atom.read({ key: partyKey, user: { id: userIds.Tom } });
             assert.equal(party.personCount, 8);
 
             // Tom list party
-            const parties = await this.ctx.meta.atom.select({
+            const parties = await this.ctx.bean.atom.select({
               atomClass,
               options: {
                 where: { atomName: { val: 'test:all', op: 'likeRight' } },
@@ -919,7 +919,7 @@ module.exports = appInfo => {
             // checkRightRead
             const checkRightReads = [[ 'Tom', partyKey.atomId, true ]];
             for (const [ userName, atomId, right ] of checkRightReads) {
-              const res = await this.ctx.meta.atom.checkRightRead({
+              const res = await this.ctx.bean.atom.checkRightRead({
                 atom: { id: atomId },
                 user: { id: userIds[userName] },
               });
@@ -929,7 +929,7 @@ module.exports = appInfo => {
             // checkRightWrite
             const checkRightWrites = [[ 'Tom', partyKey.atomId, true ], [ 'Tomson', partyKey.atomId, false ]];
             for (const [ userName, atomId, right ] of checkRightWrites) {
-              const res = await this.ctx.meta.atom.checkRightUpdate({
+              const res = await this.ctx.bean.atom.checkRightUpdate({
                 atom: { id: atomId, action: this.ctx.constant.module('a-base').atom.action.write },
                 user: { id: userIds[userName] },
               });
@@ -939,7 +939,7 @@ module.exports = appInfo => {
             // checkRightDelete
             const checkRightDeletes = [[ 'Tom', partyKey.atomId, true ], [ 'Tomson', partyKey.atomId, false ]];
             for (const [ userName, atomId, right ] of checkRightDeletes) {
-              const res = await this.ctx.meta.atom.checkRightUpdate({
+              const res = await this.ctx.bean.atom.checkRightUpdate({
                 atom: { id: atomId, action: this.ctx.constant.module('a-base').atom.action.delete },
                 user: { id: userIds[userName] },
               });
@@ -949,7 +949,7 @@ module.exports = appInfo => {
             // checkRightCreate
             const checkRightCreates = [[ 'Tom', true ], [ 'Jimmy', true ], [ 'Smith', false ]];
             for (const [ userName, right ] of checkRightCreates) {
-              const res = await this.ctx.meta.atom.checkRightCreate({
+              const res = await this.ctx.bean.atom.checkRightCreate({
                 atomClass,
                 user: { id: userIds[userName] },
               });
@@ -959,7 +959,7 @@ module.exports = appInfo => {
             // checkRightAction:review(flag=1)
             const checkRightActions_1 = [[ 'Tom', partyKey.atomId, false ], [ 'Jane', partyKey.atomId, true ]];
             for (const [ userName, atomId, right ] of checkRightActions_1) {
-              const res = await this.ctx.meta.atom.checkRightAction({
+              const res = await this.ctx.bean.atom.checkRightAction({
                 atom: { id: atomId, action: 101 },
                 user: { id: userIds[userName] },
               });
@@ -967,7 +967,7 @@ module.exports = appInfo => {
             }
 
             // action: review
-            await this.ctx.meta.atom.action({
+            await this.ctx.bean.atom.action({
               action: 101,
               key: partyKey,
               user: { id: userIds.Jane },
@@ -976,7 +976,7 @@ module.exports = appInfo => {
             // checkRightAction:review(flag=2)
             const checkRightActions_2 = [[ 'Tom', partyKey.atomId, false ], [ 'Jane', partyKey.atomId, false ]];
             for (const [ userName, atomId, right ] of checkRightActions_2) {
-              const res = await this.ctx.meta.atom.checkRightAction({
+              const res = await this.ctx.bean.atom.checkRightAction({
                 atom: { id: atomId, action: 101 },
                 user: { id: userIds[userName] },
               });
@@ -984,14 +984,14 @@ module.exports = appInfo => {
             }
 
             // action: review again
-            await this.ctx.meta.atom.action({
+            await this.ctx.bean.atom.action({
               action: 101,
               key: partyKey,
               user: { id: userIds.Jane },
             });
 
             // Tom delete party
-            await this.ctx.meta.atom.delete({
+            await this.ctx.bean.atom.delete({
               key: partyKey,
               user: { id: userIds.Tom },
             });
@@ -1012,7 +1012,7 @@ module.exports = appInfo => {
 
           async _testCheckList(userIds, userAtoms, cb) {
             for (const [ userName, atomCountExpected ] of userAtoms) {
-              const list = await this.ctx.meta.atom.select({
+              const list = await this.ctx.bean.atom.select({
                 options: {
                   where: {
                     atomName: 'test:all',
@@ -1047,7 +1047,7 @@ module.exports = appInfo => {
 
           async publicFlow() {
             // atomClass
-            const atomClass = await this.ctx.meta.atomClass.get({ atomClassName: 'partyPublic' });
+            const atomClass = await this.ctx.bean.atomClass.get({ atomClassName: 'partyPublic' });
             // userIds
             const userIds = this.ctx.cache.mem.get('userIds');
 
@@ -1062,11 +1062,11 @@ module.exports = appInfo => {
             });
 
             // Tom add party
-            const partyKey = await this.ctx.meta.atom.create({
+            const partyKey = await this.ctx.bean.atom.create({
               atomClass,
               user: { id: userIds.Tom },
             });
-            await this.ctx.meta.atom.write({
+            await this.ctx.bean.atom.write({
               key: partyKey,
               item: { atomName: 'test:publicFlow' },
               user: { id: userIds.Tom },
@@ -1082,7 +1082,7 @@ module.exports = appInfo => {
             });
 
             // Tom enable(submit) party
-            await this.ctx.meta.atom.enable({
+            await this.ctx.bean.atom.enable({
               key: partyKey,
               atom: {
                 atomEnabled: 1,
@@ -1102,7 +1102,7 @@ module.exports = appInfo => {
             // checkRightRead 1
             let checkRightReads = [[ 'Jane', partyKey.atomId, false ]];
             for (const [ userName, atomId, right ] of checkRightReads) {
-              const res = await this.ctx.meta.atom.checkRightRead({
+              const res = await this.ctx.bean.atom.checkRightRead({
                 atom: { id: atomId },
                 user: { id: userIds[userName] },
               });
@@ -1110,7 +1110,7 @@ module.exports = appInfo => {
             }
 
             // close atomFlow
-            await this.ctx.meta.atom.flow({
+            await this.ctx.bean.atom.flow({
               key: partyKey,
               atom: {
                 atomFlow: 0,
@@ -1130,7 +1130,7 @@ module.exports = appInfo => {
             // checkRightRead 2
             checkRightReads = [[ 'Jane', partyKey.atomId, true ]];
             for (const [ userName, atomId, right ] of checkRightReads) {
-              const res = await this.ctx.meta.atom.checkRightRead({
+              const res = await this.ctx.bean.atom.checkRightRead({
                 atom: { id: atomId },
                 user: { id: userIds[userName] },
               });
@@ -1138,11 +1138,11 @@ module.exports = appInfo => {
             }
 
             // Jane read party
-            const party = await this.ctx.meta.atom.read({ key: partyKey, user: { id: userIds.Jane } });
+            const party = await this.ctx.bean.atom.read({ key: partyKey, user: { id: userIds.Jane } });
             assert(party);
 
             // Tom delete party
-            await this.ctx.meta.atom.delete({
+            await this.ctx.bean.atom.delete({
               key: partyKey,
               user: { id: userIds.Tom },
             });
@@ -1162,7 +1162,7 @@ module.exports = appInfo => {
 
           async _testCheckList(userIds, userAtoms, cb) {
             for (const [ userName, atomCountExpected ] of userAtoms) {
-              const list = await this.ctx.meta.atom.select({
+              const list = await this.ctx.bean.atom.select({
                 options: {
                   where: {
                     atomName: 'test:publicFlow',
@@ -1257,7 +1257,7 @@ module.exports = appInfo => {
             const functionCount = Object.keys(this.ctx.module.main.meta.base.functions).length;
 
             // Tom list all
-            let list = await this.ctx.meta.function.list({
+            let list = await this.ctx.bean.function.list({
               options: {
                 where: { 'a.module': 'test-party' },
                 orders: [[ 'id', 'asc' ]],
@@ -1270,7 +1270,7 @@ module.exports = appInfo => {
             assert(!list[0].titleLocale);
 
             // Tom menu list zh-cn
-            list = await this.ctx.meta.function.list({
+            list = await this.ctx.bean.function.list({
               options: {
                 where: { 'a.module': 'test-party' },
                 orders: [[ 'id', 'asc' ]],
@@ -1286,10 +1286,10 @@ module.exports = appInfo => {
             const function1 = list[0];
 
             // clear locales
-            await this.ctx.meta.function.clearLocales();
+            await this.ctx.bean.function.clearLocales();
 
             // select star
-            list = await this.ctx.meta.function.list({
+            list = await this.ctx.bean.function.list({
               user: userTom,
               options: {
                 where: { 'a.module': 'test-party' },
@@ -1300,12 +1300,12 @@ module.exports = appInfo => {
             assert.equal(list.length, 0);
 
             // star 1
-            await this.ctx.meta.function.star({
+            await this.ctx.bean.function.star({
               id: function1.id,
               star: 1,
               user: userTom,
             });
-            list = await this.ctx.meta.function.list({
+            list = await this.ctx.bean.function.list({
               user: userTom,
               options: {
                 where: { 'a.module': 'test-party' },
@@ -1316,12 +1316,12 @@ module.exports = appInfo => {
             assert.equal(list.length, 1);
 
             // star 0
-            await this.ctx.meta.function.star({
+            await this.ctx.bean.function.star({
               id: function1.id,
               star: 0,
               user: userTom,
             });
-            list = await this.ctx.meta.function.list({
+            list = await this.ctx.bean.function.list({
               user: userTom,
               options: {
                 where: { 'a.module': 'test-party' },
@@ -1332,7 +1332,7 @@ module.exports = appInfo => {
             assert.equal(list.length, 0);
 
             // check
-            list = await this.ctx.meta.function.check({
+            list = await this.ctx.bean.function.check({
               functions: [
                 { module: function1.module, name: function1.name },
               ],
@@ -1370,7 +1370,7 @@ module.exports = appInfo => {
             const functionCount = Object.values(this.ctx.module.main.meta.base.functions).filter(item => item.public === 1).length;
 
             // check right function
-            const pass = await this.ctx.meta.function.checkRightFunction({
+            const pass = await this.ctx.bean.function.checkRightFunction({
               function: {
                 module: 'test-party',
                 name: 'testFunctionPublic',
@@ -1380,7 +1380,7 @@ module.exports = appInfo => {
             assert.equal(!!pass, true);
 
             // Tom list all
-            const list = await this.ctx.meta.function.list({
+            const list = await this.ctx.bean.function.list({
               options: {
                 where: {
                   'a.module': 'test-party',
@@ -1459,13 +1459,13 @@ module.exports = appInfo => {
             const itemNew = this.ctx.request.body.item;
 
             // write
-            await this.ctx.meta.atom.write({
+            await this.ctx.bean.atom.write({
               key: atomKey,
               item: { atomName: itemNew.atomName },
               user,
             });
             // write: throw error when personCount is 0
-            await this.ctx.meta.atom.write({
+            await this.ctx.bean.atom.write({
               key: atomKey,
               item: { personCount: itemNew.personCount },
               user,
@@ -1943,27 +1943,27 @@ module.exports = appInfo => {
             const roleIds = this.ctx.cache.mem.get('roleIds');
 
             // direct
-            let list = await this.ctx.meta.role.getUserRolesDirect({ userId: userIds.root });
+            let list = await this.ctx.bean.role.getUserRolesDirect({ userId: userIds.root });
             assert.equal(list.length, 1);
             // parent
-            list = await this.ctx.meta.role.getUserRolesParent({ userId: userIds.root });
+            list = await this.ctx.bean.role.getUserRolesParent({ userId: userIds.root });
             assert.equal(list.length, 3);
             // expand
-            list = await this.ctx.meta.role.getUserRolesExpand({ userId: userIds.root });
+            list = await this.ctx.bean.role.getUserRolesExpand({ userId: userIds.root });
             assert(list.length > 3);
 
             // direct
-            let res = await this.ctx.meta.role.userInRoleDirect({
+            let res = await this.ctx.bean.role.userInRoleDirect({
               userId: userIds.root, roleId: roleIds.superuser,
             });
             assert.equal(res, true);
             // parent
-            res = await this.ctx.meta.role.userInRoleParent({
+            res = await this.ctx.bean.role.userInRoleParent({
               userId: userIds.root, roleId: roleIds.root,
             });
             assert.equal(res, true);
             // expand
-            res = await this.ctx.meta.role.userInRoleExpand({
+            res = await this.ctx.bean.role.userInRoleExpand({
               userId: userIds.root, roleId: roleIds.system,
             });
             assert.equal(res, true);
@@ -1994,7 +1994,7 @@ module.exports = appInfo => {
             const data = {
               text: 'hello',
             };
-            const res = await this.ctx.meta.event.invoke({
+            const res = await this.ctx.bean.event.invoke({
               module: moduleInfo.relativeName, name: 'hello', data,
             });
             assert.equal(data.text, 'hello echo');
@@ -2148,7 +2148,7 @@ module.exports = appInfo => {
           async sendMail() {
             // send
             const message = this.ctx.request.body.data;
-            await this.ctx.meta.mail.send({
+            await this.ctx.bean.mail.send({
               scene: 'test',
               message,
             });
@@ -2178,7 +2178,7 @@ module.exports = appInfo => {
             const options = this.ctx.request.body.options;
             const message = this.ctx.request.body.message;
             message.userIdFrom = this.ctx.state.user.op.id;
-            const res = await this.ctx.meta.io.publish({
+            const res = await this.ctx.bean.io.publish({
               path: _subscribePath,
               message,
               messageClass: {
@@ -2266,7 +2266,7 @@ module.exports = appInfo => {
 
           async progress() {
             // create progress
-            const progressId = await this.ctx.meta.progress.create();
+            const progressId = await this.ctx.bean.progress.create();
             // background
             this.ctx.performActionInBackground({
               method: 'post',
@@ -2285,12 +2285,12 @@ module.exports = appInfo => {
               // level one
               await this._levelOne({ progressId, progressNo: 0 });
               // progress done
-              await this.ctx.meta.progress.done({ progressId, message: this.ctx.text('Well Done') });
+              await this.ctx.bean.progress.done({ progressId, message: this.ctx.text('Well Done') });
               // ok
               this.ctx.success(true);
             } catch (err) {
               // progress error
-              await this.ctx.meta.progress.error({ progressId, message: err.message });
+              await this.ctx.bean.progress.error({ progressId, message: err.message });
               // throw err
               throw err;
             }
@@ -2301,7 +2301,7 @@ module.exports = appInfo => {
             let current = 0;
             for (let i = 0; i < total; i++) {
               const text = `${this.ctx.text('Level One')}: ${i + 1}`;
-              await this.ctx.meta.progress.update({
+              await this.ctx.bean.progress.update({
                 progressId,
                 progressNo,
                 total,
@@ -2309,7 +2309,7 @@ module.exports = appInfo => {
                 text,
               });
               // sleep
-              await this.ctx.meta.util.sleep(1500);
+              await this.ctx.bean.util.sleep(1500);
               // level two
               await this._levelTwo({ progressId, progressNo: progressNo + 1 });
             }
@@ -2320,7 +2320,7 @@ module.exports = appInfo => {
             let current = 0;
             for (let i = 0; i < total; i++) {
               const text = `${this.ctx.text('Level Two')}: ${i + 1}`;
-              await this.ctx.meta.progress.update({
+              await this.ctx.bean.progress.update({
                 progressId,
                 progressNo,
                 total,
@@ -2328,7 +2328,7 @@ module.exports = appInfo => {
                 text,
               });
               // sleep
-              await this.ctx.meta.util.sleep(1500);
+              await this.ctx.bean.util.sleep(1500);
               // level two
               await this._levelThree({ progressId, progressNo: progressNo + 1 });
             }
@@ -2339,7 +2339,7 @@ module.exports = appInfo => {
             let current = 0;
             for (let i = 0; i < total; i++) {
               const text = `${this.ctx.text('Level Three')}: ${i + 1}`;
-              await this.ctx.meta.progress.update({
+              await this.ctx.bean.progress.update({
                 progressId,
                 progressNo,
                 total,
@@ -2347,7 +2347,7 @@ module.exports = appInfo => {
                 text,
               });
               // sleep
-              await this.ctx.meta.util.sleep(1500);
+              await this.ctx.bean.util.sleep(1500);
             }
           }
 
@@ -2371,22 +2371,22 @@ module.exports = appInfo => {
           async sequence() {
 
             // current
-            let current = await this.ctx.meta.sequence.current('test');
+            let current = await this.ctx.bean.sequence.current('test');
             assert.equal(current, 0);
 
             // next
-            let next = await this.ctx.meta.sequence.next('test');
+            let next = await this.ctx.bean.sequence.next('test');
             assert.equal(next, 1);
 
             // current
-            current = await this.ctx.meta.sequence.current('test');
+            current = await this.ctx.bean.sequence.current('test');
             assert.equal(current, 1);
 
             // reset
-            await this.ctx.meta.sequence.reset('test');
+            await this.ctx.bean.sequence.reset('test');
 
             // other module's sequence
-            const moduleSequence = this.ctx.meta.sequence.module(this.ctx.module.info.relativeName);
+            const moduleSequence = this.ctx.bean.sequence.module(this.ctx.module.info.relativeName);
 
             // next
             next = await moduleSequence.next('test');
@@ -2433,37 +2433,37 @@ module.exports = appInfo => {
             // user
 
             // get settings from config
-            let data = await this.ctx.meta.settings.getUser({ name: '/groupInfo/username' });
+            let data = await this.ctx.bean.settings.getUser({ name: '/groupInfo/username' });
             assert.equal(data, 'zhennann');
-            data = await this.ctx.meta.settings.getUser({ name: '/groupExtra/panelExtra/groupInfo/language' });
+            data = await this.ctx.bean.settings.getUser({ name: '/groupExtra/panelExtra/groupInfo/language' });
             assert.equal(data, 'en-us');
 
             // load settings
-            data = await this.ctx.meta.settings.loadSettingsUser();
+            data = await this.ctx.bean.settings.loadSettingsUser();
             assert.equal(data.groupInfo.username, 'zhennann');
             // save settings
             data.groupExtra.panelExtra.groupInfo.language = 'zh-cn';
-            await this.ctx.meta.settings.saveSettingsUser({ data });
+            await this.ctx.bean.settings.saveSettingsUser({ data });
 
             // get settings from db
-            data = await this.ctx.meta.settings.getUser({ name: '/groupExtra/panelExtra/groupInfo/language' });
+            data = await this.ctx.bean.settings.getUser({ name: '/groupExtra/panelExtra/groupInfo/language' });
             assert.equal(data, 'zh-cn');
 
             // instance
 
             // get settings from config
-            data = await this.ctx.meta.settings.getInstance({ name: '/groupInfo/slogan' });
+            data = await this.ctx.bean.settings.getInstance({ name: '/groupInfo/slogan' });
             assert.equal(data, '');
 
             // load settings
-            data = await this.ctx.meta.settings.loadSettingsInstance();
+            data = await this.ctx.bean.settings.loadSettingsInstance();
             assert.equal(data.groupInfo.slogan, '');
             // save settings
             data.groupInfo.slogan = 'Less is more, while more is less';
-            await this.ctx.meta.settings.saveSettingsInstance({ data });
+            await this.ctx.bean.settings.saveSettingsInstance({ data });
 
             // get settings from db
-            data = await this.ctx.meta.settings.getInstance({ name: '/groupInfo/slogan' });
+            data = await this.ctx.bean.settings.getInstance({ name: '/groupInfo/slogan' });
             assert.equal(data, 'Less is more, while more is less');
 
             // ok
@@ -2492,26 +2492,26 @@ module.exports = appInfo => {
             const name = '__test_enable';
 
             // get
-            let value = await this.ctx.meta.status.get(name);
+            let value = await this.ctx.bean.status.get(name);
             assert.equal(value, undefined);
 
             // set
-            await this.ctx.meta.status.set(name, true);
+            await this.ctx.bean.status.set(name, true);
 
             // get
-            value = await this.ctx.meta.status.get(name);
+            value = await this.ctx.bean.status.get(name);
             assert.equal(value, true);
 
             // other module's status
-            const moduleStatus = this.ctx.meta.status.module(this.ctx.module.info.relativeName);
+            const moduleStatus = this.ctx.bean.status.module(this.ctx.module.info.relativeName);
             value = await moduleStatus.get(name);
             assert.equal(value, true);
 
             // set
-            await this.ctx.meta.status.set(name, false);
+            await this.ctx.bean.status.set(name, false);
 
             // get
-            value = await this.ctx.meta.status.get(name);
+            value = await this.ctx.bean.status.get(name);
             assert.equal(value, false);
 
             // done
@@ -2895,7 +2895,7 @@ module.exports = appInfo => {
             // page
             let page = this.ctx.request.body.page;
             // adjust page
-            page = this.ctx.meta.util.page(page, false);
+            page = this.ctx.bean.util.page(page, false);
             // items
             const items = [];
             for (let i = 0; i < page.size; i++) {
@@ -3019,13 +3019,13 @@ module.exports = appInfo => {
             //
             if (options.version === 2) {
               // // roleFunctions
-              // const roleRoot = await this.ctx.meta.role.getSystemRole({ roleName: 'root' });
+              // const roleRoot = await this.ctx.bean.role.getSystemRole({ roleName: 'root' });
               // const functions = [ 'kichenSink' ];
               // for (const functionName of functions) {
-              //   const func = await this.ctx.meta.function.get({
+              //   const func = await this.ctx.bean.function.get({
               //     name: functionName,
               //   });
-              //   await this.ctx.meta.role.addRoleFunction({
+              //   await this.ctx.bean.role.addRoleFunction({
               //     roleId: roleRoot.id,
               //     functionId: func.id,
               //   });
@@ -3035,13 +3035,13 @@ module.exports = appInfo => {
             //
             if (options.version === 3) {
               // delete old function
-              await this.ctx.meta.function.delete({ name: 'kichenSink' });
+              await this.ctx.bean.function.delete({ name: 'kichenSink' });
 
               // roleFunctions
               const roleFunctions = [
                 { roleName: 'root', name: 'kitchenSink' },
               ];
-              await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
+              await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions });
             }
 
             //
@@ -3054,7 +3054,7 @@ module.exports = appInfo => {
                 { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
                 { roleName: 'system', action: 'review', scopeNames: 'authenticated' },
               ];
-              await this.ctx.meta.role.addRoleRightBatch({ atomClassName: 'party', roleRights });
+              await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'party', roleRights });
             }
 
             //
@@ -3066,15 +3066,15 @@ module.exports = appInfo => {
                 { roleName: null, name: 'widgetSalesPie' },
                 { roleName: null, name: 'widgetSnapshot' },
               ];
-              await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
+              await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions });
             }
 
             //
             if (options.version === 6) {
               // function: kitchenSink scene->demonstration
-              const sceneId = await this.ctx.meta.function.getSceneId({ sceneName: 'demonstration', sceneMenu: 1 });
-              const func = await this.ctx.meta.function.get({ name: 'kitchenSink' });
-              await this.ctx.meta.function.model.update({ id: func.id, sceneId });
+              const sceneId = await this.ctx.bean.function.getSceneId({ sceneName: 'demonstration', sceneMenu: 1 });
+              const func = await this.ctx.bean.function.get({ name: 'kitchenSink' });
+              await this.ctx.bean.function.model.update({ id: func.id, sceneId });
             }
 
           }
@@ -3109,7 +3109,7 @@ module.exports = appInfo => {
             await this._testRoleIncs(roleIds);
 
             // set role dirty
-            await ctx.meta.role.setDirty(true);
+            await ctx.bean.role.setDirty(true);
 
             // users
             const userIds = await this._testUsers(roleIds);
@@ -3133,12 +3133,12 @@ module.exports = appInfo => {
             const roleIds = {};
             // system roles
             for (const roleName of ctx.constant.module('a-base').systemRoles) {
-              const role = await ctx.meta.role.getSystemRole({ roleName });
+              const role = await ctx.bean.role.getSystemRole({ roleName });
               roleIds[roleName] = role.id;
             }
             // roles
             for (const [ roleName, leader, catalog, roleNameParent ] of testData.roles) {
-              roleIds[roleName] = await ctx.meta.role.add({
+              roleIds[roleName] = await ctx.bean.role.add({
                 roleName,
                 leader,
                 catalog,
@@ -3152,7 +3152,7 @@ module.exports = appInfo => {
           // role incs
           async _testRoleIncs(roleIds) {
             for (const [ roleId, roleIdInc ] of testData.roleIncs) {
-              await ctx.meta.role.addRoleInc({
+              await ctx.bean.role.addRoleInc({
                 roleId: roleIds[roleId],
                 roleIdInc: roleIds[roleIdInc],
               });
@@ -3166,17 +3166,17 @@ module.exports = appInfo => {
             for (const [ userName, roleName ] of testData.users) {
               // add
               if (!userIds[userName]) {
-                userIds[userName] = await ctx.meta.user.add({
+                userIds[userName] = await ctx.bean.user.add({
                   userName,
                   realName: userName,
                 });
                 // activated
-                await ctx.meta.user.save({
+                await ctx.bean.user.save({
                   user: { id: userIds[userName], activated: 1 },
                 });
               }
               // role
-              await ctx.meta.role.addUserRole({
+              await ctx.bean.role.addUserRole({
                 userId: userIds[userName],
                 roleId: roleIds[roleName],
               });
@@ -3186,7 +3186,7 @@ module.exports = appInfo => {
             await this._testAuths(userIds);
 
             // root
-            const userRoot = await ctx.meta.user.get({ userName: 'root' });
+            const userRoot = await ctx.bean.user.get({ userName: 'root' });
             userIds.root = userRoot.id;
             return userIds;
           }
@@ -3194,15 +3194,15 @@ module.exports = appInfo => {
           // role rights
           async _testRoleRights() {
             // atomClass
-            await ctx.meta.role.addRoleRightBatch({ atomClassName: 'party', roleRights: testData.roleRights });
-            await ctx.meta.role.addRoleRightBatch({ atomClassName: 'partyPublic', roleRights: null });
+            await ctx.bean.role.addRoleRightBatch({ atomClassName: 'party', roleRights: testData.roleRights });
+            await ctx.bean.role.addRoleRightBatch({ atomClassName: 'partyPublic', roleRights: null });
             // function
             const roleFunctions = [
               { roleName: null, name: 'testFunctionPublic' },
             ];
-            await ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
+            await ctx.bean.role.addRoleFunctionBatch({ roleFunctions });
             // set locales of new functions
-            await ctx.meta.function.setLocales();
+            await ctx.bean.function.setLocales();
           }
 
           // auths
@@ -3350,7 +3350,7 @@ module.exports = appInfo => {
           async action({ action, atomClass, key, user }) {
             if (action === 101) {
               // change flag
-              await this.ctx.meta.atom.flag({
+              await this.ctx.bean.atom.flag({
                 key,
                 atom: { atomFlag: 2 },
                 user,
@@ -3362,7 +3362,7 @@ module.exports = appInfo => {
             // enable
             const atomFlag = atom.atomEnabled ? 1 : 0;
             // change flag
-            await this.ctx.meta.atom.flag({
+            await this.ctx.bean.atom.flag({
               key,
               atom: { atomFlag },
               user,

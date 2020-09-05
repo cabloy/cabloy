@@ -9,7 +9,7 @@ module.exports = app => {
       // page
       let page = this.ctx.request.body.page;
       // adjust page
-      page = this.ctx.meta.util.page(page, false);
+      page = this.ctx.bean.util.page(page, false);
       // items
       const items = [];
       for (let i = 0; i < page.size; i++) {

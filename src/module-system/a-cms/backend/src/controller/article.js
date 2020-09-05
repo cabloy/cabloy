@@ -56,8 +56,8 @@ module.exports = app => {
         'a.atomFlag': 2, // published
       });
       // select
-      options.page = this.ctx.meta.util.page(options.page, false);
-      const items = await this.ctx.meta.atom.select({ atomClass, options, user, pageForce: false });
+      options.page = this.ctx.bean.util.page(options.page, false);
+      const items = await this.ctx.bean.atom.select({ atomClass, options, user, pageForce: false });
       // ok
       this.ctx.successMore(items, options.page.index, options.page.size);
     }

@@ -67,7 +67,7 @@ module.exports = app => {
     async action({ action, atomClass, key, user }) {
       if (action === 101) {
         // change flag
-        await this.ctx.meta.atom.flag({
+        await this.ctx.bean.atom.flag({
           key,
           atom: { atomFlag: 2 },
           user,
@@ -79,7 +79,7 @@ module.exports = app => {
       // enable
       const atomFlag = atom.atomEnabled ? 1 : 0;
       // change flag
-      await this.ctx.meta.atom.flag({
+      await this.ctx.bean.atom.flag({
         key,
         atom: { atomFlag },
         user,

@@ -21,7 +21,7 @@ module.exports = app => {
         userIds: [ user.id ],
         data: { msg },
       };
-      await this.ctx.meta.io.pushDirect({
+      await this.ctx.bean.io.pushDirect({
         content,
         channel: { module: 'a-dingtalk', name: 'app' },
       });

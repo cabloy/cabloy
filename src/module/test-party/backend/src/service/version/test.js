@@ -13,7 +13,7 @@ module.exports = function(ctx) {
       await this._testRoleIncs(roleIds);
 
       // set role dirty
-      await ctx.meta.role.setDirty(true);
+      await ctx.bean.role.setDirty(true);
 
       // users
       const userIds = await this._testUsers(roleIds);
@@ -37,12 +37,12 @@ module.exports = function(ctx) {
       const roleIds = {};
       // system roles
       for (const roleName of ctx.constant.module('a-base').systemRoles) {
-        const role = await ctx.meta.role.getSystemRole({ roleName });
+        const role = await ctx.bean.role.getSystemRole({ roleName });
         roleIds[roleName] = role.id;
       }
       // roles
       for (const [ roleName, leader, catalog, roleNameParent ] of testData.roles) {
-        roleIds[roleName] = await ctx.meta.role.add({
+        roleIds[roleName] = await ctx.bean.role.add({
           roleName,
           leader,
           catalog,
@@ -56,7 +56,7 @@ module.exports = function(ctx) {
     // role incs
     async _testRoleIncs(roleIds) {
       for (const [ roleId, roleIdInc ] of testData.roleIncs) {
-        await ctx.meta.role.addRoleInc({
+        await ctx.bean.role.addRoleInc({
           roleId: roleIds[roleId],
           roleIdInc: roleIds[roleIdInc],
         });
@@ -70,17 +70,17 @@ module.exports = function(ctx) {
       for (const [ userName, roleName ] of testData.users) {
         // add
         if (!userIds[userName]) {
-          userIds[userName] = await ctx.meta.user.add({
+          userIds[userName] = await ctx.bean.user.add({
             userName,
             realName: userName,
           });
           // activated
-          await ctx.meta.user.save({
+          await ctx.bean.user.save({
             user: { id: userIds[userName], activated: 1 },
           });
         }
         // role
-        await ctx.meta.role.addUserRole({
+        await ctx.bean.role.addUserRole({
           userId: userIds[userName],
           roleId: roleIds[roleName],
         });
@@ -90,7 +90,7 @@ module.exports = function(ctx) {
       await this._testAuths(userIds);
 
       // root
-      const userRoot = await ctx.meta.user.get({ userName: 'root' });
+      const userRoot = await ctx.bean.user.get({ userName: 'root' });
       userIds.root = userRoot.id;
       return userIds;
     }
@@ -98,15 +98,15 @@ module.exports = function(ctx) {
     // role rights
     async _testRoleRights() {
       // atomClass
-      await ctx.meta.role.addRoleRightBatch({ atomClassName: 'party', roleRights: testData.roleRights });
-      await ctx.meta.role.addRoleRightBatch({ atomClassName: 'partyPublic', roleRights: null });
+      await ctx.bean.role.addRoleRightBatch({ atomClassName: 'party', roleRights: testData.roleRights });
+      await ctx.bean.role.addRoleRightBatch({ atomClassName: 'partyPublic', roleRights: null });
       // function
       const roleFunctions = [
         { roleName: null, name: 'testFunctionPublic' },
       ];
-      await ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
+      await ctx.bean.role.addRoleFunctionBatch({ roleFunctions });
       // set locales of new functions
-      await ctx.meta.function.setLocales();
+      await ctx.bean.function.setLocales();
     }
 
     // auths

@@ -12,7 +12,7 @@ module.exports = app => {
 
     async select() {
       const options = this.ctx.request.body.options;
-      options.page = this.ctx.meta.util.page(options.page);
+      options.page = this.ctx.bean.util.page(options.page);
       const items = await this.ctx.service.message.select({
         messageClass: this.ctx.request.body.messageClass,
         options,

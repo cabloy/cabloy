@@ -15,7 +15,7 @@ module.exports = app => {
         }
       }
       // raise event
-      return await this.ctx.meta.event.invoke({
+      return await this.ctx.bean.event.invoke({
         module: moduleInfo.relativeName,
         name: 'wechatMessage',
         data: { message },
@@ -38,7 +38,7 @@ module.exports = app => {
 
     async _subscribeUser({ openid, message }) {
       // user info
-      const userInfo = await this.ctx.meta.wechat.app.getUser({ openid });
+      const userInfo = await this.ctx.bean.wechat.app.getUser({ openid });
       // verify auth user
       const wechatHelper = new (WechatHelperFn(this.ctx))();
       await wechatHelper.verifyAuthUser({ scene: 'wechat', openid, userInfo });

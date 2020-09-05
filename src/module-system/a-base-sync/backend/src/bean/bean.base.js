@@ -78,7 +78,7 @@ module.exports = ctx => {
     }
 
     authProviders() {
-      return ctx.meta.util.authProviders();
+      return ctx.bean.util.authProviders();
     }
 
     modules() {
@@ -509,7 +509,7 @@ module.exports = ctx => {
         sorting: _func.sorting || 0,
         menu: _func.menu || 0,
         public: _func.public ? 1 : 0,
-        url: ctx.meta.util.combinePagePath(module.info, _func.url),
+        url: ctx.bean.util.combinePagePath(module.info, _func.url),
         component: _func.component,
       };
       func.titleLocale = ctx.text(func.title);

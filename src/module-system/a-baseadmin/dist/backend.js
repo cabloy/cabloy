@@ -369,7 +369,7 @@ module.exports = appInfo => {
         class UserController extends app.Controller {
 
           async list() {
-            const page = this.ctx.meta.util.page(this.ctx.request.body.page);
+            const page = this.ctx.bean.util.page(this.ctx.request.body.page);
             const items = await this.service.user.list({
               roleId: this.ctx.request.body.roleId,
               query: this.ctx.request.body.query,
@@ -678,12 +678,12 @@ module.exports = appInfo => {
                 { roleName: 'system', name: 'functionRight' },
                 { roleName: 'system', name: 'auth' },
               ];
-              await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
+              await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions });
             }
 
             if (options.version === 2) {
               // remove menuRight
-              const fun = await this.ctx.meta.function._get({ module: moduleInfo.relativeName, name: 'menuRight' });
+              const fun = await this.ctx.bean.function._get({ module: moduleInfo.relativeName, name: 'menuRight' });
               if (fun) {
                 //  1. aFunction
                 await this.ctx.model.delete('aFunction', { id: fun.id });
@@ -701,12 +701,12 @@ module.exports = appInfo => {
               const roleFunctions = [
                 { roleName: 'system', name: 'menu' },
               ];
-              await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
+              await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions });
 
               // menu: 1->0
               const functions = 'user,role,atomRight,functionRight,auth'.split(',');
               for (const name of functions) {
-                const func = await this.ctx.meta.function.get({ name });
+                const func = await this.ctx.bean.function.get({ name });
                 await this.ctx.model.function.update({ id: func.id, sceneId: 0, menu: 0 });
               }
             }
@@ -728,47 +728,47 @@ module.exports = appInfo => {
         class Role extends app.Service {
 
           async children({ roleId, page }) {
-            return await this.ctx.meta.role.children({ roleId, page });
+            return await this.ctx.bean.role.children({ roleId, page });
           }
 
           async item({ roleId }) {
-            return await this.ctx.meta.role.get({ id: roleId });
+            return await this.ctx.bean.role.get({ id: roleId });
           }
 
           async save({ roleId, data }) {
-            return await this.ctx.meta.role.save({ roleId, data });
+            return await this.ctx.bean.role.save({ roleId, data });
           }
 
           async add({ roleIdParent, catalog }) {
-            return await this.ctx.meta.role.add({ roleIdParent, catalog });
+            return await this.ctx.bean.role.add({ roleIdParent, catalog });
           }
 
           async move({ roleId, roleIdParent }) {
-            return await this.ctx.meta.role.move({ roleId, roleIdParent });
+            return await this.ctx.bean.role.move({ roleId, roleIdParent });
           }
 
           async delete({ roleId }) {
-            return await this.ctx.meta.role.delete({ roleId });
+            return await this.ctx.bean.role.delete({ roleId });
           }
 
           async includes({ roleId, page }) {
-            return await this.ctx.meta.role.includes({ roleId, page });
+            return await this.ctx.bean.role.includes({ roleId, page });
           }
 
           async addRoleInc({ roleId, roleIdInc }) {
-            return await this.ctx.meta.role.addRoleInc({ roleId, roleIdInc });
+            return await this.ctx.bean.role.addRoleInc({ roleId, roleIdInc });
           }
 
           async removeRoleInc({ id }) {
-            return await this.ctx.meta.role.removeRoleInc({ id });
+            return await this.ctx.bean.role.removeRoleInc({ id });
           }
 
           async dirty() {
-            return await this.ctx.meta.role.getDirty();
+            return await this.ctx.bean.role.getDirty();
           }
 
           async build() {
-            const progressId = await this.ctx.meta.progress.create();
+            const progressId = await this.ctx.bean.progress.create();
             this.ctx.performActionInBackground({
               method: 'post',
               url: 'role/buildInBackground',
@@ -780,7 +780,7 @@ module.exports = appInfo => {
           }
 
           async buildInBackground({ progressId }) {
-            return await this.ctx.meta.role.build({ progressId });
+            return await this.ctx.bean.role.build({ progressId });
           }
 
         }
@@ -798,39 +798,39 @@ module.exports = appInfo => {
         class User extends app.Service {
 
           async list({ roleId, query, anonymous, page }) {
-            return await this.ctx.meta.user.list({ roleId, query, anonymous, page });
+            return await this.ctx.bean.user.list({ roleId, query, anonymous, page });
           }
 
           async item({ userId }) {
-            return await this.ctx.meta.user.get({ id: userId });
+            return await this.ctx.bean.user.get({ id: userId });
           }
 
           async disable({ userId, disabled }) {
-            return await this.ctx.meta.user.disable({ userId, disabled });
+            return await this.ctx.bean.user.disable({ userId, disabled });
           }
 
           async delete({ userId }) {
-            return await this.ctx.meta.user.delete({ userId });
+            return await this.ctx.bean.user.delete({ userId });
           }
 
           async roles({ userId, page }) {
-            return await this.ctx.meta.user.roles({ userId, page });
+            return await this.ctx.bean.user.roles({ userId, page });
           }
 
           async addRole({ userId, roleId }) {
-            return await this.ctx.meta.role.addUserRole({ userId, roleId });
+            return await this.ctx.bean.role.addUserRole({ userId, roleId });
           }
 
           async removeRole({ id }) {
-            return await this.ctx.meta.role.deleteUserRole({ id });
+            return await this.ctx.bean.role.deleteUserRole({ id });
           }
 
           async atomRights({ userId, page }) {
-            return await this.ctx.meta.role.atomRightsOfUser({ userId, page });
+            return await this.ctx.bean.role.atomRightsOfUser({ userId, page });
           }
 
           async functionRights({ menu, userId, page }) {
-            return await this.ctx.meta.role.functionRightsOfUser({ menu, userId, page });
+            return await this.ctx.bean.role.functionRightsOfUser({ menu, userId, page });
           }
 
 
@@ -849,13 +849,13 @@ module.exports = appInfo => {
         class AtomRight extends app.Service {
 
           async rights({ roleId, page }) {
-            return await this.ctx.meta.role.roleRights({ roleId, page });
+            return await this.ctx.bean.role.roleRights({ roleId, page });
           }
 
           async add({ roleId, atomClass, actionCode, scopeSelf, scope }) {
-            const _atomClass = await this.ctx.meta.atomClass.get(atomClass);
+            const _atomClass = await this.ctx.bean.atomClass.get(atomClass);
             if (actionCode === 1 || ((actionCode === 3 || actionCode === 4) && scopeSelf)) scope = 0;
-            return await this.ctx.meta.role.addRoleRight({
+            return await this.ctx.bean.role.addRoleRight({
               roleId,
               atomClassId: _atomClass.id,
               action: actionCode,
@@ -864,11 +864,11 @@ module.exports = appInfo => {
           }
 
           async delete({ id }) {
-            return await this.ctx.meta.role.deleteRoleRight({ id });
+            return await this.ctx.bean.role.deleteRoleRight({ id });
           }
 
           async spreads({ roleId, page }) {
-            return await this.ctx.meta.role.roleSpreads({ roleId, page });
+            return await this.ctx.bean.role.roleSpreads({ roleId, page });
           }
 
         }
@@ -886,20 +886,20 @@ module.exports = appInfo => {
         class FunctionRight extends app.Service {
 
           async rights({ menu, roleId, page }) {
-            return await this.ctx.meta.role.functionRights({ menu, roleId, page });
+            return await this.ctx.bean.role.functionRights({ menu, roleId, page });
           }
 
           async add({ roleId, module, name }) {
-            const func = await this.ctx.meta.function.get({ module, name });
+            const func = await this.ctx.bean.function.get({ module, name });
             if (func.autoRight) {
-              return await this.ctx.meta.role.addRoleRight({
+              return await this.ctx.bean.role.addRoleRight({
                 roleId,
                 atomClassId: func.atomClassId,
                 action: func.action,
                 scope: 0,
               });
             }
-            return await this.ctx.meta.role.addRoleFunction({
+            return await this.ctx.bean.role.addRoleFunction({
               roleId,
               functionId: func.id,
               roleRightId: 0,
@@ -914,13 +914,13 @@ module.exports = appInfo => {
       `;
             const roleFunction = await this.ctx.model.queryOne(sql, [ this.ctx.instance.id, id ]);
             if (roleFunction.autoRight) {
-              return await this.ctx.meta.role.deleteRoleRight({ id: roleFunction.roleRightId });
+              return await this.ctx.bean.role.deleteRoleRight({ id: roleFunction.roleRightId });
             }
-            return await this.ctx.meta.role.deleteRoleFunction({ id });
+            return await this.ctx.bean.role.deleteRoleFunction({ id });
           }
 
           async spreads({ menu, roleId, page }) {
-            return await this.ctx.meta.role.functionSpreads({ menu, roleId, page });
+            return await this.ctx.bean.role.functionSpreads({ menu, roleId, page });
           }
 
         }
@@ -944,7 +944,7 @@ module.exports = appInfo => {
             // list
             const list = await this.ctx.model.authProvider.select();
             // meta
-            const authProviders = this.ctx.meta.base.authProviders();
+            const authProviders = this.ctx.bean.base.authProviders();
             for (const item of list) {
               const key = `${item.module}:${item.providerName}`;
               const authProvider = authProviders[key];
@@ -975,12 +975,12 @@ module.exports = appInfo => {
             // item
             const item = await this.ctx.model.authProvider.get({ id });
             // meta
-            const authProviders = this.ctx.meta.base.authProviders();
+            const authProviders = this.ctx.bean.base.authProviders();
             const authProvider = authProviders[`${item.module}:${item.providerName}`];
             if (authProvider.meta.mode === 'redirect') {
               const moduleInfo = mparse.parseInfo(item.module);
-              const loginURL = this.ctx.meta.base.getAbsoluteUrl(`/api/${moduleInfo.url}/passport/${item.module}/${item.providerName}`);
-              const callbackURL = this.ctx.meta.base.getAbsoluteUrl(`/api/${moduleInfo.url}/passport/${item.module}/${item.providerName}/callback`);
+              const loginURL = this.ctx.bean.base.getAbsoluteUrl(`/api/${moduleInfo.url}/passport/${item.module}/${item.providerName}`);
+              const callbackURL = this.ctx.bean.base.getAbsoluteUrl(`/api/${moduleInfo.url}/passport/${item.module}/${item.providerName}/callback`);
               item._meta = {
                 loginURL,
                 callbackURL,
@@ -1028,7 +1028,7 @@ module.exports = appInfo => {
         class _Function extends app.Service {
 
           async scenesLoad({ sceneMenu }) {
-            return await this.ctx.meta.function.scenesArray({ sceneMenu });
+            return await this.ctx.bean.function.scenesArray({ sceneMenu });
           }
 
           async scenesSaveSortings({ sceneMenu, sortings }) {

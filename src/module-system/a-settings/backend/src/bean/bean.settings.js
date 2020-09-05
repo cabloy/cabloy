@@ -98,7 +98,7 @@ module.exports = ctx => {
       module = module || this.moduleName;
       const validator = this._getValidator({ scene, module });
       if (!validator) ctx.throw(404); // not found
-      await ctx.meta.validation.validate({
+      await ctx.bean.validation.validate({
         module: validator.module,
         validator: validator.validator,
         schema: null,
@@ -174,7 +174,7 @@ module.exports = ctx => {
     _getSchema({ scene, module, schemaName }) {
       const validator = this._getValidator({ scene, module });
       if (!validator) return null;
-      const _schema = ctx.meta.validation.getSchema({ module: validator.module, validator: validator.validator, schema: schemaName });
+      const _schema = ctx.bean.validation.getSchema({ module: validator.module, validator: validator.validator, schema: schemaName });
       return extend(true, {}, validator, { schema: _schema });
     }
 

@@ -4,7 +4,7 @@ module.exports = app => {
 
     // next
     async next({ module, name }) {
-      const res = await this.ctx.meta.sequence.module(module)._next(name);
+      const res = await this.ctx.bean.sequence.module(module)._next(name);
       return res;
     }
 

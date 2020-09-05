@@ -47,7 +47,7 @@ module.exports = app => {
         const roleFunctions = [
           { roleName: 'system', name: 'settings' },
         ];
-        await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions });
+        await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions });
       }
     }
 

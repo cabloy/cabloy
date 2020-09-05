@@ -31,7 +31,7 @@ module.exports = app => {
     //   where, orders, page, star, label
     async select() {
       const options = this.ctx.request.body.options;
-      options.page = this.ctx.meta.util.page(options.page);
+      options.page = this.ctx.bean.util.page(options.page);
       const items = await this.ctx.service.atom.select({
         atomClass: this.ctx.request.body.atomClass,
         options,
@@ -86,7 +86,7 @@ module.exports = app => {
       // only allowed: draft
       const key = this.ctx.request.body.key;
       const user = this.ctx.state.user.op;
-      const atom = await this.ctx.meta.atom._get({ atom: { id: key.atomId }, user });
+      const atom = await this.ctx.bean.atom._get({ atom: { id: key.atomId }, user });
       if (atom.atomEnabled || user.id !== atom.userIdCreated) this.ctx.throw(403);
       // enable
       const res = await this.ctx.service.atom.enable({
@@ -124,7 +124,7 @@ module.exports = app => {
         },
       };
       // select
-      const res = await this.ctx.meta.atom.select({
+      const res = await this.ctx.bean.atom.select({
         options, user: this.ctx.state.user.op, pageForce: false,
       });
       this.ctx.success(res);

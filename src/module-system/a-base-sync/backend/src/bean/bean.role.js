@@ -164,7 +164,7 @@ module.exports = ctx => {
         }
       }
       // force action exists in db
-      await ctx.meta.atomAction.get({ atomClassId, code: action });
+      await ctx.bean.atomAction.get({ atomClassId, code: action });
 
       // roleRight
       const res = await this.modelRoleRight.insert({
@@ -189,13 +189,13 @@ module.exports = ctx => {
       // insert into roleFunction if action=create/read
       const constant = ctx.constant.module(moduleInfo.relativeName);
       if (action === constant.atom.action.create || action === constant.atom.action.read) {
-        const atomClass = await ctx.meta.atomClass.get({ id: atomClassId });
-        const functions = ctx.meta.base.functionsAutoRight({
+        const atomClass = await ctx.bean.atomClass.get({ id: atomClassId });
+        const functions = ctx.bean.base.functionsAutoRight({
           module: atomClass.module,
           atomClassName: atomClass.atomClassName,
           action });
         for (const key in functions) {
-          const func = await ctx.meta.function.get({ module: atomClass.module, name: functions[key].name });
+          const func = await ctx.bean.function.get({ module: atomClass.module, name: functions[key].name });
           await this.addRoleFunction({
             roleId,
             functionId: func.id,
@@ -230,7 +230,7 @@ module.exports = ctx => {
 
     // children
     async children({ roleId, page }) {
-      page = ctx.meta.util.page(page, false);
+      page = ctx.bean.util.page(page, false);
       // roleId
       if (!roleId || roleId === 'root') {
         roleId = 0;
@@ -259,7 +259,7 @@ module.exports = ctx => {
 
     // includes
     async includes({ roleId, page }) {
-      page = ctx.meta.util.page(page, false);
+      page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       return await ctx.model.query(`
         select a.*,b.roleName from aRoleInc a
@@ -271,7 +271,7 @@ module.exports = ctx => {
 
     // role rights
     async roleRights({ roleId, page }) {
-      page = ctx.meta.util.page(page, false);
+      page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       const list = await ctx.model.query(`
         select a.*,b.module,b.atomClassName,c.name as actionName from aRoleRight a
@@ -291,7 +291,7 @@ module.exports = ctx => {
 
     // role spreads
     async roleSpreads({ roleId, page }) {
-      page = ctx.meta.util.page(page, false);
+      page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       const list = await ctx.model.query(`
         select d.*,d.id as roleExpandId,a.id as roleRightId,a.scope,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,e.roleName from aRoleRight a
@@ -313,7 +313,7 @@ module.exports = ctx => {
 
     // atom rights of user
     async atomRightsOfUser({ userId, page }) {
-      page = ctx.meta.util.page(page, false);
+      page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       const list = await ctx.model.query(`
         select a.*,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,e.roleName from aViewUserRightAtomClass a
@@ -345,7 +345,7 @@ module.exports = ctx => {
       // check locale
       const locale = ctx.locale;
       // list
-      page = ctx.meta.util.page(page, false);
+      page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       const list = await ctx.model.query(`
         select a.*,b.module,b.name,b.title,b.sceneId,g.sceneName,b.sorting,f.titleLocale from aRoleFunction a
@@ -364,7 +364,7 @@ module.exports = ctx => {
       // check locale
       const locale = ctx.locale;
       // list
-      page = ctx.meta.util.page(page, false);
+      page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       const list = await ctx.model.query(`
         select d.*,d.id as roleExpandId,a.id as roleFunctionId,b.module,b.name,b.title,b.sceneId,g.sceneName,e.roleName,f.titleLocale from aRoleFunction a
@@ -385,7 +385,7 @@ module.exports = ctx => {
       // check locale
       const locale = ctx.locale;
       // list
-      page = ctx.meta.util.page(page, false);
+      page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       const list = await ctx.model.query(`
         select a.*,b.module,b.name,b.title,b.sceneId,g.sceneName,b.sorting,f.titleLocale,e.roleName from aViewUserRightFunction a
@@ -454,11 +454,11 @@ module.exports = ctx => {
 
     // set dirty
     async setDirty(dirty) {
-      await ctx.meta.status.module(moduleInfo.relativeName).set('roleDirty', dirty);
+      await ctx.bean.status.module(moduleInfo.relativeName).set('roleDirty', dirty);
     }
 
     async getDirty() {
-      return await ctx.meta.status.module(moduleInfo.relativeName).get('roleDirty');
+      return await ctx.bean.status.module(moduleInfo.relativeName).get('roleDirty');
     }
 
     // build roles
@@ -483,12 +483,12 @@ module.exports = ctx => {
         await this.setDirty(false);
         // done
         if (progressId) {
-          await ctx.meta.progress.done({ progressId });
+          await ctx.bean.progress.done({ progressId });
         }
       } catch (err) {
         // error
         if (progressId) {
-          await ctx.meta.progress.error({ progressId, message: err.message });
+          await ctx.bean.progress.error({ progressId, message: err.message });
         }
         throw err;
       }
@@ -509,7 +509,7 @@ module.exports = ctx => {
       module = module || this.moduleName;
       const _module = ctx.app.meta.modules[module];
       // atomClass
-      const atomClass = await ctx.meta.atomClass.get({ module, atomClassName, atomClassIdParent });
+      const atomClass = await ctx.bean.atomClass.get({ module, atomClassName, atomClassIdParent });
       // roleRights
       if (!roleRights || !roleRights.length) return;
       for (const roleRight of roleRights) {
@@ -546,7 +546,7 @@ module.exports = ctx => {
       module = module || this.moduleName;
       for (const roleFunction of roleFunctions) {
         // func
-        const func = await ctx.meta.function.get({ module, name: roleFunction.name });
+        const func = await ctx.bean.function.get({ module, name: roleFunction.name });
         if (roleFunction.roleName) {
           // role
           const role = await this.get({ roleName: roleFunction.roleName });
@@ -583,7 +583,7 @@ module.exports = ctx => {
         }
         // progress
         if (progress.progressId) {
-          await ctx.meta.progress.update({
+          await ctx.bean.progress.update({
             progressId: progress.progressId, progressNo: 0,
             total: progress.total, progress: progress.progress++,
             text: item.roleName,

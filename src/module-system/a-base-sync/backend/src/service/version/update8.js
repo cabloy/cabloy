@@ -91,7 +91,7 @@ module.exports = function(ctx) {
       const scenes = constants.function.scene;
       for (const sceneName in scenes) {
         const sceneValue = scenes[sceneName];
-        const sceneId = await ctx.meta.function.getSceneId({ sceneName, sceneMenu: 1 });
+        const sceneId = await ctx.bean.function.getSceneId({ sceneName, sceneMenu: 1 });
         await ctx.model.query('update aFunction set sceneId=? where iid=? and sceneId=?',
           [ sceneId, ctx.instance.id, sceneValue ]);
       }
@@ -129,7 +129,7 @@ module.exports = function(ctx) {
     }
 
     async _getRoleIdOwner(atomClassId, userId) {
-      const roles = await ctx.meta.atom.preferredRoles({
+      const roles = await ctx.bean.atom.preferredRoles({
         atomClass: { id: atomClassId },
         user: { id: userId },
       });

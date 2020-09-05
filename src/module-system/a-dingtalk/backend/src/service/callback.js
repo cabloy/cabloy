@@ -14,7 +14,7 @@ module.exports = app => {
         await this.contacts({ message });
       }
       // raise event
-      await this.ctx.meta.event.invoke({
+      await this.ctx.bean.event.invoke({
         module: moduleInfo.relativeName,
         name: 'dingtalkCallback',
         data: { message },
@@ -28,14 +28,14 @@ module.exports = app => {
       const token = config.token;
       const encodingAESKey = config.encodingAESKey;
       const callbackList = config.list;
-      const callbackUrl = this.ctx.meta.base.getAbsoluteUrl('/api/a/dingtalk/callback/index');
+      const callbackUrl = this.ctx.bean.base.getAbsoluteUrl('/api/a/dingtalk/callback/index');
       // check if valid
-      if (this.ctx.meta.base.host !== host || !token || !encodingAESKey || !callbackList) return;
+      if (this.ctx.bean.base.host !== host || !token || !encodingAESKey || !callbackList) return;
       // check status
       const res = await this._tryGetList();
       if (!res) {
         // register
-        await this.ctx.meta.dingtalk.app.selfBuilt.callback.register_call_back({
+        await this.ctx.bean.dingtalk.app.selfBuilt.callback.register_call_back({
           call_back_tag: callbackList,
           token,
           aes_key: encodingAESKey,
@@ -50,7 +50,7 @@ module.exports = app => {
           // do nothing
         } else {
           // difference
-          await this.ctx.meta.dingtalk.app.selfBuilt.callback.update_call_back({
+          await this.ctx.bean.dingtalk.app.selfBuilt.callback.update_call_back({
             call_back_tag: callbackList,
             token,
             aes_key: encodingAESKey,
@@ -62,7 +62,7 @@ module.exports = app => {
 
     async _tryGetList() {
       try {
-        return await this.ctx.meta.dingtalk.app.selfBuilt.callback.get_call_back();
+        return await this.ctx.bean.dingtalk.app.selfBuilt.callback.get_call_back();
       } catch (err) {
         if (err.code === 71007) return null;
         throw err;

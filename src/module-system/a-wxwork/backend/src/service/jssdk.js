@@ -12,7 +12,7 @@ module.exports = app => {
         jsApiList: configAppSelfBuilt.jssdk.jsApiList,
         url,
       };
-      return await this.ctx.meta.wxwork.app.selfBuilt.getJsConfig(params);
+      return await this.ctx.bean.wxwork.app.selfBuilt.getJsConfig(params);
     }
 
     async jsconfigAgent({ url }) {
@@ -25,7 +25,7 @@ module.exports = app => {
         jsApiList: configAppSelfBuilt.jssdkAgent.jsApiList,
         url,
       };
-      return await this.ctx.meta.wxwork.app.selfBuilt.getJsConfigAgent(params);
+      return await this.ctx.bean.wxwork.app.selfBuilt.getJsConfigAgent(params);
     }
 
   }

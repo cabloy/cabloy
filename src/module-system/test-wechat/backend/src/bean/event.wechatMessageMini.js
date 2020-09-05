@@ -10,7 +10,7 @@ module.exports = ctx => {
       const message = data.message;
       if (message.MsgType === 'text') {
         const text = `${ctx.text.locale('zh-cn', 'Reply')}: ${message.Content}`;
-        await ctx.meta.wechat.mini[scene].sendText(message.FromUserName, text);
+        await ctx.bean.wechat.mini[scene].sendText(message.FromUserName, text);
         // break
         return;
       }

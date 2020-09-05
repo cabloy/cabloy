@@ -11,7 +11,7 @@ module.exports = app => {
         // unique slug for language and atomClass
         const ctx = this;
         //   atomClass from atomId
-        const atomClass = await ctx.meta.atomClass.getByAtomId({ atomId: rootData.atomId });
+        const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: rootData.atomId });
         //   read by atomClass, language, slug
         const items = await ctx.model.query(`
           select a.id from aAtom a

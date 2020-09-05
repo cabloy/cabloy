@@ -317,7 +317,7 @@ module.exports = appInfo => {
               const roleWidgets = [
                 { roleName: null, name: 'widgetAbout' },
               ];
-              await this.ctx.meta.role.addRoleFunctionBatch({ roleFunctions: roleWidgets });
+              await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions: roleWidgets });
             }
           }
 

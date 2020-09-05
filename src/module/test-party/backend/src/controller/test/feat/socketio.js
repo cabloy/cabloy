@@ -9,7 +9,7 @@ module.exports = app => {
       const options = this.ctx.request.body.options;
       const message = this.ctx.request.body.message;
       message.userIdFrom = this.ctx.state.user.op.id;
-      const res = await this.ctx.meta.io.publish({
+      const res = await this.ctx.bean.io.publish({
         path: _subscribePath,
         message,
         messageClass: {

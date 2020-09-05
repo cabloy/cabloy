@@ -12,7 +12,7 @@ module.exports = (options2, app) => {
     const schema = options.schema || (ctx.meta._validator && ctx.meta._validator.schema);
     const data = ctx.request.body[options.data || 'data'];
     // if error throw 422
-    await ctx.meta.validation.validate({
+    await ctx.bean.validation.validate({
       module,
       validator,
       schema,

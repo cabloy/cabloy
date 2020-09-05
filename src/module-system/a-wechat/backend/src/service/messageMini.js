@@ -4,7 +4,7 @@ module.exports = app => {
 
     async index({ scene, message }) {
       // raise event
-      await this.ctx.meta.event.invoke({
+      await this.ctx.bean.event.invoke({
         module: moduleInfo.relativeName,
         name: 'wechatMessageMini',
         data: { scene, message },

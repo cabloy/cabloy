@@ -26,7 +26,7 @@ module.exports = app => {
       };
 
       // verify
-      const verifyUser = await this.ctx.meta.user.verify({ state, profileUser });
+      const verifyUser = await this.ctx.bean.user.verify({ state, profileUser });
       if (!verifyUser) this.ctx.throw(403);
 
       // userId
@@ -41,12 +41,12 @@ module.exports = app => {
       if (state === 'login' || !user.userName || user.userName.indexOf('__') > -1) {
         userNew.userName = userName;
       }
-      await this.ctx.meta.user.save({
+      await this.ctx.bean.user.save({
         user: userNew,
       });
       // save email
       if (email !== verifyUser.agent.email) {
-        await this.ctx.meta.user.setActivated({
+        await this.ctx.bean.user.setActivated({
           user: { id: userId, email, emailConfirmed: 0 },
         });
       }
@@ -88,7 +88,7 @@ module.exports = app => {
       await this.ctx.model.authSimple.update({ id: authSimpleId, userId });
 
       // auth
-      const providerItem = await this.ctx.meta.user.getAuthProvider({
+      const providerItem = await this.ctx.bean.user.getAuthProvider({
         module: moduleInfo.relativeName,
         providerName: 'authsimple',
       });
@@ -140,7 +140,7 @@ module.exports = app => {
       };
 
       // verify
-      const verifyUser = await this.ctx.meta.user.verify({ state: 'associate', profileUser });
+      const verifyUser = await this.ctx.bean.user.verify({ state: 'associate', profileUser });
       if (!verifyUser) this.ctx.throw(403);
       // login now
       //   always no matter login/associate
@@ -176,7 +176,7 @@ module.exports = app => {
       // clear token
       await this.ctx.cache.db.remove(cacheKey);
       // login antomatically
-      const user = await this.ctx.meta.user.get({ id: userId });
+      const user = await this.ctx.bean.user.get({ id: userId });
       const data = { auth: user.email, password: passwordNew, rememberMe: false };
       const user2 = await this.signin({ data, state: 'login' });
       // ok
@@ -185,24 +185,24 @@ module.exports = app => {
 
     async passwordForgot({ email }) {
       // user by email
-      const user = await this.ctx.meta.user.exists({ email });
+      const user = await this.ctx.bean.user.exists({ email });
       // link
       const token = uuid.v4().replace(/-/g, '');
-      const link = this.ctx.meta.base.getAbsoluteUrl(`/#!/a/authsimple/passwordReset?token=${token}`);
+      const link = this.ctx.bean.base.getAbsoluteUrl(`/#!/a/authsimple/passwordReset?token=${token}`);
       // email scene
       const scene = (app.meta.isTest || app.meta.isLocal) ? 'test' : 'system';
       // email subject
       let subject = this.ctx.text('passwordResetEmailSubject');
-      subject = this.ctx.meta.util.replaceTemplate(subject, { siteName: this.ctx.instance.title });
+      subject = this.ctx.bean.util.replaceTemplate(subject, { siteName: this.ctx.instance.title });
       // email body
       let body = this.ctx.text('passwordResetEmailBody');
-      body = this.ctx.meta.util.replaceTemplate(body, {
+      body = this.ctx.bean.util.replaceTemplate(body, {
         userName: user.userName,
         link,
         siteName: this.ctx.instance.title,
       });
       // send
-      await this.ctx.meta.mail.send({
+      await this.ctx.bean.mail.send({
         scene,
         message: {
           to: email,
@@ -220,26 +220,26 @@ module.exports = app => {
 
     async emailConfirm({ email, user }) {
       // save email
-      await this.ctx.meta.user.setActivated({
+      await this.ctx.bean.user.setActivated({
         user: { id: user.id, email, emailConfirmed: 0 },
       });
       // link
       const token = uuid.v4().replace(/-/g, '');
-      const link = this.ctx.meta.base.getAbsoluteUrl(`/api/a/authsimple/auth/emailConfirmation?token=${token}`);
+      const link = this.ctx.bean.base.getAbsoluteUrl(`/api/a/authsimple/auth/emailConfirmation?token=${token}`);
       // email scene
       const scene = (app.meta.isTest || app.meta.isLocal) ? 'test' : 'system';
       // email subject
       let subject = this.ctx.text('confirmationEmailSubject');
-      subject = this.ctx.meta.util.replaceTemplate(subject, { siteName: this.ctx.instance.title });
+      subject = this.ctx.bean.util.replaceTemplate(subject, { siteName: this.ctx.instance.title });
       // email body
       let body = this.ctx.text('confirmationEmailBody');
-      body = this.ctx.meta.util.replaceTemplate(body, {
+      body = this.ctx.bean.util.replaceTemplate(body, {
         userName: user.userName,
         link,
         siteName: this.ctx.instance.title,
       });
       // send
-      await this.ctx.meta.mail.send({
+      await this.ctx.bean.mail.send({
         scene,
         message: {
           to: email,
@@ -267,13 +267,13 @@ module.exports = app => {
           link: '/a/authsimple/emailConfirm',
           linkText: this.ctx.text('Resend Confirmation Email'),
         };
-        const url = this.ctx.meta.base.getAlertUrl({ data });
+        const url = this.ctx.bean.base.getAlertUrl({ data });
         return this.ctx.redirect(url);
       }
       // userId
       const userId = value.userId;
       // activated
-      await this.ctx.meta.user.setActivated({
+      await this.ctx.bean.user.setActivated({
         user: { id: userId, emailConfirmed: 1 },
       });
       // clear token
@@ -285,7 +285,7 @@ module.exports = app => {
         link: '#back',
         linkText: this.ctx.text('Close'),
       };
-      const url = this.ctx.meta.base.getAlertUrl({ data });
+      const url = this.ctx.bean.base.getAlertUrl({ data });
       return this.ctx.redirect(url);
     }
 

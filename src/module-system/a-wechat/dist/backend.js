@@ -147,7 +147,7 @@ module.exports =
             // verify
             let verifyUser;
             if (!cbVerify) {
-              verifyUser = await ctx.meta.user.verify({ state, profileUser });
+              verifyUser = await ctx.bean.user.verify({ state, profileUser });
               await ctx.login(verifyUser);
             } else {
               verifyUser = await bb.fromCallback(cb => {
@@ -234,7 +234,7 @@ module.exports =
               },
             };
             // provider
-            const providerItem = await ctx.meta.user.getAuthProvider({
+            const providerItem = await ctx.bean.user.getAuthProvider({
               module: moduleInfo.relativeName,
               providerName: sceneInfo.authProvider,
             });
@@ -1132,7 +1132,7 @@ module.exports =
               }
             }
             // raise event
-            const res2 = await this.ctx.meta.event.invoke({
+            const res2 = await this.ctx.bean.event.invoke({
               module: moduleInfo.relativeName,
               name: 'wechatMessage',
               data: { message },
@@ -1152,7 +1152,7 @@ module.exports =
 
           async _subscribeUser({ openid, message }) {
             // user info
-            const userInfo = await this.ctx.meta.wechat.app.getUser({ openid });
+            const userInfo = await this.ctx.bean.wechat.app.getUser({ openid });
             // verify auth user
             const wechatHelper = new (WechatHelperFn(this.ctx))();
             await wechatHelper.verifyAuthUser({ scene: 'wechat', openid, userInfo });
@@ -1240,7 +1240,7 @@ module.exports =
               jsApiList: config.jssdk.jsApiList,
               url,
             };
-            return await this.ctx.meta.wechat.app.getJsConfig(params);
+            return await this.ctx.bean.wechat.app.getJsConfig(params);
           }
 
         }
@@ -1259,7 +1259,7 @@ module.exports =
 
           async index({ scene, message }) {
             // raise event
-            await this.ctx.meta.event.invoke({
+            await this.ctx.bean.event.invoke({
               module: moduleInfo.relativeName,
               name: 'wechatMessageMini',
               data: { scene, message },
@@ -1287,7 +1287,7 @@ module.exports =
             let unionid;
 
             // mini
-            const apiMini = this.ctx.meta.wechat.mini[scene];
+            const apiMini = this.ctx.bean.wechat.mini[scene];
 
             // code
             if (code) {
@@ -1325,7 +1325,7 @@ module.exports =
             // save session_key, because ctx.state.user maybe changed
             await apiMini.saveSessionKey(session_key);
             // echo
-            return await this.ctx.meta.auth.echo();
+            return await this.ctx.bean.auth.echo();
           }
 
         }

@@ -5,17 +5,17 @@ module.exports = app => {
     // return current user auth info
     //   { op:{id},agent:{id},provider}
     async echo() {
-      const info = await this.ctx.meta.auth.echo();
+      const info = await this.ctx.bean.auth.echo();
       this.ctx.success(info);
     }
 
     async check() {
-      const info = await this.ctx.meta.auth.check();
+      const info = await this.ctx.bean.auth.check();
       this.ctx.success(info);
     }
 
     async logout() {
-      const info = await this.ctx.meta.auth.logout();
+      const info = await this.ctx.bean.auth.logout();
       this.ctx.success(info);
     }
 
@@ -27,7 +27,7 @@ module.exports = app => {
         // state: login/associate
         const state = ctx.request.query.state || 'login';
         // user verify
-        return await ctx.meta.user.verify({ state, profileUser });
+        return await ctx.bean.user.verify({ state, profileUser });
       });
       // serializeUser
       this.app.passport.serializeUser(async (ctx, user) => {

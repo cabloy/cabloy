@@ -176,7 +176,7 @@ module.exports = app => {
       });
       const list = res.list;
       // atomClass
-      const atomClass = await this.ctx.meta.atomClass.get({ id: article.atomClassId });
+      const atomClass = await this.ctx.bean.atomClass.get({ id: article.atomClassId });
       // build
       const build = Build.create(this.ctx, atomClass);
       // site

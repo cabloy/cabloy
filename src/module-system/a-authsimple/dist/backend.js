@@ -292,7 +292,7 @@ module.exports =
           async init(options) {
             if (options.version === 1) {
               // root
-              const user = await this.ctx.meta.user.get({ userName: 'root' });
+              const user = await this.ctx.bean.user.get({ userName: 'root' });
               await this.ctx.service.auth.add({
                 userId: user.id,
                 password: options.password,
@@ -342,7 +342,7 @@ module.exports =
             };
 
             // verify
-            const verifyUser = await this.ctx.meta.user.verify({ state, profileUser });
+            const verifyUser = await this.ctx.bean.user.verify({ state, profileUser });
             if (!verifyUser) this.ctx.throw(403);
 
             // userId
@@ -357,12 +357,12 @@ module.exports =
             if (state === 'login' || !user.userName || user.userName.indexOf('__') > -1) {
               userNew.userName = userName;
             }
-            await this.ctx.meta.user.save({
+            await this.ctx.bean.user.save({
               user: userNew,
             });
             // save email
             if (email !== verifyUser.agent.email) {
-              await this.ctx.meta.user.setActivated({
+              await this.ctx.bean.user.setActivated({
                 user: { id: userId, email, emailConfirmed: 0 },
               });
             }
@@ -403,7 +403,7 @@ module.exports =
             await this.ctx.model.authSimple.update({ id: authSimpleId, userId });
 
             // auth
-            const providerItem = await this.ctx.meta.user.getAuthProvider({
+            const providerItem = await this.ctx.bean.user.getAuthProvider({
               module: moduleInfo.relativeName,
               providerName: 'authsimple',
             });
@@ -455,7 +455,7 @@ module.exports =
             };
 
             // verify
-            const verifyUser = await this.ctx.meta.user.verify({ state: 'associate', profileUser });
+            const verifyUser = await this.ctx.bean.user.verify({ state: 'associate', profileUser });
             if (!verifyUser) this.ctx.throw(403);
             // login now
             //   always no matter login/associate
@@ -491,7 +491,7 @@ module.exports =
             // clear token
             await this.ctx.cache.db.remove(cacheKey);
             // login antomatically
-            const user = await this.ctx.meta.user.get({ id: userId });
+            const user = await this.ctx.bean.user.get({ id: userId });
             const user2 = await this.signin({ auth: user.email, password: passwordNew, rememberMe: false });
             // ok
             return user2;
@@ -499,24 +499,24 @@ module.exports =
 
           async passwordForgot({ email }) {
             // user by email
-            const user = await this.ctx.meta.user.exists({ email });
+            const user = await this.ctx.bean.user.exists({ email });
             // link
             const token = uuid.v4().replace(/-/g, '');
-            const link = this.ctx.meta.base.getAbsoluteUrl(`/#!/a/authsimple/passwordReset?token=${token}`);
+            const link = this.ctx.bean.base.getAbsoluteUrl(`/#!/a/authsimple/passwordReset?token=${token}`);
             // email scene
             const scene = (app.meta.isTest || app.meta.isLocal) ? 'test' : 'system';
             // email subject
             let subject = this.ctx.text('passwordResetEmailSubject');
-            subject = this.ctx.meta.util.replaceTemplate(subject, { siteName: this.ctx.instance.title });
+            subject = this.ctx.bean.util.replaceTemplate(subject, { siteName: this.ctx.instance.title });
             // email body
             let body = this.ctx.text('passwordResetEmailBody');
-            body = this.ctx.meta.util.replaceTemplate(body, {
+            body = this.ctx.bean.util.replaceTemplate(body, {
               userName: user.userName,
               link,
               siteName: this.ctx.instance.title,
             });
             // send
-            await this.ctx.meta.mail.send({
+            await this.ctx.bean.mail.send({
               scene,
               message: {
                 to: email,
@@ -534,26 +534,26 @@ module.exports =
 
           async emailConfirm({ email, user }) {
             // save email
-            await this.ctx.meta.user.setActivated({
+            await this.ctx.bean.user.setActivated({
               user: { id: user.id, email, emailConfirmed: 0 },
             });
             // link
             const token = uuid.v4().replace(/-/g, '');
-            const link = this.ctx.meta.base.getAbsoluteUrl(`/api/a/authsimple/auth/emailConfirmation?token=${token}`);
+            const link = this.ctx.bean.base.getAbsoluteUrl(`/api/a/authsimple/auth/emailConfirmation?token=${token}`);
             // email scene
             const scene = (app.meta.isTest || app.meta.isLocal) ? 'test' : 'system';
             // email subject
             let subject = this.ctx.text('confirmationEmailSubject');
-            subject = this.ctx.meta.util.replaceTemplate(subject, { siteName: this.ctx.instance.title });
+            subject = this.ctx.bean.util.replaceTemplate(subject, { siteName: this.ctx.instance.title });
             // email body
             let body = this.ctx.text('confirmationEmailBody');
-            body = this.ctx.meta.util.replaceTemplate(body, {
+            body = this.ctx.bean.util.replaceTemplate(body, {
               userName: user.userName,
               link,
               siteName: this.ctx.instance.title,
             });
             // send
-            await this.ctx.meta.mail.send({
+            await this.ctx.bean.mail.send({
               scene,
               message: {
                 to: email,
@@ -581,13 +581,13 @@ module.exports =
                 link: '/a/authsimple/emailConfirm',
                 linkText: this.ctx.text('Resend Confirmation Email'),
               };
-              const url = this.ctx.meta.base.getAlertUrl({ data });
+              const url = this.ctx.bean.base.getAlertUrl({ data });
               return this.ctx.redirect(url);
             }
             // userId
             const userId = value.userId;
             // activated
-            await this.ctx.meta.user.setActivated({
+            await this.ctx.bean.user.setActivated({
               user: { id: userId, emailConfirmed: 1 },
             });
             // clear token
@@ -599,7 +599,7 @@ module.exports =
               link: '#back',
               linkText: this.ctx.text('Close'),
             };
-            const url = this.ctx.meta.base.getAlertUrl({ data });
+            const url = this.ctx.bean.base.getAlertUrl({ data });
             return this.ctx.redirect(url);
           }
 
@@ -973,9 +973,9 @@ Regards,
         async function verify(ctx, body) {
           const { auth, password, rememberMe } = body;
           // validate
-          await ctx.meta.validation.validate({ validator: 'signin', data: body });
+          await ctx.bean.validation.validate({ validator: 'signin', data: body });
           // exists
-          const user = await ctx.meta.user.exists({ userName: auth, email: auth, mobile: auth });
+          const user = await ctx.bean.user.exists({ userName: auth, email: auth, mobile: auth });
           if (!user) return ctx.throw(1001);
           // disabled
           if (user.disabled) return ctx.throw(1002);
@@ -1057,7 +1057,7 @@ Regards,
             if (req.query.returnTo) {
               url = `${url}&returnTo=${encodeURIComponent(req.query.returnTo)}`;
             }
-            url = req.ctx.meta.base.getAbsoluteUrl(url);
+            url = req.ctx.bean.base.getAbsoluteUrl(url);
             return self.redirect(url);
           }
           // not allow
@@ -1154,7 +1154,7 @@ Regards,
           compile() {
             return async function(data, path, rootData, name) {
               const ctx = this;
-              const res = await ctx.meta.user.exists({ [name]: data });
+              const res = await ctx.bean.user.exists({ [name]: data });
               if (res && res.id !== ctx.state.user.agent.id) {
                 const errors = [{ keyword: 'x-exists', params: [], message: ctx.text('Element Exists') }];
                 throw new app.meta.ajv.ValidationError(errors);
@@ -1174,7 +1174,7 @@ Regards,
           compile() {
             return async function(data, path, rootData, name) {
               const ctx = this;
-              const res = await ctx.meta.user.exists({ [name]: data });
+              const res = await ctx.bean.user.exists({ [name]: data });
               if (!res) {
                 const errors = [{ keyword: 'x-passwordForgotEmail', params: [], message: ctx.text('Email Address does not Exist') }];
                 throw new app.meta.ajv.ValidationError(errors);

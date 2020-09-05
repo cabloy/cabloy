@@ -48,23 +48,23 @@ class Build {
 
   async getConfigSite() {
     const name = this.default ? 'config-site' : `config-site:${this.atomClass.module}`;
-    return await this.ctx.meta.status.get(name);
+    return await this.ctx.bean.status.get(name);
   }
 
   async setConfigSite({ data }) {
     const name = this.default ? 'config-site' : `config-site:${this.atomClass.module}`;
-    await this.ctx.meta.status.set(name, data);
+    await this.ctx.bean.status.set(name, data);
   }
 
   async getConfigLanguage({ language }) {
     const name = this.default ? `config-${language}` : `config-${language}:${this.atomClass.module}`;
-    return await this.ctx.meta.status.get(name);
+    return await this.ctx.bean.status.get(name);
   }
 
   async setConfigLanguage({ language, data }) {
     const name = this.default ? `config-${language}` : `config-${language}:${this.atomClass.module}`;
     this._adjustConfigLanguange(data);
-    await this.ctx.meta.status.set(name, data);
+    await this.ctx.bean.status.set(name, data);
   }
 
   async getConfigLanguagePreview({ language }) {
@@ -198,7 +198,7 @@ class Build {
       // cms or cms.moduleName
       const cmsPathName = this.getCMSPathName();
       const publicDir = this.ctx.app.config.static.prefix + 'public/';
-      const prefix = this.ctx.meta.base.host ? `${this.ctx.meta.base.protocol}://${this.ctx.meta.base.host}` : '';
+      const prefix = this.ctx.bean.base.host ? `${this.ctx.bean.base.protocol}://${this.ctx.bean.base.host}` : '';
       return `${prefix}${publicDir}${this.ctx.instance.id}/${cmsPathName}/dist`;
     }
     return `${site.host.url}${site.host.rootPath ? '/' + site.host.rootPath : ''}`;
@@ -212,7 +212,7 @@ class Build {
     return path ? `${urlRoot}/${path}` : urlRoot;
   }
   getServerUrl(path) {
-    return this.ctx.meta.base.getAbsoluteUrl(path);
+    return this.ctx.bean.base.getAbsoluteUrl(path);
   }
 
   async getPathCustom(language) {
@@ -229,11 +229,11 @@ class Build {
   }
   async getPathCms() {
     // cms
-    return await this.ctx.meta.base.getPath(this.getCMSPathName());
+    return await this.ctx.bean.base.getPath(this.getCMSPathName());
   }
   async getPathRawDist() {
     // cms/dist
-    return await this.ctx.meta.base.getPath(`${this.getCMSPathName()}/dist`);
+    return await this.ctx.bean.base.getPath(`${this.getCMSPathName()}/dist`);
   }
 
   // ///////////////////////////////// render
@@ -293,9 +293,9 @@ class Build {
 
   async _renderArticles({ site, progressId, progressNo }) {
     // anonymous user
-    const user = await this.ctx.meta.user.anonymous();
+    const user = await this.ctx.bean.user.anonymous();
     // articles
-    const articles = await this.ctx.meta.atom.select({
+    const articles = await this.ctx.bean.atom.select({
       atomClass: this.atomClass,
       options: {
         where: {
@@ -318,7 +318,7 @@ class Build {
     const mapper = async article => {
       // progress: initialize
       if (progressId) {
-        await this.ctx.meta.progress.update({
+        await this.ctx.bean.progress.update({
           progressId,
           progressNo,
           total: progress1_Total,
@@ -506,7 +506,7 @@ class Build {
         mtime: new Date(),
       },
     };
-    await this.ctx.meta.io.publish({
+    await this.ctx.bean.io.publish({
       path: `/a/cms/hotloadFile/${hotloadFile}`,
       message,
       messageClass: {
@@ -757,7 +757,7 @@ var env=${JSON.stringify(env, null, 2)};
       for (const language of languages) {
         // progress: language
         if (progressId) {
-          await this.ctx.meta.progress.update({
+          await this.ctx.bean.progress.update({
             progressId,
             progressNo,
             total: progress0_Total,
@@ -777,7 +777,7 @@ var env=${JSON.stringify(env, null, 2)};
       // progress: done
       if (progressId) {
         if (progressNo === 0) {
-          await this.ctx.meta.progress.done({
+          await this.ctx.bean.progress.done({
             progressId,
             message: `${this.ctx.text('Time Used')}: ${parseInt(time)}${this.ctx.text('second2')}`,
           });
@@ -792,7 +792,7 @@ var env=${JSON.stringify(env, null, 2)};
       // error
       if (progressId) {
         if (progressNo === 0) {
-          await this.ctx.meta.progress.error({ progressId, message: err.message });
+          await this.ctx.bean.progress.error({ progressId, message: err.message });
         }
       }
       throw err;
@@ -810,7 +810,7 @@ var env=${JSON.stringify(env, null, 2)};
       let progress0_progress = 0;
       // progress: initialize
       if (progressId) {
-        await this.ctx.meta.progress.update({
+        await this.ctx.bean.progress.update({
           progressId,
           progressNo,
           total: progress0_Total,
@@ -924,7 +924,7 @@ var env=${JSON.stringify(env, null, 2)};
 
       // progress: render files
       if (progressId) {
-        await this.ctx.meta.progress.update({
+        await this.ctx.bean.progress.update({
           progressId,
           progressNo,
           total: progress0_Total,
@@ -943,7 +943,7 @@ var env=${JSON.stringify(env, null, 2)};
       // progress: done
       if (progressId) {
         if (progressNo === 0) {
-          await this.ctx.meta.progress.done({
+          await this.ctx.bean.progress.done({
             progressId,
             message: `${this.ctx.text('Time Used')}: ${parseInt(time)}${this.ctx.text('second2')}`,
           });
@@ -958,7 +958,7 @@ var env=${JSON.stringify(env, null, 2)};
       // error
       if (progressId) {
         if (progressNo === 0) {
-          await this.ctx.meta.progress.error({ progressId, message: err.message });
+          await this.ctx.bean.progress.error({ progressId, message: err.message });
         }
       }
       throw err;

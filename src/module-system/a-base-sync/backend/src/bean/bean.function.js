@@ -30,7 +30,7 @@ module.exports = ctx => {
     // list
     //   locale maybe '' for selectAllFunctions beside menus
     async list({ options: { where, orders, page, star = 0, locale = '' }, user }) {
-      // page = ctx.meta.util.page(page); // has set in controller
+      // page = ctx.bean.util.page(page); // has set in controller
 
       // sql
       const sql = this.sqlProcedure.selectFunctions({
@@ -144,12 +144,12 @@ module.exports = ctx => {
       // get
       const res = await this.model.get({ module, name });
       if (res) return res;
-      const func = ctx.meta.base.function({ module, name });
+      const func = ctx.bean.base.function({ module, name });
       if (!func) throw new Error(`function not found: ${module}:${name}`);
       // atomClassId
       let atomClassId = 0;
       if (func.atomClassName) {
-        const atomClass = await ctx.meta.atomClass.get({ module, atomClassName: func.atomClassName });
+        const atomClass = await ctx.bean.atomClass.get({ module, atomClassName: func.atomClassName });
         atomClassId = atomClass.id;
       }
       // sceneId
@@ -213,7 +213,7 @@ module.exports = ctx => {
       // insert locales
       for (const func of functions) {
         // title
-        const funcBase = ctx.meta.base.function({ module: func.module, name: func.name });
+        const funcBase = ctx.bean.base.function({ module: func.module, name: func.name });
         if (!funcBase) {
           // not throw error
           ctx.logger.info(`function not found: ${func.module}:${func.name}`);

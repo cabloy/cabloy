@@ -5,7 +5,7 @@ module.exports = app => {
     async sendMail() {
       // send
       const message = this.ctx.request.body.data;
-      await this.ctx.meta.mail.send({
+      await this.ctx.bean.mail.send({
         scene: 'test',
         message,
       });

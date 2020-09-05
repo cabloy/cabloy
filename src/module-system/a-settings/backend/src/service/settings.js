@@ -15,8 +15,8 @@ module.exports = app => {
     }
 
     async instanceLoad({ module }) {
-      const validator = await this.ctx.meta.settings.loadValidatorInstance({ module });
-      const data = await this.ctx.meta.settings.loadSettingsInstance({ module });
+      const validator = await this.ctx.bean.settings.loadValidatorInstance({ module });
+      const data = await this.ctx.bean.settings.loadSettingsInstance({ module });
       return {
         module,
         validator: validator.validator,
@@ -25,7 +25,7 @@ module.exports = app => {
     }
 
     async instanceSave({ module, data }) {
-      await this.ctx.meta.settings.saveSettingsInstance({ module, data });
+      await this.ctx.bean.settings.saveSettingsInstance({ module, data });
     }
 
     // user
@@ -38,8 +38,8 @@ module.exports = app => {
     }
 
     async userLoad({ module }) {
-      const validator = await this.ctx.meta.settings.loadValidatorUser({ module });
-      const data = await this.ctx.meta.settings.loadSettingsUser({ module });
+      const validator = await this.ctx.bean.settings.loadValidatorUser({ module });
+      const data = await this.ctx.bean.settings.loadSettingsUser({ module });
       return {
         module,
         validator: validator.validator,
@@ -48,7 +48,7 @@ module.exports = app => {
     }
 
     async userSave({ module, data }) {
-      await this.ctx.meta.settings.saveSettingsUser({ module, data });
+      await this.ctx.bean.settings.saveSettingsUser({ module, data });
     }
 
     //

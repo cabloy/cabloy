@@ -15,11 +15,11 @@ module.exports = function(ctx) {
       ];
       let needBuild = false;
       for (const item of items) {
-        const role = await ctx.meta.role.getSystemRole({ roleName: item.roleName });
+        const role = await ctx.bean.role.getSystemRole({ roleName: item.roleName });
         if (!role) {
           needBuild = true;
-          const roleParent = await ctx.meta.role.getSystemRole({ roleName: item.roleIdParent });
-          const roleId = await ctx.meta.role.add({
+          const roleParent = await ctx.bean.role.getSystemRole({ roleName: item.roleIdParent });
+          const roleId = await ctx.bean.role.add({
             roleName: item.roleName,
             leader: item.leader,
             catalog: item.catalog,
@@ -29,14 +29,14 @@ module.exports = function(ctx) {
           });
           if (item.roleName === 'system') {
             // superuser include system
-            const roleSuperuser = await ctx.meta.role.getSystemRole({ roleName: 'superuser' });
-            await ctx.meta.role.addRoleInc({ roleId: roleSuperuser.id, roleIdInc: roleId });
+            const roleSuperuser = await ctx.bean.role.getSystemRole({ roleName: 'superuser' });
+            await ctx.bean.role.addRoleInc({ roleId: roleSuperuser.id, roleIdInc: roleId });
           }
         }
       }
       // build
       if (needBuild) {
-        await ctx.meta.role.setDirty(true);
+        await ctx.bean.role.setDirty(true);
       }
 
     }

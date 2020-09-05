@@ -7,39 +7,39 @@ module.exports = app => {
 
     async starLabel() {
       // atomClass
-      const atomClass = await this.ctx.meta.atomClass.get({ atomClassName: 'party' });
+      const atomClass = await this.ctx.bean.atomClass.get({ atomClassName: 'party' });
       // user
       const user = this.ctx.state.user.op;
 
       // add party:star
-      const partyKey = await this.ctx.meta.atom.create({
+      const partyKey = await this.ctx.bean.atom.create({
         atomClass,
         user,
       });
 
       // write party
-      await this.ctx.meta.atom.write({
+      await this.ctx.bean.atom.write({
         key: partyKey,
         item: { atomName: 'test:starLabel' },
         user,
       });
 
       // get party
-      let party = await this.ctx.meta.atom.read({ key: partyKey, user });
+      let party = await this.ctx.bean.atom.read({ key: partyKey, user });
       assert.equal(party.star, null);
       assert.equal(party.labels, null);
 
       // set star/label
-      await this.ctx.meta.atom.star({ key: partyKey, atom: { star: 1 }, user });
-      await this.ctx.meta.atom.labels({ key: partyKey, atom: { labels: [ 1 ] }, user });
+      await this.ctx.bean.atom.star({ key: partyKey, atom: { star: 1 }, user });
+      await this.ctx.bean.atom.labels({ key: partyKey, atom: { labels: [ 1 ] }, user });
 
       // get party
-      party = await this.ctx.meta.atom.read({ key: partyKey, user });
+      party = await this.ctx.bean.atom.read({ key: partyKey, user });
       assert.equal(party.star, 1);
       assert.equal(party.labels, '[1]');
 
       // select parties
-      let parties = await this.ctx.meta.atom.select({
+      let parties = await this.ctx.bean.atom.select({
         user,
         options: {
           star: 1,
@@ -48,7 +48,7 @@ module.exports = app => {
       });
       assert.equal(parties.length, 1);
 
-      parties = await this.ctx.meta.atom.select({
+      parties = await this.ctx.bean.atom.select({
         user,
         options: {
           label: 1,
@@ -57,7 +57,7 @@ module.exports = app => {
       });
       assert.equal(parties.length, 1);
 
-      parties = await this.ctx.meta.atom.select({
+      parties = await this.ctx.bean.atom.select({
         user,
         options: {
           label: 2,
@@ -67,16 +67,16 @@ module.exports = app => {
       assert.equal(parties.length, 0);
 
       // clear star/label
-      await this.ctx.meta.atom.star({ key: partyKey, atom: { star: 0 }, user });
-      await this.ctx.meta.atom.labels({ key: partyKey, atom: { labels: null }, user });
+      await this.ctx.bean.atom.star({ key: partyKey, atom: { star: 0 }, user });
+      await this.ctx.bean.atom.labels({ key: partyKey, atom: { labels: null }, user });
 
       // get party
-      party = await this.ctx.meta.atom.read({ key: partyKey, user });
+      party = await this.ctx.bean.atom.read({ key: partyKey, user });
       assert.equal(party.star, null);
       assert.equal(party.labels, null);
 
       // delete party
-      await this.ctx.meta.atom.delete({ key: partyKey, user });
+      await this.ctx.bean.atom.delete({ key: partyKey, user });
 
       // done
       this.ctx.success();

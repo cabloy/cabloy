@@ -338,7 +338,7 @@ module.exports = appInfo => {
 
       module.exports = {
         getCacheKey({ ctx, providerInstanceId }) {
-          return `captcha:${ctx.meta.user.anonymousId()}:${providerInstanceId}`;
+          return `captcha:${ctx.bean.user.anonymousId()}:${providerInstanceId}`;
         },
       };
 
@@ -523,7 +523,7 @@ module.exports = appInfo => {
         class Captcha extends app.Service {
 
           async createProviderInstance({ module, sceneName, context }) {
-            return await this.ctx.meta.captcha.createProviderInstance({ module, sceneName, context });
+            return await this.ctx.bean.captcha.createProviderInstance({ module, sceneName, context });
           }
 
         }
