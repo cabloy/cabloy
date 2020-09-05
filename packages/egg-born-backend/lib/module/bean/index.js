@@ -24,11 +24,9 @@ module.exports = function(loader) {
     loader.app.createContext = (...args) => {
       const context = createContext.call(loader.app, ...args);
 
-      // maybe /favicon.ico
-      if (context.module) {
-        // bean
-        context.bean = beanContainerFn(loader.app, context);
-      }
+      // not check context.module
+      // bean
+      context.bean = beanContainerFn(loader.app, context);
 
       return context;
     };

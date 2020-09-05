@@ -15,6 +15,7 @@ module.exports = ctx => {
     }
 
     async create() {
+      if (!ctx.state.user || !ctx.state.user.op) return ctx.throw(403);
       const progressId = uuid.v4().replace(/-/g, '');
       await this.modelProgress.insert({ progressId, userId: ctx.state.user.op.id });
       return progressId;

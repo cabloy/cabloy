@@ -110,7 +110,7 @@ module.exports = app => {
       { method: 'post', path: 'test/feat/instance', controller: 'testFeatInstance', middlewares: 'test', meta: { auth: { enable: false } } },
 
       // test/feat/progress
-      { method: 'post', path: 'test/feat/progress', controller: 'testFeatProgress', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/feat/progress', controller: 'testFeatProgress' },
       { method: 'post', path: 'test/feat/progressInBackground', controller: 'testFeatProgress', middlewares: 'inner', meta: { auth: { enable: false } } },
 
       // test/feat/sequence
