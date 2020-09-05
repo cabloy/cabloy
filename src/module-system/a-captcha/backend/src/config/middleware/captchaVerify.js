@@ -1,5 +1,3 @@
-const CaptchaFn = require('./adapter/captcha.js');
-
 module.exports = (options2, app) => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   return async function captchaVerify(ctx, next, options) {
@@ -31,8 +29,7 @@ async function sceneVerify({ ctx, scene }) {
   const dataInput = captchaData.data;
   // verify
   try {
-    const _captcha = new (CaptchaFn(ctx))();
-    await _captcha.verify({ module, sceneName, providerInstanceId, dataInput });
+    await ctx.bean.captcha.verify({ module, sceneName, providerInstanceId, dataInput });
   } catch (err) {
     throw combineCaptchaError({
       fieldKey: scene.fieldKey || 'token',

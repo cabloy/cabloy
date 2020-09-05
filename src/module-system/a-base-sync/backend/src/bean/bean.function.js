@@ -24,7 +24,7 @@ module.exports = ctx => {
     }
 
     get sqlProcedure() {
-      return ctx._getBean(moduleInfo.relativeName, 'local.procedure');
+      return ctx.bean._getBean(moduleInfo.relativeName, 'local.procedure');
     }
 
     // list

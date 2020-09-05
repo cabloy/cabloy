@@ -71,6 +71,9 @@ module.exports = {
     // transaction
     this.dbMeta = value.dbMeta;
   },
+  get cache() {
+    return this.bean.cache;
+  },
   tail(cb) {
     if (this.ctxCaller && this.ctxCaller[TAILCALLBACKS]) {
       this.ctxCaller.tail(cb);
