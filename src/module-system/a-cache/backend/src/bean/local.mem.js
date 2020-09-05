@@ -1,4 +1,4 @@
-const CACHEMEMORY = Symbol.for('APP#__CACHEMEMORY');
+const CACHEMEMORY = Symbol('APP#__CACHEMEMORY');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
