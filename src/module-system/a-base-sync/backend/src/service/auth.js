@@ -14,7 +14,7 @@ module.exports = app => {
     }
 
     _registerAllRouters() {
-      const authProviders = this.ctx.bean.util.authProviders();
+      const authProviders = this.ctx.bean.base.authProviders();
       for (const key in authProviders) {
         const [ moduleRelativeName, providerName ] = key.split(':');
         this._registerProviderRouters(moduleRelativeName, providerName);
@@ -58,7 +58,7 @@ module.exports = app => {
     }
 
     async _registerInstanceProviders(subdomain, iid) {
-      const authProviders = this.ctx.bean.util.authProviders();
+      const authProviders = this.ctx.bean.base.authProviders();
       for (const key in authProviders) {
         const [ moduleRelativeName, providerName ] = key.split(':');
         await this._registerInstanceProvider(subdomain, iid, moduleRelativeName, providerName);
@@ -79,7 +79,7 @@ module.exports = app => {
       // unuse/use
       if (providerItem.disabled === 0) {
         // provider
-        const authProviders = this.ctx.bean.util.authProviders();
+        const authProviders = this.ctx.bean.base.authProviders();
         const provider = authProviders[`${moduleRelativeName}:${providerName}`];
         if (provider.handler) {
           // config
@@ -131,7 +131,7 @@ function createAuthenticate(moduleRelativeName, providerName, _config) {
     }
 
     // provider
-    const authProviders = ctx.bean.util.authProviders();
+    const authProviders = ctx.bean.base.authProviders();
     const provider = authProviders[`${moduleRelativeName}:${providerName}`];
 
     // config

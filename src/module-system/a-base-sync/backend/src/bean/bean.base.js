@@ -16,6 +16,7 @@ const _panels = {};
 const _widgets = {};
 const _sections = {};
 const _buttons = {};
+const _authProvidersLocales = {};
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -75,10 +76,6 @@ module.exports = ctx => {
     // alert
     getAlertUrl({ data }) {
       return this.getAbsoluteUrl(`/#!/a/base/base/alert?data=${encodeURIComponent(JSON.stringify(data))}`);
-    }
-
-    authProviders() {
-      return ctx.bean.util.authProviders();
     }
 
     modules() {
@@ -202,6 +199,13 @@ module.exports = ctx => {
         }
       }
       return functions;
+    }
+
+    authProviders() {
+      if (!_authProvidersLocales[ctx.locale]) {
+        _authProvidersLocales[ctx.locale] = this._prepareAuthProviders();
+      }
+      return _authProvidersLocales[ctx.locale];
     }
 
     // inner methods
@@ -525,6 +529,35 @@ module.exports = ctx => {
       }
       // ok
       return func;
+    }
+
+    _prepareAuthProviders() {
+      const authProviders = {};
+      for (const relativeName in ctx.app.meta.modules) {
+        const module = ctx.app.meta.modules[relativeName];
+        let metaAuth = module.main.meta && module.main.meta.auth;
+        if (!metaAuth) continue;
+        if (typeof metaAuth === 'function') {
+          metaAuth = metaAuth(ctx);
+        }
+        if (!metaAuth.providers) continue;
+        // loop
+        for (const providerName in metaAuth.providers) {
+          const _authProvider = metaAuth.providers[providerName];
+          if (!_authProvider) continue;
+          const authProvider = {
+            meta: _authProvider.meta,
+            config: _authProvider.config,
+            configFunctions: _authProvider.configFunctions,
+            handler: _authProvider.handler,
+          };
+          if (authProvider.meta && authProvider.meta.title) {
+            authProvider.meta.titleLocale = ctx.text(authProvider.meta.title);
+          }
+          authProviders[`${relativeName}:${providerName}`] = authProvider;
+        }
+      }
+      return authProviders;
     }
 
   }
