@@ -4,10 +4,6 @@ module.exports = appInfo => {
 
   // middlewares
   config.middlewares = {
-    status: {
-      global: true,
-      dependencies: 'instance',
-    },
   };
 
   // queues

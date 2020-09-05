@@ -1,14 +1,10 @@
-const Fn = module.exports = ctx => {
+module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class Status {
+  class Status extends ctx.app.meta.BeanModuleBase {
 
     constructor(moduleName) {
+      super(ctx, 'status');
       this.moduleName = moduleName || ctx.module.info.relativeName;
-    }
-
-    // other module's status
-    module(moduleName) {
-      return new (Fn(ctx))(moduleName);
     }
 
     async get(name) {

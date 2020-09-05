@@ -4,10 +4,6 @@ module.exports = appInfo => {
 
   // middlewares
   config.middlewares = {
-    validation: {
-      global: true,
-      dependencies: 'instance',
-    },
     validate: {
       global: false,
     },

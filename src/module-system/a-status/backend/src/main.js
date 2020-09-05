@@ -7,12 +7,15 @@ const middlewares = require('./config/middlewares.js');
 // eslint-disable-next-line
 module.exports = app => {
 
+  // beans
+  const beans = require('./beans.js')(app);
   // routes
   const routes = require('./routes.js')(app);
   // controllers
   const controllers = require('./controllers.js')(app);
 
   return {
+    beans,
     routes,
     controllers,
     services,

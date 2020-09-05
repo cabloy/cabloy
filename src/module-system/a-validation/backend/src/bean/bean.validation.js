@@ -1,13 +1,9 @@
-const Fn = module.exports = ctx => {
-  class Validation {
+module.exports = ctx => {
+  class Validation extends ctx.app.meta.BeanModuleBase {
 
     constructor(moduleName) {
+      super(ctx, 'validation');
       this.moduleName = moduleName || ctx.module.info.relativeName;
-    }
-
-    // other module's validation
-    module(moduleName) {
-      return new (Fn(ctx))(moduleName);
     }
 
     getSchema({ module, validator, schema }) {
