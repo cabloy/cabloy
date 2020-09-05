@@ -44,10 +44,6 @@ module.exports = appInfo => {
 
   // middlewares
   config.middlewares = {
-    wechat: {
-      global: false,
-      dependencies: 'instance',
-    },
     inWechat: {
       global: false,
       dependencies: 'instance',
