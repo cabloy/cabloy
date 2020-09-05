@@ -100,7 +100,6 @@ module.exports = app => {
     }
 
     async after(options) {
-      // console.log(this.ctx.meta);
       const dirty = await this.ctx.bean.role.getDirty();
       if (dirty) {
         await this.ctx.bean.role.build();
