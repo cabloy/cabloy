@@ -119,10 +119,6 @@ module.exports = appInfo => {
 
   // middlewares
   config.middlewares = {
-    wxwork: {
-      global: false,
-      dependencies: 'instance',
-    },
     inWxwork: {
       global: false,
       dependencies: 'instance',

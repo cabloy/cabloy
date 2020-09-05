@@ -1,5 +1,3 @@
-const WxworkHelperFn = require('../../common/wxworkHelper.js');
-
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   async function onPush({ ctx, content }) {
@@ -32,9 +30,7 @@ module.exports = app => {
       message.toparty = list.map(item => item.departmentId).join('|');
     }
     // send
-    const wxworkHelper = new (WxworkHelperFn(ctx))();
-    const api = wxworkHelper.createWxworkApi();
-    await api.app.selfBuilt.sendMessage(message);
+    await ctx.bean.wxwork.app.selfBuilt.sendMessage(message);
     // done
     return true;
   }

@@ -34,8 +34,7 @@ module.exports = ctx => {
             const state = ctx.request.query.state || 'login';
             // code/memberId
             const wxworkHelper = new (WxworkHelperFn(ctx))();
-            const api = wxworkHelper.createWxworkApi();
-            api.app.selfBuilt.getUserIdByCode(code).then(res => {
+            ctx.bean.wxwork.app.selfBuilt.getUserIdByCode(code).then(res => {
               if (res.errcode) throw new Error(res.errmsg);
               const memberId = res.UserId;
               wxworkHelper.verifyAuthUser({
