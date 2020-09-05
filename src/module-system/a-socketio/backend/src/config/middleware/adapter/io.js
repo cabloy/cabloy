@@ -299,7 +299,7 @@ module.exports = ctx => {
       let autoFirstValid = false;
       if (channels === 'auto') {
         autoFirstValid = true;
-        channels = Object.keys(messageClassBase.channels);
+        channels = messageClassBase.channels ? Object.keys(messageClassBase.channels) : [];
       }
       // loop
       let atLeastDone = false;
