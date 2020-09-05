@@ -1,14 +1,10 @@
-const Fn = module.exports = ctx => {
+module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class Sequence {
+  class Sequence extends ctx.app.meta.BeanModuleBase {
 
     constructor(moduleName) {
+      super(ctx, 'sequence');
       this.moduleName = moduleName || ctx.module.info.relativeName;
-    }
-
-    // other module's sequence
-    module(moduleName) {
-      return new (Fn(ctx))(moduleName);
     }
 
     async reset(name) {

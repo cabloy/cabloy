@@ -12,10 +12,6 @@ module.exports = appInfo => {
     packet: {
       type: 'socketio.packet',
     },
-    io: {
-      global: true,
-      dependencies: 'instance',
-    },
   };
 
   // queues

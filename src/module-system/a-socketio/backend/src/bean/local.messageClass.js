@@ -1,5 +1,3 @@
-const modelMessageClassFn = require('../../../model/messageClass.js');
-
 const _cacheMessageClasses = {};
 const _cacheChannels = {};
 
@@ -7,13 +5,8 @@ module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class MessageClass {
 
-    constructor() {
-      this._modelMessageClass = null;
-    }
-
     get modelMessageClass() {
-      if (!this._modelMessageClass) this._modelMessageClass = new (modelMessageClassFn(ctx.app))(ctx);
-      return this._modelMessageClass;
+      return ctx.model.module(moduleInfo.relativeName).messageClass;
     }
 
     async getMessageClassId({ id, module, messageClassName }) {

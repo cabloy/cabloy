@@ -1,33 +1,24 @@
 const require3 = require('require3');
 const uuid = require3('uuid');
 
-const modelMessageFn = require('../../../model/message.js');
-const modelMessageSyncFn = require('../../../model/messageSync.js');
-const sqlProcedureFn = require('../../sql/procedure.js');
-
 module.exports = ctx => {
-  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class MessageClass {
 
     constructor() {
-      this._modelMessage = null;
-      this._modelMessageSync = null;
       this._sqlProcedure = null;
     }
 
     get modelMessage() {
-      if (!this._modelMessage) this._modelMessage = new (modelMessageFn(ctx.app))(ctx);
-      return this._modelMessage;
+      return ctx.model.module(moduleInfo.relativeName).message;
     }
 
     get modelMessageSync() {
-      if (!this._modelMessageSync) this._modelMessageSync = new (modelMessageSyncFn(ctx.app))(ctx);
-      return this._modelMessageSync;
+      return ctx.model.module(moduleInfo.relativeName).messageSync;
     }
 
     get sqlProcedure() {
-      if (!this._sqlProcedure) this._sqlProcedure = new (sqlProcedureFn(ctx))();
-      return this._sqlProcedure;
+      return ctx.bean._getBean(moduleInfo.relativeName, 'local.procedure');
     }
 
     async save({ message }) {

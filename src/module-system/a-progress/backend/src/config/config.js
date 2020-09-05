@@ -4,10 +4,6 @@ module.exports = appInfo => {
 
   // middlewares
   config.middlewares = {
-    progress: {
-      global: false,
-      dependencies: 'instance',
-    },
   };
 
   return config;

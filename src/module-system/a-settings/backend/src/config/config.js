@@ -4,10 +4,6 @@ module.exports = appInfo => {
 
   // middlewares
   config.middlewares = {
-    settings: {
-      global: true,
-      dependencies: 'validation',
-    },
   };
 
   return config;

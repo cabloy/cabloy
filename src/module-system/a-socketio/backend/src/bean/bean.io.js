@@ -1,9 +1,6 @@
 const require3 = require('require3');
 const uuid = require3('uuid');
 
-const MessageClassFn = require('./messageClass.js');
-const MessageFn = require('./message.js');
-
 const SOCKETSONLINE = Symbol.for('APP#__SOCKETSONLINE');
 
 module.exports = ctx => {
@@ -11,19 +8,15 @@ module.exports = ctx => {
   class IO {
 
     constructor() {
-      this._messageClass = null;
-      this._message = null;
       this._redis = null;
     }
 
     get messageClass() {
-      if (!this._messageClass) this._messageClass = new (MessageClassFn(ctx))();
-      return this._messageClass;
+      return ctx.bean._getBean(moduleInfo.relativeName, 'local.messageClass');
     }
 
     get message() {
-      if (!this._message) this._message = new (MessageFn(ctx))();
-      return this._message;
+      return ctx.bean._getBean(moduleInfo.relativeName, 'local.message');
     }
 
     get redis() {

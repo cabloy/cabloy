@@ -1,25 +1,17 @@
 const require3 = require('require3');
 const uuid = require3('uuid');
 
-const modelProgressFn = require('../../../model/progress.js');
-
-const Fn = module.exports = ctx => {
+module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class Progress {
+  class Progress extends ctx.app.meta.BeanModuleBase {
 
     constructor(moduleName) {
+      super(ctx, 'progress');
       this.moduleName = moduleName || ctx.module.info.relativeName;
-      this._modelProgress = null;
-    }
-
-    // other module's progress
-    module(moduleName) {
-      return new (Fn(ctx))(moduleName);
     }
 
     get modelProgress() {
-      if (!this._modelProgress) this._modelProgress = new (modelProgressFn(ctx.app))(ctx);
-      return this._modelProgress;
+      return ctx.model.module(moduleInfo.relativeName).progress;
     }
 
     async create() {

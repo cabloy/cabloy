@@ -1,32 +1,22 @@
 const require3 = require('require3');
 const extend = require3('extend2');
-const modelSettingsFn = require('../../../model/settings.js');
-const modelSettingsRefFn = require('../../../model/settingsRef.js');
-const constants = require('../../constants.js');
+const constants = require('../config/constants.js');
 
-const Fn = module.exports = ctx => {
-
-  class Settings {
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Settings extends ctx.app.meta.BeanModuleBase {
 
     constructor(moduleName) {
+      super(ctx, 'settings');
       this.moduleName = moduleName || ctx.module.info.relativeName;
-      this._modelSettings = null;
-      this._modelSettingsRef = null;
-    }
-
-    // other module's settings
-    module(moduleName) {
-      return new (Fn(ctx))(moduleName);
     }
 
     get modelSettings() {
-      if (!this._modelSettings) this._modelSettings = new (modelSettingsFn(ctx.app))(ctx);
-      return this._modelSettings;
+      return ctx.model.module(moduleInfo.relativeName).settings;
     }
 
     get modelSettingsRef() {
-      if (!this._modelSettingsRef) this._modelSettingsRef = new (modelSettingsRefFn(ctx.app))(ctx);
-      return this._modelSettingsRef;
+      return ctx.model.module(moduleInfo.relativeName).settingsRef;
     }
 
     // get

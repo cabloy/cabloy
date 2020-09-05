@@ -4,10 +4,6 @@ module.exports = appInfo => {
 
   // middlewares
   config.middlewares = {
-    sequence: {
-      global: true,
-      dependencies: 'instance',
-    },
   };
 
   // queues
