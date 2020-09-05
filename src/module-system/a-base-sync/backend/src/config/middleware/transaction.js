@@ -1,48 +1,24 @@
 module.exports = ctx => {
   class Middleware {
     async execute(options, next) {
-      // set flag
-      ctx.dbMeta.transaction = true;
-
-      try {
+      await ctx.dbMeta.transaction.begin(async () => {
         // next
         await next();
-
-        // check if success
-        if (checkIfSucess(ctx)) {
-          await handleTransaction(ctx, true);
-        } else {
-          await handleTransaction(ctx, false);
-        }
-      } catch (err) {
-        await handleTransaction(ctx, false);
-        throw err;
-      }
+        checkIfSuccess(ctx);
+      });
     }
   }
   return Middleware;
 };
 
-function checkIfSucess(ctx) {
+function checkIfSuccess(ctx) {
   if (typeof ctx.response.body === 'object' && ctx.response.body && ctx.response.body.code !== undefined) {
-    return ctx.response.body.code === 0;
-  }
-  return ctx.response.status === 200;
-}
-
-async function handleTransaction(ctx, success) {
-  if (!ctx.dbMeta.master) return;
-  if (ctx.dbMeta.connection.conn) {
-    const tran = ctx.dbMeta.connection.conn;
-    ctx.dbMeta.connection.conn = null;
-    if (success) {
-      // commit
-      await tran.commit();
-    } else {
-      // rollback
-      await tran.rollback();
+    if (ctx.response.body.code !== 0) {
+      throw ctx.app.meta.util.createError(ctx.response.body);
+    }
+  } else {
+    if (ctx.response.status !== 200) {
+      ctx.throw(ctx.response.status);
     }
   }
-  // reset flag, only for master
-  ctx.dbMeta.transaction = false;
 }

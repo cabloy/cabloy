@@ -18,6 +18,53 @@ const SUBDOMAIN = Symbol.for('Context#__subdomain');
 const CTXCALLER = Symbol.for('Context#__ctxcaller');
 const TAILCALLBACKS = Symbol.for('Context#__tailcallbacks');
 
+class DbTransaction {
+  constructor(ctx) {
+    this._ctx = ctx;
+    this._transactionCounter = 0;
+    this._connection = null;
+  }
+  get inTransaction() {
+    return this._transactionCounter > 0;
+  }
+  get connection() {
+    return this._connection;
+  }
+  set connection(value) {
+    this._connection = value;
+  }
+  async begin(fn) {
+    const db = getDbOriginal(this._ctx);
+    try {
+      if (++this._transactionCounter === 1) {
+        this._connection = await db.beginTransaction();
+      }
+    } catch (err) {
+      this._transactionCounter--;
+      throw err;
+    }
+    try {
+      await fn();
+    } catch (err) {
+      if (--this._transactionCounter === 0) {
+        await this._connection.rollback();
+        this._connection = null;
+      }
+      throw err;
+    }
+    try {
+      if (--this._transactionCounter === 0) {
+        await this._connection.commit();
+        this._connection = null;
+      }
+    } catch (err) {
+      await this._connection.rollback();
+      this._connection = null;
+      throw err;
+    }
+  }
+}
+
 module.exports = {
   get module() {
     if (this[MODULE] === undefined) {
@@ -35,17 +82,17 @@ module.exports = {
   get dbMeta() {
     if (!this[DATABASEMETA]) {
       this[DATABASEMETA] = {
-        master: true, transaction: false, connection: { conn: null },
+        master: true,
+        transaction: new DbTransaction(this),
       };
     }
     return this[DATABASEMETA];
   },
   set dbMeta(metaCaller) {
     // transaction
-    if (metaCaller.transaction) {
+    if (metaCaller.transaction.inTransaction) {
       this.dbMeta.master = false; // false only on metaCaller.transaction=true
-      this.dbMeta.transaction = true;
-      this.dbMeta.connection = metaCaller.connection;
+      this.dbMeta.transaction = metaCaller.transaction;
     }
   },
   get innerAccess() {
@@ -285,11 +332,15 @@ function createRequest({ method, url }, ctxCaller) {
   return req;
 }
 
+function getDbOriginal(ctx) {
+  return ctx.app.mysql.__ebdb_test || ctx.app.mysql.get('__ebdb');
+}
+
 function createDatabase(ctx) {
 
   const __db = {};
 
-  const db = ctx.app.mysql.__ebdb_test || ctx.app.mysql.get('__ebdb');
+  const db = getDbOriginal(ctx);
   const proto = Object.getPrototypeOf(Object.getPrototypeOf(db));
   Object.keys(proto).forEach(key => {
     Object.defineProperty(__db, key, {
@@ -304,26 +355,10 @@ function createDatabase(ctx) {
             }
 
             // check if use transaction
-            if (!ctx.dbMeta.transaction) return db[key].apply(db, args);
+            if (!ctx.dbMeta.transaction.inTransaction) return db[key].apply(db, args);
 
             // use transaction
-            if (!ctx.dbMeta.connection.conn) {
-              return new Promise(function(resolve, reject) {
-                db.beginTransaction()
-                  .then(conn => {
-                    ctx.dbMeta.connection.conn = conn;
-                    const fn = ctx.dbMeta.connection.conn[key].apply(ctx.dbMeta.connection.conn, args);
-                    if (!is.promise(fn)) {
-                      resolve(fn);
-                    } else {
-                      fn.then(res => resolve(res)).catch(err => reject(err));
-                    }
-                  })
-                  .catch(err => reject(err));
-              });
-            }
-            // connection ready
-            return ctx.dbMeta.connection.conn[key].apply(ctx.dbMeta.connection.conn, args);
+            return ctx.dbMeta.transaction.connection[key].apply(ctx.dbMeta.transaction.connection, args);
           };
         }
         // property

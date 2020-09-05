@@ -4,20 +4,37 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
-  {
-    "name": "Debug",
-    "type": "node",
-    "request": "launch",
-    "cwd": "${workspaceRoot}",
-    "runtimeExecutable": "npm",
-    "windows":
     {
-      "runtimeExecutable": "npm.cmd"
+      "name": "dev:backend",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": "npm",
+      "windows":
+      {
+        "runtimeExecutable": "npm.cmd"
+      },
+      "runtimeArgs": ["run", "dev:backend"],
+      "console": "integratedTerminal",
+      "protocol": "auto",
+      "restart": true,
+      "port": 9999
     },
-    "runtimeArgs": ["run", "debug:backend"],
-    "console": "integratedTerminal",
-    "protocol": "auto",
-    "restart": true,
-    "port": 9999
-  }]
+    {
+      "name": "test:backend",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": "npm",
+      "windows":
+      {
+        "runtimeExecutable": "npm.cmd"
+      },
+      "runtimeArgs": ["run", "test:backend"],
+      "console": "integratedTerminal",
+      "protocol": "auto",
+      "restart": true,
+      "port": 9999
+    }
+  ]
 }
