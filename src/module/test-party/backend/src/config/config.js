@@ -23,10 +23,6 @@ module.exports = appInfo => {
         global: false,
         dependencies: 'instance',
       },
-      testInjection: {
-        global: false,
-        dependencies: 'instance',
-      },
     };
     // queues
     config.queues = {

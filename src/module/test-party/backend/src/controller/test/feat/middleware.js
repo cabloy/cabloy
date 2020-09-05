@@ -14,12 +14,6 @@ module.exports = app => {
       this.ctx.success(c);
     }
 
-    async injection() {
-      const { a, b } = this.ctx.request.body;
-      const c = this.ctx.meta.__plus(a, b);
-      this.ctx.success(c);
-    }
-
   }
 
   return TestController;

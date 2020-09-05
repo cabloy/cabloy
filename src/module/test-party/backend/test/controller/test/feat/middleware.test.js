@@ -30,15 +30,4 @@ describe('test/controller/test/feat/middleware.test.js', () => {
     assert.equal(result.body.data, 3);
   });
 
-  it('action:injection', async () => {
-    // success
-    const result = await app.httpRequest()
-      .post(mockUrl('test/feat/middleware/injection'))
-      .send({
-        a: '1',
-        b: '2',
-      });
-    assert.equal(result.body.data, 3);
-  });
-
 });
