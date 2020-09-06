@@ -1,7 +1,7 @@
 module.exports = ctx => {
   class Middleware {
     async execute(options, next) {
-      await ctx.dbMeta.transaction.begin(async () => {
+      await ctx.transaction.begin(async () => {
         // next
         await next();
         checkIfSuccess(ctx);

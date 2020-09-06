@@ -95,6 +95,9 @@ module.exports = {
       this.dbMeta.transaction = metaCaller.transaction;
     }
   },
+  get transaction() {
+    return this.dbMeta.transaction;
+  },
   get innerAccess() {
     return this[INNERACCESS];
   },
