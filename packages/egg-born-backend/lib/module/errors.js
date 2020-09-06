@@ -1,7 +1,6 @@
 const extend = require('extend2');
 const assetErrors = require('./asset/errors.js');
 const errorClassFn = require('../base/error.js');
-const util = require('./util.js');
 const ERROR = Symbol('Context#__error');
 
 module.exports = function(loader, modules) {
@@ -38,7 +37,7 @@ module.exports = function(loader, modules) {
 
         // createError
         context.createError = function(data) {
-          return util.createError(data);
+          return loader.app.meta.util.createError(data);
         };
 
       }

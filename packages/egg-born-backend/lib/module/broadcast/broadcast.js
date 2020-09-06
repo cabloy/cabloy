@@ -12,17 +12,35 @@ module.exports = function(loader, modules) {
   loadBroadcasts();
 
   function loadBroadcasts() {
-    Object.keys(modules).forEach(key => {
+    for (const key in modules) {
       const module = modules[key];
       const config = loader.app.meta.configs[module.info.relativeName];
-      // module broadcasts
-      if (config.broadcasts) {
-        Object.keys(config.broadcasts).forEach(broadcastKey => {
-          const fullKey = `${module.info.relativeName}:${broadcastKey}`;
-          ebBroadcasts[fullKey] = { config: config.broadcasts[broadcastKey] };
+      if (!config.broadcasts) continue;
+      for (const broadcastKey in config.broadcasts) {
+        const broadcastConfig = config.broadcasts[broadcastKey];
+        const fullKey = `${broadcastConfig.module || module.info.relativeName}:${broadcastKey}`;
+        if (!ebBroadcasts[fullKey]) ebBroadcasts[fullKey] = [];
+        // bean
+        const implementationName = broadcastConfig.bean;
+        if (!implementationName) throw new Error(`bean not set for broadcast: ${fullKey}`);
+        let bean;
+        if (typeof implementationName === 'string') {
+          bean = {
+            module: module.info.relativeName,
+            name: implementationName,
+          };
+        } else {
+          bean = {
+            module: implementationName.module || module.info.relativeName,
+            name: implementationName.name,
+          };
+        }
+        ebBroadcasts[fullKey].push({
+          bean,
+          config: broadcastConfig,
         });
       }
-    });
+    }
   }
 
 };

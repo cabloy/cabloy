@@ -1,5 +1,4 @@
 const qs = require('querystring');
-const util = require('./util.js');
 
 module.exports = function(loader) {
 
@@ -29,7 +28,7 @@ module.exports = function(loader) {
   };
 
   loader.app.meta._runStartup = async (ctx, startup, info) => {
-    const url = util.combineApiPath(info, startup.path);
+    const url = loader.app.meta.util.combineApiPath(info, startup.path);
     if (!startup.instance) {
       return await ctx.performAction({
         method: 'post',

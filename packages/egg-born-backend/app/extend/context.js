@@ -8,7 +8,6 @@ const is = require('is-type-of');
 const raw = require('raw-body');
 const inflate = require('inflation');
 const mparse = require('egg-born-mparse').default;
-const util = require('../../lib/module/util.js');
 
 const MODULE = Symbol.for('Context#__module');
 const DATABASE = Symbol.for('Context#__database');
@@ -153,7 +152,7 @@ module.exports = {
       const handleRequest = appCallback.call(this.app);
       const request = createRequest({
         method,
-        url: util.combineFetchPath(this.module && this.module.info, url),
+        url: this.app.meta.util.combineFetchPath(this.module && this.module.info, url),
       }, this);
       const response = new http.ServerResponse(request);
       handleRequest(this, innerAccess, subdomain, request, response, resolve, reject, query, params, headers, body);

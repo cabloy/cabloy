@@ -1,6 +1,5 @@
 const bull = require('bullmq');
 const uuid = require('uuid');
-const util = require('../util.js');
 
 module.exports = function(app) {
 
@@ -224,12 +223,12 @@ module.exports = function(app) {
       // queue config
       const queueConfig = app.meta.queues[`${module}:${queueName}`].config;
       // url
-      let url = util.combineApiPath(module, queueConfig.path);
+      let url = app.meta.util.combineApiPath(module, queueConfig.path);
       // queries
       const queries = {};
       if (locale) queries.locale = locale;
       if (queueNameSub) queries.queueNameSub = queueNameSub;
-      url = util.combineQueries(url, queries);
+      url = app.meta.util.combineQueries(url, queries);
       // ctx
       const ctx = app.createAnonymousContext({
         method: 'post',

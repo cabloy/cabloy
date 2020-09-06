@@ -1,5 +1,4 @@
 const uuid = require('uuid');
-const util = require('./util.js');
 const eventMessengerCall = 'eb:event:messengerCall';
 
 module.exports = function(loader) {
@@ -20,7 +19,7 @@ module.exports = function(loader) {
         try {
           data = await provider.handler(info.data);
         } catch (error) {
-          err = util.createError(error, true);
+          err = loader.app.meta.util.createError(error, true);
         }
         if (info.echo) {
           if (loader.app.meta.inApp) {

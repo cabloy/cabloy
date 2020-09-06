@@ -1,6 +1,5 @@
 const _config = require('../../../build/config.js');
 
-const fs = require('fs');
 const path = require('path');
 const chalk = require('chalk');
 const uuid = require('uuid');
@@ -77,6 +76,11 @@ module.exports = appInfo => {
 
   // modules
   config.modules = {
+  };
+
+  // i18n
+  config.i18n = {
+    defaultLocale: 'en-us',
   };
 
   // session

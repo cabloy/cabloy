@@ -1,7 +1,6 @@
 const is = require('is-type-of');
 const extend = require('extend2');
 const pathMatching = require('egg-path-matching');
-const util = require('./util.js');
 const loadMiddlewares = require('./middleware.js');
 const MWSTATUS = Symbol('Context#__wmstatus');
 const TAILCALLBACKS = Symbol.for('Context#__tailcallbacks');
@@ -25,7 +24,7 @@ module.exports = function(loader, modules) {
         // name
         if (route.name) args.push(route.name);
         // path
-        args.push(typeof route.path === 'string' ? util.combineFetchPath(info, route.path) : route.path);
+        args.push(typeof route.path === 'string' ? loader.app.meta.util.combineFetchPath(info, route.path) : route.path);
 
         // constroller
         let controllerBeanFullName;
@@ -105,7 +104,7 @@ module.exports = function(loader, modules) {
         if (index > -1) loader.app.router.stack.splice(index, 1);
       },
       findByPath(moduleName, arg) {
-        const path = util.combineFetchPath(moduleName, arg);
+        const path = loader.app.meta.util.combineFetchPath(moduleName, arg);
         return loader.app.router.stack.find(layer => layer.path === path);
       },
     };

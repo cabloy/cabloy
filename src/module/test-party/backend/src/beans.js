@@ -5,6 +5,7 @@ const eventLoginInfoDashboard = require('./bean/event.loginInfoDashboard.js');
 const eventHelloEcho = require('./bean/event.helloEcho.js');
 const eventUserVerify = require('./bean/event.userVerify.js');
 const eventLoginInfo = require('./bean/event.loginInfo.js');
+const broadcastTest = require('./bean/broadcast.test.js');
 
 module.exports = app => {
   const beans = {};
@@ -38,6 +39,10 @@ module.exports = app => {
       'event.loginInfo': {
         mode: 'ctx',
         bean: eventLoginInfo,
+      },
+      'broadcast.test': {
+        mode: 'ctx',
+        bean: broadcastTest,
       },
     });
   }

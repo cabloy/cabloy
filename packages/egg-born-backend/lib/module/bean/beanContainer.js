@@ -1,5 +1,4 @@
 const is = require('is-type-of');
-const util = require('../util.js');
 
 module.exports = (app, ctx) => {
 
@@ -221,11 +220,11 @@ module.exports = (app, ctx) => {
   };
 
   function __composeForProp(chains) {
-    return util.compose(chains, __composeForPropAdapter);
+    return app.meta.util.compose(chains, __composeForPropAdapter);
   }
 
   function __composeForPropAsync(chains) {
-    return util.composeAsync(chains, __composeForPropAdapter);
+    return app.meta.util.composeAsync(chains, __composeForPropAdapter);
   }
 
   return new Proxy(beanContainer, {

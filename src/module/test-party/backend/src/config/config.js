@@ -33,7 +33,7 @@ module.exports = appInfo => {
     // broadcasts
     config.broadcasts = {
       broadcastTest: {
-        path: 'test/feat/broadcast',
+        bean: 'test',
       },
     };
     // monkey

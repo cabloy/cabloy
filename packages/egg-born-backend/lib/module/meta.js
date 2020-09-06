@@ -1,6 +1,6 @@
 const uuid = require('uuid');
 const mparse = require('egg-born-mparse').default;
-const util = require('./util.js');
+const utilFn = require('./util.js');
 const ModelClass = require('../base/model.js');
 const BeanBaseClass = require('./bean/beanBase.js');
 const BeanModuleBaseClass = require('./bean/beanModuleBase.js');
@@ -25,10 +25,10 @@ module.exports = function(loader) {
   meta.isLocal = loader.app.config.env === 'local';
 
   // util
-  meta.util = util;
+  meta.util = utilFn(loader.app);
 
   // mockUtil
-  meta.mockUtil = createMockUtil();
+  meta.mockUtil = createMockUtil(loader.app);
 
   // model
   meta.Model = ModelClass(loader.app);
@@ -42,7 +42,7 @@ module.exports = function(loader) {
   return meta;
 };
 
-function createMockUtil() {
+function createMockUtil(app) {
   return {
     parseUrlFromPackage(dir) {
       const moduleInfo = this.parseInfoFromPackage(dir);
@@ -50,7 +50,7 @@ function createMockUtil() {
       return `/api/${moduleInfo.pid}/${moduleInfo.name}`;
     },
     parseInfoFromPackage(dir) {
-      const file = util.lookupPackage(dir);
+      const file = app.meta.util.lookupPackage(dir);
       if (!file) return null;
       const pkg = require(file);
       return mparse.parseInfo(mparse.parseName(pkg.name));

@@ -1,7 +1,6 @@
 const semver = require('semver');
 const chalk = require('chalk');
 const mglob = require('egg-born-mglob');
-const util = require('./util.js');
 
 module.exports = function(loader) {
 
@@ -37,7 +36,7 @@ module.exports = function(loader) {
 
   function monkeyModules() {
     for (const module of ebModulesArray) {
-      util.monkeyModule(ebModulesMonkey, 'moduleLoaded', { module });
+      loader.app.meta.util.monkeyModule(ebModulesMonkey, 'moduleLoaded', { module });
     }
   }
 
