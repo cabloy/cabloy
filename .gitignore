@@ -21,6 +21,9 @@ miniprogram_npm
 /src/module/*
 !/src/module/test-party
 !/src/module/test-partymonkey-monkey
+!/src/module/test-dingtalk
+!/src/module/test-wechat
+!/src/module/test-wxwork
 
 # package-lock.json
 # yarn.lock
