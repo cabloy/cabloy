@@ -184,7 +184,9 @@ module.exports = app => {
         },
       });
       // instance
-      ctx.instance = await ctx.bean.instance.get({ subdomain });
+      if (subdomain !== undefined) {
+        ctx.instance = await ctx.bean.instance.get({ subdomain });
+      }
       // ok
       return ctx;
     },
