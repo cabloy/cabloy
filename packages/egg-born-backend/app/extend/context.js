@@ -291,23 +291,9 @@ function respond() {
 }
 
 function delegateCookies(ctx, ctxCaller) {
-  Object.defineProperty(ctx.cookies, 'keys', {
+  Object.defineProperty(ctx, 'cookies', {
     get() {
-      return ctxCaller.cookies.keys;
-    },
-  });
-  Object.defineProperty(ctx.cookies, 'get', {
-    get() {
-      return function(name, opts) {
-        return ctxCaller.cookies.get(name, opts);
-      };
-    },
-  });
-  Object.defineProperty(ctx.cookies, 'set', {
-    get() {
-      return function(name, value, opts) {
-        return ctxCaller.cookies.set(name, value, opts);
-      };
+      return ctxCaller.cookies;
     },
   });
 }
@@ -337,35 +323,17 @@ function getDbOriginal(ctx) {
 }
 
 function createDatabase(ctx) {
-
-  const __db = {};
-
   const db = getDbOriginal(ctx);
-  const proto = Object.getPrototypeOf(Object.getPrototypeOf(db));
-  Object.keys(proto).forEach(key => {
-    Object.defineProperty(__db, key, {
-      get() {
-        if (is.function(db[key])) {
-          return function() {
-            const args = arguments;
-
-            // check if promise
-            if (db[key].name !== 'createPromise') {
-              return db[key].apply(db, args);
-            }
-
-            // check if use transaction
-            if (!ctx.dbMeta.transaction.inTransaction) return db[key].apply(db, args);
-
-            // use transaction
-            return ctx.dbMeta.transaction.connection[key].apply(ctx.dbMeta.transaction.connection, args);
-          };
-        }
-        // property
-        return db[key];
-      },
-    });
+  return new Proxy(db, {
+    get(target, prop) {
+      const value = target[prop];
+      if (!is.function(value)) return value;
+      if (value.name !== 'createPromise') return value;
+      // check if use transaction
+      if (!ctx.dbMeta.transaction.inTransaction) return value;
+      return function(...args) {
+        return ctx.dbMeta.transaction.connection[prop].apply(ctx.dbMeta.transaction.connection, args);
+      };
+    },
   });
-
-  return __db;
 }
