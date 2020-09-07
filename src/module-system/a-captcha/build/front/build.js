@@ -11,10 +11,12 @@ const webpackConfig = require('./webpack.prod.conf');
 const spinner = ora('building for production...');
 spinner.start();
 
-rm(path.join(config.build.assetsRoot, 'front.*'), err => {
+const destPath = config.build.assetsRoot;
+
+rm(path.join(destPath, 'front.*'), err => {
   if (err) throw err;
 
-  rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
+  rm(path.join(destPath, config.build.assetsSubDirectory), err => {
     if (err) throw err;
     webpack(webpackConfig, function(err, stats) {
       spinner.stop();

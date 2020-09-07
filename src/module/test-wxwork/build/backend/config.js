@@ -8,6 +8,7 @@ module.exports = merge({
       NODE_ENV: '"production"',
     },
     assetsRoot: path.resolve(__dirname, '../../dist'),
+    assetsSubDirectory: 'staticBackend',
     productionSourceMap: true,
     uglify: false,
   },
