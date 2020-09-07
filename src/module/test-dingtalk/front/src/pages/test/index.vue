@@ -31,7 +31,7 @@ export default {
       this.dd = res && res.dd;
     }).catch(e => {
       this.$view.toast.show({ text: e.message });
-    })
+    });
   },
   mounted() {
     this.messagebar = this.$refs.messagebar.f7Messagebar;
@@ -45,13 +45,13 @@ export default {
         },
         onFail: err => {
           this.$view.toast.show({ text: err.message });
-        }
+        },
       });
     },
     onPerformMemberId() {
       return this.$api.post('test/getMemberId').then(data => {
         this.memberId = data.memberId;
-      })
+      });
     },
     onSubmitSendMessage(value, clear) {
       // clear
@@ -68,9 +68,8 @@ export default {
       }).then(() => {
         // donothing
       });
-    }
-
-  }
+    },
+  },
 };
 
 </script>
