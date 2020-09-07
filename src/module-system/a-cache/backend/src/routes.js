@@ -4,9 +4,6 @@ module.exports = app => {
     { method: 'post', path: 'db/set', controller: 'db', middlewares: 'inner',
       meta: { auth: { enable: false } },
     },
-    // broadcast
-    { method: 'post', path: 'broadcast/memRemove', controller: 'broadcast', middlewares: 'inner', meta: { auth: { enable: false } } },
-    { method: 'post', path: 'broadcast/memClear', controller: 'broadcast', middlewares: 'inner', meta: { auth: { enable: false } } },
   ];
   return routes;
 };

@@ -12,10 +12,10 @@ module.exports = appInfo => {
   // broadcasts
   config.broadcasts = {
     memRemove: {
-      path: 'broadcast/memRemove',
+      bean: 'memRemove',
     },
     memClear: {
-      path: 'broadcast/memClear',
+      bean: 'memClear',
     },
   };
 

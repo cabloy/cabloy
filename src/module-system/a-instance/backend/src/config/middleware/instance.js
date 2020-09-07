@@ -5,15 +5,13 @@ const boxen = require3('boxen');
 
 const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' };
 
-const regexURL_resetCache = /\/a\/instance\/instance\/broadcast\/resetCache/;
-
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Middleware {
     async execute(options, next) {
       // cache
       const cacheMem = ctx.cache.mem.module(moduleInfo.relativeName);
-      let instance = regexURL_resetCache.test(ctx.url) ? null : cacheMem.get('instance');
+      let instance = cacheMem.get('instance');
       if (!instance) {
         instance = await ctx.db.get('aInstance', { name: ctx.subdomain });
         if (instance) {

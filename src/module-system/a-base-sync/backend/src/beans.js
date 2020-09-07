@@ -1,5 +1,5 @@
 const localProcedure = require('./bean/local.procedure.js');
-
+const broadcastAuthProviderChanged = require('./bean/broadcast.authProviderChanged.js');
 const beanAtom = require('./bean/bean.atom.js');
 const beanAtomAction = require('./bean/bean.atomAction.js');
 const beanAtomClass = require('./bean/bean.atomClass.js');
@@ -16,6 +16,11 @@ module.exports = app => {
     'local.procedure': {
       mode: 'ctx',
       bean: localProcedure,
+    },
+    // broadcast
+    'broadcast.authProviderChanged': {
+      mode: 'ctx',
+      bean: broadcastAuthProviderChanged,
     },
     // global
     atom: {

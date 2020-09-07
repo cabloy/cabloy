@@ -25,7 +25,7 @@ module.exports = appInfo => {
   // broadcasts
   config.broadcasts = {
     resetCache: {
-      path: 'instance/broadcast/resetCache',
+      bean: 'resetCache',
     },
   };
 

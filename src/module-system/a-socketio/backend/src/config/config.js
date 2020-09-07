@@ -1,5 +1,3 @@
-const onSocketEmit = require('./middleware/adapter/socketEmit.js');
-
 // eslint-disable-next-line
 module.exports = appInfo => {
   const config = {};
@@ -44,7 +42,7 @@ module.exports = appInfo => {
   // broadcasts
   config.broadcasts = {
     socketEmit: {
-      callback: onSocketEmit,
+      bean: 'socketEmit',
     },
   };
 

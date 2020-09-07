@@ -1,6 +1,8 @@
 const localDb = require('./bean/local.db.js');
 const localMem = require('./bean/local.mem.js');
 const localRedis = require('./bean/local.redis.js');
+const broadcastMemClear = require('./bean/broadcast.memClear.js');
+const broadcastMemRemove = require('./bean/broadcast.memRemove.js');
 const beanCache = require('./bean/bean.cache.js');
 
 module.exports = app => {
@@ -17,6 +19,16 @@ module.exports = app => {
     'local.redis': {
       mode: 'ctx',
       bean: localRedis,
+    },
+    // broadcast
+    'broadcast.memClear': {
+      mode: 'ctx',
+      bean: broadcastMemClear,
+    },
+    // broadcast
+    'broadcast.memRemove': {
+      mode: 'ctx',
+      bean: broadcastMemRemove,
     },
     // global
     cache: {

@@ -70,7 +70,7 @@ module.exports = appInfo => {
   // broadcasts
   config.broadcasts = {
     authProviderChanged: {
-      path: 'auth/providerChanged',
+      bean: 'authProviderChanged',
     },
   };
 
