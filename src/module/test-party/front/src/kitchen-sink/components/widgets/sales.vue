@@ -68,7 +68,7 @@ function install(_Vue) {
         },
       },
     },
-    mixins: [ebDashboardWidgetBase],
+    mixins: [ ebDashboardWidgetBase ],
     data() {
       return {
         dataSource,

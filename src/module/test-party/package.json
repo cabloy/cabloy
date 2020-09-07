@@ -17,12 +17,7 @@
     "preversion": "npm run build:front && npm run build:backend && git add ."
   },
   "author": "zhennann",
-  "devDependencies": {
-    "babel-eslint": "^10.0.3",
-    "eslint": "^7.3.0",
-    "eslint-config-egg": "^8.0.1",
-    "eslint-plugin-vuefix": "^0.2.1"
-  },
+  "devDependencies": {},
   "dependencies": {
     "egg-born-mock": "^2.0.0",
     "egg-born-mparse": "^2.0.0",

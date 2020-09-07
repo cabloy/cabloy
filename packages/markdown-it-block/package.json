@@ -17,7 +17,6 @@
     "markdown"
   ],
   "devDependencies": {
-    "eslint": "^7.3.0",
     "markdown-it": "^10.0.0",
     "markdown-it-testgen": "~0.1.6",
     "mocha": "*"

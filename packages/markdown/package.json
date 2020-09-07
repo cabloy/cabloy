@@ -16,12 +16,7 @@
     "url": "https://github.com/zhennann/markdown/issues"
   },
   "homepage": "https://github.com/zhennann/markdown#readme",
-  "devDependencies": {
-    "babel-eslint": "^10.0.3",
-    "eslint": "^7.3.0",
-    "eslint-config-egg": "^8.0.1",
-    "eslint-plugin-vuefix": "^0.2.1"
-  },
+  "devDependencies": {},
   "dependencies": {
     "markdown-it": "^10.0.0",
     "markdown-it-abbr": "^1.0.4",

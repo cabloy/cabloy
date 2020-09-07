@@ -1,23 +1,21 @@
 module.exports = {
-  parser: 'babel-eslint',
-  extends: 'eslint-config-egg',
+  parser: 'vue-eslint-parser',
+  extends: [
+    'eslint-config-egg',
+    'plugin:vue/essential',
+  ],
   parserOptions: {
-    // ecmaVersion: 6, // 指定ECMAScript支持的版本，6为ES6
+    parser: 'babel-eslint',
     sourceType: 'module',
   },
-  // required to lint *.vue files
-  // extends: 'vue',
   plugins: [
-    'vuefix',
-    //'html',
   ],
   // add your custom rules here
   rules: {
-    'vuefix/vuefix': [ 2, { auto: true }],
   },
   env: {
     browser: true,
-    node:true,
+    node: true,
   },
   globals: {
   },

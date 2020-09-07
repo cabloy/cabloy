@@ -16,12 +16,7 @@
     "url": "https://github.com/zhennann/require3/issues"
   },
   "homepage": "https://github.com/zhennann/require3#readme",
-  "devDependencies": {
-    "babel-eslint": "^10.0.3",
-    "eslint": "^7.3.0",
-    "eslint-config-egg": "^8.0.1",
-    "eslint-plugin-vuefix": "^0.2.1"
-  },
+  "devDependencies": {},
   "dependencies": {
     "@zhennann/markdown": "^3.0.0",
     "@zhennann/markdown-it-block": "^3.0.0",

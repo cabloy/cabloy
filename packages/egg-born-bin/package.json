@@ -21,12 +21,7 @@
     "url": "https://github.com/zhennann/egg-born-bin/issues"
   },
   "homepage": "https://github.com/zhennann/egg-born-bin#readme",
-  "devDependencies": {
-    "babel-eslint": "^10.0.3",
-    "eslint": "^7.3.0",
-    "eslint-config-egg": "^8.0.1",
-    "eslint-plugin-vuefix": "^0.2.1"
-  },
+  "devDependencies": {},
   "dependencies": {
     "boxen": "^4.2.0",
     "chai": "^4.2.0",
