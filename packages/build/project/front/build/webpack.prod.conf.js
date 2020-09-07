@@ -10,10 +10,6 @@ const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = context => {
 
-  function resolve(dir) {
-    return path.join(__dirname, '..', dir);
-  }
-
   const env = context.config.build.env;
 
   let plugins = [
