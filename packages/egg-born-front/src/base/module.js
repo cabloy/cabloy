@@ -1,8 +1,5 @@
 import mparse from 'egg-born-mparse';
-import modulesRepo from '../../build/__runtime/modules.js';
-
-const rLocalJSs = require.context('../../../../src/module/', true, /-sync\/front\/src\/main\.js$/);
-const rGlobalJSs = require.context('../../build/__runtime/modules/', true, /-sync\/dist\/front\.js$/);
+import modulesRepo from '../../__runtime/modules.js';
 
 export default function(Vue) {
   const loadingQueue = {

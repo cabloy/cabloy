@@ -23,6 +23,7 @@
   "homepage": "https://github.com/zhennann/egg-born-bin#readme",
   "devDependencies": {},
   "dependencies": {
+    "@zhennann/build": "^1.0.0",
     "boxen": "^4.2.0",
     "chai": "^4.2.0",
     "chalk": "^3.0.0",
