@@ -1,5 +1,5 @@
-const projectFrontBuild = require('./project/front/build/build.js');
-const projectFrontDev = require('./project/front/build/dev-server.js');
+const projectFrontBuild = require('./lib/project/front/build/build.js');
+const projectFrontDev = require('./lib/project/front/build/dev-server.js');
 
 module.exports = {
   project: {

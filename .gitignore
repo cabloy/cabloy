@@ -33,7 +33,7 @@ sftp-config.json
 sftp-config-.json
 /.assets
 
-/packages/build/project/front/dist
+/packages/build/lib/project/front/dist
 /packages/egg-born-front/__runtime
 
 /src/module-system/a-authsms/backend
