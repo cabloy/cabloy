@@ -43,10 +43,11 @@ function loadMiddlewaresAll(ebMiddlewaresAll, ebModulesArray, loader) {
     const config = loader.app.meta.configs[module.info.relativeName];
     for (const middlewareKey in module.main.middlewares) {
       // register bean
+      const middlewareItem = module.main.middlewares[middlewareKey];
       const beanName = `middleware.${middlewareKey}`;
       const bean = {
         mode: 'ctx',
-        bean: module.main.middlewares[middlewareKey],
+        bean: middlewareItem,
       };
       loader.app.bean._register(module.info.relativeName, beanName, bean);
       // options
