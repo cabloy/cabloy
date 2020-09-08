@@ -89,8 +89,8 @@ module.exports = context => {
     output: {
       path: context.config.build.assetsRoot,
       filename: context.utils.assetsPath('js/[name].[chunkhash].js'),
-      chunkFilename: context.utils.assetsPath('js/[id].[chunkhash].js'),
-    // ecmaVersion: 5,
+      chunkFilename: context.utils.assetsPath('js/[name].[chunkhash].js'),
+      // ecmaVersion: 5,
     },
     plugins,
     optimization: {

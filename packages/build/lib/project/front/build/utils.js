@@ -129,7 +129,7 @@ modules['${relativeName}'] = {
           jsModules +=
 `
 modules['${relativeName}'] = {
-   instance: () => import('${module.js.front}'),
+   instance: () => import(/* webpackChunkName: "${relativeName}" */ '${module.js.front}'),
    info: ${JSON.stringify(module.info)},
 };
 `;
