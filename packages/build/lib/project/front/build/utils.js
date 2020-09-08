@@ -90,6 +90,10 @@ module.exports = context => {
         let fileSrc = `${module.root}/dist/front.js`;
         let fileDest = path.join(runtimePath, 'modules', relativeName, 'dist/front.js');
         fse.copySync(fileSrc, fileDest);
+        // copy js.map
+        fileSrc = `${module.root}/dist/front.js.map`;
+        fileDest = path.join(runtimePath, 'modules', relativeName, 'dist/front.js.map');
+        if (fse.existsSync(fileSrc)) fse.copySync(fileSrc, fileDest);
         // copy static
         fileSrc = `${module.root}/dist/static`;
         fileDest = path.join(context.config.build.assetsRoot, context.config.build.assetsSubDirectory);
