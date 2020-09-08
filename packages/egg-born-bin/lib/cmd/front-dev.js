@@ -11,14 +11,15 @@ class FrontDevCommand extends Command {
   * run({ cwd, argv }) {
     console.log('run front dev at %s', cwd);
 
-    const devServer = require.resolve('egg-born-front/build/dev-server.js');
+    const frontFile = require.resolve('egg-born-front/package.json');
+    const frontPath = path.dirname(frontFile);
+    const projectPath = cwd;
+    const scene = argv.scene;
 
-    const ops = { cwd };
-
-    const args = [];
-    if (argv.scene) args.push(`--scene=${argv.scene}`);
-
-    yield this.helper.forkNode(devServer, args, ops);
+    const build = require('@zhennann/build');
+    build.project.front.dev({
+      frontPath, projectPath, scene,
+    });
   }
 
   description() {

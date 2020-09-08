@@ -2,12 +2,10 @@ const ora = require('ora');
 const path = require('path');
 const chalk = require('chalk');
 const webpack = require('webpack');
+const fse = require('fs-extra');
 const configFn = require('../config');
 const webpackConfigFn = require('./webpack.prod.conf');
 const utilsFn = require('./utils.js');
-const fse = require('fs-extra');
-
-process.env.NODE_ENV = 'production';
 
 module.exports = ({ projectPath, frontPath, scene }) => {
 
@@ -22,13 +20,15 @@ module.exports = ({ projectPath, frontPath, scene }) => {
   // utils
   context.utils = utilsFn(context);
 
-  const spinner = ora('building for production...');
-  spinner.start();
+  process.env.NODE_ENV = 'production';
 
   fse.removeSync(context.config.build.assetsRoot);
   fse.ensureDirSync(context.config.build.assetsRoot);
 
   context.utils.copyModules();
+
+  const spinner = ora('building for production...');
+  spinner.start();
 
   webpack(webpackConfigFn(context), function(err, stats) {
     spinner.stop();

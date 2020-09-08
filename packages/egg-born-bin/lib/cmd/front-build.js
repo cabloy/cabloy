@@ -17,7 +17,7 @@ class FrontBuildCommand extends Command {
     const scene = argv.scene;
 
     const build = require('@zhennann/build');
-    build.project.front({
+    build.project.front.build({
       frontPath, projectPath, scene,
     });
   }
