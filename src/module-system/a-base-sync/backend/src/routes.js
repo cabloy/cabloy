@@ -121,10 +121,6 @@ module.exports = app => {
     { method: 'post', path: 'schedule/scheduleQueue', controller: 'schedule', middlewares: 'inner',
       meta: { instance: { enable: false } },
     },
-    // startup
-    { method: 'post', path: 'startup/startupQueue', controller: 'startup', middlewares: 'inner',
-      meta: { instance: { enable: false } },
-    },
     // auth
     { method: 'post', path: 'auth/echo', controller: 'auth', meta: { auth: { enable: false } } },
     { method: 'post', path: 'auth/check', controller: 'auth', meta: { auth: { user: true } } },

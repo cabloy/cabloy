@@ -27,7 +27,7 @@ module.exports = appInfo => {
     // queues
     config.queues = {
       queueTest: {
-        path: 'test/feat/queue',
+        bean: 'test',
       },
     };
     // broadcasts

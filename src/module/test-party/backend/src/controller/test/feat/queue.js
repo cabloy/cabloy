@@ -5,12 +5,6 @@ module.exports = app => {
 
   class QueueController extends app.Controller {
 
-    async queue() {
-      const { a, b } = this.ctx.request.body;
-      const c = a + b;
-      this.ctx.success(c);
-    }
-
     async pushAsync() {
       const res = await this.ctx.app.meta.queue.pushAsync({
         subdomain: this.ctx.subdomain,

@@ -62,7 +62,7 @@ module.exports = appInfo => {
       repeat: true,
     },
     startup: {
-      path: 'startup/startupQueue',
+      bean: 'startup',
       // concurrency: true,
     },
   };

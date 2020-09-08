@@ -138,7 +138,6 @@ module.exports = app => {
       { method: 'post', path: 'test/feat/middleware/restructuring', controller: 'testFeatMiddleware', middlewares: 'test,testInterception,testRestructuring' },
 
       // test/feat/queue
-      { method: 'post', path: 'test/feat/queue', controller: 'testFeatQueue', middlewares: 'inner' },
       { method: 'post', path: 'test/feat/pushAsync', controller: 'testFeatQueue', middlewares: 'test' },
       { method: 'post', path: 'test/feat/push', controller: 'testFeatQueue', middlewares: 'test' },
 

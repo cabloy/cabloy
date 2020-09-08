@@ -12,21 +12,37 @@ module.exports = function(loader, modules) {
   loadQueues();
 
   function loadQueues() {
-    Object.keys(modules).forEach(key => {
+    for (const key in modules) {
       const module = modules[key];
       const config = loader.app.meta.configs[module.info.relativeName];
-      // module queues
-      if (config.queues) {
-        Object.keys(config.queues).forEach(queueName => {
-          const fullKey = `${module.info.relativeName}:${queueName}`;
-          ebQueues[fullKey] = {
+      if (!config.queues) continue;
+      for (const queueName in config.queues) {
+        const queueConfig = config.queues[queueName];
+        const fullKey = `${module.info.relativeName}:${queueName}`;
+        // bean
+        const beanName = queueConfig.bean;
+        if (!beanName) continue;
+        // if (!beanName) throw new Error(`bean not set for queue: ${fullKey}`);
+        let bean;
+        if (typeof beanName === 'string') {
+          bean = {
             module: module.info.relativeName,
-            name: queueName,
-            config: config.queues[queueName],
+            name: beanName,
           };
-        });
+        } else {
+          bean = {
+            module: beanName.module || module.info.relativeName,
+            name: beanName.name,
+          };
+        }
+        ebQueues[fullKey] = {
+          module: module.info.relativeName,
+          name: queueName,
+          config: queueConfig,
+          bean,
+        };
       }
-    });
+    }
   }
 
   loader.app.meta._loadQueueWorkers = () => {

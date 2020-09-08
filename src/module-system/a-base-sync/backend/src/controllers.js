@@ -9,7 +9,6 @@ const func = require('./controller/function.js');
 const jwt = require('./controller/jwt.js');
 const layoutConfig = require('./controller/layoutConfig.js');
 const schedule = require('./controller/schedule.js');
-const startup = require('./controller/startup.js');
 const user = require('./controller/user.js');
 
 module.exports = app => {
@@ -25,7 +24,6 @@ module.exports = app => {
     jwt,
     layoutConfig,
     schedule,
-    startup,
     user,
   };
   return controllers;

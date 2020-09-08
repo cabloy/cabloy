@@ -1,5 +1,6 @@
 const localProcedure = require('./bean/local.procedure.js');
 const broadcastAuthProviderChanged = require('./bean/broadcast.authProviderChanged.js');
+const queueStartup = require('./bean/queue.startup.js');
 const beanAtom = require('./bean/bean.atom.js');
 const beanAtomAction = require('./bean/bean.atomAction.js');
 const beanAtomClass = require('./bean/bean.atomClass.js');
@@ -21,6 +22,11 @@ module.exports = app => {
     'broadcast.authProviderChanged': {
       mode: 'ctx',
       bean: broadcastAuthProviderChanged,
+    },
+    // queue
+    'queue.startup': {
+      mode: 'ctx',
+      bean: queueStartup,
     },
     // global
     atom: {

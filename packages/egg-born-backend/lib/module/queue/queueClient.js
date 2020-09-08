@@ -185,6 +185,7 @@ module.exports = function(app) {
     }
 
     _queuePush(info, isAsync) {
+      console.log('---------queue: ', info.module, info.queueName);
       // queue config
       const queueConfig = app.meta.queues[`${info.module}:${info.queueName}`].config;
       // queueConfig.options: queue/worker/job/limiter
@@ -220,27 +221,21 @@ module.exports = function(app) {
     }
 
     async _performTask({ locale, subdomain, module, queueName, queueNameSub, data }) {
+      // context
+      const context = { data };
+      if (queueNameSub) {
+        context.queueNameSub = queueNameSub;
+      }
       // queue config
-      const queueConfig = app.meta.queues[`${module}:${queueName}`].config;
-      // url
-      let url = app.meta.util.combineApiPath(module, queueConfig.path);
-      // queries
-      const queries = {};
-      if (locale) queries.locale = locale;
-      if (queueNameSub) queries.queueNameSub = queueNameSub;
-      url = app.meta.util.combineQueries(url, queries);
+      const queue = app.meta.queues[`${module}:${queueName}`];
+      // bean
+      const bean = queue.bean;
       // ctx
-      const ctx = app.createAnonymousContext({
-        method: 'post',
-        url,
-      });
-      // performAction
-      return await ctx.performAction({
-        subdomain,
-        method: 'post',
-        url,
-        body: data,
-      });
+      const ctx = await app.meta.util.createAnonymousContext({ locale, subdomain, module: bean.module });
+      // bean
+      const beanInstance = ctx.bean._getBean(`${bean.module}.queue.${bean.name}`);
+      // execute
+      return await beanInstance.execute(context);
     }
   }
 
