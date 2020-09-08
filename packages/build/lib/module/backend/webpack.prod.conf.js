@@ -1,25 +1,27 @@
 const webpack = require('webpack');
-const config = require('./config.js');
 const merge = require('webpack-merge');
-const baseWebpackConfig = require('./webpack.base.conf');
+const baseWebpackConfigFn = require('./webpack.base.conf');
 
-const env = config.build.env;
+module.exports = context => {
 
-const plugins = [
-  new webpack.DefinePlugin({
-    'process.env': env,
-  }),
-];
+  const env = context.config.build.env;
 
-const webpackConfig = merge(baseWebpackConfig, {
-  mode: 'production',
-  devtool: config.build.productionSourceMap ? 'source-map' : false,
-  plugins,
-  optimization: {
-    runtimeChunk: false,
-    splitChunks: false,
-    minimize: config.build.uglify,
-  },
-});
+  const plugins = [
+    new webpack.DefinePlugin({
+      'process.env': env,
+    }),
+  ];
 
-module.exports = webpackConfig;
+  return merge(baseWebpackConfigFn(context), {
+    mode: 'production',
+    devtool: context.config.build.productionSourceMap ? 'source-map' : false,
+    plugins,
+    optimization: {
+      runtimeChunk: false,
+      splitChunks: false,
+      minimize: context.config.build.uglify,
+    },
+  });
+
+};
+

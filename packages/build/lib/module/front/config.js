@@ -1,10 +1,11 @@
 const path = require('path');
 const merge = require('webpack-merge');
+const configFn = require('../config.js');
 
 module.exports = context => {
 
   // config
-  const config = require(path.join(context.modulePath, 'build/config.js'));
+  const config = configFn(context);
 
   // dist
   const distPath = path.resolve(context.modulePath, 'dist');
@@ -17,7 +18,7 @@ module.exports = context => {
       assetsRoot: distPath,
       assetsSubDirectory: 'static',
       assetsPublicPath: '',
-      productionSourceMap: false,
+      productionSourceMap: true,
       uglify: true,
     },
   }, { build: config.front });

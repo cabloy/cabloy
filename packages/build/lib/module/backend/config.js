@@ -1,15 +1,25 @@
 const path = require('path');
 const merge = require('webpack-merge');
-const config = require('../config.js');
+const configFn = require('../config.js');
 
-module.exports = merge({
-  build: {
-    env: {
-      NODE_ENV: '"production"',
+module.exports = context => {
+
+  // config
+  const config = configFn(context);
+
+  // dist
+  const distPath = path.resolve(context.modulePath, 'dist');
+
+  return merge({
+    build: {
+      env: {
+        NODE_ENV: '"production"',
+      },
+      assetsRoot: distPath,
+      assetsSubDirectory: 'staticBackend',
+      productionSourceMap: true,
+      uglify: false,
     },
-    assetsRoot: path.resolve(__dirname, '../../dist'),
-    assetsSubDirectory: 'staticBackend',
-    productionSourceMap: true,
-    uglify: false,
-  },
-}, { build: config });
+  }, { build: config.backend });
+
+};

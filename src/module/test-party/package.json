@@ -12,7 +12,7 @@
   "description": "",
   "scripts": {
     "build:front": "egg-born-bin front-build-module",
-    "build:backend": "node build/backend/build.js",
+    "build:backend": "egg-born-bin backend-build-module",
     "lint": "eslint front backend",
     "preversion": "npm run build:front && npm run build:backend && git add ."
   },
