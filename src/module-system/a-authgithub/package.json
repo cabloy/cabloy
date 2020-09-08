@@ -11,15 +11,15 @@
   },
   "description": "",
   "scripts": {
-    "build:front": "node build/front/build.js",
-    "build:backend": "node build/backend/build.js",
+    "build:front": "egg-born-bin front-build-module",
+    "build:backend": "egg-born-bin backend-build-module",
     "lint": "eslint front backend",
     "preversion": "npm run build:front && npm run build:backend && git add ."
   },
   "author": "zhennann",
   "dependencies": {
+    "egg-born-bin": "^3.0.0",
     "egg-born-mock": "^2.0.0",
-    "egg-born-mparse": "^2.0.0",
     "passport-github": "^1.1.0",
     "require3": "^2.0.0"
   }
