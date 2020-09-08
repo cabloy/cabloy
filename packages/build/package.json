@@ -12,6 +12,7 @@
   "devDependencies": {},
   "dependencies": {
     "egg-born-mglob": "^2.0.0",
+    "egg-born-mparse": "^2.0.0",
     "@babel/core": "^7.8.4",
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "@babel/plugin-transform-runtime": "^7.8.3",

@@ -1,4 +1,10 @@
 module.exports = {
-  productionSourceMap: true,
-  uglify: false,
+  front: {
+    productionSourceMap: true,
+    uglify: true,
+  },
+  backend: {
+    productionSourceMap: true,
+    uglify: false,
+  },
 };
