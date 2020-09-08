@@ -47,7 +47,7 @@ module.exports = context => {
         },
         {
           test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
-          loader: 'file-loader',
+          loader: 'url-loader',
           options: {
             limit: 1000,
             name: context.utils.assetsPath('img/[name].[contenthash].[ext]'),
@@ -56,10 +56,19 @@ module.exports = context => {
         },
         {
           test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-          loader: 'file-loader',
+          loader: 'url-loader',
           options: {
             limit: 1000,
-            name: context.utils.assetsPath('fonts/[name].[contenthash].[ext]'),
+            name: context.utils.assetsPath('font/[name].[contenthash].[ext]'),
+            esModule: false,
+          },
+        },
+        {
+          test: /\.(doc|docx|xlsx?|odt|pdf|mp3|wma|wav|iso|ppt|pptx|csv|apk|exe|rar|zip|tar\.gz)(\?.*)?$/,
+          loader: 'url-loader',
+          options: {
+            limit: false,
+            name: context.utils.assetsPath('file/[name].[contenthash].[ext]'),
             esModule: false,
           },
         },
