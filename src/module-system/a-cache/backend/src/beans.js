@@ -23,12 +23,12 @@ module.exports = app => {
     },
     // broadcast
     'broadcast.memClear': {
-      mode: 'ctx',
+      mode: 'app',
       bean: broadcastMemClear,
     },
     // broadcast
     'broadcast.memRemove': {
-      mode: 'ctx',
+      mode: 'app',
       bean: broadcastMemRemove,
     },
     // queue

@@ -27,7 +27,7 @@ module.exports = app => {
     },
     // broadcast
     'broadcast.socketEmit': {
-      mode: 'ctx',
+      mode: 'app',
       bean: broadcastSocketEmit,
     },
     // queue

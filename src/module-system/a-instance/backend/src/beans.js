@@ -5,7 +5,7 @@ module.exports = app => {
   const beans = {
     // broadcast
     'broadcast.resetCache': {
-      mode: 'ctx',
+      mode: 'app',
       bean: broadcastResetCache,
     },
     // global

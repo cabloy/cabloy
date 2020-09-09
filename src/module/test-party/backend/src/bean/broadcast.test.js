@@ -1,8 +1,8 @@
 const require3 = require('require3');
 const assert = require3('assert');
 
-module.exports = ctx => {
-  class Broadcast {
+module.exports = app => {
+  class Broadcast extends app.meta.BeanBase {
 
     async execute(context) {
       const sameAsCaller = context.sameAsCaller;
@@ -11,7 +11,7 @@ module.exports = ctx => {
         // do something
       }
       // locale
-      assert.equal(ctx.locale, 'zh-cn');
+      assert.equal(this.ctx.locale, 'zh-cn');
       // data
       assert.equal(data.message, 'hello');
     }

@@ -45,7 +45,7 @@ module.exports = app => {
       },
       // broadcast
       'broadcast.test': {
-        mode: 'ctx',
+        mode: 'app',
         bean: broadcastTest,
       },
       // queue

@@ -25,7 +25,7 @@ module.exports = app => {
     },
     // broadcast
     'broadcast.authProviderChanged': {
-      mode: 'ctx',
+      mode: 'app',
       bean: broadcastAuthProviderChanged,
     },
     // queue

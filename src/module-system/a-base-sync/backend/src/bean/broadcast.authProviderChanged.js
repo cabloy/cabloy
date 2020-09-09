@@ -1,9 +1,9 @@
-module.exports = ctx => {
-  class Broadcast {
+module.exports = app => {
+  class Broadcast extends app.meta.BeanBase {
 
     async execute(context) {
       const data = context.data;
-      await ctx.bean.auth._registerInstanceProvider(ctx.subdomain, ctx.instance.id, data.module, data.providerName);
+      await this.ctx.bean.auth._registerInstanceProvider(this.ctx.subdomain, this.ctx.instance.id, data.module, data.providerName);
     }
 
   }
