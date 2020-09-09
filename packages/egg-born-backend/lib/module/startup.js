@@ -75,6 +75,7 @@ module.exports = function(loader) {
       await loader.app.meta.queue.pushAsync({
         module: 'a-base',
         queueName: 'startup',
+        queueNameSub: key,
         data: { key, startup, info },
       });
     };

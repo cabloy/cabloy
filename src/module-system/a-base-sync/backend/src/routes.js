@@ -105,7 +105,7 @@ module.exports = app => {
     { method: 'post', path: 'atomClass/checkRightCreate', controller: 'atomClass' },
     { method: 'post', path: 'atomClass/atomClass', controller: 'atomClass' },
     // schedule
-    { method: 'post', path: 'schedule/installAllSchedules', controller: 'schedule', middlewares: 'inner',
+    { method: 'post', path: 'schedule/loadSchedules', controller: 'schedule', middlewares: 'inner',
       meta: { instance: { enable: false } },
     },
     // auth

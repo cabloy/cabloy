@@ -29,8 +29,8 @@ module.exports = appInfo => {
 
   // startups
   config.startups = {
-    installAllSchedules: {
-      path: 'schedule/installAllSchedules',
+    loadSchedules: {
+      path: 'schedule/loadSchedules',
       debounce: true,
     },
     installAuthProviders: {
@@ -59,7 +59,6 @@ module.exports = appInfo => {
     },
     schedule: {
       bean: 'schedule',
-      repeat: true,
     },
     startup: {
       bean: 'startup',

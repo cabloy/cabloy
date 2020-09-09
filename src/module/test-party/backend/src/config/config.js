@@ -45,6 +45,17 @@ module.exports = appInfo => {
     // config
     config.message = 'Hello World';
 
+    // schedules
+    config.schedules = {
+      test: {
+        bean: 'test',
+        instance: true,
+        repeat: {
+          every: 2000,
+        },
+      },
+    };
+
     // settings
     config.settings = {
       instance: {

@@ -7,6 +7,7 @@ const eventUserVerify = require('./bean/event.userVerify.js');
 const eventLoginInfo = require('./bean/event.loginInfo.js');
 const broadcastTest = require('./bean/broadcast.test.js');
 const queueTest = require('./bean/queue.test.js');
+const scheduleTest = require('./bean/schedule.test.js');
 
 module.exports = app => {
   const beans = {};
@@ -52,6 +53,11 @@ module.exports = app => {
       'queue.test': {
         mode: 'app',
         bean: queueTest,
+      },
+      // schedule
+      'schedule.test': {
+        mode: 'app',
+        bean: scheduleTest,
       },
     });
   }

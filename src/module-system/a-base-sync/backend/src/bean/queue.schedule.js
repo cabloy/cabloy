@@ -8,6 +8,8 @@ module.exports = app => {
       // schedule config
       const config = app.meta.configs[module];
       const scheduleConfig = config.schedules[schedule];
+      console.log('---------- schedule:', schedule, new Date());
+      return;
       // url
       const url = this.ctx.bean.util.combinePagePath(module, scheduleConfig.path);
       // performAction
