@@ -46,19 +46,19 @@ module.exports = appInfo => {
   // queues
   config.queues = {
     registerFunction: {
-      path: 'function/register',
+      bean: 'registerFunction',
     },
     registerAtomAction: {
-      path: 'atomAction/register',
+      bean: 'registerAtomAction',
     },
     registerAtomClass: {
-      path: 'atomClass/register',
+      bean: 'registerAtomClass',
     },
     registerAuthProvider: {
-      path: 'auth/register',
+      bean: 'registerAuthProvider',
     },
     schedule: {
-      path: 'schedule/scheduleQueue',
+      bean: 'schedule',
       repeat: true,
     },
     startup: {

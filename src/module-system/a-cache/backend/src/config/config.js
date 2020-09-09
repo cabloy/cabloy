@@ -5,7 +5,7 @@ module.exports = appInfo => {
   // queues
   config.queues = {
     cacheDbSet: {
-      path: 'db/set',
+      bean: 'cacheDbSet',
     },
   };
 

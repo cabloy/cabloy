@@ -2,6 +2,12 @@ const localMessage = require('./bean/local.message.js');
 const localMessageClass = require('./bean/local.messageClass.js');
 const localProcedure = require('./bean/local.procedure.js');
 const broadcastSocketEmit = require('./bean/broadcast.socketEmit.js');
+const queueRegisterMessageClass = require('./bean/queue.registerMessageClass.js');
+const queueSaveMessage = require('./bean/queue.saveMessage.js');
+const queueProcess = require('./bean/queue.process.js');
+const queueDelivery = require('./bean/queue.delivery.js');
+const queuePush = require('./bean/queue.push.js');
+const queuePushDirect = require('./bean/queue.pushDirect.js');
 const beanIO = require('./bean/bean.io.js');
 
 module.exports = app => {
@@ -23,6 +29,31 @@ module.exports = app => {
     'broadcast.socketEmit': {
       mode: 'ctx',
       bean: broadcastSocketEmit,
+    },
+    // queue
+    'queue.registerMessageClass': {
+      mode: 'ctx',
+      bean: queueRegisterMessageClass,
+    },
+    'queue.saveMessage': {
+      mode: 'ctx',
+      bean: queueSaveMessage,
+    },
+    'queue.process': {
+      mode: 'ctx',
+      bean: queueProcess,
+    },
+    'queue.delivery': {
+      mode: 'ctx',
+      bean: queueDelivery,
+    },
+    'queue.push': {
+      mode: 'ctx',
+      bean: queuePush,
+    },
+    'queue.pushDirect': {
+      mode: 'ctx',
+      bean: queuePushDirect,
     },
     // global
     io: {

@@ -29,22 +29,6 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async queue() {
-      const queueAction = this.ctx.request.body.queueAction;
-      if (queueAction === 'sync') {
-        await this.service.contacts.queueSync({
-          type: this.ctx.request.body.type,
-          progressId: this.ctx.request.body.progressId,
-          userOp: this.ctx.request.body.userOp,
-        });
-      } else if (queueAction === 'changeContact') {
-        await this.service.contacts.queueChangeContact({
-          message: this.ctx.request.body.message,
-        });
-      }
-      this.ctx.success();
-    }
-
   }
   return ContactsController;
 };

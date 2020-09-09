@@ -15,26 +15,26 @@ module.exports = appInfo => {
   // queues
   config.queues = {
     registerMessageClass: {
-      path: 'messageClass/queueRegister',
+      bean: 'registerMessageClass',
     },
     saveMessage: {
-      path: 'io/queueSaveMessage',
+      bean: 'saveMessage',
       concurrency: true,
     },
     process: {
-      path: 'io/queueProcess',
+      bean: 'process',
       concurrency: true,
     },
     delivery: {
-      path: 'io/queueDelivery',
+      bean: 'delivery',
       concurrency: true,
     },
     push: {
-      path: 'io/queuePush',
+      bean: 'push',
       concurrency: true,
     },
     pushDirect: {
-      path: 'io/queuePushDirect',
+      bean: 'pushDirect',
       concurrency: true,
     },
   };

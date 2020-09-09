@@ -98,7 +98,8 @@ module.exports = appInfo => {
   // queues
   config.queues = {
     contacts: {
-      path: 'contacts/queue',
+      bean: 'contacts',
+      transaction: true,
     },
   };
 

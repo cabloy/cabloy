@@ -97,28 +97,15 @@ module.exports = app => {
     { method: 'post', path: 'function/list', controller: 'function' },
     { method: 'post', path: 'function/star', controller: 'function' },
     { method: 'post', path: 'function/check', controller: 'function' },
-    { method: 'post', path: 'function/register', controller: 'function', middlewares: 'inner',
-      meta: { auth: { enable: false } },
-    },
     { method: 'post', path: 'function/setLocalesStartup', controller: 'function', middlewares: 'inner',
       meta: { auth: { enable: false } },
     },
-    // atomAction
-    { method: 'post', path: 'atomAction/register', controller: 'atomAction', middlewares: 'inner',
-      meta: { auth: { enable: false } },
-    },
     // atomClass
-    { method: 'post', path: 'atomClass/register', controller: 'atomClass', middlewares: 'inner',
-      meta: { auth: { enable: false } },
-    },
     { method: 'post', path: 'atomClass/validatorSearch', controller: 'atomClass' },
     { method: 'post', path: 'atomClass/checkRightCreate', controller: 'atomClass' },
     { method: 'post', path: 'atomClass/atomClass', controller: 'atomClass' },
     // schedule
     { method: 'post', path: 'schedule/installAllSchedules', controller: 'schedule', middlewares: 'inner',
-      meta: { instance: { enable: false } },
-    },
-    { method: 'post', path: 'schedule/scheduleQueue', controller: 'schedule', middlewares: 'inner',
       meta: { instance: { enable: false } },
     },
     // auth
@@ -127,9 +114,6 @@ module.exports = app => {
     { method: 'post', path: 'auth/logout', controller: 'auth', meta: { auth: { enable: false } } },
     { method: 'post', path: 'auth/installAuthProviders', controller: 'auth', middlewares: 'inner',
       meta: { instance: { enable: false } },
-    },
-    { method: 'post', path: 'auth/register', controller: 'auth', middlewares: 'inner',
-      meta: { auth: { enable: false } },
     },
     // cors
     { method: 'options', path: /.*/ },

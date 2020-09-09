@@ -1,5 +1,6 @@
 const eventLoginInfo = require('./bean/event.loginInfo.js');
 const eventAccountMigration = require('./bean/event.accountMigration.js');
+const queueContacts = require('./bean/queue.contacts.js');
 const beanDingtalk = require('./bean/bean.dingtalk.js');
 
 module.exports = app => {
@@ -12,6 +13,11 @@ module.exports = app => {
     'event.accountMigration': {
       mode: 'ctx',
       bean: eventAccountMigration,
+    },
+    // queue
+    'queue.contacts': {
+      mode: 'app',
+      bean: queueContacts,
     },
     // global
     dingtalk: {

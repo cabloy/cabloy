@@ -21,8 +21,7 @@ module.exports = function(loader, modules) {
         const fullKey = `${module.info.relativeName}:${queueName}`;
         // bean
         const beanName = queueConfig.bean;
-        if (!beanName) continue;
-        // if (!beanName) throw new Error(`bean not set for queue: ${fullKey}`);
+        if (!beanName) throw new Error(`bean not set for queue: ${fullKey}`);
         let bean;
         if (typeof beanName === 'string') {
           bean = {

@@ -5,7 +5,7 @@ module.exports = appInfo => {
   // queues
   config.queues = {
     render: {
-      path: 'queue/render',
+      bean: 'render',
     },
   };
 

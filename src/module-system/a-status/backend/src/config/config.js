@@ -9,7 +9,7 @@ module.exports = appInfo => {
   // queues
   config.queues = {
     statusSet: {
-      path: 'status/set',
+      bean: 'statusSet',
     },
   };
 

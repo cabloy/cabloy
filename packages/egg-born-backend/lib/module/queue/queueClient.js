@@ -185,7 +185,6 @@ module.exports = function(app) {
     }
 
     _queuePush(info, isAsync) {
-      console.log('---------queue: ', info.module, info.queueName);
       // queue config
       const queueConfig = app.meta.queues[`${info.module}:${info.queueName}`].config;
       // queueConfig.options: queue/worker/job/limiter

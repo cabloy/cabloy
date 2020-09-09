@@ -6,7 +6,6 @@ const site = require('./controller/site.js');
 const tag = require('./controller/tag.js');
 const comment = require('./controller/comment.js');
 const rss = require('./controller/rss.js');
-const queue = require('./controller/queue.js');
 
 module.exports = app => {
   const controllers = {
@@ -18,7 +17,6 @@ module.exports = app => {
     tag,
     comment,
     rss,
-    queue,
   };
   return controllers;
 };

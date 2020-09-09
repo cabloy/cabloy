@@ -12,10 +12,6 @@ module.exports = app => {
     // contacts
     { method: 'post', path: 'contacts/sync', controller: 'contacts', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'contacts/syncStatus', controller: 'contacts', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
-    // queue
-    { method: 'post', path: 'contacts/queue', controller: 'contacts', middlewares: 'inner,transaction',
-      meta: { auth: { enable: false } },
-    },
 
     // jsapi
     { method: 'post', path: 'jssdk/jsconfig', controller: 'jssdk' },

@@ -6,9 +6,6 @@ module.exports = app => {
     { method: 'post', path: 'version/test', controller: 'version', middlewares: 'test' },
     // util
     { method: 'post', path: 'util/submit', controller: 'util', middlewares: 'inner' },
-    { method: 'post', path: 'util/queueSubmit', controller: 'util', middlewares: 'inner',
-      meta: { auth: { enable: false } },
-    },
   ];
   return routes;
 };

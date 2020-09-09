@@ -58,10 +58,6 @@ module.exports = app => {
     { method: 'get', path: 'rss/feed/article/comments/:atomId', controller: 'rss', action: 'articleComments' },
     { method: 'get', path: 'rss/feed/comments/:module/:atomClassName/:language', controller: 'rss', action: 'feedComments' },
     { method: 'get', path: 'rss/feed/:module/:atomClassName/:language', controller: 'rss', action: 'feed' },
-    // queue
-    { method: 'post', path: 'queue/render', controller: 'queue', middlewares: 'inner',
-      meta: { auth: { enable: false } },
-    },
   ];
   if (app.meta.isTest || app.meta.isLocal) {
     routes = routes.concat([

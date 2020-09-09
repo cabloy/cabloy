@@ -7,14 +7,6 @@ module.exports = app => {
       this.ctx.success();
     }
 
-    async scheduleQueue() {
-      await this.ctx.service.schedule.scheduleQueue({
-        module: this.ctx.request.body.module,
-        schedule: this.ctx.request.body.schedule,
-      });
-      this.ctx.success();
-    }
-
   }
 
   return ScheduleController;

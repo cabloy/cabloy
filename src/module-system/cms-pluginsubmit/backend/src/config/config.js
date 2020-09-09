@@ -14,7 +14,7 @@ module.exports = appInfo => {
   // queues
   config.queues = {
     submit: {
-      path: 'util/queueSubmit',
+      bean: 'submit',
     },
   };
 

@@ -14,10 +14,6 @@ module.exports = app => {
       return await this.ctx.bean.function.check({ functions, user });
     }
 
-    async register({ module, name }) {
-      return await this.ctx.bean.function.register({ module, name });
-    }
-
     async setLocalesStartup() {
       await this.ctx.bean.function.setLocales({ reset: true });
     }

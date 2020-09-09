@@ -2,10 +2,6 @@ module.exports = app => {
 
   class AtomClass extends app.Service {
 
-    async register({ module, atomClassName, atomClassIdParent }) {
-      return await this.ctx.bean.atomClass.register({ module, atomClassName, atomClassIdParent });
-    }
-
     async validatorSearch({ atomClass }) {
       return await this.ctx.bean.atomClass.validatorSearch({ atomClass });
     }

@@ -1,5 +1,10 @@
 const localProcedure = require('./bean/local.procedure.js');
 const broadcastAuthProviderChanged = require('./bean/broadcast.authProviderChanged.js');
+const queueRegisterFunction = require('./bean/queue.registerFunction.js');
+const queueRegisterAtomAction = require('./bean/queue.registerAtomAction.js');
+const queueRegisterAtomClass = require('./bean/queue.registerAtomClass.js');
+const queueRegisterAuthProvider = require('./bean/queue.registerAuthProvider.js');
+const queueSchedule = require('./bean/queue.schedule.js');
 const queueStartup = require('./bean/queue.startup.js');
 const beanAtom = require('./bean/bean.atom.js');
 const beanAtomAction = require('./bean/bean.atomAction.js');
@@ -24,6 +29,26 @@ module.exports = app => {
       bean: broadcastAuthProviderChanged,
     },
     // queue
+    'queue.registerFunction': {
+      mode: 'ctx',
+      bean: queueRegisterFunction,
+    },
+    'queue.registerAtomAction': {
+      mode: 'ctx',
+      bean: queueRegisterAtomAction,
+    },
+    'queue.registerAtomClass': {
+      mode: 'ctx',
+      bean: queueRegisterAtomClass,
+    },
+    'queue.registerAuthProvider': {
+      mode: 'ctx',
+      bean: queueRegisterAuthProvider,
+    },
+    'queue.schedule': {
+      mode: 'ctx',
+      bean: queueSchedule,
+    },
     'queue.startup': {
       mode: 'ctx',
       bean: queueStartup,

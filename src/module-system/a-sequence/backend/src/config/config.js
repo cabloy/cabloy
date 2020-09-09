@@ -9,7 +9,7 @@ module.exports = appInfo => {
   // queues
   config.queues = {
     sequence: {
-      path: 'sequence/next',
+      bean: 'sequence',
     },
   };
 
