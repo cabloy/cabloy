@@ -51,8 +51,9 @@ module.exports = appInfo => {
         bean: 'test',
         instance: true,
         repeat: {
-          every: 2000,
+          every: 3000,
         },
+        disable: true,
       },
     };
 

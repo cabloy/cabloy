@@ -47,17 +47,13 @@ module.exports = function(app) {
 
     async _performTask({ broadcast, context, locale, subdomain }) {
       const bean = broadcast.bean;
-      // ctx
-      const ctx = await app.meta.util.createAnonymousContext({ locale, subdomain, module: bean.module });
-      // bean
-      const beanInstance = ctx.bean._getBean(`${bean.module}.broadcast.${bean.name}`);
       // execute
-      if (broadcast.config.transaction) {
-        return await ctx.transaction.begin(async () => {
-          return await beanInstance.execute(context);
-        });
-      }
-      return await beanInstance.execute(context);
+      return await app.meta.util.executeBean({
+        locale, subdomain, context,
+        beanModule: bean.module,
+        beanFullName: `${bean.module}.broadcast.${bean.name}`,
+        transaction: broadcast.config.transaction,
+      });
     }
   }
 

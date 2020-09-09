@@ -124,7 +124,7 @@ module.exports = ctx => {
 
     async _registerAllProviders() {
       // all instances
-      const instances = await ctx.model.query('select * from aInstance a where a.disabled=0');
+      const instances = await ctx.bean.instance.list();
       for (const instance of instances) {
         await this._registerInstanceProviders(instance.name, instance.id);
       }

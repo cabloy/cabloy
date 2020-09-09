@@ -30,7 +30,7 @@ module.exports = app => {
       return `/${moduleInfo.url}/${arg}`;
     },
     combineQueries(url, queries) {
-    //
+      //
       if (!queries) return url;
       //
       let str = '';
@@ -90,7 +90,7 @@ module.exports = app => {
       return whiteListCors;
     },
     isSafeDomain(ctx, origin) {
-    // origin is {protocol}{hostname}{port}...
+      // origin is {protocol}{hostname}{port}...
       if (!origin || origin === 'null' || origin === null) return true;
 
       let parsedUrl;
@@ -110,7 +110,7 @@ module.exports = app => {
     compose(chains, adapter) {
       if (!chains) chains = [];
       return function(context, next) {
-      // last called middleware #
+        // last called middleware #
         let index = -1;
         return dispatch(0);
         function dispatch(i) {
@@ -189,6 +189,36 @@ module.exports = app => {
       }
       // ok
       return ctx;
+    },
+    async executeBean({ locale, subdomain, context, beanModule, beanFullName, transaction }) {
+      // ctx
+      const ctx = await this.createAnonymousContext({ locale, subdomain, module: beanModule });
+      // bean
+      const beanInstance = ctx.bean._getBean(beanFullName);
+      // execute
+      if (transaction) {
+        return await ctx.transaction.begin(async () => {
+          return await beanInstance.execute(context);
+        });
+      }
+      return await beanInstance.execute(context);
+    },
+    async executeBeanInstance({ locale, context, beanModule, beanFullName, transaction, instance }) {
+      // not check instance
+      if (!instance) {
+        return await this.executeBean({
+          locale, context, beanModule, beanFullName, transaction,
+        });
+      }
+      // all instances
+      const ctx = await this.createAnonymousContext({ module: beanModule });
+      const instances = await ctx.bean.instance.list();
+      for (const instance of instances) {
+        await this.executeBean({
+          locale, subdomain: instance.name, context,
+          beanModule, beanFullName, transaction,
+        });
+      }
     },
   };
 };

@@ -194,7 +194,7 @@ module.exports = function(app) {
       // job
       const jobId = uuid.v4();
       const jobName = info.jobName || jobId;
-      const _jobOptions = Object.assign({}, jobOptions, info.jobOptions, { jobId });
+      const _jobOptions = Object.assign({}, jobOptions, { jobId }, info.jobOptions);
       // not async
       if (!isAsync) {
         // add job
@@ -234,17 +234,13 @@ module.exports = function(app) {
       const queue = app.meta.queues[`${module}:${queueName}`];
       // bean
       const bean = queue.bean;
-      // ctx
-      const ctx = await app.meta.util.createAnonymousContext({ locale, subdomain, module: bean.module });
-      // bean
-      const beanInstance = ctx.bean._getBean(`${bean.module}.queue.${bean.name}`);
       // execute
-      if (queue.config.transaction) {
-        return await ctx.transaction.begin(async () => {
-          return await beanInstance.execute(context);
-        });
-      }
-      return await beanInstance.execute(context);
+      return await app.meta.util.executeBean({
+        locale, subdomain, context,
+        beanModule: bean.module,
+        beanFullName: `${bean.module}.queue.${bean.name}`,
+        transaction: queue.config.transaction,
+      });
     }
   }
 

@@ -36,7 +36,7 @@ module.exports = function(loader) {
       });
     }
     // all instances
-    const instances = await ctx.db.query('select * from aInstance a where a.disabled=0');
+    const instances = await ctx.bean.instance.list();
     for (const instance of instances) {
       await ctx.performAction({
         subdomain: instance.name,
