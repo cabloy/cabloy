@@ -25,7 +25,6 @@
   "dependencies": {
     "egg-born-bin": "^3.0.0",
     "egg-born-mock": "^2.0.0",
-    "egg-born-module-a-dingtalk": "^4.0.0",
     "extend2": "^1.0.0",
     "require3": "^2.0.0"
   }
