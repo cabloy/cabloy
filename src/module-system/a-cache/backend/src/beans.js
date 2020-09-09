@@ -33,7 +33,7 @@ module.exports = app => {
     },
     // queue
     'queue.cacheDbSet': {
-      mode: 'ctx',
+      mode: 'app',
       bean: queueCacheDbSet,
     },
     // global

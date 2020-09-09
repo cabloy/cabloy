@@ -30,27 +30,27 @@ module.exports = app => {
     },
     // queue
     'queue.registerFunction': {
-      mode: 'ctx',
+      mode: 'app',
       bean: queueRegisterFunction,
     },
     'queue.registerAtomAction': {
-      mode: 'ctx',
+      mode: 'app',
       bean: queueRegisterAtomAction,
     },
     'queue.registerAtomClass': {
-      mode: 'ctx',
+      mode: 'app',
       bean: queueRegisterAtomClass,
     },
     'queue.registerAuthProvider': {
-      mode: 'ctx',
+      mode: 'app',
       bean: queueRegisterAuthProvider,
     },
     'queue.schedule': {
-      mode: 'ctx',
+      mode: 'app',
       bean: queueSchedule,
     },
     'queue.startup': {
-      mode: 'ctx',
+      mode: 'app',
       bean: queueStartup,
     },
     // global

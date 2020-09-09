@@ -4,7 +4,7 @@ module.exports = app => {
   const beans = {
     // queue
     'queue.render': {
-      mode: 'ctx',
+      mode: 'app',
       bean: queueRender,
     },
   };

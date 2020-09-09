@@ -5,7 +5,7 @@ module.exports = app => {
   const beans = {
     // queue
     'queue.sequence': {
-      mode: 'ctx',
+      mode: 'app',
       bean: queueSequence,
     },
     // global

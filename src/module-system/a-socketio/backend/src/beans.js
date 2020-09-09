@@ -32,27 +32,27 @@ module.exports = app => {
     },
     // queue
     'queue.registerMessageClass': {
-      mode: 'ctx',
+      mode: 'app',
       bean: queueRegisterMessageClass,
     },
     'queue.saveMessage': {
-      mode: 'ctx',
+      mode: 'app',
       bean: queueSaveMessage,
     },
     'queue.process': {
-      mode: 'ctx',
+      mode: 'app',
       bean: queueProcess,
     },
     'queue.delivery': {
-      mode: 'ctx',
+      mode: 'app',
       bean: queueDelivery,
     },
     'queue.push': {
-      mode: 'ctx',
+      mode: 'app',
       bean: queuePush,
     },
     'queue.pushDirect': {
-      mode: 'ctx',
+      mode: 'app',
       bean: queuePushDirect,
     },
     // global

@@ -50,7 +50,7 @@ module.exports = app => {
       },
       // queue
       'queue.test': {
-        mode: 'ctx',
+        mode: 'app',
         bean: queueTest,
       },
     });

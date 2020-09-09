@@ -1,9 +1,9 @@
-module.exports = ctx => {
-  class Queue {
+module.exports = app => {
+  class Queue extends app.meta.BeanBase {
 
     async execute(context) {
       const { module, name } = context.data;
-      return await ctx.bean.function.register({ module, name });
+      return await this.ctx.bean.function.register({ module, name });
     }
 
   }

@@ -1,5 +1,5 @@
-module.exports = ctx => {
-  class Queue {
+module.exports = app => {
+  class Queue extends app.meta.BeanBase {
 
     async execute(context) {
       const { target, targetConfig, hostname, links } = context.data;
@@ -17,13 +17,13 @@ module.exports = ctx => {
         dataType: 'json',
         data: links.join('\n'),
       };
-      const res = await ctx.curl(url, options);
+      const res = await this.ctx.curl(url, options);
       if (res.status !== 200) {
         // log
-        ctx.logger.error(new Error(res.data && res.data.message));
+        this.ctx.logger.error(new Error(res.data && res.data.message));
       } else {
         // log
-        ctx.logger.info(`submit baidu: ${links.join('\n')}`);
+        this.ctx.logger.info(`submit baidu: ${links.join('\n')}`);
       }
     }
 
