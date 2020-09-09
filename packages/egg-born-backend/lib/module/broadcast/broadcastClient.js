@@ -52,7 +52,12 @@ module.exports = function(app) {
       // bean
       const beanInstance = ctx.bean._getBean(`${bean.module}.broadcast.${bean.name}`);
       // execute
-      await beanInstance.execute(context);
+      if (broadcast.config.transaction) {
+        return await ctx.transaction.begin(async () => {
+          return await beanInstance.execute(context);
+        });
+      }
+      return await beanInstance.execute(context);
     }
   }
 

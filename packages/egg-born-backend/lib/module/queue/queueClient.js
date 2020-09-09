@@ -235,6 +235,11 @@ module.exports = function(app) {
       // bean
       const beanInstance = ctx.bean._getBean(`${bean.module}.queue.${bean.name}`);
       // execute
+      if (queue.config.transaction) {
+        return await ctx.transaction.begin(async () => {
+          return await beanInstance.execute(context);
+        });
+      }
       return await beanInstance.execute(context);
     }
   }

@@ -33,6 +33,7 @@ class DbTransaction {
     this._connection = value;
   }
   async begin(fn) {
+    let res;
     const db = getDbOriginal(this._ctx);
     try {
       if (++this._transactionCounter === 1) {
@@ -43,7 +44,7 @@ class DbTransaction {
       throw err;
     }
     try {
-      await fn();
+      res = await fn();
     } catch (err) {
       if (--this._transactionCounter === 0) {
         await this._connection.rollback();
@@ -61,6 +62,7 @@ class DbTransaction {
       this._connection = null;
       throw err;
     }
+    return res;
   }
 }
 
