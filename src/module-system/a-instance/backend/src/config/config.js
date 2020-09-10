@@ -5,11 +5,13 @@ module.exports = appInfo => {
   // middlewares
   config.middlewares = {
     instance: {
+      bean: 'instance',
       global: true,
       dependencies: 'appReady',
       ignore: /\/version\/update$/,
     },
     appReady: {
+      bean: 'appReady',
       global: true,
     },
   };

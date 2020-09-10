@@ -39,21 +39,32 @@ function loadMiddlewares(ebMiddlewares, ebMiddlewaresAll) {
 
 function loadMiddlewaresAll(ebMiddlewaresAll, ebModulesArray, loader) {
   for (const module of ebModulesArray) {
-    if (!module.main.middlewares) continue;
     const config = loader.app.meta.configs[module.info.relativeName];
-    for (const middlewareKey in module.main.middlewares) {
-      // register bean
-      const middlewareItem = module.main.middlewares[middlewareKey];
-      const beanName = `middleware.${middlewareKey}`;
-      const bean = {
-        mode: 'ctx',
-        bean: middlewareItem,
-      };
-      loader.app.bean._register(module.info.relativeName, beanName, bean);
-      // options
-      const options = (config.middlewares ? config.middlewares[middlewareKey] : null) || {};
+    if (!config.middlewares) continue;
+    for (const middlewareKey in config.middlewares) {
+      const middlewareConfig = config.middlewares[middlewareKey];
+      // bean
+      const beanName = middlewareConfig.bean;
+      if (!beanName) throw new Error(`bean not set for middleware: ${module.info.relativeName}.${middlewareKey}`);
+      let bean;
+      if (typeof beanName === 'string') {
+        bean = {
+          module: module.info.relativeName,
+          name: beanName,
+        };
+      } else {
+        bean = {
+          module: beanName.module || module.info.relativeName,
+          name: beanName.name,
+        };
+      }
       // push
-      ebMiddlewaresAll.push({ options, module: module.info.relativeName, name: middlewareKey });
+      ebMiddlewaresAll.push({
+        module: module.info.relativeName,
+        name: middlewareKey,
+        options: middlewareConfig,
+        bean,
+      });
     }
   }
 }
