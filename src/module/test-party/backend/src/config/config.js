@@ -13,17 +13,6 @@ module.exports = appInfo => {
         instance: true,
       },
     };
-    // middlewares
-    config.middlewares = {
-      testInterception: {
-        global: false,
-        dependencies: 'instance',
-      },
-      testRestructuring: {
-        global: false,
-        dependencies: 'instance',
-      },
-    };
     // queues
     config.queues = {
       queueTest: {
@@ -44,6 +33,20 @@ module.exports = appInfo => {
 
     // config
     config.message = 'Hello World';
+
+    // middlewares
+    config.middlewares = {
+      testInterception: {
+        bean: 'testInterception',
+        global: false,
+        dependencies: 'instance',
+      },
+      testRestructuring: {
+        bean: 'testRestructuring',
+        global: false,
+        dependencies: 'instance',
+      },
+    };
 
     // schedules
     config.schedules = {

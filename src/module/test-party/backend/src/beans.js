@@ -10,6 +10,8 @@ const queueTest = require('./bean/queue.test.js');
 const scheduleTest = require('./bean/schedule.test.js');
 const startupStartupAll = require('./bean/startup.startupAll.js');
 const startupStartupInstance = require('./bean/startup.startupInstance.js');
+const middlewareTestInterception = require('./bean/middleware.interception.js');
+const middlewareTestRestructuring = require('./bean/middleware.restructuring.js');
 
 module.exports = app => {
   const beans = {};
@@ -69,6 +71,15 @@ module.exports = app => {
       'startup.startupInstance': {
         mode: 'app',
         bean: startupStartupInstance,
+      },
+      // middleware
+      'middleware.testInterception': {
+        mode: 'ctx',
+        bean: middlewareTestInterception,
+      },
+      'middleware.testRestructuring': {
+        mode: 'ctx',
+        bean: middlewareTestRestructuring,
       },
     });
   }

@@ -5,9 +5,11 @@ module.exports = appInfo => {
   // middlewares
   config.middlewares = {
     connection: {
+      bean: 'connection',
       type: 'socketio.connection',
     },
     packet: {
+      bean: 'packet',
       type: 'socketio.packet',
     },
   };

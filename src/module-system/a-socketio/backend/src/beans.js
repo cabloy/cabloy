@@ -8,6 +8,8 @@ const queueProcess = require('./bean/queue.process.js');
 const queueDelivery = require('./bean/queue.delivery.js');
 const queuePush = require('./bean/queue.push.js');
 const queuePushDirect = require('./bean/queue.pushDirect.js');
+const middlewareConnection = require('./bean/middleware.connection.js');
+const middlewarePacket = require('./bean/middleware.packet.js');
 const beanIO = require('./bean/bean.io.js');
 
 module.exports = app => {
@@ -54,6 +56,15 @@ module.exports = app => {
     'queue.pushDirect': {
       mode: 'app',
       bean: queuePushDirect,
+    },
+    // middleware
+    'middleware.connection': {
+      mode: 'ctx',
+      bean: middlewareConnection,
+    },
+    'middleware.packet': {
+      mode: 'ctx',
+      bean: middlewarePacket,
     },
     // global
     io: {

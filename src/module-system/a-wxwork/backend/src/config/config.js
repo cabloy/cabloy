@@ -121,6 +121,7 @@ module.exports = appInfo => {
   // middlewares
   config.middlewares = {
     inWxwork: {
+      bean: 'inWxwork',
       global: false,
       dependencies: 'instance',
     },

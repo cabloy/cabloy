@@ -116,6 +116,7 @@ module.exports = appInfo => {
   // middlewares
   config.middlewares = {
     inDingtalk: {
+      bean: 'inDingtalk',
       global: false,
       dependencies: 'instance',
     },

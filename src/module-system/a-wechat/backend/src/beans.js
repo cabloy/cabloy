@@ -1,5 +1,6 @@
 const eventLoginInfo = require('./bean/event.loginInfo.js');
 const eventAccountMigration = require('./bean/event.accountMigration.js');
+const middlewareInWechat = require('./bean/middleware.inWechat.js');
 const beanWechat = require('./bean/bean.wechat.js');
 
 module.exports = app => {
@@ -12,6 +13,11 @@ module.exports = app => {
     'event.accountMigration': {
       mode: 'ctx',
       bean: eventAccountMigration,
+    },
+    // middleware
+    'middleware.inWechat': {
+      mode: 'ctx',
+      bean: middlewareInWechat,
     },
     // global
     wechat: {

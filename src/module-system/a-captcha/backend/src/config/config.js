@@ -5,6 +5,7 @@ module.exports = appInfo => {
   // middlewares
   config.middlewares = {
     captchaVerify: {
+      bean: 'captchaVerify',
       global: false,
       dependencies: 'auth',
     },

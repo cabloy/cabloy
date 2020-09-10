@@ -5,6 +5,7 @@ module.exports = appInfo => {
   // middlewares
   config.middlewares = {
     validate: {
+      bean: 'validate',
       global: false,
     },
   };

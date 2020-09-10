@@ -4,24 +4,41 @@ module.exports = appInfo => {
 
   // middlewares
   config.middlewares = {
+    inner: {
+      bean: 'inner',
+      global: false,
+    },
+    test: {
+      bean: 'test',
+      global: false,
+    },
+    transaction: {
+      bean: 'transaction',
+      global: false,
+    },
     cors: {
+      bean: 'cors',
       global: true,
       dependencies: 'instance',
     },
     auth: {
+      bean: 'auth',
       global: true,
       dependencies: 'instance',
       ignore: /\/version\/(update|init|test)/,
     },
     right: {
+      bean: 'right',
       global: true,
       dependencies: 'auth',
     },
     jsonp: {
+      bean: 'jsonp',
       global: false,
       dependencies: 'instance',
     },
     httpLog: {
+      bean: 'httpLog',
       global: false,
       dependencies: 'instance',
     },

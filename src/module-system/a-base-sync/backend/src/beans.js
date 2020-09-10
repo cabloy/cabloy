@@ -9,6 +9,14 @@ const queueStartup = require('./bean/queue.startup.js');
 const startupLoadSchedules = require('./bean/startup.loadSchedules.js');
 const startupInstallAuthProviders = require('./bean/startup.installAuthProviders.js');
 const startupSetFunctionLocales = require('./bean/startup.setFunctionLocales.js');
+const middlewareInner = require('./bean/middleware.inner.js');
+const middlewareTest = require('./bean/middleware.test.js');
+const middlewareTransaction = require('./bean/middleware.transaction.js');
+const middlewareCors = require('./bean/middleware.cors.js');
+const middlewareAuth = require('./bean/middleware.auth.js');
+const middlewareRight = require('./bean/middleware.right.js');
+const middlewareJsonp = require('./bean/middleware.jsonp.js');
+const middlewareHttpLog = require('./bean/middleware.httpLog.js');
 const beanAtom = require('./bean/bean.atom.js');
 const beanAtomAction = require('./bean/bean.atomAction.js');
 const beanAtomClass = require('./bean/bean.atomClass.js');
@@ -68,6 +76,39 @@ module.exports = app => {
     'startup.setFunctionLocales': {
       mode: 'app',
       bean: startupSetFunctionLocales,
+    },
+    // middleware
+    'middleware.inner': {
+      mode: 'ctx',
+      bean: middlewareInner,
+    },
+    'middleware.test': {
+      mode: 'ctx',
+      bean: middlewareTest,
+    },
+    'middleware.transaction': {
+      mode: 'ctx',
+      bean: middlewareTransaction,
+    },
+    'middleware.cors': {
+      mode: 'ctx',
+      bean: middlewareCors,
+    },
+    'middleware.auth': {
+      mode: 'ctx',
+      bean: middlewareAuth,
+    },
+    'middleware.right': {
+      mode: 'ctx',
+      bean: middlewareRight,
+    },
+    'middleware.jsonp': {
+      mode: 'ctx',
+      bean: middlewareJsonp,
+    },
+    'middleware.httpLog': {
+      mode: 'ctx',
+      bean: middlewareHttpLog,
     },
     // global
     atom: {
