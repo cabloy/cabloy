@@ -32,6 +32,12 @@ module.exports = app => {
       res = await this.ctx.bean['test.ctx'].actionAsync({ a, b });
       assert.equal(res, `${a + b}:regexpaop:simpleaop`);
 
+      res = await this.ctx.bean['test.ctx'].actionAsync2({ a, b });
+      assert.equal(res, `test-party:regexpaop:simpleaop:${a + b}:regexpaop:simpleaop`);
+
+      res = await this.ctx.bean['test.ctx'].actionAsync3({ a, b });
+      assert.equal(res, `test-party:regexpaop:simpleaop:${a + b}:regexpaop:simpleaop`);
+
       // ctx.bean: class
       assert.equal(this.ctx.bean['test-party.test.class'], this.ctx.bean['test-party.test.class']);
 
