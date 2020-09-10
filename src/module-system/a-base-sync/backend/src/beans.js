@@ -6,6 +6,9 @@ const queueRegisterAtomClass = require('./bean/queue.registerAtomClass.js');
 const queueRegisterAuthProvider = require('./bean/queue.registerAuthProvider.js');
 const queueSchedule = require('./bean/queue.schedule.js');
 const queueStartup = require('./bean/queue.startup.js');
+const startupLoadSchedules = require('./bean/startup.loadSchedules.js');
+const startupInstallAuthProviders = require('./bean/startup.installAuthProviders.js');
+const startupSetFunctionLocales = require('./bean/startup.setFunctionLocales.js');
 const beanAtom = require('./bean/bean.atom.js');
 const beanAtomAction = require('./bean/bean.atomAction.js');
 const beanAtomClass = require('./bean/bean.atomClass.js');
@@ -52,6 +55,19 @@ module.exports = app => {
     'queue.startup': {
       mode: 'app',
       bean: queueStartup,
+    },
+    // startup
+    'startup.loadSchedules': {
+      mode: 'app',
+      bean: startupLoadSchedules,
+    },
+    'startup.installAuthProviders': {
+      mode: 'app',
+      bean: startupInstallAuthProviders,
+    },
+    'startup.setFunctionLocales': {
+      mode: 'app',
+      bean: startupSetFunctionLocales,
     },
     // global
     atom: {

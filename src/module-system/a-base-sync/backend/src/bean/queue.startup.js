@@ -3,17 +3,18 @@ module.exports = app => {
   class Queue extends app.meta.BeanBase {
 
     async execute(context) {
-      const { key, startup, info } = context.data;
+      const startup = context.data;
       // ignore debounce for test
       if (!app.meta.isTest) {
-        const cacheKey = `startupDebounce:${key}`;
-        const debounce = typeof startup.debounce === 'number' ? startup.debounce : app.config.queue.startup.debounce;
+        const fullKey = `${startup.module}:${startup.name}`;
+        const cacheKey = `startupDebounce:${fullKey}`;
+        const debounce = typeof startup.config.debounce === 'number' ? startup.config.debounce : app.config.queue.startup.debounce;
         const cache = this.ctx.cache.db.module(moduleInfo.relativeName);
         const flag = await cache.getset(cacheKey, true, debounce);
         if (flag) return;
       }
       // perform
-      await app.meta._runStartup(this.ctx, startup, info);
+      await app.meta._runStartupQueue({ module: startup.module, name: startup.name });
     }
 
   }

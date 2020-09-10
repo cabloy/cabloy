@@ -12,73 +12,70 @@ module.exports = function(loader) {
   // load startups
   loadStartups();
 
-  // for test purpose
-  loader.app.meta.runStartup = (module, key) => {
-    const fullKey = key === undefined ? module : `${module}:${key}`;
-    const startup = ebStartups[fullKey];
-    if (!startup) {
-      throw new Error(`Cannot find startup ${fullKey}`);
-    }
-    // run with anonymous context
-    const ctx = loader.app.createAnonymousContext({
-      method: 'STARTUP',
-      url: `/__startup?path=${fullKey}&${qs.stringify(startup.startup)}`,
-    });
-    return startup.task(ctx);
-  };
-
-  loader.app.meta._runStartup = async (ctx, startup, info) => {
-    const url = loader.app.meta.util.combineApiPath(info, startup.path);
-    if (!startup.instance) {
-      return await ctx.performAction({
-        method: 'post',
-        url,
-      });
-    }
-    // all instances
-    const instances = await ctx.bean.instance.list();
-    for (const instance of instances) {
-      await ctx.performAction({
-        subdomain: instance.name,
-        method: 'post',
-        url,
-      });
-    }
-  };
-
   function loadStartups() {
     for (const module of ebModulesArray) {
       const config = loader.app.meta.configs[module.info.relativeName];
-      // module startups
-      if (config.startups) {
-        for (const startupKey in config.startups) {
-          const fullKey = `${module.info.relativeName}:${startupKey}`;
-          const startupConfig = config.startups[startupKey];
-          ebStartups[fullKey] = {
-            startup: startupConfig,
-            task: wrapTask(fullKey, startupConfig, module.info),
-            key: fullKey,
+      if (!config.startups) continue;
+      for (const startupKey in config.startups) {
+        const startupConfig = config.startups[startupKey];
+        const fullKey = `${module.info.relativeName}:${startupKey}`;
+        // bean
+        const beanName = startupConfig.bean;
+        if (!beanName) throw new Error(`bean not set for startup: ${fullKey}`);
+        let bean;
+        if (typeof beanName === 'string') {
+          bean = {
+            module: module.info.relativeName,
+            name: beanName,
           };
-          ebStartupsArray.push(ebStartups[fullKey]);
+        } else {
+          bean = {
+            module: beanName.module || module.info.relativeName,
+            name: beanName.name,
+          };
         }
+        ebStartups[fullKey] = {
+          module: module.info.relativeName,
+          name: startupKey,
+          config: startupConfig,
+          bean,
+        };
+        ebStartupsArray.push(ebStartups[fullKey]);
       }
     }
   }
 
-  function wrapTask(key, startup, info) {
-    return async function(ctx) {
-      // normal
-      if (!startup.debounce) {
-        return await loader.app.meta._runStartup(ctx, startup, info);
-      }
-      // debounce: queue
-      await loader.app.meta.queue.pushAsync({
-        module: 'a-base',
-        queueName: 'startup',
-        queueNameSub: key,
-        data: { key, startup, info },
-      });
-    };
-  }
+  // for test purpose
+  loader.app.meta._runStartup = async ({ module, name }) => {
+    const fullKey = `${module}:${name}`;
+    const startup = ebStartups[fullKey];
+    // normal
+    if (!startup.config.debounce) {
+      return await loader.app.meta._runStartupQueue({ module, name });
+    }
+    // debounce: queue
+    await loader.app.meta.queue.pushAsync({
+      module: 'a-base',
+      queueName: 'startup',
+      queueNameSub: fullKey,
+      data: startup,
+    });
+  };
+
+  loader.app.meta._runStartupQueue = async ({ module, name }) => {
+    // schedule
+    const fullKey = `${module}:${name}`;
+    const startup = ebStartups[fullKey];
+    // bean
+    const bean = startup.bean;
+    // execute
+    return await loader.app.meta.util.executeBeanInstance({
+      // locale, context,
+      beanModule: bean.module,
+      beanFullName: `${bean.module}.startup.${bean.name}`,
+      transaction: startup.config.transaction,
+      instance: startup.config.instance,
+    });
+  };
 
 };

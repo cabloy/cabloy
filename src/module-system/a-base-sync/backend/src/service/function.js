@@ -14,10 +14,6 @@ module.exports = app => {
       return await this.ctx.bean.function.check({ functions, user });
     }
 
-    async setLocalesStartup() {
-      await this.ctx.bean.function.setLocales({ reset: true });
-    }
-
     async scenes({ sceneMenu }) {
       return await this.ctx.bean.function.scenes({ sceneMenu });
     }

@@ -5,11 +5,11 @@ module.exports = appInfo => {
   // startups
   config.startups = {
     databaseInit: {
-      path: 'version/databaseInitStartup',
+      bean: 'databaseInit',
       debounce: true,
     },
     databaseName: {
-      path: 'version/databaseNameStartup',
+      bean: 'databaseName',
     },
   };
 

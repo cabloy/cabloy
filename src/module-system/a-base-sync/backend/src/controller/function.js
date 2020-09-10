@@ -33,11 +33,6 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async setLocalesStartup() {
-      const res = await this.ctx.service.function.setLocalesStartup();
-      this.ctx.success(res);
-    }
-
     async scenes() {
       const res = await this.ctx.service.function.scenes({
         sceneMenu: this.ctx.request.body.sceneMenu,

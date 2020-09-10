@@ -30,15 +30,15 @@ module.exports = appInfo => {
   // startups
   config.startups = {
     loadSchedules: {
-      path: 'schedule/loadSchedules',
+      bean: 'loadSchedules',
       debounce: true,
     },
     installAuthProviders: {
-      path: 'auth/installAuthProviders',
+      bean: 'installAuthProviders',
     },
     setFunctionLocales: {
+      bean: 'setFunctionLocales',
       instance: true,
-      path: 'function/setLocalesStartup',
       debounce: true,
     },
   };

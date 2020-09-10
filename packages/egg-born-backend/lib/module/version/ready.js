@@ -19,7 +19,7 @@ module.exports = async function(app) {
   for (const startup of app.meta.startupsArray) {
     if (!startup.startup.disable && startup.startup.after !== true) {
       console.log(`---- startup: ${startup.key}, pid: ${process.pid}`);
-      await app.meta.runStartup(startup.key);
+      await app.meta._runStartup({ module: startup.module, name: startup.name });
     }
   }
 
@@ -57,7 +57,7 @@ module.exports = async function(app) {
   // run startups: after
   for (const startup of app.meta.startupsArray) {
     if (!startup.startup.disable && startup.startup.after === true) {
-      await app.meta.runStartup(startup.key);
+      await app.meta._runStartup({ module: startup.module, name: startup.name });
     }
   }
 

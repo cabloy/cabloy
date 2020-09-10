@@ -86,6 +86,13 @@ module.exports = ctx => {
       return account;
     }
 
+    async _installAuthProviders() {
+      // registerAllRouters
+      this._registerAllRouters();
+      // registerAllProviders
+      await this._registerAllProviders();
+    }
+
     _registerAllRouters() {
       const authProviders = ctx.bean.base.authProviders();
       for (const key in authProviders) {
