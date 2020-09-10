@@ -242,11 +242,11 @@ module.exports = (app, ctx) => {
 };
 
 function __getPropertyDescriptor(obj, prop) {
-  let proto = obj.__proto__;
+  let proto = Object.getPrototypeOf(obj);
   while (proto) {
     const descriptor = Object.getOwnPropertyDescriptor(proto, prop);
     if (descriptor) return descriptor;
-    proto = proto.__proto__;
+    proto = Object.getPrototypeOf(proto);
   }
   return null;
 }
