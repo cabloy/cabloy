@@ -8,6 +8,8 @@ const eventLoginInfo = require('./bean/event.loginInfo.js');
 const broadcastTest = require('./bean/broadcast.test.js');
 const queueTest = require('./bean/queue.test.js');
 const scheduleTest = require('./bean/schedule.test.js');
+const startupStartupAll = require('./bean/startup.startupAll.js');
+const startupStartupInstance = require('./bean/startup.startupInstance.js');
 
 module.exports = app => {
   const beans = {};
@@ -58,6 +60,15 @@ module.exports = app => {
       'schedule.test': {
         mode: 'app',
         bean: scheduleTest,
+      },
+      // startup
+      'startup.startupAll': {
+        mode: 'app',
+        bean: startupStartupAll,
+      },
+      'startup.startupInstance': {
+        mode: 'app',
+        bean: startupStartupInstance,
       },
     });
   }

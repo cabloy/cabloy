@@ -12,8 +12,8 @@ module.exports = appInfo => {
   // startups
   config.startups = {
     registerAllWatchers: {
+      bean: 'registerAllWatchers',
       instance: true,
-      path: 'site/registerAllWatchersStartup',
       debounce: true,
     },
   };

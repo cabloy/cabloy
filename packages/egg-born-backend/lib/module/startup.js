@@ -1,5 +1,3 @@
-const qs = require('querystring');
-
 module.exports = function(loader) {
 
   // use modulesArray
@@ -35,6 +33,7 @@ module.exports = function(loader) {
           };
         }
         ebStartups[fullKey] = {
+          key: fullKey,
           module: module.info.relativeName,
           name: startupKey,
           config: startupConfig,

@@ -127,11 +127,6 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async registerAllWatchersStartup() {
-      await this.ctx.service.site.registerAllWatchersStartup();
-      this.ctx.success();
-    }
-
     async getStats() {
       const atomClass = this.ctx.request.body.atomClass;
       const res = await this.ctx.service.site.getStats({

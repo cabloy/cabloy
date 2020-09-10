@@ -16,10 +16,6 @@ module.exports = appInfo => {
 
   // startups
   config.startups = {
-    startupInstance: {
-      instance: true,
-      path: 'instance/startup',
-    },
   };
 
   // broadcasts

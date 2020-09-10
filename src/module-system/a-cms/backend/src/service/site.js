@@ -1,5 +1,4 @@
 const require3 = require('require3');
-const fse = require3('fs-extra');
 const extend = require3('extend2');
 const Build = require('../common/build.js');
 
@@ -107,29 +106,6 @@ module.exports = app => {
           progressId,
         },
       });
-    }
-
-    async registerAllWatchersStartup() {
-      // only in development
-      if (!this.ctx.app.meta.isLocal) return;
-      // loop modules
-      for (const module of this.ctx.app.meta.modulesArray) {
-        // cms.site=true
-        if (module.package.eggBornModule && module.package.eggBornModule.cms && module.package.eggBornModule.cms.site) {
-          // loop atomClasses
-          for (const key in module.main.meta.base.atoms) {
-            if (module.main.meta.base.atoms[key].info.cms === false) continue;
-            // atomClass
-            const atomClass = {
-              module: module.info.relativeName,
-              atomClassName: key,
-              atomClassIdParent: 0,
-            };
-            const build = Build.create(this.ctx, atomClass);
-            await build.registerWatchers();
-          }
-        }
-      }
     }
 
     getBlocks({ locale }) {

@@ -1,6 +1,7 @@
 const eventLoginInfo = require('./bean/event.loginInfo.js');
 const eventAccountMigration = require('./bean/event.accountMigration.js');
 const queueContacts = require('./bean/queue.contacts.js');
+const startupRegisterBusinessCallbackList = require('./bean/startup.registerBusinessCallbackList.js');
 const beanDingtalk = require('./bean/bean.dingtalk.js');
 
 module.exports = app => {
@@ -18,6 +19,11 @@ module.exports = app => {
     'queue.contacts': {
       mode: 'app',
       bean: queueContacts,
+    },
+    // startup
+    'startup.registerBusinessCallbackList': {
+      mode: 'app',
+      bean: startupRegisterBusinessCallbackList,
     },
     // global
     dingtalk: {

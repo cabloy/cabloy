@@ -6,11 +6,11 @@ module.exports = appInfo => {
     // startups
     config.startups = {
       startupAll: {
-        path: 'test/feat/startup/all',
+        bean: 'startupAll',
       },
       startupInstance: {
+        bean: 'startupInstance',
         instance: true,
-        path: 'test/feat/startup/instance',
       },
     };
     // middlewares

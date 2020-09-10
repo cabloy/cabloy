@@ -11,11 +11,6 @@ module.exports = app => {
       });
     }
 
-    async registerList() {
-      await this.ctx.service.callback.registerList();
-      this.ctx.success();
-    }
-
     async _handleMessage(appName, handler) {
       // query
       const query = this.ctx.query;

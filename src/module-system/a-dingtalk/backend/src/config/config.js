@@ -106,8 +106,8 @@ module.exports = appInfo => {
   // startups
   config.startups = {
     registerBusinessCallbackList: {
+      bean: 'registerBusinessCallbackList',
       instance: true,
-      path: 'callback/registerList',
       debounce: true,
       after: true,
     },

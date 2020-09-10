@@ -96,10 +96,6 @@ module.exports = app => {
       // test/feat/httpLog
       { method: 'post', path: 'test/feat/httpLog', controller: 'testFeatHttpLog', middlewares: 'test,httpLog', meta: { auth: { enable: false } } },
 
-      // test/feat/startup
-      { method: 'post', path: 'test/feat/startup/all', controller: 'testFeatStartup', middlewares: 'inner', meta: { instance: { enable: false } } },
-      { method: 'post', path: 'test/feat/startup/instance', controller: 'testFeatStartup', middlewares: 'inner', meta: { auth: { enable: false } } },
-
       // test/feat/sendMail
       { method: 'post', path: 'test/feat/sendMail', controller: 'testFeatSendMail', meta: { auth: { enable: false } } },
 

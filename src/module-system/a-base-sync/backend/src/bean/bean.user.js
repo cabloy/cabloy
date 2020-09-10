@@ -638,7 +638,7 @@ module.exports = ctx => {
       if (!module || !providerName) throw new Error('Invalid arguments');
       // queue
       return await ctx.app.meta.queue.pushAsync({
-        subdomain: subdomain || ctx.subdomain,
+        subdomain: subdomain !== undefined ? subdomain : ctx.subdomain,
         module: moduleInfo.relativeName,
         queueName: 'registerAuthProvider',
         data: { module, providerName },

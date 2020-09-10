@@ -23,7 +23,6 @@ const testRoleUserRole = require('./controller/test/role/userRole.js');
 const testEventHello = require('./controller/test/event/hello.js');
 const testFeatBean = require('./controller/test/feat/bean.js');
 const testFeatHttpLog = require('./controller/test/feat/httpLog.js');
-const testFeatStartup = require('./controller/test/feat/startup.js');
 const testFeatSendMail = require('./controller/test/feat/sendMail.js');
 const testFeatSocketIO = require('./controller/test/feat/socketio.js');
 const testFeatInstance = require('./controller/test/feat/instance.js');
@@ -68,7 +67,6 @@ module.exports = app => {
     testEventHello,
     testFeatBean,
     testFeatHttpLog,
-    testFeatStartup,
     testFeatSendMail,
     testFeatSocketIO,
     testFeatInstance,
