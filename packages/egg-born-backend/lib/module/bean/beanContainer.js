@@ -15,14 +15,15 @@ module.exports = (app, ctx) => {
       };
       return beanFullName;
     },
-    _registerAop(moduleName, aopName, aop) {
+    _registerAop(moduleName, aopName, aopClass) {
       const beanName = `aop.${aopName}`;
-      const bean = {
-        mode: aop.mode,
-        bean: aop.bean,
+      const beanClass = {
+        mode: aopClass.mode,
+        bean: aopClass.bean,
+        aop: true,
       };
-      const beanFullName = this._register(moduleName, beanName, bean);
-      app.meta.aops[beanFullName] = { match: aop.match };
+      const beanFullName = this._register(moduleName, beanName, beanClass);
+      app.meta.aops[beanFullName] = { match: aopClass.match, matchAop: aopClass.matchAop };
       return beanFullName;
     },
     _getBeanClass(beanFullName) {
@@ -183,8 +184,12 @@ module.exports = (app, ctx) => {
       const chains = [];
       for (const key in app.meta.aops) {
         const aop = app.meta.aops[key];
-        const match = aop.match;
-        if (key !== beanFullName && __aopMatch(match, beanFullName)) {
+        // not self
+        if (key === beanFullName) continue;
+        // check if match aop
+        if (_beanClass.aop && !aop.matchAop) continue;
+        // match
+        if (__aopMatch(aop.match, beanFullName)) {
           chains.push(key);
         }
       }
