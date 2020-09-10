@@ -1,7 +1,6 @@
 const config = require('./config/config.js');
 const locales = require('./config/locales.js');
 const errors = require('./config/errors.js');
-const middlewares = require('./config/middlewares.js');
 const WatcherFn = require('./common/watcher.js');
 
 module.exports = app => {
@@ -33,7 +32,6 @@ module.exports = app => {
     config,
     locales,
     errors,
-    middlewares,
     meta,
   };
 

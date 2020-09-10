@@ -1,7 +1,6 @@
 const config = require('./config/config.js');
 const locales = require('./config/locales.js');
 const errors = require('./config/errors.js');
-const middlewares = require('./config/middlewares.js');
 
 // eslint-disable-next-line
 module.exports = app => {
@@ -25,7 +24,6 @@ module.exports = app => {
     config,
     locales,
     errors,
-    middlewares,
     meta,
   };
 
