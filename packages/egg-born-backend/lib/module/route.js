@@ -157,9 +157,11 @@ function wrapMiddleware(item, route) {
       ctx[MWSTATUS][item.name] = false;
       return next();
     }
-    // run
-    const bean = ctx.bean._getBean(item.module, `middleware.${item.name}`);
-    return bean.execute(options, next);
+    // bean
+    const bean = item.bean;
+    // execute
+    const beanInstance = ctx.bean._getBean(bean.module, `middleware.${bean.name}`);
+    return beanInstance.execute(options, next);
   };
   fn._name = item.name;
   return fn;
