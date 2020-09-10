@@ -190,18 +190,24 @@ module.exports = app => {
       // ok
       return ctx;
     },
-    async executeBean({ locale, subdomain, context, beanModule, beanFullName, transaction }) {
+    async executeBean({ locale, subdomain, context, beanModule, beanFullName, transaction, fn }) {
       // ctx
       const ctx = await this.createAnonymousContext({ locale, subdomain, module: beanModule });
       // bean
-      const beanInstance = ctx.bean._getBean(beanFullName);
+      const bean = ctx.bean._getBean(beanFullName);
       // execute
       if (transaction) {
         return await ctx.transaction.begin(async () => {
-          return await beanInstance.execute(context);
+          return await this._executeBeanFn({ fn, ctx, bean, context });
         });
       }
-      return await beanInstance.execute(context);
+      return await this._executeBeanFn({ fn, ctx, bean, context });
+    },
+    async _executeBeanFn({ fn, ctx, bean, context }) {
+      if (fn) {
+        return await fn({ ctx, bean, context });
+      }
+      return await bean.execute(context);
     },
     async executeBeanInstance({ locale, context, beanModule, beanFullName, transaction, instance }) {
       // not check instance
