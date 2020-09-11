@@ -1,3 +1,4 @@
+const versionManager = require('./bean/version.manager.js');
 const testApp = require('./bean/test.app.js');
 const testClass = require('./bean/test.class.js');
 const testCtx = require('./bean/test.ctx.js');
@@ -14,7 +15,13 @@ const middlewareTestInterception = require('./bean/middleware.interception.js');
 const middlewareTestRestructuring = require('./bean/middleware.restructuring.js');
 
 module.exports = app => {
-  const beans = {};
+  const beans = {
+    // version
+    'version.manager': {
+      mode: 'app',
+      bean: versionManager,
+    },
+  };
   if (app.meta.isTest || app.meta.isLocal) {
     Object.assign(beans, {
       // test

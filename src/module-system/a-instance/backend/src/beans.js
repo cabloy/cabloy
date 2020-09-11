@@ -1,3 +1,4 @@
+const versionManager = require('./bean/version.manager.js');
 const beanInstance = require('./bean/bean.instance.js');
 const broadcastResetCache = require('./bean/broadcast.resetCache.js');
 const middlewareAppReady = require('./bean/middleware.appReady.js');
@@ -6,6 +7,11 @@ const queueInstanceStartup = require('./bean/queue.instanceStartup.js');
 
 module.exports = app => {
   const beans = {
+    // version
+    'version.manager': {
+      mode: 'app',
+      bean: versionManager,
+    },
     // broadcast
     'broadcast.resetCache': {
       mode: 'app',

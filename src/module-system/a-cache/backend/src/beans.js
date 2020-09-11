@@ -1,3 +1,4 @@
+const versionManager = require('./bean/version.manager.js');
 const localDb = require('./bean/local.db.js');
 const localMem = require('./bean/local.mem.js');
 const localRedis = require('./bean/local.redis.js');
@@ -8,6 +9,11 @@ const queueCacheDbSet = require('./bean/queue.cacheDbSet.js');
 
 module.exports = app => {
   const beans = {
+    // version
+    'version.manager': {
+      mode: 'app',
+      bean: versionManager,
+    },
     // local
     'local.db': {
       mode: 'ctx',

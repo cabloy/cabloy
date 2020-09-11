@@ -4,7 +4,7 @@ const chalk = require3('chalk');
 
 module.exports = app => {
 
-  class Version extends app.Service {
+  class Version extends app.meta.BeanBase {
 
     async update(options) {
       // check indexes

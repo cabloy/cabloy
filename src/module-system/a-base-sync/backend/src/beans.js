@@ -1,3 +1,4 @@
+const versionManager = require('./bean/version.manager.js');
 const localProcedure = require('./bean/local.procedure.js');
 const broadcastAuthProviderChanged = require('./bean/broadcast.authProviderChanged.js');
 const queueRegisterFunction = require('./bean/queue.registerFunction.js');
@@ -29,6 +30,11 @@ const beanUtil = require('./bean/bean.util.js');
 
 module.exports = app => {
   const beans = {
+    // version
+    'version.manager': {
+      mode: 'app',
+      bean: versionManager,
+    },
     // local
     'local.procedure': {
       mode: 'ctx',

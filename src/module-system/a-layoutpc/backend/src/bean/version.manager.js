@@ -1,6 +1,6 @@
 module.exports = app => {
 
-  class Version extends app.Service {
+  class Version extends app.meta.BeanBase {
 
     // eslint-disable-next-line
     async update(options) {

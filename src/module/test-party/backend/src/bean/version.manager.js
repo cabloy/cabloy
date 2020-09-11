@@ -2,7 +2,7 @@ const VersionTestFn = require('./version/test.js');
 
 module.exports = app => {
 
-  class Version extends app.Service {
+  class Version extends app.meta.BeanBase {
 
     async update(options) {
       // only in test/local

@@ -1,3 +1,4 @@
+const versionManager = require('./bean/version.manager.js');
 const localMessage = require('./bean/local.message.js');
 const localMessageClass = require('./bean/local.messageClass.js');
 const localProcedure = require('./bean/local.procedure.js');
@@ -14,6 +15,11 @@ const beanIO = require('./bean/bean.io.js');
 
 module.exports = app => {
   const beans = {
+    // version
+    'version.manager': {
+      mode: 'app',
+      bean: versionManager,
+    },
     // local
     'local.message': {
       mode: 'ctx',

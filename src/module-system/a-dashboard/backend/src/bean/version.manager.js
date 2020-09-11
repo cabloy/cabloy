@@ -1,18 +1,20 @@
 module.exports = app => {
-  class Version extends app.Service {
+
+  class Version extends app.meta.BeanBase {
 
     async update(options) {
       if (options.version === 1) {
-        // create table: aStatus
+        // create table: aDashboardProfile
         const sql = `
-          CREATE TABLE aAuthSimple (
+          CREATE TABLE aDashboardProfile (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             deleted int(11) DEFAULT '0',
             iid int(11) DEFAULT '0',
             userId int(11) DEFAULT '0',
-            hash text DEFAULT NULL,
+            profileName varchar(255) DEFAULT NULL,
+            profileValue json DEFAULT NULL,
             PRIMARY KEY (id)
           )
         `;
@@ -22,17 +24,15 @@ module.exports = app => {
 
     async init(options) {
       if (options.version === 1) {
-        // root
-        const user = await this.ctx.bean.user.get({ userName: 'root' });
-        await this.ctx.service.auth.add({
-          userId: user.id,
-          password: options.password,
-        });
+        // roleFunctions: widgets
+        const roleWidgets = [
+          { roleName: null, name: 'widgetAbout' },
+        ];
+        await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions: roleWidgets });
       }
     }
 
     async test() {
-
     }
 
   }

@@ -12,7 +12,7 @@ const VersionInit8Fn = require('./version/init8.js');
 
 module.exports = app => {
 
-  class Version extends app.Service {
+  class Version extends app.meta.BeanBase {
 
     async update(options) {
 
