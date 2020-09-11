@@ -6,7 +6,7 @@ module.exports = app => {
 
     async update(options) {
       // only in test/local
-      if (!this.app.meta.isTest && !this.app.meta.isLocal) return;
+      if (!app.meta.isTest && !app.meta.isLocal) return;
 
       // update
       if (options.version === 1) {
@@ -62,7 +62,7 @@ module.exports = app => {
 
     async init(options) {
       // only in test/local
-      if (!this.app.meta.isTest && !this.app.meta.isLocal) return;
+      if (!app.meta.isTest && !app.meta.isLocal) return;
 
       // init
       if (options.version === 1) {
