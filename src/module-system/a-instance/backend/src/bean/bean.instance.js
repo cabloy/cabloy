@@ -106,16 +106,6 @@ module.exports = ctx => {
     // options: force/instanceBase
     async instanceStartup({ subdomain, options }) {
       if (!options) options = { force: false, instanceBase: null };
-      // queue
-      await ctx.app.meta.queue.pushAsync({
-        module: moduleInfo.relativeName,
-        queueName: 'instanceStartup',
-        queueNameSub: subdomain,
-        data: { subdomain, options },
-      });
-    }
-
-    async _instanceStartupQueue({ subdomain, options }) {
       return await ctx.app.meta._runStartupInstance({ subdomain, options });
     }
 

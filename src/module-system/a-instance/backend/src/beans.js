@@ -3,7 +3,6 @@ const beanInstance = require('./bean/bean.instance.js');
 const broadcastResetCache = require('./bean/broadcast.resetCache.js');
 const middlewareAppReady = require('./bean/middleware.appReady.js');
 const middlewareInstance = require('./bean/middleware.instance.js');
-const queueInstanceStartup = require('./bean/queue.instanceStartup.js');
 const queueRegisterInstance = require('./bean/queue.registerInstance.js');
 
 module.exports = app => {
@@ -28,10 +27,6 @@ module.exports = app => {
       bean: middlewareInstance,
     },
     // queue
-    'queue.instanceStartup': {
-      mode: 'app',
-      bean: queueInstanceStartup,
-    },
     'queue.registerInstance': {
       mode: 'app',
       bean: queueRegisterInstance,

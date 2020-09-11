@@ -51,7 +51,14 @@ module.exports = async function(app) {
     // subdomain
     const subdomain = '';
     // init
-    await app.meta._runStartupInstance({ subdomain, options: null });
+    await app.meta.util.executeBean({
+      subdomain,
+      beanModule: 'a-instance',
+      beanFullName: 'instance',
+      fn: async ({ bean }) => {
+        await bean.instanceStartup({ subdomain });
+      },
+    });
     // test
     await app.meta.util.executeBean({
       subdomain,
