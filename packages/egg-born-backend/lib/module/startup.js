@@ -44,37 +44,66 @@ module.exports = function(loader) {
     }
   }
 
-  // for test purpose
-  loader.app.meta._runStartup = async ({ module, name }) => {
+  loader.app.meta._runStartup = async ({ module, name, instanceStartup }) => {
     const fullKey = `${module}:${name}`;
     const startup = ebStartups[fullKey];
     // normal
     if (!startup.config.debounce) {
-      return await loader.app.meta._runStartupQueue({ module, name });
+      return await loader.app.meta._runStartupQueue({ module, name, instanceStartup });
     }
     // debounce: queue
     await loader.app.meta.queue.pushAsync({
+      subdomain: instanceStartup ? instanceStartup.subdomain : undefined,
       module: 'a-base',
       queueName: 'startup',
       queueNameSub: fullKey,
-      data: startup,
+      data: { startup, instanceStartup },
     });
   };
 
-  loader.app.meta._runStartupQueue = async ({ module, name }) => {
+  loader.app.meta._runStartupQueue = async ({ module, name, instanceStartup }) => {
+    // context
+    const context = {
+      options: instanceStartup ? instanceStartup.options : undefined,
+    };
     // schedule
     const fullKey = `${module}:${name}`;
     const startup = ebStartups[fullKey];
     // bean
     const bean = startup.bean;
     // execute
-    return await loader.app.meta.util.executeBeanInstance({
-      // locale, context,
+    return await loader.app.meta.util.executeBean({
+      subdomain: instanceStartup ? instanceStartup.subdomain : undefined,
+      context,
       beanModule: bean.module,
       beanFullName: `${bean.module}.startup.${bean.name}`,
       transaction: startup.config.transaction,
-      instance: startup.config.instance,
     });
+  };
+
+  loader.app.meta._runStartupInstance = async ({ subdomain, options }) => {
+    // run startups: not after
+    for (const startup of loader.app.meta.startupsArray) {
+      if (!startup.config.disable && startup.config.instance && startup.config.after !== true) {
+        console.log(`---- instance startup: ${startup.key}, pid: ${process.pid}`);
+        await loader.app.meta._runStartup({
+          module: startup.module, name: startup.name,
+          instanceStartup: { subdomain, options },
+        });
+      }
+    }
+    // set flag
+    loader.app.meta.appReadyInstances[subdomain] = true;
+    // run startups: after
+    for (const startup of loader.app.meta.startupsArray) {
+      if (!startup.config.disable && startup.config.instance && startup.config.after === true) {
+        console.log(`---- instance startup: ${startup.key}, pid: ${process.pid}`);
+        await loader.app.meta._runStartup({
+          module: startup.module, name: startup.name,
+          instanceStartup: { subdomain, options },
+        });
+      }
+    }
   };
 
 };

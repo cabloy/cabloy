@@ -16,6 +16,13 @@ module.exports = appInfo => {
     },
   };
 
+  // queues
+  config.queues = {
+    instanceStartup: {
+      bean: 'instanceStartup',
+    },
+  };
+
   // startups
   config.startups = {
   };

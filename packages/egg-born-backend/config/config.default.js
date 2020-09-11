@@ -124,7 +124,7 @@ module.exports = appInfo => {
         retryCount: -1,
         retryDelay: 200,
         retryJitter: 100,
-        lockTTL: 20 * 1000,
+        lockTTL: 30 * 1000,
       },
     },
     bottleneck: {
@@ -134,7 +134,7 @@ module.exports = appInfo => {
       debounce: 10 * 1000,
     },
     worker: {
-      lockDuration: 20 * 1000,
+      lockDuration: 30 * 1000,
     },
     scheduler: {
       maxStalledCount: 1000,

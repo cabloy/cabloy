@@ -49,6 +49,41 @@ module.exports = ctx => {
       return instance;
     }
 
+    async checkAppReady() {
+      while (!ctx.app.meta.appReady) {
+        await ctx.bean.util.sleep(300);
+      }
+    }
+
+    async checkAppReadyInstance() {
+      // chech appReady first
+      await ctx.bean.instance.checkAppReady();
+      // check appReady instance
+      const subdomain = ctx.subdomain;
+      if (subdomain === undefined) throw new Error(`subdomain not valid: ${subdomain}`);
+      if (ctx.app.meta.appReadyInstances[subdomain]) return;
+      // instance startup
+      await this.instanceStartup();
+    }
+
+    async instanceStartup(options) {
+      if (!options) options = { force: false, instance: null };
+      // queue
+      await ctx.app.meta.queue.pushAsync({
+        subdomain: ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'instanceStartup',
+        data: options,
+      });
+    }
+
+    async _instanceStartupQueue(options) {
+      return await ctx.app.meta._runStartupInstance({
+        subdomain: ctx.subdomain,
+        options,
+      });
+    }
+
   }
   return Instance;
 };

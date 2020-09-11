@@ -17,7 +17,7 @@ module.exports = async function(app) {
 
   // run startups: not after
   for (const startup of app.meta.startupsArray) {
-    if (!startup.config.disable && startup.config.after !== true) {
+    if (!startup.config.disable && !startup.config.instance && startup.config.after !== true) {
       console.log(`---- startup: ${startup.key}, pid: ${process.pid}`);
       await app.meta._runStartup({ module: startup.module, name: startup.name });
     }
@@ -47,6 +47,7 @@ module.exports = async function(app) {
 
   // event: appReady
   app.meta.appReady = true;
+  app.meta.appReadyInstances = {};
   app.emit(constant.event.appReady);
   // event to agent
   app.meta.messenger.callAgent({
@@ -56,7 +57,8 @@ module.exports = async function(app) {
 
   // run startups: after
   for (const startup of app.meta.startupsArray) {
-    if (!startup.config.disable && startup.config.after === true) {
+    if (!startup.config.disable && !startup.config.instance && startup.config.after === true) {
+      console.log(`---- startup: ${startup.key}, pid: ${process.pid}`);
       await app.meta._runStartup({ module: startup.module, name: startup.name });
     }
   }
