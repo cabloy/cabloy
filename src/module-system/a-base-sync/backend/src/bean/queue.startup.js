@@ -5,7 +5,7 @@ module.exports = app => {
     async execute(context) {
       const { startup, instanceStartup } = context.data;
       // ignore debounce for test
-      const force = instanceStartup ? instanceStartup.options.force : false;
+      const force = instanceStartup && instanceStartup.options && instanceStartup.options.force;
       if (!force && !app.meta.isTest) {
         const fullKey = `${startup.module}:${startup.name}`;
         const cacheKey = `startupDebounce:${fullKey}`;

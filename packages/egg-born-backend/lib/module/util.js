@@ -194,7 +194,7 @@ module.exports = app => {
       // ctx
       const ctx = await this.createAnonymousContext({ locale, subdomain, module: beanModule });
       // bean
-      const bean = ctx.bean._getBean(beanFullName);
+      const bean = beanFullName ? ctx.bean._getBean(beanFullName) : null;
       // execute
       if (transaction) {
         return await ctx.transaction.begin(async () => {

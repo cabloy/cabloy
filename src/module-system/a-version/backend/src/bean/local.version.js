@@ -18,6 +18,11 @@ module.exports = app => {
       await this.__database();
     }
 
+    async instanceInitStartup({ options }) {
+      const instanceBase = options && options.instanceBase;
+      await this.__instanceInit(this.ctx.subdomain, instanceBase);
+    }
+
     async __start() {
       // update all modules
       try {
@@ -28,15 +33,24 @@ module.exports = app => {
         console.log(chalk.cyan('  Modules are checked failed!'));
         throw err;
       }
-      // version test
-      if (app.meta.isTest) {
-        const _ctx = await app.meta.util.createAnonymousContext({
-          subdomain: '', // for test
-          module: moduleInfo.relativeName,
-        });
-        const beanVersion = _ctx.bean._getBean(`${moduleInfo.relativeName}.local.version`);
-        await beanVersion.__check({ scene: 'test', subdomain: '' });
+    }
+
+    async __instanceInit(subdomain, instanceBase) {
+      try {
+        if (!instanceBase) {
+          instanceBase = this.ctx.bean.instance._getInstanceBase({ subdomain });
+        }
+        if (!instanceBase) instanceBase = {};
+        await this.__check({ ...instanceBase, scene: 'init', subdomain });
+        console.log(chalk.cyan(`  The instance is initialized successfully: ${subdomain || 'default'}`));
+      } catch (err) {
+        console.log(chalk.cyan(`  The instance is initialized failed: ${subdomain || 'default'}`));
+        throw err;
       }
+    }
+
+    async __instanceTest(subdomain) {
+      await this.__check({ scene: 'test', subdomain });
     }
 
     // scene: null/init/test
@@ -122,8 +136,13 @@ module.exports = app => {
 
       if (options.scene === 'test') {
         // test module
-        await this.ctx.transaction.begin(async () => {
-          await this.__testModuleTransaction(options, module, fileVersionNew);
+        await app.meta.util.executeBean({
+          subdomain: options.subdomain,
+          beanModule: module.info.relativeName,
+          transaction: true,
+          fn: async ({ ctx }) => {
+            await this.__testModuleTransaction(ctx, module, fileVersionNew, options);
+          },
         });
       }
 
@@ -158,13 +177,22 @@ module.exports = app => {
       try {
         if (!options.scene) {
           // update
-          await this.ctx.transaction.begin(async () => {
-            await this.__updateModuleTransaction(module, version);
+          await app.meta.util.executeBean({
+            beanModule: module.info.relativeName,
+            transaction: true,
+            fn: async ({ ctx }) => {
+              await this.__updateModuleTransaction(ctx, module, version);
+            },
           });
         } else {
           // init
-          await this.ctx.transaction.begin(async () => {
-            await this.__initModuleTransaction(options, module, version);
+          await app.meta.util.executeBean({
+            subdomain: options.subdomain,
+            beanModule: module.info.relativeName,
+            transaction: true,
+            fn: async ({ ctx }) => {
+              await this.__initModuleTransaction(ctx, module, version, options);
+            },
           });
         }
       } catch (err) {
@@ -172,25 +200,25 @@ module.exports = app => {
       }
     }
 
-    async __updateModuleTransaction(module, version) {
+    async __updateModuleTransaction(_ctx, module, version) {
       // bean
-      const beanVersion = this.ctx.bean._getBean(`${module.info.relativeName}.version.manager`);
+      const beanVersion = _ctx.bean._getBean(`${module.info.relativeName}.version.manager`);
       if (!beanVersion) throw new Error(`version.manager not exists for ${module.info.relativeName}`);
       if (!beanVersion.update) throw new Error(`version.manager.update not exists for ${module.info.relativeName}`);
       // execute
       await beanVersion.update({ version });
       // insert record
       if (version > 0) {
-        await this.ctx.db.insert('aVersion', {
+        await _ctx.db.insert('aVersion', {
           module: module.info.relativeName,
           version,
         });
       }
     }
 
-    async __initModuleTransaction(options, module, version) {
+    async __initModuleTransaction(_ctx, module, version, options) {
       // bean
-      const beanVersion = this.ctx.bean._getBean(`${module.info.relativeName}.version.manager`);
+      const beanVersion = _ctx.bean._getBean(`${module.info.relativeName}.version.manager`);
       if (!beanVersion) throw new Error(`version.manager not exists for ${module.info.relativeName}`);
       // execute
       if (beanVersion.init) {
@@ -198,7 +226,7 @@ module.exports = app => {
       }
       // insert record
       if (version > 0) {
-        await this.ctx.db.insert('aVersionInit', {
+        await _ctx.db.insert('aVersionInit', {
           subdomain: options.subdomain,
           module: module.info.relativeName,
           version,
@@ -207,12 +235,11 @@ module.exports = app => {
     }
 
     // test module
-    async __testModuleTransaction(options, module, version) {
+    async __testModuleTransaction(_ctx, module, version, options) {
       // bean
-      const beanVersion = this.ctx.bean._getBean(`${module.info.relativeName}.version.manager`);
-      if (!beanVersion) throw new Error(`version.manager not exists for ${module.info.relativeName}`);
+      const beanVersion = _ctx.bean._getBean(`${module.info.relativeName}.version.manager`);
       // execute
-      if (beanVersion.test) {
+      if (beanVersion && beanVersion.test) {
         await beanVersion.test({ ...options, version });
       }
     }

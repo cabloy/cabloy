@@ -24,10 +24,47 @@ module.exports = ctx => {
       return instance;
     }
 
+    async _get({ subdomain }) {
+      // get
+      const instance = await ctx.db.get('aInstance', { name: subdomain });
+      if (instance) return instance;
+      // instance base
+      const instanceBase = this._getInstanceBase({ subdomain });
+      if (!instanceBase) return null;
+      // queue
+      return await ctx.app.meta.queue.pushAsync({
+        module: moduleInfo.relativeName,
+        queueName: 'registerInstance',
+        queueNameSub: subdomain,
+        data: instanceBase,
+      });
+    }
+
+    async _registerQueue(instanceBase) {
+      // get again
+      let instance = await ctx.db.get('aInstance', { name: instanceBase.subdomain });
+      if (instance) return instance;
+      // insert
+      instance = {
+        name: instanceBase.subdomain,
+        title: instanceBase.title,
+        config: JSON.stringify(instanceBase.config || {}),
+        disabled: 0,
+      };
+      const res = await ctx.db.insert('aInstance', instance);
+      instance.id = res.insertId;
+      return instance;
+    }
+
+    _getInstanceBase({ subdomain }) {
+      const instances = ctx.app.config.instances || [{ subdomain: '', password: '' }];
+      return instances.find(item => item.subdomain === subdomain);
+    }
+
     async resetCache({ subdomain }) {
       // cache
       const cacheMem = ctx.cache.mem.module(moduleInfo.relativeName);
-      const instance = await ctx.db.get('aInstance', { name: subdomain });
+      const instance = await this._get({ subdomain });
       if (!instance) {
         // prompt
         if (ctx.app.meta.isLocal) {
@@ -63,25 +100,23 @@ module.exports = ctx => {
       if (subdomain === undefined) throw new Error(`subdomain not valid: ${subdomain}`);
       if (ctx.app.meta.appReadyInstances[subdomain]) return;
       // instance startup
-      await this.instanceStartup();
+      await this.instanceStartup({ subdomain });
     }
 
-    async instanceStartup(options) {
-      if (!options) options = { force: false, instance: null };
+    // options: force/instanceBase
+    async instanceStartup({ subdomain, options }) {
+      if (!options) options = { force: false, instanceBase: null };
       // queue
       await ctx.app.meta.queue.pushAsync({
-        subdomain: ctx.subdomain,
         module: moduleInfo.relativeName,
         queueName: 'instanceStartup',
-        data: options,
+        queueNameSub: subdomain,
+        data: { subdomain, options },
       });
     }
 
-    async _instanceStartupQueue(options) {
-      return await ctx.app.meta._runStartupInstance({
-        subdomain: ctx.subdomain,
-        options,
-      });
+    async _instanceStartupQueue({ subdomain, options }) {
+      return await ctx.app.meta._runStartupInstance({ subdomain, options });
     }
 
   }

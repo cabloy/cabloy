@@ -7,6 +7,7 @@ const queueRegisterAtomClass = require('./bean/queue.registerAtomClass.js');
 const queueRegisterAuthProvider = require('./bean/queue.registerAuthProvider.js');
 const queueSchedule = require('./bean/queue.schedule.js');
 const queueStartup = require('./bean/queue.startup.js');
+const queueRoleBuild = require('./bean/queue.roleBuild.js');
 const startupLoadSchedules = require('./bean/startup.loadSchedules.js');
 const startupInstallAuthProviders = require('./bean/startup.installAuthProviders.js');
 const startupSetFunctionLocales = require('./bean/startup.setFunctionLocales.js');
@@ -69,6 +70,10 @@ module.exports = app => {
     'queue.startup': {
       mode: 'app',
       bean: queueStartup,
+    },
+    'queue.roleBuild': {
+      mode: 'app',
+      bean: queueRoleBuild,
     },
     // startup
     'startup.loadSchedules': {

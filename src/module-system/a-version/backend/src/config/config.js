@@ -11,6 +11,11 @@ module.exports = appInfo => {
     databaseName: {
       bean: 'databaseName',
     },
+    instanceInit: {
+      bean: 'instanceInit',
+      instance: true,
+      debounce: true,
+    },
   };
 
   return config;

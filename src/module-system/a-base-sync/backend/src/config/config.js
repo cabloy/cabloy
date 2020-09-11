@@ -81,6 +81,9 @@ module.exports = appInfo => {
       bean: 'startup',
       // concurrency: true,
     },
+    roleBuild: {
+      bean: 'roleBuild',
+    },
   };
 
   // broadcasts

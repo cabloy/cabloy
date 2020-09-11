@@ -20,6 +20,9 @@ module.exports = appInfo => {
     instanceStartup: {
       bean: 'instanceStartup',
     },
+    registerInstance: {
+      bean: 'registerInstance',
+    },
   };
 
   // startups

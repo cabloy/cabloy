@@ -186,7 +186,10 @@ module.exports = function(app) {
 
     _queuePush(info, isAsync) {
       // queue config
-      const queueConfig = app.meta.queues[`${info.module}:${info.queueName}`].config;
+      const fullKey = `${info.module}:${info.queueName}`;
+      const queueBase = app.meta.queues[fullKey];
+      if (!queueBase) throw new Error(`queue config not found: ${fullKey}`);
+      const queueConfig = queueBase.config;
       // queueConfig.options: queue/worker/job/limiter
       const jobOptions = (queueConfig.options && queueConfig.options.job) || null;
       // queue

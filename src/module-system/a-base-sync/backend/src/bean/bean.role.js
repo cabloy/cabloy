@@ -463,6 +463,16 @@ module.exports = ctx => {
 
     // build roles
     async build(options) {
+      // queue
+      await ctx.app.meta.queue.pushAsync({
+        subdomain: ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'roleBuild',
+        data: { options },
+      });
+    }
+
+    async _buildQueue(options) {
       options = options || {};
       const progressId = options.progressId;
       // total

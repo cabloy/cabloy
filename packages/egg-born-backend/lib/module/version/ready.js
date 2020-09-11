@@ -46,6 +46,23 @@ module.exports = async function(app) {
     }
   }
 
+  // version test
+  if (app.meta.isTest) {
+    // subdomain
+    const subdomain = '';
+    // init
+    await app.meta._runStartupInstance({ subdomain, options: null });
+    // test
+    await app.meta.util.executeBean({
+      subdomain,
+      beanModule: 'a-version',
+      beanFullName: 'a-version.local.version',
+      fn: async ({ bean }) => {
+        await bean.__instanceTest(subdomain);
+      },
+    });
+  }
+
 };
 
 async function _clearRedisKeys(redis, pattern) {

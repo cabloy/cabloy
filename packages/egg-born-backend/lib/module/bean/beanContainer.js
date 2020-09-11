@@ -40,14 +40,17 @@ module.exports = (app, ctx) => {
       } else {
         beanFullName = `${typeof moduleName === 'string' ? moduleName : moduleName.relativeName}.${beanName}`;
       }
-      if (!this[beanFullName]) {
+      if (this[beanFullName] === undefined) {
         this[beanFullName] = this._newBean(beanFullName);
       }
       return this[beanFullName];
     },
     _newBean(beanFullName, ...args) {
       const _beanClass = this._getBeanClass(beanFullName);
-      if (!_beanClass) throw new Error(`bean not found: ${beanFullName}`);
+      if (!_beanClass) {
+        // throw new Error(`bean not found: ${beanFullName}`);
+        return null;
+      }
       // class or fn
       const bean = _beanClass.bean;
       let _classOrFn;

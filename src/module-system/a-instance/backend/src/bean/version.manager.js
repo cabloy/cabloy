@@ -44,28 +44,7 @@ module.exports = app => {
       }
     }
 
-    async init(options) {
-      if (options.version === 1) {
-        await this.ctx.db.insert('aInstance', { name: options.subdomain, disabled: 0 });
-      }
-      if (options.version === 2) {
-        if (options.title) {
-          const instance = await this.ctx.db.get('aInstance', { name: options.subdomain });
-          await this.ctx.db.update('aInstance', { id: instance.id, title: options.title });
-        }
-      }
-      // if (options.version === 3) {
-      //   if (options.meta) {
-      //     const instance = await this.ctx.db.get('aInstance', { name: options.subdomain });
-      //     await this.ctx.db.update('aInstance', { id: instance.id, meta: JSON.stringify(options.meta) });
-      //   }
-      // }
-      if (options.version === 4) {
-        const config = options.config || {};
-        const instance = await this.ctx.db.get('aInstance', { name: options.subdomain });
-        await this.ctx.db.update('aInstance', { id: instance.id, config: JSON.stringify(config) });
-      }
-    }
+    async init(options) { }
 
   }
 
