@@ -1,4 +1,3 @@
-const version = require('./service/version.js');
 const role = require('./service/role.js');
 const user = require('./service/user.js');
 const atomRight = require('./service/atomRight.js');
@@ -8,7 +7,6 @@ const _function = require('./service/function.js');
 
 module.exports = app => {
   const services = {
-    version,
     role,
     user,
     atomRight,

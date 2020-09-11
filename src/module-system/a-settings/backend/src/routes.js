@@ -1,8 +1,5 @@
 module.exports = app => {
   const routes = [
-    // version
-    { method: 'post', path: 'version/update', controller: 'version', middlewares: 'inner' },
-    { method: 'post', path: 'version/init', controller: 'version', middlewares: 'inner' },
     // settings:instance
     { method: 'post', path: 'settings/instance/list', controller: 'settings', action: 'instanceList',
       meta: { right: { type: 'function', name: 'settings' } },

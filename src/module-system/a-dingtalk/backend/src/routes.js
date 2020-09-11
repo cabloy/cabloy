@@ -1,9 +1,5 @@
 module.exports = app => {
   const routes = [
-    // version
-    { method: 'post', path: 'version/update', controller: 'version', middlewares: 'inner' },
-    { method: 'post', path: 'version/init', controller: 'version', middlewares: 'inner' },
-    { method: 'post', path: 'version/test', controller: 'version', middlewares: 'test' },
     // message
     { method: 'post', path: 'callback/index', controller: 'callback', meta: { auth: { enable: false } } },
     // contacts

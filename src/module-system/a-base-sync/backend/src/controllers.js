@@ -1,4 +1,3 @@
-const version = require('./controller/version.js');
 const atom = require('./controller/atom.js');
 const atomAction = require('./controller/atomAction.js');
 const atomClass = require('./controller/atomClass.js');
@@ -12,7 +11,6 @@ const user = require('./controller/user.js');
 
 module.exports = app => {
   const controllers = {
-    version,
     atom,
     atomAction,
     atomClass,

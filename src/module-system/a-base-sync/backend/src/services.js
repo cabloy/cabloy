@@ -1,4 +1,3 @@
-const version = require('./service/version.js');
 const base = require('./service/base.js');
 const user = require('./service/user.js');
 const atom = require('./service/atom.js');
@@ -12,7 +11,6 @@ const layoutConfig = require('./service/layoutConfig.js');
 
 module.exports = app => {
   const services = {
-    version,
     base,
     user,
     atom,

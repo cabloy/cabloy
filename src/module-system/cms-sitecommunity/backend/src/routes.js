@@ -1,9 +1,5 @@
 module.exports = app => {
   const routes = [
-    // version
-    { method: 'post', path: 'version/update', controller: 'version', middlewares: 'inner' },
-    { method: 'post', path: 'version/init', controller: 'version', middlewares: 'inner' },
-    { method: 'post', path: 'version/test', controller: 'version', middlewares: 'test' },
     // post
     { method: 'post', path: 'post/create', controller: 'post', middlewares: 'inner', meta: { auth: { enable: false } } },
     { method: 'post', path: 'post/read', controller: 'post', middlewares: 'inner', meta: { auth: { enable: false } } },

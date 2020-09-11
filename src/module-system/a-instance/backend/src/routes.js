@@ -1,6 +1,4 @@
 module.exports = [
-  // version
-  { method: 'post', path: 'version/update', controller: 'version', middlewares: 'inner' },
   { method: 'post', path: 'version/init', controller: 'version', middlewares: 'inner', meta: { instance: { enable: false } } },
   // instance
   { method: 'post', path: 'instance/item', controller: 'instance', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },

@@ -1,4 +1,3 @@
-const version = require('./controller/version.js');
 const role = require('./controller/role.js');
 const user = require('./controller/user.js');
 const atomRight = require('./controller/atomRight.js');
@@ -8,7 +7,6 @@ const _function = require('./controller/function.js');
 
 module.exports = app => {
   const controllers = {
-    version,
     role,
     user,
     atomRight,
