@@ -2,7 +2,7 @@ class BeanBase {
 
   constructor(ctx) {
     this.ctx = ctx;
-    this.app = ctx.app;
+    this.app = ctx ? ctx.app : null;
   }
 }
 

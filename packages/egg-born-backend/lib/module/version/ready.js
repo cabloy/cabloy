@@ -28,15 +28,9 @@ module.exports = async function(app) {
     app.meta._loadQueueWorkers();
   }
 
-  // event: appReady
+  // appReady
   app.meta.appReady = true;
   app.meta.appReadyInstances = {};
-  app.emit(constant.event.appReady);
-  // event to agent
-  app.meta.messenger.callAgent({
-    name: 'appReady',
-    data: { pid: process.pid },
-  });
 
   // run startups: after
   for (const startup of app.meta.startupsArray) {
@@ -69,6 +63,14 @@ module.exports = async function(app) {
       },
     });
   }
+
+  // event: appReady
+  app.emit(constant.event.appReady);
+  // event to agent
+  app.meta.messenger.callAgent({
+    name: 'appReady',
+    data: { pid: process.pid },
+  });
 
 };
 

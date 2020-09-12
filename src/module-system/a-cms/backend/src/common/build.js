@@ -1150,15 +1150,11 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
             // getSite
             let site;
             try {
-              site = await this.ctx.performAction({
-                method: 'post',
-                url: '/a/cms/site/getSite',
-                body: {
-                  atomClass,
-                  language,
-                  options: {
-                    envs: false,
-                  },
+              site = await this.ctx.service.site.getSite({
+                atomClass,
+                language,
+                options: {
+                  envs: false,
                 },
               });
             } catch (e) {

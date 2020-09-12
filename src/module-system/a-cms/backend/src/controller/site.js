@@ -1,23 +1,8 @@
 const utils = require('../common/utils.js');
 
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class SiteController extends app.Controller {
-
-    async getSite() {
-      // not log the error
-      try {
-        const atomClass = this.ctx.request.body.atomClass;
-        const site = await this.ctx.service.site.getSite({
-          atomClass,
-          language: this.ctx.request.body.language,
-          options: this.ctx.request.body.options,
-        });
-        this.ctx.success(site);
-      } catch (err) {
-        this.ctx.fail(err);
-      }
-    }
 
     async getConfigSiteBase() {
       const atomClass = this.ctx.request.body.atomClass;

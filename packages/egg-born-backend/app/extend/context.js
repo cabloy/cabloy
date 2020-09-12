@@ -80,6 +80,9 @@ module.exports = {
     }
     return this[DATABASE];
   },
+  set db(value) {
+    this[DATABASE] = value;
+  },
   get dbMeta() {
     if (!this[DATABASEMETA]) {
       this[DATABASEMETA] = {
