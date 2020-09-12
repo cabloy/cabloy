@@ -2,8 +2,11 @@ const require3 = require('require3');
 const extend = require3('extend2');
 const chalk = require3('chalk');
 const boxen = require3('boxen');
+const async = require3('async');
 
 const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' };
+
+const __queueInstanceStartup = {};
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -106,9 +109,33 @@ module.exports = ctx => {
 
     // options: force/instanceBase
     async instanceStartup({ subdomain, options }) {
-      if (!options) options = { force: false, instanceBase: null };
-      // important: must not use queue, so as to execute in the same worker
-      return await ctx.app.meta._runStartupInstance({ subdomain, options });
+      // queue within the same worker
+      if (!__queueInstanceStartup[subdomain]) {
+        __queueInstanceStartup[subdomain] = async.queue((info, cb) => {
+          // check again
+          const force = info.options && info.options.force;
+          if (ctx.app.meta.appReadyInstances[info.subdomain] && !force) {
+            info.resolve();
+            cb();
+            return;
+          }
+          // startup
+          ctx.app.meta._runStartupInstance({ subdomain: info.subdomain, options: info.options }).then(() => {
+            info.resolve();
+            cb();
+          }).catch(err => {
+            info.reject(err);
+            cb();
+          });
+        });
+      }
+      // promise
+      return new Promise((resolve, reject) => {
+        // options
+        if (!options) options = { force: false, instanceBase: null };
+        // queue push
+        __queueInstanceStartup[subdomain].push({ resolve, reject, subdomain, options });
+      });
     }
 
   }
