@@ -106,6 +106,7 @@ module.exports = ctx => {
     // options: force/instanceBase
     async instanceStartup({ subdomain, options }) {
       if (!options) options = { force: false, instanceBase: null };
+      // important: must not use queue, so as to execute in the same worker
       return await ctx.app.meta._runStartupInstance({ subdomain, options });
     }
 
