@@ -86,6 +86,9 @@ module.exports = appInfo => {
       bean: 'startup',
       // concurrency: true,
     },
+    instanceStartup: {
+      bean: 'startup',
+    },
     roleBuild: {
       bean: 'roleBuild',
     },

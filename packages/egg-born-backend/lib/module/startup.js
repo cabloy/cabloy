@@ -55,7 +55,7 @@ module.exports = function(loader) {
     await loader.app.meta.queue.pushAsync({
       subdomain: instanceStartup ? instanceStartup.subdomain : undefined,
       module: 'a-base',
-      queueName: 'startup',
+      queueName: instanceStartup ? 'instanceStartup' : 'startup',
       queueNameSub: fullKey,
       data: { startup, instanceStartup },
     });
