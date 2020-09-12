@@ -38,7 +38,7 @@ module.exports = function(loader, modules) {
     }
   }
 
-  async function __removeAllSchedules() {
+  async function __removeAllSchedules({ subdomain }) {
     const info = {
       module: 'a-base',
       queueName: 'schedule',
@@ -47,17 +47,21 @@ module.exports = function(loader, modules) {
     const jobs = await queue.getRepeatableJobs();
     // console.log(jobs);
     for (const job of jobs) {
-      await queue.removeRepeatableByKey(job.key);
+      const prefix = `_schedule.${subdomain}.`;
+      if (job.name.indexOf(prefix) === 0) {
+        await queue.removeRepeatableByKey(job.key);
+      }
     }
   }
 
-  function __installSchedules() {
+  function __installSchedules({ subdomain }) {
     for (const fullKey in ebSchedules) {
       const schedule = ebSchedules[fullKey];
       if (!schedule.config.disable && schedule.config.repeat) {
         // push
-        const jobId = `_schedule.${fullKey}`;
+        const jobId = `_schedule.${subdomain}.${fullKey}`;
         loader.app.meta.queue.push({
+          subdomain,
           module: 'a-base',
           queueName: 'schedule',
           queueNameSub: fullKey,
@@ -67,6 +71,7 @@ module.exports = function(loader, modules) {
             repeat: schedule.config.repeat,
           },
           data: {
+            subdomain,
             module: schedule.module,
             name: schedule.name,
           },
@@ -75,12 +80,12 @@ module.exports = function(loader, modules) {
     }
   }
 
-  loader.app.meta._loadSchedules = async () => {
-    await __removeAllSchedules();
-    __installSchedules();
+  loader.app.meta._loadSchedules = async ({ subdomain }) => {
+    await __removeAllSchedules({ subdomain });
+    __installSchedules({ subdomain });
   };
 
-  loader.app.meta._runSchedule = async ({ module, name }) => {
+  loader.app.meta._runSchedule = async ({ subdomain, module, name }) => {
     // ignore on test
     if (loader.app.meta.isTest) return;
     // schedule
@@ -89,12 +94,11 @@ module.exports = function(loader, modules) {
     // bean
     const bean = schedule.bean;
     // execute
-    return await loader.app.meta.util.executeBeanInstance({
-      // locale, context,
+    return await loader.app.meta.util.executeBean({
+      subdomain,
       beanModule: bean.module,
       beanFullName: `${bean.module}.schedule.${bean.name}`,
       transaction: schedule.config.transaction,
-      instance: schedule.config.instance,
     });
   };
 };

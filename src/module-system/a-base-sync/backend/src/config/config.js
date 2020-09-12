@@ -48,10 +48,12 @@ module.exports = appInfo => {
   config.startups = {
     loadSchedules: {
       bean: 'loadSchedules',
+      instance: true,
       debounce: true,
     },
     installAuthProviders: {
       bean: 'installAuthProviders',
+      instance: true,
     },
     setFunctionLocales: {
       bean: 'setFunctionLocales',

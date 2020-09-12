@@ -209,22 +209,22 @@ module.exports = app => {
       }
       return await bean.execute(context);
     },
-    async executeBeanInstance({ locale, context, beanModule, beanFullName, transaction, instance }) {
-      // not check instance
-      if (!instance) {
-        return await this.executeBean({
-          locale, context, beanModule, beanFullName, transaction,
-        });
-      }
-      // all instances
-      const ctx = await this.createAnonymousContext({ module: beanModule });
-      const instances = await ctx.bean.instance.list();
-      for (const instance of instances) {
-        await this.executeBean({
-          locale, subdomain: instance.name, context,
-          beanModule, beanFullName, transaction,
-        });
-      }
-    },
+    // async executeBeanInstance({ locale, context, beanModule, beanFullName, transaction, instance }) {
+    //   // not check instance
+    //   if (!instance) {
+    //     return await this.executeBean({
+    //       locale, context, beanModule, beanFullName, transaction,
+    //     });
+    //   }
+    //   // all instances
+    //   const ctx = await this.createAnonymousContext({ module: beanModule });
+    //   const instances = await ctx.bean.instance.list();
+    //   for (const instance of instances) {
+    //     await this.executeBean({
+    //       locale, subdomain: instance.name, context,
+    //       beanModule, beanFullName, transaction,
+    //     });
+    //   }
+    // },
   };
 };
