@@ -1,7 +1,5 @@
-const Build = require('../common/build.js');
-
 module.exports = app => {
-
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class RSSController extends app.Controller {
 
     async feed() {
@@ -33,7 +31,7 @@ module.exports = app => {
       });
       const list = res.list;
       // build
-      const build = Build.create(this.ctx, atomClass);
+      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
       // site
       const site = await build.getSite({ language });
       // feed
@@ -105,7 +103,7 @@ module.exports = app => {
       });
       const list = res.list;
       // build
-      const build = Build.create(this.ctx, atomClass);
+      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
       // site
       const site = await build.getSite({ language });
       // feed
@@ -178,7 +176,7 @@ module.exports = app => {
       // atomClass
       const atomClass = await this.ctx.bean.atomClass.get({ id: article.atomClassId });
       // build
-      const build = Build.create(this.ctx, atomClass);
+      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
       // site
       const site = await build.getSite({ language });
       // feed

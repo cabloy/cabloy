@@ -1,6 +1,5 @@
-const Build = require('../common/build.js');
-
 module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Queue extends app.meta.BeanBase {
 
     async execute(context) {
@@ -10,22 +9,22 @@ module.exports = app => {
     }
 
     async buildLanguage({ atomClass, language, progressId }) {
-      const build = Build.create(this.ctx, atomClass);
+      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
       return await build.buildLanguage({ language, progressId });
     }
 
     async buildLanguages({ atomClass, progressId }) {
-      const build = Build.create(this.ctx, atomClass);
+      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
       return await build.buildLanguages({ progressId });
     }
 
     async renderArticle({ atomClass, key, inner }) {
-      const build = Build.create(this.ctx, atomClass);
+      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
       return await build.renderArticle({ key, inner });
     }
 
     async deleteArticle({ atomClass, key, article, inner }) {
-      const build = Build.create(this.ctx, atomClass);
+      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
       return await build.deleteArticle({ key, article, inner });
     }
 

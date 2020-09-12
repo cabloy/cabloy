@@ -1,6 +1,5 @@
 const require3 = require('require3');
 const extend = require3('extend2');
-const Build = require('../common/build.js');
 
 const _blocksLocales = {};
 const _blockArrayLocales = {};
@@ -10,24 +9,24 @@ module.exports = app => {
   class Site extends app.Service {
 
     async getSite({ atomClass, language, options }) {
-      const build = Build.create(this.ctx, atomClass);
+      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
       return await build.getSite({ language, options });
     }
 
     async getConfigSiteBase({ atomClass }) {
-      const build = Build.create(this.ctx, atomClass);
+      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
       return await build.getConfigSiteBase();
     }
 
     async getConfigSite({ atomClass }) {
-      const build = Build.create(this.ctx, atomClass);
+      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
       return await build.getConfigSite();
     }
 
     // save site config
     async setConfigSite({ atomClass, data }) {
       // build
-      const build = Build.create(this.ctx, atomClass);
+      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
       // save
       await build.setConfigSite({ data });
       // only in development
@@ -40,19 +39,19 @@ module.exports = app => {
     }
 
     async getConfigLanguagePreview({ atomClass, language }) {
-      const build = Build.create(this.ctx, atomClass);
+      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
       return await build.getConfigLanguagePreview({ language });
     }
 
     async getConfigLanguage({ atomClass, language }) {
-      const build = Build.create(this.ctx, atomClass);
+      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
       return await build.getConfigLanguage({ language });
     }
 
     // save language config
     async setConfigLanguage({ atomClass, language, data }) {
       // build
-      const build = Build.create(this.ctx, atomClass);
+      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
       // save
       await build.setConfigLanguage({ language, data });
       // only in development
@@ -65,12 +64,12 @@ module.exports = app => {
     }
 
     async getLanguages({ atomClass }) {
-      const build = Build.create(this.ctx, atomClass);
+      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
       return await build.getLanguages();
     }
 
     async getUrl({ atomClass, language, path }) {
-      const build = Build.create(this.ctx, atomClass);
+      const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
       const site = await build.getSite({ language });
       return build.getUrl(site, language, path);
     }
