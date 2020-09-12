@@ -8,9 +8,10 @@ const queueRegisterAuthProvider = require('./bean/queue.registerAuthProvider.js'
 const queueSchedule = require('./bean/queue.schedule.js');
 const queueStartup = require('./bean/queue.startup.js');
 const queueRoleBuild = require('./bean/queue.roleBuild.js');
-const startupLoadSchedules = require('./bean/startup.loadSchedules.js');
+const startupRegisterPassport = require('./bean/startup.registerPassport.js');
 const startupInstallAuthProviders = require('./bean/startup.installAuthProviders.js');
 const startupSetFunctionLocales = require('./bean/startup.setFunctionLocales.js');
+const startupLoadSchedules = require('./bean/startup.loadSchedules.js');
 const middlewareInner = require('./bean/middleware.inner.js');
 const middlewareTest = require('./bean/middleware.test.js');
 const middlewareTransaction = require('./bean/middleware.transaction.js');
@@ -76,9 +77,9 @@ module.exports = app => {
       bean: queueRoleBuild,
     },
     // startup
-    'startup.loadSchedules': {
+    'startup.registerPassport': {
       mode: 'app',
-      bean: startupLoadSchedules,
+      bean: startupRegisterPassport,
     },
     'startup.installAuthProviders': {
       mode: 'app',
@@ -87,6 +88,10 @@ module.exports = app => {
     'startup.setFunctionLocales': {
       mode: 'app',
       bean: startupSetFunctionLocales,
+    },
+    'startup.loadSchedules': {
+      mode: 'app',
+      bean: startupLoadSchedules,
     },
     // middleware
     'middleware.inner': {

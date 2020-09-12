@@ -9,10 +9,11 @@ module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Instance {
 
-    async list(where) {
-      if (!where) where = { disabled: 0 }; // allow disabled=undefined
-      return await ctx.db.select('aInstance', { where });
-    }
+    // todo: could support paged
+    // async list(where) {
+    //   if (!where) where = { disabled: 0 }; // allow disabled=undefined
+    //   return await ctx.db.select('aInstance', { where });
+    // }
 
     async get({ subdomain }) {
       // cache

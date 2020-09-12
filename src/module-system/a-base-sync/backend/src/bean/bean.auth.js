@@ -109,7 +109,7 @@ module.exports = ctx => {
         callbackURL: `/api/${moduleInfo.url}/passport/${moduleRelativeName}/${providerName}/callback`,
       };
       // authenticate
-      const authenticate = createAuthenticate(moduleRelativeName, providerName, config);
+      const authenticate = _createAuthenticate(moduleRelativeName, providerName, config);
       // middlewares
       const middlewaresPost = [];
       const middlewaresGet = [];
@@ -130,11 +130,7 @@ module.exports = ctx => {
     }
 
     async _registerAllProviders() {
-      // all instances
-      const instances = await ctx.bean.instance.list();
-      for (const instance of instances) {
-        await this._registerInstanceProviders(instance.name, instance.id);
-      }
+      await this._registerInstanceProviders(ctx.instance.name, ctx.instance.id);
     }
 
     async _registerInstanceProviders(subdomain, iid) {
@@ -184,7 +180,7 @@ module.exports = ctx => {
   return Auth;
 };
 
-function createAuthenticate(moduleRelativeName, providerName, _config) {
+function _createAuthenticate(moduleRelativeName, providerName, _config) {
   return async function(ctx, next) {
     // provider of db
     const providerItem = await ctx.bean.user.getAuthProvider({

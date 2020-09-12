@@ -46,10 +46,8 @@ module.exports = appInfo => {
 
   // startups
   config.startups = {
-    loadSchedules: {
-      bean: 'loadSchedules',
-      instance: true,
-      debounce: true,
+    registerPassport: {
+      bean: 'registerPassport',
     },
     installAuthProviders: {
       bean: 'installAuthProviders',
@@ -57,6 +55,11 @@ module.exports = appInfo => {
     },
     setFunctionLocales: {
       bean: 'setFunctionLocales',
+      instance: true,
+      debounce: true,
+    },
+    loadSchedules: {
+      bean: 'loadSchedules',
       instance: true,
       debounce: true,
     },

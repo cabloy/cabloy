@@ -271,7 +271,7 @@ module.exports = app => {
           // create test mysql
           mysqlConfig.database = databaseName;
           app.mysql.__ebdb_test = app.mysql.createInstance(mysqlConfig);// database ready
-          console.log(chalk.cyan(`  database: ${mysqlConfig.database}`));
+          console.log(chalk.cyan(`  database: ${mysqlConfig.database}, pid: ${process.pid}`));
         }
       }
       // test db
@@ -291,7 +291,7 @@ module.exports = app => {
         mysqlConfig.database = databaseName;
         app.mysql.__ebdb_test = app.mysql.createInstance(mysqlConfig);
         // database ready
-        console.log(chalk.cyan(`  database: ${mysqlConfig.database}`));
+        console.log(chalk.cyan(`  database: ${mysqlConfig.database}, pid: ${process.pid}`));
       }
     }
 

@@ -202,10 +202,18 @@ module.exports = ctx => {
     }
 
     authProviders() {
-      if (!_authProvidersLocales[ctx.locale]) {
-        _authProvidersLocales[ctx.locale] = this._prepareAuthProviders();
+      const subdomain = ctx.subdomain;
+      if (!_authProvidersLocales[subdomain]) _authProvidersLocales[subdomain] = {};
+      const authProvidersSubdomain = _authProvidersLocales[subdomain];
+      if (!authProvidersSubdomain[ctx.locale]) {
+        authProvidersSubdomain[ctx.locale] = this._prepareAuthProviders();
       }
-      return _authProvidersLocales[ctx.locale];
+      return authProvidersSubdomain[ctx.locale];
+    }
+
+    authProvidersReset() {
+      const subdomain = ctx.subdomain;
+      _authProvidersLocales[subdomain] = {};
     }
 
     // inner methods
