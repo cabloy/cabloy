@@ -1,10 +1,6 @@
 const require3 = require('require3');
 const extend = require3('extend2');
-const chalk = require3('chalk');
-const boxen = require3('boxen');
 const async = require3('async');
-
-const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' };
 
 const __queueInstanceStartup = {};
 
@@ -21,11 +17,9 @@ module.exports = ctx => {
     async get({ subdomain }) {
       // cache
       const cacheMem = ctx.cache.mem.module(moduleInfo.relativeName);
-      let instance = cacheMem.get('instance');
-      if (!instance) {
-        instance = await this.resetCache({ subdomain });
-      }
-      return instance;
+      const instance = cacheMem.get('instance');
+      if (instance) return instance;
+      return await this.resetCache({ subdomain });
     }
 
     async _get({ subdomain }) {
@@ -71,17 +65,7 @@ module.exports = ctx => {
       // cache
       const cacheMem = ctx.cache.mem.module(moduleInfo.relativeName);
       const instance = await this._get({ subdomain });
-      if (!instance) {
-        // prompt
-        if (ctx.app.meta.isLocal) {
-          const urlInfo = ctx.locale === 'zh-cn' ? 'https://cabloy.com/zh-cn/articles/multi-instance.html' : 'https://cabloy.com/articles/multi-instance.html';
-          let message = `Please add instance in ${chalk.keyword('cyan')('src/backend/config/config.local.js')}`;
-          message += '\n' + chalk.keyword('orange')(`{ subdomain: '${subdomain}', password: '', title: '' }`);
-          message += `\nMore info: ${chalk.keyword('cyan')(urlInfo)}`;
-          console.log('\n' + boxen(message, boxenOptions));
-        }
-        return ctx.throw(423);
-      }
+      if (!instance) return null;
       // config
       instance.config = JSON.parse(instance.config) || {};
       // cache configs
