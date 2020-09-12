@@ -6,12 +6,12 @@ module.exports = app => {
   class Instance extends app.Service {
 
     async item() {
-      return await this.ctx.db.get('aInstance', { id: this.ctx.instance.id });
+      return await this.ctx.model.instance.get({ id: this.ctx.instance.id });
     }
 
     async save({ data }) {
       // update
-      await this.ctx.db.update('aInstance', {
+      await this.ctx.model.instance.update({
         id: this.ctx.instance.id,
         title: data.title,
         config: data.config,

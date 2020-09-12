@@ -30,7 +30,8 @@ module.exports = ctx => {
 
     async _get({ subdomain }) {
       // get
-      const instance = await ctx.db.get('aInstance', { name: subdomain });
+      const modelInstance = ctx.model.module(moduleInfo.relativeName).instance;
+      const instance = await modelInstance.get({ name: subdomain });
       if (instance) return instance;
       // instance base
       const instanceBase = this._getInstanceBase({ subdomain });
@@ -46,7 +47,8 @@ module.exports = ctx => {
 
     async _registerQueue(instanceBase) {
       // get again
-      let instance = await ctx.db.get('aInstance', { name: instanceBase.subdomain });
+      const modelInstance = ctx.model.module(moduleInfo.relativeName).instance;
+      let instance = await modelInstance.get({ name: instanceBase.subdomain });
       if (instance) return instance;
       // insert
       instance = {
@@ -55,7 +57,7 @@ module.exports = ctx => {
         config: JSON.stringify(instanceBase.config || {}),
         disabled: 0,
       };
-      const res = await ctx.db.insert('aInstance', instance);
+      const res = await modelInstance.insert(instance);
       instance.id = res.insertId;
       return instance;
     }
@@ -74,7 +76,7 @@ module.exports = ctx => {
         if (ctx.app.meta.isLocal) {
           const urlInfo = ctx.locale === 'zh-cn' ? 'https://cabloy.com/zh-cn/articles/multi-instance.html' : 'https://cabloy.com/articles/multi-instance.html';
           let message = `Please add instance in ${chalk.keyword('cyan')('src/backend/config/config.local.js')}`;
-          message += '\n' + chalk.keyword('orange')(`{ subdomain: '${ctx.subdomain}', password: '', title: '' }`);
+          message += '\n' + chalk.keyword('orange')(`{ subdomain: '${subdomain}', password: '', title: '' }`);
           message += `\nMore info: ${chalk.keyword('cyan')(urlInfo)}`;
           console.log('\n' + boxen(message, boxenOptions));
         }
