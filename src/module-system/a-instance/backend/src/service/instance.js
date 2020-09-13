@@ -33,6 +33,16 @@ module.exports = app => {
       return { data: this.ctx.app.meta.configs };
     }
 
+    async reload() {
+      // broadcast
+      this.ctx.app.meta.broadcast.emit({
+        subdomain: this.ctx.subdomain,
+        module: 'a-instance',
+        broadcastName: 'reload',
+        data: null,
+      });
+    }
+
   }
 
   return Instance;

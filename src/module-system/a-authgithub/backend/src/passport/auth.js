@@ -47,9 +47,13 @@ module.exports = ctx => {
 
   const metaAuth = {
     providers: {
-      authgithub: _createProvider(),
     },
   };
+
+  const authgithub = _createProvider();
+  if (authgithub) {
+    metaAuth.providers.authgithub = authgithub;
+  }
 
   // ok
   return metaAuth;

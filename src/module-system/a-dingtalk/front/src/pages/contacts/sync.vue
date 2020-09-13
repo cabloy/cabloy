@@ -13,7 +13,7 @@
 <script>
 import syncStatus from '../../common/syncStatus.js';
 export default {
-  mixins: [syncStatus],
+  mixins: [ syncStatus ],
   data() {
     return {
       type: this.$f7route.query.type,
@@ -62,7 +62,7 @@ export default {
     onPerformSync() {
       if (this.ioSimple) return;
       return this.$view.dialog.confirm().then(() => {
-        return this.$api.post(`contacts/sync`, {
+        return this.$api.post('contacts/sync', {
           type: this.type,
         }).then(res => {
           this.progressId = res.progressId;
@@ -146,7 +146,7 @@ export default {
       }
       if (textarea.scrollTop() === scrollTopNew) return cb();
       textarea.scrollTop(scrollTopNew, 300, cb);
-    }
+    },
   },
 };
 

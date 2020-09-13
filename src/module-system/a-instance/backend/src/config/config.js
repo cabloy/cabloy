@@ -31,6 +31,9 @@ module.exports = appInfo => {
     resetCache: {
       bean: 'resetCache',
     },
+    reload: {
+      bean: 'reload',
+    },
   };
 
   return config;

@@ -5,4 +5,5 @@ export default {
   Subdomain: '子域名',
   Title: '标题',
   Empty: '空',
+  'Reload Instance': '重新加载实例',
 };

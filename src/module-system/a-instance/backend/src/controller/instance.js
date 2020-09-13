@@ -18,6 +18,11 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async reload() {
+      await this.service.instance.reload();
+      this.ctx.success();
+    }
+
   }
   return InstanceController;
 };

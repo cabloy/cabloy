@@ -1,6 +1,7 @@
 const versionManager = require('./bean/version.manager.js');
 const beanInstance = require('./bean/bean.instance.js');
 const broadcastResetCache = require('./bean/broadcast.resetCache.js');
+const broadcastReload = require('./bean/broadcast.reload.js');
 const middlewareAppReady = require('./bean/middleware.appReady.js');
 const middlewareInstance = require('./bean/middleware.instance.js');
 const queueRegisterInstance = require('./bean/queue.registerInstance.js');
@@ -16,6 +17,10 @@ module.exports = app => {
     'broadcast.resetCache': {
       mode: 'app',
       bean: broadcastResetCache,
+    },
+    'broadcast.reload': {
+      mode: 'app',
+      bean: broadcastReload,
     },
     // middleware
     'middleware.appReady': {

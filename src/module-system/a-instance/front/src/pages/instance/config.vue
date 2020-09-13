@@ -15,6 +15,9 @@
         </eb-list-input>
       </eb-list>
     </eb-validate>
+    <f7-toolbar bottom-md>
+      <eb-link :onPerform="onPerformReload">{{$text('Reload Instance')}}</eb-link>
+    </f7-toolbar>
   </eb-page>
 </template>
 <script>
@@ -26,24 +29,23 @@ export default {
   },
   created() {
     this.$api.post('instance/item').then(data => {
-      data.config = JSON5.stringify(JSON.parse(data.config || '{}'), null, 2);
+      data.config = window.JSON5.stringify(JSON.parse(data.config || '{}'), null, 2);
       this.instance = data;
     });
   },
   methods: {
-    onPerformValidate() {
+    async onPerformValidate() {
       const data = this.$utils.extend({}, this.instance);
-      data.config = JSON.stringify(JSON5.parse(data.config || '{}'));
-      return this.$api.post('instance/save', { data }).then(() => {
-        // change preview
-        this.$emit('preview');
-        // instance
-        this.$store.commit('auth/setInstance', { name: this.instance.name, title: this.instance.title });
-        // title
-        window.document.title = this.$store.getters['auth/title'];
-        // ok
-        return true;
-      });
+      data.config = JSON.stringify(window.JSON5.parse(data.config || '{}'));
+      await this.$api.post('instance/save', { data });
+      // change preview
+      this.$emit('preview');
+      // instance
+      this.$store.commit('auth/setInstance', { name: this.instance.name, title: this.instance.title });
+      // title
+      window.document.title = this.$store.getters['auth/title'];
+      // ok
+      return true;
     },
     onPerformSave() {
       return this.$refs.validate.perform();
@@ -59,6 +61,11 @@ export default {
     },
     onSubmit() {
       this.$refs.buttonSubmit.onClick();
+    },
+    async onPerformReload() {
+      await this.$view.dialog.confirm();
+      await this.$api.post('instance/reload');
+      return true;
     },
   },
 };
