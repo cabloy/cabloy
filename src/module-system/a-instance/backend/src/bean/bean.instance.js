@@ -8,11 +8,21 @@ module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Instance {
 
-    // todo: could support paged
-    // async list(where) {
-    //   if (!where) where = { disabled: 0 }; // allow disabled=undefined
-    //   return await ctx.db.select('aInstance', { where });
-    // }
+    async list(options) {
+      if (!options) options = { where: null, orders: null, page: null };
+      const page = ctx.bean.util.page(options.page, false);
+      // select
+      const _options = {
+        where: options.where,
+        orders: options.orders,
+      };
+      if (page.size !== 0) {
+        _options.limit = page.size;
+        _options.offset = page.index;
+      }
+      const modelInstance = ctx.model.module(moduleInfo.relativeName).instance;
+      return await modelInstance.select(_options);
+    }
 
     async get({ subdomain }) {
       // cache
