@@ -100,11 +100,11 @@ export default {
         const hintMust = hint.must;
         // check optional
         if (hintOptional && !property.notEmpty) {
-          return `${title}(${this.$text(hintOptional)})`;
+          return `${title}${this.$text(hintOptional)}`;
         }
         // check must
         if (hintMust && property.notEmpty) {
-          return `${title}(${this.$text(hintMust)})`;
+          return `${title}${this.$text(hintMust)}`;
         }
       }
       // default
@@ -309,7 +309,7 @@ export default {
       if (!value) {
         value = [];
       } else if (!Array.isArray(value)) {
-        value = [value];
+        value = [ value ];
       }
       // input
       return c('eb-list-input', {
@@ -337,7 +337,7 @@ export default {
             } else {
               this.setValue(data, key, values[0] || null, property);
             }
-          }
+          },
         },
       }, [
         c('div', {
@@ -514,7 +514,7 @@ export default {
         key,
         attrs: {
           smartSelect: !this.validate.readOnly && !property.ebReadOnly,
-          //title,
+          // title,
           smartSelectParams: property.ebParams || { openIn: 'page', closeOnSelect: true },
         },
       }, [
@@ -558,7 +558,7 @@ export default {
         },
         setValue: value => {
           this.setValue(data, key, value, property);
-        }
+        },
       };
       return c('eb-component', {
         props: renderProps,

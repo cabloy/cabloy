@@ -1,7 +1,7 @@
 export default {
   validate: {
     hint: {
-      optional: '?',
+      optional: '(?)',
       must: '',
     },
   },
