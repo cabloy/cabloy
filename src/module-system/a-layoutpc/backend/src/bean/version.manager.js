@@ -35,6 +35,17 @@ module.exports = app => {
 
       }
 
+      if (options.version === 2) {
+
+        // roleFunctions: buttons
+        const roleButtons = [
+          { roleName: null, name: 'buttonHome' },
+        ];
+        await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions: roleButtons });
+
+      }
+
+
     }
 
   }

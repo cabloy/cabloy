@@ -14,11 +14,11 @@ function install(_Vue) {
   const Vue = _Vue;
   const ebLayoutButtonBase = Vue.prototype.$meta.module.get('a-layoutpc').options.mixins.ebLayoutButtonBase;
   return {
-    mixins: [ebLayoutButtonBase],
+    mixins: [ ebLayoutButtonBase ],
     data() {
       return {
         isFullscreen: false,
-      }
+      };
     },
     created() {
       if (!screenfull.isEnabled) {
@@ -32,7 +32,7 @@ function install(_Vue) {
     methods: {
       onPerform() {
         screenfull.toggle();
-      }
+      },
     },
   };
 }

@@ -5,13 +5,15 @@ export default {
     autoHideSidebarOnOpenUrl: true,
     header: {
       button: {
-        home: { name: 'Home', iconMaterial: 'dashboard', url: '/a/dashboard/dashboard', scene: 'dashboard', sceneOptions: { name: 'home' } },
+        // home: { name: 'Home', iconMaterial: 'home', url: '/a/base/menu/list', scene: 'dashboard', sceneOptions: { name: 'home' } },
+        dashboard: { name: 'Dashboard', iconMaterial: 'dashboard', url: '/a/dashboard/dashboard', scene: 'dashboard', sceneOptions: { name: 'dashboard' } },
         mine: { name: 'Mine', iconMaterial: 'person', url: '/a/user/user/mine', scene: 'sidebar', sceneOptions: { side: 'right', name: 'mine', title: 'Mine' } },
       },
     },
     sidebar: {
       top: {
         buttons: [
+          { module: 'a-layoutpc', name: 'buttonHome' },
           { module: 'a-layoutpc', name: 'buttonDashboard' },
           { module: 'a-layoutpc', name: 'buttonFullscreen' },
           { module: 'a-layoutpc', name: 'buttonMine' },

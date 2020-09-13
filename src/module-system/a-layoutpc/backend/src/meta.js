@@ -36,6 +36,12 @@ module.exports = app => {
           public: 1,
         },
         // header buttons
+        buttonHome: {
+          title: 'Home',
+          component: 'buttonHome',
+          menu: 5,
+          public: 1,
+        },
         buttonDashboard: {
           title: 'Dashboard',
           component: 'buttonDashboard',

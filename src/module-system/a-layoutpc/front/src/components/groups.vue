@@ -18,12 +18,12 @@ export default {
         staticClass: `eb-layout-group${group.scene ? ` eb-layout-scene eb-layout-scene-${group.scene}` : ''}`,
         attrs: { id: group.id, 'data-groupId': group.id },
         on: { 'tab:show': this.onTabShow },
-      }, [_group]));
+      }, [ _group ]));
     }
     return c('f7-tabs', { staticClass: 'eb-layout-groups' }, children);
   },
   data() {
-    return {}
+    return {};
   },
   computed: {
     layout() {
@@ -34,7 +34,7 @@ export default {
     },
     groups() {
       return this.layout.groups;
-    }
+    },
   },
   methods: {
     reLayout(groupId) {
@@ -132,8 +132,8 @@ export default {
     },
     _getGroupAndIndex(groupId) {
       const groupIndex = this._getGroupIndex(groupId);
-      if (groupIndex === -1) return [null, -1];
-      return [this.groups[groupIndex], groupIndex];
+      if (groupIndex === -1) return [ null, -1 ];
+      return [ this.groups[groupIndex], groupIndex ];
     },
     removeGroup(groupId) {
       // current
@@ -156,7 +156,8 @@ export default {
           this.switchGroup(groupIdNext);
         }
         // check if openHome
-        if (this.groups.length === 0 && (!groupCurrent.sceneOptions || groupCurrent.sceneOptions.name !== 'home')) {
+        const _groupCurrentName = groupCurrent.sceneOptions && groupCurrent.sceneOptions.name;
+        if (this.groups.length === 0 && _groupCurrentName !== 'home' && _groupCurrentName !== 'dashboard') {
           this.layout.openHome();
         }
       });

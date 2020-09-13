@@ -180,7 +180,10 @@ export default {
       });
     },
     openHome() {
-      const button = this.$config.layout.header.button.home;
+      let button = this.$config.layout.header.button.home;
+      if (!button) {
+        button = this.$config.layout.header.button.dashboard;
+      }
       if (button) {
         this.navigate(button.url, { scene: button.scene, sceneOptions: button.sceneOptions });
       }
