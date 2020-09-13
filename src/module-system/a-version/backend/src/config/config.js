@@ -7,6 +7,7 @@ module.exports = appInfo => {
     databaseInit: {
       bean: 'databaseInit',
       debounce: true,
+      queue: 'databaseInit',
     },
     databaseName: {
       bean: 'databaseName',
@@ -15,6 +16,16 @@ module.exports = appInfo => {
       bean: 'instanceInit',
       instance: true,
       debounce: true,
+    },
+  };
+
+  // queues
+  config.queues = {
+    databaseInit: {
+      bean: {
+        module: 'a-base',
+        name: 'startup',
+      },
     },
   };
 

@@ -52,10 +52,19 @@ module.exports = function(loader) {
       return await loader.app.meta._runStartupQueue({ module, name, instanceStartup });
     }
     // debounce: queue
+    let queueModule;
+    let queueName;
+    if (startup.config.queue) {
+      queueModule = module;
+      queueName = startup.config.queue;
+    } else {
+      queueModule = 'a-base';
+      queueName = instanceStartup ? 'instanceStartup' : 'startup';
+    }
     await loader.app.meta.queue.pushAsync({
       subdomain: instanceStartup ? instanceStartup.subdomain : undefined,
-      module: 'a-base',
-      queueName: instanceStartup ? 'instanceStartup' : 'startup',
+      module: queueModule,
+      queueName,
       queueNameSub: fullKey,
       data: { startup, instanceStartup },
     });
