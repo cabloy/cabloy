@@ -1,6 +1,8 @@
 const require3 = require('require3');
 const extend = require3('extend2');
 
+const __blackFields = [ 'startups', 'queues', 'broadcasts', 'middlewares', 'schedules' ];
+
 module.exports = app => {
 
   class Instance extends app.Service {
@@ -14,7 +16,7 @@ module.exports = app => {
       await this.ctx.model.instance.update({
         id: this.ctx.instance.id,
         title: data.title,
-        config: data.config,
+        config: JSON.stringify(this.__configBlackFields(data.config)),
       });
       // broadcast
       this.ctx.app.meta.broadcast.emit({
@@ -27,10 +29,9 @@ module.exports = app => {
 
     async getConfigsPreview() {
       const instance = await this.item();
-      instance.config = JSON.parse(instance.config);
-      if (!this.ctx.app.meta._configsOriginal) this.ctx.app.meta._configsOriginal = extend(true, {}, this.ctx.app.meta.configs);
-      this.ctx.app.meta.configs = extend(true, {}, this.ctx.app.meta._configsOriginal, instance.config);
-      return { data: this.ctx.app.meta.configs };
+      let configPreview = extend(true, {}, app.meta.configs, JSON.parse(instance.config));
+      configPreview = this.__configBlackFields(configPreview);
+      return { data: configPreview };
     }
 
     async reload() {
@@ -41,6 +42,17 @@ module.exports = app => {
         broadcastName: 'reload',
         data: null,
       });
+    }
+
+    __configBlackFields(config) {
+      if (typeof config === 'string') config = JSON.parse(config);
+      for (const moduleName in config) {
+        const moduleConfig = config[moduleName];
+        for (const field of __blackFields) {
+          delete moduleConfig[field];
+        }
+      }
+      return config;
     }
 
   }
