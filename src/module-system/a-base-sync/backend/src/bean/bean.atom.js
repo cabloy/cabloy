@@ -149,7 +149,7 @@ module.exports = ctx => {
         tableName = this._getTableName({ atomClass: _atomClass, mode: options.mode });
         // 'where' should append atomClassId, such as article/post using the same table
         if (!options.where) options.where = {};
-        options.where.atomClassId = atomClass.id;
+        options.where['a.atomClassId'] = atomClass.id;
       }
       // select
       const items = await this._list({

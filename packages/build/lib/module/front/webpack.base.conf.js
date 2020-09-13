@@ -46,7 +46,7 @@ module.exports = context => {
           include: [ path.join(context.modulePath, 'front/src') ],
         },
         {
-          test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+          test: /\.(png|jpe?g|gif|svg|webp)(\?.*)?$/,
           loader: 'url-loader',
           options: {
             limit: 1000,
