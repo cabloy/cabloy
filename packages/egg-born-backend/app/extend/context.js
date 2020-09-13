@@ -136,6 +136,7 @@ module.exports = {
     }
   },
 
+  // * deprecated
   performActionInBackground(options) {
     // inherit subdomain, cookies such as locale
     const ctx = this;

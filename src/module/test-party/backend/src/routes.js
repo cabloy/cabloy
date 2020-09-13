@@ -103,7 +103,6 @@ module.exports = app => {
 
       // test/feat/progress
       { method: 'post', path: 'test/feat/progress', controller: 'testFeatProgress' },
-      { method: 'post', path: 'test/feat/progressInBackground', controller: 'testFeatProgress', middlewares: 'inner', meta: { auth: { enable: false } } },
 
       // test/feat/sequence
       { method: 'post', path: 'test/feat/sequence', controller: 'testFeatSequence', middlewares: 'test', meta: { auth: { enable: false } } },

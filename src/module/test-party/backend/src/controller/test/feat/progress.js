@@ -6,19 +6,14 @@ module.exports = app => {
       // create progress
       const progressId = await this.ctx.bean.progress.create();
       // background
-      this.ctx.performActionInBackground({
-        method: 'post',
-        url: 'test/feat/progressInBackground',
-        body: {
-          progressId,
-        },
+      this.ctx.runInBackground(async () => {
+        await this._progressInBackground({ progressId });
       });
       // return progressId
       this.ctx.success({ progressId });
     }
 
-    async progressInBackground() {
-      const progressId = this.ctx.request.body.progressId;
+    async _progressInBackground({ progressId }) {
       try {
         // level one
         await this._levelOne({ progressId, progressNo: 0 });
