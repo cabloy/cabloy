@@ -98,11 +98,11 @@ export default {
       const hintMust = hint.must;
       // check optional
       if (hintOptional && !property.notEmpty) {
-        return `${title}(${this.$text(hintOptional)})`;
+        return `${title}${this.$text(hintOptional)}`;
       }
       // check must
       if (hintMust && property.notEmpty) {
-        return `${title}(${this.$text(hintMust)})`;
+        return `${title}${this.$text(hintMust)}`;
       }
       // default
       return title;
