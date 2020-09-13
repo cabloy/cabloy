@@ -27,7 +27,7 @@ export default {
         ref: 'groups',
         style: {
           height: `${this.size.main}px`,
-          top: `${ this.size.top + this.sizeSpacing}px`,
+          top: `${this.size.top + this.sizeSpacing}px`,
         },
       });
       children.push(groups);
@@ -97,8 +97,8 @@ export default {
         this.$nextTick(() => {
           // start
           this.start();
-        })
-      })
+        });
+      });
     });
   },
   methods: {
@@ -280,7 +280,7 @@ export default {
         case 'large':
           sizeClass = 'eb-view-size-small eb-view-size-medium eb-view-size-large';
           break;
-      };
+      }
       return sizeClass;
     },
     _sidebarWidth(side) {
@@ -366,7 +366,7 @@ export default {
     },
     __saveLayoutConfig: Vue.prototype.$meta.util.debounce(function() {
       // override
-      let value = this.$meta.util.extend({}, this.sidebar);
+      const value = this.$meta.util.extend({}, this.sidebar);
       // remove dynamic panels
       this.__removeDynamicPanels(value.top);
       this.__removeDynamicPanels(value.left);
@@ -422,9 +422,9 @@ export default {
       }
     },
     __initSidebar(side) {
-      let panels = this.sidebar[side].panels;
-      let sections = this.sidebar[side].sections;
-      let buttons = this.sidebar[side].buttons;
+      const panels = this.sidebar[side].panels;
+      const sections = this.sidebar[side].sections;
+      const buttons = this.sidebar[side].buttons;
 
       if (panels) {
         this.sidebar[side].panels = [];
@@ -488,11 +488,11 @@ export default {
       if (side === 'left' || side === 'right') {
         style = {
           height: `${this.size.height}px`,
-          top: `${ this.size.top}px`,
+          top: `${this.size.top}px`,
         };
       } else {
         style = {
-          width: `100%`,
+          width: '100%',
           bottom: '0',
         };
       }
@@ -577,7 +577,7 @@ export default {
     _buttonFullName(button) {
       if (button.module) return `${button.module}:${button.name}`;
       return button.name;
-    }
+    },
   },
 };
 

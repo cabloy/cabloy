@@ -26,14 +26,14 @@ export default {
     },
     options: {
       type: Object,
-    }
+    },
   },
   data() {
     return {
       initOpened: false,
       views: [],
       dragdropSceneResize: Vue.prototype.$meta.util.nextId('dragdrop'),
-    }
+    };
   },
   computed: {
     layout() {
@@ -66,7 +66,7 @@ export default {
         };
       }
       return size;
-    }
+    },
   },
   created() {
     const side = this.side;
@@ -84,7 +84,7 @@ export default {
   },
   mounted() {
     if (this.initOpened && this.options.panelActive && this.options.panelActive.indexOf(':') > -1) {
-      const [module, name] = this.options.panelActive.split(':');
+      const [ module, name ] = this.options.panelActive.split(':');
       this.layout._createPanel({ side: this.side, panel: { module, name }, init: true });
     }
   },
@@ -95,7 +95,7 @@ export default {
       const buttons = c('eb-sidebar-tab-buttons', {
         props: {
           side: this.side,
-        }
+        },
       });
       children.push(buttons);
       // sections
@@ -103,7 +103,7 @@ export default {
         const sections = c('eb-sidebar-tab-sections', {
           props: {
             side: this.side,
-          }
+          },
         });
         children.push(sections);
       }
@@ -128,7 +128,7 @@ export default {
         };
       } else {
         style = {
-          height: `${this.options.panelHeight-this.options.toolbarHeight}px`,
+          height: `${this.options.panelHeight - this.options.toolbarHeight}px`,
           top: `${this.options.toolbarHeight}px`,
         };
       }
@@ -150,7 +150,7 @@ export default {
             resizeDirection: this._getResizeDirection(),
             onDragStart: this.onDragStartResizable,
             onDragMove: this.onDragMoveResizable,
-          }
+          },
         }],
       });
       // panel
@@ -167,7 +167,7 @@ export default {
       const panel = c('div', {
         staticClass: this._getPanelClassName(),
         style,
-      }, [toolbar, group, resizeHandler]);
+      }, [ toolbar, group, resizeHandler ]);
       return panel;
     },
     createView({ ctx, panel, options, init }) {
@@ -252,16 +252,16 @@ export default {
     },
     _getSectionAndIndex(section) {
       const sectionIndex = this._getSectionIndex(section);
-      if (sectionIndex === -1) return [null, -1];
-      return [this.options.sections[sectionIndex], sectionIndex];
+      if (sectionIndex === -1) return [ null, -1 ];
+      return [ this.options.sections[sectionIndex], sectionIndex ];
     },
     _getPanelIndex(panel) {
       return this.options.panels.findIndex(item => this.layout._panelFullName(item) === this.layout._panelFullName(panel));
     },
     _getPanelAndIndex(panel) {
       const panelIndex = this._getPanelIndex(panel);
-      if (panelIndex === -1) return [null, -1];
-      return [this.options.panels[panelIndex], panelIndex];
+      if (panelIndex === -1) return [ null, -1 ];
+      return [ this.options.panels[panelIndex], panelIndex ];
     },
     _removePanel(panel) {
       const panelIndex = this._getPanelIndex(panel);
@@ -350,19 +350,19 @@ export default {
         this.setPanelWidth(newPanelWidth);
         const tooltip = newPanelWidth;
         return { eaten: true, tooltip };
-      } else {
-        let diffAbs = parseInt(diff.abs.y);
-        if (diffAbs === 0) return;
-        if (this.side === 'bottom') diffAbs = -diffAbs;
-        const viewSizeExtent = this.viewSizeExtent;
-        const newPanelHeight = viewSizeExtent.height + diffAbs;
-        this.setPanelWidth(newPanelHeight);
-        const tooltip = newPanelHeight;
-        return { eaten: true, tooltip };
       }
+      let diffAbs = parseInt(diff.abs.y);
+      if (diffAbs === 0) return;
+      if (this.side === 'bottom') diffAbs = -diffAbs;
+      const viewSizeExtent = this.viewSizeExtent;
+      const newPanelHeight = viewSizeExtent.height + diffAbs;
+      this.setPanelWidth(newPanelHeight);
+      const tooltip = newPanelHeight;
+      return { eaten: true, tooltip };
+
 
     },
-  }
-}
+  },
+};
 
 </script>
