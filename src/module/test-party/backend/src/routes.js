@@ -4,13 +4,6 @@ module.exports = app => {
   if (app.meta.isTest || app.meta.isLocal) {
     routes = routes.concat([
       // atom: party
-      { method: 'post', path: 'party/create', controller: 'party', middlewares: 'inner', meta: { auth: { enable: false } } },
-      { method: 'post', path: 'party/read', controller: 'party', middlewares: 'inner', meta: { auth: { enable: false } } },
-      { method: 'post', path: 'party/select', controller: 'party', middlewares: 'inner', meta: { auth: { enable: false } } },
-      { method: 'post', path: 'party/write', controller: 'party', middlewares: 'inner', meta: { auth: { enable: false } } },
-      { method: 'post', path: 'party/delete', controller: 'party', middlewares: 'inner', meta: { auth: { enable: false } } },
-      { method: 'post', path: 'party/action', controller: 'party', middlewares: 'inner', meta: { auth: { enable: false } } },
-      { method: 'post', path: 'party/enable', controller: 'party', middlewares: 'inner', meta: { auth: { enable: false } } },
       { method: 'post', path: 'party/types', controller: 'party' },
 
       // atom: partyPublic (only for test)

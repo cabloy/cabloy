@@ -13,6 +13,7 @@ const startupStartupAll = require('./bean/startup.startupAll.js');
 const startupStartupInstance = require('./bean/startup.startupInstance.js');
 const middlewareTestInterception = require('./bean/middleware.interception.js');
 const middlewareTestRestructuring = require('./bean/middleware.restructuring.js');
+const atomParty = require('./bean/atom.party.js');
 
 module.exports = app => {
   const beans = {
@@ -87,6 +88,11 @@ module.exports = app => {
       'middleware.testRestructuring': {
         mode: 'ctx',
         bean: middlewareTestRestructuring,
+      },
+      // atom
+      'atom.party': {
+        mode: 'app',
+        bean: atomParty,
       },
     });
   }

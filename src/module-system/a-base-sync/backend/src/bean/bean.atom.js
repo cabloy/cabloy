@@ -55,78 +55,42 @@ module.exports = ctx => {
       atomClass = await ctx.bean.atomClass.get(atomClass);
       // item
       item = item || { };
-      if (!item.atomName) {
-        // draftId
-        const draftId = await this.sequence.next('draft');
-        item.atomName = `${ctx.text('Draft')}-${draftId}`;
-      }
       item.roleIdOwner = roleIdOwner;
-      const atomId = await this._add({
-        atomClass,
-        atom: item,
-        user,
-      });
-
-      // add item
+      // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const res = await ctx.performAction({
-        method: 'post',
-        url: `/${_moduleInfo.url}/${atomClass.atomClassName}/create`,
-        body: {
-          atomClass,
-          roleIdOwner,
-          key: { atomId },
-          item,
-          user,
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      const res = await ctx.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        fn: async ({ bean }) => {
+          return await bean.create({ atomClass, item, user });
         },
       });
-      const itemId = res.itemId;
-
+      const { atomId, itemId } = res;
       // save itemId
-      const atomFlow = item.atomFlow === undefined ? atomClass.flow : item.atomFlow;
       await this._update({
-        atom: {
-          id: atomId,
-          itemId,
-          atomName: item.atomName,
-          atomFlow,
-        },
+        atom: { id: atomId, itemId },
         user,
       });
-
+      // ok
       return { atomId, itemId };
     }
 
     // read
     async read({ key, user }) {
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
-      // get
-      const item = await this._get({
-        atom: {
-          id: key.atomId,
-          tableName: _atomClass.tableNameFull || _atomClass.tableName,
-        },
-        user,
-      });
-      if (!item) return null;
-
-      // itemId
-      key.itemId = item.id;
-
-      // read item
+      // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      await ctx.performAction({
-        method: 'post',
-        url: `/${_moduleInfo.url}/${atomClass.atomClassName}/read`,
-        body: {
-          atomClass,
-          key,
-          item,
-          user,
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      const item = await ctx.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        fn: async ({ bean }) => {
+          return await bean.read({ atomClass, key, user });
         },
       });
-
       return item;
     }
 
@@ -159,110 +123,67 @@ module.exports = ctx => {
         pageForce,
         count,
       });
-
       // select items
       if (!count && atomClass) {
         const _moduleInfo = mparse.parseInfo(atomClass.module);
-        await ctx.performAction({
-          method: 'post',
-          url: `/${_moduleInfo.url}/${atomClass.atomClassName}/select`,
-          body: {
-            atomClass,
-            options,
-            items,
-            user,
+        const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+        await ctx.executeBean({
+          beanModule: _moduleInfo.relativeName,
+          beanFullName,
+          fn: async ({ bean }) => {
+            return await bean.select({ atomClass, options, items, user });
           },
         });
       }
-
+      // ok
       return items;
     }
 
     // write
     async write({ key, item, user }) {
+      // atomClass
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-
-      // validator
-      const validator = await ctx.bean.atom.validator({ atomClass, user });
-      if (validator) {
-        // if error throw 422
-        await ctx.bean.validation.validate({
-          module: validator.module,
-          validator: validator.validator,
-          schema: validator.schema,
-          data: item,
-        });
-      }
-
-      // write item
+      // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      await ctx.performAction({
-        method: 'post',
-        url: `/${_moduleInfo.url}/${atomClass.atomClassName}/write`,
-        body: {
-          atomClass,
-          key,
-          item,
-          user,
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      await ctx.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        fn: async ({ bean }) => {
+          return await bean.write({ atomClass, key, item, user });
         },
       });
-
-      // write atom only after item writed
-      await this._writeAtom({ key, item, user });
-    }
-
-    async _writeAtom({ key, item, user }) {
-      // write atom
-      if (item) {
-        const atom = { };
-        if (item.atomName !== undefined) atom.atomName = item.atomName;
-        if (item.allowComment !== undefined) atom.allowComment = item.allowComment;
-        if (Object.keys(atom).length > 0) {
-          atom.id = key.atomId;
-          await this._update({
-            atom,
-            user,
-          });
-        }
-      }
     }
 
     // delete
     async delete({ key, user }) {
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-      // delete item
+      // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      await ctx.performAction({
-        method: 'post',
-        url: `/${_moduleInfo.url}/${atomClass.atomClassName}/delete`,
-        body: {
-          atomClass,
-          key,
-          user,
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      await ctx.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        fn: async ({ bean }) => {
+          return await bean.delete({ atomClass, key, user });
         },
-      });
-
-      // delete atom and item
-      await this._delete({
-        atom: {
-          id: key.atomId,
-        },
-        user,
       });
     }
 
     // action
     async action({ action, key, user }) {
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      return await ctx.performAction({
-        method: 'post',
-        url: `/${_moduleInfo.url}/${atomClass.atomClassName}/action`,
-        body: {
-          action,
-          atomClass,
-          key,
-          user,
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      await ctx.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        fn: async ({ bean }) => {
+          return await bean.action({ action, atomClass, key, user });
         },
       });
     }
@@ -270,25 +191,18 @@ module.exports = ctx => {
     async enable({ key, atom: { atomEnabled = 1 }, user }) {
       const _atom = await this.modelAtom.get({ id: key.atomId });
       if (_atom.atomEnabled === atomEnabled) return;
-      // update
-      const res = await this.modelAtom.update({
-        id: key.atomId,
-        atomEnabled,
-        userIdUpdated: user.id,
-      });
-      if (res.affectedRows !== 1) ctx.throw.module(moduleInfo.relativeName, 1003);
       _atom.atomEnabled = atomEnabled;
-      // enable item
+      // atomClass
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      await ctx.performAction({
-        method: 'post',
-        url: `/${_moduleInfo.url}/${atomClass.atomClassName}/enable`,
-        body: {
-          atomClass,
-          key,
-          atom: _atom,
-          user,
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      await ctx.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        fn: async ({ bean }) => {
+          return await bean.enable({ atomClass, key, atom: _atom, user });
         },
       });
     }
@@ -300,21 +214,19 @@ module.exports = ctx => {
     }
 
     async flag({ key, atom: { atomFlag }, user }) {
-      const res = await this.modelAtom.update({
+      await this.modelAtom.update({
         id: key.atomId,
         atomFlag,
         userIdUpdated: user.id,
       });
-      if (res.affectedRows !== 1) ctx.throw.module(moduleInfo.relativeName, 1003);
     }
 
     async flow({ key, atom: { atomFlow }, user }) {
-      const res = await this.modelAtom.update({
+      await this.modelAtom.update({
         id: key.atomId,
         atomFlow,
         userIdUpdated: user.id,
       });
-      if (res.affectedRows !== 1) ctx.throw.module(moduleInfo.relativeName, 1003);
     }
 
     async star({ key, atom: { star = 1 }, user }) {
@@ -473,8 +385,7 @@ module.exports = ctx => {
       if (atomFlow !== undefined) params.atomFlow = atomFlow;
       if (itemId !== undefined) params.itemId = itemId;
       params.updatedAt = new Date();
-      const res = await this.modelAtom.update(params);
-      if (res.affectedRows !== 1) ctx.throw.module(moduleInfo.relativeName, 1003);
+      await this.modelAtom.update(params);
     }
 
     async _delete({
