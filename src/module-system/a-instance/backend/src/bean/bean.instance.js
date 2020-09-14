@@ -9,13 +9,13 @@ module.exports = ctx => {
   class Instance {
 
     async list(options) {
+      // options
       if (!options) options = { where: null, orders: null, page: null };
       const page = ctx.bean.util.page(options.page, false);
+      const orders = options.orders;
+      const where = options.where || { disabled: 0 };// allow disabled=undefined
       // select
-      const _options = {
-        where: options.where,
-        orders: options.orders,
-      };
+      const _options = { where, orders };
       if (page.size !== 0) {
         _options.limit = page.size;
         _options.offset = page.index;
