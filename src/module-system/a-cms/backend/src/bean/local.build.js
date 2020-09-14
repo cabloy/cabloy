@@ -16,6 +16,7 @@ const time = require('../common/time.js');
 const utils = require('../common/utils.js');
 
 module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Build extends app.meta.BeanBase {
 
     constructor(ctx, atomClass) {
@@ -239,7 +240,7 @@ module.exports = app => {
     // ///////////////////////////////// render
 
     async renderAllFiles({ language, progressId, progressNo }) {
-    // clearCache
+      // clearCache
       ejs.clearCache();
       // site
       const site = await this.getSite({ language });
@@ -253,8 +254,8 @@ module.exports = app => {
     }
 
     async renderArticle({ key, inner }) {
-    // article
-      const article = await this.ctx.service.article._getArticle({ key, inner });
+      // article
+      const article = await this.ctx.bean._getBean(`${moduleInfo.relativeName}.atom.article`)._getArticle({ key, inner });
       if (!article) return;
       // clearCache
       ejs.clearCache();
@@ -272,7 +273,7 @@ module.exports = app => {
     }
 
     async deleteArticle({ key, article, inner }) {
-    // clearCache
+      // clearCache
       ejs.clearCache();
       // site
       const site = await this.getSite({ language: article.language });
@@ -292,7 +293,7 @@ module.exports = app => {
     }
 
     async _renderArticles({ site, progressId, progressNo }) {
-    // anonymous user
+      // anonymous user
       const user = await this.ctx.bean.user.anonymous();
       // articles
       const articles = await this.ctx.bean.atom.select({
@@ -335,7 +336,7 @@ module.exports = app => {
     }
 
     async _renderArticle({ site, article }) {
-    // data
+      // data
       const data = await this.getData({ site });
       data.article = article;
       // render
@@ -348,7 +349,7 @@ module.exports = app => {
     }
 
     async _renderIndex({ site }) {
-    // index
+      // index
       const pathIntermediate = await this.getPathIntermediate(site.language.current);
       const indexFiles = await bb.fromCallback(cb => {
         glob(`${pathIntermediate}/main/index/\*\*/\*.ejs`, cb);
@@ -371,7 +372,7 @@ module.exports = app => {
     }
 
     async _writeSitemaps({ site, articles }) {
-    // xml
+      // xml
       let xml =
 `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -430,7 +431,7 @@ module.exports = app => {
 
 
     async _renderStatic({ site }) {
-    // static
+      // static
       const pathIntermediate = await this.getPathIntermediate(site.language.current);
       const staticFiles = await bb.fromCallback(cb => {
         glob(`${pathIntermediate}/static/\*\*/\*.ejs`, cb);
@@ -453,7 +454,7 @@ module.exports = app => {
     }
 
     async _renderFile({ fileSrc, fileDest, fileDestAlt, data }) {
-    // site
+      // site
       const site = data.site;
       // language
       const language = site.language.current;
@@ -522,7 +523,7 @@ module.exports = app => {
     }
 
     async _loadPluginIncludes({ site, language }) {
-    // if exists
+      // if exists
       if (site._pluginIncludes) return site._pluginIncludes;
       // modulesArray
       let pluginIncludes = '';
@@ -625,7 +626,7 @@ module.exports = app => {
     }
 
     async _renderEnvs({ data, content }) {
-    // site
+      // site
       const site = data.site;
       // env
       const _env = {};
@@ -684,7 +685,7 @@ var env=${JSON.stringify(env, null, 2)};
     }
 
     async getData({ site }) {
-    // data
+      // data
       const self = this;
       const _csses = [];
       const _jses = [];
@@ -744,7 +745,7 @@ var env=${JSON.stringify(env, null, 2)};
     // build languages
     async buildLanguages({ progressId, progressNo = 0 }) {
       try {
-      // time start
+        // time start
         const timeStart = new Date();
         // site
         const site = await this.combineSiteBase();
@@ -802,7 +803,7 @@ var env=${JSON.stringify(env, null, 2)};
     // build language
     async buildLanguage({ language, progressId, progressNo = 0 }) {
       try {
-      // time start
+        // time start
         const timeStart = new Date();
 
         // progress
@@ -955,7 +956,7 @@ var env=${JSON.stringify(env, null, 2)};
           time,
         };
       } catch (err) {
-      // error
+        // error
         if (progressId) {
           if (progressNo === 0) {
             await this.ctx.bean.progress.error({ progressId, message: err.message });
@@ -967,7 +968,7 @@ var env=${JSON.stringify(env, null, 2)};
 
     // register watchers
     async registerWatchers() {
-    // info
+      // info
       const watcherInfos = [];
       // site
       const site = await this.combineSiteBase();
@@ -989,14 +990,14 @@ var env=${JSON.stringify(env, null, 2)};
     }
 
     async registerWatcher({ language }) {
-    // info
+      // info
       const watcherInfo = await this._collectWatcher({ language });
       // register
       this.app.meta['a-cms:watcher'].register(watcherInfo);
     }
 
     async _collectWatcher({ language }) {
-    // site
+      // site
       const site = await this.getSite({ language });
 
       // watcher
@@ -1032,7 +1033,7 @@ var env=${JSON.stringify(env, null, 2)};
     }
 
     async createSitemapIndex({ site }) {
-    // content
+      // content
       const urlRawRoot = this.getUrlRawRoot(site);
       let items = '';
       for (const language of site.language.items.split(',')) {
@@ -1095,7 +1096,7 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
     }
 
     _watcherThemes(site, themeModuleName) {
-    // module
+      // module
       const module = this.app.meta.modules[themeModuleName];
       if (!module) this.ctx.throw(1003, themeModuleName);
       // extend
@@ -1112,7 +1113,7 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
 
     async getArticleUrl({ key }) {
     // article
-      const article = await this.ctx.service.article._getArticle({ key, inner: true });
+      const article = await this.ctx.bean._getBean(`${moduleInfo.relativeName}.atom.article`)._getArticle({ key, inner: true });
       if (!article) return;
       // site
       const site = await this.getSite({ language: article.language });

@@ -129,17 +129,29 @@ module.exports = {
     return this.bean.cache;
   },
   tail(cb) {
-    if (this.ctxCaller && this.ctxCaller[TAILCALLBACKS]) {
+    if (this.ctxCaller) {
       this.ctxCaller.tail(cb);
     } else {
-      this[TAILCALLBACKS].push(cb);
+      this.tailCallbacks.push(cb);
     }
   },
+  async tailDone() {
+    for (const cb of this.tailCallbacks) {
+      await cb();
+    }
+    this[TAILCALLBACKS] = null;
+  },
+  get tailCallbacks() {
+    if (!this[TAILCALLBACKS]) {
+      this[TAILCALLBACKS] = [];
+    }
+    return this[TAILCALLBACKS];
+  },
 
-  async executeBean({ context, beanModule, beanFullName, transaction, fn }) {
+  async executeBean({ locale, subdomain, context, beanModule, beanFullName, transaction, fn }) {
     return await this.app.meta.util.executeBean({
-      locale: this.locale,
-      subdomain: this.subdomain,
+      locale: locale === undefined ? this.locale : locale,
+      subdomain: subdomain === undefined ? this.subdomain : subdomain,
       context, beanModule, beanFullName, transaction, fn,
       ctxCaller: this,
     });

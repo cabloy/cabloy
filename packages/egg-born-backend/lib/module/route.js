@@ -3,7 +3,6 @@ const extend = require('extend2');
 const pathMatching = require('egg-path-matching');
 const loadMiddlewares = require('./middleware.js');
 const MWSTATUS = Symbol('Context#__wmstatus');
-const TAILCALLBACKS = Symbol.for('Context#__tailcallbacks');
 
 module.exports = function(loader, modules) {
 
@@ -47,8 +46,6 @@ module.exports = function(loader, modules) {
 
         // middlewares: start
         const fnStart = async (ctx, next) => {
-          // callbacks
-          ctx[TAILCALLBACKS] = [];
           // status
           ctx[MWSTATUS] = {};
           // route
@@ -59,9 +56,7 @@ module.exports = function(loader, modules) {
           // next
           await next();
           // invoke callbackes
-          for (const cb of ctx[TAILCALLBACKS]) {
-            await cb();
-          }
+          await ctx.tailDone();
         };
         fnStart._name = 'start';
         args.push(fnStart);

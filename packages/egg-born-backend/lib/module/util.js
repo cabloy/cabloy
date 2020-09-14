@@ -199,51 +199,46 @@ module.exports = app => {
         ctx.multipart = function(options) {
           return ctxCaller.multipart(options);
         };
-        // cookies
-        delegateCookies(ctx, ctxCaller);
+        for (const property of [ 'cookies', 'session', 'user', 'state' ]) {
+          delegateProperty(ctx, ctxCaller, property);
+        }
         // ctxCaller
         ctx.ctxCaller = ctxCaller;
       }
       // bean
       const bean = beanFullName ? ctx.bean._getBean(beanFullName) : null;
       // execute
+      let res;
       if (transaction) {
-        return await ctx.transaction.begin(async () => {
+        res = await ctx.transaction.begin(async () => {
           return await this._executeBeanFn({ fn, ctx, bean, context });
         });
+      } else {
+        res = await this._executeBeanFn({ fn, ctx, bean, context });
       }
-      return await this._executeBeanFn({ fn, ctx, bean, context });
+      // tail done
+      if (!ctxCaller) {
+        await ctx.tailDone();
+      }
+      // ok
+      return res;
     },
     async _executeBeanFn({ fn, ctx, bean, context }) {
+      let res;
       if (fn) {
-        return await fn({ ctx, bean, context });
+        res = await fn({ ctx, bean, context });
+      } else {
+        res = await bean.execute(context);
       }
-      return await bean.execute(context);
+      return res;
     },
-    // async executeBeanInstance({ locale, context, beanModule, beanFullName, transaction, instance }) {
-    //   // not check instance
-    //   if (!instance) {
-    //     return await this.executeBean({
-    //       locale, context, beanModule, beanFullName, transaction,
-    //     });
-    //   }
-    //   // all instances
-    //   const ctx = await this.createAnonymousContext({ module: beanModule });
-    //   const instances = await ctx.bean.instance.list();
-    //   for (const instance of instances) {
-    //     await this.executeBean({
-    //       locale, subdomain: instance.name, context,
-    //       beanModule, beanFullName, transaction,
-    //     });
-    //   }
-    // },
   };
 };
 
-function delegateCookies(ctx, ctxCaller) {
-  Object.defineProperty(ctx, 'cookies', {
+function delegateProperty(ctx, ctxCaller, property) {
+  Object.defineProperty(ctx, property, {
     get() {
-      return ctxCaller.cookies;
+      return ctxCaller[property];
     },
   });
 }
