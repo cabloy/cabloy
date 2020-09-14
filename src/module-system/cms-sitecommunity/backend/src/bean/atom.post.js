@@ -1,7 +1,7 @@
 module.exports = app => {
   // this module
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  // article module
+  // article bean
   const articleBeanModule = 'a-cms';
   const articleBeanFullName = 'a-cms.atom.article';
 
