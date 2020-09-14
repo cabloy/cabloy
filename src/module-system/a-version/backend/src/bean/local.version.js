@@ -80,11 +80,14 @@ module.exports = app => {
 
       // check if role dirty for init/test
       if (options.scene === 'init' || options.scene === 'test') {
-        const _ctx = await app.meta.util.createAnonymousContext({
-          subdomain: options.subdomain, module: moduleInfo.relativeName,
+        await app.meta.util.executeBean({
+          subdomain: options.subdomain,
+          beanModule: moduleInfo.relativeName,
+          beanFullName: `${moduleInfo.relativeName}.local.version`,
+          fn: async ({ bean }) => {
+            await bean.__after();
+          },
         });
-        const beanVersion = _ctx.bean._getBean(`${moduleInfo.relativeName}.local.version`);
-        await beanVersion.__after();
       }
 
       // ok
