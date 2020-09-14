@@ -7,6 +7,7 @@ module.exports = app => {
       atoms: {
         article: {
           info: {
+            bean: 'article',
             title: 'Article',
             tableName: 'aCmsArticleView',
             tableNameFull: 'aCmsArticleViewFull',

@@ -1,5 +1,6 @@
 const versionManager = require('./bean/version.manager.js');
 const eventAtomClassValidator = require('./bean/event.atomClassValidator.js');
+const atomPost = require('./bean/atom.post.js');
 
 module.exports = app => {
   const beans = {
@@ -12,6 +13,11 @@ module.exports = app => {
     'event.atomClassValidator': {
       mode: 'ctx',
       bean: eventAtomClassValidator,
+    },
+    // atom
+    'atom.post': {
+      mode: 'app',
+      bean: atomPost,
     },
   };
   return beans;

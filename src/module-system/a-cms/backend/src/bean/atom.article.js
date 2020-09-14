@@ -6,9 +6,12 @@ const uuid = require3('uuid');
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class Article extends app.Service {
+  class Atom extends app.meta.AtomBase {
 
-    async create({ atomClass, key, item, user }) {
+    async create({ atomClass, item, user }) {
+      // super
+      const key = await super.create({ atomClass, item, user });
+      // article
       const site = await this.ctx.service.render.combineSiteBase({ atomClass });
       const editMode = site.edit.mode;
       // add article
@@ -32,28 +35,21 @@ module.exports = app => {
       return { atomId: key.atomId, itemId };
     }
 
-    _getMeta(item, showSorting) {
-      // flags
-      const flags = [];
-      if (item.sticky) flags.push(this.ctx.text('Sticky'));
-      if (item.sorting && showSorting) flags.push(item.sorting);
-      // meta
-      const meta = {
-        summary: item.summary,
-        flags,
-      };
-      // ok
-      item._meta = meta;
-    }
-
-    async read({ atomClass, key, item, user }) {
+    async read({ atomClass, key, user }) {
+      // super
+      const item = await super.read({ atomClass, key, user });
+      if (!item) return null;
       // read: showSorting=true
       this._getMeta(item, true);
+      // ok
+      return item;
     }
 
     async select({ atomClass, options, items, user }) {
-      const showSorting = options && options.where && options.where.categoryId;
+      // super
+      await super.select({ atomClass, options, items, user });
       // select
+      const showSorting = options && options.where && options.where.categoryId;
       for (const item of items) {
         this._getMeta(item, showSorting);
       }
@@ -62,12 +58,13 @@ module.exports = app => {
     async write({ atomClass, key, item, user }) {
       // get atom for safety
       const atomOld = await this.ctx.bean.atom.read({ key, user });
+      // super
+      await super.write({ atomClass, key, item, user });
       // if undefined then old
       const fields = [ 'slug', 'editMode', 'content', 'language', 'categoryId', 'sticky', 'keywords', 'description', 'sorting', 'flag', 'extra' ];
       for (const field of fields) {
         if (item[field] === undefined) item[field] = atomOld[field];
       }
-
       // url
       let url;
       if (item.slug) {
@@ -181,9 +178,15 @@ module.exports = app => {
 
       // delete article
       await this._deleteArticle({ atomClass, key, article: atomOld, inner: atomOld.atomFlag !== 2 });
+
+      // super
+      await super.delete({ atomClass, key, user });
     }
 
     async action({ action, atomClass, key, user }) {
+      // super
+      await super.action({ action, atomClass, key, user });
+      // action
       if (action === 101) {
         // get atom for safety
         const atomOld = await this.ctx.bean.atom.read({ key, user });
@@ -216,6 +219,8 @@ module.exports = app => {
     }
 
     async enable({ atomClass, key, atom, user }) {
+      // super
+      await super.enable({ atomClass, key, atom, user });
       // enable
       const atomFlag = atom.atomEnabled ? 1 : 0;
       // change flag
@@ -231,6 +236,20 @@ module.exports = app => {
         // publish
         await this.action({ action: 101, atomClass, key, user });
       }
+    }
+
+    _getMeta(item, showSorting) {
+      // flags
+      const flags = [];
+      if (item.sticky) flags.push(this.ctx.text('Sticky'));
+      if (item.sorting && showSorting) flags.push(item.sorting);
+      // meta
+      const meta = {
+        summary: item.summary,
+        flags,
+      };
+      // ok
+      item._meta = meta;
     }
 
     async _deleteArticle({ atomClass, key, article, inner }) {
@@ -284,5 +303,5 @@ module.exports = app => {
 
   }
 
-  return Article;
+  return Atom;
 };
