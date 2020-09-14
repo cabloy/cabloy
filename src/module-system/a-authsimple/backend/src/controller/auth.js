@@ -1,12 +1,6 @@
 module.exports = app => {
   class AuthController extends app.Controller {
 
-    async add() {
-      const { userId, password } = this.ctx.request.body;
-      await this.service.auth.add({ userId, password });
-      this.ctx.success();
-    }
-
     async signin() {
       // data: { auth, password, rememberMe }
       const data = this.ctx.request.body.data;

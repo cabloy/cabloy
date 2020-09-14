@@ -1,5 +1,4 @@
 module.exports = [
-  { method: 'post', path: 'auth/add', controller: 'auth', middlewares: 'inner', meta: { auth: { enable: false } } },
   { method: 'post', path: 'auth/signin', controller: 'auth', middlewares: 'captchaVerify',
     meta: {
       captchaVerify: { scene: { name: 'signin' } },

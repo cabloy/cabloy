@@ -112,12 +112,14 @@ module.exports = function(ctx) {
     // auths
     async _testAuths(userIds) {
       for (const userName in userIds) {
-        await ctx.performAction({
-          method: 'post',
-          url: '/a/authsimple/auth/add',
-          body: {
-            userId: userIds[userName],
-            password: '',
+        await ctx.executeBean({
+          beanModule: 'a-authsimple',
+          beanFullName: 'a-authsimple.service.auth',
+          fn: async ({ bean }) => {
+            await bean.add({
+              userId: userIds[userName],
+              password: '',
+            });
           },
         });
       }

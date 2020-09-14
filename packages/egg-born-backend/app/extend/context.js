@@ -136,6 +136,14 @@ module.exports = {
     }
   },
 
+  async executeBean({ context, beanModule, beanFullName, transaction, fn }) {
+    return await this.app.meta.util.executeBean({
+      locale: this.locale,
+      subdomain: this.subdomain,
+      context, beanModule, beanFullName, transaction, fn,
+    });
+  },
+
   // * deprecated
   performActionInBackground(options) {
     // inherit subdomain, cookies such as locale
