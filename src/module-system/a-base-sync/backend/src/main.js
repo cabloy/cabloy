@@ -2,9 +2,13 @@ const config = require('./config/config.js');
 const locales = require('./config/locales.js');
 const errors = require('./config/errors.js');
 const constants = require('./config/constants.js');
+const AtomBaseFn = require('./common/atomBase.js');
 
 // eslint-disable-next-line
 module.exports = app => {
+
+  // atomBase
+  app.meta.AtomBase = AtomBaseFn(app);
 
   // beans
   const beans = require('./beans.js')(app);

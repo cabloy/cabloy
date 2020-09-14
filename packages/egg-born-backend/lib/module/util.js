@@ -190,9 +190,20 @@ module.exports = app => {
       // ok
       return ctx;
     },
-    async executeBean({ locale, subdomain, context, beanModule, beanFullName, transaction, fn }) {
+    async executeBean({ locale, subdomain, context, beanModule, beanFullName, transaction, fn, ctxCaller }) {
       // ctx
       const ctx = await this.createAnonymousContext({ locale, subdomain, module: beanModule });
+      // ctxCaller
+      if (ctxCaller) {
+        // multipart
+        ctx.multipart = function(options) {
+          return ctxCaller.multipart(options);
+        };
+        // cookies
+        delegateCookies(ctx, ctxCaller);
+        // ctxCaller
+        ctx.ctxCaller = ctxCaller;
+      }
       // bean
       const bean = beanFullName ? ctx.bean._getBean(beanFullName) : null;
       // execute
@@ -228,3 +239,11 @@ module.exports = app => {
     // },
   };
 };
+
+function delegateCookies(ctx, ctxCaller) {
+  Object.defineProperty(ctx, 'cookies', {
+    get() {
+      return ctxCaller.cookies;
+    },
+  });
+}

@@ -141,6 +141,7 @@ module.exports = {
       locale: this.locale,
       subdomain: this.subdomain,
       context, beanModule, beanFullName, transaction, fn,
+      ctxCaller: this,
     });
   },
 

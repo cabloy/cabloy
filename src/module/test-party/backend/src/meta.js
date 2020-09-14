@@ -17,6 +17,7 @@ module.exports = app => {
         atoms: {
           party: {
             info: {
+              bean: 'party',
               title: 'Party',
               tableName: 'testPartyView',
               flow: 0,
