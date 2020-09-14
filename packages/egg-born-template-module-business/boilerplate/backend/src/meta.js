@@ -5,6 +5,7 @@ module.exports = app => {
       atoms: {
         {{atomClassName}}: {
           info: {
+            bean:'{{atomClassName}}',
             title: '{{atomClassNameCapitalize}}',
             tableName: '{{providerId}}{{atomClassNameCapitalize}}',
           },
