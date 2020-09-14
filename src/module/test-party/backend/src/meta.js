@@ -166,6 +166,7 @@ module.exports = app => {
         atoms: {
           partyPublic: {
             info: {
+              bean: 'partyPublic',
               tableName: 'testPartyPublic',
               public: 1,
               flow: 1,

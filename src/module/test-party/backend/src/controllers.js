@@ -1,5 +1,4 @@
 const party = require('./controller/party.js');
-const partyPublic = require('./controller/partyPublic.js');
 const testAtomStarLabel = require('./controller/test/atom/starLabel.js');
 const testAtomAll = require('./controller/test/atom/all.js');
 const testAtomPublicFlow = require('./controller/test/atom/publicFlow.js');
@@ -42,7 +41,6 @@ const testKitchensinkPtrIsLoadMore = require('./controller/kitchen-sink/ptr-is-l
 module.exports = app => {
   const controllers = {
     party,
-    partyPublic,
     testAtomStarLabel,
     testAtomAll,
     testAtomPublicFlow,
