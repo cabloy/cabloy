@@ -80,7 +80,7 @@ module.exports = app => {
 
       // check if role dirty for init/test
       if (options.scene === 'init' || options.scene === 'test') {
-        await app.meta.util.executeBean({
+        await this.ctx.executeBean({
           subdomain: options.subdomain,
           beanModule: moduleInfo.relativeName,
           beanFullName: `${moduleInfo.relativeName}.local.version`,
@@ -139,7 +139,7 @@ module.exports = app => {
 
       if (options.scene === 'test') {
         // test module
-        await app.meta.util.executeBean({
+        await this.ctx.executeBean({
           subdomain: options.subdomain,
           beanModule: module.info.relativeName,
           transaction: true,
@@ -180,7 +180,7 @@ module.exports = app => {
       try {
         if (!options.scene) {
           // update
-          await app.meta.util.executeBean({
+          await this.ctx.executeBean({
             beanModule: module.info.relativeName,
             transaction: true,
             fn: async ({ ctx }) => {
@@ -189,7 +189,7 @@ module.exports = app => {
           });
         } else {
           // init
-          await app.meta.util.executeBean({
+          await this.ctx.executeBean({
             subdomain: options.subdomain,
             beanModule: module.info.relativeName,
             transaction: true,
