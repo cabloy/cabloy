@@ -5,7 +5,6 @@ module.exports = app => {
     { method: 'get', path: 'file/download/:downloadId', controller: 'file', action: 'download', meta: { auth: { enable: false } } },
     { method: 'post', path: 'file/list', controller: 'file' },
     { method: 'post', path: 'file/delete', controller: 'file', middlewares: 'transaction' },
-    { method: 'get', path: 'file/fileInfo/:downloadId', controller: 'file', action: 'fileInfo', middlewares: 'inner' },
   ];
   return routes;
 };

@@ -1,6 +1,5 @@
 module.exports = app => {
   const routes = [
-    { method: 'post', path: 'version/update8Atoms', controller: 'version', middlewares: 'inner' },
     // base
     { method: 'post', path: 'base/modules', controller: 'base' },
     { method: 'post', path: 'base/locales', controller: 'base' },
