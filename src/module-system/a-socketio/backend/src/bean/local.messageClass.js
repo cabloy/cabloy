@@ -79,7 +79,7 @@ module.exports = ctx => {
       const messageClasses = {};
       for (const key in _messages) {
         const message = extend(true, {}, _messages[key]);
-        message.info.module = module;
+        message.info.module = module.info.relativeName;
         message.info.name = key;
         // titleLocale
         message.info.titleLocale = ctx.text(message.info.title);
@@ -128,7 +128,7 @@ module.exports = ctx => {
       const channels = {};
       for (const key in _channels) {
         const channel = extend(true, {}, _channels[key]);
-        channel.info.module = module;
+        channel.info.module = module.info.relativeName;
         channel.info.name = key;
         // titleLocale
         channel.info.titleLocale = ctx.text(channel.info.title);
