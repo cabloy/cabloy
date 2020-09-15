@@ -538,13 +538,11 @@ module.exports = ctx => {
         },
       };
       // upload
-      const res2 = await ctx.performAction({
-        method: 'post',
-        url: '/a/file/file/uploadInner',
-        body: {
-          file: res.data,
-          meta,
-        },
+      const res2 = await ctx.executeBean({
+        beanModule: 'a-file',
+        beanFullName: 'a-file.service.file',
+        context: { fileContent: res.data, meta, user: null },
+        fn: '_upload',
       });
       // hold
       profile._avatar = res2.downloadUrl;

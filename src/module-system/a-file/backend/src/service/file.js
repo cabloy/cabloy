@@ -43,10 +43,6 @@ module.exports = app => {
       }
     }
 
-    async uploadInner({ file, meta, user }) {
-      return await this._upload({ fileContent: file, meta, user });
-    }
-
     async upload({ user }) {
       const stream = await this.ctx.getFileStream();
       try {
@@ -62,6 +58,7 @@ module.exports = app => {
         throw e;
       }
     }
+
     async _upload({ fileContent, meta, user }) {
       // info
       const fileInfo = path.parse(meta.filename);

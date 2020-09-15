@@ -1,5 +1,5 @@
-import captcha from './components/captcha.vue';
+import simple from './components/simple.vue';
 
 export default {
-  captcha,
+  simple,
 };

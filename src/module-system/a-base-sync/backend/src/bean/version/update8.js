@@ -1,7 +1,7 @@
 const constants = require('../../config/constants.js');
 
 module.exports = function(ctx) {
-
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class VersionUpdate8 {
 
     async run(options) {
@@ -75,13 +75,14 @@ module.exports = function(ctx) {
 
     async _updateFunctions(options) {
       // all instances
-      const instances = await ctx.model.query('select * from aInstance');
+      const instances = await ctx.bean.instance.list({ where: {} });
       for (const instance of instances) {
-        await ctx.performAction({
+        await ctx.executeBean({
           subdomain: instance.name,
-          method: 'post',
-          url: 'version/update8FunctionScenes',
-          body: options,
+          beanModule: moduleInfo.relativeName,
+          beanFullName: `${moduleInfo.relativeName}.version.manager`,
+          context: options,
+          fn: 'update8FunctionScenes',
         });
       }
     }
@@ -99,13 +100,14 @@ module.exports = function(ctx) {
 
     async _updateAtoms(options) {
       // all instances
-      const instances = await ctx.model.query('select * from aInstance');
+      const instances = await ctx.bean.instance.list({ where: {} });
       for (const instance of instances) {
-        await ctx.performAction({
+        await ctx.executeBean({
           subdomain: instance.name,
-          method: 'post',
-          url: 'version/update8Atoms',
-          body: options,
+          beanModule: moduleInfo.relativeName,
+          beanFullName: `${moduleInfo.relativeName}.version.manager`,
+          context: options,
+          fn: 'update8Atoms',
         });
       }
     }

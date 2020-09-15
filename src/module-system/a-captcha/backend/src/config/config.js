@@ -16,7 +16,7 @@ module.exports = appInfo => {
     scenes: {
       default: {
         module: 'a-captchasimple',
-        name: 'captcha',
+        name: 'simple',
         timeout: 20 * 60 * 1000,
       },
     },

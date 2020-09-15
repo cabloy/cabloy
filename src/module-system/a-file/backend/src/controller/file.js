@@ -46,15 +46,6 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async uploadInner() {
-      const res = await this.service.file.uploadInner({
-        file: this.ctx.request.body.file,
-        meta: this.ctx.request.body.meta,
-        user: this.ctx.state.user ? this.ctx.state.user.op : null,
-      });
-      this.ctx.success(res);
-    }
-
     async upload() {
       const res = await this.service.file.upload({
         user: this.ctx.state.user.op,

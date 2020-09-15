@@ -74,15 +74,16 @@ module.exports = ctx => {
       const provider = await this.getProvider({ module: providerInstance.module, sceneName: providerInstance.sceneName });
       // invoke provider verify
       const _moduleInfo = mparse.parseInfo(provider.module);
-      await ctx.performAction({
-        method: 'post',
-        url: `/${_moduleInfo.url}/${provider.name}/verify`,
-        body: {
+      await ctx.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName: `${_moduleInfo.relativeName}.captcha.${provider.name}`,
+        context: {
           providerInstanceId,
           context: providerInstance.context,
           data: providerInstance.data,
           dataInput,
         },
+        fn: 'verify',
       });
       // // clear
       // await cache.remove(key);
