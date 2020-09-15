@@ -2,6 +2,7 @@ const mparse = require('egg-born-mparse').default;
 const fse = require('fs-extra');
 const path = require('path');
 const URL = require('url').URL;
+const is = require('is-type-of');
 const isSafeDomainUtil = require('egg-security').utils.isSafeDomain;
 
 module.exports = app => {
@@ -190,7 +191,7 @@ module.exports = app => {
       // ok
       return ctx;
     },
-    async executeBean({ locale, subdomain, context, beanModule, beanFullName, transaction, fn, ctxCaller }) {
+    async executeBean({ locale, subdomain, beanModule, beanFullName, context, fn, transaction, ctxCaller }) {
       // ctx
       const ctx = await this.createAnonymousContext({ locale, subdomain, module: beanModule });
       // ctxCaller
@@ -225,10 +226,11 @@ module.exports = app => {
     },
     async _executeBeanFn({ fn, ctx, bean, context }) {
       let res;
-      if (fn) {
+      if (is.function(fn)) {
         res = await fn({ ctx, bean, context });
       } else {
-        res = await bean.execute(context);
+        fn = fn || 'execute';
+        res = await bean[fn](context);
       }
       return res;
     },

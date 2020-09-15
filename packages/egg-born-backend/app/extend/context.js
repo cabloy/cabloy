@@ -148,7 +148,7 @@ module.exports = {
     return this[TAILCALLBACKS];
   },
 
-  async executeBean({ locale, subdomain, context, beanModule, beanFullName, transaction, fn }) {
+  async executeBean({ locale, subdomain, beanModule, beanFullName, context, fn, transaction }) {
     return await this.app.meta.util.executeBean({
       locale: locale === undefined ? this.locale : locale,
       subdomain: subdomain === undefined ? this.subdomain : subdomain,

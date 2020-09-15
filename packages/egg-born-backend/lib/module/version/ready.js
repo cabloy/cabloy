@@ -49,18 +49,16 @@ module.exports = async function(app) {
       subdomain,
       beanModule: 'a-instance',
       beanFullName: 'instance',
-      fn: async ({ bean }) => {
-        await bean.instanceStartup({ subdomain });
-      },
+      context: { subdomain },
+      fn: 'instanceStartup',
     });
     // test
     await app.meta.util.executeBean({
       subdomain,
       beanModule: 'a-version',
       beanFullName: 'a-version.local.version',
-      fn: async ({ bean }) => {
-        await bean.__instanceTest(subdomain);
-      },
+      context: subdomain,
+      fn: '__instanceTest',
     });
   }
 
