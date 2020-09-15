@@ -4,8 +4,6 @@ module.exports = app => {
       title: 'Progress',
       persistence: true,
     },
-    callbacks: {
-    },
   };
   return progress;
 };

@@ -1,11 +1,10 @@
 module.exports = app => {
-  const progress = {
+  const hotloadFile = {
     info: {
+      bean: 'hotloadFile',
       title: 'Hotload File',
       persistence: false,
     },
-    callbacks: {
-    },
   };
-  return progress;
+  return hotloadFile;
 };

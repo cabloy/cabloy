@@ -15,6 +15,7 @@ const middlewareTestInterception = require('./bean/middleware.interception.js');
 const middlewareTestRestructuring = require('./bean/middleware.restructuring.js');
 const atomParty = require('./bean/atom.party.js');
 const atomPartyPublic = require('./bean/atom.partyPublic.js');
+const ioMessageTest = require('./bean/io.message.test.js');
 
 module.exports = app => {
   const beans = {
@@ -98,6 +99,10 @@ module.exports = app => {
       'atom.partyPublic': {
         mode: 'app',
         bean: atomPartyPublic,
+      },
+      'io.message.test': {
+        mode: 'ctx',
+        bean: ioMessageTest,
       },
     });
   }

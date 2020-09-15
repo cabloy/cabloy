@@ -3,6 +3,7 @@ const eventLoginInfo = require('./bean/event.loginInfo.js');
 const eventAccountMigration = require('./bean/event.accountMigration.js');
 const queueContacts = require('./bean/queue.contacts.js');
 const middlewareInWxwork = require('./bean/middleware.inWxwork.js');
+const ioChannelApp = require('./bean/io.channel.app.js');
 const beanWxwork = require('./bean/bean.wxwork.js');
 
 module.exports = app => {
@@ -30,6 +31,11 @@ module.exports = app => {
     'middleware.inWxwork': {
       mode: 'ctx',
       bean: middlewareInWxwork,
+    },
+    // io
+    'io.channel.app': {
+      mode: 'ctx',
+      bean: ioChannelApp,
     },
     // global
     wxwork: {

@@ -3,6 +3,7 @@ const localBuild = require('./bean/local.build.js');
 const queueRender = require('./bean/queue.render.js');
 const startupRegisterAllWatchers = require('./bean/startup.registerAllWatchers.js');
 const atomArticle = require('./bean/atom.article.js');
+const ioMessageHotloadFile = require('./bean/io.message.hotloadFile.js');
 
 module.exports = app => {
   const beans = {
@@ -30,6 +31,11 @@ module.exports = app => {
     'atom.article': {
       mode: 'app',
       bean: atomArticle,
+    },
+    // io
+    'io.message.hotloadFile': {
+      mode: 'ctx',
+      bean: ioMessageHotloadFile,
     },
   };
   return beans;

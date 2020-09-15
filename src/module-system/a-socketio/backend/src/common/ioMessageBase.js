@@ -27,6 +27,10 @@ module.exports = ctx => {
       return null;
     }
 
+    async publish({ path, message, messageClass, options }) {
+      return await ctx.bean.io.publish({ path, message, messageClass, options });
+    }
+
     // combine sessionId
     _combineSessionId(userIdFrom, userIdTo) {
       if (userIdFrom === userIdTo) return userIdFrom;

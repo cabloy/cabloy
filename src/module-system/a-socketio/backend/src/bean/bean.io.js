@@ -347,7 +347,7 @@ module.exports = ctx => {
       }
       // bean
       const beanFullName = `${channelBase.info.module}.io.channel.${channelBase.info.bean}`;
-      const beanChannel = ctx._getBean(beanFullName);
+      const beanChannel = ctx.bean._getBean(beanFullName);
       if (!beanChannel) {
         ctx.logger.info(`channel bean not found: ${beanFullName}`);
         return;
@@ -357,11 +357,15 @@ module.exports = ctx => {
 
     _getBeanMessage(messageClassBase) {
       // bean
-      const beanFullName = `${messageClassBase.info.module}.io.message.${messageClassBase.info.bean}`;
-      const beanMessage = ctx._getBean(beanFullName);
+      let beanMessage;
+      if (messageClassBase.info.bean) {
+        const beanFullName = `${messageClassBase.info.module}.io.message.${messageClassBase.info.bean}`;
+        beanMessage = ctx.bean._getBean(beanFullName);
+      }
       if (!beanMessage) {
-        ctx.logger.info(`message bean not found: ${beanFullName}`);
-        return;
+        beanMessage = new (ctx.app.meta.IOMessageBase(ctx))();
+        // ctx.logger.info(`message bean not found: ${beanFullName}`);
+        // return;
       }
       return beanMessage;
     }

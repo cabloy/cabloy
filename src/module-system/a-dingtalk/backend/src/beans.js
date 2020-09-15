@@ -4,6 +4,7 @@ const eventAccountMigration = require('./bean/event.accountMigration.js');
 const queueContacts = require('./bean/queue.contacts.js');
 const startupRegisterBusinessCallbackList = require('./bean/startup.registerBusinessCallbackList.js');
 const middlewareInDingtalk = require('./bean/middleware.inDingtalk.js');
+const ioChannelApp = require('./bean/io.channel.app.js');
 const beanDingtalk = require('./bean/bean.dingtalk.js');
 
 module.exports = app => {
@@ -36,6 +37,11 @@ module.exports = app => {
     'middleware.inDingtalk': {
       mode: 'ctx',
       bean: middlewareInDingtalk,
+    },
+    // io
+    'io.channel.app': {
+      mode: 'ctx',
+      bean: ioChannelApp,
     },
     // global
     dingtalk: {
