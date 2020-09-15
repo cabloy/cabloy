@@ -1,6 +1,6 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class Captcha extends ctx.app.meta.BeanModuleBase {
+  class Captcha {
 
     async verify(context) {
       const { data, dataInput } = context;

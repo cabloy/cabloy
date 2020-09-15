@@ -1,11 +1,11 @@
-const captchaSimple = require('./bean/captcha.simple.js');
+const captchaProvider = require('./bean/captcha.provider.captcha.js');
 
 module.exports = app => {
   const beans = {
-    // captcha
-    'captcha.simple': {
+    // captcha.provider
+    'captcha.provider.captcha': {
       mode: 'ctx',
-      bean: captchaSimple,
+      bean: captchaProvider,
     },
   };
   return beans;

@@ -76,7 +76,7 @@ module.exports = ctx => {
       const _moduleInfo = mparse.parseInfo(provider.module);
       await ctx.executeBean({
         beanModule: _moduleInfo.relativeName,
-        beanFullName: `${_moduleInfo.relativeName}.captcha.${provider.name}`,
+        beanFullName: `${_moduleInfo.relativeName}.captcha.provider.${provider.name}`,
         context: {
           providerInstanceId,
           context: providerInstance.context,
