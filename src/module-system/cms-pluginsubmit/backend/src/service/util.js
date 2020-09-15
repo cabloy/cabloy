@@ -2,17 +2,15 @@ const url = require('url');
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class UtilController extends app.Controller {
+  class Util extends app.Service {
 
-    async submit() {
-      const { links, config } = this.ctx.request.body;
+    async submit({ links, config }) {
       for (const target in config.submit) {
         const targetConfig = config.submit[target];
         if (target === 'baidu') {
           await this._submitBaidu({ target, targetConfig, links });
         }
       }
-      this.ctx.success();
     }
 
     async _submitBaidu({ target, targetConfig, links }) {
@@ -38,5 +36,5 @@ module.exports = app => {
     }
 
   }
-  return UtilController;
+  return Util;
 };

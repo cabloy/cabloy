@@ -3,14 +3,14 @@
   if(typeof article!=='undefined' && site.render && site.render.scene==='single' && !site.render.inner){
     const articleLink=url(article.url);
     // submit
-    const res = await ctx.performAction({
-      method: 'post',
-      url: '/cms/pluginsubmit/util/submit',
-      body: {
+    await ctx.executeBean({
+      beanModule:'cms-pluginsubmit',
+      beanFullName:'cms-pluginsubmit.service.util',
+      context:{
         links:[articleLink],
         config:site.plugins['cms-pluginsubmit'],
       },
+      fn:'submit',
     });
   }
-
 %>
