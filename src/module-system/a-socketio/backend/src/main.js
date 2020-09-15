@@ -1,8 +1,14 @@
 const config = require('./config/config.js');
 const locales = require('./config/locales.js');
 const errors = require('./config/errors.js');
+const IOMessageBaseFn = require('./common/ioMessageBase.js');
+const IOChannelBaseFn = require('./common/ioChannelBase.js');
 
 module.exports = app => {
+
+  // atomBase
+  app.meta.IOMessageBase = IOMessageBaseFn;
+  app.meta.IOChannelBase = IOChannelBaseFn;
 
   // beans
   const beans = require('./beans.js')(app);

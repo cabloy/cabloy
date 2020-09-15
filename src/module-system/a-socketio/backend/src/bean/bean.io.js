@@ -108,13 +108,8 @@ module.exports = ctx => {
       const userIdFrom = message.userIdFrom;
       const userIdTo = message.userIdTo;
       // sessionId
-      let sessionId;
-      if (messageClassBase.callbacks.onSessionId) {
-        sessionId = await messageClassBase.callbacks.onSessionId({ io: this, ctx, path, message, options });
-      }
-      if (!sessionId) {
-        sessionId = message.messageGroup ? userIdTo : this._combineSessionId(userIdFrom, userIdTo);
-      }
+      const beanMessage = this._getBeanMessage(messageClassBase);
+      const sessionId = await beanMessage.onSessionId({ path, message, options });
       // message
       const _message = {
         messageClassId: messageClass.id,
@@ -197,15 +192,16 @@ module.exports = ctx => {
     async queueProcess({ path, options, message, messageClass }) {
       // messageClass
       const messageClassBase = this.messageClass.messageClass(messageClass);
+      const beanMessage = this._getBeanMessage(messageClassBase);
       // groupUsers
-      let groupUsers;
-      if (messageClassBase.callbacks.onGroupUsers) {
-        groupUsers = await messageClassBase.callbacks.onGroupUsers({ io: this, ctx, path, message, options });
-      }
+      const groupUsers = await beanMessage.onGroupUsers({ path, message, options });
       // onProcess
-      if (messageClassBase.callbacks.onProcess) {
-        await messageClassBase.callbacks.onProcess({ io: this, ctx, path, options, message, groupUsers, messageClass });
-      }
+      await beanMessage.onProcess({ path, options, message, groupUsers, messageClass });
+    }
+
+    async _onProcessBase({ path, options, message, groupUsers, messageClass }) {
+      // messageClass
+      const messageClassBase = this.messageClass.messageClass(messageClass);
       // save syncs
       const messageSyncs = await this.message.saveSyncs({
         message,
@@ -268,13 +264,8 @@ module.exports = ctx => {
     }
 
     async _queuePushMessageSync({ messageClassBase, options, message, messageSync, messageClass }) {
-      if (messageClassBase.callbacks.onPush) {
-        // custom
-        await messageClassBase.callbacks.onPush({ io: this, ctx, options, message, messageSync, messageClass });
-      } else {
-        // default
-        await this.push({ options, message, messageSync, messageClass });
-      }
+      const beanMessage = this._getBeanMessage(messageClassBase);
+      await beanMessage.onPush({ options, message, messageSync, messageClass });
     }
 
     async push({ options, message, messageSync, messageClass }) {
@@ -284,16 +275,15 @@ module.exports = ctx => {
       const isSender = message.userIdFrom === userId;
       // ignore sender
       if (isSender) return true;
-      // options maybe set push.channels
-      let channels = options && options.push && options.channels;
-      if (!channels) channels = messageClassBase.info.push.channels;
-      if (!channels) return false;
       // adjust auto
       let autoFirstValid = false;
-      if (channels === 'auto') {
+      // options maybe set push.channels
+      let channels = options && options.push && options.channels;
+      if (!channels) {
+        channels = messageClassBase.info.push.channels;
         autoFirstValid = true;
-        channels = messageClassBase.channels ? Object.keys(messageClassBase.channels) : [];
       }
+      if (!channels) return false;
       // loop
       let atLeastDone = false;
       for (const channelFullName of channels) {
@@ -313,22 +303,19 @@ module.exports = ctx => {
 
     async _pushChannel({ messageClassBase, options, message, messageSync, messageClass, channelFullName }) {
       try {
+        // bean
+        const beanMessage = this._getBeanMessage(messageClassBase);
+        if (!beanMessage) return false;
         // render message content
-        const onRender = messageClassBase.channels[channelFullName] && messageClassBase.channels[channelFullName].onRender;
-        if (!onRender) return false;
-        const content = await onRender({ io: this, ctx, options, message, messageSync, messageClass });
+        const content = await beanMessage.onChannelRender({ channelFullName, options, message, messageSync, messageClass });
         if (!content) return false;
         // get channel base
-        const channelBase = this.messageClass.channel(channelFullName);
-        if (!channelBase) {
-          ctx.logger.info(`channel not found: ${channelFullName}`);
+        const beanChannel = this._getBeanChannel(channelFullName);
+        if (!beanChannel) {
           return false;
         }
         // push
-        let pushDone = false;
-        if (channelBase.callbacks.onPush) {
-          pushDone = await channelBase.callbacks.onPush({ io: this, ctx, content, options, message, messageSync, messageClass });
-        }
+        const pushDone = await beanChannel.onPush({ content, options, message, messageSync, messageClass });
         if (!pushDone) return false;
         // done this channel
         return true;
@@ -342,15 +329,41 @@ module.exports = ctx => {
     async queuePushDirect({ content, options, channel }) {
       // get channel base
       const channelFullName = `${channel.module}:${channel.name}`;
+      const beanChannel = this._getBeanChannel(channelFullName);
+      if (!beanChannel) {
+        return false;
+      }
+      const pushDone = await beanChannel.onPush({ content, options });
+      // done
+      return pushDone;
+    }
+
+    _getBeanChannel(channelFullName) {
+      // get channel base
       const channelBase = this.messageClass.channel(channelFullName);
       if (!channelBase) {
         ctx.logger.info(`channel not found: ${channelFullName}`);
-        return false;
+        return;
       }
-      if (!channelBase.callbacks.onPush) return false;
-      const pushDone = await channelBase.callbacks.onPush({ io: this, ctx, content, options });
-      // done
-      return pushDone;
+      // bean
+      const beanFullName = `${channelBase.info.module}.io.channel.${channelBase.info.bean}`;
+      const beanChannel = ctx._getBean(beanFullName);
+      if (!beanChannel) {
+        ctx.logger.info(`channel bean not found: ${beanFullName}`);
+        return;
+      }
+      return beanChannel;
+    }
+
+    _getBeanMessage(messageClassBase) {
+      // bean
+      const beanFullName = `${messageClassBase.info.module}.io.message.${messageClassBase.info.bean}`;
+      const beanMessage = ctx._getBean(beanFullName);
+      if (!beanMessage) {
+        ctx.logger.info(`message bean not found: ${beanFullName}`);
+        return;
+      }
+      return beanMessage;
     }
 
     _pushQueuePush({ options, message, messageSyncs, messageSync, messageClass }) {
@@ -386,13 +399,8 @@ module.exports = ctx => {
     }
 
     async _queueDeliveryMessageSync({ messageClassBase, path, options, message, messageSync, messageClass }) {
-      if (messageClassBase.callbacks.onDelivery) {
-        // custom
-        await messageClassBase.callbacks.onDelivery({ io: this, ctx, path, options, message, messageSync, messageClass });
-      } else {
-        // default
-        await this.delivery({ path, options, message, messageSync, messageClass });
-      }
+      const beanMessage = this._getBeanMessage(messageClassBase);
+      await beanMessage.onDelivery({ path, options, message, messageSync, messageClass });
     }
 
     async delivery({ path, options, message, messageSync, messageClass }) {
@@ -477,12 +485,6 @@ module.exports = ctx => {
         broadcastName: 'socketEmit',
         data: { path, message, workerId, socketId },
       });
-    }
-
-    // combine sessionId
-    _combineSessionId(userIdFrom, userIdTo) {
-      if (userIdFrom === userIdTo) return userIdFrom;
-      return `${userIdFrom > userIdTo ? userIdFrom : userIdTo}:${userIdFrom < userIdTo ? userIdFrom : userIdTo}`;
     }
 
   }

@@ -1,3 +1,6 @@
+const require3 = require('require3');
+const extend = require3('extend2');
+
 const _cacheMessageClasses = {};
 const _cacheChannels = {};
 
@@ -75,11 +78,13 @@ module.exports = ctx => {
     _prepareMessageClassesModule(module, _messages) {
       const messageClasses = {};
       for (const key in _messages) {
-        const _message = _messages[key];
+        const message = extend(true, {}, _messages[key]);
+        message.info.module = module;
+        message.info.name = key;
         // titleLocale
-        _message.info.titleLocale = ctx.text(_message.info.title);
+        message.info.titleLocale = ctx.text(message.info.title);
         // ok
-        messageClasses[key] = _message;
+        messageClasses[key] = message;
       }
       return messageClasses;
     }
@@ -122,11 +127,13 @@ module.exports = ctx => {
     _prepareChannelsModule(module, _channels) {
       const channels = {};
       for (const key in _channels) {
-        const _channel = _channels[key];
+        const channel = extend(true, {}, _channels[key]);
+        channel.info.module = module;
+        channel.info.name = key;
         // titleLocale
-        _channel.info.titleLocale = ctx.text(_channel.info.title);
+        channel.info.titleLocale = ctx.text(channel.info.title);
         // ok
-        channels[key] = _channel;
+        channels[key] = channel;
       }
       return channels;
     }
