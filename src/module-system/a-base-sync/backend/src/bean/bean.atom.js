@@ -63,9 +63,8 @@ module.exports = ctx => {
       const res = await ctx.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
-        fn: async ({ bean }) => {
-          return await bean.create({ atomClass, item, user });
-        },
+        context: { atomClass, item, user },
+        fn: 'create',
       });
       const { atomId, itemId } = res;
       // save itemId
@@ -87,9 +86,8 @@ module.exports = ctx => {
       const item = await ctx.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
-        fn: async ({ bean }) => {
-          return await bean.read({ atomClass, key, user });
-        },
+        context: { atomClass, key, user },
+        fn: 'read',
       });
       return item;
     }
@@ -130,9 +128,8 @@ module.exports = ctx => {
         await ctx.executeBean({
           beanModule: _moduleInfo.relativeName,
           beanFullName,
-          fn: async ({ bean }) => {
-            return await bean.select({ atomClass, options, items, user });
-          },
+          context: { atomClass, options, items, user },
+          fn: 'select',
         });
       }
       // ok
@@ -150,9 +147,8 @@ module.exports = ctx => {
       await ctx.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
-        fn: async ({ bean }) => {
-          return await bean.write({ atomClass, key, item, user });
-        },
+        context: { atomClass, key, item, user },
+        fn: 'write',
       });
     }
 
@@ -166,9 +162,8 @@ module.exports = ctx => {
       await ctx.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
-        fn: async ({ bean }) => {
-          return await bean.delete({ atomClass, key, user });
-        },
+        context: { atomClass, key, user },
+        fn: 'delete',
       });
     }
 
@@ -182,9 +177,8 @@ module.exports = ctx => {
       await ctx.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
-        fn: async ({ bean }) => {
-          return await bean.action({ action, atomClass, key, user });
-        },
+        context: { action, atomClass, key, user },
+        fn: 'action',
       });
     }
 
@@ -201,9 +195,8 @@ module.exports = ctx => {
       await ctx.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
-        fn: async ({ bean }) => {
-          return await bean.enable({ atomClass, key, atom: _atom, user });
-        },
+        context: { atomClass, key, atom: _atom, user },
+        fn: 'enable',
       });
     }
 

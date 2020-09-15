@@ -115,12 +115,11 @@ module.exports = function(ctx) {
         await ctx.executeBean({
           beanModule: 'a-authsimple',
           beanFullName: 'a-authsimple.service.auth',
-          fn: async ({ bean }) => {
-            await bean.add({
-              userId: userIds[userName],
-              password: '',
-            });
+          context: {
+            userId: userIds[userName],
+            password: '',
           },
+          fn: 'add',
         });
       }
     }

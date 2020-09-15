@@ -11,9 +11,8 @@ module.exports = app => {
       return await this.ctx.executeBean({
         beanModule: articleBeanModule,
         beanFullName: articleBeanFullName,
-        fn: async ({ bean }) => {
-          return await bean.create({ atomClass, item, user });
-        },
+        context: { atomClass, item, user },
+        fn: 'create',
       });
     }
 
@@ -21,9 +20,8 @@ module.exports = app => {
       return await this.ctx.executeBean({
         beanModule: articleBeanModule,
         beanFullName: articleBeanFullName,
-        fn: async ({ bean }) => {
-          return await bean.read({ atomClass, key, user });
-        },
+        context: { atomClass, key, user },
+        fn: 'read',
       });
     }
 
@@ -31,9 +29,8 @@ module.exports = app => {
       return await this.ctx.executeBean({
         beanModule: articleBeanModule,
         beanFullName: articleBeanFullName,
-        fn: async ({ bean }) => {
-          return await bean.select({ atomClass, options, items, user });
-        },
+        context: { atomClass, options, items, user },
+        fn: 'select',
       });
     }
 
@@ -41,9 +38,8 @@ module.exports = app => {
       return await this.ctx.executeBean({
         beanModule: articleBeanModule,
         beanFullName: articleBeanFullName,
-        fn: async ({ bean }) => {
-          return await bean.write({ atomClass, key, item, user });
-        },
+        context: { atomClass, key, item, user },
+        fn: 'write',
       });
     }
 
@@ -51,9 +47,8 @@ module.exports = app => {
       return await this.ctx.executeBean({
         beanModule: articleBeanModule,
         beanFullName: articleBeanFullName,
-        fn: async ({ bean }) => {
-          return await bean.delete({ atomClass, key, user });
-        },
+        context: { atomClass, key, user },
+        fn: 'delete',
       });
     }
 
@@ -61,9 +56,8 @@ module.exports = app => {
       return await this.ctx.executeBean({
         beanModule: articleBeanModule,
         beanFullName: articleBeanFullName,
-        fn: async ({ bean }) => {
-          return await bean.action({ action, atomClass, key, user });
-        },
+        context: { action, atomClass, key, user },
+        fn: 'action',
       });
     }
 
@@ -71,9 +65,8 @@ module.exports = app => {
       return await this.ctx.executeBean({
         beanModule: articleBeanModule,
         beanFullName: articleBeanFullName,
-        fn: async ({ bean }) => {
-          return await bean.enable({ atomClass, key, atom, user });
-        },
+        context: { atomClass, key, atom, user },
+        fn: 'enable',
       });
     }
 

@@ -84,9 +84,7 @@ module.exports = app => {
           subdomain: options.subdomain,
           beanModule: moduleInfo.relativeName,
           beanFullName: `${moduleInfo.relativeName}.local.version`,
-          fn: async ({ bean }) => {
-            await bean.__after();
-          },
+          fn: '__after',
         });
       }
 
