@@ -1,5 +1,5 @@
 <template>
-  <eb-link iconMaterial="home" :onPerform="onPerform"></eb-link>
+  <eb-link :iconMaterial="iconHome()" :onPerform="onPerform"></eb-link>
 </template>
 <script>
 // export
@@ -20,6 +20,10 @@ function install(_Vue) {
       }
     },
     methods: {
+      iconHome() {
+        const button = this.getButton();
+        return (button && button.iconMaterial) || 'home';
+      },
       getButton() {
         return this.$config.layout.header.button.home;
       },

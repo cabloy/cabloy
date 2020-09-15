@@ -1,5 +1,5 @@
 <template>
-  <eb-link iconMaterial="dashboard" :onPerform="onPerform"></eb-link>
+  <eb-link :iconMaterial="iconDashboard()" :onPerform="onPerform"></eb-link>
 </template>
 <script>
 // export
@@ -20,6 +20,10 @@ function install(_Vue) {
       }
     },
     methods: {
+      iconDashboard() {
+        const button = this.getButton();
+        return (button && button.iconMaterial) || 'dashboard';
+      },
       getButton() {
         return this.$config.layout.header.button.dashboard;
       },
