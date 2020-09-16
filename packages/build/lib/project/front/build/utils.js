@@ -75,8 +75,7 @@ module.exports = context => {
       const runtimePath = path.join(context.config.frontPath, '__runtime');
 
       // modules
-      const modules = mglob.glob();
-
+      const { modules } = mglob.glob(context.config.projectPath);
 
       // clear
       fse.emptyDirSync(runtimePath);

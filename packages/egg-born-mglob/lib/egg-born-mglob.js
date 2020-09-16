@@ -1,5 +1,7 @@
-const glob = require('glob');
 const path = require('path');
+const glob = require('glob');
+const semver = require('semver');
+const chalk = require('chalk');
 const mparse = require('egg-born-mparse').default;
 
 module.exports = {
@@ -12,13 +14,103 @@ const __paths = [
   { prefix: 'node_modules/egg-born-module-', public: true, jsFront: 'dist/front.js', jsBackend: 'dist/backend.js', staticBackend: 'dist/staticBackend' },
 ];
 
-function eggBornMglob() {
-  // modules
-  const modules = {};
-  // path
-  const projectPath = process.cwd();
+function eggBornMglob(projectPath) {
+  // disabledModules
+  const disabledModules = __getDisabledModules(projectPath);
+  // context
+  const context = {
+    modules: {},
+    modulesArray: [],
+    modulesLast: [],
+    modulesMonkey: {},
+    disabledModules,
+  };
+  // parse
+  const modules = __parseModules(projectPath);
+  // order
+  __orderModules(context, modules);
+  // ok
+  return {
+    modules: context.modules,
+    modulesArray: context.modulesArray,
+    modulesMonkey: context.modulesMonkey,
+  };
+}
 
-  // loop
+function __orderModules(context, modules) {
+  // 'a-version' first
+  __pushModule(context, modules, 'a-version');
+  // others
+  for (const key in modules) {
+    if (key !== 'a-version') {
+      __pushModule(context, modules, key);
+    }
+  }
+  // combine last
+  for (const module of context.modulesLast) {
+    context.modulesArray.push(module);
+  }
+}
+
+function __pushModule(context, modules, moduleRelativeName) {
+  // check if disable
+  if (context.disabledModules[moduleRelativeName]) return false;
+
+  // module
+  const module = modules[moduleRelativeName];
+  if (module.__ordering) return true;
+  module.__ordering = true;
+
+  // dependencies
+  if (!__orderDependencies(context, modules, module)) {
+    context.disabledModules[moduleRelativeName] = true;
+    return false;
+  }
+
+  // push this
+  context.modules[moduleRelativeName] = module;
+  if (module.package && module.package.eggBornModule && module.package.eggBornModule.last === true) {
+    context.modulesLast.push(module);
+  } else {
+    context.modulesArray.push(module);
+  }
+  // monkey
+  if (module.info.monkey) {
+    context.modulesMonkey[moduleRelativeName] = module;
+  }
+
+  return true;
+}
+
+function __orderDependencies(context, modules, module) {
+  if (!module.package.eggBornModule || !module.package.eggBornModule.dependencies) return true;
+
+  let enabled = true;
+
+  const dependencies = module.package.eggBornModule.dependencies;
+  for (const key in dependencies) {
+    const subModule = modules[key];
+    if (!subModule) {
+      console.warn(chalk.cyan(`module ${key} not exists`));
+      process.exit(0);
+    }
+
+    const subModuleVersion = dependencies[key];
+    if (semver.lt(subModule.package.version, subModuleVersion)) {
+      console.warn(chalk.cyan(`module ${key} is old`));
+      process.exit(0);
+    }
+
+    if (!__pushModule(context, modules, key)) {
+      enabled = false;
+    }
+  }
+
+  return enabled;
+}
+
+function __parseModules(projectPath) {
+  const modules = {};
   for (const __path of __paths) {
     const jsFronts = __path.jsFront.split(',');
     const jsBackends = __path.jsBackend.split(',');
@@ -59,7 +151,18 @@ function eggBornMglob() {
       }
     }
   }
-
-  // ok
   return modules;
 }
+
+function __getDisabledModules(projectPath) {
+  const configBuild = require(path.join(projectPath, 'build/config.js'));
+  const disabledModules = configBuild.general && configBuild.general.disabledModules;
+  const disabledModulesMap = {};
+  if (disabledModules && disabledModules.length > 0) {
+    for (const moduleName of disabledModules) {
+      disabledModulesMap[moduleName] = true;
+    }
+  }
+  return disabledModulesMap;
+}
+
