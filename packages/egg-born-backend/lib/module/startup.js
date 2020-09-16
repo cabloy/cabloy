@@ -49,44 +49,22 @@ module.exports = function(loader) {
     const startup = ebStartups[fullKey];
     // normal
     if (!startup.config.debounce) {
-      return await loader.app.meta._runStartupQueue({ module, name, instanceStartup });
+      return await _runStartupInner({ startup, instanceStartup });
     }
-    // debounce: queue
-    let queueModule;
-    let queueName;
-    if (startup.config.queue) {
-      queueModule = module;
-      queueName = startup.config.queue;
-    } else {
-      queueModule = 'a-base';
-      queueName = instanceStartup ? 'instanceStartup' : 'startup';
-    }
-    await loader.app.meta.queue.pushAsync({
-      subdomain: instanceStartup ? instanceStartup.subdomain : undefined,
-      module: queueModule,
-      queueName,
-      queueNameSub: fullKey,
-      data: { startup, instanceStartup },
-    });
-  };
-
-  loader.app.meta._runStartupQueue = async ({ module, name, instanceStartup }) => {
-    // context
-    const context = {
-      options: instanceStartup ? instanceStartup.options : undefined,
-    };
-    // schedule
-    const fullKey = `${module}:${name}`;
-    const startup = ebStartups[fullKey];
-    // bean
-    const bean = startup.bean;
-    // execute
-    return await loader.app.meta.util.executeBean({
-      subdomain: instanceStartup ? instanceStartup.subdomain : undefined,
-      context,
-      beanModule: bean.module,
-      beanFullName: `${bean.module}.startup.${bean.name}`,
-      transaction: startup.config.transaction,
+    // debounce: lock
+    const subdomain = instanceStartup ? instanceStartup.subdomain : undefined;
+    return await loader.app.meta.util.lock({
+      subdomain,
+      resource: `${instanceStartup ? 'instanceStartup' : 'startup'}.${fullKey}`,
+      fn: async () => {
+        return await loader.app.meta.util.executeBean({
+          subdomain,
+          beanModule: 'a-base',
+          fn: async ({ ctx }) => {
+            await _runStartupLock({ ctx, startup, instanceStartup });
+          },
+        });
+      },
     });
   };
 
@@ -114,5 +92,37 @@ module.exports = function(loader) {
       }
     }
   };
+
+  async function _runStartupLock({ ctx, startup, instanceStartup }) {
+    // ignore debounce for test
+    const force = instanceStartup && instanceStartup.options && instanceStartup.options.force;
+    if (!force && !ctx.app.meta.isTest) {
+      const fullKey = `${startup.module}:${startup.name}`;
+      const cacheKey = `startupDebounce:${fullKey}${instanceStartup ? `:${ctx.instance.id}` : ''}`;
+      const debounce = typeof startup.config.debounce === 'number' ? startup.config.debounce : ctx.app.config.queue.startup.debounce;
+      const cache = ctx.cache.db.module('a-base');
+      const flag = await cache.getset(cacheKey, true, debounce);
+      if (flag) return;
+    }
+    // perform
+    await _runStartupInner({ startup, instanceStartup });
+  }
+
+  async function _runStartupInner({ startup, instanceStartup }) {
+    // context
+    const context = {
+      options: instanceStartup ? instanceStartup.options : undefined,
+    };
+    // bean
+    const bean = startup.bean;
+    // execute
+    return await loader.app.meta.util.executeBean({
+      subdomain: instanceStartup ? instanceStartup.subdomain : undefined,
+      context,
+      beanModule: bean.module,
+      beanFullName: `${bean.module}.startup.${bean.name}`,
+      transaction: startup.config.transaction,
+    });
+  }
 
 };

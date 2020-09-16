@@ -70,13 +70,6 @@ module.exports = appInfo => {
     schedule: {
       bean: 'schedule',
     },
-    startup: {
-      bean: 'startup',
-      // concurrency: true,
-    },
-    instanceStartup: {
-      bean: 'startup',
-    },
     roleBuild: {
       bean: 'roleBuild',
     },

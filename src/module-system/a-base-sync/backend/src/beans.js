@@ -2,7 +2,6 @@ const versionManager = require('./bean/version.manager.js');
 const localProcedure = require('./bean/local.procedure.js');
 const broadcastAuthProviderChanged = require('./bean/broadcast.authProviderChanged.js');
 const queueSchedule = require('./bean/queue.schedule.js');
-const queueStartup = require('./bean/queue.startup.js');
 const queueRoleBuild = require('./bean/queue.roleBuild.js');
 const startupRegisterPassport = require('./bean/startup.registerPassport.js');
 const startupInstallAuthProviders = require('./bean/startup.installAuthProviders.js');
@@ -47,10 +46,6 @@ module.exports = app => {
     'queue.schedule': {
       mode: 'app',
       bean: queueSchedule,
-    },
-    'queue.startup': {
-      mode: 'app',
-      bean: queueStartup,
     },
     'queue.roleBuild': {
       mode: 'app',
