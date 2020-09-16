@@ -1,3 +1,5 @@
+let __sequences;
+
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Sequence extends ctx.app.meta.BeanModuleBase {
@@ -54,7 +56,7 @@ module.exports = ctx => {
       }
 
       // next
-      const value = await provider.expression({ ctx, value: current });
+      const value = await ctx.bean._getBean(provider.beanFullName).execute({ value: current });
 
       // save
       if (sequence) {
@@ -86,8 +88,35 @@ module.exports = ctx => {
     }
 
     _findSequenceProvider(name) {
-      const meta = ctx.app.meta.modules[this.moduleName].main.meta;
-      return meta.sequence.providers[name];
+      const fullKey = `${this.moduleName}:${name}`;
+      if (!__sequences) {
+        __sequences = this._collectSequences();
+      }
+      return __sequences[fullKey];
+    }
+
+    _collectSequences() {
+      const sequences = {};
+      for (const module of ctx.app.meta.modulesArray) {
+        const providers = module.main.meta && module.main.meta.sequence && module.main.meta.sequence.providers;
+        if (!providers) continue;
+        for (const key in providers) {
+          const provider = providers[key];
+          const beanName = provider.bean;
+          let beanFullName;
+          if (typeof beanName === 'string') {
+            beanFullName = `${module.info.relativeName}.sequence.${beanName}`;
+          } else {
+            beanFullName = `${beanName.module || module.info.relativeName}.sequence.${beanName.name}`;
+          }
+          const fullKey = `${module.info.relativeName}:${key}`;
+          sequences[fullKey] = {
+            ...provider,
+            beanFullName,
+          };
+        }
+      }
+      return sequences;
     }
 
   }

@@ -23,16 +23,18 @@ module.exports = app => {
     sequence: {
       providers: {
         draft: {
-          start: 0,
-          expression({ ctx, value }) {
-            return ++value;
+          bean: {
+            module: 'a-sequence',
+            name: 'simple',
           },
+          start: 0,
         },
         userName: {
-          start: 0,
-          expression({ ctx, value }) {
-            return ++value;
+          bean: {
+            module: 'a-sequence',
+            name: 'simple',
           },
+          start: 0,
         },
       },
     },

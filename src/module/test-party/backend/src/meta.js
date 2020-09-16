@@ -194,10 +194,8 @@ module.exports = app => {
       sequence: {
         providers: {
           test: {
+            bean: 'test',
             start: 0,
-            expression({ ctx, value }) {
-              return ++value;
-            },
           },
         },
       },
