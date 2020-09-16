@@ -4,7 +4,6 @@ const broadcastResetCache = require('./bean/broadcast.resetCache.js');
 const broadcastReload = require('./bean/broadcast.reload.js');
 const middlewareAppReady = require('./bean/middleware.appReady.js');
 const middlewareInstance = require('./bean/middleware.instance.js');
-const queueRegisterInstance = require('./bean/queue.registerInstance.js');
 
 module.exports = app => {
   const beans = {
@@ -30,11 +29,6 @@ module.exports = app => {
     'middleware.instance': {
       mode: 'ctx',
       bean: middlewareInstance,
-    },
-    // queue
-    'queue.registerInstance': {
-      mode: 'app',
-      bean: queueRegisterInstance,
     },
     // global
     instance: {

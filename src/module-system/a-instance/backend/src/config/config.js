@@ -15,13 +15,6 @@ module.exports = appInfo => {
     },
   };
 
-  // queues
-  config.queues = {
-    registerInstance: {
-      bean: 'registerInstance',
-    },
-  };
-
   // startups
   config.startups = {
   };

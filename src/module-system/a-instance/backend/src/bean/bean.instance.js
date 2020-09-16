@@ -40,16 +40,21 @@ module.exports = ctx => {
       // instance base
       const instanceBase = this._getInstanceBase({ subdomain });
       if (!instanceBase) return null;
-      // queue
-      return await ctx.app.meta.queue.pushAsync({
-        module: moduleInfo.relativeName,
-        queueName: 'registerInstance',
-        queueNameSub: subdomain,
-        data: instanceBase,
+      // lock
+      return await ctx.app.meta.util.lock({
+        resource: `${moduleInfo.relativeName}.registerInstance.${subdomain}`,
+        fn: async () => {
+          return await ctx.app.meta.util.executeBean({
+            beanModule: moduleInfo.relativeName,
+            beanFullName: 'instance',
+            context: { instanceBase },
+            fn: '_registerLock',
+          });
+        },
       });
     }
 
-    async _registerQueue(instanceBase) {
+    async _registerLock({ instanceBase }) {
       // get again
       const modelInstance = ctx.model.module(moduleInfo.relativeName).instance;
       let instance = await modelInstance.get({ name: instanceBase.subdomain });
