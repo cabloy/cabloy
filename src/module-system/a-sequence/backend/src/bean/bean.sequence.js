@@ -24,19 +24,24 @@ module.exports = ctx => {
     }
 
     async next(name) {
-      const res = await ctx.app.meta.queue.pushAsync({
+      const moduleName = this.moduleName;
+      return await ctx.app.meta.util.lock({
         subdomain: ctx.subdomain,
-        module: moduleInfo.relativeName,
-        queueName: 'sequence',
-        data: {
-          module: this.moduleName,
-          name,
+        resource: `${moduleInfo.relativeName}.sequence.${moduleName}.${name}`,
+        fn: async () => {
+          return await ctx.app.meta.util.executeBean({
+            subdomain: ctx.subdomain,
+            beanModule: moduleInfo.relativeName,
+            beanFullName: 'sequence',
+            fn: async ({ bean }) => {
+              return await bean.module(moduleName)._nextLock(name);
+            },
+          });
         },
       });
-      return res;
     }
 
-    async _next(name) {
+    async _nextLock(name) {
       const provider = this._findSequenceProvider(name);
       const sequence = await this._get(name);
 

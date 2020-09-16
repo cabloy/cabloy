@@ -30,12 +30,6 @@ module.exports = appInfo => {
     },
   };
 
-  // mysql
-  config.mysql = {
-    app: true,
-    agent: false,
-  };
-
   // io
   config.io = {
     init: {

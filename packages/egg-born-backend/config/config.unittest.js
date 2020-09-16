@@ -3,6 +3,11 @@ module.exports = appInfo => {
 
   // mysql
   config.mysql = {
+    app: true,
+    agent: false,
+    default: {
+      connectionLimit: 100,
+    },
     clients: {
       // donnot change the name
       __ebdb: {
