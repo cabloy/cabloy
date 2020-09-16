@@ -634,16 +634,24 @@ module.exports = ctx => {
       const res = await ctx.db.get('aAuthProvider', data);
       if (res) return res;
       if (!module || !providerName) throw new Error('Invalid arguments');
-      // queue
-      return await ctx.app.meta.queue.pushAsync({
-        subdomain: subdomain !== undefined ? subdomain : ctx.subdomain,
-        module: moduleInfo.relativeName,
-        queueName: 'registerAuthProvider',
-        data: { module, providerName },
+      // lock
+      const _subdomain = subdomain !== undefined ? subdomain : ctx.subdomain;
+      return await ctx.app.meta.util.lock({
+        subdomain: _subdomain,
+        resource: `${moduleInfo.relativeName}.authProvider.register`,
+        fn: async () => {
+          return await ctx.app.meta.util.executeBean({
+            subdomain: _subdomain,
+            beanModule: moduleInfo.relativeName,
+            beanFullName: 'user',
+            context: { module, providerName },
+            fn: '_registerAuthProviderLock',
+          });
+        },
       });
     }
 
-    async registerAuthProvider({ module, providerName }) {
+    async _registerAuthProviderLock({ module, providerName }) {
       // get
       const res = await this.modelAuthProvider.get({ module, providerName });
       if (res) return res;

@@ -1,10 +1,6 @@
 const versionManager = require('./bean/version.manager.js');
 const localProcedure = require('./bean/local.procedure.js');
 const broadcastAuthProviderChanged = require('./bean/broadcast.authProviderChanged.js');
-const queueRegisterFunction = require('./bean/queue.registerFunction.js');
-const queueRegisterAtomAction = require('./bean/queue.registerAtomAction.js');
-const queueRegisterAtomClass = require('./bean/queue.registerAtomClass.js');
-const queueRegisterAuthProvider = require('./bean/queue.registerAuthProvider.js');
 const queueSchedule = require('./bean/queue.schedule.js');
 const queueStartup = require('./bean/queue.startup.js');
 const queueRoleBuild = require('./bean/queue.roleBuild.js');
@@ -48,22 +44,6 @@ module.exports = app => {
       bean: broadcastAuthProviderChanged,
     },
     // queue
-    'queue.registerFunction': {
-      mode: 'app',
-      bean: queueRegisterFunction,
-    },
-    'queue.registerAtomAction': {
-      mode: 'app',
-      bean: queueRegisterAtomAction,
-    },
-    'queue.registerAtomClass': {
-      mode: 'app',
-      bean: queueRegisterAtomClass,
-    },
-    'queue.registerAuthProvider': {
-      mode: 'app',
-      bean: queueRegisterAuthProvider,
-    },
     'queue.schedule': {
       mode: 'app',
       bean: queueSchedule,

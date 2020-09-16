@@ -15,22 +15,23 @@ module.exports = ctx => {
       const data = id ? { id } : { atomClassId, code };
       const res = await this.model.get(data);
       if (res) return res;
-      // queue
-      return await ctx.app.meta.queue.pushAsync({
+      // lock
+      return await ctx.app.meta.util.lock({
         subdomain: ctx.subdomain,
-        module: moduleInfo.relativeName,
-        queueName: 'registerAtomAction',
-        data: { atomClassId, code },
+        resource: `${moduleInfo.relativeName}.atomAction.register`,
+        fn: async () => {
+          return await ctx.app.meta.util.executeBean({
+            subdomain: ctx.subdomain,
+            beanModule: moduleInfo.relativeName,
+            beanFullName: 'atomAction',
+            context: { atomClassId, code },
+            fn: '_registerLock',
+          });
+        },
       });
     }
 
-    async getFlagByAtomId({ atomId, code, name }) {
-      const atomClass = await ctx.bean.atomClass.getTopByAtomId({ atomId });
-      const action = ctx.bean.base.action({ module: atomClass.module, atomClassName: atomClass.atomClassName, code, name });
-      return action.flag.toString();
-    }
-
-    async register({ atomClassId, code }) {
+    async _registerLock({ atomClassId, code }) {
       // get
       const res = await this.model.get({ atomClassId, code });
       if (res) return res;
@@ -45,6 +46,12 @@ module.exports = ctx => {
       const res2 = await this.model.insert(data);
       data.id = res2.insertId;
       return data;
+    }
+
+    async getFlagByAtomId({ atomId, code, name }) {
+      const atomClass = await ctx.bean.atomClass.getTopByAtomId({ atomId });
+      const action = ctx.bean.base.action({ module: atomClass.module, atomClassName: atomClass.atomClassName, code, name });
+      return action.flag.toString();
     }
 
   }

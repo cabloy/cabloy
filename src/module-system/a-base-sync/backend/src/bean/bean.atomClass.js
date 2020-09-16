@@ -30,16 +30,23 @@ module.exports = ctx => {
       const res = await this.model.get(data);
       if (res) return res;
       if (!module || !atomClassName) throw new Error('Invalid arguments');
-      // queue
-      return await ctx.app.meta.queue.pushAsync({
+      // lock
+      return await ctx.app.meta.util.lock({
         subdomain: ctx.subdomain,
-        module: moduleInfo.relativeName,
-        queueName: 'registerAtomClass',
-        data: { module, atomClassName, atomClassIdParent },
+        resource: `${moduleInfo.relativeName}.atomClass.register`,
+        fn: async () => {
+          return await ctx.app.meta.util.executeBean({
+            subdomain: ctx.subdomain,
+            beanModule: moduleInfo.relativeName,
+            beanFullName: 'atomClass',
+            context: { module, atomClassName, atomClassIdParent },
+            fn: '_registerLock',
+          });
+        },
       });
     }
 
-    async register({ module, atomClassName, atomClassIdParent }) {
+    async _registerLock({ module, atomClassName, atomClassIdParent }) {
       // get
       const res = await this.model.get({ module, atomClassName, atomClassIdParent });
       if (res) return res;

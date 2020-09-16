@@ -115,31 +115,23 @@ module.exports = ctx => {
       module = module || this.moduleName;
       const res = await this._get({ id, module, name });
       if (res) return res;
-      // queue
-      return await ctx.app.meta.queue.pushAsync({
+      // lock
+      return await ctx.app.meta.util.lock({
         subdomain: ctx.subdomain,
-        module: moduleInfo.relativeName,
-        queueName: 'registerFunction',
-        data: { module, name },
+        resource: `${moduleInfo.relativeName}.function.register`,
+        fn: async () => {
+          return await ctx.app.meta.util.executeBean({
+            subdomain: ctx.subdomain,
+            beanModule: moduleInfo.relativeName,
+            beanFullName: 'function',
+            context: { module, name },
+            fn: '_registerLock',
+          });
+        },
       });
     }
 
-    // iid maybe undefined
-    async getSceneId({ sceneName, sceneMenu }) {
-      const sceneItem = await this.modelFunctionScene.get({ sceneName, sceneMenu });
-      if (sceneItem) return sceneItem.id;
-      // scene sorting
-      const scenes = (ctx.config.module(moduleInfo.relativeName).function.scenes[sceneMenu] || '').split(',');
-      const sceneSorting = scenes.indexOf(sceneName) + 1;
-      const res = await this.modelFunctionScene.insert({
-        sceneName,
-        sceneMenu,
-        sceneSorting,
-      });
-      return res.insertId;
-    }
-
-    async register({ module, name }) {
+    async _registerLock({ module, name }) {
       module = module || this.moduleName;
       // get
       const res = await this.model.get({ module, name });
@@ -177,6 +169,21 @@ module.exports = ctx => {
       const res2 = await this.model.insert(data);
       data.id = res2.insertId;
       return data;
+    }
+
+    // iid maybe undefined
+    async getSceneId({ sceneName, sceneMenu }) {
+      const sceneItem = await this.modelFunctionScene.get({ sceneName, sceneMenu });
+      if (sceneItem) return sceneItem.id;
+      // scene sorting
+      const scenes = (ctx.config.module(moduleInfo.relativeName).function.scenes[sceneMenu] || '').split(',');
+      const sceneSorting = scenes.indexOf(sceneName) + 1;
+      const res = await this.modelFunctionScene.insert({
+        sceneName,
+        sceneMenu,
+        sceneSorting,
+      });
+      return res.insertId;
     }
 
     async checkRightFunction({
