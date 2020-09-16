@@ -15,10 +15,6 @@ module.exports = appInfo => {
     },
   };
 
-  // startups
-  config.startups = {
-  };
-
   // broadcasts
   config.broadcasts = {
     resetCache: {

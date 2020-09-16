@@ -23,16 +23,23 @@ module.exports = ctx => {
       const res = await this.modelMessageClass.get(data);
       if (res) return res;
       if (!module || !messageClassName) throw new Error('Invalid arguments');
-      // queue
-      return await ctx.app.meta.queue.pushAsync({
+      // lock
+      return await ctx.app.meta.util.lock({
         subdomain: ctx.subdomain,
-        module: moduleInfo.relativeName,
-        queueName: 'registerMessageClass',
-        data: { module, messageClassName },
+        resource: `${moduleInfo.relativeName}.messageClass.register`,
+        fn: async () => {
+          return await ctx.app.meta.util.executeBean({
+            subdomain: ctx.subdomain,
+            beanModule: moduleInfo.relativeName,
+            fn: async ({ ctx }) => {
+              return await ctx.bean.io.messageClass._registerLock({ module, messageClassName });
+            },
+          });
+        },
       });
     }
 
-    async queueRegister({ module, messageClassName }) {
+    async _registerLock({ module, messageClassName }) {
       // get
       const res = await this.modelMessageClass.get({ module, messageClassName });
       if (res) return res;
