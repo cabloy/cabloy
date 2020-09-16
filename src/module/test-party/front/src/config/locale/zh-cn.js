@@ -58,6 +58,7 @@ export default {
   MailTo: '发往',
   Subject: '主题',
   Text: '文本',
+  Dashboard: '仪表盘',
   MonkeyeeTestTip1: '本页面将被Monkey',
   MonkeyeeTestTip2: '本组件将被Monkey',
   CabloyAboutTip1: 'CabloyJS - 是一款顶级NodeJS全栈业务开发框架',

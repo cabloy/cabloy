@@ -11,6 +11,16 @@ export default {
   },
   render(c) {
     const children = [];
+    if (this.$meta.vueApp.layout === 'mobile' || this.$view.size === 'small') {
+      children.push(c('eb-navbar', {
+        attrs: {
+          large: true,
+          largeTransparent: true,
+          title: this.$text('Dashboard'),
+          ebBackLink: 'Back',
+        },
+      }));
+    }
     if (this.ready) {
       // root group
       children.push(c('widget-group', {
