@@ -11,6 +11,16 @@ export default {
   },
   render(c) {
     const children = [];
+    if (this.$meta.vueApp.layout === 'mobile' || this.$view.size === 'small') {
+      children.push(c('eb-navbar', {
+        attrs: {
+          large: true,
+          largeTransparent: true,
+          title: this.$text('Dashboard'),
+          ebBackLink: 'Back',
+        },
+      }));
+    }
     if (this.ready) {
       // root group
       children.push(c('widget-group', {
@@ -25,11 +35,11 @@ export default {
       children.push(c('f7-link', {
         staticClass: 'dashboard-settings',
         attrs: {
-          iconMaterial: 'settings'
+          iconMaterial: 'settings',
         },
         on: {
           click: this.onClickSettings,
-        }
+        },
       }));
     }
     return c('eb-page', {
@@ -72,7 +82,7 @@ export default {
     },
     __saveLayoutConfig: Vue.prototype.$meta.util.debounce(function() {
       // override
-      let profileValue = this.$meta.util.extend({}, this.profile);
+      const profileValue = this.$meta.util.extend({}, this.profile);
       // save
       if (this.profileId === 0) {
         // save
@@ -185,12 +195,12 @@ export default {
       this.__saveLayoutConfig();
     },
     __generateUUID() {
-      var d = new Date().getTime();
-      if (window.performance && typeof window.performance.now === "function") {
-        d += performance.now(); //use high-precision timer if available
+      let d = new Date().getTime();
+      if (window.performance && typeof window.performance.now === 'function') {
+        d += performance.now(); // use high-precision timer if available
       }
-      var uuid = 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        var r = (d + Math.random() * 16) % 16 | 0;
+      const uuid = 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = (d + Math.random() * 16) % 16 | 0;
         d = Math.floor(d / 16);
         return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
       });
@@ -201,22 +211,22 @@ export default {
       this.widgetsReal.push({ widgetId, widgetReal });
     },
     __onWidgetRealDestroy(widgetId, widgetReal) {
-      const [widget, index] = this.__findWidgetRealById(widgetId);
+      const [ widget, index ] = this.__findWidgetRealById(widgetId);
       if (index > -1) {
         this.widgetsReal.splice(index, 1);
       }
     },
     __findWidgetRealById(widgetId) {
       const index = this.widgetsReal.findIndex(item => item.widgetId === widgetId);
-      if (index === -1) return [null, -1];
-      return [this.widgetsReal[index], index];
+      if (index === -1) return [ null, -1 ];
+      return [ this.widgetsReal[index], index ];
     },
     __getWidgetRealById(widgetId) {
-      const [widget] = this.__findWidgetRealById(widgetId);
+      const [ widget ] = this.__findWidgetRealById(widgetId);
       if (!widget) return null;
       return widget.widgetReal;
     },
-  }
-}
+  },
+};
 
 </script>

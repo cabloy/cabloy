@@ -33,6 +33,7 @@ const items = [
   { title: 'Socket IO', path: 'kitchen-sink/socketio' },
   { title: 'Mail', path: 'kitchen-sink/mail' },
   { title: 'Load Component Async', path: 'kitchen-sink/component/loadComponentAsync' },
+  { title: 'Dashboard', path: '/a/dashboard/dashboard' },
 ];
 export default {
   data() {

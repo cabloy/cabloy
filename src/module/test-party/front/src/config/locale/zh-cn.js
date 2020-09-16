@@ -61,6 +61,7 @@ export default {
   Motto: '箴言',
   CaptchaCode: '验证码',
   SMSVerificationCode: '认证码',
+  Dashboard: '仪表盘',
   MonkeyeeTestTip1: '本页面将被Monkey',
   MonkeyeeTestTip2: '本组件将被Monkey',
   CabloyAboutTip1: 'CabloyJS - 是一款顶级NodeJS全栈业务开发框架',
