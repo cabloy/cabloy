@@ -38,15 +38,17 @@ module.exports = ctx => {
           `, [ JSON.stringify(value), res.id ]);
       } else {
         if (queue) {
-          await ctx.app.meta.queue.pushAsync({
+          await ctx.app.meta.util.lock({
             subdomain: ctx.subdomain,
-            module: moduleInfo.relativeName,
-            queueName: 'cacheDbSet',
-            data: {
-              module: this.moduleName,
-              name,
-              value,
-              timeout,
+            resource: `${moduleInfo.relativeName}.cacheDbSet.${this.moduleName}.${name}`,
+            fn: async () => {
+              return await ctx.app.meta.util.executeBean({
+                subdomain: ctx.subdomain,
+                beanModule: moduleInfo.relativeName,
+                fn: async ({ ctx }) => {
+                  return await ctx.cache._db.module(this.moduleName)._set({ name, value, timeout, queue: false });
+                },
+              });
             },
           });
         } else {

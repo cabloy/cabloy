@@ -2,13 +2,6 @@
 module.exports = appInfo => {
   const config = {};
 
-  // queues
-  config.queues = {
-    cacheDbSet: {
-      bean: 'cacheDbSet',
-    },
-  };
-
   // broadcasts
   config.broadcasts = {
     memRemove: {
