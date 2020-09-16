@@ -57,9 +57,8 @@ module.exports = ctx => {
           id: sequence.id,
           value: JSON.stringify(value),
         });
-      }
-      // insert
-      else {
+      } else {
+        // insert
         await ctx.db.insert('aSequence', {
           iid: ctx.instance.id,
           module: this.moduleName,

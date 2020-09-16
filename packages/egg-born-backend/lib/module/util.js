@@ -234,6 +234,47 @@ module.exports = app => {
       }
       return res;
     },
+    async lock({ subdomain, resource, fn, options, redlock }) {
+      // resource
+      const _lockResource = `redlock_${app.name}:${this.subdomainDesp(subdomain)}:${resource}`;
+      // options
+      const _lockOptions = Object.assign({}, app.config.queue.redlock.options, options);
+      // redlock
+      if (!redlock) {
+        redlock = app.meta.redlock.create(_lockOptions);
+      }
+      let _lock = await redlock.lock(_lockResource, _lockOptions.lockTTL);
+      // timer
+      let _lockTimer = null;
+      const _lockDone = () => {
+        if (_lockTimer) {
+          clearInterval(_lockTimer);
+          _lockTimer = null;
+        }
+      };
+      _lockTimer = setInterval(() => {
+        _lock.extend(_lockOptions.lockTTL).then(lock => {
+          _lock = lock;
+        }).catch(err => {
+          app.logger.error(err);
+          _lockDone();
+        });
+      }, _lockOptions.lockTTL / 2);
+      try {
+        const res = await fn();
+        _lockDone();
+        await _lock.unlock();
+        return res;
+      } catch (err) {
+        _lockDone();
+        await _lock.unlock();
+        throw err;
+      }
+    },
+    subdomainDesp(subdomain) {
+      if (subdomain === undefined) return '~';
+      return subdomain || '-';
+    },
   };
 };
 
@@ -244,3 +285,4 @@ function delegateProperty(ctx, ctxCaller, property) {
     },
   });
 }
+

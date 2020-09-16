@@ -55,33 +55,16 @@ module.exports = function(app) {
           return await this._performTask(job.data);
         }
         // redlock
-        const _lockResource = `redlock_${app.name}:queue:${queueKey}:${this._subdomainDesp(job.data.subdomain)}${job.data.queueNameSub ? '#' + job.data.queueNameSub : ''}`;
-        let _lock = await _worker.redlock.lock(_lockResource, _redlockOptions.lockTTL);
-        let _lockTimer = null;
-        const _lockDone = () => {
-          if (_lockTimer) {
-            clearInterval(_lockTimer);
-            _lockTimer = null;
-          }
-        };
-        _lockTimer = setInterval(() => {
-          _lock.extend(_redlockOptions.lockTTL).then(lock => {
-            _lock = lock;
-          }).catch(err => {
-            app.logger.error(err);
-            _lockDone();
-          });
-        }, _redlockOptions.lockTTL / 2);
-        try {
-          const res = await this._performTask(job.data);
-          _lockDone();
-          await _lock.unlock();
-          return res;
-        } catch (err) {
-          _lockDone();
-          await _lock.unlock();
-          throw err;
-        }
+        const _lockResource = `queue:${queueKey}${job.data.queueNameSub ? '#' + job.data.queueNameSub : ''}`;
+        return await app.meta.util.lock({
+          subdomain: job.data.subdomain,
+          resource: _lockResource,
+          options: _redlockOptions,
+          redlock: _worker.redlock,
+          fn: async () => {
+            return await this._performTask(job.data);
+          },
+        });
       }, _workerOptions);
 
       _worker.worker.on('failed', (job, err) => {
@@ -220,11 +203,6 @@ module.exports = function(app) {
 
     _combineQueueKey({ module = '', queueName = '' }) {
       return `${module}||${queueName}`;
-    }
-
-    _subdomainDesp(subdomain) {
-      if (subdomain === undefined) return '~';
-      return subdomain || '-';
     }
 
     async _performTask({ locale, subdomain, module, queueName, queueNameSub, data }) {
