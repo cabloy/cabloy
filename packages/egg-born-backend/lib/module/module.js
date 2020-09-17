@@ -6,7 +6,8 @@ module.exports = function(loader) {
   // all modules
   const { modules, modulesArray, modulesMonkey } = mglob.glob(
     path.join(loader.app.options.baseDir, '../..'),
-    loader.app.config.disabledModules
+    loader.app.config.disabledModules,
+    !!loader.app.meta.inAgent
   );
   const ebModules = loader.app.meta.modules = modules;
   const ebModulesArray = loader.app.meta.modulesArray = modulesArray;
@@ -15,8 +16,6 @@ module.exports = function(loader) {
   loadModules();
   // monkey modules
   monkeyModules();
-  // log modules
-  logModules();
 
   function loadModules() {
     for (const module of ebModulesArray) {
@@ -27,14 +26,6 @@ module.exports = function(loader) {
   function monkeyModules() {
     for (const module of ebModulesArray) {
       loader.app.meta.util.monkeyModule(ebModulesMonkey, 'moduleLoaded', { module });
-    }
-  }
-
-  function logModules() {
-    if (loader.app.meta.inAgent) {
-      for (const module of ebModulesArray) {
-        console.log(module.info.fullName);
-      }
     }
   }
 

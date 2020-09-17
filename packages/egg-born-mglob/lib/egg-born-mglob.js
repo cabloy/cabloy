@@ -14,12 +14,15 @@ const __paths = [
   { prefix: 'node_modules/egg-born-module-', public: true, jsFront: 'dist/front.js', jsBackend: 'dist/backend.js', staticBackend: 'dist/staticBackend' },
 ];
 
-function eggBornMglob(projectPath, disabledModules) {
+function eggBornMglob(projectPath, disabledModules, log) {
   // context
   const context = {
     modules: {},
     modulesArray: [],
     modulesLast: [],
+    //
+    modulesLocal: {},
+    modulesGlobal: {},
     modulesMonkey: {},
     disabledModules: __getDisabledModules(disabledModules),
   };
@@ -27,10 +30,15 @@ function eggBornMglob(projectPath, disabledModules) {
   const modules = __parseModules(projectPath);
   // order
   __orderModules(context, modules);
+  // log
+  __logModules(context, log);
   // ok
   return {
     modules: context.modules,
     modulesArray: context.modulesArray,
+    //
+    modulesLocal: context.modulesLocal,
+    modulesGlobal: context.modulesGlobal,
     modulesMonkey: context.modulesMonkey,
   };
 }
@@ -71,10 +79,6 @@ function __pushModule(context, modules, moduleRelativeName) {
     context.modulesLast.push(module);
   } else {
     context.modulesArray.push(module);
-  }
-  // monkey
-  if (module.info.monkey) {
-    context.modulesMonkey[moduleRelativeName] = module;
   }
 
   return true;
@@ -150,6 +154,36 @@ function __parseModules(projectPath) {
     }
   }
   return modules;
+}
+
+function __logModules(context, log) {
+  for (const module of context.modulesArray) {
+    const relativeName = module.info.relativeName;
+    if (module.info.monkey) {
+      context.modulesMonkey[relativeName] = module;
+    }
+    if (module.info.public) {
+      context.modulesGlobal[relativeName] = module;
+    } else {
+      context.modulesLocal[relativeName] = module;
+    }
+  }
+  if (!log) return;
+  // log
+  console.log('\n');
+  console.log(chalk.yellow('\n=== Local Modules ==='));
+  for (const key in context.modulesLocal) {
+    console.log(chalk.cyan('> ' + key));
+  }
+  console.log(chalk.yellow('\n=== Global Modules ==='));
+  for (const key in context.modulesGlobal) {
+    console.log(chalk.cyan('> ' + key));
+  }
+  console.log(chalk.yellow('\n=== Monkey Modules ==='));
+  for (const key in context.modulesMonkey) {
+    console.log(chalk.cyan('> ' + key));
+  }
+  console.log('\n');
 }
 
 function __getDisabledModules(disabledModules) {

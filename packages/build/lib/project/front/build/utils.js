@@ -68,16 +68,14 @@ module.exports = context => {
       return output;
     },
     copyModules() {
-      const modulesLocal = {};
-      const modulesGlobal = {};
-      const modulesMonkey = {};
-
+      // runtime path
       const runtimePath = path.join(context.config.frontPath, '__runtime');
 
       // modules
-      const { modules } = mglob.glob(
+      const { modules, modulesGlobal } = mglob.glob(
         context.config.projectPath,
-        context.config.configProject.base.disabledModules
+        context.config.configProject.base.disabledModules,
+        true
       );
 
       // clear
@@ -85,9 +83,8 @@ module.exports = context => {
       fse.emptyDirSync(path.join(runtimePath, 'modules'));
 
       // global modules
-      for (const relativeName in modules) {
+      for (const relativeName in modulesGlobal) {
         const module = modules[relativeName];
-        if (!module.info.public) continue;
         // copy js
         let fileSrc = `${module.root}/dist/front.js`;
         let fileDest = path.join(runtimePath, 'modules', relativeName, 'dist/front.js');
@@ -110,14 +107,6 @@ module.exports = context => {
       let jsModulesSync = '';
       for (const relativeName in modules) {
         const module = modules[relativeName];
-        // log
-        if (module.info.monkey) {
-          modulesMonkey[relativeName] = module;
-        } else if (module.info.public) {
-          modulesGlobal[relativeName] = module;
-        } else {
-          modulesLocal[relativeName] = module;
-        }
         // js
         if (module.info.monkey || module.info.sync) {
           jsModules +=
@@ -160,23 +149,9 @@ export default {
   modulesMonkey,
 };
 `;
+
       fse.outputFileSync(path.join(runtimePath, 'modules.js'), modulesJS);
 
-      // log
-      console.log('\n');
-      console.log(chalk.yellow('\n=== Local Modules ==='));
-      for (const key in modulesLocal) {
-        console.log(chalk.cyan('> ' + key));
-      }
-      console.log(chalk.yellow('\n=== Global Modules ==='));
-      for (const key in modulesGlobal) {
-        console.log(chalk.cyan('> ' + key));
-      }
-      console.log(chalk.yellow('\n=== Monkey Modules ==='));
-      for (const key in modulesMonkey) {
-        console.log(chalk.cyan('> ' + key));
-      }
-      console.log('\n');
     },
     getIndexPath() {
       const index = path.join(context.config.projectPath, 'src/front/index.ejs');
