@@ -4,6 +4,11 @@ module.exports = appInfo => {
   // keys
   config.keys = appInfo.name + '_1596889047267_3245';
 
+  // disabledModules
+  config.disabledModules = [
+    'test-party',
+  ];
+
   // instances
   config.instances = [
     { subdomain: '', password: '', title: '',
@@ -25,7 +30,7 @@ module.exports = appInfo => {
     clients: {
       // donnot change the name
       __ebdb: {
-        host: 'mysql',  // see: docker-compose.yml
+        host: 'mysql', // see: docker-compose.yml
         port: '3306',
         user: 'web_user',
         password: '!%{9mov.Tw3LmcYP',

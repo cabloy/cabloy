@@ -4,7 +4,10 @@ const mglob = require('egg-born-mglob');
 module.exports = function(loader) {
 
   // all modules
-  const { modules, modulesArray, modulesMonkey } = mglob.glob(path.join(loader.app.options.baseDir, '../..'));
+  const { modules, modulesArray, modulesMonkey } = mglob.glob(
+    path.join(loader.app.options.baseDir, '../..'),
+    loader.app.config.disabledModules
+  );
   const ebModules = loader.app.meta.modules = modules;
   const ebModulesArray = loader.app.meta.modulesArray = modulesArray;
   const ebModulesMonkey = loader.app.meta.modulesMonkey = modulesMonkey;

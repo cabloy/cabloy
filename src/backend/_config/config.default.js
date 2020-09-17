@@ -4,6 +4,9 @@ module.exports = appInfo => {
   // keys
   config.keys = appInfo.name + '_1596889047267_3245';
 
+  // disabledModules
+  config.disabledModules = [];
+
   // subdomainOffset
   config.subdomainOffset = 2;
 

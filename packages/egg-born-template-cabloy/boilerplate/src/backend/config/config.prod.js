@@ -4,6 +4,11 @@ module.exports = appInfo => {
   // keys
   config.keys = appInfo.name + '_{{safeKeys}}';
 
+  // disabledModules
+  config.disabledModules = [
+    'test-party',
+  ];
+
   // instances
   config.instances = [
     { subdomain: '', password: '', title: '',

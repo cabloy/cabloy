@@ -14,16 +14,14 @@ const __paths = [
   { prefix: 'node_modules/egg-born-module-', public: true, jsFront: 'dist/front.js', jsBackend: 'dist/backend.js', staticBackend: 'dist/staticBackend' },
 ];
 
-function eggBornMglob(projectPath) {
-  // disabledModules
-  const disabledModules = __getDisabledModules(projectPath);
+function eggBornMglob(projectPath, disabledModules) {
   // context
   const context = {
     modules: {},
     modulesArray: [],
     modulesLast: [],
     modulesMonkey: {},
-    disabledModules,
+    disabledModules: __getDisabledModules(disabledModules),
   };
   // parse
   const modules = __parseModules(projectPath);
@@ -154,9 +152,7 @@ function __parseModules(projectPath) {
   return modules;
 }
 
-function __getDisabledModules(projectPath) {
-  const configBuild = require(path.join(projectPath, 'build/config.js'));
-  const disabledModules = configBuild.general && configBuild.general.disabledModules;
+function __getDisabledModules(disabledModules) {
   const disabledModulesMap = {};
   if (disabledModules && disabledModules.length > 0) {
     for (const moduleName of disabledModules) {
@@ -165,4 +161,3 @@ function __getDisabledModules(projectPath) {
   }
   return disabledModulesMap;
 }
-

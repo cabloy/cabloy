@@ -1,8 +1,12 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
 const path = require('path');
 const merge = require('webpack-merge');
+const extend = require('extend2');
+const os = require('os');
+const webpack = require('webpack');
+const fse = require('fs-extra');
 
-module.exports = context => {
+module.exports = (context, cb) => {
 
   // config
   const config = require(path.join(context.projectPath, 'build/config.js'));
@@ -33,48 +37,77 @@ module.exports = context => {
   // dist
   const distPath = path.resolve(__dirname, `../dist${sceneValue ? '/' + sceneValue : ''}`);
 
-  // merge
-  return merge({
-    projectPath: context.projectPath,
-    frontPath: context.frontPath,
-    build: {
-      env: require('./prod.env'),
-      index: path.resolve(distPath, 'index.html'),
-      assetsRoot: distPath,
-      assetsSubDirectory: 'static',
-      assetsPublicPath: '',
-      productionSourceMap: true,
-      uglify: true,
+  // configProject
+  const tmpdir = os.tmpdir();
+  const files = {
+    entry: {
+      default: path.join(context.projectPath, 'src/front/config/config.default.js'),
+      [sceneValue]: path.join(context.projectPath, `src/front/config/config.${sceneValue}.js`),
     },
-    dev: {
-      env: require('./dev.env'),
-      port: 9090,
-      autoOpenBrowser: true,
-      assetsSubDirectory: 'static',
-      assetsPublicPath: '',
-      proxyTable: {
-        '/favicon.ico': {
-          target: proxyTarget,
-          xfwd: true,
-        },
-        '/api': {
-          target: proxyTarget,
-          xfwd: true,
-        },
-        '/socket.io': {
-          target: proxyTarget,
-          xfwd: true,
-          ws: true,
-        },
+    output: {
+      path: tmpdir,
+      filename: 'cabloy-front-config-[name].js',
+      libraryTarget: 'commonjs2',
+    },
+  };
+  webpack(files, err => {
+    if (err) throw err;
+
+    const fileDefault = path.join(tmpdir, 'cabloy-front-config-default.js');
+    const fileScene = path.join(tmpdir, `cabloy-front-config-${sceneValue}.js`);
+    let configProject = require(fileDefault).default;
+    const configScene = require(fileScene).default;
+    configProject = extend(true, {}, configProject, configScene);
+
+    fse.removeSync(fileDefault);
+    fse.removeSync(fileScene);
+
+    // merge
+    const res = merge({
+      projectPath: context.projectPath,
+      frontPath: context.frontPath,
+      configProject,
+      build: {
+        env: require('./prod.env'),
+        index: path.resolve(distPath, 'index.html'),
+        assetsRoot: distPath,
+        assetsSubDirectory: 'static',
+        assetsPublicPath: '',
+        productionSourceMap: true,
+        uglify: true,
       },
-      // CSS Sourcemaps off by default because relative paths are "buggy"
-      // with this option, according to the CSS-Loader README
-      // (https://github.com/webpack/css-loader#sourcemaps)
-      // In our experience, they generally work as expected,
-      // just be aware of this issue when enabling this option.
-      cssSourceMap: false,
-    },
-  }, envCustom, config.front);
+      dev: {
+        env: require('./dev.env'),
+        port: 9090,
+        autoOpenBrowser: true,
+        assetsSubDirectory: 'static',
+        assetsPublicPath: '',
+        proxyTable: {
+          '/favicon.ico': {
+            target: proxyTarget,
+            xfwd: true,
+          },
+          '/api': {
+            target: proxyTarget,
+            xfwd: true,
+          },
+          '/socket.io': {
+            target: proxyTarget,
+            xfwd: true,
+            ws: true,
+          },
+        },
+        // CSS Sourcemaps off by default because relative paths are "buggy"
+        // with this option, according to the CSS-Loader README
+        // (https://github.com/webpack/css-loader#sourcemaps)
+        // In our experience, they generally work as expected,
+        // just be aware of this issue when enabling this option.
+        cssSourceMap: false,
+      },
+    }, envCustom, config.front);
+
+    cb(null, res);
+  });
 
 };
 

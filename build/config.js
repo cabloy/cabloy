@@ -22,15 +22,7 @@ const front = {
   },
 };
 
-// general
-const general = {
-  disabledModules: [
-    // 'test-party',
-  ],
-};
-
 module.exports = {
   front,
   backend,
-  general,
 };
