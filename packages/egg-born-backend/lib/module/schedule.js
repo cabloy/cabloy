@@ -38,36 +38,20 @@ module.exports = function(loader, modules) {
     }
   }
 
-  async function __removeAllSchedules({ subdomain }) {
-    const info = {
-      module: 'a-base',
-      queueName: 'schedule',
-    };
-    const queue = loader.app.meta.queue._ensureQueue(info).queue;
-    const jobs = await queue.getRepeatableJobs();
-    // console.log(jobs);
-    for (const job of jobs) {
-      const prefix = `_schedule.${subdomain}.`;
-      if (job.name.indexOf(prefix) === 0) {
-        await queue.removeRepeatableByKey(job.key);
-      }
-    }
-  }
-
   function __installSchedules({ subdomain }) {
     for (const fullKey in ebSchedules) {
       const schedule = ebSchedules[fullKey];
       if (!schedule.config.disable && schedule.config.repeat) {
         // push
-        const jobId = `_schedule.${subdomain}.${fullKey}`;
+        const jobName = __combineJobName(subdomain, schedule.module, schedule.name);
         loader.app.meta.queue.push({
           subdomain,
           module: 'a-base',
           queueName: 'schedule',
           queueNameSub: fullKey,
-          jobName: jobId,
+          jobName,
           jobOptions: {
-            jobId,
+            // jobId,
             repeat: schedule.config.repeat,
           },
           data: {
@@ -81,13 +65,19 @@ module.exports = function(loader, modules) {
   }
 
   loader.app.meta._loadSchedules = async ({ subdomain }) => {
-    await __removeAllSchedules({ subdomain });
+    // install
     __installSchedules({ subdomain });
   };
 
-  loader.app.meta._runSchedule = async ({ subdomain, module, name }) => {
+  loader.app.meta._runSchedule = async context => {
+    const { subdomain, module, name } = context.data;
     // ignore on test
     if (loader.app.meta.isTest) return;
+    // check if valid
+    if (!__checkJobValid(context)) {
+      await __deleteSchedule(context);
+      return;
+    }
     // schedule
     const fullKey = `${module}.${name}`;
     const schedule = ebSchedules[fullKey];
@@ -99,6 +89,44 @@ module.exports = function(loader, modules) {
       beanModule: bean.module,
       beanFullName: `${bean.module}.schedule.${bean.name}`,
       transaction: schedule.config.transaction,
+      context,
     });
   };
+
+  function __combineJobName(subdomain, module, name) {
+    return `_schedule.${loader.app.meta.util.subdomainDesp(subdomain)}.${module}.${name}`;
+  }
+
+  async function __deleteSchedule(context) {
+    const job = context.job;
+    const jobKeyActive = getRepeatKey(job.data.jobName, job.data.jobOptions.repeat);
+    const repeat = await job.queue.repeat;
+    await repeat.removeRepeatableByKey(jobKeyActive);
+  }
+
+  function __checkJobValid(context) {
+    const job = context.job;
+    const { module, name } = context.data;
+    // schedule
+    const fullKey = `${module}.${name}`;
+    const schedule = ebSchedules[fullKey];
+    if (!schedule) return false;
+    // check disable
+    if (schedule.config.disable) return false;
+    // check if changed
+    const jobKeyActive = getRepeatKey(job.data.jobName, job.data.jobOptions.repeat);
+    const jobKeyConfig = getRepeatKey(job.data.jobName, schedule.config.repeat);
+    if (jobKeyActive !== jobKeyConfig) return false;
+    // ok
+    return true;
+  }
 };
+
+function getRepeatKey(name, repeat) {
+  const endDate = repeat.endDate ? new Date(repeat.endDate).getTime() : '';
+  const tz = repeat.tz || '';
+  const suffix = (repeat.cron ? repeat.cron : String(repeat.every)) || '';
+
+  return `${name}::${endDate}:${tz}:${suffix}`;
+}
+

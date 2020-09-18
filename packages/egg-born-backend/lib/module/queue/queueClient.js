@@ -52,7 +52,7 @@ module.exports = function(app) {
       _worker.worker = new bull.Worker(queueKey, async job => {
         // concurrency
         if (queueConfig.concurrency) {
-          return await this._performTask(job.data);
+          return await this._performTask(job);
         }
         // redlock
         const _lockResource = `queue:${queueKey}${job.data.queueNameSub ? '#' + job.data.queueNameSub : ''}`;
@@ -62,7 +62,7 @@ module.exports = function(app) {
           options: _redlockOptions,
           redlock: _worker.redlock,
           fn: async () => {
-            return await this._performTask(job.data);
+            return await this._performTask(job);
           },
         });
       }, _workerOptions);
@@ -205,9 +205,10 @@ module.exports = function(app) {
       return `${module}||${queueName}`;
     }
 
-    async _performTask({ locale, subdomain, module, queueName, queueNameSub, data }) {
+    async _performTask(job) {
+      const { locale, subdomain, module, queueName, queueNameSub, data } = job.data;
       // context
-      const context = { data };
+      const context = { job, data };
       if (queueNameSub) {
         context.queueNameSub = queueNameSub;
       }
