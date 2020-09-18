@@ -56,7 +56,7 @@ module.exports = appInfo => {
         repeat: {
           every: 3000,
         },
-        // disable: true,
+        disable: true,
       },
     };
 
