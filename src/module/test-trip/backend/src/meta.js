@@ -1,5 +1,6 @@
 module.exports = app => {
   const schemas = require('./config/validation/schemas.js')(app);
+  const flowDefinitions = require('./config/flow/definitions.js')(app);
   const meta = {
     base: {
       atoms: {
@@ -53,6 +54,11 @@ module.exports = app => {
       schemas: {
         trip: schemas.trip,
         tripSearch: schemas.tripSearch,
+      },
+    },
+    flow: {
+      definitions: {
+        simple: flowDefinitions.simple,
       },
     },
   };
