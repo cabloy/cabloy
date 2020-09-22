@@ -1,33 +1,28 @@
 {
-  "name": "egg-born-module-{{name}}",
+  "name": "egg-born-module-test-trip",
   "version": "1.0.0",
-  "title": "{{name}}",
-  "eggBornModule":
-  {
-    "fileVersion": 0,
-    "dependencies":
-    {
+  "title": "test-trip",
+  "eggBornModule": {
+    "fileVersion": 1,
+    "dependencies": {
       "a-instance": "4.0.0",
       "a-base": "4.0.0",
       "a-flow": "4.0.0"
     }
   },
-  "description": "{{description}}",
+  "description": "",
   "keywords": [
     "Cabloy Module"
   ],
-  "scripts":
-  {
+  "scripts": {
     "build:front": "egg-born-bin front-build-module",
     "build:backend": "egg-born-bin backend-build-module",
     "lint": "eslint front backend",
     "preversion": "npm run build:front && npm run build:backend && git add ."
   },
-  "author": "{{author}}",
-  "devDependencies":
-  {},
-  "dependencies":
-  {
+  "author": "zhennann",
+  "devDependencies": {},
+  "dependencies": {
     "require3": "^2.0.0",
     "extend2": "^1.0.0",
     "egg-born-bin": "^3.0.0",
