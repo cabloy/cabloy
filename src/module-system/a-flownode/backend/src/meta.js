@@ -14,6 +14,22 @@ module.exports = app => {
       schemas: {
       },
     },
+    flow: {
+      nodes: {
+        startEventNone: {
+          title: 'StartEventNone',
+          group: 'startEvent',
+          bean: 'startEventNone',
+          icon: '/api/static/a/flownode/node/start-event-none',
+        },
+        endEventNone: {
+          title: 'EndEventNone',
+          group: 'endEvent',
+          bean: 'endEventNone',
+          icon: '/api/static/a/flownode/node/start-event-none',
+        },
+      },
+    },
   };
   return meta;
 };

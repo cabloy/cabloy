@@ -6,7 +6,7 @@ const IOChannelBaseFn = require('./common/ioChannelBase.js');
 
 module.exports = app => {
 
-  // atomBase
+  // base
   app.meta.IOMessageBase = IOMessageBaseFn;
   app.meta.IOChannelBase = IOChannelBaseFn;
 

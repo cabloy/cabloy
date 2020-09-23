@@ -1,8 +1,12 @@
 const config = require('./config/config.js');
 const locales = require('./config/locales.js');
 const errors = require('./config/errors.js');
+const FlowNodeBaseFn = require('./common/flowNodeBase.js');
 
 module.exports = app => {
+
+  // flowNodeBase
+  app.meta.FlowNodeBase = FlowNodeBaseFn;
 
   // aops
   const aops = require('./aops.js')(app);

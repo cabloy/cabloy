@@ -15,12 +15,12 @@ module.exports = app => {
         {
           id: 'startEvent_1',
           name: 'Start',
-          type: 'startEvent',
+          type: 'startEventNone',
         },
         {
           id: 'endEvent_1',
           name: 'End',
-          type: 'endEvent',
+          type: 'endEventNone',
         },
       ],
       edges: [
