@@ -1,3 +1,6 @@
+
+const __fieldNames = [ 'flowDefinitionKey', 'version', 'description', 'dynamic', 'disabled' ];
+
 module.exports = app => {
 
   class Atom extends app.meta.AtomBase {
@@ -9,8 +12,14 @@ module.exports = app => {
       const res = await this.ctx.model.flowDefinition.insert({
         atomId: key.atomId,
       });
-      // return key
-      return { atomId: key.atomId, itemId: res.insertId };
+      const itemId = res.insertId;
+      // add content
+      await this.ctx.model.flowDefinitionContent.insert({
+        atomId: key.atomId,
+        itemId,
+        content: null,
+      });
+      return { atomId: key.atomId, itemId };
     }
 
     async read({ atomClass, key, user }) {
@@ -30,16 +39,28 @@ module.exports = app => {
       // super
       await super.write({ atomClass, key, item, user });
       // update flowDefinition
-      await this.ctx.model.flowDefinition.update({
+      const data = {
         id: key.itemId,
-        description: item.description,
-      });
+      };
+      for (const fieldName of __fieldNames) {
+        if (item[fieldName] !== undefined) {
+          data[fieldName] = item[fieldName];
+        }
+      }
+      await this.ctx.model.flowDefinition.update(data);
+      // update content
+      await this.ctx.model.query('update aFlowDefinitionContent a set a.content=? where a.iid=? and a.atomId=?',
+        [ item.content, this.ctx.instance.id, key.atomId ]);
     }
 
     async delete({ atomClass, key, user }) {
       // delete flowDefinition
       await this.ctx.model.flowDefinition.delete({
         id: key.itemId,
+      });
+      // delete content
+      await this.ctx.model.flowDefinitionContent.delete({
+        itemId: key.itemId,
       });
       // super
       await super.delete({ atomClass, key, user });

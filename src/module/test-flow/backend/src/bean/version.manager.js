@@ -30,7 +30,7 @@ module.exports = app => {
           { roleName: 'authenticated', action: 'read', scopeNames: 0 },
           { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
         ];
-        await this.ctx.meta.role.addRoleRightBatch({ atomClassName: 'trip', roleRights });
+        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'trip', roleRights });
       }
     }
 
