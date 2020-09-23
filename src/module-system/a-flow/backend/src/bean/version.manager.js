@@ -48,6 +48,74 @@ module.exports = app => {
         `;
         await this.ctx.model.query(sql);
 
+        // create table: aFlow
+        //  flowStatus: 1/COMPLETED, 2/CANCELLED
+        sql = `
+          CREATE TABLE aFlow (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            deleted int(11) DEFAULT '0',
+            iid int(11) DEFAULT '0',
+            flowDefinitionId int(11) DEFAULT '0',
+            flowDefinitionKey varchar(255) DEFAULT NULL,
+            version varchar(50) DEFAULT NULL,
+            flowStatus int(11) DEFAULT '0',
+            PRIMARY KEY (id)
+          )
+        `;
+        await this.ctx.model.query(sql);
+
+        // create table: aFlowNode
+        sql = `
+          CREATE TABLE aFlowNode (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            deleted int(11) DEFAULT '0',
+            iid int(11) DEFAULT '0',
+            flowId int(11) DEFAULT '0',
+            flowNodeKey varchar(255) DEFAULT NULL,
+            PRIMARY KEY (id)
+          )
+        `;
+        await this.ctx.model.query(sql);
+
+        // create table: aFlowHistory
+        //  flowStatus: 1/COMPLETED, 2/CANCELLED
+        sql = `
+          CREATE TABLE aFlowHistory (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            deleted int(11) DEFAULT '0',
+            iid int(11) DEFAULT '0',
+            flowId int(11) DEFAULT '0',
+            flowDefinitionId int(11) DEFAULT '0',
+            flowDefinitionKey varchar(255) DEFAULT NULL,
+            version varchar(50) DEFAULT NULL,
+            flowStatus int(11) DEFAULT '0',
+            PRIMARY KEY (id)
+          )
+        `;
+        await this.ctx.model.query(sql);
+
+        // create table: aFlowNodeHistory
+        sql = `
+          CREATE TABLE aFlowNodeHistory (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            deleted int(11) DEFAULT '0',
+            iid int(11) DEFAULT '0',
+            flowId int(11) DEFAULT '0',
+            flowHistoryId int(11) DEFAULT '0',
+            flowNodeKey varchar(255) DEFAULT NULL,
+            PRIMARY KEY (id)
+          )
+        `;
+        await this.ctx.model.query(sql);
+
       }
     }
 
