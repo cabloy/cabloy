@@ -1,7 +1,7 @@
 {
-  "name": "egg-born-module-test-trip",
+  "name": "egg-born-module-test-flow",
   "version": "1.0.0",
-  "title": "test-trip",
+  "title": "test-flow",
   "eggBornModule": {
     "fileVersion": 1,
     "dependencies": {
