@@ -3,8 +3,10 @@ module.exports = app => {
 
     async update(options) {
       if (options.version === 1) {
+        let sql;
+
         // create table: aFlowDefinition
-        const sql = `
+        sql = `
           CREATE TABLE aFlowDefinition (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -12,11 +14,40 @@ module.exports = app => {
             deleted int(11) DEFAULT '0',
             iid int(11) DEFAULT '0',
             atomId int(11) DEFAULT '0',
+            flowDefinitionKey varchar(255) DEFAULT NULL,
+            version varchar(50) DEFAULT NULL,
             description varchar(255) DEFAULT NULL,
+            dynamic int(11) DEFAULT '0',
+            disabled int(11) DEFAULT '0',
             PRIMARY KEY (id)
           )
         `;
         await this.ctx.model.query(sql);
+
+        // create table: aFlowDefinitionContent
+        sql = `
+          CREATE TABLE aFlowDefinitionContent (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            deleted int(11) DEFAULT '0',
+            iid int(11) DEFAULT '0',
+            atomId int(11) DEFAULT '0',
+            itemId int(11) DEFAULT '0',
+            content JSON DEFAULT NULL,
+            PRIMARY KEY (id)
+          )
+        `;
+        await this.ctx.model.query(sql);
+
+        // create view: aFlowDefinitionViewFull
+        sql = `
+          CREATE VIEW aFlowDefinitionViewFull as
+            select a.*,b.content from aFlowDefinition a
+              left join aFlowDefinitionContent b on a.id=b.itemId
+        `;
+        await this.ctx.model.query(sql);
+
       }
     }
 

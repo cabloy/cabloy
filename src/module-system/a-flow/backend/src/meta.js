@@ -8,6 +8,7 @@ module.exports = app => {
             bean: 'flowDefinition',
             title: 'FlowDefinition',
             tableName: 'aFlowDefinition',
+            tableNameFull: 'aFlowDefinitionViewFull',
           },
           actions: {
           },
