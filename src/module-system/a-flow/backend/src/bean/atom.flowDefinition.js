@@ -1,5 +1,5 @@
 
-const __fieldNames = [ 'flowDefinitionKey', 'version', 'description', 'dynamic', 'disabled' ];
+const __fieldNames = [ 'flowDefinitionKey', 'version', 'description', 'dynamic' ];
 
 module.exports = app => {
 
