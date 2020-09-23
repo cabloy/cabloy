@@ -5,10 +5,12 @@ class Listener {
 }
 module.exports = app => {
   const definition = {
+    info: {
+      title: 'Test_Set00_Simple',
+      description: 'Test_Set00_Simple',
+      version: '2020-09-22',
+    },
     process: {
-      info: {
-        version: '2020-09-22',
-      },
       nodes: [
         {
           id: 'startEvent_1',
