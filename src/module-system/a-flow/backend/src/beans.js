@@ -1,7 +1,7 @@
 const versionManager = require('./bean/version.manager.js');
-const atomFlowDefinition = require('./bean/atom.flowDefinition.js');
+const atomFlowDef = require('./bean/atom.flowDef.js');
 const beanFlow = require('./bean/bean.flow.js');
-const beanFlowDefinition = require('./bean/bean.flowDefinition.js');
+const beanFlowDef = require('./bean/bean.flowDef.js');
 
 module.exports = app => {
   const beans = {
@@ -11,9 +11,9 @@ module.exports = app => {
       bean: versionManager,
     },
     // atom
-    'atom.flowDefinition': {
+    'atom.flowDef': {
       mode: 'app',
-      bean: atomFlowDefinition,
+      bean: atomFlowDef,
     },
     // global
     flow: {
@@ -21,9 +21,9 @@ module.exports = app => {
       bean: beanFlow,
       global: true,
     },
-    flowDefinition: {
+    flowDef: {
       mode: 'ctx',
-      bean: beanFlowDefinition,
+      bean: beanFlowDef,
       global: true,
     },
   };

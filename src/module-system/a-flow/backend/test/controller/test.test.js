@@ -6,7 +6,7 @@ describe('[your tests start from here]', () => {
 
     // atomClass info
     const atomClassModule = mockInfo().relativeName;
-    const atomClassName = 'flowDefinition';
+    const atomClassName = 'flowDef';
 
     // login as root
     await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({

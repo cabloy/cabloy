@@ -1,5 +1,5 @@
 
-const __fieldNames = [ 'flowDefinitionKey', 'version', 'description', 'dynamic' ];
+const __fieldNames = [ 'flowDefKey', 'version', 'description', 'dynamic' ];
 
 module.exports = app => {
 
@@ -8,13 +8,13 @@ module.exports = app => {
     async create({ atomClass, item, user }) {
       // super
       const key = await super.create({ atomClass, item, user });
-      // add flowDefinition
-      const res = await this.ctx.model.flowDefinition.insert({
+      // add flowDef
+      const res = await this.ctx.model.flowDef.insert({
         atomId: key.atomId,
       });
       const itemId = res.insertId;
       // add content
-      await this.ctx.model.flowDefinitionContent.insert({
+      await this.ctx.model.flowDefContent.insert({
         atomId: key.atomId,
         itemId,
         content: null,
@@ -38,7 +38,7 @@ module.exports = app => {
     async write({ atomClass, key, item, user }) {
       // super
       await super.write({ atomClass, key, item, user });
-      // update flowDefinition
+      // update flowDef
       const data = {
         id: key.itemId,
       };
@@ -47,19 +47,19 @@ module.exports = app => {
           data[fieldName] = item[fieldName];
         }
       }
-      await this.ctx.model.flowDefinition.update(data);
+      await this.ctx.model.flowDef.update(data);
       // update content
-      await this.ctx.model.query('update aFlowDefinitionContent a set a.content=? where a.iid=? and a.atomId=?',
+      await this.ctx.model.query('update aFlowDefContent a set a.content=? where a.iid=? and a.atomId=?',
         [ item.content, this.ctx.instance.id, key.atomId ]);
     }
 
     async delete({ atomClass, key, user }) {
-      // delete flowDefinition
-      await this.ctx.model.flowDefinition.delete({
+      // delete flowDef
+      await this.ctx.model.flowDef.delete({
         id: key.itemId,
       });
       // delete content
-      await this.ctx.model.flowDefinitionContent.delete({
+      await this.ctx.model.flowDefContent.delete({
         itemId: key.itemId,
       });
       // super

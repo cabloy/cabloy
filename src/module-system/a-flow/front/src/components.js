@@ -1,5 +1,5 @@
-import flowDefinitionItem from './components/flowDefinition/item.vue';
+import flowDefItem from './components/flowDef/item.vue';
 
 export default {
-  flowDefinitionItem,
+  flowDefItem,
 };

@@ -3,38 +3,38 @@ module.exports = app => {
   const meta = {
     base: {
       atoms: {
-        flowDefinition: {
+        flowDef: {
           info: {
-            bean: 'flowDefinition',
+            bean: 'flowDef',
             title: 'FlowDefinition',
-            tableName: 'aFlowDefinition',
-            tableNameFull: 'aFlowDefinitionViewFull',
+            tableName: 'aFlowDef',
+            tableNameFull: 'aFlowDefViewFull',
           },
           actions: {
           },
           flags: {
           },
-          validator: 'flowDefinition',
+          validator: 'flowDef',
           search: {
-            validator: 'flowDefinitionSearch',
+            validator: 'flowDefSearch',
           },
         },
       },
       functions: {
-        createFlowDefinition: {
+        createFlowDef: {
           title: 'Create FlowDefinition',
           scene: 'create',
           autoRight: 1,
-          atomClassName: 'flowDefinition',
+          atomClassName: 'flowDef',
           action: 'create',
           sorting: 1,
           menu: 1,
         },
-        listFlowDefinition: {
+        listFlowDef: {
           title: 'FlowDefinition List',
           scene: 'list',
           autoRight: 1,
-          atomClassName: 'flowDefinition',
+          atomClassName: 'flowDef',
           action: 'read',
           sorting: 1,
           menu: 1,
@@ -43,17 +43,17 @@ module.exports = app => {
     },
     validation: {
       validators: {
-        flowDefinition: {
-          schemas: 'flowDefinition',
+        flowDef: {
+          schemas: 'flowDef',
         },
-        flowDefinitionSearch: {
-          schemas: 'flowDefinitionSearch',
+        flowDefSearch: {
+          schemas: 'flowDefSearch',
         },
       },
       keywords: {},
       schemas: {
-        flowDefinition: schemas.flowDefinition,
-        flowDefinitionSearch: schemas.flowDefinitionSearch,
+        flowDef: schemas.flowDef,
+        flowDefSearch: schemas.flowDefSearch,
       },
     },
   };

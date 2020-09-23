@@ -4,8 +4,8 @@ module.exports = app => {
 
     async start() {
       // start
-      await this.ctx.bean.flow.startInstanceByKey({
-        flowDefinitionKey: this.ctx.request.body.flowDefinitionKey,
+      await this.ctx.bean.flow.startByKey({
+        flowDefKey: this.ctx.request.body.flowDefKey,
       });
       this.ctx.success();
     }

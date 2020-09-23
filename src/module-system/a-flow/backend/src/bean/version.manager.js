@@ -5,16 +5,16 @@ module.exports = app => {
       if (options.version === 1) {
         let sql;
 
-        // create table: aFlowDefinition
+        // create table: aFlowDef
         sql = `
-          CREATE TABLE aFlowDefinition (
+          CREATE TABLE aFlowDef (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             deleted int(11) DEFAULT '0',
             iid int(11) DEFAULT '0',
             atomId int(11) DEFAULT '0',
-            flowDefinitionKey varchar(255) DEFAULT NULL,
+            flowDefKey varchar(255) DEFAULT NULL,
             version varchar(50) DEFAULT NULL,
             description varchar(255) DEFAULT NULL,
             dynamic int(11) DEFAULT '0',
@@ -24,9 +24,9 @@ module.exports = app => {
         `;
         await this.ctx.model.query(sql);
 
-        // create table: aFlowDefinitionContent
+        // create table: aFlowDefContent
         sql = `
-          CREATE TABLE aFlowDefinitionContent (
+          CREATE TABLE aFlowDefContent (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -40,11 +40,11 @@ module.exports = app => {
         `;
         await this.ctx.model.query(sql);
 
-        // create view: aFlowDefinitionViewFull
+        // create view: aFlowDefViewFull
         sql = `
-          CREATE VIEW aFlowDefinitionViewFull as
-            select a.*,b.content from aFlowDefinition a
-              left join aFlowDefinitionContent b on a.id=b.itemId
+          CREATE VIEW aFlowDefViewFull as
+            select a.*,b.content from aFlowDef a
+              left join aFlowDefContent b on a.id=b.itemId
         `;
         await this.ctx.model.query(sql);
 
@@ -57,8 +57,8 @@ module.exports = app => {
             updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             deleted int(11) DEFAULT '0',
             iid int(11) DEFAULT '0',
-            flowDefinitionId int(11) DEFAULT '0',
-            flowDefinitionKey varchar(255) DEFAULT NULL,
+            flowDefId int(11) DEFAULT '0',
+            flowDefKey varchar(255) DEFAULT NULL,
             version varchar(50) DEFAULT NULL,
             flowStatus int(11) DEFAULT '0',
             PRIMARY KEY (id)
@@ -75,7 +75,7 @@ module.exports = app => {
             deleted int(11) DEFAULT '0',
             iid int(11) DEFAULT '0',
             flowId int(11) DEFAULT '0',
-            flowNodeKey varchar(255) DEFAULT NULL,
+            flowNodeDefId varchar(255) DEFAULT NULL,
             PRIMARY KEY (id)
           )
         `;
@@ -91,8 +91,8 @@ module.exports = app => {
             deleted int(11) DEFAULT '0',
             iid int(11) DEFAULT '0',
             flowId int(11) DEFAULT '0',
-            flowDefinitionId int(11) DEFAULT '0',
-            flowDefinitionKey varchar(255) DEFAULT NULL,
+            flowDefId int(11) DEFAULT '0',
+            flowDefKey varchar(255) DEFAULT NULL,
             version varchar(50) DEFAULT NULL,
             flowStatus int(11) DEFAULT '0',
             PRIMARY KEY (id)
@@ -110,7 +110,9 @@ module.exports = app => {
             iid int(11) DEFAULT '0',
             flowId int(11) DEFAULT '0',
             flowHistoryId int(11) DEFAULT '0',
-            flowNodeKey varchar(255) DEFAULT NULL,
+            flowNodeId int(11) DEFAULT '0',
+            flowNodeDefId varchar(255) DEFAULT NULL,
+            flowNodeStatus int(11) DEFAULT '0',
             PRIMARY KEY (id)
           )
         `;
@@ -129,7 +131,7 @@ module.exports = app => {
           { roleName: 'system', action: 'read', scopeNames: 0 },
           { roleName: 'system', action: 'read', scopeNames: 'superuser' },
         ];
-        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'flowDefinition', roleRights });
+        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'flowDef', roleRights });
       }
     }
 

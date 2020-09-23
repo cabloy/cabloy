@@ -1,11 +1,11 @@
 module.exports = app => {
   const schemas = {};
-  // flowDefinition
-  schemas.flowDefinition = {
+  // flowDef
+  schemas.flowDef = {
     type: 'object',
     meta: {
       custom: {
-        // component: 'flowDefinitionItem',
+        // component: 'flowDefItem',
       },
     },
     properties: {
@@ -15,7 +15,7 @@ module.exports = app => {
         ebTitle: 'Name',
         notEmpty: true,
       },
-      flowDefinitionKey: {
+      flowDefKey: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Key',
@@ -44,8 +44,8 @@ module.exports = app => {
       },
     },
   };
-  // flowDefinition search
-  schemas.flowDefinitionSearch = {
+  // flowDef search
+  schemas.flowDefSearch = {
     type: 'object',
     properties: {
       description: {
