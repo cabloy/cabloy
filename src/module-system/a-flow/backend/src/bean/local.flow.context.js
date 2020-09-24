@@ -39,8 +39,16 @@ module.exports = ctx => {
 
     }
 
-    async nextNode({ nodeRef }) {
+    async nextEdges({ nodeRef }) {
+      const edges = this._findEdgesNext({ nodeRefId: nodeRef.id });
+      for (const edge of edges) {
+        await edge.enter();
+      }
+    }
 
+    async nextNode({ edgeRef }) {
+      const nodeNext = this._findNodeNext({ nodeRefId: edgeRef.target });
+      await nodeNext.enter();
     }
 
     async _createFlow() {
@@ -72,6 +80,29 @@ module.exports = ctx => {
       const FlowListenerFn = vm.compileFunction(`return ${this._flowDefContent.listener}`, [], { parsingContext: this._flowListenerSandbox });
       // new class
       this._flowListener = new (FlowListenerFn())(this._flowListenerSandbox);
+    }
+
+    _findEdgesNext({ nodeRefId }) {
+      const edges = [];
+      for (const edgeRef of this._flowDefContent.process.edges) {
+        if (edgeRef.source === nodeRefId) {
+          const edge = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.edge`, {
+            context: this, edgeRef,
+          });
+          edges.push(edge);
+        }
+      }
+      return edges;
+    }
+
+    _findNodeNext({ nodeRefId }) {
+      const nodeRef = this._flowDefContent.process.nodes.find(node => {
+        return nodeRefId === node.id;
+      });
+      const node = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.node`, {
+        context: this, nodeRef,
+      });
+      return node;
     }
 
     _findNodeStartEvent({ startEventId }) {

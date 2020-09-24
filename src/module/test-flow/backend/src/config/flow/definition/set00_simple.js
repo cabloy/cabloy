@@ -28,17 +28,25 @@ class Listener {
     console.log('onNodeLeave');
   }
 
-  // async execute() {
-  //   // const { name, node, edge, flow } = context;
-  //   return this.context._flowDefKey;
-  // }
+  async onEdgeEnter() {
+    console.log('onEdgeEnter');
+  }
+
+  async onEdgeTake() {
+    console.log('onEdgeTake');
+  }
+
+  async onEdgeLeave() {
+    console.log('onEdgeLeave');
+  }
+
 }
 module.exports = app => {
   const definition = {
     info: {
       title: 'Test_Set00_Simple',
       description: 'Test_Set00_Simple',
-      version: '2020-09-23 8',
+      version: '2020-09-23 9',
     },
     process: {
       nodes: [

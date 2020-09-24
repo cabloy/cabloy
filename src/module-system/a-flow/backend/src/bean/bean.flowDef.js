@@ -1,6 +1,7 @@
 
 let __flowDefs;
 const __flowNodeBases = {};
+const __flowEdgeBases = {};
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -229,6 +230,43 @@ module.exports = ctx => {
         }
       }
       return flowNodeBases;
+    }
+
+    _getFlowEdgeBases() {
+      if (!__flowEdgeBases[ctx.locale]) {
+        __flowEdgeBases[ctx.locale] = this._prepareFlowEdgeBases();
+      }
+      return __flowEdgeBases[ctx.locale];
+    }
+
+    _getFlowEdgeBase(edgeType = 'sequence') {
+      return this._getFlowEdgeBases()[edgeType];
+    }
+
+    _prepareFlowEdgeBases() {
+      const flowEdgeBases = {};
+      for (const module of ctx.app.meta.modulesArray) {
+        const edges = module.main.meta && module.main.meta.flow && module.main.meta.flow.edges;
+        if (!edges) continue;
+        for (const key in edges) {
+          const edge = edges[key];
+          const beanName = edge.bean;
+          let beanFullName;
+          if (typeof beanName === 'string') {
+            beanFullName = `${module.info.relativeName}.flow.edge.${beanName}`;
+          } else {
+            beanFullName = `${beanName.module || module.info.relativeName}.flow.edge.${beanName.name}`;
+          }
+          // const fullKey = `${module.info.relativeName}:${key}`;
+          const fullKey = key;
+          flowEdgeBases[fullKey] = {
+            ...edge,
+            beanFullName,
+            title: ctx.text(edge.title),
+          };
+        }
+      }
+      return flowEdgeBases;
     }
 
     _combineFullKey({ flowDefKey }) {

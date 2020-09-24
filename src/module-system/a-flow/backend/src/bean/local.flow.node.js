@@ -40,7 +40,7 @@ module.exports = ctx => {
       const res = await this.nodeBaseBean.onNodeLeave();
       if (!res) return;
       // next
-      await this.context.nextNode({ nodeRef: this._nodeRef });
+      await this.context.nextEdges({ nodeRef: this._nodeRef });
     }
 
     get nodeBaseBean() {

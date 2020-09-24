@@ -29,6 +29,12 @@ module.exports = app => {
           icon: '/api/static/a/flownode/bpmn/events/end-event-none.svg',
         },
       },
+      edges: {
+        sequence: {
+          title: 'Sequence',
+          bean: 'sequence',
+        },
+      },
     },
   };
   return meta;
