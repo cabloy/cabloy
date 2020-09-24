@@ -10,13 +10,13 @@ module.exports = ctx => {
       // get flow def
       const flowDef = await ctx.bean.flowDef.getByKey({ flowDefKey });
       if (!flowDef) ctx.throw.module(moduleInfo.relativeName, 1001, fullKey);
-      // context
-      const context = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.context`, {
+      // flowInstance
+      const flowInstance = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.flow`, {
         flowDefKey: fullKey,
         flowDef,
       });
       // start
-      await context.start();
+      await flowInstance.start();
     }
 
   }

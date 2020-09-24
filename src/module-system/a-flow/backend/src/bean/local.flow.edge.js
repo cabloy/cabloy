@@ -1,6 +1,7 @@
 module.exports = ctx => {
   class FlowEdge {
-    constructor({ context, edgeRef }) {
+    constructor({ flowInstance, context, edgeRef }) {
+      this.flowInstance = flowInstance;
       this.context = context;
       this._edgeRef = edgeRef;
       this._edgeBase = null;
@@ -26,13 +27,13 @@ module.exports = ctx => {
       const res = await this.edgeBaseBean.onEdgeLeave();
       if (!res) return;
       // next
-      await this.context.nextNode({ edgeRef: this._edgeRef });
+      await this.flowInstance.nextNode({ edgeRef: this._edgeRef });
     }
 
     get edgeBaseBean() {
       if (!this._edgeBaseBean) {
         this._edgeBaseBean = ctx.bean._newBean(this.edgeBase.beanFullName, {
-          context: this.context, edgeRef: this._edgeRef,
+          flowInstance: this.flowInstance, context: this.context, edgeRef: this._edgeRef,
         });
       }
       return this._edgeBaseBean;
