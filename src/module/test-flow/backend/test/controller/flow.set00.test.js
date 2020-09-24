@@ -10,6 +10,9 @@ describe.only('flow.set00', () => {
         module: mockInfo().relativeName,
         name: 'set00_simple',
       },
+      flowVars: {
+        a: 1, b: 2,
+      },
     });
     assert(result.body.code === 0);
 

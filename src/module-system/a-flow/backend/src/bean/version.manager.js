@@ -61,6 +61,7 @@ module.exports = app => {
             flowDefKey varchar(255) DEFAULT NULL,
             version varchar(50) DEFAULT NULL,
             flowStatus int(11) DEFAULT '0',
+            flowVars JSON DEFAULT NULL,
             PRIMARY KEY (id)
           )
         `;
@@ -95,6 +96,7 @@ module.exports = app => {
             flowDefKey varchar(255) DEFAULT NULL,
             version varchar(50) DEFAULT NULL,
             flowStatus int(11) DEFAULT '0',
+            flowVars JSON DEFAULT NULL,
             PRIMARY KEY (id)
           )
         `;

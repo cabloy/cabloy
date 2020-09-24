@@ -6,6 +6,7 @@ module.exports = app => {
       // start
       await this.ctx.bean.flow.startByKey({
         flowDefKey: this.ctx.request.body.flowDefKey,
+        flowVars: this.ctx.request.body.flowVars,
       });
       this.ctx.success();
     }

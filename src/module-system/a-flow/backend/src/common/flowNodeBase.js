@@ -37,9 +37,13 @@ module.exports = class FlowNodeBase {
   }
 
   async onNodeLeave() {
+    // listener
     if (this.flowInstance._flowListener.onNodeLeave) {
       await this.flowInstance._flowListener.onNodeLeave();
     }
+    // save flowVars
+    await this.flowInstance._saveFlowVars();
+    // ok
     return true;
   }
 

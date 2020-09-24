@@ -23,9 +23,13 @@ module.exports = class FlowEdgeBase {
   }
 
   async onEdgeLeave() {
+    // listener
     if (this.flowInstance._flowListener.onEdgeLeave) {
       await this.flowInstance._flowListener.onEdgeLeave();
     }
+    // save flowVars
+    await this.flowInstance._saveFlowVars();
+    // ok
     return true;
   }
 

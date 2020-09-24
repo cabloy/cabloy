@@ -6,6 +6,11 @@ class Listener {
 
   async onFlowStart(options) {
     console.log('onFlowStart:', options.startEventId);
+    let xyz = this.context.flowVars.get('x.y.z');
+    console.log('--xyz:', xyz);
+    this.context.flowVars.set('x.y.z', true);
+    xyz = this.context.flowVars.get('x.y.z');
+    console.log('--xyz:', xyz);
   }
 
   async onFlowEnd() {
@@ -50,7 +55,7 @@ module.exports = app => {
     info: {
       title: 'Test_Set00_Simple',
       description: 'Test_Set00_Simple',
-      version: '2020-09-23 11',
+      version: '2020-09-23 13',
     },
     process: {
       nodes: [
