@@ -3,7 +3,30 @@ class Listener {
     this.context = context;
   }
 
-  async onFlowStart() {}
+
+  async onFlowStart(options) {
+    console.log('onFlowStart:', options.startEventId);
+  }
+
+  async onNodeEnter() {
+    console.log('onNodeEnter');
+  }
+
+  async onNodeBegin() {
+    console.log('onNodeBegin');
+  }
+
+  async onNodeDoing() {
+    console.log('onNodeDoing');
+  }
+
+  async onNodeEnd() {
+    console.log('onNodeEnd');
+  }
+
+  async onNodeLeave() {
+    console.log('onNodeLeave');
+  }
 
   // async execute() {
   //   // const { name, node, edge, flow } = context;
@@ -15,7 +38,7 @@ module.exports = app => {
     info: {
       title: 'Test_Set00_Simple',
       description: 'Test_Set00_Simple',
-      version: '2020-09-23 7',
+      version: '2020-09-23 8',
     },
     process: {
       nodes: [

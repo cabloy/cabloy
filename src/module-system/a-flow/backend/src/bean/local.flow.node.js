@@ -7,15 +7,46 @@ module.exports = ctx => {
       this._nodeBaseBean = null;
     }
 
+    async enter() {
+      // raise event: onNodeEnter
+      const res = await this.nodeBaseBean.onNodeEnter();
+      if (!res) return;
+      await this.begin();
+    }
 
-    async onNodeEnter() {
-      await this.nodeBaseBean.onNodeEnter();
+    async begin() {
+      // raise event: onNodeBegin
+      const res = await this.nodeBaseBean.onNodeBegin();
+      if (!res) return;
+      await this.doing();
+    }
+
+    async doing() {
+      // raise event: onNodeDoing
+      const res = await this.nodeBaseBean.onNodeDoing();
+      if (!res) return;
+      await this.end();
+    }
+
+    async end() {
+      // raise event: onNodeEnd
+      const res = await this.nodeBaseBean.onNodeEnd();
+      if (!res) return;
+      await this.leave();
+    }
+
+    async leave() {
+      // raise event: onNodeLeave
+      const res = await this.nodeBaseBean.onNodeLeave();
+      if (!res) return;
+      // next
+      await this.context.nextNode({ nodeRef: this._nodeRef });
     }
 
     get nodeBaseBean() {
       if (!this._nodeBaseBean) {
         this._nodeBaseBean = ctx.bean._newBean(this.nodeBase.beanFullName, {
-          context: this, nodeRef: this._nodeRef,
+          context: this.context, nodeRef: this._nodeRef,
         });
       }
       return this._nodeBaseBean;

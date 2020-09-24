@@ -3,7 +3,9 @@ const vm = require('vm');
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowContext {
+
     constructor({ flowDefKey, flowDef }) {
+      this._flowId = null;
       this._flowDefKey = flowDefKey;
       this._flowDef = flowDef;
       // content
@@ -12,18 +14,50 @@ module.exports = ctx => {
       this._initFlowListener();
     }
 
+    get modelFlow() {
+      return ctx.model.module(moduleInfo.relativeName).flow;
+    }
+    get modelFlowHistory() {
+      return ctx.model.module(moduleInfo.relativeName).flowHistory;
+    }
+
     async start(options) {
       if (!options) options = {};
       const startEventId = options.startEventId;
+      // create flow
+      this._flowId = await this._createFlow();
+      // raise event: onFlowStart
+      if (this._flowListener.onFlowStart) {
+        await this._flowListener.onFlowStart(options);
+      }
       // node: startEvent
       const nodeStartEvent = this._findNodeStartEvent({ startEventId });
       if (!nodeStartEvent) throw new Error(`startEvent not found: ${this._flowDefKey}.${startEventId}`);
-      // raise event: onFlowStart
-      await this._flowListener.onFlowStart(options);
-      // raise event: onNodeEnter
-      await nodeStartEvent.onNodeEnter();
+      // node enter
+      await nodeStartEvent.enter();
       console.log('--------done');
 
+    }
+
+    async nextNode({ nodeRef }) {
+
+    }
+
+    async _createFlow() {
+      // flow
+      const data = {
+        flowDefId: this._flowDef.atomId,
+        flowDefKey: this._flowDefKey,
+        version: this._flowDef.version,
+        flowStatus: 0,
+      };
+      const res = await this.modelFlow.insert(data);
+      const flowId = res.insertId;
+      // flowHistory
+      data.flowId = flowId;
+      await this.modelFlowHistory.insert(data);
+      // ok
+      return flowId;
     }
 
     _initFlowListener() {
