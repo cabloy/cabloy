@@ -3,6 +3,17 @@ module.exports = ctx => {
     constructor(options) {
       super(ctx, options);
     }
+
+    async onNodeLeave() {
+      super.onNodeLeave();
+      // raise event: onFlowEnd
+      if (this.flowInstance._flowListener.onFlowEnd) {
+        await this.flowInstance._flowListener.onFlowEnd();
+      }
+      // end
+      return false;
+    }
+
   }
 
   return FlowNode;

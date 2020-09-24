@@ -8,6 +8,10 @@ class Listener {
     console.log('onFlowStart:', options.startEventId);
   }
 
+  async onFlowEnd() {
+    console.log('onFlowEnd');
+  }
+
   async onNodeEnter() {
     console.log('onNodeEnter');
   }
@@ -46,7 +50,7 @@ module.exports = app => {
     info: {
       title: 'Test_Set00_Simple',
       description: 'Test_Set00_Simple',
-      version: '2020-09-23 9',
+      version: '2020-09-23 11',
     },
     process: {
       nodes: [
