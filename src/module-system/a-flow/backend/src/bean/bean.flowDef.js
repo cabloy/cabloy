@@ -1,5 +1,6 @@
 
 let __flowDefs;
+const __flowNodeBases = {};
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -191,6 +192,43 @@ module.exports = ctx => {
         }
       }
       return flowDefs;
+    }
+
+    _getFlowNodeBases() {
+      if (!__flowNodeBases[ctx.locale]) {
+        __flowNodeBases[ctx.locale] = this._prepareFlowNodeBases();
+      }
+      return __flowNodeBases[ctx.locale];
+    }
+
+    _getFlowNodeBase(nodeType) {
+      return this._getFlowNodeBases()[nodeType];
+    }
+
+    _prepareFlowNodeBases() {
+      const flowNodeBases = {};
+      for (const module of ctx.app.meta.modulesArray) {
+        const nodes = module.main.meta && module.main.meta.flow && module.main.meta.flow.nodes;
+        if (!nodes) continue;
+        for (const key in nodes) {
+          const node = nodes[key];
+          const beanName = node.bean;
+          let beanFullName;
+          if (typeof beanName === 'string') {
+            beanFullName = `${module.info.relativeName}.flow.node.${beanName}`;
+          } else {
+            beanFullName = `${beanName.module || module.info.relativeName}.flow.node.${beanName.name}`;
+          }
+          // const fullKey = `${module.info.relativeName}:${key}`;
+          const fullKey = key;
+          flowNodeBases[fullKey] = {
+            ...node,
+            beanFullName,
+            title: ctx.text(node.title),
+          };
+        }
+      }
+      return flowNodeBases;
     }
 
     _combineFullKey({ flowDefKey }) {

@@ -1,6 +1,7 @@
 const vm = require('vm');
 
 module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowContext {
     constructor({ flowDefKey, flowDef }) {
       this._flowDefKey = flowDefKey;
@@ -17,7 +18,11 @@ module.exports = ctx => {
       // node: startEvent
       const nodeStartEvent = this._findNodeStartEvent({ startEventId });
       if (!nodeStartEvent) throw new Error(`startEvent not found: ${this._flowDefKey}.${startEventId}`);
-      //
+      // raise event: onFlowStart
+      await this._flowListener.onFlowStart(options);
+      // raise event: onNodeEnter
+      await nodeStartEvent.onNodeEnter();
+      console.log('--------done');
 
     }
 
@@ -36,9 +41,13 @@ module.exports = ctx => {
     }
 
     _findNodeStartEvent({ startEventId }) {
-      return this._flowDefContent.process.nodes.find(node => {
+      const nodeRef = this._flowDefContent.process.nodes.find(node => {
         return (startEventId && startEventId === node.id) || (!startEventId && node.type === 'startEventNone');
       });
+      const node = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.node`, {
+        context: this, nodeRef,
+      });
+      return node;
     }
 
 
