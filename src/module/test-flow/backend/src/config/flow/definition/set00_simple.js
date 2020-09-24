@@ -1,6 +1,10 @@
 class Listener {
-  async execute(context) {
-    const { name, node, edge, flow } = context;
+  constructor(context) {
+    this.context = context;
+  }
+  async execute() {
+    // const { name, node, edge, flow } = context;
+    return this.context._flowDefKey;
   }
 }
 module.exports = app => {
@@ -8,7 +12,7 @@ module.exports = app => {
     info: {
       title: 'Test_Set00_Simple',
       description: 'Test_Set00_Simple',
-      version: '2020-09-22',
+      version: '2020-09-23 5',
     },
     process: {
       nodes: [
