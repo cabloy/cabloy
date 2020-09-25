@@ -6,7 +6,6 @@ module.exports = ctx => {
     constructor({ flowInstance, context, nodeRef }) {
       this.flowInstance = flowInstance;
       this.context = context;
-      this._nodeRef = nodeRef;
       this._nodeBase = null;
       this._nodeBaseBean = null;
       // context
@@ -33,7 +32,7 @@ module.exports = ctx => {
       // flowNode
       const data = {
         flowId: this.context._flowId,
-        flowNodeDefId: this.contextNode._nodeDef.id,
+        flowNodeDefId: this.contextNode._nodeRef.id,
         nodeVars: '{}',
       };
       const res = await this.modelFlowNode.insert(data);
@@ -89,20 +88,20 @@ module.exports = ctx => {
       const res = await this.nodeBaseBean.onNodeLeave();
       if (!res) return;
       // next
-      await this.flowInstance.nextEdges({ nodeRef: this._nodeRef });
+      await this.flowInstance.nextEdges({ contextNode: this.contextNode });
     }
 
     get nodeBaseBean() {
       if (!this._nodeBaseBean) {
         this._nodeBaseBean = ctx.bean._newBean(this.nodeBase.beanFullName, {
-          flowInstance: this.flowInstance, context: this.context, nodeRef: this._nodeRef,
+          flowInstance: this.flowInstance, context: this.context, contextNode: this.contextNode,
         });
       }
       return this._nodeBaseBean;
     }
 
     get nodeBase() {
-      if (!this._nodeBase) this._nodeBase = ctx.bean.flowDef._getFlowNodeBase(this._nodeRef.type);
+      if (!this._nodeBase) this._nodeBase = ctx.bean.flowDef._getFlowNodeBase(this.contextNode._nodeRef.type);
       return this._nodeBase;
     }
 

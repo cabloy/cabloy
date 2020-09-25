@@ -4,20 +4,21 @@ module.exports = class FlowEdgeBase {
     if (options) {
       this.flowInstance = options.flowInstance;
       this.context = options.context;
-      this._edgeRef = options.edgeRef;
+      this.contextNode = options.contextNode;
+      this.contextEdge = options.contextEdge;
     }
   }
 
   async onEdgeEnter() {
     if (this.flowInstance._flowListener.onEdgeEnter) {
-      await this.flowInstance._flowListener.onEdgeEnter();
+      await this.flowInstance._flowListener.onEdgeEnter(this.contextEdge, this.contextNode);
     }
     return true;
   }
 
   async onEdgeTake() {
     if (this.flowInstance._flowListener.onEdgeTake) {
-      await this.flowInstance._flowListener.onEdgeTake();
+      await this.flowInstance._flowListener.onEdgeTake(this.contextEdge, this.contextNode);
     }
     return true;
   }
@@ -25,7 +26,7 @@ module.exports = class FlowEdgeBase {
   async onEdgeLeave() {
     // listener
     if (this.flowInstance._flowListener.onEdgeLeave) {
-      await this.flowInstance._flowListener.onEdgeLeave();
+      await this.flowInstance._flowListener.onEdgeLeave(this.contextEdge, this.contextNode);
     }
     // save flowVars
     await this.flowInstance._saveFlowVars();

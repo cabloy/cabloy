@@ -2,6 +2,7 @@ const versionManager = require('./bean/version.manager.js');
 const atomFlowDef = require('./bean/atom.flowDef.js');
 const localContextFlow = require('./bean/local.context.flow.js');
 const localContextNode = require('./bean/local.context.node.js');
+const localContextEdge = require('./bean/local.context.edge.js');
 const localFlowFlow = require('./bean/local.flow.flow.js');
 const localFlowNode = require('./bean/local.flow.node.js');
 const localFlowEdge = require('./bean/local.flow.edge.js');
@@ -28,6 +29,10 @@ module.exports = app => {
     'local.context.node': {
       mode: 'ctx',
       bean: localContextNode,
+    },
+    'local.context.edge': {
+      mode: 'ctx',
+      bean: localContextEdge,
     },
     'local.flow.flow': {
       mode: 'ctx',

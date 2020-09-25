@@ -3,7 +3,7 @@ module.exports = ctx => {
   class ContextNode {
 
     constructor({ nodeRef }) {
-      this._nodeDef = nodeRef;
+      this._nodeRef = nodeRef;
       //
       this._flowNodeId = null;
       this._flowNode = null;

@@ -21,36 +21,36 @@ class Listener {
     assert.equal(xyz, true);
   }
 
-  async onNodeEnter() {
-    console.log('onNodeEnter');
+  async onNodeEnter(contextNode) {
+    console.log('onNodeEnter: ', contextNode._nodeRef.id);
   }
 
-  async onNodeBegin() {
-    console.log('onNodeBegin');
+  async onNodeBegin(contextNode) {
+    console.log('onNodeBegin: ', contextNode._nodeRef.id);
   }
 
-  async onNodeDoing() {
-    console.log('onNodeDoing');
+  async onNodeDoing(contextNode) {
+    console.log('onNodeDoing: ', contextNode._nodeRef.id);
   }
 
-  async onNodeEnd() {
-    console.log('onNodeEnd');
+  async onNodeEnd(contextNode) {
+    console.log('onNodeEnd: ', contextNode._nodeRef.id);
   }
 
-  async onNodeLeave() {
-    console.log('onNodeLeave');
+  async onNodeLeave(contextNode) {
+    console.log('onNodeLeave: ', contextNode._nodeRef.id);
   }
 
-  async onEdgeEnter() {
-    console.log('onEdgeEnter');
+  async onEdgeEnter(contextEdge, contextNode) {
+    console.log('onEdgeEnter: ', contextEdge._edgeRef.id, ' from node: ', contextNode._nodeRef.id);
   }
 
-  async onEdgeTake() {
-    console.log('onEdgeTake');
+  async onEdgeTake(contextEdge, contextNode) {
+    console.log('onEdgeTake: ', contextEdge._edgeRef.id, ' from node: ', contextNode._nodeRef.id);
   }
 
-  async onEdgeLeave() {
-    console.log('onEdgeLeave');
+  async onEdgeLeave(contextEdge, contextNode) {
+    console.log('onEdgeLeave: ', contextEdge._edgeRef.id, ' from node: ', contextNode._nodeRef.id);
   }
 
 }
@@ -59,7 +59,7 @@ module.exports = app => {
     info: {
       title: 'Test_Set00_Simple',
       description: 'Test_Set00_Simple',
-      version: '2020-09-23 13',
+      version: '2020-09-23 14',
     },
     process: {
       nodes: [
