@@ -113,15 +113,12 @@ module.exports = ctx => {
       return new (FlowListenerFn())(this.context);
     }
 
-    async _findEdgesNext({ nodeRefId }) {
-      const edges = [];
-      for (const edgeRef of this.context._flowDefContent.process.edges) {
-        if (edgeRef.source === nodeRefId) {
-          const edge = await this._createEdgeBean({ edgeRef });
-          edges.push(edge);
-        }
-      }
-      return edges;
+    async _createNodeBean({ nodeRef }) {
+      const node = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.node`, {
+        flowInstance: this, context: this.context, nodeRef,
+      });
+      await node.init();
+      return node;
     }
 
     async _createEdgeBean({ edgeRef }) {
@@ -130,14 +127,6 @@ module.exports = ctx => {
       });
       await edge.init();
       return edge;
-    }
-
-    async _createNodeBean({ nodeRef }) {
-      const node = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.node`, {
-        flowInstance: this, context: this.context, nodeRef,
-      });
-      await node.init();
-      return node;
     }
 
     async _findNodeNext({ nodeRefId }) {
@@ -152,6 +141,17 @@ module.exports = ctx => {
         return (startEventId && startEventId === node.id) || (!startEventId && node.type === 'startEventNone');
       });
       return await this._createNodeBean({ nodeRef });
+    }
+
+    async _findEdgesNext({ nodeRefId }) {
+      const edges = [];
+      for (const edgeRef of this.context._flowDefContent.process.edges) {
+        if (edgeRef.source === nodeRefId) {
+          const edge = await this._createEdgeBean({ edgeRef });
+          edges.push(edge);
+        }
+      }
+      return edges;
     }
 
 
