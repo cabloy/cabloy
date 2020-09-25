@@ -66,7 +66,7 @@ module.exports = app => {
     info: {
       title: 'Test_Set00_Simple',
       description: 'Test_Set00_Simple',
-      version: '2020-09-23 17',
+      version: '2020-09-23 00:00:00',
     },
     process: {
       nodes: [

@@ -1,5 +1,8 @@
+const flowNodes = require('./config/flow/nodes.js');
+const flowEdges = require('./config/flow/edges.js');
+
 module.exports = app => {
-  const schemas = require('./config/validation/schemas.js')(app);
+  // const schemas = require('./config/validation/schemas.js')(app);
   const meta = {
     base: {
       atoms: {
@@ -15,26 +18,8 @@ module.exports = app => {
       },
     },
     flow: {
-      nodes: {
-        startEventNone: {
-          title: 'StartEventNone',
-          group: 'startEvent',
-          bean: 'startEventNone',
-          icon: '/api/static/a/flownode/bpmn/events/start-event-none.svg',
-        },
-        endEventNone: {
-          title: 'EndEventNone',
-          group: 'endEvent',
-          bean: 'endEventNone',
-          icon: '/api/static/a/flownode/bpmn/events/end-event-none.svg',
-        },
-      },
-      edges: {
-        sequence: {
-          title: 'Sequence',
-          bean: 'sequence',
-        },
-      },
+      nodes: flowNodes,
+      edges: flowEdges,
     },
   };
   return meta;

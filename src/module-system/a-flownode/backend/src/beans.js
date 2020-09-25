@@ -2,6 +2,7 @@ const versionManager = require('./bean/version.manager.js');
 const flowEdgeSequence = require('./bean/flow.edge.sequence.js');
 const flowNodeStartEventNone = require('./bean/flow.node.startEventNone.js');
 const flowNodeEndEventNone = require('./bean/flow.node.endEventNone.js');
+const flowNodeActivityNone = require('./bean/flow.node.activityNone.js');
 
 module.exports = app => {
   const beans = {
@@ -22,6 +23,10 @@ module.exports = app => {
     'flow.node.endEventNone': {
       mode: 'ctx',
       bean: flowNodeEndEventNone,
+    },
+    'flow.node.activityNone': {
+      mode: 'ctx',
+      bean: flowNodeActivityNone,
     },
   };
   return beans;
