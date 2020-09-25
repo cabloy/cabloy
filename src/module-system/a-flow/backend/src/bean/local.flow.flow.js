@@ -54,6 +54,7 @@ module.exports = ctx => {
 
     async nextNode({ contextEdge }) {
       const nodeInstanceNext = await this._findNodeInstanceNext({ nodeRefId: contextEdge._edgeRef.target });
+      // enter
       await nodeInstanceNext.enter();
     }
 
@@ -75,6 +76,17 @@ module.exports = ctx => {
       await this.modelFlow.update(this.context._flow);
       // flow history
       this.context._flowHistory.flowVars = this.context._flow.flowVars;
+      await this.modelFlowHistory.update(this.context._flowHistory);
+    }
+
+    async _endFlow() {
+      // raise event: onFlowEnd
+      await this._flowListener.onFlowEnd();
+      // flow
+      this.context._flow.flowStatus = 1;
+      await this.modelFlow.update(this.context._flow);
+      // flow history
+      this.context._flowHistory.flowStatus = this.context._flow.flowStatus;
       await this.modelFlowHistory.update(this.context._flowHistory);
     }
 

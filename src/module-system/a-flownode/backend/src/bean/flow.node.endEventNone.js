@@ -6,9 +6,8 @@ module.exports = ctx => {
 
     async onNodeLeave() {
       super.onNodeLeave();
-      // raise event: onFlowEnd
-      await this.flowInstance._flowListener.onFlowEnd();
       // end
+      await this.flowInstance._endFlow();
       return false;
     }
 

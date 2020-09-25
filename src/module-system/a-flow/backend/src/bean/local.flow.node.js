@@ -14,6 +14,12 @@ module.exports = ctx => {
       });
     }
 
+    get modelFlow() {
+      return ctx.model.module(moduleInfo.relativeName).flow;
+    }
+    get modelFlowHistory() {
+      return ctx.model.module(moduleInfo.relativeName).flowHistory;
+    }
     get modelFlowNode() {
       return ctx.model.module(moduleInfo.relativeName).flowNode;
     }
@@ -65,7 +71,30 @@ module.exports = ctx => {
       await this.modelFlowNodeHistory.update(this.contextNode._flowNodeHistory);
     }
 
+    async _setCurrent(clear) {
+      // flow
+      this.context._flow.flowNodeIdCurrent = clear ? 0 : this.contextNode._flowNodeId;
+      this.context._flow.flowNodeNameCurrent = clear ? '' : this.contextNode._nodeRef.name;
+      await this.modelFlow.update(this.context._flow);
+      // flow history
+      this.context._flowHistory.flowNodeIdCurrent = this.context._flow.flowNodeIdCurrent;
+      this.context._flowHistory.flowNodeNameCurrent = this.context._flow.flowNodeNameCurrent;
+      await this.modelFlowHistory.update(this.context._flowHistory);
+    }
+
+    async _clearCurrent() {
+      // clear
+      await this._setCurrent(true);
+      // clear node
+      await this.modelFlowNode.delete({ id: this.contextNode._flowNodeId });
+      // set nodeHistoryStatus
+      this.contextNode._flowNodeHistory.flowNodeStatus = 1;
+      await this.modelFlowNodeHistory.update(this.contextNode._flowNodeHistory);
+    }
+
     async enter() {
+      // current
+      await this._setCurrent();
       // raise event: onNodeEnter
       const res = await this.nodeBaseBean.onNodeEnter();
       if (!res) return;
@@ -96,6 +125,9 @@ module.exports = ctx => {
     async leave() {
       // raise event: onNodeLeave
       const res = await this.nodeBaseBean.onNodeLeave();
+      // clear current
+      await this._clearCurrent();
+      // res
       if (!res) return;
       // next
       await this.flowInstance.nextEdges({ contextNode: this.contextNode });
