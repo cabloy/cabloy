@@ -1,4 +1,7 @@
+const VarsFn = require('../common/vars.js');
+
 module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowNode {
     constructor({ flowInstance, context, nodeRef }) {
       this.flowInstance = flowInstance;
@@ -6,6 +9,51 @@ module.exports = ctx => {
       this._nodeRef = nodeRef;
       this._nodeBase = null;
       this._nodeBaseBean = null;
+      // context
+      this.contextNode = ctx.bean._newBean(`${moduleInfo.relativeName}.local.context.node`, {
+        nodeRef,
+      });
+    }
+
+    get modelFlowNode() {
+      return ctx.model.module(moduleInfo.relativeName).flowNode;
+    }
+    get modelFlowNodeHistory() {
+      return ctx.model.module(moduleInfo.relativeName).flowNodeHistory;
+    }
+
+    async init() {
+      // create flowNode
+      const flowNodeId = await this._createFlowNode();
+      // context init
+      await this._contextInit({ flowNodeId });
+    }
+
+    async _createFlowNode() {
+      // flowNode
+      const data = {
+        flowId: this.context._flowId,
+        flowNodeDefId: this.contextNode._nodeDef.id,
+        nodeVars: '{}',
+      };
+      const res = await this.modelFlowNode.insert(data);
+      const flowNodeId = res.insertId;
+      // flowNodeHistory
+      data.flowNodeId = flowNodeId;
+      await this.modelFlowNodeHistory.insert(data);
+      // ok
+      return flowNodeId;
+    }
+
+    async _contextInit({ flowNodeId }) {
+      // flowNodeId
+      this.contextNode._flowNodeId = flowNodeId;
+      // flowNode
+      this.contextNode._flowNode = await this.modelFlowNode.get({ id: flowNodeId });
+      this.contextNode._flowHistory = await this.modelFlowNodeHistory.get({ flowNodeId });
+      // flowVars
+      this.contextNode._nodeVars = new (VarsFn())();
+      this.contextNode._nodeVars._vars = this.contextNode._flowNode.nodeVars ? JSON.parse(this.contextNode._flowNode.nodeVars) : {};
     }
 
     async enter() {

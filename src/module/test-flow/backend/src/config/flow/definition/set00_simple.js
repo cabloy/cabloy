@@ -1,20 +1,24 @@
+const require3 = require('require3');
+const assert = require3('assert');
+
 class Listener {
   constructor(context) {
     this.context = context;
   }
 
-
   async onFlowStart(options) {
     console.log('onFlowStart:', options.startEventId);
-    // let xyz = this.context.flowVars.get('x.y.z');
-    // console.log('--xyz:', xyz);
-    // this.context.flowVars.set('x.y.z', true);
-    // xyz = this.context.flowVars.get('x.y.z');
-    // console.log('--xyz:', xyz);
+    // flowVars
+    const xyz = this.context.flowVars.get('x.y.z');
+    assert.equal(xyz, undefined);
+    this.context.flowVars.set('x.y.z', true);
   }
 
   async onFlowEnd() {
     console.log('onFlowEnd');
+    // flowVars
+    const xyz = this.context.flowVars.get('x.y.z');
+    assert.equal(xyz, true);
   }
 
   async onNodeEnter() {

@@ -1,5 +1,7 @@
 const vm = require('vm');
-const FlowVarsFn = require('../common/flowVars.js');
+const require3 = require('require3');
+const assert = require3('assert');
+const VarsFn = require('../common/vars.js');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -7,7 +9,7 @@ module.exports = ctx => {
 
     constructor({ flowDefKey, flowDef }) {
       // context
-      this.context = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.context`, {
+      this.context = ctx.bean._newBean(`${moduleInfo.relativeName}.local.context.flow`, {
         flowDefKey, flowDef,
       });
       // listener
@@ -35,7 +37,7 @@ module.exports = ctx => {
         await this._saveFlowVars();
       }
       // node: startEvent
-      const nodeStartEvent = this._findNodeStartEvent({ startEventId });
+      const nodeStartEvent = await this._findNodeStartEvent({ startEventId });
       if (!nodeStartEvent) throw new Error(`startEvent not found: ${this._flowDefKey}.${startEventId}`);
       // node enter
       await nodeStartEvent.enter();
@@ -48,14 +50,14 @@ module.exports = ctx => {
     }
 
     async nextEdges({ nodeRef }) {
-      const edges = this._findEdgesNext({ nodeRefId: nodeRef.id });
+      const edges = await this._findEdgesNext({ nodeRefId: nodeRef.id });
       for (const edge of edges) {
         await edge.enter();
       }
     }
 
     async nextNode({ edgeRef }) {
-      const nodeNext = this._findNodeNext({ nodeRefId: edgeRef.target });
+      const nodeNext = await this._findNodeNext({ nodeRefId: edgeRef.target });
       await nodeNext.enter();
     }
 
@@ -66,7 +68,7 @@ module.exports = ctx => {
       this.context._flow = await this.modelFlow.get({ id: flowId });
       this.context._flowHistory = await this.modelFlowHistory.get({ flowId });
       // flowVars
-      this.context._flowVars = new (FlowVarsFn())();
+      this.context._flowVars = new (VarsFn())();
       this.context._flowVars._vars = this.context._flow.flowVars ? JSON.parse(this.context._flow.flowVars) : {};
     }
 
@@ -100,44 +102,56 @@ module.exports = ctx => {
 
     _initFlowListener() {
       // sandbox
-      const sandbox = vm.createContext({});
+      let sandbox = {};
+      if (ctx.app.meta.isTest || ctx.app.meta.isLocal) {
+        sandbox.assert = assert;
+      }
+      sandbox = vm.createContext(sandbox);
       // class
       const FlowListenerFn = vm.compileFunction(`return ${this.context._flowDefContent.listener}`, [], { parsingContext: sandbox });
       // new class
       return new (FlowListenerFn())(this.context);
     }
 
-    _findEdgesNext({ nodeRefId }) {
+    async _findEdgesNext({ nodeRefId }) {
       const edges = [];
       for (const edgeRef of this.context._flowDefContent.process.edges) {
         if (edgeRef.source === nodeRefId) {
-          const edge = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.edge`, {
-            flowInstance: this, context: this.context, edgeRef,
-          });
+          const edge = await this._createEdgeBean({ edgeRef });
           edges.push(edge);
         }
       }
       return edges;
     }
 
-    _findNodeNext({ nodeRefId }) {
-      const nodeRef = this.context._flowDefContent.process.nodes.find(node => {
-        return nodeRefId === node.id;
+    async _createEdgeBean({ edgeRef }) {
+      const edge = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.edge`, {
+        flowInstance: this, context: this.context, edgeRef,
       });
+      await edge.init();
+      return edge;
+    }
+
+    async _createNodeBean({ nodeRef }) {
       const node = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.node`, {
         flowInstance: this, context: this.context, nodeRef,
       });
+      await node.init();
       return node;
     }
 
-    _findNodeStartEvent({ startEventId }) {
+    async _findNodeNext({ nodeRefId }) {
+      const nodeRef = this.context._flowDefContent.process.nodes.find(node => {
+        return nodeRefId === node.id;
+      });
+      return await this._createNodeBean({ nodeRef });
+    }
+
+    async _findNodeStartEvent({ startEventId }) {
       const nodeRef = this.context._flowDefContent.process.nodes.find(node => {
         return (startEventId && startEventId === node.id) || (!startEventId && node.type === 'startEventNone');
       });
-      const node = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.node`, {
-        flowInstance: this, context: this.context, nodeRef,
-      });
-      return node;
+      return await this._createNodeBean({ nodeRef });
     }
 
 

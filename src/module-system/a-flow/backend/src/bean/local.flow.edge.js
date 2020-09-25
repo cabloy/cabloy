@@ -8,6 +8,10 @@ module.exports = ctx => {
       this._edgeBaseBean = null;
     }
 
+    async init() {
+      // donothing
+    }
+
     async enter() {
       // raise event: onEdgeEnter
       const res = await this.edgeBaseBean.onEdgeEnter();
