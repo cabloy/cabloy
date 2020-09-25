@@ -68,6 +68,7 @@ module.exports = app => {
       description: 'Test_Set00_Simple',
       version: '2020-09-23 00:00:00',
     },
+    listener: Listener.toString(),
     process: {
       nodes: [
         {
@@ -89,7 +90,6 @@ module.exports = app => {
         },
       ],
     },
-    listener: Listener.toString(),
   };
   return definition;
 };

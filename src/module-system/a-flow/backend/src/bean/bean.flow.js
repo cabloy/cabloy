@@ -17,6 +17,8 @@ module.exports = ctx => {
       });
       // start
       await flowInstance.start({ flowVars });
+      // ok
+      return flowInstance;
     }
 
   }

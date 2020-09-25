@@ -1,3 +1,4 @@
+const vm = require('vm');
 const VarsFn = require('../common/vars.js');
 
 module.exports = ctx => {
@@ -42,12 +43,16 @@ module.exports = ctx => {
     }
 
     async continue({}) {
-
     }
 
     async nextEdges({ contextNode }) {
       const edgeInstances = await this._findEdgeInstancesNext({ nodeRefId: contextNode._nodeRef.id, contextNode });
       for (const edgeInstance of edgeInstances) {
+        // check if end
+        if (this.context._flow.flowStatus !== 0) {
+          break;
+        }
+        // enter
         await edgeInstance.enter();
       }
     }
@@ -106,6 +111,11 @@ module.exports = ctx => {
       await this.modelFlowHistory.insert(data);
       // ok
       return flowId;
+    }
+
+    _evaluateExpression(expression, globals) {
+      const sandbox = Object.assign({ context: this.context }, globals);
+      return vm.runInContext(expression, vm.createContext(sandbox));
     }
 
     async _createNodeInstance({ nodeRef }) {

@@ -24,4 +24,27 @@ describe.only('flow.set00', () => {
     });
     assert(result.body.code === 0);
   });
+  it.only('edgeSequence', async () => {
+    // create
+    let result = await app.httpRequest().post(mockUrl('flow/start')).send({
+      flowDefKey: {
+        module: mockInfo().relativeName,
+        name: 'set00_edgeSequence',
+      },
+      flowVars: {
+        x: 1,
+      },
+    });
+    assert(result.body.code === 0);
+    result = await app.httpRequest().post(mockUrl('flow/start')).send({
+      flowDefKey: {
+        module: mockInfo().relativeName,
+        name: 'set00_edgeSequence',
+      },
+      flowVars: {
+        x: 2,
+      },
+    });
+    assert(result.body.code === 0);
+  });
 });
