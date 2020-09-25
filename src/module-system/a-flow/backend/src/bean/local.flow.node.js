@@ -49,10 +49,20 @@ module.exports = ctx => {
       this.contextNode._flowNodeId = flowNodeId;
       // flowNode
       this.contextNode._flowNode = await this.modelFlowNode.get({ id: flowNodeId });
-      this.contextNode._flowHistory = await this.modelFlowNodeHistory.get({ flowNodeId });
+      this.contextNode._flowNodeHistory = await this.modelFlowNodeHistory.get({ flowNodeId });
       // flowVars
       this.contextNode._nodeVars = new (VarsFn())();
       this.contextNode._nodeVars._vars = this.contextNode._flowNode.nodeVars ? JSON.parse(this.contextNode._flowNode.nodeVars) : {};
+    }
+
+    async _saveNodeVars() {
+      if (!this.contextNode._nodeVars._dirty) return;
+      // flowNode
+      this.contextNode._flowNode.nodeVars = JSON.stringify(this.contextNode._nodeVars._vars);
+      await this.modelFlowNode.update(this.contextNode._flowNode);
+      // flowNode history
+      this.contextNode._flowNodeHistory.nodeVars = this.contextNode._flowNode.nodeVars;
+      await this.modelFlowNodeHistory.update(this.contextNode._flowNodeHistory);
     }
 
     async enter() {
@@ -94,7 +104,8 @@ module.exports = ctx => {
     get nodeBaseBean() {
       if (!this._nodeBaseBean) {
         this._nodeBaseBean = ctx.bean._newBean(this.nodeBase.beanFullName, {
-          flowInstance: this.flowInstance, context: this.context, contextNode: this.contextNode,
+          flowInstance: this.flowInstance, nodeInstance: this,
+          context: this.context, contextNode: this.contextNode,
         });
       }
       return this._nodeBaseBean;

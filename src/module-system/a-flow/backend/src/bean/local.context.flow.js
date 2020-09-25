@@ -13,7 +13,7 @@ module.exports = ctx => {
       this._flowVars = null;
     }
 
-    get flowVars() {
+    get vars() {
       return this._flowVars;
     }
 

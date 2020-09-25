@@ -3,6 +3,7 @@ module.exports = class FlowEdgeBase {
     this.ctx = ctx;
     if (options) {
       this.flowInstance = options.flowInstance;
+      this.edgeInstance = options.edgeInstance;
       this.context = options.context;
       this.contextNode = options.contextNode;
       this.contextEdge = options.contextEdge;

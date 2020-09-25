@@ -11,7 +11,7 @@ module.exports = ctx => {
       this._nodeVars = null;
     }
 
-    get nodeVars() {
+    get vars() {
       return this._nodeVars;
     }
 

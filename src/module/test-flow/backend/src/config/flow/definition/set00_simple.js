@@ -9,20 +9,24 @@ class Listener {
   async onFlowStart(options) {
     console.log('onFlowStart:', options.startEventId);
     // flowVars
-    const xyz = this.context.flowVars.get('x.y.z');
+    const xyz = this.context.vars.get('x.y.z');
     assert.equal(xyz, undefined);
-    this.context.flowVars.set('x.y.z', true);
+    this.context.vars.set('x.y.z', 'flow');
   }
 
   async onFlowEnd() {
     console.log('onFlowEnd');
     // flowVars
-    const xyz = this.context.flowVars.get('x.y.z');
-    assert.equal(xyz, true);
+    const xyz = this.context.vars.get('x.y.z');
+    assert.equal(xyz, 'flow');
   }
 
   async onNodeEnter(contextNode) {
     console.log('onNodeEnter: ', contextNode._nodeRef.id);
+    // nodeVars
+    const xyz = contextNode.vars.get('x.y.z');
+    assert.equal(xyz, undefined);
+    contextNode.vars.set('x.y.z', contextNode._nodeRef.id);
   }
 
   async onNodeBegin(contextNode) {
@@ -39,6 +43,9 @@ class Listener {
 
   async onNodeLeave(contextNode) {
     console.log('onNodeLeave: ', contextNode._nodeRef.id);
+    // nodeVars
+    const xyz = contextNode.vars.get('x.y.z');
+    assert.equal(xyz, contextNode._nodeRef.id);
   }
 
   async onEdgeEnter(contextEdge, contextNode) {
@@ -59,7 +66,7 @@ module.exports = app => {
     info: {
       title: 'Test_Set00_Simple',
       description: 'Test_Set00_Simple',
-      version: '2020-09-23 14',
+      version: '2020-09-23 17',
     },
     process: {
       nodes: [

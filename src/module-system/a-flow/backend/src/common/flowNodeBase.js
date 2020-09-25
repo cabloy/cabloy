@@ -3,6 +3,7 @@ module.exports = class FlowNodeBase {
     this.ctx = ctx;
     if (options) {
       this.flowInstance = options.flowInstance;
+      this.nodeInstance = options.nodeInstance;
       this.context = options.context;
       this.contextNode = options.contextNode;
     }
@@ -41,6 +42,8 @@ module.exports = class FlowNodeBase {
     if (this.flowInstance._flowListener.onNodeLeave) {
       await this.flowInstance._flowListener.onNodeLeave(this.contextNode);
     }
+    // save nodeVars
+    await this.nodeInstance._saveNodeVars();
     // save flowVars
     await this.flowInstance._saveFlowVars();
     // ok

@@ -47,7 +47,8 @@ module.exports = ctx => {
     get edgeBaseBean() {
       if (!this._edgeBaseBean) {
         this._edgeBaseBean = ctx.bean._newBean(this.edgeBase.beanFullName, {
-          flowInstance: this.flowInstance, context: this.context, contextNode: this.contextNode, contextEdge: this.contextEdge,
+          flowInstance: this.flowInstance, edgeInstance: this,
+          context: this.context, contextNode: this.contextNode, contextEdge: this.contextEdge,
         });
       }
       return this._edgeBaseBean;
