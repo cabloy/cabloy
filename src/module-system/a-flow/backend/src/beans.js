@@ -6,6 +6,7 @@ const localContextEdge = require('./bean/local.context.edge.js');
 const localFlowFlow = require('./bean/local.flow.flow.js');
 const localFlowNode = require('./bean/local.flow.node.js');
 const localFlowEdge = require('./bean/local.flow.edge.js');
+const localFlowListener = require('./bean/local.flow.listener.js');
 const beanFlow = require('./bean/bean.flow.js');
 const beanFlowDef = require('./bean/bean.flowDef.js');
 
@@ -45,6 +46,10 @@ module.exports = app => {
     'local.flow.edge': {
       mode: 'ctx',
       bean: localFlowEdge,
+    },
+    'local.flow.listener': {
+      mode: 'ctx',
+      bean: localFlowListener,
     },
     // global
     flow: {

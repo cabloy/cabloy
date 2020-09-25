@@ -1,6 +1,3 @@
-const vm = require('vm');
-const require3 = require('require3');
-const assert = require3('assert');
 const VarsFn = require('../common/vars.js');
 
 module.exports = ctx => {
@@ -13,7 +10,9 @@ module.exports = ctx => {
         flowDefKey, flowDef,
       });
       // listener
-      this._flowListener = this._initFlowListener();
+      this._flowListener = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.listener`, {
+        flowInstance: this, context: this.context,
+      });
     }
 
     get modelFlow() {
@@ -32,10 +31,7 @@ module.exports = ctx => {
       // context init
       await this._contextInit({ flowId });
       // raise event: onFlowStart
-      if (this._flowListener.onFlowStart) {
-        await this._flowListener.onFlowStart(options);
-        await this._saveFlowVars();
-      }
+      await this._flowListener.onFlowStart(options);
       // node: startEvent
       const nodeInstanceStartEvent = await this._findNodeInstanceStartEvent({ startEventId });
       if (!nodeInstanceStartEvent) throw new Error(`startEvent not found: ${this._flowDefKey}.${startEventId}`);
@@ -98,19 +94,6 @@ module.exports = ctx => {
       await this.modelFlowHistory.insert(data);
       // ok
       return flowId;
-    }
-
-    _initFlowListener() {
-      // sandbox
-      let sandbox = {};
-      if (ctx.app.meta.isTest || ctx.app.meta.isLocal) {
-        sandbox.assert = assert;
-      }
-      sandbox = vm.createContext(sandbox);
-      // class
-      const FlowListenerFn = vm.compileFunction(`return ${this.context._flowDefContent.listener}`, [], { parsingContext: sandbox });
-      // new class
-      return new (FlowListenerFn())(this.context);
     }
 
     async _createNodeInstance({ nodeRef }) {
