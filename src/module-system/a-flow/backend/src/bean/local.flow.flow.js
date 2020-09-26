@@ -135,6 +135,9 @@ module.exports = ctx => {
       const beanFullName = `${bean.module}.flow.activity.service.${bean.name}`;
       const beanInstance = ctx.bean._getBean(beanFullName);
       if (!beanInstance) throw new Error(`bean not found: ${beanFullName}`);
+      if (Object.getPrototypeOf(Object.getPrototypeOf(beanInstance)).constructor.name !== 'FlowActivityServiceBase') {
+        throw new Error(`bean should extends FlowActivityServiceBase: ${beanFullName}`);
+      }
       // context
       const context = Object.assign({ context: this.context }, globals);
       if (parameter !== undefined) {
