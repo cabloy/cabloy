@@ -68,8 +68,6 @@ module.exports = ctx => {
       // flowDef
       const flowDef = await this._getById({ flowDefId });
       if (!flowDef) return;
-      // disabled
-      const disabled = flowDef.disabled;
       // content
       const content = flowDef.content ? JSON.parse(flowDef.content) : null;
       if (!content) return;
@@ -80,7 +78,11 @@ module.exports = ctx => {
         const _nodeBase = this._getFlowNodeBase(nodeType);
         const _nodeBaseBean = ctx.bean._newBean(_nodeBase.beanFullName);
         if (_nodeBaseBean.deploy) {
-          await _nodeBaseBean.deploy(!disabled);
+          await _nodeBaseBean.deploy({
+            deploy: !flowDef.disabled,
+            flowDefId,
+            node,
+          });
         }
       }
     }

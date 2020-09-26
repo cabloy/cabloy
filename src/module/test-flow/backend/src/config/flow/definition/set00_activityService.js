@@ -15,7 +15,7 @@ class Listener {
   async onNodeDoing(contextNode) {
     if (contextNode._nodeRef.id === 'activity_2') {
       // execute activity service
-      const res = await contextNode.utils.executeActivityService({
+      const res = await contextNode.utils.executeService({
         bean: {
           module: 'test-flow',
           name: 'test',

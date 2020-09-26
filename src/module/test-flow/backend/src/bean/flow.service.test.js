@@ -1,5 +1,5 @@
 module.exports = ctx => {
-  class ActivityService extends ctx.app.meta.FlowActivityServiceBase {
+  class FlowService extends ctx.app.meta.FlowServiceBase {
     async execute(context) {
       // parameter
       const parameter = context.parameter;
@@ -9,5 +9,5 @@ module.exports = ctx => {
       return parameter;
     }
   }
-  return ActivityService;
+  return FlowService;
 };

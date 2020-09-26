@@ -7,11 +7,11 @@ module.exports = ({ ctx, flowInstance }) => {
       this.contextEdge = contextEdge;
     }
 
-    async executeActivityService({ bean, parameter }) {
+    async executeService({ bean, parameter }) {
       const globals = {};
       if (this.contextNode) globals.contextNode = this.contextNode;
       if (this.contextEdge) globals.contextEdge = this.contextEdge;
-      return await flowInstance._executeActivityServiceInner({
+      return await flowInstance._executeServiceInner({
         bean, parameter, globals,
       });
     }

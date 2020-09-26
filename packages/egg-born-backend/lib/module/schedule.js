@@ -43,7 +43,7 @@ module.exports = function(loader, modules) {
       const schedule = ebSchedules[fullKey];
       if (!schedule.config.disable && schedule.config.repeat) {
         // push
-        const jobName = __combineJobName(subdomain, schedule.module, schedule.name);
+        const jobName = `${schedule.module}.${schedule.name}`; // not use :
         loader.app.meta.queue.push({
           subdomain,
           module: 'a-base',
@@ -92,10 +92,6 @@ module.exports = function(loader, modules) {
       context,
     });
   };
-
-  function __combineJobName(subdomain, module, name) {
-    return `_schedule.${loader.app.meta.util.subdomainDesp(subdomain)}.${module}.${name}`;
-  }
 
   async function __deleteSchedule(context) {
     const job = context.job;

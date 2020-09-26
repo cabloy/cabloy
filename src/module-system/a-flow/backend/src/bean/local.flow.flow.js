@@ -125,20 +125,20 @@ module.exports = ctx => {
       return vm.runInContext(expression, vm.createContext(sandbox));
     }
 
-    async _executeActivityService({ bean, parameterExpression, globals }) {
+    async _executeService({ bean, parameterExpression, globals }) {
       let parameter;
       if (parameterExpression !== undefined) {
         parameter = this._evaluateExpression({ expression: parameterExpression, globals });
       }
-      return await this._executeActivityServiceInner({ bean, parameter, globals });
+      return await this._executeServiceInner({ bean, parameter, globals });
     }
-    async _executeActivityServiceInner({ bean, parameter, globals }) {
+    async _executeServiceInner({ bean, parameter, globals }) {
       // bean
-      const beanFullName = `${bean.module}.flow.activity.service.${bean.name}`;
+      const beanFullName = `${bean.module}.flow.service.${bean.name}`;
       const beanInstance = ctx.bean._getBean(beanFullName);
       if (!beanInstance) throw new Error(`bean not found: ${beanFullName}`);
-      if (Object.getPrototypeOf(Object.getPrototypeOf(beanInstance)).constructor.name !== 'FlowActivityServiceBase') {
-        throw new Error(`bean should extends FlowActivityServiceBase: ${beanFullName}`);
+      if (Object.getPrototypeOf(Object.getPrototypeOf(beanInstance)).constructor.name !== 'FlowServiceBase') {
+        throw new Error(`bean should extends FlowServiceBase: ${beanFullName}`);
       }
       // context
       const context = Object.assign({ context: this.context }, globals);
