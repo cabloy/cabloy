@@ -1,3 +1,5 @@
+const UtilsFn = require('../common/utils.js');
+
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowEdge {
@@ -9,7 +11,7 @@ module.exports = ctx => {
       this._edgeBaseBean = null;
       // context
       this.contextEdge = ctx.bean._newBean(`${moduleInfo.relativeName}.local.context.edge`, {
-        edgeRef,
+        context, contextNode, edgeRef,
       });
     }
 
@@ -19,7 +21,12 @@ module.exports = ctx => {
     }
 
     async _contextInit() {
-      // donothing
+      // utils
+      this.contextEdge._utils = new (UtilsFn({ ctx, flowInstance: this.flowInstance }))({
+        context: this.context,
+        contextNode: this.contextNode,
+        contextEdge: this.contextEdge,
+      });
     }
 
     async enter() {

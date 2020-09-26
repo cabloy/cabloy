@@ -14,9 +14,15 @@ class Listener {
 
   async onNodeDoing(contextNode) {
     if (contextNode._nodeRef.id === 'activity_2') {
-      // execute service bean
-      // const echo = this.context.vars.get('x');
-      // contextNode.vars.set('x', x);
+      // execute activity service
+      const res = await contextNode.utils.executeActivityService({
+        bean: {
+          module: 'test-flow',
+          name: 'test',
+        },
+        parameter: 'hello world',
+      });
+      assert.equal(res, 'hello world');
     }
   }
 
@@ -35,7 +41,7 @@ module.exports = app => {
     info: {
       title: 'Test_Set00_Activity_Service',
       description: 'Test_Set00_Activity_Service',
-      version: '2020-09-26 00:00:03',
+      version: '2020-09-26 00:00:06',
     },
     listener: Listener.toString(),
     process: {

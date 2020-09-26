@@ -1,5 +1,6 @@
 const vm = require('vm');
 const VarsFn = require('../common/vars.js');
+const UtilsFn = require('../common/utils.js');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -72,6 +73,10 @@ module.exports = ctx => {
       // flowVars
       this.context._flowVars = new (VarsFn())();
       this.context._flowVars._vars = this.context._flow.flowVars ? JSON.parse(this.context._flow.flowVars) : {};
+      // utils
+      this.context._utils = new (UtilsFn({ ctx, flowInstance: this }))({
+        context: this.context,
+      });
     }
 
     async _saveFlowVars() {
@@ -119,14 +124,21 @@ module.exports = ctx => {
     }
 
     async _executeActivityService({ bean, parameterExpression, globals }) {
+      let parameter;
+      if (parameterExpression !== undefined) {
+        parameter = this._evaluateExpression({ expression: parameterExpression, globals });
+      }
+      return await this._executeActivityServiceInner({ bean, parameter, globals });
+    }
+    async _executeActivityServiceInner({ bean, parameter, globals }) {
       // bean
       const beanFullName = `${bean.module}.flow.activity.service.${bean.name}`;
       const beanInstance = ctx.bean._getBean(beanFullName);
       if (!beanInstance) throw new Error(`bean not found: ${beanFullName}`);
       // context
       const context = Object.assign({ context: this.context }, globals);
-      if (parameterExpression) {
-        context.parameter = this._evaluateExpression({ expression: parameterExpression, globals });
+      if (parameter !== undefined) {
+        context.parameter = parameter;
       }
       return await beanInstance.execute(context);
     }

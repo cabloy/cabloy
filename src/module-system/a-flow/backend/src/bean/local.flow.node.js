@@ -1,4 +1,5 @@
 const VarsFn = require('../common/vars.js');
+const UtilsFn = require('../common/utils.js');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -10,7 +11,7 @@ module.exports = ctx => {
       this._nodeBaseBean = null;
       // context
       this.contextNode = ctx.bean._newBean(`${moduleInfo.relativeName}.local.context.node`, {
-        nodeRef,
+        context, nodeRef,
       });
     }
 
@@ -59,6 +60,11 @@ module.exports = ctx => {
       // flowVars
       this.contextNode._nodeVars = new (VarsFn())();
       this.contextNode._nodeVars._vars = this.contextNode._flowNode.nodeVars ? JSON.parse(this.contextNode._flowNode.nodeVars) : {};
+      // utils
+      this.contextNode._utils = new (UtilsFn({ ctx, flowInstance: this.flowInstance }))({
+        context: this.context,
+        contextNode: this.contextNode,
+      });
     }
 
     async _saveNodeVars() {
