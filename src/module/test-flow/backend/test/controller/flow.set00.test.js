@@ -10,7 +10,7 @@ describe.only('flow.set00', () => {
         password: '123456',
       },
     });
-    // create
+    // flow start
     const result = await app.httpRequest().post(mockUrl('flow/start')).send({
       flowDefKey: {
         module: mockInfo().relativeName,
@@ -23,7 +23,15 @@ describe.only('flow.set00', () => {
     assert(result.body.code === 0);
   });
   it('edgeSequence', async () => {
-    // create
+    app.mockSession({});
+    // login as root
+    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
+      data: {
+        auth: 'root',
+        password: '123456',
+      },
+    });
+    // flow start
     let result = await app.httpRequest().post(mockUrl('flow/start')).send({
       flowDefKey: {
         module: mockInfo().relativeName,
@@ -46,7 +54,15 @@ describe.only('flow.set00', () => {
     assert(result.body.code === 0);
   });
   it('activityNone', async () => {
-    // create
+    app.mockSession({});
+    // login as root
+    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
+      data: {
+        auth: 'root',
+        password: '123456',
+      },
+    });
+    // flow start
     const result = await app.httpRequest().post(mockUrl('flow/start')).send({
       flowDefKey: {
         module: mockInfo().relativeName,
@@ -64,7 +80,7 @@ describe.only('flow.set00', () => {
         password: '123456',
       },
     });
-    // create
+    // flow start
     const result = await app.httpRequest().post(mockUrl('flow/start')).send({
       flowDefKey: {
         module: mockInfo().relativeName,
