@@ -74,6 +74,10 @@ module.exports = app => {
     async enable({ atomClass, key, atom, user }) {
       // super
       await super.enable({ atomClass, key, atom, user });
+      // deploy
+      this.ctx.tail(async () => {
+        await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId });
+      });
     }
 
   }

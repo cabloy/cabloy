@@ -53,6 +53,42 @@ module.exports = ctx => {
       return null;
     }
 
+    async deploy({ flowDefId }) {
+      // queue
+      await ctx.app.meta.queue.pushAsync({
+        subdomain: ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'deploy',
+        queueNameSub: flowDefId,
+        data: { flowDefId },
+      });
+    }
+
+    async _deployQueue({ flowDefId }) {
+      // flowDef
+      const flowDef = await this._getById({ flowDefId });
+      if (!flowDef) return;
+      // disabled
+      const disabled = flowDef.disabled;
+      // content
+      const content = flowDef.content ? JSON.parse(flowDef.content) : null;
+      if (!content) return;
+      // all startEvents
+      for (const node of content.process.nodes) {
+        const nodeType = node.type;
+        if (nodeType.indexOf('startEvent') !== 0) continue;
+        const _nodeBase = this._getFlowNodeBase(nodeType);
+        const _nodeBaseBean = ctx.bean._newBean(_nodeBase.beanFullName);
+        if (_nodeBaseBean.deploy) {
+          await _nodeBaseBean.deploy(!disabled);
+        }
+      }
+    }
+
+    async _getById({ flowDefId }) {
+      return await ctx.bean.atom.read({ key: { atomId: flowDefId } });
+    }
+
     async _getByKey({ flowDefKey, version, atomStage }) {
       // fullKey
       const { fullKey } = this._combineFullKey({ flowDefKey });
