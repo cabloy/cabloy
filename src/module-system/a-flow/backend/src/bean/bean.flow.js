@@ -4,7 +4,7 @@ module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Flow {
 
-    async startByKey({ flowDefKey, flowVars }) {
+    async startByKey({ flowDefKey, flowVars, flowUserId }) {
       // fullKey
       const { fullKey } = ctx.bean.flowDef._combineFullKey({ flowDefKey });
       // get flow def
@@ -16,7 +16,7 @@ module.exports = ctx => {
         flowDef,
       });
       // start
-      await flowInstance.start({ flowVars });
+      await flowInstance.start({ flowVars, flowUserId });
       // ok
       return flowInstance;
     }

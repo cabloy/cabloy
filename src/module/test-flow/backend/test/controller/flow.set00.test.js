@@ -2,6 +2,14 @@ const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
 describe.only('flow.set00', () => {
   it('simple', async () => {
+    app.mockSession({});
+    // login as root
+    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
+      data: {
+        auth: 'root',
+        password: '123456',
+      },
+    });
     // create
     const result = await app.httpRequest().post(mockUrl('flow/start')).send({
       flowDefKey: {
@@ -48,6 +56,14 @@ describe.only('flow.set00', () => {
     assert(result.body.code === 0);
   });
   it.only('activityService', async () => {
+    app.mockSession({});
+    // login as root
+    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
+      data: {
+        auth: 'root',
+        password: '123456',
+      },
+    });
     // create
     const result = await app.httpRequest().post(mockUrl('flow/start')).send({
       flowDefKey: {

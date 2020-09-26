@@ -7,6 +7,7 @@ module.exports = app => {
       await this.ctx.bean.flow.startByKey({
         flowDefKey: this.ctx.request.body.flowDefKey,
         flowVars: this.ctx.request.body.flowVars,
+        flowUserId: this.ctx.state.user.op.id,
       });
       this.ctx.success();
     }

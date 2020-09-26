@@ -64,6 +64,7 @@ module.exports = app => {
             flowVars JSON DEFAULT NULL,
             flowNodeIdCurrent int(11) DEFAULT '0',
             flowNodeNameCurrent varchar(255) DEFAULT NULL,
+            flowUserId int(11) DEFAULT '0',
             PRIMARY KEY (id)
           )
         `;
@@ -102,6 +103,7 @@ module.exports = app => {
             flowVars JSON DEFAULT NULL,
             flowNodeIdCurrent int(11) DEFAULT '0',
             flowNodeNameCurrent varchar(255) DEFAULT NULL,
+            flowUserId int(11) DEFAULT '0',
             PRIMARY KEY (id)
           )
         `;

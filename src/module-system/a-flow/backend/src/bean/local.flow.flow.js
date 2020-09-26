@@ -28,8 +28,9 @@ module.exports = ctx => {
       if (!options) options = {};
       const startEventId = options.startEventId;
       const flowVars = options.flowVars || {};
+      const flowUserId = options.flowUserId || 0;
       // create flow
-      const flowId = await this._createFlow({ flowVars });
+      const flowId = await this._createFlow({ flowVars, flowUserId });
       // context init
       await this._contextInit({ flowId });
       // raise event: onFlowStart
@@ -100,7 +101,7 @@ module.exports = ctx => {
       await this.modelFlowHistory.update(this.context._flowHistory);
     }
 
-    async _createFlow({ flowVars }) {
+    async _createFlow({ flowVars, flowUserId }) {
       // flow
       const data = {
         flowDefId: this.context._flowDef.atomId,
@@ -108,6 +109,7 @@ module.exports = ctx => {
         version: this.context._flowDef.version,
         flowStatus: 0,
         flowVars: JSON.stringify(flowVars),
+        flowUserId,
       };
       const res = await this.modelFlow.insert(data);
       const flowId = res.insertId;
