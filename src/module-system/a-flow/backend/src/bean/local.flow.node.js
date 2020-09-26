@@ -144,7 +144,10 @@ module.exports = ctx => {
     }
 
     get nodeBase() {
-      if (!this._nodeBase) this._nodeBase = ctx.bean.flowDef._getFlowNodeBase(this.contextNode._nodeRef.type);
+      if (!this._nodeBase) {
+        this._nodeBase = ctx.bean.flowDef._getFlowNodeBase(this.contextNode._nodeRef.type);
+        if (!this._nodeBase) throw new Error(`flow node not found: ${this.contextNode._nodeRef.type}`);
+      }
       return this._nodeBase;
     }
 

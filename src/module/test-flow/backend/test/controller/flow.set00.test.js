@@ -14,17 +14,7 @@ describe.only('flow.set00', () => {
     });
     assert(result.body.code === 0);
   });
-  it('activityNone', async () => {
-    // create
-    const result = await app.httpRequest().post(mockUrl('flow/start')).send({
-      flowDefKey: {
-        module: mockInfo().relativeName,
-        name: 'set00_activityNone',
-      },
-    });
-    assert(result.body.code === 0);
-  });
-  it.only('edgeSequence', async () => {
+  it('edgeSequence', async () => {
     // create
     let result = await app.httpRequest().post(mockUrl('flow/start')).send({
       flowDefKey: {
@@ -43,6 +33,26 @@ describe.only('flow.set00', () => {
       },
       flowVars: {
         x: 2,
+      },
+    });
+    assert(result.body.code === 0);
+  });
+  it('activityNone', async () => {
+    // create
+    const result = await app.httpRequest().post(mockUrl('flow/start')).send({
+      flowDefKey: {
+        module: mockInfo().relativeName,
+        name: 'set00_activityNone',
+      },
+    });
+    assert(result.body.code === 0);
+  });
+  it.only('activityService', async () => {
+    // create
+    const result = await app.httpRequest().post(mockUrl('flow/start')).send({
+      flowDefKey: {
+        module: mockInfo().relativeName,
+        name: 'set00_activityService',
       },
     });
     assert(result.body.code === 0);

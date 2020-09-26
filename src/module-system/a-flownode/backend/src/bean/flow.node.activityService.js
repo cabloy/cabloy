@@ -9,10 +9,10 @@ module.exports = ctx => {
       await super.onNodeDoing();
       // bean/parameters
       const bean = this.contextNode._nodeRef.options.bean;
-      const parametersExpression = this.contextNode._nodeRef.options.parametersExpression;
+      const parameterExpression = this.contextNode._nodeRef.options.parameterExpression;
       await this.flowInstance._executeActivityService({
         bean,
-        parametersExpression,
+        parameterExpression,
         globals: {
           contextNode: this.contextNode,
         },
