@@ -5,7 +5,7 @@ module.exports = ctx => {
     }
 
     async onNodeLeave() {
-      super.onNodeLeave();
+      await super.onNodeLeave();
       // end
       await this.flowInstance._endFlow();
       return false;

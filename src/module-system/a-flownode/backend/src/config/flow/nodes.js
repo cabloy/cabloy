@@ -19,4 +19,10 @@ module.exports = {
     bean: 'activityNone',
     icon: '/api/static/a/flownode/bpmn/activities/activity-none.svg',
   },
+  activityService: {
+    title: 'ActivityService',
+    group: 'activity',
+    bean: 'activityService',
+    icon: '/api/static/a/flownode/bpmn/activities/activity-service.svg',
+  },
 };

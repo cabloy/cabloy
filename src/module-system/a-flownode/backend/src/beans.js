@@ -3,6 +3,7 @@ const flowEdgeSequence = require('./bean/flow.edge.sequence.js');
 const flowNodeStartEventNone = require('./bean/flow.node.startEventNone.js');
 const flowNodeEndEventNone = require('./bean/flow.node.endEventNone.js');
 const flowNodeActivityNone = require('./bean/flow.node.activityNone.js');
+const flowNodeActivityService = require('./bean/flow.node.activityService.js');
 
 module.exports = app => {
   const beans = {
@@ -27,6 +28,10 @@ module.exports = app => {
     'flow.node.activityNone': {
       mode: 'ctx',
       bean: flowNodeActivityNone,
+    },
+    'flow.node.activityService': {
+      mode: 'ctx',
+      bean: flowNodeActivityService,
     },
   };
   return beans;

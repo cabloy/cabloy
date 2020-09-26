@@ -6,11 +6,15 @@ module.exports = ctx => {
 
     async onEdgeEnter() {
       // super
-      super.onEdgeEnter();
+      await super.onEdgeEnter();
       // check conditionExpression
       const conditionExpression = this.contextEdge._edgeRef.options.conditionExpression;
-      const res = this.flowInstance._evaluateExpression(conditionExpression, {
-        contextNode: this.contextNode, contextEdge: this.contextEdge,
+      const res = this.flowInstance._evaluateExpression({
+        expression: conditionExpression,
+        globals: {
+          contextNode: this.contextNode,
+          contextEdge: this.contextEdge,
+        },
       });
       return !!res;
     }

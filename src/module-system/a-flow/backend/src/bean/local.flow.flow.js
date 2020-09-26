@@ -113,9 +113,22 @@ module.exports = ctx => {
       return flowId;
     }
 
-    _evaluateExpression(expression, globals) {
+    _evaluateExpression({ expression, globals }) {
       const sandbox = Object.assign({ context: this.context }, globals);
       return vm.runInContext(expression, vm.createContext(sandbox));
+    }
+
+    async _executeActivityService({ bean, parametersExpression, globals }) {
+      // bean
+      const beanFullName = `${bean.module}.flow.activity.service.${bean.name}`;
+      const beanInstance = ctx.bean._getBean(beanFullName);
+      if (!beanInstance) throw new Error(`bean not found: ${beanFullName}`);
+      // context
+      const context = Object.assign({ context: this.context }, globals);
+      if (parametersExpression) {
+        context.parameters = this._evaluateExpression({ expression: parametersExpression, globals });
+      }
+      return await beanInstance.execute(context);
     }
 
     async _createNodeInstance({ nodeRef }) {
