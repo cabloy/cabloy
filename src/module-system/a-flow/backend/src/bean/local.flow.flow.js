@@ -23,20 +23,18 @@ module.exports = ctx => {
       return ctx.model.module(moduleInfo.relativeName).flowHistory;
     }
 
-    async start(options) {
-      if (!options) options = {};
-      const startEventId = options.startEventId;
-      const flowVars = options.flowVars || {};
-      const flowUserId = options.flowUserId || 0;
+    async start({ flowVars, flowUserId, startEventId }) {
+      if (!flowVars) flowVars = {};
+      if (flowUserId === undefined) flowUserId = 0;
       // create flow
       const flowId = await this._createFlow({ flowVars, flowUserId });
       // context init
       await this._contextInit({ flowId });
       // raise event: onFlowStart
-      await this._flowListener.onFlowStart(options);
+      await this._flowListener.onFlowStart({ flowVars, flowUserId, startEventId });
       // node: startEvent
       const nodeInstanceStartEvent = await this._findNodeInstanceStartEvent({ startEventId });
-      if (!nodeInstanceStartEvent) throw new Error(`startEvent not found: ${this.context._flowDef.flowDefKey}.${startEventId}`);
+      if (!nodeInstanceStartEvent) throw new Error(`startEvent not found: ${this.context._flowDef.flowDefKey}.${startEventId || 'startEventNone'}`);
       // node enter
       await nodeInstanceStartEvent.enter();
 
@@ -139,6 +137,7 @@ module.exports = ctx => {
       const nodeRef = this.context._flowDefContent.process.nodes.find(node => {
         return nodeRefId === node.id;
       });
+      if (!nodeRef) return null;
       return await this._createNodeInstance({ nodeRef });
     }
 
@@ -146,6 +145,7 @@ module.exports = ctx => {
       const nodeRef = this.context._flowDefContent.process.nodes.find(node => {
         return (startEventId && startEventId === node.id) || (!startEventId && node.type === 'startEventNone');
       });
+      if (!nodeRef) return null;
       return await this._createNodeInstance({ nodeRef });
     }
 

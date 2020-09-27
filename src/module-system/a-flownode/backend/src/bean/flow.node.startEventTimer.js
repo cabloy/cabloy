@@ -58,7 +58,7 @@ module.exports = ctx => {
         });
       } else {
         // start
-        await ctx.bean.flow.startById({ flowDefId });
+        await ctx.bean.flow.startById({ flowDefId, startEventId: node.id });
       }
     }
 
