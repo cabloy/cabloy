@@ -6,10 +6,10 @@ module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowInstance {
 
-    constructor({ flowDefKey, flowDef }) {
+    constructor({ flowDef }) {
       // context
       this.context = ctx.bean._newBean(`${moduleInfo.relativeName}.local.context.flow`, {
-        flowDefKey, flowDef,
+        flowDef,
       });
       // listener
       this._flowListener = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.listener`, {
@@ -37,7 +37,7 @@ module.exports = ctx => {
       await this._flowListener.onFlowStart(options);
       // node: startEvent
       const nodeInstanceStartEvent = await this._findNodeInstanceStartEvent({ startEventId });
-      if (!nodeInstanceStartEvent) throw new Error(`startEvent not found: ${this._flowDefKey}.${startEventId}`);
+      if (!nodeInstanceStartEvent) throw new Error(`startEvent not found: ${this.context._flowDef.flowDefKey}.${startEventId}`);
       // node enter
       await nodeInstanceStartEvent.enter();
 

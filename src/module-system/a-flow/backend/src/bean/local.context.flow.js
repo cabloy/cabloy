@@ -2,8 +2,7 @@ module.exports = ctx => {
 
   class ContextFlow {
 
-    constructor({ flowDefKey, flowDef }) {
-      this._flowDefKey = flowDefKey;
+    constructor({ flowDef }) {
       this._flowDef = flowDef;
       this._flowDefContent = JSON.parse(this._flowDef.content);
       //

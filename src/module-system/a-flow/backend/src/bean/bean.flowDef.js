@@ -42,6 +42,19 @@ module.exports = ctx => {
       return await this._register({ flowDefKey });
     }
 
+    async getById({ flowDefId }) {
+      // get
+      const flowDef = await this._getById({ flowDefId });
+      if (!flowDef) return null;
+      if (flowDef.dynamic) return flowDef;
+      // check version
+      const _flowDefBase = this._getFlowDefBase({ flowDefKey: flowDef.flowDefKey });
+      if (!_flowDefBase) return flowDef;
+      if (_flowDefBase.info.version === flowDef.version) return flowDef;
+      await this._updateVersion({ flowDefKey: flowDef.flowDefKey });
+      return await this.getById({ flowDefId });
+    }
+
     async getByKeyAndVersion({ flowDefKey, version }) {
       // get from archive
       let flowDef = await this._getByKey({ flowDefKey, version, atomStage: 'archive' });
