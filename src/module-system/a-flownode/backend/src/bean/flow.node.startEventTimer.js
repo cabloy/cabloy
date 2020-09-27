@@ -48,7 +48,14 @@ module.exports = ctx => {
       const parameterExpression = node.options && node.options.parameterExpression;
       if (bean) {
         // bean
-        await ctx.bean.flow.executeService({ bean, parameterExpression, globals: null });
+        const parameter = ctx.bean.flow.evaluateExpression({
+          expression: parameterExpression, globals: null,
+        });
+        await ctx.bean.flow.executeService({
+          bean,
+          parameter: { flowDefId, node, parameter },
+          globals: null,
+        });
       } else {
         // start
         await ctx.bean.flow.startById({ flowDefId });

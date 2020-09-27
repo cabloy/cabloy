@@ -11,7 +11,7 @@ module.exports = ctx => {
       const conditionExpression = this.contextEdge._edgeRef.options && this.contextEdge._edgeRef.options.conditionExpression;
       if (conditionExpression === undefined) return true;
       if (!conditionExpression) return false;
-      const res = this.flowInstance._evaluateExpression({
+      const res = ctx.bean.flow.evaluateExpression({
         expression: conditionExpression,
         globals: {
           context: this.context,
