@@ -2,6 +2,15 @@
 module.exports = appInfo => {
   const config = {};
 
+  // startups
+  config.startups = {
+    loadFlowDefs: {
+      bean: 'loadFlowDefs',
+      instance: true,
+      debounce: true,
+    },
+  };
+
   // queues
   config.queues = {
     deploy: {

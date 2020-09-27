@@ -10,6 +10,7 @@ module.exports = ctx => {
       // get flow def
       const flowDef = await ctx.bean.flowDef.getByKey({ flowDefKey });
       if (!flowDef) ctx.throw.module(moduleInfo.relativeName, 1001, fullKey);
+      if (flowDef.disabled) ctx.throw.module(moduleInfo.relativeName, 1002, fullKey);
       return await this._start({ flowDef, flowVars, flowUserId, startEventId });
     }
 
@@ -17,6 +18,7 @@ module.exports = ctx => {
       // get flow def
       const flowDef = await ctx.bean.flowDef.getById({ flowDefId });
       if (!flowDef) ctx.throw.module(moduleInfo.relativeName, 1001, flowDefId);
+      if (flowDef.disabled) ctx.throw.module(moduleInfo.relativeName, 1002, flowDef.flowDefKey);
       return await this._start({ flowDef, flowVars, flowUserId, startEventId });
     }
 

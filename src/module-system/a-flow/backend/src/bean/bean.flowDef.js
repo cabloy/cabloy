@@ -24,35 +24,12 @@ module.exports = ctx => {
     }
 
     async getByKey({ flowDefKey }) {
-      // get
-      const flowDef = await this._getByKey({ flowDefKey, atomStage: 'archive' });
-      if (flowDef) {
-        if (flowDef.dynamic) return flowDef;
-        // check version
-        const _flowDefBase = this._getFlowDefBase({ flowDefKey });
-        if (!_flowDefBase) return flowDef;
-        if (_flowDefBase.info.version === flowDef.version) return flowDef;
-        await this._updateVersion({ flowDefKey });
-        return await this.getByKey({ flowDefKey });
-      }
-      // dynamic
-      const { dynamic } = this._combineFullKey({ flowDefKey });
-      if (dynamic) return null;
-      // register
-      return await this._register({ flowDefKey });
+      return await this._getByKey({ flowDefKey, atomStage: 'archive' });
     }
 
     async getById({ flowDefId }) {
       // get
-      const flowDef = await this._getById({ flowDefId });
-      if (!flowDef) return null;
-      if (flowDef.dynamic) return flowDef;
-      // check version
-      const _flowDefBase = this._getFlowDefBase({ flowDefKey: flowDef.flowDefKey });
-      if (!_flowDefBase) return flowDef;
-      if (_flowDefBase.info.version === flowDef.version) return flowDef;
-      await this._updateVersion({ flowDefKey: flowDef.flowDefKey });
-      return await this.getById({ flowDefId });
+      return await this._getById({ flowDefId });
     }
 
     async getByKeyAndVersion({ flowDefKey, version }) {
@@ -122,12 +99,27 @@ module.exports = ctx => {
       return list[0];
     }
 
+    async _loadFlowDefBases() {
+      const flowDefBases = this._getFlowDefBases();
+      for (const flowDefKey in flowDefBases) {
+        const flowDef = await this._getByKey({ flowDefKey, atomStage: 'archive' });
+        if (flowDef) {
+          // check version
+          const _flowDefBase = flowDefBases[flowDefKey];
+          if (_flowDefBase.info.version !== flowDef.version) {
+            await this._updateVersion({ flowDefKey });
+          }
+        } else {
+          // register
+          await this._register({ flowDefKey });
+        }
+      }
+    }
+
     async _updateVersion({ flowDefKey }) {
-      // fullKey
-      const { fullKey } = this._combineFullKey({ flowDefKey });
       return await ctx.app.meta.util.lock({
         subdomain: ctx.subdomain,
-        resource: `${moduleInfo.relativeName}.flowDef.register.${fullKey}`,
+        resource: `${moduleInfo.relativeName}.flowDef.register.${flowDefKey}`,
         fn: async () => {
           return await ctx.app.meta.util.executeBean({
             subdomain: ctx.subdomain,
@@ -141,7 +133,6 @@ module.exports = ctx => {
     }
 
     async _updateVersionLock({ flowDefKey }) {
-      const { fullKey } = this._combineFullKey({ flowDefKey });
       // get
       const flowDef = await this._getByKey({ flowDefKey, atomStage: 'draft' });
       const atomKey = {
@@ -149,7 +140,7 @@ module.exports = ctx => {
       };
       // get flowDefBase
       const _flowDefBase = this._getFlowDefBase({ flowDefKey });
-      if (!_flowDefBase) ctx.throw.module(moduleInfo.relativeName, 1001, fullKey);
+      if (!_flowDefBase) ctx.throw.module(moduleInfo.relativeName, 1001, flowDefKey);
       await ctx.bean.atom.write({
         key: atomKey,
         item: {
@@ -170,11 +161,9 @@ module.exports = ctx => {
     }
 
     async _register({ flowDefKey }) {
-      // fullKey
-      const { fullKey } = this._combineFullKey({ flowDefKey });
       return await ctx.app.meta.util.lock({
         subdomain: ctx.subdomain,
-        resource: `${moduleInfo.relativeName}.flowDef.register.${fullKey}`,
+        resource: `${moduleInfo.relativeName}.flowDef.register.${flowDefKey}`,
         fn: async () => {
           return await ctx.app.meta.util.executeBean({
             subdomain: ctx.subdomain,
@@ -188,13 +177,12 @@ module.exports = ctx => {
     }
 
     async _registerLock({ flowDefKey }) {
-      const { fullKey } = this._combineFullKey({ flowDefKey });
       // get again
       const flowDef = await this._getByKey({ flowDefKey, atomStage: 'archive' });
-      if (flowDef) return flowDef;
+      if (flowDef) return;
       // get flowDefBase
       const _flowDefBase = this._getFlowDefBase({ flowDefKey });
-      if (!_flowDefBase) ctx.throw.module(moduleInfo.relativeName, 1001, fullKey);
+      if (!_flowDefBase) ctx.throw.module(moduleInfo.relativeName, 1001, flowDefKey);
       // add atom
       const roleSuperuser = await ctx.bean.role.getSystemRole({ roleName: 'superuser' });
       const atomKey = await ctx.bean.atom.create({
@@ -206,7 +194,7 @@ module.exports = ctx => {
         key: atomKey,
         item: {
           atomName: ctx.text(_flowDefBase.info.title),
-          flowDefKey: fullKey,
+          flowDefKey,
           version: _flowDefBase.info.version,
           description: ctx.text(_flowDefBase.info.description),
           dynamic: 0,
@@ -221,15 +209,18 @@ module.exports = ctx => {
         },
         user: { id: 0 },
       });
-      return await this._registerLock({ flowDefKey });
     }
 
     _getFlowDefBase({ flowDefKey }) {
       const { fullKey } = this._combineFullKey({ flowDefKey });
+      return this._getFlowDefBases()[fullKey];
+    }
+
+    _getFlowDefBases() {
       if (!__flowDefs) {
         __flowDefs = this._collectFlowDefs();
       }
-      return __flowDefs[fullKey];
+      return __flowDefs;
     }
 
     _collectFlowDefs() {

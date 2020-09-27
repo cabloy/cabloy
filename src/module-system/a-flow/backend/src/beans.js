@@ -1,5 +1,6 @@
 const versionManager = require('./bean/version.manager.js');
 const atomFlowDef = require('./bean/atom.flowDef.js');
+const startupLoadFlowDefs = require('./bean/startup.loadFlowDefs.js');
 const queueDeploy = require('./bean/queue.deploy.js');
 const localContextFlow = require('./bean/local.context.flow.js');
 const localContextNode = require('./bean/local.context.node.js');
@@ -22,6 +23,11 @@ module.exports = app => {
     'atom.flowDef': {
       mode: 'app',
       bean: atomFlowDef,
+    },
+    // startup
+    'startup.loadFlowDefs': {
+      mode: 'app',
+      bean: startupLoadFlowDefs,
     },
     // queue
     'queue.deploy': {
