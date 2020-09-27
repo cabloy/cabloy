@@ -1,4 +1,3 @@
-const vm = require('vm');
 const VarsFn = require('../common/vars.js');
 const UtilsFn = require('../common/utils.js');
 
@@ -118,34 +117,6 @@ module.exports = ctx => {
       await this.modelFlowHistory.insert(data);
       // ok
       return flowId;
-    }
-
-    _evaluateExpression({ expression, globals }) {
-      const sandbox = Object.assign({ context: this.context }, globals);
-      return vm.runInContext(expression, vm.createContext(sandbox));
-    }
-
-    async _executeService({ bean, parameterExpression, globals }) {
-      let parameter;
-      if (parameterExpression !== undefined) {
-        parameter = this._evaluateExpression({ expression: parameterExpression, globals });
-      }
-      return await this._executeServiceInner({ bean, parameter, globals });
-    }
-    async _executeServiceInner({ bean, parameter, globals }) {
-      // bean
-      const beanFullName = `${bean.module}.flow.service.${bean.name}`;
-      const beanInstance = ctx.bean._getBean(beanFullName);
-      if (!beanInstance) throw new Error(`bean not found: ${beanFullName}`);
-      if (Object.getPrototypeOf(Object.getPrototypeOf(beanInstance)).constructor.name !== 'FlowServiceBase') {
-        throw new Error(`bean should extends FlowServiceBase: ${beanFullName}`);
-      }
-      // context
-      const context = Object.assign({ context: this.context }, globals);
-      if (parameter !== undefined) {
-        context.parameter = parameter;
-      }
-      return await beanInstance.execute(context);
     }
 
     async _createNodeInstance({ nodeRef }) {

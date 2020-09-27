@@ -14,6 +14,7 @@ module.exports = ctx => {
       const res = this.flowInstance._evaluateExpression({
         expression: conditionExpression,
         globals: {
+          context: this.context,
           contextNode: this.contextNode,
           contextEdge: this.contextEdge,
         },

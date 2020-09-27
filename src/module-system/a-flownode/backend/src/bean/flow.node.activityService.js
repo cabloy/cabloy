@@ -10,10 +10,11 @@ module.exports = ctx => {
       // bean/parameters
       const bean = this.contextNode._nodeRef.options.bean;
       const parameterExpression = this.contextNode._nodeRef.options.parameterExpression;
-      await this.flowInstance._executeService({
+      await ctx.bean.flow.executeService({
         bean,
         parameterExpression,
         globals: {
+          context: this.context,
           contextNode: this.contextNode,
         },
       });
