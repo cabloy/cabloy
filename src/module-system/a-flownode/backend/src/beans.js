@@ -3,6 +3,7 @@ const queueStartEventTimer = require('./bean/queue.startEventTimer.js');
 const flowEdgeSequence = require('./bean/flow.edge.sequence.js');
 const flowNodeStartEventNone = require('./bean/flow.node.startEventNone.js');
 const flowNodeStartEventTimer = require('./bean/flow.node.startEventTimer.js');
+const flowNodeStartEventAtom = require('./bean/flow.node.startEventAtom.js');
 const flowNodeEndEventNone = require('./bean/flow.node.endEventNone.js');
 const flowNodeActivityNone = require('./bean/flow.node.activityNone.js');
 const flowNodeActivityService = require('./bean/flow.node.activityService.js');
@@ -31,6 +32,10 @@ module.exports = app => {
     'flow.node.startEventTimer': {
       mode: 'ctx',
       bean: flowNodeStartEventTimer,
+    },
+    'flow.node.startEventAtom': {
+      mode: 'ctx',
+      bean: flowNodeStartEventAtom,
     },
     'flow.node.endEventNone': {
       mode: 'ctx',

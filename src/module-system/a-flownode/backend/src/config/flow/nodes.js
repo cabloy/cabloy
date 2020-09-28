@@ -12,6 +12,12 @@ module.exports = {
     bean: 'startEventTimer',
     icon: '/api/static/a/flownode/bpmn/events/start-event-timer.svg',
   },
+  startEventAtom: {
+    title: 'StartEventAtom',
+    group: 'startEvent',
+    bean: 'startEventAtom',
+    icon: '/api/static/a/flownode/bpmn/events/start-event-atom.svg',
+  },
   endEventNone: {
     title: 'EndEventNone',
     group: 'endEvent',
