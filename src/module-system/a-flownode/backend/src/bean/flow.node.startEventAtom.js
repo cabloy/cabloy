@@ -46,60 +46,71 @@ module.exports = ctx => {
       }
     }
 
-    async _runSchedule(context) {
-      const { flowDefId, node } = context.data;
-      // ignore on test
-      if (ctx.app.meta.isTest) return;
-      // check if valid
-      if (!(await this._checkJobValid(context))) {
-        await this._deleteSchedule(context);
-        return;
+    async _match({ atom, user }) {
+      // order by dynamic/conditionExpression
+      const list = await ctx.model.query(`
+          select a.* from aFlowNodeStartEventAtomCondition a
+            left join aFlowDef b on a.flowDefId=b.id
+            where a.iid=? and a.atomClassId=?
+            order by b.dynamic desc, a.conditionExpression desc
+        `, [ ctx.instance.id, atom.atomClassId ]);
+      for (const _condition of list) {
+        const res = await this._matchCondition({ _condition, atom, user });
+        if (res) return true;
       }
-      // bean/parameterExpression
-      const bean = node.options && node.options.bean;
-      const parameterExpression = node.options && node.options.parameterExpression;
-      if (bean) {
-        // bean
-        const parameter = ctx.bean.flow.evaluateExpression({
-          expression: parameterExpression, globals: null,
-        });
-        await ctx.bean.flow.executeService({
-          bean,
-          parameter: { flowDefId, node, parameter },
-          globals: null,
-        });
-      } else {
-        // start
-        await ctx.bean.flow.startById({ flowDefId, startEventId: node.id });
-      }
+      return false;
     }
 
-    async _checkJobValid(context) {
-      const job = context.job;
-      const { flowDefId, node } = context.data;
+    async _matchCondition(context) {
+      const { _condition, atom, user } = context;
+      // check if valid
+      if (!(await this._checkConditionValid(context))) {
+        await this._deleteCondition(context);
+        return false;
+      }
+      // match conditionExpression
+      const conditionActive = _condition.conditionExpression;
+      if (conditionActive) {
+        const res = ctx.bean.flow.evaluateExpression({
+          expression: conditionActive,
+          globals: { atom },
+        });
+        if (!res) return false;
+      }
+      // start
+      await ctx.bean.flow.startById({
+        flowDefId: _condition.flowDefId,
+        startEventId: _condition.startEventId,
+        flowUserId: user.id,
+        flowAtomId: atom.id,
+      });
+      // ok
+      return true;
+    }
+
+    async _checkConditionValid(context) {
+      const { _condition } = context;
       // flowDef
-      const flowDef = await ctx.bean.flowDef.getById({ flowDefId });
+      const flowDef = await ctx.bean.flowDef.getById({ flowDefId: _condition.flowDefId });
       if (!flowDef) return false;
       // disabled
       if (flowDef.disabled) return false;
       // content
       const content = flowDef.content ? JSON.parse(flowDef.content) : null;
       if (!content) return false;
-      const nodeConfig = content.process.nodes.find(item => item.id === node.id);
+      const nodeConfig = content.process.nodes.find(item => item.id === _condition.startEventId);
       if (!nodeConfig) return false;
       // check if changed
-      const jobKeyActive = getRepeatKey(job.data.jobName, job.data.jobOptions.repeat);
-      const jobKeyConfig = getRepeatKey(flowDefId, nodeConfig.options && nodeConfig.options.repeat);
-      if (jobKeyActive !== jobKeyConfig) return false;
+      const conditionActive = _condition.conditionExpression;
+      const conditionConfig = nodeConfig.options && nodeConfig.options.conditionExpression;
+      if (conditionActive !== conditionConfig) return false;
       // ok
       return true;
     }
 
-    async _deleteSchedule(context) {
-      const job = context.job;
-      const jobKeyActive = getRepeatKey(job.data.jobName, job.data.jobOptions.repeat);
-      const repeat = await job.queue.repeat;
-      await repeat.removeRepeatableByKey(jobKeyActive);
+    async _deleteCondition(context) {
+      const { _condition } = context;
+      await this.modelCondition.delete({ id: _condition.id });
     }
 
   }

@@ -1,3 +1,20 @@
+const require3 = require('require3');
+const assert = require3('assert');
+
+class Listener {
+  constructor(context) {
+    this.context = context;
+  }
+
+  async onNodeEnter(contextNode) {
+    if (contextNode._nodeRef.id === 'startEvent_1') {
+      const atomName = this.context.atom.atomName;
+      assert.equal(atomName, 'startEventAtom-test');
+    }
+  }
+
+}
+
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const definition = {
@@ -6,6 +23,7 @@ module.exports = app => {
       description: 'Test_Set00_StartEvent_Atom',
       version: '2020-09-28',
     },
+    listener: Listener.toString(),
     process: {
       nodes: [
         {

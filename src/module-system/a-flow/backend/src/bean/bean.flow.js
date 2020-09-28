@@ -4,22 +4,22 @@ module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Flow {
 
-    async startByKey({ flowDefKey, flowVars, flowUserId, startEventId }) {
+    async startByKey({ flowDefKey, flowAtomId, flowVars, flowUserId, startEventId }) {
       // fullKey
       const { fullKey } = ctx.bean.flowDef._combineFullKey({ flowDefKey });
       // get flow def
       const flowDef = await ctx.bean.flowDef.getByKey({ flowDefKey });
       if (!flowDef) ctx.throw.module(moduleInfo.relativeName, 1001, fullKey);
       if (flowDef.disabled) ctx.throw.module(moduleInfo.relativeName, 1002, fullKey);
-      return await this._start({ flowDef, flowVars, flowUserId, startEventId });
+      return await this._start({ flowDef, flowAtomId, flowVars, flowUserId, startEventId });
     }
 
-    async startById({ flowDefId, flowVars, flowUserId, startEventId }) {
+    async startById({ flowDefId, flowAtomId, flowVars, flowUserId, startEventId }) {
       // get flow def
       const flowDef = await ctx.bean.flowDef.getById({ flowDefId });
       if (!flowDef) ctx.throw.module(moduleInfo.relativeName, 1001, flowDefId);
       if (flowDef.disabled) ctx.throw.module(moduleInfo.relativeName, 1002, flowDef.flowDefKey);
-      return await this._start({ flowDef, flowVars, flowUserId, startEventId });
+      return await this._start({ flowDef, flowAtomId, flowVars, flowUserId, startEventId });
     }
 
     evaluateExpression({ expression, globals }) {
@@ -49,13 +49,13 @@ module.exports = ctx => {
       return await beanInstance.execute(context);
     }
 
-    async _start({ flowDef, flowVars, flowUserId, startEventId }) {
+    async _start({ flowDef, flowAtomId, flowVars, flowUserId, startEventId }) {
       // flowInstance
       const flowInstance = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.flow`, {
         flowDef,
       });
       // start
-      await flowInstance.start({ flowVars, flowUserId, startEventId });
+      await flowInstance.start({ flowAtomId, flowVars, flowUserId, startEventId });
       // ok
       return flowInstance;
     }

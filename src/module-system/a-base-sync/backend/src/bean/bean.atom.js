@@ -185,6 +185,17 @@ module.exports = ctx => {
     async enable({ key, atom: { atomEnabled = 1 }, user }) {
       const _atom = await this.modelAtom.get({ id: key.atomId });
       if (_atom.atomEnabled === atomEnabled) return;
+      // check atom flow
+      if (atomEnabled) {
+        const _nodeBaseBean = ctx.bean._newBean('a-flownode.flow.node.startEventAtom');
+        const res = await _nodeBaseBean._match({ atom: _atom, user });
+        if (res) {
+          // set atom flow
+          await this.flow({ key, atom: { atomFlow: 1 }, user });
+          return;
+        }
+      }
+      // update
       _atom.atomEnabled = atomEnabled;
       // atomClass
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });

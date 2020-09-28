@@ -11,11 +11,17 @@ module.exports = ctx => {
       this._flowHistory = null;
       this._flowVars = null;
       //
+      this._atom = null;
+      //
       this._utils = null;
     }
 
     get vars() {
       return this._flowVars;
+    }
+
+    get atom() {
+      return this._atom;
     }
 
     get utils() {

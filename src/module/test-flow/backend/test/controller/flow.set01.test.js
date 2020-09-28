@@ -1,7 +1,7 @@
 const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
 describe.only('flow.set01', () => {
-  it('startEventTimer', async () => {
+  it('startEventAtom', async () => {
     app.mockSession({});
 
     // atomClass info

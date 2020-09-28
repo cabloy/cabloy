@@ -23,11 +23,11 @@ module.exports = ctx => {
       return ctx.model.module(moduleInfo.relativeName).flowHistory;
     }
 
-    async start({ flowVars, flowUserId, startEventId }) {
+    async start({ flowAtomId, flowVars, flowUserId, startEventId }) {
       if (!flowVars) flowVars = {};
       if (flowUserId === undefined) flowUserId = 0;
       // create flow
-      const flowId = await this._createFlow({ flowVars, flowUserId });
+      const flowId = await this._createFlow({ flowAtomId, flowVars, flowUserId });
       // context init
       await this._contextInit({ flowId });
       // raise event: onFlowStart
@@ -71,6 +71,10 @@ module.exports = ctx => {
       // flowVars
       this.context._flowVars = new (VarsFn())();
       this.context._flowVars._vars = this.context._flow.flowVars ? JSON.parse(this.context._flow.flowVars) : {};
+      // atom
+      if (this.context._flow.flowAtomId) {
+        this.context._atom = await ctx.bean.atom.read({ key: { atomId: this.context._flow.flowAtomId } });
+      }
       // utils
       this.context._utils = new (UtilsFn({ ctx, flowInstance: this }))({
         context: this.context,
@@ -98,13 +102,14 @@ module.exports = ctx => {
       await this.modelFlowHistory.update(this.context._flowHistory);
     }
 
-    async _createFlow({ flowVars, flowUserId }) {
+    async _createFlow({ flowAtomId, flowVars, flowUserId }) {
       // flow
       const data = {
         flowDefId: this.context._flowDef.atomId,
         flowDefKey: this.context._flowDefKey,
         version: this.context._flowDef.version,
         flowStatus: 0,
+        flowAtomId,
         flowVars: JSON.stringify(flowVars),
         flowUserId,
       };
