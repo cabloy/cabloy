@@ -5,33 +5,45 @@ module.exports = ctx => {
       super(ctx, options);
     }
 
+    get modelCondition() {
+      return ctx.model.module(moduleInfo.relativeName).flowNodeStartEventAtomCondition;
+    }
+
     async deploy({ deploy, flowDefId, node }) {
       if (deploy) {
         await this._addCondition({ flowDefId, node });
       } else {
-        await this._deleteCondition({ flowDefId, node });
+        // donot delete condition
       }
     }
 
     async _addCondition({ flowDefId, node }) {
-      const repeat = node.options && node.options.repeat;
-      if (!repeat) return;
-      // push
-      const jobName = flowDefId;
-      ctx.app.meta.queue.push({
-        subdomain: ctx.subdomain,
-        module: moduleInfo.relativeName,
-        queueName: 'startEventTimer',
-        queueNameSub: flowDefId,
-        jobName,
-        jobOptions: {
-          repeat,
-        },
-        data: {
-          flowDefId,
-          node,
-        },
+      const atom = node.options && node.options.atom;
+      if (!atom) throw new Error(`atom not set for startEventAtom: ${flowDefId}.${node.id}`);
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.get({
+        module: atom.module,
+        atomClassName: atom.atomClassName,
+        atomClassIdParent: atom.atomClassIdParent || 0,
       });
+      const conditionExpression = node.options.conditionExpression;
+      // get condition
+      const startEventId = node.id;
+      const _condition = await this.modelCondition.get({
+        flowDefId, startEventId,
+      });
+      if (_condition) {
+        // update
+        _condition.atomClassId = atomClass.id;
+        _condition.conditionExpression = conditionExpression;
+        await this.modelCondition.update(_condition);
+      } else {
+        // insert
+        await this.modelCondition.insert({
+          flowDefId, startEventId,
+          atomClassId: atomClass.id, conditionExpression,
+        });
+      }
     }
 
     async _runSchedule(context) {

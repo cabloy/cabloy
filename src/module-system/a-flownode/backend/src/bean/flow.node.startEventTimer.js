@@ -17,7 +17,7 @@ module.exports = ctx => {
       const repeat = node.options && node.options.repeat;
       if (!repeat) return;
       // push
-      const jobName = flowDefId;
+      const jobName = `${flowDefId}.${node.id}`;
       ctx.app.meta.queue.push({
         subdomain: ctx.subdomain,
         module: moduleInfo.relativeName,
@@ -77,7 +77,7 @@ module.exports = ctx => {
       if (!nodeConfig) return false;
       // check if changed
       const jobKeyActive = getRepeatKey(job.data.jobName, job.data.jobOptions.repeat);
-      const jobKeyConfig = getRepeatKey(flowDefId, nodeConfig.options && nodeConfig.options.repeat);
+      const jobKeyConfig = getRepeatKey(`${flowDefId}.${nodeConfig.id}`, nodeConfig.options && nodeConfig.options.repeat);
       if (jobKeyActive !== jobKeyConfig) return false;
       // ok
       return true;

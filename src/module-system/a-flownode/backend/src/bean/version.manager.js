@@ -11,8 +11,9 @@ module.exports = app => {
             updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             deleted int(11) DEFAULT '0',
             iid int(11) DEFAULT '0',
-            atomClassModule varchar(255) DEFAULT NULL,
-            atomClassName varchar(255) DEFAULT NULL,
+            flowDefId int(11) DEFAULT '0',
+            startEventId varchar(255) DEFAULT NULL,
+            atomClassId int(11) DEFAULT '0',
             conditionExpression TEXT DEFAULT NULL,
             PRIMARY KEY (id)
           )
