@@ -1,6 +1,11 @@
 module.exports = {
   systemRoles: [ 'root', 'anonymous', 'authenticated', 'template', 'system', 'registered', 'activated', 'superuser', 'organization', 'internal', 'external' ],
   atom: {
+    stage: {
+      draft: 0,
+      archive: 1,
+      history: 2,
+    },
     action: {
       create: 1,
       read: 2,
