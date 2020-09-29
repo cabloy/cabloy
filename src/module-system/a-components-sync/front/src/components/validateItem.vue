@@ -122,41 +122,43 @@ export default {
       const property = properties[key];
       // ignore if not specified
       if (!property.ebType) return null;
+      // dataPath
+      const dataPath = pathParent + key;
       // panel
       if (property.ebType === 'panel') {
-        return this.renderPanel(c, data, pathParent, key, property);
+        return this.renderPanel(c, data, pathParent, key, property, dataPath);
       }
       // group
       else if (property.ebType === 'group') {
-        return this.renderGroup(c, data, pathParent, key, property);
+        return this.renderGroup(c, data, pathParent, key, property, dataPath);
       }
       // text
       else if (property.ebType === 'text') {
-        return this.renderText(c, data, pathParent, key, property);
+        return this.renderText(c, data, pathParent, key, property, dataPath);
       }
       // toggle
       else if (property.ebType === 'toggle') {
-        return this.renderToggle(c, data, pathParent, key, property);
+        return this.renderToggle(c, data, pathParent, key, property, dataPath);
       }
       // select
       else if (property.ebType === 'select') {
-        return this.renderSelect(c, data, pathParent, key, property);
+        return this.renderSelect(c, data, pathParent, key, property, dataPath);
       }
       // file
       else if (property.ebType === 'file') {
-        return this.renderFile(c, data, pathParent, key, property);
+        return this.renderFile(c, data, pathParent, key, property, dataPath);
       }
-      // file
+      // datepicker
       else if (property.ebType === 'datepicker') {
-        return this.renderDatepicker(c, data, pathParent, key, property);
+        return this.renderDatepicker(c, data, pathParent, key, property, dataPath);
       }
       // link
       else if (property.ebType === 'link') {
-        return this.renderLink(c, data, pathParent, key, property);
+        return this.renderLink(c, data, pathParent, key, property, dataPath);
       }
       // component
       else if (property.ebType === 'component') {
-        return this.renderComponent(c, data, pathParent, key, property);
+        return this.renderComponent(c, data, pathParent, key, property, dataPath);
       }
       // not support
       return c('div', {
@@ -179,8 +181,8 @@ export default {
       }
       return children;
     },
-    renderPanel(c, data, pathParent, key, property) {
-      const dataPath = pathParent + key + '/';
+    renderPanel(c, data, pathParent, key, property, dataPath) {
+      dataPath = dataPath + '/';
       return c('eb-list-item-panel', {
         key,
         attrs: {
@@ -218,9 +220,10 @@ export default {
         },
       });
     },
-    renderGroup(c, data, pathParent, key, property) {
+    renderGroup(c, data, pathParent, key, property, dataPath) {
+      dataPath = dataPath + '/';
       // children
-      const children = this.renderProperties(c, data[key], property.properties, `${pathParent}${key}/`);
+      const children = this.renderProperties(c, data[key], property.properties, dataPath);
       // group
       const group = c('f7-list-item', {
         key,
@@ -233,7 +236,7 @@ export default {
       children.unshift(group);
       return c('div', children);
     },
-    renderText(c, data, pathParent, key, property) {
+    renderText(c, data, pathParent, key, property, dataPath) {
       const title = this.getTitle(key, property);
       if ((this.validate.readOnly || property.ebReadOnly) && !property.ebTextarea) {
         return c('f7-list-item', {
@@ -271,7 +274,7 @@ export default {
           info,
           resizable: property.ebTextarea,
           clearButton: !this.validate.readOnly && !property.ebReadOnly,
-          dataPath: pathParent + key,
+          dataPath,
           value: this.getValue(data, key, property),
           disabled: this.validate.readOnly || property.ebReadOnly,
         },
@@ -288,7 +291,7 @@ export default {
         }),
       ]);
     },
-    renderDatepicker(c, data, pathParent, key, property) {
+    renderDatepicker(c, data, pathParent, key, property, dataPath) {
       const title = this.getTitle(key, property);
       // should format date
       // // the form is readOnly
@@ -321,7 +324,7 @@ export default {
           info,
           resizable: false,
           clearButton: !this.validate.readOnly && !property.ebDisabled,
-          dataPath: pathParent + key,
+          dataPath,
           value,
           readonly: true, // always
           disabled: this.validate.readOnly || property.ebDisabled,
@@ -347,7 +350,7 @@ export default {
         }),
       ]);
     },
-    renderFile(c, data, pathParent, key, property) {
+    renderFile(c, data, pathParent, key, property, dataPath) {
       const title = this.getTitle(key, property);
       if ((this.validate.readOnly || property.ebReadOnly) && !property.ebTextarea) {
         return c('f7-list-item', {
@@ -394,7 +397,7 @@ export default {
           info,
           resizable: property.ebTextarea,
           clearButton: !this.validate.readOnly && !property.ebReadOnly,
-          dataPath: pathParent + key,
+          dataPath,
           value: this.getValue(data, key, property),
           disabled: this.validate.readOnly || property.ebReadOnly,
         },
@@ -454,7 +457,7 @@ export default {
         }),
       ]);
     },
-    renderToggle(c, data, pathParent, key, property) {
+    renderToggle(c, data, pathParent, key, property, dataPath) {
       const title = this.getTitle(key, property);
       return c('f7-list-item', {
         key,
@@ -467,7 +470,7 @@ export default {
         c('eb-toggle', {
           slot: 'after',
           attrs: {
-            dataPath: pathParent + key,
+            dataPath,
             value: this.getValue(data, key, property),
             disabled: this.validate.readOnly || property.ebReadOnly,
           },
@@ -479,12 +482,12 @@ export default {
         }),
       ]);
     },
-    renderSelect(c, data, pathParent, key, property) {
+    renderSelect(c, data, pathParent, key, property, dataPath) {
       const title = this.getTitle(key, property);
       const valueCurrent = this.getValue(data, key, property);
       const attrs = {
         name: key,
-        dataPath: pathParent + key,
+        dataPath,
         value: valueCurrent,
         readOnly: this.validate.readOnly || property.ebReadOnly,
       };
@@ -533,7 +536,7 @@ export default {
         }),
       ]);
     },
-    renderLink(c, data, pathParent, key, property) {
+    renderLink(c, data, pathParent, key, property /* dataPath*/) {
       const title = this.getTitle(key, property, true);
       const href = this.$meta.util.combineApiPath(this.validate.renderModuleName, property.ebParams.href);
       return c('eb-list-item', {
@@ -544,12 +547,12 @@ export default {
         },
       });
     },
-    renderComponent(c, data, pathParent, key, property) {
+    renderComponent(c, data, pathParent, key, property, dataPath) {
       const renderProps = this.$meta.util.extend({ options: { props: {} } }, property.ebRender);
       renderProps.options.props.context = {
         validateItem: this,
         data,
-        dataPath: pathParent + key,
+        dataPath,
         pathParent,
         key,
         property,
