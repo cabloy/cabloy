@@ -1,6 +1,7 @@
 const config = require('./config/config.js');
 const locales = require('./config/locales.js');
 const errors = require('./config/errors.js');
+const constants = require('./config/constants.js');
 const FlowNodeBase = require('./common/flowNodeBase.js');
 const FlowEdgeBase = require('./common/flowEdgeBase.js');
 
@@ -35,6 +36,7 @@ module.exports = app => {
     config,
     locales,
     errors,
+    constants,
     meta,
   };
 

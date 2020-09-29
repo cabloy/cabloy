@@ -22,6 +22,9 @@ module.exports = ctx => {
     get modelFlowHistory() {
       return ctx.model.module(moduleInfo.relativeName).flowHistory;
     }
+    get constant() {
+      return ctx.constant.module(moduleInfo.relativeName);
+    }
 
     async start({ flowAtomId, flowVars, flowUserId, startEventId }) {
       if (!flowVars) flowVars = {};
@@ -48,7 +51,7 @@ module.exports = ctx => {
       const edgeInstances = await this._findEdgeInstancesNext({ nodeRefId: contextNode._nodeRef.id, contextNode });
       for (const edgeInstance of edgeInstances) {
         // check if end
-        if (this.context._flow.flowStatus !== 0) {
+        if (this.context._flow.flowStatus !== this.constant.flow.status.flowing) {
           break;
         }
         // enter
@@ -95,7 +98,7 @@ module.exports = ctx => {
       // raise event: onFlowEnd
       await this._flowListener.onFlowEnd();
       // flow
-      this.context._flow.flowStatus = 1;
+      this.context._flow.flowStatus = this.constant.flow.status.completed;
       await this.modelFlow.update(this.context._flow);
       // flow history
       this.context._flowHistory.flowStatus = this.context._flow.flowStatus;
@@ -108,7 +111,7 @@ module.exports = ctx => {
         flowDefId: this.context._flowDef.atomId,
         flowDefKey: this.context._flowDefKey,
         version: this.context._flowDef.version,
-        flowStatus: 0,
+        flowStatus: this.constant.flow.status.flowing,
         flowAtomId,
         flowVars: JSON.stringify(flowVars),
         flowUserId,
