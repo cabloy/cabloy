@@ -39,13 +39,17 @@ export default {
       }
       return parent;
     },
-    getMetaValue(key) {
+    getMetaValue(key, dataPath) {
       // 1. item
       const value = this.meta ? this.meta[key] : undefined;
       if (value !== undefined) return value;
       // 2. validate
       const validateMeta = this.validate.meta;
-      return validateMeta ? validateMeta[key] : undefined;
+      if (!validateMeta) return undefined;
+      // dataPath is empty
+      if (!dataPath) return validateMeta[key];
+      // dataPath is not empty
+      return (validateMeta[dataPath] && validateMeta[dataPath][key]) || validateMeta[key];
     },
     getValue(data, key, property) {
       const _value = data[key];
@@ -378,15 +382,15 @@ export default {
         type = 'text';
       }
       // mode
-      const mode = this.getMetaValue('mode') || property.ebParams.mode;
+      const mode = this.getMetaValue('mode', dataPath) || property.ebParams.mode;
       // atomId
-      const atomId = this.getMetaValue('atomId') || property.ebParams.atomId || 0;
+      const atomId = this.getMetaValue('atomId', dataPath) || property.ebParams.atomId || 0;
       // attachment
-      const attachment = this.getMetaValue('attachment') || property.ebParams.attachment;
+      const attachment = this.getMetaValue('attachment', dataPath) || property.ebParams.attachment;
       // flag
-      const flag = this.getMetaValue('flag') || property.ebParams.flag;
+      const flag = this.getMetaValue('flag', dataPath) || property.ebParams.flag;
       // accept
-      const accept = this.getMetaValue('accept') || property.ebParams.accept;
+      const accept = this.getMetaValue('accept', dataPath) || property.ebParams.accept;
       // render
       return c('eb-list-input', {
         key,
@@ -491,7 +495,7 @@ export default {
         value: valueCurrent,
         readOnly: this.validate.readOnly || property.ebReadOnly,
       };
-      const metaOptions = this.getMetaValue('options');
+      const metaOptions = this.getMetaValue('options', dataPath);
       if (metaOptions) attrs.options = metaOptions;
       if (!metaOptions && property.ebOptions) attrs.options = property.ebOptions;
       if (property.ebOptionsUrl) {
