@@ -51,10 +51,16 @@ module.exports = app => {
     }
 
     async write() {
+      // only allowed: draft(not closed)
+      const key = this.ctx.request.body.key;
+      const user = this.ctx.state.user.op;
+      const atom = await this.ctx.bean.atom._get({ atom: { id: key.atomId }, user });
+      if (atom.atomStage > 0 || atom.atomClosed || user.id !== atom.userIdUpdated) this.ctx.throw(403);
+      // write
       await this.ctx.service.atom.write({
-        key: this.ctx.request.body.key,
+        key,
         item: this.ctx.request.body.item,
-        user: this.ctx.state.user.op,
+        user,
       });
       this.ctx.success();
     }
@@ -83,15 +89,15 @@ module.exports = app => {
     }
 
     async enable() {
-      // only allowed: draft
+      // only allowed: draft(not closed)
       const key = this.ctx.request.body.key;
       const user = this.ctx.state.user.op;
       const atom = await this.ctx.bean.atom._get({ atom: { id: key.atomId }, user });
-      if (atom.atomEnabled || user.id !== atom.userIdCreated) this.ctx.throw(403);
+      if (atom.atomStage > 0 || atom.atomClosed || user.id !== atom.userIdUpdated) this.ctx.throw(403);
       // enable
       const res = await this.ctx.service.atom.enable({
         key,
-        atom: { atomEnabled: 1 },
+        options: this.ctx.request.body.options,
         user,
       });
       this.ctx.success(res);

@@ -188,10 +188,10 @@ module.exports = ctx => {
       // check atom flow
       if (atomEnabled) {
         const _nodeBaseBean = ctx.bean._newBean('a-flownode.flow.node.startEventAtom');
-        const res = await _nodeBaseBean._match({ atom: _atom, user });
-        if (res) {
+        const flowInstance = await _nodeBaseBean._match({ atom: _atom, user });
+        if (flowInstance) {
           // set atom flow
-          await this.flow({ key, atom: { atomFlow: 1 }, user });
+          await this.flow({ key, atom: { atomFlowId: flowInstance.context._flowId }, user });
           return;
         }
       }
@@ -441,6 +441,15 @@ module.exports = ctx => {
       atom: { id },
       user,
     }) {
+      // draft: only userIdUpdated
+      const _atom = await this.modelAtom.get({ id });
+      if (_atom.atomStage === 0) {
+        // 1. self
+        if (_atom.userIdUpdated === user.id) return _atom;
+        // 2. flow task
+        return null;
+      }
+      // archive/history
       const sql = this.sqlProcedure.checkRightRead({
         iid: ctx.instance.id,
         userIdWho: user.id,

@@ -349,6 +349,7 @@ module.exports = ctx => {
       return _sql;
     }
 
+    // check for archive/history
     checkRightRead({ iid, userIdWho, atomId }) {
       // for safe
       iid = parseInt(iid);
@@ -361,43 +362,13 @@ module.exports = ctx => {
              where
              (
                  a.deleted=0 and a.iid=${iid} and a.id=${atomId}
-                 and
-                 (
-                      (a.userIdCreated=${userIdWho})
-                      or
-                      (
-                          a.atomEnabled=1 and
-                          (
-                              (
-                                  a.atomFlow=1 and
-                                  (
-                                      (
-                                        exists(
-                                                select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action>2 and c.userIdWho=${userIdWho}
-                                              )
-                                      )
-                                      or
-                                      (
-                                        a.userIdCreated=${userIdWho} and
-                                        exists(
-                                                select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action>2 and c.scope=0 and c.userIdWho=${userIdWho}
-                                              )
-                                      )
-                                  )
-                              )
-                              or
-                              (
-                                  a.atomFlow=0 and
-                                  (
-                                      b.public=1 or
-                                      exists(
-                                              select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.userIdWho=${userIdWho}
-                                            )
-                                  )
-                              )
+                 and a.atomStage>0 and
+                  (
+                    b.public=1 or
+                    exists(
+                            select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.userIdWho=${userIdWho}
                           )
-                      )
-                 )
+                  )
              )
         `;
       return _sql;

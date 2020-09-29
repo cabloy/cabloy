@@ -55,10 +55,10 @@ module.exports = ctx => {
             order by b.dynamic desc, a.conditionExpression desc
         `, [ ctx.instance.id, atom.atomClassId ]);
       for (const _condition of list) {
-        const res = await this._matchCondition({ _condition, atom, user });
-        if (res) return true;
+        const flowInstance = await this._matchCondition({ _condition, atom, user });
+        if (flowInstance) return flowInstance;
       }
-      return false;
+      return null;
     }
 
     async _matchCondition(context) {
@@ -66,7 +66,7 @@ module.exports = ctx => {
       // check if valid
       if (!(await this._checkConditionValid(context))) {
         await this._deleteCondition(context);
-        return false;
+        return null;
       }
       // match conditionExpression
       const conditionActive = _condition.conditionExpression;
@@ -75,17 +75,17 @@ module.exports = ctx => {
           expression: conditionActive,
           globals: { atom },
         });
-        if (!res) return false;
+        if (!res) return null;
       }
       // start
-      await ctx.bean.flow.startById({
+      const flowInstance = await ctx.bean.flow.startById({
         flowDefId: _condition.flowDefId,
         startEventId: _condition.startEventId,
         flowUserId: user.id,
         flowAtomId: atom.id,
       });
       // ok
-      return true;
+      return flowInstance;
     }
 
     async _checkConditionValid(context) {
