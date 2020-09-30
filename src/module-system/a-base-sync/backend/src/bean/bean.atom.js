@@ -466,7 +466,7 @@ module.exports = ctx => {
       user,
     }) {
       const _atom = await this.modelAtom.get({ id });
-      if (_atom.atomStage > 0 || _atom.atomClosed || user.id !== _atom.userIdUpdated) return null;
+      if (_atom.atomStage > 0 || _atom.atomClosed || _atom.atomFlowId > 0 || user.id !== _atom.userIdUpdated) return null;
       return _atom;
     }
 
