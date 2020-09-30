@@ -448,7 +448,7 @@ module.exports = ctx => {
         if (_atom.atomClosed) return null;
         // 2. self
         if (_atom.userIdUpdated === user.id) return _atom;
-        // 3. flow task
+        // 3. todo: flow task
         // others
         return null;
       }
@@ -459,6 +459,15 @@ module.exports = ctx => {
         atomId: id,
       });
       return await ctx.model.queryOne(sql);
+    }
+
+    async checkRightWriteDraft({
+      atom: { id },
+      user,
+    }) {
+      const _atom = await this.modelAtom.get({ id });
+      if (_atom.atomStage > 0 || _atom.atomClosed || user.id !== _atom.userIdUpdated) return null;
+      return _atom;
     }
 
     async checkRightUpdate({
