@@ -474,6 +474,17 @@ module.exports = ctx => {
       atom: { id, action },
       user,
     }) {
+      const _atom = await this.modelAtom.get({ id });
+      if (_atom.atomStage === 0) {
+        // 1. closed
+        if (_atom.atomClosed) return null;
+        // 2. flow
+        if (_atom.atomFlowId > 0) return null;
+        // 3. self
+        if (_atom.userIdUpdated === user.id) return _atom;
+        // others
+        return null;
+      }
       const actionFlag = await ctx.bean.atomAction.getFlagByAtomId({ atomId: id, code: action });
       const sql = this.sqlProcedure.checkRightUpdate({
         iid: ctx.instance.id,
@@ -488,6 +499,15 @@ module.exports = ctx => {
       atom: { id, action },
       user,
     }) {
+      const _atom = await this.modelAtom.get({ id });
+      if (_atom.atomStage === 0) {
+        // 1. closed
+        if (_atom.atomClosed) return null;
+        // 2. self
+        if (_atom.userIdUpdated === user.id) return _atom;
+        // others
+        return null;
+      }
       const actionFlag = await ctx.bean.atomAction.getFlagByAtomId({ atomId: id, code: action });
       const sql = this.sqlProcedure.checkRightAction({
         iid: ctx.instance.id,

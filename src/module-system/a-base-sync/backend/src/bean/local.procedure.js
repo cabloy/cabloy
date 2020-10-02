@@ -389,13 +389,11 @@ module.exports = ctx => {
            where
            (
              a.deleted=0 and a.iid=${iid} and a.id=${atomId}
-             and (
-                  (a.atomEnabled=0 and a.userIdCreated=${userIdWho}) or
-                  (a.atomEnabled=1 and (
-                    (exists(select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.userIdWho=${userIdWho})) or
-                    (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.scope=0 and c.userIdWho=${userIdWho}))
-                  ))
-                )
+             and a.atomStage>0 and
+              (
+                (exists(select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.userIdWho=${userIdWho})) or
+                (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.scope=0 and c.userIdWho=${userIdWho}))
+              )
            )
         `;
       return _sql;
@@ -415,11 +413,12 @@ module.exports = ctx => {
         `select a.* from aAtom a
             where
             (
-               a.deleted=0 and a.iid=${iid} and a.id=${atomId} and a.atomEnabled=1
-               and (
-                      (exists(select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.userIdWho=${userIdWho})) or
-                      (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.scope=0 and c.userIdWho=${userIdWho}))
-                   )
+               a.deleted=0 and a.iid=${iid} and a.id=${atomId}
+               and a.atomStage>0 and
+                (
+                    (exists(select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.userIdWho=${userIdWho})) or
+                    (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.scope=0 and c.userIdWho=${userIdWho}))
+                )
             )
         `;
       return _sql;
