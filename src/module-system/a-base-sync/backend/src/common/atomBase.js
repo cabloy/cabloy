@@ -68,7 +68,7 @@ module.exports = app => {
 
     async submit({ /* atomClass,*/ key, options, user }) {
       const ignoreFlow = options && options.ignoreFlow;
-      const _atom = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
+      const _atom = await this.ctx.bean.atom.read({ key, user });
       if (_atom.atomStage > 0) this.ctx.throw(403);
       // check atom flow
       if (!ignoreFlow) {
@@ -80,7 +80,11 @@ module.exports = app => {
           return;
         }
       }
-      return await this.ctx.bean.atom._submitDirect({ key, atom: _atom, user });
+      return await this.ctx.bean.atom._submitDirect({ key, item: _atom, user });
+    }
+
+    async history({ /* atomClass,*/ key, item, user }) {
+      await this.ctx.bean.atom.write({ key, item, user });
     }
 
     async action(/* { action, atomClass, key, user }*/) {

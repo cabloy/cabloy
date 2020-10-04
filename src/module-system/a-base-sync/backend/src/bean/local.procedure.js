@@ -121,7 +121,7 @@ module.exports = ctx => {
         _selectFields = 'count(*) as _count';
       } else {
         _selectFields = `${_itemField}
-                a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomFlowId,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
+                a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdArchive,a.roleIdOwner,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
                 g.userName,g.avatar,
                 j.flowId,j.flowStatus,j.flowNodeIdCurrent,j.flowNodeNameCurrent
@@ -229,7 +229,7 @@ module.exports = ctx => {
         _selectFields = 'count(*) as _count';
       } else {
         _selectFields = `${_itemField}
-                a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomFlowId,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
+                a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdArchive,a.roleIdOwner,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
                 g.userName,g.avatar,
                 j.flowId,j.flowStatus,j.flowNodeIdCurrent,j.flowNodeNameCurrent
@@ -362,7 +362,7 @@ module.exports = ctx => {
         _selectFields = 'count(*) as _count';
       } else {
         _selectFields = `${_itemField}
-                a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomFlowId,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
+                a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdArchive,a.roleIdOwner,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
                 g.userName,g.avatar,
                 j.flowId,j.flowStatus,j.flowNodeIdCurrent,j.flowNodeNameCurrent
@@ -455,7 +455,7 @@ module.exports = ctx => {
       // sql
       const _sql =
         `select ${_itemField}
-                a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomFlowId,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
+                a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdArchive,a.roleIdOwner,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
                 g.userName,g.avatar,
                 j.flowId,j.flowStatus,j.flowNodeIdCurrent,j.flowNodeNameCurrent

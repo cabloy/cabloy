@@ -196,20 +196,44 @@ module.exports = ctx => {
       });
     }
 
-    async _submitDirect({ key, atom, user }) {
-      // todo:
+    async _submitDirect({ key, item, user }) {
       // atomClass
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      await ctx.executeBean({
-        beanModule: _moduleInfo.relativeName,
-        beanFullName,
-        context: { atomClass, key, atom, user },
-        fn: 'submit',
-      });
+      // archive -> history
+      if (item.atomIdArchive) {
+        // item
+        const itemArchive = await ctx.bean.atom.read({ key: { atomId: item.atomIdArchive }, user });
+        // create history
+        const keyHistory = await this.create({ atomClass, roleIdOwner: itemArchive.roleIdOwner, item: itemArchive, user });
+        // update fields
+        await this.modelAtom.update({
+          id: keyHistory.atomId,
+          atomStage: ctx.constant.module(moduleInfo.relativeName).atom.stage.history,
+          atomFlowId: itemArchive.atomFlowId,
+          allowComment: itemArchive.allowComment,
+          attachmentCount: itemArchive.attachmentCount,
+          atomClosed: 0,
+          atomIdDraft: item.atomId,
+          atomIdArchive: item.atomIdArchive,
+        });
+        // history
+        await ctx.executeBean({
+          beanModule: _moduleInfo.relativeName,
+          beanFullName,
+          context: { atomClass, key: keyHistory, item: itemArchive, user },
+          fn: 'history',
+        });
+      }
+      // draft -> archive
+      if (!item.atomIdArchive) {
+        // create
+      }
+      // update fields
+      // archive
     }
 
     async openDraft({}) {
@@ -368,7 +392,7 @@ module.exports = ctx => {
       let atomClassId = id;
       if (!atomClassId) atomClassId = await this.getAtomClassId({ atomClassName, atomClassIdParent });
       const res = await this.modelAtom.insert({
-        atomEnabled: 0, // must be enabled by enable
+        atomStage: 0,
         atomFlag,
         itemId,
         atomClassId,
