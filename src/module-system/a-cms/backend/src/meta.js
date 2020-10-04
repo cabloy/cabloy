@@ -13,7 +13,6 @@ module.exports = app => {
             tableNameFull: 'aCmsArticleViewFull',
             tableNameSearch: 'aCmsArticleViewSearch',
             tableNameTag: 'aCmsArticleViewTag',
-            flow: 1,
             cms: true,
           },
           actions: {

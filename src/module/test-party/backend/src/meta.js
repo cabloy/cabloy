@@ -20,7 +20,6 @@ module.exports = app => {
               bean: 'party',
               title: 'Party',
               tableName: 'testPartyView',
-              flow: 0,
             },
             actions: {
               review: {
@@ -169,7 +168,6 @@ module.exports = app => {
               bean: 'partyPublic',
               tableName: 'testPartyPublic',
               public: 1,
-              flow: 1,
             },
           },
         },
