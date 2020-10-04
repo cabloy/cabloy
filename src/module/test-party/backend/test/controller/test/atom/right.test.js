@@ -95,14 +95,14 @@ describe('test/controller/test/atom/right.test.js', () => {
       }
     }
 
-    // enable
+    // submit
     await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
       data: {
         auth: 'Tom',
         password: '123456',
       },
     });
-    res = await app.httpRequest().post(mockUrl('/a/base/atom/enable')).send({
+    res = await app.httpRequest().post(mockUrl('/a/base/atom/writeSubmit')).send({
       key: partyKey,
     });
     assert.equal(res.body.code, 0);

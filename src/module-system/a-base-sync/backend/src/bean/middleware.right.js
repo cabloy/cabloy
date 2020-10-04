@@ -82,21 +82,10 @@ async function checkAtom(moduleInfo, options, ctx) {
     ctx.meta._atom = res;
   }
 
-  // write: only for Draft
-  if (options.action === constant.atom.action.write) {
-    const res = await ctx.bean.atom.checkRightWriteDraft({
-      atom: { id: ctx.request.body.key.atomId },
-      user: ctx.state.user.op,
-    });
-    if (!res) ctx.throw(403);
-    ctx.request.body.key.itemId = res.itemId;
-    ctx.meta._atom = res;
-  }
-
-  // delete
-  if (options.action === constant.atom.action.delete) {
+  // write/delete
+  if (options.action === constant.atom.action.write || options.action === constant.atom.action.delete) {
     const res = await ctx.bean.atom.checkRightUpdate({
-      atom: { id: ctx.request.body.key.atomId, action: options.action },
+      atom: { id: ctx.request.body.key.atomId, action: options.action, stage: options.stage },
       user: ctx.state.user.op,
     });
     if (!res) ctx.throw(403);

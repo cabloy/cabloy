@@ -24,7 +24,7 @@ describe('[your tests start from here]', () => {
     const atomKey = result.body.data;
 
     // submit
-    result = await app.httpRequest().post(mockUrl('/a/base/atom/submit')).send({
+    result = await app.httpRequest().post(mockUrl('/a/base/atom/writeSubmit')).send({
       key: atomKey,
       item: {
         atomName: 'test',

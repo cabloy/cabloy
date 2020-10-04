@@ -374,14 +374,12 @@ module.exports = ctx => {
       return _sql;
     }
 
-    checkRightUpdate({ iid, userIdWho, atomId, action, actionFlag }) {
+    checkRightUpdate({ iid, userIdWho, atomId, action }) {
       // for safe
       iid = parseInt(iid);
       userIdWho = parseInt(userIdWho);
       atomId = parseInt(atomId);
       action = parseInt(action);
-
-      actionFlag = ctx.model.format('?', actionFlag);
 
       // sql
       const _sql =
@@ -391,8 +389,8 @@ module.exports = ctx => {
              a.deleted=0 and a.iid=${iid} and a.id=${atomId}
              and a.atomStage>0 and
               (
-                (exists(select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.userIdWho=${userIdWho})) or
-                (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=${action} and (${actionFlag}='' or find_in_set(a.atomFlag,${actionFlag})>0 ) and c.scope=0 and c.userIdWho=${userIdWho}))
+                (exists(select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=${action} and c.userIdWho=${userIdWho})) or
+                (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=${action} and c.scope=0 and c.userIdWho=${userIdWho}))
               )
            )
         `;

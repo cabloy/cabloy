@@ -61,8 +61,20 @@ module.exports = app => {
     }
 
     async submit() {
+      const options = this.ctx.request.body.options || {};
+      options.ignoreFlow = false;
+      // submit
+      const res = await this.ctx.service.atom.submit({
+        key: this.ctx.request.body.key,
+        options,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async writeSubmit() {
       await this.write();
-      await this.enable();
+      await this.submit();
       this.ctx.success();
     }
 
@@ -78,16 +90,6 @@ module.exports = app => {
       const res = await this.ctx.service.atom.action({
         action: this.ctx.request.body.action,
         key: this.ctx.request.body.key,
-        user: this.ctx.state.user.op,
-      });
-      this.ctx.success(res);
-    }
-
-    async enable() {
-      // enable
-      const res = await this.ctx.service.atom.enable({
-        key: this.ctx.request.body.key,
-        options: this.ctx.request.body.options,
         user: this.ctx.state.user.op,
       });
       this.ctx.success(res);

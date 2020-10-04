@@ -30,7 +30,7 @@ export default {
         // submit
         const key = { atomId: item.atomId, itemId: item.itemId };
         return ctx.$view.dialog.confirm().then(() => {
-          return ctx.$api.post('/a/base/atom/submit', {
+          return ctx.$api.post('/a/base/atom/writeSubmit', {
             key,
             item,
           }).then(() => {

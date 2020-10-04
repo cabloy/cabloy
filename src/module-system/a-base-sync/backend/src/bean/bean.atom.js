@@ -182,11 +182,12 @@ module.exports = ctx => {
       });
     }
 
-    async enable({ key, atom: { atomEnabled = 1 }, user }) {
+    async submit({ key, options, user }) {
+      const ignoreFlow = options && options.ignoreFlow;
       const _atom = await this.modelAtom.get({ id: key.atomId });
-      if (_atom.atomEnabled === atomEnabled) return;
+      if (_atom.atomStage > 0) ctx.throw(403);
       // check atom flow
-      if (atomEnabled) {
+      if (!ignoreFlow) {
         const _nodeBaseBean = ctx.bean._newBean('a-flownode.flow.node.startEventAtom');
         const flowInstance = await _nodeBaseBean._match({ atom: _atom, user });
         if (flowInstance) {
@@ -195,8 +196,11 @@ module.exports = ctx => {
           return;
         }
       }
-      // update
-      _atom.atomEnabled = atomEnabled;
+      return await this.submitDirect({ key, atom: _atom, user });
+    }
+
+    async submitDirect({ key, atom, user }) {
+      // todo:
       // atomClass
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
       // atom bean
@@ -206,9 +210,13 @@ module.exports = ctx => {
       await ctx.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
-        context: { atomClass, key, atom: _atom, user },
-        fn: 'enable',
+        context: { atomClass, key, atom, user },
+        fn: 'submit',
       });
+    }
+
+    async toDraft({}) {
+      // todo:
     }
 
     // atom other functions
@@ -400,10 +408,7 @@ module.exports = ctx => {
       await this.modelAtom.delete(atom);
     }
 
-    async _get({
-      atom: { id, tableName },
-      user,
-    }) {
+    async _get({ atom: { id, tableName }, user }) {
       const sql = this.sqlProcedure.getAtom({
         iid: ctx.instance.id,
         userIdWho: user ? user.id : 0,
@@ -427,20 +432,14 @@ module.exports = ctx => {
 
     // right
 
-    async checkRoleRightRead({
-      atom: { id },
-      roleId,
-    }) {
+    async checkRoleRightRead({ atom: { id }, roleId }) {
       const res = await ctx.model.query('call aCheckRoleRightRead(?,?,?)',
         [ ctx.instance.id, roleId, id ]
       );
       return res[0][0];
     }
 
-    async checkRightRead({
-      atom: { id },
-      user,
-    }) {
+    async checkRightRead({ atom: { id }, user }) {
       // draft: only userIdUpdated
       const _atom = await this.modelAtom.get({ id });
       if (_atom.atomStage === 0) {
@@ -461,20 +460,9 @@ module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    async checkRightWriteDraft({
-      atom: { id },
-      user,
-    }) {
+    async checkRightUpdate({ atom: { id, action, stage }, user }) {
       const _atom = await this.modelAtom.get({ id });
-      if (_atom.atomStage > 0 || _atom.atomClosed || _atom.atomFlowId > 0 || user.id !== _atom.userIdUpdated) return null;
-      return _atom;
-    }
-
-    async checkRightUpdate({
-      atom: { id, action },
-      user,
-    }) {
-      const _atom = await this.modelAtom.get({ id });
+      if ((stage === 'draft' && _atom.atomStage > 0) || (stage === 'archive' && _atom.atomStage === 0)) return null;
       if (_atom.atomStage === 0) {
         // 1. closed
         if (_atom.atomClosed) return null;
@@ -485,20 +473,17 @@ module.exports = ctx => {
         // others
         return null;
       }
-      const actionFlag = await ctx.bean.atomAction.getFlagByAtomId({ atomId: id, code: action });
+      // check archive
       const sql = this.sqlProcedure.checkRightUpdate({
         iid: ctx.instance.id,
         userIdWho: user.id,
         atomId: id,
-        action, actionFlag,
+        action,
       });
       return await ctx.model.queryOne(sql);
     }
 
-    async checkRightAction({
-      atom: { id, action },
-      user,
-    }) {
+    async checkRightAction({ atom: { id, action }, user }) {
       const _atom = await this.modelAtom.get({ id });
       if (_atom.atomStage === 0) {
         // 1. closed

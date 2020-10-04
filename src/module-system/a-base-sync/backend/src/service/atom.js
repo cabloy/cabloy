@@ -26,16 +26,16 @@ module.exports = app => {
       return await this.ctx.bean.atom.write({ key, item, user });
     }
 
+    async submit({ key, options, user }) {
+      return await this.ctx.bean.atom.submit({ key, options, user });
+    }
+
     async delete({ key, user }) {
       return await this.ctx.bean.atom.delete({ key, user });
     }
 
     async action({ action, key, user }) {
       return await this.ctx.bean.atom.action({ action, key, user });
-    }
-
-    async enable({ key, atom, user }) {
-      return await this.ctx.bean.atom.enable({ key, atom, user });
     }
 
     async star({ key, atom, user }) {
