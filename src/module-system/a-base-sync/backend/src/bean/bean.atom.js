@@ -183,20 +183,17 @@ module.exports = ctx => {
     }
 
     async submit({ key, options, user }) {
-      const ignoreFlow = options && options.ignoreFlow;
-      const _atom = await this.modelAtom.get({ id: key.atomId });
-      if (_atom.atomStage > 0) ctx.throw(403);
-      // check atom flow
-      if (!ignoreFlow) {
-        const _nodeBaseBean = ctx.bean._newBean('a-flownode.flow.node.startEventAtom');
-        const flowInstance = await _nodeBaseBean._match({ atom: _atom, userId: _atom.userIdUpdated });
-        if (flowInstance) {
-          // set atom flow
-          await this.flow({ key, atom: { atomFlowId: flowInstance.context._flowId } });
-          return;
-        }
-      }
-      return await this._submitDirect({ key, atom: _atom, user });
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      // atom bean
+      const _moduleInfo = mparse.parseInfo(atomClass.module);
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      return await ctx.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        context: { atomClass, key, options, user },
+        fn: 'submit',
+      });
     }
 
     async _submitDirect({ key, atom, user }) {
@@ -396,9 +393,8 @@ module.exports = ctx => {
 
     async _delete({
       atom,
-      user,
+      /* user,*/
     }) {
-      await this._update({ atom, user });
       await this.modelAtom.delete(atom);
     }
 

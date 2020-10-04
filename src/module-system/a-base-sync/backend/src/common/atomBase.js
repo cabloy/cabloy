@@ -66,13 +66,21 @@ module.exports = app => {
       }
     }
 
-    async enable({ /* atomClass,*/ key, atom, user }) {
-      // update
-      await this.ctx.bean.atom.modelAtom.update({
-        id: key.atomId,
-        atomEnabled: atom.atomEnabled,
-        // userIdUpdated: user.id,
-      });
+    async submit({ /* atomClass,*/ key, options, user }) {
+      const ignoreFlow = options && options.ignoreFlow;
+      const _atom = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
+      if (_atom.atomStage > 0) this.ctx.throw(403);
+      // check atom flow
+      if (!ignoreFlow) {
+        const _nodeBaseBean = this.ctx.bean._newBean('a-flownode.flow.node.startEventAtom');
+        const flowInstance = await _nodeBaseBean._match({ atom: _atom, userId: _atom.userIdUpdated });
+        if (flowInstance) {
+          // set atom flow
+          await this.ctx.bean.atom.flow({ key, atom: { atomFlowId: flowInstance.context._flowId } });
+          return;
+        }
+      }
+      return await this.ctx.bean.atom._submitDirect({ key, atom: _atom, user });
     }
 
     async action(/* { action, atomClass, key, user }*/) {
