@@ -21,35 +21,6 @@ module.exports = function(ctx) {
               and a.userIdCreated=b.userIdWhom
           `;
       await ctx.model.query(sql);
-
-      // aCheckRoleRightRead
-      sql = `
-        create procedure aCheckRoleRightRead (in _iid int,in _roleIdWho int,in _atomId int)
-        begin
-
-          select a.* from aAtom a
-           left join aAtomClass b on a.atomClassId=b.id
-            where (
-             a.deleted=0 and a.iid=_iid and a.id=_atomId
-             and (
-                    (a.atomEnabled=1 and (
-                      (
-                        a.atomFlow=1 and (
-                          (exists(select c.atomId from aViewRoleRightAtom c where c.iid=_iid and a.id=c.atomId and c.action>2 and c.roleIdWho=_roleIdWho))
-                        )
-                      ) or (
-                        a.atomFlow=0 and (
-                          b.public=1 or exists(select c.atomId from aViewRoleRightAtom c where c.iid=_iid and a.id=c.atomId and c.action=2 and c.roleIdWho=_roleIdWho)
-                        )
-                      )
-                    ))
-                  )
-            );
-
-        end
-        `;
-      await ctx.model.query(sql);
-
     }
 
   }

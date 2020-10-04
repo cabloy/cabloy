@@ -46,7 +46,7 @@ module.exports = ctx => {
       }
     }
 
-    async _match({ atom, user }) {
+    async _match({ atom, userId }) {
       // order by dynamic/conditionExpression
       const list = await ctx.model.query(`
           select a.* from aFlowNodeStartEventAtomCondition a
@@ -55,14 +55,14 @@ module.exports = ctx => {
             order by b.dynamic desc, a.conditionExpression desc
         `, [ ctx.instance.id, atom.atomClassId ]);
       for (const _condition of list) {
-        const flowInstance = await this._matchCondition({ _condition, atom, user });
+        const flowInstance = await this._matchCondition({ _condition, atom, userId });
         if (flowInstance) return flowInstance;
       }
       return null;
     }
 
     async _matchCondition(context) {
-      const { _condition, atom, user } = context;
+      const { _condition, atom, userId } = context;
       // check if valid
       if (!(await this._checkConditionValid(context))) {
         await this._deleteCondition(context);
@@ -81,7 +81,7 @@ module.exports = ctx => {
       const flowInstance = await ctx.bean.flow.startById({
         flowDefId: _condition.flowDefId,
         startEventId: _condition.startEventId,
-        flowUserId: user.id,
+        flowUserId: userId,
         flowAtomId: atom.id,
       });
       // ok

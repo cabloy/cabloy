@@ -189,17 +189,17 @@ module.exports = ctx => {
       // check atom flow
       if (!ignoreFlow) {
         const _nodeBaseBean = ctx.bean._newBean('a-flownode.flow.node.startEventAtom');
-        const flowInstance = await _nodeBaseBean._match({ atom: _atom, user });
+        const flowInstance = await _nodeBaseBean._match({ atom: _atom, userId: _atom.userIdUpdated });
         if (flowInstance) {
           // set atom flow
-          await this.flow({ key, atom: { atomFlowId: flowInstance.context._flowId }, user });
+          await this.flow({ key, atom: { atomFlowId: flowInstance.context._flowId } });
           return;
         }
       }
-      return await this.submitDirect({ key, atom: _atom, user });
+      return await this._submitDirect({ key, atom: _atom, user });
     }
 
-    async submitDirect({ key, atom, user }) {
+    async _submitDirect({ key, atom, user }) {
       // todo:
       // atomClass
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
@@ -215,7 +215,7 @@ module.exports = ctx => {
       });
     }
 
-    async toDraft({}) {
+    async openDraft({}) {
       // todo:
     }
 
@@ -225,19 +225,17 @@ module.exports = ctx => {
       return await this.modelAtom.get({ id: atomId });
     }
 
-    async flag({ key, atom: { atomFlag }, user }) {
+    async flag({ key, atom: { atomFlag } /* user*/ }) {
       await this.modelAtom.update({
         id: key.atomId,
         atomFlag,
-        userIdUpdated: user.id,
       });
     }
 
-    async flow({ key, atom: { atomFlow }, user }) {
+    async flow({ key, atom: { atomFlowId } }) {
       await this.modelAtom.update({
         id: key.atomId,
-        atomFlow,
-        userIdUpdated: user.id,
+        atomFlowId,
       });
     }
 
@@ -271,7 +269,6 @@ module.exports = ctx => {
         await this.modelAtom.update({
           id: key.atomId,
           starCount,
-          // userIdUpdated: user.id,
         });
       }
       // ok
@@ -368,7 +365,7 @@ module.exports = ctx => {
 
     async _add({
       atomClass: { id, atomClassName, atomClassIdParent = 0 },
-      atom: { itemId, atomName, atomFlag = 0, atomFlow = 0, roleIdOwner = 0 },
+      atom: { itemId, atomName, atomFlag = 0, roleIdOwner = 0 },
       user,
     }) {
       let atomClassId = id;
@@ -376,7 +373,6 @@ module.exports = ctx => {
       const res = await this.modelAtom.insert({
         atomEnabled: 0, // must be enabled by enable
         atomFlag,
-        atomFlow,
         itemId,
         atomClassId,
         atomName,
@@ -388,15 +384,13 @@ module.exports = ctx => {
     }
 
     async _update({
-      atom: { id, atomName, allowComment, atomFlow, itemId },
-      user,
+      atom: { id, atomName, allowComment, itemId },
+      /* user,*/
     }) {
-      const params = { id, userIdUpdated: user.id };
+      const params = { id };
       if (atomName !== undefined) params.atomName = atomName;
       if (allowComment !== undefined) params.allowComment = allowComment;
-      if (atomFlow !== undefined) params.atomFlow = atomFlow;
       if (itemId !== undefined) params.itemId = itemId;
-      params.updatedAt = new Date();
       await this.modelAtom.update(params);
     }
 
@@ -433,10 +427,14 @@ module.exports = ctx => {
     // right
 
     async checkRoleRightRead({ atom: { id }, roleId }) {
-      const res = await ctx.model.query('call aCheckRoleRightRead(?,?,?)',
-        [ ctx.instance.id, roleId, id ]
-      );
-      return res[0][0];
+      // not check draft
+      // archive/history
+      const sql = this.sqlProcedure.checkRoleRightRead({
+        iid: ctx.instance.id,
+        roleIdWho: roleId,
+        atomId: id,
+      });
+      return await ctx.model.queryOne(sql);
     }
 
     async checkRightRead({ atom: { id }, user }) {
@@ -493,12 +491,12 @@ module.exports = ctx => {
         // others
         return null;
       }
-      const actionFlag = await ctx.bean.atomAction.getFlagByAtomId({ atomId: id, code: action });
+      // check archive
       const sql = this.sqlProcedure.checkRightAction({
         iid: ctx.instance.id,
         userIdWho: user.id,
         atomId: id,
-        action, actionFlag,
+        action,
       });
       return await ctx.model.queryOne(sql);
     }

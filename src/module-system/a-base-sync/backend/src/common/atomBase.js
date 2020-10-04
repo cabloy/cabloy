@@ -10,10 +10,6 @@ module.exports = app => {
         const draftId = await sequence.next('draft');
         item.atomName = `${this.ctx.text('Draft')}-${draftId}`;
       }
-      // atomFlow
-      if (item.atomFlow === undefined) {
-        item.atomFlow = atomClass.flow;
-      }
       // add
       const atomId = await this.ctx.bean.atom._add({ atomClass, atom: item, user });
       return { atomId };
@@ -75,7 +71,7 @@ module.exports = app => {
       await this.ctx.bean.atom.modelAtom.update({
         id: key.atomId,
         atomEnabled: atom.atomEnabled,
-        userIdUpdated: user.id,
+        // userIdUpdated: user.id,
       });
     }
 
