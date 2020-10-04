@@ -8,6 +8,7 @@ module.exports = ctx => {
       label = parseInt(label);
       comment = parseInt(comment);
       file = parseInt(file);
+      stage = parseInt(stage);
 
       // draft
       if (stage === 0) {
@@ -132,7 +133,7 @@ module.exports = ctx => {
         `select ${_selectFields} from aAtom a
             inner join aAtomClass b on a.atomClassId=b.id
             inner join aUser g on a.userIdCreated=g.id
-            inner join aFlowHistory j on a.id=j.flowAtomId
+            left join aFlowHistory j on a.atomFlowId=j.id
             ${_itemJoin}
             ${_starJoin}
             ${_labelJoin}
@@ -156,7 +157,7 @@ module.exports = ctx => {
       return _sql;
     }
 
-    _selectAtoms_0({ iid, tableName, where, orders, page, comment, file, count }) {
+    _selectAtoms_0({ iid, tableName, where, orders, page, comment, file, count, stage }) {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass
@@ -230,7 +231,8 @@ module.exports = ctx => {
         _selectFields = `${_itemField}
                 a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomFlow,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
-                g.userName,g.avatar
+                g.userName,g.avatar,
+                j.flowId,j.flowStatus,j.flowNodeIdCurrent,j.flowNodeNameCurrent
                 ${_commentField} ${_fileField}`;
       }
 
@@ -239,13 +241,14 @@ module.exports = ctx => {
         `select ${_selectFields} from aAtom a
             inner join aAtomClass b on a.atomClassId=b.id
             inner join aUser g on a.userIdCreated=g.id
+            left join aFlowHistory j on a.atomFlowId=j.id
             ${_itemJoin}
             ${_commentJoin}
             ${_fileJoin}
 
           ${_where}
            (
-             a.deleted=0 and a.iid=${iid}
+             a.deleted=0 and a.iid=${iid} and a.atomStage=${stage}
              ${_commentWhere}
              ${_fileWhere}
            )
@@ -258,7 +261,7 @@ module.exports = ctx => {
       return _sql;
     }
 
-    _selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count }) {
+    _selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage }) {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass
@@ -269,6 +272,7 @@ module.exports = ctx => {
       // -- g: aUser
       // -- h: aComment
       // -- i: aFile
+      // -- j: aFlowHistory
 
       // for safe
       tableName = tableName ? ctx.model.format('??', tableName) : null;
@@ -360,7 +364,8 @@ module.exports = ctx => {
         _selectFields = `${_itemField}
                 a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomFlow,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
-                g.userName,g.avatar
+                g.userName,g.avatar,
+                j.flowId,j.flowStatus,j.flowNodeIdCurrent,j.flowNodeNameCurrent
                 ${_starField} ${_labelField} ${_commentField} ${_fileField}`;
       }
 
@@ -369,6 +374,7 @@ module.exports = ctx => {
         `select ${_selectFields} from aAtom a
             inner join aAtomClass b on a.atomClassId=b.id
             inner join aUser g on a.userIdCreated=g.id
+            left join aFlowHistory j on a.atomFlowId=j.id
             ${_itemJoin}
             ${_starJoin}
             ${_labelJoin}
@@ -377,42 +383,16 @@ module.exports = ctx => {
 
           ${_where}
            (
-             a.deleted=0 and a.iid=${iid}
+             a.deleted=0 and a.iid=${iid} and a.atomStage=${stage}
              ${_starWhere}
              ${_labelWhere}
              ${_commentWhere}
              ${_fileWhere}
              and (
-                     (a.userIdCreated=${userIdWho}) or
-                     (
-                           a.atomEnabled=1 and
-                           (
-                               (
-                                 a.atomFlow=1 and
-                                   (
-                                     (
-                                       exists(
-                                               select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action>2 and c.userIdWho=${userIdWho}
-                                             )
-                                     ) or
-                                     (
-                                       a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action>2 and c.scope=0 and c.userIdWho=${userIdWho}
-                                     )
-                                   )
-                                 )
-                               )
-                               or
-                               (
-                                 a.atomFlow=0 and
-                                   (
-                                     b.public=1 or
-                                     exists(
-                                             select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.userIdWho=${userIdWho}
-                                           )
-                                   )
-                               )
-                           )
-                     )
+                   b.public=1 or
+                   exists(
+                           select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.userIdWho=${userIdWho}
+                         )
                  )
            )
 
@@ -432,6 +412,7 @@ module.exports = ctx => {
       // -- e: aAtomLabelRef
       // -- f: {item}
       // -- g: aUser
+      // -- j: aFlowHistory
 
       // for safe
       tableName = tableName ? ctx.model.format('??', tableName) : null;
@@ -476,13 +457,15 @@ module.exports = ctx => {
         `select ${_itemField}
                 a.id as atomId,a.itemId,a.atomEnabled,a.atomFlag,a.atomFlow,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
-                g.userName,g.avatar
+                g.userName,g.avatar,
+                j.flowId,j.flowStatus,j.flowNodeIdCurrent,j.flowNodeNameCurrent
                 ${_starField}
                 ${_labelField}
           from aAtom a
 
             inner join aAtomClass b on a.atomClassId=b.id
             inner join aUser g on a.userIdCreated=g.id
+            left join aFlowHistory j on a.atomFlowId=j.id
             ${_itemJoin}
 
           where a.id=${atomId}
