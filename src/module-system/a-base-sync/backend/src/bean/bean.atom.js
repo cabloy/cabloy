@@ -29,6 +29,9 @@ module.exports = ctx => {
     get modelAtomLabelRef() {
       return ctx.model.module(moduleInfo.relativeName).atomLabelRef;
     }
+    get modelFile() {
+      return ctx.model.module('a-file').file;
+    }
 
     get sequence() {
       return ctx.bean.sequence.module(moduleInfo.relativeName);
@@ -159,12 +162,69 @@ module.exports = ctx => {
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      await ctx.executeBean({
-        beanModule: _moduleInfo.relativeName,
-        beanFullName,
-        context: { atomClass, key, user },
-        fn: 'delete',
-      });
+      // atom
+      const _atom = await this.modelAtom.get({ id: key.atomId });
+      if (_atom.atomStage === 0) {
+        if (_atom.atomIdArchive) {
+          // just close
+          await this.modelAtom.update({
+            id: key.atomId,
+            atomClosed: 1,
+          });
+        } else {
+          // delete
+          await ctx.executeBean({
+            beanModule: _moduleInfo.relativeName,
+            beanFullName,
+            context: { atomClass, key, user },
+            fn: 'delete',
+          });
+        }
+      } else if (_atom.atomStage === 1) {
+        // delete history
+        const listHistory = await this.modelAtom.select({
+          where: {
+            atomStage: 2,
+            atomIdArchive: _atom.id,
+          },
+        });
+        for (const item of listHistory) {
+          await ctx.executeBean({
+            beanModule: _moduleInfo.relativeName,
+            beanFullName,
+            context: { atomClass, key: { atomId: item.id, itemId: item.itemId }, user },
+            fn: 'delete',
+          });
+        }
+        // delete draft
+        const itemDraft = await this.modelAtom.get({
+          atomStage: 0,
+          atomIdArchive: _atom.id,
+        });
+        if (itemDraft) {
+          await ctx.executeBean({
+            beanModule: _moduleInfo.relativeName,
+            beanFullName,
+            context: { atomClass, key: { atomId: itemDraft.id, itemId: itemDraft.itemId }, user },
+            fn: 'delete',
+          });
+        }
+        // delete archive
+        await ctx.executeBean({
+          beanModule: _moduleInfo.relativeName,
+          beanFullName,
+          context: { atomClass, key: { atomId: _atom.id, itemId: _atom.itemId }, user },
+          fn: 'delete',
+        });
+      } else if (_atom.atomStage === 2) {
+        // delete history self
+        await ctx.executeBean({
+          beanModule: _moduleInfo.relativeName,
+          beanFullName,
+          context: { atomClass, key: { atomId: _atom.id, itemId: _atom.itemId }, user },
+          fn: 'delete',
+        });
+      }
     }
 
     // action
@@ -248,7 +308,6 @@ module.exports = ctx => {
         attachmentCount: item.attachmentCount,
         atomClosed: 0,
         atomIdDraft: item.atomId,
-        atomIdArchive: keyArchive.atomId,
       });
       // copy attachments
       await this._copyAttachments({ atomIdSrc: item.atomId, atomIdDest: keyArchive.atomId });
@@ -259,17 +318,22 @@ module.exports = ctx => {
         context: { atomClass, key: keyArchive, item, user },
         fn: 'archive',
       });
+      // update draft
+      await this.modelAtom.update({
+        id: item.atomId,
+        atomClosed: 1,
+        atomIdArchive: keyArchive.atomId,
+      });
     }
 
     async _copyAttachments({ atomIdSrc, atomIdDest }) {
-      const modelFile = ctx.model.module('a-file').file;
-      const files = await modelFile.select({
+      const files = await this.modelFile.select({
         where: { atomId: atomIdSrc },
       });
       for (const file of files) {
         delete file.id;
         file.atomId = atomIdDest;
-        await modelFile.insert(file);
+        await this.modelFile.insert(file);
       }
     }
 
@@ -456,7 +520,10 @@ module.exports = ctx => {
       atom,
       /* user,*/
     }) {
+      // aAtom
       await this.modelAtom.delete(atom);
+      // aFile
+      await this.modelFile.delete({ atomId: atom.id });
     }
 
     async _get({ atom: { id, tableName }, user }) {

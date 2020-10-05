@@ -89,7 +89,7 @@ module.exports = ctx => {
         mode: 'Full',
         atomStage,
         where: {
-          flowDefKey: fullKey,
+          'f.flowDefKey': fullKey,
         },
       };
       if (version) {
