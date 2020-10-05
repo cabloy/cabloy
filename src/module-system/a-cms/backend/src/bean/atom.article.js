@@ -144,15 +144,16 @@ module.exports = app => {
         [ item.content, html, this.ctx.instance.id, key.atomId ]);
 
       // tags
-      const tagsNew = await this.ctx.service.tag.updateArticleTags({ atomClass, key, item });
-
-      // set tag count , force check if delete tags
-      // if (atomOld.atomFlag === 2) {
-      await this.ctx.service.tag.setTagArticleCount({ tagsNew, tagsOld: atomOld.tags });
-      // }
+      if (atomOld.atomStage === 1) {
+        const tagsNew = await this.ctx.service.tag.updateArticleTags({ atomClass, key, item });
+        // set tag count , force check if delete tags
+        await this.ctx.service.tag.setTagArticleCount({ tagsNew, tagsOld: atomOld.tags });
+      }
 
       // render
-      await this._renderArticle({ atomClass, key, inner: atomOld.atomFlag !== 2 });
+      if (atomOld.atomStage === 1) {
+        await this._renderArticle({ atomClass, key, inner: false });
+      }
     }
 
     async delete({ atomClass, key, user }) {
@@ -169,15 +170,17 @@ module.exports = app => {
       });
 
       // delete tags
-      await this.ctx.service.tag.deleteArticleTags({ key });
+      if (atomOld.atomStage === 1) {
+        await this.ctx.service.tag.deleteArticleTags({ key });
 
-      // set tag count , force check if delete tags
-      // if (atomOld.atomFlag === 2) {
-      await this.ctx.service.tag.setTagArticleCount({ tagsNew: null, tagsOld: atomOld.tags });
-      // }
+        // set tag count , force check if delete tags
+        await this.ctx.service.tag.setTagArticleCount({ tagsNew: null, tagsOld: atomOld.tags });
+      }
 
       // delete article
-      await this._deleteArticle({ atomClass, key, article: atomOld, inner: atomOld.atomFlag !== 2 });
+      if (atomOld.atomStage === 1) {
+        await this._deleteArticle({ atomClass, key, article: atomOld, inner: atomOld.atomFlag !== 2 });
+      }
 
       // super
       await super.delete({ atomClass, key, user });
@@ -186,56 +189,16 @@ module.exports = app => {
     async action({ action, atomClass, key, user }) {
       // super
       await super.action({ action, atomClass, key, user });
-      // action
-      if (action === 101) {
-        // get atom for safety
-        const atomOld = await this.ctx.bean.atom.read({ key, user });
-
-        // change flag
-        await this.ctx.bean.atom.flag({
-          key,
-          atom: { atomFlag: 2 },
-          user,
-        });
-        // change flow
-        await this.ctx.bean.atom.flow({
-          key,
-          atom: { atomFlow: 0 },
-          user,
-        });
-
-        // tags
-        if (atomOld.atomFlag !== 2) {
-          await this.ctx.service.tag.setTagArticleCount({ tagsOld: atomOld.tags });
-        }
-
-        // render
-        await this._renderArticle({ atomClass, key, inner: false });
-      } else {
-        // other custom action
-        //   always render again
-        await this._renderArticle({ atomClass, key, inner: false });
-      }
     }
 
-    async enable({ atomClass, key, atom, user }) {
-      // super
-      await super.enable({ atomClass, key, atom, user });
-      // enable
-      const atomFlag = atom.atomEnabled ? 1 : 0;
-      // change flag
-      await this.ctx.bean.atom.flag({
-        key,
-        atom: { atomFlag },
-        user,
-      });
+    async submit({ atomClass, key, options, user }) {
       // site
       const site = await this.ctx.service.render.combineSiteBase({ atomClass });
-      // if (this.ctx.config.article.publishOnSubmit) {
       if (site.base.publishOnSubmit !== false) {
-        // publish
-        await this.action({ action: 101, atomClass, key, user });
+        options = Object.assign({}, options, { ignoreFlow: true });
       }
+      // super
+      return await super.submit({ atomClass, key, options, user });
     }
 
     _getMeta(item, showSorting) {

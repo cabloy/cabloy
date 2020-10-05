@@ -87,7 +87,7 @@ module.exports = ctx => {
       // from db
       const options = {
         mode: 'Full',
-        atomStage,
+        stage: atomStage,
         where: {
           'f.flowDefKey': fullKey,
         },
@@ -151,11 +151,9 @@ module.exports = ctx => {
         },
         user: { id: 0 },
       });
-      await ctx.bean.atom.enable({
+      await ctx.bean.atom.submit({
         key: atomKey,
-        atom: {
-          atomEnabled: 1,
-        },
+        options: { ignoreFlow: true },
         user: { id: 0 },
       });
     }
@@ -202,11 +200,9 @@ module.exports = ctx => {
         },
         user: { id: 0 },
       });
-      await ctx.bean.atom.enable({
+      await ctx.bean.atom.submit({
         key: atomKey,
-        atom: {
-          atomEnabled: 1,
-        },
+        options: { ignoreFlow: true },
         user: { id: 0 },
       });
     }

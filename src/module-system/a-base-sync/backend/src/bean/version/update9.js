@@ -29,6 +29,39 @@ module.exports = function(ctx) {
         `;
       await ctx.model.query(sql);
 
+      // alter view: aViewUserRightAtom
+      await ctx.model.query('drop view aViewUserRightAtom');
+      sql = `
+          create view aViewUserRightAtom as
+            select a.iid, a.id as atomId,a.userIdCreated as userIdWhom,b.userIdWho,b.action from aAtom a,aViewUserRightAtomClassUser b
+              where a.deleted=0 and a.atomStage>0
+                and a.atomClassId=b.atomClassId
+                and a.userIdCreated=b.userIdWhom
+        `;
+      await ctx.model.query(sql);
+
+      // alter view: aViewRoleRightAtom
+      await ctx.model.query('drop view aViewRoleRightAtom');
+      sql = `
+          create view aViewRoleRightAtom as
+            select a.iid, a.id as atomId,a.userIdCreated as userIdWhom,b.roleIdWho,b.action from aAtom a,aViewRoleRightAtomClassUser b
+              where a.deleted=0 and a.atomStage>0
+                and a.atomClassId=b.atomClassId
+                and a.userIdCreated=b.userIdWhom
+        `;
+      await ctx.model.query(sql);
+
+      // alter view: aViewUserRightAtomRole
+      await ctx.model.query('drop view aViewUserRightAtomRole');
+      sql = `
+          create view aViewUserRightAtomRole as
+            select a.iid, a.id as atomId,a.roleIdOwner as roleIdWhom,b.userIdWho,b.action from aAtom a,aViewUserRightAtomClassRole b
+              where a.deleted=0 and a.atomStage>0
+                and a.atomClassId=b.atomClassId
+                and a.roleIdOwner=b.roleIdWhom
+        `;
+      await ctx.model.query(sql);
+
     }
 
   }

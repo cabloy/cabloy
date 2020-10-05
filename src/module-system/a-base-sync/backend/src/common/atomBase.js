@@ -76,8 +76,9 @@ module.exports = app => {
         const flowInstance = await _nodeBaseBean._match({ atom: _atom, userId: _atom.userIdUpdated });
         if (flowInstance) {
           // set atom flow
-          await this.ctx.bean.atom.flow({ key, atom: { atomFlowId: flowInstance.context._flowId } });
-          return;
+          const atomFlowId = flowInstance.context._flowId;
+          await this.ctx.bean.atom.flow({ key, atom: { atomFlowId } });
+          return { flow: { id: atomFlowId } };
         }
       }
       return await this.ctx.bean.atom._submitDirect({ key, item: _atom, user });

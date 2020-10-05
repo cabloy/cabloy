@@ -3,9 +3,9 @@ const assert = require3('assert');
 
 module.exports = app => {
 
-  class PublicFlowController extends app.Controller {
+  class PublicController extends app.Controller {
 
-    async publicFlow() {
+    async public() {
       // atomClass
       const atomClass = await this.ctx.bean.atomClass.get({ atomClassName: 'partyPublic' });
       // userIds
@@ -42,39 +42,9 @@ module.exports = app => {
       });
 
       // Tom enable(submit) party
-      await this.ctx.bean.atom.enable({
+      await this.ctx.bean.atom.submit({
         key: partyKey,
-        atom: {
-          atomEnabled: 1,
-        },
-        user: { id: userIds.Tom },
-      });
-
-      await this._testCheckList(userIds, [
-        [ 'Tom', 1 ],
-        [ 'Jane', 0 ],
-        [ 'Jimmy', 0 ],
-        [ 'Smith', 0 ],
-      ], (actual, expected, userName) => {
-        assert.equal(actual, expected, userName);
-      });
-
-      // checkRightRead 1
-      let checkRightReads = [[ 'Jane', partyKey.atomId, false ]];
-      for (const [ userName, atomId, right ] of checkRightReads) {
-        const res = await this.ctx.bean.atom.checkRightRead({
-          atom: { id: atomId },
-          user: { id: userIds[userName] },
-        });
-        assert.equal(!!res, right, userName);
-      }
-
-      // close atomFlow
-      await this.ctx.bean.atom.flow({
-        key: partyKey,
-        atom: {
-          atomFlow: 0,
-        },
+        // options:{ignoreFlow:true},
         user: { id: userIds.Tom },
       });
 
@@ -87,8 +57,8 @@ module.exports = app => {
         assert.equal(actual, expected, userName);
       });
 
-      // checkRightRead 2
-      checkRightReads = [[ 'Jane', partyKey.atomId, true ]];
+      // checkRightRead
+      const checkRightReads = [[ 'Jane', partyKey.atomId, true ]];
       for (const [ userName, atomId, right ] of checkRightReads) {
         const res = await this.ctx.bean.atom.checkRightRead({
           atom: { id: atomId },
@@ -140,6 +110,6 @@ module.exports = app => {
 
   }
 
-  return PublicFlowController;
+  return PublicController;
 };
 

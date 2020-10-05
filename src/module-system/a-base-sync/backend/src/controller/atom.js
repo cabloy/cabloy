@@ -73,9 +73,14 @@ module.exports = app => {
     }
 
     async writeSubmit() {
-      await this.write();
+      // write
+      await this.ctx.service.atom.write({
+        key: this.ctx.request.body.key,
+        item: this.ctx.request.body.item,
+        user: this.ctx.state.user.op,
+      });
+      // submit
       await this.submit();
-      this.ctx.success();
     }
 
     async delete() {

@@ -10,8 +10,8 @@ module.exports = app => {
       { method: 'post', path: 'test/atom/starLabel', controller: 'testAtomStarLabel', middlewares: 'test' },
       // test/atom/all
       { method: 'post', path: 'test/atom/all', controller: 'testAtomAll', middlewares: 'test', meta: { auth: { enable: false } } },
-      // test/atom/publicFlow
-      { method: 'post', path: 'test/atom/publicFlow', controller: 'testAtomPublicFlow', middlewares: 'test', meta: { auth: { enable: false } } },
+      // test/atom/public
+      { method: 'post', path: 'test/atom/public', controller: 'testAtomPublic', middlewares: 'test', meta: { auth: { enable: false } } },
       // test/atom/right(checked by middleware)
       { method: 'post', path: 'test/atom/checkRightCreate', controller: 'testAtomRight', middlewares: 'test',
         meta: { right: { type: 'atom', action: 1 } },

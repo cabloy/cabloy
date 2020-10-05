@@ -1,6 +1,6 @@
 const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
-describe('test/controller/test.test.js', () => {
+describe.only('test/controller/test.test.js', () => {
 
   it('action:set config', async () => {
     app.mockSession({});
@@ -195,26 +195,13 @@ describe('test/controller/test.test.js', () => {
         },
       });
       assert(result.body.code === 0);
-
-      // publish
-      result = await app.httpRequest().post(mockUrl('/a/base/atom/action')).send({
-        action: 101,
-        key: atomKey,
-      });
-      assert(result.body.code === 0);
+      const keyArchive = result.body.data.archive.key;
 
       // special test
       if (article.special) {
-        // publish again
-        let result = await app.httpRequest().post(mockUrl('/a/base/atom/action')).send({
-          action: 101,
-          key: atomKey,
-        });
-        assert(result.body.code === 0);
-
         // delete
         result = await app.httpRequest().post(mockUrl('/a/base/atom/delete')).send({
-          key: atomKey,
+          key: keyArchive,
         });
         assert(result.body.code === 0);
       }

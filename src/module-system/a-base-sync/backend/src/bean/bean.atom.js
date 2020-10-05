@@ -324,6 +324,8 @@ module.exports = ctx => {
         atomClosed: 1,
         atomIdArchive: keyArchive.atomId,
       });
+      // return keyArchive
+      return { archive: { key: keyArchive } };
     }
 
     async _copyAttachments({ atomIdSrc, atomIdDest }) {

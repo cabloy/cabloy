@@ -54,11 +54,9 @@ module.exports = app => {
       });
 
       // Tom enable(submit) party
-      await this.ctx.bean.atom.enable({
+      await this.ctx.bean.atom.submit({
         key: partyKey,
-        atom: {
-          atomEnabled: 1,
-        },
+        // options: { ignoreFlow: true },
         user: { id: userIds.Tom },
       });
 
