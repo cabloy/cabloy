@@ -87,6 +87,10 @@ module.exports = app => {
       await this.ctx.bean.atom.write({ key, item, user });
     }
 
+    async archive({ /* atomClass,*/ key, item, user }) {
+      await this.ctx.bean.atom.write({ key, item, user });
+    }
+
     async action(/* { action, atomClass, key, user }*/) {
       // donothing
     }

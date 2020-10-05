@@ -203,10 +203,14 @@ module.exports = ctx => {
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      //
+      let itemArchive;
+      let keyArchive;
       // archive -> history
       if (item.atomIdArchive) {
         // item
-        const itemArchive = await ctx.bean.atom.read({ key: { atomId: item.atomIdArchive }, user });
+        itemArchive = await ctx.bean.atom.read({ key: { atomId: item.atomIdArchive }, user });
+        keyArchive = { atomId: itemArchive.atomId, itemId: itemArchive.itemId };
         // create history
         const keyHistory = await this.create({ atomClass, roleIdOwner: itemArchive.roleIdOwner, item: itemArchive, user });
         // update fields
@@ -220,6 +224,8 @@ module.exports = ctx => {
           atomIdDraft: item.atomId,
           atomIdArchive: item.atomIdArchive,
         });
+        // copy attachments
+        await this._copyAttachments({ atomIdSrc: item.atomIdArchive, atomIdDest: keyHistory.atomId });
         // history
         await ctx.executeBean({
           beanModule: _moduleInfo.relativeName,
@@ -230,10 +236,41 @@ module.exports = ctx => {
       }
       // draft -> archive
       if (!item.atomIdArchive) {
-        // create
+        // create archive
+        keyArchive = await this.create({ atomClass, roleIdOwner: item.roleIdOwner, item, user });
       }
       // update fields
-      // archive
+      await this.modelAtom.update({
+        id: keyArchive.atomId,
+        atomStage: ctx.constant.module(moduleInfo.relativeName).atom.stage.archive,
+        atomFlowId: item.atomFlowId,
+        allowComment: item.allowComment,
+        attachmentCount: item.attachmentCount,
+        atomClosed: 0,
+        atomIdDraft: item.atomId,
+        atomIdArchive: keyArchive.atomId,
+      });
+      // copy attachments
+      await this._copyAttachments({ atomIdSrc: item.atomId, atomIdDest: keyArchive.atomId });
+      // history
+      await ctx.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        context: { atomClass, key: keyArchive, item, user },
+        fn: 'archive',
+      });
+    }
+
+    async _copyAttachments({ atomIdSrc, atomIdDest }) {
+      const modelFile = ctx.model.module('a-file').file;
+      const files = await modelFile.select({
+        where: { atomId: atomIdSrc },
+      });
+      for (const file of files) {
+        delete file.id;
+        file.atomId = atomIdDest;
+        await modelFile.insert(file);
+      }
     }
 
     async openDraft({}) {
