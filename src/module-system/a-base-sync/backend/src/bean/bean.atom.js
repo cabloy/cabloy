@@ -150,7 +150,7 @@ module.exports = ctx => {
       await ctx.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
-        context: { atomClass, key, item, user },
+        context: { atomClass, key, item, user, stage: 0 },
         fn: 'write',
       });
     }

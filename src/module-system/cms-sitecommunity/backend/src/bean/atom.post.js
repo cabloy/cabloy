@@ -34,11 +34,11 @@ module.exports = app => {
       });
     }
 
-    async write({ atomClass, key, item, user }) {
+    async write({ atomClass, key, item, user, stage }) {
       return await this.ctx.executeBean({
         beanModule: articleBeanModule,
         beanFullName: articleBeanFullName,
-        context: { atomClass, key, item, user },
+        context: { atomClass, key, item, user, stage },
         fn: 'write',
       });
     }

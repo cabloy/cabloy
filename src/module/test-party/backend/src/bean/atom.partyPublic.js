@@ -22,9 +22,9 @@ module.exports = app => {
       await super.select({ atomClass, options, items, user });
     }
 
-    async write({ atomClass, key, item, user }) {
+    async write({ atomClass, key, item, user, stage }) {
       // super
-      await super.write({ atomClass, key, item, user });
+      await super.write({ atomClass, key, item, user, stage });
     }
 
     async delete({ atomClass, key, user }) {
