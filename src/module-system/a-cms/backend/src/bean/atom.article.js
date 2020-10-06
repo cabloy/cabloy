@@ -55,11 +55,12 @@ module.exports = app => {
       }
     }
 
-    async write({ atomClass, key, item, user, stage }) {
+    async write({ atomClass, key, item, user }) {
+      const atomStage = item.atomStage;
       // get atom for safety
       const atomOld = await this.ctx.bean.atom.read({ key, user });
       // super
-      await super.write({ atomClass, key, item, user, stage });
+      await super.write({ atomClass, key, item, user });
       // if undefined then old
       const fields = [ 'slug', 'editMode', 'content', 'language', 'categoryId', 'sticky', 'keywords', 'description', 'sorting', 'flag', 'extra' ];
       for (const field of fields) {
@@ -144,14 +145,14 @@ module.exports = app => {
         [ item.content, html, this.ctx.instance.id, key.atomId ]);
 
       // tags
-      if (atomOld.atomStage === 1) {
+      if (atomStage === 1) {
         const tagsNew = await this.ctx.service.tag.updateArticleTags({ atomClass, key, item });
         // set tag count , force check if delete tags
         await this.ctx.service.tag.setTagArticleCount({ tagsNew, tagsOld: atomOld.tags });
       }
 
       // render
-      if (atomOld.atomStage === 1) {
+      if (atomStage === 1) {
         await this._renderArticle({ atomClass, key, inner: false });
       }
     }

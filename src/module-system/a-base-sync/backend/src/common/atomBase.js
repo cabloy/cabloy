@@ -38,7 +38,8 @@ module.exports = app => {
       });
     }
 
-    async write({ atomClass, key, item, user, stage }) {
+    async write({ atomClass, key, item, user }) {
+      const atomStage = item.atomStage;
       // validator
       const validator = await this.ctx.bean.atom.validator({ atomClass, user });
       if (validator) {
@@ -51,11 +52,11 @@ module.exports = app => {
         });
       }
       // write atom
-      await this._writeAtom({ key, item, user, stage });
+      await this._writeAtom({ key, item, user, atomStage });
     }
 
-    async _writeAtom({ key, item, user, stage }) {
-      if (!item || stage > 0) return;
+    async _writeAtom({ key, item, user, atomStage }) {
+      if (!item || atomStage > 0) return;
       // write atom
       const atom = { };
       if (item.atomName !== undefined) atom.atomName = item.atomName;
@@ -85,11 +86,11 @@ module.exports = app => {
     }
 
     async history({ atomClass, key, item, user }) {
-      await this.write({ atomClass, key, item, user, stage: 2 });
+      await this.write({ atomClass, key, item, user });
     }
 
     async archive({ atomClass, key, item, user }) {
-      await this.write({ atomClass, key, item, user, stage: 1 });
+      await this.write({ atomClass, key, item, user });
     }
 
     async action(/* { action, atomClass, key, user }*/) {

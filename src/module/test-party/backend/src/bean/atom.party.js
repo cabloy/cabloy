@@ -37,9 +37,9 @@ module.exports = app => {
       }
     }
 
-    async write({ atomClass, key, item, user, stage }) {
+    async write({ atomClass, key, item, user }) {
       // super
-      await super.write({ atomClass, key, item, user, stage });
+      await super.write({ atomClass, key, item, user });
       // update party
       await this.ctx.model.party.update({
         id: key.itemId,

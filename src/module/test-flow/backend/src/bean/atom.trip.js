@@ -26,9 +26,9 @@ module.exports = app => {
       await super.select({ atomClass, options, items, user });
     }
 
-    async write({ atomClass, key, item, user, stage }) {
+    async write({ atomClass, key, item, user }) {
       // super
-      await super.write({ atomClass, key, item, user, stage });
+      await super.write({ atomClass, key, item, user });
       // update trip
       await this.ctx.model.trip.update({
         id: key.itemId,

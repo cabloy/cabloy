@@ -147,10 +147,16 @@ module.exports = ctx => {
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      // item draft
+      const itemDraft = Object.assign({}, item, {
+        atomId: key.atomId,
+        itemId: item.itemId || key.itemId,
+        atomStage: ctx.constant.module(moduleInfo.relativeName).atom.stage.draft,
+      });
       await ctx.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
-        context: { atomClass, key, item, user, stage: 0 },
+        context: { atomClass, key, item: itemDraft, user },
         fn: 'write',
       });
     }
@@ -273,9 +279,9 @@ module.exports = ctx => {
         keyArchive = { atomId: itemArchive.atomId, itemId: itemArchive.itemId };
         // create history
         const keyHistory = await this.create({ atomClass, roleIdOwner: itemArchive.roleIdOwner, item: itemArchive, user });
-        // update fields
-        await this.modelAtom.update({
-          id: keyHistory.atomId,
+        const itemHistory = Object.assign({}, itemArchive, {
+          atomId: keyHistory.atomId,
+          itemId: keyHistory.itemId,
           atomStage: ctx.constant.module(moduleInfo.relativeName).atom.stage.history,
           atomFlowId: itemArchive.atomFlowId,
           allowComment: itemArchive.allowComment,
@@ -284,13 +290,24 @@ module.exports = ctx => {
           atomIdDraft: item.atomId,
           atomIdArchive: item.atomIdArchive,
         });
+        // update fields
+        await this.modelAtom.update({
+          id: keyHistory.atomId,
+          atomStage: itemHistory.atomStage,
+          atomFlowId: itemHistory.atomFlowId,
+          allowComment: itemHistory.allowComment,
+          attachmentCount: itemHistory.attachmentCount,
+          atomClosed: itemHistory.atomClosed,
+          atomIdDraft: itemHistory.atomIdDraft,
+          atomIdArchive: itemHistory.atomIdArchive,
+        });
         // copy attachments
         await this._copyAttachments({ atomIdSrc: item.atomIdArchive, atomIdDest: keyHistory.atomId });
         // history
         await ctx.executeBean({
           beanModule: _moduleInfo.relativeName,
           beanFullName,
-          context: { atomClass, key: keyHistory, item: itemArchive, user },
+          context: { atomClass, key: keyHistory, item: itemHistory, user },
           fn: 'history',
         });
       }
@@ -299,9 +316,9 @@ module.exports = ctx => {
         // create archive
         keyArchive = await this.create({ atomClass, roleIdOwner: item.roleIdOwner, item, user });
       }
-      // update fields
-      await this.modelAtom.update({
-        id: keyArchive.atomId,
+      itemArchive = Object.assign({}, item, {
+        atomId: keyArchive.atomId,
+        itemId: keyArchive.itemId,
         atomStage: ctx.constant.module(moduleInfo.relativeName).atom.stage.archive,
         atomFlowId: item.atomFlowId,
         allowComment: item.allowComment,
@@ -309,13 +326,23 @@ module.exports = ctx => {
         atomClosed: 0,
         atomIdDraft: item.atomId,
       });
+      // update fields
+      await this.modelAtom.update({
+        id: keyArchive.atomId,
+        atomStage: itemArchive.atomStage,
+        atomFlowId: itemArchive.atomFlowId,
+        allowComment: itemArchive.allowComment,
+        attachmentCount: itemArchive.attachmentCount,
+        atomClosed: itemArchive.atomClosed,
+        atomIdDraft: itemArchive.atomIdDraft,
+      });
       // copy attachments
       await this._copyAttachments({ atomIdSrc: item.atomId, atomIdDest: keyArchive.atomId });
-      // history
+      // archive
       await ctx.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
-        context: { atomClass, key: keyArchive, item, user },
+        context: { atomClass, key: keyArchive, item: itemArchive, user },
         fn: 'archive',
       });
       // update draft
