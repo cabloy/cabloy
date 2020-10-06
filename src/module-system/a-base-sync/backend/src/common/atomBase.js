@@ -41,15 +41,17 @@ module.exports = app => {
     async write({ atomClass, key, item, user }) {
       const atomStage = item.atomStage;
       // validator
-      const validator = await this.ctx.bean.atom.validator({ atomClass, user });
-      if (validator) {
+      if (atomStage === 0) {
+        const validator = await this.ctx.bean.atom.validator({ atomClass, user });
+        if (validator) {
         // if error throw 422
-        await this.ctx.bean.validation.validate({
-          module: validator.module,
-          validator: validator.validator,
-          schema: validator.schema,
-          data: item,
-        });
+          await this.ctx.bean.validation.validate({
+            module: validator.module,
+            validator: validator.validator,
+            schema: validator.schema,
+            data: item,
+          });
+        }
       }
       // write atom
       await this._writeAtom({ key, item, user, atomStage });

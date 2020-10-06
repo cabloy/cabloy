@@ -16,7 +16,7 @@ module.exports = app => {
         const items = await ctx.model.query(`
           select a.id from aAtom a
             left join aCmsArticle b on a.id=b.atomId
-              where a.iid=? and a.deleted=0 and a.atomClassId=? and b.language=? and b.slug=?
+              where a.atomStage=0 and a.iid=? and a.deleted=0 and a.atomClassId=? and b.language=? and b.slug=?
           `, [ ctx.instance.id, atomClass.id, rootData.language, data ]);
         if (items[0] && items[0].id !== rootData.atomId) {
           const errors = [{ keyword: 'x-slug', params: [], message: ctx.text('Slug Exists') }];
