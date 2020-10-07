@@ -1,6 +1,6 @@
 const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
-describe('action: atom: party', () => {
+describe.only('action: atom: party', () => {
   it('[atom]', async () => {
     app.mockSession({});
 
@@ -21,27 +21,28 @@ describe('action: atom: party', () => {
       atomClass: { module: atomClassModule, atomClassName, atomClassIdParent: 0 },
     });
     assert(result.body.code === 0);
-    const atomKey = result.body.data;
+    const keyDraft = result.body.data;
 
     // submit
     result = await app.httpRequest().post(mockUrl('/a/base/atom/writeSubmit')).send({
-      key: atomKey,
+      key: keyDraft,
       item: {
         atomName: 'party demo',
         personCount: 3,
       },
     });
     assert(result.body.code === 0);
+    const keyArchive = result.body.data.archive.key;
 
     // read
     result = await app.httpRequest().post(mockUrl('/a/base/atom/read')).send({
-      key: atomKey,
+      key: keyArchive,
     });
     assert(result.body.code === 0);
 
     // delete
     result = await app.httpRequest().post(mockUrl('/a/base/atom/delete')).send({
-      key: atomKey,
+      key: keyArchive,
     });
     assert(result.body.code === 0);
 
