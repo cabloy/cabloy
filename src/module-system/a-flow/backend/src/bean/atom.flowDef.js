@@ -1,6 +1,3 @@
-
-const __fieldNames = [ 'flowDefKey', 'version', 'description', 'dynamic' ];
-
 module.exports = app => {
 
   class Atom extends app.meta.AtomBase {
@@ -39,14 +36,8 @@ module.exports = app => {
       // super
       await super.write({ atomClass, key, item, user });
       // update flowDef
-      const data = {
-        id: key.itemId,
-      };
-      for (const fieldName of __fieldNames) {
-        if (item[fieldName] !== undefined) {
-          data[fieldName] = item[fieldName];
-        }
-      }
+      const data = await this.ctx.model.flowDef.prepareData(item);
+      data.id = key.itemId;
       await this.ctx.model.flowDef.update(data);
       // update content
       await this.ctx.model.query('update aFlowDefContent a set a.content=? where a.iid=? and a.atomId=?',

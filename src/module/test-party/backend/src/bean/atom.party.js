@@ -41,11 +41,9 @@ module.exports = app => {
       // super
       await super.write({ atomClass, key, item, user });
       // update party
-      await this.ctx.model.party.update({
-        id: key.itemId,
-        personCount: item.personCount,
-        partyTypeId: item.partyTypeId,
-      });
+      const data = await this.ctx.model.party.prepareData(item);
+      data.id = key.itemId;
+      await this.ctx.model.party.update(data);
     }
 
     async delete({ atomClass, key, user }) {

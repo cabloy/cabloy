@@ -30,10 +30,9 @@ module.exports = app => {
       // super
       await super.write({ atomClass, key, item, user });
       // update trip
-      await this.ctx.model.trip.update({
-        id: key.itemId,
-        description: item.description,
-      });
+      const data = await this.ctx.model.trip.prepareData(item);
+      data.id = key.itemId;
+      await this.ctx.model.trip.update(data);
     }
 
     async delete({ atomClass, key, user }) {

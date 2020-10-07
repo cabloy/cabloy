@@ -2,6 +2,8 @@ const is = require('is-type-of');
 const moment = require('moment');
 const RDSClient = require('ali-rds');
 
+const __columns = {};
+
 module.exports = app => {
   class Model extends app.BaseContextClass {
 
@@ -10,6 +12,31 @@ module.exports = app => {
       this.table = table;
       this.disableDeleted = (options.disableDeleted === undefined) ? app.config.model.disableDeleted : options.disableDeleted;
       this.disableInstance = (options.disableInstance === undefined) ? app.config.model.disableInstance : options.disableInstance;
+    }
+
+    async columns() {
+      let columns = __columns[this.table];
+      if (!columns) {
+        const list = await this.ctx.db.query(`show columns from ${this.ctx.db.format('??', this.table)}`);
+        columns = __columns[this.table] = {};
+        for (const item of list) {
+          columns[item.Field] = item;
+        }
+      }
+      return columns;
+    }
+
+    async prepareData(item) {
+      // columns
+      const columns = await this.columns();
+      // data
+      const data = {};
+      for (const column in columns) {
+        if (item[column] !== undefined) {
+          data[column] = item[column];
+        }
+      }
+      return data;
     }
 
   }
