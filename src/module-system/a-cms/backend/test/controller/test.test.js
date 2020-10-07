@@ -179,13 +179,13 @@ describe('test/controller/test.test.js', () => {
         atomClass: { module: mockInfo().relativeName, atomClassName: 'article', atomClassIdParent: 0 },
       });
       assert(result.body.code === 0);
-      const atomKey = result.body.data;
+      const keyDraft = result.body.data;
 
       // submit
       result = await app.httpRequest().post(mockUrl('/a/base/atom/writeSubmit')).send({
-        key: atomKey,
+        key: keyDraft,
         item: {
-          atomId: atomKey.atomId,
+          atomId: keyDraft.atomId,
           atomName: article.atomName,
           language: article.language,
           editMode: article.editMode,

@@ -160,13 +160,13 @@ describe('test/controller/test.test.js', () => {
         atomClass,
       });
       assert(result.body.code === 0);
-      const atomKey = result.body.data;
+      const keyDraft = result.body.data;
 
       // submit
       result = await app.httpRequest().post(mockUrl('/a/base/atom/writeSubmit')).send({
-        key: atomKey,
+        key: keyDraft,
         item: {
-          atomId: atomKey.atomId,
+          atomId: keyDraft.atomId,
           atomName: article.atomName,
           language: article.language,
           editMode: article.editMode,
@@ -176,26 +176,13 @@ describe('test/controller/test.test.js', () => {
         },
       });
       assert(result.body.code === 0);
-
-      // publish
-      result = await app.httpRequest().post(mockUrl('/a/base/atom/action')).send({
-        action: 101,
-        key: atomKey,
-      });
-      assert(result.body.code === 0);
+      const keyArchive = result.body.data.archive.key;
 
       // special test
       if (article.special) {
-        // publish again
-        let result = await app.httpRequest().post(mockUrl('/a/base/atom/action')).send({
-          action: 101,
-          key: atomKey,
-        });
-        assert(result.body.code === 0);
-
         // delete
         result = await app.httpRequest().post(mockUrl('/a/base/atom/delete')).send({
-          key: atomKey,
+          key: keyArchive,
         });
         assert(result.body.code === 0);
       }
