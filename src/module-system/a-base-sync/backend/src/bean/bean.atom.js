@@ -143,6 +143,7 @@ module.exports = ctx => {
     async write({ key, item, user }) {
       // atomClass
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      if (!key.itemId) key.itemId = atomClass.itemId;
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
@@ -150,7 +151,7 @@ module.exports = ctx => {
       // item draft
       const itemDraft = Object.assign({}, item, {
         atomId: key.atomId,
-        itemId: item.itemId || key.itemId,
+        itemId: key.itemId,
         atomStage: ctx.constant.module(moduleInfo.relativeName).atom.stage.draft,
       });
       await ctx.executeBean({
@@ -164,6 +165,7 @@ module.exports = ctx => {
     // delete
     async delete({ key, user }) {
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      if (!key.itemId) key.itemId = atomClass.itemId;
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
@@ -236,6 +238,7 @@ module.exports = ctx => {
     // action
     async action({ action, key, user }) {
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      if (!key.itemId) key.itemId = atomClass.itemId;
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
@@ -250,6 +253,7 @@ module.exports = ctx => {
 
     async submit({ key, options, user }) {
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      if (!key.itemId) key.itemId = atomClass.itemId;
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
@@ -265,6 +269,7 @@ module.exports = ctx => {
     async _submitDirect({ key, item, user }) {
       // atomClass
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      if (!key.itemId) key.itemId = atomClass.itemId;
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);

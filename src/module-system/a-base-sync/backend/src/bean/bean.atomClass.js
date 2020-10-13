@@ -67,7 +67,7 @@ module.exports = ctx => {
 
     async getByAtomId({ atomId }) {
       const res = await this.model.query(`
-        select a.* from aAtomClass a
+        select a.*,b.id as atomId,b.itemId from aAtomClass a
           left join aAtom b on a.id=b.atomClassId
             where b.iid=? and b.id=?
         `, [ ctx.instance.id, atomId ]);
