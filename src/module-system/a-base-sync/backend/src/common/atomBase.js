@@ -16,15 +16,8 @@ module.exports = app => {
     }
 
     async read({ atomClass, key, user }) {
-      const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
       // get
-      return await this.ctx.bean.atom._get({
-        atom: {
-          id: key.atomId,
-          tableName: _atomClass.tableNameFull || _atomClass.tableName,
-        },
-        user,
-      });
+      return await this.ctx.bean.atom._get({ atomClass, key, mode: 'full', user });
     }
 
     async select(/* {  atomClass, options, items, user }*/) {

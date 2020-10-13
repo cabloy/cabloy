@@ -86,7 +86,7 @@ module.exports = ctx => {
       const { fullKey } = this._combineFullKey({ flowDefKey });
       // from db
       const options = {
-        mode: 'Full',
+        mode: 'full',
         stage: atomStage,
         where: {
           'f.flowDefKey': fullKey,

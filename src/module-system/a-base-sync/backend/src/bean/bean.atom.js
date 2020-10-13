@@ -552,11 +552,13 @@ module.exports = ctx => {
       await this.modelFile.delete({ atomId: atom.id });
     }
 
-    async _get({ atom: { id, tableName }, user }) {
+    async _get({ atomClass, key, mode, user }) {
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      const tableName = this._getTableName({ atomClass: _atomClass, mode });
       const sql = this.sqlProcedure.getAtom({
         iid: ctx.instance.id,
         userIdWho: user ? user.id : 0,
-        tableName, atomId: id,
+        tableName, atomId: key.atomId,
       });
       return await ctx.model.queryOne(sql);
     }
