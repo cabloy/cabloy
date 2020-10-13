@@ -609,9 +609,9 @@ module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    async checkRightUpdate({ atom: { id, action, stage = 'draft' }, user }) {
+    async checkRightUpdate({ atom: { id, action, stage }, user }) {
       const _atom = await this.modelAtom.get({ id });
-      if ((stage === 'draft' && _atom.atomStage > 0) || (stage !== 'draft' && _atom.atomStage === 0)) return null;
+      if ((stage === 'draft' && _atom.atomStage > 0) || ((stage === 'archive' || stage === 'history') && _atom.atomStage === 0)) return null;
       if (_atom.atomStage === 0) {
         // 1. closed
         if (_atom.atomClosed) return null;
