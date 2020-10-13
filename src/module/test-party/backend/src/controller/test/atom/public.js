@@ -12,7 +12,7 @@ module.exports = app => {
       const userIds = this.ctx.cache.mem.get('userIds');
 
       // user->atom
-      await this._testCheckList(userIds, [
+      await this._testCheckList('archive', userIds, [
         [ 'Tom', 0 ],
         [ 'Jane', 0 ],
         [ 'Jimmy', 0 ],
@@ -22,17 +22,17 @@ module.exports = app => {
       });
 
       // Tom add party
-      const partyKey = await this.ctx.bean.atom.create({
+      const partyKeyDraft = await this.ctx.bean.atom.create({
         atomClass,
         user: { id: userIds.Tom },
       });
       await this.ctx.bean.atom.write({
-        key: partyKey,
+        key: partyKeyDraft,
         item: { atomName: 'test:publicFlow' },
         user: { id: userIds.Tom },
       });
 
-      await this._testCheckList(userIds, [
+      await this._testCheckList('draft', userIds, [
         [ 'Tom', 1 ],
         [ 'Jane', 0 ],
         [ 'Jimmy', 0 ],
@@ -42,13 +42,14 @@ module.exports = app => {
       });
 
       // Tom enable(submit) party
-      await this.ctx.bean.atom.submit({
-        key: partyKey,
-        // options:{ignoreFlow:true},
+      const res = await this.ctx.bean.atom.submit({
+        key: partyKeyDraft,
+        options: { ignoreFlow: true },
         user: { id: userIds.Tom },
       });
+      const partyKeyArchive = res.archive.key;
 
-      await this._testCheckList(userIds, [
+      await this._testCheckList('archive', userIds, [
         [ 'Tom', 1 ],
         [ 'Jane', 1 ],
         [ 'Jimmy', 1 ],
@@ -58,7 +59,7 @@ module.exports = app => {
       });
 
       // checkRightRead
-      const checkRightReads = [[ 'Jane', partyKey.atomId, true ]];
+      const checkRightReads = [[ 'Jane', partyKeyArchive.atomId, true ]];
       for (const [ userName, atomId, right ] of checkRightReads) {
         const res = await this.ctx.bean.atom.checkRightRead({
           atom: { id: atomId },
@@ -68,16 +69,16 @@ module.exports = app => {
       }
 
       // Jane read party
-      const party = await this.ctx.bean.atom.read({ key: partyKey, user: { id: userIds.Jane } });
+      const party = await this.ctx.bean.atom.read({ key: partyKeyArchive, user: { id: userIds.Jane } });
       assert(party);
 
       // Tom delete party
       await this.ctx.bean.atom.delete({
-        key: partyKey,
+        key: partyKeyArchive,
         user: { id: userIds.Tom },
       });
 
-      await this._testCheckList(userIds, [
+      await this._testCheckList('archive', userIds, [
         [ 'Tom', 0 ],
         [ 'Jane', 0 ],
         [ 'Jimmy', 0 ],
@@ -90,7 +91,7 @@ module.exports = app => {
       this.ctx.success();
     }
 
-    async _testCheckList(userIds, userAtoms, cb) {
+    async _testCheckList(stage, userIds, userAtoms, cb) {
       for (const [ userName, atomCountExpected ] of userAtoms) {
         const list = await this.ctx.bean.atom.select({
           options: {
@@ -100,6 +101,7 @@ module.exports = app => {
             },
             orders: null,
             page: null,
+            stage,
           },
           user: { id: userIds[userName] },
         });

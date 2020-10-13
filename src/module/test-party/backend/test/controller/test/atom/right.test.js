@@ -108,29 +108,29 @@ describe('test/controller/test/atom/right.test.js', () => {
     assert.equal(res.body.code, 0);
     const partyKeyArchive = res.body.data.archive.key;
 
-    // check right actions
-    const checkRightActions = [
-      [ 'Tom', false ],
-      [ 'Jane', true ],
-    ];
-    for (const [ userName, right ] of checkRightActions) {
-      // login
-      await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-        data: {
-          auth: userName,
-          password: '123456',
-        },
-      });
-      // checkRightAction
-      const result = await app.httpRequest().post(mockUrl('test/atom/checkRightAction')).send({
-        key: partyKeyArchive,
-      });
-      if (right) {
-        assert.equal(result.body.data.id, partyKeyArchive.atomId);
-      } else {
-        assert.equal(result.status, 403);
-      }
-    }
+    // // check right actions
+    // const checkRightActions = [
+    //   [ 'Tom', false ],
+    //   [ 'Jane', true ],
+    // ];
+    // for (const [ userName, right ] of checkRightActions) {
+    //   // login
+    //   await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
+    //     data: {
+    //       auth: userName,
+    //       password: '123456',
+    //     },
+    //   });
+    //   // checkRightAction
+    //   const result = await app.httpRequest().post(mockUrl('test/atom/checkRightAction')).send({
+    //     key: partyKeyArchive,
+    //   });
+    //   if (right) {
+    //     assert.equal(result.body.data.id, partyKeyArchive.atomId);
+    //   } else {
+    //     assert.equal(result.status, 403);
+    //   }
+    // }
 
     // // customActionReview
     // const customActionReviews = [
