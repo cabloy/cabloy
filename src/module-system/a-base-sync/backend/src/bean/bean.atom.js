@@ -696,18 +696,12 @@ module.exports = ctx => {
       return roles;
     }
 
-    _upperCaseFirstChar(str) {
-      if (!str) return '';
-      return str.substring(0, 1).toUpperCase() + str.substring(1);
-    }
-
     _getTableName({ atomClass, mode }) {
-      mode = this._upperCaseFirstChar(mode);
-      if (mode === 'Search') {
-        return atomClass.tableNameSearch || atomClass.tableNameFull || atomClass.tableName;
+      const tableNameModes = atomClass.tableNameModes || {};
+      if (mode === 'search') {
+        return tableNameModes.search || tableNameModes.full || tableNameModes.default || atomClass.tableName;
       }
-      // special: all = list + atomEnabled=0
-      return atomClass[`tableName${mode}`] || atomClass.tableName;
+      return tableNameModes[mode] || tableNameModes.default || atomClass.tableName;
     }
 
   }

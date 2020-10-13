@@ -110,7 +110,7 @@ export default {
     global: false,
   },
   props: {
-    // mode: list/drafts/stars/labels/search/all / select/selectSearch
+    // mode: list/drafts/stars/labels/search / select/selectSearch
     mode: {
       type: String,
     },
@@ -148,7 +148,7 @@ export default {
       return !!this.ordersAll;
     },
     mode2() {
-      if (this.mode === 'select') return 'all';
+      if (this.mode === 'select') return 'default';
       if (this.mode === 'selectSearch') return 'search';
       return this.mode;
     },
@@ -163,7 +163,7 @@ export default {
     },
     atomOrderDefault() {
       let atomOrder;
-      if (this.mode === 'list') {
+      if (this.mode === 'default') {
         atomOrder = {
           name: 'updatedAt',
           by: 'desc',
@@ -206,7 +206,7 @@ export default {
           tableAlias: 'a',
         };
       } else {
-        // default = all
+        // others
         atomOrder = {
           name: 'updatedAt',
           by: 'desc',
@@ -245,15 +245,16 @@ export default {
     onLoadMore({ index }) {
       // options
       let options;
-      if (this.mode === 'list') {
+      if (this.mode === 'default') {
         options = {
-          where: { 'a.atomEnabled': 1 },
+          where: { },
           page: { index },
         };
       } else if (this.mode === 'drafts') {
         options = {
-          where: { 'a.atomEnabled': 0 },
+          where: { },
           page: { index },
+          stage: 'draft',
         };
       } else if (this.mode === 'stars') {
         options = {
@@ -298,8 +299,7 @@ export default {
           page: { index },
         };
       } else {
-        // default = all
-        // special: all = list + atomEnabled=0
+        // other
         options = {
           page: { index },
         };
@@ -401,7 +401,7 @@ export default {
       const action = data.action;
       // create
       if (action.menu === 1 && action.action === 'create') {
-        if (this.mode === 'drafts' || this.mode === 'search' || this.mode === 'all') {
+        if (this.mode === 'drafts' || this.mode === 'search' || this.mode === 'default') {
           this.reload();
         }
         return;

@@ -8,7 +8,9 @@ module.exports = app => {
             bean: 'flowDef',
             title: 'FlowDefinition',
             tableName: 'aFlowDef',
-            tableNameFull: 'aFlowDefViewFull',
+            tableNameModes: {
+              full: 'aFlowDefViewFull',
+            },
           },
           validator: 'flowDef',
           search: {

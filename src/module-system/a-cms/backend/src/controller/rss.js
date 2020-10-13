@@ -21,7 +21,7 @@ module.exports = app => {
           [ 'a.updatedAt', 'desc' ],
         ],
         page: { index: 0 },
-        mode: 'list',
+        mode: 'default',
       };
       // select
       const res = await this.ctx.performAction({

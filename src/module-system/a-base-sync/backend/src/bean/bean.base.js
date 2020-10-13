@@ -281,13 +281,9 @@ module.exports = ctx => {
           title: _atom.title || key,
           public: _atom.public ? 1 : 0,
           meta: _atom.meta,
+          tableName: _atom.tableName,
+          tableNameModes: _atom.tableNameModes,
         };
-        // tableName
-        for (const key in _atom) {
-          if (key.indexOf('tableName') === 0) {
-            atomClass[key] = _atom[key];
-          }
-        }
         // titleLocale
         atomClass.titleLocale = ctx.text(atomClass.title);
         // ok

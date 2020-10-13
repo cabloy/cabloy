@@ -161,7 +161,7 @@ module.exports = app => {
           where: {
             'f.language': language,
           },
-          mode: 'list', // atomEnabled=1
+          mode: 'default',
         },
       });
 
@@ -172,7 +172,7 @@ module.exports = app => {
           where: {
             'f.language': language,
           },
-          mode: 'list', // atomEnabled=1
+          mode: 'default',
           comment: 1,
         },
       });

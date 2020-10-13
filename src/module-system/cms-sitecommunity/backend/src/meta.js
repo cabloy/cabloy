@@ -13,10 +13,13 @@ module.exports = app => {
           info: {
             bean: 'post',
             title: 'Post2',
-            tableName: 'aCmsArticleView',
-            tableNameFull: 'aCmsArticleViewFull',
-            tableNameSearch: 'aCmsArticleViewSearch',
-            tableNameTag: 'aCmsArticleViewTag',
+            tableName: 'aCmsArticle',
+            tableNameModes: {
+              default: 'aCmsArticleView',
+              full: 'aCmsArticleViewFull',
+              search: 'aCmsArticleViewSearch',
+              tag: 'aCmsArticleViewTag',
+            },
             cms: true,
           },
           actions: {

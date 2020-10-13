@@ -19,7 +19,10 @@ module.exports = app => {
             info: {
               bean: 'party',
               title: 'Party',
-              tableName: 'testPartyView',
+              tableName: 'testParty',
+              tableNameModes: {
+                default: 'testPartyView',
+              },
             },
             actions: {
             },
