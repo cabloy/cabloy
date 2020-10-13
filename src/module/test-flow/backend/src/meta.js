@@ -19,8 +19,6 @@ module.exports = app => {
             },
             actions: {
             },
-            flags: {
-            },
             validator: 'trip',
             search: {
               validator: 'tripSearch',

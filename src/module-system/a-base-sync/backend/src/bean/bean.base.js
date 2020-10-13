@@ -8,7 +8,6 @@ const _themesLocales = {};
 const _locales = {};
 const _atomClasses = {};
 const _actions = {};
-const _flags = {};
 const _orders = {};
 const _functions = {};
 const _menus = {};
@@ -124,13 +123,6 @@ module.exports = ctx => {
       if (name) return actions[name];
       const key = Object.keys(actions).find(key => actions[key].code === code);
       return actions[key];
-    }
-
-    flags() {
-      if (!_flags[ctx.locale]) {
-        _flags[ctx.locale] = this._prepareFlags();
-      }
-      return _flags[ctx.locale];
     }
 
     orders() {
@@ -302,33 +294,6 @@ module.exports = ctx => {
         atomClasses[key] = atomClass;
       }
       return atomClasses;
-    }
-
-    _prepareFlags() {
-      const flags = {};
-      for (const relativeName in ctx.app.meta.modules) {
-        const module = ctx.app.meta.modules[relativeName];
-        if (module.main.meta && module.main.meta.base && module.main.meta.base.atoms) {
-          flags[relativeName] = {};
-          for (const atomClassName in module.main.meta.base.atoms) {
-            flags[relativeName][atomClassName] = this._prepareFlagsAtomClass(module, module.main.meta.base.atoms[atomClassName]);
-          }
-        }
-      }
-      return flags;
-    }
-
-    _prepareFlagsAtomClass(module, atomClass) {
-      const flags = {};
-      const _flags = atomClass.flags;
-      for (const key in _flags) {
-        const flag = {
-          title: _flags[key].title,
-        };
-        flag.titleLocale = ctx.text(flag.title);
-        flags[key] = flag;
-      }
-      return flags;
     }
 
     _prepareOrders() {

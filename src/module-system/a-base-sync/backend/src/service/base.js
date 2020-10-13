@@ -18,10 +18,6 @@ module.exports = app => {
       return this.ctx.bean.base.actions();
     }
 
-    flags() {
-      return this.ctx.bean.base.flags();
-    }
-
     orders() {
       return this.ctx.bean.base.orders();
     }

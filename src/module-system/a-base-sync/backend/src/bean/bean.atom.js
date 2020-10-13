@@ -381,13 +381,6 @@ module.exports = ctx => {
       return await this.modelAtom.get({ id: atomId });
     }
 
-    async flag({ key, atom: { atomFlag } /* user*/ }) {
-      await this.modelAtom.update({
-        id: key.atomId,
-        atomFlag,
-      });
-    }
-
     async flow({ key, atom: { atomFlowId } }) {
       await this.modelAtom.update({
         id: key.atomId,
@@ -521,14 +514,13 @@ module.exports = ctx => {
 
     async _add({
       atomClass: { id, atomClassName, atomClassIdParent = 0 },
-      atom: { itemId, atomName, atomFlag = 0, roleIdOwner = 0 },
+      atom: { itemId, atomName, roleIdOwner = 0 },
       user,
     }) {
       let atomClassId = id;
       if (!atomClassId) atomClassId = await this.getAtomClassId({ atomClassName, atomClassIdParent });
       const res = await this.modelAtom.insert({
         atomStage: 0,
-        atomFlag,
         itemId,
         atomClassId,
         atomName,

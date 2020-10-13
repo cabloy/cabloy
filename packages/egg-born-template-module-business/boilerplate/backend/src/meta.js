@@ -11,8 +11,6 @@ module.exports = app => {
           },
           actions: {
           },
-          flags: {
-          },
           validator: '{{atomClassName}}',
           search: {
             validator: '{{atomClassName}}Search',

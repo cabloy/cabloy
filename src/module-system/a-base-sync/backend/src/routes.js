@@ -5,7 +5,6 @@ module.exports = app => {
     { method: 'post', path: 'base/locales', controller: 'base' },
     { method: 'post', path: 'base/atomClasses', controller: 'base' },
     { method: 'post', path: 'base/actions', controller: 'base' },
-    { method: 'post', path: 'base/flags', controller: 'base' },
     { method: 'post', path: 'base/orders', controller: 'base' },
     { method: 'post', path: 'base/menus', controller: 'base' },
     { method: 'post', path: 'base/panels', controller: 'base' },

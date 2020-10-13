@@ -31,7 +31,6 @@ export default function(Vue) {
       modules: null,
       atomClasses: null,
       actions: null,
-      flags: null,
       orders: null,
       functionScenes: {},
       functions: null,
@@ -110,9 +109,6 @@ export default function(Vue) {
       setActions(state, actions) {
         state.actions = actions;
       },
-      setFlags(state, flags) {
-        state.flags = flags;
-      },
       setOrders(state, orders) {
         state.orders = orders;
       },
@@ -185,18 +181,6 @@ export default function(Vue) {
           Vue.prototype.$meta.api.post('/a/base/base/actions').then(data => {
             data = data || {};
             commit('setActions', data);
-            resolve(data);
-          }).catch(err => {
-            reject(err);
-          });
-        });
-      },
-      getFlags({ state, commit }) {
-        return new Promise((resolve, reject) => {
-          if (state.flags) return resolve(state.flags);
-          Vue.prototype.$meta.api.post('/a/base/base/flags').then(data => {
-            data = data || {};
-            commit('setFlags', data);
             resolve(data);
           }).catch(err => {
             reject(err);

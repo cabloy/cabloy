@@ -22,19 +22,6 @@ module.exports = app => {
               tableName: 'testPartyView',
             },
             actions: {
-              review: {
-                code: 101,
-                title: 'Review',
-                flag: '1',
-              },
-            },
-            flags: {
-              1: {
-                title: 'Reviewing',
-              },
-              2: {
-                title: 'Reviewed',
-              },
             },
             validator: 'party',
             search: {

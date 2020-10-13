@@ -161,7 +161,6 @@ const tables = {
             itemId int(11) DEFAULT '0',
             atomEnabled int(11) DEFAULT '0',
             atomFlow int(11) DEFAULT '0',
-            atomFlag int(11) DEFAULT '0',
             atomClassId int(11) DEFAULT '0',
             atomName varchar(255) DEFAULT NULL,
             userIdCreated int(11) DEFAULT '0',

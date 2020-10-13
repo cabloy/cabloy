@@ -108,7 +108,6 @@ module.exports = app => {
           { roleName: 'system', action: 'write', scopeNames: 0 },
           { roleName: 'system', action: 'delete', scopeNames: 0 },
           { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
-          { roleName: 'system', action: 'review', scopeNames: 'authenticated' },
         ];
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'party', roleRights });
       }

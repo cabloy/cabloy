@@ -17,7 +17,6 @@
               <span v-if="item.commentCount>0">💬</span>
               <span v-if="item.commentCount>1">{{`${item.commentCount}&nbsp;`}}</span>
               <f7-badge v-for="flag of getItemMetaFlags(item)" :key="flag">{{flag}}</f7-badge>
-              <f7-badge v-if="item.atomFlag>0">{{getFlagTitle(item)}}</f7-badge>
               <template v-if="item.labels && labels">
                 <f7-badge v-for="label of JSON.parse(item.labels)" :key="label" :style="{backgroundColor:getLabel(label).color}">{{getLabel(label).text}}</f7-badge>
               </template>
@@ -59,7 +58,6 @@
           </div>
           <div slot="after" class="after">
             <f7-badge v-for="flag of getItemMetaFlags(item)" :key="flag">{{flag}}</f7-badge>
-            <f7-badge v-if="item.atomFlag>0">{{getFlagTitle(item)}}</f7-badge>
             <template v-if="item.labels && labels">
               <f7-badge v-for="label of JSON.parse(item.labels)" :key="label" :style="{backgroundColor:getLabel(label).color}">{{getLabel(label).text}}</f7-badge>
             </template>
@@ -107,7 +105,7 @@ import ebAtomClasses from '../../common/atomClasses.js';
 import ebAtomActions from '../../common/atomActions.js';
 import ebAtomOrders from '../../common/atomOrders.js';
 export default {
-  mixins: [ebAtomClasses, ebAtomActions, ebAtomOrders],
+  mixins: [ ebAtomClasses, ebAtomActions, ebAtomOrders ],
   meta: {
     global: false,
   },
@@ -132,7 +130,7 @@ export default {
   data() {
     return {
       radioName: Vue.prototype.$meta.util.nextId('radio'),
-      items: this.itemShow ? [this.itemShow] : [],
+      items: this.itemShow ? [ this.itemShow ] : [],
       atomOrderSelected: null,
       selectedAtomIds: null,
       selectedAtoms: null,
@@ -142,9 +140,6 @@ export default {
   computed: {
     labels() {
       return this.$local.getters('userLabels');
-    },
-    flags() {
-      return this.$local.state.flags;
     },
     user() {
       return this.$store.state.auth.user.op;
@@ -224,7 +219,6 @@ export default {
   },
   created() {
     this.$local.dispatch('getLabels');
-    this.$local.dispatch('getFlags');
   },
   mounted() {
     this.$meta.eventHub.$on('atom:star', this.onStarChanged);
@@ -317,7 +311,7 @@ export default {
       // order
       const atomOrderCurrent = this.atomOrderSelected || this.atomOrderDefault;
       options.orders = [
-        [this.getAtomOrderKey(atomOrderCurrent), atomOrderCurrent.by],
+        [ this.getAtomOrderKey(atomOrderCurrent), atomOrderCurrent.by ],
       ];
       // mode
       options.mode = this.mode2;
@@ -491,11 +485,6 @@ export default {
       if (!atomClass) return summary;
       return `${atomClass.titleLocale} ${summary}`;
     },
-    getFlagTitle(item) {
-      if (!this.flags) return null;
-      const flag = this.flags[item.module][item.atomClassName][item.atomFlag];
-      return flag ? flag.titleLocale : this.$text('Flag Not Found');
-    },
     onItemClick(event, item) {
       if (this.itemShow || this.mode === 'selectSearch') return;
       return this.onAction(event, {
@@ -552,7 +541,7 @@ export default {
     onItemChange(event, item) {
       if (this.params.selectMode === 'single') {
         if (event.target.checked) {
-          this.selectedAtoms = [item];
+          this.selectedAtoms = [ item ];
         }
       } else {
         if (!this.selectedAtoms) this.selectedAtoms = [];
@@ -576,7 +565,7 @@ export default {
       if (!selectedAtoms || selectedAtoms.length === 0) return;
       let needReload = false;
       if (this.params.selectMode === 'single') {
-        this.selectedAtomIds = [selectedAtoms[0].atomId];
+        this.selectedAtomIds = [ selectedAtoms[0].atomId ];
         needReload = true;
       } else {
         if (!this.selectedAtomIds) this.selectedAtomIds = [];
@@ -602,7 +591,7 @@ export default {
       } else {
         this.reload(true);
       }
-    }
+    },
   },
 };
 

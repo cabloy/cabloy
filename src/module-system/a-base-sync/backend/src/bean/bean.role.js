@@ -538,11 +538,16 @@ module.exports = ctx => {
           }
         }
         // add role right
+        let actionCode = ctx.constant.module('a-base').atom.action[roleRight.action];
+        if (!actionCode) {
+          const action = _module.main.meta.base.atoms[atomClassName].actions[roleRight.action];
+          if (!action) throw new Error(`atom action not found: ${atomClassName}.${roleRight.action}`);
+          actionCode = action.code;
+        }
         await this.addRoleRight({
           roleId: role.id,
           atomClassId: atomClass.id,
-          action: ctx.constant.module('a-base').atom.action[roleRight.action] || _module.main.meta.base.atoms[atomClassName]
-            .actions[roleRight.action].code,
+          action: actionCode,
           scope,
         });
       }

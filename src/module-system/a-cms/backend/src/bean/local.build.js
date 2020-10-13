@@ -300,12 +300,12 @@ module.exports = app => {
         atomClass: this.atomClass,
         options: {
           where: {
-            'a.atomFlag': 2,
             'f.language': site.language.current,
           },
           orders: [[ 'a.updatedAt', 'desc' ]],
           page: null,
           mode: 'search',
+          stage: 'archive',
         },
         user: { id: user.id },
         pageForce: false,

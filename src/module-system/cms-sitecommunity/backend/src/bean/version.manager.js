@@ -37,7 +37,6 @@ module.exports = app => {
           { roleName: 'cms-community-writer', action: 'read', scopeNames: 'authenticated' },
           { roleName: 'cms-community-publisher', action: 'read', scopeNames: 'authenticated' },
           { roleName: 'cms-community-publisher', action: 'write', scopeNames: 'authenticated' },
-          { roleName: 'cms-community-publisher', action: 'publish', scopeNames: 'authenticated' },
           { roleName: 'root', action: 'read', scopeNames: 'authenticated' },
         ];
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'post', roleRights });

@@ -25,11 +25,6 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    flags() {
-      const res = this.ctx.service.base.flags();
-      this.ctx.success(res);
-    }
-
     orders() {
       const res = this.ctx.service.base.orders();
       this.ctx.success(res);

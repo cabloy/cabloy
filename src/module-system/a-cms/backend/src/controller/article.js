@@ -12,14 +12,10 @@ module.exports = app => {
       const atomClass = utils.atomClass(this.ctx.request.body.atomClass);
       // options
       const options = this.ctx.request.body.options;
+      // stage
+      options.stage = 'archive';
       // user
       const user = this.ctx.state.user.op;
-      // select
-      // filter drafts
-      options.where = extend(true, options.where, {
-        'a.atomEnabled': 1, // normal mode
-        'a.atomFlag': 2, // published
-      });
       // select
       options.page = this.ctx.bean.util.page(options.page, false);
       const items = await this.ctx.bean.atom.select({ atomClass, options, user, pageForce: false });

@@ -180,7 +180,7 @@ module.exports = app => {
 
       // delete article
       if (atomOld.atomStage === 1) {
-        await this._deleteArticle({ atomClass, key, article: atomOld, inner: atomOld.atomFlag !== 2 });
+        await this._deleteArticle({ atomClass, key, article: atomOld, inner: false });
       }
 
       // super

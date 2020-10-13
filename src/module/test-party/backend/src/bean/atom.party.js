@@ -58,28 +58,6 @@ module.exports = app => {
     async action({ action, atomClass, key, user }) {
       // super
       await super.action({ action, atomClass, key, user });
-      // action
-      if (action === 101) {
-        // change flag
-        await this.ctx.bean.atom.flag({
-          key,
-          atom: { atomFlag: 2 },
-          user,
-        });
-      }
-    }
-
-    async enable({ atomClass, key, atom, user }) {
-      // super
-      await super.enable({ atomClass, key, atom, user });
-      // enable
-      const atomFlag = atom.atomEnabled ? 1 : 0;
-      // change flag
-      await this.ctx.bean.atom.flag({
-        key,
-        atom: { atomFlag },
-        user,
-      });
     }
 
     _getMeta(item) {

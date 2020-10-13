@@ -10,10 +10,6 @@ module.exports = app => {
             tableName: 'aFlowDef',
             tableNameFull: 'aFlowDefViewFull',
           },
-          actions: {
-          },
-          flags: {
-          },
           validator: 'flowDef',
           search: {
             validator: 'flowDefSearch',

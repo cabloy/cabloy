@@ -116,7 +116,7 @@ module.exports = app => {
       const res = await this.ctx.model.query(`
         select count(*) articleCount from aCmsArticleTagRef a
           inner join aAtom b on a.atomId=b.id
-          where a.iid=? and a.tagId=? and b.iid=? and b.deleted=0 and b.atomFlag=2
+          where a.iid=? and a.tagId=? and b.iid=? and b.deleted=0 and b.atomStage=1
         `,
       [ this.ctx.instance.id, id, this.ctx.instance.id ]);
       return res[0].articleCount;

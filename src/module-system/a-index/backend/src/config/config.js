@@ -13,7 +13,7 @@ module.exports = appInfo => {
       aAuthSimple: 'createdAt,updatedAt,userId',
     },
     'a-base': {
-      aAtom: 'createdAt,updatedAt,itemId,atomFlag,atomName,userIdCreated,atomClassId',
+      aAtom: 'createdAt,updatedAt,itemId,atomStage,atomFlowId,atomClassId,atomName,userIdCreated,userIdUpdated',
       aAtomAction: 'createdAt,updatedAt,atomClassId+code,name',
       aAtomClass: 'createdAt,updatedAt,module+atomClassName',
       aAtomLabel: 'createdAt,updatedAt,userId,atomId',

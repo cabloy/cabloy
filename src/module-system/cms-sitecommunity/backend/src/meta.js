@@ -20,19 +20,6 @@ module.exports = app => {
             cms: true,
           },
           actions: {
-            publish: {
-              code: 101,
-              title: 'Publish',
-              flag: '1,2',
-            },
-          },
-          flags: {
-            1: {
-              title: 'Publishing',
-            },
-            2: {
-              title: 'Published',
-            },
           },
           validator: 'post',
           search: {
