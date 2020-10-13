@@ -20,7 +20,7 @@ module.exports = app => {
       const userIds = this.ctx.cache.mem.get('userIds');
 
       // user->atom
-      await this._testCheckList(userIds, [
+      await this._testCheckList('archive', userIds, [
         [ 'Tom', 0 ],
         [ 'Jane', 0 ],
         [ 'Jimmy', 0 ],
@@ -32,35 +32,36 @@ module.exports = app => {
 
       // Tom add party
       const roleIdOwnerTom = await this.getRoleIdOwner(atomClass, userIds.Tom);
-      const partyKey = await this.ctx.bean.atom.create({
+      const partyKeyDraft = await this.ctx.bean.atom.create({
         atomClass,
         roleIdOwner: roleIdOwnerTom,
         user: { id: userIds.Tom },
       });
       await this.ctx.bean.atom.write({
-        key: partyKey,
+        key: partyKeyDraft,
         item: { atomName: 'test:all', personCount: 3 },
         user: { id: userIds.Tom },
       });
 
-      await this._testCheckList(userIds, [
+      await this._testCheckList('draft', userIds, [
         [ 'Tom', 1 ],
         [ 'Jane', 0 ],
         [ 'Jimmy', 0 ],
         [ 'Smith', 0 ],
-        [ '', 1 ],
+        [ '', 0 ],
       ], (actual, expected, userName) => {
         assert.equal(actual, expected, userName);
       });
 
       // Tom enable(submit) party
-      await this.ctx.bean.atom.submit({
-        key: partyKey,
-        // options: { ignoreFlow: true },
+      const res = await this.ctx.bean.atom.submit({
+        key: partyKeyDraft,
+        options: { ignoreFlow: true },
         user: { id: userIds.Tom },
       });
+      const partyKeyArchive = res.archive.key;
 
-      await this._testCheckList(userIds, [
+      await this._testCheckList('archive', userIds, [
         [ 'Tom', 1 ],
         [ 'Jane', 1 ],
         [ 'Jimmy', 1 ],
@@ -72,13 +73,13 @@ module.exports = app => {
 
       // Tom update party
       await this.ctx.bean.atom.write({
-        key: partyKey,
+        key: partyKeyDraft,
         item: { personCount: 8 },
         user: { id: userIds.Tom },
       });
 
       // Tom get party
-      const party = await this.ctx.bean.atom.read({ key: partyKey, user: { id: userIds.Tom } });
+      const party = await this.ctx.bean.atom.read({ key: partyKeyDraft, user: { id: userIds.Tom } });
       assert.equal(party.personCount, 8);
 
       // Tom list party
@@ -88,13 +89,14 @@ module.exports = app => {
           where: { atomName: { val: 'test:all', op: 'likeRight' } },
           orders: [[ 'a.createdAt', 'desc' ]],
           page: { index: 0, size: 0 },
+          stage: 'archive',
         },
         user: { id: userIds.Tom },
       });
       assert.equal(parties.length, 1);
 
       // checkRightRead
-      const checkRightReads = [[ 'Tom', partyKey.atomId, true ]];
+      const checkRightReads = [[ 'Tom', partyKeyArchive.atomId, true ]];
       for (const [ userName, atomId, right ] of checkRightReads) {
         const res = await this.ctx.bean.atom.checkRightRead({
           atom: { id: atomId },
@@ -104,7 +106,7 @@ module.exports = app => {
       }
 
       // checkRightWrite
-      const checkRightWrites = [[ 'Tom', partyKey.atomId, true ], [ 'Tomson', partyKey.atomId, false ]];
+      const checkRightWrites = [[ 'Tom', partyKeyArchive.atomId, true ], [ 'Tomson', partyKeyArchive.atomId, false ]];
       for (const [ userName, atomId, right ] of checkRightWrites) {
         const res = await this.ctx.bean.atom.checkRightUpdate({
           atom: { id: atomId, action: this.ctx.constant.module('a-base').atom.action.write },
@@ -114,7 +116,7 @@ module.exports = app => {
       }
 
       // checkRightDelete
-      const checkRightDeletes = [[ 'Tom', partyKey.atomId, true ], [ 'Tomson', partyKey.atomId, false ]];
+      const checkRightDeletes = [[ 'Tom', partyKeyArchive.atomId, true ], [ 'Tomson', partyKeyArchive.atomId, false ]];
       for (const [ userName, atomId, right ] of checkRightDeletes) {
         const res = await this.ctx.bean.atom.checkRightUpdate({
           atom: { id: atomId, action: this.ctx.constant.module('a-base').atom.action.delete },
@@ -133,47 +135,47 @@ module.exports = app => {
         assert.equal(!!res, right, userName);
       }
 
-      // checkRightAction:review(flag=1)
-      const checkRightActions_1 = [[ 'Tom', partyKey.atomId, false ], [ 'Jane', partyKey.atomId, true ]];
-      for (const [ userName, atomId, right ] of checkRightActions_1) {
-        const res = await this.ctx.bean.atom.checkRightAction({
-          atom: { id: atomId, action: 101 },
-          user: { id: userIds[userName] },
-        });
-        assert.equal(!!res, right, userName);
-      }
+      // // checkRightAction:review(flag=1)
+      // const checkRightActions_1 = [[ 'Tom', partyKey.atomId, false ], [ 'Jane', partyKey.atomId, true ]];
+      // for (const [ userName, atomId, right ] of checkRightActions_1) {
+      //   const res = await this.ctx.bean.atom.checkRightAction({
+      //     atom: { id: atomId, action: 101 },
+      //     user: { id: userIds[userName] },
+      //   });
+      //   assert.equal(!!res, right, userName);
+      // }
 
-      // action: review
-      await this.ctx.bean.atom.action({
-        action: 101,
-        key: partyKey,
-        user: { id: userIds.Jane },
-      });
+      // // action: review
+      // await this.ctx.bean.atom.action({
+      //   action: 101,
+      //   key: partyKey,
+      //   user: { id: userIds.Jane },
+      // });
 
-      // checkRightAction:review(flag=2)
-      const checkRightActions_2 = [[ 'Tom', partyKey.atomId, false ], [ 'Jane', partyKey.atomId, false ]];
-      for (const [ userName, atomId, right ] of checkRightActions_2) {
-        const res = await this.ctx.bean.atom.checkRightAction({
-          atom: { id: atomId, action: 101 },
-          user: { id: userIds[userName] },
-        });
-        assert.equal(!!res, right, userName);
-      }
+      // // checkRightAction:review(flag=2)
+      // const checkRightActions_2 = [[ 'Tom', partyKey.atomId, false ], [ 'Jane', partyKey.atomId, false ]];
+      // for (const [ userName, atomId, right ] of checkRightActions_2) {
+      //   const res = await this.ctx.bean.atom.checkRightAction({
+      //     atom: { id: atomId, action: 101 },
+      //     user: { id: userIds[userName] },
+      //   });
+      //   assert.equal(!!res, right, userName);
+      // }
 
-      // action: review again
-      await this.ctx.bean.atom.action({
-        action: 101,
-        key: partyKey,
-        user: { id: userIds.Jane },
-      });
+      // // action: review again
+      // await this.ctx.bean.atom.action({
+      //   action: 101,
+      //   key: partyKey,
+      //   user: { id: userIds.Jane },
+      // });
 
       // Tom delete party
       await this.ctx.bean.atom.delete({
-        key: partyKey,
+        key: partyKeyArchive,
         user: { id: userIds.Tom },
       });
 
-      await this._testCheckList(userIds, [
+      await this._testCheckList('archive', userIds, [
         [ 'Tom', 0 ],
         [ 'Jane', 0 ],
         [ 'Jimmy', 0 ],
@@ -187,7 +189,7 @@ module.exports = app => {
       this.ctx.success();
     }
 
-    async _testCheckList(userIds, userAtoms, cb) {
+    async _testCheckList(stage, userIds, userAtoms, cb) {
       for (const [ userName, atomCountExpected ] of userAtoms) {
         const list = await this.ctx.bean.atom.select({
           options: {
@@ -197,6 +199,7 @@ module.exports = app => {
             },
             orders: null,
             page: null,
+            stage,
           },
           user: userName ? { id: userIds[userName] } : null,
         });
