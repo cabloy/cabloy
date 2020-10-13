@@ -62,7 +62,9 @@ module.exports = app => {
 
     async submit() {
       const options = this.ctx.request.body.options || {};
-      options.ignoreFlow = false;
+      if (!app.meta.isTest) {
+        options.ignoreFlow = false;
+      }
       // submit
       const res = await this.ctx.service.atom.submit({
         key: this.ctx.request.body.key,
