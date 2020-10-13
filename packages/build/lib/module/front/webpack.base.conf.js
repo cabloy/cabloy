@@ -30,19 +30,39 @@ module.exports = context => {
         },
         {
           test: /\.esm\.js$/,
-          loader: 'babel-loader',
+          use: {
+            loader: 'babel-loader',
+            options: context.utils.babelLoaderOptions(),
+          },
         },
         {
           test: /\.esm\.bundle\.js$/,
-          loader: 'babel-loader',
+          use: {
+            loader: 'babel-loader',
+            options: context.utils.babelLoaderOptions(),
+          },
         },
         {
           test: /\.module\.js$/,
-          loader: 'babel-loader',
+          use: {
+            loader: 'babel-loader',
+            options: context.utils.babelLoaderOptions(),
+          },
         },
         {
           test: /\.js$/,
-          loader: 'babel-loader',
+          use: {
+            loader: 'babel-loader',
+            options: context.utils.babelLoaderOptions(),
+          },
+          include: [ path.join(context.modulePath, 'front/src') ],
+        },
+        {
+          test: /\.jsx$/,
+          use: {
+            loader: 'babel-loader',
+            options: context.utils.babelLoaderOptions(),
+          },
           include: [ path.join(context.modulePath, 'front/src') ],
         },
         {

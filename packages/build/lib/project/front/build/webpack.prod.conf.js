@@ -66,18 +66,7 @@ module.exports = context => {
           ],
           use: {
             loader: 'babel-loader',
-            options: {
-              presets: [
-                [
-                  '@babel/preset-env',
-                  {
-                    modules: false,
-                    useBuiltIns: false,
-                  },
-                ],
-              ],
-              plugins: [ '@babel/plugin-syntax-dynamic-import' ],
-            },
+            options: context.utils.babelLoaderOptions(),
           },
         },
         ...context.utils.styleLoaders({

@@ -40,6 +40,13 @@ module.exports = context => {
           loader: 'vue-loader',
         },
         {
+          test: /\.jsx$/,
+          use: {
+            loader: 'babel-loader',
+            options: context.utils.babelLoaderOptions(),
+          },
+        },
+        {
           test: /\.(png|jpe?g|gif|svg|webp)(\?.*)?$/,
           loader: 'url-loader',
           options: {

@@ -67,6 +67,22 @@ module.exports = context => {
       const pkg = require(path.join(context.modulePath, 'package.json'));
       return mparse.parseInfo(mparse.parseName(pkg.name));
     },
+    babelLoaderOptions() {
+      return {
+        babelrc: false,
+        presets: [
+          '@vue/babel-preset-jsx',
+          [
+            '@babel/preset-env',
+            {
+              modules: false,
+              useBuiltIns: false,
+            },
+          ],
+        ],
+        plugins: [ '@babel/plugin-syntax-dynamic-import' ],
+      };
+    },
   };
 };
 

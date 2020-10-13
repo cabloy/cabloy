@@ -3,6 +3,10 @@ function load(name) {
   return require(`./pages/${name}.vue`).default;
 }
 
+function loadjsx(name) {
+  return require(`./pages/${name}.jsx`).default;
+}
+
 function loadKitchenSink(name) {
   return require(`./kitchen-sink/pages/${name}.vue`).default;
 }
@@ -12,6 +16,7 @@ function loadKitchenSinkFramework7(name) {
 }
 
 export default [
+  { path: 'jsx', component: loadjsx('jsx') },
   // cabloy
   { path: 'kitchen-sink/index', component: loadKitchenSink('index') },
   { path: 'kitchen-sink/about', component: loadKitchenSink('about') },

@@ -1,7 +1,6 @@
 const path = require('path');
 // const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const fse = require('fs-extra');
-const chalk = require('chalk');
 const mglob = require('egg-born-mglob');
 
 module.exports = context => {
@@ -157,6 +156,22 @@ export default {
       const index = path.join(context.config.projectPath, 'src/front/index.ejs');
       if (fse.existsSync(index)) return index;
       return path.join(__dirname, '../index.ejs');
+    },
+    babelLoaderOptions() {
+      return {
+        babelrc: false,
+        presets: [
+          '@vue/babel-preset-jsx',
+          [
+            '@babel/preset-env',
+            {
+              modules: false,
+              useBuiltIns: false,
+            },
+          ],
+        ],
+        plugins: [ '@babel/plugin-syntax-dynamic-import' ],
+      };
     },
   };
 };
