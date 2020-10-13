@@ -23,7 +23,7 @@ module.exports = app => {
       const roleIdOwner = await this.getRoleIdOwner(atomClass, user.id);
       const partyKeyDraft = await this.ctx.bean.atom.create({
         atomClass,
-        roleIdOwner,
+        // roleIdOwner,
         user,
       });
 

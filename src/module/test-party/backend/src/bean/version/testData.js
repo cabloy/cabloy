@@ -32,6 +32,7 @@ const users = [
 const roleRights = [
   { roleName: 'family', action: 'create' },
   { roleName: 'family', action: 'read', scopeNames: 'family' },
+  { roleName: 'authenticated', action: 'read', scopeNames: 0 },
   { roleName: 'authenticated', action: 'write', scopeNames: 0 },
   { roleName: 'authenticated', action: 'delete', scopeNames: 0 },
   { roleName: 'consultant', action: 'read', scopeNames: 'family' },
