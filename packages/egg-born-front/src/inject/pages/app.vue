@@ -1,11 +1,11 @@
 <script>
 import Vue from 'vue';
 const F7Locales = {
-  dialog: ['buttonCancel', 'buttonOk', 'passwordPlaceholder', 'preloaderTitle', 'progressTitle', 'usernamePlaceholder'],
-  picker: ['toolbarCloseText'],
-  colorPicker: ['navbarTitleText', 'navbarCloseText'],
-  calendar: ['timePickerPlaceholder', 'headerPlaceholder', 'toolbarCloseText'],
-  smartSelect: ['pageBackLinkText', 'popupCloseLinkText', 'sheetCloseLinkText', 'searchbarPlaceholder', 'searchbarDisableText'],
+  dialog: [ 'buttonCancel', 'buttonOk', 'passwordPlaceholder', 'preloaderTitle', 'progressTitle', 'usernamePlaceholder' ],
+  picker: [ 'toolbarCloseText' ],
+  colorPicker: [ 'navbarTitleText', 'navbarCloseText' ],
+  calendar: [ 'timePickerPlaceholder', 'headerPlaceholder', 'toolbarCloseText' ],
+  smartSelect: [ 'pageBackLinkText', 'popupCloseLinkText', 'sheetCloseLinkText', 'searchbarPlaceholder', 'searchbarDisableText' ],
 };
 export default {
   render(c) {
@@ -25,11 +25,11 @@ export default {
         },
         on: {
           click: this.onClickTryAgain,
-        }
-      })
+        },
+      });
       const elErrorContainer = c('div', {
         staticClass: 'eb-init-error-container',
-      }, [c('div', [elError, elButton])]);
+      }, [ c('div', [ elError, elButton ]) ]);
       children.push(elErrorContainer);
     }
     // app
@@ -37,7 +37,7 @@ export default {
       staticClass: '',
       props: { params: this.$root.$options.framework7 },
     }, children);
-    return c('div', [app]);
+    return c('div', [ app ]);
   },
   data() {
     return {
@@ -285,7 +285,7 @@ export default {
     onClickTryAgain() {
       this.error = null;
       this._authEchoInit();
-    }
+    },
   },
   beforeDestroy() {
     this.$f7.off('resize', this.onResize);
