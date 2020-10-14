@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <atoms ref="list" :atomClass="atomClass" :where="where" :params="params" :scene="scene" :mode="mode"></atoms>
+    <atoms ref="list" :atomClass="atomClass" :where="where" :params="params" :scene="scene" :mode="mode" :layout="layout"></atoms>
   </eb-page>
 </template>
 <script>
@@ -18,12 +18,14 @@ export default {
     const params = (query && query.params) ? JSON.parse(query.params) : null;
     const scene = query && query.scene;
     const mode = query && query.mode;
+    const layout = query && query.mode;
     return {
       atomClass,
       where,
       params,
       scene,
       mode,
+      layout,
     };
   },
   created() {

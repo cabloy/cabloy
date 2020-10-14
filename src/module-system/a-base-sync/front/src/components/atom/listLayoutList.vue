@@ -1,6 +1,6 @@
 <template>
   <div>
-
+    {{this.layoutManager.atomClass}}
   </div>
 </template>
 <script>
@@ -9,21 +9,7 @@ export default {
     global: false,
   },
   props: {
-    // default/select/search
-    scene: {
-      type: String,
-    },
-    // mode: default/full/search/tag
-    mode: {
-      type: String,
-    },
-    atomClass: {
-      type: Object,
-    },
-    where: {
-      type: Object,
-    },
-    params: {
+    layoutManager: {
       type: Object,
     },
   },

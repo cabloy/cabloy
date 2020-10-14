@@ -14,4 +14,24 @@ export default {
       default: avatarUser,
     },
   },
+  atom: {
+    list: {
+      layout: {
+        list: {
+          component: {
+            module: 'a-base',
+            name: 'listLayoutList',
+          },
+          blocks: {
+            title: {
+              component: {
+                module: 'a-base',
+                name: 'listLayoutBlockTitle',
+              },
+            },
+          },
+        },
+      },
+    },
+  },
 };
