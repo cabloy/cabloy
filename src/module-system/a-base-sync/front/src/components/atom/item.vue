@@ -17,7 +17,7 @@
       </eb-validate>
       <f7-popover :id="popoverId">
         <f7-list v-if="showPopover" inset>
-          <eb-list-button v-if="findAction('write') && item.atomEnabled===0" popover-close context="submit" :onPerform="onAction">{{$text('Submit')}}</eb-list-button>
+          <eb-list-button v-if="findAction('write') && item.atomStage===0" popover-close context="submit" :onPerform="onAction">{{$text('Submit')}}</eb-list-button>
           <eb-list-button v-for="action of actions" :key="action.id" v-if="action.name!=='write'" popover-close :context="action" :onPerform="onAction">{{getActionTitle(action)}}</eb-list-button>
         </f7-list>
       </f7-popover>
@@ -34,7 +34,7 @@ import atoms from './list.vue';
 import ebAtomClasses from '../../common/atomClasses.js';
 import ebAtomActions from '../../common/atomActions.js';
 export default {
-  mixins: [ebAtomClasses, ebAtomActions],
+  mixins: [ ebAtomClasses, ebAtomActions ],
   meta: {
     global: false,
   },
@@ -75,7 +75,7 @@ export default {
     showPopover() {
       if (!this.ready) return false;
       // submit
-      const submit = this.findAction('write') && this.item.atomEnabled === 0;
+      const submit = this.findAction('write') && this.item.atomStage === 0;
       if (submit) return true;
       // others
       for (const action of this.actions) {
