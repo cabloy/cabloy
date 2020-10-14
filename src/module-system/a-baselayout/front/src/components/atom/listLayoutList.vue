@@ -1,6 +1,6 @@
 <template>
   <div>
-    {{this.layoutManager.atomClass}}
+    {{this.layoutConfig}}
   </div>
 </template>
 <script>
@@ -10,6 +10,9 @@ export default {
   },
   props: {
     layoutManager: {
+      type: Object,
+    },
+    layoutConfig: {
       type: Object,
     },
   },

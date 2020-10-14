@@ -62,6 +62,7 @@ export default {
           options: {
             props: {
               layoutManager: this,
+              layoutConfig: this.layoutConfig,
             },
           },
         },
