@@ -13,9 +13,9 @@
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 import ebAtomClasses from '../../common/atomClasses.js';
-import atoms from '../../components/atom/list.vue';
+import atoms from '../../components/atom/listLayoutManager.vue';
 export default {
-  mixins: [ebPageContext, ebAtomClasses],
+  mixins: [ ebPageContext, ebAtomClasses ],
   components: {
     atoms,
   },
@@ -51,7 +51,7 @@ export default {
     // params
     let selectedAtomIds;
     if (contextParams.selectMode === 'single') {
-      selectedAtomIds = contextParams.selectedAtomId ? [contextParams.selectedAtomId] : null;
+      selectedAtomIds = contextParams.selectedAtomId ? [ contextParams.selectedAtomId ] : null;
     } else {
       selectedAtomIds = contextParams.selectedAtomIds ? contextParams.selectedAtomIds.concat() : null;
     }

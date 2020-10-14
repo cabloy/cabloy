@@ -1,5 +1,5 @@
-import tripItem from './components/trip/item.vue';
+import purchaseOrderItem from './components/purchaseOrder/item.vue';
 
 export default {
-  tripItem,
+  purchaseOrderItem,
 };

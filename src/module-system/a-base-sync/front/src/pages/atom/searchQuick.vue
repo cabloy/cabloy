@@ -6,9 +6,9 @@
 <script>
 import Vue from 'vue';
 import ebAtomClasses from '../../common/atomClasses.js';
-import atoms from '../../components/atom/list.vue';
+import atoms from '../../components/atom/listLayoutManager.vue';
 export default {
-  mixins: [ebAtomClasses],
+  mixins: [ ebAtomClasses ],
   components: {
     atoms,
   },
@@ -60,10 +60,10 @@ export default {
       const url = this.$meta.util.combineQueries('/a/base/atom/search', this.queries);
       this.$view.navigate(url, {
         target: '_self',
-        //reloadCurrent: true
+        // reloadCurrent: true
       });
-    }
-  }
+    },
+  },
 };
 
 </script>
