@@ -9,7 +9,7 @@ class Listener {
   async onNodeEnter(contextNode) {
     if (contextNode._nodeRef.id === 'startEvent_1') {
       const flowDefKey = this.context.atom.flowDefKey;
-      assert.equal(flowDefKey, '_set01_startEventAtom');
+      assert.equal(flowDefKey, 'set01_startEventAtom');
     }
   }
 

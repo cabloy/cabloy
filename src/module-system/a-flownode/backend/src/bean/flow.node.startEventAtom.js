@@ -82,7 +82,7 @@ module.exports = ctx => {
         flowDefId: _condition.flowDefId,
         startEventId: _condition.startEventId,
         flowUserId: userId,
-        flowAtomId: atom.id,
+        flowAtomId: atom.atomId,
       });
       // ok
       return flowInstance;

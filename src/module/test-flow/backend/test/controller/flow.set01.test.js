@@ -32,13 +32,21 @@ describe.only('flow.set01', () => {
       },
     });
     assert(result.body.code === 0);
-    const keyArchive = result.body.data.archive.key;
+    const flowId = result.body.data.flow.id;
 
-    // read
-    result = await app.httpRequest().post(mockUrl('/a/base/atom/read')).send({
-      key: keyArchive,
+    // select
+    result = await app.httpRequest().post(mockUrl('/a/base/atom/select')).send({
+      atomClass: { module: atomClassModule, atomClassName, atomClassIdParent: 0 },
+      options: {
+        where: {
+          atomFlowId: flowId,
+        },
+        stage: 'archive',
+      },
     });
     assert(result.body.code === 0);
+    const archive = result.body.data.list[0];
+    const keyArchive = { atomId: archive.atomId };
 
     // delete
     result = await app.httpRequest().post(mockUrl('/a/base/atom/delete')).send({

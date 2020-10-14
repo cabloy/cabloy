@@ -16,6 +16,9 @@ module.exports = ctx => {
       });
     }
 
+    get modelAtom() {
+      return ctx.model.module('a-base').atom;
+    }
     get modelFlow() {
       return ctx.model.module(moduleInfo.relativeName).flow;
     }
@@ -103,6 +106,15 @@ module.exports = ctx => {
       // flow history
       this.context._flowHistory.flowStatus = this.context._flow.flowStatus;
       await this.modelFlowHistory.update(this.context._flowHistory);
+      // atom
+      if (this.context._flow.flowAtomId) {
+        // _submitDirect
+        await ctx.bean.atom._submitDirect({
+          key: { atomId: this.context._flow.flowAtomId },
+          item: this.context._atom,
+          user: { id: this.context._atom.userIdUpdated },
+        });
+      }
     }
 
     async _createFlow({ flowAtomId, flowVars, flowUserId }) {
@@ -121,6 +133,11 @@ module.exports = ctx => {
       // flowHistory
       data.flowId = flowId;
       await this.modelFlowHistory.insert(data);
+      // atom
+      await this.modelAtom.update({
+        id: flowAtomId,
+        atomFlowId: flowId,
+      });
       // ok
       return flowId;
     }
