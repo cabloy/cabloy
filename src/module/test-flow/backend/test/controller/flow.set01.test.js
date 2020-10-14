@@ -6,7 +6,7 @@ describe('flow.set01', () => {
 
     // atomClass info
     const atomClassModule = mockInfo().relativeName;
-    const atomClassName = 'trip';
+    const atomClassName = 'purchaseOrder';
 
     // login as root
     await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({

@@ -5,8 +5,8 @@ module.exports = app => {
     async create({ atomClass, item, user }) {
       // super
       const key = await super.create({ atomClass, item, user });
-      // add trip
-      const res = await this.ctx.model.trip.insert({
+      // add purchaseOrder
+      const res = await this.ctx.model.purchaseOrder.insert({
         atomId: key.atomId,
       });
       // return key
@@ -29,15 +29,15 @@ module.exports = app => {
     async write({ atomClass, key, item, user }) {
       // super
       await super.write({ atomClass, key, item, user });
-      // update trip
-      const data = await this.ctx.model.trip.prepareData(item);
+      // update purchaseOrder
+      const data = await this.ctx.model.purchaseOrder.prepareData(item);
       data.id = key.itemId;
-      await this.ctx.model.trip.update(data);
+      await this.ctx.model.purchaseOrder.update(data);
     }
 
     async delete({ atomClass, key, user }) {
-      // delete trip
-      await this.ctx.model.trip.delete({
+      // delete purchaseOrder
+      await this.ctx.model.purchaseOrder.delete({
         id: key.itemId,
       });
       // super
@@ -47,11 +47,6 @@ module.exports = app => {
     async action({ action, atomClass, key, user }) {
       // super
       await super.action({ action, atomClass, key, user });
-    }
-
-    async enable({ atomClass, key, atom, user }) {
-      // super
-      await super.enable({ atomClass, key, atom, user });
     }
 
   }

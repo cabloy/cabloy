@@ -1,11 +1,11 @@
 module.exports = app => {
   const schemas = {};
-  // trip
-  schemas.trip = {
+  // purchase order
+  schemas.purchaseOrder = {
     type: 'object',
     meta: {
       custom: {
-        // component: 'tripItem',
+        // component: 'purchaseOrderItem',
       },
     },
     properties: {
@@ -22,8 +22,8 @@ module.exports = app => {
       },
     },
   };
-  // trip search
-  schemas.tripSearch = {
+  // purchase order search
+  schemas.purchaseOrderSearch = {
     type: 'object',
     properties: {
       description: {

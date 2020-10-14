@@ -1,8 +1,8 @@
-const trip = require('./model/trip.js');
+const purchaseOrder = require('./model/purchaseOrder.js');
 
 module.exports = app => {
   const models = {
-    trip,
+    purchaseOrder,
   };
   return models;
 };

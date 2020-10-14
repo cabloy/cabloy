@@ -33,7 +33,7 @@ module.exports = app => {
           options: {
             atom: {
               module: moduleInfo.relativeName,
-              atomClassName: 'trip',
+              atomClassName: 'purchaseOrder',
             },
             conditionExpression: 'atom.atomName===\'startEventAtom-test\'',
           },

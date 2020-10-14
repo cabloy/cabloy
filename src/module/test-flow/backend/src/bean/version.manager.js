@@ -3,9 +3,9 @@ module.exports = app => {
 
     async update(options) {
       if (options.version === 1) {
-        // create table: testTrip
+        // create table: testFlowPurchaseOrder
         const sql = `
-          CREATE TABLE testTrip (
+          CREATE TABLE testFlowPurchaseOrder (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -30,7 +30,7 @@ module.exports = app => {
           { roleName: 'authenticated', action: 'read', scopeNames: 0 },
           { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
         ];
-        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'trip', roleRights });
+        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'purchaseOrder', roleRights });
       }
     }
 

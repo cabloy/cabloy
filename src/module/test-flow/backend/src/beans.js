@@ -1,5 +1,5 @@
 const versionManager = require('./bean/version.manager.js');
-const atomTrip = require('./bean/atom.trip.js');
+const atomPurchaseOrder = require('./bean/atom.purchaseOrder.js');
 const flowServiceTest = require('./bean/flow.service.test.js');
 const flowServiceStartEventTimer = require('./bean/flow.service.startEventTimer.js');
 
@@ -11,9 +11,9 @@ module.exports = app => {
       bean: versionManager,
     },
     // atom
-    'atom.trip': {
+    'atom.purchaseOrder': {
       mode: 'app',
-      bean: atomTrip,
+      bean: atomPurchaseOrder,
     },
     // flow
     'flow.service.test': {

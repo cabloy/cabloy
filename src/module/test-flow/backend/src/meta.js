@@ -11,35 +11,35 @@ module.exports = app => {
     extend(true, meta, {
       base: {
         atoms: {
-          trip: {
+          purchaseOrder: {
             info: {
-              bean: 'trip',
-              title: 'Trip',
-              tableName: 'testTrip',
+              bean: 'purchaseOrder',
+              title: 'Purchase Order',
+              tableName: 'testFlowPurchaseOrder',
             },
             actions: {
             },
-            validator: 'trip',
+            validator: 'purchaseOrder',
             search: {
-              validator: 'tripSearch',
+              validator: 'purchaseOrderSearch',
             },
           },
         },
         functions: {
-          createTrip: {
-            title: 'Create Trip',
+          createPurchaseOrder: {
+            title: 'Create Purchase Order',
             scene: 'create',
             autoRight: 1,
-            atomClassName: 'trip',
+            atomClassName: 'purchaseOrder',
             action: 'create',
             sorting: 1,
             menu: 1,
           },
-          listTrip: {
-            title: 'Trip List',
+          listPurchaseOrder: {
+            title: 'Purchase Order List',
             scene: 'list',
             autoRight: 1,
-            atomClassName: 'trip',
+            atomClassName: 'purchaseOrder',
             action: 'read',
             sorting: 1,
             menu: 1,
@@ -48,17 +48,17 @@ module.exports = app => {
       },
       validation: {
         validators: {
-          trip: {
-            schemas: 'trip',
+          purchaseOrder: {
+            schemas: 'purchaseOrder',
           },
-          tripSearch: {
-            schemas: 'tripSearch',
+          purchaseOrderSearch: {
+            schemas: 'purchaseOrderSearch',
           },
         },
         keywords: {},
         schemas: {
-          trip: schemas.trip,
-          tripSearch: schemas.tripSearch,
+          purchaseOrder: schemas.purchaseOrder,
+          purchaseOrderSearch: schemas.purchaseOrderSearch,
         },
       },
       flow: {

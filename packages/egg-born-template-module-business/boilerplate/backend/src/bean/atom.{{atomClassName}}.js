@@ -49,11 +49,6 @@ module.exports = app => {
       await super.action({ action, atomClass, key, user });
     }
 
-    async enable({ atomClass, key, atom, user }) {
-      // super
-      await super.enable({ atomClass, key, atom, user });
-    }
-
   }
 
   return Atom;
