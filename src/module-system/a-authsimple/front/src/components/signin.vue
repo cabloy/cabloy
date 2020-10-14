@@ -63,8 +63,8 @@ export default {
       },
       captchaContainerOptions: {
         props: {
-          module: "a-authsimple",
-          sceneName: "signin",
+          module: 'a-authsimple',
+          sceneName: 'signin',
         },
       },
     };
