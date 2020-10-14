@@ -8,8 +8,8 @@ class Listener {
 
   async onNodeEnter(contextNode) {
     if (contextNode._nodeRef.id === 'startEvent_1') {
-      const atomName = this.context.atom.atomName;
-      assert.equal(atomName, 'startEventAtom-test');
+      const flowDefKey = this.context.atom.flowDefKey;
+      assert.equal(flowDefKey, '_set01_startEventAtom');
     }
   }
 
@@ -35,7 +35,7 @@ module.exports = app => {
               module: moduleInfo.relativeName,
               atomClassName: 'purchaseOrder',
             },
-            conditionExpression: 'atom.atomName===\'startEventAtom-test\'',
+            conditionExpression: 'atom.flowDefKey===\'set01_startEventAtom\'',
           },
         },
         {

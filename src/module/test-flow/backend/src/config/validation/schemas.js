@@ -20,6 +20,11 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Description',
       },
+      flowDefKey: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Flow Definition',
+      },
     },
   };
   // purchase order search
