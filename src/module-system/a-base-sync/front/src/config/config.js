@@ -19,13 +19,13 @@ export default {
       layout: {
         list: {
           component: {
-            module: 'a-base',
+            module: 'a-baselayout',
             name: 'listLayoutList',
           },
           blocks: {
             title: {
               component: {
-                module: 'a-base',
+                module: 'a-baselayout',
                 name: 'listLayoutBlockTitle',
               },
             },
