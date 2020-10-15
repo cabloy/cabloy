@@ -6,6 +6,9 @@ export default {
     layoutManager: {
       type: Object,
     },
+    layout: {
+      type: Object,
+    },
     blockConfig: {
       type: Object,
     },
@@ -29,7 +32,7 @@ export default {
       return this.$meta.util.combineImageUrl(media, 32);
     },
     _renderList() {
-      const items = [{ atomId: 1 }];// this.layoutManager.items;
+      const items = [{ atomId: 1 }];// this.layout.items;
       const children = [];
       for (const item of items) {
         let domMedia;

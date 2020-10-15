@@ -12,15 +12,23 @@ export default {
   },
   data() {
     return {
+      items: [],
     };
   },
   created() {
   },
   methods: {
+    onPageRefresh() {
+      // todo
+    },
+    onPageInfinite() {
+      // todo
+    },
     getBlockComponentOptions({ blockConfig }) {
       return {
         props: {
           layoutManager: this.layoutManager,
+          layout: this,
           blockConfig,
         },
       };

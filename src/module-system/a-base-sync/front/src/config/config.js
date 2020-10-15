@@ -33,7 +33,7 @@ export default {
               items: {
                 component: {
                   module: 'a-baselayout',
-                  name: 'listLayoutBlockItems',
+                  name: 'listLayoutBlockListItems',
                 },
               },
             },

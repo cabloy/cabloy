@@ -1,5 +1,5 @@
 <template>
-  <eb-page>
+  <eb-page ptr @ptr:refresh="onPageRefresh" infinite :infinitePreloader="false" @infinite="onPageInfinite">
     <atoms ref="list" :atomClass="atomClass" :where="where" :params="params" :scene="scene" :mode="mode" :layout="layout"></atoms>
   </eb-page>
 </template>
@@ -28,9 +28,21 @@ export default {
       layout,
     };
   },
+  computed: {
+    list() {
+      return this.$refs.list;
+    },
+  },
   created() {
   },
   methods: {
+    onPageRefresh(done) {
+      done();
+      this.list && this.list.onPageRefresh();
+    },
+    onPageInfinite() {
+      this.list && this.list.onPageInfinite();
+    },
   },
 };
 

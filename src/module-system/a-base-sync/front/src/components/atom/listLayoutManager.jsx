@@ -33,8 +33,12 @@ export default {
       ready: false,
       layout2: null,
       layoutConfig: null,
-      items: [],
     };
+  },
+  computed: {
+    layoutComponentInstance() {
+      return this.$refs.layout && this.$refs.layout.getComponentInstance();
+    },
   },
   created() {
     this.layout2 = this.layout || this.getLayout();
@@ -44,6 +48,12 @@ export default {
     });
   },
   methods: {
+    onPageRefresh() {
+      this.layoutComponentInstance && this.layoutComponentInstance.onPageRefresh();
+    },
+    onPageInfinite() {
+      this.layoutComponentInstance && this.layoutComponentInstance.onPageInfinite();
+    },
     getLayout() {
       return this.$view.size === 'small' ? 'list' : 'table';
     },
@@ -76,7 +86,7 @@ export default {
     },
     _renderLayoutComponent() {
       if (!this.ready) return null;
-      return <eb-component module={this.layoutConfig.component.module} name={this.layoutConfig.component.name} options={this.getLayoutComponentOptions()}></eb-component>;
+      return <eb-component ref='layout' module={this.layoutConfig.component.module} name={this.layoutConfig.component.name} options={this.getLayoutComponentOptions()}></eb-component>;
     },
   },
   render() {
