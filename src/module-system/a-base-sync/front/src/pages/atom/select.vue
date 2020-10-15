@@ -13,7 +13,7 @@
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 import ebAtomClasses from '../../common/atomClasses.js';
-import atoms from '../../components/atom/listLayoutManager.vue';
+import atoms from '../../components/atom/listLayoutManager.jsx';
 export default {
   mixins: [ ebPageContext, ebAtomClasses ],
   components: {

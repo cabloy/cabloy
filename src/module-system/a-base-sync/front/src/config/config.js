@@ -30,6 +30,12 @@ export default {
                   name: 'listLayoutBlockTitle',
                 },
               },
+              atoms: {
+                component: {
+                  module: 'a-baselayout',
+                  name: 'listLayoutBlockAtoms',
+                },
+              },
             },
           },
         },

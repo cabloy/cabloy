@@ -1,9 +1,3 @@
-<template>
-  <div>
-    {{this.layoutConfig}}
-  </div>
-</template>
-<script>
 export default {
   meta: {
     global: false,
@@ -12,7 +6,7 @@ export default {
     layoutManager: {
       type: Object,
     },
-    layoutConfig: {
+    blockConfig: {
       type: Object,
     },
   },
@@ -24,6 +18,9 @@ export default {
   },
   methods: {
   },
+  render() {
+    return (
+      <eb-navbar title={this.layoutManager.getPageTitle()} eb-back-link="Back"></eb-navbar>
+    );
+  },
 };
-
-</script>

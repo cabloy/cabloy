@@ -1,9 +1,3 @@
-<template>
-  <div>
-
-  </div>
-</template>
-<script>
 export default {
   meta: {
     global: false,
@@ -36,5 +30,3 @@ export default {
   methods: {
   },
 };
-
-</script>

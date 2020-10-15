@@ -4,7 +4,7 @@
   </eb-page>
 </template>
 <script>
-import atoms from '../../components/atom/listLayoutManager.vue';
+import atoms from '../../components/atom/listLayoutManager.jsx';
 export default {
   components: {
     atoms,

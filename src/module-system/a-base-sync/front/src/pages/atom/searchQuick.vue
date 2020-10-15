@@ -6,7 +6,7 @@
 <script>
 import Vue from 'vue';
 import ebAtomClasses from '../../common/atomClasses.js';
-import atoms from '../../components/atom/listLayoutManager.vue';
+import atoms from '../../components/atom/listLayoutManager.jsx';
 export default {
   mixins: [ ebAtomClasses ],
   components: {

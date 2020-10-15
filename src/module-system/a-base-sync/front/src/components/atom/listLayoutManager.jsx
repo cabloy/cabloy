@@ -1,8 +1,9 @@
-<script>
+import ebAtomClasses from '../../common/atomClasses.js';
 export default {
   meta: {
     global: false,
   },
+  mixins: [ ebAtomClasses ],
   props: {
     // default/select/search
     scene: {
@@ -32,10 +33,12 @@ export default {
       layoutConfig: null,
     };
   },
-  async created() {
+  created() {
     this.layout2 = this.layout || this.getLayout();
-    this.layoutConfig = await this.getLayoutConfig();
-    this.ready = true;
+    this.getLayoutConfig().then(res => {
+      this.layoutConfig = res;
+      this.ready = true;
+    });
   },
   methods: {
     getLayout() {
@@ -55,25 +58,29 @@ export default {
       }
       return this.$meta.util.extend({}, layoutConfig, layoutConfigAtom);
     },
-  },
-  render(c) {
-    const children = [];
-    if (this.ready) {
-      children.push(c('eb-component', {
+    getPageTitle() {
+      const atomClass = this.getAtomClass(this.atomClass);
+      if (!atomClass) return this.$text('Atom');
+      return `${this.$text('Atom')}: ${atomClass.titleLocale}`;
+    },
+    getLayoutComponentOptions() {
+      return {
         props: {
-          module: this.layoutConfig.component.module,
-          name: this.layoutConfig.component.name,
-          options: {
-            props: {
-              layoutManager: this,
-              layoutConfig: this.layoutConfig,
-            },
-          },
+          layoutManager: this,
+          layoutConfig: this.layoutConfig,
         },
-      }));
-    }
-    return c('div', children);
+      };
+    },
+    _renderLayoutComponent() {
+      if (!this.ready) return null;
+      return <eb-component module={this.layoutConfig.component.module} name={this.layoutConfig.component.name} options={this.getLayoutComponentOptions()}></eb-component>;
+    },
+  },
+  render() {
+    return (
+      <div>
+        {this._renderLayoutComponent()}
+      </div>
+    );
   },
 };
-
-</script>

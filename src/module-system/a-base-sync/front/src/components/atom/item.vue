@@ -30,7 +30,7 @@
 </template>
 <script>
 import Vue from 'vue';
-import atoms from './listLayoutManager.vue';
+import atoms from './listLayoutManager.jsx';
 import ebAtomClasses from '../../common/atomClasses.js';
 import ebAtomActions from '../../common/atomActions.js';
 export default {
