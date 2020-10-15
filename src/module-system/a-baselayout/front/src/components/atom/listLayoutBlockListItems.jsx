@@ -1,3 +1,4 @@
+import Vue from 'vue';
 export default {
   meta: {
     global: false,
@@ -15,6 +16,7 @@ export default {
   },
   data() {
     return {
+      radioName: Vue.prototype.$meta.util.nextId('radio'),
     };
   },
   created() {
@@ -32,7 +34,7 @@ export default {
       return this.$meta.util.combineImageUrl(media, 32);
     },
     _renderList() {
-      const items = [{ atomId: 1 }];// this.layout.items;
+      const items = this.layout.items;
       const children = [];
       for (const item of items) {
         let domMedia;
@@ -45,7 +47,7 @@ export default {
         }
         children.push(
           <eb-list-item class="item" key={item.atomId}
-            name={this.layoutManager.radioName}
+            name={this.radioName}
             radio={this.layoutManager.scene === 'selectSearch' && this.layoutManager.params.selectMode === 'single'}
             checkbox={this.layoutManager.scene === 'selectSearch' && this.layoutManager.params.selectMode === 'multiple'}
             link={this.layoutManager.scene === 'selectSearch' ? false : '#'}

@@ -1,4 +1,3 @@
-import Vue from 'vue';
 import ebAtomClasses from '../../common/atomClasses.js';
 export default {
   meta: {
@@ -29,10 +28,10 @@ export default {
   },
   data() {
     return {
-      radioName: Vue.prototype.$meta.util.nextId('radio'),
       ready: false,
       layout2: null,
       layoutConfig: null,
+      filter: null,
     };
   },
   computed: {
@@ -56,6 +55,9 @@ export default {
     },
     getLayout() {
       return this.$view.size === 'small' ? 'list' : 'table';
+    },
+    prepareSelectParams() {
+
     },
     async getLayoutConfig() {
       const layoutConfig = this.$config.atom.render.list.layout[this.layout2];
