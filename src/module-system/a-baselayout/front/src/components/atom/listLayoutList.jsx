@@ -28,16 +28,15 @@ export default {
       this.items = [];
       done();
     },
-    onLoadMore({ index }) {
+    async onLoadMore({ index }) {
       // params
       const params = this.layoutManager.prepareSelectParams();
       // index
       params.options.page = { index };
       // fetch
-      return this.$api.post('/a/base/atom/select', params).then(data => {
-        this.items = this.items.concat(data.list);
-        return data;
-      });
+      const res = await this.$api.post('/a/base/atom/select', params);
+      this.items = this.items.concat(res.list);
+      return res;
     },
     getBlockComponentOptions({ blockConfig }) {
       return {
