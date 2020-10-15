@@ -32,20 +32,25 @@ export default {
       layoutConfig: null,
     };
   },
-  created() {
+  async created() {
     this.layout2 = this.layout || this.getLayout();
-    this.layoutConfig = this.getLayoutConfig();
+    this.layoutConfig = await this.getLayoutConfig();
     this.ready = true;
   },
   methods: {
     getLayout() {
       return this.$view.size === 'small' ? 'list' : 'table';
     },
-    getLayoutConfig() {
+    async getLayoutConfig() {
       let layoutConfig = this.$config.atom.list.layout[this.layout2];
       if (!this.atomClass) return layoutConfig;
+      // load module
+      await this.$meta.module.use(this.atomClass.module);
+      // config
       const configAtom = this.$meta.config.modules[this.atomClass.module];
-      const layoutConfigAtom = configAtom && configAtom.atom && configAtom.atom.list && configAtom.atom.list.layout && configAtom.atom.list.layout[this.layout2];
+      let layoutConfigAtom = configAtom && configAtom.atoms && configAtom.atoms[this.atomClass.atomClassName];
+      layoutConfigAtom = layoutConfigAtom && layoutConfigAtom.list && layoutConfigAtom.list.layout;
+      layoutConfigAtom = layoutConfigAtom && layoutConfigAtom[this.layout2];
       if (layoutConfigAtom) {
         layoutConfig = this.$meta.util.extend({}, layoutConfig, layoutConfigAtom);
       }
