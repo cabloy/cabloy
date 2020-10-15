@@ -5,7 +5,7 @@ export default {
   },
   mixins: [ ebAtomClasses ],
   props: {
-    // default/select
+    // default/select/selecting
     scene: {
       type: String,
     },
@@ -38,6 +38,9 @@ export default {
     layoutComponentInstance() {
       return this.$refs.layout && this.$refs.layout.getComponentInstance();
     },
+    userLabels() {
+      return this.$local.getters('userLabels');
+    },
     atomOrders() {
       if (!this.ordersAll) return null;
       // base
@@ -68,7 +71,11 @@ export default {
     },
   },
   created() {
+    //
+    this.$local.dispatch('getLabels');
+    //
     this.layout2 = this.layout || this.getLayout();
+    //
     this.getLayoutConfig().then(res => {
       this.layoutConfig = res;
       this.ready = true;
