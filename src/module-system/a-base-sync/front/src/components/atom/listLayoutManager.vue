@@ -42,19 +42,18 @@ export default {
       return this.$view.size === 'small' ? 'list' : 'table';
     },
     async getLayoutConfig() {
-      let layoutConfig = this.$config.atom.list.layout[this.layout2];
-      if (!this.atomClass) return layoutConfig;
-      // load module
-      await this.$meta.module.use(this.atomClass.module);
-      // config
-      const configAtom = this.$meta.config.modules[this.atomClass.module];
-      let layoutConfigAtom = configAtom && configAtom.atoms && configAtom.atoms[this.atomClass.atomClassName];
-      layoutConfigAtom = layoutConfigAtom && layoutConfigAtom.list && layoutConfigAtom.list.layout;
-      layoutConfigAtom = layoutConfigAtom && layoutConfigAtom[this.layout2];
-      if (layoutConfigAtom) {
-        layoutConfig = this.$meta.util.extend({}, layoutConfig, layoutConfigAtom);
+      const layoutConfig = this.$config.atom.render.list.layout[this.layout2];
+      let layoutConfigAtom;
+      if (this.atomClass) {
+        // load module
+        await this.$meta.module.use(this.atomClass.module);
+        // config
+        const configAtom = this.$meta.config.modules[this.atomClass.module];
+        layoutConfigAtom = configAtom && configAtom.atoms && configAtom.atoms[this.atomClass.atomClassName];
+        layoutConfigAtom = layoutConfigAtom && layoutConfigAtom.render && layoutConfigAtom.render.list && layoutConfigAtom.render.list.layout;
+        layoutConfigAtom = layoutConfigAtom && layoutConfigAtom[this.layout2];
       }
-      return layoutConfig;
+      return this.$meta.util.extend({}, layoutConfig, layoutConfigAtom);
     },
   },
   render(c) {

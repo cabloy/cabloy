@@ -15,18 +15,20 @@ export default {
     },
   },
   atom: {
-    list: {
-      layout: {
-        list: {
-          component: {
-            module: 'a-baselayout',
-            name: 'listLayoutList',
-          },
-          blocks: {
-            title: {
-              component: {
-                module: 'a-baselayout',
-                name: 'listLayoutBlockTitle',
+    render: {
+      list: {
+        layout: {
+          list: {
+            component: {
+              module: 'a-baselayout',
+              name: 'listLayoutList',
+            },
+            blocks: {
+              title: {
+                component: {
+                  module: 'a-baselayout',
+                  name: 'listLayoutBlockTitle',
+                },
               },
             },
           },

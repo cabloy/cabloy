@@ -1,11 +1,13 @@
 export default {
   atoms: {
     purchaseOrder: {
-      list: {
-        layout: {
-          list: {
-            blocks: {
-              // title: false,
+      render: {
+        list: {
+          layout: {
+            list: {
+              blocks: {
+                // title: false,
+              },
             },
           },
         },
