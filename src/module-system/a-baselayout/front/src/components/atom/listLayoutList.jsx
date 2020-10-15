@@ -35,7 +35,7 @@ export default {
     return (
       <div>
         {this._renderBlock({ blockName: 'title' })}
-        {this._renderBlock({ blockName: 'atoms' })}
+        {this._renderBlock({ blockName: 'items' })}
       </div>
     );
   },
