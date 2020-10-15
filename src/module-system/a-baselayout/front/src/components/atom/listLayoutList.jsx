@@ -25,8 +25,8 @@ export default {
         },
       };
     },
-    _renderBlockTitle() {
-      const blockConfig = this.layoutConfig.blocks.title;
+    _renderBlock({ blockName }) {
+      const blockConfig = this.layoutConfig.blocks[blockName];
       if (!blockConfig) return null;
       return <eb-component module={blockConfig.component.module} name={blockConfig.component.name} options={this.getBlockComponentOptions({ blockConfig })}></eb-component>;
     },
@@ -34,7 +34,8 @@ export default {
   render() {
     return (
       <div>
-        {this._renderBlockTitle()}
+        {this._renderBlock({ blockName: 'title' })}
+        {this._renderBlock({ blockName: 'atoms' })}
       </div>
     );
   },

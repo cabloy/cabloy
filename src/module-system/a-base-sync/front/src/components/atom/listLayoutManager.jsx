@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import ebAtomClasses from '../../common/atomClasses.js';
 export default {
   meta: {
@@ -5,7 +6,7 @@ export default {
   },
   mixins: [ ebAtomClasses ],
   props: {
-    // default/select/search
+    // default/select/search/selectSearch
     scene: {
       type: String,
     },
@@ -28,9 +29,11 @@ export default {
   },
   data() {
     return {
+      radioName: Vue.prototype.$meta.util.nextId('radio'),
       ready: false,
       layout2: null,
       layoutConfig: null,
+      items: [],
     };
   },
   created() {
