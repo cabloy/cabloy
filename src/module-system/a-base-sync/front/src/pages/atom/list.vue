@@ -1,6 +1,6 @@
 <template>
   <eb-page ptr @ptr:refresh="onPageRefresh" infinite :infinitePreloader="false" @infinite="onPageInfinite">
-    <atoms ref="list" :atomClass="atomClass" :where="where" :params="params" :scene="scene" :mode="mode" :layout="layout"></atoms>
+    <atoms ref="list" :atomClass="atomClass" :options="options" :params="params" :scene="scene" :layout="layout"></atoms>
   </eb-page>
 </template>
 <script>
@@ -14,17 +14,15 @@ export default {
     const module = query && query.module;
     const atomClassName = query && query.atomClassName;
     const atomClass = (module && atomClassName) ? { module, atomClassName } : null;
-    const where = (query && query.where) ? JSON.parse(query.where) : null;
+    const options = (query && query.options) ? JSON.parse(query.options) : null;
     const params = (query && query.params) ? JSON.parse(query.params) : null;
     const scene = query && query.scene;
-    const mode = query && query.mode;
-    const layout = query && query.mode;
+    const layout = query && query.layout;
     return {
       atomClass,
-      where,
+      options,
       params,
       scene,
-      mode,
       layout,
     };
   },

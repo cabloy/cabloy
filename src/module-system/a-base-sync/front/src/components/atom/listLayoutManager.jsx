@@ -5,21 +5,17 @@ export default {
   },
   mixins: [ ebAtomClasses ],
   props: {
-    // default/select/search/selectSearch
+    // default/select
     scene: {
       type: String,
     },
-    // mode: default/full/search/tag
-    mode: {
+    options: {
       type: String,
     },
     layout: {
       type: String,
     },
     atomClass: {
-      type: Object,
-    },
-    where: {
       type: Object,
     },
     params: {
@@ -32,11 +28,43 @@ export default {
       layout2: null,
       layoutConfig: null,
       filter: null,
+      filterOptions: null,
+      atomOrderSelected: null,
+      selectedAtomIds: null,
+      selectedAtoms: null,
     };
   },
   computed: {
     layoutComponentInstance() {
       return this.$refs.layout && this.$refs.layout.getComponentInstance();
+    },
+    atomOrders() {
+      if (!this.ordersAll) return null;
+      // base
+      const ordersBase = this.getOrdersOfBase();
+      // atomClass
+      const ordersAtomClass = this.atomClass ? this.getOrdersOfAtomClass(this.atomClass) : null;
+      // atomOrders
+      return ordersAtomClass ? ordersBase.concat(ordersAtomClass) : ordersBase;
+    },
+    atomOrderDefault() {
+      let atomOrder;
+      if (this.scene === 'select') {
+        atomOrder = {
+          name: 'atomName',
+          by: 'asc',
+          tableAlias: 'a',
+        };
+      } else {
+        // others
+        atomOrder = {
+          name: 'updatedAt',
+          by: 'desc',
+          tableAlias: 'a',
+        };
+      }
+      // ok
+      return atomOrder;
     },
   },
   created() {
@@ -56,8 +84,51 @@ export default {
     getLayout() {
       return this.$view.size === 'small' ? 'list' : 'table';
     },
+    prepareSelectOptions() {
+      // options
+      let options;
+      if (this.scene === 'select') {
+        // where
+        const where = {};
+        if (!this.selectedAtomIds) {
+          this.selectedAtomIds = this.params.selectedAtomIds || [];
+        }
+        where['a.id'] = this.selectedAtomIds.length > 0 ? this.selectedAtomIds : null;
+        // options
+        options = {
+          where,
+        };
+      } else {
+        // default
+        options = {
+          where: { },
+        };
+      }
+      // order
+      const atomOrderCurrent = this.atomOrderSelected || this.atomOrderDefault;
+      options.orders = [
+        [ this.getAtomOrderKey(atomOrderCurrent), atomOrderCurrent.by ],
+      ];
+      // extend 1
+      if (this.options) {
+        options = this.$utils.extend({}, options, this.options);
+      }
+      // extend 2
+      if (this.filterOptions) {
+        options = this.$utils.extend({}, options, this.filterOptions);
+      }
+      // options
+      return options;
+    },
     prepareSelectParams() {
-
+      const options = this.prepareSelectOptions();
+      return {
+        atomClass: this.atomClass,
+        options,
+      };
+    },
+    getAtomOrderKey(atomOrder) {
+      return atomOrder ? `${atomOrder.tableAlias}.${atomOrder.name}` : null;
     },
     async getLayoutConfig() {
       const layoutConfig = this.$config.atom.render.list.layout[this.layout2];
