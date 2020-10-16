@@ -1,9 +1,10 @@
 import ebAtomClasses from '../../common/atomClasses.js';
+import ebAtomOrders from '../../common/atomOrders.js';
 export default {
   meta: {
     global: false,
   },
-  mixins: [ ebAtomClasses ],
+  mixins: [ ebAtomClasses, ebAtomOrders ],
   props: {
     // default/select/selecting
     scene: {
@@ -40,6 +41,9 @@ export default {
     },
     userLabels() {
       return this.$local.getters('userLabels');
+    },
+    popoverOrdersReady() {
+      return !!this.ordersAll;
     },
     atomOrders() {
       if (!this.ordersAll) return null;
@@ -88,6 +92,28 @@ export default {
     onPageInfinite() {
       this.layoutComponentInstance && this.layoutComponentInstance.onPageInfinite();
     },
+    onPerformFilter() {
+
+    },
+    onPerformAtomOrders(element) {
+      const popover = this.$refs.popoverAtomOrders.$el;
+      this.$f7.popover.open(popover, element);
+    },
+    onPerformChangeAtomOrder(event, atomOrder) {
+      // switch
+      const atomOrderCurrent = this.atomOrderSelected || this.atomOrderDefault;
+      if (this._getAtomOrderKey(atomOrderCurrent) === this._getAtomOrderKey(atomOrder)) {
+        this.atomOrderSelected = {
+          name: atomOrderCurrent.name,
+          tableAlias: atomOrderCurrent.tableAlias,
+          by: atomOrderCurrent.by === 'desc' ? 'asc' : 'desc',
+        };
+      } else {
+        this.atomOrderSelected = atomOrder;
+      }
+      // reload
+      this.onPageRefresh();
+    },
     getLayout() {
       return this.$view.size === 'small' ? 'list' : 'table';
     },
@@ -114,7 +140,7 @@ export default {
       // order
       const atomOrderCurrent = this.atomOrderSelected || this.atomOrderDefault;
       options.orders = [
-        [ this.getAtomOrderKey(atomOrderCurrent), atomOrderCurrent.by ],
+        [ this._getAtomOrderKey(atomOrderCurrent), atomOrderCurrent.by ],
       ];
       // extend 1
       if (this.options) {
@@ -134,8 +160,15 @@ export default {
         options,
       };
     },
-    getAtomOrderKey(atomOrder) {
+    _getAtomOrderKey(atomOrder) {
       return atomOrder ? `${atomOrder.tableAlias}.${atomOrder.name}` : null;
+    },
+    _getAtomOrderStatus(atomOrder) {
+      const atomOrderCurrent = this.atomOrderSelected || this.atomOrderDefault;
+      if (this._getAtomOrderKey(atomOrderCurrent) === this._getAtomOrderKey(atomOrder)) {
+        return atomOrderCurrent.by === 'desc' ? 'arrow_drop_down' : 'arrow_drop_up';
+      }
+      return '';
     },
     async getLayoutConfig() {
       const layoutConfig = this.$config.atom.render.list.layout[this.layout2];
@@ -168,11 +201,37 @@ export default {
       if (!this.ready) return null;
       return <eb-component ref='layout' module={this.layoutConfig.component.module} name={this.layoutConfig.component.name} options={this.getLayoutComponentOptions()}></eb-component>;
     },
+    _renderPopoverAtomOrders() {
+      // list
+      let domList;
+      if (this.popoverOrdersReady) {
+        const children = [];
+        for (const atomOrder of this.atomOrders) {
+          children.push(
+            <eb-list-item key={this._getAtomOrderKey(atomOrder)} popoverClose link="#" propsOnPerform={$event => { this.onPerformChangeAtomOrder($event, atomOrder); }}>
+              <f7-icon slot="media" material={this._getAtomOrderStatus(atomOrder)}></f7-icon>
+              <div slot="title">{atomOrder.titleLocale}</div>
+            </eb-list-item>
+          );
+        }
+        domList = (
+          <f7-list inset>
+            {children}
+          </f7-list>
+        );
+      }
+      return (
+        <eb-popover ref="popoverAtomOrders" ready={this.popoverOrdersReady}>
+          {domList}
+        </eb-popover>
+      );
+    },
   },
   render() {
     return (
       <div>
         {this._renderLayoutComponent()}
+        {this._renderPopoverAtomOrders()}
       </div>
     );
   },

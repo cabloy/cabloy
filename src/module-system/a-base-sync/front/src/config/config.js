@@ -27,7 +27,7 @@ export default {
               title: {
                 component: {
                   module: 'a-baselayout',
-                  name: 'listLayoutBlockTitle',
+                  name: 'listLayoutBlockListTitle',
                 },
               },
               items: {
