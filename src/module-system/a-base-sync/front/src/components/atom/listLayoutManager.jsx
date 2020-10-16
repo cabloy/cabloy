@@ -1,10 +1,9 @@
 import ebAtomClasses from '../../common/atomClasses.js';
-import ebAtomOrders from '../../common/atomOrders.js';
 export default {
   meta: {
     global: false,
   },
-  mixins: [ ebAtomClasses, ebAtomOrders ],
+  mixins: [ ebAtomClasses ],
   props: {
     // default/select/selecting
     scene: {
@@ -28,6 +27,8 @@ export default {
       ready: false,
       layout2: null,
       layoutConfig: null,
+      configAtomBase: null,
+      configAtom: null,
       filter: null,
       filterOptions: null,
       atomOrderSelected: null,
@@ -80,8 +81,7 @@ export default {
     //
     this.layout2 = this.layout || this.getLayout();
     //
-    this.getLayoutConfig().then(res => {
-      this.layoutConfig = res;
+    this.prepareLayoutConfig().then(() => {
       this.ready = true;
     });
   },
@@ -170,19 +170,26 @@ export default {
       }
       return '';
     },
-    async getLayoutConfig() {
-      const layoutConfig = this.$config.atom.render.list.layout[this.layout2];
-      let layoutConfigAtom;
+    async prepareLayoutConfig() {
+      // configAtomBase
+      this.configAtomBase = this.$config.atom;
+      // configAtom
       if (this.atomClass) {
         // load module
         await this.$meta.module.use(this.atomClass.module);
-        // config
         const configAtom = this.$meta.config.modules[this.atomClass.module];
-        layoutConfigAtom = configAtom && configAtom.atoms && configAtom.atoms[this.atomClass.atomClassName];
-        layoutConfigAtom = layoutConfigAtom && layoutConfigAtom.render && layoutConfigAtom.render.list && layoutConfigAtom.render.list.layout;
+        this.configAtom = configAtom && configAtom.atoms && configAtom.atoms[this.atomClass.atomClassName];
+      }
+      // layoutConfig
+      const layoutConfigBase = this.configAtomBase.render.list.layouts[this.layout2];
+      let layoutConfigAtom;
+      if (this.configAtom) {
+        // config
+        layoutConfigAtom = this.configAtom;
+        layoutConfigAtom = layoutConfigAtom && layoutConfigAtom.render && layoutConfigAtom.render.list && layoutConfigAtom.render.list.layouts;
         layoutConfigAtom = layoutConfigAtom && layoutConfigAtom[this.layout2];
       }
-      return this.$meta.util.extend({}, layoutConfig, layoutConfigAtom);
+      this.layoutConfig = this.$meta.util.extend({}, layoutConfigBase, layoutConfigAtom);
     },
     getPageTitle() {
       const atomClass = this.getAtomClass(this.atomClass);

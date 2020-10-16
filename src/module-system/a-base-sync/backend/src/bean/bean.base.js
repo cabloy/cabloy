@@ -1,14 +1,12 @@
 const path = require('path');
 const require3 = require('require3');
 const fse = require3('fs-extra');
-const constants = require('../config/constants.js');
 
 const _modulesLocales = {};
 const _themesLocales = {};
 const _locales = {};
 const _atomClasses = {};
 const _actions = {};
-const _orders = {};
 const _functions = {};
 const _menus = {};
 const _panels = {};
@@ -123,13 +121,6 @@ module.exports = ctx => {
       if (name) return actions[name];
       const key = Object.keys(actions).find(key => actions[key].code === code);
       return actions[key];
-    }
-
-    orders() {
-      if (!_orders[ctx.locale]) {
-        _orders[ctx.locale] = this._prepareOrders();
-      }
-      return _orders[ctx.locale];
     }
 
     menus() {
@@ -292,24 +283,6 @@ module.exports = ctx => {
       return atomClasses;
     }
 
-    _prepareOrders() {
-      const orders = {};
-      // modules
-      for (const relativeName in ctx.app.meta.modules) {
-        const module = ctx.app.meta.modules[relativeName];
-        if (module.main.meta && module.main.meta.base && module.main.meta.base.atoms) {
-          orders[relativeName] = {};
-          for (const atomClassName in module.main.meta.base.atoms) {
-            orders[relativeName][atomClassName] = this._prepareOrdersAtomClass(module, module.main.meta.base.atoms[atomClassName]);
-          }
-        }
-      }
-      // base
-      orders.base = this._prepareOrdersBase();
-      // ok
-      return orders;
-    }
-
     _prepareOrdersAtomClass(module, atomClass) {
       if (!atomClass.orders) return null;
       return atomClass.orders.map(item => {
@@ -318,18 +291,6 @@ module.exports = ctx => {
           title: item.title,
           by: item.by,
           tableAlias: item.tableAlias || 'f',
-          titleLocale: ctx.text(item.title),
-        };
-      });
-    }
-
-    _prepareOrdersBase() {
-      return constants.atom.orders.map(item => {
-        return {
-          name: item.name,
-          title: item.title,
-          by: item.by,
-          tableAlias: item.tableAlias,
           titleLocale: ctx.text(item.title),
         };
       });

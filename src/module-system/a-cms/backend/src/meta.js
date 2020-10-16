@@ -24,10 +24,6 @@ module.exports = app => {
           search: {
             validator: 'articleSearch',
           },
-          orders: [
-            { name: 'sticky', title: 'Sticky', by: 'desc' },
-            { name: 'sorting', title: 'Sorting', by: 'asc' },
-          ],
         },
       },
       functions: {

@@ -3,7 +3,7 @@ export default {
     purchaseOrder: {
       render: {
         list: {
-          layout: {
+          layouts: {
             list: {
               blocks: {
                 // title: false,

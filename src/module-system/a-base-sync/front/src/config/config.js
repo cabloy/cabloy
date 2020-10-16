@@ -17,7 +17,14 @@ export default {
   atom: {
     render: {
       list: {
-        layout: {
+        info: {
+          orders: [
+            { name: 'createdAt', title: 'Created Time', by: 'desc', tableAlias: 'a' },
+            { name: 'updatedAt', title: 'Modification Time', by: 'desc', tableAlias: 'a' },
+            { name: 'atomName', title: 'Atom Name', by: 'asc', tableAlias: 'a' },
+          ],
+        },
+        layouts: {
           list: {
             component: {
               module: 'a-baselayout',

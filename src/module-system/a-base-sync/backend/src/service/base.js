@@ -18,10 +18,6 @@ module.exports = app => {
       return this.ctx.bean.base.actions();
     }
 
-    orders() {
-      return this.ctx.bean.base.orders();
-    }
-
     menus() {
       return this.ctx.bean.base.menus();
     }

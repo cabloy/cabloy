@@ -31,7 +31,6 @@ export default function(Vue) {
       modules: null,
       atomClasses: null,
       actions: null,
-      orders: null,
       functionScenes: {},
       functions: null,
       menus: null,
@@ -109,9 +108,6 @@ export default function(Vue) {
       setActions(state, actions) {
         state.actions = actions;
       },
-      setOrders(state, orders) {
-        state.orders = orders;
-      },
       setMenus(state, menus) {
         state.menus = menus;
       },
@@ -181,18 +177,6 @@ export default function(Vue) {
           Vue.prototype.$meta.api.post('/a/base/base/actions').then(data => {
             data = data || {};
             commit('setActions', data);
-            resolve(data);
-          }).catch(err => {
-            reject(err);
-          });
-        });
-      },
-      getOrders({ state, commit }) {
-        return new Promise((resolve, reject) => {
-          if (state.orders) return resolve(state.orders);
-          Vue.prototype.$meta.api.post('/a/base/base/orders').then(data => {
-            data = data || {};
-            commit('setOrders', data);
             resolve(data);
           }).catch(err => {
             reject(err);

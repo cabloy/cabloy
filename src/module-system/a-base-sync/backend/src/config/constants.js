@@ -24,11 +24,6 @@ module.exports = {
       submit: { title: 'Submit', actionComponent: 'action', authorize: false },
       custom: { title: 'Custom' },
     },
-    orders: [
-      { name: 'createdAt', title: 'Created Time', by: 'desc', tableAlias: 'a' },
-      { name: 'updatedAt', title: 'Modification Time', by: 'desc', tableAlias: 'a' },
-      { name: 'atomName', title: 'Atom Name', by: 'asc', tableAlias: 'a' },
-    ],
   },
   function: {
     scene: {
