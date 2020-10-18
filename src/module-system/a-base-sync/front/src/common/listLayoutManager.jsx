@@ -156,6 +156,7 @@ export default {
       const params = {
         options,
       };
+      // atomClass
       if (this.filter.form.atomClass) {
         params.atomClass = this.filter.form.atomClass;
       }
