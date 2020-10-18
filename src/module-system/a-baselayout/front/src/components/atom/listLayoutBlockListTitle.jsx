@@ -6,9 +6,6 @@ export default {
     layoutManager: {
       type: Object,
     },
-    layout: {
-      type: Object,
-    },
     blockConfig: {
       type: Object,
     },
@@ -29,12 +26,10 @@ export default {
   },
   render() {
     return (
-      <eb-navbar title={this.layoutManager.getPageTitle()} eb-back-link="Back">
-        <f7-nav-right>
-          <eb-link iconMaterial="search" propsOnPerform={this.onPerformFilter}></eb-link>
-          <eb-link iconMaterial="sort" propsOnPerform={$event => { this.onPerformAtomOrders($event); }}></eb-link>
-        </f7-nav-right>
-      </eb-navbar>
+      <f7-nav-right>
+        <eb-link iconMaterial="search" propsOnPerform={this.onPerformFilter}></eb-link>
+        <eb-link iconMaterial="sort" propsOnPerform={$event => { this.onPerformAtomOrders($event); }}></eb-link>
+      </f7-nav-right>
     );
   },
 };

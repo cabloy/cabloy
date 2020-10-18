@@ -1,12 +1,15 @@
 function load(name) {
   return require(`./pages/${name}.vue`).default;
 }
+function loadjsx(name) {
+  return require(`./pages/${name}.jsx`).default;
+}
 
 export default [
   { path: 'menu/list', component: load('menu/list') },
   { path: 'menu/search', component: load('menu/search') },
   { path: 'menu/selectFunction', component: load('menu/selectFunction') },
-  { path: 'atom/list', component: load('atom/list') },
+  { path: 'atom/list', component: loadjsx('atom/list') },
   { path: 'atom/search', component: load('atom/search') },
   { path: 'atom/searchQuick', component: load('atom/searchQuick') },
   { path: 'atom/searchResult', component: load('atom/searchResult') },

@@ -79,7 +79,7 @@ export default function(ctx, router) {
     const view = router.view;
     if (view && view.$el.hasClass('eb-layout-view')) {
       // clear hash
-      if (view.params.pushState) {
+      if (view.params.pushState && history.state) {
         const keys = Object.keys(history.state);
         if (keys.length > 0) {
           const url = history.state[keys[keys.length - 1]].url;
