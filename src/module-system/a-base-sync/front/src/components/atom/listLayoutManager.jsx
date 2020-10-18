@@ -149,7 +149,7 @@ export default {
       };
     },
     _getAtomOrderKey(atomOrder) {
-      return atomOrder ? `${atomOrder.tableAlias}.${atomOrder.name}` : null;
+      return atomOrder ? `${atomOrder.tableAlias || 'f'}.${atomOrder.name}` : null;
     },
     _getAtomOrderStatus(atomOrder) {
       const atomOrderCurrent = this.atomOrderSelected || this.atomOrderDefault;

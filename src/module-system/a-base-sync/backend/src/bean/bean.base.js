@@ -283,19 +283,6 @@ module.exports = ctx => {
       return atomClasses;
     }
 
-    _prepareOrdersAtomClass(module, atomClass) {
-      if (!atomClass.orders) return null;
-      return atomClass.orders.map(item => {
-        return {
-          name: item.name,
-          title: item.title,
-          by: item.by,
-          tableAlias: item.tableAlias || 'f',
-          titleLocale: ctx.text(item.title),
-        };
-      });
-    }
-
     _prepareActions() {
       const actions = {};
       for (const relativeName in ctx.app.meta.modules) {
