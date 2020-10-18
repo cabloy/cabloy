@@ -94,13 +94,14 @@ export default {
       options = options || {};
       const ctx = options.ctx;
       const target = options.target;
+      const scene = options.scene;
       if (target === '_self') {
         ctx.$view.f7View.router.navigate(url, options);
       } else {
         // view
         const $viewEl = ctx && ctx.$view && this.$$(ctx.$view.$el);
         // check if target===_view or in views
-        if (!$viewEl || target === '_view' || $viewEl.parents('.eb-layout-scene').length > 0) {
+        if (!$viewEl || target === '_view' || scene === 'sidebar' || $viewEl.parents('.eb-layout-scene').length > 0) {
           // in new view
           this.$refs.group.createView({ ctx, url }).then(res => {
             if (res) {
@@ -143,7 +144,7 @@ export default {
         case 'large':
           sizeClass = 'eb-view-size-small eb-view-size-medium eb-view-size-large';
           break;
-      };
+      }
       return sizeClass;
     },
   },

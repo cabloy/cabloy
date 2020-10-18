@@ -81,8 +81,18 @@ export default {
       this.layoutComponentInstance && this.layoutComponentInstance.onPageInfinite();
     },
     onPerformFilter() {
-
+      this.$view.navigate('/a/baselayout/listLayoutFilter', {
+        scene: 'sidebar',
+        sceneOptions: { side: 'right', name: 'filter', title: 'Filter' },
+        context: {
+          params: {
+            filter: this.filter,
+            onFilterChanged: this.onFilterChanged,
+          },
+        },
+      });
     },
+    onFilterChanged() {},
     onPerformAtomOrders(element) {
       const popover = this.$refs.popoverAtomOrders.$el;
       this.$f7.popover.open(popover, element);
