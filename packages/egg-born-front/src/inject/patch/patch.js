@@ -80,8 +80,14 @@ export default function(ctx, router) {
     if (view && view.$el.hasClass('eb-layout-view')) {
       // clear hash
       if (view.params.pushState) {
-        window.history.go(-(view.router.history.length - 1));
-        router.url = view.router.history[0];
+        const keys = Object.keys(history.state);
+        if (keys.length > 0) {
+          const url = history.state[keys[keys.length - 1]].url;
+          if (url === router.url) {
+            window.history.go(-(view.router.history.length - 1));
+            router.url = view.router.history[0];
+          }
+        }
       }
       // close view
       ctx.$meta.vueLayout.closeView(view);
