@@ -53,7 +53,7 @@ export default {
   },
   methods: {
     onPageRefresh(done) {
-      done();
+      done && done();
       this.layoutComponentInstance && this.layoutComponentInstance.onPageRefresh();
     },
     onPageInfinite() {
