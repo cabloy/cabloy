@@ -1,7 +1,10 @@
+import Vue from 'vue';
+const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
 export default {
   meta: {
     global: false,
   },
+  mixins: [ ebAtomClasses ],
   props: {
     layoutManager: {
       type: Object,
@@ -16,7 +19,9 @@ export default {
       form: {
         atomName: null,
         label: 0,
+        atomClass: null,
       },
+      formAtomClass: null,
     };
   },
   computed: {
@@ -33,6 +38,9 @@ export default {
       }
       return labels;
     },
+    atomClass() {
+      return this.form.atomClass || this.layoutManager.atomClass;
+    },
     atomClassTitle() {
       if (!this.atomClass) return '';
       if (this.atomClass.title) return this.atomClass.title;
@@ -42,8 +50,13 @@ export default {
     },
   },
   watch: {
-    atomClass(value) {
-      this.atomClassChanged();
+    form: {
+      deep: true,
+      handler(form, formOld) {
+        if (form.atomClass !== formOld.atomClass) {
+          this.atomClassChanged();
+        }
+      },
     },
   },
   created() {
@@ -65,22 +78,23 @@ export default {
     atomClassChanged() {
       const atomClass = this.atomClass;
       if (!atomClass) {
-        this.item = null;
-        this.validateParams = null;
+        this.formAtomClass = null;
       } else {
         // module
         this.$meta.module.use(atomClass.module, () => {
           // validateParams
-          this.$api.post('atomClass/validatorSearch', {
+          this.$api.post('/a/base/atomClass/validatorSearch', {
             atomClass: {
               module: atomClass.module,
               atomClassName: atomClass.atomClassName,
             },
           }).then(data => {
-            this.item = {};
-            this.validateParams = {
-              module: data.module,
-              validator: data.validator,
+            this.formAtomClass = {
+              item: {},
+              validateParams: {
+                module: data.module,
+                validator: data.validator,
+              },
             };
           });
         });
@@ -96,7 +110,7 @@ export default {
           },
           callback: (code, data) => {
             if (code === 200) {
-              this.atomClass = data;
+              this.form.atomClass = data;
             }
           },
         },
@@ -173,12 +187,20 @@ export default {
         </eb-list>
       );
     },
+    _renderFormAtomClass() {
+      if (!this.formAtomClass) return null;
+      return (
+        <eb-validate ref="validate" auto data={this.formAtomClass.item} params={this.formAtomClass.validateParams} onSubmit={this.onFormSubmit}>
+        </eb-validate>
+      );
+    },
   },
   render() {
     return (
       <div>
         {this._renderNavbar()}
         {this._renderForm()}
+        {this._renderFormAtomClass()}
       </div>
     );
   },
