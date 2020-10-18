@@ -81,13 +81,14 @@ export default {
       this.layoutComponentInstance && this.layoutComponentInstance.onPageInfinite();
     },
     onPerformFilter() {
+      const filterConfig = this._getFilterConfig();
       this.$view.navigate('/a/baselayout/listLayoutFilter', {
         scene: 'sidebar',
         sceneOptions: { side: 'right', name: 'filter', title: 'Filter' },
         context: {
           params: {
-            filter: this.filter,
-            onFilterChanged: this.onFilterChanged,
+            layoutManager: this,
+            filterConfig,
           },
         },
       });
@@ -175,6 +176,14 @@ export default {
       const ordersAtomClass = this.$meta.util.getProperty(this.configAtom, 'render.list.info.orders');
       // atomOrders
       return ordersAtomClass ? ordersBase.concat(ordersAtomClass) : ordersBase;
+    },
+    _getFilterConfig() {
+      // base
+      const filterConfigBase = this.configAtomBase.render.list.info.filter;
+      // atomClass
+      const filterConfig = this.$meta.util.getProperty(this.configAtom, 'render.list.info.filter');
+      // filterConfig
+      return this.$meta.util.extend({}, filterConfigBase, filterConfig);
     },
     async prepareLayoutConfig() {
       // configAtomBase

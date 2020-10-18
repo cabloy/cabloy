@@ -21,28 +21,21 @@
   </eb-page>
 </template>
 <script>
-import Vue from 'vue';
-const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
-  mixins: [ ebPageContext ],
+  meta: {
+    global: false,
+  },
+  props: {
+    layoutManager: {
+      type: Object,
+    },
+    filterConfig: {
+      type: Object,
+    },
+  },
   data() {
-    const query = this.$f7route.query;
-    const module = query && query.module;
-    const atomClassName = query && query.atomClassName;
-    const atomClass = (module && atomClassName) ? { module, atomClassName } : null;
-    const where = (query && query.where) ? JSON.parse(query.where) : null;
-    const mode = (query && query.mode) || 'search';
-    const selectMode = query && query.selectMode;
     return {
-      atomName: '',
-      label: 0,
-      atomClass,
-      where,
-      item: null,
-      validateParams: null,
-      atomClassInit: atomClass,
-      mode,
-      selectMode,
+      immediate: true,
     };
   },
   computed: {
@@ -78,6 +71,12 @@ export default {
     this.$local.dispatch('getLabels');
     // init atomClass
     this.atomClassChanged();
+  },
+  mounted() {
+    // immediate
+    const $el = this.$$(this.$el);
+    const $view = $el.parents('.eb-layout-view');
+    this.immediate = $view.is('.eb-layout-panel-view');
   },
   methods: {
     onFormSubmit() {

@@ -1,7 +1,10 @@
 function load(name) {
   return require(`./pages/${name}.vue`).default;
 }
+function loadjsx(name) {
+  return require(`./pages/${name}.jsx`).default;
+}
 
 export default [
-  { path: 'listLayoutFilter', component: load('listLayoutFilter') },
+  { path: 'listLayoutFilter', component: loadjsx('listLayoutFilter') },
 ];

@@ -23,6 +23,12 @@ export default {
             { name: 'updatedAt', title: 'Modification Time', by: 'desc', tableAlias: 'a' },
             { name: 'atomName', title: 'Atom Name', by: 'asc', tableAlias: 'a' },
           ],
+          filter: {
+            component: {
+              module: 'a-baselayout',
+              name: 'listLayoutFilter',
+            },
+          },
         },
         layouts: {
           list: {
