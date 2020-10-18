@@ -22,6 +22,7 @@ export default {
         atomClass: null,
       },
       formAtomClass: null,
+      validateParams: null,
     };
   },
   computed: {
@@ -56,7 +57,11 @@ export default {
         if (form.atomClass !== formOld.atomClass) {
           this.atomClassChanged();
         }
+        this.onFilterChanged();
       },
+    },
+    formAtomClass() {
+      this.onFilterChanged();
     },
   },
   created() {
@@ -76,29 +81,27 @@ export default {
       this.$refs.buttonSubmit.onClick();
     },
     atomClassChanged() {
+      // reset
+      this.formAtomClass = null;
+      this.validateParams = null;
       const atomClass = this.atomClass;
-      if (!atomClass) {
-        this.formAtomClass = null;
-      } else {
-        // module
-        this.$meta.module.use(atomClass.module, () => {
-          // validateParams
-          this.$api.post('/a/base/atomClass/validatorSearch', {
-            atomClass: {
-              module: atomClass.module,
-              atomClassName: atomClass.atomClassName,
-            },
-          }).then(data => {
-            this.formAtomClass = {
-              item: {},
-              validateParams: {
-                module: data.module,
-                validator: data.validator,
-              },
-            };
-          });
+      if (!atomClass) return;
+      // module
+      this.$meta.module.use(atomClass.module, () => {
+        // validateParams
+        this.$api.post('/a/base/atomClass/validatorSearch', {
+          atomClass: {
+            module: atomClass.module,
+            atomClassName: atomClass.atomClassName,
+          },
+        }).then(data => {
+          this.formAtomClass = {};
+          this.validateParams = {
+            module: data.module,
+            validator: data.validator,
+          };
         });
-      }
+      });
     },
     onSelectAtomClass() {
       this.$view.navigate('/a/base/atom/selectAtomClass', {
@@ -116,53 +119,16 @@ export default {
         },
       });
     },
+    onFilterChanged(force) {
+      if (force || this.immediate) {
+        this.layoutManager.onFilterChanged({
+          form: this.form, formAtomClass: this.formAtomClass,
+        });
+      }
+    },
     onPerformSearch() {
-      // atomClassExtra
-      let atomClassExtra;
-      if (this.item) {
-        atomClassExtra = {};
-        for (const key in this.item) {
-          const value = this.item[key];
-          // undefined/null/'', except 0/false
-          if (value !== undefined && value !== null && value !== '') {
-            if (typeof value === 'string') {
-              atomClassExtra[`f.${key}`] = { val: value, op: 'like' };
-            } else {
-              atomClassExtra[`f.${key}`] = value;
-            }
-          }
-        }
-      }
-      // url
-      const queries = {};
-      const atomClass = this.atomClass;
-      if (atomClass) {
-        queries.module = atomClass.module;
-        queries.atomClassName = atomClass.atomClassName;
-      }
-      if (this.where) {
-        queries.where = JSON.stringify(this.where);
-      }
-      queries.mode = this.mode;
-      const url = this.$meta.util.combineQueries('/a/base/atom/searchResult', queries);
-      this.$view.navigate(url, {
-        target: '_self',
-        context: {
-          params: {
-            atomName: this.atomName,
-            label: this.label,
-            atomClassExtra,
-            selectMode: this.selectMode,
-          },
-          callback: (code, data) => {
-            if (code === 200) {
-              if (this.mode === 'selectSearch') {
-                this.contextCallback(200, data);
-              }
-            }
-          },
-        },
-      });
+      this.onFilterChanged(true);
+      this.$f7router.back();
     },
     _renderNavbar() {
       return (
@@ -190,7 +156,7 @@ export default {
     _renderFormAtomClass() {
       if (!this.formAtomClass) return null;
       return (
-        <eb-validate ref="validate" auto data={this.formAtomClass.item} params={this.formAtomClass.validateParams} onSubmit={this.onFormSubmit}>
+        <eb-validate ref="validate" auto data={this.formAtomClass} params={this.validateParams} onSubmit={this.onFormSubmit}>
         </eb-validate>
       );
     },
