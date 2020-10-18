@@ -14,14 +14,16 @@ export default {
     },
   },
   data() {
+    const form = this.$meta.util.getProperty(this.layoutManager, 'filter.form') || {
+      atomName: null,
+      label: 0,
+      atomClass: null,
+    };
+    const formAtomClass = this.$meta.util.getProperty(this.layoutManager, 'filter.formAtomClass') || {};
     return {
       immediate: true,
-      form: {
-        atomName: null,
-        label: 0,
-        atomClass: null,
-      },
-      formAtomClass: null,
+      form,
+      formAtomClass,
       validateParams: null,
     };
   },
@@ -51,14 +53,8 @@ export default {
     },
   },
   watch: {
-    form: {
-      deep: true,
-      handler(form, formOld) {
-        if (form.atomClass !== formOld.atomClass) {
-          this.atomClassChanged();
-        }
-        this.onFilterChanged();
-      },
+    form() {
+      this.onFilterChanged();
     },
     formAtomClass() {
       this.onFilterChanged();
@@ -82,7 +78,6 @@ export default {
     },
     atomClassChanged() {
       // reset
-      this.formAtomClass = null;
       this.validateParams = null;
       const atomClass = this.atomClass;
       if (!atomClass) return;
@@ -95,7 +90,6 @@ export default {
             atomClassName: atomClass.atomClassName,
           },
         }).then(data => {
-          this.formAtomClass = {};
           this.validateParams = {
             module: data.module,
             validator: data.validator,
@@ -113,7 +107,11 @@ export default {
           },
           callback: (code, data) => {
             if (code === 200) {
-              this.form.atomClass = data;
+              if (this.form.atomClass !== data) {
+                this.form.atomClass = data;
+                this.formAtomClass = {};
+                this.atomClassChanged();
+              }
             }
           },
         },
@@ -154,7 +152,7 @@ export default {
       );
     },
     _renderFormAtomClass() {
-      if (!this.formAtomClass) return null;
+      if (!this.validateParams) return null;
       return (
         <eb-validate ref="validate" auto data={this.formAtomClass} params={this.validateParams} onSubmit={this.onFormSubmit}>
         </eb-validate>

@@ -93,7 +93,9 @@ export default {
         },
       });
     },
-    onFilterChanged() {},
+    onFilterChanged(value) {
+      this.filter = value;
+    },
     onPerformAtomOrders(element) {
       const popover = this.$refs.popoverAtomOrders.$el;
       this.$f7.popover.open(popover, element);
