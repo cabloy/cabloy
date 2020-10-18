@@ -9,7 +9,7 @@ export default {
   name: 'eb-navbar',
   extends: f7Navbar,
   props: {
-    ebBackLink: [Boolean, String],
+    ebBackLink: [ Boolean, String ],
   },
   data() {
     return {
@@ -17,8 +17,12 @@ export default {
     };
   },
   mounted() {
-    if (!this.ebBackLink) return;
-    if (this.$meta.vueLayout.backLink(this)) this.backLink = this.ebBackLink;
+    this.checkBackLink();
+  },
+  methods: {
+    checkBackLink() {
+      this.backLink = (this.ebBackLink && this.$meta.vueLayout.backLink(this)) ? this.ebBackLink : false;
+    },
   },
 };
 

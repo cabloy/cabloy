@@ -389,6 +389,18 @@ export default function(Vue) {
       const localeShort = locale.split('-')[0];
       return Object.keys(locales).find(item => item.indexOf(localeShort) === 0);
     },
+    viewRouterDid(view) {
+      const f7 = Vue.prototype.$vuef7;
+      let viewRouter;
+      f7.routers.views.forEach(data => {
+        if (data.el && data.el === view.$el) {
+          viewRouter = data;
+        }
+      });
+      const urlNew = viewRouter.component.$f7route.url;
+      const urlCurrent = view.f7View.router.currentRoute.url;
+      return urlNew === urlCurrent;
+    },
   };
 
   // moment

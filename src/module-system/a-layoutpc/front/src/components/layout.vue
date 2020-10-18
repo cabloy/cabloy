@@ -260,7 +260,8 @@ export default {
     },
     backLink(ctx) {
       let backLink = false;
-      if (!this.$meta.util.historyUrlEmpty(ctx.$f7router.history[ctx.$f7router.history.length - 1])) {
+      const routeDiff = this.$meta.util.viewRouterDid(ctx.$view) ? 2 : 1;
+      if (!this.$meta.util.historyUrlEmpty(ctx.$f7router.history[ctx.$f7router.history.length - routeDiff])) {
         backLink = true;
       } else {
         const $el = ctx.$$(ctx.$el);
@@ -282,6 +283,8 @@ export default {
           break;
         case 'large':
           sizeClass = 'eb-view-size-small eb-view-size-medium eb-view-size-large';
+          break;
+        default:
           break;
       }
       return sizeClass;

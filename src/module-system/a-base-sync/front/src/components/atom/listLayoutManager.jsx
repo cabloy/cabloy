@@ -30,7 +30,6 @@ export default {
       configAtomBase: null,
       configAtom: null,
       filter: null,
-      filterOptions: null,
       atomOrderSelected: null,
       selectedAtomIds: null,
       selectedAtoms: null,
@@ -95,6 +94,8 @@ export default {
     },
     onFilterChanged(value) {
       this.filter = value;
+      // reload
+      this.onPageRefresh();
     },
     onPerformAtomOrders(element) {
       const popover = this.$refs.popoverAtomOrders.$el;
@@ -147,19 +148,38 @@ export default {
       if (this.options) {
         options = this.$utils.extend({}, options, this.options);
       }
-      // extend 2
-      if (this.filterOptions) {
-        options = this.$utils.extend({}, options, this.filterOptions);
-      }
       // options
       return options;
     },
     prepareSelectParams() {
+      // options
       const options = this.prepareSelectOptions();
-      return {
+      // params
+      let params = {
         atomClass: this.atomClass,
         options,
       };
+      // filter
+      const filterParams = this.prepareFilterParams();
+      if (filterParams) {
+        params = this.$utils.extend({}, params, filterParams);
+      }
+      return params;
+    },
+    prepareFilterParams() {
+      if (!this.filter) return null;
+      // options
+      const options = {
+        where: {},
+      };
+      // params
+      const params = {
+        options,
+      };
+      if (this.filter.form.atomClass) {
+        params.atomClass = this.filter.form.atomClass;
+      }
+      return params;
     },
     _getAtomOrderKey(atomOrder) {
       return atomOrder ? `${atomOrder.tableAlias || 'f'}.${atomOrder.name}` : null;
