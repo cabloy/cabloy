@@ -43,18 +43,6 @@ export default {
     userLabels() {
       return this.$local.getters('userLabels');
     },
-    popoverOrdersReady() {
-      return !!this.ordersAll;
-    },
-    atomOrders() {
-      if (!this.ordersAll) return null;
-      // base
-      const ordersBase = this.getOrdersOfBase();
-      // atomClass
-      const ordersAtomClass = this.atomClass ? this.getOrdersOfAtomClass(this.atomClass) : null;
-      // atomOrders
-      return ordersAtomClass ? ordersBase.concat(ordersAtomClass) : ordersBase;
-    },
     atomOrderDefault() {
       let atomOrder;
       if (this.scene === 'select') {
@@ -170,6 +158,14 @@ export default {
       }
       return '';
     },
+    _getAtomOrders() {
+      // base
+      const ordersBase = this.configAtomBase.render.list.info.orders;
+      // atomClass
+      const ordersAtomClass = this.$meta.util.getProperty(this.configAtom, 'render.list.info.orders');
+      // atomOrders
+      return ordersAtomClass ? ordersBase.concat(ordersAtomClass) : ordersBase;
+    },
     async prepareLayoutConfig() {
       // configAtomBase
       this.configAtomBase = this.$config.atom;
@@ -209,26 +205,24 @@ export default {
       return <eb-component ref='layout' module={this.layoutConfig.component.module} name={this.layoutConfig.component.name} options={this.getLayoutComponentOptions()}></eb-component>;
     },
     _renderPopoverAtomOrders() {
+      if (!this.ready) return null;
       // list
-      let domList;
-      if (this.popoverOrdersReady) {
-        const children = [];
-        for (const atomOrder of this.atomOrders) {
-          children.push(
-            <eb-list-item key={this._getAtomOrderKey(atomOrder)} popoverClose link="#" propsOnPerform={$event => { this.onPerformChangeAtomOrder($event, atomOrder); }}>
-              <f7-icon slot="media" material={this._getAtomOrderStatus(atomOrder)}></f7-icon>
-              <div slot="title">{atomOrder.titleLocale}</div>
-            </eb-list-item>
-          );
-        }
-        domList = (
-          <f7-list inset>
-            {children}
-          </f7-list>
+      const children = [];
+      for (const atomOrder of this._getAtomOrders()) {
+        children.push(
+          <eb-list-item key={this._getAtomOrderKey(atomOrder)} popoverClose link="#" propsOnPerform={$event => { this.onPerformChangeAtomOrder($event, atomOrder); }}>
+            <f7-icon slot="media" material={this._getAtomOrderStatus(atomOrder)}></f7-icon>
+            <div slot="title">{this.$text(atomOrder.title)}</div>
+          </eb-list-item>
         );
       }
+      const domList = (
+        <f7-list inset>
+          {children}
+        </f7-list>
+      );
       return (
-        <eb-popover ref="popoverAtomOrders" ready={this.popoverOrdersReady}>
+        <eb-popover ref="popoverAtomOrders" ready={true}>
           {domList}
         </eb-popover>
       );

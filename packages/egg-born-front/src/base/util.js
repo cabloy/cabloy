@@ -245,6 +245,17 @@ export default function(Vue) {
         obj[names[names.length - 1]] = value;
       }
     },
+    getProperty(obj, name) {
+      if (!obj) return undefined;
+      const names = name.split('.');
+      if (names.length === 1) return obj[name];
+      // loop
+      for (const name of names) {
+        obj = obj[name];
+        if (!obj) break;
+      }
+      return obj;
+    },
     combineImageUrl(url, width, height) {
       if (!url) return url;
       if (url.indexOf('data:image/') === 0) return url;
