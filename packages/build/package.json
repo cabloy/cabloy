@@ -20,6 +20,7 @@
     "autoprefixer": "^9.7.4",
     "babel-eslint": "^10.0.3",
     "babel-loader": "^8.1.0",
+    "babel-plugin-jsx-v-model": "^2.0.3",
     "bluebird": "^3.7.2",
     "chalk": "^3.0.0",
     "connect-history-api-fallback": "^1.6.0",

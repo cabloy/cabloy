@@ -1,26 +1,3 @@
-<template>
-  <eb-page>
-    <eb-navbar large largeTransparent :title="pageTitle" eb-back-link="Back">
-      <f7-nav-right>
-        <eb-link ref="buttonSubmit" iconMaterial="search" :onPerform="onPerformSearch"></eb-link>
-      </f7-nav-right>
-    </eb-navbar>
-    <eb-list form inline-labels no-hairlines-md @submit.prevent="onFormSubmit">
-      <eb-list-input :label="$text('Atom Name')" type="text" clear-button :placeholder="$text('Atom Name')" v-model="atomName">
-      </eb-list-input>
-      <f7-list-item smartSelect :title="$text('Label')" :smartSelectParams="{openIn: 'page', closeOnSelect: true}">
-        <eb-select name="label" v-model="label" :options="labels"></eb-select>
-      </f7-list-item>
-      <f7-list-item divider></f7-list-item>
-      <f7-list-item v-if="!atomClassInit" :title="$text('Atom Class')" link="#" @click="onSelectAtomClass">
-        <div slot="after">{{atomClassTitle}}</div>
-      </f7-list-item>
-    </eb-list>
-    <eb-validate v-if="item && validateParams" ref="validate" auto :data="item" :params="validateParams" @submit.prevent="onFormSubmit">
-    </eb-validate>
-  </eb-page>
-</template>
-<script>
 export default {
   meta: {
     global: false,
@@ -36,15 +13,18 @@ export default {
   data() {
     return {
       immediate: true,
+      form: {
+        atomName: null,
+        label: 0,
+      },
     };
   },
   computed: {
     pageTitle() {
-      const atomClassTitle = this.atomClassTitle || this.$text('Atom');
-      return `${this.$text('Search')} ${atomClassTitle}`;
+      return this.$text('Filter');
     },
-    labels() {
-      const labelsAll = this.$local.getters('userLabels');
+    userLabels() {
+      const labelsAll = this.$store.getters['a/base/userLabels'];
       if (!labelsAll) return null;
 
       const labels = [{ title: '', value: 0 }];
@@ -68,7 +48,7 @@ export default {
   },
   created() {
     // labels
-    this.$local.dispatch('getLabels');
+    this.$store.dispatch('a/base/getLabels');
     // init atomClass
     this.atomClassChanged();
   },
@@ -170,9 +150,36 @@ export default {
         },
       });
     },
+    _renderNavbar() {
+      return (
+        <eb-navbar title={this.pageTitle} eb-back-link="Back">
+          <f7-nav-right>
+            {!this.immediate && <eb-link ref="buttonSubmit" iconMaterial="search" propsOnPerform={this.onPerformSearch}></eb-link>}
+          </f7-nav-right>
+        </eb-navbar>
+      );
+    },
+    _renderForm() {
+      return (
+        <eb-list form inline-labels no-hairlines-md onSubmit={this.onFormSubmit}>
+          <eb-list-input v-model={this.form.atomName} label={this.$text('Atom Name')} type="text" clear-button placeholder={this.$text('Atom Name')}></eb-list-input>
+          <f7-list-item smartSelect title={this.$text('Label')} smartSelectParams={{ openIn: 'page', closeOnSelect: true }}>
+            <eb-select name="label" v-model={this.form.label} options={this.userLabels}></eb-select>
+          </f7-list-item>
+          <f7-list-item divider></f7-list-item>
+          {!this.layoutManager.atomClass && <f7-list-item title={this.$text('Atom Class')} link="#" onClick={this.onSelectAtomClass}>
+            <div slot="after">{this.atomClassTitle}</div>
+          </f7-list-item>}
+        </eb-list>
+      );
+    },
+  },
+  render() {
+    return (
+      <div>
+        {this._renderNavbar()}
+        {this._renderForm()}
+      </div>
+    );
   },
 };
-
-</script>
-<style scoped>
-</style>

@@ -170,7 +170,7 @@ export default {
             },
           ],
         ],
-        plugins: [ '@babel/plugin-syntax-dynamic-import' ],
+        plugins: [ '@babel/plugin-syntax-dynamic-import', 'jsx-v-model' ],
       };
     },
   };

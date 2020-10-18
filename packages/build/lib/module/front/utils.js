@@ -80,7 +80,7 @@ module.exports = context => {
             },
           ],
         ],
-        plugins: [ '@babel/plugin-syntax-dynamic-import' ],
+        plugins: [ '@babel/plugin-syntax-dynamic-import', 'jsx-v-model' ],
       };
     },
   };
