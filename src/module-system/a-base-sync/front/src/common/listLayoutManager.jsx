@@ -29,6 +29,18 @@ export default {
           by: 'asc',
           tableAlias: 'a',
         };
+      } else if (this.options && this.options.star) {
+        atomOrder = {
+          name: 'updatedAt',
+          by: 'desc',
+          tableAlias: 'd',
+        };
+      } else if (this.options && this.options.label) {
+        atomOrder = {
+          name: 'updatedAt',
+          by: 'desc',
+          tableAlias: 'e',
+        };
       } else {
         // others
         atomOrder = {
