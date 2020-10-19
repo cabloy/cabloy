@@ -282,7 +282,7 @@ export default {
       const children = [];
       for (const atomOrder of this._getAtomOrders()) {
         children.push(
-          <eb-list-item key={this._getAtomOrderKey(atomOrder)} popoverClose link="#" propsOnPerform={$event => { this.onPerformChangeAtomOrder($event, atomOrder); }}>
+          <eb-list-item key={this._getAtomOrderKey(atomOrder)} popoverClose link="#" propsOnPerform={event => this.onPerformChangeAtomOrder(event, atomOrder)}>
             <f7-icon slot="media" material={this._getAtomOrderStatus(atomOrder)}></f7-icon>
             <div slot="title">{this.$text(atomOrder.title)}</div>
           </eb-list-item>

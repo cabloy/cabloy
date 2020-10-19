@@ -1,8 +1,10 @@
 import Vue from 'vue';
+const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
 export default {
   meta: {
     global: false,
   },
+  mixins: [ ebAtomActions ],
   props: {
     layoutManager: {
       type: Object,
@@ -27,10 +29,12 @@ export default {
   mounted() {
     this.$meta.eventHub.$on('atom:star', this.onStarChanged);
     this.$meta.eventHub.$on('atom:labels', this.onLabelsChanged);
+    this.$meta.eventHub.$on('atom:action', this.onActionChanged);
   },
   beforeDestroy() {
     this.$meta.eventHub.$off('atom:star', this.onStarChanged);
     this.$meta.eventHub.$off('atom:labels', this.onLabelsChanged);
+    this.$meta.eventHub.$off('atom:action', this.onActionChanged);
   },
   methods: {
     onItemClick() {
@@ -62,11 +66,17 @@ export default {
       this.$view.navigate(`/a/base/atom/labels?atomId=${item.atomId}`);
       this.$meta.util.swipeoutClose(event.target);
     },
-    onLabelsChanged(data) {
-      const index = this.layout.items.findIndex(item => item.atomId === data.key.atomId);
-      if (index !== -1) {
-        this.layout.items[index].labels = JSON.stringify(data.labels);
-      }
+    onStarSwitch(event, item) {
+      const star = item.star ? 0 : 1;
+      return this._onStarSwitch(event, item, star, 'swipeoutClose');
+    },
+    onAction(event, item, action) {
+      const _action = this.getAction(action);
+      if (!_action) return;
+      return this.$meta.util.performAction({ ctx: this, action: _action, item })
+        .then(() => {
+          this.$meta.util.swipeoutClose(event.target);
+        });
     },
     onStarChanged(data) {
       const index = this.layout.items.findIndex(item => item.atomId === data.key.atomId);
@@ -74,9 +84,41 @@ export default {
         this.layout.items[index].star = data.star;
       }
     },
-    onStarSwitch(event, item) {
-      const star = item.star ? 0 : 1;
-      return this._onStarSwitch(event, item, star, 'swipeoutClose');
+    onLabelsChanged(data) {
+      const index = this.layout.items.findIndex(item => item.atomId === data.key.atomId);
+      if (index !== -1) {
+        this.layout.items[index].labels = JSON.stringify(data.labels);
+      }
+    },
+    onActionChanged(data) {
+      const key = data.key;
+      const action = data.action;
+      // create
+      if (action.menu === 1 && action.action === 'create') {
+        // do nothing
+        return;
+      }
+      // delete
+      const index = this.layout.items.findIndex(item => item.atomId === key.atomId);
+      if (action.name === 'delete') {
+        if (index !== -1) {
+          this.layout.items.splice(index, 1);
+        }
+        return;
+      }
+      // submit
+      if (action.name === 'submit') {
+        // do nothing
+        return;
+      }
+      // others
+      if (index !== -1) {
+        this.$api.post('/a/base/atom/read', {
+          key,
+        }).then(data => {
+          Vue.set(this.layout.items, index, data);
+        });
+      }
     },
     _onStarSwitch(event, item, star, swipeoutAction) {
       // anonymous
@@ -130,6 +172,16 @@ export default {
     _getLabel(id) {
       if (!this.layoutManager.userLabels) return null;
       return this.layoutManager.userLabels[id];
+    },
+    _getActionColor(action, index) {
+      if (index === 0) return 'orange';
+      else if (index === 1) return 'red';
+      return 'blue';
+    },
+    _getActionTitle(action) {
+      if (action.code === 3) return '✏️';
+      else if (action.code === 4) return '🗑️';
+      return this.getActionTitle(action);
     },
     _renderListItem(item) {
       // media
@@ -198,7 +250,7 @@ export default {
           radio={this.layoutManager.scene === 'selecting' && this.layoutManager.params.selectMode === 'single'}
           checkbox={this.layoutManager.scene === 'selecting' && this.layoutManager.params.selectMode === 'multiple'}
           link={this.layoutManager.scene === 'selecting' ? false : '#'}
-          propsOnPerform={event => { this.onItemClick(event, item); }}
+          propsOnPerform={event => this.onItemClick(event, item)}
           onChange={event => { this.onItemChange(event, item); }}
           swipeout onSwipeoutOpened={event => { this.onSwipeoutOpened(event, item); } }
           onContextmenuOpened={event => { this.onSwipeoutOpened(event, item); } }
@@ -214,19 +266,37 @@ export default {
       );
     },
     _renderListItemContextMenu(item) {
+      // domLeft
       let domLeft;
       if (item.atomStage === 1) {
         domLeft = (
           <div slot="left">
-            <div color="teal" propsOnPerform={event => { this.onStarSwitch(event, item); }}><span>⭐</span></div>
-            <div color="blue" propsOnPerform={event => { this.onLabel(event, item); }}><span>🏷️</span></div>
+            <div color="teal" propsOnPerform={event => this.onStarSwitch(event, item)}>⭐</div>
+            <div color="blue" propsOnPerform={event => this.onLabel(event, item)}>🏷️</div>
           </div>
         );
       }
+      // domRight
+      const domActions = [];
+      if (item._actions) {
+        for (let index in item._actions) {
+          index = parseInt(index);
+          const action = item._actions[index];
+          domActions.push(
+            <div key={action.id} color={this._getActionColor(action, index)} propsOnPerform={event => this.onAction(event, item, action)}>{this._getActionTitle(action)}</div>
+          );
+        }
+      }
+      const domRight = (
+        <div slot="right" ready={!!item._actions}>
+          {domActions}
+        </div>
+      );
+
       return (
         <eb-context-menu>
           {domLeft}
-
+          {domRight}
         </eb-context-menu>
       );
     },
