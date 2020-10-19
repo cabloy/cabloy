@@ -18,7 +18,6 @@ export default {
   },
   data() {
     return {
-      radioName: Vue.prototype.$meta.util.nextId('radio'),
     };
   },
   computed: {
@@ -37,12 +36,12 @@ export default {
     this.$meta.eventHub.$off('atom:action', this.onActionChanged);
   },
   methods: {
-    onItemClick() {
-      // todo
-      console.log('ss');
-    },
-    onItemChange(event, item) {
-      // todo
+    onItemClick(event, item) {
+      return this.onAction(event, item, {
+        module: item.module,
+        atomClassName: item.atomClassName,
+        name: 'read',
+      });
     },
     onSwipeoutOpened(event, item) {
       if (item._actions) return;
@@ -185,14 +184,11 @@ export default {
     },
     _renderListItem(item) {
       // media
-      let domMedia;
-      if (this.layoutManager.scene !== 'selecting') {
-        domMedia = (
-          <div slot="media">
-            <img class="avatar avatar32" src={this._getItemMetaMedia(item)} />
-          </div>
-        );
-      }
+      const domMedia = (
+        <div slot="media">
+          <img class="avatar avatar32" src={this._getItemMetaMedia(item)} />
+        </div>
+      );
       // domHeader
       const domHeader = (
         <div slot="root-start" class="header">
@@ -245,13 +241,8 @@ export default {
       );
       // ok
       return (
-        <eb-list-item class="item" key={item.atomId}
-          name={this.radioName}
-          radio={this.layoutManager.scene === 'selecting' && this.layoutManager.params.selectMode === 'single'}
-          checkbox={this.layoutManager.scene === 'selecting' && this.layoutManager.params.selectMode === 'multiple'}
-          link={this.layoutManager.scene === 'selecting' ? false : '#'}
+        <eb-list-item class="item" key={item.atomId} link="#"
           propsOnPerform={event => this.onItemClick(event, item)}
-          onChange={event => { this.onItemChange(event, item); }}
           swipeout onSwipeoutOpened={event => { this.onSwipeoutOpened(event, item); } }
           onContextmenuOpened={event => { this.onSwipeoutOpened(event, item); } }
         >
