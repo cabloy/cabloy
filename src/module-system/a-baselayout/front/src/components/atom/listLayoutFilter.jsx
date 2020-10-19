@@ -17,6 +17,7 @@ export default {
     const form = this.$meta.util.getProperty(this.layoutManager, 'filter.form') || {
       atomName: null,
       label: 0,
+      stage: (this.layoutManager.options && this.layoutManager.options.stage) || 'archive',
       atomClass: null,
     };
     const formAtomClass = this.$meta.util.getProperty(this.layoutManager, 'filter.formAtomClass') || {};
@@ -50,6 +51,13 @@ export default {
       const _atomClass = this.getAtomClass(this.atomClass);
       if (!_atomClass) return '';
       return _atomClass.titleLocale;
+    },
+    stages() {
+      const stages = [];
+      for (const key of [ 'draft', 'archive', 'history' ]) {
+        stages.push({ title: key.replace(key[0], key[0].toUpperCase()), value: key });
+      }
+      return stages;
     },
   },
   watch: {
@@ -143,6 +151,9 @@ export default {
           <eb-list-input v-model={this.form.atomName} label={this.$text('Atom Name')} type="text" clear-button placeholder={this.$text('Atom Name')}></eb-list-input>
           <f7-list-item smartSelect title={this.$text('Label')} smartSelectParams={{ openIn: 'page', closeOnSelect: true }}>
             <eb-select name="label" v-model={this.form.label} options={this.userLabels}></eb-select>
+          </f7-list-item>
+          <f7-list-item smartSelect title={this.$text('Stage')} smartSelectParams={{ openIn: 'sheet', closeOnSelect: true }}>
+            <eb-select name="stage" v-model={this.form.stage} options={this.stages}></eb-select>
           </f7-list-item>
           <f7-list-item divider></f7-list-item>
           {!this.layoutManager.atomClass && <f7-list-item title={this.$text('Atom Class')} link="#" onClick={this.onSelectAtomClass}>

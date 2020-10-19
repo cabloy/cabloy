@@ -166,10 +166,39 @@ export default {
       const params = {
         options,
       };
-      // atomClass
-      if (this.filter.form.atomClass) {
-        params.atomClass = this.filter.form.atomClass;
+      // form
+      if (this.filter.form) {
+        if (this.filter.form.atomName) {
+          options.where['a.atomName'] = { val: this.filter.form.atomName, op: 'like' };
+        }
+        if (this.filter.form.label) {
+          options.label = this.filter.form.label;
+        }
+        if (this.filter.form.atomClass) {
+          params.atomClass = this.filter.form.atomClass;
+        }
       }
+      // formAtomClass
+      const formAtomClass = this.filter.formAtomClass;
+      if (formAtomClass) {
+        let hasValue = false;
+        for (const key in formAtomClass) {
+          const value = formAtomClass[key];
+          // undefined/null/'', except 0/false
+          if (value !== undefined && value !== null && value !== '') {
+            if (typeof value === 'string') {
+              options.where[`f.${key}`] = { val: value, op: 'like' };
+            } else {
+              options.where[`f.${key}`] = value;
+            }
+            hasValue = true;
+          }
+        }
+        if (hasValue) {
+          options.mode = 'search';
+        }
+      }
+      // ok
       return params;
     },
     _getAtomOrderKey(atomOrder) {
