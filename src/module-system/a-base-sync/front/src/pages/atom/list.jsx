@@ -18,18 +18,4 @@ export default {
       layout,
     };
   },
-  created() {
-  },
-  methods: {
-  },
-  render() {
-    return (
-      <eb-page ptr onPtrRefresh={this.onPageRefresh} infinite infinitePreloader={false} onInfinite={this.onPageInfinite}>
-        <eb-navbar title={this.getPageTitle()} eb-back-link="Back">
-          {this._renderBlock({ blockName: 'title' })}
-        </eb-navbar>
-        {this._renderLayout()}
-      </eb-page>
-    );
-  },
 };
