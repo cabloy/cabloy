@@ -26,9 +26,11 @@ export default {
   },
   mounted() {
     this.$meta.eventHub.$on('atom:star', this.onStarChanged);
+    this.$meta.eventHub.$on('atom:labels', this.onLabelsChanged);
   },
   beforeDestroy() {
     this.$meta.eventHub.$off('atom:star', this.onStarChanged);
+    this.$meta.eventHub.$off('atom:labels', this.onLabelsChanged);
   },
   methods: {
     onItemClick() {
@@ -46,6 +48,25 @@ export default {
       }).then(data => {
         Vue.set(item, '_actions', data);
       });
+    },
+    onLabel(event, item) {
+      // anonymous
+      if (this.user.anonymous) {
+        this.$view.dialog.confirm(this.$text('Please Sign In')).then(() => {
+          // login
+          this.$meta.vueLayout.openLogin();
+        });
+        return;
+      }
+      // navigate
+      this.$view.navigate(`/a/base/atom/labels?atomId=${item.atomId}`);
+      this.$meta.util.swipeoutClose(event.target);
+    },
+    onLabelsChanged(data) {
+      const index = this.layout.items.findIndex(item => item.atomId === data.key.atomId);
+      if (index !== -1) {
+        this.layout.items[index].labels = JSON.stringify(data.labels);
+      }
     },
     onStarChanged(data) {
       const index = this.layout.items.findIndex(item => item.atomId === data.key.atomId);
@@ -160,7 +181,7 @@ export default {
         for (const label of JSON.parse(item.labels)) {
           const _label = this._getLabel(label);
           domAfterLabels.push(
-            <f7-badge key="label" style={ { backgroundColor: _label.color } }>{ _label.text}</f7-badge>
+            <f7-badge key={label} style={ { backgroundColor: _label.color } }>{ _label.text}</f7-badge>
           );
         }
       }
@@ -193,12 +214,18 @@ export default {
       );
     },
     _renderListItemContextMenu(item) {
-
+      let domLeft;
+      if (item.atomStage === 1) {
+        domLeft = (
+          <div slot="left">
+            <div color="teal" propsOnPerform={event => { this.onStarSwitch(event, item); }}><span>⭐</span></div>
+            <div color="blue" propsOnPerform={event => { this.onLabel(event, item); }}><span>🏷️</span></div>
+          </div>
+        );
+      }
       return (
         <eb-context-menu>
-          <div slot="left">
-            <div color="teal" propsOnPerform={event => { this.onStarSwitch(event, item); }}><f7-icon material="star_rate" color={item.star ? 'orange' : 'gray'}></f7-icon></div>
-          </div>
+          {domLeft}
 
         </eb-context-menu>
       );
