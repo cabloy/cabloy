@@ -61,11 +61,17 @@ export default {
     },
   },
   watch: {
-    form() {
-      this.onFilterChanged();
+    form: {
+      handler() {
+        this.onFilterChanged();
+      },
+      deep: true,
     },
-    formAtomClass() {
-      this.onFilterChanged();
+    formAtomClass: {
+      handler() {
+        this.onFilterChanged();
+      },
+      deep: true,
     },
   },
   created() {

@@ -27,7 +27,7 @@ export default {
       const list = c('f7-list', { attrs: { inset: true } }, children);
       // ready
       let ready;
-      if (slotLeft) ready = slotLeft[0].data.attrs.ready;
+      if (slotLeft) ready = slotLeft[0].data.attrs ? slotLeft[0].data.attrs.ready : undefined;
       if (ready === undefined && slotRight) ready = slotRight[0].data.attrs ? slotRight[0].data.attrs.ready : undefined;
       // popover
       const attrs = {};

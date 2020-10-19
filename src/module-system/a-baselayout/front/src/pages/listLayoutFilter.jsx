@@ -15,12 +15,6 @@ export default {
       return this.$refs.filter && this.$refs.filter.getComponentInstance();
     },
   },
-  mounted() {
-    // immediate
-    const $el = this.$$(this.$el);
-    const $view = $el.parents('.eb-layout-view');
-    this.immediate = $view.is('.eb-layout-panel-view');
-  },
   methods: {
     onPerformSearch() {
       this.filterComponentInstance && this.filterComponentInstance.onPerformSearch();
@@ -35,10 +29,11 @@ export default {
       };
     },
     _renderNavbar() {
+      const immediate = this.contextParams ? this.contextParams.immediate : true;
       return (
         <eb-navbar title={this.pageTitle} eb-back-link="Back">
           <f7-nav-right>
-            {!this.immediate && <eb-link ref="buttonSubmit" iconMaterial="search" propsOnPerform={this.onPerformSearch}></eb-link>}
+            {!immediate && <eb-link ref="buttonSubmit" iconMaterial="search" propsOnPerform={this.onPerformSearch}></eb-link>}
           </f7-nav-right>
         </eb-navbar>
       );

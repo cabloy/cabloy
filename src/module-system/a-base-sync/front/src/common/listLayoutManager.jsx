@@ -12,6 +12,7 @@ export default {
       atomOrderSelected: null,
       selectedAtomIds: null,
       selectedAtoms: null,
+      searchQuery: null,
     };
   },
   computed: {
@@ -23,13 +24,7 @@ export default {
     },
     atomOrderDefault() {
       let atomOrder;
-      if (this.scene === 'select') {
-        atomOrder = {
-          name: 'atomName',
-          by: 'asc',
-          tableAlias: 'a',
-        };
-      } else if (this.options && this.options.star) {
+      if (this.options && this.options.star) {
         atomOrder = {
           name: 'updatedAt',
           by: 'desc',
@@ -63,36 +58,39 @@ export default {
       this.ready = true;
     });
   },
-  render() {
-    return (
-      <eb-page ptr onPtrRefresh={this.onPageRefresh} infinite infinitePreloader={false} onInfinite={this.onPageInfinite}>
-        <eb-navbar title={this.getPageTitle()} eb-back-link="Back">
-          {this._renderBlock({ blockName: 'title' })}
-        </eb-navbar>
-        {this._renderLayout()}
-      </eb-page>
-    );
-  },
   methods: {
     onPageRefresh(done) {
       done && done();
-      this.layoutComponentInstance && this.layoutComponentInstance.onPageRefresh();
+      this.layoutComponentInstance && this.layoutComponentInstance.onPageRefresh(true);
     },
     onPageInfinite() {
       this.layoutComponentInstance && this.layoutComponentInstance.onPageInfinite();
     },
+    onPageClear() {
+      this.layoutComponentInstance && this.layoutComponentInstance.onPageClear();
+    },
     onPerformFilter() {
+      const $el = this.$$(this.$el);
+      const $view = $el.parents('.eb-layout-view');
+      const isPanel = $view.is('.eb-layout-panel-view');
+      const immediate = this.$meta.vueApp.layout === 'pc' && !isPanel;
       const filterConfig = this._getFilterConfig();
-      this.$view.navigate('/a/baselayout/listLayoutFilter', {
-        scene: 'sidebar',
-        sceneOptions: { side: 'right', name: 'filter', title: 'Filter' },
+      const navigateOptions = {
         context: {
           params: {
             layoutManager: this,
             filterConfig,
+            immediate,
           },
         },
-      });
+      };
+      if (immediate) {
+        navigateOptions.scene = 'sidebar';
+        navigateOptions.sceneOptions = { side: 'right', name: 'filter', title: 'Filter' };
+      } else {
+        navigateOptions.target = '_self';
+      }
+      this.$view.navigate('/a/baselayout/listLayoutFilter', navigateOptions);
     },
     onFilterChanged(value) {
       this.filter = value;
@@ -123,23 +121,12 @@ export default {
     },
     prepareSelectOptions() {
       // options
-      let options;
-      if (this.scene === 'select') {
-        // where
-        const where = {};
-        if (!this.selectedAtomIds) {
-          this.selectedAtomIds = this.params.selectedAtomIds || [];
-        }
-        where['a.id'] = this.selectedAtomIds.length > 0 ? this.selectedAtomIds : null;
-        // options
-        options = {
-          where,
-        };
-      } else {
-        // default
-        options = {
-          where: { },
-        };
+      let options = {
+        where: { },
+      };
+      // search
+      if (this.searchQuery) {
+        options.where['a.atomName'] = { val: this.searchQuery, op: 'like' };
       }
       // order
       const atomOrderCurrent = this.atomOrderSelected || this.atomOrderDefault;
@@ -219,6 +206,22 @@ export default {
       // ok
       return params;
     },
+    // **  search - begin
+    onSearch(query) {
+      this.searchQuery = query;
+      if (this.searchQuery) {
+        this.onPageRefresh();
+      } else {
+        this.onPageClear();
+      }
+    },
+    onSearchDisable() {
+      this.$f7router.back();
+    },
+    onSearchAdvanced() {
+      this.onPerformFilter();
+    },
+    // ** search - end
     _getAtomOrderKey(atomOrder) {
       return atomOrder ? `${atomOrder.tableAlias || 'f'}.${atomOrder.name}` : null;
     },

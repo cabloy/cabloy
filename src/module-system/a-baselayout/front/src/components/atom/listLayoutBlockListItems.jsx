@@ -62,7 +62,9 @@ export default {
         return;
       }
       // navigate
-      this.$view.navigate(`/a/base/atom/labels?atomId=${item.atomId}`);
+      this.$view.navigate(`/a/base/atom/labels?atomId=${item.atomId}`, {
+        target: '_self',
+      });
       this.$meta.util.swipeoutClose(event.target);
     },
     onStarSwitch(event, item) {
@@ -178,9 +180,10 @@ export default {
       return 'blue';
     },
     _getActionTitle(action) {
-      if (action.code === 3) return '✏️';
-      else if (action.code === 4) return '🗑️';
-      return this.getActionTitle(action);
+      const title = this.getActionTitle(action);
+      if (action.code === 3) return this.$device.desktop ? `✏️ ${title}` : '✏️';
+      else if (action.code === 4) return this.$device.desktop ? `🗑️ ${title}` : '🗑️';
+      return title;
     },
     _renderListItem(item) {
       // media
@@ -262,8 +265,8 @@ export default {
       if (item.atomStage === 1) {
         domLeft = (
           <div slot="left">
-            <div color="teal" propsOnPerform={event => this.onStarSwitch(event, item)}>⭐</div>
-            <div color="blue" propsOnPerform={event => this.onLabel(event, item)}>🏷️</div>
+            <div color="teal" propsOnPerform={event => this.onStarSwitch(event, item)}>{this.$device.desktop ? `⭐ ${this.$text(item.star ? 'Unstar' : 'Star')}` : '⭐'}</div>
+            <div color="blue" propsOnPerform={event => this.onLabel(event, item)}>{this.$device.desktop ? `🏷️ ${this.$text('Labels')}` : '🏷️'}</div>
           </div>
         );
       }

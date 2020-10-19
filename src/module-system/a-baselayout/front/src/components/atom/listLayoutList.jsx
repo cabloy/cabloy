@@ -16,11 +16,14 @@ export default {
     };
   },
   methods: {
-    onPageRefresh() {
-      this.$refs.loadMore.reload();
+    onPageRefresh(force) {
+      this.$refs.loadMore.reload(force);
     },
     onPageInfinite() {
       this.$refs.loadMore.loadMore();
+    },
+    onPageClear() {
+      this.$refs.loadMore.clear();
     },
     onLoadClear(done) {
       this.items = [];
@@ -51,7 +54,7 @@ export default {
       return <eb-component module={blockConfig.component.module} name={blockConfig.component.name} options={this.getBlockComponentOptions({ blockConfig })}></eb-component>;
     },
     _renderLoadMore() {
-      return <eb-load-more ref="loadMore" propsOnLoadClear={this.onLoadClear} propsOnLoadMore={this.onLoadMore} autoInit={true}></eb-load-more>;
+      return <eb-load-more ref="loadMore" propsOnLoadClear={this.onLoadClear} propsOnLoadMore={this.onLoadMore} autoInit={this.layoutManager.scene !== 'search'}></eb-load-more>;
     },
   },
   render() {

@@ -58,13 +58,18 @@ export default {
     reload(force) {
       if (!force && !this.inited) return;
       this.inited = true;
-      if (!this.onLoadClear) throw new Error('onLoadClear not exists.');
+      this.clear(() => {
+        this.loadMore();
+      });
+    },
+    clear(done) {
+      if (!this.onLoadClear) throw new Error('onLoadClear not exists');
       this.onLoadClear(() => {
         this.finished = false;
         this.doing = false;
         this.index = 0;
         this.error = false;
-        this.loadMore();
+        done && done();
       });
     },
     loadMore() {

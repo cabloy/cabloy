@@ -1,6 +1,6 @@
 <template>
-  <eb-search-page :title="$text('Search Menu')" @onSearch="onSearch" @onLoadMore="onLoadMore" @onDisable="onDisable">
-    <menus slot="list" ref="list" mode="search"></menus>
+  <eb-search-page :title="$text('Search Menu')" @search="onSearch" @loadMore="onLoadMore" @disable="onDisable">
+    <menus ref="list" mode="search"></menus>
   </eb-search-page>
 </template>
 <script>
@@ -18,8 +18,8 @@ export default {
     },
     onDisable() {
       this.$f7router.back();
-    }
-  }
+    },
+  },
 };
 
 </script>
