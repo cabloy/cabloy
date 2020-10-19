@@ -4,7 +4,7 @@ export default {
   data() {
     return {
       ready: false,
-      layout2: null,
+      layoutCurrent: null,
       layoutConfig: null,
       configAtomBase: null,
       configAtom: null,
@@ -45,7 +45,7 @@ export default {
     //
     this.$store.dispatch('a/base/getLabels');
     //
-    this.layout2 = this.layout || this.getLayout();
+    this.layoutCurrent = this.layout || this.getLayout();
     //
     this.prepareLayoutConfig().then(() => {
       this.ready = true;
@@ -237,18 +237,11 @@ export default {
       if (this.atomClass) {
         // load module
         await this.$meta.module.use(this.atomClass.module);
-        const configAtom = this.$meta.config.modules[this.atomClass.module];
-        this.configAtom = configAtom && configAtom.atoms && configAtom.atoms[this.atomClass.atomClassName];
+        this.configAtom = this.$meta.util.getProperty(this.$meta.config.modules[this.atomClass.module], `atoms.${this.atomClass.atomClassName}`);
       }
       // layoutConfig
-      const layoutConfigBase = this.configAtomBase.render.list.layouts[this.layout2];
-      let layoutConfigAtom;
-      if (this.configAtom) {
-        // config
-        layoutConfigAtom = this.configAtom;
-        layoutConfigAtom = layoutConfigAtom && layoutConfigAtom.render && layoutConfigAtom.render.list && layoutConfigAtom.render.list.layouts;
-        layoutConfigAtom = layoutConfigAtom && layoutConfigAtom[this.layout2];
-      }
+      const layoutConfigBase = this.configAtomBase.render.list.layouts[this.layoutCurrent];
+      const layoutConfigAtom = this.$meta.util.getProperty(this.configAtom, `render.list.layouts.${this.layoutCurrent}`);
       this.layoutConfig = this.$meta.util.extend({}, layoutConfigBase, layoutConfigAtom);
     },
     getPageTitle() {
