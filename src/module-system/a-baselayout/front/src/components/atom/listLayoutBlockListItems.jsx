@@ -19,7 +19,16 @@ export default {
       radioName: Vue.prototype.$meta.util.nextId('radio'),
     };
   },
-  created() {
+  computed: {
+    user() {
+      return this.$store.state.auth.user.op;
+    },
+  },
+  mounted() {
+    this.$meta.eventHub.$on('atom:star', this.onStarChanged);
+  },
+  beforeDestroy() {
+    this.$meta.eventHub.$off('atom:star', this.onStarChanged);
   },
   methods: {
     onItemClick() {
@@ -28,6 +37,48 @@ export default {
     },
     onItemChange(event, item) {
       // todo
+    },
+    onSwipeoutOpened(event, item) {
+      if (item._actions) return;
+      this.$api.post('/a/base/atom/actions', {
+        key: { atomId: item.atomId },
+        basic: true,
+      }).then(data => {
+        Vue.set(item, '_actions', data);
+      });
+    },
+    onStarChanged(data) {
+      const index = this.layout.items.findIndex(item => item.atomId === data.key.atomId);
+      if (index !== -1) {
+        this.layout.items[index].star = data.star;
+      }
+    },
+    onStarSwitch(event, item) {
+      const star = item.star ? 0 : 1;
+      return this._onStarSwitch(event, item, star, 'swipeoutClose');
+    },
+    _onStarSwitch(event, item, star, swipeoutAction) {
+      // anonymous
+      if (this.user.anonymous) {
+        this.$view.dialog.confirm(this.$text('Please Sign In')).then(() => {
+          // login
+          this.$meta.vueLayout.openLogin();
+        });
+        return;
+      }
+      // key
+      const key = {
+        atomId: item.atomId,
+        itemId: item.itemId,
+      };
+      //
+      return this.$api.post('/a/base/atom/star', {
+        key,
+        atom: { star },
+      }).then(data => {
+        this.$meta.eventHub.$emit('atom:star', { key, star: data.star, starCount: data.starCount });
+        this.$meta.util[swipeoutAction](event.target);
+      });
     },
     _getItemMetaMedia(item) {
       const media = (item._meta && item._meta.media) || item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
@@ -76,7 +127,7 @@ export default {
             <span>{this._getItemMetaMediaLabel(item)}</span>
           </div>
           <div class="date">
-            {item.star && <span>⭐</span>}
+            {item.star > 0 && <span>⭐</span>}
             {item.attachmentCount > 0 && <span>🧷</span>}
             {item.attachmentCount > 1 && <span>{`${item.attachmentCount}`}</span>}
             {item.commentCount > 0 && <span>💬</span>}
@@ -126,15 +177,30 @@ export default {
           radio={this.layoutManager.scene === 'selecting' && this.layoutManager.params.selectMode === 'single'}
           checkbox={this.layoutManager.scene === 'selecting' && this.layoutManager.params.selectMode === 'multiple'}
           link={this.layoutManager.scene === 'selecting' ? false : '#'}
-          context={item} propsOnPerform={this.onItemClick}
-          onChange={$event => { this.onItemChange($event, item); }}>
+          propsOnPerform={event => { this.onItemClick(event, item); }}
+          onChange={event => { this.onItemChange(event, item); }}
+          swipeout onSwipeoutOpened={event => { this.onSwipeoutOpened(event, item); } }
+          onContextmenuOpened={event => { this.onSwipeoutOpened(event, item); } }
+        >
 
           {domMedia}
           {domHeader}
           {domTitle}
           {domSummary}
           {domAfter}
+          {this._renderListItemContextMenu(item)}
         </eb-list-item>
+      );
+    },
+    _renderListItemContextMenu(item) {
+
+      return (
+        <eb-context-menu>
+          <div slot="left">
+            <div color="teal" propsOnPerform={event => { this.onStarSwitch(event, item); }}><f7-icon material="star_rate" color={item.star ? 'orange' : 'gray'}></f7-icon></div>
+          </div>
+
+        </eb-context-menu>
       );
     },
     _renderList() {

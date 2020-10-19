@@ -10,7 +10,7 @@ export default {
   },
   name: 'eb-list-item',
   extends: f7ListItem,
-  mixins: [perform, link],
+  mixins: [ perform, link ],
   mounted() {
     this.$$(this.$el).on('contextmenu', this.onContextMenu);
     if (this.externalLink) {
@@ -36,7 +36,7 @@ export default {
       // finished the event immediately
       this.$nextTick(() => {
         this.$f7.popover.open(popover, this.$el);
-        this.$emit('contextmenu:opened', event);
+        this.$emit('contextmenuOpened', event);
       });
     },
     getLinkEl() {

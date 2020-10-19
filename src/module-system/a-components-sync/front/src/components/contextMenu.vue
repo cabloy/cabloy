@@ -32,7 +32,7 @@ export default {
       // popover
       const attrs = {};
       if (ready !== undefined) attrs.ready = ready;
-      return c('eb-popover', { attrs }, [list]);
+      return c('eb-popover', { attrs }, [ list ]);
     }
 
     // mobile
@@ -48,12 +48,14 @@ export default {
       if (attrs.link === undefined) attrs.link = '#';
       attrs.popoverClose = true;
       delete attrs.color;
-      return c('eb-list-item', { attrs }, vnode.children);
+      const props = this.$utils.extend({}, vnode.data.props);
+      return c('eb-list-item', { attrs, props }, vnode.children);
     },
     vNodeItemMobile(c, vnode) {
       if (!vnode.data) return vnode;
       const attrs = this.$utils.extend({}, vnode.data.attrs);
-      return c('eb-swipeout-button', { attrs }, vnode.children);
+      const props = this.$utils.extend({}, vnode.data.props);
+      return c('eb-swipeout-button', { attrs, props }, vnode.children);
     },
     vNodeSlotMobile(c, slot) {
       const children = [];

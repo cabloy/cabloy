@@ -15,8 +15,6 @@ export default {
       items: [],
     };
   },
-  created() {
-  },
   methods: {
     onPageRefresh() {
       this.$refs.loadMore.reload();
