@@ -174,6 +174,9 @@ export default {
         if (this.filter.form.label) {
           options.label = this.filter.form.label;
         }
+        if (this.filter.form.stage) {
+          options.stage = this.filter.form.stage;
+        }
         if (this.filter.form.atomClass) {
           params.atomClass = this.filter.form.atomClass;
         }
