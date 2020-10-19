@@ -171,6 +171,9 @@ export default {
         if (this.filter.form.atomName) {
           options.where['a.atomName'] = { val: this.filter.form.atomName, op: 'like' };
         }
+        if (this.filter.form.star) {
+          options.star = Number(this.filter.form.star);
+        }
         if (this.filter.form.label) {
           options.label = this.filter.form.label;
         }

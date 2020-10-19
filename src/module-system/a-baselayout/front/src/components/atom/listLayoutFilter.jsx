@@ -16,7 +16,8 @@ export default {
   data() {
     const form = this.$meta.util.getProperty(this.layoutManager, 'filter.form') || {
       atomName: null,
-      label: 0,
+      star: (this.layoutManager.options && this.layoutManager.options.star) || 0,
+      label: (this.layoutManager.options && this.layoutManager.options.label) || 0,
       stage: (this.layoutManager.options && this.layoutManager.options.stage) || 'archive',
       atomClass: null,
     };
@@ -149,6 +150,9 @@ export default {
       return (
         <eb-list form inline-labels no-hairlines-md onSubmit={this.onFormSubmit}>
           <eb-list-input v-model={this.form.atomName} label={this.$text('Atom Name')} type="text" clear-button placeholder={this.$text('Atom Name')}></eb-list-input>
+          <f7-list-item title={this.$text('Star')}>
+            <eb-toggle slot="after" v-model={this.form.star}></eb-toggle>
+          </f7-list-item>
           <f7-list-item smartSelect title={this.$text('Label')} smartSelectParams={{ openIn: 'page', closeOnSelect: true }}>
             <eb-select name="label" v-model={this.form.label} options={this.userLabels}></eb-select>
           </f7-list-item>
