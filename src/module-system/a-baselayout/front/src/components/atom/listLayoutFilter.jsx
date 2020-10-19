@@ -121,11 +121,14 @@ export default {
     },
     onFilterChanged(force) {
       if (force || this.filterContainer.immediate) {
-        this.layoutManager.onFilterChanged({
-          form: this.form, formAtomClass: this.formAtomClass,
-        });
+        this.onFilterDebounce();
       }
     },
+    onFilterDebounce: Vue.prototype.$meta.util.debounce(function() {
+      this.layoutManager.onFilterChanged({
+        form: this.form, formAtomClass: this.formAtomClass,
+      });
+    }, 300),
     onPerformSearch() {
       this.onFilterChanged(true);
       this.$f7router.back();
