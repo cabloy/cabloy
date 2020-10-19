@@ -12,6 +12,9 @@ export default {
     filterConfig: {
       type: Object,
     },
+    filterContainer: {
+      type: Object,
+    },
   },
   data() {
     const form = this.$meta.util.getProperty(this.layoutManager, 'filter.form') || {
@@ -23,16 +26,12 @@ export default {
     };
     const formAtomClass = this.$meta.util.getProperty(this.layoutManager, 'filter.formAtomClass') || {};
     return {
-      immediate: true,
       form,
       formAtomClass,
       validateParams: null,
     };
   },
   computed: {
-    pageTitle() {
-      return this.$text('Filter');
-    },
     userLabels() {
       const labelsAll = this.$store.getters['a/base/userLabels'];
       if (!labelsAll) return null;
@@ -74,12 +73,6 @@ export default {
     this.$store.dispatch('a/base/getLabels');
     // init atomClass
     this.atomClassChanged();
-  },
-  mounted() {
-    // immediate
-    const $el = this.$$(this.$el);
-    const $view = $el.parents('.eb-layout-view');
-    this.immediate = $view.is('.eb-layout-panel-view');
   },
   methods: {
     onFormSubmit() {
@@ -127,7 +120,7 @@ export default {
       });
     },
     onFilterChanged(force) {
-      if (force || this.immediate) {
+      if (force || this.filterContainer.immediate) {
         this.layoutManager.onFilterChanged({
           form: this.form, formAtomClass: this.formAtomClass,
         });
@@ -136,15 +129,6 @@ export default {
     onPerformSearch() {
       this.onFilterChanged(true);
       this.$f7router.back();
-    },
-    _renderNavbar() {
-      return (
-        <eb-navbar title={this.pageTitle} eb-back-link="Back">
-          <f7-nav-right>
-            {!this.immediate && <eb-link ref="buttonSubmit" iconMaterial="search" propsOnPerform={this.onPerformSearch}></eb-link>}
-          </f7-nav-right>
-        </eb-navbar>
-      );
     },
     _renderForm() {
       return (
@@ -177,7 +161,6 @@ export default {
   render() {
     return (
       <div>
-        {this._renderNavbar()}
         {this._renderForm()}
         {this._renderFormAtomClass()}
       </div>
