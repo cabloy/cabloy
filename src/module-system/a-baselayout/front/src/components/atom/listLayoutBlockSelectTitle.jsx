@@ -18,7 +18,7 @@ export default {
   },
   methods: {
     onPerformAdd() {
-      // selectedAtomIds
+      // params
       const selectedAtoms = this.layoutManager.getSelectedAtoms();
       const params = {
         selectMode: this.layoutManager.params.selectMode,
@@ -36,6 +36,7 @@ export default {
           callback: (code, selectedAtoms) => {
             if (code === 200) {
               this.layoutManager.params.selectedAtomIds = selectedAtoms.map(item => item.atomId);
+              this.layoutManager.onPageRefresh();
             }
           },
         },
@@ -45,7 +46,7 @@ export default {
       // selectedAtoms
       const selectedAtoms = this.getSelectedAtoms();
       // ok
-      this.contextCallback(200, selectedAtoms);
+      this.layoutManager.contextCallback(200, selectedAtoms);
       this.$f7router.back();
     },
     getSelectedAtoms() {

@@ -33,7 +33,13 @@ export default {
     },
     atomOrderDefault() {
       let atomOrder;
-      if (this.options && this.options.star) {
+      if (this.scene === 'select') {
+        atomOrder = {
+          name: 'atomName',
+          by: 'asc',
+          tableAlias: 'a',
+        };
+      } else if (this.options && this.options.star) {
         atomOrder = {
           name: 'updatedAt',
           by: 'desc',
@@ -160,6 +166,10 @@ export default {
       if (this.searchQuery) {
         options.where['a.atomName'] = { val: this.searchQuery, op: 'like' };
       }
+      // select
+      if (this.scene === 'select') {
+        options.where['a.id'] = this.params.selectedAtomIds.length > 0 ? this.params.selectedAtomIds : null;
+      }
       // order
       const atomOrderCurrent = this.atomOrderSelected || this.atomOrderDefault;
       options.orders = [
@@ -260,10 +270,13 @@ export default {
         return this.params.selectedAtoms;
       }
       if (this.scene === 'select') {
-        return this.layoutComponentInstance && this.layoutComponentInstance.items;
+        return this.getItems();
       }
     },
     // ** select - end
+    getItems() {
+      return this.layoutComponentInstance ? this.layoutComponentInstance.items : [];
+    },
     _getAtomOrderKey(atomOrder) {
       return atomOrder ? `${atomOrder.tableAlias || 'f'}.${atomOrder.name}` : null;
     },

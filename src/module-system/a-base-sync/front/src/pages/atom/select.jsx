@@ -24,9 +24,9 @@ export default {
     // params
     let selectedAtomIds;
     if (contextParams.selectMode === 'single') {
-      selectedAtomIds = contextParams.selectedAtomId ? [ contextParams.selectedAtomId ] : null;
+      selectedAtomIds = contextParams.selectedAtomId ? [ contextParams.selectedAtomId ] : [];
     } else {
-      selectedAtomIds = contextParams.selectedAtomIds ? contextParams.selectedAtomIds.concat() : null;
+      selectedAtomIds = contextParams.selectedAtomIds ? contextParams.selectedAtomIds.concat() : [];
     }
     this.params = {
       selectMode,

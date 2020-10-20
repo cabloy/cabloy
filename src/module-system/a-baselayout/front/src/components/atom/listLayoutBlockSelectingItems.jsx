@@ -34,12 +34,12 @@ export default {
           this.layoutManager.params.selectedAtoms = [ item ];
         }
       } else {
-        if (!this.selectedAtoms) this.selectedAtoms = [];
-        const index = this.selectedAtoms.findIndex(_item => _item.atomId === item.atomId);
+        const selectedAtoms = this.layoutManager.params.selectedAtoms;
+        const index = selectedAtoms.findIndex(_item => _item.atomId === item.atomId);
         if (event.target.checked && index === -1) {
-          this.selectedAtoms.push(item);
+          selectedAtoms.push(item);
         } else if (!event.target.checked && index > -1) {
-          this.selectedAtoms.splice(index, 1);
+          selectedAtoms.splice(index, 1);
         }
       }
     },
@@ -147,7 +147,7 @@ export default {
           checkbox={this.layoutManager.params.selectMode === 'multiple'}
           checked={this._getItemChecked(item)}
           swipeout
-          change={event => this.onItemChange(event, item)}
+          onChange={event => this.onItemChange(event, item)}
         >
 
           {domHeader}

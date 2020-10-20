@@ -20,21 +20,6 @@ export default {
     return {
     };
   },
-  computed: {
-    user() {
-      return this.$store.state.auth.user.op;
-    },
-  },
-  mounted() {
-    this.$meta.eventHub.$on('atom:star', this.onStarChanged);
-    this.$meta.eventHub.$on('atom:labels', this.onLabelsChanged);
-    this.$meta.eventHub.$on('atom:action', this.onActionChanged);
-  },
-  beforeDestroy() {
-    this.$meta.eventHub.$off('atom:star', this.onStarChanged);
-    this.$meta.eventHub.$off('atom:labels', this.onLabelsChanged);
-    this.$meta.eventHub.$off('atom:action', this.onActionChanged);
-  },
   methods: {
     onItemClick(event, item) {
       return this.onAction(event, item, {
@@ -43,33 +28,23 @@ export default {
         name: 'read',
       });
     },
-    onSwipeoutOpened(event, item) {
-      if (item._actions) return;
-      this.$api.post('/a/base/atom/actions', {
-        key: { atomId: item.atomId },
-        basic: true,
-      }).then(data => {
-        Vue.set(item, '_actions', data);
-      });
-    },
-    onLabel(event, item) {
-      // anonymous
-      if (this.user.anonymous) {
-        this.$view.dialog.confirm(this.$text('Please Sign In')).then(() => {
-          // login
-          this.$meta.vueLayout.openLogin();
-        });
-        return;
-      }
-      // navigate
-      this.$view.navigate(`/a/base/atom/labels?atomId=${item.atomId}`, {
-        target: '_self',
-      });
+    onActionSelectRemove(event, item) {
+      // close
       this.$meta.util.swipeoutClose(event.target);
-    },
-    onStarSwitch(event, item) {
-      const star = item.star ? 0 : 1;
-      return this._onStarSwitch(event, item, star, 'swipeoutClose');
+      // remove from selectedAtomIds
+      const selectedAtomIds = this.layoutManager.params.selectedAtomIds;
+      if (selectedAtomIds) {
+        const index = selectedAtomIds.findIndex(_item => _item === item.atomId);
+        if (index !== -1) {
+          selectedAtomIds.splice(index, 1);
+        }
+      }
+      // remove from list
+      const items = this.layoutManager.getItems();
+      const index = items.findIndex(_item => _item.atomId === item.atomId);
+      if (index !== -1) {
+        items.splice(index, 1);
+      }
     },
     onAction(event, item, action) {
       const _action = this.getAction(action);
@@ -78,71 +53,6 @@ export default {
         .then(() => {
           this.$meta.util.swipeoutClose(event.target);
         });
-    },
-    onStarChanged(data) {
-      const index = this.layout.items.findIndex(item => item.atomId === data.key.atomId);
-      if (index !== -1) {
-        this.layout.items[index].star = data.star;
-      }
-    },
-    onLabelsChanged(data) {
-      const index = this.layout.items.findIndex(item => item.atomId === data.key.atomId);
-      if (index !== -1) {
-        this.layout.items[index].labels = JSON.stringify(data.labels);
-      }
-    },
-    onActionChanged(data) {
-      const key = data.key;
-      const action = data.action;
-      // create
-      if (action.menu === 1 && action.action === 'create') {
-        // do nothing
-        return;
-      }
-      // delete
-      const index = this.layout.items.findIndex(item => item.atomId === key.atomId);
-      if (action.name === 'delete') {
-        if (index !== -1) {
-          this.layout.items.splice(index, 1);
-        }
-        return;
-      }
-      // submit
-      if (action.name === 'submit') {
-        // do nothing
-        return;
-      }
-      // others
-      if (index !== -1) {
-        this.$api.post('/a/base/atom/read', {
-          key,
-        }).then(data => {
-          Vue.set(this.layout.items, index, data);
-        });
-      }
-    },
-    _onStarSwitch(event, item, star, swipeoutAction) {
-      // anonymous
-      if (this.user.anonymous) {
-        this.$view.dialog.confirm(this.$text('Please Sign In')).then(() => {
-          // login
-          this.$meta.vueLayout.openLogin();
-        });
-        return;
-      }
-      // key
-      const key = {
-        atomId: item.atomId,
-        itemId: item.itemId,
-      };
-      //
-      return this.$api.post('/a/base/atom/star', {
-        key,
-        atom: { star },
-      }).then(data => {
-        this.$meta.eventHub.$emit('atom:star', { key, star: data.star, starCount: data.starCount });
-        this.$meta.util[swipeoutAction](event.target);
-      });
     },
     _getItemMetaMedia(item) {
       const media = (item._meta && item._meta.media) || item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
@@ -173,17 +83,6 @@ export default {
     _getLabel(id) {
       if (!this.layoutManager.userLabels) return null;
       return this.layoutManager.userLabels[id];
-    },
-    _getActionColor(action, index) {
-      if (index === 0) return 'orange';
-      else if (index === 1) return 'red';
-      return 'blue';
-    },
-    _getActionTitle(action) {
-      const title = this.getActionTitle(action);
-      if (action.code === 3) return this.$device.desktop ? `✏️ ${title}` : '✏️';
-      else if (action.code === 4) return this.$device.desktop ? `🗑️ ${title}` : '🗑️';
-      return title;
     },
     _renderListItem(item) {
       // media
@@ -246,8 +145,7 @@ export default {
       return (
         <eb-list-item class="item" key={item.atomId} link="#"
           propsOnPerform={event => this.onItemClick(event, item)}
-          swipeout onSwipeoutOpened={event => { this.onSwipeoutOpened(event, item); } }
-          onContextmenuOpened={event => { this.onSwipeoutOpened(event, item); } }
+          swipeout
         >
 
           {domMedia}
@@ -260,37 +158,11 @@ export default {
       );
     },
     _renderListItemContextMenu(item) {
-      // domLeft
-      let domLeft;
-      if (item.atomStage === 1) {
-        domLeft = (
-          <div slot="left">
-            <div color="teal" propsOnPerform={event => this.onStarSwitch(event, item)}>{this.$device.desktop ? `⭐ ${this.$text(item.star ? 'Unstar' : 'Star')}` : '⭐'}</div>
-            <div color="blue" propsOnPerform={event => this.onLabel(event, item)}>{this.$device.desktop ? `🏷️ ${this.$text('Labels')}` : '🏷️'}</div>
-          </div>
-        );
-      }
-      // domRight
-      const domActions = [];
-      if (item._actions) {
-        for (let index in item._actions) {
-          index = parseInt(index);
-          const action = item._actions[index];
-          domActions.push(
-            <div key={action.id} color={this._getActionColor(action, index)} propsOnPerform={event => this.onAction(event, item, action)}>{this._getActionTitle(action)}</div>
-          );
-        }
-      }
-      const domRight = (
-        <div slot="right" ready={!!item._actions}>
-          {domActions}
-        </div>
-      );
-
       return (
         <eb-context-menu>
-          {domLeft}
-          {domRight}
+          <div slot="right">
+            <div color="teal" propsOnPerform={event => this.onActionSelectRemove(event, item)}>{this.$text('Remove')}</div>
+          </div>
         </eb-context-menu>
       );
     },
