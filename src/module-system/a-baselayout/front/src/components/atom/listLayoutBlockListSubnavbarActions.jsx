@@ -22,8 +22,8 @@ export default {
     return (
       <f7-subnavbar>
         <div class="atom-list-subnavbarActions-container">
-          <div class="block-left">ss</div>
-          <div class="block-right">
+          <div class="block block-left">ss</div>
+          <div class="block block-right">
             <f7-link>List</f7-link>
             <f7-link >drafts</f7-link>
             <f7-link >stars</f7-link>
