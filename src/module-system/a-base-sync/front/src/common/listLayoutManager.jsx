@@ -345,6 +345,9 @@ export default {
       return this.pageTitle;
     },
     initPageTitle() {
+      //
+      if (this.params && this.params.pageTitle) return this.params.pageTitle;
+      //
       const atomClass = this.getAtomClass(this.atomClass);
       const atomClassTitle = atomClass && atomClass.titleLocale;
       if (this.scene === 'select') {

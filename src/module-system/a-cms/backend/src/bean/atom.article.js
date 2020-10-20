@@ -145,8 +145,8 @@ module.exports = app => {
         [ item.content, html, this.ctx.instance.id, key.atomId ]);
 
       // tags
+      const tagsNew = await this.ctx.service.tag.updateArticleTags({ atomClass, key, item });
       if (atomStage === 1) {
-        const tagsNew = await this.ctx.service.tag.updateArticleTags({ atomClass, key, item });
         // set tag count , force check if delete tags
         await this.ctx.service.tag.setTagArticleCount({ tagsNew, tagsOld: atomOld.tags });
       }

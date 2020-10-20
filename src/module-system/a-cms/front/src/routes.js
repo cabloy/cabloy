@@ -13,7 +13,6 @@ export default [
   { path: 'category/select', component: load('category/select') },
   { path: 'article/contentEdit', component: load('article/contentEdit') },
   { path: 'article/category', component: load('article/category') },
-  { path: 'article/list', component: load('article/list') },
   { path: 'article/post', component: load('article/post') },
   { path: 'tag/select', component: load('tag/select') },
   { path: 'tag/list', component: load('tag/list') },

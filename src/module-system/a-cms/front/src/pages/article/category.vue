@@ -76,7 +76,25 @@ export default {
     },
     onNodeClick(node) {
       if (node.data.catalog) return;
-      const url = this.combineAtomClass(`/a/cms/article/list?language=${node.data.language}&categoryId=${node.data.id}&categoryName=${encodeURIComponent(node.data.categoryName)}`);
+      // options
+      const options = {
+        where: {
+          language: node.data.language,
+          categoryId: node.data.id,
+        },
+      };
+      // params
+      const params = {
+        pageTitle: `${this.$text('Category')}: ${node.data.categoryName}`,
+      };
+      // queries
+      const queries = {
+        module: this.atomClass.module,
+        atomClassName: this.atomClass.atomClassName,
+        options: JSON.stringify(options),
+        params: JSON.stringify(params),
+      };
+      const url = this.$meta.util.combineQueries('/a/base/atom/list', queries);
       this.$view.navigate(url, { target: '_self' });
     },
   },

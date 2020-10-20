@@ -51,7 +51,7 @@ export default {
       const options = {
         where: { language: this.language },
         orders: [
-          ['tagName', 'asc'],
+          [ 'tagName', 'asc' ],
         ],
       };
       this.$api.post('tag/list', {
@@ -76,7 +76,27 @@ export default {
       }).catch(() => {});
     },
     onItemClick(event, item) {
-      const url = this.combineAtomClass(`/a/cms/article/list?language=${item.language}&tagId=${item.id}&tagName=${encodeURIComponent(item.tagName)}`);
+      // options
+      const options = {
+        mode: 'tag',
+        where: {
+          language: item.language,
+          tagId: item.id,
+        },
+      };
+      // params
+      const params = {
+        pageTitle: `${this.$text('Tag')}: ${item.tagName}`,
+        disableFilter: true,
+      };
+      // queries
+      const queries = {
+        module: this.atomClass.module,
+        atomClassName: this.atomClass.atomClassName,
+        options: JSON.stringify(options),
+        params: JSON.stringify(params),
+      };
+      const url = this.$meta.util.combineQueries('/a/base/atom/list', queries);
       this.$view.navigate(url, { target: '_self' });
     },
     onPerformEdit(event, item) {
@@ -105,7 +125,7 @@ export default {
           }
         }).catch(err => this.$view.dialog.alert(err.message));
       });
-    }
+    },
   },
 };
 
