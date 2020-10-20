@@ -81,9 +81,6 @@ export default {
     this.atomClassChanged();
   },
   methods: {
-    onFormSubmit() {
-      this.$refs.buttonSubmit.onClick();
-    },
     atomClassChanged() {
       // reset
       this.validateParams = null;
@@ -138,6 +135,13 @@ export default {
     onPerformSearch() {
       this.onFilterChanged(true);
       this.$f7router.back();
+    },
+    onFormSubmit() {
+      if (this.filterContainer.immediate) {
+        // donothing
+      } else {
+        this.onPerformSearch();
+      }
     },
     _renderForm() {
       return (

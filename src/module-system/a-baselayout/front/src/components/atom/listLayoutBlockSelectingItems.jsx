@@ -18,58 +18,37 @@ export default {
   },
   data() {
     return {
+      radioName: Vue.prototype.$meta.util.nextId('radio'),
     };
   },
   computed: {
-    user() {
-      return this.$store.state.auth.user.op;
+    selectedAtoms() {
+      return this.layoutManager.getSelectedAtoms();
     },
   },
-  mounted() {
-    this.$meta.eventHub.$on('atom:star', this.onStarChanged);
-    this.$meta.eventHub.$on('atom:labels', this.onLabelsChanged);
-    this.$meta.eventHub.$on('atom:action', this.onActionChanged);
-  },
-  beforeDestroy() {
-    this.$meta.eventHub.$off('atom:star', this.onStarChanged);
-    this.$meta.eventHub.$off('atom:labels', this.onLabelsChanged);
-    this.$meta.eventHub.$off('atom:action', this.onActionChanged);
-  },
   methods: {
-    onItemClick(event, item) {
+    onItemChange(event, item) {
+      const selectMode = this.layoutManager.params.selectMode;
+      if (selectMode === 'single') {
+        if (event.target.checked) {
+          this.layoutManager.params.selectedAtoms = [ item ];
+        }
+      } else {
+        if (!this.selectedAtoms) this.selectedAtoms = [];
+        const index = this.selectedAtoms.findIndex(_item => _item.atomId === item.atomId);
+        if (event.target.checked && index === -1) {
+          this.selectedAtoms.push(item);
+        } else if (!event.target.checked && index > -1) {
+          this.selectedAtoms.splice(index, 1);
+        }
+      }
+    },
+    onActionView(event, item) {
       return this.onAction(event, item, {
         module: item.module,
         atomClassName: item.atomClassName,
         name: 'read',
       });
-    },
-    onSwipeoutOpened(event, item) {
-      if (item._actions) return;
-      this.$api.post('/a/base/atom/actions', {
-        key: { atomId: item.atomId },
-        basic: true,
-      }).then(data => {
-        Vue.set(item, '_actions', data);
-      });
-    },
-    onLabel(event, item) {
-      // anonymous
-      if (this.user.anonymous) {
-        this.$view.dialog.confirm(this.$text('Please Sign In')).then(() => {
-          // login
-          this.$meta.vueLayout.openLogin();
-        });
-        return;
-      }
-      // navigate
-      this.$view.navigate(`/a/base/atom/labels?atomId=${item.atomId}`, {
-        target: '_self',
-      });
-      this.$meta.util.swipeoutClose(event.target);
-    },
-    onStarSwitch(event, item) {
-      const star = item.star ? 0 : 1;
-      return this._onStarSwitch(event, item, star, 'swipeoutClose');
     },
     onAction(event, item, action) {
       const _action = this.getAction(action);
@@ -78,75 +57,6 @@ export default {
         .then(() => {
           this.$meta.util.swipeoutClose(event.target);
         });
-    },
-    onStarChanged(data) {
-      const index = this.layout.items.findIndex(item => item.atomId === data.key.atomId);
-      if (index !== -1) {
-        this.layout.items[index].star = data.star;
-      }
-    },
-    onLabelsChanged(data) {
-      const index = this.layout.items.findIndex(item => item.atomId === data.key.atomId);
-      if (index !== -1) {
-        this.layout.items[index].labels = JSON.stringify(data.labels);
-      }
-    },
-    onActionChanged(data) {
-      const key = data.key;
-      const action = data.action;
-      // create
-      if (action.menu === 1 && action.action === 'create') {
-        // do nothing
-        return;
-      }
-      // delete
-      const index = this.layout.items.findIndex(item => item.atomId === key.atomId);
-      if (action.name === 'delete') {
-        if (index !== -1) {
-          this.layout.items.splice(index, 1);
-        }
-        return;
-      }
-      // submit
-      if (action.name === 'submit') {
-        // do nothing
-        return;
-      }
-      // others
-      if (index !== -1) {
-        this.$api.post('/a/base/atom/read', {
-          key,
-        }).then(data => {
-          Vue.set(this.layout.items, index, data);
-        });
-      }
-    },
-    _onStarSwitch(event, item, star, swipeoutAction) {
-      // anonymous
-      if (this.user.anonymous) {
-        this.$view.dialog.confirm(this.$text('Please Sign In')).then(() => {
-          // login
-          this.$meta.vueLayout.openLogin();
-        });
-        return;
-      }
-      // key
-      const key = {
-        atomId: item.atomId,
-        itemId: item.itemId,
-      };
-      //
-      return this.$api.post('/a/base/atom/star', {
-        key,
-        atom: { star },
-      }).then(data => {
-        this.$meta.eventHub.$emit('atom:star', { key, star: data.star, starCount: data.starCount });
-        this.$meta.util[swipeoutAction](event.target);
-      });
-    },
-    _getItemMetaMedia(item) {
-      const media = (item._meta && item._meta.media) || item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
-      return this.$meta.util.combineImageUrl(media, 32);
     },
     _getItemMetaMediaLabel(item) {
       const mediaLabel = (item._meta && item._meta.mediaLabel) || item.userName;
@@ -174,24 +84,11 @@ export default {
       if (!this.layoutManager.userLabels) return null;
       return this.layoutManager.userLabels[id];
     },
-    _getActionColor(action, index) {
-      if (index === 0) return 'orange';
-      else if (index === 1) return 'red';
-      return 'blue';
-    },
-    _getActionTitle(action) {
-      const title = this.getActionTitle(action);
-      if (action.code === 3) return this.$device.desktop ? `✏️ ${title}` : '✏️';
-      else if (action.code === 4) return this.$device.desktop ? `🗑️ ${title}` : '🗑️';
-      return title;
+    _getItemChecked(item) {
+      const index = this.selectedAtoms.findIndex(_item => _item.atomId === item.atomId);
+      return index > -1;
     },
     _renderListItem(item) {
-      // media
-      const domMedia = (
-        <div slot="media">
-          <img class="avatar avatar32" src={this._getItemMetaMedia(item)} />
-        </div>
-      );
       // domHeader
       const domHeader = (
         <div slot="root-start" class="header">
@@ -244,13 +141,15 @@ export default {
       );
       // ok
       return (
-        <eb-list-item class="item" key={item.atomId} link="#"
-          propsOnPerform={event => this.onItemClick(event, item)}
-          swipeout onSwipeoutOpened={event => { this.onSwipeoutOpened(event, item); } }
-          onContextmenuOpened={event => { this.onSwipeoutOpened(event, item); } }
+        <eb-list-item class="item" key={item.atomId}
+          name={this.radioName}
+          radio={this.layoutManager.params.selectMode === 'single'}
+          checkbox={this.layoutManager.params.selectMode === 'multiple'}
+          checked={this._getItemChecked(item)}
+          swipeout
+          change={event => this.onItemChange(event, item)}
         >
 
-          {domMedia}
           {domHeader}
           {domTitle}
           {domSummary}
@@ -260,37 +159,11 @@ export default {
       );
     },
     _renderListItemContextMenu(item) {
-      // domLeft
-      let domLeft;
-      if (item.atomStage === 1) {
-        domLeft = (
-          <div slot="left">
-            <div color="teal" propsOnPerform={event => this.onStarSwitch(event, item)}>{this.$device.desktop ? `⭐ ${this.$text(item.star ? 'Unstar' : 'Star')}` : '⭐'}</div>
-            <div color="blue" propsOnPerform={event => this.onLabel(event, item)}>{this.$device.desktop ? `🏷️ ${this.$text('Labels')}` : '🏷️'}</div>
-          </div>
-        );
-      }
-      // domRight
-      const domActions = [];
-      if (item._actions) {
-        for (let index in item._actions) {
-          index = parseInt(index);
-          const action = item._actions[index];
-          domActions.push(
-            <div key={action.id} color={this._getActionColor(action, index)} propsOnPerform={event => this.onAction(event, item, action)}>{this._getActionTitle(action)}</div>
-          );
-        }
-      }
-      const domRight = (
-        <div slot="right" ready={!!item._actions}>
-          {domActions}
-        </div>
-      );
-
       return (
         <eb-context-menu>
-          {domLeft}
-          {domRight}
+          <div slot="right">
+            <div color="teal" propsOnPerform={event => this.onActionView(event, item)}>{this.$text('View')}</div>
+          </div>
         </eb-context-menu>
       );
     },

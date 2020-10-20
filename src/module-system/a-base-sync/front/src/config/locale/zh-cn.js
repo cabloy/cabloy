@@ -43,6 +43,7 @@ export default {
   Search: '搜索',
   Link: '链接',
   Select: '选择',
+  Selecting: '选择中',
   Remove: '移除',
   Heart2: '点赞',
   Hearted: '已点赞',

@@ -4,7 +4,7 @@ import ebMenus from './menus.js';
 // atomClass,
 // options,
 // params,
-// scene, // default/search/select
+// scene, // default/search/select/selecting
 // layout,
 
 export default {
@@ -18,7 +18,6 @@ export default {
       configAtom: null,
       filter: null,
       atomOrderSelected: null,
-      selectedAtoms: null,
       searchQuery: null,
       actionsCreate: null,
       subnavbarActions: false,
@@ -258,7 +257,7 @@ export default {
     // ** select - begin
     getSelectedAtoms() {
       if (this.scene === 'selecting') {
-        return this.selectedAtoms;
+        return this.params.selectedAtoms;
       }
       if (this.scene === 'select') {
         return this.layoutComponentInstance && this.layoutComponentInstance.items;
@@ -306,6 +305,7 @@ export default {
       this.layoutConfig = this.$meta.util.extend({}, layoutConfigBase, layoutConfigAtom);
     },
     loadActionsCreate() {
+      if (this.scene === 'select' || this.scene === 'selecting') return;
       if (this.atomClass || this.actionsCreate) return;
       // functionList
       const options = {
@@ -321,13 +321,23 @@ export default {
       });
     },
     loadActionsList() {
+      if (this.scene === 'select' || this.scene === 'selecting') return;
       if (this.actionsList) return;
 
     },
     getPageTitle() {
       const atomClass = this.getAtomClass(this.atomClass);
+      const atomClassTitle = atomClass && atomClass.titleLocale;
+      if (this.scene === 'select') {
+        if (!atomClass) return `${this.$text('Select')} ${this.$text('Atom')}`;
+        return `${this.$text('Select')} ${atomClassTitle}`;
+      } else if (this.scene === 'selecting') {
+        if (!atomClass) return `${this.$text('Selecting')} ${this.$text('Atom')}`;
+        return `${this.$text('Selecting')} ${atomClassTitle}`;
+      }
       if (!atomClass) return this.$text('Atom');
-      return `${this.$text('Atom')}: ${atomClass.titleLocale}`;
+      return `${this.$text('Atom')}: ${atomClassTitle}`;
+
     },
     getLayoutComponentOptions() {
       return {

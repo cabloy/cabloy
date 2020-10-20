@@ -15,6 +15,9 @@ export default {
       return this.$refs.filter && this.$refs.filter.getComponentInstance();
     },
   },
+  created() {
+    this.immediate = this.contextParams.immediate;
+  },
   methods: {
     onPerformSearch() {
       this.filterComponentInstance && this.filterComponentInstance.onPerformSearch();
@@ -29,11 +32,10 @@ export default {
       };
     },
     _renderNavbar() {
-      const immediate = this.contextParams ? this.contextParams.immediate : true;
       return (
         <eb-navbar title={this.pageTitle} eb-back-link="Back">
           <f7-nav-right>
-            {!immediate && <eb-link ref="buttonSubmit" iconMaterial="search" propsOnPerform={this.onPerformSearch}></eb-link>}
+            {!this.immediate && <eb-link ref="buttonSubmit" iconMaterial="search" propsOnPerform={this.onPerformSearch}></eb-link>}
           </f7-nav-right>
         </eb-navbar>
       );

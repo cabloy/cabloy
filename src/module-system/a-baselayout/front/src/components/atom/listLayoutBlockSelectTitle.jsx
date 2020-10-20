@@ -20,10 +20,9 @@ export default {
     onPerformAdd() {
       // selectedAtomIds
       const selectedAtoms = this.layoutManager.getSelectedAtoms();
-      const selectedAtomIds = selectedAtoms.map(item => item.atomId);
       const params = {
-        selectMode: this.layoutManager.selectMode,
-        selectedAtomIds,
+        selectMode: this.layoutManager.params.selectMode,
+        selectedAtoms,
       };
       const url = '/a/base/atom/selecting';
       this.$view.navigate(url, {
@@ -57,6 +56,7 @@ export default {
       } else {
         res = (selectedAtoms && selectedAtoms.length > 0) ? selectedAtoms : null;
       }
+      return res;
     },
   },
   render() {
