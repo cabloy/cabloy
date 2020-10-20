@@ -43,6 +43,12 @@ export default {
                   name: 'listLayoutBlockListTitle',
                 },
               },
+              subnavbarActions: {
+                component: {
+                  module: 'a-baselayout',
+                  name: 'listLayoutBlockListSubnavbarActions',
+                },
+              },
               items: {
                 component: {
                   module: 'a-baselayout',

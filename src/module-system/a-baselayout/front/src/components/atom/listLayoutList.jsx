@@ -15,6 +15,12 @@ export default {
       items: [],
     };
   },
+  created() {
+    if (this.layoutManager.atomClass) {
+      this.layoutManager.subnavbarActions = true;
+      this.layoutManager.loadActionsList();
+    }
+  },
   methods: {
     onPageRefresh(force) {
       this.$refs.loadMore.reload(force);

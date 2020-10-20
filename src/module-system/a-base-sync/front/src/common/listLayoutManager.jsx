@@ -15,6 +15,8 @@ export default {
       selectedAtoms: null,
       searchQuery: null,
       actionsCreate: null,
+      subnavbarActions: false,
+      actionsList: null,
     };
   },
   computed: {
@@ -288,7 +290,7 @@ export default {
       this.layoutConfig = this.$meta.util.extend({}, layoutConfigBase, layoutConfigAtom);
     },
     loadActionsCreate() {
-      if (this.atomClass) return;
+      if (this.atomClass || this.actionsCreate) return;
       // functionList
       const options = {
         where: { menu: 1, sceneName: 'create' },
@@ -301,6 +303,10 @@ export default {
       }).then(data => {
         this.actionsCreate = data.list;
       });
+    },
+    loadActionsList() {
+      if (this.actionsList) return;
+
     },
     getPageTitle() {
       const atomClass = this.getAtomClass(this.atomClass);

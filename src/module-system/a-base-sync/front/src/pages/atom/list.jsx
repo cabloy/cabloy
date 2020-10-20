@@ -20,9 +20,12 @@ export default {
   },
   render() {
     return (
-      <eb-page ptr onPtrRefresh={this.onPageRefresh} infinite infinitePreloader={false} onInfinite={this.onPageInfinite}>
+      <eb-page withSubnavbar={this.subnavbarActions}
+        ptr onPtrRefresh={this.onPageRefresh}
+        infinite infinitePreloader={false} onInfinite={this.onPageInfinite}>
         <eb-navbar title={this.getPageTitle()} eb-back-link="Back">
           {this._renderBlock({ blockName: 'title' })}
+          {this.subnavbarActions && this._renderBlock({ blockName: 'subnavbarActions' })}
         </eb-navbar>
         {this._renderLayout()}
       </eb-page>
