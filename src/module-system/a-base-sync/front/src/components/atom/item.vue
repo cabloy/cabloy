@@ -12,7 +12,7 @@
       </f7-list>
     </template>
     <template v-else>
-      <atoms v-if="ready" mode="list" :itemShow="item"></atoms>
+      <!-- <atoms v-if="ready" mode="list" :itemShow="item"></atoms> -->
       <eb-validate v-if="ready" ref="validate" :readOnly="this.mode!=='edit'" auto :data="item" :params="validateParams" :onPerform="onPerformValidate" :onSave="onSave" @submit.prevent="onSubmit">
       </eb-validate>
       <f7-popover :id="popoverId">
@@ -30,16 +30,12 @@
 </template>
 <script>
 import Vue from 'vue';
-import atoms from './listLayoutManager.jsx';
 import ebAtomClasses from '../../common/atomClasses.js';
 import ebAtomActions from '../../common/atomActions.js';
 export default {
   mixins: [ ebAtomClasses, ebAtomActions ],
   meta: {
     global: false,
-  },
-  components: {
-    atoms,
   },
   props: {
     // mode: edit/view
