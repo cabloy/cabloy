@@ -26,7 +26,7 @@ export default {
           filter: {
             component: {
               module: 'a-baselayout',
-              name: 'listLayoutFilter',
+              name: 'listLayoutBlockFilter',
             },
           },
         },
@@ -53,6 +53,26 @@ export default {
                 component: {
                   module: 'a-baselayout',
                   name: 'listLayoutBlockListItems',
+                },
+              },
+            },
+          },
+          select: {
+            component: {
+              module: 'a-baselayout',
+              name: 'listLayoutList',
+            },
+            blocks: {
+              title: {
+                component: {
+                  module: 'a-baselayout',
+                  name: 'listLayoutBlockSelectTitle',
+                },
+              },
+              items: {
+                component: {
+                  module: 'a-baselayout',
+                  name: 'listLayoutBlockSelectItems',
                 },
               },
             },

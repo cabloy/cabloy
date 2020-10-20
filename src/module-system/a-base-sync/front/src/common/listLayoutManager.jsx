@@ -1,5 +1,12 @@
 import ebAtomClasses from './atomClasses.js';
 import ebMenus from './menus.js';
+
+// atomClass,
+// options,
+// params,
+// scene, // default/search
+// layout,
+
 export default {
   mixins: [ ebAtomClasses, ebMenus ],
   data() {

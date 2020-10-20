@@ -21,7 +21,7 @@
 import Vue from 'vue';
 const ebMenus = Vue.prototype.$meta.module.get('a-base').options.mixins.ebMenus;
 export default {
-  mixins: [ebMenus],
+  mixins: [ ebMenus ],
   data() {
     return {
       atom: null,
@@ -59,7 +59,7 @@ export default {
               module: 'test-party',
               atomClassName: 'party',
             },
-            where: {},
+            options: {},
           },
           callback: (code, selectedAtom) => {
             if (code === 200) {
