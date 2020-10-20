@@ -38,7 +38,7 @@ export default {
     return (
       <f7-nav-right>
         {this._renderActionCreate()}
-        <div><eb-link iconMaterial="sort" propsOnPerform={event => this.onPerformAtomOrders(event)}></eb-link></div>
+        <eb-link iconMaterial="sort" propsOnPerform={event => this.onPerformAtomOrders(event)}></eb-link>
         <eb-link iconMaterial="search" propsOnPerform={this.onPerformFilter}></eb-link>
       </f7-nav-right>
     );
