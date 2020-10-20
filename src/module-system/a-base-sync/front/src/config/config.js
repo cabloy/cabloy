@@ -77,6 +77,26 @@ export default {
               },
             },
           },
+          selecting: {
+            component: {
+              module: 'a-baselayout',
+              name: 'listLayoutList',
+            },
+            blocks: {
+              title: {
+                component: {
+                  module: 'a-baselayout',
+                  name: 'listLayoutBlockSelectingTitle',
+                },
+              },
+              items: {
+                component: {
+                  module: 'a-baselayout',
+                  name: 'listLayoutBlockSelectingItems',
+                },
+              },
+            },
+          },
         },
       },
     },

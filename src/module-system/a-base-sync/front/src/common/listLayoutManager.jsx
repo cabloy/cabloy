@@ -4,7 +4,7 @@ import ebMenus from './menus.js';
 // atomClass,
 // options,
 // params,
-// scene, // default/search
+// scene, // default/search/select
 // layout,
 
 export default {
@@ -18,7 +18,6 @@ export default {
       configAtom: null,
       filter: null,
       atomOrderSelected: null,
-      selectedAtomIds: null,
       selectedAtoms: null,
       searchQuery: null,
       actionsCreate: null,
@@ -256,6 +255,16 @@ export default {
       this.onPerformFilter();
     },
     // ** search - end
+    // ** select - begin
+    getSelectedAtoms() {
+      if (this.scene === 'selecting') {
+        return this.selectedAtoms;
+      }
+      if (this.scene === 'select') {
+        return this.layoutComponentInstance && this.layoutComponentInstance.items;
+      }
+    },
+    // ** select - end
     _getAtomOrderKey(atomOrder) {
       return atomOrder ? `${atomOrder.tableAlias || 'f'}.${atomOrder.name}` : null;
     },
