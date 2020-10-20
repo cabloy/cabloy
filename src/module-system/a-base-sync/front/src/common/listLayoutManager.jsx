@@ -22,6 +22,7 @@ export default {
       actionsCreate: null,
       subnavbarActions: false,
       actionsList: null,
+      pageTitle: null,
     };
   },
   computed: {
@@ -67,6 +68,8 @@ export default {
     },
   },
   created() {
+    //
+    this.pageTitle = this.initPageTitle();
     //
     this.$store.dispatch('a/base/getLabels');
     //
@@ -339,6 +342,9 @@ export default {
 
     },
     getPageTitle() {
+      return this.pageTitle;
+    },
+    initPageTitle() {
       const atomClass = this.getAtomClass(this.atomClass);
       const atomClassTitle = atomClass && atomClass.titleLocale;
       if (this.scene === 'select') {
@@ -350,7 +356,6 @@ export default {
       }
       if (!atomClass) return this.$text('Atom');
       return `${this.$text('Atom')}: ${atomClassTitle}`;
-
     },
     getLayoutComponentOptions() {
       return {

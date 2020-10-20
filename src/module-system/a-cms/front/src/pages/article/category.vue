@@ -3,7 +3,6 @@
     <eb-navbar :title="pageTitle" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="view_headline" :onPerform="onPerformList"></eb-link>
-        <eb-link iconMaterial="search" :onPerform="onPerformSearch"></eb-link>
       </f7-nav-right>
       <f7-subnavbar>
         <f7-toolbar top tabbar :scrollable="languages && languages.length>2">
@@ -29,7 +28,7 @@ const ebMenus = Vue.prototype.$meta.module.get('a-base').options.mixins.ebMenus;
 import categoryList from '../../components/category/list.vue';
 import utils from '../../common/utils.js';
 export default {
-  mixins: [ebAtomClasses, ebMenus],
+  mixins: [ ebAtomClasses, ebMenus ],
   components: {
     categoryList,
   },
@@ -74,10 +73,6 @@ export default {
       if (!_menu) return;
       _menu = this.$utils.extend(_menu, { navigateOptions: { target: '_self' } });
       return this.$meta.util.performAction({ ctx: this, action: _menu, item });
-    },
-    onPerformSearch() {
-      const url = this.combineAtomClass('/a/base/atom/search');
-      this.$view.navigate(url, { target: '_self' });
     },
     onNodeClick(node) {
       if (node.data.catalog) return;
