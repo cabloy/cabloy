@@ -38,9 +38,20 @@ export default {
           });
         });
       } else if (action.name === 'write') {
-        // actionPath: 'atom/edit?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&module={{module}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}'
-
-        ctx.$view.navigate(url, action.navigateOptions);
+        // openDraft
+        const key = { atomId: item.atomId, itemId: item.itemId };
+        return ctx.$api.post('/a/base/atom/openDraft', {
+          key,
+        }).then(data => {
+          const keyDraft = data.draft.key;
+          const _item = {
+            ...item,
+            atomId: keyDraft.atomId,
+            itemId: keyDraft.itemId,
+          };
+          const url = ctx.$meta.util.replaceTemplate('/a/base/atom/edit?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&module={{module}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}', _item);
+          ctx.$view.navigate(url, action.navigateOptions);
+        });
       }
       // others
       const key = { atomId: item.atomId, itemId: item.itemId };

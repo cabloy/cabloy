@@ -88,6 +88,10 @@ module.exports = app => {
       await this.write({ atomClass, key, item, user });
     }
 
+    async draft({ atomClass, key, item, user }) {
+      await this.write({ atomClass, key, item, user });
+    }
+
     async action(/* { action, atomClass, key, user }*/) {
       // donothing
     }

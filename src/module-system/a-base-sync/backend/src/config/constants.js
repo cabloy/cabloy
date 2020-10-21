@@ -18,7 +18,7 @@ module.exports = {
     actionMeta: {
       create: { title: 'Create', actionComponent: 'action' },
       read: { title: 'View', actionPath: 'atom/view?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&module={{module}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}' },
-      write: { title: 'Edit' },
+      write: { title: 'Edit', actionComponent: 'action' },
       delete: { title: 'Delete', actionComponent: 'action' },
       save: { title: 'Save', actionComponent: 'action', authorize: false },
       submit: { title: 'Submit', actionComponent: 'action', authorize: false },
