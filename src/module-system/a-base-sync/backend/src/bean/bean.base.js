@@ -304,60 +304,62 @@ module.exports = ctx => {
       const _actionsSystemMeta = ctx.constant.module(moduleInfo.relativeName).atom.actionMeta;
       //  _actionsSystem
       for (const key in _actionsSystem) {
-        if (key !== 'custom') {
-          const action = {
-            code: _actionsSystem[key],
-            name: key,
-            title: _actionsSystemMeta[key].title,
-            flag: (_actions && _actions[key] && _actions[key].flag) || '',
-            authorize: _actionsSystemMeta[key].authorize !== false,
-          };
-          if (_actions && _actions[key] && (_actions[key].actionComponent || _actions[key].actionPath)) {
-            // custom
-            action.actionModule = _actions[key].actionModule || module.info.relativeName;
-            action.actionComponent = _actions[key].actionComponent;
-            action.actionPath = _actions[key].actionPath;
-            action.meta = _actions[key].meta;
-          } else {
-            // default
-            action.actionModule = moduleInfo.relativeName;
-            action.actionComponent = _actionsSystemMeta[key].actionComponent;
-            action.actionPath = _actionsSystemMeta[key].actionPath;
-            action.meta = (_actions && _actions[key] && _actions[key].meta) || _actionsSystemMeta[key].meta;
-          }
-          action.titleLocale = ctx.text(action.title);
-          actions[key] = action;
+        if (key === 'custom') continue;
+        const action = {
+          code: _actionsSystem[key],
+          name: key,
+          title: _actionsSystemMeta[key].title,
+          authorize: _actionsSystemMeta[key].authorize,
+        };
+        if (_actions && _actions[key]) {
+          action.stage = _actions[key].stage;
+          action.meta = _actions[key].meta;
+        } else {
+          action.stage = _actionsSystemMeta[key].stage;
+          action.meta = _actionsSystemMeta[key].meta;
         }
+        if (_actions && _actions[key] && (_actions[key].actionComponent || _actions[key].actionPath)) {
+          // custom
+          action.actionModule = _actions[key].actionModule || module.info.relativeName;
+          action.actionComponent = _actions[key].actionComponent;
+          action.actionPath = _actions[key].actionPath;
+        } else {
+          // default
+          action.actionModule = moduleInfo.relativeName;
+          action.actionComponent = _actionsSystemMeta[key].actionComponent;
+          action.actionPath = _actionsSystemMeta[key].actionPath;
+        }
+        action.titleLocale = ctx.text(action.title);
+        actions[key] = action;
       }
       //  _actions
       if (_actions) {
         for (const key in _actions) {
-          if (!_actionsSystem[key]) {
-            const action = {
-              code: _actions[key].code,
-              name: key,
-              title: _actions[key].title || key,
-              flag: _actions[key].flag || '',
-              actionModule: _actions[key].actionModule || module.info.relativeName,
-              actionComponent: _actions[key].actionComponent,
-              actionPath: _actions[key].actionPath,
-              authorize: _actions[key].authorize !== false,
-              meta: _actions[key].meta,
-            };
-            if (!_actions[key].actionComponent && !_actions[key].actionPath) {
-              // default
-              action.actionModule = _actions[key].actionModule || moduleInfo.relativeName;
-              action.actionComponent = 'action';
-              action.actionPath = '';
-            } else {
-              // custom
-              action.actionModule = _actions[key].actionModule || module.info.relativeName;
-              action.actionComponent = _actions[key].actionComponent;
-              action.actionPath = _actions[key].actionPath;
-            }
-            action.titleLocale = ctx.text(action.title);
-            actions[key] = action;
+          if (_actionsSystem[key]) continue;
+          const action = {
+            code: _actions[key].code,
+            name: key,
+            title: _actions[key].title || key,
+            actionModule: _actions[key].actionModule || module.info.relativeName,
+            actionComponent: _actions[key].actionComponent,
+            actionPath: _actions[key].actionPath,
+            authorize: _actions[key].authorize,
+            stage: _actions[key].stage,
+            meta: _actions[key].meta,
+          };
+          if (!_actions[key].actionComponent && !_actions[key].actionPath) {
+            // default
+            action.actionModule = _actions[key].actionModule || moduleInfo.relativeName;
+            action.actionComponent = 'action';
+            action.actionPath = '';
+          } else {
+            // custom
+            action.actionModule = _actions[key].actionModule || module.info.relativeName;
+            action.actionComponent = _actions[key].actionComponent;
+            action.actionPath = _actions[key].actionPath;
           }
+          action.titleLocale = ctx.text(action.title);
+          actions[key] = action;
         }
       }
       return actions;
