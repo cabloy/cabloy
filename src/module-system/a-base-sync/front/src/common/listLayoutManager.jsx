@@ -356,6 +356,9 @@ export default {
       } else if (this.scene === 'selecting') {
         if (!atomClass) return `${this.$text('Selecting')} ${this.$text('Atom')}`;
         return `${this.$text('Selecting')} ${atomClassTitle}`;
+      } else if (this.scene === 'search') {
+        if (!atomClass) return `${this.$text('Search')} ${this.$text('Atom')}`;
+        return `${this.$text('Search')} ${atomClassTitle}`;
       }
       if (!atomClass) return this.$text('Atom');
       return `${this.$text('Atom')}: ${atomClassTitle}`;
