@@ -48,12 +48,6 @@ module.exports = ctx => {
       return data;
     }
 
-    async getFlagByAtomId({ atomId, code, name }) {
-      const atomClass = await ctx.bean.atomClass.getTopByAtomId({ atomId });
-      const action = ctx.bean.base.action({ module: atomClass.module, atomClassName: atomClass.atomClassName, code, name });
-      return action.flag.toString();
-    }
-
   }
 
   return AtomAction;

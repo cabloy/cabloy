@@ -471,11 +471,12 @@ module.exports = ctx => {
       }
     }
 
+    // actions of atom
     async actions({ key, basic, user }) {
       // atomClass
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
       // actions
-      const _basic = basic ? 'and a.code<100' : '';
+      const _basic = basic ? 'and a.code in (3,4)' : '';
       const sql = `
         select a.*,b.module,b.atomClassName from aAtomAction a
           left join aAtomClass b on a.atomClassId=b.id
@@ -623,7 +624,13 @@ module.exports = ctx => {
         // others
         return null;
       }
-      // check archive
+      // draft: must closed
+      let _atomDraft;
+      if (_atom.atomIdDraft) {
+        _atomDraft = await this.modelAtom.get({ id: _atom.atomIdDraft });
+      }
+      if (_atomDraft && !_atomDraft.atomClosed) return null;
+      // check archive/history
       const sql = this.sqlProcedure.checkRightAction({
         iid: ctx.instance.id,
         userIdWho: user.id,
