@@ -108,7 +108,7 @@ module.exports = app => {
       // checkRightWrite
       const checkRightWrites = [[ 'Tom', partyKeyArchive.atomId, true ], [ 'Tomson', partyKeyArchive.atomId, false ]];
       for (const [ userName, atomId, right ] of checkRightWrites) {
-        const res = await this.ctx.bean.atom.checkRightUpdate({
+        const res = await this.ctx.bean.atom.checkRightAction({
           atom: { id: atomId, action: this.ctx.constant.module('a-base').atom.action.write },
           user: { id: userIds[userName] },
         });
@@ -118,7 +118,7 @@ module.exports = app => {
       // checkRightDelete
       const checkRightDeletes = [[ 'Tom', partyKeyArchive.atomId, true ], [ 'Tomson', partyKeyArchive.atomId, false ]];
       for (const [ userName, atomId, right ] of checkRightDeletes) {
-        const res = await this.ctx.bean.atom.checkRightUpdate({
+        const res = await this.ctx.bean.atom.checkRightAction({
           atom: { id: atomId, action: this.ctx.constant.module('a-base').atom.action.delete },
           user: { id: userIds[userName] },
         });

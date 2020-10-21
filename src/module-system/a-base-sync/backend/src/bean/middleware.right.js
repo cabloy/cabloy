@@ -68,7 +68,7 @@ async function checkAtom(moduleInfo, options, ctx) {
       ctx.request.body.roleIdOwner = roles[0].roleIdWho;
       ctx.meta._atomClass = { id: atomClassId };
     }
-
+    return;
   }
 
   // read
@@ -80,30 +80,30 @@ async function checkAtom(moduleInfo, options, ctx) {
     if (!res) ctx.throw(403);
     ctx.request.body.key.itemId = res.itemId;
     ctx.meta._atom = res;
+    return;
   }
 
   // write/delete
   if (options.action === constant.atom.action.write || options.action === constant.atom.action.delete) {
-    const res = await ctx.bean.atom.checkRightUpdate({
+    const res = await ctx.bean.atom.checkRightAction({
       atom: { id: ctx.request.body.key.atomId, action: options.action, stage: options.stage },
       user: ctx.state.user.op,
     });
     if (!res) ctx.throw(403);
     ctx.request.body.key.itemId = res.itemId;
     ctx.meta._atom = res;
+    return;
   }
 
   // other action
-  const actionCustom = options.action || ctx.request.body.action;
-  if (actionCustom > constant.atom.action.custom) {
-    const res = await ctx.bean.atom.checkRightAction({
-      atom: { id: ctx.request.body.key.atomId, action: actionCustom },
-      user: ctx.state.user.op,
-    });
-    if (!res) ctx.throw(403);
-    ctx.request.body.key.itemId = res.itemId;
-    ctx.meta._atom = res;
-  }
+  const actionOther = options.action || ctx.request.body.action;
+  const res = await ctx.bean.atom.checkRightAction({
+    atom: { id: ctx.request.body.key.atomId, action: actionOther, stage: options.stage },
+    user: ctx.state.user.op,
+  });
+  if (!res) ctx.throw(403);
+  ctx.request.body.key.itemId = res.itemId;
+  ctx.meta._atom = res;
 
 }
 

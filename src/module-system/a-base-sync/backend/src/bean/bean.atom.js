@@ -485,15 +485,9 @@ module.exports = ctx => {
       const actions = await ctx.model.query(sql, [ ctx.instance.id, atomClass.id ]);
       // actions res
       const actionsRes = [];
-      const _actionsSystem = ctx.constant.module(moduleInfo.relativeName).atom.action;
       for (const action of actions) {
-        if (action.code === _actionsSystem.write || action.code === _actionsSystem.delete) {
-          const res = await this.checkRightUpdate({ atom: { id: key.atomId, action: action.code }, user });
-          if (res) actionsRes.push(action);
-        } else if (action.code > _actionsSystem.custom) {
-          const res = await this.checkRightAction({ atom: { id: key.atomId, action: action.code }, user });
-          if (res) actionsRes.push(action);
-        }
+        const res = await this.checkRightAction({ atom: { id: key.atomId, action: action.code }, user });
+        if (res) actionsRes.push(action);
       }
       return actionsRes;
     }
@@ -616,7 +610,7 @@ module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    async checkRightUpdate({ atom: { id, action, stage }, user }) {
+    async checkRightAction({ atom: { id, action, stage }, user }) {
       const _atom = await this.modelAtom.get({ id });
       if ((stage === 'draft' && _atom.atomStage > 0) || ((stage === 'archive' || stage === 'history') && _atom.atomStage === 0)) return null;
       if (_atom.atomStage === 0) {
@@ -625,26 +619,6 @@ module.exports = ctx => {
         // 2. flow
         if (_atom.atomFlowId > 0) return null;
         // 3. self
-        if (_atom.userIdUpdated === user.id) return _atom;
-        // others
-        return null;
-      }
-      // check archive
-      const sql = this.sqlProcedure.checkRightUpdate({
-        iid: ctx.instance.id,
-        userIdWho: user.id,
-        atomId: id,
-        action,
-      });
-      return await ctx.model.queryOne(sql);
-    }
-
-    async checkRightAction({ atom: { id, action }, user }) {
-      const _atom = await this.modelAtom.get({ id });
-      if (_atom.atomStage === 0) {
-        // 1. closed
-        if (_atom.atomClosed) return null;
-        // 2. self
         if (_atom.userIdUpdated === user.id) return _atom;
         // others
         return null;
