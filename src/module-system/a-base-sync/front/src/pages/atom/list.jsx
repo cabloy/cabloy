@@ -14,7 +14,7 @@ export default {
       atomClass,
       options,
       params,
-      scene, // default/search
+      scene,
       layout,
     };
   },

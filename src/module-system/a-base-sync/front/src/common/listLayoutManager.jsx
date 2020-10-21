@@ -4,7 +4,7 @@ import ebMenus from './menus.js';
 // atomClass,
 // options,
 // params,
-// scene, // default/search/select/selecting
+// scene, // default/search/select/selecting/mine
 // layout,
 
 export default {
@@ -172,6 +172,11 @@ export default {
       // select
       if (this.scene === 'select') {
         options.where['a.id'] = this.params.selectedAtomIds.length > 0 ? this.params.selectedAtomIds : null;
+      }
+      // mine
+      if (this.scene === 'mine') {
+        const user = this.$store.state.auth.user.op;
+        options.where['a.userIdCreated'] = user.id;
       }
       // order
       const atomOrderCurrent = this.atomOrderSelected || this.atomOrderDefault;
@@ -359,6 +364,8 @@ export default {
       } else if (this.scene === 'search') {
         if (!atomClass) return `${this.$text('Search')} ${this.$text('Atom')}`;
         return `${this.$text('Search')} ${atomClassTitle}`;
+      } else if (this.scene === 'mine') {
+        return this.$text('My Atoms');
       }
       if (!atomClass) return this.$text('Atom');
       return `${this.$text('Atom')}: ${atomClassTitle}`;

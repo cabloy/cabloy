@@ -69,4 +69,5 @@ export default {
   'Flag Not Found': 'Flag未发现',
   'Friendly Tips': '友情提示',
   'Please Sign In': '请登录',
+  'My Atoms': '我的原子',
 };
