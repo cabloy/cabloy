@@ -29,6 +29,9 @@ export default {
     layoutComponentInstance() {
       return this.$refs.layout && this.$refs.layout.getComponentInstance();
     },
+    user() {
+      return this.$store.state.auth.user.op;
+    },
     userLabels() {
       return this.$store.getters['a/base/userLabels'];
     },
@@ -175,8 +178,7 @@ export default {
       }
       // mine
       if (this.scene === 'mine') {
-        const user = this.$store.state.auth.user.op;
-        options.where['a.userIdCreated'] = user.id;
+        options.where['a.userIdCreated'] = this.user.id;
       }
       // order
       const atomOrderCurrent = this.atomOrderSelected || this.atomOrderDefault;
