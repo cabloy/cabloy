@@ -389,8 +389,11 @@ module.exports = ctx => {
     }
 
     async star({ key, atom: { star = 1 }, user }) {
-      let diff = 0;
+      // get
+      const atom = await this.get({ atomId: key.atomId });
+      if (atom.atomStage !== 1) ctx.throw.module(moduleInfo.relativeName, 1010);
       // check if exists
+      let diff = 0;
       const _star = await this.modelAtomStar.get({
         userId: user.id,
         atomId: key.atomId,
@@ -410,8 +413,7 @@ module.exports = ctx => {
           star: 1,
         });
       }
-      // get
-      const atom = await this.get({ atomId: key.atomId });
+      // starCount
       let starCount = atom.starCount;
       if (diff !== 0) {
         starCount += diff;
@@ -440,6 +442,9 @@ module.exports = ctx => {
     }
 
     async labels({ key, atom: { labels = null }, user }) {
+      // get
+      const atom = await this.get({ atomId: key.atomId });
+      if (atom.atomStage !== 1) ctx.throw.module(moduleInfo.relativeName, 1010);
       // force delete
       await this.modelAtomLabel.delete({
         userId: user.id,

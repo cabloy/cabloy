@@ -9,4 +9,5 @@ module.exports = {
   1007: 'Incomplete Information',
   1008: 'Should Delete Children first',
   1009: 'The Auth should be Enabled',
+  1010: 'Only Valid for Archive Atom',
 };
