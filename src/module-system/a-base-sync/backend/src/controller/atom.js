@@ -51,13 +51,20 @@ module.exports = app => {
     }
 
     async write() {
-      // write
       await this.ctx.service.atom.write({
         key: this.ctx.request.body.key,
         item: this.ctx.request.body.item,
         user: this.ctx.state.user.op,
       });
       this.ctx.success();
+    }
+
+    async openDraft() {
+      const res = await this.ctx.service.atom.openDraft({
+        key: this.ctx.request.body.key,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
     }
 
     async submit() {

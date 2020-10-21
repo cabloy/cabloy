@@ -37,6 +37,10 @@ export default {
             ctx.$meta.eventHub.$emit('atom:action', { key, action });
           });
         });
+      } else if (action.name === 'write') {
+        // actionPath: 'atom/edit?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&module={{module}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}'
+
+        ctx.$view.navigate(url, action.navigateOptions);
       }
       // others
       const key = { atomId: item.atomId, itemId: item.itemId };

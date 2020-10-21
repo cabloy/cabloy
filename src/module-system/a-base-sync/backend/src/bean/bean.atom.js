@@ -371,8 +371,28 @@ module.exports = ctx => {
       }
     }
 
-    async openDraft({}) {
-      // todo:
+    async openDraft({ key, user }) {
+      const _atom = await this.modelAtom.get({ id: key.atomId });
+      // draft
+      if (_atom.atomStage === 0) {
+        return { draft: { key } };
+      }
+      // archive
+      if (_atom.atomStage === 1) {
+        if (_atom.atomIdDraft === 0) {
+          // create draft from archive
+        }
+        // open
+      }
+
+      if ((stage === 'draft' && _atom.atomStage > 0) || ((stage === 'archive' || stage === 'history') && _atom.atomStage === 0)) return null;
+      // action.stage
+      const atomClass = await ctx.bean.atomClass.get({ id: _atom.atomClassId });
+      const actionBase = ctx.bean.base.action({ module: atomClass.module, atomClassName: atomClass.atomClassName, code: action });
+      if (actionBase.stage) {
+        const stages = actionBase.stage.split(',');
+        if (!stages.some(item => ctx.constant.module(moduleInfo.relativeName).atom.stage[item] === _atom.atomStage)) return null;
+      }
     }
 
     // atom other functions
