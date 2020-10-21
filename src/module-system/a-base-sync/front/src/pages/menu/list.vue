@@ -49,9 +49,8 @@ export default {
   },
   methods: {
     __initPageTitle() {
-      const $el = this.$$(this.$el);
-      const $view = $el.parents('.eb-layout-view');
-      if ($view.is('.eb-layout-panel-view')) {
+      const inPanel = this.$view.inPanel();
+      if (inPanel) {
         this.pageTitle = this.$text('Menu');
       } else {
         this.pageTitle = this.$text('Home');

@@ -96,10 +96,8 @@ export default {
       this.layoutComponentInstance && this.layoutComponentInstance.onPageClear();
     },
     onPerformFilter() {
-      const $el = this.$$(this.$el);
-      const $view = $el.parents('.eb-layout-view');
-      const isPanel = $view.is('.eb-layout-panel-view');
-      const immediate = this.$meta.vueApp.layout === 'pc' && !isPanel;
+      const inPanel = this.$view.inPanel();
+      const immediate = this.$meta.vueApp.layout === 'pc' && !inPanel;
       const filterConfig = this._getFilterConfig();
       const navigateOptions = {
         context: {

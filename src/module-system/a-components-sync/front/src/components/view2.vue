@@ -45,7 +45,11 @@ export default {
     },
     close() {
       this.$f7router.close();
-    }
+    },
+    inPanel() {
+      const view = this.$$(this.$el);
+      return view.is('.eb-layout-panel-view');
+    },
   },
   mounted() {
     const self = this;
