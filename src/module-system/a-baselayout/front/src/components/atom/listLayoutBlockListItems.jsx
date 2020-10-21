@@ -179,8 +179,8 @@ export default {
       else if (index === 1) return 'red';
       return 'blue';
     },
-    _getActionTitle(action) {
-      const title = this.getActionTitle(action);
+    _getActionTitle(action, item) {
+      const title = this.getActionTitle(action, item.atomStage);
       if (action.code === 3) return this.$device.desktop ? `✏️ ${title}` : '✏️';
       else if (action.code === 4) return this.$device.desktop ? `🗑️ ${title}` : '🗑️';
       return title;
@@ -277,7 +277,7 @@ export default {
           index = parseInt(index);
           const action = item._actions[index];
           domActions.push(
-            <div key={action.id} color={this._getActionColor(action, index)} propsOnPerform={event => this.onAction(event, item, action)}>{this._getActionTitle(action)}</div>
+            <div key={action.id} color={this._getActionColor(action, index)} propsOnPerform={event => this.onAction(event, item, action)}>{this._getActionTitle(action, item)}</div>
           );
         }
       }

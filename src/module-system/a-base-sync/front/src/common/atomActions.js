@@ -9,7 +9,12 @@ export default {
       if (!this.actionsAll) return null;
       return this.actionsAll[action.module][action.atomClassName][action.name];
     },
-    getActionTitle(action) {
+    getActionTitle(action, atomStage) {
+      if (action.name === 'write' && atomStage !== undefined) {
+        if (atomStage === 0) return this.$text('Edit');
+        if (atomStage === 1) return this.$text('Edit Again');
+        if (atomStage === 2) return this.$text('Revert to this version');
+      }
       const _action = this.getAction(action);
       return _action ? _action.titleLocale : null;
     },

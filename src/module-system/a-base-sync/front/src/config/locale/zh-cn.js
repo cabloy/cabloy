@@ -70,4 +70,6 @@ export default {
   'Friendly Tips': '友情提示',
   'Please Sign In': '请登录',
   'My Atoms': '我的原子',
+  'Edit Again': '再次编辑',
+  RevertToThisVersion: '恢复到此版本',
 };
