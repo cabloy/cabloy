@@ -287,6 +287,8 @@ module.exports = ctx => {
         const itemHistory = Object.assign({}, itemArchive, {
           atomId: keyHistory.atomId,
           itemId: keyHistory.itemId,
+          userIdCreated: itemArchive.userIdCreated,
+          userIdUpdated: itemArchive.userIdUpdated,
           atomName: itemArchive.atomName,
           atomStage: ctx.constant.module(moduleInfo.relativeName).atom.stage.history,
           atomFlowId: itemArchive.atomFlowId,
@@ -299,6 +301,8 @@ module.exports = ctx => {
         // update fields
         await this.modelAtom.update({
           id: keyHistory.atomId,
+          userIdCreated: itemHistory.userIdCreated,
+          userIdUpdated: itemHistory.userIdUpdated,
           atomName: itemHistory.atomName,
           atomStage: itemHistory.atomStage,
           atomFlowId: itemHistory.atomFlowId,
@@ -326,6 +330,8 @@ module.exports = ctx => {
       itemArchive = Object.assign({}, item, {
         atomId: keyArchive.atomId,
         itemId: keyArchive.itemId,
+        userIdCreated: item.userIdCreated || item.userIdUpdated,
+        userIdUpdated: item.userIdUpdated,
         atomName: item.atomName,
         atomStage: ctx.constant.module(moduleInfo.relativeName).atom.stage.archive,
         atomFlowId: item.atomFlowId,
@@ -337,6 +343,8 @@ module.exports = ctx => {
       // update fields
       await this.modelAtom.update({
         id: keyArchive.atomId,
+        userIdCreated: itemArchive.userIdCreated,
+        userIdUpdated: itemArchive.userIdUpdated,
         atomName: itemArchive.atomName,
         atomStage: itemArchive.atomStage,
         atomFlowId: itemArchive.atomFlowId,
@@ -407,6 +415,8 @@ module.exports = ctx => {
         const itemDraft = Object.assign({}, itemArchive, {
           atomId: keyDraft.atomId,
           itemId: keyDraft.itemId,
+          userIdCreated: itemArchive.userIdCreated,
+          userIdUpdated: itemArchive.userIdUpdated,
           atomName: itemArchive.atomName,
           atomStage: ctx.constant.module(moduleInfo.relativeName).atom.stage.draft,
           atomFlowId: 0,
@@ -419,6 +429,8 @@ module.exports = ctx => {
         // update fields
         await this.modelAtom.update({
           id: itemDraft.atomId,
+          userIdCreated: itemDraft.userIdCreated,
+          userIdUpdated: itemDraft.userIdUpdated,
           atomName: itemDraft.atomName,
           atomStage: itemDraft.atomStage,
           atomFlowId: itemDraft.atomFlowId,
@@ -461,6 +473,8 @@ module.exports = ctx => {
         const itemDraft = Object.assign({}, itemHistory, {
           atomId: keyDraft.atomId,
           itemId: keyDraft.itemId,
+          userIdCreated: itemHistory.userIdCreated,
+          userIdUpdated: itemHistory.userIdUpdated,
           atomName: itemHistory.atomName,
           atomStage: ctx.constant.module(moduleInfo.relativeName).atom.stage.draft,
           atomFlowId: 0,
@@ -473,6 +487,8 @@ module.exports = ctx => {
         // update fields
         await this.modelAtom.update({
           id: itemDraft.atomId,
+          userIdCreated: itemDraft.userIdCreated,
+          userIdUpdated: itemDraft.userIdUpdated,
           atomName: itemDraft.atomName,
           atomStage: itemDraft.atomStage,
           atomFlowId: itemDraft.atomFlowId,
