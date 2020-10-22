@@ -54,8 +54,8 @@ module.exports = app => {
       return await this.ctx.bean.atom.labels({ key, atom, user });
     }
 
-    async actions({ key, basic, user }) {
-      return await this.ctx.bean.atom.actions({ key, basic, user });
+    async actions({ key, basic, bulk, user }) {
+      return await this.ctx.bean.atom.actions({ key, basic, bulk, user });
     }
 
     async schema({ atomClass, schema, user }) {

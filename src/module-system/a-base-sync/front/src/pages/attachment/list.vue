@@ -64,7 +64,7 @@ export default {
           attachment: 1,
         },
         orders: [
-          ['createdAt', 'asc'],
+          [ 'createdAt', 'asc' ],
         ],
         page: { index },
       };
@@ -83,6 +83,7 @@ export default {
     fetchActions() {
       this.$api.post('atom/actions', {
         key: { atomId: this.atomId },
+        bulk: false,
       }).then(data => {
         this.actions = data;
       });

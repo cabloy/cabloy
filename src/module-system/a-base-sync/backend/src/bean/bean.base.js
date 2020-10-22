@@ -314,9 +314,13 @@ module.exports = ctx => {
         if (_actions && _actions[key]) {
           action.stage = _actions[key].stage;
           action.meta = _actions[key].meta;
+          action.bulk = _actions[key].bulk;
+          action.select = _actions[key].select;
         } else {
           action.stage = _actionsSystemMeta[key].stage;
           action.meta = _actionsSystemMeta[key].meta;
+          action.bulk = _actionsSystemMeta[key].bulk;
+          action.select = _actionsSystemMeta[key].select;
         }
         if (_actions && _actions[key] && (_actions[key].actionComponent || _actions[key].actionPath)) {
           // custom
@@ -346,6 +350,8 @@ module.exports = ctx => {
             authorize: _actions[key].authorize,
             stage: _actions[key].stage,
             meta: _actions[key].meta,
+            bulk: _actions[key].bulk,
+            select: _actions[key].select,
           };
           if (!_actions[key].actionComponent && !_actions[key].actionPath) {
             // default

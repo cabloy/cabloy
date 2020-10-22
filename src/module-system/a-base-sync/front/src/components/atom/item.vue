@@ -147,6 +147,7 @@ export default {
     fetchActions() {
       this.$api.post('atom/actions', {
         key: { atomId: this.atomId },
+        bulk: false,
       }).then(data => {
         this.actions = data;
       });

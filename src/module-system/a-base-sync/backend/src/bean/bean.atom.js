@@ -609,7 +609,7 @@ module.exports = ctx => {
     }
 
     // actions of atom
-    async actions({ key, basic, user }) {
+    async actions({ key, basic, bulk, user }) {
       // atomClass
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
       // actions
@@ -624,8 +624,11 @@ module.exports = ctx => {
       // actions res
       const actionsRes = [];
       for (const action of actions) {
-        const res = await this.checkRightAction({ atom: { id: key.atomId, action: action.code }, user });
-        if (res) actionsRes.push(action);
+        const actionBase = ctx.bean.base.action({ module: atomClass.module, atomClassName: atomClass.atomClassName, code: action.code });
+        if (!!actionBase.bulk === !!bulk) {
+          const res = await this.checkRightAction({ atom: { id: key.atomId, action: action.code }, user });
+          if (res) actionsRes.push(action);
+        }
       }
       return actionsRes;
     }

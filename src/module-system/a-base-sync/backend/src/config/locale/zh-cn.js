@@ -27,6 +27,8 @@ module.exports = {
   View: '查看',
   Edit: '编辑',
   Delete: '删除',
+  Clone: '克隆',
+  Export: '导出',
   Save: '保存',
   Submit: '提交',
   Atom: '原子',
