@@ -33,8 +33,16 @@ export default {
           return ctx.$api.post('/a/base/atom/writeSubmit', {
             key,
             item,
-          }).then(() => {
-            ctx.$meta.eventHub.$emit('atom:action', { key, action });
+          }).then(data => {
+            if (data.archive) {
+              // delete draft
+              ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'delete' } });
+              // update archive
+              ctx.$meta.eventHub.$emit('atom:action', { key: data.archive.key, action: { name: 'save' } });
+            } else {
+              // update draft
+              ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'save' } });
+            }
           });
         });
       } else if (action.name === 'write') {

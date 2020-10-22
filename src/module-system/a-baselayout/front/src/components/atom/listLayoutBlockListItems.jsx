@@ -107,11 +107,6 @@ export default {
         }
         return;
       }
-      // submit
-      if (action.name === 'submit') {
-        // do nothing
-        return;
-      }
       // others
       if (index !== -1) {
         this.$api.post('/a/base/atom/read', {
