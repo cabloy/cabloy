@@ -1,4 +1,5 @@
 module.exports = {
+  Flow: '流程',
   FlowDefinition: '流程定义',
   'Create FlowDefinition': '新建流程定义',
   'FlowDefinition List': '流程定义列表',

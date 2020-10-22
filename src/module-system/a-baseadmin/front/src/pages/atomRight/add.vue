@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('New Atom Right')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link ref="buttonSubmit" iconMaterial="save" :onPerform="onSave"></eb-link>
+        <eb-link v-if="!!actionCurrent" ref="buttonSubmit" iconMaterial="save" :onPerform="onSave"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <eb-list form inline-labels no-hairlines-md @submit.prevent="onFormSubmit">
@@ -10,7 +10,7 @@
         <div slot="after">{{atomClass && atomClass.title}}</div>
       </f7-list-item>
       <f7-list-item v-if="atomClass" smartSelect :title="$text('Atom Action')" :smartSelectParams="{openIn: 'page', closeOnSelect: true}">
-        <eb-select name="actionCode" v-model="actionCode" :options="selectOptions"></eb-select>
+        <eb-select name="actionName" v-model="actionName" :options="selectOptions"></eb-select>
       </f7-list-item>
       <f7-list-item v-if="scopeSelfEnable" :title="$text('Scope')">
         <span class="text-color-gray">Self</span>
@@ -31,7 +31,7 @@ export default {
     return {
       roleId: parseInt(this.$f7route.query.roleId),
       atomClass: null,
-      actionCode: '',
+      actionName: '',
       scopeSelf: true,
       scope: null,
     };
@@ -45,10 +45,11 @@ export default {
       for (const key in actions) {
         const action = actions[key];
         if (action.authorize === false) continue;
+        const option = { title: action.titleLocale, value: key };
         if (action.code === 1 || !action.bulk) {
-          groupAtom.options.push(action);
+          groupAtom.options.push(option);
         } else {
-          groupBulk.options.push(action);
+          groupBulk.options.push(option);
         }
       }
       return [ groupAtom, groupBulk ];
@@ -58,18 +59,27 @@ export default {
       return this.scope.map(item => item.data.roleName).join(',');
     },
     scopeSelfEnable() {
-      return this.actionCode && [ '3', '4' ].indexOf(this.actionCode) > -1;
+      const action = this.actionCurrent;
+      if (!action) return false;
+      return !action.bulk;
     },
     scopeEnable() {
-      if (!this.actionCode) return false;
-      if (this.actionCode === '1') return false;
-      if ([ '3', '4' ].indexOf(this.actionCode) > -1 && this.scopeSelf) return false;
-      return true;
+      const action = this.actionCurrent;
+      if (!action) return false;
+      return !action.bulk && !this.scopeSelf;
+    },
+    actionCurrent() {
+      if (!this.atomClass || !this.actionName) return null;
+      return this.getAction({
+        module: this.atomClass.module,
+        atomClassName: this.atomClass.atomClassName,
+        name: this.actionName,
+      });
     },
   },
   watch: {
     atomClass() {
-      this.actionCode = '';
+      this.actionName = '';
     },
   },
   methods: {
@@ -109,11 +119,12 @@ export default {
       });
     },
     onSave() {
-      if (!this.atomClass || !this.actionCode) return;
+      const action = this.actionCurrent;
+      if (!action) return;
       return this.$api.post('atomRight/add', {
         roleId: this.roleId,
         atomClass: this.atomClass,
-        actionCode: parseInt(this.actionCode),
+        actionCode: parseInt(action.code),
         scopeSelf: this.scopeSelf,
         scope: this.scope ? this.scope.map(item => item.id) : [],
       })

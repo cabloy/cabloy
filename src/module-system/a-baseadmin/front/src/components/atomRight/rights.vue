@@ -3,7 +3,7 @@
     <f7-list>
       <f7-list-group v-for="group of itemGroups" :key="group.id">
         <f7-list-item :title="`${group.atomClassTitle} [${group.moduleTitle}]`" group-title></f7-list-item>
-        <eb-list-item v-for="item of group.items" :key="item.id" :title="item.actionName" swipeout>
+        <eb-list-item v-for="item of group.items" :key="item.id" :title="item.titleLocale" swipeout>
           <div slot="after">
             <f7-badge v-if="item.action!==1 && item.scope==='0'">Self</f7-badge>
             <template v-if="item.scopeRoles">
@@ -25,11 +25,12 @@
 import Vue from 'vue';
 const ebModules = Vue.prototype.$meta.module.get('a-base').options.mixins.ebModules;
 const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
+const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
 export default {
   meta: {
     global: false,
   },
-  mixins: [ebModules, ebAtomClasses],
+  mixins: [ ebModules, ebAtomClasses, ebAtomActions ],
   props: {
     role: {
       type: Object,
@@ -52,6 +53,7 @@ export default {
       const groups = [];
       let group = null;
       for (const item of this.items) {
+        // group
         const groupName = `${item.module}.${item.atomClassName}`;
         if (!group || group.id !== groupName) {
           const module = this.getModule(item.module);
@@ -64,6 +66,15 @@ export default {
           };
           groups.push(group);
         }
+        // item
+        const action = this.getAction({
+          module: item.module,
+          atomClassName: item.atomClassName,
+          name: item.actionName,
+        });
+        item.title = action.title;
+        item.titleLocale = action.titleLocale;
+        // push
         group.items.push(item);
       }
       return groups;
