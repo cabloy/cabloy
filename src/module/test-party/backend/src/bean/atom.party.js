@@ -64,7 +64,7 @@ module.exports = app => {
       // flags
       const flags = [];
       if (item.personCount) {
-        flags.push(item.personCount);
+        flags.push(item.personCount + 'P');
       }
       // summary
       let summary;
