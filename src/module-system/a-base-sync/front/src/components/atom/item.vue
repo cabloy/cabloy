@@ -17,8 +17,8 @@
       </eb-validate>
       <f7-popover :id="popoverId">
         <f7-list v-if="showPopover" inset>
-          <eb-list-button v-if="findAction('write') && item.atomStage===0" popover-close context="submit" :onPerform="onAction">{{$text('Submit')}}</eb-list-button>
-          <eb-list-button v-for="action of actions" :key="action.id" v-if="action.name!=='write'" popover-close :context="action" :onPerform="onAction">{{getActionTitle(action)}}</eb-list-button>
+          <eb-list-button v-if="findAction('write') && item.atomStage===0" popover-close context="submit" :onPerform="onAction"><f7-icon material="done"></f7-icon>{{$text('Submit')}}</eb-list-button>
+          <eb-list-button v-for="action of actions" :key="action.id" v-if="action.name!=='write'" popover-close :context="action" :onPerform="onAction"><f7-icon :material="getAction(action).icon && getAction(action).icon.material"></f7-icon>{{getActionTitle(action)}}</eb-list-button>
         </f7-list>
       </f7-popover>
     </template>
