@@ -80,16 +80,8 @@ module.exports = app => {
       return await this.ctx.bean.atom._submitDirect({ key, item: _atom, user });
     }
 
-    async history({ atomClass, key, item, user }) {
-      await this.write({ atomClass, key, item, user });
-    }
-
-    async archive({ atomClass, key, item, user }) {
-      await this.write({ atomClass, key, item, user });
-    }
-
-    async draft({ atomClass, key, item, user }) {
-      await this.write({ atomClass, key, item, user });
+    async copy(/* { atomClass, target, srcKey, srcItem, destKey, destItem, user }*/) {
+      // donothing
     }
 
     async action(/* { action, atomClass, key, user }*/) {

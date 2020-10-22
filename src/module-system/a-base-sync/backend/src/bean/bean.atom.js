@@ -266,6 +266,78 @@ module.exports = ctx => {
       });
     }
 
+    // target: draft/archive/history/clone
+    async _atomCopy({ target, srcKey, srcItem, destKey, user }) {
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: srcKey.atomId });
+      if (!srcKey.itemId) srcKey.itemId = atomClass.itemId;
+      // atom bean
+      const _moduleInfo = mparse.parseInfo(atomClass.module);
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      // srcItem
+      if (!srcItem) {
+        srcItem = await ctx.bean.atom.read({ key: { atomId: srcKey.atomId }, user });
+      }
+      // destKey
+      if (!destKey) {
+        destKey = await this.create({ atomClass, roleIdOwner: srcItem.roleIdOwner, item: null, user });
+      }
+      if (!destKey.itemId) {
+        const _item = await this.modelAtom.get({ id: destKey.atomId });
+        destKey.itemId = _item.itemId;
+      }
+      // atomStage
+      const atomStage = ctx.constant.module(moduleInfo.relativeName).atom.stage[target] || 0;
+      // atomClosed
+      const atomClosed = 0;
+      // destItem
+      const destItem = Object.assign({}, srcItem, {
+        atomId: destKey.atomId,
+        itemId: destKey.itemId,
+        userIdCreated: srcItem.userIdCreated || srcItem.userIdUpdated,
+        userIdUpdated: srcItem.userIdUpdated,
+        atomName: srcItem.atomName,
+        atomStage,
+        atomFlowId: srcItem.atomFlowId,
+        allowComment: srcItem.allowComment,
+        attachmentCount: srcItem.attachmentCount,
+        atomClosed,
+        atomIdDraft: srcItem.atomIdDraft || srcItem.atomId,
+        atomIdArchive: srcItem.atomIdArchive || srcItem.atomId,
+      });
+      // update fields
+      await this.modelAtom.update({
+        id: destItem.atomId,
+        userIdCreated: destItem.userIdCreated,
+        userIdUpdated: destItem.userIdUpdated,
+        atomName: destItem.atomName,
+        atomStage: destItem.atomStage,
+        atomFlowId: destItem.atomFlowId,
+        allowComment: destItem.allowComment,
+        attachmentCount: destItem.attachmentCount,
+        atomClosed: destItem.atomClosed,
+        atomIdDraft: destItem.atomIdDraft,
+        atomIdArchive: destItem.atomIdArchive,
+      });
+      // copy attachments
+      await this._copyAttachments({ atomIdSrc: srcKey.atomId, atomIdDest: destKey.atomId });
+      // bean write
+      await ctx.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        context: { atomClass, key: destKey, item: destItem, user },
+        fn: 'write',
+      });
+      // bean copy
+      await ctx.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        context: { atomClass, target, srcKey, srcItem, destKey, destItem, user },
+        fn: 'copy',
+      });
+    }
+
     async _submitDirect({ key, item, user }) {
       // atomClass
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
