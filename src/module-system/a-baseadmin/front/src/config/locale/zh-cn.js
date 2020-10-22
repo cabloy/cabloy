@@ -31,6 +31,8 @@ export default {
   'User Management': '用户管理',
   'Login URL': '登录URL',
   'Callback URL': '回调URL',
+  'Atom Actions': '原子指令',
+  'Bulk Actions': '批量指令',
   Atoms: '原子',
   Build: '构建',
   Catalog: '目录',

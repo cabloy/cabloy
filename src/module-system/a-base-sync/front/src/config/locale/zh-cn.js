@@ -49,6 +49,8 @@ export default {
   Hearted: '已点赞',
   AtomClassSelectRoleTip: '选择角色',
   Filter: '筛选',
+  Clone: '克隆',
+  Export: '导出',
   'Advanced Filter': '高级筛选',
   'Atom Flag': '原子标记',
   'Atom Name': '原子名称',

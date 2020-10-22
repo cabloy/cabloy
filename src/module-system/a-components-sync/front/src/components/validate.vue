@@ -33,6 +33,7 @@ export default {
       // auto
       return this.renderSchema(c);
     }
+    return c('div');
   },
   props: {
     readOnly: {
@@ -182,10 +183,10 @@ export default {
         inlineLabels: !this.$config.form.floatingLabel,
       };
       return c('eb-list', {
-          attrs,
-          on: { submit: this.onSubmit },
-        },
-        children);
+        attrs,
+        on: { submit: this.onSubmit },
+      },
+      children);
     },
     renderProperties(c, data, properties, pathParent) {
       const children = [];

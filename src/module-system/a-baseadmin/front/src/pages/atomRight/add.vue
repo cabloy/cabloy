@@ -9,8 +9,8 @@
       <f7-list-item :title="$text('Atom Class')" link="#" @click="onSelectAtomClass">
         <div slot="after">{{atomClass && atomClass.title}}</div>
       </f7-list-item>
-      <f7-list-item smartSelect :title="$text('Atom Action')" :smartSelectParams="{openIn: 'page', closeOnSelect: true}">
-        <eb-select name="actionCode" v-model="actionCode" :options="actions"></eb-select>
+      <f7-list-item v-if="atomClass" smartSelect :title="$text('Atom Action')" :smartSelectParams="{openIn: 'page', closeOnSelect: true}">
+        <eb-select name="actionCode" v-model="actionCode" :options="selectOptions"></eb-select>
       </f7-list-item>
       <f7-list-item v-if="scopeSelfEnable" :title="$text('Scope')">
         <span class="text-color-gray">Self</span>
@@ -37,16 +37,21 @@ export default {
     };
   },
   computed: {
-    actions() {
+    selectOptions() {
       const actions = this.getActionsOfAtomClass(this.atomClass);
       if (!actions) return null;
-      const options = [{ title: null, value: '' }];
+      const groupAtom = { title: 'Atom Actions', options: [] };
+      const groupBulk = { title: 'Bulk Actions', options: [] };
       for (const key in actions) {
-        if (actions[key].authorize !== false) {
-          options.push({ title: key, value: actions[key].code });
+        const action = actions[key];
+        if (action.authorize === false) continue;
+        if (action.code === 1 || !action.bulk) {
+          groupAtom.options.push(action);
+        } else {
+          groupBulk.options.push(action);
         }
       }
-      return options;
+      return [ groupAtom, groupBulk ];
     },
     scopeTitle() {
       if (!this.scope) return null;
@@ -63,7 +68,7 @@ export default {
     },
   },
   watch: {
-    atomClass(value) {
+    atomClass() {
       this.actionCode = '';
     },
   },

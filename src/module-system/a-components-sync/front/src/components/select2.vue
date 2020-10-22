@@ -5,7 +5,7 @@ export default {
     global: true,
   },
   name: 'eb-select',
-  mixins: [validate],
+  mixins: [ validate ],
   props: {
     readOnly: {
       type: Boolean,
@@ -43,6 +43,12 @@ export default {
       voptions: null,
       valueSetting: false,
     };
+  },
+  computed: {
+    group() {
+      if (!this.voptions || this.voptions.length === 0) return false;
+      return this.voptions[0].options;
+    },
   },
   watch: {
     options() {
@@ -148,7 +154,38 @@ export default {
       this.clearValidateError();
     },
     findOption(value) {
-      return this.voptions.find(opt => this.equal(this.optionValue(opt), value));
+      if (!this.group) {
+        return this.voptions.find(opt => this.equal(this.optionValue(opt), value));
+      }
+      // group
+      let option;
+      for (const group of this.voptions) {
+        option = group.options.find(opt => this.equal(this.optionValue(opt), value));
+        if (option) break;
+      }
+      return option;
+    },
+    findOptions(values) {
+      values = Array.isArray(values) ? values : values.toString().split(',');
+      if (!this.group) {
+        const options = [];
+        for (const opt of this.voptions) {
+          if (values.findIndex(item => this.equal(item, this.optionValue(opt))) > -1) {
+            options.push(opt);
+          }
+        }
+        return options;
+      }
+      // group
+      const options = [];
+      for (const group of this.voptions) {
+        for (const opt of group.options) {
+          if (values.findIndex(item => this.equal(item, this.optionValue(opt))) > -1) {
+            options.push(opt);
+          }
+        }
+      }
+      return options;
     },
     getSelectedOptions() {
       if (!this.voptions) return null;
@@ -156,15 +193,7 @@ export default {
       if (!this.multiple) {
         return this.findOption(this.value);
       }
-      // multiple
-      const options = [];
-      const value = this.value.findIndex ? this.value : this.value.toString().split(',');
-      for (const opt of this.voptions) {
-        if (value.findIndex(item => this.equal(item, this.optionValue(opt))) > -1) {
-          options.push(opt);
-        }
-      }
-      return options;
+      return this.findOptions(this.value);
     },
     getDisplays() {
       const options = this.getSelectedOptions();
@@ -194,18 +223,9 @@ export default {
       const valueTo2 = this.adjustToString(valueTo);
       return valueFrom2 === valueTo2;
     },
-  },
-  render(c) {
-    if (this.readOnly) {
-      return c('div', {
-        staticClass: 'item-after',
-        domProps: { innerText: this.getDisplays() },
-      });
-    }
-    // options
-    const options = [];
-    if (this.voptions) {
-      for (const opt of this.voptions) {
+    _renderOptions(c, opts) {
+      const options = [];
+      for (const opt of opts) {
         let selected;
         if (!this.multiple) {
           selected = this.equal(this.value, this.optionValue(opt));
@@ -218,12 +238,44 @@ export default {
           }
         }
         options.push(c('option', {
+          key: this.optionTitle(opt),
           attrs: {
             value: this.optionValue(opt),
             selected,
           },
           domProps: { innerText: this.optionDisplay(opt) },
         }));
+      }
+      return options;
+    },
+    _renderGroups(c, groups) {
+      const options = [];
+      for (const group of groups) {
+        const _options = this._renderOptions(c, group.options);
+        options.push(c('optgroup', {
+          key: this.optionTitle(group),
+          attrs: {
+            label: this.optionDisplay(group),
+          },
+        }, _options));
+      }
+      return options;
+    },
+  },
+  render(c) {
+    if (this.readOnly) {
+      return c('div', {
+        staticClass: 'item-after',
+        domProps: { innerText: this.getDisplays() },
+      });
+    }
+    // options
+    let options;
+    if (this.voptions) {
+      if (!this.group) {
+        options = this._renderOptions(c, this.voptions);
+      } else {
+        options = this._renderGroups(c, this.voptions);
       }
     }
     // select
