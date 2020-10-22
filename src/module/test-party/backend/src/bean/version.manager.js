@@ -105,9 +105,12 @@ module.exports = app => {
         // add role rights
         const roleRights = [
           { roleName: 'system', action: 'create' },
+          { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
           { roleName: 'system', action: 'write', scopeNames: 0 },
           { roleName: 'system', action: 'delete', scopeNames: 0 },
-          { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
+          { roleName: 'system', action: 'clone', scopeNames: 0 },
+          { roleName: 'system', action: 'deleteBulk' },
+          { roleName: 'system', action: 'exportBulk' },
         ];
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'party', roleRights });
       }
