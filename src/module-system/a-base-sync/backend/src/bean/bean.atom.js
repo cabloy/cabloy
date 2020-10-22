@@ -266,6 +266,76 @@ module.exports = ctx => {
       });
     }
 
+    async _submitDirect({ /* key,*/ item, user }) {
+      // archive -> history
+      if (item.atomIdArchive) {
+        await this._atomCopy({
+          target: 'history',
+          srcKey: { atomId: item.atomIdArchive }, srcItem: null,
+          destKey: null,
+          user,
+        });
+      }
+      // draft -> archive
+      const keyArchive = await this._atomCopy({
+        target: 'archive',
+        srcKey: { atomId: item.atomId }, srcItem: item,
+        destKey: item.atomIdArchive ? { atomId: item.atomIdArchive } : null,
+        user,
+      });
+      // update draft
+      await this.modelAtom.update({
+        id: item.atomId,
+        atomClosed: 1,
+        atomIdArchive: keyArchive.atomId,
+      });
+      // return keyArchive
+      return { archive: { key: keyArchive } };
+    }
+
+    async openDraft({ key, user }) {
+      const _atom = await this.modelAtom.get({ id: key.atomId });
+      // draft
+      if (_atom.atomStage === 0) {
+        // do nothing
+        return { draft: { key } };
+      }
+      // archive
+      if (_atom.atomStage === 1) {
+        if (_atom.atomIdDraft > 0) {
+          // open
+          await this.modelAtom.update({
+            id: _atom.atomIdDraft,
+            atomFlowId: 0,
+            atomClosed: 0,
+            userIdUpdated: user.id,
+          });
+          return { draft: { key: { atomId: _atom.atomIdDraft } } };
+        }
+        // ** create draft from archive
+        const keyDraft = await this._atomCopy({
+          target: 'draft',
+          srcKey: { atomId: key.atomId }, srcItem: null,
+          destKey: null,
+          user,
+        });
+        // ok
+        return { draft: { key: keyDraft } };
+      }
+      // history
+      if (_atom.atomStage === 2) {
+        // ** create draft from history
+        const keyDraft = await this._atomCopy({
+          target: 'draft',
+          srcKey: { atomId: key.atomId }, srcItem: null,
+          destKey: _atom.atomIdDraft ? { atomId: _atom.atomIdDraft } : null,
+          user,
+        });
+        // ok
+        return { draft: { key: keyDraft } };
+      }
+    }
+
     // target: draft/archive/history/clone
     async _atomCopy({ target, srcKey, srcItem, destKey, user }) {
       // atomClass
@@ -291,20 +361,39 @@ module.exports = ctx => {
       const atomStage = ctx.constant.module(moduleInfo.relativeName).atom.stage[target] || 0;
       // atomClosed
       const atomClosed = 0;
+      // atomIdDraft/atomIdArchive
+      let atomIdDraft;
+      let atomIdArchive;
+      let userIdUpdated = srcItem.userIdUpdated;
+      let atomFlowId = srcItem.atomFlowId;
+      if (target === 'draft') {
+        atomIdDraft = 0;
+        atomIdArchive = srcItem.atomStage === 1 ? srcItem.atomId : srcItem.atomIdArchive;
+        userIdUpdated = user.id;
+        atomFlowId = 0;
+      } else if (target === 'archive') {
+        atomIdDraft = srcItem.atomId;
+        atomIdArchive = 0;
+      } else if (target === 'history') {
+        atomIdDraft = srcItem.atomIdDraft;
+        atomIdArchive = srcItem.atomId;
+      } else if (target === 'clone') {
+
+      }
       // destItem
       const destItem = Object.assign({}, srcItem, {
         atomId: destKey.atomId,
         itemId: destKey.itemId,
-        userIdCreated: srcItem.userIdCreated || srcItem.userIdUpdated,
-        userIdUpdated: srcItem.userIdUpdated,
+        userIdCreated: srcItem.userIdCreated || userIdUpdated,
+        userIdUpdated,
         atomName: srcItem.atomName,
         atomStage,
-        atomFlowId: srcItem.atomFlowId,
+        atomFlowId,
         allowComment: srcItem.allowComment,
         attachmentCount: srcItem.attachmentCount,
         atomClosed,
-        atomIdDraft: srcItem.atomIdDraft || srcItem.atomId,
-        atomIdArchive: srcItem.atomIdArchive || srcItem.atomId,
+        atomIdDraft,
+        atomIdArchive,
       });
       // update fields
       await this.modelAtom.update({
@@ -336,112 +425,8 @@ module.exports = ctx => {
         context: { atomClass, target, srcKey, srcItem, destKey, destItem, user },
         fn: 'copy',
       });
-    }
-
-    async _submitDirect({ key, item, user }) {
-      // atomClass
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-      if (!key.itemId) key.itemId = atomClass.itemId;
-      // atom bean
-      const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
-      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      //
-      let itemArchive;
-      let keyArchive;
-      // archive -> history
-      if (item.atomIdArchive) {
-        // item
-        itemArchive = await ctx.bean.atom.read({ key: { atomId: item.atomIdArchive }, user });
-        keyArchive = { atomId: itemArchive.atomId, itemId: itemArchive.itemId };
-        // create history
-        const keyHistory = await this.create({ atomClass, roleIdOwner: itemArchive.roleIdOwner, item: itemArchive, user });
-        const itemHistory = Object.assign({}, itemArchive, {
-          atomId: keyHistory.atomId,
-          itemId: keyHistory.itemId,
-          userIdCreated: itemArchive.userIdCreated,
-          userIdUpdated: itemArchive.userIdUpdated,
-          atomName: itemArchive.atomName,
-          atomStage: ctx.constant.module(moduleInfo.relativeName).atom.stage.history,
-          atomFlowId: itemArchive.atomFlowId,
-          allowComment: itemArchive.allowComment,
-          attachmentCount: itemArchive.attachmentCount,
-          atomClosed: 0,
-          atomIdDraft: item.atomId,
-          atomIdArchive: item.atomIdArchive,
-        });
-        // update fields
-        await this.modelAtom.update({
-          id: keyHistory.atomId,
-          userIdCreated: itemHistory.userIdCreated,
-          userIdUpdated: itemHistory.userIdUpdated,
-          atomName: itemHistory.atomName,
-          atomStage: itemHistory.atomStage,
-          atomFlowId: itemHistory.atomFlowId,
-          allowComment: itemHistory.allowComment,
-          attachmentCount: itemHistory.attachmentCount,
-          atomClosed: itemHistory.atomClosed,
-          atomIdDraft: itemHistory.atomIdDraft,
-          atomIdArchive: itemHistory.atomIdArchive,
-        });
-        // copy attachments
-        await this._copyAttachments({ atomIdSrc: item.atomIdArchive, atomIdDest: keyHistory.atomId });
-        // history
-        await ctx.executeBean({
-          beanModule: _moduleInfo.relativeName,
-          beanFullName,
-          context: { atomClass, key: keyHistory, item: itemHistory, user },
-          fn: 'history',
-        });
-      }
-      // draft -> archive
-      if (!item.atomIdArchive) {
-        // create archive
-        keyArchive = await this.create({ atomClass, roleIdOwner: item.roleIdOwner, item, user });
-      }
-      itemArchive = Object.assign({}, item, {
-        atomId: keyArchive.atomId,
-        itemId: keyArchive.itemId,
-        userIdCreated: item.userIdCreated || item.userIdUpdated,
-        userIdUpdated: item.userIdUpdated,
-        atomName: item.atomName,
-        atomStage: ctx.constant.module(moduleInfo.relativeName).atom.stage.archive,
-        atomFlowId: item.atomFlowId,
-        allowComment: item.allowComment,
-        attachmentCount: item.attachmentCount,
-        atomClosed: 0,
-        atomIdDraft: item.atomId,
-      });
-      // update fields
-      await this.modelAtom.update({
-        id: keyArchive.atomId,
-        userIdCreated: itemArchive.userIdCreated,
-        userIdUpdated: itemArchive.userIdUpdated,
-        atomName: itemArchive.atomName,
-        atomStage: itemArchive.atomStage,
-        atomFlowId: itemArchive.atomFlowId,
-        allowComment: itemArchive.allowComment,
-        attachmentCount: itemArchive.attachmentCount,
-        atomClosed: itemArchive.atomClosed,
-        atomIdDraft: itemArchive.atomIdDraft,
-      });
-      // copy attachments
-      await this._copyAttachments({ atomIdSrc: item.atomId, atomIdDest: keyArchive.atomId });
-      // archive
-      await ctx.executeBean({
-        beanModule: _moduleInfo.relativeName,
-        beanFullName,
-        context: { atomClass, key: keyArchive, item: itemArchive, user },
-        fn: 'archive',
-      });
-      // update draft
-      await this.modelAtom.update({
-        id: item.atomId,
-        atomClosed: 1,
-        atomIdArchive: keyArchive.atomId,
-      });
-      // return keyArchive
-      return { archive: { key: keyArchive } };
+      // ok
+      return destKey;
     }
 
     async _copyAttachments({ atomIdSrc, atomIdDest }) {
@@ -452,135 +437,6 @@ module.exports = ctx => {
         delete file.id;
         file.atomId = atomIdDest;
         await this.modelFile.insert(file);
-      }
-    }
-
-    async openDraft({ key, user }) {
-      const _atom = await this.modelAtom.get({ id: key.atomId });
-      // draft
-      if (_atom.atomStage === 0) {
-        // do nothing
-        return { draft: { key } };
-      }
-      // archive
-      if (_atom.atomStage === 1) {
-        if (_atom.atomIdDraft > 0) {
-          // atomClosed
-          await this.modelAtom.update({
-            id: _atom.atomIdDraft,
-            atomFlowId: 0,
-            atomClosed: 0,
-          });
-          return { draft: { key: { atomId: _atom.atomIdDraft } } };
-        }
-        // ** create draft from archive
-        // atomClass
-        const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-        // atom bean
-        const _moduleInfo = mparse.parseInfo(atomClass.module);
-        const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
-        const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-        // item
-        const itemArchive = await ctx.bean.atom.read({ key: { atomId: key.atomId }, user });
-        // create draft
-        const keyDraft = await this.create({ atomClass, roleIdOwner: itemArchive.roleIdOwner, item: itemArchive, user });
-        const itemDraft = Object.assign({}, itemArchive, {
-          atomId: keyDraft.atomId,
-          itemId: keyDraft.itemId,
-          userIdCreated: itemArchive.userIdCreated,
-          userIdUpdated: itemArchive.userIdUpdated,
-          atomName: itemArchive.atomName,
-          atomStage: ctx.constant.module(moduleInfo.relativeName).atom.stage.draft,
-          atomFlowId: 0,
-          allowComment: itemArchive.allowComment,
-          attachmentCount: itemArchive.attachmentCount,
-          atomClosed: 0,
-          atomIdDraft: 0,
-          atomIdArchive: itemArchive.atomId,
-        });
-        // update fields
-        await this.modelAtom.update({
-          id: itemDraft.atomId,
-          userIdCreated: itemDraft.userIdCreated,
-          userIdUpdated: itemDraft.userIdUpdated,
-          atomName: itemDraft.atomName,
-          atomStage: itemDraft.atomStage,
-          atomFlowId: itemDraft.atomFlowId,
-          allowComment: itemDraft.allowComment,
-          attachmentCount: itemDraft.attachmentCount,
-          atomClosed: itemDraft.atomClosed,
-          atomIdDraft: itemDraft.atomIdDraft,
-          atomIdArchive: itemDraft.atomIdArchive,
-        });
-        // copy attachments
-        await this._copyAttachments({ atomIdSrc: itemArchive.atomId, atomIdDest: keyDraft.atomId });
-        // draft
-        await ctx.executeBean({
-          beanModule: _moduleInfo.relativeName,
-          beanFullName,
-          context: { atomClass, key: keyDraft, item: itemDraft, user },
-          fn: 'draft',
-        });
-        // ok
-        return { draft: { key: keyDraft } };
-      }
-      // history
-      if (_atom.atomStage === 2) {
-        // atomClass
-        const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-        // atom bean
-        const _moduleInfo = mparse.parseInfo(atomClass.module);
-        const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
-        const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-        // item
-        const itemHistory = await ctx.bean.atom.read({ key: { atomId: key.atomId }, user });
-        // create draft
-        let keyDraft;
-        if (_atom.atomIdDraft === 0) {
-          keyDraft = await this.create({ atomClass, roleIdOwner: itemHistory.roleIdOwner, item: itemHistory, user });
-        } else {
-          const itemDraft = await this.modelAtom.get({ id: _atom.atomIdDraft });
-          keyDraft = { atomId: _atom.atomIdDraft, itemId: itemDraft.itemId };
-        }
-        const itemDraft = Object.assign({}, itemHistory, {
-          atomId: keyDraft.atomId,
-          itemId: keyDraft.itemId,
-          userIdCreated: itemHistory.userIdCreated,
-          userIdUpdated: itemHistory.userIdUpdated,
-          atomName: itemHistory.atomName,
-          atomStage: ctx.constant.module(moduleInfo.relativeName).atom.stage.draft,
-          atomFlowId: 0,
-          allowComment: itemHistory.allowComment,
-          attachmentCount: itemHistory.attachmentCount,
-          atomClosed: 0,
-          atomIdDraft: 0,
-          atomIdArchive: itemHistory.atomIdArchive,
-        });
-        // update fields
-        await this.modelAtom.update({
-          id: itemDraft.atomId,
-          userIdCreated: itemDraft.userIdCreated,
-          userIdUpdated: itemDraft.userIdUpdated,
-          atomName: itemDraft.atomName,
-          atomStage: itemDraft.atomStage,
-          atomFlowId: itemDraft.atomFlowId,
-          allowComment: itemDraft.allowComment,
-          attachmentCount: itemDraft.attachmentCount,
-          atomClosed: itemDraft.atomClosed,
-          atomIdDraft: itemDraft.atomIdDraft,
-          atomIdArchive: itemDraft.atomIdArchive,
-        });
-        // copy attachments
-        await this._copyAttachments({ atomIdSrc: itemHistory.atomId, atomIdDest: keyDraft.atomId });
-        // draft
-        await ctx.executeBean({
-          beanModule: _moduleInfo.relativeName,
-          beanFullName,
-          context: { atomClass, key: keyDraft, item: itemDraft, user },
-          fn: 'draft',
-        });
-        // ok
-        return { draft: { key: keyDraft } };
       }
     }
 
