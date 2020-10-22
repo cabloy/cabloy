@@ -36,7 +36,7 @@ module.exports = ({ modulePath }) => {
         chunkModules: false,
       }) + '\n\n');
 
-      const srcStatic = path.join(context.modulePath, 'backend/src/static');
+      const srcStatic = path.join(context.modulePath, 'backend/static');
       if (fse.existsSync(srcStatic)) {
         const destStatic = path.join(destPath, context.config.build.assetsSubDirectory);
         fse.removeSync(destStatic);

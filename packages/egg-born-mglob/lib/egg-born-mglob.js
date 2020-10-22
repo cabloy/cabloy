@@ -9,8 +9,8 @@ module.exports = {
 };
 
 const __paths = [
-  { prefix: 'src/module/', public: false, jsFront: 'front/src/main.js,dist/front.js', jsBackend: 'backend/src/main.js,dist/backend.js', staticBackend: 'backend/src/static,dist/staticBackend' },
-  { prefix: 'src/module-system/', public: false, jsFront: 'front/src/main.js,dist/front.js', jsBackend: 'backend/src/main.js,dist/backend.js', staticBackend: 'backend/src/static,dist/staticBackend' },
+  { prefix: 'src/module/', public: false, jsFront: 'front/src/main.js,dist/front.js', jsBackend: 'backend/src/main.js,dist/backend.js', staticBackend: 'backend/static,dist/staticBackend' },
+  { prefix: 'src/module-system/', public: false, jsFront: 'front/src/main.js,dist/front.js', jsBackend: 'backend/src/main.js,dist/backend.js', staticBackend: 'backend/static,dist/staticBackend' },
   { prefix: 'node_modules/egg-born-module-', public: true, jsFront: 'dist/front.js', jsBackend: 'dist/backend.js', staticBackend: 'dist/staticBackend' },
 ];
 
