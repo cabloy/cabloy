@@ -554,17 +554,18 @@ module.exports = ctx => {
       return _sql;
     }
 
-    checkRightCreate({ iid, userIdWho, atomClassId }) {
+    checkRightActionBulk({ iid, userIdWho, atomClassId, action }) {
       // for safe
       iid = parseInt(iid);
       userIdWho = parseInt(userIdWho);
       atomClassId = parseInt(atomClassId);
+      action = parseInt(action);
 
       // sql
       const _sql =
         `select a.* from aAtomClass a
             inner join aViewUserRightAtomClass b on a.id=b.atomClassId
-              where b.iid=${iid} and b.atomClassId=${atomClassId} and b.action=1 and b.userIdWho=${userIdWho}
+              where b.iid=${iid} and b.atomClassId=${atomClassId} and b.action=${action} and b.userIdWho=${userIdWho}
         `;
       return _sql;
     }

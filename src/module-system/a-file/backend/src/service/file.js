@@ -262,7 +262,8 @@ module.exports = app => {
       // not check if !atomId
       if (!atomId) return;
       const res = await this.ctx.bean.atom.checkRightAction({
-        atom: { id: atomId, action: this.ctx.constant.module('a-base').atom.action.write },
+        atom: { id: atomId },
+        action: this.ctx.constant.module('a-base').atom.action.write,
         user,
       });
       if (!res) this.ctx.throw(403);

@@ -34,7 +34,8 @@ module.exports = app => {
       // check right: atom.write or user's file
       if (item.atomId) {
         const res = await this.ctx.bean.atom.checkRightAction({
-          atom: { id: item.atomId, action: 3 },
+          atom: { id: item.atomId },
+          action: 3,
           user,
         });
         if (!res) this.ctx.throw(403);

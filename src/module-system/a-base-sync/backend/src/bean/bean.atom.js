@@ -626,8 +626,13 @@ module.exports = ctx => {
       for (const action of actions) {
         const actionBase = ctx.bean.base.action({ module: atomClass.module, atomClassName: atomClass.atomClassName, code: action.code });
         if (!!actionBase.bulk === !!bulk) {
-          const res = await this.checkRightAction({ atom: { id: key.atomId, action: action.code }, user });
-          if (res) actionsRes.push(action);
+          if (bulk) {
+            const res = await this.checkRightActionBulk({ atomClass, action: action.code, user });
+            if (res) actionsRes.push(action);
+          } else {
+            const res = await this.checkRightAction({ atom: { id: key.atomId }, action: action.code, user });
+            if (res) actionsRes.push(action);
+          }
         }
       }
       return actionsRes;
@@ -751,7 +756,7 @@ module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    async checkRightAction({ atom: { id, action, stage }, user }) {
+    async checkRightAction({ atom: { id }, action, stage, user }) {
       const _atom = await this.modelAtom.get({ id });
       if ((stage === 'draft' && _atom.atomStage > 0) || ((stage === 'archive' || stage === 'history') && _atom.atomStage === 0)) return null;
       // action.stage
@@ -788,17 +793,23 @@ module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    async checkRightCreate({
+    async checkRightActionBulk({
       atomClass: { id, module, atomClassName, atomClassIdParent = 0 },
+      action,
       user,
     }) {
       if (!id) id = await this.getAtomClassId({ module, atomClassName, atomClassIdParent });
-      const sql = this.sqlProcedure.checkRightCreate({
+      const sql = this.sqlProcedure.checkRightActionBulk({
         iid: ctx.instance.id,
         userIdWho: user.id,
         atomClassId: id,
+        action,
       });
       return await ctx.model.queryOne(sql);
+    }
+
+    async checkRightCreate({ atomClass, user }) {
+      return await this.checkRightActionBulk({ atomClass, action: 1, user });
     }
 
     async checkRightCreateRole({

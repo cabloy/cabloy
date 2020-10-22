@@ -109,7 +109,8 @@ module.exports = app => {
       const checkRightWrites = [[ 'Tom', partyKeyArchive.atomId, true ], [ 'Tomson', partyKeyArchive.atomId, false ]];
       for (const [ userName, atomId, right ] of checkRightWrites) {
         const res = await this.ctx.bean.atom.checkRightAction({
-          atom: { id: atomId, action: this.ctx.constant.module('a-base').atom.action.write },
+          atom: { id: atomId },
+          action: this.ctx.constant.module('a-base').atom.action.write,
           user: { id: userIds[userName] },
         });
         assert.equal(!!res, right, userName);
@@ -119,7 +120,8 @@ module.exports = app => {
       const checkRightDeletes = [[ 'Tom', partyKeyArchive.atomId, true ], [ 'Tomson', partyKeyArchive.atomId, false ]];
       for (const [ userName, atomId, right ] of checkRightDeletes) {
         const res = await this.ctx.bean.atom.checkRightAction({
-          atom: { id: atomId, action: this.ctx.constant.module('a-base').atom.action.delete },
+          atom: { id: atomId },
+          action: this.ctx.constant.module('a-base').atom.action.delete,
           user: { id: userIds[userName] },
         });
         assert.equal(!!res, right, userName);
@@ -139,7 +141,8 @@ module.exports = app => {
       // const checkRightActions_1 = [[ 'Tom', partyKey.atomId, false ], [ 'Jane', partyKey.atomId, true ]];
       // for (const [ userName, atomId, right ] of checkRightActions_1) {
       //   const res = await this.ctx.bean.atom.checkRightAction({
-      //     atom: { id: atomId, action: 101 },
+      //     atom: { id: atomId },
+      //     action: 101,
       //     user: { id: userIds[userName] },
       //   });
       //   assert.equal(!!res, right, userName);
@@ -156,7 +159,8 @@ module.exports = app => {
       // const checkRightActions_2 = [[ 'Tom', partyKey.atomId, false ], [ 'Jane', partyKey.atomId, false ]];
       // for (const [ userName, atomId, right ] of checkRightActions_2) {
       //   const res = await this.ctx.bean.atom.checkRightAction({
-      //     atom: { id: atomId, action: 101 },
+      //     atom: { id: atomId },
+      //     action: 101,
       //     user: { id: userIds[userName] },
       //   });
       //   assert.equal(!!res, right, userName);
