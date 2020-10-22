@@ -42,6 +42,13 @@ module.exports = app => {
       // update content
       await this.ctx.model.query('update aFlowDefContent a set a.content=? where a.iid=? and a.atomId=?',
         [ item.content, this.ctx.instance.id, key.atomId ]);
+
+      // deploy
+      if (item.atomStage === 1) {
+        this.ctx.tail(async () => {
+          await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId });
+        });
+      }
     }
 
     async delete({ atomClass, key, user }) {
@@ -60,15 +67,6 @@ module.exports = app => {
     async action({ action, atomClass, key, user }) {
       // super
       await super.action({ action, atomClass, key, user });
-    }
-
-    async archive({ atomClass, key, item, user }) {
-      // super
-      await super.archive({ atomClass, key, item, user });
-      // deploy
-      this.ctx.tail(async () => {
-        await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId });
-      });
     }
 
   }
