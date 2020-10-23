@@ -175,10 +175,7 @@ export default {
       return 'blue';
     },
     _getActionTitle(action, item) {
-      const title = this.getActionTitle(action, item.atomStage);
-      if (action.code === 3) return this.$device.desktop ? `✏️ ${title}` : '✏️';
-      else if (action.code === 4) return this.$device.desktop ? `🗑️ ${title}` : '🗑️';
-      return title;
+      return this.getActionTitle(action, item.atomStage);
     },
     _renderListItem(item) {
       // media
@@ -258,10 +255,22 @@ export default {
       // domLeft
       let domLeft;
       if (item.atomStage === 1) {
+        const domLeftStar = (
+          <div color="teal" propsOnPerform={event => this.onStarSwitch(event, item)}>
+            <f7-icon slot="media" material={item.star ? 'star_border' : 'star'}></f7-icon>
+            {this.$device.desktop && <div slot="title">{this.$text(item.star ? 'Unstar' : 'Star')}</div>}
+          </div>
+        );
+        const domLeftLabel = (
+          <div color="blue" propsOnPerform={event => this.onLabel(event, item)}>
+            <f7-icon slot="media" material="label"></f7-icon>
+            {this.$device.desktop && <div slot="title">{this.$text('Labels')}</div>}
+          </div>
+        );
         domLeft = (
           <div slot="left">
-            <div color="teal" propsOnPerform={event => this.onStarSwitch(event, item)}>{this.$device.desktop ? `⭐ ${this.$text(item.star ? 'Unstar' : 'Star')}` : '⭐'}</div>
-            <div color="blue" propsOnPerform={event => this.onLabel(event, item)}>{this.$device.desktop ? `🏷️ ${this.$text('Labels')}` : '🏷️'}</div>
+            {domLeftStar}
+            {domLeftLabel}
           </div>
         );
       }
@@ -271,8 +280,12 @@ export default {
         for (let index in item._actions) {
           index = parseInt(index);
           const action = item._actions[index];
+          const _action = this.getAction(action);
           domActions.push(
-            <div key={action.id} color={this._getActionColor(action, index)} propsOnPerform={event => this.onAction(event, item, action)}>{this._getActionTitle(action, item)}</div>
+            <div key={action.id} color={this._getActionColor(action, index)} propsOnPerform={event => this.onAction(event, item, action)}>
+              <f7-icon slot="media" material={_action.icon.material}></f7-icon>
+              {this.$device.desktop && <div slot="title">{this._getActionTitle(action, item)}</div>}
+            </div>
           );
         }
       }
