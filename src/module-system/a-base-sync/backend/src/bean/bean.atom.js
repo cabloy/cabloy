@@ -320,6 +320,17 @@ module.exports = ctx => {
       }
     }
 
+    async clone({ key, user }) {
+      const keyDraft = await this._copy({
+        target: 'clone',
+        srcKey: { atomId: key.atomId }, srcItem: null,
+        destKey: null,
+        user,
+      });
+      // ok
+      return { draft: { key: keyDraft } };
+    }
+
     // target: draft/archive/history/clone
     async _copy({ target, srcKey, srcItem, destKey, user }) {
       // atomClass
@@ -349,7 +360,9 @@ module.exports = ctx => {
       let atomIdDraft;
       let atomIdArchive;
       let userIdUpdated = srcItem.userIdUpdated;
+      let userIdCreated = srcItem.userIdCreated || userIdUpdated;
       let atomFlowId = srcItem.atomFlowId;
+      let atomName = srcItem.atomName;
       if (target === 'draft') {
         atomIdDraft = 0;
         atomIdArchive = srcItem.atomStage === 1 ? srcItem.atomId : srcItem.atomIdArchive;
@@ -362,15 +375,20 @@ module.exports = ctx => {
         atomIdDraft = srcItem.atomIdDraft;
         atomIdArchive = srcItem.atomId;
       } else if (target === 'clone') {
-
+        atomIdDraft = 0;
+        atomIdArchive = 0;
+        userIdUpdated = user.id;
+        userIdCreated = user.id;
+        atomFlowId = 0;
+        atomName = `${srcItem.atomName}-${ctx.text('CloneCopyText')}`;
       }
       // destItem
       const destItem = Object.assign({}, srcItem, {
         atomId: destKey.atomId,
         itemId: destKey.itemId,
-        userIdCreated: srcItem.userIdCreated || userIdUpdated,
+        userIdCreated,
         userIdUpdated,
-        atomName: srcItem.atomName,
+        atomName,
         atomStage,
         atomFlowId,
         allowComment: srcItem.allowComment,

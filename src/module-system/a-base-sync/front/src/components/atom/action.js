@@ -60,19 +60,24 @@ export default {
           const url = ctx.$meta.util.replaceTemplate('/a/base/atom/edit?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&module={{module}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}', _item);
           ctx.$view.navigate(url, action.navigateOptions);
         });
-      }
-      // others
-      const key = { atomId: item.atomId, itemId: item.itemId };
-      return ctx.$view.dialog.confirm().then(() => {
-        return ctx.$api.post('/a/base/atom/action', {
-          action: action.code,
-          key,
-        }).then(() => {
-          ctx.$meta.eventHub.$emit('atom:action', { key, action });
-          return true;
+      } else if (action.name === 'clone') {
+        // clone
+        return ctx.$view.dialog.confirm().then(() => {
+          const key = { atomId: item.atomId, itemId: item.itemId };
+          return ctx.$api.post('/a/base/atom/clone', {
+            key,
+          }).then(data => {
+            const keyDraft = data.draft.key;
+            const _item = {
+              ...item,
+              atomId: keyDraft.atomId,
+              itemId: keyDraft.itemId,
+            };
+            const url = ctx.$meta.util.replaceTemplate('/a/base/atom/edit?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&module={{module}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}', _item);
+            ctx.$view.navigate(url, action.navigateOptions);
+          });
         });
-      });
-
+      }
     },
     _onActionCreate({ ctx, action, item }) {
       // get roleIdOwner

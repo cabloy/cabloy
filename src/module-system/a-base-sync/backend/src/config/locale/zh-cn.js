@@ -34,4 +34,5 @@ module.exports = {
   Atom: '原子',
   Menu: '菜单',
   Search: '搜索',
+  CloneCopyText: '副本',
 };
