@@ -52,21 +52,12 @@ module.exports = app => {
       });
     }
 
-    async action({ action, atomClass, key, user }) {
+    async submit({ atomClass, key, options, user }) {
       return await this.ctx.executeBean({
         beanModule: articleBeanModule,
         beanFullName: articleBeanFullName,
-        context: { action, atomClass, key, user },
-        fn: 'action',
-      });
-    }
-
-    async enable({ atomClass, key, atom, user }) {
-      return await this.ctx.executeBean({
-        beanModule: articleBeanModule,
-        beanFullName: articleBeanFullName,
-        context: { atomClass, key, atom, user },
-        fn: 'enable',
+        context: { atomClass, key, options, user },
+        fn: 'submit',
       });
     }
 

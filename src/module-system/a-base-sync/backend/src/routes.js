@@ -39,9 +39,6 @@ module.exports = app => {
     { method: 'post', path: 'atom/delete', controller: 'atom', middlewares: 'transaction',
       meta: { right: { type: 'atom', action: 4 } },
     },
-    { method: 'post', path: 'atom/action', controller: 'atom', middlewares: 'transaction',
-      meta: { right: { type: 'atom' } },
-    },
     { method: 'post', path: 'atom/star', controller: 'atom',
       meta: {
         auth: { user: true },

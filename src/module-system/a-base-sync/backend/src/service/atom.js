@@ -38,10 +38,6 @@ module.exports = app => {
       return await this.ctx.bean.atom.delete({ key, user });
     }
 
-    async action({ action, key, user }) {
-      return await this.ctx.bean.atom.action({ action, key, user });
-    }
-
     async star({ key, atom, user }) {
       return await this.ctx.bean.atom.star({ key, atom, user });
     }

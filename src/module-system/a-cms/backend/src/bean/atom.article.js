@@ -187,11 +187,6 @@ module.exports = app => {
       await super.delete({ atomClass, key, user });
     }
 
-    async action({ action, atomClass, key, user }) {
-      // super
-      await super.action({ action, atomClass, key, user });
-    }
-
     async submit({ atomClass, key, options, user }) {
       // site
       const site = await this.ctx.service.render.combineSiteBase({ atomClass });

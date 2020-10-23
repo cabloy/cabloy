@@ -100,15 +100,6 @@ module.exports = app => {
       this.ctx.success();
     }
 
-    async action() {
-      const res = await this.ctx.service.atom.action({
-        action: this.ctx.request.body.action,
-        key: this.ctx.request.body.key,
-        user: this.ctx.state.user.op,
-      });
-      this.ctx.success(res);
-    }
-
     async star() {
       const res = await this.ctx.service.atom.star({
         key: this.ctx.request.body.key,

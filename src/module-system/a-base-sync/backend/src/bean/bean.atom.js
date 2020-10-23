@@ -235,22 +235,6 @@ module.exports = ctx => {
       }
     }
 
-    // action
-    async action({ action, key, user }) {
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-      if (!key.itemId) key.itemId = atomClass.itemId;
-      // atom bean
-      const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
-      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      await ctx.executeBean({
-        beanModule: _moduleInfo.relativeName,
-        beanFullName,
-        context: { action, atomClass, key, user },
-        fn: 'action',
-      });
-    }
-
     async submit({ key, options, user }) {
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
       if (!key.itemId) key.itemId = atomClass.itemId;

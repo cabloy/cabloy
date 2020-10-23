@@ -40,16 +40,6 @@ module.exports = app => {
       await super.delete({ atomClass, key, user });
     }
 
-    async action({ action, atomClass, key, user }) {
-      // super
-      await super.action({ action, atomClass, key, user });
-    }
-
-    async enable({ atomClass, key, atom, user }) {
-      // super
-      await super.enable({ atomClass, key, atom, user });
-    }
-
   }
 
   return Atom;

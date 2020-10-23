@@ -64,11 +64,6 @@ module.exports = app => {
       await super.delete({ atomClass, key, user });
     }
 
-    async action({ action, atomClass, key, user }) {
-      // super
-      await super.action({ action, atomClass, key, user });
-    }
-
   }
 
   return Atom;
