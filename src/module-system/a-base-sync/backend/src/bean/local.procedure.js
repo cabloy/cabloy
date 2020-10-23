@@ -559,13 +559,15 @@ module.exports = ctx => {
       iid = parseInt(iid);
       userIdWho = parseInt(userIdWho);
       atomClassId = parseInt(atomClassId);
-      action = parseInt(action);
+      action = parseInt(action || 0);
+
+      const _actionWhere = action ? `and a.code=${action}` : '';
 
       // sql
       const _sql =
-        `select a.* from aAtomClass a
-            inner join aViewUserRightAtomClass b on a.id=b.atomClassId
-              where b.iid=${iid} and b.atomClassId=${atomClassId} and b.action=${action} and b.userIdWho=${userIdWho}
+        `select a.* from aAtomAction a
+            inner join aViewUserRightAtomClass b on a.atomClassId=b.atomClassId and a.code=b.action
+              where a.iid=${iid} and a.bulk=1 and a.atomClassId=${atomClassId} ${_actionWhere} and b.userIdWho=${userIdWho}
         `;
       return _sql;
     }

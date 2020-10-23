@@ -48,7 +48,6 @@ export default {
       this.$api.post('/a/base/atom/actions', {
         key: { atomId: item.atomId },
         basic: true,
-        bulk: false,
       }).then(data => {
         Vue.set(item, '_actions', data);
       });

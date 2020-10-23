@@ -155,7 +155,14 @@ module.exports = app => {
       const res = await this.ctx.service.atom.actions({
         key: this.ctx.request.body.key,
         basic: this.ctx.request.body.basic,
-        bulk: this.ctx.request.body.bulk,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async actionsBulk() {
+      const res = await this.ctx.service.atom.actionsBulk({
+        atomClass: this.ctx.request.body.atomClass,
         user: this.ctx.state.user.op,
       });
       this.ctx.success(res);

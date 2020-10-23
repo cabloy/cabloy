@@ -269,7 +269,7 @@ module.exports = ctx => {
     async _submitDirect({ /* key,*/ item, user }) {
       // archive -> history
       if (item.atomIdArchive) {
-        await this._atomCopy({
+        await this._copy({
           target: 'history',
           srcKey: { atomId: item.atomIdArchive }, srcItem: null,
           destKey: null,
@@ -277,7 +277,7 @@ module.exports = ctx => {
         });
       }
       // draft -> archive
-      const keyArchive = await this._atomCopy({
+      const keyArchive = await this._copy({
         target: 'archive',
         srcKey: { atomId: item.atomId }, srcItem: item,
         destKey: item.atomIdArchive ? { atomId: item.atomIdArchive } : null,
@@ -313,7 +313,7 @@ module.exports = ctx => {
           return { draft: { key: { atomId: _atom.atomIdDraft } } };
         }
         // ** create draft from archive
-        const keyDraft = await this._atomCopy({
+        const keyDraft = await this._copy({
           target: 'draft',
           srcKey: { atomId: key.atomId }, srcItem: null,
           destKey: null,
@@ -325,7 +325,7 @@ module.exports = ctx => {
       // history
       if (_atom.atomStage === 2) {
         // ** create draft from history
-        const keyDraft = await this._atomCopy({
+        const keyDraft = await this._copy({
           target: 'draft',
           srcKey: { atomId: key.atomId }, srcItem: null,
           destKey: _atom.atomIdDraft ? { atomId: _atom.atomIdDraft } : null,
@@ -337,7 +337,7 @@ module.exports = ctx => {
     }
 
     // target: draft/archive/history/clone
-    async _atomCopy({ target, srcKey, srcItem, destKey, user }) {
+    async _copy({ target, srcKey, srcItem, destKey, user }) {
       // atomClass
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: srcKey.atomId });
       if (!srcKey.itemId) srcKey.itemId = atomClass.itemId;
@@ -536,36 +536,6 @@ module.exports = ctx => {
       }
     }
 
-    // actions of atom
-    async actions({ key, basic, bulk, user }) {
-      // atomClass
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-      // actions
-      const _basic = basic ? 'and a.code in (3,4)' : '';
-      const sql = `
-        select a.*,b.module,b.atomClassName from aAtomAction a
-          left join aAtomClass b on a.atomClassId=b.id
-            where a.iid=? and a.deleted=0 and a.atomClassId=? ${_basic}
-              order by a.code asc
-      `;
-      const actions = await ctx.model.query(sql, [ ctx.instance.id, atomClass.id ]);
-      // actions res
-      const actionsRes = [];
-      for (const action of actions) {
-        const actionBase = ctx.bean.base.action({ module: atomClass.module, atomClassName: atomClass.atomClassName, code: action.code });
-        if (!!actionBase.bulk === !!bulk) {
-          if (bulk) {
-            const res = await this.checkRightActionBulk({ atomClass, action: action.code, user });
-            if (res) actionsRes.push(action);
-          } else {
-            const res = await this.checkRightAction({ atom: { id: key.atomId }, action: action.code, user });
-            if (res) actionsRes.push(action);
-          }
-        }
-      }
-      return actionsRes;
-    }
-
     async schema({ atomClass, schema, user }) {
       const validator = await this.validator({ atomClass, user });
       if (!validator) return null;
@@ -754,6 +724,39 @@ module.exports = ctx => {
         roleIdOwner,
       });
       return await ctx.model.queryOne(sql);
+    }
+
+    // actions of atom
+    async actions({ key, basic, user }) {
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      // actions
+      const _basic = basic ? 'and a.code in (3,4)' : '';
+      const sql = `
+        select a.*,b.module,b.atomClassName from aAtomAction a
+          left join aAtomClass b on a.atomClassId=b.id
+            where a.iid=? and a.deleted=0 and a.bulk=0 and a.atomClassId=? ${_basic}
+              order by a.code asc
+      `;
+      const actions = await ctx.model.query(sql, [ ctx.instance.id, atomClass.id ]);
+      // actions res
+      const actionsRes = [];
+      for (const action of actions) {
+        const res = await this.checkRightAction({ atom: { id: key.atomId }, action: action.code, user });
+        if (res) actionsRes.push(action);
+      }
+      return actionsRes;
+    }
+
+    // actionsBulk of atomClass
+    async actionsBulk({ atomClass: { id, module, atomClassName, atomClassIdParent = 0 }, user }) {
+      if (!id) id = await this.getAtomClassId({ module, atomClassName, atomClassIdParent });
+      const sql = this.sqlProcedure.checkRightActionBulk({
+        iid: ctx.instance.id,
+        userIdWho: user.id,
+        atomClassId: id,
+      });
+      return await ctx.model.query(sql);
     }
 
     // preffered roles

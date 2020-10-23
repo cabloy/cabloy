@@ -62,6 +62,18 @@ module.exports = function(ctx) {
         `;
       await ctx.model.query(sql);
 
+      // aAtomAction: add field bulk
+      sql = `
+        ALTER TABLE aAtomAction
+          ADD COLUMN bulk int(11) DEFAULT '0'
+        `;
+      await ctx.model.query(sql);
+      //   update action:create as bulk
+      sql = `
+        update aAtomAction set bulk=1 where code=1
+        `;
+      await ctx.model.query(sql);
+
     }
 
   }

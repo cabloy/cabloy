@@ -84,16 +84,26 @@ async function checkAtom(moduleInfo, options, ctx) {
   }
 
   // other action (including write/delete)
-  const actionOther = options.action || ctx.request.body.action;
-  const res = await ctx.bean.atom.checkRightAction({
-    atom: { id: ctx.request.body.key.atomId },
-    action: actionOther, stage: options.stage,
-    user: ctx.state.user.op,
-  });
-  if (!res) ctx.throw(403);
-  ctx.request.body.key.itemId = res.itemId;
-  ctx.meta._atom = res;
-  return;
+  const actionOther = options.action;
+  const bulk = !ctx.request.body.key;
+  if (bulk) {
+    const res = await ctx.bean.atom.checkRightActionBulk({
+      atomClass: ctx.request.body.atomClass,
+      action: actionOther,
+      user: ctx.state.user.op,
+    });
+    if (!res) ctx.throw(403);
+    ctx.meta._atomAction = res;
+  } else {
+    const res = await ctx.bean.atom.checkRightAction({
+      atom: { id: ctx.request.body.key.atomId },
+      action: actionOther, stage: options.stage,
+      user: ctx.state.user.op,
+    });
+    if (!res) ctx.throw(403);
+    ctx.request.body.key.itemId = res.itemId;
+    ctx.meta._atom = res;
+  }
 
 }
 

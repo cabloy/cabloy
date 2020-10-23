@@ -48,14 +48,14 @@ module.exports = {
       },
       deleteBulk: {
         title: 'Delete',
-        actionComponent: 'action',
+        actionComponent: 'actionBulk',
         bulk: true,
         select: true,
         icon: { material: 'delete' },
       },
       exportBulk: {
         title: 'Export',
-        actionComponent: 'action',
+        actionComponent: 'actionBulk',
         bulk: true,
         select: null,
         icon: { material: 'cloud_download' },
