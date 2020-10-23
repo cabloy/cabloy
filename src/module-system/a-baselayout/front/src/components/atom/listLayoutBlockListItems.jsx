@@ -18,6 +18,7 @@ export default {
   },
   data() {
     return {
+      radioName: Vue.prototype.$meta.util.nextId('radio'),
     };
   },
   computed: {
@@ -37,6 +38,7 @@ export default {
   },
   methods: {
     onItemClick(event, item) {
+      if (this.layoutManager.selectingBulk) return;
       return this.onAction(event, item, {
         module: item.module,
         atomClassName: item.atomClassName,
@@ -116,6 +118,9 @@ export default {
         });
       }
     },
+    onItemChange(event, item) {
+      this.layoutManager.onItemChangeBulk(event, item);
+    },
     _onStarSwitch(event, item, star, swipeoutAction) {
       // anonymous
       if (this.user.anonymous) {
@@ -177,11 +182,15 @@ export default {
     _getActionTitle(action, item) {
       return this.getActionTitle(action, item.atomStage);
     },
+    _getItemChecked(item) {
+      const index = this.layoutManager.selectedAtomsBulk.findIndex(_item => _item.atomId === item.atomId);
+      return index > -1;
+    },
     _renderListItem(item) {
       // media
-      const domMedia = (
+      const domMedia = this.layoutManager.selectingBulk ? null : (
         <div slot="media">
-          <img class="avatar avatar32" src={this._getItemMetaMedia(item)} />
+          <img class="avatar avatar24" src={this._getItemMetaMedia(item)} />
         </div>
       );
       // domHeader
@@ -236,10 +245,15 @@ export default {
       );
       // ok
       return (
-        <eb-list-item class="item" key={item.atomId} link="#"
+        <eb-list-item class="item" key={item.atomId}
+          link={this.layoutManager.selectingBulk ? false : '#'}
+          name={this.radioName}
+          checkbox={this.layoutManager.selectingBulk}
+          checked={this._getItemChecked(item)}
           propsOnPerform={event => this.onItemClick(event, item)}
           swipeout onSwipeoutOpened={event => { this.onSwipeoutOpened(event, item); } }
           onContextmenuOpened={event => { this.onSwipeoutOpened(event, item); } }
+          onChange={event => this.onItemChange(event, item)}
         >
 
           {domMedia}

@@ -54,6 +54,9 @@ export default {
         },
       };
     },
+    getItems() {
+      return this.items;
+    },
     _renderBlock({ blockName }) {
       const blockConfig = this.layoutConfig.blocks[blockName];
       if (!blockConfig) return null;

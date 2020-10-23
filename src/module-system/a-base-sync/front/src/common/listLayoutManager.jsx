@@ -21,6 +21,8 @@ export default {
       searchQuery: null,
       actionsCreate: null,
       actionsBulk: null,
+      selectedAtomsBulk: [],
+      selectingBulk: false,
       subnavbarActions: false,
       pageTitle: null,
     };
@@ -283,8 +285,36 @@ export default {
       }
     },
     // ** select - end
+    // ** select bulk - begin
+    onSelectingBulkSwitch() {
+      this.selectingBulk = !this.selectingBulk;
+      if (!this.selectingBulk) {
+        this.selectedAtomsBulk = [];
+      }
+    },
+    onItemChangeBulk(event, item) {
+      const selectedAtoms = this.selectedAtomsBulk;
+      const index = selectedAtoms.findIndex(_item => _item.atomId === item.atomId);
+      if (event.target.checked && index === -1) {
+        selectedAtoms.push(item);
+      } else if (!event.target.checked && index > -1) {
+        selectedAtoms.splice(index, 1);
+      }
+    },
+    onSelectingBulkChecking() {
+      const items = this.getItems();
+      const selectedAtoms = this.selectedAtomsBulk;
+      if (selectedAtoms.length >= items.length) {
+        // uncheck all
+        this.selectedAtomsBulk = [];
+      } else {
+        // check all
+        this.selectedAtomsBulk = items.concat();
+      }
+    },
+    // ** select bulk - end
     getItems() {
-      return this.layoutComponentInstance ? this.layoutComponentInstance.items : [];
+      return this.layoutComponentInstance ? this.layoutComponentInstance.getItems() : [];
     },
     _getAtomOrderKey(atomOrder) {
       return atomOrder ? `${atomOrder.tableAlias || 'f'}.${atomOrder.name}` : null;

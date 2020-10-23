@@ -88,7 +88,7 @@ export default {
       // media
       const domMedia = (
         <div slot="media">
-          <img class="avatar avatar32" src={this._getItemMetaMedia(item)} />
+          <img class="avatar avatar24" src={this._getItemMetaMedia(item)} />
         </div>
       );
       // domHeader

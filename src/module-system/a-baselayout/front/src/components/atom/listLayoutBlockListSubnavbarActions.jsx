@@ -20,12 +20,37 @@ export default {
   created() {
   },
   methods: {
-    _renderActions() {
+    onSelectingBulkSwitch() {
+      this.layoutManager.onSelectingBulkSwitch();
+    },
+    onSelectingBulkChecking() {
+      this.layoutManager.onSelectingBulkChecking();
+    },
+    _renderActionsLeft() {
+      const children = [];
+      // switch select
+      const items = this.layoutManager.getItems();
+      if (items.length > 0) {
+        children.push(
+          <eb-link iconMaterial="grading" propsOnPerform={this.onSelectingBulkSwitch} ></eb-link>
+        );
+      }
+      const selectedAtomsBulk = this.layoutManager.selectedAtomsBulk;
+      if (this.layoutManager.selectingBulk) {
+        children.push(
+          <eb-link iconMaterial={selectedAtomsBulk.length >= items.length ? 'check_box_outline_blank' : 'check_box'} iconBadge={selectedAtomsBulk.length} propsOnPerform={this.onSelectingBulkChecking} ></eb-link>
+        );
+      }
+
+      return (
+        <div class="actions-block actions-block-left">
+          {children}
+        </div>
+      );
+    },
+    _renderActionsRight() {
       const children = [];
       if (this.layoutManager.actionsBulk && this.actionsAll) {
-        children.push(
-          <f7-link iconMaterial="grading"></f7-link>
-        );
         for (const action of this.layoutManager.actionsBulk) {
           const _action = this.getAction({
             module: this.layoutManager.atomClass.module,
@@ -48,8 +73,8 @@ export default {
     return (
       <f7-subnavbar>
         <div class="atom-list-subnavbarActions-container">
-          <div class="actions-block actions-block-left">ss</div>
-          {this._renderActions()}
+          {this._renderActionsLeft()}
+          {this._renderActionsRight()}
         </div>
 
       </f7-subnavbar>
