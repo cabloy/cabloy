@@ -196,43 +196,34 @@ export default function(Vue) {
       const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;
       return `/${moduleInfo.url}/${arg}`;
     },
-    performAction({ ctx, action, item }) {
-      return new Promise((resolve, reject) => {
-        if (!action.actionComponent) {
-          const url = action.actionPath ? this.combinePagePath(action.actionModule, this.replaceTemplate(action.actionPath, item)) : null;
-          if (url) {
-            ctx.$view.navigate(url, action.navigateOptions);
-          }
-          return resolve();
+    async performAction({ ctx, action, item }) {
+      // actionPath
+      if (!action.actionComponent) {
+        const url = action.actionPath ? this.combinePagePath(action.actionModule, this.replaceTemplate(action.actionPath, item)) : null;
+        if (url) {
+          ctx.$view.navigate(url, action.navigateOptions);
         }
-        ctx.$meta.module.use(action.actionModule, module => {
-          const component = module.options.components[action.actionComponent];
-          const componentInstance = new Vue(component);
-          try {
-            const res = componentInstance.onAction({ ctx, action, item });
-            this.wrapPromise(res)
-              .then(res2 => {
-                componentInstance.$destroy();
-                const url = action.actionPath ? this.combinePagePath(action.actionModule, this.replaceTemplate(action.actionPath, item)) : null;
-                if (url) {
-                  ctx.$nextTick(() => {
-                    ctx.$view.navigate(url, action.navigateOptions);
-                  });
-                }
-                resolve(res2);
-              })
-              .catch(err => {
-                componentInstance.$destroy();
-                console.error(err);
-                reject(err);
-              });
-          } catch (err) {
-            componentInstance.$destroy();
-            console.error(err);
-            reject(err);
-          }
-        });
-      });
+        return;
+      }
+      // actionComponent
+      const module = await ctx.$meta.module.use(action.actionModule);
+      const component = module.options.components[action.actionComponent];
+      if (!component) throw new Error(`actionComponent not found: ${action.actionComponent}`);
+      const componentInstance = new Vue(component);
+      try {
+        const res = await componentInstance.onAction({ ctx, action, item });
+        componentInstance.$destroy();
+        const url = action.actionPath ? this.combinePagePath(action.actionModule, this.replaceTemplate(action.actionPath, item)) : null;
+        if (url) {
+          ctx.$nextTick(() => {
+            ctx.$view.navigate(url, action.navigateOptions);
+          });
+        }
+        return res;
+      } catch (err) {
+        componentInstance.$destroy();
+        throw err;
+      }
     },
     setProperty(obj, name, value) {
       const names = name.split('.');
