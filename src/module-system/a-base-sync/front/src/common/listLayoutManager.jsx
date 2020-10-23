@@ -20,8 +20,8 @@ export default {
       atomOrderSelected: null,
       searchQuery: null,
       actionsCreate: null,
+      actionsBulk: null,
       subnavbarActions: false,
-      actionsList: null,
       pageTitle: null,
     };
   },
@@ -71,8 +71,6 @@ export default {
     },
   },
   created() {
-    //
-    this.pageTitle = this.initPageTitle();
     //
     this.$store.dispatch('a/base/getLabels');
     //
@@ -157,6 +155,9 @@ export default {
         _menu = this.$utils.extend({}, _menu, { targetEl: event.target });
       }
       this.$meta.util.performAction({ ctx: this, action: _menu, item: action });
+    },
+    onAtomClassesReady() {
+      this.pageTitle = this.initPageTitle();
     },
     getLayout() {
       return this.$view.size === 'small' ? 'list' : 'table';
@@ -341,10 +342,13 @@ export default {
         this.actionsCreate = data.list;
       });
     },
-    loadActionsList() {
-      if (this.scene === 'select' || this.scene === 'selecting') return;
-      if (this.actionsList) return;
-
+    loadActionsBulk() {
+      if (this.actionsBulk) return;
+      this.$api.post('/a/base/atom/actionsBulk', {
+        atomClass: this.atomClass,
+      }).then(data => {
+        this.actionsBulk = data;
+      });
     },
     getPageTitle() {
       return this.pageTitle;

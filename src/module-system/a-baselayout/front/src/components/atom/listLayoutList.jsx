@@ -16,9 +16,9 @@ export default {
     };
   },
   created() {
-    if (this.layoutManager.atomClass) {
+    if (this.layoutManager.atomClass && (this.layoutManager.scene !== 'select' && this.layoutManager.scene !== 'selecting')) {
       this.layoutManager.subnavbarActions = true;
-      this.layoutManager.loadActionsList();
+      this.layoutManager.loadActionsBulk();
     }
   },
   methods: {

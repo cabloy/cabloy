@@ -11,7 +11,9 @@ export default {
     },
   },
   created() {
-    this.$store.dispatch('a/base/getAtomClasses');
+    this.$store.dispatch('a/base/getAtomClasses').then(() => {
+      this.onAtomClassesReady && this.onAtomClassesReady();
+    });
   },
 };
 
