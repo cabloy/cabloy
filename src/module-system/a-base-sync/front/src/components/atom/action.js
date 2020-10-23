@@ -3,54 +3,53 @@ export default {
     global: false,
   },
   methods: {
-    onAction({ ctx, action, item }) {
+    async onAction({ ctx, action, item }) {
       if (action.name === 'create' || action.action === 'create') {
-        return this._onActionCreate({ ctx, action, item });
+        return await this._onActionCreate({ ctx, action, item });
       } else if (action.name === 'delete') {
         // delete
+        await ctx.$view.dialog.confirm();
         const key = { atomId: item.atomId, itemId: item.itemId };
-        return ctx.$view.dialog.confirm().then(() => {
-          return ctx.$api.post('/a/base/atom/delete', {
-            key,
-          }).then(() => {
-            ctx.$meta.eventHub.$emit('atom:action', { key, action });
-            return true;
-          });
-        });
+        await ctx.$api.post('/a/base/atom/delete', { key });
+        ctx.$meta.eventHub.$emit('atom:action', { key, action });
+        return true;
       } else if (action.name === 'save') {
         // save
         const key = { atomId: item.atomId, itemId: item.itemId };
-        return ctx.$api.post('/a/base/atom/write', {
-          key,
-          item,
-        }).then(() => {
-          ctx.$meta.eventHub.$emit('atom:action', { key, action });
-        });
+        await ctx.$api.post('/a/base/atom/write', { key, item });
+        ctx.$meta.eventHub.$emit('atom:action', { key, action });
       } else if (action.name === 'submit') {
         // submit
+        await ctx.$view.dialog.confirm();
         const key = { atomId: item.atomId, itemId: item.itemId };
-        return ctx.$view.dialog.confirm().then(() => {
-          return ctx.$api.post('/a/base/atom/writeSubmit', {
-            key,
-            item,
-          }).then(data => {
-            if (data.archive) {
-              // delete draft
-              ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'delete' } });
-              // update archive
-              ctx.$meta.eventHub.$emit('atom:action', { key: data.archive.key, action: { name: 'save' } });
-            } else {
-              // update draft
-              ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'save' } });
-            }
-          });
-        });
+        const data = await ctx.$api.post('/a/base/atom/writeSubmit', { key, item });
+        if (data.archive) {
+          // delete draft
+          ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'delete' } });
+          // update archive
+          ctx.$meta.eventHub.$emit('atom:action', { key: data.archive.key, action: { name: 'save' } });
+        } else {
+          // update draft
+          ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'save' } });
+        }
       } else if (action.name === 'write') {
         // openDraft
         const key = { atomId: item.atomId, itemId: item.itemId };
-        return ctx.$api.post('/a/base/atom/openDraft', {
-          key,
-        }).then(data => {
+        const data = await ctx.$api.post('/a/base/atom/openDraft', { key });
+        const keyDraft = data.draft.key;
+        const _item = {
+          ...item,
+          atomId: keyDraft.atomId,
+          itemId: keyDraft.itemId,
+        };
+        const url = ctx.$meta.util.replaceTemplate('/a/base/atom/edit?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&module={{module}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}', _item);
+        ctx.$view.navigate(url, action.navigateOptions);
+      } else if (action.name === 'clone') {
+        // clone
+        await ctx.$view.dialog.confirm();
+        try {
+          const key = { atomId: item.atomId, itemId: item.itemId };
+          const data = await ctx.$api.post('/a/base/atom/clone', { key });
           const keyDraft = data.draft.key;
           const _item = {
             ...item,
@@ -59,24 +58,12 @@ export default {
           };
           const url = ctx.$meta.util.replaceTemplate('/a/base/atom/edit?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&module={{module}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}', _item);
           ctx.$view.navigate(url, action.navigateOptions);
-        });
-      } else if (action.name === 'clone') {
-        // clone
-        return ctx.$view.dialog.confirm().then(() => {
-          const key = { atomId: item.atomId, itemId: item.itemId };
-          return ctx.$api.post('/a/base/atom/clone', {
-            key,
-          }).then(data => {
-            const keyDraft = data.draft.key;
-            const _item = {
-              ...item,
-              atomId: keyDraft.atomId,
-              itemId: keyDraft.itemId,
-            };
-            const url = ctx.$meta.util.replaceTemplate('/a/base/atom/edit?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&module={{module}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}', _item);
-            ctx.$view.navigate(url, action.navigateOptions);
-          });
-        });
+        } catch (err) {
+          if (err.code === 422) {
+            throw new Error(err.message[0].message);
+          }
+          throw err;
+        }
       }
     },
     _onActionCreate({ ctx, action, item }) {
