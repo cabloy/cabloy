@@ -57,7 +57,7 @@ export default {
         this.order.selected = atomOrder;
       }
       // reload
-      this.onPageRefresh();
+      this.page_onRefresh();
     },
     order_getKey(atomOrder) {
       return atomOrder ? `${atomOrder.tableAlias || 'f'}.${atomOrder.name}` : null;

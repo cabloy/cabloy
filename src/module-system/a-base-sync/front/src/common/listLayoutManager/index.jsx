@@ -1,5 +1,6 @@
 import ebAtomClasses from '../atomClasses.js';
 import ebMenus from '../menus.js';
+import Page from './page.jsx';
 import Layout from './layout.jsx';
 import Bulk from './bulk.jsx';
 import Search from './search.jsx';
@@ -18,7 +19,7 @@ import Subnavbar from './subnavbar.jsx';
 // },
 
 export default {
-  mixins: [ ebAtomClasses, ebMenus, Layout, Bulk, Search, Select, Create, Order, Filter, Subnavbar ],
+  mixins: [ ebAtomClasses, ebMenus, Page, Layout, Bulk, Search, Select, Create, Order, Filter, Subnavbar ],
   data() {
     return {
       ready: false,
@@ -45,16 +46,6 @@ export default {
     });
   },
   methods: {
-    onPageRefresh(done) {
-      done && done();
-      this.layout_componentInstance && this.layout_componentInstance.onPageRefresh(true);
-    },
-    onPageInfinite() {
-      this.layout_componentInstance && this.layout_componentInstance.onPageInfinite();
-    },
-    onPageClear() {
-      this.layout_componentInstance && this.layout_componentInstance.onPageClear();
-    },
     prepareSelectOptions() {
       // options
       let options = {
@@ -101,32 +92,6 @@ export default {
     },
     getItems() {
       return this.layout_componentInstance ? this.layout_componentInstance.getItems() : [];
-    },
-    getPageTitle() {
-      //
-      if (this.container.params && this.container.params.pageTitle) return this.container.params.pageTitle;
-      //
-      const atomClass = this.getAtomClass(this.container.atomClass);
-      const atomClassTitle = atomClass && atomClass.titleLocale;
-      if (this.container.scene === 'select') {
-        if (!atomClass) return `${this.$text('Select')} ${this.$text('Atom')}`;
-        return `${this.$text('Select')} ${atomClassTitle}`;
-      } else if (this.container.scene === 'selecting') {
-        if (!atomClass) return `${this.$text('Selecting')} ${this.$text('Atom')}`;
-        return `${this.$text('Selecting')} ${atomClassTitle}`;
-      } else if (this.container.scene === 'search') {
-        if (!atomClass) return `${this.$text('Search')} ${this.$text('Atom')}`;
-        return `${this.$text('Search')} ${atomClassTitle}`;
-      } else if (this.container.scene === 'mine') {
-        return this.$text('My Atoms');
-      }
-      if (!atomClass) return this.$text('Atom');
-      return `${this.$text('Atom')}: ${atomClassTitle}`;
-    },
-    getPageSubtitle() {
-      const stage = this.getCurrentStage();
-      if (stage === 'archive') return '';
-      return this.$text(stage.replace(stage[0], stage[0].toUpperCase()));
     },
     getCurrentStage() {
       let stage = this.$meta.util.getProperty(this.filter.data, 'form.stage');

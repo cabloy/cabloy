@@ -19,7 +19,7 @@ export default {
   },
   render() {
     return (
-      <eb-search-page advanced title={this.getPageTitle()} subtitle={this.getPageSubtitle()} advancedSearchTitle="Advanced Filter" onSearch={this.search_onSearch} onLoadMore={this.onPageInfinite} onDisable={this.search_onSearchDisable} onSearchAdvanced={this.search_onSearchAdvanced}>
+      <eb-search-page advanced title={this.page_getTitle()} subtitle={this.page_getSubtitle()} advancedSearchTitle="Advanced Filter" onSearch={this.search_onSearch} onLoadMore={this.page_onInfinite} onDisable={this.search_onSearchDisable} onSearchAdvanced={this.search_onSearchAdvanced}>
         {this.layout_renderComponent()}
       </eb-search-page>
     );

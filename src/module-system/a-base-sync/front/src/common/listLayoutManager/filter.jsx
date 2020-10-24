@@ -91,7 +91,7 @@ export default {
     filter_onChanged(value) {
       this.filter.data = value;
       // reload
-      this.onPageRefresh();
+      this.page_onRefresh();
     },
   },
 };

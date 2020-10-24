@@ -36,7 +36,7 @@ export default {
           callback: (code, selectedAtoms) => {
             if (code === 200) {
               this.layoutManager.container.params.selectedAtomIds = selectedAtoms.map(item => item.atomId);
-              this.layoutManager.onPageRefresh();
+              this.layoutManager.page_onRefresh();
             }
           },
         },

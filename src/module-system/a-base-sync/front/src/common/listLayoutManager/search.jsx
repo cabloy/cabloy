@@ -10,9 +10,9 @@ export default {
     search_onSearch(query) {
       this.search.query = query;
       if (this.search.query) {
-        this.onPageRefresh();
+        this.page_onRefresh();
       } else {
-        this.onPageClear();
+        this.page_onClear();
       }
     },
     search_onSearchDisable() {

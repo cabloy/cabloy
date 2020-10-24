@@ -38,9 +38,9 @@ export default {
   render() {
     return (
       <eb-page
-        ptr onPtrRefresh={this.onPageRefresh}
-        infinite infinitePreloader={false} onInfinite={this.onPageInfinite}>
-        <eb-navbar title={this.getPageTitle()} eb-back-link="Back">
+        ptr onPtrRefresh={this.page_onRefresh}
+        infinite infinitePreloader={false} onInfinite={this.page_onInfinite}>
+        <eb-navbar title={this.page_getTitle()} eb-back-link="Back">
           {this.layout_renderBlock({ blockName: 'title' })}
         </eb-navbar>
         {this.layout_renderLayout()}
