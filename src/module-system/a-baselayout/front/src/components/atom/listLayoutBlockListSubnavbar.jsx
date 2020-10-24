@@ -50,6 +50,7 @@ export default {
     },
     _renderActionsRight() {
       const children = [];
+      const selectedAtoms = this.layoutManager.bulk.selectedAtoms;
       if (this.layoutManager.bulk.actions && this.actionsAll) {
         for (const action of this.layoutManager.bulk.actions) {
           const _action = this.getAction({
@@ -57,9 +58,14 @@ export default {
             atomClassName: this.layoutManager.container.atomClass.atomClassName,
             name: action.name,
           });
-          children.push(
-            <f7-link iconMaterial={_action.icon && _action.icon.material} tooltip={_action.icon && _action.titleLocale}>{!_action.icon && _action.titleLocale}</f7-link>
-          );
+          if (_action.select === undefined || _action.select === null ||
+            (_action.select === true && selectedAtoms.length > 0) ||
+            (_action.select === false && !this.layoutManager.bulk.selecting)
+          ) {
+            children.push(
+              <f7-link iconMaterial={_action.icon && _action.icon.material} tooltip={_action.icon && _action.titleLocale}>{!_action.icon && _action.titleLocale}</f7-link>
+            );
+          }
         }
       }
       return (
