@@ -26,10 +26,10 @@ export default {
         ptr onPtrRefresh={this.onPageRefresh}
         infinite infinitePreloader={false} onInfinite={this.onPageInfinite}>
         <eb-navbar title={this.getPageTitle()} subtitle={this.getPageSubtitle()} eb-back-link="Back">
-          {this._renderBlock({ blockName: 'title' })}
-          {this.subnavbar.enable && this._renderBlock({ blockName: 'subnavbar' })}
+          {this.layout_renderBlock({ blockName: 'title' })}
+          {this.subnavbar.enable && this.layout_renderBlock({ blockName: 'subnavbar' })}
         </eb-navbar>
-        {this._renderLayout()}
+        {this.layout_renderLayout()}
       </eb-page>
     );
   },

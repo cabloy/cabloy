@@ -1,5 +1,6 @@
 import ebAtomClasses from '../atomClasses.js';
 import ebMenus from '../menus.js';
+import Layout from './layout.jsx';
 import Bulk from './bulk.jsx';
 import Search from './search.jsx';
 import Select from './select.jsx';
@@ -17,20 +18,15 @@ import Subnavbar from './subnavbar.jsx';
 // },
 
 export default {
-  mixins: [ ebAtomClasses, ebMenus, Bulk, Search, Select, Create, Order, Filter, Subnavbar ],
+  mixins: [ ebAtomClasses, ebMenus, Layout, Bulk, Search, Select, Create, Order, Filter, Subnavbar ],
   data() {
     return {
       ready: false,
-      layoutCurrent: null,
-      layoutConfig: null,
       configAtomBase: null,
       configAtom: null,
     };
   },
   computed: {
-    layoutComponentInstance() {
-      return this.$refs.layout && this.$refs.layout.getComponentInstance();
-    },
     user() {
       return this.$store.state.auth.user.op;
     },
@@ -42,9 +38,7 @@ export default {
     //
     this.$store.dispatch('a/base/getLabels');
     //
-    this.layoutCurrent = this.container.layout || this.getLayout();
-    //
-    this.prepareLayoutConfig().then(() => {
+    this.layout_prepareConfig().then(() => {
       this.ready = true;
 
       this.create_loadActions();
@@ -53,16 +47,13 @@ export default {
   methods: {
     onPageRefresh(done) {
       done && done();
-      this.layoutComponentInstance && this.layoutComponentInstance.onPageRefresh(true);
+      this.layout_componentInstance && this.layout_componentInstance.onPageRefresh(true);
     },
     onPageInfinite() {
-      this.layoutComponentInstance && this.layoutComponentInstance.onPageInfinite();
+      this.layout_componentInstance && this.layout_componentInstance.onPageInfinite();
     },
     onPageClear() {
-      this.layoutComponentInstance && this.layoutComponentInstance.onPageClear();
-    },
-    getLayout() {
-      return this.$view.size === 'small' ? 'list' : 'table';
+      this.layout_componentInstance && this.layout_componentInstance.onPageClear();
     },
     prepareSelectOptions() {
       // options
@@ -109,21 +100,7 @@ export default {
       return params;
     },
     getItems() {
-      return this.layoutComponentInstance ? this.layoutComponentInstance.getItems() : [];
-    },
-    async prepareLayoutConfig() {
-      // configAtomBase
-      this.configAtomBase = this.$config.atom;
-      // configAtom
-      if (this.container.atomClass) {
-        // load module
-        await this.$meta.module.use(this.container.atomClass.module);
-        this.configAtom = this.$meta.util.getProperty(this.$meta.config.modules[this.container.atomClass.module], `atoms.${this.container.atomClass.atomClassName}`);
-      }
-      // layoutConfig
-      const layoutConfigBase = this.configAtomBase.render.list.layouts[this.layoutCurrent];
-      const layoutConfigAtom = this.$meta.util.getProperty(this.configAtom, `render.list.layouts.${this.layoutCurrent}`);
-      this.layoutConfig = this.$meta.util.extend({}, layoutConfigBase, layoutConfigAtom);
+      return this.layout_componentInstance ? this.layout_componentInstance.getItems() : [];
     },
     getPageTitle() {
       //
@@ -156,41 +133,6 @@ export default {
       if (!stage) stage = this.container.options && this.container.options.stage;
       if (!stage) stage = 'archive';
       return stage;
-    },
-    getLayoutComponentOptions() {
-      return {
-        props: {
-          layoutManager: this,
-          layoutConfig: this.layoutConfig,
-        },
-      };
-    },
-    _renderLayoutComponent() {
-      if (!this.ready) return null;
-      return <eb-component ref='layout' module={this.layoutConfig.component.module} name={this.layoutConfig.component.name} options={this.getLayoutComponentOptions()}></eb-component>;
-    },
-    getBlockComponentOptions({ blockConfig }) {
-      return {
-        props: {
-          layoutManager: this,
-          blockConfig,
-        },
-      };
-    },
-    _renderBlock({ blockName }) {
-      if (!this.ready) return null;
-      const blockConfig = this.layoutConfig.blocks[blockName];
-      if (!blockConfig) return null;
-      return <eb-component module={blockConfig.component.module} name={blockConfig.component.name} options={this.getBlockComponentOptions({ blockConfig })}></eb-component>;
-    },
-    _renderLayout() {
-      return (
-        <div>
-          {this._renderLayoutComponent()}
-          {this.order_renderPopover()}
-          {this.create_renderPopoverActions()}
-        </div>
-      );
     },
   },
 };
