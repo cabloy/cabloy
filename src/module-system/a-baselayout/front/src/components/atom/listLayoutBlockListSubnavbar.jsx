@@ -38,6 +38,10 @@ export default {
           atomClassName: action.atomClassName,
           atomClassIdParent: action.atomClassIdParent,
         };
+        const createParams = this.$meta.util.getProperty(this.layoutManager.container.params, 'createParams');
+        if (createParams) {
+          item = this.$utils.extend({}, item, createParams);
+        }
         _action = this.$utils.extend({}, _action, { targetEl: event.currentTarget });
       }
       return this.$meta.util.performAction({ ctx: this, action: _action, item });

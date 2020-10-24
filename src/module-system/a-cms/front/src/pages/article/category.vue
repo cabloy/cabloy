@@ -86,6 +86,10 @@ export default {
       // params
       const params = {
         pageTitle: `${this.$text('Category')}: ${node.data.categoryName}`,
+        createParams: {
+          language: node.data.language,
+          categoryId: node.data.id,
+        },
       };
       // queries
       const queries = {
