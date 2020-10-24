@@ -21,7 +21,7 @@ export default {
       // params
       const selectedAtoms = this.layoutManager.getSelectedAtoms();
       const params = {
-        selectMode: this.layoutManager.params.selectMode,
+        selectMode: this.layoutManager.container.params.selectMode,
         selectedAtoms,
       };
       const url = '/a/base/atom/selecting';
@@ -29,13 +29,13 @@ export default {
         target: '_self',
         context: {
           params: {
-            atomClass: this.layoutManager.atomClass,
-            options: this.layoutManager.options,
+            atomClass: this.layoutManager.container.atomClass,
+            options: this.layoutManager.container.options,
             params,
           },
           callback: (code, selectedAtoms) => {
             if (code === 200) {
-              this.layoutManager.params.selectedAtomIds = selectedAtoms.map(item => item.atomId);
+              this.layoutManager.container.params.selectedAtomIds = selectedAtoms.map(item => item.atomId);
               this.layoutManager.onPageRefresh();
             }
           },
@@ -52,7 +52,7 @@ export default {
     getSelectedAtoms() {
       const selectedAtoms = this.layoutManager.getSelectedAtoms();
       let res;
-      if (this.layoutManager.params.selectMode === 'single') {
+      if (this.layoutManager.container.params.selectMode === 'single') {
         res = (selectedAtoms && selectedAtoms.length > 0) ? selectedAtoms[0] : null;
       } else {
         res = (selectedAtoms && selectedAtoms.length > 0) ? selectedAtoms : null;

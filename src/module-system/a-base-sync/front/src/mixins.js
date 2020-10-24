@@ -3,7 +3,7 @@ import atomActions from './common/atomActions.js';
 import modules from './common/modules.js';
 import ebMenus from './common/menus.js';
 import ebFunctions from './common/functions.js';
-import listLayoutManager from './common/listLayoutManager.jsx';
+import listLayoutManager from './common/listLayoutManager/index.jsx';
 
 export default {
   ebAtomClasses: atomClasses,

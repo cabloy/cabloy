@@ -1,26 +1,28 @@
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
-import listLayoutManager from '../../common/listLayoutManager.jsx';
+import listLayoutManager from '../../common/listLayoutManager/index.jsx';
 export default {
   mixins: [ ebPageContext, listLayoutManager ],
   data() {
     return {
-      atomClass: null,
-      options: null,
-      params: null,
-      scene: 'selecting',
-      layout: 'selecting',
+      container: {
+        atomClass: null,
+        options: null,
+        params: null,
+        scene: 'selecting',
+        layout: 'selecting',
+      },
     };
   },
   created() {
     // pageContext
     const contextParams = this.contextParams;
     // atomClass
-    this.atomClass = contextParams.atomClass;
+    this.container.atomClass = contextParams.atomClass;
     // options
-    this.options = contextParams.options;
+    this.container.options = contextParams.options;
     // params
-    this.params = contextParams.params;
+    this.container.params = contextParams.params;
   },
   render() {
     return (

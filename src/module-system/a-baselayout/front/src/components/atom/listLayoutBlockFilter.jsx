@@ -19,9 +19,9 @@ export default {
   data() {
     const form = this.$meta.util.getProperty(this.layoutManager, 'filter.form') || {
       atomName: null,
-      star: (this.layoutManager.options && this.layoutManager.options.star) || 0,
-      label: (this.layoutManager.options && this.layoutManager.options.label) || 0,
-      stage: (this.layoutManager.options && this.layoutManager.options.stage) || 'archive',
+      star: (this.layoutManager.container.options && this.layoutManager.container.options.star) || 0,
+      label: (this.layoutManager.container.options && this.layoutManager.container.options.label) || 0,
+      stage: (this.layoutManager.container.options && this.layoutManager.container.options.stage) || 'archive',
       atomClass: null,
     };
     const formAtomClass = this.$meta.util.getProperty(this.layoutManager, 'filter.formAtomClass') || {};
@@ -43,7 +43,7 @@ export default {
       return labels;
     },
     atomClass() {
-      return this.form.atomClass || this.layoutManager.atomClass;
+      return this.form.atomClass || this.layoutManager.container.atomClass;
     },
     atomClassTitle() {
       if (!this.atomClass) return '';
@@ -157,7 +157,7 @@ export default {
             <eb-select name="stage" v-model={this.form.stage} options={this.stages}></eb-select>
           </f7-list-item>
           <f7-list-item divider></f7-list-item>
-          {!this.layoutManager.atomClass && <f7-list-item title={this.$text('Atom Class')} link="#" onClick={this.onSelectAtomClass}>
+          {!this.layoutManager.container.atomClass && <f7-list-item title={this.$text('Atom Class')} link="#" onClick={this.onSelectAtomClass}>
             <div slot="after">{this.atomClassTitle}</div>
           </f7-list-item>}
         </eb-list>

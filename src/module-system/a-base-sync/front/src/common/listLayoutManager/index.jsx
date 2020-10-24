@@ -1,11 +1,13 @@
-import ebAtomClasses from './atomClasses.js';
-import ebMenus from './menus.js';
+import ebAtomClasses from '../atomClasses.js';
+import ebMenus from '../menus.js';
 
-// atomClass,
-// options,
-// params,
-// scene, // default/search/select/selecting/mine
-// layout,
+// container: {
+//   atomClass,
+//   options,
+//   params,
+//   scene, // default/search/select/selecting/mine
+//   layout,
+// },
 
 export default {
   mixins: [ ebAtomClasses, ebMenus ],
@@ -38,19 +40,19 @@ export default {
     },
     atomOrderDefault() {
       let atomOrder;
-      if (this.scene === 'select') {
+      if (this.container.scene === 'select') {
         atomOrder = {
           name: 'atomName',
           by: 'asc',
           tableAlias: 'a',
         };
-      } else if (this.options && this.options.star) {
+      } else if (this.container.options && this.container.options.star) {
         atomOrder = {
           name: 'updatedAt',
           by: 'desc',
           tableAlias: 'd',
         };
-      } else if (this.options && this.options.label) {
+      } else if (this.container.options && this.container.options.label) {
         atomOrder = {
           name: 'updatedAt',
           by: 'desc',
@@ -75,7 +77,7 @@ export default {
     //
     this.$store.dispatch('a/base/getLabels');
     //
-    this.layoutCurrent = this.layout || this.getLayout();
+    this.layoutCurrent = this.container.layout || this.getLayout();
     //
     this.prepareLayoutConfig().then(() => {
       this.ready = true;
@@ -170,11 +172,11 @@ export default {
         options.where['a.atomName'] = { val: this.searchQuery, op: 'like' };
       }
       // select
-      if (this.scene === 'select') {
-        options.where['a.id'] = this.params.selectedAtomIds.length > 0 ? this.params.selectedAtomIds : null;
+      if (this.container.scene === 'select') {
+        options.where['a.id'] = this.container.params.selectedAtomIds.length > 0 ? this.container.params.selectedAtomIds : null;
       }
       // mine
-      if (this.scene === 'mine') {
+      if (this.container.scene === 'mine') {
         options.where['a.userIdCreated'] = this.user.id;
       }
       // order
@@ -183,8 +185,8 @@ export default {
         [ this._getAtomOrderKey(atomOrderCurrent), atomOrderCurrent.by ],
       ];
       // extend 1
-      if (this.options) {
-        options = this.$utils.extend({}, options, this.options);
+      if (this.container.options) {
+        options = this.$utils.extend({}, options, this.container.options);
       }
       // options
       return options;
@@ -194,7 +196,7 @@ export default {
       const options = this.prepareSelectOptions();
       // params
       let params = {
-        atomClass: this.atomClass,
+        atomClass: this.container.atomClass,
         options,
       };
       // filter
@@ -273,10 +275,10 @@ export default {
     // ** search - end
     // ** select - begin
     getSelectedAtoms() {
-      if (this.scene === 'selecting') {
-        return this.params.selectedAtoms;
+      if (this.container.scene === 'selecting') {
+        return this.container.params.selectedAtoms;
       }
-      if (this.scene === 'select') {
+      if (this.container.scene === 'select') {
         return this.getItems();
       }
     },
@@ -342,10 +344,10 @@ export default {
       // configAtomBase
       this.configAtomBase = this.$config.atom;
       // configAtom
-      if (this.atomClass) {
+      if (this.container.atomClass) {
         // load module
-        await this.$meta.module.use(this.atomClass.module);
-        this.configAtom = this.$meta.util.getProperty(this.$meta.config.modules[this.atomClass.module], `atoms.${this.atomClass.atomClassName}`);
+        await this.$meta.module.use(this.container.atomClass.module);
+        this.configAtom = this.$meta.util.getProperty(this.$meta.config.modules[this.container.atomClass.module], `atoms.${this.container.atomClass.atomClassName}`);
       }
       // layoutConfig
       const layoutConfigBase = this.configAtomBase.render.list.layouts[this.layoutCurrent];
@@ -353,8 +355,8 @@ export default {
       this.layoutConfig = this.$meta.util.extend({}, layoutConfigBase, layoutConfigAtom);
     },
     loadActionsCreate() {
-      if (this.scene === 'select' || this.scene === 'selecting') return;
-      if (this.atomClass || this.actionsCreate) return;
+      if (this.container.scene === 'select' || this.container.scene === 'selecting') return;
+      if (this.container.atomClass || this.actionsCreate) return;
       // functionList
       const options = {
         where: { menu: 1, sceneName: 'create' },
@@ -371,27 +373,27 @@ export default {
     loadActionsBulk() {
       if (this.actionsBulk) return;
       this.$api.post('/a/base/atom/actionsBulk', {
-        atomClass: this.atomClass,
+        atomClass: this.container.atomClass,
       }).then(data => {
         this.actionsBulk = data;
       });
     },
     getPageTitle() {
       //
-      if (this.params && this.params.pageTitle) return this.params.pageTitle;
+      if (this.container.params && this.container.params.pageTitle) return this.container.params.pageTitle;
       //
-      const atomClass = this.getAtomClass(this.atomClass);
+      const atomClass = this.getAtomClass(this.container.atomClass);
       const atomClassTitle = atomClass && atomClass.titleLocale;
-      if (this.scene === 'select') {
+      if (this.container.scene === 'select') {
         if (!atomClass) return `${this.$text('Select')} ${this.$text('Atom')}`;
         return `${this.$text('Select')} ${atomClassTitle}`;
-      } else if (this.scene === 'selecting') {
+      } else if (this.container.scene === 'selecting') {
         if (!atomClass) return `${this.$text('Selecting')} ${this.$text('Atom')}`;
         return `${this.$text('Selecting')} ${atomClassTitle}`;
-      } else if (this.scene === 'search') {
+      } else if (this.container.scene === 'search') {
         if (!atomClass) return `${this.$text('Search')} ${this.$text('Atom')}`;
         return `${this.$text('Search')} ${atomClassTitle}`;
-      } else if (this.scene === 'mine') {
+      } else if (this.container.scene === 'mine') {
         return this.$text('My Atoms');
       }
       if (!atomClass) return this.$text('Atom');
@@ -404,7 +406,7 @@ export default {
     },
     getCurrentStage() {
       let stage = this.$meta.util.getProperty(this.filter, 'form.stage');
-      if (!stage) stage = this.options && this.options.stage;
+      if (!stage) stage = this.container.options && this.container.options.stage;
       if (!stage) stage = 'archive';
       return stage;
     },

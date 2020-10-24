@@ -1,4 +1,4 @@
-import listLayoutManager from '../../common/listLayoutManager.jsx';
+import listLayoutManager from '../../common/listLayoutManager/index.jsx';
 export default {
   mixins: [ listLayoutManager ],
   data() {
@@ -11,11 +11,13 @@ export default {
     const scene = query && query.scene;
     const layout = query && query.layout;
     return {
-      atomClass,
-      options,
-      params,
-      scene,
-      layout,
+      container: {
+        atomClass,
+        options,
+        params,
+        scene,
+        layout,
+      },
     };
   },
   render() {

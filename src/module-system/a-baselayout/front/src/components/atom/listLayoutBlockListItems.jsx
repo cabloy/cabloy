@@ -154,7 +154,7 @@ export default {
     },
     _getItemMetaSummary(item) {
       const summary = (item._meta && item._meta.summary) || '';
-      if (this.layoutManager.atomClass) {
+      if (this.layoutManager.container.atomClass) {
         return summary;
       }
       const atomClass = this.layoutManager.getAtomClass({

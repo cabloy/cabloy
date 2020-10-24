@@ -16,7 +16,7 @@ export default {
     };
   },
   created() {
-    if (this.layoutManager.atomClass && (this.layoutManager.scene !== 'select' && this.layoutManager.scene !== 'selecting')) {
+    if (this.layoutManager.container.atomClass && (this.layoutManager.container.scene !== 'select' && this.layoutManager.container.scene !== 'selecting')) {
       this.layoutManager.subnavbarActions = true;
       this.layoutManager.loadActionsBulk();
     }
@@ -63,7 +63,7 @@ export default {
       return <eb-component module={blockConfig.component.module} name={blockConfig.component.name} options={this.getBlockComponentOptions({ blockConfig })}></eb-component>;
     },
     _renderLoadMore() {
-      return <eb-load-more ref="loadMore" propsOnLoadClear={this.onLoadClear} propsOnLoadMore={this.onLoadMore} autoInit={this.layoutManager.scene !== 'search'}></eb-load-more>;
+      return <eb-load-more ref="loadMore" propsOnLoadClear={this.onLoadClear} propsOnLoadMore={this.onLoadMore} autoInit={this.layoutManager.container.scene !== 'search'}></eb-load-more>;
     },
   },
   render() {

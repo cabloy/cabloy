@@ -28,13 +28,13 @@ export default {
   },
   methods: {
     onItemChange(event, item) {
-      const selectMode = this.layoutManager.params.selectMode;
+      const selectMode = this.layoutManager.container.params.selectMode;
       if (selectMode === 'single') {
         if (event.target.checked) {
-          this.layoutManager.params.selectedAtoms = [ item ];
+          this.layoutManager.container.params.selectedAtoms = [ item ];
         }
       } else {
-        const selectedAtoms = this.layoutManager.params.selectedAtoms;
+        const selectedAtoms = this.layoutManager.container.params.selectedAtoms;
         const index = selectedAtoms.findIndex(_item => _item.atomId === item.atomId);
         if (event.target.checked && index === -1) {
           selectedAtoms.push(item);
@@ -64,7 +64,7 @@ export default {
     },
     _getItemMetaSummary(item) {
       const summary = (item._meta && item._meta.summary) || '';
-      if (this.layoutManager.atomClass) {
+      if (this.layoutManager.container.atomClass) {
         return summary;
       }
       const atomClass = this.layoutManager.getAtomClass({
@@ -143,8 +143,8 @@ export default {
       return (
         <eb-list-item class="item" key={item.atomId}
           name={this.radioName}
-          radio={this.layoutManager.params.selectMode === 'single'}
-          checkbox={this.layoutManager.params.selectMode === 'multiple'}
+          radio={this.layoutManager.container.params.selectMode === 'single'}
+          checkbox={this.layoutManager.container.params.selectMode === 'multiple'}
           checked={this._getItemChecked(item)}
           swipeout
           onChange={event => this.onItemChange(event, item)}

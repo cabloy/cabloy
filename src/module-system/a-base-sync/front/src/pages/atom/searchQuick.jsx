@@ -1,5 +1,5 @@
 import ebAtomClasses from '../../common/atomClasses.js';
-import listLayoutManager from '../../common/listLayoutManager.jsx';
+import listLayoutManager from '../../common/listLayoutManager/index.jsx';
 export default {
   mixins: [ ebAtomClasses, listLayoutManager ],
   data() {
@@ -9,10 +9,12 @@ export default {
     const atomClass = (module && atomClassName) ? { module, atomClassName } : null;
     const options = (query && query.options) ? JSON.parse(query.options) : null;
     return {
-      atomClass,
-      options,
-      scene: 'search',
-      layout: 'list',
+      container: {
+        atomClass,
+        options,
+        scene: 'search',
+        layout: 'list',
+      },
     };
   },
   render() {

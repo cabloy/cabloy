@@ -32,7 +32,7 @@ export default {
       // close
       this.$meta.util.swipeoutClose(event.target);
       // remove from selectedAtomIds
-      const selectedAtomIds = this.layoutManager.params.selectedAtomIds;
+      const selectedAtomIds = this.layoutManager.container.params.selectedAtomIds;
       if (selectedAtomIds) {
         const index = selectedAtomIds.findIndex(_item => _item === item.atomId);
         if (index !== -1) {
@@ -64,7 +64,7 @@ export default {
     },
     _getItemMetaSummary(item) {
       const summary = (item._meta && item._meta.summary) || '';
-      if (this.layoutManager.atomClass) {
+      if (this.layoutManager.container.atomClass) {
         return summary;
       }
       const atomClass = this.layoutManager.getAtomClass({

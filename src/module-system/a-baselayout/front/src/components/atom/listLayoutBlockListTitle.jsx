@@ -27,14 +27,14 @@ export default {
       this.layoutManager.onPerformActionsCreate(event.currentTarget);
     },
     _renderActionsCreate() {
-      if (this.layoutManager.atomClass) return;
+      if (this.layoutManager.container.atomClass) return;
       if (!this.layoutManager.showPopoverActionsCreate) return;
       return (
         <eb-link iconMaterial="add" propsOnPerform={event => this.onPerformActionsCreate(event)}></eb-link>
       );
     },
     _renderActionFilter() {
-      if (this.layoutManager.params && this.layoutManager.params.disableFilter === true) return null;
+      if (this.layoutManager.container.params && this.layoutManager.container.params.disableFilter === true) return null;
       return (
         <eb-link iconMaterial="search" propsOnPerform={this.onPerformFilter}></eb-link>
       );

@@ -53,8 +53,8 @@ export default {
       if (this.layoutManager.actionsBulk && this.actionsAll) {
         for (const action of this.layoutManager.actionsBulk) {
           const _action = this.getAction({
-            module: this.layoutManager.atomClass.module,
-            atomClassName: this.layoutManager.atomClass.atomClassName,
+            module: this.layoutManager.container.atomClass.module,
+            atomClassName: this.layoutManager.container.atomClass.atomClassName,
             name: action.name,
           });
           children.push(
