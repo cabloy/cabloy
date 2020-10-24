@@ -2,7 +2,7 @@ import listLayoutList from './components/atom/listLayoutList.jsx';
 import listLayoutTable from './components/atom/listLayoutTable.jsx';
 import listLayoutBlockFilter from './components/atom/listLayoutBlockFilter.jsx';
 import listLayoutBlockListTitle from './components/atom/listLayoutBlockListTitle.jsx';
-import listLayoutBlockListSubnavbarActions from './components/atom/listLayoutBlockListSubnavbarActions.jsx';
+import listLayoutBlockListSubnavbar from './components/atom/listLayoutBlockListSubnavbar.jsx';
 import listLayoutBlockListItems from './components/atom/listLayoutBlockListItems.jsx';
 import listLayoutBlockSelectTitle from './components/atom/listLayoutBlockSelectTitle.jsx';
 import listLayoutBlockSelectItems from './components/atom/listLayoutBlockSelectItems.jsx';
@@ -14,7 +14,7 @@ export default {
   listLayoutTable,
   listLayoutBlockFilter,
   listLayoutBlockListTitle,
-  listLayoutBlockListSubnavbarActions,
+  listLayoutBlockListSubnavbar,
   listLayoutBlockListItems,
   listLayoutBlockSelectTitle,
   listLayoutBlockSelectItems,

@@ -72,7 +72,7 @@ export default {
   render() {
     return (
       <f7-subnavbar>
-        <div class="atom-list-subnavbarActions-container">
+        <div class="atom-list-subnavbar-container">
           {this._renderActionsLeft()}
           {this._renderActionsRight()}
         </div>

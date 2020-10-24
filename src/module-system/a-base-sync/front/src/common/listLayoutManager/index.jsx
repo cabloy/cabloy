@@ -6,6 +6,7 @@ import Select from './select.jsx';
 import Create from './create.jsx';
 import Order from './order.jsx';
 import Filter from './filter.jsx';
+import Subnavbar from './subnavbar.jsx';
 
 // container: {
 //   atomClass,
@@ -16,7 +17,7 @@ import Filter from './filter.jsx';
 // },
 
 export default {
-  mixins: [ ebAtomClasses, ebMenus, Bulk, Search, Select, Create, Order, Filter ],
+  mixins: [ ebAtomClasses, ebMenus, Bulk, Search, Select, Create, Order, Filter, Subnavbar ],
   data() {
     return {
       ready: false,
@@ -24,7 +25,6 @@ export default {
       layoutConfig: null,
       configAtomBase: null,
       configAtom: null,
-      subnavbarActions: false,
     };
   },
   computed: {

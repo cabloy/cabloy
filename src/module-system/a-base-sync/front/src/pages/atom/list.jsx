@@ -22,12 +22,12 @@ export default {
   },
   render() {
     return (
-      <eb-page withSubnavbar={this.subnavbarActions}
+      <eb-page withSubnavbar={this.subnavbar.enable}
         ptr onPtrRefresh={this.onPageRefresh}
         infinite infinitePreloader={false} onInfinite={this.onPageInfinite}>
         <eb-navbar title={this.getPageTitle()} subtitle={this.getPageSubtitle()} eb-back-link="Back">
           {this._renderBlock({ blockName: 'title' })}
-          {this.subnavbarActions && this._renderBlock({ blockName: 'subnavbarActions' })}
+          {this.subnavbar.enable && this._renderBlock({ blockName: 'subnavbar' })}
         </eb-navbar>
         {this._renderLayout()}
       </eb-page>
