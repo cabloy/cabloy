@@ -4,6 +4,7 @@ import Bulk from './bulk.jsx';
 import Search from './search.jsx';
 import Select from './select.jsx';
 import Create from './create.jsx';
+import Order from './order.jsx';
 
 // container: {
 //   atomClass,
@@ -14,7 +15,7 @@ import Create from './create.jsx';
 // },
 
 export default {
-  mixins: [ ebAtomClasses, ebMenus, Bulk, Search, Select, Create ],
+  mixins: [ ebAtomClasses, ebMenus, Bulk, Search, Select, Create, Order ],
   data() {
     return {
       ready: false,
@@ -23,7 +24,6 @@ export default {
       configAtomBase: null,
       configAtom: null,
       filter: null,
-      atomOrderSelected: null,
       subnavbarActions: false,
     };
   },
@@ -36,37 +36,6 @@ export default {
     },
     userLabels() {
       return this.$store.getters['a/base/userLabels'];
-    },
-    atomOrderDefault() {
-      let atomOrder;
-      if (this.container.scene === 'select') {
-        atomOrder = {
-          name: 'atomName',
-          by: 'asc',
-          tableAlias: 'a',
-        };
-      } else if (this.container.options && this.container.options.star) {
-        atomOrder = {
-          name: 'updatedAt',
-          by: 'desc',
-          tableAlias: 'd',
-        };
-      } else if (this.container.options && this.container.options.label) {
-        atomOrder = {
-          name: 'updatedAt',
-          by: 'desc',
-          tableAlias: 'e',
-        };
-      } else {
-        // others
-        atomOrder = {
-          name: 'updatedAt',
-          by: 'desc',
-          tableAlias: 'a',
-        };
-      }
-      // ok
-      return atomOrder;
     },
   },
   created() {
@@ -118,25 +87,6 @@ export default {
       // reload
       this.onPageRefresh();
     },
-    onPerformAtomOrders(element) {
-      const popover = this.$refs.popoverAtomOrders.$el;
-      this.$f7.popover.open(popover, element);
-    },
-    onPerformChangeAtomOrder(event, atomOrder) {
-      // switch
-      const atomOrderCurrent = this.atomOrderSelected || this.atomOrderDefault;
-      if (this._getAtomOrderKey(atomOrderCurrent) === this._getAtomOrderKey(atomOrder)) {
-        this.atomOrderSelected = {
-          name: atomOrderCurrent.name,
-          tableAlias: atomOrderCurrent.tableAlias,
-          by: atomOrderCurrent.by === 'desc' ? 'asc' : 'desc',
-        };
-      } else {
-        this.atomOrderSelected = atomOrder;
-      }
-      // reload
-      this.onPageRefresh();
-    },
     getLayout() {
       return this.$view.size === 'small' ? 'list' : 'table';
     },
@@ -158,9 +108,9 @@ export default {
         options.where['a.userIdCreated'] = this.user.id;
       }
       // order
-      const atomOrderCurrent = this.atomOrderSelected || this.atomOrderDefault;
+      const atomOrderCurrent = this.order.selected || this.order_default;
       options.orders = [
-        [ this._getAtomOrderKey(atomOrderCurrent), atomOrderCurrent.by ],
+        [ this.order_getKey(atomOrderCurrent), atomOrderCurrent.by ],
       ];
       // extend 1
       if (this.container.options) {
@@ -238,24 +188,6 @@ export default {
     getItems() {
       return this.layoutComponentInstance ? this.layoutComponentInstance.getItems() : [];
     },
-    _getAtomOrderKey(atomOrder) {
-      return atomOrder ? `${atomOrder.tableAlias || 'f'}.${atomOrder.name}` : null;
-    },
-    _getAtomOrderStatus(atomOrder) {
-      const atomOrderCurrent = this.atomOrderSelected || this.atomOrderDefault;
-      if (this._getAtomOrderKey(atomOrderCurrent) === this._getAtomOrderKey(atomOrder)) {
-        return atomOrderCurrent.by === 'desc' ? 'arrow_drop_down' : 'arrow_drop_up';
-      }
-      return '';
-    },
-    _getAtomOrders() {
-      // base
-      const ordersBase = this.configAtomBase.render.list.info.orders;
-      // atomClass
-      const ordersAtomClass = this.$meta.util.getProperty(this.configAtom, 'render.list.info.orders');
-      // atomOrders
-      return ordersAtomClass ? ordersBase.concat(ordersAtomClass) : ordersBase;
-    },
     _getFilterConfig() {
       // base
       const filterConfigBase = this.configAtomBase.render.list.info.filter;
@@ -322,26 +254,6 @@ export default {
       if (!this.ready) return null;
       return <eb-component ref='layout' module={this.layoutConfig.component.module} name={this.layoutConfig.component.name} options={this.getLayoutComponentOptions()}></eb-component>;
     },
-    _renderPopoverAtomOrders() {
-      if (!this.ready) return null;
-      // list
-      const children = [];
-      for (const atomOrder of this._getAtomOrders()) {
-        children.push(
-          <eb-list-item key={this._getAtomOrderKey(atomOrder)} popoverClose link="#" propsOnPerform={event => this.onPerformChangeAtomOrder(event, atomOrder)}>
-            <f7-icon slot="media" material={this._getAtomOrderStatus(atomOrder)}></f7-icon>
-            <div slot="title">{this.$text(atomOrder.title)}</div>
-          </eb-list-item>
-        );
-      }
-      return (
-        <eb-popover ref="popoverAtomOrders" ready={true}>
-          <f7-list inset>
-            {children}
-          </f7-list>
-        </eb-popover>
-      );
-    },
     getBlockComponentOptions({ blockConfig }) {
       return {
         props: {
@@ -360,7 +272,7 @@ export default {
       return (
         <div>
           {this._renderLayoutComponent()}
-          {this._renderPopoverAtomOrders()}
+          {this.order_renderPopover()}
           {this.create_renderPopoverActions()}
         </div>
       );

@@ -23,7 +23,7 @@ export default {
   },
   methods: {
     onPerformAtomOrders(event) {
-      this.layoutManager.onPerformAtomOrders(event.currentTarget);
+      this.layoutManager.order_onPerformPopover(event.currentTarget);
     },
     onPerformFilter() {
       this.layoutManager.onPerformFilter();
