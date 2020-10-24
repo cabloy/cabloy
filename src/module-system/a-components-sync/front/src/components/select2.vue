@@ -108,8 +108,8 @@ export default {
       // optionsBlankAuto
       if (this.optionsBlankAuto) {
         const opt = _options[0];
-        if (!opt || !this.equal(opt.value, '')) {
-          _options.unshift({ title: '', value: '' });
+        if (!opt || !this.equal(this.optionValue(opt), '')) {
+          _options.unshift({ [this.optionTitleKey]: '', [this.optionValueKey]: '' });
         }
       }
 
