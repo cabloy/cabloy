@@ -735,7 +735,7 @@ module.exports = ctx => {
       // actions
       const _basic = basic ? 'and a.code in (3,4)' : '';
       const sql = `
-        select a.*,b.module,b.atomClassName from aAtomAction a
+        select a.*,b.module,b.atomClassName,b.atomClassIdParent from aAtomAction a
           left join aAtomClass b on a.atomClassId=b.id
             where a.iid=? and a.deleted=0 and a.bulk=0 and a.atomClassId=? ${_basic}
               order by a.code asc

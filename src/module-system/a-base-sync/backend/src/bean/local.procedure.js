@@ -565,8 +565,9 @@ module.exports = ctx => {
 
       // sql
       const _sql =
-        `select a.* from aAtomAction a
+        `select a.*,c.module,c.atomClassName,c.atomClassIdParent from aAtomAction a
             inner join aViewUserRightAtomClass b on a.atomClassId=b.atomClassId and a.code=b.action
+            left join aAtomClass c on a.atomClassId=c.id
               where a.iid=${iid} and a.bulk=1 and a.atomClassId=${atomClassId} ${_actionWhere} and b.userIdWho=${userIdWho}
         `;
       return _sql;

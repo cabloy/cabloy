@@ -26,6 +26,22 @@ export default {
     onSelectingBulkChecking() {
       this.layoutManager.bulk_onSelectingChecking();
     },
+    onAction(event, action) {
+      this.$f7.tooltip.hide(event.currentTarget);
+      let _action = this.getAction(action);
+      if (!_action) return;
+      let item;
+      if (_action.name === 'create') {
+        item = {
+          atomClassId: action.atomClassId,
+          module: action.module,
+          atomClassName: action.atomClassName,
+          atomClassIdParent: action.atomClassIdParent,
+        };
+        _action = this.$utils.extend({}, _action, { targetEl: event.currentTarget });
+      }
+      return this.$meta.util.performAction({ ctx: this, action: _action, item });
+    },
     _renderActionsLeft() {
       const children = [];
       // switch select
@@ -53,17 +69,13 @@ export default {
       const selectedAtoms = this.layoutManager.bulk.selectedAtoms;
       if (this.layoutManager.bulk.actions && this.actionsAll) {
         for (const action of this.layoutManager.bulk.actions) {
-          const _action = this.getAction({
-            module: this.layoutManager.container.atomClass.module,
-            atomClassName: this.layoutManager.container.atomClass.atomClassName,
-            name: action.name,
-          });
+          const _action = this.getAction(action);
           if (_action.select === undefined || _action.select === null ||
             (_action.select === true && selectedAtoms.length > 0) ||
             (_action.select === false && !this.layoutManager.bulk.selecting)
           ) {
             children.push(
-              <f7-link iconMaterial={_action.icon && _action.icon.material} tooltip={_action.icon && _action.titleLocale}>{!_action.icon && _action.titleLocale}</f7-link>
+              <eb-link iconMaterial={_action.icon && _action.icon.material} tooltip={_action.icon && _action.titleLocale} propsOnPerform={event => this.onAction(event, action)}>{!_action.icon && _action.titleLocale}</eb-link>
             );
           }
         }
