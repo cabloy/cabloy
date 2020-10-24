@@ -1,7 +1,7 @@
 import ebAtomClasses from '../atomClasses.js';
 import ebMenus from '../menus.js';
-import bulk from './bulk.jsx';
-
+import Bulk from './bulk.jsx';
+import Search from './search.jsx';
 // container: {
 //   atomClass,
 //   options,
@@ -11,7 +11,7 @@ import bulk from './bulk.jsx';
 // },
 
 export default {
-  mixins: [ ebAtomClasses, ebMenus, bulk ],
+  mixins: [ ebAtomClasses, ebMenus, Bulk, Search ],
   data() {
     return {
       ready: false,
@@ -21,7 +21,6 @@ export default {
       configAtom: null,
       filter: null,
       atomOrderSelected: null,
-      searchQuery: null,
       actionsCreate: null,
       subnavbarActions: false,
     };
@@ -166,8 +165,8 @@ export default {
         where: { },
       };
       // search
-      if (this.searchQuery) {
-        options.where['a.atomName'] = { val: this.searchQuery, op: 'like' };
+      if (this.search.query) {
+        options.where['a.atomName'] = { val: this.search.query, op: 'like' };
       }
       // select
       if (this.container.scene === 'select') {
@@ -256,20 +255,7 @@ export default {
       return params;
     },
     // **  search - begin
-    onSearch(query) {
-      this.searchQuery = query;
-      if (this.searchQuery) {
-        this.onPageRefresh();
-      } else {
-        this.onPageClear();
-      }
-    },
-    onSearchDisable() {
-      this.$f7router.back();
-    },
-    onSearchAdvanced() {
-      this.onPerformFilter();
-    },
+
     // ** search - end
     // ** select - begin
     getSelectedAtoms() {
