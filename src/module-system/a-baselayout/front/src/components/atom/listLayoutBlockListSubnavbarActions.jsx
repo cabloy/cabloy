@@ -21,10 +21,10 @@ export default {
   },
   methods: {
     onSelectingBulkSwitch() {
-      this.layoutManager.onSelectingBulkSwitch();
+      this.layoutManager.bulk_onSelectingSwitch();
     },
     onSelectingBulkChecking() {
-      this.layoutManager.onSelectingBulkChecking();
+      this.layoutManager.bulk_onSelectingChecking();
     },
     _renderActionsLeft() {
       const children = [];
@@ -35,10 +35,10 @@ export default {
           <eb-link iconMaterial="grading" propsOnPerform={this.onSelectingBulkSwitch} ></eb-link>
         );
       }
-      const selectedAtomsBulk = this.layoutManager.selectedAtomsBulk;
-      if (this.layoutManager.selectingBulk) {
+      const selectedAtoms = this.layoutManager.bulk.selectedAtoms;
+      if (this.layoutManager.bulk.selecting) {
         children.push(
-          <eb-link iconMaterial={selectedAtomsBulk.length >= items.length ? 'check_box_outline_blank' : 'check_box'} iconBadge={selectedAtomsBulk.length} propsOnPerform={this.onSelectingBulkChecking} ></eb-link>
+          <eb-link iconMaterial={selectedAtoms.length >= items.length ? 'check_box_outline_blank' : 'check_box'} iconBadge={selectedAtoms.length} propsOnPerform={this.onSelectingBulkChecking} ></eb-link>
         );
       }
 
@@ -50,8 +50,8 @@ export default {
     },
     _renderActionsRight() {
       const children = [];
-      if (this.layoutManager.actionsBulk && this.actionsAll) {
-        for (const action of this.layoutManager.actionsBulk) {
+      if (this.layoutManager.bulk.actions && this.actionsAll) {
+        for (const action of this.layoutManager.bulk.actions) {
           const _action = this.getAction({
             module: this.layoutManager.container.atomClass.module,
             atomClassName: this.layoutManager.container.atomClass.atomClassName,

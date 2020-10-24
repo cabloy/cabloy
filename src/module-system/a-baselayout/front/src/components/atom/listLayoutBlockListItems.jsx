@@ -38,7 +38,7 @@ export default {
   },
   methods: {
     onItemClick(event, item) {
-      if (this.layoutManager.selectingBulk) return;
+      if (this.layoutManager.bulk.selecting) return;
       return this.onAction(event, item, {
         module: item.module,
         atomClassName: item.atomClassName,
@@ -119,7 +119,7 @@ export default {
       }
     },
     onItemChange(event, item) {
-      this.layoutManager.onItemChangeBulk(event, item);
+      this.layoutManager.bulk_onItemChange(event, item);
     },
     _onStarSwitch(event, item, star, swipeoutAction) {
       // anonymous
@@ -183,12 +183,12 @@ export default {
       return this.getActionTitle(action, item.atomStage);
     },
     _getItemChecked(item) {
-      const index = this.layoutManager.selectedAtomsBulk.findIndex(_item => _item.atomId === item.atomId);
+      const index = this.layoutManager.bulk.selectedAtoms.findIndex(_item => _item.atomId === item.atomId);
       return index > -1;
     },
     _renderListItem(item) {
       // media
-      const domMedia = this.layoutManager.selectingBulk ? null : (
+      const domMedia = this.layoutManager.bulk.selecting ? null : (
         <div slot="media">
           <img class="avatar avatar24" src={this._getItemMetaMedia(item)} />
         </div>
@@ -246,9 +246,9 @@ export default {
       // ok
       return (
         <eb-list-item class="item" key={item.atomId}
-          link={this.layoutManager.selectingBulk ? false : '#'}
+          link={this.layoutManager.bulk.selecting ? false : '#'}
           name={this.radioName}
-          checkbox={this.layoutManager.selectingBulk}
+          checkbox={this.layoutManager.bulk.selecting}
           checked={this._getItemChecked(item)}
           propsOnPerform={event => this.onItemClick(event, item)}
           swipeout onSwipeoutOpened={event => { this.onSwipeoutOpened(event, item); } }
