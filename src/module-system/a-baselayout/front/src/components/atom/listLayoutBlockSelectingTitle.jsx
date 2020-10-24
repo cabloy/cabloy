@@ -26,7 +26,7 @@ export default {
       this.layoutManager.order_onPerformPopover(event.currentTarget);
     },
     onPerformFilter() {
-      this.layoutManager.onPerformFilter();
+      this.layoutManager.filter_onPerform();
     },
     onPerformDone() {
       // ok

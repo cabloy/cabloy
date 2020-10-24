@@ -5,6 +5,7 @@ import Search from './search.jsx';
 import Select from './select.jsx';
 import Create from './create.jsx';
 import Order from './order.jsx';
+import Filter from './filter.jsx';
 
 // container: {
 //   atomClass,
@@ -15,7 +16,7 @@ import Order from './order.jsx';
 // },
 
 export default {
-  mixins: [ ebAtomClasses, ebMenus, Bulk, Search, Select, Create, Order ],
+  mixins: [ ebAtomClasses, ebMenus, Bulk, Search, Select, Create, Order, Filter ],
   data() {
     return {
       ready: false,
@@ -23,7 +24,6 @@ export default {
       layoutConfig: null,
       configAtomBase: null,
       configAtom: null,
-      filter: null,
       subnavbarActions: false,
     };
   },
@@ -60,32 +60,6 @@ export default {
     },
     onPageClear() {
       this.layoutComponentInstance && this.layoutComponentInstance.onPageClear();
-    },
-    onPerformFilter() {
-      const inPanel = this.$view.inPanel();
-      const immediate = this.$meta.vueApp.layout === 'pc' && !inPanel;
-      const filterConfig = this._getFilterConfig();
-      const navigateOptions = {
-        context: {
-          params: {
-            layoutManager: this,
-            filterConfig,
-            immediate,
-          },
-        },
-      };
-      if (immediate) {
-        navigateOptions.scene = 'sidebar';
-        navigateOptions.sceneOptions = { side: 'right', name: 'filter', title: 'Filter' };
-      } else {
-        navigateOptions.target = '_self';
-      }
-      this.$view.navigate('/a/baselayout/listLayoutFilter', navigateOptions);
-    },
-    onFilterChanged(value) {
-      this.filter = value;
-      // reload
-      this.onPageRefresh();
     },
     getLayout() {
       return this.$view.size === 'small' ? 'list' : 'table';
@@ -128,73 +102,14 @@ export default {
         options,
       };
       // filter
-      const filterParams = this.prepareFilterParams();
+      const filterParams = this.filter_prepareSelectParams();
       if (filterParams) {
         params = this.$utils.extend({}, params, filterParams);
       }
       return params;
     },
-    prepareFilterParams() {
-      if (!this.filter) return null;
-      // options
-      const options = {
-        where: {},
-      };
-      // params
-      const params = {
-        options,
-      };
-      // form
-      if (this.filter.form) {
-        if (this.filter.form.atomName) {
-          options.where['a.atomName'] = { val: this.filter.form.atomName, op: 'like' };
-        }
-        if (this.filter.form.star) {
-          options.star = Number(this.filter.form.star);
-        }
-        if (this.filter.form.label) {
-          options.label = this.filter.form.label;
-        }
-        if (this.filter.form.stage) {
-          options.stage = this.filter.form.stage;
-        }
-        if (this.filter.form.atomClass) {
-          params.atomClass = this.filter.form.atomClass;
-        }
-      }
-      // formAtomClass
-      const formAtomClass = this.filter.formAtomClass;
-      if (formAtomClass) {
-        let hasValue = false;
-        for (const key in formAtomClass) {
-          const value = formAtomClass[key];
-          // undefined/null/'', except 0/false
-          if (value !== undefined && value !== null && value !== '') {
-            if (typeof value === 'string') {
-              options.where[`f.${key}`] = { val: value, op: 'like' };
-            } else {
-              options.where[`f.${key}`] = value;
-            }
-            hasValue = true;
-          }
-        }
-        if (hasValue) {
-          options.mode = 'search';
-        }
-      }
-      // ok
-      return params;
-    },
     getItems() {
       return this.layoutComponentInstance ? this.layoutComponentInstance.getItems() : [];
-    },
-    _getFilterConfig() {
-      // base
-      const filterConfigBase = this.configAtomBase.render.list.info.filter;
-      // atomClass
-      const filterConfig = this.$meta.util.getProperty(this.configAtom, 'render.list.info.filter');
-      // filterConfig
-      return this.$meta.util.extend({}, filterConfigBase, filterConfig);
     },
     async prepareLayoutConfig() {
       // configAtomBase
@@ -237,7 +152,7 @@ export default {
       return this.$text(stage.replace(stage[0], stage[0].toUpperCase()));
     },
     getCurrentStage() {
-      let stage = this.$meta.util.getProperty(this.filter, 'form.stage');
+      let stage = this.$meta.util.getProperty(this.filter.data, 'form.stage');
       if (!stage) stage = this.container.options && this.container.options.stage;
       if (!stage) stage = 'archive';
       return stage;

@@ -17,14 +17,14 @@ export default {
     },
   },
   data() {
-    const form = this.$meta.util.getProperty(this.layoutManager, 'filter.form') || {
+    const form = this.$meta.util.getProperty(this.layoutManager, 'filter.data.form') || {
       atomName: null,
       star: (this.layoutManager.container.options && this.layoutManager.container.options.star) || 0,
       label: (this.layoutManager.container.options && this.layoutManager.container.options.label) || 0,
       stage: (this.layoutManager.container.options && this.layoutManager.container.options.stage) || 'archive',
       atomClass: null,
     };
-    const formAtomClass = this.$meta.util.getProperty(this.layoutManager, 'filter.formAtomClass') || {};
+    const formAtomClass = this.$meta.util.getProperty(this.layoutManager, 'filter.data.formAtomClass') || {};
     return {
       form,
       formAtomClass,
@@ -128,7 +128,7 @@ export default {
       }
     },
     onFilterDebounce: Vue.prototype.$meta.util.debounce(function() {
-      this.layoutManager.onFilterChanged({
+      this.layoutManager.filter_onChanged({
         form: this.form, formAtomClass: this.formAtomClass,
       });
     }, 300),

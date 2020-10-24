@@ -19,7 +19,7 @@ export default {
       this.$f7router.back();
     },
     search_onSearchAdvanced() {
-      this.onPerformFilter();
+      this.filter_onPerform();
     },
   },
 };

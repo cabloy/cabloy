@@ -18,7 +18,7 @@ export default {
   },
   methods: {
     onPerformFilter() {
-      this.layoutManager.onPerformFilter();
+      this.layoutManager.filter_onPerform();
     },
     onPerformAtomOrders(event) {
       this.layoutManager.order_onPerformPopover(event.currentTarget);
