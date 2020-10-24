@@ -2,6 +2,8 @@ import ebAtomClasses from '../atomClasses.js';
 import ebMenus from '../menus.js';
 import Bulk from './bulk.jsx';
 import Search from './search.jsx';
+import Select from './select.jsx';
+
 // container: {
 //   atomClass,
 //   options,
@@ -11,7 +13,7 @@ import Search from './search.jsx';
 // },
 
 export default {
-  mixins: [ ebAtomClasses, ebMenus, Bulk, Search ],
+  mixins: [ ebAtomClasses, ebMenus, Bulk, Search, Select ],
   data() {
     return {
       ready: false,
@@ -254,19 +256,6 @@ export default {
       // ok
       return params;
     },
-    // **  search - begin
-
-    // ** search - end
-    // ** select - begin
-    getSelectedAtoms() {
-      if (this.container.scene === 'selecting') {
-        return this.container.params.selectedAtoms;
-      }
-      if (this.container.scene === 'select') {
-        return this.getItems();
-      }
-    },
-    // ** select - end
     getItems() {
       return this.layoutComponentInstance ? this.layoutComponentInstance.getItems() : [];
     },

@@ -19,7 +19,7 @@ export default {
   methods: {
     onPerformAdd() {
       // params
-      const selectedAtoms = this.layoutManager.getSelectedAtoms();
+      const selectedAtoms = this.layoutManager.select_getSelectedAtoms();
       const params = {
         selectMode: this.layoutManager.container.params.selectMode,
         selectedAtoms,
@@ -50,7 +50,7 @@ export default {
       this.$f7router.back();
     },
     getSelectedAtoms() {
-      const selectedAtoms = this.layoutManager.getSelectedAtoms();
+      const selectedAtoms = this.layoutManager.select_getSelectedAtoms();
       let res;
       if (this.layoutManager.container.params.selectMode === 'single') {
         res = (selectedAtoms && selectedAtoms.length > 0) ? selectedAtoms[0] : null;

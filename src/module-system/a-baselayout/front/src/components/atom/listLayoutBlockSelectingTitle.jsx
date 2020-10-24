@@ -16,7 +16,7 @@ export default {
   },
   computed: {
     selectedAtoms() {
-      return this.layoutManager.getSelectedAtoms();
+      return this.layoutManager.select_getSelectedAtoms();
     },
   },
   created() {
