@@ -42,8 +42,8 @@ export default {
         if (createParams) {
           item = this.$utils.extend({}, item, createParams);
         }
-        _action = this.$utils.extend({}, _action, { targetEl: event.currentTarget });
       }
+      _action = this.$utils.extend({}, _action, { targetEl: event.target });
       return this.$meta.util.performAction({ ctx: this, action: _action, item });
     },
     _renderActionsLeft() {
