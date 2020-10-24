@@ -23,7 +23,7 @@ export default {
       <eb-page withSubnavbar={this.subnavbarActions}
         ptr onPtrRefresh={this.onPageRefresh}
         infinite infinitePreloader={false} onInfinite={this.onPageInfinite}>
-        <eb-navbar title={this.getPageTitle()} eb-back-link="Back">
+        <eb-navbar title={this.getPageTitle()} subtitle={this.getPageSubtitle()} eb-back-link="Back">
           {this._renderBlock({ blockName: 'title' })}
           {this.subnavbarActions && this._renderBlock({ blockName: 'subnavbarActions' })}
         </eb-navbar>

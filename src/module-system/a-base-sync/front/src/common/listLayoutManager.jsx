@@ -24,7 +24,6 @@ export default {
       selectedAtomsBulk: [],
       selectingBulk: false,
       subnavbarActions: false,
-      pageTitle: null,
     };
   },
   computed: {
@@ -157,9 +156,6 @@ export default {
         _menu = this.$utils.extend({}, _menu, { targetEl: event.target });
       }
       this.$meta.util.performAction({ ctx: this, action: _menu, item: action });
-    },
-    onAtomClassesReady() {
-      this.pageTitle = this.initPageTitle();
     },
     getLayout() {
       return this.$view.size === 'small' ? 'list' : 'table';
@@ -381,9 +377,6 @@ export default {
       });
     },
     getPageTitle() {
-      return this.pageTitle;
-    },
-    initPageTitle() {
       //
       if (this.params && this.params.pageTitle) return this.params.pageTitle;
       //
@@ -403,6 +396,17 @@ export default {
       }
       if (!atomClass) return this.$text('Atom');
       return `${this.$text('Atom')}: ${atomClassTitle}`;
+    },
+    getPageSubtitle() {
+      const stage = this.getCurrentStage();
+      if (stage === 'archive') return '';
+      return this.$text(stage.replace(stage[0], stage[0].toUpperCase()));
+    },
+    getCurrentStage() {
+      let stage = this.$meta.util.getProperty(this.filter, 'form.stage');
+      if (!stage) stage = this.options && this.options.stage;
+      if (!stage) stage = 'archive';
+      return stage;
     },
     getLayoutComponentOptions() {
       return {
