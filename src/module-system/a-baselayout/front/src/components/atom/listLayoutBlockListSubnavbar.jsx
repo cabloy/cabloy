@@ -29,7 +29,7 @@ export default {
     _renderActionsLeft() {
       const children = [];
       // switch select
-      const items = this.layoutManager.getItems();
+      const items = this.layoutManager.base_getItems();
       if (items.length > 0) {
         children.push(
           <eb-link iconMaterial="grading" propsOnPerform={this.onSelectingBulkSwitch} ></eb-link>

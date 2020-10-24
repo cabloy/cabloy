@@ -61,9 +61,9 @@ export default {
     },
     filter_getConfig() {
       // base
-      const filterConfigBase = this.configAtomBase.render.list.info.filter;
+      const filterConfigBase = this.base.configAtomBase.render.list.info.filter;
       // atomClass
-      const filterConfig = this.$meta.util.getProperty(this.configAtom, 'render.list.info.filter');
+      const filterConfig = this.$meta.util.getProperty(this.base.configAtom, 'render.list.info.filter');
       // filterConfig
       return this.$meta.util.extend({}, filterConfigBase, filterConfig);
     },

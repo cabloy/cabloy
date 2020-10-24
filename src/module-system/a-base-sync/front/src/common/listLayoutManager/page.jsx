@@ -36,7 +36,7 @@ export default {
       return `${this.$text('Atom')}: ${atomClassTitle}`;
     },
     page_getSubtitle() {
-      const stage = this.getCurrentStage();
+      const stage = this.base_getCurrentStage();
       if (stage === 'archive') return '';
       return this.$text(stage.replace(stage[0], stage[0].toUpperCase()));
     },

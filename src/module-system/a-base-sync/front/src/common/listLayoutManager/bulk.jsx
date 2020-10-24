@@ -33,7 +33,7 @@ export default {
       }
     },
     bulk_onSelectingChecking() {
-      const items = this.getItems();
+      const items = this.base_getItems();
       const selectedAtoms = this.bulk.selectedAtoms;
       if (selectedAtoms.length >= items.length) {
         // uncheck all

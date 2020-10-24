@@ -9,7 +9,7 @@ export default {
         return this.container.params.selectedAtoms;
       }
       if (this.container.scene === 'select') {
-        return this.getItems();
+        return this.base_getItems();
       }
     },
   },

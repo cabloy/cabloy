@@ -37,7 +37,7 @@ export default {
     },
     async onLoadMore({ index }) {
       // params
-      const params = this.layoutManager.prepareSelectParams();
+      const params = this.layoutManager.base_prepareSelectParams();
       // index
       params.options.page = { index };
       // fetch

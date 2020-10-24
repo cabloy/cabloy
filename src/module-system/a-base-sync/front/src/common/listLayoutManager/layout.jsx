@@ -21,16 +21,16 @@ export default {
     },
     async layout_prepareConfig() {
       // configAtomBase
-      this.configAtomBase = this.$config.atom;
+      this.base.configAtomBase = this.$config.atom;
       // configAtom
       if (this.container.atomClass) {
         // load module
         await this.$meta.module.use(this.container.atomClass.module);
-        this.configAtom = this.$meta.util.getProperty(this.$meta.config.modules[this.container.atomClass.module], `atoms.${this.container.atomClass.atomClassName}`);
+        this.base.configAtom = this.$meta.util.getProperty(this.$meta.config.modules[this.container.atomClass.module], `atoms.${this.container.atomClass.atomClassName}`);
       }
       // layoutConfig
-      const layoutConfigBase = this.configAtomBase.render.list.layouts[this.layout.current];
-      const layoutConfigAtom = this.$meta.util.getProperty(this.configAtom, `render.list.layouts.${this.layout.current}`);
+      const layoutConfigBase = this.base.configAtomBase.render.list.layouts[this.layout.current];
+      const layoutConfigAtom = this.$meta.util.getProperty(this.base.configAtom, `render.list.layouts.${this.layout.current}`);
       this.layout.config = this.$meta.util.extend({}, layoutConfigBase, layoutConfigAtom);
     },
     layout_getComponentOptions() {
@@ -42,7 +42,7 @@ export default {
       };
     },
     layout_renderComponent() {
-      if (!this.ready) return null;
+      if (!this.base.ready) return null;
       return <eb-component ref='layout' module={this.layout.config.component.module} name={this.layout.config.component.name} options={this.layout_getComponentOptions()}></eb-component>;
     },
     layout_getBlockComponentOptions({ blockConfig }) {
@@ -54,7 +54,7 @@ export default {
       };
     },
     layout_renderBlock({ blockName }) {
-      if (!this.ready) return null;
+      if (!this.base.ready) return null;
       const blockConfig = this.layout.config.blocks[blockName];
       if (!blockConfig) return null;
       return <eb-component module={blockConfig.component.module} name={blockConfig.component.name} options={this.layout_getBlockComponentOptions({ blockConfig })}></eb-component>;

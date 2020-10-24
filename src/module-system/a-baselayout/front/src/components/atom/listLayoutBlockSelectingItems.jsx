@@ -81,8 +81,8 @@ export default {
       return flags.split(',');
     },
     _getLabel(id) {
-      if (!this.layoutManager.userLabels) return null;
-      return this.layoutManager.userLabels[id];
+      if (!this.layoutManager.base_userLabels) return null;
+      return this.layoutManager.base_userLabels[id];
     },
     _getItemChecked(item) {
       const index = this.selectedAtoms.findIndex(_item => _item.atomId === item.atomId);
@@ -125,7 +125,7 @@ export default {
         );
       }
       const domAfterLabels = [];
-      if (item.labels && this.layoutManager.userLabels) {
+      if (item.labels && this.layoutManager.base_userLabels) {
         for (const label of JSON.parse(item.labels)) {
           const _label = this._getLabel(label);
           domAfterLabels.push(

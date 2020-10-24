@@ -71,14 +71,14 @@ export default {
     },
     order_getList() {
       // base
-      const ordersBase = this.configAtomBase.render.list.info.orders;
+      const ordersBase = this.base.configAtomBase.render.list.info.orders;
       // atomClass
-      const ordersAtomClass = this.$meta.util.getProperty(this.configAtom, 'render.list.info.orders');
+      const ordersAtomClass = this.$meta.util.getProperty(this.base.configAtom, 'render.list.info.orders');
       // atomOrders
       return ordersAtomClass ? ordersBase.concat(ordersAtomClass) : ordersBase;
     },
     order_renderPopover() {
-      if (!this.ready) return null;
+      if (!this.base.ready) return null;
       // list
       const children = [];
       for (const atomOrder of this.order_getList()) {

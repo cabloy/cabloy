@@ -21,11 +21,6 @@ export default {
       radioName: Vue.prototype.$meta.util.nextId('radio'),
     };
   },
-  computed: {
-    user() {
-      return this.$store.state.auth.user.op;
-    },
-  },
   mounted() {
     this.$meta.eventHub.$on('atom:star', this.onStarChanged);
     this.$meta.eventHub.$on('atom:labels', this.onLabelsChanged);
@@ -56,7 +51,7 @@ export default {
     },
     onLabel(event, item) {
       // anonymous
-      if (this.user.anonymous) {
+      if (this.layoutManager.base_user.anonymous) {
         this.$view.dialog.confirm(this.$text('Please Sign In')).then(() => {
           // login
           this.$meta.vueLayout.openLogin();
@@ -123,7 +118,7 @@ export default {
     },
     _onStarSwitch(event, item, star, swipeoutAction) {
       // anonymous
-      if (this.user.anonymous) {
+      if (this.layoutManager.base_user.anonymous) {
         this.$view.dialog.confirm(this.$text('Please Sign In')).then(() => {
           // login
           this.$meta.vueLayout.openLogin();
@@ -171,8 +166,8 @@ export default {
       return flags.split(',');
     },
     _getLabel(id) {
-      if (!this.layoutManager.userLabels) return null;
-      return this.layoutManager.userLabels[id];
+      if (!this.layoutManager.base_userLabels) return null;
+      return this.layoutManager.base_userLabels[id];
     },
     _getActionColor(action, index) {
       if (index === 0) return 'orange';
@@ -229,7 +224,7 @@ export default {
         );
       }
       const domAfterLabels = [];
-      if (item.labels && this.layoutManager.userLabels) {
+      if (item.labels && this.layoutManager.base_userLabels) {
         for (const label of JSON.parse(item.labels)) {
           const _label = this._getLabel(label);
           domAfterLabels.push(
