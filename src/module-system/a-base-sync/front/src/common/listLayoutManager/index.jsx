@@ -3,6 +3,7 @@ import ebMenus from '../menus.js';
 import Bulk from './bulk.jsx';
 import Search from './search.jsx';
 import Select from './select.jsx';
+import Create from './create.jsx';
 
 // container: {
 //   atomClass,
@@ -13,7 +14,7 @@ import Select from './select.jsx';
 // },
 
 export default {
-  mixins: [ ebAtomClasses, ebMenus, Bulk, Search, Select ],
+  mixins: [ ebAtomClasses, ebMenus, Bulk, Search, Select, Create ],
   data() {
     return {
       ready: false,
@@ -23,7 +24,6 @@ export default {
       configAtom: null,
       filter: null,
       atomOrderSelected: null,
-      actionsCreate: null,
       subnavbarActions: false,
     };
   },
@@ -68,9 +68,6 @@ export default {
       // ok
       return atomOrder;
     },
-    showPopoverActionsCreate() {
-      return this.actionsCreate && this.actionsCreate.length > 0;
-    },
   },
   created() {
     //
@@ -81,7 +78,7 @@ export default {
     this.prepareLayoutConfig().then(() => {
       this.ready = true;
 
-      this.loadActionsCreate();
+      this.create_loadActions();
     });
   },
   methods: {
@@ -125,10 +122,6 @@ export default {
       const popover = this.$refs.popoverAtomOrders.$el;
       this.$f7.popover.open(popover, element);
     },
-    onPerformActionsCreate(element) {
-      const popover = this.$refs.popoverActionsCreate.$el;
-      this.$f7.popover.open(popover, element);
-    },
     onPerformChangeAtomOrder(event, atomOrder) {
       // switch
       const atomOrderCurrent = this.atomOrderSelected || this.atomOrderDefault;
@@ -143,20 +136,6 @@ export default {
       }
       // reload
       this.onPageRefresh();
-    },
-    onActionsCreateAction(event, action) {
-      let _menu = this.getMenu(action);
-      if (!_menu) return;
-      if (_menu.action === 'create') {
-        action = {
-          atomClassId: action.atomClassId,
-          module: action.module,
-          atomClassName: action.atomClassName,
-          atomClassIdParent: action.atomClassIdParent,
-        };
-        _menu = this.$utils.extend({}, _menu, { targetEl: event.target });
-      }
-      this.$meta.util.performAction({ ctx: this, action: _menu, item: action });
     },
     getLayout() {
       return this.$view.size === 'small' ? 'list' : 'table';
@@ -299,22 +278,6 @@ export default {
       const layoutConfigAtom = this.$meta.util.getProperty(this.configAtom, `render.list.layouts.${this.layoutCurrent}`);
       this.layoutConfig = this.$meta.util.extend({}, layoutConfigBase, layoutConfigAtom);
     },
-    loadActionsCreate() {
-      if (this.container.scene === 'select' || this.container.scene === 'selecting') return;
-      if (this.container.atomClass || this.actionsCreate) return;
-      // functionList
-      const options = {
-        where: { menu: 1, sceneName: 'create' },
-        orders: [
-          [ 'sorting', 'asc' ],
-        ],
-      };
-      this.$api.post('/a/base/function/list', {
-        options,
-      }).then(data => {
-        this.actionsCreate = data.list;
-      });
-    },
     getPageTitle() {
       //
       if (this.container.params && this.container.params.pageTitle) return this.container.params.pageTitle;
@@ -379,23 +342,6 @@ export default {
         </eb-popover>
       );
     },
-    _renderPopoverActionsCreate() {
-      if (!this.showPopoverActionsCreate) return null;
-      // list
-      const children = [];
-      for (const action of this.actionsCreate) {
-        children.push(
-          <eb-list-button key={action.id} popoverClose propsOnPerform={event => this.onActionsCreateAction(event, action)}>{action.titleLocale}</eb-list-button>
-        );
-      }
-      return (
-        <f7-popover ref="popoverActionsCreate">
-          <f7-list inset>
-            {children}
-          </f7-list>
-        </f7-popover>
-      );
-    },
     getBlockComponentOptions({ blockConfig }) {
       return {
         props: {
@@ -415,7 +361,7 @@ export default {
         <div>
           {this._renderLayoutComponent()}
           {this._renderPopoverAtomOrders()}
-          {this._renderPopoverActionsCreate()}
+          {this.create_renderPopoverActions()}
         </div>
       );
     },

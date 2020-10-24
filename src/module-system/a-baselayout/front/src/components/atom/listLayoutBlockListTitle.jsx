@@ -24,11 +24,11 @@ export default {
       this.layoutManager.onPerformAtomOrders(event.currentTarget);
     },
     onPerformActionsCreate(event) {
-      this.layoutManager.onPerformActionsCreate(event.currentTarget);
+      this.layoutManager.create_onPerformActions(event.currentTarget);
     },
     _renderActionsCreate() {
       if (this.layoutManager.container.atomClass) return;
-      if (!this.layoutManager.showPopoverActionsCreate) return;
+      if (!this.layoutManager.create_showPopoverActions) return;
       return (
         <eb-link iconMaterial="add" propsOnPerform={event => this.onPerformActionsCreate(event)}></eb-link>
       );
