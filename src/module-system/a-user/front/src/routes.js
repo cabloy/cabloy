@@ -9,6 +9,7 @@ export default [
   { path: 'user/functions', component: load('user/functions') },
   { path: 'user/account', component: load('user/account') },
   { path: 'user/authentications', component: load('user/authentications') },
+  { path: 'user/exports', component: load('user/exports') },
   { path: 'theme', component: load('theme/theme') },
   { path: 'theme/builtIn', component: load('theme/builtIn') },
   { path: 'view', component: load('view/view') },

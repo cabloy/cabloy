@@ -40,6 +40,16 @@ module.exports = app => {
         `;
         await this.ctx.model.query(sql);
       }
+
+      if (options.version === 2) {
+        // aFile: mime
+        const sql = `
+        ALTER TABLE aFile
+          CHANGE COLUMN mime mime varchar(255) DEFAULT NULL
+        `;
+        await this.ctx.model.query(sql);
+      }
+
     }
 
     async init(options) {

@@ -62,7 +62,7 @@ export default {
       const fields = ctx.layoutManager.base_getExportFields();
       // export
       const res = await ctx.$api.post('/a/base/atom/exportBulk', { atomClass, options, fields });
-      const url = this.$meta.util.combineQueries('/a/user/user/exports', { active: res.fileId });
+      const url = this.$meta.util.combineQueries('/a/user/user/exports', { recent: res.fileId });
       // open
       const inPanel = ctx.$view.inPanel();
       const showPanel = ctx.$meta.vueApp.layout === 'pc' && !inPanel;

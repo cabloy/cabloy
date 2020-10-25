@@ -478,15 +478,21 @@ module.exports = ctx => {
       // export
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      const res = await ctx.executeBean({
+      const resExport = await ctx.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: { atomClass, options, fields, items, user },
         fn: 'exportBulk',
       });
-      console.log(res);
-
-
+      // file
+      const resFile = await ctx.executeBean({
+        beanModule: 'a-file',
+        beanFullName: 'a-file.service.file',
+        context: { fileContent: resExport.data, meta: resExport.meta, user },
+        fn: '_upload',
+      });
+      // ok
+      return resFile;
     }
 
     // atom other functions

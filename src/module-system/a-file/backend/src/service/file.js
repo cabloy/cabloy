@@ -7,6 +7,7 @@ const gm = require3('gm');
 const bb = require3('bluebird');
 const pump = require3('pump');
 const fse = require3('fs-extra');
+const extend = require3('extend');
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -32,7 +33,7 @@ module.exports = app => {
       return list;
     }
 
-    async delete({ data: { fileId } }) {
+    async delete({ fileId }) {
       // file
       const item = await this.ctx.model.file.get({ id: fileId });
       // delete
@@ -41,6 +42,14 @@ module.exports = app => {
       if (item.atomId && item.attachment) {
         await this.ctx.bean.atom.attachment({ key: { atomId: item.atomId }, atom: { attachment: -1 } });
       }
+    }
+
+    async update({ fileId, data }) {
+      // file
+      let item = await this.ctx.model.file.get({ id: fileId });
+      // update
+      item = extend(true, item, data);
+      await this.ctx.model.file.update(item);
     }
 
     async upload({ user }) {
@@ -269,22 +278,56 @@ module.exports = app => {
       if (!res) this.ctx.throw(403);
     }
 
-    async fileDownloadCheck({ file }) {
-      // check user
-      await this.ctx.bean.user.check();
-      const user = this.ctx.state.user.op;
+    async fileUpdateCheck({ file, user }) {
+      if (!user) {
+        // check user
+        await this.ctx.bean.user.check();
+        user = this.ctx.state.user.op;
+      }
+      // check right: atom.write or user's file
+      if (file.atomId) {
+        const res = await this.ctx.bean.atom.checkRightAction({
+          atom: { id: file.atomId },
+          action: 3,
+          user,
+        });
+        if (res) return;
+      }
+      // check if self
+      if (file.userId === user.id) return;
+      // invoke event
+      const res = await this.ctx.bean.event.invoke({
+        module: moduleInfo.relativeName,
+        name: 'fileUpdateCheck',
+        data: { file, user },
+      });
+      if (res === true) return;
+      // others
+      this.ctx.throw(403);
+    }
+
+    async fileDownloadCheck({ file, user }) {
+      if (!user) {
+        // check user
+        await this.ctx.bean.user.check();
+        user = this.ctx.state.user.op;
+      }
       // not check if !atomId
       if (file.atomId) {
         const res = await this.ctx.bean.atom.checkRightRead({ atom: { id: file.atomId }, user });
-        if (!res) this.ctx.throw(403);
+        if (res) return;
       }
+      // check if self
+      if (file.userId === user.id) return;
       // invoke event
       const res = await this.ctx.bean.event.invoke({
         module: moduleInfo.relativeName,
         name: 'fileDownloadCheck',
         data: { file, user },
       });
-      if (res === false) this.ctx.throw(403);
+      if (res === true) return;
+      // others
+      this.ctx.throw(403);
     }
 
   }

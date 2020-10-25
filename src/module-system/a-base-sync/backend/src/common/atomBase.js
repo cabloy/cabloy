@@ -94,6 +94,15 @@ module.exports = app => {
       workbook.created = new Date();
       // worksheet
       const worksheet = workbook.addWorksheet('Sheet');
+      // columns
+      const columns = [];
+      for (const field of fields) {
+        columns.push({
+          header: this.ctx.text(field.title),
+          key: field.name,
+        });
+      }
+      worksheet.columns = columns;
       // rows
       const rows = [];
       for (const item of items) {
@@ -106,11 +115,18 @@ module.exports = app => {
       worksheet.addRows(rows);
       // write
       const buffer = await workbook.xlsx.writeBuffer();
-      // ok
-      return {
-        type: 'buffer',
-        data: buffer,
+      // meta
+      const meta = {
+        filename: `${this.ctx.bean.util.now()}.xlsx`,
+        encoding: '7bit',
+        mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        fields: {
+          mode: 2,
+          flag: 'atom-bulk-export',
+        },
       };
+      // ok
+      return { type: 'buffer', data: buffer, meta };
     }
 
   }

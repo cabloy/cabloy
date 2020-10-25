@@ -25,25 +25,33 @@ module.exports = app => {
       this.ctx.successMore(items, options.page.index, options.page.size);
     }
 
+    async update() {
+      //
+      const user = this.ctx.state.user.op;
+      const fileId = this.ctx.request.body.fileId;
+      const data = this.ctx.request.body.data;
+      // file
+      const file = await this.ctx.model.file.get({ id: fileId });
+      // check right
+      await this.ctx.service.file.fileUpdateCheck({ file, user });
+      // rename
+      const res = await this.ctx.service.file.update({ fileId, data });
+      this.ctx.success(res);
+    }
+
     async delete() {
       //
       const user = this.ctx.state.user.op;
-      const data = this.ctx.request.body.data;
-      // file
-      const item = await this.ctx.model.file.get({ id: data.fileId });
-      // check right: atom.write or user's file
-      if (item.atomId) {
-        const res = await this.ctx.bean.atom.checkRightAction({
-          atom: { id: item.atomId },
-          action: 3,
-          user,
-        });
-        if (!res) this.ctx.throw(403);
-      } else {
-        if (item.userId !== user.id) this.ctx.throw(403);
+      let fileId = this.ctx.request.body.fileId;
+      if (!fileId) {
+        fileId = this.ctx.request.body.data.fileId;
       }
-      //
-      const res = await this.ctx.service.file.delete({ data });
+      // file
+      const file = await this.ctx.model.file.get({ id: fileId });
+      // check right
+      await this.ctx.service.file.fileUpdateCheck({ file, user });
+      // delete
+      const res = await this.ctx.service.file.delete({ fileId });
       this.ctx.success(res);
     }
 
