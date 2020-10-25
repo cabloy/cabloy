@@ -1,3 +1,6 @@
+const require3 = require('require3');
+const ExcelJS = require3('exceljs');
+
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AtomBase extends app.meta.BeanBase {
@@ -84,8 +87,30 @@ module.exports = app => {
       // donothing
     }
 
-    async exportBulk({ atomClass, options, fields, items, user }) {
-
+    async exportBulk({ /* atomClass, options,*/ fields, items/* , user*/ }) {
+      // workbook
+      const workbook = new ExcelJS.Workbook();
+      workbook.creator = 'CabloyJS';
+      workbook.created = new Date();
+      // worksheet
+      const worksheet = workbook.addWorksheet('Sheet');
+      // rows
+      const rows = [];
+      for (const item of items) {
+        const row = {};
+        for (const field of fields) {
+          row[field.name] = item[field.name];
+        }
+        rows.push(row);
+      }
+      worksheet.addRows(rows);
+      // write
+      const buffer = await workbook.xlsx.writeBuffer();
+      // ok
+      return {
+        type: 'buffer',
+        data: buffer,
+      };
     }
 
   }

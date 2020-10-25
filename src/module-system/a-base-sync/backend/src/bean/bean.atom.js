@@ -484,7 +484,7 @@ module.exports = ctx => {
         context: { atomClass, options, fields, items, user },
         fn: 'exportBulk',
       });
-      //
+      console.log(res);
 
 
     }
