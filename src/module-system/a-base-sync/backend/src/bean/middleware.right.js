@@ -84,6 +84,7 @@ async function checkAtom(moduleInfo, options, ctx) {
   }
 
   // other action (including write/delete)
+  if (!ctx.request.body.key && !ctx.request.body.atomClass) ctx.throw.module(moduleInfo.relativeName, 1011);
   const actionOther = options.action;
   const bulk = !ctx.request.body.key;
   if (bulk) {

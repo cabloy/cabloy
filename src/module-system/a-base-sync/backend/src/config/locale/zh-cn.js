@@ -17,6 +17,7 @@ module.exports = {
   'Modification Time': '修改时间',
   'Created Time': '创建时间',
   'Account Migration': '账户迁移',
+  'Invalid Arguments': '无效参数',
   Draft: '草稿',
   Base: '基本',
   English: '英文',

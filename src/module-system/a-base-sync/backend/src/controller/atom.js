@@ -100,6 +100,15 @@ module.exports = app => {
       this.ctx.success();
     }
 
+    async deleteBulk() {
+      const res = await this.ctx.service.atom.deleteBulk({
+        atomClass: this.ctx.request.body.atomClass,
+        keys: this.ctx.request.body.keys,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     async clone() {
       const res = await this.ctx.service.atom.clone({
         key: this.ctx.request.body.key,

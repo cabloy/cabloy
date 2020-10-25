@@ -162,6 +162,30 @@ module.exports = ctx => {
       });
     }
 
+    // deleteBulk
+    async deleteBulk({ keys, user }) {
+      const resKeys = [];
+      for (const key of keys) {
+        const res = await this._deleteBulk_item({ key, user });
+        if (res) {
+          resKeys.push(key);
+        }
+      }
+      return { keys: resKeys };
+    }
+
+    async _deleteBulk_item({ key, user }) {
+      // check right
+      const res = await ctx.bean.atom.checkRightAction({
+        atom: { id: key.atomId }, action: 4, user,
+      });
+      if (!res) return false;
+      // delete
+      await this.delete({ key, user });
+      // ok
+      return true;
+    }
+
     // delete
     async delete({ key, user }) {
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });

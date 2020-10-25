@@ -29,7 +29,7 @@ module.exports = ctx => {
       const data = id ? { id } : { module, atomClassName, atomClassIdParent };
       const res = await this.model.get(data);
       if (res) return res;
-      if (!module || !atomClassName) throw new Error('Invalid arguments');
+      if (!module || !atomClassName) ctx.throw.module(moduleInfo.relativeName, 1011);
       // lock
       return await ctx.app.meta.util.lock({
         subdomain: ctx.subdomain,

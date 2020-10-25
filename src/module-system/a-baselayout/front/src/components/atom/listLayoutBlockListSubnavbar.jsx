@@ -28,29 +28,31 @@ export default {
     },
     onAction(event, action) {
       this.$f7.tooltip.hide(event.currentTarget);
+      // action
       let _action = this.getAction(action);
       if (!_action) return;
-      let item;
+      _action = this.$utils.extend({}, _action, { targetEl: event.target });
+      // item
+      let item = {
+        atomClassId: action.atomClassId,
+        module: action.module,
+        atomClassName: action.atomClassName,
+        atomClassIdParent: action.atomClassIdParent,
+      };
       if (_action.name === 'create') {
-        item = {
-          atomClassId: action.atomClassId,
-          module: action.module,
-          atomClassName: action.atomClassName,
-          atomClassIdParent: action.atomClassIdParent,
-        };
         const createParams = this.$meta.util.getProperty(this.layoutManager.container.params, 'createParams');
         if (createParams) {
           item = this.$utils.extend({}, item, createParams);
         }
       }
-      _action = this.$utils.extend({}, _action, { targetEl: event.target });
+      // performAction
       return this.$meta.util.performAction({ ctx: this, action: _action, item });
     },
     _renderActionsLeft() {
       const children = [];
       // switch select
       const items = this.layoutManager.base_getItems();
-      if (items.length > 0) {
+      if (items.length > 0 || this.layoutManager.bulk.selecting) {
         children.push(
           <eb-link iconMaterial="grading" propsOnPerform={this.onSelectingBulkSwitch} ></eb-link>
         );

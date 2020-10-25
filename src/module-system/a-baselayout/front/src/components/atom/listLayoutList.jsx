@@ -33,6 +33,7 @@ export default {
     },
     onLoadClear(done) {
       this.items = [];
+      this.layoutManager.bulk.selectedAtoms = [];
       done();
     },
     async onLoadMore({ index }) {

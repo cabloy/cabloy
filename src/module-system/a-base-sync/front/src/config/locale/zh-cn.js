@@ -51,6 +51,8 @@ export default {
   Filter: '筛选',
   Clone: '克隆',
   Export: '导出',
+  RevertToThisVersion: '恢复到此版本',
+  DeleteBulkNotAllDone: '某些条目无法删除',
   'Advanced Filter': '高级筛选',
   'Atom Flag': '原子标记',
   'Atom Name': '原子名称',
@@ -73,5 +75,4 @@ export default {
   'Please Sign In': '请登录',
   'My Atoms': '我的原子',
   'Edit Again': '再次编辑',
-  RevertToThisVersion: '恢复到此版本',
 };
