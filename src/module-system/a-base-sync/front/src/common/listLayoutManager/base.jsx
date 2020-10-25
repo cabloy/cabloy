@@ -70,5 +70,12 @@ export default {
       if (!stage) stage = 'archive';
       return stage;
     },
+    base_getExportFields() {
+      // atomClass
+      const fields = this.$meta.util.getProperty(this.base.configAtom, 'render.list.info.export.fields');
+      if (fields) return fields;
+      // base
+      return this.base.configAtomBase.render.list.info.export.fields;
+    },
   },
 };

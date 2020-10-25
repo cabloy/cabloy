@@ -11,7 +11,7 @@ export default {
       }
     },
     async onAction_deleteBulk({ ctx, item }) {
-      // delete
+      // confirm
       await ctx.$view.dialog.confirm();
       // atomClass
       const atomClass = { id: item.atomClassId };
@@ -37,7 +37,43 @@ export default {
       return this.$text('DeleteBulkNotAllDone');
     },
     async onAction_exportBulk({ ctx, item }) {
-
+      // confirm
+      await ctx.$view.dialog.confirm();
+      // atomClass
+      const atomClass = { id: item.atomClassId };
+      // options
+      let options;
+      const selectParams = ctx.layoutManager.base_prepareSelectParams();
+      const selectedAtoms = ctx.layoutManager.bulk.selectedAtoms;
+      if (selectedAtoms.length > 0) {
+        const keys = selectedAtoms.map(item => {
+          return { atomId: item.atomId, itemId: item.itemId };
+        });
+        options = {
+          where: {
+            'a.id': keys.map(key => key.atomId),
+          },
+          stage: selectParams.options.stage,
+        };
+      } else {
+        options = selectParams.options;
+      }
+      // fields
+      const fields = ctx.layoutManager.base_getExportFields();
+      // export
+      const res = await ctx.$api.post('/a/base/atom/exportBulk', { atomClass, options, fields });
+      const url = this.$meta.util.combineQueries('/a/user/user/exports', { active: res.fileId });
+      // open
+      const inPanel = ctx.$view.inPanel();
+      const showPanel = ctx.$meta.vueApp.layout === 'pc' && !inPanel;
+      const navigateOptions = {};
+      if (showPanel) {
+        navigateOptions.scene = 'sidebar';
+        navigateOptions.sceneOptions = { side: 'right', name: 'exports', title: 'Exports' };
+      } else {
+        navigateOptions.target = '_self';
+      }
+      ctx.$view.navigate(url, navigateOptions);
     },
   },
 };

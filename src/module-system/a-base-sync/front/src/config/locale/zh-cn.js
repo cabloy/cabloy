@@ -51,6 +51,7 @@ export default {
   Filter: '筛选',
   Clone: '克隆',
   Export: '导出',
+  Exports: '导出',
   RevertToThisVersion: '恢复到此版本',
   DeleteBulkNotAllDone: '某些条目无法删除',
   'Advanced Filter': '高级筛选',

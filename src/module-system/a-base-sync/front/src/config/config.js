@@ -29,6 +29,13 @@ export default {
               name: 'listLayoutBlockFilter',
             },
           },
+          export: {
+            fields: [
+              { name: 'atomName', title: 'AtomName' },
+              { name: 'createdAt', title: 'Created Time' },
+              { name: 'updatedAt', title: 'Modification Time' },
+            ],
+          },
         },
         layouts: {
           list: {

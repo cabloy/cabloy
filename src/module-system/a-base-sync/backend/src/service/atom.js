@@ -46,6 +46,10 @@ module.exports = app => {
       return await this.ctx.bean.atom.clone({ key, user });
     }
 
+    async exportBulk({ atomClass, options, fields, user }) {
+      return await this.ctx.bean.atom.exportBulk({ atomClass, options, fields, user });
+    }
+
     async star({ key, atom, user }) {
       return await this.ctx.bean.atom.star({ key, atom, user });
     }

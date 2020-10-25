@@ -84,8 +84,8 @@ module.exports = app => {
       // donothing
     }
 
-    async action(/* { action, atomClass, key, user }*/) {
-      // donothing
+    async exportBulk({ atomClass, options, fields, items, user }) {
+
     }
 
   }

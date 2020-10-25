@@ -466,6 +466,29 @@ module.exports = ctx => {
       }
     }
 
+    async exportBulk({ atomClass, options, fields, user }) {
+      // atomClass
+      let _atomClass;
+      if (atomClass) {
+        atomClass = await ctx.bean.atomClass.get(atomClass);
+        _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      }
+      // select
+      const items = await this.select({ atomClass, options, user, pageForce: false });
+      // export
+      const _moduleInfo = mparse.parseInfo(atomClass.module);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      const res = await ctx.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        context: { atomClass, options, fields, items, user },
+        fn: 'exportBulk',
+      });
+      //
+
+
+    }
+
     // atom other functions
 
     async get({ atomId }) {
