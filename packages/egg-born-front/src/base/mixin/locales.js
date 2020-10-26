@@ -1,4 +1,3 @@
-import cookies from 'js-cookie';
 import localeutil from 'egg-born-localeutil';
 
 export default function(Vue) {
