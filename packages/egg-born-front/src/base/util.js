@@ -38,11 +38,11 @@ export default function(Vue) {
       });
     },
     createComponentOptions(component) {
-      // install
-      if (component.install && !component.render) {
-        component = Vue.util.mergeOptions(component, component.install(Vue));
+      // installFactory
+      if (component.installFactory) {
+        component = Vue.util.mergeOptions(component, component.installFactory(Vue));
         component._Ctor = {};
-        delete component.install;
+        delete component.installFactory;
         Vue.extend(component);
         this._setComponentGlobal(component);
       }

@@ -41,11 +41,11 @@ const attrsSchema = {
 
 // export
 export default {
-  install,
+  installFactory,
 };
 
-// install
-function install(_Vue) {
+// installFactory
+function installFactory(_Vue) {
   const Vue = _Vue;
   const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').options.mixins.ebDashboardWidgetBase;
   return {
@@ -57,7 +57,7 @@ function install(_Vue) {
         },
       },
     },
-    mixins: [ebDashboardWidgetBase],
+    mixins: [ ebDashboardWidgetBase ],
     props: {
       dataSource: {
         type: Object,
@@ -100,7 +100,7 @@ function install(_Vue) {
         return attrs;
       },
       getPropsSchema() {
-        const props = ['dataSource'];
+        const props = [ 'dataSource' ];
         if (this.dataSource) {
           props.push('season');
         }
@@ -136,7 +136,7 @@ function install(_Vue) {
           datasets: [{
             backgroundColor: this.dataSource.colors.slice(0, 2),
             data: this.dataSource.dataset[seasonIndex].slice(0, 2),
-          }, ],
+          }],
         };
         return chartData;
       },
@@ -147,7 +147,7 @@ function install(_Vue) {
           animation: {
             onComplete: () => {
               this.__createSnapshot();
-            }
+            },
           },
           title: {
             display: true,

@@ -41,11 +41,11 @@ const attrsSchema = {
 
 // export
 export default {
-  install,
+  installFactory,
 };
 
-// install
-function install(_Vue) {
+// installFactory
+function installFactory(_Vue) {
   const Vue = _Vue;
   const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').options.mixins.ebDashboardWidgetBase;
   return {
@@ -57,7 +57,7 @@ function install(_Vue) {
         },
       },
     },
-    mixins: [ebDashboardWidgetBase],
+    mixins: [ ebDashboardWidgetBase ],
     props: {
       dataSource: {
         type: Object,
@@ -100,7 +100,7 @@ function install(_Vue) {
         return attrs;
       },
       getPropsSchema() {
-        const props = ['dataSource'];
+        const props = [ 'dataSource' ];
         if (this.dataSource) {
           props.push('fruit');
         }
@@ -137,7 +137,7 @@ function install(_Vue) {
             fill: false,
             backgroundColor: this.dataSource.colors[fruitIndex],
             data: this.dataSource.dataset.map(item => item[fruitIndex]),
-          }, ],
+          }],
         };
         return chartData;
       },
@@ -148,7 +148,7 @@ function install(_Vue) {
           animation: {
             onComplete: () => {
               this.__createSnapshot();
-            }
+            },
           },
           title: {
             display: true,

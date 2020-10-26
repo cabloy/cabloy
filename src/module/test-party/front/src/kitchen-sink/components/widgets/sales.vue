@@ -53,11 +53,11 @@ const attrsSchema = {
 
 // export
 export default {
-  install,
+  installFactory,
 };
 
-// install
-function install(_Vue) {
+// installFactory
+function installFactory(_Vue) {
   const Vue = _Vue;
   const ebDashboardWidgetBase = Vue.prototype.$meta.module.get('a-dashboard').options.mixins.ebDashboardWidgetBase;
   return {
