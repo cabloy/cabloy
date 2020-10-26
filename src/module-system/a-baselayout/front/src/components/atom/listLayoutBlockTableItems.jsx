@@ -210,6 +210,7 @@ export default {
       const columns = this.blockConfig.columns;
       const _columns = [];
       for (const column of columns) {
+        if (column.visible === false) continue;
         const _column = this.$meta.util.extend({}, column);
         _column.title = this.$text(_column.title);
         _column.ellipsis = true;
