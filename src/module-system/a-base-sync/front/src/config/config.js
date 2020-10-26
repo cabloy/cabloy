@@ -88,6 +88,11 @@ export default {
                     align: 'left',
                   },
                   {
+                    dataIndex: 'userName',
+                    title: 'Creator',
+                    align: 'left',
+                  },
+                  {
                     dataIndex: 'createdAt',
                     title: 'Created Time',
                     align: 'left',

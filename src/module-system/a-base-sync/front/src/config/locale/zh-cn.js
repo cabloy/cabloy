@@ -34,6 +34,7 @@ export default {
   Purple: '紫色',
   Label: '标签',
   Comment: '评论',
+  Creator: '创建人',
   Username: '用户名',
   Realname: '真实姓名',
   Email: '电子邮箱',
