@@ -313,7 +313,11 @@ export default {
     },
     _renderTable() {
       return (
-        <a-table>
+        <a-table
+          dataSource={this.layout.getDataSource()}
+          loading={this.layout.loading}
+          pagination={false}
+        >
         </a-table>
       );
     },
