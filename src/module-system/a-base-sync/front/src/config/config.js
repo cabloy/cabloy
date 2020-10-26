@@ -65,25 +65,6 @@ export default {
             },
           },
           table: {
-            info: {
-              columns: [
-                {
-                  dataIndex: 'atomName',
-                  title: 'AtomName',
-                  align: 'left',
-                },
-                {
-                  dataIndex: 'createdAt',
-                  title: 'Created Time',
-                  align: 'left',
-                },
-                {
-                  dataIndex: 'updatedAt',
-                  title: 'Modification Time',
-                  align: 'left',
-                },
-              ],
-            },
             component: {
               module: 'a-baselayout',
               name: 'listLayoutTable',
@@ -100,6 +81,23 @@ export default {
                   module: 'a-baselayout',
                   name: 'listLayoutBlockTableItems',
                 },
+                columns: [
+                  {
+                    dataIndex: 'atomName',
+                    title: 'AtomName',
+                    align: 'left',
+                  },
+                  {
+                    dataIndex: 'createdAt',
+                    title: 'Created Time',
+                    align: 'left',
+                  },
+                  {
+                    dataIndex: 'updatedAt',
+                    title: 'Modification Time',
+                    align: 'left',
+                  },
+                ],
               },
               bottombar: {
                 component: {

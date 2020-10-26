@@ -85,9 +85,6 @@ export default {
         this.loading = false;
       });
     },
-    getColumns() {
-      return this.layoutConfig.info.columns;
-    },
     getDataSource() {
       return this.itemsPages[this.info.pageCurrent];
     },

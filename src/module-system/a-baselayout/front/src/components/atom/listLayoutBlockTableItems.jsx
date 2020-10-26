@@ -181,6 +181,9 @@ export default {
       const index = this.layoutManager.bulk.selectedAtoms.findIndex(_item => _item.atomId === item.atomId);
       return index > -1;
     },
+    _getColumns() {
+      return this.blockConfig.columns;
+    },
     _renderListItem(item) {
       // media
       const domMedia = this.layoutManager.bulk.selecting ? null : (
@@ -315,7 +318,7 @@ export default {
       return (
         <a-table
           bordered
-          columns={this.layout.getColumns()}
+          columns={this._getColumns()}
           rowKey={item => item.atomId}
           dataSource={this.layout.getDataSource()}
           loading={this.layout.loading}
