@@ -1,5 +1,9 @@
 import Vue from 'vue';
 const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
+const _heightHeader = 56;
+const _heightToolbar = 48;
+const _heightTableHeader = 56;
+const _diffDesktop = 8;
 export default {
   meta: {
     global: false,
@@ -19,19 +23,40 @@ export default {
   data() {
     return {
       radioName: Vue.prototype.$meta.util.nextId('radio'),
+      unwatch: null,
+      tableHeight: 0,
     };
   },
   mounted() {
     this.$meta.eventHub.$on('atom:star', this.onStarChanged);
     this.$meta.eventHub.$on('atom:labels', this.onLabelsChanged);
     this.$meta.eventHub.$on('atom:action', this.onActionChanged);
+    // onSize
+    this.unwatch = this.$view.$watch('sizeExtent', () => {
+      this.onSize();
+    });
+    this.onSize();
   },
   beforeDestroy() {
     this.$meta.eventHub.$off('atom:star', this.onStarChanged);
     this.$meta.eventHub.$off('atom:labels', this.onLabelsChanged);
     this.$meta.eventHub.$off('atom:action', this.onActionChanged);
+    // onSize
+    if (this.unwatch) {
+      this.unwatch();
+      this.unwatch = null;
+    }
   },
   methods: {
+    onSize() {
+      const size = this.$view.getSizeExtent();
+      if (size) {
+        this.tableHeight = size.height - (_heightHeader + _heightToolbar + _heightTableHeader);
+        if (this.$device.desktop) {
+          this.tableHeight -= _diffDesktop;
+        }
+      }
+    },
     onItemClick(event, item) {
       if (this.layoutManager.bulk.selecting) return;
       return this.onAction(event, item, {
@@ -182,7 +207,15 @@ export default {
       return index > -1;
     },
     _getColumns() {
-      return this.blockConfig.columns;
+      const columns = this.blockConfig.columns;
+      const _columns = [];
+      for (const column of columns) {
+        const _column = this.$meta.util.extend({}, column);
+        _column.title = this.$text(_column.title);
+        _column.ellipsis = true;
+        _columns.push(_column);
+      }
+      return _columns;
     },
     _renderListItem(item) {
       // media
@@ -323,6 +356,7 @@ export default {
           dataSource={this.layout.getDataSource()}
           loading={this.layout.loading}
           pagination={false}
+          scroll={{ y: this.tableHeight }}
         >
         </a-table>
       );

@@ -84,7 +84,7 @@ export default {
                 columns: [
                   {
                     dataIndex: 'atomName',
-                    title: 'AtomName',
+                    title: 'Atom Name',
                     align: 'left',
                   },
                   {

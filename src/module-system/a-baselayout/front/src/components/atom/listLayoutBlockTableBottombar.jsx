@@ -27,7 +27,7 @@ export default {
   },
   methods: {
     onPageChange(page) {
-      this.layout.GotoPage(page);
+      this.layout.gotoPage(page);
     },
     _renderPagination() {
       return (

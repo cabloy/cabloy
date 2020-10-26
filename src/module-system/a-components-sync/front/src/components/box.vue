@@ -14,23 +14,23 @@ export default {
     toolbar: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   data() {
     return {
-      _unwatch: null,
+      unwatch: null,
     };
   },
   mounted() {
-    this._unwatch = this.$view.$watch('sizeExtent', () => {
+    this.unwatch = this.$view.$watch('sizeExtent', () => {
       this.onSize();
     });
     this.onSize();
   },
   beforeDestroy() {
-    if (this._unwatch) {
-      this._unwatch();
-      this._unwatch = null;
+    if (this.unwatch) {
+      this.unwatch();
+      this.unwatch = null;
     }
   },
   methods: {
