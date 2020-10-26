@@ -17,7 +17,7 @@ export default {
   },
   methods: {
     layout_get() {
-      return this.$view.size === 'small' ? 'list' : 'table';
+      return (this.$view.size === 'small' || !this.container.atomClass) ? 'list' : 'table';
     },
     async layout_prepareConfig() {
       // configAtomBase

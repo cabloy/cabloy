@@ -18,9 +18,18 @@ export default {
   created() {
     this.immediate = this.contextParams.immediate;
   },
+  mounted() {
+    this.contextParams.layoutManager.$on('layoutManager:destroy', this.onLayoutManagerDestroy);
+  },
+  beforeDestroy() {
+    this.contextParams.layoutManager.$off('layoutManager:destroy', this.onLayoutManagerDestroy);
+  },
   methods: {
     onPerformSearch() {
       this.filterComponentInstance && this.filterComponentInstance.onPerformSearch();
+    },
+    onLayoutManagerDestroy() {
+      this.$view.close();
     },
     _getFilterComponentOptions() {
       return {

@@ -36,4 +36,7 @@ export default {
       this.create_loadActions();
     });
   },
+  beforeDestroy() {
+    this.$emit('layoutManager:destroy');
+  },
 };
