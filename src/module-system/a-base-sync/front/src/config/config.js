@@ -64,6 +64,49 @@ export default {
               },
             },
           },
+          table: {
+            component: {
+              module: 'a-baselayout',
+              name: 'listLayoutTable',
+            },
+            blocks: {
+              title: {
+                component: {
+                  module: 'a-baselayout',
+                  name: 'listLayoutBlockListTitle',
+                },
+              },
+              items: {
+                component: {
+                  module: 'a-baselayout',
+                  name: 'listLayoutBlockTableItems',
+                },
+                columns: [
+                  {
+                    dataIndex: 'atomName',
+                    title: 'AtomName',
+                    align: 'left',
+                  },
+                  {
+                    dataIndex: 'createdAt',
+                    title: 'Created Time',
+                    align: 'left',
+                  },
+                  {
+                    dataIndex: 'updatedAt',
+                    title: 'Modification Time',
+                    align: 'left',
+                  },
+                ],
+              },
+              bottombar: {
+                component: {
+                  module: 'a-baselayout',
+                  name: 'listLayoutBlockTableBottombar',
+                },
+              },
+            },
+          },
           select: {
             component: {
               module: 'a-baselayout',

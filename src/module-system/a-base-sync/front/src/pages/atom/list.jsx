@@ -16,7 +16,7 @@ export default {
         options,
         params,
         scene,
-        layout,
+        layout: 'table',
       },
     };
   },
@@ -29,6 +29,9 @@ export default {
           {this.layout_renderBlock({ blockName: 'title' })}
           {this.subnavbar.enable && this.layout_renderBlock({ blockName: 'subnavbar' })}
         </eb-navbar>
+        <f7-toolbar position="bottom" hidden={!this.bottombar.enable}>
+          {this.bottombar.enable && this.layout_renderBlock({ blockName: 'bottombar' })}
+        </f7-toolbar>
         {this.layout_renderLayout()}
       </eb-page>
     );

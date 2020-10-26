@@ -39,7 +39,7 @@ export default function(Vue) {
     },
     createComponentOptions(component) {
       // install
-      if (component.install) {
+      if (component.install && !component.render) {
         component = Vue.util.mergeOptions(component, component.install(Vue));
         component._Ctor = {};
         delete component.install;

@@ -8,6 +8,8 @@ import listLayoutBlockSelectTitle from './components/atom/listLayoutBlockSelectT
 import listLayoutBlockSelectItems from './components/atom/listLayoutBlockSelectItems.jsx';
 import listLayoutBlockSelectingTitle from './components/atom/listLayoutBlockSelectingTitle.jsx';
 import listLayoutBlockSelectingItems from './components/atom/listLayoutBlockSelectingItems.jsx';
+import listLayoutBlockTableItems from './components/atom/listLayoutBlockTableItems.jsx';
+import listLayoutBlockTableBottombar from './components/atom/listLayoutBlockTableBottombar.jsx';
 
 export default {
   listLayoutList,
@@ -20,4 +22,6 @@ export default {
   listLayoutBlockSelectItems,
   listLayoutBlockSelectingTitle,
   listLayoutBlockSelectingItems,
+  listLayoutBlockTableItems,
+  listLayoutBlockTableBottombar,
 };

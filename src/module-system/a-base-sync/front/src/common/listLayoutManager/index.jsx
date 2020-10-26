@@ -10,6 +10,7 @@ import Create from './create.jsx';
 import Order from './order.jsx';
 import Filter from './filter.jsx';
 import Subnavbar from './subnavbar.jsx';
+import Bottombar from './bottombar.jsx';
 
 // container: {
 //   atomClass,
@@ -20,7 +21,7 @@ import Subnavbar from './subnavbar.jsx';
 // },
 
 export default {
-  mixins: [ ebAtomClasses, ebMenus, Base, Page, Layout, Bulk, Search, Select, Create, Order, Filter, Subnavbar ],
+  mixins: [ ebAtomClasses, ebMenus, Base, Page, Layout, Bulk, Search, Select, Create, Order, Filter, Subnavbar, Bottombar ],
   data() {
     return {
     };
