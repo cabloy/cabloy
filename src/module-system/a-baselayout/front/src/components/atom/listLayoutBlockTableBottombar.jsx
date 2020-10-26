@@ -62,7 +62,7 @@ export default {
   },
   render() {
     return (
-      <div class="atom-list-layout-table-pagination-container">
+      <div class="antdv atom-list-layout-table-pagination-container">
         {this._renderTotal()}
         {this._renderConfigProvider()}
       </div>

@@ -85,6 +85,9 @@ export default {
         this.loading = false;
       });
     },
+    getColumns() {
+      return this.layoutConfig.info.columns;
+    },
     getDataSource() {
       return this.itemsPages[this.info.pageCurrent];
     },
@@ -113,7 +116,7 @@ export default {
   },
   render() {
     return (
-      <div>
+      <div class="antdv">
         {this._renderConfigProvider()}
       </div>
     );

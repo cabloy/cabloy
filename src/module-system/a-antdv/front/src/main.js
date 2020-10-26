@@ -1,7 +1,10 @@
 let Vue;
 
-import Antdv from 'ant-design-vue';
-import 'ant-design-vue/dist/antd.css';
+// import Antdv from 'ant-design-vue';
+// import 'ant-design-vue/dist/antd.css';
+import ConfigProvider from 'ant-design-vue/lib/config-provider';
+import Table from 'ant-design-vue/lib/table';
+import Pagination from 'ant-design-vue/lib/pagination';
 
 import './assets/css/module.less';
 
@@ -11,7 +14,9 @@ function install(_Vue, cb) {
 
   Vue = _Vue;
 
-  Vue.use(Antdv);
+  Vue.use(ConfigProvider);
+  Vue.use(Table);
+  Vue.use(Pagination);
 
   return cb({
     routes: require('./routes.js').default,

@@ -314,6 +314,9 @@ export default {
     _renderTable() {
       return (
         <a-table
+          bordered
+          columns={this.layout.getColumns()}
+          rowKey={item => item.atomId}
           dataSource={this.layout.getDataSource()}
           loading={this.layout.loading}
           pagination={false}
