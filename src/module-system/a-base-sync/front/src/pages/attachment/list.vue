@@ -118,8 +118,7 @@ export default {
       // delete
       return this.$view.dialog.confirm().then(() => {
         return this.$api.post('/a/file/file/delete', {
-          key: { atomId: this.atomId },
-          data: { fileId: item.id },
+          fileId: item.id,
         }).then(() => {
           this.$meta.util.swipeoutClose(event.target);
           this.$meta.eventHub.$emit('attachment:action', { action: 'delete', atomId: this.atomId, fileId: item.id });
