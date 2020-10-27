@@ -16,7 +16,7 @@ export default {
   data() {
     return {
       info: {
-        pageCurrent: 1,
+        pageCurrent: 0,
         pageSize: 20,
         total: 0,
       },
@@ -49,9 +49,10 @@ export default {
       // do nothing
     },
     onPageClear() {
+      this.layoutManager.bulk.selectedAtoms = [];
       this.itemsPages = {};
       this.info = {
-        pageCurrent: 1,
+        pageCurrent: 0,
         pageSize: 20,
         total: 0,
       };
@@ -80,14 +81,19 @@ export default {
       return res.list;
     },
     gotoPage(pageNum) {
-      this.info.pageCurrent = pageNum;
+      if (this.info.pageCurrent === pageNum) return;
+      this.layoutManager.bulk.selectedAtoms = [];
       const items = this.itemsPages[pageNum];
-      if (items) return items;
+      if (items) {
+        this.info.pageCurrent = pageNum;
+        return;
+      }
       // fetech
       const index = (pageNum - 1) * this.info.pageSize;
       this.loading = true;
       this._loadMore({ index, size: this.info.pageSize }).then(items => {
         this.$set(this.itemsPages, pageNum, items);
+        this.info.pageCurrent = pageNum;
         this.loading = false;
       }).catch(err => {
         this.$view.toast.show({ text: err.message });

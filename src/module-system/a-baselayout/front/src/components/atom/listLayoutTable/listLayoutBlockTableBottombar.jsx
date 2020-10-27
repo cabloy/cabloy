@@ -32,7 +32,7 @@ export default {
     _renderPagination() {
       return (
         <a-pagination
-          v-model={this.layout.info.pageCurrent}
+          value={this.layout.info.pageCurrent}
           page-size={this.layout.info.pageSize}
           total={this.layout.info.total}
           disabled={false}
