@@ -93,5 +93,11 @@ export default {
       // reload
       this.page_onRefresh();
     },
+    filter_renderAction() {
+      if (this.container.params && this.container.params.disableFilter === true) return null;
+      return (
+        <eb-link iconMaterial="search" propsOnPerform={this.filter_onPerform}></eb-link>
+      );
+    },
   },
 };

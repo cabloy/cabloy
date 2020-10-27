@@ -51,9 +51,9 @@ export default {
     },
   },
   methods: {
-    order_onPerformPopover(element) {
+    order_onPerformPopover(event) {
       const popover = this.$refs.order_popover.$el;
-      this.$f7.popover.open(popover, element);
+      this.$f7.popover.open(popover, event.currentTarget);
     },
     order_onPerformChange(event, atomOrder) {
       // switch
@@ -79,6 +79,11 @@ export default {
         return atomOrderCurrent.by === 'desc' ? 'arrow_drop_down' : 'arrow_drop_up';
       }
       return '';
+    },
+    order_renderAction() {
+      return (
+        <eb-link iconMaterial="sort" propsOnPerform={event => this.order_onPerformPopover(event)}></eb-link>
+      );
     },
     order_renderPopover() {
       if (!this.base.ready) return null;

@@ -4,13 +4,9 @@ export default {
       layout: {
         current: null,
         config: null,
+        instance: null,
       },
     };
-  },
-  computed: {
-    layout_componentInstance() {
-      return this.$refs.layout && this.$refs.layout.getComponentInstance();
-    },
   },
   created() {
     this.layout.current = this.container.layout || this.layout_get();
@@ -43,7 +39,7 @@ export default {
     },
     layout_renderComponent() {
       if (!this.base.ready) return null;
-      return <eb-component ref='layout' module={this.layout.config.component.module} name={this.layout.config.component.name} options={this.layout_getComponentOptions()}></eb-component>;
+      return <eb-component module={this.layout.config.component.module} name={this.layout.config.component.name} options={this.layout_getComponentOptions()}></eb-component>;
     },
     layout_getBlockComponentOptions({ blockConfig }) {
       return {

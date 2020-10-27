@@ -30,8 +30,9 @@ export default {
     },
   },
   created() {
+    this.layoutManager.layout.instance = this;
+    this.layoutManager.bottombar.enable = true;
     if (this.layoutManager.container.atomClass && (this.layoutManager.container.scene !== 'select' && this.layoutManager.container.scene !== 'selecting')) {
-      this.layoutManager.bottombar.enable = true;
       this.layoutManager.bulk_loadActions();
     }
     // first load
@@ -55,6 +56,9 @@ export default {
         total: 0,
       };
       this.loading = false;
+    },
+    getItems() {
+      return this.dataSource || [];
     },
     async _loadTotal() {
       // params

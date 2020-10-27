@@ -28,9 +28,9 @@ export default {
         this.create.actions = data.list;
       });
     },
-    create_onPerformActions(element) {
+    create_onPerformActions(event) {
       const popover = this.$refs.create_popoverActions.$el;
-      this.$f7.popover.open(popover, element);
+      this.$f7.popover.open(popover, event.currentTarget);
     },
     create_onAction(event, action) {
       let _menu = this.getMenu(action);
@@ -61,6 +61,13 @@ export default {
             {children}
           </f7-list>
         </f7-popover>
+      );
+    },
+    create_renderActions() {
+      if (this.container.atomClass) return;
+      if (!this.create_showPopoverActions) return;
+      return (
+        <eb-link iconMaterial="add" propsOnPerform={event => this.create_onPerformActions(event)}></eb-link>
       );
     },
   },

@@ -1,4 +1,5 @@
 import ebAtomClasses from '../atomClasses.js';
+import ebAtomActions from '../atomActions.js';
 import ebMenus from '../menus.js';
 import Base from './base.jsx';
 import Page from './page.jsx';
@@ -21,7 +22,7 @@ import Bottombar from './bottombar.jsx';
 // },
 
 export default {
-  mixins: [ ebAtomClasses, ebMenus, Base, Page, Layout, Bulk, Search, Select, Create, Order, Filter, Subnavbar, Bottombar ],
+  mixins: [ ebAtomClasses, ebAtomActions, ebMenus, Base, Page, Layout, Bulk, Search, Select, Create, Order, Filter, Subnavbar, Bottombar ],
   data() {
     return {
     };
@@ -37,6 +38,7 @@ export default {
     });
   },
   beforeDestroy() {
+    this.layout.instance = null;
     this.$emit('layoutManager:destroy');
   },
 };

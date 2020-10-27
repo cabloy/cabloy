@@ -19,7 +19,7 @@ export default {
   },
   computed: {
     layout() {
-      return this.layoutManager.layout_componentInstance;
+      return this.layoutManager.layout.instance;
     },
   },
   created() {

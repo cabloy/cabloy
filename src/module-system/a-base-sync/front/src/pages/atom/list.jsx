@@ -27,10 +27,10 @@ export default {
         infinite infinitePreloader={false} onInfinite={this.page_onInfinite}>
         <eb-navbar title={this.page_getTitle()} subtitle={this.page_getSubtitle()} eb-back-link="Back">
           {this.layout_renderBlock({ blockName: 'title' })}
-          {this.subnavbar.enable && this.layout_renderBlock({ blockName: 'subnavbar' })}
+          {this.layout.instance && this.subnavbar.enable && this.layout_renderBlock({ blockName: 'subnavbar' })}
         </eb-navbar>
         <f7-toolbar position="bottom" hidden={!this.bottombar.enable}>
-          {this.bottombar.enable && this.layout_renderBlock({ blockName: 'bottombar' })}
+          {this.layout.instance && this.bottombar.enable && this.layout_renderBlock({ blockName: 'bottombar' })}
         </f7-toolbar>
         {this.layout_renderLayout()}
       </eb-page>

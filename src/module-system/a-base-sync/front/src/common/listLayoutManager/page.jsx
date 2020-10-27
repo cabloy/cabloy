@@ -6,13 +6,13 @@ export default {
   methods: {
     page_onRefresh(done) {
       done && done();
-      this.layout_componentInstance && this.layout_componentInstance.onPageRefresh(true);
+      this.layout.instance && this.layout.instance.onPageRefresh(true);
     },
     page_onInfinite() {
-      this.layout_componentInstance && this.layout_componentInstance.onPageInfinite();
+      this.layout.instance && this.layout.instance.onPageInfinite();
     },
     page_onClear() {
-      this.layout_componentInstance && this.layout_componentInstance.onPageClear();
+      this.layout.instance && this.layout.instance.onPageClear();
     },
     page_getTitle() {
       //
