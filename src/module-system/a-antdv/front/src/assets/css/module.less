@@ -2,3 +2,33 @@
   @import '../../../../../../../node_modules/ant-design-vue/lib/table/style/index.less';
   @import '../../../../../../../node_modules/ant-design-vue/lib/pagination/style/index.less';
 }
+
+:root {
+
+  .eb-antdv {
+    .ant-table {
+      .ant-table-scroll {
+        .ant-table-header {
+          background: transparent;
+        }
+      }
+
+      .ant-table-body {
+        outline: none;
+      }
+
+      .ant-table-thead>tr>th,
+      .ant-table-tbody>tr>td {
+        padding: 10px 10px;
+      }
+
+      .eb-antdv-table-cell {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+    }
+
+  }
+}
