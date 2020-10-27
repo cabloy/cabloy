@@ -1,14 +1,12 @@
 import Vue from 'vue';
 const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
-const _heightHeader = 56;
-const _heightToolbar = 48;
+const ebViewSizeChange = Vue.prototype.$meta.module.get('a-components').options.mixins.ebViewSizeChange;
 const _heightTableHeader = 44;
-const _diffDesktop = 8;
 export default {
   meta: {
     global: false,
   },
-  mixins: [ ebAtomActions ],
+  mixins: [ ebAtomActions, ebViewSizeChange ],
   props: {
     layoutManager: {
       type: Object,
@@ -22,8 +20,10 @@ export default {
   },
   data() {
     return {
-      unwatch: null,
       tableHeight: 0,
+      // viewSize
+      header: true,
+      toolbar: true,
     };
   },
   computed: {
@@ -63,31 +63,15 @@ export default {
     this.$meta.eventHub.$on('atom:star', this.onStarChanged);
     this.$meta.eventHub.$on('atom:labels', this.onLabelsChanged);
     this.$meta.eventHub.$on('atom:action', this.onActionChanged);
-    // onSize
-    this.unwatch = this.$view.$watch('sizeExtent', () => {
-      this.onSize();
-    });
-    this.onSize();
   },
   beforeDestroy() {
     this.$meta.eventHub.$off('atom:star', this.onStarChanged);
     this.$meta.eventHub.$off('atom:labels', this.onLabelsChanged);
     this.$meta.eventHub.$off('atom:action', this.onActionChanged);
-    // onSize
-    if (this.unwatch) {
-      this.unwatch();
-      this.unwatch = null;
-    }
   },
   methods: {
-    onSize() {
-      const size = this.$view.getSizeExtent();
-      if (size) {
-        this.tableHeight = size.height - (_heightHeader + _heightToolbar + _heightTableHeader);
-        if (this.$meta.vueApp.layout === 'pc') {
-          this.tableHeight -= _diffDesktop;
-        }
-      }
+    onViewSizeChange(size) {
+      this.tableHeight = size.height - _heightTableHeader;
     },
     onTableChange(pagination, filters, sorter) {
       const { field, order = 'ascend' } = sorter;

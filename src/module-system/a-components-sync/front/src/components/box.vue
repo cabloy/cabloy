@@ -1,16 +1,19 @@
 <script>
-const _heightHeader = 56;
-const _heightToolbar = 48;
-const _diffDesktop = 8;
+import viewSizeChange from '../common/viewSizeChange.jsx';
 export default {
   meta: {
     global: true,
   },
   name: 'eb-box',
+  mixins: [ viewSizeChange ],
   render(c) {
     return c('div', { ref: 'box' }, this.$slots.default);
   },
   props: {
+    header: {
+      type: Boolean,
+      default: true,
+    },
     toolbar: {
       type: Boolean,
       default: false,
@@ -18,40 +21,18 @@ export default {
   },
   data() {
     return {
-      unwatch: null,
     };
   },
-  mounted() {
-    this.unwatch = this.$view.$watch('sizeExtent', () => {
-      this.onSize();
-    });
-    this.onSize();
-  },
-  beforeDestroy() {
-    if (this.unwatch) {
-      this.unwatch();
-      this.unwatch = null;
-    }
-  },
   methods: {
-    onSize() {
-      const size = this.$view.getSizeExtent();
-      if (size) {
-        let height = size.height - (this.$meta.vueApp.layout === 'pc' ? _heightHeader + _diffDesktop : _heightHeader);
-        if (this.toolbar) {
-          height -= _heightToolbar;
-        }
-        this.$$(this.$refs.box).css({
-          position: 'absolute',
-          height: `${height}px`,
-          width: '100%',
-        });
-        this.$emit('size', { width: size.width, height });
-      }
+    onViewSizeChange(size) {
+      this.$$(this.$refs.box).css({
+        position: 'absolute',
+        height: `${size.height}px`,
+        width: '100%',
+      });
+      this.$emit('size', size);
     },
   },
 };
 
 </script>
-<style>
-</style>
