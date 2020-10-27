@@ -113,7 +113,7 @@ export default {
   },
   render() {
     return (
-      <div class="antdv">
+      <div class="eb-antdv">
         {this._renderConfigProvider()}
       </div>
     );

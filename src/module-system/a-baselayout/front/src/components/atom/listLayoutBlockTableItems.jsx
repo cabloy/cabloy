@@ -2,7 +2,7 @@ import Vue from 'vue';
 const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
 const _heightHeader = 56;
 const _heightToolbar = 48;
-const _heightTableHeader = 56;
+const _heightTableHeader = 44;
 const _diffDesktop = 8;
 export default {
   meta: {
@@ -206,6 +206,25 @@ export default {
       const index = this.layoutManager.bulk.selectedAtoms.findIndex(_item => _item.atomId === item.atomId);
       return index > -1;
     },
+    _customRender(text, record, index, column) {
+      if (!column.component) {
+        if (text === null || text === undefined) {
+          text = '';
+        } else if (typeof text === 'object' && text instanceof Date) {
+          text = this.$meta.util.formatDateTime(text, column.dateFormat);
+        }
+        return <div class="eb-antdv-table-cell" title={text}>{text}</div>;
+      }
+      // component
+      const options = {
+        props: {
+          layoutManager: this.layoutManager,
+          layout: this.layout,
+          info: { text, record, index, column },
+        },
+      };
+      return <eb-component module={column.component.module} name={column.component.name} options={options}></eb-component>;
+    },
     _getColumns() {
       const columns = this.blockConfig.columns;
       const _columns = [];
@@ -218,11 +237,7 @@ export default {
         // ellipsis
         _column.ellipsis = true;
         // customRender
-        _column.customRender = (text, record) => {
-          return (
-            <div>text+1</div>
-          );
-        };
+        _column.customRender = this._customRender;
         // push
         _columns.push(_column);
       }
