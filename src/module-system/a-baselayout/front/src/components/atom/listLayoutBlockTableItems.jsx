@@ -27,6 +27,31 @@ export default {
       tableHeight: 0,
     };
   },
+  computed: {
+    columns() {
+      const columns = this.blockConfig.columns;
+      const _columns = [];
+      for (const column of columns) {
+        if (column.visible === false) continue;
+        // extend
+        const _column = this.$meta.util.extend({}, column);
+        // key
+        _column.key = _column.key || _column.dataIndex;
+        // title
+        _column.title = this.$text(_column.title);
+        // ellipsis
+        _column.ellipsis = true;
+        // customRender
+        _column.customRender = this._customRender;
+        // sorter
+        _column.sorter = !!this._columnSorterFind(_column.dataIndex);
+        _column.sortOrder = this._columnSorterCurrent(_column.dataIndex);
+        // push
+        _columns.push(_column);
+      }
+      return _columns;
+    },
+  },
   mounted() {
     this.$meta.eventHub.$on('atom:star', this.onStarChanged);
     this.$meta.eventHub.$on('atom:labels', this.onLabelsChanged);
@@ -56,6 +81,13 @@ export default {
           this.tableHeight -= _diffDesktop;
         }
       }
+    },
+    onTableChange(pagination, filters, sorter) {
+      const { field, order = 'ascend' } = sorter;
+      const currentOrder = this._columnSorterCurrent(field);
+      if (currentOrder === order) return;
+      const atomOrder = this._columnSorterFind(field);
+      this.layoutManager.order_onPerformChange(null, atomOrder);
     },
     onItemClick(event, item) {
       if (this.layoutManager.bulk.selecting) return;
@@ -206,6 +238,21 @@ export default {
       const index = this.layoutManager.bulk.selectedAtoms.findIndex(_item => _item.atomId === item.atomId);
       return index > -1;
     },
+    _columnSorterFind(columnName) {
+      return this.layoutManager.order_list.find(atomOrder => {
+        const key = this.layoutManager.order_getKey(atomOrder);
+        if (key === `a.${columnName}` || key === `f.${columnName}`) return true;
+        return false;
+      });
+    },
+    _columnSorterCurrent(columnName) {
+      const atomOrderCurrent = this.layoutManager.order_current;
+      const key = this.layoutManager.order_getKey(atomOrderCurrent);
+      if (key === `a.${columnName}` || key === `f.${columnName}`) {
+        return atomOrderCurrent.by === 'desc' ? 'descend' : 'ascend';
+      }
+      return false;
+    },
     _customRender(text, record, index, column) {
       if (!column.component) {
         if (text === null || text === undefined) {
@@ -224,24 +271,6 @@ export default {
         },
       };
       return <eb-component module={column.component.module} name={column.component.name} options={options}></eb-component>;
-    },
-    _getColumns() {
-      const columns = this.blockConfig.columns;
-      const _columns = [];
-      for (const column of columns) {
-        if (column.visible === false) continue;
-        // extend
-        const _column = this.$meta.util.extend({}, column);
-        // title
-        _column.title = this.$text(_column.title);
-        // ellipsis
-        _column.ellipsis = true;
-        // customRender
-        _column.customRender = this._customRender;
-        // push
-        _columns.push(_column);
-      }
-      return _columns;
     },
     _renderListItem(item) {
       // media
@@ -377,12 +406,13 @@ export default {
       return (
         <a-table
           bordered
-          columns={this._getColumns()}
+          columns={this.columns}
           rowKey={item => item.atomId}
-          dataSource={this.layout.getDataSource()}
+          dataSource={this.layout.dataSource}
           loading={this.layout.loading}
           pagination={false}
           scroll={{ y: this.tableHeight }}
+          onChange={this.onTableChange}
         >
         </a-table>
       );

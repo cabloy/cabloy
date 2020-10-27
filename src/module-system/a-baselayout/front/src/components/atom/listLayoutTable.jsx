@@ -24,6 +24,11 @@ export default {
       loading: false,
     };
   },
+  computed: {
+    dataSource() {
+      return this.itemsPages[this.info.pageCurrent];
+    },
+  },
   created() {
     if (this.layoutManager.container.atomClass && (this.layoutManager.container.scene !== 'select' && this.layoutManager.container.scene !== 'selecting')) {
       this.layoutManager.bottombar.enable = true;
@@ -78,15 +83,12 @@ export default {
       const index = (pageNum - 1) * this.info.pageSize;
       this.loading = true;
       this._loadMore({ index, size: this.info.pageSize }).then(items => {
-        this.itemsPages[pageNum] = items;
+        this.$set(this.itemsPages, pageNum, items);
         this.loading = false;
       }).catch(err => {
         this.$view.toast.show({ text: err.message });
         this.loading = false;
       });
-    },
-    getDataSource() {
-      return this.itemsPages[this.info.pageCurrent];
     },
     getBlockComponentOptions({ blockConfig }) {
       return {
