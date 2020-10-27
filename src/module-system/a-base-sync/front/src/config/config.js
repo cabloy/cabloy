@@ -91,6 +91,10 @@ export default {
                     dataIndex: 'userName',
                     title: 'Creator',
                     align: 'left',
+                    component: {
+                      module: 'a-baselayout',
+                      name: 'listLayoutTableCellUserName',
+                    },
                   },
                   {
                     dataIndex: 'createdAt',
