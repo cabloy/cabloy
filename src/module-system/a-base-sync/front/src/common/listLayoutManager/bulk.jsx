@@ -69,15 +69,27 @@ export default {
       const children = [];
       // switch select
       const items = this.base_getItems();
+      const selectedAtoms = this.bulk.selectedAtoms;
       if (items.length > 0 || this.bulk.selecting) {
         children.push(
           <eb-link iconMaterial="grading" propsOnPerform={this.bulk_onSelectingSwitch} ></eb-link>
         );
       }
-      const selectedAtoms = this.bulk.selectedAtoms;
       if (this.bulk.selecting) {
         children.push(
-          <eb-link iconMaterial={selectedAtoms.length >= items.length ? 'check_box_outline_blank' : 'check_box'} iconBadge={selectedAtoms.length} propsOnPerform={this.bulk_onSelectingChecking} ></eb-link>
+          <eb-link iconMaterial={selectedAtoms.length >= items.length ? 'check_box_outline_blank' : 'check_box'} iconBadge={ selectedAtoms.length.toString()} propsOnPerform={this.bulk_onSelectingChecking} ></eb-link>
+        );
+      }
+      return children;
+    },
+    bulk_rendActionsLeftB() {
+      const children = [];
+      // switch select
+      const items = this.base_getItems();
+      const selectedAtoms = this.bulk.selectedAtoms;
+      if (items.length > 0 || this.bulk.selecting) {
+        children.push(
+          <eb-link iconMaterial="grading" iconBadge={ this.bulk.selecting ? selectedAtoms.length.toString() : 0} propsOnPerform={this.bulk_onSelectingSwitch} ></eb-link>
         );
       }
       return children;

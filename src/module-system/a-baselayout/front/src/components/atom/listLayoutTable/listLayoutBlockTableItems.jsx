@@ -22,7 +22,6 @@ export default {
   },
   data() {
     return {
-      radioName: Vue.prototype.$meta.util.nextId('radio'),
       unwatch: null,
       tableHeight: 0,
     };
@@ -50,6 +49,14 @@ export default {
         _columns.push(_column);
       }
       return _columns;
+    },
+    rowSelection() {
+      if (!this.layoutManager.bulk.selecting) return null;
+      const selectedRowKeys = this.layoutManager.bulk.selectedAtoms.map(item => item.atomId);
+      return {
+        selectedRowKeys,
+        onChange: this.onSelectChange,
+      };
     },
   },
   mounted() {
@@ -88,6 +95,12 @@ export default {
       if (currentOrder === order) return;
       const atomOrder = this._columnSorterFind(field);
       this.layoutManager.order_onPerformChange(null, atomOrder);
+    },
+    onSelectChange(selectedRowKeys) {
+      const items = this.layoutManager.base_getItems();
+      this.layoutManager.bulk.selectedAtoms = items.filter(item => {
+        return selectedRowKeys.findIndex(atomId => atomId === item.atomId) > -1;
+      });
     },
     onItemClick(event, item) {
       if (this.layoutManager.bulk.selecting) return;
@@ -406,6 +419,7 @@ export default {
       return (
         <a-table
           bordered
+          rowSelection={this.rowSelection}
           columns={this.columns}
           rowKey={item => item.atomId}
           dataSource={this.layout.dataSource}
