@@ -1,8 +1,8 @@
 /**
  * based on nodejs util.js
- * 
+ *
  * https://github.com/koajs/locales/blob/master/index.js
- * 
+ *
  */
 
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -106,9 +106,9 @@ function format(f) {
 
 /**
  * based on koa-locales
- * 
+ *
  * https://github.com/koajs/locales/blob/master/index.js
- * 
+ *
  */
 
 function getText(text, value) {

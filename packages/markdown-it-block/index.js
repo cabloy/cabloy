@@ -1,19 +1,19 @@
 // Process block-level custom containers
 //
-'use strict';
+
 
 module.exports = function block_plugin(md, options) {
 
   function blockRender(tokens, idx /* _options, env, self */) {
     // blockTitle
-    var blockTitle = options.utils.text('Block');
+    const blockTitle = options.utils.text('Block');
     // block
-    var token = tokens[idx];
-    var blockName = token.info.trim().split(' ', 2)[0];
-    var block = options.blocks && options.blocks[blockName];
+    const token = tokens[idx];
+    const blockName = token.info.trim().split(' ', 2)[0];
+    const block = options.blocks && options.blocks[blockName];
     // content
-    var content;
-    var errorMessage;
+    let content;
+    let errorMessage;
     try {
       content = token.content ? JSON5.parse(token.content) : {};
     } catch (err) {
@@ -31,7 +31,7 @@ module.exports = function block_plugin(md, options) {
     // render
     if (!block || !block.render) {
       // placeholder
-      var res = JSON5.stringify(content, null, 2);
+      const res = JSON5.stringify(content, null, 2);
       return `<div class="alert-info">
 <p><strong>${blockTitle}: ${md.utils.escapeHtml(blockName)}</strong></p>
 <pre><code>${md.utils.escapeHtml(res)}</code></pre>
@@ -39,11 +39,17 @@ module.exports = function block_plugin(md, options) {
 `;
     }
     // block
-    return block.render({ md, options, block, token, index:idx, content });
+    return block.render({ md, options, block, token, index: idx, content });
   }
 
   function blockRuler(state, startLine, endLine, silent) {
-    var marker, len, params, nextLine, mem, token, markup,
+    let marker,
+        len,
+        params,
+        nextLine,
+        mem,
+        token,
+        markup,
         haveEndMarker = false,
         pos = state.bMarks[startLine] + state.tShift[startLine],
         max = state.eMarks[startLine];
@@ -99,16 +105,16 @@ module.exports = function block_plugin(md, options) {
     // If a fence has heading spaces, they should be removed from its inner block
     len = state.sCount[startLine];
     state.line = nextLine + (haveEndMarker ? 1 : 0);
-    token         = state.push('cabloy_cms_block', 'div', 0);
-    token.info    = params;
+    token = state.push('cabloy_cms_block', 'div', 0);
+    token.info = params;
     token.content = state.getLines(startLine + 1, nextLine, len, true);
-    token.markup  = markup;
-    token.map     = [ startLine, state.line ];
+    token.markup = markup;
+    token.map = [ startLine, state.line ];
     return true;
   }
 
   md.block.ruler.before('fence', 'cabloy_cms_block', blockRuler, {
-    alt: [ 'paragraph', 'reference', 'blockquote', 'list' ]
+    alt: [ 'paragraph', 'reference', 'blockquote', 'list' ],
   });
   md.renderer.rules.cabloy_cms_block = blockRender;
 };

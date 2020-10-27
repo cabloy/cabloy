@@ -18,7 +18,7 @@ class BackendTestCommand extends TestCommand {
 
     if (!context.env.EGG_BASE_DIR) context.env.EGG_BASE_DIR = path.join(process.cwd(), 'src/backend');
 
-    if (!context.argv._ || context.argv._.length === 0) context.argv._ = ['src/**/backend/test/**/*.test.js'];
+    if (!context.argv._ || context.argv._.length === 0) context.argv._ = [ 'src/**/backend/test/**/*.test.js' ];
 
     const testArgv = Object.assign({}, context.argv);
 

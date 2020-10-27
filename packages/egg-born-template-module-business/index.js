@@ -23,7 +23,7 @@ module.exports = {
   atomClassNameCapitalize: {
     desc: 'atomClassNameCapitalize',
     default(vars) {
-      return vars.atomClassName.replace(/^\S/,function(s){return s.toUpperCase();});
+      return vars.atomClassName.replace(/^\S/, function(s) { return s.toUpperCase(); });
     },
   },
 };

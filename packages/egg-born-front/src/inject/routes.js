@@ -1,6 +1,6 @@
 import Empty from './pages/empty.vue';
 
-export default[
+export default [
   {
     path: '/',
     component: Empty,

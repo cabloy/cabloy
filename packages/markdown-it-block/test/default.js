@@ -1,30 +1,29 @@
-'use strict';
 
 
-var path     = require('path');
-var generate = require('markdown-it-testgen');
+const path = require('path');
+const generate = require('markdown-it-testgen');
 
-/*eslint-env mocha*/
+/* eslint-env mocha*/
 
-var options = {
-  utils:{
-    text(){
+const options = {
+  utils: {
+    text() {
       return 'Block';
-    }
+    },
   },
-  blocks:{
-    iframe:{
-      render:function ({ md, token, content, block }){
-        var src = md.utils.escapeHtml(content.src);
+  blocks: {
+    iframe: {
+      render({ md, token, content, block }) {
+        const src = md.utils.escapeHtml(content.src);
         return `<div><iframe src="${src}"></iframe></div>\n`;
-      }
-    }
-  }
+      },
+    },
+  },
 };
 
 describe('default block', function () {
-  var md = require('markdown-it')()
-              .use(require('../'), options);
+  const md = require('markdown-it')()
+    .use(require('../'), options);
 
   generate(path.join(__dirname, 'fixtures/default.txt'), md);
 });
