@@ -28,16 +28,16 @@ export default {
       const options = Object.assign({}, this.options, { ref: 'component', scopedSlots: this.$scopedSlots });
       const children = [];
       if (this.$slots) {
-        for (let key of Object.keys(this.$slots)) {
+        for (const key of Object.keys(this.$slots)) {
           children.push(c('template', {
             slot: key,
-          }, this.$slots[key]))
+          }, this.$slots[key]));
         }
       }
       return c(this.__getFullName(), options, children);
     } else if (this.errorMessage) {
       return c('div', {
-        //staticClass: 'text-align-center',
+        // staticClass: 'text-align-center',
         domProps: { innerText: this.errorMessage },
       });
     }
@@ -66,7 +66,7 @@ export default {
     __getFullName() {
       return `${this.module}:${this.name}`;
     },
-  }
+  },
 };
 
 </script>
