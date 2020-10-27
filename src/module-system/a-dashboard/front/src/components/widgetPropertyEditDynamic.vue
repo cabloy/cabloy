@@ -9,7 +9,7 @@
   </f7-list>
 </template>
 <script>
-const _attrsBasic = ['attrTitle', 'attrWidthSmall', 'attrWidthMedium', 'attrWidthLarge', 'attrHeight'];
+const _attrsBasic = [ 'attrTitle', 'attrWidthSmall', 'attrWidthMedium', 'attrWidthLarge', 'attrHeight' ];
 export default {
   props: {
     dashboard: {
@@ -68,7 +68,7 @@ export default {
           options.push({
             title: widgetItem.widgetReal.widget.__getPropertyRealValue('title'),
             value: widgetIdSource,
-          })
+          });
         }
       }
       this.optionsSourceWidget = options;
@@ -93,7 +93,7 @@ export default {
         const attrSource = attrsSchema.properties[attrKey];
         const attrSourceClues = (attrSource.ebClue || '').split(',');
         // intersection
-        var intersection = propClues.filter(item => attrSourceClues.indexOf(item) > -1);
+        const intersection = propClues.filter(item => attrSourceClues.indexOf(item) > -1);
         if (intersection.length > 0) {
           options.push({
             title: this.$text(attrSource.ebTitle),

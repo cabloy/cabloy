@@ -22,7 +22,7 @@ export default {
         buttons: this.layout.sidebar.top.buttons,
       },
     });
-    return c('div', { staticClass: 'eb-layout-header' }, [title, tabs, buttons]);
+    return c('div', { staticClass: 'eb-layout-header' }, [ title, tabs, buttons ]);
   },
   computed: {
     title() {

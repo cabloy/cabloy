@@ -8,7 +8,7 @@ export default {
   },
   name: 'eb-list-item-panel',
   extends: f7ListItem,
-  mixins: [validate],
+  mixins: [ validate ],
   methods: {
     onValidateError(error) {
       const panel = this.$$(this.$el);

@@ -8,7 +8,7 @@ export default {
   },
   name: 'eb-input',
   extends: f7Input,
-  mixins: [validate],
+  mixins: [ validate ],
   mounted() {
     this.$nextTick(() => {
       this.checkEmptyState();

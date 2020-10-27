@@ -29,7 +29,7 @@ import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 import utils from '../../common/utils.js';
 export default {
-  mixins: [ebPageContext],
+  mixins: [ ebPageContext ],
   data() {
     const atomClass = utils.parseAtomClass(this.$f7route.query);
     return {
@@ -49,7 +49,7 @@ export default {
     tagsAll2() {
       if (!this.tagsAll || !this.searchQuery) return this.tagsAll;
       return this.tagsAll.filter(item => item.tagName.toLowerCase().indexOf(this.searchQuery.toLowerCase()) > -1);
-    }
+    },
   },
   created() {
     this.initTagsCurrent();
@@ -57,7 +57,7 @@ export default {
     const options = {
       where: { language: this.language },
       orders: [
-        ['tagName', 'asc'],
+        [ 'tagName', 'asc' ],
       ],
     };
     this.$api.post('tag/list', {

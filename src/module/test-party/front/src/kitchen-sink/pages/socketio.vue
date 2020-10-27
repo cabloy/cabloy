@@ -30,7 +30,7 @@ export default {
         messageClassName: 'test',
       },
       messageIdsToRead: {},
-    }
+    };
   },
   computed: {
     user() {
@@ -78,7 +78,7 @@ export default {
       this.subscribeId = this.io.subscribe(
         _subscribePath,
         this.onMessage.bind(this),
-        this.onSubscribed.bind(this), { scene: this.messageScene },
+        this.onSubscribed.bind(this), { scene: this.messageScene }
       );
     });
   },
@@ -231,8 +231,8 @@ export default {
         this.setMessageOffset(message.id);
       });
 
-    }
-  }
-}
+    },
+  },
+};
 
 </script>

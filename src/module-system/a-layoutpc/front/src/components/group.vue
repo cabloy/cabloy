@@ -157,7 +157,7 @@ export default {
         // check
         if (left >= 0) {
           const newStyle = {
-            left: `${left+sidebarLeft}px`,
+            left: `${left + sidebarLeft}px`,
           };
           this.$$(view.$el).css(newStyle);
           this.$$(view.$el).removeClass('view-hide');

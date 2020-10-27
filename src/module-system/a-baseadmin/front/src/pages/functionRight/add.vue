@@ -19,9 +19,9 @@
 import Vue from 'vue';
 const ebModules = Vue.prototype.$meta.module.get('a-base').options.mixins.ebModules;
 const ebFunctions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebFunctions;
-const _types = ['Function', 'Menu', 'Panel', 'Widget'];
+const _types = [ 'Function', 'Menu', 'Panel', 'Widget' ];
 export default {
-  mixins: [ebModules, ebFunctions],
+  mixins: [ ebModules, ebFunctions ],
   data() {
     return {
       roleId: parseInt(this.$f7route.query.roleId),
@@ -52,7 +52,7 @@ export default {
     },
     buttonTitle() {
       return this.$text(_types[this.menu]);
-    }
+    },
   },
   watch: {
     module(value) {
@@ -84,11 +84,11 @@ export default {
     onSave() {
       if (!this.module || !this.func) return;
       return this.$api.post('functionRight/add', {
-          roleId: this.roleId,
-          menu: this.menu,
-          module: this.module,
-          name: this.func.name,
-        })
+        roleId: this.roleId,
+        menu: this.menu,
+        module: this.module,
+        name: this.func.name,
+      })
         .then(() => {
           this.$meta.eventHub.$emit('functionRight:add', { roleId: this.roleId, menu: this.menu });
           this.$f7router.back();

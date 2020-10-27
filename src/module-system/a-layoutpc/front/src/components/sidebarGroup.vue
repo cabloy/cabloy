@@ -27,7 +27,7 @@ export default {
       } else {
         style = {
           zIndex: view.zIndex + '',
-          height: `${this.sidebar.options.panelHeight-this.sidebar.options.toolbarHeight}px`,
+          height: `${this.sidebar.options.panelHeight - this.sidebar.options.toolbarHeight}px`,
         };
       }
       children.push(c('eb-view', {
@@ -55,12 +55,12 @@ export default {
   props: {
     side: {
       type: String,
-    }
+    },
   },
   data() {
     return {
       viewIndex: 1,
-    }
+    };
   },
   computed: {
     layout() {
@@ -71,7 +71,7 @@ export default {
     },
     views() {
       return this.sidebar.views;
-    }
+    },
   },
   methods: {
     createView({ ctx, panel }) {

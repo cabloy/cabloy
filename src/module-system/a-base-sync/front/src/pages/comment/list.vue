@@ -70,7 +70,7 @@ export default {
       // options
       const options = {
         orders: [
-          ['updatedAt', this.order],
+          [ 'updatedAt', this.order ],
         ],
         page: { index },
       };

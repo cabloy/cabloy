@@ -4,7 +4,7 @@ import widgetPropertyEditDynamic from '../components/widgetPropertyEditDynamic.v
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
-  mixins: [ebPageContext],
+  mixins: [ ebPageContext ],
   components: {
     widgetPropertyEditDynamic,
   },
@@ -69,6 +69,6 @@ export default {
     },
   },
 
-}
+};
 
 </script>

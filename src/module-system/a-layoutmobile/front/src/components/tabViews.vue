@@ -43,8 +43,8 @@ export default {
     // views
     return c('f7-views', {
       staticClass: 'eb-layout-scene eb-layout-scene-tool',
-      attrs: { tabs: true }
-    }, [toolbar, ...tabs]);
+      attrs: { tabs: true },
+    }, [ toolbar, ...tabs ]);
   },
   computed: {
     layout() {

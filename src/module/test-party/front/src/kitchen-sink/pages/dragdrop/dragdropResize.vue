@@ -36,24 +36,24 @@ export default {
     onDragMove({ $el, context, diff }) {
       const isRow = context.resizeDirection === 'row';
       if (!isRow) {
-        let diffAbs = parseInt(diff.abs.x);
+        const diffAbs = parseInt(diff.abs.x);
         if (diffAbs === 0) return;
         this.width += diffAbs;
         const tooltip = this.width;
         return { eaten: true, tooltip };
-      } else {
-        let diffAbs = parseInt(diff.abs.y);
-        if (diffAbs === 0) return;
-        this.height += diffAbs;
-        const tooltip = this.height;
-        return { eaten: true, tooltip };
       }
+      const diffAbs = parseInt(diff.abs.y);
+      if (diffAbs === 0) return;
+      this.height += diffAbs;
+      const tooltip = this.height;
+      return { eaten: true, tooltip };
+
     },
     onDragEnd({ $el, context }) {
       // do nothing
     },
   },
-}
+};
 
 </script>
 <style lang="less" scoped>

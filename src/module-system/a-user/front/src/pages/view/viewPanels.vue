@@ -11,7 +11,7 @@
 import Vue from 'vue';
 const ebModules = Vue.prototype.$meta.module.get('a-base').options.mixins.ebModules;
 export default {
-  mixins: [ebModules],
+  mixins: [ ebModules ],
   data() {
     return {
       side: this.$f7route.query.side,

@@ -31,7 +31,7 @@ export default {
       this.wx = res && res.wx;
     }).catch(e => {
       this.$view.toast.show({ text: e.message });
-    })
+    });
   },
   mounted() {
     this.messagebar = this.$refs.messagebar.f7Messagebar;
@@ -40,19 +40,19 @@ export default {
     onPerformScanQRCode() {
       this.wx.scanQRCode({
         needResult: 1,
-        scanType: ['qrCode', 'barCode'],
+        scanType: [ 'qrCode', 'barCode' ],
         success: res => {
           this.$view.toast.show({ text: res.resultStr });
         },
         fail: res => {
           this.$view.toast.show({ text: res.errMsg });
-        }
+        },
       });
     },
     onPerformMemberId() {
       return this.$api.post('test/getMemberId').then(data => {
         this.memberId = data.memberId;
-      })
+      });
     },
     onSubmitSendMessage(value, clear) {
       // clear
@@ -69,9 +69,9 @@ export default {
       }).then(() => {
         // donothing
       });
-    }
+    },
 
-  }
+  },
 };
 
 </script>

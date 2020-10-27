@@ -21,7 +21,7 @@ export default {
     },
     login({ ctx, state, hash }) {
       ctx.$meta.vueApp.toLogin({ url: urlLogin, state, hash });
-    }
+    },
   },
   data() {
     return {};

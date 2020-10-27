@@ -8,7 +8,7 @@ export default {
   },
   name: 'eb-list-item-choose',
   extends: f7ListItem,
-  mixins: [validate],
+  mixins: [ validate ],
   props: {
     onChoose: {
       type: Function,

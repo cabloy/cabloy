@@ -34,7 +34,7 @@
 export default {
   data() {
     return {
-      movies: ['Movie 1'],
+      movies: [ 'Movie 1' ],
     };
   },
   methods: {
@@ -52,7 +52,7 @@ export default {
       const self = this;
       const movies = self.movies;
       if (movies.length === 1 || movies.length === 0) {
-        self.movies = ['Movie 1', 'Movie 2'];
+        self.movies = [ 'Movie 1', 'Movie 2' ];
       } else if (movies.length === 2) {
         self.movies = [];
       }

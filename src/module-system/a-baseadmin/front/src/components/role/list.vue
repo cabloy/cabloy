@@ -18,7 +18,7 @@ export default {
         attrs: {
           itemToggle: false,
           selectable: true,
-        }
+        },
       },
     };
   },

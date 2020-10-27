@@ -202,7 +202,7 @@ export default {
     self.colorPickerInline = app.colorPicker.create({
       value: self.inlinePickerValue,
       containerEl: '#demo-color-picker-inline',
-      modules: ['sb-spectrum', 'hsb-sliders', 'alpha-slider'],
+      modules: [ 'sb-spectrum', 'hsb-sliders', 'alpha-slider' ],
       on: {
         change(cp, value) {
           self.inlinePickerValue = value;

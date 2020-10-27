@@ -1,9 +1,9 @@
 <script>
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
-const _propsBasic = ['title', 'widthSmall', 'widthMedium', 'widthLarge', 'height'];
+const _propsBasic = [ 'title', 'widthSmall', 'widthMedium', 'widthLarge', 'height' ];
 export default {
-  mixins: [ebPageContext],
+  mixins: [ ebPageContext ],
   data() {
     return {
       widgetId: this.$f7route.query.widgetId,
@@ -137,7 +137,7 @@ export default {
             context: { propertySchema, propertyName },
             onPerform: this.onPerformPropertyEdit,
           },
-        }, [validateItem]);
+        }, [ validateItem ]);
         children.push(link);
       }
       // list
@@ -146,21 +146,21 @@ export default {
           inset: true,
         },
       }, children);
-      const content = c('f7-accordion-content', {}, [list]);
+      const content = c('f7-accordion-content', {}, [ list ]);
       return c('f7-list-item', {
         props: {
           title: this.$text(title),
           accordionItem: true,
           accordionItemOpened: opened,
         },
-      }, [content]);
+      }, [ content ]);
     },
     _renderList(c) {
       // schema
-      let [propsSchema, propsCategories] = this.widget._getPropsSchemaCategoryGrouping(this.widget.options);
+      const [ propsSchema, propsCategories ] = this.widget._getPropsSchemaCategoryGrouping(this.widget.options);
       const basicOnly = Object.keys(propsCategories).length === 1;
       // schema data
-      let schemaData = this._getSchemaData(propsSchema);
+      const schemaData = this._getSchemaData(propsSchema);
       // list
       const children = [];
       for (const propsCategoryKey in propsCategories) {
@@ -189,10 +189,10 @@ export default {
             schema: propsSchema,
           },
         },
-      }, [list]);
+      }, [ list ]);
     },
   },
 
-}
+};
 
 </script>

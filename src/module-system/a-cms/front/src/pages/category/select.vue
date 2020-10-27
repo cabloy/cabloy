@@ -14,7 +14,7 @@ import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 import utils from '../../common/utils.js';
 export default {
-  mixins: [ebPageContext],
+  mixins: [ ebPageContext ],
   data() {
     const atomClass = utils.parseAtomClass(this.$f7route.query);
     return {
@@ -48,9 +48,9 @@ export default {
           multiple: this.multiple,
           checkbox: true,
           checkOnLabel: true,
-        }
+        },
       };
-    }
+    },
   },
   methods: {
     onLoadChildren(node) {
@@ -79,10 +79,10 @@ export default {
       // children
       const categoryId = node.root ? this.categoryIdStart : node.id;
       return this.$api.post('category/children', {
-          atomClass: this.atomClass,
-          language: this.language,
-          categoryId,
-        })
+        atomClass: this.atomClass,
+        language: this.language,
+        categoryId,
+      })
         .then(data => {
           let list = data.list.map(item => {
             const checkbox = !this.leafOnly || item.catalog === 0;

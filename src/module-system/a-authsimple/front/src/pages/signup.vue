@@ -44,8 +44,8 @@ export default {
       },
       captchaContainerOptions: {
         props: {
-          module: "a-authsimple",
-          sceneName: "signup",
+          module: 'a-authsimple',
+          sceneName: 'signup',
         },
       },
       userNameReadOnly: false,

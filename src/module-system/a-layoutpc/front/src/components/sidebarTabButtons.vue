@@ -12,7 +12,7 @@ export default {
     children.push(c('eb-sidebar-tab-buttons'), {
       props: {
         side: this.side,
-      }
+      },
     });
     const tabs = [];
     for (const panel of this.panels) {
@@ -39,7 +39,7 @@ export default {
             onDropEnter: this.onDropEnter,
             onDragEnd: this.onDragEnd,
             onDragDone: this.onDragDone,
-          }
+          },
         }],
       }));
     }
@@ -50,12 +50,12 @@ export default {
   props: {
     side: {
       type: String,
-    }
+    },
   },
   data() {
     return {
       dragdropScene: Vue.prototype.$meta.util.nextId('dragdrop'),
-    }
+    };
   },
   computed: {
     layout() {
@@ -75,14 +75,14 @@ export default {
       this.sidebar.createView({ ctx: null, panel });
     },
     onDragStart({ $el, context, dragElement }) {
-      const [panel, panelIndexDrag] = this.sidebar._getPanelAndIndex(context.panel);
+      const [ panel, panelIndexDrag ] = this.sidebar._getPanelAndIndex(context.panel);
       const tooltip = this.__getPanelTitle(panel);
       return { tooltip };
     },
     onDragElement({ $el, context }) {},
     onDropElement({ $el, context, dragElement, dragContext }) {
-      const [panelDrop, panelIndexDrop] = this.sidebar._getPanelAndIndex(context.panel);
-      const [panelDrag, panelIndexDrag] = this.sidebar._getPanelAndIndex(dragContext.panel);
+      const [ panelDrop, panelIndexDrop ] = this.sidebar._getPanelAndIndex(context.panel);
+      const [ panelDrag, panelIndexDrag ] = this.sidebar._getPanelAndIndex(dragContext.panel);
       if (panelIndexDrop === panelIndexDrag || panelIndexDrop == panelIndexDrag + 1) return null;
       // dropElement
       const dropElement = $el;
@@ -105,7 +105,7 @@ export default {
     __getPanelTitle(panel) {
       return panel.titleLocale || this.$text(panel.title) || panel.name;
     },
-  }
-}
+  },
+};
 
 </script>

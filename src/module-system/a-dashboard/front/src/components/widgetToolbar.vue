@@ -39,7 +39,7 @@ export default {
           onDropEnter: this.onDropEnter,
           onDragEnd: this.onDragEnd,
           onDragDone: this.onDragDone,
-        }
+        },
       }],
     }));
     return c('div', {
@@ -82,9 +82,9 @@ export default {
     },
   },
   data() {
-    return {}
+    return {};
   },
-  methods: {}
-}
+  methods: {},
+};
 
 </script>

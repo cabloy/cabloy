@@ -67,14 +67,14 @@ export default {
       this.$view.dialog.create({
         title: 'Vertical Buttons',
         buttons: [{
-            text: 'Button 1',
-          },
-          {
-            text: 'Button 2',
-          },
-          {
-            text: 'Button 3',
-          },
+          text: 'Button 1',
+        },
+        {
+          text: 'Button 2',
+        },
+        {
+          text: 'Button 3',
+        },
         ],
         verticalButtons: true,
       }).open();

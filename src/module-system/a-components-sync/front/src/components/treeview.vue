@@ -18,7 +18,7 @@ export default {
       type: Function,
     },
     onLoadChildren: {
-      type: Function
+      type: Function,
     },
   },
   data() {
@@ -35,7 +35,7 @@ export default {
     const {
       className,
       id,
-      style
+      style,
     } = props;
     const classes = Utils.classNames(className, 'treeview', Mixins.colorClasses(props));
 
@@ -44,17 +44,17 @@ export default {
 
     //
     return _h('div', {
-      style: style,
+      style,
       class: classes,
       attrs: {
-        id: id
-      }
+        id,
+      },
     }, nodes);
   },
   watch: {
     root() {
       this.reload();
-    }
+    },
   },
   created() {
     this.reload();
@@ -111,7 +111,7 @@ export default {
       this.treeDown(nodeStart, item => {
         if (cb(item)) {
           node = item;
-          return false; //break
+          return false; // break
         }
       });
       return node;
@@ -227,7 +227,7 @@ export default {
             change: e => {
               this._onNodeChange(node, e.target.checked);
             },
-          }
+          },
         }));
       } else if (_node.attrs.checkbox && !radio) {
         children.push(_h('f7-checkbox', {
@@ -240,7 +240,7 @@ export default {
             change: e => {
               this._onNodeChange(node, !node.attrs.checked);
             },
-          }
+          },
         }));
       }
       // scopedSlots
@@ -257,12 +257,12 @@ export default {
         style: _node.style,
         on: {
           'treeview:loadchildren': (e, done) => {
-            this._onNodeLoadChildren(e, done, node)
+            this._onNodeLoadChildren(e, done, node);
           },
-          'click': e => {
+          click: e => {
             this._onNodeClick(e, node);
-          }
-        }
+          },
+        },
       }, children);
     },
     _renderNodes(_h, nodes, attrIdParent) {
@@ -275,10 +275,10 @@ export default {
     },
     _renderScopeSlots(_h, node) {
       const slots = [];
-      for (let key of Object.keys(this.$scopedSlots)) {
+      for (const key of Object.keys(this.$scopedSlots)) {
         slots.push(_h('template', {
           slot: key,
-        }, [this.$scopedSlots[key]({ node })]));
+        }, [ this.$scopedSlots[key]({ node }) ]));
       }
       return slots;
     },
@@ -396,7 +396,7 @@ export default {
           }
         });
       }
-    }
+    },
 
   },
 };

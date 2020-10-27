@@ -100,7 +100,7 @@ export default {
 
 [Link](https://zhennann.com/)
 
-![Image](${this.$meta.util.combineStaticPath('a-base','img/avatar_user.png')})
+![Image](${this.$meta.util.combineStaticPath('a-base', 'img/avatar_user.png')})
 
 > Blockquote
 

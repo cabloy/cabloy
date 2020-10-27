@@ -20,7 +20,7 @@ export default {
   meta: {
     global: false,
   },
-  mixins: [ebClipboard],
+  mixins: [ ebClipboard ],
   data() {
     return {
       id: parseInt(this.$f7route.query.id),
@@ -41,7 +41,7 @@ export default {
     clipboardCreate() {
       if (!this.meta) return;
       this.$nextTick(() => {
-        for (let btn of ['loginURL', 'callbackURL']) {
+        for (const btn of [ 'loginURL', 'callbackURL' ]) {
           this.addClipboardTrigger(this.$refs[btn].$el, {
             text: trigger => {
               return this.meta[btn];
@@ -49,7 +49,7 @@ export default {
           });
         }
       });
-    }
+    },
   },
 };
 

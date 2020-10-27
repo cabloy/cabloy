@@ -8,7 +8,7 @@ export default {
   },
   name: 'eb-list-input',
   extends: f7ListInput,
-  mixins: [validate],
+  mixins: [ validate ],
   mounted() {
     this.$nextTick(() => {
       this.checkEmptyState();

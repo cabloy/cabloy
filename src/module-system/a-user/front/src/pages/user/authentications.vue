@@ -21,7 +21,7 @@
 import Vue from 'vue';
 const ebModules = Vue.prototype.$meta.module.get('a-base').options.mixins.ebModules;
 export default {
-  mixins: [ebModules],
+  mixins: [ ebModules ],
   data() {
     return {
       items: null,
@@ -122,7 +122,7 @@ export default {
         query: { state: 'migrate' },
         url: '/a/user/user/authentications',
       });
-    }
+    },
   },
 };
 

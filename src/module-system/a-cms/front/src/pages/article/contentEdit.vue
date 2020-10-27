@@ -21,7 +21,7 @@ export default {
   meta: {
     size: 'large',
   },
-  mixins: [ebPageContext],
+  mixins: [ ebPageContext ],
   data() {
     const atomClass = utils.parseAtomClass(this.$f7route.query);
     return {

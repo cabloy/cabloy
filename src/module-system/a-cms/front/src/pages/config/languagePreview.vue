@@ -11,7 +11,7 @@ import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 import utils from '../../common/utils.js';
 export default {
-  mixins: [ebPageContext],
+  mixins: [ ebPageContext ],
   data() {
     const atomClass = utils.parseAtomClass(this.$f7route.query);
     return {

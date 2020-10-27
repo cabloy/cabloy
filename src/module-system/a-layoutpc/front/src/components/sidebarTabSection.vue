@@ -31,7 +31,7 @@ export default {
           onDragStart: this.onDragStart,
           onDropElement: this.onDropElement,
           onDragDone: this.onDragDone,
-        }
+        },
       }],
     }, children);
   },
@@ -41,7 +41,7 @@ export default {
     },
     dragdropScene: {
       type: String,
-    }
+    },
   },
   data() {
     return {
@@ -86,13 +86,13 @@ export default {
       });
     },
     onDragStart({ $el, context, dragElement }) {
-      const [section, sectionIndexDrag] = this.sidebar._getSectionAndIndex(context.section);
+      const [ section, sectionIndexDrag ] = this.sidebar._getSectionAndIndex(context.section);
       const tooltip = this.__getSectionTitle(section);
       return { tooltip };
     },
     onDropElement({ $el, context, dragElement, dragContext }) {
-      const [sectionDrop, sectionIndexDrop] = this.sidebar._getSectionAndIndex(context.section);
-      const [sectionDrag, sectionIndexDrag] = this.sidebar._getSectionAndIndex(dragContext.section);
+      const [ sectionDrop, sectionIndexDrop ] = this.sidebar._getSectionAndIndex(context.section);
+      const [ sectionDrag, sectionIndexDrag ] = this.sidebar._getSectionAndIndex(dragContext.section);
       if (sectionIndexDrop === sectionIndexDrag || sectionIndexDrop == sectionIndexDrag + 1) return null;
       // dropElement
       const dropElement = $el;
@@ -120,8 +120,8 @@ export default {
       const fullName = this.layout._sectionFullName(this.options);
       delete this.group.sectionsReal[fullName];
     },
-  }
+  },
 
-}
+};
 
 </script>

@@ -30,7 +30,7 @@ export default {
         attrs: {
           itemToggle: false,
           selectable: true,
-        }
+        },
       },
     };
   },
@@ -56,10 +56,10 @@ export default {
       // children
       const categoryId = node.root ? this.categoryIdStart : node.id;
       return this.$api.post('category/children', {
-          atomClass: this.atomClass,
-          language: this.language,
-          categoryId,
-        })
+        atomClass: this.atomClass,
+        language: this.language,
+        categoryId,
+      })
         .then(data => {
           let list = data.list.map(item => {
             const node = {

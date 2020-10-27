@@ -11,7 +11,7 @@ export default {
     onPageAfterIn(page) {
       if (this.eventTargetEl !== page.el) return;
       this.setState({
-        routerPositionClass: 'page-current'
+        routerPositionClass: 'page-current',
       });
       this.dispatchEvent('page:afterin pageAfterIn', page);
 

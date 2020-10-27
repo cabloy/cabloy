@@ -5,7 +5,7 @@ export default {
     global: true,
   },
   name: 'eb-dashboard-widget-group',
-  mixins: [widgetBaseFn(Vue, true)],
+  mixins: [ widgetBaseFn(Vue, true) ],
   render(c) {
     return this.__renderRow(c);
   },
@@ -39,28 +39,28 @@ export default {
             options: item,
             dragdropSceneResize: this.dragdropSceneResize,
             dragdropScene: this.dragdropScene,
-          }
+          },
         });
         cols.push(col);
       }
-      //last
+      // last
       cols.push(c('f7-col', {
         staticClass: 'widget widget-last',
         props: {
           resizable: true,
           resizableHandler: false,
           width: 100,
-        }
+        },
       }));
       // row
       return c('f7-row', {
-        staticClass: `group`,
+        staticClass: 'group',
       }, cols);
     },
     __getWidgetById(widgetId) {
       const index = this.widgets.findIndex(item => item.id === widgetId);
-      if (index === -1) return [null, -1];
-      return [this.widgets[index], index];
+      if (index === -1) return [ null, -1 ];
+      return [ this.widgets[index], index ];
     },
     onWidgetAdd(widget) {
       const _widget = { module: widget.module, name: widget.name };
@@ -69,7 +69,7 @@ export default {
       // save
       this.dashboard.__saveLayoutConfig();
     },
-  }
-}
+  },
+};
 
 </script>

@@ -11,7 +11,7 @@
 export default {
   data() {
     return {
-      items: ['🍎 Apple', '🍌 Banana', '🍒 Cherry', '🍊 Orange', '🍐 Pear'],
+      items: [ '🍎 Apple', '🍌 Banana', '🍒 Cherry', '🍊 Orange', '🍐 Pear' ],
       dragdropScene: Vue.prototype.$meta.util.nextId('dragdrop'),
       indexDragIndex: -1,
       indexDropIndex: -1,
@@ -34,7 +34,7 @@ export default {
         onDropEnter: this.onDropEnter,
         onDragDone: this.onDragDone,
         onDragEnd: this.onDragEnd,
-      }
+      };
     },
     onDragElement({ $el, context }) {
       // do nothing
@@ -76,7 +76,7 @@ export default {
       return this.items.findIndex(_item => _item === item);
     },
   },
-}
+};
 
 </script>
 <style lang="less" scoped>

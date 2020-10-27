@@ -22,7 +22,7 @@ export default {
       }));
     }
     return c('div', {
-      staticClass: `header-button ${this.showing?'':'display-none'}`,
+      staticClass: `header-button ${this.showing ? '' : 'display-none'}`,
       directives: [{
         name: 'eb-dragdrop',
         value: {
@@ -31,7 +31,7 @@ export default {
           onDragStart: this.onDragStart,
           onDropElement: this.onDropElement,
           onDragDone: this.onDragDone,
-        }
+        },
       }],
     }, children);
   },
@@ -41,7 +41,7 @@ export default {
     },
     dragdropScene: {
       type: String,
-    }
+    },
   },
   data() {
     return {
@@ -90,13 +90,13 @@ export default {
       this.showing = false;
     },
     onDragStart({ $el, context, dragElement }) {
-      const [button, buttonIndexDrag] = this.group._getButtonAndIndex(context.button);
+      const [ button, buttonIndexDrag ] = this.group._getButtonAndIndex(context.button);
       const tooltip = this.__getButtonTitle(button);
       return { tooltip };
     },
     onDropElement({ $el, context, dragElement, dragContext }) {
-      const [buttonDrop, buttonIndexDrop] = this.group._getButtonAndIndex(context.button);
-      const [buttonDrag, buttonIndexDrag] = this.group._getButtonAndIndex(dragContext.button);
+      const [ buttonDrop, buttonIndexDrop ] = this.group._getButtonAndIndex(context.button);
+      const [ buttonDrag, buttonIndexDrag ] = this.group._getButtonAndIndex(dragContext.button);
       if (buttonIndexDrop === buttonIndexDrag || buttonIndexDrop == buttonIndexDrag + 1) return null;
       // dropElement
       const dropElement = $el;
@@ -124,8 +124,8 @@ export default {
       const fullName = this.layout._buttonFullName(this.options);
       delete this.group.buttonsReal[fullName];
     },
-  }
+  },
 
-}
+};
 
 </script>

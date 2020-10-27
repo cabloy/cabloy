@@ -25,7 +25,7 @@
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
-  mixins: [ebPageContext],
+  mixins: [ ebPageContext ],
   data() {
     return {
       profileIdCurrent: parseInt(this.$f7route.query.profileId || 0),
@@ -86,7 +86,7 @@ export default {
         const profile = {
           profileName,
           profileValue: null,
-        }
+        };
         return this.$api.post('profile/create', {
           data: profile,
         }).then(data => {
@@ -104,7 +104,7 @@ export default {
         const profile = {
           profileName,
           profileValue: JSON.stringify(this.dashboard.profile),
-        }
+        };
         return this.$api.post('profile/create', {
           data: profile,
         }).then(data => {
@@ -132,7 +132,7 @@ export default {
       return this.dashboard.__switchProfile(profileId).then(() => {
         this.dashboard.__saveProfileId();
         this.profileIdCurrent = profileId;
-        //return true;
+        // return true;
       });
     },
     __getProfileIndexById(profileId) {
@@ -140,8 +140,8 @@ export default {
     },
     __getProfileTitle(item) {
       return this.profileIdCurrent === item.id ? `${item.profileName} ⭐` : item.profileName;
-    }
+    },
   },
-}
+};
 
 </script>

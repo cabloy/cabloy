@@ -24,7 +24,7 @@
 <script>
 import syncStatus from '../../common/syncStatus.js';
 export default {
-  mixins: [syncStatus],
+  mixins: [ syncStatus ],
   data() {
     return {};
   },

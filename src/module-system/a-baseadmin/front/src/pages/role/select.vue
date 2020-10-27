@@ -13,7 +13,7 @@
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
-  mixins: [ebPageContext],
+  mixins: [ ebPageContext ],
   data() {
     return {};
   },
@@ -41,9 +41,9 @@ export default {
           multiple: this.multiple,
           checkbox: true,
           checkOnLabel: true,
-        }
+        },
       };
-    }
+    },
   },
   methods: {
     onLoadChildren(node) {

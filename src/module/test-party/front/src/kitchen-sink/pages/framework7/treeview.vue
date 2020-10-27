@@ -156,14 +156,14 @@ export default {
         // call done() to hide preloader
         done();
         self.loadedChildren = [{
-            name: 'John Doe',
-          },
-          {
-            name: 'Jane Doe',
-          },
-          {
-            name: 'Calvin Johnson',
-          },
+          name: 'John Doe',
+        },
+        {
+          name: 'Jane Doe',
+        },
+        {
+          name: 'Calvin Johnson',
+        },
         ];
       }, 2000);
     },

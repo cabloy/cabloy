@@ -43,7 +43,7 @@ export default {
       // user.op
       if (this.user.op.anonymous) return;
       this.$api.post('user/themeSave', {
-        theme: this.theme
+        theme: this.theme,
       }).then(() => {
         // donothing
       }).catch(err => {
@@ -61,12 +61,12 @@ export default {
     },
     onChangeBuiltIn() {
       if (this.checkSave('builtIn')) {
-        //this.editBuiltIn();
+        // this.editBuiltIn();
       }
     },
     onChangeThirdParty() {
       if (this.checkSave('thirdParty')) {
-        //this.editThirdParty();
+        // this.editThirdParty();
       }
     },
     onClickBuiltIn() {
@@ -94,7 +94,7 @@ export default {
               this.theme = { ...this.theme, builtIn };
               this.$meta.theme.set(this.theme);
               this.save();
-            }
+            },
           },
           callback: (code, data) => {
             if (code === 200) {

@@ -8,7 +8,7 @@
   </eb-page>
 </template>
 <script>
-const _types = ['Function', 'Menu', 'Panel', 'Widget'];
+const _types = [ 'Function', 'Menu', 'Panel', 'Widget' ];
 export default {
   data() {
     return {

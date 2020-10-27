@@ -57,7 +57,7 @@ import Vue from 'vue';
 const ebModules = Vue.prototype.$meta.module.get('a-base').options.mixins.ebModules;
 import utils from '../../common/utils.js';
 export default {
-  mixins: [ebModules],
+  mixins: [ ebModules ],
   data() {
     const atomClass = utils.parseAtomClass(this.$f7route.query);
     return {
@@ -123,13 +123,13 @@ export default {
     },
     combineLinkArticles(language) {
       const where = {
-        'f.language': language
+        'f.language': language,
       };
       return this.combineAtomClass(`/a/base/atom/list?where=${encodeURIComponent(JSON.stringify(where))}`);
     },
     combineLinkComments(language) {
       const where = {
-        'f.language': language
+        'f.language': language,
       };
       return this.combineAtomClass(`/a/base/comment/all?where=${encodeURIComponent(JSON.stringify(where))}`);
     },
@@ -149,7 +149,7 @@ export default {
       const stats = this.stats[language];
       if (!stats) return '--';
       return stats[fieldName];
-    }
+    },
   },
 };
 

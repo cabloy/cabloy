@@ -41,10 +41,10 @@ export default {
   props: {
     side: {
       type: String,
-    }
+    },
   },
   data() {
-    return {}
+    return {};
   },
   computed: {
     layout() {
@@ -70,7 +70,7 @@ export default {
         this.sidebar.closeView(this.$$('#' + view.id)[0].f7View);
       }
     },
-  }
-}
+  },
+};
 
 </script>

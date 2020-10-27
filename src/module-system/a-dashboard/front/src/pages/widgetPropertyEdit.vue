@@ -4,7 +4,7 @@ import widgetPropertyEditDynamic from '../components/widgetPropertyEditDynamic.v
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
-  mixins: [ebPageContext],
+  mixins: [ ebPageContext ],
   components: {
     widgetPropertyEditDynamic,
   },
@@ -146,30 +146,30 @@ export default {
               context: propertyBind,
               onPerform: this._onPerformBindEdit,
             },
-          }, [c('span', {
+          }, [ c('span', {
             domProps: {
               innerText: this.$text('Edit'),
-            }
-          })]));
+            },
+          }) ]));
           buttons.push(c('div', {
             attrs: {
               color: 'red',
               context: propertyBind,
               onPerform: this._onPerformBindDelete,
             },
-          }, [c('span', {
+          }, [ c('span', {
             domProps: {
               innerText: this.$text('Delete'),
-            }
-          })]));
+            },
+          }) ]));
           // right
           const right = c('div', {
             slot: 'right',
           }, buttons);
           // context menu
-          const menu = c('eb-context-menu', {}, [right]);
+          const menu = c('eb-context-menu', {}, [ right ]);
           // list item
-          const [title, propertyTitle] = this.widget._getBindSourceTitleAndPropertyTitle(propertyBind.widgetId, propertyBind.propertyName);
+          const [ title, propertyTitle ] = this.widget._getBindSourceTitleAndPropertyTitle(propertyBind.widgetId, propertyBind.propertyName);
           children.push(c('eb-list-item', {
             key: propertyBind.id,
             props: {
@@ -177,7 +177,7 @@ export default {
               after: title,
               swipeout: true,
             },
-          }, [menu]));
+          }, [ menu ]));
         }
       }
       return c('f7-list', {}, children);
@@ -201,10 +201,10 @@ export default {
       if (this.propertySchema.ebBindArray) {
         // array
         return this._renderValueDynamicArray(c, propertyReal && propertyReal.binds);
-      } else {
-        // single
-        return this._renderValueDynamicSingle(c, propertyReal && propertyReal.bind);
       }
+      // single
+      return this._renderValueDynamicSingle(c, propertyReal && propertyReal.bind);
+
     },
     _preparePropSchemaExtra() {
       const widgetReal = this.dashboard.__getWidgetRealById(this.widget.options.id);
@@ -243,8 +243,8 @@ export default {
         on: {
           'validateItem:change': (key, value) => {
             return this._setPropertyValue({ type: 1, value });
-          }
-        }
+          },
+        },
       });
     },
     _renderValueTypes(c, propertyReal, isDynamic) {
@@ -289,6 +289,6 @@ export default {
     },
   },
 
-}
+};
 
 </script>

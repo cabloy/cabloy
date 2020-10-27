@@ -39,8 +39,8 @@ export default {
       },
       captchaContainerOptions: {
         props: {
-          module: "test-party",
-          sceneName: "formCaptchaTest",
+          module: 'test-party',
+          sceneName: 'formCaptchaTest',
         },
       },
     };

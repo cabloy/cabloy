@@ -37,7 +37,7 @@ export default {
       return new Promise((resolve, reject) => {
         dd.runtime.permission.requestAuthCode({
           corpId: config.corpId,
-          onSuccess: function(info) {
+          onSuccess(info) {
             const code = info.code;
             ctx.$api.post('/a/dingtalk/auth/login', { scene: 'dingtalk', code, state }).then(() => {
               ctx.$meta.vueApp.reload({ echo: true });
@@ -46,9 +46,9 @@ export default {
               reject(e);
             });
           },
-          onFail: function(err) {
+          onFail(err) {
             reject(new Error(err.errorMessage || err.message));
-          }
+          },
         });
       });
     },

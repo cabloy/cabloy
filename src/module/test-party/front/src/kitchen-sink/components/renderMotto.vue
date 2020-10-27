@@ -10,7 +10,7 @@
 import Vue from 'vue';
 const ebValidateCheck = Vue.prototype.$meta.module.get('a-components').options.mixins.ebValidateCheck;
 export default {
-  mixins: [ebValidateCheck],
+  mixins: [ ebValidateCheck ],
   data() {
     return {
       errorMessage: null,

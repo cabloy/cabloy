@@ -22,7 +22,7 @@ export default {
         attrs: {
           itemToggle: false,
           selectable: true,
-        }
+        },
       },
     };
   },
@@ -63,10 +63,10 @@ export default {
       }
       // children
       return this.$api.post('category/children', {
-          atomClass: this.atomClass,
-          language: this.language,
-          categoryId: node.id,
-        })
+        atomClass: this.atomClass,
+        language: this.language,
+        categoryId: node.id,
+      })
         .then(data => {
           const list = data.list.map(item => {
             const node = {
@@ -141,7 +141,7 @@ export default {
                       attrs: {
                         toggle: true,
                         loadChildren: true,
-                      }
+                      },
                     });
                   });
               }

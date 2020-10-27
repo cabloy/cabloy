@@ -53,7 +53,7 @@ export default {
       return {
         providerInstanceId: this.providerInstance.providerInstanceId,
         data: { token },
-      }
+      };
     },
   },
 };

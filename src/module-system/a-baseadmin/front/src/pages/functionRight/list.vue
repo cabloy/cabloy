@@ -6,7 +6,7 @@
 </template>
 <script>
 import roleList from '../../components/role/list.vue';
-const _types = ['Function', 'Menu', 'Panel', 'Widget'];
+const _types = [ 'Function', 'Menu', 'Panel', 'Widget' ];
 export default {
   components: {
     roleList,

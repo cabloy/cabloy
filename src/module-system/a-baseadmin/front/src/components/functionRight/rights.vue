@@ -22,7 +22,7 @@ export default {
   meta: {
     global: false,
   },
-  mixins: [ebModules],
+  mixins: [ ebModules ],
   props: {
     role: {
       type: Object,
@@ -78,10 +78,10 @@ export default {
     },
     onLoadMore({ index }) {
       return this.$api.post('functionRight/rights', {
-          roleId: this.role.id,
-          menu: this.menu,
-          page: { index }
-        })
+        roleId: this.role.id,
+        menu: this.menu,
+        page: { index },
+      })
         .then(data => {
           this.items = this.items.concat(data.list);
           return data;

@@ -32,9 +32,9 @@ export default {
             onDragStart: this.onDragStart,
             onDropElement: this.onDropElement,
             onDragDone: this.onDragDone,
-          }
+          },
         }],
-      }, [text, close]));
+      }, [ text, close ]));
     }
     const toolbar = c('f7-toolbar', {
       ref: 'toolbar',
@@ -45,7 +45,7 @@ export default {
   data() {
     return {
       dragdropScene: Vue.prototype.$meta.util.nextId('dragdrop'),
-    }
+    };
   },
   computed: {
     layout() {
@@ -60,13 +60,13 @@ export default {
       return this.$$(this.$refs[groupId].$el).hasClass('tab-link-active');
     },
     onDragStart({ $el, context, dragElement }) {
-      const [group, groupIndexDrag] = this.groups._getGroupAndIndex(context.group.id);
+      const [ group, groupIndexDrag ] = this.groups._getGroupAndIndex(context.group.id);
       const tooltip = group.title;
       return { tooltip };
     },
     onDropElement({ $el, context, dragElement, dragContext }) {
-      const [groupDrop, groupIndexDrop] = this.groups._getGroupAndIndex(context.group.id);
-      const [groupDrag, groupIndexDrag] = this.groups._getGroupAndIndex(dragContext.group.id);
+      const [ groupDrop, groupIndexDrop ] = this.groups._getGroupAndIndex(context.group.id);
+      const [ groupDrag, groupIndexDrag ] = this.groups._getGroupAndIndex(dragContext.group.id);
       if (groupIndexDrop === groupIndexDrag || groupIndexDrop == groupIndexDrag + 1) return null;
       // dropElement
       const dropElement = $el;

@@ -41,14 +41,14 @@ export default {
       }));
     }
     return c('div', {
-      staticClass: 'eb-layout-group'
+      staticClass: 'eb-layout-group',
     }, children);
   },
   data() {
     return {
       views: [],
       viewIndex: 10000,
-    }
+    };
   },
   computed: {
     layout() {

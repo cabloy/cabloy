@@ -22,7 +22,7 @@ export default {
       tabButtons.push(c('eb-list-item', {
         key: group.id,
         props: {
-          link: "#",
+          link: '#',
           popoverClose: true,
           title: group.title,
         },
@@ -34,7 +34,7 @@ export default {
       }));
     }
     const tabList = c('f7-list', { attrs: { inset: true } }, tabButtons);
-    children.push(c('f7-popover', { attrs: { id: this.popoverId } }, [tabList]));
+    children.push(c('f7-popover', { attrs: { id: this.popoverId } }, [ tabList ]));
     // buttons
     for (const button of this.buttons) {
       children.push(c('eb-header-button', {
@@ -74,8 +74,8 @@ export default {
     },
     _getButtonAndIndex(button) {
       const buttonIndex = this._getButtonIndex(button);
-      if (buttonIndex === -1) return [null, -1];
-      return [this.buttons[buttonIndex], buttonIndex];
+      if (buttonIndex === -1) return [ null, -1 ];
+      return [ this.buttons[buttonIndex], buttonIndex ];
     },
   },
 };

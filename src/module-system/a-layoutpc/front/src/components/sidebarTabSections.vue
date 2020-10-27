@@ -8,7 +8,7 @@ export default {
   },
   render(c) {
     const tabs = [];
-    let index = 0;
+    const index = 0;
     for (const section of this.sections) {
       tabs.push(c('eb-sidebar-tab-section', {
         key: this.layout._sectionFullName(section),
@@ -19,19 +19,19 @@ export default {
       }));
     }
     return c('div', {
-      staticClass: `eb-layout-sidebar-tabs-sections`,
+      staticClass: 'eb-layout-sidebar-tabs-sections',
     }, tabs);
   },
   props: {
     side: {
       type: String,
-    }
+    },
   },
   data() {
     return {
       sectionsReal: {},
       dragdropScene: Vue.prototype.$meta.util.nextId('dragdrop'),
-    }
+    };
   },
   computed: {
     layout() {
@@ -44,7 +44,7 @@ export default {
       return this.sidebar.options.sections;
     },
   },
-  methods: {}
-}
+  methods: {},
+};
 
 </script>

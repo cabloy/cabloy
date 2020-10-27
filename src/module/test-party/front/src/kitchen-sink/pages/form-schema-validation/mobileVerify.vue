@@ -32,7 +32,7 @@
 import Vue from 'vue';
 const ebModules = Vue.prototype.$meta.module.get('a-base').options.mixins.ebModules;
 export default {
-  mixins: [ebModules],
+  mixins: [ ebModules ],
   data() {
     return {
       item: {
@@ -54,8 +54,8 @@ export default {
     captchaContainerOptions() {
       return {
         props: {
-          module: "test-party",
-          sceneName: "formMobileVerifyTest",
+          module: 'test-party',
+          sceneName: 'formMobileVerifyTest',
           context: {
             mobile: this.item.mobile,
           },

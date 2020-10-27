@@ -10,7 +10,7 @@
 <script>
 const ebFunctions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebFunctions;
 export default {
-  mixins: [ebFunctions],
+  mixins: [ ebFunctions ],
   data() {
     return {
       functions: null,

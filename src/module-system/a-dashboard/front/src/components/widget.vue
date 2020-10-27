@@ -1,7 +1,7 @@
 <script>
 import widgetToolbar from './widgetToolbar.vue';
 
-const _colWidths = [5, 10, 15, 20, 25, 30, 33, 35, 40, 45, 50, 55, 60, 65, 66, 70, 75, 80, 85, 90, 95, 100];
+const _colWidths = [ 5, 10, 15, 20, 25, 30, 33, 35, 40, 45, 50, 55, 60, 65, 66, 70, 75, 80, 85, 90, 95, 100 ];
 export default {
   meta: {
     global: true,
@@ -41,7 +41,7 @@ export default {
           widgetId: this.options.id,
           onDragStart: this.onDragStartResizable,
           onDragMove: this.onDragMoveResizable,
-        }
+        },
       }],
     });
     children.push(resizeHandler);
@@ -121,7 +121,7 @@ export default {
     },
     dragdropScene: {
       type: String,
-    }
+    },
   },
   data() {
     return {
@@ -163,7 +163,7 @@ export default {
       const widgetSource = this.dashboard.__getWidgetRealById(bind.widgetId);
       if (!widgetSource) {
         // source not found
-        //throw new Error(this.$text('Source Widget Not Found'));
+        // throw new Error(this.$text('Source Widget Not Found'));
         // maybe load slowly
         return undefined;
       }
@@ -280,7 +280,7 @@ export default {
     },
     _getAttrsSchema(options) {
       // group
-      if (options.group) return this.$options.components["eb-dashboard-widget-group"].options.meta.widget.schema.attrs;
+      if (options.group) return this.$options.components['eb-dashboard-widget-group'].options.meta.widget.schema.attrs;
       // widget
       const component = this.$options.components[this.__getFullName(options)];
       const attrsSchema = component && component.meta && component.meta.widget && component.meta.widget.schema && component.meta.widget.schema.attrs;
@@ -288,7 +288,7 @@ export default {
     },
     _getPropsSchema(options) {
       // group
-      if (options.group) return this.$options.components["eb-dashboard-widget-group"].options.meta.widget.schema.props;
+      if (options.group) return this.$options.components['eb-dashboard-widget-group'].options.meta.widget.schema.props;
       // widget
       const component = this.$options.components[this.__getFullName(options)];
       const propsSchema = component && component.meta && component.meta.widget && component.meta.widget.schema && component.meta.widget.schema.props;
@@ -296,7 +296,7 @@ export default {
     },
     _getPropsSchemaCategoryGrouping(options) {
       const propsSchema = this._getPropsSchema(options);
-      if (!propsSchema) return [null, null];
+      if (!propsSchema) return [ null, null ];
       const propsCategories = {};
       for (const propertyName in propsSchema.properties) {
         const propSchema = propsSchema.properties[propertyName];
@@ -304,7 +304,7 @@ export default {
         if (!propsCategories[category]) propsCategories[category] = {};
         propsCategories[category][propertyName] = propSchema;
       }
-      return [propsSchema, propsCategories];
+      return [ propsSchema, propsCategories ];
     },
     __combineWidgetProps(props) {
       const propsSchema = this._getPropsSchema(this.options);
@@ -326,17 +326,17 @@ export default {
     },
     _getBindSourceTitleAndPropertyTitle(widgetId, propertyName) {
       // widget
-      const [widgetItem] = this.dashboard.__findWidgetRealById(widgetId);
-      if (!widgetItem) return ['', ''];
+      const [ widgetItem ] = this.dashboard.__findWidgetRealById(widgetId);
+      if (!widgetItem) return [ '', '' ];
       // title
       const title = this._getBindSourceTitle(widgetItem);
       // property title
       const propertyTitle = this._getBindSourcePropertyTitle(widgetItem, propertyName);
       // ok
-      return [title, propertyTitle];
+      return [ title, propertyTitle ];
     },
     __getClassName() {
-      if (this.options.group) return `widget widget-id-${this.options.id} widget-group ${this.options.widgets.length===0?'widget-group-empty':'widget-group-some'}`;
+      if (this.options.group) return `widget widget-id-${this.options.id} widget-group ${this.options.widgets.length === 0 ? 'widget-group-empty' : 'widget-group-some'}`;
       return `widget widget-id-${this.options.id} widget-item widget-name-${this.options.module}-${this.options.name}`;
     },
     __getFullName(options) {
@@ -358,7 +358,7 @@ export default {
       if (diffPercent === 0) return;
       const minus = diffPercent < 0;
       // this widget
-      const [widget, index] = this.group.__getWidgetById(context.widgetId);
+      const [ widget, index ] = this.group.__getWidgetById(context.widgetId);
       const widgetWidthCurrent = this.__getPropertyRealValue2(widget, propertyNameWidth);
       let widgetWidthNew = widgetWidthCurrent + diffPercent;
       widgetWidthNew = this.__getPreferWidth(widgetWidthCurrent, widgetWidthNew, false, minus);
@@ -388,7 +388,7 @@ export default {
       const viewSizeUpperCase = viewSize.replace(viewSize[0], viewSize[0].toUpperCase());
       const propertyNameWidth = `width${viewSizeUpperCase}`;
       let tooltip;
-      const [widget, index] = this.group.__getWidgetById(context.widgetId);
+      const [ widget, index ] = this.group.__getWidgetById(context.widgetId);
       tooltip = this.__getPropertyRealValue2(widget, propertyNameWidth);
       const widgetNext = this.group.widgets[index + 1];
       if (widgetNext) {
@@ -410,16 +410,16 @@ export default {
       return null;
     },
     onDragStart({ $el, context, dragElement }) {
-      const [widgetDrag, indexDrag] = this.group.__getWidgetById(context.widgetId);
-      const tooltip = `${this.__getPropertyRealValue2(widgetDrag,'title')}`;
+      const [ widgetDrag, indexDrag ] = this.group.__getWidgetById(context.widgetId);
+      const tooltip = `${this.__getPropertyRealValue2(widgetDrag, 'title')}`;
       return { tooltip };
     },
     onDragElement({ $el, context }) {
       return this.$$(`.widget-id-${context.widgetId}`);
     },
     onDropElement({ $el, context, dragElement, dragContext }) {
-      const [widgetDrop, indexDrop] = this.group.__getWidgetById(context.widgetId);
-      const [widgetDrag, indexDrag] = this.group.__getWidgetById(dragContext.widgetId);
+      const [ widgetDrop, indexDrop ] = this.group.__getWidgetById(context.widgetId);
+      const [ widgetDrag, indexDrag ] = this.group.__getWidgetById(dragContext.widgetId);
       if (indexDrop === indexDrag || indexDrop == indexDrag + 1) return null;
       // dropElement
       const dropElement = this.$$(`.widget-id-${context.widgetId}`);
@@ -432,16 +432,16 @@ export default {
     onDropEnter({ $el, context, dropElement }) {},
     onDragEnd({ $el, context, dragElement }) {},
     onDragDone({ $el, context, dragElement, dropElement, dropContext }) {
-      const [widgetDrag, indexDrag] = this.group.__getWidgetById(context.widgetId);
+      const [ widgetDrag, indexDrag ] = this.group.__getWidgetById(context.widgetId);
       this.group.widgets.splice(indexDrag, 1);
-      const [widgetDrop, indexDrop] = this.group.__getWidgetById(dropContext.widgetId);
+      const [ widgetDrop, indexDrop ] = this.group.__getWidgetById(dropContext.widgetId);
       this.group.widgets.splice(indexDrop, 0, widgetDrag);
       // save
       this.dashboard.__saveLayoutConfig();
     },
     onWidgetDelete(widget) {
       this.$view.dialog.confirm().then(() => {
-        const [_widget, index] = this.group.__getWidgetById(widget.id);
+        const [ _widget, index ] = this.group.__getWidgetById(widget.id);
         if (index === -1) return;
         this.group.widgets.splice(index, 1);
         // save
@@ -465,7 +465,7 @@ export default {
         this.$refs.group.onWidgetAdd(widget);
       }
     },
-  }
-}
+  },
+};
 
 </script>

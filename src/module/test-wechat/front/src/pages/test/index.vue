@@ -28,24 +28,24 @@ export default {
       this.wx = res && res.wx;
     }).catch(e => {
       this.$view.toast.show({ text: e.message });
-    })
+    });
   },
   methods: {
     onPerformScanQRCode() {
       this.wx.scanQRCode({
         needResult: 1,
-        scanType: ['qrCode', 'barCode'],
-        success: (res) => {
+        scanType: [ 'qrCode', 'barCode' ],
+        success: res => {
           this.$view.toast.show({ text: res.resultStr });
-        }
+        },
       });
     },
     onPerformOpenid() {
       return this.$api.post('test/getOpenid').then(data => {
         this.openid = data.openid;
-      })
-    }
-  }
+      });
+    },
+  },
 };
 
 </script>

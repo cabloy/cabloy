@@ -11,7 +11,7 @@ export default {
   extends: f7Toggle,
   props: {
     value: {
-      type: [Boolean, Number],
+      type: [ Boolean, Number ],
       default: false,
     },
   },

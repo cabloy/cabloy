@@ -25,7 +25,7 @@
 import Vue from 'vue';
 import rights from '../../components/functionRight/rights.vue';
 import spreads from '../../components/functionRight/spreads.vue';
-const _types = ['Function', 'Menu', 'Panel', 'Widget'];
+const _types = [ 'Function', 'Menu', 'Panel', 'Widget' ];
 export default {
   components: {
     rights,

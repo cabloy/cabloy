@@ -137,7 +137,7 @@
   </eb-page>
 </template>
 <script>
-const _colWidths = [5, 10, 15, 20, 25, 30, 33, 35, 40, 45, 50, 55, 60, 65, 66, 70, 75, 80, 85, 90, 95, 100];
+const _colWidths = [ 5, 10, 15, 20, 25, 30, 33, 35, 40, 45, 50, 55, 60, 65, 66, 70, 75, 80, 85, 90, 95, 100 ];
 export default {
   meta: {
     size: 'large',
@@ -162,7 +162,7 @@ export default {
       this.dragdrop.bind($handlers[index], {
         scene: this.dragdropScene,
         resizable: true,
-        //resizeDirection: 'row',
+        // resizeDirection: 'row',
         colIndex: index,
         onDragStart: this.onDragStart,
         onDragMove: this.onDragMove,
@@ -229,7 +229,7 @@ export default {
         }
       }
       return null;
-    }
+    },
 
   },
 };

@@ -40,7 +40,7 @@ export default {
         onDragStart: this.onDragStart,
         onDropElement: this.onDropElement,
         onDragDone: this.onDragDone,
-      }
+      };
     },
     onDragStart({ $el, context, dragElement }) {
       const tooltip = context.item.titleLocale;
@@ -75,12 +75,12 @@ export default {
     },
     __functionSceneItemsSaveSortings() {
       const sortings = this.functionItems.map((item, index) => {
-        return { id: item.id, sorting: index + 1 }
+        return { id: item.id, sorting: index + 1 };
       });
       this.$api.post('function/sceneItemsSaveSortings', { sceneMenu: this.sceneMenu, sceneId: this.sceneId, sortings }).then(() => {
         this.$view.toast.show();
       });
-    }
+    },
   },
 };
 

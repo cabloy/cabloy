@@ -20,7 +20,7 @@ export default {
   meta: {
     global: false,
   },
-  mixins: [ebModules],
+  mixins: [ ebModules ],
   props: {
     role: {
       type: Object,
@@ -81,10 +81,10 @@ export default {
       if (this.role) {
         // role
         return this.$api.post('functionRight/spreads', {
-            roleId: this.role.id,
-            menu: this.menu,
-            page: { index }
-          })
+          roleId: this.role.id,
+          menu: this.menu,
+          page: { index },
+        })
           .then(data => {
             this.items = this.items.concat(data.list);
             return data;
@@ -92,10 +92,10 @@ export default {
       }
       // user
       return this.$api.post('user/functionRights', {
-          userId: this.user.id,
-          menu: this.menu,
-          page: { index }
-        })
+        userId: this.user.id,
+        menu: this.menu,
+        page: { index },
+      })
         .then(data => {
           this.items = this.items.concat(data.list);
           return data;

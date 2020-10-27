@@ -48,10 +48,10 @@ export default {
       const $ = self.$$;
 
       // Inline with custom toolbar
-      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      const monthNames = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
       self.calendarInline = app.calendar.create({
         containerEl: '#demo-calendar-inline-container',
-        value: [new Date()],
+        value: [ new Date() ],
         renderToolbar() {
           return `
               <div class="toolbar calendar-custom-toolbar no-shadow">

@@ -15,7 +15,7 @@
 import Vue from 'vue';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
-  mixins: [ebPageContext],
+  mixins: [ ebPageContext ],
   data() {
     return {
       widgetsSelected: [],
@@ -36,7 +36,7 @@ export default {
     onWidgetChange(e, widget) {
       const index = this._getWidgetIndex(widget);
       if (index === -1) {
-        this.widgetsSelected.push({ module: widget.module, name: widget.name, });
+        this.widgetsSelected.push({ module: widget.module, name: widget.name });
       } else {
         this.widgetsSelected.splice(index, 1);
       }
@@ -53,6 +53,6 @@ export default {
     },
   },
 
-}
+};
 
 </script>
