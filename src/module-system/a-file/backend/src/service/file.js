@@ -284,6 +284,14 @@ module.exports = app => {
         await this.ctx.bean.user.check();
         user = this.ctx.state.user.op;
       }
+      // invoke event
+      const res = await this.ctx.bean.event.invoke({
+        module: moduleInfo.relativeName,
+        name: 'fileUpdateCheck',
+        data: { file, user },
+      });
+      if (res === false) this.ctx.throw(403);
+      if (res === true) return;
       // check right: atom.write or user's file
       if (file.atomId) {
         const res = await this.ctx.bean.atom.checkRightAction({
@@ -295,13 +303,6 @@ module.exports = app => {
       }
       // check if self
       if (file.userId === user.id) return;
-      // invoke event
-      const res = await this.ctx.bean.event.invoke({
-        module: moduleInfo.relativeName,
-        name: 'fileUpdateCheck',
-        data: { file, user },
-      });
-      if (res === true) return;
       // others
       this.ctx.throw(403);
     }
@@ -312,6 +313,14 @@ module.exports = app => {
         await this.ctx.bean.user.check();
         user = this.ctx.state.user.op;
       }
+      // invoke event
+      const res = await this.ctx.bean.event.invoke({
+        module: moduleInfo.relativeName,
+        name: 'fileDownloadCheck',
+        data: { file, user },
+      });
+      if (res === false) this.ctx.throw(403);
+      if (res === true) return;
       // not check if !atomId
       if (file.atomId) {
         const res = await this.ctx.bean.atom.checkRightRead({ atom: { id: file.atomId }, user });
@@ -319,13 +328,6 @@ module.exports = app => {
       }
       // check if self
       if (file.userId === user.id) return;
-      // invoke event
-      const res = await this.ctx.bean.event.invoke({
-        module: moduleInfo.relativeName,
-        name: 'fileDownloadCheck',
-        data: { file, user },
-      });
-      if (res === true) return;
       // others
       this.ctx.throw(403);
     }
