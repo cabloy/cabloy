@@ -37,7 +37,7 @@ export default {
     onSize() {
       const size = this.$view.getSizeExtent();
       if (size) {
-        let height = size.height - (this.$device.desktop ? _heightHeader + _diffDesktop : _heightHeader);
+        let height = size.height - (this.$meta.vueApp.layout === 'pc' ? _heightHeader + _diffDesktop : _heightHeader);
         if (this.toolbar) {
           height -= _heightToolbar;
         }

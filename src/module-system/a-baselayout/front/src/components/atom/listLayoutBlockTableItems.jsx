@@ -52,7 +52,7 @@ export default {
       const size = this.$view.getSizeExtent();
       if (size) {
         this.tableHeight = size.height - (_heightHeader + _heightToolbar + _heightTableHeader);
-        if (this.$device.desktop) {
+        if (this.$meta.vueApp.layout === 'pc') {
           this.tableHeight -= _diffDesktop;
         }
       }
@@ -211,9 +211,19 @@ export default {
       const _columns = [];
       for (const column of columns) {
         if (column.visible === false) continue;
+        // extend
         const _column = this.$meta.util.extend({}, column);
+        // title
         _column.title = this.$text(_column.title);
+        // ellipsis
         _column.ellipsis = true;
+        // customRender
+        _column.customRender = (text, record) => {
+          return (
+            <div>text+1</div>
+          );
+        };
+        // push
         _columns.push(_column);
       }
       return _columns;
