@@ -1,4 +1,4 @@
-import Antdv from '../../common/antdv.jsx';
+import Antdv from '../../../common/antdv.jsx';
 
 export default {
   meta: {
