@@ -16,8 +16,7 @@ export default {
         options,
         params,
         scene,
-        // layout,
-        layout: 'table',
+        layout,
       },
     };
   },

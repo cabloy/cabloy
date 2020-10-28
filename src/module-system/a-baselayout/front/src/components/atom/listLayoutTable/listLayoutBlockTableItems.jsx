@@ -155,6 +155,7 @@ export default {
       if (action.name === 'delete') {
         if (index !== -1) {
           items.splice(index, 1);
+          this.layout.info.total -= 1;
         }
         return;
       }
