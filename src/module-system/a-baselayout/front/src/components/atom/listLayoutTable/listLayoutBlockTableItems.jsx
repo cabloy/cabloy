@@ -253,6 +253,9 @@ export default {
         } else if (typeof text === 'object' && text instanceof Date) {
           text = this.$meta.util.formatDateTime(text, column.dateFormat);
         }
+        if (column.textLocale) {
+          text = this.$text(text);
+        }
         return <div class="eb-antdv-table-cell" title={text}>{text}</div>;
       }
       // component

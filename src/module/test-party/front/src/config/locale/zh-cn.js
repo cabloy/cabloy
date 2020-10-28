@@ -41,6 +41,8 @@ export default {
   Male: '男',
   Female: '女',
   Birthday: '生日',
+  Dance: '跳舞',
+  Garden: '花园',
   English: '英语',
   Chinese: '中文',
   Upload: '上传',
