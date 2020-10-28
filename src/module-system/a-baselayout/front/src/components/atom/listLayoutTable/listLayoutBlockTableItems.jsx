@@ -169,9 +169,6 @@ export default {
         });
       }
     },
-    onItemChange(event, item) {
-      this.layoutManager.bulk_onItemChange(event, item);
-    },
     _onStarSwitch(event, item, star, swipeoutAction) {
       // anonymous
       if (this.layoutManager.base_user.anonymous) {
@@ -232,10 +229,6 @@ export default {
     },
     _getActionTitle(action, item) {
       return this.getActionTitle(action, item.atomStage);
-    },
-    _getItemChecked(item) {
-      const index = this.layoutManager.bulk.selectedAtoms.findIndex(_item => _item.atomId === item.atomId);
-      return index > -1;
     },
     _columnSorterFind(columnName) {
       return this.layoutManager.order_list.find(atomOrder => {
