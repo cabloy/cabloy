@@ -16,7 +16,7 @@ export default {
       // atomClass
       const atomClass = { id: item.atomClassId };
       // keys
-      const selectedAtoms = ctx.layoutManager.bulk.selectedAtoms;
+      const selectedAtoms = ctx.bulk.selectedAtoms;
       const keys = selectedAtoms.map(item => {
         return { atomId: item.atomId, itemId: item.itemId };
       });
@@ -43,8 +43,8 @@ export default {
       const atomClass = { id: item.atomClassId };
       // options
       let options;
-      const selectParams = ctx.layoutManager.base_prepareSelectParams();
-      const selectedAtoms = ctx.layoutManager.bulk.selectedAtoms;
+      const selectParams = ctx.base_prepareSelectParams();
+      const selectedAtoms = ctx.bulk.selectedAtoms;
       if (selectedAtoms.length > 0) {
         const keys = selectedAtoms.map(item => {
           return { atomId: item.atomId, itemId: item.itemId };
@@ -59,7 +59,7 @@ export default {
         options = selectParams.options;
       }
       // fields
-      const fields = ctx.layoutManager.base_getExportFields();
+      const fields = ctx.base_getExportFields();
       // export
       const res = await ctx.$api.post('/a/base/atom/exportBulk', { atomClass, options, fields });
       const url = this.$meta.util.combineQueries('/a/user/user/exports', { recent: res.fileId });

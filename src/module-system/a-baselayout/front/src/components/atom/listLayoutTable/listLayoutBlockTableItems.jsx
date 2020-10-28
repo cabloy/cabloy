@@ -131,15 +131,15 @@ export default {
         });
     },
     onStarChanged(data) {
-      const index = this.layout.items.findIndex(item => item.atomId === data.key.atomId);
+      const { items, index } = this.layout._findItem(data.key.atomId);
       if (index !== -1) {
-        this.layout.items[index].star = data.star;
+        items[index].star = data.star;
       }
     },
     onLabelsChanged(data) {
-      const index = this.layout.items.findIndex(item => item.atomId === data.key.atomId);
+      const { items, index } = this.layout._findItem(data.key.atomId);
       if (index !== -1) {
-        this.layout.items[index].labels = JSON.stringify(data.labels);
+        items[index].labels = JSON.stringify(data.labels);
       }
     },
     onActionChanged(data) {
@@ -151,10 +151,10 @@ export default {
         return;
       }
       // delete
-      const index = this.layout.items.findIndex(item => item.atomId === key.atomId);
+      const { items, index } = this.layout._findItem(key.atomId);
       if (action.name === 'delete') {
         if (index !== -1) {
-          this.layout.items.splice(index, 1);
+          items.splice(index, 1);
         }
         return;
       }
@@ -165,7 +165,7 @@ export default {
           key,
           options,
         }).then(data => {
-          Vue.set(this.layout.items, index, data);
+          Vue.set(items, index, data);
         });
       }
     },

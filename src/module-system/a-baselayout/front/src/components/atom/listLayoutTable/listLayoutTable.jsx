@@ -61,6 +61,20 @@ export default {
     getItems() {
       return this.dataSource || [];
     },
+    _findItem(atomId) {
+      for (const pageNum in this.itemsPages) {
+        const items = this.itemsPages[pageNum];
+        const index = items.findIndex(item => item.atomId === atomId);
+        if (index !== -1) {
+          return {
+            pageNum: parseInt(pageNum),
+            items,
+            index,
+          };
+        }
+      }
+      return { pageNum: null, items: null, index: -1 };
+    },
     async _loadTotal() {
       // params
       const params = this.layoutManager.base_prepareSelectParams();
