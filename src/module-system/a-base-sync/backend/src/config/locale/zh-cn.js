@@ -38,4 +38,5 @@ module.exports = {
   Menu: '菜单',
   Search: '搜索',
   CloneCopyText: '副本',
+  Creator: '创建人',
 };

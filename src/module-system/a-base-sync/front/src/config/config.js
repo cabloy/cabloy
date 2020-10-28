@@ -32,6 +32,7 @@ export default {
           export: {
             fields: [
               { name: 'atomName', title: 'AtomName' },
+              { name: 'userName', title: 'Creator' },
               { name: 'createdAt', title: 'Created Time' },
               { name: 'updatedAt', title: 'Modification Time' },
             ],
