@@ -21,6 +21,7 @@ export default {
   data() {
     return {
       tableHeight: 0,
+      contextmenuRecord: null,
       // viewSize
       header: true,
       toolbar: true,
@@ -271,20 +272,46 @@ export default {
       };
       return <eb-component module={column.component.module} name={column.component.name} options={options}></eb-component>;
     },
-    _renderListItemContextMenu(item) {
+    _customRow(record) {
+      return {
+        props: {
+        },
+        on: {
+          contextmenu: event => {
+            // popover
+            const popover = this.$$(this.$el).find('.popover');
+            if (popover.length === 0) return;
+
+            event.stopPropagation();
+            event.preventDefault();
+
+            const target = event.target;
+            // finished the event immediately
+            this.$nextTick(() => {
+              this.$f7.popover.open(popover, target);
+              // record
+              this.contextmenuRecord = record;
+              this.onSwipeoutOpened(null, record);
+            });
+          },
+        },
+      };
+    },
+    _renderListItemContextMenu() {
+      const item = this.contextmenuRecord;
       // domLeft
       let domLeft;
-      if (item.atomStage === 1) {
+      if (item && item.atomStage === 1) {
         const domLeftStar = (
           <div color="teal" propsOnPerform={event => this.onStarSwitch(event, item)}>
             <f7-icon slot="media" material={item.star ? 'star_border' : 'star'}></f7-icon>
-            {this.$device.desktop && <div slot="title">{this.$text(item.star ? 'Unstar' : 'Star')}</div>}
+            {<div slot="title">{this.$text(item.star ? 'Unstar' : 'Star')}</div>}
           </div>
         );
         const domLeftLabel = (
           <div color="blue" propsOnPerform={event => this.onLabel(event, item)}>
             <f7-icon slot="media" material="label"></f7-icon>
-            {this.$device.desktop && <div slot="title">{this.$text('Labels')}</div>}
+            {<div slot="title">{this.$text('Labels')}</div>}
           </div>
         );
         domLeft = (
@@ -296,7 +323,7 @@ export default {
       }
       // domRight
       const domActions = [];
-      if (item._actions) {
+      if (item && item._actions) {
         for (let index in item._actions) {
           index = parseInt(index);
           const action = item._actions[index];
@@ -304,19 +331,18 @@ export default {
           domActions.push(
             <div key={action.id} color={this._getActionColor(action, index)} propsOnPerform={event => this.onAction(event, item, action)}>
               <f7-icon slot="media" material={_action.icon.material}></f7-icon>
-              {this.$device.desktop && <div slot="title">{this._getActionTitle(action, item)}</div>}
+              {<div slot="title">{this._getActionTitle(action, item)}</div>}
             </div>
           );
         }
       }
       const domRight = (
-        <div slot="right" ready={!!item._actions}>
+        <div slot="right" ready={item && !!item._actions}>
           {domActions}
         </div>
       );
-
       return (
-        <eb-context-menu>
+        <eb-context-menu mode="menu">
           {domLeft}
           {domRight}
         </eb-context-menu>
@@ -334,12 +360,18 @@ export default {
           pagination={false}
           scroll={{ y: this.tableHeight }}
           onChange={this.onTableChange}
+          customRow={this._customRow}
         >
         </a-table>
       );
     },
   },
   render() {
-    return this._renderTable();
+    return (
+      <div class="atom-list-layout-table-container" >
+        {this._renderTable()}
+        {this._renderListItemContextMenu()}
+      </div>
+    );
   },
 };

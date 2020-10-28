@@ -4,10 +4,15 @@ export default {
     global: true,
   },
   name: 'eb-context-menu',
+  props: {
+    mode: {
+    },
+  },
   render(c) {
     const slotLeft = this.$slots.left;
     const slotRight = this.$slots.right;
-    if (this.$device.desktop) {
+    const mode = this.getMode();
+    if (mode === 'menu') {
       // children
       const children = [];
       if (slotLeft) {
@@ -42,6 +47,10 @@ export default {
     return c('div', children);
   },
   methods: {
+    getMode() {
+      if (this.mode) return this.mode;
+      return this.$device.desktop ? 'menu' : 'swipeout';
+    },
     vNodeItemDesktop(c, vnode) {
       if (!vnode.data) return vnode;
       const attrs = this.$utils.extend({}, vnode.data.attrs);
