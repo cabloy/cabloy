@@ -89,7 +89,7 @@ export default {
       const selectedAtoms = this.bulk.selectedAtoms;
       if (items.length > 0 || this.bulk.selecting) {
         children.push(
-          <eb-link iconMaterial="grading" iconBadge={ this.bulk.selecting ? selectedAtoms.length.toString() : 0} propsOnPerform={this.bulk_onSelectingSwitch} ></eb-link>
+          <eb-link class="no-ripple no-active-state" iconMaterial="grading" iconBadge={ this.bulk.selecting ? selectedAtoms.length.toString() : 0} propsOnPerform={this.bulk_onSelectingSwitch} ></eb-link>
         );
       }
       return children;
