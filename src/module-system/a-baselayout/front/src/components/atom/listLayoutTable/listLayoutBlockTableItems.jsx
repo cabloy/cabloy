@@ -87,7 +87,6 @@ export default {
       });
     },
     onItemClick(event, item) {
-      if (this.layoutManager.bulk.selecting) return;
       return this.onAction(event, item, {
         module: item.module,
         atomClassName: item.atomClassName,
@@ -195,7 +194,7 @@ export default {
     },
     _getItemMetaMedia(item) {
       const media = (item._meta && item._meta.media) || item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
-      return this.$meta.util.combineImageUrl(media, 32);
+      return this.$meta.util.combineImageUrl(media, 24);
     },
     _getItemMetaMediaLabel(item) {
       const mediaLabel = (item._meta && item._meta.mediaLabel) || item.userName;
@@ -264,89 +263,11 @@ export default {
         props: {
           layoutManager: this.layoutManager,
           layout: this.layout,
+          layoutItems: this,
           info: { text, record, index, column },
         },
       };
       return <eb-component module={column.component.module} name={column.component.name} options={options}></eb-component>;
-    },
-    _renderListItem(item) {
-      // media
-      const domMedia = this.layoutManager.bulk.selecting ? null : (
-        <div slot="media">
-          <img class="avatar avatar24" src={this._getItemMetaMedia(item)} />
-        </div>
-      );
-      // domHeader
-      const domHeader = (
-        <div slot="root-start" class="header">
-          <div class="mediaLabel">
-            <span>{this._getItemMetaMediaLabel(item)}</span>
-          </div>
-          <div class="date">
-            {item.star > 0 && <span>⭐</span>}
-            {item.attachmentCount > 0 && <span>🧷</span>}
-            {item.attachmentCount > 1 && <span>{`${item.attachmentCount}`}</span>}
-            {item.commentCount > 0 && <span>💬</span>}
-            {item.commentCount > 1 && <span>{`${item.commentCount}`}</span>}
-            <span>{this.$meta.util.formatDateTimeRelative(item.atomUpdatedAt)}</span>
-          </div>
-        </div>
-      );
-      // domTitle
-      const domTitle = (
-        <div slot="title" class="title">
-          <div>{item.atomName}</div>
-        </div>
-      );
-      // domSummary
-      const domSummary = (
-        <div slot="root-end" class="summary">
-          { this._getItemMetaSummary(item) }
-        </div>
-      );
-      // domAfter
-      const domAfterMetaFlags = [];
-      for (const flag of this._getItemMetaFlags(item)) {
-        domAfterMetaFlags.push(
-          <f7-badge key="flag">{flag}</f7-badge>
-        );
-      }
-      const domAfterLabels = [];
-      if (item.labels && this.layoutManager.base_userLabels) {
-        for (const label of JSON.parse(item.labels)) {
-          const _label = this._getLabel(label);
-          domAfterLabels.push(
-            <f7-badge key={label} style={ { backgroundColor: _label.color } }>{ _label.text}</f7-badge>
-          );
-        }
-      }
-      const domAfter = (
-        <div slot="after" class="after">
-          {domAfterMetaFlags}
-          {domAfterLabels}
-        </div>
-      );
-      // ok
-      return (
-        <eb-list-item class="item" key={item.atomId}
-          link={this.layoutManager.bulk.selecting ? false : '#'}
-          name={this.radioName}
-          checkbox={this.layoutManager.bulk.selecting}
-          checked={this._getItemChecked(item)}
-          propsOnPerform={event => this.onItemClick(event, item)}
-          swipeout onSwipeoutOpened={event => { this.onSwipeoutOpened(event, item); } }
-          onContextmenuOpened={event => { this.onSwipeoutOpened(event, item); } }
-          onChange={event => this.onItemChange(event, item)}
-        >
-
-          {domMedia}
-          {domHeader}
-          {domTitle}
-          {domSummary}
-          {domAfter}
-          {this._renderListItemContextMenu(item)}
-        </eb-list-item>
-      );
     },
     _renderListItemContextMenu(item) {
       // domLeft

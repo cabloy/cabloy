@@ -86,6 +86,10 @@ export default {
                     dataIndex: 'atomName',
                     title: 'Atom Name',
                     align: 'left',
+                    component: {
+                      module: 'a-baselayout',
+                      name: 'listLayoutTableCellAtomName',
+                    },
                   },
                   {
                     dataIndex: 'userName',
