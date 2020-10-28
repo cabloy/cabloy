@@ -22,6 +22,7 @@ module.exports = app => {
     async read() {
       const res = await this.ctx.service.atom.read({
         key: this.ctx.request.body.key,
+        options: this.ctx.request.body.options,
         user: this.ctx.state.user.op,
       });
       this.ctx.success(res);

@@ -80,7 +80,7 @@ module.exports = ctx => {
     }
 
     // read
-    async read({ key, user }) {
+    async read({ key, options, user }) {
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
@@ -89,7 +89,7 @@ module.exports = ctx => {
       const item = await ctx.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
-        context: { atomClass, key, user },
+        context: { atomClass, options, key, user },
         fn: 'read',
       });
       return item;

@@ -17,11 +17,22 @@ export default {
     },
   },
   methods: {
+    base_prepareReadOptions() {
+      // options
+      const options = {
+      };
+      // layout
+      options.layout = this.layout.current;
+      // options
+      return options;
+    },
     base_prepareSelectOptions() {
       // options
       let options = {
         where: { },
       };
+      // layout
+      options.layout = this.layout.current;
       // search
       if (this.search.query) {
         options.where['a.atomName'] = { val: this.search.query, op: 'like' };

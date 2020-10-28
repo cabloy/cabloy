@@ -18,12 +18,12 @@ module.exports = app => {
       return { atomId: key.atomId, itemId: res.insertId };
     }
 
-    async read({ atomClass, key, user }) {
+    async read({ atomClass, options, key, user }) {
       // super
       const item = await super.read({ atomClass, key, user });
       if (!item) return null;
       // read
-      this._getMeta(item);
+      this._getMeta(item, options);
       // ok
       return item;
     }
@@ -33,7 +33,7 @@ module.exports = app => {
       await super.select({ atomClass, options, items, user });
       // select
       for (const item of items) {
-        this._getMeta(item);
+        this._getMeta(item, options);
       }
     }
 
@@ -55,10 +55,11 @@ module.exports = app => {
       await super.delete({ atomClass, key, user });
     }
 
-    _getMeta(item) {
+    _getMeta(item, options) {
+      const layout = options && options.layout;
       // flags
       const flags = [];
-      if (item.personCount) {
+      if (layout !== 'table' && item.personCount) {
         flags.push(item.personCount + 'P');
       }
       // summary

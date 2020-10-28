@@ -159,8 +159,10 @@ export default {
       }
       // others
       if (index !== -1) {
+        const options = this.layoutManager.base_prepareReadOptions();
         this.$api.post('/a/base/atom/read', {
           key,
+          options,
         }).then(data => {
           Vue.set(this.layout.items, index, data);
         });

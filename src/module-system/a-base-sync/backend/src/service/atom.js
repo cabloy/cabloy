@@ -10,8 +10,8 @@ module.exports = app => {
       return await this.ctx.bean.atom.create({ atomClass, roleIdOwner, item, user });
     }
 
-    async read({ key, user }) {
-      return await this.ctx.bean.atom.read({ key, user });
+    async read({ key, options, user }) {
+      return await this.ctx.bean.atom.read({ key, options, user });
     }
 
     async select({ atomClass, options, user }) {
