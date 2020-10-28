@@ -128,10 +128,15 @@ export default {
       if (!blockConfig) return null;
       return <eb-component module={blockConfig.component.module} name={blockConfig.component.name} options={this.getBlockComponentOptions({ blockConfig })}></eb-component>;
     },
+    _renderEmpty() {
+      return (
+        <div>{this.$text('No Data')}</div>
+      );
+    },
     _renderConfigProvider() {
       if (!this.antdv.locales) return null;
       return (
-        <a-config-provider locale={this.antdv_getLocale()}>
+        <a-config-provider locale={this.antdv_getLocale()} renderEmpty={this._renderEmpty}>
           { this._renderBlock({ blockName: 'items' })}
         </a-config-provider>
       );
