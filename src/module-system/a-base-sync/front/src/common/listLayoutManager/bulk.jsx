@@ -85,13 +85,14 @@ export default {
     bulk_rendActionsLeftB() {
       const children = [];
       // switch select
-      const items = this.base_getItems();
+      // not check items.length > 0, so as to avoid splash
+      // const items = this.base_getItems();
       const selectedAtoms = this.bulk.selectedAtoms;
-      if (items.length > 0 || this.bulk.selecting) {
-        children.push(
-          <eb-link class="no-ripple no-active-state" iconMaterial="grading" iconBadge={ this.bulk.selecting ? selectedAtoms.length.toString() : 0} propsOnPerform={this.bulk_onSelectingSwitch} ></eb-link>
-        );
-      }
+      // if (items.length > 0 || this.bulk.selecting) {
+      children.push(
+        <eb-link class="no-ripple no-active-state" iconMaterial="grading" iconBadge={ this.bulk.selecting ? selectedAtoms.length.toString() : 0} propsOnPerform={this.bulk_onSelectingSwitch} ></eb-link>
+      );
+      // }
       return children;
     },
     bulk_rendActionsRight() {
