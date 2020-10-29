@@ -42,7 +42,7 @@ export default {
           atomId: keyDraft.atomId,
           itemId: keyDraft.itemId,
         };
-        const url = ctx.$meta.util.replaceTemplate('/a/base/atom/edit?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&module={{module}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}', _item);
+        const url = ctx.$meta.util.replaceTemplate('/a/base/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&module={{module}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}', _item);
         ctx.$view.navigate(url, action.navigateOptions);
       } else if (action.name === 'clone') {
         // clone
@@ -56,7 +56,7 @@ export default {
             atomId: keyDraft.atomId,
             itemId: keyDraft.itemId,
           };
-          const url = ctx.$meta.util.replaceTemplate('/a/base/atom/edit?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&module={{module}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}', _item);
+          const url = ctx.$meta.util.replaceTemplate('/a/base/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&module={{module}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}', _item);
           ctx.$view.navigate(url, action.navigateOptions);
         } catch (err) {
           if (err.code === 422) {

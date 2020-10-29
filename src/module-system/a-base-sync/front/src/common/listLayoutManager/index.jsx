@@ -28,12 +28,8 @@ export default {
     };
   },
   created() {
-    //
-    this.$store.dispatch('a/base/getLabels');
-    //
     this.layout_prepareConfig().then(() => {
       this.base.ready = true;
-
       this.create_loadActions();
     });
   },

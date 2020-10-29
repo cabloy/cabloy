@@ -28,7 +28,7 @@ module.exports = {
       },
       read: {
         title: 'View',
-        actionPath: 'atom/view?atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&module={{module}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}',
+        actionPath: 'atom/item?mode=view&atomId={{atomId}}&itemId={{itemId}}&atomClassId={{atomClassId}}&module={{module}}&atomClassName={{atomClassName}}&atomClassIdParent={{atomClassIdParent}}',
         icon: { material: 'visibility' },
       },
       write: {
