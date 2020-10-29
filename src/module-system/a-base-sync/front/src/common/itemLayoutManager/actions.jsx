@@ -45,7 +45,7 @@ export default {
       this.$refs.buttonSave.onClick();
     },
     actions_submit(event, action) {
-      const validateInstance = this.layout.instance.getValidateInstance();
+      const validateInstance = this.validate_getInstance();
       if (!validateInstance) return;
       return validateInstance.perform(event, action);
     },

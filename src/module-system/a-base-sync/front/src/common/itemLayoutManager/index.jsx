@@ -5,6 +5,7 @@ import Page from './page.jsx';
 import Layout from './layout.jsx';
 import Subnavbar from './subnavbar.jsx';
 import Actions from './actions.jsx';
+import Validate from './validate.jsx';
 
 // container: {
 //   mode,  // edit/view
@@ -14,7 +15,7 @@ import Actions from './actions.jsx';
 // },
 
 export default {
-  mixins: [ ebAtomClasses, ebAtomActions, Base, Page, Layout, Subnavbar, Actions ],
+  mixins: [ ebAtomClasses, ebAtomActions, Base, Page, Layout, Subnavbar, Actions, Validate ],
   data() {
     return {
     };
