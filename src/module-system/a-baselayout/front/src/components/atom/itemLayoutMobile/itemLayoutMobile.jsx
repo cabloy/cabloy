@@ -19,6 +19,13 @@ export default {
     this.layoutManager.subnavbar.enable = true;
   },
   methods: {
+    getMainInstance() {
+      return this.$refs['block:main'] && this.$refs['block:main'].getComponentInstance();
+    },
+    getValidateInstance() {
+      const mainInstance = this.getMainInstance();
+      return mainInstance && mainInstance.getValidateInstance();
+    },
     getBlockComponentOptions({ blockConfig }) {
       return {
         props: {
@@ -31,7 +38,7 @@ export default {
     _renderBlock({ blockName }) {
       const blockConfig = this.layoutConfig.blocks[blockName];
       if (!blockConfig) return null;
-      return <eb-component module={blockConfig.component.module} name={blockConfig.component.name} options={this.getBlockComponentOptions({ blockConfig })}></eb-component>;
+      return <eb-component ref={`block:${blockName}`} module={blockConfig.component.module} name={blockConfig.component.name} options={this.getBlockComponentOptions({ blockConfig })}></eb-component>;
     },
   },
   render() {

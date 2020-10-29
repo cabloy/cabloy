@@ -19,6 +19,7 @@ import listLayoutTableCellAtomName from './components/atom/listLayoutTable/listL
 import itemLayoutMobile from './components/atom/itemLayoutMobile/itemLayoutMobile.jsx';
 import itemLayoutBlockMobileTitle from './components/atom/itemLayoutMobile/itemLayoutBlockMobileTitle.jsx';
 import itemLayoutBlockMobileSubnavbar from './components/atom/itemLayoutMobile/itemLayoutBlockMobileSubnavbar.jsx';
+import itemLayoutBlockMobileMain from './components/atom/itemLayoutMobile/itemLayoutBlockMobileMain.jsx';
 
 export default {
   // listLayoutList
@@ -42,4 +43,5 @@ export default {
   itemLayoutMobile,
   itemLayoutBlockMobileTitle,
   itemLayoutBlockMobileSubnavbar,
+  itemLayoutBlockMobileMain,
 };

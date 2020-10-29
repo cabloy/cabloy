@@ -41,9 +41,20 @@ export default {
       if (!this.actions.list) return null;
       return this.actions.list.find(item => item.name === actionName);
     },
+    actions_onSubmit() {
+      this.$refs.buttonSave.onClick();
+    },
+    actions_submit(event, action) {
+      const validateInstance = this.layout.instance.getValidateInstance();
+      if (!validateInstance) return;
+      return validateInstance.perform(event, action);
+    },
     actions_onAction(event, action) {
       if (action === 'save' || action === 'submit') {
-        return this.$refs.validate.perform(event, action);
+        return this.actions_submit(event, action);
+      }
+      if (action.name === 'submit') {
+        return this.actions_submit(event, action.name);
       }
       if (typeof action === 'string') {
         action = {
