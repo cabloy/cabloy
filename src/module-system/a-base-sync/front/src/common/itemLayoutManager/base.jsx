@@ -71,11 +71,5 @@ export default {
       // options
       return options;
     },
-    base_getCurrentStage() {
-      let stage = this.$meta.util.getProperty(this.filter.data, 'form.stage');
-      if (!stage) stage = this.container.options && this.container.options.stage;
-      if (!stage) stage = 'archive';
-      return stage;
-    },
   },
 };
