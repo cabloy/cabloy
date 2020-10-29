@@ -4,6 +4,7 @@ import Base from './base.jsx';
 import Page from './page.jsx';
 import Layout from './layout.jsx';
 import Subnavbar from './subnavbar.jsx';
+import Actions from './actions.jsx';
 
 // container: {
 //   mode,  // edit/view
@@ -13,7 +14,7 @@ import Subnavbar from './subnavbar.jsx';
 // },
 
 export default {
-  mixins: [ ebAtomClasses, ebAtomActions, Base, Page, Layout, Subnavbar ],
+  mixins: [ ebAtomClasses, ebAtomActions, Base, Page, Layout, Subnavbar, Actions ],
   data() {
     return {
     };
