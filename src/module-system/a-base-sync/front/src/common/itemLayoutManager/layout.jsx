@@ -13,20 +13,16 @@ export default {
   },
   methods: {
     layout_get() {
-      return (this.$view.size === 'small') ? 'list' : 'table';
+      return (this.$view.size === 'small') ? 'mobile' : 'pc';
     },
     async layout_prepareConfig() {
       // configAtomBase
       this.base.configAtomBase = this.$config.atom;
       // configAtom
-      if (this.container.atomClass) {
-        // load module
-        await this.$meta.module.use(this.container.atomClass.module);
-        this.base.configAtom = this.$meta.util.getProperty(this.$meta.config.modules[this.container.atomClass.module], `atoms.${this.container.atomClass.atomClassName}`);
-      }
+      this.base.configAtom = this.$meta.util.getProperty(this.$meta.config.modules[this.base.atomClass.module], `atoms.${this.base.atomClass.atomClassName}`);
       // layoutConfig
-      const layoutConfigBase = this.base.configAtomBase.render.list.layouts[this.layout.current];
-      const layoutConfigAtom = this.$meta.util.getProperty(this.base.configAtom, `render.list.layouts.${this.layout.current}`);
+      const layoutConfigBase = this.base.configAtomBase.render.item.layouts[this.layout.current];
+      const layoutConfigAtom = this.$meta.util.getProperty(this.base.configAtom, `render.item.layouts.${this.layout.current}`);
       this.layout.config = this.$meta.util.extend({}, layoutConfigBase, layoutConfigAtom);
     },
     layout_getComponentOptions() {

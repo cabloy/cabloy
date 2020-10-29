@@ -163,6 +163,36 @@ export default {
           },
         },
       },
+      item: {
+        layouts: {
+          mobile: {
+            component: {
+              module: 'a-baselayout',
+              name: 'itemLayoutMobile',
+            },
+            blocks: {
+              title: {
+                component: {
+                  module: 'a-baselayout',
+                  name: 'itemLayoutBlockMobileTitle',
+                },
+              },
+              subnavbar: {
+                component: {
+                  module: 'a-baselayout',
+                  name: 'itemLayoutBlockMobileSubnavbar',
+                },
+              },
+              main: {
+                component: {
+                  module: 'a-baselayout',
+                  name: 'itemLayoutBlockMobileMain',
+                },
+              },
+            },
+          },
+        },
+      },
     },
   },
 };

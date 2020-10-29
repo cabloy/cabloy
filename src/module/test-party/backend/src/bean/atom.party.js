@@ -56,6 +56,7 @@ module.exports = app => {
     }
 
     _getMeta(item, options) {
+      // layout: list/table/mobile/pc
       const layout = options && options.layout;
       // flags
       const flags = [];

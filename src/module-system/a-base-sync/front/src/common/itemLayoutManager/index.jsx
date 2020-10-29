@@ -15,8 +15,10 @@ export default {
     };
   },
   created() {
-    this.layout_prepareConfig().then(() => {
-      this.base.ready = true;
+    this.base_loadItem().then(() => {
+      this.layout_prepareConfig().then(() => {
+        this.base.ready = true;
+      });
     });
   },
   beforeDestroy() {

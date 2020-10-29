@@ -9,13 +9,13 @@ export default {
     const mode = query.mode;
     const atomId = parseInt(query.atomId || 0);
     const itemId = parseInt(query.itemId || 0);
-    const atomClassId = parseInt(query.atomClassId || 0);
+    const layout = query.layout;
     return {
       container: {
         mode,
         atomId,
         itemId,
-        atomClassId,
+        layout,
       },
     };
   },

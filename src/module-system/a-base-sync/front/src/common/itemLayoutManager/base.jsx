@@ -5,6 +5,13 @@ export default {
         ready: false,
         configAtomBase: null,
         configAtom: null,
+        //
+        item: null,
+        atomClass: null,
+        module: null,
+        validateParams: null,
+        actions: null,
+        notfound: false,
       },
     };
   },
@@ -20,6 +27,41 @@ export default {
     this.$store.dispatch('a/base/getLabels');
   },
   methods: {
+    async base_loadItem() {
+      try {
+        // item
+        const options = this.base_prepareReadOptions();
+        this.base.item = await this.$api.post('/a/base/atom/read', {
+          key: { atomId: this.container.atomId },
+          options,
+        });
+        // atomClass
+        this.base.atomClass = {
+          id: this.base.item.atomClassId,
+          module: this.base.item.module,
+          atomClassName: this.base.item.atomClassName,
+        };
+        // module
+        this.base.module = await this.$meta.module.use(this.base.item.module);
+        // validateParams
+        const res = await this.$api.post('/a/base/atom/validator', {
+          atomClass: { id: this.base.item.atomClassId },
+        });
+        this.base.validateParams = {
+          module: res.module,
+          validator: res.validator,
+        };
+        // actions
+        await this.base_fetchActions();
+      } catch (err) {
+        this.base.notfound = true;
+      }
+    },
+    async base_fetchActions() {
+      this.base.actions = await this.$api.post('/a/base/atom/actions', {
+        key: { atomId: this.container.atomId },
+      });
+    },
     base_prepareReadOptions() {
       // options
       const options = {
@@ -29,67 +71,11 @@ export default {
       // options
       return options;
     },
-    base_prepareSelectOptions() {
-      // options
-      let options = {
-        where: { },
-      };
-      // layout
-      options.layout = this.layout.current;
-      // search
-      if (this.search.query) {
-        options.where['a.atomName'] = { val: this.search.query, op: 'like' };
-      }
-      // select
-      if (this.container.scene === 'select') {
-        options.where['a.id'] = this.container.params.selectedAtomIds.length > 0 ? this.container.params.selectedAtomIds : null;
-      }
-      // mine
-      if (this.container.scene === 'mine') {
-        options.where['a.userIdCreated'] = this.base_user.id;
-      }
-      // order
-      const atomOrderCurrent = this.order.selected || this.order_default;
-      options.orders = [
-        [ this.order_getKey(atomOrderCurrent), atomOrderCurrent.by ],
-      ];
-      // extend 1
-      if (this.container.options) {
-        options = this.$utils.extend({}, options, this.container.options);
-      }
-      // options
-      return options;
-    },
-    base_prepareSelectParams() {
-      // options
-      const options = this.base_prepareSelectOptions();
-      // params
-      let params = {
-        atomClass: this.container.atomClass,
-        options,
-      };
-      // filter
-      const filterParams = this.filter_prepareSelectParams();
-      if (filterParams) {
-        params = this.$utils.extend({}, params, filterParams);
-      }
-      return params;
-    },
-    base_getItems() {
-      return this.layout.instance ? this.layout.instance.getItems() : [];
-    },
     base_getCurrentStage() {
       let stage = this.$meta.util.getProperty(this.filter.data, 'form.stage');
       if (!stage) stage = this.container.options && this.container.options.stage;
       if (!stage) stage = 'archive';
       return stage;
-    },
-    base_getExportFields() {
-      // atomClass
-      const fields = this.$meta.util.getProperty(this.base.configAtom, 'render.list.info.export.fields');
-      if (fields) return fields;
-      // base
-      return this.base.configAtomBase.render.list.info.export.fields;
     },
   },
 };
