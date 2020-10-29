@@ -52,6 +52,16 @@ export default {
       return <eb-component module={blockConfig.component.module} name={blockConfig.component.name} options={this.layout_getBlockComponentOptions({ blockConfig })}></eb-component>;
     },
     layout_renderLayout() {
+      if (this.base.notfound) {
+        return (
+          <f7-card>
+            <f7-card-header>{this.$text('Friendly Tips')}</f7-card-header>
+            <f7-card-content>
+              {this.$text('Not Found')}
+            </f7-card-content>
+          </f7-card>
+        );
+      }
       return (
         <div>
           {this.layout_renderComponent()}

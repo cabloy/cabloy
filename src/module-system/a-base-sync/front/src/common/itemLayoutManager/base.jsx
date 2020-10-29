@@ -55,8 +55,10 @@ export default {
         };
         // actions
         await this.actions_fetchActions();
+        return true;
       } catch (err) {
         this.base.notfound = true;
+        return false;
       }
     },
     base_prepareReadOptions() {

@@ -77,4 +77,5 @@ export default {
   'Please Sign In': '请登录',
   'My Atoms': '我的原子',
   'Edit Again': '再次编辑',
+  'Not Found': '未发现',
 };

@@ -8,7 +8,7 @@
     </eb-navbar>
     <template v-if="notfound">
       <f7-list>
-        <f7-list-item :title="$text('Not found')"></f7-list-item>
+        <f7-list-item :title="$text('Not Found')"></f7-list-item>
       </f7-list>
     </template>
     <template v-else>

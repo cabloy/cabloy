@@ -21,7 +21,8 @@ export default {
     };
   },
   created() {
-    this.base_loadItem().then(() => {
+    this.base_loadItem().then(res => {
+      if (!res) return;
       this.layout_prepareConfig().then(() => {
         this.base.ready = true;
       });

@@ -82,6 +82,7 @@ module.exports = ctx => {
     // read
     async read({ key, options, user }) {
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
@@ -143,6 +144,7 @@ module.exports = ctx => {
     async write({ key, item, user }) {
       // atomClass
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
       if (!key.itemId) key.itemId = atomClass.itemId;
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
@@ -189,6 +191,7 @@ module.exports = ctx => {
     // delete
     async delete({ key, user }) {
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
       if (!key.itemId) key.itemId = atomClass.itemId;
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
@@ -261,6 +264,7 @@ module.exports = ctx => {
 
     async submit({ key, options, user }) {
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
       if (!key.itemId) key.itemId = atomClass.itemId;
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
@@ -303,6 +307,7 @@ module.exports = ctx => {
 
     async openDraft({ key, user }) {
       const _atom = await this.modelAtom.get({ id: key.atomId });
+      if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
       // draft
       if (_atom.atomStage === 0) {
         // do nothing
@@ -359,6 +364,7 @@ module.exports = ctx => {
     async _copy({ target, srcKey, srcItem, destKey, user }) {
       // atomClass
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: srcKey.atomId });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
       if (!srcKey.itemId) srcKey.itemId = atomClass.itemId;
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
@@ -691,6 +697,7 @@ module.exports = ctx => {
     async checkRightRead({ atom: { id }, user }) {
       // draft: only userIdUpdated
       const _atom = await this.modelAtom.get({ id });
+      if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
       if (_atom.atomStage === 0) {
         // 1. closed
         if (_atom.atomClosed) return null;
@@ -711,6 +718,7 @@ module.exports = ctx => {
 
     async checkRightAction({ atom: { id }, action, stage, user }) {
       const _atom = await this.modelAtom.get({ id });
+      if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
       if ((stage === 'draft' && _atom.atomStage > 0) || ((stage === 'archive' || stage === 'history') && _atom.atomStage === 0)) return null;
       // action.stage
       const atomClass = await ctx.bean.atomClass.get({ id: _atom.atomClassId });
@@ -785,6 +793,7 @@ module.exports = ctx => {
     async actions({ key, basic, user }) {
       // atomClass
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
       // actions
       const _basic = basic ? 'and a.code in (3,4)' : '';
       const sql = `
