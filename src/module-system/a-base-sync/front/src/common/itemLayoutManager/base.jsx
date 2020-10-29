@@ -1,3 +1,4 @@
+import Vue from 'vue';
 export default {
   data() {
     return {
@@ -12,15 +13,31 @@ export default {
         validateParams: null,
         actions: null,
         notfound: false,
+        //
+        popoverId: Vue.prototype.$meta.util.nextId('popover'),
       },
     };
   },
   computed: {
+    base_ready() {
+      return this.base.ready && this.atomClassesAll && this.actionsAll;
+    },
     base_user() {
       return this.$store.state.auth.user.op;
     },
     base_userLabels() {
       return this.$store.getters['a/base/userLabels'];
+    },
+    base_showPopover() {
+      if (!this.base_ready) return false;
+      // submit
+      const submit = this.base_findAction('write') && this.base.item.atomStage === 0;
+      if (submit) return true;
+      // others
+      for (const action of this.base.actions) {
+        if (action.name !== 'write') return true;
+      }
+      return false;
     },
   },
   created() {
@@ -62,6 +79,31 @@ export default {
         key: { atomId: this.container.atomId },
       });
     },
+    base_findAction(actionName) {
+      if (!this.base.actions) return null;
+      return this.base.actions.find(item => item.name === actionName);
+    },
+    base_onAction(event, action) {
+      if (action === 'save' || action === 'submit') {
+        return this.$refs.validate.perform(event, action);
+      }
+      if (typeof action === 'string') {
+        action = {
+          module: this.base.atomClass.module,
+          atomClassName: this.base.atomClass.atomClassName,
+          name: action,
+        };
+      }
+      // action
+      let _action = this.getAction(action);
+      // for write
+      if (action.name === 'write') {
+        _action = this.$utils.extend({}, _action, { navigateOptions: { target: '_self' } });
+      }
+      return this.$meta.util.performAction({ ctx: this, action: _action, item: this.base.item }).then(res => {
+        if (res) this.$f7router.back();
+      });
+    },
     base_prepareReadOptions() {
       // options
       const options = {
@@ -75,6 +117,27 @@ export default {
       if (!this.base.item) return null;
       const stage = this.base.item.atomStage;
       return stage === 0 ? 'draft' : stage === 1 ? 'archive' : 'history';
+    },
+    base_renderActions() {
+      if (!this.base_ready) return null;
+      const children = [];
+      //
+      const actionWrite = this.base_findAction('write');
+      if (actionWrite) {
+        const actionIcon = this.container.mode === 'edit' ? 'save' : 'edit';
+        const actionName = this.container.mode === 'edit' ? 'save' : 'write';
+        children.push(
+          <eb-link ref="buttonSave" iconMaterial={actionIcon} propsOnPerform={event => this.base_onAction(event, actionName)}></eb-link>
+        );
+      }
+      //
+      if (this.base_showPopover) {
+        children.push(
+          <f7-link iconMaterial="more_horiz" popover-open={`#${this.base.popoverId}`}></f7-link>
+        );
+      }
+      //
+      return children;
     },
   },
 };
