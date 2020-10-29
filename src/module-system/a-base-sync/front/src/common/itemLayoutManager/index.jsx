@@ -1,5 +1,9 @@
+import ebAtomClasses from '../atomClasses.js';
+import ebAtomActions from '../atomActions.js';
 import Base from './base.jsx';
-import layout from './layout.jsx';
+import Page from './page.jsx';
+import Layout from './layout.jsx';
+import Subnavbar from './subnavbar.jsx';
 
 // container: {
 //   mode,  // edit/view
@@ -9,7 +13,7 @@ import layout from './layout.jsx';
 // },
 
 export default {
-  mixins: [ Base, layout ],
+  mixins: [ ebAtomClasses, ebAtomActions, Base, Page, Layout, Subnavbar ],
   data() {
     return {
     };

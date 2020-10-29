@@ -21,7 +21,11 @@ export default {
   },
   render() {
     return (
-      <eb-page>
+      <eb-page withSubnavbar={this.subnavbar.enable}>
+        <eb-navbar title={this.page_getTitle()} subtitle={this.page_getSubtitle()} eb-back-link="Back">
+          {this.layout_renderBlock({ blockName: 'title' })}
+          {this.layout.instance && this.subnavbar.enable && this.layout_renderBlock({ blockName: 'subnavbar' })}
+        </eb-navbar>
       </eb-page>
     );
   },

@@ -71,5 +71,10 @@ export default {
       // options
       return options;
     },
+    base_getCurrentStage() {
+      if (!this.base.item) return null;
+      const stage = this.base.item.atomStage;
+      return stage === 0 ? 'draft' : stage === 1 ? 'archive' : 'history';
+    },
   },
 };

@@ -9,6 +9,11 @@ export default {
       50: 'Tools',
     },
   },
+  stage: {
+    draft: 0,
+    archive: 1,
+    history: 2,
+  },
   user: {
     avatar: {
       default: avatarUser,
