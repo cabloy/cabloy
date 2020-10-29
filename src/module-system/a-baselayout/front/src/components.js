@@ -16,7 +16,9 @@ import listLayoutBlockTableBottombar from './components/atom/listLayoutTable/lis
 import listLayoutTableCellUserName from './components/atom/listLayoutTable/listLayoutTableCellUserName.jsx';
 import listLayoutTableCellAtomName from './components/atom/listLayoutTable/listLayoutTableCellAtomName.jsx';
 // itemLayoutMobile
+import itemLayoutMobile from './components/atom/itemLayoutMobile/itemLayoutMobile.jsx';
 import itemLayoutBlockMobileTitle from './components/atom/itemLayoutMobile/itemLayoutBlockMobileTitle.jsx';
+import itemLayoutBlockMobileSubnavbar from './components/atom/itemLayoutMobile/itemLayoutBlockMobileSubnavbar.jsx';
 
 export default {
   // listLayoutList
@@ -37,5 +39,7 @@ export default {
   listLayoutTableCellUserName,
   listLayoutTableCellAtomName,
   // itemLayoutMobile
+  itemLayoutMobile,
   itemLayoutBlockMobileTitle,
+  itemLayoutBlockMobileSubnavbar,
 };

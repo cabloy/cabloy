@@ -26,6 +26,7 @@ export default {
           {this.layout_renderBlock({ blockName: 'title' })}
           {this.layout.instance && this.subnavbar.enable && this.layout_renderBlock({ blockName: 'subnavbar' })}
         </eb-navbar>
+        {this.layout_renderLayout()}
       </eb-page>
     );
   },

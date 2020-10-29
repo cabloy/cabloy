@@ -55,8 +55,7 @@ export default {
       return (
         <div>
           {this.layout_renderComponent()}
-          {this.order_renderPopover()}
-          {this.create_renderPopoverActions()}
+          {this.base_renderActionsPopover()}
         </div>
       );
     },

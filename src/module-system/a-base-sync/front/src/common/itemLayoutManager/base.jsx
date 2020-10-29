@@ -127,17 +127,51 @@ export default {
         const actionIcon = this.container.mode === 'edit' ? 'save' : 'edit';
         const actionName = this.container.mode === 'edit' ? 'save' : 'write';
         children.push(
-          <eb-link ref="buttonSave" iconMaterial={actionIcon} propsOnPerform={event => this.base_onAction(event, actionName)}></eb-link>
+          <eb-link key={actionName} ref="buttonSave" iconMaterial={actionIcon} propsOnPerform={event => this.base_onAction(event, actionName)}></eb-link>
         );
       }
       //
       if (this.base_showPopover) {
         children.push(
-          <f7-link iconMaterial="more_horiz" popover-open={`#${this.base.popoverId}`}></f7-link>
+          <f7-link key="actionsPopover" iconMaterial="more_horiz" popover-open={`#${this.base.popoverId}`}></f7-link>
         );
       }
       //
       return children;
+    },
+    base_renderActionsPopover() {
+      let domList;
+      if (this.base_showPopover) {
+        const children = [];
+        if (this.base_findAction('write') && this.base.item.atomStage === 0) {
+          children.push(
+            <eb-list-item key="submit" link="#" popover-close propOnPerform={event => this.base_onAction(event, 'submit')}>
+              <f7-icon slot="media" material="done"></f7-icon>
+              <div slot="title">{this.$text('Submit')}</div>
+            </eb-list-item>
+          );
+        }
+        for (const action of this.base.actions) {
+          if (action.name === 'write') continue;
+          const _action = this.getAction(action);
+          children.push(
+            <eb-list-item key={action.id} link="#" popover-close propsOnPerform={event => this.base_onAction(event, action)}>
+              <f7-icon slot="media" material={_action.icon && _action.icon.material }></f7-icon>
+              <div slot="title">{this.getActionTitle(action)}</div>
+            </eb-list-item>
+          );
+        }
+        domList = (
+          <f7-list inset>
+            {children}
+          </f7-list>
+        );
+      }
+      return (
+        <f7-popover id={this.base.popoverId}>
+          {domList}
+        </f7-popover>
+      );
     },
   },
 };
