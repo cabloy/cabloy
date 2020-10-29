@@ -28,6 +28,20 @@ export default {
   created() {
     this.$store.dispatch('a/base/getLabels');
   },
+  mounted() {
+    this.$meta.eventHub.$on('atom:star', this.base_onStarChanged);
+    this.$meta.eventHub.$on('atom:labels', this.base_onLabelsChanged);
+    this.$meta.eventHub.$on('atom:action', this.base_onActionChanged);
+    this.$meta.eventHub.$on('comment:action', this.base_onCommentChanged);
+    this.$meta.eventHub.$on('attachment:action', this.base_onAttachmentChanged);
+  },
+  beforeDestroy() {
+    this.$meta.eventHub.$off('atom:star', this.base_onStarChanged);
+    this.$meta.eventHub.$off('atom:labels', this.base_onLabelsChanged);
+    this.$meta.eventHub.$off('atom:action', this.base_onActionChanged);
+    this.$meta.eventHub.$off('comment:action', this.base_onCommentChanged);
+    this.$meta.eventHub.$off('attachment:action', this.base_onAttachmentChanged);
+  },
   methods: {
     async base_loadItem() {
       try {
@@ -74,6 +88,47 @@ export default {
       if (!this.base.item) return null;
       const stage = this.base.item.atomStage;
       return stage === 0 ? 'draft' : stage === 1 ? 'archive' : 'history';
+    },
+    async base_onActionChanged(data) {
+      const key = data.key;
+      const action = data.action;
+
+      if (this.container.mode === 'edit') return;
+      if (!this.base_ready) return;
+      if (this.base.item.atomId !== key.atomId) return;
+
+      // create
+      if (action.menu === 1 && action.action === 'create') {
+        // do nothing
+        return;
+      }
+      // delete
+      if (action.name === 'delete') {
+        this.base.item = null;
+        this.base.notfound = true;
+        this.base.ready = false;
+        return;
+      }
+      // others
+      await this.base_loadItem();
+    },
+    base_onCommentChanged(data) {
+      if (!this.base.item || data.atomId !== this.container.atomId) return;
+      if (data.action === 'create') this.base.item.commentCount += 1;
+      if (data.action === 'delete') this.base.item.commentCount -= 1;
+    },
+    base_onAttachmentChanged(data) {
+      if (!this.base.item || data.atomId !== this.container.atomId) return;
+      if (data.action === 'create') this.base.item.attachmentCount += 1;
+      if (data.action === 'delete') this.base.item.attachmentCount -= 1;
+    },
+    base_onStarChanged(data) {
+      if (!this.base.item || data.key.atomId !== this.container.atomId) return;
+      this.base.item.star = data.star;
+    },
+    base_onLabelsChanged(data) {
+      if (!this.base.item || data.key.atomId !== this.container.atomId) return;
+      this.base.item.labels = data.labels;
     },
   },
 };
