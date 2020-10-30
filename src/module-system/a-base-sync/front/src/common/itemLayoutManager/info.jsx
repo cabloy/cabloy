@@ -16,7 +16,7 @@ export default {
       // navigate
       const item = this.base.item;
       this.$view.navigate(`/a/base/atom/labels?atomId=${item.atomId}`, {
-        target: '_self',
+        // target: '_self',
       });
     },
     info_onStarSwitch() {

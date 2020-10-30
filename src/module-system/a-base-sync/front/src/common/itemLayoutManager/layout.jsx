@@ -23,7 +23,11 @@ export default {
       // config
       this.base.config = this.base.configAtom ? this.$meta.util.extend({}, this.base.configAtomBase, this.base.configAtom) : this.base.configAtomBase;
       // layoutConfig
-      this.layout.config = this.$meta.util.getProperty(this.base.config, `render.item.layouts.${this.layout.current}`);
+      let _config = this.$meta.util.getProperty(this.base.config, `render.item.layouts.${this.layout.current}`);
+      if (!_config) {
+        _config = this.$meta.util.getProperty(this.base.config, 'render.item.layouts.mobile');
+      }
+      this.layout.config = _config;
     },
     layout_getComponentOptions() {
       return {

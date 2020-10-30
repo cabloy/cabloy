@@ -114,7 +114,7 @@ export default {
       }
       // navigate
       this.$view.navigate(`/a/base/atom/labels?atomId=${item.atomId}`, {
-        target: '_self',
+        // target: '_self',
       });
       this.$meta.util.swipeoutClose(event.target);
     },
