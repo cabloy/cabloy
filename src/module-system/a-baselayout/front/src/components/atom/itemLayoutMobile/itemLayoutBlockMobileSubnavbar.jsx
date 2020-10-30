@@ -16,7 +16,7 @@ export default {
   },
   methods: {
     _renderActionsLeft() {
-      const children = this.layoutManager.info_rendActionsLeft();
+      const children = this.layoutManager.info_renderActionsLeft();
       return (
         <div class="actions-block actions-block-left">
           {children}
@@ -24,7 +24,7 @@ export default {
       );
     },
     _renderActionsRight() {
-      const children = this.layoutManager.info_rendActionsRight();
+      const children = this.layoutManager.info_renderActionsRight();
       return (
         <div class="actions-block actions-block-right">
           {children}

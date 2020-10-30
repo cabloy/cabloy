@@ -50,7 +50,11 @@ export default {
     info_getLabel(id) {
       return this.base_userLabels[id];
     },
-    info_rendActionsLeft() {
+    info_getItemMetaMedia(avatar) {
+      const media = avatar || this.$meta.config.modules['a-base'].user.avatar.default;
+      return this.$meta.util.combineImageUrl(media, 16);
+    },
+    info_renderActionsLeft() {
       if (!this.base_ready) return;
       const item = this.base.item;
       const children = [];
@@ -91,8 +95,72 @@ export default {
       // ok
       return children;
     },
-    info_rendActionsRight() {
-
+    info_renderAvatar() {
+      const item = this.base.item;
+      const children = [];
+      let small = false;
+      if (item.userIdCreated !== item.userIdUpdated) {
+        small = true;
+        children.push(
+          <img
+            class={`avatar ${small ? 'avatar12' : 'avatar16'}`}
+            src={this.info_getItemMetaMedia(item.avatarUpdated)}
+            title={item.userName}
+          />
+        );
+      }
+      children.push(
+        <img
+          class={`avatar ${small ? 'avatar12' : 'avatar16'}`}
+          src={this.info_getItemMetaMedia(item.avatar)}
+          title={item.userName}
+        />
+      );
+      return (
+        <div class="info-avatar">
+          {children}
+        </div>
+      );
+    },
+    info_renderDate() {
+      const item = this.base.item;
+      const children = [];
+      const dateCreated = this.$meta.util.formatDateTime(item.atomCreatedAt);
+      const dateUpdated = this.$meta.util.formatDateTime(item.atomUpdatedAt);
+      let small = false;
+      if (dateCreated !== dateUpdated) {
+        small = true;
+        children.push(
+          <div>{dateUpdated}</div>
+        );
+      }
+      if (small) {
+        children.push(
+          <div>{dateCreated}</div>
+        );
+      } else {
+        children.push(
+          <div>{this.$meta.util.formatDate(item.atomCreatedAt)}</div>
+        );
+        children.push(
+          <div>{this.$meta.util.formatTime(item.atomCreatedAt)}</div>
+        );
+      }
+      return (
+        <div class='info-date'>
+          {children}
+        </div>
+      );
+    },
+    info_renderActionsRight() {
+      if (!this.base_ready) return;
+      const children = [];
+      // avatar
+      children.push(this.info_renderAvatar());
+      // date
+      children.push(this.info_renderDate());
+      // ok
+      return children;
     },
   },
 };

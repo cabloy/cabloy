@@ -65,7 +65,7 @@ export default {
         this.bulk.selectedAtoms = items.concat();
       }
     },
-    bulk_rendActionsLeft() {
+    bulk_renderActionsLeft() {
       const children = [];
       // switch select
       const items = this.base_getItems();
@@ -82,7 +82,7 @@ export default {
       }
       return children;
     },
-    bulk_rendActionsLeftB() {
+    bulk_renderActionsLeftB() {
       const children = [];
       // switch select
       // not check items.length > 0, so as to avoid splash
@@ -95,7 +95,7 @@ export default {
       // }
       return children;
     },
-    bulk_rendActionsRight() {
+    bulk_renderActionsRight() {
       const children = [];
       const selectedAtoms = this.bulk.selectedAtoms;
       if (this.bulk.actions && this.actionsAll) {
