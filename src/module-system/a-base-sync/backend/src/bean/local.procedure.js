@@ -29,6 +29,7 @@ module.exports = ctx => {
       // -- e: aAtomLabelRef
       // -- f: {item}
       // -- g: aUser
+      // -- g2: aUser
       // -- h: aComment
       // -- i: aFile
       // -- j: aFlowHistory
@@ -124,6 +125,7 @@ module.exports = ctx => {
                 a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdArchive,a.roleIdOwner,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
                 g.userName,g.avatar,
+                g2.userName as userNameUpdated,g2.avatar as avatarUpdated,
                 j.flowId,j.flowStatus,j.flowNodeIdCurrent,j.flowNodeNameCurrent
                 ${_starField} ${_labelField} ${_commentField} ${_fileField}`;
       }
@@ -132,7 +134,8 @@ module.exports = ctx => {
       const _sql =
         `select ${_selectFields} from aAtom a
             inner join aAtomClass b on a.atomClassId=b.id
-            inner join aUser g on a.userIdCreated=g.id
+            left join aUser g on a.userIdCreated=g.id
+            left join aUser g2 on a.userIdUpdated=g2.id
             left join aFlowHistory j on a.atomFlowId=j.id
             ${_itemJoin}
             ${_starJoin}
@@ -166,6 +169,7 @@ module.exports = ctx => {
       // -- e: aAtomLabelRef
       // -- f: {item}
       // -- g: aUser
+      // -- g2: aUser
       // -- h: aComment
       // -- i: aFile
       // -- j: aFlowHistory
@@ -232,6 +236,7 @@ module.exports = ctx => {
                 a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdArchive,a.roleIdOwner,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
                 g.userName,g.avatar,
+                g2.userName as userNameUpdated,g2.avatar as avatarUpdated,
                 j.flowId,j.flowStatus,j.flowNodeIdCurrent,j.flowNodeNameCurrent
                 ${_commentField} ${_fileField}`;
       }
@@ -240,7 +245,8 @@ module.exports = ctx => {
       const _sql =
         `select ${_selectFields} from aAtom a
             inner join aAtomClass b on a.atomClassId=b.id
-            inner join aUser g on a.userIdCreated=g.id
+            left join aUser g on a.userIdCreated=g.id
+            left join aUser g2 on a.userIdUpdated=g2.id
             left join aFlowHistory j on a.atomFlowId=j.id
             ${_itemJoin}
             ${_commentJoin}
@@ -270,6 +276,7 @@ module.exports = ctx => {
       // -- e: aAtomLabelRef
       // -- f: {item}
       // -- g: aUser
+      // -- g2: aUser
       // -- h: aComment
       // -- i: aFile
       // -- j: aFlowHistory
@@ -365,6 +372,7 @@ module.exports = ctx => {
                 a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdArchive,a.roleIdOwner,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
                 g.userName,g.avatar,
+                g2.userName as userNameUpdated,g2.avatar as avatarUpdated,
                 j.flowId,j.flowStatus,j.flowNodeIdCurrent,j.flowNodeNameCurrent
                 ${_starField} ${_labelField} ${_commentField} ${_fileField}`;
       }
@@ -373,7 +381,8 @@ module.exports = ctx => {
       const _sql =
         `select ${_selectFields} from aAtom a
             inner join aAtomClass b on a.atomClassId=b.id
-            inner join aUser g on a.userIdCreated=g.id
+            left join aUser g on a.userIdCreated=g.id
+            left join aUser g2 on a.userIdUpdated=g2.id
             left join aFlowHistory j on a.atomFlowId=j.id
             ${_itemJoin}
             ${_starJoin}
@@ -415,6 +424,7 @@ module.exports = ctx => {
       // -- e: aAtomLabelRef
       // -- f: {item}
       // -- g: aUser
+      // -- g2: aUser
       // -- j: aFlowHistory
 
       // for safe
@@ -461,13 +471,15 @@ module.exports = ctx => {
                 a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdArchive,a.roleIdOwner,a.atomClassId,a.atomName,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
                 g.userName,g.avatar,
+                g2.userName as userNameUpdated,g2.avatar as avatarUpdated,
                 j.flowId,j.flowStatus,j.flowNodeIdCurrent,j.flowNodeNameCurrent
                 ${_starField}
                 ${_labelField}
           from aAtom a
 
             inner join aAtomClass b on a.atomClassId=b.id
-            inner join aUser g on a.userIdCreated=g.id
+            left join aUser g on a.userIdCreated=g.id
+            left join aUser g2 on a.userIdUpdated=g2.id
             left join aFlowHistory j on a.atomFlowId=j.id
             ${_itemJoin}
 
