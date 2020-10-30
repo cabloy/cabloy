@@ -32,17 +32,27 @@ export default {
         this.$meta.eventHub.$emit('atom:star', { key, star: data.star, starCount: data.starCount });
       });
     },
+    info_getLabel(id) {
+      if (!this.base_userLabels) return null;
+      return this.base_userLabels[id];
+    },
     info_rendActionsLeft() {
       if (!this.base_ready) return;
       const item = this.base.item;
       const children = [];
-      // switch select
+      // star
       children.push(
         <eb-link iconMaterial={item.star ? 'star' : 'star_border'} propsOnPerform={this.info_onStarSwitch}></eb-link>
       );
-      children.push(
-        <eb-link><f7-badge>sss</f7-badge><f7-badge>sss</f7-badge></eb-link>
-      );
+      // labels
+      if (item.labels && this.base_userLabels) {
+        for (const label of JSON.parse(item.labels)) {
+          const _label = this.info_getLabel(label);
+          children.push(
+            <eb-link key={label} text={_label.text} style={ { color: _label.color } }></eb-link>
+          );
+        }
+      }
 
       return children;
     },
