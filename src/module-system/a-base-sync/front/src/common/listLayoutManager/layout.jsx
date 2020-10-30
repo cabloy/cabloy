@@ -24,10 +24,10 @@ export default {
         await this.$meta.module.use(this.container.atomClass.module);
         this.base.configAtom = this.$meta.util.getProperty(this.$meta.config.modules[this.container.atomClass.module], `atoms.${this.container.atomClass.atomClassName}`);
       }
+      // config
+      this.base.config = this.base.configAtom ? this.$meta.util.extend({}, this.base.configAtomBase, this.base.configAtom) : this.base.configAtomBase;
       // layoutConfig
-      const layoutConfigBase = this.base.configAtomBase.render.list.layouts[this.layout.current];
-      const layoutConfigAtom = this.$meta.util.getProperty(this.base.configAtom, `render.list.layouts.${this.layout.current}`);
-      this.layout.config = this.$meta.util.extend({}, layoutConfigBase, layoutConfigAtom);
+      this.layout.config = this.$meta.util.getProperty(this.base.config, `render.list.layouts.${this.layout.current}`);
     },
     layout_getComponentOptions() {
       return {

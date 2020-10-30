@@ -60,12 +60,7 @@ export default {
       return params;
     },
     filter_getConfig() {
-      // base
-      const filterConfigBase = this.base.configAtomBase.render.list.info.filter;
-      // atomClass
-      const filterConfig = this.$meta.util.getProperty(this.base.configAtom, 'render.list.info.filter');
-      // filterConfig
-      return this.$meta.util.extend({}, filterConfigBase, filterConfig);
+      return this.$meta.util.getProperty(this.base.config, 'render.list.info.filter');
     },
     filter_onPerform() {
       const inPanel = this.$view.inPanel();

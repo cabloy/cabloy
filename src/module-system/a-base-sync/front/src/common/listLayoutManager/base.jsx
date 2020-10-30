@@ -5,6 +5,7 @@ export default {
         ready: false,
         configAtomBase: null,
         configAtom: null,
+        config: null,
       },
     };
   },
@@ -85,11 +86,7 @@ export default {
       return stage;
     },
     base_getExportFields() {
-      // atomClass
-      const fields = this.$meta.util.getProperty(this.base.configAtom, 'render.list.info.export.fields');
-      if (fields) return fields;
-      // base
-      return this.base.configAtomBase.render.list.info.export.fields;
+      return this.$meta.util.getProperty(this.base.config, 'render.list.info.export.fields');
     },
   },
 };

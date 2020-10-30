@@ -20,10 +20,10 @@ export default {
       this.base.configAtomBase = this.$config.atom;
       // configAtom
       this.base.configAtom = this.$meta.util.getProperty(this.$meta.config.modules[this.base.atomClass.module], `atoms.${this.base.atomClass.atomClassName}`);
+      // config
+      this.base.config = this.base.configAtom ? this.$meta.util.extend({}, this.base.configAtomBase, this.base.configAtom) : this.base.configAtomBase;
       // layoutConfig
-      const layoutConfigBase = this.base.configAtomBase.render.item.layouts[this.layout.current];
-      const layoutConfigAtom = this.$meta.util.getProperty(this.base.configAtom, `render.item.layouts.${this.layout.current}`);
-      this.layout.config = this.$meta.util.extend({}, layoutConfigBase, layoutConfigAtom);
+      this.layout.config = this.$meta.util.getProperty(this.base.config, `render.item.layouts.${this.layout.current}`);
     },
     layout_getComponentOptions() {
       return {

@@ -3,6 +3,7 @@
     <eb-navbar large largeTransparent :title="$text('Labels')" eb-back-link="Back">
       <f7-nav-right>
         <eb-link iconMaterial="add" @click.prevent="onAddLabel"></eb-link>
+        <eb-link iconMaterial="done" @click.prevent="onDone"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <f7-list v-if="labelsAll">
@@ -69,6 +70,9 @@ export default {
     },
   },
   methods: {
+    onDone() {
+      this.$f7router.back();
+    },
     onAddLabel() {
       this.labelId = 0;
       this.labelText = '';

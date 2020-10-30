@@ -169,6 +169,10 @@ export default {
         },
       },
       item: {
+        info: {
+          attachment: true,
+          comment: true,
+        },
         layouts: {
           mobile: {
             component: {

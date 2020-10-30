@@ -5,6 +5,7 @@ export default {
         ready: false,
         configAtomBase: null,
         configAtom: null,
+        config: null,
         //
         item: null,
         atomClass: null,
@@ -16,7 +17,7 @@ export default {
   },
   computed: {
     base_ready() {
-      return this.base.ready && this.atomClassesAll && this.actionsAll;
+      return this.base.ready && this.base_userLabels && this.atomClassesAll && this.actionsAll;
     },
     base_user() {
       return this.$store.state.auth.user.op;
@@ -128,7 +129,7 @@ export default {
     },
     base_onLabelsChanged(data) {
       if (!this.base.item || data.key.atomId !== this.container.atomId) return;
-      this.base.item.labels = data.labels;
+      this.base.item.labels = JSON.stringify(data.labels);
     },
   },
 };
