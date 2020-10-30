@@ -1,128 +1,138 @@
-.comment {
+:root {
 
-  .header-container {
+  .comment {
+
+    .header-container {
+      width: 100%;
+    }
+
+    .header-atom {
+      a.link {
+        text-transform: none;
+        text-align: right;
+      }
+    }
+
+    .header-comment {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .title {
+      .avatar {
+        float: left;
+      }
+
+      .name {
+        margin-left: 40px;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .date {
+        margin-top: -4px;
+        margin-left: 39px;
+        font-size: 13px;
+        color: var(--f7-text-editor-placeholder-color);
+      }
+    }
+
+    .actions {
+      display: flex;
+
+      a.action {
+        min-width: 0;
+        height: auto;
+        color: var(--f7-text-editor-placeholder-color);
+
+        .icon {
+          display: inline;
+          font-size: 18px;
+        }
+
+        &+a.action {
+          margin-left: 6px;
+        }
+      }
+    }
+  }
+
+  .item {
+    .header {
+      position: relative;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 2px 8px -8px 18px;
+      font-size: 12px;
+      color: var(--f7-block-header-text-color);
+
+      .mediaLabel {
+        display: flex;
+        align-items: center;
+      }
+
+      .date {
+        span {
+          margin-left: 4px;
+        }
+      }
+
+    }
+
+    .title {
+      .date {
+        font-size: 10px;
+        color: var(--f7-text-editor-placeholder-color);
+      }
+    }
+
+    .after {
+      .date {
+        font-size: 10px;
+        color: var(--f7-block-header-text-color);
+      }
+    }
+
+    .summary {
+      position: absolute;
+      left: 72px;
+      bottom: -4px;
+      height: 20px;
+      color: var(--f7-block-header-text-color);
+      font-size: 12px;
+    }
+
+  }
+
+  .atom-list-subnavbar-container,
+  .atom-item-subnavbar-container {
     width: 100%;
-  }
-
-  .header-atom {
-    a.link {
-      text-transform: none;
-      text-align: right;
-    }
-  }
-
-  .header-comment {
     display: flex;
-    justify-content: space-between;
-  }
-
-  .title {
-    .avatar {
-      float: left;
-    }
-
-    .name {
-      margin-left: 40px;
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .date {
-      margin-top: -4px;
-      margin-left: 39px;
-      font-size: 13px;
-      color: var(--f7-text-editor-placeholder-color);
-    }
-  }
-
-  .actions {
-    display: flex;
-
-    a.action {
-      min-width: 0;
-      height: auto;
-      color: var(--f7-text-editor-placeholder-color);
-
-      .icon {
-        display: inline;
-        font-size: 18px;
-      }
-
-      &+a.action {
-        margin-left: 6px;
-      }
-    }
-  }
-}
-
-.item {
-  .header {
-    position: relative;
-    box-sizing: border-box;
-    display: flex;
+    flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    margin: 2px 8px -8px 18px;
-    font-size: 12px;
-    color: var(--f7-block-header-text-color);
+    font-size: var(--f7-toolbar-font-size);
 
-    .mediaLabel {
+
+    .actions-block {
+      height: var(--f7-toolbar-height);
       display: flex;
       align-items: center;
-    }
 
-    .date {
-      span {
-        margin-left: 4px;
+      a.link {
+        padding: 0 8px
       }
     }
 
-  }
+    .actions-block-left {
+      justify-content: flex-start;
+    }
 
-  .title {
-    .date {
-      font-size: 10px;
-      color: var(--f7-text-editor-placeholder-color);
+    .actions-block-right {
+      justify-content: flex-end;
     }
   }
 
-  .after {
-    .date {
-      font-size: 10px;
-      color: var(--f7-block-header-text-color);
-    }
-  }
-
-  .summary {
-    position: absolute;
-    left: 72px;
-    bottom: -4px;
-    height: 20px;
-    color: var(--f7-block-header-text-color);
-    font-size: 12px;
-  }
-
-}
-
-.atom-list-subnavbar-container {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  font-size: var(--f7-toolbar-font-size);
-
-  .actions-block {
-    height: var(--f7-toolbar-height);
-    display: flex;
-    align-items: center;
-  }
-
-  .actions-block-left {
-    justify-content: flex-start;
-  }
-
-  .actions-block-right {
-    justify-content: flex-end;
-  }
 }

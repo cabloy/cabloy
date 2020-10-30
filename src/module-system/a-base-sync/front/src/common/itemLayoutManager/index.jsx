@@ -4,6 +4,7 @@ import Base from './base.jsx';
 import Page from './page.jsx';
 import Layout from './layout.jsx';
 import Subnavbar from './subnavbar.jsx';
+import Info from './info.jsx';
 import Actions from './actions.jsx';
 import Validate from './validate.jsx';
 
@@ -15,7 +16,7 @@ import Validate from './validate.jsx';
 // },
 
 export default {
-  mixins: [ ebAtomClasses, ebAtomActions, Base, Page, Layout, Subnavbar, Actions, Validate ],
+  mixins: [ ebAtomClasses, ebAtomActions, Base, Page, Layout, Subnavbar, Info, Actions, Validate ],
   data() {
     return {
     };

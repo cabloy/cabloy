@@ -16,7 +16,7 @@ export default {
   },
   methods: {
     _renderActionsLeft() {
-      const children = this.layoutManager.bulk_rendActionsLeft();
+      const children = this.layoutManager.info_rendActionsLeft();
       return (
         <div class="actions-block actions-block-left">
           {children}
@@ -24,7 +24,7 @@ export default {
       );
     },
     _renderActionsRight() {
-      const children = this.layoutManager.bulk_rendActionsRight();
+      const children = this.layoutManager.info_rendActionsRight();
       return (
         <div class="actions-block actions-block-right">
           {children}
@@ -33,10 +33,9 @@ export default {
     },
   },
   render() {
-    return (<f7-subnavbar></f7-subnavbar>);
     return (
       <f7-subnavbar>
-        <div class="atom-list-subnavbar-container">
+        <div class="atom-item-subnavbar-container">
           {this._renderActionsLeft()}
           {this._renderActionsRight()}
         </div>
