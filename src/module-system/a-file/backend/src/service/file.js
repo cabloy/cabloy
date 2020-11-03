@@ -272,9 +272,11 @@ module.exports = app => {
       if (!atomId) return;
       const res = await this.ctx.bean.atom.checkRightAction({
         atom: { id: atomId },
-        action: this.ctx.constant.module('a-base').atom.action.write,
+        action: 3,
+        stage: 'draft',
         user,
       });
+      if (res) return;
       if (!res) this.ctx.throw(403);
     }
 
@@ -297,9 +299,11 @@ module.exports = app => {
         const res = await this.ctx.bean.atom.checkRightAction({
           atom: { id: file.atomId },
           action: 3,
+          stage: 'draft',
           user,
         });
         if (res) return;
+        if (!res) this.ctx.throw(403);
       }
       // check if self
       if (file.userId === user.id) return;
@@ -325,6 +329,7 @@ module.exports = app => {
       if (file.atomId) {
         const res = await this.ctx.bean.atom.checkRightRead({ atom: { id: file.atomId }, user });
         if (res) return;
+        if (!res) this.ctx.throw(403);
       }
       // check if self
       if (file.userId === user.id) return;

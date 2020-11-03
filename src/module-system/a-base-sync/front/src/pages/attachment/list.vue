@@ -2,7 +2,7 @@
   <eb-page ptr @ptr:refresh="onRefresh" infinite :infinitePreloader="false" @infinite="onInfinite">
     <eb-navbar large largeTransparent :title="$text('Attachment List')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link v-if="findAction('write')" iconMaterial="add" :onPerform="onPerformAdd"></eb-link>
+        <eb-link v-if="!!actionWrite" iconMaterial="add" :onPerform="onPerformAdd"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <f7-list>
@@ -16,7 +16,7 @@
           </div>
           <div class="date">{{$meta.util.formatDateTimeRelative(item.createdAt)}}</div>
         </div>
-        <eb-context-menu v-if="item.userId===user.id">
+        <eb-context-menu v-if="!!actionWrite">
           <div slot="right">
             <div color="orange" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
           </div>
@@ -27,13 +27,12 @@
   </eb-page>
 </template>
 <script>
-import Vue from 'vue';
 export default {
   data() {
     return {
       atomId: parseInt(this.$f7route.query.atomId),
-      actions: null,
       items: [],
+      actionWrite: null,
     };
   },
   computed: {
@@ -42,7 +41,7 @@ export default {
     },
   },
   created() {
-    this.fetchActions();
+    this.checkActionWrite();
   },
   methods: {
     onRefresh(done) {
@@ -80,16 +79,14 @@ export default {
     reload() {
       this.$refs.loadMore.reload();
     },
-    fetchActions() {
-      this.$api.post('atom/actions', {
+    checkActionWrite() {
+      this.$api.post('atom/checkRightAction', {
         key: { atomId: this.atomId },
+        action: 3,
+        stage: 'draft',
       }).then(data => {
-        this.actions = data;
+        this.actionWrite = data;
       });
-    },
-    findAction(actionName) {
-      if (!this.actions) return null;
-      return this.actions.find(item => item.name === actionName);
     },
     onPerformAdd() {
       return new Promise((resolve, reject) => {

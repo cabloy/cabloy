@@ -187,6 +187,16 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async checkRightAction() {
+      const res = await this.ctx.service.atom.checkRightAction({
+        key: this.ctx.request.body.key,
+        action: this.ctx.request.body.action,
+        stage: this.ctx.request.body.stage,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     async schema() {
       const res = await this.ctx.service.atom.schema({
         atomClass: this.ctx.request.body.atomClass,

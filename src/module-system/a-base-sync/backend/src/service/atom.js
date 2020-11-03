@@ -70,6 +70,10 @@ module.exports = app => {
       return await this.ctx.bean.atom.actionsBulk({ atomClass, user });
     }
 
+    async checkRightAction({ key, action, stage, user }) {
+      return await this.ctx.bean.atom.checkRightAction({ atom: { id: key.atomId }, action, stage, user });
+    }
+
     async schema({ atomClass, schema, user }) {
       return await this.ctx.bean.atom.schema({ atomClass, schema, user });
     }

@@ -70,6 +70,7 @@ module.exports = app => {
     { method: 'post', path: 'atom/actionsBulk', controller: 'atom' },
     { method: 'post', path: 'atom/schema', controller: 'atom' },
     { method: 'post', path: 'atom/validator', controller: 'atom' },
+    { method: 'post', path: 'atom/checkRightAction', controller: 'atom' },
     // comment
     { method: 'post', path: 'comment/all', controller: 'comment' },
     { method: 'post', path: 'comment/list', controller: 'comment',
