@@ -13,7 +13,8 @@ export default {
   },
   methods: {
     layout_get() {
-      return (this.$view.size === 'small') ? 'mobile' : 'pc';
+      // large/medium/small
+      return (this.$view.size === 'large') ? 'pc' : 'mobile';
     },
     async layout_prepareConfig() {
       // configAtomBase

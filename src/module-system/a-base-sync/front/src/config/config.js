@@ -200,6 +200,26 @@ export default {
               },
             },
           },
+          pc: {
+            component: {
+              module: 'a-baselayout',
+              name: 'itemLayoutPC',
+            },
+            blocks: {
+              title: {
+                component: {
+                  module: 'a-baselayout',
+                  name: 'itemLayoutBlockPCTitle',
+                },
+              },
+              main: {
+                component: {
+                  module: 'a-baselayout',
+                  name: 'itemLayoutBlockMobileMain',
+                },
+              },
+            },
+          },
         },
       },
     },

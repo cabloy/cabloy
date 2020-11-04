@@ -20,6 +20,9 @@ import itemLayoutMobile from './components/atom/itemLayoutMobile/itemLayoutMobil
 import itemLayoutBlockMobileTitle from './components/atom/itemLayoutMobile/itemLayoutBlockMobileTitle.jsx';
 import itemLayoutBlockMobileSubnavbar from './components/atom/itemLayoutMobile/itemLayoutBlockMobileSubnavbar.jsx';
 import itemLayoutBlockMobileMain from './components/atom/itemLayoutMobile/itemLayoutBlockMobileMain.jsx';
+// itemLayoutPC
+import itemLayoutPC from './components/atom/itemLayoutPC/itemLayoutPC.jsx';
+import itemLayoutBlockPCTitle from './components/atom/itemLayoutPC/itemLayoutBlockPCTitle.jsx';
 
 export default {
   // listLayoutList
@@ -44,4 +47,7 @@ export default {
   itemLayoutBlockMobileTitle,
   itemLayoutBlockMobileSubnavbar,
   itemLayoutBlockMobileMain,
+  // itemLayoutPC
+  itemLayoutPC,
+  itemLayoutBlockPCTitle,
 };
