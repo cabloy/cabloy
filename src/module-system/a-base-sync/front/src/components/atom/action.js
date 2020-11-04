@@ -86,7 +86,9 @@ export default {
           params: JSON.stringify(params),
         };
         const url = ctx.$meta.util.combineQueries('/a/base/atom/list', queries);
-        ctx.$view.navigate(url, { target: '_self' });
+        ctx.$view.navigate(url, {
+          // target: '_self'
+        });
       }
     },
     _onActionCreate({ ctx, action, item }) {
