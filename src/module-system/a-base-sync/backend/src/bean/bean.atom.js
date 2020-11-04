@@ -426,6 +426,8 @@ module.exports = ctx => {
         atomClosed,
         atomIdDraft,
         atomIdArchive,
+        createdAt: srcItem.atomCreatedAt,
+        updatedAt: srcItem.atomUpdatedAt,
       });
       // update fields
       await this.modelAtom.update({
@@ -440,6 +442,8 @@ module.exports = ctx => {
         atomClosed: destItem.atomClosed,
         atomIdDraft: destItem.atomIdDraft,
         atomIdArchive: destItem.atomIdArchive,
+        createdAt: destItem.createdAt,
+        updatedAt: destItem.updatedAt,
       });
       // copy attachments
       await this._copyAttachments({ atomIdSrc: srcKey.atomId, atomIdDest: destKey.atomId });
@@ -635,15 +639,8 @@ module.exports = ctx => {
       return res.insertId;
     }
 
-    async _update({
-      atom: { id, atomName, allowComment, itemId },
-      /* user,*/
-    }) {
-      const params = { id };
-      if (atomName !== undefined) params.atomName = atomName;
-      if (allowComment !== undefined) params.allowComment = allowComment;
-      if (itemId !== undefined) params.itemId = itemId;
-      await this.modelAtom.update(params);
+    async _update({ atom/* , user,*/ }) {
+      await this.modelAtom.update(atom);
     }
 
     async _delete({

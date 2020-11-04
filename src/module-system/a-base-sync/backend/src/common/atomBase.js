@@ -59,10 +59,10 @@ module.exports = app => {
       const atom = { };
       if (item.atomName !== undefined) atom.atomName = item.atomName;
       if (item.allowComment !== undefined) atom.allowComment = item.allowComment;
-      if (Object.keys(atom).length > 0) {
-        atom.id = key.atomId;
-        await this.ctx.bean.atom._update({ atom, user });
-      }
+      atom.updatedAt = new Date();
+      // update
+      atom.id = key.atomId;
+      await this.ctx.bean.atom._update({ atom, user });
     }
 
     async submit({ /* atomClass,*/ key, options, user }) {

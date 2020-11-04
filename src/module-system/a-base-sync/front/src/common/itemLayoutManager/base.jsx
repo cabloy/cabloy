@@ -94,9 +94,14 @@ export default {
       const key = data.key;
       const action = data.action;
 
-      if (this.container.mode === 'edit') return;
       if (!this.base_ready) return;
       if (this.base.item.atomId !== key.atomId) return;
+
+      if (this.container.mode === 'edit') {
+        // just update time
+        this.base.item.atomUpdatedAt = new Date();
+        return;
+      }
 
       // create
       if (action.menu === 1 && action.action === 'create') {
