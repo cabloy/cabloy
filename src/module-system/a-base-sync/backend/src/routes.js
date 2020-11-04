@@ -44,11 +44,11 @@ module.exports = app => {
     },
     {
       method: 'post', path: 'atom/deleteBulk', controller: 'atom', middlewares: 'transaction',
-      meta: { right: { type: 'atom', action: 6 } },
+      meta: { right: { type: 'atom', action: 31 } },
     },
     {
       method: 'post', path: 'atom/exportBulk', controller: 'atom',
-      meta: { right: { type: 'atom', action: 7 } },
+      meta: { right: { type: 'atom', action: 32 } },
     },
     { method: 'post', path: 'atom/star', controller: 'atom',
       meta: {

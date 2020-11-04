@@ -23,9 +23,27 @@ export default {
       }
       // others
       for (const action of this.actions.list) {
+        // write
         if (action.name === 'write') continue;
+        // view
         if (action.name === 'read' && this.container.mode === 'view') continue;
+        // stage
+        const _action = this.getAction(action);
+        if (_action.stage) {
+          const stages = _action.stage.split(',');
+          if (!stages.some(item => this.$meta.config.modules['a-base'].stage[item] === this.base.item.atomStage)) continue;
+        }
+        // ok
         actions.push(action);
+      }
+      // specials
+      //    history
+      if (this.base.item.atomIdArchive || this.base.item.atomStage === 1) {
+        actions.push({
+          module: this.base.atomClass.module,
+          atomClassName: this.base.atomClass.atomClassName,
+          name: 'history',
+        });
       }
       // ok
       return actions.length > 0 ? actions : null;

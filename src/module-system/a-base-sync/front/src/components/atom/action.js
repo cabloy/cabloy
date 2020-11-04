@@ -64,6 +64,29 @@ export default {
           }
           throw err;
         }
+      } else if (action.name === 'history') {
+        const atomIdArchive = item.atomStage === 1 ? item.atomId : item.atomIdArchive;
+        if (!atomIdArchive) return;
+        // options
+        const options = {
+          where: {
+            'a.atomIdArchive': atomIdArchive,
+          },
+          stage: 'history',
+        };
+        // params
+        const params = {
+          pageTitle: `${this.$text('History')}: ${item.atomName}`,
+        };
+        // queries
+        const queries = {
+          module: item.module,
+          atomClassName: item.atomClassName,
+          options: JSON.stringify(options),
+          params: JSON.stringify(params),
+        };
+        const url = ctx.$meta.util.combineQueries('/a/base/atom/list', queries);
+        ctx.$view.navigate(url, { target: '_self' });
       }
     },
     _onActionCreate({ ctx, action, item }) {

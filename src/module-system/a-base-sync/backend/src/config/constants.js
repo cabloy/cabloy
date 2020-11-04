@@ -12,10 +12,12 @@ module.exports = {
       write: 3,
       delete: 4,
       clone: 5,
-      deleteBulk: 6,
-      exportBulk: 7,
+      deleteBulk: 31,
+      exportBulk: 32,
+
       save: 51,
       submit: 52,
+      history: 53,
       custom: 100, // custom action start from custom
     },
     actionMeta: {
@@ -71,6 +73,12 @@ module.exports = {
         actionComponent: 'action',
         authorize: false,
         icon: { material: 'done' },
+      },
+      history: {
+        title: 'History',
+        actionComponent: 'action',
+        authorize: false,
+        icon: { material: 'change_history' },
       },
       custom: {
         title: 'Custom',
