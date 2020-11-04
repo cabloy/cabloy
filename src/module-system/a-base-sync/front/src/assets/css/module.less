@@ -225,3 +225,29 @@
   }
 
 }
+
+:root {
+
+  .eb-view-size-medium,
+  .eb-view-size-large {
+    form.eb-list-row {
+      display: flex;
+      justify-content: space-evenly;
+      flex-wrap: wrap;
+      align-items: flex-start;
+
+      .eb-list-group {
+        box-sizing: border-box;
+        width: calc((100% - var(--f7-grid-gap)) / 2);
+        margin-top: calc(var(--f7-grid-gap)/2);
+      }
+
+      .eb-list-group-whole {
+        box-sizing: border-box;
+        width: calc((100% - var(--f7-grid-gap)/2));
+        margin-top: calc(var(--f7-grid-gap)/2);
+      }
+
+    }
+  }
+}

@@ -1,15 +1,15 @@
 <template>
-  <f7-list form inline-labels no-hairlines-md>
-    <f7-list-group>
+  <f7-list form inline-labels no-hairlines-md class="eb-list-row">
+    <f7-list-group class="eb-list-group">
       <f7-list-item group-title :title="$text('Title')"></f7-list-item>
       <eb-list-item-validate dataKey="atomName"></eb-list-item-validate>
     </f7-list-group>
-    <f7-list-group>
+    <f7-list-group class="eb-list-group">
       <f7-list-item group-title :title="$text('Content')"></f7-list-item>
       <eb-list-item-choose link="#" dataPath="content" :title="$text('Content')" :onChoose="onChooseEditContent">
       </eb-list-item-choose>
     </f7-list-group>
-    <f7-list-group>
+    <f7-list-group class="eb-list-group-whole">
       <f7-list-item group-title :title="$text('Basic Info')"></f7-list-item>
       <eb-list-item-validate dataKey="language" :meta="{options:languages}"></eb-list-item-validate>
       <f7-list-item :title="$text('Category')">
@@ -23,7 +23,7 @@
       <eb-list-item-validate dataKey="slug"></eb-list-item-validate>
       <eb-list-item-validate dataKey="allowComment"></eb-list-item-validate>
     </f7-list-group>
-    <f7-list-group>
+    <f7-list-group class="eb-list-group-whole">
       <f7-list-item group-title :title="$text('Extra')"></f7-list-item>
       <eb-list-item-validate dataKey="sticky"></eb-list-item-validate>
       <eb-list-item-validate dataKey="sorting"></eb-list-item-validate>
