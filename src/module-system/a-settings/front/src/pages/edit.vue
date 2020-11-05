@@ -2,10 +2,10 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="title" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link v-if="ready" iconMaterial="save" :onPerform="onSave"></eb-link>
+        <eb-link v-if="ready" ref="buttonSubmit" iconMaterial="save" :onPerform="onSave"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-validate ref="validate" auto :data="data" :params="validateParams" :onPerform="onPerformValidate">
+    <eb-validate ref="validate" auto :data="data" :params="validateParams" :onPerform="onPerformValidate" @submit.prevent="onFormSubmit">
     </eb-validate>
   </eb-page>
 </template>
@@ -32,6 +32,9 @@ export default {
     },
   },
   methods: {
+    onFormSubmit() {
+      this.$refs.buttonSubmit.onClick();
+    },
     onPerformValidate(event, context) {
       return this.$api.post(`settings/${this.scene}/save`, {
         module: this.module,

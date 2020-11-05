@@ -10,6 +10,10 @@ export default {
     meta: {
       type: Object,
     },
+    root: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -109,6 +113,24 @@ export default {
     getPlaceholder(key, property) {
       if (this.validate.readOnly || property.ebReadOnly) return undefined;
       return property.ebDescription ? this.$text(property.ebDescription) : this.getTitle(key, property, true);
+    },
+    onSubmit(event) {
+      this.validate.onSubmit(event);
+    },
+    renderRoot(c) {
+      if (!this.validate.data || !this.validate.schema) return c('div');
+      const children = this.renderProperties(c, this.validate.data, this.validate.schema.properties, this.pathParent);
+      const config = this.$meta.config.modules['a-components'];
+      const attrs = {
+        form: true,
+        noHairlinesMd: true,
+        inlineLabels: !config.form.floatingLabel,
+      };
+      return c('eb-list', {
+        staticClass: 'eb-list-row',
+        attrs,
+        on: { submit: this.onSubmit },
+      }, children);
     },
     renderItem(c) {
       if (!this.validate.data || !this.validate.schema) return c('div');

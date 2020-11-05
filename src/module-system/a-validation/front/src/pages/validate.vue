@@ -2,10 +2,10 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="title" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link v-if="schemaReady" iconMaterial="done" :onPerform="onSave"></eb-link>
+        <eb-link v-if="schemaReady" ref="buttonSubmit" iconMaterial="done" :onPerform="onSave"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-validate ref="validate" :readOnly="readOnly" auto :data="data" :dataPathRoot="dataPathRoot" :errors="errors" :params="params" @schema:ready="onSchemaReady">
+    <eb-validate ref="validate" :readOnly="readOnly" auto :data="data" :dataPathRoot="dataPathRoot" :errors="errors" :params="params" @schema:ready="onSchemaReady" @submit.prevent="onFormSubmit">
     </eb-validate>
   </eb-page>
 </template>
@@ -38,6 +38,9 @@ export default {
     },
   },
   methods: {
+    onFormSubmit() {
+      this.$refs.buttonSubmit.onClick();
+    },
     onSchemaReady(schema) {
       this.schemaReady = true;
       this.title = this.$text(schema.ebTitle);
