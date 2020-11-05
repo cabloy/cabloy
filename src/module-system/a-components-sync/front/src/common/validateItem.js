@@ -89,7 +89,7 @@ export default {
       const title = this.$text(property.ebTitle || key);
       // ignore panel/group/toggle
       const ebType = property.ebType;
-      if (ebType === 'panel' || ebType === 'group' || ebType === 'toggle') return title;
+      if (ebType === 'panel' || ebType === 'group' || ebType === 'group-flatten' || ebType === 'toggle') return title;
       // only edit
       if (this.validate.readOnly || property.ebReadOnly) return title;
       // hint
@@ -179,18 +179,81 @@ export default {
       });
     },
     renderProperties(c, data, properties, pathParent) {
-      let children = [];
+      const children = [];
+      let domGroupFlattenChildren = null;
+      let domGroupFlattenkey = null;
+      let domGroupFlattenProperty = null;
+      const _closeGroup = () => {
+        // title
+        const groupTitle = c('f7-list-item', {
+          attrs: {
+            groupTitle: true,
+            title: this.getTitle(domGroupFlattenkey, domGroupFlattenProperty),
+          },
+        });
+        // combine
+        domGroupFlattenChildren.unshift(groupTitle);
+        // group
+        const className = domGroupFlattenProperty.ebGroupWhole ? 'eb-list-group-whole' : 'eb-list-group';
+        const item = c('f7-list-group', {
+          staticClass: className,
+        }, domGroupFlattenChildren);
+        // clear
+        domGroupFlattenChildren = null;
+        domGroupFlattenkey = null;
+        domGroupFlattenProperty = null;
+        return item;
+      };
       for (const key in properties) {
-        const item = this._renderItem(c, data, properties, key, pathParent);
-        if (item) {
-          if (Array.isArray(item)) {
-            children = children.concat(item);
-          } else {
-            children.push(item);
+        const property = properties[key];
+        const bGroup = property.ebType === 'group';
+        const bGroupFlatten = property.ebType === 'group-flatten';
+        if ((bGroup || bGroupFlatten) && domGroupFlattenChildren) {
+          // close previous group
+          children.push(_closeGroup());
+        }
+        if (bGroupFlatten) {
+          // open new group
+          domGroupFlattenChildren = [];
+          domGroupFlattenkey = key;
+          domGroupFlattenProperty = property;
+        } else {
+          // others
+          const item = this._renderItem(c, data, properties, key, pathParent);
+          if (item) {
+            if (domGroupFlattenChildren) {
+              domGroupFlattenChildren.push(item);
+            } else {
+              children.push(item);
+            }
           }
         }
       }
+      // close previous group
+      if (domGroupFlattenChildren) {
+        children.push(_closeGroup());
+      }
+      // ok
       return children;
+    },
+    renderGroup(c, data, pathParent, key, property, dataPath) {
+      dataPath = dataPath + '/';
+      // children
+      const children = this.renderProperties(c, data[key], property.properties, dataPath);
+      // group
+      const group = c('f7-list-item', {
+        attrs: {
+          groupTitle: true,
+          title: this.getTitle(key, property),
+        },
+      });
+      // combine
+      children.unshift(group);
+      // group
+      const className = property.ebGroupWhole ? 'eb-list-group-whole' : 'eb-list-group';
+      return c('f7-list-group', {
+        staticClass: className,
+      }, children);
     },
     renderPanel(c, data, pathParent, key, property, dataPath) {
       dataPath = dataPath + '/';
@@ -230,26 +293,6 @@ export default {
           },
         },
       });
-    },
-    renderGroup(c, data, pathParent, key, property, dataPath) {
-      dataPath = dataPath + '/';
-      // children
-      const children = this.renderProperties(c, data[key], property.properties, dataPath);
-      // group
-      const group = c('f7-list-item', {
-        key,
-        attrs: {
-          groupTitle: true,
-          title: this.getTitle(key, property),
-        },
-      });
-      // combine
-      children.unshift(group);
-      // group
-      const className = property.ebGroupWhole ? 'eb-list-group-whole' : 'eb-list-group';
-      return c('f7-list-group', {
-        staticClass: className,
-      }, children);
     },
     renderText(c, data, pathParent, key, property, dataPath) {
       const title = this.getTitle(key, property);

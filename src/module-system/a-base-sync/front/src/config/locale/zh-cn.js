@@ -55,6 +55,10 @@ export default {
   Exports: '导出',
   RevertToThisVersion: '恢复到此版本',
   DeleteBulkNotAllDone: '某些条目无法删除',
+  Settings: '设置',
+  Extra: '额外',
+  Male: '男',
+  Female: '女',
   'Advanced Filter': '高级筛选',
   'Atom Flag': '原子标记',
   'Atom Name': '原子名称',
@@ -78,4 +82,7 @@ export default {
   'My Atoms': '我的原子',
   'Edit Again': '再次编辑',
   'Not Found': '未发现',
+  'Info Group': '信息组',
+  'Function Group': '功能组',
+  'Extra Group': '额外组',
 };

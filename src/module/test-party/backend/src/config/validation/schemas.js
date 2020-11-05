@@ -182,10 +182,20 @@ module.exports = app => {
         ],
         ebOptionsBlankAuto: true,
         ebParams: {
-          openIn: 'page',
+          openIn: 'sheet',
           closeOnSelect: true,
         },
         notEmpty: true,
+      },
+      rememberMe: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Remember Me',
+      },
+      groupExtra: {
+        type: 'null',
+        ebType: 'group-flatten',
+        ebTitle: 'Extra Group',
       },
       birthday: {
         type: [ 'object', 'null' ],
@@ -208,6 +218,10 @@ module.exports = app => {
         ebOptionsUrl: '/a/base/base/locales',
         ebOptionsUrlParams: null,
         ebOptionsBlankAuto: true,
+        ebParams: {
+          openIn: 'sheet',
+          closeOnSelect: true,
+        },
         'x-languages': true,
         // notEmpty: true,
       },
@@ -217,11 +231,6 @@ module.exports = app => {
         ebTitle: 'Avatar',
         ebParams: { mode: 1 },
         notEmpty: true,
-      },
-      rememberMe: {
-        type: 'boolean',
-        ebType: 'toggle',
-        ebTitle: 'Remember Me',
       },
       motto: {
         type: 'string',
