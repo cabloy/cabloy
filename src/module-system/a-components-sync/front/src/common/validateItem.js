@@ -230,8 +230,10 @@ export default {
       });
       // combine
       children.unshift(group);
+      // group
+      const className = property.ebGroupWhole ? 'eb-list-group-whole' : 'eb-list-group';
       return c('f7-list-group', {
-        staticClass: 'eb-list-group',
+        staticClass: className,
       }, children);
     },
     renderText(c, data, pathParent, key, property, dataPath) {

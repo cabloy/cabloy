@@ -85,6 +85,7 @@ module.exports = app => {
         type: 'object',
         ebType: 'group',
         ebTitle: 'Info Group',
+        ebGroupWhole: true,
         properties: {
           mobile: {
             type: 'string',
