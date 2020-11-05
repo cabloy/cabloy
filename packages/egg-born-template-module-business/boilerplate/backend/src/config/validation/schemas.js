@@ -3,11 +3,6 @@ module.exports = app => {
   // {{atomClassName}}
   schemas.{{atomClassName}} = {
     type: 'object',
-    meta: {
-      custom: {
-        // component: '{{atomClassName}}Item',
-      },
-    },
     properties: {
       atomName: {
         type: 'string',

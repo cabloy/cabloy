@@ -5,18 +5,41 @@ module.exports = app => {
     type: 'object',
     meta: {
       custom: {
-        component: 'articleItem',
+        // component: 'articleItem',
       },
     },
     properties: {
       atomId: {
         type: 'number',
       },
+      // title
+      groupTitle: {
+        type: 'null',
+        ebType: 'group-flatten',
+        ebTitle: 'Title',
+      },
       atomName: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Atom Name',
         notEmpty: true,
+      },
+      // content
+      groupContent: {
+        type: 'null',
+        ebType: 'group-flatten',
+        ebTitle: 'Content',
+      },
+      content: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Content',
+      },
+      // Basic Info
+      groupBasicInfo: {
+        type: 'null',
+        ebType: 'group-flatten',
+        ebTitle: 'Basic Info',
       },
       language: {
         type: 'string',
@@ -32,21 +55,15 @@ module.exports = app => {
         ebTitle: 'Category',
         notEmpty: true,
       },
-      sticky: {
-        type: 'boolean',
-        ebType: 'toggle',
-        ebTitle: 'Sticky',
-        default: false,
+      tags: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Tags',
       },
       keywords: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Keywords',
-      },
-      tags: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Tags',
       },
       description: {
         type: 'string',
@@ -54,17 +71,29 @@ module.exports = app => {
         ebTextarea: true,
         ebTitle: 'Description',
       },
-      editMode: {
-        type: 'number',
-        ebType: 'text',
-        ebTitle: 'Edit Mode',
-        notEmpty: true,
-      },
       slug: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Slug',
         'x-slug': true,
+      },
+      allowComment: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Allow Comment',
+        default: false,
+      },
+      // Extra
+      groupExtra: {
+        type: 'null',
+        ebType: 'group-flatten',
+        ebTitle: 'Extra',
+      },
+      sticky: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Sticky',
+        default: false,
       },
       sorting: {
         type: 'number',
@@ -82,16 +111,11 @@ module.exports = app => {
         ebTextarea: true,
         ebTitle: 'Extra Attributes',
       },
-      content: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Content',
-      },
-      allowComment: {
-        type: 'boolean',
-        ebType: 'toggle',
-        ebTitle: 'Allow Comment',
-        default: false,
+      editMode: {
+        type: 'number',
+        // ebType: 'text',
+        ebTitle: 'Edit Mode',
+        notEmpty: true,
       },
     },
   };
