@@ -179,7 +179,7 @@ export default {
     },
     __getValidateItemTag(property) {
       let tag;
-      if (property.ebType === 'group') {
+      if (property.ebType === 'group' || property.ebType === 'group-flatten') {
         tag = 'validateGroup';
       } else {
         tag = 'validateItem';

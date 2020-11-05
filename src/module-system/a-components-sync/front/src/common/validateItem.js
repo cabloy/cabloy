@@ -120,40 +120,33 @@ export default {
       if (!property.ebType) return null;
       // dataPath
       const dataPath = pathParent + key;
-      // panel
-      if (property.ebType === 'panel') {
-        return this.renderPanel(c, data, pathParent, key, property, dataPath);
-      }
-      // group
-      else if (property.ebType === 'group') {
+      // render
+      if (property.ebType === 'group') {
+        // group
         return this.renderGroup(c, data, pathParent, key, property, dataPath);
-      }
-      // text
-      else if (property.ebType === 'text') {
+      } else if (property.ebType === 'panel') {
+        // panel
+        return this.renderPanel(c, data, pathParent, key, property, dataPath);
+      } else if (property.ebType === 'text') {
+        // text
         return this.renderText(c, data, pathParent, key, property, dataPath);
-      }
-      // toggle
-      else if (property.ebType === 'toggle') {
+      } else if (property.ebType === 'toggle') {
+        // toggle
         return this.renderToggle(c, data, pathParent, key, property, dataPath);
-      }
-      // select
-      else if (property.ebType === 'select') {
+      } else if (property.ebType === 'select') {
+        // select
         return this.renderSelect(c, data, pathParent, key, property, dataPath);
-      }
-      // file
-      else if (property.ebType === 'file') {
+      } else if (property.ebType === 'file') {
+        // file
         return this.renderFile(c, data, pathParent, key, property, dataPath);
-      }
-      // datepicker
-      else if (property.ebType === 'datepicker') {
+      } else if (property.ebType === 'datepicker') {
+        // datepicker
         return this.renderDatepicker(c, data, pathParent, key, property, dataPath);
-      }
-      // link
-      else if (property.ebType === 'link') {
+      } else if (property.ebType === 'link') {
+        // link
         return this.renderLink(c, data, pathParent, key, property, dataPath);
-      }
-      // component
-      else if (property.ebType === 'component') {
+      } else if (property.ebType === 'component') {
+        // component
         return this.renderComponent(c, data, pathParent, key, property, dataPath);
       }
       // not support

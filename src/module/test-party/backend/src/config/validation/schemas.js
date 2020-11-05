@@ -142,6 +142,11 @@ module.exports = app => {
   schemas.formTest = {
     type: 'object',
     properties: {
+      groupInfo: {
+        type: 'null',
+        ebType: 'group-flatten',
+        ebTitle: 'Info Group',
+      },
       userName: {
         type: 'string',
         ebType: 'text',
