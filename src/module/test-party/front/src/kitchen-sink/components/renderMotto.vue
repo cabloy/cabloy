@@ -11,11 +11,6 @@ import Vue from 'vue';
 const ebValidateCheck = Vue.prototype.$meta.module.get('a-components').options.mixins.ebValidateCheck;
 export default {
   mixins: [ ebValidateCheck ],
-  data() {
-    return {
-      errorMessage: null,
-    };
-  },
   props: {
     context: {
       type: Object,
@@ -23,6 +18,11 @@ export default {
     height: {
       type: String,
     },
+  },
+  data() {
+    return {
+      errorMessage: null,
+    };
   },
   created() {},
   methods: {
