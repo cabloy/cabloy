@@ -14,6 +14,9 @@ export default {
       type: Boolean,
       default: false,
     },
+    property: {
+      type: Object,
+    },
   },
   data() {
     return {
@@ -134,10 +137,10 @@ export default {
     },
     renderItem(c) {
       if (!this.validate.data || !this.validate.schema) return c('div');
-      return this._renderItem(c, this.validate.data, this.validate.schema.properties, this.dataKey, this.pathParent);
+      return this._renderItem(c, this.validate.data, this.validate.schema.properties, this.dataKey, this.pathParent, this.property);
     },
-    _renderItem(c, data, properties, key, pathParent) {
-      const property = properties[key];
+    _renderItem(c, data, properties, key, pathParent, property) {
+      property = property || properties[key];
       const ebType = property.ebType;
       // ignore if not specified
       if (!ebType) return null;
@@ -220,7 +223,7 @@ export default {
           domGroupFlattenProperty = property;
         } else {
           // others
-          const item = this._renderItem(c, data, properties, key, pathParent);
+          const item = this._renderItem(c, data, properties, key, pathParent, null);
           if (item) {
             if (domGroupFlattenChildren) {
               domGroupFlattenChildren.push(item);
