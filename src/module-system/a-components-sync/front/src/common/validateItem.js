@@ -138,36 +138,37 @@ export default {
     },
     _renderItem(c, data, properties, key, pathParent) {
       const property = properties[key];
+      const ebType = property.ebType;
       // ignore if not specified
-      if (!property.ebType) return null;
+      if (!ebType) return null;
       // dataPath
       const dataPath = pathParent + key;
       // render
-      if (property.ebType === 'group') {
+      if (ebType === 'group') {
         // group
         return this.renderGroup(c, data, pathParent, key, property, dataPath);
-      } else if (property.ebType === 'panel') {
+      } else if (ebType === 'panel') {
         // panel
         return this.renderPanel(c, data, pathParent, key, property, dataPath);
-      } else if (property.ebType === 'text') {
+      } else if (ebType === 'text') {
         // text
         return this.renderText(c, data, pathParent, key, property, dataPath);
-      } else if (property.ebType === 'toggle') {
+      } else if (ebType === 'toggle') {
         // toggle
         return this.renderToggle(c, data, pathParent, key, property, dataPath);
-      } else if (property.ebType === 'select') {
+      } else if (ebType === 'select') {
         // select
         return this.renderSelect(c, data, pathParent, key, property, dataPath);
-      } else if (property.ebType === 'file') {
+      } else if (ebType === 'file') {
         // file
         return this.renderFile(c, data, pathParent, key, property, dataPath);
-      } else if (property.ebType === 'datepicker') {
+      } else if (ebType === 'datepicker') {
         // datepicker
         return this.renderDatepicker(c, data, pathParent, key, property, dataPath);
-      } else if (property.ebType === 'link') {
+      } else if (ebType === 'link') {
         // link
         return this.renderLink(c, data, pathParent, key, property, dataPath);
-      } else if (property.ebType === 'component') {
+      } else if (ebType === 'component') {
         // component
         return this.renderComponent(c, data, pathParent, key, property, dataPath);
       }
@@ -594,7 +595,7 @@ export default {
         }),
       ]);
     },
-    renderLink(c, data, pathParent, key, property /* dataPath*/) {
+    renderLink(c, data, pathParent, key, property, dataPath) {
       const title = this.getTitle(key, property, true);
       const href = this.$meta.util.combineApiPath(this.validate.renderModuleName, property.ebParams.href);
       return c('eb-list-item', {
@@ -621,7 +622,7 @@ export default {
           this.setValue(data, key, value, property);
         },
       };
-      return c('eb-component', {
+      return c('eb-list-item-component', {
         props: renderProps,
       });
     },

@@ -4,7 +4,7 @@ export default {
   meta: {
     global: true,
   },
-  name: 'eb-component',
+  name: 'eb-list-item-component',
   mixins: [ component ],
 };
 

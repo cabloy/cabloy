@@ -1,4 +1,5 @@
 module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const schemas = {};
   // article
   schemas.article = {
@@ -43,11 +44,15 @@ module.exports = app => {
       },
       language: {
         type: 'string',
-        ebType: 'select',
+        ebType: 'component',
         ebTitle: 'Language',
         ebMultiple: false,
         ebOptionsBlankAuto: true,
         notEmpty: true,
+        ebRender: {
+          module: moduleInfo.relativeName,
+          name: 'renderArticleLanguage',
+        },
       },
       categoryId: {
         type: 'number',

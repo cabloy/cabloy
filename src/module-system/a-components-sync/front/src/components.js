@@ -17,6 +17,7 @@ import listItem from './components/listItem.vue';
 import listPanel from './components/listPanel.vue';
 import listChoose from './components/listChoose.vue';
 import listInput from './components/listInput.vue';
+import listComponent from './components/listComponent.vue';
 import fabButton from './components/fabButton.vue';
 import swipeoutActions from './components/swipeoutActions.vue';
 import swipeoutButton from './components/swipeoutButton.vue';
@@ -48,6 +49,7 @@ export default {
   ebListItemPanel: listPanel,
   ebListItemChoose: listChoose,
   ebListInput: listInput,
+  ebListItemComponent: listComponent,
   ebFabButton: fabButton,
   ebSwipeoutActions: swipeoutActions,
   ebSwipeoutButton: swipeoutButton,
