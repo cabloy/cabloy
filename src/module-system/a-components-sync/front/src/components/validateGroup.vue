@@ -5,7 +5,7 @@ export default {
   meta: {
     global: true,
   },
-  name: 'eb-list-item-validate',
+  name: 'eb-list-group-validate',
   mixins: [ validateItem ],
   render(c) {
     return this.renderItem(c);

@@ -1,5 +1,6 @@
 <script>
 import validateItem from './validateItem.vue';
+import validateGroup from './validateGroup.vue';
 export default {
   meta: {
     global: true,
@@ -7,6 +8,7 @@ export default {
   name: 'eb-validate',
   components: {
     validateItem,
+    validateGroup,
   },
   render(c) {
     // slot
@@ -175,6 +177,15 @@ export default {
       // event
       this.$emit('schema:ready', this.schema);
     },
+    __getValidateItemTag(property) {
+      let tag;
+      if (property.ebType === 'group') {
+        tag = 'validateGroup';
+      } else {
+        tag = 'validateItem';
+      }
+      return tag;
+    },
     renderSchema(c) {
       const children = this.renderProperties(c, this.data, this.schema.properties, '');
       const attrs = {
@@ -183,6 +194,7 @@ export default {
         inlineLabels: !this.$config.form.floatingLabel,
       };
       return c('eb-list', {
+        staticClass: 'eb-list-row',
         attrs,
         on: { submit: this.onSubmit },
       },
@@ -191,7 +203,8 @@ export default {
     renderProperties(c, data, properties, pathParent) {
       const children = [];
       for (const key in properties) {
-        children.push(c('validate-item', {
+        const tag = this.__getValidateItemTag(properties[key]);
+        children.push(c(tag, {
           key,
           props: {
             dataKey: key,

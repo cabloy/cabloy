@@ -3,6 +3,10 @@
     <f7-list-group class="eb-list-group">
       <f7-list-item group-title :title="$text('Title')"></f7-list-item>
       <eb-list-item-validate dataKey="atomName"></eb-list-item-validate>
+      <f7-list-group class="eb-list-group">
+      <f7-list-item group-title :title="$text('Title')"></f7-list-item>
+      <eb-list-item-validate dataKey="atomName"></eb-list-item-validate>
+    </f7-list-group>
     </f7-list-group>
     <f7-list-group class="eb-list-group">
       <f7-list-item group-title :title="$text('Content')"></f7-list-item>
