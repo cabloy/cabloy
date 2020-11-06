@@ -670,6 +670,7 @@ export default {
       const { data, pathParent, key, property, dataPath } = context;
       const renderProps = this.$meta.util.extend({ options: { props: {} } }, property.ebRender);
       renderProps.options.props.context = {
+        validate: this.validate,
         validateItem: this,
         data,
         pathParent,

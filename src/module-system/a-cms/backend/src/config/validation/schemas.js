@@ -4,11 +4,6 @@ module.exports = app => {
   // article
   schemas.article = {
     type: 'object',
-    meta: {
-      custom: {
-        // component: 'articleItem',
-      },
-    },
     properties: {
       atomId: {
         type: 'number',
@@ -56,9 +51,13 @@ module.exports = app => {
       },
       categoryId: {
         type: 'number',
-        ebType: 'text',
+        ebType: 'component',
         ebTitle: 'Category',
         notEmpty: true,
+        ebRender: {
+          module: moduleInfo.relativeName,
+          name: 'renderArticleCategory',
+        },
       },
       tags: {
         type: 'string',
