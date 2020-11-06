@@ -4,48 +4,40 @@ export default {
     context: {
       type: Object,
     },
+    atomClass: {
+      type: Object,
+    },
   },
   data() {
     return {
     };
   },
-  computed: {
-    atomClass() {
-      return {
-        module: this.context.data.module,
-        atomClassName: this.context.data.atomClassName,
-      };
-    },
-  },
   created() {
   },
   methods: {
-    adjustTags(tags) {
-      if (!tags) return '';
-      const _tags = JSON.parse(tags);
-      return _tags.map(item => item.name).join(',');
-    },
     combineAtomClass(url) {
       return utils.combineAtomClass(this.atomClass, url);
     },
-    onChooseTags() {
+    onChooseCategory() {
       const { data } = this.context;
       if (!data.language) {
         this.$view.dialog.alert(this.$text('Please specify the language'));
         return false;
       }
       return new Promise(resolve => {
-        const url = this.combineAtomClass('/a/cms/tag/select');
+        const url = this.combineAtomClass('/a/cms/category/select');
         this.$view.navigate(url, {
           target: '_self',
           context: {
             params: {
               language: data.language,
-              tags: data.tags,
+              categoryIdStart: 0,
+              leafOnly: true,
             },
-            callback: (code, tags) => {
+            callback: (code, node) => {
               if (code === 200) {
-                data.tags = tags;
+                this.$set(data, 'categoryId', node.id);
+                this.$set(data, 'categoryName', node.data.categoryName);
                 resolve(true);
               } else if (code === false) {
                 resolve(false);
@@ -57,19 +49,12 @@ export default {
     },
   },
   render() {
-    const { data, dataPath, property, validate } = this.context;
+    const { data, dataPath } = this.context;
     const title = this.context.getTitle();
-    if (validate.readOnly || property.ebReadOnly) {
-      return (
-        <f7-list-item title={title}>
-          <div slot="after">{this.adjustTags(data.tags)}</div>
-        </f7-list-item>
-      );
-    }
     return (
       <eb-list-item-choose
-        link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseTags}>
-        <div slot="after">{this.adjustTags(data.tags)}</div>
+        link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseCategory}>
+        <div slot="after">{data.categoryName}</div>
       </eb-list-item-choose>
     );
   },

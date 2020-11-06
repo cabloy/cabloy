@@ -135,23 +135,42 @@ module.exports = app => {
   // article search
   schemas.articleSearch = {
     type: 'object',
-    meta: {
-      custom: {
-        component: 'articleSearch',
-      },
-    },
     properties: {
       language: {
         type: 'string',
-        ebType: 'select',
+        ebType: 'component',
         ebTitle: 'Language',
         ebMultiple: false,
         ebOptionsBlankAuto: true,
+        ebRender: {
+          module: moduleInfo.relativeName,
+          name: 'renderArticleSearchLanguage',
+          options: {
+            props: {
+              atomClass: {
+                module: moduleInfo.relativeName,
+                atomClassName: 'article',
+              },
+            },
+          },
+        },
       },
       categoryId: {
         type: 'number',
-        ebType: 'text',
+        ebType: 'component',
         ebTitle: 'Category',
+        ebRender: {
+          module: moduleInfo.relativeName,
+          name: 'renderArticleSearchCategory',
+          options: {
+            props: {
+              atomClass: {
+                module: moduleInfo.relativeName,
+                atomClassName: 'article',
+              },
+            },
+          },
+        },
       },
       content: {
         type: 'string',

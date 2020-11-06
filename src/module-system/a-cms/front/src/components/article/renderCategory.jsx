@@ -55,16 +55,17 @@ export default {
   },
   render() {
     const { data, dataPath, property, validate } = this.context;
+    const title = this.context.getTitle();
     if (validate.readOnly || property.ebReadOnly) {
       return (
-        <f7-list-item title={this.$text('Category')}>
+        <f7-list-item title={title}>
           <div slot="after">{data.categoryName}</div>
         </f7-list-item>
       );
     }
     return (
       <eb-list-item-choose
-        link="#" dataPath={dataPath} title={this.$text('Category')} propsOnChoose={this.onChooseCategory}>
+        link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseCategory}>
         <div slot="after">{data.categoryName}</div>
       </eb-list-item-choose>
     );

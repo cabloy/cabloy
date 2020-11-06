@@ -53,9 +53,10 @@ export default {
   },
   render() {
     const { dataPath } = this.context;
+    const title = this.context.getTitle();
     return (
       <eb-list-item-choose
-        link="#" dataPath={dataPath} title={this.$text('Content')} propsOnChoose={this.onChooseEditContent}>
+        link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseEditContent}>
       </eb-list-item-choose>
     );
   },

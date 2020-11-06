@@ -680,6 +680,9 @@ export default {
         property,
         dataPath,
         meta: context.meta,
+        getTitle: notHint => {
+          return this.getTitle(context, notHint);
+        },
         getValue: () => {
           return this.getValue(data, key, property);
         },
