@@ -1,7 +1,4 @@
-import Vue from 'vue';
-const ebValidateCheck = Vue.prototype.$meta.module.get('a-components').options.mixins.ebValidateCheck;
 export default {
-  mixins: [ ebValidateCheck ],
   props: {
     context: {
       type: Object,
@@ -32,24 +29,18 @@ export default {
     });
   },
   methods: {
-    getDataPath() {
-      return this.context.dataPath;
-    },
-    onValidateError(error) {
-      this.errorMessage = error;
-    },
-    onInput(event) {
-      this.context.setValue(event.target.value);
-      this.$emit('input', event.target.value);
-      this.clearValidateError();
-    },
   },
   render() {
-    const property = this.$utils.extend({}, this.context.property, {
+    const { data, pathParent, key, schema, properties, property, meta } = this.context;
+    const propertyNew = this.$utils.extend({}, property, {
       ebType: 'select',
+      ebOptions: this.languages,
     });
     return (
-      <eb-list-item-validate dataKey="language" property={property} meta={{ options: this.languages }}></eb-list-item-validate>
+      <eb-list-item-validate
+        data={data} pathParent={pathParent} schema={schema} properties={properties} meta={meta}
+        dataKey={key} property={propertyNew}>
+      </eb-list-item-validate>
     );
   },
 };

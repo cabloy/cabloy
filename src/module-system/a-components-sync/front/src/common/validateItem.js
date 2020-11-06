@@ -1,11 +1,23 @@
 export default {
   props: {
-    dataKey: {
-      type: String,
+    data: {
+      type: Object,
     },
     pathParent: {
       type: String,
       default: '',
+    },
+    dataKey: {
+      type: String,
+    },
+    schema: {
+      type: Object,
+    },
+    properties: {
+      type: Object,
+    },
+    property: {
+      type: Object,
     },
     meta: {
       type: Object,
@@ -13,9 +25,6 @@ export default {
     root: {
       type: Boolean,
       default: false,
-    },
-    property: {
-      type: Object,
     },
   },
   data() {
@@ -38,9 +47,9 @@ export default {
       }
       return parent;
     },
-    getMetaValue(key, dataPath) {
+    getMetaValue(meta, key, dataPath) {
       // 1. item
-      const value = this.meta ? this.meta[key] : undefined;
+      const value = meta ? meta[key] : undefined;
       if (value !== undefined) return value;
       // 2. validate
       const validateMeta = this.validate.meta;
@@ -88,7 +97,8 @@ export default {
       if (dataPath[0] !== '/') return this.validate.dataPathRoot + dataPath;
       return dataPath;
     },
-    getTitle(key, property, notHint) {
+    getTitle(context, notHint) {
+      const { meta, key, property } = context;
       const title = this.$text(property.ebTitle || key);
       // ignore panel/group/toggle
       const ebType = property.ebType;
@@ -98,7 +108,7 @@ export default {
       // hint
       if (!notHint) {
         // config
-        const hint = this.getMetaValue('hint') || this.$config.validate.hint;
+        const hint = this.getMetaValue(meta, 'hint') || this.$config.validate.hint;
         const hintOptional = hint.optional;
         const hintMust = hint.must;
         // check optional
@@ -113,21 +123,28 @@ export default {
       // default
       return title;
     },
-    getPlaceholder(key, property) {
+    getPlaceholder(context) {
+      const { property } = context;
       if (this.validate.readOnly || property.ebReadOnly) return undefined;
-      return property.ebDescription ? this.$text(property.ebDescription) : this.getTitle(key, property, true);
+      return property.ebDescription ? this.$text(property.ebDescription) : this.getTitle(context, true);
     },
     onSubmit(event) {
       this.validate.onSubmit(event);
     },
     renderRoot(c) {
       if (!this.validate.data || !this.validate.schema) return c('div');
-      const children = this.renderProperties(c, this.validate.data, this.validate.schema.properties, this.pathParent);
-      const config = this.$meta.config.modules['a-components'];
+      // context
+      const context = {
+        data: this.data || this.validate.data,
+        pathParent: this.pathParent,
+        schema: this.schema || this.validate.schema,
+        properties: this.properties || this.validate.schema.properties,
+      };
+      const children = this.renderProperties(c, context);
       const attrs = {
         form: true,
         noHairlinesMd: true,
-        inlineLabels: !config.form.floatingLabel,
+        inlineLabels: !this.$config.form.floatingLabel,
       };
       return c('eb-list', {
         staticClass: 'eb-list-row',
@@ -137,52 +154,61 @@ export default {
     },
     renderItem(c) {
       if (!this.validate.data || !this.validate.schema) return c('div');
-      return this._renderItem(c, this.validate.data, this.validate.schema.properties, this.dataKey, this.pathParent, this.property);
+      // context
+      const context = {
+        data: this.data || this.validate.data,
+        pathParent: this.pathParent,
+        schema: this.schema || this.validate.schema,
+        properties: this.properties || this.validate.schema.properties,
+        key: this.dataKey,
+        meta: this.meta,
+      };
+      context.property = this.property || context.properties[context.key];
+      context.dataPath = context.pathParent + context.key;
+      return this._renderItem(c, context);
     },
-    _renderItem(c, data, properties, key, pathParent, property) {
-      property = property || properties[key];
-      const ebType = property.ebType;
+    _renderItem(c, context) {
+      const ebType = context.property.ebType;
       // ignore if not specified
       if (!ebType) return null;
-      // dataPath
-      const dataPath = pathParent + key;
       // render
       if (ebType === 'group') {
         // group
-        return this.renderGroup(c, data, pathParent, key, property, dataPath);
+        return this.renderGroup(c, context);
       } else if (ebType === 'panel') {
         // panel
-        return this.renderPanel(c, data, pathParent, key, property, dataPath);
+        return this.renderPanel(c, context);
       } else if (ebType === 'text') {
         // text
-        return this.renderText(c, data, pathParent, key, property, dataPath);
+        return this.renderText(c, context);
       } else if (ebType === 'toggle') {
         // toggle
-        return this.renderToggle(c, data, pathParent, key, property, dataPath);
+        return this.renderToggle(c, context);
       } else if (ebType === 'select') {
         // select
-        return this.renderSelect(c, data, pathParent, key, property, dataPath);
+        return this.renderSelect(c, context);
       } else if (ebType === 'file') {
         // file
-        return this.renderFile(c, data, pathParent, key, property, dataPath);
+        return this.renderFile(c, context);
       } else if (ebType === 'datepicker') {
         // datepicker
-        return this.renderDatepicker(c, data, pathParent, key, property, dataPath);
+        return this.renderDatepicker(c, context);
       } else if (ebType === 'link') {
         // link
-        return this.renderLink(c, data, pathParent, key, property, dataPath);
+        return this.renderLink(c, context);
       } else if (ebType === 'component') {
         // component
-        return this.renderComponent(c, data, pathParent, key, property, dataPath);
+        return this.renderComponent(c, context);
       }
       // not support
       return c('div', {
         domProps: {
-          innerText: `not support: ${property.ebType}`,
+          innerText: `not support: ${ebType}`,
         },
       });
     },
-    renderProperties(c, data, properties, pathParent) {
+    renderProperties(c, context) {
+      const { data, properties, pathParent } = context;
       const children = [];
       let domGroupFlattenChildren = null;
       let domGroupFlattenkey = null;
@@ -192,7 +218,10 @@ export default {
         const groupTitle = c('f7-list-item', {
           attrs: {
             groupTitle: true,
-            title: this.getTitle(domGroupFlattenkey, domGroupFlattenProperty),
+            title: this.getTitle({
+              key: domGroupFlattenkey,
+              property: domGroupFlattenProperty,
+            }),
           },
         });
         // combine
@@ -223,7 +252,18 @@ export default {
           domGroupFlattenProperty = property;
         } else {
           // others
-          const item = this._renderItem(c, data, properties, key, pathParent, null);
+          // context
+          const context2 = {
+            data,
+            pathParent,
+            schema: context.schema,
+            properties,
+            key,
+          };
+          context2.property = context2.properties[context2.key];
+          context2.dataPath = context2.pathParent + context2.key;
+          // render
+          const item = this._renderItem(c, context2);
           if (item) {
             if (domGroupFlattenChildren) {
               domGroupFlattenChildren.push(item);
@@ -240,15 +280,22 @@ export default {
       // ok
       return children;
     },
-    renderGroup(c, data, pathParent, key, property, dataPath) {
-      dataPath = dataPath + '/';
+    renderGroup(c, context) {
+      const { data, key, property, dataPath } = context;
+      // context2
+      const context2 = {
+        data: data[key],
+        pathParent: dataPath + '/',
+        schema: context.schema,
+        properties: property.properties,
+      };
       // children
-      const children = this.renderProperties(c, data[key], property.properties, dataPath);
+      const children = this.renderProperties(c, context2);
       // group
       const group = c('f7-list-item', {
         attrs: {
           groupTitle: true,
-          title: this.getTitle(key, property),
+          title: this.getTitle(context),
         },
       });
       // combine
@@ -259,13 +306,14 @@ export default {
         staticClass: className,
       }, children);
     },
-    renderPanel(c, data, pathParent, key, property, dataPath) {
+    renderPanel(c, context) {
+      let { data, key, property, dataPath } = context;
       dataPath = dataPath + '/';
       return c('eb-list-item-panel', {
         key,
         attrs: {
           link: '#',
-          title: this.getTitle(key, property),
+          title: this.getTitle(context),
           dataPath,
         },
         on: {
@@ -298,8 +346,9 @@ export default {
         },
       });
     },
-    renderText(c, data, pathParent, key, property, dataPath) {
-      const title = this.getTitle(key, property);
+    renderText(c, context) {
+      const { data, key, property, dataPath } = context;
+      const title = this.getTitle(context);
       if ((this.validate.readOnly || property.ebReadOnly) && !property.ebTextarea) {
         return c('f7-list-item', {
           key,
@@ -315,7 +364,7 @@ export default {
           }),
         ]);
       }
-      const placeholder = this.getPlaceholder(key, property);
+      const placeholder = this.getPlaceholder(context);
       const info = property.ebHelp ? this.$text(property.ebHelp) : undefined;
       let type;
       if (property.ebSecure) {
@@ -353,8 +402,9 @@ export default {
         }),
       ]);
     },
-    renderDatepicker(c, data, pathParent, key, property, dataPath) {
-      const title = this.getTitle(key, property);
+    renderDatepicker(c, context) {
+      const { data, key, property, dataPath } = context;
+      const title = this.getTitle(context);
       // should format date
       // // the form is readOnly
       // if (this.validate.readOnly || property.ebDisabled) {
@@ -367,7 +417,7 @@ export default {
       //     },
       //   });
       // }
-      const placeholder = this.getPlaceholder(key, property);
+      const placeholder = this.getPlaceholder(context);
       const info = property.ebHelp ? this.$text(property.ebHelp) : undefined;
       // value
       let value = this.getValue(data, key, property);
@@ -412,8 +462,9 @@ export default {
         }),
       ]);
     },
-    renderFile(c, data, pathParent, key, property, dataPath) {
-      const title = this.getTitle(key, property);
+    renderFile(c, context) {
+      const { data, key, property, dataPath, meta } = context;
+      const title = this.getTitle(context);
       if ((this.validate.readOnly || property.ebReadOnly) && !property.ebTextarea) {
         return c('f7-list-item', {
           key,
@@ -429,7 +480,7 @@ export default {
           }),
         ]);
       }
-      const placeholder = this.getPlaceholder(key, property);
+      const placeholder = this.getPlaceholder(context);
       const info = property.ebHelp ? this.$text(property.ebHelp) : undefined;
       let type;
       if (property.ebSecure) {
@@ -440,15 +491,15 @@ export default {
         type = 'text';
       }
       // mode
-      const mode = this.getMetaValue('mode', dataPath) || property.ebParams.mode;
+      const mode = this.getMetaValue(meta, 'mode', dataPath) || property.ebParams.mode;
       // atomId
-      const atomId = this.getMetaValue('atomId', dataPath) || property.ebParams.atomId || 0;
+      const atomId = this.getMetaValue(meta, 'atomId', dataPath) || property.ebParams.atomId || 0;
       // attachment
-      const attachment = this.getMetaValue('attachment', dataPath) || property.ebParams.attachment;
+      const attachment = this.getMetaValue(meta, 'attachment', dataPath) || property.ebParams.attachment;
       // flag
-      const flag = this.getMetaValue('flag', dataPath) || property.ebParams.flag;
+      const flag = this.getMetaValue(meta, 'flag', dataPath) || property.ebParams.flag;
       // accept
-      const accept = this.getMetaValue('accept', dataPath) || property.ebParams.accept;
+      const accept = this.getMetaValue(meta, 'accept', dataPath) || property.ebParams.accept;
       // render
       return c('eb-list-input', {
         key,
@@ -519,8 +570,9 @@ export default {
         }),
       ]);
     },
-    renderToggle(c, data, pathParent, key, property, dataPath) {
-      const title = this.getTitle(key, property);
+    renderToggle(c, context) {
+      const { data, key, property, dataPath } = context;
+      const title = this.getTitle(context);
       return c('f7-list-item', {
         key,
       }, [
@@ -544,8 +596,9 @@ export default {
         }),
       ]);
     },
-    renderSelect(c, data, pathParent, key, property, dataPath) {
-      const title = this.getTitle(key, property);
+    renderSelect(c, context) {
+      const { data, key, property, dataPath, meta } = context;
+      const title = this.getTitle(context);
       const valueCurrent = this.getValue(data, key, property);
       const attrs = {
         name: key,
@@ -553,7 +606,7 @@ export default {
         value: valueCurrent,
         readOnly: this.validate.readOnly || property.ebReadOnly,
       };
-      const metaOptions = this.getMetaValue('options', dataPath);
+      const metaOptions = this.getMetaValue(meta, 'options', dataPath);
       if (metaOptions) attrs.options = metaOptions;
       if (!metaOptions && property.ebOptions) attrs.options = property.ebOptions;
       if (property.ebOptionsUrl) {
@@ -598,9 +651,13 @@ export default {
         }),
       ]);
     },
-    renderLink(c, data, pathParent, key, property, dataPath) {
-      const title = this.getTitle(key, property, true);
-      const href = this.$meta.util.combineApiPath(this.validate.renderModuleName, property.ebParams.href);
+    renderLink(c, context) {
+      const { data, property } = context;
+      const title = this.getTitle(context, true);
+      const href = this.$meta.util.combinePagePath(
+        this.validate.renderModuleName,
+        this.$meta.util.replaceTemplate(property.ebParams.href, data)
+      );
       return c('eb-list-item', {
         props: {
           link: '#',
@@ -609,15 +666,19 @@ export default {
         },
       });
     },
-    renderComponent(c, data, pathParent, key, property, dataPath) {
+    renderComponent(c, context) {
+      const { data, pathParent, key, property, dataPath } = context;
       const renderProps = this.$meta.util.extend({ options: { props: {} } }, property.ebRender);
       renderProps.options.props.context = {
         validateItem: this,
         data,
-        dataPath,
         pathParent,
         key,
+        schema: context.schema,
+        properties: context.properties,
         property,
+        dataPath,
+        meta: context.meta,
         getValue: () => {
           return this.getValue(data, key, property);
         },

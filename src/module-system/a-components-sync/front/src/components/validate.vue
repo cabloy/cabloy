@@ -178,8 +178,13 @@ export default {
     renderSchema(c) {
       return c('validateItem', {
         props: {
-          dataKey: null,
+          data: this.data,
           pathParent: '',
+          dataKey: null,
+          schema: this.schema,
+          properties: this.schema.properties,
+          property: null,
+          meta: null,
           root: true,
         },
       });
