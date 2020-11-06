@@ -28,7 +28,7 @@ export default {
     return (
       <div>
         <img class="avatar avatar24 eb-vertical-align" src={this.layoutItems._getItemMetaMedia(this.info.record)} />
-        <span>&nbsp;{this.info.text + '!'}</span>
+        <span>&nbsp;{this.info.text}</span>
       </div>
     );
   },

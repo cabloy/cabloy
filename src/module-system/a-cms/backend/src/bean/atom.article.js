@@ -68,10 +68,11 @@ module.exports = app => {
       }
       // url
       let url;
+      const draftExt = atomStage === 0 ? '.draft' : '';
       if (item.slug) {
-        url = `articles/${item.slug}.html`;
+        url = `articles/${item.slug}${draftExt}.html`;
       } else {
-        url = `articles/${atomOld.uuid}.html`;
+        url = `articles/${atomOld.uuid}${draftExt}.html`;
       }
       // image first
       let imageFirst = '';
@@ -152,6 +153,9 @@ module.exports = app => {
       }
 
       // render
+      if (atomStage === 0) {
+        await this._renderArticle({ atomClass, key, inner: true });
+      }
       if (atomStage === 1) {
         await this._renderArticle({ atomClass, key, inner: false });
       }
@@ -179,6 +183,9 @@ module.exports = app => {
       }
 
       // delete article
+      if (atomOld.atomStage === 0) {
+        await this._deleteArticle({ atomClass, key, article: atomOld, inner: true });
+      }
       if (atomOld.atomStage === 1) {
         await this._deleteArticle({ atomClass, key, article: atomOld, inner: false });
       }
@@ -213,8 +220,8 @@ module.exports = app => {
 
     async _deleteArticle({ atomClass, key, article, inner }) {
       this.ctx.tail(async () => {
-        // queue not async
-        await this.ctx.app.meta.queue.push({
+        // queue
+        await this.ctx.app.meta.queue.pushAsync({
           locale: this.ctx.locale,
           subdomain: this.ctx.subdomain,
           module: moduleInfo.relativeName,
@@ -230,8 +237,8 @@ module.exports = app => {
 
     async _renderArticle({ atomClass, key, inner }) {
       this.ctx.tail(async () => {
-        // queue not async
-        await this.ctx.app.meta.queue.push({
+        // queue
+        await this.ctx.app.meta.queue.pushAsync({
           locale: this.ctx.locale,
           subdomain: this.ctx.subdomain,
           module: moduleInfo.relativeName,
@@ -247,7 +254,7 @@ module.exports = app => {
 
     async _getArticle({ key, inner }) {
       if (!inner) {
-      // check right
+        // check right
         const roleAnonymous = await this.ctx.bean.role.getSystemRole({ roleName: 'anonymous' });
         const right = await this.ctx.bean.atom.checkRoleRightRead({ atom: { id: key.atomId }, roleId: roleAnonymous.id });
         if (!right) return null;

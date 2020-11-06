@@ -265,7 +265,7 @@ module.exports = app => {
       // render article
       await this._renderArticle({ site, article });
       if (!inner) {
-      // write sitemap
+        // write sitemap
         await this._writeSitemap({ site, article });
         // render index
         await this._renderIndex({ site });
@@ -1112,7 +1112,7 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
     }
 
     async getArticleUrl({ key }) {
-    // article
+      // article
       const article = await this.ctx.bean._getBean(`${moduleInfo.relativeName}.atom.article`)._getArticle({ key, inner: true });
       if (!article) return;
       // site
