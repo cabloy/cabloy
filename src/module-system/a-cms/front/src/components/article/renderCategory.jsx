@@ -54,8 +54,7 @@ export default {
     },
   },
   render() {
-    const { data, pathParent, key, property, validate } = this.context;
-    const dataPath = pathParent + key;
+    const { data, dataPath, property, validate } = this.context;
     if (validate.readOnly || property.ebReadOnly) {
       return (
         <f7-list-item title={this.$text('Category')}>
