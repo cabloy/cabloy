@@ -3,6 +3,7 @@ import articleSearch from './components/article/articleSearch.vue';
 import renderArticleLanguage from './components/article/renderLanguage.jsx';
 import renderArticleCategory from './components/article/renderCategory.jsx';
 import renderArticleTags from './components/article/renderTags.jsx';
+import renderArticleContent from './components/article/renderContent.jsx';
 
 export default {
   categoryList,
@@ -10,4 +11,5 @@ export default {
   renderArticleLanguage,
   renderArticleCategory,
   renderArticleTags,
+  renderArticleContent,
 };

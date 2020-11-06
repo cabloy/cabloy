@@ -28,8 +28,12 @@ module.exports = app => {
       },
       content: {
         type: 'string',
-        ebType: 'text',
+        ebType: 'component',
         ebTitle: 'Content',
+        ebRender: {
+          module: moduleInfo.relativeName,
+          name: 'renderArticleContent',
+        },
       },
       // Basic Info
       groupBasicInfo: {
