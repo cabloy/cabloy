@@ -9,7 +9,7 @@ class Listener {
   async onNodeEnter(contextNode) {
     if (contextNode._nodeRef.id === 'startEvent_1') {
       const flowDefKey = this.context.atom.flowDefKey;
-      assert.equal(flowDefKey, 'set01_startEventAtom');
+      assert.equal(flowDefKey, 'set01_atomUserTask');
     }
   }
 
@@ -19,9 +19,9 @@ module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const definition = {
     info: {
-      title: 'Test_Set01_StartEvent_Atom',
-      description: 'Test_Set01_StartEvent_Atom',
-      version: '2020-09-28',
+      title: 'Test_Set01_Atom_UserTask',
+      description: 'Test_Set01_Atom_UserTask',
+      version: '2020-11-06',
     },
     listener: Listener.toString(),
     process: {
@@ -35,13 +35,13 @@ module.exports = app => {
               module: moduleInfo.relativeName,
               atomClassName: 'purchaseOrder',
             },
-            conditionExpression: 'atom.flowDefKey===\'set01_startEventAtom\'',
+            conditionExpression: 'atom.flowDefKey===\'set01_atomUserTask\'',
           },
         },
         {
           id: 'activity_1',
-          name: 'ActivityNone',
-          type: 'activityNone',
+          name: 'ActivityTask',
+          type: 'activityTask',
         },
         {
           id: 'endEvent_1',

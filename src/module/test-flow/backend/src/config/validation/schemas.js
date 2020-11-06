@@ -22,8 +22,13 @@ module.exports = app => {
       },
       flowDefKey: {
         type: 'string',
-        ebType: 'text',
+        ebType: 'select',
         ebTitle: 'Flow Definition',
+        ebOptionsBlankAuto: true,
+        ebOptions: [
+          { title: 'Test_Set01_StartEvent_Atom', value: 'set01_startEventAtom' },
+          { title: 'Test_Set01_Atom_UserTask', value: 'set01_atomUserTask' },
+        ],
       },
     },
   };
