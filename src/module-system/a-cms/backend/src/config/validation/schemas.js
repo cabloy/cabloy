@@ -61,8 +61,12 @@ module.exports = app => {
       },
       tags: {
         type: 'string',
-        ebType: 'text',
+        ebType: 'component',
         ebTitle: 'Tags',
+        ebRender: {
+          module: moduleInfo.relativeName,
+          name: 'renderArticleTags',
+        },
       },
       keywords: {
         type: 'string',
