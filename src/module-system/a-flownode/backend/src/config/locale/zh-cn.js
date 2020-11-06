@@ -5,4 +5,5 @@ module.exports = {
   EndEventNone: '空结束事件',
   ActivityNone: '空活动',
   ActivityService: '服务活动',
+  ActivityUserTask: '用户任务活动',
 };

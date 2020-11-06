@@ -7,6 +7,7 @@ const flowNodeStartEventAtom = require('./bean/flow.node.startEventAtom.js');
 const flowNodeEndEventNone = require('./bean/flow.node.endEventNone.js');
 const flowNodeActivityNone = require('./bean/flow.node.activityNone.js');
 const flowNodeActivityService = require('./bean/flow.node.activityService.js');
+const flowNodeActivityUserTask = require('./bean/flow.node.activityUserTask.js');
 
 module.exports = app => {
   const beans = {
@@ -48,6 +49,10 @@ module.exports = app => {
     'flow.node.activityService': {
       mode: 'ctx',
       bean: flowNodeActivityService,
+    },
+    'flow.node.activityUserTask': {
+      mode: 'ctx',
+      bean: flowNodeActivityUserTask,
     },
   };
   return beans;

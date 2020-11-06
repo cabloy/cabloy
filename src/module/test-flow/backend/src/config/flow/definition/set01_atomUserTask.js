@@ -40,8 +40,8 @@ module.exports = app => {
         },
         {
           id: 'activity_1',
-          name: 'ActivityTask',
-          type: 'activityTask',
+          name: 'ActivityUserTask',
+          type: 'activityUserTask',
         },
         {
           id: 'endEvent_1',

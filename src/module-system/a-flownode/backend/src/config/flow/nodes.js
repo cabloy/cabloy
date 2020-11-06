@@ -37,4 +37,10 @@ module.exports = {
     bean: 'activityService',
     icon: '/api/static/a/flownode/bpmn/activities/activity-service.svg',
   },
+  activityUserTask: {
+    title: 'ActivityUserTask',
+    group: 'activity',
+    bean: 'activityUserTask',
+    icon: '/api/static/a/flownode/bpmn/activities/activity-user-task.svg',
+  },
 };
