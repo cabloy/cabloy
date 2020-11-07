@@ -44,9 +44,9 @@ module.exports = app => {
           type: 'activityUserTask',
           options: {
             assignees: {
-              // userIds:'1,2',
-              // roleIds:'1,2',
-              vars: 'flowUserId,',
+              // users:'1,2',
+              // roles:'1,2',
+              vars: 'flowUser,',
             },
             confirmation: false,
             bidding: false,
@@ -54,6 +54,7 @@ module.exports = app => {
               // passed: 1,
               // rejected: '100%',
             },
+            // rejectedNode:'activity_1',
           },
         },
         {
