@@ -32,9 +32,12 @@ module.exports = app => {
         // add role rights
         const roleRights = [
           { roleName: 'cms-community-writer', action: 'create' },
+          { roleName: 'cms-community-writer', action: 'read', scopeNames: 'authenticated' },
           { roleName: 'cms-community-writer', action: 'write', scopeNames: 0 },
           { roleName: 'cms-community-writer', action: 'delete', scopeNames: 0 },
-          { roleName: 'cms-community-writer', action: 'read', scopeNames: 'authenticated' },
+          { roleName: 'cms-community-writer', action: 'clone', scopeNames: 0 },
+          { roleName: 'cms-community-writer', action: 'deleteBulk' },
+          { roleName: 'cms-community-writer', action: 'exportBulk' },
           { roleName: 'cms-community-publisher', action: 'read', scopeNames: 'authenticated' },
           { roleName: 'cms-community-publisher', action: 'write', scopeNames: 'authenticated' },
           { roleName: 'root', action: 'read', scopeNames: 'authenticated' },

@@ -338,9 +338,12 @@ module.exports = app => {
         // add role rights
         const roleRights = [
           { roleName: 'cms-writer', action: 'create' },
+          { roleName: 'cms-writer', action: 'read', scopeNames: 'authenticated' },
           { roleName: 'cms-writer', action: 'write', scopeNames: 0 },
           { roleName: 'cms-writer', action: 'delete', scopeNames: 0 },
-          { roleName: 'cms-writer', action: 'read', scopeNames: 'authenticated' },
+          { roleName: 'cms-writer', action: 'clone', scopeNames: 0 },
+          { roleName: 'cms-writer', action: 'deleteBulk' },
+          { roleName: 'cms-writer', action: 'exportBulk' },
           { roleName: 'cms-publisher', action: 'read', scopeNames: 'authenticated' },
           { roleName: 'cms-publisher', action: 'write', scopeNames: 'authenticated' },
           { roleName: 'root', action: 'read', scopeNames: 'authenticated' },
