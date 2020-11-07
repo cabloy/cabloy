@@ -42,6 +42,19 @@ module.exports = app => {
           id: 'activity_1',
           name: 'ActivityUserTask',
           type: 'activityUserTask',
+          options: {
+            assignees: {
+              // userIds:'1,2',
+              // roleIds:'1,2',
+              vars: 'flowUserId,',
+            },
+            confirmation: false,
+            bidding: false,
+            completionCondition: {
+              // passed: 1,
+              // rejected: '100%',
+            },
+          },
         },
         {
           id: 'endEvent_1',
