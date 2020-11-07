@@ -3,6 +3,14 @@ module.exports = ctx => {
     constructor(options) {
       super(ctx, options);
     }
+
+    async onNodeBegin() {
+      // super
+      await super.onNodeBegin();
+
+      // ok
+      return true;
+    }
   }
 
   return FlowNode;
