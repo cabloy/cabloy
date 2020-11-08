@@ -1,7 +1,7 @@
 const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
-describe('flow.set01', () => {
-  it('startEventAtom', async () => {
+describe.only('flow.set01_atomUserTask', () => {
+  it('atomUserTask', async () => {
     app.mockSession({});
 
     // atomClass info
@@ -28,7 +28,7 @@ describe('flow.set01', () => {
       key: keyDraft,
       item: {
         atomName: 'startEventAtom-test',
-        flowDefKey: 'set01_startEventAtom',
+        flowDefKey: 'set01_atomUserTask',
       },
     });
     assert(result.body.code === 0);

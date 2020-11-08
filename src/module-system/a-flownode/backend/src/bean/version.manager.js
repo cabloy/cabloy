@@ -3,8 +3,9 @@ module.exports = app => {
 
     async update(options) {
       if (options.version === 1) {
+        let sql;
         // create table: aFlowNodeStartEventAtomCondition
-        const sql = `
+        sql = `
           CREATE TABLE aFlowNodeStartEventAtomCondition (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -19,6 +20,50 @@ module.exports = app => {
           )
         `;
         await this.ctx.model.query(sql);
+
+        // create table: aFlowTask
+        sql = `
+          CREATE TABLE aFlowTask (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            deleted int(11) DEFAULT '0',
+            iid int(11) DEFAULT '0',
+            flowId int(11) DEFAULT '0',
+            flowNodeId int(11) DEFAULT '0',
+            flowNodeDefId varchar(255) DEFAULT NULL,
+            flowTaskStatus int(11) DEFAULT '0',
+            userIdAssignee int(11) DEFAULT '0',
+            timeClaim timestamp DEFAULT NULL,
+            timeHandle timestamp DEFAULT NULL,
+            taskVars JSON DEFAULT NULL,
+            PRIMARY KEY (id)
+          )
+        `;
+        await this.ctx.model.query(sql);
+
+        // create table: aFlowTaskHistory
+        sql = `
+          CREATE TABLE aFlowTaskHistory (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            deleted int(11) DEFAULT '0',
+            iid int(11) DEFAULT '0',
+            flowId int(11) DEFAULT '0',
+            flowTaskId int(11) DEFAULT '0',
+            flowNodeId int(11) DEFAULT '0',
+            flowNodeDefId varchar(255) DEFAULT NULL,
+            flowTaskStatus int(11) DEFAULT '0',
+            userIdAssignee int(11) DEFAULT '0',
+            timeClaim timestamp DEFAULT NULL,
+            timeHandle timestamp DEFAULT NULL,
+            taskVars JSON DEFAULT NULL,
+            PRIMARY KEY (id)
+          )
+        `;
+        await this.ctx.model.query(sql);
+
       }
     }
 

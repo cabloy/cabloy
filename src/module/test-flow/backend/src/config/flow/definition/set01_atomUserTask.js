@@ -54,7 +54,7 @@ module.exports = app => {
               // passed: 1,
               // rejected: '100%',
             },
-            // rejectedNode:'activity_1',
+            // rejectedNode:'startEvent_1',
           },
         },
         {
