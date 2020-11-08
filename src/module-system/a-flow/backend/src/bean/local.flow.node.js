@@ -103,29 +103,29 @@ module.exports = ctx => {
       await this._setCurrent();
       // raise event: onNodeEnter
       const res = await this.nodeBaseBean.onNodeEnter();
-      if (!res) return;
-      await this.begin();
+      if (!res) return false;
+      return await this.begin();
     }
 
     async begin() {
       // raise event: onNodeBegin
       const res = await this.nodeBaseBean.onNodeBegin();
-      if (!res) return;
-      await this.doing();
+      if (!res) return false;
+      return await this.doing();
     }
 
     async doing() {
       // raise event: onNodeDoing
       const res = await this.nodeBaseBean.onNodeDoing();
-      if (!res) return;
-      await this.end();
+      if (!res) return false;
+      return await this.end();
     }
 
     async end() {
       // raise event: onNodeEnd
       const res = await this.nodeBaseBean.onNodeEnd();
-      if (!res) return;
-      await this.leave();
+      if (!res) return false;
+      return await this.leave();
     }
 
     async leave() {
@@ -134,9 +134,9 @@ module.exports = ctx => {
       // clear current
       await this._clearCurrent();
       // res
-      if (!res) return;
+      if (!res) return false;
       // next
-      await this.flowInstance.nextEdges({ contextNode: this.contextNode });
+      return await this.flowInstance.nextEdges({ contextNode: this.contextNode });
     }
 
     get nodeBaseBean() {

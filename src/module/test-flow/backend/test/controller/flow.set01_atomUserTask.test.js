@@ -46,12 +46,15 @@ describe.only('flow.set01_atomUserTask', () => {
     });
     assert(result.body.code === 0);
     const archive = result.body.data.list[0];
-    const keyArchive = { atomId: archive.atomId };
+    // maybe null
+    assert(!archive);
 
-    // delete
-    result = await app.httpRequest().post(mockUrl('/a/base/atom/delete')).send({
-      key: keyArchive,
-    });
-    assert(result.body.code === 0);
+    // const keyArchive = { atomId: archive.atomId };
+
+    // // delete
+    // result = await app.httpRequest().post(mockUrl('/a/base/atom/delete')).send({
+    //   key: keyArchive,
+    // });
+    // assert(result.body.code === 0);
   });
 });

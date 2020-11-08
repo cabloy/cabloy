@@ -42,30 +42,37 @@ module.exports = ctx => {
       const nodeInstanceStartEvent = await this._findNodeInstanceStartEvent({ startEventId });
       if (!nodeInstanceStartEvent) throw new Error(`startEvent not found: ${this.context._flowDef.flowDefKey}.${startEventId || 'startEventNone'}`);
       // node enter
-      await nodeInstanceStartEvent.enter();
-
-      console.log('--------done');
+      const res = await nodeInstanceStartEvent.enter();
+      if (!res) {
+        console.log(`--------flow break: ${flowId}`);
+      } else {
+        console.log(`--------flow done: ${flowId}`);
+      }
     }
 
-    async continue({}) {
-    }
+    // async continue({}) {
+    // }
 
     async nextEdges({ contextNode }) {
       const edgeInstances = await this._findEdgeInstancesNext({ nodeRefId: contextNode._nodeRef.id, contextNode });
       for (const edgeInstance of edgeInstances) {
         // check if end
         if (this.context._flow.flowStatus !== this.constant.flow.status.flowing) {
-          break;
+          return true;
         }
         // enter
-        await edgeInstance.enter();
+        const res = await edgeInstance.enter();
+        if (res) {
+          return true;
+        }
       }
+      return false;
     }
 
     async nextNode({ contextEdge }) {
       const nodeInstanceNext = await this._findNodeInstanceNext({ nodeRefId: contextEdge._edgeRef.target });
       // enter
-      await nodeInstanceNext.enter();
+      return await nodeInstanceNext.enter();
     }
 
     async _contextInit({ flowId }) {

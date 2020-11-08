@@ -32,23 +32,23 @@ module.exports = ctx => {
     async enter() {
       // raise event: onEdgeEnter
       const res = await this.edgeBaseBean.onEdgeEnter();
-      if (!res) return;
-      await this.take();
+      if (!res) return false;
+      return await this.take();
     }
 
     async take() {
       // raise event: onEdgeTake
       const res = await this.edgeBaseBean.onEdgeTake();
-      if (!res) return;
-      await this.leave();
+      if (!res) return false;
+      return await this.leave();
     }
 
     async leave() {
       // raise event: onEdgeLeave
       const res = await this.edgeBaseBean.onEdgeLeave();
-      if (!res) return;
+      if (!res) return false;
       // next
-      await this.flowInstance.nextNode({ contextEdge: this.contextEdge });
+      return await this.flowInstance.nextNode({ contextEdge: this.contextEdge });
     }
 
     get edgeBaseBean() {
