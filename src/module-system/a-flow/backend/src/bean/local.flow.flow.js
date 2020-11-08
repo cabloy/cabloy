@@ -55,6 +55,7 @@ module.exports = ctx => {
 
     async nextEdges({ contextNode }) {
       const edgeInstances = await this._findEdgeInstancesNext({ nodeRefId: contextNode._nodeRef.id, contextNode });
+      if (edgeInstances.length === 0) return true;
       for (const edgeInstance of edgeInstances) {
         // check if end
         if (this.context._flow.flowStatus !== this.constant.flow.status.flowing) {

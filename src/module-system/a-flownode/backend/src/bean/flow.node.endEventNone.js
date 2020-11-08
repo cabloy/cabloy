@@ -8,7 +8,8 @@ module.exports = ctx => {
       await super.onNodeLeave();
       // end
       await this.flowInstance._endFlow();
-      return false;
+      // also true
+      return true;
     }
 
   }

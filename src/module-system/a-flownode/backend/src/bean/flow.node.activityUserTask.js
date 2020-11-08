@@ -71,7 +71,7 @@ module.exports = ctx => {
       this.contextNode.vars.set('_assignees', assignees);
 
       // ok
-      return false;
+      return true;
     }
 
     async _parseUserVar({ _var }) {
