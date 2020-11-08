@@ -29,8 +29,8 @@ module.exports = app => {
           type: 'activityUserTask',
           options: {
             assignees: {
-              users: '1,2',
-              roles: '1,2',
+              // users: '1,2',
+              // roles: '1,2',
               vars: 'flowUser,',
             },
             confirmation: false,
