@@ -1,17 +1,4 @@
-class Listener {
-  constructor(context) {
-    this.context = context;
-  }
-
-  async onNodeEnter(contextNode) {
-    if (contextNode._nodeRef.id === 'startEvent_1') {
-      // nodeVars
-      const x = this.context.vars.get('x');
-      contextNode.vars.set('x', x);
-    }
-  }
-
-}
+const Listener = require('./listener/set00_edgeSequence.spec.js');
 
 module.exports = app => {
   const definition = {

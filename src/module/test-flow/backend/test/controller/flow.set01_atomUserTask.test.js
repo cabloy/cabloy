@@ -1,6 +1,6 @@
 const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
-describe.only('flow.set01_atomUserTask', () => {
+describe('flow.set01_atomUserTask', () => {
   it('atomUserTask', async () => {
     app.mockSession({});
 
