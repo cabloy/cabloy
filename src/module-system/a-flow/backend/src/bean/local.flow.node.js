@@ -57,7 +57,7 @@ module.exports = ctx => {
       // flowNode
       this.contextNode._flowNode = await this.modelFlowNode.get({ id: flowNodeId });
       this.contextNode._flowNodeHistory = await this.modelFlowNodeHistory.get({ flowNodeId });
-      // flowVars
+      // nodeVars
       this.contextNode._nodeVars = new (VarsFn())();
       this.contextNode._nodeVars._vars = this.contextNode._flowNode.nodeVars ? JSON.parse(this.contextNode._flowNode.nodeVars) : {};
       // utils
@@ -75,6 +75,15 @@ module.exports = ctx => {
       // flowNode history
       this.contextNode._flowNodeHistory.nodeVars = this.contextNode._flowNode.nodeVars;
       await this.modelFlowNodeHistory.update(this.contextNode._flowNodeHistory);
+      // done
+      this.contextNode._nodeVars._dirty = false;
+    }
+
+    async _saveVars() {
+      // save nodeVars
+      await this._saveNodeVars();
+      // save flowVars
+      await this.flowInstance._saveFlowVars();
     }
 
     async _setCurrent(clear) {
@@ -103,6 +112,7 @@ module.exports = ctx => {
       await this._setCurrent();
       // raise event: onNodeEnter
       const res = await this.nodeBaseBean.onNodeEnter();
+      await this._saveVars();
       if (!res) return false;
       return await this.begin();
     }
@@ -110,6 +120,7 @@ module.exports = ctx => {
     async begin() {
       // raise event: onNodeBegin
       const res = await this.nodeBaseBean.onNodeBegin();
+      await this._saveVars();
       if (!res) return false;
       return await this.doing();
     }
@@ -117,6 +128,7 @@ module.exports = ctx => {
     async doing() {
       // raise event: onNodeDoing
       const res = await this.nodeBaseBean.onNodeDoing();
+      await this._saveVars();
       if (!res) return false;
       return await this.end();
     }
@@ -124,6 +136,7 @@ module.exports = ctx => {
     async end() {
       // raise event: onNodeEnd
       const res = await this.nodeBaseBean.onNodeEnd();
+      await this._saveVars();
       if (!res) return false;
       return await this.leave();
     }
@@ -131,6 +144,7 @@ module.exports = ctx => {
     async leave() {
       // raise event: onNodeLeave
       const res = await this.nodeBaseBean.onNodeLeave();
+      await this._saveVars();
       // clear current
       await this._clearCurrent();
       // res

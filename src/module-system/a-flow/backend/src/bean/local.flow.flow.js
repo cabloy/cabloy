@@ -38,6 +38,7 @@ module.exports = ctx => {
       await this._contextInit({ flowId });
       // raise event: onFlowStart
       await this._flowListener.onFlowStart({ flowVars, flowUserId, startEventId });
+      await this._saveFlowVars();
       // node: startEvent
       const nodeInstanceStartEvent = await this._findNodeInstanceStartEvent({ startEventId });
       if (!nodeInstanceStartEvent) throw new Error(`startEvent not found: ${this.context._flowDef.flowDefKey}.${startEventId || 'startEventNone'}`);
@@ -103,6 +104,8 @@ module.exports = ctx => {
       // flow history
       this.context._flowHistory.flowVars = this.context._flow.flowVars;
       await this.modelFlowHistory.update(this.context._flowHistory);
+      // done
+      this.context._flowVars._dirty = false;
     }
 
     async _endFlow() {

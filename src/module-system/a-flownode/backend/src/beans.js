@@ -8,6 +8,9 @@ const flowNodeEndEventNone = require('./bean/flow.node.endEventNone.js');
 const flowNodeActivityNone = require('./bean/flow.node.activityNone.js');
 const flowNodeActivityService = require('./bean/flow.node.activityService.js');
 const flowNodeActivityUserTask = require('./bean/flow.node.activityUserTask.js');
+const localContextTask = require('./bean/local.context.task.js');
+const localFlowTask = require('./bean/local.flow.task.js');
+const beanFlowTask = require('./bean/bean.flowTask.js');
 
 module.exports = app => {
   const beans = {
@@ -53,6 +56,20 @@ module.exports = app => {
     'flow.node.activityUserTask': {
       mode: 'ctx',
       bean: flowNodeActivityUserTask,
+    },
+    'local.context.task': {
+      mode: 'ctx',
+      bean: localContextTask,
+    },
+    'local.flow.task': {
+      mode: 'ctx',
+      bean: localFlowTask,
+    },
+    // global
+    flowTask: {
+      mode: 'ctx',
+      bean: beanFlowTask,
+      global: true,
     },
   };
   return beans;

@@ -40,7 +40,6 @@ module.exports = ctx => {
     async onFlowStart(options) {
       if (this.flowListener && this.flowListener.onFlowStart) {
         await this.flowListener.onFlowStart(options);
-        await this.flowInstance._saveFlowVars();
       }
     }
 
@@ -95,6 +94,24 @@ module.exports = ctx => {
     async onEdgeLeave(contextEdge, contextNode) {
       if (this.flowListener && this.flowListener.onEdgeLeave) {
         await this.flowListener.onEdgeLeave(contextEdge, contextNode);
+      }
+    }
+
+    async onTaskCreated(contextTask, contextNode) {
+      if (this.flowListener && this.flowListener.onTaskCreated) {
+        await this.flowListener.onTaskCreated(contextTask, contextNode);
+      }
+    }
+
+    async onTaskClaimed(contextTask, contextNode) {
+      if (this.flowListener && this.flowListener.onTaskClaimed) {
+        await this.flowListener.onTaskClaimed(contextTask, contextNode);
+      }
+    }
+
+    async onTaskCompleted(contextTask, contextNode) {
+      if (this.flowListener && this.flowListener.onTaskCompleted) {
+        await this.flowListener.onTaskCompleted(contextTask, contextNode);
       }
     }
 

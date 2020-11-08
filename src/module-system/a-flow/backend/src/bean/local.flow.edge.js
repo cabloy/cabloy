@@ -29,9 +29,15 @@ module.exports = ctx => {
       });
     }
 
+    async _saveVars() {
+      // save flowVars
+      await this.flowInstance._saveFlowVars();
+    }
+
     async enter() {
       // raise event: onEdgeEnter
       const res = await this.edgeBaseBean.onEdgeEnter();
+      await this._saveVars();
       if (!res) return false;
       return await this.take();
     }
@@ -39,6 +45,7 @@ module.exports = ctx => {
     async take() {
       // raise event: onEdgeTake
       const res = await this.edgeBaseBean.onEdgeTake();
+      await this._saveVars();
       if (!res) return false;
       return await this.leave();
     }
@@ -46,6 +53,7 @@ module.exports = ctx => {
     async leave() {
       // raise event: onEdgeLeave
       const res = await this.edgeBaseBean.onEdgeLeave();
+      await this._saveVars();
       if (!res) return false;
       // next
       return await this.flowInstance.nextNode({ contextEdge: this.contextEdge });

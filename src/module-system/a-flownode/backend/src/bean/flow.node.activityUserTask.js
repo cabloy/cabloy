@@ -1,3 +1,6 @@
+const require3 = require('require3');
+const assert = require3('assert');
+
 module.exports = ctx => {
   class FlowNode extends ctx.app.meta.FlowNodeBase {
     constructor(options) {
@@ -22,9 +25,18 @@ module.exports = ctx => {
 
       // var: _assignees
       const assignees = this.contextNode.vars.get('_assignees');
-      console.log(assignees, 2);
+      assert(assignees && assignees.length > 0);
 
-      return true;
+      // create tasks
+      for (const userIdAssignee of assignees) {
+        await ctx.bean.flowTask._createTaskInstance({
+          nodeInstance: this.nodeInstance,
+          userIdAssignee,
+        });
+      }
+
+      // break
+      return false;
     }
 
     async _prepareAssignees() {
