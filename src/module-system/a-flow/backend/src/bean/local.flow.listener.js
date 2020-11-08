@@ -24,6 +24,10 @@ module.exports = ctx => {
       let sandbox = {};
       if (ctx.app.meta.isTest || ctx.app.meta.isLocal) {
         sandbox.assert = assert;
+        sandbox.console = console;
+      } else {
+        sandbox.assert = () => {};
+        sandbox.console = () => {};
       }
       sandbox = vm.createContext(sandbox);
       // class

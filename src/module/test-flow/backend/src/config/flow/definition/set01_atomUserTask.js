@@ -6,7 +6,7 @@ module.exports = app => {
     info: {
       title: 'Test_Set01_Atom_UserTask',
       description: 'Test_Set01_Atom_UserTask',
-      version: '2020-11-06',
+      version: '2020-11-06 00:00:00',
     },
     listener: Listener.toString(),
     process: {
@@ -29,8 +29,8 @@ module.exports = app => {
           type: 'activityUserTask',
           options: {
             assignees: {
-              // users:'1,2',
-              // roles:'1,2',
+              users: '1,2',
+              roles: '1,2',
               vars: 'flowUser,',
             },
             confirmation: false,

@@ -452,6 +452,63 @@ module.exports = ctx => {
       return list[0].count > 0;
     }
 
+    async usersOfRoleDirect({ roleId, disabled, page }) {
+      // disabled
+      let _disabled = '';
+      if (disabled !== undefined) {
+        _disabled = `and disabled=${parseInt(disabled)}`;
+      }
+      // page
+      page = ctx.bean.util.page(page, false);
+      const _limit = ctx.model._limit(page.size, page.index);
+      const list = await ctx.model.query(`
+        select a.* from aUser a
+          inner join aUserRole b on a.id=b.userId
+            where a.iid=? and a.deleted=0 ${_disabled} and b.roleId=?
+            order by a.userName
+            ${_limit}
+        `, [ ctx.instance.id, roleId ]);
+      return list;
+    }
+
+    async usersOfRoleParent({ roleId, disabled, page }) {
+      // disabled
+      let _disabled = '';
+      if (disabled !== undefined) {
+        _disabled = `and disabled=${parseInt(disabled)}`;
+      }
+      // page
+      page = ctx.bean.util.page(page, false);
+      const _limit = ctx.model._limit(page.size, page.index);
+      const list = await ctx.model.query(`
+        select a.* from aUser a
+          inner join aViewUserRoleRef b on a.id=b.userId
+            where a.iid=? and a.deleted=0 ${_disabled} and b.roleIdParent=?
+            order by a.userName
+            ${_limit}
+        `, [ ctx.instance.id, roleId ]);
+      return list;
+    }
+
+    async usersOfRoleExpand({ roleId, disabled, page }) {
+      // disabled
+      let _disabled = '';
+      if (disabled !== undefined) {
+        _disabled = `and disabled=${parseInt(disabled)}`;
+      }
+      // page
+      page = ctx.bean.util.page(page, false);
+      const _limit = ctx.model._limit(page.size, page.index);
+      const list = await ctx.model.query(`
+        select a.* from aUser a
+          inner join aViewUserRoleExpand b on a.id=b.userId
+            where a.iid=? and a.deleted=0 ${_disabled} and b.roleIdBase=?
+            order by a.userName
+            ${_limit}
+        `, [ ctx.instance.id, roleId ]);
+      return list;
+    }
+
     // set dirty
     async setDirty(dirty) {
       await ctx.bean.status.module(moduleInfo.relativeName).set('roleDirty', dirty);
