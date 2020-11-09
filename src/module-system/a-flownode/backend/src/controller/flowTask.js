@@ -31,6 +31,16 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async complete() {
+      const res = await this.ctx.service.flowTask.complete({
+        flowTaskId: this.ctx.request.body.flowTaskId,
+        handle: this.ctx.request.body.handle,
+        formAtom: this.ctx.request.body.formAtom,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
   }
   return FlowTaskController;
 };

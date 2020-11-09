@@ -86,9 +86,9 @@ describe.only('flow.set01_atomUserTask', () => {
     // complete
     result = await app.httpRequest().post(mockUrl('/a/flownode/task/complete')).send({
       flowTaskId: flowTask.id,
-
-      formBase: {
-
+      handle: {
+        status: 1,
+        opinion: 'Nice Work!',
       },
       formAtom: null,
     });

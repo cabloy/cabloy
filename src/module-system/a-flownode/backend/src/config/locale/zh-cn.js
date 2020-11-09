@@ -9,4 +9,5 @@ module.exports = {
   'Task not Found': '任务未发现',
   'Task cannot been accessed': '任务无权访问',
   'Task has been claimed': '任务已被申领',
+  'Task should be claimed first': '任务必须先申领',
 };
