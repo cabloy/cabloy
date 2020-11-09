@@ -28,13 +28,13 @@ module.exports = ctx => {
       // must be the same user
       if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002);
       // check
-      if (flowTask.timeClaim) ctx.throw.module(moduleInfo.relativeName, 1003);
-      // timeClaim
-      const timeClaim = new Date();
-      await this.modelFlowTask.update({ id: flowTaskId, timeClaim });
+      if (flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1003);
+      // timeClaimed
+      const timeClaimed = new Date();
+      await this.modelFlowTask.update({ id: flowTaskId, timeClaimed });
       // history
       const flowTaskHistory = await this.modelFlowTaskHistory.get({ flowTaskId });
-      await this.modelFlowTaskHistory.update({ id: flowTaskHistory.id, timeClaim });
+      await this.modelFlowTaskHistory.update({ id: flowTaskHistory.id, timeClaimed });
     }
 
     async complete({ flowTaskId, handle, formAtom, user }) {
@@ -43,8 +43,8 @@ module.exports = ctx => {
       if (!flowTask) ctx.throw.module(moduleInfo.relativeName, 1001);
       // must be the same user
       if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002);
-      // timeClaim first
-      if (!flowTask.timeClaim) ctx.throw.module(moduleInfo.relativeName, 1004);
+      // timeClaimed first
+      if (!flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1004);
       // formAtom
       // handle
       // next

@@ -49,7 +49,7 @@ module.exports = app => {
         await this.ctx.model.query(sql);
 
         // create table: aFlow
-        //  flowStatus: 1/COMPLETED, 2/CANCELLED
+        //  flowStatus: 1/end
         sql = `
           CREATE TABLE aFlow (
             id int(11) NOT NULL AUTO_INCREMENT,
@@ -66,6 +66,8 @@ module.exports = app => {
             flowNodeIdCurrent int(11) DEFAULT '0',
             flowNodeNameCurrent varchar(255) DEFAULT NULL,
             flowUserId int(11) DEFAULT '0',
+            timeEnd timestamp DEFAULT NULL,
+            flowRemark varchar(255) DEFAULT NULL,
             PRIMARY KEY (id)
           )
         `;
@@ -89,7 +91,7 @@ module.exports = app => {
         await this.ctx.model.query(sql);
 
         // create table: aFlowHistory
-        //  flowStatus: 1/COMPLETED, 2/CANCELLED
+        //  flowStatus: 1/end
         sql = `
           CREATE TABLE aFlowHistory (
             id int(11) NOT NULL AUTO_INCREMENT,
@@ -107,6 +109,8 @@ module.exports = app => {
             flowNodeIdCurrent int(11) DEFAULT '0',
             flowNodeNameCurrent varchar(255) DEFAULT NULL,
             flowUserId int(11) DEFAULT '0',
+            timeEnd timestamp DEFAULT NULL,
+            flowRemark varchar(255) DEFAULT NULL,
             PRIMARY KEY (id)
           )
         `;

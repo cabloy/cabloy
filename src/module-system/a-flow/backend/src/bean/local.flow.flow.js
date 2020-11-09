@@ -108,14 +108,20 @@ module.exports = ctx => {
       this.context._flowVars._dirty = false;
     }
 
-    async _endFlow() {
+    async _endFlow(options) {
+      const flowRemark = (options && options.flowRemark) || null;
+      const timeEnd = new Date();
       // raise event: onFlowEnd
       await this._flowListener.onFlowEnd();
       // flow
-      this.context._flow.flowStatus = this.constant.flow.status.completed;
+      this.context._flow.flowStatus = this.constant.flow.status.end;
+      this.context._flow.timeEnd = timeEnd;
+      this.context._flow.flowRemark = flowRemark;
       await this.modelFlow.update(this.context._flow);
       // flow history
       this.context._flowHistory.flowStatus = this.context._flow.flowStatus;
+      this.context._flowHistory.timeEnd = timeEnd;
+      this.context._flowHistory.flowRemark = flowRemark;
       await this.modelFlowHistory.update(this.context._flowHistory);
       // atom
       if (this.context._flow.flowAtomId) {

@@ -36,8 +36,8 @@ module.exports = app => {
             specificFlag int(11) DEFAULT '0',
             handleStatus int(11) DEFAULT '0',
             handleOpinion TEXT DEFAULT NULL,
-            timeClaim timestamp DEFAULT NULL,
-            timeHandle timestamp DEFAULT NULL,
+            timeClaimed timestamp DEFAULT NULL,
+            timeHandled timestamp DEFAULT NULL,
             taskVars JSON DEFAULT NULL,
             PRIMARY KEY (id)
           )
@@ -60,8 +60,8 @@ module.exports = app => {
             specificFlag int(11) DEFAULT '0',
             handleStatus int(11) DEFAULT '0',
             handleOpinion TEXT DEFAULT NULL,
-            timeClaim timestamp DEFAULT NULL,
-            timeHandle timestamp DEFAULT NULL,
+            timeClaimed timestamp DEFAULT NULL,
+            timeHandled timestamp DEFAULT NULL,
             taskVars JSON DEFAULT NULL,
             PRIMARY KEY (id)
           )
