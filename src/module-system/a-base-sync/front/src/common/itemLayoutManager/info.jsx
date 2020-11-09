@@ -61,19 +61,19 @@ export default {
       // comment
       if (item.atomStage === 0 || this.base.config.render.item.info.comment) {
         children.push(
-          <eb-link iconMaterial="comment" iconBadge={item.commentCount} eb-href={`/a/base/comment/list?atomId=${item.atomId}`}></eb-link>
+          <eb-link key="actionsLeft:comment" iconMaterial="comment" iconBadge={item.commentCount} eb-href={`/a/base/comment/list?atomId=${item.atomId}`}></eb-link>
         );
       }
       // attachment
       if (this.base.config.render.item.info.attachment) {
         children.push(
-          <eb-link iconMaterial="attachment" iconBadge={item.attachmentCount} eb-href={`/a/base/attachment/list?atomId=${item.atomId}`}></eb-link>
+          <eb-link key="actionsLeft:attachment" iconMaterial="attachment" iconBadge={item.attachmentCount} eb-href={`/a/base/attachment/list?atomId=${item.atomId}`}></eb-link>
         );
       }
       // star
       if (item.atomStage === 1) {
         children.push(
-          <eb-link iconMaterial={item.star ? 'star' : 'star_border'} propsOnPerform={this.info_onStarSwitch}></eb-link>
+          <eb-link key="actionsLeft:star" iconMaterial={item.star ? 'star' : 'star_border'} propsOnPerform={this.info_onStarSwitch}></eb-link>
         );
       }
       // labels
@@ -88,7 +88,7 @@ export default {
           }
         } else {
           children.push(
-            <eb-link iconMaterial='label' propsOnPerform={this.info_onLabel}></eb-link>
+            <eb-link key="actionsLeft:label" iconMaterial='label' propsOnPerform={this.info_onLabel}></eb-link>
           );
         }
       }
@@ -102,7 +102,7 @@ export default {
       if (item.userIdCreated !== item.userIdUpdated) {
         small = true;
         children.push(
-          <img
+          <img key="avatar:one"
             class={`avatar ${small ? 'avatar12' : 'avatar16'}`}
             src={this.info_getItemMetaMedia(item.avatarUpdated)}
             title={item.userName}
@@ -110,14 +110,14 @@ export default {
         );
       }
       children.push(
-        <img
+        <img key="avatar:two"
           class={`avatar ${small ? 'avatar12' : 'avatar16'}`}
           src={this.info_getItemMetaMedia(item.avatar)}
           title={item.userName}
         />
       );
       return (
-        <div class="info-avatar">
+        <div key="avatar" class="info-avatar">
           {children}
         </div>
       );
@@ -131,23 +131,23 @@ export default {
       if (dateCreated !== dateUpdated) {
         small = true;
         children.push(
-          <div>{dateUpdated}</div>
+          <div key="date:one">{dateUpdated}</div>
         );
       }
       if (small) {
         children.push(
-          <div>{dateCreated}</div>
+          <div key="date:two">{dateCreated}</div>
         );
       } else {
         children.push(
-          <div>{this.$meta.util.formatDate(item.atomCreatedAt)}</div>
+          <div key="date:one2">{this.$meta.util.formatDate(item.atomCreatedAt)}</div>
         );
         children.push(
-          <div>{this.$meta.util.formatTime(item.atomCreatedAt)}</div>
+          <div key="date:two2">{this.$meta.util.formatTime(item.atomCreatedAt)}</div>
         );
       }
       return (
-        <div class='info-date'>
+        <div key="date" class='info-date'>
           {children}
         </div>
       );
