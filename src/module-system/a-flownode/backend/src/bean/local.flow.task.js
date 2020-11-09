@@ -38,7 +38,6 @@ module.exports = ctx => {
       const data = {
         flowId: this.context._flowId,
         flowNodeId: this.contextNode._flowNodeId,
-        flowNodeDefId: this.contextNode._nodeRef.id,
         flowTaskStatus: 0,
         userIdAssignee,
         taskVars: '{}',

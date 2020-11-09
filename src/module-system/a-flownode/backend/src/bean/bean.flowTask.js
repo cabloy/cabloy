@@ -2,6 +2,10 @@ module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowTask {
 
+    get sqlProcedure() {
+      return ctx.bean._getBean(moduleInfo.relativeName, 'local.procedure');
+    }
+
     async count({ options, user }) {
       return await this.select({ options, user, count: 1 });
     }

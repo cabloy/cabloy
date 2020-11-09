@@ -49,18 +49,32 @@ describe.only('flow.set01_atomUserTask', () => {
     // not found
     assert(!archive);
 
+    // select task from history
+    result = await app.httpRequest().post(mockUrl('/a/flownode/task/select')).send({
+      options: {
+        where: {
+          'a.flowId': flowId,
+          'a.flowTaskStatus': 0,
+        },
+        history: 1,
+      },
+    });
+    assert(result.body.code === 0);
+    let flowTask = result.body.data.list[0];
+    assert(!!flowTask);
+
     // select task
     result = await app.httpRequest().post(mockUrl('/a/flownode/task/select')).send({
       options: {
         where: {
-          flowId,
-          flowTaskStatus: 0,
+          'a.flowId': flowId,
+          'a.flowTaskStatus': 0,
         },
         history: 0,
       },
     });
     assert(result.body.code === 0);
-    const flowTask = result.body.data.list[0];
+    flowTask = result.body.data.list[0];
     assert(!!flowTask);
 
     // claim
