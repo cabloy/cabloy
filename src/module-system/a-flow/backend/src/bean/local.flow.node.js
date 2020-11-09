@@ -35,6 +35,11 @@ module.exports = ctx => {
       await this._contextInit({ flowNodeId });
     }
 
+    async _load({ flowNode }) {
+      // context init
+      await this._contextInit({ flowNodeId: flowNode.id });
+    }
+
     async _createFlowNode() {
       // flowNode
       const data = {

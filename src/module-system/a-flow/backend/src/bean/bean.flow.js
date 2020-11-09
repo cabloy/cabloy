@@ -4,6 +4,14 @@ module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Flow {
 
+    get modelFlow() {
+      return ctx.model.module(moduleInfo.relativeName).flow;
+    }
+
+    get modelFlowNode() {
+      return ctx.model.module(moduleInfo.relativeName).flowNode;
+    }
+
     async startByKey({ flowDefKey, flowAtomId, flowVars, flowUserId, startEventId }) {
       // fullKey
       const { fullKey } = ctx.bean.flowDef._combineFullKey({ flowDefKey });
@@ -51,13 +59,45 @@ module.exports = ctx => {
 
     async _start({ flowDef, flowAtomId, flowVars, flowUserId, startEventId }) {
       // flowInstance
-      const flowInstance = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.flow`, {
-        flowDef,
-      });
+      const flowInstance = this._createFlowInstance({ flowDef });
       // start
       await flowInstance.start({ flowAtomId, flowVars, flowUserId, startEventId });
       // ok
       return flowInstance;
+    }
+
+    async _loadFlowInstance({ flowId }) {
+      // flow
+      const flow = await this.modelFlow.get({ id: flowId });
+      if (!flow) ctx.throw.module(moduleInfo.relativeName, 1003, flowId);
+      // flowDef
+      const flowDef = await ctx.bean.flowDef.getById({ flowDefId: flow.flowDefId });
+      if (!flowDef) ctx.throw.module(moduleInfo.relativeName, 1001, flow.flowDefId);
+      // not check disabled
+      // flowInstance
+      const flowInstance = this._createFlowInstance({ flowDef });
+      // load
+      await flowInstance._load({ flow });
+      // ok
+      return flowInstance;
+    }
+
+    _createFlowInstance({ flowDef }) {
+      const flowInstance = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.flow`, {
+        flowDef,
+      });
+      return flowInstance;
+    }
+
+    async _loadFlowNodeInstance({ flowNodeId }) {
+      // get
+      const flowNode = await this.modelFlowNode.get({ id: flowNodeId });
+      if (!flowNode) ctx.throw.module(moduleInfo.relativeName, 1004, flowNodeId);
+      // load flow
+      const flowInstance = await this._loadFlowInstance({ flowId: flowNode.flowId });
+      // load flow node
+      const flowNodeInstance = await flowInstance._loadNodeInstance({ flowNode });
+      return flowNodeInstance;
     }
 
   }

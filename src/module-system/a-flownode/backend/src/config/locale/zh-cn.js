@@ -6,8 +6,8 @@ module.exports = {
   ActivityNone: '空活动',
   ActivityService: '服务活动',
   ActivityUserTask: '用户任务活动',
-  'Task not Found': '任务未发现',
-  'Task cannot been accessed': '任务无权访问',
-  'Task has been claimed': '任务已被申领',
-  'Task should be claimed first': '任务必须先申领',
+  'Task not Found: %d': '任务未发现: %d',
+  'Task cannot been accessed: %d': '任务无权访问: %d',
+  'Task has been claimed: %d': '任务已被申领: %d',
+  'Task should be claimed first: %d': '任务必须先申领: %d',
 };

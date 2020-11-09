@@ -33,6 +33,11 @@ module.exports = ctx => {
       await this.created();
     }
 
+    async _load({ flowTask }) {
+      // context init
+      await this._contextInit({ flowTaskId: flowTask.id });
+    }
+
     async _createFlowTask({ userIdAssignee }) {
       // flowTask
       const data = {

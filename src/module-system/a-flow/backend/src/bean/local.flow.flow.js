@@ -46,13 +46,13 @@ module.exports = ctx => {
       const res = await nodeInstanceStartEvent.enter();
       if (!res) {
         console.log(`--------flow break: ${flowId}`);
-      } else {
-        console.log(`--------flow done: ${flowId}`);
       }
     }
 
-    // async continue({}) {
-    // }
+    async _load({ flow }) {
+      // context init
+      await this._contextInit({ flowId: flow.id });
+    }
 
     async nextEdges({ contextNode }) {
       const edgeInstances = await this._findEdgeInstancesNext({ nodeRefId: contextNode._nodeRef.id, contextNode });
@@ -132,6 +132,8 @@ module.exports = ctx => {
           user: { id: this.context._atom.userIdUpdated },
         });
       }
+      // log
+      console.log(`--------flow done: ${this.context._flowId}`);
     }
 
     async _createFlow({ flowAtomId, flowVars, flowUserId }) {
@@ -159,10 +161,23 @@ module.exports = ctx => {
       return flowId;
     }
 
-    async _createNodeInstance({ nodeRef }) {
+    _createNodeInstance2({ nodeRef }) {
       const node = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.node`, {
         flowInstance: this, context: this.context, nodeRef,
       });
+      return node;
+    }
+
+    async _loadNodeInstance({ flowNode }) {
+      const nodeRef = this._findNodeRef({ nodeRefId: flowNode.flowNodeDefId });
+      if (!nodeRef) ctx.throw.module(moduleInfo.relativeName, 1005, flowNode.flowNodeDefId);
+      const node = this._createNodeInstance2({ nodeRef });
+      await node._load({ flowNode });
+      return node;
+    }
+
+    async _createNodeInstance({ nodeRef }) {
+      const node = this._createNodeInstance2({ nodeRef });
       await node.init();
       return node;
     }
@@ -175,10 +190,15 @@ module.exports = ctx => {
       return edge;
     }
 
-    async _findNodeInstanceNext({ nodeRefId }) {
+    _findNodeRef({ nodeRefId }) {
       const nodeRef = this.context._flowDefContent.process.nodes.find(node => {
         return nodeRefId === node.id;
       });
+      return nodeRef;
+    }
+
+    async _findNodeInstanceNext({ nodeRefId }) {
+      const nodeRef = this._findNodeRef({ nodeRefId });
       if (!nodeRef) return null;
       return await this._createNodeInstance({ nodeRef });
     }

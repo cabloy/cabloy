@@ -45,7 +45,7 @@ describe.only('flow.set01_atomUserTask', () => {
       },
     });
     assert(result.body.code === 0);
-    const archive = result.body.data.list[0];
+    let archive = result.body.data.list[0];
     // not found
     assert(!archive);
 
@@ -94,12 +94,24 @@ describe.only('flow.set01_atomUserTask', () => {
     });
     assert(result.body.code === 0);
 
-    // const keyArchive = { atomId: archive.atomId };
+    // select archive
+    result = await app.httpRequest().post(mockUrl('/a/base/atom/select')).send({
+      atomClass: { module: atomClassModule, atomClassName, atomClassIdParent: 0 },
+      options: {
+        where: {
+          atomFlowId: flowId,
+        },
+        stage: 'archive',
+      },
+    });
+    assert(result.body.code === 0);
+    archive = result.body.data.list[0];
+    const keyArchive = { atomId: archive.atomId };
 
-    // // delete
-    // result = await app.httpRequest().post(mockUrl('/a/base/atom/delete')).send({
-    //   key: keyArchive,
-    // });
-    // assert(result.body.code === 0);
+    // delete
+    result = await app.httpRequest().post(mockUrl('/a/base/atom/delete')).send({
+      key: keyArchive,
+    });
+    assert(result.body.code === 0);
   });
 });
