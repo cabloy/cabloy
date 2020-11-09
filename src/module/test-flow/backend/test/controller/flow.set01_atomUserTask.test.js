@@ -83,6 +83,17 @@ describe.only('flow.set01_atomUserTask', () => {
     });
     assert(result.body.code === 0);
 
+    // complete
+    result = await app.httpRequest().post(mockUrl('/a/flownode/task/complete')).send({
+      flowTaskId: flowTask.id,
+
+      formBase: {
+
+      },
+      formAtom: null,
+    });
+    assert(result.body.code === 0);
+
     // const keyArchive = { atomId: archive.atomId };
 
     // // delete
