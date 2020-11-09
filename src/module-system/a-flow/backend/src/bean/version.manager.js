@@ -129,6 +129,7 @@ module.exports = app => {
             flowNodeDefId varchar(255) DEFAULT NULL,
             flowNodeName varchar(255) DEFAULT NULL,
             flowNodeStatus int(11) DEFAULT '0',
+            flowNodeRemark TEXT DEFAULT NULL,
             timeDone timestamp DEFAULT NULL,
             nodeVars JSON DEFAULT NULL,
             PRIMARY KEY (id)
