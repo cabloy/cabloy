@@ -46,8 +46,38 @@ module.exports = ctx => {
       // timeClaimed first
       if (!flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1004);
       // formAtom
+      await this._complete_formAtom({ flowTaskId, formAtom });
       // handle
-      // next
+      await this._complete_handle({ flowTaskId, handle });
+      // go to the stage: end
+
+    }
+
+    async _complete_formAtom({ flowTaskId, formAtom }) {
+      if (!formAtom) return;
+      // todo:
+    }
+
+    async _complete_handle({ flowTaskId, handle }) {
+      const timeHandled = new Date();
+      const data = {
+        flowTaskStatus: 1,
+        timeHandled,
+      };
+      if (handle) {
+        data.handleStatus = handle.status;
+        data.handleRemark = handle.remark;
+      }
+      await this.modelFlowTask.update({
+        id: flowTaskId,
+        ...data,
+      });
+      // history
+      const flowTaskHistory = await this.modelFlowTaskHistory.get({ flowTaskId });
+      await this.modelFlowTaskHistory.update({
+        id: flowTaskHistory.id,
+        ...data,
+      });
     }
 
     async _list({ options: { where, orders, page, history = 0 }, user, pageForce = true, count = 0 }) {

@@ -88,7 +88,7 @@ describe.only('flow.set01_atomUserTask', () => {
       flowTaskId: flowTask.id,
       handle: {
         status: 1,
-        opinion: 'Nice Work!',
+        remark: 'Nice Work!',
       },
       formAtom: null,
     });

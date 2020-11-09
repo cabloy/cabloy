@@ -35,6 +35,14 @@ module.exports = ctx => {
         });
       }
 
+      // ok
+      return true;
+    }
+
+    async onNodeDoing() {
+      // super
+      await super.onNodeDoing();
+
       // break
       return false;
     }
