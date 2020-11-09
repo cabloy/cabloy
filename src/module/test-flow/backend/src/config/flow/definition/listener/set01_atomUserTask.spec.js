@@ -13,4 +13,17 @@ module.exports = class Listener {
     }
   }
 
+  async onTaskCreated(contextTask, contextNode) {
+    console.log('onTaskCreated: ', contextTask._flowTaskId, ' of node: ', contextNode._nodeRef.id);
+  }
+
+  async onTaskClaimed(contextTask, contextNode) {
+    console.log('onTaskClaimed: ', contextTask._flowTaskId, ' of node: ', contextNode._nodeRef.id);
+  }
+
+  async onTaskCompleted(contextTask, contextNode) {
+    console.log('onTaskCompleted: ', contextTask._flowTaskId, ' of node: ', contextNode._nodeRef.id);
+    console.log('handleStatus: %d, handleRemark: %s', contextTask._flowTask.handleStatus, contextTask._flowTask.handleRemark);
+  }
+
 };

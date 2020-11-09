@@ -133,7 +133,7 @@ module.exports = ctx => {
         });
       }
       // log
-      console.log(`--------flow done: ${this.context._flowId}`);
+      console.log(`--------flow end: ${this.context._flowId}`);
     }
 
     async _createFlow({ flowAtomId, flowVars, flowUserId }) {
