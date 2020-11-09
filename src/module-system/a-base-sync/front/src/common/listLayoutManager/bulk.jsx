@@ -72,12 +72,12 @@ export default {
       const selectedAtoms = this.bulk.selectedAtoms;
       if (items.length > 0 || this.bulk.selecting) {
         children.push(
-          <eb-link iconMaterial="grading" propsOnPerform={this.bulk_onSelectingSwitch} ></eb-link>
+          <eb-link key="actionsLeft:select" iconMaterial="grading" propsOnPerform={this.bulk_onSelectingSwitch} ></eb-link>
         );
       }
       if (this.bulk.selecting) {
         children.push(
-          <eb-link iconMaterial={selectedAtoms.length >= items.length ? 'check_box_outline_blank' : 'check_box'} iconBadge={ selectedAtoms.length.toString()} propsOnPerform={this.bulk_onSelectingChecking} ></eb-link>
+          <eb-link key="actionsLeft:selectChecking" iconMaterial={selectedAtoms.length >= items.length ? 'check_box_outline_blank' : 'check_box'} iconBadge={ selectedAtoms.length.toString()} propsOnPerform={this.bulk_onSelectingChecking} ></eb-link>
         );
       }
       return children;
@@ -90,7 +90,7 @@ export default {
       const selectedAtoms = this.bulk.selectedAtoms;
       // if (items.length > 0 || this.bulk.selecting) {
       children.push(
-        <eb-link class="no-ripple no-active-state" iconMaterial="grading" iconBadge={ this.bulk.selecting ? selectedAtoms.length.toString() : 0} propsOnPerform={this.bulk_onSelectingSwitch} ></eb-link>
+        <eb-link key="actionsLeftB:select" iconMaterial="grading" iconBadge={ this.bulk.selecting ? selectedAtoms.length.toString() : 0} propsOnPerform={this.bulk_onSelectingSwitch} ></eb-link>
       );
       // }
       return children;
@@ -106,7 +106,7 @@ export default {
             (_action.select === false && !this.bulk.selecting)
           ) {
             children.push(
-              <eb-link iconMaterial={_action.icon && _action.icon.material} tooltip={_action.icon && _action.titleLocale} propsOnPerform={event => this.bulk_onAction(event, action)}>{!_action.icon && _action.titleLocale}</eb-link>
+              <eb-link key={`actionsRight:${_action.name}`} iconMaterial={_action.icon && _action.icon.material} tooltip={_action.icon && _action.titleLocale} propsOnPerform={event => this.bulk_onAction(event, action)}>{!_action.icon && _action.titleLocale}</eb-link>
             );
           }
         }
