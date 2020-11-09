@@ -110,6 +110,7 @@ module.exports = ctx => {
       await this.modelFlowNode.delete({ id: this.contextNode._flowNodeId });
       // set nodeHistoryStatus
       this.contextNode._flowNodeHistory.flowNodeStatus = 1;
+      this.contextNode._flowNodeHistory.timeDone = new Date();
       await this.modelFlowNodeHistory.update(this.contextNode._flowNodeHistory);
     }
 
