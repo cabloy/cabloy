@@ -81,6 +81,7 @@ module.exports = app => {
             iid int(11) DEFAULT '0',
             flowId int(11) DEFAULT '0',
             flowNodeDefId varchar(255) DEFAULT NULL,
+            flowNodeName varchar(255) DEFAULT NULL,
             nodeVars JSON DEFAULT NULL,
             PRIMARY KEY (id)
           )
@@ -122,6 +123,7 @@ module.exports = app => {
             flowId int(11) DEFAULT '0',
             flowNodeId int(11) DEFAULT '0',
             flowNodeDefId varchar(255) DEFAULT NULL,
+            flowNodeName varchar(255) DEFAULT NULL,
             flowNodeStatus int(11) DEFAULT '0',
             nodeVars JSON DEFAULT NULL,
             PRIMARY KEY (id)

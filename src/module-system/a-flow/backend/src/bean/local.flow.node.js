@@ -40,6 +40,7 @@ module.exports = ctx => {
       const data = {
         flowId: this.context._flowId,
         flowNodeDefId: this.contextNode._nodeRef.id,
+        flowNodeName: this.contextNode._nodeRef.name,
         nodeVars: '{}',
       };
       const res = await this.modelFlowNode.insert(data);

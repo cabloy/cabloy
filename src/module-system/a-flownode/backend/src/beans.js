@@ -1,4 +1,5 @@
 const versionManager = require('./bean/version.manager.js');
+const localProcedure = require('./bean/local.procedure.js');
 const queueStartEventTimer = require('./bean/queue.startEventTimer.js');
 const flowEdgeSequence = require('./bean/flow.edge.sequence.js');
 const flowNodeStartEventNone = require('./bean/flow.node.startEventNone.js');
@@ -18,6 +19,11 @@ module.exports = app => {
     'version.manager': {
       mode: 'app',
       bean: versionManager,
+    },
+    // local
+    'local.procedure': {
+      mode: 'ctx',
+      bean: localProcedure,
     },
     // queue
     'queue.startEventTimer': {
