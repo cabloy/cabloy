@@ -78,7 +78,10 @@ describe.only('flow.set01_atomUserTask', () => {
     assert(!!flowTask);
 
     // claim
-
+    result = await app.httpRequest().post(mockUrl('/a/flownode/task/claim')).send({
+      flowTaskId: flowTask.id,
+    });
+    assert(result.body.code === 0);
 
     // const keyArchive = { atomId: archive.atomId };
 

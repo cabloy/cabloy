@@ -10,6 +10,10 @@ module.exports = app => {
       return await this.ctx.bean.flowTask.count({ options, user });
     }
 
+    async claim({ flowTaskId, user }) {
+      return await this.ctx.bean.flowTask.claim({ flowTaskId, user });
+    }
+
   }
   return FlowTask;
 };

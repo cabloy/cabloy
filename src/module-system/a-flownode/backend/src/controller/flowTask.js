@@ -23,6 +23,14 @@ module.exports = app => {
       this.ctx.success(count);
     }
 
+    async claim() {
+      const res = await this.ctx.service.flowTask.claim({
+        flowTaskId: this.ctx.request.body.flowTaskId,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
   }
   return FlowTaskController;
 };

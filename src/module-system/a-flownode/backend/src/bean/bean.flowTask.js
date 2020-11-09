@@ -2,6 +2,13 @@ module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowTask {
 
+    get modelFlowTask() {
+      return ctx.model.module(moduleInfo.relativeName).flowTask;
+    }
+    get modelFlowTaskHistory() {
+      return ctx.model.module(moduleInfo.relativeName).flowTaskHistory;
+    }
+
     get sqlProcedure() {
       return ctx.bean._getBean(moduleInfo.relativeName, 'local.procedure');
     }
@@ -12,6 +19,22 @@ module.exports = ctx => {
 
     async select({ options, user, pageForce = true, count = 0 }) {
       return await this._list({ options, user, pageForce, count });
+    }
+
+    async claim({ flowTaskId, user }) {
+      // get
+      const flowTask = await this.modelFlowTask.get({ id: flowTaskId });
+      if (!flowTask) ctx.throw.module(moduleInfo.relativeName, 1001);
+      // must be the same user
+      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002);
+      // check
+      if (flowTask.timeClaim) ctx.throw.module(moduleInfo.relativeName, 1003);
+      // timeClaim
+      const timeClaim = new Date();
+      await this.modelFlowTask.update({ id: flowTaskId, timeClaim });
+      // history
+      const flowTaskHistory = await this.modelFlowTaskHistory.get({ flowTaskId });
+      await this.modelFlowTaskHistory.update({ id: flowTaskHistory.id, timeClaim });
     }
 
     async _list({ options: { where, orders, page, history = 0 }, user, pageForce = true, count = 0 }) {
