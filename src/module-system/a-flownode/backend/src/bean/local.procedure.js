@@ -73,6 +73,66 @@ module.exports = ctx => {
       return _sql;
     }
 
+    _selectTasks_1({ iid, userIdWho, where, orders, page, count }) {
+      // -- tables
+      // -- a: aFlowTaskHistory
+      // -- b: aFlowNodeHistory
+      // -- c: aFlowHistory
+      // -- d: aUser
+
+      // for safe
+      where = where ? ctx.model._where(where) : null;
+      orders = orders ? ctx.model._orders(orders) : null;
+      const limit = page ? ctx.model._limit(page.size, page.index) : null;
+
+      // vars
+      let _userWhere;
+
+      //
+      const _where = where ? `${where} AND` : ' WHERE';
+      const _orders = orders || '';
+      const _limit = limit || '';
+
+      // user
+      if (userIdWho !== 0) {
+        _userWhere = ` and a.userIdAssignee=${userIdWho}`;
+      } else {
+        _userWhere = '';
+      }
+
+      // fields
+      let _selectFields;
+      if (count) {
+        _selectFields = 'count(*) as _count';
+      } else {
+        _selectFields = `a.*,
+            b.flowNodeDefId,b.flowNodeName,
+            c.flowDefId,c.flowDefKey,c.version,c.flowStatus,c.flowAtomId,c.flowNodeIdCurrent,c.flowUserId,
+            d.userName,d.avatar
+          `;
+      }
+
+      // sql
+      const _sql =
+        `select ${_selectFields} from aFlowTaskHistory a
+            inner join aFlowNodeHistory b on a.flowNodeId=b.flowNodeId
+            inner join aFlowHistory c on a.flowId=c.flowId
+            left join aUser d on a.userIdAssignee=d.id
+
+          ${_where}
+           (
+             a.deleted=0 and a.iid=${iid}
+             ${_userWhere}
+           )
+
+          ${count ? '' : _orders}
+          ${count ? '' : _limit}
+        `;
+
+      // ok
+      return _sql;
+    }
+
   }
 
   return Procedure;
