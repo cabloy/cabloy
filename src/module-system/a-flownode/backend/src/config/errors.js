@@ -4,4 +4,5 @@ module.exports = {
   1002: 'Task cannot been accessed: %d',
   1003: 'Task has been claimed: %d',
   1004: 'Task should be claimed first: %d',
+  1005: 'Task has been handled: %d',
 };

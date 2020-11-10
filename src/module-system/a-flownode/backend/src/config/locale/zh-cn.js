@@ -10,4 +10,5 @@ module.exports = {
   'Task cannot been accessed: %d': '任务无权访问: %d',
   'Task has been claimed: %d': '任务已被申领: %d',
   'Task should be claimed first: %d': '任务必须先申领: %d',
+  'Task has been handled: %d': '任务已处理: %d',
 };

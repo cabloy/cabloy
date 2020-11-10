@@ -48,6 +48,8 @@ module.exports = ctx => {
       if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
       // timeClaimed first
       if (!flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1004, flowTaskId);
+      // check handled
+      if (flowTask.flowTaskStatus !== 0) ctx.throw.module(moduleInfo.relativeName, 1005, flowTaskId);
       // formAtom
       await this._complete_formAtom({ flowTaskId, formAtom });
       // handle
@@ -55,8 +57,28 @@ module.exports = ctx => {
       // event: task.completed
       const task = await this._loadTaskInstance({ flowTaskId });
       await task.completed();
+      // check if node done
+      ctx.tail(async () => {
+        // queue
+        await ctx.app.meta.queue.pushAsync({
+          locale: ctx.locale,
+          subdomain: ctx.subdomain,
+          module: moduleInfo.relativeName,
+          queueName: 'flowCheck',
+          queueNameSub: flowTask.flowId,
+          data: {
+            queueAction: 'activityUserTask.checkIfNodeDone',
+            flowNodeId: flowTask.flowNodeId,
+          },
+        });
+      });
+    }
+
+    async _checkIfNodeDone({ flowNodeId }) {
+      // load flow node
+      const nodeInstance = await ctx.bean.flow._loadFlowNodeInstance({ flowNodeId });
       // next stage of flow node: end
-      await task.nodeInstance.end();
+      await nodeInstance.end();
     }
 
     async _complete_formAtom({ flowTaskId, formAtom }) {
