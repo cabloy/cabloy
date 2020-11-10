@@ -24,18 +24,18 @@ module.exports = ctx => {
       return ctx.model.module(moduleInfo.relativeName).flowTaskHistory;
     }
 
-    async init({ userIdAssignee }) {
+    async init({ userIdAssignee, user }) {
       // create flowTask
       const flowTaskId = await this._createFlowTask({ userIdAssignee });
       // context init
-      await this._contextInit({ flowTaskId });
+      await this._contextInit({ flowTaskId, user });
       // event
       await this.created();
     }
 
-    async _load({ flowTask }) {
+    async _load({ flowTask, user }) {
       // context init
-      await this._contextInit({ flowTaskId: flowTask.id });
+      await this._contextInit({ flowTaskId: flowTask.id, user });
     }
 
     async _createFlowTask({ userIdAssignee }) {
@@ -56,7 +56,7 @@ module.exports = ctx => {
       return flowTaskId;
     }
 
-    async _contextInit({ flowTaskId }) {
+    async _contextInit({ flowTaskId, user }) {
       // flowTaskId
       this.contextTask._flowTaskId = flowTaskId;
       // flowTask
@@ -71,6 +71,8 @@ module.exports = ctx => {
         contextNode: this.contextNode,
         contextTask: this.contextTask,
       });
+      // user
+      this.contextTask._user = user;
     }
 
     async _saveTaskVars() {

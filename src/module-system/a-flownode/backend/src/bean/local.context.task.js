@@ -13,6 +13,8 @@ module.exports = ctx => {
       this._taskVars = null;
       //
       this._utils = null;
+      //
+      this._user = null;
     }
 
     get vars() {

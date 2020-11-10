@@ -36,7 +36,7 @@ module.exports = ctx => {
       const flowTaskHistory = await this.modelFlowTaskHistory.get({ flowTaskId });
       await this.modelFlowTaskHistory.update({ id: flowTaskHistory.id, timeClaimed });
       // event: task.claimed
-      const task = await this._loadTaskInstance({ flowTaskId });
+      const task = await this._loadTaskInstance({ flowTaskId, user });
       await task.claimed();
     }
 
@@ -55,7 +55,7 @@ module.exports = ctx => {
       // handle
       await this._complete_handle({ flowTaskId, handle });
       // event: task.completed
-      const task = await this._loadTaskInstance({ flowTaskId });
+      const task = await this._loadTaskInstance({ flowTaskId, user });
       await task.completed();
       // check if node done
       ctx.tail(async () => {
@@ -209,7 +209,7 @@ module.exports = ctx => {
       return count ? res[0]._count : res;
     }
 
-    async _loadTaskInstance({ flowTaskId }) {
+    async _loadTaskInstance({ flowTaskId, user }) {
       // get
       const flowTask = await this.modelFlowTask.get({ id: flowTaskId });
       if (!flowTask) ctx.throw.module(moduleInfo.relativeName, 1001, flowTaskId);
@@ -217,7 +217,7 @@ module.exports = ctx => {
       const nodeInstance = await ctx.bean.flow._loadFlowNodeInstance({ flowNodeId: flowTask.flowNodeId });
       // load task
       const task = this._createTaskInstance2({ nodeInstance });
-      await task._load({ flowTask });
+      await task._load({ flowTask, user });
       return task;
     }
 
@@ -228,9 +228,9 @@ module.exports = ctx => {
       return task;
     }
 
-    async _createTaskInstance({ nodeInstance, userIdAssignee }) {
+    async _createTaskInstance({ nodeInstance, userIdAssignee, user }) {
       const task = this._createTaskInstance2({ nodeInstance });
-      await task.init({ userIdAssignee });
+      await task.init({ userIdAssignee, user });
       return task;
     }
 

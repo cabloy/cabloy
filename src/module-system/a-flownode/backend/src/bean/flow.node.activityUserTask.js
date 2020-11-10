@@ -32,6 +32,7 @@ module.exports = ctx => {
         await ctx.bean.flowTask._createTaskInstance({
           nodeInstance: this.nodeInstance,
           userIdAssignee,
+          user: ctx.state.user.op,
         });
       }
 
