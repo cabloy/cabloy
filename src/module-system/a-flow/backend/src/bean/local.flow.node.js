@@ -116,6 +116,10 @@ module.exports = ctx => {
       await this.modelFlowNodeHistory.update(this.contextNode._flowNodeHistory);
     }
 
+    getNodeRefOptions() {
+      return this.nodeBaseBean.getNodeRefOptions();
+    }
+
     async enter() {
       // current
       await this._setCurrent();

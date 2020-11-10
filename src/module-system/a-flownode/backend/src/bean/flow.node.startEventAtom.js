@@ -1,3 +1,27 @@
+const require3 = require('require3');
+const extend = require3('extend2');
+
+const __nodeRefOptionsDefault = {
+  atom: null,
+  conditionExpression: null,
+  task: {
+    assignees: {
+      users: null,
+      roles: null,
+      vars: 'flowUser',
+    },
+    confirmation: false,
+    bidding: false,
+    completionCondition: {
+      passed: 1,
+      rejected: '100%',
+    },
+    rejectedNode: null,
+    allowRejectTask: false,
+    allowCancelFlow: true,
+  },
+};
+
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowNode extends ctx.app.meta.FlowNodeBase {
@@ -7,6 +31,11 @@ module.exports = ctx => {
 
     get modelCondition() {
       return ctx.model.module(moduleInfo.relativeName).flowNodeStartEventAtomCondition;
+    }
+
+    getNodeRefOptions() {
+      const options = super.getNodeRefOptions();
+      return extend(true, {}, __nodeRefOptionsDefault, options);
     }
 
     async deploy({ deploy, flowDefId, node }) {

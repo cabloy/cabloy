@@ -31,7 +31,7 @@ module.exports = app => {
             assignees: {
               // users: '1,2',
               // roles: '1,2',
-              vars: 'flowUser,',
+              vars: 'flowUser',
             },
             confirmation: false,
             bidding: false,

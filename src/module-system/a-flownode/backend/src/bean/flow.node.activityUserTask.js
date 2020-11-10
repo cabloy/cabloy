@@ -1,10 +1,33 @@
 const require3 = require('require3');
+const extend = require3('extend2');
 const assert = require3('assert');
+
+const __nodeRefOptionsDefault = {
+  assignees: {
+    users: null,
+    roles: null,
+    vars: null,
+  },
+  confirmation: false,
+  bidding: false,
+  completionCondition: {
+    passed: 1,
+    rejected: '100%',
+  },
+  rejectedNode: null,
+  allowRejectTask: true,
+  allowCancelFlow: false,
+};
 
 module.exports = ctx => {
   class FlowNode extends ctx.app.meta.FlowNodeBase {
     constructor(options) {
       super(ctx, options);
+    }
+
+    getNodeRefOptions() {
+      const options = super.getNodeRefOptions();
+      return extend(true, {}, __nodeRefOptionsDefault, options);
     }
 
     async onNodeEnter() {

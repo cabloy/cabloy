@@ -78,6 +78,10 @@ module.exports = ctx => {
     async _checkIfNodeDone({ flowNodeId /* user*/ }) {
       // load flow node
       const nodeInstance = await ctx.bean.flow._loadFlowNodeInstance({ flowNodeId });
+      // options
+      const options = this.getNodeRefOptionsTask({ nodeInstance });
+      console.log(options);
+
       // next stage of flow node: end
       await nodeInstance.end();
     }
@@ -145,6 +149,14 @@ module.exports = ctx => {
       const task = this._createTaskInstance2({ nodeInstance });
       await task.init({ userIdAssignee });
       return task;
+    }
+
+    getNodeRefOptionsTask({ nodeInstance }) {
+      // nodeRef
+      const nodeRef = nodeInstance.contextNode._nodeRef;
+      // options
+      const options = nodeInstance.getNodeRefOptions();
+      return nodeRef.type === 'startEventAtom' ? options.task : options;
     }
 
   }

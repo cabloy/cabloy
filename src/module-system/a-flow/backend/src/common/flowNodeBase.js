@@ -9,6 +9,13 @@ module.exports = class FlowNodeBase {
     }
   }
 
+  getNodeRefOptions() {
+    // nodeRef
+    const nodeRef = this.contextNode._nodeRef;
+    // options
+    return nodeRef.options || {};
+  }
+
   async onNodeEnter() {
     await this.flowInstance._flowListener.onNodeEnter(this.contextNode);
     return true;
