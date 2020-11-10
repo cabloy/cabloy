@@ -72,7 +72,10 @@ module.exports = ctx => {
     }
 
     async nextNode({ contextEdge }) {
-      const nodeInstanceNext = await this._findNodeInstanceNext({ nodeRefId: contextEdge._edgeRef.target });
+      const nodeInstanceNext = await this._findNodeInstanceNext({
+        nodeRefId: contextEdge._edgeRef.target,
+        flowNodeIdPrev: contextEdge.contextNode._flowNodeId,
+      });
       // enter
       return await nodeInstanceNext.enter();
     }
@@ -176,9 +179,9 @@ module.exports = ctx => {
       return node;
     }
 
-    async _createNodeInstance({ nodeRef }) {
+    async _createNodeInstance({ nodeRef, flowNodeIdPrev }) {
       const node = this._createNodeInstance2({ nodeRef });
-      await node.init();
+      await node.init({ flowNodeIdPrev });
       return node;
     }
 
@@ -197,10 +200,10 @@ module.exports = ctx => {
       return nodeRef;
     }
 
-    async _findNodeInstanceNext({ nodeRefId }) {
+    async _findNodeInstanceNext({ nodeRefId, flowNodeIdPrev }) {
       const nodeRef = this._findNodeRef({ nodeRefId });
       if (!nodeRef) return null;
-      return await this._createNodeInstance({ nodeRef });
+      return await this._createNodeInstance({ nodeRef, flowNodeIdPrev });
     }
 
     async _findNodeInstanceStartEvent({ startEventId }) {

@@ -28,9 +28,9 @@ module.exports = ctx => {
       return ctx.model.module(moduleInfo.relativeName).flowNodeHistory;
     }
 
-    async init() {
+    async init({ flowNodeIdPrev }) {
       // create flowNode
-      const flowNodeId = await this._createFlowNode();
+      const flowNodeId = await this._createFlowNode({ flowNodeIdPrev });
       // context init
       await this._contextInit({ flowNodeId });
     }
@@ -40,12 +40,13 @@ module.exports = ctx => {
       await this._contextInit({ flowNodeId: flowNode.id });
     }
 
-    async _createFlowNode() {
+    async _createFlowNode({ flowNodeIdPrev = 0 }) {
       // flowNode
       const data = {
         flowId: this.context._flowId,
         flowNodeDefId: this.contextNode._nodeRef.id,
         flowNodeName: this.contextNode._nodeRef.name,
+        flowNodeIdPrev,
         nodeVars: '{}',
       };
       const res = await this.modelFlowNode.insert(data);
