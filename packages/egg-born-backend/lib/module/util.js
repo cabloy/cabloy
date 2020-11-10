@@ -191,7 +191,7 @@ module.exports = app => {
       // ok
       return ctx;
     },
-    async executeBean({ locale, subdomain, beanModule, beanFullName, context, fn, transaction, ctxCaller }) {
+    async executeBean({ locale, subdomain, beanModule, beanFullName, context, fn, transaction, ctxCaller, ctxParent }) {
       // ctx
       const ctx = await this.createAnonymousContext({ locale, subdomain, module: beanModule });
       // ctxCaller
@@ -205,6 +205,12 @@ module.exports = app => {
         }
         // ctxCaller
         ctx.ctxCaller = ctxCaller;
+      }
+      // ctxParent
+      if (ctxParent) {
+        for (const property of [ 'cookies', 'session', 'user', 'state' ]) {
+          delegateProperty(ctx, ctxParent, property);
+        }
       }
       // bean
       const bean = beanFullName ? ctx.bean._getBean(beanFullName) : null;

@@ -59,6 +59,14 @@ module.exports = ctx => {
       await task.completed();
       // check if node done
       ctx.tail(async () => {
+        // ctxParent
+        const ctxParent = {
+          state: {
+            user: {
+              op: user,
+            },
+          },
+        };
         // queue
         await ctx.app.meta.queue.pushAsync({
           locale: ctx.locale,
@@ -66,9 +74,9 @@ module.exports = ctx => {
           module: moduleInfo.relativeName,
           queueName: 'flowCheck',
           queueNameSub: flowTask.flowId,
+          ctxParent,
           data: {
             queueAction: 'activityUserTask.checkIfNodeDone',
-            user,
             flowNodeId: flowTask.flowNodeId,
           },
         });

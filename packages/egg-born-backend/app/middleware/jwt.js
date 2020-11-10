@@ -13,7 +13,7 @@ function __getToken(ctx) {
   let token;
   if (ctx.get('authorization')) {
     const parts = ctx.get('authorization').split(' ');
-    if (parts.length == 2) {
+    if (parts.length === 2) {
       const scheme = parts[0];
       const credentials = parts[1];
       if (/^Bearer$/i.test(scheme)) {

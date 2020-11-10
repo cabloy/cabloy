@@ -206,7 +206,7 @@ module.exports = function(app) {
     }
 
     async _performTask(job) {
-      const { locale, subdomain, module, queueName, queueNameSub, data } = job.data;
+      const { locale, subdomain, module, queueName, queueNameSub, data, ctxParent } = job.data;
       // context
       const context = { job, data };
       if (queueNameSub) {
@@ -222,6 +222,7 @@ module.exports = function(app) {
         beanModule: bean.module,
         beanFullName: `${bean.module}.queue.${bean.name}`,
         transaction: queue.config.transaction,
+        ctxParent,
       });
     }
   }

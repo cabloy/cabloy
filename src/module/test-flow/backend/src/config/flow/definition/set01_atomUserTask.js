@@ -39,7 +39,22 @@ module.exports = app => {
               // passed: 1,
               // rejected: '100%',
             },
-            // rejectedNode:'startEvent_1',
+            // rejectedNode:null,
+            // allowRejectTask: true,
+            // allowCancelFlow: false,
+            schema: {
+              write: [
+                'atomName',
+                {
+                  name: 'description',
+                  property: {
+                    type: 'string',
+                    ebType: 'text',
+                    ebTitle: 'Description',
+                  },
+                },
+              ],
+            },
           },
         },
         {
