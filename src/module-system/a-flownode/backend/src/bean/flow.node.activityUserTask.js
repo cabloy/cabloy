@@ -79,16 +79,16 @@ module.exports = ctx => {
       assignees = [];
 
       // options
-      const options = this.contextNode._nodeRef.options || {};
+      const options = this.getNodeRefOptions();
 
       // 1. users
-      const users = this._ensureIntArray(options.assignees && options.assignees.users);
+      const users = this._ensureIntArray(options.assignees.users);
       if (users) {
         assignees = assignees.concat(users);
       }
 
       // 2. roles
-      const roles = this._ensureIntArray(options.assignees && options.assignees.roles);
+      const roles = this._ensureIntArray(options.assignees.roles);
       if (roles) {
         for (const roleId of roles) {
           const list = await ctx.bean.role.usersOfRoleParent({ roleId, disabled: 0 });
@@ -97,7 +97,7 @@ module.exports = ctx => {
       }
 
       // 3. vars
-      const vars = this._ensureArray(options.assignees && options.assignees.vars);
+      const vars = this._ensureArray(options.assignees.vars);
       if (vars) {
         for (const _var of vars) {
           const userId = await this._parseUserVar({ _var });
