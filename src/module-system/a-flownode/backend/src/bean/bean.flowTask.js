@@ -117,13 +117,14 @@ module.exports = ctx => {
           return await this._checkIfNodeDone_rejected({ nodeInstance, options });
         }
       }
+      // here means not done
     }
 
     async _checkIfNodeDone_passed({ nodeInstance }) {
       // delete tasks
       await this._checkIfNodeDone_deleteTasks({ nodeInstance });
       // next stage of flow node: end
-      await nodeInstance.end();
+      return await nodeInstance.end();
     }
 
     async _checkIfNodeDone_rejected({ nodeInstance, options }) {
