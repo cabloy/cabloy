@@ -68,13 +68,14 @@ module.exports = ctx => {
           queueNameSub: flowTask.flowId,
           data: {
             queueAction: 'activityUserTask.checkIfNodeDone',
+            user,
             flowNodeId: flowTask.flowNodeId,
           },
         });
       });
     }
 
-    async _checkIfNodeDone({ flowNodeId }) {
+    async _checkIfNodeDone({ flowNodeId /* user*/ }) {
       // load flow node
       const nodeInstance = await ctx.bean.flow._loadFlowNodeInstance({ flowNodeId });
       // next stage of flow node: end

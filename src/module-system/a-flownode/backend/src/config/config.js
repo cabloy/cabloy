@@ -9,6 +9,7 @@ module.exports = appInfo => {
     },
     flowCheck: {
       bean: 'flowCheck',
+      transaction: true,
     },
   };
 
