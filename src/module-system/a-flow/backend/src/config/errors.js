@@ -2,7 +2,8 @@
 module.exports = {
   1001: 'Flow definition not Found: %s',
   1002: 'Flow definition disabled: %s',
-  1003: 'Flow not Found: %d',
-  1004: 'Flow Node not Found: %d',
+  1003: 'Flow not Found: %s',
+  1004: 'Flow Node not Found: %s',
   1005: 'Flow Node definition not Found: %s',
+  1006: 'Previous Flow Node not Found: %s',
 };

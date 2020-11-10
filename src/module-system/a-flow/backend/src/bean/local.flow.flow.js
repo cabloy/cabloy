@@ -25,6 +25,12 @@ module.exports = ctx => {
     get modelFlowHistory() {
       return ctx.model.module(moduleInfo.relativeName).flowHistory;
     }
+    get modelFlowNode() {
+      return ctx.model.module(moduleInfo.relativeName).flowNode;
+    }
+    get modelFlowNodeHistory() {
+      return ctx.model.module(moduleInfo.relativeName).flowNodeHistory;
+    }
     get constant() {
       return ctx.constant.module(moduleInfo.relativeName);
     }
@@ -223,6 +229,20 @@ module.exports = ctx => {
         }
       }
       return edges;
+    }
+
+    // find from history
+    async _findFlowNodeHistoryPrevious({ flowNodeId, cb }) {
+      while (true) {
+        const flowNode = await this.modelFlowNodeHistory.get({ flowNodeId });
+        if (!flowNode) return null;
+        if (!cb) return flowNode;
+        // nodeRef
+        const nodeRef = this._findNodeRef({ nodeRefId: flowNode.flowNodeDefId });
+        if (cb({ flowNode, nodeRef })) return flowNode;
+        // previous
+        flowNodeId = flowNode.flowNodeIdPrev;
+      }
     }
 
 

@@ -109,12 +109,12 @@ module.exports = ctx => {
       if (typeof completionCondition.rejected === 'number' || completionCondition.rejected.indexOf('%') === -1) {
         // absolute value
         if (taskCountRejected >= parseInt(completionCondition.rejected)) {
-          return await this._checkIfNodeDone_rejected({ nodeInstance });
+          return await this._checkIfNodeDone_rejected({ nodeInstance, options });
         }
       } else {
         // percent value
         if (taskCountRejected / taskCountTotal >= parseInt(completionCondition.rejected) / 100) {
-          return await this._checkIfNodeDone_rejected({ nodeInstance });
+          return await this._checkIfNodeDone_rejected({ nodeInstance, options });
         }
       }
     }
@@ -126,9 +126,33 @@ module.exports = ctx => {
       await nodeInstance.end();
     }
 
-    async _checkIfNodeDone_rejected({ nodeInstance }) {
+    async _checkIfNodeDone_rejected({ nodeInstance, options }) {
+      // flowNodeId
+      const flowNodeId = nodeInstance.contextNode._flowNodeId;
       // delete tasks
       await this._checkIfNodeDone_deleteTasks({ nodeInstance });
+      // rejectedNode
+      let rejectedNode = options.rejectedNode;
+      if (!rejectedNode) {
+        // find previous task node
+        const flowNode = await this._findFlowNodeHistoryPrevious({ nodeInstance, flowNodeId });
+        if (!flowNode) ctx.throw.module('a-flow', 1006, flowNodeId);
+        rejectedNode = flowNode.flowNodeDefId;
+      }
+      // enter
+      const nodeInstancePrev = await nodeInstance.flowInstance._findNodeInstanceNext({
+        nodeRefId: rejectedNode,
+        flowNodeIdPrev: flowNodeId,
+      });
+      return await nodeInstancePrev.enter();
+    }
+
+    async _findFlowNodeHistoryPrevious({ nodeInstance, flowNodeId }) {
+      return await nodeInstance.flowInstance._findFlowNodeHistoryPrevious({
+        flowNodeId, cb: ({ /* flowNode*/ nodeRef }) => {
+          return nodeRef.type === 'startEventAtom' || nodeRef.type === 'activityUserTask';
+        },
+      });
     }
 
     async _checkIfNodeDone_deleteTasks({ nodeInstance }) {
