@@ -1,3 +1,6 @@
+const require3 = require('require3');
+const extend = require3('extend2');
+
 module.exports = class FlowNodeBase {
   constructor(ctx, options) {
     this.ctx = ctx;
@@ -13,7 +16,11 @@ module.exports = class FlowNodeBase {
     // nodeRef
     const nodeRef = this.contextNode._nodeRef;
     // options
-    return nodeRef.options || {};
+    const options = nodeRef.options || {};
+    // default
+    const optionsDefault = this.nodeInstance.nodeBase.options.default;
+    if (!optionsDefault) return options;
+    return extend(true, {}, optionsDefault, options);
   }
 
   async onNodeEnter() {

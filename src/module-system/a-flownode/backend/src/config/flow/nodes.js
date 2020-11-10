@@ -1,4 +1,6 @@
-module.exports = {
+const defaults = require('./defaults.js');
+
+const nodes = {
   // events
   startEventNone: {
     title: 'StartEventNone',
@@ -44,3 +46,13 @@ module.exports = {
     icon: '/api/static/a/flownode/bpmn/activities/activity-user-task.svg',
   },
 };
+
+for (const key in nodes) {
+  const node = nodes[key];
+  node.options = {};
+  if (defaults[key]) {
+    node.options.default = defaults[key];
+  }
+}
+
+module.exports = nodes;
