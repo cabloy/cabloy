@@ -80,10 +80,52 @@ module.exports = ctx => {
       const nodeInstance = await ctx.bean.flow._loadFlowNodeInstance({ flowNodeId });
       // options
       const options = this.getNodeRefOptionsTask({ nodeInstance });
-      console.log(options);
+      // completionCondition
+      const completionCondition = options.completionCondition;
+      // task count
+      const taskCountTotal = await this.modelFlowTask.count({
+        flowNodeId,
+      });
+      if (taskCountTotal === 0) ctx.throw.module('a-flow', 1004, flowNodeId);
+      const taskCountPassed = await this.modelFlowTask.count({
+        flowNodeId, flowTaskStatus: 1, handleStatus: 1,
+      });
+      const taskCountRejected = await this.modelFlowTask.count({
+        flowNodeId, flowTaskStatus: 1, handleStatus: 2,
+      });
+      // check passed
+      if (typeof completionCondition.passed === 'number' || completionCondition.passed.indexOf('%') === -1) {
+        // absolute value
+        if (taskCountPassed >= parseInt(completionCondition.passed)) {
+          return await this._checkIfNodeDone_passed({ nodeInstance });
+        }
+      } else {
+        // percent value
+        if (taskCountPassed / taskCountTotal >= parseInt(completionCondition.passed) / 100) {
+          return await this._checkIfNodeDone_passed({ nodeInstance });
+        }
+      }
+      // check rejected
+      if (typeof completionCondition.rejected === 'number' || completionCondition.rejected.indexOf('%') === -1) {
+        // absolute value
+        if (taskCountRejected >= parseInt(completionCondition.rejected)) {
+          return await this._checkIfNodeDone_rejected({ nodeInstance });
+        }
+      } else {
+        // percent value
+        if (taskCountRejected / taskCountTotal >= parseInt(completionCondition.rejected) / 100) {
+          return await this._checkIfNodeDone_rejected({ nodeInstance });
+        }
+      }
+    }
 
+    async _checkIfNodeDone_passed({ nodeInstance }) {
       // next stage of flow node: end
       await nodeInstance.end();
+    }
+
+    async _checkIfNodeDone_rejected({ nodeInstance }) {
+
     }
 
     async _complete_formAtom({ flowTaskId, formAtom }) {
