@@ -75,6 +75,112 @@ module.exports = ctx => {
       this.contextTask._user = user;
     }
 
+    async _claim() {
+      // user
+      const user = this.contextTask._user;
+      // flowTask
+      const flowTask = this.contextTask._flowTask;
+      const flowTaskId = flowTask.id;
+      // must be the same user
+      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
+      // check
+      if (flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1003, flowTaskId);
+      // flowTask
+      const timeClaimed = new Date();
+      this.contextTask._flowTask.timeClaimed = timeClaimed;
+      await this.modelFlowTask.update(this.contextTask._flowTask);
+      // history
+      this.contextTask._flowTaskHistory.timeClaimed = timeClaimed;
+      await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
+      // event: task.claimed
+      await this.claimed();
+    }
+
+    async _complete({ handle, formAtom }) {
+      // user
+      const user = this.contextTask._user;
+      // flowTask
+      const flowTask = this.contextTask._flowTask;
+      const flowTaskId = flowTask.id;
+      // must be the same user
+      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
+      // timeClaimed first
+      if (!flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1004, flowTaskId);
+      // check handled
+      if (flowTask.flowTaskStatus !== 0) ctx.throw.module(moduleInfo.relativeName, 1005, flowTaskId);
+      // formAtom
+      await this._complete_formAtom({ formAtom });
+      // handle
+      await this._complete_handle({ handle });
+      // event: task.completed
+      await this.completed();
+      // check if node done
+      ctx.tail(async () => {
+        // ctxParent
+        const ctxParent = {
+          state: {
+            user: {
+              op: user,
+            },
+          },
+        };
+        // queue
+        await ctx.app.meta.queue.pushAsync({
+          locale: ctx.locale,
+          subdomain: ctx.subdomain,
+          module: moduleInfo.relativeName,
+          queueName: 'flowCheck',
+          queueNameSub: flowTask.flowId,
+          ctxParent,
+          data: {
+            queueAction: 'activityUserTask.checkIfNodeDone',
+            flowNodeId: flowTask.flowNodeId,
+          },
+        });
+      });
+    }
+
+    async _complete_formAtom({ formAtom }) {
+      if (!formAtom) return;
+      const schema = await this._getSchemaWrite();
+      console.log('0000000000--------:', schema);
+    }
+
+    async _complete_handle({ handle }) {
+      const timeHandled = new Date();
+      // flowTask
+      this.contextTask._flowTask.flowTaskStatus = 1;
+      this.contextTask._flowTask.timeHandled = timeHandled;
+      if (handle) {
+        this.contextTask._flowTask.handleStatus = handle.status;
+        this.contextTask._flowTask.handleRemark = handle.remark;
+      }
+      await this.modelFlowTask.update(this.contextTask._flowTask);
+      // flowTaskHistory
+      this.contextTask._flowTaskHistory.flowTaskStatus = 1;
+      this.contextTask._flowTaskHistory.timeHandled = timeHandled;
+      if (handle) {
+        this.contextTask._flowTaskHistory.handleStatus = handle.status;
+        this.contextTask._flowTaskHistory.handleRemark = handle.remark;
+      }
+      await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
+    }
+
+    async _getSchemaWrite() {
+      const schema = await this._getSchemaBase();
+      return schema;
+    }
+
+    async _getSchemaBase() {
+      const atomClassId = this.context._atom.atomClassId;
+      const user = this.contextTask._user;
+      const schema = await ctx.bean.atom.schema({
+        atomClass: { id: atomClassId },
+        user,
+      });
+      return schema;
+    }
+
     async _saveTaskVars() {
       if (!this.contextTask._taskVars._dirty) return;
       // flowTask

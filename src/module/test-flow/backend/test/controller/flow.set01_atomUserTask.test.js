@@ -90,7 +90,11 @@ describe.only('flow.set01_atomUserTask', () => {
         status: 1,
         remark: 'Nice Work!',
       },
-      formAtom: null,
+      formAtom: {
+        atomName: 'startEventAtom-test!!',
+        description: 'modified by userTask',
+        flowDefKey: 'would not been modified',
+      },
     });
     assert(result.body.code === 0);
 

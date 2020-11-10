@@ -22,65 +22,15 @@ module.exports = ctx => {
     }
 
     async claim({ flowTaskId, user }) {
-      // get
-      const flowTask = await this.modelFlowTask.get({ id: flowTaskId });
-      if (!flowTask) ctx.throw.module(moduleInfo.relativeName, 1001, flowTaskId);
-      // must be the same user
-      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
-      // check
-      if (flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1003, flowTaskId);
-      // timeClaimed
-      const timeClaimed = new Date();
-      await this.modelFlowTask.update({ id: flowTaskId, timeClaimed });
-      // history
-      const flowTaskHistory = await this.modelFlowTaskHistory.get({ flowTaskId });
-      await this.modelFlowTaskHistory.update({ id: flowTaskHistory.id, timeClaimed });
-      // event: task.claimed
-      const task = await this._loadTaskInstance({ flowTaskId, user });
-      await task.claimed();
+      // taskInstance
+      const taskInstance = await this._loadTaskInstance({ flowTaskId, user });
+      await taskInstance._claim();
     }
 
     async complete({ flowTaskId, handle, formAtom, user }) {
-      // get
-      const flowTask = await this.modelFlowTask.get({ id: flowTaskId });
-      if (!flowTask) ctx.throw.module(moduleInfo.relativeName, 1001, flowTaskId);
-      // must be the same user
-      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
-      // timeClaimed first
-      if (!flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1004, flowTaskId);
-      // check handled
-      if (flowTask.flowTaskStatus !== 0) ctx.throw.module(moduleInfo.relativeName, 1005, flowTaskId);
-      // formAtom
-      await this._complete_formAtom({ flowTaskId, formAtom });
-      // handle
-      await this._complete_handle({ flowTaskId, handle });
-      // event: task.completed
-      const task = await this._loadTaskInstance({ flowTaskId, user });
-      await task.completed();
-      // check if node done
-      ctx.tail(async () => {
-        // ctxParent
-        const ctxParent = {
-          state: {
-            user: {
-              op: user,
-            },
-          },
-        };
-        // queue
-        await ctx.app.meta.queue.pushAsync({
-          locale: ctx.locale,
-          subdomain: ctx.subdomain,
-          module: moduleInfo.relativeName,
-          queueName: 'flowCheck',
-          queueNameSub: flowTask.flowId,
-          ctxParent,
-          data: {
-            queueAction: 'activityUserTask.checkIfNodeDone',
-            flowNodeId: flowTask.flowNodeId,
-          },
-        });
-      });
+      // taskInstance
+      const taskInstance = await this._loadTaskInstance({ flowTaskId, user });
+      await taskInstance._complete({ handle, formAtom });
     }
 
     async _checkIfNodeDone({ flowNodeId /* user*/ }) {
@@ -167,33 +117,6 @@ module.exports = ctx => {
     async _checkIfNodeDone_deleteTasks({ nodeInstance }) {
       const flowNodeId = nodeInstance.contextNode._flowNodeId;
       await this.modelFlowTask.delete({ flowNodeId });
-    }
-
-    async _complete_formAtom({ flowTaskId, formAtom }) {
-      if (!formAtom) return;
-      // todo:
-    }
-
-    async _complete_handle({ flowTaskId, handle }) {
-      const timeHandled = new Date();
-      const data = {
-        flowTaskStatus: 1,
-        timeHandled,
-      };
-      if (handle) {
-        data.handleStatus = handle.status;
-        data.handleRemark = handle.remark;
-      }
-      await this.modelFlowTask.update({
-        id: flowTaskId,
-        ...data,
-      });
-      // history
-      const flowTaskHistory = await this.modelFlowTaskHistory.get({ flowTaskId });
-      await this.modelFlowTaskHistory.update({
-        id: flowTaskHistory.id,
-        ...data,
-      });
     }
 
     async _list({ options: { where, orders, page, history = 0 }, user, pageForce = true, count = 0 }) {

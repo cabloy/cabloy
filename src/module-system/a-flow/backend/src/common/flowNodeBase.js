@@ -23,10 +23,6 @@ module.exports = class FlowNodeBase {
     return extend(true, {}, optionsDefault, options);
   }
 
-  async getSchemaWrite() {
-
-  }
-
   async onNodeEnter() {
     await this.flowInstance._flowListener.onNodeEnter(this.contextNode);
     return true;
@@ -50,10 +46,6 @@ module.exports = class FlowNodeBase {
   async onNodeLeave() {
     await this.flowInstance._flowListener.onNodeLeave(this.contextNode);
     return true;
-  }
-
-  async _getSchemaAtomClass() {
-
   }
 
 };
