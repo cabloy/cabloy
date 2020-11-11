@@ -7,8 +7,9 @@ module.exports = {
   ActivityService: '服务活动',
   ActivityUserTask: '用户任务活动',
   'Task not Found: %s': '任务未发现: %s',
-  'Task cannot been accessed: %s': '任务无权访问: %s',
+  'Task cannot be accessed: %s': '任务无权访问: %s',
   'Task has been claimed: %s': '任务已被申领: %s',
   'Task should be claimed first: %s': '任务必须先申领: %s',
   'Task has been handled: %s': '任务已处理: %s',
+  'Task cannot be rejected: %s': '任务无权被拒绝: %s',
 };

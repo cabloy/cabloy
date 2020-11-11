@@ -1,8 +1,9 @@
 // error code should start from 1001
 module.exports = {
   1001: 'Task not Found: %s',
-  1002: 'Task cannot been accessed: %s',
+  1002: 'Task cannot be accessed: %s',
   1003: 'Task has been claimed: %s',
   1004: 'Task should be claimed first: %s',
   1005: 'Task has been handled: %s',
+  1006: 'Task cannot be rejected: %s',
 };

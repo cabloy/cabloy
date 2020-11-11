@@ -108,6 +108,11 @@ module.exports = ctx => {
       if (!flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1004, flowTaskId);
       // check handled
       if (flowTask.flowTaskStatus !== 0) ctx.throw.module(moduleInfo.relativeName, 1005, flowTaskId);
+      // check if reject
+      if (handle && handle.status === 2) {
+        const options = ctx.bean.flowTask._getNodeRefOptionsTask({ nodeInstance: this.nodeInstance });
+        if (!options.allowRejectTask) ctx.throw.module(moduleInfo.relativeName, 1006, flowTaskId);
+      }
       // formAtom
       await this._complete_formAtom({ formAtom });
       // handle
