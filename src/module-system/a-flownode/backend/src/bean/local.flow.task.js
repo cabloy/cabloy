@@ -178,7 +178,7 @@ module.exports = ctx => {
     async _getSchemaWrite() {
       const module = this.context._atom.module;
       // options
-      const options = ctx.bean.flowTask.getNodeRefOptionsTask({ nodeInstance: this.nodeInstance });
+      const options = ctx.bean.flowTask._getNodeRefOptionsTask({ nodeInstance: this.nodeInstance });
       const fields = options.schema.write;
       if (!fields || fields.length === 0) return null;
       // base

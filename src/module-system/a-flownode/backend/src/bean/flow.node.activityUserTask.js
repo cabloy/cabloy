@@ -23,6 +23,9 @@ module.exports = ctx => {
       // super
       await super.onNodeBegin();
 
+      // user
+      const user = this._getOpUser();
+
       // var: _assignees
       const assignees = this.contextNode.vars.get('_assignees');
       assert(assignees && assignees.length > 0);
@@ -32,7 +35,7 @@ module.exports = ctx => {
         await ctx.bean.flowTask._createTaskInstance({
           nodeInstance: this.nodeInstance,
           userIdAssignee,
-          user: ctx.state.user.op,
+          user,
         });
       }
 
@@ -99,6 +102,14 @@ module.exports = ctx => {
       if (_var === 'flowUser') {
         return this.context._flow.flowUserId;
       }
+    }
+
+    _getOpUser() {
+      let user = ctx.state.user && ctx.state.user.op;
+      if (!user || user.anonymous === 1) {
+        user = { id: this.context._flow.flowUserId };
+      }
+      return user;
     }
 
     _ensureIntArray(str) {

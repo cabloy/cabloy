@@ -37,7 +37,7 @@ module.exports = ctx => {
       // load flow node
       const nodeInstance = await ctx.bean.flow._loadFlowNodeInstance({ flowNodeId });
       // options
-      const options = this.getNodeRefOptionsTask({ nodeInstance });
+      const options = this._getNodeRefOptionsTask({ nodeInstance });
       // completionCondition
       const completionCondition = options.completionCondition;
       // task count
@@ -157,7 +157,7 @@ module.exports = ctx => {
       return task;
     }
 
-    getNodeRefOptionsTask({ nodeInstance }) {
+    _getNodeRefOptionsTask({ nodeInstance }) {
       // nodeRef
       const nodeRef = nodeInstance.contextNode._nodeRef;
       // options
