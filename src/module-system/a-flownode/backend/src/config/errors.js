@@ -8,4 +8,5 @@ module.exports = {
   1006: 'Task cannot be passed: %s',
   1007: 'Task cannot be rejected: %s',
   1008: 'Role not Found: %s',
+  1009: 'Task Assignees cannot be empty: %s',
 };

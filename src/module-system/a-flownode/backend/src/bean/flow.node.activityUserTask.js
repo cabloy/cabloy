@@ -12,8 +12,11 @@ module.exports = ctx => {
       // super
       await super.onNodeEnter();
 
+      // options
+      const options = this.getNodeRefOptions();
+
       // prepare assignees
-      const res = await this._prepareAssignees();
+      const res = await this._prepareAssignees({ options });
       if (!res) return false;
 
       // ok
@@ -52,16 +55,51 @@ module.exports = ctx => {
       return false;
     }
 
-    async _prepareAssignees() {
+    async _prepareAssignees({ options }) {
       // check var: _assignees
       let assignees = this.contextNode.vars.get('_assignees');
       if (assignees && assignees.length > 0) return true;
 
-      // init
-      assignees = [];
+      // assignees
+      assignees = await this._parseAssignees({ options });
 
-      // options
-      const options = this.getNodeRefOptions();
+      // confirmation
+      if (assignees.length === 0 || options.confirmation) {
+        // user
+        const user = this._getOpUser();
+        const taskInstance = await ctx.bean.flowTask._createTaskInstance({
+          nodeInstance: this.nodeInstance,
+          userIdAssignee: user.id,
+          user,
+        });
+        await this._taskConfirmationClaim({ taskInstance });
+        // break
+        return false;
+      }
+
+      // save var: _assignees
+      this.contextNode.vars.set('_assignees', assignees);
+
+      // ok
+      return true;
+    }
+
+    async _taskConfirmationClaim({ taskInstance }) {
+      // specificFlag timeClaimed
+      const specificFlag = 1;
+      const timeClaimed = new Date();
+      taskInstance.contextTask._flowTask.specificFlag = specificFlag;
+      taskInstance.contextTask._flowTask.timeClaimed = timeClaimed;
+      await taskInstance.modelFlowTask.update(taskInstance.contextTask._flowTask);
+      // history
+      taskInstance.contextTask._flowTaskHistory.specificFlag = specificFlag;
+      taskInstance.contextTask._flowTaskHistory.timeClaimed = timeClaimed;
+      await taskInstance.modelFlowTaskHistory.update(taskInstance.contextTask._flowTaskHistory);
+    }
+
+    async _parseAssignees({ options }) {
+      // init
+      let assignees = [];
 
       // 1. users
       const users = this._ensureIntArray(options.assignees.users);
@@ -97,11 +135,8 @@ module.exports = ctx => {
       // unique
       assignees = Array.from(new Set(assignees));
 
-      // save var: _assignees
-      this.contextNode.vars.set('_assignees', assignees);
-
       // ok
-      return true;
+      return assignees;
     }
 
     async _parseUserVar({ _var }) {

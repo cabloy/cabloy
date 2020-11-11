@@ -34,6 +34,32 @@ describe.only('flow.set01_atomAssigneesConfirmation', () => {
     assert(result.body.code === 0);
     const flowId = result.body.data.flow.id;
 
+    // select task
+    result = await app.httpRequest().post(mockUrl('/a/flownode/task/select')).send({
+      options: {
+        where: {
+          'a.flowId': flowId,
+          'a.flowTaskStatus': 0,
+        },
+        history: 0,
+      },
+    });
+    assert(result.body.code === 0);
+    const flowTask = result.body.data.list[0];
+    assert(!!flowTask);
+
+    // assigneesConfirmation
+    result = await app.httpRequest().post(mockUrl('/a/flownode/task/assigneesConfirmation')).send({
+      flowTaskId: flowTask.id,
+      handle: {
+        status: 1,
+        assignees: [ 2 ],
+      },
+    });
+    assert(result.body.code === 0);
+
+    // ////////////
+
     // select
     result = await app.httpRequest().post(mockUrl('/a/base/atom/select')).send({
       atomClass: { module: atomClassModule, atomClassName, atomClassIdParent: 0 },

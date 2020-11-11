@@ -33,6 +33,12 @@ module.exports = ctx => {
       await taskInstance._complete({ handle, formAtom });
     }
 
+    async assigneesConfirmation({ flowTaskId, handle, user }) {
+      // taskInstance
+      const taskInstance = await this._loadTaskInstance({ flowTaskId, user });
+      await taskInstance._assigneesConfirmation({ handle });
+    }
+
     async _checkIfNodeDone({ flowNodeId /* user*/ }) {
       // load flow node
       const nodeInstance = await ctx.bean.flow._loadFlowNodeInstance({ flowNodeId });

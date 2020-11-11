@@ -45,6 +45,7 @@ module.exports = ctx => {
         flowNodeId: this.contextNode._flowNodeId,
         flowTaskStatus: 0,
         userIdAssignee,
+        specificFlag: 0,
         taskVars: '{}',
       };
       const res = await this.modelFlowTask.insert(data);
@@ -102,6 +103,8 @@ module.exports = ctx => {
       // flowTask
       const flowTask = this.contextTask._flowTask;
       const flowTaskId = flowTask.id;
+      // specificFlag must be 0
+      if (flowTask.specificFlag !== 0) ctx.throw(403);
       // must be the same user
       if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
       // timeClaimed first
@@ -146,6 +149,46 @@ module.exports = ctx => {
           },
         });
       });
+    }
+
+    async _assigneesConfirmation({ handle }) {
+      // user
+      const user = this.contextTask._user;
+      // flowTask
+      const flowTask = this.contextTask._flowTask;
+      const flowTaskId = flowTask.id;
+      // specificFlag must be 1
+      if (flowTask.specificFlag !== 1) ctx.throw(403);
+      // must be the same user
+      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
+      // timeClaimed first
+      if (!flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1004, flowTaskId);
+      // check handled
+      if (flowTask.flowTaskStatus !== 0) ctx.throw.module(moduleInfo.relativeName, 1005, flowTaskId);
+      // handle
+      await this._assigneesConfirmation_handle({ handle });
+    }
+
+    async _assigneesConfirmation_handle({ handle }) {
+      const status = handle.status;
+      const assignees = handle.assignees;
+      // delete flowTask and flowTaskHistory
+      const flowTaskId = this.contextTask._flowTaskId;
+      await this.modelFlowTask.delete({ id: flowTaskId });
+      await this.modelFlowTaskHistory.delete({ flowTaskId });
+      // passed
+      if (status === 1) {
+        if (!assignees || assignees.length === 0) ctx.throw.module(moduleInfo.relativeName, 1009, flowTaskId);
+        // save var: _assignees
+        this.contextNode.vars.set('_assignees', assignees);
+        // next stage of flow node: begin
+        return await this.nodeInstance.begin();
+      }
+      // reject
+      if (status === 2) {
+
+      }
+
     }
 
     async _complete_formAtom({ formAtom }) {
