@@ -43,9 +43,9 @@ module.exports = ctx => {
       }
     }
 
-    async onFlowEnd() {
+    async onFlowEnd(options) {
       if (this.flowListener && this.flowListener.onFlowEnd) {
-        await this.flowListener.onFlowEnd();
+        await this.flowListener.onFlowEnd(options);
       }
     }
 

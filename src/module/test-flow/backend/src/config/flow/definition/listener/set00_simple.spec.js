@@ -7,15 +7,15 @@ module.exports = class Listener {
   }
 
   async onFlowStart(options) {
-    console.log('onFlowStart:', options.startEventId);
+    console.log('onFlowStart: ', options.startEventId);
     // flowVars
     const xyz = this.context.vars.get('x.y.z');
     assert.equal(xyz, undefined);
     this.context.vars.set('x.y.z', 'flow');
   }
 
-  async onFlowEnd() {
-    console.log('onFlowEnd');
+  async onFlowEnd(options) {
+    console.log('onFlowEnd: ', options && options.flowRemark);
     // flowVars
     const xyz = this.context.vars.get('x.y.z');
     assert.equal(xyz, 'flow');

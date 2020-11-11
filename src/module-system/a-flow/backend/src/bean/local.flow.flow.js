@@ -118,29 +118,21 @@ module.exports = ctx => {
     }
 
     async _endFlow(options) {
+      const flowStatus = this.constant.flow.status.end;
       const flowRemark = (options && options.flowRemark) || null;
       const timeEnd = new Date();
-      // raise event: onFlowEnd
-      await this._flowListener.onFlowEnd();
       // flow
-      this.context._flow.flowStatus = this.constant.flow.status.end;
-      this.context._flow.timeEnd = timeEnd;
+      this.context._flow.flowStatus = flowStatus;
       this.context._flow.flowRemark = flowRemark;
+      this.context._flow.timeEnd = timeEnd;
       await this.modelFlow.update(this.context._flow);
       // flow history
-      this.context._flowHistory.flowStatus = this.context._flow.flowStatus;
-      this.context._flowHistory.timeEnd = timeEnd;
+      this.context._flowHistory.flowStatus = flowStatus;
       this.context._flowHistory.flowRemark = flowRemark;
+      this.context._flowHistory.timeEnd = timeEnd;
       await this.modelFlowHistory.update(this.context._flowHistory);
-      // atom
-      if (this.context._flow.flowAtomId) {
-        // _submitDirect
-        await ctx.bean.atom._submitDirect({
-          key: { atomId: this.context._flow.flowAtomId },
-          item: this.context._atom,
-          user: { id: this.context._atom.userIdUpdated },
-        });
-      }
+      // raise event: onFlowEnd
+      await this._flowListener.onFlowEnd(options);
       // log
       console.log(`--------flow end: ${this.context._flowId}`);
     }
