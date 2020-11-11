@@ -27,7 +27,7 @@ describe('flow.set01_atomUserTask', () => {
     result = await app.httpRequest().post(mockUrl('/a/base/atom/writeSubmit')).send({
       key: keyDraft,
       item: {
-        atomName: 'startEventAtom-test',
+        atomName: 'atomUserTask-test',
         flowDefKey: 'set01_atomUserTask',
       },
     });

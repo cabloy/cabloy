@@ -7,4 +7,5 @@ module.exports = {
   1005: 'Task has been handled: %s',
   1006: 'Task cannot be passed: %s',
   1007: 'Task cannot be rejected: %s',
+  1008: 'Role not Found: %s',
 };

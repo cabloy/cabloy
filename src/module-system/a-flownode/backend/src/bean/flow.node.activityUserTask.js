@@ -2,6 +2,7 @@ const require3 = require('require3');
 const assert = require3('assert');
 
 module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowNode extends ctx.app.meta.FlowNodeBase {
     constructor(options) {
       super(ctx, options);
@@ -69,9 +70,14 @@ module.exports = ctx => {
       }
 
       // 2. roles
-      const roles = this._ensureIntArray(options.assignees.roles);
+      const roles = this._ensureArray(options.assignees.roles);
       if (roles) {
-        for (const roleId of roles) {
+        for (let roleId of roles) {
+          if (isNaN(roleId)) {
+            const role = await ctx.bean.role.get({ roleName: roleId });
+            if (!role) ctx.throw.module(moduleInfo.relativeName, 1008, roleId);
+            roleId = role.id;
+          }
           const list = await ctx.bean.role.usersOfRoleParent({ roleId, disabled: 0 });
           assignees = assignees.concat(list.map(item => item.id));
         }

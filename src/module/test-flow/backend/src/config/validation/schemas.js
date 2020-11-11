@@ -28,6 +28,7 @@ module.exports = app => {
         ebOptions: [
           { title: 'Test_Set01_StartEvent_Atom', value: 'set01_startEventAtom' },
           { title: 'Test_Set01_Atom_UserTask', value: 'set01_atomUserTask' },
+          { title: 'Test_Set01_Atom_AssigneesConfirmation', value: 'set01_atomAssigneesConfirmation' },
         ],
       },
     },

@@ -1,14 +1,12 @@
-const Listener = require('./listener/set01_atomAssigneesConfirmation.spec.js');
-
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const definition = {
     info: {
-      title: 'Test_Set01_Atom_UserTask',
-      description: 'Test_Set01_Atom_UserTask',
-      version: '2020-11-06 00:00:00',
+      title: 'Test_Set01_Atom_AssigneesConfirmation',
+      description: 'Test_Set01_Atom_AssigneesConfirmation',
+      version: '2020-11-11',
     },
-    listener: Listener.toString(),
+    listener: null,
     process: {
       nodes: [
         {
@@ -20,7 +18,7 @@ module.exports = app => {
               module: moduleInfo.relativeName,
               atomClassName: 'purchaseOrder',
             },
-            conditionExpression: 'atom.flowDefKey===\'set01_atomUserTask\'',
+            conditionExpression: 'atom.flowDefKey===\'set01_atomAssigneesConfirmation\'',
           },
         },
         {
@@ -29,32 +27,10 @@ module.exports = app => {
           type: 'activityUserTask',
           options: {
             assignees: {
-              // users: '1,2',
-              // roles: '1,2',
-              vars: 'flowUser',
+              roles: 'family',
             },
-            confirmation: false,
-            bidding: false,
-            completionCondition: {
-              // passed: 1,
-              // rejected: '100%',
-            },
-            // rejectedNode:null,
-            // allowRejectTask: true,
-            // allowCancelFlow: false,
-            schema: {
-              write: [
-                'atomName',
-                {
-                  name: 'description',
-                  property: {
-                    type: 'string',
-                    ebType: 'text',
-                    ebTitle: 'Description',
-                  },
-                },
-              ],
-            },
+            confirmation: true,
+            bidding: true,
           },
         },
         {

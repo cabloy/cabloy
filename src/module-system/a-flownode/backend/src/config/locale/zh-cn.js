@@ -13,4 +13,5 @@ module.exports = {
   'Task has been handled: %s': '任务已处理: %s',
   'Task cannot be passed: %s': '任务无权被通过: %s',
   'Task cannot be rejected: %s': '任务无权被拒绝: %s',
+  'Role not Found: %s': '角色未发现: %s',
 };
