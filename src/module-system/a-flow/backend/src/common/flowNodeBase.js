@@ -16,11 +16,18 @@ module.exports = class FlowNodeBase {
     // nodeRef
     const nodeRef = this.contextNode._nodeRef;
     // options
-    const options = nodeRef.options || {};
+    let options = nodeRef.options || {};
     // default
     const optionsDefault = this.nodeInstance.nodeBase.options.default;
-    if (!optionsDefault) return options;
-    return extend(true, {}, optionsDefault, options);
+    if (optionsDefault) {
+      options = extend(true, {}, optionsDefault, options);
+    }
+    // listener
+    const res = this.flowInstance._flowListener.getNodeRefOptions(this.contextNode, { options });
+    if (res) {
+      options = res;
+    }
+    return options;
   }
 
   async onNodeEnter() {
