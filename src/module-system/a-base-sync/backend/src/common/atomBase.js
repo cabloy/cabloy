@@ -34,19 +34,28 @@ module.exports = app => {
       });
     }
 
-    async write({ atomClass, key, item, user }) {
+    async write({ atomClass, key, item, options, user }) {
       const atomStage = item.atomStage;
       // validator
       if (atomStage === 0) {
-        const validator = await this.ctx.bean.atom.validator({ atomClass, user });
-        if (validator) {
-          // if error throw 422
-          await this.ctx.bean.validation.validate({
-            module: validator.module,
-            validator: validator.validator,
-            schema: validator.schema,
+        const optionsSchema = options && options.schema;
+        if (optionsSchema) {
+          await this.ctx.bean.validation.ajvFromSchemaAndValidate({
+            module: optionsSchema.module,
+            schema: optionsSchema.schema,
             data: item,
           });
+        } else {
+          const validator = await this.ctx.bean.atom.validator({ atomClass, user });
+          if (validator) {
+            // if error throw 422
+            await this.ctx.bean.validation.validate({
+              module: validator.module,
+              validator: validator.validator,
+              schema: validator.schema,
+              data: item,
+            });
+          }
         }
       }
       // write atom

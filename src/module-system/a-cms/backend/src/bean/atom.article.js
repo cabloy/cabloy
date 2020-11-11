@@ -55,12 +55,12 @@ module.exports = app => {
       }
     }
 
-    async write({ atomClass, key, item, user }) {
+    async write({ atomClass, key, item, options, user }) {
       const atomStage = item.atomStage;
       // get atom for safety
       const atomOld = await this.ctx.bean.atom.read({ key, user });
       // super
-      await super.write({ atomClass, key, item, user });
+      await super.write({ atomClass, key, item, options, user });
       // if undefined then old
       const fields = [ 'slug', 'editMode', 'content', 'language', 'categoryId', 'sticky', 'keywords', 'description', 'sorting', 'flag', 'extra' ];
       for (const field of fields) {

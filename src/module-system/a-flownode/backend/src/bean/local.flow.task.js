@@ -142,8 +142,17 @@ module.exports = ctx => {
 
     async _complete_formAtom({ formAtom }) {
       if (!formAtom) return;
-      const schema = await this._getSchemaWrite();
-      console.log('0000000000--------:', schema);
+      // schemaWrite
+      const schemaWrite = await this._getSchemaWrite();
+      if (!schemaWrite) return;
+      // write
+      const atomId = this.context._atom.atomId;
+      const user = this.contextTask._user;
+      await ctx.bean.atom.write({
+        key: { atomId }, item: formAtom,
+        options: { schema: schemaWrite },
+        user,
+      });
     }
 
     async _complete_handle({ handle }) {
@@ -167,8 +176,44 @@ module.exports = ctx => {
     }
 
     async _getSchemaWrite() {
-      const schema = await this._getSchemaBase();
-      return schema;
+      const module = this.context._atom.module;
+      // options
+      const options = ctx.bean.flowTask.getNodeRefOptionsTask({ nodeInstance: this.nodeInstance });
+      const fields = options.schema.write;
+      if (!fields || fields.length === 0) return null;
+      // base
+      let schemaBase = await this._getSchemaBase();
+      if (!schemaBase) {
+        schemaBase = {
+          module,
+          schema: { type: 'object', properties: {} },
+        };
+      }
+      const propertiesBase = schemaBase.schema.properties;
+      // propertiesWrite
+      const propertiesWrite = {};
+      for (const field of fields) {
+        if (typeof field === 'string') {
+          if (propertiesBase[field]) {
+            propertiesWrite[field] = propertiesBase[field];
+          }
+        } else {
+          // { name, property }
+          propertiesWrite[field.name] = field.property;
+        }
+      }
+      // schemaWrite
+      let schemaWrite = {
+        module,
+        schema: { type: 'object', properties: propertiesWrite },
+      };
+      // listener
+      const res = await this.flowInstance._flowListener.getSchemaWrite(this.contextTask, this.contextNode, { schemaBase, schemaWrite });
+      if (res) {
+        schemaWrite = res;
+      }
+      // ok
+      return schemaWrite;
     }
 
     async _getSchemaBase() {

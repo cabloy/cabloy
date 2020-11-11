@@ -141,7 +141,7 @@ module.exports = ctx => {
     }
 
     // write
-    async write({ key, item, user }) {
+    async write({ key, item, options, user }) {
       // atomClass
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
       if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
@@ -159,7 +159,7 @@ module.exports = ctx => {
       await ctx.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
-        context: { atomClass, key, item: itemDraft, user },
+        context: { atomClass, key, item: itemDraft, options, user },
         fn: 'write',
       });
     }

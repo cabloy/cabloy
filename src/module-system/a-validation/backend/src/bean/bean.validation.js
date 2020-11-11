@@ -1,3 +1,6 @@
+const require3 = require('require3');
+const uuid = require3('uuid');
+
 module.exports = ctx => {
   class Validation extends ctx.app.meta.BeanModuleBase {
 
@@ -18,8 +21,36 @@ module.exports = ctx => {
 
     async validate({ module, validator, schema, data }) {
       const _validator = this._checkValidator({ module, validator });
-      const res = await _validator.ajv.v({ ctx, schema, data });
-      return res;
+      return await _validator.ajv.v({ ctx, schema, data });
+    }
+
+    async ajvFromSchemaAndValidate({ module, schema, options, data }) {
+      const ajv = this.ajvFromSchema({ module, schema, options });
+      return await this.ajvValidate({ ajv, schema: null, data });
+    }
+
+    async ajvValidate({ ajv, schema, data }) {
+      return await ajv.v({ ctx, schema, data });
+    }
+
+    ajvFromSchema({ module, schema, options }) {
+      // params
+      const params = {
+        options,
+      };
+      // keywords
+      if (module) {
+        module = module || this.moduleName;
+        const meta = ctx.app.meta.modules[module].main.meta;
+        params.keywords = meta.validation.keywords;
+      }
+      // schemas
+      params.schemaRoot = uuid.v4();
+      params.schemas = {
+        [params.schemaRoot]: { ... schema, $async: true },
+      };
+      // create
+      return ctx.app.meta.ajv.create(params);
     }
 
     _checkValidator({ module, validator }) {

@@ -115,6 +115,12 @@ module.exports = ctx => {
       }
     }
 
+    async getSchemaWrite(contextTask, contextNode, { schemaBase, schemaWrite }) {
+      if (this.flowListener && this.flowListener.getSchemaWrite) {
+        return await this.flowListener.getSchemaWrite(contextTask, contextNode, { schemaBase, schemaWrite });
+      }
+    }
+
   }
 
   return FlowListener;

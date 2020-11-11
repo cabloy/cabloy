@@ -22,9 +22,9 @@ module.exports = app => {
       await super.select({ atomClass, options, items, user });
     }
 
-    async write({ atomClass, key, item, user }) {
+    async write({ atomClass, key, item, options, user }) {
       // super
-      await super.write({ atomClass, key, item, user });
+      await super.write({ atomClass, key, item, options, user });
       // update partyPublic
       const data = await this.ctx.model.partyPublic.prepareData(item);
       data.id = key.itemId;
