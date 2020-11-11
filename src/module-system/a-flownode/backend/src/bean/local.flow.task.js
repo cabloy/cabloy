@@ -108,10 +108,13 @@ module.exports = ctx => {
       if (!flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1004, flowTaskId);
       // check handled
       if (flowTask.flowTaskStatus !== 0) ctx.throw.module(moduleInfo.relativeName, 1005, flowTaskId);
-      // check if reject
-      if (handle && handle.status === 2) {
-        const options = ctx.bean.flowTask._getNodeRefOptionsTask({ nodeInstance: this.nodeInstance });
-        if (!options.allowRejectTask) ctx.throw.module(moduleInfo.relativeName, 1006, flowTaskId);
+      // check if pass/reject
+      const options = ctx.bean.flowTask._getNodeRefOptionsTask({ nodeInstance: this.nodeInstance });
+      if (handle && handle.status === 1 && !options.allowPassTask) {
+        ctx.throw.module(moduleInfo.relativeName, 1006, flowTaskId);
+      }
+      if (handle && handle.status === 2 && !options.allowRejectTask) {
+        ctx.throw.module(moduleInfo.relativeName, 1007, flowTaskId);
       }
       // formAtom
       await this._complete_formAtom({ formAtom });
