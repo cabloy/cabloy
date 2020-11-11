@@ -60,4 +60,8 @@ module.exports = class Listener {
     console.log('onEdgeLeave: ', contextEdge._edgeRef.id, ' from node: ', contextNode._nodeRef.id);
   }
 
+  getNodeRefOptions(contextNode /* { options }*/) {
+    console.log('getNodeRefOptions: ', contextNode._nodeRef.id);
+  }
+
 };

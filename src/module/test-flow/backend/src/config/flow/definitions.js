@@ -5,7 +5,7 @@ const set00_activityService = require('./definition/set00_activityService.js');
 // const set00_startEventTimer = require('./definition/set00_startEventTimer.js');
 const set01_startEventAtom = require('./definition/set01_startEventAtom.js');
 const set01_atomUserTask = require('./definition/set01_atomUserTask.js');
-const set01_atomAssigneesConfirmation = require('./definition/set01_atomAssigneesConfirmation.js');
+// const set01_atomAssigneesConfirmation = require('./definition/set01_atomAssigneesConfirmation.js');
 
 module.exports = app => {
   const definitions = {
@@ -16,7 +16,7 @@ module.exports = app => {
     // set00_startEventTimer: set00_startEventTimer(app),
     set01_startEventAtom: set01_startEventAtom(app),
     set01_atomUserTask: set01_atomUserTask(app),
-    set01_atomAssigneesConfirmation: set01_atomAssigneesConfirmation(app),
+    // set01_atomAssigneesConfirmation: set01_atomAssigneesConfirmation(app),
   };
   return definitions;
 };
