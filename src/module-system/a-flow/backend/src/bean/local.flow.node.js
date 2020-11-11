@@ -104,15 +104,17 @@ module.exports = ctx => {
       await this.modelFlowHistory.update(this.context._flowHistory);
     }
 
-    async _clearCurrent() {
+    async _clear(options) {
+      const flowNodeRemark = (options && options.flowNodeRemark) || null;
+      const timeDone = new Date();
       // clear
       await this._setCurrent(true);
       // clear node
       await this.modelFlowNode.delete({ id: this.contextNode._flowNodeId });
       // set nodeHistoryStatus
       this.contextNode._flowNodeHistory.flowNodeStatus = 1;
-      this.contextNode._flowNodeHistory.flowNodeRemark = null;
-      this.contextNode._flowNodeHistory.timeDone = new Date();
+      this.contextNode._flowNodeHistory.flowNodeRemark = flowNodeRemark;
+      this.contextNode._flowNodeHistory.timeDone = timeDone;
       await this.modelFlowNodeHistory.update(this.contextNode._flowNodeHistory);
     }
 
@@ -158,8 +160,8 @@ module.exports = ctx => {
       // raise event: onNodeLeave
       const res = await this.nodeBaseBean.onNodeLeave();
       await this._saveVars();
-      // clear current
-      await this._clearCurrent();
+      // clear
+      await this._clear();
       // res
       if (!res) return false;
       // next

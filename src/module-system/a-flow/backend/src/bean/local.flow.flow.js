@@ -121,11 +121,11 @@ module.exports = ctx => {
       const flowStatus = this.constant.flow.status.end;
       const flowRemark = (options && options.flowRemark) || null;
       const timeEnd = new Date();
-      // flow
+      // flow: update fields for onFlowEnd
       this.context._flow.flowStatus = flowStatus;
       this.context._flow.flowRemark = flowRemark;
       this.context._flow.timeEnd = timeEnd;
-      await this.modelFlow.update(this.context._flow);
+      await this.modelFlow.delete({ id: this.context._flowId });
       // flow history
       this.context._flowHistory.flowStatus = flowStatus;
       this.context._flowHistory.flowRemark = flowRemark;

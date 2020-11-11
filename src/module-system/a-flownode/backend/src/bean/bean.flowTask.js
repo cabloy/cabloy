@@ -98,11 +98,13 @@ module.exports = ctx => {
         if (!flowNode) ctx.throw.module('a-flow', 1006, flowNodeId);
         rejectedNode = flowNode.flowNodeDefId;
       }
-      // enter
+      // nodeInstancePrev
       const nodeInstancePrev = await nodeInstance.flowInstance._findNodeInstanceNext({
         nodeRefId: rejectedNode,
         flowNodeIdPrev: flowNodeId,
       });
+      // clear & enter
+      await nodeInstance._clear({ flowNodeRemark: 'Rejected' });
       return await nodeInstancePrev.enter();
     }
 
