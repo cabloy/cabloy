@@ -1,9 +1,8 @@
+const FlowNodeActivityUserTaskBase = require('../common/flowNodeActivityUserTaskBase.js');
+
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class FlowNode extends ctx.app.meta.FlowNodeBase {
-    constructor(options) {
-      super(ctx, options);
-    }
+  class FlowNode extends FlowNodeActivityUserTaskBase(ctx) {
 
     get modelCondition() {
       return ctx.model.module(moduleInfo.relativeName).flowNodeStartEventAtomCondition;
