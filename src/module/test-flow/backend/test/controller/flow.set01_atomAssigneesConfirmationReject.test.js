@@ -1,6 +1,6 @@
 const { app, mockUrl, assert } = require('egg-born-mock')(__dirname);
 
-describe('flow.set01_atomAssigneesConfirmation', () => {
+describe.only('flow.set01_atomAssigneesConfirmationReject', () => {
 
   // atomClass info
   const atomClassModule = 'test-flow';
@@ -9,7 +9,7 @@ describe('flow.set01_atomAssigneesConfirmation', () => {
   let flowId;
   let taskAssignees;
 
-  it('atomAssigneesConfirmation', async () => {
+  it.only('atomAssigneesConfirmation', async () => {
     app.mockSession({});
 
     // login as root
@@ -31,7 +31,7 @@ describe('flow.set01_atomAssigneesConfirmation', () => {
     result = await app.httpRequest().post(mockUrl('/a/base/atom/writeSubmit')).send({
       key: keyDraft,
       item: {
-        atomName: 'atomAssigneesConfirmation-test',
+        atomName: 'atomAssigneesConfirmationReject-test',
         flowDefKey: 'set01_atomAssigneesConfirmation',
       },
     });
@@ -53,23 +53,11 @@ describe('flow.set01_atomAssigneesConfirmation', () => {
     const flowTask = result.body.data.list[0];
     assert(!!flowTask);
 
-    // assignees
-    result = await app.httpRequest().post(mockUrl('/a/flownode/task/assignees')).send({
-      flowTaskId: flowTask.id,
-    });
-    assert(result.body.code === 0);
-    // hold
-    taskAssignees = result.body.data;
-
     // assigneesConfirmation
-    const assigneesUsers = taskAssignees.users.map(item => item.id);
     result = await app.httpRequest().post(mockUrl('/a/flownode/task/assigneesConfirmation')).send({
       flowTaskId: flowTask.id,
       handle: {
-        status: 1,
-        assignees: {
-          users: assigneesUsers,
-        },
+        status: 2,
       },
     });
     assert(result.body.code === 0);

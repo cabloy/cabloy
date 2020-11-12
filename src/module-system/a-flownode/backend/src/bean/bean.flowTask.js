@@ -98,12 +98,14 @@ module.exports = ctx => {
     }
 
     async _checkIfNodeDone_rejected({ nodeInstance, options }) {
+      // rejectedNode
+      return await this._gotoFlowNodePrevious({ nodeInstance, rejectedNode: options.rejectedNode });
+    }
+
+    async _gotoFlowNodePrevious({ nodeInstance, rejectedNode }) {
       // flowNodeId
       const flowNodeId = nodeInstance.contextNode._flowNodeId;
-      // delete tasks
-      await this._checkIfNodeDone_deleteTasks({ nodeInstance });
       // rejectedNode
-      let rejectedNode = options.rejectedNode;
       if (!rejectedNode) {
         // find previous task node
         const flowNode = await this._findFlowNodeHistoryPrevious({ nodeInstance, flowNodeId });
@@ -115,6 +117,8 @@ module.exports = ctx => {
         nodeRefId: rejectedNode,
         flowNodeIdPrev: flowNodeId,
       });
+      // delete tasks
+      await this._checkIfNodeDone_deleteTasks({ nodeInstance });
       // clear & enter
       await nodeInstance._clear({ flowNodeRemark: 'Rejected' });
       return await nodeInstancePrev.enter();

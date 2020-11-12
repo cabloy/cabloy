@@ -227,8 +227,6 @@ module.exports = ctx => {
     async _assigneesConfirmation_handle({ handle }) {
       // options
       const options = ctx.bean.flowTask._getNodeRefOptionsTask({ nodeInstance: this.nodeInstance });
-      // assignees
-      const assignees = await this.flowInstance._parseAssignees(handle.assignees);
       // flowTaskHistory update
       this.contextTask._flowTaskHistory.flowTaskStatus = 1;
       this.contextTask._flowTaskHistory.timeHandled = new Date();
@@ -240,6 +238,8 @@ module.exports = ctx => {
       await this.modelFlowTaskHistory.delete({ flowTaskId });
       // passed
       if (handle.status === 1) {
+        // assignees
+        const assignees = await this.flowInstance._parseAssignees(handle.assignees);
         if (!assignees || assignees.length === 0) {
           ctx.throw.module(moduleInfo.relativeName, 1008, flowTaskId);
         }
@@ -257,9 +257,10 @@ module.exports = ctx => {
       }
       // reject
       if (handle.status === 2) {
-        //
+        return await ctx.bean.flowTask._gotoFlowNodePrevious({
+          nodeInstance: this.nodeInstance, rejectedNode: null,
+        });
       }
-
     }
 
     async _complete_formAtom({ formAtom }) {
