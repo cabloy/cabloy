@@ -305,6 +305,13 @@ module.exports = ctx => {
       return { archive: { key: keyArchive } };
     }
 
+    async closeDraft({ key }) {
+      await this.modelAtom.update({
+        id: key.atomId,
+        atomClosed: 1,
+      });
+    }
+
     async openDraft({ key, user }) {
       const _atom = await this.modelAtom.get({ id: key.atomId });
       if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);

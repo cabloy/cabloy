@@ -15,4 +15,5 @@ module.exports = {
   'Task cannot be rejected: %s': '任务无权被拒绝: %s',
   'Task Assignees cannot be empty: %s': '任务参与人不允许为空: %s',
   'Task Assignees cannot be appended: %s': '任务参与人不允许追加: %s',
+  'Flow cannot be cancelled: %s': '流程无权被取消: %s',
 };

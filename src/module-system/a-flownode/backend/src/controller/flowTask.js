@@ -58,6 +58,15 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async cancelFlow() {
+      const res = await this.ctx.service.flowTask.cancelFlow({
+        flowTaskId: this.ctx.request.body.flowTaskId,
+        handle: this.ctx.request.body.handle,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
   }
   return FlowTaskController;
 };

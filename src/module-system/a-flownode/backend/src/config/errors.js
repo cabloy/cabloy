@@ -9,4 +9,5 @@ module.exports = {
   1007: 'Task cannot be rejected: %s',
   1008: 'Task Assignees cannot be empty: %s',
   1009: 'Task Assignees cannot be appended: %s',
+  1010: 'Flow cannot be cancelled: %s',
 };
