@@ -1,0 +1,13 @@
+{
+  "name": "@zhennann/set",
+  "version": "1.0.0",
+  "description": "Set",
+  "main": "index.js",
+  "keywords": [
+    "Set"
+  ],
+  "author": "zhennann",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {}
+}

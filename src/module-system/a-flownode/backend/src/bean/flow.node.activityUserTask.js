@@ -2,7 +2,7 @@ const require3 = require('require3');
 const assert = require3('assert');
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowNode extends ctx.app.meta.FlowNodeBase {
     constructor(options) {
       super(ctx, options);
@@ -28,10 +28,10 @@ module.exports = ctx => {
       await super.onNodeBegin();
 
       // user
-      const user = this._getOpUser();
+      const user = this.flowInstance._getOpUser();
 
-      // var: _assignees
-      const assignees = this.contextNode.vars.get('_assignees');
+      // var: _assigneesConfirmation
+      const assignees = this.contextNode.vars.get('_assigneesConfirmation');
       assert(assignees && assignees.length > 0);
 
       // create tasks
@@ -56,17 +56,23 @@ module.exports = ctx => {
     }
 
     async _prepareAssignees({ options }) {
-      // check var: _assignees
-      let assignees = this.contextNode.vars.get('_assignees');
+      // check var: _assigneesConfirmation
+      let assignees = this.contextNode.vars.get('_assigneesConfirmation');
       if (assignees && assignees.length > 0) return true;
 
-      // assignees
-      assignees = await this._parseAssignees({ options });
+      // check var: _assignees
+      this.contextNode.vars.get('_assignees');
+      if (!assignees || assignees.length === 0) {
+        // assignees
+        assignees = await this.flowInstance._parseAssignees(options.assignees);
+      }
 
       // confirmation
       if (assignees.length === 0 || options.confirmation) {
+        // save var: _assignees
+        this.contextNode.vars.set('_assignees', assignees);
         // user
-        const user = this._getOpUser();
+        const user = this.flowInstance._getOpUser();
         const taskInstance = await ctx.bean.flowTask._createTaskInstance({
           nodeInstance: this.nodeInstance,
           userIdAssignee: user.id,
@@ -77,8 +83,8 @@ module.exports = ctx => {
         return false;
       }
 
-      // save var: _assignees
-      this.contextNode.vars.set('_assignees', assignees);
+      // save var: _assigneesConfirmation
+      this.contextNode.vars.set('_assigneesConfirmation', assignees);
 
       // ok
       return true;
@@ -95,78 +101,6 @@ module.exports = ctx => {
       taskInstance.contextTask._flowTaskHistory.specificFlag = specificFlag;
       taskInstance.contextTask._flowTaskHistory.timeClaimed = timeClaimed;
       await taskInstance.modelFlowTaskHistory.update(taskInstance.contextTask._flowTaskHistory);
-    }
-
-    async _parseAssignees({ options }) {
-      // init
-      let assignees = [];
-
-      // 1. users
-      const users = this._ensureIntArray(options.assignees.users);
-      if (users) {
-        assignees = assignees.concat(users);
-      }
-
-      // 2. roles
-      const roles = this._ensureArray(options.assignees.roles);
-      if (roles) {
-        for (let roleId of roles) {
-          if (isNaN(roleId)) {
-            const role = await ctx.bean.role.get({ roleName: roleId });
-            if (!role) ctx.throw.module(moduleInfo.relativeName, 1008, roleId);
-            roleId = role.id;
-          }
-          const list = await ctx.bean.role.usersOfRoleParent({ roleId, disabled: 0 });
-          assignees = assignees.concat(list.map(item => item.id));
-        }
-      }
-
-      // 3. vars
-      const vars = this._ensureArray(options.assignees.vars);
-      if (vars) {
-        for (const _var of vars) {
-          const userId = await this._parseUserVar({ _var });
-          if (userId) {
-            assignees.push(userId);
-          }
-        }
-      }
-
-      // unique
-      assignees = Array.from(new Set(assignees));
-
-      // ok
-      return assignees;
-    }
-
-    async _parseUserVar({ _var }) {
-      if (_var === 'flowUser') {
-        return this.context._flow.flowUserId;
-      }
-    }
-
-    _getOpUser() {
-      let user = ctx.state.user && ctx.state.user.op;
-      if (!user || user.anonymous === 1) {
-        user = { id: this.context._flow.flowUserId };
-      }
-      return user;
-    }
-
-    _ensureIntArray(str) {
-      if (!str) return null;
-      if (!Array.isArray(str)) {
-        str = str.toString().split(',');
-      }
-      return str.map(item => parseInt(item));
-    }
-
-    _ensureArray(str) {
-      if (!str) return null;
-      if (!Array.isArray(str)) {
-        str = str.toString().split(',');
-      }
-      return str;
     }
 
   }

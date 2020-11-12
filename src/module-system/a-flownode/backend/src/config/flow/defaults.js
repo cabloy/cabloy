@@ -9,6 +9,7 @@ module.exports = {
         vars: 'flowUser',
       },
       confirmation: false,
+      confirmationAllowAppend: false,
       bidding: false,
       completionCondition: {
         passed: 1,
@@ -27,6 +28,7 @@ module.exports = {
       vars: null,
     },
     confirmation: false,
+    confirmationAllowAppend: false,
     bidding: false,
     completionCondition: {
       passed: 1,

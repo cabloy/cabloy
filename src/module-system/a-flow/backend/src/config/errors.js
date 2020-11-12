@@ -6,4 +6,5 @@ module.exports = {
   1004: 'Flow Node not Found: %s',
   1005: 'Flow Node definition not Found: %s',
   1006: 'Previous Flow Node not Found: %s',
+  1007: 'Role not Found: %s',
 };

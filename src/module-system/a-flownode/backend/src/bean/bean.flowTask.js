@@ -33,6 +33,12 @@ module.exports = ctx => {
       await taskInstance._complete({ handle, formAtom });
     }
 
+    async assignees({ flowTaskId, user }) {
+      // taskInstance
+      const taskInstance = await this._loadTaskInstance({ flowTaskId, user });
+      return await taskInstance._assignees();
+    }
+
     async assigneesConfirmation({ flowTaskId, handle, user }) {
       // taskInstance
       const taskInstance = await this._loadTaskInstance({ flowTaskId, user });

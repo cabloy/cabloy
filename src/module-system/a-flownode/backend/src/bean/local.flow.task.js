@@ -1,3 +1,5 @@
+const require3 = require('require3');
+const _Set = require3('@zhennann/set');
 const VarsFn = require('../common/vars.js');
 const UtilsFn = require('../common/utils.js');
 
@@ -151,6 +153,48 @@ module.exports = ctx => {
       });
     }
 
+    async _assignees() {
+      // user
+      const user = this.contextTask._user;
+      // flowTask
+      const flowTask = this.contextTask._flowTask;
+      const flowTaskId = flowTask.id;
+      // specificFlag must be 1
+      if (flowTask.specificFlag !== 1) ctx.throw(403);
+      // must be the same user
+      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
+      // timeClaimed first
+      if (!flowTask.timeClaimed) ctx.throw.module(moduleInfo.relativeName, 1004, flowTaskId);
+      // check handled
+      if (flowTask.flowTaskStatus !== 0) ctx.throw.module(moduleInfo.relativeName, 1005, flowTaskId);
+      // handle
+      return await this._assignees_handle();
+    }
+
+    async _assignees_handle() {
+      // assignees
+      const assignees = this.contextNode.vars.get('_assignees');
+      // users
+      let users;
+      if (!assignees || assignees.length === 0) {
+        users = [];
+      } else {
+        const modelUser = ctx.model.module('a-base').user;
+        users = await modelUser.select({
+          where: { disabled: 0, id: assignees },
+        });
+      }
+      // options
+      const options = ctx.bean.flowTask._getNodeRefOptionsTask({ nodeInstance: this.nodeInstance });
+      // ok
+      return {
+        users,
+        options: {
+          confirmationAllowAppend: options.confirmationAllowAppend,
+        },
+      };
+    }
+
     async _assigneesConfirmation({ handle }) {
       // user
       const user = this.contextTask._user;
@@ -172,15 +216,24 @@ module.exports = ctx => {
     async _assigneesConfirmation_handle({ handle }) {
       const status = handle.status;
       const assignees = handle.assignees;
+      // options
+      const options = ctx.bean.flowTask._getNodeRefOptionsTask({ nodeInstance: this.nodeInstance });
       // delete flowTask and flowTaskHistory
       const flowTaskId = this.contextTask._flowTaskId;
       await this.modelFlowTask.delete({ id: flowTaskId });
       await this.modelFlowTaskHistory.delete({ flowTaskId });
       // passed
       if (status === 1) {
-        if (!assignees || assignees.length === 0) ctx.throw.module(moduleInfo.relativeName, 1009, flowTaskId);
-        // save var: _assignees
-        this.contextNode.vars.set('_assignees', assignees);
+        if (!assignees || assignees.length === 0) ctx.throw.module(moduleInfo.relativeName, 1008, flowTaskId);
+        // check confirmationAllowAppend
+        if (!options.confirmationAllowAppend) {
+          const assigneesOld = this.contextNode.vars.get('_assignees');
+          const setOld = new _Set(assigneesOld);
+          const setNew = new _Set(assignees);
+          if (!setOld.isSuperset(setNew)) ctx.throw.module(moduleInfo.relativeName, 1009, flowTaskId);
+        }
+        // save var: _assigneesConfirmation
+        this.contextNode.vars.set('_assigneesConfirmation', assignees);
         // next stage of flow node: begin
         return await this.nodeInstance.begin();
       }

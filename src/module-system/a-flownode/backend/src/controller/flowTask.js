@@ -41,6 +41,14 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async assignees() {
+      const res = await this.ctx.service.flowTask.assignees({
+        flowTaskId: this.ctx.request.body.flowTaskId,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     async assigneesConfirmation() {
       const res = await this.ctx.service.flowTask.assigneesConfirmation({
         flowTaskId: this.ctx.request.body.flowTaskId,

@@ -9,4 +9,5 @@ module.exports = {
   'Flow Node not Found: %s': '流程节点未发现: %s',
   'Flow Node definition not Found: %s': '流程节点定义未发现: %s',
   'Previous Flow Node not Found: %s': '前置流程节点未发现: %s',
+  'Role not Found: %s': '角色未发现: %s',
 };

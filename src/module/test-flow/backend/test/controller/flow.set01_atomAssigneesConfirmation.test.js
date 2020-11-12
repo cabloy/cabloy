@@ -48,12 +48,20 @@ describe.only('flow.set01_atomAssigneesConfirmation', () => {
     const flowTask = result.body.data.list[0];
     assert(!!flowTask);
 
+    // assignees
+    result = await app.httpRequest().post(mockUrl('/a/flownode/task/assignees')).send({
+      flowTaskId: flowTask.id,
+    });
+    assert(result.body.code === 0);
+    const assignees = result.body.data;
+
     // assigneesConfirmation
+    const assigneesConfirmation = assignees.users.map(item => item.id);
     result = await app.httpRequest().post(mockUrl('/a/flownode/task/assigneesConfirmation')).send({
       flowTaskId: flowTask.id,
       handle: {
         status: 1,
-        assignees: [ 2 ],
+        assignees: assigneesConfirmation,
       },
     });
     assert(result.body.code === 0);
