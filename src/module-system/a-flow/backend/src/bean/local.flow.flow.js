@@ -225,16 +225,16 @@ module.exports = ctx => {
 
     // find from history
     async _findFlowNodeHistoryPrevious({ flowNodeId, cb }) {
-      while (true) {
-        const flowNode = await this.modelFlowNodeHistory.get({ flowNodeId });
+      let flowNode = await this.modelFlowNodeHistory.get({ flowNodeId });
+      while (flowNode && flowNode.flowNodeIdPrev !== 0) {
+        flowNode = await this.modelFlowNodeHistory.get({ flowNodeId: flowNode.flowNodeIdPrev });
         if (!flowNode) return null;
         if (!cb) return flowNode;
         // nodeRef
         const nodeRef = this._findNodeRef({ nodeRefId: flowNode.flowNodeDefId });
         if (cb({ flowNode, nodeRef })) return flowNode;
-        // previous
-        flowNodeId = flowNode.flowNodeIdPrev;
       }
+      return null;
     }
 
     async _parseAssignees({ users, roles, vars }) {

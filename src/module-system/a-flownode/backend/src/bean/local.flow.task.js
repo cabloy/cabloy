@@ -302,7 +302,7 @@ module.exports = ctx => {
       const module = this.context._atom.module;
       // options
       const options = ctx.bean.flowTask._getNodeRefOptionsTask({ nodeInstance: this.nodeInstance });
-      const fields = options.schema.write;
+      const fields = options.schema && options.schema.write;
       if (!fields || fields.length === 0) return null;
       // base
       let schemaBase = await this._getSchemaBase();

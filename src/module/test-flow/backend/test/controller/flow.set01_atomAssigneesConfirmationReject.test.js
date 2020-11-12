@@ -9,7 +9,7 @@ describe.only('flow.set01_atomAssigneesConfirmationReject', () => {
   let flowId;
   let taskAssignees;
 
-  it.only('atomAssigneesConfirmation', async () => {
+  it('atomAssigneesConfirmation', async () => {
     app.mockSession({});
 
     // login as root
@@ -53,7 +53,7 @@ describe.only('flow.set01_atomAssigneesConfirmationReject', () => {
     const flowTask = result.body.data.list[0];
     assert(!!flowTask);
 
-    // assigneesConfirmation
+    // assigneesConfirmation: rejected
     result = await app.httpRequest().post(mockUrl('/a/flownode/task/assigneesConfirmation')).send({
       flowTaskId: flowTask.id,
       handle: {
@@ -62,6 +62,95 @@ describe.only('flow.set01_atomAssigneesConfirmationReject', () => {
     });
     assert(result.body.code === 0);
 
+  });
+
+  it('atomAssigneesConfirmation_startEventAtom_handle', async () => {
+    app.mockSession({});
+
+    // login as root
+    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
+      data: {
+        auth: 'root',
+        password: '123456',
+      },
+    });
+
+    // select task
+    let result = await app.httpRequest().post(mockUrl('/a/flownode/task/select')).send({
+      options: {
+        where: {
+          'a.flowId': flowId,
+          'a.flowTaskStatus': 0,
+        },
+        history: 0,
+      },
+    });
+    assert(result.body.code === 0);
+    const flowTask = result.body.data.list[0];
+    assert(!!flowTask);
+
+    // claim
+    result = await app.httpRequest().post(mockUrl('/a/flownode/task/claim')).send({
+      flowTaskId: flowTask.id,
+    });
+    assert(result.body.code === 0);
+
+    // complete
+    result = await app.httpRequest().post(mockUrl('/a/flownode/task/complete')).send({
+      flowTaskId: flowTask.id,
+      handle: {
+        status: 1,
+        remark: 'StartEventAtom-Handle Again',
+      },
+    });
+    assert(result.body.code === 0);
+  });
+
+  it('atomAssigneesConfirmation_confirmation_again', async () => {
+    app.mockSession({});
+
+    // login as root
+    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
+      data: {
+        auth: 'root',
+        password: '123456',
+      },
+    });
+
+    // select task
+    let result = await app.httpRequest().post(mockUrl('/a/flownode/task/select')).send({
+      options: {
+        where: {
+          'a.flowId': flowId,
+          'a.flowTaskStatus': 0,
+        },
+        history: 0,
+      },
+    });
+    assert(result.body.code === 0);
+    const flowTask = result.body.data.list[0];
+    assert(!!flowTask);
+
+    // assignees
+    result = await app.httpRequest().post(mockUrl('/a/flownode/task/assignees')).send({
+      flowTaskId: flowTask.id,
+    });
+    assert(result.body.code === 0);
+    // hold
+    taskAssignees = result.body.data;
+
+    // assigneesConfirmation: passed
+    const assigneesUsers = taskAssignees.users.map(item => item.id);
+    result = await app.httpRequest().post(mockUrl('/a/flownode/task/assigneesConfirmation')).send({
+      flowTaskId: flowTask.id,
+      handle: {
+        status: 1,
+        assignees: {
+          users: assigneesUsers,
+        },
+      },
+    });
+    assert(result.body.code === 0);
   });
 
   it('atomAssigneesConfirmation_claim_bidding', async () => {

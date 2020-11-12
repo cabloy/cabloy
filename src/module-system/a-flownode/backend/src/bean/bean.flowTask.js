@@ -108,7 +108,7 @@ module.exports = ctx => {
       // rejectedNode
       if (!rejectedNode) {
         // find previous task node
-        const flowNode = await this._findFlowNodeHistoryPrevious({ nodeInstance, flowNodeId });
+        const flowNode = await this._findFlowNodeHistoryPrevious({ nodeInstance });
         if (!flowNode) ctx.throw.module('a-flow', 1006, flowNodeId);
         rejectedNode = flowNode.flowNodeDefId;
       }
@@ -124,7 +124,9 @@ module.exports = ctx => {
       return await nodeInstancePrev.enter();
     }
 
-    async _findFlowNodeHistoryPrevious({ nodeInstance, flowNodeId }) {
+    async _findFlowNodeHistoryPrevious({ nodeInstance }) {
+      // flowNodeId
+      const flowNodeId = nodeInstance.contextNode._flowNodeId;
       return await nodeInstance.flowInstance._findFlowNodeHistoryPrevious({
         flowNodeId, cb: ({ /* flowNode*/ nodeRef }) => {
           return nodeRef.type === 'startEventAtom' || nodeRef.type === 'activityUserTask';
