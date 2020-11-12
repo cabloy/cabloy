@@ -1,12 +1,16 @@
-const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
+const { app, mockUrl, assert } = require('egg-born-mock')(__dirname);
 
 describe.only('flow.set01_atomAssigneesConfirmation', () => {
+
+  // atomClass info
+  const atomClassModule = 'test-flow';
+  const atomClassName = 'purchaseOrder';
+
+  let flowId;
+  let taskAssignees;
+
   it('atomAssigneesConfirmation', async () => {
     app.mockSession({});
-
-    // atomClass info
-    const atomClassModule = mockInfo().relativeName;
-    const atomClassName = 'purchaseOrder';
 
     // login as root
     await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
@@ -32,7 +36,8 @@ describe.only('flow.set01_atomAssigneesConfirmation', () => {
       },
     });
     assert(result.body.code === 0);
-    const flowId = result.body.data.flow.id;
+    // hold
+    flowId = result.body.data.flow.id;
 
     // select task
     result = await app.httpRequest().post(mockUrl('/a/flownode/task/select')).send({
@@ -53,23 +58,88 @@ describe.only('flow.set01_atomAssigneesConfirmation', () => {
       flowTaskId: flowTask.id,
     });
     assert(result.body.code === 0);
-    const assignees = result.body.data;
+    // hold
+    taskAssignees = result.body.data;
 
     // assigneesConfirmation
-    const assigneesConfirmation = assignees.users.map(item => item.id);
+    const assigneesUsers = taskAssignees.users.map(item => item.id);
     result = await app.httpRequest().post(mockUrl('/a/flownode/task/assigneesConfirmation')).send({
       flowTaskId: flowTask.id,
       handle: {
         status: 1,
-        assignees: assigneesConfirmation,
+        assignees: {
+          users: assigneesUsers,
+        },
       },
     });
     assert(result.body.code === 0);
 
-    // ////////////
+  });
+
+  it('atomAssigneesConfirmation_claim_bidding', async () => {
+    app.mockSession({});
+
+    // choose the first assignee
+    const taskAssignee = taskAssignees.users[0];
+
+    // login as root
+    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
+      data: {
+        auth: taskAssignee.userName,
+        password: '123456',
+      },
+    });
+
+    // select task
+    let result = await app.httpRequest().post(mockUrl('/a/flownode/task/select')).send({
+      options: {
+        where: {
+          'a.flowId': flowId,
+          'a.flowTaskStatus': 0,
+        },
+        history: 0,
+      },
+    });
+    assert(result.body.code === 0);
+    const flowTask = result.body.data.list[0];
+    assert(!!flowTask);
+
+    // claim
+    result = await app.httpRequest().post(mockUrl('/a/flownode/task/claim')).send({
+      flowTaskId: flowTask.id,
+    });
+    assert(result.body.code === 0);
+
+    // complete
+    result = await app.httpRequest().post(mockUrl('/a/flownode/task/complete')).send({
+      flowTaskId: flowTask.id,
+      handle: {
+        status: 1,
+        remark: 'Nice Work!',
+      },
+      formAtom: {
+        atomName: 'assigneesConfirmation-test!!',
+        description: 'modified by userTask',
+        flowDefKey: 'would not been modified',
+      },
+    });
+    assert(result.body.code === 0);
+
+  });
+
+  it('atomAssigneesConfirmation_clear', async () => {
+    app.mockSession({});
+
+    // login as root
+    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
+      data: {
+        auth: 'root',
+        password: '123456',
+      },
+    });
 
     // select
-    result = await app.httpRequest().post(mockUrl('/a/base/atom/select')).send({
+    let result = await app.httpRequest().post(mockUrl('/a/base/atom/select')).send({
       atomClass: { module: atomClassModule, atomClassName, atomClassIdParent: 0 },
       options: {
         where: {
@@ -88,4 +158,5 @@ describe.only('flow.set01_atomAssigneesConfirmation', () => {
     });
     assert(result.body.code === 0);
   });
+
 });

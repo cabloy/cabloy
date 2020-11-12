@@ -38,5 +38,8 @@ module.exports = {
     allowPassTask: true,
     allowRejectTask: true,
     allowCancelFlow: false,
+    schema: {
+      write: null,
+    },
   },
 };
