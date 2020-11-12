@@ -93,6 +93,19 @@ module.exports = ctx => {
       // history
       this.contextTask._flowTaskHistory.timeClaimed = timeClaimed;
       await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
+      // check if bidding
+      const options = ctx.bean.flowTask._getNodeRefOptionsTask({ nodeInstance: this.nodeInstance });
+      if (options.bidding) {
+        // delete other tasks
+        await ctx.model.query(`
+          delete from aFlowTask
+            where iid=? and flowNodeId=? and id<>?
+          `, [ ctx.instance.id, flowTask.flowNodeId, flowTaskId ]);
+        await ctx.model.query(`
+          update aFlowTaskHistory set deleted=1
+            where iid=? and deleted=0 and flowNodeId=? and flowTaskId<>?
+          `, [ ctx.instance.id, flowTask.flowNodeId, flowTaskId ]);
+      }
       // event: task.claimed
       await this.claimed();
     }
