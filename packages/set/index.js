@@ -62,4 +62,15 @@ for (const _toolName of _toolNames) {
   }
 }
 
+if (!Set.unique) {
+  Object.defineProperty(Set, 'unique', {
+    enumerable: false,
+    get() {
+      return function(array) {
+        return Array.from(new Set(array));
+      };
+    },
+  });
+}
+
 module.exports = Set;

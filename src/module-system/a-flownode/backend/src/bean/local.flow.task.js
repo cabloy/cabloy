@@ -1,5 +1,3 @@
-const require3 = require('require3');
-const _Set = require3('@zhennann/set');
 const VarsFn = require('../common/vars.js');
 const UtilsFn = require('../common/utils.js');
 
@@ -224,13 +222,15 @@ module.exports = ctx => {
       await this.modelFlowTaskHistory.delete({ flowTaskId });
       // passed
       if (status === 1) {
-        if (!assignees || assignees.length === 0) ctx.throw.module(moduleInfo.relativeName, 1008, flowTaskId);
+        if (!assignees || assignees.length === 0) {
+          ctx.throw.module(moduleInfo.relativeName, 1008, flowTaskId);
+        }
         // check confirmationAllowAppend
         if (!options.confirmationAllowAppend) {
           const assigneesOld = this.contextNode.vars.get('_assignees');
-          const setOld = new _Set(assigneesOld);
-          const setNew = new _Set(assignees);
-          if (!setOld.isSuperset(setNew)) ctx.throw.module(moduleInfo.relativeName, 1009, flowTaskId);
+          if (!(new Set(assigneesOld)).isSuperset(new Set(assignees))) {
+            ctx.throw.module(moduleInfo.relativeName, 1009, flowTaskId);
+          }
         }
         // save var: _assigneesConfirmation
         this.contextNode.vars.set('_assigneesConfirmation', assignees);

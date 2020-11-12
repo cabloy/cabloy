@@ -20,7 +20,6 @@
   "dependencies": {
     "@zhennann/markdown": "^3.0.0",
     "@zhennann/markdown-it-block": "^3.0.0",
-    "@zhennann/set": "^1.0.0",
     "egg-born-mparse": "^2.0.0"
   }
 }

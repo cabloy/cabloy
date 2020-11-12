@@ -273,7 +273,7 @@ module.exports = ctx => {
       }
 
       // unique
-      assignees = Array.from(new Set(assignees));
+      assignees = Set.unique(assignees);
 
       // ok
       return assignees;
