@@ -57,6 +57,10 @@ module.exports = ctx => {
       return false;
     }
 
+    async clearRemains() {
+      await ctx.bean.flowTask._clearRemains({ nodeInstance: this.nodeInstance });
+    }
+
     async _prepareAssignees({ options }) {
       // check var: _assigneesConfirmation
       let assignees = this.contextNode.vars.get('_assigneesConfirmation');

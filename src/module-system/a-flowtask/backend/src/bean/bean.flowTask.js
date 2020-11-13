@@ -141,16 +141,7 @@ module.exports = ctx => {
     }
 
     async _checkIfNodeDone_deleteTasks({ nodeInstance }) {
-      const flowNodeId = nodeInstance.contextNode._flowNodeId;
-      // flowTask delete
-      await this.modelFlowTask.delete({ flowNodeId });
-      // flowTaskHistory close
-      //    flowTaskStatus:1
-      //    handleStatus: not changed
-      await ctx.model.query(`
-        update aFlowTaskHistory set flowTaskStatus=1
-          where iid=? and deleted=0 and flowNodeId=? and flowTaskStatus=0
-        `, [ ctx.instance.id, flowNodeId ]);
+      await this._clearRemains({ nodeInstance });
     }
 
     async _list({ options: { where, orders, page, history = 0 }, user, pageForce = true, count = 0 }) {
@@ -197,6 +188,19 @@ module.exports = ctx => {
       // options
       const options = nodeInstance.getNodeRefOptions();
       return nodeRef.type === 'startEventAtom' ? options.task : options;
+    }
+
+    async _clearRemains({ nodeInstance }) {
+      const flowNodeId = nodeInstance.contextNode._flowNodeId;
+      // flowTask delete
+      await this.modelFlowTask.delete({ flowNodeId });
+      // flowTaskHistory close
+      //    flowTaskStatus:1
+      //    handleStatus: not changed
+      await ctx.model.query(`
+        update aFlowTaskHistory set flowTaskStatus=1
+          where iid=? and deleted=0 and flowNodeId=? and flowTaskStatus=0
+        `, [ ctx.instance.id, flowNodeId ]);
     }
 
   }
