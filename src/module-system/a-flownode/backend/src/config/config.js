@@ -7,10 +7,6 @@ module.exports = appInfo => {
     startEventTimer: {
       bean: 'startEventTimer',
     },
-    flowCheck: {
-      bean: 'flowCheck',
-      transaction: true,
-    },
   };
 
   return config;

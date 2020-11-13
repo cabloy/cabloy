@@ -50,7 +50,7 @@ describe('flow.set01_atomUserTask', () => {
     assert(!archive);
 
     // select task from history
-    result = await app.httpRequest().post(mockUrl('/a/flownode/task/select')).send({
+    result = await app.httpRequest().post(mockUrl('/a/flowtask/task/select')).send({
       options: {
         where: {
           'a.flowId': flowId,
@@ -64,7 +64,7 @@ describe('flow.set01_atomUserTask', () => {
     assert(!!flowTask);
 
     // select task
-    result = await app.httpRequest().post(mockUrl('/a/flownode/task/select')).send({
+    result = await app.httpRequest().post(mockUrl('/a/flowtask/task/select')).send({
       options: {
         where: {
           'a.flowId': flowId,
@@ -78,13 +78,13 @@ describe('flow.set01_atomUserTask', () => {
     assert(!!flowTask);
 
     // claim
-    result = await app.httpRequest().post(mockUrl('/a/flownode/task/claim')).send({
+    result = await app.httpRequest().post(mockUrl('/a/flowtask/task/claim')).send({
       flowTaskId: flowTask.id,
     });
     assert(result.body.code === 0);
 
     // complete
-    result = await app.httpRequest().post(mockUrl('/a/flownode/task/complete')).send({
+    result = await app.httpRequest().post(mockUrl('/a/flowtask/task/complete')).send({
       flowTaskId: flowTask.id,
       handle: {
         status: 1,

@@ -40,7 +40,7 @@ describe('flow.set01_atomAssigneesConfirmation', () => {
     flowId = result.body.data.flow.id;
 
     // select task
-    result = await app.httpRequest().post(mockUrl('/a/flownode/task/select')).send({
+    result = await app.httpRequest().post(mockUrl('/a/flowtask/task/select')).send({
       options: {
         where: {
           'a.flowId': flowId,
@@ -54,7 +54,7 @@ describe('flow.set01_atomAssigneesConfirmation', () => {
     assert(!!flowTask);
 
     // assignees
-    result = await app.httpRequest().post(mockUrl('/a/flownode/task/assignees')).send({
+    result = await app.httpRequest().post(mockUrl('/a/flowtask/task/assignees')).send({
       flowTaskId: flowTask.id,
     });
     assert(result.body.code === 0);
@@ -63,7 +63,7 @@ describe('flow.set01_atomAssigneesConfirmation', () => {
 
     // assigneesConfirmation
     const assigneesUsers = taskAssignees.users.map(item => item.id);
-    result = await app.httpRequest().post(mockUrl('/a/flownode/task/assigneesConfirmation')).send({
+    result = await app.httpRequest().post(mockUrl('/a/flowtask/task/assigneesConfirmation')).send({
       flowTaskId: flowTask.id,
       handle: {
         status: 1,
@@ -91,7 +91,7 @@ describe('flow.set01_atomAssigneesConfirmation', () => {
     });
 
     // select task
-    let result = await app.httpRequest().post(mockUrl('/a/flownode/task/select')).send({
+    let result = await app.httpRequest().post(mockUrl('/a/flowtask/task/select')).send({
       options: {
         where: {
           'a.flowId': flowId,
@@ -105,13 +105,13 @@ describe('flow.set01_atomAssigneesConfirmation', () => {
     assert(!!flowTask);
 
     // claim
-    result = await app.httpRequest().post(mockUrl('/a/flownode/task/claim')).send({
+    result = await app.httpRequest().post(mockUrl('/a/flowtask/task/claim')).send({
       flowTaskId: flowTask.id,
     });
     assert(result.body.code === 0);
 
     // complete
-    result = await app.httpRequest().post(mockUrl('/a/flownode/task/complete')).send({
+    result = await app.httpRequest().post(mockUrl('/a/flowtask/task/complete')).send({
       flowTaskId: flowTask.id,
       handle: {
         status: 1,

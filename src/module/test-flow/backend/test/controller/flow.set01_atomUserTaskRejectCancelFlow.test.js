@@ -51,7 +51,7 @@ describe('flow.set01_atomUserTaskRejectCancelFlow', () => {
     });
 
     // select task
-    let result = await app.httpRequest().post(mockUrl('/a/flownode/task/select')).send({
+    let result = await app.httpRequest().post(mockUrl('/a/flowtask/task/select')).send({
       options: {
         where: {
           'a.flowId': flowId,
@@ -65,13 +65,13 @@ describe('flow.set01_atomUserTaskRejectCancelFlow', () => {
     assert(!!flowTask);
 
     // claim
-    result = await app.httpRequest().post(mockUrl('/a/flownode/task/claim')).send({
+    result = await app.httpRequest().post(mockUrl('/a/flowtask/task/claim')).send({
       flowTaskId: flowTask.id,
     });
     assert(result.body.code === 0);
 
     // complete: rejected
-    result = await app.httpRequest().post(mockUrl('/a/flownode/task/complete')).send({
+    result = await app.httpRequest().post(mockUrl('/a/flowtask/task/complete')).send({
       flowTaskId: flowTask.id,
       handle: {
         status: 2,
@@ -94,7 +94,7 @@ describe('flow.set01_atomUserTaskRejectCancelFlow', () => {
     });
 
     // select task
-    let result = await app.httpRequest().post(mockUrl('/a/flownode/task/select')).send({
+    let result = await app.httpRequest().post(mockUrl('/a/flowtask/task/select')).send({
       options: {
         where: {
           'a.flowId': flowId,
@@ -108,7 +108,7 @@ describe('flow.set01_atomUserTaskRejectCancelFlow', () => {
     assert(!!flowTask);
 
     // cancelFlow
-    result = await app.httpRequest().post(mockUrl('/a/flownode/task/cancelFlow')).send({
+    result = await app.httpRequest().post(mockUrl('/a/flowtask/task/cancelFlow')).send({
       flowTaskId: flowTask.id,
       handle: {
         // status:3,

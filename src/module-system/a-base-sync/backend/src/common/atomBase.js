@@ -80,7 +80,7 @@ module.exports = app => {
       if (_atom.atomStage > 0) this.ctx.throw(403);
       // check atom flow
       if (!ignoreFlow) {
-        const _nodeBaseBean = this.ctx.bean._newBean('a-flownode.flow.node.startEventAtom');
+        const _nodeBaseBean = this.ctx.bean._newBean('a-flowtask.flow.node.startEventAtom');
         const flowInstance = await _nodeBaseBean._match({ atom: _atom, userId: _atom.userIdUpdated });
         if (flowInstance) {
           // set atom flow

@@ -14,12 +14,6 @@ const nodes = {
     bean: 'startEventTimer',
     icon: '/api/static/a/flownode/bpmn/events/start-event-timer.svg',
   },
-  startEventAtom: {
-    title: 'StartEventAtom',
-    group: 'startEvent',
-    bean: 'startEventAtom',
-    icon: '/api/static/a/flownode/bpmn/events/start-event-atom.svg',
-  },
   endEventNone: {
     title: 'EndEventNone',
     group: 'endEvent',
@@ -38,12 +32,6 @@ const nodes = {
     group: 'activity',
     bean: 'activityService',
     icon: '/api/static/a/flownode/bpmn/activities/activity-service.svg',
-  },
-  activityUserTask: {
-    title: 'ActivityUserTask',
-    group: 'activity',
-    bean: 'activityUserTask',
-    icon: '/api/static/a/flownode/bpmn/activities/activity-user-task.svg',
   },
 };
 
