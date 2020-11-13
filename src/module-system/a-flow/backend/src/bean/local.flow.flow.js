@@ -118,35 +118,50 @@ module.exports = ctx => {
     }
 
     async _endFlow(options) {
+      const flowId = this.context._flowId;
       const flowStatus = this.constant.flow.status.end;
       const flowRemark = (options && options.flowRemark) || null;
       const timeEnd = new Date();
       // check if end
       if (this.context._flow.flowStatus === flowStatus) {
-        // do nothing
-        return;
+        ctx.throw.module(moduleInfo.relativeName, 1008, flowId);
       }
-      // flow: update fields for onFlowEnd
-      this.context._flow.flowStatus = flowStatus;
-      this.context._flow.flowRemark = flowRemark;
-      this.context._flow.timeEnd = timeEnd;
-      await this.modelFlow.delete({ id: this.context._flowId });
-      // flow history
-      this.context._flowHistory.flowStatus = flowStatus;
-      this.context._flowHistory.flowRemark = flowRemark;
-      this.context._flowHistory.timeEnd = timeEnd;
-      await this.modelFlowHistory.update(this.context._flowHistory);
-      // raise event: onFlowEnd
-      await this._flowListener.onFlowEnd(options);
-      // log
-      console.log(`--------flow end: ${this.context._flowId}`);
+      ctx.tail(async () => {
+        // flow: update fields for onFlowEnd
+        this.context._flow.flowStatus = flowStatus;
+        this.context._flow.flowRemark = flowRemark;
+        this.context._flow.timeEnd = timeEnd;
+        await this.modelFlow.delete({ id: flowId });
+        // flow history
+        this.context._flowHistory.flowStatus = flowStatus;
+        this.context._flowHistory.flowRemark = flowRemark;
+        this.context._flowHistory.timeEnd = timeEnd;
+        await this.modelFlowHistory.update(this.context._flowHistory);
+        // raise event: onFlowEnd
+        await this._flowListener.onFlowEnd(options);
+        // clear nodes
+        await this._clearNodeRemains();
+        // log
+        console.log(`--------flow end: ${flowId}`);
+      });
+    }
+
+    async _clearNodeRemains() {
+      const flowId = this.context._flowId;
+      const flowNodes = await this.modelFlowNode.select({
+        where: { flowId },
+      });
+      for (const flowNode of flowNodes) {
+        const flowNodeInstance = await this._loadNodeInstance({ flowNode });
+        await flowNodeInstance._clearRemains();
+      }
     }
 
     async _createFlow({ flowAtomId, flowVars, flowUserId }) {
       // flow
       const data = {
         flowDefId: this.context._flowDef.atomId,
-        flowDefKey: this.context._flowDefKey,
+        flowDefKey: this.context._flowDef.flowDefKey,
         version: this.context._flowDef.version,
         flowStatus: this.constant.flow.status.flowing,
         flowAtomId,

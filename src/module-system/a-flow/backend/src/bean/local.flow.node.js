@@ -109,12 +109,24 @@ module.exports = ctx => {
       const timeDone = new Date();
       // clear
       await this._setCurrent(true);
-      // clear node
+      // delete node
       await this.modelFlowNode.delete({ id: this.contextNode._flowNodeId });
       // set nodeHistoryStatus
       this.contextNode._flowNodeHistory.flowNodeStatus = 1;
       this.contextNode._flowNodeHistory.flowNodeRemark = flowNodeRemark;
       this.contextNode._flowNodeHistory.timeDone = timeDone;
+      await this.modelFlowNodeHistory.update(this.contextNode._flowNodeHistory);
+    }
+
+    async _clearRemains() {
+      // clear taskRemains
+      if (this.nodeBaseBean.clearRemains) {
+        await this.nodeBaseBean.clearRemains();
+      }
+      // delete node
+      await this.modelFlowNode.delete({ id: this.contextNode._flowNodeId });
+      // set nodeHistoryStatus
+      this.contextNode._flowNodeHistory.flowNodeStatus = 1;
       await this.modelFlowNodeHistory.update(this.contextNode._flowNodeHistory);
     }
 
