@@ -1,6 +1,6 @@
 const { app, mockUrl, assert } = require('egg-born-mock')(__dirname);
 
-describe.only('flow.set01_atomUserTaskRejectCancelFlow', () => {
+describe('flow.set01_atomUserTaskRejectCancelFlow', () => {
 
   // atomClass info
   const atomClassModule = 'test-flow';

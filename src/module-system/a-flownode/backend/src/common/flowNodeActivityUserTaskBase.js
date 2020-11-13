@@ -53,41 +53,8 @@ module.exports = ctx => {
       // super
       await super.onNodeDoing();
 
-      // check if the first node
-      if (this.contextNode._flowNode.flowNodeIdPrev !== 0) {
-        // break
-        return false;
-      }
-
-      // auto complete
-      await this._autoCompleteTask();
-
       // break
       return false;
-    }
-
-    async _autoCompleteTask() {
-      const flowId = this.context._flowId;
-      // select
-      const tasks = await ctx.bean.flowTask.select({
-        options: {
-          where: {
-            'a.flowId': flowId,
-            'a.flowTaskStatus': 0,
-          },
-          history: 0,
-        } });
-      const task = tasks[0];
-      const flowTaskId = task.id;
-      const user = { id: task.userIdAssignee };
-      // claim
-      await ctx.bean.flowTask.claim({ flowTaskId, user });
-      // complete
-      await ctx.bean.flowTask.complete({
-        flowTaskId,
-        handle: { status: 1 },
-        user,
-      });
     }
 
     async _prepareAssignees({ options }) {

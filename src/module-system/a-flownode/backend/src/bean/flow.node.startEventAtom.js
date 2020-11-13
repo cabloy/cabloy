@@ -16,6 +16,41 @@ module.exports = ctx => {
       }
     }
 
+    async onNodeDoing() {
+      // super
+      await super.onNodeDoing();
+      // auto handle
+      await this._autoHandle();
+      // break
+      return false;
+    }
+
+    async _autoHandle() {
+      const flowId = this.context._flowId;
+      // select
+      const tasks = await ctx.bean.flowTask.select({
+        options: {
+          where: {
+            'a.flowId': flowId,
+            'a.flowTaskStatus': 0,
+          },
+          history: 0,
+        } });
+      const task = tasks[0];
+      const flowTaskId = task.id;
+      const user = { id: task.userIdAssignee };
+      // claim automatically always
+      await ctx.bean.flowTask.claim({ flowTaskId, user });
+      // complete automatically only on first-in
+      if (this.contextNode._flowNode.flowNodeIdPrev === 0) {
+        await ctx.bean.flowTask.complete({
+          flowTaskId,
+          handle: { status: 1 },
+          user,
+        });
+      }
+    }
+
     async _addCondition({ flowDefId, node }) {
       const atom = node.options && node.options.atom;
       if (!atom) throw new Error(`atom not set for startEventAtom: ${flowDefId}.${node.id}`);
