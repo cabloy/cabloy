@@ -127,6 +127,7 @@ module.exports = ctx => {
         ctx.throw.module(moduleInfo.relativeName, 1008, flowId);
       }
       ctx.tail(async () => {
+        // need not in transaction
         // flow: update fields for onFlowEnd
         this.context._flow.flowStatus = flowStatus;
         this.context._flow.flowRemark = flowRemark;
