@@ -29,6 +29,7 @@
     "egg-born-module-a-authsms": "^4.0.0",
     "egg-born-module-a-base-sync": "^4.0.0",
     "egg-born-module-a-baseadmin": "^4.0.0",
+    "egg-born-module-a-basefront": "^4.0.0",
     "egg-born-module-a-baselayout": "^4.0.0",
     "egg-born-module-a-cache": "^4.0.0",
     "egg-born-module-a-captcha": "^4.0.0",

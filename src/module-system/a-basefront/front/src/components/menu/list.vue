@@ -38,8 +38,9 @@
   </div>
 </template>
 <script>
-import ebModules from '../../common/modules.js';
-import ebMenus from '../../common/menus.js';
+import Vue from 'vue';
+const ebModules = Vue.prototype.$meta.module.get('a-base').options.mixins.ebModules;
+const ebMenus = Vue.prototype.$meta.module.get('a-base').options.mixins.ebMenus;
 export default {
   meta: {
     global: false,

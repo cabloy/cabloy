@@ -1,5 +1,6 @@
-import ebAtomClasses from '../../common/atomClasses.js';
+import Vue from 'vue';
 import listLayoutManager from '../../common/listLayoutManager/index.jsx';
+const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
 export default {
   mixins: [ ebAtomClasses, listLayoutManager ],
   data() {

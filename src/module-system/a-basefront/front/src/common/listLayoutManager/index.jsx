@@ -1,6 +1,4 @@
-import ebAtomClasses from '../atomClasses.js';
-import ebAtomActions from '../atomActions.js';
-import ebMenus from '../menus.js';
+import Vue from 'vue';
 import Base from './base.jsx';
 import Page from './page.jsx';
 import Layout from './layout.jsx';
@@ -12,6 +10,9 @@ import Order from './order.jsx';
 import Filter from './filter.jsx';
 import Subnavbar from './subnavbar.jsx';
 import Bottombar from './bottombar.jsx';
+const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
+const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
+const ebMenus = Vue.prototype.$meta.module.get('a-base').options.mixins.ebMenus;
 
 // container: {
 //   atomClass,

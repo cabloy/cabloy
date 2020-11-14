@@ -1,7 +1,7 @@
 {
-  "name": "egg-born-module-a-baselayout",
+  "name": "egg-born-module-a-basefront",
   "version": "4.0.0",
-  "title": "Base Layout",
+  "title": "Base Front",
   "eggBornModule": {
     "dependencies": {}
   },
