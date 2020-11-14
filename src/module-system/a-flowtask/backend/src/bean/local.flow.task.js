@@ -149,16 +149,16 @@ module.exports = ctx => {
           },
         };
         // queue
+        const flowNodeId = flowTask.flowNodeId;
         await ctx.app.meta.queue.pushAsync({
           locale: ctx.locale,
           subdomain: ctx.subdomain,
           module: moduleInfo.relativeName,
-          queueName: 'flowCheck',
-          queueNameSub: flowTask.flowId,
+          queueName: 'nodeDoneCheck',
+          queueNameSub: flowNodeId,
           ctxParent,
           data: {
-            queueAction: 'activityUserTask.checkIfNodeDone',
-            flowNodeId: flowTask.flowNodeId,
+            flowNodeId,
           },
         });
       });

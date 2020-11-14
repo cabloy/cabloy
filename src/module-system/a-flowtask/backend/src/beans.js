@@ -1,6 +1,6 @@
 const versionManager = require('./bean/version.manager.js');
 const localProcedure = require('./bean/local.procedure.js');
-const queueFlowCheck = require('./bean/queue.flowCheck.js');
+const queueNodeDoneCheck = require('./bean/queue.nodeDoneCheck.js');
 const flowNodeStartEventAtom = require('./bean/flow.node.startEventAtom.js');
 const flowNodeActivityUserTask = require('./bean/flow.node.activityUserTask.js');
 const localContextTask = require('./bean/local.context.task.js');
@@ -20,9 +20,9 @@ module.exports = app => {
       bean: localProcedure,
     },
     // queue
-    'queue.flowCheck': {
+    'queue.nodeDoneCheck': {
       mode: 'app',
-      bean: queueFlowCheck,
+      bean: queueNodeDoneCheck,
     },
     // flow
     'flow.node.startEventAtom': {

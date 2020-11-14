@@ -4,8 +4,8 @@ module.exports = appInfo => {
 
   // queues
   config.queues = {
-    flowCheck: {
-      bean: 'flowCheck',
+    nodeDoneCheck: {
+      bean: 'nodeDoneCheck',
       transaction: true,
     },
   };

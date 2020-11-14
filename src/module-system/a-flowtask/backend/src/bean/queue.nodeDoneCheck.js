@@ -4,11 +4,8 @@ module.exports = app => {
 
     async execute(context) {
       const data = context.data;
-      const queueAction = data.queueAction;
       const user = this.ctx.state.user.op;
-      if (queueAction === 'activityUserTask.checkIfNodeDone') {
-        await this.ctx.bean.flowTask._checkIfNodeDone({ flowNodeId: data.flowNodeId, user });
-      }
+      await this.ctx.bean.flowTask._checkIfNodeDone({ flowNodeId: data.flowNodeId, user });
     }
 
   }
