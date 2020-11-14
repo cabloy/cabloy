@@ -46,4 +46,5 @@ module.exports = {
   Creator: '创建人',
   Revision: '修订',
   Version: '版本',
+  Key2: '关键字',
 };

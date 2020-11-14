@@ -18,7 +18,7 @@ module.exports = app => {
       flowDefKey: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Key',
+        ebTitle: 'Key2',
         notEmpty: true,
       },
       flowDefRevision: {
@@ -34,7 +34,7 @@ module.exports = app => {
       },
       dynamic: {
         type: 'boolean',
-        ebType: 'Toggle',
+        ebType: 'toggle',
         ebTitle: 'Dynamic',
       },
       content: {
