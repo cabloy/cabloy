@@ -62,6 +62,7 @@ export default {
   Revision: '修订',
   Version: '版本',
   Key2: '关键字',
+  Content: '内容',
   'Advanced Filter': '高级筛选',
   'Atom Flag': '原子标记',
   'Atom Name': '原子名称',
