@@ -51,7 +51,7 @@ module.exports = ctx => {
       await taskInstance._cancelFlow({ handle });
     }
 
-    async _checkIfNodeDone({ flowNodeId /* user*/ }) {
+    async _nodeDoneCheckLock({ flowNodeId /* user*/ }) {
       // load flow node
       const nodeInstance = await ctx.bean.flow._loadFlowNodeInstance({ flowNodeId });
       // options
@@ -62,7 +62,13 @@ module.exports = ctx => {
       const taskCountTotal = await this.modelFlowTask.count({
         flowNodeId,
       });
-      if (taskCountTotal === 0) ctx.throw.module('a-flow', 1004, flowNodeId);
+      if (taskCountTotal === 0) {
+        // means node has been checked and done
+        // XX //   should throw error to deny the db changed for tasks has been deleted.
+        // XX ctx.throw.module('a-flow', 1004, flowNodeId);
+        // neednot throw error for this method is called in ctx.tail
+        return;
+      }
       const taskCountPassed = await this.modelFlowTask.count({
         flowNodeId, flowTaskStatus: 1, handleStatus: 1,
       });
@@ -73,37 +79,37 @@ module.exports = ctx => {
       if (typeof completionCondition.passed === 'number' || completionCondition.passed.indexOf('%') === -1) {
         // absolute value
         if (taskCountPassed >= parseInt(completionCondition.passed)) {
-          return await this._checkIfNodeDone_passed({ nodeInstance });
+          return await this._nodeDoneCheckLock_passed({ nodeInstance });
         }
       } else {
         // percent value
         if (taskCountPassed / taskCountTotal >= parseInt(completionCondition.passed) / 100) {
-          return await this._checkIfNodeDone_passed({ nodeInstance });
+          return await this._nodeDoneCheckLock_passed({ nodeInstance });
         }
       }
       // check rejected
       if (typeof completionCondition.rejected === 'number' || completionCondition.rejected.indexOf('%') === -1) {
         // absolute value
         if (taskCountRejected >= parseInt(completionCondition.rejected)) {
-          return await this._checkIfNodeDone_rejected({ nodeInstance, options });
+          return await this._nodeDoneCheckLock_rejected({ nodeInstance, options });
         }
       } else {
         // percent value
         if (taskCountRejected / taskCountTotal >= parseInt(completionCondition.rejected) / 100) {
-          return await this._checkIfNodeDone_rejected({ nodeInstance, options });
+          return await this._nodeDoneCheckLock_rejected({ nodeInstance, options });
         }
       }
       // here means not done
     }
 
-    async _checkIfNodeDone_passed({ nodeInstance }) {
+    async _nodeDoneCheckLock_passed({ nodeInstance }) {
       // delete tasks
-      await this._checkIfNodeDone_deleteTasks({ nodeInstance });
+      await this._nodeDoneCheckLock_deleteTasks({ nodeInstance });
       // next stage of flow node: end
       return await nodeInstance.end();
     }
 
-    async _checkIfNodeDone_rejected({ nodeInstance, options }) {
+    async _nodeDoneCheckLock_rejected({ nodeInstance, options }) {
       // rejectedNode
       return await this._gotoFlowNodePrevious({ nodeInstance, rejectedNode: options.rejectedNode });
     }
@@ -124,7 +130,7 @@ module.exports = ctx => {
         flowNodeIdPrev: flowNodeId,
       });
       // delete tasks
-      await this._checkIfNodeDone_deleteTasks({ nodeInstance });
+      await this._nodeDoneCheckLock_deleteTasks({ nodeInstance });
       // clear & enter
       await nodeInstance._clear({ flowNodeRemark: 'Rejected' });
       return await nodeInstancePrev.enter();
@@ -140,7 +146,7 @@ module.exports = ctx => {
       });
     }
 
-    async _checkIfNodeDone_deleteTasks({ nodeInstance }) {
+    async _nodeDoneCheckLock_deleteTasks({ nodeInstance }) {
       await this._clearRemains({ nodeInstance });
     }
 

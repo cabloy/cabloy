@@ -140,27 +140,25 @@ module.exports = ctx => {
       await this.completed();
       // check if node done
       ctx.tail(async () => {
-        // ctxParent
-        const ctxParent = {
-          state: {
-            user: {
-              op: user,
-            },
-          },
-        };
-        // queue
-        const flowNodeId = flowTask.flowNodeId;
-        await ctx.app.meta.queue.pushAsync({
-          locale: ctx.locale,
-          subdomain: ctx.subdomain,
-          module: moduleInfo.relativeName,
-          queueName: 'nodeDoneCheck',
-          queueNameSub: flowNodeId,
-          ctxParent,
-          data: {
-            flowNodeId,
-          },
-        });
+        await this._complete_tail({ flowTask, user });
+      });
+    }
+
+    async _complete_tail({ flowTask, user }) {
+      const flowNodeId = flowTask.flowNodeId;
+      await ctx.app.meta.util.lock({
+        subdomain: ctx.subdomain,
+        resource: `${moduleInfo.relativeName}.flowTask.nodeDoneCheck.${flowNodeId}`,
+        fn: async () => {
+          return await ctx.app.meta.util.executeBean({
+            subdomain: ctx.subdomain,
+            beanModule: moduleInfo.relativeName,
+            beanFullName: 'flowTask',
+            context: { flowNodeId, user },
+            fn: '_nodeDoneCheckLock',
+            transaction: true,
+          });
+        },
       });
     }
 
