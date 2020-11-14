@@ -72,7 +72,7 @@ module.exports = ctx => {
 
     // alert
     getAlertUrl({ data }) {
-      return this.getAbsoluteUrl(`/#!/a/base/base/alert?data=${encodeURIComponent(JSON.stringify(data))}`);
+      return this.getAbsoluteUrl(`/#!/a/basefront/base/alert?data=${encodeURIComponent(JSON.stringify(data))}`);
     }
 
     modules() {

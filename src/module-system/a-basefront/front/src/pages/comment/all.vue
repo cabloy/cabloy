@@ -73,7 +73,7 @@ export default {
       module: 'a-base',
       name: 'deleteComment',
     }];
-    this.$api.post('function/check', {
+    this.$api.post('/a/base/function/check', {
       functions,
     }).then(data => {
       this.rightDeleteComment = data[0].passed;
@@ -114,7 +114,7 @@ export default {
         options.where = this.where;
       }
       // fetch
-      return this.$api.post('comment/all', {
+      return this.$api.post('/a/base/comment/all', {
         atomClass: this.atomClass,
         options,
       }).then(data => {
@@ -128,7 +128,7 @@ export default {
     onPerformDelete(event, item) {
       // delete
       return this.$view.dialog.confirm().then(() => {
-        return this.$api.post('comment/delete', {
+        return this.$api.post('/a/base/comment/delete', {
           key: { atomId: item.atomId },
           data: { commentId: item.h_id },
         }).then(data => {
@@ -147,7 +147,7 @@ export default {
         return;
       }
       //
-      return this.$api.post('comment/heart', {
+      return this.$api.post('/a/base/comment/heart', {
         key: { atomId: item.atomId },
         data: { commentId: item.h_id, heart: item.h_heart ? 0 : 1 },
       }).then(data => {
@@ -173,7 +173,7 @@ export default {
       }
       // others
       if (index !== -1) {
-        this.$api.post('comment/item', {
+        this.$api.post('/a/base/comment/item', {
           key: { atomId },
           data: { commentId },
         }).then(data => {

@@ -165,7 +165,7 @@ export default {
         };
       }
       // fetch
-      return this.$api.post('function/list', {
+      return this.$api.post('/a/base/function/list', {
         options,
       }).then(data => {
         this.items = this.items.concat(data.list);
@@ -174,7 +174,7 @@ export default {
     },
     onStarSwitch(event, item) {
       const star = item.star ? 0 : 1;
-      return this.$api.post('function/star', {
+      return this.$api.post('/a/base/function/star', {
         id: item.id,
         star,
       }).then(() => {
@@ -183,7 +183,7 @@ export default {
       });
     },
     onStarOff(event, item) {
-      return this.$api.post('function/star', {
+      return this.$api.post('/a/base/function/star', {
         id: item.id,
         star: 0,
       }).then(() => {

@@ -17,7 +17,7 @@ export default {
     },
     async layout_prepareConfig() {
       // configAtomBase
-      this.base.configAtomBase = this.$config.atom;
+      this.base.configAtomBase = this.$meta.config.modules['a-basefront'].atom;
       // configAtom
       if (this.container.atomClass) {
         // load module

@@ -18,7 +18,7 @@ export default {
     },
     async layout_prepareConfig() {
       // configAtomBase
-      this.base.configAtomBase = this.$config.atom;
+      this.base.configAtomBase = this.$meta.config.modules['a-basefront'].atom;
       // configAtom
       this.base.configAtom = this.$meta.util.getProperty(this.$meta.config.modules[this.base.atomClass.module], `atoms.${this.base.atomClass.atomClassName}`);
       // config

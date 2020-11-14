@@ -97,7 +97,7 @@ export default {
   methods: {
     loadComment(commentId) {
       if (!commentId) return;
-      this.$api.post('comment/item', {
+      this.$api.post('/a/base/comment/item', {
         key: { atomId: this.atomId },
         data: { commentId },
       }).then(data => {
@@ -107,7 +107,7 @@ export default {
     },
     loadReply(replyId) {
       if (!replyId) return;
-      this.$api.post('comment/item', {
+      this.$api.post('/a/base/comment/item', {
         key: { atomId: this.atomId },
         data: { commentId: replyId },
       }).then(data => {

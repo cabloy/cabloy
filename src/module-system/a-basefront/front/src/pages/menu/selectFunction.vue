@@ -33,7 +33,7 @@ export default {
       return this.contextParams.optional;
     },
     functions() {
-      const functionsAll = this.$local.state.functions;
+      const functionsAll = this.$store.getState('a/base/functions');
       if (!functionsAll) return [];
 
       const functions = [];
@@ -53,7 +53,7 @@ export default {
     },
   },
   created() {
-    this.$local.dispatch('getFunctions');
+    this.$store.dispatch('a/base/getFunctions');
   },
   methods: {
     onItemClick(item) {

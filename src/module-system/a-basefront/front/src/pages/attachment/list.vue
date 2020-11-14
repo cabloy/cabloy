@@ -80,7 +80,7 @@ export default {
       this.$refs.loadMore.reload();
     },
     checkActionWrite() {
-      this.$api.post('atom/checkRightAction', {
+      this.$api.post('/a/base/atom/checkRightAction', {
         key: { atomId: this.atomId },
         action: 3,
         stage: 'draft',

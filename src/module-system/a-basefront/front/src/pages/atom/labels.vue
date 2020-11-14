@@ -66,7 +66,7 @@ export default {
   },
   computed: {
     labelsAll() {
-      return this.$local.getters('userLabels');
+      return this.$store.getters['a/base/userLabels'];
     },
   },
   methods: {
@@ -96,10 +96,10 @@ export default {
       } else {
         labels[this.labelId] = { text: this.labelText, color: this.labelColor };
       }
-      return this.$api.post('user/setLabels', {
+      return this.$api.post('/a/base/user/setLabels', {
         labels,
       }).then(() => {
-        this.$local.commit('setLabels', labels);
+        this.$store.commit('a/base/setLabels', labels);
         this.sheetOpened = false;
       });
     },
@@ -126,7 +126,7 @@ export default {
       // sort
       this.labels.sort((a, b) => a - b);
       // post
-      this.$api.post('atom/labels', {
+      this.$api.post('/a/base/atom/labels', {
         key: { atomId: this.atomId },
         atom: { labels: this.labels },
       }).then(() => {
@@ -135,8 +135,8 @@ export default {
     },
   },
   created() {
-    this.$local.dispatch('getLabels');
-    this.$api.post('atom/read', {
+    this.$store.dispatch('a/base/getLabels');
+    this.$api.post('/a/base/atom/read', {
       key: { atomId: this.atomId },
     }).then(data => {
       this.item = data;

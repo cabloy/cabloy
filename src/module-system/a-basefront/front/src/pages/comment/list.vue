@@ -75,7 +75,7 @@ export default {
         page: { index },
       };
       // fetch
-      return this.$api.post('comment/list', {
+      return this.$api.post('/a/base/comment/list', {
         key: { atomId: this.atomId },
         options,
       }).then(data => {
@@ -89,7 +89,7 @@ export default {
     onPerformDelete(event, item) {
       // delete
       return this.$view.dialog.confirm().then(() => {
-        return this.$api.post('comment/delete', {
+        return this.$api.post('/a/base/comment/delete', {
           key: { atomId: this.atomId },
           data: { commentId: item.id },
         }).then(data => {
@@ -108,7 +108,7 @@ export default {
         return;
       }
       //
-      return this.$api.post('comment/heart', {
+      return this.$api.post('/a/base/comment/heart', {
         key: { atomId: this.atomId },
         data: { commentId: item.id, heart: item.heart ? 0 : 1 },
       }).then(data => {
@@ -136,7 +136,7 @@ export default {
       }
       // others
       if (index !== -1) {
-        this.$api.post('comment/item', {
+        this.$api.post('/a/base/comment/item', {
           key: { atomId: this.atomId },
           data: { commentId },
         }).then(data => {
