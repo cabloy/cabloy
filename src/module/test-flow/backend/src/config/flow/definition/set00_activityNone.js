@@ -3,7 +3,7 @@ module.exports = app => {
     info: {
       title: 'Test_Set00_Activity_None',
       description: 'Test_Set00_Activity_None',
-      version: '2020-09-25',
+      revision: 1,
     },
     process: {
       nodes: [

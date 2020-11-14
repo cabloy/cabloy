@@ -4,7 +4,7 @@ module.exports = app => {
     info: {
       title: 'Test_Set00_StartEvent_Timer',
       description: 'Test_Set00_StartEvent_Timer',
-      version: '2020-09-26',
+      revision: 1,
     },
     process: {
       nodes: [

@@ -21,10 +21,10 @@ module.exports = app => {
         ebTitle: 'Key',
         notEmpty: true,
       },
-      version: {
+      flowDefRevision: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Version',
+        ebTitle: 'Revision',
         notEmpty: true,
       },
       description: {

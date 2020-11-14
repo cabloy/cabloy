@@ -163,7 +163,7 @@ module.exports = ctx => {
       const data = {
         flowDefId: this.context._flowDef.atomId,
         flowDefKey: this.context._flowDef.flowDefKey,
-        version: this.context._flowDef.version,
+        flowDefRevision: this.context._flowDef.flowDefRevision,
         flowStatus: this.constant.flow.status.flowing,
         flowAtomId,
         flowVars: JSON.stringify(flowVars),

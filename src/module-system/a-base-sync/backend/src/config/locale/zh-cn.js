@@ -44,4 +44,6 @@ module.exports = {
   Search: '搜索',
   CloneCopyText: '副本',
   Creator: '创建人',
+  Revision: '修订',
+  Version: '版本',
 };

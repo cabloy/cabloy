@@ -32,12 +32,12 @@ module.exports = ctx => {
       return await this._getById({ flowDefId });
     }
 
-    async getByKeyAndVersion({ flowDefKey, version }) {
+    async getByKeyAndRevision({ flowDefKey, flowDefRevision }) {
       // get from archive
-      let flowDef = await this._getByKey({ flowDefKey, version, atomStage: 'archive' });
+      let flowDef = await this._getByKey({ flowDefKey, flowDefRevision, atomStage: 'archive' });
       if (flowDef) return flowDef;
       // get from history
-      flowDef = await this._getByKey({ flowDefKey, version, atomStage: 'history' });
+      flowDef = await this._getByKey({ flowDefKey, flowDefRevision, atomStage: 'history' });
       if (flowDef) return flowDef;
       // not found
       return null;
@@ -81,7 +81,7 @@ module.exports = ctx => {
       return await ctx.bean.atom.read({ key: { atomId: flowDefId } });
     }
 
-    async _getByKey({ flowDefKey, version, atomStage }) {
+    async _getByKey({ flowDefKey, flowDefRevision, atomStage }) {
       // fullKey
       const { fullKey } = this._combineFullKey({ flowDefKey });
       // from db
@@ -92,8 +92,8 @@ module.exports = ctx => {
           'f.flowDefKey': fullKey,
         },
       };
-      if (version) {
-        options.where.version = version;
+      if (flowDefRevision) {
+        options.where.flowDefRevision = flowDefRevision;
       }
       const list = await ctx.bean.atom.select({ atomClass: this.atomClass, options });
       return list[0];
@@ -104,10 +104,10 @@ module.exports = ctx => {
       for (const flowDefKey in flowDefBases) {
         const flowDef = await this._getByKey({ flowDefKey, atomStage: 'archive' });
         if (flowDef) {
-          // check version
+          // check revision
           const _flowDefBase = flowDefBases[flowDefKey];
-          if (_flowDefBase.info.version !== flowDef.version) {
-            await this._updateVersion({ flowDefKey });
+          if (_flowDefBase.info.revision !== flowDef.flowDefRevision) {
+            await this._updateRevision({ flowDefKey });
           }
         } else {
           // register
@@ -116,7 +116,7 @@ module.exports = ctx => {
       }
     }
 
-    async _updateVersion({ flowDefKey }) {
+    async _updateRevision({ flowDefKey }) {
       return await ctx.app.meta.util.lock({
         subdomain: ctx.subdomain,
         resource: `${moduleInfo.relativeName}.flowDef.register.${flowDefKey}`,
@@ -126,13 +126,13 @@ module.exports = ctx => {
             beanModule: moduleInfo.relativeName,
             beanFullName: 'flowDef',
             context: { flowDefKey },
-            fn: '_updateVersionLock',
+            fn: '_updateRevisionLock',
           });
         },
       });
     }
 
-    async _updateVersionLock({ flowDefKey }) {
+    async _updateRevisionLock({ flowDefKey }) {
       // get
       const flowDef = await this._getByKey({ flowDefKey, atomStage: 'draft' });
       const atomKey = {
@@ -145,7 +145,7 @@ module.exports = ctx => {
         key: atomKey,
         item: {
           atomName: ctx.text(_flowDefBase.info.title),
-          version: _flowDefBase.info.version,
+          flowDefRevision: _flowDefBase.info.revision,
           description: ctx.text(_flowDefBase.info.description),
           content: JSON.stringify(_flowDefBase),
         },
@@ -193,7 +193,7 @@ module.exports = ctx => {
         item: {
           atomName: ctx.text(_flowDefBase.info.title),
           flowDefKey,
-          version: _flowDefBase.info.version,
+          flowDefRevision: _flowDefBase.info.revision,
           description: ctx.text(_flowDefBase.info.description),
           dynamic: 0,
           content: JSON.stringify(_flowDefBase),

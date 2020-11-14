@@ -70,8 +70,8 @@ module.exports = ctx => {
       // flow
       const flow = await this.modelFlow.get({ id: flowId });
       if (!flow) ctx.throw.module(moduleInfo.relativeName, 1003, flowId);
-      // flowDef: by key+version
-      const flowDef = await ctx.bean.flowDef.getByKeyAndVersion({ flowDefKey: flow.flowDefKey, version: flow.version });
+      // flowDef: by key+revision
+      const flowDef = await ctx.bean.flowDef.getByKeyAndRevision({ flowDefKey: flow.flowDefKey, flowDefRevision: flow.flowDefRevision });
       if (!flowDef) ctx.throw.module(moduleInfo.relativeName, 1001, flow.flowDefId);
       // not check disabled
       // flowInstance

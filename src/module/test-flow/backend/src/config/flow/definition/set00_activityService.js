@@ -6,7 +6,7 @@ module.exports = app => {
     info: {
       title: 'Test_Set00_Activity_Service',
       description: 'Test_Set00_Activity_Service',
-      version: '2020-09-26 00:00:13',
+      revision: 1,
     },
     listener: Listener.toString(),
     process: {

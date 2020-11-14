@@ -6,7 +6,7 @@ module.exports = app => {
     info: {
       title: 'Test_Set01_StartEvent_Atom',
       description: 'Test_Set01_StartEvent_Atom',
-      version: '2020-09-28',
+      revision: 1,
     },
     listener: Listener.toString(),
     process: {

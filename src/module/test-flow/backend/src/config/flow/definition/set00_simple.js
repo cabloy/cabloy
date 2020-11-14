@@ -5,7 +5,7 @@ module.exports = app => {
     info: {
       title: 'Test_Set00_Simple',
       description: 'Test_Set00_Simple',
-      version: '2020-09-23 00:00:00',
+      revision: 1,
     },
     listener: Listener.toString(),
     process: {

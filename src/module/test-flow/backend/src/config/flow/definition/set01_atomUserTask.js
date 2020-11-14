@@ -6,7 +6,7 @@ module.exports = app => {
     info: {
       title: 'Test_Set01_Atom_UserTask',
       description: 'Test_Set01_Atom_UserTask',
-      version: '2020-11-06 00:00:00',
+      revision: 1,
     },
     listener: Listener.toString(),
     process: {

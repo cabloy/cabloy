@@ -4,7 +4,7 @@ module.exports = app => {
     info: {
       title: 'Test_Set01_Atom_AssigneesConfirmation',
       description: 'Test_Set01_Atom_AssigneesConfirmation',
-      version: '2020-11-11',
+      revision: 1,
     },
     listener: null,
     process: {

@@ -5,7 +5,7 @@ module.exports = app => {
     info: {
       title: 'Test_Set00_Edge_Sequence',
       description: 'Test_Set00_Edge_Sequence',
-      version: '2020-09-25 00:00:04',
+      revision: 1,
     },
     listener: Listener.toString(),
     process: {
