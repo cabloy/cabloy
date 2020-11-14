@@ -2,7 +2,7 @@
   <eb-page :page-content="false" tabs with-subnavbar>
     <eb-navbar :title="pageTitle" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link iconMaterial="search" eb-target="_self" eb-href="menu/search"></eb-link>
+        <eb-link iconMaterial="search" eb-target="_self" eb-href="/a/basefront/menu/search"></eb-link>
       </f7-nav-right>
       <f7-subnavbar v-if="tabActive">
         <f7-toolbar top tabbar>

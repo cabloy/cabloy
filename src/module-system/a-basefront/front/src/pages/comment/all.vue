@@ -19,10 +19,10 @@
                 <div class="date">#{{item.h_sorting}} · {{$meta.util.formatDateTimeRelative(item.h_createdAt)}}</div>
               </div>
               <div class="actions">
-                <eb-link v-if="item.h_userId===user.id" class="action" iconMaterial="edit" :eb-href="`comment/item?atomId=${item.atomId}&commentId=${item.h_id}&replyId=0`"></eb-link>
+                <eb-link v-if="item.h_userId===user.id" class="action" iconMaterial="edit" :eb-href="`/a/basefront/comment/item?atomId=${item.atomId}&commentId=${item.h_id}&replyId=0`"></eb-link>
                 <eb-link v-if="item.h_userId===user.id || rightDeleteComment" class="action" iconMaterial="delete_forever" :context="item" :onPerform="onPerformDelete"></eb-link>
                 <eb-link class="action" :iconMaterial="item.h_heart?'favorite':'favorite_border'" :context="item" :onPerform="onPerformHeart">{{item.h_heartCount}}</eb-link>
-                <eb-link v-if="!user.anonymous" class="action" iconMaterial="reply" :eb-href="`comment/item?atomId=${item.atomId}&commentId=0&replyId=${item.h_id}`"></eb-link>
+                <eb-link v-if="!user.anonymous" class="action" iconMaterial="reply" :eb-href="`/a/basefront/comment/item?atomId=${item.atomId}&commentId=0&replyId=${item.h_id}`"></eb-link>
               </div>
             </div>
           </div>

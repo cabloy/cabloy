@@ -59,7 +59,7 @@ export default {
         return;
       }
       // navigate
-      this.$view.navigate(`/a/base/atom/labels?atomId=${item.atomId}`, {
+      this.$view.navigate(`/a/basefront/atom/labels?atomId=${item.atomId}`, {
         target: '_self',
       });
       this.$meta.util.swipeoutClose(event.target);

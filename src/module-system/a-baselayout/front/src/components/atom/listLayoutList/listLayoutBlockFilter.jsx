@@ -103,7 +103,7 @@ export default {
       });
     },
     onSelectAtomClass() {
-      this.$view.navigate('/a/base/atom/selectAtomClass', {
+      this.$view.navigate('/a/basefront/atom/selectAtomClass', {
         target: '_self',
         context: {
           params: {

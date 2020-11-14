@@ -149,7 +149,7 @@ util.article = {
     this._switchOrder({ $container, order: orderInit, onParse: options.onParse });
   },
   commentUrl({ atomId, id, replyId }) {
-    return `${env.site.serverUrl}/#!/a/base/comment/item?atomId=${atomId}&commentId=${id}&replyId=${replyId || 0}&returnTo=${encodeURIComponent(location.href)}`;
+    return `${env.site.serverUrl}/#!/a/basefront/comment/item?atomId=${atomId}&commentId=${id}&replyId=${replyId || 0}&returnTo=${encodeURIComponent(location.href)}`;
   },
   articleEdit(options) {
     const $container = $(options.container);
@@ -191,7 +191,7 @@ util.article = {
     // check if anonymous
     if (util.user.op.anonymous) {
       // url
-      const url = `${env.site.serverUrl}/#!/a/base/comment/autoHeart?atomId=${atomId}&commentId=${id}&returnTo=${encodeURIComponent(location.href)}`;
+      const url = `${env.site.serverUrl}/#!/a/basefront/comment/autoHeart?atomId=${atomId}&commentId=${id}&returnTo=${encodeURIComponent(location.href)}`;
       location.assign(url);
     } else {
       util.performAction({
@@ -336,7 +336,7 @@ util.article = {
     // check if anonymous
     if (util.user.op.anonymous) {
       // url
-      const url = `${env.site.serverUrl}/#!/a/base/atom/autoStar?atomId=${atomId}&returnTo=${encodeURIComponent(location.href)}`;
+      const url = `${env.site.serverUrl}/#!/a/basefront/atom/autoStar?atomId=${atomId}&returnTo=${encodeURIComponent(location.href)}`;
       location.assign(url);
     } else {
       // star

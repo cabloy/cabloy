@@ -24,7 +24,7 @@ export default {
         selectMode: this.layoutManager.container.params.selectMode,
         selectedAtoms,
       };
-      const url = '/a/base/atom/selecting';
+      const url = '/a/basefront/atom/selecting';
       this.$view.navigate(url, {
         target: '_self',
         context: {

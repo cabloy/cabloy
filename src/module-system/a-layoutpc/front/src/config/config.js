@@ -5,7 +5,7 @@ export default {
     autoHideSidebarOnOpenUrl: true,
     header: {
       button: {
-        // home: { name: 'Home', iconMaterial: 'home', url: '/a/base/menu/list', scene: 'dashboard', sceneOptions: { name: 'home' } },
+        // home: { name: 'Home', iconMaterial: 'home', url: '/a/basefront/menu/list', scene: 'dashboard', sceneOptions: { name: 'home' } },
         dashboard: { name: 'Dashboard', iconMaterial: 'dashboard', url: '/a/dashboard/dashboard', scene: 'dashboard', sceneOptions: { name: 'dashboard' } },
         mine: { name: 'Mine', iconMaterial: 'person', url: '/a/user/user/mine', scene: 'sidebar', sceneOptions: { side: 'right', name: 'mine', title: 'Mine' } },
       },

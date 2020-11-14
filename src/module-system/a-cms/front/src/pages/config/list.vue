@@ -125,13 +125,13 @@ export default {
       const where = {
         'f.language': language,
       };
-      return this.combineAtomClass(`/a/base/atom/list?where=${encodeURIComponent(JSON.stringify(where))}`);
+      return this.combineAtomClass(`/a/basefront/atom/list?where=${encodeURIComponent(JSON.stringify(where))}`);
     },
     combineLinkComments(language) {
       const where = {
         'f.language': language,
       };
-      return this.combineAtomClass(`/a/base/comment/all?where=${encodeURIComponent(JSON.stringify(where))}`);
+      return this.combineAtomClass(`/a/basefront/comment/all?where=${encodeURIComponent(JSON.stringify(where))}`);
     },
     getStats(languages) {
       if (!languages) {

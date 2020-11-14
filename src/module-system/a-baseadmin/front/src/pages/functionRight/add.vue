@@ -64,7 +64,7 @@ export default {
       this.$refs.buttonSubmit.onClick();
     },
     onSelectFunction() {
-      this.$view.navigate('/a/base/menu/selectFunction', {
+      this.$view.navigate('/a/basefront/menu/selectFunction', {
         target: '_self',
         context: {
           params: {

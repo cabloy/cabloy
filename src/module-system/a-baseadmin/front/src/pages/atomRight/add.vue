@@ -87,7 +87,7 @@ export default {
       this.$refs.buttonSubmit.onClick();
     },
     onSelectAtomClass() {
-      this.$view.navigate('/a/base/atom/selectAtomClass', {
+      this.$view.navigate('/a/basefront/atom/selectAtomClass', {
         target: '_self',
         context: {
           params: {

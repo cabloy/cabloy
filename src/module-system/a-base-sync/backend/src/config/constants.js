@@ -30,7 +30,7 @@ module.exports = {
       },
       read: {
         title: 'View',
-        actionPath: 'atom/item?mode=view&atomId={{atomId}}&itemId={{itemId}}',
+        actionPath: '/a/basefront/atom/item?mode=view&atomId={{atomId}}&itemId={{itemId}}',
         icon: { material: 'visibility' },
       },
       write: {

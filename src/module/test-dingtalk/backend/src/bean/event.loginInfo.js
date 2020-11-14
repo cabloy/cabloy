@@ -19,7 +19,7 @@ module.exports = ctx => {
                 },
                 tabs: [
                   { name: 'Test', tabLinkActive: true, iconMaterial: 'group_work', url: '/test/dingtalk/test/index' },
-                  { name: 'Home', tabLinkActive: false, iconMaterial: 'home', url: '/a/base/menu/list' },
+                  { name: 'Home', tabLinkActive: false, iconMaterial: 'home', url: '/a/basefront/menu/list' },
                   { name: 'Mine', tabLinkActive: false, iconMaterial: 'person', url: '/a/user/user/mine' },
                 ],
               },

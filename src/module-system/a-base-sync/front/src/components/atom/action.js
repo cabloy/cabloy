@@ -42,7 +42,7 @@ export default {
           atomId: keyDraft.atomId,
           itemId: keyDraft.itemId,
         };
-        const url = ctx.$meta.util.replaceTemplate('/a/base/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}', _item);
+        const url = ctx.$meta.util.replaceTemplate('/a/basefront/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}', _item);
         ctx.$view.navigate(url, action.navigateOptions);
       } else if (action.name === 'clone') {
         // clone
@@ -56,7 +56,7 @@ export default {
             atomId: keyDraft.atomId,
             itemId: keyDraft.itemId,
           };
-          const url = ctx.$meta.util.replaceTemplate('/a/base/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}', _item);
+          const url = ctx.$meta.util.replaceTemplate('/a/basefront/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}', _item);
           ctx.$view.navigate(url, action.navigateOptions);
         } catch (err) {
           if (err.code === 422) {
@@ -85,7 +85,7 @@ export default {
           options: JSON.stringify(options),
           params: JSON.stringify(params),
         };
-        const url = ctx.$meta.util.combineQueries('/a/base/atom/list', queries);
+        const url = ctx.$meta.util.combineQueries('/a/basefront/atom/list', queries);
         ctx.$view.navigate(url, {
           // target: '_self'
         });

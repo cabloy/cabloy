@@ -3,7 +3,7 @@
     <eb-navbar large largeTransparent :title="$text('Atom')" eb-back-link="Back"></eb-navbar>
     <eb-list class="item" no-hairlines-md>
       <eb-list-item :title="$text('Create Party')" link="#" :onPerform="onPerformCreate"></eb-list-item>
-      <eb-list-item :title="$text('Party List')" link="#" eb-href="/a/base/atom/list?module=test-party&atomClassName=party"></eb-list-item>
+      <eb-list-item :title="$text('Party List')" link="#" eb-href="/a/basefront/atom/list?module=test-party&atomClassName=party"></eb-list-item>
       <eb-list-item :title="$text('Select Single Atom')" link="#" :onPerform="onPerformSelectAtom">
         <div slot="after" class="after">
           {{ atom && atom.atomName }}
@@ -48,7 +48,7 @@ export default {
       return this.$meta.util.performAction({ ctx: this, action: _menu, item });
     },
     onPerformSelectAtom() {
-      const url = '/a/base/atom/select';
+      const url = '/a/basefront/atom/select';
       this.$view.navigate(url, {
         target: '_self',
         context: {
@@ -70,7 +70,7 @@ export default {
       });
     },
     onPerformSelectAtoms() {
-      const url = '/a/base/atom/select';
+      const url = '/a/basefront/atom/select';
       this.$view.navigate(url, {
         target: '_self',
         context: {

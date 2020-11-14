@@ -12,7 +12,7 @@ module.exports = app => {
           scene: 'list',
           sorting: 1,
           menu: 1,
-          actionPath: 'comment/all',
+          actionPath: '/a/basefront/comment/all',
         },
         deleteComment: {
           title: 'Delete Comment',

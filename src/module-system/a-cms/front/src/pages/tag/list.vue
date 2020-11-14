@@ -96,7 +96,7 @@ export default {
         options: JSON.stringify(options),
         params: JSON.stringify(params),
       };
-      const url = this.$meta.util.combineQueries('/a/base/atom/list', queries);
+      const url = this.$meta.util.combineQueries('/a/basefront/atom/list', queries);
       this.$view.navigate(url, { target: '_self' });
     },
     onPerformEdit(event, item) {

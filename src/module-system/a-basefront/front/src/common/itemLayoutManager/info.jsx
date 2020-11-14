@@ -15,7 +15,7 @@ export default {
       }
       // navigate
       const item = this.base.item;
-      this.$view.navigate(`/a/base/atom/labels?atomId=${item.atomId}`, {
+      this.$view.navigate(`/a/basefront/atom/labels?atomId=${item.atomId}`, {
         // target: '_self',
       });
     },
@@ -61,13 +61,13 @@ export default {
       // comment
       if (item.atomStage === 0 || this.base.config.render.item.info.comment) {
         children.push(
-          <eb-link key="actionsLeft:comment" iconMaterial="comment" iconBadge={item.commentCount} eb-href={`/a/base/comment/list?atomId=${item.atomId}`}></eb-link>
+          <eb-link key="actionsLeft:comment" iconMaterial="comment" iconBadge={item.commentCount} eb-href={`/a/basefront/comment/list?atomId=${item.atomId}`}></eb-link>
         );
       }
       // attachment
       if (this.base.config.render.item.info.attachment) {
         children.push(
-          <eb-link key="actionsLeft:attachment" iconMaterial="attachment" iconBadge={item.attachmentCount} eb-href={`/a/base/attachment/list?atomId=${item.atomId}`}></eb-link>
+          <eb-link key="actionsLeft:attachment" iconMaterial="attachment" iconBadge={item.attachmentCount} eb-href={`/a/basefront/attachment/list?atomId=${item.atomId}`}></eb-link>
         );
       }
       // star

@@ -449,11 +449,11 @@ module.exports = ctx => {
       if (func.action === 'create' && !func.actionComponent && !func.actionPath) {
         func.actionModule = 'a-base';
         func.actionComponent = 'action';
-        // func.actionPath = '/a/base/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}';
+        // func.actionPath = '/a/basefront/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}';
       }
       // list
       if (func.action === 'read' && !func.actionComponent && !func.actionPath) {
-        func.actionPath = '/a/base/atom/list?module={{module}}&atomClassName={{atomClassName}}';
+        func.actionPath = '/a/basefront/atom/list?module={{module}}&atomClassName={{atomClassName}}';
       }
       // ok
       return func;

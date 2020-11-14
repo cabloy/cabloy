@@ -5,11 +5,11 @@ module.exports = app => {
       functions: {
         myAtoms: {
           title: 'Atoms',
-          actionPath: '/a/base/atom/list?scene=mine',
+          actionPath: '/a/basefront/atom/list?scene=mine',
         },
         myComments: {
           title: 'Comments',
-          actionPath: '/a/base/comment/all?scene=mine',
+          actionPath: '/a/basefront/comment/all?scene=mine',
         },
         myExports: {
           title: 'Exports',

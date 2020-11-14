@@ -6,19 +6,19 @@ module.exports = app => {
         // panels
         panelMenu: {
           title: 'Menu',
-          url: '/a/base/menu/list',
+          url: '/a/basefront/menu/list',
           menu: 2,
           public: 1,
         },
         panelAtom: {
           title: 'Atom',
-          url: '/a/base/atom/list',
+          url: '/a/basefront/atom/list',
           menu: 2,
           public: 1,
         },
         panelSearch: {
           title: 'Search',
-          url: '/a/base/atom/searchQuick',
+          url: '/a/basefront/atom/searchQuick',
           menu: 2,
           public: 1,
         },
