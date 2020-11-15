@@ -9,13 +9,13 @@ const set01_atomAssigneesConfirmation = require('./definition/set01_atomAssignee
 
 module.exports = app => {
   const definitions = [
-    // set00_simple(app),
-    // set00_edgeSequence(app),
-    // set00_activityNone(app),
-    // set00_activityService(app),
-    // //  set00_startEventTimer(app),
-    // set01_startEventAtom(app),
-    // set01_atomUserTask(app),
+    set00_simple(app),
+    set00_edgeSequence(app),
+    set00_activityNone(app),
+    set00_activityService(app),
+    //  set00_startEventTimer(app),
+    set01_startEventAtom(app),
+    set01_atomUserTask(app),
     set01_atomAssigneesConfirmation(app),
   ];
   return definitions;

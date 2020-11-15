@@ -1,12 +1,7 @@
 const Listener = require('./listener/set00_edgeSequence.spec.js');
 
 module.exports = app => {
-  const definition = {
-    info: {
-      title: 'Test_Set00_Edge_Sequence',
-      description: 'Test_Set00_Edge_Sequence',
-      revision: 1,
-    },
+  const content = {
     listener: Listener.toString(),
     process: {
       nodes: [
@@ -48,6 +43,13 @@ module.exports = app => {
         },
       ],
     },
+  };
+  const definition = {
+    atomName: 'Test_Set00_Edge_Sequence',
+    atomStaticKey: 'set00_edgeSequence',
+    atomRevision: 0,
+    description: '',
+    content: JSON.stringify(content),
   };
   return definition;
 };

@@ -2,12 +2,7 @@ const Listener = require('./listener/set01_startEventAtom.spec.js');
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  const definition = {
-    info: {
-      title: 'Test_Set01_StartEvent_Atom',
-      description: 'Test_Set01_StartEvent_Atom',
-      revision: 1,
-    },
+  const content = {
     listener: Listener.toString(),
     process: {
       nodes: [
@@ -47,6 +42,13 @@ module.exports = app => {
         },
       ],
     },
+  };
+  const definition = {
+    atomName: 'Test_Set01_StartEvent_Atom',
+    atomStaticKey: 'set01_startEventAtom',
+    atomRevision: 0,
+    description: '',
+    content: JSON.stringify(content),
   };
   return definition;
 };

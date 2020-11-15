@@ -1,11 +1,6 @@
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  const definition = {
-    info: {
-      title: 'Test_Set00_StartEvent_Timer',
-      description: 'Test_Set00_StartEvent_Timer',
-      revision: 1,
-    },
+  const content = {
     process: {
       nodes: [
         {
@@ -47,6 +42,13 @@ module.exports = app => {
         },
       ],
     },
+  };
+  const definition = {
+    atomName: 'Test_Set00_StartEvent_Timer',
+    atomStaticKey: 'set00_startEventTimer',
+    atomRevision: 0,
+    description: '',
+    content: JSON.stringify(content),
   };
   return definition;
 };

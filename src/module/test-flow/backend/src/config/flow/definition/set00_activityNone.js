@@ -1,10 +1,5 @@
 module.exports = app => {
-  const definition = {
-    info: {
-      title: 'Test_Set00_Activity_None',
-      description: 'Test_Set00_Activity_None',
-      revision: 1,
-    },
+  const content = {
     process: {
       nodes: [
         {
@@ -36,6 +31,13 @@ module.exports = app => {
         },
       ],
     },
+  };
+  const definition = {
+    atomName: 'Test_Set00_Activity_None',
+    atomStaticKey: 'set00_activityNone',
+    atomRevision: 0,
+    description: '',
+    content: JSON.stringify(content),
   };
   return definition;
 };

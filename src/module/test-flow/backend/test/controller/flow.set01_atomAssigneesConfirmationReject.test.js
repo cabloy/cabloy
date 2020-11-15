@@ -1,6 +1,6 @@
 const { app, mockUrl, assert } = require('egg-born-mock')(__dirname);
 
-describe.only('flow.set01_atomAssigneesConfirmationReject', () => {
+describe('flow.set01_atomAssigneesConfirmationReject', () => {
 
   // atomClass info
   const atomClassModule = 'test-flow';

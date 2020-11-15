@@ -1,12 +1,7 @@
 const Listener = require('./listener/set00_simple.spec.js');
 
 module.exports = app => {
-  const definition = {
-    info: {
-      title: 'Test_Set00_Simple',
-      description: 'Test_Set00_Simple',
-      revision: 1,
-    },
+  const content = {
     listener: Listener.toString(),
     process: {
       nodes: [
@@ -29,6 +24,13 @@ module.exports = app => {
         },
       ],
     },
+  };
+  const definition = {
+    atomName: 'Test_Set00_Simple',
+    atomStaticKey: 'set00_simple',
+    atomRevision: 0,
+    description: '',
+    content: JSON.stringify(content),
   };
   return definition;
 };

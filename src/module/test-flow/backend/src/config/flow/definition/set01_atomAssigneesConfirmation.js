@@ -1,6 +1,5 @@
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-
   const content = {
     listener: null,
     process: {
@@ -49,7 +48,6 @@ module.exports = app => {
       ],
     },
   };
-
   const definition = {
     atomName: 'Test_Set01_Atom_AssigneesConfirmation',
     atomStaticKey: 'set01_atomAssigneesConfirmation',

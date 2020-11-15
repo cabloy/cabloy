@@ -2,12 +2,7 @@ const Listener = require('./listener/set01_atomUserTask.spec.js');
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  const definition = {
-    info: {
-      title: 'Test_Set01_Atom_UserTask',
-      description: 'Test_Set01_Atom_UserTask',
-      revision: 1,
-    },
+  const content = {
     listener: Listener.toString(),
     process: {
       nodes: [
@@ -76,6 +71,13 @@ module.exports = app => {
         },
       ],
     },
+  };
+  const definition = {
+    atomName: 'Test_Set01_Atom_UserTask',
+    atomStaticKey: 'set01_atomUserTask',
+    atomRevision: 0,
+    description: '',
+    content: JSON.stringify(content),
   };
   return definition;
 };
