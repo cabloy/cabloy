@@ -808,8 +808,8 @@ module.exports = ctx => {
         const stages = actionBase.stage.split(',');
         if (!stages.some(item => ctx.constant.module(moduleInfo.relativeName).atom.stage[item] === _atom.atomStage)) return null;
       }
-      // action.enableOnStatic
-      if (_atom.atomStatic === 1 && !action.enableOnStatic) {
+      // actionBase.enableOnStatic
+      if (_atom.atomStatic === 1 && !actionBase.enableOnStatic) {
         return null;
       }
       // draft
