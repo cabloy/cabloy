@@ -67,6 +67,9 @@ module.exports = app => {
       // write atom
       const atom = { };
       if (item.atomName !== undefined) atom.atomName = item.atomName;
+      if (item.atomStatic !== undefined) atom.atomStatic = item.atomStatic;
+      if (item.atomStaticKey !== undefined) atom.atomStaticKey = item.atomStaticKey;
+      if (item.atomRevision !== undefined) atom.atomRevision = item.atomRevision;
       if (item.allowComment !== undefined) atom.allowComment = item.allowComment;
       atom.updatedAt = new Date();
       // update

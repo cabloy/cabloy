@@ -29,6 +29,15 @@ module.exports = function(ctx) {
         `;
       await ctx.model.query(sql);
 
+      // aAtom: add field atomStatic/atomStaticKey/atomRevision
+      sql = `
+        ALTER TABLE aAtom
+          ADD COLUMN atomStatic int(11) DEFAULT '0',
+          ADD COLUMN atomStaticKey varchar(255) DEFAULT NULL,
+          ADD COLUMN atomRevision int(11) DEFAULT '0'
+        `;
+      await ctx.model.query(sql);
+
       // alter view: aViewUserRightAtom
       await ctx.model.query('drop view aViewUserRightAtom');
       sql = `

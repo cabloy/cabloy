@@ -400,6 +400,9 @@ module.exports = ctx => {
       let userIdCreated = srcItem.userIdCreated || userIdUpdated;
       let atomFlowId = srcItem.atomFlowId;
       let atomName = srcItem.atomName;
+      let atomStatic = srcItem.atomStatic;
+      let atomStaticKey = srcItem.atomStaticKey;
+      let atomRevision = srcItem.atomRevision;
       if (target === 'draft') {
         atomIdDraft = 0;
         atomIdArchive = srcItem.atomStage === 1 ? srcItem.atomId : srcItem.atomIdArchive;
@@ -418,6 +421,9 @@ module.exports = ctx => {
         userIdCreated = user.id;
         atomFlowId = 0;
         atomName = `${srcItem.atomName}-${ctx.text('CloneCopyText')}`;
+        atomStatic = 0;
+        atomStaticKey = null;
+        atomRevision = 0;
       }
       // destItem
       const destItem = Object.assign({}, srcItem, {
@@ -426,6 +432,9 @@ module.exports = ctx => {
         userIdCreated,
         userIdUpdated,
         atomName,
+        atomStatic,
+        atomStaticKey,
+        atomRevision,
         atomStage,
         atomFlowId,
         allowComment: srcItem.allowComment,
@@ -442,6 +451,9 @@ module.exports = ctx => {
         userIdCreated: destItem.userIdCreated,
         userIdUpdated: destItem.userIdUpdated,
         atomName: destItem.atomName,
+        atomStatic: destItem.atomStatic,
+        atomStaticKey: destItem.atomStaticKey,
+        atomRevision: destItem.atomRevision,
         atomStage: destItem.atomStage,
         atomFlowId: destItem.atomFlowId,
         allowComment: destItem.allowComment,
@@ -629,7 +641,10 @@ module.exports = ctx => {
 
     async _add({
       atomClass: { id, atomClassName, atomClassIdParent = 0 },
-      atom: { itemId, atomName, roleIdOwner = 0 },
+      atom: {
+        itemId, atomName, roleIdOwner = 0,
+        atomStatic = 0, atomStaticKey = null, atomRevision = 0,
+      },
       user,
     }) {
       let atomClassId = id;
@@ -639,6 +654,9 @@ module.exports = ctx => {
         itemId,
         atomClassId,
         atomName,
+        atomStatic,
+        atomStaticKey,
+        atomRevision,
         userIdCreated: user.id,
         userIdUpdated: user.id,
         roleIdOwner,
