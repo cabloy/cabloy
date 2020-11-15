@@ -63,6 +63,11 @@ module.exports = appInfo => {
       instance: true,
       debounce: true,
     },
+    loadAtomStatics: {
+      bean: 'loadAtomStatics',
+      instance: true,
+      debounce: true,
+    },
   };
 
   // queues

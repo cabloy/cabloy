@@ -20,7 +20,7 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Description',
       },
-      flowDefKey: {
+      _flowDefKey: {
         type: 'string',
         ebType: 'select',
         ebTitle: 'Flow Definition',

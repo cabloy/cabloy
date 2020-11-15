@@ -1,11 +1,7 @@
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  const definition = {
-    info: {
-      title: 'Test_Set01_Atom_AssigneesConfirmation',
-      description: 'Test_Set01_Atom_AssigneesConfirmation',
-      revision: 1,
-    },
+
+  const content = {
     listener: null,
     process: {
       nodes: [
@@ -18,7 +14,7 @@ module.exports = app => {
               module: moduleInfo.relativeName,
               atomClassName: 'purchaseOrder',
             },
-            conditionExpression: 'atom.flowDefKey===\'set01_atomAssigneesConfirmation\'',
+            conditionExpression: 'atom._flowDefKey===\'set01_atomAssigneesConfirmation\'',
           },
         },
         {
@@ -52,6 +48,14 @@ module.exports = app => {
         },
       ],
     },
+  };
+
+  const definition = {
+    atomName: 'Test_Set01_Atom_AssigneesConfirmation',
+    atomStaticKey: 'set01_atomAssigneesConfirmation',
+    atomRevision: 1,
+    description: '',
+    content: JSON.stringify(content),
   };
   return definition;
 };

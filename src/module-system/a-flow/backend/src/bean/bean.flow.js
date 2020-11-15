@@ -26,7 +26,7 @@ module.exports = ctx => {
       // get flow def
       const flowDef = await ctx.bean.flowDef.getById({ flowDefId });
       if (!flowDef) ctx.throw.module(moduleInfo.relativeName, 1001, flowDefId);
-      if (flowDef.disabled) ctx.throw.module(moduleInfo.relativeName, 1002, flowDef.flowDefKey);
+      if (flowDef.disabled) ctx.throw.module(moduleInfo.relativeName, 1002, flowDef.atomStaticKey);
       return await this._start({ flowDef, flowAtomId, flowVars, flowUserId, startEventId });
     }
 

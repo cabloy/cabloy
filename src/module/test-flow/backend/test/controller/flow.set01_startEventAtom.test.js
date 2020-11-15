@@ -28,7 +28,7 @@ describe('flow.set01_startEventAtom', () => {
       key: keyDraft,
       item: {
         atomName: 'startEventAtom-test',
-        flowDefKey: 'set01_startEventAtom',
+        _flowDefKey: 'set01_startEventAtom',
       },
     });
     assert(result.body.code === 0);

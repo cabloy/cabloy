@@ -28,7 +28,7 @@ describe('flow.set01_atomUserTask', () => {
       key: keyDraft,
       item: {
         atomName: 'atomUserTask-test',
-        flowDefKey: 'set01_atomUserTask',
+        _flowDefKey: 'set01_atomUserTask',
       },
     });
     assert(result.body.code === 0);
@@ -93,7 +93,7 @@ describe('flow.set01_atomUserTask', () => {
       formAtom: {
         atomName: 'startEventAtom-test!!',
         description: 'modified by userTask',
-        flowDefKey: 'would not been modified',
+        _flowDefKey: 'would not been modified',
       },
     });
     assert(result.body.code === 0);

@@ -1,5 +1,4 @@
 
-let __flowDefs;
 const __flowNodeBases = {};
 const __flowEdgeBases = {};
 
@@ -85,152 +84,12 @@ module.exports = ctx => {
       // fullKey
       const { fullKey } = this._combineFullKey({ flowDefKey });
       // from db
-      const options = {
-        mode: 'full',
-        stage: atomStage,
-        where: {
-          'f.flowDefKey': fullKey,
-        },
-      };
-      if (flowDefRevision) {
-        options.where.flowDefRevision = flowDefRevision;
-      }
-      const list = await ctx.bean.atom.select({ atomClass: this.atomClass, options });
-      return list[0];
-    }
-
-    async _loadFlowDefBases() {
-      const flowDefBases = this._getFlowDefBases();
-      for (const flowDefKey in flowDefBases) {
-        const flowDef = await this._getByKey({ flowDefKey, atomStage: 'archive' });
-        if (flowDef) {
-          // check revision
-          const _flowDefBase = flowDefBases[flowDefKey];
-          if (_flowDefBase.info.revision !== flowDef.flowDefRevision) {
-            await this._updateRevision({ flowDefKey });
-          }
-        } else {
-          // register
-          await this._register({ flowDefKey });
-        }
-      }
-    }
-
-    async _updateRevision({ flowDefKey }) {
-      return await ctx.app.meta.util.lock({
-        subdomain: ctx.subdomain,
-        resource: `${moduleInfo.relativeName}.flowDef.register.${flowDefKey}`,
-        fn: async () => {
-          return await ctx.app.meta.util.executeBean({
-            subdomain: ctx.subdomain,
-            beanModule: moduleInfo.relativeName,
-            beanFullName: 'flowDef',
-            context: { flowDefKey },
-            fn: '_updateRevisionLock',
-          });
-        },
-      });
-    }
-
-    async _updateRevisionLock({ flowDefKey }) {
-      // get
-      const flowDef = await this._getByKey({ flowDefKey, atomStage: 'draft' });
-      const atomKey = {
-        atomId: flowDef.atomId, itemId: flowDef.itemId,
-      };
-      // get flowDefBase
-      const _flowDefBase = this._getFlowDefBase({ flowDefKey });
-      if (!_flowDefBase) ctx.throw.module(moduleInfo.relativeName, 1001, flowDefKey);
-      await ctx.bean.atom.write({
-        key: atomKey,
-        item: {
-          atomName: ctx.text(_flowDefBase.info.title),
-          flowDefRevision: _flowDefBase.info.revision,
-          description: ctx.text(_flowDefBase.info.description),
-          content: JSON.stringify(_flowDefBase),
-        },
-        user: { id: 0 },
-      });
-      await ctx.bean.atom.submit({
-        key: atomKey,
-        options: { ignoreFlow: true },
-        user: { id: 0 },
-      });
-    }
-
-    async _register({ flowDefKey }) {
-      return await ctx.app.meta.util.lock({
-        subdomain: ctx.subdomain,
-        resource: `${moduleInfo.relativeName}.flowDef.register.${flowDefKey}`,
-        fn: async () => {
-          return await ctx.app.meta.util.executeBean({
-            subdomain: ctx.subdomain,
-            beanModule: moduleInfo.relativeName,
-            beanFullName: 'flowDef',
-            context: { flowDefKey },
-            fn: '_registerLock',
-          });
-        },
-      });
-    }
-
-    async _registerLock({ flowDefKey }) {
-      // get again
-      const flowDef = await this._getByKey({ flowDefKey, atomStage: 'archive' });
-      if (flowDef) return;
-      // get flowDefBase
-      const _flowDefBase = this._getFlowDefBase({ flowDefKey });
-      if (!_flowDefBase) ctx.throw.module(moduleInfo.relativeName, 1001, flowDefKey);
-      // add atom
-      const roleSuperuser = await ctx.bean.role.getSystemRole({ roleName: 'superuser' });
-      const atomKey = await ctx.bean.atom.create({
+      return await ctx.bean.atom.readByStaticKey({
         atomClass: this.atomClass,
-        roleIdOwner: roleSuperuser.id,
-        user: { id: 0 },
+        atomStaticKey: fullKey,
+        atomRevision: flowDefRevision,
+        atomStage,
       });
-      await ctx.bean.atom.write({
-        key: atomKey,
-        item: {
-          atomName: ctx.text(_flowDefBase.info.title),
-          flowDefKey,
-          flowDefRevision: _flowDefBase.info.revision,
-          description: ctx.text(_flowDefBase.info.description),
-          dynamic: 0,
-          content: JSON.stringify(_flowDefBase),
-        },
-        user: { id: 0 },
-      });
-      await ctx.bean.atom.submit({
-        key: atomKey,
-        options: { ignoreFlow: true },
-        user: { id: 0 },
-      });
-    }
-
-    _getFlowDefBase({ flowDefKey }) {
-      const { fullKey } = this._combineFullKey({ flowDefKey });
-      return this._getFlowDefBases()[fullKey];
-    }
-
-    _getFlowDefBases() {
-      if (!__flowDefs) {
-        __flowDefs = this._collectFlowDefs();
-      }
-      return __flowDefs;
-    }
-
-    _collectFlowDefs() {
-      const flowDefs = {};
-      for (const module of ctx.app.meta.modulesArray) {
-        const defs = module.main.meta && module.main.meta.flow && module.main.meta.flow.definitions;
-        if (!defs) continue;
-        for (const key in defs) {
-          const def = defs[key];
-          const fullKey = `${module.info.relativeName}:${key}`;
-          flowDefs[fullKey] = def;
-        }
-      }
-      return flowDefs;
     }
 
     _getFlowNodeBases() {

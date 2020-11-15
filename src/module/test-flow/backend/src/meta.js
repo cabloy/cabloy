@@ -45,6 +45,11 @@ module.exports = app => {
             menu: 1,
           },
         },
+        statics: {
+          'a-flow.flowDef': {
+            items: flowDefinitions,
+          },
+        },
       },
       validation: {
         validators: {
@@ -60,9 +65,6 @@ module.exports = app => {
           purchaseOrder: schemas.purchaseOrder,
           purchaseOrderSearch: schemas.purchaseOrderSearch,
         },
-      },
-      flow: {
-        definitions: flowDefinitions,
       },
     });
   }

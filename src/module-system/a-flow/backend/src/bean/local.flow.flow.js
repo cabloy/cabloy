@@ -47,7 +47,7 @@ module.exports = ctx => {
       await this._saveFlowVars();
       // node: startEvent
       const nodeInstanceStartEvent = await this._findNodeInstanceStartEvent({ startEventId });
-      if (!nodeInstanceStartEvent) throw new Error(`startEvent not found: ${this.context._flowDef.flowDefKey}.${startEventId || 'startEventNone'}`);
+      if (!nodeInstanceStartEvent) throw new Error(`startEvent not found: ${this.context._flowDef.atomStaticKey}.${startEventId || 'startEventNone'}`);
       // node enter
       const res = await nodeInstanceStartEvent.enter();
       if (!res) {
@@ -162,8 +162,8 @@ module.exports = ctx => {
       // flow
       const data = {
         flowDefId: this.context._flowDef.atomId,
-        flowDefKey: this.context._flowDef.flowDefKey,
-        flowDefRevision: this.context._flowDef.flowDefRevision,
+        flowDefKey: this.context._flowDef.atomStaticKey,
+        flowDefRevision: this.context._flowDef.atomRevision,
         flowStatus: this.constant.flow.status.flowing,
         flowAtomId,
         flowVars: JSON.stringify(flowVars),

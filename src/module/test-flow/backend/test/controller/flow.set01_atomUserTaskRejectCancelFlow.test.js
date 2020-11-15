@@ -31,7 +31,7 @@ describe('flow.set01_atomUserTaskRejectCancelFlow', () => {
       key: keyDraft,
       item: {
         atomName: 'atomUserTask-rejectCancelFlow-test',
-        flowDefKey: 'set01_atomUserTask',
+        _flowDefKey: 'set01_atomUserTask',
       },
     });
     assert(result.body.code === 0);

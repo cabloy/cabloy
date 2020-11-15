@@ -20,7 +20,7 @@ module.exports = app => {
               module: moduleInfo.relativeName,
               atomClassName: 'purchaseOrder',
             },
-            conditionExpression: 'atom.flowDefKey===\'set01_atomUserTask\'',
+            conditionExpression: 'atom._flowDefKey===\'set01_atomUserTask\'',
           },
         },
         {

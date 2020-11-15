@@ -32,7 +32,7 @@ describe.only('flow.set01_atomAssigneesConfirmationReject', () => {
       key: keyDraft,
       item: {
         atomName: 'atomAssigneesConfirmationReject-test',
-        flowDefKey: 'set01_atomAssigneesConfirmation',
+        _flowDefKey: 'set01_atomAssigneesConfirmation',
       },
     });
     assert(result.body.code === 0);
@@ -191,7 +191,7 @@ describe.only('flow.set01_atomAssigneesConfirmationReject', () => {
       formAtom: {
         atomName: 'assigneesConfirmation-test!!',
         description: 'modified by userTask',
-        flowDefKey: 'would not been modified',
+        _flowDefKey: 'would not been modified',
       },
     });
     assert(result.body.code === 0);

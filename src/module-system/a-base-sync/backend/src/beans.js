@@ -7,6 +7,7 @@ const startupRegisterPassport = require('./bean/startup.registerPassport.js');
 const startupInstallAuthProviders = require('./bean/startup.installAuthProviders.js');
 const startupSetFunctionLocales = require('./bean/startup.setFunctionLocales.js');
 const startupLoadSchedules = require('./bean/startup.loadSchedules.js');
+const startupLoadAtomStatics = require('./bean/startup.loadAtomStatics.js');
 const middlewareInner = require('./bean/middleware.inner.js');
 const middlewareTest = require('./bean/middleware.test.js');
 const middlewareTransaction = require('./bean/middleware.transaction.js');
@@ -67,6 +68,10 @@ module.exports = app => {
     'startup.loadSchedules': {
       mode: 'app',
       bean: startupLoadSchedules,
+    },
+    'startup.loadAtomStatics': {
+      mode: 'app',
+      bean: startupLoadAtomStatics,
     },
     // middleware
     'middleware.inner': {

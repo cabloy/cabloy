@@ -15,27 +15,22 @@ module.exports = app => {
         ebTitle: 'Name',
         notEmpty: true,
       },
-      flowDefKey: {
+      atomStaticKey: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Key2',
         notEmpty: true,
       },
-      flowDefRevision: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Revision',
-        notEmpty: true,
-      },
+      // atomRevision: {
+      //   type: 'string',
+      //   ebType: 'text',
+      //   ebTitle: 'Revision',
+      //   notEmpty: true,
+      // },
       description: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Description',
-      },
-      dynamic: {
-        type: 'boolean',
-        ebType: 'toggle',
-        ebTitle: 'Dynamic',
       },
       content: {
         type: 'string',

@@ -14,10 +14,7 @@ module.exports = app => {
             deleted int(11) DEFAULT '0',
             iid int(11) DEFAULT '0',
             atomId int(11) DEFAULT '0',
-            flowDefKey varchar(255) DEFAULT NULL,
-            flowDefRevision int(11) DEFAULT '0',
             description varchar(255) DEFAULT NULL,
-            dynamic int(11) DEFAULT '0',
             disabled int(11) DEFAULT '0',
             PRIMARY KEY (id)
           )

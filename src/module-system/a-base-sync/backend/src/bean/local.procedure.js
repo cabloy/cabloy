@@ -143,6 +143,7 @@ module.exports = ctx => {
           ${_where}
            (
              a.deleted=0 and a.iid=${iid} and a.atomStage=${stage} and a.atomClosed=0 and a.userIdUpdated=${userIdWho}
+             and a.atomFlowId=0
              ${_starWhere}
              ${_labelWhere}
              ${_commentWhere}

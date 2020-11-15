@@ -96,6 +96,22 @@ module.exports = ctx => {
       return item;
     }
 
+    // readByStaticKey
+    async readByStaticKey({ atomClass, atomStaticKey, atomRevision, atomStage }) {
+      const options = {
+        mode: 'full',
+        stage: atomStage,
+        where: {
+          'a.atomStaticKey': atomStaticKey,
+        },
+      };
+      if (atomRevision !== undefined) {
+        options.where['a.atomRevision'] = atomRevision;
+      }
+      const list = await this.select({ atomClass, options });
+      return list[0];
+    }
+
     // count
     async count({ atomClass, options, user }) {
       return await this.select({ atomClass, options, user, count: 1 });
@@ -766,7 +782,7 @@ module.exports = ctx => {
         // 1. closed
         if (_atom.atomClosed) return null;
         // 2. flow
-        // if (_atom.atomFlowId > 0) return null;
+        if (_atom.atomFlowId > 0) return null;
         // 3. self
         if (_atom.userIdUpdated === user.id) return _atom;
         // others
