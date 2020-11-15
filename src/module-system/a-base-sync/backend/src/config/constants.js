@@ -18,6 +18,8 @@ module.exports = {
       save: 51,
       submit: 52,
       history: 53,
+      archive: 54,
+      draft: 55,
       custom: 100, // custom action start from custom
     },
     actionMeta: {
@@ -83,6 +85,18 @@ module.exports = {
         actionComponent: 'action',
         authorize: false,
         icon: { material: 'change_history' },
+      },
+      archive: {
+        title: 'Archive',
+        actionComponent: 'action',
+        authorize: false,
+        icon: { material: 'all_inbox' },
+      },
+      draft: {
+        title: 'Draft',
+        actionComponent: 'action',
+        authorize: false,
+        icon: { material: 'content_paste' },
       },
       custom: {
         title: 'Custom',

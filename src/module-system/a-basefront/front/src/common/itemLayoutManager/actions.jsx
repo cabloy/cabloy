@@ -37,6 +37,22 @@ export default {
         actions.push(action);
       }
       // specials
+      //    draft
+      if (this.base.item.atomIdDraft) {
+        actions.push({
+          module: this.base.atomClass.module,
+          atomClassName: this.base.atomClass.atomClassName,
+          name: 'draft',
+        });
+      }
+      //    archive
+      if (this.base.item.atomIdArchive) {
+        actions.push({
+          module: this.base.atomClass.module,
+          atomClassName: this.base.atomClass.atomClassName,
+          name: 'archive',
+        });
+      }
       //    history
       if (this.base.item.atomIdArchive || this.base.item.atomStage === 1) {
         actions.push({

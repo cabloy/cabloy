@@ -89,7 +89,17 @@ export default {
         ctx.$view.navigate(url, {
           // target: '_self'
         });
+      } else if (action.name === 'archive') {
+        await this._onActionRead({ ctx, item, atomId: item.atomIdArchive });
+      } else if (action.name === 'draft') {
+        await this._onActionRead({ ctx, item, atomId: item.atomIdDraft });
       }
+    },
+    async _onActionRead({ ctx, item, atomId }) {
+      const actionsAll = await ctx.$store.dispatch('a/base/getActions');
+      let actionRead = actionsAll[item.module][item.atomClassName].read;
+      actionRead = ctx.$utils.extend({}, actionRead);
+      await ctx.$meta.util.performAction({ ctx, action: actionRead, item: { atomId } });
     },
     _onActionCreate({ ctx, action, item }) {
       // get roleIdOwner
