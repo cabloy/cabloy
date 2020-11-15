@@ -45,7 +45,7 @@ module.exports = app => {
       if (atom) {
         // check revision
         if (item.atomRevision !== atom.atomRevision) {
-          await this._updateRevision({ atomClass, item });
+          await this._updateRevision({ atomClass, atomIdArchive: atom.atomId, atomIdDraft: atom.atomIdDraft, item });
         }
       } else {
         // register
@@ -53,7 +53,7 @@ module.exports = app => {
       }
     }
 
-    async _updateRevision({ atomClass, item }) {
+    async _updateRevision({ atomClass, atomIdArchive, atomIdDraft, item }) {
       return await this.ctx.app.meta.util.lock({
         subdomain: this.ctx.subdomain,
         resource: `${moduleInfo.relativeName}.atomStatic.register.${item.atomStaticKey}`,
@@ -62,24 +62,26 @@ module.exports = app => {
             subdomain: this.ctx.subdomain,
             beanModule: moduleInfo.relativeName,
             beanFullName: `${moduleInfo.relativeName}.startup.loadAtomStatics`,
-            context: { atomClass, item },
+            context: { atomClass, atomIdArchive, atomIdDraft, item },
             fn: '_updateRevisionLock',
           });
         },
       });
     }
 
-    async _updateRevisionLock({ atomClass, item }) {
-      // get
-      const atom = await this.ctx.bean.atom.readByStaticKey({
-        atomClass,
-        atomStaticKey: item.atomStaticKey,
-        atomStage: 'draft',
-      });
+    async _updateRevisionLock({ atomIdDraft, item }) {
+      // get draft
+      const atom = await this.ctx.bean.atom.modelAtom.get({ id: atomIdDraft });
       if (item.atomRevision === atom.atomRevision) return;
       const atomKey = {
-        atomId: atom.atomId, itemId: atom.itemId,
+        atomId: atomIdDraft, itemId: atom.itemId,
       };
+      // update
+      await this.ctx.bean.atom.modelAtom.update({
+        id: atomIdDraft,
+        atomName: item.atomName,
+        atomRevision: item.atomRevision,
+      });
       // write
       await this.ctx.bean.atom.write({
         key: atomKey, item, user: { id: 0 },
