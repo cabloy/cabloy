@@ -31,21 +31,25 @@ module.exports = {
       read: {
         title: 'View',
         actionPath: '/a/basefront/atom/item?mode=view&atomId={{atomId}}&itemId={{itemId}}',
+        enableOnStatic: true,
         icon: { material: 'visibility' },
       },
       write: {
         title: 'Edit',
         actionComponent: 'action',
+        enableOnStatic: false,
         icon: { material: 'edit' },
       },
       delete: {
         title: 'Delete',
         actionComponent: 'action',
+        enableOnStatic: false,
         icon: { material: 'delete' },
       },
       clone: {
         title: 'Clone',
         actionComponent: 'action',
+        enableOnStatic: true,
         icon: { material: 'content_copy' },
       },
       deleteBulk: {

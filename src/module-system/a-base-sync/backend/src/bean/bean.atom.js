@@ -765,9 +765,10 @@ module.exports = ctx => {
       if (_atom.atomStage === 0) {
         // 1. closed
         if (_atom.atomClosed) return null;
-        // 2. self
+        // 2. flow
+        // if (_atom.atomFlowId > 0) return null;
+        // 3. self
         if (_atom.userIdUpdated === user.id) return _atom;
-        // 3. todo: flow task
         // others
         return null;
       }
