@@ -317,18 +317,24 @@ module.exports = ctx => {
       if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
       // draft
       if (_atom.atomStage === 0) {
-        // do nothing
+        if (_atom.atomClosed === 1) {
+          // open
+          await this._openDraft_update({
+            atomId: _atom.id,
+            atomRevision: _atom.atomRevision + 1,
+            user,
+          });
+        }
         return { draft: { key } };
       }
       // archive
       if (_atom.atomStage === 1) {
         if (_atom.atomIdDraft > 0) {
           // open
-          await this.modelAtom.update({
-            id: _atom.atomIdDraft,
-            atomFlowId: 0,
-            atomClosed: 0,
-            userIdUpdated: user.id,
+          await this._openDraft_update({
+            atomId: _atom.atomIdDraft,
+            atomRevision: _atom.atomRevision + 1,
+            user,
           });
           return { draft: { key: { atomId: _atom.atomIdDraft } } };
         }
@@ -337,6 +343,12 @@ module.exports = ctx => {
           target: 'draft',
           srcKey: { atomId: key.atomId }, srcItem: null,
           destKey: null,
+          user,
+        });
+        // open
+        await this._openDraft_update({
+          atomId: keyDraft.atomId,
+          atomRevision: _atom.atomRevision + 1,
           user,
         });
         // ok
@@ -351,9 +363,39 @@ module.exports = ctx => {
           destKey: _atom.atomIdDraft ? { atomId: _atom.atomIdDraft } : null,
           user,
         });
+        // open
+        await this._openDraft_update({
+          atomId: keyDraft.atomId,
+          atomRevision: await this._openDraft_atomRevision_history({ _atom }),
+          user,
+        });
         // ok
         return { draft: { key: keyDraft } };
       }
+    }
+
+    async _openDraft_atomRevision_history({ _atom }) {
+      let atomRevision;
+      if (_atom.atomIdDraft) {
+        const _atom2 = await this.modelAtom.get({ id: _atom.atomIdDraft });
+        atomRevision = _atom2.atomRevision + 1;
+      } else if (_atom.atomIdArchive) {
+        const _atom2 = await this.modelAtom.get({ id: _atom.atomIdArchive });
+        atomRevision = _atom2.atomRevision + 1;
+      } else {
+        atomRevision = _atom.atomRevision + 1;
+      }
+      return atomRevision;
+    }
+
+    async _openDraft_update({ atomId, atomRevision, user }) {
+      await this.modelAtom.update({
+        id: atomId,
+        atomFlowId: 0,
+        atomClosed: 0,
+        atomRevision,
+        userIdUpdated: user.id,
+      });
     }
 
     async clone({ key, user }) {
