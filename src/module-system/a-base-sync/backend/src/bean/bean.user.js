@@ -288,15 +288,34 @@ module.exports = ctx => {
       return await this.switchAgent({ userIdAgent: ctx.state.user.agent.id });
     }
 
-    async list({ roleId, query, anonymous, page }) {
+    async getFields({ removePrivacy }) {
+      const fields = await this.model.columns();
+      if (removePrivacy) {
+        const privacyFields = ctx.config.module(moduleInfo.relativeName).user.privacyFields.split(',');
+        for (const privacyField of privacyFields) {
+          delete fields[privacyField];
+        }
+      }
+      return fields;
+    }
+
+    async getFieldsSelect({ removePrivacy, alias }) {
+      const fields = await this.getFields({ removePrivacy });
+      return Object.keys(fields).map(item => (alias ? `${alias}.${item}` : item)).join(',');
+    }
+
+    async list({ roleId, query, anonymous, page, removePrivacy }) {
       const roleJoin = roleId ? 'left join aUserRole b on a.id=b.userId' : '';
       const roleWhere = roleId ? `and b.roleId=${ctx.model._format(roleId)}` : '';
       const queryLike = query ? ctx.model._format({ op: 'like', val: query }) : '';
       const queryWhere = query ? `and ( a.userName like ${queryLike} or a.realName like ${queryLike} or a.mobile like ${queryLike} )` : '';
       const anonymousWhere = anonymous !== undefined ? `and a.anonymous=${ctx.model._format(anonymous)}` : '';
       const _limit = ctx.model._limit(page.size, page.index);
+      // fields
+      const fields = await this.getFieldsSelect({ removePrivacy, alias: 'a' });
+      // sql
       const sql = `
-        select a.* from aUser a
+        select ${fields} from aUser a
           ${roleJoin}
             where a.iid=? and a.deleted=0
                   ${anonymousWhere}

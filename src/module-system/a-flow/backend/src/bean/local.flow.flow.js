@@ -277,7 +277,7 @@ module.exports = ctx => {
             if (!role) ctx.throw.module(moduleInfo.relativeName, 1007, roleId);
             roleId = role.id;
           }
-          const list = await ctx.bean.role.usersOfRoleParent({ roleId, disabled: 0 });
+          const list = await ctx.bean.role.usersOfRoleParent({ roleId, disabled: 0, removePrivacy: true });
           assignees = assignees.concat(list.map(item => item.id));
         }
       }

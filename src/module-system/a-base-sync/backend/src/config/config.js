@@ -151,5 +151,10 @@ module.exports = appInfo => {
     },
   };
 
+  // user
+  config.user = {
+    privacyFields: 'createdAt,updatedAt,realName,locale,email,mobile,activated,emailConfirmed,mobileVerified',
+  };
+
   return config;
 };
