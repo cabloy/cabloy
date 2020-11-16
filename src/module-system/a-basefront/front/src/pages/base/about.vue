@@ -1,6 +1,11 @@
 <template>
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('About')" eb-back-link="Back"> </eb-navbar>
+    <f7-toolbar position="bottom">
+      <f7-link external target="_blank" href="https://cabloy.com">{{$text('Documentation')}}</f7-link>
+      <f7-link external target="_blank" href="https://community.cabloy.com">{{$text('Community')}}</f7-link>
+      <f7-link external target="_blank" href="https://github.com/zhennann/cabloy">GitHub</f7-link>
+    </f7-toolbar>
     <f7-block-title>{{$text('Welcome to CabloyJS')}}</f7-block-title>
     <f7-block strong>
       <div class="alert-info">{{$text('CabloyAboutTip1')}}</div>
