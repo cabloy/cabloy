@@ -22,6 +22,7 @@ module.exports = app => {
         options: {
           where: {
             'a.flowId': flowId,
+            'b.flowNodeType': [ 'startEventAtom', 'activityUserTask' ],
           },
           orders: [[ 'a.flowNodeId', 'desc' ]],
           history: 1,
