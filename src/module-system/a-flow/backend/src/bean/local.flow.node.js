@@ -46,6 +46,7 @@ module.exports = ctx => {
         flowId: this.context._flowId,
         flowNodeDefId: this.contextNode._nodeRef.id,
         flowNodeName: this.contextNode._nodeRef.name,
+        flowNodeType: this.contextNode._nodeRef.type,
         flowNodeIdPrev,
         nodeVars: '{}',
       };
