@@ -1,24 +1,25 @@
 module.exports = ctx => {
   class Procedure {
 
-    selectFlows({ iid, userIdWho, where, orders, page, count, history }) {
+    // mode: mine/others/flowing/history
+    selectFlows({ iid, userIdWho, where, orders, page, count, mode }) {
       iid = parseInt(iid);
       userIdWho = parseInt(userIdWho);
-      history = parseInt(history);
 
-      // history
-      if (history === 0) {
-        return this._selectTasks_0({ iid, userIdWho, where, orders, page, count });
+      // mode
+      if (mode === 'mine') {
+        return this._selectFlows_Mine({ iid, userIdWho, where, orders, page, count });
+      } else if (mode === 'others' || mode === 'flowing') {
+        return this._selectFlows_Others({ iid, userIdWho, where, orders, page, count, mode });
       }
-      return this._selectTasks_1({ iid, userIdWho, where, orders, page, count });
+      return this._selectFlows_History({ iid, userIdWho, where, orders, page, count });
     }
 
-    _selectTasks_0({ iid, userIdWho, where, orders, page, count }) {
+    _selectFlows_Mine({ iid, userIdWho, where, orders, page, count }) {
       // -- tables
-      // -- a: aFlowTask
-      // -- b: aFlowNode
-      // -- c: aFlow
-      // -- d: aUser
+      // -- a: aFlow
+      // -- b: aAtom
+      // -- c: aUser
 
       // for safe
       where = where ? ctx.model._where(where) : null;
@@ -35,7 +36,7 @@ module.exports = ctx => {
 
       // user
       if (userIdWho !== 0) {
-        _userWhere = ` and a.userIdAssignee=${userIdWho}`;
+        _userWhere = ` and a.flowUserId=${userIdWho}`;
       } else {
         _userWhere = '';
       }
@@ -45,19 +46,17 @@ module.exports = ctx => {
       if (count) {
         _selectFields = 'count(*) as _count';
       } else {
-        _selectFields = `a.*,
-            b.flowNodeDefId,b.flowNodeName,b.flowNodeType,
-            c.flowDefId,c.flowDefKey,c.flowDefRevision,c.flowStatus,c.flowAtomId,c.flowNodeIdCurrent,c.flowUserId,
-            d.userName,d.avatar
+        _selectFields = `a.id,a.createdAt,a.updatedAt,a.deleted,a.iid,a.flowStatus,a.flowAtomId,a.flowNodeIdCurrent,a.flowNodeNameCurrent,a.flowUserId,
+            b.atomName,
+            c.userName,c.avatar
           `;
       }
 
       // sql
       const _sql =
-        `select ${_selectFields} from aFlowTask a
-            inner join aFlowNode b on a.flowNodeId=b.id
-            inner join aFlow c on a.flowId=c.id
-            left join aUser d on a.userIdAssignee=d.id
+        `select ${_selectFields} from aFlow a
+            inner join aAtom b on a.flowAtomId=b.id
+            left join aUser c on a.flowUserId=c.id
 
           ${_where}
            (
@@ -73,12 +72,79 @@ module.exports = ctx => {
       return _sql;
     }
 
-    _selectTasks_1({ iid, userIdWho, where, orders, page, count }) {
+    _selectFlows_Others({ iid, userIdWho, where, orders, page, count, mode }) {
       // -- tables
-      // -- a: aFlowTaskHistory
-      // -- b: aFlowNodeHistory
-      // -- c: aFlowHistory
-      // -- d: aUser
+      // -- a: aFlow
+      // -- b: aAtom
+      // -- c: aUser
+      // -- d: aFlowTask
+
+      // for safe
+      where = where ? ctx.model._where(where) : null;
+      orders = orders ? ctx.model._orders(orders) : null;
+      const limit = page ? ctx.model._limit(page.size, page.index) : null;
+
+      // vars
+      let _userWhere;
+      let _modeWhere;
+
+      //
+      const _where = where ? `${where} AND` : ' WHERE';
+      const _orders = orders || '';
+      const _limit = limit || '';
+
+      // user
+      if (userIdWho !== 0) {
+        _userWhere = ` and exists(select d.id from aFlowTask d where d.flowId=a.id and d.userIdAssignee=${userIdWho})`;
+      } else {
+        _userWhere = '';
+      }
+
+      // mode
+      if (mode === 'others') {
+        _modeWhere = ` and a.flowUserId<>${userIdWho}`;
+      } else {
+        _modeWhere = '';
+      }
+
+      // fields
+      let _selectFields;
+      if (count) {
+        _selectFields = 'count(*) as _count';
+      } else {
+        _selectFields = `a.id,a.createdAt,a.updatedAt,a.deleted,a.iid,a.flowStatus,a.flowAtomId,a.flowNodeIdCurrent,a.flowNodeNameCurrent,a.flowUserId,
+            b.atomName,
+            c.userName,c.avatar
+          `;
+      }
+
+      // sql
+      const _sql =
+        `select ${_selectFields} from aFlow a
+            inner join aAtom b on a.flowAtomId=b.id
+            left join aUser c on a.flowUserId=c.id
+
+          ${_where}
+           (
+             a.deleted=0 and a.iid=${iid}
+             ${_userWhere}
+             ${_modeWhere}
+           )
+
+          ${count ? '' : _orders}
+          ${count ? '' : _limit}
+        `;
+
+      // ok
+      return _sql;
+    }
+
+    _selectFlows_History({ iid, userIdWho, where, orders, page, count }) {
+      // -- tables
+      // -- a: aFlowHistory
+      // -- b: aAtom
+      // -- c: aUser
+      // -- d: aFlowTaskHistory
 
       // for safe
       where = where ? ctx.model._where(where) : null;
@@ -95,7 +161,7 @@ module.exports = ctx => {
 
       // user
       if (userIdWho !== 0) {
-        _userWhere = ` and a.userIdAssignee=${userIdWho}`;
+        _userWhere = ` and exists(select d.id from aFlowTaskHistory d where d.flowId=a.flowId and d.userIdAssignee=${userIdWho})`;
       } else {
         _userWhere = '';
       }
@@ -105,19 +171,17 @@ module.exports = ctx => {
       if (count) {
         _selectFields = 'count(*) as _count';
       } else {
-        _selectFields = `a.*,
-            b.flowNodeDefId,b.flowNodeName,b.flowNodeType,
-            c.flowDefId,c.flowDefKey,c.flowDefRevision,c.flowStatus,c.flowAtomId,c.flowNodeIdCurrent,c.flowUserId,
-            d.userName,d.avatar
+        _selectFields = `a.id,a.flowId,a.createdAt,a.updatedAt,a.deleted,a.iid,a.flowStatus,a.flowAtomId,a.flowUserId,
+            b.atomName,
+            c.userName,c.avatar
           `;
       }
 
       // sql
       const _sql =
-        `select ${_selectFields} from aFlowTaskHistory a
-            inner join aFlowNodeHistory b on a.flowNodeId=b.flowNodeId
-            inner join aFlowHistory c on a.flowId=c.flowId
-            left join aUser d on a.userIdAssignee=d.id
+        `select ${_selectFields} from aFlowHistory a
+            inner join aAtom b on a.flowAtomId=b.id
+            left join aUser c on a.flowUserId=c.id
 
           ${_where}
            (

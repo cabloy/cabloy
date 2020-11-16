@@ -112,14 +112,15 @@ module.exports = ctx => {
       return await this._list({ options, user, pageForce, count });
     }
 
-    async _list({ options: { where, orders, page, history = 0 }, user, pageForce = true, count = 0 }) {
+    // mode: mine/others/flowing/history
+    async _list({ options: { where, orders, page, mode }, user, pageForce = true, count = 0 }) {
       page = ctx.bean.util.page(page, pageForce);
       const sql = this.sqlProcedure.selectFlows({
         iid: ctx.instance.id,
         userIdWho: user ? user.id : 0,
         where, orders, page,
         count,
-        history,
+        mode,
       });
       const res = await ctx.model.query(sql);
       return count ? res[0]._count : res;

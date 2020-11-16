@@ -3,7 +3,7 @@ module.exports = app => {
   class FlowController extends app.Controller {
 
     // options
-    //   where, orders, page, history
+    //   where, orders, page, mode: mine/others/flowing/history
     async select() {
       const options = this.ctx.request.body.options;
       options.page = this.ctx.bean.util.page(options.page);
