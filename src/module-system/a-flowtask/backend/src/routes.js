@@ -1,5 +1,8 @@
 module.exports = app => {
   const routes = [
+    // flow
+    { method: 'post', path: 'flow/data', controller: 'flow' },
+    // task
     { method: 'post', path: 'task/select', controller: 'flowTask' },
     { method: 'post', path: 'task/count', controller: 'flowTask' },
     { method: 'post', path: 'task/claim', controller: 'flowTask', middlewares: 'transaction' },
