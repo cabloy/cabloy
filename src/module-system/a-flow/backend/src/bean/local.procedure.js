@@ -77,7 +77,7 @@ module.exports = ctx => {
       // -- a: aFlow
       // -- b: aAtom
       // -- c: aUser
-      // -- d: aFlowTask
+      // -- d: aFlowTaskHistory
 
       // for safe
       where = where ? ctx.model._where(where) : null;
@@ -95,7 +95,7 @@ module.exports = ctx => {
 
       // user
       if (userIdWho !== 0) {
-        _userWhere = ` and exists(select d.id from aFlowTask d where d.flowId=a.id and d.userIdAssignee=${userIdWho})`;
+        _userWhere = ` and exists(select d.id from aFlowTaskHistory d where d.flowId=a.id and d.userIdAssignee=${userIdWho})`;
       } else {
         _userWhere = '';
       }
