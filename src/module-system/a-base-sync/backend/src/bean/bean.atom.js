@@ -828,7 +828,7 @@ module.exports = ctx => {
       if (_atom.atomIdDraft) {
         _atomDraft = await this.modelAtom.get({ id: _atom.atomIdDraft });
       }
-      if (_atomDraft && !_atomDraft.atomClosed) return null;
+      if (_atomDraft && !_atomDraft.atomClosed && !actionBase.enableOnOpened) return null;
       // check archive/history
       const sql = this.sqlProcedure.checkRightAction({
         iid: ctx.instance.id,

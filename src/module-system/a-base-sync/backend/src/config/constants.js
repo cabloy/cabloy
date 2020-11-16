@@ -34,24 +34,28 @@ module.exports = {
         title: 'View',
         actionPath: '/a/basefront/atom/item?mode=view&atomId={{atomId}}&itemId={{itemId}}',
         enableOnStatic: true,
+        enableOnOpened: true,
         icon: { material: 'visibility' },
       },
       write: {
         title: 'Edit',
         actionComponent: 'action',
         enableOnStatic: false,
+        enableOnOpened: false,
         icon: { material: 'edit' },
       },
       delete: {
         title: 'Delete',
         actionComponent: 'action',
         enableOnStatic: false,
+        enableOnOpened: false,
         icon: { material: 'delete' },
       },
       clone: {
         title: 'Clone',
         actionComponent: 'action',
         enableOnStatic: true,
+        enableOnOpened: true,
         icon: { material: 'content_copy' },
       },
       deleteBulk: {

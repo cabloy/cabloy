@@ -317,6 +317,7 @@ module.exports = ctx => {
           action.bulk = _actions[key].bulk;
           action.select = _actions[key].select;
           action.enableOnStatic = _actions[key].enableOnStatic;
+          action.enableOnOpened = _actions[key].enableOnOpened;
           action.icon = _actions[key].icon;
         } else {
           action.stage = _actionsSystemMeta[key].stage;
@@ -324,6 +325,7 @@ module.exports = ctx => {
           action.bulk = _actionsSystemMeta[key].bulk;
           action.select = _actionsSystemMeta[key].select;
           action.enableOnStatic = _actionsSystemMeta[key].enableOnStatic;
+          action.enableOnOpened = _actionsSystemMeta[key].enableOnOpened;
           action.icon = _actionsSystemMeta[key].icon;
         }
         if (_actions && _actions[key] && (_actions[key].actionComponent || _actions[key].actionPath)) {
@@ -357,6 +359,7 @@ module.exports = ctx => {
             bulk: _actions[key].bulk,
             select: _actions[key].select,
             enableOnStatic: _actions[key].enableOnStatic,
+            enableOnOpened: _actions[key].enableOnOpened,
             icon: _actions[key].icon,
           };
           if (!_actions[key].actionComponent && !_actions[key].actionPath) {
