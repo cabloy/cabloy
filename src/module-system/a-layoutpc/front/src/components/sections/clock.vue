@@ -1,5 +1,5 @@
 <template>
-  <span class="clock-text" @click="onClickSettings">{{clockText}}</span>
+  <span class="eb-cursor-pointer" @click="onClickSettings">{{clockText}}</span>
 </template>
 <script>
 // export
@@ -134,8 +134,4 @@ function installFactory(_Vue) {
 
 </script>
 <style lang="less" scoped>
-.clock-text {
-  cursor: pointer;
-}
-
 </style>

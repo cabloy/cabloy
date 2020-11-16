@@ -19,7 +19,6 @@ export default [
   { path: 'jsx', component: loadjsx('jsx') },
   // cabloy
   { path: 'kitchen-sink/index', component: loadKitchenSink('index') },
-  { path: 'kitchen-sink/about', component: loadKitchenSink('about') },
   { path: 'kitchen-sink/guide', component: loadKitchenSink('guide') },
   { path: 'kitchen-sink/fileUpload', component: loadKitchenSink('fileUpload') },
   { path: 'kitchen-sink/progress', component: loadKitchenSink('progress'), meta: { auth: true } },

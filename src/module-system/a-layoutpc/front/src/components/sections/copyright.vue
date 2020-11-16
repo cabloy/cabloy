@@ -1,5 +1,5 @@
 <template>
-  <span>{{$text('CopyrightTip')}}</span>
+  <span class="eb-cursor-pointer" @click="onClickAbout">{{$text('CopyrightTip')}}</span>
 </template>
 <script>
 // export
@@ -13,6 +13,14 @@ function installFactory(_Vue) {
   const ebLayoutSectionBase = Vue.prototype.$meta.module.get('a-layoutpc').options.mixins.ebLayoutSectionBase;
   return {
     mixins: [ ebLayoutSectionBase ],
+    methods: {
+      onClickAbout() {
+        this.$meta.vueLayout.navigate('/a/basefront/base/about', {
+          scene: 'sidebar',
+          sceneOptions: { side: 'right', name: 'about', title: 'About' },
+        });
+      },
+    },
   };
 }
 

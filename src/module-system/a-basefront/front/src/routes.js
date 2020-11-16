@@ -23,4 +23,5 @@ export default [
   { path: 'comment/autoHeart', component: load('comment/autoHeart') },
   { path: 'attachment/list', component: load('attachment/list') },
   { path: 'base/alert', component: load('base/alert') },
+  { path: 'base/about', component: load('base/about') },
 ];

@@ -8,7 +8,7 @@
 </template>
 <script>
 const items = [
-  { title: 'About', path: 'kitchen-sink/about' },
+  { title: 'About', path: '/a/basefront/base/about' },
   { title: 'Framework7', path: 'kitchen-sink/framework7/index' },
   { title: 'Guide', path: 'kitchen-sink/guide' },
   { title: 'File Upload', path: 'kitchen-sink/fileUpload' },

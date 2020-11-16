@@ -8,6 +8,7 @@ export default {
   Date: '日期',
   Time: '时间',
   Preferences: '配置',
+  About: '关于',
   'Not LoggedIn': '未登录',
   'Sign In': '登录',
   'Log Out': '退出登录',
