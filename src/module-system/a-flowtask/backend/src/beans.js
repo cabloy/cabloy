@@ -1,9 +1,9 @@
 const versionManager = require('./bean/version.manager.js');
-const localProcedure = require('./bean/local.procedure.js');
 const flowNodeStartEventAtom = require('./bean/flow.node.startEventAtom.js');
 const flowNodeActivityUserTask = require('./bean/flow.node.activityUserTask.js');
 const localContextTask = require('./bean/local.context.task.js');
 const localFlowTask = require('./bean/local.flow.task.js');
+const localProcedure = require('./bean/local.procedure.js');
 const beanFlowTask = require('./bean/bean.flowTask.js');
 
 module.exports = app => {
@@ -12,11 +12,6 @@ module.exports = app => {
     'version.manager': {
       mode: 'app',
       bean: versionManager,
-    },
-    // local
-    'local.procedure': {
-      mode: 'ctx',
-      bean: localProcedure,
     },
     // flow
     'flow.node.startEventAtom': {
@@ -27,6 +22,7 @@ module.exports = app => {
       mode: 'ctx',
       bean: flowNodeActivityUserTask,
     },
+    // local
     'local.context.task': {
       mode: 'ctx',
       bean: localContextTask,
@@ -34,6 +30,10 @@ module.exports = app => {
     'local.flow.task': {
       mode: 'ctx',
       bean: localFlowTask,
+    },
+    'local.procedure': {
+      mode: 'ctx',
+      bean: localProcedure,
     },
     // global
     flowTask: {

@@ -12,6 +12,10 @@ module.exports = ctx => {
       return ctx.model.module(moduleInfo.relativeName).flowNode;
     }
 
+    get sqlProcedure() {
+      return ctx.bean._getBean(moduleInfo.relativeName, 'local.procedure');
+    }
+
     async startByKey({ flowDefKey, flowAtomId, flowVars, flowUserId, startEventId }) {
       // fullKey
       const { fullKey } = ctx.bean.flowDef._combineFullKey({ flowDefKey });
@@ -98,6 +102,27 @@ module.exports = ctx => {
       // load flow node
       const flowNodeInstance = await flowInstance._loadNodeInstance({ flowNode });
       return flowNodeInstance;
+    }
+
+    async count({ options, user }) {
+      return await this.select({ options, user, count: 1 });
+    }
+
+    async select({ options, user, pageForce = true, count = 0 }) {
+      return await this._list({ options, user, pageForce, count });
+    }
+
+    async _list({ options: { where, orders, page, history = 0 }, user, pageForce = true, count = 0 }) {
+      page = ctx.bean.util.page(page, pageForce);
+      const sql = this.sqlProcedure.selectFlows({
+        iid: ctx.instance.id,
+        userIdWho: user ? user.id : 0,
+        where, orders, page,
+        count,
+        history,
+      });
+      const res = await ctx.model.query(sql);
+      return count ? res[0]._count : res;
     }
 
   }
