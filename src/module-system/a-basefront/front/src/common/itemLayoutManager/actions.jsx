@@ -38,7 +38,7 @@ export default {
       }
       // specials
       //    draft
-      if (this.base.item.atomIdDraft) {
+      if (this.base.item.atomStage > 0 && !this.actions_findAction('write')) {
         actions.push({
           module: this.base.atomClass.module,
           atomClassName: this.base.atomClass.atomClassName,

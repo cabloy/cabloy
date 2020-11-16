@@ -44,6 +44,10 @@ export default {
         };
         const url = ctx.$meta.util.replaceTemplate('/a/basefront/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}', _item);
         ctx.$view.navigate(url, action.navigateOptions);
+        // event
+        if (item.atomStage > 0) {
+          ctx.$meta.eventHub.$emit('atom:openDraft', { key, keyDraft });
+        }
       } else if (action.name === 'clone') {
         // clone
         await ctx.$view.dialog.confirm();

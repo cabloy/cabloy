@@ -33,6 +33,7 @@ export default {
     this.$meta.eventHub.$on('atom:star', this.base_onStarChanged);
     this.$meta.eventHub.$on('atom:labels', this.base_onLabelsChanged);
     this.$meta.eventHub.$on('atom:action', this.base_onActionChanged);
+    this.$meta.eventHub.$on('atom:openDraft', this.base_onOpenDrafted);
     this.$meta.eventHub.$on('comment:action', this.base_onCommentChanged);
     this.$meta.eventHub.$on('attachment:action', this.base_onAttachmentChanged);
   },
@@ -40,6 +41,7 @@ export default {
     this.$meta.eventHub.$off('atom:star', this.base_onStarChanged);
     this.$meta.eventHub.$off('atom:labels', this.base_onLabelsChanged);
     this.$meta.eventHub.$off('atom:action', this.base_onActionChanged);
+    this.$meta.eventHub.$off('atom:openDraft', this.base_onOpenDrafted);
     this.$meta.eventHub.$off('comment:action', this.base_onCommentChanged);
     this.$meta.eventHub.$off('attachment:action', this.base_onAttachmentChanged);
   },
@@ -117,6 +119,14 @@ export default {
       }
       // others
       await this.base_loadItem();
+    },
+    async base_onOpenDrafted(data) {
+      const key = data.key;
+
+      if (!this.base_ready) return;
+      if (this.base.item.atomId !== key.atomId) return;
+
+      await this.actions_fetchActions();
     },
     base_onCommentChanged(data) {
       if (!this.base.item || data.atomId !== this.container.atomId) return;
