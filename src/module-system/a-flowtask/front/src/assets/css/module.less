@@ -9,18 +9,29 @@
   .eb-flow-timeline {
 
     .flowNode.timeline-item-content {
-      background: var(--f7-list-group-title-bg-color);
       width: 100%;
+      background: var(--f7-list-group-title-bg-color);
       padding: 6px;
+    }
+
+    .flowTask.timeline-item-content {
+      width: 100%;
+
+      .flowTaskInfo {
+        display: flex;
+        justify-content: space-between;
+
+        .task-user,
+        .task-actions {
+          display: flex;
+          align-items: center;
+        }
+      }
     }
 
     .flowRemark.badge {
       margin: 0 16px;
     }
 
-    .flowTaskUser {
-      display: flex;
-      align-items: center;
-    }
   }
 }

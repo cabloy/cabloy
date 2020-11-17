@@ -78,12 +78,17 @@ export default {
         );
       }
       const domStatus = this._timeline_renderFlowTaskStatus({ task });
-      const domUser = (
-        <div class="timeline-item-time flowTaskUser">
-          {domTime}
-          <img class="avatar avatar12" src={this.info_getItemMetaMedia(task.avatar)} />
-          <span>{task.userName}</span>
-          {domStatus}
+      const domInfo = (
+        <div class="timeline-item-time flowTaskInfo">
+          <div class="task-user">
+            {domTime}
+            <img class="avatar avatar12" src={this.info_getItemMetaMedia(task.avatar)} />
+            <span>{task.userName}</span>
+            {domStatus}
+          </div>
+          <div class="task-actions">
+            <eb-link iconMaterial="visibility"></eb-link>
+          </div>
         </div>
       );
       let domRemark;
@@ -99,7 +104,7 @@ export default {
           <div class="timeline-item-date">{domDate}</div>
           <div class="timeline-item-divider"></div>
           <div class="timeline-item-content flowTask">
-            {domUser}
+            {domInfo}
             {domRemark}
           </div>
         </div>
