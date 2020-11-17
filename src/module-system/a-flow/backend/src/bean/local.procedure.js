@@ -55,7 +55,7 @@ module.exports = ctx => {
       // sql
       const _sql =
         `select ${_selectFields} from aFlow a
-            inner join aAtom b on a.flowAtomId=b.id
+            left join aAtom b on a.flowAtomId=b.id
             left join aUser c on a.flowUserId=c.id
 
           ${_where}
@@ -95,7 +95,7 @@ module.exports = ctx => {
 
       // user
       if (userIdWho !== 0) {
-        _userWhere = ` and exists(select d.id from aFlowTaskHistory d where d.flowId=a.id and d.userIdAssignee=${userIdWho})`;
+        _userWhere = ` and exists(select d.id from aFlowTaskHistory d where d.deleted=0 and d.flowId=a.id and d.userIdAssignee=${userIdWho})`;
       } else {
         _userWhere = '';
       }
@@ -121,7 +121,7 @@ module.exports = ctx => {
       // sql
       const _sql =
         `select ${_selectFields} from aFlow a
-            inner join aAtom b on a.flowAtomId=b.id
+            left join aAtom b on a.flowAtomId=b.id
             left join aUser c on a.flowUserId=c.id
 
           ${_where}
@@ -161,7 +161,7 @@ module.exports = ctx => {
 
       // user
       if (userIdWho !== 0) {
-        _userWhere = ` and exists(select d.id from aFlowTaskHistory d where d.flowId=a.flowId and d.userIdAssignee=${userIdWho})`;
+        _userWhere = ` and exists(select d.id from aFlowTaskHistory d where d.deleted=0 and d.flowId=a.flowId and d.userIdAssignee=${userIdWho})`;
       } else {
         _userWhere = '';
       }
@@ -171,7 +171,7 @@ module.exports = ctx => {
       if (count) {
         _selectFields = 'count(*) as _count';
       } else {
-        _selectFields = `a.id,a.flowId,a.createdAt,a.updatedAt,a.deleted,a.iid,a.flowStatus,a.flowAtomId,a.flowUserId,a.timeEnd,a.flowRemark
+        _selectFields = `a.id,a.flowId,a.createdAt,a.updatedAt,a.deleted,a.iid,a.flowStatus,a.flowAtomId,a.flowUserId,a.timeEnd,a.flowRemark,
             b.atomName,
             c.userName,c.avatar
           `;
@@ -180,7 +180,7 @@ module.exports = ctx => {
       // sql
       const _sql =
         `select ${_selectFields} from aFlowHistory a
-            inner join aAtom b on a.flowAtomId=b.id
+            left join aAtom b on a.flowAtomId=b.id
             left join aUser c on a.flowUserId=c.id
 
           ${_where}

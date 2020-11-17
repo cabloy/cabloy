@@ -63,7 +63,7 @@ export default {
       const children = [];
       // flowStatus
       if (flow.flowStatus === 1) {
-        const endText = `${this.$text(flow.flowRemark || 'End')}: ${this.$meta.util.formatDateTime(flow.timeEnd)}`;
+        const endText = `${this.$text(flow.flowRemark || 'End')}`;
         children.push(
           <f7-badge class="eb-flowstatus" key="flowStatus" color="teal">{endText}</f7-badge>
         );

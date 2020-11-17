@@ -20,7 +20,7 @@ module.exports = app => {
           where: {
             'a.id': flowId,
           },
-          mode: 'flowing',
+          mode: 'history',
         },
         user,
       });

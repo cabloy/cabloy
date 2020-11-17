@@ -11,6 +11,7 @@ export default {
     info_renderActionsLeft() {
       if (!this.base_ready) return;
       const atom = this.base.data.atom;
+      if (!atom) return;
       const children = [];
       // comment
       if (this.base.config.render.item.info.comment) {
@@ -47,12 +48,26 @@ export default {
       const flow = this.base.data.flow;
       const children = [];
       const dateCreated = this.$meta.util.formatDateTime(flow.createdAt);
-      children.push(
-        <div key="date:one2">{this.$meta.util.formatDate(dateCreated)}</div>
-      );
-      children.push(
-        <div key="date:two2">{this.$meta.util.formatTime(dateCreated)}</div>
-      );
+      const dateEnd = this.$meta.util.formatDateTime(flow.timeEnd);
+      let small = false;
+      if (flow.timeEnd) {
+        small = true;
+        children.push(
+          <div key="date:one">{dateCreated}</div>
+        );
+      }
+      if (small) {
+        children.push(
+          <div key="date:two">{dateEnd}</div>
+        );
+      } else {
+        children.push(
+          <div key="date:one2">{this.$meta.util.formatDate(flow.createdAt)}</div>
+        );
+        children.push(
+          <div key="date:two2">{this.$meta.util.formatTime(flow.createdAt)}</div>
+        );
+      }
       return (
         <div key="date" class='info-date'>
           {children}
