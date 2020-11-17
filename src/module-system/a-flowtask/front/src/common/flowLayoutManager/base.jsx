@@ -57,7 +57,7 @@ export default {
       if (data.action === 'create') this.base.item.attachmentCount += 1;
       if (data.action === 'delete') this.base.item.attachmentCount -= 1;
     },
-    base_flowStatusRender() {
+    base_renderFlowStatus() {
       if (!this.base_ready) return null;
       const flow = this.base.data.flow;
       const children = [];

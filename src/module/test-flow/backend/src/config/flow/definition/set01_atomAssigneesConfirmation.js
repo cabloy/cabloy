@@ -6,7 +6,7 @@ module.exports = app => {
       nodes: [
         {
           id: 'startEvent_1',
-          name: 'Start',
+          name: 'Drafting',
           type: 'startEventAtom',
           options: {
             atom: {
@@ -18,7 +18,7 @@ module.exports = app => {
         },
         {
           id: 'activity_1',
-          name: 'Drafting',
+          name: 'Review',
           type: 'activityUserTask',
           options: {
             assignees: {

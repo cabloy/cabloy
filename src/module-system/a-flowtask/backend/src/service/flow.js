@@ -25,7 +25,12 @@ module.exports = app => {
         user,
       });
       if (flows.length === 0) this.ctx.throw(404);
-      return flows[0];
+      const flow = flows[0];
+      // locale
+      if (flow.flowRemark) {
+        flow.flowRemark = this.ctx.text(flow.flowRemark);
+      }
+      return flow;
     }
 
     async _data_atom({ atomId }) {
@@ -42,12 +47,22 @@ module.exports = app => {
             'a.flowId': flowId,
             'b.flowNodeType': [ 'startEventAtom', 'activityUserTask' ],
           },
-          orders: [[ 'a.flowNodeId', 'desc' ]],
+          orders: [
+            [ 'a.flowNodeId', 'desc' ],
+            [ 'a.flowTaskStatus', 'asc' ],
+          ],
           history: 1,
         },
         user: null,
         pageForce: false,
       });
+      // locale
+      for (const task of tasks) {
+        task.flowNodeName = this.ctx.text(task.flowNodeName);
+        if (task.flowNodeRemark) {
+          task.flowNodeRemark = this.ctx.text(task.flowNodeRemark);
+        }
+      }
       return tasks;
     }
 
