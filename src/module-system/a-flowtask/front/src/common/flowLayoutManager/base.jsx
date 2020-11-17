@@ -18,6 +18,21 @@ export default {
     base_user() {
       return this.$store.state.auth.user.op;
     },
+    base_flow() {
+      return this.base.data && this.base.data.flow;
+    },
+    base_atom() {
+      return this.base.data && this.base.data.atom;
+    },
+    base_tasks() {
+      return this.base.data && this.base.data.tasks;
+    },
+    base_flowOld() {
+      if (!this.base_ready) return false;
+      const atom = this.base_atom;
+      const flow = this.base_flow;
+      return !atom || atom.atomFlowId !== flow.flowId;
+    },
   },
   created() {
   },

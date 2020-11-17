@@ -12,6 +12,7 @@ const __flowTaskStatuses = {
     text: 'Cancelled',
   },
 };
+import Vue from 'vue';
 export default {
   data() {
     return {
@@ -20,6 +21,20 @@ export default {
     };
   },
   methods: {
+    timeline_onPerformTaskActions(event, task) {
+      // popover
+      const popover = this.$$(this.$refs[`flowTask:${task.flowTaskId}`]).find('.popover');
+      if (popover.length === 0) return;
+      this.$f7.popover.open(popover, event.currentTarget);
+      // actions
+      if (!task._actions) {
+        this.$api.post('/a/flowtask/task/actions', {
+          flowTaskId: task.flowTaskId,
+        }).then(data => {
+          Vue.set(task, '_actions', data);
+        });
+      }
+    },
     _timeline_renderFlowNode({ task, flowNodeGroupIndex }) {
       // date
       const domDate = (
@@ -56,6 +71,30 @@ export default {
         <f7-badge class="flowRemark" color={status.color}>{this.$text(status.text)}</f7-badge>
       );
     },
+    _timeline_renderFlowTaskActions({ task }) {
+      if (task.userIdAssignee !== this.base_user.id || this.base_flowOld) return;
+      return (
+        <eb-link iconMaterial="more_horiz" propsOnPerform={event => this.timeline_onPerformTaskActions(event, task)}></eb-link>
+      );
+    },
+    _timeline_renderFlowTaskActionsPopoverActions({ task }) {
+      if (!task._actions) return;
+      const children = [];
+      for (const action of task._actions) {
+
+      }
+    },
+    _timeline_renderFlowTaskActionsPopover({ task }) {
+      if (task.userIdAssignee !== this.base_user.id || this.base_flowOld) return;
+      const children = this._timeline_renderFlowTaskActionsPopoverActions({ task });
+      return (
+        <eb-popover ready={task._actions}>
+          <f7-list inset>
+            {children}
+          </f7-list>
+        </eb-popover>
+      );
+    },
     _timeline_renderFlowTask({ task }) {
       // date
       let domDate;
@@ -70,7 +109,7 @@ export default {
           <small>{this.$meta.util.formatDateTime(task.timeHandled, 'MM-DD')}</small>
         );
       }
-      // user
+      // info
       let domTime;
       if (task.handleStatus > 0) {
         domTime = (
@@ -78,6 +117,7 @@ export default {
         );
       }
       const domStatus = this._timeline_renderFlowTaskStatus({ task });
+      const domActions = this._timeline_renderFlowTaskActions({ task });
       const domInfo = (
         <div class="timeline-item-time flowTaskInfo">
           <div class="task-user">
@@ -86,11 +126,10 @@ export default {
             <span>{task.userName}</span>
             {domStatus}
           </div>
-          <div class="task-actions">
-            <eb-link iconMaterial="visibility"></eb-link>
-          </div>
+          {domActions}
         </div>
       );
+      // remark
       let domRemark;
       if (task.handleRemark) {
         domRemark = (
@@ -99,13 +138,16 @@ export default {
           </div>
         );
       }
+      // popover
+      const domPopover = this._timeline_renderFlowTaskActionsPopover({ task });
       return (
-        <div key={`flowTask:${task.flowTaskId}`} class="timeline-item">
+        <div key={`flowTask:${task.flowTaskId}`} ref={`flowTask:${task.flowTaskId}`} class="timeline-item">
           <div class="timeline-item-date">{domDate}</div>
           <div class="timeline-item-divider"></div>
           <div class="timeline-item-content flowTask">
             {domInfo}
             {domRemark}
+            {domPopover}
           </div>
         </div>
       );
