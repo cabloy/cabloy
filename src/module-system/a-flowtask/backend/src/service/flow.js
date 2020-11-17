@@ -62,6 +62,9 @@ module.exports = app => {
         if (task.flowNodeRemark) {
           task.flowNodeRemark = this.ctx.text(task.flowNodeRemark);
         }
+        if (task.handleRemark) {
+          task.handleRemark = this.ctx.text(task.handleRemark);
+        }
       }
       return tasks;
     }
