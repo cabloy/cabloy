@@ -46,7 +46,7 @@ module.exports = ctx => {
       if (count) {
         _selectFields = 'count(*) as _count';
       } else {
-        _selectFields = `a.id,a.createdAt,a.updatedAt,a.deleted,a.iid,a.flowStatus,a.flowAtomId,a.flowNodeIdCurrent,a.flowNodeNameCurrent,a.flowUserId,
+        _selectFields = `a.id,a.id as flowId,a.createdAt,a.updatedAt,a.deleted,a.iid,a.flowStatus,a.flowAtomId,a.flowNodeIdCurrent,a.flowNodeNameCurrent,a.flowUserId,
             b.atomName,
             c.userName,c.avatar
           `;
@@ -112,7 +112,7 @@ module.exports = ctx => {
       if (count) {
         _selectFields = 'count(*) as _count';
       } else {
-        _selectFields = `a.id,a.createdAt,a.updatedAt,a.deleted,a.iid,a.flowStatus,a.flowAtomId,a.flowNodeIdCurrent,a.flowNodeNameCurrent,a.flowUserId,
+        _selectFields = `a.id,a.id as flowId,a.createdAt,a.updatedAt,a.deleted,a.iid,a.flowStatus,a.flowAtomId,a.flowNodeIdCurrent,a.flowNodeNameCurrent,a.flowUserId,
             b.atomName,
             c.userName,c.avatar
           `;

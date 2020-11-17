@@ -18,7 +18,7 @@ module.exports = app => {
       atomStaticKey: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Key2',
+        ebTitle: 'KeyForAtom',
         // notEmpty: true,
       },
       // atomRevision: {
