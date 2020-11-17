@@ -65,12 +65,12 @@ export default {
       if (flow.flowStatus === 1) {
         const endText = `${this.$text(flow.flowRemark || 'End')}: ${this.$meta.util.formatDateTime(flow.timeEnd)}`;
         children.push(
-          <f7-badge key="flowStatus" color="teal">{endText}</f7-badge>
+          <f7-badge class="eb-flowstatus" key="flowStatus" color="teal">{endText}</f7-badge>
         );
       } else {
         const currentText = `${this.$text('Current')}: ${this.$text(flow.flowNodeNameCurrent)}`;
         children.push(
-          <f7-badge key="flowStatus" color="orange">{currentText}</f7-badge>
+          <f7-badge class="eb-flowstatus" key="flowStatus" color="orange">{currentText}</f7-badge>
         );
       }
       //
