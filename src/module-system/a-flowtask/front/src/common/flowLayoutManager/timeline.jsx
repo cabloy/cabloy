@@ -1,3 +1,17 @@
+const __flowTaskStatuses = {
+  1: {
+    color: 'teal',
+    text: 'Passed',
+  },
+  2: {
+    color: 'orange',
+    text: 'Rejected',
+  },
+  3: {
+    color: 'gray',
+    text: 'Cancelled',
+  },
+};
 export default {
   data() {
     return {
@@ -35,6 +49,13 @@ export default {
         </div>
       );
     },
+    _timeline_renderFlowTaskStatus({ task }) {
+      if (task.handleStatus === 0) return;
+      const status = __flowTaskStatuses[task.handleStatus];
+      return (
+        <f7-badge class="flowRemark" color={status.color}>{this.$text(status.text)}</f7-badge>
+      );
+    },
     _timeline_renderFlowTask({ task }) {
       // date
       let domDate;
@@ -56,11 +77,13 @@ export default {
           <span>{this.$meta.util.formatDateTime(task.timeHandled, 'HH:mm')}</span>
         );
       }
+      const domStatus = this._timeline_renderFlowTaskStatus({ task });
       const domUser = (
         <div class="timeline-item-time flowTaskUser">
           {domTime}
           <img class="avatar avatar12" src={this.info_getItemMetaMedia(task.avatar)} />
           <span>{task.userName}</span>
+          {domStatus}
         </div>
       );
       let domRemark;
