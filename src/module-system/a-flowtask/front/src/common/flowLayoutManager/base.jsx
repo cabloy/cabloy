@@ -13,7 +13,7 @@ export default {
   },
   computed: {
     base_ready() {
-      return this.base.ready && this.data;
+      return this.base.ready && this.base.data;
     },
     base_user() {
       return this.$store.state.auth.user.op;
@@ -56,6 +56,25 @@ export default {
       if (!this.base.item || data.atomId !== this.container.atomId) return;
       if (data.action === 'create') this.base.item.attachmentCount += 1;
       if (data.action === 'delete') this.base.item.attachmentCount -= 1;
+    },
+    base_flowStatusRender() {
+      if (!this.base_ready) return null;
+      const flow = this.base.data.flow;
+      const children = [];
+      // flowStatus
+      if (flow.flowStatus === 1) {
+        const endText = `${this.$text(flow.flowRemark || 'End')}: ${this.$meta.util.formatDateTime(flow.timeEnd)}`;
+        children.push(
+          <f7-badge key="flowStatus" color="teal">{endText}</f7-badge>
+        );
+      } else {
+        const currentText = `${this.$text('Current')}: ${this.$text(flow.flowNodeNameCurrent)}`;
+        children.push(
+          <f7-badge key="flowStatus" color="orange">{currentText}</f7-badge>
+        );
+      }
+      //
+      return children;
     },
   },
 };

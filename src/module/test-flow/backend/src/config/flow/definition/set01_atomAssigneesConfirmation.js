@@ -18,7 +18,7 @@ module.exports = app => {
         },
         {
           id: 'activity_1',
-          name: 'ActivityUserTask',
+          name: 'Drafting',
           type: 'activityUserTask',
           options: {
             assignees: {

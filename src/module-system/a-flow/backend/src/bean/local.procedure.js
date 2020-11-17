@@ -171,7 +171,7 @@ module.exports = ctx => {
       if (count) {
         _selectFields = 'count(*) as _count';
       } else {
-        _selectFields = `a.id,a.flowId,a.createdAt,a.updatedAt,a.deleted,a.iid,a.flowStatus,a.flowAtomId,a.flowUserId,
+        _selectFields = `a.id,a.flowId,a.createdAt,a.updatedAt,a.deleted,a.iid,a.flowStatus,a.flowAtomId,a.flowUserId,a.timeEnd,a.flowRemark
             b.atomName,
             c.userName,c.avatar
           `;

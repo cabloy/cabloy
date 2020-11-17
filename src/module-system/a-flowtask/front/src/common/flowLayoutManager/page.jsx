@@ -5,14 +5,11 @@ export default {
   },
   methods: {
     page_getTitle() {
-      const name = this.container.mode === 'edit' ? this.$text('Edit') : this.$text('View');
-      if (!this.base.item) return name;
-      return `${name}: ${this.base.item.atomName}`;
+      if (!this.base_ready) return '';
+      return `${this.$text('FlowTitle')}: ${this.base.data.atom.atomName}`;
     },
     page_getSubtitle() {
-      const stage = this.base_getCurrentStage();
-      if (!stage || stage === 'archive') return '';
-      return this.$text(stage.replace(stage[0], stage[0].toUpperCase()));
+      return null;
     },
   },
 };
