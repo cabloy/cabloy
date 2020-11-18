@@ -380,10 +380,19 @@ module.exports = ctx => {
     }
 
     async _viewAtom() {
+      // user/atom
+      const user = this.contextTask._user;
+      const atom = this.context._atom;
+      // flowTask
+      const flowTask = this.contextTask._flowTaskHistory;
+      const flowTaskId = flowTask.flowTaskId;
+      // must be the same user
+      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
+      // must be the same flowId
+      if (atom.atomFlowId !== this.context._flowId) ctx.throw.module('a-flow', 1009, this.context._flowId);
       // schema
       const schema = await this._getSchemaRead();
       // item
-      const atom = this.context._atom;
       const item = extend(true, {}, atom);
       // validate
       await ctx.bean.validation.ajvFromSchemaAndValidate({

@@ -8,5 +8,6 @@ export default {
   Cancelled: '已取消',
   View: '查看',
   Handle: '处理',
+  Outdated: '已过期',
   'Cancel Flow': '取消流程',
 };

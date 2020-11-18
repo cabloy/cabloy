@@ -11,19 +11,24 @@ export default {
     info_renderActionsLeft() {
       if (!this.base_ready) return;
       const atom = this.base.data.atom;
-      if (!atom) return;
       const children = [];
-      // comment
-      if (this.base.config.render.item.info.comment) {
+      if (!atom) {
         children.push(
-          <eb-link key="actionsLeft:comment" iconMaterial="comment" iconBadge={atom.commentCount} eb-href={`/a/basefront/comment/list?atomId=${atom.id}`}></eb-link>
+          <f7-badge color="gray">{this.$text('Outdated')}</f7-badge>
         );
-      }
-      // attachment
-      if (this.base.config.render.item.info.attachment) {
-        children.push(
-          <eb-link key="actionsLeft:attachment" iconMaterial="attachment" iconBadge={atom.attachmentCount} eb-href={`/a/basefront/attachment/list?atomId=${atom.id}`}></eb-link>
-        );
+      } else {
+        // comment
+        if (this.base.config.render.item.info.comment) {
+          children.push(
+            <eb-link key="actionsLeft:comment" iconMaterial="comment" iconBadge={atom.commentCount} eb-href={`/a/basefront/comment/list?atomId=${atom.id}`}></eb-link>
+          );
+        }
+        // attachment
+        if (this.base.config.render.item.info.attachment) {
+          children.push(
+            <eb-link key="actionsLeft:attachment" iconMaterial="attachment" iconBadge={atom.attachmentCount} eb-href={`/a/basefront/attachment/list?atomId=${atom.id}`}></eb-link>
+          );
+        }
       }
       // ok
       return children;

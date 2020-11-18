@@ -8,4 +8,5 @@ module.exports = {
   1006: 'Previous Flow Node not Found: %s',
   1007: 'Role not Found: %s',
   1008: 'Flow Completed: %s',
+  1009: 'Flow Outdated: %s',
 };
