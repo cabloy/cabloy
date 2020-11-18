@@ -1,4 +1,32 @@
 export default {
+  flowTask: {
+    actions: {
+      viewAtom: {
+        title: 'View',
+        actionModule: 'a-flowtask',
+        actionComponent: 'action',
+        icon: { material: 'visibility' },
+      },
+      handleTask: {
+        title: 'Handle',
+        actionModule: 'a-flowtask',
+        actionComponent: 'action',
+        icon: { material: 'done' },
+      },
+      cancelFlow: {
+        title: 'Cancel Flow',
+        actionModule: 'a-flowtask',
+        actionComponent: 'action',
+        icon: { material: 'done' },
+      },
+      assigneesConfirmation: {
+        title: 'Confirmation',
+        actionModule: 'a-flowtask',
+        actionComponent: 'action',
+        icon: { material: 'done' },
+      },
+    },
+  },
   flow: {
     render: {
       item: {

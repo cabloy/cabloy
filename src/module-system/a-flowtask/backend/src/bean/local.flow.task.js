@@ -334,6 +334,47 @@ module.exports = ctx => {
       await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
     }
 
+    async _actions() {
+      // user
+      const user = this.contextTask._user;
+      // flowTask
+      const flowTask = this.contextTask._flowTask;
+      const flowTaskId = flowTask.id;
+      // must be the same user
+      if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
+      // actions
+      const actions = [];
+      // flowTaskStatus
+      if (flowTask.flowTaskStatus === 1) return actions;
+      // specificFlag
+      if (flowTask.specificFlag === 1) {
+        actions.push({
+          name: 'assigneesConfirmation',
+        });
+      } else if (flowTask.specificFlag === 0) {
+        // options
+        const options = ctx.bean.flowTask._getNodeRefOptionsTask({ nodeInstance: this.nodeInstance });
+        // allowPassTask allowRejectTask
+        if (options.allowPassTask || options.allowRejectTask) {
+          actions.push({
+            name: 'handleTask',
+            options: {
+              allowPassTask: options.allowPassTask,
+              allowRejectTask: options.allowRejectTask,
+            },
+          });
+        }
+        // allowCancelFlow
+        if (options.allowCancelFlow) {
+          actions.push({
+            name: 'cancelFlow',
+          });
+        }
+      }
+      // others
+      return actions;
+    }
+
     async _getSchemaWrite() {
       const module = this.context._atom.module;
       // options

@@ -6,4 +6,7 @@ export default {
   Passed: '已通过',
   Rejected: '已驳回',
   Cancelled: '已取消',
+  View: '查看',
+  Handle: '处理',
+  'Cancel Flow': '取消流程',
 };

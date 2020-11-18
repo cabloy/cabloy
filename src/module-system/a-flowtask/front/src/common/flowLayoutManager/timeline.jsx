@@ -21,19 +21,39 @@ export default {
     };
   },
   methods: {
-    timeline_onPerformTaskActions(event, task) {
+    async timeline_onPerformTaskActions(event, task) {
       // popover
       const popover = this.$$(this.$refs[`flowTask:${task.flowTaskId}`]).find('.popover');
       if (popover.length === 0) return;
       this.$f7.popover.open(popover, event.currentTarget);
       // actions
-      if (!task._actions) {
-        this.$api.post('/a/flowtask/task/actions', {
+      await this._timeline_prepareActions(task);
+    },
+    async _timeline_prepareActions(task) {
+      if (task._actions) return;
+      // actions
+      let actions = [];
+      // action view
+      actions.push({
+        name: 'viewAtom',
+      });
+      // others
+      if (task.flowTaskStatus === 0) {
+        const actionsOther = await this.$api.post('/a/flowtask/task/actions', {
           flowTaskId: task.flowTaskId,
-        }).then(data => {
-          Vue.set(task, '_actions', data);
         });
+        actions = actions.concat(actionsOther);
       }
+      // set
+      Vue.set(task, '_actions', actions);
+    },
+    timeline_onPerformTaskAction(event, actionBase) {
+
+    },
+    _timeline_getActionBase(action) {
+      const actions = this.$meta.config.modules['a-flowtask'].flowTask.actions;
+      const actionBase = actions[action.name];
+      return this.$meta.util.extend({}, actionBase, action);
     },
     _timeline_renderFlowNode({ task, flowNodeGroupIndex }) {
       // date
@@ -81,14 +101,21 @@ export default {
       if (!task._actions) return;
       const children = [];
       for (const action of task._actions) {
-
+        const actionBase = this._timeline_getActionBase(action);
+        children.push(
+          <eb-list-item key={actionBase.name} popoverClose link="#" propsOnPerform={event => this.timeline_onPerformTaskAction(event, actionBase)}>
+            <f7-icon slot="media" material={actionBase.icon.material}></f7-icon>
+            <div slot="title">{this.$text(actionBase.title)}</div>
+          </eb-list-item>
+        );
       }
+      return children;
     },
     _timeline_renderFlowTaskActionsPopover({ task }) {
       if (task.userIdAssignee !== this.base_user.id || this.base_flowOld) return;
       const children = this._timeline_renderFlowTaskActionsPopoverActions({ task });
       return (
-        <eb-popover ready={task._actions}>
+        <eb-popover ready={!!task._actions}>
           <f7-list inset>
             {children}
           </f7-list>

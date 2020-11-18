@@ -67,6 +67,14 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async actions() {
+      const res = await this.ctx.service.flowTask.actions({
+        flowTaskId: this.ctx.request.body.flowTaskId,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
   }
   return FlowTaskController;
 };

@@ -10,6 +10,7 @@ module.exports = app => {
     { method: 'post', path: 'task/assignees', controller: 'flowTask' },
     { method: 'post', path: 'task/assigneesConfirmation', controller: 'flowTask', middlewares: 'transaction' },
     { method: 'post', path: 'task/cancelFlow', controller: 'flowTask', middlewares: 'transaction' },
+    { method: 'post', path: 'task/actions', controller: 'flowTask' },
   ];
   return routes;
 };
