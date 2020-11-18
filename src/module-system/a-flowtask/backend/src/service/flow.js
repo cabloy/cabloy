@@ -8,7 +8,7 @@ module.exports = app => {
       // atom
       const atom = await this._data_atom({ flowId, atomId: flow.flowAtomId });
       // tasks
-      const tasks = await this._data_tasks({ flowId });
+      const tasks = await this._data_tasks({ flowId, user });
       // ok
       return { flow, atom, tasks };
     }
@@ -45,7 +45,7 @@ module.exports = app => {
       return atom;
     }
 
-    async _data_tasks({ flowId }) {
+    async _data_tasks({ flowId, user }) {
       // select tasks
       const tasks = await this.ctx.bean.flowTask.select({
         options: {
@@ -62,14 +62,19 @@ module.exports = app => {
         user: null,
         pageForce: false,
       });
-      // locale
+      // loop
       for (const task of tasks) {
+        // locale
         task.flowNodeName = this.ctx.text(task.flowNodeName);
         if (task.flowNodeRemark) {
           task.flowNodeRemark = this.ctx.text(task.flowNodeRemark);
         }
         if (task.handleRemark) {
           task.handleRemark = this.ctx.text(task.handleRemark);
+        }
+        // actions
+        if (task.userIdAssignee === user.id && task.flowTaskStatus === 0) {
+          task._actions = await this.ctx.bean.flowTask.actions({ flowTaskId: task.flowTaskId, user });
         }
       }
       return tasks;

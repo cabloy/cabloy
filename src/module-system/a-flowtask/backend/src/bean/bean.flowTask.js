@@ -54,13 +54,13 @@ module.exports = ctx => {
     async actions({ flowTaskId, user }) {
       // taskInstance
       const taskInstance = await this._loadTaskInstance({ flowTaskId, user });
-      await taskInstance._actions();
+      return await taskInstance._actions();
     }
 
     async viewAtom({ flowTaskId, user }) {
       // taskInstance
       const taskInstance = await this._loadTaskInstance({ flowTaskId, user });
-      await taskInstance._actions();
+      return await taskInstance._actions();
     }
 
     async _nodeDoneCheckLock({ flowNodeId /* user*/ }) {

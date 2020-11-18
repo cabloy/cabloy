@@ -342,10 +342,10 @@ module.exports = ctx => {
       const flowTaskId = flowTask.id;
       // must be the same user
       if (user && user.id !== 0 && user.id !== flowTask.userIdAssignee) ctx.throw.module(moduleInfo.relativeName, 1002, flowTaskId);
+      // flowTaskStatus
+      if (flowTask.flowTaskStatus === 1) return null;
       // actions
       const actions = [];
-      // flowTaskStatus
-      if (flowTask.flowTaskStatus === 1) return actions;
       // specificFlag
       if (flowTask.specificFlag === 1) {
         actions.push({
