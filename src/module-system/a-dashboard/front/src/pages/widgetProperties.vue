@@ -186,7 +186,10 @@ export default {
           readOnly: true,
           data: schemaData,
           meta: {
-            schema: propsSchema,
+            schema: {
+              module: 'a-dashboard',
+              schema: propsSchema,
+            },
           },
         },
       }, [ list ]);

@@ -233,7 +233,10 @@ export default {
           readOnly: false,
           data,
           meta: {
-            schema,
+            schema: {
+              module: 'a-dashboard',
+              schema,
+            },
             hint: {
               optional: '',
               must: '',

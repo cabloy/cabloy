@@ -111,7 +111,10 @@ function installFactory(_Vue) {
           context: {
             params: {
               clock: this,
-              schema,
+              schema: {
+                module: 'a-layoutpc',
+                schema,
+              },
               item: this.options,
             },
             callback: (code, data) => {
