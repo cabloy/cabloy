@@ -12,7 +12,6 @@ const __flowTaskStatuses = {
     text: 'Cancelled',
   },
 };
-import Vue from 'vue';
 export default {
   data() {
     return {
