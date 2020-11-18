@@ -1,3 +1,4 @@
+import Vue from 'vue';
 export default {
   meta: {
     global: false,
@@ -7,9 +8,14 @@ export default {
       const task = item.task;
       if (action.name === 'viewAtom') {
         // load schema and item
-        const data = await ctx.$api.post('/a/flowtask/task/viewAtom', {
-          flowTaskId: task.flowTaskId,
-        });
+        if (!task._viewAtomData) {
+          const data = await ctx.$api.post('/a/flowtask/task/viewAtom', {
+            flowTaskId: task.flowTaskId,
+          });
+          Vue.set(task, '_viewAtomData', data);
+        }
+        // navigate
+
 
       }
     },
