@@ -26,6 +26,42 @@ export default {
         icon: { material: 'done' },
       },
     },
+    render: {
+      atom: {
+        info: {
+          attachment: true,
+          comment: true,
+        },
+        layouts: {
+          mobile: {
+            component: {
+              module: 'a-flowtask',
+              name: 'atomLayoutMobile',
+            },
+            blocks: {
+              title: {
+                component: {
+                  module: 'a-flowtask',
+                  name: 'atomLayoutBlockMobileTitle',
+                },
+              },
+              subnavbar: {
+                component: {
+                  module: 'a-flowtask',
+                  name: 'atomLayoutBlockMobileSubnavbar',
+                },
+              },
+              main: {
+                component: {
+                  module: 'a-flowtask',
+                  name: 'atomLayoutBlockMobileMain',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   },
   flow: {
     render: {
