@@ -130,17 +130,19 @@ export default {
       );
     },
     _timeline_renderFlowTask({ task }) {
+      // taskCurrentClass
+      const taskCurrentClass = task.id === this.container.flowTaskId ? 'text-color-orange' : '';
       // date
       let domDate;
       if (task.handleStatus === 0) {
         if (task.userIdAssignee === this.base_user.id) {
           domDate = (
-            <f7-icon material="play_arrow"></f7-icon>
+            <f7-icon class={taskCurrentClass} material="play_arrow"></f7-icon>
           );
         }
       } else {
         domDate = (
-          <small>{this.$meta.util.formatDateTime(task.timeHandled, 'MM-DD')}</small>
+          <small class={taskCurrentClass}>{this.$meta.util.formatDateTime(task.timeHandled, 'MM-DD')}</small>
         );
       }
       // info
@@ -178,7 +180,7 @@ export default {
         <div key={`flowTask:${task.flowTaskId}`} ref={`flowTask:${task.flowTaskId}`} class="timeline-item">
           <div class="timeline-item-date">{domDate}</div>
           <div class="timeline-item-divider"></div>
-          <div class="timeline-item-content flowTask">
+          <div class={`timeline-item-content flowTask ${taskCurrentClass}` }>
             {domInfo}
             {domRemark}
             {domPopover}
