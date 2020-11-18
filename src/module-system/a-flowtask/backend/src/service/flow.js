@@ -6,7 +6,7 @@ module.exports = app => {
       // flow
       const flow = await this._data_flow({ flowId, user });
       // atom
-      const atom = await this._data_atom({ atomId: flow.flowAtomId });
+      const atom = await this._data_atom({ flowId, atomId: flow.flowAtomId });
       // tasks
       const tasks = await this._data_tasks({ flowId });
       // ok
@@ -33,14 +33,15 @@ module.exports = app => {
       return flow;
     }
 
-    async _data_atom({ atomId }) {
+    async _data_atom({ flowId, atomId }) {
       // only read basic info
+      //   a.atomFlowId = {flowId}
       const atom = await this.ctx.model.queryOne(`
         select a.*,b.module,b.atomClassName from aAtom a
            left join aAtomClass b on a.atomClassId=b.id
              where a.deleted=0 and a.iid=? and a.id=?
-        `, [ this.ctx.instance.id, atomId ]);
-
+                   and a.atomFlowId=?
+        `, [ this.ctx.instance.id, atomId, flowId ]);
       return atom;
     }
 
