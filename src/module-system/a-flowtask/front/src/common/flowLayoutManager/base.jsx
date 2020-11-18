@@ -56,14 +56,9 @@ export default {
     async base_loadData() {
       try {
         // flow data
-        const data = await this.$api.post('/a/flowtask/flow/data', {
+        this.base.data = await this.$api.post('/a/flowtask/flow/data', {
           flowId: this.container.flowId,
         });
-        // task
-        for (const task of data.tasks) {
-          task._actions = null;
-        }
-        this.base.data = data;
         return true;
       } catch (err) {
         this.base.notfound = true;
