@@ -47,8 +47,15 @@ export default {
       // set
       Vue.set(task, '_actions', actions);
     },
-    timeline_onPerformTaskAction(event, actionBase) {
-
+    async timeline_onPerformTaskAction(event, actionBase, task) {
+      const res = await this.$meta.util.performAction({
+        ctx: this,
+        action: actionBase,
+        item: task,
+      });
+      if (res) {
+        await this.base_loadData();
+      }
     },
     _timeline_getActionBase(action) {
       const actions = this.$meta.config.modules['a-flowtask'].flowTask.actions;
@@ -103,7 +110,7 @@ export default {
       for (const action of task._actions) {
         const actionBase = this._timeline_getActionBase(action);
         children.push(
-          <eb-list-item key={actionBase.name} popoverClose link="#" propsOnPerform={event => this.timeline_onPerformTaskAction(event, actionBase)}>
+          <eb-list-item key={actionBase.name} popoverClose link="#" propsOnPerform={event => this.timeline_onPerformTaskAction(event, actionBase, task)}>
             <f7-icon slot="media" material={actionBase.icon.material}></f7-icon>
             <div slot="title">{this.$text(actionBase.title)}</div>
           </eb-list-item>
