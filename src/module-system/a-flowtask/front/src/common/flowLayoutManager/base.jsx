@@ -4,6 +4,7 @@ export default {
       base: {
         ready: false,
         configFlowBase: null,
+        configAtom: null,
         config: null,
         //
         data: null,
@@ -32,6 +33,13 @@ export default {
       const atom = this.base_atom;
       const flow = this.base_flow;
       return !atom || atom.atomFlowId !== flow.flowId;
+    },
+    base_atomClass() {
+      if (!this.base.data || !this.base.data.atom) return null;
+      return {
+        module: this.base.data.atom.module,
+        atomClassName: this.base.data.atom.atomClassName,
+      };
     },
   },
   created() {

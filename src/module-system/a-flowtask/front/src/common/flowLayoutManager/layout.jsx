@@ -19,8 +19,11 @@ export default {
     async layout_prepareConfig() {
       // configFlowBase
       this.base.configFlowBase = this.$meta.config.modules['a-flowtask'].flow;
+      // configAtom
+      const atomClass = this.base_atomClass;
+      this.base.configAtom = atomClass ? this.$meta.util.getProperty(this.$meta.config.modules[atomClass.module], `flows.${atomClass.atomClassName}`) : null;
       // config
-      this.base.config = this.base.configFlowBase;
+      this.base.config = this.base.configAtom ? this.$meta.util.extend({}, this.base.configFlowBase, this.base.configAtom) : this.base.configFlowBase;
       // layoutConfig
       let _config = this.$meta.util.getProperty(this.base.config, `render.item.layouts.${this.layout.current}`);
       if (!_config) {
