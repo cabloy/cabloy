@@ -134,8 +134,8 @@ export default {
     },
     fetchSchema() {
       if (this.meta && this.meta.schema) {
-        this.schemaModuleName = this.$page.$module.name;
-        this.__schemaReady(this.meta.schema, this.schemaModuleName);
+        this.schemaModuleName = this.meta.schema.module || this.$page.$module.name;
+        this.__schemaReady(this.meta.schema.schema, this.schemaModuleName);
         return;
       }
       if (!this.params) return;

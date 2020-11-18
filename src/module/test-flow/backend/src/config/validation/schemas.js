@@ -3,11 +3,6 @@ module.exports = app => {
   // purchase order
   schemas.purchaseOrder = {
     type: 'object',
-    meta: {
-      custom: {
-        // component: 'purchaseOrderItem',
-      },
-    },
     properties: {
       atomName: {
         type: 'string',

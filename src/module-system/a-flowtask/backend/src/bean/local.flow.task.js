@@ -1,3 +1,5 @@
+const require3 = require('require3');
+const extend = require3('extend2');
 const VarsFn = require('../common/vars.js');
 const UtilsFn = require('../common/utils.js');
 
@@ -378,14 +380,46 @@ module.exports = ctx => {
     }
 
     async _viewAtom() {
+      // schema
+      const schema = await this._getSchemaRead();
+      // item
+      const atom = this.context._atom;
+      const item = extend(true, {}, atom);
+      // validate
+      await ctx.bean.validation.ajvFromSchemaAndValidate({
+        module: schema.module,
+        schema: schema.schema,
+        data: item,
+      });
+      // basic fields
+      const fields = await ctx.bean.atom.modelAtom.columns();
+      fields.atomId = {};
+      for (const field in fields) {
+        item[field] = atom[field];
+      }
+      // ok
+      return { schema, item };
+    }
 
+    async _getSchemaRead() {
+      let schema = await this._getSchema({ mode: 'read' });
+      if (!schema) {
+        // use schema base
+        schema = await this._getSchemaBase();
+      }
+      return schema;
     }
 
     async _getSchemaWrite() {
+      return await this._getSchema({ mode: 'write' });
+    }
+
+    // mode: read/write
+    async _getSchema({ mode }) {
       const module = this.context._atom.module;
       // options
       const options = ctx.bean.flowTask._getNodeRefOptionsTask({ nodeInstance: this.nodeInstance });
-      const fields = options.schema && options.schema.write;
+      const fields = options.schema && options.schema[mode];
       if (!fields || fields.length === 0) return null;
       // base
       let schemaBase = await this._getSchemaBase();
@@ -396,30 +430,31 @@ module.exports = ctx => {
         };
       }
       const propertiesBase = schemaBase.schema.properties;
-      // propertiesWrite
-      const propertiesWrite = {};
+      // properties
+      const properties = {};
       for (const field of fields) {
         if (typeof field === 'string') {
           if (propertiesBase[field]) {
-            propertiesWrite[field] = propertiesBase[field];
+            properties[field] = propertiesBase[field];
           }
         } else {
           // { name, property }
-          propertiesWrite[field.name] = field.property;
+          properties[field.name] = field.property;
         }
       }
-      // schemaWrite
-      let schemaWrite = {
+      // schema
+      let schema = {
         module,
-        schema: { type: 'object', properties: propertiesWrite },
+        schema: { type: 'object', properties },
       };
       // listener
-      const res = await this.flowInstance._flowListener.getSchemaWrite(this.contextTask, this.contextNode, { schemaBase, schemaWrite });
+      const methodName = `getSchema${mode.replace(mode[0], mode[0].toUpperCase())}`;
+      const res = await this.flowInstance._flowListener[methodName](this.contextTask, this.contextNode, { schemaBase, schema });
       if (res) {
-        schemaWrite = res;
+        schema = res;
       }
       // ok
-      return schemaWrite;
+      return schema;
     }
 
     async _getSchemaBase() {
