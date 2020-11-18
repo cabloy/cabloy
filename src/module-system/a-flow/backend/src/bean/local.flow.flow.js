@@ -55,9 +55,9 @@ module.exports = ctx => {
       }
     }
 
-    async _load({ flow }) {
+    async _load({ flow, history }) {
       // context init
-      await this._contextInit({ flowId: flow.id });
+      await this._contextInit({ flowId: flow.id, history });
     }
 
     async nextEdges({ contextNode }) {
@@ -86,18 +86,20 @@ module.exports = ctx => {
       return await nodeInstanceNext.enter();
     }
 
-    async _contextInit({ flowId }) {
+    async _contextInit({ flowId, history }) {
       // flowId
       this.context._flowId = flowId;
       // flow
-      this.context._flow = await this.modelFlow.get({ id: flowId });
+      if (!history) {
+        this.context._flow = await this.modelFlow.get({ id: flowId });
+      }
       this.context._flowHistory = await this.modelFlowHistory.get({ flowId });
       // flowVars
       this.context._flowVars = new (VarsFn())();
-      this.context._flowVars._vars = this.context._flow.flowVars ? JSON.parse(this.context._flow.flowVars) : {};
+      this.context._flowVars._vars = this.context._flowHistory.flowVars ? JSON.parse(this.context._flowHistory.flowVars) : {};
       // atom
-      if (!this.context._atom && this.context._flow.flowAtomId) {
-        this.context._atom = await this._contextInit_atom({ atomId: this.context._flow.flowAtomId });
+      if (!this.context._atom && this.context._flowHistory.flowAtomId) {
+        this.context._atom = await this._contextInit_atom({ atomId: this.context._flowHistory.flowAtomId });
       }
       // utils
       this.context._utils = new (UtilsFn({ ctx, flowInstance: this }))({
@@ -203,11 +205,11 @@ module.exports = ctx => {
       return node;
     }
 
-    async _loadNodeInstance({ flowNode }) {
+    async _loadNodeInstance({ flowNode, history }) {
       const nodeRef = this._findNodeRef({ nodeRefId: flowNode.flowNodeDefId });
       if (!nodeRef) ctx.throw.module(moduleInfo.relativeName, 1005, flowNode.flowNodeDefId);
       const node = this._createNodeInstance2({ nodeRef });
-      await node._load({ flowNode });
+      await node._load({ flowNode, history });
       return node;
     }
 

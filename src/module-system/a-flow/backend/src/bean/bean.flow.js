@@ -7,9 +7,14 @@ module.exports = ctx => {
     get modelFlow() {
       return ctx.model.module(moduleInfo.relativeName).flow;
     }
-
+    get modelFlowHistory() {
+      return ctx.model.module(moduleInfo.relativeName).flowHistory;
+    }
     get modelFlowNode() {
       return ctx.model.module(moduleInfo.relativeName).flowNode;
+    }
+    get modelFlowNodeHistory() {
+      return ctx.model.module(moduleInfo.relativeName).flowNodeHistory;
     }
 
     get sqlProcedure() {
@@ -70,9 +75,14 @@ module.exports = ctx => {
       return flowInstance;
     }
 
-    async _loadFlowInstance({ flowId }) {
+    async _loadFlowInstance({ flowId, history }) {
       // flow
-      const flow = await this.modelFlow.get({ id: flowId });
+      let flow;
+      if (!history) {
+        flow = await this.modelFlow.get({ id: flowId });
+      } else {
+        flow = await this.modelFlowHistory.get({ flowId });
+      }
       if (!flow) ctx.throw.module(moduleInfo.relativeName, 1003, flowId);
       // flowDef: by key+revision
       const flowDef = await ctx.bean.flowDef.getByKeyAndRevision({ flowDefKey: flow.flowDefKey, flowDefRevision: flow.flowDefRevision });
@@ -81,7 +91,7 @@ module.exports = ctx => {
       // flowInstance
       const flowInstance = this._createFlowInstance({ flowDef });
       // load
-      await flowInstance._load({ flow });
+      await flowInstance._load({ flow, history });
       // ok
       return flowInstance;
     }
@@ -93,14 +103,19 @@ module.exports = ctx => {
       return flowInstance;
     }
 
-    async _loadFlowNodeInstance({ flowNodeId }) {
+    async _loadFlowNodeInstance({ flowNodeId, history }) {
       // get
-      const flowNode = await this.modelFlowNode.get({ id: flowNodeId });
+      let flowNode;
+      if (!history) {
+        flowNode = await this.modelFlowNode.get({ id: flowNodeId });
+      } else {
+        flowNode = await this.modelFlowNodeHistory.get({ flowNodeId });
+      }
       if (!flowNode) ctx.throw.module(moduleInfo.relativeName, 1004, flowNodeId);
       // load flow
-      const flowInstance = await this._loadFlowInstance({ flowId: flowNode.flowId });
+      const flowInstance = await this._loadFlowInstance({ flowId: flowNode.flowId, history });
       // load flow node
-      const flowNodeInstance = await flowInstance._loadNodeInstance({ flowNode });
+      const flowNodeInstance = await flowInstance._loadNodeInstance({ flowNode, history });
       return flowNodeInstance;
     }
 

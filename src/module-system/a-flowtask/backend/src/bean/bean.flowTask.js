@@ -57,10 +57,11 @@ module.exports = ctx => {
       return await taskInstance._actions();
     }
 
+    // from history
     async viewAtom({ flowTaskId, user }) {
       // taskInstance
-      const taskInstance = await this._loadTaskInstance({ flowTaskId, user });
-      return await taskInstance._actions();
+      const taskInstance = await this._loadTaskInstance({ flowTaskId, user, history: true });
+      return await taskInstance._viewAtom();
     }
 
     async _nodeDoneCheckLock({ flowNodeId /* user*/ }) {
@@ -175,15 +176,20 @@ module.exports = ctx => {
       return count ? res[0]._count : res;
     }
 
-    async _loadTaskInstance({ flowTaskId, user }) {
+    async _loadTaskInstance({ flowTaskId, user, history }) {
       // get
-      const flowTask = await this.modelFlowTask.get({ id: flowTaskId });
+      let flowTask;
+      if (!history) {
+        flowTask = await this.modelFlowTask.get({ id: flowTaskId });
+      } else {
+        flowTask = await this.modelFlowTaskHistory.get({ flowTaskId });
+      }
       if (!flowTask) ctx.throw.module(moduleInfo.relativeName, 1001, flowTaskId);
       // load flow node
-      const nodeInstance = await ctx.bean.flow._loadFlowNodeInstance({ flowNodeId: flowTask.flowNodeId });
+      const nodeInstance = await ctx.bean.flow._loadFlowNodeInstance({ flowNodeId: flowTask.flowNodeId, history });
       // load task
       const task = this._createTaskInstance2({ nodeInstance });
-      await task._load({ flowTask, user });
+      await task._load({ flowTask, user, history });
       return task;
     }
 

@@ -35,9 +35,9 @@ module.exports = ctx => {
       await this._contextInit({ flowNodeId });
     }
 
-    async _load({ flowNode }) {
+    async _load({ flowNode, history }) {
       // context init
-      await this._contextInit({ flowNodeId: flowNode.id });
+      await this._contextInit({ flowNodeId: flowNode.id, history });
     }
 
     async _createFlowNode({ flowNodeIdPrev = 0 }) {
@@ -59,15 +59,17 @@ module.exports = ctx => {
       return flowNodeId;
     }
 
-    async _contextInit({ flowNodeId }) {
+    async _contextInit({ flowNodeId, history }) {
       // flowNodeId
       this.contextNode._flowNodeId = flowNodeId;
       // flowNode
-      this.contextNode._flowNode = await this.modelFlowNode.get({ id: flowNodeId });
+      if (!history) {
+        this.contextNode._flowNode = await this.modelFlowNode.get({ id: flowNodeId });
+      }
       this.contextNode._flowNodeHistory = await this.modelFlowNodeHistory.get({ flowNodeId });
       // nodeVars
       this.contextNode._nodeVars = new (VarsFn())();
-      this.contextNode._nodeVars._vars = this.contextNode._flowNode.nodeVars ? JSON.parse(this.contextNode._flowNode.nodeVars) : {};
+      this.contextNode._nodeVars._vars = this.contextNode._flowNodeHistory.nodeVars ? JSON.parse(this.contextNode._flowNodeHistory.nodeVars) : {};
       // utils
       this.contextNode._utils = new (UtilsFn({ ctx, flowInstance: this.flowInstance }))({
         context: this.context,

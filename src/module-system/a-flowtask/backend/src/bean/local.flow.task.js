@@ -33,9 +33,9 @@ module.exports = ctx => {
       await this.created();
     }
 
-    async _load({ flowTask, user }) {
+    async _load({ flowTask, user, history }) {
       // context init
-      await this._contextInit({ flowTaskId: flowTask.id, user });
+      await this._contextInit({ flowTaskId: flowTask.id, user, history });
     }
 
     async _createFlowTask({ userIdAssignee }) {
@@ -57,15 +57,17 @@ module.exports = ctx => {
       return flowTaskId;
     }
 
-    async _contextInit({ flowTaskId, user }) {
+    async _contextInit({ flowTaskId, user, history }) {
       // flowTaskId
       this.contextTask._flowTaskId = flowTaskId;
       // flowTask
-      this.contextTask._flowTask = await this.modelFlowTask.get({ id: flowTaskId });
+      if (!history) {
+        this.contextTask._flowTask = await this.modelFlowTask.get({ id: flowTaskId });
+      }
       this.contextTask._flowTaskHistory = await this.modelFlowTaskHistory.get({ flowTaskId });
       // taskVars
       this.contextTask._taskVars = new (VarsFn())();
-      this.contextTask._taskVars._vars = this.contextTask._flowTask.taskVars ? JSON.parse(this.contextTask._flowTask.taskVars) : {};
+      this.contextTask._taskVars._vars = this.contextTask._flowTaskHistory.taskVars ? JSON.parse(this.contextTask._flowTaskHistory.taskVars) : {};
       // utils
       this.contextTask._utils = new (UtilsFn({ ctx, flowInstance: this.flowInstance }))({
         context: this.context,
@@ -373,6 +375,10 @@ module.exports = ctx => {
       }
       // others
       return actions;
+    }
+
+    async _viewAtom() {
+
     }
 
     async _getSchemaWrite() {
