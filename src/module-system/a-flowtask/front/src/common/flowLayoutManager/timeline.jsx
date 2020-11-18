@@ -51,7 +51,7 @@ export default {
       const res = await this.$meta.util.performAction({
         ctx: this,
         action: actionBase,
-        item: task,
+        item: { task },
       });
       if (res) {
         await this.base_loadData();

@@ -57,6 +57,12 @@ module.exports = ctx => {
       await taskInstance._actions();
     }
 
+    async viewAtom({ flowTaskId, user }) {
+      // taskInstance
+      const taskInstance = await this._loadTaskInstance({ flowTaskId, user });
+      await taskInstance._actions();
+    }
+
     async _nodeDoneCheckLock({ flowNodeId /* user*/ }) {
       // load flow node
       const nodeInstance = await ctx.bean.flow._loadFlowNodeInstance({ flowNodeId });
