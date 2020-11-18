@@ -35,11 +35,11 @@ module.exports = ctx => {
       return ctx.constant.module(moduleInfo.relativeName);
     }
 
-    async start({ flowAtomId, flowVars, flowUserId, startEventId }) {
+    async start({ flowName, flowAtomId, flowVars, flowUserId, startEventId }) {
       if (!flowVars) flowVars = {};
       if (flowUserId === undefined) flowUserId = 0;
       // create flow
-      const flowId = await this._createFlow({ flowAtomId, flowVars, flowUserId });
+      const flowId = await this._createFlow({ flowName, flowAtomId, flowVars, flowUserId });
       // context init
       await this._contextInit({ flowId });
       // raise event: onFlowStart
@@ -96,13 +96,17 @@ module.exports = ctx => {
       this.context._flowVars = new (VarsFn())();
       this.context._flowVars._vars = this.context._flow.flowVars ? JSON.parse(this.context._flow.flowVars) : {};
       // atom
-      if (this.context._flow.flowAtomId) {
-        this.context._atom = await ctx.bean.atom.read({ key: { atomId: this.context._flow.flowAtomId } });
+      if (!this.context._atom && this.context._flow.flowAtomId) {
+        this.context._atom = await this._contextInit_atom({ atomId: this.context._flow.flowAtomId });
       }
       // utils
       this.context._utils = new (UtilsFn({ ctx, flowInstance: this }))({
         context: this.context,
       });
+    }
+
+    async _contextInit_atom({ atomId }) {
+      return await ctx.bean.atom.read({ key: { atomId } });
     }
 
     async _saveFlowVars() {
@@ -158,13 +162,22 @@ module.exports = ctx => {
       }
     }
 
-    async _createFlow({ flowAtomId, flowVars, flowUserId }) {
+    async _createFlow({ flowName, flowAtomId, flowVars, flowUserId }) {
+      // flowName
+      if (!flowName && flowAtomId) {
+        this.context._atom = await this._contextInit_atom({ atomId: flowAtomId });
+        flowName = this.context._atom.atomName;
+      }
+      if (!flowName) {
+        flowName = this.context._flowDef.atomName;
+      }
       // flow
       const data = {
         flowDefId: this.context._flowDef.atomId,
         flowDefKey: this.context._flowDef.atomStaticKey,
         flowDefRevision: this.context._flowDef.atomRevision,
         flowStatus: this.constant.flow.status.flowing,
+        flowName,
         flowAtomId,
         flowVars: JSON.stringify(flowVars),
         flowUserId,

@@ -18,7 +18,6 @@ module.exports = ctx => {
     _selectFlows_Mine({ iid, userIdWho, where, orders, page, count }) {
       // -- tables
       // -- a: aFlow
-      // -- b: aAtom
       // -- c: aUser
 
       // for safe
@@ -46,8 +45,7 @@ module.exports = ctx => {
       if (count) {
         _selectFields = 'count(*) as _count';
       } else {
-        _selectFields = `a.id,a.id as flowId,a.createdAt,a.updatedAt,a.deleted,a.iid,a.flowStatus,a.flowAtomId,a.flowNodeIdCurrent,a.flowNodeNameCurrent,a.flowUserId,
-            b.atomName,
+        _selectFields = `a.id,a.id as flowId,a.createdAt,a.updatedAt,a.deleted,a.iid,a.flowName,a.flowStatus,a.flowAtomId,a.flowNodeIdCurrent,a.flowNodeNameCurrent,a.flowUserId,
             c.userName,c.avatar
           `;
       }
@@ -55,7 +53,6 @@ module.exports = ctx => {
       // sql
       const _sql =
         `select ${_selectFields} from aFlow a
-            left join aAtom b on a.flowAtomId=b.id
             left join aUser c on a.flowUserId=c.id
 
           ${_where}
@@ -75,7 +72,6 @@ module.exports = ctx => {
     _selectFlows_Others({ iid, userIdWho, where, orders, page, count, mode }) {
       // -- tables
       // -- a: aFlow
-      // -- b: aAtom
       // -- c: aUser
       // -- d: aFlowTaskHistory
 
@@ -112,8 +108,7 @@ module.exports = ctx => {
       if (count) {
         _selectFields = 'count(*) as _count';
       } else {
-        _selectFields = `a.id,a.id as flowId,a.createdAt,a.updatedAt,a.deleted,a.iid,a.flowStatus,a.flowAtomId,a.flowNodeIdCurrent,a.flowNodeNameCurrent,a.flowUserId,
-            b.atomName,
+        _selectFields = `a.id,a.id as flowId,a.createdAt,a.updatedAt,a.deleted,a.iid,a.flowName,a.flowStatus,a.flowAtomId,a.flowNodeIdCurrent,a.flowNodeNameCurrent,a.flowUserId,
             c.userName,c.avatar
           `;
       }
@@ -121,7 +116,6 @@ module.exports = ctx => {
       // sql
       const _sql =
         `select ${_selectFields} from aFlow a
-            left join aAtom b on a.flowAtomId=b.id
             left join aUser c on a.flowUserId=c.id
 
           ${_where}
@@ -142,7 +136,6 @@ module.exports = ctx => {
     _selectFlows_History({ iid, userIdWho, where, orders, page, count }) {
       // -- tables
       // -- a: aFlowHistory
-      // -- b: aAtom
       // -- c: aUser
       // -- d: aFlowTaskHistory
 
@@ -171,8 +164,7 @@ module.exports = ctx => {
       if (count) {
         _selectFields = 'count(*) as _count';
       } else {
-        _selectFields = `a.id,a.flowId,a.createdAt,a.updatedAt,a.deleted,a.iid,a.flowStatus,a.flowAtomId,a.flowUserId,a.timeEnd,a.flowRemark,
-            b.atomName,
+        _selectFields = `a.id,a.flowId,a.createdAt,a.updatedAt,a.deleted,a.iid,a.flowName,a.flowStatus,a.flowAtomId,a.flowUserId,a.timeEnd,a.flowRemark,
             c.userName,c.avatar
           `;
       }
@@ -180,7 +172,6 @@ module.exports = ctx => {
       // sql
       const _sql =
         `select ${_selectFields} from aFlowHistory a
-            left join aAtom b on a.flowAtomId=b.id
             left join aUser c on a.flowUserId=c.id
 
           ${_where}
