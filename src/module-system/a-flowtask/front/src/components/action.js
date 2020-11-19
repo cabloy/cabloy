@@ -14,6 +14,8 @@ export default {
         return await this._assigneesConfirmation({ ctx, action, flowLayoutManager, task, flowTaskId });
       } else if (action.name === 'cancelFlow') {
         return await this._cancelFlow({ ctx, action, flowLayoutManager, task, flowTaskId });
+      } else if (action.name === 'handleTask') {
+        return await this._handleTask({ ctx, action, flowLayoutManager, task, flowTaskId });
       }
     },
     async _viewAtom({ ctx, flowLayoutManager, task, flowTaskId }) {
@@ -64,6 +66,8 @@ export default {
         },
       });
       await flowLayoutManager.base_loadData();
+    },
+    async _handleTask({ ctx, action, flowLayoutManager, task, flowTaskId }) {
     },
   },
 };

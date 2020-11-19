@@ -18,6 +18,13 @@ export default {
     };
   },
   render() {
-    return this.layoutManager.timeline_render();
+    const domTimeline = this.layoutManager.timeline_render();
+    const domActions = this.layoutManager.actions_renderActionComponents();
+    return (
+      <div>
+        {domTimeline}
+        {domActions}
+      </div>
+    );
   },
 };
