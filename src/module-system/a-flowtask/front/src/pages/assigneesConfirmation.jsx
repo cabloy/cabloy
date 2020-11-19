@@ -83,7 +83,7 @@ export default {
         <eb-navbar title={this.$text('Assignees Confirmation')} eb-back-link="Back">
           <f7-nav-right>
             {domPass}
-            <eb-link propsOnPerform={event => this.onPerform(event)}>{this.$text('Reject')}</eb-link>
+            <eb-link propsOnPerform={event => this.onPerform(event, 2)}>{this.$text('Reject')}</eb-link>
           </f7-nav-right>
         </eb-navbar>
         {this.renderUsers()}

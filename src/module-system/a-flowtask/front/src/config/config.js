@@ -17,7 +17,7 @@ export default {
         title: 'Cancel Flow',
         actionModule: 'a-flowtask',
         actionComponent: 'action',
-        icon: { material: 'done' },
+        icon: { material: 'clear' },
       },
       assigneesConfirmation: {
         title: 'Confirmation',
