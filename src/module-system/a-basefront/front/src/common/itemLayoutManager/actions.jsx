@@ -103,9 +103,7 @@ export default {
       if (action.name === 'write') {
         _action = this.$utils.extend({}, _action, { navigateOptions: { target: '_self' } });
       }
-      return this.$meta.util.performAction({ ctx: this, action: _action, item: this.base.item }).then(res => {
-        if (res) this.$f7router.back();
-      });
+      return this.$meta.util.performAction({ ctx: this, action: _action, item: this.base.item });
     },
     actions_render() {
       if (!this.base_ready) return null;

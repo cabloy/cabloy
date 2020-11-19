@@ -12,12 +12,15 @@ export default {
         const key = { atomId: item.atomId, itemId: item.itemId };
         await ctx.$api.post('/a/base/atom/delete', { key });
         ctx.$meta.eventHub.$emit('atom:action', { key, action });
-        return true;
+        // back
+        ctx.$f7router.back();
       } else if (action.name === 'save') {
         // save
         const key = { atomId: item.atomId, itemId: item.itemId };
         await ctx.$api.post('/a/base/atom/write', { key, item });
         ctx.$meta.eventHub.$emit('atom:action', { key, action });
+        // toast
+        return true;
       } else if (action.name === 'submit') {
         // submit
         await ctx.$view.dialog.confirm();
@@ -28,9 +31,19 @@ export default {
           ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'delete' } });
           // update archive
           ctx.$meta.eventHub.$emit('atom:action', { key: data.archive.key, action: { name: 'save' } });
+          // back
+          ctx.$f7router.back();
         } else {
+          // flow
+          const flow = data.flow;
           // update draft
           ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'save' } });
+          // navigate replace self
+          const url = `/a/flowtask/flow?flowId=${flow.id}`;
+          ctx.$view.navigate(url, {
+            target: '_self',
+            reloadCurrent: true,
+          });
         }
       } else if (action.name === 'write') {
         // openDraft
