@@ -11,13 +11,13 @@ export default {
         title: 'Handle',
         actionModule: 'a-flowtask',
         actionComponent: 'action',
-        icon: { material: 'done' },
+        icon: { material: 'play_arrow' },
       },
       cancelFlow: {
         title: 'Cancel Flow',
         actionModule: 'a-flowtask',
         actionComponent: 'action',
-        icon: { material: 'clear' },
+        icon: { material: 'stop' },
       },
       assigneesConfirmation: {
         title: 'Confirmation',
