@@ -91,6 +91,26 @@ export default {
               },
             },
           },
+          pc: {
+            component: {
+              module: 'a-flowtask',
+              name: 'flowLayoutPC',
+            },
+            blocks: {
+              title: {
+                component: {
+                  module: 'a-flowtask',
+                  name: 'flowLayoutBlockPCTitle',
+                },
+              },
+              main: {
+                component: {
+                  module: 'a-flowtask',
+                  name: 'flowLayoutBlockMobileMain',
+                },
+              },
+            },
+          },
         },
       },
     },

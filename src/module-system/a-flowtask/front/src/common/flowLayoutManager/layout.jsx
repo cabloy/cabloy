@@ -14,7 +14,7 @@ export default {
   methods: {
     layout_get() {
       // large/medium/small
-      return (this.$view.size === 'large') ? 'pc' : 'mobile';
+      return (this.$view.size === 'small') ? 'mobile' : 'pc';
     },
     async layout_prepareConfig() {
       // configFlowBase
