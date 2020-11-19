@@ -8,6 +8,9 @@ export default {
     };
   },
   computed: {
+    flowTaskId() {
+      return this.contextParams.flowTaskId;
+    },
     assignees() {
       return this.contextParams.assignees;
     },
@@ -16,8 +19,19 @@ export default {
     this.selectedUsers = this.assignees.users.map(user => user.id);
   },
   methods: {
-    onPerformOk() {
-      console.log(this.selectedUsers);
+    async onPerform(event, status) {
+      await this.$view.dialog.confirm();
+      await this.$api.post('/a/flowtask/task/assigneesConfirmation', {
+        flowTaskId: this.flowTaskId,
+        handle: {
+          status,
+          assignees: status === 1 ? {
+            users: this.selectedUsers,
+          } : undefined,
+        },
+      });
+      this.contextCallback(200, true);
+      this.$f7router.back();
     },
     onItemChange(event, item) {
       const index = this.selectedUsers.findIndex(_item => _item === item.id);
@@ -58,11 +72,18 @@ export default {
     },
   },
   render() {
+    let domPass;
+    if (this.selectedUsers.length > 0) {
+      domPass = (
+        <eb-link propsOnPerform={event => this.onPerform(event, 1)}>{this.$text('Pass')}</eb-link>
+      );
+    }
     return (
       <eb-page>
         <eb-navbar title={this.$text('Assignees Confirmation')} eb-back-link="Back">
           <f7-nav-right>
-            <eb-link iconMaterial="done" propsOnPerform={event => this.onPerformOk(event)}></eb-link>
+            {domPass}
+            <eb-link propsOnPerform={event => this.onPerform(event)}>{this.$text('Reject')}</eb-link>
           </f7-nav-right>
         </eb-navbar>
         {this.renderUsers()}

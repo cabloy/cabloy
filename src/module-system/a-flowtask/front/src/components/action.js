@@ -11,7 +11,7 @@ export default {
       if (action.name === 'viewAtom') {
         return await this._viewAtom({ ctx, action, flowLayoutManager, task, flowTaskId });
       } else if (action.name === 'assigneesConfirmation') {
-        return await this._assigneesConfirmation({ ctx, action, task, flowTaskId });
+        return await this._assigneesConfirmation({ ctx, action, flowLayoutManager, task, flowTaskId });
       }
     },
     async _viewAtom({ ctx, flowLayoutManager, task, flowTaskId }) {
@@ -33,7 +33,7 @@ export default {
         },
       });
     },
-    async _assigneesConfirmation({ ctx, task, flowTaskId }) {
+    async _assigneesConfirmation({ ctx, flowLayoutManager, flowTaskId }) {
       // assignees
       const assignees = await ctx.$api.post('/a/flowtask/task/assignees', {
         flowTaskId,
@@ -42,11 +42,12 @@ export default {
       ctx.$view.navigate(`/a/flowtask/assigneesConfirmation?flowTaskId=${flowTaskId}`, {
         context: {
           params: {
+            flowTaskId,
             assignees,
           },
-          callback: (code, data) => {
+          callback: code => {
             if (code === 200) {
-              console.log(data);
+              flowLayoutManager.base_loadData().then(() => {});
             }
           },
         },

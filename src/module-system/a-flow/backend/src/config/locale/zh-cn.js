@@ -5,6 +5,8 @@ module.exports = {
   Current: '当前',
   Drafting: '起草',
   Review: '评审',
+  Pass: '通过',
+  Reject: '驳回',
   Passed: '已通过',
   Rejected: '已驳回',
   Cancelled: '已取消',
