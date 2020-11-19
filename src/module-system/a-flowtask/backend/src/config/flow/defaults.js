@@ -19,6 +19,10 @@ module.exports = {
       allowPassTask: true,
       allowRejectTask: false,
       allowCancelFlow: true,
+      schema: {
+        read: true,
+        write: true,
+      },
     },
   },
   activityUserTask: {
@@ -39,7 +43,8 @@ module.exports = {
     allowRejectTask: true,
     allowCancelFlow: false,
     schema: {
-      write: null,
+      read: true,
+      write: false,
     },
   },
 };

@@ -411,12 +411,7 @@ module.exports = ctx => {
     }
 
     async _getSchemaRead() {
-      let schema = await this._getSchema({ mode: 'read' });
-      if (!schema) {
-        // use schema base
-        schema = await this._getSchemaBase();
-      }
-      return schema;
+      return await this._getSchema({ mode: 'read' });
     }
 
     async _getSchemaWrite() {
@@ -429,7 +424,7 @@ module.exports = ctx => {
       // options
       const options = ctx.bean.flowTask._getNodeRefOptionsTask({ nodeInstance: this.nodeInstance });
       const fields = options.schema && options.schema[mode];
-      if (!fields || fields.length === 0) return null;
+      if (!fields) return null;
       // base
       let schemaBase = await this._getSchemaBase();
       if (!schemaBase) {
@@ -438,6 +433,9 @@ module.exports = ctx => {
           schema: { type: 'object', properties: {} },
         };
       }
+      // full read/write
+      if (fields === true) return schemaBase;
+      // some fields
       const propertiesBase = schemaBase.schema.properties;
       // properties
       const properties = {};
