@@ -23,7 +23,7 @@ export default {
         title: 'Confirmation',
         actionModule: 'a-flowtask',
         actionComponent: 'action',
-        icon: { material: 'done' },
+        icon: { material: 'group' },
       },
     },
     render: {
