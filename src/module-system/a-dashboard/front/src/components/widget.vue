@@ -420,7 +420,7 @@ export default {
     onDropElement({ $el, context, dragElement, dragContext }) {
       const [ widgetDrop, indexDrop ] = this.group.__getWidgetById(context.widgetId);
       const [ widgetDrag, indexDrag ] = this.group.__getWidgetById(dragContext.widgetId);
-      if (indexDrop === indexDrag || indexDrop == indexDrag + 1) return null;
+      if (indexDrop === indexDrag || indexDrop === indexDrag + 1) return null;
       // dropElement
       const dropElement = this.$$(`.widget-id-${context.widgetId}`);
       // tooltip

@@ -45,12 +45,6 @@ export default {
                   name: 'atomLayoutBlockMobileTitle',
                 },
               },
-              subnavbar: {
-                component: {
-                  module: 'a-flowtask',
-                  name: 'atomLayoutBlockMobileSubnavbar',
-                },
-              },
               main: {
                 component: {
                   module: 'a-flowtask',
