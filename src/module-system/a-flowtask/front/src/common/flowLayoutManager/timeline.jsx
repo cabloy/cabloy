@@ -22,14 +22,16 @@ export default {
   methods: {
     _timeline_prepareActions({ task, enableView }) {
       // actions
-      const actions = [];
+      let actions = [];
+      // concat
+      actions = task._actions ? actions.concat(task._actions) : actions;
       // action view
       if (enableView) {
         actions.push({
           name: 'viewAtom',
         });
       }
-      return task._actions ? actions.concat(task._actions) : actions;
+      return actions;
     },
     async timeline_onPerformTaskAction(event, actionBase, task) {
       const res = await this.$meta.util.performAction({
@@ -104,6 +106,13 @@ export default {
         </div>
       );
     },
+    _timeline_getHandleRemark({ task }) {
+      if (task.handleRemark) return task.handleRemark;
+      if (task.flowTaskStatus === 0 && task.specificFlag === 1) {
+        // assigneesConfirmation
+        return this.$text('AssigneesConfirmationPrompt');
+      }
+    },
     _timeline_renderFlowTask({ task }) {
       // taskCurrentClass
       const taskCurrentClass = task.id === this.container.flowTaskId ? 'text-color-orange' : '';
@@ -142,10 +151,11 @@ export default {
       );
       // remark
       let domRemark;
-      if (task.handleRemark) {
+      const handleRemark = this._timeline_getHandleRemark({ task });
+      if (handleRemark) {
         domRemark = (
           <div class="timeline-item-text">
-            {'> ' + task.handleRemark}
+            {'> ' + handleRemark}
           </div>
         );
       }

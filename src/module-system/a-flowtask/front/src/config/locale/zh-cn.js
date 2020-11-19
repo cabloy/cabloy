@@ -10,5 +10,6 @@ export default {
   View: '查看',
   Handle: '处理',
   Outdated: '已过期',
+  AssigneesConfirmationPrompt: '请确认参与人',
   'Cancel Flow': '取消流程',
 };

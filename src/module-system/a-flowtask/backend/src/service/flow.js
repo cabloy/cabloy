@@ -30,6 +30,10 @@ module.exports = app => {
       if (flow.flowRemark) {
         flow.flowRemark = this.ctx.text(flow.flowRemark);
       }
+      if (flow.flowNodeNameCurrent) {
+        flow.flowNodeNameCurrent = this.ctx.text(flow.flowNodeNameCurrent);
+      }
+      // ok
       return flow;
     }
 
