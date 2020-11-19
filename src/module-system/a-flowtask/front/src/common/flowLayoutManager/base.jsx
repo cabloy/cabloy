@@ -80,24 +80,5 @@ export default {
       if (data.action === 'create') this.base.item.attachmentCount += 1;
       if (data.action === 'delete') this.base.item.attachmentCount -= 1;
     },
-    base_renderFlowStatus() {
-      if (!this.base_ready) return null;
-      const flow = this.base.data.flow;
-      const children = [];
-      // flowStatus
-      if (flow.flowStatus === 1) {
-        const endText = `${this.$text(flow.flowRemark || 'End')}`;
-        children.push(
-          <f7-badge class="eb-flowStatus" key="flowStatus" color="teal">{endText}</f7-badge>
-        );
-      } else {
-        const currentText = `${this.$text('Current')}: ${this.$text(flow.flowNodeNameCurrent)}`;
-        children.push(
-          <f7-badge class="eb-flowStatus" key="flowStatus" color="orange">{currentText}</f7-badge>
-        );
-      }
-      //
-      return children;
-    },
   },
 };

@@ -18,6 +18,6 @@ export default {
     };
   },
   render() {
-    return this.layoutManager.timeline_render();
+    return this.layoutManager.validate_render();
   },
 };

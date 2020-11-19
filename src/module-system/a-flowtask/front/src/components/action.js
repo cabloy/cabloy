@@ -20,6 +20,8 @@ export default {
           context: {
             params: {
               flowLayoutManager: ctx,
+              task,
+              data: task._viewAtomData,
             },
           },
         });

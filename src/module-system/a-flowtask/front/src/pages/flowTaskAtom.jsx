@@ -16,11 +16,6 @@ export default {
       },
     };
   },
-  computed: {
-    container_flowLayoutManager() {
-      return this.contextParams.flowLayoutManager;
-    },
-  },
   render() {
     return (
       <eb-page>

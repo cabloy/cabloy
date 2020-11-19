@@ -21,7 +21,11 @@ export default {
       this.base.configAtomBase = this.$meta.config.modules['a-flowtask'].flowTask;
       // configAtom
       const atomClass = this.base_atomClass;
-      this.base.configAtom = atomClass ? this.$meta.util.getProperty(this.$meta.config.modules[atomClass.module], `flowTasks.${atomClass.atomClassName}`) : null;
+      if (atomClass) {
+        // load module
+        await this.$meta.module.use(atomClass.module);
+        this.base.configAtom = this.$meta.util.getProperty(this.$meta.config.modules[atomClass.module], `flowTasks.${atomClass.atomClassName}`);
+      }
       // config
       this.base.config = this.base.configAtom ? this.$meta.util.extend({}, this.base.configAtomBase, this.base.configAtom) : this.base.configAtomBase;
       // layoutConfig

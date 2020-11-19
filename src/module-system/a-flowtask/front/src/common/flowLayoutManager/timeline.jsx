@@ -20,13 +20,15 @@ export default {
     };
   },
   methods: {
-    _timeline_prepareActions({ task }) {
+    _timeline_prepareActions({ task, enableView }) {
       // actions
       const actions = [];
       // action view
-      actions.push({
-        name: 'viewAtom',
-      });
+      if (enableView) {
+        actions.push({
+          name: 'viewAtom',
+        });
+      }
       return task._actions ? actions.concat(task._actions) : actions;
     },
     async timeline_onPerformTaskAction(event, actionBase, task) {
@@ -80,16 +82,22 @@ export default {
         <f7-badge class="flowRemark" color={status.color}>{this.$text(status.text)}</f7-badge>
       );
     },
-    _timeline_renderFlowTaskActions({ task }) {
+    // also be invoked by atomLayoutManager
+    _timeline_renderFlowTaskActionsChildren({ task, enableView }) {
       if (task.userIdAssignee !== this.base_user.id || this.base_flowOld) return;
       const children = [];
-      const actions = this._timeline_prepareActions({ task });
+      const actions = this._timeline_prepareActions({ task, enableView });
       for (const action of actions) {
         const actionBase = this._timeline_getActionBase(action);
         children.push(
           <eb-link key={actionBase.name} iconMaterial={actionBase.icon.material} propsOnPerform={event => this.timeline_onPerformTaskAction(event, actionBase, task)}></eb-link>
         );
       }
+      return children;
+    },
+    _timeline_renderFlowTaskActions({ task }) {
+      if (task.userIdAssignee !== this.base_user.id || this.base_flowOld) return;
+      const children = this._timeline_renderFlowTaskActionsChildren({ task, enableView: true });
       return (
         <div class="task-actions">
           {children}
