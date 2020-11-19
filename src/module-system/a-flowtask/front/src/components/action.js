@@ -5,15 +5,16 @@ export default {
   },
   methods: {
     async onAction({ ctx, action, item }) {
+      const flowLayoutManager = item.flowLayoutManager;
       const task = item.task;
       const flowTaskId = task.flowTaskId;
       if (action.name === 'viewAtom') {
-        return await this._viewAtom({ ctx, action, task, flowTaskId });
+        return await this._viewAtom({ ctx, action, flowLayoutManager, task, flowTaskId });
       } else if (action.name === 'assigneesConfirmation') {
         return await this._assigneesConfirmation({ ctx, action, task, flowTaskId });
       }
     },
-    async _viewAtom({ ctx, task, flowTaskId }) {
+    async _viewAtom({ ctx, flowLayoutManager, task, flowTaskId }) {
       // load schema and item
       if (!task._viewAtomData) {
         const data = await ctx.$api.post('/a/flowtask/task/viewAtom', {
@@ -25,7 +26,7 @@ export default {
       ctx.$view.navigate(`/a/flowtask/flowTaskAtom?flowTaskId=${flowTaskId}&mode=view`, {
         context: {
           params: {
-            flowLayoutManager: ctx,
+            flowLayoutManager,
             task,
             data: task._viewAtomData,
           },

@@ -33,15 +33,15 @@ export default {
       }
       return actions;
     },
-    async timeline_onPerformTaskAction(event, actionBase, task) {
-      const res = await this.$meta.util.performAction({
-        ctx: this,
+    async timeline_onPerformTaskAction(event, actionBase, task, ctxParent) {
+      return await this.$meta.util.performAction({
+        ctx: ctxParent || this,
         action: actionBase,
-        item: { task },
+        item: {
+          flowLayoutManager: this,
+          task,
+        },
       });
-      if (res) {
-        await this.base_loadData();
-      }
     },
     _timeline_getActionBase(action) {
       const actions = this.$meta.config.modules['a-flowtask'].flowTask.actions;
@@ -85,14 +85,14 @@ export default {
       );
     },
     // also be invoked by atomLayoutManager
-    _timeline_renderFlowTaskActionsChildren({ task, enableView }) {
+    _timeline_renderFlowTaskActionsChildren({ task, enableView, ctxParent }) {
       if (task.userIdAssignee !== this.base_user.id || this.base_flowOld) return;
       const children = [];
       const actions = this._timeline_prepareActions({ task, enableView });
       for (const action of actions) {
         const actionBase = this._timeline_getActionBase(action);
         children.push(
-          <eb-link key={actionBase.name} iconMaterial={actionBase.icon.material} propsOnPerform={event => this.timeline_onPerformTaskAction(event, actionBase, task)}></eb-link>
+          <eb-link key={actionBase.name} iconMaterial={actionBase.icon.material} propsOnPerform={event => this.timeline_onPerformTaskAction(event, actionBase, task, ctxParent)}></eb-link>
         );
       }
       return children;

@@ -45,7 +45,9 @@ export default {
     actions_render() {
       if (!this.base_ready) return null;
       const children = this.container_flowLayoutManager._timeline_renderFlowTaskActionsChildren({
-        task: this.container_task, enableView: false,
+        task: this.container_task,
+        enableView: false,
+        ctxParent: this,
       });
       return children;
     },
