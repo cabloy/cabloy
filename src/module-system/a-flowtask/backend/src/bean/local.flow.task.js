@@ -192,9 +192,14 @@ module.exports = ctx => {
       if (!assignees || assignees.length === 0) {
         users = [];
       } else {
-        const modelUser = ctx.model.module('a-base').user;
-        users = await modelUser.select({
-          where: { disabled: 0, id: assignees },
+        users = await ctx.bean.user.select({
+          options: {
+            where: {
+              'a.disabled': 0,
+              'a.id': assignees,
+            },
+            removePrivacy: true,
+          },
         });
       }
       // options

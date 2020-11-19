@@ -40,6 +40,10 @@ module.exports = ctx => {
       return this._config;
     }
 
+    get sqlProcedure() {
+      return ctx.bean._getBean(moduleInfo.relativeName, 'local.procedure');
+    }
+
     async anonymous() {
       // cache
       let _userAnonymous = _usersAnonymous[ctx.instance.id];
@@ -324,6 +328,29 @@ module.exports = ctx => {
             ${_limit}
       `;
       return await ctx.model.query(sql, [ ctx.instance.id ]);
+    }
+
+    async count({ options }) {
+      return await this.select({ options, count: 1 });
+    }
+
+    async select({ options, pageForce = true, count = 0 }) {
+      return await this._list({ options, pageForce, count });
+    }
+
+    async _list({ options: { where, orders, page, removePrivacy }, pageForce = true, count = 0 }) {
+      page = ctx.bean.util.page(page, pageForce);
+      // fields
+      const fields = await this.getFieldsSelect({ removePrivacy, alias: 'a' });
+      // sql
+      const sql = this.sqlProcedure.selectUsers({
+        iid: ctx.instance.id,
+        where, orders, page,
+        count,
+        fields,
+      });
+      const res = await ctx.model.query(sql);
+      return count ? res[0]._count : res;
     }
 
     async disable({ userId, disabled }) {

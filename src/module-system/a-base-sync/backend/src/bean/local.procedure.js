@@ -715,6 +715,46 @@ module.exports = ctx => {
       return _sql;
     }
 
+    selectUsers({ iid, where, orders, page, count, fields }) {
+      // -- tables
+      // -- a: aUser
+
+      // for safe
+      where = where ? ctx.model._where(where) : null;
+      orders = orders ? ctx.model._orders(orders) : null;
+      const limit = page ? ctx.model._limit(page.size, page.index) : null;
+
+      // vars
+
+      //
+      const _where = where ? `${where} AND` : ' WHERE';
+      const _orders = orders || '';
+      const _limit = limit || '';
+
+      // fields
+      let _selectFields;
+      if (count) {
+        _selectFields = 'count(*) as _count';
+      } else {
+        _selectFields = fields;
+      }
+
+      // sql
+      const _sql =
+        `select ${_selectFields} from aUser a
+          ${_where}
+           (
+             a.deleted=0 and a.iid=${iid}
+           )
+
+          ${count ? '' : _orders}
+          ${count ? '' : _limit}
+        `;
+
+      // ok
+      return _sql;
+    }
+
   }
 
   return Procedure;

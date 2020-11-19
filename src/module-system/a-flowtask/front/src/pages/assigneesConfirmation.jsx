@@ -4,6 +4,7 @@ export default {
   mixins: [ ebPageContext ],
   data() {
     return {
+      selectedUsers: null,
     };
   },
   computed: {
@@ -11,9 +12,24 @@ export default {
       return this.contextParams.assignees;
     },
   },
+  created() {
+    this.selectedUsers = this.assignees.users.map(user => user.id);
+  },
   methods: {
     onPerformOk() {
-
+      console.log(this.selectedUsers);
+    },
+    onItemChange(event, item) {
+      const index = this.selectedUsers.findIndex(_item => _item === item.id);
+      if (event.target.checked && index === -1) {
+        this.selectedUsers.push(item.id);
+      } else if (!event.target.checked && index > -1) {
+        this.selectedUsers.splice(index, 1);
+      }
+    },
+    _getItemChecked(item) {
+      const index = this.selectedUsers.findIndex(_item => _item === item.id);
+      return index > -1;
     },
     _getItemMetaMedia(item) {
       const media = item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
@@ -25,7 +41,8 @@ export default {
       for (const user of users) {
         children.push(
           <eb-list-item class="item" key={user.id}
-            checkbox checked>
+            checkbox checked={this._getItemChecked(user)}
+            onChange={event => this.onItemChange(event, user)}>
             <div slot="title" class="display-flex align-items-center">
               <img class="avatar avatar24" src={this._getItemMetaMedia(user)} />
               <span>{user.userName}</span>
