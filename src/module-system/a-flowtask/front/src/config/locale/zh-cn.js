@@ -13,6 +13,7 @@ export default {
   Handle: '处理',
   Outdated: '已过期',
   AssigneesConfirmationPrompt: '请确认参与人',
+  CancelFlowPrompt: '您确认要取消本流程吗？',
   'Assignees Confirmation': '参与人确认',
   'Cancel Flow': '取消流程',
 };

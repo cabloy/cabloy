@@ -12,6 +12,8 @@ export default {
         return await this._viewAtom({ ctx, action, flowLayoutManager, task, flowTaskId });
       } else if (action.name === 'assigneesConfirmation') {
         return await this._assigneesConfirmation({ ctx, action, flowLayoutManager, task, flowTaskId });
+      } else if (action.name === 'cancelFlow') {
+        return await this._cancelFlow({ ctx, action, flowLayoutManager, task, flowTaskId });
       }
     },
     async _viewAtom({ ctx, flowLayoutManager, task, flowTaskId }) {
@@ -52,6 +54,16 @@ export default {
           },
         },
       });
+    },
+    async _cancelFlow({ ctx, flowLayoutManager, flowTaskId }) {
+      await ctx.$view.dialog.confirm(this.$text('CancelFlowPrompt'));
+      await ctx.$api.post('/a/flowtask/task/cancelFlow', {
+        flowTaskId,
+        handle: {
+          remark: 'Cancelled',
+        },
+      });
+      await flowLayoutManager.base_loadData();
     },
   },
 };

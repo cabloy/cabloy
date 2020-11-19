@@ -8,7 +8,7 @@ module.exports = app => {
       nodes: [
         {
           id: 'startEvent_1',
-          name: 'Start',
+          name: 'Drafting',
           type: 'startEventAtom',
           options: {
             atom: {
