@@ -275,9 +275,10 @@ module.exports = app => {
         action: 3,
         stage: 'draft',
         user,
+        checkFlow: true,
       });
-      if (res) return;
-      if (!res) this.ctx.throw(403);
+      if (res && res.atomClosed === 0) return;
+      this.ctx.throw(403);
     }
 
     async fileUpdateCheck({ file, user }) {
@@ -301,9 +302,10 @@ module.exports = app => {
           action: 3,
           stage: 'draft',
           user,
+          checkFlow: true,
         });
-        if (res) return;
-        if (!res) this.ctx.throw(403);
+        if (res && res.atomClosed === 0) return;
+        this.ctx.throw(403);
       }
       // check if self
       if (file.userId === user.id) return;
@@ -327,9 +329,13 @@ module.exports = app => {
       if (res === true) return;
       // not check if !atomId
       if (file.atomId) {
-        const res = await this.ctx.bean.atom.checkRightRead({ atom: { id: file.atomId }, user });
+        const res = await this.ctx.bean.atom.checkRightRead({
+          atom: { id: file.atomId },
+          user,
+          checkFlow: true,
+        });
         if (res) return;
-        if (!res) this.ctx.throw(403);
+        this.ctx.throw(403);
       }
       // check if self
       if (file.userId === user.id) return;

@@ -14,6 +14,7 @@ module.exports = app => {
         const res = await this.ctx.bean.atom.checkRightRead({
           atom: { id: atomId },
           user,
+          checkFlow: true,
         });
         if (!res) this.ctx.throw(403);
         options.where.atomId = atomId; // add where

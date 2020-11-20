@@ -84,8 +84,11 @@ export default {
         key: { atomId: this.atomId },
         action: 3,
         stage: 'draft',
+        checkFlow: true,
       }).then(data => {
-        this.actionWrite = data;
+        if (data && data.atomClosed === 0) {
+          this.actionWrite = data;
+        }
       });
     },
     onPerformAdd() {
