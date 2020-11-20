@@ -40,7 +40,7 @@ export default {
     async _handleTask({ ctx, action, flowLayoutManager, task, flowTaskId }) {
       // claim first
       if (!task.timeClaimed) {
-        await this.ctx.$api.post('/a/flowtask/task/claim', {
+        await ctx.$api.post('/a/flowtask/task/claim', {
           flowTaskId,
         });
         task.timeClaimed = new Date();
