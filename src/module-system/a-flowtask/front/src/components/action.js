@@ -58,14 +58,7 @@ export default {
       });
     },
     async _cancelFlow({ ctx, flowLayoutManager, flowTaskId }) {
-      await ctx.$view.dialog.confirm(this.$text('CancelFlowPrompt'));
-      await ctx.$api.post('/a/flowtask/task/cancelFlow', {
-        flowTaskId,
-        handle: {
-          remark: 'Cancelled',
-        },
-      });
-      await flowLayoutManager.base_loadData();
+      ctx.$refs.actionCancelFlow.open({ flowLayoutManager, flowTaskId });
     },
     async _handleTask({ ctx, action, flowLayoutManager, task, flowTaskId }) {
     },

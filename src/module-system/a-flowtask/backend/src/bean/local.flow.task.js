@@ -250,9 +250,11 @@ module.exports = ctx => {
       this.contextTask._flowTaskHistory.handleRemark = handle.remark;
       await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
       // node clear
-      await this.nodeInstance._clear({ flowNodeRemark: handle.remark });
+      //    not use handle.remark
+      const remark = 'Cancelled';// handle.remark;
+      await this.nodeInstance._clear({ flowNodeRemark: remark });
       // end flow
-      await this.flowInstance._endFlow({ flowRemark: handle.remark });
+      await this.flowInstance._endFlow({ flowRemark: remark });
     }
 
     async _assigneesConfirmation({ handle }) {
