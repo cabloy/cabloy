@@ -12,6 +12,7 @@ module.exports = app => {
     { method: 'post', path: 'task/cancelFlow', controller: 'flowTask', middlewares: 'transaction' },
     { method: 'post', path: 'task/actions', controller: 'flowTask' },
     { method: 'post', path: 'task/viewAtom', controller: 'flowTask' },
+    { method: 'post', path: 'task/editAtom', controller: 'flowTask' },
   ];
   return routes;
 };

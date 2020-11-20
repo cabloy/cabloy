@@ -387,6 +387,14 @@ module.exports = ctx => {
     }
 
     async _viewAtom() {
+      return await this._getAtomAndSchema({ mode: 'read' });
+    }
+
+    async _editAtom() {
+      return await this._getAtomAndSchema({ mode: 'write' });
+    }
+
+    async _getAtomAndSchema({ mode }) {
       // user/atom
       const user = this.contextTask._user;
       const atom = this.context._atom;
@@ -398,7 +406,8 @@ module.exports = ctx => {
       // must be the same flowId
       if (atom.atomFlowId !== this.context._flowId) ctx.throw.module('a-flow', 1009, this.context._flowId);
       // schema
-      const schema = await this._getSchemaRead();
+      const schema = await this._getSchema({ mode });
+      if (!schema) return null;
       // item
       const item = extend(true, {}, atom);
       // validate

@@ -38,6 +38,10 @@ module.exports = app => {
       return await this.ctx.bean.flowTask.viewAtom({ flowTaskId, user });
     }
 
+    async editAtom({ flowTaskId, user }) {
+      return await this.ctx.bean.flowTask.editAtom({ flowTaskId, user });
+    }
+
   }
   return FlowTask;
 };

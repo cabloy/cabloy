@@ -37,6 +37,30 @@ export default {
         },
       });
     },
+    async _handleTask({ ctx, flowLayoutManager, task, flowTaskId }) {
+      // load schema and item
+      if (!task._editAtomData) {
+        const data = await ctx.$api.post('/a/flowtask/task/editAtom', {
+          flowTaskId,
+        });
+        Vue.set(task, '_editAtomData', data);
+      }
+      if (!task._editAtomData.schema) {
+        // handle directly
+        ctx.$refs.actionCancelFlow.open({ flowLayoutManager, flowTaskId });
+        return;
+      }
+      // navigate
+      ctx.$view.navigate(`/a/flowtask/flowTaskAtom?flowTaskId=${flowTaskId}&mode=edit`, {
+        context: {
+          params: {
+            flowLayoutManager,
+            task,
+            data: task._editAtomData,
+          },
+        },
+      });
+    },
     async _assigneesConfirmation({ ctx, flowLayoutManager, flowTaskId }) {
       // assignees
       const assignees = await ctx.$api.post('/a/flowtask/task/assignees', {
@@ -59,8 +83,6 @@ export default {
     },
     async _cancelFlow({ ctx, flowLayoutManager, flowTaskId }) {
       ctx.$refs.actionCancelFlow.open({ flowLayoutManager, flowTaskId });
-    },
-    async _handleTask({ ctx, action, flowLayoutManager, task, flowTaskId }) {
     },
   },
 };

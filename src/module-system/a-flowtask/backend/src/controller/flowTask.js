@@ -83,6 +83,14 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async editAtom() {
+      const res = await this.ctx.service.flowTask.editAtom({
+        flowTaskId: this.ctx.request.body.flowTaskId,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
   }
   return FlowTaskController;
 };
