@@ -16,7 +16,29 @@ export default {
       // close
       this.$refs.sheet.f7Sheet.close(false);
       // callback
-      await this.callback(event, { status, remark: this.remark });
+      await this.callback(event, async data => {
+        // prompt
+        await this.$view.dialog.confirm(this.$text(status === 1 ? 'TaskPassPrompt' : 'TaskRejectPrompt'));
+        // params
+        const params = {
+          flowTaskId: this.flowTaskId,
+          handle: {
+            status,
+            remark: this.remark,
+          },
+        };
+        if (status === 1 && data && data.formAtom) {
+          params.formAtom = data.formAtom;
+        }
+        // complete
+        await this.$api.post('/a/flowtask/task/complete', params);
+        // load flow
+        await this.flowLayoutManager.base_loadData();
+        // back
+        if (this.$f7route.path === '/a/flowtask/flowTaskAtom') {
+          this.$f7router.back();
+        }
+      });
     },
     open({ flowLayoutManager, flowTaskId, action, callback }) {
       this.flowLayoutManager = flowLayoutManager;

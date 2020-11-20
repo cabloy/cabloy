@@ -46,19 +46,26 @@ export default {
         task.timeClaimed = new Date();
       }
       // load schema and item
-      if (!task._editAtomData) {
+      if (task._editAtomData === undefined) {
         const data = await ctx.$api.post('/a/flowtask/task/editAtom', {
           flowTaskId,
         });
         Vue.set(task, '_editAtomData', data);
       }
-      if (!task._editAtomData.schema) {
+      if (!task._editAtomData) {
         // handle directly
-        ctx.$refs.actionHandleTask.open({ flowLayoutManager, flowTaskId, action });
+        ctx.$refs.actionHandleTask.open({
+          flowLayoutManager,
+          flowTaskId,
+          action,
+          callback: (event, cb) => {
+            return cb(null);
+          },
+        });
         return;
       }
-      // navigate
-      ctx.$view.navigate(`/a/flowtask/flowTaskAtom?flowTaskId=${flowTaskId}&mode=edit`, {
+      // navigate options
+      const navigateOptions = {
         context: {
           params: {
             flowLayoutManager,
@@ -67,7 +74,13 @@ export default {
             action,
           },
         },
-      });
+      };
+      if (ctx.$f7route.path === '/a/flowtask/flowTaskAtom') {
+        navigateOptions.target = '_self';
+        navigateOptions.reloadCurrent = true;
+      }
+      // navigate
+      ctx.$view.navigate(`/a/flowtask/flowTaskAtom?flowTaskId=${flowTaskId}&mode=edit`, navigateOptions);
     },
     async _assigneesConfirmation({ ctx, flowLayoutManager, flowTaskId }) {
       // assignees

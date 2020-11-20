@@ -14,36 +14,20 @@ export default {
     actions_onSubmit() {
       this.$refs.buttonSave.onClick();
     },
-    async actions_onPerformValidate(event, data) {
-      // prompt
-      await this.$view.dialog.confirm(this.$text(data.status === 1 ? 'TaskPassPrompt' : 'TaskRejectPrompt'));
-      // params
-      const params = {
-        flowTaskId: this.container.flowTaskId,
-        handle: {
-          status: data.status,
-          remark: data.remark,
-        },
-      };
-      if (data.status === 1) {
-        params.formAtom = this.container_data.item;
-      }
-      // complete
-      await this.$api.post('/a/flowtask/task/complete', params);
-      // load flow
-      await this.container_flowLayoutManager.base_loadData();
-      // check
-      this.$f7router.back();
+    actions_onPerformValidate(event, cb) {
+      return cb({
+        formAtom: this.container_data.item,
+      });
     },
     actions_onPerformTaskHandle() {
       this.$refs.actionHandleTask.open({
         flowLayoutManager: this.container_flowLayoutManager,
         flowTaskId: this.container.flowTaskId,
         action: this.container_action,
-        callback: (event, data) => {
+        callback: (event, cb) => {
           const validateInstance = this.validate_getInstance();
           if (!validateInstance) return;
-          return validateInstance.perform(event, data);
+          return validateInstance.perform(event, cb);
         },
       });
     },
