@@ -73,26 +73,28 @@ module.exports = app => {
     { method: 'post', path: 'atom/checkRightAction', controller: 'atom' },
     // comment
     { method: 'post', path: 'comment/all', controller: 'comment' },
-    { method: 'post', path: 'comment/list', controller: 'comment' },
+    { method: 'post', path: 'comment/list', controller: 'comment',
+      meta: { right: { type: 'atom', action: 2, checkFlow: true } },
+    },
     { method: 'post', path: 'comment/item', controller: 'comment',
-      meta: { right: { type: 'atom', action: 2 } },
+      meta: { right: { type: 'atom', action: 2, checkFlow: true } },
     },
     { method: 'post', path: 'comment/save', controller: 'comment', middlewares: 'transaction',
       meta: {
         auth: { user: true },
-        right: { type: 'atom', action: 2 },
+        right: { type: 'atom', action: 2, checkFlow: true },
       },
     },
     { method: 'post', path: 'comment/delete', controller: 'comment', middlewares: 'transaction',
       meta: {
         auth: { user: true },
-        right: { type: 'atom', action: 2 },
+        right: { type: 'atom', action: 2, checkFlow: true },
       },
     },
     { method: 'post', path: 'comment/heart', controller: 'comment', middlewares: 'transaction',
       meta: {
         auth: { user: true },
-        right: { type: 'atom', action: 2 },
+        right: { type: 'atom', action: 2, checkFlow: true },
       },
     },
     // user

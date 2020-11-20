@@ -76,6 +76,7 @@ async function checkAtom(moduleInfo, options, ctx) {
     const res = await ctx.bean.atom.checkRightRead({
       atom: { id: ctx.request.body.key.atomId },
       user: ctx.state.user.op,
+      checkFlow: options.checkFlow,
     });
     if (!res) ctx.throw(403);
     ctx.request.body.key.itemId = res.itemId;
@@ -100,6 +101,7 @@ async function checkAtom(moduleInfo, options, ctx) {
       atom: { id: ctx.request.body.key.atomId },
       action: actionOther, stage: options.stage,
       user: ctx.state.user.op,
+      checkFlow: options.checkFlow,
     });
     if (!res) ctx.throw(403);
     ctx.request.body.key.itemId = res.itemId;
