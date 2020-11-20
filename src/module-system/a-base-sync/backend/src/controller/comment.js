@@ -17,12 +17,21 @@ module.exports = app => {
     }
 
     async list() {
+      const key = this.ctx.request.body.key;
       const options = this.ctx.request.body.options;
+      const user = this.ctx.state.user.op;
       options.page = this.ctx.bean.util.page(options.page);
+      // checkRightRead
+      const res = await this.ctx.bean.atom.checkRightRead({
+        atom: { id: key.atomId },
+        user,
+        checkFlow: true,
+      });
+      if (!res) this.ctx.throw(403);
       const items = await this.ctx.service.comment.list({
-        key: this.ctx.request.body.key,
+        key,
         options,
-        user: this.ctx.state.user.op,
+        user,
       });
       this.ctx.successMore(items, options.page.index, options.page.size);
     }

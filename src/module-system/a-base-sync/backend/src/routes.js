@@ -73,9 +73,7 @@ module.exports = app => {
     { method: 'post', path: 'atom/checkRightAction', controller: 'atom' },
     // comment
     { method: 'post', path: 'comment/all', controller: 'comment' },
-    { method: 'post', path: 'comment/list', controller: 'comment',
-      meta: { right: { type: 'atom', action: 2 } },
-    },
+    { method: 'post', path: 'comment/list', controller: 'comment' },
     { method: 'post', path: 'comment/item', controller: 'comment',
       meta: { right: { type: 'atom', action: 2 } },
     },
