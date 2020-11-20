@@ -87,8 +87,8 @@ export default {
       const assignees = await ctx.$api.post('/a/flowtask/task/assignees', {
         flowTaskId,
       });
-      // navigate
-      ctx.$view.navigate(`/a/flowtask/assigneesConfirmation?flowTaskId=${flowTaskId}`, {
+      // navigate options
+      const navigateOptions = {
         context: {
           params: {
             flowTaskId,
@@ -100,7 +100,13 @@ export default {
             }
           },
         },
-      });
+      };
+      if (ctx.$f7route.path === '/a/flowtask/flowTaskAtom') {
+        navigateOptions.target = '_self';
+        navigateOptions.reloadCurrent = true;
+      }
+      // navigate
+      ctx.$view.navigate(`/a/flowtask/assigneesConfirmation?flowTaskId=${flowTaskId}`, navigateOptions);
     },
     async _cancelFlow({ ctx, flowLayoutManager, flowTaskId }) {
       ctx.$refs.actionCancelFlow.open({ flowLayoutManager, flowTaskId });
