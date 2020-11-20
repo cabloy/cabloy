@@ -32,7 +32,7 @@ module.exports = app => {
       // only read basic info
       //   a.atomFlowId = {flowId}
       const atom = await this.ctx.model.queryOne(`
-        select a.*,b.module,b.atomClassName from aAtom a
+        select a.*,a.id as atomId,b.module,b.atomClassName from aAtom a
            left join aAtomClass b on a.atomClassId=b.id
              where a.deleted=0 and a.iid=? and a.id=?
                    and a.atomFlowId=?

@@ -71,14 +71,16 @@ export default {
       return stage === 0 ? 'draft' : stage === 1 ? 'archive' : 'history';
     },
     base_onCommentChanged(data) {
-      if (!this.base.item || data.atomId !== this.container.atomId) return;
-      if (data.action === 'create') this.base.item.commentCount += 1;
-      if (data.action === 'delete') this.base.item.commentCount -= 1;
+      const atom = this.base_atom;
+      if (!atom || data.atomId !== atom.atomId) return;
+      if (data.action === 'create') atom.commentCount += 1;
+      if (data.action === 'delete') atom.commentCount -= 1;
     },
     base_onAttachmentChanged(data) {
-      if (!this.base.item || data.atomId !== this.container.atomId) return;
-      if (data.action === 'create') this.base.item.attachmentCount += 1;
-      if (data.action === 'delete') this.base.item.attachmentCount -= 1;
+      const atom = this.base_atom;
+      if (!atom || data.atomId !== atom.atomId) return;
+      if (data.action === 'create') atom.attachmentCount += 1;
+      if (data.action === 'delete') atom.attachmentCount -= 1;
     },
   },
 };
