@@ -1,5 +1,5 @@
-import actionCancelFlow from '../../components/actionCancelFlow.jsx';
-import actionHandleTask from '../../components/actionHandleTask.jsx';
+import actionCancelFlow from '../../components/action/actionCancelFlow.jsx';
+import actionHandleTask from '../../components/action/actionHandleTask.jsx';
 
 export default {
   components: {

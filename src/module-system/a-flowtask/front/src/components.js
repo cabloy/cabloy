@@ -1,5 +1,5 @@
 // action
-import action from './components/action.js';
+import action from './components/action/action.js';
 // flowLayoutMobile
 import flowLayoutMobile from './components/flow/flowLayoutMobile/flowLayoutMobile.jsx';
 import flowLayoutBlockMobileTitle from './components/flow/flowLayoutMobile/flowLayoutBlockMobileTitle.jsx';
