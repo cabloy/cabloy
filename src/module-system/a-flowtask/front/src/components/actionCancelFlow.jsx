@@ -20,7 +20,11 @@ export default {
       });
       await this.flowLayoutManager.base_loadData();
       // close
-      this.$refs.sheet.f7Sheet.close();
+      this.$refs.sheet.f7Sheet.close(false);
+      // check
+      if (this.$f7route.path === '/a/flowtask/flowTaskAtom') {
+        this.$f7router.back();
+      }
     },
     open({ flowLayoutManager, flowTaskId }) {
       this.flowLayoutManager = flowLayoutManager;

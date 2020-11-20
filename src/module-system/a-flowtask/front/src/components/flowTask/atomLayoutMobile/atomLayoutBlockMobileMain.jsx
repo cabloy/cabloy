@@ -18,6 +18,13 @@ export default {
     };
   },
   render() {
-    return this.layoutManager.validate_render();
+    const domValidate = this.layoutManager.validate_render();
+    const domActions = this.layoutManager.actions_renderActionComponents();
+    return (
+      <div>
+        {domValidate}
+        {domActions}
+      </div>
+    );
   },
 };

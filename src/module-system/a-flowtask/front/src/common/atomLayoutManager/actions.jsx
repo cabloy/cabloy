@@ -1,9 +1,18 @@
+import actionCancelFlow from '../../components/actionCancelFlow.jsx';
 export default {
+  components: {
+    actionCancelFlow,
+  },
   data() {
     return {
     };
   },
   methods: {
+    actions_renderActionComponents() {
+      return (
+        <actionCancelFlow ref="actionCancelFlow"></actionCancelFlow>
+      );
+    },
     async actions_fetchActions() {
       this.actions.list = await this.$api.post('/a/base/atom/actions', {
         key: { atomId: this.container.atomId },
