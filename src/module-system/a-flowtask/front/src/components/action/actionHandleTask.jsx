@@ -3,43 +3,50 @@ export default {
     return {
       flowLayoutManager: null,
       flowTaskId: 0,
+      action: null,
       remark: '',
+      callback: null,
     };
   },
   methods: {
     onFormSubmit() {
-      this.$refs.buttonSubmit.onClick();
+      // this.$refs.buttonSubmit.onClick();
     },
-    async onSubmit() {
-      await this.$view.dialog.confirm(this.$text('CancelFlowPrompt'));
-      await this.$api.post('/a/flowtask/task/cancelFlow', {
-        flowTaskId: this.flowTaskId,
-        handle: {
-          remark: this.remark,
-        },
-      });
-      await this.flowLayoutManager.base_loadData();
+    async onSubmit(event, status) {
       // close
       this.$refs.sheet.f7Sheet.close(false);
-      // check
-      if (this.$f7route.path === '/a/flowtask/flowTaskAtom') {
-        this.$f7router.back();
-      }
+      // callback
+      await this.callback(event, { status, remark: this.remark });
     },
-    open({ flowLayoutManager, flowTaskId }) {
+    open({ flowLayoutManager, flowTaskId, action, callback }) {
       this.flowLayoutManager = flowLayoutManager;
       this.flowTaskId = flowTaskId;
+      this.action = action;
+      this.callback = callback;
       this.$refs.sheet.f7Sheet.open();
     },
   },
   render() {
+    let domButtonPass;
+    if (this.action && this.action.options.allowPassTask) {
+      domButtonPass = (
+        <eb-link ref="buttonSubmitPass" propsOnPerform={event => this.onSubmit(event, 1)}>{this.$text('Pass')}</eb-link>
+      );
+    }
+    let domButtonReject;
+    if (this.action && this.action.options.allowRejectTask) {
+      domButtonReject = (
+        <eb-link ref="buttonSubmitReject" propsOnPerform={event => this.onSubmit(event, 2)}>{this.$text('Reject')}</eb-link>
+      );
+    }
     return (
       <f7-sheet ref="sheet" fill>
         <f7-toolbar>
           <div class="left">
           </div>
-          <div class="right">
-            <eb-link ref="buttonSubmit" propsOnPerform={event => this.onSubmit(event)}>{this.$text('Cancel Flow')}</eb-link>
+          <div class="right display-flex align-items-center">
+            {domButtonPass}
+            {domButtonReject}
           </div>
         </f7-toolbar>
         <f7-page-content>

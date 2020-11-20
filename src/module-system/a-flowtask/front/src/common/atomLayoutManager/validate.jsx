@@ -11,15 +11,10 @@ export default {
       // return this.actions_submit(event, 'save');
     },
     validate_onSubmit() {
-      // this.actions_onSubmit();
+      this.actions_onSubmit();
     },
-    validate_onPerformValidate(event, actionName) {
-      const action = this.$utils.extend({}, this.actions_findAction('write'), { name: actionName });
-      const _action = this.getAction(action);
-      return this.$meta.util.performAction({ ctx: this, action: _action, item: this.base.item }).then(() => {
-        if (actionName === 'save') return true; // toast on success
-        if (actionName === 'submit') this.$f7router.back();
-      });
+    validate_onPerformValidate(event, data) {
+      return this.actions_onPerformValidate(event, data);
     },
     validate_render() {
       if (!this.base_ready) return null;

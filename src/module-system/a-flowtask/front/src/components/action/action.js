@@ -37,7 +37,14 @@ export default {
         },
       });
     },
-    async _handleTask({ ctx, flowLayoutManager, task, flowTaskId }) {
+    async _handleTask({ ctx, action, flowLayoutManager, task, flowTaskId }) {
+      // claim first
+      if (!task.timeClaimed) {
+        await this.ctx.$api.post('/a/flowtask/task/claim', {
+          flowTaskId,
+        });
+        task.timeClaimed = new Date();
+      }
       // load schema and item
       if (!task._editAtomData) {
         const data = await ctx.$api.post('/a/flowtask/task/editAtom', {
@@ -47,7 +54,7 @@ export default {
       }
       if (!task._editAtomData.schema) {
         // handle directly
-        ctx.$refs.actionCancelFlow.open({ flowLayoutManager, flowTaskId });
+        ctx.$refs.actionHandleTask.open({ flowLayoutManager, flowTaskId, action });
         return;
       }
       // navigate
@@ -57,6 +64,7 @@ export default {
             flowLayoutManager,
             task,
             data: task._editAtomData,
+            action,
           },
         },
       });

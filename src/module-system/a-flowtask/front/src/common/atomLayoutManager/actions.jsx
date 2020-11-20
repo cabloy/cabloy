@@ -11,10 +11,40 @@ export default {
     };
   },
   methods: {
+    actions_onSubmit() {
+      this.$refs.buttonSave.onClick();
+    },
+    async actions_onPerformValidate(event, data) {
+      // prompt
+      await this.$view.dialog.confirm(this.$text(data.status === 1 ? 'TaskPassPrompt' : 'TaskRejectPrompt'));
+      // params
+      const params = {
+        flowTaskId: this.container.flowTaskId,
+        handle: {
+          status: data.status,
+          remark: data.remark,
+        },
+      };
+      if (data.status === 1) {
+        params.formAtom = this.container_data.item;
+      }
+      // complete
+      await this.$api.post('/a/flowtask/task/complete', params);
+      // load flow
+      await this.container_flowLayoutManager.base_loadData();
+      // check
+      this.$f7router.back();
+    },
     actions_onPerformTaskHandle() {
       this.$refs.actionHandleTask.open({
         flowLayoutManager: this.container_flowLayoutManager,
-        flowTaskId: this.container_flowTaskId,
+        flowTaskId: this.container.flowTaskId,
+        action: this.container_action,
+        callback: (event, data) => {
+          const validateInstance = this.validate_getInstance();
+          if (!validateInstance) return;
+          return validateInstance.perform(event, data);
+        },
       });
     },
     actions_renderActionComponents() {
@@ -29,7 +59,7 @@ export default {
     },
     actions_renderHandle() {
       return (
-        <eb-link iconMaterial='done' propsOnPerform={event => this.actions_onPerformTaskHandle(event)}></eb-link>
+        <eb-link ref="buttonSave" iconMaterial='done' propsOnPerform={event => this.actions_onPerformTaskHandle(event)}></eb-link>
       );
     },
     actions_render() {

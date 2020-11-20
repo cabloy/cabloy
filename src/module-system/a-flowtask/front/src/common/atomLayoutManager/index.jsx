@@ -10,7 +10,8 @@ import Actions from './actions.jsx';
 //   mode, // edit/view
 //   layout,
 //   flowLayoutManager,
-//   data
+//   data,
+//   action,
 // },
 
 export default {
@@ -28,6 +29,9 @@ export default {
     },
     container_data() {
       return this.contextParams.data;
+    },
+    container_action() {
+      return this.contextParams.action;
     },
   },
   created() {
