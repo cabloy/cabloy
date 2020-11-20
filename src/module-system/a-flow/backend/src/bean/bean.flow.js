@@ -127,6 +127,19 @@ module.exports = ctx => {
       return await this._list({ options, user, pageForce, count });
     }
 
+    async get({ flowId, history, user }) {
+      const flows = await this.select({
+        options: {
+          where: {
+            'a.id': flowId,
+          },
+          mode: history ? 'history' : 'flowing',
+        },
+        user,
+      });
+      return flows[0];
+    }
+
     // mode: mine/others/flowing/history
     async _list({ options: { where, orders, page, mode }, user, pageForce = true, count = 0 }) {
       page = ctx.bean.util.page(page, pageForce);

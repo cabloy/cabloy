@@ -45,7 +45,7 @@ module.exports = ctx => {
       if (count) {
         _selectFields = 'count(*) as _count';
       } else {
-        _selectFields = `a.*,
+        _selectFields = `a.*,a.id as flowTaskId,
             b.flowNodeDefId,b.flowNodeName,b.flowNodeType,
             c.flowDefId,c.flowDefKey,c.flowDefRevision,c.flowStatus,c.flowAtomId,c.flowNodeIdCurrent,c.flowUserId,
             d.userName,d.avatar

@@ -193,6 +193,7 @@ module.exports = app => {
         action: this.ctx.request.body.action,
         stage: this.ctx.request.body.stage,
         user: this.ctx.state.user.op,
+        checkFlow: this.ctx.request.body.checkFlow,
       });
       this.ctx.success(res);
     }

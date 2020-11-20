@@ -15,17 +15,8 @@ module.exports = app => {
 
     async _data_flow({ flowId, user }) {
       // select flow
-      const flows = await this.ctx.bean.flow.select({
-        options: {
-          where: {
-            'a.id': flowId,
-          },
-          mode: 'history',
-        },
-        user,
-      });
-      if (flows.length === 0) this.ctx.throw(404);
-      const flow = flows[0];
+      const flow = await this.ctx.bean.flow.get({ flowId, history: true, user });
+      if (!flow) this.ctx.throw(404);
       // locale
       if (flow.flowRemark) {
         flow.flowRemark = this.ctx.text(flow.flowRemark);

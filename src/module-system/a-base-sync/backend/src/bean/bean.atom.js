@@ -774,11 +774,17 @@ module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    async checkRightRead({ atom: { id }, user }) {
+    async checkRightRead({ atom: { id }, user, checkFlow }) {
       // draft: only userIdUpdated
       const _atom = await this.modelAtom.get({ id });
       if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
       if (_atom.atomStage === 0) {
+        // checkFlow
+        if (_atom.atomFlowId > 0 && checkFlow) {
+          const flow = await ctx.bean.flow.get({ flowId: _atom.atomFlowId, history: true, user });
+          if (!flow) return null;
+          return _atom;
+        }
         // 1. closed
         if (_atom.atomClosed) return null;
         // 2. flow
@@ -797,7 +803,7 @@ module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    async checkRightAction({ atom: { id }, action, stage, user }) {
+    async checkRightAction({ atom: { id }, action, stage, user, checkFlow }) {
       const _atom = await this.modelAtom.get({ id });
       if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
       if ((stage === 'draft' && _atom.atomStage > 0) || ((stage === 'archive' || stage === 'history') && _atom.atomStage === 0)) return null;
@@ -814,6 +820,12 @@ module.exports = ctx => {
       }
       // draft
       if (_atom.atomStage === 0) {
+        // checkFlow
+        if (_atom.atomFlowId > 0 && checkFlow) {
+          const flow = await ctx.bean.flow.get({ flowId: _atom.atomFlowId, history: true, user });
+          if (!flow) return null;
+          return _atom;
+        }
         // 1. closed
         if (_atom.atomClosed) return null;
         // 2. flow
