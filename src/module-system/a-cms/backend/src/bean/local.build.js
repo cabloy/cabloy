@@ -26,8 +26,8 @@ module.exports = app => {
     }
 
     async getConfigSiteBase() {
-    // config
-    //    try other then default
+      // config
+      //    try other then default
       let configSite = this.ctx.config.module(this.atomClass.module).site;
       if (!configSite) {
         configSite = this.ctx.config.site;
