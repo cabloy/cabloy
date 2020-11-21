@@ -11,9 +11,9 @@ module.exports = app => {
     }
 
     // site<plugin<theme<site(db)<language(db)
-    async combineSiteBase({ atomClass }) {
+    async combineSiteBase({ atomClass, mergeConfigSite }) {
       const build = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.build`, atomClass);
-      return await build.combineSiteBase();
+      return await build.combineSiteBase({ mergeConfigSite });
     }
 
   }

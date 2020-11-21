@@ -2,6 +2,7 @@ module.exports = app => {
   const keywords = require('./config/validation/keywords.js')(app);
   const schemas = require('./config/validation/schemas.js')(app);
   const socketioHotloadFile = require('./config/socketio/hotloadFile.js')(app);
+  const flowDefinitions = require('./config/flow/definitions.js')(app);
   const meta = {
     base: {
       atoms: {
@@ -54,6 +55,11 @@ module.exports = app => {
           sorting: 1,
           menu: 1,
           actionPath: 'article/category',
+        },
+      },
+      statics: {
+        'a-flow.flowDef': {
+          items: flowDefinitions,
         },
       },
     },

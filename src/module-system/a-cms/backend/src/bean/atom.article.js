@@ -12,7 +12,7 @@ module.exports = app => {
       // super
       const key = await super.create({ atomClass, item, user });
       // article
-      const site = await this.ctx.service.render.combineSiteBase({ atomClass });
+      const site = await this.ctx.service.render.combineSiteBase({ atomClass, mergeConfigSite: true });
       const editMode = site.edit.mode;
       // add article
       const params = {
@@ -196,7 +196,7 @@ module.exports = app => {
 
     async submit({ atomClass, key, options, user }) {
       // site
-      const site = await this.ctx.service.render.combineSiteBase({ atomClass });
+      const site = await this.ctx.service.render.combineSiteBase({ atomClass, mergeConfigSite: true });
       if (site.base.ignoreFlow !== false) {
         options = Object.assign({}, options, { ignoreFlow: true });
       }

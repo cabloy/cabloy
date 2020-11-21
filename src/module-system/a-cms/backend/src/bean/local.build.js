@@ -95,13 +95,20 @@ module.exports = app => {
     }
 
     // site<plugin<theme<site(db)<language(db)
-    async combineSiteBase() {
-    // site
-      const site = await this.getConfigSiteBase();
+    async combineSiteBase(options) {
+      const mergeConfigSite = options && options.mergeConfigSite;
+      // site
+      let site = await this.getConfigSiteBase();
       // site(db) special for language/themes
       const configSite = await this.getConfigSite();
-      if (configSite && configSite.language) site.language = configSite.language;
-      if (configSite && configSite.themes) site.themes = configSite.themes;
+      if (configSite) {
+        if (mergeConfigSite) {
+          site = extend(true, site, configSite);
+        } else {
+          if (configSite.language) site.language = configSite.language;
+          if (configSite.themes) site.themes = configSite.themes;
+        }
+      }
       return site;
     }
 
