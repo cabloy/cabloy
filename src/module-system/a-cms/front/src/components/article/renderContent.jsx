@@ -20,7 +20,7 @@ export default {
   created() {
   },
   methods: {
-    onSave() {
+    save() {
       const { validate } = this.context;
       return validate.perform(null, 'save');
     },

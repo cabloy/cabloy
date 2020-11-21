@@ -114,7 +114,7 @@ export default {
       });
     },
     onPerformSave() {
-      return this.contextParams.ctx.onSave().then(() => {
+      return this.contextParams.ctx.save().then(() => {
         this.dirty = false;
         return true;
       });
