@@ -31,6 +31,7 @@ module.exports = app => {
       content: {
         type: 'string',
         ebType: 'text',
+        ebTextarea: true,
         ebTitle: 'Content',
       },
     },
