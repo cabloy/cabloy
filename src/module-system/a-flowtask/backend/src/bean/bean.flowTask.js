@@ -24,7 +24,7 @@ module.exports = ctx => {
     async claim({ flowTaskId, user }) {
       // taskInstance
       const taskInstance = await this._loadTaskInstance({ flowTaskId, user });
-      await taskInstance._claim();
+      return await taskInstance._claim();
     }
 
     async complete({ flowTaskId, handle, formAtom, user }) {

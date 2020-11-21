@@ -40,10 +40,10 @@ export default {
     async _handleTask({ ctx, action, flowLayoutManager, task, flowTaskId }) {
       // claim first
       if (!task.timeClaimed) {
-        await ctx.$api.post('/a/flowtask/task/claim', {
+        const res = await ctx.$api.post('/a/flowtask/task/claim', {
           flowTaskId,
         });
-        task.timeClaimed = new Date();
+        task.timeClaimed = res.timeClaimed;
       }
       // load schema and item
       if (task._editAtomData === undefined) {
