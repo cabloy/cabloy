@@ -68,8 +68,9 @@ module.exports = app => {
       // super
       const res = await super.checkRightAction({ atom, atomClass, action, stage, user, checkFlow });
       if (!res) return res;
-      // enable/disable
       if (atom.atomStage !== 1) return res;
+      if (action !== 101 && action !== 102) return res;
+      // enable/disable
       const flowDef = await this.ctx.model.flowDef.get({ id: atom.itemId });
       if (action === 101 && flowDef.disabled) return res;
       if (action === 102 && !flowDef.disabled) return res;

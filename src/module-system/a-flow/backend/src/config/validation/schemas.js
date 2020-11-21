@@ -14,6 +14,7 @@ module.exports = app => {
         type: 'string',
         ebType: 'text',
         ebTitle: 'KeyForAtom',
+        ebReadOnly: true,
         notEmpty: true,
       },
       // atomRevision: {
