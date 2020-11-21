@@ -141,6 +141,10 @@ module.exports = app => {
       return { type: 'buffer', data: buffer, meta };
     }
 
+    async checkRightAction({ atom, atomClass, action, stage, user, checkFlow }) {
+      return await this.ctx.bean.atom._checkRightAction({ atom, atomClass, action, stage, user, checkFlow });
+    }
+
   }
   return AtomBase;
 };

@@ -807,7 +807,26 @@ module.exports = ctx => {
     }
 
     async checkRightAction({ atom: { id }, action, stage, user, checkFlow }) {
+      // atom
       const _atom = await this.modelAtom.get({ id });
+      if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.get({ id: _atom.atomClassId });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      // atom bean
+      const _moduleInfo = mparse.parseInfo(atomClass.module);
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      return await ctx.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        context: { atom: _atom, atomClass, action, stage, user, checkFlow },
+        fn: 'checkRightAction',
+      });
+    }
+
+    async _checkRightAction({ atom, action, stage, user, checkFlow }) {
+      const _atom = atom;
       if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
       if ((stage === 'draft' && _atom.atomStage > 0) || ((stage === 'archive' || stage === 'history') && _atom.atomStage === 0)) return null;
       // action.stage
@@ -848,7 +867,7 @@ module.exports = ctx => {
       const sql = this.sqlProcedure.checkRightAction({
         iid: ctx.instance.id,
         userIdWho: user.id,
-        atomId: id,
+        atomId: atom.id,
         action,
       });
       return await ctx.model.queryOne(sql);
