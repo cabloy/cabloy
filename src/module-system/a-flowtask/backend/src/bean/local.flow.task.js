@@ -424,6 +424,8 @@ module.exports = ctx => {
       // basic fields
       const fields = await ctx.bean.atom.modelAtom.columns();
       fields.atomId = {};
+      fields.module = {};
+      fields.atomClassName = {};
       for (const field in fields) {
         item[field] = atom[field];
       }

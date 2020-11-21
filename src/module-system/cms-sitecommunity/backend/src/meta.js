@@ -6,6 +6,7 @@ module.exports = app => {
   };
   const atomClassQuery = `module=${atomClass.module}&atomClassName=${atomClass.atomClassName}`;
   const schemas = require('./config/validation/schemas.js')(app);
+  const flowDefinitions = require('./config/flow/definitions.js')(app);
   const meta = {
     base: {
       atoms: {
@@ -58,6 +59,11 @@ module.exports = app => {
           sorting: 2,
           menu: 1,
           actionPath: `/a/cms/article/category?${atomClassQuery}`,
+        },
+      },
+      statics: {
+        'a-flow.flowDef': {
+          items: flowDefinitions,
         },
       },
     },

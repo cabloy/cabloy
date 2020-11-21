@@ -11,7 +11,7 @@ module.exports = app => {
           options: {
             atom: {
               module: moduleInfo.relativeName,
-              atomClassName: 'article',
+              atomClassName: 'post',
             },
             conditionExpression: null,
           },
@@ -52,8 +52,8 @@ module.exports = app => {
     },
   };
   const definition = {
-    atomName: 'CMS Article Publish',
-    atomStaticKey: 'articlePublish',
+    atomName: 'Community Post Publish',
+    atomStaticKey: 'postPublish',
     atomRevision: 0,
     description: '',
     content: JSON.stringify(content),
