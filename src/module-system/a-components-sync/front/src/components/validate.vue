@@ -23,7 +23,6 @@ export default {
               props: {
                 data: this.data,
                 readOnly: this.readOnly,
-                onSave: this.onSave,
               },
               on: { submit: this.onSubmit },
             },
@@ -62,9 +61,6 @@ export default {
     },
     errors: {
       type: Array,
-    },
-    onSave: {
-      type: Function,
     },
   },
   data() {

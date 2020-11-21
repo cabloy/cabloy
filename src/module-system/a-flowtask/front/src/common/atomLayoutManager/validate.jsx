@@ -7,9 +7,6 @@ export default {
     validate_getInstance() {
       return this.$refs.validate;
     },
-    validate_onSave(event) {
-      // return this.actions_submit(event, 'save');
-    },
     validate_onSubmit() {
       this.actions_onSubmit();
     },
@@ -26,7 +23,6 @@ export default {
             { schema: this.container_data.schema }
           }
           propsOnPerform={this.validate_onPerformValidate}
-          propsOnSave={this.validate_onSave}
           onSubmit={this.validate_onSubmit}>
         </eb-validate>
       );
