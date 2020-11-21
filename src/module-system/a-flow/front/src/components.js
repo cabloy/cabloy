@@ -1,5 +1,5 @@
-import flowDefItem from './components/flowDef/item.vue';
+import actionFlowDef from './components/actionFlowDef.js';
 
 export default {
-  flowDefItem,
+  actionFlowDef,
 };

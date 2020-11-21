@@ -3,11 +3,6 @@ module.exports = app => {
   // flowDef
   schemas.flowDef = {
     type: 'object',
-    meta: {
-      custom: {
-        // component: 'flowDefItem',
-      },
-    },
     properties: {
       atomName: {
         type: 'string',
