@@ -1,4 +1,5 @@
 const require3 = require('require3');
+const uuid = require3('uuid');
 const mparse = require3('egg-born-mparse').default;
 
 module.exports = ctx => {
@@ -480,7 +481,9 @@ module.exports = ctx => {
         atomFlowId = 0;
         atomName = `${srcItem.atomName}-${ctx.text('CloneCopyText')}`;
         atomStatic = 0;
-        atomStaticKey = null;
+        if (atomStaticKey) {
+          atomStaticKey = uuid.v4().replace(/-/g, '');
+        }
         atomRevision = 0;
       }
       // destItem
