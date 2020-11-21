@@ -53,6 +53,19 @@ module.exports = ctx => {
       });
     }
 
+    async enable({ flowDefId }) {
+      const flowDef = await this.modelFlowDef.get({ atomId: flowDefId });
+      await this.modelFlowDef.update({ id: flowDef.id, disabled: 0 });
+      ctx.tail(async () => {
+        await ctx.bean.flowDef.deploy({ flowDefId });
+      });
+    }
+
+    async disable({ flowDefId }) {
+      const flowDef = await this.modelFlowDef.get({ atomId: flowDefId });
+      await this.modelFlowDef.update({ id: flowDef.id, disabled: 1 });
+    }
+
     async _deployQueue({ flowDefId }) {
       // flowDef
       const flowDef = await this._getById({ flowDefId });

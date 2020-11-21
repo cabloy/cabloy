@@ -25,11 +25,13 @@ export default {
     this.$meta.eventHub.$on('atom:star', this.onStarChanged);
     this.$meta.eventHub.$on('atom:labels', this.onLabelsChanged);
     this.$meta.eventHub.$on('atom:action', this.onActionChanged);
+    this.$meta.eventHub.$on('atom:actions', this.onActionsChanged);
   },
   beforeDestroy() {
     this.$meta.eventHub.$off('atom:star', this.onStarChanged);
     this.$meta.eventHub.$off('atom:labels', this.onLabelsChanged);
     this.$meta.eventHub.$off('atom:action', this.onActionChanged);
+    this.$meta.eventHub.$off('atom:actions', this.onActionsChanged);
   },
   methods: {
     onItemClick(event, item) {
@@ -113,6 +115,13 @@ export default {
         }).then(data => {
           Vue.set(this.layout.items, index, data);
         });
+      }
+    },
+    onActionsChanged(data) {
+      const key = data.key;
+      const index = this.layout.items.findIndex(item => item.atomId === key.atomId);
+      if (index !== -1) {
+        Vue.set(this.layout.items[index], '_actions', null);
       }
     },
     onItemChange(event, item) {

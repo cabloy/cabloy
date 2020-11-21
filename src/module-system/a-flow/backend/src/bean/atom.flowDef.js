@@ -1,8 +1,15 @@
+const require3 = require('require3');
+const uuid = require3('uuid');
+
 module.exports = app => {
 
   class Atom extends app.meta.AtomBase {
 
     async create({ atomClass, item, user }) {
+      // atomStaticKey
+      if (!item.atomStaticKey) {
+        item.atomStaticKey = uuid.v4().replace(/-/g, '');
+      }
       // super
       const key = await super.create({ atomClass, item, user });
       // add flowDef
@@ -14,7 +21,7 @@ module.exports = app => {
       await this.ctx.model.flowDefContent.insert({
         atomId: key.atomId,
         itemId,
-        content: null,
+        content: '{}',
       });
       return { atomId: key.atomId, itemId };
     }
@@ -33,6 +40,8 @@ module.exports = app => {
     }
 
     async write({ atomClass, key, item, options, user }) {
+      // force delete disabled
+      delete item.disabled;
       // super
       await super.write({ atomClass, key, item, options, user });
       // update flowDef
@@ -45,9 +54,12 @@ module.exports = app => {
 
       // deploy
       if (item.atomStage === 1) {
-        this.ctx.tail(async () => {
-          await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId });
-        });
+        const flowDef = await this.ctx.model.flowDef.get({ id: key.itemId });
+        if (!flowDef.disabled) {
+          this.ctx.tail(async () => {
+            await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId });
+          });
+        }
       }
     }
 
