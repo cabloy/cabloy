@@ -13,11 +13,11 @@ export default {
     },
     async _enable({ ctx, key }) {
       await ctx.$api.post('/a/flow/flowDef/enable', { key });
-      ctx.$meta.eventHub.$emit('atom:actions', { key });
+      ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'save' } });
     },
     async _disable({ ctx, key }) {
       await ctx.$api.post('/a/flow/flowDef/disable', { key });
-      ctx.$meta.eventHub.$emit('atom:actions', { key });
+      ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'save' } });
     },
   },
 };

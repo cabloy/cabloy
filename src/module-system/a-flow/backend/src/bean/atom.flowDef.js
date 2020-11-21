@@ -30,6 +30,8 @@ module.exports = app => {
       // super
       const item = await super.read({ atomClass, key, user });
       if (!item) return null;
+      // meta
+      this._getMeta(item);
       // ok
       return item;
     }
@@ -37,6 +39,10 @@ module.exports = app => {
     async select({ atomClass, options, items, user }) {
       // super
       await super.select({ atomClass, options, items, user });
+      // meta
+      for (const item of items) {
+        this._getMeta(item);
+      }
     }
 
     async write({ atomClass, key, item, options, user }) {
@@ -87,6 +93,18 @@ module.exports = app => {
       if (action === 101 && flowDef.disabled) return res;
       if (action === 102 && !flowDef.disabled) return res;
       return null;
+    }
+
+    _getMeta(item) {
+      // flags
+      const flags = [];
+      if (item.disabled) flags.push(this.ctx.text('Disabled'));
+      // meta
+      const meta = {
+        flags,
+      };
+      // ok
+      item._meta = meta;
     }
 
   }
