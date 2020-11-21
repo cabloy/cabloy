@@ -5,7 +5,7 @@
         <eb-link iconMaterial="done" :onPerform="onPerformDone"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-validate v-if="moduleBlock" ref="validate" :readOnly="false" auto :data="item" :params="validateParams" :meta="meta" :onPerform="onPerformValidate" @submit.prevent="onSubmit">
+    <eb-validate v-if="moduleBlock" ref="validate" :readOnly="false" auto :data="item" :params="validateParams" :meta="meta" :onPerform="onPerformValidate" @submit="onSubmit">
     </eb-validate>
   </eb-page>
 </template>

@@ -6,7 +6,7 @@
       </f7-nav-right>
     </eb-navbar>
     <f7-block-title>Form</f7-block-title>
-    <eb-list v-if="item" form inline-labels no-hairlines-md @submit.prevent="onFormSubmit">
+    <eb-list v-if="item" form inline-labels no-hairlines-md @submit="onFormSubmit">
       <eb-list-input :label="$text('Username')" type="text" clear-button :placeholder="$text('Username')" v-model="item.userName"></eb-list-input>
       <eb-list-input :label="$text('Password')" type="password" clear-button :placeholder="$text('Password')" v-model="item.password"></eb-list-input>
       <eb-list-input :label="$text('Password Again')" type="Password" clear-button :placeholder="$text('Password Again')" v-model="item.passwordAgain"></eb-list-input>

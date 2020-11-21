@@ -7,7 +7,7 @@
     </eb-navbar>
     <f7-block>
       <eb-validate ref="validate" :auto="false" :data="data" :params="{validator: 'passwordChange'}" :onPerform="onPerformValidate">
-        <eb-list form inline-labels no-hairlines-md @submit.prevent="onSubmit">
+        <eb-list form inline-labels no-hairlines-md @submit="onSubmit">
           <eb-list-item-validate dataKey="passwordOld"></eb-list-item-validate>
           <eb-list-item-validate dataKey="passwordNew"></eb-list-item-validate>
           <eb-list-item-validate dataKey="passwordNewAgain"></eb-list-item-validate>

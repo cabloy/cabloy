@@ -6,7 +6,7 @@
       </f7-nav-right>
     </eb-navbar>
     <eb-validate ref="validate" :auto="false" :data="user" :params="{module:'a-base',validator: 'user'}" :onPerform="onPerformValidate">
-      <eb-list form inline-labels no-hairlines-md @submit.prevent="onFormSubmit">
+      <eb-list form inline-labels no-hairlines-md @submit="onFormSubmit">
         <eb-list-item-validate dataKey="userName"></eb-list-item-validate>
         <eb-list-item-validate dataKey="realName"></eb-list-item-validate>
         <f7-list-item divider></f7-list-item>

@@ -5,7 +5,7 @@
         <eb-link v-if="schemaReady" ref="buttonSubmit" iconMaterial="done" :onPerform="onSave"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-validate ref="validate" :readOnly="readOnly" auto :data="data" :dataPathRoot="dataPathRoot" :errors="errors" :params="params" @schema:ready="onSchemaReady" @submit.prevent="onFormSubmit">
+    <eb-validate ref="validate" :readOnly="readOnly" auto :data="data" :dataPathRoot="dataPathRoot" :errors="errors" :params="params" @schema:ready="onSchemaReady" @submit="onFormSubmit">
     </eb-validate>
   </eb-page>
 </template>

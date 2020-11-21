@@ -6,7 +6,7 @@
       </f7-nav-right>
     </eb-navbar>
     <f7-block-title>Form</f7-block-title>
-    <eb-validate v-if="item" ref="validate" auto :data="item" :params="validateParams" :onPerform="onPerformValidate" @submit.prevent="onFormSubmit">
+    <eb-validate v-if="item" ref="validate" auto :data="item" :params="validateParams" :onPerform="onPerformValidate" @submit="onFormSubmit">
     </eb-validate>
     <f7-block-title>Form Value</f7-block-title>
     <pre class="form-data">{{form2}}</pre>

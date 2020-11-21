@@ -30,7 +30,7 @@
         <div class="label">
           <f7-badge :style="{backgroundColor:labelColor}">{{labelText}}</f7-badge>
         </div>
-        <eb-list form inline-labels no-hairlines-md @submit.prevent="onFormSubmit">
+        <eb-list form inline-labels no-hairlines-md @submit="onFormSubmit">
           <eb-list-input :label="$text('Text')" type="text" clear-button :placeholder="$text('Text')" v-model="labelText">
           </eb-list-input>
           <f7-list-item>

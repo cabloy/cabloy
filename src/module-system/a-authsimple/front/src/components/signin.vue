@@ -3,7 +3,7 @@
     <f7-card>
       <f7-card-content>
         <eb-validate ref="validate" :onPerform="onPerformValidate">
-          <eb-list form no-hairlines-md @submit.prevent="onSubmit">
+          <eb-list form no-hairlines-md @submit="onSubmit">
             <eb-list-input :label="$text('Your Username/Mobile/Email')" floating-label type="text" clear-button :placeholder="$text('Your Username/Mobile/Email')" v-model="data.auth" dataPath="auth">
               <f7-icon material="person_outline" slot="media"></f7-icon>
             </eb-list-input>

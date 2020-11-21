@@ -3,7 +3,7 @@
     <eb-navbar large largeTransparent :title="getPageTitle()" eb-back-link="Back"></eb-navbar>
     <f7-block>
       <eb-validate ref="validate" :auto="false" :data="data" :params="{validator: 'signup'}" :onPerform="onPerformValidate" @schema:ready="onSchemaReady">
-        <eb-list form inline-labels no-hairlines-md @submit.prevent="onSubmit">
+        <eb-list form inline-labels no-hairlines-md @submit="onSubmit">
           <eb-list-item-validate dataKey="userName"></eb-list-item-validate>
           <eb-list-item-validate dataKey="realName"></eb-list-item-validate>
           <eb-list-item-validate dataKey="email"></eb-list-item-validate>

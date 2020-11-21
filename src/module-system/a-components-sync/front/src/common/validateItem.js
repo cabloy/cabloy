@@ -335,9 +335,13 @@ export default {
                   readOnly: this.validate.readOnly || property.ebReadOnly,
                 },
                 callback: (code, res) => {
-                  if (code) {
+                  if (code === 200) {
                     this.setValue(data, key, res.data, property);
                     this.validate.verrors = res.errors;
+                    // submit
+                    if (property.ebAutoSubmit !== false) {
+                      this.validate.onSubmit();
+                    }
                   }
                 },
               },

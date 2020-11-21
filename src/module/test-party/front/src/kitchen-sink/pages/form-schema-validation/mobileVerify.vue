@@ -10,7 +10,7 @@
       <f7-block-title>Form</f7-block-title>
       <f7-block>
         <eb-validate v-if="item" ref="validate" :auto="false" :data="item" :params="validateParams" :onPerform="onPerformValidate">
-          <eb-list form inline-labels no-hairlines-md @submit.prevent="onFormSubmit">
+          <eb-list form inline-labels no-hairlines-md @submit="onFormSubmit">
             <eb-list-item-validate dataKey="mobile"></eb-list-item-validate>
             <eb-list-input :label="$text('SMSVerificationCode')" type="text" clear-button :placeholder="$text('SMS Verification Code')" v-model="captcha.token" dataPath="captcha/token">
               <div slot="content">
