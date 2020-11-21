@@ -48,4 +48,8 @@ module.exports = {
   Version: '版本',
   KeyForAtom: '关键字',
   Content: '内容',
+  Enable: '启用',
+  Enabled: '已启用',
+  Disable: '禁用',
+  Disabled: '已禁用',
 };

@@ -64,6 +64,18 @@ module.exports = app => {
       await super.delete({ atomClass, key, user });
     }
 
+    async checkRightAction({ atom, atomClass, action, stage, user, checkFlow }) {
+      // super
+      const res = await super.checkRightAction({ atom, atomClass, action, stage, user, checkFlow });
+      if (!res) return res;
+      // enable/disable
+      if (atom.atomStage !== 1) return res;
+      const flowDef = await this.ctx.model.flowDef.get({ id: atom.itemId });
+      if (action === 101 && flowDef.disabled) return res;
+      if (action === 102 && !flowDef.disabled) return res;
+      return null;
+    }
+
   }
 
   return Atom;

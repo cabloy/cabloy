@@ -156,6 +156,10 @@ module.exports = app => {
           { roleName: 'system', action: 'delete', scopeNames: 'superuser' },
           { roleName: 'system', action: 'clone', scopeNames: 0 },
           { roleName: 'system', action: 'clone', scopeNames: 'superuser' },
+          { roleName: 'system', action: 'enable', scopeNames: 0 },
+          { roleName: 'system', action: 'enable', scopeNames: 'superuser' },
+          { roleName: 'system', action: 'disable', scopeNames: 0 },
+          { roleName: 'system', action: 'disable', scopeNames: 'superuser' },
           { roleName: 'system', action: 'deleteBulk' },
           { roleName: 'system', action: 'exportBulk' },
         ];
