@@ -82,6 +82,18 @@ module.exports = app => {
       });
       assert.equal(list.length, 3);
 
+      // select: like
+      list = await model.select({
+        where: {
+          atomStaticKey: [ atomStaticKey ],
+          atomName: {
+            op: 'likeRight',
+            val: 'atom-',
+          },
+        },
+      });
+      assert.equal(list.length, 3);
+
       // delete
       await model.delete({ atomStaticKey });
 

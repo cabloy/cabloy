@@ -228,7 +228,7 @@ function _formatWhere(db, where, join) {
       wheres.push(db.format('?? IN (?)', [ key, value ]));
     } else if (value === null || value === undefined) {
       wheres.push(db.format('?? IS ?', [ key, value ]));
-    } else if (value && typeof value === 'object') {
+    } else if (value && !(value instanceof Date) && typeof value === 'object') {
       // op
       let op = value.op || '='; // default is =
       op = op.indexOf('like') > -1 ? 'LIKE' : op;
@@ -247,7 +247,7 @@ function _formatWhere(db, where, join) {
 }
 
 function _formatValue(db, value) {
-  if (typeof value !== 'object') return db.format('?', value);
+  if (typeof value !== 'object' || (value instanceof Date)) return db.format('?', value);
   let val;
   if (value.type === 'Date') {
     val = db.format('?', moment(value.val).format('YYYY-MM-DD HH:mm:ss.SSS'));
