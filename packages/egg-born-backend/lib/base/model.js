@@ -109,7 +109,7 @@ module.exports = app => {
           if (this.table) args.push(this.table);
           for (const arg of arguments) args.push(arg);
           if (args[2] && args[2].where) {
-            this._insertRowsCheck(args[2].where);
+            this._rowCheck(args[2].where);
           }
           return this.ctx.db[method].apply(this.ctx.db, args);
         };
@@ -127,7 +127,7 @@ module.exports = app => {
           if (this.table) args.push(this.table);
           for (const arg of arguments) args.push(arg);
           args[1] = args[1] || {};
-          this._insertRowsCheck(args[1]);
+          this._rowCheck(args[1]);
           if (this.table && !this.disableDeleted) {
             const sql = this.ctx.db.format('UPDATE ?? SET deleted=1 ', [ args[0] ]) +
               this.ctx.db._where(args[1]);
@@ -149,7 +149,7 @@ module.exports = app => {
           if (this.table) args.push(this.table);
           for (const arg of arguments) args.push(arg);
           args[1] = args[1] || {};
-          this._insertRowsCheck(args[1]);
+          this._rowCheck(args[1]);
           return this.ctx.db[method].apply(this.ctx.db, args);
         };
       },
@@ -169,7 +169,7 @@ module.exports = app => {
           // if (args[1].id) {
           //   return this.ctx.db[method].apply(this.ctx.db, args);
           // }
-          this._insertRowsCheck(args[1]);
+          this._rowCheck(args[1]);
           return this.ctx.db[method].apply(this.ctx.db, args);
         };
       },
@@ -187,7 +187,7 @@ module.exports = app => {
           for (const arg of arguments) args.push(arg);
           args[1] = args[1] || {};
           args[1].where = args[1].where || {};
-          this._insertRowsCheck(args[1].where);
+          this._rowCheck(args[1].where);
           return this.ctx.db[method].apply(this.ctx.db, args);
         };
       },
