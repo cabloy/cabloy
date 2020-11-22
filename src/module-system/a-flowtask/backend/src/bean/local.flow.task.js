@@ -80,6 +80,16 @@ module.exports = ctx => {
       this.contextTask._user = user;
     }
 
+    async _hidden({ hidden }) {
+      // flowTask
+      const flowTaskHidden = hidden ? 1 : 0;
+      this.contextTask._flowTask.flowTaskHidden = flowTaskHidden;
+      await this.modelFlowTask.update(this.contextTask._flowTask);
+      // history
+      this.contextTask._flowTaskHistory.flowTaskHidden = flowTaskHidden;
+      await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
+    }
+
     async _claim() {
       // user
       const user = this.contextTask._user;
@@ -96,9 +106,11 @@ module.exports = ctx => {
       // flowTask
       const timeClaimed = new Date();
       this.contextTask._flowTask.timeClaimed = timeClaimed;
+      this.contextTask._flowTask.flowTaskHidden = 0; // show
       await this.modelFlowTask.update(this.contextTask._flowTask);
       // history
       this.contextTask._flowTaskHistory.timeClaimed = timeClaimed;
+      this.contextTask._flowTaskHistory.flowTaskHidden = 0; // show
       await this.modelFlowTaskHistory.update(this.contextTask._flowTaskHistory);
       // check if bidding
       const options = ctx.bean.flowTask._getNodeRefOptionsTask({ nodeInstance: this.nodeInstance });

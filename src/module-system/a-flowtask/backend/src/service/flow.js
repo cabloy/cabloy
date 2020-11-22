@@ -47,6 +47,10 @@ module.exports = app => {
           where: {
             'a.flowId': flowId,
             'b.flowNodeType': [ 'startEventAtom', 'activityUserTask' ],
+            __or__: [
+              { 'a.userIdAssignee': user.id },
+              { 'a.flowTaskHidden': 0 },
+            ],
           },
           orders: [
             [ 'a.flowNodeId', 'desc' ],

@@ -11,6 +11,7 @@ module.exports = {
       confirmation: false,
       confirmationAllowAppend: false,
       bidding: false,
+      showBiddings: false,
       completionCondition: {
         passed: 1,
         rejected: '100%',
@@ -34,6 +35,7 @@ module.exports = {
     confirmation: false,
     confirmationAllowAppend: false,
     bidding: false,
+    showBiddings: false,
     completionCondition: {
       passed: 1,
       rejected: '100%',

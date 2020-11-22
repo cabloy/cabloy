@@ -29,6 +29,11 @@ module.exports = ctx => {
       // super
       await super.onNodeBegin();
 
+      // options
+      const options = ctx.bean.flowTask._getNodeRefOptionsTask({
+        nodeInstance: this.nodeInstance,
+      });
+
       // user
       const user = this.flowInstance._getOpUser();
 
@@ -38,11 +43,14 @@ module.exports = ctx => {
 
       // create tasks
       for (const userIdAssignee of assignees) {
-        await ctx.bean.flowTask._createTaskInstance({
+        const task = await ctx.bean.flowTask._createTaskInstance({
           nodeInstance: this.nodeInstance,
           userIdAssignee,
           user,
         });
+        if (!options.showBiddings) {
+          await task._hidden({ hidden: true });
+        }
       }
 
       // ok
