@@ -19,8 +19,15 @@ export default {
         formAtom: this.container_data.item,
       });
     },
-    actions_onPerformTaskHandle() {
-      this.$refs.actionHandleTask.open({
+    async actions_onPerformTaskHandleSave() {
+      await this.actions_onPerformTaskHandle_({ submitDirectly: true });
+      return this.$text('Saved');
+    },
+    actions_onPerformTaskHandleSubmit() {
+      return this.actions_onPerformTaskHandle_({ submitDirectly: false });
+    },
+    actions_onPerformTaskHandle_({ submitDirectly }) {
+      return this.$refs.actionHandleTask.open({
         flowLayoutManager: this.container_flowLayoutManager,
         flowTaskId: this.container.flowTaskId,
         action: this.container_action,
@@ -29,6 +36,7 @@ export default {
           if (!validateInstance) return;
           return validateInstance.perform(event, cb);
         },
+        submitDirectly,
       });
     },
     actions_renderActionComponents() {
@@ -42,9 +50,14 @@ export default {
       return children;
     },
     actions_renderHandle() {
-      return (
-        <eb-link ref="buttonSave" iconMaterial='done' propsOnPerform={event => this.actions_onPerformTaskHandle(event)}></eb-link>
+      const children = [];
+      children.push(
+        <eb-link key="save" ref="buttonSave" iconMaterial='save' propsOnPerform={event => this.actions_onPerformTaskHandleSave(event)}></eb-link>
       );
+      children.push(
+        <eb-link key="submit" ref="buttonSubmit" iconMaterial='done' propsOnPerform={event => this.actions_onPerformTaskHandleSubmit(event)}></eb-link>
+      );
+      return children;
     },
     actions_render() {
       if (!this.base_ready) return null;

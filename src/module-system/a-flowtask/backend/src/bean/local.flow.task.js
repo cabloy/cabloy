@@ -134,23 +134,29 @@ module.exports = ctx => {
       // check handled
       if (flowTask.flowTaskStatus !== 0) ctx.throw.module(moduleInfo.relativeName, 1005, flowTaskId);
       // check if pass/reject
-      const options = ctx.bean.flowTask._getNodeRefOptionsTask({ nodeInstance: this.nodeInstance });
-      if (handle.status === 1 && !options.allowPassTask) {
-        ctx.throw.module(moduleInfo.relativeName, 1006, flowTaskId);
-      }
-      if (handle.status === 2 && !options.allowRejectTask) {
-        ctx.throw.module(moduleInfo.relativeName, 1007, flowTaskId);
+      if (handle) {
+        const options = ctx.bean.flowTask._getNodeRefOptionsTask({ nodeInstance: this.nodeInstance });
+        if (handle.status === 1 && !options.allowPassTask) {
+          ctx.throw.module(moduleInfo.relativeName, 1006, flowTaskId);
+        }
+        if (handle.status === 2 && !options.allowRejectTask) {
+          ctx.throw.module(moduleInfo.relativeName, 1007, flowTaskId);
+        }
       }
       // formAtom
-      await this._complete_formAtom({ formAtom });
+      if (formAtom) {
+        await this._complete_formAtom({ formAtom });
+      }
       // handle
-      await this._complete_handle({ handle });
-      // event: task.completed
-      await this.completed();
-      // check if node done
-      ctx.tail(async () => {
-        await this._complete_tail({ flowTask, user });
-      });
+      if (handle) {
+        await this._complete_handle({ handle });
+        // event: task.completed
+        await this.completed();
+        // check if node done
+        ctx.tail(async () => {
+          await this._complete_tail({ flowTask, user });
+        });
+      }
     }
 
     async _complete_tail({ flowTask, user }) {
@@ -320,7 +326,6 @@ module.exports = ctx => {
     }
 
     async _complete_formAtom({ formAtom }) {
-      if (!formAtom) return;
       // schemaWrite
       const schemaWrite = await this._getSchemaWrite();
       if (!schemaWrite) return;

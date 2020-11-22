@@ -15,37 +15,53 @@ export default {
     async onSubmit(event, status) {
       // close
       this.$refs.sheet.f7Sheet.close(false);
+      // submit
+      await this._submit(event, status);
+    },
+    async _submit(event, status) {
       // callback
       await this.callback(event, async data => {
         // prompt
-        await this.$view.dialog.confirm(this.$text(status === 1 ? 'TaskPassPrompt' : 'TaskRejectPrompt'));
+        if (status) {
+          await this.$view.dialog.confirm(this.$text(status === 1 ? 'TaskPassPrompt' : 'TaskRejectPrompt'));
+        }
         // params
         const params = {
           flowTaskId: this.flowTaskId,
-          handle: {
+        };
+        // handle
+        if (status) {
+          params.handle = {
             status,
             remark: this.remark,
-          },
-        };
-        if (status === 1 && data && data.formAtom) {
+          };
+        }
+        // formAtom
+        if (data && data.formAtom) {
           params.formAtom = data.formAtom;
         }
         // complete
         await this.$api.post('/a/flowtask/task/complete', params);
-        // load flow
+        // load flow & atom
         await this.flowLayoutManager.base_loadData();
         // back
-        if (this.$f7route.path === '/a/flowtask/flowTaskAtom') {
-          this.$f7router.back();
+        if (status) {
+          if (this.$f7route.path === '/a/flowtask/flowTaskAtom') {
+            this.$f7router.back();
+          }
         }
       });
     },
-    open({ flowLayoutManager, flowTaskId, action, callback }) {
+    async open({ flowLayoutManager, flowTaskId, action, callback, submitDirectly }) {
       this.flowLayoutManager = flowLayoutManager;
       this.flowTaskId = flowTaskId;
       this.action = action;
       this.callback = callback;
-      this.$refs.sheet.f7Sheet.open();
+      if (submitDirectly) {
+        await this._submit(null, null);
+      } else {
+        this.$refs.sheet.f7Sheet.open();
+      }
     },
   },
   render() {
