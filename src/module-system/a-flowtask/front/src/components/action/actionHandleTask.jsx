@@ -6,7 +6,11 @@ export default {
       action: null,
       remark: '',
       callback: null,
+      pathThis: null,
     };
+  },
+  created() {
+    this.pathThis = this.$f7route.path;
   },
   methods: {
     onFormSubmit() {
@@ -48,7 +52,7 @@ export default {
       await this.flowLayoutManager.base_loadData();
       // back
       if (handle) {
-        if (this.$f7route.path === '/a/flowtask/flowTaskAtom') {
+        if (this.pathThis === '/a/flowtask/flowTaskAtom') {
           this.$f7router.back();
         }
       }

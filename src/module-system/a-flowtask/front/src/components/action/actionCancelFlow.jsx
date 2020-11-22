@@ -4,7 +4,11 @@ export default {
       flowLayoutManager: null,
       flowTaskId: 0,
       remark: '',
+      pathThis: null,
     };
+  },
+  created() {
+    this.pathThis = this.$f7route.path;
   },
   methods: {
     onFormSubmit() {
@@ -22,7 +26,7 @@ export default {
       // close
       this.$refs.sheet.f7Sheet.close(false);
       // check
-      if (this.$f7route.path === '/a/flowtask/flowTaskAtom') {
+      if (this.pathThis === '/a/flowtask/flowTaskAtom') {
         this.$f7router.back();
       }
     },
