@@ -43,13 +43,13 @@ module.exports = ctx => {
 
       // create tasks
       for (const userIdAssignee of assignees) {
-        const task = await ctx.bean.flowTask._createTaskInstance({
+        const taskInstance = await ctx.bean.flowTask._createTaskInstance({
           nodeInstance: this.nodeInstance,
           userIdAssignee,
           user,
         });
-        if (!options.showBiddings) {
-          await task._hidden({ hidden: true });
+        if (!options.showAssignees) {
+          await taskInstance._hidden({ hidden: true });
         }
       }
 

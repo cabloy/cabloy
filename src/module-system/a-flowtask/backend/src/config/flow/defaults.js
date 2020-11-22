@@ -8,10 +8,10 @@ module.exports = {
         roles: null,
         vars: 'flowUser',
       },
+      showAssignees: false,
       confirmation: false,
       confirmationAllowAppend: false,
       bidding: false,
-      showBiddings: false,
       completionCondition: {
         passed: 1,
         rejected: '100%',
@@ -32,10 +32,10 @@ module.exports = {
       roles: null,
       vars: null,
     },
+    showAssignees: false,
     confirmation: false,
     confirmationAllowAppend: false,
     bidding: false,
-    showBiddings: false,
     completionCondition: {
       passed: 1,
       rejected: '100%',
