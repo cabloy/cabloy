@@ -28,6 +28,28 @@ module.exports = app => {
       });
       assert.equal(list.length, 3);
 
+      // read
+      const item = await model.get({
+        atomStaticKey,
+        atomName: 'atom-one',
+      });
+
+      // update one row
+      await model.update({
+        id: item.id,
+        readCount: item.readCount + 1,
+      });
+
+      // update with options.where and options.columns
+      await model.update({
+        readCount: 1,
+      }, {
+        where: { atomStaticKey },
+        columns: [ 'readCount' ],
+      });
+
+      // select
+
       // delete
       await model.delete({ atomStaticKey });
 

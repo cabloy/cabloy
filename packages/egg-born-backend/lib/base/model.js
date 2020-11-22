@@ -108,6 +108,9 @@ module.exports = app => {
           const args = [ ];
           if (this.table) args.push(this.table);
           for (const arg of arguments) args.push(arg);
+          if (args[2] && args[2].where) {
+            this._insertRowsCheck(args[2].where);
+          }
           return this.ctx.db[method].apply(this.ctx.db, args);
         };
       },
