@@ -39,6 +39,22 @@ module.exports = app => {
       return data;
     }
 
+    _insertRowCheck(row) {
+      if ((!this.table || !this.disableInstance) && row.iid === undefined) {
+        row.iid = this.ctx.instance.id;
+      }
+      if ((this.table && !this.disableDeleted) && row.deleted === undefined) {
+        row.deleted = 0;
+      }
+    }
+
+    _insertRowsCheck(rows) {
+      if (!Array.isArray(rows)) return this._insertRowCheck(rows);
+      for (const row of rows) {
+        this._insertRowCheck(row);
+      }
+    }
+
   }
 
   [
@@ -76,12 +92,7 @@ module.exports = app => {
           const args = [ ];
           if (this.table) args.push(this.table);
           for (const arg of arguments) args.push(arg);
-          if ((!this.table || !this.disableInstance) && !args[1].iid) {
-            args[1].iid = this.ctx.instance.id;
-          }
-          if (this.table && !this.disableDeleted) {
-            args[1].deleted = 0;
-          }
+          this._insertRowsCheck(args[1]);
           return this.ctx.db[method].apply(this.ctx.db, args);
         };
       },
