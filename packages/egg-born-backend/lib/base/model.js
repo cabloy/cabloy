@@ -200,7 +200,7 @@ module.exports = app => {
     Object.defineProperty(Model.prototype, method, {
       get() {
         return function() {
-          return _format(this.ctx.db, arguments[0]);
+          return _formatValue(this.ctx.db, arguments[0]);
         };
       },
     });
@@ -227,7 +227,7 @@ module.exports = app => {
         if (op === 'notNull') {
           wheres.push(this.format('?? IS NOT null', [ key ]));
         } else {
-          wheres.push(`${this.format('??', key)} ${_safeOp(op)} ${_format(this, value)}`);
+          wheres.push(`${this.format('??', key)} ${_safeOp(op)} ${_formatValue(this, value)}`);
         }
       } else {
         wheres.push(this.format('?? = ?', [ key, value ]));
@@ -242,7 +242,7 @@ module.exports = app => {
   return Model;
 };
 
-function _format(db, value) {
+function _formatValue(db, value) {
   if (typeof value !== 'object') return db.format('?', value);
   let val;
   if (value.type === 'Date') {
