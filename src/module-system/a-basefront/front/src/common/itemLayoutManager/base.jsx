@@ -34,7 +34,6 @@ export default {
     this.$meta.eventHub.$on('atom:labels', this.base_onLabelsChanged);
     this.$meta.eventHub.$on('atom:action', this.base_onActionChanged);
     this.$meta.eventHub.$on('atom:actions', this.base_onActionsChanged);
-    this.$meta.eventHub.$on('atom:openDraft', this.base_onOpenDrafted);
     this.$meta.eventHub.$on('comment:action', this.base_onCommentChanged);
     this.$meta.eventHub.$on('attachment:action', this.base_onAttachmentChanged);
   },
@@ -43,7 +42,6 @@ export default {
     this.$meta.eventHub.$off('atom:labels', this.base_onLabelsChanged);
     this.$meta.eventHub.$off('atom:action', this.base_onActionChanged);
     this.$meta.eventHub.$off('atom:actions', this.base_onActionsChanged);
-    this.$meta.eventHub.$off('atom:openDraft', this.base_onOpenDrafted);
     this.$meta.eventHub.$off('comment:action', this.base_onCommentChanged);
     this.$meta.eventHub.$off('attachment:action', this.base_onAttachmentChanged);
   },

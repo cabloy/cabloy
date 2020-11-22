@@ -59,7 +59,7 @@ export default {
         ctx.$view.navigate(url, action.navigateOptions);
         // event
         if (item.atomStage > 0) {
-          ctx.$meta.eventHub.$emit('atom:openDraft', { key, keyDraft });
+          ctx.$meta.eventHub.$emit('atom:actions', { key });
         }
       } else if (action.name === 'clone') {
         // clone
