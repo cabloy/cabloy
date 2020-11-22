@@ -58,9 +58,7 @@ export default {
           flowLayoutManager,
           flowTaskId,
           action,
-          callback: (event, cb) => {
-            return cb(null);
-          },
+          callback: null,
         });
         return;
       }

@@ -15,53 +15,53 @@ export default {
     async onSubmit(event, status) {
       // close
       this.$refs.sheet.f7Sheet.close(false);
-      // submit
-      await this._submit(event, status);
-    },
-    async _submit(event, status) {
+      // prompt
+      await this.$view.dialog.confirm(this.$text(status === 1 ? 'TaskPassPrompt' : 'TaskRejectPrompt'));
+      // handle
+      const handle = {
+        status,
+        remark: this.remark,
+      };
       // callback
-      await this.callback(event, async data => {
-        // prompt
-        if (status) {
-          await this.$view.dialog.confirm(this.$text(status === 1 ? 'TaskPassPrompt' : 'TaskRejectPrompt'));
-        }
-        // params
-        const params = {
-          flowTaskId: this.flowTaskId,
-        };
-        // handle
-        if (status) {
-          params.handle = {
-            status,
-            remark: this.remark,
-          };
-        }
-        // formAtom
-        if (data && data.formAtom) {
-          params.formAtom = data.formAtom;
-        }
-        // complete
-        await this.$api.post('/a/flowtask/task/complete', params);
-        // load flow & atom
-        await this.flowLayoutManager.base_loadData();
-        // back
-        if (status) {
-          if (this.$f7route.path === '/a/flowtask/flowTaskAtom') {
-            this.$f7router.back();
-          }
-        }
-      });
+      if (this.callback) {
+        return await this.callback({ handle });
+      }
+      // default submit
+      return await this._submit({ handle, formAtom: null });
     },
-    async open({ flowLayoutManager, flowTaskId, action, callback, submitDirectly }) {
+    async _submit({ handle, formAtom }) {
+      // params
+      const params = {
+        flowTaskId: this.flowTaskId,
+      };
+        // handle
+      if (handle) {
+        params.handle = handle;
+      }
+      // formAtom
+      if (formAtom) {
+        params.formAtom = formAtom;
+      }
+      // complete
+      await this.$api.post('/a/flowtask/task/complete', params);
+      // load flow & atom
+      await this.flowLayoutManager.base_loadData();
+      // back
+      if (handle) {
+        if (this.$f7route.path === '/a/flowtask/flowTaskAtom') {
+          this.$f7router.back();
+        }
+      }
+    },
+    init({ flowLayoutManager, flowTaskId, action, callback }) {
       this.flowLayoutManager = flowLayoutManager;
       this.flowTaskId = flowTaskId;
       this.action = action;
       this.callback = callback;
-      if (submitDirectly) {
-        await this._submit(null, null);
-      } else {
-        this.$refs.sheet.f7Sheet.open();
-      }
+    },
+    open({ flowLayoutManager, flowTaskId, action, callback }) {
+      this.init({ flowLayoutManager, flowTaskId, action, callback });
+      this.$refs.sheet.f7Sheet.open();
     },
   },
   render() {

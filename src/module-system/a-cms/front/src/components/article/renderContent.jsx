@@ -22,7 +22,7 @@ export default {
   methods: {
     save() {
       const { validate } = this.context;
-      return validate.perform(null, 'save');
+      return validate.perform(null, { action: 'save' });
     },
     combineAtomClass(url) {
       return utils.combineAtomClass(this.atomClass, url);

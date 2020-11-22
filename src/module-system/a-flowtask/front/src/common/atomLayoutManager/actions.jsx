@@ -14,29 +14,36 @@ export default {
     actions_onSubmit() {
       this.$refs.buttonSave.onClick();
     },
-    actions_onPerformValidate(event, cb) {
-      return cb({
-        formAtom: this.container_data.item,
-      });
-    },
-    async actions_onPerformTaskHandleSave() {
-      await this.actions_onPerformTaskHandle_({ submitDirectly: true });
-      return this.$text('Saved');
-    },
-    actions_onPerformTaskHandleSubmit() {
-      return this.actions_onPerformTaskHandle_({ submitDirectly: false });
-    },
-    actions_onPerformTaskHandle_({ submitDirectly }) {
-      return this.$refs.actionHandleTask.open({
+    async actions_onPerformValidate(event, { /* action,*/ handle }) {
+      // init for validateInstance.perform directly
+      this.$refs.actionHandleTask.init({
         flowLayoutManager: this.container_flowLayoutManager,
         flowTaskId: this.container.flowTaskId,
         action: this.container_action,
-        callback: (event, cb) => {
+      });
+      // formAtom
+      const formAtom = this.container_data.item;
+      // submit
+      return await this.$refs.actionHandleTask._submit({ handle, formAtom });
+    },
+    async actions_onPerformTaskHandleSave() {
+      // save
+      const validateInstance = this.validate_getInstance();
+      if (!validateInstance) return;
+      await validateInstance.perform(null, { action: 'save' });
+      return this.$text('Saved');
+    },
+    actions_onPerformTaskHandleSubmit() {
+      // open
+      this.$refs.actionHandleTask.open({
+        flowLayoutManager: this.container_flowLayoutManager,
+        flowTaskId: this.container.flowTaskId,
+        action: this.container_action,
+        callback: async ({ handle }) => {
           const validateInstance = this.validate_getInstance();
           if (!validateInstance) return;
-          return validateInstance.perform(event, cb);
+          return await validateInstance.perform(null, { action: 'submit', handle });
         },
-        submitDirectly,
       });
     },
     actions_renderActionComponents() {

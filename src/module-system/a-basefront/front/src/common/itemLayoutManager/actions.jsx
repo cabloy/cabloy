@@ -81,7 +81,7 @@ export default {
     actions_submit(event, action) {
       const validateInstance = this.validate_getInstance();
       if (!validateInstance) return;
-      return validateInstance.perform(event, action);
+      return validateInstance.perform(event, { action });
     },
     actions_onAction(event, action) {
       if (action === 'save' || action === 'submit') {
