@@ -208,39 +208,43 @@ module.exports = app => {
 
   // replace _where
   RDSClient.prototype._where = function(where) {
-    if (!where) {
-      return '';
-    }
-
-    const wheres = [];
-    for (const key in where) {
-      const value = where[key];
-      if (Array.isArray(value)) {
-        wheres.push(this.format('?? IN (?)', [ key, value ]));
-      } else if (value === null || value === undefined) {
-        wheres.push(this.format('?? IS ?', [ key, value ]));
-      } else if (value && typeof value === 'object') {
-        // op
-        let op = value.op || '='; // default is =
-        op = op.indexOf('like') > -1 ? 'LIKE' : op;
-        // op: notNull
-        if (op === 'notNull') {
-          wheres.push(this.format('?? IS NOT null', [ key ]));
-        } else {
-          wheres.push(`${this.format('??', key)} ${_safeOp(op)} ${_formatValue(this, value)}`);
-        }
-      } else {
-        wheres.push(this.format('?? = ?', [ key, value ]));
-      }
-    }
-    if (wheres.length > 0) {
-      return ` WHERE (${wheres.join(' AND ')})`;
-    }
-    return '';
+    const wheres = _formatWhere(this, where, 'AND');
+    if (!wheres) return '';
+    return ` WHERE (${wheres})`;
   };
 
   return Model;
 };
+
+function _formatWhere(db, where, join) {
+  if (!where) {
+    return '';
+  }
+
+  const wheres = [];
+  for (const key in where) {
+    const value = where[key];
+    if (Array.isArray(value)) {
+      wheres.push(db.format('?? IN (?)', [ key, value ]));
+    } else if (value === null || value === undefined) {
+      wheres.push(db.format('?? IS ?', [ key, value ]));
+    } else if (value && typeof value === 'object') {
+      // op
+      let op = value.op || '='; // default is =
+      op = op.indexOf('like') > -1 ? 'LIKE' : op;
+      // op: notNull
+      if (op === 'notNull') {
+        wheres.push(db.format('?? IS NOT null', [ key ]));
+      } else {
+        wheres.push(`${db.format('??', key)} ${_safeOp(op)} ${_formatValue(db, value)}`);
+      }
+    } else {
+      wheres.push(db.format('?? = ?', [ key, value ]));
+    }
+  }
+  if (wheres.length === 0) return '';
+  return wheres.join(` ${join} `);
+}
 
 function _formatValue(db, value) {
   if (typeof value !== 'object') return db.format('?', value);
