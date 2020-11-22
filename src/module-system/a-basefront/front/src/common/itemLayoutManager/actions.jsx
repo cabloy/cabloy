@@ -24,7 +24,7 @@ export default {
       // others
       for (const action of this.actions.list) {
         // write
-        if (action.name === 'write') continue;
+        if (action.name === 'write' && this.base.item.atomStage === 0) continue;
         // view
         if (action.name === 'read' && this.container.mode === 'view') continue;
         // stage
@@ -108,9 +108,9 @@ export default {
     actions_render() {
       if (!this.base_ready) return null;
       const children = [];
-      //
+      // only show on draft
       const actionWrite = this.actions_findAction('write');
-      if (actionWrite) {
+      if (actionWrite && this.base.item.atomStage === 0) {
         const actionIcon = this.container.mode === 'edit' ? 'save' : 'edit';
         const actionName = this.container.mode === 'edit' ? 'save' : 'write';
         children.push(
@@ -136,7 +136,7 @@ export default {
           children.push(
             <eb-list-item key={action.id} link="#" popover-close propsOnPerform={event => this.actions_onAction(event, action)}>
               <f7-icon slot="media" material={_action.icon && _action.icon.material }></f7-icon>
-              <div slot="title">{this.getActionTitle(action)}</div>
+              <div slot="title">{this.getActionTitle(action, this.base.item.atomStage)}</div>
             </eb-list-item>
           );
         }
