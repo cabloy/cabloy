@@ -213,29 +213,28 @@ module.exports = app => {
     }
 
     const wheres = [];
-    const values = [];
     for (const key in where) {
-      let ignore = false;
       const value = where[key];
       if (Array.isArray(value)) {
-        wheres.push('?? IN (?)');
+        wheres.push(this.format('?? IN (?)', [ key, value ]));
       } else if (value === null || value === undefined) {
-        wheres.push('?? IS ?');
+        wheres.push(this.format('?? IS ?', [ key, value ]));
       } else if (value && typeof value === 'object') {
+        // op
         let op = value.op || '='; // default is =
         op = op.indexOf('like') > -1 ? 'LIKE' : op;
-        wheres.push(`${this.format('??', key)} ${_safeOp(op)} ${_format(this, value)}`);
-        ignore = true;
+        // op: notNull
+        if (op === 'notNull') {
+          wheres.push(this.format('?? IS NOT null', [ key ]));
+        } else {
+          wheres.push(`${this.format('??', key)} ${_safeOp(op)} ${_format(this, value)}`);
+        }
       } else {
-        wheres.push('?? = ?');
-      }
-      if (!ignore) {
-        values.push(key);
-        values.push(value);
+        wheres.push(this.format('?? = ?', [ key, value ]));
       }
     }
     if (wheres.length > 0) {
-      return this.format(` WHERE (${wheres.join(' AND ')})`, values);
+      return ` WHERE (${wheres.join(' AND ')})`;
     }
     return '';
   };
@@ -251,10 +250,12 @@ function _format(db, value) {
   } else {
     val = db.format('?', value.val);
   }
+  // like
   const val2 = val.substr(1, val.length - 2);
   if (value.op === 'like') return `'%${val2}%'`;
   if (value.op === 'likeLeft') return `'%${val2}'`;
   if (value.op === 'likeRight') return `'${val2}%'`;
+  // in
   if (value.op === 'in') {
     const arr = typeof value.val === 'string' ? value.val.split(',') : value.val;
     const arrVal = [];
@@ -263,6 +264,7 @@ function _format(db, value) {
     }
     return `(${arrVal.join(',')})`;
   }
+  // others
   return val;
 }
 

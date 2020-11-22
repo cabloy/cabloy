@@ -23,7 +23,7 @@ module.exports = app => {
       await model.insert(__rows.slice(1));
 
       // select
-      const list = await model.select({
+      let list = await model.select({
         where: { atomStaticKey },
       });
       assert.equal(list.length, 3);
@@ -48,7 +48,39 @@ module.exports = app => {
         columns: [ 'readCount' ],
       });
 
-      // select
+      // select: in
+      list = await model.select({
+        where: { atomStaticKey: [ atomStaticKey ] },
+      });
+      assert.equal(list.length, 3);
+      list = await model.select({
+        where: {
+          atomStaticKey: {
+            op: 'in', val: [ atomStaticKey ],
+          },
+        },
+      });
+      assert.equal(list.length, 3);
+
+      // select: is null
+      list = await model.select({
+        where: {
+          atomStaticKey: [ atomStaticKey ],
+          atomName: null,
+        },
+      });
+      assert.equal(list.length, 0);
+
+      // select: is not null
+      list = await model.select({
+        where: {
+          atomStaticKey: [ atomStaticKey ],
+          atomName: {
+            op: 'notNull',
+          },
+        },
+      });
+      assert.equal(list.length, 3);
 
       // delete
       await model.delete({ atomStaticKey });
