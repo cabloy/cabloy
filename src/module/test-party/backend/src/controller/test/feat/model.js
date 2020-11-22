@@ -94,6 +94,19 @@ module.exports = app => {
       });
       assert.equal(list.length, 3);
 
+      // select: or
+      list = await model.select({
+        where: {
+          atomStaticKey: [ atomStaticKey ],
+          __or__: [
+            { atomName: 'atom-one' },
+            { atomName: 'atom-two' },
+          ],
+        },
+      });
+      assert.equal(list.length, 2);
+
+
       // delete
       await model.delete({ atomStaticKey });
 

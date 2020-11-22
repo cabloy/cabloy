@@ -2,6 +2,7 @@ const is = require('is-type-of');
 const moment = require('moment');
 const RDSClient = require('ali-rds');
 
+const __whereOrPlaceholder = '__or__';
 const __columns = {};
 
 module.exports = app => {
@@ -208,7 +209,7 @@ module.exports = app => {
 
   // replace _where
   RDSClient.prototype._where = function(where) {
-    const wheres = _formatWhere(this, where, 'AND');
+    const wheres = _formatWhere(this, where);
     if (!wheres) return '';
     return ` WHERE (${wheres})`;
   };
@@ -216,7 +217,19 @@ module.exports = app => {
   return Model;
 };
 
-function _formatWhere(db, where, join) {
+function _formatOr(db, ors) {
+  const wheres = [];
+  for (const or of ors) {
+    const _where = _formatWhere(db, or);
+    if (_where) {
+      wheres.push(_where);
+    }
+  }
+  if (wheres.length === 0) return '';
+  return wheres.join(' OR ');
+}
+
+function _formatWhere(db, where) {
   if (!where) {
     return '';
   }
@@ -224,6 +237,16 @@ function _formatWhere(db, where, join) {
   const wheres = [];
   for (const key in where) {
     const value = where[key];
+    // check key
+    if (key.indexOf(__whereOrPlaceholder) > -1) {
+      // or
+      const _where = _formatOr(db, value);
+      if (_where) {
+        wheres.push(`(${_where})`);
+      }
+      continue;
+    }
+    // check value
     if (Array.isArray(value)) {
       wheres.push(db.format('?? IN (?)', [ key, value ]));
     } else if (value === null || value === undefined) {
@@ -243,7 +266,7 @@ function _formatWhere(db, where, join) {
     }
   }
   if (wheres.length === 0) return '';
-  return wheres.join(` ${join} `);
+  return wheres.join(' AND ');
 }
 
 function _formatValue(db, value) {
@@ -262,11 +285,7 @@ function _formatValue(db, value) {
   // in
   if (value.op === 'in') {
     const arr = typeof value.val === 'string' ? value.val.split(',') : value.val;
-    const arrVal = [];
-    for (const item of arr) {
-      arrVal.push(db.format('?', item));
-    }
-    return `(${arrVal.join(',')})`;
+    return `(${db.format('?', [ arr ])})`;
   }
   // others
   return val;
