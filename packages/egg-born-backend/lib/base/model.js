@@ -39,7 +39,7 @@ module.exports = app => {
       return data;
     }
 
-    _insertRowCheck(row) {
+    _rowCheck(row) {
       if ((!this.table || !this.disableInstance) && row.iid === undefined) {
         row.iid = this.ctx.instance.id;
       }
@@ -49,9 +49,9 @@ module.exports = app => {
     }
 
     _insertRowsCheck(rows) {
-      if (!Array.isArray(rows)) return this._insertRowCheck(rows);
+      if (!Array.isArray(rows)) return this._rowCheck(rows);
       for (const row of rows) {
-        this._insertRowCheck(row);
+        this._rowCheck(row);
       }
     }
 
@@ -124,9 +124,7 @@ module.exports = app => {
           if (this.table) args.push(this.table);
           for (const arg of arguments) args.push(arg);
           args[1] = args[1] || {};
-          if ((!this.table || !this.disableInstance) && !args[1].iid) {
-            args[1].iid = this.ctx.instance.id;
-          }
+          this._insertRowsCheck(args[1]);
           if (this.table && !this.disableDeleted) {
             const sql = this.ctx.db.format('UPDATE ?? SET deleted=1 ', [ args[0] ]) +
               this.ctx.db._where(args[1]);
@@ -148,12 +146,7 @@ module.exports = app => {
           if (this.table) args.push(this.table);
           for (const arg of arguments) args.push(arg);
           args[1] = args[1] || {};
-          if ((!this.table || !this.disableInstance) && !args[1].iid) {
-            args[1].iid = this.ctx.instance.id;
-          }
-          if (this.table && !this.disableDeleted) {
-            args[1].deleted = 0;
-          }
+          this._insertRowsCheck(args[1]);
           return this.ctx.db[method].apply(this.ctx.db, args);
         };
       },
@@ -173,12 +166,7 @@ module.exports = app => {
           // if (args[1].id) {
           //   return this.ctx.db[method].apply(this.ctx.db, args);
           // }
-          if ((!this.table || !this.disableInstance) && !args[1].iid) {
-            args[1].iid = this.ctx.instance.id;
-          }
-          if (this.table && !this.disableDeleted) {
-            args[1].deleted = 0;
-          }
+          this._insertRowsCheck(args[1]);
           return this.ctx.db[method].apply(this.ctx.db, args);
         };
       },
@@ -196,12 +184,7 @@ module.exports = app => {
           for (const arg of arguments) args.push(arg);
           args[1] = args[1] || {};
           args[1].where = args[1].where || {};
-          if ((!this.table || !this.disableInstance) && !args[1].iid) {
-            args[1].where.iid = this.ctx.instance.id;
-          }
-          if (this.table && !this.disableDeleted) {
-            args[1].where.deleted = 0;
-          }
+          this._insertRowsCheck(args[1].where);
           return this.ctx.db[method].apply(this.ctx.db, args);
         };
       },
