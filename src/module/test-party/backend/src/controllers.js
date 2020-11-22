@@ -32,6 +32,7 @@ const testFeatValidation = require('./controller/test/feat/validation.js');
 const testFeatMiddleware = require('./controller/test/feat/middleware.js');
 const testFeatQueue = require('./controller/test/feat/queue.js');
 const testFeatBroadcast = require('./controller/test/feat/broadcast.js');
+const testFeatModel = require('./controller/test/feat/model.js');
 const testMonkeyee = require('./controller/test/monkey/monkeyee.js');
 const testKitchensinkAutocomplete = require('./controller/kitchen-sink/autocomplete.js');
 const testKitchensinkGuide = require('./controller/kitchen-sink/guide.js');
@@ -74,6 +75,7 @@ module.exports = app => {
     testFeatMiddleware,
     testFeatQueue,
     testFeatBroadcast,
+    testFeatModel,
     testMonkeyee,
     testKitchensinkAutocomplete,
     testKitchensinkGuide,
