@@ -67,6 +67,7 @@ export default {
   Enabled: '已启用',
   Disable: '禁用',
   Disabled: '已禁用',
+  Saved: '已保存',
   'Advanced Filter': '高级筛选',
   'Atom Flag': '原子标记',
   'Atom Name': '原子名称',

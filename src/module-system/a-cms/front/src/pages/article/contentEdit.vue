@@ -109,14 +109,14 @@ export default {
       this.contextCallback(200, { content: data });
     },
     onSave() {
-      this.onPerformSave().then(() => {
-        this.$view.toast.show();
+      this.onPerformSave().then(text => {
+        this.$view.toast.show({ text });
       });
     },
     onPerformSave() {
       return this.contextParams.ctx.save().then(() => {
         this.dirty = false;
-        return true;
+        return this.$text('Saved');
       });
     },
     onPerformPreview() {

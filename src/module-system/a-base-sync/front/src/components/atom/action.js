@@ -20,7 +20,7 @@ export default {
         await ctx.$api.post('/a/base/atom/write', { key, item });
         ctx.$meta.eventHub.$emit('atom:action', { key, action });
         // toast
-        return true;
+        return ctx.$text('Saved');
       } else if (action.name === 'submit') {
         // submit
         await ctx.$view.dialog.confirm();
