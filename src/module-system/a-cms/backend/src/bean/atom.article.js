@@ -195,11 +195,6 @@ module.exports = app => {
     }
 
     async submit({ atomClass, key, options, user }) {
-      // site
-      const site = await this.ctx.service.render.combineSiteBase({ atomClass, mergeConfigSite: true });
-      if (site.base.ignoreFlow !== false) {
-        options = Object.assign({}, options, { ignoreFlow: true });
-      }
       // super
       return await super.submit({ atomClass, key, options, user });
     }

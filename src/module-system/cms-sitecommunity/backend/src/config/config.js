@@ -9,7 +9,6 @@ module.exports = appInfo => {
       subTitle: 'Everything About CabloyJS',
       description: '',
       keywords: '',
-      ignoreFlow: true,
     },
     host: {
       url: 'http://community.example.com',

@@ -25,7 +25,6 @@ module.exports = appInfo => {
       wordBreak: false,
       preserveTags: false,
     },
-    // ignoreFlow: true,
   };
 
   // site
@@ -35,7 +34,6 @@ module.exports = appInfo => {
       subTitle: 'gone with the wind',
       description: '',
       keywords: '',
-      ignoreFlow: true,
     },
     host: {
       url: 'http://example.com',
