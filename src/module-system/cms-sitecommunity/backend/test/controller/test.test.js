@@ -174,6 +174,7 @@ describe('test/controller/test.test.js', () => {
           categoryId: article.categoryId,
           slug: article.slug,
         },
+        options: { ignoreFlow: true },
       });
       assert(result.body.code === 0);
       const keyArchive = result.body.data.archive.key;
