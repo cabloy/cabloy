@@ -56,9 +56,19 @@ export default {
     async base_loadData() {
       try {
         // flow data
+        const flowOld = this.base_flow;
         this.base.data = await this.$api.post('/a/flowtask/flow/data', {
           flowId: this.container.flowId,
         });
+        const flowNew = this.base_flow;
+        const atomNew = this.base_atom;
+        if (atomNew && flowOld && flowNew && flowOld.flowStatus === 0 && flowNew.flowStatus === 1) {
+          // delete draft
+          this.$meta.eventHub.$emit('atom:action', { key: { atomId: atomNew.atomId }, action: { name: 'delete' } });
+          // update archive
+          this.$meta.eventHub.$emit('atom:action', { key: { atomId: atomNew.atomIdArchive }, action: { name: 'save' } });
+        }
+        // ok
         return true;
       } catch (err) {
         this.base.notfound = true;
