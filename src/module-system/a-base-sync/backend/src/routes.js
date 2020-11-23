@@ -57,7 +57,7 @@ module.exports = app => {
       },
     },
     { method: 'post', path: 'atom/readCount', controller: 'atom',
-      meta: { right: { type: 'atom', action: 2 } },
+      meta: { right: { type: 'atom', action: 2, checkFlow: true } },
     },
     { method: 'post', path: 'atom/stats', controller: 'atom' },
     { method: 'post', path: 'atom/labels', controller: 'atom',

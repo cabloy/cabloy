@@ -147,16 +147,9 @@ module.exports = app => {
     }
 
     async stats() {
-      // atomIds
-      const atomIds = this.ctx.request.body.atomIds;
-      const options = {
-        where: {
-          'a.id': { op: 'in', val: atomIds },
-        },
-      };
-      // select
-      const res = await this.ctx.bean.atom.select({
-        options, user: this.ctx.state.user.op, pageForce: false,
+      const res = await this.ctx.service.atom.stats({
+        atomIds: this.ctx.request.body.atomIds,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }

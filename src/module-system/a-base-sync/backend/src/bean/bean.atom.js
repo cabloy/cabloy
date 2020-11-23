@@ -651,6 +651,23 @@ module.exports = ctx => {
         [ attachment, ctx.instance.id, key.atomId ]);
     }
 
+    async stats({ atomIds, user }) {
+      const list = [];
+      for (const atomId of atomIds) {
+        const res = await this.checkRightRead({ atom: { id: atomId }, user, checkFlow: true });
+        if (res) {
+          list.push({
+            id: atomId,
+            atomId,
+            readCount: res.readCount,
+            commentCount: res.commentCount,
+            starCount: res.starCount,
+          });
+        }
+      }
+      return list;
+    }
+
     async labels({ key, atom: { labels = null }, user }) {
       // get
       const atom = await this.get({ atomId: key.atomId });

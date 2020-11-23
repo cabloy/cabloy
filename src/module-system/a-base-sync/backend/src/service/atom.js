@@ -58,6 +58,10 @@ module.exports = app => {
       return await this.ctx.bean.atom.readCount({ key, atom, user });
     }
 
+    async stats({ atomIds, user }) {
+      return await this.ctx.bean.atom.stats({ atomIds, user });
+    }
+
     async labels({ key, atom, user }) {
       return await this.ctx.bean.atom.labels({ key, atom, user });
     }
