@@ -273,7 +273,7 @@ function _formatValue(db, value) {
   if (typeof value !== 'object' || (value instanceof Date)) return db.format('?', value);
   let val;
   if (value.type === 'Date') {
-    val = db.format('?', moment(value.val).format('YYYY-MM-DD HH:mm:ss.SSS'));
+    val = db.format('?', moment(value.val).toDate());
   } else {
     val = db.format('?', value.val);
   }
