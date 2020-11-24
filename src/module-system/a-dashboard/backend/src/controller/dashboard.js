@@ -3,7 +3,7 @@ module.exports = app => {
 
     async itemByKey() {
       const res = await this.service.dashboard.itemByKey({
-        atomStaticKey: this.ctx.request.body.key.atomStaticKey,
+        atomStaticKey: this.ctx.request.body.atomStaticKey,
         user: this.ctx.state.user.op,
       });
       this.ctx.success(res);

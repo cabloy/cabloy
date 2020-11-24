@@ -59,6 +59,8 @@ export default {
       profile: null,
       dashboardAtomId: 0,
       dashboardUserId: 0,
+      dashboardSystem: null,
+      dashboardUser: null,
       widgetsReal: [],
     };
   },
@@ -96,25 +98,35 @@ export default {
       }
     }, 1000),
     __onTitleChange(title) {
+      title = this.$text(title);
+      if (title !== this.$text('Default')) {
+        title = `${this.$text('Dashboard')}-${title}`;
+      } else {
+        title = this.$text('Dashboard');
+      }
       this.$view.$emit('view:title', { title });
     },
     async __switchProfile({ dashboardUserId }) {
       if (dashboardUserId === 0) {
-        // default
-        this.$store.dispatch('a/base/getLayoutConfig', 'a-dashboard').then(layoutConfig => {
-          let profile;
-          if (layoutConfig.profile) {
-            // default of user
-            profile = this.$meta.util.extend({}, layoutConfig.profile);
-          } else {
-            // default
-            profile = this.__getProfileDefault();
-          }
-          this.profile = profile;
-          this.profileId = profileId;
-          this.__onTitleChange(this.$text('Dashboard')); // default
-          return resolve();
-        }).catch(err => reject(err));
+        const res = await this.$api.post('/a/dashboard/dashboard/itemByKey', {
+          atomStaticKey: this.atomStaticKey,
+        });
+        let title;
+        if (res.dashboardUser) {
+          this.dashboardUser = res.dashboardUser;
+          this.dashboardAtomId = this.dashboardUser.dashboardAtomId;
+          this.dashboardUserId = this.dashboardUser.id;
+          this.profile = JSON.parse(this.dashboardUser.content);
+          title = this.dashboardUser.dashboardName;
+        }
+        if (res.dashboardSystem) {
+          this.dashboardSystem = res.dashboardSystem;
+          this.dashboardAtomId = this.dashboardSystem.atomId;
+          this.dashboardUserId = 0;
+          this.profile = JSON.parse(this.dashboardSystem.content);
+          title = this.dashboardSystem.atomName;
+        }
+        this.__onTitleChange(title);
         return;
       }
       // profile of user
