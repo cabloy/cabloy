@@ -3,7 +3,10 @@ module.exports = app => {
   const content = {
     root: {
       widgets: [
-        { module: 'a-dashboard', name: 'widgetAbout' },
+        {
+          module: 'a-dashboard',
+          name: 'widgetAbout',
+        },
       ],
     },
   };

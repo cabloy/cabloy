@@ -126,27 +126,25 @@ export default {
           this.profile = JSON.parse(this.dashboardSystem.content);
           title = this.dashboardSystem.atomName;
         }
+        this.__checkProfile(this.profile);
         this.__onTitleChange(title);
         return;
       }
       // profile of user
-      this.$api.post('profile/item', { profileId }).then(data => {
-        if (!data) throw new Error('Profile not found!');
-        let profile;
-        if (data.profileValue) {
-          profile = JSON.parse(data.profileValue);
-        } else {
-          profile = this.__getProfileEmpty();
-        }
-        this.profile = profile;
-        this.profileId = profileId;
-        this.__onTitleChange(`${this.$text('Dashboard')}-${data.profileName}`);
-        return resolve();
-      }).catch(err => reject(err));
+      const dashboardUser = await this.$api.post('/a/dashboard/dashboard/loadItemUser', {
+        dashboardUserId,
+      });
+      if (!dashboardUser) throw new Error('Dashboard not found!');
+      // data
+      this.dashboardUser = dashboardUser;
+      this.dashboardAtomId = this.dashboardUser.dashboardAtomId;
+      this.dashboardUserId = this.dashboardUser.id;
+      this.profile = JSON.parse(this.dashboardUser.content);
+      const title = this.dashboardUser.dashboardName;
+      this.__checkProfile(this.profile);
+      this.__onTitleChange(title);
     },
-    __getProfileDefault() {
-      const profileDefault = this.$config.profile.default;
-      const profile = this.$meta.util.extend({}, profileDefault);
+    __checkProfile(profile) {
       // root id
       if (!profile.root.id) profile.root.id = this.__generateUUID();
       // widget id
