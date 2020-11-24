@@ -6,7 +6,7 @@ module.exports = app => {
   };
   if (app.meta.isTest || app.meta.isLocal) {
     const schemas = require('./config/validation/schemas.js')(app);
-    const flowDefinitions = require('./config/flow/definitions.js')(app);
+    const staticFlowDefs = require('./config/static/flowDefs.js')(app);
     // meta
     extend(true, meta, {
       base: {
@@ -47,7 +47,7 @@ module.exports = app => {
         },
         statics: {
           'a-flow.flowDef': {
-            items: flowDefinitions,
+            items: staticFlowDefs,
           },
         },
       },
