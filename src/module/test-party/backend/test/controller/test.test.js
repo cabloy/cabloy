@@ -1,6 +1,6 @@
 const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
-describe('action: atom: party', () => {
+describe.only('action: atom: party', () => {
   it('[atom]', async () => {
     app.mockSession({});
 
