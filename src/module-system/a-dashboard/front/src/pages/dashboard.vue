@@ -13,6 +13,7 @@ export default {
     const children = [];
     if (this.$meta.vueApp.layout === 'mobile' || this.$view.size === 'small') {
       children.push(c('eb-navbar', {
+        key: 'navbar',
         attrs: {
           large: true,
           largeTransparent: true,
@@ -24,6 +25,7 @@ export default {
     if (this.ready) {
       // root group
       children.push(c('widget-group', {
+        key: 'group',
         ref: 'group',
         props: {
           root: true,
@@ -33,6 +35,7 @@ export default {
       }));
       // settings
       children.push(c('f7-link', {
+        key: 'dashboard-settings',
         staticClass: 'dashboard-settings',
         attrs: {
           iconMaterial: 'settings',
@@ -47,35 +50,33 @@ export default {
     }, children);
   },
   data() {
+    const query = this.$f7route.query;
+    const atomStaticKey = query.key;
     return {
       ready: false,
       widgetsAll: null,
+      atomStaticKey,
       profile: null,
-      profileId: 0,
+      dashboardAtomId: 0,
+      dashboardUserId: 0,
       widgetsReal: [],
     };
   },
   created() {
-    this.__init();
+    this.__init().then(() => {}).catch(err => {
+      this.$view.toast.show({ text: err.message });
+    });
   },
   beforeDestroy() {
     this.$emit('dashboard:destroy');
   },
   methods: {
-    __init() {
+    async __init() {
       // widgetsAll
-      this.$store.dispatch('a/base/getWidgets').then(widgets => {
-        this.widgetsAll = widgets;
-        // layoutConfig
-        this.$store.dispatch('a/base/getLayoutConfig', 'a-dashboard').then(layoutConfig => {
-          // profile id
-          const profileId = layoutConfig.profileId || 0;
-          this.__switchProfile(profileId).then(() => {
-            // ready
-            this.ready = true;
-          });
-        });
-      });
+      this.widgetsAll = await this.$store.dispatch('a/base/getWidgets');
+      await this.__switchProfile({ dashboardUserId: this.dashboardUserId });
+      // ready
+      this.ready = true;
     },
     __saveProfileId() {
       this.$store.commit('a/base/setLayoutConfigKey', { module: 'a-dashboard', key: 'profileId', value: this.profileId });
@@ -97,41 +98,39 @@ export default {
     __onTitleChange(title) {
       this.$view.$emit('view:title', { title });
     },
-    __switchProfile(profileId) {
-      return new Promise((resolve, reject) => {
+    async __switchProfile({ dashboardUserId }) {
+      if (dashboardUserId === 0) {
         // default
-        if (profileId === 0) {
-          this.$store.dispatch('a/base/getLayoutConfig', 'a-dashboard').then(layoutConfig => {
-            let profile;
-            if (layoutConfig.profile) {
-              // default of user
-              profile = this.$meta.util.extend({}, layoutConfig.profile);
-            } else {
-              // default
-              profile = this.__getProfileDefault();
-            }
-            this.profile = profile;
-            this.profileId = profileId;
-            this.__onTitleChange(this.$text('Dashboard')); // default
-            return resolve();
-          }).catch(err => reject(err));
-          return;
-        }
-        // profile of user
-        this.$api.post('profile/item', { profileId }).then(data => {
-          if (!data) throw new Error('Profile not found!');
+        this.$store.dispatch('a/base/getLayoutConfig', 'a-dashboard').then(layoutConfig => {
           let profile;
-          if (data.profileValue) {
-            profile = JSON.parse(data.profileValue);
+          if (layoutConfig.profile) {
+            // default of user
+            profile = this.$meta.util.extend({}, layoutConfig.profile);
           } else {
-            profile = this.__getProfileEmpty();
+            // default
+            profile = this.__getProfileDefault();
           }
           this.profile = profile;
           this.profileId = profileId;
-          this.__onTitleChange(`${this.$text('Dashboard')}-${data.profileName}`);
+          this.__onTitleChange(this.$text('Dashboard')); // default
           return resolve();
         }).catch(err => reject(err));
-      });
+        return;
+      }
+      // profile of user
+      this.$api.post('profile/item', { profileId }).then(data => {
+        if (!data) throw new Error('Profile not found!');
+        let profile;
+        if (data.profileValue) {
+          profile = JSON.parse(data.profileValue);
+        } else {
+          profile = this.__getProfileEmpty();
+        }
+        this.profile = profile;
+        this.profileId = profileId;
+        this.__onTitleChange(`${this.$text('Dashboard')}-${data.profileName}`);
+        return resolve();
+      }).catch(err => reject(err));
     },
     __getProfileDefault() {
       const profileDefault = this.$config.profile.default;
@@ -202,7 +201,7 @@ export default {
       const uuid = 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
         const r = (d + Math.random() * 16) % 16 | 0;
         d = Math.floor(d / 16);
-        return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
       });
       return uuid;
     },

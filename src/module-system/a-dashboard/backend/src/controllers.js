@@ -1,8 +1,8 @@
-const profile = require('./controller/profile.js');
+const dashboard = require('./controller/dashboard.js');
 
 module.exports = app => {
   const controllers = {
-    profile,
+    dashboard,
   };
   return controllers;
 };
