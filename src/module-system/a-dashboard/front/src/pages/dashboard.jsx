@@ -1,4 +1,3 @@
-<script>
 import widgetGroup from '../components/widgetGroup.vue';
 
 import Vue from 'vue';
@@ -9,45 +8,31 @@ export default {
   components: {
     widgetGroup,
   },
-  render(c) {
-    const children = [];
+  render() {
+    let domNavbar;
     if (this.$meta.vueApp.layout === 'mobile' || this.$view.size === 'small') {
-      children.push(c('eb-navbar', {
-        key: 'navbar',
-        attrs: {
-          large: true,
-          largeTransparent: true,
-          title: this.$text('Dashboard'),
-          ebBackLink: 'Back',
-        },
-      }));
+      domNavbar = (
+        <eb-navbar large largeTransparent title={this.pageTitle} ebBackLink='Back'>
+        </eb-navbar>
+      );
     }
+    let domGroup;
     if (this.ready) {
-      // root group
-      children.push(c('widget-group', {
-        key: 'group',
-        ref: 'group',
-        props: {
-          root: true,
-          dashboard: this,
-          widgets: this.profile.root.widgets,
-        },
-      }));
-      // settings
-      children.push(c('f7-link', {
-        key: 'dashboard-settings',
-        staticClass: 'dashboard-settings',
-        attrs: {
-          iconMaterial: 'settings',
-        },
-        on: {
-          click: this.onClickSettings,
-        },
-      }));
+      domGroup = (
+        <widget-group ref="group" root dashboard={this} widgets={this.profile.root.widgets}></widget-group>
+      );
     }
-    return c('eb-page', {
-      staticClass: `dashboard dashboard-profile-${this.profileId}`,
-    }, children);
+    let domActions;
+    if (this.ready) {
+      domActions = this.renderActions();
+    }
+    return (
+      <eb-page staticClass={`dashboard dashboard-profile-${this.dashboardAtomId} ${this.lock ? '' : 'dashboard-unlock'}`}>
+        {domNavbar}
+        {domGroup}
+        {domActions}
+      </eb-page>
+    );
   },
   data() {
     const query = this.$f7route.query;
@@ -62,9 +47,12 @@ export default {
       dashboardSystem: null,
       dashboardUser: null,
       widgetsReal: [],
+      pageTitle: null,
+      lock: true,
     };
   },
   created() {
+    this.__onTitleChange();
     this.__init().then(() => {}).catch(err => {
       this.$view.toast.show({ text: err.message });
     });
@@ -73,6 +61,29 @@ export default {
     this.$emit('dashboard:destroy');
   },
   methods: {
+    renderActions() {
+      const children = [];
+      if (this.lock) {
+        children.push(
+          <eb-link key="dashboard-action-lock" class="dashboard-action-lock" iconMaterial="lock" propsOnPerform={event => this.onPerformLock(event)}></eb-link>
+        );
+      }
+      if (!this.lock) {
+        children.push(
+          <eb-link key="dashboard-action-unlock" class="dashboard-action-unlock" iconMaterial="lock_open" propsOnPerform={event => this.onPerformUnlock(event)}></eb-link>
+        );
+      }
+      if (!this.lock) {
+        children.push(
+          <eb-link key="dashboard-action-settings" class="dashboard-action-settings" iconMaterial="settings" propsOnPerform={event => this.onPerformSettings(event)}></eb-link>
+        );
+      }
+      return (
+        <div class="dashboard-settings">
+          {children}
+        </div>
+      );
+    },
     async __init() {
       // widgetsAll
       this.widgetsAll = await this.$store.dispatch('a/base/getWidgets');
@@ -98,12 +109,15 @@ export default {
       }
     }, 1000),
     __onTitleChange(title) {
+      const titleBase = this.$text('Dashboard');
+      if (!title) return titleBase;
       title = this.$text(title);
       if (title !== this.$text('Default')) {
-        title = `${this.$text('Dashboard')}-${title}`;
+        title = `${titleBase}-${title}`;
       } else {
-        title = this.$text('Dashboard');
+        title = titleBase;
       }
+      this.pageTitle = title;
       this.$view.$emit('view:title', { title });
     },
     async __switchProfile({ dashboardUserId }) {
@@ -177,7 +191,16 @@ export default {
       const widgets = this.widgetsAll[widget.module];
       return widgets[widget.name];
     },
-    onClickSettings() {
+    onPerformLock() {
+      // check if user
+
+      // open lock
+      this.lock = false;
+    },
+    onPerformUnlock() {
+      this.lock = true;
+    },
+    onPerformSettings() {
       this.$view.navigate(`/a/dashboard/dashboard/settings?profileId=${this.profileId}`, {
         scene: 'sidebar',
         sceneOptions: { side: 'right', name: 'profile', title: 'Profile2' },
@@ -238,4 +261,3 @@ export default {
   },
 };
 
-</script>

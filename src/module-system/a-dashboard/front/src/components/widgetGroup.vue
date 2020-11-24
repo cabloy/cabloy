@@ -1,4 +1,5 @@
 <script>
+import Vue from 'vue';
 import widgetBaseFn from '../common/widgetBase.js';
 export default {
   meta: {

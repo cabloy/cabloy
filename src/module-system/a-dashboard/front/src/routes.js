@@ -1,9 +1,12 @@
 function load(name) {
   return require(`./pages/${name}.vue`).default;
 }
+function loadjsx(name) {
+  return require(`./pages/${name}.jsx`).default;
+}
 
 export default [
-  { path: 'dashboard', component: load('dashboard') },
+  { path: 'dashboard', component: loadjsx('dashboard') },
   { path: 'dashboard/settings', component: load('dashboardSettings') },
   { path: 'widget/add', component: load('widgetAdd') },
   { path: 'widget/properties', component: load('widgetProperties') },
