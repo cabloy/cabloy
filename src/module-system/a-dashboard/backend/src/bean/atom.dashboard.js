@@ -12,13 +12,13 @@ module.exports = app => {
       }
       // super
       const key = await super.create({ atomClass, item, user });
-      // add profile
-      const res = await this.ctx.model.profile.insert({
+      // add dashboard
+      const res = await this.ctx.model.dashboard.insert({
         atomId: key.atomId,
       });
       const itemId = res.insertId;
       // add content
-      await this.ctx.model.profileContent.insert({
+      await this.ctx.model.dashboardContent.insert({
         atomId: key.atomId,
         itemId,
         content: '{}',
@@ -48,12 +48,12 @@ module.exports = app => {
     async write({ atomClass, key, item, options, user }) {
       // super
       await super.write({ atomClass, key, item, options, user });
-      // update profile
-      const data = await this.ctx.model.profile.prepareData(item);
+      // update dashboard
+      const data = await this.ctx.model.dashboard.prepareData(item);
       data.id = key.itemId;
-      await this.ctx.model.profile.update(data);
+      await this.ctx.model.dashboard.update(data);
       // update content
-      await this.ctx.model.profileContent.update({
+      await this.ctx.model.dashboardContent.update({
         content: item.content,
       }, { where: {
         atomId: key.atomId,
@@ -61,12 +61,12 @@ module.exports = app => {
     }
 
     async delete({ atomClass, key, user }) {
-      // delete profile
-      await this.ctx.model.profile.delete({
+      // delete dashboard
+      await this.ctx.model.dashboard.delete({
         id: key.itemId,
       });
       // delete content
-      await this.ctx.model.profileContent.delete({
+      await this.ctx.model.dashboardContent.delete({
         itemId: key.itemId,
       });
       // super

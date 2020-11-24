@@ -22,22 +22,30 @@ module.exports = app => {
       }
 
       if (options.version === 2) {
-        // alter table: aDashboardProfile
-        // remove: userId/profileName/profileValue
-        // add: atomId description
+        // drop table: aDashboardProfile
         let sql = `
-          ALTER TABLE aDashboardProfile
-            DROP COLUMN userId,
-            DROP COLUMN profileName,
-            DROP COLUMN profileValue,
-            ADD COLUMN atomId int(11) DEFAULT '0',
-            ADD COLUMN description varchar(255) DEFAULT NULL
+          DROP TABLE aDashboardProfile
+        `;
+        await this.ctx.model.query(sql);
+
+        // create table: aDashboard
+        sql = `
+          CREATE TABLE aDashboard (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            deleted int(11) DEFAULT '0',
+            iid int(11) DEFAULT '0',
+            atomId int(11) DEFAULT '0',
+            description varchar(255) DEFAULT NULL,
+            PRIMARY KEY (id)
+          )
           `;
         await this.ctx.model.query(sql);
 
-        // create table: aDashboardProfileContent
+        // create table: aDashboardContent
         sql = `
-          CREATE TABLE aDashboardProfileContent (
+          CREATE TABLE aDashboardContent (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -51,29 +59,29 @@ module.exports = app => {
         `;
         await this.ctx.model.query(sql);
 
-        // create table: aDashboardProfileUser
+        // create table: aDashboardUser
         sql = `
-          CREATE TABLE aDashboardProfileUser (
+          CREATE TABLE aDashboardUser (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             deleted int(11) DEFAULT '0',
             iid int(11) DEFAULT '0',
             userId int(11) DEFAULT '0',
-            profileDefault int(11) DEFAULT '0',
-            profileAtomId int(11) DEFAULT '0',
-            profileName varchar(255) DEFAULT NULL,
+            dashboardDefault int(11) DEFAULT '0',
+            dashboardAtomId int(11) DEFAULT '0',
+            dashboardName varchar(255) DEFAULT NULL,
             content JSON DEFAULT NULL,
             PRIMARY KEY (id)
           )
         `;
         await this.ctx.model.query(sql);
 
-        // create view: aDashboardProfileViewFull
+        // create view: aDashboardViewFull
         sql = `
-          CREATE VIEW aDashboardProfileViewFull as
-            select a.*,b.content from aDashboardProfile a
-              left join aDashboardProfileContent b on a.id=b.itemId
+          CREATE VIEW aDashboardViewFull as
+            select a.*,b.content from aDashboard a
+              left join aDashboardContent b on a.id=b.itemId
         `;
         await this.ctx.model.query(sql);
 
@@ -106,7 +114,7 @@ module.exports = app => {
           { roleName: 'system', action: 'exportBulk' },
           { roleName: 'root', action: 'read', scopeNames: 'superuser' },
         ];
-        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'profile', roleRights });
+        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'dashboard', roleRights });
       }
     }
 

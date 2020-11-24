@@ -3,36 +3,36 @@ module.exports = app => {
   const meta = {
     base: {
       atoms: {
-        profile: {
+        dashboard: {
           info: {
-            bean: 'profile',
-            title: 'Dashboard Profile',
-            tableName: 'aDashboardProfile',
+            bean: 'dashboard',
+            title: 'Dashboard',
+            tableName: 'aDashboard',
             tableNameModes: {
-              full: 'aDashboardProfileViewFull',
+              full: 'aDashboardViewFull',
             },
           },
-          validator: 'profile',
+          validator: 'dashboard',
           search: {
-            validator: 'profileSearch',
+            validator: 'dashboardSearch',
           },
         },
       },
       functions: {
-        createProfile: {
-          title: 'CreateDashboardProfile',
+        createDashboard: {
+          title: 'Create Dashboard',
           scene: 'create',
           autoRight: 1,
-          atomClassName: 'profile',
+          atomClassName: 'dashboard',
           action: 'create',
           sorting: 1,
           menu: 1,
         },
-        listProfile: {
-          title: 'DashboardProfileList',
+        listDashboard: {
+          title: 'Dashboard List',
           scene: 'list',
           autoRight: 1,
-          atomClassName: 'profile',
+          atomClassName: 'dashboard',
           action: 'read',
           sorting: 1,
           menu: 1,
@@ -48,22 +48,22 @@ module.exports = app => {
     },
     validation: {
       validators: {
-        profile: {
-          schemas: 'profile',
+        dashboard: {
+          schemas: 'dashboard',
         },
-        profileSearch: {
-          schemas: 'profileSearch',
+        dashboardSearch: {
+          schemas: 'dashboardSearch',
         },
       },
       keywords: {},
       schemas: {
-        profile: schemas.profile,
-        profileSearch: schemas.profileSearch,
+        dashboard: schemas.dashboard,
+        dashboardSearch: schemas.dashboardSearch,
       },
     },
     index: {
       indexes: {
-        aDashboardProfile: 'createdAt,updatedAt,atomId',
+        aDashboard: 'createdAt,updatedAt,atomId',
       },
     },
   };

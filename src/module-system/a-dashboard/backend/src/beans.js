@@ -1,5 +1,5 @@
 const versionManager = require('./bean/version.manager.js');
-const atomProfile = require('./bean/atom.profile.js');
+const atomDashboard = require('./bean/atom.dashboard.js');
 
 module.exports = app => {
   const beans = {
@@ -9,9 +9,9 @@ module.exports = app => {
       bean: versionManager,
     },
     // atom
-    'atom.profile': {
+    'atom.dashboard': {
       mode: 'app',
-      bean: atomProfile,
+      bean: atomDashboard,
     },
   };
   return beans;

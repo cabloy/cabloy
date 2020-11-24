@@ -1,14 +1,14 @@
-const profile = require('./model/profile.js');
-const profileContent = require('./model/profileContent.js');
-const profileUser = require('./model/profileUser.js');
-const profileFull = require('./model/profileFull.js');
+const dashboard = require('./model/dashboard.js');
+const dashboardContent = require('./model/dashboardContent.js');
+const dashboardUser = require('./model/dashboardUser.js');
+const dashboardFull = require('./model/dashboardFull.js');
 
 module.exports = app => {
   const models = {
-    profile,
-    profileContent,
-    profileUser,
-    profileFull,
+    dashboard,
+    dashboardContent,
+    dashboardUser,
+    dashboardFull,
   };
   return models;
 };

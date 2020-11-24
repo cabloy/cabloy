@@ -1,7 +1,7 @@
 module.exports = app => {
   const schemas = {};
-  // profile
-  schemas.profile = {
+  // dashboard
+  schemas.dashboard = {
     type: 'object',
     properties: {
       atomName: {
@@ -30,8 +30,8 @@ module.exports = app => {
       },
     },
   };
-  // profile search
-  schemas.profileSearch = {
+  // dashboard search
+  schemas.dashboardSearch = {
     type: 'object',
     properties: {
       description: {
