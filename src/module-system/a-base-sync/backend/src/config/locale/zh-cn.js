@@ -52,4 +52,7 @@ module.exports = {
   Enabled: '已启用',
   Disable: '禁用',
   Disabled: '已禁用',
+  Default: '缺省',
+  Home: '首页',
+  Test: '测试',
 };
