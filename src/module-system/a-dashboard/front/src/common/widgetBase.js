@@ -161,9 +161,11 @@ export default function(Vue, bGroup) {
     },
     mounted() {
       this.$emit('widgetReal:ready', this);
+      this.$emit('widgetRealReady', this);
     },
     beforeDestroy() {
       this.$emit('widgetReal:destroy', this);
+      this.$emit('widgetRealDestroy', this);
     },
     methods: {
       getAttrsSchema() {

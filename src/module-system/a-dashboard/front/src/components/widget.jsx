@@ -1,4 +1,3 @@
-<script>
 import widgetToolbar from './widgetToolbar.jsx';
 
 const _colWidths = [ 5, 10, 15, 20, 25, 30, 33, 35, 40, 45, 50, 55, 60, 65, 66, 70, 75, 80, 85, 90, 95, 100 ];
@@ -13,27 +12,25 @@ export default {
   render(c) {
     const children = [];
     // toolbar
-    const toolbar = c('widget-toolbar', {
-      staticClass: 'widget-toolbar',
-      props: {
-        widget: this.options,
-        dragdropScene: this.dragdropScene,
-        onDragStart: this.onDragStart,
-        onDragElement: this.onDragElement,
-        onDropElement: this.onDropElement,
-        onDropLeave: this.onDropLeave,
-        onDropEnter: this.onDropEnter,
-        onDragEnd: this.onDragEnd,
-        onDragDone: this.onDragDone,
-        onWidgetDelete: this.onWidgetDelete,
-        onWidgetProperties: this.onWidgetProperties,
-      },
-    });
-    children.push(toolbar);
+    if (!this.dashboard.lock) {
+      children.push(
+        <widget-toolbar key="widget-toolbar" staticClass="widget-toolbar" widget={this.options}
+          dragdropScene={this.dragdropScene}
+          propsOnDragStart={ this.onDragStart}
+          propsOnDragElement={ this.onDragElement}
+          propsOnDropElement={this.onDropElement}
+          propsOnDropLeave={ this.onDropLeave}
+          propsOnDropEnter={this.onDropEnter}
+          propsOnDragEnd={this.onDragEnd}
+          propsOnDragDone={this.onDragDone}
+          propsOnWidgetDelete={ this.onWidgetDelete}
+          propsOnWidgetProperties={this.onWidgetProperties}
+        ></widget-toolbar>
+      );
+    }
     // resize handler
-    const resizeHandler = c('span', {
-      staticClass: 'resize-handler',
-      directives: [{
+    if (!this.dashboard.lock) {
+      const directives = [{
         name: 'eb-dragdrop',
         value: {
           scene: this.dragdropSceneResize,
@@ -42,9 +39,11 @@ export default {
           onDragStart: this.onDragStartResizable,
           onDragMove: this.onDragMoveResizable,
         },
-      }],
-    });
-    children.push(resizeHandler);
+      }];
+      children.push(
+        <span key="resize-handler" staticClass="resize-handler" {...{ directives }}></span>
+      );
+    }
     // group/widget
     if (this.options.group) {
       // props
@@ -55,14 +54,12 @@ export default {
         widgets: this.options.widgets,
       };
       this.__combineWidgetProps(props);
-      children.push(c('eb-dashboard-widget-group', {
-        ref: 'group',
-        props,
-        on: {
-          'widgetReal:ready': this.__onWidgetRealReady,
-          'widgetReal:destroy': this.__onWidgetRealDestroy,
-        },
-      }));
+      children.push(
+        <eb-dashboard-widget-group key="group" ref="group" {...{ props }}
+          onWidgetRealReady={this.__onWidgetRealReady}
+          onWidgetRealDestroy={ this.__onWidgetRealDestroy}
+        ></eb-dashboard-widget-group>
+      );
     } else {
       if (!this.errorMessage && this.ready) {
         // props
@@ -71,6 +68,7 @@ export default {
         };
         this.__combineWidgetProps(props);
         children.push(c(this.__getFullName(), {
+          key: 'widget-inner',
           staticClass: 'widget-inner',
           props,
           style: {
@@ -82,29 +80,30 @@ export default {
           },
         }));
       } else if (this.errorMessage) {
-        children.push(c('div', {
-          staticClass: 'widget-inner widget-inner-error',
-          domProps: { innerText: this.errorMessage },
-          style: {
-            height: this.__getPropertyRealValue('height'),
-          },
-        }));
+        children.push(
+          <div key="errorMessage" staticClass="widget-inner widget-inner-error"
+            domPropsInnerText={this.errorMessage}
+            style={{ height: this.__getPropertyRealValue('height') }}
+          ></div>
+        );
       }
     }
     // f7-col
-    return c('f7-col', {
-      staticClass: this.__getClassName(),
-      attrs: {
-        'data-widget-id': this.options.id,
-      },
-      props: {
-        resizable: true,
-        resizableHandler: false,
-        width: this.__getPropertyRealValue('widthSmall'),
-        medium: this.__getPropertyRealValue('widthMedium'),
-        large: this.__getPropertyRealValue('widthLarge'),
-      },
-    }, children);
+    const attrs = {
+      'data-widget-id': this.options.id,
+    };
+    const props = {
+      resizable: true,
+      resizableHandler: false,
+      width: this.__getPropertyRealValue('widthSmall'),
+      medium: this.__getPropertyRealValue('widthMedium'),
+      large: this.__getPropertyRealValue('widthLarge'),
+    };
+    return (
+      <f7-col staticClass={this.__getClassName()} {...{ attrs }} {...{ props }}>
+        {children}
+      </f7-col>
+    );
   },
   props: {
     dashboard: {
@@ -467,5 +466,3 @@ export default {
     },
   },
 };
-
-</script>
