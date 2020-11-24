@@ -1,5 +1,6 @@
 module.exports = app => {
   const schemas = require('./config/validation/schemas.js')(app);
+  const staticDashboards = require('./config/static/dashboards.js')(app);
   const meta = {
     base: {
       atoms: {
@@ -43,6 +44,11 @@ module.exports = app => {
           component: 'widgetAbout',
           menu: 3,
           public: 1,
+        },
+      },
+      statics: {
+        'a-dashboard.dashboard': {
+          items: staticDashboards,
         },
       },
     },

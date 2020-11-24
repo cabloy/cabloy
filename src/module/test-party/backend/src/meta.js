@@ -11,6 +11,7 @@ module.exports = app => {
     const keywords = require('./config/validation/keywords.js')(app);
     // socketio
     const socketioTest = require('./config/socketio/test.js')(app);
+    const staticDashboards = require('./config/static/dashboards.js')(app);
     // meta
     extend(true, meta, {
       base: {
@@ -84,6 +85,11 @@ module.exports = app => {
             public: 1,
           },
         },
+        statics: {
+          'a-dashboard.dashboard': {
+            items: staticDashboards,
+          },
+        },
       },
       validation: {
         validators: {
@@ -129,11 +135,6 @@ module.exports = app => {
         },
         instance: {
           validator: 'instanceTest',
-        },
-      },
-      event: {
-        implementations: {
-          'a-base:loginInfo': 'loginInfoDashboard',
         },
       },
       index: {

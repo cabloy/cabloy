@@ -2,13 +2,6 @@
 export default function(Vue) {
   return {
     profile: {
-      default: {
-        root: {
-          widgets: [
-            { module: 'a-dashboard', name: 'widgetAbout' },
-          ],
-        },
-      },
       meta: {
         widget: {
           properties: {

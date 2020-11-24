@@ -2,7 +2,6 @@ const versionManager = require('./bean/version.manager.js');
 const testApp = require('./bean/test.app.js');
 const testClass = require('./bean/test.class.js');
 const testCtx = require('./bean/test.ctx.js');
-const eventLoginInfoDashboard = require('./bean/event.loginInfoDashboard.js');
 const eventHelloEcho = require('./bean/event.helloEcho.js');
 const eventUserVerify = require('./bean/event.userVerify.js');
 const eventLoginInfo = require('./bean/event.loginInfo.js');
@@ -43,10 +42,6 @@ module.exports = app => {
         global: true,
       },
       // event
-      'event.loginInfoDashboard': {
-        mode: 'ctx',
-        bean: eventLoginInfoDashboard,
-      },
       'event.helloEcho': {
         mode: 'ctx',
         bean: eventHelloEcho,
