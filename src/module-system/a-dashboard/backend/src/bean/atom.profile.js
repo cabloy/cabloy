@@ -12,13 +12,13 @@ module.exports = app => {
       }
       // super
       const key = await super.create({ atomClass, item, user });
-      // add flowDef
-      const res = await this.ctx.model.flowDef.insert({
+      // add profile
+      const res = await this.ctx.model.profile.insert({
         atomId: key.atomId,
       });
       const itemId = res.insertId;
       // add content
-      await this.ctx.model.flowDefContent.insert({
+      await this.ctx.model.profileContent.insert({
         atomId: key.atomId,
         itemId,
         content: '{}',
@@ -46,68 +46,34 @@ module.exports = app => {
     }
 
     async write({ atomClass, key, item, options, user }) {
-      // force delete disabled
-      delete item.disabled;
       // super
       await super.write({ atomClass, key, item, options, user });
-      // update flowDef
-      const data = await this.ctx.model.flowDef.prepareData(item);
+      // update profile
+      const data = await this.ctx.model.profile.prepareData(item);
       data.id = key.itemId;
-      await this.ctx.model.flowDef.update(data);
+      await this.ctx.model.profile.update(data);
       // update content
-      await this.ctx.model.flowDefContent.update({
+      await this.ctx.model.profileContent.update({
         content: item.content,
       }, { where: {
         atomId: key.atomId,
       } });
-
-      // deploy
-      if (item.atomStage === 1) {
-        const flowDef = await this.ctx.model.flowDef.get({ id: key.itemId });
-        if (!flowDef.disabled) {
-          this.ctx.tail(async () => {
-            await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId });
-          });
-        }
-      }
     }
 
     async delete({ atomClass, key, user }) {
-      // delete flowDef
-      await this.ctx.model.flowDef.delete({
+      // delete profile
+      await this.ctx.model.profile.delete({
         id: key.itemId,
       });
       // delete content
-      await this.ctx.model.flowDefContent.delete({
+      await this.ctx.model.profileContent.delete({
         itemId: key.itemId,
       });
       // super
       await super.delete({ atomClass, key, user });
     }
 
-    async checkRightAction({ atom, atomClass, action, stage, user, checkFlow }) {
-      // super
-      const res = await super.checkRightAction({ atom, atomClass, action, stage, user, checkFlow });
-      if (!res) return res;
-      if (atom.atomStage !== 1) return res;
-      if (action !== 101 && action !== 102) return res;
-      // enable/disable
-      const flowDef = await this.ctx.model.flowDef.get({ id: atom.itemId });
-      if (action === 101 && flowDef.disabled) return res;
-      if (action === 102 && !flowDef.disabled) return res;
-      return null;
-    }
-
     _getMeta(item) {
-      // flags
-      const flags = [];
-      if (item.disabled) flags.push(this.ctx.text('Disabled'));
-      // meta
-      const meta = {
-        flags,
-      };
-      // ok
-      item._meta = meta;
     }
 
   }

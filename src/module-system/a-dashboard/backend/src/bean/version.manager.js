@@ -89,10 +89,27 @@ module.exports = app => {
         ];
         await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions: roleWidgets });
       }
+
+      if (options.version === 2) {
+        // add role rights
+        const roleRights = [
+          { roleName: 'system', action: 'create' },
+          { roleName: 'system', action: 'read', scopeNames: 0 },
+          { roleName: 'system', action: 'read', scopeNames: 'superuser' },
+          { roleName: 'system', action: 'write', scopeNames: 0 },
+          { roleName: 'system', action: 'write', scopeNames: 'superuser' },
+          { roleName: 'system', action: 'delete', scopeNames: 0 },
+          { roleName: 'system', action: 'delete', scopeNames: 'superuser' },
+          { roleName: 'system', action: 'clone', scopeNames: 0 },
+          { roleName: 'system', action: 'clone', scopeNames: 'superuser' },
+          { roleName: 'system', action: 'deleteBulk' },
+          { roleName: 'system', action: 'exportBulk' },
+        ];
+        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'profile', roleRights });
+      }
     }
 
-    async test() {
-    }
+    async test() { }
 
   }
 

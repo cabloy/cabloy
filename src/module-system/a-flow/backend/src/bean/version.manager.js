@@ -167,8 +167,7 @@ module.exports = app => {
       }
     }
 
-    async test() {
-    }
+    async test() { }
 
   }
 

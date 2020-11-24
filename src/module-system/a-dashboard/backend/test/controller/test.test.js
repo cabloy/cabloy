@@ -1,12 +1,12 @@
 const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
-describe('action: atom: party', () => {
+describe.only('[your tests start from here]', () => {
   it('[atom]', async () => {
     app.mockSession({});
 
     // atomClass info
     const atomClassModule = mockInfo().relativeName;
-    const atomClassName = 'party';
+    const atomClassName = 'profile';
 
     // login as root
     await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
@@ -27,8 +27,8 @@ describe('action: atom: party', () => {
     result = await app.httpRequest().post(mockUrl('/a/base/atom/writeSubmit')).send({
       key: keyDraft,
       item: {
-        atomName: 'party demo',
-        personCount: 3,
+        atomName: 'test',
+        description: 'this is a test',
       },
     });
     assert(result.body.code === 0);
