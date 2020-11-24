@@ -8,7 +8,7 @@ const set01_atomUserTask = require('./flowDef/set01_atomUserTask.js');
 const set01_atomAssigneesConfirmation = require('./flowDef/set01_atomAssigneesConfirmation.js');
 
 module.exports = app => {
-  const definitions = [
+  const flowDefs = [
     set00_simple(app),
     set00_edgeSequence(app),
     set00_activityNone(app),
@@ -18,5 +18,5 @@ module.exports = app => {
     set01_atomUserTask(app),
     set01_atomAssigneesConfirmation(app),
   ];
-  return definitions;
+  return flowDefs;
 };

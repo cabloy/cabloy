@@ -2,7 +2,7 @@ module.exports = app => {
   const keywords = require('./config/validation/keywords.js')(app);
   const schemas = require('./config/validation/schemas.js')(app);
   const socketioHotloadFile = require('./config/socketio/hotloadFile.js')(app);
-  const flowDefinitions = require('./config/flow/definitions.js')(app);
+  const staticFlowDefs = require('./config/static/flowDefs.js')(app);
   const meta = {
     base: {
       atoms: {
@@ -59,7 +59,7 @@ module.exports = app => {
       },
       statics: {
         'a-flow.flowDef': {
-          items: flowDefinitions,
+          items: staticFlowDefs,
         },
       },
     },

@@ -6,7 +6,7 @@ module.exports = app => {
   };
   const atomClassQuery = `module=${atomClass.module}&atomClassName=${atomClass.atomClassName}`;
   const schemas = require('./config/validation/schemas.js')(app);
-  const flowDefinitions = require('./config/flow/definitions.js')(app);
+  const staticFlowDefs = require('./config/static/flowDefs.js')(app);
   const meta = {
     base: {
       atoms: {
@@ -63,7 +63,7 @@ module.exports = app => {
       },
       statics: {
         'a-flow.flowDef': {
-          items: flowDefinitions,
+          items: staticFlowDefs,
         },
       },
     },
