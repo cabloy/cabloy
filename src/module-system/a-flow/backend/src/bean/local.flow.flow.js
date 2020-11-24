@@ -51,7 +51,7 @@ module.exports = ctx => {
       // node enter
       const res = await nodeInstanceStartEvent.enter();
       if (!res) {
-        console.log(`--------flow break: ${flowId}`);
+        // console.log(`--------flow break: ${flowId}`);
       }
     }
 
@@ -149,7 +149,7 @@ module.exports = ctx => {
         // clear nodes
         await this._clearNodeRemains();
         // log
-        console.log(`--------flow end: ${flowId}`);
+        // console.log(`--------flow end: ${flowId}`);
       });
     }
 
