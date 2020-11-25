@@ -18,10 +18,6 @@ module.exports = app => {
     { method: 'post', path: 'dashboard/changeItemUserDefault', controller: 'dashboard',
       meta: { right: { type: 'atom', action: 2, checkFlow: true } },
     },
-
-    // { method: 'post', path: 'profile/item', controller: 'profile', meta: { auth: { user: true } } },
-    // { method: 'post', path: 'profile/delete', controller: 'profile', meta: { auth: { user: true } } },
-    // { method: 'post', path: 'profile/save', controller: 'profile', meta: { auth: { user: true } } },
   ];
   return routes;
 };
