@@ -35,4 +35,5 @@ export default {
   'Width(Large)': '宽度(大页面)',
   'Source Widget': '源部件',
   'Property Name': '属性名',
+  'Change Name': '修改名称',
 };

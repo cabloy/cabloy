@@ -102,6 +102,19 @@ module.exports = app => {
       });
     }
 
+    async changeItemUserDefault({ dashboardAtomId, dashboardUserId, user }) {
+      await this.ctx.model.dashboardUser.update({
+        dashboardDefault: 0,
+      }, { where: {
+        userId: user.id,
+        dashboardAtomId,
+      } });
+      await this.ctx.model.dashboardUser.update({
+        id: dashboardUserId,
+        dashboardDefault: 1,
+      });
+    }
+
     // //////////////
 
     async list({ user }) {

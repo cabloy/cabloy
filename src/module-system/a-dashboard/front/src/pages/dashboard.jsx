@@ -96,9 +96,6 @@ export default {
       // ready
       this.ready = true;
     },
-    __saveProfileId() {
-      this.$store.commit('a/base/setLayoutConfigKey', { module: 'a-dashboard', key: 'profileId', value: this.profileId });
-    },
     __saveLayoutConfig() {
       this.__setDirty(true);
     },
@@ -193,6 +190,17 @@ export default {
       const widgets = this.widgetsAll[widget.module];
       return widgets[widget.name];
     },
+    async __saveDashboardUser() {
+      // check if dirty
+      if (this.dirty) {
+        // save dashboardUser
+        await this.$api.post('/a/dashboard/dashboard/saveItemUser', {
+          dashboardUserId: this.dashboardUserId,
+          content: JSON.stringify(this.profile),
+        });
+        this.__setDirty(false);
+      }
+    },
     async onPerformLock() {
       // check if user
       if (this.dashboardUserId === 0) {
@@ -207,15 +215,8 @@ export default {
       this.lock = false;
     },
     async onPerformUnlock() {
-      // check if dirty
-      if (this.dirty) {
-        // save dashboardUser
-        await this.$api.post('/a/dashboard/dashboard/saveItemUser', {
-          dashboardUserId: this.dashboardUserId,
-          content: JSON.stringify(this.profile),
-        });
-        this.__setDirty(false);
-      }
+      // save
+      await this.__saveDashboardUser();
       // lock
       this.lock = true;
     },

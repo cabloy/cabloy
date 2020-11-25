@@ -119,14 +119,19 @@ export default {
         });
       });
     },
-    onPerformSwitch(e, item) {
-      const profileId = item.id;
-      if (this.profileIdCurrent === profileId) return;
-      return this.dashboard.__switchProfile(profileId).then(() => {
-        this.dashboard.__saveProfileId();
-        this.profileIdCurrent = profileId;
-        // return true;
+    async onPerformSwitch(e, item) {
+      const dashboardUserId = item.id;
+      if (this.dashboardUserIdCurrent === dashboardUserId) return;
+      // save
+      await this.dashboard.__saveDashboardUser();
+      // change default
+      await this.$api.post('/a/dashboard/dashboard/changeItemUserDefault', {
+        key: { atomId: this.dashboard.dashboardAtomId },
+        dashboardUserId,
       });
+      // switch
+      await this.dashboard.__switchProfile({ dashboardUserId });
+      this.dashboardUserIdCurrent = dashboardUserId;
     },
     __getProfileIndexById(profileId) {
       return this.profiles.findIndex(item => item.id === profileId);

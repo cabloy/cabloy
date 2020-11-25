@@ -50,6 +50,15 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async changeItemUserDefault() {
+      const res = await this.service.dashboard.changeItemUserDefault({
+        dashboardAtomId: this.ctx.request.body.key.atomId,
+        dashboardUserId: this.ctx.request.body.dashboardUserId,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     // //////////
 
     async list() {
