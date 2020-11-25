@@ -31,15 +31,17 @@ module.exports = app => {
       return await this.item({ dashboardAtomId: atomId, user });
     }
 
-    async item({ dashboardAtomId, user }) {
+    async item({ dashboardAtomId, dashboardUserCheck = true, user }) {
       // try get default of dashboardUser
-      const dashboardUser = await this.ctx.model.dashboardUser.get({
-        dashboardAtomId,
-        dashboardDefault: 1,
-        userId: user.id,
-      });
-      if (dashboardUser) {
-        return { dashboardUser };
+      if (dashboardUserCheck) {
+        const dashboardUser = await this.ctx.model.dashboardUser.get({
+          dashboardAtomId,
+          dashboardDefault: 1,
+          userId: user.id,
+        });
+        if (dashboardUser) {
+          return { dashboardUser };
+        }
       }
       // get system
       const dashboardSystem = await this.ctx.bean.atom.read({

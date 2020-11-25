@@ -39,12 +39,15 @@ export default {
   data() {
     const query = this.$f7route.query;
     const atomStaticKey = query.key;
+    const dashboardAtomId = parseInt(query.atomId) || 0;
+    const scene = query.scene;
     return {
+      scene,
       ready: false,
       widgetsAll: null,
       atomStaticKey,
       profile: null,
-      dashboardAtomId: 0,
+      dashboardAtomId,
       dashboardUserId: 0,
       dashboardSystem: null,
       dashboardUser: null,
@@ -61,6 +64,13 @@ export default {
     user() {
       return this.$store.state.auth.user;
     },
+    // for edit/view
+    readOnly() {
+      return this.contextParams && this.contextParams.readOnly;
+    },
+    item() {
+      return this.contextParams && this.contextParams.item;
+    },
   },
   mounted() {
     this.__init().then(() => {}).catch(err => {
@@ -74,28 +84,44 @@ export default {
     renderActions() {
       if (this.user.op.anonymous === 1) return null;
       const children = [];
-      if (this.lock) {
-        children.push(
-          <eb-link key="dashboard-action-lock" class="dashboard-action-lock" iconMaterial="lock" propsOnPerform={event => this.onPerformLock(event)}></eb-link>
-        );
+      // not manager
+      if (this.scene !== 'manager') {
+        if (this.lock) {
+          children.push(
+            <eb-link key="dashboard-action-lock" class="dashboard-action-lock" iconMaterial="lock" propsOnPerform={event => this.onPerformLock(event)}></eb-link>
+          );
+        }
+        if (!this.lock) {
+          children.push(
+            <eb-link key="dashboard-action-unlock" class="dashboard-action-unlock" iconMaterial="lock_open" propsOnPerform={event => this.onPerformUnlock(event)}></eb-link>
+          );
+        }
       }
-      if (!this.lock) {
-        children.push(
-          <eb-link key="dashboard-action-unlock" class="dashboard-action-unlock" iconMaterial="lock_open" propsOnPerform={event => this.onPerformUnlock(event)}></eb-link>
-        );
+      // manager
+      if (this.scene === 'manager') {
+        if (!this.lock) {
+          children.push(
+            <eb-link key="dashboard-action-save" class="dashboard-action-save" iconMaterial="save" propsOnPerform={event => this.onPerformSave(event)}></eb-link>
+          );
+        }
       }
+      //
       if (!this.lock) {
         children.push(
           <eb-link key="dashboard-action-settings" class="dashboard-action-settings" iconMaterial="settings" propsOnPerform={event => this.onPerformSettings(event)}></eb-link>
         );
       }
       return (
-        <div class="dashboard-settings">
+        <div class="dashboard-actions">
           {children}
         </div>
       );
     },
     async __init() {
+      // check scene
+      if (this.scene === 'manager') {
+        this.lock = this.readOnly;
+      }
       // widgetsAll
       this.widgetsAll = await this.$store.dispatch('a/base/getWidgets');
       await this.__switchProfile({ dashboardUserId: this.dashboardUserId });
@@ -104,6 +130,9 @@ export default {
     },
     __saveLayoutConfig() {
       this.__setDirty(true);
+      if (this.scene === 'manager' && !this.readOnly) {
+        this.contextCallback(200, { content: JSON.stringify(this.profile) });
+      }
     },
     __setTitle(title) {
       const titleBase = this.$text('Dashboard');
@@ -127,23 +156,28 @@ export default {
     },
     async __switchProfile({ dashboardUserId }) {
       if (dashboardUserId === 0) {
-        const res = await this.$api.post('/a/dashboard/dashboard/itemByKey', {
-          atomStaticKey: this.atomStaticKey,
-        });
         let title;
-        if (res.dashboardUser) {
-          this.dashboardUser = res.dashboardUser;
-          this.dashboardAtomId = this.dashboardUser.dashboardAtomId;
-          this.dashboardUserId = this.dashboardUser.id;
-          this.profile = JSON.parse(this.dashboardUser.content);
-          title = this.dashboardUser.dashboardName;
-        }
-        if (res.dashboardSystem) {
-          this.dashboardSystem = res.dashboardSystem;
-          this.dashboardAtomId = this.dashboardSystem.atomId;
-          this.dashboardUserId = 0;
-          this.profile = JSON.parse(this.dashboardSystem.content);
-          title = this.dashboardSystem.atomName;
+        if (this.scene === 'manager') {
+          this.profile = JSON.parse(this.item.content);
+          title = this.item.atomName;
+        } else {
+          const res = await this.$api.post('/a/dashboard/dashboard/itemByKey', {
+            atomStaticKey: this.atomStaticKey,
+          });
+          if (res.dashboardUser) {
+            this.dashboardUser = res.dashboardUser;
+            this.dashboardAtomId = this.dashboardUser.dashboardAtomId;
+            this.dashboardUserId = this.dashboardUser.id;
+            this.profile = JSON.parse(this.dashboardUser.content);
+            title = this.dashboardUser.dashboardName;
+          }
+          if (res.dashboardSystem) {
+            this.dashboardSystem = res.dashboardSystem;
+            this.dashboardAtomId = this.dashboardSystem.atomId;
+            this.dashboardUserId = 0;
+            this.profile = JSON.parse(this.dashboardSystem.content);
+            title = this.dashboardSystem.atomName;
+          }
         }
         this.__checkProfile(this.profile);
         this.__setTitle(title);
@@ -240,6 +274,12 @@ export default {
           },
         },
       });
+    },
+    async onPerformSave() {
+      // for manager
+      await this.contextParams.ctx.save();
+      this.__setDirty(false);
+      return this.$text('Saved');
     },
     onWidgetsAdd({ widgets }) {
       for (const widget of widgets) {

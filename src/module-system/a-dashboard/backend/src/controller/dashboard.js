@@ -12,6 +12,7 @@ module.exports = app => {
     async item() {
       const res = await this.service.dashboard.item({
         dashboardAtomId: this.ctx.request.body.key.atomId,
+        dashboardUserCheck: this.ctx.request.body.dashboardUserCheck,
         user: this.ctx.state.user.op,
       });
       this.ctx.success(res);

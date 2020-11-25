@@ -17,7 +17,7 @@ export default {
     },
     onChooseEditContent() {
       const { data, validate } = this.context;
-      const url = `/a/dashboard/dashboard?atomId=${data.atomId}`;
+      const url = `/a/dashboard/dashboard?scene=manager&atomId=${data.atomId}`;
       this.$view.navigate(url, {
         target: '_view',
         context: {

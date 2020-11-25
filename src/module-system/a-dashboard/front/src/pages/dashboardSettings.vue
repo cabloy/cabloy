@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar :title="$text('Dashboard')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link iconMaterial="add" :onPerform="onPerformCreate"></eb-link>
+        <eb-link v-if="dashboard.scene!=='manager'" iconMaterial="add" :onPerform="onPerformCreate"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <f7-list>
@@ -48,6 +48,7 @@ export default {
   },
   methods: {
     __load() {
+      if (this.dashboard.scene === 'manager') return;
       // list
       this.$api.post('/a/dashboard/dashboard/itemUsers', {
         key: { atomId: this.dashboard.dashboardAtomId },
