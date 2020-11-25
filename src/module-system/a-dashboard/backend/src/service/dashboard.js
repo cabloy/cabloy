@@ -21,7 +21,12 @@ module.exports = app => {
         atomStaticKey = this.ctx.config.dashboard.home;
       }
       // get atomId
-      const atom = await this.ctx.bean.atom.modelAtom.get({ atomStaticKey, atomStage: 1 });
+      const atomClass = await this.ctx.bean.atomClass.get(this.atomClass);
+      const atom = await this.ctx.bean.atom.modelAtom.get({
+        atomClassId: atomClass.id,
+        atomStaticKey,
+        atomStage: 1,
+      });
       if (!atom) return this.ctx.throw.module('a-base', 1002);
       const atomId = atom.id;
       // check right
