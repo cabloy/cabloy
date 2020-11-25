@@ -9,6 +9,10 @@ module.exports = app => {
       };
     }
 
+    get sequence() {
+      return this.ctx.bean.sequence.module(moduleInfo.relativeName);
+    }
+
     async itemByKey({ atomStaticKey, user }) {
       // adjust key
       if (!atomStaticKey || atomStaticKey === 'default') {
@@ -49,6 +53,42 @@ module.exports = app => {
         id: dashboardUserId,
         userId: user.id,
       });
+    }
+
+    async saveItemUser({ dashboardUserId, content, user }) {
+      await this.ctx.model.dashboardUser.update({
+        content,
+      }, { where: {
+        id: dashboardUserId,
+        userId: user.id,
+      } });
+    }
+
+    async createItemUser({ dashboardAtomId, user }) {
+      // name
+      const id = await this.sequence.next('dashboard');
+      const dashboardName = `${this.ctx.text('Dashboard')}-${id}`;
+      // content
+      const dashboardContent = await this.ctx.model.dashboardContent.get({ atomId: dashboardAtomId });
+      // update old default
+      await this.ctx.model.dashboardUser.update({
+        dashboardDefault: 0,
+      }, { where: {
+        userId: user.id,
+        dashboardAtomId,
+      } });
+      // insert
+      const res = await this.ctx.model.dashboardUser.insert({
+        userId: user.id,
+        dashboardDefault: 1,
+        dashboardAtomId,
+        dashboardName,
+        content: dashboardContent.content,
+      });
+      // ok
+      return {
+        dashboardUserId: res.insertId,
+      };
     }
 
     // //////////////

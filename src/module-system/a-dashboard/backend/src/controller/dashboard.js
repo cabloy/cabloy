@@ -25,6 +25,23 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async saveItemUser() {
+      const res = await this.service.dashboard.saveItemUser({
+        dashboardUserId: this.ctx.request.body.dashboardUserId,
+        content: this.ctx.request.body.content,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async createItemUser() {
+      const res = await this.service.dashboard.createItemUser({
+        dashboardAtomId: this.ctx.request.body.key.atomId,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     // //////////
 
     async list() {

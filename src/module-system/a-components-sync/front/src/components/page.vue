@@ -7,7 +7,16 @@ export default {
   },
   name: 'eb-page',
   extends: f7Page,
+  data() {
+    return {
+      pageTitle: '',
+    };
+  },
   methods: {
+    setPageTitle(title) {
+      this.pageTitle = title;
+      this.onTitleChange(false);
+    },
     onPageAfterIn(page) {
       if (this.eventTargetEl !== page.el) return;
       this.setState({
@@ -16,20 +25,23 @@ export default {
       this.dispatchEvent('page:afterin pageAfterIn', page);
 
       // title
-      let title = page.$el.find('.navbar .title').text();
-      if (!title) {
-        // try get meta
-        const page = this.$page;
-        const _title = page && page.$options.meta && page.$options.meta.title;
-        if (_title) {
-          title = this.$text(_title);
+      if (!this.pageTitle) {
+        let title = page.$el.find('.navbar .title').text();
+        if (!title) {
+          // try get meta
+          const page = this.$page;
+          const _title = page && page.$options.meta && page.$options.meta.title;
+          if (_title) {
+            title = this.$text(_title);
+          }
         }
+        this.pageTitle = title;
       }
-      this.onTitleChange(title, true);
+      this.onTitleChange(true);
     },
-    onTitleChange(title, force) {
+    onTitleChange(force) {
       if (force || this.$$(this.$el).hasClass('page-current')) {
-        this.$view.$emit('view:title', { page: this, title });
+        this.$view.$emit('view:title', { page: this, title: this.pageTitle });
       }
     },
   },
@@ -37,7 +49,8 @@ export default {
     const navbar = this.$$(this.$el).find('.navbar');
     if (navbar.length > 0) {
       this._watchTitle = navbar[0].__vue__.$watch('title', value => {
-        this.onTitleChange(value, false);
+        this.pageTitle = value;
+        this.onTitleChange(false);
       });
     }
   },

@@ -52,6 +52,17 @@ module.exports = app => {
         },
       },
     },
+    sequence: {
+      providers: {
+        dashboard: {
+          bean: {
+            module: 'a-sequence',
+            name: 'simple',
+          },
+          start: 0,
+        },
+      },
+    },
     validation: {
       validators: {
         dashboard: {

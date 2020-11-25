@@ -1,10 +1,6 @@
 import widgetGroup from '../components/widgetGroup.vue';
 
-import Vue from 'vue';
 export default {
-  meta: {
-    title: 'Dashboard',
-  },
   components: {
     widgetGroup,
   },
@@ -27,7 +23,7 @@ export default {
       domActions = this.renderActions();
     }
     return (
-      <eb-page staticClass={`dashboard dashboard-profile-${this.dashboardAtomId} ${this.lock ? '' : 'dashboard-unlock'}`}>
+      <eb-page ref="page" staticClass={`dashboard dashboard-profile-${this.dashboardAtomId} ${this.lock ? '' : 'dashboard-unlock'}`}>
         {domNavbar}
         {domGroup}
         {domActions}
@@ -57,8 +53,7 @@ export default {
       return this.dirty ? `* ${this.title}` : this.title;
     },
   },
-  created() {
-    this.__setTitle();
+  mounted() {
     this.__init().then(() => {}).catch(err => {
       this.$view.toast.show({ text: err.message });
     });
@@ -100,29 +95,16 @@ export default {
     __saveProfileId() {
       this.$store.commit('a/base/setLayoutConfigKey', { module: 'a-dashboard', key: 'profileId', value: this.profileId });
     },
-    __saveLayoutConfig: Vue.prototype.$meta.util.debounce(function() {
-      // override
-      const profileValue = this.$meta.util.extend({}, this.profile);
-      // save
-      if (this.profileId === 0) {
-        // save
-        this.$store.commit('a/base/setLayoutConfigKey', { module: 'a-dashboard', key: 'profile', value: profileValue });
-        this.__saveProfileId();
-      } else {
-        this.$api.post('profile/save', { profileId: this.profileId, profileValue }).then(() => {
-          this.__saveProfileId();
-        });
-      }
-    }, 1000),
+    __saveLayoutConfig() {
+      this.__setDirty(true);
+    },
     __setTitle(title) {
       const titleBase = this.$text('Dashboard');
       if (!title) {
         title = titleBase;
       } else {
         title = this.$text(title);
-        if (title !== this.$text('Default')) {
-          title = `${titleBase}-${title}`;
-        } else {
+        if (title === this.$text('Default')) {
           title = titleBase;
         }
       }
@@ -134,7 +116,7 @@ export default {
       this.__onTitleChange();
     },
     __onTitleChange() {
-      this.$view.$emit('view:title', { title: this.pageTitle });
+      this.$refs.page.setPageTitle(this.pageTitle);
     },
     async __switchProfile({ dashboardUserId }) {
       if (dashboardUserId === 0) {
@@ -207,13 +189,30 @@ export default {
       const widgets = this.widgetsAll[widget.module];
       return widgets[widget.name];
     },
-    onPerformLock() {
+    async onPerformLock() {
       // check if user
-
+      if (this.dashboardUserId === 0) {
+        // create dashboardUser
+        const res = await this.$api.post('/a/dashboard/dashboard/createItemUser', {
+          key: { atomId: this.dashboardAtomId },
+        });
+        const dashboardUserId = res.dashboardUserId;
+        await this.__switchProfile({ dashboardUserId });
+      }
       // open lock
       this.lock = false;
     },
-    onPerformUnlock() {
+    async onPerformUnlock() {
+      // check if dirty
+      if (this.dirty) {
+        // save dashboardUser
+        await this.$api.post('/a/dashboard/dashboard/saveItemUser', {
+          dashboardUserId: this.dashboardUserId,
+          content: JSON.stringify(this.profile),
+        });
+        this.__setDirty(false);
+      }
+      // lock
       this.lock = true;
     },
     onPerformSettings() {
