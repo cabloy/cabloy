@@ -8,6 +8,7 @@ module.exports = app => {
     { method: 'post', path: 'dashboard/loadItemUser', controller: 'dashboard', meta: { auth: { user: true } } },
     { method: 'post', path: 'dashboard/saveItemUser', controller: 'dashboard', meta: { auth: { user: true } } },
     { method: 'post', path: 'dashboard/changeItemUserName', controller: 'dashboard', meta: { auth: { user: true } } },
+    { method: 'post', path: 'dashboard/deleteItemUser', controller: 'dashboard', meta: { auth: { user: true } } },
     { method: 'post', path: 'dashboard/createItemUser', controller: 'dashboard',
       meta: { right: { type: 'atom', action: 2, checkFlow: true } },
     },

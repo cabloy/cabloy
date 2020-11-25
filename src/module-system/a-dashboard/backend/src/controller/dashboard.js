@@ -43,6 +43,14 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async deleteItemUser() {
+      const res = await this.service.dashboard.deleteItemUser({
+        dashboardUserId: this.ctx.request.body.dashboardUserId,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     async createItemUser() {
       const res = await this.service.dashboard.createItemUser({
         dashboardAtomId: this.ctx.request.body.key.atomId,

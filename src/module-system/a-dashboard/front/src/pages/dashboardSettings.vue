@@ -109,16 +109,16 @@ export default {
       }
       this.$meta.util.swipeoutClose(e.target);
     },
-    onPerformDelete(e, item) {
-      if (item.id === 0) return;
-      return this.$view.dialog.confirm().then(() => {
-        return this.$api.post('profile/delete', { profileId: item.id }).then(() => {
-          const index = this.__getProfileIndexById(item.id);
-          this.profiles.splice(index, 1);
-          this.$meta.util.swipeoutClose(e.target);
-          return true;
-        });
+    async onPerformDelete(e, item) {
+      const dashboardUserId = item.id;
+      if (this.dashboardUserIdCurrent === dashboardUserId) return;
+      await this.$view.dialog.confirm();
+      await this.$api.post('/a/dashboard/dashboard/deleteItemUser', {
+        dashboardUserId,
       });
+      const res = this.__findItem(dashboardUserId);
+      this.dashboardUsers.splice(res.index, 1);
+      this.$meta.util.swipeoutClose(e.target);
     },
     async onPerformSwitch(e, item) {
       const dashboardUserId = item.id;
@@ -133,12 +133,6 @@ export default {
       // switch
       await this.dashboard.__switchProfile({ dashboardUserId });
       this.dashboardUserIdCurrent = dashboardUserId;
-    },
-    __getProfileIndexById(profileId) {
-      return this.profiles.findIndex(item => item.id === profileId);
-    },
-    __getProfileTitle(item) {
-      return this.profileIdCurrent === item.id ? `${item.profileName} ⭐` : item.profileName;
     },
   },
 };

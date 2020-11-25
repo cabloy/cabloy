@@ -73,6 +73,13 @@ module.exports = app => {
       } });
     }
 
+    async deleteItemUser({ dashboardUserId, user }) {
+      await this.ctx.model.dashboardUser.delete({
+        id: dashboardUserId,
+        userId: user.id,
+      });
+    }
+
     async createItemUser({ dashboardAtomId, user }) {
       // name
       const id = await this.sequence.next('dashboard');
