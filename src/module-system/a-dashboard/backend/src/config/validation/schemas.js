@@ -31,6 +31,7 @@ module.exports = app => {
           module: moduleInfo.relativeName,
           name: 'renderDashboardContent',
         },
+        notEmpty: true,
       },
     },
   };

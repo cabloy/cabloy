@@ -1,9 +1,12 @@
+import Vue from 'vue';
 import widgetGroup from '../components/widgetGroup.vue';
+const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 
 export default {
   meta: {
     size: 'large',
   },
+  mixins: [ ebPageContext ],
   components: {
     widgetGroup,
   },
