@@ -1,4 +1,6 @@
 export default {
+  Name: '名称',
+  Description: '描述',
   Menu: '菜单',
   Scenes: '场景',
   Modules: '模块',

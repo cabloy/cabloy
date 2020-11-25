@@ -1,6 +1,9 @@
 import widgetGroup from '../components/widgetGroup.vue';
 
 export default {
+  meta: {
+    size: 'large',
+  },
   components: {
     widgetGroup,
   },

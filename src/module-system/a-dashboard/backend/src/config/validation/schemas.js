@@ -1,4 +1,5 @@
 module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const schemas = {};
   // dashboard
   schemas.dashboard = {
@@ -24,9 +25,12 @@ module.exports = app => {
       },
       content: {
         type: 'string',
-        ebType: 'text',
-        ebTextarea: true,
+        ebType: 'component',
         ebTitle: 'Content',
+        ebRender: {
+          module: moduleInfo.relativeName,
+          name: 'renderDashboardContent',
+        },
       },
     },
   };
