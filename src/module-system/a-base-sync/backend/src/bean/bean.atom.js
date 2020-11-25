@@ -698,8 +698,8 @@ module.exports = ctx => {
       }
     }
 
-    async schema({ atomClass, schema, user }) {
-      const validator = await this.validator({ atomClass, user });
+    async schema({ atomClass, schema }) {
+      const validator = await this.validator({ atomClass });
       if (!validator) return null;
       const _schema = ctx.bean.validation.getSchema({ module: validator.module, validator: validator.validator, schema });
       return {
@@ -709,10 +709,10 @@ module.exports = ctx => {
       };
     }
 
-    async validator({ atomClass: { id }, user }) {
+    async validator({ atomClass: { id } }) {
       let atomClass = await this.atomClass.get({ id });
       atomClass = await this.atomClass.top(atomClass);
-      return await this.atomClass.validator({ atomClass, user });
+      return await this.atomClass.validator({ atomClass });
     }
 
     // atom

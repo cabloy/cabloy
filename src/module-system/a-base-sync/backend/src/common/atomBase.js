@@ -46,7 +46,7 @@ module.exports = app => {
             data: item,
           });
         } else {
-          const validator = await this.ctx.bean.atom.validator({ atomClass, user });
+          const validator = await this.ctx.bean.atom.validator({ atomClass });
           if (validator) {
             // if error throw 422
             await this.ctx.bean.validation.validate({

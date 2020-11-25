@@ -78,12 +78,12 @@ module.exports = app => {
       return await this.ctx.bean.atom.checkRightAction({ atom: { id: key.atomId }, action, stage, user, checkFlow });
     }
 
-    async schema({ atomClass, schema, user }) {
-      return await this.ctx.bean.atom.schema({ atomClass, schema, user });
+    async schema({ atomClass, schema }) {
+      return await this.ctx.bean.atom.schema({ atomClass, schema });
     }
 
-    async validator({ atomClass, user }) {
-      return await this.ctx.bean.atom.validator({ atomClass, user });
+    async validator({ atomClass }) {
+      return await this.ctx.bean.atom.validator({ atomClass });
     }
 
   }

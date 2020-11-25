@@ -87,11 +87,6 @@ module.exports = app => {
         actionPath: `/a/cms/config/list?${atomClassQuery}`,
       },
     },
-    event: {
-      implementations: {
-        'a-base:atomClassValidator': 'atomClassValidator',
-      },
-    },
   };
   return meta;
 };

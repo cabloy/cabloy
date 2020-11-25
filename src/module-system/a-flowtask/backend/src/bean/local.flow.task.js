@@ -506,10 +506,8 @@ module.exports = ctx => {
 
     async _getSchemaBase() {
       const atomClassId = this.context._atom.atomClassId;
-      const user = this.contextTask._user;
       const schema = await ctx.bean.atom.schema({
         atomClass: { id: atomClassId },
-        user,
       });
       return schema;
     }

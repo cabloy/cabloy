@@ -79,29 +79,15 @@ module.exports = ctx => {
       return await this.top(atomClass);
     }
 
-    async validator({ atomClass, user }) {
-      // maybe empty
-      user = user || ctx.state.user.op;
-      // event
-      return await ctx.bean.event.invoke({
-        module: moduleInfo.relativeName,
-        name: 'atomClassValidator',
-        data: {
-          atomClass, user,
-        },
-        next: async (context, next) => {
-          // default
-          if (context.result === undefined) {
-            const _module = ctx.app.meta.modules[atomClass.module];
-            const validator = _module.main.meta.base.atoms[atomClass.atomClassName].validator;
-            context.result = validator ? {
-              module: atomClass.module,
-              validator,
-            } : null;
-          }
-          await next();
-        },
-      });
+    async validator({ atomClass }) {
+      // default
+      const _module = ctx.app.meta.modules[atomClass.module];
+      const validator = _module.main.meta.base.atoms[atomClass.atomClassName].validator;
+      if (!validator) throw new Error(`validator of ${atomClass.module}:${atomClass.atomClassName} not found!`);
+      return {
+        module: atomClass.module,
+        validator,
+      };
     }
 
     async validatorSearch({ atomClass }) {
