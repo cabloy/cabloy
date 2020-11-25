@@ -34,6 +34,15 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async changeItemUserName() {
+      const res = await this.service.dashboard.changeItemUserName({
+        dashboardUserId: this.ctx.request.body.dashboardUserId,
+        dashboardName: this.ctx.request.body.dashboardName,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     async createItemUser() {
       const res = await this.service.dashboard.createItemUser({
         dashboardAtomId: this.ctx.request.body.key.atomId,

@@ -64,6 +64,15 @@ module.exports = app => {
       } });
     }
 
+    async changeItemUserName({ dashboardUserId, dashboardName, user }) {
+      await this.ctx.model.dashboardUser.update({
+        dashboardName,
+      }, { where: {
+        id: dashboardUserId,
+        userId: user.id,
+      } });
+    }
+
     async createItemUser({ dashboardAtomId, user }) {
       // name
       const id = await this.sequence.next('dashboard');

@@ -55,6 +55,11 @@ export default {
         this.dashboardUsers = data;
       });
     },
+    __findItem(dashboardUserId) {
+      const index = this.dashboardUsers.findIndex(item => item.id === dashboardUserId);
+      if (index === -1) return { item: null, index };
+      return { item: this.dashboardUsers[index], index };
+    },
     onDashboardDestroy() {
       this.$view.close();
     },
@@ -89,24 +94,20 @@ export default {
         });
       });
     },
-    onPerformChangeName(e, item) {
-      const profileId = item.id;
-      if (profileId !== this.profileIdCurrent) return;
-      return this.$view.dialog.prompt(this.$text('Please specify the profile name')).then(profileName => {
-        if (!profileName) return;
-        const profile = {
-          profileName,
-          profileValue: JSON.stringify(this.dashboard.profile),
-        };
-        return this.$api.post('profile/create', {
-          data: profile,
-        }).then(data => {
-          profile.id = data.profileId;
-          this.profiles.push(profile);
-          this.$meta.util.swipeoutClose(e.target);
-          return true;
-        });
+    async onPerformChangeName(e, item) {
+      const dashboardUserId = item.id;
+      const dashboardName = await this.$view.dialog.prompt(this.$text('Please specify the dashboard name'));
+      if (!dashboardName || dashboardName === item.dashboardName) return;
+      await this.$api.post('/a/dashboard/dashboard/changeItemUserName', {
+        dashboardUserId,
+        dashboardName,
       });
+      const res = this.__findItem(dashboardUserId);
+      res.item.dashboardName = dashboardName;
+      if (this.dashboardUserIdCurrent === dashboardUserId) {
+        this.dashboard.__setTitle(dashboardName);
+      }
+      this.$meta.util.swipeoutClose(e.target);
     },
     onPerformDelete(e, item) {
       if (item.id === 0) return;
