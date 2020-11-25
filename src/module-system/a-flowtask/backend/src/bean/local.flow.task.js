@@ -467,12 +467,15 @@ module.exports = ctx => {
       if (!fields) return null;
       // { module, validator, schema }
       if (fields && !Array.isArray(fields) && typeof fields === 'object') {
-        console.log('fields:', fields);
-        return ctx.bean.validation.getSchema({
+        const schema = ctx.bean.validation.getSchema({
           module: fields.module,
           validator: fields.validator,
           schema: fields.schema,
         });
+        return {
+          module: fields.module,
+          schema,
+        };
       }
       // base
       let schemaBase = await this._getSchemaBase();
