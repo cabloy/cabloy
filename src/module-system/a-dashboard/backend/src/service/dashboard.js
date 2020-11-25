@@ -91,6 +91,17 @@ module.exports = app => {
       };
     }
 
+    async itemUsers({ dashboardAtomId, user }) {
+      return await this.ctx.model.dashboardUser.select({
+        columns: [ 'id', 'createdAt', 'updatedAt', 'deleted', 'iid', 'userId', 'dashboardDefault', 'dashboardAtomId', 'dashboardName' ],
+        where: {
+          userId: user.id,
+          dashboardAtomId,
+        },
+        orders: [[ 'dashboardName', 'asc' ]],
+      });
+    }
+
     // //////////////
 
     async list({ user }) {

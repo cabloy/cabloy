@@ -52,6 +52,9 @@ export default {
     pageTitle() {
       return this.dirty ? `* ${this.title}` : this.title;
     },
+    user() {
+      return this.$store.state.auth.user;
+    },
   },
   mounted() {
     this.__init().then(() => {}).catch(err => {
@@ -63,6 +66,7 @@ export default {
   },
   methods: {
     renderActions() {
+      if (this.user.op.anonymous === 1) return null;
       const children = [];
       if (this.lock) {
         children.push(
@@ -216,7 +220,7 @@ export default {
       this.lock = true;
     },
     onPerformSettings() {
-      this.$view.navigate(`/a/dashboard/dashboard/settings?profileId=${this.profileId}`, {
+      this.$view.navigate(`/a/dashboard/dashboard/settings?dashboardUserId=${this.dashboardUserId}`, {
         scene: 'sidebar',
         sceneOptions: { side: 'right', name: 'profile', title: 'Profile2' },
         context: {

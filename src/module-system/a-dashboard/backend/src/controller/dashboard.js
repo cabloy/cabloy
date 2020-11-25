@@ -42,6 +42,14 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async itemUsers() {
+      const res = await this.service.dashboard.itemUsers({
+        dashboardAtomId: this.ctx.request.body.key.atomId,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     // //////////
 
     async list() {

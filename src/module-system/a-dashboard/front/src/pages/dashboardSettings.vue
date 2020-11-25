@@ -1,16 +1,16 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Profile2')" eb-back-link="Back">
+    <eb-navbar :title="$text('Dashboard')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link v-if="user.op.anonymous!==1" iconMaterial="add" :onPerform="onPerformNewProfile"></eb-link>
+        <eb-link iconMaterial="add" :onPerform="onPerformNewProfile"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <f7-list>
-      <eb-list-item v-for="item of profiles" :key="item.id" :title="item.profileName" radio :checked="item.id===profileIdCurrent" :context="item" :onPerform="onPerformProfile" swipeout>
+      <eb-list-item v-for="item of dashboardUsers" :key="item.id" :title="item.dashboardName" radio :checked="item.id===dashboardUserIdCurrent" :context="item" :onPerform="onPerformSwitch" swipeout>
         <eb-context-menu>
           <div slot="right">
-            <div v-if="user.op.anonymous!==1 && item.id===profileIdCurrent" color="orange" :context="item" :onPerform="onPerformClone">{{$text('Clone')}}</div>
-            <div v-if="user.op.anonymous!==1 && item.id>0 && item.id!==profileIdCurrent" color="red" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
+            <div color="orange" :context="item" :onPerform="onPerformChangeName">{{$text('Change Name')}}</div>
+            <div v-if="item.id!==dashboardUserIdCurrent" color="red" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
           </div>
         </eb-context-menu>
       </eb-list-item>
@@ -28,16 +28,13 @@ export default {
   mixins: [ ebPageContext ],
   data() {
     return {
-      profileIdCurrent: parseInt(this.$f7route.query.profileId || 0),
-      profiles: null,
+      dashboardUserIdCurrent: parseInt(this.$f7route.query.dashboardUserId || 0),
+      dashboardUsers: null,
     };
   },
   computed: {
     dashboard() {
       return this.contextParams.dashboard;
-    },
-    user() {
-      return this.$store.state.auth.user;
     },
   },
   created() {
@@ -51,16 +48,12 @@ export default {
   },
   methods: {
     __init() {
-      // default
-      const _default = [{ id: 0, profileName: this.$text('Default') }];
-      if (this.user.op.anonymous === 1) {
-        this.profiles = _default;
-      } else {
-        // list
-        this.$api.post('profile/list').then(data => {
-          this.profiles = _default.concat(data);
-        });
-      }
+      // list
+      this.$api.post('/a/dashboard/dashboard/itemUsers', {
+        key: { atomId: this.dashboard.dashboardAtomId },
+      }).then(data => {
+        this.dashboardUsers = data;
+      });
     },
     onDashboardDestroy() {
       this.$view.close();
@@ -96,7 +89,7 @@ export default {
         });
       });
     },
-    onPerformClone(e, item) {
+    onPerformChangeName(e, item) {
       const profileId = item.id;
       if (profileId !== this.profileIdCurrent) return;
       return this.$view.dialog.prompt(this.$text('Please specify the profile name')).then(profileName => {
@@ -126,7 +119,7 @@ export default {
         });
       });
     },
-    onPerformProfile(e, item) {
+    onPerformSwitch(e, item) {
       const profileId = item.id;
       if (this.profileIdCurrent === profileId) return;
       return this.dashboard.__switchProfile(profileId).then(() => {
