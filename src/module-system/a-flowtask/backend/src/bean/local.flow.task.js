@@ -465,6 +465,15 @@ module.exports = ctx => {
       const options = ctx.bean.flowTask._getNodeRefOptionsTask({ nodeInstance: this.nodeInstance });
       const fields = options.schema && options.schema[mode];
       if (!fields) return null;
+      // { module, validator, schema }
+      if (fields && !Array.isArray(fields) && typeof fields === 'object') {
+        console.log('fields:', fields);
+        return ctx.bean.validation.getSchema({
+          module: fields.module,
+          validator: fields.validator,
+          schema: fields.schema,
+        });
+      }
       // base
       let schemaBase = await this._getSchemaBase();
       if (!schemaBase) {

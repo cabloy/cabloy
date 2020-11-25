@@ -83,11 +83,10 @@ module.exports = ctx => {
       // default
       const _module = ctx.app.meta.modules[atomClass.module];
       const validator = _module.main.meta.base.atoms[atomClass.atomClassName].validator;
-      if (!validator) throw new Error(`validator of ${atomClass.module}:${atomClass.atomClassName} not found!`);
-      return {
+      return validator ? {
         module: atomClass.module,
         validator,
-      };
+      } : null;
     }
 
     async validatorSearch({ atomClass }) {

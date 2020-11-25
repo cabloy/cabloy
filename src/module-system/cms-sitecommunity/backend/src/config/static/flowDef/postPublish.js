@@ -27,7 +27,10 @@ module.exports = app => {
             confirmation: false,
             bidding: true,
             schema: {
-              write: true,
+              write: {
+                module: 'a-cms',
+                schema: 'article',
+              },
             },
           },
         },
