@@ -47,12 +47,18 @@ export default {
       dashboardSystem: null,
       dashboardUser: null,
       widgetsReal: [],
-      pageTitle: null,
+      title: null,
+      dirty: false,
       lock: true,
     };
   },
+  computed: {
+    pageTitle() {
+      return this.dirty ? `* ${this.title}` : this.title;
+    },
+  },
   created() {
-    this.__onTitleChange();
+    this.__setTitle();
     this.__init().then(() => {}).catch(err => {
       this.$view.toast.show({ text: err.message });
     });
@@ -108,17 +114,27 @@ export default {
         });
       }
     }, 1000),
-    __onTitleChange(title) {
+    __setTitle(title) {
       const titleBase = this.$text('Dashboard');
-      if (!title) return titleBase;
-      title = this.$text(title);
-      if (title !== this.$text('Default')) {
-        title = `${titleBase}-${title}`;
-      } else {
+      if (!title) {
         title = titleBase;
+      } else {
+        title = this.$text(title);
+        if (title !== this.$text('Default')) {
+          title = `${titleBase}-${title}`;
+        } else {
+          title = titleBase;
+        }
       }
-      this.pageTitle = title;
-      this.$view.$emit('view:title', { title });
+      this.title = title;
+      this.__onTitleChange();
+    },
+    __setDirty(dirty) {
+      this.dirty = dirty;
+      this.__onTitleChange();
+    },
+    __onTitleChange() {
+      this.$view.$emit('view:title', { title: this.pageTitle });
     },
     async __switchProfile({ dashboardUserId }) {
       if (dashboardUserId === 0) {
@@ -141,7 +157,7 @@ export default {
           title = this.dashboardSystem.atomName;
         }
         this.__checkProfile(this.profile);
-        this.__onTitleChange(title);
+        this.__setTitle(title);
         return;
       }
       // profile of user
@@ -156,7 +172,7 @@ export default {
       this.profile = JSON.parse(this.dashboardUser.content);
       const title = this.dashboardUser.dashboardName;
       this.__checkProfile(this.profile);
-      this.__onTitleChange(title);
+      this.__setTitle(title);
     },
     __checkProfile(profile) {
       // root id
