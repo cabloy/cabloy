@@ -201,14 +201,18 @@ export default {
         this.__setDirty(false);
       }
     },
+    async __createDashboardUser() {
+      // create dashboardUser
+      const res = await this.$api.post('/a/dashboard/dashboard/createItemUser', {
+        key: { atomId: this.dashboardAtomId },
+      });
+      return res.dashboardUserId;
+    },
     async onPerformLock() {
       // check if user
       if (this.dashboardUserId === 0) {
         // create dashboardUser
-        const res = await this.$api.post('/a/dashboard/dashboard/createItemUser', {
-          key: { atomId: this.dashboardAtomId },
-        });
-        const dashboardUserId = res.dashboardUserId;
+        const dashboardUserId = await this.__createDashboardUser();
         await this.__switchProfile({ dashboardUserId });
       }
       // open lock

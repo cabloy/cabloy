@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar :title="$text('Dashboard')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link iconMaterial="add" :onPerform="onPerformNewProfile"></eb-link>
+        <eb-link iconMaterial="add" :onPerform="onPerformCreate"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <f7-list>
@@ -38,7 +38,7 @@ export default {
     },
   },
   created() {
-    this.__init();
+    this.__load();
   },
   mounted() {
     this.dashboard.$on('dashboard:destroy', this.onDashboardDestroy);
@@ -47,7 +47,7 @@ export default {
     this.dashboard.$off('dashboard:destroy', this.onDashboardDestroy);
   },
   methods: {
-    __init() {
+    __load() {
       // list
       this.$api.post('/a/dashboard/dashboard/itemUsers', {
         key: { atomId: this.dashboard.dashboardAtomId },
@@ -76,22 +76,6 @@ export default {
             }
           },
         },
-      });
-    },
-    onPerformNewProfile() {
-      return this.$view.dialog.prompt(this.$text('Please specify the profile name')).then(profileName => {
-        if (!profileName) return;
-        const profile = {
-          profileName,
-          profileValue: null,
-        };
-        return this.$api.post('profile/create', {
-          data: profile,
-        }).then(data => {
-          profile.id = data.profileId;
-          this.profiles.push(profile);
-          return true;
-        });
       });
     },
     async onPerformChangeName(e, item) {
@@ -133,6 +117,18 @@ export default {
       // switch
       await this.dashboard.__switchProfile({ dashboardUserId });
       this.dashboardUserIdCurrent = dashboardUserId;
+    },
+    async onPerformCreate() {
+      await this.$view.dialog.confirm();
+      // save
+      await this.dashboard.__saveDashboardUser();
+      // create dashboardUser
+      const dashboardUserId = await this.dashboard.__createDashboardUser();
+      // switch
+      await this.dashboard.__switchProfile({ dashboardUserId });
+      this.dashboardUserIdCurrent = dashboardUserId;
+      // reload
+      this.__load();
     },
   },
 };
