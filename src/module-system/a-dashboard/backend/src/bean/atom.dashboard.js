@@ -18,10 +18,16 @@ module.exports = app => {
       });
       const itemId = res.insertId;
       // add content
+      const content = {
+        root: {
+          id: uuid.v4().replace(/-/g, ''),
+          widgets: [],
+        },
+      };
       await this.ctx.model.dashboardContent.insert({
         atomId: key.atomId,
         itemId,
-        content: '{}',
+        content: JSON.stringify(content),
       });
       return { atomId: key.atomId, itemId };
     }
