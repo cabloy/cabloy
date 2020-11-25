@@ -9,7 +9,7 @@ export default {
   extends: f7Page,
   data() {
     return {
-      pageTitle: '',
+      pageTitle: null,
     };
   },
   methods: {
@@ -25,7 +25,7 @@ export default {
       this.dispatchEvent('page:afterin pageAfterIn', page);
 
       // title
-      if (!this.pageTitle) {
+      if (this.pageTitle === null) {
         let title = page.$el.find('.navbar .title').text();
         if (!title) {
           // try get meta
