@@ -24,6 +24,15 @@ module.exports = app => {
       });
       assert(categoryId > 0);
 
+      // parseCategoryName: levelOne.levelTwo.levelThree
+      const category = await this.ctx.bean.category.parseCategoryName({
+        atomClass,
+        categoryLanguage: 'en-us',
+        categoryName: 'levelOne.levelTwo.levelThree',
+        force: true,
+      });
+      assert.equal(category.categoryName, 'levelThree');
+
 
       this.ctx.success();
     }
