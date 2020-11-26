@@ -16,6 +16,8 @@ module.exports = app => {
           { roleName: 'system', name: 'atomRight' },
           { roleName: 'system', name: 'functionRight' },
           { roleName: 'system', name: 'auth' },
+          { roleName: 'system', name: 'category' },
+          { roleName: 'system', name: 'tag' },
         ];
         await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions });
       }
@@ -43,7 +45,7 @@ module.exports = app => {
         await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions });
 
         // menu: 1->0
-        const functions = 'user,role,atomRight,functionRight,auth'.split(',');
+        const functions = 'user,role,atomRight,functionRight,auth,category,tag'.split(',');
         for (const name of functions) {
           const func = await this.ctx.bean.function.get({ name });
           await this.ctx.model.function.update({ id: func.id, sceneId: 0, menu: 0 });

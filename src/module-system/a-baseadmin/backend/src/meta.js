@@ -41,6 +41,18 @@ module.exports = app => {
           sorting: 1,
           menu: 0,
         },
+        category: {
+          title: 'Category Management',
+          actionPath: 'category/list',
+          sorting: 1,
+          menu: 0,
+        },
+        tag: {
+          title: 'Tag Management',
+          actionPath: 'tag/list',
+          sorting: 1,
+          menu: 0,
+        },
       },
     },
     validation: {
