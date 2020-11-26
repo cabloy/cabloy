@@ -32,7 +32,7 @@ module.exports = app => {
       });
       assert.equal(tagIds.length, 3);
 
-
+      // ok
       this.ctx.success();
     }
 

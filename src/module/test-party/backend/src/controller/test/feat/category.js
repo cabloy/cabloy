@@ -33,7 +33,7 @@ module.exports = app => {
       });
       assert.equal(category.categoryName, 'levelThree');
 
-
+      // ok
       this.ctx.success();
     }
 
