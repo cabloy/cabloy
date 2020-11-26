@@ -30,7 +30,7 @@ module.exports = app => {
       if (!atom) return this.ctx.throw.module('a-base', 1002);
       const atomId = atom.id;
       // check right
-      const res = await this.ctx.bean.atom.checkRightRead({ atom: { id: atomId }, user, checkFlow: true });
+      const res = await this.ctx.bean.atom.checkRightRead({ atom: { id: atomId }, user });
       if (!res) this.ctx.throw(403);
       // item
       return await this.item({ dashboardAtomId: atomId, user });

@@ -112,7 +112,6 @@ module.exports = app => {
           { roleName: 'system', action: 'clone', scopeNames: 'superuser' },
           { roleName: 'system', action: 'deleteBulk' },
           { roleName: 'system', action: 'exportBulk' },
-          { roleName: 'root', action: 'read', scopeNames: 'superuser' },
         ];
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'dashboard', roleRights });
       }
