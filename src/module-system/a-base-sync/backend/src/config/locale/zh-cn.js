@@ -18,6 +18,8 @@ module.exports = {
   'Created Time': '创建时间',
   'Account Migration': '账户迁移',
   'Invalid Arguments': '无效参数',
+  'Cannot delete if has atoms': '有原子时不允许删除',
+  'Cannot delete if has children': '有子元素时不允许删除',
   Draft: '草稿',
   Drafts: '草稿',
   Archive: '归档',

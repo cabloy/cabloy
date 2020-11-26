@@ -25,6 +25,8 @@ const beanFunction = require('./bean/bean.function.js');
 const beanRole = require('./bean/bean.role.js');
 const beanUser = require('./bean/bean.user.js');
 const beanUtil = require('./bean/bean.util.js');
+const beanCategory = require('./bean/bean.category.js');
+const beanTag = require('./bean/bean.tag.js');
 
 module.exports = app => {
   const beans = {
@@ -150,6 +152,16 @@ module.exports = app => {
     util: {
       mode: 'ctx',
       bean: beanUtil,
+      global: true,
+    },
+    category: {
+      mode: 'ctx',
+      bean: beanCategory,
+      global: true,
+    },
+    tag: {
+      mode: 'ctx',
+      bean: beanTag,
       global: true,
     },
   };

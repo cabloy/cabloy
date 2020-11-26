@@ -118,6 +118,7 @@ module.exports = function(ctx) {
             categorySorting int(11) DEFAULT '0',
             categoryFlag varchar(255) DEFAULT NULL,
             categoryIdParent int(11) DEFAULT '0',
+            categoryUrl varchar(255) DEFAULT NULL,
             PRIMARY KEY (id)
           )
         `;
