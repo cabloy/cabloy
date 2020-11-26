@@ -27,7 +27,28 @@ module.exports = app => {
     async _loadAtomStatic({ moduleName, atomClass, item }) {
       // key not empty
       if (!item.atomStaticKey) throw new Error('atomStaticKey cannot be empty');
-      // todo: atomLanguage,atomCategoryId,atomTags
+      const atomStaticKey = `${moduleName}:${item.atomStaticKey}`;
+      const atomRevision = item.atomRevision || 0;
+      // get by key
+      const atom = await this.ctx.bean.atom.readByStaticKey({
+        atomClass,
+        atomStaticKey,
+        atomStage: 'archive',
+      });
+      if (atom) {
+        // check revision
+        if (atomRevision !== atom.atomRevision) {
+          item = await this._adjustItem({ moduleName, atomClass, item });
+          await this._updateRevision({ atomClass, atomIdArchive: atom.atomId, atomIdDraft: atom.atomIdDraft, item });
+        }
+      } else {
+        // register
+        item = await this._adjustItem({ moduleName, atomClass, item });
+        await this._register({ atomClass, item });
+      }
+    }
+
+    async _adjustItem({ moduleName, atomClass, item }) {
       // item
       item = {
         ...item,
@@ -37,21 +58,26 @@ module.exports = app => {
         atomName: this.ctx.text(item.atomName),
         description: this.ctx.text(item.description),
       };
-      // get by key
-      const atom = await this.ctx.bean.atom.readByStaticKey({
-        atomClass,
-        atomStaticKey: item.atomStaticKey,
-        atomStage: 'archive',
-      });
-      if (atom) {
-        // check revision
-        if (item.atomRevision !== atom.atomRevision) {
-          await this._updateRevision({ atomClass, atomIdArchive: atom.atomId, atomIdDraft: atom.atomIdDraft, item });
-        }
-      } else {
-        // register
-        await this._register({ atomClass, item });
+      // atomLanguage,atomCategoryId,atomTags
+      if (typeof item.atomCategoryId === 'string') {
+        const category = await this.ctx.bean.category.parseCategoryName({
+          atomClass,
+          categoryLanguage: item.atomLanguage,
+          categoryName: item.atomCategoryId,
+          force: true,
+        });
+        item.atomCategoryId = category.id;
       }
+      if (typeof item.atomTags === 'string') {
+        const tagIds = await this.ctx.bean.tag.parseTags({
+          atomClass,
+          tagLanguage: item.atomLanguage,
+          tagName: item.atomTags,
+          force: true,
+        });
+        item.atomTags = JSON.stringify(tagIds);
+      }
+      return item;
     }
 
     async _updateRevision({ atomClass, atomIdArchive, atomIdDraft, item }) {

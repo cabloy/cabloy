@@ -24,13 +24,13 @@ module.exports = app => {
       assert(tagId > 0);
 
       // parseTags: 'tagOne,tagTwo,tagThree'
-      const tags = await this.ctx.bean.tag.parseTags({
+      const tagIds = await this.ctx.bean.tag.parseTags({
         atomClass,
         tagLanguage: 'en-us',
         tagName: 'tagOne,tagTwo,tagThree',
         force: true,
       });
-      assert.equal(tags.length, 3);
+      assert.equal(tagIds.length, 3);
 
 
       this.ctx.success();
