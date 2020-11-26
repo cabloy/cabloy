@@ -18,6 +18,20 @@ module.exports = ctx => {
       });
     }
 
+    async get({ tagId }) {
+      return await this.modelTag.get({ id: tagId });
+    }
+
+    async item({ atomClass, tagLanguage, tagName }) {
+      const options = {
+        where: {
+          tagLanguage, tagName,
+        },
+      };
+      const list = await this.list({ atomClass, options });
+      return list[0];
+    }
+
     async list({ atomClass, options }) {
       atomClass = await ctx.bean.atomClass.get(atomClass);
       if (!options.where) options.where = {};
@@ -110,6 +124,58 @@ module.exports = ctx => {
         `,
       [ ctx.instance.id, tagId, ctx.instance.id ]);
       return res[0].atomCount;
+    }
+
+    async parseTags({ atomClass, tagLanguage, tagName, force = false }) {
+      const tagNames = tagName.split(',');
+      const tagIds = [];
+      for (const _tagName of tagNames) {
+        const tag = await this.item({ atomClass, tagLanguage, tagName: _tagName });
+        // next
+        if (tag) {
+          tagIds.push(tag.id);
+          continue;
+        }
+        // null
+        if (!force) continue;
+        // create
+        const tagId = await this._register({
+          atomClass, tagLanguage, tagName: _tagName,
+        });
+        tagIds.push(tagId);
+      }
+      return tagIds;
+    }
+
+    async _register({ atomClass, tagLanguage, tagName }) {
+      atomClass = await ctx.bean.atomClass.get(atomClass);
+      return await ctx.app.meta.util.lock({
+        subdomain: ctx.subdomain,
+        resource: `${moduleInfo.relativeName}.tag.register.${atomClass.id}`,
+        fn: async () => {
+          return await ctx.app.meta.util.executeBean({
+            subdomain: ctx.subdomain,
+            beanModule: moduleInfo.relativeName,
+            beanFullName: 'tag',
+            context: { atomClass, tagLanguage, tagName },
+            fn: '_registerLock',
+          });
+        },
+      });
+    }
+
+    async _registerLock({ atomClass, tagLanguage, tagName }) {
+      // get again
+      const tag = await this.item({ atomClass, tagLanguage, tagName });
+      if (tag) return tag.id;
+      // add
+      return await this.add({
+        atomClass,
+        data: {
+          tagLanguage,
+          tagName,
+        },
+      });
     }
 
   }

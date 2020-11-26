@@ -6,7 +6,7 @@ module.exports = ctx => {
       return ctx.model.module(moduleInfo.relativeName).category;
     }
 
-    async item({ categoryId }) {
+    async get({ categoryId }) {
       return await this.modelCategory.get({ id: categoryId });
     }
 
@@ -141,7 +141,7 @@ module.exports = ctx => {
 
     async _relativeTop({ categoryId }) {
       if (categoryId === 0) return null;
-      const category = await this.item({ categoryId });
+      const category = await this.get({ categoryId });
       if (!category) return null;
       if (category.categoryUrl) return category;
       return await this._relativeTop({ categoryId: category.categoryIdParent });
@@ -170,7 +170,7 @@ module.exports = ctx => {
           categoryName: _categoryName,
           categoryIdParent,
         });
-        category = await this.item({ categoryId });
+        category = await this.get({ categoryId });
         // next
         categoryIdParent = categoryId;
       }
