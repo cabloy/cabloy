@@ -61,7 +61,7 @@ co(function* () {
     if (pkg.name === 'egg-born-template-cabloy') {
       // download
       modules = {};
-      for (const moduleName of [ 'test-party', 'test-partymonkey-monkey', 'test-trip' ]) {
+      for (const moduleName of [ 'test-party', 'test-partymonkey-monkey', 'test-flow' ]) {
         modules[moduleName] = yield this.__downloadCabloyModule(moduleName);
       }
     }
