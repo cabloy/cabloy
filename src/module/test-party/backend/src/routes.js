@@ -122,6 +122,9 @@ module.exports = app => {
       // test/feat/model
       { method: 'post', path: 'test/feat/model', controller: 'testFeatModel', middlewares: 'test' },
 
+      // test/feat/category
+      { method: 'post', path: 'test/feat/category', controller: 'testFeatCategory', middlewares: 'test' },
+
       // test/monkey/monkeyee
       { method: 'post', path: 'test/monkey/monkeyee/test', controller: 'testMonkeyee', middlewares: 'test' },
 

@@ -140,6 +140,11 @@ module.exports = ctx => {
       return await this._relativeTop({ categoryId: category.categoryIdParent });
     }
 
+    // categoryA.categoryB
+    async parseCategoryName({ categoryName, forceCreate = false }) {
+
+    }
+
   }
   return Category;
 };
