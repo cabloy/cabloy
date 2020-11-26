@@ -264,16 +264,10 @@ module.exports = ctx => {
     _prepareAtomClassesModule(module, _atoms) {
       const atomClasses = {};
       for (const key in _atoms) {
-        const _atom = _atoms[key].info;
         // info
         const atomClass = {
           name: key,
-          bean: _atom.bean,
-          title: _atom.title || key,
-          public: _atom.public ? 1 : 0,
-          meta: _atom.meta,
-          tableName: _atom.tableName,
-          tableNameModes: _atom.tableNameModes,
+          ..._atoms[key].info,
         };
         // titleLocale
         atomClass.titleLocale = ctx.text(atomClass.title);

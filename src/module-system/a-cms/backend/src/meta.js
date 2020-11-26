@@ -17,6 +17,10 @@ module.exports = app => {
               search: 'aCmsArticleViewSearch',
               tag: 'aCmsArticleViewTag',
             },
+            category: true,
+            categoryLanguage: true,
+            tag: true,
+            tagLanguage: true,
             cms: true,
           },
           actions: {
