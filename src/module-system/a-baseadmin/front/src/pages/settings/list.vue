@@ -8,6 +8,7 @@
   </eb-page>
 </template>
 <script>
+import Vue from 'vue';
 const ebFunctions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebFunctions;
 export default {
   mixins: [ ebFunctions ],

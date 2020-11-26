@@ -97,7 +97,8 @@ module.exports = function(ctx) {
       sql = `
         ALTER TABLE aAtom
           ADD COLUMN atomLanguage varchar(50) DEFAULT NULL,
-          ADD COLUMN atomCategoryId int(11) DEFAULT '0'
+          ADD COLUMN atomCategoryId int(11) DEFAULT '0',
+          ADD COLUMN atomTags JSON DEFAULT NULL
         `;
       await ctx.model.query(sql);
 
@@ -134,22 +135,6 @@ module.exports = function(ctx) {
             tagLanguage varchar(50) DEFAULT NULL,
             tagName varchar(50) DEFAULT NULL,
             tagAtomCount int(11) DEFAULT '0',
-            PRIMARY KEY (id)
-          )
-        `;
-      await ctx.model.query(sql);
-
-      // create table: aAtomTag
-      sql = `
-          CREATE TABLE aAtomTag (
-            id int(11) NOT NULL AUTO_INCREMENT,
-            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            deleted int(11) DEFAULT '0',
-            iid int(11) DEFAULT '0',
-            atomId int(11) DEFAULT '0',
-            itemId int(11) DEFAULT '0',
-            tags JSON DEFAULT NULL,
             PRIMARY KEY (id)
           )
         `;

@@ -1,6 +1,11 @@
 const require3 = require('require3');
 const ExcelJS = require3('exceljs');
 
+const __atomBasicFields = [
+  'atomName', 'atomStatic', 'atomStaticKey', 'atomRevision',
+  'atomLanguage', 'atomCategoryId', 'atomTags', 'allowComment',
+];
+
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AtomBase extends app.meta.BeanBase {
@@ -66,11 +71,9 @@ module.exports = app => {
       if (!item || atomStage > 0) return;
       // write atom
       const atom = { };
-      if (item.atomName !== undefined) atom.atomName = item.atomName;
-      if (item.atomStatic !== undefined) atom.atomStatic = item.atomStatic;
-      if (item.atomStaticKey !== undefined) atom.atomStaticKey = item.atomStaticKey;
-      if (item.atomRevision !== undefined) atom.atomRevision = item.atomRevision;
-      if (item.allowComment !== undefined) atom.allowComment = item.allowComment;
+      for (const field of __atomBasicFields) {
+        if (item[field] !== undefined) atom[field] = item[field];
+      }
       atom.updatedAt = new Date();
       // update
       atom.id = key.atomId;

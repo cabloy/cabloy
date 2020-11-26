@@ -462,6 +462,9 @@ module.exports = ctx => {
       let atomStatic = srcItem.atomStatic;
       let atomStaticKey = srcItem.atomStaticKey;
       let atomRevision = srcItem.atomRevision;
+      const atomLanguage = srcItem.atomLanguage;
+      const atomCategoryId = srcItem.atomCategoryId;
+      const atomTags = srcItem.atomTags;
       if (target === 'draft') {
         atomIdDraft = 0;
         atomIdArchive = srcItem.atomStage === 1 ? srcItem.atomId : srcItem.atomIdArchive;
@@ -496,6 +499,9 @@ module.exports = ctx => {
         atomStatic,
         atomStaticKey,
         atomRevision,
+        atomLanguage,
+        atomCategoryId,
+        atomTags,
         atomStage,
         atomFlowId,
         allowComment: srcItem.allowComment,
@@ -515,6 +521,9 @@ module.exports = ctx => {
         atomStatic: destItem.atomStatic,
         atomStaticKey: destItem.atomStaticKey,
         atomRevision: destItem.atomRevision,
+        atomLanguage: destItem.atomLanguage,
+        atomCategoryId: destItem.atomCategoryId,
+        atomTags: destItem.atomTags,
         atomStage: destItem.atomStage,
         atomFlowId: destItem.atomFlowId,
         allowComment: destItem.allowComment,
@@ -722,6 +731,7 @@ module.exports = ctx => {
       atom: {
         itemId, atomName, roleIdOwner = 0,
         atomStatic = 0, atomStaticKey = null, atomRevision = 0,
+        atomLanguage = null, atomCategoryId = 0, atomTags = null,
       },
       user,
     }) {
@@ -735,6 +745,9 @@ module.exports = ctx => {
         atomStatic,
         atomStaticKey,
         atomRevision,
+        atomLanguage,
+        atomCategoryId,
+        atomTags,
         userIdCreated: user.id,
         userIdUpdated: user.id,
         roleIdOwner,

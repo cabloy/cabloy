@@ -121,7 +121,9 @@ module.exports = ctx => {
         _selectFields = 'count(*) as _count';
       } else {
         _selectFields = `${_itemField}
-                a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdArchive,a.roleIdOwner,a.atomClassId,a.atomName,a.atomStatic,a.atomStaticKey,a.atomRevision,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
+                a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdArchive,a.roleIdOwner,a.atomClassId,a.atomName,
+                a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,a.atomTags,
+                a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
                 g.userName,g.avatar,
                 g2.userName as userNameUpdated,g2.avatar as avatarUpdated
@@ -230,7 +232,9 @@ module.exports = ctx => {
         _selectFields = 'count(*) as _count';
       } else {
         _selectFields = `${_itemField}
-                a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdArchive,a.roleIdOwner,a.atomClassId,a.atomName,a.atomStatic,a.atomStaticKey,a.atomRevision,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
+                a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdArchive,a.roleIdOwner,a.atomClassId,a.atomName,
+                a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,a.atomTags,
+                a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
                 g.userName,g.avatar,
                 g2.userName as userNameUpdated,g2.avatar as avatarUpdated
@@ -363,7 +367,9 @@ module.exports = ctx => {
         _selectFields = 'count(*) as _count';
       } else {
         _selectFields = `${_itemField}
-                a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdArchive,a.roleIdOwner,a.atomClassId,a.atomName,a.atomStatic,a.atomStaticKey,a.atomRevision,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
+                a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdArchive,a.roleIdOwner,a.atomClassId,a.atomName,
+                a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,a.atomTags,
+                a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
                 g.userName,g.avatar,
                 g2.userName as userNameUpdated,g2.avatar as avatarUpdated
@@ -459,7 +465,9 @@ module.exports = ctx => {
       // sql
       const _sql =
         `select ${_itemField}
-                a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdArchive,a.roleIdOwner,a.atomClassId,a.atomName,a.atomStatic,a.atomStaticKey,a.atomRevision,a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
+                a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdArchive,a.roleIdOwner,a.atomClassId,a.atomName,
+                a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,a.atomTags,
+                a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
                 g.userName,g.avatar,
                 g2.userName as userNameUpdated,g2.avatar as avatarUpdated

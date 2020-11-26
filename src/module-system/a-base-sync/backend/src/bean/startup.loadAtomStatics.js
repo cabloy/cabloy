@@ -27,6 +27,7 @@ module.exports = app => {
     async _loadAtomStatic({ moduleName, atomClass, item }) {
       // key not empty
       if (!item.atomStaticKey) throw new Error('atomStaticKey cannot be empty');
+      // todo: atomLanguage,atomCategoryId,atomTags
       // item
       item = {
         ...item,
