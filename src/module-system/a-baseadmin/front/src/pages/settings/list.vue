@@ -28,6 +28,8 @@ export default {
         { module: 'a-baseadmin', name: 'functionRight' },
         { module: 'a-baseadmin', name: 'menu' },
         { module: 'a-baseadmin', name: 'auth' },
+        { module: 'a-baseadmin', name: 'category' },
+        { module: 'a-baseadmin', name: 'tag' },
       ];
       this.$api.post('/a/base/function/check', { functions }).then(data => {
         this.functions = data.filter(item => item.passed);
