@@ -24,9 +24,9 @@ const roleFunction = require('./model/roleFunction.js');
 const comment = require('./model/comment.js');
 const commentView = require('./model/commentView.js');
 const commentHeart = require('./model/commentHeart.js');
-const atomTagRef = require('./model/atomTagRef.js');
 const category = require('./model/category.js');
 const tag = require('./model/tag.js');
+const tagRef = require('./model/tagRef.js');
 
 module.exports = app => {
   const models = {
@@ -56,9 +56,9 @@ module.exports = app => {
     comment,
     commentView,
     commentHeart,
-    atomTagRef,
     category,
     tag,
+    tagRef,
   };
   return models;
 };
