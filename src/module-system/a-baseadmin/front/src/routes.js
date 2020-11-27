@@ -1,6 +1,9 @@
 function load(name) {
   return require(`./pages/${name}.vue`).default;
 }
+function loadjsx(name) {
+  return require(`./pages/${name}.jsx`).default;
+}
 
 export default [
   { path: 'role/list', component: load('role/list') },
@@ -23,4 +26,5 @@ export default [
   { path: 'settings/list', component: load('settings/list') },
   { path: 'function/scene', component: load('settings/functionScene') },
   { path: 'function/sceneItem', component: load('settings/functionSceneItem') },
+  { path: 'category/management', component: loadjsx('category/management') },
 ];

@@ -33,6 +33,8 @@ export default {
   'Callback URL': '回调URL',
   'Atom Actions': '原子指令',
   'Bulk Actions': '批量指令',
+  'Category Management': '目录管理',
+  'Tag Management': '标签管理',
   Atoms: '原子',
   Build: '构建',
   Catalog: '目录',

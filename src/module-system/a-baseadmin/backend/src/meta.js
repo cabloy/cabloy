@@ -43,13 +43,13 @@ module.exports = app => {
         },
         category: {
           title: 'Category Management',
-          actionPath: 'category/list',
+          actionPath: 'category/management',
           sorting: 1,
           menu: 0,
         },
         tag: {
           title: 'Tag Management',
-          actionPath: 'tag/list',
+          actionPath: 'tag/management',
           sorting: 1,
           menu: 0,
         },
