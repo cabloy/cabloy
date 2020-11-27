@@ -62,7 +62,7 @@ module.exports = app => {
       if (typeof item.atomCategoryId === 'string') {
         const category = await this.ctx.bean.category.parseCategoryName({
           atomClass,
-          categoryLanguage: item.atomLanguage,
+          language: item.atomLanguage,
           categoryName: item.atomCategoryId,
           force: true,
         });
@@ -71,7 +71,7 @@ module.exports = app => {
       if (typeof item.atomTags === 'string') {
         const tagIds = await this.ctx.bean.tag.parseTags({
           atomClass,
-          tagLanguage: item.atomLanguage,
+          language: item.atomLanguage,
           tagName: item.atomTags,
           force: true,
         });

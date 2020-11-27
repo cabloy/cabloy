@@ -10,11 +10,11 @@ module.exports = ctx => {
       return ctx.model.module(moduleInfo.relativeName).tagRef;
     }
 
-    async count({ atomClass, tagLanguage }) {
+    async count({ atomClass, language }) {
       atomClass = await ctx.bean.atomClass.get(atomClass);
       return await this.modelTag.count({
         atomClassId: atomClass.id,
-        tagLanguage,
+        language,
       });
     }
 
@@ -22,10 +22,10 @@ module.exports = ctx => {
       return await this.modelTag.get({ id: tagId });
     }
 
-    async item({ atomClass, tagLanguage, tagName }) {
+    async item({ atomClass, language, tagName }) {
       const options = {
         where: {
-          tagLanguage, tagName,
+          language, tagName,
         },
       };
       const list = await this.list({ atomClass, options });
@@ -44,7 +44,7 @@ module.exports = ctx => {
       // add
       const res = await this.modelTag.insert({
         atomClassId: atomClass.id,
-        tagLanguage: data.tagLanguage,
+        language: data.language,
         tagName: data.tagName,
         tagAtomCount: 0,
       });
@@ -126,11 +126,11 @@ module.exports = ctx => {
       return res[0].atomCount;
     }
 
-    async parseTags({ atomClass, tagLanguage, tagName, force = false }) {
+    async parseTags({ atomClass, language, tagName, force = false }) {
       const tagNames = tagName.split(',');
       const tagIds = [];
       for (const _tagName of tagNames) {
-        const tag = await this.item({ atomClass, tagLanguage, tagName: _tagName });
+        const tag = await this.item({ atomClass, language, tagName: _tagName });
         // next
         if (tag) {
           tagIds.push(tag.id);
@@ -140,14 +140,14 @@ module.exports = ctx => {
         if (!force) continue;
         // create
         const tagId = await this._register({
-          atomClass, tagLanguage, tagName: _tagName,
+          atomClass, language, tagName: _tagName,
         });
         tagIds.push(tagId);
       }
       return tagIds;
     }
 
-    async _register({ atomClass, tagLanguage, tagName }) {
+    async _register({ atomClass, language, tagName }) {
       atomClass = await ctx.bean.atomClass.get(atomClass);
       return await ctx.app.meta.util.lock({
         subdomain: ctx.subdomain,
@@ -157,22 +157,22 @@ module.exports = ctx => {
             subdomain: ctx.subdomain,
             beanModule: moduleInfo.relativeName,
             beanFullName: 'tag',
-            context: { atomClass, tagLanguage, tagName },
+            context: { atomClass, language, tagName },
             fn: '_registerLock',
           });
         },
       });
     }
 
-    async _registerLock({ atomClass, tagLanguage, tagName }) {
+    async _registerLock({ atomClass, language, tagName }) {
       // get again
-      const tag = await this.item({ atomClass, tagLanguage, tagName });
+      const tag = await this.item({ atomClass, language, tagName });
       if (tag) return tag.id;
       // add
       return await this.add({
         atomClass,
         data: {
-          tagLanguage,
+          language,
           tagName,
         },
       });

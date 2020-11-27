@@ -111,7 +111,7 @@ module.exports = function(ctx) {
             deleted int(11) DEFAULT '0',
             iid int(11) DEFAULT '0',
             atomClassId int(11) DEFAULT '0',
-            categoryLanguage varchar(50) DEFAULT NULL,
+            language varchar(50) DEFAULT NULL,
             categoryName varchar(50) DEFAULT NULL,
             categoryCatalog int(11) DEFAULT '0',
             categoryHidden int(11) DEFAULT '0',
@@ -133,7 +133,7 @@ module.exports = function(ctx) {
             deleted int(11) DEFAULT '0',
             iid int(11) DEFAULT '0',
             atomClassId int(11) DEFAULT '0',
-            tagLanguage varchar(50) DEFAULT NULL,
+            language varchar(50) DEFAULT NULL,
             tagName varchar(50) DEFAULT NULL,
             tagAtomCount int(11) DEFAULT '0',
             PRIMARY KEY (id)

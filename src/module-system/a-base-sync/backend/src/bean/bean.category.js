@@ -21,16 +21,16 @@ module.exports = ctx => {
       });
     }
 
-    async count({ atomClass, categoryLanguage, categoryId, categoryHidden, categoryFlag }) {
-      return await this.children({ atomClass, categoryLanguage, categoryId, categoryHidden, categoryFlag, count: 1 });
+    async count({ atomClass, language, categoryId, categoryHidden, categoryFlag }) {
+      return await this.children({ atomClass, language, categoryId, categoryHidden, categoryFlag, count: 1 });
     }
 
-    async child({ atomClass, categoryLanguage, categoryId, categoryName, categoryHidden, categoryFlag }) {
-      const list = await this.children({ atomClass, categoryLanguage, categoryId, categoryName, categoryHidden, categoryFlag });
+    async child({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag }) {
+      const list = await this.children({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag });
       return list[0];
     }
 
-    async children({ atomClass, categoryLanguage, categoryId, categoryName, categoryHidden, categoryFlag, count = 0 }) {
+    async children({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag, count = 0 }) {
       //
       const where = { };
       if (count) {
@@ -45,7 +45,7 @@ module.exports = ctx => {
         where.atomClassId = atomClass.id;
       }
       //
-      if (categoryLanguage !== undefined) where.categoryLanguage = categoryLanguage;
+      if (language !== undefined) where.language = language;
       if (categoryName !== undefined) where.categoryName = categoryName;
       if (categoryHidden !== undefined) where.categoryHidden = categoryHidden;
       if (categoryFlag !== undefined) where.categoryFlag = categoryFlag;
@@ -64,7 +64,7 @@ module.exports = ctx => {
       // add
       const res = await this.modelCategory.insert({
         atomClassId: atomClass.id,
-        categoryLanguage: data.categoryLanguage,
+        language: data.language,
         categoryName: data.categoryName,
         categoryCatalog: 0,
         categoryHidden: 0,
@@ -120,12 +120,12 @@ module.exports = ctx => {
       });
     }
 
-    async tree({ atomClass, categoryLanguage, categoryId, categoryHidden, categoryFlag }) {
-      return await this._treeChildren({ atomClass, categoryLanguage, categoryId, categoryHidden, categoryFlag });
+    async tree({ atomClass, language, categoryId, categoryHidden, categoryFlag }) {
+      return await this._treeChildren({ atomClass, language, categoryId, categoryHidden, categoryFlag });
     }
 
-    async _treeChildren({ atomClass, categoryLanguage, categoryId, categoryHidden, categoryFlag }) {
-      const list = await this.children({ atomClass, categoryLanguage, categoryId, categoryHidden, categoryFlag });
+    async _treeChildren({ atomClass, language, categoryId, categoryHidden, categoryFlag }) {
+      const list = await this.children({ atomClass, language, categoryId, categoryHidden, categoryFlag });
       for (const item of list) {
         if (item.categoryCatalog) {
           // only categoryId
@@ -148,12 +148,12 @@ module.exports = ctx => {
     }
 
     // categoryA.categoryB
-    async parseCategoryName({ atomClass, categoryLanguage, categoryName, categoryIdParent = 0, force = false }) {
+    async parseCategoryName({ atomClass, language, categoryName, categoryIdParent = 0, force = false }) {
       const categoryNames = categoryName.split('.');
       let category;
       for (const _categoryName of categoryNames) {
         category = await this.child({
-          atomClass, categoryLanguage,
+          atomClass, language,
           categoryId: categoryIdParent,
           categoryName: _categoryName,
         });
@@ -166,7 +166,7 @@ module.exports = ctx => {
         if (!force) return null;
         // create
         const categoryId = await this._register({
-          atomClass, categoryLanguage,
+          atomClass, language,
           categoryName: _categoryName,
           categoryIdParent,
         });
@@ -177,7 +177,7 @@ module.exports = ctx => {
       return category;
     }
 
-    async _register({ atomClass, categoryLanguage, categoryName, categoryIdParent }) {
+    async _register({ atomClass, language, categoryName, categoryIdParent }) {
       atomClass = await ctx.bean.atomClass.get(atomClass);
       return await ctx.app.meta.util.lock({
         subdomain: ctx.subdomain,
@@ -187,18 +187,18 @@ module.exports = ctx => {
             subdomain: ctx.subdomain,
             beanModule: moduleInfo.relativeName,
             beanFullName: 'category',
-            context: { atomClass, categoryLanguage, categoryName, categoryIdParent },
+            context: { atomClass, language, categoryName, categoryIdParent },
             fn: '_registerLock',
           });
         },
       });
     }
 
-    async _registerLock({ atomClass, categoryLanguage, categoryName, categoryIdParent }) {
+    async _registerLock({ atomClass, language, categoryName, categoryIdParent }) {
       // get again
       const category = await this.child({
         atomClass,
-        categoryLanguage,
+        language,
         categoryId: categoryIdParent,
         categoryName,
       });
@@ -207,7 +207,7 @@ module.exports = ctx => {
       return await this.add({
         atomClass,
         data: {
-          categoryLanguage,
+          language,
           categoryName,
           categoryIdParent,
         },
