@@ -28,12 +28,35 @@ export default {
     },
   },
   methods: {
+    async onPerformClick(event, item) {
+      let language;
+      if (item.info.language) {
+        const action = {
+          actionModule: 'a-base',
+          actionComponent: 'action',
+          name: 'selectLanguage',
+          targetEl: event.target,
+        };
+        language = await this.$meta.util.performAction({ ctx: this, action });
+        if (!language) return;
+      }
+      // navigate
+      const queries = {
+        module: item.module,
+        atomClassName: item.atomClassName,
+      };
+      if (language) {
+        queries.language = language;
+      }
+      const url = this.$meta.util.combineQueries('/a/baseadmin/category/tree', queries);
+      this.$view.navigate(url);
+    },
     renderAtomClasses() {
       const children = [];
       for (const item of this.atomClasses) {
         children.push(
-          <f7-list-item key={`${item.module}:${item.atomClassName}`} title={item.info.titleLocale}>
-          </f7-list-item>
+          <eb-list-item key={`${item.module}:${item.atomClassName}`} title={item.info.titleLocale} link="#" propsOnPerform={event => this.onPerformClick(event, item)}>
+          </eb-list-item>
         );
       }
       return (

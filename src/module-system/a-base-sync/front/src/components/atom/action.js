@@ -110,6 +110,8 @@ export default {
         await this._onActionRead({ ctx, item, atomId: item.atomIdArchive });
       } else if (action.name === 'draft') {
         await this._onActionRead({ ctx, item, atomId: item.atomIdDraft });
+      } else if (action.name === 'selectLanguage') {
+        return await this._onActionSelectLanguage({ ctx, action });
       }
     },
     async _onActionRead({ ctx, item, atomId }) {
@@ -202,6 +204,44 @@ export default {
             text: role.roleNameWho,
             onClick: () => {
               onButtonClick(role.roleIdWho);
+            },
+          });
+        }
+        const actions = ctx.$f7.actions.create({ hostEl, buttons, targetEl });
+        function onActionsClosed() {
+          actions.destroy();
+          if (!resolved) {
+            resolved = true;
+            resolve();
+          }
+        }
+        actions.open()
+          .once('actionsClosed', onActionsClosed)
+          .once('popoverClosed', onActionsClosed);
+      });
+    },
+    async _onActionSelectLanguage({ ctx, action }) {
+      const locales = await ctx.$store.dispatch('a/base/getLocales');
+      if (locales.length === 1) {
+        return locales[0].value;
+      }
+      return new Promise(resolve => {
+        const hostEl = ctx.$view.getHostEl();
+        const targetEl = action.targetEl;
+        const buttons = [{
+          text: ctx.$text('SelectLanguageTip'),
+          label: true,
+        }];
+        let resolved = false;
+        function onButtonClick(language) {
+          resolved = true;
+          resolve(language);
+        }
+        for (const locale of locales) {
+          buttons.push({
+            text: locale.title,
+            onClick: () => {
+              onButtonClick(locale.value);
             },
           });
         }

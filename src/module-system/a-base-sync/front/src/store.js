@@ -28,6 +28,7 @@ export default function(Vue) {
       userButtons: null,
       userAtomClassRolesPreferred: {},
       // global
+      locales: null,
       modules: null,
       atomClasses: null,
       actions: null,
@@ -99,6 +100,9 @@ export default function(Vue) {
           [atomClassId]: roleIdOwner,
         };
       },
+      setLocales(state, locales) {
+        state.locales = locales;
+      },
       setModules(state, modules) {
         state.modules = modules;
       },
@@ -153,6 +157,18 @@ export default function(Vue) {
           Vue.prototype.$meta.api.post('/a/base/base/modules').then(data => {
             data = data || {};
             commit('setModules', data);
+            resolve(data);
+          }).catch(err => {
+            reject(err);
+          });
+        });
+      },
+      getLocales({ state, commit }) {
+        return new Promise((resolve, reject) => {
+          if (state.locales) return resolve(state.locales);
+          Vue.prototype.$meta.api.post('/a/base/base/locales').then(data => {
+            data = data || [];
+            commit('setLocales', data);
             resolve(data);
           }).catch(err => {
             reject(err);

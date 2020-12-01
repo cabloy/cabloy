@@ -57,4 +57,10 @@ module.exports = {
   Default: '缺省',
   Home: '首页',
   Test: '测试',
+  Catalog: '目录',
+  Category: '目录',
+  Categories: '目录',
+  Tag: '标签',
+  Tags: '标签',
+  Url: '链接',
 };
