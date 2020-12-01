@@ -38,17 +38,17 @@ module.exports = app => {
       if (atom) {
         // check revision
         if (atomRevision !== atom.atomRevision) {
-          item = await this._adjustItem({ moduleName, atomClass, item });
+          item = await this._adjustItem({ moduleName, atomClass, item, register: false });
           await this._updateRevision({ atomClass, atomIdArchive: atom.atomId, atomIdDraft: atom.atomIdDraft, item });
         }
       } else {
         // register
-        item = await this._adjustItem({ moduleName, atomClass, item });
+        item = await this._adjustItem({ moduleName, atomClass, item, register: true });
         await this._register({ atomClass, item });
       }
     }
 
-    async _adjustItem({ moduleName, atomClass, item }) {
+    async _adjustItem({ moduleName, atomClass, item, register }) {
       // item
       item = {
         ...item,
@@ -77,6 +77,13 @@ module.exports = app => {
         });
         item.atomTags = JSON.stringify(tagIds);
       }
+      // roleIdOwner
+      if (register) {
+        const roleName = item.roleIdOwner || 'superuser';
+        const role = await this.ctx.bean.role.get({ roleName });
+        item.roleIdOwner = role.id;
+      }
+      // ok
       return item;
     }
 
@@ -146,10 +153,9 @@ module.exports = app => {
       });
       if (atom) return;
       // add atom
-      const roleSuperuser = await this.ctx.bean.role.getSystemRole({ roleName: 'superuser' });
       const atomKey = await this.ctx.bean.atom.create({
         atomClass,
-        roleIdOwner: roleSuperuser.id,
+        roleIdOwner: item.roleIdOwner,
         item,
         user: { id: 0 },
       });
