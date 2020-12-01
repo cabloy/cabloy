@@ -80,6 +80,7 @@ export default {
   Add: '添加',
   Move: '移动',
   Root: '根',
+  'New Category': '新目录',
   'Advanced Filter': '高级筛选',
   'Atom Flag': '原子标记',
   'Atom Name': '原子名称',

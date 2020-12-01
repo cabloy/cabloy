@@ -8,6 +8,7 @@ const func = require('./service/function.js');
 const comment = require('./service/comment.js');
 const jwt = require('./service/jwt.js');
 const layoutConfig = require('./service/layoutConfig.js');
+const category = require('./service/category.js');
 
 module.exports = app => {
   const services = {
@@ -21,6 +22,7 @@ module.exports = app => {
     comment,
     jwt,
     layoutConfig,
+    category,
   };
   return services;
 };

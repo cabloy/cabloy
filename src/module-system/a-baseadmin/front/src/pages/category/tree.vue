@@ -45,51 +45,43 @@ export default {
     this.$meta.eventHub.$off('category:save', this.onCategorySave);
   },
   methods: {
-    onLoadChildren(node) {
+    async onLoadChildren(node) {
       // root
       if (node.root) {
-        return new Promise(resolve => {
-          resolve([{
+        return [{
+          id: 0,
+          attrs: {
+            link: '#',
+            label: this.$text('Root'),
+            toggle: true,
+            loadChildren: true,
+          },
+          data: {
             id: 0,
-            attrs: {
-              link: '#',
-              label: this.$text('Root'),
-              toggle: true,
-              loadChildren: true,
-            },
-            data: {
-              id: 0,
-              catalog: 1,
-            },
-          }]);
-        });
+            categoryCatalog: 1,
+          },
+        }];
       }
       // children
-      return this.$api.post('category/children', {
+      const data = await this.$api.post('/a/base/category/children', {
         atomClass: this.atomClass,
         language: this.language,
         categoryId: node.id,
-      })
-        .then(data => {
-          const list = data.list.map(item => {
-            const node = {
-              id: item.id,
-              attrs: {
-                link: '#',
-                label: item.categoryName || `[${this.$text('New Category')}]`,
-                toggle: item.catalog === 1,
-                loadChildren: item.catalog === 1,
-              },
-              data: item,
-            };
-            return node;
-          });
-          return list;
-        })
-        .catch(err => {
-          this.$view.toast.show({ text: err.message });
-          throw err;
-        });
+      });
+      const list = data.list.map(item => {
+        const node = {
+          id: item.id,
+          attrs: {
+            link: '#',
+            label: item.categoryName || `[${this.$text('New Category')}]`,
+            toggle: item.categoryCatalog === 1,
+            loadChildren: item.categoryCatalog === 1,
+          },
+          data: item,
+        };
+        return node;
+      });
+      return list;
     },
     onNodeClick(e, node) {
       if (!node.id) return;
