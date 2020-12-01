@@ -19,9 +19,11 @@ export default {
       atomClassName: query.atomClassName,
     };
     const language = query.language;
+    const languageTitle = query.languageTitle;
     return {
       atomClass,
       language,
+      languageTitle,
       root: {
         attrs: {
           itemToggle: false,
@@ -33,19 +35,16 @@ export default {
   computed: {
     title() {
       const _title = this.$text('Categories');
-      return `${_title}: ${this.language}`;
+      return `${_title}: ${this.languageTitle}`;
     },
   },
   mounted() {
-    this.$meta.eventHub.$on('a-cms:category:save', this.onCategorySave);
+    this.$meta.eventHub.$on('category:save', this.onCategorySave);
   },
   beforeDestroy() {
-    this.$meta.eventHub.$off('a-cms:category:save', this.onCategorySave);
+    this.$meta.eventHub.$off('category:save', this.onCategorySave);
   },
   methods: {
-    combineAtomClass(url) {
-      return utils.combineAtomClass(this.atomClass, url);
-    },
     onLoadChildren(node) {
       // root
       if (node.root) {

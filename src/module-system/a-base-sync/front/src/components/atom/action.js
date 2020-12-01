@@ -110,8 +110,8 @@ export default {
         await this._onActionRead({ ctx, item, atomId: item.atomIdArchive });
       } else if (action.name === 'draft') {
         await this._onActionRead({ ctx, item, atomId: item.atomIdDraft });
-      } else if (action.name === 'selectLanguage') {
-        return await this._onActionSelectLanguage({ ctx, action });
+      } else if (action.name === 'selectLocale') {
+        return await this._onActionSelectLocale({ ctx, action });
       }
     },
     async _onActionRead({ ctx, item, atomId }) {
@@ -220,7 +220,7 @@ export default {
           .once('popoverClosed', onActionsClosed);
       });
     },
-    async _onActionSelectLanguage({ ctx, action }) {
+    async _onActionSelectLocale({ ctx, action }) {
       const locales = await ctx.$store.dispatch('a/base/getLocales');
       if (locales.length === 1) {
         return locales[0].value;
@@ -233,15 +233,15 @@ export default {
           label: true,
         }];
         let resolved = false;
-        function onButtonClick(language) {
+        function onButtonClick(locale) {
           resolved = true;
-          resolve(language);
+          resolve(locale);
         }
         for (const locale of locales) {
           buttons.push({
             text: locale.title,
             onClick: () => {
-              onButtonClick(locale.value);
+              onButtonClick(locale);
             },
           });
         }

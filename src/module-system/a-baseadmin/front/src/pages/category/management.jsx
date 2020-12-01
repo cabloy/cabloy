@@ -29,24 +29,25 @@ export default {
   },
   methods: {
     async onPerformClick(event, item) {
-      let language;
+      let locale;
       if (item.info.language) {
         const action = {
           actionModule: 'a-base',
           actionComponent: 'action',
-          name: 'selectLanguage',
+          name: 'selectLocale',
           targetEl: event.target,
         };
-        language = await this.$meta.util.performAction({ ctx: this, action });
-        if (!language) return;
+        locale = await this.$meta.util.performAction({ ctx: this, action });
+        if (!locale) return;
       }
       // navigate
       const queries = {
         module: item.module,
         atomClassName: item.atomClassName,
       };
-      if (language) {
-        queries.language = language;
+      if (locale) {
+        queries.language = locale.value;
+        queries.languageTitle = locale.title;
       }
       const url = this.$meta.util.combineQueries('/a/baseadmin/category/tree', queries);
       this.$view.navigate(url);
