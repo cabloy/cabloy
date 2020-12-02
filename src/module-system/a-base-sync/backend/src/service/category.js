@@ -14,6 +14,11 @@ module.exports = app => {
       return await this.ctx.bean.category.delete({ categoryId });
     }
 
+    async move({ categoryId, categoryIdParent }) {
+      return await this.ctx.bean.category.move({ categoryId, categoryIdParent });
+    }
+
+
   }
 
   return Category;

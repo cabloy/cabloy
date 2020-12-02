@@ -137,7 +137,7 @@ export default {
             if (code === 200) {
               const categoryIdParent = data.id;
               if (node.data.categoryIdParent !== categoryIdParent) {
-                this.$api.post('category/move', { categoryId, categoryIdParent })
+                this.$api.post('/a/base/category/move', { categoryId, categoryIdParent })
                   .then(() => {
                     this.reloadNode(this.findNode(node.data.categoryIdParent));
                     this.reloadNode(this.findNode(categoryIdParent), {

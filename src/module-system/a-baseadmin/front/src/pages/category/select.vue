@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Select Category')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link iconMaterial="done" @click.prevent="onDone"></eb-link>
+        <eb-link iconMaterial="done" :onPerform="onPerformDone"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <eb-treeview ref="tree" :root="root" :onLoadChildren="onLoadChildren">
@@ -55,66 +55,58 @@ export default {
     },
   },
   methods: {
-    onLoadChildren(node) {
+    async onLoadChildren(node) {
       // root
       if (node.root && this.categoryIdStart === undefined) {
-        return new Promise(resolve => {
-          const checkbox = !this.leafOnly;
-          resolve([{
+        const checkbox = !this.leafOnly;
+        return [{
+          id: 0,
+          attrs: {
+            label: this.$text('Root'),
+            toggle: true,
+            loadChildren: true,
+            checkbox,
+            checkOnLabel: checkbox,
+            selectable: checkbox,
+            itemToggle: !checkbox,
+          },
+          data: {
             id: 0,
-            attrs: {
-              label: this.$text('Root'),
-              toggle: true,
-              loadChildren: true,
-              checkbox,
-              checkOnLabel: checkbox,
-              selectable: checkbox,
-              itemToggle: !checkbox,
-            },
-            data: {
-              id: 0,
-              catalog: 1,
-            },
-          }]);
-        });
+            categoryCatalog: 1,
+          },
+        }];
       }
       // children
       const categoryId = node.root ? this.categoryIdStart : node.id;
-      return this.$api.post('category/children', {
+      const data = await this.$api.post('/a/base/category/children', {
         atomClass: this.atomClass,
         language: this.language,
         categoryId,
-      })
-        .then(data => {
-          let list = data.list.map(item => {
-            const checkbox = !this.leafOnly || item.catalog === 0;
-            const node = {
-              id: item.id,
-              attrs: {
-                label: item.categoryName || `[${this.$text('New Category')}]`,
-                toggle: item.catalog === 1,
-                loadChildren: item.catalog === 1,
-                checkbox,
-                checkOnLabel: checkbox,
-                selectable: checkbox,
-                itemToggle: !checkbox,
-              },
-              data: item,
-            };
-            return node;
-          });
-          list = list.filter(item => {
-            return (!this.catalogOnly || item.data.catalog === 1) &&
+      });
+      let list = data.list.map(item => {
+        const checkbox = !this.leafOnly || item.categoryCatalog === 0;
+        const node = {
+          id: item.id,
+          attrs: {
+            label: item.categoryName || `[${this.$text('New Category')}]`,
+            toggle: item.categoryCatalog === 1,
+            loadChildren: item.categoryCatalog === 1,
+            checkbox,
+            checkOnLabel: checkbox,
+            selectable: checkbox,
+            itemToggle: !checkbox,
+          },
+          data: item,
+        };
+        return node;
+      });
+      list = list.filter(item => {
+        return (!this.catalogOnly || item.data.categoryCatalog === 1) &&
               (!this.categoryIdDisable || this.categoryIdDisable !== item.id);
-          });
-          return list;
-        })
-        .catch(err => {
-          this.$view.toast.show({ text: err.message });
-          throw err;
-        });
+      });
+      return list;
     },
-    onDone() {
+    onPerformDone() {
       const checked = this.$refs.tree.checked();
       if (!checked || checked.length === 0) return;
 

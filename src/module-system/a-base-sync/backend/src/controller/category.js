@@ -32,6 +32,15 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async move() {
+      // need not param:atomClass
+      const res = await this.ctx.service.category.move({
+        categoryId: this.ctx.request.body.categoryId,
+        categoryIdParent: this.ctx.request.body.categoryIdParent,
+      });
+      this.ctx.success(res);
+    }
+
 
     // ////
 
@@ -64,15 +73,6 @@ module.exports = app => {
       this.ctx.success({ list });
     }
 
-
-    async move() {
-      // need not param:atomClass
-      const res = await this.ctx.service.category.move({
-        categoryId: this.ctx.request.body.categoryId,
-        categoryIdParent: this.ctx.request.body.categoryIdParent,
-      });
-      this.ctx.success(res);
-    }
 
     async relativeTop() {
       // need not param:atomClass
