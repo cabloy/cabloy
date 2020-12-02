@@ -15,7 +15,7 @@ export default {
       for (const module in atomClassesAll) {
         for (const atomClassName in atomClassesAll[module]) {
           const info = atomClassesAll[module][atomClassName];
-          if (info.language) {
+          if (info.category) {
             atomClasses.push({
               module,
               atomClassName,

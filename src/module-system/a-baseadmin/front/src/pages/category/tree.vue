@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar large largeTransparent :title="title" eb-back-link="Back"></eb-navbar>
+    <eb-navbar large largeTransparent :title="pageTitle" eb-back-link="Back"></eb-navbar>
     <eb-treeview ref="tree" :root="root" :onLoadChildren="onLoadChildren" @node:click="onNodeClick">
       <div class="category-node" slot="root-end" slot-scope="{node}">
         <f7-link class="category-action" @click.stop="onNodeClickAdd(node)">{{$text('Add')}}</f7-link>
@@ -33,9 +33,10 @@ export default {
     };
   },
   computed: {
-    title() {
-      const _title = this.$text('Categories');
-      return `${_title}: ${this.languageTitle}`;
+    pageTitle() {
+      const title = this.$text('Categories');
+      if (!this.language) return title;
+      return `${title}: ${this.languageTitle}`;
     },
   },
   mounted() {
