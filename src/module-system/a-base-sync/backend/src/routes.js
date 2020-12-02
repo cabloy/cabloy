@@ -131,7 +131,6 @@ module.exports = app => {
       validate: { module: 'a-base', validator: 'category' },
       right: { type: 'function', module: 'a-settings', name: 'settings' },
     } },
-
     { method: 'post', path: 'category/tree', controller: 'category' }, // not set function right
     { method: 'post', path: 'category/relativeTop', controller: 'category' }, // not set function right
   ];

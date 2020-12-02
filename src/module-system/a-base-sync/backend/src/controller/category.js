@@ -58,22 +58,17 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-
-    // ////
-
-
     async tree() {
       const atomClass = this.ctx.request.body.atomClass;
       const list = await this.ctx.service.category.tree({
         atomClass,
         language: this.ctx.request.body.language,
         categoryId: this.ctx.request.body.categoryId,
-        hidden: this.ctx.request.body.hidden,
-        flag: this.ctx.request.body.flag,
+        categoryHidden: this.ctx.request.body.categoryHidden,
+        categoryFlag: this.ctx.request.body.categoryFlag,
       });
       this.ctx.success({ list });
     }
-
 
     async relativeTop() {
       // need not param:atomClass

@@ -26,6 +26,14 @@ module.exports = app => {
       return await this.ctx.bean.category.save({ categoryId, data });
     }
 
+    async tree({ atomClass, language, categoryId, categoryHidden, categoryFlag }) {
+      return await this.ctx.bean.category.tree({ atomClass, language, categoryId, categoryHidden, categoryFlag });
+    }
+
+    async relativeTop({ categoryId }) {
+      return await this.ctx.bean.category.relativeTop({ categoryId });
+    }
+
   }
 
   return Category;
