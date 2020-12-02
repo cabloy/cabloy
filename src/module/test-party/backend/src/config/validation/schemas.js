@@ -28,11 +28,6 @@ module.exports = app => {
         ebOptionsBlankAuto: true,
         notEmpty: true,
       },
-      atomLanguage: {
-        type: 'string',
-        ebType: 'language',
-        ebTitle: 'Language',
-      },
       atomCategoryId: {
         type: 'number',
         ebType: 'category',
@@ -40,7 +35,7 @@ module.exports = app => {
       },
       atomTags: {
         type: [ 'string', 'null' ],
-        ebType: 'tag',
+        ebType: 'tags',
         ebTitle: 'Tags',
       },
     },

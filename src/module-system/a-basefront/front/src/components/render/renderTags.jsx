@@ -6,6 +6,7 @@ export default {
   },
   data() {
     return {
+      tagsAll: null,
     };
   },
   computed: {
@@ -17,34 +18,63 @@ export default {
     },
   },
   created() {
+    this.loadTagAlls(this.context.data.atomLanguage).then(() => {});
   },
   methods: {
+    combineAtomClassAndLanguage(locale) {
+      const queries = {
+        module: this.atomClass.module,
+        atomClassName: this.atomClass.atomClassName,
+      };
+      if (locale) {
+        queries.language = locale.value;
+      }
+      return queries;
+    },
+    async loadTagAlls(language) {
+      this.tagsAll = await this.$store.dispatch('a/base/getTags', {
+        atomClass: this.atomClass,
+        language,
+      });
+    },
     adjustTags(tags) {
-      if (!tags) return '';
-      const _tags = JSON.parse(tags);
-      return _tags.map(item => item.name).join(',');
+      if (!this.tagsAll || !tags) return '';
+      tags = JSON.parse(tags);
+      tags = tags.map(tagId => {
+        const tag = this.tagsAll.find(_item => _item.id === tagId);
+        return tag ? tag.tagName : '';
+      });
+      return tags.join(',');
     },
-    combineAtomClass(url) {
-      return utils.combineAtomClass(this.atomClass, url);
-    },
-    onChooseTags() {
+    async onChooseTags(event) {
       const { data } = this.context;
-      if (!data.language) {
-        this.$view.dialog.alert(this.$text('Please specify the language'));
-        return false;
+      const action = {
+        actionModule: 'a-base',
+        actionComponent: 'action',
+        name: 'selectLocale',
+        targetEl: event.target,
+      };
+      let locale;
+      if (data.atomLanguage) {
+        locale = data.atomLanguage;
+      } else {
+        locale = await this.$meta.util.performAction({ ctx: this, action, item: data });
+        if (locale) {
+          data.atomLanguage = locale.value;
+          await this.loadTagAlls();
+        }
       }
       return new Promise(resolve => {
-        const url = this.combineAtomClass('/a/cms/tag/select');
+        const url = this.$meta.util.combineQueries('/a/basefront/tag/select', this.combineAtomClassAndLanguage(locale));
         this.$view.navigate(url, {
           target: '_self',
           context: {
             params: {
-              language: data.language,
-              tags: data.tags,
+              tags: data.atomTags,
             },
             callback: (code, tags) => {
               if (code === 200) {
-                data.tags = tags;
+                data.atomTags = tags ? JSON.stringify(tags) : null;
                 resolve(true);
               } else if (code === false) {
                 resolve(false);
@@ -61,14 +91,14 @@ export default {
     if (validate.readOnly || property.ebReadOnly) {
       return (
         <f7-list-item title={title}>
-          <div slot="after">{this.adjustTags(data.tags)}</div>
+          <div slot="after">{this.adjustTags(data.atomTags)}</div>
         </f7-list-item>
       );
     }
     return (
       <eb-list-item-choose
         link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseTags}>
-        <div slot="after">{this.adjustTags(data.tags)}</div>
+        <div slot="after">{this.adjustTags(data.atomTags)}</div>
       </eb-list-item-choose>
     );
   },

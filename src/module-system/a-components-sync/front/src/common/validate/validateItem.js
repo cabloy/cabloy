@@ -10,12 +10,13 @@ import renderSelect from './render/renderSelect.js';
 import renderLink from './render/renderLink.js';
 import renderLanguage from './render/renderLanguage.js';
 import renderCategory from './render/renderCategory.js';
+import renderTags from './render/renderTags.js';
 
 export default {
   mixins: [
     renderProperties, renderComponent, renderGroup, renderPanel, renderText,
     renderDatepicker, renderFile, renderToggle, renderSelect, renderLink,
-    renderLanguage, renderCategory,
+    renderLanguage, renderCategory, renderTags,
   ],
   props: {
     data: {
@@ -223,6 +224,9 @@ export default {
       } else if (ebType === 'category') {
         // category
         return this.renderCategory(c, context);
+      } else if (ebType === 'tags') {
+        // tags
+        return this.renderTags(c, context);
       }
       // not support
       return c('div', {

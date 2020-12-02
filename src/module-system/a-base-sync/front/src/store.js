@@ -32,6 +32,7 @@ export default function(Vue) {
       modules: null,
       atomClasses: null,
       actions: null,
+      tags: {},
       functionScenes: {},
       functions: null,
       menus: null,
@@ -134,6 +135,13 @@ export default function(Vue) {
         state.functionScenes = {
           ...state.functionScenes,
           [sceneMenu]: scenes,
+        };
+      },
+      setTags(state, { atomClass, language, tags }) {
+        const key = `${atomClass.module}:${atomClass.atomClassName}:${language || ''}`;
+        state.tags = {
+          ...state.tags,
+          [key]: tags,
         };
       },
     },
@@ -254,6 +262,31 @@ export default function(Vue) {
             data = data || {};
             commit('setButtons', data);
             resolve(data);
+          }).catch(err => {
+            reject(err);
+          });
+        });
+      },
+      getTags({ state, commit }, { atomClass, language }) {
+        return new Promise((resolve, reject) => {
+          const key = `${atomClass.module}:${atomClass.atomClassName}:${language || ''}`;
+          if (state.tags[key]) return resolve(state.tags[key]);
+          const options = {
+            where: { },
+            orders: [
+              [ 'tagName', 'asc' ],
+            ],
+          };
+          if (language) {
+            options.where.language = language;
+          }
+          Vue.prototype.$meta.api.post('/a/base/tag/list', {
+            atomClass,
+            options,
+          }).then(data => {
+            const tags = data.list;
+            commit('setTags', { atomClass, language, tags });
+            resolve(tags);
           }).catch(err => {
             reject(err);
           });

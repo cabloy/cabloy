@@ -24,6 +24,6 @@ export default [
   { path: 'attachment/list', component: load('attachment/list') },
   { path: 'base/alert', component: load('base/alert') },
   { path: 'base/about', component: load('base/about') },
-  { path: 'category/select', component: load('category/select') },
-  { path: 'tag/select', component: load('tag/select') },
+  { path: 'category/select', component: load('category/categorySelect') },
+  { path: 'tag/select', component: load('tag/tagSelect') },
 ];
