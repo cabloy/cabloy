@@ -43,12 +43,16 @@ module.exports = app => {
         user: {
           schemas: 'user',
         },
+        category: {
+          schemas: 'category',
+        },
       },
       keywords: {
         'x-exists': keywords.exists,
       },
       schemas: {
         user: schemas.user,
+        category: schemas.category,
       },
     },
     event: {

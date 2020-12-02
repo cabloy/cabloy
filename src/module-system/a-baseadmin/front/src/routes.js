@@ -29,4 +29,5 @@ export default [
   { path: 'category/management', component: loadjsx('category/management') },
   { path: 'category/tree', component: load('category/tree') },
   { path: 'category/select', component: load('category/select') },
+  { path: 'category/edit', component: load('category/edit') },
 ];

@@ -41,9 +41,6 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-
-    // ////
-
     async item() {
       // need not param:atomClass
       const data = await this.ctx.service.category.item({
@@ -60,6 +57,10 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
+
+
+    // ////
+
 
     async tree() {
       const atomClass = this.ctx.request.body.atomClass;

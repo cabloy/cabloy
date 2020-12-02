@@ -18,6 +18,13 @@ module.exports = app => {
       return await this.ctx.bean.category.move({ categoryId, categoryIdParent });
     }
 
+    async item({ categoryId }) {
+      return await this.ctx.bean.category.get({ categoryId });
+    }
+
+    async save({ categoryId, data }) {
+      return await this.ctx.bean.category.save({ categoryId, data });
+    }
 
   }
 

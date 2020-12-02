@@ -96,7 +96,9 @@ export default {
     },
     onNodeClick(e, node) {
       if (!node.id) return;
-      const url = this.combineAtomClass(`/a/cms/category/edit?categoryId=${node.id}`);
+      const queries = this.combineAtomClassAndLanguage();
+      queries.categoryId = node.id;
+      const url = this.$meta.util.combineQueries('/a/baseadmin/category/edit', queries);
       this.$view.navigate(url);
     },
     async onPerformAdd(event, node) {

@@ -74,9 +74,6 @@ module.exports = app => {
         articleSearch: {
           schemas: 'articleSearch',
         },
-        category: {
-          schemas: 'category',
-        },
       },
       keywords: {
         'x-slug': keywords.slug,
@@ -84,7 +81,6 @@ module.exports = app => {
       schemas: {
         article: schemas.article,
         articleSearch: schemas.articleSearch,
-        category: schemas.category,
       },
     },
     settings: {
