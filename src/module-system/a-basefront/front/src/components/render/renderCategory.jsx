@@ -1,4 +1,3 @@
-import utils from '../../common/utils.js';
 export default {
   props: {
     context: {

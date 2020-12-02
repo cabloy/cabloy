@@ -1,6 +1,6 @@
 <script>
 import Vue from 'vue';
-import validate from '../common/validateCheck.js';
+import validate from '../common/validate/validateCheck.js';
 const f7ListItem = Vue.options.components['f7-list-item'].extendOptions;
 export default {
   meta: {

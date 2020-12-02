@@ -1,5 +1,5 @@
 <script>
-import validateItem from '../common/validateItem.js';
+import validateItem from '../common/validate/validateItem.js';
 
 export default {
   meta: {
