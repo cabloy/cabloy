@@ -9,12 +9,13 @@ import renderToggle from './render/renderToggle.js';
 import renderSelect from './render/renderSelect.js';
 import renderLink from './render/renderLink.js';
 import renderLanguage from './render/renderLanguage.js';
+import renderCategory from './render/renderCategory.js';
 
 export default {
   mixins: [
     renderProperties, renderComponent, renderGroup, renderPanel, renderText,
     renderDatepicker, renderFile, renderToggle, renderSelect, renderLink,
-    renderLanguage,
+    renderLanguage, renderCategory,
   ],
   props: {
     data: {
@@ -219,6 +220,9 @@ export default {
       } else if (ebType === 'language') {
         // language
         return this.renderLanguage(c, context);
+      } else if (ebType === 'category') {
+        // category
+        return this.renderCategory(c, context);
       }
       // not support
       return c('div', {

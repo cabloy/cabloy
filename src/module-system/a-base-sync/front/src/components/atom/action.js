@@ -111,7 +111,7 @@ export default {
       } else if (action.name === 'draft') {
         await this._onActionRead({ ctx, item, atomId: item.atomIdDraft });
       } else if (action.name === 'selectLocale') {
-        return await this._onActionSelectLocale({ ctx, action });
+        return await this._onActionSelectLocale({ ctx, action, item });
       }
     },
     async _onActionRead({ ctx, item, atomId }) {
@@ -220,12 +220,20 @@ export default {
           .once('popoverClosed', onActionsClosed);
       });
     },
-    async _onActionSelectLocale({ ctx, action }) {
+    async _onActionSelectLocale({ ctx, action, item }) {
+      const atomClasses = await ctx.$store.dispatch('a/base/getAtomClasses');
+      const atomClass = atomClasses[item.module][item.atomClassName];
+      // not support language
+      if (!atomClass.language) {
+        return null;
+      }
+      // only one
       const locales = await ctx.$store.dispatch('a/base/getLocales');
       if (locales.length === 1) {
-        return locales[0].value;
+        return locales[0];
       }
-      return new Promise(resolve => {
+      // choose
+      return new Promise((resolve, reject) => {
         const hostEl = ctx.$view.getHostEl();
         const targetEl = action.targetEl;
         const buttons = [{
@@ -250,7 +258,7 @@ export default {
           actions.destroy();
           if (!resolved) {
             resolved = true;
-            resolve();
+            reject();
           }
         }
         actions.open()

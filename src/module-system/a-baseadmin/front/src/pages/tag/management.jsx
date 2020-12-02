@@ -29,17 +29,13 @@ export default {
   },
   methods: {
     async onPerformClick(event, item) {
-      let locale;
-      if (item.info.language) {
-        const action = {
-          actionModule: 'a-base',
-          actionComponent: 'action',
-          name: 'selectLocale',
-          targetEl: event.target,
-        };
-        locale = await this.$meta.util.performAction({ ctx: this, action });
-        if (!locale) return;
-      }
+      const action = {
+        actionModule: 'a-base',
+        actionComponent: 'action',
+        name: 'selectLocale',
+        targetEl: event.target,
+      };
+      const locale = await this.$meta.util.performAction({ ctx: this, action, item });
       // navigate
       const queries = {
         module: item.module,

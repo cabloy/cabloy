@@ -39,7 +39,7 @@ module.exports = app => {
         ebTitle: 'Category',
       },
       atomTags: {
-        type: 'string',
+        type: [ 'string', 'null' ],
         ebType: 'tag',
         ebTitle: 'Tags',
       },

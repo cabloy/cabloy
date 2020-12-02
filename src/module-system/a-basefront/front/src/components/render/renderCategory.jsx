@@ -19,11 +19,9 @@ export default {
   created() {
   },
   methods: {
-    combineAtomClass(url) {
-      return utils.combineAtomClass(this.atomClass, url);
-    },
     onChooseCategory() {
       const { data } = this.context;
+
       if (!data.language) {
         this.$view.dialog.alert(this.$text('Please specify the language'));
         return false;
