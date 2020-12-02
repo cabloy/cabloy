@@ -6,7 +6,7 @@
       </f7-nav-right>
     </eb-navbar>
     <f7-list>
-      <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.tagName" :badge="item.articleCount" link="#" :context="item" :onPerform="onItemClick" swipeout>
+      <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.tagName" :badge="item.tagAtomCount" link="#" :context="item" :onPerform="onItemClick" swipeout>
         <eb-context-menu>
           <div slot="right">
             <div color="orange" close :context="item" :onPerform="onPerformEdit">{{$text('Edit')}}</div>
@@ -65,70 +65,43 @@ export default {
         this.items = res.list;
       });
     },
-    onPerformAdd() {
-      this.$view.dialog.prompt(this.$text('Please specify the tag name')).then(tagName => {
-        if (!tagName) return;
-        this.$api.post('tag/add', {
-          atomClass: this.atomClass,
-          data: {
-            tagName,
-            language: this.language,
-          },
-        }).then(() => {
-          this.reload();
-        });
-      }).catch(() => {});
-    },
-    onItemClick(event, item) {
-      // options
-      const options = {
-        mode: 'tag',
-        where: {
-          language: item.language,
-          tagId: item.id,
+    async onPerformAdd() {
+      const tagName = await this.$view.dialog.prompt(this.$text('Please specify the tag name'));
+      if (!tagName) return;
+      await this.$api.post('/a/base/tag/add', {
+        atomClass: this.atomClass,
+        data: {
+          tagName,
+          language: this.language,
         },
-      };
-      // params
-      const params = {
-        pageTitle: `${this.$text('Tag')}: ${item.tagName}`,
-        disableFilter: true,
-      };
-      // queries
-      const queries = {
-        module: this.atomClass.module,
-        atomClassName: this.atomClass.atomClassName,
-        options: JSON.stringify(options),
-        params: JSON.stringify(params),
-      };
-      const url = this.$meta.util.combineQueries('/a/basefront/atom/list', queries);
-      this.$view.navigate(url, { target: '_self' });
-    },
-    onPerformEdit(event, item) {
-      this.$view.dialog.prompt(this.$text('Please specify the new tag name')).then(tagName => {
-        if (!tagName) return;
-        this.$api.post('tag/save', {
-          tagId: item.id,
-          data: {
-            tagName,
-          },
-        }).then(() => {
-          const index = this.items.findIndex(_item => _item.id === item.id);
-          if (index !== -1) {
-            this.items.splice(index, 1, { ...item, tagName });
-          }
-        });
-      }).catch(() => {});
-    },
-    onPerformDelete(event, item) {
-      return this.$view.dialog.confirm().then(() => {
-        return this.$api.post('tag/delete', { tagId: item.id }).then(() => {
-          this.$meta.util.swipeoutClose(event.target);
-          const index = this.items.findIndex(_item => _item.id === item.id);
-          if (index !== -1) {
-            this.items.splice(index, 1);
-          }
-        }).catch(err => this.$view.dialog.alert(err.message));
       });
+      this.reload();
+    },
+    async onItemClick(event, item) {
+      await this.onPerformEdit(event, item);
+    },
+    async onPerformEdit(event, item) {
+      const tagName = await this.$view.dialog.prompt(this.$text('Please specify the new tag name'));
+      if (!tagName) return;
+      await this.$api.post('/a/base/tag/save', {
+        tagId: item.id,
+        data: {
+          tagName,
+        },
+      });
+      const index = this.items.findIndex(_item => _item.id === item.id);
+      if (index !== -1) {
+        this.items.splice(index, 1, { ...item, tagName });
+      }
+    },
+    async onPerformDelete(event, item) {
+      await this.$view.dialog.confirm();
+      await this.$api.post('/a/base/tag/delete', { tagId: item.id });
+      this.$meta.util.swipeoutClose(event.target);
+      const index = this.items.findIndex(_item => _item.id === item.id);
+      if (index !== -1) {
+        this.items.splice(index, 1);
+      }
     },
   },
 };
