@@ -28,6 +28,16 @@ module.exports = app => {
         ebOptionsBlankAuto: true,
         notEmpty: true,
       },
+      categoryId: {
+        type: 'number',
+        ebType: 'category',
+        ebTitle: 'Category',
+      },
+      tags: {
+        type: 'string',
+        ebType: 'tag',
+        ebTitle: 'Tags',
+      },
     },
   };
   // party search

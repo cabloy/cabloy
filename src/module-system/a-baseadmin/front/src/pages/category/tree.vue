@@ -129,7 +129,7 @@ export default {
     },
     onPerformMove(event, node) {
       const categoryId = node.data.id;
-      const url = this.$meta.util.combineQueries('/a/baseadmin/category/select', this.combineAtomClassAndLanguage());
+      const url = this.$meta.util.combineQueries('/a/basefront/category/select', this.combineAtomClassAndLanguage());
       this.$view.navigate(url, {
         context: {
           params: {
