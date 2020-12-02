@@ -4,7 +4,7 @@
     <eb-treeview ref="tree" :root="root" :onLoadChildren="onLoadChildren" @node:click="onNodeClick">
       <div class="category-node" slot="root-end" slot-scope="{node}">
         <eb-link class="category-action" :context="node" :onPerform="onPerformAdd">{{$text('Add')}}</eb-link>
-        <f7-link class="category-action" v-if="node.id>0" @click.stop="onNodeClickMove(node)">{{$text('Move')}}</f7-link>
+        <eb-link class="category-action" v-if="node.id>0" :context="node" :onPerform="onPerformMove">{{$text('Move')}}</eb-link>
         <eb-link class="category-action" v-if="node.id>0" :context="node" :onPerform="onPerformDelete">{{$text('Delete')}}</eb-link>
       </div>
     </eb-treeview>
@@ -46,6 +46,16 @@ export default {
     this.$meta.eventHub.$off('category:save', this.onCategorySave);
   },
   methods: {
+    combineAtomClassAndLanguage() {
+      const queries = {
+        module: this.atomClass.module,
+        atomClassName: this.atomClass.atomClassName,
+      };
+      if (this.language) {
+        queries.language = this.language;
+      }
+      return queries;
+    },
     async onLoadChildren(node) {
       // root
       if (node.root) {
@@ -115,13 +125,12 @@ export default {
       });
       this.reloadNode(node.parent);
     },
-    onNodeClickMove(node) {
+    onPerformMove(event, node) {
       const categoryId = node.data.id;
-      const url = this.combineAtomClass('/a/cms/category/select');
+      const url = this.$meta.util.combineQueries('/a/baseadmin/category/select', this.combineAtomClassAndLanguage());
       this.$view.navigate(url, {
         context: {
           params: {
-            language: this.language,
             categoryIdDisable: categoryId,
           },
           callback: (code, data) => {

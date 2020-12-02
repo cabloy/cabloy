@@ -28,4 +28,5 @@ export default [
   { path: 'function/sceneItem', component: load('settings/functionSceneItem') },
   { path: 'category/management', component: loadjsx('category/management') },
   { path: 'category/tree', component: load('category/tree') },
+  { path: 'category/select', component: load('category/select') },
 ];
