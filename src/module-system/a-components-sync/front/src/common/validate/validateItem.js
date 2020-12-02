@@ -8,9 +8,14 @@ import renderFile from './render/renderFile.js';
 import renderToggle from './render/renderToggle.js';
 import renderSelect from './render/renderSelect.js';
 import renderLink from './render/renderLink.js';
+import renderLanguage from './render/renderLanguage.js';
 
 export default {
-  mixins: [ renderProperties, renderComponent, renderGroup, renderPanel, renderText, renderDatepicker, renderFile, renderToggle, renderSelect, renderLink ],
+  mixins: [
+    renderProperties, renderComponent, renderGroup, renderPanel, renderText,
+    renderDatepicker, renderFile, renderToggle, renderSelect, renderLink,
+    renderLanguage,
+  ],
   props: {
     data: {
       type: Object,
@@ -211,6 +216,9 @@ export default {
       } else if (ebType === 'component') {
         // component
         return this.renderComponent(c, context);
+      } else if (ebType === 'language') {
+        // language
+        return this.renderLanguage(c, context);
       }
       // not support
       return c('div', {

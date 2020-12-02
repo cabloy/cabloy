@@ -15,16 +15,14 @@ export default {
         atomClassName: this.context.data.atomClassName,
       };
     },
-    languages() {
-      return this.$local.state.languages[this.atomClass.module];
+    locales() {
+      return this.$store.getState('a/base/locales');
     },
   },
   created() {
-    this.$local.dispatch('getLanguages', {
-      atomClass: this.atomClass,
-    }).then(res => {
-      if (res.length === 1) {
-        this.context.data.language = res[0].value;
+    this.$store.dispatch('a/base/getLocales').then(locales => {
+      if (locales.length === 1) {
+        this.context.data.atomLanguage = locales[0].value;
       }
     });
   },
@@ -34,7 +32,7 @@ export default {
     const { data, pathParent, key, schema, properties, property, meta } = this.context;
     const propertyNew = this.$utils.extend({}, property, {
       ebType: 'select',
-      ebOptions: this.languages,
+      ebOptions: this.locales,
     });
     return (
       <eb-list-item-validate
