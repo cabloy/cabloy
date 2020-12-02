@@ -133,6 +133,12 @@ module.exports = app => {
     } },
     { method: 'post', path: 'category/tree', controller: 'category' }, // not set function right
     { method: 'post', path: 'category/relativeTop', controller: 'category' }, // not set function right
+    // tag
+    { method: 'post', path: 'tag/list', controller: 'tag' },
+    { method: 'post', path: 'tag/add', controller: 'tag', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
+    { method: 'post', path: 'tag/save', controller: 'tag', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
+    { method: 'post', path: 'tag/delete', controller: 'tag', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
+
   ];
   return routes;
 };

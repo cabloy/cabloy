@@ -9,6 +9,7 @@ const jwt = require('./controller/jwt.js');
 const layoutConfig = require('./controller/layoutConfig.js');
 const user = require('./controller/user.js');
 const category = require('./controller/category.js');
+const tag = require('./controller/tag.js');
 
 module.exports = app => {
   const controllers = {
@@ -23,6 +24,7 @@ module.exports = app => {
     layoutConfig,
     user,
     category,
+    tag,
   };
   return controllers;
 };

@@ -30,4 +30,6 @@ export default [
   { path: 'category/tree', component: load('category/tree') },
   { path: 'category/select', component: load('category/select') },
   { path: 'category/edit', component: load('category/edit') },
+  { path: 'tag/management', component: loadjsx('tag/management') },
+  { path: 'tag/list', component: load('tag/list') },
 ];
