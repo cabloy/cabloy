@@ -26,8 +26,9 @@ export default {
       const isLink = $clickedLinkEl && $clickedLinkEl.length > 0;
 
       // only preventDefault for link
-      if (isLink) {
-        event && event.preventDefault();
+      if (isLink && event) {
+        event.preventDefault();
+        event.stopPropagation();
       }
 
       // Prevent Router

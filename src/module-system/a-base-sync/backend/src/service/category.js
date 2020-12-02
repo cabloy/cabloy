@@ -6,6 +6,14 @@ module.exports = app => {
       return await this.ctx.bean.category.children({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag });
     }
 
+    async add({ atomClass, data }) {
+      return await this.ctx.bean.category.add({ atomClass, data });
+    }
+
+    async delete({ categoryId }) {
+      return await this.ctx.bean.category.delete({ categoryId });
+    }
+
   }
 
   return Category;

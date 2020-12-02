@@ -3,9 +3,9 @@
     <eb-navbar large largeTransparent :title="pageTitle" eb-back-link="Back"></eb-navbar>
     <eb-treeview ref="tree" :root="root" :onLoadChildren="onLoadChildren" @node:click="onNodeClick">
       <div class="category-node" slot="root-end" slot-scope="{node}">
-        <f7-link class="category-action" @click.stop="onNodeClickAdd(node)">{{$text('Add')}}</f7-link>
+        <eb-link class="category-action" :context="node" :onPerform="onPerformAdd">{{$text('Add')}}</eb-link>
         <f7-link class="category-action" v-if="node.id>0" @click.stop="onNodeClickMove(node)">{{$text('Move')}}</f7-link>
-        <f7-link class="category-action" v-if="node.id>0" @click.stop="onNodeClickDelete(node)">{{$text('Delete')}}</f7-link>
+        <eb-link class="category-action" v-if="node.id>0" :context="node" :onPerform="onPerformDelete">{{$text('Delete')}}</eb-link>
       </div>
     </eb-treeview>
   </eb-page>
@@ -89,33 +89,31 @@ export default {
       const url = this.combineAtomClass(`/a/cms/category/edit?categoryId=${node.id}`);
       this.$view.navigate(url);
     },
-    onNodeClickAdd(node) {
+    async onPerformAdd(event, node) {
       const categoryId = node.data.id;
-      this.$view.dialog.prompt(this.$text('Please specify the category name')).then(categoryName => {
-        if (!categoryName) return;
-        this.$api.post('category/add', {
-          atomClass: this.atomClass,
-          data: {
-            categoryName,
-            language: this.language,
-            categoryIdParent: categoryId,
-          },
-        }).then(() => {
-          this.reloadNode(node, {
-            attrs: {
-              toggle: true,
-              loadChildren: true,
-            },
-          });
-        });
-      }).catch(() => {});
-    },
-    onNodeClickDelete(node) {
-      return this.$view.dialog.confirm().then(() => {
-        return this.$api.post('category/delete', { categoryId: node.data.id }).then(() => {
-          this.reloadNode(node.parent);
-        }).catch(err => this.$view.dialog.alert(err.message));
+      const categoryName = await this.$view.dialog.prompt(this.$text('Please specify the category name'));
+      if (!categoryName) return;
+      await this.$api.post('/a/base/category/add', {
+        atomClass: this.atomClass,
+        data: {
+          categoryName,
+          language: this.language,
+          categoryIdParent: categoryId,
+        },
       });
+      this.reloadNode(node, {
+        attrs: {
+          toggle: true,
+          loadChildren: true,
+        },
+      });
+    },
+    async onPerformDelete(event, node) {
+      await this.$view.dialog.confirm();
+      await this.$api.post('/a/base/category/delete', {
+        categoryId: node.data.id,
+      });
+      this.reloadNode(node.parent);
     },
     onNodeClickMove(node) {
       const categoryId = node.data.id;

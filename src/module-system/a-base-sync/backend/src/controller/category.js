@@ -15,6 +15,23 @@ module.exports = app => {
       this.ctx.success({ list });
     }
 
+    async add() {
+      const atomClass = this.ctx.request.body.atomClass;
+      const res = await this.ctx.service.category.add({
+        atomClass,
+        data: this.ctx.request.body.data,
+      });
+      this.ctx.success(res);
+    }
+
+    async delete() {
+      // need not param:atomClass
+      const res = await this.ctx.service.category.delete({
+        categoryId: this.ctx.request.body.categoryId,
+      });
+      this.ctx.success(res);
+    }
+
 
     // ////
 
@@ -47,23 +64,6 @@ module.exports = app => {
       this.ctx.success({ list });
     }
 
-
-    async add() {
-      const atomClass = this.ctx.request.body.atomClass;
-      const res = await this.ctx.service.category.add({
-        atomClass,
-        data: this.ctx.request.body.data,
-      });
-      this.ctx.success(res);
-    }
-
-    async delete() {
-      // need not param:atomClass
-      const res = await this.ctx.service.category.delete({
-        categoryId: this.ctx.request.body.categoryId,
-      });
-      this.ctx.success(res);
-    }
 
     async move() {
       // need not param:atomClass
