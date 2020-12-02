@@ -46,6 +46,16 @@ export default {
     this.reload();
   },
   methods: {
+    combineAtomClassAndLanguage() {
+      const queries = {
+        module: this.atomClass.module,
+        atomClassName: this.atomClass.atomClassName,
+      };
+      if (this.language) {
+        queries.language = this.language;
+      }
+      return queries;
+    },
     onRefresh(done) {
       done();
       this.reload();
