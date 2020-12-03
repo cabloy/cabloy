@@ -3,7 +3,7 @@ const uuid = require3('uuid');
 const utils = require('../common/utils.js');
 
 module.exports = app => {
-
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Version extends app.meta.BeanBase {
 
     async update(options) {
@@ -382,7 +382,35 @@ module.exports = app => {
     }
 
     async test() {
-
+      const atomClass = {
+        module: moduleInfo.relativeName,
+        atomClassName: 'article',
+      };
+      const categories = [
+        { categoryName: 'test1', language: 'en-us', categoryIdParent: 0 },
+        { categoryName: 'test2', language: 'en-us', categoryIdParent: 0 },
+        { categoryName: 'test2-1', language: 'en-us', categoryIdParent: 'test2' },
+        { categoryName: 'test2-2', language: 'en-us', categoryIdParent: 'test2' },
+        { categoryName: 'test3', language: 'en-us', categoryIdParent: 0, categorySorting: 1 },
+        { categoryName: 'testHidden', language: 'en-us', categoryIdParent: 0, categoryHidden: 1 },
+        { categoryName: 'testFlag', language: 'en-us', categoryIdParent: 0, categoryFlag: 'Flag' },
+      ];
+      const categoryIds = {};
+      for (const item of categories) {
+        // add
+        const categoryId = await this.ctx.bean.category.add({
+          atomClass,
+          data: {
+            language: item.language,
+            categoryName: item.categoryName,
+            categoryHidden: item.categoryHidden,
+            categorySorting: item.categorySorting,
+            categoryFlag: item.categoryFlag,
+            categoryIdParent: item.categoryIdParent ? categoryIds[item.categoryIdParent] : 0,
+          },
+        });
+        categoryIds[item.categoryName] = categoryId;
+      }
     }
 
     _parseUuid(article) {

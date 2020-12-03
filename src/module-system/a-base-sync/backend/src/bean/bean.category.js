@@ -62,10 +62,12 @@ module.exports = ctx => {
         atomClassId: atomClass.id,
         language: data.language,
         categoryName: data.categoryName,
-        categoryCatalog: 0,
-        categoryHidden: 0,
-        categorySorting: 0,
+        categoryHidden: data.categoryHidden || 0,
+        categorySorting: data.categorySorting || 0,
+        categoryFlag: data.categoryFlag,
+        categoryUrl: data.categoryUrl,
         categoryIdParent: data.categoryIdParent,
+        categoryCatalog: 0,
       });
       // adjust catalog
       await this.adjustCatalog(data.categoryIdParent);

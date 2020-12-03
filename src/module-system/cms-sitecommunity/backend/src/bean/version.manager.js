@@ -1,5 +1,5 @@
 module.exports = app => {
-
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Version extends app.meta.BeanBase {
 
     async update(options) {
@@ -48,6 +48,31 @@ module.exports = app => {
     }
 
     async test() {
+      const atomClass = {
+        module: moduleInfo.relativeName,
+        atomClassName: 'post',
+      };
+      const categories = [
+        { categoryName: 'Share', language: 'en-us', categoryIdParent: 0, categorySorting: 1 },
+        { categoryName: 'Answer', language: 'en-us', categoryIdParent: 0, categorySorting: 2 },
+        { categoryName: 'Announcement', language: 'en-us', categoryIdParent: 0, categorySorting: 3 },
+      ];
+      const categoryIds = {};
+      for (const item of categories) {
+        // add
+        const categoryId = await this.ctx.bean.category.add({
+          atomClass,
+          data: {
+            language: item.language,
+            categoryName: item.categoryName,
+            categoryHidden: item.categoryHidden,
+            categorySorting: item.categorySorting,
+            categoryFlag: item.categoryFlag,
+            categoryIdParent: item.categoryIdParent ? categoryIds[item.categoryIdParent] : 0,
+          },
+        });
+        categoryIds[item.categoryName] = categoryId;
+      }
     }
 
   }

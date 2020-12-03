@@ -43,49 +43,6 @@ describe('test/controller/test.test.js', () => {
 
   });
 
-  it('action:categories', async () => {
-    app.mockSession({});
-
-    // login as root
-    await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
-      data: {
-        auth: 'root',
-        password: '123456',
-      },
-    });
-
-    const categories = [
-      { categoryName: 'Share', language: 'en-us', categoryIdParent: 0, sorting: 1 },
-      { categoryName: 'Answer', language: 'en-us', categoryIdParent: 0, sorting: 2 },
-      { categoryName: 'Announcement', language: 'en-us', categoryIdParent: 0, sorting: 3 },
-    ];
-    for (const item of categories) {
-      // add
-      let result = await app.httpRequest().post(mockUrl('/a/cms/category/add')).send({
-        atomClass,
-        data: {
-          categoryName: item.categoryName,
-          language: item.language,
-          categoryIdParent: item.categoryIdParent ? categoryIds[item.categoryIdParent] : 0,
-        },
-      });
-      assert(result.body.code === 0);
-      categoryIds[item.categoryName] = result.body.data;
-      // write
-      result = await app.httpRequest().post(mockUrl('/a/cms/category/save')).send({
-        categoryId: categoryIds[item.categoryName],
-        data: {
-          categoryName: item.categoryName,
-          flag: item.flag || null,
-          hidden: item.hidden || 0,
-          sorting: item.sorting || 0,
-        },
-      });
-      assert(result.body.code === 0);
-    }
-
-  });
-
   it('action:build languages', async () => {
     app.mockSession({});
 
