@@ -45,11 +45,11 @@ module.exports = app => {
       }
     }
 
-    async write({ atomClass, key, item, options, user }) {
+    async write({ atomClass, target, key, item, options, user }) {
       // force delete disabled
       delete item.disabled;
       // super
-      await super.write({ atomClass, key, item, options, user });
+      await super.write({ atomClass, target, key, item, options, user });
       // update flowDef
       const data = await this.ctx.model.flowDef.prepareData(item);
       data.id = key.itemId;

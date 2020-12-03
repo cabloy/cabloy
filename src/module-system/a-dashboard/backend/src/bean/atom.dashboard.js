@@ -51,9 +51,9 @@ module.exports = app => {
       }
     }
 
-    async write({ atomClass, key, item, options, user }) {
+    async write({ atomClass, target, key, item, options, user }) {
       // super
-      await super.write({ atomClass, key, item, options, user });
+      await super.write({ atomClass, target, key, item, options, user });
       // update dashboard
       const data = await this.ctx.model.dashboard.prepareData(item);
       data.id = key.itemId;

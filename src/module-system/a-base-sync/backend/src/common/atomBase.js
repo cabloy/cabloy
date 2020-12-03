@@ -39,42 +39,63 @@ module.exports = app => {
       });
     }
 
-    async write({ atomClass, key, item, options, user }) {
+    async write({ atomClass, target, key, item, options, user }) {
+      if (!item) return;
+      // stage
       const atomStage = item.atomStage;
-      // validator
-      if (atomStage === 0) {
-        const optionsSchema = options && options.schema;
-        if (optionsSchema) {
-          await this.ctx.bean.validation.ajvFromSchemaAndValidate({
-            module: optionsSchema.module,
-            schema: optionsSchema.schema,
-            data: item,
-          });
-        } else {
-          const validator = await this.ctx.bean.atom.validator({ atomClass });
-          if (validator) {
-            // if error throw 422
-            await this.ctx.bean.validation.validate({
-              module: validator.module,
-              validator: validator.validator,
-              schema: validator.schema,
-              data: item,
-            });
-          }
-        }
+      // atomClass
+      const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
+      let _atomOld;
+      if (_atomClass.tag && item.atomTags !== undefined && atomStage === 1) {
+        _atomOld = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
+      }
+      // validate
+      if (atomStage === 0 && !target) {
+        await this._writeValidate({ atomClass, item, options });
       }
       // write atom
       await this._writeAtom({ key, item, user, atomStage });
+      // tag
+      if (_atomClass.tag && item.atomTags !== undefined) {
+        await this.ctx.bean.tag.updateTagRefs({ atomId: key.atomId, atomTags: item.atomTags });
+        if (atomStage === 1) {
+          await this.ctx.bean.tag.setTagAtomCount({ tagsNew: item.atomTags, tagsOld: _atomOld.atomTags });
+        }
+      }
+    }
+
+    async _writeValidate({ atomClass, item, options }) {
+      // validator
+      const optionsSchema = options && options.schema;
+      if (optionsSchema) {
+        await this.ctx.bean.validation.ajvFromSchemaAndValidate({
+          module: optionsSchema.module,
+          schema: optionsSchema.schema,
+          data: item,
+        });
+      } else {
+        const validator = await this.ctx.bean.atom.validator({ atomClass });
+        if (validator) {
+          // if error throw 422
+          await this.ctx.bean.validation.validate({
+            module: validator.module,
+            validator: validator.validator,
+            schema: validator.schema,
+            data: item,
+          });
+        }
+      }
     }
 
     async _writeAtom({ key, item, user, atomStage }) {
-      if (!item || atomStage > 0) return;
       // write atom
       const atom = { };
       for (const field of __atomBasicFields) {
         if (item[field] !== undefined) atom[field] = item[field];
       }
-      atom.updatedAt = new Date();
+      if (atomStage === 0) {
+        atom.updatedAt = new Date();
+      }
       // update
       atom.id = key.atomId;
       await this.ctx.bean.atom._update({ atom, user });

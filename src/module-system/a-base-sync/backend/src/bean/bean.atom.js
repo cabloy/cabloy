@@ -158,7 +158,7 @@ module.exports = ctx => {
     }
 
     // write
-    async write({ key, item, options, user }) {
+    async write({ key, target, item, options, user }) {
       // atomClass
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
       if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
@@ -176,7 +176,7 @@ module.exports = ctx => {
       await ctx.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
-        context: { atomClass, key, item: itemDraft, options, user },
+        context: { atomClass, target, key, item: itemDraft, options, user },
         fn: 'write',
       });
     }
@@ -470,6 +470,7 @@ module.exports = ctx => {
         atomIdArchive = srcItem.atomStage === 1 ? srcItem.atomId : srcItem.atomIdArchive;
         userIdUpdated = user.id;
         atomFlowId = 0;
+        atomRevision = undefined;
       } else if (target === 'archive') {
         atomIdDraft = srcItem.atomId;
         atomIdArchive = 0;
@@ -517,16 +518,17 @@ module.exports = ctx => {
         id: destItem.atomId,
         userIdCreated: destItem.userIdCreated,
         userIdUpdated: destItem.userIdUpdated,
-        atomName: destItem.atomName,
-        atomStatic: destItem.atomStatic,
-        atomStaticKey: destItem.atomStaticKey,
-        atomRevision: destItem.atomRevision,
-        atomLanguage: destItem.atomLanguage,
-        atomCategoryId: destItem.atomCategoryId,
-        atomTags: destItem.atomTags,
+        //   see also: atomBase
+        // atomName: destItem.atomName,
+        // atomStatic: destItem.atomStatic,
+        // atomStaticKey: destItem.atomStaticKey,
+        // atomRevision: destItem.atomRevision,
+        // atomLanguage: destItem.atomLanguage,
+        // atomCategoryId: destItem.atomCategoryId,
+        // atomTags: destItem.atomTags,
+        // allowComment: destItem.allowComment,
         atomStage: destItem.atomStage,
         atomFlowId: destItem.atomFlowId,
-        allowComment: destItem.allowComment,
         attachmentCount: destItem.attachmentCount,
         atomClosed: destItem.atomClosed,
         atomIdDraft: destItem.atomIdDraft,
@@ -534,13 +536,11 @@ module.exports = ctx => {
         createdAt: destItem.createdAt,
         updatedAt: destItem.updatedAt,
       });
-      // copy attachments
-      await this._copyAttachments({ atomIdSrc: srcKey.atomId, atomIdDest: destKey.atomId });
       // bean write
       await ctx.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
-        context: { atomClass, key: destKey, item: destItem, user },
+        context: { atomClass, target, key: destKey, item: destItem, user },
         fn: 'write',
       });
       // bean copy
@@ -550,6 +550,8 @@ module.exports = ctx => {
         context: { atomClass, target, srcKey, srcItem, destKey, destItem, user },
         fn: 'copy',
       });
+      // copy attachments
+      await this._copyAttachments({ atomIdSrc: srcKey.atomId, atomIdDest: destKey.atomId });
       // ok
       return destKey;
     }
