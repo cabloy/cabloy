@@ -50,16 +50,6 @@ module.exports = app => {
           sorting: 2,
           menu: 1,
         },
-        listPostByCategory: {
-          title: 'Post List(by Category)',
-          scene: 'list',
-          autoRight: 1,
-          atomClassName: 'post',
-          action: 'read',
-          sorting: 2,
-          menu: 1,
-          actionPath: `/a/cms/article/category?${atomClassQuery}`,
-        },
       },
       statics: {
         'a-flow.flowDef': {

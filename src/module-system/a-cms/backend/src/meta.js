@@ -49,16 +49,6 @@ module.exports = app => {
           sorting: 1,
           menu: 1,
         },
-        listArticleByCategory: {
-          title: 'Article List(by Category)',
-          scene: 'list',
-          autoRight: 1,
-          atomClassName: 'article',
-          action: 'read',
-          sorting: 1,
-          menu: 1,
-          actionPath: 'article/category',
-        },
       },
       statics: {
         'a-flow.flowDef': {
