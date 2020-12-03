@@ -261,6 +261,10 @@ module.exports = app => {
           ADD COLUMN atomClassId int(11) DEFAULT '0'
                   `;
         await this.ctx.model.query(sql);
+
+        // atomClass
+        await this._update5AtomClassIds(options);
+
       }
 
       if (options.version === 6) {
@@ -314,8 +318,69 @@ module.exports = app => {
               left join aCmsArticleTagRef f on a.id=f.itemId
         `;
         await this.ctx.model.query(sql);
+
+        // uuid
+        await this._update6Uuids(options);
+
       }
 
+      if (options.version === 7) {
+
+      }
+
+    }
+
+    async _update5AtomClassIds(options) {
+      // all instances
+      const instances = await this.ctx.bean.instance.list({ where: {} });
+      for (const instance of instances) {
+        await this.ctx.executeBean({
+          subdomain: instance.name,
+          beanModule: moduleInfo.relativeName,
+          beanFullName: `${moduleInfo.relativeName}.version.manager`,
+          context: options,
+          fn: '_update5AtomClassIdsInstance',
+        });
+      }
+    }
+
+    async _update5AtomClassIdsInstance() {
+      const atomClass = await utils.atomClass2(this.ctx, null);
+      // update aCmsCategory's atomClassId
+      await this.ctx.model.query(
+        `update aCmsCategory set atomClassId=?
+             where iid=?`,
+        [ atomClass.id, this.ctx.instance.id ]);
+      // update aCmsTag's atomClassId
+      await this.ctx.model.query(
+        `update aCmsTag set atomClassId=?
+             where iid=?`,
+        [ atomClass.id, this.ctx.instance.id ]);
+    }
+
+    async _update6Uuids(options) {
+      // all instances
+      const instances = await this.ctx.bean.instance.list({ where: {} });
+      for (const instance of instances) {
+        await this.ctx.executeBean({
+          subdomain: instance.name,
+          beanModule: moduleInfo.relativeName,
+          beanFullName: `${moduleInfo.relativeName}.version.manager`,
+          context: options,
+          fn: '_update6UuidsInstance',
+        });
+      }
+    }
+
+    async _update6UuidsInstance() {
+      const articles = await this.ctx.model.article.select();
+      for (const article of articles) {
+        const uuid = this._parseUuid(article);
+        await this.ctx.model.article.update({
+          id: article.id,
+          uuid,
+        });
+      }
     }
 
     async init(options) {
@@ -350,33 +415,6 @@ module.exports = app => {
         ];
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'article', roleRights });
 
-      }
-
-      if (options.version === 5) {
-        // atomClass
-        const atomClass = await utils.atomClass2(this.ctx, null);
-        // update aCmsCategory's atomClassId
-        await this.ctx.model.query(
-          `update aCmsCategory set atomClassId=?
-             where iid=?`,
-          [ atomClass.id, this.ctx.instance.id ]);
-        // update aCmsTag's atomClassId
-        await this.ctx.model.query(
-          `update aCmsTag set atomClassId=?
-             where iid=?`,
-          [ atomClass.id, this.ctx.instance.id ]);
-      }
-
-      if (options.version === 6) {
-        // uuid
-        const articles = await this.ctx.model.article.select();
-        for (const article of articles) {
-          const uuid = this._parseUuid(article);
-          await this.ctx.model.article.update({
-            id: article.id,
-            uuid,
-          });
-        }
       }
 
     }
