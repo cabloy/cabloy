@@ -33,6 +33,7 @@ export default {
       formAtomClass,
       validateParams: null,
       categoriesAll: null,
+      tagsAll: null,
       ready: false,
     };
   },
@@ -99,8 +100,6 @@ export default {
       await this.$store.dispatch('a/base/getLabels');
       // locales
       await this.$store.dispatch('a/base/getLocales');
-      // categories
-      await this.loadCategoriesAll(this.form.language);
       // init atomClass
       await this.atomClassChanged();
       //
@@ -114,11 +113,23 @@ export default {
         language,
       });
     },
+    async loadTagsAll(language) {
+      const atomClassBase = this.atomClassBase;
+      if (!atomClassBase || !atomClassBase.tag) return;
+      this.tagsAll = await this.$store.dispatch('a/base/getTags', {
+        atomClass: this.atomClass,
+        language,
+      });
+    },
     async atomClassChanged() {
       // reset
       this.validateParams = null;
       const atomClass = this.atomClass;
       if (!atomClass) return;
+      // categories
+      await this.loadCategoriesAll(this.form.language);
+      // tags
+      await this.loadTagsAll(this.form.language);
       // module
       await this.$meta.module.use(atomClass.module);
       // validateParams
@@ -179,6 +190,11 @@ export default {
       const category = this.categoriesAll.find(_item => _item.id === categoryId);
       return category ? category.categoryName : '';
     },
+    getTagName(tagId) {
+      if (!this.tagsAll || !tagId) return '';
+      const tag = this.tagsAll.find(_item => _item.id === tagId);
+      return tag ? tag.tagName : '';
+    },
     combineAtomClassAndLanguage(language) {
       const queries = {
         module: this.atomClass.module,
@@ -189,27 +205,32 @@ export default {
       }
       return queries;
     },
-    async onChooseCategory(event) {
+    async _selectLanguage(event) {
       const action = {
         actionModule: 'a-base',
         actionComponent: 'action',
         name: 'selectLocale',
         targetEl: event.target,
       };
-      let locale;
+      let language;
       if (this.form.language) {
-        locale = this.form.language;
+        language = this.form.language;
       } else {
-        locale = await this.$meta.util.performAction({ ctx: this, action, item: this.atomClass });
+        const locale = await this.$meta.util.performAction({ ctx: this, action, item: this.atomClass });
         if (locale) {
+          language = locale.value;
           this.form.language = locale.value;
         }
       }
-      if (locale) {
-        await this.loadCategoriesAll(this.form.language);
+      return language;
+    },
+    async onChooseCategory(event) {
+      const language = await this._selectLanguage(event);
+      if (language) {
+        await this.loadCategoriesAll(language);
       }
       return new Promise(resolve => {
-        const url = this.$meta.util.combineQueries('/a/basefront/category/select', this.combineAtomClassAndLanguage(this.form.language));
+        const url = this.$meta.util.combineQueries('/a/basefront/category/select', this.combineAtomClassAndLanguage(language));
         this.$view.navigate(url, {
           target: '_self',
           context: {
@@ -220,6 +241,32 @@ export default {
             callback: (code, node) => {
               if (code === 200) {
                 this.form.category = node.id;
+                resolve(true);
+              } else if (code === false) {
+                resolve(false);
+              }
+            },
+          },
+        });
+      });
+    },
+    async onChooseTag(event) {
+      const language = await this._selectLanguage(event);
+      if (language) {
+        await this.loadTagsAll(language);
+      }
+      return new Promise(resolve => {
+        const url = this.$meta.util.combineQueries('/a/basefront/tag/select', this.combineAtomClassAndLanguage(language));
+        this.$view.navigate(url, {
+          target: '_self',
+          context: {
+            params: {
+              tags: this.form.tag ? [ this.form.tag ] : null,
+              multiple: false,
+            },
+            callback: (code, tag) => {
+              if (code === 200) {
+                this.form.tag = tag;
                 resolve(true);
               } else if (code === false) {
                 resolve(false);
@@ -265,7 +312,12 @@ export default {
       );
     },
     _renderTag() {
-
+      return (
+        <eb-list-item-choose key="form.tag"
+          link="#" title={this.$text('Tag')} propsOnChoose={this.onChooseTag}>
+          <div slot="after">{this.getTagName(this.form.tag)}</div>
+        </eb-list-item-choose>
+      );
     },
     _renderLanguageAndOthers() {
       const atomClassBase = this.atomClassBase;

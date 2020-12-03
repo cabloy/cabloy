@@ -48,6 +48,9 @@ export default {
     tags() {
       return this.contextParams.tags;
     },
+    multiple() {
+      return this.contextParams.multiple !== false;
+    },
     tagsAll2() {
       if (!this.tagsAll || !this.searchQuery) return this.tagsAll;
       return this.tagsAll.filter(item => item.tagName.toLowerCase().indexOf(this.searchQuery.toLowerCase()) > -1);
@@ -101,15 +104,25 @@ export default {
       }
     },
     onTagSwitch(item) {
-      const index = this.tagIndex(item.id);
-      if (index > -1) {
-        this.tagsCurrent.splice(index, 1);
+      if (this.multiple) {
+        const index = this.tagIndex(item.id);
+        if (index > -1) {
+          this.tagsCurrent.splice(index, 1);
+        } else {
+          this.tagsCurrent.push(item.id);
+        }
       } else {
-        this.tagsCurrent.push(item.id);
+        this.tagsCurrent = [ item.id ];
       }
     },
     onPerformDone() {
-      this.contextCallback(200, this.tagsCurrent.length > 0 ? this.tagsCurrent : null);
+      let res;
+      if (this.multiple) {
+        res = this.tagsCurrent.length > 0 ? this.tagsCurrent : null;
+      } else {
+        res = this.tagsCurrent.length > 0 ? this.tagsCurrent[0] : null;
+      }
+      this.contextCallback(200, res);
       this.$f7router.back();
     },
     onPerformSearch() {

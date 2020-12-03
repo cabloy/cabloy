@@ -19,13 +19,13 @@ export default {
   created() {
   },
   methods: {
-    combineAtomClassAndLanguage(locale) {
+    combineAtomClassAndLanguage(language) {
       const queries = {
         module: this.atomClass.module,
         atomClassName: this.atomClass.atomClassName,
       };
-      if (locale) {
-        queries.language = locale.value;
+      if (language) {
+        queries.language = language;
       }
       return queries;
     },
@@ -37,17 +37,18 @@ export default {
         name: 'selectLocale',
         targetEl: event.target,
       };
-      let locale;
+      let language;
       if (data.atomLanguage) {
-        locale = data.atomLanguage;
+        language = data.atomLanguage;
       } else {
-        locale = await this.$meta.util.performAction({ ctx: this, action, item: data });
+        const locale = await this.$meta.util.performAction({ ctx: this, action, item: data });
         if (locale) {
+          language = locale.value;
           data.atomLanguage = locale.value;
         }
       }
       return new Promise(resolve => {
-        const url = this.$meta.util.combineQueries('/a/basefront/category/select', this.combineAtomClassAndLanguage(locale));
+        const url = this.$meta.util.combineQueries('/a/basefront/category/select', this.combineAtomClassAndLanguage(language));
         this.$view.navigate(url, {
           target: '_self',
           context: {
