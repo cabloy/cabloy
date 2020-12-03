@@ -35,6 +35,7 @@ module.exports = ctx => {
       // -- h: aComment
       // -- i: aFile
       // -- j: aCategory
+      // -- k: aTagRef
 
       // for safe
       tableName = tableName ? ctx.model.format('??', tableName) : null;
@@ -43,6 +44,14 @@ module.exports = ctx => {
       const limit = page ? ctx.model._limit(page.size, page.index) : null;
 
       // vars
+      let
+        _languageWhere;
+      let
+        _categoryWhere;
+      let
+        _tagJoin,
+        _tagWhere;
+
       let
         _starJoin,
         _starWhere;
@@ -63,6 +72,29 @@ module.exports = ctx => {
       const _where = where ? `${where} AND` : ' WHERE';
       const _orders = orders || '';
       const _limit = limit || '';
+
+      // language
+      if (language) {
+        _languageWhere = ctx.model.format(' and a.atomLanguage=?', language);
+      } else {
+        _languageWhere = '';
+      }
+
+      // category
+      if (category) {
+        _categoryWhere = ` and a.atomCategoryId=${category}`;
+      } else {
+        _categoryWhere = '';
+      }
+
+      // tag
+      if (tag) {
+        _tagJoin = ' inner join aTagRef k on k.atomId=a.id';
+        _tagWhere = ` and k.iid=${iid} and k.tagId=${tag}`;
+      } else {
+        _tagJoin = '';
+        _tagWhere = '';
+      }
 
       // star
       if (star) {
@@ -141,6 +173,7 @@ module.exports = ctx => {
             left join aUser g2 on a.userIdUpdated=g2.id
             left join aCategory j on a.atomCategoryId=j.id
             ${_itemJoin}
+            ${_tagJoin}
             ${_starJoin}
             ${_labelJoin}
             ${_commentJoin}
@@ -150,6 +183,9 @@ module.exports = ctx => {
            (
              a.deleted=0 and a.iid=${iid} and a.atomStage=${stage} and a.atomClosed=0 and a.userIdUpdated=${userIdWho}
              and a.atomFlowId=0
+             ${_languageWhere}
+             ${_categoryWhere}
+             ${_tagWhere}
              ${_starWhere}
              ${_labelWhere}
              ${_commentWhere}
@@ -177,6 +213,7 @@ module.exports = ctx => {
       // -- h: aComment
       // -- i: aFile
       // -- j: aCategory
+      // -- k: aTagRef
 
       // for safe
       tableName = tableName ? ctx.model.format('??', tableName) : null;
@@ -185,6 +222,14 @@ module.exports = ctx => {
       const limit = page ? ctx.model._limit(page.size, page.index) : null;
 
       // vars
+      let
+        _languageWhere;
+      let
+        _categoryWhere;
+      let
+        _tagJoin,
+        _tagWhere;
+
       let _commentField,
         _commentJoin,
         _commentWhere;
@@ -198,6 +243,29 @@ module.exports = ctx => {
       const _where = where ? `${where} AND` : ' WHERE';
       const _orders = orders || '';
       const _limit = limit || '';
+
+      // language
+      if (language) {
+        _languageWhere = ctx.model.format(' and a.atomLanguage=?', language);
+      } else {
+        _languageWhere = '';
+      }
+
+      // category
+      if (category) {
+        _categoryWhere = ` and a.atomCategoryId=${category}`;
+      } else {
+        _categoryWhere = '';
+      }
+
+      // tag
+      if (tag) {
+        _tagJoin = ' inner join aTagRef k on k.atomId=a.id';
+        _tagWhere = ` and k.iid=${iid} and k.tagId=${tag}`;
+      } else {
+        _tagJoin = '';
+        _tagWhere = '';
+      }
 
       // comment
       if (comment) {
@@ -254,12 +322,16 @@ module.exports = ctx => {
             left join aUser g2 on a.userIdUpdated=g2.id
             left join aCategory j on a.atomCategoryId=j.id
             ${_itemJoin}
+            ${_tagJoin}
             ${_commentJoin}
             ${_fileJoin}
 
           ${_where}
            (
              a.deleted=0 and a.iid=${iid} and a.atomStage=${stage}
+             ${_languageWhere}
+             ${_categoryWhere}
+             ${_tagWhere}
              ${_commentWhere}
              ${_fileWhere}
            )
@@ -330,12 +402,14 @@ module.exports = ctx => {
         _languageWhere = '';
       }
 
+      // category
       if (category) {
         _categoryWhere = ` and a.atomCategoryId=${category}`;
       } else {
         _categoryWhere = '';
       }
 
+      // tag
       if (tag) {
         _tagJoin = ' inner join aTagRef k on k.atomId=a.id';
         _tagWhere = ` and k.iid=${iid} and k.tagId=${tag}`;
