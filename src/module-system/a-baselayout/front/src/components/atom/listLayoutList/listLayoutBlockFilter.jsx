@@ -33,6 +33,7 @@ export default {
       formAtomClass,
       validateParams: null,
       categoriesAll: null,
+      ready: false,
     };
   },
   computed: {
@@ -88,36 +89,49 @@ export default {
     },
   },
   created() {
-    // labels
-    this.$store.dispatch('a/base/getLabels');
-    // locales
-    this.$store.dispatch('a/base/getLocales');
-    // categories
-    this.loadCategoriesAll(this.form.language);
-    // init atomClass
-    this.atomClassChanged();
   },
   methods: {
-    atomClassChanged() {
+    onAtomClassesReady() {
+      this.init();
+    },
+    async init() {
+      // labels
+      await this.$store.dispatch('a/base/getLabels');
+      // locales
+      await this.$store.dispatch('a/base/getLocales');
+      // categories
+      await this.loadCategoriesAll(this.form.language);
+      // init atomClass
+      await this.atomClassChanged();
+      //
+      this.ready = true;
+    },
+    async loadCategoriesAll(language) {
+      const atomClassBase = this.atomClassBase;
+      if (!atomClassBase || !atomClassBase.category) return;
+      this.categoriesAll = await this.$store.dispatch('a/base/getCategories', {
+        atomClass: this.atomClass,
+        language,
+      });
+    },
+    async atomClassChanged() {
       // reset
       this.validateParams = null;
       const atomClass = this.atomClass;
       if (!atomClass) return;
       // module
-      this.$meta.module.use(atomClass.module, () => {
-        // validateParams
-        this.$api.post('/a/base/atomClass/validatorSearch', {
-          atomClass: {
-            module: atomClass.module,
-            atomClassName: atomClass.atomClassName,
-          },
-        }).then(data => {
-          this.validateParams = {
-            module: data.module,
-            validator: data.validator,
-          };
-        });
+      await this.$meta.module.use(atomClass.module);
+      // validateParams
+      const data = await this.$api.post('/a/base/atomClass/validatorSearch', {
+        atomClass: {
+          module: atomClass.module,
+          atomClassName: atomClass.atomClassName,
+        },
       });
+      this.validateParams = {
+        module: data.module,
+        validator: data.validator,
+      };
     },
     onSelectAtomClass() {
       this.$view.navigate('/a/basefront/atom/selectAtomClass', {
@@ -215,12 +229,6 @@ export default {
         });
       });
     },
-    async loadCategoriesAll(language) {
-      this.categoriesAll = await this.$store.dispatch('a/base/getCategories', {
-        atomClass: this.atomClass,
-        language,
-      });
-    },
     _renderForm() {
       return (
         <eb-list form inline-labels no-hairlines-md onSubmit={this.onFormSubmit}>
@@ -303,8 +311,8 @@ export default {
   render() {
     return (
       <div>
-        {this._renderForm()}
-        {this._renderFormAtomClass()}
+        {this.ready && this._renderForm()}
+        {this.ready && this._renderFormAtomClass()}
       </div>
     );
   },
