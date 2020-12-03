@@ -120,7 +120,7 @@ export default {
       if (this.multiple) {
         res = this.tagsCurrent.length > 0 ? this.tagsCurrent : null;
       } else {
-        res = this.tagsCurrent.length > 0 ? this.tagsCurrent[0] : null;
+        res = this.tagsCurrent.length > 0 ? this.tagsCurrent[0] : 0;
       }
       this.contextCallback(200, res);
       this.$f7router.back();

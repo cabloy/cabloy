@@ -23,15 +23,27 @@ export default {
         if (form.atomName) {
           options.where['a.atomName'] = { val: form.atomName, op: 'like' };
         }
+        if (form.stage) {
+          options.stage = form.stage;
+        }
+
+        if (form.language) {
+          options.language = form.language;
+        }
+        if (form.category) {
+          options.category = form.category;
+        }
+        if (form.tag) {
+          options.tag = form.tag;
+        }
+
         if (form.star) {
           options.star = Number(form.star);
         }
         if (form.label) {
           options.label = form.label;
         }
-        if (form.stage) {
-          options.stage = form.stage;
-        }
+
         if (form.atomClass) {
           params.atomClass = form.atomClass;
         }
