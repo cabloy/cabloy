@@ -108,9 +108,13 @@ export default {
     },
     onPerformDone() {
       const checked = this.$refs.tree.checked();
-      if (!checked || checked.length === 0) return;
-
-      this.contextCallback(200, checked);
+      let res;
+      if (!checked || checked.length === 0) {
+        res = null;
+      } else {
+        res = checked;
+      }
+      this.contextCallback(200, res);
       this.$f7router.back();
     },
   },

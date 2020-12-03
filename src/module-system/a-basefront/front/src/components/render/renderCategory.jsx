@@ -58,8 +58,13 @@ export default {
             },
             callback: (code, node) => {
               if (code === 200) {
-                data.atomCategoryId = node.id;
-                data.atomCategoryName = node.data.categoryName;
+                if (node) {
+                  data.atomCategoryId = node.id;
+                  data.atomCategoryName = node.data.categoryName;
+                } else {
+                  data.atomCategoryId = 0;
+                  data.atomCategoryName = '';
+                }
                 resolve(true);
               } else if (code === false) {
                 resolve(false);

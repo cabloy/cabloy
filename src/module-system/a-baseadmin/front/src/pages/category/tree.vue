@@ -137,19 +137,19 @@ export default {
           },
           callback: (code, data) => {
             if (code === 200) {
+              if (!data) return;
               const categoryIdParent = data.id;
-              if (node.data.categoryIdParent !== categoryIdParent) {
-                this.$api.post('/a/base/category/move', { categoryId, categoryIdParent })
-                  .then(() => {
-                    this.reloadNode(this.findNode(node.data.categoryIdParent));
-                    this.reloadNode(this.findNode(categoryIdParent), {
-                      attrs: {
-                        toggle: true,
-                        loadChildren: true,
-                      },
-                    });
+              if (node.data.categoryIdParent === categoryIdParent) return;
+              this.$api.post('/a/base/category/move', { categoryId, categoryIdParent })
+                .then(() => {
+                  this.reloadNode(this.findNode(node.data.categoryIdParent));
+                  this.reloadNode(this.findNode(categoryIdParent), {
+                    attrs: {
+                      toggle: true,
+                      loadChildren: true,
+                    },
                   });
-              }
+                });
             }
           },
         },

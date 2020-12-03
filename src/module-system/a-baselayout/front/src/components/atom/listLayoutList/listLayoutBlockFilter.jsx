@@ -240,7 +240,7 @@ export default {
             },
             callback: (code, node) => {
               if (code === 200) {
-                this.form.category = node.id;
+                this.form.category = node ? node.id : 0;
                 resolve(true);
               } else if (code === false) {
                 resolve(false);
