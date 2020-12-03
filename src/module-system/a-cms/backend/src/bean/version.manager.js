@@ -325,7 +325,8 @@ module.exports = app => {
       }
 
       if (options.version === 7) {
-        //
+        // migration: languange/category/tag
+        await this._update7Migration(options);
       }
 
     }
@@ -381,6 +382,25 @@ module.exports = app => {
           uuid,
         });
       }
+    }
+
+    async _update7Migration(options) {
+      // all instances
+      const instances = await this.ctx.bean.instance.list({ where: {} });
+      for (const instance of instances) {
+        await this.ctx.executeBean({
+          subdomain: instance.name,
+          beanModule: moduleInfo.relativeName,
+          beanFullName: `${moduleInfo.relativeName}.version.manager`,
+          context: options,
+          fn: '_update7MigrationInstance',
+        });
+      }
+    }
+
+    async _update7MigrationInstance() {
+      // cagetory
+
     }
 
     async init(options) {
