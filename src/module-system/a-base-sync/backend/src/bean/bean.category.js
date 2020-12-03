@@ -33,11 +33,7 @@ module.exports = ctx => {
     async children({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag, count = 0 }) {
       //
       const where = { };
-      if (count) {
-        if (categoryId !== undefined) where.categoryIdParent = categoryId;
-      } else {
-        where.categoryIdParent = categoryId || 0;
-      }
+      if (categoryId !== undefined) where.categoryIdParent = categoryId;
       // atomClassId
       if (!where.categoryIdParent) {
         // atomClass

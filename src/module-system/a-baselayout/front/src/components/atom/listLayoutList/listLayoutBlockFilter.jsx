@@ -32,6 +32,7 @@ export default {
       form,
       formAtomClass,
       validateParams: null,
+      categoriesAll: null,
     };
   },
   computed: {
@@ -91,6 +92,8 @@ export default {
     this.$store.dispatch('a/base/getLabels');
     // locales
     this.$store.dispatch('a/base/getLocales');
+    // categories
+    this.loadCategoriesAll(this.form.language);
     // init atomClass
     this.atomClassChanged();
   },
@@ -157,6 +160,67 @@ export default {
         this.onPerformSearch();
       }
     },
+    getCategoryName(categoryId) {
+      if (!this.categoriesAll || !categoryId) return '';
+      const category = this.categoriesAll.find(_item => _item.id === categoryId);
+      return category ? category.categoryName : '';
+    },
+    combineAtomClassAndLanguage(language) {
+      const queries = {
+        module: this.atomClass.module,
+        atomClassName: this.atomClass.atomClassName,
+      };
+      if (language) {
+        queries.language = language;
+      }
+      return queries;
+    },
+    async onChooseCategory(event) {
+      const action = {
+        actionModule: 'a-base',
+        actionComponent: 'action',
+        name: 'selectLocale',
+        targetEl: event.target,
+      };
+      let locale;
+      if (this.form.language) {
+        locale = this.form.language;
+      } else {
+        locale = await this.$meta.util.performAction({ ctx: this, action, item: this.atomClass });
+        if (locale) {
+          this.form.language = locale.value;
+        }
+      }
+      if (locale) {
+        await this.loadCategoriesAll(this.form.language);
+      }
+      return new Promise(resolve => {
+        const url = this.$meta.util.combineQueries('/a/basefront/category/select', this.combineAtomClassAndLanguage(this.form.language));
+        this.$view.navigate(url, {
+          target: '_self',
+          context: {
+            params: {
+              categoryIdStart: 0,
+              leafOnly: true,
+            },
+            callback: (code, node) => {
+              if (code === 200) {
+                this.form.category = node.id;
+                resolve(true);
+              } else if (code === false) {
+                resolve(false);
+              }
+            },
+          },
+        });
+      });
+    },
+    async loadCategoriesAll(language) {
+      this.categoriesAll = await this.$store.dispatch('a/base/getCategories', {
+        atomClass: this.atomClass,
+        language,
+      });
+    },
     _renderForm() {
       return (
         <eb-list form inline-labels no-hairlines-md onSubmit={this.onFormSubmit}>
@@ -169,7 +233,7 @@ export default {
           <f7-list-item title={this.$text('UserStar')}>
             <eb-toggle slot="after" v-model={this.form.star}></eb-toggle>
           </f7-list-item>
-          <f7-list-item smartSelect title={this.$text('UserLabel')} smartSelectParams={{ openIn: 'page', closeOnSelect: true }}>
+          <f7-list-item smartSelect title={this.$text('UserLabel')} smartSelectParams={{ openIn: 'sheet', closeOnSelect: true }}>
             <eb-select name="label" v-model={this.form.label} options={this.userLabels}></eb-select>
           </f7-list-item>
           <f7-list-item divider></f7-list-item>
@@ -177,17 +241,39 @@ export default {
         </eb-list>
       );
     },
+    _renderLanguage() {
+      return (
+        <f7-list-item key="form.language" smartSelect title={this.$text('Language')} smartSelectParams={{ openIn: 'sheet', closeOnSelect: true }}>
+          <eb-select name="language" v-model={this.form.language} options={this.locales}></eb-select>
+        </f7-list-item>
+      );
+    },
+    _renderCategory() {
+      return (
+        <eb-list-item-choose key="form.category"
+          link="#" title={this.$text('Category')} propsOnChoose={this.onChooseCategory}>
+          <div slot="after">{this.getCategoryName(this.form.category)}</div>
+        </eb-list-item-choose>
+      );
+    },
+    _renderTag() {
+
+    },
     _renderLanguageAndOthers() {
       const atomClassBase = this.atomClassBase;
       if (!atomClassBase) return null;
       const children = [];
       // language
-      if (!atomClassBase.language) {
-        children.push(
-          <f7-list-item key="form.language" smartSelect title={this.$text('Language')} smartSelectParams={{ openIn: 'page', closeOnSelect: true }}>
-            <eb-select name="language" v-model={this.form.language} options={this.locales}></eb-select>
-          </f7-list-item>
-        );
+      if (atomClassBase.language) {
+        children.push(this._renderLanguage());
+      }
+      // category
+      if (atomClassBase.category) {
+        children.push(this._renderCategory());
+      }
+      // tag
+      if (atomClassBase.tag) {
+        children.push(this._renderTag());
       }
       // divider
       if (children.length > 0) {

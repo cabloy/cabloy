@@ -18,7 +18,7 @@ export default {
     },
   },
   created() {
-    this.loadTagAlls(this.context.data.atomLanguage).then(() => {});
+    this.loadTagsAll(this.context.data.atomLanguage);
   },
   methods: {
     combineAtomClassAndLanguage(locale) {
@@ -31,7 +31,7 @@ export default {
       }
       return queries;
     },
-    async loadTagAlls(language) {
+    async loadTagsAll(language) {
       this.tagsAll = await this.$store.dispatch('a/base/getTags', {
         atomClass: this.atomClass,
         language,
@@ -61,8 +61,10 @@ export default {
         locale = await this.$meta.util.performAction({ ctx: this, action, item: data });
         if (locale) {
           data.atomLanguage = locale.value;
-          await this.loadTagAlls();
         }
+      }
+      if (locale) {
+        await this.loadTagsAll(data.atomLanguage);
       }
       return new Promise(resolve => {
         const url = this.$meta.util.combineQueries('/a/basefront/tag/select', this.combineAtomClassAndLanguage(locale));

@@ -24,7 +24,7 @@ module.exports = app => {
               tableNameModes: {
                 default: 'testPartyView',
               },
-              language: false,
+              language: true, // false,
               category: true,
               tag: true,
             },

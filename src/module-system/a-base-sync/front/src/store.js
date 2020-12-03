@@ -32,6 +32,7 @@ export default function(Vue) {
       modules: null,
       atomClasses: null,
       actions: null,
+      categories: {},
       tags: {},
       functionScenes: {},
       functions: null,
@@ -135,6 +136,13 @@ export default function(Vue) {
         state.functionScenes = {
           ...state.functionScenes,
           [sceneMenu]: scenes,
+        };
+      },
+      setCategories(state, { atomClass, language, categories }) {
+        const key = `${atomClass.module}:${atomClass.atomClassName}:${language || ''}`;
+        state.categories = {
+          ...state.categories,
+          [key]: categories,
         };
       },
       setTags(state, { atomClass, language, tags }) {
@@ -262,6 +270,22 @@ export default function(Vue) {
             data = data || {};
             commit('setButtons', data);
             resolve(data);
+          }).catch(err => {
+            reject(err);
+          });
+        });
+      },
+      getCategories({ state, commit }, { atomClass, language }) {
+        return new Promise((resolve, reject) => {
+          const key = `${atomClass.module}:${atomClass.atomClassName}:${language || ''}`;
+          if (state.categories[key]) return resolve(state.categories[key]);
+          Vue.prototype.$meta.api.post('/a/base/category/children', {
+            atomClass,
+            language: language || undefined,
+          }).then(data => {
+            const categories = data.list;
+            commit('setCategories', { atomClass, language, categories });
+            resolve(categories);
           }).catch(err => {
             reject(err);
           });
