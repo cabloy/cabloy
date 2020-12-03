@@ -97,6 +97,8 @@ export default {
   Site: '站点',
   seconds: '秒',
   Seconds: '秒',
+  UserStar: '用户星标',
+  UserLabel: '用户标签',
   'New Category': '新目录',
   'Advanced Filter': '高级筛选',
   'Atom Flag': '原子标记',

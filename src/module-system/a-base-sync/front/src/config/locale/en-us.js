@@ -1,4 +1,6 @@
 export default {
+  UserStar: 'User Star',
+  UserLabel: 'User Label',
   HeartForAtom: 'Heart',
   KeyForAtom: 'Key',
   AtomClassSelectRoleTip: 'Select Role',
