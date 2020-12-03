@@ -1,4 +1,5 @@
 const require3 = require('require3');
+const uuid = require3('uuid');
 const ExcelJS = require3('exceljs');
 
 const __atomBasicFields = [
@@ -17,6 +18,10 @@ module.exports = app => {
         const sequence = this.ctx.bean.sequence.module(moduleInfo.relativeName);
         const draftId = await sequence.next('draft');
         item.atomName = `${this.ctx.text('Draft')}-${draftId}`;
+      }
+      // atomStaticKey
+      if (!item.atomStaticKey) {
+        item.atomStaticKey = uuid.v4().replace(/-/g, '');
       }
       // add
       const atomId = await this.ctx.bean.atom._add({ atomClass, atom: item, user });
