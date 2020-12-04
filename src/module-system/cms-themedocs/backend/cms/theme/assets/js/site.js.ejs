@@ -204,7 +204,7 @@ function _prepareTreeData(list) {
       icon: false,
       original: item,
     };
-    if (item.catalog === 0) {
+    if (item.categoryCatalog === 0) {
       _item.children = true;
     } else {
       _item.children = this._prepareTreeData(item.children);
