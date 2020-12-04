@@ -31,13 +31,13 @@
             </f7-col>
             <f7-col class="flex-direction-column text-align-center">
               <div>
-                <eb-link :eb-href="combineAtomClass(`category/list?language=${item.value}`)">{{$text('Categories')}}</eb-link>
+                <eb-link :eb-href="combineAtomClass(`/a/baseadmin/category/tree?language=${item.value}&languageTitle=${item.title}`)">{{$text('Categories')}}</eb-link>
               </div>
               <div>{{getStat(item.value,'categories')}}</div>
             </f7-col>
             <f7-col class="flex-direction-column text-align-center">
               <div>
-                <eb-link :eb-href="combineAtomClass(`tag/list?language=${item.value}`)">{{$text('Tags')}}</eb-link>
+                <eb-link :eb-href="combineAtomClass(`/a/baseadmin/tag/list?language=${item.value}&languageTitle=${item.title}`)">{{$text('Tags')}}</eb-link>
               </div>
               <div>{{getStat(item.value,'tags')}}</div>
             </f7-col>

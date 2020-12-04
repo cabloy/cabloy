@@ -175,12 +175,12 @@ module.exports = app => {
       });
 
       // categories
-      stats.categories = await this.ctx.service.category.count({
+      stats.categories = await this.ctx.bean.category.count({
         atomClass, language,
       });
 
       // tags
-      stats.tags = await this.ctx.service.tag.count({
+      stats.tags = await this.ctx.bean.tag.count({
         atomClass, language,
       });
 
