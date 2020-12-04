@@ -519,13 +519,16 @@ module.exports = app => {
           atomCategoryId,
           atomTags,
         },
-        options: {},
+        options: {
+          ignoreRender: true,
+        },
         user,
       });
       // submit
       await this.ctx.bean.atom.submit({
         key: draftKey,
         options: {
+          ignoreRender: true,
           ignoreFlow: true,
         },
         user,

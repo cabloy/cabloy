@@ -108,6 +108,7 @@ module.exports = app => {
     }
 
     getBlocks({ locale }) {
+      if (!locale) locale = this.ctx.locale;
       if (!_blocksLocales[locale]) {
         const blocks = this._prepareBlocks({ locale });
         // object

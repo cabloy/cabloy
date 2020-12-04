@@ -295,13 +295,14 @@ module.exports = ctx => {
       });
     }
 
-    async _submitDirect({ /* key,*/ item, user }) {
+    async _submitDirect({ /* key,*/ item, options, user }) {
       // archive -> history
       if (item.atomIdArchive) {
         await this._copy({
           target: 'history',
           srcKey: { atomId: item.atomIdArchive }, srcItem: null,
           destKey: null,
+          options,
           user,
         });
       }
@@ -310,6 +311,7 @@ module.exports = ctx => {
         target: 'archive',
         srcKey: { atomId: item.atomId }, srcItem: item,
         destKey: item.atomIdArchive ? { atomId: item.atomIdArchive } : null,
+        options,
         user,
       });
       // update draft
@@ -427,7 +429,7 @@ module.exports = ctx => {
     }
 
     // target: draft/archive/history/clone
-    async _copy({ target, srcKey, srcItem, destKey, user }) {
+    async _copy({ target, srcKey, srcItem, destKey, options, user }) {
       // atomClass
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: srcKey.atomId });
       if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
@@ -540,14 +542,14 @@ module.exports = ctx => {
       await ctx.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
-        context: { atomClass, target, key: destKey, item: destItem, user },
+        context: { atomClass, target, key: destKey, item: destItem, options, user },
         fn: 'write',
       });
       // bean copy
       await ctx.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
-        context: { atomClass, target, srcKey, srcItem, destKey, destItem, user },
+        context: { atomClass, target, srcKey, srcItem, destKey, destItem, options, user },
         fn: 'copy',
       });
       // copy attachments

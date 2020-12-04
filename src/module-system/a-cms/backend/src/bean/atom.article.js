@@ -19,8 +19,6 @@ module.exports = app => {
         atomId: key.atomId,
         editMode,
       };
-      if (item.language) params.language = item.language;
-      if (item.categoryId) params.categoryId = item.categoryId;
       // uuid
       params.uuid = item.uuid || uuid.v4().replace(/-/g, '');
       // insert
@@ -49,7 +47,7 @@ module.exports = app => {
       // super
       await super.select({ atomClass, options, items, user });
       // select
-      const showSorting = options && options.where && options.where.categoryId;
+      const showSorting = options && options.category;
       for (const item of items) {
         this._getMeta(item, showSorting);
       }
@@ -62,7 +60,7 @@ module.exports = app => {
       // super
       await super.write({ atomClass, target, key, item, options, user });
       // if undefined then old
-      const fields = [ 'slug', 'editMode', 'content', 'language', 'categoryId', 'sticky', 'keywords', 'description', 'sorting', 'flag', 'extra' ];
+      const fields = [ 'atomLanguage', 'slug', 'editMode', 'content', 'sticky', 'keywords', 'description', 'sorting', 'flag', 'extra' ];
       for (const field of fields) {
         if (item[field] === undefined) item[field] = atomOld[field];
       }
@@ -102,12 +100,12 @@ module.exports = app => {
       // markdown
       const md = markdown.create();
       // markdown-it-block
-      const blocks = this.ctx.service.site.getBlocks({ locale: item.language });
+      const blocks = this.ctx.service.site.getBlocks({ locale: item.atomLanguage });
       // block options
       const blockOptions = {
         utils: {
           text: (...args) => {
-            return this.ctx.text.locale(item.language, ...args);
+            return this.ctx.text.locale(item.atomLanguage, ...args);
           },
         },
         blocks,
@@ -125,7 +123,6 @@ module.exports = app => {
       // update article
       await this.ctx.model.article.update({
         id: key.itemId,
-        language: item.language,
         categoryId: item.categoryId,
         sticky: item.sticky,
         keywords: item.keywords,
@@ -145,19 +142,15 @@ module.exports = app => {
       await this.ctx.model.query('update aCmsContent a set a.content=?, a.html=? where a.iid=? and a.atomId=?',
         [ item.content, html, this.ctx.instance.id, key.atomId ]);
 
-      // tags
-      const tagsNew = await this.ctx.service.tag.updateArticleTags({ atomClass, key, item });
-      if (atomStage === 1) {
-        // set tag count , force check if delete tags
-        await this.ctx.service.tag.setTagArticleCount({ tagsNew, tagsOld: atomOld.tags });
-      }
-
       // render
-      if (atomStage === 0) {
-        await this._renderArticle({ atomClass, key, inner: true });
-      }
-      if (atomStage === 1) {
-        await this._renderArticle({ atomClass, key, inner: false });
+      const ignoreRender = options && options.ignoreRender;
+      if (!ignoreRender) {
+        if (atomStage === 0) {
+          await this._renderArticle({ atomClass, key, inner: true });
+        }
+        if (atomStage === 1) {
+          await this._renderArticle({ atomClass, key, inner: false });
+        }
       }
     }
 
@@ -173,14 +166,6 @@ module.exports = app => {
       await this.ctx.model.content.delete({
         itemId: key.itemId,
       });
-
-      // delete tags
-      if (atomOld.atomStage === 1) {
-        await this.ctx.service.tag.deleteArticleTags({ key });
-
-        // set tag count , force check if delete tags
-        await this.ctx.service.tag.setTagArticleCount({ tagsNew: null, tagsOld: atomOld.tags });
-      }
 
       // delete article
       if (atomOld.atomStage === 0) {
@@ -258,7 +243,10 @@ module.exports = app => {
       const article = await this.ctx.bean.atom.read({ key, user: { id: 0 } });
       if (!article) return null;
       // check language
-      if (!article.language) this.ctx.throw(1001);
+      if (!article.atomLanguage) {
+        return null;
+        // this.ctx.throw(1001);
+      }
       return article;
     }
 

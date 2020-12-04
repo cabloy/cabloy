@@ -24,23 +24,6 @@ module.exports = app => {
     { method: 'post', path: 'site/getBlockArray', controller: 'site' },
     { method: 'post', path: 'site/blockSave', controller: 'site' },
     { method: 'post', path: 'site/getStats', controller: 'site', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
-    // category
-    { method: 'post', path: 'category/item', controller: 'category', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'category/save', controller: 'category', middlewares: 'validate', meta: {
-      validate: { validator: 'category' },
-      right: { type: 'function', module: 'a-settings', name: 'settings' },
-    } },
-    { method: 'post', path: 'category/tree', controller: 'category' }, // not set function right
-    { method: 'post', path: 'category/children', controller: 'category' }, // not set function right
-    { method: 'post', path: 'category/add', controller: 'category', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'category/delete', controller: 'category', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'category/move', controller: 'category', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'category/relativeTop', controller: 'category' }, // not set function right
-    // tag
-    { method: 'post', path: 'tag/list', controller: 'tag' },
-    { method: 'post', path: 'tag/add', controller: 'tag', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'tag/save', controller: 'tag', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'tag/delete', controller: 'tag', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
     // rss
     { method: 'get', path: 'rss/feed/article/comments/:atomId', controller: 'rss', action: 'articleComments' },
     { method: 'get', path: 'rss/feed/comments/:module/:atomClassName/:language', controller: 'rss', action: 'feedComments' },
