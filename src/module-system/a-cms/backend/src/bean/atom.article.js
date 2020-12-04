@@ -242,7 +242,7 @@ module.exports = app => {
       // article
       const article = await this.ctx.bean.atom.read({ key, user: { id: 0 } });
       if (!article) return null;
-      // check language
+      // check atomLanguage
       if (!article.atomLanguage) {
         return null;
         // this.ctx.throw(1001);

@@ -122,20 +122,21 @@ export default {
       });
     },
     combineLinkArticles(language) {
-      const where = {
-        'f.language': language,
+      const options = {
+        language,
       };
-      return this.combineAtomClass(`/a/basefront/atom/list?where=${encodeURIComponent(JSON.stringify(where))}`);
+      return this.combineAtomClass(`/a/basefront/atom/list?options=${encodeURIComponent(JSON.stringify(options))}`);
     },
     combineLinkComments(language) {
       const where = {
-        'f.language': language,
+        'a.atomLanguage': language,
       };
       return this.combineAtomClass(`/a/basefront/comment/all?where=${encodeURIComponent(JSON.stringify(where))}`);
     },
     getStats(languages) {
       if (!languages) {
-        return this.stats = null;
+        this.stats = null;
+        return;
       }
       this.$api.post('site/getStats', {
         atomClass: this.atomClass,

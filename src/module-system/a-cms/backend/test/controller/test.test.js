@@ -65,12 +65,12 @@ describe.only('test/controller/test.test.js', () => {
       {
         special: true,
         atomName: 'hello world',
-        language: 'en-us',
+        atomLanguage: 'en-us',
         editMode: 1,
       },
       {
         atomName: 'hello world2',
-        language: 'en-us',
+        atomLanguage: 'en-us',
         slug: 'about',
         editMode: 1,
         content: `
@@ -104,12 +104,12 @@ describe.only('test/controller/test.test.js', () => {
       },
       {
         atomName: '你好，世界',
-        language: 'zh-cn',
+        atomLanguage: 'zh-cn',
         editMode: 1,
       },
       {
         atomName: '你好，世界2',
-        language: 'zh-cn',
+        atomLanguage: 'zh-cn',
         editMode: 1,
       },
     ];
@@ -128,10 +128,9 @@ describe.only('test/controller/test.test.js', () => {
         item: {
           atomId: keyDraft.atomId,
           atomName: article.atomName,
-          language: article.language,
+          atomLanguage: article.atomLanguage,
           editMode: article.editMode,
           content: article.content,
-          categoryId: article.categoryId,
           slug: article.slug,
         },
         options: { ignoreFlow: true },

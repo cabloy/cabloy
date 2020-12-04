@@ -14,9 +14,7 @@ module.exports = app => {
       const atomClass = { module, atomClassName };
       // options
       const options = {
-        where: {
-          'f.language': language,
-        },
+        language,
         orders: [
           [ 'a.updatedAt', 'desc' ],
         ],
@@ -156,7 +154,7 @@ module.exports = app => {
       const article = await this.ctx.bean._getBean(`${moduleInfo.relativeName}.atom.article`)._getArticle({ key: { atomId }, inner: false });
       if (!article) this.ctx.throw.module('a-base', 1002);
       // language
-      const language = article.language;
+      const language = article.atomLanguage;
       // options
       const options = {
         orders: [

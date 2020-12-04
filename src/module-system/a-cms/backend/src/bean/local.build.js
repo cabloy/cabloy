@@ -267,7 +267,7 @@ module.exports = app => {
       // clearCache
       ejs.clearCache();
       // site
-      const site = await this.getSite({ language: article.language });
+      const site = await this.getSite({ language: article.atomLanguage });
       site.render = { scene: 'single', inner };
       // render article
       await this._renderArticle({ site, article });
@@ -283,9 +283,9 @@ module.exports = app => {
       // clearCache
       ejs.clearCache();
       // site
-      const site = await this.getSite({ language: article.language });
+      const site = await this.getSite({ language: article.atomLanguage });
       // remove file
-      const pathDist = await this.getPathDist(site, article.language);
+      const pathDist = await this.getPathDist(site, article.atomLanguage);
       await fse.remove(path.join(pathDist, article.url));
       if (!inner) {
       // remove sitemap
@@ -306,9 +306,7 @@ module.exports = app => {
       const articles = await this.ctx.bean.atom.select({
         atomClass: this.atomClass,
         options: {
-          where: {
-            'f.language': site.language.current,
-          },
+          language: site.language.current,
           orders: [[ 'a.updatedAt', 'desc' ]],
           page: null,
           mode: 'search',
@@ -1123,9 +1121,9 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
       const article = await this.ctx.bean._getBean(`${moduleInfo.relativeName}.atom.article`)._getArticle({ key, inner: true });
       if (!article) return;
       // site
-      const site = await this.getSite({ language: article.language });
+      const site = await this.getSite({ language: article.atomLanguage });
       // check if build site first
-      const pathIntermediate = await this.getPathIntermediate(article.language);
+      const pathIntermediate = await this.getPathIntermediate(article.atomLanguage);
       const fileName = path.join(pathIntermediate, 'main/article.ejs');
       const exists = await fse.pathExists(fileName);
       if (!exists) this.ctx.throw(1006);

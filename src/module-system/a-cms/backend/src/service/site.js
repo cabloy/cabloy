@@ -159,9 +159,7 @@ module.exports = app => {
       stats.articles = await this.ctx.bean.atom.count({
         atomClass,
         options: {
-          where: {
-            'f.language': language,
-          },
+          language,
           mode: 'default',
         },
       });
@@ -170,9 +168,7 @@ module.exports = app => {
       stats.comments = await this.ctx.bean.atom.count({
         atomClass,
         options: {
-          where: {
-            'f.language': language,
-          },
+          language,
           mode: 'default',
           comment: 1,
         },
