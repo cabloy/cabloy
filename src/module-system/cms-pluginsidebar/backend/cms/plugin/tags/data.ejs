@@ -3,13 +3,13 @@
 const options = {
   where: { language: site.language.current },
   orders: [
-    [ 'articleCount', 'desc' ],
+    [ 'tagAtomCount', 'desc' ],
   ],
 };
 // tags
 const tags = await ctx.performAction({
   method: 'post',
-  url: '/a/cms/tag/list',
+  url: '/a/base/tag/list',
   body: {
     atomClass: site.atomClass,
     options,

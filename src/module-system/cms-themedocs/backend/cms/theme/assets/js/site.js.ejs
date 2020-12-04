@@ -296,12 +296,13 @@ function _loadMore({ categoryId, tagId, search }) {
         `<a target="_blank" href="${util.url('static/articles.html')}?categoryId=${item.atomCategoryId}&categoryName=${encodeURIComponent(item.atomCategoryName)}"><span class="num category">${util.escapeHtml(item.atomCategoryName)}</span></a>` : '';
       // tags
       let tagsText = '';
-      const tags = item.tags ? JSON.parse(item.tags) : null;
+      const tags = item.atomTags ? JSON.parse(item.atomTags) : null;
       if (tags && tags.length > 0) {
         tagsText += '<i class="fas fa-tags"></i> ';
         for (let i = 0; i < tags.length; i++) {
-          const tag = tags[i];
-          tagsText += `<a target="_blank" href="${util.url('static/articles.html')}?tagId=${tag.id}&tagName=${encodeURIComponent(tag.name)}"><span class="num tag">${util.escapeHtml(tag.name)}</span></a>`;
+          const tagId = tags[i];
+          const tagName = util.sidebar.getTagName(tagId);
+          tagsText += `<a target="_blank" href="${util.url('static/articles.html')}?tagId=${tagId}&tagName=${encodeURIComponent(tagName)}"><span class="num tag">${util.escapeHtml(tagName)}</span></a>`;
         }
         tagsText += '';
       }

@@ -68,6 +68,10 @@ util.sidebar = {
     if (!options.onParse) options.onParse = _onParseTag;
     this._loadTags({ $container, onParse: options.onParse });
   },
+  getTagName(tagId) {
+    const tag = window._tags.list.find(item => item.id === tagId);
+    return tag ? tag.tagName : '';
+  },
   commentsRecent(options) {
     const $containers = $(options.container);
     if ($containers.length === 0) return;

@@ -45,11 +45,13 @@
         `;
         // tags
         let tagsText='';
-        const tags=item.tags?JSON.parse(item.tags):null;
+        const tags=item.atomTags?JSON.parse(item.atomTags):null;
         if(tags && tags.length>0){
           tagsText+='<i class="fas fa-tags"></i> ';
-          for(const tag of tags){
-            tagsText+=`<a target="_blank" href="${url('static/articles.html')}?tagId=${tag.id}&tagName=${encodeURIComponent(tag.name)}"><span class="num tag">${util.escapeHtml(tag.name)}</span></a>`;
+          for(const tagId of tags){
+            const tag = await ctx.bean.tag.get({ tagId });
+            const tagName = tag.tagName;
+            tagsText+=`<a target="_blank" href="${url('static/articles.html')}?tagId=${tagId}&tagName=${encodeURIComponent(tagName)}"><span class="num tag">${util.escapeHtml(tagName)}</span></a>`;
           }
           tagsText+='';
         }

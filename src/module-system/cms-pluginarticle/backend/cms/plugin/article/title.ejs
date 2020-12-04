@@ -15,11 +15,12 @@
 <%
   // tags
   let tagsText='';
-  const tags=article.tags?JSON.parse(article.tags):null;
+  const tags=article.atomTags?JSON.parse(article.atomTags):null;
   if(tags && tags.length>0){
     tagsText+='<i class="fas fa-tags"></i> ';
-    for(const tag of tags){
-      tagsText+=`<a target="_blank" href="${url('static/articles.html')}?tagId=${tag.id}&tagName=${encodeURIComponent(tag.name)}"><span class="num tag">${util.escapeHtml(tag.name)}</span></a>`;
+    for(const tagId of tags){
+      const tag = await ctx.bean.tag.get({ tagId });
+      tagsText+=`<a target="_blank" href="${url('static/articles.html')}?tagId=${tagId}&tagName=${encodeURIComponent(tag.tagName)}"><span class="num tag">${util.escapeHtml(tag.tagName)}</span></a>`;
     }
     tagsText+='';
   }
