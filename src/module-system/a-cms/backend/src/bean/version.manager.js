@@ -331,6 +331,74 @@ module.exports = app => {
 
     }
 
+    async init(options) {
+      if (options.version === 1) {
+        // create roles: cms-writer cms-publisher to template
+        const roles = [ 'cms-writer', 'cms-publisher' ];
+        const roleTemplate = await this.ctx.bean.role.getSystemRole({ roleName: 'template' });
+        const roleSuperuser = await this.ctx.bean.role.getSystemRole({ roleName: 'superuser' });
+        for (const roleName of roles) {
+          const roleId = await this.ctx.bean.role.add({
+            roleName,
+            roleIdParent: roleTemplate.id,
+          });
+          // role:superuser include cms-writer cms-publisher
+          await this.ctx.bean.role.addRoleInc({ roleId: roleSuperuser.id, roleIdInc: roleId });
+        }
+        // build roles
+        await this.ctx.bean.role.setDirty(true);
+
+        // add role rights
+        const roleRights = [
+          { roleName: 'cms-writer', action: 'create' },
+          { roleName: 'cms-writer', action: 'read', scopeNames: 'authenticated' },
+          { roleName: 'cms-writer', action: 'write', scopeNames: 0 },
+          { roleName: 'cms-writer', action: 'delete', scopeNames: 0 },
+          { roleName: 'cms-writer', action: 'clone', scopeNames: 0 },
+          { roleName: 'cms-writer', action: 'deleteBulk' },
+          { roleName: 'cms-writer', action: 'exportBulk' },
+          { roleName: 'cms-publisher', action: 'read', scopeNames: 'authenticated' },
+          { roleName: 'cms-publisher', action: 'write', scopeNames: 'authenticated' },
+          { roleName: 'root', action: 'read', scopeNames: 'authenticated' },
+        ];
+        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'article', roleRights });
+
+      }
+
+    }
+
+    async test() {
+      const atomClass = {
+        module: moduleInfo.relativeName,
+        atomClassName: 'article',
+      };
+      const categories = [
+        { categoryName: 'test1', language: 'en-us', categoryIdParent: 0 },
+        { categoryName: 'test2', language: 'en-us', categoryIdParent: 0 },
+        { categoryName: 'test2-1', language: 'en-us', categoryIdParent: 'test2' },
+        { categoryName: 'test2-2', language: 'en-us', categoryIdParent: 'test2' },
+        { categoryName: 'test3', language: 'en-us', categoryIdParent: 0, categorySorting: 1 },
+        { categoryName: 'testHidden', language: 'en-us', categoryIdParent: 0, categoryHidden: 1 },
+        { categoryName: 'testFlag', language: 'en-us', categoryIdParent: 0, categoryFlag: 'Flag' },
+      ];
+      const categoryIds = {};
+      for (const item of categories) {
+        // add
+        const categoryId = await this.ctx.bean.category.add({
+          atomClass,
+          data: {
+            language: item.language,
+            categoryName: item.categoryName,
+            categoryHidden: item.categoryHidden,
+            categorySorting: item.categorySorting,
+            categoryFlag: item.categoryFlag,
+            categoryIdParent: item.categoryIdParent ? categoryIds[item.categoryIdParent] : 0,
+          },
+        });
+        categoryIds[item.categoryName] = categoryId;
+      }
+    }
+
     async _update5AtomClassIds(options) {
       // all instances
       const instances = await this.ctx.bean.instance.list({ where: {} });
@@ -399,76 +467,135 @@ module.exports = app => {
     }
 
     async _update7MigrationInstance() {
-      // cagetory
-
+      // cagetories
+      const mapCagetoryIds = await this._update7Migration_cagetories();
+      console.log(mapCagetoryIds);
+      // tags
+      const mapTagIds = await this._update7Migration_tags();
+      console.log(mapTagIds);
+      // articles/post
+      await this._update7Migration_articles({ mapCagetoryIds, mapTagIds });
+      // throw
+      throw new Error('error');
     }
 
-    async init(options) {
-      if (options.version === 1) {
-        // create roles: cms-writer cms-publisher to template
-        const roles = [ 'cms-writer', 'cms-publisher' ];
-        const roleTemplate = await this.ctx.bean.role.getSystemRole({ roleName: 'template' });
-        const roleSuperuser = await this.ctx.bean.role.getSystemRole({ roleName: 'superuser' });
-        for (const roleName of roles) {
-          const roleId = await this.ctx.bean.role.add({
-            roleName,
-            roleIdParent: roleTemplate.id,
-          });
-          // role:superuser include cms-writer cms-publisher
-          await this.ctx.bean.role.addRoleInc({ roleId: roleSuperuser.id, roleIdInc: roleId });
-        }
-        // build roles
-        await this.ctx.bean.role.setDirty(true);
-
-        // add role rights
-        const roleRights = [
-          { roleName: 'cms-writer', action: 'create' },
-          { roleName: 'cms-writer', action: 'read', scopeNames: 'authenticated' },
-          { roleName: 'cms-writer', action: 'write', scopeNames: 0 },
-          { roleName: 'cms-writer', action: 'delete', scopeNames: 0 },
-          { roleName: 'cms-writer', action: 'clone', scopeNames: 0 },
-          { roleName: 'cms-writer', action: 'deleteBulk' },
-          { roleName: 'cms-writer', action: 'exportBulk' },
-          { roleName: 'cms-publisher', action: 'read', scopeNames: 'authenticated' },
-          { roleName: 'cms-publisher', action: 'write', scopeNames: 'authenticated' },
-          { roleName: 'root', action: 'read', scopeNames: 'authenticated' },
-        ];
-        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'article', roleRights });
-
+    async _update7Migration_articles({ mapCagetoryIds, mapTagIds }) {
+      const articles = await this.ctx.model.query(`
+        select a.*,b.userIdCreated,c.tags
+           from aCmsArticle a
+           left join aAtom b on b.id=a.atomId
+           left join aCmsArticleTag c on c.atomId=a.atomId
+            where a.iid=? and a.deleted=0 and b.atomStage=1
+        `, [ this.ctx.instance.id ]);
+      console.log(articles);
+      for (const article of articles) {
+        await this._update7Migration_article({ mapCagetoryIds, mapTagIds, article });
       }
-
     }
 
-    async test() {
-      const atomClass = {
-        module: moduleInfo.relativeName,
-        atomClassName: 'article',
-      };
-      const categories = [
-        { categoryName: 'test1', language: 'en-us', categoryIdParent: 0 },
-        { categoryName: 'test2', language: 'en-us', categoryIdParent: 0 },
-        { categoryName: 'test2-1', language: 'en-us', categoryIdParent: 'test2' },
-        { categoryName: 'test2-2', language: 'en-us', categoryIdParent: 'test2' },
-        { categoryName: 'test3', language: 'en-us', categoryIdParent: 0, categorySorting: 1 },
-        { categoryName: 'testHidden', language: 'en-us', categoryIdParent: 0, categoryHidden: 1 },
-        { categoryName: 'testFlag', language: 'en-us', categoryIdParent: 0, categoryFlag: 'Flag' },
-      ];
-      const categoryIds = {};
-      for (const item of categories) {
-        // add
-        const categoryId = await this.ctx.bean.category.add({
-          atomClass,
-          data: {
-            language: item.language,
-            categoryName: item.categoryName,
-            categoryHidden: item.categoryHidden,
-            categorySorting: item.categorySorting,
-            categoryFlag: item.categoryFlag,
-            categoryIdParent: item.categoryIdParent ? categoryIds[item.categoryIdParent] : 0,
-          },
+    async _update7Migration_article({ mapCagetoryIds, mapTagIds, article }) {
+      // user
+      const user = { id: article.userIdCreated };
+      // open
+      const res = await this.ctx.bean.atom.openDraft({ key: { atomId: article.atomId }, user });
+      const draftKey = res.draft.key;
+      // atomCategoryId
+      const atomCategoryId = article.categoryId === 0 ? 0 : mapCagetoryIds[article.categoryId];
+      // atomTags
+      let atomTags = article.tags;
+      if (article.tags) {
+        const _tags = JSON.parse(article.tags);
+        atomTags = Object.keys(_tags).map(item => {
+          return mapTagIds[item];
         });
-        categoryIds[item.categoryName] = categoryId;
+        atomTags = JSON.stringify(atomTags);
       }
+      // write
+      await this.ctx.bean.atom.write({
+        key: draftKey,
+        target: null,
+        item: {
+          atomLanguage: article.language,
+          atomCategoryId,
+          atomTags,
+        },
+        options: {},
+        user,
+      });
+      // submit
+      await this.ctx.bean.atom.submit({
+        key: draftKey,
+        options: {
+          ignoreFlow: true,
+        },
+        user,
+      });
+      const atom = await this.ctx.bean.atom.modelAtom.get({ id: article.atomId });
+      console.log(atom);
+    }
+
+    async _update7Migration_tags() {
+      const mapTagIds = {};
+      const tags = await this.ctx.model.select('aCmsTag', {
+        where: {
+          iid: this.ctx.instance.id,
+          deleted: 0,
+        },
+      });
+      for (const tag of tags) {
+        await this._update7Migration_tag({ mapTagIds, tags, tag });
+      }
+      return mapTagIds;
+    }
+
+    async _update7Migration_tag({ mapTagIds, tag }) {
+      const tagIdNew = await this.ctx.bean.tag.add({
+        atomClass: { id: tag.atomClassId },
+        data: {
+          language: tag.language,
+          tagName: tag.tagName,
+          tagAtomCount: tag.articleCount,
+        },
+      });
+      mapTagIds[tag.id] = tagIdNew;
+      return tagIdNew;
+    }
+
+    async _update7Migration_cagetories() {
+      const mapCagetoryIds = {};
+      const categories = await this.ctx.model.select('aCmsCategory', {
+        where: {
+          iid: this.ctx.instance.id,
+          deleted: 0,
+        },
+      });
+      for (const category of categories) {
+        await this._update7Migration_cagetory({ mapCagetoryIds, categories, category });
+      }
+      return mapCagetoryIds;
+    }
+    async _update7Migration_cagetory({ mapCagetoryIds, categories, category }) {
+      if (category.__parsed) return mapCagetoryIds[category.id];
+      let categoryIdParent = 0;
+      if (category.categoryIdParent > 0) {
+        const categoryParent = categories.find(item => item.id === category.categoryIdParent);
+        categoryIdParent = await this._update7Migration_cagetory({ mapCagetoryIds, categories, category: categoryParent });
+      }
+      const categoryIdNew = await this.ctx.bean.category.add({
+        atomClass: { id: category.atomClassId },
+        data: {
+          language: category.language,
+          categoryName: category.categoryName,
+          categoryHidden: category.hidden,
+          categorySorting: category.sorting,
+          categoryFlag: category.flag,
+          categoryUrl: category.url,
+          categoryIdParent,
+        },
+      });
+      category.__parsed = true;
+      mapCagetoryIds[category.id] = categoryIdNew;
+      return categoryIdNew;
     }
 
     _parseUuid(article) {

@@ -46,7 +46,7 @@ module.exports = ctx => {
         atomClassId: atomClass.id,
         language: data.language,
         tagName: data.tagName,
-        tagAtomCount: 0,
+        tagAtomCount: data.tagAtomCount || 0,
       });
       return res.insertId;
     }
