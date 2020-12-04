@@ -2,12 +2,12 @@
 // categories
 const categories = await ctx.performAction({
   method: 'post',
-  url: '/a/cms/category/tree',
+  url: '/a/base/category/tree',
   body: {
     atomClass: site.atomClass,
     language: site.language.current,
     categoryId: 0,
-    hidden: 0,
+    categoryHidden: 0,
   },
 });
 // output

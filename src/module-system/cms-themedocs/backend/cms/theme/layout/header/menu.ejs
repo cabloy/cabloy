@@ -3,7 +3,7 @@
 function _menuItems(categories,submenu) {
   let res = '';
   for (const item of categories) {
-    if (!item.catalog) {
+    if (!item.categoryCatalog) {
       res += `<li class="nav-item"><a class="nav-link category-${item.id}" data-category-name="${item.categoryName}" href="${url('static/articles.html')}?categoryId=${item.id}&categoryName=${item.categoryName}">${item.categoryName}</a></li>`;
     } else if(item.url){
       res += `<li class="nav-item"><a class="nav-link category-${item.id}" data-category-name="${item.categoryName}" href="${url(item.url)}">${item.categoryName}</a></li>`;
