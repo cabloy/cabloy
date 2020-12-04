@@ -64,6 +64,10 @@ module.exports = app => {
       for (const field of fields) {
         if (item[field] === undefined) item[field] = atomOld[field];
       }
+      // clone
+      if (target === 'clone') {
+        item.slug = null; // clear slug
+      }
       // url
       let url;
       const draftExt = atomStage === 0 ? '.draft' : '';
