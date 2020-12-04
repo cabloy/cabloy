@@ -29,10 +29,6 @@ export default {
     },
     onChooseEditContent() {
       const { data, validate } = this.context;
-      if (!data.categoryId) {
-        this.$view.dialog.alert(this.$text('Please specify the category name'));
-        return false;
-      }
       const url = this.combineAtomClass('/a/cms/article/contentEdit');
       this.$view.navigate(url, {
         target: validate.readOnly ? '_self' : undefined,

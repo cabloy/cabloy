@@ -44,12 +44,8 @@ module.exports = appInfo => {
       aCache: 'createdAt,updatedAt,module+name',
     },
     'a-cms': {
-      aCmsArticle: 'createdAt,updatedAt,atomId,categoryId,sticky,sorting',
-      aCmsArticleTag: 'createdAt,updatedAt,atomId,itemId',
-      aCmsArticleTagRef: 'createdAt,updatedAt,atomId,itemId,tagId',
-      aCmsCategory: 'createdAt,updatedAt,categoryName,sorting,categoryIdParent,atomClassId',
+      aCmsArticle: 'createdAt,updatedAt,atomId,sticky,sorting',
       aCmsContent: 'createdAt,updatedAt,atomId,itemId,content:fulltext',
-      aCmsTag: 'createdAt,updatedAt,atomClassId+language+tagName',
     },
     'a-file': {
       aFile: 'createdAt,updatedAt,userId,downloadId,atomId',

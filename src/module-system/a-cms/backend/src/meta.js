@@ -12,10 +12,9 @@ module.exports = app => {
             title: 'Article',
             tableName: 'aCmsArticle',
             tableNameModes: {
-              default: 'aCmsArticleView',
+              default: 'aCmsArticle',
               full: 'aCmsArticleViewFull',
               search: 'aCmsArticleViewSearch',
-              tag: 'aCmsArticleViewTag',
             },
             language: true,
             category: true,

@@ -8,9 +8,6 @@ describe('test/controller/test.test.js', () => {
     atomClassName: 'post',
   };
 
-  // categoryIds
-  const categoryIds = {};
-
   it('action:set config', async () => {
     app.mockSession({});
 
@@ -77,12 +74,12 @@ describe('test/controller/test.test.js', () => {
       {
         special: true,
         atomName: 'only for test',
-        language: 'en-us',
+        atomLanguage: 'en-us',
         editMode: 1,
       },
       {
         atomName: 'CabloyJS Changelog',
-        language: 'en-us',
+        atomLanguage: 'en-us',
         categoryName: 'Announcement',
         slug: 'changelog',
         editMode: 1,
@@ -92,7 +89,7 @@ describe('test/controller/test.test.js', () => {
       },
       {
         atomName: 'Welcome to CabloyJS Community',
-        language: 'en-us',
+        atomLanguage: 'en-us',
         categoryName: 'Announcement',
         editMode: 1,
         content: `
@@ -101,17 +98,12 @@ describe('test/controller/test.test.js', () => {
       },
       {
         atomName: 'CabloyJS修改记录',
-        language: 'zh-cn',
+        atomLanguage: 'zh-cn',
         editMode: 1,
       },
     ];
     for (const article of articles) {
       let result;
-      // category
-      if (article.categoryName) {
-        article.categoryId = categoryIds[article.categoryName];
-      }
-
       // create
       result = await app.httpRequest().post(mockUrl('/a/base/atom/create')).send({
         atomClass,
@@ -125,10 +117,9 @@ describe('test/controller/test.test.js', () => {
         item: {
           atomId: keyDraft.atomId,
           atomName: article.atomName,
-          language: article.language,
+          atomLanguage: article.atomLanguage,
           editMode: article.editMode,
           content: article.content,
-          categoryId: article.categoryId,
           slug: article.slug,
         },
         options: { ignoreFlow: true },

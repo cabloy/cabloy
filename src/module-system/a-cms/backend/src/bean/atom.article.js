@@ -123,7 +123,6 @@ module.exports = app => {
       // update article
       await this.ctx.model.article.update({
         id: key.itemId,
-        categoryId: item.categoryId,
         sticky: item.sticky,
         keywords: item.keywords,
         description: item.description,
