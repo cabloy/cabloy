@@ -336,8 +336,8 @@ function _fetchArticles({ index, categoryId, tagId, search, orders, pageForce = 
   }
   // options
   const options = {
+    language: env.language.current,
     where: {
-      'f.language': env.language.current,
     },
     orders: [
       [ 'f.sticky', 'desc' ],

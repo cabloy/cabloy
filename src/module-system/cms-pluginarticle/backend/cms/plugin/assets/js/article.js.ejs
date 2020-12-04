@@ -42,7 +42,7 @@ function _onParseCommentAll(item) {
   return `
 <div class="comment card panel-default" data-atom-id="${item.atomId}" data-comment-id="${item.h_id}">
   <div class="header card-header">
-    <h5 class="article-title"><a target="_blank" href="${util.url(item.url, item.language)}#comments">Re: ${util.escapeHtml(item.atomName)}</a></h5>
+    <h5 class="article-title"><a target="_blank" href="${util.url(item.url, item.atomLanguage)}#comments">Re: ${util.escapeHtml(item.atomName)}</a></h5>
     <div class="user">
       <img class="avatar avatar32" src="${util.combineImageUrl(item.h_avatar, 32, 32)}" />
       <h3 class="name panel-title">${util.escapeHtml(item.h_userName)}</h3>
@@ -275,9 +275,9 @@ util.article = {
     const article = env.article;
     // options
     const options = {
+      language: article.atomLanguage,
+      category: article.atomCategoryId,
       where: {
-        'f.language': article.language,
-        'f.categoryId': article.categoryId,
       },
       page: { index: 0, size: 1 },
       mode: 'default',

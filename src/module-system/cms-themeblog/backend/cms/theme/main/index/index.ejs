@@ -7,8 +7,8 @@
         <%
           // options
           const options = {
+            language: site.language.current,
             where: {
-              'f.language': site.language.current,
             },
             orders: [
               [ 'f.sticky', 'desc' ],

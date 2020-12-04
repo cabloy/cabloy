@@ -2,7 +2,7 @@ function _onParseCommentRecent(item, atomClass) {
   return `
 <li class="media">
     <div class="media-body">
-      <h5 class="media-heading"><a href="${util.url(item.url, item.language, atomClass)}#comments">Re: ${util.escapeHtml(item.atomName)}</a></h5>
+      <h5 class="media-heading"><a href="${util.url(item.url, item.atomLanguage, atomClass)}#comments">Re: ${util.escapeHtml(item.atomName)}</a></h5>
       <div class="body">${item.h_summary}</div>
       <div class="user">-- ${util.escapeHtml(item.h_userName)}</div>
     </div>
@@ -52,7 +52,7 @@ function _onParseArticleRecent(item, atomClass) {
   return `
 <li class="media">
     <div class="media-body">
-      <h4 class="media-heading">${audio}${attachment}<a target="_blank" href="${util.url(item.url, item.language, atomClass)}">${util.escapeHtml(item.atomName)}</a></h4>
+      <h4 class="media-heading">${audio}${attachment}<a target="_blank" href="${util.url(item.url, item.atomLanguage, atomClass)}">${util.escapeHtml(item.atomName)}</a></h4>
       ${util.escapeHtml(item.description) || item.summary}
       ${stat}
     </div>
@@ -119,8 +119,8 @@ util.sidebar = {
     }
     // options
     const options = {
+      language: env.language.current,
       where: {
-        'f.language': env.language.current,
       },
       orders: [
         [ 'a.createdAt', 'desc' ],
