@@ -42,36 +42,20 @@ module.exports = app => {
         ebTitle: 'Basic Info',
         ebGroupWhole: true,
       },
-      language: {
+      atomLanguage: {
         type: 'string',
-        ebType: 'component',
+        ebType: 'language',
         ebTitle: 'Language',
-        ebMultiple: false,
-        ebOptionsBlankAuto: true,
-        notEmpty: true,
-        ebRender: {
-          module: 'a-cms',
-          name: 'renderArticleLanguage',
-        },
       },
-      categoryId: {
+      atomCategoryId: {
         type: 'number',
-        ebType: 'component',
+        ebType: 'category',
         ebTitle: 'Category',
-        notEmpty: true,
-        ebRender: {
-          module: 'a-cms',
-          name: 'renderArticleCategory',
-        },
       },
-      tags: {
-        type: 'string',
-        ebType: 'component',
+      atomTags: {
+        type: [ 'string', 'null' ],
+        ebType: 'tags',
         ebTitle: 'Tags',
-        ebRender: {
-          module: 'a-cms',
-          name: 'renderArticleTags',
-        },
       },
     },
   };
@@ -79,42 +63,6 @@ module.exports = app => {
   schemas.postSearch = {
     type: 'object',
     properties: {
-      language: {
-        type: 'string',
-        ebType: 'component',
-        ebTitle: 'Language',
-        ebMultiple: false,
-        ebOptionsBlankAuto: true,
-        ebRender: {
-          module: 'a-cms',
-          name: 'renderArticleSearchLanguage',
-          options: {
-            props: {
-              atomClass: {
-                module: moduleInfo.relativeName,
-                atomClassName: 'post',
-              },
-            },
-          },
-        },
-      },
-      categoryId: {
-        type: 'number',
-        ebType: 'component',
-        ebTitle: 'Category',
-        ebRender: {
-          module: 'a-cms',
-          name: 'renderArticleSearchCategory',
-          options: {
-            props: {
-              atomClass: {
-                module: moduleInfo.relativeName,
-                atomClassName: 'post',
-              },
-            },
-          },
-        },
-      },
       content: {
         type: 'string',
         ebType: 'text',

@@ -41,36 +41,20 @@ module.exports = app => {
         ebType: 'group-flatten',
         ebTitle: 'Basic Info',
       },
-      language: {
+      atomLanguage: {
         type: 'string',
-        ebType: 'component',
+        ebType: 'language',
         ebTitle: 'Language',
-        ebMultiple: false,
-        ebOptionsBlankAuto: true,
-        notEmpty: true,
-        ebRender: {
-          module: moduleInfo.relativeName,
-          name: 'renderArticleLanguage',
-        },
       },
-      categoryId: {
+      atomCategoryId: {
         type: 'number',
-        ebType: 'component',
+        ebType: 'category',
         ebTitle: 'Category',
-        notEmpty: true,
-        ebRender: {
-          module: moduleInfo.relativeName,
-          name: 'renderArticleCategory',
-        },
       },
-      tags: {
-        type: 'string',
-        ebType: 'component',
+      atomTags: {
+        type: [ 'string', 'null' ],
+        ebType: 'tags',
         ebTitle: 'Tags',
-        ebRender: {
-          module: moduleInfo.relativeName,
-          name: 'renderArticleTags',
-        },
       },
       keywords: {
         type: 'string',
@@ -136,42 +120,6 @@ module.exports = app => {
   schemas.articleSearch = {
     type: 'object',
     properties: {
-      language: {
-        type: 'string',
-        ebType: 'component',
-        ebTitle: 'Language',
-        ebMultiple: false,
-        ebOptionsBlankAuto: true,
-        ebRender: {
-          module: moduleInfo.relativeName,
-          name: 'renderArticleSearchLanguage',
-          options: {
-            props: {
-              atomClass: {
-                module: moduleInfo.relativeName,
-                atomClassName: 'article',
-              },
-            },
-          },
-        },
-      },
-      categoryId: {
-        type: 'number',
-        ebType: 'component',
-        ebTitle: 'Category',
-        ebRender: {
-          module: moduleInfo.relativeName,
-          name: 'renderArticleSearchCategory',
-          options: {
-            props: {
-              atomClass: {
-                module: moduleInfo.relativeName,
-                atomClassName: 'article',
-              },
-            },
-          },
-        },
-      },
       content: {
         type: 'string',
         ebType: 'text',
