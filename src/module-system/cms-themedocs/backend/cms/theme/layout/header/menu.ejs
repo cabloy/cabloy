@@ -5,8 +5,8 @@ function _menuItems(categories,submenu) {
   for (const item of categories) {
     if (!item.categoryCatalog) {
       res += `<li class="nav-item"><a class="nav-link category-${item.id}" data-category-name="${item.categoryName}" href="${url('static/articles.html')}?categoryId=${item.id}&categoryName=${item.categoryName}">${item.categoryName}</a></li>`;
-    } else if(item.url){
-      res += `<li class="nav-item"><a class="nav-link category-${item.id}" data-category-name="${item.categoryName}" href="${url(item.url)}">${item.categoryName}</a></li>`;
+    } else if(item.categoryUrl){
+      res += `<li class="nav-item"><a class="nav-link category-${item.id}" data-category-name="${item.categoryName}" href="${url(item.categoryUrl)}">${item.categoryName}</a></li>`;
     } else {
       const _items = _menuItems(item.children,true);
       res += `
