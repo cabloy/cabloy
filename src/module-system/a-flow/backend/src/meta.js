@@ -11,6 +11,8 @@ module.exports = app => {
             tableNameModes: {
               full: 'aFlowDefViewFull',
             },
+            category: true,
+            tag: true,
           },
           actions: {
             enable: {

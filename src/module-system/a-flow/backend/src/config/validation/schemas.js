@@ -4,11 +4,56 @@ module.exports = app => {
   schemas.flowDef = {
     type: 'object',
     properties: {
+      // title
+      groupTitle: {
+        type: 'null',
+        ebType: 'group-flatten',
+        ebTitle: 'Title',
+      },
       atomName: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Name',
         notEmpty: true,
+      },
+      // content
+      groupContent: {
+        type: 'null',
+        ebType: 'group-flatten',
+        ebTitle: 'Content',
+      },
+      content: {
+        type: 'string',
+        ebType: 'text',
+        ebTextarea: true,
+        ebTitle: 'Content',
+      },
+      // Basic Info
+      groupBasicInfo: {
+        type: 'null',
+        ebType: 'group-flatten',
+        ebTitle: 'Basic Info',
+      },
+      description: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Description',
+      },
+      atomCategoryId: {
+        type: 'number',
+        ebType: 'category',
+        ebTitle: 'Category',
+      },
+      atomTags: {
+        type: [ 'string', 'null' ],
+        ebType: 'tags',
+        ebTitle: 'Tags',
+      },
+      // Extra
+      groupExtra: {
+        type: 'null',
+        ebType: 'group-flatten',
+        ebTitle: 'Extra',
       },
       atomStaticKey: {
         type: 'string',
@@ -17,22 +62,11 @@ module.exports = app => {
         ebReadOnly: true,
         notEmpty: true,
       },
-      // atomRevision: {
-      //   type: 'string',
-      //   ebType: 'text',
-      //   ebTitle: 'Revision',
-      //   notEmpty: true,
-      // },
-      description: {
-        type: 'string',
+      atomRevision: {
+        type: 'number',
         ebType: 'text',
-        ebTitle: 'Description',
-      },
-      content: {
-        type: 'string',
-        ebType: 'text',
-        ebTextarea: true,
-        ebTitle: 'Content',
+        ebTitle: 'Revision',
+        ebReadOnly: true,
       },
     },
   };
