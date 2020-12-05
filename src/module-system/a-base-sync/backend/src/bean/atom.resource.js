@@ -5,17 +5,11 @@ module.exports = app => {
     async create({ atomClass, item, user }) {
       // super
       const key = await super.create({ atomClass, item, user });
-      // add flowDef
-      const res = await this.ctx.model.flowDef.insert({
+      // add resource
+      const res = await this.ctx.model.resource.insert({
         atomId: key.atomId,
       });
       const itemId = res.insertId;
-      // add content
-      await this.ctx.model.flowDefContent.insert({
-        atomId: key.atomId,
-        itemId,
-        content: '{}',
-      });
       return { atomId: key.atomId, itemId };
     }
 
@@ -43,36 +37,20 @@ module.exports = app => {
       delete item.disabled;
       // super
       await super.write({ atomClass, target, key, item, options, user });
-      // update flowDef
-      const data = await this.ctx.model.flowDef.prepareData(item);
+      // update resource
+      const data = await this.ctx.model.resource.prepareData(item);
       data.id = key.itemId;
-      await this.ctx.model.flowDef.update(data);
-      // update content
-      await this.ctx.model.flowDefContent.update({
-        content: item.content,
-      }, { where: {
-        atomId: key.atomId,
-      } });
-
-      // deploy
+      await this.ctx.model.resource.update(data);
+      // update locales
       if (item.atomStage === 1) {
-        const flowDef = await this.ctx.model.flowDef.get({ id: key.itemId });
-        if (!flowDef.disabled) {
-          this.ctx.tail(async () => {
-            await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId });
-          });
-        }
+        // todo:
       }
     }
 
     async delete({ atomClass, key, user }) {
-      // delete flowDef
-      await this.ctx.model.flowDef.delete({
+      // delete resource
+      await this.ctx.model.resource.delete({
         id: key.itemId,
-      });
-      // delete content
-      await this.ctx.model.flowDefContent.delete({
-        itemId: key.itemId,
       });
       // super
       await super.delete({ atomClass, key, user });
@@ -85,9 +63,9 @@ module.exports = app => {
       if (atom.atomStage !== 1) return res;
       if (action !== 101 && action !== 102) return res;
       // enable/disable
-      const flowDef = await this.ctx.model.flowDef.get({ id: atom.itemId });
-      if (action === 101 && flowDef.disabled) return res;
-      if (action === 102 && !flowDef.disabled) return res;
+      const resource = await this.ctx.model.resource.get({ id: atom.itemId });
+      if (action === 101 && resource.disabled) return res;
+      if (action === 102 && !resource.disabled) return res;
       return null;
     }
 

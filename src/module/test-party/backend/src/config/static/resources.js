@@ -1,5 +1,6 @@
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  if (!app.meta.isTest && !app.meta.isLocal) return [];
   const resources = [
     // menu
     {

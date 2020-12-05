@@ -1,4 +1,5 @@
 const versionManager = require('./bean/version.manager.js');
+const atomResource = require('./bean/atom.resource.js');
 const localProcedure = require('./bean/local.procedure.js');
 const broadcastAuthProviderChanged = require('./bean/broadcast.authProviderChanged.js');
 const queueSchedule = require('./bean/queue.schedule.js');
@@ -34,6 +35,11 @@ module.exports = app => {
     'version.manager': {
       mode: 'app',
       bean: versionManager,
+    },
+    // atom
+    'atom.resource': {
+      mode: 'app',
+      bean: atomResource,
     },
     // local
     'local.procedure': {

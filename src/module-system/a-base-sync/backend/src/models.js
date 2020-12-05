@@ -27,6 +27,10 @@ const commentHeart = require('./model/commentHeart.js');
 const category = require('./model/category.js');
 const tag = require('./model/tag.js');
 const tagRef = require('./model/tagRef.js');
+const resource = require('./model/resource.js');
+const resourceLocale = require('./model/resourceLocale.js');
+const resourceRole = require('./model/resourceRole.js');
+
 
 module.exports = app => {
   const models = {
@@ -59,6 +63,9 @@ module.exports = app => {
     category,
     tag,
     tagRef,
+    resource,
+    resourceLocale,
+    resourceRole,
   };
   return models;
 };
