@@ -132,6 +132,74 @@ module.exports = ctx => {
       });
     }
 
+    async parseRoleNames({ roleNames, force = false }) {
+      const arr = roleNames.split(',');
+      const res = [];
+      for (const roleName of arr) {
+        const role = await this.parseRoleName({ roleName, force });
+        res.push(role); // not check if null
+      }
+      return res;
+    }
+
+    // roleA.roleB
+    async parseRoleName({ roleName, roleIdParent, force = false }) {
+      const roleNames = roleName.split('.');
+      let role;
+      for (const _roleName of roleNames) {
+        if (roleIdParent === undefined) {
+          role = await this.get({ roleName: _roleName });
+        } else {
+          role = await this.child({
+            roleId: roleIdParent,
+            roleName: _roleName,
+          });
+        }
+        // next
+        if (role) {
+          roleIdParent = role.id;
+          continue;
+        }
+        // null
+        if (!roleIdParent || !force) return null;
+        // create
+        const roleId = await this._register({
+          roleName: _roleName, roleIdParent,
+        });
+        role = await this.get({ id: roleId });
+        // next
+        roleIdParent = roleId;
+      }
+      return role;
+    }
+
+    async _register({ roleName, roleIdParent }) {
+      return await ctx.app.meta.util.lock({
+        subdomain: ctx.subdomain,
+        resource: `${moduleInfo.relativeName}.role.register`,
+        fn: async () => {
+          return await ctx.app.meta.util.executeBean({
+            subdomain: ctx.subdomain,
+            beanModule: moduleInfo.relativeName,
+            beanFullName: 'role',
+            context: { roleName, roleIdParent },
+            fn: '_registerLock',
+          });
+        },
+      });
+    }
+
+    async _registerLock({ roleName, roleIdParent }) {
+      // get again
+      const role = await this.child({
+        roleId: roleIdParent,
+        roleName,
+      });
+      if (role) return role.id;
+      // add
+      return await this.add({ roleName, roleIdParent });
+    }
+
     // add role include
     async addRoleInc({ roleId, roleIdInc }) {
       const res = await this.modelRoleInc.insert({
@@ -251,16 +319,24 @@ module.exports = ctx => {
       await this.modelRoleFunction.delete({ id });
     }
 
+    async child({ roleId, roleName }) {
+      const list = await this.children({ roleId, roleName, page: false });
+      return list[0];
+    }
+
     // children
-    async children({ roleId, page }) {
+    async children({ roleId, roleName, page }) {
       page = ctx.bean.util.page(page, false);
       // roleId
       if (!roleId || roleId === 'root') {
         roleId = 0;
       }
+      // where
+      const where = { roleIdParent: roleId };
+      if (roleName !== undefined) where.roleName = roleName;
       // select
       const options = {
-        where: { roleIdParent: roleId },
+        where,
         orders: [[ 'sorting', 'asc' ], [ 'roleName', 'asc' ]],
       };
       if (page.size !== 0) {

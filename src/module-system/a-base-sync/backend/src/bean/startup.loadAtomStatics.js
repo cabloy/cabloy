@@ -77,11 +77,17 @@ module.exports = app => {
         });
         item.atomTags = JSON.stringify(tagIds);
       }
-      // roleIdOwner
+      // only valid for register
       if (register) {
+        // roleIdOwner
         const roleName = item.roleIdOwner || 'superuser';
-        const role = await this.ctx.bean.role.get({ roleName });
+        const role = await this.ctx.bean.role.parseRoleName({ roleName });
         item.roleIdOwner = role.id;
+        // resourceRoles
+        if (item.resourceRoles) {
+          item.resourceRoles = await this.ctx.bean.role.parseRoleNames({ roleNames: item.resourceRoles });
+          console.log(item.resourceRoles);
+        }
       }
       // ok
       return item;

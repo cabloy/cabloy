@@ -14,6 +14,7 @@ module.exports = app => {
         atomClassName: 'party',
         action: 'create',
       }),
+      resourceRoles: 'template.system',
     },
     {
       atomName: 'Party List',
@@ -26,6 +27,7 @@ module.exports = app => {
         atomClassName: 'party',
         action: 'read',
       }),
+      resourceRoles: 'template.system',
     },
     {
       atomName: 'Kitchen-sink',
@@ -37,6 +39,7 @@ module.exports = app => {
         actionModule: moduleInfo.relativeName,
         actionPath: 'kitchen-sink/index',
       }),
+      resourceRoles: 'root',
     },
     // dashboard widget
     {
@@ -49,6 +52,7 @@ module.exports = app => {
         module: moduleInfo.relativeName,
         component: 'widgetSales',
       }),
+      resourceRoles: 'root',
     },
     {
       atomName: 'Fruit Sales(Line Chart)',
@@ -60,6 +64,7 @@ module.exports = app => {
         module: moduleInfo.relativeName,
         component: 'widgetSalesLine',
       }),
+      resourceRoles: 'root',
     },
     {
       atomName: 'Fruit Sales(Pie Chart)',
@@ -71,6 +76,7 @@ module.exports = app => {
         module: moduleInfo.relativeName,
         component: 'widgetSalesPie',
       }),
+      resourceRoles: 'root',
     },
     {
       atomName: 'Snapshots',
@@ -82,6 +88,7 @@ module.exports = app => {
         module: moduleInfo.relativeName,
         component: 'widgetSnapshot',
       }),
+      resourceRoles: 'root',
     },
   ];
   return resources;
