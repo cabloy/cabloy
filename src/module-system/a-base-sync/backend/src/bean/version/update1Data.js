@@ -146,8 +146,6 @@ const tables = {
             module varchar(255) DEFAULT NULL,
             atomClassName varchar(255) DEFAULT NULL,
             atomClassIdParent int(11) DEFAULT '0',
-            public int(11) DEFAULT '0',
-            flow int(11) DEFAULT '0',
             PRIMARY KEY (id)
           )
         `,

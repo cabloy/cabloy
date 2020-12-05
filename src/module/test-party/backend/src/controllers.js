@@ -1,7 +1,6 @@
 const party = require('./controller/party.js');
 const testAtomStarLabel = require('./controller/test/atom/starLabel.js');
 const testAtomAll = require('./controller/test/atom/all.js');
-const testAtomPublic = require('./controller/test/atom/public.js');
 const testAtomRight = require('./controller/test/atom/right.js');
 const testFunctionRight = require('./controller/test/function/right.js');
 const testFunctionAll = require('./controller/test/function/all.js');
@@ -46,7 +45,6 @@ module.exports = app => {
     party,
     testAtomStarLabel,
     testAtomAll,
-    testAtomPublic,
     testAtomRight,
     testFunctionRight,
     testFunctionAll,

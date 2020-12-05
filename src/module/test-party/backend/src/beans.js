@@ -13,7 +13,6 @@ const startupStartupInstance = require('./bean/startup.startupInstance.js');
 const middlewareTestInterception = require('./bean/middleware.interception.js');
 const middlewareTestRestructuring = require('./bean/middleware.restructuring.js');
 const atomParty = require('./bean/atom.party.js');
-const atomPartyPublic = require('./bean/atom.partyPublic.js');
 const ioMessageTest = require('./bean/io.message.test.js');
 const sequenceTest = require('./bean/sequence.test.js');
 
@@ -91,10 +90,6 @@ module.exports = app => {
       'atom.party': {
         mode: 'app',
         bean: atomParty,
-      },
-      'atom.partyPublic': {
-        mode: 'app',
-        bean: atomPartyPublic,
       },
       // io
       'io.message.test': {

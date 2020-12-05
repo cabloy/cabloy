@@ -512,8 +512,6 @@ module.exports = ctx => {
              ${_commentWhere}
              ${_fileWhere}
              and (
-                   b.public=1
-                     or
                    exists(
                            select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.userIdWho=${userIdWho}
                          )
@@ -620,7 +618,6 @@ module.exports = ctx => {
                a.deleted=0 and a.iid=${iid} and a.id=${atomId}
                and a.atomStage>0 and
                 (
-                  b.public=1 or
                   exists(
                           select c.atomId from aViewRoleRightAtom c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.roleIdWho=${roleIdWho}
                         )
@@ -645,8 +642,6 @@ module.exports = ctx => {
                  a.deleted=0 and a.iid=${iid} and a.id=${atomId}
                  and a.atomStage>0 and
                   (
-                    b.public=1
-                      or
                     exists(
                             select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.userIdWho=${userIdWho}
                           )

@@ -156,15 +156,6 @@ module.exports = app => {
     // meta
     extend(true, meta, {
       base: {
-        atoms: {
-          partyPublic: {
-            info: {
-              bean: 'partyPublic',
-              tableName: 'testPartyPublic',
-              public: 1,
-            },
-          },
-        },
         functions: {
           testFunctionPublic: {
             scene: 'tools',
