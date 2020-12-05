@@ -1,7 +1,7 @@
 module.exports = ctx => {
   class Procedure {
 
-    selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage, language, category, tag }) {
+    selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage, language, category, tag, mine }) {
       iid = parseInt(iid);
       userIdWho = parseInt(userIdWho);
       star = parseInt(star);
@@ -11,6 +11,7 @@ module.exports = ctx => {
       stage = parseInt(stage);
       category = parseInt(category);
       tag = parseInt(tag);
+      mine = parseInt(mine);
 
       // draft
       if (stage === 0) {
@@ -19,7 +20,7 @@ module.exports = ctx => {
       }
       if (userIdWho === 0) return this._selectAtoms_0({ iid, tableName, where, orders, page, comment, file, count, stage, language, category, tag });
       // archive/history
-      return this._selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage, language, category, tag });
+      return this._selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage, language, category, tag, mine });
     }
 
     _selectAtoms_draft({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage, language, category, tag }) {
@@ -344,7 +345,7 @@ module.exports = ctx => {
       return _sql;
     }
 
-    _selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage, language, category, tag }) {
+    _selectAtoms({ iid, userIdWho, tableName, where, orders, page, star, label, comment, file, count, stage, language, category, tag, mine }) {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass
@@ -487,6 +488,20 @@ module.exports = ctx => {
                 ${_starField} ${_labelField} ${_commentField} ${_fileField}`;
       }
 
+      // mine
+      let _rightWhere;
+      if (mine) {
+        _rightWhere = `
+          (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=2 and c.scope=0 and c.userIdWho=${userIdWho}))
+        `;
+      } else {
+        _rightWhere = `
+          exists(
+            select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.userIdWho=${userIdWho}
+          )
+        `;
+      }
+
       // sql
       const _sql =
         `select ${_selectFields} from aAtom a
@@ -511,13 +526,7 @@ module.exports = ctx => {
              ${_labelWhere}
              ${_commentWhere}
              ${_fileWhere}
-             and (
-                   exists(
-                           select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.userIdWho=${userIdWho}
-                         )
-                     or
-                   (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=2 and c.scope=0 and c.userIdWho=${userIdWho}))
-                 )
+             and ( ${_rightWhere} )
            )
 
           ${count ? '' : _orders}
