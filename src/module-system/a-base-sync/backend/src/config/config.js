@@ -96,6 +96,17 @@ module.exports = appInfo => {
     'zh-cn': 'Chinese',
   };
 
+  // resourceTypes
+  config.resourceTypes = {
+    function: 'Function',
+    menu: 'Menu',
+    headerButton: 'Header Button',
+    sidebarPanel: 'Sidebar Panel',
+    bottombarSection: 'Bottombar Section',
+    dashboardWidget: 'Dashboard Widget',
+    cmsBlock: 'CMS Block',
+  };
+
   // function
   config.function = {
     scenes: {

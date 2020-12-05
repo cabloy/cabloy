@@ -10,6 +10,10 @@ module.exports = app => {
       return this.ctx.bean.base.locales();
     }
 
+    resourceTypes() {
+      return this.ctx.bean.base.resourceTypes();
+    }
+
     atomClasses() {
       return this.ctx.bean.base.atomClasses();
     }

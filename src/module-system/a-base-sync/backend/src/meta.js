@@ -6,6 +6,43 @@ module.exports = app => {
   // meta
   const meta = {
     base: {
+      atoms: {
+        resource: {
+          info: {
+            bean: 'resource',
+            title: 'Resource',
+            tableName: 'aResource',
+            tableNameModes: {
+            },
+            category: true,
+            tag: true,
+          },
+          actions: {
+            enable: {
+              code: 101,
+              title: 'Enable',
+              actionComponent: 'actionResource',
+              enableOnStatic: true,
+              enableOnOpened: true,
+              stage: 'archive',
+              icon: { material: 'play_arrow' },
+            },
+            disable: {
+              code: 102,
+              title: 'Disable',
+              actionComponent: 'actionResource',
+              enableOnStatic: true,
+              enableOnOpened: true,
+              stage: 'archive',
+              icon: { material: 'stop' },
+            },
+          },
+          validator: 'resource',
+          search: {
+            validator: 'resourceSearch',
+          },
+        },
+      },
       functions: {
         listComment: {
           title: 'Comment List',
@@ -46,6 +83,12 @@ module.exports = app => {
         category: {
           schemas: 'category',
         },
+        resource: {
+          schemas: 'resource',
+        },
+        resourceSearch: {
+          schemas: 'resourceSearch',
+        },
       },
       keywords: {
         'x-exists': keywords.exists,
@@ -53,6 +96,8 @@ module.exports = app => {
       schemas: {
         user: schemas.user,
         category: schemas.category,
+        resource: schemas.resource,
+        resourceSearch: schemas.resourceSearch,
       },
     },
     event: {

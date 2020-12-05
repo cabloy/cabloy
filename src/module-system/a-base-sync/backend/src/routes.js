@@ -3,6 +3,7 @@ module.exports = app => {
     // base
     { method: 'post', path: 'base/modules', controller: 'base' },
     { method: 'post', path: 'base/locales', controller: 'base' },
+    { method: 'post', path: 'base/resourceTypes', controller: 'base' },
     { method: 'post', path: 'base/atomClasses', controller: 'base' },
     { method: 'post', path: 'base/actions', controller: 'base' },
     { method: 'post', path: 'base/menus', controller: 'base' },

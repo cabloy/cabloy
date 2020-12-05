@@ -5,6 +5,7 @@ module.exports = function(ctx) {
     async run() {
       await this.run_atom();
       await this.run_categorytag();
+      await this.run_resource();
     }
 
     async run_atom() {
@@ -151,6 +152,58 @@ module.exports = function(ctx) {
             iid int(11) DEFAULT '0',
             atomId int(11) DEFAULT '0',
             tagId int(11) DEFAULT '0',
+            PRIMARY KEY (id)
+          )
+        `;
+      await ctx.model.query(sql);
+
+    }
+
+    async run_resource() {
+      let sql;
+
+      // create table: aResource
+      sql = `
+          CREATE TABLE aResource (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            deleted int(11) DEFAULT '0',
+            iid int(11) DEFAULT '0',
+            atomId int(11) DEFAULT '0',
+            disabled int(11) DEFAULT '0',
+            resourceSorting int(11) DEFAULT '0',
+            resourceType varchar(50) DEFAULT NULL,
+            resourceConfig JSON DEFAULT NULL,
+            PRIMARY KEY (id)
+          )
+        `;
+      await ctx.model.query(sql);
+
+      sql = `
+          CREATE TABLE aResourceLocale (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            deleted int(11) DEFAULT '0',
+            iid int(11) DEFAULT '0',
+            atomId int(11) DEFAULT '0',
+            locale varchar(50) DEFAULT NULL,
+            atomNameLocale varchar(255) DEFAULT NULL,
+            PRIMARY KEY (id)
+          )
+        `;
+      await ctx.model.query(sql);
+
+      sql = `
+          CREATE TABLE aResourceRole (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            deleted int(11) DEFAULT '0',
+            iid int(11) DEFAULT '0',
+            atomId int(11) DEFAULT '0',
+            roleId int(11) DEFAULT '0',
             PRIMARY KEY (id)
           )
         `;

@@ -99,5 +99,94 @@ module.exports = app => {
     },
   };
 
+  // resource
+  schemas.resource = {
+    type: 'object',
+    properties: {
+      // title
+      groupTitle: {
+        type: 'null',
+        ebType: 'group-flatten',
+        ebTitle: 'Title',
+      },
+      atomName: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Name',
+        notEmpty: true,
+      },
+      // config
+      groupConfig: {
+        type: 'null',
+        ebType: 'group-flatten',
+        ebTitle: 'Config',
+      },
+      resourceConfig: {
+        type: 'string',
+        ebType: 'text',
+        ebTextarea: true,
+        ebTitle: 'Config',
+      },
+      // Basic Info
+      groupBasicInfo: {
+        type: 'null',
+        ebType: 'group-flatten',
+        ebTitle: 'Basic Info',
+      },
+      atomCategoryId: {
+        type: 'number',
+        ebType: 'category',
+        ebTitle: 'Category',
+      },
+      atomTags: {
+        type: [ 'string', 'null' ],
+        ebType: 'tags',
+        ebTitle: 'Tags',
+      },
+      // Extra
+      groupExtra: {
+        type: 'null',
+        ebType: 'group-flatten',
+        ebTitle: 'Extra',
+      },
+      resourceType: {
+        type: 'string',
+        ebType: 'select',
+        ebTitle: 'Type',
+        ebOptionsUrl: '/a/base/base/resourceTypes',
+        ebOptionsUrlParams: null,
+        ebOptionsBlankAuto: true,
+        notEmpty: true,
+      },
+      resourceSorting: {
+        type: 'number',
+        ebType: 'text',
+        ebTitle: 'Sorting',
+      },
+      atomStaticKey: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'KeyForAtom',
+        ebReadOnly: true,
+        notEmpty: true,
+      },
+    },
+  };
+
+  // resource search
+  schemas.resourceSearch = {
+    type: 'object',
+    properties: {
+      resourceType: {
+        type: 'string',
+        ebType: 'select',
+        ebTitle: 'Type',
+        ebOptionsUrl: '/a/base/base/resourceTypes',
+        ebOptionsUrlParams: null,
+        ebOptionsBlankAuto: true,
+      },
+    },
+  };
+
   return schemas;
 };

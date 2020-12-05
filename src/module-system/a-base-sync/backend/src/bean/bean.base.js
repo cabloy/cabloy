@@ -5,6 +5,7 @@ const fse = require3('fs-extra');
 const _modulesLocales = {};
 const _themesLocales = {};
 const _locales = {};
+const _resourceTypes = {};
 const _atomClasses = {};
 const _actions = {};
 const _functions = {};
@@ -94,6 +95,13 @@ module.exports = ctx => {
         _locales[ctx.locale] = this._prepareLocales();
       }
       return _locales[ctx.locale];
+    }
+
+    resourceTypes() {
+      if (!_resourceTypes[ctx.locale]) {
+        _resourceTypes[ctx.locale] = this._prepareResourceTypes();
+      }
+      return _resourceTypes[ctx.locale];
     }
 
     atomClasses() {
@@ -245,6 +253,18 @@ module.exports = ctx => {
         });
       }
       return locales;
+    }
+
+    _prepareResourceTypes() {
+      const resourceTypes = [];
+      const config = ctx.config.module(moduleInfo.relativeName);
+      for (const key in config.resourceTypes) {
+        resourceTypes.push({
+          title: ctx.text(config.resourceTypes[key]),
+          value: key,
+        });
+      }
+      return resourceTypes;
     }
 
     _prepareAtomClasses() {

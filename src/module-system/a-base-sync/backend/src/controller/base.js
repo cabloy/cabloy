@@ -15,6 +15,11 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    resourceTypes() {
+      const res = this.ctx.service.base.resourceTypes();
+      this.ctx.success(res);
+    }
+
     atomClasses() {
       const res = this.ctx.service.base.atomClasses();
       this.ctx.success(res);
