@@ -12,6 +12,7 @@ module.exports = app => {
     // socketio
     const socketioTest = require('./config/socketio/test.js')(app);
     const staticDashboards = require('./config/static/dashboards.js')(app);
+    const staticResources = require('./config/static/resources.js')(app);
     // meta
     extend(true, meta, {
       base: {
@@ -91,6 +92,9 @@ module.exports = app => {
         statics: {
           'a-dashboard.dashboard': {
             items: staticDashboards,
+          },
+          'a-base.resource': {
+            items: staticResources,
           },
         },
       },
