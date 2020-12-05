@@ -98,6 +98,7 @@ module.exports = ctx => {
       const category = await this.modelCategory.get({ id: categoryId });
       // categoryIdParentOld
       const categoryIdParentOld = category.categoryIdParent;
+      if (categoryIdParentOld === categoryIdParent) return;
       // move
       await this.modelCategory.update({
         id: categoryId,

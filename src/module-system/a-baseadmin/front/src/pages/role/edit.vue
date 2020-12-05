@@ -5,7 +5,7 @@
         <f7-toolbar v-if="role" top tabbar scrollable>
           <f7-link :tab-link="`#${tabIdInfo}`" tab-link-active>{{$text('Info')}}</f7-link>
           <f7-link v-if="role.catalog===0" :tab-link="`#${tabIdUsers}`">{{$text('Users')}}</f7-link>
-          <f7-link v-if="role.catalog===1" :tab-link="`#${tabIdChildren}`">{{$text('Children')}}</f7-link>
+          <f7-link :tab-link="`#${tabIdChildren}`">{{$text('Children')}}</f7-link>
           <f7-link :tab-link="`#${tabIdIncludes}`">{{$text('Includes')}}</f7-link>
         </f7-toolbar>
       </f7-subnavbar>
@@ -17,7 +17,7 @@
       <eb-tab-page-content v-if="role.catalog===0" :id="tabIdUsers" @tab:show="tabName='users'">
         <role-users slot="list" :roleId="role.id"></role-users>
       </eb-tab-page-content>
-      <eb-tab-page-content v-if="role.catalog===1" :id="tabIdChildren" @tab:show="tabName='children'">
+      <eb-tab-page-content :id="tabIdChildren" @tab:show="tabName='children'">
         <role-children ref="children" slot="list" :role="role"></role-children>
       </eb-tab-page-content>
       <eb-tab-page-content :id="tabIdIncludes" @tab:show="tabName='includes'">
@@ -33,7 +33,6 @@
     </f7-toolbar>
     <f7-toolbar v-if="tabName==='children'" bottom-md>
       <eb-link :onPerform="onPerformChildrenAdd">{{$text('New Role')}}</eb-link>
-      <eb-link :onPerform="onPerformChildrenAddCatalog">{{$text('New Catalog')}}</eb-link>
     </f7-toolbar>
     <f7-toolbar v-if="tabName==='includes'" bottom-md>
       <eb-link :onPerform="onPerformIncludesAdd">{{$text('Add Role Include')}}</eb-link>
@@ -87,9 +86,6 @@ export default {
     },
     onPerformChildrenAdd() {
       return this.$refs.children.onPerformAdd();
-    },
-    onPerformChildrenAddCatalog() {
-      return this.$refs.children.onPerformAddCatalog();
     },
     onPerformIncludesAdd() {
       return this.$refs.includes.onPerformAdd();

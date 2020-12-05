@@ -59,13 +59,10 @@ export default {
         });
     },
     onPerformAdd() {
-      return this.addRole({ catalog: 0 });
+      return this.addRole();
     },
-    onPerformAddCatalog() {
-      return this.addRole({ catalog: 1 });
-    },
-    addRole({ catalog }) {
-      return this.$api.post('role/add', { roleIdParent: this.role.id, catalog })
+    addRole() {
+      return this.$api.post('role/add', { roleIdParent: this.role.id })
         .then(data => {
           this.$meta.eventHub.$emit('role:add', { roleIdParent: this.role.id, roleId: data });
           this.$meta.eventHub.$emit('role:dirty', { dirty: true });

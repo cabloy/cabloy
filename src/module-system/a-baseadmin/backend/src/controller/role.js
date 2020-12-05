@@ -28,7 +28,6 @@ module.exports = app => {
     async add() {
       const res = await this.service.role.add({
         roleIdParent: this.ctx.request.body.roleIdParent,
-        catalog: this.ctx.request.body.catalog,
       });
       this.ctx.success(res);
     }

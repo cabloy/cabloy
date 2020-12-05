@@ -47,16 +47,19 @@ module.exports = ctx => {
     }
 
     // add role
-    async add({ roleName = '', leader = 0, catalog = 0, system = 0, sorting = 0, roleIdParent = 0 }) {
+    async add({ roleName = '', leader = 0, /* catalog = 0,*/ system = 0, sorting = 0, roleIdParent = 0 }) {
       const res = await this.model.insert({
         roleName,
         leader,
-        catalog,
+        catalog: 0,
         system,
         sorting,
         roleIdParent,
       });
       const roleId = res.insertId;
+
+      // adjust catalog
+      await this.adjustCatalog(roleIdParent);
 
       // set dirty
       await this.setDirty(true);
@@ -67,10 +70,15 @@ module.exports = ctx => {
     async move({ roleId, roleIdParent }) {
       // role
       const role = await this.get({ id: roleId });
-      if (role.roleIdParent === roleIdParent) return;
-
+      // roleIdParentOld
+      const roleIdParentOld = role.roleIdParent;
+      if (roleIdParentOld === roleIdParent) return;
       // update
       await this.model.update({ id: roleId, roleIdParent });
+
+      // adjust catalog
+      await this.adjustCatalog(roleIdParentOld);
+      await this.adjustCatalog(roleIdParent);
 
       // set dirty
       await this.setDirty(true);
@@ -79,6 +87,8 @@ module.exports = ctx => {
     async delete({ roleId, force = false }) {
       // role
       const role = await this.get({ id: roleId });
+      // parent
+      const roleIdParent = role.roleIdParent;
 
       // check if system
       if (role.system) ctx.throw(403);
@@ -105,8 +115,21 @@ module.exports = ctx => {
       // delete this
       await this.model.delete({ id: roleId });
 
+      // adjust catalog
+      await this.adjustCatalog(roleIdParent);
+
       // set dirty
       await this.setDirty(true);
+    }
+
+    // for donothing on roleId === 0
+    async adjustCatalog(roleId) {
+      if (roleId === 0) return;
+      const children = await this.children({ roleId, page: false });
+      await this.model.update({
+        id: roleId,
+        catalog: children.length === 0 ? 0 : 1,
+      });
     }
 
     // add role include
