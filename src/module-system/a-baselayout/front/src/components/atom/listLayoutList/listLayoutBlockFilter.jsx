@@ -19,6 +19,7 @@ export default {
   data() {
     const form = this.$meta.util.getProperty(this.layoutManager, 'filter.data.form') || {
       atomName: null,
+      mine: (this.layoutManager.container.options && this.layoutManager.container.options.mine) || 0,
       stage: (this.layoutManager.container.options && this.layoutManager.container.options.stage) || 'archive',
       language: (this.layoutManager.container.options && this.layoutManager.container.options.language) || '',
       category: (this.layoutManager.container.options && this.layoutManager.container.options.category) || 0,
@@ -280,6 +281,9 @@ export default {
       return (
         <eb-list form inline-labels no-hairlines-md onSubmit={this.onFormSubmit}>
           <eb-list-input v-model={this.form.atomName} label={this.$text('Atom Name')} type="text" clear-button placeholder={this.$text('Atom Name')}></eb-list-input>
+          <f7-list-item title={this.$text('Mine')}>
+            <eb-toggle slot="after" v-model={this.form.mine}></eb-toggle>
+          </f7-list-item>
           <f7-list-item smartSelect title={this.$text('Stage')} smartSelectParams={{ openIn: 'sheet', closeOnSelect: true }}>
             <eb-select name="stage" v-model={this.form.stage} options={this.stages}></eb-select>
           </f7-list-item>

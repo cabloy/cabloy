@@ -23,6 +23,9 @@ export default {
         if (form.atomName) {
           options.where['a.atomName'] = { val: form.atomName, op: 'like' };
         }
+        if (form.mine) {
+          options.mine = Number(form.mine);
+        }
         if (form.stage) {
           options.stage = form.stage;
         }

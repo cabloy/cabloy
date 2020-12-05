@@ -99,6 +99,7 @@ export default {
   Seconds: '秒',
   UserStar: '用户星标',
   UserLabel: '用户标签',
+  Mine: '我的',
   'New Category': '新目录',
   'Advanced Filter': '高级筛选',
   'Atom Flag': '原子标记',
