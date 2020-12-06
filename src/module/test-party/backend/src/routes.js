@@ -30,8 +30,6 @@ module.exports = app => {
       },
       // test/function/all
       { method: 'post', path: 'test/function/all', controller: 'testFunctionAll', middlewares: 'test', meta: { auth: { enable: false } } },
-      // test/function/public
-      { method: 'post', path: 'test/function/functionPublic', controller: 'testFunctionPublic', middlewares: 'test', meta: { auth: { enable: false } } },
 
       // test/role/userRole
       { method: 'post', path: 'test/role/userRole', controller: 'testRoleUserRole', middlewares: 'test', meta: { auth: { enable: false } } },
