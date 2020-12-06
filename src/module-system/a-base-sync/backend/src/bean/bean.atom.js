@@ -784,7 +784,7 @@ module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    async _list({ tableName, options: { where, orders, page, star = 0, label = 0, comment = 0, file = 0, stage = 'archive', language, category = 0, tag = 0, mine = 0 }, user, pageForce = true, count = 0 }) {
+    async _list({ tableName, options: { where, orders, page, star = 0, label = 0, comment = 0, file = 0, stage = 'archive', language, category = 0, tag = 0, mine = 0, resource = 0, resourceLocale }, user, pageForce = true, count = 0 }) {
       page = ctx.bean.util.page(page, pageForce);
       stage = typeof stage === 'number' ? stage : ctx.constant.module(moduleInfo.relativeName).atom.stage[stage];
       const sql = this.sqlProcedure.selectAtoms({
@@ -795,6 +795,7 @@ module.exports = ctx => {
         stage,
         language, category, tag,
         mine,
+        resource, resourceLocale,
       });
       const res = await ctx.model.query(sql);
       return count ? res[0]._count : res;

@@ -209,6 +209,16 @@ module.exports = function(ctx) {
         `;
       await ctx.model.query(sql);
 
+      // aViewUserRightResource
+      sql = `
+          CREATE VIEW aViewUserRightResource as
+            select a.iid,a.userId as userIdWho,a.roleExpandId,a.roleId,a.roleIdBase,
+                   b.id as resourceRoleId,b.atomId as resourceAtomId
+              from aViewUserRoleExpand a
+                inner join aResourceRole b on a.roleIdBase=b.roleId
+            `;
+      await ctx.model.query(sql);
+
     }
 
   }

@@ -10,21 +10,25 @@ module.exports = app => {
       const userIds = this.ctx.cache.mem.get('userIds');
       const userTom = { id: userIds.Tom };
 
-      // function all: including panels/widgets
-      const functionCount = Object.keys(this.ctx.module.main.meta.base.functions).length;
+      // function all: including widgets
+      const resourceStaticsAll = this.ctx.module.main.meta.base.statics['a-base.resource'].items;
+      const resourceCount = resourceStaticsAll.length;
 
       // Tom list all
-      let list = await this.ctx.bean.function.list({
+      let list = await this.ctx.bean.resource.select({
         options: {
-          where: { 'a.module': 'test-party' },
-          orders: [[ 'id', 'asc' ]],
+          where: { 'a.atomStaticKey': {
+            op: 'likeRight', val: 'test-party:',
+          } },
+          orders: [[ 'a.id', 'asc' ]],
           page: { index: 0, size: 0 },
-          locale: '',
         },
         user: userTom,
       });
-      assert.equal(list.length, functionCount);
-      assert(!list[0].titleLocale);
+      assert.equal(list.length, resourceCount - 2);
+
+      // done
+      return this.ctx.success();
 
       // Tom menu list zh-cn
       list = await this.ctx.bean.function.list({

@@ -28,8 +28,8 @@ module.exports = app => {
       { method: 'post', path: 'test/function/checkRightFunctionUser', controller: 'testFunctionRight', middlewares: 'test',
         meta: { right: { type: 'function', module: 'a-baseadmin', name: 'user' } },
       },
-      // test/function/all
-      { method: 'post', path: 'test/function/all', controller: 'testFunctionAll', middlewares: 'test', meta: { auth: { enable: false } } },
+      // test/resource/all
+      { method: 'post', path: 'test/resource/all', controller: 'testResourceAll', middlewares: 'test', meta: { auth: { enable: false } } },
 
       // test/role/userRole
       { method: 'post', path: 'test/role/userRole', controller: 'testRoleUserRole', middlewares: 'test', meta: { auth: { enable: false } } },
