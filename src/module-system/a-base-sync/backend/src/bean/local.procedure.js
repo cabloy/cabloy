@@ -837,6 +837,22 @@ module.exports = ctx => {
       return _sql;
     }
 
+    checkRightResource({ iid, userIdWho, resourceAtomId }) {
+      // for safe
+      iid = parseInt(iid);
+      userIdWho = parseInt(userIdWho);
+      resourceAtomId = parseInt(resourceAtomId);
+      // sql
+      const _sql =
+        `select a.* from aResource a
+            where a.iid=${iid} and a.deleted=0 and a.disabled=0 and a.atomId=${resourceAtomId}
+              and (
+                exists(select c.resourceAtomId from aViewUserRightResource c where c.iid=${iid} and c.resourceAtomId=${resourceAtomId} and c.userIdWho=${userIdWho})
+                  )
+        `;
+      return _sql;
+    }
+
     checkRightFunction({ iid, userIdWho, functionId }) {
       // for safe
       iid = parseInt(iid);

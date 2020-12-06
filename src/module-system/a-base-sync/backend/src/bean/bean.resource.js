@@ -87,22 +87,42 @@ module.exports = ctx => {
       return await ctx.model.query(sql);
     }
 
-
-    // /////////////
-
-
-    async check({ functions, user }) {
-      for (const func of functions) {
-        const res = await this.checkRightFunction({ function: func, user });
+    // check
+    async check({ atomStaticKeys, user }) {
+      const output = [];
+      for (const atomStaticKey of atomStaticKeys) {
+        const res = await this.checkRightResource({ atomStaticKey, user });
         if (res) {
-          func.passed = true;
-          func.id = res.id;
+          output.push({
+            passed: true,
+            atomId: res.atomId,
+            atomStaticKey,
+          });
         } else {
-          func.passed = false;
+          output.push({
+            passed: false,
+            atomStaticKey,
+          });
         }
       }
-      return functions;
+      return output;
     }
+
+    async checkRightResource({
+      atomStaticKey,
+      user,
+    }) {
+      const atom = await ctx.bean.atom.modelAtom.get({ atomStaticKey, atomStage: 1 });
+      const sql = this.sqlProcedure.checkRightResource({
+        iid: ctx.instance.id,
+        userIdWho: user.id,
+        resourceAtomId: atom.id,
+      });
+      return await ctx.model.queryOne(sql);
+    }
+
+
+    // /////////////
 
 
     //
@@ -131,74 +151,6 @@ module.exports = ctx => {
           });
         },
       });
-    }
-
-    async _registerLock({ module, name }) {
-      module = module || this.moduleName;
-      // get
-      const res = await this.model.get({ module, name });
-      if (res) return res;
-      const func = ctx.bean.base.function({ module, name });
-      if (!func) throw new Error(`function not found: ${module}:${name}`);
-      // atomClassId
-      let atomClassId = 0;
-      if (func.atomClassName) {
-        const atomClass = await ctx.bean.atomClass.get({ module, atomClassName: func.atomClassName });
-        atomClassId = atomClass.id;
-      }
-      // sceneId
-      let sceneId;
-      const sceneName = func.scene;
-      if (!sceneName) {
-        sceneId = 0;
-      } else {
-        sceneId = await this.getSceneId({ sceneName, sceneMenu: func.menu });
-      }
-      // insert
-      const data = {
-        module,
-        name: func.name,
-        title: func.title,
-        sceneId,
-        autoRight: func.autoRight,
-        atomClassId,
-        action: func.action ? ctx.constant.module(moduleInfo.relativeName).atom.action[func.action] : 0,
-        sorting: func.sorting,
-        menu: func.menu,
-        public: func.public,
-      };
-      // insert
-      const res2 = await this.model.insert(data);
-      data.id = res2.insertId;
-      return data;
-    }
-
-    // iid maybe undefined
-    async getSceneId({ sceneName, sceneMenu }) {
-      const sceneItem = await this.modelFunctionScene.get({ sceneName, sceneMenu });
-      if (sceneItem) return sceneItem.id;
-      // scene sorting
-      const scenes = (ctx.config.module(moduleInfo.relativeName).function.scenes[sceneMenu] || '').split(',');
-      const sceneSorting = scenes.indexOf(sceneName) + 1;
-      const res = await this.modelFunctionScene.insert({
-        sceneName,
-        sceneMenu,
-        sceneSorting,
-      });
-      return res.insertId;
-    }
-
-    async checkRightFunction({
-      function: { module, name },
-      user,
-    }) {
-      const func = await this.get({ module, name });
-      const sql = this.sqlProcedure.checkRightFunction({
-        iid: ctx.instance.id,
-        userIdWho: user.id,
-        functionId: func.id,
-      });
-      return await ctx.model.queryOne(sql);
     }
 
 

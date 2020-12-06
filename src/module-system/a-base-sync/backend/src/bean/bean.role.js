@@ -291,41 +291,6 @@ module.exports = ctx => {
       await this.modelRoleFunction.delete({ roleRightId: id });
     }
 
-    // add role function
-    async addRoleFunction({ roleId, functionId, roleRightId = 0 }) {
-      await this.modelRoleFunction.insert({
-        roleId,
-        functionId,
-        roleRightId,
-      });
-    }
-
-    // delete role function
-    async deleteRoleFunction({ id }) {
-      await this.modelRoleFunction.delete({ id });
-    }
-
-    // add role resource
-    async addRoleResource({ roleId, atomId, atomStaticKey }) {
-      if (!atomId && !atomStaticKey) return null;
-      if (!atomId) {
-        const atom = await ctx.bean.atom.modelAtom.get({
-          atomStaticKey,
-          atomStage: 1, // archive
-        });
-        if (!atom) ctx.throw.module(moduleInfo.relativeName, 1002);
-        atomId = atom.id;
-      }
-      await this.modelResourceRole.insert({
-        roleId, atomId,
-      });
-    }
-
-    // delete role resource
-    async deleteRoleResource({ id }) {
-      await this.modelResourceRole.delete({ id });
-    }
-
     // child
     async child({ roleId, roleName }) {
       const list = await this.children({ roleId, roleName, page: false });
@@ -445,67 +410,6 @@ module.exports = ctx => {
             select a.* from aRole a
               where a.iid=? and a.id in (${scope.join(',')})
             `, [ ctx.instance.id ]);
-    }
-
-    // function rights
-    async functionRights({ menu, roleId, page }) {
-      // check locale
-      const locale = ctx.locale;
-      // list
-      page = ctx.bean.util.page(page, false);
-      const _limit = ctx.model._limit(page.size, page.index);
-      const list = await ctx.model.query(`
-        select a.*,b.module,b.name,b.title,b.sceneId,g.sceneName,b.sorting,f.titleLocale from aRoleFunction a
-          left join aFunction b on a.functionId=b.id
-          left join aFunctionLocale f on a.functionId=f.functionId
-          left join aFunctionScene g on g.id=b.sceneId
-            where a.iid=? and a.roleId=? and b.menu=? and f.locale=?
-            order by b.module,g.sceneSorting,b.sorting
-            ${_limit}
-        `, [ ctx.instance.id, roleId, menu, locale ]);
-      return list;
-    }
-
-    // function spreads
-    async functionSpreads({ menu, roleId, page }) {
-      // check locale
-      const locale = ctx.locale;
-      // list
-      page = ctx.bean.util.page(page, false);
-      const _limit = ctx.model._limit(page.size, page.index);
-      const list = await ctx.model.query(`
-        select d.*,d.id as roleExpandId,a.id as roleFunctionId,b.module,b.name,b.title,b.sceneId,g.sceneName,e.roleName,f.titleLocale from aRoleFunction a
-          left join aFunction b on a.functionId=b.id
-          left join aRoleExpand d on a.roleId=d.roleIdBase
-          left join aRole e on d.roleIdBase=e.id
-          left join aFunctionLocale f on a.functionId=f.functionId
-          left join aFunctionScene g on g.id=b.sceneId
-            where d.iid=? and d.roleId=? and b.menu=? and f.locale=?
-            order by b.module,g.sceneSorting,b.sorting
-            ${_limit}
-        `, [ ctx.instance.id, roleId, menu, locale ]);
-      return list;
-    }
-
-    // function rights of user
-    async functionRightsOfUser({ menu, userId, page }) {
-      // check locale
-      const locale = ctx.locale;
-      // list
-      page = ctx.bean.util.page(page, false);
-      const _limit = ctx.model._limit(page.size, page.index);
-      const list = await ctx.model.query(`
-        select a.*,b.module,b.name,b.title,b.sceneId,g.sceneName,b.sorting,f.titleLocale,e.roleName from aViewUserRightFunction a
-          left join aFunction b on a.functionId=b.id
-          left join aFunctionLocale f on a.functionId=f.functionId
-          left join aFunctionScene g on g.id=b.sceneId
-          left join aRole e on a.roleIdBase=e.id
-            where a.iid=? and a.userIdWho=? and b.menu=? and f.locale=?
-            order by b.module,g.sceneSorting,b.sorting
-            ${_limit}
-        `, [ ctx.instance.id, userId, menu, locale ]);
-
-      return list;
     }
 
     async getUserRolesDirect({ userId }) {
@@ -726,28 +630,6 @@ module.exports = ctx => {
       }
     }
 
-    // const roleFunctions = [
-    //   { roleName: 'root', name: 'listComment' },
-    // ];
-    async addRoleFunctionBatch({ module, roleFunctions }) {
-      if (!roleFunctions || !roleFunctions.length) return;
-      module = module || this.moduleName;
-      for (const roleFunction of roleFunctions) {
-        // func
-        const func = await ctx.bean.function.get({ module, name: roleFunction.name });
-        if (roleFunction.roleName) {
-          // role
-          const role = await this.get({ roleName: roleFunction.roleName });
-          // add role function
-          await this.addRoleFunction({
-            roleId: role.id,
-            functionId: func.id,
-          });
-        }
-      }
-    }
-
-
     async _buildRolesRemove({ iid }) {
       await ctx.model.query(`delete from aRoleRef where aRoleRef.iid=${iid}`);
       await ctx.model.query(`delete from aRoleIncRef where aRoleIncRef.iid=${iid}`);
@@ -823,6 +705,131 @@ module.exports = ctx => {
               where a.iid=${iid} and a.roleId=${roleId}
         `);
     }
+
+    // ///////////////
+
+    // add role resource
+    async addRoleResource({ roleId, atomId, atomStaticKey }) {
+      if (!atomId && !atomStaticKey) return null;
+      if (!atomId) {
+        const atom = await ctx.bean.atom.modelAtom.get({
+          atomStaticKey,
+          atomStage: 1, // archive
+        });
+        if (!atom) ctx.throw.module(moduleInfo.relativeName, 1002);
+        atomId = atom.id;
+      }
+      await this.modelResourceRole.insert({
+        roleId, atomId,
+      });
+    }
+
+    // delete role resource
+    async deleteRoleResource({ id }) {
+      await this.modelResourceRole.delete({ id });
+    }
+
+    // /////////////////////
+
+
+    // function rights
+    async functionRights({ menu, roleId, page }) {
+      // check locale
+      const locale = ctx.locale;
+      // list
+      page = ctx.bean.util.page(page, false);
+      const _limit = ctx.model._limit(page.size, page.index);
+      const list = await ctx.model.query(`
+        select a.*,b.module,b.name,b.title,b.sceneId,g.sceneName,b.sorting,f.titleLocale from aRoleFunction a
+          left join aFunction b on a.functionId=b.id
+          left join aFunctionLocale f on a.functionId=f.functionId
+          left join aFunctionScene g on g.id=b.sceneId
+            where a.iid=? and a.roleId=? and b.menu=? and f.locale=?
+            order by b.module,g.sceneSorting,b.sorting
+            ${_limit}
+        `, [ ctx.instance.id, roleId, menu, locale ]);
+      return list;
+    }
+
+    // function spreads
+    async functionSpreads({ menu, roleId, page }) {
+      // check locale
+      const locale = ctx.locale;
+      // list
+      page = ctx.bean.util.page(page, false);
+      const _limit = ctx.model._limit(page.size, page.index);
+      const list = await ctx.model.query(`
+        select d.*,d.id as roleExpandId,a.id as roleFunctionId,b.module,b.name,b.title,b.sceneId,g.sceneName,e.roleName,f.titleLocale from aRoleFunction a
+          left join aFunction b on a.functionId=b.id
+          left join aRoleExpand d on a.roleId=d.roleIdBase
+          left join aRole e on d.roleIdBase=e.id
+          left join aFunctionLocale f on a.functionId=f.functionId
+          left join aFunctionScene g on g.id=b.sceneId
+            where d.iid=? and d.roleId=? and b.menu=? and f.locale=?
+            order by b.module,g.sceneSorting,b.sorting
+            ${_limit}
+        `, [ ctx.instance.id, roleId, menu, locale ]);
+      return list;
+    }
+
+    // function rights of user
+    async functionRightsOfUser({ menu, userId, page }) {
+      // check locale
+      const locale = ctx.locale;
+      // list
+      page = ctx.bean.util.page(page, false);
+      const _limit = ctx.model._limit(page.size, page.index);
+      const list = await ctx.model.query(`
+        select a.*,b.module,b.name,b.title,b.sceneId,g.sceneName,b.sorting,f.titleLocale,e.roleName from aViewUserRightFunction a
+          left join aFunction b on a.functionId=b.id
+          left join aFunctionLocale f on a.functionId=f.functionId
+          left join aFunctionScene g on g.id=b.sceneId
+          left join aRole e on a.roleIdBase=e.id
+            where a.iid=? and a.userIdWho=? and b.menu=? and f.locale=?
+            order by b.module,g.sceneSorting,b.sorting
+            ${_limit}
+        `, [ ctx.instance.id, userId, menu, locale ]);
+
+      return list;
+    }
+
+    // const roleFunctions = [
+    //   { roleName: 'root', name: 'listComment' },
+    // ];
+    async addRoleFunctionBatch({ module, roleFunctions }) {
+      if (!roleFunctions || !roleFunctions.length) return;
+      module = module || this.moduleName;
+      for (const roleFunction of roleFunctions) {
+        // func
+        const func = await ctx.bean.function.get({ module, name: roleFunction.name });
+        if (roleFunction.roleName) {
+          // role
+          const role = await this.get({ roleName: roleFunction.roleName });
+          // add role function
+          await this.addRoleFunction({
+            roleId: role.id,
+            functionId: func.id,
+          });
+        }
+      }
+    }
+
+    // ////////////////////
+
+    // add role function
+    async addRoleFunction({ roleId, functionId, roleRightId = 0 }) {
+      await this.modelRoleFunction.insert({
+        roleId,
+        functionId,
+        roleRightId,
+      });
+    }
+
+    // delete role function
+    async deleteRoleFunction({ id }) {
+      await this.modelRoleFunction.delete({ id });
+    }
+
 
   }
 
