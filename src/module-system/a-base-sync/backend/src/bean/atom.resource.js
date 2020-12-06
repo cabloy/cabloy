@@ -43,7 +43,10 @@ module.exports = app => {
       await this.ctx.model.resource.update(data);
       // update locales
       if (item.atomStage === 1) {
-        // todo:
+        await this.ctx.bean.resource.setLocales({
+          atomId: key.atomId,
+          atomName: item.atomName,
+        });
       }
     }
 

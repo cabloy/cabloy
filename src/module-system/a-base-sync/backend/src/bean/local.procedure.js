@@ -861,7 +861,7 @@ module.exports = ctx => {
       const _sql =
         `select a.id,a.atomId,c.atomName from aResource a
           inner join aAtom c on c.id=a.atomId
-            where a.iid=${iid} and a.deleted=0
+            where a.iid=${iid} and a.deleted=0 and c.atomStage=1
               and not exists(
                 select b.id from aResourceLocale b
                   where b.iid=${iid} and b.locale=${locale} and b.atomId=a.atomId

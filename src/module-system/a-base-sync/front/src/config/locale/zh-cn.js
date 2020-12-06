@@ -101,6 +101,7 @@ export default {
   UserLabel: '用户标签',
   Mine: '我的',
   Resource: '资源',
+  Type: '类型',
   'New Category': '新目录',
   'Advanced Filter': '高级筛选',
   'Atom Flag': '原子标记',

@@ -44,6 +44,20 @@ module.exports = ctx => {
       });
     }
 
+    async setLocales({ atomId, atomName }) {
+      // delete
+      await this.modelResourceLocale.delete({ atomId });
+      // setLocales
+      const locales = ctx.config.module(moduleInfo.relativeName).locales;
+      for (const locale in locales) {
+        await this.modelResourceLocale.insert({
+          atomId,
+          locale,
+          atomNameLocale: ctx.text.locale(locale, atomName),
+        });
+      }
+    }
+
     async checkLocales() {
       // setLocales
       const locales = ctx.config.module(moduleInfo.relativeName).locales;
