@@ -104,8 +104,6 @@ module.exports = function(ctx) {
         { roleName: null, name: 'testFunctionPublic' },
       ];
       await ctx.bean.role.addRoleFunctionBatch({ roleFunctions });
-      // set locales of new functions
-      await ctx.bean.function.setLocales();
     }
 
     // auths

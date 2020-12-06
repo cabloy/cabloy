@@ -52,6 +52,10 @@ module.exports = app => {
       await this.ctx.model.resource.delete({
         id: key.itemId,
       });
+      // delete resource locales
+      await this.ctx.model.resourceLocale.delete({
+        atomId: key.atomId,
+      });
       // super
       await super.delete({ atomClass, key, user });
     }

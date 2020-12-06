@@ -44,24 +44,38 @@ module.exports = ctx => {
       });
     }
 
+    async checkLocales() {
+      // setLocales
+      const locales = ctx.config.module(moduleInfo.relativeName).locales;
+      for (const locale in locales) {
+        await this._checkLocale({ locale });
+      }
+    }
 
-    // /////////////
-
-    async star({ id, star = 1, user }) {
-      // force delete
-      await this.modelFunctionStar.delete({
-        userId: user.id,
-        functionId: id,
-      });
-      // new
-      if (star) {
-        await this.modelFunctionStar.insert({
-          userId: user.id,
-          functionId: id,
-          star: 1,
+    async _checkLocale({ locale }) {
+      const resources = await this._checkResourceLocales({ locale });
+      if (resources.length === 0) return;
+      // insert locales
+      for (const resource of resources) {
+        await this.modelResourceLocale.insert({
+          atomId: resource.atomId,
+          locale,
+          atomNameLocale: ctx.text.locale(locale, resource.atomName),
         });
       }
     }
+
+    async _checkResourceLocales({ locale }) {
+      const sql = this.sqlProcedure._checkResourceLocales({
+        iid: ctx.instance.id,
+        locale,
+      });
+      return await ctx.model.query(sql);
+    }
+
+
+    // /////////////
+
 
     async check({ functions, user }) {
       for (const func of functions) {
@@ -76,38 +90,8 @@ module.exports = ctx => {
       return functions;
     }
 
-    async scenesArray({ sceneMenu }) {
-      const list = await this.modelFunctionScene.select({
-        where: { sceneMenu },
-        orders: [[ 'sceneSorting', 'asc' ]],
-      });
-      for (const item of list) {
-        const sceneName = item.sceneName;
-        item.title = sceneName.replace(sceneName[0], sceneName[0].toUpperCase());
-        item.titleLocale = ctx.text(item.title);
-      }
-      return list;
-    }
-
-    async scenes({ sceneMenu }) {
-      const list = await this.scenesArray({ sceneMenu });
-      const scenes = {};
-      for (const item of list) {
-        scenes[item.id] = item;
-      }
-      return scenes;
-    }
 
     //
-
-    async delete({ id, module, name }) {
-      if (id) {
-        await this.model.delete({ id });
-      } else {
-        module = module || this.moduleName;
-        await this.model.delete({ module, name });
-      }
-    }
 
     async _get({ id, module, name }) {
       if (id) return await this.model.get({ id });
@@ -203,61 +187,6 @@ module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    async _checkFunctionLocales({ locale }) {
-      locale = locale || ctx.locale;
-      const sql = this.sqlProcedure.checkFunctionLocales({
-        iid: ctx.instance.id,
-        locale,
-      });
-      return await ctx.model.query(sql);
-    }
-
-    async _setLocale({ locale, reset }) {
-      let functions;
-      // functions
-      if (reset) {
-        functions = await this.model.select();
-      } else {
-        functions = await this._checkFunctionLocales({ locale });
-      }
-      if (functions.length === 0) return;
-      // insert locales
-      for (const func of functions) {
-        // title
-        const funcBase = ctx.bean.base.function({ module: func.module, name: func.name });
-        if (!funcBase) {
-          // not throw error
-          ctx.logger.info(`function not found: ${func.module}:${func.name}`);
-        } else {
-          if (func.title !== funcBase.title) {
-            await this.model.update({ id: func.id, title: funcBase.title });
-          }
-          // titleLocale
-          const titleLocale = ctx.text.locale(locale, funcBase.title);
-          await this.modelFunctionLocale.insert({
-            functionId: func.id, locale, titleLocale,
-          });
-        }
-      }
-    }
-
-    async setLocales(options) {
-      options = options || {};
-      const reset = options.reset;
-      // clear
-      if (reset) {
-        await this.clearLocales();
-      }
-      // setLocales
-      const locales = ctx.config.module(moduleInfo.relativeName).locales;
-      for (const locale in locales) {
-        await this._setLocale({ locale, reset });
-      }
-    }
-
-    async clearLocales() {
-      await this.modelFunctionLocale.delete();
-    }
 
   }
 

@@ -853,18 +853,19 @@ module.exports = ctx => {
       return _sql;
     }
 
-    checkFunctionLocales({ iid, locale }) {
+    _checkResourceLocales({ iid, locale }) {
       // for safe
       iid = parseInt(iid);
       locale = ctx.model.format('?', locale);
       // sql
       const _sql =
-        `select a.* from aFunction a
-            where a.iid=${iid}
+        `select a.id,a.atomId,c.atomName from aResource a
+          inner join aAtom c on c.id=a.atomId
+            where a.iid=${iid} and a.deleted=0
               and not exists(
-                select b.id from aFunctionLocale b
-                  where b.iid=${iid} and b.locale=${locale} and b.functionId=a.id
-                    and (b.titleLocale is not null and b.titleLocale<>'')
+                select b.id from aResourceLocale b
+                  where b.iid=${iid} and b.locale=${locale} and b.atomId=a.atomId
+                    and (b.atomNameLocale is not null and b.atomNameLocale<>'')
                 )
         `;
       return _sql;

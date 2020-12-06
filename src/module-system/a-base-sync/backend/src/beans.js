@@ -6,9 +6,9 @@ const queueSchedule = require('./bean/queue.schedule.js');
 const queueRoleBuild = require('./bean/queue.roleBuild.js');
 const startupRegisterPassport = require('./bean/startup.registerPassport.js');
 const startupInstallAuthProviders = require('./bean/startup.installAuthProviders.js');
-const startupSetFunctionLocales = require('./bean/startup.setFunctionLocales.js');
 const startupLoadSchedules = require('./bean/startup.loadSchedules.js');
 const startupLoadAtomStatics = require('./bean/startup.loadAtomStatics.js');
+const startupCheckResourceLocales = require('./bean/startup.checkResourceLocales.js');
 const middlewareInner = require('./bean/middleware.inner.js');
 const middlewareTest = require('./bean/middleware.test.js');
 const middlewareTransaction = require('./bean/middleware.transaction.js');
@@ -70,10 +70,6 @@ module.exports = app => {
       mode: 'app',
       bean: startupInstallAuthProviders,
     },
-    'startup.setFunctionLocales': {
-      mode: 'app',
-      bean: startupSetFunctionLocales,
-    },
     'startup.loadSchedules': {
       mode: 'app',
       bean: startupLoadSchedules,
@@ -81,6 +77,10 @@ module.exports = app => {
     'startup.loadAtomStatics': {
       mode: 'app',
       bean: startupLoadAtomStatics,
+    },
+    'startup.checkResourceLocales': {
+      mode: 'app',
+      bean: startupCheckResourceLocales,
     },
     // middleware
     'middleware.inner': {

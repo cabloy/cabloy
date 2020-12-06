@@ -53,11 +53,6 @@ module.exports = appInfo => {
       bean: 'installAuthProviders',
       instance: true,
     },
-    setFunctionLocales: {
-      bean: 'setFunctionLocales',
-      instance: true,
-      debounce: true,
-    },
     loadSchedules: {
       bean: 'loadSchedules',
       instance: true,
@@ -65,6 +60,11 @@ module.exports = appInfo => {
     },
     loadAtomStatics: {
       bean: 'loadAtomStatics',
+      instance: true,
+      debounce: true,
+    },
+    checkResourceLocales: {
+      bean: 'checkResourceLocales',
       instance: true,
       debounce: true,
     },

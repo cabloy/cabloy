@@ -22,10 +22,12 @@ module.exports = app => {
           } },
           orders: [[ 'a.id', 'asc' ]],
           page: { index: 0, size: 0 },
+          locale: 'en-us',
         },
         user: userTom,
       });
       assert.equal(list.length, resourceCount - 2);
+      assert(list[0].atomNameLocale);
 
       // done
       return this.ctx.success();
