@@ -562,7 +562,7 @@ module.exports = ctx => {
       return _sql;
     }
 
-    getAtom({ iid, userIdWho, tableName, atomId }) {
+    getAtom({ iid, userIdWho, tableName, atomId, resource, resourceLocale }) {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass
@@ -572,6 +572,7 @@ module.exports = ctx => {
       // -- g: aUser
       // -- g2: aUser
       // -- j: aCategory
+      // -- m: aResourceLocale
 
       // for safe
       tableName = tableName ? ctx.model.format('??', tableName) : null;
@@ -579,12 +580,17 @@ module.exports = ctx => {
       iid = parseInt(iid);
       userIdWho = parseInt(userIdWho);
       atomId = parseInt(atomId);
+      resource = parseInt(resource);
 
       // vars
       let _starField,
         _labelField;
       let _itemField,
         _itemJoin;
+
+      let _resourceField,
+        _resourceJoin,
+        _resourceWhere;
 
       // star
       if (userIdWho) {
@@ -600,6 +606,18 @@ module.exports = ctx => {
           `,(select e.labels from aAtomLabel e where e.iid=${iid} and e.atomId=a.id and e.userId=${userIdWho}) as labels`;
       } else {
         _labelField = '';
+      }
+
+      // resource
+      if (resource) {
+        _resourceField = ',m.atomNameLocale';
+        _resourceJoin = ' left join aResourceLocale m on m.atomId=a.id';
+        // not check disabled
+        _resourceWhere = ctx.model.format(' and m.locale=?', resourceLocale);
+      } else {
+        _resourceField = '';
+        _resourceJoin = '';
+        _resourceWhere = '';
       }
 
       // tableName
@@ -622,6 +640,7 @@ module.exports = ctx => {
                 g2.userName as userNameUpdated,g2.avatar as avatarUpdated
                 ${_starField}
                 ${_labelField}
+                ${_resourceField}
           from aAtom a
 
             inner join aAtomClass b on a.atomClassId=b.id
@@ -629,9 +648,11 @@ module.exports = ctx => {
             left join aUser g2 on a.userIdUpdated=g2.id
             left join aCategory j on a.atomCategoryId=j.id
             ${_itemJoin}
+            ${_resourceJoin}
 
           where a.id=${atomId}
             and a.deleted=0 and a.iid=${iid}
+            ${_resourceWhere}
         `;
 
       // ok

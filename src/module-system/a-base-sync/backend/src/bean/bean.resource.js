@@ -25,6 +25,11 @@ module.exports = ctx => {
       return ctx.bean._getBean(moduleInfo.relativeName, 'local.procedure');
     }
 
+    // count
+    async count({ options, user }) {
+      return await this.select({ options, user, count: 1 });
+    }
+
     // select
     //   donot set disabled
     async select({ options: { where, orders, page, resourceType, star = 0, label = 0, stage = 'archive', category = 0, tag = 0, locale }, user, pageForce = true, count = 0 }) {
@@ -42,6 +47,14 @@ module.exports = ctx => {
       return await ctx.bean.atom.select({
         atomClass: __atomClass, options, user, pageForce, count,
       });
+    }
+
+    // read
+    async read({ key, options, user }) {
+      options = Object.assign({ resource: 1 }, options);
+      // locale
+      options.resourceLocale = options.locale || ctx.locale;
+      return await ctx.bean.atom.read({ key, options, user });
     }
 
     async setLocales({ atomId, atomName }) {

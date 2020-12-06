@@ -13,9 +13,9 @@ module.exports = app => {
       return { atomId: key.atomId, itemId };
     }
 
-    async read({ atomClass, key, user }) {
+    async read({ atomClass, options, key, user }) {
       // super
-      const item = await super.read({ atomClass, key, user });
+      const item = await super.read({ atomClass, options, key, user });
       if (!item) return null;
       // meta
       this._getMeta(item);

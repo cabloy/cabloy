@@ -39,6 +39,14 @@ module.exports = app => {
       });
       assert.equal(list[0].passed, true);
 
+      // read
+      const item = await this.ctx.bean.resource.read({
+        key: { atomId: resource_one.atomId },
+        options: { locale: 'en-us' },
+        user: userTom,
+      });
+      assert.equal(!!item.atomNameLocale, true);
+
       // done
       this.ctx.success();
     }

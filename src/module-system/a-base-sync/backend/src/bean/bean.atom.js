@@ -773,13 +773,18 @@ module.exports = ctx => {
       await this.modelFile.delete({ atomId: atom.id });
     }
 
-    async _get({ atomClass, key, mode, user }) {
+    async _get({ atomClass, options, key, mode, user }) {
+      if (!options) options = {};
+      const resource = options.resource || 0;
+      const resourceLocale = options.resourceLocale || ctx.locale;
+      //
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       const tableName = this._getTableName({ atomClass: _atomClass, mode });
       const sql = this.sqlProcedure.getAtom({
         iid: ctx.instance.id,
         userIdWho: user ? user.id : 0,
         tableName, atomId: key.atomId,
+        resource, resourceLocale,
       });
       return await ctx.model.queryOne(sql);
     }

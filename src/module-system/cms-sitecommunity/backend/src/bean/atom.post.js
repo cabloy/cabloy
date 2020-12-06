@@ -16,11 +16,11 @@ module.exports = app => {
       });
     }
 
-    async read({ atomClass, key, user }) {
+    async read({ atomClass, options, key, user }) {
       return await this.ctx.executeBean({
         beanModule: articleBeanModule,
         beanFullName: articleBeanFullName,
-        context: { atomClass, key, user },
+        context: { atomClass, options, key, user },
         fn: 'read',
       });
     }

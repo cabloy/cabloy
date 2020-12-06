@@ -20,7 +20,7 @@ module.exports = app => {
 
     async read({ atomClass, options, key, user }) {
       // super
-      const item = await super.read({ atomClass, key, user });
+      const item = await super.read({ atomClass, options, key, user });
       if (!item) return null;
       // read
       this._getMeta(item, options);
