@@ -44,7 +44,18 @@ module.exports = app => {
       } else {
         // register
         item = await this._adjustItem({ moduleName, atomClass, item, register: true });
-        await this._register({ atomClass, item });
+        const atomId = await this._register({ atomClass, item });
+        await this._addResourceRoles({ atomId, roles: item.resourceRoles });
+      }
+    }
+
+    async _addResourceRoles({ atomId, roles }) {
+      if (!roles || !roles.length) return;
+      for (const role of roles) {
+        if (!role) continue;
+        await this.ctx.bean.role.addRoleResource({
+          roleId: role.id, atomId,
+        });
       }
     }
 
@@ -156,7 +167,7 @@ module.exports = app => {
         atomStaticKey: item.atomStaticKey,
         atomStage: 'archive',
       });
-      if (atom) return;
+      if (atom) return atom.atomId;
       // add atom
       const atomKey = await this.ctx.bean.atom.create({
         atomClass,
@@ -169,11 +180,12 @@ module.exports = app => {
         key: atomKey, item, user: { id: 0 },
       });
       // submit
-      await this.ctx.bean.atom.submit({
+      const res = await this.ctx.bean.atom.submit({
         key: atomKey,
         options: { ignoreFlow: true },
         user: { id: 0 },
       });
+      return res.archive.key.atomId;
     }
 
   }
