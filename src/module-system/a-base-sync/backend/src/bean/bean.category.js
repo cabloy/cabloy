@@ -6,8 +6,12 @@ module.exports = ctx => {
       return ctx.model.module(moduleInfo.relativeName).category;
     }
 
-    async get({ categoryId }) {
-      return await this.modelCategory.get({ id: categoryId });
+    async get({ categoryId, setLocale }) {
+      const category = await this.modelCategory.get({ id: categoryId });
+      if (category && setLocale) {
+        category.categoryNameLocale = ctx.text(category.categoryName);
+      }
+      return category;
     }
 
     async save({ categoryId, data }) {
@@ -25,12 +29,12 @@ module.exports = ctx => {
       return await this.children({ atomClass, language, categoryId, categoryHidden, categoryFlag, count: 1 });
     }
 
-    async child({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag }) {
-      const list = await this.children({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag });
+    async child({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag, setLocale }) {
+      const list = await this.children({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag, setLocale });
       return list[0];
     }
 
-    async children({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag, count = 0 }) {
+    async children({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag, setLocale, count = 0 }) {
       //
       const where = { };
       if (categoryId !== undefined) where.categoryIdParent = categoryId;
@@ -49,10 +53,16 @@ module.exports = ctx => {
       if (count) {
         return await this.modelCategory.count(where);
       }
-      return await this.modelCategory.select({
+      const list = await this.modelCategory.select({
         where,
         orders: [[ 'categorySorting', 'asc' ], [ 'createdAt', 'asc' ]],
       });
+      if (setLocale) {
+        for (const category of list) {
+          category.categoryNameLocale = ctx.text(category.categoryName);
+        }
+      }
+      return list;
     }
 
     async add({ atomClass, data }) {
@@ -119,31 +129,31 @@ module.exports = ctx => {
       });
     }
 
-    async tree({ atomClass, language, categoryId, categoryHidden, categoryFlag }) {
-      return await this._treeChildren({ atomClass, language, categoryId, categoryHidden, categoryFlag });
+    async tree({ atomClass, language, categoryId, categoryHidden, categoryFlag, setLocale }) {
+      return await this._treeChildren({ atomClass, language, categoryId, categoryHidden, categoryFlag, setLocale });
     }
 
-    async _treeChildren({ atomClass, language, categoryId, categoryHidden, categoryFlag }) {
-      const list = await this.children({ atomClass, language, categoryId, categoryHidden, categoryFlag });
+    async _treeChildren({ atomClass, language, categoryId, categoryHidden, categoryFlag, setLocale }) {
+      const list = await this.children({ atomClass, language, categoryId, categoryHidden, categoryFlag, setLocale });
       for (const item of list) {
         if (item.categoryCatalog) {
           // only categoryId
-          item.children = await this._treeChildren({ atomClass, language, categoryId: item.id, categoryHidden, categoryFlag });
+          item.children = await this._treeChildren({ atomClass, language, categoryId: item.id, categoryHidden, categoryFlag, setLocale });
         }
       }
       return list;
     }
 
-    async relativeTop({ categoryId }) {
-      return await this._relativeTop({ categoryId });
+    async relativeTop({ categoryId, setLocale }) {
+      return await this._relativeTop({ categoryId, setLocale });
     }
 
-    async _relativeTop({ categoryId }) {
+    async _relativeTop({ categoryId, setLocale }) {
       if (categoryId === 0) return null;
-      const category = await this.get({ categoryId });
+      const category = await this.get({ categoryId, setLocale });
       if (!category) return null;
       if (category.categoryUrl) return category;
-      return await this._relativeTop({ categoryId: category.categoryIdParent });
+      return await this._relativeTop({ categoryId: category.categoryIdParent, setLocale });
     }
 
     // categoryA.categoryB

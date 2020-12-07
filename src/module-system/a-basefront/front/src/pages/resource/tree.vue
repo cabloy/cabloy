@@ -79,7 +79,7 @@ export default {
           id: item.id,
           attrs: {
             // link: '#',
-            label: item.categoryName,
+            label: item.categoryNameLocale,
             toggle: true,
             itemToggle: true,
             loadChildren: true,

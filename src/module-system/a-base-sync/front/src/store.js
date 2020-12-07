@@ -322,6 +322,7 @@ export default function(Vue) {
               atomClass: __atomClassResource,
               categoryId: categoryRoot.id,
               categoryHidden: 0,
+              setLocale: true,
             }).then(data => {
               const tree = data.list;
               commit('setResourceTrees', { resourceType, tree });

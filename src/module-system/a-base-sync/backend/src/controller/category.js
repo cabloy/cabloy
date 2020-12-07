@@ -11,6 +11,7 @@ module.exports = app => {
         categoryName: this.ctx.request.body.categoryName,
         categoryHidden: this.ctx.request.body.categoryHidden,
         categoryFlag: this.ctx.request.body.categoryFlag,
+        setLocale: this.ctx.request.body.setLocale,
       });
       this.ctx.success(res);
     }
@@ -24,6 +25,7 @@ module.exports = app => {
         categoryName: this.ctx.request.body.categoryName,
         categoryHidden: this.ctx.request.body.categoryHidden,
         categoryFlag: this.ctx.request.body.categoryFlag,
+        setLocale: this.ctx.request.body.setLocale,
       });
       this.ctx.success({ list });
     }
@@ -58,6 +60,7 @@ module.exports = app => {
       // need not param:atomClass
       const data = await this.ctx.service.category.item({
         categoryId: this.ctx.request.body.categoryId,
+        setLocale: this.ctx.request.body.setLocale,
       });
       this.ctx.success(data);
     }
@@ -79,6 +82,7 @@ module.exports = app => {
         categoryId: this.ctx.request.body.categoryId,
         categoryHidden: this.ctx.request.body.categoryHidden,
         categoryFlag: this.ctx.request.body.categoryFlag,
+        setLocale: this.ctx.request.body.setLocale,
       });
       this.ctx.success({ list });
     }
@@ -87,6 +91,7 @@ module.exports = app => {
       // need not param:atomClass
       const res = await this.ctx.service.category.relativeTop({
         categoryId: this.ctx.request.body.categoryId,
+        setLocale: this.ctx.request.body.setLocale,
       });
       this.ctx.success(res);
     }
