@@ -128,21 +128,21 @@ module.exports = app => {
     // category
     { method: 'post', path: 'category/child', controller: 'category' }, // not set function right
     { method: 'post', path: 'category/children', controller: 'category' }, // not set function right
-    { method: 'post', path: 'category/add', controller: 'category', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'category/delete', controller: 'category', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'category/move', controller: 'category', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'category/item', controller: 'category', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
+    { method: 'post', path: 'category/add', controller: 'category', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
+    { method: 'post', path: 'category/delete', controller: 'category', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
+    { method: 'post', path: 'category/move', controller: 'category', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
+    { method: 'post', path: 'category/item', controller: 'category', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
     { method: 'post', path: 'category/save', controller: 'category', middlewares: 'validate', meta: {
       validate: { module: 'a-base', validator: 'category' },
-      right: { type: 'function', module: 'a-settings', name: 'settings' },
+      right: { type: 'resource', module: 'a-settings', name: 'settings' },
     } },
     { method: 'post', path: 'category/tree', controller: 'category' }, // not set function right
     { method: 'post', path: 'category/relativeTop', controller: 'category' }, // not set function right
     // tag
     { method: 'post', path: 'tag/list', controller: 'tag' },
-    { method: 'post', path: 'tag/add', controller: 'tag', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'tag/save', controller: 'tag', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'tag/delete', controller: 'tag', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
+    { method: 'post', path: 'tag/add', controller: 'tag', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
+    { method: 'post', path: 'tag/save', controller: 'tag', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
+    { method: 'post', path: 'tag/delete', controller: 'tag', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
 
   ];
   return routes;

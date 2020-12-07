@@ -128,7 +128,7 @@ module.exports = ctx => {
       for (const item of list) {
         if (item.categoryCatalog) {
           // only categoryId
-          item.children = await this._treeChildren({ atomClass, categoryId: item.id });
+          item.children = await this._treeChildren({ atomClass, language, categoryId: item.id, categoryHidden, categoryFlag });
         }
       }
       return list;
