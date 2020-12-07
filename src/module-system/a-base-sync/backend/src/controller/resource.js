@@ -14,6 +14,14 @@ module.exports = app => {
       this.ctx.successMore(items, options.page.index, options.page.size);
     }
 
+    async check() {
+      const res = await this.ctx.service.resource.check({
+        atomStaticKeys: this.ctx.request.body.atomStaticKeys,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
   }
 
   return ResourceController;

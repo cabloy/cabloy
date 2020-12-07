@@ -39,6 +39,7 @@ export default function(Vue) {
       actions: null,
       resourceTypes: null,
       resourceTrees: {},
+      resources: {},
       categories: {},
       tags: {},
       functionScenes: {},
@@ -152,6 +153,12 @@ export default function(Vue) {
         state.resourceTrees = {
           ...state.resourceTrees,
           [resourceType]: tree,
+        };
+      },
+      setResources(state, { resourceType, resources }) {
+        state.resources = {
+          ...state.resources,
+          [resourceType]: resources,
         };
       },
       setCategories(state, { atomClass, language, categories }) {
@@ -322,6 +329,25 @@ export default function(Vue) {
             }).catch(err => {
               reject(err);
             });
+          }).catch(err => {
+            reject(err);
+          });
+        });
+      },
+      getResources({ state, commit }, { resourceType }) {
+        return new Promise((resolve, reject) => {
+          if (state.resources[resourceType]) return resolve(state.resources[resourceType]);
+          Vue.prototype.$meta.api.post('/a/base/resource/select', {
+            options: {
+              resourceType,
+            },
+          }).then(data => {
+            const resources = {};
+            for (const item of data.list) {
+              resources[item.atomStaticKey] = item;
+            }
+            commit('setResources', { resourceType, resources });
+            resolve(resources);
           }).catch(err => {
             reject(err);
           });
