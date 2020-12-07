@@ -1,6 +1,11 @@
 // eslint-disable-next-line
 export default function(Vue) {
 
+  const __atomClassResource = {
+    module: 'a-base',
+    atomClassName: 'resource',
+  };
+
   const queueLayoutConfig = Vue.prototype.$meta.util.queue((info, cb) => {
     const user = Vue.prototype.$meta.store.getState('auth/user');
     if (user.op.id !== info.userId) return cb();
@@ -28,11 +33,12 @@ export default function(Vue) {
       userButtons: null,
       userAtomClassRolesPreferred: {},
       // global
-      resourceTypes: null,
       locales: null,
       modules: null,
       atomClasses: null,
       actions: null,
+      resourceTypes: null,
+      resourceTrees: {},
       categories: {},
       tags: {},
       functionScenes: {},
@@ -103,9 +109,6 @@ export default function(Vue) {
           [atomClassId]: roleIdOwner,
         };
       },
-      setResourceTypes(state, resourceTypes) {
-        state.resourceTypes = resourceTypes;
-      },
       setLocales(state, locales) {
         state.locales = locales;
       },
@@ -140,6 +143,15 @@ export default function(Vue) {
         state.functionScenes = {
           ...state.functionScenes,
           [sceneMenu]: scenes,
+        };
+      },
+      setResourceTypes(state, resourceTypes) {
+        state.resourceTypes = resourceTypes;
+      },
+      setResourceTrees(state, { resourceType, tree }) {
+        state.resourceTrees = {
+          ...state.resourceTrees,
+          [resourceType]: tree,
         };
       },
       setCategories(state, { atomClass, language, categories }) {
@@ -286,6 +298,30 @@ export default function(Vue) {
             data = data || {};
             commit('setButtons', data);
             resolve(data);
+          }).catch(err => {
+            reject(err);
+          });
+        });
+      },
+      getResourceTrees({ state, commit }, { resourceType }) {
+        return new Promise((resolve, reject) => {
+          if (state.resourceTrees[resourceType]) return resolve(state.resourceTrees[resourceType]);
+          Vue.prototype.$meta.api.post('/a/base/category/child', {
+            atomClass: __atomClassResource,
+            categoryId: 0,
+            categoryName: resourceType,
+          }).then(categoryRoot => {
+            Vue.prototype.$meta.api.post('/a/base/category/tree', {
+              atomClass: __atomClassResource,
+              categoryId: categoryRoot.id,
+              categoryHidden: 0,
+            }).then(data => {
+              const tree = data.list;
+              commit('setResourceTrees', { resourceType, tree });
+              resolve(tree);
+            }).catch(err => {
+              reject(err);
+            });
           }).catch(err => {
             reject(err);
           });

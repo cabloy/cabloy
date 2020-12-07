@@ -2,6 +2,10 @@ module.exports = app => {
 
   class Category extends app.Service {
 
+    async child({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag }) {
+      return await this.ctx.bean.category.child({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag });
+    }
+
     async children({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag }) {
       return await this.ctx.bean.category.children({ atomClass, language, categoryId, categoryName, categoryHidden, categoryFlag });
     }

@@ -1,12 +1,7 @@
 <template>
   <eb-page>
     <eb-navbar :title="pageTitle" eb-back-link="Back"></eb-navbar>
-    <eb-treeview ref="tree" :root="root" :onLoadChildren="onLoadChildren" @node:click="onNodeClick">
-      <div class="category-node" slot="root-end" slot-scope="{node}">
-        <eb-link class="category-action" :context="node" :onPerform="onPerformAdd">{{$text('Add')}}</eb-link>
-        <eb-link class="category-action" v-if="node.id>0" :context="node" :onPerform="onPerformMove">{{$text('Move')}}</eb-link>
-        <eb-link class="category-action" v-if="node.id>0" :context="node" :onPerform="onPerformDelete">{{$text('Delete')}}</eb-link>
-      </div>
+    <eb-treeview v-if="ready" ref="tree" :root="root" :onLoadChildren="onLoadChildren" @node:click="onNodeClick">
     </eb-treeview>
   </eb-page>
 </template>
@@ -21,8 +16,10 @@ export default {
       home = true;
     }
     return {
+      ready: false,
       resourceType,
       home,
+      treeData: null,
       root: {
         attrs: {
           itemToggle: false,
@@ -43,9 +40,14 @@ export default {
     },
   },
   created() {
-    this.$store.dispatch('a/base/getResourceTypes');
+    this.__init();
   },
   methods: {
+    async __init() {
+      await this.$store.dispatch('a/base/getResourceTypes');
+      this.treeData = await this.$store.dispatch('a/base/getResourceTrees', { resourceType: this.resourceType });
+      this.ready = true;
+    },
     combineAtomClassAndLanguage() {
       const queries = {
         module: this.atomClass.module,
@@ -56,7 +58,36 @@ export default {
       }
       return queries;
     },
+    async _loadNodeCategories(node) {
+      let treeChildren;
+      if (node.root) {
+        treeChildren = this.treeData;
+      } else {
+        treeChildren = node.data.children;
+      }
+      return treeChildren.map(item => {
+        const node = {
+          id: item.id,
+          attrs: {
+            link: '#',
+            label: item.categoryName,
+            toggle: true,
+            loadChildren: true,
+          },
+          data: item,
+        };
+        return node;
+      });
+    },
+    async _loadNodeResources(node) {
+
+    },
     async onLoadChildren(node) {
+      if (node.root || node.data.categoryCatalog === 1) {
+        return await this._loadNodeCategories(node);
+      }
+      return await this._loadNodeResources(node);
+
       // root
       if (node.root) {
         return [{

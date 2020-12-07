@@ -2,6 +2,19 @@ module.exports = app => {
 
   class CategoryController extends app.Controller {
 
+    async child() {
+      const atomClass = this.ctx.request.body.atomClass;
+      const res = await this.ctx.service.category.child({
+        atomClass,
+        language: this.ctx.request.body.language,
+        categoryId: this.ctx.request.body.categoryId,
+        categoryName: this.ctx.request.body.categoryName,
+        categoryHidden: this.ctx.request.body.categoryHidden,
+        categoryFlag: this.ctx.request.body.categoryFlag,
+      });
+      this.ctx.success(res);
+    }
+
     async children() {
       const atomClass = this.ctx.request.body.atomClass;
       const list = await this.ctx.service.category.children({
