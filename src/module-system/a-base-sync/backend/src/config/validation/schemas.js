@@ -122,7 +122,7 @@ module.exports = app => {
         ebTitle: 'Config',
       },
       resourceConfig: {
-        type: 'string',
+        type: [ 'string', 'null' ],
         ebType: 'text',
         ebTextarea: true,
         ebTitle: 'Config',

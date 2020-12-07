@@ -1,56 +1,17 @@
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Version extends app.meta.BeanBase {
 
     async update(options) {
-      if (options.version === 1) {
-      }
+      if (options.version === 1) {}
     }
 
     async init(options) {
-      if (options.version === 1) {
-        // roleFunctions
-        const roleFunctions = [
-          { roleName: 'system', name: 'user' },
-          { roleName: 'system', name: 'role' },
-          { roleName: 'system', name: 'atomRight' },
-          { roleName: 'system', name: 'functionRight' },
-          { roleName: 'system', name: 'auth' },
-          { roleName: 'system', name: 'category' },
-          { roleName: 'system', name: 'tag' },
-        ];
-        await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions });
-      }
+      if (options.version === 1) {}
 
-      if (options.version === 2) {
-        // remove menuRight
-        const fun = await this.ctx.bean.function._get({ module: moduleInfo.relativeName, name: 'menuRight' });
-        if (fun) {
-          //  1. aFunction
-          await this.ctx.model.delete('aFunction', { id: fun.id });
-          //  2. aFunctionLocale
-          await this.ctx.model.delete('aFunctionLocale', { functionId: fun.id });
-          //  3. aFunctionStar
-          await this.ctx.model.delete('aFunctionStar', { functionId: fun.id });
-          //  4. aRoleFunction
-          await this.ctx.model.delete('aRoleFunction', { functionId: fun.id });
-        }
-      }
+      if (options.version === 2) {}
 
-      if (options.version === 3) {
-        // roleFunctions
-        const roleFunctions = [
-          { roleName: 'system', name: 'menu' },
-        ];
-        await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions });
-
-        // menu: 1->0
-        const functions = 'user,role,atomRight,functionRight,auth,category,tag'.split(',');
-        for (const name of functions) {
-          const func = await this.ctx.bean.function.get({ name });
-          await this.ctx.model.function.update({ id: func.id, sceneId: 0, menu: 0 });
-        }
-      }
+      if (options.version === 3) {}
 
     }
 

@@ -11,6 +11,7 @@ module.exports = app => {
     const keywords = require('./config/validation/keywords.js')(app);
     // socketio
     const socketioTest = require('./config/socketio/test.js')(app);
+    // static
     const staticDashboards = require('./config/static/dashboards.js')(app);
     const staticResources = require('./config/static/resources.js')(app);
     // meta

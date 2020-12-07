@@ -1,57 +1,14 @@
 module.exports = app => {
   // schemas
   const schemas = require('./config/validation/schemas.js')(app);
+  // static
+  const staticResources = require('./config/static/resources.js')(app);
   // meta
   const meta = {
     base: {
-      functions: {
-        user: {
-          title: 'User Management',
-          actionPath: 'user/list',
-          sorting: 1,
-          menu: 0,
-        },
-        role: {
-          title: 'Role Management',
-          actionPath: 'role/list',
-          sorting: 1,
-          menu: 0,
-        },
-        atomRight: {
-          title: 'Atom Right Management',
-          actionPath: 'atomRight/list',
-          sorting: 1,
-          menu: 0,
-        },
-        functionRight: {
-          title: 'Function Right Management',
-          actionPath: 'functionRight/types',
-          sorting: 1,
-          menu: 0,
-        },
-        auth: {
-          title: 'Auth Management',
-          actionPath: 'auth/list',
-          sorting: 1,
-          menu: 0,
-        },
-        menu: {
-          title: 'Menu Management',
-          actionPath: 'function/scene?sceneMenu=1',
-          sorting: 1,
-          menu: 0,
-        },
-        category: {
-          title: 'Category Management',
-          actionPath: 'category/management',
-          sorting: 1,
-          menu: 0,
-        },
-        tag: {
-          title: 'Tag Management',
-          actionPath: 'tag/management',
-          sorting: 1,
-          menu: 0,
+      statics: {
+        'a-base.resource': {
+          items: staticResources,
         },
       },
     },

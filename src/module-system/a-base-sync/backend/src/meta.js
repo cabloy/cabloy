@@ -3,6 +3,8 @@ module.exports = app => {
   const keywords = require('./config/validation/keywords.js')(app);
   // schemas
   const schemas = require('./config/validation/schemas.js')(app);
+  // static
+  const staticResources = require('./config/static/resources.js')(app);
   // meta
   const meta = {
     base: {
@@ -43,19 +45,6 @@ module.exports = app => {
           },
         },
       },
-      functions: {
-        listComment: {
-          title: 'Comment List',
-          scene: 'list',
-          sorting: 1,
-          menu: 1,
-          actionPath: '/a/basefront/comment/all',
-        },
-        deleteComment: {
-          title: 'Delete Comment',
-          menu: 0,
-        },
-      },
       resources: {
         function: {
           title: 'Function',
@@ -63,6 +52,11 @@ module.exports = app => {
         },
         menu: {
           title: 'Menu',
+        },
+      },
+      statics: {
+        'a-base.resource': {
+          items: staticResources,
         },
       },
     },

@@ -42,13 +42,7 @@ module.exports = app => {
     }
 
     async init(options) {
-      if (options.version === 1) {
-        // roleFunctions
-        const roleFunctions = [
-          { roleName: 'system', name: 'settings' },
-        ];
-        await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions });
-      }
+      if (options.version === 1) {}
     }
 
   }
