@@ -2,7 +2,7 @@ const party = require('./controller/party.js');
 const testAtomStarLabel = require('./controller/test/atom/starLabel.js');
 const testAtomAll = require('./controller/test/atom/all.js');
 const testAtomRight = require('./controller/test/atom/right.js');
-const testFunctionRight = require('./controller/test/resource/right.js');
+const testResourceRight = require('./controller/test/resource/right.js');
 const testResourceAll = require('./controller/test/resource/all.js');
 const testCtxPerformAction = require('./controller/test/ctx/performAction.js');
 const testCtxTransaction = require('./controller/test/ctx/transaction.js');
@@ -45,7 +45,7 @@ module.exports = app => {
     testAtomStarLabel,
     testAtomAll,
     testAtomRight,
-    testFunctionRight,
+    testResourceRight,
     testResourceAll,
     testCtxPerformAction,
     testCtxTransaction,

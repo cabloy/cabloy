@@ -2,14 +2,14 @@ const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
 describe('test/controller/test/function/right.test.js', () => {
 
-  it('action:checkRightFunctionUser', async () => {
+  it('action:checkRightResourceUser', async () => {
     app.mockSession({});
 
-    const checkRightFunctions = [
+    const checkRightResources = [
       [ 'Root', true ],
       [ 'Tomson', false ],
     ];
-    for (const [ userName, right ] of checkRightFunctions) {
+    for (const [ userName, right ] of checkRightResources) {
       // login
       await app.httpRequest().post(mockUrl('/a/authsimple/passport/a-authsimple/authsimple')).send({
         data: {
@@ -17,10 +17,11 @@ describe('test/controller/test/function/right.test.js', () => {
           password: '123456',
         },
       });
-      // checkRightFunctionUser
-      const result = await app.httpRequest().post(mockUrl('test/function/checkRightFunctionUser'));
+      // checkRightResourceUser
+      const result = await app.httpRequest().post(mockUrl('test/resource/checkRightResourceUser'));
       if (right) {
-        assert.equal(result.body.data.id > 0, true);
+        console.log(result.body.data);
+        assert.equal(result.body.data.atomId > 0, true);
       } else {
         assert.equal(result.status, 403);
       }

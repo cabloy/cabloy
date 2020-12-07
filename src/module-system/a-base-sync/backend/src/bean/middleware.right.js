@@ -20,6 +20,9 @@ module.exports = ctx => {
       // function
       if (options.type === 'function') await checkFunction(moduleInfo, options, ctx);
 
+      // resource
+      if (options.type === 'resource') await checkResource(moduleInfo, options, ctx);
+
       // next
       await next();
     }
@@ -120,4 +123,19 @@ async function checkFunction(moduleInfo, options, ctx) {
   });
   if (!res) ctx.throw(403);
   ctx.meta._function = res;
+}
+
+async function checkResource(moduleInfo, options, ctx) {
+  if (ctx.innerAccess) return;
+  let atomStaticKey = options.atomStaticKey;
+  if (!atomStaticKey && options.name) {
+    atomStaticKey = `${options.module || ctx.module.info.relativeName}:${options.name}`;
+  }
+  if (!atomStaticKey) ctx.throw(403);
+  const res = await ctx.bean.resource.checkRightResource({
+    atomStaticKey,
+    user: ctx.state.user.op,
+  });
+  if (!res) ctx.throw(403);
+  ctx.meta._resource = res;
 }

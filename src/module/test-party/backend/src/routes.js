@@ -24,9 +24,9 @@ module.exports = app => {
         meta: { right: { type: 'atom', action: 101 } },
       },
 
-      // test/function/right
-      { method: 'post', path: 'test/function/checkRightFunctionUser', controller: 'testFunctionRight', middlewares: 'test',
-        meta: { right: { type: 'function', module: 'a-baseadmin', name: 'user' } },
+      // test/resource/right
+      { method: 'post', path: 'test/resource/checkRightResourceUser', controller: 'testResourceRight', middlewares: 'test',
+        meta: { right: { type: 'resource', module: 'test-party', name: 'createParty' } },
       },
       // test/resource/all
       { method: 'post', path: 'test/resource/all', controller: 'testResourceAll', middlewares: 'test', meta: { auth: { enable: false } } },
