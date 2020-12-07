@@ -49,6 +49,11 @@ module.exports = app => {
           menu: 1,
         },
       },
+      resources: {
+        block: {
+          title: 'CMS Block',
+        },
+      },
       statics: {
         'a-flow.flowDef': {
           items: staticFlowDefs,

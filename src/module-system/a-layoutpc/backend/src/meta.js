@@ -61,6 +61,17 @@ module.exports = app => {
           public: 1,
         },
       },
+      resources: {
+        headerButton: {
+          title: 'Header Button',
+        },
+        sidebarPanel: {
+          title: 'Sidebar Panel',
+        },
+        bottombarSection: {
+          title: 'Bottombar Section',
+        },
+      },
     },
   };
   return meta;

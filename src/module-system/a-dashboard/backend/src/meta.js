@@ -46,6 +46,11 @@ module.exports = app => {
           public: 1,
         },
       },
+      resources: {
+        widget: {
+          title: 'Dashboard Widget',
+        },
+      },
       statics: {
         'a-dashboard.dashboard': {
           items: staticDashboards,

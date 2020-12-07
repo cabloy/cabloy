@@ -56,6 +56,15 @@ module.exports = app => {
           menu: 0,
         },
       },
+      resources: {
+        function: {
+          title: 'Function',
+          validator: null,
+        },
+        menu: {
+          title: 'Menu',
+        },
+      },
     },
     sequence: {
       providers: {

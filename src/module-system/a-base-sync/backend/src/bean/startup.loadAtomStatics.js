@@ -10,7 +10,7 @@ module.exports = app => {
     async _loadAtomStatics() {
       for (const module of this.ctx.app.meta.modulesArray) {
         const moduleName = module.info.relativeName;
-        const statics = module.main.meta && module.main.meta.base && module.main.meta.base.statics && module.main.meta.base.statics;
+        const statics = module.main.meta && module.main.meta.base && module.main.meta.base.statics;
         if (!statics) continue;
         for (const atomClassKey in statics) {
           const [ atomClassModule, atomClassName ] = atomClassKey.split('.');
