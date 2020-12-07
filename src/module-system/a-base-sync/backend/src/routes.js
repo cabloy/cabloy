@@ -101,6 +101,8 @@ module.exports = app => {
     // user
     { method: 'post', path: 'user/getLabels', controller: 'user' },
     { method: 'post', path: 'user/setLabels', controller: 'user' },
+    // resource
+    { method: 'post', path: 'resource/select', controller: 'resource' },
     // function
     { method: 'post', path: 'function/scenes', controller: 'function' },
     { method: 'post', path: 'function/list', controller: 'function' },

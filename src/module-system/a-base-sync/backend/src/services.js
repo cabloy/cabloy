@@ -4,6 +4,7 @@ const atom = require('./service/atom.js');
 const atomClass = require('./service/atomClass.js');
 const atomAction = require('./service/atomAction.js');
 const auth = require('./service/auth.js');
+const resource = require('./service/resource.js');
 const func = require('./service/function.js');
 const comment = require('./service/comment.js');
 const jwt = require('./service/jwt.js');
@@ -19,6 +20,7 @@ module.exports = app => {
     atomClass,
     atomAction,
     auth,
+    resource,
     function: func,
     comment,
     jwt,

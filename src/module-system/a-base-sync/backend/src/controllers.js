@@ -4,6 +4,7 @@ const atomClass = require('./controller/atomClass.js');
 const auth = require('./controller/auth.js');
 const base = require('./controller/base.js');
 const comment = require('./controller/comment.js');
+const resource = require('./controller/resource.js');
 const func = require('./controller/function.js');
 const jwt = require('./controller/jwt.js');
 const layoutConfig = require('./controller/layoutConfig.js');
@@ -19,6 +20,7 @@ module.exports = app => {
     auth,
     base,
     comment,
+    resource,
     function: func,
     jwt,
     layoutConfig,

@@ -32,7 +32,7 @@ module.exports = ctx => {
 
     // select
     //   donot set disabled
-    async select({ options: { where, orders, page, resourceType, star = 0, label = 0, stage = 'archive', category = 0, tag = 0, locale }, user, pageForce = true, count = 0 }) {
+    async select({ options: { where, orders, page, resourceType, star = 0, label = 0, stage = 'archive', category = 0, tag = 0, locale }, user, pageForce = false, count = 0 }) {
       // locale
       locale = locale || ctx.locale;
       // where

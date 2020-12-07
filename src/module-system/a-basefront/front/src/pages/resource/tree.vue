@@ -6,7 +6,10 @@
   </eb-page>
 </template>
 <script>
+import Vue from 'vue';
+const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
 export default {
+  mixins: [ ebAtomActions ],
   data() {
     const query = this.$f7route.query;
     let resourceType = query.resourceType;
@@ -16,7 +19,6 @@ export default {
       home = true;
     }
     return {
-      ready: false,
       resourceType,
       home,
       treeData: null,
@@ -29,6 +31,9 @@ export default {
     };
   },
   computed: {
+    ready() {
+      return this.treeData && this.actionsAll;
+    },
     pageTitle() {
       if (this.home) {
         const inPanel = this.$view.inPanel();
@@ -44,9 +49,8 @@ export default {
   },
   methods: {
     async __init() {
-      await this.$store.dispatch('a/base/getResourceTypes');
+      this.$store.dispatch('a/base/getResourceTypes');
       this.treeData = await this.$store.dispatch('a/base/getResourceTrees', { resourceType: this.resourceType });
-      this.ready = true;
     },
     combineAtomClassAndLanguage() {
       const queries = {
@@ -69,9 +73,10 @@ export default {
         const node = {
           id: item.id,
           attrs: {
-            link: '#',
+            // link: '#',
             label: item.categoryName,
             toggle: true,
+            itemToggle: true,
             loadChildren: true,
           },
           data: item,
@@ -80,132 +85,66 @@ export default {
       });
     },
     async _loadNodeResources(node) {
-
+      const options = {
+        resourceType: this.resourceType,
+        category: node.id,
+      };
+      const res = await this.$api.post('/a/base/resource/select', { options });
+      return res.list.map(item => {
+        const node = {
+          id: item.atomId,
+          attrs: {
+            link: '#',
+            label: item.atomNameLocale,
+            toggle: false,
+            loadChildren: false,
+          },
+          data: item,
+        };
+        return node;
+      });
     },
     async onLoadChildren(node) {
       if (node.root || node.data.categoryCatalog === 1) {
         return await this._loadNodeCategories(node);
       }
       return await this._loadNodeResources(node);
-
-      // root
-      if (node.root) {
-        return [{
-          id: 0,
-          attrs: {
-            link: '#',
-            label: this.$text('Root'),
-            toggle: true,
-            loadChildren: true,
-          },
-          data: {
-            id: 0,
-            categoryCatalog: 1,
-          },
-        }];
-      }
-      // children
-      const data = await this.$api.post('/a/base/category/children', {
-        atomClass: this.atomClass,
-        language: this.language,
-        categoryId: node.id,
-      });
-      const list = data.list.map(item => {
-        const node = {
-          id: item.id,
-          attrs: {
-            link: '#',
-            label: item.categoryName || `[${this.$text('New Category')}]`,
-            toggle: item.categoryCatalog === 1,
-            loadChildren: item.categoryCatalog === 1,
-          },
-          data: item,
+    },
+    onNodeClick(event, node) {
+      const resourceConfig = JSON.parse(node.data.resourceConfig);
+      // special for action
+      let action;
+      let item;
+      if (resourceConfig.atomAction === 'create') {
+        //
+        action = this.getAction({
+          module: resourceConfig.module,
+          atomClassName: resourceConfig.atomClassName,
+          name: resourceConfig.atomAction,
+        });
+        item = {
+          module: resourceConfig.module,
+          atomClassName: resourceConfig.atomClassName,
         };
-        return node;
-      });
-      return list;
-    },
-    onNodeClick(e, node) {
-      if (!node.id) return;
-      const queries = this.combineAtomClassAndLanguage();
-      queries.categoryId = node.id;
-      const url = this.$meta.util.combineQueries('/a/baseadmin/category/edit', queries);
-      this.$view.navigate(url);
-    },
-    async onPerformAdd(event, node) {
-      const categoryId = node.data.id;
-      const categoryName = await this.$view.dialog.prompt(this.$text('Please specify the category name'));
-      if (!categoryName) return;
-      await this.$api.post('/a/base/category/add', {
-        atomClass: this.atomClass,
-        data: {
-          categoryName,
-          language: this.language,
-          categoryIdParent: categoryId,
-        },
-      });
-      this.reloadNode(node, {
-        attrs: {
-          toggle: true,
-          loadChildren: true,
-        },
-      });
-    },
-    async onPerformDelete(event, node) {
-      await this.$view.dialog.confirm();
-      await this.$api.post('/a/base/category/delete', {
-        categoryId: node.data.id,
-      });
-      this.reloadNode(node.parent);
-    },
-    onPerformMove(event, node) {
-      const categoryId = node.data.id;
-      const url = this.$meta.util.combineQueries('/a/basefront/category/select', this.combineAtomClassAndLanguage());
-      this.$view.navigate(url, {
-        context: {
-          params: {
-            categoryIdDisable: categoryId,
-          },
-          callback: (code, data) => {
-            if (code === 200) {
-              if (!data) return;
-              const categoryIdParent = data.id;
-              if (node.data.categoryIdParent === categoryIdParent) return;
-              this.$api.post('/a/base/category/move', { categoryId, categoryIdParent })
-                .then(() => {
-                  this.reloadNode(this.findNode(node.data.categoryIdParent));
-                  this.reloadNode(this.findNode(categoryIdParent), {
-                    attrs: {
-                      toggle: true,
-                      loadChildren: true,
-                    },
-                  });
-                });
-            }
-          },
-        },
-      });
-    },
-    reloadNode(node, nodeNew) {
-      if (!node) return;
-      this.$refs.tree.reloadNode(node, nodeNew);
-    },
-    findNode(id) {
-      return this.$refs.tree.find(null, node => node.id === id);
+      } else if (resourceConfig.atomAction === 'read') {
+        if (!resourceConfig.actionComponent && !resourceConfig.actionPath) {
+          resourceConfig.actionPath = '/a/basefront/atom/list?module={{module}}&atomClassName={{atomClassName}}';
+        }
+        action = resourceConfig;
+        item = {
+          module: resourceConfig.module,
+          atomClassName: resourceConfig.atomClassName,
+        };
+      } else {
+        action = resourceConfig;
+      }
+      action = this.$utils.extend({}, action, { targetEl: event.target });
+      return this.$meta.util.performAction({ ctx: this, action, item });
     },
   },
 };
 
 </script>
 <style lang="less" scoped>
-.category-node {
-  flex-grow: 1;
-  display: flex;
-  justify-content: flex-end;
-
-  .category-action+.category-action {
-    margin-left: 4px;
-  }
-}
 
 </style>
