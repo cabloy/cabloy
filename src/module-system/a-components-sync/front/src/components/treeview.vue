@@ -290,6 +290,7 @@ export default {
         if (!this._needLoadChildren(node)) return resolve(node.children);
         this.onLoadChildren(node).then(data => {
           this.$set(node, '_loaded', true);
+          if (!node.children) node.children = [];
           const nodeChildren = node.children;
           for (const item of data) {
             // children

@@ -12,6 +12,7 @@ export default {
   mixins: [ ebAtomActions ],
   data() {
     const query = this.$f7route.query;
+    const maxLevelAutoOpened = parseInt(query.maxLevelAutoOpened || 1);
     let resourceType = query.resourceType;
     let home = false;
     if (!resourceType) {
@@ -19,6 +20,7 @@ export default {
       home = true;
     }
     return {
+      maxLevelAutoOpened,
       resourceType,
       home,
       treeData: null,
@@ -63,13 +65,16 @@ export default {
       return queries;
     },
     async _loadNodeCategories(node) {
+      const levelCurrent = (node.data && node.data.__level) || 0;
+      const level = levelCurrent + 1;
       let treeChildren;
       if (node.root) {
         treeChildren = this.treeData;
       } else {
         treeChildren = node.data.children;
       }
-      return treeChildren.map(item => {
+      const list = [];
+      for (const item of treeChildren) {
         const node = {
           id: item.id,
           attrs: {
@@ -79,10 +84,19 @@ export default {
             itemToggle: true,
             loadChildren: true,
           },
-          data: item,
+          data: {
+            ...item,
+            __level: level,
+          },
         };
-        return node;
-      });
+        if (level <= this.maxLevelAutoOpened || this.maxLevelAutoOpened === -1) {
+          node.children = await this.onLoadChildren(node);
+          node.attrs.loadChildren = false;
+          node.attrs.opened = true;
+        }
+        list.push(node);
+      }
+      return list;
     },
     async _loadNodeResources(node) {
       const options = {
@@ -111,6 +125,7 @@ export default {
       return await this._loadNodeResources(node);
     },
     onNodeClick(event, node) {
+      console.log(node);
       const resourceConfig = JSON.parse(node.data.resourceConfig);
       // special for action
       let action;
