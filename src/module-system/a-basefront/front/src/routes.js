@@ -26,4 +26,5 @@ export default [
   { path: 'base/about', component: load('base/about') },
   { path: 'category/select', component: load('category/categorySelect') },
   { path: 'tag/select', component: load('tag/tagSelect') },
+  { path: 'resource/tree', component: load('resource/tree') },
 ];
