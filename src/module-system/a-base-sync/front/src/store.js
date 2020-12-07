@@ -28,6 +28,7 @@ export default function(Vue) {
       userButtons: null,
       userAtomClassRolesPreferred: {},
       // global
+      resourceTypes: null,
       locales: null,
       modules: null,
       atomClasses: null,
@@ -102,6 +103,9 @@ export default function(Vue) {
           [atomClassId]: roleIdOwner,
         };
       },
+      setResourceTypes(state, resourceTypes) {
+        state.resourceTypes = resourceTypes;
+      },
       setLocales(state, locales) {
         state.locales = locales;
       },
@@ -173,6 +177,18 @@ export default function(Vue) {
           Vue.prototype.$meta.api.post('/a/base/base/modules').then(data => {
             data = data || {};
             commit('setModules', data);
+            resolve(data);
+          }).catch(err => {
+            reject(err);
+          });
+        });
+      },
+      getResourceTypes({ state, commit }) {
+        return new Promise((resolve, reject) => {
+          if (state.resourceTypes) return resolve(state.resourceTypes);
+          Vue.prototype.$meta.api.post('/a/base/base/resourceTypes').then(data => {
+            data = data || {};
+            commit('setResourceTypes', data);
             resolve(data);
           }).catch(err => {
             reject(err);

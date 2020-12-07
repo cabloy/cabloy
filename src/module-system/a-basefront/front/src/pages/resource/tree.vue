@@ -1,6 +1,6 @@
 <template>
   <eb-page>
-    <eb-navbar large largeTransparent :title="pageTitle" eb-back-link="Back"></eb-navbar>
+    <eb-navbar :title="pageTitle" eb-back-link="Back"></eb-navbar>
     <eb-treeview ref="tree" :root="root" :onLoadChildren="onLoadChildren" @node:click="onNodeClick">
       <div class="category-node" slot="root-end" slot-scope="{node}">
         <eb-link class="category-action" :context="node" :onPerform="onPerformAdd">{{$text('Add')}}</eb-link>
@@ -14,16 +14,15 @@
 export default {
   data() {
     const query = this.$f7route.query;
-    const atomClass = {
-      module: query.module,
-      atomClassName: query.atomClassName,
-    };
-    const language = query.language;
-    const languageTitle = query.languageTitle;
+    let resourceType = query.resourceType;
+    let home = false;
+    if (!resourceType) {
+      resourceType = 'a-base:menu';
+      home = true;
+    }
     return {
-      atomClass,
-      language,
-      languageTitle,
+      resourceType,
+      home,
       root: {
         attrs: {
           itemToggle: false,
@@ -34,16 +33,17 @@ export default {
   },
   computed: {
     pageTitle() {
-      const title = this.$text('Categories');
-      if (!this.language) return title;
-      return `${title}: ${this.languageTitle}`;
+      if (this.home) {
+        const inPanel = this.$view.inPanel();
+        return inPanel ? this.$text('Menu') : this.$text('Home');
+      }
+      const resourceTypes = this.$store.getState('a/base/resourceTypes');
+      if (!resourceTypes) return null;
+      return resourceTypes[this.resourceType].titleLocale;
     },
   },
-  mounted() {
-    this.$meta.eventHub.$on('category:save', this.onCategorySave);
-  },
-  beforeDestroy() {
-    this.$meta.eventHub.$off('category:save', this.onCategorySave);
+  created() {
+    this.$store.dispatch('a/base/getResourceTypes');
   },
   methods: {
     combineAtomClassAndLanguage() {
@@ -161,11 +161,6 @@ export default {
     },
     findNode(id) {
       return this.$refs.tree.find(null, node => node.id === id);
-    },
-    onCategorySave(data) {
-      if (data.atomClass.module !== this.atomClass.module) return;
-      const node = this.findNode(data.categoryIdParent);
-      this.reloadNode(node);
     },
   },
 };

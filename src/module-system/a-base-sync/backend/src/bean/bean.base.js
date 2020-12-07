@@ -256,19 +256,18 @@ module.exports = ctx => {
     }
 
     _prepareResourceTypes() {
-      const resourceTypes = [];
-      for (const module of this.ctx.app.meta.modulesArray) {
+      const resourceTypes = {};
+      for (const module of ctx.app.meta.modulesArray) {
         const moduleName = module.info.relativeName;
         const resources = module.main.meta && module.main.meta.base && module.main.meta.base.resources;
         if (!resources) continue;
         for (const key in resources) {
           const resource = resources[key];
           const fullKey = `${moduleName}:${key}`;
-          resourceTypes.push({
-            title: ctx.text(resource.title),
-            value: fullKey,
-            resource,
-          });
+          resourceTypes[fullKey] = {
+            ...resource,
+            titleLocale: ctx.text(resource.title),
+          };
         }
       }
       return resourceTypes;

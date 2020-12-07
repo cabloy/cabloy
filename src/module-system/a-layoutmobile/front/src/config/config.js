@@ -6,7 +6,7 @@ export default {
       tabbar: true, labels: true, bottom: true,
     },
     tabs: [
-      { name: 'Home', tabLinkActive: true, iconMaterial: 'home', url: '/a/basefront/menu/list' },
+      { name: 'Home', tabLinkActive: true, iconMaterial: 'home', url: '/a/basefront/resource/tree' },
       { name: 'Atom', tabLinkActive: false, iconMaterial: 'group_work', url: '/a/basefront/atom/list' },
       { name: 'Mine', tabLinkActive: false, iconMaterial: 'person', url: '/a/user/user/mine' },
     ],

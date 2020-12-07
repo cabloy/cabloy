@@ -6,7 +6,7 @@ module.exports = app => {
         // panels
         panelMenu: {
           title: 'Menu',
-          url: '/a/basefront/menu/list',
+          url: '/a/basefront/resource/tree',
           menu: 2,
           public: 1,
         },
