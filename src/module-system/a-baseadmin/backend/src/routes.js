@@ -39,11 +39,6 @@ module.exports = app => {
     { method: 'post', path: 'auth/disable', controller: 'auth', meta: { right: { type: 'resource', name: 'auth' } } },
     { method: 'post', path: 'auth/item', controller: 'auth', meta: { right: { type: 'resource', name: 'auth' } } },
     { method: 'post', path: 'auth/save', controller: 'auth', meta: { right: { type: 'resource', name: 'auth' } } },
-    // function
-    { method: 'post', path: 'function/scenesLoad', controller: 'function', meta: { right: { type: 'resource', name: 'menu' } } },
-    { method: 'post', path: 'function/scenesSaveSortings', controller: 'function', meta: { right: { type: 'resource', name: 'menu' } } },
-    { method: 'post', path: 'function/sceneItemsLoad', controller: 'function', meta: { right: { type: 'resource', name: 'menu' } } },
-    { method: 'post', path: 'function/sceneItemsSaveSortings', controller: 'function', meta: { right: { type: 'resource', name: 'menu' } } },
   ];
   return routes;
 };
