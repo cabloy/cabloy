@@ -3,6 +3,7 @@ module.exports = app => {
   const schemas = require('./config/validation/schemas.js')(app);
   const socketioHotloadFile = require('./config/socketio/hotloadFile.js')(app);
   const staticFlowDefs = require('./config/static/flowDefs.js')(app);
+  const staticResources = require('./config/static/resources.js')(app);
   const meta = {
     base: {
       atoms: {
@@ -29,26 +30,6 @@ module.exports = app => {
           },
         },
       },
-      functions: {
-        createArticle: {
-          title: 'Create Article',
-          scene: 'create',
-          autoRight: 1,
-          atomClassName: 'article',
-          action: 'create',
-          sorting: 1,
-          menu: 1,
-        },
-        listArticle: {
-          title: 'Article List',
-          scene: 'list',
-          autoRight: 1,
-          atomClassName: 'article',
-          action: 'read',
-          sorting: 1,
-          menu: 1,
-        },
-      },
       resources: {
         block: {
           title: 'CMS Block',
@@ -57,6 +38,9 @@ module.exports = app => {
       statics: {
         'a-flow.flowDef': {
           items: staticFlowDefs,
+        },
+        'a-base.resource': {
+          items: staticResources,
         },
       },
     },
