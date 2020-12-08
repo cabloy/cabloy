@@ -34,11 +34,6 @@ module.exports = app => {
       return await this.ctx.bean.role.atomRightsOfUser({ userId, page });
     }
 
-    async functionRights({ menu, userId, page }) {
-      return await this.ctx.bean.role.functionRightsOfUser({ menu, userId, page });
-    }
-
-
   }
 
   return User;

@@ -67,16 +67,6 @@ module.exports = app => {
       this.ctx.successMore(items, page.index, page.size);
     }
 
-    async functionRights() {
-      const page = this.ctx.request.body.page;
-      const items = await this.service.user.functionRights({
-        menu: this.ctx.request.body.menu,
-        userId: this.ctx.request.body.userId,
-        page,
-      });
-      this.ctx.successMore(items, page.index, page.size);
-    }
-
   }
   return UserController;
 };
