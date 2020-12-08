@@ -27,7 +27,13 @@ export default {
     },
     __getFunctionTitle(item) {
       const func = this.functionsAll[item.atomStaticKey];
-      if (!func) return '';
+      if (!func) {
+        this.$nextTick(() => {
+          this.$store.commit('a/base/setResources', { resourceType: 'a-base:function', resources: null });
+          this.__init();
+        });
+        return '';
+      }
       return func.atomNameLocale;
     },
     async __loadFunctions() {
@@ -45,10 +51,7 @@ export default {
     },
     onPerformClick(event, item) {
       const func = this.functionsAll[item.atomStaticKey];
-      if (!func) {
-        this.$view.toast.show({ text: this.$text('Please Reload App') });
-        return;
-      }
+      if (!func) return;
       const resourceConfig = JSON.parse(func.resourceConfig);
       return this.$meta.util.performAction({ ctx: this, action: resourceConfig });
     },
