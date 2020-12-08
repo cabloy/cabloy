@@ -46,7 +46,7 @@ module.exports = app => {
       atomName: 'Fruit Sales',
       atomStaticKey: 'widgetSales',
       atomRevision: 0,
-      atomCategoryId: 'a-dashboard:widget.demonstration',
+      atomCategoryId: 'a-dashboard:widget.Demonstration',
       resourceType: 'a-dashboard:widget',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
@@ -58,7 +58,7 @@ module.exports = app => {
       atomName: 'Fruit Sales(Line Chart)',
       atomStaticKey: 'widgetSalesLine',
       atomRevision: 0,
-      atomCategoryId: 'a-dashboard:widget.demonstration',
+      atomCategoryId: 'a-dashboard:widget.Demonstration',
       resourceType: 'a-dashboard:widget',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
@@ -70,7 +70,7 @@ module.exports = app => {
       atomName: 'Fruit Sales(Pie Chart)',
       atomStaticKey: 'widgetSalesPie',
       atomRevision: 0,
-      atomCategoryId: 'a-dashboard:widget.demonstration',
+      atomCategoryId: 'a-dashboard:widget.Demonstration',
       resourceType: 'a-dashboard:widget',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
@@ -82,7 +82,7 @@ module.exports = app => {
       atomName: 'Snapshots',
       atomStaticKey: 'widgetSnapshot',
       atomRevision: 0,
-      atomCategoryId: 'a-dashboard:widget.demonstration',
+      atomCategoryId: 'a-dashboard:widget.Demonstration',
       resourceType: 'a-dashboard:widget',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,

@@ -58,38 +58,6 @@ module.exports = app => {
         for (const name of [ 'Birthday', 'Dance', 'Garden' ]) {
           await this.ctx.model.partyType.insert({ name });
         }
-      }
-
-      //
-      if (options.version === 2) {
-        // // roleFunctions
-        // const roleRoot = await this.ctx.bean.role.getSystemRole({ roleName: 'root' });
-        // const functions = [ 'kichenSink' ];
-        // for (const functionName of functions) {
-        //   const func = await this.ctx.bean.function.get({
-        //     name: functionName,
-        //   });
-        //   await this.ctx.bean.role.addRoleFunction({
-        //     roleId: roleRoot.id,
-        //     functionId: func.id,
-        //   });
-        // }
-      }
-
-      //
-      if (options.version === 3) {
-        // delete old function
-        await this.ctx.bean.function.delete({ name: 'kichenSink' });
-
-        // roleFunctions
-        const roleFunctions = [
-          { roleName: 'root', name: 'kitchenSink' },
-        ];
-        await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions });
-      }
-
-      //
-      if (options.version === 4) {
         // add role rights
         const roleRights = [
           { roleName: 'system', action: 'create' },
@@ -101,26 +69,6 @@ module.exports = app => {
           { roleName: 'system', action: 'exportBulk' },
         ];
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'party', roleRights });
-      }
-
-      //
-      if (options.version === 5) {
-        // roleFunctions: widgets
-        const roleFunctions = [
-          { roleName: null, name: 'widgetSales' },
-          { roleName: null, name: 'widgetSalesLine' },
-          { roleName: null, name: 'widgetSalesPie' },
-          { roleName: null, name: 'widgetSnapshot' },
-        ];
-        await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions });
-      }
-
-      //
-      if (options.version === 6) {
-        // function: kitchenSink scene->demonstration
-        const sceneId = await this.ctx.bean.function.getSceneId({ sceneName: 'demonstration', sceneMenu: 1 });
-        const func = await this.ctx.bean.function.get({ name: 'kitchenSink' });
-        await this.ctx.bean.function.model.update({ id: func.id, sceneId });
       }
 
     }

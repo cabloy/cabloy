@@ -68,4 +68,5 @@ module.exports = {
   Function: '功能',
   Menu: '菜单',
   Authorize: '授权',
+  General: '通用',
 };

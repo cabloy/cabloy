@@ -38,58 +38,6 @@ module.exports = app => {
             },
           },
         },
-        functions: {
-          createParty: {
-            title: 'Create Party',
-            scene: 'create',
-            autoRight: 1,
-            atomClassName: 'party',
-            action: 'create',
-            sorting: 1,
-            menu: 1,
-          },
-          listParty: {
-            title: 'Party List',
-            scene: 'list',
-            autoRight: 1,
-            atomClassName: 'party',
-            action: 'read',
-            sorting: 1,
-            menu: 1,
-          },
-          kitchenSink: {
-            title: 'Kitchen-sink',
-            scene: 'demonstration',
-            actionPath: 'kitchen-sink/index',
-            sorting: 1,
-            menu: 1,
-          },
-          // widgets
-          widgetSales: {
-            title: 'Fruit Sales',
-            component: 'widgetSales',
-            menu: 3,
-            public: 1,
-          },
-          widgetSalesLine: {
-            title: 'Fruit Sales(Line Chart)',
-            component: 'widgetSalesLine',
-            menu: 3,
-            public: 1,
-          },
-          widgetSalesPie: {
-            title: 'Fruit Sales(Pie Chart)',
-            component: 'widgetSalesPie',
-            menu: 3,
-            public: 1,
-          },
-          widgetSnapshot: {
-            title: 'Snapshots',
-            component: 'widgetSnapshot',
-            menu: 3,
-            public: 1,
-          },
-        },
         statics: {
           'a-dashboard.dashboard': {
             items: staticDashboards,
@@ -161,13 +109,6 @@ module.exports = app => {
     // meta
     extend(true, meta, {
       base: {
-        functions: {
-          testFunctionPublic: {
-            scene: 'tools',
-            menu: 1,
-            public: 1,
-          },
-        },
       },
       event: {
         declarations: {
