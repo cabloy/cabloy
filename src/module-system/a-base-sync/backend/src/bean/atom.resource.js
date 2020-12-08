@@ -18,6 +18,7 @@ module.exports = app => {
       const item = await super.read({ atomClass, options, key, user });
       if (!item) return null;
       // meta
+      item.atomNameLocale = this.ctx.text(item.atomName);
       this._getMeta(item);
       // ok
       return item;
@@ -28,6 +29,7 @@ module.exports = app => {
       await super.select({ atomClass, options, items, user });
       // meta
       for (const item of items) {
+        item.atomNameLocale = this.ctx.text(item.atomName);
         this._getMeta(item);
       }
     }

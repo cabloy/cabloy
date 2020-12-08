@@ -112,7 +112,7 @@ export default {
       // domTitle
       const domTitle = (
         <div slot="title" class="title">
-          <div>{item.atomName}</div>
+          <div>{item.atomNameLocale || item.atomName}</div>
         </div>
       );
       // domSummary

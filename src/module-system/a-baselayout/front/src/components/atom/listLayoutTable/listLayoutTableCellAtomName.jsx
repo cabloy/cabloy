@@ -49,7 +49,9 @@ export default {
       <div class="atom-list-layout-table-cell-atomName">
         <div class="atomName-inner">
           <div class="atomName-left">
-            <eb-link propsOnPerform={event => this.onItemClick(event)}>{this.info.record.atomName}</eb-link>
+            <eb-link propsOnPerform={event => this.onItemClick(event)}>
+              { this.info.record.atomNameLocale || this.info.record.atomName}
+            </eb-link>
           </div>
           <div class="atomName-right">
             {domAfterMetaFlags}
