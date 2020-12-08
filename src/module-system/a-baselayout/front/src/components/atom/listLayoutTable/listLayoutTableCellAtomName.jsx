@@ -33,7 +33,7 @@ export default {
     const domAfterMetaFlags = [];
     for (const flag of this.layoutItems._getItemMetaFlags(item)) {
       domAfterMetaFlags.push(
-        <f7-badge key="flag">{flag}</f7-badge>
+        <f7-badge key={flag}>{flag}</f7-badge>
       );
     }
     const domAfterLabels = [];

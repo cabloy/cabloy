@@ -44,6 +44,13 @@ module.exports = function(ctx) {
         `;
       await ctx.model.query(sql);
 
+      // aAtom: add field atomDisabled
+      sql = `
+        ALTER TABLE aAtom
+          ADD COLUMN atomDisabled int(11) DEFAULT '0'
+        `;
+      await ctx.model.query(sql);
+
       // alter view: aViewUserRightAtom
       await ctx.model.query('drop view aViewUserRightAtom');
       sql = `
@@ -171,7 +178,6 @@ module.exports = function(ctx) {
             deleted int(11) DEFAULT '0',
             iid int(11) DEFAULT '0',
             atomId int(11) DEFAULT '0',
-            disabled int(11) DEFAULT '0',
             resourceSorting int(11) DEFAULT '0',
             resourceType varchar(50) DEFAULT NULL,
             resourceConfig JSON DEFAULT NULL,

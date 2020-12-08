@@ -126,7 +126,6 @@ export default {
       return await this._loadNodeResources(node);
     },
     onNodeClick(event, node) {
-      console.log(node);
       const resourceConfig = JSON.parse(node.data.resourceConfig);
       // special for action
       let action;

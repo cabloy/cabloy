@@ -31,7 +31,7 @@ module.exports = ctx => {
     }
 
     // select
-    //   donot set disabled
+    //   donot set atomDisabled
     async select({ options: { where, orders, page, resourceType, star = 0, label = 0, stage = 'archive', category = 0, tag = 0, locale }, user, pageForce = false, count = 0 }) {
       // locale
       locale = locale || ctx.locale;
@@ -125,7 +125,8 @@ module.exports = ctx => {
       atomStaticKey,
       user,
     }) {
-      const atom = await ctx.bean.atom.modelAtom.get({ atomStaticKey, atomStage: 1 });
+      const atom = await ctx.bean.atom.modelAtom.get({ atomStaticKey, atomDisabled: 0, atomStage: 1 });
+      if (!atom) return null;
       const sql = this.sqlProcedure.checkRightResource({
         iid: ctx.instance.id,
         userIdWho: user.id,

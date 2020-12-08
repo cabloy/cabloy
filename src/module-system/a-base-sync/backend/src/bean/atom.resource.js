@@ -33,8 +33,6 @@ module.exports = app => {
     }
 
     async write({ atomClass, target, key, item, options, user }) {
-      // force delete disabled
-      delete item.disabled;
       // super
       await super.write({ atomClass, target, key, item, options, user });
       // update resource
@@ -63,23 +61,9 @@ module.exports = app => {
       await super.delete({ atomClass, key, user });
     }
 
-    async checkRightAction({ atom, atomClass, action, stage, user, checkFlow }) {
-      // super
-      const res = await super.checkRightAction({ atom, atomClass, action, stage, user, checkFlow });
-      if (!res) return res;
-      if (atom.atomStage !== 1) return res;
-      if (action !== 101 && action !== 102) return res;
-      // enable/disable
-      const resource = await this.ctx.model.resource.get({ id: atom.itemId });
-      if (action === 101 && resource.disabled) return res;
-      if (action === 102 && !resource.disabled) return res;
-      return null;
-    }
-
     _getMeta(item) {
       // flags
       const flags = [];
-      if (item.disabled) flags.push(this.ctx.text('Disabled'));
       // meta
       const meta = {
         flags,

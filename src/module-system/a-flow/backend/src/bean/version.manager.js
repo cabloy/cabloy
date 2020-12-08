@@ -15,7 +15,6 @@ module.exports = app => {
             iid int(11) DEFAULT '0',
             atomId int(11) DEFAULT '0',
             description varchar(255) DEFAULT NULL,
-            disabled int(11) DEFAULT '0',
             PRIMARY KEY (id)
           )
         `;

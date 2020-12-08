@@ -1,5 +1,5 @@
 module.exports = app => {
-  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const resources = [
     // function
     {
@@ -12,6 +12,32 @@ module.exports = app => {
       resourceRoles: 'template.system',
     },
     // menu
+    {
+      atomName: 'Create Resource',
+      atomStaticKey: 'createResource',
+      atomRevision: 0,
+      atomCategoryId: 'a-base:menu.Create',
+      resourceType: 'a-base:menu',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        atomClassName: 'resource',
+        atomAction: 'create',
+      }),
+      resourceRoles: 'template.system',
+    },
+    {
+      atomName: 'Resource List',
+      atomStaticKey: 'listResource',
+      atomRevision: 0,
+      atomCategoryId: 'a-base:menu.List',
+      resourceType: 'a-base:menu',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        atomClassName: 'resource',
+        atomAction: 'read',
+      }),
+      resourceRoles: 'template.system',
+    },
     {
       atomName: 'Comment List',
       atomStaticKey: 'listComment',

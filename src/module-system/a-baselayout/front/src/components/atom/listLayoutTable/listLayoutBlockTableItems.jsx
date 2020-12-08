@@ -223,10 +223,12 @@ export default {
       return `${atomClass.titleLocale} ${summary}`;
     },
     _getItemMetaFlags(item) {
-      const flags = (item._meta && item._meta.flags);
-      if (!flags) return [];
-      if (Array.isArray(flags)) return flags;
-      return flags.split(',');
+      let flags = (item._meta && item._meta.flags) || [];
+      if (!Array.isArray(flags)) flags = flags.split(',');
+      if (item.atomDisabled) {
+        flags = [ this.$text('Disabled') ].concat(flags);
+      }
+      return flags;
     },
     _getLabel(id) {
       if (!this.layoutManager.base_userLabels) return null;

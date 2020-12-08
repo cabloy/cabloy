@@ -417,6 +417,40 @@ module.exports = ctx => {
       });
     }
 
+    async enable({ key, user }) {
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      if (!key.itemId) key.itemId = atomClass.itemId;
+      // atom bean
+      const _moduleInfo = mparse.parseInfo(atomClass.module);
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      await ctx.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        context: { atomClass, key, user },
+        fn: 'enable',
+      });
+    }
+
+    async disable({ key, user }) {
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      if (!key.itemId) key.itemId = atomClass.itemId;
+      // atom bean
+      const _moduleInfo = mparse.parseInfo(atomClass.module);
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      await ctx.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        context: { atomClass, key, user },
+        fn: 'disable',
+      });
+    }
+
     async clone({ key, user }) {
       const keyDraft = await this._copy({
         target: 'clone',
@@ -905,6 +939,9 @@ module.exports = ctx => {
         _atomDraft = await this.modelAtom.get({ id: _atom.atomIdDraft });
       }
       if (_atomDraft && !_atomDraft.atomClosed && !actionBase.enableOnOpened) return null;
+      // enable/disable
+      if (action === 6 && _atom.atomDisabled === 0) return null;
+      if (action === 7 && _atom.atomDisabled === 1) return null;
       // check archive/history
       const sql = this.sqlProcedure.checkRightAction({
         iid: ctx.instance.id,

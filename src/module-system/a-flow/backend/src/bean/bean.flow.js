@@ -27,7 +27,7 @@ module.exports = ctx => {
       // get flow def
       const flowDef = await ctx.bean.flowDef.getByKey({ flowDefKey });
       if (!flowDef) ctx.throw.module(moduleInfo.relativeName, 1001, fullKey);
-      if (flowDef.disabled) ctx.throw.module(moduleInfo.relativeName, 1002, fullKey);
+      if (flowDef.atomDisabled === 1) ctx.throw.module(moduleInfo.relativeName, 1002, fullKey);
       return await this._start({ flowDef, flowAtomId, flowVars, flowUserId, startEventId });
     }
 
@@ -35,7 +35,7 @@ module.exports = ctx => {
       // get flow def
       const flowDef = await ctx.bean.flowDef.getById({ flowDefId });
       if (!flowDef) ctx.throw.module(moduleInfo.relativeName, 1001, flowDefId);
-      if (flowDef.disabled) ctx.throw.module(moduleInfo.relativeName, 1002, flowDef.atomStaticKey);
+      if (flowDef.atomDisabled === 1) ctx.throw.module(moduleInfo.relativeName, 1002, flowDef.atomStaticKey);
       return await this._start({ flowDef, flowAtomId, flowVars, flowUserId, startEventId });
     }
 
@@ -87,7 +87,7 @@ module.exports = ctx => {
       // flowDef: by key+revision
       const flowDef = await ctx.bean.flowDef.getByKeyAndRevision({ flowDefKey: flow.flowDefKey, flowDefRevision: flow.flowDefRevision });
       if (!flowDef) ctx.throw.module(moduleInfo.relativeName, 1001, flow.flowDefId);
-      // not check disabled
+      // not check atomDisabled
       // flowInstance
       const flowInstance = this._createFlowInstance({ flowDef });
       // load

@@ -159,7 +159,7 @@ module.exports = ctx => {
       } else {
         _selectFields = `${_itemField}
                 a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdArchive,a.roleIdOwner,a.atomClassId,a.atomName,
-                a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,
+                a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,a.atomDisabled,
                 a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
                 g.userName,g.avatar,
@@ -308,7 +308,7 @@ module.exports = ctx => {
       } else {
         _selectFields = `${_itemField}
                 a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdArchive,a.roleIdOwner,a.atomClassId,a.atomName,
-                a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,
+                a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,a.atomDisabled,
                 a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
                 g.userName,g.avatar,
@@ -474,7 +474,7 @@ module.exports = ctx => {
       if (resource) {
         _resourceField = ',m.atomNameLocale';
         _resourceJoin = ' left join aResourceLocale m on m.atomId=a.id';
-        _resourceWhere = ctx.model.format(' and f.disabled=0 and m.locale=?', resourceLocale);
+        _resourceWhere = ctx.model.format(' and a.atomDisabled=0 and m.locale=?', resourceLocale);
       } else {
         _resourceField = '';
         _resourceJoin = '';
@@ -497,7 +497,7 @@ module.exports = ctx => {
       } else {
         _selectFields = `${_itemField}
                 a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdArchive,a.roleIdOwner,a.atomClassId,a.atomName,
-                a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,
+                a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,a.atomDisabled,
                 a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
                 g.userName,g.avatar,
@@ -612,7 +612,7 @@ module.exports = ctx => {
       if (resource) {
         _resourceField = ',m.atomNameLocale';
         _resourceJoin = ' left join aResourceLocale m on m.atomId=a.id';
-        // not check disabled
+        // not check atomDisabled
         _resourceWhere = ctx.model.format(' and m.locale=?', resourceLocale);
       } else {
         _resourceField = '';
@@ -633,7 +633,7 @@ module.exports = ctx => {
       const _sql =
         `select ${_itemField}
                 a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdArchive,a.roleIdOwner,a.atomClassId,a.atomName,
-                a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,
+                a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,a.atomDisabled,
                 a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
                 g.userName,g.avatar,
@@ -865,8 +865,9 @@ module.exports = ctx => {
       resourceAtomId = parseInt(resourceAtomId);
       // sql
       const _sql =
-        `select a.* from aResource a
-            where a.iid=${iid} and a.deleted=0 and a.disabled=0 and a.atomId=${resourceAtomId}
+        `select a.*,b.atomName from aResource a
+          inner join aAtom b on a.atomId=b.id
+            where a.iid=${iid} and a.deleted=0 and b.atomDisabled=0 and a.atomId=${resourceAtomId}
               and (
                 exists(select c.resourceAtomId from aViewUserRightResource c where c.iid=${iid} and c.resourceAtomId=${resourceAtomId} and c.userIdWho=${userIdWho})
                   )

@@ -60,6 +60,8 @@ module.exports = app => {
 
     async write({ atomClass, target, key, item, options, user }) {
       if (!item) return;
+      // force delete atomDisabled
+      delete item.atomDisabled;
       // stage
       const atomStage = item.atomStage;
       // atomClass
@@ -136,6 +138,18 @@ module.exports = app => {
         }
       }
       return await this.ctx.bean.atom._submitDirect({ key, item: _atom, options, user });
+    }
+
+    async enable({ /* atomClass,*/ key/* , user*/ }) {
+      await this.ctx.bean.atom.modelAtom.update({
+        id: key.atomId, atomDisabled: 0,
+      });
+    }
+
+    async disable({ /* atomClass,*/ key/* , user*/ }) {
+      await this.ctx.bean.atom.modelAtom.update({
+        id: key.atomId, atomDisabled: 1,
+      });
     }
 
     async copy(/* { atomClass, target, srcKey, srcItem, destKey, destItem, user }*/) {

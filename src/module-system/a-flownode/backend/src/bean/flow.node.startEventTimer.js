@@ -68,8 +68,8 @@ module.exports = ctx => {
       // flowDef
       const flowDef = await ctx.bean.flowDef.getById({ flowDefId });
       if (!flowDef) return false;
-      // disabled
-      if (flowDef.disabled) return false;
+      // atomDisabled
+      if (flowDef.atomDisabled === 1) return false;
       // content
       const content = flowDef.content ? JSON.parse(flowDef.content) : null;
       if (!content) return false;

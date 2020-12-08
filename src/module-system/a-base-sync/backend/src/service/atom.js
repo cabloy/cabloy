@@ -46,6 +46,14 @@ module.exports = app => {
       return await this.ctx.bean.atom.clone({ key, user });
     }
 
+    async enable({ key, user }) {
+      return await this.ctx.bean.atom.enable({ key, user });
+    }
+
+    async disable({ key, user }) {
+      return await this.ctx.bean.atom.disable({ key, user });
+    }
+
     async exportBulk({ atomClass, options, fields, user }) {
       return await this.ctx.bean.atom.exportBulk({ atomClass, options, fields, user });
     }

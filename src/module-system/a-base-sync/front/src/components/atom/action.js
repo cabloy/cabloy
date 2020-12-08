@@ -112,6 +112,12 @@ export default {
         await this._onActionRead({ ctx, item, atomId: item.atomIdDraft });
       } else if (action.name === 'selectLocale') {
         return await this._onActionSelectLocale({ ctx, action, item });
+      } else if (action.name === 'enable') {
+        const key = { atomId: item.atomId, itemId: item.itemId };
+        return await this._onActionEnable({ ctx, key });
+      } else if (action.name === 'disable') {
+        const key = { atomId: item.atomId, itemId: item.itemId };
+        return await this._onActionDisable({ ctx, key });
       }
     },
     async _onActionRead({ ctx, item, atomId }) {
@@ -265,6 +271,14 @@ export default {
           .once('actionsClosed', onActionsClosed)
           .once('popoverClosed', onActionsClosed);
       });
+    },
+    async _onActionEnable({ ctx, key }) {
+      await ctx.$api.post('/a/base/atom/enable', { key });
+      ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'save' } });
+    },
+    async _onActionDisable({ ctx, key }) {
+      await ctx.$api.post('/a/base/atom/disable', { key });
+      ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'save' } });
     },
   },
 };

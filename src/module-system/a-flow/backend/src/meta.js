@@ -14,26 +14,6 @@ module.exports = app => {
             category: true,
             tag: true,
           },
-          actions: {
-            enable: {
-              code: 101,
-              title: 'Enable',
-              actionComponent: 'actionFlowDef',
-              enableOnStatic: true,
-              enableOnOpened: true,
-              stage: 'archive',
-              icon: { material: 'play_arrow' },
-            },
-            disable: {
-              code: 102,
-              title: 'Disable',
-              actionComponent: 'actionFlowDef',
-              enableOnStatic: true,
-              enableOnOpened: true,
-              stage: 'archive',
-              icon: { material: 'stop' },
-            },
-          },
           validator: 'flowDef',
           search: {
             validator: 'flowDefSearch',

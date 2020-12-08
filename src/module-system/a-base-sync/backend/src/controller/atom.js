@@ -118,6 +118,22 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async enable() {
+      const res = await this.ctx.service.atom.enable({
+        key: this.ctx.request.body.key,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async disable() {
+      const res = await this.ctx.service.atom.disable({
+        key: this.ctx.request.body.key,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     async exportBulk() {
       const res = await this.ctx.service.atom.exportBulk({
         atomClass: this.ctx.request.body.atomClass,

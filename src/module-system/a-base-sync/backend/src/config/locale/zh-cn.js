@@ -20,6 +20,8 @@ module.exports = {
   'Invalid Arguments': '无效参数',
   'Cannot delete if has atoms': '有原子时不允许删除',
   'Cannot delete if has children': '有子元素时不允许删除',
+  'Create Resource': '新建资源',
+  'Resource List': '资源列表',
   Draft: '草稿',
   Drafts: '草稿',
   Archive: '归档',

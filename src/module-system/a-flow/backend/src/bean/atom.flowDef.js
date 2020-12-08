@@ -39,8 +39,6 @@ module.exports = app => {
     }
 
     async write({ atomClass, target, key, item, options, user }) {
-      // force delete disabled
-      delete item.disabled;
       // super
       await super.write({ atomClass, target, key, item, options, user });
       // update flowDef
@@ -56,8 +54,8 @@ module.exports = app => {
 
       // deploy
       if (item.atomStage === 1) {
-        const flowDef = await this.ctx.model.flowDef.get({ id: key.itemId });
-        if (!flowDef.disabled) {
+        const _atom = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
+        if (_atom.atomDisabled === 0) {
           this.ctx.tail(async () => {
             await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId });
           });
@@ -78,23 +76,18 @@ module.exports = app => {
       await super.delete({ atomClass, key, user });
     }
 
-    async checkRightAction({ atom, atomClass, action, stage, user, checkFlow }) {
+    async enable({ atomClass, key, user }) {
       // super
-      const res = await super.checkRightAction({ atom, atomClass, action, stage, user, checkFlow });
-      if (!res) return res;
-      if (atom.atomStage !== 1) return res;
-      if (action !== 101 && action !== 102) return res;
-      // enable/disable
-      const flowDef = await this.ctx.model.flowDef.get({ id: atom.itemId });
-      if (action === 101 && flowDef.disabled) return res;
-      if (action === 102 && !flowDef.disabled) return res;
-      return null;
+      await super.enable({ atomClass, key, user });
+      // deploy
+      this.ctx.tail(async () => {
+        await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId });
+      });
     }
 
     _getMeta(item) {
       // flags
       const flags = [];
-      if (item.disabled) flags.push(this.ctx.text('Disabled'));
       // meta
       const meta = {
         flags,

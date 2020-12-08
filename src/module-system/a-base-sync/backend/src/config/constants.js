@@ -12,6 +12,8 @@ module.exports = {
       write: 3,
       delete: 4,
       clone: 5,
+      enable: 6,
+      disable: 7,
       deleteBulk: 31,
       exportBulk: 32,
 
@@ -57,6 +59,22 @@ module.exports = {
         enableOnStatic: true,
         enableOnOpened: true,
         icon: { material: 'content_copy' },
+      },
+      enable: {
+        title: 'Enable',
+        actionComponent: 'action',
+        enableOnStatic: true,
+        enableOnOpened: true,
+        stage: 'archive',
+        icon: { material: 'play_arrow' },
+      },
+      disable: {
+        title: 'Disable',
+        actionComponent: 'action',
+        enableOnStatic: true,
+        enableOnOpened: true,
+        stage: 'archive',
+        icon: { material: 'stop' },
       },
       deleteBulk: {
         title: 'Delete',
