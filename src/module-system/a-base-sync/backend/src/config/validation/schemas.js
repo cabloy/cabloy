@@ -151,10 +151,8 @@ module.exports = app => {
       },
       resourceType: {
         type: 'string',
-        ebType: 'select',
-        ebTitle: 'Type',
-        ebOptionsUrl: '/a/base/base/resourceTypes',
-        ebOptionsUrlParams: null,
+        ebType: 'resourceType',
+        ebTitle: 'Resource Type',
         ebOptionsBlankAuto: true,
         notEmpty: true,
       },
@@ -177,14 +175,12 @@ module.exports = app => {
   schemas.resourceSearch = {
     type: 'object',
     properties: {
-      resourceType: {
-        type: 'string',
-        ebType: 'select',
-        ebTitle: 'Type',
-        ebOptionsUrl: '/a/base/base/resourceTypes',
-        ebOptionsUrlParams: null,
-        ebOptionsBlankAuto: true,
-      },
+      // resourceType: {
+      //   type: 'string',
+      //   ebType: 'resourceType',
+      //   ebTitle: 'Resource Type',
+      //   ebOptionsBlankAuto: true,
+      // },
     },
   };
 

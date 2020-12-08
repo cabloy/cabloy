@@ -30,6 +30,7 @@ module.exports = {
   'Theme %s not Found': '没有找到主题%s',
   'en-us': '英语',
   'zh-cn': '简体中文',
+  'CMS Block': 'CMS区块',
   PersonalProfile: '个人信息',
   AuthorProfile: '作者信息',
   ArticlePrevious: '前一篇',
