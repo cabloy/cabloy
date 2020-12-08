@@ -5,7 +5,6 @@ const auth = require('./controller/auth.js');
 const base = require('./controller/base.js');
 const comment = require('./controller/comment.js');
 const resource = require('./controller/resource.js');
-const func = require('./controller/function.js');
 const jwt = require('./controller/jwt.js');
 const layoutConfig = require('./controller/layoutConfig.js');
 const user = require('./controller/user.js');
@@ -21,7 +20,6 @@ module.exports = app => {
     base,
     comment,
     resource,
-    function: func,
     jwt,
     layoutConfig,
     user,

@@ -766,97 +766,6 @@ module.exports = ctx => {
       return _sql;
     }
 
-    selectFunctions({ iid, locale, userIdWho, where, orders, page, star }) {
-      // -- tables
-      // -- a: aFunction
-      // -- b: aFunctionLocale
-      // -- c: aViewUserRightFunction
-      // -- d: aFunctionStar
-      // -- e: aAtomClass
-      // -- f: aFunctionScene
-
-      // for safe
-      where = where ? ctx.model._where(where) : null;
-      orders = orders ? ctx.model._orders(orders) : null;
-      const limit = page ? ctx.model._limit(page.size, page.index) : null;
-
-      iid = parseInt(iid);
-      userIdWho = parseInt(userIdWho);
-      star = parseInt(star);
-
-      locale = locale ? ctx.model.format('?', locale) : null;
-
-      // vars
-      let _starField,
-        _starJoin,
-        _starWhere;
-      let _localeField,
-        _localeJoin,
-        _localeWhere;
-
-      //
-      const _where = where ? `${where} AND` : ' WHERE';
-      const _orders = orders || '';
-      const _limit = limit || '';
-
-      // star
-      if (star) {
-        _starField = '';
-        _starJoin = ' inner join aFunctionStar d on a.id=d.functionId';
-        _starWhere = ` and d.iid=${iid} and d.userId=${userIdWho} and d.star=1`;
-      } else {
-        _starField =
-        `,(select d.star from aFunctionStar d where d.iid=${iid} and d.functionId=a.id and d.userId=${userIdWho}) as star`;
-        _starJoin = '';
-        _starWhere = '';
-      }
-
-      // locale
-      if (locale) {
-        _localeField = ',b.titleLocale';
-        _localeJoin = ' inner join aFunctionLocale b on a.id=b.functionId';
-        _localeWhere = ` and b.iid=${iid} and b.locale=${locale}`;
-      } else {
-        _localeField = '';
-        _localeJoin = '';
-        _localeWhere = '';
-      }
-
-      // sql
-      const _sql =
-        `select a.*,
-                e.atomClassName,e.atomClassIdParent
-                ${_localeField}
-                ${_starField}
-           from aFunction a
-
-             left join aAtomClass e on a.atomClassId=e.id
-             left join aFunctionScene f on a.sceneId=f.id
-             ${_localeJoin}
-             ${_starJoin}
-
-             ${_where}
-
-              (
-                a.deleted=0 and a.iid=${iid}
-                ${_localeWhere}
-                ${_starWhere}
-                and (
-                       a.public=1
-                       or
-                       exists(
-                               select c.functionId from aViewUserRightFunction c where c.iid=${iid} and a.id=c.functionId and c.userIdWho=${userIdWho}
-                             )
-                    )
-              )
-
-            ${_orders}
-            ${_limit}
-       `;
-
-      // ok
-      return _sql;
-    }
 
     checkRightResource({ iid, userIdWho, resourceAtomId }) {
       // for safe
@@ -870,22 +779,6 @@ module.exports = ctx => {
             where a.iid=${iid} and a.deleted=0 and b.atomDisabled=0 and a.atomId=${resourceAtomId}
               and (
                 exists(select c.resourceAtomId from aViewUserRightResource c where c.iid=${iid} and c.resourceAtomId=${resourceAtomId} and c.userIdWho=${userIdWho})
-                  )
-        `;
-      return _sql;
-    }
-
-    checkRightFunction({ iid, userIdWho, functionId }) {
-      // for safe
-      iid = parseInt(iid);
-      userIdWho = parseInt(userIdWho);
-      functionId = parseInt(functionId);
-      // sql
-      const _sql =
-        `select a.* from aFunction a
-            where a.deleted=0 and a.iid=${iid} and a.id=${functionId}
-              and ( a.public=1 or
-                    exists(select c.functionId from aViewUserRightFunction c where c.iid=${iid} and c.functionId=${functionId} and c.userIdWho=${userIdWho})
                   )
         `;
       return _sql;
@@ -954,3 +847,113 @@ module.exports = ctx => {
   return Procedure;
 
 };
+
+// /* backup */
+
+// function selectFunctions({ iid, locale, userIdWho, where, orders, page, star }) {
+//   // -- tables
+//   // -- a: aFunction
+//   // -- b: aFunctionLocale
+//   // -- c: aViewUserRightFunction
+//   // -- d: aFunctionStar
+//   // -- e: aAtomClass
+//   // -- f: aFunctionScene
+
+//   // for safe
+//   where = where ? ctx.model._where(where) : null;
+//   orders = orders ? ctx.model._orders(orders) : null;
+//   const limit = page ? ctx.model._limit(page.size, page.index) : null;
+
+//   iid = parseInt(iid);
+//   userIdWho = parseInt(userIdWho);
+//   star = parseInt(star);
+
+//   locale = locale ? ctx.model.format('?', locale) : null;
+
+//   // vars
+//   let _starField,
+//     _starJoin,
+//     _starWhere;
+//   let _localeField,
+//     _localeJoin,
+//     _localeWhere;
+
+//   //
+//   const _where = where ? `${where} AND` : ' WHERE';
+//   const _orders = orders || '';
+//   const _limit = limit || '';
+
+//   // star
+//   if (star) {
+//     _starField = '';
+//     _starJoin = ' inner join aFunctionStar d on a.id=d.functionId';
+//     _starWhere = ` and d.iid=${iid} and d.userId=${userIdWho} and d.star=1`;
+//   } else {
+//     _starField =
+//         `,(select d.star from aFunctionStar d where d.iid=${iid} and d.functionId=a.id and d.userId=${userIdWho}) as star`;
+//     _starJoin = '';
+//     _starWhere = '';
+//   }
+
+//   // locale
+//   if (locale) {
+//     _localeField = ',b.titleLocale';
+//     _localeJoin = ' inner join aFunctionLocale b on a.id=b.functionId';
+//     _localeWhere = ` and b.iid=${iid} and b.locale=${locale}`;
+//   } else {
+//     _localeField = '';
+//     _localeJoin = '';
+//     _localeWhere = '';
+//   }
+
+//   // sql
+//   const _sql =
+//         `select a.*,
+//                 e.atomClassName,e.atomClassIdParent
+//                 ${_localeField}
+//                 ${_starField}
+//            from aFunction a
+
+//              left join aAtomClass e on a.atomClassId=e.id
+//              left join aFunctionScene f on a.sceneId=f.id
+//              ${_localeJoin}
+//              ${_starJoin}
+
+//              ${_where}
+
+//               (
+//                 a.deleted=0 and a.iid=${iid}
+//                 ${_localeWhere}
+//                 ${_starWhere}
+//                 and (
+//                        a.public=1
+//                        or
+//                        exists(
+//                                select c.functionId from aViewUserRightFunction c where c.iid=${iid} and a.id=c.functionId and c.userIdWho=${userIdWho}
+//                              )
+//                     )
+//               )
+
+//             ${_orders}
+//             ${_limit}
+//        `;
+
+//   // ok
+//   return _sql;
+// }
+
+// function checkRightFunction({ iid, userIdWho, functionId }) {
+//   // for safe
+//   iid = parseInt(iid);
+//   userIdWho = parseInt(userIdWho);
+//   functionId = parseInt(functionId);
+//   // sql
+//   const _sql =
+//         `select a.* from aFunction a
+//             where a.deleted=0 and a.iid=${iid} and a.id=${functionId}
+//               and ( a.public=1 or
+//                     exists(select c.functionId from aViewUserRightFunction c where c.iid=${iid} and c.functionId=${functionId} and c.userIdWho=${userIdWho})
+//                   )
+//         `;
+//   return _sql;
+// }

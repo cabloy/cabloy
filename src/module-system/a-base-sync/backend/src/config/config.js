@@ -96,13 +96,6 @@ module.exports = appInfo => {
     'zh-cn': 'Chinese',
   };
 
-  // function
-  config.function = {
-    scenes: {
-      1: 'demonstration,create,list,tools', // menu
-    },
-  };
-
   // anonymous
   config.anonymous = {
     maxAge: 365 * 24 * 3600 * 1000, // 365 天

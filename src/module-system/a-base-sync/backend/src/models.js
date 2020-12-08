@@ -16,11 +16,6 @@ const label = require('./model/label.js');
 const atomLabel = require('./model/atomLabel.js');
 const atomLabelRef = require('./model/atomLabelRef.js');
 const atomStar = require('./model/atomStar.js');
-const func = require('./model/function.js');
-const functionStar = require('./model/functionStar.js');
-const functionLocale = require('./model/functionLocale.js');
-const functionScene = require('./model/functionScene.js');
-const roleFunction = require('./model/roleFunction.js');
 const comment = require('./model/comment.js');
 const commentView = require('./model/commentView.js');
 const commentHeart = require('./model/commentHeart.js');
@@ -52,11 +47,6 @@ module.exports = app => {
     atomLabel,
     atomLabelRef,
     atomStar,
-    function: func,
-    functionStar,
-    functionLocale,
-    functionScene,
-    roleFunction,
     comment,
     commentView,
     commentHeart,

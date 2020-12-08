@@ -119,11 +119,6 @@ module.exports = app => {
     { method: 'post', path: 'resource/resourceRoleAdd', controller: 'resource',
       meta: { right: { type: 'atom', action: 25 } },
     },
-    // function
-    { method: 'post', path: 'function/scenes', controller: 'function' },
-    { method: 'post', path: 'function/list', controller: 'function' },
-    { method: 'post', path: 'function/star', controller: 'function' },
-    { method: 'post', path: 'function/check', controller: 'function' },
     // atomClass
     { method: 'post', path: 'atomClass/validatorSearch', controller: 'atomClass' },
     { method: 'post', path: 'atomClass/checkRightCreate', controller: 'atomClass' },

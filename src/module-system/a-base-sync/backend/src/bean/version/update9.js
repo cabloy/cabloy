@@ -6,6 +6,7 @@ module.exports = function(ctx) {
       await this.run_atom();
       await this.run_categorytag();
       await this.run_resource();
+      await this.run_function();
     }
 
     async run_atom() {
@@ -225,6 +226,19 @@ module.exports = function(ctx) {
             `;
       await ctx.model.query(sql);
 
+    }
+
+    async run_function() {
+      // drop table: aFunction
+      await ctx.model.query('drop table aFunction');
+      // drop table: aFunctionLocale
+      await ctx.model.query('drop table aFunctionLocale');
+      // drop table: aFunctionScene
+      await ctx.model.query('drop table aFunctionScene');
+      // drop table: aFunctionStar
+      await ctx.model.query('drop table aFunctionStar');
+      // drop table: aRoleFunction
+      await ctx.model.query('drop table aRoleFunction');
     }
 
   }

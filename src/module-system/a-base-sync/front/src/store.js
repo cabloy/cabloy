@@ -27,10 +27,6 @@ export default function(Vue) {
       // user
       labels: null,
       layoutConfig: {},
-      userPanels: null,
-      userWidgets: null,
-      userSections: null,
-      userButtons: null,
       userAtomClassRolesPreferred: {},
       // global
       locales: null,
@@ -42,13 +38,6 @@ export default function(Vue) {
       resources: {},
       categories: {},
       tags: {},
-      functionScenes: {},
-      functions: null,
-      menus: null,
-      panels: null,
-      widgets: null,
-      sections: null,
-      buttons: null,
     },
     getters: {
       userLabels(state) {
@@ -60,10 +49,6 @@ export default function(Vue) {
         // clear user
         state.labels = null;
         state.layoutConfig = {};
-        state.userPanels = null;
-        state.userWidgets = null;
-        state.userSections = null;
-        state.userButtons = null;
         state.userAtomClassRolesPreferred = {};
       },
       setLabels(state, labels) {
@@ -92,18 +77,6 @@ export default function(Vue) {
           queueLayoutConfig.push({ userId: user.op.id, data });
         }
       },
-      setUserPanels(state, panels) {
-        state.userPanels = panels;
-      },
-      setUserWidgets(state, widgets) {
-        state.userWidgets = widgets;
-      },
-      setUserSections(state, sections) {
-        state.userSections = sections;
-      },
-      setUserButtons(state, buttons) {
-        state.userButtons = buttons;
-      },
       setUserAtomClassRolesPreferred(state, { atomClassId, roleIdOwner }) {
         state.userAtomClassRolesPreferred = {
           ...state.userAtomClassRolesPreferred,
@@ -121,30 +94,6 @@ export default function(Vue) {
       },
       setActions(state, actions) {
         state.actions = actions;
-      },
-      setMenus(state, menus) {
-        state.menus = menus;
-      },
-      setPanels(state, panels) {
-        state.panels = panels;
-      },
-      setWidgets(state, widgets) {
-        state.widgets = widgets;
-      },
-      setSections(state, sections) {
-        state.sections = sections;
-      },
-      setButtons(state, buttons) {
-        state.buttons = buttons;
-      },
-      setFunctions(state, functions) {
-        state.functions = functions;
-      },
-      setFunctionScenes(state, { sceneMenu, scenes }) {
-        state.functionScenes = {
-          ...state.functionScenes,
-          [sceneMenu]: scenes,
-        };
       },
       setResourceTypes(state, resourceTypes) {
         state.resourceTypes = resourceTypes;
@@ -250,66 +199,6 @@ export default function(Vue) {
           });
         });
       },
-      getMenus({ state, commit }) {
-        return new Promise((resolve, reject) => {
-          if (state.menus) return resolve(state.menus);
-          Vue.prototype.$meta.api.post('/a/base/base/menus').then(data => {
-            data = data || {};
-            commit('setMenus', data);
-            resolve(data);
-          }).catch(err => {
-            reject(err);
-          });
-        });
-      },
-      getPanels({ state, commit }) {
-        return new Promise((resolve, reject) => {
-          if (state.panels) return resolve(state.panels);
-          Vue.prototype.$meta.api.post('/a/base/base/panels').then(data => {
-            data = data || {};
-            commit('setPanels', data);
-            resolve(data);
-          }).catch(err => {
-            reject(err);
-          });
-        });
-      },
-      getWidgets({ state, commit }) {
-        return new Promise((resolve, reject) => {
-          if (state.widgets) return resolve(state.widgets);
-          Vue.prototype.$meta.api.post('/a/base/base/widgets').then(data => {
-            data = data || {};
-            commit('setWidgets', data);
-            resolve(data);
-          }).catch(err => {
-            reject(err);
-          });
-        });
-      },
-      getSections({ state, commit }) {
-        return new Promise((resolve, reject) => {
-          if (state.sections) return resolve(state.sections);
-          Vue.prototype.$meta.api.post('/a/base/base/sections').then(data => {
-            data = data || {};
-            commit('setSections', data);
-            resolve(data);
-          }).catch(err => {
-            reject(err);
-          });
-        });
-      },
-      getButtons({ state, commit }) {
-        return new Promise((resolve, reject) => {
-          if (state.buttons) return resolve(state.buttons);
-          Vue.prototype.$meta.api.post('/a/base/base/buttons').then(data => {
-            data = data || {};
-            commit('setButtons', data);
-            resolve(data);
-          }).catch(err => {
-            reject(err);
-          });
-        });
-      },
       getResourceTrees({ state, commit }, { resourceType }) {
         return new Promise((resolve, reject) => {
           if (state.resourceTrees[resourceType]) return resolve(state.resourceTrees[resourceType]);
@@ -395,30 +284,6 @@ export default function(Vue) {
           });
         });
       },
-      getFunctionScenes({ state, commit }, { sceneMenu }) {
-        return new Promise((resolve, reject) => {
-          if (state.functionScenes[sceneMenu]) return resolve(state.functionScenes[sceneMenu]);
-          Vue.prototype.$meta.api.post('/a/base/function/scenes', { sceneMenu }).then(data => {
-            data = data || {};
-            commit('setFunctionScenes', { sceneMenu, scenes: data });
-            resolve(data);
-          }).catch(err => {
-            reject(err);
-          });
-        });
-      },
-      getFunctions({ state, commit }) {
-        return new Promise((resolve, reject) => {
-          if (state.functions) return resolve(state.functions);
-          Vue.prototype.$meta.api.post('/a/base/base/functions').then(data => {
-            data = data || {};
-            commit('setFunctions', data);
-            resolve(data);
-          }).catch(err => {
-            reject(err);
-          });
-        });
-      },
       getLayoutConfig({ state, commit }, module) {
         return new Promise((resolve, reject) => {
           if (state.layoutConfig[module]) return resolve(state.layoutConfig[module]);
@@ -426,78 +291,6 @@ export default function(Vue) {
             data = data || {};
             commit('setLayoutConfig', { module, data });
             resolve(data);
-          }).catch(err => {
-            reject(err);
-          });
-        });
-      },
-      getUserPanels({ state, commit }) {
-        return new Promise((resolve, reject) => {
-          if (state.userPanels) return resolve(state.userPanels);
-          const options = {
-            where: { menu: 2 },
-            orders: [
-              [ 'titleLocale', 'asc' ],
-            ],
-            page: { size: 0 },
-          };
-          Vue.prototype.$meta.api.post('/a/base/function/list', { options }).then(data => {
-            commit('setUserPanels', data.list);
-            resolve(data.list);
-          }).catch(err => {
-            reject(err);
-          });
-        });
-      },
-      getUserWidgets({ state, commit }) {
-        return new Promise((resolve, reject) => {
-          if (state.userWidgets) return resolve(state.userWidgets);
-          const options = {
-            where: { menu: 3 },
-            orders: [
-              [ 'titleLocale', 'asc' ],
-            ],
-            page: { size: 0 },
-          };
-          Vue.prototype.$meta.api.post('/a/base/function/list', { options }).then(data => {
-            commit('setUserWidgets', data.list);
-            resolve(data.list);
-          }).catch(err => {
-            reject(err);
-          });
-        });
-      },
-      getUserSections({ state, commit }) {
-        return new Promise((resolve, reject) => {
-          if (state.userSections) return resolve(state.userSections);
-          const options = {
-            where: { menu: 4 },
-            orders: [
-              [ 'titleLocale', 'asc' ],
-            ],
-            page: { size: 0 },
-          };
-          Vue.prototype.$meta.api.post('/a/base/function/list', { options }).then(data => {
-            commit('setUserSections', data.list);
-            resolve(data.list);
-          }).catch(err => {
-            reject(err);
-          });
-        });
-      },
-      getUserButtons({ state, commit }) {
-        return new Promise((resolve, reject) => {
-          if (state.userButtons) return resolve(state.userButtons);
-          const options = {
-            where: { menu: 5 },
-            orders: [
-              [ 'titleLocale', 'asc' ],
-            ],
-            page: { size: 0 },
-          };
-          Vue.prototype.$meta.api.post('/a/base/function/list', { options }).then(data => {
-            commit('setUserButtons', data.list);
-            resolve(data.list);
           }).catch(err => {
             reject(err);
           });

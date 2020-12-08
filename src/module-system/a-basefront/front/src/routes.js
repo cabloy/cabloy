@@ -6,9 +6,6 @@ function loadjsx(name) {
 }
 
 export default [
-  { path: 'menu/list', component: load('menu/list') },
-  { path: 'menu/search', component: load('menu/search') },
-  { path: 'menu/selectFunction', component: load('menu/selectFunction') },
   { path: 'atom/list', component: loadjsx('atom/list') },
   { path: 'atom/searchQuick', component: loadjsx('atom/searchQuick') },
   { path: 'atom/labels', component: load('atom/labels') },

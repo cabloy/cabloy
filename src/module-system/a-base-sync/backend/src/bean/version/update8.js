@@ -1,5 +1,3 @@
-const constants = require('../../config/constants.js');
-
 module.exports = function(ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class VersionUpdate8 {
@@ -30,9 +28,6 @@ module.exports = function(ctx) {
           CHANGE COLUMN scene sceneId int(11) DEFAULT '0'
                   `;
       await ctx.model.query(sql);
-
-      // update exists functions
-      await this._updateFunctions(options);
 
 
       // aAtom: add field roleIdOwner
@@ -71,31 +66,6 @@ module.exports = function(ctx) {
 
       // update exists atoms
       await this._updateAtoms(options);
-    }
-
-    async _updateFunctions(options) {
-      // all instances
-      const instances = await ctx.bean.instance.list({ where: {} });
-      for (const instance of instances) {
-        await ctx.executeBean({
-          subdomain: instance.name,
-          beanModule: moduleInfo.relativeName,
-          beanFullName: `${moduleInfo.relativeName}.version.manager`,
-          context: options,
-          fn: 'update8FunctionScenes',
-        });
-      }
-    }
-
-    async _updateFunctionsInstance() {
-      // update sceneName
-      const scenes = constants.function.scene;
-      for (const sceneName in scenes) {
-        const sceneValue = scenes[sceneName];
-        const sceneId = await ctx.bean.function.getSceneId({ sceneName, sceneMenu: 1 });
-        await ctx.model.query('update aFunction set sceneId=? where iid=? and sceneId=?',
-          [ sceneId, ctx.instance.id, sceneValue ]);
-      }
     }
 
     async _updateAtoms(options) {

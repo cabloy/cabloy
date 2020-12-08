@@ -82,11 +82,6 @@ module.exports = app => {
       }
     }
 
-    async update8FunctionScenes(options) {
-      const versionUpdate8 = new (VersionUpdate8Fn(this.ctx))();
-      await versionUpdate8._updateFunctionsInstance(options);
-    }
-
     async update8Atoms(options) {
       const versionUpdate8 = new (VersionUpdate8Fn(this.ctx))();
       await versionUpdate8._updateAtomsInstance(options);

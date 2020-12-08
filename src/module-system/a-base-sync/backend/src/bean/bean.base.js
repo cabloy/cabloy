@@ -8,12 +8,6 @@ const _locales = {};
 const _resourceTypes = {};
 const _atomClasses = {};
 const _actions = {};
-const _functions = {};
-const _menus = {};
-const _panels = {};
-const _widgets = {};
-const _sections = {};
-const _buttons = {};
 const _authProvidersLocales = {};
 
 module.exports = ctx => {
@@ -129,67 +123,6 @@ module.exports = ctx => {
       if (name) return actions[name];
       const key = Object.keys(actions).find(key => actions[key].code === code);
       return actions[key];
-    }
-
-    menus() {
-      if (!_menus[ctx.locale]) {
-        _menus[ctx.locale] = this._prepareMenus(1);
-      }
-      return _menus[ctx.locale];
-    }
-
-    panels() {
-      if (!_panels[ctx.locale]) {
-        _panels[ctx.locale] = this._prepareMenus(2);
-      }
-      return _panels[ctx.locale];
-    }
-
-    widgets() {
-      if (!_widgets[ctx.locale]) {
-        _widgets[ctx.locale] = this._prepareMenus(3);
-      }
-      return _widgets[ctx.locale];
-    }
-
-    sections() {
-      if (!_sections[ctx.locale]) {
-        _sections[ctx.locale] = this._prepareMenus(4);
-      }
-      return _sections[ctx.locale];
-    }
-
-    buttons() {
-      if (!_buttons[ctx.locale]) {
-        _buttons[ctx.locale] = this._prepareMenus(5);
-      }
-      return _buttons[ctx.locale];
-    }
-
-    functions() {
-      if (!_functions[ctx.locale]) {
-        _functions[ctx.locale] = this._prepareFunctions();
-      }
-      return _functions[ctx.locale];
-    }
-
-    function({ module, name }) {
-      const _functions = this.functions();
-      if (!_functions[module]) return null;
-      return _functions[module][name];
-    }
-
-    functionsAutoRight({ module, atomClassName, action }) {
-      const functions = {};
-      const _functions = this.functions();
-      for (const key in _functions[module]) {
-        const _func = _functions[module][key];
-        const _action = typeof action === 'string' ? _func.action : ctx.constant.module(moduleInfo.relativeName).atom.action[_func.action];
-        if (_func.autoRight && _func.atomClassName === atomClassName && _action === action) {
-          functions[key] = _func;
-        }
-      }
-      return functions;
     }
 
     authProviders() {
@@ -398,91 +331,6 @@ module.exports = ctx => {
         }
       }
       return actions;
-    }
-
-    _prepareMenus(functionType) {
-      const menus = {};
-      const functions = this._prepareFunctions();
-      for (const relativeName in functions) {
-        const functionsModule = functions[relativeName];
-        const _menus = {};
-        for (const key in functionsModule) {
-          const func = functionsModule[key];
-          // 2018.12.22 menu maybe 0 for special scene
-          if (functionType === 1) {
-            if (func.menu === 1 || (func.actionComponent || func.actionPath)) {
-              _menus[key] = func;
-            }
-          } else if (func.menu === functionType) {
-            _menus[key] = func;
-          }
-        }
-        if (Object.keys(_menus).length > 0) {
-          menus[relativeName] = _menus;
-        }
-      }
-      return menus;
-    }
-
-    _prepareFunctions() {
-      const functions = {};
-      for (const relativeName in ctx.app.meta.modules) {
-        const module = ctx.app.meta.modules[relativeName];
-        if (module.main.meta && module.main.meta.base && module.main.meta.base.functions) {
-          functions[relativeName] = this._prepareFunctionsModule(module, module.main.meta.base.functions);
-        }
-      }
-      return functions;
-    }
-
-    _prepareFunctionsModule(module, _functions) {
-      const functions = {};
-      if (Array.isArray(_functions)) {
-        // array
-        for (const _func of _functions) {
-          const key = _functions.name;
-          functions[key] = this._prepareFunctionsModule_function(module, _func, key);
-        }
-      } else {
-        // object
-        for (const key in _functions) {
-          functions[key] = this._prepareFunctionsModule_function(module, _functions[key], key);
-        }
-      }
-      return functions;
-    }
-
-    _prepareFunctionsModule_function(module, _func, key) {
-      const func = {
-        module: module.info.relativeName,
-        name: key,
-        title: _func.title || key,
-        scene: _func.scene,
-        autoRight: _func.autoRight || 0,
-        atomClassName: _func.atomClassName,
-        action: _func.action,
-        actionModule: _func.actionModule || module.info.relativeName,
-        actionComponent: _func.actionComponent,
-        actionPath: _func.actionPath,
-        sorting: _func.sorting || 0,
-        menu: _func.menu || 0,
-        public: _func.public ? 1 : 0,
-        url: ctx.bean.util.combinePagePath(module.info, _func.url),
-        component: _func.component,
-      };
-      func.titleLocale = ctx.text(func.title);
-      // create
-      if (func.action === 'create' && !func.actionComponent && !func.actionPath) {
-        func.actionModule = 'a-base';
-        func.actionComponent = 'action';
-        // func.actionPath = '/a/basefront/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}';
-      }
-      // list
-      if (func.action === 'read' && !func.actionComponent && !func.actionPath) {
-        func.actionPath = '/a/basefront/atom/list?module={{module}}&atomClassName={{atomClassName}}';
-      }
-      // ok
-      return func;
     }
 
     _prepareAuthProviders() {
