@@ -27,4 +27,5 @@ export default [
   { path: 'category/select', component: load('category/categorySelect') },
   { path: 'tag/select', component: load('tag/tagSelect') },
   { path: 'resource/tree', component: load('resource/tree') },
+  { path: 'resource/authorize', component: load('resource/authorize') },
 ];

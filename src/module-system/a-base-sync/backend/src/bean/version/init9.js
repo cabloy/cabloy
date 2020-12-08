@@ -18,6 +18,8 @@ module.exports = function(ctx) {
         { roleName: 'system', action: 'enable', scopeNames: 'superuser' },
         { roleName: 'system', action: 'disable', scopeNames: 0 },
         { roleName: 'system', action: 'disable', scopeNames: 'superuser' },
+        { roleName: 'system', action: 'authorize', scopeNames: 0 },
+        { roleName: 'system', action: 'authorize', scopeNames: 'superuser' },
         { roleName: 'system', action: 'deleteBulk' },
         { roleName: 'system', action: 'exportBulk' },
       ];

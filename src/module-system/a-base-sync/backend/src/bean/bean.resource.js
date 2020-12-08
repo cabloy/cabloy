@@ -21,6 +21,10 @@ module.exports = ctx => {
       return ctx.model.module(moduleInfo.relativeName).resourceLocale;
     }
 
+    get modelResourceRole() {
+      return ctx.model.module(moduleInfo.relativeName).resourceRole;
+    }
+
     get sqlProcedure() {
       return ctx.bean._getBean(moduleInfo.relativeName, 'local.procedure');
     }
@@ -133,6 +137,20 @@ module.exports = ctx => {
         resourceAtomId: atom.id,
       });
       return await ctx.model.queryOne(sql);
+    }
+
+    async resourceRoles({ key/* , user */ }) {
+      const list = await ctx.model.query(`
+        select a.*,b.roleName from aResourceRole a
+          left join aRole b on a.roleId=b.id
+            where a.iid=? and a.atomId=?
+            order by b.roleName
+        `, [ ctx.instance.id, key.atomId ]);
+      return list;
+    }
+
+    async resourceRoleRemove({ /* key,*/ data/* , user*/ }) {
+      await this.modelResourceRole.delete({ id: data.resourceRoleId });
     }
 
 

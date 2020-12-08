@@ -51,11 +51,11 @@ module.exports = app => {
     },
     {
       method: 'post', path: 'atom/deleteBulk', controller: 'atom', middlewares: 'transaction',
-      meta: { right: { type: 'atom', action: 31 } },
+      meta: { right: { type: 'atom', action: 35 } },
     },
     {
       method: 'post', path: 'atom/exportBulk', controller: 'atom',
-      meta: { right: { type: 'atom', action: 32 } },
+      meta: { right: { type: 'atom', action: 36 } },
     },
     { method: 'post', path: 'atom/star', controller: 'atom',
       meta: {
@@ -110,6 +110,18 @@ module.exports = app => {
     // resource
     { method: 'post', path: 'resource/select', controller: 'resource' },
     { method: 'post', path: 'resource/check', controller: 'resource' },
+    { method: 'post', path: 'resource/resourceRoles', controller: 'resource',
+      meta: {
+        auth: { user: true },
+        right: { type: 'atom', action: 25 },
+      },
+    },
+    { method: 'post', path: 'resource/resourceRoleRemove', controller: 'resource',
+      meta: {
+        auth: { user: true },
+        right: { type: 'atom', action: 25 },
+      },
+    },
     // function
     { method: 'post', path: 'function/scenes', controller: 'function' },
     { method: 'post', path: 'function/list', controller: 'function' },

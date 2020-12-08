@@ -10,6 +10,14 @@ module.exports = app => {
       return await this.ctx.bean.resource.check({ atomStaticKeys, user });
     }
 
+    async resourceRoles({ key, user }) {
+      return await this.ctx.bean.resource.resourceRoles({ key, user });
+    }
+
+    async resourceRoleRemove({ key, data, user }) {
+      return await this.ctx.bean.resource.resourceRoleRemove({ key, data, user });
+    }
+
   }
 
   return Resource;

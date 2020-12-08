@@ -14,8 +14,11 @@ module.exports = {
       clone: 5,
       enable: 6,
       disable: 7,
-      deleteBulk: 31,
-      exportBulk: 32,
+
+      authorize: 25,
+
+      deleteBulk: 35,
+      exportBulk: 36,
 
       save: 51,
       submit: 52,
@@ -75,6 +78,14 @@ module.exports = {
         enableOnOpened: true,
         stage: 'archive',
         icon: { material: 'stop' },
+      },
+      authorize: {
+        title: 'Authorize',
+        actionPath: '/a/basefront/resource/authorize?atomId={{atomId}}&itemId={{itemId}}',
+        enableOnStatic: true,
+        enableOnOpened: true,
+        stage: 'archive',
+        icon: { material: 'groups' },
       },
       deleteBulk: {
         title: 'Delete',
