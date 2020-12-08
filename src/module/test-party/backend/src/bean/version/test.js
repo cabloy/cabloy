@@ -99,11 +99,6 @@ module.exports = function(ctx) {
     async _testRoleRights() {
       // atomClass
       await ctx.bean.role.addRoleRightBatch({ atomClassName: 'party', roleRights: testData.roleRights });
-      // function
-      const roleFunctions = [
-        { roleName: null, name: 'testFunctionPublic' },
-      ];
-      await ctx.bean.role.addRoleFunctionBatch({ roleFunctions });
     }
 
     // auths

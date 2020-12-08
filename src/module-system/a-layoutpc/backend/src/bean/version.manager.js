@@ -8,43 +8,9 @@ module.exports = app => {
 
     async init(options) {
 
-      if (options.version === 1) {
+      if (options.version === 1) {}
 
-        // roleFunctions: panels
-        const rolePanels = [
-          { roleName: null, name: 'panelMenu' },
-          { roleName: null, name: 'panelAtom' },
-          { roleName: null, name: 'panelSearch' },
-        ];
-        await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions: rolePanels });
-
-        // roleFunctions: sections
-        const roleSections = [
-          { roleName: null, name: 'sectionCopyright' },
-          { roleName: null, name: 'sectionClock' },
-        ];
-        await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions: roleSections });
-
-        // roleFunctions: buttons
-        const roleButtons = [
-          { roleName: null, name: 'buttonDashboard' },
-          { roleName: null, name: 'buttonFullscreen' },
-          { roleName: null, name: 'buttonMine' },
-        ];
-        await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions: roleButtons });
-
-      }
-
-      if (options.version === 2) {
-
-        // roleFunctions: buttons
-        const roleButtons = [
-          { roleName: null, name: 'buttonHome' },
-        ];
-        await this.ctx.bean.role.addRoleFunctionBatch({ roleFunctions: roleButtons });
-
-      }
-
+      if (options.version === 2) {}
 
     }
 
