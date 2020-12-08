@@ -149,16 +149,25 @@ module.exports = ctx => {
       return list;
     }
 
-    async resourceRoleRemove({ /* key,*/ data/* , user*/ }) {
-      await this.modelResourceRole.delete({ id: data.resourceRoleId });
+    // add resource role
+    async addResourceRole({ atomId, atomStaticKey, roleId }) {
+      if (!atomId && !atomStaticKey) return null;
+      if (!atomId) {
+        const atom = await ctx.bean.atom.modelAtom.get({
+          atomStaticKey,
+          atomStage: 1, // archive
+        });
+        if (!atom) ctx.throw.module(moduleInfo.relativeName, 1002);
+        atomId = atom.id;
+      }
+      await this.modelResourceRole.insert({
+        atomId, roleId,
+      });
     }
 
-    async resourceRoleAdd({ key, data/* , user*/ }) {
-      for (const roleId of data.roles) {
-        await this.modelResourceRole.insert({
-          atomId: key.atomId, roleId,
-        });
-      }
+    // delete resource role
+    async deleteResourceRole({ id }) {
+      await this.modelResourceRole.delete({ id });
     }
 
     // /* backup */

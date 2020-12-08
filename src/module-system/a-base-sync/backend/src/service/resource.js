@@ -14,12 +14,14 @@ module.exports = app => {
       return await this.ctx.bean.resource.resourceRoles({ key, user });
     }
 
-    async resourceRoleRemove({ key, data, user }) {
-      return await this.ctx.bean.resource.resourceRoleRemove({ key, data, user });
+    async resourceRoleRemove({ /* key,*/ data/* , user*/ }) {
+      return await this.ctx.bean.resource.deleteResourceRole({ id: data.resourceRoleId });
     }
 
-    async resourceRoleAdd({ key, data, user }) {
-      return await this.ctx.bean.resource.resourceRoleAdd({ key, data, user });
+    async resourceRoleAdd({ key, data/* , user*/ }) {
+      for (const roleId of data.roles) {
+        await this.ctx.bean.resource.addResourceRole({ atomId: key.atomId, roleId });
+      }
     }
 
   }

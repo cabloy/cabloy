@@ -53,8 +53,8 @@ module.exports = app => {
       if (!roles || !roles.length) return;
       for (const role of roles) {
         if (!role) continue;
-        await this.ctx.bean.role.addRoleResource({
-          roleId: role.id, atomId,
+        await this.ctx.bean.resource.addResourceRole({
+          atomId, roleId: role.id,
         });
       }
     }

@@ -35,10 +35,6 @@ module.exports = ctx => {
       return ctx.model.module(moduleInfo.relativeName).roleFunction;
     }
 
-    get modelResourceRole() {
-      return ctx.model.module(moduleInfo.relativeName).resourceRole;
-    }
-
     async get(where) {
       return await this.model.get(where);
     }
@@ -704,29 +700,6 @@ module.exports = ctx => {
             select a.iid,a.roleId,a.roleIdInc from aRoleIncRef a
               where a.iid=${iid} and a.roleId=${roleId}
         `);
-    }
-
-    // resource
-
-    // add role resource
-    async addRoleResource({ roleId, atomId, atomStaticKey }) {
-      if (!atomId && !atomStaticKey) return null;
-      if (!atomId) {
-        const atom = await ctx.bean.atom.modelAtom.get({
-          atomStaticKey,
-          atomStage: 1, // archive
-        });
-        if (!atom) ctx.throw.module(moduleInfo.relativeName, 1002);
-        atomId = atom.id;
-      }
-      await this.modelResourceRole.insert({
-        roleId, atomId,
-      });
-    }
-
-    // delete role resource
-    async deleteRoleResource({ id }) {
-      await this.modelResourceRole.delete({ id });
     }
 
   }
