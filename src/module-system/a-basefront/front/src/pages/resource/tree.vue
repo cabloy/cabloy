@@ -90,7 +90,8 @@ export default {
           },
         };
         if (level <= this.maxLevelAutoOpened || this.maxLevelAutoOpened === -1) {
-          node.children = await this.onLoadChildren(node);
+          const children = await this.onLoadChildren(node);
+          this.$refs.tree.childrenLoaded(node, children);
           node.attrs.loadChildren = false;
           node.attrs.opened = true;
         }

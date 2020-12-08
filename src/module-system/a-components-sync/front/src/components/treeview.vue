@@ -285,27 +285,31 @@ export default {
     _needLoadChildren(node) {
       return (this.onLoadChildren && node.attrs.loadChildren && !node._loaded);
     },
+    childrenLoaded(node, children) {
+      this.$set(node, '_loaded', true);
+      if (!node.children) node.children = [];
+      const nodeChildren = node.children;
+      for (const item of children) {
+        // children
+        if (!item.children) item.children = [];
+        // checked
+        if (this.treeviewRoot.attrs.multiple && node.attrs.checked) {
+          item.attrs.checked = true;
+        }
+        // push
+        nodeChildren.push(item);
+      }
+      // record parent
+      for (const item of nodeChildren) {
+        item.parent = node;
+      }
+      return nodeChildren;
+    },
     _loadChildren(node) {
       return new Promise((resolve, reject) => {
         if (!this._needLoadChildren(node)) return resolve(node.children);
         this.onLoadChildren(node).then(data => {
-          this.$set(node, '_loaded', true);
-          if (!node.children) node.children = [];
-          const nodeChildren = node.children;
-          for (const item of data) {
-            // children
-            if (!item.children) item.children = [];
-            // checked
-            if (this.treeviewRoot.attrs.multiple && node.attrs.checked) {
-              item.attrs.checked = true;
-            }
-            // push
-            nodeChildren.push(item);
-          }
-          // record parent
-          for (const item of nodeChildren) {
-            item.parent = node;
-          }
+          const nodeChildren = this.childrenLoaded(node, data);
           // ok
           return resolve(nodeChildren);
         }).catch(reject);
