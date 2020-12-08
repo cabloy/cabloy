@@ -33,6 +33,9 @@ export default {
     roleIdDisable() {
       return this.contextParams.roleIdDisable;
     },
+    resourceAtomId() {
+      return this.contextParams.resourceAtomId;
+    },
     root() {
       return {
         attrs: {
@@ -48,7 +51,11 @@ export default {
   methods: {
     onLoadChildren(node) {
       const roleId = node.root ? this.roleIdStart : node.id;
-      return this.$api.post('role/children', { roleId, page: { size: 0 } })
+      return this.$api.post('role/children', {
+        roleId,
+        page: { size: 0 },
+        key: { atomId: this.resourceAtomId },
+      })
         .then(data => {
           let list = data.list.map(item => {
             const checkbox = !this.leafOnly || item.catalog === 0;

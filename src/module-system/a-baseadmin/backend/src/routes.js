@@ -1,7 +1,9 @@
 module.exports = app => {
   const routes = [
     // role
-    { method: 'post', path: 'role/children', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
+    { method: 'post', path: 'role/children', controller: 'role',
+      meta: { right: { type: 'resource,atom', name: 'role', action: 25 } },
+    },
     { method: 'post', path: 'role/item', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
     { method: 'post', path: 'role/save', controller: 'role', middlewares: 'validate',
       meta: { validate: { validator: 'role' }, right: { type: 'resource', name: 'role' } },

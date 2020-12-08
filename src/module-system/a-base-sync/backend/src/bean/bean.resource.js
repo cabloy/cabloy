@@ -153,6 +153,13 @@ module.exports = ctx => {
       await this.modelResourceRole.delete({ id: data.resourceRoleId });
     }
 
+    async resourceRoleAdd({ key, data/* , user*/ }) {
+      for (const roleId of data.roles) {
+        await this.modelResourceRole.insert({
+          atomId: key.atomId, roleId,
+        });
+      }
+    }
 
     // /////////////
 

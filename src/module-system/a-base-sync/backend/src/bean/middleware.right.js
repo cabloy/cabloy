@@ -14,14 +14,23 @@ module.exports = ctx => {
       // ignore
       if (!options.type) return await next();
 
-      // atom
-      if (options.type === 'atom') await checkAtom(moduleInfo, options, ctx);
-
-      // function
-      if (options.type === 'function') await checkFunction(moduleInfo, options, ctx);
-
-      // resource
-      if (options.type === 'resource') await checkResource(moduleInfo, options, ctx);
+      const types = options.type.split(',');
+      if (types.length === 1) {
+        await checkRight(types[0], moduleInfo, options, ctx);
+      } else {
+        let error;
+        for (const type of types) {
+          try {
+            await checkRight(type, moduleInfo, options, ctx);
+            // ok
+            error = null;
+            break;
+          } catch (err) {
+            error = err;
+          }
+        }
+        if (error) throw error;
+      }
 
       // next
       await next();
@@ -29,6 +38,14 @@ module.exports = ctx => {
   }
   return Middleware;
 };
+
+async function checkRight(type, moduleInfo, options, ctx) {
+  // atom
+  if (type === 'atom') await checkAtom(moduleInfo, options, ctx);
+
+  // resource
+  if (type === 'resource') await checkResource(moduleInfo, options, ctx);
+}
 
 async function checkAtom(moduleInfo, options, ctx) {
   // constant
@@ -111,18 +128,6 @@ async function checkAtom(moduleInfo, options, ctx) {
     ctx.meta._atom = res;
   }
 
-}
-
-async function checkFunction(moduleInfo, options, ctx) {
-  if (ctx.innerAccess) return;
-  const res = await ctx.bean.function.checkRightFunction({
-    function: {
-      module: options.module || ctx.module.info.relativeName,
-      name: options.name || ctx.request.body.name },
-    user: ctx.state.user.op,
-  });
-  if (!res) ctx.throw(403);
-  ctx.meta._function = res;
 }
 
 async function checkResource(moduleInfo, options, ctx) {

@@ -111,16 +111,13 @@ module.exports = app => {
     { method: 'post', path: 'resource/select', controller: 'resource' },
     { method: 'post', path: 'resource/check', controller: 'resource' },
     { method: 'post', path: 'resource/resourceRoles', controller: 'resource',
-      meta: {
-        auth: { user: true },
-        right: { type: 'atom', action: 25 },
-      },
+      meta: { right: { type: 'atom', action: 25 } },
     },
     { method: 'post', path: 'resource/resourceRoleRemove', controller: 'resource',
-      meta: {
-        auth: { user: true },
-        right: { type: 'atom', action: 25 },
-      },
+      meta: { right: { type: 'atom', action: 25 } },
+    },
+    { method: 'post', path: 'resource/resourceRoleAdd', controller: 'resource',
+      meta: { right: { type: 'atom', action: 25 } },
     },
     // function
     { method: 'post', path: 'function/scenes', controller: 'function' },

@@ -53,15 +53,28 @@ export default {
       });
     },
     async onPerformAdd() {
-
-      const tagName = await this.$view.dialog.prompt(this.$text('Please specify the tag name'));
-      if (!tagName) return;
-      await this.$api.post('/a/base/tag/add', {
-        atomClass: this.atomClass,
-        data: {
-          tagName,
-          language: this.language,
+      this.$view.navigate('/a/baseadmin/role/select', {
+        target: '_self',
+        context: {
+          params: {
+            roleIdStart: null,
+            multiple: true,
+            resourceAtomId: this.atomId,
+          },
+          callback: (code, data) => {
+            if (code === 200) {
+              this._resourceRoleAdd(data);
+            }
+          },
         },
+      });
+    },
+    async _resourceRoleAdd(_roles) {
+      if (!_roles || _roles.length === 0) return;
+      const roles = _roles.map(item => item.id);
+      await this.$api.post('/a/base/resource/resourceRoleAdd', {
+        key: { atomId: this.atomId },
+        data: { roles },
       });
       this.reload();
     },

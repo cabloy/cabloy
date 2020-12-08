@@ -39,6 +39,15 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async resourceRoleAdd() {
+      const res = await this.ctx.service.resource.resourceRoleAdd({
+        key: this.ctx.request.body.key,
+        data: this.ctx.request.body.data,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
   }
 
   return ResourceController;
