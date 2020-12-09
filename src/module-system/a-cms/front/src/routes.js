@@ -10,6 +10,5 @@ export default [
   { path: 'config/languagePreview', component: load('config/languagePreview') },
   { path: 'article/contentEdit', component: load('article/contentEdit') },
   { path: 'article/post', component: load('article/post') },
-  { path: 'block/list', component: load('block/list') },
-  { path: 'block/item', component: load('block/item') },
+  { path: 'block/edit', component: load('block/blockEdit') },
 ];

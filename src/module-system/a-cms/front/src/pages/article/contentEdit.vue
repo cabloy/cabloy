@@ -187,7 +187,7 @@ export default {
     },
     __blockEdit(block, atomId) {
       return new Promise((resolve, reject) => {
-        this.$view.navigate('/a/cms/block/item', {
+        this.$view.navigate('/a/cms/block/edit', {
           context: {
             params: {
               block,
