@@ -1,5 +1,5 @@
 module.exports = app => {
-  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const resources = [
     // cms block
     {
@@ -19,6 +19,10 @@ module.exports = app => {
           autoplay: false,
           loop: true,
         },
+        validator: {
+          module: moduleInfo.relativeName,
+          validator: 'blockAudio',
+        },
       }),
       resourceRoles: 'root',
     },
@@ -33,6 +37,10 @@ module.exports = app => {
           url: '',
           width: '',
           height: '',
+        },
+        validator: {
+          module: moduleInfo.relativeName,
+          validator: 'blockIFrame',
         },
       }),
       resourceRoles: 'root',

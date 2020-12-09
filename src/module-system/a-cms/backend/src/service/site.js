@@ -162,8 +162,8 @@ module.exports = app => {
         data: item,
       });
       // output
-      if (!block.data.output) return item;
-      return await block.data.output({ ctx: this.ctx, block, data: item });
+      if (!block.output) return item;
+      return await block.output({ ctx: this.ctx, block, data: item });
     }
 
     getBlocks() {

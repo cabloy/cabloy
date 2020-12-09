@@ -5,7 +5,7 @@
         <eb-link iconMaterial="done" :onPerform="onPerformDone"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-validate v-if="moduleBlock" ref="validate" :readOnly="false" auto :data="item" :params="validateParams" :meta="meta" :onPerform="onPerformValidate" @submit="onSubmit">
+    <eb-validate v-if="item" ref="validate" :readOnly="false" auto :data="item" :params="validateParams" :meta="meta" :onPerform="onPerformValidate" @submit="onSubmit">
     </eb-validate>
   </eb-page>
 </template>
@@ -16,46 +16,45 @@ export default {
   mixins: [ ebPageContext ],
   data() {
     return {
-      block: null,
       item: null,
-      meta: null,
-      moduleBlock: null,
     };
   },
   computed: {
     title() {
-      if (!this.block) return this.$text('Block');
-      return `${this.$text('Block')}: ${this.block.meta.titleLocale}`;
+      return `${this.$text('Block')}: ${this.block.atomNameLocale}`;
+    },
+    block() {
+      return this.contextParams.block;
+    },
+    atomId() {
+      return this.contextParams.atomId;
+    },
+    resourceConfig() {
+      return JSON.parse(this.block.resourceConfig);
+    },
+    meta() {
+      return { atomId: this.atomId };
     },
     validateParams() {
-      if (!this.block) return null;
       return {
-        module: this.block.meta.module,
-        validator: this.block.meta.validator,
+        module: this.resourceConfig.validator.module,
+        validator: this.resourceConfig.validator.validator,
       };
     },
   },
-  mounted() {
-    this.block = this.contextParams.block;
-    this.item = this.block.data.default;
-    this.meta = {
-      atomId: this.contextParams.atomId,
-    };
-    this.$meta.module.use(this.block.meta.module, module => {
-      this.moduleBlock = module;
-    });
+  created() {
+    this.item = this.resourceConfig.default;
   },
   methods: {
     onPerformValidate() {
-      const blockName = this.block.meta.fullName;
+      const blockName = this.block.atomStaticKey;
       return this.$api.post('site/blockSave', {
         blockName,
         item: this.item,
       }).then(data => {
         // callback
         this.contextCallback(200, { name: blockName, content: data });
-        // close view
-        this.$view.close();
+        this.$f7router.back();
       });
     },
     onPerformDone() {

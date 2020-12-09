@@ -161,13 +161,36 @@ export default {
         });
       });
     },
-    onBlockAdd() {
-      const atomId = this.item.atomId;
-      return new Promise((resolve, reject) => {
-        this.$view.navigate('/a/cms/block/list', {
-          target: '_view',
+    async onBlockAdd() {
+      const block = await this.__blockSelect();
+      if (!block) return;
+      return await this.__blockEdit(block, this.item.atomId);
+    },
+    __blockSelect() {
+      return new Promise(resolve => {
+        let res;
+        this.$view.navigate('/a/basefront/resource/select?resourceType=a-cms:block', {
           context: {
             params: {
+              multiple: false,
+            },
+            callback: (code, node) => {
+              if (code === 200) {
+                res = node.data;
+              } else {
+                resolve(res);
+              }
+            },
+          },
+        });
+      });
+    },
+    __blockEdit(block, atomId) {
+      return new Promise((resolve, reject) => {
+        this.$view.navigate('/a/cms/block/item', {
+          context: {
+            params: {
+              block,
               atomId,
             },
             callback: (code, data) => {
@@ -185,7 +208,7 @@ export default {
     },
   },
 };
-
+// data: {name,content}
 </script>
 <style lang="less" scoped>
 </style>
