@@ -6,8 +6,6 @@ module.exports = app => {
     base: {
       atoms: {
       },
-      functions: {
-      },
     },
     validation: {
       validators: {

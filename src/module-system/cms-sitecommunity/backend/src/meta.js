@@ -7,6 +7,7 @@ module.exports = app => {
   const atomClassQuery = `module=${atomClass.module}&atomClassName=${atomClass.atomClassName}`;
   const schemas = require('./config/validation/schemas.js')(app);
   const staticFlowDefs = require('./config/static/flowDefs.js')(app);
+  const staticResources = require('./config/static/resources.js')(app);
   const meta = {
     base: {
       atoms: {
@@ -33,29 +34,12 @@ module.exports = app => {
           },
         },
       },
-      functions: {
-        createPost: {
-          title: 'Create Post',
-          scene: 'create',
-          autoRight: 1,
-          atomClassName: 'post',
-          action: 'create',
-          sorting: 2,
-          menu: 1,
-        },
-        listPost: {
-          title: 'Post List',
-          scene: 'list',
-          autoRight: 1,
-          atomClassName: 'post',
-          action: 'read',
-          sorting: 2,
-          menu: 1,
-        },
-      },
       statics: {
         'a-flow.flowDef': {
           items: staticFlowDefs,
+        },
+        'a-base.resource': {
+          items: staticResources,
         },
       },
     },

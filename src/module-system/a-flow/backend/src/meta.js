@@ -1,5 +1,6 @@
 module.exports = app => {
   const schemas = require('./config/validation/schemas.js')(app);
+  const staticResources = require('./config/static/resources.js')(app);
   const meta = {
     base: {
       atoms: {
@@ -20,24 +21,9 @@ module.exports = app => {
           },
         },
       },
-      functions: {
-        createFlowDef: {
-          title: 'Create FlowDefinition',
-          scene: 'create',
-          autoRight: 1,
-          atomClassName: 'flowDef',
-          action: 'create',
-          sorting: 1,
-          menu: 1,
-        },
-        listFlowDef: {
-          title: 'FlowDefinition List',
-          scene: 'list',
-          autoRight: 1,
-          atomClassName: 'flowDef',
-          action: 'read',
-          sorting: 1,
-          menu: 1,
+      statics: {
+        'a-base.resource': {
+          items: staticResources,
         },
       },
     },

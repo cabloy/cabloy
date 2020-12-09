@@ -7,6 +7,7 @@ module.exports = app => {
   if (app.meta.isTest || app.meta.isLocal) {
     const schemas = require('./config/validation/schemas.js')(app);
     const staticFlowDefs = require('./config/static/flowDefs.js')(app);
+    const staticResources = require('./config/static/resources.js')(app);
     // meta
     extend(true, meta, {
       base: {
@@ -25,29 +26,12 @@ module.exports = app => {
             },
           },
         },
-        functions: {
-          createPurchaseOrder: {
-            title: 'Create Purchase Order',
-            scene: 'create',
-            autoRight: 1,
-            atomClassName: 'purchaseOrder',
-            action: 'create',
-            sorting: 1,
-            menu: 1,
-          },
-          listPurchaseOrder: {
-            title: 'Purchase Order List',
-            scene: 'list',
-            autoRight: 1,
-            atomClassName: 'purchaseOrder',
-            action: 'read',
-            sorting: 1,
-            menu: 1,
-          },
-        },
         statics: {
           'a-flow.flowDef': {
             items: staticFlowDefs,
+          },
+          'a-base.resource': {
+            items: staticResources,
           },
         },
       },
