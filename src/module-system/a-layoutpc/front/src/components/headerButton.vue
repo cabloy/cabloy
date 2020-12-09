@@ -69,9 +69,9 @@ export default {
   },
   methods: {
     __init() {
-      this.$meta.module.use(this.options.module, module => {
+      this.$meta.module.use(this.options.resourceConfig.module, module => {
         const fullName = this.layout._buttonFullName(this.options);
-        let component = module.options.components[this.options.name];
+        let component = module.options.components[this.options.resourceConfig.component];
         if (!component) {
           this.errorMessage = `${this.$text('Button Not Found')}: ${fullName}`;
           this.ready = false;
