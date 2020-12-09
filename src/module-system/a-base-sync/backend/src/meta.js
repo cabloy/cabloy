@@ -19,6 +19,11 @@ module.exports = app => {
             category: true,
             tag: true,
           },
+          actions: {
+            write: {
+              enableOnStatic: true,
+            },
+          },
           validator: 'resource',
           search: {
             validator: 'resourceSearch',
