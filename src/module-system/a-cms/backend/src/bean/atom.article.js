@@ -247,7 +247,8 @@ module.exports = app => {
       if (!article) return null;
       // check atomLanguage
       if (!article.atomLanguage) {
-        return null;
+        article.atomLanguage = this.ctx.locale;
+        // return null;
         // this.ctx.throw(1001);
       }
       return article;

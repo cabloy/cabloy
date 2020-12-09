@@ -1119,7 +1119,7 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
     async getArticleUrl({ key }) {
       // article
       const article = await this.ctx.bean._getBean(`${moduleInfo.relativeName}.atom.article`)._getArticle({ key, inner: true });
-      if (!article) return;
+      if (!article) this.ctx.throw.module('a-base', 1002);
       // site
       const site = await this.getSite({ language: article.atomLanguage });
       // check if build site first
