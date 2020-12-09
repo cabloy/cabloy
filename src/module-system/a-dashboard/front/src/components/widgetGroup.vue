@@ -32,12 +32,14 @@ export default {
       // cols
       const cols = [];
       for (const item of this.widgets) {
+        const resource = this.dashboard.__findWidgetStock(item);
         const col = c('eb-dashboard-widget', {
           key: item.id,
           props: {
             dashboard: this.dashboard,
             group: this,
             options: item,
+            resource,
             dragdropSceneResize: this.dragdropSceneResize,
             dragdropScene: this.dragdropScene,
           },

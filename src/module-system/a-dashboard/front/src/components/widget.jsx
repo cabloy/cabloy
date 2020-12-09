@@ -115,6 +115,9 @@ export default {
     options: {
       type: Object,
     },
+    resource: {
+      type: Object,
+    },
     dragdropSceneResize: {
       type: String,
     },
@@ -136,10 +139,19 @@ export default {
   },
   methods: {
     __init() {
+      // group
       if (this.options.group) return;
-      this.$meta.module.use(this.options.module, module => {
-        const fullName = this.__getFullName();
-        let component = module.options.components[this.options.name];
+      // fullName
+      const fullName = this.__getFullName();
+      // resource
+      if (!this.resource) {
+        this.errorMessage = `${this.$text('Widget Not Found')}: ${fullName}`;
+        this.ready = false;
+        return;
+      }
+      // component
+      this.$meta.module.use(this.resource.resourceConfig.module, module => {
+        let component = module.options.components[this.resource.resourceConfig.component];
         if (!component) {
           this.errorMessage = `${this.$text('Widget Not Found')}: ${fullName}`;
           this.ready = false;

@@ -228,10 +228,13 @@ export default {
       if (!resourcesAll) return null;
       const _resource = resourcesAll[this.__resourceFullName(resource)];
       if (!_resource) return null;
-      const res = JSON.parse(_resource.resourceConfig);
-      res.title = _resource.atomName;
-      res.titleLocale = _resource.atomNameLocale;
-      return res;
+      return {
+        ...resource,
+        title: _resource.atomName,
+        titleLocale: _resource.atomNameLocale,
+        resourceAtomId: _resource.atomId,
+        resourceConfig: JSON.parse(_resource.resourceConfig),
+      };
     },
     __findWidgetStock(widget) {
       if (widget.group) return null;
