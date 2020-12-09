@@ -1,10 +1,15 @@
-const blocks = require('./config/blocks.js');
-
 module.exports = app => {
   const schemas = require('./config/validation/schemas.js')(app);
+  const blocks = require('./config/blocks.js')(app);
+  const staticResources = require('./config/static/resources.js')(app);
   const meta = {
     base: {
       atoms: {
+      },
+      statics: {
+        'a-base.resource': {
+          items: staticResources,
+        },
       },
     },
     validation: {
