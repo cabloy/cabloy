@@ -5,7 +5,7 @@ import Layout from './layout.jsx';
 import Bulk from './bulk.jsx';
 import Search from './search.jsx';
 import Select from './select.jsx';
-import Create from './create.jsx';
+// import Create from './create.jsx';
 import Order from './order.jsx';
 import Filter from './filter.jsx';
 import Subnavbar from './subnavbar.jsx';
@@ -23,7 +23,7 @@ const ebMenus = Vue.prototype.$meta.module.get('a-base').options.mixins.ebMenus;
 // },
 
 export default {
-  mixins: [ ebAtomClasses, ebAtomActions, ebMenus, Base, Page, Layout, Bulk, Search, Select, Create, Order, Filter, Subnavbar, Bottombar ],
+  mixins: [ ebAtomClasses, ebAtomActions, ebMenus, Base, Page, Layout, Bulk, Search, Select, Order, Filter, Subnavbar, Bottombar ],
   data() {
     return {
     };

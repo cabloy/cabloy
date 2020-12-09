@@ -69,12 +69,9 @@ export default {
   },
   created() {
     // check function right
-    const functions = [{
-      module: 'a-base',
-      name: 'deleteComment',
-    }];
-    this.$api.post('/a/base/function/check', {
-      functions,
+    const atomStaticKeys = [ 'a-base:deleteComment' ];
+    this.$api.post('/a/base/resource/check', {
+      atomStaticKeys,
     }).then(data => {
       this.rightDeleteComment = data[0].passed;
       // markdown style
