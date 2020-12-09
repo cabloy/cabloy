@@ -103,6 +103,7 @@ export default {
   Resource: '资源',
   Type: '类型',
   Authorize: '授权',
+  Options: '选项',
   'New Category': '新目录',
   'Advanced Filter': '高级筛选',
   'Atom Flag': '原子标记',

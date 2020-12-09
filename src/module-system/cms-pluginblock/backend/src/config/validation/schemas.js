@@ -27,6 +27,7 @@ module.exports = app => {
   schemas.blockAudio = {
     type: 'object',
     properties: {
+      // audio
       audio: {
         type: 'object',
         ebType: 'group',
@@ -58,6 +59,12 @@ module.exports = app => {
             ebParams: { mode: 1 },
           },
         },
+      },
+      // options
+      groupOptions: {
+        type: 'null',
+        ebType: 'group-flatten',
+        ebTitle: 'Options',
       },
       autoplay: {
         type: 'boolean',
