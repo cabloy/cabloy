@@ -387,6 +387,7 @@ export default {
         });
         // parent to checked/indeterminate
         this.treeParent(node, item => {
+          if (!item.attrs.checkbox) return false; // break
           const every = item.children.every(_item => _item.attrs.checked);
           const some = item.children.some(_item => _item.attrs.checked || _item.attrs.indeterminate);
           if (every) {

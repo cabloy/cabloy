@@ -342,6 +342,28 @@ export default {
       if (resource.atomStaticKey) return resource.atomStaticKey;
       return `${resource.module}:${resource.name}`;
     },
+    onPerformAddWidget(ctx, widgetGroup) {
+      ctx.$view.navigate('/a/basefront/resource/select?resourceType=a-dashboard:widget', {
+        target: '_self',
+        context: {
+          params: {
+            multiple: true,
+          },
+          callback: (code, nodes) => {
+            if (code === 200) {
+              if (nodes) {
+                const widgets = nodes.map(item => {
+                  return {
+                    atomStaticKey: item.data.atomStaticKey,
+                  };
+                });
+                widgetGroup.onWidgetsAdd({ widgets });
+              }
+            }
+          },
+        },
+      });
+    },
   },
 };
 

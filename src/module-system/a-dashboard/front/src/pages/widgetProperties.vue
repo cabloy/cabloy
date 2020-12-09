@@ -53,16 +53,7 @@ export default {
       this.$view.close();
     },
     onPerformAddWidget() {
-      this.$view.navigate('/a/dashboard/widget/add', {
-        target: '_self',
-        context: {
-          callback: (code, data) => {
-            if (code === 200) {
-              this.widget.onWidgetsAdd(data);
-            }
-          },
-        },
-      });
+      this.dashboard.onPerformAddWidget(this, this.widget);
     },
     onPerformPropertyEdit(e, { propertySchema, propertyName }) {
       this.$view.navigate(`/a/dashboard/widget/property/edit?widgetId=${this.widgetId}&propertyName=${propertyName}`, {

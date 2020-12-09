@@ -23,13 +23,6 @@ export default {
       maxLevelAutoOpened,
       resourceType,
       treeData: null,
-      root: {
-        attrs: {
-          itemToggle: false,
-          selectable: false,
-          multiple: this.multiple,
-        },
-      },
     };
   },
   computed: {
@@ -43,6 +36,15 @@ export default {
     },
     multiple() {
       return this.contextParams.multiple;
+    },
+    root() {
+      return {
+        attrs: {
+          itemToggle: false,
+          selectable: false,
+          multiple: this.multiple,
+        },
+      };
     },
   },
   created() {
@@ -74,6 +76,7 @@ export default {
       }
       const list = [];
       for (const item of treeChildren) {
+        const checkbox = false;
         const node = {
           id: item.id,
           attrs: {
@@ -82,6 +85,9 @@ export default {
             toggle: true,
             itemToggle: true,
             loadChildren: true,
+            checkbox,
+            checkOnLabel: checkbox,
+            selectable: checkbox,
           },
           data: {
             ...item,

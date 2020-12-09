@@ -68,16 +68,7 @@ export default {
       this.dashboard.onGroupAdd();
     },
     onPerformAddWidget() {
-      this.$view.navigate('/a/dashboard/widget/add', {
-        target: '_self',
-        context: {
-          callback: (code, data) => {
-            if (code === 200) {
-              this.dashboard.onWidgetsAdd(data);
-            }
-          },
-        },
-      });
+      this.dashboard.onPerformAddWidget(this, this.dashboard);
     },
     async onPerformChangeName(e, item) {
       const dashboardUserId = item.id;
