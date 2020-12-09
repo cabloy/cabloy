@@ -5,14 +5,12 @@ import Layout from './layout.jsx';
 import Bulk from './bulk.jsx';
 import Search from './search.jsx';
 import Select from './select.jsx';
-// import Create from './create.jsx';
 import Order from './order.jsx';
 import Filter from './filter.jsx';
 import Subnavbar from './subnavbar.jsx';
 import Bottombar from './bottombar.jsx';
 const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
 const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
-const ebMenus = Vue.prototype.$meta.module.get('a-base').options.mixins.ebMenus;
 
 // container: {
 //   atomClass,
@@ -23,7 +21,10 @@ const ebMenus = Vue.prototype.$meta.module.get('a-base').options.mixins.ebMenus;
 // },
 
 export default {
-  mixins: [ ebAtomClasses, ebAtomActions, ebMenus, Base, Page, Layout, Bulk, Search, Select, Order, Filter, Subnavbar, Bottombar ],
+  mixins: [
+    ebAtomClasses, ebAtomActions,
+    Base, Page, Layout, Bulk, Search, Select, Order, Filter, Subnavbar, Bottombar,
+  ],
   data() {
     return {
     };
@@ -31,7 +32,6 @@ export default {
   created() {
     this.layout_prepareConfig().then(() => {
       this.base.ready = true;
-      this.create_loadActions();
     });
   },
   beforeDestroy() {

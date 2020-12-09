@@ -23,7 +23,6 @@ export default {
       <f7-nav-right>
         {this.layoutManager.bulk_renderActionsRight()}
         {this.layoutManager.bulk_renderActionsLeftB()}
-        {this.layoutManager.create_renderActions()}
         {this.layoutManager.filter_renderAction()}
       </f7-nav-right>
     );

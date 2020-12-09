@@ -60,7 +60,6 @@ export default {
         <div>
           {this.layout_renderComponent()}
           {this.order_renderPopover()}
-          {this.create_renderPopoverActions()}
         </div>
       );
     },

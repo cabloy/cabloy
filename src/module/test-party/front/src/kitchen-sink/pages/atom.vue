@@ -19,9 +19,9 @@
 </template>
 <script>
 import Vue from 'vue';
-const ebMenus = Vue.prototype.$meta.module.get('a-base').options.mixins.ebMenus;
+const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
 export default {
-  mixins: [ ebMenus ],
+  mixins: [ ebAtomActions ],
   data() {
     return {
       atom: null,
@@ -35,17 +35,22 @@ export default {
   },
   methods: {
     onPerformCreate(event) {
-      // menu
-      let _menu = this.getMenu({ module: 'test-party', name: 'createParty' });
-      if (!_menu || _menu.action !== 'create') return;
-      const item = {
+      const resourceConfig = {
         module: 'test-party',
         atomClassName: 'party',
-        atomClassIdParent: 0,
+        atomAction: 'create',
       };
-      _menu = this.$utils.extend({}, _menu, { targetEl: event.target });
-      // add
-      return this.$meta.util.performAction({ ctx: this, action: _menu, item });
+      let action = this.getAction({
+        module: resourceConfig.module,
+        atomClassName: resourceConfig.atomClassName,
+        name: resourceConfig.atomAction,
+      });
+      const item = {
+        module: resourceConfig.module,
+        atomClassName: resourceConfig.atomClassName,
+      };
+      action = this.$utils.extend({}, action, { targetEl: event.target });
+      return this.$meta.util.performAction({ ctx: this, action, item });
     },
     onPerformSelectAtom() {
       const url = '/a/basefront/atom/select';
