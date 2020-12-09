@@ -370,11 +370,11 @@ export default {
     __saveLayoutConfig: Vue.prototype.$meta.util.debounce(function() {
       // override
       const value = this.$meta.util.extend({}, this.sidebar);
-      // remove dynamic panels
-      this.__removeDynamicPanels(value.top);
-      this.__removeDynamicPanels(value.left);
-      this.__removeDynamicPanels(value.right);
-      this.__removeDynamicPanels(value.bottom);
+      // remove dynamic resources
+      this.__removeDynamicResources(value.top);
+      this.__removeDynamicResources(value.left);
+      this.__removeDynamicResources(value.right);
+      this.__removeDynamicResources(value.bottom);
       // save
       this.$store.commit('a/base/setLayoutConfigKey', { module: 'a-layoutpc', key: 'sidebar', value });
     }, 1000),
@@ -386,41 +386,24 @@ export default {
         this.sidebar = this.$meta.util.extend({}, sidebarDefault);
       }
     },
-    __removeDynamicPanels(side) {
-      // panels
-      if (side.panels) {
-        const panels = side.panels;
-        for (let index = panels.length - 1; index >= 0; index--) {
-          const panel = panels[index];
-          if (!panel.module) {
-            panels.splice(index, 1);
-          } else {
-            panels[index] = { module: panel.module, name: panel.name };
-          }
+    __removeDynamicResource(resources) {
+      for (let index = resources.length - 1; index >= 0; index--) {
+        const resource = resources[index];
+        if (!resource.atomStaticKey && !resource.module) {
+          resources.splice(index, 1);
+        } else {
+          resources[index] = resource.atomStaticKey ?
+            { atomStaticKey: resource.atomStaticKey } :
+            { module: resource.module, name: resource.name };
         }
       }
-      // sections
-      if (side.sections) {
-        const sections = side.sections;
-        for (let index = sections.length - 1; index >= 0; index--) {
-          const section = sections[index];
-          if (!section.module) {
-            sections.splice(index, 1);
-          } else {
-            sections[index] = { module: section.module, name: section.name };
-          }
-        }
-      }
-      // buttons
-      if (side.buttons) {
-        const buttons = side.buttons;
-        for (let index = buttons.length - 1; index >= 0; index--) {
-          const button = buttons[index];
-          if (!button.module) {
-            buttons.splice(index, 1);
-          } else {
-            buttons[index] = { module: button.module, name: button.name };
-          }
+    },
+    __removeDynamicResources(side) {
+      const types = [ 'panels', 'sections', 'buttons' ];
+      for (const type of types) {
+        const resources = side[type];
+        if (resources) {
+          this.__removeDynamicResource(resources);
         }
       }
     },
