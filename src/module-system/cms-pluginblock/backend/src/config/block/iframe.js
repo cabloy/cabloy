@@ -1,11 +1,9 @@
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const block = {
-    data: {
-      validator: {
-        module: moduleInfo.relativeName,
-        validator: 'blockIFrame',
-      },
+    validator: {
+      module: moduleInfo.relativeName,
+      validator: 'blockIFrame',
     },
     render({ md, options, block, token, index, content }) {
       const url = md.utils.escapeHtml(content.url);

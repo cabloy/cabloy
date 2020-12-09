@@ -90,20 +90,6 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async getBlocks() {
-      const res = await this.ctx.service.site.getBlocks({
-        locale: this.ctx.locale,
-      });
-      this.ctx.success(res);
-    }
-
-    async getBlockArray() {
-      const res = await this.ctx.service.site.getBlockArray({
-        locale: this.ctx.locale,
-      });
-      this.ctx.success(res);
-    }
-
     async blockSave() {
       const res = await this.ctx.service.site.blockSave({
         blockName: this.ctx.request.body.blockName,

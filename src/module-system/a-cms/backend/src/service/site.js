@@ -1,8 +1,7 @@
 const require3 = require('require3');
 const extend = require3('extend2');
 
-const _blocksLocales = {};
-const _blockArrayLocales = {};
+let __blocks = null;
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -107,43 +106,6 @@ module.exports = app => {
       });
     }
 
-    getBlocks({ locale }) {
-      if (!locale) locale = this.ctx.locale;
-      if (!_blocksLocales[locale]) {
-        const blocks = this._prepareBlocks({ locale });
-        // object
-        _blocksLocales[locale] = blocks;
-        // array order by titleLocale
-        const blockArray = [];
-        for (const key in blocks) {
-          blockArray.push(blocks[key]);
-        }
-        _blockArrayLocales[locale] = blockArray.sort((a, b) => a.meta.titleLocale.localeCompare(b.meta.titleLocale, locale));
-      }
-      return _blocksLocales[locale];
-    }
-
-    getBlockArray({ locale }) {
-      this.getBlocks({ locale });
-      return _blockArrayLocales[locale];
-    }
-
-    async blockSave({ blockName, item }) {
-      // block
-      const blocks = this.getBlocks({ locale: this.ctx.locale });
-      const block = blocks[blockName];
-      // validate
-      await this.ctx.bean.validation.validate({
-        module: block.meta.module,
-        validator: block.meta.validator,
-        schema: null,
-        data: item,
-      });
-      // output
-      if (!block.data.output) return item;
-      return await block.data.output({ ctx: this.ctx, block, data: item });
-    }
-
     async getStats({ atomClass, languages }) {
       const res = {};
       for (const language of languages) {
@@ -188,32 +150,48 @@ module.exports = app => {
       return stats;
     }
 
-    _prepareBlocks({ locale }) {
+    async blockSave({ blockName, item }) {
+      // block
+      const blocks = this.getBlocks();
+      const block = blocks[blockName];
+      // validate
+      await this.ctx.bean.validation.validate({
+        module: block.validator.module,
+        validator: block.validator.validator,
+        schema: null,
+        data: item,
+      });
+      // output
+      if (!block.data.output) return item;
+      return await block.data.output({ ctx: this.ctx, block, data: item });
+    }
+
+    getBlocks() {
+      if (!__blocks) {
+        __blocks = this._prepareBlocks();
+      }
+      return __blocks;
+    }
+
+    _prepareBlocks() {
       const blocks = {};
       // (X) modulesArray for block override
       for (const module of this.app.meta.modulesArray) {
         if (module.main.meta && module.main.meta.cms &&
           module.main.meta.cms.plugin && module.main.meta.cms.plugin.blocks) {
-          const blocksModule = this._prepareBlocksModule({ locale, module, blocks: module.main.meta.cms.plugin.blocks });
+          const blocksModule = this._prepareBlocksModule({ module, blocks: module.main.meta.cms.plugin.blocks });
           Object.assign(blocks, blocksModule);
         }
       }
       return blocks;
     }
 
-    _prepareBlocksModule({ locale, module, blocks }) {
+    _prepareBlocksModule({ module, blocks }) {
       const blocksModule = {};
       const moduleName = module.info.relativeName;
       for (const key in blocks) {
-        const block = blocks[key];
         const fullName = `${moduleName}:${key}`;
-        blocksModule[fullName] = extend(true, {}, block, {
-          meta: {
-            fullName,
-            module: block.meta.module || moduleName,
-            titleLocale: this.ctx.text.locale(locale, block.meta.title),
-          },
-        });
+        blocksModule[fullName] = blocks[key];
       }
       return blocksModule;
     }

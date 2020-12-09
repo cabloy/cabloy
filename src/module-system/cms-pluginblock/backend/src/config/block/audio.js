@@ -1,15 +1,13 @@
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const block = {
-    data: {
-      validator: {
-        module: moduleInfo.relativeName,
-        validator: 'blockAudio',
-      },
+    validator: {
+      module: moduleInfo.relativeName,
+      validator: 'blockAudio',
+    },
     // async output({ ctx, block, data }) {
     //   return data;
     // },
-    },
     render({ md, options, block, token, index, content }) {
       content = content || {};
       content.audio = content.audio || {};

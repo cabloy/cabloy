@@ -104,7 +104,7 @@ module.exports = app => {
       // markdown
       const md = markdown.create();
       // markdown-it-block
-      const blocks = this.ctx.service.site.getBlocks({ locale: item.atomLanguage });
+      const blocks = this.ctx.service.site.getBlocks();
       // block options
       const blockOptions = {
         utils: {
