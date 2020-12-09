@@ -435,10 +435,13 @@ export default {
       if (!resourcesAll) return null;
       const _resource = resourcesAll[this._resourceFullName(resource)];
       if (!_resource) return null;
-      const res = JSON.parse(_resource.resourceConfig);
-      res.title = _resource.atomName;
-      res.titleLocale = _resource.atomNameLocale;
-      return res;
+      return {
+        ...resource,
+        title: _resource.atomName,
+        titleLocale: _resource.atomNameLocale,
+        resourceAtomId: _resource.atomId,
+        resourceConfig: JSON.parse(_resource.resourceConfig),
+      };
     },
     _findPanelStock(panel) {
       return this._findResourceStock(this.panelsAll, panel);
@@ -451,8 +454,8 @@ export default {
     },
     _preparePanel(panel, url) {
       // extra
-      const _panelExtra = {};
-      if (url) _panelExtra.url = url;
+      const _panelExtra = { resourceConfig: {} };
+      if (url) _panelExtra.resourceConfig.url = url;
       if (panel.title) _panelExtra.titleLocale = this.$text(panel.title);
       // stock
       const panelStock = this._findPanelStock(panel);

@@ -93,7 +93,7 @@ export default {
       // view
       const _view = this.views.find(item => item.id === view.id);
       // route
-      const url = _view.panel.url;
+      const url = _view.panel.resourceConfig.url;
       this.$meta.vueLayout._patchRouter.loadRoute(url, route => {
         if (!route) throw new Error(`not found route: ${url}`);
         // callback must not be null

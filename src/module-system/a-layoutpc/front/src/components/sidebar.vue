@@ -179,9 +179,9 @@ export default {
       if (view) {
         const $view = this.$$(`#${view.id}`);
         // navigate
-        if (panel.url && panel.url !== view.panel.url) {
+        if (panel.resourceConfig.url && panel.resourceConfig.url !== view.panel.resourceConfig.url) {
           options = this.$utils.extend({}, options, { reloadAll: true });
-          $view[0].f7View.router.navigate(panel.url, options);
+          $view[0].f7View.router.navigate(panel.resourceConfig.url, options);
         }
         // always update, maybe some properties have changed
         view.panel = panel;
@@ -197,7 +197,7 @@ export default {
       return this.$refs.sidebarGroup.createView({ ctx, panel }).then(res => {
         if (res) {
           if (res.options) options = this.$utils.extend({}, options, res.options);
-          res.view.f7View.router.navigate(panel.url, options);
+          res.view.f7View.router.navigate(panel.resourceConfig.url, options);
           // active
           this._activeView(panel, init);
           // opened
