@@ -334,22 +334,19 @@ export default {
       this._hideAllSidebars();
     },
     __getResourcesAll() {
+      const resourceTypes = [
+        { name: 'sidebarPanel', var: 'panelsAll' },
+        { name: 'bottombarSection', var: 'sectionsAll' },
+        { name: 'headerButton', var: 'buttonsAll' },
+      ];
       const promises = [];
-      promises.push(
-        this.$store.dispatch('a/base/getPanels').then(panels => {
-          this.panelsAll = panels;
-        })
-      );
-      promises.push(
-        this.$store.dispatch('a/base/getSections').then(sections => {
-          this.sectionsAll = sections;
-        })
-      );
-      promises.push(
-        this.$store.dispatch('a/base/getButtons').then(buttons => {
-          this.buttonsAll = buttons;
-        })
-      );
+      for (const resourceType of resourceTypes) {
+        promises.push(
+          this.$store.dispatch('a/base/getResources', { resourceType: `a-layoutpc:${resourceType.name}` }).then(data => {
+            this[resourceType.var] = data;
+          })
+        );
+      }
       return Promise.all(promises);
     },
     __init(cb) {
@@ -451,20 +448,23 @@ export default {
         }
       }
     },
+    _findResourceStock(resourcesAll, resource) {
+      if (!resourcesAll) return null;
+      const _resource = resourcesAll[this._resourceFullName(resource)];
+      if (!_resource) return null;
+      const res = JSON.parse(_resource.resourceConfig);
+      res.title = _resource.atomName;
+      res.titleLocale = _resource.atomNameLocale;
+      return res;
+    },
     _findPanelStock(panel) {
-      if (!this.panelsAll || !panel.module) return null;
-      const panels = this.panelsAll[panel.module];
-      return panels[panel.name];
+      return this._findResourceStock(this.panelsAll, panel);
     },
     _findSectionStock(section) {
-      if (!this.sectionsAll || !section.module) return null;
-      const sections = this.sectionsAll[section.module];
-      return sections[section.name];
+      return this._findResourceStock(this.sectionsAll, section);
     },
     _findButtonStock(button) {
-      if (!this.buttonsAll || !button.module) return null;
-      const buttons = this.buttonsAll[button.module];
-      return buttons[button.name];
+      return this._findResourceStock(this.buttonsAll, button);
     },
     _preparePanel(panel, url) {
       // extra
@@ -572,17 +572,18 @@ export default {
       this.sidebar[side].buttons.push(button);
       this.__saveLayoutConfig();
     },
+    _resourceFullName(resource) {
+      if (resource.atomStaticKey) return resource.atomStaticKey;
+      return `${resource.module}:${resource.name}`;
+    },
     _panelFullName(panel) {
-      if (panel.module) return `${panel.module}:${panel.name}`;
-      return panel.name;
+      return this._resourceFullName(panel);
     },
     _sectionFullName(section) {
-      if (section.module) return `${section.module}:${section.name}`;
-      return section.name;
+      return this._resourceFullName(section);
     },
     _buttonFullName(button) {
-      if (button.module) return `${button.module}:${button.name}`;
-      return button.name;
+      return this._resourceFullName(button);
     },
   },
 };
