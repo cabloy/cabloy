@@ -126,15 +126,19 @@ export default {
       for (const propertyName in propsSchema) {
         if (!this._checkPropertyValid(propertyName)) continue;
         const propertySchema = propsSchema[propertyName];
-        const link = c('eb-list-item', {
-          key: propertyName,
+        const validateItem = c('eb-list-item-validate', {
           props: {
-            link: '#',
-            title: this.$text(propertySchema.ebTitle),
+            dataKey: propertyName,
+          },
+        });
+        const link = c('eb-link', {
+          key: propertyName,
+          staticClass: 'no-ripple display-block',
+          props: {
             context: { propertySchema, propertyName },
             onPerform: this.onPerformPropertyEdit,
           },
-        });
+        }, [ validateItem ]);
         children.push(link);
       }
       // list
