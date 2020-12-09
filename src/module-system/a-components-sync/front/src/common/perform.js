@@ -23,11 +23,11 @@ export default {
     onClick(event) {
       // link
       const $clickedLinkEl = this.getLinkEl && this.getLinkEl();
-      // const isLink = $clickedLinkEl && $clickedLinkEl.length > 0;
+      const isLink = $clickedLinkEl && $clickedLinkEl.length > 0;
 
       // only preventDefault for link
       //  not check isLink
-      if (this.link && event) {
+      if ((this.link || this.link === undefined && isLink) && event) {
         event.preventDefault();
         event.stopPropagation();
       }
