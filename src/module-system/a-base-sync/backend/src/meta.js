@@ -1,4 +1,5 @@
 module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   // keywords
   const keywords = require('./config/validation/keywords.js')(app);
   // schemas
@@ -21,7 +22,12 @@ module.exports = app => {
           },
           actions: {
             write: {
+              title: 'Edit',
+              actionModule: moduleInfo.relativeName,
+              actionComponent: 'action',
               enableOnStatic: true,
+              enableOnOpened: false,
+              icon: { material: 'edit' },
             },
           },
           validator: 'resource',
