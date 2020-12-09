@@ -769,7 +769,7 @@ module.exports =
           { method: 'get', path: 'message/contacts', controller: 'message', middlewares: 'wxwork', meta: { auth: { enable: false } } },
           { method: 'post', path: 'message/contacts', controller: 'message', middlewares: 'wxwork', meta: { auth: { enable: false } } },
           // contacts
-          { method: 'post', path: 'contacts/sync', controller: 'contacts', meta: { right: { type: 'function', name: 'contacts' } } },
+          { method: 'post', path: 'contacts/sync', controller: 'contacts', meta: { right: { type: 'resource', name: 'contacts' } } },
           // queue
           { method: 'post', path: 'contacts/queue', controller: 'contacts', middlewares: 'inner,transaction,wxwork',
             meta: { auth: { enable: false } },

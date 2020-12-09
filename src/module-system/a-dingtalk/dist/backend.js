@@ -795,7 +795,7 @@ module.exports =
           { method: 'post', path: 'callback/index', controller: 'callback', middlewares: 'dingtalk', meta: { auth: { enable: false } } },
           { method: 'post', path: 'callback/registerList', controller: 'callback', middlewares: 'dingtalk', meta: { auth: { enable: false } } },
           // contacts
-          { method: 'post', path: 'contacts/sync', controller: 'contacts', meta: { right: { type: 'function', name: 'contacts' } } },
+          { method: 'post', path: 'contacts/sync', controller: 'contacts', meta: { right: { type: 'resource', name: 'contacts' } } },
           // queue
           { method: 'post', path: 'contacts/queue', controller: 'contacts', middlewares: 'inner,transaction,dingtalk',
             meta: { auth: { enable: false } },

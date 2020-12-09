@@ -136,7 +136,7 @@ module.exports = app => {
       { method: 'post', path: 'kitchen-sink/guide/echo8', controller: 'testKitchensinkGuide', middlewares: 'transaction' },
       { method: 'post', path: 'kitchen-sink/guide/echo9', controller: 'testKitchensinkGuide',
         meta: {
-          right: { type: 'function', name: 'kitchenSink' },
+          right: { type: 'resource', name: 'kitchenSink' },
         },
       },
 

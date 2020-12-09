@@ -6,8 +6,8 @@ module.exports = app => {
     { method: 'get', path: 'message/contacts', controller: 'message', meta: { auth: { enable: false } } },
     { method: 'post', path: 'message/contacts', controller: 'message', meta: { auth: { enable: false } } },
     // contacts
-    { method: 'post', path: 'contacts/sync', controller: 'contacts', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
-    { method: 'post', path: 'contacts/syncStatus', controller: 'contacts', meta: { right: { type: 'function', module: 'a-settings', name: 'settings' } } },
+    { method: 'post', path: 'contacts/sync', controller: 'contacts', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
+    { method: 'post', path: 'contacts/syncStatus', controller: 'contacts', meta: { right: { type: 'resource', module: 'a-settings', name: 'settings' } } },
 
     // jsapi
     { method: 'post', path: 'jssdk/jsconfig', controller: 'jssdk' },
