@@ -339,8 +339,7 @@ export default {
       return `widget widget-id-${this.options.id} widget-item widget-name-${this.options.module}-${this.options.name}`;
     },
     __getFullName(options) {
-      if (!options) options = this.options;
-      return `${options.module}:${options.name}`;
+      return this.dashboard.__resourceFullName(options || this.options);
     },
     onDragStartResizable({ $el, context, dragElement }) {
       const $container = this.$$(this.group.$el);

@@ -123,7 +123,7 @@ export default {
         this.lock = this.readOnly;
       }
       // widgetsAll
-      this.widgetsAll = await this.$store.dispatch('a/base/getWidgets');
+      this.widgetsAll = await this.$store.dispatch('a/base/getResources', { resourceType: 'a-dashboard:widget' });
       await this.__switchProfile({ dashboardUserId: this.dashboardUserId });
       // ready
       this.ready = true;
@@ -224,11 +224,18 @@ export default {
         widget.properties = this.$meta.util.extend({}, this.$config.profile.meta[type].properties);
       }
     },
+    __findResourceStock(resourcesAll, resource) {
+      if (!resourcesAll) return null;
+      const _resource = resourcesAll[this.__resourceFullName(resource)];
+      if (!_resource) return null;
+      const res = JSON.parse(_resource.resourceConfig);
+      res.title = _resource.atomName;
+      res.titleLocale = _resource.atomNameLocale;
+      return res;
+    },
     __findWidgetStock(widget) {
       if (widget.group) return null;
-      if (!this.widgetsAll) return null;
-      const widgets = this.widgetsAll[widget.module];
-      return widgets[widget.name];
+      return this.__findResourceStock(this.widgetsAll, widget);
     },
     async __saveDashboardUser() {
       // check if dirty
@@ -327,6 +334,10 @@ export default {
       const [ widget ] = this.__findWidgetRealById(widgetId);
       if (!widget) return null;
       return widget.widgetReal;
+    },
+    __resourceFullName(resource) {
+      if (resource.atomStaticKey) return resource.atomStaticKey;
+      return `${resource.module}:${resource.name}`;
     },
   },
 };
