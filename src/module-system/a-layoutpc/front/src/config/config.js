@@ -7,7 +7,7 @@ export default {
       button: {
         home: { name: 'Home', iconMaterial: 'home', url: '/a/dashboard/dashboard?key=home', scene: 'dashboard', sceneOptions: { name: 'home' } },
         dashboard: { name: 'Dashboard', iconMaterial: 'dashboard', url: '/a/dashboard/dashboard', scene: 'dashboard', sceneOptions: { name: 'dashboard' } },
-        mine: { name: 'Mine', iconMaterial: 'person', scene: 'sidebar', sceneOptions: { side: 'right', module: 'a-layoutpc', name: 'panelMine', title: 'Mine' } },
+        mine: { name: 'Mine', iconMaterial: 'person', scene: 'sidebar', sceneOptions: { side: 'right', module: 'a-layoutpc', name: 'panelMine' } },
       },
     },
     sidebar: {
