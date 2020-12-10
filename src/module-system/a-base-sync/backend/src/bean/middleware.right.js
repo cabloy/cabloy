@@ -132,12 +132,19 @@ async function checkAtom(moduleInfo, options, ctx) {
 
 async function checkResource(moduleInfo, options, ctx) {
   if (ctx.innerAccess) return;
-  let atomStaticKey = options.atomStaticKey;
-  if (!atomStaticKey && options.name) {
-    atomStaticKey = `${options.module || ctx.module.info.relativeName}:${options.name}`;
+  let resourceAtomId;
+  let atomStaticKey;
+  if (options.useKey) {
+    resourceAtomId = ctx.request.body.key.atomId;
+  } else {
+    atomStaticKey = options.atomStaticKey;
+    if (!atomStaticKey && options.name) {
+      atomStaticKey = `${options.module || ctx.module.info.relativeName}:${options.name}`;
+    }
   }
-  if (!atomStaticKey) ctx.throw(403);
+  if (!resourceAtomId && !atomStaticKey) ctx.throw(403);
   const res = await ctx.bean.resource.checkRightResource({
+    resourceAtomId,
     atomStaticKey,
     user: ctx.state.user.op,
   });

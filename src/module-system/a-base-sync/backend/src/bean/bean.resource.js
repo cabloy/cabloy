@@ -38,7 +38,9 @@ module.exports = ctx => {
     //   donot set atomDisabled
     async select({ options: { where, orders, page, resourceType, star = 0, label = 0, stage = 'archive', category = 0, tag = 0, locale }, user, pageForce = false, count = 0 }) {
       // locale
-      locale = locale || ctx.locale;
+      if (locale !== false) {
+        locale = locale || ctx.locale;
+      }
       // where
       if (!where) where = {};
       if (resourceType) {
@@ -57,7 +59,11 @@ module.exports = ctx => {
     async read({ key, options, user }) {
       options = Object.assign({ resource: 1 }, options);
       // locale
-      options.resourceLocale = options.locale || ctx.locale;
+      let locale = options.locale;
+      if (locale !== false) {
+        locale = locale || ctx.locale;
+      }
+      options.resourceLocale = locale;
       return await ctx.bean.atom.read({ key, options, user });
     }
 
@@ -125,16 +131,16 @@ module.exports = ctx => {
       return output;
     }
 
-    async checkRightResource({
-      atomStaticKey,
-      user,
-    }) {
-      const atom = await ctx.bean.atom.modelAtom.get({ atomStaticKey, atomDisabled: 0, atomStage: 1 });
-      if (!atom) return null;
+    async checkRightResource({ resourceAtomId, atomStaticKey, user }) {
+      if (!resourceAtomId) {
+        const atom = await ctx.bean.atom.modelAtom.get({ atomStaticKey, atomDisabled: 0, atomStage: 1 });
+        if (!atom) return null;
+        resourceAtomId = atom.id;
+      }
       const sql = this.sqlProcedure.checkRightResource({
         iid: ctx.instance.id,
         userIdWho: user.id,
-        resourceAtomId: atom.id,
+        resourceAtomId,
       });
       return await ctx.model.queryOne(sql);
     }

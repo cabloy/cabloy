@@ -216,6 +216,7 @@ module.exports = ctx => {
       // -- i: aFile
       // -- j: aCategory
       // -- k: aTagRef
+      // -- m: aResourceLocale
 
       // for safe
       tableName = tableName ? ctx.model.format('??', tableName) : null;
@@ -240,6 +241,10 @@ module.exports = ctx => {
         _fileWhere;
       let _itemField,
         _itemJoin;
+
+      let _resourceField,
+        _resourceJoin,
+        _resourceWhere;
 
       //
       const _where = where ? `${where} AND` : ' WHERE';
@@ -292,6 +297,17 @@ module.exports = ctx => {
         _fileWhere = '';
       }
 
+      // resource
+      if (resource && resourceLocale) {
+        _resourceField = ',m.atomNameLocale';
+        _resourceJoin = ' left join aResourceLocale m on m.atomId=a.id';
+        _resourceWhere = ctx.model.format(' and a.atomDisabled=0 and m.locale=?', resourceLocale);
+      } else {
+        _resourceField = '';
+        _resourceJoin = '';
+        _resourceWhere = '';
+      }
+
       // tableName
       if (tableName) {
         _itemField = 'f.*,';
@@ -313,7 +329,7 @@ module.exports = ctx => {
                 b.module,b.atomClassName,b.atomClassIdParent,
                 g.userName,g.avatar,
                 g2.userName as userNameUpdated,g2.avatar as avatarUpdated
-                ${_commentField} ${_fileField}`;
+                ${_commentField} ${_fileField} ${_resourceField}`;
       }
 
       // sql
@@ -327,6 +343,7 @@ module.exports = ctx => {
             ${_tagJoin}
             ${_commentJoin}
             ${_fileJoin}
+            ${_resourceJoin}
 
           ${_where}
            (
@@ -336,6 +353,7 @@ module.exports = ctx => {
              ${_tagWhere}
              ${_commentWhere}
              ${_fileWhere}
+             ${_resourceWhere}
            )
 
           ${count ? '' : _orders}
@@ -471,7 +489,7 @@ module.exports = ctx => {
       }
 
       // resource
-      if (resource) {
+      if (resource && resourceLocale) {
         _resourceField = ',m.atomNameLocale';
         _resourceJoin = ' left join aResourceLocale m on m.atomId=a.id';
         _resourceWhere = ctx.model.format(' and a.atomDisabled=0 and m.locale=?', resourceLocale);
@@ -609,7 +627,7 @@ module.exports = ctx => {
       }
 
       // resource
-      if (resource) {
+      if (resource && resourceLocale) {
         _resourceField = ',m.atomNameLocale';
         _resourceJoin = ' left join aResourceLocale m on m.atomId=a.id';
         // not check atomDisabled
@@ -774,9 +792,8 @@ module.exports = ctx => {
       resourceAtomId = parseInt(resourceAtomId);
       // sql
       const _sql =
-        `select a.*,b.atomName from aResource a
-          inner join aAtom b on a.atomId=b.id
-            where a.iid=${iid} and a.deleted=0 and b.atomDisabled=0 and a.atomId=${resourceAtomId}
+        `select a.id as atomId,a.atomName from aAtom a
+            where a.iid=${iid} and a.deleted=0 and a.atomDisabled=0 and a.atomStage=1 and a.id=${resourceAtomId}
               and (
                 exists(select c.resourceAtomId from aViewUserRightResource c where c.iid=${iid} and c.resourceAtomId=${resourceAtomId} and c.userIdWho=${userIdWho})
                   )
