@@ -5,10 +5,10 @@ export default {
   },
   created() {},
   methods: {
-    onPerformHeaderButtons(event, side) {
-      const buttonsShowOld = this.$meta.vueLayout.sidebar[side].buttons;
-      const checkedAtomStaticKeys = buttonsShowOld.map(item => this._resourceFullName(item));
-      this.$view.navigate('/a/basefront/resource/select?resourceType=a-layoutpc:headerButton', {
+    onPerformResources(event, side, resourceVar, resourceType) {
+      const resourcesShowOld = this.$meta.vueLayout.sidebar[side][resourceVar];
+      const checkedAtomStaticKeys = resourcesShowOld.map(item => this._resourceFullName(item));
+      this.$view.navigate(`/a/basefront/resource/select?resourceType=${resourceType}`, {
         target: '_self',
         context: {
           params: {
@@ -17,36 +17,62 @@ export default {
           },
           callback: (code, nodes) => {
             if (code === 200) {
-              this._switchButtons(side, nodes);
+              this._switchResources(side, nodes, resourceVar, resourceType);
             }
           },
         },
       });
     },
-    _switchButtons(side, nodes) {
+    _switchPolicy(resourceType) {
+      if (resourceType === 'a-layoutpc:headerButton') {
+        return {
+          open: (side, resource) => {
+            this.$meta.vueLayout.openButton(side, resource);
+          },
+          close: (side, resource) => {
+            this.$meta.vueLayout.closeButton(side, resource);
+          },
+        };
+      } else if (resourceType === 'a-layoutpc:sidebarPanel') {
+        return {
+          open: (side, resource) => {
+            const sceneOptions = this.$utils.extend({}, resource, { side });
+            this.$meta.vueLayout.navigate(null, { scene: 'sidebar', sceneOptions });
+          },
+          close: (side, resource) => {
+            this.$meta.vueLayout.closePanel(side, resource);
+          },
+        };
+      }
+    },
+    _switchResources(side, nodes, resourcesVar, resourceType) {
+      const policy = this._switchPolicy(resourceType);
       // new
-      let buttonsShowNew;
+      let resourcesShowNew;
       if (!nodes || nodes.length === 0) {
-        buttonsShowNew = [];
+        resourcesShowNew = [];
       } else {
-        buttonsShowNew = nodes.map(node => {
+        resourcesShowNew = nodes.map(node => {
           return { atomStaticKey: node.data.atomStaticKey };
         });
       }
       // old
-      const buttonsShowOld = this.$meta.vueLayout.sidebar[side].buttons.concat();
+      const resourcesShowOld = this.$meta.vueLayout.sidebar[side][resourcesVar].concat();
       // open
-      for (const button of buttonsShowNew) {
-        const index = buttonsShowOld.findIndex(item => this._resourceFullName(item) === button.atomStaticKey);
+      for (const resource of resourcesShowNew) {
+        const index = resourcesShowOld.findIndex(item => this._resourceFullName(item) === resource.atomStaticKey);
         if (index === -1) {
-          this.$meta.vueLayout.openButton(side, button);
+          policy.open(side, resource);
         }
       }
       // close
-      for (const button of buttonsShowOld) {
-        const index = buttonsShowNew.findIndex(item => item.atomStaticKey === this._resourceFullName(button));
+      for (const resource of resourcesShowOld) {
+        // dynamic
+        if (!resource.atomStaticKey && !resource.module) continue;
+        // check
+        const index = resourcesShowNew.findIndex(item => item.atomStaticKey === this._resourceFullName(resource));
         if (index === -1) {
-          this.$meta.vueLayout.closeButton(side, button);
+          policy.close(side, resource);
         }
       }
     },
@@ -60,10 +86,10 @@ export default {
       <eb-page>
         <eb-navbar large largeTransparent title={this.$text('ViewLayout')} eb-back-link="Back"></eb-navbar>
         <f7-list>
-          <eb-list-item title={this.$text('Header Buttons')} link="#" propsOnPerform={event => this.onPerformHeaderButtons(event, 'top')}></eb-list-item>
-          <eb-list-item title={this.$text('Sidebar (Left)')} link="#" eb-href="view/panels?side=left" eb-target="_self"></eb-list-item>
-          <eb-list-item title={this.$text('Sidebar (Right)')} link="#" eb-href="view/panels?side=right" eb-target="_self"></eb-list-item>
-          <eb-list-item title={this.$text('Statusbar (Left)')} link="#" eb-href="view/panels?side=bottom" eb-target="_self"></eb-list-item>
+          <eb-list-item title={this.$text('Header Buttons')} link="#" propsOnPerform={event => this.onPerformResources(event, 'top', 'buttons', 'a-layoutpc:headerButton')}></eb-list-item>
+          <eb-list-item title={this.$text('Sidebar (Left)')} link="#" propsOnPerform={event => this.onPerformResources(event, 'left', 'panels', 'a-layoutpc:sidebarPanel')}></eb-list-item>
+          <eb-list-item title={this.$text('Sidebar (Right)')} link="#" propsOnPerform={event => this.onPerformResources(event, 'right', 'panels', 'a-layoutpc:sidebarPanel')}></eb-list-item>
+          <eb-list-item title={this.$text('Statusbar (Left)')} link="#" propsOnPerform={event => this.onPerformResources(event, 'bottom', 'panels', 'a-layoutpc:sidebarPanel')}></eb-list-item>
           <eb-list-item title={this.$text('Statusbar (Right)')} link="#" eb-href="view/sections?side=bottom" eb-target="_self"></eb-list-item>
         </f7-list>
       </eb-page>
