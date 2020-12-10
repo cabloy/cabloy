@@ -19,7 +19,7 @@ module.exports = app => {
       if (!item) return null;
       // meta
       item.atomNameLocale = this.ctx.text(item.atomName);
-      this._getMeta(item);
+      this._getMeta(item, true);
       // ok
       return item;
     }
@@ -28,9 +28,10 @@ module.exports = app => {
       // super
       await super.select({ atomClass, options, items, user });
       // meta
+      const showSorting = options && options.category;
       for (const item of items) {
         item.atomNameLocale = this.ctx.text(item.atomName);
-        this._getMeta(item);
+        this._getMeta(item, showSorting);
       }
     }
 
@@ -63,9 +64,10 @@ module.exports = app => {
       await super.delete({ atomClass, key, user });
     }
 
-    _getMeta(item) {
+    _getMeta(item, showSorting) {
       // flags
       const flags = [];
+      if (item.resourceSorting && showSorting) flags.push(item.resourceSorting);
       // meta
       const meta = {
         flags,

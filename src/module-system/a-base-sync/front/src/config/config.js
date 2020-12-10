@@ -10,4 +10,23 @@ export default {
       default: avatarUser,
     },
   },
+  atoms: {
+    resource: {
+      render: {
+        list: {
+          info: {
+            orders: [
+              { name: 'resourceSorting', title: 'Resource Sorting', by: 'asc' },
+            ],
+          },
+          layouts: {
+            list: {
+            },
+            table: {
+            },
+          },
+        },
+      },
+    },
+  },
 };
