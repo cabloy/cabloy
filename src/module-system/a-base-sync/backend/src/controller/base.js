@@ -30,36 +30,6 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    menus() {
-      const res = this.ctx.service.base.menus();
-      this.ctx.success(res);
-    }
-
-    panels() {
-      const res = this.ctx.service.base.panels();
-      this.ctx.success(res);
-    }
-
-    widgets() {
-      const res = this.ctx.service.base.widgets();
-      this.ctx.success(res);
-    }
-
-    sections() {
-      const res = this.ctx.service.base.sections();
-      this.ctx.success(res);
-    }
-
-    buttons() {
-      const res = this.ctx.service.base.buttons();
-      this.ctx.success(res);
-    }
-
-    functions() {
-      const res = this.ctx.service.base.functions();
-      this.ctx.success(res);
-    }
-
     themes() {
       const res = this.ctx.service.base.themes();
       this.ctx.success(res);

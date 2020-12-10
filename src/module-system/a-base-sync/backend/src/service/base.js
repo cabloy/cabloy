@@ -22,30 +22,6 @@ module.exports = app => {
       return this.ctx.bean.base.actions();
     }
 
-    menus() {
-      return this.ctx.bean.base.menus();
-    }
-
-    panels() {
-      return this.ctx.bean.base.panels();
-    }
-
-    widgets() {
-      return this.ctx.bean.base.widgets();
-    }
-
-    sections() {
-      return this.ctx.bean.base.sections();
-    }
-
-    buttons() {
-      return this.ctx.bean.base.buttons();
-    }
-
-    functions() {
-      return this.ctx.bean.base.functions();
-    }
-
     themes() {
       return this.ctx.bean.base.themes();
     }
