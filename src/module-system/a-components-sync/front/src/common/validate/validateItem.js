@@ -12,12 +12,14 @@ import renderLanguage from './render/renderLanguage.js';
 import renderCategory from './render/renderCategory.js';
 import renderTags from './render/renderTags.js';
 import renderResourceType from './render/renderResourceType.js';
+import renderJson from './render/renderJson.js';
 
 export default {
   mixins: [
     renderProperties, renderComponent, renderGroup, renderPanel, renderText,
     renderDatepicker, renderFile, renderToggle, renderSelect, renderLink,
     renderLanguage, renderCategory, renderTags, renderResourceType,
+    renderJson,
   ],
   props: {
     data: {
@@ -231,6 +233,9 @@ export default {
       } else if (ebType === 'resourceType') {
         // resourceType
         return this.renderResourceType(c, context);
+      } else if (ebType === 'json') {
+        // resourceJson
+        return this.renderJson(c, context);
       }
       // not support
       return c('div', {

@@ -123,8 +123,7 @@ module.exports = app => {
       },
       resourceConfig: {
         type: [ 'string', 'null' ],
-        ebType: 'text',
-        ebTextarea: true,
+        ebType: 'json',
         ebTitle: 'Config',
       },
       // Basic Info
@@ -175,12 +174,6 @@ module.exports = app => {
   schemas.resourceSearch = {
     type: 'object',
     properties: {
-      // resourceType: {
-      //   type: 'string',
-      //   ebType: 'resourceType',
-      //   ebTitle: 'Resource Type',
-      //   ebOptionsBlankAuto: true,
-      // },
     },
   };
 
