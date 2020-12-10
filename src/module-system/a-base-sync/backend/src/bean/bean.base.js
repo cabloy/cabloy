@@ -1,6 +1,7 @@
 const path = require('path');
 const require3 = require('require3');
 const fse = require3('fs-extra');
+const extend = require3('extend2');
 
 const _modulesLocales = {};
 const _themesLocales = {};
@@ -255,80 +256,14 @@ module.exports = ctx => {
       const _actions = atomClass.actions;
       const _actionsSystem = ctx.constant.module(moduleInfo.relativeName).atom.action;
       const _actionsSystemMeta = ctx.constant.module(moduleInfo.relativeName).atom.actionMeta;
-      //  _actionsSystem
-      for (const key in _actionsSystem) {
+      const _actionsAll = extend(true, {}, _actionsSystemMeta, _actions);
+      for (const key in _actionsAll) {
         if (key === 'custom') continue;
-        const action = {
-          code: _actionsSystem[key],
-          name: key,
-          title: _actionsSystemMeta[key].title,
-          authorize: _actionsSystemMeta[key].authorize,
-        };
-        if (_actions && _actions[key]) {
-          action.stage = _actions[key].stage;
-          action.meta = _actions[key].meta;
-          action.bulk = _actions[key].bulk;
-          action.select = _actions[key].select;
-          action.enableOnStatic = _actions[key].enableOnStatic;
-          action.enableOnOpened = _actions[key].enableOnOpened;
-          action.icon = _actions[key].icon;
-        } else {
-          action.stage = _actionsSystemMeta[key].stage;
-          action.meta = _actionsSystemMeta[key].meta;
-          action.bulk = _actionsSystemMeta[key].bulk;
-          action.select = _actionsSystemMeta[key].select;
-          action.enableOnStatic = _actionsSystemMeta[key].enableOnStatic;
-          action.enableOnOpened = _actionsSystemMeta[key].enableOnOpened;
-          action.icon = _actionsSystemMeta[key].icon;
-        }
-        if (_actions && _actions[key] && (_actions[key].actionComponent || _actions[key].actionPath)) {
-          // custom
-          action.actionModule = _actions[key].actionModule || module.info.relativeName;
-          action.actionComponent = _actions[key].actionComponent;
-          action.actionPath = _actions[key].actionPath;
-        } else {
-          // default
-          action.actionModule = moduleInfo.relativeName;
-          action.actionComponent = _actionsSystemMeta[key].actionComponent;
-          action.actionPath = _actionsSystemMeta[key].actionPath;
-        }
+        const action = _actionsAll[key];
+        if (!action.code) action.code = _actionsSystem[key];
+        action.name = key;
         action.titleLocale = ctx.text(action.title);
         actions[key] = action;
-      }
-      //  _actions
-      if (_actions) {
-        for (const key in _actions) {
-          if (_actionsSystem[key]) continue;
-          const action = {
-            code: _actions[key].code,
-            name: key,
-            title: _actions[key].title || key,
-            actionModule: _actions[key].actionModule || module.info.relativeName,
-            actionComponent: _actions[key].actionComponent,
-            actionPath: _actions[key].actionPath,
-            authorize: _actions[key].authorize,
-            stage: _actions[key].stage,
-            meta: _actions[key].meta,
-            bulk: _actions[key].bulk,
-            select: _actions[key].select,
-            enableOnStatic: _actions[key].enableOnStatic,
-            enableOnOpened: _actions[key].enableOnOpened,
-            icon: _actions[key].icon,
-          };
-          if (!_actions[key].actionComponent && !_actions[key].actionPath) {
-            // default
-            action.actionModule = _actions[key].actionModule || moduleInfo.relativeName;
-            action.actionComponent = 'action';
-            action.actionPath = '';
-          } else {
-            // custom
-            action.actionModule = _actions[key].actionModule || module.info.relativeName;
-            action.actionComponent = _actions[key].actionComponent;
-            action.actionPath = _actions[key].actionPath;
-          }
-          action.titleLocale = ctx.text(action.title);
-          actions[key] = action;
-        }
       }
       return actions;
     }
