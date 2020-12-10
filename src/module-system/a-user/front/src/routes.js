@@ -1,6 +1,9 @@
 function load(name) {
   return require(`./pages/${name}.vue`).default;
 }
+function loadjsx(name) {
+  return require(`./pages/${name}.jsx`).default;
+}
 
 export default [
   { path: 'user/mine', component: load('user/mine') },
@@ -12,7 +15,7 @@ export default [
   { path: 'user/exports', component: load('user/exports') },
   { path: 'theme', component: load('theme/theme') },
   { path: 'theme/builtIn', component: load('theme/builtIn') },
-  { path: 'view', component: load('view/view') },
+  { path: 'view', component: loadjsx('view/view') },
   { path: 'view/panels', component: load('view/viewPanels') },
   { path: 'view/sections', component: load('view/viewSections') },
   { path: 'view/buttons', component: load('view/viewButtons') },

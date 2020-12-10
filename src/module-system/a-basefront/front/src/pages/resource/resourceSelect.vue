@@ -109,7 +109,7 @@ export default {
     },
     _checkCheckedInit(item) {
       if (!this.checkedAtomStaticKeys) return false;
-      this.checkedAtomStaticKeys.findIndex(_item => _item === item.atomStaticKey) > -1;
+      return this.checkedAtomStaticKeys.findIndex(_item => _item === item.atomStaticKey) > -1;
     },
     async _loadNodeResources(node) {
       const options = {
