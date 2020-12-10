@@ -106,8 +106,10 @@ export default {
   methods: {
     onResize() {
       if (!this.started) return;
-      this.setSize();
-      this.$refs.groups.resize();
+      this.__checkSafeSetSize(() => {
+        this.setSize();
+        this.$refs.groups.resize();
+      });
     },
     setSize() {
       const layoutWidth = this.$$(this.$el).width();
@@ -573,6 +575,13 @@ export default {
     },
     _buttonFullName(button) {
       return this._resourceFullName(button);
+    },
+    __checkSafeSetSize(cb) {
+      const $view = this.$$('.eb-layout-groups .view.router-transition');
+      if ($view.length === 0) return cb();
+      window.setTimeout(() => {
+        this.__checkSafeSetSize(cb);
+      }, 50);
     },
   },
 };
