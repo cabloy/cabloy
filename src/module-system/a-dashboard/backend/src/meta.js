@@ -14,6 +14,11 @@ module.exports = app => {
               full: 'aDashboardViewFull',
             },
           },
+          actions: {
+            write: {
+              enableOnStatic: true,
+            },
+          },
           validator: 'dashboard',
           search: {
             validator: 'dashboardSearch',
