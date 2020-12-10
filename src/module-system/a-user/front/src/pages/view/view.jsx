@@ -43,6 +43,15 @@ export default {
             this.$meta.vueLayout.closePanel(side, resource);
           },
         };
+      } else if (resourceType === 'a-layoutpc:statusbarSection') {
+        return {
+          open: (side, resource) => {
+            this.$meta.vueLayout.openSection(side, resource);
+          },
+          close: (side, resource) => {
+            this.$meta.vueLayout.closeSection(side, resource);
+          },
+        };
       }
     },
     _switchResources(side, nodes, resourcesVar, resourceType) {
@@ -90,7 +99,7 @@ export default {
           <eb-list-item title={this.$text('Sidebar (Left)')} link="#" propsOnPerform={event => this.onPerformResources(event, 'left', 'panels', 'a-layoutpc:sidebarPanel')}></eb-list-item>
           <eb-list-item title={this.$text('Sidebar (Right)')} link="#" propsOnPerform={event => this.onPerformResources(event, 'right', 'panels', 'a-layoutpc:sidebarPanel')}></eb-list-item>
           <eb-list-item title={this.$text('Statusbar (Left)')} link="#" propsOnPerform={event => this.onPerformResources(event, 'bottom', 'panels', 'a-layoutpc:sidebarPanel')}></eb-list-item>
-          <eb-list-item title={this.$text('Statusbar (Right)')} link="#" eb-href="view/sections?side=bottom" eb-target="_self"></eb-list-item>
+          <eb-list-item title={this.$text('Statusbar (Right)')} link="#" propsOnPerform={event => this.onPerformResources(event, 'bottom', 'sections', 'a-layoutpc:statusbarSection')}></eb-list-item>
         </f7-list>
       </eb-page>
     );
