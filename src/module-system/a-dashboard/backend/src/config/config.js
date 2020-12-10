@@ -4,8 +4,8 @@ module.exports = appInfo => {
 
   // dashboard
   config.dashboard = {
-    default: 'a-dashboard:default',
-    home: 'a-dashboard:home',
+    default: 'a-dashboard:dashboardDefault',
+    home: 'a-dashboard:dashboardHome',
   };
 
   return config;

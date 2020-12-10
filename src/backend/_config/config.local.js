@@ -8,7 +8,7 @@ module.exports = appInfo => {
   config.modules = {
     'a-dashboard': {
       dashboard: {
-        default: 'test-party:test',
+        default: 'test-party:dashboardTest',
       },
     },
   };

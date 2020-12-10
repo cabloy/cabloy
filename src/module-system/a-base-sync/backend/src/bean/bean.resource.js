@@ -36,7 +36,9 @@ module.exports = ctx => {
 
     // select
     //   donot set atomDisabled
-    async select({ options: { where, orders, page, resourceType, star = 0, label = 0, stage = 'archive', category = 0, tag = 0, locale }, user, pageForce = false, count = 0 }) {
+    async select({ atomClass, options: { where, orders, page, resourceType, star = 0, label = 0, stage = 'archive', category = 0, tag = 0, locale }, user, pageForce = false, count = 0 }) {
+      // atomClass
+      atomClass = atomClass || __atomClass;
       // locale
       if (locale !== false) {
         locale = locale || ctx.locale;
@@ -51,7 +53,7 @@ module.exports = ctx => {
         where, orders, page, star, label, stage, category, tag, resource: 1, resourceLocale: locale,
       };
       return await ctx.bean.atom.select({
-        atomClass: __atomClass, options, user, pageForce, count,
+        atomClass, options, user, pageForce, count,
       });
     }
 

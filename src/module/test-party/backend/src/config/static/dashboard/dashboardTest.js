@@ -259,10 +259,11 @@ module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const dashboard = {
     atomName: 'Test',
-    atomStaticKey: 'test',
+    atomStaticKey: 'dashboardTest',
     atomRevision: 0,
     description: '',
     content: JSON.stringify(content),
+    resourceRoles: 'root',
   };
   return dashboard;
 };

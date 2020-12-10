@@ -12,10 +12,11 @@ module.exports = app => {
   };
   const dashboard = {
     atomName: 'Home',
-    atomStaticKey: 'home',
+    atomStaticKey: 'dashboardHome',
     atomRevision: 0,
     description: '',
     content: JSON.stringify(content),
+    resourceRoles: 'root',
   };
   return dashboard;
 };
