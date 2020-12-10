@@ -10,8 +10,8 @@ module.exports = app => {
         sidebarPanel: {
           title: 'Sidebar Panel',
         },
-        bottombarSection: {
-          title: 'Bottombar Section',
+        statusbarSection: {
+          title: 'Statusbar Section',
         },
       },
       statics: {

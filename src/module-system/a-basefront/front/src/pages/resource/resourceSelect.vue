@@ -37,6 +37,9 @@ export default {
     multiple() {
       return this.contextParams.multiple;
     },
+    checkedAtomStaticKeys() {
+      return this.contextParams.checkedAtomStaticKeys;
+    },
     root() {
       return {
         attrs: {
@@ -104,6 +107,10 @@ export default {
       }
       return list;
     },
+    _checkCheckedInit(item) {
+      if (!this.checkedAtomStaticKeys) return false;
+      this.checkedAtomStaticKeys.findIndex(_item => _item === item.atomStaticKey) > -1;
+    },
     async _loadNodeResources(node) {
       const options = {
         resourceType: this.resourceType,
@@ -111,7 +118,11 @@ export default {
       };
       const res = await this.$api.post('/a/base/resource/select', { options });
       return res.list.map(item => {
+        // checkbox
         const checkbox = true;
+        // checked
+        const checked = this._checkCheckedInit(item);
+        // node
         const node = {
           id: item.atomId,
           attrs: {
@@ -119,6 +130,7 @@ export default {
             toggle: false,
             loadChildren: false,
             checkbox,
+            checked,
             checkOnLabel: checkbox,
             selectable: checkbox,
             itemToggle: !checkbox,

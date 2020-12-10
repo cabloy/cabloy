@@ -40,8 +40,8 @@ module.exports = app => {
       atomName: 'Copyright',
       atomStaticKey: 'sectionCopyright',
       atomRevision: 0,
-      atomCategoryId: 'a-layoutpc:bottombarSection.General',
-      resourceType: 'a-layoutpc:bottombarSection',
+      atomCategoryId: 'a-layoutpc:statusbarSection.General',
+      resourceType: 'a-layoutpc:statusbarSection',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         component: 'sectionCopyright',
@@ -52,8 +52,8 @@ module.exports = app => {
       atomName: 'Clock',
       atomStaticKey: 'sectionClock',
       atomRevision: 0,
-      atomCategoryId: 'a-layoutpc:bottombarSection.General',
-      resourceType: 'a-layoutpc:bottombarSection',
+      atomCategoryId: 'a-layoutpc:statusbarSection.General',
+      resourceType: 'a-layoutpc:statusbarSection',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         component: 'sectionClock',

@@ -336,7 +336,7 @@ export default {
     __getResourcesAll() {
       const resourceTypes = [
         { name: 'sidebarPanel', var: 'panelsAll' },
-        { name: 'bottombarSection', var: 'sectionsAll' },
+        { name: 'statusbarSection', var: 'sectionsAll' },
         { name: 'headerButton', var: 'buttonsAll' },
       ];
       const promises = [];
