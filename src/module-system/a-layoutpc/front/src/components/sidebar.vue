@@ -1,4 +1,5 @@
 <script>
+import Vue from 'vue';
 import SidebarTabButtons from './sidebarTabButtons.vue';
 import SidebarTabSections from './sidebarTabSections.vue';
 import SidebarGroup from './sidebarGroup.vue';
@@ -108,6 +109,7 @@ export default {
       }
       // tabs
       return c('div', {
+        key: 'tabs',
         staticClass: 'eb-layout-sidebar-tabs',
       }, children);
     },
@@ -164,6 +166,7 @@ export default {
         };
       }
       const panel = c('div', {
+        key: 'panel',
         staticClass: this._getPanelClassName(),
         style,
       }, [ toolbar, group, resizeHandler ]);

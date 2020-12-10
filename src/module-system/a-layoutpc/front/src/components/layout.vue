@@ -18,12 +18,14 @@ export default {
     if (this.sidebarInited) {
       // header
       const header = c('eb-header', {
+        key: 'header',
         ref: 'header',
         style: { height: `${this.size.top}px` },
       });
       children.push(header);
       // groups
       const groups = c('eb-groups', {
+        key: 'groups',
         ref: 'groups',
         style: {
           height: `${this.size.main}px`,
@@ -489,6 +491,7 @@ export default {
         };
       }
       return c('eb-sidebar', {
+        key: `sidebar:${side}`,
         ref: `sidebar${sideUpperCase}`,
         staticClass: this._getSidebarDisplay(side) ? '' : 'display-none',
         props: {
