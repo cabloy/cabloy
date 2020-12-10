@@ -36,7 +36,7 @@ export default {
       this.content = event.target.value;
     },
     onPerformDone() {
-      const data = JSON.stringify(JSON5.parse(this.content));
+      const data = this.content ? JSON.stringify(JSON5.parse(this.content)) : null;
       this.contextCallback(200, data);
       this.$f7router.back();
     },
