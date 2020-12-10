@@ -83,9 +83,8 @@ export default {
     this.options.opened = false;
   },
   mounted() {
-    if (this.initOpened && this.options.panelActive && this.options.panelActive.indexOf(':') > -1) {
-      const [ module, name ] = this.options.panelActive.split(':');
-      this.layout._createPanel({ side: this.side, panel: { module, name }, init: true });
+    if (this.initOpened && this.options.panelActive && this.options.panelActive.indexOf('undefined:') === -1) {
+      this.layout._createPanel({ side: this.side, panel: { atomStaticKey: this.options.panelActive }, init: true });
     }
   },
   methods: {

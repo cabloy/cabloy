@@ -35,6 +35,17 @@ module.exports = app => {
       }),
       resourceRoles: 'root',
     },
+    {
+      atomName: 'Mine',
+      atomStaticKey: 'panelMine',
+      atomRevision: 0,
+      atomCategoryId: 'a-layoutpc:sidebarPanel.General',
+      resourceType: 'a-layoutpc:sidebarPanel',
+      resourceConfig: JSON.stringify({
+        url: '/a/user/user/mine',
+      }),
+      resourceRoles: 'root',
+    },
     // sections
     {
       atomName: 'Copyright',

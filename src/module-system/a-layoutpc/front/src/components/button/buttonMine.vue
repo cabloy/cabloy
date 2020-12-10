@@ -49,7 +49,7 @@ function installFactory(_Vue) {
       onPerform() {
         const button = this.$config.layout.header.button.mine;
         if (button) {
-          this.$meta.vueLayout.navigate(button.url, { scene: button.scene, sceneOptions: button.sceneOptions });
+          this.$meta.vueLayout.navigate(null, { scene: button.scene, sceneOptions: button.sceneOptions });
         }
       },
       // onSignin() {
