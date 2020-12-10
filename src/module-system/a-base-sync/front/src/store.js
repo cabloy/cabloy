@@ -230,6 +230,7 @@ export default function(Vue) {
           Vue.prototype.$meta.api.post('/a/base/resource/select', {
             options: {
               resourceType,
+              orders: [[ 'f.resourceSorting', 'asc' ], [ 'f.createdAt', 'asc' ]],
             },
           }).then(data => {
             const resources = {};

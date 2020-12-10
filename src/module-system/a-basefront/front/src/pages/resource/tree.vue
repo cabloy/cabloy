@@ -104,6 +104,7 @@ export default {
       const options = {
         resourceType: this.resourceType,
         category: node.id,
+        orders: [[ 'f.resourceSorting', 'asc' ], [ 'f.createdAt', 'asc' ]],
       };
       const res = await this.$api.post('/a/base/resource/select', { options });
       return res.list.map(item => {
