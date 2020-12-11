@@ -4,6 +4,10 @@ const mineAtomArchives = require('./mines/mineAtomArchives.js');
 const mineTaskClaimings = require('./mines/mineTaskClaimings.js');
 const mineTaskHandlings = require('./mines/mineTaskHandlings.js');
 const mineTaskCompleteds = require('./mines/mineTaskCompleteds.js');
+const mineFlowInitiateds = require('./mines/mineFlowInitiateds.js');
+const mineFlowParticipateds = require('./mines/mineFlowParticipateds.js');
+const mineFlowEnds = require('./mines/mineFlowEnds.js');
+const mineMineAttachments = require('./mines/mineMineAttachments.js');
 
 module.exports = app => {
   const resources = [
@@ -13,6 +17,10 @@ module.exports = app => {
     mineTaskClaimings(app),
     mineTaskHandlings(app),
     mineTaskCompleteds(app),
+    mineFlowInitiateds(app),
+    mineFlowParticipateds(app),
+    mineFlowEnds(app),
+    mineMineAttachments(app),
   ];
   return resources;
 };

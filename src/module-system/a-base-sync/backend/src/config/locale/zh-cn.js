@@ -75,4 +75,11 @@ module.exports = {
   Claimings: '待签收',
   Handlings: '处理中',
   Completeds: '已完成',
+  Flow: '流程',
+  Flows: '流程',
+  Initiateds: '发起的',
+  Participateds: '参与的',
+  Ends: '已结束',
+  Mine: '我的',
+  Attachments: '附件',
 };

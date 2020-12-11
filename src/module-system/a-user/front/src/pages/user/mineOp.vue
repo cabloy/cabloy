@@ -17,7 +17,7 @@
         <eb-button v-if="loggedIn" :onPerform="onPerformLogout">{{$text('Log Out')}}</eb-button>
       </f7-segmented>
     </div>
-    <div v-if="ready">
+    <div v-if="ready" class="mine-items">
       <div v-for="category of treeData" :key="category.id">
         <f7-block-title>{{category.categoryNameLocale}}</f7-block-title>
        <f7-card>
@@ -84,7 +84,6 @@ export default {
     async __init() {
       this.resourcesArrayAll = await this.$store.dispatch('a/base/getResourcesArray', { resourceType: this.resourceType });
       this.treeData = await this.$store.dispatch('a/base/getResourceTrees', { resourceType: this.resourceType });
-      console.log(this.treeData);
     },
     __getMineItemsOfCategory(category) {
       return this.resourcesArrayAll.filter(item => item.atomCategoryId === category.id);
@@ -167,6 +166,12 @@ export default {
     .button{
       width: auto;
     }
+  }
+}
+
+.mine-items{
+  .block-title{
+    margin-top: var(--f7-block-title-margin-bottom);
   }
 }
 
