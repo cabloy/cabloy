@@ -28,16 +28,16 @@ export default function(Vue) {
       labels: null,
       layoutConfig: {},
       userAtomClassRolesPreferred: {},
+      resourceTrees: {},
+      resources: {},
+      categories: {},
+      tags: {},
       // global
       locales: null,
       modules: null,
       atomClasses: null,
       actions: null,
       resourceTypes: null,
-      resourceTrees: {},
-      resources: {},
-      categories: {},
-      tags: {},
     },
     getters: {
       userLabels(state) {
@@ -50,6 +50,10 @@ export default function(Vue) {
         state.labels = null;
         state.layoutConfig = {};
         state.userAtomClassRolesPreferred = {};
+        state.resourceTrees = {};
+        state.resources = {};
+        state.categories = {};
+        state.tags = {};
       },
       setLabels(state, labels) {
         state.labels = labels;
