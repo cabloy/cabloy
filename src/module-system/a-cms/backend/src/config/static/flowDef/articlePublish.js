@@ -53,7 +53,7 @@ module.exports = app => {
   };
   const definition = {
     atomName: 'CMS Article Publish',
-    atomStaticKey: 'articlePublish',
+    atomStaticKey: 'flowArticlePublish',
     atomRevision: 0,
     description: '',
     content: JSON.stringify(content),

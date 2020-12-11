@@ -56,7 +56,7 @@ module.exports = app => {
   };
   const definition = {
     atomName: 'Community Post Publish',
-    atomStaticKey: 'postPublish',
+    atomStaticKey: 'flowPostPublish',
     atomRevision: 0,
     description: '',
     content: JSON.stringify(content),
