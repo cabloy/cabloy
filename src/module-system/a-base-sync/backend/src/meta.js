@@ -39,6 +39,9 @@ module.exports = app => {
         menu: {
           title: 'Menu',
         },
+        mine: {
+          title: 'Mine',
+        },
       },
       statics: {
         'a-base.resource': {

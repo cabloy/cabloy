@@ -29,8 +29,6 @@ export default {
       } else if (this.container.scene === 'search') {
         if (!atomClass) return `${this.$text('Search')} ${this.$text('Atom')}`;
         return `${this.$text('Search')} ${atomClassTitle}`;
-      } else if (this.container.scene === 'mine') {
-        return this.$text('My Atoms');
       }
       if (!atomClass) return this.$text('Atom');
       return `${this.$text('Atom')}: ${atomClassTitle}`;

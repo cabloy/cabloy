@@ -49,6 +49,18 @@ module.exports = app => {
       }),
       resourceRoles: 'root',
     },
+    // mine
+    {
+      atomName: 'Drafts',
+      atomStaticKey: 'mineDrafts',
+      atomRevision: 0,
+      atomCategoryId: 'a-base:mine.Atom',
+      resourceType: 'a-base:mine',
+      resourceConfig: JSON.stringify({
+        actionPath: '/a/basefront/comment/all',
+      }),
+      resourceRoles: 'root',
+    },
   ];
   return resources;
 };

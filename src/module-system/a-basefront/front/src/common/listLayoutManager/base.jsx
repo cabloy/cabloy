@@ -45,10 +45,6 @@ export default {
       if (this.container.scene === 'select') {
         options.where['a.id'] = this.container.params.selectedAtomIds.length > 0 ? this.container.params.selectedAtomIds : null;
       }
-      // mine
-      if (this.container.scene === 'mine') {
-        options.where['a.userIdCreated'] = this.base_user.id;
-      }
       // order
       const atomOrderCurrent = this.order.selected || this.order_default;
       options.orders = [
