@@ -23,7 +23,7 @@
        <f7-card>
         <f7-card-content>
           <f7-row>
-            <f7-col width="33" v-for="mineItem of __getMineItemsOfCategory(category)" :key="mineItem.atomStaticKey">
+            <f7-col v-for="mineItem of __getMineItemsOfCategory(category)" width="33" :key="mineItem.atomStaticKey">
               <div>
                 <eb-link :context="mineItem" :onPerform="onPerformMineItem">{{mineItem.atomNameLocale}}</eb-link>
               </div>
