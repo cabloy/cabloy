@@ -33,6 +33,7 @@
       </f7-card>
       </div>
     </div>
+    <f7-block></f7-block>
   </eb-page>
 </template>
 <script>

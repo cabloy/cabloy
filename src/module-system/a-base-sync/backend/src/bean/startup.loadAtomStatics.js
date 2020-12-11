@@ -66,8 +66,9 @@ module.exports = app => {
         atomStatic: 1,
         atomStaticKey: `${moduleName}:${item.atomStaticKey}`,
         atomRevision: item.atomRevision || 0,
-        atomName: this.ctx.text(item.atomName),
-        description: this.ctx.text(item.description),
+        // ctx.text is not good for resource
+        // atomName: this.ctx.text(item.atomName),
+        // description: this.ctx.text(item.description),
       };
       // atomLanguage,atomCategoryId,atomTags
       if (typeof item.atomCategoryId === 'string') {

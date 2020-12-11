@@ -82,4 +82,9 @@ module.exports = {
   Ends: '已结束',
   Mine: '我的',
   Attachments: '附件',
+  Comments: '评论',
+  Appearance: '外观',
+  Language: '语言',
+  Theme: '主题',
+  ViewLayout: '视图',
 };

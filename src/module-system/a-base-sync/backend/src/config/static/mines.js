@@ -8,6 +8,11 @@ const mineFlowInitiateds = require('./mines/mineFlowInitiateds.js');
 const mineFlowParticipateds = require('./mines/mineFlowParticipateds.js');
 const mineFlowEnds = require('./mines/mineFlowEnds.js');
 const mineMineAttachments = require('./mines/mineMineAttachments.js');
+const mineMineComments = require('./mines/mineMineComments.js');
+const mineMineExports = require('./mines/mineMineExports.js');
+const mineAppearanceLanguage = require('./mines/mineAppearanceLanguage.js');
+const mineAppearanceTheme = require('./mines/mineAppearanceTheme.js');
+const mineAppearanceView = require('./mines/mineAppearanceView.js');
 
 module.exports = app => {
   const resources = [
@@ -21,6 +26,11 @@ module.exports = app => {
     mineFlowParticipateds(app),
     mineFlowEnds(app),
     mineMineAttachments(app),
+    mineMineComments(app),
+    mineMineExports(app),
+    mineAppearanceLanguage(app),
+    mineAppearanceTheme(app),
+    mineAppearanceView(app),
   ];
   return resources;
 };
