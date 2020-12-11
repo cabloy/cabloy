@@ -23,11 +23,12 @@ export default {
       maxLevelAutoOpened,
       resourceType,
       treeData: null,
+      resourcesArrayAll: null,
     };
   },
   computed: {
     ready() {
-      return this.treeData;
+      return this.treeData && this.resourcesArrayAll;
     },
     pageTitle() {
       const resourceTypes = this.$store.getState('a/base/resourceTypes');
@@ -56,6 +57,7 @@ export default {
   methods: {
     async __init() {
       this.$store.dispatch('a/base/getResourceTypes');
+      this.resourcesArrayAll = await this.$store.dispatch('a/base/getResourcesArray', { resourceType: this.resourceType });
       this.treeData = await this.$store.dispatch('a/base/getResourceTrees', { resourceType: this.resourceType });
     },
     combineAtomClassAndLanguage() {
@@ -112,12 +114,8 @@ export default {
       return this.checkedAtomStaticKeys.findIndex(_item => _item === item.atomStaticKey) > -1;
     },
     async _loadNodeResources(node) {
-      const options = {
-        resourceType: this.resourceType,
-        category: node.id,
-      };
-      const res = await this.$api.post('/a/base/resource/select', { options });
-      return res.list.map(item => {
+      const resources = this.resourcesArrayAll.filter(item => item.atomCategoryId === node.id);
+      return resources.map(item => {
         // checkbox
         const checkbox = true;
         // checked
