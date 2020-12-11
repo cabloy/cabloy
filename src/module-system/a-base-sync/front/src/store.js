@@ -30,6 +30,7 @@ export default function(Vue) {
       userAtomClassRolesPreferred: {},
       resourceTrees: {},
       resources: {},
+      resourcesArray: {},
       categories: {},
       tags: {},
       // global
@@ -52,6 +53,7 @@ export default function(Vue) {
         state.userAtomClassRolesPreferred = {};
         state.resourceTrees = {};
         state.resources = {};
+        state.resourcesArray = {};
         state.categories = {};
         state.tags = {};
       },
@@ -108,10 +110,14 @@ export default function(Vue) {
           [resourceType]: tree,
         };
       },
-      setResources(state, { resourceType, resources }) {
+      setResources(state, { resourceType, resources, resourcesArray }) {
         state.resources = {
           ...state.resources,
           [resourceType]: resources,
+        };
+        state.resourcesArray = {
+          ...state.resourcesArray,
+          [resourceType]: resourcesArray,
         };
       },
       setCategories(state, { atomClass, language, categories }) {
@@ -229,24 +235,10 @@ export default function(Vue) {
         });
       },
       getResources({ state, commit }, { resourceType }) {
-        return new Promise((resolve, reject) => {
-          if (state.resources[resourceType]) return resolve(state.resources[resourceType]);
-          Vue.prototype.$meta.api.post('/a/base/resource/select', {
-            options: {
-              resourceType,
-              orders: [[ 'f.resourceSorting', 'asc' ], [ 'f.createdAt', 'asc' ]],
-            },
-          }).then(data => {
-            const resources = {};
-            for (const item of data.list) {
-              resources[item.atomStaticKey] = item;
-            }
-            commit('setResources', { resourceType, resources });
-            resolve(resources);
-          }).catch(err => {
-            reject(err);
-          });
-        });
+        return __getResources({ state, commit }, { resourceType, useArray: false });
+      },
+      getResourcesArray({ state, commit }, { resourceType }) {
+        return __getResources({ state, commit }, { resourceType, useArray: true });
       },
       getCategories({ state, commit }, { atomClass, language }) {
         return new Promise((resolve, reject) => {
@@ -303,5 +295,29 @@ export default function(Vue) {
       },
     },
   };
+
+  function __getResources({ state, commit }, { resourceType, useArray }) {
+    return new Promise((resolve, reject) => {
+      if (state.resources[resourceType]) {
+        return resolve(useArray ? state.resourcesArray[resourceType] : state.resources[resourceType]);
+      }
+      Vue.prototype.$meta.api.post('/a/base/resource/select', {
+        options: {
+          resourceType,
+          orders: [[ 'f.resourceSorting', 'asc' ], [ 'f.createdAt', 'asc' ]],
+        },
+      }).then(data => {
+        const resourcesArray = data.list;
+        const resources = {};
+        for (const item of resourcesArray) {
+          resources[item.atomStaticKey] = item;
+        }
+        commit('setResources', { resourceType, resources, resourcesArray });
+        resolve(useArray ? resourcesArray : resources);
+      }).catch(err => {
+        reject(err);
+      });
+    });
+  }
 
 }
