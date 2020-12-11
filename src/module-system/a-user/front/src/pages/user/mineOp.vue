@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar :title="$text('Mine')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link v-if="!inAgent" iconMaterial="settings" eb-href="user/mineAgent"></eb-link>
+        <eb-link v-if="!user.agent.anonymous && !inAgent" iconMaterial="settings" eb-href="user/mineAgent"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <div class="mine">
@@ -17,23 +17,38 @@
         <eb-button v-if="loggedIn" :onPerform="onPerformLogout">{{$text('Log Out')}}</eb-button>
       </f7-segmented>
     </div>
-    <f7-list>
-      <eb-list-item v-if="!user.agent.anonymous" :title="$text('Account')" link="#" eb-href="user/account" eb-target="_self"></eb-list-item>
-      <eb-list-item :title="$text('Functions')" link="#" eb-href="user/functions" eb-target="_self"></eb-list-item>
-      <f7-list-item divider></f7-list-item>
-      <eb-list-item v-if="viewEnable" :title="$text('ViewLayout')" link="#" eb-href="view" eb-target="_self"></eb-list-item>
-      <eb-list-item :title="$text('Theme')" link="#" eb-href="theme" eb-target="_self"></eb-list-item>
-      <eb-list-item v-if="!user.agent.anonymous" :title="$text('Settings')" link="#" eb-href="/a/settings/user/list" eb-target="_self"></eb-list-item>
-    </f7-list>
+    <div v-if="ready">
+      <div v-for="category of treeData" :key="category.id">
+        <f7-block-title medium>{{category.categoryNameLocale}}</f7-block-title>
+       <f7-card>
+        <f7-card-content>
+          <f7-row>
+            <f7-col width="33" v-for="mineItem of __getMineItemsOfCategory(category)" :key="mineItem.atomStaticKey">
+              <div>
+                <eb-link :context="mineItem" :onPerform="onPerformMineItem">{{mineItem.atomNameLocale}}</eb-link>
+              </div>
+            </f7-col>
+          </f7-row>
+        </f7-card-content>
+      </f7-card>
+      </div>
+    </div>
   </eb-page>
 </template>
 <script>
 export default {
   components: {},
   data() {
-    return {};
+    return {
+      resourceType: 'a-base:mine',
+      treeData: null,
+      resourcesArrayAll: null,
+    };
   },
   computed: {
+    ready() {
+      return this.treeData && this.resourcesArrayAll;
+    },
     loggedIn() {
       return this.$store.state.auth.loggedIn;
     },
@@ -62,8 +77,18 @@ export default {
       return this.$meta.vueApp.layout === 'pc' && this.$meta.vueLayout.closePanel;
     },
   },
-  created() {},
+  created() {
+    this.__init();
+  },
   methods: {
+    async __init() {
+      this.resourcesArrayAll = await this.$store.dispatch('a/base/getResourcesArray', { resourceType: this.resourceType });
+      this.treeData = await this.$store.dispatch('a/base/getResourceTrees', { resourceType: this.resourceType });
+      console.log(this.treeData);
+    },
+    __getMineItemsOfCategory(category) {
+      return this.resourcesArrayAll.filter(item => item.atomCategoryId === category.id);
+    },
     onPerformLogin() {
       this.$meta.vueLayout.openLogin();
     },
@@ -78,6 +103,14 @@ export default {
       await this.$view.dialog.confirm();
       await this.$api.post('user/switchOffAgent');
       this.$meta.vueApp.reload({ echo: true });
+    },
+    onPerformMineItem(event, mineItem) {
+      const resourceConfig = JSON.parse(mineItem.resourceConfig);
+      const action = this.$utils.extend({}, resourceConfig, {
+        targetEl: event.target,
+        navigateOptions: { target: '_self' },
+      });
+      return this.$meta.util.performAction({ ctx: this, action, item: null });
     },
     onClickAvatar() {
       if (this.user.agent.anonymous || this.inAgent) return;
