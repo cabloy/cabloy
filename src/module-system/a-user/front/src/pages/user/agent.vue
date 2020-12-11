@@ -8,8 +8,7 @@
       <template v-if="agentsBy && agentsBy.length>0">
         <eb-list-item v-for="item of agentsBy" :key="item.id" radio disabled :checked="user.op.id===item.id" :title="item.userName">
           <div slot="after">
-            <eb-link v-if="user.op.id===item.id" :context="item" :onPerform="onPerformSwitchOff">{{$text('Switch Off')}}</eb-link>
-            <eb-link v-else :context="item" :onPerform="onPerformSwitch">{{$text('Switch')}}</eb-link>
+            <eb-link v-if="user.op.id!==item.id" :context="item" :onPerform="onPerformSwitch">{{$text('Switch')}}</eb-link>
           </div>
         </eb-list-item>
       </template>
@@ -69,13 +68,6 @@ export default {
     onPerformSwitch(event, item) {
       return this.$view.dialog.confirm().then(() => {
         return this.$api.post('user/switchAgent', { userIdAgent: item.id }).then(() => {
-          this.$meta.vueApp.reload({ echo: true });
-        });
-      });
-    },
-    onPerformSwitchOff(event, item) {
-      return this.$view.dialog.confirm().then(() => {
-        return this.$api.post('user/switchOffAgent').then(() => {
           this.$meta.vueApp.reload({ echo: true });
         });
       });

@@ -1,16 +1,21 @@
 <template>
   <eb-page>
-    <eb-navbar :title="$text('Mine')" eb-back-link="Back"></eb-navbar>
-    <div class="me">
-      <div>
+    <eb-navbar :title="$text('Mine')" eb-back-link="Back">
+      <f7-nav-right>
+        <eb-link v-if="!inAgent" iconMaterial="settings" eb-href="user/mineAgent"></eb-link>
+      </f7-nav-right>
+    </eb-navbar>
+    <div class="mine">
+      <div class="mine-block">
         <img class="avatar avatar48" :src="userAvatar" style="cursor:pointer;" @click="onClickAvatar">
       </div>
-      <div class="name">{{userName}}</div>
-      <div class="status" v-if="!loggedIn">{{$text('Not LoggedIn')}}</div>
-      <div class="login">
+      <div class="mine-block name">{{userName}}</div>
+      <div class="mine-block status" v-if="!loggedIn">{{$text('Not LoggedIn')}}</div>
+      <f7-segmented strong tag="div" class="login">
+        <eb-button v-if="inAgent" :onPerform="onPerformSwitchOff">{{$text('Quit Agent')}}</eb-button>
         <eb-link v-if="!loggedIn" :onPerform="onPerformLogin">{{$text('Sign In')}}</eb-link>
-        <eb-link v-if="loggedIn" :onPerform="onPerformLogout">{{$text('Log Out')}}</eb-link>
-      </div>
+        <eb-button v-if="loggedIn" :onPerform="onPerformLogout">{{$text('Log Out')}}</eb-button>
+      </f7-segmented>
     </div>
     <f7-list>
       <eb-list-item v-if="!user.agent.anonymous" :title="$text('Account')" link="#" eb-href="user/account" eb-target="_self"></eb-list-item>
@@ -35,9 +40,12 @@ export default {
     user() {
       return this.$store.state.auth.user;
     },
+    inAgent() {
+      return this.user.op.id !== this.user.agent.id;
+    },
     userName() {
       let userName = this.user.op.userName;
-      if (this.user.op.id !== this.user.agent.id) {
+      if (this.inAgent) {
         userName = `${userName}(${this.$text('Agent')})`;
       }
       return userName;
@@ -66,8 +74,13 @@ export default {
         });
       });
     },
+    async onPerformSwitchOff() {
+      await this.$view.dialog.confirm();
+      await this.$api.post('user/switchOffAgent');
+      this.$meta.vueApp.reload({ echo: true });
+    },
     onClickAvatar() {
-      if (this.user.agent.anonymous || this.user.op.id !== this.user.agent.id) return;
+      if (this.user.agent.anonymous || this.inAgent) return;
       this.$view.navigate('/a/file/file/upload', {
         context: {
           params: {
@@ -91,7 +104,7 @@ export default {
 
 </script>
 <style lang="less" scoped>
-.me {
+.mine {
   position: relative;
   display: flex;
   align-items: center;
@@ -100,7 +113,7 @@ export default {
   color: var(--f7-block-header-text-color);
   padding-left: 24px;
 
-  div {
+  .mine-block {
     display: flex;
     align-items: center;
     padding-right: 12px;
@@ -118,6 +131,9 @@ export default {
     position: absolute;
     bottom: 12px;
     right: 12px;
+    .button{
+      width: auto;
+    }
   }
 }
 
