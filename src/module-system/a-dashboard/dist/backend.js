@@ -143,7 +143,7 @@ module.exports = appInfo => {
 
       module.exports = {
         About: '关于',
-        Dashboard: '仪表盘',
+        Dashboard: '仪表板',
       };
 
 

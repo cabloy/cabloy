@@ -1,7 +1,7 @@
 export default {
   Basic: '基本',
   Clone: '克隆',
-  Dashboard: '仪表盘',
+  Dashboard: '仪表板',
   Delete: '删除',
   Default: '缺省',
   General: '通用',
@@ -27,7 +27,7 @@ export default {
   'Data Source': '数据源',
   'Save As': '保存为',
   'New Profile': '新建配置',
-  'Please specify the dashboard name': '请指定仪表盘名称',
+  'Please specify the dashboard name': '请指定仪表板名称',
   'Widget Not Found': '部件未发现',
   'Source Widget Not Found': '源部件未发现',
   'Width(Small)': '宽度(小页面)',
