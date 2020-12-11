@@ -8,7 +8,7 @@ module.exports = app => {
   // resource
   const resource = {
     atomName: 'Stars',
-    atomStaticKey: 'mineStars',
+    atomStaticKey: 'mineAtomStars',
     atomRevision: 0,
     atomCategoryId: 'a-base:mine.Atom',
     resourceType: 'a-base:mine',

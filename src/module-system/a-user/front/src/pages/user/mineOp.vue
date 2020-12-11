@@ -19,7 +19,7 @@
     </div>
     <div v-if="ready">
       <div v-for="category of treeData" :key="category.id">
-        <f7-block-title medium>{{category.categoryNameLocale}}</f7-block-title>
+        <f7-block-title>{{category.categoryNameLocale}}</f7-block-title>
        <f7-card>
         <f7-card-content>
           <f7-row>

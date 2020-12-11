@@ -70,4 +70,9 @@ module.exports = {
   Authorize: '授权',
   General: '通用',
   Stars: '星标',
+  Task: '任务',
+  Tasks: '任务',
+  Claimings: '待签收',
+  Handlings: '处理中',
+  Completeds: '已完成',
 };
