@@ -1,6 +1,7 @@
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  const resources = [
+  const resourceMines = require('./mines.js')(app);
+  let resources = [
     // function
     {
       atomName: 'Delete Comment',
@@ -49,18 +50,9 @@ module.exports = app => {
       }),
       resourceRoles: 'root',
     },
-    // mine
-    {
-      atomName: 'Drafts',
-      atomStaticKey: 'mineDrafts',
-      atomRevision: 0,
-      atomCategoryId: 'a-base:mine.Atom',
-      resourceType: 'a-base:mine',
-      resourceConfig: JSON.stringify({
-        actionPath: '/a/basefront/comment/all',
-      }),
-      resourceRoles: 'root',
-    },
   ];
+  // mine
+  resources = resources.concat(resourceMines);
+  // ok
   return resources;
 };
