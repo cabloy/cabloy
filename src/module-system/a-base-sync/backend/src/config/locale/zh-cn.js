@@ -69,4 +69,5 @@ module.exports = {
   Menu: '菜单',
   Authorize: '授权',
   General: '通用',
+  Stars: '星标',
 };
