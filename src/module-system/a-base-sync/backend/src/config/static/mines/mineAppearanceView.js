@@ -1,5 +1,4 @@
 module.exports = app => {
-  const actionPath = '';
   // resource
   const resource = {
     atomName: 'ViewLayout',
@@ -8,7 +7,9 @@ module.exports = app => {
     atomCategoryId: 'a-base:mine.Appearance',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
-      actionPath,
+      actionModule: 'a-user',
+      actionComponent: 'action',
+      name: 'appearanceView',
     }),
     resourceRoles: 'root',
   };

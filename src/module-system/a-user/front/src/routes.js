@@ -16,7 +16,8 @@ export default [
   { path: 'user/exports', component: load('user/exports') },
   { path: 'theme', component: load('theme/theme') },
   { path: 'theme/builtIn', component: load('theme/builtIn') },
-  { path: 'view', component: loadjsx('view/view') },
+  { path: 'view/pc', component: loadjsx('view/viewpc') },
+  { path: 'view/mobile', component: loadjsx('view/viewmobile') },
   { path: 'my/atoms', component: load('my/atoms') },
   { path: 'public/profile', component: load('public/profile') },
 ];
