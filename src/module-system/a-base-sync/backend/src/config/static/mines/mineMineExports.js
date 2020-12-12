@@ -1,5 +1,5 @@
 module.exports = app => {
-  const actionPath = '';
+  const actionPath = '/a/user/user/exports';
   // resource
   const resource = {
     atomName: 'Exports',

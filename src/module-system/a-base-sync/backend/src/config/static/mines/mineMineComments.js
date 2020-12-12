@@ -1,5 +1,5 @@
 module.exports = app => {
-  const actionPath = '';
+  const actionPath = '/a/basefront/comment/all?scene=mine';
   // resource
   const resource = {
     atomName: 'Comments',
