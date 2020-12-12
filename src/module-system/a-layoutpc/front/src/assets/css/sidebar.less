@@ -111,7 +111,7 @@
         white-space: nowrap;
         font-size: smaller;
 
-        .eb-layout-sidebar-tabs-buttons {
+        .eb-layout-sidebar-tab-links {
           display: flex;
           justify-content: flex-start;
           align-items: center;
@@ -130,20 +130,26 @@
 
         }
 
-        .eb-layout-sidebar-tabs-sections {
+        .eb-layout-sidebar-tab-buttons {
           display: flex;
           justify-content: flex-end;
           align-items: center;
           white-space: nowrap;
 
-          .section {
+          a.link {
             color: #C3D4E7;
-            opacity: 0.2;
+            opacity: 0.6;
             user-select: none;
             display: inline-flex;
             align-items: center;
             align-content: center;
             justify-content: center;
+
+            &.active,
+            &:hover {
+              background: hsla(0, 0%, 100%, .12);
+              opacity: 0.6;
+            }
           }
 
         }
@@ -169,7 +175,7 @@
         width: var(--eb-layout-sidebar-tabs-width);
         flex-direction: column;
 
-        .eb-layout-sidebar-tabs-buttons {
+        .eb-layout-sidebar-tab-links {
           flex-direction: column;
           width: 100%;
 
@@ -185,11 +191,11 @@
           }
         }
 
-        .eb-layout-sidebar-tabs-sections {
+        .eb-layout-sidebar-tab-buttons {
           flex-direction: column;
           width: 100%;
 
-          .section {
+          a.link {
             writing-mode: vertical-lr;
             word-break: keep-all;
             padding: 10px 0;
@@ -212,7 +218,7 @@
         height: var(--eb-layout-sidebar-tabs-width);
         flex-direction: row;
 
-        .eb-layout-sidebar-tabs-buttons {
+        .eb-layout-sidebar-tab-links {
           flex-direction: row;
           height: 100%;
 
@@ -228,11 +234,11 @@
 
         }
 
-        .eb-layout-sidebar-tabs-sections {
+        .eb-layout-sidebar-tab-buttons {
           flex-direction: row;
           height: 100%;
 
-          .section {
+          a.link {
             word-break: keep-all;
             padding: 0 10px;
             height: 100%;

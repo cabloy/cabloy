@@ -19,6 +19,7 @@ export default {
     const buttons = c('eb-header-buttons', {
       staticClass: 'buttons',
       props: {
+        side: 'top',
         buttons: this.layout.sidebar.top.buttons,
       },
     });

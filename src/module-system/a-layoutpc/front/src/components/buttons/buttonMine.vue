@@ -1,5 +1,5 @@
 <template>
-  <eb-link :class="buttonClass" :onPerform="onPerform">
+  <eb-link :class="buttonClass" :onPerform="onPerformClick">
     <div class="item" v-if="loggedIn">
       <img class="avatar avatar24" :src="userAvatar">
     </div>
@@ -53,34 +53,6 @@ function installFactory(_Vue) {
           'header-button-separator': this.buttonConfig.showSeparator,
         };
       },
-    },
-    methods: {
-      onPerform() {
-        const button = this.$config.layout.header.button.mine;
-        if (button) {
-          this.$meta.vueLayout.navigate(null, { scene: button.scene, sceneOptions: button.sceneOptions });
-        }
-      },
-      // onSignin() {
-      //   this.$meta.vueLayout.openLogin();
-      // },
-      // onLogout() {
-      //   this.$f7.dialog.confirm(this.$text('Are you sure to perform this operation?'), () => {
-      //     this.$api.post('/a/base/auth/logout').then(() => {
-      //       this.$meta.vueApp.reload({ echo: true });
-      //     }).catch(err => {
-      //       const notification = this.$f7.notification.create({
-      //         icon: '<i class="material-icons">error</i>',
-      //         title: err.message,
-      //         closeTimeout: 3000,
-      //       });
-      //       notification.open();
-      //     });
-      //   });
-      // },
-      // onTheme() {
-      //   this.$meta.vueLayout.navigate('/a/user/theme');
-      // }
     },
   };
 }

@@ -1,13 +1,13 @@
 <script>
 import Vue from 'vue';
-import SidebarTabButtons from './sidebarTabButtons.vue';
+import SidebarTabLinks from './sidebarTabLinks.vue';
 import SidebarGroup from './sidebarGroup.vue';
 import SidebarToolbar from './sidebarToolbar.vue';
 import HeaderButtons from './headerButtons.vue';
 
 export default {
   components: {
-    ebSidebarTabButtons: SidebarTabButtons,
+    ebSidebarTabLinks: SidebarTabLinks,
     ebSidebarGroup: SidebarGroup,
     ebSidebarToolbar: SidebarToolbar,
     ebHeaderButtons: HeaderButtons,
@@ -91,9 +91,9 @@ export default {
   methods: {
     _renderSidebarTabs(c) {
       const children = [];
-      // buttons
-      const buttons = c('eb-sidebar-tab-buttons', {
-        key: 'buttons',
+      // links
+      const buttons = c('eb-sidebar-tab-links', {
+        key: 'links',
         props: {
           side: this.side,
         },
@@ -102,8 +102,10 @@ export default {
       // buttons
       if (this.side === 'bottom') {
         const buttons = c('eb-header-buttons', {
-          key: 'sections',
+          key: 'buttons',
+          staticClass: 'eb-layout-sidebar-tab-buttons',
           props: {
+            side: this.side,
             buttons: this.layout.sidebar[this.side].buttons,
           },
         });

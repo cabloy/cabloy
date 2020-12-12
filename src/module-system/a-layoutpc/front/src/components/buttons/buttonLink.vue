@@ -1,5 +1,5 @@
 <template>
-  <eb-link :class="buttonClass" :iconMaterial="buttonIcon" :text="buttonLabel" :onPerform="onPerform"></eb-link>
+  <eb-link :class="buttonClass" :iconMaterial="buttonIcon" :text="buttonLabel" :onPerform="onPerformClick"></eb-link>
 </template>
 <script>
 // export
@@ -28,17 +28,6 @@ function installFactory(_Vue) {
         return {
           'header-button-separator': this.buttonConfig.showSeparator,
         };
-      },
-    },
-    methods: {
-      onPerform() {
-        const action = this.$utils.extend({}, this.buttonConfig, {
-          navigateOptions: {
-            scene: this.buttonConfig.scene,
-            sceneOptions: this.buttonConfig.sceneOptions,
-          },
-        });
-        this.$meta.util.performAction({ ctx: this, action, item: null });
       },
     },
   };

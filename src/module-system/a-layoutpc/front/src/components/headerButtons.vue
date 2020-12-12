@@ -8,33 +8,39 @@ export default {
   },
   render(c) {
     const children = [];
-    // more
-    children.push(c('f7-link', {
-      staticClass: (this.layout.size.verySmall || this.layout.groups.length > 2) ? '' : 'display-none',
-      props: {
-        iconMaterial: 'expand_more',
-        popoverOpen: `#${this.popoverId}`,
-      },
-    }));
-    // popover
-    const tabButtons = [];
-    for (const group of this.layout.groups) {
-      tabButtons.push(c('eb-list-item', {
-        key: group.id,
+    if (this.side === 'top') {
+      // more
+      children.push(c('f7-link', {
+        key: 'expand_more',
+        staticClass: (this.layout.size.verySmall || this.layout.groups.length > 2) ? '' : 'display-none',
         props: {
-          link: '#',
-          popoverClose: true,
-          title: group.title,
-        },
-        on: {
-          click: event => {
-            this.groups.switchGroup(group.id);
-          },
+          iconMaterial: 'expand_more',
+          popoverOpen: `#${this.popoverId}`,
         },
       }));
+      // popover
+      const tabButtons = [];
+      for (const group of this.layout.groups) {
+        tabButtons.push(c('eb-list-item', {
+          key: group.id,
+          props: {
+            link: '#',
+            popoverClose: true,
+            title: group.title,
+          },
+          on: {
+            click: event => {
+              this.groups.switchGroup(group.id);
+            },
+          },
+        }));
+      }
+      const tabList = c('f7-list', { attrs: { inset: true } }, tabButtons);
+      children.push(c('f7-popover', {
+        key: 'popover',
+        attrs: { id: this.popoverId },
+      }, [ tabList ]));
     }
-    const tabList = c('f7-list', { attrs: { inset: true } }, tabButtons);
-    children.push(c('f7-popover', { attrs: { id: this.popoverId } }, [ tabList ]));
     // buttons
     for (const button of this.buttons) {
       children.push(c('eb-header-button', {
@@ -46,9 +52,13 @@ export default {
       }));
     }
     // ok
-    return c('div', children);
+    return c('div', {
+    }, children);
   },
   props: {
+    side: {
+      type: String,
+    },
     buttons: {
       type: Array,
     },

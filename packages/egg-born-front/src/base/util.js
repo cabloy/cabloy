@@ -200,9 +200,7 @@ export default function(Vue) {
       // actionPath
       if (!action.actionComponent) {
         const url = action.actionPath ? this.combinePagePath(action.actionModule, this.replaceTemplate(action.actionPath, item)) : null;
-        if (url) {
-          this.navigate({ ctx, url, options: action.navigateOptions });
-        }
+        this.navigate({ ctx, url, options: action.navigateOptions });
         return;
       }
       // actionComponent

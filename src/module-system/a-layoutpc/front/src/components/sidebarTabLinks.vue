@@ -1,22 +1,12 @@
 <script>
-import SidebarTabButtons from './sidebarTabButtons.vue';
-
 import Vue from 'vue';
 export default {
   components: {
-    ebSidebarTabButtons: SidebarTabButtons,
   },
   render(c) {
-    const children = [];
-    // buttons
-    children.push(c('eb-sidebar-tab-buttons'), {
-      props: {
-        side: this.side,
-      },
-    });
-    const tabs = [];
+    const tabLinks = [];
     for (const panel of this.panels) {
-      tabs.push(c('f7-link', {
+      tabLinks.push(c('f7-link', {
         key: this.layout._panelFullName(panel),
         staticClass: this.layout._panelFullName(panel) === this.sidebar.options.panelActive ? 'active' : '',
         props: {
@@ -44,8 +34,8 @@ export default {
       }));
     }
     return c('div', {
-      staticClass: 'eb-layout-sidebar-tabs-buttons',
-    }, tabs);
+      staticClass: 'eb-layout-sidebar-tab-links',
+    }, tabLinks);
   },
   props: {
     side: {
