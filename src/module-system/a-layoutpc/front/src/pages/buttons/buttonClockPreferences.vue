@@ -35,10 +35,10 @@ export default {
     },
   },
   mounted() {
-    this.clock.$on('button:destroy', this.onButtonDestroy);
+    this.clock.$on('buttonReal:destroy', this.onButtonDestroy);
   },
   beforeDestroy() {
-    this.clock.$off('button:destroy', this.onButtonDestroy);
+    this.clock.$off('buttonReal:destroy', this.onButtonDestroy);
   },
   methods: {
     onButtonDestroy() {
