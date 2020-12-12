@@ -12,7 +12,6 @@ export default {
   'Not LoggedIn': '未登录',
   'Sign In': '登录',
   'Log Out': '退出登录',
-  'Section Not Found': '区段未发现',
   'Button Not Found': '按钮未发现',
   'Day of Week': '星期',
   'Custom Format': '自定义格式',

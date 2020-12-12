@@ -66,7 +66,6 @@ export default {
       groups: [],
       sidebar: null,
       panelsAll: null,
-      sectionsAll: null,
       buttonsAll: null,
     };
   },
@@ -349,7 +348,6 @@ export default {
     __getResourcesAll() {
       const resourceTypes = [
         { name: 'sidebarPanel', var: 'panelsAll' },
-        { name: 'statusbarSection', var: 'sectionsAll' },
         { name: 'headerButton', var: 'buttonsAll' },
       ];
       const promises = [];
@@ -363,7 +361,7 @@ export default {
       return Promise.all(promises);
     },
     __init(cb) {
-      // panelsAll & sectionsAll & buttonsAll
+      // panelsAll & buttonsAll
       this.__getResourcesAll().then(() => {
         // layoutConfig
         this.$store.dispatch('a/base/getLayoutConfig', 'a-layoutpc').then(layoutConfig => {
@@ -412,7 +410,7 @@ export default {
       }
     },
     __removeDynamicResources(side) {
-      const types = [ 'panels', 'sections', 'buttons' ];
+      const types = [ 'panels', 'buttons' ];
       for (const type of types) {
         const resources = side[type];
         if (resources) {
@@ -422,19 +420,12 @@ export default {
     },
     __initSidebar(side) {
       const panels = this.sidebar[side].panels;
-      const sections = this.sidebar[side].sections;
       const buttons = this.sidebar[side].buttons;
 
       if (panels) {
         this.sidebar[side].panels = [];
         for (const panel of panels) {
           this.sidebar[side].panels.push(this._preparePanel(panel));
-        }
-      }
-      if (sections) {
-        this.sidebar[side].sections = [];
-        for (const section of sections) {
-          this.sidebar[side].sections.push(this._prepareSection(section));
         }
       }
       if (buttons) {
@@ -459,9 +450,6 @@ export default {
     _findPanelStock(panel) {
       return this._findResourceStock(this.panelsAll, panel);
     },
-    _findSectionStock(section) {
-      return this._findResourceStock(this.sectionsAll, section);
-    },
     _findButtonStock(button) {
       return this._findResourceStock(this.buttonsAll, button);
     },
@@ -474,12 +462,6 @@ export default {
       const panelStock = this._findPanelStock(panel);
       // extend
       return this.$meta.util.extend({}, panelStock, panel, _panelExtra);
-    },
-    _prepareSection(section) {
-      // stock
-      const sectionStock = this._findSectionStock(section);
-      // extend
-      return this.$meta.util.extend({}, sectionStock, section);
     },
     _prepareButton(button) {
       // stock
@@ -538,26 +520,6 @@ export default {
         this.$refs[`sidebar${sideUpperCase}`].createView({ ctx: null, panel, options, init });
       });
     },
-    closeSection(side, section) {
-      const _sectionIndex = this.sidebar[side].sections.findIndex(item => this._sectionFullName(item) === this._sectionFullName(section));
-      if (_sectionIndex === -1) return;
-      this.sidebar[side].sections.splice(_sectionIndex, 1);
-      if (this.sidebar[side].sections.length === 0) {
-        this.onResize();
-      }
-      this.__saveLayoutConfig();
-    },
-    openSection(side, section) {
-      const _sectionIndex = this.sidebar[side].sections.findIndex(item => this._sectionFullName(item) === this._sectionFullName(section));
-      if (_sectionIndex > -1) return;
-      // prepare section
-      section = this._prepareSection(section);
-      this.sidebar[side].sections.push(section);
-      if (this.sidebar[side].sections.length === 1) {
-        this.onResize();
-      }
-      this.__saveLayoutConfig();
-    },
     closeButton(side, button) {
       const [ , _buttonIndex ] = this._findButton(side, button);
       if (_buttonIndex === -1) return;
@@ -583,9 +545,6 @@ export default {
     },
     _panelFullName(panel) {
       return this._resourceFullName(panel);
-    },
-    _sectionFullName(section) {
-      return this._resourceFullName(section);
     },
     _buttonFullName(button) {
       return this._resourceFullName(button);

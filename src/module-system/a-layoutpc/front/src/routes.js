@@ -3,5 +3,5 @@ function load(name) {
 }
 
 export default [
-  { path: 'section/clock/preferences', component: load('section/clockPreferences') },
+  { path: 'button/clock/preferences', component: load('buttons/buttonClockPreferences') },
 ];

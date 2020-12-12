@@ -67,8 +67,8 @@ function installFactory(_Vue) {
         // layoutConfig
         this.$store.dispatch('a/base/getLayoutConfig', 'a-layoutpc').then(layoutConfig => {
           let options;
-          if (layoutConfig.sectionClockOptions) {
-            options = this.$meta.util.extend({}, configDefault, layoutConfig.sectionClockOptions);
+          if (layoutConfig.buttonClockOptions) {
+            options = this.$meta.util.extend({}, configDefault, layoutConfig.buttonClockOptions);
           } else {
             // default
             options = this.$meta.util.extend({}, configDefault);
@@ -125,7 +125,7 @@ function installFactory(_Vue) {
                 };
                 this.updateClockText();
                 // save
-                this.$store.commit('a/base/setLayoutConfigKey', { module: 'a-layoutpc', key: 'sectionClockOptions', value: this.options });
+                this.$store.commit('a/base/setLayoutConfigKey', { module: 'a-layoutpc', key: 'buttonClockOptions', value: this.options });
               }
             },
           },

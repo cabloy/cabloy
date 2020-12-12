@@ -116,7 +116,7 @@ module.exports = app => {
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         component: 'buttonClock',
-        actionPath: '/a/layoutpc/section/clock/preferences',
+        actionPath: '/a/layoutpc/button/clock/preferences',
         scene: 'sidebar',
         sceneOptions: { side: 'right', name: 'preferences', title: 'Preferences' },
       }),

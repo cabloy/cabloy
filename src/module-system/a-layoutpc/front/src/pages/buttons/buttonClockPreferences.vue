@@ -35,13 +35,13 @@ export default {
     },
   },
   mounted() {
-    this.clock.$on('section:destroy', this.onSectionDestroy);
+    this.clock.$on('button:destroy', this.onButtonDestroy);
   },
   beforeDestroy() {
-    this.clock.$off('section:destroy', this.onSectionDestroy);
+    this.clock.$off('button:destroy', this.onButtonDestroy);
   },
   methods: {
-    onSectionDestroy() {
+    onButtonDestroy() {
       this.$view.close();
     },
     onValidateItemChange(key, value) {
