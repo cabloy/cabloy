@@ -1,15 +1,13 @@
 import layout from './components/layout.vue';
-import sectionCopyright from './components/sections/copyright.vue';
-import sectionClock from './components/sections/clock.vue';
-import buttonLink from './components/button/buttonLink.vue';
-import buttonFullscreen from './components/button/buttonFullscreen.vue';
-import buttonMine from './components/button/buttonMine.vue';
+import buttonLink from './components/buttons/buttonLink.vue';
+import buttonFullscreen from './components/buttons/buttonFullscreen.vue';
+import buttonMine from './components/buttons/buttonMine.vue';
+import buttonClock from './components/buttons/buttonClock.vue';
 
 export default {
   layout,
-  sectionCopyright,
-  sectionClock,
   buttonLink,
   buttonFullscreen,
   buttonMine,
+  buttonClock,
 };

@@ -46,31 +46,6 @@ module.exports = app => {
       }),
       resourceRoles: 'root',
     },
-    // sections
-    {
-      atomName: 'Copyright',
-      atomStaticKey: 'sectionCopyright',
-      atomRevision: 0,
-      atomCategoryId: 'a-layoutpc:statusbarSection.General',
-      resourceType: 'a-layoutpc:statusbarSection',
-      resourceConfig: JSON.stringify({
-        module: moduleInfo.relativeName,
-        component: 'sectionCopyright',
-      }),
-      resourceRoles: 'root',
-    },
-    {
-      atomName: 'Clock',
-      atomStaticKey: 'sectionClock',
-      atomRevision: 0,
-      atomCategoryId: 'a-layoutpc:statusbarSection.General',
-      resourceType: 'a-layoutpc:statusbarSection',
-      resourceConfig: JSON.stringify({
-        module: moduleInfo.relativeName,
-        component: 'sectionClock',
-      }),
-      resourceRoles: 'root',
-    },
     // header buttons
     {
       atomName: 'Home',
@@ -132,6 +107,39 @@ module.exports = app => {
       }),
       resourceRoles: 'root',
     },
+    {
+      atomName: 'Clock',
+      atomStaticKey: 'buttonClock',
+      atomRevision: 0,
+      atomCategoryId: 'a-layoutpc:headerButton.General',
+      resourceType: 'a-layoutpc:headerButton',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonClock',
+        actionPath: '/a/layoutpc/section/clock/preferences',
+        scene: 'sidebar',
+        sceneOptions: { side: 'right', name: 'preferences', title: 'Preferences' },
+      }),
+      resourceRoles: 'root',
+    },
+    {
+      atomName: 'Copyright',
+      atomStaticKey: 'buttonCopyright',
+      atomRevision: 0,
+      atomCategoryId: 'a-layoutpc:headerButton.General',
+      resourceType: 'a-layoutpc:headerButton',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonLink',
+        icon: null,
+        actionPath: '/a/basefront/base/about',
+        scene: 'sidebar',
+        sceneOptions: { side: 'right', name: 'about', title: 'About' },
+        showLabel: true,
+      }),
+      resourceRoles: 'root',
+    },
+
 
   ];
   return resources;

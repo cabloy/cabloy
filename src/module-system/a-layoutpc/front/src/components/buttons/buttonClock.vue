@@ -1,5 +1,5 @@
 <template>
-  <span class="eb-cursor-pointer" @click="onClickSettings">{{clockText}}</span>
+  <eb-link :class="buttonClass" :iconMaterial="buttonIcon" :text="clockText" :onPerform="onPerform"></eb-link>
 </template>
 <script>
 // export
@@ -44,9 +44,9 @@ const configDefault = {
 // installFactory
 function installFactory(_Vue) {
   const Vue = _Vue;
-  const ebLayoutSectionBase = Vue.prototype.$meta.module.get('a-layoutpc').options.mixins.ebLayoutSectionBase;
+  const ebLayoutButtonBase = Vue.prototype.$meta.module.get('a-layoutpc').options.mixins.ebLayoutButtonBase;
   return {
-    mixins: [ ebLayoutSectionBase ],
+    mixins: [ ebLayoutButtonBase ],
     data() {
       return {
         options: null,
@@ -54,6 +54,19 @@ function installFactory(_Vue) {
         timerId: 0,
         clockText: '',
       };
+    },
+    computed: {
+      buttonConfig() {
+        return this.button.options.resourceConfig;
+      },
+      buttonIcon() {
+        return this.buttonConfig.icon && this.buttonConfig.icon.material;
+      },
+      buttonClass() {
+        return {
+          'header-button-separator': this.buttonConfig.showSeparator,
+        };
+      },
     },
     created() {
       this.__init();
@@ -104,10 +117,10 @@ function installFactory(_Vue) {
         if (this.options.time) text = `${text} ${moment.format('HH:mm')}`;
         return text.trim();
       },
-      onClickSettings() {
-        this.$meta.vueLayout.navigate('/a/layoutpc/section/clock/preferences', {
-          scene: 'sidebar',
-          sceneOptions: { side: 'right', name: 'preferences', title: 'Preferences' },
+      onPerform() {
+        this.$meta.vueLayout.navigate(this.buttonConfig.actionPath, {
+          scene: this.buttonConfig.scene,
+          sceneOptions: this.buttonConfig.sceneOptions,
           context: {
             params: {
               clock: this,

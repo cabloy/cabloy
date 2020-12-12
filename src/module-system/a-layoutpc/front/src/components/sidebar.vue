@@ -1,16 +1,16 @@
 <script>
 import Vue from 'vue';
 import SidebarTabButtons from './sidebarTabButtons.vue';
-import SidebarTabSections from './sidebarTabSections.vue';
 import SidebarGroup from './sidebarGroup.vue';
 import SidebarToolbar from './sidebarToolbar.vue';
+import HeaderButtons from './headerButtons.vue';
 
 export default {
   components: {
     ebSidebarTabButtons: SidebarTabButtons,
-    ebSidebarTabSections: SidebarTabSections,
     ebSidebarGroup: SidebarGroup,
     ebSidebarToolbar: SidebarToolbar,
+    ebHeaderButtons: HeaderButtons,
   },
   render(c) {
     const children = [];
@@ -93,19 +93,21 @@ export default {
       const children = [];
       // buttons
       const buttons = c('eb-sidebar-tab-buttons', {
+        key: 'buttons',
         props: {
           side: this.side,
         },
       });
       children.push(buttons);
-      // sections
+      // buttons
       if (this.side === 'bottom') {
-        const sections = c('eb-sidebar-tab-sections', {
+        const buttons = c('eb-header-buttons', {
+          key: 'sections',
           props: {
-            side: this.side,
+            buttons: this.layout.sidebar[this.side].buttons,
           },
         });
-        children.push(sections);
+        children.push(buttons);
       }
       // tabs
       return c('div', {

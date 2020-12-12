@@ -516,7 +516,7 @@ export default {
       if (side === 'left' || side === 'right') {
         return this.sidebar[side].panels.length > 0;
       }
-      return this.sidebar[side].panels.length > 0 || this.sidebar[side].sections.length > 0;
+      return this.sidebar[side].panels.length > 0 || this.sidebar[side].buttons.length > 0;
     },
     _createPanel({ side, panel, url, options, init }) {
       const sideUpperCase = side.replace(side[0], side[0].toUpperCase());

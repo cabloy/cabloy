@@ -5,29 +5,29 @@ export default {
     if (!this.errorMessage && this.ready) {
       // props
       const props = {
-        section: this, // for more extensible
+        button: this, // for more extensible
       };
-      children.push(c(this.layout._sectionFullName(this.options), {
-        staticClass: 'section-inner',
+      children.push(c(this.layout._buttonFullName(this.options), {
+        staticClass: 'button-inner',
         props,
         on: {
-          'sectionReal:ready': this.__onSectionRealReady,
-          'sectionReal:destroy': this.__onSectionRealDestroy,
+          'buttonReal:ready': this.__onButtonRealReady,
+          'buttonReal:destroy': this.__onButtonRealDestroy,
         },
       }));
     } else if (this.errorMessage) {
       children.push(c('div', {
-        staticClass: 'section-inner section-inner-error',
+        staticClass: 'button-inner button-inner-error',
         domProps: { innerText: this.errorMessage },
       }));
     }
     return c('div', {
-      staticClass: 'section',
+      staticClass: 'button',
       directives: [{
         name: 'eb-dragdrop',
         value: {
           scene: this.dragdropScene,
-          section: this.options,
+          button: this.options,
           onDragStart: this.onDragStart,
           onDropElement: this.onDropElement,
           onDragDone: this.onDragDone,
@@ -56,8 +56,8 @@ export default {
     sidebar() {
       return this.$parent.$parent;
     },
-    sections() {
-      return this.group.sections;
+    buttons() {
+      return this.group.buttons;
     },
     group() {
       return this.$parent;
@@ -67,7 +67,7 @@ export default {
     this.__init();
   },
   beforeDestroy() {
-    this.$emit('section:destroy');
+    this.$emit('button:destroy');
   },
   methods: {
     __init() {

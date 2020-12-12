@@ -42,9 +42,9 @@ export default {
         toolbarHeight: 24,
         panelActive: '',
         panels: [],
-        sections: [
-          { module: 'a-layoutpc', name: 'sectionClock' },
-          { module: 'a-layoutpc', name: 'sectionCopyright' },
+        buttons: [
+          { module: 'a-layoutpc', name: 'buttonClock' },
+          { module: 'a-layoutpc', name: 'buttonCopyright' },
         ],
       },
     },

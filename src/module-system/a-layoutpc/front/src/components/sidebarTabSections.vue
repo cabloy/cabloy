@@ -9,11 +9,11 @@ export default {
   render(c) {
     const tabs = [];
     const index = 0;
-    for (const section of this.sections) {
+    for (const button of this.buttons) {
       tabs.push(c('eb-sidebar-tab-section', {
-        key: this.layout._sectionFullName(section),
+        key: this.layout._buttonFullName(button),
         props: {
-          options: section,
+          options: button,
           dragdropScene: this.dragdropScene,
         },
       }));
@@ -29,7 +29,7 @@ export default {
   },
   data() {
     return {
-      sectionsReal: {},
+      buttonsReal: {},
       dragdropScene: Vue.prototype.$meta.util.nextId('dragdrop'),
     };
   },
@@ -40,8 +40,8 @@ export default {
     sidebar() {
       return this.$parent;
     },
-    sections() {
-      return this.sidebar.options.sections;
+    buttons() {
+      return this.sidebar.options.buttons;
     },
   },
   methods: {},
