@@ -184,12 +184,21 @@ export default {
       });
     },
     openHome() {
-      let button = this.$config.layout.header.button.home;
-      if (!button) {
-        button = this.$config.layout.header.button.dashboard;
+      // home
+      let [ _button ] = this._findButton('top', { module: 'a-layoutpc', name: 'buttonHome' });
+      if (!_button) {
+        // default
+        [ _button ] = this._findButton('top', { module: 'a-layoutpc', name: 'buttonDashboard' });
       }
-      if (button) {
-        this.navigate(button.url, { scene: button.scene, sceneOptions: button.sceneOptions });
+      if (_button) {
+        const resourceConfig = _button.resourceConfig;
+        const action = this.$utils.extend({}, resourceConfig, {
+          navigateOptions: {
+            scene: resourceConfig.scene,
+            sceneOptions: resourceConfig.sceneOptions,
+          },
+        });
+        return this.$meta.util.performAction({ ctx: this, action, item: null });
       }
     },
     navigate(url, options) {
@@ -550,18 +559,23 @@ export default {
       this.__saveLayoutConfig();
     },
     closeButton(side, button) {
-      const _buttonIndex = this.sidebar[side].buttons.findIndex(item => this._buttonFullName(item) === this._buttonFullName(button));
+      const [ , _buttonIndex ] = this._findButton(side, button);
       if (_buttonIndex === -1) return;
       this.sidebar[side].buttons.splice(_buttonIndex, 1);
       this.__saveLayoutConfig();
     },
     openButton(side, button) {
-      const _buttonIndex = this.sidebar[side].buttons.findIndex(item => this._buttonFullName(item) === this._buttonFullName(button));
+      const [ , _buttonIndex ] = this._findButton(side, button);
       if (_buttonIndex > -1) return;
       // prepare button
       button = this._prepareButton(button);
       this.sidebar[side].buttons.push(button);
       this.__saveLayoutConfig();
+    },
+    _findButton(side, button) {
+      const _buttonIndex = this.sidebar[side].buttons.findIndex(item => this._buttonFullName(item) === this._buttonFullName(button));
+      if (_buttonIndex === -1) return [ null, -1 ];
+      return [ this.sidebar[side].buttons[_buttonIndex], _buttonIndex ];
     },
     _resourceFullName(resource) {
       if (resource.atomStaticKey) return resource.atomStaticKey;

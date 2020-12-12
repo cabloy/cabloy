@@ -201,7 +201,7 @@ export default function(Vue) {
       if (!action.actionComponent) {
         const url = action.actionPath ? this.combinePagePath(action.actionModule, this.replaceTemplate(action.actionPath, item)) : null;
         if (url) {
-          ctx.$view.navigate(url, action.navigateOptions);
+          this.navigate({ ctx, url, options: action.navigateOptions });
         }
         return;
       }
@@ -216,13 +216,21 @@ export default function(Vue) {
         const url = action.actionPath ? this.combinePagePath(action.actionModule, this.replaceTemplate(action.actionPath, item)) : null;
         if (url) {
           ctx.$nextTick(() => {
-            ctx.$view.navigate(url, action.navigateOptions);
+            this.navigate({ ctx, url, options: action.navigateOptions });
           });
         }
         return res;
       } catch (err) {
         componentInstance.$destroy();
         throw err;
+      }
+    },
+    navigate({ ctx, url, options }) {
+      const view = ctx.$view;
+      if (view) {
+        view.navigate(url, options);
+      } else {
+        ctx.$meta.vueLayout.navigate(url, options);
       }
     },
     setProperty(obj, name, value) {
