@@ -83,7 +83,7 @@ export default {
   render() {
     return (
       <eb-page>
-        <eb-navbar large largeTransparent title={this.$text('ViewLayout')} eb-back-link="Back"></eb-navbar>
+        <eb-navbar large largeTransparent title={this.$text('ViewLayout') + ' TBD'} eb-back-link="Back"></eb-navbar>
         <f7-list>
           <eb-list-item title={this.$text('Header Buttons')} link="#" propsOnPerform={event => this.onPerformResources(event, 'top', 'buttons', 'a-layoutpc:button')}></eb-list-item>
           <eb-list-item title={this.$text('Sidebar (Left)')} link="#" propsOnPerform={event => this.onPerformResources(event, 'left', 'panels', 'a-layoutpc:panel')}></eb-list-item>

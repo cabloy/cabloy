@@ -227,11 +227,13 @@ export default {
       });
     },
     async _onActionSelectLocale({ ctx, action, item }) {
-      const atomClasses = await ctx.$store.dispatch('a/base/getAtomClasses');
-      const atomClass = atomClasses[item.module][item.atomClassName];
-      // not support language
-      if (!atomClass.language) {
-        return null;
+      if (item && item.module && item.atomClassName) {
+        const atomClasses = await ctx.$store.dispatch('a/base/getAtomClasses');
+        const atomClass = atomClasses[item.module][item.atomClassName];
+        // not support language
+        if (!atomClass.language) {
+          return null;
+        }
       }
       // only one
       const locales = await ctx.$store.dispatch('a/base/getLocales');

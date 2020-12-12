@@ -16,6 +16,7 @@ module.exports = app => {
       actionPath,
     }),
     resourceRoles: 'root',
+    resourceSorting: 2,
   };
   return resource;
 };

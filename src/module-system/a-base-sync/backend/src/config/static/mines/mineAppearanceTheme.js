@@ -1,5 +1,5 @@
 module.exports = app => {
-  const actionPath = '';
+  const actionPath = '/a/user/theme';
   // resource
   const resource = {
     atomName: 'Theme',
@@ -11,6 +11,7 @@ module.exports = app => {
       actionPath,
     }),
     resourceRoles: 'root',
+    resourceSorting: 2,
   };
   return resource;
 };

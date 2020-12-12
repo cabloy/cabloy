@@ -17,23 +17,18 @@
         <eb-button v-if="loggedIn" :onPerform="onPerformLogout">{{$text('Log Out')}}</eb-button>
       </f7-segmented>
     </div>
-    <div v-if="ready" class="mine-items">
-      <div v-for="category of treeData" :key="category.id">
-        <f7-block-title>{{category.categoryNameLocale}}</f7-block-title>
-       <f7-card>
-        <f7-card-content>
-          <f7-row>
-            <f7-col v-for="mineItem of __getMineItemsOfCategory(category)" width="33" :key="mineItem.atomStaticKey">
-              <div>
-                <eb-link :context="mineItem" :onPerform="onPerformMineItem">{{mineItem.atomNameLocale}}</eb-link>
-              </div>
-            </f7-col>
-          </f7-row>
-        </f7-card-content>
-      </f7-card>
-      </div>
-    </div>
-    <f7-block></f7-block>
+    <f7-list v-if="ready">
+      <f7-list-group v-for="category of treeData" :key="category.id">
+        <f7-list-item group-title :title="category.categoryNameLocale"></f7-list-item>
+        <eb-list-item v-for="mineItem of __getMineItemsOfCategory(category)" :key="mineItem.atomStaticKey"
+         link="#" :title="mineItem.atomNameLocale"
+         :context="mineItem" :onPerform="onPerformMineItem">
+          <div slot="after">
+          </div>
+        </eb-list-item>
+      </f7-list-group>
+    </f7-list>
+
   </eb-page>
 </template>
 <script>
@@ -170,10 +165,5 @@ export default {
   }
 }
 
-.mine-items{
-  .block-title{
-    margin-top: var(--f7-block-title-margin-bottom);
-  }
-}
 
 </style>

@@ -12,6 +12,7 @@ module.exports = app => {
       name: 'appearanceView',
     }),
     resourceRoles: 'root',
+    resourceSorting: 3,
   };
   return resource;
 };

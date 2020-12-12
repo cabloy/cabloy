@@ -17,6 +17,14 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async saveLocale() {
+      const res = await this.service.user.saveLocale({
+        data: this.ctx.request.body.data,
+        user: this.ctx.state.user.agent,
+      });
+      this.ctx.success(res);
+    }
+
     async agent() {
       const res = await this.service.user.agent({ userId: this.ctx.state.user.agent.id });
       this.ctx.success(res);

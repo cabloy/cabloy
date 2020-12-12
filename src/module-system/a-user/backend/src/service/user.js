@@ -11,13 +11,19 @@ module.exports = app => {
       delete data.userName;
       delete data.email;
       delete data.mobile;
+      delete data.locale;
       // save
       return await this.ctx.bean.user.save({ user: data });
     }
 
     async saveAvatar({ data, user }) {
-      data.id = user.id;
-      return await this.ctx.bean.user.save({ user: data });
+      const userData = { id: user.id, avatar: data.avatar };
+      return await this.ctx.bean.user.save({ user: userData });
+    }
+
+    async saveLocale({ data, user }) {
+      const userData = { id: user.id, locale: data.locale };
+      return await this.ctx.bean.user.save({ user: userData });
     }
 
     async agent({ userId }) {

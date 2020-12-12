@@ -45,8 +45,7 @@ module.exports = app => {
         ebType: 'select',
         ebTitle: 'Locale',
         ebOptionsUrl: '/a/base/base/locales',
-        ebOptionsUrlParams: null,
-        ebOptionsBlankAuto: true,
+        ebReadOnly: true,
       },
     },
   };

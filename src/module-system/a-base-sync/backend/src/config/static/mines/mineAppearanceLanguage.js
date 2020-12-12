@@ -1,5 +1,4 @@
 module.exports = app => {
-  const actionPath = '';
   // resource
   const resource = {
     atomName: 'Language',
@@ -8,9 +7,12 @@ module.exports = app => {
     atomCategoryId: 'a-base:mine.Appearance',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
-      actionPath,
+      actionModule: 'a-user',
+      actionComponent: 'action',
+      name: 'appearanceLanguage',
     }),
     resourceRoles: 'root',
+    resourceSorting: 1,
   };
   return resource;
 };

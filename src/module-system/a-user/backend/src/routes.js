@@ -5,6 +5,7 @@ module.exports = app => {
       meta: { validate: { module: 'a-base', validator: 'user' } },
     },
     { method: 'post', path: 'user/saveAvatar', controller: 'user' },
+    { method: 'post', path: 'user/saveLocale', controller: 'user' },
     { method: 'post', path: 'user/agent', controller: 'user' },
     { method: 'post', path: 'user/agentsBy', controller: 'user' },
     { method: 'post', path: 'user/userByMobile', controller: 'user' },
