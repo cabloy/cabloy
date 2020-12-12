@@ -128,6 +128,7 @@ module.exports = app => {
         icon: { material: 'person' },
         actionPath: null,
         scene: 'sidebar', sceneOptions: { side: 'right', module: 'a-layoutpc', name: 'panelMine' },
+        showSeparator: true,
       }),
       resourceRoles: 'root',
     },

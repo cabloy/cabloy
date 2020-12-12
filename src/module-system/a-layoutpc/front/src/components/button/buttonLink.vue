@@ -1,5 +1,5 @@
 <template>
-  <eb-link :iconMaterial="buttonIcon" :text="buttonLabel" :onPerform="onPerform"></eb-link>
+  <eb-link :class="buttonClass" :iconMaterial="buttonIcon" :text="buttonLabel" :onPerform="onPerform"></eb-link>
 </template>
 <script>
 // export
@@ -23,6 +23,11 @@ function installFactory(_Vue) {
       buttonLabel() {
         if (!this.buttonConfig.showLabel) return null;
         return this.button.options.titleLocale;
+      },
+      buttonClass() {
+        return {
+          'header-button-separator': this.buttonConfig.showSeparator,
+        };
       },
     },
     methods: {

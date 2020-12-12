@@ -1,5 +1,5 @@
 <template>
-  <eb-link class="mine" :onPerform="onPerform">
+  <eb-link :class="buttonClass" :onPerform="onPerform">
     <div class="item" v-if="loggedIn">
       <img class="avatar avatar24" :src="userAvatar">
     </div>
@@ -43,6 +43,15 @@ function installFactory(_Vue) {
           avatar = configBase.user.avatar.default;
         }
         return this.$meta.util.combineImageUrl(avatar, 48);
+      },
+      buttonConfig() {
+        return this.button.options.resourceConfig;
+      },
+      buttonClass() {
+        return {
+          mine: true,
+          'header-button-separator': this.buttonConfig.showSeparator,
+        };
       },
     },
     methods: {
