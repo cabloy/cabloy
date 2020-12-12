@@ -66,24 +66,13 @@ export default {
       return this.$api.post('user/save', {
         data: this.user,
       }).then(() => {
-        // locale
-        const localeOld = this.$store.state.auth.user.agent.locale;
-        const localeConfirm = this.$text('Do you want to reload for the new locale to take effect?');
         // save
         const userNew = { agent: this.user };
         if (this.$store.state.auth.user.op.id === this.user.id) {
           userNew.op = this.user;
         }
         this.$store.commit('auth/setUser', userNew);
-        // check if locale changed
-        if (localeOld !== this.user.locale) {
-          this.$view.dialog.confirm(localeConfirm).then(() => {
-            // this.$meta.vueApp.reload({ echo: false });
-            window.location.reload();
-          });
-        } else {
-          this.$f7router.back();
-        }
+        this.$f7router.back();
       });
     },
   },
