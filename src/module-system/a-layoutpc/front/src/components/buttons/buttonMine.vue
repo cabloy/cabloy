@@ -1,7 +1,7 @@
 <template>
   <eb-link :class="buttonClass" :onPerform="onPerformClick">
     <div class="item" v-if="loggedIn">
-      <img class="avatar avatar24" :src="userAvatar">
+      <img class="avatar" :src="userAvatar">
     </div>
     <div class="item name" v-if="loggedIn">{{userName}}</div>
     <div class="item status" v-if="!loggedIn">{{$text('Not LoggedIn')}}</div>
