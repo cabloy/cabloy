@@ -99,7 +99,7 @@ export default {
           <eb-list-item title={this.$text('Sidebar (Left)')} link="#" propsOnPerform={event => this.onPerformResources(event, 'left', 'panels', 'a-layoutpc:sidebarPanel')}></eb-list-item>
           <eb-list-item title={this.$text('Sidebar (Right)')} link="#" propsOnPerform={event => this.onPerformResources(event, 'right', 'panels', 'a-layoutpc:sidebarPanel')}></eb-list-item>
           <eb-list-item title={this.$text('Statusbar (Left)')} link="#" propsOnPerform={event => this.onPerformResources(event, 'bottom', 'panels', 'a-layoutpc:sidebarPanel')}></eb-list-item>
-          <eb-list-item title={this.$text('Statusbar (Right)')} link="#" propsOnPerform={event => this.onPerformResources(event, 'bottom', 'sections', 'a-layoutpc:statusbarSection')}></eb-list-item>
+          <eb-list-item title={this.$text('Statusbar (Right)')} link="#" propsOnPerform={event => this.onPerformResources(event, 'bottom', 'buttons', 'a-layoutpc:headerButton')}></eb-list-item>
         </f7-list>
       </eb-page>
     );

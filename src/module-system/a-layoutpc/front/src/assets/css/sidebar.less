@@ -136,19 +136,31 @@
           align-items: center;
           white-space: nowrap;
 
-          a.link {
-            color: #C3D4E7;
-            opacity: 0.6;
+          .header-button {
+            height: 100%;
+            word-break: keep-all;
+            padding: 0 0;
+            margin-left: 6px;
             user-select: none;
             display: inline-flex;
             align-items: center;
             align-content: center;
             justify-content: center;
 
+          }
+
+          a.link {
+            color: #C3D4E7;
+            opacity: 0.6;
+
             &.active,
             &:hover {
               background: hsla(0, 0%, 100%, .12);
               opacity: 0.6;
+            }
+
+            i.icon {
+              font-size: 16px;
             }
           }
 
@@ -195,15 +207,17 @@
           flex-direction: column;
           width: 100%;
 
+          .header-button {
+            &[data-dragdrop-drop] {
+              border-top: 1px solid #C3D4E7;
+            }
+          }
+
           a.link {
             writing-mode: vertical-lr;
             word-break: keep-all;
             padding: 10px 0;
             width: 100%;
-
-            &[data-dragdrop-drop] {
-              border-top: 1px solid #C3D4E7;
-            }
           }
 
           .button-separator {
@@ -242,14 +256,16 @@
           flex-direction: row;
           height: 100%;
 
+          .header-button {
+            &[data-dragdrop-drop] {
+              border-left: 1px solid #C3D4E7;
+            }
+          }
+
           a.link {
             word-break: keep-all;
             padding: 0 10px;
             height: 100%;
-
-            &[data-dragdrop-drop] {
-              border-left: 1px solid #C3D4E7;
-            }
           }
 
           .button-separator {
