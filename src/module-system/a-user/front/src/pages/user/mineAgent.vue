@@ -1,23 +1,10 @@
 <template>
   <eb-page>
     <eb-navbar :title="$text('Mine')" eb-back-link="Back"></eb-navbar>
-    <div class="me">
-      <div>
-        <img class="avatar avatar48" :src="userAvatar" style="cursor:pointer;" @click="onClickAvatar">
-      </div>
-      <div class="name">{{userName}}</div>
-      <div class="status" v-if="!loggedIn">{{$text('Not LoggedIn')}}</div>
-      <div class="login">
-        <eb-link v-if="!loggedIn" :onPerform="onPerformLogin">{{$text('Sign In')}}</eb-link>
-        <eb-link v-if="loggedIn" :onPerform="onPerformLogout">{{$text('Log Out')}}</eb-link>
-      </div>
-    </div>
     <f7-list>
-      <eb-list-item v-if="!user.agent.anonymous" :title="$text('Account')" link="#" eb-href="user/account" eb-target="_self"></eb-list-item>
+      <eb-list-item :title="$text('Account')" link="#" eb-href="user/account" eb-target="_self"></eb-list-item>
       <f7-list-item divider></f7-list-item>
-      <eb-list-item v-if="viewEnable" :title="$text('ViewLayout')" link="#" eb-href="view" eb-target="_self"></eb-list-item>
-      <eb-list-item :title="$text('Theme')" link="#" eb-href="theme" eb-target="_self"></eb-list-item>
-      <eb-list-item v-if="!user.agent.anonymous" :title="$text('Settings')" link="#" eb-href="/a/settings/user/list" eb-target="_self"></eb-list-item>
+      <eb-list-item  :title="$text('Settings')" link="#" eb-href="/a/settings/user/list" eb-target="_self"></eb-list-item>
     </f7-list>
   </eb-page>
 </template>
