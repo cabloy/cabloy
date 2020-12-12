@@ -36,8 +36,8 @@ module.exports = app => {
         atomStage: 'archive',
       });
       if (atom) {
-        // check revision
-        if (atomRevision !== atom.atomRevision) {
+        // check revision: not use !==
+        if (atomRevision > atom.atomRevision) {
           item = await this._adjustItem({ moduleName, atomClass, item, register: false });
           await this._updateRevision({ atomClass, atomIdArchive: atom.atomId, atomIdDraft: atom.atomIdDraft, item });
         }
