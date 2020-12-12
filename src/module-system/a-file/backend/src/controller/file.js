@@ -1,6 +1,27 @@
 module.exports = app => {
   class FileController extends app.Controller {
 
+    async all() {
+      const options = this.ctx.request.body.options;
+      options.file = 1;
+      const res = await this.ctx.performAction({
+        method: 'post',
+        url: '/a/base/atom/select',
+        body: {
+          atomClass: this.ctx.request.body.atomClass,
+          options,
+        },
+      });
+      for (const item of res.list) {
+        item.i_downloadUrl = this.ctx.service.file.getDownloadUrl({
+          downloadId: item.i_downloadId,
+          mode: item.i_mode,
+          fileExt: item.i_fileExt,
+        });
+      }
+      this.ctx.success(res);
+    }
+
     async list() {
       const user = this.ctx.state.user.op;
       const options = this.ctx.request.body.options;

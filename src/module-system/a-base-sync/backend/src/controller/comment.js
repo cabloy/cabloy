@@ -7,7 +7,7 @@ module.exports = app => {
       options.comment = 1;
       const res = await this.ctx.performAction({
         method: 'post',
-        url: 'atom/select',
+        url: '/a/base/atom/select',
         body: {
           atomClass: this.ctx.request.body.atomClass,
           options,

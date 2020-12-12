@@ -2,37 +2,46 @@
   <eb-page ptr @ptr:refresh="onRefresh" infinite :infinitePreloader="false" @infinite="onInfinite">
     <eb-navbar large largeTransparent :title="$text('Attachment List')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link v-if="!!actionWrite" iconMaterial="add" :onPerform="onPerformAdd"></eb-link>
+        <eb-link :iconMaterial="order==='desc'?'arrow_downward':'arrow_upward'" :onPerform="onPerformSort"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <f7-list>
-      <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.realName" link="#" :context="item" :onPerform="onItemClick" :swipeout="item.userId===user.id">
-        <div slot="media">
-          <img class="avatar avatar32" :src="getItemMedia(item)">
-        </div>
+      <eb-list-item class="item" v-for="item of items" :key="item.id" :title="item.i_realName" link="#" :context="item" :onPerform="onItemClick">
         <div slot="root-start" class="header">
           <div class="userName">
-            <span>{{item.userName}}</span>
+            <eb-link :context="item" :onPerform="onPerformViewAtom">{{item.atomName}}</eb-link>
           </div>
-          <div class="date">{{$meta.util.formatDateTimeRelative(item.createdAt)}}</div>
+          <div class="date">{{$meta.util.formatDateTimeRelative(item.i_createdAt)}}</div>
         </div>
-        <eb-context-menu v-if="!!actionWrite">
-          <div slot="right">
-            <div color="orange" :context="item" :onPerform="onPerformDelete">{{$text('Delete')}}</div>
-          </div>
-        </eb-context-menu>
       </eb-list-item>
     </f7-list>
     <eb-load-more ref="loadMore" :onLoadClear="onLoadClear" :onLoadMore="onLoadMore" :autoInit="true"></eb-load-more>
   </eb-page>
 </template>
 <script>
+import Vue from 'vue';
+const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
+
 export default {
+  mixins: [ ebAtomActions ],
   data() {
+    const query = this.$f7route.query;
+    const module = query && query.module;
+    const atomClassName = query && query.atomClassName;
+    const atomClass = (module && atomClassName) ? { module, atomClassName } : null;
+    let where = (query && query.where) ? JSON.parse(query.where) : null;
+    // scene
+    const scene = query && query.scene;
+    if (scene === 'mine') {
+      if (!where) where = {};
+      const user = this.$store.state.auth.user.op;
+      where['i.userId'] = user.id;
+    }
     return {
-      atomId: parseInt(this.$f7route.query.atomId),
+      atomClass,
+      where,
+      order: 'desc',
       items: [],
-      actionWrite: null,
     };
   },
   computed: {
@@ -41,7 +50,12 @@ export default {
     },
   },
   created() {
-    this.checkActionWrite();
+  },
+  mounted() {
+    this.$meta.eventHub.$on('attachment:action', this.onAttachmentChanged);
+  },
+  beforeDestroy() {
+    this.$meta.eventHub.$off('attachment:action', this.onAttachmentChanged);
   },
   methods: {
     onRefresh(done) {
@@ -63,13 +77,17 @@ export default {
           attachment: 1,
         },
         orders: [
-          [ 'createdAt', 'asc' ],
+          [ 'i_createdAt', this.order ],
         ],
         page: { index },
       };
+      // where
+      if (this.where) {
+        options.where = this.where;
+      }
       // fetch
-      return this.$api.post('/a/file/file/list', {
-        key: { atomId: this.atomId },
+      return this.$api.post('/a/file/file/all', {
+        atomClass: this.atomClass,
         options,
       }).then(data => {
         this.items = this.items.concat(data.list);
@@ -79,58 +97,21 @@ export default {
     reload() {
       this.$refs.loadMore.reload();
     },
-    checkActionWrite() {
-      this.$api.post('/a/base/atom/checkRightAction', {
-        key: { atomId: this.atomId },
-        action: 3,
-        stage: 'draft',
-        checkFlow: true,
-      }).then(data => {
-        if (data && data.atomClosed === 0) {
-          this.actionWrite = data;
-        }
-      });
+    onPerformSort() {
+      this.order = this.order === 'desc' ? 'asc' : 'desc';
+      this.reload();
     },
-    onPerformAdd() {
-      return new Promise((resolve, reject) => {
-        this.$view.navigate('/a/file/file/upload', {
-          context: {
-            params: {
-              mode: 2,
-              atomId: this.atomId,
-              attachment: 1,
-            },
-            callback: (code, data) => {
-              if (code === 200) {
-                this.$meta.eventHub.$emit('attachment:action', { action: 'create', atomId: this.atomId });
-                this.reload();
-                resolve();
-              }
-              if (code === false) {
-                reject();
-              }
-            },
-          },
-        });
-      });
+    onAttachmentChanged(data) {
+      this.reload();
     },
-    onPerformDelete(event, item) {
-      // delete
-      return this.$view.dialog.confirm().then(() => {
-        return this.$api.post('/a/file/file/delete', {
-          fileId: item.id,
-        }).then(() => {
-          this.$meta.util.swipeoutClose(event.target);
-          this.$meta.eventHub.$emit('attachment:action', { action: 'delete', atomId: this.atomId, fileId: item.id });
-          this.deleteItem(item.id);
-        });
+    onPerformViewAtom(event, item) {
+      const _action = this.getAction({
+        module: item.module,
+        atomClassName: item.atomClassName,
+        name: 'read',
       });
-    },
-    deleteItem(fileId) {
-      const index = this.items.findIndex(item => item.id === fileId);
-      if (index !== -1) {
-        this.items.splice(index, 1);
-      }
+      if (!_action) return;
+      return this.$meta.util.performAction({ ctx: this, action: _action, item });
     },
     onItemClick(event, item) {
       if (this.$meta.config.base.jwt) {
@@ -143,14 +124,10 @@ export default {
     },
     _openUrl(item, jwt) {
       if (jwt) {
-        window.open(this.$meta.util.combineQueries(item.downloadUrl, { 'eb-jwt': jwt }));
+        window.open(this.$meta.util.combineQueries(item.i_downloadUrl, { 'eb-jwt': jwt }));
       } else {
-        window.open(item.downloadUrl);
+        window.open(item.i_downloadUrl);
       }
-    },
-    getItemMedia(item) {
-      const media = item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
-      return this.$meta.util.combineImageUrl(media, 32);
     },
   },
 };

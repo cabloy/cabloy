@@ -19,6 +19,7 @@ export default [
   { path: 'comment/all', component: load('comment/all') },
   { path: 'comment/autoHeart', component: load('comment/autoHeart') },
   { path: 'attachment/list', component: load('attachment/list') },
+  { path: 'attachment/all', component: load('attachment/all') },
   { path: 'base/alert', component: load('base/alert') },
   { path: 'base/about', component: load('base/about') },
   { path: 'category/select', component: load('category/categorySelect') },

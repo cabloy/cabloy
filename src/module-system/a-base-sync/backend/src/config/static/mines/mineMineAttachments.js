@@ -1,5 +1,5 @@
 module.exports = app => {
-  const actionPath = '';
+  const actionPath = '/a/basefront/attachment/all?scene=mine';
   // resource
   const resource = {
     atomName: 'Attachments',
