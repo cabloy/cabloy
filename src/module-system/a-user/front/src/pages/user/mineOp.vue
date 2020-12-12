@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar :title="$text('Mine')" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link v-if="!user.agent.anonymous && !inAgent" iconMaterial="settings" eb-href="user/mineAgent"></eb-link>
+        <eb-link v-if="!user.agent.anonymous && !inAgent" iconMaterial="settings" eb-href="user/mineAgent" eb-target="_self"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <div class="mine">
