@@ -4,14 +4,11 @@ module.exports = app => {
   const meta = {
     base: {
       resources: {
-        headerButton: {
-          title: 'Header Button',
+        button: {
+          title: 'Button',
         },
-        sidebarPanel: {
-          title: 'Sidebar Panel',
-        },
-        statusbarSection: {
-          title: 'Statusbar Section',
+        panel: {
+          title: 'Panel',
         },
       },
       statics: {

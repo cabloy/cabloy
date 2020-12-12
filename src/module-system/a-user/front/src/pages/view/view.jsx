@@ -24,7 +24,7 @@ export default {
       });
     },
     _switchPolicy(resourceType) {
-      if (resourceType === 'a-layoutpc:headerButton') {
+      if (resourceType === 'a-layoutpc:button') {
         return {
           open: (side, resource) => {
             this.$meta.vueLayout.openButton(side, resource);
@@ -33,7 +33,7 @@ export default {
             this.$meta.vueLayout.closeButton(side, resource);
           },
         };
-      } else if (resourceType === 'a-layoutpc:sidebarPanel') {
+      } else if (resourceType === 'a-layoutpc:panel') {
         return {
           open: (side, resource) => {
             const sceneOptions = this.$utils.extend({}, resource, { side });
@@ -41,15 +41,6 @@ export default {
           },
           close: (side, resource) => {
             this.$meta.vueLayout.closePanel(side, resource);
-          },
-        };
-      } else if (resourceType === 'a-layoutpc:statusbarSection') {
-        return {
-          open: (side, resource) => {
-            this.$meta.vueLayout.openSection(side, resource);
-          },
-          close: (side, resource) => {
-            this.$meta.vueLayout.closeSection(side, resource);
           },
         };
       }
@@ -95,11 +86,11 @@ export default {
       <eb-page>
         <eb-navbar large largeTransparent title={this.$text('ViewLayout')} eb-back-link="Back"></eb-navbar>
         <f7-list>
-          <eb-list-item title={this.$text('Header Buttons')} link="#" propsOnPerform={event => this.onPerformResources(event, 'top', 'buttons', 'a-layoutpc:headerButton')}></eb-list-item>
-          <eb-list-item title={this.$text('Sidebar (Left)')} link="#" propsOnPerform={event => this.onPerformResources(event, 'left', 'panels', 'a-layoutpc:sidebarPanel')}></eb-list-item>
-          <eb-list-item title={this.$text('Sidebar (Right)')} link="#" propsOnPerform={event => this.onPerformResources(event, 'right', 'panels', 'a-layoutpc:sidebarPanel')}></eb-list-item>
-          <eb-list-item title={this.$text('Statusbar (Left)')} link="#" propsOnPerform={event => this.onPerformResources(event, 'bottom', 'panels', 'a-layoutpc:sidebarPanel')}></eb-list-item>
-          <eb-list-item title={this.$text('Statusbar (Right)')} link="#" propsOnPerform={event => this.onPerformResources(event, 'bottom', 'buttons', 'a-layoutpc:headerButton')}></eb-list-item>
+          <eb-list-item title={this.$text('Header Buttons')} link="#" propsOnPerform={event => this.onPerformResources(event, 'top', 'buttons', 'a-layoutpc:button')}></eb-list-item>
+          <eb-list-item title={this.$text('Sidebar (Left)')} link="#" propsOnPerform={event => this.onPerformResources(event, 'left', 'panels', 'a-layoutpc:panel')}></eb-list-item>
+          <eb-list-item title={this.$text('Sidebar (Right)')} link="#" propsOnPerform={event => this.onPerformResources(event, 'right', 'panels', 'a-layoutpc:panel')}></eb-list-item>
+          <eb-list-item title={this.$text('Statusbar (Left)')} link="#" propsOnPerform={event => this.onPerformResources(event, 'bottom', 'panels', 'a-layoutpc:panel')}></eb-list-item>
+          <eb-list-item title={this.$text('Statusbar (Right)')} link="#" propsOnPerform={event => this.onPerformResources(event, 'bottom', 'buttons', 'a-layoutpc:button')}></eb-list-item>
         </f7-list>
       </eb-page>
     );

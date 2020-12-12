@@ -6,8 +6,8 @@ module.exports = app => {
       atomName: 'Menu',
       atomStaticKey: 'panelMenu',
       atomRevision: 0,
-      atomCategoryId: 'a-layoutpc:sidebarPanel.General',
-      resourceType: 'a-layoutpc:sidebarPanel',
+      atomCategoryId: 'a-layoutpc:panel.General',
+      resourceType: 'a-layoutpc:panel',
       resourceConfig: JSON.stringify({
         url: '/a/basefront/resource/tree',
       }),
@@ -17,8 +17,8 @@ module.exports = app => {
       atomName: 'Atom',
       atomStaticKey: 'panelAtom',
       atomRevision: 0,
-      atomCategoryId: 'a-layoutpc:sidebarPanel.General',
-      resourceType: 'a-layoutpc:sidebarPanel',
+      atomCategoryId: 'a-layoutpc:panel.General',
+      resourceType: 'a-layoutpc:panel',
       resourceConfig: JSON.stringify({
         url: '/a/basefront/atom/list',
       }),
@@ -28,8 +28,8 @@ module.exports = app => {
       atomName: 'Search',
       atomStaticKey: 'panelSearch',
       atomRevision: 0,
-      atomCategoryId: 'a-layoutpc:sidebarPanel.General',
-      resourceType: 'a-layoutpc:sidebarPanel',
+      atomCategoryId: 'a-layoutpc:panel.General',
+      resourceType: 'a-layoutpc:panel',
       resourceConfig: JSON.stringify({
         url: '/a/basefront/atom/searchQuick',
       }),
@@ -39,20 +39,20 @@ module.exports = app => {
       atomName: 'Mine',
       atomStaticKey: 'panelMine',
       atomRevision: 0,
-      atomCategoryId: 'a-layoutpc:sidebarPanel.General',
-      resourceType: 'a-layoutpc:sidebarPanel',
+      atomCategoryId: 'a-layoutpc:panel.General',
+      resourceType: 'a-layoutpc:panel',
       resourceConfig: JSON.stringify({
         url: '/a/user/user/mine',
       }),
       resourceRoles: 'root',
     },
-    // header buttons
+    // buttons
     {
       atomName: 'Home',
       atomStaticKey: 'buttonHome',
       atomRevision: 0,
-      atomCategoryId: 'a-layoutpc:headerButton.General',
-      resourceType: 'a-layoutpc:headerButton',
+      atomCategoryId: 'a-layoutpc:button.General',
+      resourceType: 'a-layoutpc:button',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         component: 'buttonLink',
@@ -67,8 +67,8 @@ module.exports = app => {
       atomName: 'Dashboard',
       atomStaticKey: 'buttonDashboard',
       atomRevision: 0,
-      atomCategoryId: 'a-layoutpc:headerButton.General',
-      resourceType: 'a-layoutpc:headerButton',
+      atomCategoryId: 'a-layoutpc:button.General',
+      resourceType: 'a-layoutpc:button',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         component: 'buttonLink',
@@ -83,8 +83,8 @@ module.exports = app => {
       atomName: 'Fullscreen',
       atomStaticKey: 'buttonFullscreen',
       atomRevision: 0,
-      atomCategoryId: 'a-layoutpc:headerButton.General',
-      resourceType: 'a-layoutpc:headerButton',
+      atomCategoryId: 'a-layoutpc:button.General',
+      resourceType: 'a-layoutpc:button',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         component: 'buttonFullscreen',
@@ -95,8 +95,8 @@ module.exports = app => {
       atomName: 'Mine',
       atomStaticKey: 'buttonMine',
       atomRevision: 0,
-      atomCategoryId: 'a-layoutpc:headerButton.General',
-      resourceType: 'a-layoutpc:headerButton',
+      atomCategoryId: 'a-layoutpc:button.General',
+      resourceType: 'a-layoutpc:button',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         component: 'buttonMine',
@@ -111,8 +111,8 @@ module.exports = app => {
       atomName: 'Clock',
       atomStaticKey: 'buttonClock',
       atomRevision: 0,
-      atomCategoryId: 'a-layoutpc:headerButton.General',
-      resourceType: 'a-layoutpc:headerButton',
+      atomCategoryId: 'a-layoutpc:button.General',
+      resourceType: 'a-layoutpc:button',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         component: 'buttonClock',
@@ -126,8 +126,8 @@ module.exports = app => {
       atomName: 'Copyright',
       atomStaticKey: 'buttonCopyright',
       atomRevision: 0,
-      atomCategoryId: 'a-layoutpc:headerButton.General',
-      resourceType: 'a-layoutpc:headerButton',
+      atomCategoryId: 'a-layoutpc:button.General',
+      resourceType: 'a-layoutpc:button',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         component: 'buttonLink',
