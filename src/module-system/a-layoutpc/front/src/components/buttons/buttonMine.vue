@@ -44,13 +44,10 @@ function installFactory(_Vue) {
         }
         return this.$meta.util.combineImageUrl(avatar, 48);
       },
-      buttonConfig() {
-        return this.button.options.resourceConfig;
-      },
       buttonClass() {
         return {
           mine: true,
-          'header-button-separator': this.buttonConfig.showSeparator,
+          'button-separator': this.buttonConfig.showSeparator,
         };
       },
     },

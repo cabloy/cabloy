@@ -12,6 +12,23 @@ export default function(Vue) {
       return {
       };
     },
+    computed: {
+      buttonConfig() {
+        return this.button.options.resourceConfig;
+      },
+      buttonIcon() {
+        return this.buttonConfig.icon && this.buttonConfig.icon.material;
+      },
+      buttonLabel() {
+        if (!this.buttonConfig.showLabel) return null;
+        return this.button.options.titleLocale;
+      },
+      buttonClass() {
+        return {
+          'button-separator': this.buttonConfig.showSeparator,
+        };
+      },
+    },
     mounted() {
       this.$emit('buttonReal:ready', this);
     },

@@ -55,19 +55,6 @@ function installFactory(_Vue) {
         clockText: '',
       };
     },
-    computed: {
-      buttonConfig() {
-        return this.button.options.resourceConfig;
-      },
-      buttonIcon() {
-        return this.buttonConfig.icon && this.buttonConfig.icon.material;
-      },
-      buttonClass() {
-        return {
-          'header-button-separator': this.buttonConfig.showSeparator,
-        };
-      },
-    },
     created() {
       this.__init();
     },

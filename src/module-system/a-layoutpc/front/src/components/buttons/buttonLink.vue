@@ -13,23 +13,6 @@ function installFactory(_Vue) {
   const ebLayoutButtonBase = Vue.prototype.$meta.module.get('a-layoutpc').options.mixins.ebLayoutButtonBase;
   return {
     mixins: [ ebLayoutButtonBase ],
-    computed: {
-      buttonConfig() {
-        return this.button.options.resourceConfig;
-      },
-      buttonIcon() {
-        return this.buttonConfig.icon && this.buttonConfig.icon.material;
-      },
-      buttonLabel() {
-        if (!this.buttonConfig.showLabel) return null;
-        return this.button.options.titleLocale;
-      },
-      buttonClass() {
-        return {
-          'header-button-separator': this.buttonConfig.showSeparator,
-        };
-      },
-    },
   };
 }
 
