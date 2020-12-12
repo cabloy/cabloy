@@ -14,7 +14,6 @@
     </div>
     <f7-list>
       <eb-list-item v-if="!user.agent.anonymous" :title="$text('Account')" link="#" eb-href="user/account" eb-target="_self"></eb-list-item>
-      <eb-list-item :title="$text('Functions')" link="#" eb-href="user/functions" eb-target="_self"></eb-list-item>
       <f7-list-item divider></f7-list-item>
       <eb-list-item v-if="viewEnable" :title="$text('ViewLayout')" link="#" eb-href="view" eb-target="_self"></eb-list-item>
       <eb-list-item :title="$text('Theme')" link="#" eb-href="theme" eb-target="_self"></eb-list-item>

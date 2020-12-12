@@ -83,11 +83,6 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    functions() {
-      const res = this.service.user.functions();
-      this.ctx.success(res);
-    }
-
     async themeLoad() {
       const res = await this.service.user.themeLoad({
         user: this.ctx.state.user.op,

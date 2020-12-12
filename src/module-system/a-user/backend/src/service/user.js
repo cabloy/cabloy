@@ -1,5 +1,3 @@
-const _functions = {};
-
 module.exports = app => {
 
   class User extends app.Service {
@@ -88,13 +86,6 @@ module.exports = app => {
         [ authId, user.id ]);
     }
 
-    functions() {
-      if (!_functions[this.ctx.locale]) {
-        _functions[this.ctx.locale] = this._prepareFunctions();
-      }
-      return _functions[this.ctx.locale];
-    }
-
     async themeLoad({ user }) {
       const name = `user-theme:${user.id}`;
       return await this.ctx.bean.status.get(name);
@@ -103,35 +94,6 @@ module.exports = app => {
     async themeSave({ theme, user }) {
       const name = `user-theme:${user.id}`;
       await this.ctx.bean.status.set(name, theme);
-    }
-
-    _prepareFunctions() {
-      const functions = {};
-      for (const relativeName in this.ctx.app.meta.modules) {
-        const module = this.ctx.app.meta.modules[relativeName];
-        if (module.main.meta && module.main.meta.user && module.main.meta.user.functions) {
-          functions[relativeName] = this._prepareFunctionsModule(module, module.main.meta.user.functions);
-        }
-      }
-      return functions;
-    }
-
-    _prepareFunctionsModule(module, _functions) {
-      const functions = {};
-      for (const key in _functions) {
-        const _func = _functions[key];
-        const func = {
-          name: key,
-          title: _func.title || key,
-          module: module.info.relativeName,
-          actionModule: _func.actionModule || module.info.relativeName,
-          actionComponent: _func.actionComponent,
-          actionPath: _func.actionPath,
-        };
-        func.titleLocale = this.ctx.text(func.title);
-        functions[key] = func;
-      }
-      return functions;
     }
 
   }
