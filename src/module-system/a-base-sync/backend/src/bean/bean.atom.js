@@ -593,12 +593,16 @@ module.exports = ctx => {
     }
 
     async _copyAttachments({ atomIdSrc, atomIdDest }) {
+      // delete old files
+      await this.modelFile.delete({ atomId: atomIdDest });
+      // add new files
       const files = await this.modelFile.select({
         where: { atomId: atomIdSrc },
       });
       for (const file of files) {
         delete file.id;
         file.atomId = atomIdDest;
+        file.downloadId = uuid.v4().replace(/-/g, '');
         await this.modelFile.insert(file);
       }
     }
