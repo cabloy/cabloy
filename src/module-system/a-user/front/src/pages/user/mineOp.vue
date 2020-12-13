@@ -28,7 +28,6 @@
         </eb-list-item>
       </f7-list-group>
     </f7-list>
-
   </eb-page>
 </template>
 <script>
