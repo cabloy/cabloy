@@ -10,7 +10,6 @@ export default [
   { path: 'user/mineAgent', component: load('user/mineAgent') },
   { path: 'user/edit', component: load('user/edit') },
   { path: 'user/agent', component: load('user/agent') },
-  { path: 'user/account', component: load('user/account') },
   { path: 'user/authentications', component: load('user/authentications') },
   { path: 'user/exports', component: load('user/exports') },
   { path: 'theme', component: load('theme/theme') },
