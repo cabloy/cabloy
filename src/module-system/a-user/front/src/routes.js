@@ -16,6 +16,5 @@ export default [
   { path: 'theme/builtIn', component: load('theme/builtIn') },
   { path: 'view/pc', component: loadjsx('view/viewpc') },
   { path: 'view/mobile', component: loadjsx('view/viewmobile') },
-  { path: 'my/atoms', component: load('my/atoms') },
   { path: 'public/profile', component: load('public/profile') },
 ];
