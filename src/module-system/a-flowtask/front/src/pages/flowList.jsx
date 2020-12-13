@@ -3,7 +3,7 @@ export default {
   mixins: [ flowListLayoutManager ],
   data() {
     const query = this.$f7route.query;
-    const options = (query && query.options) ? JSON.parse(query.options) : null;
+    const options = (query && query.options) ? JSON.parse(query.options) : { mode: 'history' };
     const layout = query && query.layout;
     return {
       container: {

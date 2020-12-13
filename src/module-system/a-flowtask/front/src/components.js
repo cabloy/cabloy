@@ -1,5 +1,9 @@
 // action
 import action from './components/action/action.js';
+// flowListLayoutMobile
+import flowListLayoutMobile from './components/flowList/flowListLayoutMobile/flowListLayoutMobile.jsx';
+import flowListLayoutBlockMobileTitle from './components/flowList/flowListLayoutMobile/flowListLayoutBlockMobileTitle.jsx';
+import flowListLayoutBlockMobileMain from './components/flowList/flowListLayoutMobile/flowListLayoutBlockMobileMain.jsx';
 // flowLayoutMobile
 import flowLayoutMobile from './components/flow/flowLayoutMobile/flowLayoutMobile.jsx';
 import flowLayoutBlockMobileTitle from './components/flow/flowLayoutMobile/flowLayoutBlockMobileTitle.jsx';
@@ -16,6 +20,10 @@ import atomLayoutBlockMobileMain from './components/flowTask/atomLayoutMobile/at
 export default {
   // action
   action,
+  // flowListLayoutMobile
+  flowListLayoutMobile,
+  flowListLayoutBlockMobileTitle,
+  flowListLayoutBlockMobileMain,
   // flowLayoutMobile
   flowLayoutMobile,
   flowLayoutBlockMobileTitle,
