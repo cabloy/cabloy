@@ -21,7 +21,6 @@ export default {
   render() {
     return (
       <f7-nav-right>
-        {this.layoutManager.info_renderFlowStatus()}
       </f7-nav-right>
     );
   },

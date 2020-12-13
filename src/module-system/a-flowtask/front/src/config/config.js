@@ -61,22 +61,22 @@ export default {
     render: {
       list: {
         layouts: {
-          mobile: {
+          list: {
             component: {
               module: 'a-flowtask',
-              name: 'flowListLayoutMobile',
+              name: 'flowListLayoutList',
             },
             blocks: {
               title: {
                 component: {
                   module: 'a-flowtask',
-                  name: 'flowListLayoutBlockMobileTitle',
+                  name: 'flowListLayoutBlockListTitle',
                 },
               },
-              main: {
+              items: {
                 component: {
                   module: 'a-flowtask',
-                  name: 'flowListLayoutBlockMobileMain',
+                  name: 'flowListLayoutBlockListItems',
                 },
               },
             },
