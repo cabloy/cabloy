@@ -100,7 +100,7 @@ export default {
       );
       // ok
       return (
-        <eb-list-item class="item" key={item.flowId}
+        <eb-list-item class="item" key={item.flowTaskId}
           link='#'
           propsOnPerform={event => this.onItemClick(event, item)}
         >
