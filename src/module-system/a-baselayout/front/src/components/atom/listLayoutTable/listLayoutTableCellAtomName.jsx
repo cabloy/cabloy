@@ -45,6 +45,12 @@ export default {
         );
       }
     }
+    // domSummary
+    const domSummary = (
+      <div class="atomName-summary">
+        {this.layoutItems._getItemMetaSummary(item)}
+      </div>
+    );
     return (
       <div class="atom-list-layout-table-cell-atomName">
         <div class="atomName-inner">
@@ -54,17 +60,18 @@ export default {
             </eb-link>
           </div>
           <div class="atomName-right">
+            <span class="stats">
+              {item.star > 0 && <span>⭐</span>}
+              {item.attachmentCount > 0 && <span>🧷</span>}
+              {item.attachmentCount > 1 && <span>{`${item.attachmentCount}`}</span>}
+              {item.commentCount > 0 && <span>💬</span>}
+              {item.commentCount > 1 && <span>{`${item.commentCount}`}</span>}
+            </span>
             {domAfterMetaFlags}
             {domAfterLabels}
           </div>
         </div>
-        <div class="atomName-summary">
-          {item.star > 0 && <span>⭐</span>}
-          {item.attachmentCount > 0 && <span>🧷</span>}
-          {item.attachmentCount > 1 && <span>{`${item.attachmentCount}`}</span>}
-          {item.commentCount > 0 && <span>💬</span>}
-          {item.commentCount > 1 && <span>{`${item.commentCount}`}</span>}
-        </div>
+        {domSummary}
       </div>
     );
   },

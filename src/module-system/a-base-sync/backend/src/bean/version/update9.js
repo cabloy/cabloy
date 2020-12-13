@@ -179,6 +179,7 @@ module.exports = function(ctx) {
             deleted int(11) DEFAULT '0',
             iid int(11) DEFAULT '0',
             atomId int(11) DEFAULT '0',
+            description varchar(255) DEFAULT NULL,
             resourceSorting int(11) DEFAULT '0',
             resourceType varchar(50) DEFAULT NULL,
             resourceConfig JSON DEFAULT NULL,

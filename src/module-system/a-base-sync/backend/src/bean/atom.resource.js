@@ -70,6 +70,7 @@ module.exports = app => {
       if (item.resourceSorting && showSorting) flags.push(item.resourceSorting);
       // meta
       const meta = {
+        summary: item.description,
         flags,
       };
       // ok

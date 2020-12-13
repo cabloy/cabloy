@@ -90,6 +90,7 @@ module.exports = app => {
       const flags = [];
       // meta
       const meta = {
+        summary: item.description,
         flags,
       };
       // ok

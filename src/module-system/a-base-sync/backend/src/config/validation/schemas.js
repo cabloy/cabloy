@@ -131,6 +131,11 @@ module.exports = app => {
         ebType: 'group-flatten',
         ebTitle: 'Basic Info',
       },
+      description: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Description',
+      },
       atomCategoryId: {
         type: 'number',
         ebType: 'category',
