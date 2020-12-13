@@ -17,6 +17,8 @@ export default {
           await ctx.$api.post('/a/user/user/saveLocale', {
             data: { locale: locale.value },
           });
+          // locale
+          ctx.$meta.util.setLocale(locale.value);
           // confirm
           await ctx.$view.dialog.confirm(ctx.$text('LocaleReloadConfirmText'));
           // this.$meta.vueApp.reload({ echo: false });
