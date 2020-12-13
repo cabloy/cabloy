@@ -23,6 +23,8 @@ export default {
   },
   methods: {
     onItemClick(event, item) {
+      const url = `/a/flowtask/flow?flowId=${item.flowId}`;
+      this.$view.navigate(url);
     },
     _getItemMetaMedia(item) {
       const media = (item._meta && item._meta.media) || item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
@@ -60,7 +62,7 @@ export default {
             <span>{this._getItemMetaMediaLabel(item)}</span>
           </div>
           <div class="date">
-            <span>{this.$meta.util.formatDateTimeRelative(item.updatedAt)}</span>
+            <span>{this.$meta.util.formatDateTimeRelative(item.timeEnd || item.updatedAt)}</span>
           </div>
         </div>
       );

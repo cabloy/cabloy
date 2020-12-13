@@ -1,5 +1,9 @@
 module.exports = app => {
-  const actionPath = '';
+  // actionPath
+  const options = {
+    mode: 'mine',
+  };
+  const actionPath = `/a/flowtask/flow/list?options=${encodeURIComponent(JSON.stringify(options))}`;
   // resource
   const resource = {
     atomName: 'Initiateds',

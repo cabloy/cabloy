@@ -1,5 +1,12 @@
 module.exports = app => {
-  const actionPath = '';
+  // actionPath
+  const options = {
+    mode: 'history',
+    where: {
+      'a.flowStatus': 1,
+    },
+  };
+  const actionPath = `/a/flowtask/flow/list?options=${encodeURIComponent(JSON.stringify(options))}`;
   // resource
   const resource = {
     atomName: 'Ends',
