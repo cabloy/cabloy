@@ -25,7 +25,7 @@ export default {
       options.layout = this.layout.current;
       // order
       options.orders = [
-        [ 'a.createdAt', 'desc' ],
+        [ 'a.updatedAt', 'desc' ],
       ];
       // extend 1
       if (this.container.options) {
