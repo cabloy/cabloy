@@ -4,6 +4,10 @@ import action from './components/action/action.js';
 import flowListLayoutList from './components/flowList/flowListLayoutList/flowListLayoutList.jsx';
 import flowListLayoutBlockListTitle from './components/flowList/flowListLayoutList/flowListLayoutBlockListTitle.jsx';
 import flowListLayoutBlockListItems from './components/flowList/flowListLayoutList/flowListLayoutBlockListItems.jsx';
+// flowTaskListLayoutList
+import flowTaskListLayoutList from './components/flowTask/flowTaskListLayoutList/flowTaskListLayoutList.jsx';
+import flowTaskListLayoutBlockListTitle from './components/flowTask/flowTaskListLayoutList/flowTaskListLayoutBlockListTitle.jsx';
+import flowTaskListLayoutBlockListItems from './components/flowTask/flowTaskListLayoutList/flowTaskListLayoutBlockListItems.jsx';
 // flowLayoutMobile
 import flowLayoutMobile from './components/flow/flowLayoutMobile/flowLayoutMobile.jsx';
 import flowLayoutBlockMobileTitle from './components/flow/flowLayoutMobile/flowLayoutBlockMobileTitle.jsx';
@@ -24,6 +28,10 @@ export default {
   flowListLayoutList,
   flowListLayoutBlockListTitle,
   flowListLayoutBlockListItems,
+  // flowTaskListLayoutList
+  flowTaskListLayoutList,
+  flowTaskListLayoutBlockListTitle,
+  flowTaskListLayoutBlockListItems,
   // flowLayoutMobile
   flowLayoutMobile,
   flowLayoutBlockMobileTitle,

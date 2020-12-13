@@ -170,8 +170,23 @@ module.exports = ctx => {
       await this._clearRemains({ nodeInstance });
     }
 
-    async _list({ options: { where, orders, page, history = 0 }, user, pageForce = true, count = 0 }) {
+    async _list({ options: { where, orders, page, mode, history = 0 }, user, pageForce = true, count = 0 }) {
+      // special for mode
+      if (mode === 'claimings') {
+        where['a.flowTaskStatus'] = 0;
+        where['a.timeClaimed'] = null;
+        history = 0;
+      } else if (mode === 'handlings') {
+        where['a.flowTaskStatus'] = 0;
+        where['a.timeClaimed'] = { op: 'notNull' };
+        history = 0;
+      } else if (mode === 'completeds') {
+        where['a.flowTaskStatus'] = 1;
+        history = 1;
+      }
+      // page
       page = ctx.bean.util.page(page, pageForce);
+      // select
       const sql = this.sqlProcedure.selectTasks({
         iid: ctx.instance.id,
         userIdWho: user ? user.id : 0,
