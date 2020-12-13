@@ -14,6 +14,8 @@
           <f7-badge>{{$text.locale('zh-cn','Chinese Test')}}</f7-badge>
         </div>
       </eb-list-item>
+      <f7-list-item divider></f7-list-item>
+      <eb-list-item :title="$text('Language')" link="#" :onPerform="onPerformLanguage"></eb-list-item>
     </eb-list>
   </eb-page>
 </template>
@@ -27,7 +29,19 @@ export default {
   created() {
     this.localeCurrent = this.$meta.util.getLocale();
   },
-  methods: {},
+  methods: {
+    onPerformLanguage(event) {
+      const resourceConfig = {
+        actionModule: 'a-user',
+        actionComponent: 'action',
+        name: 'appearanceLanguage',
+      };
+      const action = this.$utils.extend({}, resourceConfig, {
+        targetEl: event.target,
+      });
+      return this.$meta.util.performAction({ ctx: this, action, item: null });
+    },
+  },
 };
 
 </script>
