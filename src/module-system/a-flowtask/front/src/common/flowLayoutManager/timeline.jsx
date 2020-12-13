@@ -55,15 +55,14 @@ export default {
       );
       // title
       let domRemark;
-      task.flowNodeRemark;
-      if (task.flowNodeRemark) {
+      if (task.flowNodeRemarkLocale) {
         domRemark = (
-          <f7-badge class="flowRemark" color="gray">{task.flowNodeRemark}</f7-badge>
+          <f7-badge class="flowRemark" color="gray">{task.flowNodeRemarkLocale}</f7-badge>
         );
       }
       const domTitle = (
         <div class="timeline-item-title">
-          <span>{task.flowNodeName}</span>
+          <span>{task.flowNodeNameLocale}</span>
           {domRemark}
         </div>
       );
@@ -107,7 +106,7 @@ export default {
       );
     },
     _timeline_getHandleRemark({ task }) {
-      if (task.handleRemark) return task.handleRemark;
+      if (task.handleRemarkLocale) return task.handleRemarkLocale;
       if (task.flowTaskStatus === 0 && task.specificFlag === 1) {
         // assigneesConfirmation
         return this.$text('AssigneesConfirmationPrompt');

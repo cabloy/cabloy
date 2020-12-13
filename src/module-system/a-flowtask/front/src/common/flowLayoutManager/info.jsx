@@ -95,12 +95,12 @@ export default {
       const children = [];
       // flowStatus
       if (flow.flowStatus === 1) {
-        const endText = `${this.$text(flow.flowRemark || 'End')}`;
+        const endText = `${flow.flowRemarkLocale || this.$text('End')}`;
         children.push(
           <f7-badge class="eb-flowStatus" key="flowStatus" color="teal">{endText}</f7-badge>
         );
       } else {
-        const currentText = `${this.$text('Current')}: ${this.$text(flow.flowNodeNameCurrent)}`;
+        const currentText = `${this.$text('Current')}: ${flow.flowNodeNameCurrentLocale}`;
         children.push(
           <f7-badge class="eb-flowStatus" key="flowStatus" color="orange">{currentText}</f7-badge>
         );

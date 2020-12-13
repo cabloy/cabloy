@@ -19,10 +19,10 @@ module.exports = app => {
       if (!flow) this.ctx.throw(404);
       // locale
       if (flow.flowRemark) {
-        flow.flowRemark = this.ctx.text(flow.flowRemark);
+        flow.flowRemarkLocale = this.ctx.text(flow.flowRemark);
       }
       if (flow.flowNodeNameCurrent) {
-        flow.flowNodeNameCurrent = this.ctx.text(flow.flowNodeNameCurrent);
+        flow.flowNodeNameCurrentLocale = this.ctx.text(flow.flowNodeNameCurrent);
       }
       // ok
       return flow;
@@ -64,12 +64,12 @@ module.exports = app => {
       // loop
       for (const task of tasks) {
         // locale
-        task.flowNodeName = this.ctx.text(task.flowNodeName);
+        task.flowNodeNameLocale = this.ctx.text(task.flowNodeName);
         if (task.flowNodeRemark) {
-          task.flowNodeRemark = this.ctx.text(task.flowNodeRemark);
+          task.flowNodeRemarkLocale = this.ctx.text(task.flowNodeRemark);
         }
         if (task.handleRemark) {
-          task.handleRemark = this.ctx.text(task.handleRemark);
+          task.handleRemarkLocale = this.ctx.text(task.handleRemark);
         }
         // actions
         if (task.userIdAssignee === user.id && task.flowTaskStatus === 0) {
