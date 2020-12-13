@@ -93,6 +93,11 @@ module.exports = app => {
           validator: 'instanceTest',
         },
       },
+      event: {
+        implementations: {
+          'a-base:loginInfo': 'loginInfoDashboard',
+        },
+      },
       index: {
         indexes: {
           testParty: 'createdAt,updatedAt,atomId,partyTypeId',

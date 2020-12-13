@@ -69,6 +69,11 @@ export default {
   },
   methods: {
     __init() {
+      if (!this.options.resourceConfig) {
+        // maybe disabled
+        this.hide();
+        return;
+      }
       this.$meta.module.use(this.options.resourceConfig.module, module => {
         const fullName = this.layout._buttonFullName(this.options);
         let component = module.options.components[this.options.resourceConfig.component];
