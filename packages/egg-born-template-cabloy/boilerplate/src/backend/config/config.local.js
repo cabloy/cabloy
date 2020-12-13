@@ -6,11 +6,6 @@ module.exports = appInfo => {
 
   // modules
   config.modules = {
-    'a-dashboard': {
-      dashboard: {
-        default: 'test-party:dashboardTest',
-      },
-    },
   };
 
   // mysql

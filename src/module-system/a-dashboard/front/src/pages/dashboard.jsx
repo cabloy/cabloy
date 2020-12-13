@@ -154,6 +154,14 @@ export default {
     __onTitleChange() {
       this.$refs.page.setPageTitle(this.pageTitle);
     },
+    __adjustDashboardKey(atomStaticKey) {
+      if (!atomStaticKey || atomStaticKey === 'default') {
+        return this.$config.dashboard.default;
+      } else if (atomStaticKey === 'home') {
+        return this.$config.dashboard.home;
+      }
+      return atomStaticKey;
+    },
     async __switchProfile({ dashboardUserId }) {
       if (dashboardUserId === 0) {
         let title;
@@ -162,7 +170,7 @@ export default {
           title = this.item.atomName;
         } else {
           const res = await this.$api.post('/a/dashboard/dashboard/itemByKey', {
-            atomStaticKey: this.atomStaticKey,
+            atomStaticKey: this.__adjustDashboardKey(this.atomStaticKey),
           });
           if (res.dashboardUser) {
             this.dashboardUser = res.dashboardUser;

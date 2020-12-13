@@ -1,6 +1,10 @@
 // eslint-disable-next-line
 export default function(Vue) {
   return {
+    dashboard: {
+      default: 'a-dashboard:dashboardDefault',
+      home: 'a-dashboard:dashboardHome',
+    },
     profile: {
       meta: {
         widget: {
