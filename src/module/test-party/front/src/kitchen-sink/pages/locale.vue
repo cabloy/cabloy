@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="$text('Locale')" eb-back-link="Back"></eb-navbar>
     <eb-list no-hairlines-md>
-      <eb-list-item v-if="localeCurrent==='en-us'" :title="$text('en-us')">
+      <eb-list-item :title="$text('en-us')">
         <div slot="after">
           <f7-badge>{{$text.locale('en-us','EnglishTest')}}</f7-badge>
           <f7-badge>{{$text.locale('en-us','Chinese Test')}}</f7-badge>
