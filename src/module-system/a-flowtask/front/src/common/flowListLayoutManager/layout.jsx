@@ -16,18 +16,16 @@ export default {
       return (this.$view.size === 'small') ? 'list' : 'table';
     },
     async layout_prepareConfig() {
-      // configAtomBase
-      this.base.configAtomBase = this.$meta.config.modules['a-basefront'].atom;
-      // configAtom
-      if (this.container.atomClass) {
-        // load module
-        await this.$meta.module.use(this.container.atomClass.module);
-        this.base.configAtom = this.$meta.util.getProperty(this.$meta.config.modules[this.container.atomClass.module], `atoms.${this.container.atomClass.atomClassName}`);
-      }
+      // configFlowBase
+      this.base.configFlowBase = this.$meta.config.modules['a-flowtask'].flow;
       // config
-      this.base.config = this.base.configAtom ? this.$meta.util.extend({}, this.base.configAtomBase, this.base.configAtom) : this.base.configAtomBase;
+      this.base.config = this.base.configFlowBase;
       // layoutConfig
-      this.layout.config = this.$meta.util.getProperty(this.base.config, `render.list.layouts.${this.layout.current}`);
+      let _config = this.$meta.util.getProperty(this.base.config, `render.list.layouts.${this.layout.current}`);
+      if (!_config) {
+        _config = this.$meta.util.getProperty(this.base.config, 'render.list.layouts.mobile');
+      }
+      this.layout.config = _config;
     },
     layout_getComponentOptions() {
       return {
@@ -59,7 +57,6 @@ export default {
       return (
         <div>
           {this.layout_renderComponent()}
-          {this.order_renderPopover()}
         </div>
       );
     },

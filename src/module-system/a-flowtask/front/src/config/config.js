@@ -59,6 +59,30 @@ export default {
   },
   flow: {
     render: {
+      list: {
+        layouts: {
+          mobile: {
+            component: {
+              module: 'a-flowtask',
+              name: 'flowListLayoutMobile',
+            },
+            blocks: {
+              title: {
+                component: {
+                  module: 'a-flowtask',
+                  name: 'flowListLayoutBlockMobileTitle',
+                },
+              },
+              main: {
+                component: {
+                  module: 'a-flowtask',
+                  name: 'flowListLayoutBlockMobileMain',
+                },
+              },
+            },
+          },
+        },
+      },
       item: {
         info: {
           attachment: true,

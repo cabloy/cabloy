@@ -4,6 +4,7 @@ function loadjsx(name) {
 
 export default [
   { path: 'flow', component: loadjsx('flow') },
+  { path: 'flowList', component: loadjsx('flowList') },
   { path: 'flowTaskAtom', component: loadjsx('flowTaskAtom') },
   { path: 'assigneesConfirmation', component: loadjsx('assigneesConfirmation') },
 ];
