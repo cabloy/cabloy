@@ -39,6 +39,12 @@ export default {
       return this.$store.state.auth.user.op;
     },
   },
+  mounted() {
+    this.$meta.eventHub.$on('export:action', this.onExportChanged);
+  },
+  beforeDestroy() {
+    this.$meta.eventHub.$off('export:action', this.onExportChanged);
+  },
   methods: {
     onRefresh(done) {
       done();
@@ -81,10 +87,7 @@ export default {
         fileId: item.id,
         data: { realName },
       });
-      const index = this.items.findIndex(_item => _item.id === item.id);
-      if (index !== -1) {
-        this.items[index].realName = realName;
-      }
+      this.$meta.eventHub.$emit('export:action', { action: 'rename', fileId: item.id, data: { realName } });
     },
     async onPerformDelete(event, item) {
       await this.$view.dialog.confirm();
@@ -93,12 +96,36 @@ export default {
         fileId: item.id,
       });
       this.$meta.util.swipeoutClose(event.target);
-      this.deleteItem(item.id);
+      this.$meta.eventHub.$emit('export:action', { action: 'delete', fileId: item.id });
     },
     deleteItem(fileId) {
       const index = this.items.findIndex(item => item.id === fileId);
       if (index !== -1) {
         this.items.splice(index, 1);
+      }
+    },
+    renameItem(fileId, data) {
+      const index = this.items.findIndex(_item => _item.id === fileId);
+      if (index !== -1) {
+        this.items[index].realName = data.realName;
+      }
+    },
+    onExportChanged(data) {
+      const { action, fileId } = data;
+      // create
+      if (action === 'create') {
+        this.reload();
+        return;
+      }
+      // delete
+      if (action === 'delete') {
+        this.deleteItem(fileId);
+        return;
+      }
+      // rename
+      if (action === 'rename') {
+        this.renameItem(fileId, data.data);
+        return;
       }
     },
     onItemClick(event, item) {

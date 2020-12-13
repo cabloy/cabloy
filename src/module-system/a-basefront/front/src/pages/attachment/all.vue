@@ -102,7 +102,21 @@ export default {
       this.reload();
     },
     onAttachmentChanged(data) {
-      this.reload();
+      // because the event fired for draft, so donot take affects here.
+      // const { action, fileId } = data;
+      // // create
+      // if (action === 'create') {
+      //   this.reload();
+      //   return;
+      // }
+      // // delete
+      // if (action === 'delete') {
+      //   const index = this.items.findIndex(item => item.i_id === fileId);
+      //   if (index !== -1) {
+      //     this.items.splice(index, 1);
+      //   }
+      //   return;
+      // }
     },
     onPerformViewAtom(event, item) {
       const _action = this.getAction({
