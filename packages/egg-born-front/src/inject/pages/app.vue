@@ -102,7 +102,7 @@ export default {
       this.$store.commit('auth/setReload', true);
       // echo
       if (ops.echo) {
-        this._authEcho(() => {
+        this._authEcho().then(() => {
           this._reloadLayout();
         });
       } else {
@@ -113,18 +113,27 @@ export default {
       this.resize();
     }, 300),
     _authEchoInit() {
-      this._authEcho(() => {
+      this._authEcho().then(() => {
         // resize
         this.resize();
       });
     },
-    _setTheme(theme, cb) {
-      this.$meta.theme.set(theme).then(cb);
+    _setTheme(theme) {
+      return this.$meta.theme.set(theme);
     },
-    _authEcho(cb) {
-      // get auth first
-      const locale = this.$meta.util.getLocale();
-      this.$api.post(`/a/base/auth/echo?locale=${locale}`).then(data => {
+    async _setLocaleModules(localeModules) {
+      if (!localeModules || localeModules.length === 0) return;
+      const promises = [];
+      for (const localeModule of localeModules) {
+        promises.push(this.$meta.module.use(localeModule));
+      }
+      return await Promise.all(promises);
+    },
+    async _authEcho() {
+      try {
+        // get auth first
+        const locale = this.$meta.util.getLocale();
+        const data = await this.$api.post(`/a/base/auth/echo?locale=${locale}`);
         // login
         this.$store.commit('auth/login', {
           loggedIn: data.user.agent.anonymous === 0,
@@ -141,13 +150,12 @@ export default {
         // set locale resource
         this._setLocaleResource();
         // theme
-        this._setTheme(data.config.theme, () => {
-          // error
-          this.error = null;
-          // ok
-          return cb && cb();
-        });
-      }).catch(err => {
+        await this._setTheme(data.config.theme);
+        // localeModules
+        await this._setLocaleModules(data.config.localeModules);
+        // error
+        this.error = null;
+      } catch (err) {
         // err
         this.error = err.message;
         this.layout = null; // force to null
@@ -157,7 +165,7 @@ export default {
           closeTimeout: 3000,
         });
         notification.open();
-      });
+      }
     },
     _reloadLayout() {
       const layout = this.layout;

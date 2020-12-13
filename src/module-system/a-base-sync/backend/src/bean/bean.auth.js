@@ -67,6 +67,8 @@ module.exports = ctx => {
       if (theme) {
         config.theme = theme;
       }
+      // localeModules
+      config.localeModules = ctx.bean.base.localeModules();
       // ok
       return config;
     }

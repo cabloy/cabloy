@@ -1,7 +1,5 @@
 let Vue;
 
-import './assets/css/module.less';
-
 // install
 function install(_Vue, cb) {
   if (Vue) return console.error('already installed.');

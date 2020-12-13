@@ -6,6 +6,7 @@ const extend = require3('extend2');
 const _modulesLocales = {};
 const _themesLocales = {};
 const _locales = {};
+const _localeModules = {};
 const _resourceTypes = {};
 const _atomClasses = {};
 const _actions = {};
@@ -90,6 +91,13 @@ module.exports = ctx => {
         _locales[ctx.locale] = this._prepareLocales();
       }
       return _locales[ctx.locale];
+    }
+
+    localeModules() {
+      if (!_localeModules[ctx.locale]) {
+        _localeModules[ctx.locale] = this._prepareLocaleModules();
+      }
+      return _localeModules[ctx.locale];
     }
 
     resourceTypes() {
@@ -187,6 +195,19 @@ module.exports = ctx => {
         });
       }
       return locales;
+    }
+
+    _prepareLocaleModules() {
+      const localeModules = [];
+      for (const module of ctx.app.meta.modulesArray) {
+        const locale = module.package.eggBornModule && module.package.eggBornModule.locale;
+        if (!locale) continue;
+        const locales = locale.split(',');
+        if (locales.findIndex(item => item === ctx.locale) > -1) {
+          localeModules.push(module.info.relativeName);
+        }
+      }
+      return localeModules;
     }
 
     _prepareResourceTypes() {
