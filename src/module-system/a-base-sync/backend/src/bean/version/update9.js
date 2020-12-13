@@ -240,6 +240,8 @@ module.exports = function(ctx) {
       await ctx.model.query('drop table aFunctionStar');
       // drop table: aRoleFunction
       await ctx.model.query('drop table aRoleFunction');
+      // drop view: aViewUserRightFunction
+      await ctx.model.query('drop view aViewUserRightFunction');
     }
 
   }
