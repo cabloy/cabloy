@@ -34,6 +34,7 @@ const items = [
   { title: 'Mail', path: 'kitchen-sink/mail' },
   { title: 'Load Component Async', path: 'kitchen-sink/component/loadComponentAsync' },
   { title: 'Dashboard', path: '/a/dashboard/dashboard' },
+  { title: 'Locale', path: 'kitchen-sink/Locale' },
 ];
 export default {
   data() {
