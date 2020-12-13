@@ -38,7 +38,7 @@ export default {
       // index
       params.options.page = { index };
       // fetch
-      const res = await this.$api.post('/a/flow/flow/select', params);
+      const res = await this.$api.post('/a/flowtask/task/select', params);
       this.items = this.items.concat(res.list);
       return res;
     },

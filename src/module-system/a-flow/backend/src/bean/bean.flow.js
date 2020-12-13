@@ -124,7 +124,16 @@ module.exports = ctx => {
     }
 
     async select({ options, user, pageForce = true, count = 0 }) {
-      return await this._list({ options, user, pageForce, count });
+      const items = await this._list({ options, user, pageForce, count });
+      for (const item of items) {
+        if (item.flowNodeNameCurrent) {
+          item.flowNodeNameCurrentLocale = ctx.text(item.flowNodeNameCurrent);
+        }
+        if (item.flowRemark) {
+          item.flowRemarkLocale = ctx.text(item.flowRemark);
+        }
+      }
+      return items;
     }
 
     async get({ flowId, history, user }) {

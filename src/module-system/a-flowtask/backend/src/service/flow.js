@@ -17,13 +17,6 @@ module.exports = app => {
       // select flow
       const flow = await this.ctx.bean.flow.get({ flowId, history: true, user });
       if (!flow) this.ctx.throw(404);
-      // locale
-      if (flow.flowRemark) {
-        flow.flowRemarkLocale = this.ctx.text(flow.flowRemark);
-      }
-      if (flow.flowNodeNameCurrent) {
-        flow.flowNodeNameCurrentLocale = this.ctx.text(flow.flowNodeNameCurrent);
-      }
       // ok
       return flow;
     }
@@ -63,14 +56,6 @@ module.exports = app => {
       });
       // loop
       for (const task of tasks) {
-        // locale
-        task.flowNodeNameLocale = this.ctx.text(task.flowNodeName);
-        if (task.flowNodeRemark) {
-          task.flowNodeRemarkLocale = this.ctx.text(task.flowNodeRemark);
-        }
-        if (task.handleRemark) {
-          task.handleRemarkLocale = this.ctx.text(task.handleRemark);
-        }
         // actions
         if (task.userIdAssignee === user.id && task.flowTaskStatus === 0) {
           task._actions = await this.ctx.bean.flowTask.actions({ flowTaskId: task.flowTaskId, user });

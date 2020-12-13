@@ -23,7 +23,7 @@ export default {
   },
   methods: {
     onItemClick(event, item) {
-      const url = `/a/flowtask/flow?flowId=${item.flowId}`;
+      const url = `/a/flowtask/flow?flowId=${item.flowId}&flowTaskId=${item.flowTaskId}`;
       this.$view.navigate(url);
     },
     _getItemMetaMedia(item) {
@@ -40,13 +40,21 @@ export default {
     },
     _getItemMetaFlags(item) {
       const flags = [];
-      if (item.flowNodeNameCurrentLocale) {
-        flags.push(item.flowNodeNameCurrentLocale);
+      if (item.flowNodeNameLocale) {
+        flags.push(item.flowNodeNameLocale);
       }
-      if (item.flowRemarkLocale) {
-        flags.push(item.flowRemarkLocale);
+      const handleRemark = this._getHandleRemark(item);
+      if (handleRemark) {
+        flags.push(handleRemark);
       }
       return flags;
+    },
+    _getHandleRemark(task) {
+      if (task.handleRemarkLocale) return task.handleRemarkLocale;
+      if (task.flowTaskStatus === 0 && task.specificFlag === 1) {
+        // assigneesConfirmation
+        return this.$text('AssigneesConfirmationPrompt');
+      }
     },
     _renderListItem(item) {
       // media
@@ -62,7 +70,7 @@ export default {
             <span>{this._getItemMetaMediaLabel(item)}</span>
           </div>
           <div class="date">
-            <span>{this.$meta.util.formatDateTimeRelative(item.timeEnd || item.updatedAt)}</span>
+            <span>{this.$meta.util.formatDateTimeRelative(item.timeHandled || item.updatedAt)}</span>
           </div>
         </div>
       );

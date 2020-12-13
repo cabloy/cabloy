@@ -18,7 +18,19 @@ module.exports = ctx => {
     }
 
     async select({ options, user, pageForce = true, count = 0 }) {
-      return await this._list({ options, user, pageForce, count });
+      const tasks = await this._list({ options, user, pageForce, count });
+      // loop
+      for (const task of tasks) {
+        // locale
+        task.flowNodeNameLocale = ctx.text(task.flowNodeName);
+        if (task.flowNodeRemark) {
+          task.flowNodeRemarkLocale = ctx.text(task.flowNodeRemark);
+        }
+        if (task.handleRemark) {
+          task.handleRemarkLocale = ctx.text(task.handleRemark);
+        }
+      }
+      return tasks;
     }
 
     async claim({ flowTaskId, user }) {

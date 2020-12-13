@@ -47,7 +47,7 @@ module.exports = ctx => {
       } else {
         _selectFields = `a.*,a.id as flowTaskId,
             b.flowNodeDefId,b.flowNodeName,b.flowNodeType,
-            c.flowDefId,c.flowDefKey,c.flowDefRevision,c.flowStatus,c.flowAtomId,c.flowNodeIdCurrent,c.flowUserId,
+            c.flowDefId,c.flowDefKey,c.flowDefRevision,c.flowName,c.flowStatus,c.flowAtomId,c.flowNodeIdCurrent,c.flowUserId,
             d.userName,d.avatar
           `;
       }
@@ -107,7 +107,7 @@ module.exports = ctx => {
       } else {
         _selectFields = `a.*,
             b.flowNodeDefId,b.flowNodeName,b.flowNodeType,b.flowNodeStatus,b.flowNodeRemark,b.timeDone,
-            c.flowDefId,c.flowDefKey,c.flowDefRevision,c.flowStatus,c.flowAtomId,c.flowNodeIdCurrent,c.flowUserId,
+            c.flowDefId,c.flowDefKey,c.flowDefRevision,c.flowName,c.flowStatus,c.flowAtomId,c.flowNodeIdCurrent,c.flowUserId,
             d.userName,d.avatar
           `;
       }
