@@ -44,8 +44,14 @@ module.exports = ctx => {
     }
 
     async _notify_queue({ module, name, nameSub, user }) {
+      // loop names
+      await this._notify_queue_names({ module, name, nameSub, user });
+      // deps
+      await this._notify_queue_deps({ module, name, user });
+    }
+
+    async _notify_queue_names({ module, name, nameSub, user }) {
       const provider = this._findStatsProvider({ module, name });
-      // loop
       const fullName = this._getFullName({ name, nameSub });
       const names = fullName.split('.');
       for (let i = 0; i < names.length; i++) {
@@ -61,8 +67,16 @@ module.exports = ctx => {
           user,
         });
       }
-      // deps
+    }
 
+    async _notify_queue_deps({ module, name, user }) {
+      const fullKey = `${module}:${name}`;
+      const deps = __statsDeps[fullKey];
+      if (!deps || deps.length === 0) return;
+      for (const dep of deps) {
+        const [ depModule, depName ] = dep.split(':');
+        await this._notify_queue({ module: depModule, name: depName, user });
+      }
     }
 
     async get({ module, name, nameSub, user }) {

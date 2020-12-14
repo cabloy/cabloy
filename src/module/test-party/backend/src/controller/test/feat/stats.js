@@ -33,6 +33,13 @@ module.exports = app => {
       });
       assert.equal(value, 1);
 
+      // instance
+      value = await this.ctx.bean.stats.get({
+        name: 'tasksInstance',
+        user,
+      });
+      assert.equal(value, 1);
+
       // done
       this.ctx.success();
     }
