@@ -134,6 +134,7 @@ module.exports = app => {
           // set atom flow
           const atomFlowId = flowInstance.context._flowId;
           await this.ctx.bean.atom.flow({ key, atom: { atomFlowId } });
+          // ok
           return { flow: { id: atomFlowId } };
         }
       }

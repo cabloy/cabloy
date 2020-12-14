@@ -4,11 +4,14 @@ module.exports = ctx => {
 
     async execute(context) {
       const { user } = context;
-      const modelStar = ctx.model.module(moduleInfo.relativeName).atomStar;
-      return await modelStar.count({
-        userId: user.id,
-        star: 1,
+      const modelAtom = ctx.model.module(moduleInfo.relativeName).atom;
+      const count = await modelAtom.count({
+        userIdUpdated: user.id,
+        atomStage: 0,
+        atomClosed: 0,
+        atomFlowId: 0,
       });
+      return count;
     }
 
   }

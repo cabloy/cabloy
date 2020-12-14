@@ -28,6 +28,8 @@ const beanUser = require('./bean/bean.user.js');
 const beanUtil = require('./bean/bean.util.js');
 const beanCategory = require('./bean/bean.category.js');
 const beanTag = require('./bean/bean.tag.js');
+const statsStars = require('./bean/stats.stars.js');
+const statsDrafts = require('./bean/stats.drafts.js');
 
 module.exports = app => {
   const beans = {
@@ -169,6 +171,15 @@ module.exports = app => {
       mode: 'ctx',
       bean: beanTag,
       global: true,
+    },
+    // stats
+    'stats.stars': {
+      mode: 'ctx',
+      bean: statsStars,
+    },
+    'stats.drafts': {
+      mode: 'ctx',
+      bean: statsDrafts,
     },
   };
   return beans;

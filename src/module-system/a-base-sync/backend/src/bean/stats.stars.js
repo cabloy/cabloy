@@ -5,10 +5,11 @@ module.exports = ctx => {
     async execute(context) {
       const { user } = context;
       const modelStar = ctx.model.module(moduleInfo.relativeName).atomStar;
-      return await modelStar.count({
+      const count = await modelStar.count({
         userId: user.id,
         star: 1,
       });
+      return count;
     }
 
   }

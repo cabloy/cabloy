@@ -76,6 +76,8 @@ module.exports = ctx => {
         atom: { id: atomId, itemId },
         user,
       });
+      // notify
+      this._notifyDrafts();
       // ok
       return { atomId, itemId };
     }
@@ -232,6 +234,8 @@ module.exports = ctx => {
             fn: 'delete',
           });
         }
+        // notify
+        this._notifyDrafts();
       } else if (_atom.atomStage === 1) {
         // delete history
         const listHistory = await this.modelAtom.select({
@@ -268,6 +272,8 @@ module.exports = ctx => {
           context: { atomClass, key: { atomId: _atom.id, itemId: _atom.itemId }, user },
           fn: 'delete',
         });
+        // notify
+        this._notifyDrafts();
       } else if (_atom.atomStage === 2) {
         // delete history self
         await ctx.executeBean({
@@ -320,6 +326,8 @@ module.exports = ctx => {
         atomClosed: 1,
         atomIdArchive: keyArchive.atomId,
       });
+      // notify
+      this._notifyDrafts();
       // return keyArchive
       return { archive: { key: keyArchive } };
     }
@@ -329,6 +337,8 @@ module.exports = ctx => {
         id: key.atomId,
         atomClosed: 1,
       });
+      // notify
+      this._notifyDrafts();
     }
 
     async openDraft({ key, user }) {
@@ -415,6 +425,8 @@ module.exports = ctx => {
         atomRevision,
         userIdUpdated: user.id,
       });
+      // notify
+      this._notifyDrafts();
     }
 
     async enable({ key, user }) {
@@ -647,6 +659,8 @@ module.exports = ctx => {
         id: key.atomId,
         atomFlowId,
       });
+      // notify
+      this._notifyDrafts();
     }
 
     async star({ key, atom: { star = 1 }, user }) {
@@ -684,10 +698,7 @@ module.exports = ctx => {
         });
       }
       // notify
-      ctx.bean.stats.notify({
-        module: moduleInfo.relativeName,
-        name: 'stars',
-      });
+      this._notifyStars();
       // ok
       return { star, starCount };
     }
@@ -1051,6 +1062,20 @@ module.exports = ctx => {
         return tableNameModes.search || tableNameModes.full || tableNameModes.default || atomClass.tableName;
       }
       return tableNameModes[mode] || tableNameModes.default || atomClass.tableName;
+    }
+
+    _notifyDrafts() {
+      ctx.bean.stats.notify({
+        module: moduleInfo.relativeName,
+        name: 'drafts',
+      });
+    }
+
+    _notifyStars() {
+      ctx.bean.stats.notify({
+        module: moduleInfo.relativeName,
+        name: 'stars',
+      });
     }
 
   }
