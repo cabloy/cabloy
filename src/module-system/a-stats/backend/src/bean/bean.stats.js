@@ -16,6 +16,7 @@ module.exports = ctx => {
 
     notify({ module, name, nameSub, user }) {
       module = module || this.moduleName;
+      user = user || (ctx.state.user && ctx.state.user.op);
       ctx.tail(() => {
         this._notify_tail({ module, name, nameSub, user, async: false });
       });
@@ -23,6 +24,7 @@ module.exports = ctx => {
 
     async notifyAsync({ module, name, nameSub, user }) {
       module = module || this.moduleName;
+      user = user || (ctx.state.user && ctx.state.user.op);
       await this._notify_tail({ module, name, nameSub, user, async: true });
     }
 
@@ -43,6 +45,7 @@ module.exports = ctx => {
 
     async _notify_queue({ module, name, nameSub, user }) {
       const provider = this._findStatsProvider({ module, name });
+      // loop
       const fullName = this._getFullName({ name, nameSub });
       const names = fullName.split('.');
       for (let i = 0; i < names.length; i++) {
@@ -58,6 +61,8 @@ module.exports = ctx => {
           user,
         });
       }
+      // deps
+
     }
 
     async get({ module, name, nameSub, user }) {
