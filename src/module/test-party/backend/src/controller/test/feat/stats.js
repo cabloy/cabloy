@@ -44,6 +44,14 @@ module.exports = app => {
       this.ctx.success();
     }
 
+    async plus() {
+      this.ctx.bean.stats.notify({
+        name: 'tasksUser',
+        nameSub: 'department.project',
+      });
+      this.ctx.success();
+    }
+
   }
   return StatsController;
 };

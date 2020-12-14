@@ -64,6 +64,8 @@ export default {
   CaptchaCode: '验证码',
   SMSVerificationCode: '认证码',
   Dashboard: '仪表板',
+  Department: '部门',
+  Project: '项目',
   MonkeyeeTestTip1: '本页面将被Monkey',
   MonkeyeeTestTip2: '本组件将被Monkey',
   F7AboutTip1: 'Framework7 - 是一款免费开源的HTML移动框架，用于开发混合程序和Web应用程序，达到iOS和Android的原生视觉体验。Framework7的作者是Vladimir Kharlampidi (iDangero.us)',

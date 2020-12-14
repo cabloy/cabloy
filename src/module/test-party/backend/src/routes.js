@@ -92,6 +92,7 @@ module.exports = app => {
 
       // test/feat/stats
       { method: 'post', path: 'test/feat/stats', controller: 'testFeatStats', middlewares: 'test', meta: { auth: { enable: false } } },
+      { method: 'post', path: 'test/feat/stats/plus', controller: 'testFeatStats' },
 
       // test/feat/status
       { method: 'post', path: 'test/feat/status', controller: 'testFeatStatus', middlewares: 'test', meta: { auth: { enable: false } } },

@@ -17,6 +17,12 @@ export default {
       type: String,
       default: 'gray',
     },
+    hiddenOnEmpty: {
+      type: Boolean,
+      default: true,
+    },
+    default: {
+    },
   },
   data() {
     return {
@@ -28,16 +34,22 @@ export default {
   },
   methods: {
     async loadValue() {
-      this.value = await this.$api.post('/a/stats/stats/get', {
+      const value = await this.$api.post('/a/stats/stats/get', {
         module: this.module,
         name: this.name,
         nameSub: this.nameSub,
       });
+      if (value === undefined) {
+        this.value = this.default;
+      } else {
+        this.value = value;
+      }
     },
   },
   render() {
+    const hidden = !this.value && this.hiddenOnEmpty;
     return (
-      <f7-badge color={this.color}>{this.value}</f7-badge>
+      <f7-badge color={this.color} class={hidden ? 'display-none' : ''}>{this.value}</f7-badge>
     );
   },
 };

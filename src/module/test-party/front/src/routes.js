@@ -51,6 +51,7 @@ export default [
   { path: 'kitchen-sink/socketio', component: loadKitchenSink('socketio'), meta: { auth: true } },
   { path: 'kitchen-sink/mail', component: loadKitchenSink('mail') },
   { path: 'kitchen-sink/locale', component: loadKitchenSink('locale') },
+  { path: 'kitchen-sink/stats', component: loadKitchenSink('stats') },
   // framework7
   { path: 'kitchen-sink/framework7/index', component: loadKitchenSinkFramework7('index') },
   { path: 'kitchen-sink/framework7/about', component: loadKitchenSinkFramework7('about') },
