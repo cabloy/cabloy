@@ -56,16 +56,37 @@ module.exports = ctx => {
       const names = fullName.split('.');
       for (let i = 0; i < names.length; i++) {
         const keys = names.slice(0, names.length - i);
+        const fullNameSub = keys.join('.');
         // execute
         const value = await ctx.bean._getBean(provider.beanFullName).execute({
           keys, provider, user,
         });
+        // set
         await this._set({
           module,
-          fullName: keys.join('.'),
+          fullName: fullNameSub,
           value,
           user,
         });
+        // push
+        if (provider.user && user) {
+          const message = {
+            userIdTo: user.id,
+            content: {
+              module, name,
+              fullName: fullNameSub,
+              value,
+            },
+          };
+          await ctx.bean.io.publish({
+            path: `/a/stats/stats/${user.id}/${module}/${fullNameSub}`,
+            message,
+            messageClass: {
+              module: 'a-stats',
+              messageClassName: 'stats',
+            },
+          });
+        }
       }
     }
 

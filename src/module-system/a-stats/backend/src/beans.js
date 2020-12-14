@@ -1,6 +1,7 @@
 const versionManager = require('./bean/version.manager.js');
 const queueStats = require('./bean/queue.stats.js');
 const beanStats = require('./bean/bean.stats.js');
+const ioMessageStats = require('./bean/io.message.stats.js');
 
 module.exports = app => {
   const beans = {
@@ -13,6 +14,11 @@ module.exports = app => {
     'queue.stats': {
       mode: 'app',
       bean: queueStats,
+    },
+    // io
+    'io.message.stats': {
+      mode: 'ctx',
+      bean: ioMessageStats,
     },
     // global
     stats: {
