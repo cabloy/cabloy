@@ -1,4 +1,5 @@
 let __stats;
+let __statsDeps;
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -9,116 +10,101 @@ module.exports = ctx => {
       this.moduleName = moduleName || ctx.module.info.relativeName;
     }
 
-    // async
-    async notify({ module, name, nameSub }) {
+    get modelStats() {
+      return ctx.model.module(moduleInfo.relativeName).stats;
+    }
+
+    notify({ module, name, nameSub, user }) {
       module = module || this.moduleName;
       ctx.tail(() => {
-        this._notify_tail({ module, name, nameSub });
+        this._notify_tail({ module, name, nameSub, user, async: false });
       });
     }
 
-    _notify_tail({ module, name, nameSub }) {
+    async notifyAsync({ module, name, nameSub, user }) {
+      module = module || this.moduleName;
+      await this._notify_tail({ module, name, nameSub, user, async: true });
+    }
+
+    _notify_tail({ module, name, nameSub, user, async }) {
       const provider = this._findStatsProvider({ module, name });
       // queue
-      ctx.app.meta.queue.push({
+      const method = async ? 'pushAsync' : 'push';
+      return ctx.app.meta.queue[method]({
         subdomain: ctx.subdomain,
         module: moduleInfo.relativeName,
         queueName: 'stats',
-        queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
+        queueNameSub: provider.user ? 'user' : 'instance',
         data: {
-          module, name, nameSub,
+          module, name, nameSub, user,
         },
       });
     }
 
-
-    // ////////////////////
-
-    async reset(name) {
-      const provider = this._findSequenceProvider(name);
-      const sequence = await this._get(name);
-      await ctx.db.update('aSequence', {
-        id: sequence.id,
-        value: JSON.stringify(provider.start),
-      });
-    }
-
-    async current(name) {
-      const sequence = await this._get(name);
-      if (sequence) return JSON.parse(sequence.value);
-      const provider = this._findSequenceProvider(name);
-      return provider.start;
-    }
-
-    async next(name) {
-      const moduleName = this.moduleName;
-      return await ctx.app.meta.util.lock({
-        subdomain: ctx.subdomain,
-        resource: `${moduleInfo.relativeName}.sequence.${moduleName}.${name}`,
-        fn: async () => {
-          return await ctx.app.meta.util.executeBean({
-            subdomain: ctx.subdomain,
-            beanModule: moduleInfo.relativeName,
-            beanFullName: 'sequence',
-            fn: async ({ bean }) => {
-              return await bean.module(moduleName)._nextLock(name);
-            },
-          });
-        },
-      });
-    }
-
-    async _nextLock(name) {
-      const provider = this._findSequenceProvider(name);
-      const sequence = await this._get(name);
-
-      // current
-      let current;
-      if (sequence) {
-        current = JSON.parse(sequence.value);
-      } else {
-        current = provider.start;
+    async _notify_queue({ module, name, nameSub, user }) {
+      const provider = this._findStatsProvider({ module, name });
+      const fullName = this._getFullName({ name, nameSub });
+      const names = fullName.split('.');
+      for (let i = 0; i < names.length; i++) {
+        const keys = names.slice(0, names.length - i);
+        // execute
+        const value = await ctx.bean._getBean(provider.beanFullName).execute({
+          keys, provider, user,
+        });
+        await this._set({
+          module,
+          fullName: keys.join('.'),
+          value,
+          user,
+        });
       }
+    }
 
-      // next
-      const value = await ctx.bean._getBean(provider.beanFullName).execute({ value: current });
+    async get({ module, name, nameSub, user }) {
+      module = module || this.moduleName;
+      const provider = this._findStatsProvider({ module, name });
+      const fullName = this._getFullName({ name, nameSub });
+      return await this._get({
+        module,
+        fullName,
+        user: provider.user ? user : null,
+      });
+    }
 
-      // save
-      if (sequence) {
-        await ctx.db.update('aSequence', {
-          id: sequence.id,
+    _getFullName({ name, nameSub }) {
+      return nameSub ? `${name}.${nameSub}` : name;
+    }
+
+    async _get({ module, fullName, user }) {
+      const where = { module, name: fullName };
+      if (user) { where.userId = user.id; }
+      const item = await this.modelStats.get(where);
+      return item ? JSON.parse(item.value) : undefined;
+    }
+
+    async _set({ module, fullName, value, user }) {
+      const where = { module, name: fullName };
+      if (user) { where.userId = user.id; }
+      const item = await this.modelStats.get(where);
+      if (item) {
+        await this.modelStats.update({
+          id: item.id,
           value: JSON.stringify(value),
         });
       } else {
-        // insert
-        await ctx.db.insert('aSequence', {
-          iid: ctx.instance.id,
-          module: this.moduleName,
-          name,
-          value: JSON.stringify(value),
-        });
+        const data = { module, name: fullName, value: JSON.stringify(value) };
+        if (user) { data.userId = user.id; }
+        await this.modelStats.insert(data);
       }
-
-      return value;
-    }
-
-    async _get(name) {
-      // get
-      const sequence = await ctx.db.get('aSequence', {
-        iid: ctx.instance.id,
-        module: this.moduleName,
-        name,
-      });
-      return sequence;
     }
 
     _findStatsProvider({ module, name }) {
       module = module || this.moduleName;
       const fullKey = `${module}:${name}`;
       if (!__stats) {
+        __statsDeps = {};
         __stats = this._collectStats();
       }
-      console.log(__stats);
       return __stats[fullKey];
     }
 
@@ -129,6 +115,7 @@ module.exports = ctx => {
         if (!providers) continue;
         for (const key in providers) {
           const provider = providers[key];
+          const fullKey = `${module.info.relativeName}:${key}`;
           // bean
           const beanName = provider.bean;
           let beanFullName;
@@ -138,9 +125,8 @@ module.exports = ctx => {
             beanFullName = `${beanName.module || module.info.relativeName}.stats.${beanName.name}`;
           }
           // dependencies
-          const dependencies = this._adjustDependencies(module, provider.dependencies);
+          const dependencies = this._parseDependencies(fullKey, module, provider.dependencies);
           // ok
-          const fullKey = `${module.info.relativeName}:${key}`;
           stats[fullKey] = {
             ...provider,
             beanFullName,
@@ -151,15 +137,20 @@ module.exports = ctx => {
       return stats;
     }
 
-    _adjustDependencies(module, dependencies) {
+    _parseDependencies(fullKey, module, dependencies) {
       if (!dependencies) return null;
       if (!Array.isArray(dependencies)) {
         dependencies = dependencies.split(',');
       }
-      return dependencies.map(item => {
+      dependencies = dependencies.map(item => {
         if (item.indexOf(':') > -1) return item;
         return `${module.info.relativeName}:${item}`;
       });
+      for (const dep of dependencies) {
+        if (!__statsDeps[dep]) __statsDeps[dep] = [];
+        __statsDeps[dep].push(fullKey);
+      }
+      return dependencies;
     }
 
   }

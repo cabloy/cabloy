@@ -1,4 +1,5 @@
 const versionManager = require('./bean/version.manager.js');
+const queueStats = require('./bean/queue.stats.js');
 const beanStats = require('./bean/bean.stats.js');
 
 module.exports = app => {
@@ -7,6 +8,11 @@ module.exports = app => {
     'version.manager': {
       mode: 'app',
       bean: versionManager,
+    },
+    // queue
+    'queue.stats': {
+      mode: 'app',
+      bean: queueStats,
     },
     // global
     stats: {

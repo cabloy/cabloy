@@ -6,6 +6,7 @@ module.exports = appInfo => {
   config.queues = {
     render: {
       bean: 'render',
+      concurrency: true,
     },
   };
 

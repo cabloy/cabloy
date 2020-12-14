@@ -14,12 +14,15 @@ module.exports = app => {
   const routes = require('./routes.js')(app);
   // controllers
   const controllers = require('./controllers.js')(app);
+  // models
+  const models = require('./models.js')(app);
 
   return {
     beans,
     routes,
     controllers,
     services,
+    models,
     config,
     locales,
     errors,
