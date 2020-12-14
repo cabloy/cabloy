@@ -66,7 +66,7 @@ module.exports = ctx => {
           module,
           fullName: fullNameSub,
           value,
-          user,
+          user: provider.user ? user : null,
         });
         // push
         if (provider.user && user) {

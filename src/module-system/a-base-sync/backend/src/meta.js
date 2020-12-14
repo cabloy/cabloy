@@ -1,5 +1,5 @@
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   // keywords
   const keywords = require('./config/validation/keywords.js')(app);
   // schemas
@@ -97,6 +97,18 @@ module.exports = app => {
         loginInfo: 'Login Info',
         userVerify: 'User Verify',
         accountMigration: 'Account Migration',
+      },
+    },
+    stats: {
+      providers: {
+        drafts: {
+          user: true,
+          bean: 'drafts',
+        },
+        stars: {
+          user: true,
+          bean: 'stars',
+        },
       },
     },
   };

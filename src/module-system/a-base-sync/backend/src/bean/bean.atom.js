@@ -683,6 +683,11 @@ module.exports = ctx => {
           starCount,
         });
       }
+      // notify
+      ctx.bean.stats.notify({
+        module: moduleInfo.relativeName,
+        name: 'stars',
+      });
       // ok
       return { star, starCount };
     }
