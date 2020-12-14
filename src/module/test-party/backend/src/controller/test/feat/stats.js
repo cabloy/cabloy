@@ -3,7 +3,7 @@ const assert = require3('assert');
 const pMap = require3('p-map');
 
 module.exports = app => {
-  class SequenceController extends app.Controller {
+  class StatsController extends app.Controller {
 
     async stats() {
 
@@ -76,6 +76,6 @@ module.exports = app => {
     }
 
   }
-  return SequenceController;
+  return StatsController;
 };
 

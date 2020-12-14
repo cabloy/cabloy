@@ -1,7 +1,7 @@
 module.exports = app => {
 
-  class Sequence extends app.Service {
+  class Stats extends app.Service {
   }
 
-  return Sequence;
+  return Stats;
 };

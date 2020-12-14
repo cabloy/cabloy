@@ -2,7 +2,7 @@ let __sequences;
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class Sequence extends ctx.app.meta.BeanModuleBase {
+  class Stats extends ctx.app.meta.BeanModuleBase {
 
     constructor(moduleName) {
       super(ctx, 'sequence');
@@ -121,5 +121,5 @@ module.exports = ctx => {
 
   }
 
-  return Sequence;
+  return Stats;
 };

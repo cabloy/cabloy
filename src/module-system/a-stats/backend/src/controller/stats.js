@@ -1,7 +1,7 @@
 module.exports = app => {
 
-  class SequenceController extends app.Controller {
+  class StatsController extends app.Controller {
   }
 
-  return SequenceController;
+  return StatsController;
 };
