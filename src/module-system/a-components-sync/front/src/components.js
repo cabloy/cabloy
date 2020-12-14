@@ -28,6 +28,7 @@ import contextMenu from './components/contextMenu.vue';
 import box from './components/box.vue';
 import treeview from './components/treeview.vue';
 import treeviewItem from './components/treeviewItem.vue';
+import stats from './components/stats.jsx';
 
 export default {
   ebLoadMore: loadMore,
@@ -60,4 +61,5 @@ export default {
   ebBox: box,
   ebTreeview: treeview,
   ebTreeviewItem: treeviewItem,
+  ebStats: stats,
 };
