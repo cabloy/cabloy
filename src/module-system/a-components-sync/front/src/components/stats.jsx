@@ -28,6 +28,7 @@ export default {
   watch: {
     params() {
       this.$nextTick(() => {
+        this.setValue(null);
         this.init();
       });
     },
@@ -58,9 +59,9 @@ export default {
         nameSub: this.params.nameSub,
       });
       if (value === undefined) {
-        this.value = this.default;
+        this.setValue(this.default);
       } else {
-        this.value = value;
+        this.setValue(value);
       }
     },
     async subscribe() {
@@ -82,15 +83,18 @@ export default {
         this.io.unsubscribe(this.subscribeId);
         this.io = null;
         this.subscribeId = null;
-        this.value = null;
       }
     },
     onMessage({ message }) {
       const content = JSON.parse(message.content);
-      this.value = content.value;
+      this.setValue(content.value);
     },
     onSubscribed() {
       this.loadValue();
+    },
+    setValue(value) {
+      this.value = value;
+      this.$emit('change', value);
     },
     _getFullName() {
       return this.params.nameSub ? `${this.params.name}.${this.params.nameSub}` : this.params.name;
