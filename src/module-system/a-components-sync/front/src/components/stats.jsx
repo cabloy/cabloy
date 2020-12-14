@@ -27,12 +27,29 @@ export default {
   data() {
     return {
       value: null,
+      io: null,
+      subscribeId: null,
     };
   },
+  computed: {
+    user() {
+      return this.$store.state.auth.user.op;
+    },
+  },
   created() {
-    this.loadValue();
+    this.init();
+  },
+  beforeDestroy() {
+    // unsubscribe
+    if (this.subscribeId) {
+      this.io.unsubscribe(this.subscribeId);
+      this.subscribeId = null;
+    }
   },
   methods: {
+    async init() {
+      await this.subscribe();
+    },
     async loadValue() {
       const value = await this.$api.post('/a/stats/stats/get', {
         module: this.module,
@@ -44,6 +61,34 @@ export default {
       } else {
         this.value = value;
       }
+    },
+    async subscribe() {
+      // io
+      const action = {
+        actionModule: 'a-socketio',
+        actionComponent: 'io',
+        name: 'instance',
+      };
+      this.io = await this.$meta.util.performAction({ ctx: this, action });
+      // socket io
+      const subscribePath = this._getSubscribePath();
+      this.subscribeId = this.io.subscribe(
+        subscribePath, this.onMessage, this.onSubscribed
+      );
+    },
+    onMessage({ message }) {
+      const content = JSON.parse(message.content);
+      this.value = content.value;
+    },
+    onSubscribed() {
+      this.loadValue();
+    },
+    _getFullName() {
+      return this.nameSub ? `${this.name}.${this.nameSub}` : this.name;
+    },
+    _getSubscribePath() {
+      const fullName = this._getFullName();
+      return `/a/stats/stats/${this.user.id}/${this.module}/${fullName}`;
     },
   },
   render() {
