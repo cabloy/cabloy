@@ -30,6 +30,7 @@ module.exports = ctx => {
 
     _notify_tail({ module, name, nameSub, user, async }) {
       const provider = this._findStatsProvider({ module, name });
+      if (provider.user && !user) return;
       // queue
       const method = async ? 'pushAsync' : 'push';
       return ctx.app.meta.queue[method]({

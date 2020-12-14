@@ -1,36 +1,3 @@
-<template>
-  <eb-page>
-    <eb-navbar :title="$text('Mine')" eb-back-link="Back">
-      <f7-nav-right>
-        <eb-link v-if="!user.agent.anonymous && !inAgent" iconMaterial="settings" eb-href="user/mineAgent" eb-target="_self"></eb-link>
-      </f7-nav-right>
-    </eb-navbar>
-    <div class="mine">
-      <div class="mine-block">
-        <img class="avatar avatar48" :src="userAvatar" style="cursor:pointer;" @click="onClickAvatar">
-      </div>
-      <div class="mine-block name">{{userName}}</div>
-      <div class="mine-block status" v-if="!loggedIn">{{$text('Not LoggedIn')}}</div>
-      <f7-segmented strong tag="div" class="login">
-        <eb-button v-if="inAgent" :onPerform="onPerformSwitchOff">{{$text('Quit Agent')}}</eb-button>
-        <eb-link v-if="!loggedIn" :onPerform="onPerformLogin">{{$text('Sign In')}}</eb-link>
-        <eb-button v-if="loggedIn" :onPerform="onPerformLogout">{{$text('Log Out')}}</eb-button>
-      </f7-segmented>
-    </div>
-    <f7-list v-if="ready">
-      <f7-list-group v-for="category of treeData" :key="category.id">
-        <f7-list-item group-title :title="category.categoryNameLocale"></f7-list-item>
-        <eb-list-item v-for="mineItem of __getMineItemsOfCategory(category)" :key="mineItem.atomStaticKey"
-         link="#" :title="mineItem.atomNameLocale"
-         :context="mineItem" :onPerform="onPerformMineItem">
-          <div slot="after">
-          </div>
-        </eb-list-item>
-      </f7-list-group>
-    </f7-list>
-  </eb-page>
-</template>
-<script>
 export default {
   components: {},
   data() {
@@ -126,43 +93,76 @@ export default {
         },
       });
     },
+    renderStats(mineItem) {
+      const resourceConfig = JSON.parse(mineItem.resourceConfig);
+      const stats = resourceConfig.stats;
+      if (!stats) return;
+      return (
+        <eb-stats params={stats.params} color={stats.color}></eb-stats>
+      );
+    },
+    renderMineItems(category) {
+      const children = [];
+      const mineItems = this.__getMineItemsOfCategory(category);
+      for (const mineItem of mineItems) {
+        children.push(
+          <eb-list-item key={mineItem.atomStaticKey}
+            link="#" title={mineItem.atomNameLocale}
+            propsOnPerform={event => this.onPerformMineItem(event, mineItem)}>
+            <div slot="after">
+              {this.renderStats(mineItem)}
+            </div>
+          </eb-list-item>
+        );
+      }
+      return children;
+    },
+    renderList() {
+      if (!this.ready) return;
+      const children = [];
+      for (const category of this.treeData) {
+        children.push(
+          <f7-list-group key={category.id}>
+            <f7-list-item group-title title={category.categoryNameLocale}></f7-list-item>
+            {this.renderMineItems(category)}
+          </f7-list-group>
+        );
+      }
+      return (
+        <f7-list>
+          {children}
+        </f7-list>
+      );
+    },
+  },
+  render() {
+    let domSettings;
+    if (!this.user.agent.anonymous && !this.inAgent) {
+      domSettings = (
+        <eb-link iconMaterial="settings" eb-href="user/mineAgent" eb-target="_self"></eb-link>
+      );
+    }
+    return (
+      <eb-page>
+        <eb-navbar title={this.$text('Mine')} eb-back-link="Back">
+          <f7-nav-right>
+            {domSettings}
+          </f7-nav-right>
+        </eb-navbar>
+        <div class="mine-user">
+          <div class="mine-block">
+            <img class="avatar avatar48" src={this.userAvatar} style="cursor:pointer;" onClick={this.onClickAvatar} />
+          </div>
+          <div class="mine-block name">{this.userName}</div>
+          {!this.loggedIn && <div class="mine-block status">{this.$text('Not LoggedIn')}</div>}
+          <f7-segmented strong tag="div" class="login">
+            {this.inAgent && <eb-button propsOnPerform={this.onPerformSwitchOff}>{this.$text('Quit Agent')}</eb-button>}
+            {!this.loggedIn && <eb-link propsOnPerform={this.onPerformLogin}>{this.$text('Sign In')}</eb-link>}
+            {this.loggedIn && <eb-button propsOnPerform={this.onPerformLogout}>{this.$text('Log Out')}</eb-button>}
+          </f7-segmented>
+        </div>
+        {this.renderList()}
+      </eb-page>
+    );
   },
 };
-
-</script>
-<style lang="less" scoped>
-.mine {
-  position: relative;
-  display: flex;
-  align-items: center;
-  height: 100px;
-  background-color: var(--f7-text-editor-toolbar-bg-color);
-  color: var(--f7-block-header-text-color);
-  padding-left: 24px;
-
-  .mine-block {
-    display: flex;
-    align-items: center;
-    padding-right: 12px;
-  }
-
-  .name {
-    font-size: 20px;
-  }
-
-  .status {
-    font-size: 16px;
-  }
-
-  .login {
-    position: absolute;
-    bottom: 12px;
-    right: 12px;
-    .button{
-      width: auto;
-    }
-  }
-}
-
-
-</style>
