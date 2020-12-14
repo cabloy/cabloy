@@ -145,7 +145,9 @@ module.exports = ctx => {
         __statsDeps = {};
         __stats = this._collectStats();
       }
-      return __stats[fullKey];
+      const provider = __stats[fullKey];
+      if (!provider) throw new Error(`stats provider not found: ${fullKey}`);
+      return provider;
     }
 
     _collectStats() {
