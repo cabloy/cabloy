@@ -4,14 +4,8 @@ export default {
   },
   name: 'eb-stats',
   props: {
-    module: {
-      type: String,
-    },
-    name: {
-      type: String,
-    },
-    nameSub: {
-      type: String,
+    params: {
+      type: Object,
     },
     color: {
       type: String,
@@ -31,6 +25,13 @@ export default {
       subscribeId: null,
     };
   },
+  watch: {
+    params() {
+      this.$nextTick(() => {
+        this.init();
+      });
+    },
+  },
   computed: {
     user() {
       return this.$store.state.auth.user.op;
@@ -41,20 +42,20 @@ export default {
   },
   beforeDestroy() {
     // unsubscribe
-    if (this.subscribeId) {
-      this.io.unsubscribe(this.subscribeId);
-      this.subscribeId = null;
-    }
+    this.unsubscribe();
   },
   methods: {
     async init() {
-      await this.subscribe();
+      this.unsubscribe();
+      if (this.params) {
+        await this.subscribe();
+      }
     },
     async loadValue() {
       const value = await this.$api.post('/a/stats/stats/get', {
-        module: this.module,
-        name: this.name,
-        nameSub: this.nameSub,
+        module: this.params.module,
+        name: this.params.name,
+        nameSub: this.params.nameSub,
       });
       if (value === undefined) {
         this.value = this.default;
@@ -76,6 +77,14 @@ export default {
         subscribePath, this.onMessage, this.onSubscribed
       );
     },
+    unsubscribe() {
+      if (this.subscribeId) {
+        this.io.unsubscribe(this.subscribeId);
+        this.io = null;
+        this.subscribeId = null;
+        this.value = null;
+      }
+    },
     onMessage({ message }) {
       const content = JSON.parse(message.content);
       this.value = content.value;
@@ -84,11 +93,11 @@ export default {
       this.loadValue();
     },
     _getFullName() {
-      return this.nameSub ? `${this.name}.${this.nameSub}` : this.name;
+      return this.params.nameSub ? `${this.params.name}.${this.params.nameSub}` : this.params.name;
     },
     _getSubscribePath() {
       const fullName = this._getFullName();
-      return `/a/stats/stats/${this.user.id}/${this.module}/${fullName}`;
+      return `/a/stats/stats/${this.user.id}/${this.params.module}/${fullName}`;
     },
   },
   render() {
