@@ -1,13 +1,38 @@
-let __sequences;
+let __stats;
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Stats extends ctx.app.meta.BeanModuleBase {
 
     constructor(moduleName) {
-      super(ctx, 'sequence');
+      super(ctx, 'stats');
       this.moduleName = moduleName || ctx.module.info.relativeName;
     }
+
+    // async
+    async notify({ module, name, nameSub }) {
+      module = module || this.moduleName;
+      ctx.tail(() => {
+        this._notify_tail({ module, name, nameSub });
+      });
+    }
+
+    _notify_tail({ module, name, nameSub }) {
+      const provider = this._findStatsProvider({ module, name });
+      // queue
+      ctx.app.meta.queue.push({
+        subdomain: ctx.subdomain,
+        module: moduleInfo.relativeName,
+        queueName: 'stats',
+        queueNameSub: `${atomClass.module}:${atomClass.atomClassName}`,
+        data: {
+          module, name, nameSub,
+        },
+      });
+    }
+
+
+    // ////////////////////
 
     async reset(name) {
       const provider = this._findSequenceProvider(name);
@@ -87,36 +112,54 @@ module.exports = ctx => {
       return sequence;
     }
 
-    _findSequenceProvider(name) {
-      const fullKey = `${this.moduleName}:${name}`;
-      if (!__sequences) {
-        __sequences = this._collectSequences();
+    _findStatsProvider({ module, name }) {
+      module = module || this.moduleName;
+      const fullKey = `${module}:${name}`;
+      if (!__stats) {
+        __stats = this._collectStats();
       }
-      return __sequences[fullKey];
+      console.log(__stats);
+      return __stats[fullKey];
     }
 
-    _collectSequences() {
-      const sequences = {};
+    _collectStats() {
+      const stats = {};
       for (const module of ctx.app.meta.modulesArray) {
-        const providers = module.main.meta && module.main.meta.sequence && module.main.meta.sequence.providers;
+        const providers = module.main.meta && module.main.meta.stats && module.main.meta.stats.providers;
         if (!providers) continue;
         for (const key in providers) {
           const provider = providers[key];
+          // bean
           const beanName = provider.bean;
           let beanFullName;
           if (typeof beanName === 'string') {
-            beanFullName = `${module.info.relativeName}.sequence.${beanName}`;
+            beanFullName = `${module.info.relativeName}.stats.${beanName}`;
           } else {
-            beanFullName = `${beanName.module || module.info.relativeName}.sequence.${beanName.name}`;
+            beanFullName = `${beanName.module || module.info.relativeName}.stats.${beanName.name}`;
           }
+          // dependencies
+          const dependencies = this._adjustDependencies(module, provider.dependencies);
+          // ok
           const fullKey = `${module.info.relativeName}:${key}`;
-          sequences[fullKey] = {
+          stats[fullKey] = {
             ...provider,
             beanFullName,
+            dependencies,
           };
         }
       }
-      return sequences;
+      return stats;
+    }
+
+    _adjustDependencies(module, dependencies) {
+      if (!dependencies) return null;
+      if (!Array.isArray(dependencies)) {
+        dependencies = dependencies.split(',');
+      }
+      return dependencies.map(item => {
+        if (item.indexOf(':') > -1) return item;
+        return `${module.info.relativeName}:${item}`;
+      });
     }
 
   }

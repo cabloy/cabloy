@@ -109,14 +109,16 @@ module.exports = app => {
         },
       },
       stats: {
-        tasksUser: {
-          user: true,
-          bean: 'tasksUser',
-        },
-        tasksInstance: {
-          user: false,
-          bean: 'tasksInstance',
-          dependencies: 'tasksUser',
+        providers: {
+          tasksUser: {
+            user: true,
+            bean: 'tasksUser',
+          },
+          tasksInstance: {
+            user: false,
+            bean: 'tasksInstance',
+            dependencies: 'tasksUser',
+          },
         },
       },
     });

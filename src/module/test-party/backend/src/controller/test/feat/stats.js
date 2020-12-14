@@ -7,6 +7,8 @@ module.exports = app => {
 
     async stats() {
 
+      await this.ctx.bean.stats.notify({ name: 'tasksUser' });
+
       // done
       this.ctx.success();
     }
