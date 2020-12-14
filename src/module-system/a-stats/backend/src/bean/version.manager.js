@@ -4,14 +4,15 @@ module.exports = app => {
 
     async update(options) {
       if (options.version === 1) {
-        // create table: aSequence
+        // create table: aStats
         const sql = `
-          CREATE TABLE aSequence (
+          CREATE TABLE aStats (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             deleted int(11) DEFAULT '0',
             iid int(11) DEFAULT '0',
+            userId int(11) DEFAULT '0',
             module varchar(255) DEFAULT NULL,
             name varchar(255) DEFAULT NULL,
             value json DEFAULT NULL,

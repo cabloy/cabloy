@@ -108,6 +108,17 @@ module.exports = app => {
           test: socketioTest,
         },
       },
+      stats: {
+        tasksUser: {
+          user: true,
+          bean: 'tasksUser',
+        },
+        tasksInstance: {
+          user: false,
+          bean: 'tasksInstance',
+          dependencies: 'tasksUser',
+        },
+      },
     });
   }
   if (app.meta.isTest) {

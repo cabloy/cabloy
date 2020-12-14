@@ -1,6 +1,5 @@
 const versionManager = require('./bean/version.manager.js');
-const sequenceSimple = require('./bean/sequence.simple.js');
-const beanSequence = require('./bean/bean.sequence.js');
+const beanStats = require('./bean/bean.stats.js');
 
 module.exports = app => {
   const beans = {
@@ -9,15 +8,10 @@ module.exports = app => {
       mode: 'app',
       bean: versionManager,
     },
-    // sequence
-    'sequence.simple': {
-      mode: 'ctx',
-      bean: sequenceSimple,
-    },
     // global
-    sequence: {
+    stats: {
       mode: 'ctx',
-      bean: beanSequence,
+      bean: beanStats,
       global: true,
     },
   };

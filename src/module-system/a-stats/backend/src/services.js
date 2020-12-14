@@ -1,4 +1,4 @@
-const sequence = require('./service/sequence.js');
+const stats = require('./service/stats.js');
 module.exports = {
-  sequence,
+  stats,
 };

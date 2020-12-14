@@ -25,6 +25,7 @@ const testFeatInstance = require('./controller/test/feat/instance.js');
 const testFeatProgress = require('./controller/test/feat/progress.js');
 const testFeatSequence = require('./controller/test/feat/sequence.js');
 const testFeatSettings = require('./controller/test/feat/settings.js');
+const testFeatStats = require('./controller/test/feat/stats.js');
 const testFeatStatus = require('./controller/test/feat/status.js');
 const testFeatValidation = require('./controller/test/feat/validation.js');
 const testFeatMiddleware = require('./controller/test/feat/middleware.js');
@@ -68,6 +69,7 @@ module.exports = app => {
     testFeatProgress,
     testFeatSequence,
     testFeatSettings,
+    testFeatStats,
     testFeatStatus,
     testFeatValidation,
     testFeatMiddleware,

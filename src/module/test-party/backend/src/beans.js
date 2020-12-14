@@ -16,6 +16,8 @@ const middlewareTestRestructuring = require('./bean/middleware.restructuring.js'
 const atomParty = require('./bean/atom.party.js');
 const ioMessageTest = require('./bean/io.message.test.js');
 const sequenceTest = require('./bean/sequence.test.js');
+const statsTasksUser = require('./bean/stats.tasksUser.js');
+const statsTasksInstance = require('./bean/stats.tasksInstance.js');
 
 module.exports = app => {
   const beans = {
@@ -105,6 +107,15 @@ module.exports = app => {
       'sequence.test': {
         mode: 'ctx',
         bean: sequenceTest,
+      },
+      // stats
+      'stats.tasksUser': {
+        mode: 'ctx',
+        bean: statsTasksUser,
+      },
+      'stats.tasksInstance': {
+        mode: 'ctx',
+        bean: statsTasksInstance,
       },
     });
   }

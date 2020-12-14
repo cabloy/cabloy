@@ -1,6 +1,6 @@
 const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
-describe.only('test/controller/test/resource/all.test.js', () => {
+describe('test/controller/test/resource/all.test.js', () => {
 
   it('action:all', async () => {
     const result = await app.httpRequest().post(mockUrl('test/resource/all'));

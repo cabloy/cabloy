@@ -1,8 +1,8 @@
-const sequence = require('./controller/sequence.js');
+const stats = require('./controller/stats.js');
 
 module.exports = app => {
   const controllers = {
-    sequence,
+    stats,
   };
   return controllers;
 };
