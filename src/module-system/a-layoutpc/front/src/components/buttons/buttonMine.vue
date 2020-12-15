@@ -5,6 +5,8 @@
     </div>
     <div class="item name" v-if="loggedIn">{{userName}}</div>
     <div class="item status" v-if="!loggedIn">{{$text('Not LoggedIn')}}</div>
+    <div class="item"><eb-stats :params="{module:'a-user', name:'userRed'}" color="red" :hidden="statsUserRedHidden" @change="onChangeStatsUserRed"></eb-stats></div>
+    <div class="item"><eb-stats :params="{module:'a-user', name:'userOrange'}" color="orange" :hidden="statsUserOrangeHidden" @change="onChangeStatsUserOrange"></eb-stats></div>
   </eb-link>
 </template>
 <script>
@@ -20,7 +22,10 @@ function installFactory(_Vue) {
   return {
     mixins: [ ebLayoutButtonBase ],
     data() {
-      return {};
+      return {
+        statsUserRed: null,
+        statsUserOrange: null,
+      };
     },
     computed: {
       loggedIn() {
@@ -49,6 +54,20 @@ function installFactory(_Vue) {
           mine: true,
           'button-separator': this.buttonConfig.showSeparator,
         };
+      },
+      statsUserRedHidden() {
+        return !this.statsUserRed;
+      },
+      statsUserOrangeHidden() {
+        return this.statsUserRed || !this.statsUserOrange;
+      },
+    },
+    methods: {
+      onChangeStatsUserRed(value) {
+        this.statsUserRed = value;
+      },
+      onChangeStatsUserOrange(value) {
+        this.statsUserOrange = value;
       },
     },
   };

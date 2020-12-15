@@ -11,6 +11,10 @@ export default {
       type: String,
       default: 'gray',
     },
+    hidden: {
+      type: Boolean,
+      default: false,
+    },
     hiddenOnEmpty: {
       type: Boolean,
       default: true,
@@ -26,7 +30,8 @@ export default {
     };
   },
   watch: {
-    params() {
+    params(valueNew, valueOld) {
+      if (JSON.stringify(valueNew) === JSON.stringify(valueOld)) return;
       this.$nextTick(() => {
         this.setValue(null);
         this.init();
@@ -105,7 +110,7 @@ export default {
     },
   },
   render() {
-    const hidden = !this.value && this.hiddenOnEmpty;
+    const hidden = this.hidden || (!this.value && this.hiddenOnEmpty);
     return (
       <f7-badge color={this.color} class={hidden ? 'display-none' : ''}>{this.value}</f7-badge>
     );
