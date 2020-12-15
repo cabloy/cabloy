@@ -42,6 +42,14 @@ module.exports = app => {
         flowDefSearch: schemas.flowDefSearch,
       },
     },
+    stats: {
+      providers: {
+        flowInitiateds: {
+          user: true,
+          bean: 'flowInitiateds',
+        },
+      },
+    },
   };
   return meta;
 };

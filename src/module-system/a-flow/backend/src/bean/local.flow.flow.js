@@ -49,8 +49,10 @@ module.exports = ctx => {
       const nodeInstanceStartEvent = await this._findNodeInstanceStartEvent({ startEventId });
       if (!nodeInstanceStartEvent) throw new Error(`startEvent not found: ${this.context._flowDef.atomStaticKey}.${startEventId || 'startEventNone'}`);
       // node enter
-      const res = await nodeInstanceStartEvent.enter();
-      if (!res) {
+      const finished = await nodeInstanceStartEvent.enter();
+      if (!finished) {
+        // notify
+        this._notifyFlowInitiateds(flowUserId);
         // console.log(`--------flow break: ${flowId}`);
       }
     }
@@ -151,6 +153,8 @@ module.exports = ctx => {
         // log
         // console.log(`--------flow end: ${flowId}`);
       });
+      // notify
+      this._notifyFlowInitiateds(this.context._flow.flowUserId);
     }
 
     async _clearNodeRemains() {
@@ -343,6 +347,16 @@ module.exports = ctx => {
         str = str.toString().split(',');
       }
       return str;
+    }
+
+    _notifyFlowInitiateds(flowUserId) {
+      if (flowUserId) {
+        ctx.bean.stats.notify({
+          module: moduleInfo.relativeName,
+          name: 'flowInitiateds',
+          user: { id: flowUserId },
+        });
+      }
     }
 
   }

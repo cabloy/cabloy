@@ -11,6 +11,7 @@ const localFlowListener = require('./bean/local.flow.listener.js');
 const localProcedure = require('./bean/local.procedure.js');
 const beanFlow = require('./bean/bean.flow.js');
 const beanFlowDef = require('./bean/bean.flowDef.js');
+const statsFlowInitiateds = require('./bean/stats.flowInitiateds.js');
 
 module.exports = app => {
   const beans = {
@@ -72,6 +73,11 @@ module.exports = app => {
       mode: 'ctx',
       bean: beanFlowDef,
       global: true,
+    },
+    // stats
+    'stats.flowInitiateds': {
+      mode: 'ctx',
+      bean: statsFlowInitiateds,
     },
   };
   return beans;

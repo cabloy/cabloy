@@ -13,6 +13,13 @@ module.exports = app => {
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
       actionPath,
+      stats: {
+        params: {
+          module: 'a-flow',
+          name: 'flowInitiateds',
+        },
+        color: 'orange',
+      },
     }),
     resourceRoles: 'root',
     resourceSorting: 1,

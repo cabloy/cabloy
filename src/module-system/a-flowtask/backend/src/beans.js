@@ -5,6 +5,8 @@ const localContextTask = require('./bean/local.context.task.js');
 const localFlowTask = require('./bean/local.flow.task.js');
 const localProcedure = require('./bean/local.procedure.js');
 const beanFlowTask = require('./bean/bean.flowTask.js');
+const statsTaskClaimings = require('./bean/stats.taskClaimings.js');
+const statsTaskHandlings = require('./bean/stats.taskHandlings.js');
 
 module.exports = app => {
   const beans = {
@@ -40,6 +42,15 @@ module.exports = app => {
       mode: 'ctx',
       bean: beanFlowTask,
       global: true,
+    },
+    // stats
+    'stats.taskClaimings': {
+      mode: 'ctx',
+      bean: statsTaskClaimings,
+    },
+    'stats.taskHandlings': {
+      mode: 'ctx',
+      bean: statsTaskHandlings,
     },
   };
   return beans;

@@ -17,6 +17,18 @@ module.exports = app => {
     flow: {
       nodes: flowNodes,
     },
+    stats: {
+      providers: {
+        taskClaimings: {
+          user: true,
+          bean: 'taskClaimings',
+        },
+        taskHandlings: {
+          user: true,
+          bean: 'taskHandlings',
+        },
+      },
+    },
   };
   return meta;
 };
