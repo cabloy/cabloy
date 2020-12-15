@@ -33,6 +33,11 @@ export default {
       });
     },
   },
+  computed: {
+    user() {
+      return this.$store.state.auth.user.op;
+    },
+  },
   created() {
     this.init();
   },
@@ -42,6 +47,7 @@ export default {
   },
   methods: {
     async init() {
+      if (this.user.anonymous) return;
       this.unsubscribe();
       if (this.params) {
         await this.subscribe();
