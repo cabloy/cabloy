@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-file",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "title": "File",
   "eggBornModule": {
     "fileVersion": 2,
@@ -20,13 +20,13 @@
   "dependencies": {
     "bluebird": "^3.7.2",
     "cropperjs": "^1.5.6",
-    "egg-born-bin": "^3.0.2",
-    "egg-born-mock": "^2.0.3",
+    "egg-born-bin": "^3.0.3",
+    "egg-born-mock": "^2.0.4",
     "extend2": "^1.0.0",
     "fs-extra": "^8.1.0",
     "gm": "^1.23.1",
     "pump": "^3.0.0",
-    "require3": "^2.0.2",
+    "require3": "^2.0.3",
     "stream-wormhole": "^1.1.0",
     "uuid": "^3.4.0"
   }

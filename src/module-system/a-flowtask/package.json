@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-flowtask",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "title": "a-flowtask",
   "eggBornModule": {
     "fileVersion": 1,
@@ -22,9 +22,9 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "egg-born-bin": "^3.0.2",
-    "egg-born-mock": "^2.0.3",
+    "egg-born-bin": "^3.0.3",
+    "egg-born-mock": "^2.0.4",
     "extend2": "^1.0.0",
-    "require3": "^2.0.2"
+    "require3": "^2.0.3"
   }
 }

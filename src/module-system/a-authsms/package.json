@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-authsms",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "title": "a-authsms",
   "eggBornModule": {
     "fileVersion": 0,
@@ -24,9 +24,9 @@
     "@alicloud/pop-core": "^1.7.9",
     "boxen": "^4.2.0",
     "chalk": "^3.0.0",
-    "egg-born-bin": "^3.0.2",
-    "egg-born-mock": "^2.0.3",
+    "egg-born-bin": "^3.0.3",
+    "egg-born-mock": "^2.0.4",
     "extend2": "^1.0.0",
-    "require3": "^2.0.2"
+    "require3": "^2.0.3"
   }
 }
