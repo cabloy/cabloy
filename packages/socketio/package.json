@@ -1,6 +1,6 @@
 {
   "name": "@zhennann/socketio",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "socketio",
   "main": "dist/socketio.min.js",
   "publishConfig": {
@@ -9,9 +9,6 @@
   "scripts": {
     "build": "node build/front/build.js",
     "preversion": "npm run build && git add ."
-  },
-  "publishConfig": {
-    "access": "public"
   },
   "repository": {
     "type": "git",
