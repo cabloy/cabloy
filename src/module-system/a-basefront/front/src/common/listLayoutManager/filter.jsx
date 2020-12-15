@@ -23,12 +23,8 @@ export default {
         if (form.atomName) {
           options.where['a.atomName'] = { val: form.atomName, op: 'like' };
         }
-        if (form.mine) {
-          options.mine = Number(form.mine);
-        }
-        if (form.stage) {
-          options.stage = form.stage;
-        }
+        options.mine = Number(form.mine);
+        options.stage = form.stage;
 
         if (form.language) {
           options.language = form.language;
@@ -40,16 +36,10 @@ export default {
           options.tag = form.tag;
         }
 
-        if (form.star) {
-          options.star = Number(form.star);
-        }
-        if (form.label) {
-          options.label = form.label;
-        }
+        options.star = Number(form.star);
+        options.label = Number(form.label);
 
-        if (form.atomClass) {
-          params.atomClass = form.atomClass;
-        }
+        params.atomClass = form.atomClass;
       }
       // formAtomClass
       const formAtomClass = this.filter.data.formAtomClass;

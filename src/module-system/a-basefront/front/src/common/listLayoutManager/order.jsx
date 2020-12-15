@@ -7,21 +7,37 @@ export default {
     };
   },
   computed: {
-    order_default() {
+    order_current() {
+      return this.order.selected || this.order_default();
+    },
+    order_list() {
+      // base
+      const ordersBase = this.base.configAtomBase.render.list.info.orders;
+      // atomClass
+      const ordersAtomClass = this.$meta.util.getProperty(this.base.configAtom, 'render.list.info.orders');
+      // atomOrders
+      return ordersAtomClass ? ordersBase.concat(ordersAtomClass) : ordersBase;
+    },
+  },
+  methods: {
+    order_default(params) {
       let atomOrder;
+      if (!params) {
+        params = this.base_prepareSelectParams({ setOrder: false });
+      }
       if (this.container.scene === 'select') {
         atomOrder = {
           name: 'atomName',
           by: 'asc',
           tableAlias: 'a',
         };
-      } else if (this.container.options && this.container.options.star) {
+      } else if (params.options.star) {
         atomOrder = {
           name: 'updatedAt',
           by: 'desc',
           tableAlias: 'd',
         };
-      } else if (this.container.options && this.container.options.label) {
+      } else if (params.options.label) {
         atomOrder = {
           name: 'updatedAt',
           by: 'desc',
@@ -38,19 +54,6 @@ export default {
       // ok
       return atomOrder;
     },
-    order_current() {
-      return this.order.selected || this.order_default;
-    },
-    order_list() {
-      // base
-      const ordersBase = this.base.configAtomBase.render.list.info.orders;
-      // atomClass
-      const ordersAtomClass = this.$meta.util.getProperty(this.base.configAtom, 'render.list.info.orders');
-      // atomOrders
-      return ordersAtomClass ? ordersBase.concat(ordersAtomClass) : ordersBase;
-    },
-  },
-  methods: {
     order_onPerformPopover(event) {
       const popover = this.$refs.order_popover.$el;
       this.$f7.popover.open(popover, event.currentTarget);

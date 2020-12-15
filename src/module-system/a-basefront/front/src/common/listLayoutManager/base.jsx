@@ -45,11 +45,6 @@ export default {
       if (this.container.scene === 'select') {
         options.where['a.id'] = this.container.params.selectedAtomIds.length > 0 ? this.container.params.selectedAtomIds : null;
       }
-      // order
-      const atomOrderCurrent = this.order.selected || this.order_default;
-      options.orders = [
-        [ this.order_getKey(atomOrderCurrent), atomOrderCurrent.by ],
-      ];
       // extend 1
       if (this.container.options) {
         options = this.$utils.extend({}, options, this.container.options);
@@ -57,7 +52,8 @@ export default {
       // options
       return options;
     },
-    base_prepareSelectParams() {
+    base_prepareSelectParams(opts) {
+      const setOrder = !opts || opts.setOrder !== false;
       // options
       const options = this.base_prepareSelectOptions();
       // params
@@ -70,6 +66,14 @@ export default {
       if (filterParams) {
         params = this.$utils.extend({}, params, filterParams);
       }
+      // order
+      if (setOrder) {
+        const atomOrderCurrent = this.order.selected || this.order_default(params);
+        params.options.orders = [
+          [ this.order_getKey(atomOrderCurrent), atomOrderCurrent.by ],
+        ];
+      }
+      // ok
       return params;
     },
     base_getItems() {
