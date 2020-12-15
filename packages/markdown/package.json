@@ -1,6 +1,6 @@
 {
   "name": "@zhennann/markdown",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "markdown",
   "main": "index.js",
   "repository": {
@@ -16,7 +16,6 @@
     "url": "https://github.com/zhennann/markdown/issues"
   },
   "homepage": "https://github.com/zhennann/markdown#readme",
-  "devDependencies": {},
   "dependencies": {
     "markdown-it": "^10.0.0",
     "markdown-it-abbr": "^1.0.4",

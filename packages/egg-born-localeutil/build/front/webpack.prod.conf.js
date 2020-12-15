@@ -1,7 +1,7 @@
 const utils = require('./utils');
 const webpack = require('webpack');
 const config = require('./config.js');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const baseWebpackConfig = require('./webpack.base.conf');
 const { VueLoaderPlugin } = require('vue-loader');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');

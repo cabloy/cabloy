@@ -1,13 +1,11 @@
 {
   "name": "@zhennann/set",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Set",
   "main": "index.js",
   "keywords": [
     "Set"
   ],
   "author": "zhennann",
-  "license": "MIT",
-  "devDependencies": {},
-  "dependencies": {}
+  "license": "MIT"
 }

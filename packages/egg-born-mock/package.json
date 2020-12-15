@@ -1,6 +1,6 @@
 {
   "name": "egg-born-mock",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "egg-born-mock",
   "main": "src/main.js",
   "repository": {
@@ -18,7 +18,6 @@
     "url": "https://github.com/zhennann/egg-born-mock/issues"
   },
   "homepage": "https://github.com/zhennann/egg-born-mock#readme",
-  "devDependencies": {},
   "dependencies": {
     "egg-mock": "^3.25.1"
   }
