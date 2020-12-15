@@ -3,6 +3,9 @@
   "version": "1.0.5",
   "description": "Set",
   "main": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [
     "Set"
   ],

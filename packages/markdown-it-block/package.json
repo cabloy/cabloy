@@ -3,6 +3,9 @@
   "version": "3.0.4",
   "description": "Plugin to create block-level custom tags for markdown-it markdown parser on Cabloy-CMS",
   "main": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zhennann/markdown-it-block.git"

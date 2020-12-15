@@ -3,6 +3,9 @@
   "version": "1.0.3",
   "description": "Cabloy Build System",
   "main": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [
     "cabloy",
     "build"

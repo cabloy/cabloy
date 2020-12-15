@@ -3,6 +3,9 @@
   "version": "2.0.3",
   "description": "socketio",
   "main": "dist/socketio.min.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "node build/front/build.js",
     "preversion": "npm run build && git add ."
