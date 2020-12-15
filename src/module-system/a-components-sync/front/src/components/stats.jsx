@@ -33,11 +33,6 @@ export default {
       });
     },
   },
-  computed: {
-    user() {
-      return this.$store.state.auth.user.op;
-    },
-  },
   created() {
     this.init();
   },
@@ -101,7 +96,7 @@ export default {
     },
     _getSubscribePath() {
       const fullName = this._getFullName();
-      return `/a/stats/stats/${this.user.id}/${this.params.module}/${fullName}`;
+      return `/a/stats/stats/${this.params.module}/${fullName}`;
     },
   },
   render() {

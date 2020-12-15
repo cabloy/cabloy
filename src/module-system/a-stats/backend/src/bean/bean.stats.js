@@ -80,7 +80,7 @@ module.exports = ctx => {
             },
           };
           await ctx.bean.io.publish({
-            path: `/a/stats/stats/${user.id}/${module}/${fullNameSub}`,
+            path: `/a/stats/stats/${module}/${fullNameSub}`,
             message,
             messageClass: {
               module: 'a-stats',
