@@ -3,7 +3,7 @@ const path = require('path');
 const express = require('express');
 const webpack = require('webpack');
 const fse = require('fs-extra');
-const proxyMiddleware = require('http-proxy-middleware');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 const webpackConfigFn = require('./webpack.dev.conf');
 const configFn = require('../config');
 const utilsFn = require('./utils.js');
@@ -46,8 +46,6 @@ module.exports = ({ projectPath, frontPath, scene }) => {
 
     const devMiddleware = require('webpack-dev-middleware')(compiler, {
       publicPath: webpackConfig.output.publicPath,
-      quiet: true,
-      watchOptions: webpackConfig.watchOptions,
     });
 
     const hotMiddleware = require('webpack-hot-middleware')(compiler, {
@@ -70,7 +68,7 @@ module.exports = ({ projectPath, frontPath, scene }) => {
       if (typeof options === 'string') {
         options = { target: options };
       }
-      app.use(proxyMiddleware(options.filter || context, options));
+      app.use(createProxyMiddleware(options.filter || context, options));
     });
 
     // handle fallback for HTML5 history API

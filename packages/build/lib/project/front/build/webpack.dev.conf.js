@@ -1,6 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const baseWebpackConfigFn = require('./webpack.base.conf');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
@@ -29,7 +29,6 @@ module.exports = context => {
       new VueLoaderPlugin(),
       // https://github.com/glenjamin/webpack-hot-middleware#installation--usage
       new webpack.HotModuleReplacementPlugin(),
-      new webpack.NoEmitOnErrorsPlugin(),
       // https://github.com/ampedandwired/html-webpack-plugin
       new HtmlWebpackPlugin({
         filename: 'index.html',
@@ -39,9 +38,13 @@ module.exports = context => {
       }),
       new FriendlyErrorsPlugin(),
     ],
+    optimization: {
+      emitOnErrors: true,
+    },
     watchOptions: {
       aggregateTimeout: 1000,
-      ignored: [ /\/backend\/cms\//, /\/backend\/test\//, /\/src\/module\/.*?\/build\//, /\/src\/module\/.*?\/dist\//, /\/\.git\// ],
+      ignored: [ '**/.git/**' ],
+      // ignored: [ '**/backend/cms/**', '**/backend/test/**', '**/src/module/*/dist/**', '**/.git/**' ],
     },
   });
 };

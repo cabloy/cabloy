@@ -1,6 +1,6 @@
 const path = require('path');
 const fse = require('fs-extra');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 
 module.exports = context => {
 

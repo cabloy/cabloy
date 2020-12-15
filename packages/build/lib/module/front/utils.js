@@ -42,7 +42,7 @@ module.exports = context => {
       return {
         css: generateLoaders(),
         postcss: generateLoaders(),
-        less: generateLoaders('less', { javascriptEnabled: true }),
+        less: generateLoaders('less', { lessOptions: { javascriptEnabled: true } }),
         sass: generateLoaders('sass', { indentedSyntax: true }),
         scss: generateLoaders('sass'),
         stylus: generateLoaders('stylus'),
