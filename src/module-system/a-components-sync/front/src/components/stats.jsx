@@ -47,9 +47,8 @@ export default {
   },
   methods: {
     async init() {
-      if (this.user.anonymous) return;
       this.unsubscribe();
-      if (this.params) {
+      if (!this.user.anonymous && this.params) {
         await this.subscribe();
       }
     },
