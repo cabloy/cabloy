@@ -14,7 +14,6 @@ module.exports = {
     path: config.build.assetsRoot,
     filename: '[name].js',
     publicPath: config.build.assetsPublicPath,
-    library: 'index',
     libraryTarget: 'commonjs2',
   },
   externals: {

@@ -39,7 +39,6 @@ module.exports = context => {
     output: {
       path: context.config.build.assetsRoot,
       filename: '[name].js',
-      library: 'backend',
       libraryTarget: 'commonjs2',
     },
     externals: nodeModules,
