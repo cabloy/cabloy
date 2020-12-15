@@ -8,5 +8,6 @@ module.exports = {
   Buttons: '按钮',
   Panel: '面板',
   Panels: '面板',
-  'Sidebar Panel': '侧边栏面板',
+  'Sidebar Button': '边栏按钮',
+  'Sidebar Panel': '边栏面板',
 };

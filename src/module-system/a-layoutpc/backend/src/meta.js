@@ -5,10 +5,10 @@ module.exports = app => {
     base: {
       resources: {
         button: {
-          title: 'Button',
+          title: 'Sidebar Button',
         },
         panel: {
-          title: 'Panel',
+          title: 'Sidebar Panel',
         },
       },
       statics: {
