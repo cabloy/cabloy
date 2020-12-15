@@ -32,9 +32,9 @@ module.exports = appInfo => {
       __ebdb: {
         host: 'mysql', // see: docker-compose.yml
         port: '3306',
-        user: 'web_user',
-        password: '!%{9mov.Tw3LmcYP',
-        database: 'cabloy',
+        user: '{{mysqlUserName}}',
+        password: '{{mysqlUserPassword}}',
+        database: '{{name}}',
         hook: {
           meta: {
             long_query_time: 500,
