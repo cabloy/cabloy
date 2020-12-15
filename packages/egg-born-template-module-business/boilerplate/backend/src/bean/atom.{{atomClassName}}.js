@@ -13,9 +13,9 @@ module.exports = app => {
       return { atomId: key.atomId, itemId: res.insertId };
     }
 
-    async read({ atomClass, key, user }) {
+    async read({ atomClass, options, key, user }) {
       // super
-      const item = await super.read({ atomClass, key, user });
+      const item = await super.read({ atomClass, options, key, user });
       if (!item) return null;
       // ok
       return item;
@@ -26,9 +26,9 @@ module.exports = app => {
       await super.select({ atomClass, options, items, user });
     }
 
-    async write({ atomClass, key, item, options, user }) {
+    async write({ atomClass, target, key, item, options, user }) {
       // super
-      await super.write({ atomClass, key, item, options, user });
+      await super.write({ atomClass, target, key, item, options, user });
       // update {{atomClassName}}
       const data = await this.ctx.model.{{atomClassName}}.prepareData(item);
       data.id = key.itemId;

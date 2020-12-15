@@ -1,5 +1,9 @@
 module.exports = app => {
+  // schemas
   const schemas = require('./config/validation/schemas.js')(app);
+  // static
+  const staticResources = require('./config/static/resources.js')(app);
+  // meta
   const meta = {
     base: {
       atoms: {
@@ -8,6 +12,9 @@ module.exports = app => {
             bean:'{{atomClassName}}',
             title: '{{atomClassNameCapitalize}}',
             tableName: '{{providerId}}{{atomClassNameCapitalize}}',
+            language: false,
+            category: true,
+            tag: true,
           },
           actions: {
           },
@@ -17,24 +24,9 @@ module.exports = app => {
           },
         },
       },
-      functions: {
-        create{{atomClassNameCapitalize}}: {
-          title: 'Create {{atomClassNameCapitalize}}',
-          scene: 'create',
-          autoRight: 1,
-          atomClassName: '{{atomClassName}}',
-          action: 'create',
-          sorting: 1,
-          menu: 1,
-        },
-        list{{atomClassNameCapitalize}}: {
-          title: '{{atomClassNameCapitalize}} List',
-          scene: 'list',
-          autoRight: 1,
-          atomClassName: '{{atomClassName}}',
-          action: 'read',
-          sorting: 1,
-          menu: 1,
+      statics: {
+        'a-base.resource': {
+          items: staticResources,
         },
       },
     },
