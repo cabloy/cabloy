@@ -5,8 +5,8 @@
     </div>
     <div class="item name" v-if="loggedIn">{{userName}}</div>
     <div class="item status" v-if="!loggedIn">{{$text('Not LoggedIn')}}</div>
-    <div class="item"><eb-stats :params="{module:'a-user', name:'userRed'}" color="red" :hidden="statsUserRedHidden" @change="onChangeStatsUserRed"></eb-stats></div>
-    <div class="item"><eb-stats :params="{module:'a-user', name:'userOrange'}" color="orange" :hidden="statsUserOrangeHidden" @change="onChangeStatsUserOrange"></eb-stats></div>
+    <div :class="statsUserRedClass"><eb-stats :params="{module:'a-user', name:'userRed'}" color="red" @change="onChangeStatsUserRed"></eb-stats></div>
+    <div :class="statsUserOrangeClass" class="item"><eb-stats :params="{module:'a-user', name:'userOrange'}" color="orange" @change="onChangeStatsUserOrange"></eb-stats></div>
   </eb-link>
 </template>
 <script>
@@ -55,11 +55,17 @@ function installFactory(_Vue) {
           'button-separator': this.buttonConfig.showSeparator,
         };
       },
-      statsUserRedHidden() {
-        return !this.statsUserRed;
+      statsUserRedClass() {
+        return {
+          item: true,
+          'display-none': !this.statsUserRed,
+        };
       },
-      statsUserOrangeHidden() {
-        return this.statsUserRed || !this.statsUserOrange;
+      statsUserOrangeClass() {
+        return {
+          item: true,
+          'display-none': this.statsUserRed || !this.statsUserOrange,
+        };
       },
     },
     methods: {
