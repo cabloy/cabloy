@@ -5,7 +5,10 @@ module.exports = app => {
       providers: {
         userRed: {
           user: true,
-          bean: 'userRed',
+          bean: {
+            module: 'a-stats',
+            name: 'deps',
+          },
           dependencies: [
             'a-flowtask:taskClaimings',
             'a-flowtask:taskHandlings',
@@ -13,7 +16,10 @@ module.exports = app => {
         },
         userOrange: {
           user: true,
-          bean: 'userOrange',
+          bean: {
+            module: 'a-stats',
+            name: 'deps',
+          },
           dependencies: [
             'a-base:drafts',
             'a-base:stars',

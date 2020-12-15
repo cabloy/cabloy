@@ -2,6 +2,7 @@ const versionManager = require('./bean/version.manager.js');
 const queueStats = require('./bean/queue.stats.js');
 const beanStats = require('./bean/bean.stats.js');
 const ioMessageStats = require('./bean/io.message.stats.js');
+const statsDeps = require('./bean/stats.deps.js');
 
 module.exports = app => {
   const beans = {
@@ -25,6 +26,11 @@ module.exports = app => {
       mode: 'ctx',
       bean: beanStats,
       global: true,
+    },
+    // stats
+    'stats.deps': {
+      mode: 'ctx',
+      bean: statsDeps,
     },
   };
   return beans;
