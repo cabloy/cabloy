@@ -1,6 +1,6 @@
 {
   "name": "egg-born-front",
-  "version": "8.0.0",
+  "version": "8.0.1",
   "description": "egg-born-front",
   "scripts": {
     "lint": "eslint src",
@@ -24,18 +24,18 @@
   },
   "homepage": "https://github.com/zhennann/egg-born-front#readme",
   "dependencies": {
+    "@zhennann/extend": "^3.0.2",
     "@zhennann/framework7": "^5.7.14",
     "@zhennann/vue": "^2.6.15",
-    "@zhennann/extend": "^3.0.2",
     "async": "^3.2.0",
     "axios": "^0.19.2",
-    "egg-born-localeutil": "^2.0.0",
-    "egg-born-mparse": "^2.0.0",
+    "egg-born-localeutil": "^2.0.1",
+    "egg-born-mparse": "^2.0.1",
     "framework7-icons": "^3.0.0",
-    "moment": "^2.24.0",
-    "regenerator-runtime": "^0.13.7",
     "js-cookie": "^2.2.1",
     "json5": "^2.1.1",
+    "moment": "^2.24.0",
+    "regenerator-runtime": "^0.13.7",
     "vuex": "^3.1.2"
   }
 }

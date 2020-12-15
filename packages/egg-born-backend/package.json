@@ -1,6 +1,6 @@
 {
   "name": "egg-born-backend",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "description": "egg-born-backend",
   "scripts": {
     "lint": "eslint ."
@@ -23,9 +23,10 @@
   "homepage": "https://github.com/zhennann/egg-born-backend#readme",
   "dependencies": {
     "@zhennann/ali-rds": "^3.3.3",
-    "@zhennann/passport-oauth2": "^1.6.3",
+    "@zhennann/egg-socket.io": "^4.1.7",
     "@zhennann/koa-static-cache": "^5.1.8",
-    "@zhennann/set": "^1.0.1",
+    "@zhennann/passport-oauth2": "^1.6.3",
+    "@zhennann/set": "^1.0.3",
     "async": "^3.2.0",
     "autod": "^3.1.0",
     "autod-egg": "^1.0.0",
@@ -33,27 +34,26 @@
     "bullmq": "^1.8.13",
     "chalk": "^3.0.0",
     "egg": "^2.26.0",
-    "egg-born-localeutil": "^2.0.0",
-    "egg-born-mglob": "^2.0.0",
-    "egg-born-mock": "^2.0.0",
-    "egg-born-mparse": "^2.0.0",
+    "egg-born-localeutil": "^2.0.1",
+    "egg-born-mglob": "^2.0.1",
+    "egg-born-mock": "^2.0.2",
+    "egg-born-mparse": "^2.0.1",
     "egg-mysql": "^3.0.0",
     "egg-passport": "^2.0.0",
     "egg-redis": "^2.4.0",
     "egg-schedule": "^3.6.2",
-    "@zhennann/egg-socket.io": "^4.1.7",
     "extend2": "^1.0.0",
     "glob": "^7.1.6",
     "is-type-of": "^1.2.0",
     "json5": "^2.1.1",
+    "jsonwebtoken": "^8.5.1",
+    "koa-jwt2": "^1.0.3",
     "module-alias": "^2.2.2",
     "moment": "^2.24.0",
-    "object-get-o-a": "^2.0.0",
+    "object-get-o-a": "^2.0.1",
     "redlock": "^4.1.0",
     "semver": "^7.1.2",
     "supertest": "^4.0.2",
-    "uuid": "^3.4.0",
-    "jsonwebtoken": "^8.5.1",
-    "koa-jwt2": "^1.0.3"
+    "uuid": "^3.4.0"
   }
 }

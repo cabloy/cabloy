@@ -1,6 +1,6 @@
 {
   "name": "egg-born-localeutil",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "egg-born-localeutil",
   "main": "dist/index.js",
   "scripts": {
@@ -22,6 +22,5 @@
   "bugs": {
     "url": "https://github.com/zhennann/egg-born-localeutil/issues"
   },
-  "homepage": "https://github.com/zhennann/egg-born-localeutil#readme",
-  "devDependencies": {}
+  "homepage": "https://github.com/zhennann/egg-born-localeutil#readme"
 }
