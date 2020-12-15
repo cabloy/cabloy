@@ -4,12 +4,11 @@ module.exports = ctx => {
 
     async execute(context) {
       const { user } = context;
-      const modelAtom = ctx.model.module(moduleInfo.relativeName).atom;
-      const count = await modelAtom.count({
-        userIdUpdated: user.id,
-        atomStage: 0,
-        atomClosed: 0,
-        atomFlowId: 0,
+      const modelFlowTask = ctx.model.module(moduleInfo).flowTask;
+      const count = await modelFlowTask.count({
+        userIdAssignee: user.id,
+        flowTaskStatus: 0,
+        timeClaimed: null,
       });
       return count;
     }

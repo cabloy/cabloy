@@ -55,6 +55,8 @@ module.exports = ctx => {
       // flowTaskHistory
       data.flowTaskId = flowTaskId;
       await this.modelFlowTaskHistory.insert(data);
+      // notify
+      this._notifyTaskClaimings(userIdAssignee);
       // ok
       return flowTaskId;
     }
@@ -127,6 +129,9 @@ module.exports = ctx => {
       }
       // event: task.claimed
       await this.claimed();
+      // notify
+      this._notifyTaskClaimings(flowTask.userIdAssignee);
+      this._notifyTaskHandlings(flowTask.userIdAssignee);
       // ok
       return { timeClaimed };
     }
@@ -168,6 +173,8 @@ module.exports = ctx => {
         ctx.tail(async () => {
           await this._complete_tail({ flowTask, user });
         });
+        // notify
+        this._notifyTaskHandlings(flowTask.userIdAssignee);
       }
     }
 
@@ -561,6 +568,26 @@ module.exports = ctx => {
       // raise event: onTaskCompleted
       await this.flowInstance._flowListener.onTaskCompleted(this.contextTask, this.contextNode);
       await this._saveVars();
+    }
+
+    _notifyTaskClaimings(userId) {
+      if (userId) {
+        ctx.bean.stats.notify({
+          module: moduleInfo.relativeName,
+          name: 'taskClaimings',
+          user: { id: userId },
+        });
+      }
+    }
+
+    _notifyTaskHandlings(userId) {
+      if (userId) {
+        ctx.bean.stats.notify({
+          module: moduleInfo.relativeName,
+          name: 'taskHandlings',
+          user: { id: userId },
+        });
+      }
     }
 
   }

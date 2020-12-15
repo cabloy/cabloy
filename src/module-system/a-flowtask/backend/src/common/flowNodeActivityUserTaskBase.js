@@ -115,6 +115,9 @@ module.exports = ctx => {
       taskInstance.contextTask._flowTaskHistory.specificFlag = specificFlag;
       taskInstance.contextTask._flowTaskHistory.timeClaimed = timeClaimed;
       await taskInstance.modelFlowTaskHistory.update(taskInstance.contextTask._flowTaskHistory);
+      // notify
+      taskInstance._notifyTaskClaimings(taskInstance.contextTask._flowTask.userIdAssignee);
+      taskInstance._notifyTaskHandlings(taskInstance.contextTask._flowTask.userIdAssignee);
     }
 
   }
