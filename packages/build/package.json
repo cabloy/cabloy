@@ -24,7 +24,7 @@
     "bluebird": "^3.7.2",
     "chalk": "^3.0.0",
     "connect-history-api-fallback": "^1.6.0",
-    "copy-webpack-plugin": "^5.1.1",
+    "copy-webpack-plugin": "^7.0.0",
     "css-loader": "^3.4.2",
     "egg-born-mglob": "^2.0.0",
     "egg-born-mparse": "^2.0.0",
@@ -56,10 +56,10 @@
     "vue-loader": "^15.8.3",
     "vue-style-loader": "^4.1.2",
     "vue-template-compiler": "^2.6.11",
-    "webpack": "^4.41.5",
-    "webpack-bundle-analyzer": "^3.6.0",
-    "webpack-dev-middleware": "^3.7.2",
+    "webpack": "^5.10.2",
+    "webpack-bundle-analyzer": "^4.2.0",
+    "webpack-dev-middleware": "^4.0.2",
     "webpack-hot-middleware": "^2.25.0",
-    "webpack-merge": "^4.2.2"
+    "webpack-merge": "^5.7.0"
   }
 }
